@@ -1,137 +1,110 @@
-Return-Path: <linux-kernel+bounces-385105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E98499B3273
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:03:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8EB99B3276
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9674C1F226F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:03:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D78FB22C4C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ACD51DD88F;
-	Mon, 28 Oct 2024 14:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F1E21DD862;
+	Mon, 28 Oct 2024 14:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="arGkzp+v";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="rkE9mDo2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lxCZvALT"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B3C1DB922;
-	Mon, 28 Oct 2024 14:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0949F1DB372;
+	Mon, 28 Oct 2024 14:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124226; cv=none; b=vEGTkDyALiwdWeMHieJQDYdmUbrHGra2A0RStWhJh6nDudycXZZOP9vZtM7O2fMXyUFliyYBP6OtbCVvR7aMvrdKGH0bBbVagoZamxKSU0OCx8vukYm8doZ0/CixB1gh/DzaQehjd5rVfP6HuKl/2J/n5s+4fYwyICbSeVBFg+Q=
+	t=1730124255; cv=none; b=KHvY0DlCS9IB8qs41YbAXlfjTTk/Z5PihKGYQ1t8nwq0r5xxOz0FRoPZHHPX0D3wInEQSmbAiiU2L6rfovkHKKSFZVAaNYO9iHI0KR1iltID/htqTKG38Mx1lHf3BUpU9z9EqSc+FVPXkm/jpMcUS3inkXSFdKxsZM4YJKmn2Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124226; c=relaxed/simple;
-	bh=UO2Np97bbRmmRNH5U0frEn7d9SUxS8pzOMQSOzd+U5g=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=uDwHk4RFH5H8fRQlaPS/Cjnbjw4V8IQ7JCKqu3P5zfakiQLcNpjV9+3YsT9j006q/yQi/7gDmWXWvXS7gTZ0ZjdP7IQB66akm7YGAtilO15qcf7nyrKcn87e3ctCKg0I0C2i0jVsl65N4BS9BkXIxUoIeDuoyzASp/4aw2A2kCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=arGkzp+v; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=rkE9mDo2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 28 Oct 2024 14:03:41 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730124222;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HrSQiWQY0kHuSMxiycezsKXoS5qH797q8JxQRTQfWLQ=;
-	b=arGkzp+vnkKPhuGaDPx1168RvCCo7vLNlQDugvD6IKCWAAI4TxaNWRZjLj+2gKMqG5bcrF
-	v/Dzzr8ZC/HcDr9gbbxgvs/y+rGmM6dAKSSEuqNh5Wt/UNyUeh138VSx1269pTHIg7NwZp
-	le3UXFZu4Nk0cX5dBYrzB5DqYVYMz3iDvh5p5MZpQ6pWIkD8e54mVE99Sozo1NwwHL2QJ2
-	8oOqvexamLICjNMbxZUkScpQQb6dSGi80EBW0fFJDb4Wl+0VvAHU2cq1qTtuol1bI4uLkh
-	iKbpatyH3ZvLUMJuNhhJKolNUvyJ3fchYf8M4RKVrmJKAOa7lT7MgkktVOWuXQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730124222;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HrSQiWQY0kHuSMxiycezsKXoS5qH797q8JxQRTQfWLQ=;
-	b=rkE9mDo2xIqlaWrlSftnNyfGZw08su8jlxuSFBMJ/6kdgdbEr+41njvltLl8+ZVwQenVPS
-	7UmFMsjjoLZBNlBA==
-From: "tip-bot2 for Qiuxu Zhuo" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: ras/core] x86/mce/mcelog: Use xchg() to get and clear the flags
-Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- Tony Luck <tony.luck@intel.com>, Nikolay Borisov <nik.borisov@suse.com>,
- Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241025024602.24318-2-qiuxu.zhuo@intel.com>
-References: <20241025024602.24318-2-qiuxu.zhuo@intel.com>
+	s=arc-20240116; t=1730124255; c=relaxed/simple;
+	bh=SNFmw9lcQmn/cgpI6BNBlDafgBf4IGjFU+dS3PXsQAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rB+H0T0ttZyjBxD/x/0Akynux87xj0cXevSNRAZq3wrsRtyOdEr+BoTSAFLy+s+85YtTPwdmto0xCxjZSuITP/Mf5rQQJMCeqaXyYkyDqBJ/smQU/bQY978tTiXWU+jpU91nPErw4NhX89SUXrD87Pyp9ED/MJfy7esfK0q1QsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lxCZvALT; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Sq3n4ZBLfS4RB/WURRVHc91SFe8DIKYxMpdakJNvepo=; b=lxCZvALTryteSo3HihrYgynWDg
+	Oafy7lbdM82qIS7vgdx0ipIdHZYfWkDki/wfqkX/v0pukUrMEgZA2OKbWwRiNNJYskP71Z3OvRgor
+	wbVHDDcOWeLect7PRt27wSywAYt6K4YtXJa58xRao2Y7yJP6dKpej7uBUQyAA+MXJeOjk9BNTLVwy
+	ANtmbqTMoq0Sc3klJWQSkhcx2f7F8J4ePu0a7EJZIhzjAhsMZ0CUpfjq8SoUq0UI6xwrLMmvpT6fZ
+	73KvxEkHaSKPWo+wSb/gRnii7xqzHolW0ZyTpMJa4Gd59Kyb505dhSiRRUG09ut1nhD+2XPJ6ndKl
+	iq8hLzKA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5QLm-00000008aT6-2tF9;
+	Mon, 28 Oct 2024 14:04:06 +0000
+Date: Mon, 28 Oct 2024 14:04:06 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Hugh Dickins <hughd@google.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH] iov_iter: fix copy_page_from_iter_atomic() if
+ KMAP_LOCAL_FORCE_MAP
+Message-ID: <Zx-Z1vqRkyokcHmQ@casper.infradead.org>
+References: <dd5f0c89-186e-18e1-4f43-19a60f5a9774@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173012422146.1442.7437515597289801002.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dd5f0c89-186e-18e1-4f43-19a60f5a9774@google.com>
 
-The following commit has been merged into the ras/core branch of tip:
+On Sun, Oct 27, 2024 at 03:23:23PM -0700, Hugh Dickins wrote:
+> generic/077 on x86_32 CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP=y with highmem,
+> on huge=always tmpfs, issues a warning and then hangs (interruptibly):
 
-Commit-ID:     325c3376afad838eec8b9342e9e5eef270c5b184
-Gitweb:        https://git.kernel.org/tip/325c3376afad838eec8b9342e9e5eef270c5b184
-Author:        Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-AuthorDate:    Fri, 25 Oct 2024 10:45:53 +08:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 28 Oct 2024 14:07:47 +01:00
+> +++ b/lib/iov_iter.c
+> @@ -461,6 +461,8 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
+>  		size_t bytes, struct iov_iter *i)
+>  {
+>  	size_t n, copied = 0;
+> +	bool uses_kmap = IS_ENABLED(CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP) ||
+> +			 PageHighMem(page);
+>  
+>  	if (!page_copy_sane(page, offset, bytes))
+>  		return 0;
+> @@ -471,7 +473,7 @@ size_t copy_page_from_iter_atomic(struct page *page, size_t offset,
+>  		char *p;
+>  
+>  		n = bytes - copied;
+> -		if (PageHighMem(page)) {
+> +		if (uses_kmap) {
+>  			page += offset / PAGE_SIZE;
+>  			offset %= PAGE_SIZE;
+>  			n = min_t(size_t, n, PAGE_SIZE - offset);
 
-x86/mce/mcelog: Use xchg() to get and clear the flags
+Urgh.  I've done this same optimisation elsewhere.
 
-Using xchg() to atomically get and clear the MCE log buffer flags,
-streamlines the code and reduces the text size by 20 bytes.
+memcpy_from_folio:
+                if (folio_test_highmem(folio) &&
+                    chunk > PAGE_SIZE - offset_in_page(offset))
+                        chunk = PAGE_SIZE - offset_in_page(offset);
 
-  $ size dev-mcelog.o.*
+also memcpy_to_folio(), folio_zero_tail(), folio_fill_tail(),
+memcpy_from_file_folio()
 
-       text	   data	    bss	    dec	    hex	filename
-       3013	    360	    160	   3533	    dcd	dev-mcelog.o.old
-       2993	    360	    160	   3513	    db9	dev-mcelog.o.new
-
-No functional changes intended.
-
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Reviewed-by: Sohil Mehta <sohil.mehta@intel.com>
-Link: https://lore.kernel.org/r/20241025024602.24318-2-qiuxu.zhuo@intel.com
----
- arch/x86/kernel/cpu/mce/dev-mcelog.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
-
-diff --git a/arch/x86/kernel/cpu/mce/dev-mcelog.c b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-index af44fd5..8d02323 100644
---- a/arch/x86/kernel/cpu/mce/dev-mcelog.c
-+++ b/arch/x86/kernel/cpu/mce/dev-mcelog.c
-@@ -264,15 +264,8 @@ static long mce_chrdev_ioctl(struct file *f, unsigned int cmd,
- 		return put_user(sizeof(struct mce), p);
- 	case MCE_GET_LOG_LEN:
- 		return put_user(mcelog->len, p);
--	case MCE_GETCLEAR_FLAGS: {
--		unsigned flags;
--
--		do {
--			flags = mcelog->flags;
--		} while (cmpxchg(&mcelog->flags, flags, 0) != flags);
--
--		return put_user(flags, p);
--	}
-+	case MCE_GETCLEAR_FLAGS:
-+		return put_user(xchg(&mcelog->flags, 0), p);
- 	default:
- 		return -ENOTTY;
- 	}
+I think that means we need a new predicate.  I don't have a good name
+yet.  folio_kmap_can_access_multiple_pages() is a bit too wordy.  Anyone
+think of a good one?
 
