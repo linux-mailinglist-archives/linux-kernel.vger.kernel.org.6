@@ -1,46 +1,53 @@
-Return-Path: <linux-kernel+bounces-385521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA1429B3823
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:48:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B1F29B3826
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:48:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBA001C222E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C82F1C22317
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:48:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150A61E0B84;
-	Mon, 28 Oct 2024 17:44:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E9941DF757;
+	Mon, 28 Oct 2024 17:46:04 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6B21DF74C;
-	Mon, 28 Oct 2024 17:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F971DF251;
+	Mon, 28 Oct 2024 17:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730137476; cv=none; b=aCEUsXMpD/VrSoN6dmDxxgTWwrsrMAx3Rof60x6/d6vcF8SrtM6J+c0uWimKaXn8FeGil4jqfJ2igMdA/hy6YF+hm9mef3lEoCyDB6mKE7+6ORW0/dL3yD64YUK7qLPmxO56PJYOvV6MzPcILe/DPZgg4Jkv71LiKkqUhxlSBoM=
+	t=1730137564; cv=none; b=Lr4lCDyzRpPl7iPe+WeCvxJ8qatFOPrvmNc9t0GEnjwafNrF/m0bXDSsWShWokA23HKzKbTrbvhe9c3YG2GqO75umSwqBVM+uE3VGy7vriSCtuJtiK4Rryx4Lgu+qi+7rpbMqOpF3aC7U9UOM0a2XlGntFLN2wY6bUeyF2Yf6lQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730137476; c=relaxed/simple;
-	bh=qYHQccaUHX1B5FxGZXBCYY5h73M309VvW3KOYFQw26Y=;
+	s=arc-20240116; t=1730137564; c=relaxed/simple;
+	bh=wBM3YyAQDgxYAAlMYnnUUBE+DwhHmnmpDhboAb817Yc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTVR8sphtp8zxDsAMWAuMMg99p7dFAaqizmRcEwQw5PmNfYskiA5mayIrjoELmv8+7BYm6DU48+nhNeJbxwFiGU3VvPGQE0uQWRX1VhtMVlHU58i7rKPSIEDbU0/vsvue7TSv8TRyFEmtjCptSdmkuuLW0oIp1HqaSCy4tEJM/U=
+	 Content-Type:Content-Disposition:In-Reply-To; b=gaVKzORHqIVU4nuicpT8QjpGr6OyCRQ1LtGJgcEWmpxwIY6qbdiLOaoxeDiZtK/wXGW3osHPTV4vw7ssekkwXv1JKlWSclsUuQOgB/1Z3D5eZH2Q5deIvwMFS4nBNZZz7vKweOoecCgBdEXorEj3bcJ0cWrbUIErbmgZGgQWrKo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85665C4CEC3;
-	Mon, 28 Oct 2024 17:44:34 +0000 (UTC)
-Date: Mon, 28 Oct 2024 17:44:32 +0000
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A21FFC4CEC3;
+	Mon, 28 Oct 2024 17:46:01 +0000 (UTC)
+Date: Mon, 28 Oct 2024 17:45:59 +0000
 From: Catalin Marinas <catalin.marinas@arm.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Cc: Will Deacon <will@kernel.org>, KVM <kvm@vger.kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Yang Shi <yang@os.amperecomputing.com>
-Subject: Re: linux-next: manual merge of the kvm tree with the arm64 tree
-Message-ID: <Zx_NgJnjsGIrW4uF@arm.com>
-References: <20241028170310.3051da53@canb.auug.org.au>
+To: Ido Schimmel <idosch@idosch.org>
+Cc: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	zhangzekun11@huawei.com, john.g.garry@oracle.com,
+	dheerajkumar.srivastava@amd.com, jsnitsel@redhat.com
+Subject: Re: [PATCH v3 0/2] iommu/iova: Make the rcache depot properly
+ flexible
+Message-ID: <Zx_N1xVHFskgx-KX@arm.com>
+References: <ZY1osaGLyT-sdKE8@shredder>
+ <c9cf02b5-7add-46ea-8db1-46fdce191c1c@arm.com>
+ <ZZ2AqZT4dD-s01q9@shredder>
+ <ab22c439-e7da-49b5-b20b-856daf376c02@arm.com>
+ <ZZ7atzgT6_kOvWnJ@arm.com>
+ <ZZ-ky9UCoHwbyqfn@shredder>
+ <ZZ-_LWz_4KxOkRsA@arm.com>
+ <ZaFbPnDrYT5uGqJD@shredder>
+ <ZaTb8KorPFPgRqD6@shredder>
+ <Zx9Fepzvrs8b6_LX@shredder.mtl.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,66 +56,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028170310.3051da53@canb.auug.org.au>
+In-Reply-To: <Zx9Fepzvrs8b6_LX@shredder.mtl.com>
 
-On Mon, Oct 28, 2024 at 05:03:10PM +1100, Stephen Rothwell wrote:
-> Today's linux-next merge of the kvm tree got a conflict in:
+On Mon, Oct 28, 2024 at 10:04:10AM +0200, Ido Schimmel wrote:
+> On Mon, Jan 15, 2024 at 09:17:04AM +0200, Ido Schimmel wrote:
+> > On Fri, Jan 12, 2024 at 05:31:15PM +0200, Ido Schimmel wrote:
+> > > On Thu, Jan 11, 2024 at 10:13:01AM +0000, Catalin Marinas wrote:
+> > > > On Thu, Jan 11, 2024 at 10:20:27AM +0200, Ido Schimmel wrote:
+> > > > > On Wed, Jan 10, 2024 at 05:58:15PM +0000, Catalin Marinas wrote:
+> > > > > > Transient false positives are possible, especially as the code doesn't
+> > > > > > use a double-linked list (for the latter, kmemleak does checksumming and
+> > > > > > detects the prev/next change, defers the reporting until the object
+> > > > > > becomes stable). That said, if a new scan is forced (echo scan >
+> > > > > > /sys/kernel/debug/kmemleak), are the same objects still listed as leaks?
+> > > > > > If yes, they may not be transient.
+> > > > > 
+> > > > > We are doing "scan" and "clear" after each test. I will disable the
+> > > > > "clear" and see if the leaks persist.
+> > > > 
+> > > > If it is indeed a false positive
+> > > 
+> > > Looks like the leaks are transient. After removing the "clear" step the
+> > > leaks do not seem to persist.
+> > > 
+> > > > you can try the patch below (I haven't given it any run-time test,
+> > > > only compiled):
+> > > 
+> > > Will try and let you know next week.
+> > 
+> > Looks good. Feel free to add:
+> > 
+> > Tested-by: Ido Schimmel <idosch@nvidia.com>
 > 
->   arch/arm64/kvm/guest.c
-> 
-> between commit:
-> 
->   25c17c4b55de ("hugetlb: arm64: add mte support")
-> 
-> from the arm64 tree and commit:
-> 
->   570d666c11af ("KVM: arm64: Use __gfn_to_page() when copying MTE tags to/from userspace")
-> 
-> from the kvm tree.
-[...]
-> diff --cc arch/arm64/kvm/guest.c
-> index e738a353b20e,4cd7ffa76794..000000000000
-> --- a/arch/arm64/kvm/guest.c
-> +++ b/arch/arm64/kvm/guest.c
-> @@@ -1051,13 -1051,11 +1051,12 @@@ int kvm_vm_ioctl_mte_copy_tags(struct k
->   	}
->   
->   	while (length > 0) {
-> - 		kvm_pfn_t pfn = gfn_to_pfn_prot(kvm, gfn, write, NULL);
-> + 		struct page *page = __gfn_to_page(kvm, gfn, write);
->   		void *maddr;
->   		unsigned long num_tags;
-> - 		struct page *page;
->  +		struct folio *folio;
->   
-> - 		if (is_error_noslot_pfn(pfn)) {
-> + 		if (!page) {
->   			ret = -EFAULT;
->   			goto out;
->   		}
-> @@@ -1099,12 -1090,8 +1097,12 @@@
->   			/* uaccess failed, don't leave stale tags */
->   			if (num_tags != MTE_GRANULES_PER_PAGE)
->   				mte_clear_page_tags(maddr);
->  -			set_page_mte_tagged(page);
->  +			if (folio_test_hugetlb(folio))
->  +				folio_set_hugetlb_mte_tagged(folio);
->  +			else
->  +				set_page_mte_tagged(page);
->  +
-> - 			kvm_release_pfn_dirty(pfn);
-> + 			kvm_release_page_dirty(page);
->   		}
->   
->   		if (num_tags != MTE_GRANULES_PER_PAGE) {
+> Catalin, we have been using this patch since you posted it and haven't
+> seen any issues. Can please submit it upstream?
 
-Thanks Stephen. The resolution looks fine and I'm happy to leave to
-Linus to fix it up during the merging window.
-
-To the KVM maintainers, if you prefer a conflict-free linux-next, feel
-free to pull the arm64 for-next/mte branch with the above commit (and a
-kselftest). The other way around is not something I'd suggest we do,
-there are over 80 patches in that kvm series.
+Oh, I completely forgot about it. I'll try to do it this week. Thanks
+for the reminder.
 
 -- 
 Catalin
