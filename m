@@ -1,35 +1,81 @@
-Return-Path: <linux-kernel+bounces-384827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A4929B2EE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:31:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B2369B2EED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:32:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCF092832ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:31:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAAC5B211B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A4E1D6191;
-	Mon, 28 Oct 2024 11:30:53 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B671B1D2785;
+	Mon, 28 Oct 2024 11:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O48pUA0f"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BEB917A58F;
-	Mon, 28 Oct 2024 11:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED55842A82
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730115052; cv=none; b=BcUtnjH1BJNO1mC1hHTxbB3smX8Ebna9skVa/wkNKLn0zIsR2ZefnizR3wKnToY8jXbPjlgIRMIRwPyhCM42GLfYToChvRyggMy3e4CQp0k9618fkssfYxRi5VH94xWU+Nve4x7AvTXWGShlHFNxuopofenhUAYsYVPqUb+rruU=
+	t=1730115119; cv=none; b=nAmWZxAU0n68P7EeeM+FmPMpCklZj9h66wZukS6k7tOj3czzq5hYv4zltYtI43xd/ZOAI4Xy8MRRpIS1vk78HGxt9RmuajRHO3HFmpIiRUj9vPMSaHuUJk5NOA3re8Rm9+4sGiRxOY2l0zt+tdr0qexaH8KTn3Jqfk8qd8k4HOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730115052; c=relaxed/simple;
-	bh=bVt+2siwCc1v02VyHDDISl8GOS+0XqVUEBHdOCaYYuk=;
+	s=arc-20240116; t=1730115119; c=relaxed/simple;
+	bh=PDN9vXO/dZI0+lgwYlek32a4uiMHBlWo7Nb6O/Pgn7s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b853Y4SHQBB4eULurUqViZC1LxwTq+3MOLsZNbKu9kmO4a9/5FbyWn+0h98oTxzW2kVfz1EJoRishQazjpmVEFiiDJ8tCHh7szzwBjn+M7GtbgdT7ZAyauoVkyFSxeblG9vVXe0v1mHsxyH3ruVEfAYXY68GMjH9FDtk/hjXGAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A86E8C4CEC3;
-	Mon, 28 Oct 2024 11:30:47 +0000 (UTC)
-Message-ID: <563347aa-4155-47e1-b71a-0107aed83eb6@xs4all.nl>
-Date: Mon, 28 Oct 2024 12:30:45 +0100
+	 In-Reply-To:Content-Type; b=jpnonA6LnFVJlkjKxd4S0AdJTgjvf2fw3pivEOur2TO3MUBvIj3PzJqrTkhupraI+QpE0ucEYp2DWJR6+5RrGuXFuuITzvrqIcbZAdIz9aq8krUQy19cPOmjRZZmZaIdFJAQCjN0O+RlONAkgGDIRObwz6EtVEKrAID8TMBeeG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O48pUA0f; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SBFCiQ010456
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:31:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Fay1WfqSR5ZfNix8IeEA2i6PepY/ruW4Izlv+/bHV0A=; b=O48pUA0fHbAHs9On
+	A0j2qJbEO+quqEysLo8jMe9xmB1AaO39EC43zjrhqCmbo+KwkaN03bDuY/4kEHj5
+	0q56AdsX/T8s6epYeDPU/w1QshWLaoFh5Tj9XO1n1ExjjEjL/8kpNGXiq8GbR2HB
+	vdC/Vrm+fvtqSBU1Nw37m14wASTPpKznP2Gr+863Td8RFDg9e/nEmSzbbgxxJOWW
+	epA+v79Fl4OgWSfPr3h1HNAW8+qwLBV0gcEkCPqLVS/7gyZThC/Hhkd5F8HCs9fo
+	PyVuYOUu9lrL9w3gozkW61DQ8CmJTBRfkUFOGwVaIz5L5smg33kYxy23LyCLk0YE
+	fADK7A==
+Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gr0x4nk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:31:55 +0000 (GMT)
+Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbe40565feso13296866d6.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:31:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730115115; x=1730719915;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fay1WfqSR5ZfNix8IeEA2i6PepY/ruW4Izlv+/bHV0A=;
+        b=Nsqn/oT98xpjBkejMWZaPm0P99IR9CCl5olUxQVt0Btja37NGeyn2pbDKqjlaiqWSI
+         dENZa0TbGQZJ49E+IRMn9YH+GbHMZKz/rqg75GI+jQo8ylYa/wXPeieSVBtuE7OgZmNC
+         QoNM/MJv/sBjrGJuPpFds26EPYgqvpDEr8oFw1ePMiU73tAYQt8vGSnA4xPzH2hRtBl4
+         3KuxpINIjrqqCjyP8uTqeQ5Ybm8YyC4ZsYMftnojyVWdXs8xRkPK/XQLQYcD6e+vKW9C
+         3rR5IpySSRI+8FzD65hw0ZMXdIncV98yNGH/kxfDGMWuUBjdTHhE1XRIvc3BNl/TiGXA
+         3zEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUij/th/Dn2gX7v7zkAmLipcH5F16bgLjRLa9LhmqnbheDgpaICeyFec+VsSFeHuEAmKvDbdjJ5qRZYlsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk402l+Jt1eLvem4xwovc5ISolJ4VH5kLYmKbT+8rwUePexAWZ
+	Zn+a1OPxtjdqvpwnokXYQY38p+MZtp/PioiPdppNKQjs/aikGVQ6Oe7bu3yXBWhZS1/qVQ7mm8/
+	fJZef05BNepI3ovcL61P5dxXEYdG5FhOQEr9duyi/pZ4RLwxEpkMC7CIjqfA4Iko=
+X-Received: by 2002:a05:6214:2583:b0:6c5:3338:45d6 with SMTP id 6a1803df08f44-6d18583be81mr55405636d6.11.1730115114828;
+        Mon, 28 Oct 2024 04:31:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEkvgYqxpo2ACrB5DdSvsn7yzDd4MDBFRzTXO/ZPMds196WuLyzCIGXKaPWm/X4ux6U8JcyOw==
+X-Received: by 2002:a05:6214:2583:b0:6c5:3338:45d6 with SMTP id 6a1803df08f44-6d18583be81mr55405456d6.11.1730115114488;
+        Mon, 28 Oct 2024 04:31:54 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1e0b232dsm366494766b.26.2024.10.28.04.31.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 04:31:54 -0700 (PDT)
+Message-ID: <27bea27a-9aa3-42f5-9b0a-df5744276966@oss.qualcomm.com>
+Date: Mon, 28 Oct 2024 12:31:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,226 +83,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/4] media: raspberrypi: Add support for RP1-CFE
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, Naushir Patuck
- <naush@raspberrypi.com>, Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-References: <20241003-rp1-cfe-v6-0-d6762edd98a8@ideasonboard.com>
- <20241003-rp1-cfe-v6-3-d6762edd98a8@ideasonboard.com>
- <4d9e340e-2ae7-495b-8623-0d10398e1c3d@xs4all.nl>
- <02f05b61-08e7-45f8-8d59-f79bc20d076f@ideasonboard.com>
- <74286a86-51b9-4742-bb0c-583d70b1b0a7@xs4all.nl>
- <505c502e-b67a-4dca-8420-eb87eae4e170@ideasonboard.com>
- <59cf95be-fb53-4a94-bc6e-f9dca322749d@xs4all.nl>
- <5832a2f9-c908-4f5a-a3ee-9cb7d23ddab4@ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <5832a2f9-c908-4f5a-a3ee-9cb7d23ddab4@ideasonboard.com>
+Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+        Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling
+ <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        Arnd Bergmann <arnd@kernel.org>
+References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+ <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
+ <6fea85fc-ccdc-46ec-b612-3712e9431301@quicinc.com>
+ <CAA8EJpodjP3rY0Twe9sP37LWwk5ppP36dyLC9WKD6CTDOtmwzA@mail.gmail.com>
+ <b7f72f38-2758-405b-abc7-60b73448d8bb@oss.qualcomm.com>
+ <vtj3yahojkozge4bvq66ax2c2idbw27c3hs7l6cy3e7ucz4jqb@qge2nckj3mr4>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <vtj3yahojkozge4bvq66ax2c2idbw27c3hs7l6cy3e7ucz4jqb@qge2nckj3mr4>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: DH0bWKDU5K8kYHiA5laLGacTOmLtLq9t
+X-Proofpoint-GUID: DH0bWKDU5K8kYHiA5laLGacTOmLtLq9t
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1015 bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280093
 
-On 28/10/2024 12:25, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 28/10/2024 13:13, Hans Verkuil wrote:
->> On 28/10/2024 12:05, Tomi Valkeinen wrote:
->>> Hi Hans,
->>>
->>> On 28/10/2024 12:11, Hans Verkuil wrote:
->>>> On 28/10/2024 10:21, Tomi Valkeinen wrote:
->>>>> Hi,
+On 28.10.2024 11:52 AM, Dmitry Baryshkov wrote:
+> On Mon, Oct 28, 2024 at 11:36:15AM +0100, Konrad Dybcio wrote:
+>> On 28.10.2024 11:27 AM, Dmitry Baryshkov wrote:
+>>> On Mon, 28 Oct 2024 at 12:08, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>
+>>>> On 10/28/2024 1:56 PM, Dmitry Baryshkov wrote:
+>>>>> On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
+>>>>>> Clang-19 and above sometimes end up with multiple copies of the large
+>>>>>> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+>>>>>> a6xx_hfi_send_bw_table() calls a number of device specific functions to
+>>>>>> fill the structure, but these create another copy of the structure on
+>>>>>> the stack which gets copied to the first.
+>>>>>>
+>>>>>> If the functions get inlined, that busts the warning limit:
+>>>>>>
+>>>>>> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+>>>>>>
+>>>>>> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
+>>>>>> the stack. Also, use this opportunity to skip re-initializing this table
+>>>>>> to optimize gpu wake up latency.
+>>>>>>
+>>>>>> Cc: Arnd Bergmann <arnd@kernel.org>
+>>>>>>
+>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>>>> ---
+>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+>>>>>>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
+>>>>>>  2 files changed, 23 insertions(+), 12 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>>>>>> index 94b6c5cab6f4..b4a79f88ccf4 100644
+>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>>>>>> @@ -99,6 +99,7 @@ struct a6xx_gmu {
+>>>>>>      struct completion pd_gate;
+>>>>>>
+>>>>>>      struct qmp *qmp;
+>>>>>> +    struct a6xx_hfi_msg_bw_table *bw_table;
+>>>>>>  };
+>>>>>>
+>>>>>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>>>>>> index cdb3f6e74d3e..55e51c81be1f 100644
+>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>>>>>> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>>>>>>
+>>>>>>  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>>>>>>  {
+>>>>>> -    struct a6xx_hfi_msg_bw_table msg = { 0 };
+>>>>>> +    struct a6xx_hfi_msg_bw_table *msg;
+>>>>>>      struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>>>>>>      struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>>>>>>
+>>>>>> +    if (gmu->bw_table)
+>>>>>> +            goto send;
+>>>>>> +
+>>>>>> +    msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
 >>>>>
->>>>> On 24/10/2024 11:20, Hans Verkuil wrote:
->>>>>> Hi Tomi,
->>>>>>
->>>>>> I know this driver is already merged, but while checking for drivers that use
->>>>>> q->max_num_buffers I stumbled on this cfe code:
->>>>>>
->>>>>> <snip>
->>>>>>
->>>>>>> +/*
->>>>>>> + * vb2 ops
->>>>>>> + */
->>>>>>> +
->>>>>>> +static int cfe_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
->>>>>>> +               unsigned int *nplanes, unsigned int sizes[],
->>>>>>> +               struct device *alloc_devs[])
->>>>>>> +{
->>>>>>> +    struct cfe_node *node = vb2_get_drv_priv(vq);
->>>>>>> +    struct cfe_device *cfe = node->cfe;
->>>>>>> +    unsigned int size = is_image_node(node) ?
->>>>>>> +                    node->vid_fmt.fmt.pix.sizeimage :
->>>>>>> +                    node->meta_fmt.fmt.meta.buffersize;
->>>>>>> +
->>>>>>> +    cfe_dbg(cfe, "%s: [%s] type:%u\n", __func__, node_desc[node->id].name,
->>>>>>> +        node->buffer_queue.type);
->>>>>>> +
->>>>>>> +    if (vq->max_num_buffers + *nbuffers < 3)
->>>>>>> +        *nbuffers = 3 - vq->max_num_buffers;
->>>>>>
->>>>>> This makes no sense: max_num_buffers is 32, unless explicitly set when vb2_queue_init
->>>>>> is called. So 32 + *nbuffers is never < 3.
->>>>>>
->>>>>> If the idea is that at least 3 buffers should be allocated by REQBUFS, then set
->>>>>> q->min_reqbufs_allocation = 3; before calling vb2_queue_init and vb2 will handle this
->>>>>> for you.
->>>>>>
->>>>>> Drivers shouldn't modify *nbuffers, except in very rare circumstances, especially
->>>>>> since the code is almost always wrong.
->>>>>
->>>>> Looking at this, the original code in the old BSP tree was, which somehow, along the long way, got turned into the above:
->>>>>
->>>>> if (vq->num_buffers + *nbuffers < 3)
->>>>>           *nbuffers = 3 - vq->num_buffers;
->>>>>
->>>>> So... I think that is the same as "q->min_reqbufs_allocation = 3"?
->>>>>
->>>>> The distinction between min_queued_buffers and min_reqbufs_allocation, or rather the need for the latter, still escapes me. If the HW/SW requires N buffers to be queued, why would we require
->>>>> allocating more than N buffers?
+>>>>> Is it necessary after being sent? Isn't it better to just kzalloc() it
+>>>>> and then kfree() it at the end of the function?
 >>>>
->>>> min_queued_buffers is easiest to explain: that represents the requirements of the DMA
->>>> engine, i.e. how many buffers much be queued before the DMA engine can be started.
->>>> Typically it is 0, 1 or 2.
->>>>
->>>> min_reqbufs_allocation is the minimum number of buffers that will be allocated when
->>>> calling VIDIOC_REQBUFS in order for userspace to be able to stream without blocking
->>>> or dropping frames.
->>>>
->>>> Typically this is 3 for video capture: one buffer is being DMAed, another is queued up
->>>> and the third is being processed by userspace. But sometimes drivers have other
->>>> requirements.
->>>>
->>>> The reason is that some applications will just call VIDIOC_REQBUFS with count=1 and
->>>> expect it to be rounded up to whatever makes sense. See the VIDIOC_REQBUFS doc in
->>>> https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/vidioc-reqbufs.html
->>>>
->>>> "It can be smaller than the number requested, even zero, when the driver runs out of
->>>>    free memory. A larger number is also possible when the driver requires more buffers
->>>>    to function correctly."
->>>>
->>>> How drivers implement this is a mess, and usually the code in the driver is wrong as
->>>> well. In particular they often did not take VIDIOC_CREATE_BUFS into account, i.e.
->>>> instead of 'if (vq->num_buffers + *nbuffers < 3)' they would do 'if (*nbuffers < 3)'.
+>>>> Keeping it around will help to cut down unnecessary work during
+>>>> subsequent gpu wake ups.
 >>>
->>> Thanks, this was educational!
->>>
->>> So. If I have a driver that has min_queued_buffers = 1, I can use VIDIOC_CREATE_BUFS to allocate a single buffer, and then capture just one buffer, right? Whereas VIDIOC_REQBUFS would give me
->>> (probably) three (or two, if the driver does not set min_reqbufs_allocation). Three buffers makes sense for full streaming, of course.
->>>
->>>> When we worked on the support for more than 32 buffers we added min_reqbufs_allocation
->>>> to let the core take care of this. In addition, this only applies to VIDIOC_REQBUFS,
->>>> if you want full control over the number of allocated buffers, then use VIDIOC_CREATE_BUFS,
->>>> with this ioctl the number of buffers will never be more than requested, although it
->>>> may be less if you run out of memory.
->>>>
->>>> I really should go through all existing drivers and fix them up if they try to
->>>> handle this in the queue_setup function, I suspect a lot of them are quite messy.
->>>>
->>>> One thing that is missing in the V4L2 uAPI is a way to report the minimum number of
->>>> buffers that need to be allocated, i.e. min_queued_buffers + 1. Since if you want
->>>
->>> Hmm, so what I wrote above is not correct? One needs min_queued_buffers + 1? Why is that?
+>>> Then, I'd say, it is better to make it a part of the a6xx_gpu struct.
 >>
->> The DMA engine always uses min_queued_buffers, so if there are only that many buffers,
->> then it can never return a buffer to userspace! So you need one more. That's the absolute
->> minimum. For smooth capture you need two more to allow time for userspace to process the
->> buffer.
-> 
-> Hmm, ok, I see. Well, I guess my "I want to capture just a single frame" is not a very common case.
-> 
-> Can I queue one buffer, start streaming, stop streaming, and get the filled buffer? But then I guess I don't when the buffer has been filled, i.e. when to call stop streaming.
-
-Exactly. If you really want that, then the driver has to be adapted in the way that Laurent
-suggested, i.e. with one or more scratch buffers. But that is not always possible, esp. with
-older hardware without an IOMMU.
-
-Regards,
-
-	Hans
-
-> 
-> So, never mind, I don't actually have any use case for this, just wondering.
-> 
->>>
->>>> to use CREATE_BUFS you need that information so you know that you have to create
->>>> at least that number of buffers. We have the V4L2_CID_MIN_BUFFERS_FOR_CAPTURE control,
->>>> but it is effectively codec specific. This probably should be clarified.
->>>>
->>>> I wonder if it wouldn't be better to add a min_num_buffers field to
->>>> struct v4l2_create_buffers and set it to min_queued_buffers + 1.
->>>
->>> I think this makes sense (although I still don't get the +1).
->>>
->>> However, based on the experiences from adding the streams features to various ioctls, let's be very careful =). The new 'min_num_buffers' can be filled with garbage by the userspace. If we define the
->>> 'min_num_buffers' field to be always filled by the kernel, and any value provided from the userspace to be ignored, I think it should work.
+>> I think a6xx_gmu makes more logical sense here.
 >>
->> I've posted an RFC for this.
+>> FWIW, the driver allocates both _gmu and _gpu for all GPUs regardless
 > 
-> Thanks, I'll check it out.
-> 
-> For the original issue in this thread, I think the correct fix is to remove the lines from cfe_queue_setup(), and add "q->min_reqbufs_allocation = 3".
-> 
-> I'll send a patch for that.
-> 
->  Tomi
-> 
+> Hmm, are we expected to handle / perform BW requests in case of GMU-less
+> devices?
 
+opp-table does that for us
+
+In case of no gmu ("gmu wrapper"), Linux is the only entity that controls
+things
+
+Konrad
 
