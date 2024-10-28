@@ -1,165 +1,164 @@
-Return-Path: <linux-kernel+bounces-385646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F699B39EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:03:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD799B39EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EAEF6B2195C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3337B21706
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F671DFDB3;
-	Mon, 28 Oct 2024 19:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9318C1DF990;
+	Mon, 28 Oct 2024 19:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UTITOVI0"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BE5+G3k1"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961A718FC7F;
-	Mon, 28 Oct 2024 19:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1C318DF77;
+	Mon, 28 Oct 2024 19:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730142228; cv=none; b=pgLIj/gshWPHXMRv2TmoCyfcZYoHO1fdZ3pjuBf43wNjvWPIbB0Q/E6bfc9YeJeoW/BYnpjjcSzf5yU4P4yTexJpMeS4bOOhOQh0u6x4KxZ7UTbIW24BPxQjHIWV851Of4ma5i0rEw4ydzacVD1wOMmJ0RfSAvKqzwFcaPTlESE=
+	t=1730142283; cv=none; b=KFgJfaemVOn7nBpRsZNIh7QFt9mKw3uPmPmtghSotwMFISjsDCKWpFyESOwo8EO1YW/khLf5RM/7PtUNli5MF00uwRFhnnawailT0IB6m2MGGv03YooWI6O7kL6v/fmQ5W842BwlOOWy+0nFnEV1khXxwCigkP/LrryHOIwPwn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730142228; c=relaxed/simple;
-	bh=ulUP69L6OJ8qwxELaCLyAPm0tpDL3q8IauoU40wSzPA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tQE3feCc6B3y1J9Z/Kx2LFx9mGCChcBvg9r31s2j7qAv7WGgGxfKeTb8Xk4n077ieNzsKIJn1M3T6BobGvVptw0ssNE6P/CL7jkzPtRIJ5XYJzWY2v26tvKKiruJApeM+cThjLxACnLdaS48JK39OlYCt001j690A6nfyf4Fq3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UTITOVI0; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1730142283; c=relaxed/simple;
+	bh=xepM4h6v+VJ8U3pRtpoMyZ9VuGKEwo7ELCQCMO5p/0c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GSAmKhCwWbrGMWfuu3M0PLcbQmI4cmEeZCqYG9VPQaPXPFbRvXOjI0ypap3GrLkNlSZIvFYc0C6U7B85cc1vw04ueFwr/ZcvXHS4n1XJfGdEA5a2Z0r2z/HD72Ds8hsfaTWNDLVeixeYnKgiGVqRnBwlkWRnySDf8WXL96v8mBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BE5+G3k1; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso619480f8f.1;
-        Mon, 28 Oct 2024 12:03:46 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e7086c231so3550570b3a.0;
+        Mon, 28 Oct 2024 12:04:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730142224; x=1730747024; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=EumjPlqo/OwaKuDLCplZJLv7GsAu7zXdwCFO9fyVbt0=;
-        b=UTITOVI0PL0n6ijwqZaumOlfolqdcRVCpCR2/YpFOp5nm+gj6q+MNuDhmWhmegMTZy
-         Y2+vT3VpJlrcCG1SzwaDUod/8PLsMIqpz7t3ZTFmw3eGlM8BDo751k2G0/ZpQL84QCF/
-         5K5OpW/q3C2OqnRe56v6JTFDU85RqeCJtAZ0LeM8y/ivU2AqKJRZO8+rB7fFlqKQEaht
-         /IZMKHKaohIpfKqMmyo+qbLVU61VdcreAZx1L4gYfAQmCCaR44WMdh4IL5huRHt5yG35
-         HfN02qgTjyfKG3OxuaqjNrh78tyrYjaMOMPo3i5/MyMVdmt0ET3whTEuaw3ayMLQ/R1O
-         Zgqw==
+        d=gmail.com; s=20230601; t=1730142279; x=1730747079; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=T+BcJmJv3LS4q7Hv3Kc5Q5meZeEkT9QtVp8QKpoSCfE=;
+        b=BE5+G3k1CvKo67jHBjstZz7CdUlUWgp7t5psHGgkFuaKvXHmyYx3mTphST1gPHf3qt
+         W8drxqxbzZ5JQaW7dCb7WdO3DG6FDRBJxhEB9+jOK/wEGC7vJZeXGoiJivilct/O+1lQ
+         uNd1mtkm+5u2PpfoFpkhjrT324UMjRD0B1sNpq9nEaJYT+zuHOxqISlNirh0m25e9wmr
+         tAWRDakvAH3pCPHcLze6qyKyaSjTrR3EtANNpvd6bW6QvRzC4z7J8YNpjyyofnxz/3TC
+         imHBOIE9TzG5AyA3O+Tjktbtle8E1AX5m3OWa/y7BZ1vQbz7Xdq9l2yLtz3Nj0Hc5xEt
+         aB6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730142224; x=1730747024;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EumjPlqo/OwaKuDLCplZJLv7GsAu7zXdwCFO9fyVbt0=;
-        b=pAJoIbCk/QF9nhCrsQ5aN45YRCfw8z1KJXiKfbbtpwC3+xp3dwUX6h8RsN4i2SMmyA
-         gXnN030tfG/ZfHdUCETwS1tHLSHp08a1oBBzABSj1zICGf83YFmM0o9833eKN6h2HiCg
-         PjdZ3xwrZdcmou2VNTrLgG2svJCEr50YlYkNyemBi0NltsV31Vlhf9Hv4MxRi0BNKBOR
-         2atHrbx+Tm+sPWRGkSTb/hAeOS2ndWM49HiJ9PvtpuCR4mwxz7dh4phZ88R6VagXylfU
-         OICpVoB0nuau9PyUEZ0wu3ucnFP2J3tMKFwWbFuimblb8o1Oc3+mJY20mDvZ1WAJvhoK
-         J4yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVgXDLd9wWXXpiNRcK+0/FtAbeuLRgd380DTZUVCLvJUj2YX9vY7v/Lb44Ap1RtdR6MGlRTHV2EMSps5xbu@vger.kernel.org, AJvYcCWGIGc5tHJI3Wp1Ijn6+a03Eo9S3QjckqkupyXzKPJGQNt69waD6ziAfV7ObHvkPapbyDbFxJrs9t8=@vger.kernel.org, AJvYcCWWjfyNwX6/fzujiz4dyxiBM7CH9pLpgpFylVRuwdU38Y+HeibIG0pf+E95g9X+DTVlG+U9jHRF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2oYsbM8BPUQRJo5YUjXhYyEvfqNIJCorulc7L8bB5G/R3ufrw
-	0zVz6bQQZGP7IitHnwciS95J14vkDZw0mHWoRVyvBHamUy1kitm0HQw8jQ==
-X-Google-Smtp-Source: AGHT+IGXMqBBwhHc8UxZfuRc6tyRsx0ixk0d4f9PJQ9ZvmIEwc9xwdFe62Q4Pnz6/UXgK5gbabDlsQ==
-X-Received: by 2002:a5d:61d2:0:b0:37c:cc4b:d1d6 with SMTP id ffacd0b85a97d-380611a495cmr8773753f8f.27.1730142224350;
-        Mon, 28 Oct 2024 12:03:44 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-b273-88b2-f83b-5936.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b273:88b2:f83b:5936])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b93006sm10275161f8f.93.2024.10.28.12.03.43
+        d=1e100.net; s=20230601; t=1730142279; x=1730747079;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T+BcJmJv3LS4q7Hv3Kc5Q5meZeEkT9QtVp8QKpoSCfE=;
+        b=sKKNL0VX5pAiQ4q5GHlhWsLG85JX46fO5rZo9QQFLsKMMSPkzpAsejIfW9C04e3RNU
+         HWA/M7FN/DZ1EMEFO/w9PcLOjpY5105FRzwOqgfaGM32zw9Q/tuJD9Nsy36Gzpz59m/1
+         BmusNqE8J1vkO4YfO/VKc9XTwoyUFqmX92Had9y55oTNQAok+1SShVMY98B15S5nvsMa
+         bzyRPi2LKkqdQ1FFjb5xr1Jx7TODkjxJdbBgW/2LRIyerrM2tKoEK05czC9h2Z/+mBkl
+         Qauf1pVMu6zgX6/f9gd8y0BeT+0aibOfaVdOdNzBC+3lKOViGyfJxZ90G7BVboHfYZ95
+         ntnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVHTKr/aCvdcfGu+n3WTqvi0I4CCa0OAags1AzYZ5KbYdw6NE3QTaR/hC8nQHSSlehVTHdZNsHXDEzrVg==@vger.kernel.org, AJvYcCWZevIAKBILloNKKYRznrBQQFz6o2EMu+rv+3WWMBHcnm01S4ZXOfNaAuoFKe8MSO/k0moCYnR/FKqXMA2R@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+OgFawxbMRE+5LA8UjpUN+XR/ENMX9FK/kd87OycqsFLgq1Zv
+	UByweY1lRK8fyUjt1516TmYRkTAPG9+sLaBLCd3NRK3k+fLQl0dx
+X-Google-Smtp-Source: AGHT+IG4/Ohig9L4xymEiQUtTcPMn/wy56S6YyWnffb+ZvYM47tKR0e/TkOTtma8c1OpHKYyDKnwmA==
+X-Received: by 2002:a05:6a00:2d95:b0:71e:617:63c1 with SMTP id d2e1a72fcca58-7206309805amr13918690b3a.27.1730142279135;
+        Mon, 28 Oct 2024 12:04:39 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:e9ba:17cc:78fe:499e])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a24199sm6291059b3a.178.2024.10.28.12.04.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 12:03:43 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 28 Oct 2024 20:03:36 +0100
-Subject: [PATCH] dmaengine: ti: dma-crossbar: Add missing put_device in
- ti_am335x_xbar_route_allocate
+        Mon, 28 Oct 2024 12:04:38 -0700 (PDT)
+Date: Mon, 28 Oct 2024 12:04:36 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: multitouch: make mt_set_mode() less cryptic
+Message-ID: <Zx_gRK9siGDtJ3PN@google.com>
+References: <ZxwciG6YeVFgfDRU@google.com>
+ <nqj6hx3yhw3q5e5qtyqdxwpxt2xe3u45vibjcjqmpmsvs7opq3@snxzjynjpwyp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241028-ti-dma-crossbar-put_device-v1-1-e8087e1f0a59@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAAfgH2cC/x3MOwqFQAxA0a1IagMzo4W6lcdD5hM1hR8SFUHcu
- 4PlKe69QUmYFLriBqGTldclw5YFxMkvIyGnbHDG1da4BnfGNHuMsqoGL7gde59yGAmrloIPdds
- YayEPNqGBr2/++z/PC1oqTadsAAAA
-To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
- Vinod Koul <vkoul@kernel.org>
-Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>, dmaengine@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730142223; l=2313;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=ulUP69L6OJ8qwxELaCLyAPm0tpDL3q8IauoU40wSzPA=;
- b=umrO+fvsT+aAbUufuLU+hzw3p1mvIrcGEdKUvl7A8J4BhzH4rv1wfFkRHojpXfw4y8zXcyFv9
- nxWOM3V9x1oA8Vtj1TDG67/YyfeNu/d8myMyhEXOzWpznvB3bKxG2CY
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nqj6hx3yhw3q5e5qtyqdxwpxt2xe3u45vibjcjqmpmsvs7opq3@snxzjynjpwyp>
 
-The refcount of the device obtained with of_find_device_by_node() must
-be decremented when the device is no longer required. Add the missing
-calls to put_device(&pdev->dev) in the error paths of
-ti_am335x_xbar_route_allocate().
+On Mon, Oct 28, 2024 at 04:47:55PM +0100, Benjamin Tissoires wrote:
+> On Oct 25 2024, Dmitry Torokhov wrote:
+> > mt_set_mode() accepts 2 boolean switches indicating whether the device
+> > (if it follows Windows Precision Touchpad specification) should report
+> > hardware buttons and/or surface contacts. For a casual reader it is
+> > completely not clear, as they look at the call site, which exact mode
+> > is being requested.
+> > 
+> > Define report_mode enum and change mt_set_mode() to accept is as
+> > an argument instead. This allows to write:
+> > 
+> > 	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+> > 
+> > or
+> > 
+> > 	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_BUTTONS);
+> > 
+> > which makes intent much more clear.
+> > 
+> > Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> > ---
+> >  drivers/hid/hid-multitouch.c | 29 +++++++++++++++++------------
+> >  1 file changed, 17 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> > index 99812c0f830b..e4bb2fb5596d 100644
+> > --- a/drivers/hid/hid-multitouch.c
+> > +++ b/drivers/hid/hid-multitouch.c
+> > @@ -83,6 +83,13 @@ enum latency_mode {
+> >  	HID_LATENCY_HIGH = 1,
+> >  };
+> >  
+> > +enum report_mode {
+> > +	TOUCHPAD_REPORT_NONE = 0,
+> > +	TOUCHPAD_REPORT_BUTTONS = 1,
+> > +	TOUCHPAD_REPORT_CONTACTS = 2,
+> 
+> Maybe to be more obvious, BIT(0) and BIT(1) for the 2 values above?
+> 
+> I'm just concerned that someone adds "3" if we ever need to add a new
+> value.
 
-Cc: stable@vger.kernel.org
-Fixes: 42dbdcc6bf96 ("dmaengine: ti-dma-crossbar: Add support for crossbar on AM33xx/AM43xx")
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
-Similar to what commit 615a4bfc426e ("dmaengine: ti: Add missing
-put_device in ti_dra7_xbar_route_allocate") did for dra7, where the
-calls to put_device were also missing in the error paths.
----
- drivers/dma/ti/dma-crossbar.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Right, I'll change it.
 
-diff --git a/drivers/dma/ti/dma-crossbar.c b/drivers/dma/ti/dma-crossbar.c
-index 7f17ee87a6dc..ae596b3fc636 100644
---- a/drivers/dma/ti/dma-crossbar.c
-+++ b/drivers/dma/ti/dma-crossbar.c
-@@ -81,18 +81,22 @@ static void *ti_am335x_xbar_route_allocate(struct of_phandle_args *dma_spec,
- 	struct ti_am335x_xbar_data *xbar = platform_get_drvdata(pdev);
- 	struct ti_am335x_xbar_map *map;
- 
--	if (dma_spec->args_count != 3)
-+	if (dma_spec->args_count != 3) {
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EINVAL);
-+	}
- 
- 	if (dma_spec->args[2] >= xbar->xbar_events) {
- 		dev_err(&pdev->dev, "Invalid XBAR event number: %d\n",
- 			dma_spec->args[2]);
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
- 	if (dma_spec->args[0] >= xbar->dma_requests) {
- 		dev_err(&pdev->dev, "Invalid DMA request line number: %d\n",
- 			dma_spec->args[0]);
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-@@ -100,12 +104,14 @@ static void *ti_am335x_xbar_route_allocate(struct of_phandle_args *dma_spec,
- 	dma_spec->np = of_parse_phandle(ofdma->of_node, "dma-masters", 0);
- 	if (!dma_spec->np) {
- 		dev_err(&pdev->dev, "Can't get DMA master\n");
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
- 	map = kzalloc(sizeof(*map), GFP_KERNEL);
- 	if (!map) {
- 		of_node_put(dma_spec->np);
-+		put_device(&pdev->dev);
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
+> 
+> > +	TOUCHPAD_REPORT_ALL = TOUCHPAD_REPORT_BUTTONS | TOUCHPAD_REPORT_CONTACTS,
+> > +};
+> > +
+> >  #define MT_IO_FLAGS_RUNNING		0
+> >  #define MT_IO_FLAGS_ACTIVE_SLOTS	1
+> >  #define MT_IO_FLAGS_PENDING_SLOTS	2
+> > @@ -1486,8 +1493,7 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+> >  				     struct hid_field *field,
+> >  				     struct hid_usage *usage,
+> >  				     enum latency_mode latency,
+> > -				     bool surface_switch,
+> > -				     bool button_switch,
+> > +				     enum report_mode report_mode,
+> >  				     bool *inputmode_found)
+> >  {
+> >  	struct mt_device *td = hid_get_drvdata(hdev);
+> > @@ -1542,11 +1548,11 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+> >  		return true;
+> >  
+> >  	case HID_DG_SURFACESWITCH:
+> > -		field->value[index] = surface_switch;
+> > +		field->value[index] = report_mode & TOUCHPAD_REPORT_CONTACTS;
+> 
+> Just to be on the safe side:
+> !!(report_mode & TOUCHPAD_REPORT_CONTACTS);
 
----
-base-commit: dec9255a128e19c5fcc3bdb18175d78094cc624d
-change-id: 20241028-ti-dma-crossbar-put_device-39ebab498011
+Oh, yes, that makes sense. I'll send an updated patch in a minute.
 
-Best regards,
+Thanks.
+
 -- 
-Javier Carrasco <javier.carrasco.cruz@gmail.com>
-
+Dmitry
 
