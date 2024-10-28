@@ -1,100 +1,114 @@
-Return-Path: <linux-kernel+bounces-386064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96E6D9B3EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:52:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC75A9B3EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:53:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8B7F1C221A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36731F2334B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79CD1F428D;
-	Mon, 28 Oct 2024 23:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E581F9ABE;
+	Mon, 28 Oct 2024 23:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="sdnGTgQM"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V7XjgYjM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C7A1EF92F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E681EF92F;
+	Mon, 28 Oct 2024 23:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730159567; cv=none; b=X6Gsty2w1iE3cvC+8Q5sSDKhk72gHojBqryrFvEQEXNMLhhVeDJtg9vplGTYsS/qjcNcI7Wjn73R0jeR93I0BnYLs6nWvalGe5vcE5Exgzi3194bLDEmfXV+RmORI0Rus9Jba2S4xa33FJm4MtUAj8KCteeTa+C04WVk7570Js0=
+	t=1730159592; cv=none; b=RpLdEUjQ9wUvJ4dscvjS0K8hK+75WNu10iQKXURgn22eezOXet7UcDdzWB7YqTh5L1gXhonyFKOC3aTVM8d4tefXbHEtO6QJfXRJScMOg3mKPeSuMHY9vch/Jj500F5XITA0Yavew6Ik8LzJ82it1AAiMLVaixUQ/IxdXIJYi9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730159567; c=relaxed/simple;
-	bh=tIbXoRz+grJKX0Pg3BpU/0uybo1tRz+5ub/7PaOexe4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c/Bvpc5BsWMA0QxWqNjQK+m6SCcGLBlaGD0Gd0BRjZ3+kuH3gNF7pjl2gy6osBI/pPPUITdRzvP0tmqX1fZ1JPN2A+zX1PDx3lGOOifywU2w1cHnQ2g2sBNQtzrtCkS/uW7EvPOzHDaYwHf54r7m+y9whIC779dEoiIoDv+UooE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name; spf=pass smtp.mailfrom=chrisdown.name; dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b=sdnGTgQM; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=chrisdown.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chrisdown.name
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43161c0068bso46906105e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:52:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google; t=1730159563; x=1730764363; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lUNkA7BddWMVnGRV3ZcWZ9WpOODwgvLHaMwCA3sf+Bg=;
-        b=sdnGTgQMbdYSrFEuSzp2j6tIigsSCP+uhYNM3cc80z9YHdSV6djt33laNlf+wTvOLS
-         uWS5Y/p6VQeS4sx4PP7V7X35AJ7uDeL3QyiGO1c7kLSKyX1+73shu5nIQrnvWHYLr6zp
-         2K+DKvBnL/WnF10jETS2lv1oq8tjQsQhpX+Po=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730159563; x=1730764363;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lUNkA7BddWMVnGRV3ZcWZ9WpOODwgvLHaMwCA3sf+Bg=;
-        b=CYUYWDzSG3jtsZ9/M6xUASWMRROqvRJMpNdiDGrlZkrP725Zo20s7MjfLrjZwQPtGI
-         sAaHGgXciuc097p/5/Z3BycUkjFO3HZZ/sje4wFXG3CMpZityDpfHNbvnur489Pme203
-         U9A2Tjk3UFjmOp9+CPe973E2OpEioCdMboMXCHJy4TdoTn+r3HoEY3ugWk9N0aiPef3d
-         nynC6g/W7ZUC7hhhcmrJd16fXwtUwYTHBvDf18ySN2/kSETQ9+quRmA+wTx/0M8joa5i
-         Veme0EMNqNdU+i287CQrhssGx8T7mVtHp2T7mlAU2KNmDun+gLZDwszH2Ldv+HWxcUtX
-         vbtA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxGgaL3P4/fzAtGMWv3GElU0fjCbUy9d16ulRiKjAYahmkEOcEbYpumy271IjaoABxiTdmMBA75lTEt/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHLmack7pz3UOBOClJaRlta27qZn/rPMS9+5/FgDn5bYYG8Iir
-	owgwNYtriDdce/KBpUmK010yA8W+AL6FEr0v0lY4a8MnjZcAsjR2YX4UCGz5I20=
-X-Google-Smtp-Source: AGHT+IFzIpiIDrJyM/bLP1KzfaKFQi11v2oVRVznDwVrGRcSZ4H/R/Qcm8ilwsnf/5fI6znaZyOlMw==
-X-Received: by 2002:a05:600c:3550:b0:431:4a5a:f09a with SMTP id 5b1f17b1804b1-4319ad16150mr83149375e9.24.1730159563185;
-        Mon, 28 Oct 2024 16:52:43 -0700 (PDT)
-Received: from localhost ([93.115.193.42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b56742asm155362795e9.21.2024.10.28.16.52.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 16:52:42 -0700 (PDT)
-Date: Mon, 28 Oct 2024 23:52:41 +0000
-From: Chris Down <chris@chrisdown.name>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Petr Mladek <pmladek@suse.com>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Tony Lindgren <tony.lindgren@linux.intel.com>, kernel-team@fb.com
-Subject: Re: [PATCH v6 05/11] MAINTAINERS: Mark printk-basics.rst as owned by
- printk subsystem
-Message-ID: <ZyAjya4rFmw-kE48@chrisdown.name>
-References: <62e6a36052a1759e7d01669c5c760b6a1760a9c8.1730133890.git.chris@chrisdown.name>
- <87msin3j28.ffs@tglx>
+	s=arc-20240116; t=1730159592; c=relaxed/simple;
+	bh=lWRCW+I7hWCkqI1/Qywg1Mar1bIibz0LJvPC/YB25Ts=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hauGQpnbhsjiOWviQSASyDvu/jQzEodZpD/eUM4S1/MIUK4M4lWBzqHs8LIjN/rUIQqTjIGn4OeXVgQ3MNP875KXI2QYGFQVhhfzfpj1RIrmKDIhEyet/ANXG+C+84dPWEV723Fda/sdv3d6dMllP0FxWvcvaSqZO4Uj816XYRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V7XjgYjM; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730159591; x=1761695591;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=lWRCW+I7hWCkqI1/Qywg1Mar1bIibz0LJvPC/YB25Ts=;
+  b=V7XjgYjMp5ss5363AZ5UbrsCuAHjVkO4S+6npce6q6IpVdPzX5g9S6+f
+   eixxWSPtP4+McKXfIZMAYvxnMKh6R1CWyr0iLwi8qS2MPwd8aOTYCv2QW
+   Yk16LOZA4HIjebkwpsd7SABkX3CGCOTL3ObgaDZ0C2TEPa2yw3yKDslTO
+   Za5h/Z3FDm5yaYX5LUU2COi3WA2KCXiR3kFTgLUR8UCdIp43yDtaV6Fih
+   67H94yZF/fRZWN0UJFDYgep650e9Kley6BGprPohjQ4FkyhRwKzGZV+LG
+   Gem2Zlqdz5Addfmdesg7RKGghPEW2/gRNZz4N5oQo5WcA/Qvz1q2vkRmh
+   w==;
+X-CSE-ConnectionGUID: E4NOKMwWT6SB9lbSO/qACg==
+X-CSE-MsgGUID: ajMMbTZ/RCyp7al/SgO99g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29920772"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29920772"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:53:08 -0700
+X-CSE-ConnectionGUID: Sl41N38STqmnbF/wNKCgVg==
+X-CSE-MsgGUID: Rw5lo38OTR+htm7wc4P2nw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="81396685"
+Received: from salmansi-mobl.amr.corp.intel.com (HELO [10.125.80.18]) ([10.125.80.18])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:53:06 -0700
+Message-ID: <963f9a3e-71f2-41ba-ba46-e27aa8fe991a@linux.intel.com>
+Date: Mon, 28 Oct 2024 16:53:04 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <87msin3j28.ffs@tglx>
-User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] VERW based clean-up
+From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+ Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
+ Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
+Cc: hpa@zytor.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pawan.kumar.gupta@linux.intel.com
+References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Just a slip from indicative mood ("This file will be updated in the next patch, 
-so [...]". :-)
+Of course it isn't until after I hit send to realize I missed the "-v2" flag
+when I generated these patches! Sorry for the confusion!
 
-I'll change it if we get a v7.
+On 10/28/24 16:50, Daniel Sneddon wrote:
+> There are several mitigations that use the VERW instruction to clean
+> up internal CPU buffers.  Currently, each of these mitigations is
+> treated independently, but if VERW is needed for one of the
+> mitigations, it's on for all of them. This can lead to some confusion
+> if a user tries to disable one of the mitigations, but it is left
+> enabled for one of the others. The user needs to disable all 4 VERW-
+> based mitigations. Warn the user when one or more VERW mitigations are
+> disabled but not all of them. While we're messing with VERW
+> mitigations, might as well simplify them and remove the need to call
+> each of them twice.
+> 
+> V2:
+> Dropped the new knob previously introduced in the first patch (Borislav)
+> Add warning if not all 4 mitigations states match (Borislav)
+> Removed extra comment (Josh)
+> Code clean-up (Josh)
+> 
+> 
+> Daniel Sneddon (2):
+>   x86/bugs: Check VERW mitigations for consistency
+>   x86/bugs: Clean-up verw mitigations
+> 
+>  arch/x86/include/asm/processor.h |   2 +-
+>  arch/x86/kernel/cpu/bugs.c       | 206 +++++++++++++------------------
+>  2 files changed, 90 insertions(+), 118 deletions(-)
+> 
 
-Thanks,
-
-Chris
 
