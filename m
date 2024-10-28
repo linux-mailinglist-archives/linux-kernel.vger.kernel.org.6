@@ -1,241 +1,94 @@
-Return-Path: <linux-kernel+bounces-384821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B3ED9B2ED2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:25:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 527BC9B2ED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28A55286C7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:25:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849411C21DBD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28FE21D3644;
-	Mon, 28 Oct 2024 11:23:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5531D9665;
+	Mon, 28 Oct 2024 11:24:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="x6lwJa0H"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b="E5YYH84a"
+Received: from mta-64-225.siemens.flowmailer.net (mta-64-225.siemens.flowmailer.net [185.136.64.225])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0BE19258B;
-	Mon, 28 Oct 2024 11:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3B11D9586
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.225
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730114611; cv=none; b=kaA82BE4LkJ3XGorxN6VnO7dKaXOsrUKxmAJLR/x/o344B+xX/jGLkif2Nx1XfONJgBAMQnPwDpFGtOdTCYyCWo+lAStEERbaC60PWR/aTC8EmUDo7kAQu4YYpI3DnDPV3OtGIUBKeQk6hNkEwpXaAeofJPlwRZoxnoYb+Ft4D4=
+	t=1730114656; cv=none; b=ODmf1Z9gtYMeecGjExEIdoK+ufWuXmJLZDnLiP2TYFXBvO37i+Rxp88ZxTM1nK2zJkkx9bfgkB2iwzj1hgiUGC6LCpOB75h5MB1JItzTlbE6XJPBMeLVdHCNKzGeI3+AFSTtui1oheTqvNwr9EsaYgPeukhSFKHNmDR0/wTZVSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730114611; c=relaxed/simple;
-	bh=SuyxiTYdCbpA1kfJXBppdzGESsoDHyulqBof6kweIk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aXm3aE77jMWDXPe7MFyCbDehI20zCPCjJjs/qQCEZyiELeCFkus7qBS/oB1hQO+XuI1i0NxRJ7U0HNCUvWRBHZs9Xb/1PQO2cpuVqB1+a6JRYfsxBxxRoakP349HH7J5YDqydF6TcbMs+lUDZjHe4oycQPOU4rozfkKd2g2DJJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=x6lwJa0H; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [192.168.1.107] (89-186-114-4.pool.digikabel.hu [89.186.114.4])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: hs@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 3DCE68907B;
-	Mon, 28 Oct 2024 12:23:19 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1730114605;
-	bh=9WOt/O2aSaelze2ima45p34Z2cNV949LPG7fDV305A4=;
-	h=Date:Subject:To:Cc:References:From:Reply-To:In-Reply-To:From;
-	b=x6lwJa0HNf64WxDoZRE8mWtAZxSY24eLdRYmNHfIr35c8gEmSuqXeQ+2NMy1YMar1
-	 wdGZ4WjDvl1PNM9tfNAxR2bvI2u/BOapPb0pDhnjeSUVBjEbN2ev/9bTKrxJv23qQ+
-	 1zipO6PpA2HYe5qGCDh6/HLnwrm94h6EPq7pmsaDKmx+B4aHh+JnglnMj6ikWdL0cM
-	 y2Vv+AmM9+MUlpc/RxZLCDPU4btLbFWla0bcp7Bh8H+U5rdjfM/Udt8ygVoqgxzGv6
-	 p2TKr+sgDMoHsTum0lWYqUBnLhh+XmaXpP7uNu7XyQJ9B0J0VfOFvN7/2E6C4al/8u
-	 UdwSldeQRW/hw==
-Message-ID: <1c21a636-5778-03c0-85b0-a4b3710b8f3d@denx.de>
-Date: Mon, 28 Oct 2024 12:21:01 +0100
+	s=arc-20240116; t=1730114656; c=relaxed/simple;
+	bh=Ky5YBRYQATDBlfe9Lmh+zMWTk5LDfZ3E5jBpxDguYms=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WUsJhl9gEwN/iiZf9mcH84x81ZvvDzrWccBZbWUjZyKphsc2ldr4oYiv7zKZwHmSsOnIZSYDfyPEkAmp57yLbnENR+VnkPgiRvGI1lnL+KiFWj/DbUVraXj0u4C94nL9Ykh2wt78zl0p2nmnN+GpfY44HEqXKAWr70DkL1aLnYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=benedikt.niedermayr@siemens.com header.b=E5YYH84a; arc=none smtp.client-ip=185.136.64.225
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-225.siemens.flowmailer.net with ESMTPSA id 20241028112411ac6d60900ac90ea268
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 28 Oct 2024 12:24:12 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
+ d=siemens.com; i=benedikt.niedermayr@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=YpfhoksL9PDDwInw2DZ2EdIAS8Ef5VZRAiLXmKgQ/IU=;
+ b=E5YYH84aR8Od7Y/LAhHmacmnYuCIUBAepoH9NDnbAp83Fj1k5B2khb3eQiQvvH8WSjLpFq
+ hVLq6cEFLGoNuk410ccEW1aloI2/tz1AYfbPZ+coEU9QRhxTp7gp/KaCcvcut2/QpDgIuLJ9
+ aPGL47X2r/LfNic10XGVcFFJW8ni6qhMoWOm8/WS7HcqV8rxdb2BVSeqY7S8qUXIM9EseKTg
+ 9ZdPDJq6pYdLcvLe599tsEsWLSCNhId4Gm2/Xd3ncYnF3sCIGGIpxxntoVZsq6tyBGUIDq1z
+ WMFmVlXgWml7NBF++hZyaPtn7E9HbnFkl17ONnnLXn6vvIWU6IGJOnpA==;
+From: Benedikt Niedermayr <benedikt.niedermayr@siemens.com>
+To: konstantin@linuxfoundation.org,
+	baocheng.su@siemens.com,
+	tobias.schaffner@siemens.com,
+	pavel@ucw.cz,
+	lee@kernel.org,
+	hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net
+Cc: linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	felix.moessbauer@siemens.com,
+	christian.storm@siemens.com,
+	quirin.gylstorff@siemens.com,
+	chao.zeng@siemens.com
+Subject: [PATCH 0/1] MAINTAINERS: replace bouncing maintainers
+Date: Mon, 28 Oct 2024 12:23:58 +0100
+Message-Id: <20241028112359.3333152-1-benedikt.niedermayr@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH v1 2/2] arm64: dts: imx8mp: add aristainetos3 board
- support
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20241028082332.21672-1-hs@denx.de>
- <20241028082332.21672-3-hs@denx.de>
- <f4150aa3-4c0e-45fa-9c9c-879ac04c4364@kernel.org>
- <bf2c81e1-4e97-cfa2-326f-0a6125b2cff9@denx.de>
- <fd4fffb3-44d3-4efb-8c74-4d94e1f26298@kernel.org>
-From: Heiko Schocher <hs@denx.de>
-Reply-To: hs@denx.de
-In-Reply-To: <fd4fffb3-44d3-4efb-8c74-4d94e1f26298@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-1323861:519-21489:flowmailer
 
-Hello Krzysztof,
+Since there where complaints [1] about bouncing maintainers we have now a
+replacement for maintainers that stepped away from their duties.
 
-On 28.10.24 11:49, Krzysztof Kozlowski wrote:
-> On 28/10/2024 11:41, Heiko Schocher wrote:
->> Hello Krzysztof,
->>
->> On 28.10.24 11:24, Krzysztof Kozlowski wrote:
->>> On 28/10/2024 09:23, Heiko Schocher wrote:
->>>> Add support for the i.MX8MP based aristainetos3 boards from ABB.
->>>>
->>>> The board uses a ABB specific SoM from ADLink, based on NXP
->>>> i.MX8MP SoC. The SoM is used on 3 different carrier boards,
->>>> with small differences, which are all catched up in
->>>> devicetree overlays. The kernel image, the basic dtb
->>>> and all dtbos are collected in a fitimage. As bootloader
->>>> is used U-Boot which detects in his SPL stage the carrier
->>>> board by probing some i2c devices. When the correct
->>>> carrier is probed, the SPL applies all needed dtbos to
->>>> the dtb with which U-Boot gets loaded. Same principle
->>>> later before linux image boot, U-Boot applies the dtbos
->>>> needed for the carrier board before booting Linux.
->>>>
->>>> Signed-off-by: Heiko Schocher <hs@denx.de>
->>>> ---
->>>> checkpatch dropped the following warnings:
->>>> arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi:248: warning: DT compatible string "ethernet-phy-id2000.a231" appears un-documented -- check ./Documentation/devicetree/bindings/
->>>>
->>>> ignored, as this compatible string is usedin other dts too, for example in
->>>>
->>>> arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
->>>>
->>>>    arch/arm64/boot/dts/freescale/Makefile        |    5 +
->>>>    .../imx8mp-aristainetos3-adpismarc.dtsi       |   64 +
->>>>    .../imx8mp-aristainetos3-adpismarc.dtso       |   14 +
->>>>    .../imx8mp-aristainetos3-helios-lvds.dtsi     |   89 ++
->>>>    .../imx8mp-aristainetos3-helios-lvds.dtso     |   13 +
->>>>    .../imx8mp-aristainetos3-helios.dtsi          |  103 ++
->>>>    .../imx8mp-aristainetos3-helios.dtso          |   13 +
->>>>    .../imx8mp-aristainetos3-proton2s.dtsi        |  176 +++
->>>>    .../imx8mp-aristainetos3-proton2s.dtso        |   13 +
->>>>    .../imx8mp-aristainetos3a-som-v1.dts          |   18 +
->>>>    .../imx8mp-aristainetos3a-som-v1.dtsi         | 1210 +++++++++++++++++
->>>>    11 files changed, 1718 insertions(+)
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtso
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtsi
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtsi
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtso
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtsi
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtso
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dts
->>>>    create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
->>>>
->>>> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
->>>> index 9d3df8b218a2..7c3586509b8b 100644
->>>> --- a/arch/arm64/boot/dts/freescale/Makefile
->>>> +++ b/arch/arm64/boot/dts/freescale/Makefile
->>>> @@ -163,6 +163,11 @@ imx8mn-tqma8mqnl-mba8mx-usbotg-dtbs += imx8mn-tqma8mqnl-mba8mx.dtb imx8mn-tqma8m
->>>>    dtb-$(CONFIG_ARCH_MXC) += imx8mn-tqma8mqnl-mba8mx-lvds-tm070jvhg33.dtb
->>>>    dtb-$(CONFIG_ARCH_MXC) += imx8mn-tqma8mqnl-mba8mx-usbotg.dtb
->>>>    
->>>> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-aristainetos3a-som-v1.dtb \
->>>> +			  imx8mp-aristainetos3-adpismarc.dtbo \
->>>> +			  imx8mp-aristainetos3-proton2s.dtbo \
->>>> +			  imx8mp-aristainetos3-helios.dtbo \
->>>> +			  imx8mp-aristainetos3-helios-lvds.dtbo
->>>>    dtb-$(CONFIG_ARCH_MXC) += imx8mp-beacon-kit.dtb
->>>>    dtb-$(CONFIG_ARCH_MXC) += imx8mp-data-modul-edm-sbc.dtb
->>>>    dtb-$(CONFIG_ARCH_MXC) += imx8mp-debix-model-a.dtb
->>>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
->>>> new file mode 100644
->>>> index 000000000000..cc0cddaa33ea
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
->>>> @@ -0,0 +1,64 @@
->>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>>> +/*
->>>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
->>>> + */
->>>> +
->>>> +#include <dt-bindings/gpio/gpio.h>
->>>> +#include <dt-bindings/interrupt-controller/irq.h>
->>>> +
->>>> +&ecspi1 {
->>>> +	spidev0: spi@0 {
->>>> +		reg = <0>;
->>>> +		compatible = "rohm,dh2228fv";
->>>
->>> Hm? I have some doubts, what device is here?
->>
->> $ grep -lr dh2228fv drivers/
->> drivers/spi/spidev.c
->>
->> Customer uses an userspace implementation...
-> 
-> That's not the question. I asked what device is here.
+I'm going to address all participants from the above discussion, so that everybody
+is informed about the change. I also added the related subsystem maintainers.
+Please tell me if I should avoid this in the future, and whom I should exactly address
+for changes in the MAINTAINERS file.
 
-I do not know, as on carrier boards there are only connectors,
-to which a spi device can be attached. So may I need to use here
-a more generic entry?
 
->>
->>>
->>>> +		spi-max-frequency = <500000>;
->>>> +	};
->>>> +};
->>>> +
->>>> +&ecspi2 {
->>>> +	spidev1: spi@0 {
->>>> +		reg = <0>;
->>>> +		compatible = "rohm,dh2228fv";
->>>> +		spi-max-frequency = <500000>;
->>>> +	};
->>>> +};
->>>> +
->>>> +&i2c2 {
->>>> +	/* SX1509(2) U1001@IPi SMARC Plus */
->>>> +	gpio8: i2c2_gpioext0@3e {
->>>
->>> Uh, no, please never send us downstream code.
->>>
->>> Please follow DTS coding style in all upstream submissions.
->>
->> driver is in here:
->>
->> $ grep -lr probe-reset drivers/pinctrl/
->> drivers/pinctrl/pinctrl-sx150x.c
-> 
-> This so not related... Your driver does not matter. You send us poor
-> quality downstream code.
+[1] https://www.spinics.net/lists/platform-driver-x86/msg47105.html
 
-The driver is upstream... see:
+Benedikt Niedermayr (1):
+  MAINTAINERS: replace bouncing maintainers
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/pinctrl/pinctrl-sx150x.c
+ MAINTAINERS | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-or may I misunderstood you here too?
-
-Poor is my dts, checks are running and I fix them.
-
-> ...
-> 
->>
->>> And why this is DTSO, I have no clue...
-> 
-> Why is this a DTSO, not a DTS?
-
-Hmm... the idea is, that the bootloader applies the dtbo on runtime,
-when it has detected the carrier board it runs on, I tried to explain
-in cover letter.
-
-And again... sorry...
-
-bye,
-Heiko
--- 
-DENX Software Engineering GmbH,      Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
+--
+2.34.1
 
