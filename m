@@ -1,303 +1,227 @@
-Return-Path: <linux-kernel+bounces-385384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CE619B368A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:33:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8270D9B36C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08FD11F220C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:33:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 430802860A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC761DEFC4;
-	Mon, 28 Oct 2024 16:32:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624F61DF75D;
+	Mon, 28 Oct 2024 16:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kYMdFsiA"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="BGWVc/Hj";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yhhyYKTP"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EBF18785D;
-	Mon, 28 Oct 2024 16:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133174; cv=none; b=YO9KPzmyUJ6iT5FK5BwYT8pINEW3Hq3dH0j6R6/mXY165qUbS9gSKevUYgJ+lRVncQMP1n+/qukM55TDLDjlHS7nWUq5Hn0xD/4GRDC8oilZqpSTTSbHNu2PSrqitJNyB5eXERgpgbbuYiXbeBqNfqzuN6tpv7cnPkGhCYwjFQs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133174; c=relaxed/simple;
-	bh=dX9dtqxTAZzZ8oaWbpxD+Vr5AqGKDD1hpjrSJQfrnfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y0U38qZbF9qitr+yy/OBnvJxP0N9+zd+uspYSazqLtEVKe41hbXx8SQ55PzYf4SMfKIWAtlqifxpHicQMD5GB8V/N/bJm1bxe6SctHV+sM0YLr0MLkugsESjhqagANjF5INBjg9dEUVQ9VyHt+qhp67RyGsCVR/s4Y6rLgkEpPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kYMdFsiA; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1A1B8641;
-	Mon, 28 Oct 2024 17:32:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730133167;
-	bh=dX9dtqxTAZzZ8oaWbpxD+Vr5AqGKDD1hpjrSJQfrnfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kYMdFsiAhe6U/DPUvrYAUG/AFfhcfJCMiTF/asy5Nugs5+urnvuPgDgilpeypMM8D
-	 kXt5MzHUDTqCTpxkP8vQehLnI4TeRWnKlQctyeF6ZJDrwh1c1cztZHZT1qwuEONDNT
-	 YTzzOT9ZUgXxEIGOzINNZah5hTPmnS2dyuLH7O6c=
-Date: Mon, 28 Oct 2024 18:32:43 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	Naushir Patuck <naush@raspberrypi.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-Subject: Re: [PATCH v6 3/4] media: raspberrypi: Add support for RP1-CFE
-Message-ID: <20241028163243.GB26852@pendragon.ideasonboard.com>
-References: <20241003-rp1-cfe-v6-3-d6762edd98a8@ideasonboard.com>
- <4d9e340e-2ae7-495b-8623-0d10398e1c3d@xs4all.nl>
- <02f05b61-08e7-45f8-8d59-f79bc20d076f@ideasonboard.com>
- <74286a86-51b9-4742-bb0c-583d70b1b0a7@xs4all.nl>
- <505c502e-b67a-4dca-8420-eb87eae4e170@ideasonboard.com>
- <59cf95be-fb53-4a94-bc6e-f9dca322749d@xs4all.nl>
- <5832a2f9-c908-4f5a-a3ee-9cb7d23ddab4@ideasonboard.com>
- <563347aa-4155-47e1-b71a-0107aed83eb6@xs4all.nl>
- <20241028151713.GI24052@pendragon.ideasonboard.com>
- <62073d7a-0a4b-4440-90e5-dcce0dec72d7@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8681DEFFB;
+	Mon, 28 Oct 2024 16:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730133511; cv=fail; b=qGMez+YHUK9o3pGjXCser6bA3XHaZa5aD8oSp+4nu+oj1qm8atRv7NhNuuisVuDp5JNBam7Im+Y1hFaGjMR1bq9LyBtbXgOlMqSjRphwO6GL23DziV2n4BsCwhu9WarhPTwO1zHXSuCppMRmOepMtNCfM3e+evq0NS9HRzRsONM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730133511; c=relaxed/simple;
+	bh=2C4PQAzU461OfP90TswWb5BE4rFAz6Te4vwOTFIawq4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=h+OBWh5kXyOs7mEbqgsG306aRcx/pyNDQJc2fFnLY7X7ix1rgqr6ie3rY2H8JcQywSEpOj2dL6l7zIQ2QOq49VDIIEUMYjQJ8QGOF9eTBjZBe/husV8XOdhkMmXo6Jzsw3KeX/TXn3GtQe087xuhsP9b2t3VNdhPDzZ/Tr+BFbs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=BGWVc/Hj; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yhhyYKTP; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SEtdM9020881;
+	Mon, 28 Oct 2024 16:33:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=/xIPoJWV18ON54hzQdGByZ4h+dLSSd/U2lFooSLtHZY=; b=
+	BGWVc/HjfBlBvHQ/PSRKO1NgFOBXaL3Q2GuklQG/hI8T7S6WWosbJd/7W00ltiAc
+	Q57TAfEHtebmwn6w/ZMyHXALOvdqBfcZMYb93V8xz38xNAdCuJTexTvAMi9ref8a
+	PY3XLG0oNqMANGVovRsKKDuhvOQg0paKSuon99tNeaKzjf0zzYjddL9pXy1k6VmH
+	tWm4+IJBgH4noqjD0XR7ezXviuJ//sv/sWgfez/H2VgWDD1e0ZNt+u+t32llMZrD
+	NP9tfuuzVOFsC+iHGfkLs+OcQtw5zXIdPoQ67+XQVuFuuBffh/T7Y5f1MZ+2viqg
+	XN+PLDhAmNdLGeHGiIuviw==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grys3b2k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Oct 2024 16:33:14 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49SGT91C040411;
+	Mon, 28 Oct 2024 16:33:14 GMT
+Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2169.outbound.protection.outlook.com [104.47.56.169])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42hnamnj8d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Oct 2024 16:33:13 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=exO/aocmZxzDi8Z8BpXsBuK52uw6VVWjGpABRkIAfia0r3yInC9E1s2nmkwmVxd4zEE2v215xV9yxyBATGize8mQ2YDvuXDzrmz1cb9Ko/c8zo+i6X47PysA8rztd7cH8dj29w+IdS1tipnupOswdCjk47G7JWlgYsu2crBChqyhF3D/Cs5aYmHgTTd0bjKLNgb0C4L9vAtEdWqzBE6TWHipHp1XsfdgGGtEgB0/C5Z5trjYoan5URww4MFEWua9oRrciscNBMa6x/kbaJk0lMfzVh84z1vlnsoUpPU0GksDp40dxNibO2nPZXRoKyZEzC17Rsyr9KL/wzyrsBIHwg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/xIPoJWV18ON54hzQdGByZ4h+dLSSd/U2lFooSLtHZY=;
+ b=fAsVGYnzTbI2Tk1Tf7LtsohDCBLTFUWNHpk2xJRNPVLdwM1yFN2nZQVG6zZ5a1Ei3ojtVojRCpj16whaJM8KJEO+BOKNZe+FXt2hJMuQoyR/erB63cZzad8EuQnBe/eN6IcCX+UCuKsDKTA719Xhlbf3UgFpvjjYVqhQ1NNqfODMZfl5isl2Gjql+RHyg+V0twF67mgoe1toM5/80zgBzKU8+KPICQI6qalAU3/y7CaAOU9lo11mOS8DGxN+Xe3F3GdUdAlPBhhYgBZpfjOnrJGjYzC0PaSIiUIXNLB5UgjewxH8ad2moiM3oBFdDQ+LfhmaPYESWj6QmBNkcDCzmw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/xIPoJWV18ON54hzQdGByZ4h+dLSSd/U2lFooSLtHZY=;
+ b=yhhyYKTP15Y78xYAdfon5l8V+n8cku0FhSJrLHautpN7ta3JAjxKhk2HMS0Q9k6Y5ecbXAo/meh1k985ZpV+41iegKfMAeEj7QCKSY/p6CIP57O4PxXWtER+q0Cn8pei8/ebFGq5NrYrfK0DS8mQrSLM8pK3m0RbLiHKslSk0fk=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DS7PR10MB4942.namprd10.prod.outlook.com (2603:10b6:5:3ab::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Mon, 28 Oct
+ 2024 16:33:01 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
+ 16:33:01 +0000
+Message-ID: <3e7d2823-5fc9-4c92-8278-ecde863bdb01@oracle.com>
+Date: Mon, 28 Oct 2024 16:32:57 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/7] block: Use BLK_STS_OK in bio_init()
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com,
+        martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
+        Johannes.Thumshirn@wdc.com
+References: <20241028152730.3377030-1-john.g.garry@oracle.com>
+ <20241028152730.3377030-2-john.g.garry@oracle.com>
+ <20241028161128.GA28829@lst.de>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <20241028161128.GA28829@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0184.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:311::10) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <62073d7a-0a4b-4440-90e5-dcce0dec72d7@ideasonboard.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS7PR10MB4942:EE_
+X-MS-Office365-Filtering-Correlation-Id: 71891a3c-b17e-410d-d0fd-08dcf76e3062
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SFFEY3RPRHM1TjFJbGFKNzA0SGpTbHRybGJYZ0MvOGtabHRTQXErd3VlWUNv?=
+ =?utf-8?B?aG1lcUZ6U2ZIQWsyUnBDaHpxNldla2xHMHI2RTlwRk5oT0FESmh1STdiUFVK?=
+ =?utf-8?B?TEZybFgwM2ZxQVJLM29JZTRyeW1aVUdqWTZUNUZXUHFxMlZpdVh3L0RBVmFZ?=
+ =?utf-8?B?cUw3SHZKcjJ1MDNXaWhkV2s0ZVhuUWZZN2t0ZWFvYXZXUmE4NXQ5WXBWVTNm?=
+ =?utf-8?B?ZzlHRVk2V0N3RVV0cUk5dTZCWDVkclkrbUIxZXlwditmUmNCUllibHk1UWI2?=
+ =?utf-8?B?RFpkUzdUaUNLMzJqSzRSbFdLOXlBWWlSZGE3MHZCeUs5WEpXdnhoQ0NJTHpI?=
+ =?utf-8?B?R2N6VHpSOFlIc2RnYUJjL3FqNHZsdE9GKy9QcUFWQVp1T0xJcXpDcitrSWVZ?=
+ =?utf-8?B?YWlIaC8ycEFFcW1SSnZnRk5aOUliK1Zabkg1aTV6MXpjRGdRa3o0WFJrcnVs?=
+ =?utf-8?B?OXU1aXg4M2ZCTlU0dDJtY3RKK1dyOXJwRzZtdTZjbWlzMlJBeWpBSUpvdE9i?=
+ =?utf-8?B?aEZpckphMG8vVE1HNTVjd0hpZk1zcllvcW8zdXlqbWY5eUpOSEgzd2YycGVs?=
+ =?utf-8?B?TmR4RjRERGFvZ1ZkTDhLc0MramFRQStMTURvL0VYY1ViU0tsYnkxWFlJb3RG?=
+ =?utf-8?B?R2dHZ1VER1lSMHh4ZWtvZW5WSzhMaGUzTHlTYk5GQ2RseWVsU0hrM25pdXJY?=
+ =?utf-8?B?bW4xbTBRRm9RditiZm00aVg5OS9EU2xyaGJtM01ZTDV0YVVsOHo0V0t6Q0tq?=
+ =?utf-8?B?dFdHcDVUamlzN0tQNWFjc0twM0kyTzJsK0NyRFdmblBDd3JYSEJjTlZMcUF0?=
+ =?utf-8?B?STk1WHkzT0NpMEFlNE9QRFZ6alpmRzBiTmxoYmJ0eVRJQmlGc0w5TWV2ZW1B?=
+ =?utf-8?B?N1dQNnJyZEhQRGRQYW9KWDJrSHFPS05HZlhDZnhRZWoxWTlvR0N4QnQ5Q1hv?=
+ =?utf-8?B?bWJuSitsaWp3Z1hVdHF0OXRtZnRaanFRRjVuV3JqQnNvMUd0N1hIS3ByQ3Q2?=
+ =?utf-8?B?V1VtbzEwSk8rZG90WmRpeEFGUjE3RTRzYk1RRVJFUE1TeHpobWk1ajdsWnkv?=
+ =?utf-8?B?bld5WXlhbkZsTzRkS0R5d3V6TjYyb3o2OW5qUG81TVBkNkNjVEY4Yms4MkdS?=
+ =?utf-8?B?dHVxbndKbjc3R0l3aTBETFVvMTBZZjA3b1lSZDVDa1FMVjVtSDA2REVJUkFa?=
+ =?utf-8?B?aUVzVG85d3ZOR1gzSnd1cFhxMU8wRHRweEp1V1RBRU9ydlFyaGhsaEoyVjcv?=
+ =?utf-8?B?RGQ2U0lGSUY4c1o3amc4eVE1b2RlRlJaYkdkZDhJL1dZN3N2WUkvVmlPOUI0?=
+ =?utf-8?B?clRoYjA4QWRwYVY1dWV4c0VMRDEvYjZWNURBSDJKdWhrUEt0SHNZa2pjaUtX?=
+ =?utf-8?B?SEtjTnVnaEdSS3R6dmlCbW5QWFdDdTEzVTgyZTdXeXBXOXFDNjRkR2hPL2Uz?=
+ =?utf-8?B?QmFINEhiam1xbVo5SC9qSmV3T3JNM3AraVBWU3ZSQ21sdmp5TU1oUFdsREU1?=
+ =?utf-8?B?VDU3SmdFcjJhWG5wM0RQWEtsempPbG8raCt6SjZvOEYxakNPUG1Qblh5bHo3?=
+ =?utf-8?B?a0VpOWJaSHpqWFNycEMyN2lhUVRYTGd3em41alY0TmZvMkR4Wll6V0lZQXVK?=
+ =?utf-8?B?RnZ1VU9sQisyY0lDVDIzMktoWDBwbExZSU1JSysrck1EdDUxZllaV0hLUGdk?=
+ =?utf-8?B?dStaOHJzaXhsY09ueEJkdzRjblhFZ3orcnVzWHNuaVZxanVFdFFlLzRlMGhm?=
+ =?utf-8?Q?CP6Jtpj54MPsSdHzoR/XVr5xCLffBAZsia6Jn8S?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VWdtdVlXclNNTXJpVUlHcW1xWDNBUEVGMVBSd0Y5d2tQRjZ5dWdzaklLS1RR?=
+ =?utf-8?B?Umw2TFpWbGFmY2VKUERtb0Z4NHN5a0pmMU9PUlozeXZyemkxNXhoVUUwSlo4?=
+ =?utf-8?B?NnJ4VVZpbDVsVjIyVUdVRWs1anZQckR0YzFjTkhDMkgwNmR4LzJzWWpla0du?=
+ =?utf-8?B?RXVScVk0VTErT2FUb21wVUNWUnE0dkwreFEwMTI4SS9laUo3em5ycjZQaFlS?=
+ =?utf-8?B?NHFwK2MyZHNhWk1BaVNIVnFSRnBQMVd4YWprTjFQamNZMTk3NmNHSjJzd2lR?=
+ =?utf-8?B?aUs2ZlpLc1AzdGJFQllOYjRTbTU1d2VyNGJWVDl1QlFLa0JCUFd1d3o0VWpC?=
+ =?utf-8?B?UFlpL0xpM2RyNk91TkV5dVlXbzZ2MkszZGRMMEtIVVRjUUt0VVBWU1FOY09P?=
+ =?utf-8?B?S0ROdDR2RXMyKzRBZDFxczlQZEtjUEQ3MHVKUzhoTW56RGdpdXhXUnlucUFv?=
+ =?utf-8?B?Yzk4ZU5kQzBlM2ZUNmQvdnBOajZ3RTF1bXZVaThPMldXUFZOeGJRS1R3d3dE?=
+ =?utf-8?B?NkY1U0tPaXE4ajUwcWh0aW9Od1VWaE9rZzNYd3VKSStvQXczVnlaSXgrZG9y?=
+ =?utf-8?B?cEZ2bXBEUlpFT05DaGp4YjIwSDJJeE1mV0JzeENTR0JJSml4emFsL00rMEgr?=
+ =?utf-8?B?cDVrcm5LNy9ISkM5azRJdkdBRDdacUovVDBWQWQ5Y1YyZ0ZsVWFJTmFtVENR?=
+ =?utf-8?B?cVd1UkN6RFdlS2NUd2J0NmpZbzBZTWZPallONlgySkczSk95VWEwOUordDhP?=
+ =?utf-8?B?VytDcmhrb0tXc2VST3p2U3VQWE9RQmQ3dmxkOUlqN2tyNTBRR1ZZcFBWc1Bs?=
+ =?utf-8?B?Q1pVRUFXR1pkdXBTMURtbmRjQ0JnVXpvOWw4WHc0NWdCT0FBVnVyMWN6YXJt?=
+ =?utf-8?B?VXNHTElYczE4TWp0Y2d1ZXVzQ1d1cEI3dnhtTWZ6RFdhLzNyVnVmK0dtZ2pG?=
+ =?utf-8?B?eTNDZWRhQ0FsWnREV1pmci83enRJdXQxSVIxUCs1VndyTElBbHZBN0NrT0RK?=
+ =?utf-8?B?N1k1cnNCQ3djVHgzR1pCSkNaSitMM1JXYVhMNE4rVlM4WFpsMFEwcGhFV0Np?=
+ =?utf-8?B?b0Q2MGlaZ0dCRlFLQ1dxdGlDMEFEZmZnd1NkZWFqU1h1Zmd3WlBuWUQ5MURE?=
+ =?utf-8?B?Qlg0dzdSRWlMcDJsOW82SEthTVBFak1WRmZGbDEza1ZoUkp3eUp3WFltUlN1?=
+ =?utf-8?B?OGlGb0NLWEJkdWUySGpXZ01ia0luanEvbnVzenA0T0FmakFMV3lLaDA0RzFs?=
+ =?utf-8?B?c1JJZjVpNjRxb2JNVjNqY3IyY2F6UlZ5TnpkLzZoUzdWMFhqS3hWWS9vWDAw?=
+ =?utf-8?B?b0FoY1U0ejExcnJnUVd0TnpYV0VtR1Ezd0NPUU1BVGFLRWVXNlRDQzVsWUsr?=
+ =?utf-8?B?ckZhblB6T3JMNWlIZVlhbjZrVUpnTmtQSCswbFZ3L3R2VS95eWtrenF0SjZr?=
+ =?utf-8?B?SmF3WkJRRFlyOVJVeUdsNkVVekVheEwrMnZFVHdmQm1SSXEweTdrMUZoZHZB?=
+ =?utf-8?B?VWF3VW1LN2JtaEt5N2pjRW1HczI4V3JmVkxjUmJ6Q2dqN0dkK3NXNGk3VUgr?=
+ =?utf-8?B?cFY5aGtwOEdZc2dVd3JOaUladWo4endxYW9KbE0xRW5aYlFoVzhYYUpxWVVE?=
+ =?utf-8?B?K3hyTTF0aWF2OTJ2VWJOdHNBZVFSRWxyMzhHaE5ybzY3NlZSaWNPME9BaGdX?=
+ =?utf-8?B?U1kzTjN5WU5Xc1Q2bVdnZG4vNVJJVis4N0hHT010ejNkalhWekpiV2JZQW1N?=
+ =?utf-8?B?V1FZcHBpRlJwNGtkOGU1YTJKaURLa0Y5U2prWmVhU1V0MjhiUTVyWXRoRG42?=
+ =?utf-8?B?Ykhjall3SU4rZDNEN0FZU2ViRXNVT1JSY1BUTm5CWi8vbE9aMUErNGdHVGRi?=
+ =?utf-8?B?dS9Mc1REUVVVR1NSaVpnVkZ1Q2UxdHFwWm52T1JsTGU1TjZ3UmlzakVjL0Q4?=
+ =?utf-8?B?ZFhRM1VaYkYyOG5xdERlbytBMCs3WEZGdkQrajAyWEc2UlEwcjMvckR1TElS?=
+ =?utf-8?B?K1I3emlUb2ZyZGVGMTBzOU81eHlFZ0FjV1dScjJPOTdMbWd6ZkF1emxCU0Ra?=
+ =?utf-8?B?T0xMdGM3aFlMU1RzakpUWWJGbE40Z2xHL0NLbDZXcTkrejZYZjJNbjVGRFFQ?=
+ =?utf-8?B?RFEza2RGV0w1aVRhQTFpYzF6NWUxMGU3Y09PWmJIZERhaUZZa2ZCcEsveVdp?=
+ =?utf-8?B?dHc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	6+EpZTx7J5HC4fuMO41Xn0iWosy8J6F7oG62F1XfFsyQtfkQiU45kCr5oIU6bY14/7t+rhKuyKHIqEsdDgXGsMLl7DnJRggrK8ey0OP1VoE4uUBQsyzgVmDRkB4et/FNCR/O26dM7X9yMPgbFqeZeiknjaWaXG1KsLRkBOW/qe/jGEndsLyt48AT9e8pSKiEM5rfvKFz2RGWhQt4yz5HNdQPk8WOXcPDMsiQm1Z14A3gkXGyVytoxkdzMp1SGaYjDejquaqWIWHg/NlbjVO1511KpcpFdpYW9dS+66WQbShLpSv+bnZePNnULKJK2lifExpb0ay37uSNbNaILLww+wJGe42WLlJ6aEwPQBB1r13XZ9GfoEu4s1Mq2c6P1XzmBeSJlfy7xg2AdJUEXArQccY0QoQy+kjoLs8wCuUSZaC4406Lf0uaxTmSbdql2B0asVXKLhRcUH7mz7W8qO30dTBrr0AnC4dC4eP7+TFiUPaF9YvNm4YZhJxqC6PQrKnVB9gz1QCEIvF3SZmDFasovuLXB9hbPs4Bab6/MC8Kg1xb6ZIvB7JSKs39/whG0IaIyrRE550FQnnTiCCOVXKjbKdRVi9yqv7ooK/iTsI4/OM=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 71891a3c-b17e-410d-d0fd-08dcf76e3062
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 16:33:01.2425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q8fXxBmflmJD8+EC1nX/wZSi4Au3dFJtZKRkallDUBuE8mVYEPxdHnIVre7NbUYOdjbQECJjBMggwGz8M6ls+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB4942
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-28_06,2024-10-28_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 mlxscore=0 adultscore=0
+ mlxlogscore=999 phishscore=0 bulkscore=0 malwarescore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410280131
+X-Proofpoint-ORIG-GUID: Phz3c7GUTjVW2kpQzmLC2_u6hbhv2Hhc
+X-Proofpoint-GUID: Phz3c7GUTjVW2kpQzmLC2_u6hbhv2Hhc
 
-On Mon, Oct 28, 2024 at 05:32:27PM +0200, Tomi Valkeinen wrote:
-> On 28/10/2024 17:17, Laurent Pinchart wrote:
-> > On Mon, Oct 28, 2024 at 12:30:45PM +0100, Hans Verkuil wrote:
-> >> On 28/10/2024 12:25, Tomi Valkeinen wrote:
-> >>> On 28/10/2024 13:13, Hans Verkuil wrote:
-> >>>> On 28/10/2024 12:05, Tomi Valkeinen wrote:
-> >>>>> On 28/10/2024 12:11, Hans Verkuil wrote:
-> >>>>>> On 28/10/2024 10:21, Tomi Valkeinen wrote:
-> >>>>>>> On 24/10/2024 11:20, Hans Verkuil wrote:
-> >>>>>>>> Hi Tomi,
-> >>>>>>>>
-> >>>>>>>> I know this driver is already merged, but while checking for drivers that use
-> >>>>>>>> q->max_num_buffers I stumbled on this cfe code:
-> >>>>>>>>
-> >>>>>>>> <snip>
-> >>>>>>>>
-> >>>>>>>>> +/*
-> >>>>>>>>> + * vb2 ops
-> >>>>>>>>> + */
-> >>>>>>>>> +
-> >>>>>>>>> +static int cfe_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
-> >>>>>>>>> +               unsigned int *nplanes, unsigned int sizes[],
-> >>>>>>>>> +               struct device *alloc_devs[])
-> >>>>>>>>> +{
-> >>>>>>>>> +    struct cfe_node *node = vb2_get_drv_priv(vq);
-> >>>>>>>>> +    struct cfe_device *cfe = node->cfe;
-> >>>>>>>>> +    unsigned int size = is_image_node(node) ?
-> >>>>>>>>> +                    node->vid_fmt.fmt.pix.sizeimage :
-> >>>>>>>>> +                    node->meta_fmt.fmt.meta.buffersize;
-> >>>>>>>>> +
-> >>>>>>>>> +    cfe_dbg(cfe, "%s: [%s] type:%u\n", __func__, node_desc[node->id].name,
-> >>>>>>>>> +        node->buffer_queue.type);
-> >>>>>>>>> +
-> >>>>>>>>> +    if (vq->max_num_buffers + *nbuffers < 3)
-> >>>>>>>>> +        *nbuffers = 3 - vq->max_num_buffers;
-> >>>>>>>>
-> >>>>>>>> This makes no sense: max_num_buffers is 32, unless explicitly set when vb2_queue_init
-> >>>>>>>> is called. So 32 + *nbuffers is never < 3.
-> >>>>>>>>
-> >>>>>>>> If the idea is that at least 3 buffers should be allocated by REQBUFS, then set
-> >>>>>>>> q->min_reqbufs_allocation = 3; before calling vb2_queue_init and vb2 will handle this
-> >>>>>>>> for you.
-> >>>>>>>>
-> >>>>>>>> Drivers shouldn't modify *nbuffers, except in very rare circumstances, especially
-> >>>>>>>> since the code is almost always wrong.
-> >>>>>>>
-> >>>>>>> Looking at this, the original code in the old BSP tree was, which somehow, along the long way, got turned into the above:
-> >>>>>>>
-> >>>>>>> if (vq->num_buffers + *nbuffers < 3)
-> >>>>>>>            *nbuffers = 3 - vq->num_buffers;
-> >>>>>>>
-> >>>>>>> So... I think that is the same as "q->min_reqbufs_allocation = 3"?
-> >>>>>>>
-> >>>>>>> The distinction between min_queued_buffers and
-> >>>>>>> min_reqbufs_allocation, or rather the need for the latter, still
-> >>>>>>> escapes me. If the HW/SW requires N buffers to be queued, why
-> >>>>>>> would we require allocating more than N buffers?
-> >>>>>>
-> >>>>>> min_queued_buffers is easiest to explain: that represents the requirements of the DMA
-> >>>>>> engine, i.e. how many buffers much be queued before the DMA engine can be started.
-> >>>>>> Typically it is 0, 1 or 2.
-> > 
-> > That's partly true only. Even if the hardware requires 2 buffers, a
-> > driver can allocate scratch buffers to lower the requirement for
-> > userspace. Setting min_queued_buffers to 1 is usually fine, as there are
-> > few use cases for userspace to start the hardware before a buffer is
-> > available to capture a frame to. A value of 2 is much more problematic,
-> > as it prevents operating with a single buffer. I know using a single
-> > buffer results in frame drops, but there are resource-constrained
-> > systems where application don't always need all the frames (such as the
-> > Raspberry Pi Zero for instance). I very strongly encourage drivers to
-> > never set a min_queued_buffers value higher than 1.
-> > 
-> >>>>>>
-> >>>>>> min_reqbufs_allocation is the minimum number of buffers that will be allocated when
-> >>>>>> calling VIDIOC_REQBUFS in order for userspace to be able to stream without blocking
-> >>>>>> or dropping frames.
-> >>>>>>
-> >>>>>> Typically this is 3 for video capture: one buffer is being DMAed, another is queued up
-> >>>>>> and the third is being processed by userspace. But sometimes drivers have other
-> >>>>>> requirements.
-> > 
-> > This is exactly why I dislike min_reqbufs_allocation when set based on
-> > this logic, it encodes assumption on userspace use cases that a capture
-> > driver really shouldn't make.
-> > 
-> >>>>>>
-> >>>>>> The reason is that some applications will just call VIDIOC_REQBUFS with count=1 and
-> >>>>>> expect it to be rounded up to whatever makes sense. See the VIDIOC_REQBUFS doc in
-> >>>>>> https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/vidioc-reqbufs.html
-> >>>>>>
-> >>>>>> "It can be smaller than the number requested, even zero, when the driver runs out of
-> >>>>>>     free memory. A larger number is also possible when the driver requires more buffers
-> >>>>>>     to function correctly."
-> >>>>>>
-> >>>>>> How drivers implement this is a mess, and usually the code in the driver is wrong as
-> >>>>>> well. In particular they often did not take VIDIOC_CREATE_BUFS into account, i.e.
-> >>>>>> instead of 'if (vq->num_buffers + *nbuffers < 3)' they would do 'if (*nbuffers < 3)'.
-> >>>>>
-> >>>>> Thanks, this was educational!
-> >>>>>
-> >>>>> So. If I have a driver that has min_queued_buffers = 1, I can use
-> >>>>> VIDIOC_CREATE_BUFS to allocate a single buffer, and then capture
-> >>>>> just one buffer, right? Whereas VIDIOC_REQBUFS would give me
-> >>>>> (probably) three (or two, if the driver does not set
-> >>>>> min_reqbufs_allocation). Three buffers makes sense for full
-> >>>>> streaming, of course.
-> >>>>>
-> >>>>>> When we worked on the support for more than 32 buffers we added min_reqbufs_allocation
-> >>>>>> to let the core take care of this. In addition, this only applies to VIDIOC_REQBUFS,
-> > 
-> > I agree it's better to handle it in the core than in drivers, even if I
-> > dislike the feature in the first place.
-> > 
-> >>>>>> if you want full control over the number of allocated buffers, then use VIDIOC_CREATE_BUFS,
-> >>>>>> with this ioctl the number of buffers will never be more than requested, although it
-> >>>>>> may be less if you run out of memory.
-> > 
-> > On a side note, we should transition libcamera to use VIDIOC_CREATE_BUFS
-> > unconditionally.
-> > 
-> >>>>>>
-> >>>>>> I really should go through all existing drivers and fix them up if they try to
-> >>>>>> handle this in the queue_setup function, I suspect a lot of them are quite messy.
-> >>>>>>
-> >>>>>> One thing that is missing in the V4L2 uAPI is a way to report the minimum number of
-> >>>>>> buffers that need to be allocated, i.e. min_queued_buffers + 1. Since if you want
-> >>>>>
-> >>>>> Hmm, so what I wrote above is not correct? One needs min_queued_buffers + 1? Why is that?
-> >>>>
-> >>>> The DMA engine always uses min_queued_buffers, so if there are only that many buffers,
-> >>>> then it can never return a buffer to userspace! So you need one more. That's the absolute
-> >>>> minimum. For smooth capture you need two more to allow time for userspace to process the
-> >>>> buffer.
-> >>>
-> >>> Hmm, ok, I see. Well, I guess my "I want to capture just a single frame" is not a very common case.
-> > 
-> > It's not that uncommon, see above.
-> > 
-> >>>
-> >>> Can I queue one buffer, start streaming, stop streaming, and get the
-> >>> filled buffer? But then I guess I don't when the buffer has been
-> >>> filled, i.e. when to call stop streaming.
-> >>
-> >> Exactly. If you really want that, then the driver has to be adapted in the way that Laurent
-> >> suggested, i.e. with one or more scratch buffers. But that is not always possible, esp. with
-> >> older hardware without an IOMMU.
-> > 
-> > Drivers can always allocate a full-frame scratch buffer in the worst
-> > case. That can waste memory though, which is less than ideal.
-> > 
-> >>> So, never mind, I don't actually have any use case for this, just wondering.
-> >>>
-> >>>>>
-> >>>>>> to use CREATE_BUFS you need that information so you know that you have to create
-> >>>>>> at least that number of buffers. We have the V4L2_CID_MIN_BUFFERS_FOR_CAPTURE control,
-> >>>>>> but it is effectively codec specific. This probably should be clarified.
-> >>>>>>
-> >>>>>> I wonder if it wouldn't be better to add a min_num_buffers field to
-> >>>>>> struct v4l2_create_buffers and set it to min_queued_buffers + 1.
-> > 
-> > Don't add the +1. We should give userspace the information it needs to
-> > make informed decisions, not make decisions on its behalf.
-> > 
-> >>>>>
-> >>>>> I think this makes sense (although I still don't get the +1).
-> >>>>>
-> >>>>> However, based on the experiences from adding the streams features
-> >>>>> to various ioctls, let's be very careful =). The new
-> >>>>> 'min_num_buffers' can be filled with garbage by the userspace. If
-> >>>>> we define the 'min_num_buffers' field to be always filled by the
-> >>>>> kernel, and any value provided from the userspace to be ignored, I
-> >>>>> think it should work.
-> >>>>
-> >>>> I've posted an RFC for this.
-> >>>
-> >>> Thanks, I'll check it out.
-> >>>
-> >>> For the original issue in this thread, I think the correct fix is to
-> >>> remove the lines from cfe_queue_setup(), and add
-> >>> "q->min_reqbufs_allocation = 3".
-> > 
-> > Or just don't set min_reqbufs_allocation ? This is a new driver, and it
-> > requires a device-specific userspace to operate the ISP. I don't think
-> > we need to care about applications blindly calling VIDIOC_REQBUFS(1) and
-> > expecting to get more buffers.
-> 
-> It doesn't require a device-specific userspace for plain CSI-2 capture.
-> 
-> If I understood right, the expected behavior for VIDIOC_REQBUFS is to 
-> return enough buffers for "smooth streaming". So even if device-specific 
-> userspace would be required, doesn't it still make sense to have 
-> min_reqbufs_allocation = 3?
+On 28/10/2024 16:11, Christoph Hellwig wrote:
+> On Mon, Oct 28, 2024 at 03:27:24PM +0000, John Garry wrote:
+>> Use the proper blk_status_t value to init the bi_status.
+> I think 0 as ok is a very wide spread assumption and intentional.
 
-"Smooth streaming" is use case-dependent, you will need different number
-of buffers for different use cases. That's why I don't like hardcoding
-this in a video capture driver. I'd rather expose information about the
-driver behaviour (in particular, how many buffers it will hold on
-without returning anything to userspace until a new buffer gets queued)
-and let applications make a decision. I don't expect applications
-relying on VIDIOC_REQBUFS(1) to work out-of-the-box on Pi 5 anyway, as
-the media graph needs to be configured.
+Sure
 
-> Or is your point that even a device-specific userspace, which knows 
-> exactly what it's doing, would use VIDIOC_REQBUFS, instead of 
-> VIDIOC_CREATE_BUFS?
+> Personally I think 0 is fine, as it also is special case by
+> __bitwise types, but if Jens prefers it this way I'm fine with that
+> too.
 
-I expect a device-specific userspace not to require drivers to make
-policy decisions on its behalf.
+I just found it easier to grep BLK_STS_OK (rather than 0). And also 
+proper to init to the declared macro, but I don't feel strongly about this.
 
-> Also, if I don't set min_reqbufs_allocation, VIDIOC_REQBUFS(1) would 
-> still allocate two buffers, not one.
+Cheers
 
--- 
-Regards,
-
-Laurent Pinchart
 
