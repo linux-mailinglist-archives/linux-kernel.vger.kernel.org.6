@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-384371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052F39B2958
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CDB049B2959
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE4FC1F22527
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:56:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 843831F239FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A5E20126D;
-	Mon, 28 Oct 2024 07:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37BE1922E4;
+	Mon, 28 Oct 2024 07:36:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RoJCq8Y9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="t/jKjCfI"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RsvexYUr";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vyw9nNaH"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C55DA202F9E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CF5190671
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100954; cv=none; b=lIWp6B4eftgZQv0y545YSurQ3KOEF0wQ1Q43q1X7rP2T1NMsQpu+UB48r/iXN4NlkhV1gASH76xb2XituuGeCLaj+fzlMLZ0mkGp9dHda8Vm/wfdPbuhscXgSnL7y4qd+TyeOwAA3qwS0/HVRqH2qFtDDf8fWRLpFATCUx95CyQ=
+	t=1730100968; cv=none; b=GN/FjFDK6DmQKuyPww/B15NxA8UQ1d4p5TBV2IHap//DPawbCrl9TWlYSL6LMdV9SK6bmOWvieTDqkDtMK1P+K4AP0RK3MHtbRiZu6Nsqf/8cKRHeBx+lPSVuoTQ8auWF+Anj5ziN+Jj2FX7YXmxCRi7SEK9zeFcTNdwohZ5R54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100954; c=relaxed/simple;
-	bh=cntlSwMjndeYGfNblFynIUDsp5kX3z4EV7tsbwvRhQM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dh5vOd9VzC0M/3cZng/cjzM8r7VMWvR6sSp1C61iUxtv75aYU623/ZSLiepzZuFT4H2Bq620gWOMq4qFnZpnHItmf2nXjxwMs2e+7Q8XtmdshgeaYNmoFbnabEcX15MB9ohOquK2L09kDzMh++BDzSSbJbU6RAoeyjMxSYPgkPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RoJCq8Y9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=t/jKjCfI; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1730100968; c=relaxed/simple;
+	bh=NpvWzh7Ftalp3C4DmfRGMNBTWvj2+Oo5LMKljDU2TCY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DBeAtXGMneVKoNeEJLUYgKwIs8rh8BIFg/Orq20ubzsTWEdbGaiQJBhY6MKKrl0sNE8VSsqGWFFcvDceJrR7/kO9FZDInsiZJoGGc8v5Tlbvq552jlyfbR/VQibKgtuUHn8r/+lfM9RJzzCK48fImAC4RtyXPL+71/lXc4EC4Eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RsvexYUr; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vyw9nNaH; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100950;
+	s=2020; t=1730100964;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5BIy9+AZJOkVMok8NrBSJhjeT8JcmYVXmj+uS2bpLPU=;
-	b=RoJCq8Y9dCoUG3Kq547zP1KRVf5BK91krNHJx2hN6CF5WzbGbSwiT8UYxs3bDxZ0vwNcCd
-	E8VlQQb1oYUQzSG6o5iS+jlPQ2DpwMA+xef0H1IDrdY04T8Zw4lA5dYWZwVYD6ZfHly7Xe
-	Ml51nuY4qYqt6LfJZHjBvfF0ntY0wAdupoUS23UB3paHpfGYYOXkfSErOHReljc8sLVTIM
-	tBU2p93WWqHJomlXgjJsdX2vaz/kryiSWdSNyWKHJ0JvXV4dVZDl7TVvmlJkky/vkeELt8
-	ALsBcwRE9swuEG2vPchPmAzDwL7tRZuqtFGCw8b97NiHcnwoX4xZqEHld+8q0g==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mL11sOnXoBUyTFWl/QkWTr94BmP52wyuD/23j1W1GZM=;
+	b=RsvexYUro2sA90GG0603iffH81IVphBgyqmSbJMAj4qoe0fjQnZP+ue70diBw0ehXUBgLr
+	ygjbv6LK4qgxg2reNYVbFNEiKZ31faN7mVK/uBkr5A2E1KELGhiBT+ZdRseEjOesCenAJt
+	xYIDxqCPLOetbqjEWycLTBUG5BiY43Koap2O+dHGmoSAZST1dACRbY4ds7JK20y1bKJBN2
+	baU7C8Hn+b38X34dsngtmpQDc1TFmb/ztNogeBGDo5HAHxc5UAXUowo3nRtcTrmFLL4xX2
+	endtmUXDFX+rpKMgzZWZLhZ79HwgsX/LtnhDrLRGGjx8166Ypb1HX9pABLDLCw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100950;
+	s=2020e; t=1730100964;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5BIy9+AZJOkVMok8NrBSJhjeT8JcmYVXmj+uS2bpLPU=;
-	b=t/jKjCfIqPmUEupagOIlKonVEW8DH8kbpdZdVyLqXxALftHxggimhwxfQwM3hEJiAyaIou
-	n/PgtmBk1+/YclBg==
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=mL11sOnXoBUyTFWl/QkWTr94BmP52wyuD/23j1W1GZM=;
+	b=vyw9nNaHtLptk4SInGPZSZ4tj8H+cx+PktgQlIR5GMReJviCifBAQbZ2FUK4e5MfHGPPUD
+	xzU2/XeYpqHfGZBg==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,12 +59,13 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Takashi Iwai <tiwai@suse.com>
-Subject: [PATCH 44/44] ALSA: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:35:20 +0100
-Message-Id: <a4c103403802ba8e7656462bdcdf8de922c604cf.1729865485.git.namcao@linutronix.de>
-In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
-References: <cover.1729865485.git.namcao@linutronix.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Kalle Valo <kvalo@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH 00/12] hrtimers: Switch to new hrtimer interface functions (5/5)
+Date: Mon, 28 Oct 2024 08:35:44 +0100
+Message-Id: <cover.1729865740.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,87 +74,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-There is a newly introduced hrtimer_setup() which will replace
-hrtimer_init(). This new function is similar to the old one, except that it
-also sanity-checks and initializes the timer's callback function.
+This is the fifth part of a 5-part series (split for convenience). All 5
+parts are:
 
-Switch to use this new function.
+Part 1: https://lore.kernel.org/lkml/cover.1729864615.git.namcao@linutronix=
+.de
+Part 2: https://lore.kernel.org/lkml/cover.1729864823.git.namcao@linutronix=
+.de
+Part 3: https://lore.kernel.org/lkml/cover.1729865232.git.namcao@linutronix=
+.de
+Part 4: https://lore.kernel.org/lkml/cover.1729865485.git.namcao@linutronix=
+.de
+Part 5: https://lore.kernel.org/lkml/cover.1729865740.git.namcao@linutronix=
+.de
 
-Patch was created by using Coccinelle.
+To use hrtimer, hrtimer_init() (or one of its variant) must be called, and
+also the timer's callfack function must be setup separately.
+
+That can cause misuse of hrtimer. For example, because:
+  - The callback function is not setup
+  - The callback function is setup while it is not safe to do so
+
+To prevent misuse of hrtimer, this series:
+  - Introduce new functions hrtimer_setup*(). These new functions are
+    similar to hrtimer_init*(), except that they also sanity-check and
+    initialize the callback function.
+  - Introduce hrtimer_update_function() which checks that it is safe to
+    change the callback function. The 'function' field of hrtimer is then
+    made private.
+  - Convert all users to use the new functions.
+  - Some minor cleanups on the way.
+
+Most conversion patches were created using Coccinelle with the sematic
+patch below; except for tricky cases that Coccinelle cannot handle, or for
+some cases where a Coccinelle's bug regarding 100 column limit is
+triggered. Any patches not mentioning Coccinelle were done manually.
+
+virtual patch
+@@ expression timer, clock, mode, func; @@
+- hrtimer_init(timer, clock, mode);
+  ...
+- timer->function =3D func;
++ hrtimer_setup(timer, func, clock, mode);
+
+@@ expression timer, clock, mode, func; @@
+- hrtimer_init(&timer, clock, mode);
+  ...
+- timer.function =3D func;
++ hrtimer_setup(&timer, func, clock, mode);
+
+@@ expression timer, clock, mode, func; @@
+- hrtimer_init_on_stack(&timer, clock, mode);
+  ...
+- timer.function =3D func;
++ hrtimer_setup_on_stack(&timer, func, clock, mode);
+
+@@ expression timer, clock, mode; @@
+- hrtimer_init_sleeper_on_stack(timer, clock, mode);
++ hrtimer_setup_sleeper_on_stack(timer, clock, mode);
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
----
-Cc: Takashi Iwai <tiwai@suse.com>
----
- sound/core/hrtimer.c      | 3 +--
- sound/drivers/dummy.c     | 3 +--
- sound/drivers/pcsp/pcsp.c | 3 +--
- sound/sh/sh_dac_audio.c   | 3 +--
- 4 files changed, 4 insertions(+), 8 deletions(-)
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Kalle Valo <kvalo@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
 
-diff --git a/sound/core/hrtimer.c b/sound/core/hrtimer.c
-index 147c1fea4708..e9c60dce59fb 100644
---- a/sound/core/hrtimer.c
-+++ b/sound/core/hrtimer.c
-@@ -66,9 +66,8 @@ static int snd_hrtimer_open(struct snd_timer *t)
- 	stime =3D kzalloc(sizeof(*stime), GFP_KERNEL);
- 	if (!stime)
- 		return -ENOMEM;
--	hrtimer_init(&stime->hrt, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
- 	stime->timer =3D t;
--	stime->hrt.function =3D snd_hrtimer_callback;
-+	hrtimer_setup(&stime->hrt, snd_hrtimer_callback, CLOCK_MONOTONIC, HRTIMER=
-_MODE_REL);
- 	t->private_data =3D stime;
- 	return 0;
- }
-diff --git a/sound/drivers/dummy.c b/sound/drivers/dummy.c
-index 8f5df9b3aaaa..c1a3efb633c5 100644
---- a/sound/drivers/dummy.c
-+++ b/sound/drivers/dummy.c
-@@ -457,8 +457,7 @@ static int dummy_hrtimer_create(struct snd_pcm_substrea=
-m *substream)
- 	if (!dpcm)
- 		return -ENOMEM;
- 	substream->runtime->private_data =3D dpcm;
--	hrtimer_init(&dpcm->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_SOFT);
--	dpcm->timer.function =3D dummy_hrtimer_callback;
-+	hrtimer_setup(&dpcm->timer, dummy_hrtimer_callback, CLOCK_MONOTONIC, HRTI=
-MER_MODE_REL_SOFT);
- 	dpcm->substream =3D substream;
- 	atomic_set(&dpcm->running, 0);
- 	return 0;
-diff --git a/sound/drivers/pcsp/pcsp.c b/sound/drivers/pcsp/pcsp.c
-index 78c9b1c7590f..e8482c2290c3 100644
---- a/sound/drivers/pcsp/pcsp.c
-+++ b/sound/drivers/pcsp/pcsp.c
-@@ -103,8 +103,7 @@ static int snd_card_pcsp_probe(int devnum, struct devic=
-e *dev)
- 	if (devnum !=3D 0)
- 		return -EINVAL;
-=20
--	hrtimer_init(&pcsp_chip.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	pcsp_chip.timer.function =3D pcsp_do_timer;
-+	hrtimer_setup(&pcsp_chip.timer, pcsp_do_timer, CLOCK_MONOTONIC, HRTIMER_M=
-ODE_REL);
-=20
- 	err =3D snd_devm_card_new(dev, index, id, THIS_MODULE, 0, &card);
- 	if (err < 0)
-diff --git a/sound/sh/sh_dac_audio.c b/sound/sh/sh_dac_audio.c
-index e7b6ce7bd086..4fb88c3a4902 100644
---- a/sound/sh/sh_dac_audio.c
-+++ b/sound/sh/sh_dac_audio.c
-@@ -313,8 +313,7 @@ static int snd_sh_dac_create(struct snd_card *card,
-=20
- 	chip->card =3D card;
-=20
--	hrtimer_init(&chip->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	chip->hrtimer.function =3D sh_dac_audio_timer;
-+	hrtimer_setup(&chip->hrtimer, sh_dac_audio_timer, CLOCK_MONOTONIC, HRTIME=
-R_MODE_REL);
-=20
- 	dac_audio_reset(chip);
- 	chip->rate =3D 8000;
+Nam Cao (12):
+  hrtimers: Delete hrtimer_init()
+  hrtimers: Switch to use __htimer_setup()
+  hrtimers: Merge __hrtimer_init() into __hrtimer_setup()
+  serial: xilinx_uartps: Use helper function hrtimer_update_function()
+  io_uring: Use helper function hrtimer_update_function()
+  wifi: rt2x00: Switch to use hrtimer_update_function()
+  hrtimers: Make callback function pointer private
+  hrtimers: Remove unnecessary NULL check in hrtimer_start_range_ns()
+  hrtimers: Rename __hrtimer_init_sleeper() to __hrtimer_setup_sleeper()
+  hrtimers: Rename debug_init() to debug_setup()
+  hrtimers: Rename debug_init_on_stack() to debug_setup_on_stack()
+  tracing/timers: Rename hrtimer_init event to hrtimer_setup
+
+ Documentation/trace/ftrace.rst                |  4 +-
+ .../net/wireless/ralink/rt2x00/rt2800mmio.c   |  2 +-
+ .../net/wireless/ralink/rt2x00/rt2800usb.c    |  2 +-
+ drivers/tty/serial/xilinx_uartps.c            |  4 +-
+ include/linux/hrtimer.h                       |  4 +-
+ include/linux/hrtimer_types.h                 |  4 +-
+ include/trace/events/timer.h                  |  8 +--
+ io_uring/io_uring.c                           |  2 +-
+ kernel/time/hrtimer.c                         | 69 +++++--------------
+ kernel/time/timer_list.c                      |  2 +-
+ tools/perf/tests/shell/trace_btf_enum.sh      |  2 +-
+ 11 files changed, 35 insertions(+), 68 deletions(-)
+
 --=20
 2.39.5
 
