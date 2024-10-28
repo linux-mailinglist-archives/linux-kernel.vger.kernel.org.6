@@ -1,243 +1,199 @@
-Return-Path: <linux-kernel+bounces-385221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61B19B342B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:59:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEAD39B3430
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FC9FB224BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:59:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3F3281D9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6641DE2D5;
-	Mon, 28 Oct 2024 14:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b="NJ/QgNkw"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2054.outbound.protection.outlook.com [40.107.20.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65971DE2DB;
+	Mon, 28 Oct 2024 15:01:01 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A74D18E354;
-	Mon, 28 Oct 2024 14:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730127567; cv=fail; b=NfgpDEnsGKoGJXMLe2gCxGw+S+c0f8OtgxATx2fgmmgNdBeBhKJTO77dP+FpMzQu3VrZeFVi3CbfXfoXrM4eYaaT1STAoBIOZVy7is1L67vwzQpVDlaQ9tze2GmqrBUkhpg/GgW31EGaBsyYCxkhADev8yqsUR2vTR+jc1i6aL0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730127567; c=relaxed/simple;
-	bh=leB1+sqgbXX6QZSCuX2NhBvJ8I6amVBhYT2rM3HrLY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=cCiVW1bPE/fhNm2hKxBxh/9qMnWj/yd5OJm28FmbNI2OpuwoOKoT4o+jecCIPqxCfJoAYrUgMmJqukyRsSs+ejqErmhI40RwdkCTHlK3thrgERH0mNPGnrcEVgNBSFYWf6hPmLiV1Z/Io40v1X6xybECaURhRtV8pKmGNjphQU0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com; spf=fail smtp.mailfrom=leica-geosystems.com; dkim=pass (1024-bit key) header.d=leica-geosystems.com header.i=@leica-geosystems.com header.b=NJ/QgNkw; arc=fail smtp.client-ip=40.107.20.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=leica-geosystems.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=leica-geosystems.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ddMzC1vkIROGKH3J8RctMR0X20EqjmHfsociYS+1ROM+Ay3fdT3xE/jKwwnF+Dg/4hrXy5mQmvZU+0FFQlH/0lu+FRFWTabzMuM33iSDwqhflfDP8+MuAZy1kgtb4r32xzdvM3viLkAeaSwbcpyGFLSGGh1VZth+YP+gPgbOgbfkclEgSzexuD19RBJQtz8oyk5MXOefipGvPF/xyklnrTyjsKo24JdUCMsGB3o4lWUUWiRUcOlqUBsTyJjo1tDfH8w5A6KNfBf6JTr44MC83bhyjGLzyvhwe3dYFz8uyO+0r0Y75nBiRVdRCIIhjdmBjLnPsIAJx4v1VM62Qtr82w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=30rG/7YxDBbuHOl7//qMEkeVkEZ72lzZkZHeP/aTPAg=;
- b=ChvbZOvIrLZmIoD81EemYWitxWvj2Ew9CCZnOuY9CbV3kmec+p5Df7gQxhIMl76pAPIM/jGXxMRz7TSYTlqUYR+QoMDhF5JlTyWFYwghF+/PyQMbupSSKYIEhh7AWYbiIED0WZXwScezP67EvuJyqRWPtizYt0NzpOnPxiM9WSumz9jTnfNvNJ6ZMWjrhnrqjN2T+uTQ2CxNCWRN4PPTHw6yqzkjLx45gHd8tw4LS/VRMPC6dPSmaXHSdU6hTG9qsFtwgxAoxpze9lhjUyLa9b24eR5VV/+XQRA4V+5pqVVNDdTLhxAC8h6iOJ3zPYlhTHmi/lhHuKzeZL+57MhKdw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 193.8.40.94) smtp.rcpttodomain=vger.kernel.org
- smtp.mailfrom=leica-geosystems.com; dmarc=pass (p=reject sp=reject pct=100)
- action=none header.from=leica-geosystems.com; dkim=none (message not signed);
- arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=leica-geosystems.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=30rG/7YxDBbuHOl7//qMEkeVkEZ72lzZkZHeP/aTPAg=;
- b=NJ/QgNkwvrxZqeI5QzuG3oF/p4/gWEZvZ4GVUMuvY5UYrPYXgqJWUoXmRKPjbNyMyL6SQelyyUXer02cxh6vsRyGJc1RP+o+XNPmQq2TzzzvbNoMRz1fW0/AshvgA960bYvO/QN7rbom7QhDF6YRuYyx8qukNCu+GIYJaV+Re9Y=
-Received: from AS8PR04CA0092.eurprd04.prod.outlook.com (2603:10a6:20b:31e::7)
- by DU4PR06MB9681.eurprd06.prod.outlook.com (2603:10a6:10:55d::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
- 2024 14:59:22 +0000
-Received: from AM4PEPF00025F96.EURPRD83.prod.outlook.com
- (2603:10a6:20b:31e:cafe::88) by AS8PR04CA0092.outlook.office365.com
- (2603:10a6:20b:31e::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.26 via Frontend
- Transport; Mon, 28 Oct 2024 14:59:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 193.8.40.94)
- smtp.mailfrom=leica-geosystems.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=leica-geosystems.com;
-Received-SPF: Pass (protection.outlook.com: domain of leica-geosystems.com
- designates 193.8.40.94 as permitted sender) receiver=protection.outlook.com;
- client-ip=193.8.40.94; helo=hexagon.com; pr=C
-Received: from hexagon.com (193.8.40.94) by
- AM4PEPF00025F96.mail.protection.outlook.com (10.167.16.5) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8137.0 via Frontend Transport; Mon, 28 Oct 2024 14:59:21 +0000
-Received: from aherlnxbspsrv01.lgs-net.com ([10.60.34.116]) by hexagon.com with Microsoft SMTPSVC(10.0.17763.1697);
-	 Mon, 28 Oct 2024 15:59:21 +0100
-From: Mamta Shukla <mamta.shukla@leica-geosystems.com>
-To: dinguyen@kernel.org,
-	alexandre.torgue@foss.st.com,
-	joabreu@synopsys.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	mcoquelin.stm32@gmail.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	a.fatoum@pengutronix.de
-Cc: bsp-development.geo@leica-geosystems.com,
-	Mamta Shukla <mamta.shukla@leica-geosystems.com>
-Subject: [PATCH net v2] arm: dts: socfpga: use reset-name "stmmaceth-ocp" instead of "ahb"
-Date: Mon, 28 Oct 2024 15:59:07 +0100
-Message-Id: <20241028145907.1698960-1-mamta.shukla@leica-geosystems.com>
-X-Mailer: git-send-email 2.34.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2331415E5B8
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730127661; cv=none; b=aQFkEzRyvZ/7hQSESXUta1c1f582+R6yAp0p72E59elpq9iLTDRU7oSm5UDRaKBAM6cvgUXpAQcQ5zAz39F8Up0/oiCql7FuLjPd7DJz+w6G0qqJhB7rDjqe+hNu46YTILc5OH4icih/IJtEc+vdkicxzqVIwu5g0O09bG26WXg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730127661; c=relaxed/simple;
+	bh=E22snKOiwORKipQzrXfVGm9Ej7rTAa7fAhHXIBaGcaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LXt4fyxVf+Ezx/eG1IK+VOgnoUFPq+5j3yOg2TbdrwDBTyZzxkzb9bvtXhxpToDNxT7x06JeXWzVL9NVjx0oFtx1Q5eMoiWeWIVHK8Pvx5FWBdQOVvfucfZuBjewMTr8AMpjrMD1Cvy7N6TUwFRpThg4d03mnJpsWH1PuWj67zw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t5REf-0006vD-4J; Mon, 28 Oct 2024 16:00:49 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t5REe-000sIi-1t;
+	Mon, 28 Oct 2024 16:00:48 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t5REe-000n3t-1Y;
+	Mon, 28 Oct 2024 16:00:48 +0100
+Date: Mon, 28 Oct 2024 16:00:48 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Sherry Sun <sherry.sun@nxp.com>
+Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
+	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
+	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
+	"marcel@holtmann.org" <marcel@holtmann.org>,
+	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
+ supply and reset
+Message-ID: <20241028150048.qnqjxntns6quy7py@pengutronix.de>
+References: <20241022082256.nzfxqp67tdaxtn56@pengutronix.de>
+ <DB9PR04MB84292445D0FEDB8211ED52C3924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <9b09774e-d0ed-4c97-b6a0-e976580b5bb5@leica-geosystems.com>
+ <DB9PR04MB8429CF700571FE42C997FB9C924D2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <1b8864e5-0ec7-49c4-932a-89cfbaeacc9f@leica-geosystems.com>
+ <DB9PR04MB842929186683C1DF13DCBD92924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <20241028090028.x6rzopvpcdvgouqv@pengutronix.de>
+ <DB9PR04MB842960A18BB8570B04A64BEA924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+ <20241028115150.fgvqaem36lwxwvjh@pengutronix.de>
+ <DB9PR04MB8429B10FA73E5333685103FB924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-OriginalArrivalTime: 28 Oct 2024 14:59:21.0649 (UTC) FILETIME=[F886B210:01DB2949]
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM4PEPF00025F96:EE_|DU4PR06MB9681:EE_
-Content-Type: text/plain
-X-MS-Office365-Filtering-Correlation-Id: d754728f-0599-4490-e223-08dcf7611b26
-X-SET-LOWER-SCL-SCANNER: YES
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1EXpAB1Fn33xi2Rp797xr0rsFHE+ehhDVIAkp6/BDJCxz2ep7RILENKIbdYU?=
- =?us-ascii?Q?eNp/XLvyPeASBKznpqosHJtLeFXscWQaDCk2Ge1mf4HhcazBfTySLT4h0UF6?=
- =?us-ascii?Q?1sN3XENRmARTR2nY3a/3EVpxod5JbO5YDOU9zbooiDTtY27UqTgehWlynk0z?=
- =?us-ascii?Q?WOR51B+7kKwxzddx8RW9wPHz8rfidZRg4BAVczW6u5jMFZP5MWWO4Ly2UUJt?=
- =?us-ascii?Q?5nAv1YS13ZWHo/oM1rCGNBOtruzSZoZw+e59GWfJONbHB8e5aB4oPIDXinb3?=
- =?us-ascii?Q?8rgSm4JfadX2vt32nvuNFTWfT+CoF+xukl6zvDoeLkhha4NeggRuNPWd+/I4?=
- =?us-ascii?Q?2f4YGGXB1z5+zwLZp1tcxLOXdkQPc58v7hf/QauymdI2qNbRGTz4Ll6xFc9d?=
- =?us-ascii?Q?IneQ19UDzWOuTYM9hlh/7KbOr0NmGHwCJ2nZ8HS3hRjyhXvkNYGfAiYZTYrQ?=
- =?us-ascii?Q?M6I04Eqa22pxQCHehQPf7bjc+voZm2c2724jTufnv/+fvqOpEpDGZvcaIAJ3?=
- =?us-ascii?Q?0cPDY/TW1Foz7QMuSMs1qvyTCH8/axYgnUA6dOyxthe0oHXfijqdv/CQ+55l?=
- =?us-ascii?Q?Kbqum3Bgv3FOk9pK5jC3jlDR9s4yrN7RrA93uaAZHOvmSAuU1893osCzVd7J?=
- =?us-ascii?Q?Fa0kNL7/1IdQi6x02TImcgzhIM3qskVe1ky1W5T34+84Bky718awGIHSczTT?=
- =?us-ascii?Q?FQK5EaVXt+QiH9/m0/N2qY/7+KcvNmhNxmfGUHzSQLto5PxKm326PAzosGhR?=
- =?us-ascii?Q?DPRkkQ28fB4Vqu/azitzO9CknZjvjXecrUvAa5pnuW2+qdIjyASfFwqfkPTa?=
- =?us-ascii?Q?ey633VQOQ1GMEKu5ujouSFyUY9q0cETU+EW5KTmfhYbLpus8iGv6QM/vD9NX?=
- =?us-ascii?Q?Twvj/YGQe5eMWL9pchHDZ5bJXOOZKbGQfkqTw4QYRsT/lSTXfvBEwUkz16OA?=
- =?us-ascii?Q?K80Mm4f9GbZNJmu7oz744MccfHb61VMUkenFusHCCFJPCi0fLey4et3ocelP?=
- =?us-ascii?Q?Dzu6C3+a5+BrSWRrEu14tent9YJJMsEz7zWtjHkwdtGRSPOvcxIiDiKhnlJl?=
- =?us-ascii?Q?kCX/Ep/nQPw8Il20w0ZQF1D6q84Ki9nLt2HMaiJ6wO3qhrZ9fF+Nu+uC5C4G?=
- =?us-ascii?Q?b3ey1PNHD78F3rbPccih3EZGnboZLm5BUtvnCHyq26U7zgjAuSc7qj/xUQAV?=
- =?us-ascii?Q?+PZ09+wqUikeaS7+FIQ82WkrY7G5Cs+sDGsOkuZTE/104H4HQkCqNkGB3vMj?=
- =?us-ascii?Q?cKsWkRFyOP3JZO0KfMDuApw4iQXQ65RpUzk/2OeVdo+dfcXCC5dYTv6Z5jQI?=
- =?us-ascii?Q?BZ5sNvdU+1DEbuMgwYzg/FddGCKhrxLSqqZlXLA6wo0MovmGwVT7AODPe2dG?=
- =?us-ascii?Q?3b7/U9HUu32ZfR92M1vX90YRtjUAb4Pic+kVKQcRKUX/irFPEyU57pDl2obT?=
- =?us-ascii?Q?0iBcaI7SocQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:193.8.40.94;CTRY:CH;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:hexagon.com;PTR:ahersrvdom50.leica-geosystems.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: leica-geosystems.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:59:21.8408
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d754728f-0599-4490-e223-08dcf7611b26
-X-MS-Exchange-CrossTenant-Id: 1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=1b16ab3e-b8f6-4fe3-9f3e-2db7fe549f6a;Ip=[193.8.40.94];Helo=[hexagon.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F96.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR06MB9681
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DB9PR04MB8429B10FA73E5333685103FB924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The ahb reset is deasserted in probe before first register access, while the
-stmmacheth-ocp reset needs to be asserted every time before changing the phy
-mode in Arria10[1].
+On 24-10-28, Sherry Sun wrote:
+> 
+> > From: Marco Felsch <m.felsch@pengutronix.de>
+> > 
+> > On 24-10-28, Sherry Sun wrote:
+> > >
+> > > > From: Marco Felsch <m.felsch@pengutronix.de>
+> > > >
+> > > > Hi,
+> > > >
+> > > > On 24-10-28, Sherry Sun wrote:
+> > > > >
+> > > > > > From: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
+> > > > > >
+> > > > > > We use the NXP downstream driver mwifiex which doesn't have
+> > > > > > support for regulator or PDn.
+> > > > > >
+> > > > > > However, regulator is already supported by the MMC core (vmmc-
+> > supply).
+> > > > > >
+> > > > > > For PDn, we use mmc pwrseq simple driver that has been patched
+> > > > > > to add support for reset-control.
+> > > > >
+> > > > > Ok, thanks, the mmc change looks good for me, so there is no
+> > > > > problem with the NXP SDIO wifi.
+> > > > >
+> > > > > But how do you plan to handle the NXP PCIe wifi? We also need to
+> > > > > make sure the BT patch won't break the PCIe wifi function.
+> > > >
+> > > > Can you please elaborate how this could break the PCIe use-case?
+> > >
+> > > Similar to the SDIO wifi, if no corresponding reset control for the
+> > > PDn pin in PCIe wifi driver, the wifi part will be unexpectedly
+> > > powered off when removing the BT driver.
+> > 
+> > Nope it's not that easy for PCIe case since the phy + link layer handling is
+> > much more complex compared to the MMC case. For the PCIe case the intial
+> > handling is very strict according to the PCIe spec and we can't handle the BT
+> > device independently.
+> > 
+> > _BUT_ this patch doesn't cause any regression for the PCIe use-case since the
+> > support added by Catalin is optional which means that the user don't have to
+> > use these options.
+> > 
+> > To sum up:
+> > 
+> > WLAN (PCIe) used + BT (UART) used -> no independent handling
+> >                                      possible. BT depends on WLAN.
+> > 
+> > WLAN (PCIe) not used + BT (UART) used -> This patchset allow us to
+> >                                          handle BT. Without the patchset
+> > 					 this is not possible.
+> > 
+> > WLAN (SDIO) + BT (UART) -> This patchset and the mmc-power-seq patchset
+> >                            allow us to handle WLAN and BT independently
+> > 			   regardless if BT or WLAN is used or not.
+> 
+> If we add the reset-gpios property in the BT dts node when using the
+> SDIO wifi chip, my concern is for some host platforms, taking
+> i.MX95-19x19-EVK as an example, it supports both SDIO and PCIe
+> interface wifi chip through the M.2 connector, when customers want to
+> plug in the PCIe wifi chip, they have to remove the reset-gpios in the
+> BT dts node to avoid the PCIe WLAN been affected by BT, right?
 
-Changed in Upstream to "ahb"(331085a423b  arm64: dts: socfpga: change the
-reset-name of "stmmaceth-ocp" to "ahb" ).This change was intended for arm64
-socfpga and it is not applicable to Arria10.
+I don't know the i.MX95-19x19-EVK platform since it is not upstream. If
+you want to support both:
 
-Further with STMMAC-SELFTEST Driver enabled, ethtool test also FAILS.
-$ ethtool -t eth0
-[  322.946709] socfpga-dwmac ff800000.ethernet eth0: entered promiscuous mode
-[  323.374558] socfpga-dwmac ff800000.ethernet eth0: left promiscuous mode
-The test result is FAIL
-The test extra info:
- 1. MAC Loopback                 0
- 2. PHY Loopback                 -110
- 3. MMC Counters                 -110
- 4. EEE                          -95
- 5. Hash Filter MC               0
- 6. Perfect Filter UC            -110
- 7. MC Filter                    -110
- 8. UC Filter                    0
- 9. Flow Control                 -110
-10. RSS                          -95
-11. VLAN Filtering               -95
-12. VLAN Filtering (perf)        -95
-13. Double VLAN Filter           -95
-14. Double VLAN Filter (perf)    -95
-15. Flexible RX Parser           -95
-16. SA Insertion (desc)          -95
-17. SA Replacement (desc)        -95
-18. SA Insertion (reg)           -95
-19. SA Replacement (reg)         -95
-20. VLAN TX Insertion            -95
-21. SVLAN TX Insertion           -95
-22. L3 DA Filtering              -95
-23. L3 SA Filtering              -95
-24. L4 DA TCP Filtering          -95
-25. L4 SA TCP Filtering          -95
-26. L4 DA UDP Filtering          -95
-27. L4 SA UDP Filtering          -95
-28. ARP Offload                  -95
-29. Jumbo Frame                  -110
-30. Multichannel Jumbo           -95
-31. Split Header                 -95
-32. TBS (ETF Scheduler)          -95
+> > WLAN (PCIe) used + BT (UART) used -> no independent handling
+> >                                      possible. BT depends on WLAN.
 
-[  324.881327] socfpga-dwmac ff800000.ethernet eth0: Link is Down
-[  327.995360] socfpga-dwmac ff800000.ethernet eth0: Link is Up - 1Gbps/Full - flow control rx/tx
+and
 
-Link:[1] https://www.intel.com/content/www/us/en/docs/programmable/683711/21-2/functional-description-of-the-emac.html
-Fixes: 331085a423b ("arm64: dts: socfpga: change the reset-name of "stmmaceth-ocp" to "ahb")
-Signed-off-by: Mamta Shukla <mamta.shukla@leica-geosystems.com>
-Tested-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
----
-Changes in v2:
-- Fix subject prefix
-- Reword commit message.
+> > WLAN (SDIO) + BT (UART) -> This patchset and the mmc-power-seq patchset
+> >                            allow us to handle WLAN and BT independently
+> > 			   regardless if BT or WLAN is used or not.
 
- arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+you need to stick with the dependent handling which is no problem once
+this patchset get applied if your system support hot-plug. If hot-plug
+is not possible you could consider unsing overlays.
 
-diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-index f36063c57c7f..72c55e5187ca 100644
---- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-+++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
-@@ -440,7 +440,7 @@ gmac0: ethernet@ff800000 {
- 			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
- 			clock-names = "stmmaceth", "ptp_ref";
- 			resets = <&rst EMAC0_RESET>, <&rst EMAC0_OCP_RESET>;
--			reset-names = "stmmaceth", "ahb";
-+			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			snps,axi-config = <&socfpga_axi_setup>;
- 			status = "disabled";
- 		};
-@@ -460,7 +460,7 @@ gmac1: ethernet@ff802000 {
- 			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
- 			clock-names = "stmmaceth", "ptp_ref";
- 			resets = <&rst EMAC1_RESET>, <&rst EMAC1_OCP_RESET>;
--			reset-names = "stmmaceth", "ahb";
-+			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			snps,axi-config = <&socfpga_axi_setup>;
- 			status = "disabled";
- 		};
-@@ -480,7 +480,7 @@ gmac2: ethernet@ff804000 {
- 			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
- 			clock-names = "stmmaceth", "ptp_ref";
- 			resets = <&rst EMAC2_RESET>, <&rst EMAC2_OCP_RESET>;
--			reset-names = "stmmaceth", "ahb";
-+			reset-names = "stmmaceth", "stmmaceth-ocp";
- 			snps,axi-config = <&socfpga_axi_setup>;
- 			status = "disabled";
- 		};
--- 
-2.25.1
+However, this patchset does _NOT_ cause any regression neither for the
+MMC nor the PCIe use-case, and you don't have to touch your DTS files. It
+would be an improvement for platforms (not speaking of NXP EVK
+platforms) which utilize the MMC+UART interfaces only.
+
+> And it looks strange that we can only add the reset-gpios BT property
+> to the hosts that only support SDIO WLAN, we hope there is a solution
+> for the PCIe WLAN too.
+
+"We hope there is a solution" <-- This is not how upstream work.
+
+Also as said: The WLAN PCIe interface must/should be compatible with the
+PCIe Spec. There is no way that we can handle both devices
+independent since the PCIe spec specifies the power-up-sequence very
+strict.
+
+If for example, we do handle it independent and the BT part brings the
+device out-of-reset while the PCIe bus is not yet ready, the device's
+WLAN PCIe subsystem may get confused.
+
+There are two solution NXP could provide:
+
+ - The PCIe WLAN/BT devices exposes all devices WLAN + BT via PCIe, this
+   would eliminate the UART part.
+ - All new WLAN/BT devices do have a separate hw reset line for each
+   radio the device supports.
+
+Regards,
+  Marco
 
