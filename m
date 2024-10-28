@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E10BF9B28E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:37:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3EEC9B28E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:37:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5C3B281FF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:37:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98A5E1F21EB1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF5E1DA631;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6994D1DACB1;
 	Mon, 28 Oct 2024 07:32:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ob67aNQV";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CMSwTDVw"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="caBvsLBS";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gBGboDw5"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7075192B78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D4B192D63
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100744; cv=none; b=SSgy47Ywufbxg/q0vRlx7RLmRmCnImqGsa3G0lVjBP0hZDiD4Tn4dw+Uln3iD9vP0ISNydv8Y+HWr1T5VgM63oQm/CP2trZ+Sus5oteBtEDTJBQR8T/YpmALGcYaOKPhKPLbEdwRTZnH7o0ukUSSsKpf/ZivKbRsdRtXHLlogek=
+	t=1730100744; cv=none; b=YflL7s1j6e6BZIfFvvHPsMYuHKu2CXvCm075lfHCJDhCgqMfviL4/mYFiNVUH/mX4e+KldF+U6P7ou1hoy7i1yun53w7FLxxAcgGH5yi7VTdOp4+0l4DYzWU+V8kBUXQfWJVahq7tw6Bf5N6l/2DZJeL8hiEPvxlfAqLNEfjgQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100744; c=relaxed/simple;
-	bh=5MZt17PaMlsHfNRKyGAIFHUJ+wkj5i3UiEoH00D7aik=;
+	bh=bkqsIoCyE3CqSdDhx7dadJrfLwphPvU3dAe3uOitme8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=daknXdVl5zWSim8ZM5qSlLGV7jIeaVYX6QwZRL6Ya/lVAtYK9wlHk6pP6aaHTpMg7vKLtAIyjJNvICeEfY6zWICKsRXtH7lAmGwHGZj2XL/sf6R6RvO2Puk941/ic66ybAMOf8nm0O6lwVN45RndGIcYbVZGllOXGuRUyJDvFso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ob67aNQV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CMSwTDVw; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=KCB+79A8g1hnBIfKKeHFI/e7OtMcIn775fYOmuWUPr39pYWjmUV8Y5+NxLj5ZXXmzUvn+cQUnlUf7S8tUvm7KT2Znf+mXxX8x7qhonctofGjLu0quNLBQtMjZjp/tukogn1PNZyJMRbeRg0+CoR6jPXlv/xn/bKAiuUxSCQaJIA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=caBvsLBS; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gBGboDw5; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AxwZp1odMq9uoPIq7uyz56U1ANYVR+uLtMQUbFRNsoI=;
-	b=Ob67aNQVJ2vmXD48JMg76G9LAhvRtlYe+BZwJp8xAhCUxyJ1XUdQjRTN4S3Wp6d0m/r3cP
-	jhVy7fMDd0fpiBC9J+2P8M+6UzHHJ5Fa7r2y8iNKhltFKdl1aPrc0b77M4op6xZ8PPwMSi
-	EwApT8qLARocXytNnNx5aAGinbIG/cUQH8ygO6QYobK/Uc1sLEH2lhpoGBDPJyaPbl8utD
-	e2wYCKUj/x03in5TP44zu3iHhL+ju7oq2obuQg3oZAFNQ5bOBHddsmzPgfenEEysZU3YXO
-	5kySGjo4M+KTTd0SSy0Jt9dNNwInjCrnAFsQokA78XmRYTUUxF2vD3Wn0MK3LA==
+	bh=f/bFwrQjSGVLIFbGNl9gheDznbX3lT4A2xnJTp6woys=;
+	b=caBvsLBSuNZHOOv6Ak9Hjy3hcH80QJwywcu2t/XYHT5TqxKNV5G8by6Qs6a2kojGxwAPz+
+	VdcmaD13xmCPsUTqBqzmPtcKS2IRS6vmm+NHB8fips7oHh7nPfrGgpciPTUPkLCenP4niS
+	7tlrmwu6X04bXjDY3s86ou5vQEMTg/qUD9Unqki1PGqHeD8NPMUsZ7q4b18dRcfHuo/fgL
+	7lIB+FL+frqM6/5rks/0gyxY2fBHhIlCDGDkhhI3OG98JLgr/M7SIwKDIjrygD/U0XWlMd
+	EWQJYteV97vPH7NF4olcT7ocQVJ4JA/9xmhFIhNGQRYmi4JGxqe9HqIX9rGkeg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100739;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=AxwZp1odMq9uoPIq7uyz56U1ANYVR+uLtMQUbFRNsoI=;
-	b=CMSwTDVw7VVUHDmc42Bsf+4kqEpFAgsrg0NWOJtTIw8M9YcLv0pHEx2YXmpjRBfBA4vTrI
-	zR+dKTFRhCnjPXDA==
+	bh=f/bFwrQjSGVLIFbGNl9gheDznbX3lT4A2xnJTp6woys=;
+	b=gBGboDw5EPF0VtdEVuqyHOAmc8K+F+LPj+4UlHI5rDJ7uNNED9tzQBeM0CVAsNHIlr8onN
+	2pa1txmFYrgsd4Aw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Michael Ellerman <mpe@ellerman.id.au>
-Subject: [PATCH 10/31] powerpc/watchdog: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:31:43 +0100
-Message-Id: <80cf6f14a74a374903997670926b8ce3a9439558.1729864823.git.namcao@linutronix.de>
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH 11/31] perf/x86: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:31:44 +0100
+Message-Id: <0687a34c6cc33bd7f814b6c71c029d5cfcad0de8.1729864823.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729864823.git.namcao@linutronix.de>
 References: <cover.1729864823.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,26 +86,43 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
 ---
- arch/powerpc/kernel/watchdog.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ arch/x86/events/intel/uncore.c | 3 +--
+ arch/x86/events/rapl.c         | 3 +--
+ 2 files changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/kernel/watchdog.c b/arch/powerpc/kernel/watchdog.c
-index 8c464a5d8246..2429cb1c7baa 100644
---- a/arch/powerpc/kernel/watchdog.c
-+++ b/arch/powerpc/kernel/watchdog.c
-@@ -495,8 +495,7 @@ static void start_watchdog(void *arg)
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index d98fac567684..1579ee33f8eb 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -347,8 +347,7 @@ void uncore_pmu_cancel_hrtimer(struct intel_uncore_box =
+*box)
 =20
- 	*this_cpu_ptr(&wd_timer_tb) =3D get_tb();
-=20
--	hrtimer_init(hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	hrtimer->function =3D watchdog_timer_fn;
-+	hrtimer_setup(hrtimer, watchdog_timer_fn, CLOCK_MONOTONIC, HRTIMER_MODE_R=
-EL);
- 	hrtimer_start(hrtimer, ms_to_ktime(wd_timer_period_ms),
- 		      HRTIMER_MODE_REL_PINNED);
+ static void uncore_pmu_init_hrtimer(struct intel_uncore_box *box)
+ {
+-	hrtimer_init(&box->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	box->hrtimer.function =3D uncore_pmu_hrtimer;
++	hrtimer_setup(&box->hrtimer, uncore_pmu_hrtimer, CLOCK_MONOTONIC, HRTIMER=
+_MODE_REL);
  }
+=20
+ static struct intel_uncore_box *uncore_alloc_box(struct intel_uncore_type =
+*type,
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index a481a939862e..d072955e5930 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -264,8 +264,7 @@ static void rapl_hrtimer_init(struct rapl_pmu *pmu)
+ {
+ 	struct hrtimer *hr =3D &pmu->hrtimer;
+=20
+-	hrtimer_init(hr, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	hr->function =3D rapl_hrtimer_handle;
++	hrtimer_setup(hr, rapl_hrtimer_handle, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+ }
+=20
+ static void __rapl_pmu_event_start(struct rapl_pmu *pmu,
 --=20
 2.39.5
 
