@@ -1,189 +1,164 @@
-Return-Path: <linux-kernel+bounces-384998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3809B3139
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:01:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A26E9B313C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CF3E2826AC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E355E2826BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2741DA605;
-	Mon, 28 Oct 2024 13:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43761D9587;
+	Mon, 28 Oct 2024 13:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gZ425BEn"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DT5jDkNo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="I8qbRfXc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B07A1E519;
-	Mon, 28 Oct 2024 13:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D32CF1CCECE;
+	Mon, 28 Oct 2024 13:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730120463; cv=none; b=lknVHaQ/lNZE/6Mi3GXMLJs2lHMdyARNrOgZVYzNbgJFUlSfqgmjgGpcamxvbht3F3nd5+Mpnp5l3+2ap8b8iOV3pmoxWv4CJLcGcD7H/ON+iRkxuEok8rvn2kAYswqDizIXsPfmllJUG6W8ZPIy+e2VY3Q8cQlxWLlrpO4IAYU=
+	t=1730120475; cv=none; b=eGEfme8TfHiwLtELVdLV/ywa82oyQ7JEla2XLgq2VMeGUjj8NBISkwBLsGUBaETXR/PVEsOZONm2BSAUsMQ/vZ1Epy1Fv15u9zmqBLV3LbJITe4LStsguLumx91ZOH2VKiamRL0XiS0pNtBbM9SJIyTbi/VtFJ0zOoTM222CCRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730120463; c=relaxed/simple;
-	bh=l9v3vKArLjj24VREBGBj/ErZeIFdYN2suaGECGgbByE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=hNVNif3L2Hnr5by+cowOkEMj4lX3mVED0HNB+kosExwzduyz3AiqeEYNGlkaRS2KFHMF8fqKq1bpbPM3x+06b+GJGUHb8r3+ZewZEulDmoQ/UWMqEd5nxL0d5KcW2HlNEOMWFmD5X0aSjRkQYWY6xgiRrq8p7SSanjP8GglXzng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gZ425BEn; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SCarnq024817;
-	Mon, 28 Oct 2024 13:00:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=oBmDpw
-	YNe84I09VKwn/ofeAOrg0jpJFVYeqd3MTN4WE=; b=gZ425BEn4oql0Xzz69kBF7
-	PUoWGFRa/UHLGEVtqVgwAU17d3cZL6k5raOKCaBNzOo5yKE3MkY1o8tuM7zX6Szh
-	95NEAQXER8NheVVsIOeuJP3sE6gVhJbG00Ju53/bT3gt3P0qKLjW4GZ6lfN8erDu
-	PEnYn+Voir4cArTtNaUO5lirZT7RmjwjDxpPu4DnGu+r6inlqGaxBfPqNB835feY
-	IyvcWN7OgJ+dbw356aw7ieRjAohB9b3VeD8LfyRvOoibrw9b+Cno4EUspm+SrwN4
-	FluZzF3yOcodcNY36V2yWrLLa4kq9zWv1D1gn3PN7bMKL3XpiHuCwtcCgEyuQnLw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j43fthqb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 13:00:34 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49SCrYOA005507;
-	Mon, 28 Oct 2024 13:00:34 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j43fthq6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 13:00:33 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49SCZSZu018383;
-	Mon, 28 Oct 2024 13:00:32 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hc8jx648-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 13:00:32 +0000
-Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49SD0VSQ30343528
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Oct 2024 13:00:32 GMT
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D2B1058056;
-	Mon, 28 Oct 2024 13:00:31 +0000 (GMT)
-Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DE60C58063;
-	Mon, 28 Oct 2024 13:00:30 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Oct 2024 13:00:30 +0000 (GMT)
-Message-ID: <04887ab4-3e30-467a-973c-4c004283476e@linux.ibm.com>
-Date: Mon, 28 Oct 2024 09:00:30 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/3] tpm: Return tpm2_sessions_init() when null key
- creation fails
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: linux-kernel@vger.kernel.org, David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>,
-        Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Eric Snowberg <eric.snowberg@oracle.com>,
-        "open list:KEYS-TRUSTED" <keyrings@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-        stable@vger.kernel.org
-References: <20241028055007.1708971-1-jarkko@kernel.org>
- <20241028055007.1708971-2-jarkko@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <20241028055007.1708971-2-jarkko@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wrV6d_5Hf2d-impEjk1QDiYe4EVOmJqo
-X-Proofpoint-ORIG-GUID: QVsqHa21LWF-oSSjeQDdvmmUq_PCechQ
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1730120475; c=relaxed/simple;
+	bh=3hHHwP2n7PCvFaIxNa7UQkkvkGOEnOK62fpL8yZ5+G4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=umnBds1T1+X3Un74hQ6SHE++hV06HUdMHMn8NiHy2sTh7DRa8FKFhShh++Ri76bSE3NE/s801fgPykKvGle+cl7bpJo9O54+RpFmchqB4qdseX6Nb9IuY0rQcGdDlFxqTIL/UBEwQE6cnmrE4CvAkfMsDz0IvWnMJTIsS/A7xMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DT5jDkNo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=I8qbRfXc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 28 Oct 2024 13:01:09 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730120471;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=3fUlt5XcT83BeQWbDAkXrniPfir179H8/qNvazSBwAY=;
+	b=DT5jDkNoGmKVcnigDI8bSgyicWxgUg3Lc9j50eis8XosXHVKwmRptx29g2eJJYxgij3r+j
+	fffTq52TbymFSkg0udmFBznthH0Nb16P2LYbtMX2tobzU1X8fBUTHfnoRAnitQyRQ3dGWS
+	12/TY9eOyAX3xjUUMhSDxkfRCl56bxHw4wjYfifLj2W/WMrR71pEn1SnjmdcLplVwoU++H
+	7x+9Uwbpe0P/B9iEMixkUT1hhjmY9gwKsnlNf14KUksiTlKRQYS7JHMyM9MIIhVD3cJevW
+	hCmGC9GWUfbdeVMbm4Hsfe3W8ZnvsHjOzRZace8RVOrVCbVv3o7L9i50XnhNKA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730120471;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=3fUlt5XcT83BeQWbDAkXrniPfir179H8/qNvazSBwAY=;
+	b=I8qbRfXcwkNKGFSu8Zj+8HglEUNvmobPJMP+s4YT6kKoCrRvDn1CEjHPb/1sO+9yAHlusf
+	XiyTyLRV2SWHcQBA==
+From: "tip-bot2 for Borislav Petkov (AMD)" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/cpu] x86/cpu: Fix formatting of cpuid_bits[] in scattered.c
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1011
- adultscore=0 mlxscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410280103
+Message-ID: <173012046924.1442.11993258877519479480.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/cpu branch of tip:
 
+Commit-ID:     e6e6a303f83d1dcd32dcd1ab0d04ef5b7b7be646
+Gitweb:        https://git.kernel.org/tip/e6e6a303f83d1dcd32dcd1ab0d04ef5b7b7be646
+Author:        Borislav Petkov (AMD) <bp@alien8.de>
+AuthorDate:    Mon, 28 Oct 2024 13:51:05 +01:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 28 Oct 2024 13:51:05 +01:00
 
-On 10/28/24 1:49 AM, Jarkko Sakkinen wrote:
-> Do not continue tpm2_sessions_init() further if the null key pair creation
-> fails.
-> 
-> Cc: stable@vger.kernel.org # v6.10+
-> Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
-> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+x86/cpu: Fix formatting of cpuid_bits[] in scattered.c
 
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+Realign initializers to accomodate for longer X86_FEATURE define names.
 
-> ---
-> v8:
-> - Refine commit message.
-> v7:
-> - Add the error message back but fix it up a bit:
->    1. Remove 'TPM:' given dev_err().
->    2. s/NULL/null/ as this has nothing to do with the macro in libc.
->    3. Fix the reasoning: null key creation failed
-> v6:
-> - Address:
->    https://lore.kernel.org/linux-integrity/69c893e7-6b87-4daa-80db-44d1120e80fe@linux.ibm.com/
->    as TPM RC is taken care of at the call site. Add also the missing
->    documentation for the return values.
-> v5:
-> - Do not print klog messages on error, as tpm2_save_context() already
->    takes care of this.
-> v4:
-> - Fixed up stable version.
-> v3:
-> - Handle TPM and POSIX error separately and return -ENODEV always back
->    to the caller.
-> v2:
-> - Refined the commit message.
-> ---
->   drivers/char/tpm/tpm2-sessions.c | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-> index d3521aadd43e..a0306126e86c 100644
-> --- a/drivers/char/tpm/tpm2-sessions.c
-> +++ b/drivers/char/tpm/tpm2-sessions.c
-> @@ -1347,14 +1347,21 @@ static int tpm2_create_null_primary(struct tpm_chip *chip)
->    *
->    * Derive and context save the null primary and allocate memory in the
->    * struct tpm_chip for the authorizations.
-> + *
-> + * Return:
-> + * * 0		- OK
-> + * * -errno	- A system error
-> + * * TPM_RC	- A TPM error
->    */
->   int tpm2_sessions_init(struct tpm_chip *chip)
->   {
->   	int rc;
->   
->   	rc = tpm2_create_null_primary(chip);
-> -	if (rc)
-> -		dev_err(&chip->dev, "TPM: security failed (NULL seed derivation): %d\n", rc);
-> +	if (rc) {
-> +		dev_err(&chip->dev, "null key creation failed with %d\n", rc);
-> +		return rc;
-> +	}
->   
->   	chip->auth = kmalloc(sizeof(*chip->auth), GFP_KERNEL);
->   	if (!chip->auth)
+No functional changes.
 
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+---
+ arch/x86/kernel/cpu/scattered.c | 58 ++++++++++++++++----------------
+ 1 file changed, 29 insertions(+), 29 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/scattered.c b/arch/x86/kernel/cpu/scattered.c
+index 1e54332..16f3ca3 100644
+--- a/arch/x86/kernel/cpu/scattered.c
++++ b/arch/x86/kernel/cpu/scattered.c
+@@ -24,36 +24,36 @@ struct cpuid_bit {
+  * levels are different and there is a separate entry for each.
+  */
+ static const struct cpuid_bit cpuid_bits[] = {
+-	{ X86_FEATURE_APERFMPERF,       CPUID_ECX,  0, 0x00000006, 0 },
+-	{ X86_FEATURE_EPB,		CPUID_ECX,  3, 0x00000006, 0 },
+-	{ X86_FEATURE_INTEL_PPIN,	CPUID_EBX,  0, 0x00000007, 1 },
+-	{ X86_FEATURE_RRSBA_CTRL,	CPUID_EDX,  2, 0x00000007, 2 },
+-	{ X86_FEATURE_BHI_CTRL,		CPUID_EDX,  4, 0x00000007, 2 },
+-	{ X86_FEATURE_CQM_LLC,		CPUID_EDX,  1, 0x0000000f, 0 },
+-	{ X86_FEATURE_CQM_OCCUP_LLC,	CPUID_EDX,  0, 0x0000000f, 1 },
+-	{ X86_FEATURE_CQM_MBM_TOTAL,	CPUID_EDX,  1, 0x0000000f, 1 },
+-	{ X86_FEATURE_CQM_MBM_LOCAL,	CPUID_EDX,  2, 0x0000000f, 1 },
+-	{ X86_FEATURE_CAT_L3,		CPUID_EBX,  1, 0x00000010, 0 },
+-	{ X86_FEATURE_CAT_L2,		CPUID_EBX,  2, 0x00000010, 0 },
+-	{ X86_FEATURE_CDP_L3,		CPUID_ECX,  2, 0x00000010, 1 },
+-	{ X86_FEATURE_CDP_L2,		CPUID_ECX,  2, 0x00000010, 2 },
+-	{ X86_FEATURE_MBA,		CPUID_EBX,  3, 0x00000010, 0 },
+-	{ X86_FEATURE_PER_THREAD_MBA,	CPUID_ECX,  0, 0x00000010, 3 },
+-	{ X86_FEATURE_SGX1,		CPUID_EAX,  0, 0x00000012, 0 },
+-	{ X86_FEATURE_SGX2,		CPUID_EAX,  1, 0x00000012, 0 },
+-	{ X86_FEATURE_SGX_EDECCSSA,	CPUID_EAX, 11, 0x00000012, 0 },
+-	{ X86_FEATURE_HW_PSTATE,	CPUID_EDX,  7, 0x80000007, 0 },
+-	{ X86_FEATURE_CPB,		CPUID_EDX,  9, 0x80000007, 0 },
+-	{ X86_FEATURE_PROC_FEEDBACK,    CPUID_EDX, 11, 0x80000007, 0 },
+-	{ X86_FEATURE_AMD_FAST_CPPC,	CPUID_EDX, 15, 0x80000007, 0 },
+-	{ X86_FEATURE_MBA,		CPUID_EBX,  6, 0x80000008, 0 },
+-	{ X86_FEATURE_SMBA,		CPUID_EBX,  2, 0x80000020, 0 },
+-	{ X86_FEATURE_BMEC,		CPUID_EBX,  3, 0x80000020, 0 },
+-	{ X86_FEATURE_AMD_WORKLOAD_CLASS,	CPUID_EAX,  22, 0x80000021, 0 },
+-	{ X86_FEATURE_PERFMON_V2,	CPUID_EAX,  0, 0x80000022, 0 },
+-	{ X86_FEATURE_AMD_LBR_V2,	CPUID_EAX,  1, 0x80000022, 0 },
++	{ X86_FEATURE_APERFMPERF,		CPUID_ECX,  0, 0x00000006, 0 },
++	{ X86_FEATURE_EPB,			CPUID_ECX,  3, 0x00000006, 0 },
++	{ X86_FEATURE_INTEL_PPIN,		CPUID_EBX,  0, 0x00000007, 1 },
++	{ X86_FEATURE_RRSBA_CTRL,		CPUID_EDX,  2, 0x00000007, 2 },
++	{ X86_FEATURE_BHI_CTRL,			CPUID_EDX,  4, 0x00000007, 2 },
++	{ X86_FEATURE_CQM_LLC,			CPUID_EDX,  1, 0x0000000f, 0 },
++	{ X86_FEATURE_CQM_OCCUP_LLC,		CPUID_EDX,  0, 0x0000000f, 1 },
++	{ X86_FEATURE_CQM_MBM_TOTAL,		CPUID_EDX,  1, 0x0000000f, 1 },
++	{ X86_FEATURE_CQM_MBM_LOCAL,		CPUID_EDX,  2, 0x0000000f, 1 },
++	{ X86_FEATURE_CAT_L3,			CPUID_EBX,  1, 0x00000010, 0 },
++	{ X86_FEATURE_CAT_L2,			CPUID_EBX,  2, 0x00000010, 0 },
++	{ X86_FEATURE_CDP_L3,			CPUID_ECX,  2, 0x00000010, 1 },
++	{ X86_FEATURE_CDP_L2,			CPUID_ECX,  2, 0x00000010, 2 },
++	{ X86_FEATURE_MBA,			CPUID_EBX,  3, 0x00000010, 0 },
++	{ X86_FEATURE_PER_THREAD_MBA,		CPUID_ECX,  0, 0x00000010, 3 },
++	{ X86_FEATURE_SGX1,			CPUID_EAX,  0, 0x00000012, 0 },
++	{ X86_FEATURE_SGX2,			CPUID_EAX,  1, 0x00000012, 0 },
++	{ X86_FEATURE_SGX_EDECCSSA,		CPUID_EAX, 11, 0x00000012, 0 },
++	{ X86_FEATURE_HW_PSTATE,		CPUID_EDX,  7, 0x80000007, 0 },
++	{ X86_FEATURE_CPB,			CPUID_EDX,  9, 0x80000007, 0 },
++	{ X86_FEATURE_PROC_FEEDBACK,		CPUID_EDX, 11, 0x80000007, 0 },
++	{ X86_FEATURE_AMD_FAST_CPPC,		CPUID_EDX, 15, 0x80000007, 0 },
++	{ X86_FEATURE_MBA,			CPUID_EBX,  6, 0x80000008, 0 },
++	{ X86_FEATURE_SMBA,			CPUID_EBX,  2, 0x80000020, 0 },
++	{ X86_FEATURE_BMEC,			CPUID_EBX,  3, 0x80000020, 0 },
++	{ X86_FEATURE_AMD_WORKLOAD_CLASS,	CPUID_EAX, 22, 0x80000021, 0 },
++	{ X86_FEATURE_PERFMON_V2,		CPUID_EAX,  0, 0x80000022, 0 },
++	{ X86_FEATURE_AMD_LBR_V2,		CPUID_EAX,  1, 0x80000022, 0 },
+ 	{ X86_FEATURE_AMD_LBR_PMC_FREEZE,	CPUID_EAX,  2, 0x80000022, 0 },
+-	{ X86_FEATURE_AMD_HETEROGENEOUS_CORES,	CPUID_EAX,  30, 0x80000026, 0 },
++	{ X86_FEATURE_AMD_HETEROGENEOUS_CORES,	CPUID_EAX, 30, 0x80000026, 0 },
+ 	{ 0, 0, 0, 0, 0 }
+ };
+ 
 
