@@ -1,159 +1,131 @@
-Return-Path: <linux-kernel+bounces-384088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 987FF9B2423
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:26:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82FEC9B2426
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:26:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A1A51F21649
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:26:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA618B218C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EB018CC09;
-	Mon, 28 Oct 2024 05:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C6118D649;
+	Mon, 28 Oct 2024 05:26:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="pJ/hLgol"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="k/9c/UgW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2A218C355
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A4118CBE9;
+	Mon, 28 Oct 2024 05:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730093169; cv=none; b=suEJu0B57uFGjtRf/1VLEzSgcnFJqhxJU15bGbNpbqIJVjC97/2l1+5z+aU7KcEE7zOuI9fZGAv8nG7fRKYlkx96Fq+5GwIZyFsfg36yULNFSGcWCeyPqm61HE/5aLqi3OIRLYLtHGnBdipqxK4z4SwXQfdgOGTOAXIg8lMIV7o=
+	t=1730093177; cv=none; b=CDcH5mT4akIcWgwHei9481PmoL8o+PT9fdFgcFVytntiEc5mdYbWhc6YAFnPdWkzNTk4Nq0XswfCZNMTmAHHqDVYCPEaquPQbjP0tfPJnlREPPu9ccSgX7VUVdqii9q0h7XqkZb9xb/G2Pm8ot2mBcHzqda3Oxg8kgEkfyjs5Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730093169; c=relaxed/simple;
-	bh=iRnLCBjGCZmdswD8L6vxT3DzJwoWN7WXYl0w/SsifZM=;
+	s=arc-20240116; t=1730093177; c=relaxed/simple;
+	bh=nA6pfjfAB2+RV2rRgDmuKuNqtYi6ymb+L+byNKDyasM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p991h/fXjNAdtaiXKWny7AaGl37QWe4CdlF5HVjDpkeJZCW3pjL2bKlZZ9cOfa3luIqoqO1mXA8Ypfeqjuz69+4E1aP1BRJM2elWWSrOREf6G8npNIbKolEtc/YY5uDgQrUnAjbnqhYhHTG/i0PRk3Bo9oHTp7sbJiyAG1zpUzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=pJ/hLgol; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20caccadbeeso40990665ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 22:26:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1730093167; x=1730697967; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Q7ptIREBatZjd8dBV5b/Qd6B2L3n4WY1Wuc9++2Okc=;
-        b=pJ/hLgolkDPoiVpQIm/DPz1tIIHooSfb8Or05XIuy2uXZrNaYJt0u6tK2g/xjWlSRC
-         WgFnx8AhmkNMQufUOF/RMqbuBhyRc6upJubJlYUl5gdNC0+iHMmFRe3dS1CaLQFqXl/q
-         j7r9iM3f4Mv/9L1esVv1HvP0/aqqZ4gtAGbSh7wKEBTiEMpO7oE/rnJaxIyQ7aU/iko6
-         N2BDNN2Ge/ITXWQoSSc1t4J1CKoU+wYMlu4mee/U0A9Rs6kPLUdNW2mUFwVMsIcfLLCu
-         j7yO9QxY4vq2NC4MiQxtH5WqtwlVlu77WlxjzOFXZ0LR4GN6ONhR+xEks3mvPqFZiuuq
-         hf3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730093167; x=1730697967;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2Q7ptIREBatZjd8dBV5b/Qd6B2L3n4WY1Wuc9++2Okc=;
-        b=q0P4FzYlSWPGBmFPm+oYty6mNNwvwukhBLKKp/8hmzy2eC1XaFuIf63XA6G8iznprJ
-         u/k7GlHhL6F85jrreGufqc/7YYugA0B8maH/IkjrX8hbCyfGCMBnejAEP+2cSI3Pne4y
-         K+JG7DjLs42fBq6Y6U/F7rWG4A2rPnu6VixmnAEcImqnGQssKZSndDVo8+LwYvktJokI
-         bq46bHQc+5HGLFnjk52OWZ7qf10QCjHYctqax6/blYsQopL1COdUJQAjMCbJvxR7SzQ6
-         NrTwSqhEJ+SG0Boiht36DXbvwShdAEDZuDOTXcGmt/E+Xzm0C5ocNXJG4bjmCW1PqHyo
-         Tzkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYgS8je0PJAEJpw2NTGvVKrYsN8bZMUl5Qt5LcxqlIeI2VEM8YRPio7IcAXtA8wntvuHJx1qJqAVWawkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtP2jgswc1cR4Dfn5RtdNfP307PW4O1SBQ0p1/yPGq4lckkk0O
-	z7XllCM++I6UTVnaqQ7sxQsoOGyWI3tf4al4vuEFzsMYLF73/7lf8IJR7ZvjD+E=
-X-Google-Smtp-Source: AGHT+IFPxeRf9IuVVTDCJj4v1ByXNtqUKo50trb3jTrgm4WFJiMGk499pN63tQrEWj+eFKMRI/dnXQ==
-X-Received: by 2002:a17:902:c943:b0:205:709e:1949 with SMTP id d9443c01a7336-210c6d4450cmr90056815ad.57.1730093166880;
-        Sun, 27 Oct 2024 22:26:06 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf4435asm43489265ad.55.2024.10.27.22.26.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 22:26:06 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1t5IGR-006mkH-0i;
-	Mon, 28 Oct 2024 16:26:03 +1100
-Date: Mon, 28 Oct 2024 16:26:03 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Ritesh Harjani <ritesh.list@gmail.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] ext4: Warn if we ever fallback to buffered-io for
- DIO atomic writes
-Message-ID: <Zx8ga59h0JgU/YIC@dread.disaster.area>
-References: <cover.1729825985.git.ritesh.list@gmail.com>
- <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com>
- <Zx6+F4Cl1owSDspD@dread.disaster.area>
- <87iktdm3sf.fsf@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iyx3joiGFTxxpVkagw81WIj1J0IKNQ5zNA3mGkBsRelsUnQ7DBBB16+6qvkHDYfbyWoGGJJsQpSWv6DG+6U3iu2/IkBa8OnuaGs0DW9r1iCvRasjNqvDQtMBE2r5R0qVIlf7caIXT2Fn7ZdSFqYO3PA0eYZem448WK6HnwWKW7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=k/9c/UgW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96A57C4CEC3;
+	Mon, 28 Oct 2024 05:26:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730093176;
+	bh=nA6pfjfAB2+RV2rRgDmuKuNqtYi6ymb+L+byNKDyasM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=k/9c/UgWO5g2BQ3KsZ22B6waQrSOAPEMYuGE27n+EiQYYnD0mmbs/yFMUojHCOJja
+	 U9fCKb2HAYbkuo7NbGTmfq25HMOtK9oCwYY8kpsmq3cL7pkXXc961FC4/YsI2CO50m
+	 DqAS49eobpen5tuRkLYJpRBj5B+VT/5+dBFLf9Os=
+Date: Mon, 28 Oct 2024 06:26:04 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"saravanak@google.com" <saravanak@google.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Seiya Wang =?utf-8?B?KOeOi+i/uuWQmyk=?= <seiya.wang@mediatek.com>,
+	Singo Chang =?utf-8?B?KOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>
+Subject: Re: [PATCH] Revert "drm/mipi-dsi: Set the fwnode for mipi_dsi_device"
+Message-ID: <2024102855-untitled-unfixed-2b9d@gregkh>
+References: <20241024-fixup-5-15-v1-1-74d360bd3002@mediatek.com>
+ <2024102406-shore-refurbish-767a@gregkh>
+ <88f78b11804b0f18e0dce0dca95544bf6cf6c7c6.camel@mediatek.com>
+ <2024102411-handgrip-repayment-f149@gregkh>
+ <ddc5f179dfa8445e2b25ae0c6e382550d45bbbd3.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87iktdm3sf.fsf@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ddc5f179dfa8445e2b25ae0c6e382550d45bbbd3.camel@mediatek.com>
 
-On Mon, Oct 28, 2024 at 06:39:36AM +0530, Ritesh Harjani wrote:
+On Mon, Oct 28, 2024 at 02:38:49AM +0000, Jason-JH Lin (林睿祥) wrote:
+> On Thu, 2024-10-24 at 12:23 +0200, gregkh@linuxfoundation.org wrote:
+> >  	 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  On Thu, Oct 24, 2024 at 10:16:05AM +0000, Jason-JH Lin (林睿祥) wrote:
+> > > Hi Greg,
+> > > 
+> > > Thanks for your information.
+> > > 
+> > > On Thu, 2024-10-24 at 11:47 +0200, Greg KH wrote:
+> > > >   
+> > > > External email : Please do not click links or open attachments
+> > until
+> > > > you have verified the sender or the content.
+> > > >  On Thu, Oct 24, 2024 at 05:37:13PM +0800, Jason-JH.Lin via B4
+> > Relay
+> > > > wrote:
+> > > > > From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+> > > > > 
+> > > > > This reverts commit ac88a1f41f93499df6f50fd18ea835e6ff4f3200.
+> > > > > 
+> > > > > Reason for revert:
+> > > > > 1. The commit [1] does not land on linux-5.15, so this patch
+> > does
+> > > > not
+> > > > > fix anything.
+> > > > > 
+> > > > > 2. Since the fw_device improvements series [2] does not land on
+> > > > > linux-5.15, using device_set_fwnode() causes the panel to flash
+> > > > during
+> > > > > bootup.
+> > > > > 
+> > > > > Incorrect link management may lead to incorrect device
+> > > > initialization,
+> > > > > affecting firmware node links and consumer relationships.
+> > > > > The fwnode setting of panel to the DSI device would cause a DSI
+> > > > > initialization error without series[2], so this patch was
+> > reverted
+> > > > to
+> > > > > avoid using the incomplete fw_devlink functionality.
+> > > > > 
+> > > > > [1] commit 3fb16866b51d ("driver core: fw_devlink: Make cycle
+> > > > detection more robust")
+> > > > > [2] Link: 
+> > > > 
+> > https://lore.kernel.org/all/20230207014207.1678715-1-saravanak@google.com
+> > > > > 
+> > > 
+> > > Please don't mind me make a confirmation.
+> > > I just need to add this line here and send it again, right?
+> > > 
+> > > Cc: <stable@vger.kernel.org> #5.15.169
+> > 
+> > Yes.
 > 
-> Hi Dave, 
+> Hi Greg,
 > 
-> Dave Chinner <david@fromorbit.com> writes:
+> Thanks for your confirmation!
 > 
-> > On Fri, Oct 25, 2024 at 09:15:53AM +0530, Ritesh Harjani (IBM) wrote:
-> >> iomap will not return -ENOTBLK in case of dio atomic writes. But let's
-> >> also add a WARN_ON_ONCE and return -EIO as a safety net.
-> >> 
-> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> >> ---
-> >>  fs/ext4/file.c | 10 +++++++++-
-> >>  1 file changed, 9 insertions(+), 1 deletion(-)
-> >> 
-> >> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-> >> index f9516121a036..af6ebd0ac0d6 100644
-> >> --- a/fs/ext4/file.c
-> >> +++ b/fs/ext4/file.c
-> >> @@ -576,8 +576,16 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
-> >>  		iomap_ops = &ext4_iomap_overwrite_ops;
-> >>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
-> >>  			   dio_flags, NULL, 0);
-> >> -	if (ret == -ENOTBLK)
-> >> +	if (ret == -ENOTBLK) {
-> >>  		ret = 0;
-> >> +		/*
-> >> +		 * iomap will never return -ENOTBLK if write fails for atomic
-> >> +		 * write. But let's just add a safety net.
-> >> +		 */
-> >> +		if (WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC))
-> >> +			ret = -EIO;
-> >> +	}
-> >
-> > Why can't the iomap code return EIO in this case for IOCB_ATOMIC?
-> > That way we don't have to put this logic into every filesystem.
-> 
-> This was origially intended as a safety net hence the WARN_ON_ONCE.
-> Later Darrick pointed out that we still might have an unconverted
-> condition in iomap which can return ENOTBLK for DIO atomic writes (page
-> cache invalidation).
+> I've sent the patch again without adding `v2` after the [PATCH]:
+> https://lore.kernel.org/all/20241024-fixup-5-15-v1-1-62f21a32b5a5@mediatek.com
+> Would that be fine with you?
 
-Yes. That's my point - iomap knows that it's an atomic write, it
-knows that invalidation failed, and it knows that there is no such
-thing as buffered atomic writes. So there is no possible fallback
-here, and it should be returning EIO in the page cache invalidation
-failure case and not ENOTBLK.
-
-> You pointed it right that it should be fixed in iomap. However do you
-> think filesystems can still keep this as safety net (maybe no need of
-> WARN_ON_ONCE).
-
-I don't see any point in adding "impossible to hit" checks into
-filesystems just in case some core infrastructure has a bug
-introduced....
-
--Dave.
-
--- 
-Dave Chinner
-david@fromorbit.com
+But it is a v2 patch, why not mark it as such?
 
