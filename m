@@ -1,79 +1,132 @@
-Return-Path: <linux-kernel+bounces-384081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7BE9B2406
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:15:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8B49B240A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:16:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B932B213F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:15:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAF5281B19
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47F318C03D;
-	Mon, 28 Oct 2024 05:14:55 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96BA818C900;
+	Mon, 28 Oct 2024 05:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fiA5OUsI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E26F1534E9;
-	Mon, 28 Oct 2024 05:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E249F646;
+	Mon, 28 Oct 2024 05:16:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730092495; cv=none; b=t2hpyNU9Oj8W8xS4DoA7c+2hGQQbAOXkTe8BhX7oXuRsft0PQ6+rxKWTM7HQDpqPA/N4ZAPDxgR9tg3OlzHirLOur1m5jBXQs9/D+ZhqXtZLHMz7AS6JjbE3ciZrx6SG7A+MGxjewqi6/4ZRrntGVHlIHq+nIM/U9NsqLuUe7uI=
+	t=1730092570; cv=none; b=MyYt8pi6PL0WhA91DjAJit4psGs8sYb9bt5JpoOy8lgLCwHz/p6her+uATl7WeYu393NJKI0zSrksRWFfY5Vu7IlvP0R28maKh+vKv2K8WCAok3I0gpRmWeF73MoFC7O1T92ctMUWOhJJPm/QUZJ8R1WrFSOL5qEn9PTtE0iDYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730092495; c=relaxed/simple;
-	bh=ph9qCNxC2H1s5AcGeZm0TwwdMutnnnRZ5XviYZxuODA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pQ9+/sKUWJgXu9BH3N0G1Nhw9UB12AYROkdku+xoELzps1fDw15GBPEvjgY4yupqRP6bnEJS6oEWhS+gWGxmfQVCmcNVJLfbU8Ipu3qgXkr60xSXmL1B7EN1/JQ8etCoHVUDGiensmr8el+zN6JrT4nXwbx+pmUlHNqTLV/sZAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 747A6C4CEC3;
-	Mon, 28 Oct 2024 05:14:53 +0000 (UTC)
-Date: Mon, 28 Oct 2024 01:14:49 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: MottiKumar Babu <mottikumarbabu@gmail.com>, mhiramat@kernel.org,
- mark.rutland@arm.com, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linux.dev, anupnewsmail@gmail.com
-Subject: Re: [PATCH] Removed unnecessary initialization of "ret"
-Message-ID: <20241028011449.68818eef@rorschach.local.home>
-In-Reply-To: <5d87c8ba-8464-4d9c-9152-611097b5ae3e@linuxfoundation.org>
-References: <20241027211913.26718-2-mottikumarbabu@gmail.com>
-	<5d87c8ba-8464-4d9c-9152-611097b5ae3e@linuxfoundation.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730092570; c=relaxed/simple;
+	bh=NeiDnxW6+CaN8HTntKouJjciT9/fHViKi/g7Ol6iO08=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MEqf/a+kkpfIkuLKRV9hFttYwf/uWJwvoG3capSR/IuFg+yco6H6+up09buK27SvgEk2jIy7VRYQ5KcoEfWntPO4glAotWiqAkrNi+qmCzTib83hObPxtYCyRnZYax0KwmrJsxfOp40bELD7+zRl1BHZnGDASz3nwtRUboOyzQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fiA5OUsI; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNxiwH017467;
+	Mon, 28 Oct 2024 05:16:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	pNfJ+VE0McHs+D6MN/SQa8ixaw3qRmSdWP5mkFmCyeI=; b=fiA5OUsIH/n2lCec
+	Bd6rfnTjWiaauQSMvmybZvZk8EggUX5cjQJP5MFOMemOlxHgKmI0iwAD5d3E5RaA
+	24aAKjNuvjTb/Jhx5ZPBBZGvUz+7Y8JGjNk6sffw2FqFxJ/rwbEhpXsA7f3iuZ8N
+	CwxKydS/zpC0/CWN/PW3pB5th6g/Qr5citr3PvkbuZHpt+piETweoYfrux4uqRJ+
+	IC+/QNXI0+CLv3SvcQTu/KsfDjXXPhFHB9RGGvmua7FKu+CtskK+L4TJ0vRkn3cJ
+	QgBau2d/NlMdGdluoJO2A2lDSw6+2PY7EqRW355sOzYfPcEGFgF+vnEXRDGAlJ+a
+	KlgOZA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqrgkq3n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 05:16:00 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S5FxfZ004596
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 05:15:59 GMT
+Received: from [10.216.48.13] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 22:15:55 -0700
+Message-ID: <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+Date: Mon, 28 Oct 2024 10:45:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
+ QCS8300
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
+ <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
+ <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P4B_djelzvsaKjiCRpCbZzRvWnFhno0C
+X-Proofpoint-GUID: P4B_djelzvsaKjiCRpCbZzRvWnFhno0C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=776 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280043
 
-On Sun, 27 Oct 2024 21:24:55 -0600
-Shuah Khan <skhan@linuxfoundation.org> wrote:
 
-> > diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
-> > index 69e226a48daa..b13ab2ad0e88 100644
-> > --- a/kernel/trace/fgraph.c
-> > +++ b/kernel/trace/fgraph.c
-> > @@ -1249,7 +1249,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
-> >   {
-> >   	static bool fgraph_initialized;
-> >   	int command = 0;
-> > -	int ret = 0;
-> > +	int ret;
-> >   	int i = -1;
-> >   
-> >   	guard(mutex)(&ftrace_lock);  
+
+On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
+> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
+>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
+>> QCS8300 has few additional clocks and minor differences. Hence, reuse
+>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
 > 
-> It makes sense to initialize ret - i think you might see a warning about
-> ret being not initialized before use. I don't see much value in saving
-> unnecessary computation.
+> IIUC, these clocks are not valid for SA8775p. How do we deal with such
+> cases for other Qualcomm SoCs?
+> 
 
-FYI, I'm rewriting this code for the next merge window, so this patch
-doesn't need to be applied (as it's not something Linus would take in
-an -rc release cycle).
+These newly added clocks are not applicable to SA8755P. In the 
+gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P, 
+ensuring they are not registered to the CCF.
 
--- Steve
+Thanks,
+Imran
+
+> Best regards,
+> Krzysztof
+> 
+
 
