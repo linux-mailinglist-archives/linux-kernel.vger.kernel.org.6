@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33A89B294E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:54:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2BE89B294D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:54:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F3A3B2175B
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97003282906
 	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:54:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDEF2038CA;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC8D2038CB;
 	Mon, 28 Oct 2024 07:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Hzxhe8ij";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="32lwbkQz"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dKE1tGt8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fQ2K/j3k"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A826020103B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC0932010E3
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100950; cv=none; b=hRrDGZPaM0dDHMw2CvOqq0bIxJHE5HeansY6pHVgH2yT2+7ECj0WEpfUpVktpaleukzPPSd0EzTwXYmvbZT6bUjTMOwtfxZ4HewBpAijktGDMRpH2BKlsfJ8bN3gV7rixpNQx4pIudoThbICS4M9gvlIacP9PVTy7sUwzdncmY0=
+	t=1730100950; cv=none; b=dNLAAfim96StC3A//unTgpeu7sYQ5zl1UfuysYZY/fZADQ1v9NcuMH+1Jd9IgNIHd/oOckETVzMdAmsZA/V2FUxGFwMAljvr7tnv7rlEX2UePlgrWmbcnhOXjeezEUCz4QSTinPun9mR5dN9rUYk2jm1TI0dCpXBWjajD/DiXzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100950; c=relaxed/simple;
-	bh=v0RPT0OMep2K6Mo6s2uR2d1ekab+Ly2Ar/Ea5HBqeiw=;
+	bh=vWG2uHH01sJ9W2jiPIkagHVlUuZh6PLgpKQ8r9ArHz0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=BM2xgawR+Oxqqw/5Ed7F0JLPPWGpJw7M6spqNeK0d3g8Ae7DuB4FxHxlwtbWOlcp9UXkbY9bjBID1SEK+q20GqpUYMcFlHwqpG/OmICS3/G8Jk6do1r/+pHUzEV/OFXswPMPlDwIY1FKqwttq1P2a5ax+YijTaDMjGKmUmi+oZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Hzxhe8ij; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=32lwbkQz; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=aUXvTqbNN4jePzeoq0AlPMtaC8bCml8L/XIpMjufXe+usoPir1LvsXjw1GvV5qOkOP59t/xn8Z6oz9RhQaNkwk2DH8VJ6nIQ9k1TV33nXopzVR9ErT81E3CUfqMGMNDmxTXO87lKJB5Xiy9GVOnAciOnbklr6Z1dtcb4FrPO9I8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dKE1tGt8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fQ2K/j3k; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100945;
+	s=2020; t=1730100946;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rWHQDyubjZWA+hi6pNCvcOiea7GiWMjj2xs2Oakz3bo=;
-	b=Hzxhe8ij4ZEGz0obSse4rDgIPWvEBRr4cajuIhko29oTpbm5/4F1e5AIBhvIAwgRf7DUBd
-	rwejuP7qFjYF4t0u2nJ3LfDKE+KnG0WnqvGeI97J187WdBcgdESBGEyunlPqV8e14CEcFq
-	e9x9ww/n3BhY+LKLNocpOa4oyjJU14N5HKV3xn0WGI/G/6RaWwGh8nmmGLxalMjsMiSPWk
-	AAExKd3puteWk0Ib5Sei5Ishq7JhbIjbQM7PE8WfGQWOb/D2stdAOm7raDKVjgfdL/Ibdp
-	EeaSleID8Q7BOM//X6IXC+VL1aQsapDA3o+2L+jQo2pmfq271Fs10IS2VSGMNg==
+	bh=Bf/hLOIb0vZTjqh1LvbKYEJqnLzJOGg6pXdqyiM/rK8=;
+	b=dKE1tGt8myM/uLYGLdeOSW3a/Lnn6oWxiMq2I31w1NdQ4MHiH0qw9XoI4AUdj3hLpOiWN4
+	wcNzsxS+YwGNq82jVwkjC6rr2OHAQE2/u8uCO0Bn5dMMhttJIApBsRr2U0+PKL2i4r3Qwp
+	jrUmY36WuhgwMBvXngALZnLZZT5KILAn5yXkqrZcC1IuHfFHdST2vSyhyM6o+rHDcJaHp+
+	+Ivskg88txPGJcr2d6ut2kM7DmpI+XClDweuiBXNno0itqEX/IBWCa/TefWdqDhLSq4Wd9
+	oL7ALf9kn93ZaN5/F+ZhyVVTbGEXYGy9wT/5mM7QYY1b2HNu/faE4T3+/hdvhQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100945;
+	s=2020e; t=1730100946;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=rWHQDyubjZWA+hi6pNCvcOiea7GiWMjj2xs2Oakz3bo=;
-	b=32lwbkQzr9NCNuObcApg1ny8tWmex7Zl4RX+dDU5FIpP92hQBpQwicRzLzDer+2ycbnLqh
-	WZ1C7HFh6u5N/CDQ==
+	bh=Bf/hLOIb0vZTjqh1LvbKYEJqnLzJOGg6pXdqyiM/rK8=;
+	b=fQ2K/j3kAJvoiSPwtrqyOVT41SKsp3UGpdA4GTEkrMdNbXlQeMBHeF8Q9br6tLqbR7Mx1l
+	v08+Nw20sCEEbtCA==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -63,9 +63,9 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
 	Jani Nikula <jani.nikula@linux.intel.com>
-Subject: [PATCH 34/44] drm/i915/uncore: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:35:10 +0100
-Message-Id: <4e2d3f9085781c67f94002cb91694c0f813614f9.1729865485.git.namcao@linutronix.de>
+Subject: [PATCH 35/44] drm/i915/request: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:35:11 +0100
+Message-Id: <a7913a53789c5cabccd0622308718e19e7efe36b.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -88,26 +88,25 @@ Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
 Cc: Jani Nikula <jani.nikula@linux.intel.com>
 ---
- drivers/gpu/drm/i915/intel_uncore.c | 3 +--
+ drivers/gpu/drm/i915/i915_request.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/intel_uncore.c b/drivers/gpu/drm/i915/int=
-el_uncore.c
-index 6aa179a3e92a..f68e76c5c883 100644
---- a/drivers/gpu/drm/i915/intel_uncore.c
-+++ b/drivers/gpu/drm/i915/intel_uncore.c
-@@ -2098,8 +2098,7 @@ static int __fw_domain_init(struct intel_uncore *unco=
-re,
+diff --git a/drivers/gpu/drm/i915/i915_request.c b/drivers/gpu/drm/i915/i91=
+5_request.c
+index 8f62cfa23fb7..ea0b8e7e4828 100644
+--- a/drivers/gpu/drm/i915/i915_request.c
++++ b/drivers/gpu/drm/i915/i915_request.c
+@@ -293,8 +293,7 @@ static void __rq_init_watchdog(struct i915_request *rq)
+ {
+ 	struct i915_request_watchdog *wdg =3D &rq->watchdog;
 =20
- 	d->mask =3D BIT(domain_id);
+-	hrtimer_init(&wdg->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	wdg->timer.function =3D __rq_watchdog_expired;
++	hrtimer_setup(&wdg->timer, __rq_watchdog_expired, CLOCK_MONOTONIC, HRTIME=
+R_MODE_REL);
+ }
 =20
--	hrtimer_init(&d->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	d->timer.function =3D intel_uncore_fw_release_timer;
-+	hrtimer_setup(&d->timer, intel_uncore_fw_release_timer, CLOCK_MONOTONIC, =
-HRTIMER_MODE_REL);
-=20
- 	uncore->fw_domains |=3D BIT(domain_id);
-=20
+ static void __rq_arm_watchdog(struct i915_request *rq)
 --=20
 2.39.5
 
