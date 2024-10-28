@@ -1,89 +1,121 @@
-Return-Path: <linux-kernel+bounces-384418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA1E9B29E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:08:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C389B29E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCC391C2198D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:08:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 562B11C21B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:08:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA41A1B4C23;
-	Mon, 28 Oct 2024 08:05:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BC618D65C;
+	Mon, 28 Oct 2024 08:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eITFST+e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4791E517;
-	Mon, 28 Oct 2024 08:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45AE17BB34;
+	Mon, 28 Oct 2024 08:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102753; cv=none; b=B2V2yV2zvNt7A+jy0cU3vjHvmRLBzmT6j7F55CX6D4gUcEnrqjE5hXvadlPPKGEW9KU5zkyc7D3dIuHFR7AJdST3/AcrD6JiumfGXlwO+PZL3IT1evJE1lTmjT2mRSkd87MU1aZngY3zInBv9y29nxjLevXS281RY7SkqbGkTSk=
+	t=1730102779; cv=none; b=cPKC2NpyEE+uL5PETBz5OTcToqCsAp+QUhn5xdSkCdNmXeKW6w+yjZ2TdtqdvrbDcz5TPG51Aa6YfNsQKzr2qRYWOAOXLDnC4/R/qXvBz5KwNp+VUAUZt4ZRr8S2tgy63h8Akn1YzNA4LtY/94qs0u8yFoaiK1Ip6TAszrvPVLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102753; c=relaxed/simple;
-	bh=dviMwiAMFSbxCHyTiVlGnp7JwQoMFZLYV9XlffgTC+c=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iHN6gxTMJCYKMwxR4SPlhE1yd6cC4h50Ho4BRZVinKTf9dzuC6BBJF9Gb9xFHKRvqMuTHTuqnrBQdSTEOJ4KfC6jGXAAR4l+cjLejQBQrIR9k7Lk5TCQ+FOMOtY6Zr6+NeQ0AARf4rjIE7P9QER36S19TJ6O1/KtYGTAR88QgDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XcQrS40GvzpXVC;
-	Mon, 28 Oct 2024 16:03:52 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8826D1402CC;
-	Mon, 28 Oct 2024 16:05:48 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 28 Oct
- 2024 16:05:47 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <horms@kernel.org>, <kuniyu@amazon.com>,
-	<a.kovaleva@yadro.com>, <ruanjinjie@huawei.com>, <lirongqing@baidu.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net] netlink: Fix off-by-one error in netlink_proto_init()
-Date: Mon, 28 Oct 2024 16:05:15 +0800
-Message-ID: <20241028080515.3540779-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730102779; c=relaxed/simple;
+	bh=oLOrjxLO4jpqn+/v2u9s6D7B2l4cAsIRB6H7GDg37Dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ad5irVw8W2A0bc8dAJie0EqtjEDhG9sRI9meCuCXS8pXS36sq+yN+XxC29imm0IIi+fzluAvGB5ywk7MKP/2rMhV3DxMNuo7u5kGUkZvb73PSJ+JPqY07BZ3WUDgjKkY4MbK9thu53mgIDPQrbYuEDdgJxXicJrGLbZth2I57DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eITFST+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D51CC4CEC3;
+	Mon, 28 Oct 2024 08:06:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730102779;
+	bh=oLOrjxLO4jpqn+/v2u9s6D7B2l4cAsIRB6H7GDg37Dg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eITFST+emWawecxJTkcdCJMhNyFxK8c992NF7GI3yRsDNLCY/Zt7ni1GzIm1SNohV
+	 kbSCinkP1LZTNPJEv2hdCBIm1hJN+0N7ie89oOaHCgnHSbadKEK02GPrPz4OgSErSF
+	 xRKYFn15fL0c+3D9txUYWio8UITcXDdqvOi1tvkUhtTLrD4Lhj4KIzDxYQN/Drw/C0
+	 VAQYkPEXmkNQDm6qG4f+9ViFq9jfKsOXsO7TmOkPrRf5O2L2jecsu/GFRxeIS5giiu
+	 0hx2War4NcqBFGIXaLxEpM7Naw5IGUu4fIW5LTwQoUywxK0ilTHui1NBpC1WPlrmNa
+	 97QzQrMaTDdRg==
+Date: Mon, 28 Oct 2024 09:06:14 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: ahaslam@baylibre.com
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com, 
+	dlechner@baylibre.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] dt-bindings: iio: dac: ad5791: Add required voltage
+ supplies
+Message-ID: <oy25ajhj7hgg2lk6i2xpkceisoveloc6i6z5sank44jc7i4f6k@xpqgqjpcgn34>
+References: <20241028071118.699951-1-ahaslam@baylibre.com>
+ <20241028071118.699951-3-ahaslam@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemg200008.china.huawei.com (7.202.181.35)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241028071118.699951-3-ahaslam@baylibre.com>
 
-In the error path of netlink_proto_init(), frees the already allocated
-bucket table for new hash tables in a loop, but the loop condition
-terminates when the index reaches zero, which fails to free the first
-bucket table at index zero.
+On Mon, Oct 28, 2024 at 08:11:14AM +0100, ahaslam@baylibre.com wrote:
+> From: Axel Haslam <ahaslam@baylibre.com>
+> 
+> Vcc, iovcc, vrefp, and vrefn are needed for the DAC to work.
+> Add them as required bindings for ad5791.
+> 
+> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
+> ---
+>  .../bindings/iio/dac/adi,ad5791.yaml          | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> index fe664378c966..79cb4b78a88a 100644
+> --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> @@ -26,6 +26,22 @@ properties:
+>    vdd-supply: true
+>    vss-supply: true
+>  
+> +  vcc-supply:
+> +    description:
+> +      Supply that powers the chip.
+> +
+> +  iovcc-supply:
+> +    description:
+> +      Supply for the digital interface.
+> +
+> +  vrefp-supply:
+> +    description:
+> +      Positive referance input voltage range. From 5v to (vdd - 2.5)
+> +
+> +  vrefn-supply:
+> +    description:
+> +      Negative referance input voltage range. From (vss + 2.5) to 0.
+> +
+>    adi,rbuf-gain2-en:
+>      description: Specify to allow an external amplifier to be connected in a
+>        gain of two configuration.
+> @@ -47,6 +63,10 @@ required:
+>    - reg
+>    - vdd-supply
+>    - vss-supply
+> +  - vcc-supply
+> +  - iovcc-supply
+> +  - vrefp-supply
+> +  - vrefn-supply
 
-Check for >= 0 so that nl_table[0].hash is freed as well.
+So you have six required supplies?
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- net/netlink/af_netlink.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Datasheet says "A voltage range of 2.7 V to 5.5 V *can* be connected",
+so doesn't it mean this is optional? Although similar wording is for
+other supplies, so maybe it's just imprecise language?
 
-diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-index 0a9287fadb47..9601b85dda95 100644
---- a/net/netlink/af_netlink.c
-+++ b/net/netlink/af_netlink.c
-@@ -2936,7 +2936,7 @@ static int __init netlink_proto_init(void)
- 	for (i = 0; i < MAX_LINKS; i++) {
- 		if (rhashtable_init(&nl_table[i].hash,
- 				    &netlink_rhashtable_params) < 0) {
--			while (--i > 0)
-+			while (--i >= 0)
- 				rhashtable_destroy(&nl_table[i].hash);
- 			kfree(nl_table);
- 			goto panic;
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
