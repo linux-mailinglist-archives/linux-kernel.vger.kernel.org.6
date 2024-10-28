@@ -1,116 +1,231 @@
-Return-Path: <linux-kernel+bounces-385126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032E59B32D6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:10:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CF5249B32DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:11:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C0F1F223B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:10:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539B31F227C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12F141DDC13;
-	Mon, 28 Oct 2024 14:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456001DDA39;
+	Mon, 28 Oct 2024 14:09:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bRAKrGoS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hTY/NJej"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04A8A1DEFE7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:07:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620D71DD547;
+	Mon, 28 Oct 2024 14:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124457; cv=none; b=TNCc097FGyzbiAwCc/0U5prtL+qDqaAi+MLuNpJzpt9WVUH6oyhatSLAzFTZ04oek0xLsuEPITRI4ak1ONeLE6RvWgqZIsv/4lJ4tU+ukFV6LhU3HbVkv2DvO/2miWuFSYIXDjtVtTyWINbQP9mgP2Phm5iFTmgUi5SuTWcD5pc=
+	t=1730124546; cv=none; b=DzTAoYYG0Q0QyrdZWxJu8JqWqfMROUdi8GGA392ATJHJ45dtL5SJYOm6OWDTmpi8NpDuoUY9Cyn1OAnsX/YfM4jZlYyXY3g7K4QxWx16OCDRDYY9BJQR7Zzm4SlYNxA4iHZHkwPoS6aRPoEHlydJEbhuxbTMBL8FZW6J+vi5SGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124457; c=relaxed/simple;
-	bh=aEPy/RuGOvqvdVlqkm67nl9kjh+ssyk/4rtEJ635zZ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Z5jhubuSWbjNpYVDKZYWZzgeJAz5JDxPZFL5Y85EHhu3oAhrjZV+cMTudRth95d1uuqQM3KTyQcAQg4goCvIg2uGdpm+M5Mc4rdnJC4fe0T8FjzGo8aTjKVV5ET+nbKiPB7OcKTxSJqcGXiVYzBVUVUgqtR3DA0ZGsualr+vsos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bRAKrGoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BBEEC4AF64;
-	Mon, 28 Oct 2024 14:07:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730124456;
-	bh=aEPy/RuGOvqvdVlqkm67nl9kjh+ssyk/4rtEJ635zZ0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bRAKrGoSXQQGTjDHPYEDQJ7WvURWH9YVGynUuT7BYoMSRc1aanTZ+Uo2XzCmRLo+X
-	 ExoiSNiAjcCxIfbndx2lD9mGS/isYXPhbo7lIW78wNMIwHBOyyyY1vHFRpZ1J+ARSD
-	 qj+/Zoevgn+2iN9lpxvrLHYPCPVbyeKouIm9ElCEV1sWnW96FYV+DTumitp3avUyMu
-	 P4276NOvFLY92UPSi9RojeBEBuzCoqLCqowXN7CGtjG5B425V+A5Mgf9ncAJzbSODu
-	 F+5OL1K4irFgKPGEiJSXHNT9PV82vn/I8JIJY23f5hK8DKcsmHn1LZzVsD/6nC8llC
-	 eNP5OMfGejxVw==
-Message-ID: <5ee160bd-431e-453d-acfb-ac6e7ba71961@kernel.org>
-Date: Mon, 28 Oct 2024 15:07:31 +0100
+	s=arc-20240116; t=1730124546; c=relaxed/simple;
+	bh=oKhIZPEnSEfcEKdXa3+2tY+wLlmSTAmm3LOY8kq93dQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=eV+Jz0LLF8O65HfYvNF+ZA6KMfgXlNatQg6EiHMl4pjIheini8rQFUy2DHPqML7qykMq+ToTvOymgFQfZCYLUh9L01rnYrIhXHT/Vc5i3Ty2w3/7fXwI2TsoAmzSMtqsdnox0XCFwL77VRAI6X3Z/R6kd2SF4ks3sc1i0CRryP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hTY/NJej; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SAj2Uf022992;
+	Mon, 28 Oct 2024 14:08:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=02KEb+GZb3EqyEdbi0ZKCQ
+	J9sjYgLaBg4YbjIePF+Dk=; b=hTY/NJej0mzt75cQm5YqobRBZBFxY4ihZTEpgd
+	FQ1ylOwveK5WxlXNKr7WbLPJ1HZffOS30CG0HFeiSDMG6t3M5b5LTj/IZS3wCGaH
+	VSPR5XxgNezusB85raVvfZ0Xnc3lIfKtYVTFF3PzqI+/sisHuyzgERYivKpYUIjS
+	egagvo6jSGMpJQex1Kj+//ZZ4m19k7wecfNMG37TpK+NDP2hfx6Ma1qLC5FxzMhp
+	wP7MXAeMdCGgxb3J20ZUpNhMtgnJiSVNecuTbkdT+bVd8ALIeqXIUITR/s4wh9+T
+	eHwoorMwY8GJ898cX1pwofBL8NuAwgSS/8fwXDDLpggdE6xw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6w5mc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 14:08:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SE8pCI001886
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 14:08:51 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 07:08:50 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Mon, 28 Oct 2024 07:08:40 -0700
+Subject: [PATCH] wifi: ath12k: mark QMI driver event helpers as noinline
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] w1: ds2408: Fix the wrong output format
-To: Liu Jing <liujing@cmss.chinamobile.com>
-Cc: linux-kernel@vger.kernel.org
-References: <20241028125751.3948-1-liujing@cmss.chinamobile.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241028125751.3948-1-liujing@cmss.chinamobile.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAOeaH2cC/42O0Q6CIBiFX8VxHU2Q1LrqPZpjCH/xzwkJRjXnu
+ 4c+QZffds53zkIiBIRILsVCAiSM6F0GdiiItso9gKLJTHjJBSv5iarZMj7IaURpAiYIEhK4Wb5
+ 9GCioc1NWWghlGpIVzwB3/Oz6W5e5VxFoH5TTdpNmFx0Vui1qMc4+fPcjiW2FPzcTo4y2fV3xl
+ rO2NuI6vVCj00ftR9Kt6/oDzFJSGeUAAAA=
+To: <ath12k-devel-internal@qti.qualcomm.com>, Kalle Valo <kvalo@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, Arnd Bergmann <arnd@kernel.org>
+CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
+        Jeff Johnson
+	<quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lCpZeS_j_RfWys6-w64f4zA4uqEA4Ei4
+X-Proofpoint-GUID: lCpZeS_j_RfWys6-w64f4zA4uqEA4Ei4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 clxscore=1011 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280113
 
-On 28/10/2024 13:57, Liu Jing wrote:
-> The output format of the retries variable should be %u instead of %d
+As described in [1], compiling the ath12k driver using clang with
+KASAN enabled warns about some functions with excessive stack usage,
+with the worst case being:
 
-Why? Is there a specific compiler warning?
+drivers/net/wireless/ath/ath12k/qmi.c:3546:13: warning: stack frame size (2456) exceeds limit (1024) in 'ath12k_qmi_driver_event_work' [-Wframe-larger-than]
 
-Please organize your patches in patchsets (see submitting patches and b4
-tool).
+Nathan [2] highlighted work done by Arnd [3] to address similar
+issues in other portions of the kernel.
 
-Best regards,
-Krzysztof
+ath12k_qmi_driver_event_work() itself is a pretty lightweight
+function, but it dispatches to several other functions which do the
+real work:
+ath12k_qmi_driver_event_work()
+	ath12k_qmi_event_server_arrive()
+		ath12k_qmi_host_cap_send()
+	ath12k_qmi_event_mem_request()
+		ath12k_qmi_respond_fw_mem_request()
+	ath12k_qmi_event_load_bdf()
+		ath12k_qmi_request_target_cap()
+		ath12k_qmi_load_bdf_qmi()
+		ath12k_qmi_wlanfw_m3_info_send()
+
+Mark all of those underlying functions as 'noinline_for_stack' to
+prevent them from being inlined in ath12k_qmi_driver_event_work(),
+thereby eliminating the excessive stack usage.
+
+Link: https://msgid.link/bc214795-1c51-4cb7-922f-67d6ef98bff2@quicinc.com # [1]
+Link: https://msgid.link/20241025223321.GA3647469@thelio-3990X # [2]
+Link: https://lore.kernel.org/all/?q=f:arnd@kernel.org+Wframe-larger-than # [3]
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/net/wireless/ath/ath12k/qmi.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
+index b93ce9f87f61..d2d9d03c7a28 100644
+--- a/drivers/net/wireless/ath/ath12k/qmi.c
++++ b/drivers/net/wireless/ath/ath12k/qmi.c
+@@ -2066,7 +2066,9 @@ static void ath12k_host_cap_parse_mlo(struct ath12k_base *ab,
+ 	req->mlo_chip_info_valid = 1;
+ }
+ 
+-static int ath12k_qmi_host_cap_send(struct ath12k_base *ab)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_host_cap_send(struct ath12k_base *ab)
+ {
+ 	struct qmi_wlanfw_host_cap_req_msg_v01 req = {};
+ 	struct qmi_wlanfw_host_cap_resp_msg_v01 resp = {};
+@@ -2275,7 +2277,9 @@ static int ath12k_qmi_fw_ind_register_send(struct ath12k_base *ab)
+ 	return ret;
+ }
+ 
+-static int ath12k_qmi_respond_fw_mem_request(struct ath12k_base *ab)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_respond_fw_mem_request(struct ath12k_base *ab)
+ {
+ 	struct qmi_wlanfw_respond_mem_req_msg_v01 *req;
+ 	struct qmi_wlanfw_respond_mem_resp_msg_v01 resp = {};
+@@ -2433,7 +2437,9 @@ static int ath12k_qmi_alloc_target_mem_chunk(struct ath12k_base *ab)
+ 	return 0;
+ }
+ 
+-static int ath12k_qmi_request_target_cap(struct ath12k_base *ab)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_request_target_cap(struct ath12k_base *ab)
+ {
+ 	struct qmi_wlanfw_cap_req_msg_v01 req = {};
+ 	struct qmi_wlanfw_cap_resp_msg_v01 resp = {};
+@@ -2619,8 +2625,10 @@ static int ath12k_qmi_load_file_target_mem(struct ath12k_base *ab,
+ 	return ret;
+ }
+ 
+-static int ath12k_qmi_load_bdf_qmi(struct ath12k_base *ab,
+-				   enum ath12k_qmi_bdf_type type)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_load_bdf_qmi(struct ath12k_base *ab,
++			    enum ath12k_qmi_bdf_type type)
+ {
+ 	struct device *dev = ab->dev;
+ 	char filename[ATH12K_QMI_MAX_BDF_FILE_NAME_SIZE];
+@@ -2791,7 +2799,9 @@ static int ath12k_qmi_m3_load(struct ath12k_base *ab)
+ 	return ret;
+ }
+ 
+-static int ath12k_qmi_wlanfw_m3_info_send(struct ath12k_base *ab)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_wlanfw_m3_info_send(struct ath12k_base *ab)
+ {
+ 	struct m3_mem_region *m3_mem = &ab->qmi.m3_mem;
+ 	struct qmi_wlanfw_m3_info_req_msg_v01 req = {};
+@@ -3079,7 +3089,9 @@ ath12k_qmi_driver_event_post(struct ath12k_qmi *qmi,
+ 	return 0;
+ }
+ 
+-static int ath12k_qmi_event_server_arrive(struct ath12k_qmi *qmi)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_event_server_arrive(struct ath12k_qmi *qmi)
+ {
+ 	struct ath12k_base *ab = qmi->ab;
+ 	int ret;
+@@ -3101,7 +3113,9 @@ static int ath12k_qmi_event_server_arrive(struct ath12k_qmi *qmi)
+ 	return ret;
+ }
+ 
+-static int ath12k_qmi_event_mem_request(struct ath12k_qmi *qmi)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_event_mem_request(struct ath12k_qmi *qmi)
+ {
+ 	struct ath12k_base *ab = qmi->ab;
+ 	int ret;
+@@ -3115,7 +3129,9 @@ static int ath12k_qmi_event_mem_request(struct ath12k_qmi *qmi)
+ 	return ret;
+ }
+ 
+-static int ath12k_qmi_event_load_bdf(struct ath12k_qmi *qmi)
++/* clang stack usage explodes if this is inlined */
++static noinline_for_stack
++int ath12k_qmi_event_load_bdf(struct ath12k_qmi *qmi)
+ {
+ 	struct ath12k_base *ab = qmi->ab;
+ 	int ret;
+
+---
+base-commit: 8a58dcd8db9c7af1187f0236d71a99cbbe146f6a
+change-id: 20241025-ath12k_qmi_driver_event_work-ea9703c44ad7
 
 
