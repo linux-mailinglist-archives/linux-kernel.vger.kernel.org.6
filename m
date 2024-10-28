@@ -1,62 +1,70 @@
-Return-Path: <linux-kernel+bounces-385034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0E399B3199
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:23:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A5E9B319A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2718DB220C2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:23:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB0FB22261
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03DF71DC054;
-	Mon, 28 Oct 2024 13:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 568CF1DB92A;
+	Mon, 28 Oct 2024 13:23:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PudSzRtk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="k4NXsdC8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41F8538396;
-	Mon, 28 Oct 2024 13:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FAF838396
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121784; cv=none; b=QHpNzAjF+L/ZxrA1jUNi+hIG3HwOOe0vVKDyhnt9D/IaeazejB1HYlG73HlXS61i7aKFP8GgmwoTc8Dhuca60nfyJsuzsroCh+7G9Vo3iGU8lnLdwNfWDKFC3BkR+0W5ECccnMKeAJBoYAYOnTtWsw622INXeDSXvO04VxAZ/ME=
+	t=1730121801; cv=none; b=Sj1zeBO6bg2hDG37FnFjHyJncHwgsBk3oQ8R950n0X5WXMTAs33TEOeXRvv+sEssvSGeYB1XHMHwhrDp7t2QgEpGXE0JplzZcircWpVTfs/YZB7X3MOKWQZw0FYO5iw6uO9RpDRb+5dsny0pkX8SYLVOMKVHZGAhfoMsWS9rUTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121784; c=relaxed/simple;
-	bh=9tECmQTWRmCrctZx1DA72M0oCUbizMBPA+xl+7zZJYo=;
+	s=arc-20240116; t=1730121801; c=relaxed/simple;
+	bh=esSGSXH7jB3IQQWeum4//cC9lsdkx5i7Q9ZZfFTuoME=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a7iPZFw1JBZbxyzidJOQjssUfxgBGmWu8TtTx2jjbFxJ0+q39wjHLfUwTzVb4gr9mvtS73KccDfZJ6YLKb3+eXMxGl2GU1qNXuH8GX8znxtMshl4kqi+CYdhi3PD3XmzOVIbMcRS8eE9BPXHRk7G7XmUM7tv22taRnwBxqq4mVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PudSzRtk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED931C4CEC3;
-	Mon, 28 Oct 2024 13:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730121783;
-	bh=9tECmQTWRmCrctZx1DA72M0oCUbizMBPA+xl+7zZJYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PudSzRtksSiVNKwGVRWY+Dv/cjY6o52UJ0NnBF7zVDLApZAd+3k1U+8KEOalpOQSz
-	 POD/7Kbnv5zzk76wsCPMIf0GzShT7MPuShwXhOmvrxsYnXj/H/8UMUCSnH8fHWrJz8
-	 fqBbtiavtPcg2WMEWraY9Vozjtw5ejFDYzr62CACQtyvybrbMMo28MQtnYVd4S7Vu/
-	 gFF4y9CUyjwEyQXnBnNs+gniZG0KiyXqY+D55Gcivzne0KfVo0RRDyw8lWaxqlrPJV
-	 UTO4rZjPzhelBMLEhjQBnbfbQPc0JrbawU9rmefiYtL8ehhGebUyH4kPGwkxWcpUA+
-	 JQiK+GV53c/3g==
-Date: Mon, 28 Oct 2024 14:22:56 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 13/16] samples: rust: add Rust PCI sample driver
-Message-ID: <Zx-QMBHtWSFkLiKm@pollux>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-14-dakr@kernel.org>
- <20241023155737.GB1064929-robh@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=edvK+xXI7jQIqrHL05TnM5Lgdwz+2sKjLSj8HizdixUCEEgh/UV4V+acj7CJuxNJr66TFNYJ+ZO/zjk/bueJgGNdgRMazpXExiRdyUYXx/ldJXVq1JUERlZz4dsKh5qrUdVg3tsg3eWOj9vMpdUc0dQJjttG1nGGdogxNgE71qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=k4NXsdC8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=77fE5jzGLpolVyjwxDvLLZZxdaxWxpJTh6gpD2XJluM=; b=k4NXsdC8jPsb2B7hyU56O7S9Om
+	3UEJMMHsjaHBcWYgECpLhAF0vcrL2AiUdmQVAmwyn8UzJqjS4Xcv03dqXND7fbfp920UHLOLqfNHA
+	3SArKaYUt2x/1kimc+xoPBmg1K4KdyY36pv37/Ylbjj106w/BmF1r4CyfEOdL6cebZa3lOUIsvjfj
+	kkwNRx7l1BN95HUjxJu8FkSMc2yWcMVjfAKRbXbkmDrxQZF+1N3S9EtUWbcErLcFwAQUr75AxON7e
+	RF2o0KTS1QgY1a9MApNsreQbrePtkbDlZ+liOiSRafAmBrShZg2RNrJpD5eCE0k1gRXi6ZopVoYjh
+	bwdmaJgw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5Pi6-00000008XSL-2Jf1;
+	Mon, 28 Oct 2024 13:23:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C2DC630083E; Mon, 28 Oct 2024 14:23:06 +0100 (CET)
+Date: Mon, 28 Oct 2024 14:23:06 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+Cc: mingo@redhat.com, James Morse <james.morse@arm.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Gavin Shan <gshan@redhat.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Simon Deziel <simon.deziel@canonical.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched/cpuacct: show only present CPUs to userspace
+Message-ID: <20241028132306.GP14555@noisy.programming.kicks-ass.net>
+References: <20241017102138.92504-1-aleksandr.mikhalitsyn@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,161 +73,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023155737.GB1064929-robh@kernel.org>
+In-Reply-To: <20241017102138.92504-1-aleksandr.mikhalitsyn@canonical.com>
 
-On Wed, Oct 23, 2024 at 10:57:37AM -0500, Rob Herring wrote:
-> On Tue, Oct 22, 2024 at 11:31:50PM +0200, Danilo Krummrich wrote:
-> > This commit adds a sample Rust PCI driver for QEMU's "pci-testdev"
-> > device. To enable this device QEMU has to be called with
-> > `-device pci-testdev`.
+On Thu, Oct 17, 2024 at 12:21:38PM +0200, Alexander Mikhalitsyn wrote:
+> After commit b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_CPU_DEVICES")
+> changed which CPUs are shown in /sys/devices/system/cpu/ (only "present" ones)
+> it also makes sense to change cpuacct cgroupv1 code not to report CPUs
+> which are not present in the system as it confuses userspace.
+> Let's make it consistent.
 > 
-> Note that the DT unittests also use this device. So this means we have 2 
-> drivers that bind to the device. Probably it's okay, but does make 
-> them somewhat mutually-exclusive.
+> A configuration when #(present CPUs) < #(possible CPUs) is easy to get with:
+> qemu-system-x86_64
+> 	-smp 3,maxcpus=12 \
+> 	...
+> 
+> Cc: James Morse <james.morse@arm.com>
+> Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Cc: Gavin Shan <gshan@redhat.com>
+> Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Reported-by: Simon Deziel <simon.deziel@canonical.com>
+> Closes: https://github.com/canonical/lxd/issues/13324
+> Co-developed-by: Simon Deziel <simon.deziel@canonical.com>
+> Signed-off-by: Simon Deziel <simon.deziel@canonical.com>
+> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
+> ---
+>  kernel/sched/cpuacct.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
+> index 0de9dda09949..0f07fbfdb20e 100644
+> --- a/kernel/sched/cpuacct.c
+> +++ b/kernel/sched/cpuacct.c
+> @@ -213,7 +213,7 @@ static int __cpuacct_percpu_seq_show(struct seq_file *m,
+>  	u64 percpu;
+>  	int i;
 >  
-> > The same driver shows how to use the PCI device / driver abstractions,
-> > as well as how to request and map PCI BARs, including a short sequence of
-> > MMIO operations.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  MAINTAINERS                     |   1 +
-> >  samples/rust/Kconfig            |  11 ++++
-> >  samples/rust/Makefile           |   1 +
-> >  samples/rust/rust_driver_pci.rs | 109 ++++++++++++++++++++++++++++++++
-> >  4 files changed, 122 insertions(+)
-> >  create mode 100644 samples/rust/rust_driver_pci.rs
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 2d00d3845b4a..d9c512a3e72b 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -17940,6 +17940,7 @@ F:	include/linux/of_pci.h
-> >  F:	include/linux/pci*
-> >  F:	include/uapi/linux/pci*
-> >  F:	rust/kernel/pci.rs
-> > +F:	samples/rust/rust_driver_pci.rs
-> >  
-> >  PCIE DRIVER FOR AMAZON ANNAPURNA LABS
-> >  M:	Jonathan Chocron <jonnyc@amazon.com>
-> > diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> > index b0f74a81c8f9..6d468193cdd8 100644
-> > --- a/samples/rust/Kconfig
-> > +++ b/samples/rust/Kconfig
-> > @@ -30,6 +30,17 @@ config SAMPLE_RUST_PRINT
-> >  
-> >  	  If unsure, say N.
-> >  
-> > +config SAMPLE_RUST_DRIVER_PCI
-> > +	tristate "PCI Driver"
-> > +	depends on PCI
-> > +	help
-> > +	  This option builds the Rust PCI driver sample.
-> > +
-> > +	  To compile this as a module, choose M here:
-> > +	  the module will be called driver_pci.
-> > +
-> > +	  If unsure, say N.
-> > +
-> >  config SAMPLE_RUST_HOSTPROGS
-> >  	bool "Host programs"
-> >  	help
-> > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> > index 03086dabbea4..b66767f4a62a 100644
-> > --- a/samples/rust/Makefile
-> > +++ b/samples/rust/Makefile
-> > @@ -2,5 +2,6 @@
-> >  
-> >  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
-> >  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
-> > +obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
-> >  
-> >  subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+= hostprogs
-> > diff --git a/samples/rust/rust_driver_pci.rs b/samples/rust/rust_driver_pci.rs
-> > new file mode 100644
-> > index 000000000000..d24dc1fde9e8
-> > --- /dev/null
-> > +++ b/samples/rust/rust_driver_pci.rs
-> > @@ -0,0 +1,109 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Rust PCI driver sample (based on QEMU's `pci-testdev`).
-> > +//!
-> > +//! To make this driver probe, QEMU must be run with `-device pci-testdev`.
-> > +
-> > +use kernel::{bindings, c_str, devres::Devres, pci, prelude::*};
-> > +
-> > +struct Regs;
-> > +
-> > +impl Regs {
-> > +    const TEST: usize = 0x0;
-> > +    const OFFSET: usize = 0x4;
-> > +    const DATA: usize = 0x8;
-> > +    const COUNT: usize = 0xC;
-> > +    const END: usize = 0x10;
-> > +}
-> > +
-> > +type Bar0 = pci::Bar<{ Regs::END }>;
-> > +
-> > +#[derive(Debug)]
-> > +struct TestIndex(u8);
-> > +
-> > +impl TestIndex {
-> > +    const NO_EVENTFD: Self = Self(0);
-> > +}
-> > +
-> > +struct SampleDriver {
-> > +    pdev: pci::Device,
-> > +    bar: Devres<Bar0>,
-> > +}
-> > +
-> > +kernel::pci_device_table!(
-> > +    PCI_TABLE,
-> > +    MODULE_PCI_TABLE,
-> > +    <SampleDriver as pci::Driver>::IdInfo,
-> > +    [(
-> > +        pci::DeviceId::new(bindings::PCI_VENDOR_ID_REDHAT, 0x5),
-> > +        TestIndex::NO_EVENTFD
-> > +    )]
-> > +);
-> > +
-> > +impl SampleDriver {
-> > +    fn testdev(index: &TestIndex, bar: &Bar0) -> Result<u32> {
-> > +        // Select the test.
-> > +        bar.writeb(index.0, Regs::TEST);
-> > +
-> > +        let offset = u32::from_le(bar.readl(Regs::OFFSET)) as usize;
-> 
-> The C version of readl takes care of from_le for you. Why not here?
+> -	for_each_possible_cpu(i) {
+> +	for_each_present_cpu(i) {
+>  		percpu = cpuacct_cpuusage_read(ca, i, index);
+>  		seq_printf(m, "%llu ", (unsigned long long) percpu);
+>  	}
+> @@ -247,7 +247,7 @@ static int cpuacct_all_seq_show(struct seq_file *m, void *V)
+>  		seq_printf(m, " %s", cpuacct_stat_desc[index]);
+>  	seq_puts(m, "\n");
+>  
+> -	for_each_possible_cpu(cpu) {
+> +	for_each_present_cpu(cpu) {
+>  		seq_printf(m, "%d", cpu);
+>  		for (index = 0; index < CPUACCT_STAT_NSTATS; index++)
+>  			seq_printf(m, " %llu",
 
-It's just an abstraction around the C readl(), so it does -- good catch.
 
-> 
-> Also, can't we do better with rust and make this a generic:
-> 
-> let offset = bar.read::<u32>(Regs::OFFSET)) as usize;
+Doesn't this create problems for machines that support actual physical
+hotplug?
 
-I think we probably could, but we'd still need to handle the special cases for 1
-to 8 bytes type size (always using memcopy_{to,from}io() would lead to
-unnecessary overhead). Hence, there's probably not much benefit in that.
-
-Also, what would be the logic for a generic `{read, write}::<T>` in terms of
-memory barriers? I think memcopy_{to,from}io() is always "relaxed", isn't it?
-
-I think it's probably best to keep the two separate, the b,w,l,q variants and
-a generic one that maps to memcopy_{to,from}io().
-
-> 
-> 
-> > +        let data = bar.readb(Regs::DATA);
-> > +
-> > +        // Write `data` to `offset` to increase `count` by one.
-> > +        //
-> > +        // Note that we need `try_writeb`, since `offset` can't be checked at compile-time.
-> > +        bar.try_writeb(data, offset)?;
-> > +
-> > +        Ok(u32::from_le(bar.readl(Regs::COUNT)))
-> > +    }
-> > +}
-> 
+Then all of a sudden, when a CPU with non-zero stats goes from present
+to !present, the stats also go away, and any userspace looking at the
+sum of stats over CPUs sees an unexplained dis-continuity.
 
