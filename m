@@ -1,160 +1,114 @@
-Return-Path: <linux-kernel+bounces-385165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5924F9B335E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:23:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 240BA9B3361
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:24:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6A71F24059
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:23:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBDC928339F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:24:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3F51DE2BD;
-	Mon, 28 Oct 2024 14:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5881DDC13;
+	Mon, 28 Oct 2024 14:23:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7/E5AJH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kntAFHzS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D1F1DD87D;
-	Mon, 28 Oct 2024 14:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83671DA631;
+	Mon, 28 Oct 2024 14:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730125359; cv=none; b=FwsutGXEMJ7T423PwgWe3fiaMJdJ9wsEo/KO1ZtDsMcGYxqKTC5XuCuvqxW8hesZDgzG1fKP46K1vo3wMCO2XpdvQ9Pg7pV5gDQeRg2BoNJDyYIP9w5J8uenIXzqzMPzkUGymmOYgwPgQJ7eRQDIJezx0IbZeGq/Jzw58h+hr7Y=
+	t=1730125384; cv=none; b=Mbf7eihOHzgVzAnqPh11NaYmcO4H0MW0boQmFKZEzcf/j42oA1yn/SsJHUuVtSiOIjKtJgpfOsMOAPkQpwwRyvQHnUHKLbnTSqxWLMXxT+dpDCBuM3ShCIDC8m5AHgfEveV2diBZcWF50d7MPs2q2bZT+J1znRvoKsTZFRnaWaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730125359; c=relaxed/simple;
-	bh=KfEZzztwyTJ64T901c72B6fi2IVRJUQKimQEAY86q7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fnE8lXduT3sIqqznfi2WIu58kFGc8iwYOVDlLm8aDG6NiHSiuv2p5Q+/pi9/BGXAPSida+OpRsJG5RzmgbAMF9tYwyzGRp+z1wZbXMaOG60myl7WFuMdgW2vtm/ogNv46RG6UcxeQUTuNIdCZyZ2f5nZLKH0XGonzaGOLzTfa1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7/E5AJH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2BEDC4CEC3;
-	Mon, 28 Oct 2024 14:22:35 +0000 (UTC)
+	s=arc-20240116; t=1730125384; c=relaxed/simple;
+	bh=ZQCzSCdRJnarUvUNjH4dcubxSkcXGcHBY3Q+CZQ2Yus=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=aQZHUDdOWhaV5UVCLn4FN9CROmRlalO9W16ZJ8k1qf+LiemuyTvMt/xY6kQMeI2AiVRFaiS7q/m2dpaTaKnzmuNRzvBzNmBQx8zoJ0IXUpG/4cwT8tJt0FtwvbEbPLIVETZdChQqnTn4XlR1yeUCyhqHUddRmL+rXKgjUdjQGfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kntAFHzS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF3EC4CEC3;
+	Mon, 28 Oct 2024 14:23:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730125359;
-	bh=KfEZzztwyTJ64T901c72B6fi2IVRJUQKimQEAY86q7I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N7/E5AJH1FxSkk0w3eC3f6vWRGTr3iVy+I8nTW3+hMYzAWay2yrWrxLJwci/GTeU3
-	 7Q2LEB2sHA0R5tGlBwRZZrn9wvDpCx6quaFEJ5nmoF3cUcC3Ynqp4ZxeN87tc4qGT2
-	 3K5pMsRVHTAREqmsEuH7Yaywf65QVw0DPTVXc0uZEXgIW2Ls539UVJ2qrJ7JQA86m7
-	 NJ/tLX8IS1t6tXOIL4yukWcHkLGrC3qBYM2/P9LA/lJGDk2t19uVEG70pSXCoM6Wlp
-	 J2JaMy02B+9ZfF3qQkTWcd7T7eCPgsZC1WnhxrPJuue63x0gULqg2ULBvCT4ukEB9F
-	 i6q97QAql7NUQ==
-Message-ID: <e29e2c9e-60c1-4f32-ab71-e74f331e1921@kernel.org>
-Date: Mon, 28 Oct 2024 15:22:33 +0100
+	s=k20201202; t=1730125384;
+	bh=ZQCzSCdRJnarUvUNjH4dcubxSkcXGcHBY3Q+CZQ2Yus=;
+	h=From:Subject:Date:To:Cc:From;
+	b=kntAFHzSa2STXgjS3+YZA6rDD097Rmxcv2cwb13ucIBzhSUPKir7czv48YTSwBCmk
+	 s/nt9qfNjkC8hx4YpyCledjyzk3Xyq6fIVbpDpqhgtWh/+ymhhjwE4ssKqOZMDoTsf
+	 0FicV63BQ+MfiTFrj8eouf9lv4cu0hm3K4FfcQ3d8117m4U07LL5WbIjSLm+Ba04ml
+	 fWCUvy5Cwmb6hQTNc84YnNhUelOTQryn21sTuJ6qRu/r/qyn0Thfats9R78w0U5L91
+	 5JdWjwqGTA4y+iz1eyGMnXOJqxfhiovfuWpksRMUxoifQLHcacIK332IFoMZqmWW/A
+	 H/woj9j5T0ggA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 0/3] Allow specifying an S2RAM sleep on pre-SYSTEM_SUSPEND
+ PSCI impls
+Date: Mon, 28 Oct 2024 15:22:56 +0100
+Message-Id: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: pwm-fan: add
- retain-state-shutdown property
-To: Akinobu Mita <akinobu.mita@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org,
- devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Billy Tsai <billy_tsai@aspeedtech.com>
-References: <20241026080535.444903-1-akinobu.mita@gmail.com>
- <20241026080535.444903-3-akinobu.mita@gmail.com>
- <ijdk5uuurnfd2shnwwj2nm64bno6lmrhdyqp42pzjc3i2e5cyh@v5ljkrsgo6ac>
- <CAC5umyitFp7oGR-eYXMVaS8bY1AGe3QwEuSPoEz3DxWwH=dUsA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAC5umyitFp7oGR-eYXMVaS8bY1AGe3QwEuSPoEz3DxWwH=dUsA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAECeH2cC/x3MQQqAIBBA0avErBNsKLCuEhGiU80iFaciiO6et
+ HyL/x8QykwCQ/VApouFYyho6grcZsNKin0xoMa20WjUERM75dI5yymJgp8Fs90VmsXpvvPa2hZ
+ KnTItfP/ncXrfDxOo+w9pAAAA
+X-Change-ID: 20241028-topic-cpu_suspend_s2ram-28fc095d0aa4
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Sudeep Holla <sudeep.holla@arm.com>, Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730125380; l=1608;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=ZQCzSCdRJnarUvUNjH4dcubxSkcXGcHBY3Q+CZQ2Yus=;
+ b=CJb5iv370J3U0frllG/BZzoHQSaWIPmZgpGoQ58p2btL7ihJwcbBT8zD1VKQ/ziRzdc1U6Uas
+ 0G+Ugzn/wmLBSi4AbM9rrHA7dtq5o+QUORoJO4QpnMwGDqz1XQcdumk
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On 28/10/2024 13:42, Akinobu Mita wrote:
-> 2024年10月28日(月) 5:38 Krzysztof Kozlowski <krzk@kernel.org>:
->>
->> On Sat, Oct 26, 2024 at 05:05:35PM +0900, Akinobu Mita wrote:
->>> Document new retain-state-shutdown property.
->>>
->>> Cc: Jean Delvare <jdelvare@suse.com>
->>> Cc: Guenter Roeck <linux@roeck-us.net>
->>> Cc: Rob Herring <robh@kernel.org>
->>> Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
->>> Cc: Conor Dooley <conor+dt@kernel.org>
->>> Cc: Billy Tsai <billy_tsai@aspeedtech.com>
->>> Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
->>> ---
->>>  Documentation/devicetree/bindings/hwmon/pwm-fan.yaml | 4 ++++
->>>  1 file changed, 4 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml b/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
->>> index 4e5abf7580cc..86a069969e29 100644
->>> --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
->>> +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
->>> @@ -40,6 +40,10 @@ properties:
->>>      maximum: 4
->>>      default: 2
->>>
->>> +  retain-state-shutdown:
->>> +    description: Retain the state of the PWM on shutdown.
->>
->> You described the desired Linux feature or behavior, not the actual
->> hardware. The bindings are about the latter, so instead you need to
->> rephrase the property and its description to match actual hardware
->> capabilities/features/configuration etc.
-> 
-> Is this description okay?
-> (Reused the description of retain-state-shutdown in leds-gpio.yaml)
-> 
-> description:
->   Retain the state of the PWM on shutdown. Useful in BMC systems, for
->   example, when the BMC is rebooted while the host remains up, the fan
->   will not stop.
+Certain firmwares expose exactly what PSCI_SYSTEM_SUSPEND does through
+CPU_SUSPEND instead. Inform Linux about that.
+Please see the commit messages for a more detailed explanation.
 
-Nothing improved in the property. You still say what the system should
-do. This is user-space choice, not DT.
+This is effectively a more educated follow-up to [1].
+
+The ultimate goal is to stop making Linux think that certain states
+only concern cores/clusters, and consequently setting
+pm_set_suspend/resume_via_firmware(), so that client drivers (such as
+NVMe, see related discussion over at [2]) can make informed decisions
+about assuming the power state of the device they govern.
+
+If this series gets green light, I'll push a follow-up one that wires
+up said sleep state on Qualcomm SoCs across the board.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20231227-topic-psci_fw_sus-v1-0-6910add70bf3@linaro.org/
+[2] https://lore.kernel.org/linux-nvme/20241024-topic-nvmequirk-v1-1-51249999d409@oss.qualcomm.com/
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (3):
+      dt-bindings: arm,psci: Allow S2RAM power_state parameter description
+      firmware/psci: Set pm_set_resume/suspend_via_firmware() for SYSTEM_SUSPEND
+      firmware/psci: Allow specifying an S2RAM state through CPU_SUSPEND
+
+ Documentation/devicetree/bindings/arm/psci.yaml |  6 ++++
+ drivers/firmware/psci/psci.c                    | 44 ++++++++++++++++++++++---
+ 2 files changed, 46 insertions(+), 4 deletions(-)
+---
+base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+change-id: 20241028-topic-cpu_suspend_s2ram-28fc095d0aa4
 
 Best regards,
-Krzysztof
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
