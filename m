@@ -1,179 +1,145 @@
-Return-Path: <linux-kernel+bounces-384633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766059B2CA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:20:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A04B9B2CAA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3411F215D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:20:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB2F1C21E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADF01D4342;
-	Mon, 28 Oct 2024 10:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F911D5ADE;
+	Mon, 28 Oct 2024 10:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="S6L8GoTX"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pSLPgxfW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C2461D3573
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4C01D2B28;
+	Mon, 28 Oct 2024 10:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110830; cv=none; b=FFWZBp/VZMNLCi/4y9JzA7TGd5GdIVQb7FgBl4Bv51JyTMGmz9S8PX1H8kFV0Ju/WUn6/TvxaArnoADgo6MN2+MPbQmpLA9t2JW2yHFZyqnfRSgwb0P9Pg74psENkxDgEs9nu9JRbx9Yq0yzvxzUljZnYlBPO97tifZorH+VlNc=
+	t=1730110840; cv=none; b=Xa72OMEgenztBDv5RKuj1KOSkLWJCY4EqoyFky5Pw+E5BitXUISiIdWkSD6vYX1Z+NUtGeyukYBbqAi1cLsNtkfWSd8LIBk9eZDgasD6KWhgoAgycBs7qg817rzparnu2AHIg50cRC7OumXYnioSqYZBN7m4BknNgeut5/wJ/B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110830; c=relaxed/simple;
-	bh=A0GqmnuqlPptcNZg6+u3k/n30Pb95tM6ybSTJvsR02o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EM8xrencLBFcaMimi7jfZ7Y4OUCeOeXP9XlahFnq7hsJNoozKQMH45W9M0BmnzdzeRMRSLIWtsaQENRSFiydww88kxvTi8lq8ViWsbqk5j0G/VkLnIDQDiWxLPOdvcdatCrUTvbhDCo2PNJYKRiMW7oCrWFOwiIL+bpLwNPRgaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=S6L8GoTX; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4XcTt266QQz9vMZ;
-	Mon, 28 Oct 2024 10:20:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1730110827; bh=A0GqmnuqlPptcNZg6+u3k/n30Pb95tM6ybSTJvsR02o=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=S6L8GoTXankcL+IvSHq8MOnQa5WqCJaXAc0yVgOHfGrRgTdWoc44M/614Uj58dFID
-	 SyBYkeELX8WLpC5JLd9c3qFRPrKQDlbVH2HsTr+IeHPWKXu6ClkPDLA0jpdVtG8BG9
-	 9FVY/znxPwWr6em0YSmKE/YOZ30ZPUVobKkm62Ms=
-X-Riseup-User-ID: ACFA0EC763EE17DF39ECF7ABA89DF4B9B67CC05D073A779B1DFAE844FC37A2DF
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XcTsx13NzzFtfv;
-	Mon, 28 Oct 2024 10:20:20 +0000 (UTC)
-Message-ID: <3b497dee-9371-4d21-a4a6-e75a6e61e364@riseup.net>
-Date: Mon, 28 Oct 2024 07:20:18 -0300
+	s=arc-20240116; t=1730110840; c=relaxed/simple;
+	bh=971B72kXUieIqQA2AeBlzfjt6poloNY1Byeyd+Lagdw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nO6hiwoGb4+2R8RkWFIr0yjB+unTqohON5Ha1JaM4e0jLHfAmryacPiE8cKDi/VqPl1LGDAned9JDQHKwOiK6IMmN05Qc87Ls465r6zCtloM4kDLYTsjN89gTr3O2KvjO3+ogBCMnZXfza7Yl6flwf70yLTLsYhiSELJxi5zbgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pSLPgxfW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF7CBC4CEE4;
+	Mon, 28 Oct 2024 10:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730110840;
+	bh=971B72kXUieIqQA2AeBlzfjt6poloNY1Byeyd+Lagdw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pSLPgxfWtUkDl7fHAm5wecQ7hBeNYIROc3vvim1id5K4Kz0Wt2Rf0vsT3PX4WcDSI
+	 q15ZTjKEfiZMf3Vtg8iIKFw+oWc8w1EzEi7E0VeXn4nJ7NEXeLnBDdsefGD1lK3r+u
+	 UJWgz32rEy9Vyp2oIuB9zuDO+vaxrBkKwIzn2ylLXK866JsuMsa63f6UhKOwG1t7DP
+	 XqOY6YKqD6nXtK3yYhLlWhEXMMBzAIWgw00RHKarMoMvCeodQVuTaAnokwo7gZVEbD
+	 g9FjPGjmLkVp/ZlRBHkeFUL9p81C2PSYEbyUWX+mdCXXuoZpDK5uUpMfu4LppC/NcX
+	 fdumuqJcz2saA==
+Message-ID: <64b545a0-8784-4f1e-a318-c92439e291e1@kernel.org>
+Date: Mon, 28 Oct 2024 11:20:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH RESEND v2 2/8] drm/vkms: Add support for ARGB8888 formats
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
- arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
- jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
- thomas.petazzoni@bootlin.com, seanpaul@google.com, marcheu@google.com,
- nicolejadeyee@google.com, 20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
- <20241007-b4-new-color-formats-v2-2-d47da50d4674@bootlin.com>
- <40c85513-6c57-4b9c-87f6-2ca56c556462@riseup.net> <Zx9eateq0ylJGvS_@fedora>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] dt-bindings: arm: fsl: Add ABB SoM and carrier
+To: Heiko Schocher <hs@denx.de>, linux-kernel@vger.kernel.org
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Gregor Herburger <gregor.herburger@ew.tq-group.com>,
+ Hiago De Franco <hiago.franco@toradex.com>,
+ Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+ Joao Paulo Goncalves <joao.goncalves@toradex.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Mathieu Othacehe <m.othacehe@gmail.com>,
+ Max Merchel <Max.Merchel@ew.tq-group.com>, Michael Walle
+ <mwalle@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+ Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Tim Harvey <tharvey@gateworks.com>, devicetree@vger.kernel.org
+References: <20241028082332.21672-1-hs@denx.de>
+ <20241028082332.21672-2-hs@denx.de>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <Zx9eateq0ylJGvS_@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241028082332.21672-2-hs@denx.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Louis,
-
-On 28/10/24 06:50, Louis Chauvet wrote:
-> On 26/10/24 - 11:11, Maíra Canal wrote:
->> Hi Louis,
->>
->> On 07/10/24 13:46, Louis Chauvet wrote:
->>> The formats XRGB8888 and ARGB8888 were already supported.
->>> Add the support for:
->>> - XBGR8888
->>> - RGBX8888
->>> - BGRX8888
->>> - ABGR8888
->>> - RGBA8888
->>> - BGRA8888
->>>
->>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->>> ---
->>>    drivers/gpu/drm/vkms/vkms_formats.c | 18 ++++++++++++++++++
->>>    drivers/gpu/drm/vkms/vkms_plane.c   |  6 ++++++
->>>    2 files changed, 24 insertions(+)
->>>
->>> diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
->>> index 8f1bcca38148..b5a38f70c62b 100644
->>> --- a/drivers/gpu/drm/vkms/vkms_formats.c
->>> +++ b/drivers/gpu/drm/vkms/vkms_formats.c
->>> @@ -432,8 +432,14 @@ static void R4_read_line(const struct vkms_plane_state *plane, int x_start,
->>>    READ_LINE_ARGB8888(XRGB8888_read_line, px, 255, px[2], px[1], px[0])
->>> +READ_LINE_ARGB8888(XBGR8888_read_line, px, 255, px[0], px[1], px[2]) > +READ_LINE_ARGB8888(RGBX8888_read_line, px, 255, px[3], px[2], px[1])
->>
->> I'm not expert in colors, but is this correct? From what I understand,
->> it should be:
+On 28/10/2024 09:23, Heiko Schocher wrote:
+> add support for the i.MX8MP based SoM and carrier from ABB.
 > 
-> Yes, this is correct, READ_LINE_ARGB8888 take the parameters as A, R, G,
-> B, so here 0xFF, px[2], px[1], px[0]
+> Signed-off-by: Heiko Schocher <hs@denx.de>
+> ---
+> 
+>  Documentation/devicetree/bindings/arm/fsl.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/fsl.yaml b/Documentation/devicetree/bindings/arm/fsl.yaml
+> index b39a7e031177..96b0eaa3b80f 100644
+> --- a/Documentation/devicetree/bindings/arm/fsl.yaml
+> +++ b/Documentation/devicetree/bindings/arm/fsl.yaml
+> @@ -1073,6 +1073,8 @@ properties:
+>        - description: i.MX8MP based Boards
+>          items:
+>            - enum:
+> +              - abb,imx8mp-aristianetos3 # i.MX8MP ABB Board
+> +              - abb,imx8mp-aristianetos3-som # i.MX8MP ABB Board SoM
 
-Now I wonder if
+SoM usually is not used alone. If here is one of the few exceptions, you
+have entire commit msg to explain that.
 
-READ_LINE_ARGB8888(XRGB8888_read_line, px, 255, px[2], px[1], px[0])
+If this is not exception, properly mark compatibility, like in other cases.
 
-is correct.
-
-Best Regards,
-- Maíra
-
->   
->> READ_LINE_ARGB8888(RGBX8888_read_line, px, px[2], px[1], px[0], 255)
->>                                             ^R     ^G     ^B     ^X
->>
->>> +READ_LINE_ARGB8888(BGRX8888_read_line, px, 255, px[1], px[2], px[3])
->>
->> Again, is this correct?
->>
->> Best Regards,
->> - Maíra
->>
->>>    READ_LINE_ARGB8888(ARGB8888_read_line, px, px[3], px[2], px[1], px[0])
->>> +READ_LINE_ARGB8888(ABGR8888_read_line, px, px[3], px[0], px[1], px[2])
->>> +READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
->>> +READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
->>>    READ_LINE_16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0]);
->>> @@ -637,8 +643,20 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
->>>    	switch (format) {
->>>    	case DRM_FORMAT_ARGB8888:
->>>    		return &ARGB8888_read_line;
->>> +	case DRM_FORMAT_ABGR8888:
->>> +		return &ABGR8888_read_line;
->>> +	case DRM_FORMAT_BGRA8888:
->>> +		return &BGRA8888_read_line;
->>> +	case DRM_FORMAT_RGBA8888:
->>> +		return &RGBA8888_read_line;
->>>    	case DRM_FORMAT_XRGB8888:
->>>    		return &XRGB8888_read_line;
->>> +	case DRM_FORMAT_XBGR8888:
->>> +		return &XBGR8888_read_line;
->>> +	case DRM_FORMAT_RGBX8888:
->>> +		return &RGBX8888_read_line;
->>> +	case DRM_FORMAT_BGRX8888:
->>> +		return &BGRX8888_read_line;
->>>    	case DRM_FORMAT_ARGB16161616:
->>>    		return &ARGB16161616_read_line;
->>>    	case DRM_FORMAT_XRGB16161616:
->>> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
->>> index 67f891e7ac58..941a6e92a040 100644
->>> --- a/drivers/gpu/drm/vkms/vkms_plane.c
->>> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
->>> @@ -14,7 +14,13 @@
->>>    static const u32 vkms_formats[] = {
->>>    	DRM_FORMAT_ARGB8888,
->>> +	DRM_FORMAT_ABGR8888,
->>> +	DRM_FORMAT_BGRA8888,
->>> +	DRM_FORMAT_RGBA8888,
->>>    	DRM_FORMAT_XRGB8888,
->>> +	DRM_FORMAT_XBGR8888,
->>> +	DRM_FORMAT_RGBX8888,
->>> +	DRM_FORMAT_BGRX8888,
->>>    	DRM_FORMAT_XRGB16161616,
->>>    	DRM_FORMAT_ARGB16161616,
->>>    	DRM_FORMAT_RGB565,
->>>
+Best regards,
+Krzysztof
 
 
