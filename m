@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-384550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01429B2BA4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:38:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65AC09B2BA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:38:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DCBDB22EA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:38:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 128F11F21CEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67261192B6D;
-	Mon, 28 Oct 2024 09:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE316193060;
+	Mon, 28 Oct 2024 09:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SP9F35Mv"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ipnchwCv"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D090E155744
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7263B155744;
+	Mon, 28 Oct 2024 09:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730108280; cv=none; b=XqmKio0i5UpJhN0pEY+jNaAEazNVo5dLR1qIrnlBZFQQm+vf7rROvAYiiC5Y3VfjOhGHpPM81LijwYmsm9dKVpNlUvbY8b8nD3TmtCy97mYW6T0yyRV5D9lpFFXvi9PXbVFi4+WqhAcgkkVhwMIImCJXHFwP0cQ1F+8KZVVKwgM=
+	t=1730108321; cv=none; b=X6dVchwxhhIyyiCpuYI0j/oquiA+HJ6sXg5K6Jjl+nDjnPQPKJURS0XsjdrKGhZ5VF6APrMGzbPNj236WL/TWKLuZSORo0AXE1KjM1ZhJ52B/IDocGzBX+FE/Vwzkl1pzOavIl07yayTc9LYfUKMNMZs7k3m+etPKVjxNTh2CXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730108280; c=relaxed/simple;
-	bh=qJISTUAGM1Sk9VlnAUjbDwyVuT6U98xvMznKzuQhry8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uPa13nuestVuMXMOcooiC+Aq9uIt8S/NrvDk8/xQRillVK6Ejks1BM/GTU6L3/sa88FfLWL2my+J30QgNGoh1noAQtWN1o7lPAukrrjNWRgtlz/M1gSTAa/2I9Od3qxmU09wKPxhR06nxb7NRBAyJUPyCpkczuXERtHvXfpYHRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SP9F35Mv; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d4c482844so2725432f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 02:37:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730108277; x=1730713077; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+4kvxdQvqSmN65+ZGA8szwL65OsN8Xi7ITeBdBaj9iE=;
-        b=SP9F35Mv4jBaNGZWZfOTRNIh05C2L7DM/hXV+cqh8+6tp49diMGbIUBr0B37qQMRD5
-         Hn/cUm/xvWFNtYDHcDuiJBU+T0Vs9ncgseb86uFaHSev9xzWRtEIt+sTz8YTsfz/GOHM
-         u3W5nZdyxnydb/5D7Wo02ZFjNFY0eEmjMc8aWj91LVh7WMnZZCjVx8PNIkBj6lxN6D+L
-         OfL71FOyCP8gKscmf4pJJY5Wp/J/6aJQaPZc8kAnMEG9Xpk1HhUNVP3jaWmWPtdRbyU2
-         d2u5a6juNoDE/gJQD4KBui8QwXiIf8P4gd1t3AgL/+CY4jlNvYjGb+8yeswVfN5nMIXK
-         Nxbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730108277; x=1730713077;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+4kvxdQvqSmN65+ZGA8szwL65OsN8Xi7ITeBdBaj9iE=;
-        b=A3UWKbjNLs71qAvCAa/Imfy5FqXCXmAUaATK7sg/X7gcKZ2w0Vs/3xrBl/2vYx7Mnh
-         49vKGjER42hvz3REQNEnpRRN6Nx/hxvAnoRyJR5bkgowGf/Nw5PJgaekcjzfE5WAjVVU
-         5nm+oNiiZlOYaB6fYOfSlKvvQcom09s4YAm+0kel77rU0EXikLUOpr+nOPBUedqIGrTT
-         Owjwa8f6IFv9n/CCDvaceVqFRmhNiFuEC0LUyMl9Wh0DPoiY8NLSSCk8Qo2oYhAgcuWg
-         Ge1/ZIXtPh9ncDW4gmRGDD07zXH7WS2smezLpgOwCHJ6fK4gw2ASAoyweJ7akz1vc9f3
-         C5uw==
-X-Gm-Message-State: AOJu0Yzk8g8B4r7vr0JrLEIgWi8rb4GfwO3CZBgej1Prei2YKfm5+3mp
-	7WPWpi/+NNm1vwE1H9ysJU5Qq9D38wUD1wDgXTcsxb24+rMkmeF6+fbgj9iKMdKqOFqxyCdHAUu
-	z
-X-Google-Smtp-Source: AGHT+IGTs+ff2QTEnOLMho4Aw+9cbpHlVIucr9RKtQb16JkGVUN9VfELT1cWoow3VERcxplazgYiRA==
-X-Received: by 2002:a5d:63cf:0:b0:37c:d57d:71cd with SMTP id ffacd0b85a97d-380611ff862mr5585322f8f.52.1730108277184;
-        Mon, 28 Oct 2024 02:37:57 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b3c861sm8981783f8f.44.2024.10.28.02.37.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 02:37:56 -0700 (PDT)
-Message-ID: <0aee828d-b55d-4585-b997-1d8fc3b478e1@linaro.org>
-Date: Mon, 28 Oct 2024 10:37:56 +0100
+	s=arc-20240116; t=1730108321; c=relaxed/simple;
+	bh=TTzDaDISSTXKhoI13t5qVj7ZDIOkYQKbwOtUI03eJpw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YjCN1aHR/AmNQCCZ+ZUvHzG+/ljaOhquuWOD4sy/xsvajVAOBjH5sgZ5o/peHnDQdnrcIvme08+cwueBwChPBBdkN1vvKIar1ckN5qoQvacAUgrrEAOHoSiNLRL4UwKssn0hcv2fVL3XuJrAkO2QYWUUxTPG6Bu+iQ+73TzaFGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ipnchwCv; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=YsVgrVYidjdLoY8ut0hhSwdO11cYdvJtoCYBOkZVwdg=; b=ipnchwCv5ZZNCwBnChIKjpeyvx
+	vBsJv+AtNzZD8IfYJtizz1JKY1PKdJNtwFD2On5M3DNe7h2Kb6LRGzJ6AY2LnAoAiVKHUmQA+gbQv
+	Ka53ZcHVJOM852ZIv4ejGsgeDDSCwY/fbiY5A/6CSU1BALECS0v7aWTmoNlyE0+PAZI7HNa+KFYMd
+	7LsjSD8atHwTeflrl7SeQgPtW6mKEQNHdvzpM4hqebiloT7D0YGMwphCQsufdwMxgJZoK2CIg+j2y
+	wOckw6B6Ig5Vr1XL2Mu/k4v2+0NRwu0I07Bckb+WS7IJn7Q34eSpbUTnTG/IeOKODrVN9NJq7lJ5o
+	dRVGTlHA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5MCj-00000009cRx-2S76;
+	Mon, 28 Oct 2024 09:38:29 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3EB4930083E; Mon, 28 Oct 2024 10:38:29 +0100 (CET)
+Date: Mon, 28 Oct 2024 10:38:29 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@redhat.com,
+	dvhart@infradead.org, andrealmeid@igalia.com,
+	Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com,
+	hch@infradead.org, lstoakes@gmail.com,
+	Arnd Bergmann <arnd@arndb.de>, linux-api@vger.kernel.org,
+	linux-mm@kvack.org, linux-arch@vger.kernel.org,
+	malteskarupke@web.de, cl@linux.com, llong@redhat.com
+Subject: Re: [PATCH 2/6] futex: Implement FUTEX2_NUMA
+Message-ID: <20241028093829.GK9767@noisy.programming.kicks-ass.net>
+References: <20241025090347.244183920@infradead.org>
+ <20241025093944.485691531@infradead.org>
+ <i4ljhfndmqrdg5zevd4gf2chmzesfieflxvfj2io2qfhfj4vb7@nicvpjmcdtyu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource: Remove unused dw_apb_clockevent functions
-To: linux@treblig.org, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org
-References: <20241025203101.241709-1-linux@treblig.org>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241025203101.241709-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <i4ljhfndmqrdg5zevd4gf2chmzesfieflxvfj2io2qfhfj4vb7@nicvpjmcdtyu>
 
-On 25/10/2024 22:31, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, Oct 25, 2024 at 11:30:26AM -0700, Davidlohr Bueso wrote:
+> On Fri, 25 Oct 2024, Peter Zijlstra wrote:\n
 > 
-> dw_apb_clockevent_pause(), dw_apb_clockevent_resume() and
-> dw_apb_clockevent_stop() have been unused since 2021's
-> commit 1b79fc4f2bfd ("x86/apb_timer: Remove driver for deprecated
-> platform")
+> > static int __init futex_init(void)
+> > {
+> > -	unsigned int futex_shift;
+> > -	unsigned long i;
+> > +	unsigned int order, n;
+> > +	unsigned long size, i;
+> > 
+> > #ifdef CONFIG_BASE_SMALL
+> > 	futex_hashsize = 16;
+> > #else
+> > -	futex_hashsize = roundup_pow_of_two(256 * num_possible_cpus());
+> > +	futex_hashsize = 256 * num_possible_cpus();
+> > +	futex_hashsize /= num_possible_nodes();
+> > +	futex_hashsize = roundup_pow_of_two(futex_hashsize);
+> > #endif
+> > +	futex_hashshift = ilog2(futex_hashsize);
+> > +	size = sizeof(struct futex_hash_bucket) * futex_hashsize;
+> > +	order = get_order(size);
+> > +
+> > +	for_each_node(n) {
 > 
-> Remove them.
-> 
-> (Some of the other clockevent functions are still called by
-> dw_apb_timer_of.c  so I guess it is still in use?)
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
+> Probably want to skip nodes that don't have CPUs, those will never
+> have the remote for .node value.
 
-Applied, thanks for the cleanup
+What if the CPU-less node is placed equidistant between two (or more)
+regular nodes and it is the best location for a futex that is spanning
+those nodes?
 
+That is to say, just because it doesn't have CPUs, doesn't mean it is
+never the right node.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Hmm?
 
