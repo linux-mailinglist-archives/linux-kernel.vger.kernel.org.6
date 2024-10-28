@@ -1,114 +1,171 @@
-Return-Path: <linux-kernel+bounces-385579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA599B38E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:13:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E8369B3951
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:39:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0E751F2335D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:13:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E37C281112
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:39:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB551E009C;
-	Mon, 28 Oct 2024 18:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28121DFD8F;
+	Mon, 28 Oct 2024 18:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="K19VSXkL"
-Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu8XwCxf"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B21A1DF97A;
-	Mon, 28 Oct 2024 18:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA041DE4DE;
+	Mon, 28 Oct 2024 18:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730139171; cv=none; b=VZKbRqFpTCxPqw9s9DRnRvyqb8voqGOYWD/4iv/GForaMkvXpdSK/DbYFTu/rBApk0Is9a64Vmj/sDnPnfzL6PlZRlKbuFIHKc+DHyJUTCPEi1NNb0ZqtrMFdbaMCmD1ZORWyDVMv6XlaoR836nqB/J3a8whX0pB/hNlkmYH5bI=
+	t=1730140753; cv=none; b=Hi6GRxCJPGqXG3g3O6i/wzFeOL8X8u3+aQtSldtAqbhMJ6+ErPJVYCXx06cXFnL36ivS6qbe7cZNavnLEmDdYIJkkZjuIbb8myIvdf/+FgEhU2qFdpBbiZUUKNFVP9FzK+FObJ4PoSaTt35yp0HaM5bFb6/Sr05v/vBNVmdX6lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730139171; c=relaxed/simple;
-	bh=5MaPsfR2hKKODgbANuDJ+3vdVd9wsJj23KxRLquFmkc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
-	 Content-Type:Subject; b=Ra6FpbEM9XLjA6K3ULHuTl8jODPqEmw9qDKatyh/BfvcTwbUBUT4DWxknevcxtdnxKwLy80jd59WvHDRDSoemrE9plldeCsxVKBTn9nin0odWhtlSnm7wXCQrVfnyvLTN7gjww0TqvAqkDWPWAgjZmWIra2AXCQyc3tKeSNa+m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=K19VSXkL; arc=none smtp.client-ip=204.191.154.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
-	MIME-Version:Date:Message-ID:content-disposition;
-	bh=PVgGO8I+aKJHmvYCR04uOsA3HSUhN0BC0EboYMzK8as=; b=K19VSXkL0jbE9wKlLQwlzKl5Qt
-	dFI8msaT1mELaj5hwKIwDlCJ46EwcaMmEobLfzfEKq+Eq7nTnteRjLb92tlfPf+mQ1jHZs/uau/Zv
-	btPElz6z7lxamWA9dafk7bpsCpOHuPE5ytvXdPKxSvkskCQz9G9p+Cd3hVlToTbBzJvAgoSIlT37A
-	r+ZWM2l+KvYFm7d2b43t3ljFpzoofdPK8h6WvgnWHW7sU/zCs1CIEnQebX78Y3u5+eOJI3mrSnt5j
-	dSSu52KwvY+eSIGe4RXd3JdoU0j37bdCROcQ7YHpM0slV0+MpM5Xaz7qZFasLUl12Cvd6Oj0uBW7u
-	ffpSvEzg==;
-Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
-	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96)
-	(envelope-from <logang@deltatee.com>)
-	id 1t5UEF-002ZWw-0E;
-	Mon, 28 Oct 2024 12:12:35 -0600
-Message-ID: <30e87c78-1021-4fa4-8aa6-e81245e77379@deltatee.com>
-Date: Mon, 28 Oct 2024 12:12:34 -0600
+	s=arc-20240116; t=1730140753; c=relaxed/simple;
+	bh=AYtJEjGo8gcP80huS1IqoXQUq0zkyVAYCgidNOLpDm8=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=WKol566BQ/2h6DEQLmY3iNG4KeTMy5/ItaivOLi0H/lz10yaY5CCEFIqbOSaY5etYN1URme5czJvGupwhdd4XurSP+UI2nbnKKQOP/KXpmpp87tygOdc4BHZ3hvh9tTATs0CepUyDyuNQPeftJBcpDJayT7itwoz5v5iizIMtj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tu8XwCxf; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cb47387ceso41100015ad.1;
+        Mon, 28 Oct 2024 11:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730140750; x=1730745550; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SZiPmgj2dPJ6tCBHtrpUtVtByhB4f+Nr2hhGHzMBNas=;
+        b=Tu8XwCxfHL0EPB/QK3zerXs48rE/wLhGuSaE2Ko/c/V+17m0xjRhjegpHhAQdudXYA
+         jraGmJdUaH+c5hcXxC17+OVYAJwatnH+Wwn+LgxcFnGeyKfXBjIb2dF5qQcHPWLn5rp7
+         UjCUJCACrMVtdfXr1bHTOgQ3NC6fWXWlfaBp13bOKpPPQqJ4kRwgz5yIwpKhzxjiu6GO
+         XN2eh95cNDp58QHmNI9tvNZ42AOLYFJgC7mghJz0CfPpJVTwEVUIxPPhEvtXtAXaOYJy
+         KGFDArBOLvL2ZipAoTPC+bnEWCUMwh2cUjN5TffKuAc1UwFHF87Rg5KfslSTaICy1wYx
+         6+ng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730140750; x=1730745550;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZiPmgj2dPJ6tCBHtrpUtVtByhB4f+Nr2hhGHzMBNas=;
+        b=Z7HHslonJYXDqm0Qr8dttwouSJDoY4fGtl11vEuwYZf2BdAhCFl/o0W4uHXBD7wVbz
+         ED7gk8XwG0S2s/IKX9ulUv6XgQzmNTuedhImqKI3/ZscJC0raa8Q2YRtFhMwSHt2m/D1
+         QpqmfYM52a7ak2y1P17G4uhqqiRWth/0xcUenclXUlwV4/M2FNqRuXlophuuI+GhNdf1
+         fd6Q/qHoT278Cri5emenCr3gBHW6eG+qugyXZuLw71EbLYHrDvwOeLz9u2tXOiERRPnA
+         yPBLA2cDb/hQmtaDsmgb6Ucpkj9k0NojLI6NwHB5/PKt6eMPnO2+N/zBQ+N9BlvJPej3
+         wVMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVYtmJGfDQQ4tFOYLLayR/zvH72EFimH20zqzaAuNxqtJo3kxUHHyeOp60NLMpwmEkUDbHZuHOHxDP8@vger.kernel.org, AJvYcCX36ZwTsccqgcXqXY49wL7z0XW/nxMDOvDll04YWtFpS/cBzpYjMK5rKxZ9z2sT9B8IQKDEA5VMP36cUz7X@vger.kernel.org, AJvYcCX9aoIZrQGoeWVxbjK5D1BclPLDvuYmYPVeGJCYwQTm1jJyLrlTquT29IJObLsGhZnkz0H0if4hYW2QMlU6@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywybj9gSkeXkyy4KhMjjTIVnuq3IqrfuOezDgj7K9TtVsawPp0p
+	vNJ9XOGmL0JpswFT0QR78PN5mghEaEkZ4FJgSWyBuS5vtT9EZw+QqH194w==
+X-Google-Smtp-Source: AGHT+IGsUjCFz3IRvH+sm1iBtHXYzpWXPl8/usgsJfUshZ6e3iWqYhjikKEhPIHCn1AfVf0B/C6ZOw==
+X-Received: by 2002:a17:902:f693:b0:20b:7be8:8ecf with SMTP id d9443c01a7336-210c6c7f095mr108266405ad.53.1730140749888;
+        Mon, 28 Oct 2024 11:39:09 -0700 (PDT)
+Received: from dw-tp ([171.76.83.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6dcfbsm53600815ad.103.2024.10.28.11.39.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 11:39:09 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: Dave Chinner <david@fromorbit.com>
+Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, John Garry <john.g.garry@oracle.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 4/6] ext4: Warn if we ever fallback to buffered-io for DIO atomic writes
+In-Reply-To: <Zx8ga59h0JgU/YIC@dread.disaster.area>
+Date: Mon, 28 Oct 2024 23:44:00 +0530
+Message-ID: <87a5eom6xj.fsf@gmail.com>
+References: <cover.1729825985.git.ritesh.list@gmail.com> <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com> <Zx6+F4Cl1owSDspD@dread.disaster.area> <87iktdm3sf.fsf@gmail.com> <Zx8ga59h0JgU/YIC@dread.disaster.area>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-Cc: Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
- iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
-References: <cover.1730037276.git.leon@kernel.org>
- <f7ee023a7497ad3d8a7a31b12f492339d155ac39.1730037276.git.leon@kernel.org>
-Content-Language: en-CA
-From: Logan Gunthorpe <logang@deltatee.com>
-In-Reply-To: <f7ee023a7497ad3d8a7a31b12f492339d155ac39.1730037276.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 104.157.31.28
-X-SA-Exim-Rcpt-To: leon@kernel.org, axboe@kernel.dk, jgg@ziepe.ca, robin.murphy@arm.com, joro@8bytes.org, will@kernel.org, hch@lst.de, sagi@grimberg.me, kbusch@kernel.org, bhelgaas@google.com, yishaih@nvidia.com, shameerali.kolothum.thodi@huawei.com, kevin.tian@intel.com, alex.williamson@redhat.com, m.szyprowski@samsung.com, jglisse@redhat.com, akpm@linux-foundation.org, corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, linux-rdma@vger.kernel.org, iommu@lists.linux.dev, linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
-X-SA-Exim-Mail-From: logang@deltatee.com
-X-Spam-Level: 
-Subject: Re: [PATCH 09/18] docs: core-api: document the IOVA-based API
-X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
 
-I noticed a couple of typos below:
+Hi Dave, 
 
-On 2024-10-27 08:21, Leon Romanovsky wrote:
+Dave Chinner <david@fromorbit.com> writes:
 
-> +Part Ie - IOVA-based DMA mappings
-> +---------------------------------
-> +
-> +These APIs allow a very efficient mapping when using an IOMMU.  They are an
-> +optional path that requires extra code and are only recommended for drivers
-> +where DMA mapping performance, or the space usage for storing the dma addresses
+> On Mon, Oct 28, 2024 at 06:39:36AM +0530, Ritesh Harjani wrote:
+>> 
+>> Hi Dave, 
+>> 
+>> Dave Chinner <david@fromorbit.com> writes:
+>> 
+>> > On Fri, Oct 25, 2024 at 09:15:53AM +0530, Ritesh Harjani (IBM) wrote:
+>> >> iomap will not return -ENOTBLK in case of dio atomic writes. But let's
+>> >> also add a WARN_ON_ONCE and return -EIO as a safety net.
+>> >> 
+>> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+>> >> ---
+>> >>  fs/ext4/file.c | 10 +++++++++-
+>> >>  1 file changed, 9 insertions(+), 1 deletion(-)
+>> >> 
+>> >> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+>> >> index f9516121a036..af6ebd0ac0d6 100644
+>> >> --- a/fs/ext4/file.c
+>> >> +++ b/fs/ext4/file.c
+>> >> @@ -576,8 +576,16 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>> >>  		iomap_ops = &ext4_iomap_overwrite_ops;
+>> >>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>> >>  			   dio_flags, NULL, 0);
+>> >> -	if (ret == -ENOTBLK)
+>> >> +	if (ret == -ENOTBLK) {
+>> >>  		ret = 0;
+>> >> +		/*
+>> >> +		 * iomap will never return -ENOTBLK if write fails for atomic
+>> >> +		 * write. But let's just add a safety net.
+>> >> +		 */
+>> >> +		if (WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC))
+>> >> +			ret = -EIO;
+>> >> +	}
+>> >
+>> > Why can't the iomap code return EIO in this case for IOCB_ATOMIC?
+>> > That way we don't have to put this logic into every filesystem.
+>> 
+>> This was origially intended as a safety net hence the WARN_ON_ONCE.
+>> Later Darrick pointed out that we still might have an unconverted
+>> condition in iomap which can return ENOTBLK for DIO atomic writes (page
+>> cache invalidation).
+>
+> Yes. That's my point - iomap knows that it's an atomic write, it
+> knows that invalidation failed, and it knows that there is no such
+> thing as buffered atomic writes. So there is no possible fallback
+> here, and it should be returning EIO in the page cache invalidation
+> failure case and not ENOTBLK.
+>
 
-The second 'dma' should be capitalized as it is in other uses.
+So the iomap DIO can return following as return values which can make
+some filesystems fallback to buffered-io (if they implement fallback
+logic) - 
+(1) -ENOTBLK -> this is only returned for pagecache invalidation failure.
+(2) 0 or partial write size -> This can never happen for atomic writes
+(since we are only allowing for single fsblock as of now).
 
+Now looking at XFS, it never fallsback to buffered-io ever except just 2
+cases - 
+1. When pagecache invalidation fails in iomap (can never happen for
+atomic writes)
+2. On unaligned DIO writes to reflinked CoW (not possible for atomic writes)
 
-> +    int dma_iova_sync(struct device *dev, struct dma_iova_state *state,
-> +		size_t offset, size_t size, int ret);
-> +
-> +Must called to sync the IOMMU page tables for IOVA-range mapped by one or
-> +more calls to ``dma_iova_link()``.
+So it anyways should never happen that XFS ever fallback to buffered-io
+for DIO atomic writes. Even today it does not fallback to buffered-io
+for non-atomic short DIO writes.
 
-"Must be called" instead of "Must called"
+>> You pointed it right that it should be fixed in iomap. However do you
+>> think filesystems can still keep this as safety net (maybe no need of
+>> WARN_ON_ONCE).
+>
+> I don't see any point in adding "impossible to hit" checks into
+> filesystems just in case some core infrastructure has a bug
+> introduced....
 
-Thanks,
+Yes, that is true for XFS. EXT4 however can return -ENOTBLK for short
+writes, though it should not happen for current atomic write case where
+we are only allowing for 1 fsblock. 
 
-Logan
+However given there are several places in EXT4 which has got fallback logic,
+I would still like to go with a WARN_ON_ONCE where we are calling ext4
+buffered-io handling for DIO fallback writes. This is to catch any bugs
+even in future when we move to multi-fsblock case (until we have atomic
+write support for buffered-io).
+
+Thanks!
+-ritesh
 
