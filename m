@@ -1,128 +1,110 @@
-Return-Path: <linux-kernel+bounces-385610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 174749B395D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:43:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F6F9B3959
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:39:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5B41F21E20
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:43:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35261F21B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FC61DFD82;
-	Mon, 28 Oct 2024 18:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11DDE1DFDA7;
+	Mon, 28 Oct 2024 18:39:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mTesfLpY"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ufVbxxkT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCCB3A268;
-	Mon, 28 Oct 2024 18:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A68C1DF972;
+	Mon, 28 Oct 2024 18:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140997; cv=none; b=XfrMP5KLbS61Pbpt1mRJCWsI+I+6ZpLIsyV5DEU5jDn/cJ71lKQQ8GCjrSTIWeKWECYsYt6a/ezLR++QUgakdH0HvHTfw0/HUzfX02+fvnVfkPCLg+1qFchMg1fV0jAC3Dz7wXxkEIy9zNQZ8oNGJwFSPz145Z5CznMOv3heHxY=
+	t=1730140789; cv=none; b=poWbdNtyfSxdtOBeL1kN8QUQZ6lsYDdJ/QDmNWHqgUzLn3cKLH8cTX3So5dGY2b3zTAULZNUfuwRGM6y132EUIqwoSxBybldbkRsYWbH49Wcsj+a1EF6rILz0R5+1O4EjJwGkE3Fezx6JR0o/4c6Yvfvrvc7JM7Izku2U2Ls8tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140997; c=relaxed/simple;
-	bh=hZDW9WqjWuNKMYjcCSSCDzXV28y4hUdmwJYnvnbOIsY=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=SqfZHsVdXChl4V1TmLZOIMaqh8dFnijzXR/tOM85Q8jo784RwbYXx3TB12TS3EXgfjVMN8zIIlIyJHnx5vzNSExsIcmRkjxZJP++QOnbyL6I93QioVpODgagRKBjJAo6a8tnrGZf0NzQSXkzj13/1wpqKmQBN3L2xbrENakXtec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mTesfLpY; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ede6803585so1183751a12.0;
-        Mon, 28 Oct 2024 11:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730140994; x=1730745794; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=N4/Me2eVv8lU1gEbAQKsDKN4O3ejsnyGDvUbN3UpB54=;
-        b=mTesfLpYEnjC/2HlTzG/TDo5lhqkBJ/jjAeUMaP+33s1TvzxwCuCVGIrdVn3eivleH
-         D9+UKMfpoGZ8o1tz/kzYEMYhV9C0bKfcYDb66qdiMabre0xN7+YvJlnuHvU9etI/qnQL
-         vvn+wgri+ASCiLGgsD2b0jeM1a6qUcaKWgSi5nUdgpoZHQH8NolqfamwO+jXt3FqdqH+
-         245V+efhJH52hivcVTgvLq+MaXSsyEPBeUh+4mUIR8PiYX+7m9DaLJ1N1WmZjk6DZnOf
-         re9PfESqn0rW8MiUOZdmovnTJeCJXFiMhsVWQ0Qa6SPSvoweK9j5d8FqU8qvFWqbDyni
-         4Vgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730140994; x=1730745794;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=N4/Me2eVv8lU1gEbAQKsDKN4O3ejsnyGDvUbN3UpB54=;
-        b=kOZK/+5J5ndqcDrPG4WCLSI+cW8vgOO2sqnBOH1obGqhOHS7pEx5ufIvSNT6taJbYr
-         GAdxoPErVMHy6IANYs+d5XKAM/LaJItyElzF8leqUlwOORwHshDO8c1RoPBUlMdvR5Iy
-         KGKcZItQsZKb8YCIsoy1vAq8fhQjmoM9AnfVB6R1h/FKIbKV7OF1l+Ikotbk9JdBETiY
-         dnyD8nl6coGsqfVQtdTkCNzBHo2Y8ig973E+dXOUORMk7GMpeHe40LfvKf6HVqm3VcEp
-         /4zBLXgezGLUIS5cO7pJ9xyqHXaTtEPnGqAt/aj6Dqhf3wXZ8xk8h9liDELJlRgMyFI4
-         ezwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWMaVhENcd4x+NnS4ldDZqeOuBegWsxlwflDNWaCUrQutfZ8gEv8BRwD7efX/vZlrH8upT+Wd1cyJQVdgmJ@vger.kernel.org, AJvYcCWge8UWmXu8Fz0/rSSkqbyr6NfMmSTj0Vu8+buFvWUb14SuYpll1eawPvYriE/WY8c6btZnffBEwKixSsAg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/qT+vV+RuS3Xwl6TEIHYrDUbXQ7U/WUK+fdKAGeWZD/trUgis
-	JX0ZnIsTNP4CciEYayLYwPCWQzmRnmxhwaRkuW7z6LQG3X+eFqjRXWcsaw==
-X-Google-Smtp-Source: AGHT+IEsPi5CnLsqPDuL34kjNvgLU7cQX769oqJlfbYM1E4LDRAIFJKDXg808cZWKd8btOzgvDe0Xw==
-X-Received: by 2002:a05:6a20:b58b:b0:1d8:f97e:b402 with SMTP id adf61e73a8af0-1d9dc89879amr772134637.13.1730140993654;
-        Mon, 28 Oct 2024 11:43:13 -0700 (PDT)
-Received: from dw-tp ([171.76.83.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3f0eesm6063729b3a.208.2024.10.28.11.43.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 11:43:12 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: linux-xfs@vger.kernel.org
-Cc: "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, John Garry <john.g.garry@oracle.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, Carlos Maiolino <cem@kernel.org>, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] xfs: Do not fallback to buffered-io for DIO atomic write
-In-Reply-To: <627c14b7987a3ab91d9bff31b99d86167d56f476.1729879630.git.ritesh.list@gmail.com>
-Date: Tue, 29 Oct 2024 00:09:25 +0530
-Message-ID: <878qu8m5r6.fsf@gmail.com>
-References: <627c14b7987a3ab91d9bff31b99d86167d56f476.1729879630.git.ritesh.list@gmail.com>
+	s=arc-20240116; t=1730140789; c=relaxed/simple;
+	bh=uk4BWPlVVVwanPbUBrAaB+ERcnlLbOL0Xx2a3Ixjboc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9rhzs6eUATWdEW72bLDH9/FBUpll2yGGp/nM1cRIKJPmTyWXQxbWLJ5DbdcgRHkWhEminy6WwQsIoXzfUh4ER7Vw+DcqLJPwt92c5Iz4/cFmSc8jhTLBO3F943sAx7Smzu4byjaqbY/SgfIaw1NMKvFG78HIUfocvuN71Si1fk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ufVbxxkT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 611F4C4CEC3;
+	Mon, 28 Oct 2024 18:39:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730140789;
+	bh=uk4BWPlVVVwanPbUBrAaB+ERcnlLbOL0Xx2a3Ixjboc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ufVbxxkTWxJDj8HIHfBS/e+90hOVJwh2ipSDoAm1RUfU5KMmgV7WmmTEjAnysS0gC
+	 z5jEygQH1q1/a4tB71R8Bp1ATC7U76OqZCKr7wjOu+I99j4mc2QjAt8Nucxunj7xg1
+	 wZGv+VyMIcKunGsRclb7iUvRyfGDDFbVTaCVCog4/uhm9IRpC0XmzA5NwCl+5V8/Bn
+	 9wZ5570n4BR8rOzU1bjzDuSdR42R13+66vSllQDn/p2SFwTnRgy26PwXV6Ke4S75WX
+	 FEIMyZc4Wgc+/rkrpAtXMY0SjfvDNi/ydcZe2lrkEs8d5xkzyJZMRC4Uj03ufeh6Rh
+	 9Iy6DC7COCGhw==
+Date: Mon, 28 Oct 2024 18:39:38 +0000
+From: Will Deacon <will@kernel.org>
+To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Russell King <linux@armlinux.org.uk>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>, Theodore Ts'o <tytso@mit.edu>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	linux-csky@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, loongarch@lists.linux.dev,
+	linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH 05/28] arm64: vdso: Use only one single vvar mapping
+Message-ID: <20241028183937.GA3132@willie-the-truck>
+References: <20241010-vdso-generic-base-v1-0-b64f0842d512@linutronix.de>
+ <20241010-vdso-generic-base-v1-5-b64f0842d512@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241010-vdso-generic-base-v1-5-b64f0842d512@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-
-We need not pick this patch up. As after the careful review of the code,
-it seems XFS can never fallback to buffered-io for DIO atomic writes. 
-
-Hence we don't need this patch. More details in [1]. 
-
-[1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
-
-(Sorry for the noise).
-
-"Ritesh Harjani (IBM)" <ritesh.list@gmail.com> writes:
-
-> iomap can return -ENOTBLK if pagecache invalidation fails.
-> Let's make sure if -ENOTBLK is ever returned for atomic
-> writes than we fail the write request (-EIO) instead of
-> fallback to buffered-io.
->
-> Suggested-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+On Thu, Oct 10, 2024 at 09:01:07AM +0200, Thomas Weiﬂschuh wrote:
+> The vvar mapping is the same for all processes. Use a single mapping to
+> simplify the logic and align it with the other architectures.
+> 
+> In addition this will enable the move of the vvar handling into generic code.
+> 
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 > ---
->
-> This should be on top of John's atomic write series [1].
-> [1]: https://lore.kernel.org/linux-xfs/20241019125113.369994-1-john.g.garry@oracle.com/
->
->  fs/xfs/xfs_file.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index ca47cae5a40a..b819a9273511 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -876,6 +876,14 @@ xfs_file_write_iter(
->  		ret = xfs_file_dio_write(iocb, from);
->  		if (ret != -ENOTBLK)
->  			return ret;
-> +		/*
-> +		 * iomap can return -ENOTBLK if pagecache invalidation fails.
-> +		 * Let's make sure if -ENOTBLK is ever returned for atomic
-> +		 * writes than we fail the write request instead of fallback
-> +		 * to buffered-io.
-> +		 */
-> +		if (iocb->ki_flags & IOCB_ATOMIC)
-> +			return -EIO;
->  	}
->
->  	return xfs_file_buffered_write(iocb, from);
-> --
-> 2.39.5
+>  arch/arm64/kernel/vdso.c | 43 +++++++++++++------------------------------
+>  1 file changed, 13 insertions(+), 30 deletions(-)
+
+I took this for a spin in qemu to double-check that compat and native
+tasks can peacefully co-exist while using the vDSO. It all seems ok, so:
+
+Acked-by: Will Deacon <will@kernel.org>
+Tested-by: Will Deacon <will@kernel.org>
+
+Will
 
