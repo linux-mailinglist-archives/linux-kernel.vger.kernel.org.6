@@ -1,87 +1,147 @@
-Return-Path: <linux-kernel+bounces-385806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F9E9B3BFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:38:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B86409B3BFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:38:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 787DDB20FAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D584285F36
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:38:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B6E1E0DCB;
-	Mon, 28 Oct 2024 20:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4679C1E0095;
+	Mon, 28 Oct 2024 20:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="XRlsP4MP"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oMIV7ouo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8758B148300
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 20:37:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC49148300;
+	Mon, 28 Oct 2024 20:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730147858; cv=none; b=j/0rQM8brtogRIj96ydBVesOrQLahnnhgiJ2UJMpNc21oyRsYy+jqJovDaGfoDk4CanG6NnHkFfVhE5TWsUomYxWXZmimjKsikDbI8SRHLG3l3sU9opyoY3VMbK7/4qL9KrwBauzEHiSja9VSoLtpU0mdO7ZG7eQ+42uKWI+CQ0=
+	t=1730147930; cv=none; b=Tc70MdybFNtnloEmIR3AeLLO0dteUGtDQHmoez16ke8OzK7jS7f+dJXzQfdRG4N4EQrlwEc1eRFSBsFuQPJGJWJm0xdNK9K/xXhqgKfHIgo13sYetxkS7wiB5JcrQv5tzG8AMQrAE+GzHyskSkIWquMLD1JB/csTZXL+PdNzjdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730147858; c=relaxed/simple;
-	bh=1cmMA6DZcIj1ByUWOXepebgMFqvxMzRHCB8E9CDMjlc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=skrZffAH4e9q5RFDexKjbZ43KNr5w3gP8fh5o2VHmZc4NMoysT+DNmW9NPkDQHuTrFVvS1FrnrapDYjjiinAiJibaSxO9zsn6vUSno13DUHAQvtnxRVfjrRGx633lm0edX4Ker2G7eur+L8Xgv+nWhPyvLO6u7b7Ed3Wt7IxJ10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=XRlsP4MP; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 75A69177109; Mon, 28 Oct 2024 20:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730147855; bh=1cmMA6DZcIj1ByUWOXepebgMFqvxMzRHCB8E9CDMjlc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XRlsP4MPGa7h7zOFzKDBEcBo9QX8tRMFmkGcgVeAYYN7yFIVqTrGPsh2IlCE50ECe
-	 cHTzmVEeObLjOpkR/ceV0ajGU6tJVQC77k8mucf9hhvEv4zIMXUSAIKh/e3zG+iw66
-	 VtLl7Be5XTTLEHNI0wQK1ZhTZW5tIHZDHKzpgWObuRnrmFp61KcFq1TG9ZL3RGH0Vk
-	 vA5HDFi6t9epgtsfAJQj7G9Ygd3y0paPDjz1VnJEHQiLewgYC6YJPmwOGS3Zo0mTBS
-	 D5O1edOSQEH7o71PZWGww57isk5YQavd38n4hwvV7MqaYhca/wY815a7Ig2txdwWa9
-	 wzMgKC700bOAg==
-Date: Mon, 28 Oct 2024 20:37:35 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: jason.wessel@windriver.com, daniel.thompson@linaro.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kdb: Fix breakpoint enable to be silent if already
- enabled
-Message-ID: <20241028203735.GA919150@lichtman.org>
-References: <20241027204729.GA907155@lichtman.org>
- <CAD=FV=XP3WueSj9reLqsDm3-i3K0LMX7SJcf_Z=8E=3rD7E81g@mail.gmail.com>
+	s=arc-20240116; t=1730147930; c=relaxed/simple;
+	bh=m3PZAoWfta+ZnN37Ke0OPKpW1qTjsH1pXd/rg1xGge8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qt0yXYBIg4X0qiX0Pp5dlHtsfL/U4sgrLRjhbRuFewfk9wAYSncIQ/ZKTBhcCrRGhJ8d3L/6WgN/t1XXnUff1NgxpNnsxHexNCMGsW19GQlzyk/i+Kh9quYK4IMmjztkElbJfAtBgpXFDEQ1qFggGYgFiUjJ0F4x6d4d0414wOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oMIV7ouo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99932C4CEC3;
+	Mon, 28 Oct 2024 20:38:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730147930;
+	bh=m3PZAoWfta+ZnN37Ke0OPKpW1qTjsH1pXd/rg1xGge8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oMIV7ouoNxO1A4ULnqqb+zD3y3ho0clS8GBIBs9qHMH/dskaNgIq+bZz1RhmTW+DE
+	 SdERiwUKLf/JmJS73kqRx3/PkieSIliCACITTT85+ZwQcUoI1m4mnZR2cD4eGCc3O5
+	 DnKK7yMH+cuPax9jnFOtaF0Loz/0flFGLZJWwepSNIQAT8Cg7Kmr4liSyVojS5UznI
+	 3JHumZdHCyFHX/xpTUN6XW06BesrhaH7FMdfjfSl3K4hMRUump6ly9ZSFMU54gRSiV
+	 HJO6jwiYGeUjG9em0maWV5mqGxa0K2xPhFnz5ulbFyTuX2kLo1eg1TnyrnoTAmZnnb
+	 wz3rU2IKfHlCA==
+Date: Mon, 28 Oct 2024 20:38:39 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Aren Moynihan <aren@peacevolution.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
+ <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+ <samuel@sholland.org>, Kaustabh Chakraborty <kauschluss@disroot.org>,
+ =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <trabarni@gmail.com>, Ondrej Jirman
+ <megi@xff.cz>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@pengutronix.de>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, Dragan
+ Simic <dsimic@manjaro.org>, phone-devel@vger.kernel.org
+Subject: Re: [PATCH v3 3/6] iio: light: stk3310: Implement vdd and leda
+ supplies
+Message-ID: <20241028203839.65debe2b@jic23-huawei>
+In-Reply-To: <ggpxs4mlkobdkvqxbzroeogqe2kxlixne7ly4njb5ynnszvvkv@3gusj5w53bbj>
+References: <20241028142000.1058149-1-aren@peacevolution.org>
+	<20241028142000.1058149-4-aren@peacevolution.org>
+	<Zx-h7QUnCKwtu8iC@smile.fi.intel.com>
+	<ggpxs4mlkobdkvqxbzroeogqe2kxlixne7ly4njb5ynnszvvkv@3gusj5w53bbj>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XP3WueSj9reLqsDm3-i3K0LMX7SJcf_Z=8E=3rD7E81g@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 11:38:00AM -0700, Doug Anderson wrote:
-> On Sun, Oct 27, 2024 at 1:47 PM Nir Lichtman <nir@lichtman.org> wrote:
-> >
-> > Fix the breakpoint enable command (be) to a logic that is inline with the
-> > breakpoint disable command (bd) in which if the breakpoint is already in
-> > an enabled state, do not print the message of enabled again to the user.
+On Mon, 28 Oct 2024 12:37:14 -0400
+Aren Moynihan <aren@peacevolution.org> wrote:
+
+> On Mon, Oct 28, 2024 at 04:38:37PM +0200, Andy Shevchenko wrote:
+> > On Mon, Oct 28, 2024 at 10:19:57AM -0400, Aren Moynihan wrote:  
+> > > The vdd and leda supplies must be powered on for the chip to function
+> > > and can be powered off during system suspend.
+> > > 
+> > > Co-developed-by: Ondrej Jirman <megi@xff.cz>  
+> > 
+> > Missing SoB. Please, read Submitting Patches documentation for understanding
+> > what has to be done here.
+> >   
+> > > Signed-off-by: Aren Moynihan <aren@peacevolution.org>  
+> > 
+> > ...
+> >   
+> > > Notes:
+> > >     I'm not sure what the proper way to handle attribution for this patch
+> > >     is. It was origionally based on a patch by Ondrej Jirman[1], but I have
+> > >     rewritten a large portion if it. I have included a Co-developed-by tag
+> > >     to indicate this, but haven't sent him this patch, so I'm not sure what
+> > >     to do about a Signed-off-by.  
+> > 
+> > Ah, seems you already aware of this issue. So, either drop Co-developed-by
+> > (and if you wish you may give a credit in a free form inside commit message)
+> > or make sure you get his SoB tag.  
 > 
-> I don't ever use these commands (if I'm setting breakpoints them I'm
-> using kgdb, not kdb), but this seems OK to me in general. I'm a little
-> curious why you don't also make the "breakpoint clear" command
-> consistent.
+> Alright, thanks for clarifying that.
 > 
+> > >  	mutex_init(&data->lock);  
+> > 
+> > Somewhere (in the previous patch?) you want to switch to devm_mutex_init().  
+> 
+> Good catch, it looks like that was being leaked before this refactor.
+> Yeah that sounds like the right place, I'll include it in v4.
+Not really on the leaking.  Take a look at the cleanup for devm_mutex_init().
+It's debug only and not all that useful in most cases.
 
-After looking deeper into this, reason this is not applicable for the "bc"
-command is that after clearing the breakpoint, upon trying to clear it again,
-an error will occur that says the breakpoint doesn't exist anymore hence this
-logic is not applicable for "bc" which unlike "be"/"bd" completely clear out the bp
+However, it is good to not assume that now we have a devm_mutex_init()
+available that is easy to use.
 
-Thanks,
-Nir
+> 
+> > > +	ret = devm_regulator_bulk_get(&client->dev, ARRAY_SIZE(data->supplies),
+> > > +				      data->supplies);
+> > > +	if (ret)
+> > > +		return dev_err_probe(&client->dev, ret, "get regulators failed\n");  
+> >   
+> > > +		return dev_err_probe(&client->dev, ret,
+> > > +				     "regulator enable failed\n");  
+> >   
+> > > +	ret = devm_add_action_or_reset(&client->dev, stk3310_regulators_disable, data);
+> > > +	if (ret)
+> > > +		return dev_err_probe(&client->dev, ret,
+> > > +				     "failed to register regulator cleanup\n");  
+> > 
+> > With
+> > 
+> > 	struct devuce *dev = &client->dev;
+> > 
+> > at the top of the function makes these and more lines neater.
+> >   
+> [snip]
+> > 
+> > While changing to RCT order here, it seems you have inconsistent approach
+> > elsewhere (in your own patches!). Please, be consistent with chosen style.  
+> 
+> Sounds easy enough to fix, I'll include these in v4.
+> 
+> Thanks taking the time to review
+>  - Aren
 
-> -Doug
 
