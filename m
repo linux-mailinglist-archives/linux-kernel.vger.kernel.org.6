@@ -1,126 +1,196 @@
-Return-Path: <linux-kernel+bounces-385601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E72749B3941
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 090A69B3942
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:37:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 954EC1F225EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:37:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3C21F227B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D22E51DF97D;
-	Mon, 28 Oct 2024 18:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8671DFDBB;
+	Mon, 28 Oct 2024 18:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOr06pMO"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MhfIttbR"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CFB186E27
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B221DFD89;
+	Mon, 28 Oct 2024 18:37:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140624; cv=none; b=ni37LYtgyjSplgmC+TzO6wnjBOECJcP2UIzu0j/tRGB0dIspsfrceuHW7wEAyJyrrr9NinAe587kN0ht/1x8y91kWlTysW9vunfg8xrgBpMLqbg8Zk4XYPie1DObes3p9yDDvQATaBt3pRaPlh/en4/lB5GLBAk8xXU1cWoJjNE=
+	t=1730140629; cv=none; b=C2K37OXrdChYvSEf+iSv0MdiFXnS7IU0NJZYMwi/UYUf8W8PrSj10dhiIHKiiavReVDJ3XpK53Q1DXi6x2PDQOgN4mh32riaZMVKlA7/7gTHyOSCwIkABoMNl2vekmpntpnB9Xd2QToEnBPSvQ5VND0lNT4FCskU+rGdQxC6loI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140624; c=relaxed/simple;
-	bh=PsNzc2OXfUCmJP2l2vN8PVR2Xt+FXaIQ1Sx8H2964UQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QGgnJNB+T9lhOgj8+WAICh9o34fkvlTn1N7VcqgnxF+CxSPtJBV6YHLV//rgTq938cSxm8SveEeHl3LveGsFQ3XP+5K3ItDLYTWEoOu1+xjc3O+IAMwne0Z5zkYwF1vcVbk97jYaYDnl2qNhhVTHM8PBDBDagc6MZlxqfxfeuEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOr06pMO; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso9118115a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:37:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730140621; x=1730745421; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PsNzc2OXfUCmJP2l2vN8PVR2Xt+FXaIQ1Sx8H2964UQ=;
-        b=JOr06pMOLujJbLBZXDPH5DX84XKfgR5TYxxUEkKrh1vxw+itH/MLc0x9l28p/zj5ZV
-         rPDPd3WqoFq1L3q2+pKjXGzEZBQJ9dnXLYdy3wzRwlbXj1XLXlRqblm4h1075oGPDmO/
-         lnRGTO/xEZ8K3y1wrr1/Oe/snpVftDi8ljn5+fij1xSOfnPXrO/btT9vigRf0ZZM30R2
-         nFrwXAbpJhKqBNa7h0SzoF8USg+Cxgzi4Ko/aXptcfKXI2LzOiyDpu0qbD3VDvVzednD
-         uqtA0aNU0BgZ/E4Wc+fOpY+jZKbicJa+GtWzjkvl3V5pPpflmDTthoKgosZI7L6ZxhjU
-         XI4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730140621; x=1730745421;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PsNzc2OXfUCmJP2l2vN8PVR2Xt+FXaIQ1Sx8H2964UQ=;
-        b=Y6if7/3wM5+pxPwTAlSxVicFTGWtS8XwTIVn31jgbsYCWncM4DPlhQbtQwp0B0d2kz
-         H7h8M+CxqfKHkeSIsmEEIdNTirRaO7gZqWGwAg8C9IQaCtXUQhGY9xo+Ax7LTe0NX/KV
-         tg2Y8q22AvPa27gyEGHsgpp+Gu40jDYh3Siz3uuV9W560w8U7h5hWaZd7QcNmU1A95F0
-         gbPTjbEZRJgPUxrZft96lYRxMQtfBc2b/AS8mFoYLPQYhfPTdZ9FjqAdF1OBrTrE/c/I
-         3aHA6V22JEWRDdWXB2psomCNc2acAuL2wmQ4y7pCooaopz0fliMwp7ODorL11dfKGfug
-         sfFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0SRRwbw353PcjzTtO51w7lKqjoA6atBQyYdnBXBCjBvZx1EocY46OWhi9zYDSqTBdoniU/jgrBqA4GsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/0rShFc/bErdRbSz6U2QXPUtztkeT8QNC87fObvgoJ1l0bYDT
-	Ct9G/2zUKx8b0rDbXx4YdgOm1C0GaQfvj7t7I5Ka/zbM/ff6dKPP01IQn2ZptbJ6D0siWhby8MZ
-	31rSe7Mx6y0CkuZ7ICaUzYd4JBHU=
-X-Google-Smtp-Source: AGHT+IG4WvxG8g6dvo3BHYFnBH+wdpUsZIaJXYJCg/ztAeenlQauWzMEMGpB8nzANJtwXgFCVFXBcS8Mgd23/gp+y9s=
-X-Received: by 2002:a17:907:9808:b0:a9a:ca:4436 with SMTP id
- a640c23a62f3a-a9e2274cc43mr41235266b.13.1730140620413; Mon, 28 Oct 2024
- 11:37:00 -0700 (PDT)
+	s=arc-20240116; t=1730140629; c=relaxed/simple;
+	bh=kCmPyYjjWXHxfuxWDJeY/5/Sf0Ji2AD9knLHw1d8mu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=is5PBloCz3puKmu1sTSFLt5RwcvS9rxc/zgOkfHXlAoS8bepDGIfcnLANPzv+qOjloUK3XAOfe6ZeaRG1ODRqUTP/Uyatq4eUxc4oD0zyufBl2TtlPuftizgQN2sPvutcWL9oTxb+bqwKVHFVDJXbTc3OPFXVt2Fl45gJox5luQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MhfIttbR; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AEFE6743;
+	Mon, 28 Oct 2024 19:37:01 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730140621;
+	bh=kCmPyYjjWXHxfuxWDJeY/5/Sf0Ji2AD9knLHw1d8mu0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MhfIttbRLbQVqdgGnkdZqJ2bK4AJhY6EAz6Zk1ai+fgLCdi1u9LgmPqykm++u9asm
+	 sGjVzCtgTQegee66JrctZPf9283L2tA7qY8R7IxQ0aseoMkiIs55TK9NhwccyHuzTe
+	 35IYukIeE3mchRb6iNcKGSgkSKqrXYyJqL44fYpQ=
+Date: Mon, 28 Oct 2024 20:36:57 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tommaso Merciai <tomm.merciai@gmail.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
+Message-ID: <20241028183657.GE26852@pendragon.ideasonboard.com>
+References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
+ <20241020164354.GG7770@pendragon.ideasonboard.com>
+ <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <20241021073034.GC14328@pendragon.ideasonboard.com>
+ <Zx/KsKBtVBWfziXo@tom-desktop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
- <3A1E5353-D8C5-4D38-A3FF-BFC671FC25CE@nvidia.com> <966a4aff-f587-c4bb-1e10-2673734c2aa0@google.com>
- <E5A75697-55C7-4335-8D86-EE5CB6A99C4F@nvidia.com> <CAHbLzkqEhbw89HMh7h-r6M1xM5vw7bUZDNO7KEgPyaguO32d-Q@mail.gmail.com>
- <5d28df34-f073-dec5-730e-a3073f14d849@google.com>
-In-Reply-To: <5d28df34-f073-dec5-730e-a3073f14d849@google.com>
-From: Yang Shi <shy828301@gmail.com>
-Date: Mon, 28 Oct 2024 11:36:48 -0700
-Message-ID: <CAHbLzkpTgJkzCNCmPwmtnOwGEf0-pxT=_bhPw-gawgiuH21OBw@mail.gmail.com>
-Subject: Re: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not partially_mapped
-To: Hugh Dickins <hughd@google.com>
-Cc: Zi Yan <ziy@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Usama Arif <usamaarif642@gmail.com>, Wei Yang <richard.weiyang@gmail.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, Matthew Wilcox <willy@infradead.org>, 
-	David Hildenbrand <david@redhat.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Barry Song <baohua@kernel.org>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Nhat Pham <nphamcs@gmail.com>, Chris Li <chrisl@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Zx/KsKBtVBWfziXo@tom-desktop>
 
-On Sat, Oct 26, 2024 at 10:08=E2=80=AFPM Hugh Dickins <hughd@google.com> wr=
-ote:
->
-> On Fri, 25 Oct 2024, Yang Shi wrote:
-> >
-> > The other subtle thing is folio->_deferred_list is reused when the
-> > folio is moved to the local on-stack list. And some
->
-> Yes.
->
-> > list_empty(deferred_list) checks return true even though the folio is
-> > actually on the local on-stack list. Some code may depend on or
->
-> The code definitely depends on that behaviour: that's how folios get
-> unqueued when refcount reaches 0, whether they are on the public list
-> or on the local list at that time.
+Hi Tommaso,
 
-Yeah, folio may have 0 refcount on the local list after that
-folio_put() before it is moved back to deferred list.
+On Mon, Oct 28, 2024 at 06:32:32PM +0100, Tommaso Merciai wrote:
+> On Mon, Oct 21, 2024 at 10:30:34AM +0300, Laurent Pinchart wrote:
+> > On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
+> > > On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
+> > > > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
+> > > > > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > > > > userspace has to be able to subscribe to control events so that it is
+> > > > > notified when the control changes value.
+> > > > > If a control handler is set for the subdev then set the HAS_EVENTS
+> > > > > flag automatically into v4l2_subdev_init_finalize() and use
+> > > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> > > > > as default if subdev don't have .(un)subscribe control operations.
+> > > > 
+> > > > I would add here
+> > > > 
+> > > > This simplifies subdev drivers by avoiding the need to set the
+> > > > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
+> > > > consistency of the API exposed to userspace.
+> > > > 
+> > > > And you can also add
+> > > > 
+> > > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > > 
+> > > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > > 
+> > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > 
+> > > Oks, Thanks again.
+> > > 
+> > > > Now, can we simplify sensor drivers to drop the event handlers and the
+> > > > flag ? :-)
+> > > 
+> > > Yep, plan is add all to support v4l2_subdev_init_finalize()
+> > > Removing:
+> > > 
+> > >  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > >  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > > 
+> > > if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
+> > 
+> > What I meant is looking at the I2C sensor drivers that currently
+> > 
+> > - call v4l2_subdev_init_finalize()
+> > - set V4L2_SUBDEV_FL_HAS_EVENTS
+> > - set the .subscribe_event() and .unsubscribe_event() handlers
+> > 
+> > and dropping the flag and handlers from them. Is that what you plan to
+> > work on ?
+> 
+> It's ok for you per/driver patch or you prefer a big single patch?
 
-The main purpose for using folio_batch is to disambiguate list_empty()
-so that we don't rely on this subtle behavior. But I soon realized
-this may make deferred list lock contention worse when moving the
-folios back to deferred list. Currently we just need to do list
-splice, but we have to add every single folio back to deferred list
-one by one with folio_batch. It depends on how often folio split
-fails.
+I'm fine either way. Maybe one large patch to address all the drivers
+where the flag and handlers are simply dropped, and then one patch per
+driver where changes are larger (such as adding calls to
+v4l2_subdev_init_finalize()) ?
 
->
-> > inadvertently depend on this behavior. Using folio_batch may break
-> > some assumptions, but depending on this subtle behavior is definitely
-> > not reliable IMHO.
+> Meanwhile I've prepared something here:
+> 
+> https://gitlab.freedesktop.org/linux-media/users/tmerciai/-/compare/next...v6.12.0-rc1-nxp?from_project_id=22111
+> 
+> Let me know if you prefer (un)squashed version.
+> Thanks in advance. :)
+> 
+> Thanks & Regards,
+> Tommaso
+> 
+> > 
+> > > Meanwhile I think I will send v3 with your
+> > > suggestions. :)
+> > > 
+> > > > > ---
+> > > > > Changes since v1:
+> > > > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
+> > > > >    SAilus
+> > > > > 
+> > > > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
+> > > > >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > > > > 
+> > > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > > index 3a4ba08810d2..fad8fa1f63e8 100644
+> > > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+> > > > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
+> > > > >  
+> > > > >  	case VIDIOC_SUBSCRIBE_EVENT:
+> > > > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
+> > > > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
+> > > > > +			return v4l2_subdev_call(sd, core, subscribe_event,
+> > > > > +						vfh, arg);
+> > > > > +
+> > > > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+> > > > > +		    vfh->ctrl_handler)
+> > > > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
+> > > > > +
+> > > > > +		return -ENOIOCTLCMD;
+> > > > >  
+> > > > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
+> > > > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
+> > > > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
+> > > > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
+> > > > > +						vfh, arg);
+> > > > > +
+> > > > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
+> > > > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
+> > > > > +
+> > > > > +		return -ENOIOCTLCMD;
+> > > > >  
+> > > > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
+> > > > >  	case VIDIOC_DBG_G_REGISTER:
+> > > > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
+> > > > >  		}
+> > > > >  	}
+> > > > >  
+> > > > > +	if (sd->ctrl_handler)
+> > > > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> > > > > +
+> > > > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
+> > > > >  	if (IS_ERR(state))
+> > > > >  		return PTR_ERR(state);
+
+-- 
+Regards,
+
+Laurent Pinchart
 
