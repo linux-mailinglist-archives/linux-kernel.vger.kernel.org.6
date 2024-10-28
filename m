@@ -1,150 +1,563 @@
-Return-Path: <linux-kernel+bounces-385468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEEC99B3788
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:20:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ECF19B378D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:20:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEC9728213D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:20:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D0F31C21A04
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE2151DF747;
-	Mon, 28 Oct 2024 17:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F151DF276;
+	Mon, 28 Oct 2024 17:20:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1hIO9XF"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Y+DdsZB7";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="VpMyGr+t"
+Received: from fout-b2-smtp.messagingengine.com (fout-b2-smtp.messagingengine.com [202.12.124.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ACA1DEFEE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:20:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1211DEFC8;
+	Mon, 28 Oct 2024 17:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730136005; cv=none; b=RngoEjYdXlLOAiXQvQCwNdr/zdsNaCu9T+30YG7lAZY4GPNH+U87PS7Emb2oriVxzP1sEHtwjJ8KePrOHdT3gL0DjektYyAfP6UvKpglCUA5deGw5Z1eHEKQtuGm8/3UwH2QIpdQTe501L55XCMPZDIcicU2Yb2gXEEh/H6gPEw=
+	t=1730136035; cv=none; b=dkYKirsWt69e4PXp/nFl3NxSCRBh/mn1ZgC9dOeHO5PJU8vImh1m5s43F+2PVPli+v5ZxNB8OleLRWwetWtdvhTJPKmPVLxlwbZjXcYRn51GrPxal6howO5qn9X3BgxbCQHObVfRsbSsDmh5ylNZ+z50Hf5QHHZxJ9xBWOZUzBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730136005; c=relaxed/simple;
-	bh=VEhUyVK3jvTUmJ54/f3jkFNzqnn+7h4N9Iv352Qdsb4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kl/phN0Bc5LJ2Y5rvDdvk1umhfGr3fRK5xjiGSKFvojtKhdO2Sxq+fLWVrHXTnEXE/LOaZiIP+wW3GpHznfTbTkJOeL/rfaMOVL0jXhrRZ/iwj2DkLhw2gw6jIGpfNj7VyHRo7OLO42nzriybKYMajWHVp2zPdmiLaAkrbbreb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1hIO9XF; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso9002833a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:20:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730136001; x=1730740801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/eVHk3AW7gexiX7PCuaMlSsl6eHUqJBpZrMSinpxlxM=;
-        b=l1hIO9XFj22Esqb58pAWfkbnHa1gKO9QIYfUvf+VP+x2g07i2lTLoUuv/IqaXNuLAg
-         mrTXs1YAR2eej+A4mtCSdjYsVnXsQgQlARbHVrFWVclecISXmEZDm8FbUJsQc8Ynu3hI
-         JH4n49bSpf3X2CZuMy7pnfRHp5NCRCh0VeZ8GqSgriANjwJqpkM/4HwD7iQy06CwNUc0
-         2dKgo67S5910iXAC0FKylcTVi8/xYK8FqlT/UCKgZpB0fXx3LLMi9Og1Xiw5sfc2Dweb
-         XwiHJVO8sSAZ388eC1+k0HKDDK4FrVuQ8w8/mi4pSvSiexMqPxjztfvTuCmHAJqqcZ+R
-         Rf0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730136001; x=1730740801;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/eVHk3AW7gexiX7PCuaMlSsl6eHUqJBpZrMSinpxlxM=;
-        b=XuRMWP6oIQF9X6tYia5PUVtjjJejCeoEV10/7pcYPYTZM+FN4zU4ITMG6fHBfsb4JI
-         2VIucGD/bsdoKKe/x+MimhEqGh+pQR7e5shaDbAtiTAvEE1K2mrCxYRr9rcwRrTDc9Vp
-         uzwwKV0vUUkfNcdHH21W619a2FNDtQQhuNSWh0ujBf3Dn3b4c7sRACKhngd2Rcgu6C1j
-         WM9uJlVXfzkzgEa96uRchvt2e6JY/HMTVetroxIhI/wc1RC/wZ8yK8m1NgB+cj3zPPfc
-         mtA0X+x3YZOG4RW3PDO8BAJvDW/CaV6kT9v5+CTyXNohwt4f0KzJ9p1maerms3xv6PEz
-         Rs7g==
-X-Forwarded-Encrypted: i=1; AJvYcCVxZxqE5B25bl6yCJWuZNuRQMFrLfYZRLPpLvtU6g739YAR+gYWgB88QCxyaH1RUBG4pFCuZ+EDTxLlfnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlkvCZ3968o5Jgqes+19I8b+E7Q0MjeoXaIVU9lDFZQYcIPU/N
-	j2HAs9kFeZRu6GFIdcRIz0aJ8EmYBtrloHiDQ1d0AV6eNNNVWjZl
-X-Google-Smtp-Source: AGHT+IEscDPCM9cn12k4IcZouQpiYm6zyHeuc25wHiqlz9PCBSKJZWHRvo5xoi99boMMwTEwSJedOg==
-X-Received: by 2002:a17:907:9808:b0:a9a:ca:4436 with SMTP id a640c23a62f3a-a9e2274cc43mr25156366b.13.1730136000899;
-        Mon, 28 Oct 2024 10:20:00 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::5:1494])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b23027154sm396403866b.146.2024.10.28.10.20.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 10:20:00 -0700 (PDT)
-Message-ID: <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com>
-Date: Mon, 28 Oct 2024 17:19:59 +0000
+	s=arc-20240116; t=1730136035; c=relaxed/simple;
+	bh=gLeZv5ir97Yjl1sdt/46HloAxmSGIxtLFIMXVh3T8XM=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=EQacG21VQJxo+rgTMUxUrSm1S5sySKkTSs/DyMfjXBgXrbdt+jyD2KzG9OyfdQTOZRT1VyUaU1XjVqkHX7qxh/yNFTTRkABD5yXqX/r/o1sZIZqo1dPcnHXCzlvvUQQweCeEA5FOrMNvOpC1ryeGK7Kpvkt9SY9qIDmYOkzuRMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Y+DdsZB7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=VpMyGr+t; arc=none smtp.client-ip=202.12.124.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 6F3181140132;
+	Mon, 28 Oct 2024 13:20:29 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-02.internal (MEProxy); Mon, 28 Oct 2024 13:20:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1730136029;
+	 x=1730222429; bh=W0iPmQesPT1ho4cxae7PXZhUHNnzDttL/+VQgkAzRlU=; b=
+	Y+DdsZB7OduXrd1rze1TeqOHxe+A3MLaY/i72gOoxdD5jwzdVM49tkuLLMc6G+56
+	uQPKjvPGYkymIfxictfTtg2EevDSEPEAnmh951d+qmprjR1oP+PMlAQcWNsVw9gA
+	Un2PfTwLlArCxzgPN0p5C6jxJLxaKPcQQKpQJyArrBSCodQQH+DKBLlyAkrK/ppP
+	LJH8nU4+thdVadfJABkqr3mn6Qc/+OWZ+xjLiqLIXC31pHIK69koTOPjQHxOcNPR
+	WASkDdXwGiLXUQNGlH3rEdVyer1iqqV3pjELE9WPtz0CZ6lej7JdCdbsgYK6BZTG
+	0iiJj9awFOyJsvM/kBpzUg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730136029; x=
+	1730222429; bh=W0iPmQesPT1ho4cxae7PXZhUHNnzDttL/+VQgkAzRlU=; b=V
+	pMyGr+tEK9ck5IIjV9xcb86Hl/EOsyw5rYc1XG+DnAaZ7zax22iyJmyaPxTqId+4
+	2f+hgnNpy04+S3GFMG8XCN/30YBUV8wgLTa7lBxePUvQytGVQwCOkUe7rdYc7AqR
+	cpj/SEEdX9pVe1t1Raf2AFGJUtvvx3fslzm/kWbTf1J9SrV7n+gwnCLezUucE913
+	TI2lhRIEhaocgJtGryjqD5MNW0/iKG9BpnZIwguubfPZI347WRyRDI//WIxv9wIu
+	WulFy/OiIEOJuHcgb1S1zmRtDl5AOGrIuUS/E5iJrF/etqFARc4r0ykr5B/nRw3w
+	u3U2EAzGrMrs0IFBPXqVA==
+X-ME-Sender: <xms:28cfZzAIT4cMpLsw3HylBRNasIcSvz0Bxw9LJyH5hnYcqGDffSRVJg>
+    <xme:28cfZ5i4NxIwNPY0oX8NgYlqK0QThnGQXbyX03KtKwMwkd2qkw2a7j893pxoJtfrc
+    vVnAMAyipl2GJPNWOg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejledgjeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
+    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
+    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
+    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhr
+    tghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtph
+    htthhopehikhgvrdhprghnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtoheprghl
+    vgigsggvlhhmgeeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrd
+    gthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuiihmrgigihhmihhlihgr
+    nhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhhrdgvnhhgrdgsrhdprh
+    gtphhtthhopehsohihvghrsehirhhlrdhhuhdprhgtphhtthhopehlvghnsgeskhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:28cfZ-mAEsWbKI51UqfLgYMLMSHnoYgqSbhjb8-nwckgPM5ZR2pPIQ>
+    <xmx:28cfZ1ylYbLqq3xQGAseKWbAVoec4w8dY5S8-pg2xSL0uCj5ygG_vw>
+    <xmx:28cfZ4TUNyNtX6MzodjItDgTvTNoJZg82gDMrz2yZ3LQ-Qxm1EqokA>
+    <xmx:28cfZ4awSgp7vI2aqmzuoI6EMtWnaK52X1WcwXZUqR8Da9ht1by-6Q>
+    <xmx:3ccfZxRLhypQqzSxv9gyn6-o37nfjZlSREBixzUNEUpo7SvapGyJrMiw>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 241463C0066; Mon, 28 Oct 2024 13:20:27 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, Barry Song <21cnbao@gmail.com>,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>, Chengming Zhou
- <chengming.zhou@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
- David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Andi Kleen <ak@linux.intel.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
- "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
- Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
-References: <20241027011959.9226-1-21cnbao@gmail.com>
- <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
- <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
- <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com>
- <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
- <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com>
- <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Date: Mon, 28 Oct 2024 13:20:06 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
+ "Maximilian Luz" <luzmaximilian@gmail.com>, "Lee Chun-Yi" <jlee@suse.com>,
+ "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>,
+ "Corentin Chary" <corentin.chary@gmail.com>,
+ "Luke D . Jones" <luke@ljones.dev>, "Ike Panhc" <ike.pan@canonical.com>,
+ "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
+ "Alexis Belmonte" <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Ai Chao" <aichao@kylinos.cn>, "Gergo Koteles" <soyer@irl.hu>,
+ "open list" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
+ "Matthew Schwartz" <matthew.schwartz@linux.dev>
+Message-Id: <93160eab-8b19-4b21-8539-85cf1c2a2dce@app.fastmail.com>
+In-Reply-To: <f6b937ba-3e6c-400a-8fd0-de776c78f0cd@amd.com>
+References: <20241025193055.2235-1-mario.limonciello@amd.com>
+ <20241025193055.2235-8-mario.limonciello@amd.com>
+ <bfafd7c5-6757-42e5-a3cf-d4695b6723cd@app.fastmail.com>
+ <f6b937ba-3e6c-400a-8fd0-de776c78f0cd@amd.com>
+Subject: Re: [PATCH 7/8] ACPI: platform_profile: Add support for multiple handlers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+Thanks Mario,
 
-
-On 28/10/2024 17:08, Yosry Ahmed wrote:
-> On Mon, Oct 28, 2024 at 10:00 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>
->>
->> On 28/10/2024 16:33, Nhat Pham wrote:
->>> On Mon, Oct 28, 2024 at 5:23 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>
->>>> I wonder if instead of having counters, it might be better to keep track
->>>> of the number of zeropages currently stored in zeromap, similar to how
->>>> zswap_same_filled_pages did it. It will be more complicated then this
->>>> patch, but would give more insight of the current state of the system.
->>>>
->>>> Joshua (in CC) was going to have a look at that.
+On Mon, Oct 28, 2024, at 10:10 AM, Mario Limonciello wrote:
+> On 10/28/2024 06:01, Mark Pearson wrote:
+>> Hi Mario,
+>> 
+>> On Fri, Oct 25, 2024, at 3:30 PM, Mario Limonciello wrote:
+>>> Multiple drivers may attempt to register platform profile handlers,
+>>> but only one may be registered and the behavior is non-deterministic
+>>> for which one wins.  It's mostly controlled by probing order.
 >>>
->>> I don't think one can substitute for the other.
->>
->> Yes agreed, they have separate uses and provide different information, but
->> maybe wasteful to have both types of counters? They are counters so maybe
->> dont consume too much resources but I think we should still think about
->> it..
-> 
-> Not for or against here, but I would say that statement is debatable
-> at best for memcg stats :)
-> 
-> Each new counter consumes 2 longs per-memcg per-CPU (see
-> memcg_vmstats_percpu), about 16 bytes, which is not a lot but it can
-> quickly add up with a large number of CPUs/memcgs/stats.
-> 
-> Also, when flushing the stats we iterate all of them to propagate
-> updates from per-CPU counters. This is already a slowpath so adding
-> one stat is not a big deal, but again because we iterate all stats on
-> multiple CPUs (and sometimes on each node as well), the overall flush
-> latency becomes a concern sometimes.
-> 
-> All of that is not to say we shouldn't add more memcg stats, but we
-> have to be mindful of the resources.
+>>> This can be problematic if one driver changes CPU settings and another
+>>> driver notifies the EC for changing fan curves.
+>>>
+>>> Modify the ACPI platform profile handler to let multiple drivers
+>>> register platform profile handlers and abstract this detail from userspace.
+>>>
+>>>  From userspace perspective the user will see profiles available across
+>>> both drivers.  However to avoid chaos only allow changing to profiles
+>>> that are common in both drivers.
+>>>
+>>> If any problems occur when changing profiles for any driver, then revert
+>>> back to the previous profile.
+>>>
+>>> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>>   drivers/acpi/platform_profile.c | 203 ++++++++++++++++++--------------
+>>>   1 file changed, 117 insertions(+), 86 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+>>> index 091ca6941a925..915e3c49f0b5f 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -9,7 +9,6 @@
+>>>   #include <linux/platform_profile.h>
+>>>   #include <linux/sysfs.h>
+>>>
+>>> -static struct platform_profile_handler *cur_profile;
+>>>   static LIST_HEAD(platform_profile_handler_list);
+>>>   static DEFINE_MUTEX(profile_lock);
+>>>
+>>> @@ -36,26 +35,26 @@ static ssize_t platform_profile_choices_show(struct
+>>> device *dev,
+>>>   					struct device_attribute *attr,
+>>>   					char *buf)
+>>>   {
+>>> +	struct platform_profile_handler *handler;
+>>> +	unsigned long seen = 0;
+>>>   	int len = 0;
+>>> -	int err, i;
+>>> -
+>>> -	err = mutex_lock_interruptible(&profile_lock);
+>>> -	if (err)
+>>> -		return err;
+>>> -
+>>> -	if (!cur_profile) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return -ENODEV;
+>>> +	int i;
+>>> +
+>>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>>> +			for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST) {
+>>> +				if (seen & BIT(i))
+>>> +					continue;
+>>> +				if (len == 0)
+>>> +					len += sysfs_emit_at(buf, len, "%s", profile_names[i]);
+>>> +				else
+>>> +					len += sysfs_emit_at(buf, len, " %s", profile_names[i]);
+>>> +				seen |= BIT(i);
+>>> +			}
+>>> +		}
+>>>   	}
+>>>
+>>> -	for_each_set_bit(i, cur_profile->choices, PLATFORM_PROFILE_LAST) {
+>>> -		if (len == 0)
+>>> -			len += sysfs_emit_at(buf, len, "%s", profile_names[i]);
+>>> -		else
+>>> -			len += sysfs_emit_at(buf, len, " %s", profile_names[i]);
+>>> -	}
+>>>   	len += sysfs_emit_at(buf, len, "\n");
+>>> -	mutex_unlock(&profile_lock);
+>>>   	return len;
+>>>   }
+>>>
+>>> @@ -64,22 +63,20 @@ static ssize_t platform_profile_show(struct device *dev,
+>>>   					char *buf)
+>>>   {
+>>>   	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
+>>> +	struct platform_profile_handler *handler;
+>>>   	int err;
+>>>
+>>> -	err = mutex_lock_interruptible(&profile_lock);
+>>> -	if (err)
+>>> -		return err;
+>>>
+>>> -	if (!cur_profile) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return -ENODEV;
+>>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>> +		if (!platform_profile_is_registered())
+>>> +			return -ENODEV;
+>>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>>> +			err = handler->profile_get(handler, &profile);
+>>> +			if (err)
+>>> +				return err;
+>>> +		}
+>>>   	}
+>>>
+>>> -	err = cur_profile->profile_get(cur_profile, &profile);
+>>> -	mutex_unlock(&profile_lock);
+>>> -	if (err)
+>>> -		return err;
+>>> -
+>>>   	/* Check that profile is valid index */
+>>>   	if (WARN_ON((profile < 0) || (profile >= ARRAY_SIZE(profile_names))))
+>>>   		return -EIO;
+>>> @@ -91,37 +88,48 @@ static ssize_t platform_profile_store(struct device *dev,
+>>>   			    struct device_attribute *attr,
+>>>   			    const char *buf, size_t count)
+>>>   {
+>>> +	struct platform_profile_handler *handler;
+>>> +	enum platform_profile_option profile;
+>>>   	int err, i;
+>>>
+>>> -	err = mutex_lock_interruptible(&profile_lock);
+>>> -	if (err)
+>>> -		return err;
+>>> -
+>>> -	if (!cur_profile) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return -ENODEV;
+>>> -	}
+>>> -
+>>>   	/* Scan for a matching profile */
+>>>   	i = sysfs_match_string(profile_names, buf);
+>>>   	if (i < 0) {
+>>> -		mutex_unlock(&profile_lock);
+>>>   		return -EINVAL;
+>>>   	}
+>>>
+>>> -	/* Check that platform supports this profile choice */
+>>> -	if (!test_bit(i, cur_profile->choices)) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return -EOPNOTSUPP;
+>>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>> +		if (!platform_profile_is_registered())
+>>> +			return -ENODEV;
+>>> +
+>>> +		/* Check that all handlers support this profile choice */
+>>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>>> +			if (!test_bit(i, handler->choices))
+>>> +				return -EOPNOTSUPP;
+>>> +
+>>> +			/* save the profile so that it can be reverted if necessary */
+>>> +			err = handler->profile_get(handler, &profile);
+>>> +			if (err)
+>>> +				return err;
+>>> +		}
+>>> +
+>>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>>> +			err = handler->profile_set(handler, i);
+>>> +			if (err) {
+>>> +				pr_err("Failed to set profile for handler %s\n", handler->name);
+>>> +				break;
+>>> +			}
+>>> +		}
+>>> +		if (err) {
+>>> +			list_for_each_entry_continue_reverse(handler,
+>>> &platform_profile_handler_list, list) {
+>>> +				if (handler->profile_set(handler, profile))
+>>> +					pr_err("Failed to revert profile for handler %s\n",
+>>> handler->name);
+>>> +			}
+>>> +			return err;
+>>> +		}
+>>>   	}
+>>>
+>>> -	err = cur_profile->profile_set(cur_profile, i);
+>>> -	if (!err)
+>>> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>> -
+>>> -	mutex_unlock(&profile_lock);
+>>> -	if (err)
+>>> -		return err;
+>>> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>>   	return count;
+>>>   }
+>>>
+>>> @@ -140,7 +148,8 @@ static const struct attribute_group
+>>> platform_profile_group = {
+>>>
+>>>   void platform_profile_notify(void)
+>>>   {
+>>> -	if (!cur_profile)
+>>> +	guard(mutex)(&profile_lock);
+>>> +	if (!platform_profile_is_registered())
+>>>   		return;
+>>>   	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>>   }
+>>> @@ -148,40 +157,65 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
+>>>
+>>>   int platform_profile_cycle(void)
+>>>   {
+>>> +	struct platform_profile_handler *handler;
+>>>   	enum platform_profile_option profile;
+>>> -	enum platform_profile_option next;
+>>> +	enum platform_profile_option next = PLATFORM_PROFILE_LAST;
+>>> +	enum platform_profile_option next2 = PLATFORM_PROFILE_LAST;
+>>>   	int err;
+>>>
+>>> -	err = mutex_lock_interruptible(&profile_lock);
+>>> -	if (err)
+>>> -		return err;
+>>> -
+>>> -	if (!cur_profile) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return -ENODEV;
+>>> -	}
+>>> -
+>>> -	err = cur_profile->profile_get(cur_profile, &profile);
+>>> -	if (err) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return err;
+>>> -	}
+>>> -
+>>> -	next = find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LAST,
+>>> -				  profile + 1);
+>>> -
+>>> -	if (WARN_ON(next == PLATFORM_PROFILE_LAST)) {
+>>> -		mutex_unlock(&profile_lock);
+>>> -		return -EINVAL;
+>>> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+>>> +		/* first pass, make sure all handlers agree on the definition of
+>>> "next" profile */
+>>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>>> +
+>>> +			err = handler->profile_get(handler, &profile);
+>>> +			if (err)
+>>> +				return err;
+>>> +
+>>> +			if (next == PLATFORM_PROFILE_LAST)
+>>> +				next = find_next_bit_wrap(handler->choices,
+>>> +							  PLATFORM_PROFILE_LAST,
+>>> +							  profile + 1);
+>>> +			else
+>>> +				next2 = find_next_bit_wrap(handler->choices,
+>>> +							   PLATFORM_PROFILE_LAST,
+>>> +							   profile + 1);
+>>> +
+>>> +			if (WARN_ON(next == PLATFORM_PROFILE_LAST))
+>>> +				return -EINVAL;
+>>> +
+>>> +			if (next2 == PLATFORM_PROFILE_LAST)
+>>> +				continue;
+>>> +
+>>> +			if (next != next2) {
+>>> +				pr_warn("Next profile to cycle to is ambiguous between
+>>> platform_profile handlers\n");
+>>> +				return -EINVAL;
+>>> +			}
+>>> +			next = next2;
+>>> +		}
+>>> +
+>>> +		/*
+>>> +		 * Second pass: apply "next" to each handler
+>>> +		 * If any failures occur unwind and revert all back to the original
+>>> profile
+>>> +		 */
+>>> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+>>> +			err = handler->profile_set(handler, next);
+>>> +			if (err) {
+>>> +				pr_err("Failed to set profile for handler %s\n", handler->name);
+>>> +				break;
+>>> +			}
+>>> +		}
+>>> +		if (err) {
+>>> +			list_for_each_entry_continue_reverse(handler,
+>>> &platform_profile_handler_list, list) {
+>>> +				err = handler->profile_set(handler, profile);
+>>> +				if (err)
+>>> +					pr_err("Failed to revert profile for handler %s\n",
+>>> handler->name);
+>>> +			}
+>>> +		}
+>>>   	}
+>>>
+>>> -	err = cur_profile->profile_set(cur_profile, next);
+>>> -	mutex_unlock(&profile_lock);
+>>> -
+>>> -	if (!err)
+>>> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>>>
+>>> -	return err;
+>>> +	return 0;
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(platform_profile_cycle);
+>>>
+>>> @@ -190,21 +224,19 @@ int platform_profile_register(struct
+>>> platform_profile_handler *pprof)
+>>>   	int err;
+>>>
+>>>   	guard(mutex)(&profile_lock);
+>>> -	/* We can only have one active profile */
+>>> -	if (cur_profile)
+>>> -		return -EEXIST;
+>>>
+>>>   	/* Sanity check the profile handler field are set */
+>>>   	if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
+>>>   		!pprof->profile_set || !pprof->profile_get)
+>>>   		return -EINVAL;
+>>>
+>>> -	err = sysfs_create_group(acpi_kobj, &platform_profile_group);
+>>> -	if (err)
+>>> -		return err;
+>>> +	if (!platform_profile_is_registered()) {
+>>> +		err = sysfs_create_group(acpi_kobj, &platform_profile_group);
+>>> +		if (err)
+>>> +			return err;
+>>> +	}
+>>>   	list_add_tail(&pprof->list, &platform_profile_handler_list);
+>>>
+>>> -	cur_profile = pprof;
+>>>   	return 0;
+>>>   }
+>>>   EXPORT_SYMBOL_GPL(platform_profile_register);
+>>> @@ -215,7 +247,6 @@ int platform_profile_remove(struct
+>>> platform_profile_handler *pprof)
+>>>
+>>>   	list_del(&pprof->list);
+>>>
+>>> -	cur_profile = NULL;
+>>>   	if (!platform_profile_is_registered())
+>>>   		sysfs_remove_group(acpi_kobj, &platform_profile_group);
+>>>
+>>> -- 
+>>> 2.43.0
+>> 
+>> I'm still going thru the code changes - but I'm a bit unsure on the implementation itself.
+>
+> FYI, I split it up in v2 to make each chunk and intent behind it more 
+> manageable to review instead of patch 7 being "so" big.
+>
+> V2 covers some of the points below as well based on some feedback from 
+> Hans and Armin.
+>
 
-Yes agreed! Plus the cost of incrementing similar counters (which ofcourse is
-also not much).
+Ack - sorry for that, on PTO this week/last week and not checking email very often. Saw the v2 after I sent the comments on v1 (my inbox is a little bit out of control right now).
+I've just started looking thru that - let me know if better to move that conversation there
 
-Not trying to block this patch in anyway. Just think its a good point
-to discuss here if we are ok with both types of counters. If its too wasteful
-then which one we should have.
- 
+>> 
+>> I'd expect that one of the advantages of having different profile handlers register is that you could support extra & new profiles that might be wanted. For example the recent discussion of the AMD handler providing better tools to tweak advanced system settings for gaming etc. Won't this approach limit that? You'll only be able to have common settings.
+>
+> Well that RFC it turns out won't really be scalable because SPS is done 
+> differently in AMD Strix and newer.  I haven't revisited it yet.
+>
+> But yes this approach would conceptually limit that idea because common 
+> settings are all that is presented.
+>
+>> 
+>> I find having a common profile and two different handlers a bit tricky on how to handle. My concern is it can easily lead to conflict in settings.
+>> If two handlers are doing different operations to provide the same effect - then neither handler is (probably) providing what they think is required. With your CPU vs EC example, the EC will often set CPU clock thresholds and the CPU profile handler will be changing that. If this is done I think it should be explicit to the user (admittedly I'm doing this with my Lenovo hat on - but we certify our platforms with our EC profile handler)
+>> 
+>> I could see providing two separate handlers. e.g. balanced-A and balanced-B (for driver-A and driver-B) and the user maybe choosing which one they want (or both - though the user interface for that is definitely tricky)
+>> But choosing one option for two different drivers seems confusing and with unknown side-effects. I appreciate it's complicated by your example wanting to add CPU and EC - I know how much work you've been doing on the AMD CPU front which benefits all systems.
+>> 
+>
+> Thinking through your comments I guess another way to approach this 
+> would be "per-driver" sysfs knobs.  Here's my thought.
+>
+> 1) /sys/firmware/acpi/platform_profile_choices would contain only things 
+> that are common and if there is something NOT common then also the 
+> string "custom".
+>
+> 2) /sys/firmware/acpi/platform_profile would accept writes for 
+> everything in platform profile choices except "custom".
+>
+> 3) Each driver handler would also export it's own sysfs files to 
+> represent the driver state.
+>
+> 3) If the user changed the main knob at 
+> /sys/firmware/acpi/platform_profile then it would change all driver 
+> handlers.
+>
+> 4) If the user changed sysfs for any driver individually then the main 
+> knob /sys/firmware/acpi/platform_profile would export "custom".
+
+I need to think about it a bit more - I still have some concerns about two drivers doing the same thing. In some cases they can complement each other nicely, but in other cases they will treat on each others toes.
+
+Just to throw another idea on the pile:
+
+ - If only one profile then it can have low-power, balanced, performance as currently
+ - If two or more profiles, belonging as an example to driverA and driverB, their profile names become balanced-driverA and balanced-driverB. You could choose specifically if you wanted to activate one of them by using the driver name
+ - Each driver would have a priority. I'm biased here, but a vendor platform driver would have priority 1, a CPU vendor driver priority 2, etc. This would be used to determine which driver version would be used for the cases where multiple options are present and user chooses, for example, just balanced. If two drivers of the same priority compete then first driver loaded wins.
+
+So as an example: if we have the case where we have thinkpad_acpi (priority 1) and amd (priority 2) profile drivers offering all three profiles then:
+
+/sys/blah/platform_profile_choices would offer:
+lower-power, balanced, performance, low-power-thinkpad_acpi, balanced-thinkpad_acpi, performance-thinkpad_acpi, low-power-amd, balanced-amd, performance-amd.
+
+If the user chooses balanced - it would activate the balanced-thinkpad_acpi profile as it has the higher priority.
+The user could then also activate balanced-amd separately if they choose. Multi balanced profiles are OK.
+
+Initially this would all be from command line, but I'm sure some nice user space GUI can be done to allow you to choose which profiles are available and active/in-active.
+
+Maybe also add an option under platform-profiles to have an "enable all matching profiles" to override the priority implementation? In this case choosing balanced would enable all balanced profiles available (in priority order?)
+
+Would that work for the ASUS case or not?
+
+>
+> Hans what do you think?
+>
+
+>> Another concern - would this mean that another driver could limit the options available? For instance if someone wrote a new 'mega-turbo' only profile driver and it loaded - it would then mean no profiles were available for anything as no profiles matched?
+>
+> Yes.  I don't think it's a problem in practice right now (as we only 
+> just recently have two drivers vying for this position), but it /could/ 
+> be something that happens.
+>
+
+I'd certainly like to leave the window open so that there could be, for instance, a 'gaming' profile option that does some high-performance mode with maybe power shifting towards the GPU and some other graphics only tuning things? 
+I wouldn't like to shut down the ability to have options for things like that.
+
+>> 
+>> Let me know if I've misunderstood the architecture. I didn't fully get how the ASUS and Framework platforms were impacted in the intro I'm afraid.
+>> 
+>> Thanks!
+>> Mark
+>
+> Framework isn't affected, it was just showing that there are platforms 
+> that use the BIOS/EC notification concept and not just SPS values that 
+> the driver programs so it can't "go away" to solve this issue.
+>
+> ASUS is the only thing affected right now.
 
