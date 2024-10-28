@@ -1,118 +1,99 @@
-Return-Path: <linux-kernel+bounces-384923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A279B3037
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:28:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB82A9B303D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:28:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79B021C2184A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:28:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55F7EB24B08
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 403D91DA617;
-	Mon, 28 Oct 2024 12:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738041D95B0;
+	Mon, 28 Oct 2024 12:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YOSHXXAD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X9Gxc8ko"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 734771D934B;
-	Mon, 28 Oct 2024 12:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC4F01D8E1D;
+	Mon, 28 Oct 2024 12:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730118453; cv=none; b=YVZqgiqRHxrfFRmIsXsAxSosTAHjjkF7ryAeH8qjtR90GAp3Ot+UXQ+Co1a7zYDy/PKiXBkW3r/mW11PNbOpjq/RPucVTm8mWklY0yn9/2O5FvSPYW48J7d0t7ucIzLVGiYOCP+F5aLRP+Lcq0MY4vFw/4GK13WMG97xvU7CC38=
+	t=1730118521; cv=none; b=WTmWA1j76fyyDFA2Vjn0koG92FCsVhvLZklFrW3PInZcBdm6diPPz9SQMMDySGNXyqEUJQiAYY25b5+L90pANpn3eQXXcJe860yse2/YrjLIOgfjvGQKqxpZdGhnqmF3H7+bL4WOgDgxKQp8srCmNRt558MIQzwIlsIo1j+KyqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730118453; c=relaxed/simple;
-	bh=dBjKbQ72OiI43nKphYScHzSn1tB9+kybe2uOdPkKmfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nSBmDG+2HdQmwQ2bppGfWOST9Iqy9hWtahu58E+ehTOUGHT3tRICJ4bWXOKz07enHV2oaqZoTfjG+E9hEPXZIOaAhOOVMGc0GZd9EN1jdRWDnNtD+8PSpUSEvRx+oyNPb4dkJs/udpzrQik0BiMoKskeXmidm9FTxA254zNv6Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YOSHXXAD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F37D2C4CEC3;
-	Mon, 28 Oct 2024 12:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730118452;
-	bh=dBjKbQ72OiI43nKphYScHzSn1tB9+kybe2uOdPkKmfk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YOSHXXADjGIBHyQ2Iftg3bbghvOAJhq4EiqJMrhlWca7rTdICjxerGGqjybHz8Qbc
-	 1qq4wiHrRsAx7igB0qYo6Fqnnd4v2M9lfSoJiAEGsptqUmxJ3sPaIMsxPQFCXqFOFL
-	 G+8gnI756fFPrU5ye1iVoLnZitTPARuyPmAm5Zr5zW9eEIWd87YAkF5UWbkl8dzTD2
-	 Uyg1eVjUX/UcLLTT43Tpkx9dTMBwIE6R8L9X9vh1BDbi0Yg/K36rlQ2o1QGqS89eCT
-	 w666gTjX8lDiJQgsvbQmQAEqb5SeAZ7EXAbq3j/7n7enXbhgYmzw0IOiEXpI0DWbHu
-	 erUXacxTtG8bQ==
-From: Christian Brauner <brauner@kernel.org>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	cgroups@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	linux-fsdevel@vger.kernel.org,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	linux-doc@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	Pankaj Raghav <p.raghav@samsung.com>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Chao Yu <chao@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	willy@infradead.org,
-	Josef Bacik <josef@toxicpanda.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Tejun Heo <tj@kernel.org>,
-	akpm@linux-foundation.org,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Jaegeuk Kim <jaegeuk@kernel.org>,
-	Jan Kara <jack@suse.cz>,
-	Chris Mason <clm@fb.com>,
-	David Sterba <dsterba@suse.com>
-Subject: Re: [PATCH] fs/writeback: convert wbc_account_cgroup_owner to take a folio
-Date: Mon, 28 Oct 2024 13:27:12 +0100
-Message-ID: <20241028-jazzclub-kulant-81ce918f186d@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240926140121.203821-1-kernel@pankajraghav.com>
-References: <20240926140121.203821-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1730118521; c=relaxed/simple;
+	bh=p8c3yFftQuOyQ/iEmX2zARlTSUYS8TzTsqqVg9inSPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CT/hQUsiJT3A7scf9ueF9N0T2a1qe3KnUFpSAUjCjldeDFCzhzvkTehHnBWlj4SINWAVsD6fgmCw1dgEOlQnI7/0aPfj7/KxuUlgeMtgvrJcTLnOVb4cNKGs61g9GXcR/VXpQH6sKpD9hXZrDsEKK0onF1feiINeFAeWaqwSkZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X9Gxc8ko; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=OmnXAfgH5krb4Qa7xH5WkPMr5z7E41xpqGjszUtCldQ=; b=X9Gxc8koh4tsaSTZBwfaPLp/kY
+	m6eXMrD6ioDtr1nxU1xTZHt+frSGzd5XWC96Tu5CuDdH7ol4XYE/tvXajHbazmoXo8ph7lhrL4WKv
+	qMw5WfSghV6DVEw5aJzy7SrUfHvp2qT7ZSxU6ALB+N40ooz4rBIB3Pb2VdVjUTFhmogM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t5Or7-00BRXh-LZ; Mon, 28 Oct 2024 13:28:21 +0100
+Date: Mon, 28 Oct 2024 13:28:21 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH net-next v5 1/2] dt-bindings: net: Add T-HEAD dwmac
+ support
+Message-ID: <a3d6c6a1-924c-41a8-b70b-38056fdc079d@lunn.ch>
+References: <20241025-th1520-gmac-v5-0-38d0a48406ff@tenstorrent.com>
+ <20241025-th1520-gmac-v5-1-38d0a48406ff@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1219; i=brauner@kernel.org; h=from:subject:message-id; bh=dBjKbQ72OiI43nKphYScHzSn1tB9+kybe2uOdPkKmfk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTLN2uu+DzdfEnhecaTkubfhQ409WjqduxOmMF7KdigI N+yyLeio5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCI68xn+WZ87u07/2LedTZON LEs8muedMzWVfFfzOC1n1XFJ7/Ypcgz//bxEjzupHb2h6ccRwHzg3uLVWQlS/A75P0Ptmaw/fzr GBwA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025-th1520-gmac-v5-1-38d0a48406ff@tenstorrent.com>
 
-On Thu, 26 Sep 2024 16:01:21 +0200, Pankaj Raghav (Samsung) wrote:
-> Most of the callers of wbc_account_cgroup_owner() are converting a folio
-> to page before calling the function. wbc_account_cgroup_owner() is
-> converting the page back to a folio to call mem_cgroup_css_from_folio().
+On Fri, Oct 25, 2024 at 10:39:08AM -0700, Drew Fustini wrote:
+> From: Jisheng Zhang <jszhang@kernel.org>
 > 
-> Convert wbc_account_cgroup_owner() to take a folio instead of a page,
-> and convert all callers to pass a folio directly except f2fs.
+> Add documentation to describe the DesginWare-based GMAC controllers in
+> the T-HEAD TH1520 SoC.
 > 
-> [...]
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> [drew: rename compatible, add apb registers as second reg of gmac node,
+>        add clocks and interrupts poroperties]
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 
-Applied to the vfs.misc branch of the vfs/vfs.git tree.
-Patches in the vfs.misc branch should appear in linux-next soon.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.misc
-
-[1/1] fs/writeback: convert wbc_account_cgroup_owner to take a folio
-      https://git.kernel.org/vfs/vfs/c/30dac24e14b5
+    Andrew
 
