@@ -1,221 +1,249 @@
-Return-Path: <linux-kernel+bounces-385691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FD79B3A78
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:30:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 886189B3A7C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:31:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7662283043
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:30:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B0EA28308D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:31:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8B5149E00;
-	Mon, 28 Oct 2024 19:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127DE17B516;
+	Mon, 28 Oct 2024 19:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CGmOsa6E"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="rgV/OaSb"
+Received: from mx1.riseup.net (mx1.riseup.net [198.252.153.129])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BA9B173
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C704B173;
+	Mon, 28 Oct 2024 19:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730143837; cv=none; b=JXtA2bdKCiCpoeh4ENqM/lV8TLVNa3yx6QZ7DcvrntcKYFk6Vv11993U6JSlQdGQOCD4F45udNN+zVdwtn5lK8Vbj950LLQw2GrCFnDREPgqQG47mBb+Odye6Jq4CRYpIqrIyT+A2vk/JMqWINrhMohVHTSeqm0P0OF/ouGrgYk=
+	t=1730143908; cv=none; b=OUgzme/8XwNl1tC57+kPnz/MPH/UlY8SnTOaUR9VjEod/5M8e5hmv8tNNtayQ6K01rZOYF693CkhwXcBMbd+ZIJkO48+YV/Px4Yw0Otaxh41XbUqP2CP3uNvxyUGW/hZ2GJSG3ZdOAAtcIyLSvPetnl68LxxteSBM14EStdogcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730143837; c=relaxed/simple;
-	bh=+dQGxhlBGjXERLsSIrUME5gPdgt0T04Wn4mJ3d9Xi+8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=el5FjuxRFrnbml8XJ/MNTjzjBAnFfl4SaKVKj6nf8rDx8v2A+jp8v0FwtFYndLu8/emlruY3XRdELgk0YOtNaKUNfo1IYvB7PGR3AX0efHYia2hW67fYFv+pTSVbIBYb8aojsMo78y65F9io+uCpbAaVnrxyVi6pgtuCfi+NxQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CGmOsa6E; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539e6c754bdso4198683e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:30:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730143832; x=1730748632; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pjVVDKyMQJcDkO9PRJnNlItLffVmPfb9Vq+C3do3VgA=;
-        b=CGmOsa6EmWyKjPMt4ELpdwEg9vvG9p66cu8AblRWz/9q+Rsdg9m1O+JrxVgJHFUVzP
-         3+W6gy+O+KcYAkSAuy1JH5MZCSfmgl2Y7GFFUjoVvcPldK0zH/uG/ct5CwRPmRha9PGD
-         Vzmr5j66GJWNOeMTdlpgAuIP7jMQMLuMgg3pGNcEt9NeRzVQGNSY4QfejBAFAW8cMOuI
-         YjGzsxNFmCmqgDq8v6vVFlj5ZJzhMlV0O9PZQpU4cdJgeOudA9I1N+G6gbMIk1JiX+TK
-         6de5h5qmcQkkcob4pGcVxdHj+KZOHrLvnl7tmIvp8bI7Z6xHRi7e/n6MtQVzd1VPVfAg
-         3lBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730143832; x=1730748632;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pjVVDKyMQJcDkO9PRJnNlItLffVmPfb9Vq+C3do3VgA=;
-        b=Tq3DgTeybC+BKg/3s28N5ZRu+wak4LNT+g5tvWGhaxi0H9k+4ZuK9td0+d/PHZYsju
-         IUHjsB3t9wPisrKQy8uI6KtzY8birYsYTi/jNzbogkOQrfVVnB4HxbrdwlBGdFeZr5au
-         Ibid81+GzedW5iWIBN2gW4TkPZOMrqkITmjkJajSw8qOvlM6RCph+/RsLVrWMw8V4n8x
-         DTFxCvGHCP308zlze5vJqTrl2Ew5QiVNR5X024CLepVceu/hHE2nEYujuwNgkInmqVc0
-         xBd3tWnIhNTzx4268hEYJInv/JwGnuTmmlEbI72FlEIWEUwJBCJltUUTp98T8Ny05DB3
-         E7Nw==
-X-Gm-Message-State: AOJu0YyU6FWnnpmm6mR63j9bT81JlXZB6OvQueBZu9ZWMTTmx2jgyMmf
-	8jKnAjhmM5qPIdtKoEOLnvswp1B05wbgt/W0IiPp0aYPvf6BRgKOI7aqtbVaz3FlZJwya67LSyj
-	nnnBJo8g7O5kfc4nZfS5/WerjvPKXUJ48ObU=
-X-Google-Smtp-Source: AGHT+IEknlCPMRNCvofx3rzi6GWUQXVrrGCLEh++KtXDJ2aZq9E5yi9TkDHDS9lLB8s4qnJN58Czh9dx4maNTZZMDzg=
-X-Received: by 2002:a05:6512:1189:b0:539:ec87:bc7f with SMTP id
- 2adb3069b0e04-53b348d63ddmr4496757e87.19.1730143832280; Mon, 28 Oct 2024
- 12:30:32 -0700 (PDT)
+	s=arc-20240116; t=1730143908; c=relaxed/simple;
+	bh=cjdbZV5ZPfheGFbVrkdDtNRq2JcwEKKbOMHwK5Kq7Ug=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qM3xMdl2dGBmEMNFzQqLlbT8ubkR8pvz07JbkCEB+YYZq5mT5Adee5PRJVb9jmBalZMYnryu9KQU5/wSi5m8MGeX1tZeqr6g45eXNbA4VrHKGbwOIbOI0N83cf+FJvAe5KVHcXq9RNwUWxnZEig+chH0o2VYug/EFb8lxODTsRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=rgV/OaSb; arc=none smtp.client-ip=198.252.153.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
+Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx1.riseup.net (Postfix) with ESMTPS id 4Xck684vnHzDqSH;
+	Mon, 28 Oct 2024 19:31:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
+	t=1730143905; bh=cjdbZV5ZPfheGFbVrkdDtNRq2JcwEKKbOMHwK5Kq7Ug=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=rgV/OaSbta7GShv7nwZ2whXBakzHb2SBzHiY+9J9Tp06+k1EU7YGZVQ3lPu+4GgP6
+	 2lQv2nIc9+aab1wv0QFWxqPCDQvzROojMMJ3V2qWPrjjJ7i2GHMIoVmfYTlZyGuQE6
+	 3vt2jTnGAlBI2YaSlH/jtcMNAYdblZ+mnCID8tEE=
+X-Riseup-User-ID: F22E330D62DAD2F355815919666460B5781E5B3DA059EB560FC67CC1611AE6F8
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4Xck614SnJzFsg9;
+	Mon, 28 Oct 2024 19:31:37 +0000 (UTC)
+Message-ID: <5aa5af69-948e-4fdd-b69e-7b8874930178@riseup.net>
+Date: Mon, 28 Oct 2024 16:31:34 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: John Stultz <jstultz@google.com>
-Date: Mon, 28 Oct 2024 12:30:20 -0700
-Message-ID: <CANDhNCo8NRm4meR7vHqvP8vVZ-_GXVPuUKSO1wUQkKdfjvy20w@mail.gmail.com>
-Subject: Deadlock?: console_waiter/serial8250_ports/low_water_lock with 6.12-rc
-To: John Ogness <john.ogness@linutronix.de>, Petr Mladek <pmladek@suse.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, jirislaby@kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH v12 09/15] drm/vkms: Remove useless drm_rotation_simplify
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+ Melissa Wen <melissa.srw@gmail.com>,
+ Haneen Mohammed <hamohammed.sa@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+ Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+ arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
+ Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, jeremie.dautheribes@bootlin.com,
+ miquel.raynal@bootlin.com, seanpaul@google.com, marcheu@google.com,
+ nicolejadeyee@google.com
+References: <ZwzYqihbReaLFn-c@louis-chauvet-laptop>
+ <d3e8bb5a-6053-4a2b-a445-0cf4e610f112@riseup.net> <Zx9eazDt3f2meyht@fedora>
+ <6278651d-b61d-49d2-8151-7ab4ca03971c@riseup.net>
+ <Zx9u9K129dWhfzPQ@louis-chauvet-laptop>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
+In-Reply-To: <Zx9u9K129dWhfzPQ@louis-chauvet-laptop>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-In stress testing my own patches over the weekend, I ran across a hang
-that looks unrelated to my changes, so I wanted to raise it with folks
-to see if they have seen anything.
+Hi Louis,
 
-I basically left a shell script looping rebooting a qemu system (which
-uses a number of in-kernel torture/selftest drivers) over and over,
-and on boot the hang happened right as init was starting. On the
-serial console I saw:
+On 28/10/24 08:01, Louis Chauvet wrote:
+> On 28/10/24 - 07:17, Maíra Canal wrote:
+>> Hi Louis,
+>>
+>> On 28/10/24 06:50, Louis Chauvet wrote:
+>>> On 26/10/24 - 09:10, Maíra Canal wrote:
+>>>> Hi Louis,
+>>>>
+>>>> On 14/10/24 05:39, Louis Chauvet wrote:
+>>>>> On 11/10/24 - 10:53, Maira Canal wrote:
+>>>>>> Hi Louis,
+>>>>>>
+>>>>>> On 10/11/24 06:36, Louis Chauvet wrote:
+>>>>>>>
+>>>>>>> Hi all,
+>>>>>>>
+>>>>>>> Until this point, this series has not received any major comments since
+>>>>>>> v9. I will commit patches 1-9 next week if there are no further comments.
+>>>>>>>
+>>>>>>
+>>>>>> Although we are maintainers of VKMS, it isn't recommended that we push
+>>>>>> our own changes without even the Ack of another person. Please, read the
+>>>>>> "drm-misc Committer Guidelines" [1].
+>>>>>
+>>>>> Hi Maíra, Maxime,
+>>>>>
+>>>>> I apologize for this rushed commit request. I sent the initial email with
+>>>>> a delay before the commit action because I was not sure about the
+>>>>> procedure and wanted to give others a chance to raise any concerns.
+>>>>> Unfortunately, I overlooked the need to collect an Ack/Review for each
+>>>>> patch, even when there hadn't been any responses for several months. I'm
+>>>>> sorry for this oversight.
+>>>>>
+>>>>>> I can ack patches 05/15, 07/15, and 09/15, but it would be more
+>>>>>> beneficial for the community if you ask for an ack (from me or from the
+>>>>>> DRM maintainers, which are always around), instead of saying that you
+>>>>>> are going to commit the patches without any review.
+>>>>>
+>>>>> I will be happy to ask for acknowledgments if needed, but as you mentioned
+>>>>> multiple times: nobody is paid to maintain VKMS. Since you did not comment
+>>>>> these series since July, when you told me you would review my patches, I
+>>>>> assumed it was either okay or you no longer had the time to maintain
+>>>>> (which I completely understand).
+>>>>
+>>>> Yeah, I'm a volunteer and no longer have time to maintain VKMS. A couple
+>>>> of weeks ago I sent a patch removing myself as VKMS maintainer. This
+>>>> doesn't imply that patches can be pushed without review.
+>>>
+>>> I will acked-by and push your patch, it will be an easy "first commit". If
+>>> I do something wrong during the process, please tell me.
+>>>
+>>> Thanks for this precision, I understood this, and I will not push without
+>>> reviews, don't worry!
+>>>
+>>> Thanks a lot for all your reviews!
+>>>> We are a community with several active developers. Although I don't have
+>>>> time to properly review your patches, you can try to gather other
+>>>> developers to review your patches. You can try to use #dri-devel to get
+>>>> reviewers.
+>>>
+>>> Thanks for the tip, I will do this!
+>>>
+>>>> That said, you can add my ACK to patches 05/15, 07/15, and 09/15 and
+>>>> push the patches. I won't ack the YUV patches as I don't feel
+>>>> comfortable reviewing/acking those.
+>>>
+>>> Perfect for the patches 1..9, it will be a very nice step forward and will
+>>> reduce my conflicts a lot with the rest of my work!
+>>>>> Acked-by: Maíra Canal <mairacanal@riseup.net>
+>>>>
+>>>> BTW if the patches are fixing IGT tests, please update the list of fails
+>>>> and skips on DRM CI.
+>>>
+>>> For this, how should I do? Commit the series and wait for the bot results?
+>>> Run tests on my computer (I only have a x86 VM)? Is there some doc
+>>> somewhere?
+>>
+>> Check [1] for instructions on how to run the CI on GitLab.
+>>
+>> [1] https://docs.kernel.org/gpu/automated_testing.html
+> 
+> Thanks for the link!
+> 
+> I am stuck at the first step, do I need to ask some right to create a repo
+> on git.freedesktop.org? I don't see any button to create a repo, and I
+> can't fork any existing kernel repo.
 
-[   69.661820] Freeing unused kernel image (initmem) memory: 3788K
-[   69.669203] Write protecting the kernel read-only data: 28672k
-[   69.680557] Freeing unused kernel image (rodata/data gap) memory: 1436K
-[   69.758577] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[   69.763876] x86/mm: Checking user space page tables
-[   69.826932] x86/mm: Checked W+X mappings: passed, no W+X pages found.
-[   69.832656] Run /init as init process
-[   69.841940] mkdir (833) used greatest stack depth: 14272 bytes left
-[   69.847347] mkdir (834) used greatest stack depth: 13856 bytes left
-[   69.852756] mount (837) used greatest stack depth: 12960 bytes left
+Check [1]. For more fd.o infra questions, you can ask on #freedesktop 
+(the answer will probably be quicker).
 
-Attaching gdb to qemu, I see:
-* Most of the non-idle/halted cpus are stuck in:
-virt_spin_lock (lock=lock@entry=0xffffffff82c6d3a0 <low_water_lock>)
-at ./arch/x86/include/asm/qspinlock.h:106. The backtrace shows they
-are being call from  check_stack_usage () at kernel/exit.c:849  from
-do_exit (code=code@entry=0) at kernel/exit.c:982
+[1] https://gitlab.freedesktop.org/freedesktop/freedesktop/-/wikis/home
 
-* One thread is in virt_spin_lock (lock=lock@entry=0xffffffff843d19a0
-<serial8250_ports>) at ./arch/x86/include/asm/qspinlock.h:106.  The
-backtrace there, is similarly going through
-do_exit()->check_stack_usage()->printk (I suspect blocking all the
-other cpus), where it hits: serial8250_console_write
-(up=0xffffffff843d19a0 <serial8250_ports>, s=0xffffffff8434f7e0
-<printk_shared_pbufs> "[   69.857641] \n", count=<optimized out>) at
-drivers/tty/serial/8250/8250_port.c:3352,  then into the spinlock
-code.
+Best Regards,
+- Maíra
 
-* Another thread is stuck in:
-console_trylock_spinning () at kernel/printk/printk.c:2031
+> 
+> I also asked the access to CI-OK.
+> 
+> Thanks,
+> Louis Chauvet
+>   
+>> Best Regards,
+>> - Maíra
+>>
+>>>
+>>> Thanks a lot,
+>>> Louis Chauvet
+>>>
+>>>> Best Regards,
+>>>> - Maíra
+>>>>
+>>>>>
+>>>>> So, I hereby formally request reviews/ACKs for the following series:
+>>>>>
+>>>>> [this series]:https://lore.kernel.org/all/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com/
+>>>>> [2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
+>>>>> [3]:https://lore.kernel.org/all/20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com/
+>>>>>
+>>>>> (I have to send a v2 for [3] because of rebase conflict, but nothing else
+>>>>> changed)
+>>>>>
+>>>>> Thanks a lot,
+>>>>> Louis Chauvet
+>>>>>> [1] https://drm.pages.freedesktop.org/maintainer-tools/committer/committer-drm-misc.html
+>>>>>>
+>>>>>> Best Regards,
+>>>>>> - Maíra
+>>>>>>
+>>>>>>> For patches 10-15, I am currently waiting for feedback from Maxime to
+>>>>>>> send the next iteration with a fix for kunit tests.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Louis Chauvet
+>>>>>>>
+>>>>>>> On 07/10/24 - 18:10, Louis Chauvet wrote:
+>>>>>>>> As all the rotation are now supported by VKMS, this simplification does
+>>>>>>>> not make sense anymore, so remove it.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+>>>>>>>> ---
+>>>>>>>>      drivers/gpu/drm/vkms/vkms_plane.c | 7 +------
+>>>>>>>>      1 file changed, 1 insertion(+), 6 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+>>>>>>>> index 8875bed76410..5a028ee96c91 100644
+>>>>>>>> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+>>>>>>>> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+>>>>>>>> @@ -115,12 +115,7 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
+>>>>>>>>      	frame_info->fb = fb;
+>>>>>>>>      	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
+>>>>>>>>      	drm_framebuffer_get(frame_info->fb);
+>>>>>>>> -	frame_info->rotation = drm_rotation_simplify(new_state->rotation, DRM_MODE_ROTATE_0 |
+>>>>>>>> -									  DRM_MODE_ROTATE_90 |
+>>>>>>>> -									  DRM_MODE_ROTATE_270 |
+>>>>>>>> -									  DRM_MODE_REFLECT_X |
+>>>>>>>> -									  DRM_MODE_REFLECT_Y);
+>>>>>>>> -
+>>>>>>>> +	frame_info->rotation = new_state->rotation;
+>>>>>>>>      	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
+>>>>>>>>      }
+>>>>>>>>
+>>>>>>>> -- 
+>>>>>>>> 2.46.2
+>>>>>>>>
+>>
 
-This one has the most interesting backtrace, as it is going from
-ksys_write() -> uart_write() [which takes the uart port_lock] ->
-__pm_runtime_resume() -> trying to grab the dev->power.lock, which
-trips lockdep, which tries to then printk lockdep details which gets
-stuck on console_trylock_spinning.
-
-Full gdb backtrace trace below.
-
-I wanted to raise this in case anyone else has already hit something
-similar, or had any ideas as to the root cause.
-
-#0  console_trylock_spinning () at kernel/printk/printk.c:2031
-#1  vprintk_emit (facility=0, level=<optimized out>, dev_info=0x0
-<fixed_percpu_data>, fmt=0xffffffff82980860 "\0014\nwhich lock already
-depends on the new lock.\n\n",
-    args=0xffffc90000017a28) at kernel/printk/printk.c:2406
-#2  0xffffffff8113b9d4 in _printk (fmt=fmt@entry=0xffffffff82980860
-"\0014\nwhich lock already depends on the new lock.\n\n") at
-kernel/printk/printk.c:2432
-#3  0xffffffff81121319 in print_circular_bug_header
-(entry=entry@entry=0xffffffff8418fa50 <list_entries+5712>,
-depth=depth@entry=5,
-    check_src=check_src@entry=0xffff888100360b58,
-check_tgt=check_tgt@entry=0xffff888100360b30) at
-kernel/locking/lockdep.c:1968
-#4  0xffffffff811213dc in print_circular_bug
-(this=this@entry=0xffffc90000017b10, target=0xffffffff8418fa50
-<list_entries+5712>,
-    check_src=check_src@entry=0xffff888100360b58,
-check_tgt=check_tgt@entry=0xffff888100360b30) at
-kernel/locking/lockdep.c:2057
-#5  0xffffffff811217fe in check_noncircular
-(src=src@entry=0xffff888100360b58,
-target=target@entry=0xffff888100360b30,
-trace=trace@entry=0xffffc90000017c10)
-    at kernel/locking/lockdep.c:2206
-#6  0xffffffff81122a6b in check_prev_add
-(curr=curr@entry=0xffff888100360000,
-prev=prev@entry=0xffff888100360b30,
-next=next@entry=0xffff888100360b58, distance=1,
-    trace=trace@entry=0xffffc90000017c10) at kernel/locking/lockdep.c:3161
-#7  0xffffffff81125b0c in check_prevs_add (next=0xffff888100360b58,
-curr=0xffff888100360000) at kernel/locking/lockdep.c:3280
-#8  validate_chain (chain_key=<optimized out>, chain_head=<optimized
-out>, hlock=0xffff888100360b58, curr=0xffff888100360000) at
-kernel/locking/lockdep.c:3904
-#9  __lock_acquire (lock=lock@entry=0xffff88810b4a2970,
-subclass=subclass@entry=0, trylock=trylock@entry=0, read=read@entry=0,
-check=<optimized out>, check@entry=1,
-    hardirqs_off=<optimized out>, nest_lock=<optimized out>,
-ip=<optimized out>, references=<optimized out>, pin_count=<optimized
-out>, sync=<optimized out>)
-    at kernel/locking/lockdep.c:5202
-#10 0xffffffff8112686e in lock_acquire (ip=<optimized out>,
-nest_lock=0x0 <fixed_percpu_data>, check=1, read=0, trylock=0,
-subclass=0, lock=0xffff88810b4a2970)
-    at kernel/locking/lockdep.c:5825
-#11 lock_acquire (lock=lock@entry=0xffff88810b4a2970,
-subclass=subclass@entry=0, trylock=trylock@entry=0, read=read@entry=0,
-check=check@entry=1,
-    nest_lock=nest_lock@entry=0x0 <fixed_percpu_data>, ip=<optimized
-out>) at kernel/locking/lockdep.c:5790
-#12 0xffffffff82177e5f in __raw_spin_lock_irqsave
-(lock=0xffff88810b4a2958) at ./include/linux/spinlock_api_smp.h:110
-#13 _raw_spin_lock_irqsave (lock=lock@entry=0xffff88810b4a2958) at
-kernel/locking/spinlock.c:162
-#14 0xffffffff81a4295e in __pm_runtime_resume
-(dev=dev@entry=0xffff88810b4a2800, rpmflags=rpmflags@entry=5) at
-drivers/base/power/runtime.c:1171
-#15 0xffffffff81760715 in pm_runtime_get (dev=0xffff88810b4a2800) at
-./include/linux/pm_runtime.h:396
-#16 __uart_start (state=state@entry=0xffff8881172b8000) at
-drivers/tty/serial/serial_core.c:148
-#17 0xffffffff817655c6 in uart_write (tty=<optimized out>,
-buf=0xffff888108010800 "Loading, please wait...\n\020",
-count=<optimized out>)
-    at drivers/tty/serial/serial_core.c:635
-#18 0xffffffff81742e1e in process_output_block (nr=24,
-buf=0xffff888108010800 "Loading, please wait...\n\020",
-tty=0xffff8881080d7000) at drivers/tty/n_tty.c:574
-#19 n_tty_write (tty=0xffff8881080d7000, file=<optimized out>,
-buf=0xffff888108010800 "Loading, please wait...\n\020", nr=24) at
-drivers/tty/n_tty.c:2389
-#20 0xffffffff8173dfbe in iterate_tty_write (from=0xffffc90000017e60,
-file=0xffff888108154000, tty=0xffff8881080d7000,
-ld=0xffff8881080cf060) at drivers/tty/tty_io.c:1015
-#21 file_tty_write (file=0xffff888108154000, from=0xffffc90000017e60,
-iocb=<optimized out>) at drivers/tty/tty_io.c:1090
-#22 0xffffffff8132e756 in new_sync_write (ppos=0xffffc90000017ef0,
-len=24, buf=0x55b9dbbffa60 "Loading, please wait...\n",
-filp=0xffff888108154000) at fs/read_write.c:590
-#23 vfs_write (file=file@entry=0xffff888108154000,
-buf=buf@entry=0x55b9dbbffa60 "Loading, please wait...\n",
-count=count@entry=24, pos=pos@entry=0xffffc90000017ef0)
-    at fs/read_write.c:683
-#24 0xffffffff8132ec05 in ksys_write (fd=<optimized out>,
-buf=0x55b9dbbffa60 "Loading, please wait...\n", count=24) at
-fs/read_write.c:736
-#25 0xffffffff8216267b in do_syscall_x64 (nr=1,
-regs=0xffffc90000017f58) at arch/x86/entry/common.c:52
-#26 do_syscall_64 (regs=0xffffc90000017f58, nr=1) at arch/x86/entry/common.c:83
-#27 0xffffffff82200130 in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:121
-#28 0x00007ffd2cd643c0 in ?? ()
 
