@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-385448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02A609B3750
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:06:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D470E9B3752
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:06:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9AC2837DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:06:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FDC11F2242B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2FC21DF745;
-	Mon, 28 Oct 2024 17:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBAD81DF25B;
+	Mon, 28 Oct 2024 17:06:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DMgcBQAq"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFtvX7yT"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E87091DF25B
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CBE31DF252;
+	Mon, 28 Oct 2024 17:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730135156; cv=none; b=RHbrqA3rhwLk+u/BFcnZVx86QuDXxjT9S6ewrvNpf6oCITO6EQitVBijW6ZI2KA1eeIhBxpBWAd1AOdgqstDHo3rI9wTToeL9JE4z4IvkS9G+cIIJu7svkUDXCQZgH+/4S1DRC0+jxKJNka2j/0X1rtcTX5dA5Jk2J8zy6XznLM=
+	t=1730135208; cv=none; b=pZiDOiQGxjjdroPxa5n+reDIeeACVXChy7BfkZBo5mPKiyfQ9G++SU95+Rfpir6tAUxFOcw2GaNTt87Iq3+QaK09eqYdg67ugkDJrB5rwZC2QUJXn4MAktAJZ+mNmEVkx09Vd4K6sCOePNEjwREnUg2boxaLrqcNRZDxwxYck0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730135156; c=relaxed/simple;
-	bh=qf4BASZOO83+U0eaTzV9hGsXGZDbSGzCe04IvJPCi6g=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B3ob0ksIMYb1aHfH7vmHxf5WayhFlYYZgLgZMTF5R5L1BxFvPR67BbAWf488ClsRwbMlamohjVG21mHY1UNzgUGWvM7fwkiIN0Z86Ntiyqx/CCLHRe43OfsoL94MajwLEmapMrbsB78hdqMkbyRaWFC5Az+oI+HLBNO930y6Q+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DMgcBQAq; arc=none smtp.client-ip=209.85.221.49
+	s=arc-20240116; t=1730135208; c=relaxed/simple;
+	bh=uv8UhE2oHj/jAoSYFDFHGa6v1zWyBJnbSc/opV4Ew7s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DQzbjnPFD57QniQDeEVPGLbakgf/z00WAE10nQ5CZb913o6m79s8PtwuVHrqtTG+FHBJ8+Jwi9S/AqGoqdJd65AAtid06QTCEUyDQvE1CirsM0z/xrgCq4cBLHBs15Cs69ohKClr8sI47GzYrD3y+HajIGT3REdwdEylLFZsokU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFtvX7yT; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d49a7207cso3259573f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:05:53 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43152b79d25so42341975e9.1;
+        Mon, 28 Oct 2024 10:06:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730135152; x=1730739952; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/k4PyykaU7zaHMCv8bUR8FdZQ8YmUwD9IMewLudEt1g=;
-        b=DMgcBQAqDB6fvQytH+JMtSIGarWq0bQOHuu9R3CHsiAK00B1DjpipdE7uozuXu9ACG
-         YtpYB+qF5UQ+LuMqsqLhgFcvjhPzeaiOi0ITe3qoUjHPDo+RjRtpcseuZ/L354hA50mJ
-         vNP24PoJq5we/KbYQc41ynKaFBVN0SdWPVf/QXbhHHg1Dc4xCZN4GHAWuMV0I4zmrlJO
-         7T93JL8XCo5gO5Mo/cTtjnNLJnln1Cp0uc1xKWxTtJ+VXDTAselcjPqEKwNJ0zLOb1Df
-         lL1qGUSblMjza4GuvmzqvIXduyDEVeraJFbEDmMx8duqy+k6OSwePEBqPWVjTjwzxR3E
-         QEag==
+        d=gmail.com; s=20230601; t=1730135204; x=1730740004; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nirCWzG2Wn5O48MYiFe6S6iiaaXRgl7t6gTboEBb224=;
+        b=OFtvX7yTKrR7l0V+JGoibB0ikjgDjCXmp8+j4LoQapoEF37A75NBjDjAkNFM0txtzB
+         WOp6DOWY/ATvdv2sepJQVDhNLujI+C3ZEIpO9Eryw/81a63r7rZZntL6vitRLM+6QXvI
+         whZ5sopxdH3h9V/ipVfLcjyXokybha9lvXvgiQo5hiQ9bDP2SZEHPrafc705HvDXuTGs
+         smx/wUNffX9VtwvvMH09e83tcpC4/RMyPCAZLkOlQNnXVZRIVZZZP932oQrD7o1vRV+5
+         3rfISzlAPKuVBRx/CWup/YyEloYTVQ4cd71S5XvjRN0t2cMyIJFT8lEP4w9rJaC0tC82
+         KOVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730135152; x=1730739952;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/k4PyykaU7zaHMCv8bUR8FdZQ8YmUwD9IMewLudEt1g=;
-        b=kyr4KG6L8rSrl+C/pS9NmJzBcqfPE6f8Ku7nKgROfsA8uSjsA4qdZapElktM1RQ3Kx
-         1oZG51mW+tuwQyMOFUrZwpb//2iXGNGTVpBp59Edd6+keOtzzJiD30f1hcHhBgoHn8XZ
-         mhDkQZ39SAcHXFtytQDh13d7JtnN8QCN2bR7VPDl3ArDLMJoVlSIDt/24C/iJf+d5CRJ
-         B7NeyRigmeWAJAjmbdP1fU7rsQjKYnJpm9d0zQHtZ2m/FzplOHhceuXUq1XAA1WiPXd4
-         tJ0sLjGs/FvhMr4PojDVMkLkWJ8LGqW9JrXq45zNYxKzPAwI2lDzd/drWWr7BbDYEe7l
-         YiPA==
-X-Gm-Message-State: AOJu0YwYAm3NJfkcUuT4mMIk8UFj3U5mx8uDLtyMDoM1k6tAlfOmflD0
-	n8tC+8hs4FxDenR6Wu1fA2lOGxcW8E36e0Kn2BXHinqbHpShIeF/
-X-Google-Smtp-Source: AGHT+IEO9RH4Pja0bIJOCVClRCSa7kNscMqQ9FMgJVqocrKK6txwmIFHj6x83Pf+m+y3/nkcuKwUTg==
-X-Received: by 2002:a05:6000:10a:b0:374:ca16:e09b with SMTP id ffacd0b85a97d-380610f448amr6371751f8f.9.1730135152211;
-        Mon, 28 Oct 2024 10:05:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730135204; x=1730740004;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nirCWzG2Wn5O48MYiFe6S6iiaaXRgl7t6gTboEBb224=;
+        b=CorzkyYf1HBn1V2lb7ScG/WPtTpCoQGqND3NS2wbs5txnQ+QqakVOXE+0kyMORAdeH
+         /a3V4pNnx9UWjanMWg0sU+M+E6ZeWOrOdvFn78vm59PZrDJqNL9mPPe6TglatnpZ9fMx
+         r3Su8GDJ+xlQtqmdlsfsuMJY84npVF8qJbZDaYeEqOXQkwivUtRm9RyA7+pCFHh+u7h4
+         CkOzuqZFkY3lXZ52AT7Mpcrl8BwQ3BVxHIaeLEeSU9+nDBtDD/tmCxJlUMQx+ukK9Npp
+         OfBmZCIDdq5FbRO3w4MFBtZow0zT377P7f6sqwP/AdJumM5Y2pE7EhRVWc5AVAs+tUX7
+         QLfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQbyQmgehMXtugFNovglVJhM/qEHXAwpjQHRCGOSf+qRCxgMbcbbCDNeUUj7kF/Y/WPow8Ivc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzeVfpdvk/DhFd+eEOkdluspShlELEk5QZZQjFf2nYznizyGD5I
+	E6r1/cA7d1wFyepOOoZ2ydjVX1T1J8Fa/o6gTN3RcSrKbKFBHV5T
+X-Google-Smtp-Source: AGHT+IEQC1BU8VU12ifQwvyH5dCRImXcjuHtW31p5zdb2omPfodR6YsUxwjQjlwh9jpeYW+c4MHuKw==
+X-Received: by 2002:a05:600c:1c03:b0:431:5d89:646e with SMTP id 5b1f17b1804b1-4319ad30bfcmr80043155e9.32.1730135204497;
+        Mon, 28 Oct 2024 10:06:44 -0700 (PDT)
 Received: from [127.0.1.1] (2a02-8389-41cf-e200-b273-88b2-f83b-5936.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b273:88b2:f83b:5936])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3be78sm10097655f8f.31.2024.10.28.10.05.50
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1323bsm10089732f8f.9.2024.10.28.10.06.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 10:05:51 -0700 (PDT)
+        Mon, 28 Oct 2024 10:06:44 -0700 (PDT)
 From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 28 Oct 2024 18:05:42 +0100
-Subject: [PATCH 2/2] virt: fsl: refactor out_of_memory label
+Subject: [PATCH v2 0/2] clocksource/drivers/timer-ti-dm: fix child node
+ refcount handling
+Date: Mon, 28 Oct 2024 18:06:41 +0100
+Message-Id: <20241028-timer-ti-dm-systimer-of_node_put-v2-0-e6b9a1b3fe67@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,70 +77,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241028-fsl_hypervisor-of_node_put-v1-2-dd0621341fb7@gmail.com>
-References: <20241028-fsl_hypervisor-of_node_put-v1-0-dd0621341fb7@gmail.com>
-In-Reply-To: <20241028-fsl_hypervisor-of_node_put-v1-0-dd0621341fb7@gmail.com>
-To: Arnd Bergmann <arnd@arndb.de>, Timur Tabi <timur@freescale.com>, 
- Kumar Gala <galak@kernel.crashing.org>
+X-B4-Tracking: v=1; b=H4sIAKHEH2cC/5WNTQqDMBBGryKz7pQkWv9WvUcRkWTUgcZIYqUi3
+ r2pPUE3H7xv8d4OgTxTgDrZwdPKgd0UQV0S0GM3DYRsIoMSKpNCpriwJR8XjcWwhR+6vp2coXZ
+ +LWgyVaS3vCzyqoSomT31/D4TjybyyGFxfjuLq/y+f8hXiRKF7oWuurTIy+w+2I6fV+0sNMdxf
+ ABs5xWV0AAAAA==
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Tony Lindgren <tony@atomide.com>
 Cc: linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
 X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730135148; l=1333;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730135203; l=974;
  i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=qf4BASZOO83+U0eaTzV9hGsXGZDbSGzCe04IvJPCi6g=;
- b=god0/YyyCqyX14l1T5+0D7+BuDPG4AgCZoVV/A7h6cWARfbbatBZLo2ps9D8j/vI4WN0oI5P/
- wBF8FVvc1j8CFnwqsKdBRGfRs07cb1K1pB/o3hY3hLpiNqudSqGoCaJ
+ bh=uv8UhE2oHj/jAoSYFDFHGa6v1zWyBJnbSc/opV4Ew7s=;
+ b=42unLjeMw9UF99FvGsX6qXi7uZzLc/XRF9h4810jk+s6XqJBcJInQHlaRgHhW6ILfuw4MgXH0
+ doTmV0BNonPD0WakPhDx1KYrgD1eb1WKtTTCVLyoSggNys+Ecs1c3XP
 X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
  pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-The 'out_of_memory' label is only accessible by means of a goto jump
-that only happens once. Take the required actions right after the error
-happens, and drop the need for a jump out of the loop.
+This series adds the missing calls to of_node_put(arm_timer) to release
+the resource, and then switches to the more robust approach that makes
+use of the automatic cleanup facility (not available for all stable
+kernels).
 
 Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 ---
- drivers/virt/fsl_hypervisor.c | 19 +++++++------------
- 1 file changed, 7 insertions(+), 12 deletions(-)
+Changes in v2:
+- Add second patch for automatic cleanup.
+- Link to v1: https://lore.kernel.org/r/20241013-timer-ti-dm-systimer-of_node_put-v1-1-0cf0c9a37684@gmail.com
 
-diff --git a/drivers/virt/fsl_hypervisor.c b/drivers/virt/fsl_hypervisor.c
-index 7c7ec13761ba..bc5d7aa246df 100644
---- a/drivers/virt/fsl_hypervisor.c
-+++ b/drivers/virt/fsl_hypervisor.c
-@@ -848,7 +848,13 @@ static int __init fsl_hypervisor_init(void)
- 		dbisr = kzalloc(sizeof(*dbisr), GFP_KERNEL);
- 		if (!dbisr) {
- 			of_node_put(np);
--			goto out_of_memory;
-+			list_for_each_entry_safe(dbisr, n, &isr_list, list) {
-+				free_irq(dbisr->irq, dbisr);
-+				list_del(&dbisr->list);
-+				kfree(dbisr);
-+			}
-+			misc_deregister(&fsl_hv_misc_dev);
-+			return -ENOMEM;
- 		}
- 
- 		dbisr->irq = irq;
-@@ -895,17 +901,6 @@ static int __init fsl_hypervisor_init(void)
- 	}
- 
- 	return 0;
--
--out_of_memory:
--	list_for_each_entry_safe(dbisr, n, &isr_list, list) {
--		free_irq(dbisr->irq, dbisr);
--		list_del(&dbisr->list);
--		kfree(dbisr);
--	}
--
--	misc_deregister(&fsl_hv_misc_dev);
--
--	return -ENOMEM;
- }
- 
- /*
+---
+Javier Carrasco (2):
+      clocksource/drivers/timer-ti-dm: fix child node refcount handling
+      clocksource/drivers/timer-ti-dm: automate device_node cleanup in dmtimer_percpu_quirk_init()
 
+ drivers/clocksource/timer-ti-dm-systimer.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20241013-timer-ti-dm-systimer-of_node_put-d42735687698
+
+Best regards,
 -- 
-2.43.0
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
 
