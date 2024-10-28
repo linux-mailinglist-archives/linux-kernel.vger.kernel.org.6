@@ -1,109 +1,83 @@
-Return-Path: <linux-kernel+bounces-385393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2253B9B369F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:35:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50CF9B36AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:36:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C301E1F2289B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:35:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E185B1C22229
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF8B1DEFC6;
-	Mon, 28 Oct 2024 16:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="ZgS7BZdH"
-Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DD521DEFD2;
+	Mon, 28 Oct 2024 16:36:50 +0000 (UTC)
+Received: from proxima.lasnet.de (proxima.lasnet.de [78.47.171.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608AB1DE4D5;
-	Mon, 28 Oct 2024 16:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B00C1DE8B3;
+	Mon, 28 Oct 2024 16:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.47.171.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133351; cv=none; b=LULxMDN2iCDOp9kbNA+2JyusnFZOYXRaOOvQ7o9s+BE9vhckrwMiGhGZi+266Dp2qtM4+UUAEHsRWQHjd5/pkGTMUQ9eV14cXgL+hyisswnHM3eOOBYM+iiWo7LaUdVokI3GAx3z9UkwKrigCOAAD/c4F2BZ8vVNsiPwvEZ8s2E=
+	t=1730133410; cv=none; b=QVEHdulhULYz9c5TjTMB6T63dRflpVdFNxILtyrbYqBDmaB2Fv4wJEBevElVxZxOxGamVMXRZh1DOCQLVI8xK3jgAM8iPnJ4hkLjmmIr6cSMpzYEmptY5NY9uJiTyYKVIGHq5ZAB/whHtgsWm4B+3geZ0mQnZCjZ4iwK4uBJd78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133351; c=relaxed/simple;
-	bh=SgbZ6d/TsfOwGbc31ZKuYuZl628O9USHtGUALdy8B+A=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ij2wFfVjDjTc18Yob7pRoOShiQcvj2CNUyZ2osx2PtarrZX8c3+nYpE5b4cer5ENRZfnUotU/CfpAEiIZbyTvk9W4pXrky8eiiA5H7QTjnh7JgyrWmIGvulyICSqAkmoLL9sHPuR6ZaUgHlJNyaYJtk9stLlu/9BRKCSYeCjT3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=ZgS7BZdH; arc=none smtp.client-ip=51.222.15.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
-	s=default; t=1730133348;
-	bh=SgbZ6d/TsfOwGbc31ZKuYuZl628O9USHtGUALdy8B+A=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZgS7BZdH9XB4Xl54n/5i1z3TmXuFPGbZT7e1yyh6uidffhW5fJX3UtOgD2UeUYK1h
-	 aPieFahk0TWr7mrR5UR2vvYcP5G9n0GfgeYuBZezw2UKR5niDymDl8Chm2YXq1yxqd
-	 vV4KAWsY0azGRYxHjbp5QIGL1rr6H6czLNQ6yUZmoFu5Ga1u8VcJoyhLXkD0lsoVNi
-	 T2CoAgCcSGveBqJ5QOz7kqvpbcs/+pHyUxwaXhJI4d0jDTHHpou488yykXHXa3FNB2
-	 SauQb81+iQBLuqZg93k1S5j7eQe03frPSqwIwgzzfHf1Vz5qoXIeBK2irb+YrAK9yQ
-	 VpuH4DjlbmtDw==
-X-Virus-Scanned: by epochal.quest
+	s=arc-20240116; t=1730133410; c=relaxed/simple;
+	bh=bUP6fDetm4BEdNdBbdqYhqnqTS+NEpIDafsj0e1Z+BE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SpPANpddYInkmt3hdvzpjFJ0kDM5zxge5djebzlFbOVFsTldG8K7ELOU8NlcS2o4xODo2nUWNkiypoPdSP5wUgxJJ6a1+ezmkTYkzrc44U0sQdcPK3+qUg4Ia6w4NM3TeX6/NAiGO/P+puUzvB1PodvrCJEBg+NSXVk/uXJtkLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org; spf=pass smtp.mailfrom=datenfreihafen.org; arc=none smtp.client-ip=78.47.171.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=datenfreihafen.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=datenfreihafen.org
+Received: from localhost.localdomain (unknown [45.118.184.53])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: stefan@sostec.de)
+	by proxima.lasnet.de (Postfix) with ESMTPSA id 566C8C06F3;
+	Mon, 28 Oct 2024 17:36:43 +0100 (CET)
+From: Stefan Schmidt <stefan@datenfreihafen.org>
+To: alex.aring@gmail.com,
+	miquel.raynal@bootlin.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	corbet@lwn.net,
+	Leo Stone <leocstone@gmail.com>
+Cc: Stefan Schmidt <stefan@datenfreihafen.org>,
+	linux-wpan@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	anupnewmail@gmail.com
+Subject: Re: [PATCH net] Documentation: ieee802154: fix grammar
+Date: Mon, 28 Oct 2024 17:35:52 +0100
+Message-ID: <173013328919.2005465.16226848141693976566.b4-ty@datenfreihafen.org>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241023041203.35313-1-leocstone@gmail.com>
+References: <20241023041203.35313-1-leocstone@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 28 Oct 2024 13:35:46 -0300
-From: Cody Eksal <masterr3c0rd@epochal.quest>
-To: wens@csie.org
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-usb@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej
- Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
- Andre Przywara <andre.przywara@arm.com>, Parthiban <parthiban@linumiz.com>,
- Yangtao Li <frank@allwinnertech.com>, Florian Fainelli
- <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>, Linus
- Walleij <linus.walleij@linaro.org>, Thierry Reding <treding@nvidia.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Maxime Ripard
- <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Yangtao Li <tiny.windzz@gmail.com>, Viresh Kumar <vireshk@kernel.org>,
- Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 07/13] arm64: dts: allwinner: a100: add usb related nodes
-In-Reply-To: <CAGb2v64tQ_9C3mwJqt-tm-6SV=SHAk75sO5Ho7gT=p=iyRfLcw@mail.gmail.com>
-References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
- <20241024170540.2721307-8-masterr3c0rd@epochal.quest>
- <CAGb2v64tQ_9C3mwJqt-tm-6SV=SHAk75sO5Ho7gT=p=iyRfLcw@mail.gmail.com>
-Message-ID: <542c16a63ab228a7ed1cc81fc91b961f@epochal.quest>
-X-Sender: masterr3c0rd@epochal.quest
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On 2024/10/25 10:29 pm, Chen-Yu Tsai wrote:
-> On Fri, Oct 25, 2024 at 1:09 AM Cody Eksal <masterr3c0rd@epochal.quest> 
-> wrote:
->> 
->> From: Yangtao Li <frank@allwinnertech.com>
->> 
->> Allwinner A64 have two HCI USB controllers, a OTG controller and a USB
-> 
->             ^^^ Please update this.
-I wasn't sure if I was supposed to update the commit messages; a few 
-others have grammar errors as well. I'll fix those alongside this one in 
-V2.
+Hello Leo Stone.
 
-Thanks!
-- Cody
->> PHY device, let's add nodes on dts.
->> 
->> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
->> [masterr3c0rd@epochal.quest: fallback to a33-musb instead of h3-musb]
->> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
->> ---
->>  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi | 91 
->> +++++++++++++++++++
->>  1 file changed, 91 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi 
->> b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
->> index adb11b26045f..0aee1b578661 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+On Tue, 22 Oct 2024 21:12:01 -0700, Leo Stone wrote:
+> Fix grammar where it improves readability.
+> 
+> 
+
+Applied to wpan/wpan-next.git, thanks!
+
+[1/1] Documentation: ieee802154: fix grammar
+      https://git.kernel.org/wpan/wpan-next/c/2107395f0711
+
+regards,
+Stefan Schmidt
 
