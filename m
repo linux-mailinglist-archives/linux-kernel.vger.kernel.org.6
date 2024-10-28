@@ -1,83 +1,123 @@
-Return-Path: <linux-kernel+bounces-385544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42F159B3873
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:59:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26AE69B38A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:02:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07ED9283421
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:59:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9EE21F22FE3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:02:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D776E1DF753;
-	Mon, 28 Oct 2024 17:59:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DD61EC011;
+	Mon, 28 Oct 2024 18:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MIfUXmIZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MCeteye/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770E1DF729;
-	Mon, 28 Oct 2024 17:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1C01E22EF;
+	Mon, 28 Oct 2024 18:00:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730138380; cv=none; b=IlYQWyn2MPMHWqVdzhMty1dUDtcHUf3pfsI7M6Jo/fZya+j2vfX6/+PTWI7q8ZrDXCeM7OegaWqPSzcIFXi2ICOBWHaklolHykiec4yelK9rzFStheLP2S3nOwWnxB6aW7JwRHBOGDdg/AodSfrymYtcQIi8TyeTKc5ZEkBG8oE=
+	t=1730138406; cv=none; b=bNh79OsjA/BaKnWoOByuOp6fFGQPlRzpGpLwH6ImY/mFEE/tdNaFS/6djw/ylF7udtCx8mvaA9yBctwVq0lLIcH4HACIs9RjzyTDX6Nls1DHvax/Pa6hk/UMGq3iwz4DgzjXeI9cdmXVvP/j35rTN4iOiSExDcBew0TBK7/Syuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730138380; c=relaxed/simple;
-	bh=NNDZK1DgsTBU9hMvDjvluvD+vh7E84vISaTdisCl6nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qKtEMpJnweEcT2XO4oIJyztAeQ+VVfrXMjjVBYQokvdWqtDcUsMeJV/KICvYNjNvfCVUo2DdCxs5olz1PRLANtcLabvrWnLPuZv3A5ZLOZlsnnvOuDpykfHO5fpDcA2gz1X4Uy79dv8RI2d5FGdcUkpYU3dbZkeFsMZpFtm8W6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MIfUXmIZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C7AAC4CEC3;
-	Mon, 28 Oct 2024 17:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730138379;
-	bh=NNDZK1DgsTBU9hMvDjvluvD+vh7E84vISaTdisCl6nc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MIfUXmIZON3MDXg7HzGZZEbagXo3naflrdv/a5QCLfR3SAQgye1gIQfWy9rMCx/j1
-	 XFa+DRZu9qPSYbHQlxL9lABTEyegZ52vV9WrRieuJll7AKnWYqu7BX12760tEAEL3a
-	 WchfUDjnOHSrRA3nHelHfE+VUQDtRb8imaxPpotVX4ZSjDKNm/kCKKFhoLy1iGlOZp
-	 GSHM2S5YXJPlHKcOpuEV5BkP9XugoATtLthXOqiaL5AWuusSE5PjffvlzXW2Yv+4eF
-	 PMaceQ13QRslMZcipJ1R82DfuMNWL2znqPlR8vM6ZjMxAww9HZReCPPjSBnBPcVLpu
-	 bHQeudYdO47jg==
-Date: Mon, 28 Oct 2024 12:59:37 -0500
-From: Rob Herring <robh@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Conor Dooley <conor@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] dt-bindings: cache: qcom,llcc: Fix X1E80100 reg entries
-Message-ID: <20241028175937.GA1065786-robh@kernel.org>
-References: <20241018-qcom-llcc-bindings-reg-ranges-fix-v1-1-88693cb7723b@linaro.org>
+	s=arc-20240116; t=1730138406; c=relaxed/simple;
+	bh=+mrd7zgi7m7coIAfM4paFT/Ggz1fukaNTlSAj3Ha9OA=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i4kdHowOFfB0ZAOXmkSiiE5MKhMQ549tJITN1rvMBml8hE6ZLZ0oAFE87tGWWaSQlI+zXbKvMVt3JipKT1vYc7ewJuCa5tUmeBAUGP7HSqutCBagXQUTptukKYO2Y7mDIj9NkfGFuj6svCwcACfdd204RPrYhXHo9Mjx7dvylCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MCeteye/; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730138405; x=1761674405;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=+mrd7zgi7m7coIAfM4paFT/Ggz1fukaNTlSAj3Ha9OA=;
+  b=MCeteye/V2qJnCjSBgpS4X5ER6SAbyg+AHPgo+SdlrUxsmR03DWRaPFn
+   lYmtfG47vXwhHklC0lC6OWCd6o9Tucs7jNl6Z/0gKsjOlmiBfWjsRwX2e
+   o7SeL5z7J199BbyZ6ZA9FqB2bWxkCxE7+dKZ1OlruqFAnSRJQ7cuECO7x
+   nCfnHRxcx/MAAVzMspqZqCf5shmaJDXQ77nD/GhIWzwPgwPzDtYZmKzrx
+   KSuvGF9JVmb0IxpVsmSUkQ31OSBRS0TeWid8B39//fP32U5WSq7UO7wLZ
+   O+IGP5KI1sL5Wvp6fR90SFWFWfNNk6Vkxsm24kqAzlV/ld75ykFBeJLB4
+   w==;
+X-CSE-ConnectionGUID: wmrrC0kPToG4LzafQbUxuA==
+X-CSE-MsgGUID: npAhcUAvQAK8qoB7DsiQiw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29714727"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29714727"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 11:00:04 -0700
+X-CSE-ConnectionGUID: LixNoEwERY+XuFlmRZis0g==
+X-CSE-MsgGUID: gCW4ZiKMR5C+/geFuJIuhw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="85642500"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.203])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 11:00:01 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 28 Oct 2024 19:59:58 +0200 (EET)
+To: Keith Busch <kbusch@kernel.org>
+cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/3] PCI/sysfs: Use __free() in reset_method_store()
+In-Reply-To: <Zx_Pt2ObNKIS8cu2@kbusch-mbp>
+Message-ID: <8862b34b-26b3-af75-5d23-d765fb41b5d4@linux.intel.com>
+References: <20241028174046.1736-1-ilpo.jarvinen@linux.intel.com> <20241028174046.1736-3-ilpo.jarvinen@linux.intel.com> <Zx_Pt2ObNKIS8cu2@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018-qcom-llcc-bindings-reg-ranges-fix-v1-1-88693cb7723b@linaro.org>
+Content-Type: multipart/mixed; boundary="8323328-1973112510-1730138398=:947"
 
-On Fri, Oct 18, 2024 at 04:13:47PM +0300, Abel Vesa wrote:
-> Document the missing Broadcast_AND region for x1e80100.
-> 
-> Fixes: e9ceb595c2d3 ("dt-bindings: cache: qcom,llcc: Add X1E80100 compatible")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410181235.L7MF7z48-lkp@intel.com/
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> ---
->  .../devicetree/bindings/cache/qcom,llcc.yaml       | 36 ++++++++++++++++++++--
->  1 file changed, 34 insertions(+), 2 deletions(-)
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Applied, thanks.
+--8323328-1973112510-1730138398=:947
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-Rob
+On Mon, 28 Oct 2024, Keith Busch wrote:
 
+> On Mon, Oct 28, 2024 at 07:40:45PM +0200, Ilpo J=E4rvinen wrote:
+> > @@ -1430,7 +1431,7 @@ static ssize_t reset_method_store(struct device *=
+dev,
+> >  =09=09=09=09  const char *buf, size_t count)
+> >  {
+> >  =09struct pci_dev *pdev =3D to_pci_dev(dev);
+> > -=09char *options, *tmp_options, *name;
+> > +=09char *tmp_options, *name;
+> >  =09int m, n;
+> >  =09u8 reset_methods[PCI_NUM_RESET_METHODS] =3D { 0 };
+> > =20
+> > @@ -1445,7 +1446,7 @@ static ssize_t reset_method_store(struct device *=
+dev,
+> >  =09=09return count;
+> >  =09}
+> > =20
+> > -=09options =3D kstrndup(buf, count, GFP_KERNEL);
+> > +=09char *options __free(kfree) =3D kstrndup(buf, count, GFP_KERNEL);
+>=20
+> We should avoid mixing declarations with code. Please declare it with
+> the cleanup attribute at the top like before, and just initialize it to
+> NULL.
+
+Hi,
+
+I don't exactly disagree with you myself and would prefer to keep=20
+declarations at top, but I think as done now is exactly what Bjorn wants=20
+for the specific case where __free() is used. This was discussed earlier=20
+on the list.
+
+If I misunderstood the conclusion of the earlier cleanup related=20
+discussion, can you please correct me Bjorn?
+
+--=20
+ i.
+
+--8323328-1973112510-1730138398=:947--
 
