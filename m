@@ -1,199 +1,172 @@
-Return-Path: <linux-kernel+bounces-385222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEAD39B3430
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:01:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22C9C9B3439
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D3F3281D9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:01:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBDFD2821E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65971DE2DB;
-	Mon, 28 Oct 2024 15:01:01 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71BE81D61A4;
+	Mon, 28 Oct 2024 15:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="IvZJKnoE"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2055.outbound.protection.outlook.com [40.107.92.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2331415E5B8
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730127661; cv=none; b=aQFkEzRyvZ/7hQSESXUta1c1f582+R6yAp0p72E59elpq9iLTDRU7oSm5UDRaKBAM6cvgUXpAQcQ5zAz39F8Up0/oiCql7FuLjPd7DJz+w6G0qqJhB7rDjqe+hNu46YTILc5OH4icih/IJtEc+vdkicxzqVIwu5g0O09bG26WXg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730127661; c=relaxed/simple;
-	bh=E22snKOiwORKipQzrXfVGm9Ej7rTAa7fAhHXIBaGcaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXt4fyxVf+Ezx/eG1IK+VOgnoUFPq+5j3yOg2TbdrwDBTyZzxkzb9bvtXhxpToDNxT7x06JeXWzVL9NVjx0oFtx1Q5eMoiWeWIVHK8Pvx5FWBdQOVvfucfZuBjewMTr8AMpjrMD1Cvy7N6TUwFRpThg4d03mnJpsWH1PuWj67zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t5REf-0006vD-4J; Mon, 28 Oct 2024 16:00:49 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t5REe-000sIi-1t;
-	Mon, 28 Oct 2024 16:00:48 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1t5REe-000n3t-1Y;
-	Mon, 28 Oct 2024 16:00:48 +0100
-Date: Mon, 28 Oct 2024 16:00:48 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Sherry Sun <sherry.sun@nxp.com>
-Cc: POPESCU Catalin <catalin.popescu@leica-geosystems.com>,
-	Amitkumar Karwar <amitkumar.karwar@nxp.com>,
-	Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>,
-	"marcel@holtmann.org" <marcel@holtmann.org>,
-	"luiz.dentz@gmail.com" <luiz.dentz@gmail.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	GEO-CHHER-bsp-development <bsp-development.geo@leica-geosystems.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH 1/2] dt-bindings: net: bluetooth: nxp: add support for
- supply and reset
-Message-ID: <20241028150048.qnqjxntns6quy7py@pengutronix.de>
-References: <20241022082256.nzfxqp67tdaxtn56@pengutronix.de>
- <DB9PR04MB84292445D0FEDB8211ED52C3924C2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <9b09774e-d0ed-4c97-b6a0-e976580b5bb5@leica-geosystems.com>
- <DB9PR04MB8429CF700571FE42C997FB9C924D2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <1b8864e5-0ec7-49c4-932a-89cfbaeacc9f@leica-geosystems.com>
- <DB9PR04MB842929186683C1DF13DCBD92924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <20241028090028.x6rzopvpcdvgouqv@pengutronix.de>
- <DB9PR04MB842960A18BB8570B04A64BEA924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
- <20241028115150.fgvqaem36lwxwvjh@pengutronix.de>
- <DB9PR04MB8429B10FA73E5333685103FB924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 872E315E5B8;
+	Mon, 28 Oct 2024 15:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730127724; cv=fail; b=YGmLZ62l2jBMkXYtX6ms7FbndHPTd7d4+c/Acisqtu3qwqmnxRoeETb/JxnKZcEZX6/d5/mX34HHMB/2HkefkUdBq1Tcg6KfaDkh6h88l4wVcr8dVZuKa6mzk4a12HIdMT7FOb2lHp+hdMLvJsddBt2AK6o0n32Blr7Vy04OmzE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730127724; c=relaxed/simple;
+	bh=kzHewhwwd8ao1CxsuP+JS1guIUwYEyBD9RK41jRZL0o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ad5jNQEzVctTTtuaYEey9fgXmgAvbU1RV2ArQKH4hlwC1C7jgIJBZsEcQdSwRN1BoTTAtwGpEtvkJb+3ay1DziO2XJCfE3UT//zVuXwZrF9fNdksNdpPbU6Wk/s97cq/IKFOfbKJcJKWNR7tPTNrnMEMgK7vosxxVGE0RrKiwQE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=IvZJKnoE; arc=fail smtp.client-ip=40.107.92.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uDw0lGCtew3RS7HdFBroYVDfQWC+aoPBi2GNupZDh4v8jyerfacOaYTgAC6BSmHaf8ulgz5+4iSMGotDeR3IGo8yB7eomhXTKKR4B8OCEXlKaVK8SiBhZmSiSkelG1I8vnVoHoHR6yPKktyzEo8T9OqNVDKgr7Gc6m4n3RIPaEF00vJwj3VC+DMhkHOt+NnNxaAmka6pb6lWVjSonx6Qi47CEozxsPjwg00RE1KBIUoAVP9r9aiBbuUFtYSJ3eLpg4AJW6RwQeC/trbHxaLd33L/7SeTXMI1zNLJNfw3oRU+svZQ13us3FmKlFJHPWzfcDQIzLzzcSvx4775JT+Z+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hGY3u7zO+pGvl5JJqmjXHuv6YVHyYlM+a3+QwvODDEo=;
+ b=pQ9fdsinwkYdpl91hnkRWjzMmz1vVHi4ahV7kr+WKR5uUJxkpw6/hyUPD2s0WViKagI4hEHXu/LeAAXbIlxJF0Dv4Ld343g0My24k7azZEefVfxyf34J2Re//PZloMUyksgEJFz6GOlKpt11OFNxbDz99uvBrC4wRA5bYrR/VVMlrZR2hZM+XwSzm6rSuEL5TJCpEdUy3bAeeNgi7QRWYNq+x/Z7qm0J2iJxSKBtZ+Cdapha+pcEcz5sjQ0PeFirVn6nPpefrgCfwR9ze4JiA0dc43e0a4DPU5ieohphvvv4PiYx9Ggl+9zBd5FZhVpq8bG91x2pQxmr+ssWTdChNw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hGY3u7zO+pGvl5JJqmjXHuv6YVHyYlM+a3+QwvODDEo=;
+ b=IvZJKnoE4D0LoYl9tdAz3jSIpKQ7dH+e5mXofDDiRKX/VAa/O66tvN87OXrB+BcD62+YdBNgAEwxhpHxc6czgC62hMmOPQP3PmMDNPXXrv8uwOICZwjUI1WCRF6148eMXR3ZeEnBNqqSFd7//FtI59oFeG3cYzU9mNn4G4Q3AS4zq8lC2oZxKM+Qnkz8O+EFVNq5HZAJJQCpO/kCoJTAFNONsJMrKJ1EsKbfe7B51m6XGWrXYgljipNc0tUcow1Rs8Czb/LKFUp0AcYOn4g6JKzS+rkXaGwG9QwAq581WQidPjfE7FunsG2NtjDV3h6wE4VrOdsPCxaDvKFE6o3MUA==
+Received: from MW4PR04CA0315.namprd04.prod.outlook.com (2603:10b6:303:82::20)
+ by SA3PR12MB8440.namprd12.prod.outlook.com (2603:10b6:806:2f8::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Mon, 28 Oct
+ 2024 15:01:54 +0000
+Received: from CO1PEPF000044F4.namprd05.prod.outlook.com
+ (2603:10b6:303:82:cafe::9) by MW4PR04CA0315.outlook.office365.com
+ (2603:10b6:303:82::20) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24 via Frontend
+ Transport; Mon, 28 Oct 2024 15:01:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1PEPF000044F4.mail.protection.outlook.com (10.167.241.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.16 via Frontend Transport; Mon, 28 Oct 2024 15:01:53 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Oct
+ 2024 08:01:28 -0700
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Oct
+ 2024 08:01:28 -0700
+Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.8)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 28 Oct 2024 08:01:26 -0700
+Date: Mon, 28 Oct 2024 08:01:24 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
+	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
+	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<smostafa@google.com>, <yi.l.liu@intel.com>, <aik@amd.com>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v5 06/13] iommufd: Allow pt_id to carry viommu_id for
+ IOMMU_HWPT_ALLOC
+Message-ID: <Zx+nRJrlmAD/7H8w@Asurada-Nvidia>
+References: <cover.1729897352.git.nicolinc@nvidia.com>
+ <4f5ed9d75c23a503ffe672a85cf9010569652794.1729897352.git.nicolinc@nvidia.com>
+ <CABQgh9Gkt5tsw+wr_=WeA+m=Kz2xY5Z7aSBNhHCvBG2r=7O3TQ@mail.gmail.com>
+ <CABQgh9EgXsyHDzZHK2FMuUw-eu9zeczyMGLTUjS3AKYUHKwwDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <DB9PR04MB8429B10FA73E5333685103FB924A2@DB9PR04MB8429.eurprd04.prod.outlook.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <CABQgh9EgXsyHDzZHK2FMuUw-eu9zeczyMGLTUjS3AKYUHKwwDg@mail.gmail.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F4:EE_|SA3PR12MB8440:EE_
+X-MS-Office365-Filtering-Correlation-Id: eb5a494b-d0c5-4ef4-a667-08dcf76175d3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jIeIy7r0EuhMQlSmnvUTsz+nH/Prqr5ia26uaD+RXVigo868XhVJs828iJjh?=
+ =?us-ascii?Q?MjWTsxzb4/qtDJ6YsCpX5eIkKR7ucMGeEoeyUAmi3sIHi1+/Aaorc5Q78pGD?=
+ =?us-ascii?Q?U/9vQMBH9VD/6uRnfwv8hbaLLNkCSSTI1jxHURzmbQQ0U0xR1220zRDT/y34?=
+ =?us-ascii?Q?byrU5vOJPEEERrrBtgqhBzuRN2ubliPy6tQOhXEVq7AvCI2WmOP6n8f5fp61?=
+ =?us-ascii?Q?x8+EOKeAJfQ+rlGrBRGyZdCVukeTsXsSKbRbY+ZiweJcDrLEjZgB4MloqiUB?=
+ =?us-ascii?Q?z1f0Kk/bclVrG6QEg1kAdfO89zuIFDubMjd0l3ac9tDWeJP7l9Ut7U9ZY+5S?=
+ =?us-ascii?Q?WiKvMg/fMh5NBheBL0e/Cyrf+24JH1jGtgn1GmfAQ5Mt9/cIkWZP4xlgifvw?=
+ =?us-ascii?Q?7cty7I/CDRJpWDf8sanfhR1NUSsB0NTOF1IDQQgD5ELeHKJtPM0ITf+/GyJj?=
+ =?us-ascii?Q?hARd9xMkMGqUSxhC4hquhcaFfqHcNy/zy8a4EGSOVmtijpiiHw9HGRfwlZgS?=
+ =?us-ascii?Q?JOzfrpZlvIReljMKFTuoombWA1GmwOQJYz+Oa4x41V5bSwHwOw5+pbPMimEM?=
+ =?us-ascii?Q?kosLfi3twmjBThXuHPggiKl7VL4V1lCFfcRnYEe4PwdQXpHpQufhyLPJQUUb?=
+ =?us-ascii?Q?NaUxpw5NJTx03QCb6oWRUtrQnDWPfkUhy11iOa2vy+Hf+UHD4Hz23BC0ayTj?=
+ =?us-ascii?Q?dLZ+Dcqri1CBu7WyZz0JfAZfXfo4vrXyJQFsugaKdZHDHvgH/uFNotc+jpC8?=
+ =?us-ascii?Q?4PM+Z3UzTWizsR1X9J3zAYrtap+7ORPcq7VhcyE8AZb1etY/wDRzY2KkcMK4?=
+ =?us-ascii?Q?KjRQDieoqkjMtkm0LXD4m3xpNtvM5kuvAlYrqgJV/8mq+/d93OFptWyqbOQA?=
+ =?us-ascii?Q?EFcJZtUiX+vhvoMbMvsz5pRmvldzukNni22VBqx+vPq/wrxzhP6RVDDnw2gx?=
+ =?us-ascii?Q?v/1jM0e/3kcxipZwy2HAbHteQ0hdij8hcOWBb/JdWbQ7ox1xiFeMvKVLQ1xn?=
+ =?us-ascii?Q?IPQgmkU4STSawAgcHCQ/HmDgqQAz2iAKLV13yAEFiNAtzdf5fhNMwrfKcydl?=
+ =?us-ascii?Q?Pv8zGkbnn54Qix6aofBMiWGmXZIbyVQri8Z1ELRnrimxIf7Z4/B/gMOiUoIe?=
+ =?us-ascii?Q?wH+BVUI6CTADj5M28myipJ0MTFXPrIwQH/UHsT+jGQ7I6UU3powWZmfWf0K1?=
+ =?us-ascii?Q?MePAPHHrMsROsJ2/QJf6/439pKGp3feNYvPKatSZbuddiRP6OOPJkdmHrNUc?=
+ =?us-ascii?Q?JiDcjuBmneURtQEcJwymO+UtXk60g/okj+hav7UAcjp0wFWATTgUpW4rVTH1?=
+ =?us-ascii?Q?CdwT22THWkH+4ybg/s2hYAqCoRDX7NdUdkFQhBKjg+iS/iB0t2ODHNDetg4C?=
+ =?us-ascii?Q?HIDNpl8X1nqgURz3jxstRauHAMR6qPc95GNzPen2EGG0YkwmYw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 15:01:53.8898
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eb5a494b-d0c5-4ef4-a667-08dcf76175d3
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044F4.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA3PR12MB8440
 
-On 24-10-28, Sherry Sun wrote:
+On Mon, Oct 28, 2024 at 10:53:38PM +0800, Zhangfei Gao wrote:
+> On Mon, 28 Oct 2024 at 11:24, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
 > 
-> > From: Marco Felsch <m.felsch@pengutronix.de>
-> > 
-> > On 24-10-28, Sherry Sun wrote:
-> > >
-> > > > From: Marco Felsch <m.felsch@pengutronix.de>
-> > > >
-> > > > Hi,
-> > > >
-> > > > On 24-10-28, Sherry Sun wrote:
-> > > > >
-> > > > > > From: POPESCU Catalin <catalin.popescu@leica-geosystems.com>
-> > > > > >
-> > > > > > We use the NXP downstream driver mwifiex which doesn't have
-> > > > > > support for regulator or PDn.
-> > > > > >
-> > > > > > However, regulator is already supported by the MMC core (vmmc-
-> > supply).
-> > > > > >
-> > > > > > For PDn, we use mmc pwrseq simple driver that has been patched
-> > > > > > to add support for reset-control.
-> > > > >
-> > > > > Ok, thanks, the mmc change looks good for me, so there is no
-> > > > > problem with the NXP SDIO wifi.
-> > > > >
-> > > > > But how do you plan to handle the NXP PCIe wifi? We also need to
-> > > > > make sure the BT patch won't break the PCIe wifi function.
-> > > >
-> > > > Can you please elaborate how this could break the PCIe use-case?
-> > >
-> > > Similar to the SDIO wifi, if no corresponding reset control for the
-> > > PDn pin in PCIe wifi driver, the wifi part will be unexpectedly
-> > > powered off when removing the BT driver.
-> > 
-> > Nope it's not that easy for PCIe case since the phy + link layer handling is
-> > much more complex compared to the MMC case. For the PCIe case the intial
-> > handling is very strict according to the PCIe spec and we can't handle the BT
-> > device independently.
-> > 
-> > _BUT_ this patch doesn't cause any regression for the PCIe use-case since the
-> > support added by Catalin is optional which means that the user don't have to
-> > use these options.
-> > 
-> > To sum up:
-> > 
-> > WLAN (PCIe) used + BT (UART) used -> no independent handling
-> >                                      possible. BT depends on WLAN.
-> > 
-> > WLAN (PCIe) not used + BT (UART) used -> This patchset allow us to
-> >                                          handle BT. Without the patchset
-> > 					 this is not possible.
-> > 
-> > WLAN (SDIO) + BT (UART) -> This patchset and the mmc-power-seq patchset
-> >                            allow us to handle WLAN and BT independently
-> > 			   regardless if BT or WLAN is used or not.
+> > By the way, has qemu changed compared with v3?
+> > I still got a hardware error in this version, in check
 > 
-> If we add the reset-gpios property in the BT dts node when using the
-> SDIO wifi chip, my concern is for some host platforms, taking
-> i.MX95-19x19-EVK as an example, it supports both SDIO and PCIe
-> interface wifi chip through the M.2 connector, when customers want to
-> plug in the PCIe wifi chip, they have to remove the reset-gpios in the
-> BT dts node to avoid the PCIe WLAN been affected by BT, right?
+> Found iommufd_viommu_p2-v5 misses some patches,
+> Simply tested ok with iommufd_viommu_p2-v5-with-rmr, (with some hacks)
 
-I don't know the i.MX95-19x19-EVK platform since it is not upstream. If
-you want to support both:
+I see. I put those RMR patches on top of Part-1&2 in v5, v.s.
+Part-1&2 rebasing on RMR patches.
 
-> > WLAN (PCIe) used + BT (UART) used -> no independent handling
-> >                                      possible. BT depends on WLAN.
+Thanks for testing!
 
-and
-
-> > WLAN (SDIO) + BT (UART) -> This patchset and the mmc-power-seq patchset
-> >                            allow us to handle WLAN and BT independently
-> > 			   regardless if BT or WLAN is used or not.
-
-you need to stick with the dependent handling which is no problem once
-this patchset get applied if your system support hot-plug. If hot-plug
-is not possible you could consider unsing overlays.
-
-However, this patchset does _NOT_ cause any regression neither for the
-MMC nor the PCIe use-case, and you don't have to touch your DTS files. It
-would be an improvement for platforms (not speaking of NXP EVK
-platforms) which utilize the MMC+UART interfaces only.
-
-> And it looks strange that we can only add the reset-gpios BT property
-> to the hosts that only support SDIO WLAN, we hope there is a solution
-> for the PCIe WLAN too.
-
-"We hope there is a solution" <-- This is not how upstream work.
-
-Also as said: The WLAN PCIe interface must/should be compatible with the
-PCIe Spec. There is no way that we can handle both devices
-independent since the PCIe spec specifies the power-up-sequence very
-strict.
-
-If for example, we do handle it independent and the BT part brings the
-device out-of-reset while the PCIe bus is not yet ready, the device's
-WLAN PCIe subsystem may get confused.
-
-There are two solution NXP could provide:
-
- - The PCIe WLAN/BT devices exposes all devices WLAN + BT via PCIe, this
-   would eliminate the UART part.
- - All new WLAN/BT devices do have a separate hw reset line for each
-   radio the device supports.
-
-Regards,
-  Marco
+Nicolin
 
