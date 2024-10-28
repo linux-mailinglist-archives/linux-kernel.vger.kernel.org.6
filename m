@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-385870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 084E59B3CC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:34:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 748B89B3CCC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C14A8282D88
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:34:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AACCB21E57
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:34:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 324761E230E;
-	Mon, 28 Oct 2024 21:33:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 357451EE010;
+	Mon, 28 Oct 2024 21:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjSTerNs"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CmKIDUhW"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DD911E0E09;
-	Mon, 28 Oct 2024 21:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A76A1EC01D;
+	Mon, 28 Oct 2024 21:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730151227; cv=none; b=AlCET2vum/P9mi3sXoAMZWNg8ImKpSA6TDEAb+Cg24YU3FoSknglhlSNafyLEVUZuWWrLXjOPl/Qo35f7tDaoCzaMhetISxrJwWYnNRFOnIwZk4U+xvd13I5CfuM/3v409+BYcaPx5eD9cvTZxpBk/jkqHFu/QgcXUCqWPmbvI4=
+	t=1730151229; cv=none; b=FnW3B/8SlDyM8ewn9MgbRmF28cdXChYt+7X9MLcSGY6LI1+wQZZx5I154s8l3sN62dkGk7KCeq7z8rc1IHdJtfrxo8FKZi/kfPWkaWzmUvFr2YlLss1xZWATvdnyx4eXxveIU/ABNMEEm2+Q8wTALTnn+q2kpUBscHWoKwhUmlo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730151227; c=relaxed/simple;
-	bh=JG/ULN2d7dX81AfqT9FVv7XbCkIBN7iVY3LOa+L8ce4=;
+	s=arc-20240116; t=1730151229; c=relaxed/simple;
+	bh=uyl6bDyVF7nQDAug5sFX4y1SJJ2HMJQyu9QDFJvMUgM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=K3aQPBuYSXXzn7h3XjC2ZbUNMgtnBPrg4tBDXzMKq/ETgoXhCTBy5PZpR/B5JEMCmb2RJqYXpzKNZZxBZRn/CmSh1f5slI4Wu5pfRs6N/Alxa7pGU4DMSqzyAQ/KmaARBKSoouBcFKP1Ztuoh/5cwUPfBl2r3izVrQ1BN8CiQk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjSTerNs; arc=none smtp.client-ip=209.85.167.44
+	 MIME-Version; b=naTrFoyvBJ7w+1KEsDx1QQm/JbbWUTi7uk3Lejw/TiUA0q3BlAf13gOEzjqSnpZmuVF+uXVN8DuFplYChT+1CWkGcNv9UJuoRB4/zu7mZz77SDeEnXWihzV9vVzxY+3lnVJz2Tx1lYjPK8qNV59SyJb3vyusf6HcGG6h+N10rX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CmKIDUhW; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539eb97f26aso4870255e87.2;
-        Mon, 28 Oct 2024 14:33:45 -0700 (PDT)
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539fbbadf83so6135661e87.0;
+        Mon, 28 Oct 2024 14:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730151224; x=1730756024; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730151225; x=1730756025; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=DPRnLRSy0O8eO8/usPbgRGVWwoluAoJVN3wn79JTw9s=;
-        b=fjSTerNsqsW6Y70gRo0/q3z8KfWzCU4FDAdgxqVyyvWs+Fxr/TRguAW+JEl5yVyTCy
-         ZOv0Q5pLumGO5I1J+URHo3xWY5AMRY8NKS84jWmdCIowzjMmEbprqybVFwQcSDNQz7Kp
-         odar+aPWqjVpMQg9UzQ8JydGciymEMbWFo5Cg7u8aMuw8Gu2lV7c151PxM5fMrkIcKJn
-         Or+rKwctz4Ux6vsNyQT5eDW+HrZclOP5a2GTIdo/Qontmx3iJP4EBj2QNgvrsp317b4J
-         vj+NlmQEOAgNOBuy0a9Sdxz85LoZG/4fSRM+QpmDfo5Rs7G7udNlyZfEWJlW1E5qGpyk
-         X87g==
+        bh=ohUz9CtNZvlwl/uKjQaJUL1p7+iSw3LXALabDVJ8WTI=;
+        b=CmKIDUhWQOKt9opkvVh6CXYuP4wROAOcVDMRo3JhCYsTYwHU2xgiM5hVC0qm24d543
+         7aAcGDp+iWuXROV1Aq3EfuhiKHkckgnvy/Hpla/+zynR7XbDyGwzzl+E6UrMW+a3XHm6
+         uKurGCEtFRa4LAfuSak/q8/ZTHPf7ewfmDJdgrRwa+GCOyGRlTcSRL/dlgGDqSPUzEk0
+         lafdsDFT5NpZGlia/52o2ZMyX/1r9d2dmriSsJZjIt+6BzWH1cWuByXzmnX01+kvzPEG
+         NDFGt0fIFjyAFPGRrsgivZiIV12jkmk70CzpiDUEV5fST00Q64kzrff0C3bGn+JPR22X
+         ux3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730151224; x=1730756024;
+        d=1e100.net; s=20230601; t=1730151226; x=1730756026;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DPRnLRSy0O8eO8/usPbgRGVWwoluAoJVN3wn79JTw9s=;
-        b=fDa+vPNrGkzW7OivTyyIcxOFbkcOcwyv3E+Zm2v6yK8Yv0+Sh+uQgfBkhrFezoxRpL
-         Ck/FcCZnQNTWrgWpSjMZ8Odjn0dsYwb6XzD7D90AtNKCZOtQtA1hM9SvBYZBTSjtaUgW
-         IfZb0e7UYho5S1/15I4maYoVlpVdPTPe6gwpK+OfXZ5dgnKdI9/7h5Px5INhcdNXunGn
-         /Dxx/iQe2wmOd6AdQah3geMAiObtVbSMnh6Nm7xX7dFqkxvDrMhLpE5BTR9xM93yBgcF
-         4pJ9ybCIsoNRGrSB4prOtkl3mHX1jF8iqXVTI0CbJNmlZj0kAHLdtTm2aFDWNElHC6Yv
-         9+fw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdHiuxj3wgaAQ15dAYZUjqMW/DYZ5WxoEwE6qRXmRBJKnwIhDQdDpKJiCS4sbUCOf6P3/EpDGHH8kVbsUB@vger.kernel.org, AJvYcCV6WSAcqzEptBkwq8rgMYl9MrWXkHb+WCIKo183ABRW/y2EXdJaDYc1sp06QXlHGzo2LrsDAPDzMwN8@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPchE+JlCVPurKibCtwV6EOgIQltLzV6DauBdFhjRupUaW364m
-	6TKZwlnStMC8omR5PXYLTQHun+INgrdmAiKYMKzlG8VblMPRNU3J
-X-Google-Smtp-Source: AGHT+IE2BQsW00x49gT530R1Vo7XSzUMAOGRbVHewvEcO0xDjhqc7o/bJXhiJS7Rw9Fk4OIxjCFtBA==
-X-Received: by 2002:a05:6512:10d1:b0:539:ed5e:e224 with SMTP id 2adb3069b0e04-53b348b9923mr4191254e87.7.1730151223612;
-        Mon, 28 Oct 2024 14:33:43 -0700 (PDT)
+        bh=ohUz9CtNZvlwl/uKjQaJUL1p7+iSw3LXALabDVJ8WTI=;
+        b=RKsxiEKPu/HkfGeLHAx1tPc81Ubmw9wo35B6S6ShNmqKwo1ylB+45M6tdMNZE/N2c2
+         I45/faxal/niSdZ9pQmUGFCV+Non7ARjS6ZnfckGHyaPR/DGTqXh1xFVs1ZXIzPctj2a
+         kPlO9U5uOPNp7Zkz8xv5GN8+wTPKA1NAvlP/M5w3GX+k5GCE+4PnEZLCgQZdFIXcF2bR
+         +OdXyFl+wGiHGiBV4PA8i+tBNREp1a3PWW1+2z5ekFMdojZ4IRchJFTsw7buMpgkmKry
+         XNaMUc+NiXRPSA+zUss4QYDvQ6+825IAWYb5zH04ukqZijDe4cpI6CRZnnkhimldG9t1
+         CmTg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZX9vl3N/zDl3Av5kFyO93L91nqy4E8nt426FJN/N7A7+yqNT+x3/WUG5KSO2BMzDSr8qpvUyjsD/s@vger.kernel.org, AJvYcCWVchA2Sbha2RiDPl8NN4NLEMpkDN7lmdV4MIGaC5f54BggJlMznquiVnuPBshQb4bMH0e+tCo354LD1WL5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw845tODfXVZEoZPlBlttIpc54NNzWlTsdtWFogQLzBeQO38+A
+	mBguy4LMDjhYis8pL82nBvYYHEzBVcuumCGg/VSfRlw44te9enn8
+X-Google-Smtp-Source: AGHT+IHboX6tF/kL9fw5rWbEKTXeKT55CdmXXqd4xEFP/Q2yeXehfeAx1CdLdWoclTqVwxmFpiSWXA==
+X-Received: by 2002:a05:6512:2820:b0:539:9505:7e5 with SMTP id 2adb3069b0e04-53b348e59a7mr4446540e87.36.1730151225390;
+        Mon, 28 Oct 2024 14:33:45 -0700 (PDT)
 Received: from localhost.localdomain ([91.90.219.38])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c98b9sm1204625e87.224.2024.10.28.14.33.41
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c98b9sm1204625e87.224.2024.10.28.14.33.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 14:33:43 -0700 (PDT)
+        Mon, 28 Oct 2024 14:33:44 -0700 (PDT)
 From: Dmitry Yashin <dmt.yashin@gmail.com>
 To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Liam Girdwood <lgirdwood@gmail.com>,
@@ -80,9 +80,9 @@ Cc: linux-sound@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Dmitry Yashin <dmt.yashin@gmail.com>
-Subject: [PATCH 1/3] ASoC: dt-bindings: rockchip,rk3308-codec: add port property
-Date: Tue, 29 Oct 2024 02:33:12 +0500
-Message-ID: <20241028213314.476776-2-dmt.yashin@gmail.com>
+Subject: [PATCH 2/3] dt-bindings: arm: rockchip: add Banana Pi BPI-P2 Pro board
+Date: Tue, 29 Oct 2024 02:33:13 +0500
+Message-ID: <20241028213314.476776-3-dmt.yashin@gmail.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241028213314.476776-1-dmt.yashin@gmail.com>
 References: <20241028213314.476776-1-dmt.yashin@gmail.com>
@@ -94,31 +94,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Fix DTB warnings when rk3308-codec used with audio-graph-card by
-documenting port property:
+Banana Pi BPI-P2 Pro is the SBC made by Shenzhen SINOVOIP based on
+Rockchip RK3308.
 
-codec@ff560000: 'port' does not match any of the regexes: 'pinctrl-[0-9]+'
+Banana Pi BPI-P2 Pro features:
+- Rockchip RK3308B-S
+- DDR3 512 MB
+- eMMC 8 GB
+- 100M lan + onboard PoE
+- 40 pin and 12 pin headers
+- AP6256 BT + WIFI
+- TF card slot
+- 2x USB 2.0 (Type-C OTG and Type-A)
+- Headphone jack
+
+Add devicetree binding for Banana Pi BPI-P2 Pro.
 
 Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
 ---
- .../devicetree/bindings/sound/rockchip,rk3308-codec.yaml      | 4 ++++
- 1 file changed, 4 insertions(+)
+ Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/sound/rockchip,rk3308-codec.yaml b/Documentation/devicetree/bindings/sound/rockchip,rk3308-codec.yaml
-index ecf3d7d968c8..2cf229a076f0 100644
---- a/Documentation/devicetree/bindings/sound/rockchip,rk3308-codec.yaml
-+++ b/Documentation/devicetree/bindings/sound/rockchip,rk3308-codec.yaml
-@@ -48,6 +48,10 @@ properties:
-       - const: mclk_rx
-       - const: hclk
+diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+index 1e3eceb266b7..0c85c15d5c04 100644
+--- a/Documentation/devicetree/bindings/arm/rockchip.yaml
++++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+@@ -1104,6 +1104,11 @@ properties:
+           - const: rockchip,rk3568-evb1-v10
+           - const: rockchip,rk3568
  
-+  port:
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
++      - description: Sinovoip RK3308 Banana Pi BPI-P2 Pro
++        items:
++          - const: sinovoip,rk3308-bpi-p2pro
++          - const: rockchip,rk3308
 +
-   resets:
-     maxItems: 1
- 
+       - description: Sinovoip RK3568 Banana Pi R2 Pro
+         items:
+           - const: sinovoip,rk3568-bpi-r2pro
 -- 
 2.39.5
 
