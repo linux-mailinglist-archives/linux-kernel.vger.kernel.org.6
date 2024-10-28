@@ -1,114 +1,96 @@
-Return-Path: <linux-kernel+bounces-385264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93F149B34C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:27:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F095D9B34C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:27:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 593462823D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E9891C21E41
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED301DE4C6;
-	Mon, 28 Oct 2024 15:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC8D1DE4CA;
+	Mon, 28 Oct 2024 15:27:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+FPVnAD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mitmURvN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF9E1D9324;
-	Mon, 28 Oct 2024 15:27:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337321DE3C7;
+	Mon, 28 Oct 2024 15:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730129230; cv=none; b=iAXaVOEFTTWgtHgPDoByL8WP0WkZDbigxHAOnLBuY3CVwhpggYfgloy4IPocAlhmQA3JAR+o4Ot9BOwz/sdVS1OOqn15ZYlJseivf+sxwShoxzyrNaa8Rtie+rkDZRDTPgZR6ExuMSPuIMnvNk131of3IQKwN74rDN5/ZXn8GE0=
+	t=1730129246; cv=none; b=TBzIRuns4/n9PJ5OarHFBcd3Y5GCwvFzd2fTqZImLT+L+kPgzVPvXJ+OYXVxr6V9wiAzg8KglbLLwJ8SC5c4Pj/qfs4nCYcjkf2rBZL0QLG2rx3A4dbbDk0hHK0rnCbxiITOKUusJ+wgcqehR0Gg5nukURtewjhhLdVEV2MUv0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730129230; c=relaxed/simple;
-	bh=+32x8F2klkIYlYnnknN/8nNQ3cVmUi1lWcYeG5QzytQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCRLXNWqb+lFEBfxIO5ZCu/jxyvaQLbpAMz12akW6m/LrVG9RAO4LrqcMdRlqLbNi1XN64OOmxytk0nO4Bgj2tahxf9XbnoVvKJWojhyr3w5fi00V6wYcHij2nWrSKkhP6442Y3NTz1IzWJryWbGAyqxRkRyZtOVbMyfbPgHFOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+FPVnAD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCAECC4CEC3;
-	Mon, 28 Oct 2024 15:27:06 +0000 (UTC)
+	s=arc-20240116; t=1730129246; c=relaxed/simple;
+	bh=Z325oQiglIYd+vK+uL66gzb3t2eRQRD/bh38l5IqgSw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=DoB0P+pnsgYACcU/CEd6mV79pPkqqRty4k5IT//QjUS7vqDBZcFdXHmYzSuY+a8tqwVpPcbeRyJWC0YWYhI9VWBHus0+WqLTLukNCh8qOsPcpfvdhGlvxENHmUM1mHiwFK2KQMfBOwC60Un7Yj0amhx8CEu3uOHrF7RqhE65idE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mitmURvN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6896AC4CEC3;
+	Mon, 28 Oct 2024 15:27:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730129229;
-	bh=+32x8F2klkIYlYnnknN/8nNQ3cVmUi1lWcYeG5QzytQ=;
+	s=k20201202; t=1730129245;
+	bh=Z325oQiglIYd+vK+uL66gzb3t2eRQRD/bh38l5IqgSw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n+FPVnADYc/xiutKjw+8Oq3Cj3FCAvTOr7SZYidMPuzpzj80Z5cVVyGbQ9Wsd85TL
-	 SXYRsrD6JDEi/TD3AEngsNP9fjGsXhl+KetEnOeZ72+4vsNWe6uCCNDp3gsxQ7QCVl
-	 HvzeCHytXh+UNx0+fviH6+N2xTzz5DoEbTy8L0OQw3AxGuXNLvU63ymtg4GuZsK0pg
-	 hYE/B9lG/BVw3KxRkhSyOGka8HtAXfZ3KqT4lF24gHpbhKkCgjeep0JxfFfVoYzLLm
-	 5Met1n23ErS6MnjfUxmzV22hNxRb3RDdcSOv71W7W3fg3zSVm0fy0zV/lhwIpIyQNV
-	 aKHRWjOzmpxvg==
-Date: Mon, 28 Oct 2024 15:27:03 +0000
-From: Will Deacon <will@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Florent Revest <revest@chromium.org>,
-	linux-trace-kernel@vger.kernel.org,
-	LKML <linux-kernel@vger.kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>
-Subject: Re: [PATCH v18 06/17] tracing: Add ftrace_partial_regs() for
- converting ftrace_regs to pt_regs
-Message-ID: <20241028152702.GD2484@willie-the-truck>
-References: <172991731968.443985.4558065903004844780.stgit@devnote2>
- <172991739940.443985.12363344022031875406.stgit@devnote2>
+	b=mitmURvNzdmUJK7jVnTzRuW/dAIKyKoMQMy6pLs5T3FFyK8KF+Hhq0EF7UMPoNM0P
+	 C/V238863VEnRHd81yP5BfIxai0XCsYdYbIsArqTW584fhIfBsl9+xQNCSepiWOApO
+	 XavqcpF+tbKloK28ZuTXt2nWMTlizSlwB6njh7HiqXi6A67ksl62pnlymSM9NnbA2m
+	 dg2/JsrAfQkBm+Ty2o4WZpEkzyITBlM2REklTRlvruOIgqi2QRBHFV0sQV8uCjKj0v
+	 yp6PvFws9A1O2KoVcI8Ha2wz++4N7waK35o1OD0omXfs2cO7cC7SXM4ZW4wwO4XPRY
+	 k4WyzfipcsnsQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <172991739940.443985.12363344022031875406.stgit@devnote2>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Oct 2024 17:27:21 +0200
+Message-Id: <D57JMPA3UYWU.3CJ5XOL06SW7I@kernel.org>
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+Cc: <linux-kernel@vger.kernel.org>, "David Howells" <dhowells@redhat.com>,
+ "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
+ <roberto.sassu@huawei.com>, "Paul Moore" <paul@paul-moore.com>, "James
+ Morris" <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, "Dmitry
+ Kasatkin" <dmitry.kasatkin@gmail.com>, "Eric Snowberg"
+ <eric.snowberg@oracle.com>, "open list:KEYS-TRUSTED"
+ <keyrings@vger.kernel.org>, "open list:SECURITY SUBSYSTEM"
+ <linux-security-module@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v8 1/3] tpm: Return tpm2_sessions_init() when null key
+ creation fails
+X-Mailer: aerc 0.18.2
+References: <20241028055007.1708971-1-jarkko@kernel.org>
+ <20241028055007.1708971-2-jarkko@kernel.org>
+ <04887ab4-3e30-467a-973c-4c004283476e@linux.ibm.com>
+In-Reply-To: <04887ab4-3e30-467a-973c-4c004283476e@linux.ibm.com>
 
-On Sat, Oct 26, 2024 at 01:36:39PM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Add ftrace_partial_regs() which converts the ftrace_regs to pt_regs.
-> This is for the eBPF which needs this to keep the same pt_regs interface
-> to access registers.
-> Thus when replacing the pt_regs with ftrace_regs in fprobes (which is
-> used by kprobe_multi eBPF event), this will be used.
-> 
-> If the architecture defines its own ftrace_regs, this copies partial
-> registers to pt_regs and returns it. If not, ftrace_regs is the same as
-> pt_regs and ftrace_partial_regs() will return ftrace_regs::regs.
-> 
-> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Acked-by: Florent Revest <revest@chromium.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> 
-> ---
->  Changes in v18:
->   - Fix to use sizeof() for calculating array size.
->  Changes in v14:
->   - Add riscv change.
->  Changes in v8:
->   - Add the reason why this required in changelog.
->  Changes from previous series: NOTHING, just forward ported.
-> ---
->  arch/arm64/include/asm/ftrace.h |   13 +++++++++++++
+On Mon Oct 28, 2024 at 3:00 PM EET, Stefan Berger wrote:
+>
+>
+> On 10/28/24 1:49 AM, Jarkko Sakkinen wrote:
+> > Do not continue tpm2_sessions_init() further if the null key pair creat=
+ion
+> > fails.
+> >=20
+> > Cc: stable@vger.kernel.org # v6.10+
+> > Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-For the arm64 bits:
+Thanks, patch are applied to
 
-Acked-by: Will Deacon <will@kernel.org>
+https://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git/log/=
+?h=3Dnext
 
-Will
+I will amend these with any further changes (such as tags).
+
+BR, Jarkko
 
