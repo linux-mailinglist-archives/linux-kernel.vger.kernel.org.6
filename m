@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-384398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C469B29A0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:03:32 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7DD9B29A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:04:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8C111C218E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:03:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50069B2131F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8AE1D222B;
-	Mon, 28 Oct 2024 07:46:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92AE11D517C;
+	Mon, 28 Oct 2024 07:51:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bi3RkSbD"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kdLcrOxF"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B96F1CCEE5;
-	Mon, 28 Oct 2024 07:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9718F191F91;
+	Mon, 28 Oct 2024 07:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730101587; cv=none; b=Y7mmIiSCubXZWkEUkLN/9eoLXbvkqXhObbrBjwl15EQAkbP8Y0Rih80XVhO40WE2AS2D81M/r7RbX8W6jSx4JG044VK8tjyW7TYYiCNemCRRLHaHfBvdX0c2oEQ4ZUmR2/thVgUTFlCVIC1UX9wrTqGBNlG+KLY6/1wMdw+6Zs4=
+	t=1730101892; cv=none; b=osaRn7RqAxvQTo4U4cAzvYJa+PXFzDZnXjZwFmxnkwRziK4BTfuGmHM/s7BKqnoASkheHusYpTKh9/fgp//y4N3GZzkXivNRG6KvPgyPspeJfuj9wg8J4v/xn+GPLaDlGZr7A+gtXhCkc1Wx6FIW+TIm4ZzS4ORgg+mOheQfpCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730101587; c=relaxed/simple;
-	bh=0nzgBNDrmE7kW4KbM11lBzWym2g/ZRqGgQBcfHojSFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GXHq02gkMUZWCAkWcKVLljHOSob7+V3nbZ7yJSwZmLkW5htDjjUet4iTGpYq33R8d3lyOWYYysWC6VKcIamWO6APoDQGjXw4DB4EkOaIwrM8UfArY1u/UQsYIQDnp617snzZcnbtd0H1Do6iCdMc2qyUbjJ7OsTMg+/kHKmNgzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bi3RkSbD; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RN0OG6010456;
-	Mon, 28 Oct 2024 07:45:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PobXzPGGnjLtxgHS3B4nk270t4SMrzqU1Y+YvIFP7Vw=; b=Bi3RkSbDc7A892gc
-	pyMeJPC3Hob/hxOxDhrNLvf1wvhb8uFzE0CkC8DKjY6+zEr9acONf12+AXYH9NmC
-	PBReXXGYoOBT5wIneCkKCZU6LmP7nm3HtN/CbA3yESqUsHbLTlPNyY1KZ5x0iOZh
-	XkZJ1VyWT8XbEdLtpsWRJ4JxbQpqdSIVidTC3umUgEI1n+lMX0I+CG3DXLUQjCHq
-	/Rb7bTnM/5d8cyRJDgX+8Okm1X6c5pLW4RBnwkgos8oNvs6mGubIO+2q21qBJlXK
-	0KIYFAKCuB6JLAdnC7JgRuehPmNDNmtQLnc+1gqYsbCiZI3cj2qSfohcNOpDT/Iz
-	fauHuQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gr0x40xn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 07:45:54 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S7jqO9014587
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 07:45:52 GMT
-Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 00:45:43 -0700
-Message-ID: <5862062c-8c52-421d-94b3-6b6000b53616@quicinc.com>
-Date: Mon, 28 Oct 2024 13:15:40 +0530
+	s=arc-20240116; t=1730101892; c=relaxed/simple;
+	bh=rlB5luWUnPMFxZLsAJNBTH+KfMj0AeBMA7Y0LrVgo9A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IZBUKW0hfW//PbolwBpgJRyrhuF6s6cFqVm/gxJR4oQA8Fr267+knyq2ErIksjNm171K0ZNffyQtwGxK/Wq3nqeCKWpfIpvuvgVe0l5AWq2CydOPLpRYcc3V45zyQTEz0V+LqnUzosABgx5T9/ZWNtlVgGf1f1bJ29IdVTHLg7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kdLcrOxF; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730101890; x=1761637890;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=rlB5luWUnPMFxZLsAJNBTH+KfMj0AeBMA7Y0LrVgo9A=;
+  b=kdLcrOxFuEzlFdweibPJhB4eLe5atE42mFtUYv43YXXB4RF0D28EnIm8
+   DZIyMq2B0yc9/ckic6IDJPA4g5Zjlo/toQAxafv4TG0qdoyexbemqNTaR
+   i0v/PV3sEHeeYEIFqovyjJPOgTW9qkNz1A7kRL4YqTUYuY4RMnekfHHTF
+   EO1Jf+Hl0PCXjDCfRvjDyULFfeJnkrzZ94irZQdkFPV33cAA2buFyfu7B
+   gTMZ6vOycIMd15/jso7Ssok+RQHXg2UAs+sgIBfRaE2HEY8Uy1RGnMrH7
+   tY7z88DLJOA5gxMVSCDzxzoF96z35EJGm865rMlIONVb1+zI6YeH988U9
+   g==;
+X-CSE-ConnectionGUID: bwlzFZ84S0+c+O4iMoCzCg==
+X-CSE-MsgGUID: uFBLa/88RaWdPgooLv7iJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="17325885"
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="17325885"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 00:51:29 -0700
+X-CSE-ConnectionGUID: GSwhJVN9StyaknSFA3Kqag==
+X-CSE-MsgGUID: oNmLfPRsRI2xAM91scp68w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="81127439"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 28 Oct 2024 00:51:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 19B2813E; Mon, 28 Oct 2024 09:51:25 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v1 1/1] iio: accel: kxcjk-1013: Add missing terminator entries
+Date: Mon, 28 Oct 2024 09:50:26 +0200
+Message-ID: <20241028075123.615813-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
- reset definitions
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
-        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
-        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-        <angelogioacchino.delregno@collabora.com>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
- <20241025035520.1841792-5-quic_mmanikan@quicinc.com>
- <lyafg7jwbwoe3j7voecgd5tnhrb65utc3vkc5qqxoqug3qd47m@iudkp4w2mrso>
-Content-Language: en-US
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-In-Reply-To: <lyafg7jwbwoe3j7voecgd5tnhrb65utc3vkc5qqxoqug3qd47m@iudkp4w2mrso>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2B14fMh6JTJ678YrLvHL2MnvQnTUs5Ax
-X-Proofpoint-GUID: 2B14fMh6JTJ678YrLvHL2MnvQnTUs5Ax
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- clxscore=1011 bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0
- malwarescore=0 mlxlogscore=703 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280063
+Content-Transfer-Encoding: 8bit
 
+Add missing terminator entries to struct kx_odr_start_up_time
+initializators.
 
+Fixes: d381089dda44 ("iio: accel: kxcjk-1013: Convert ODR times array to variable in chip_info")
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
 
-On 10/25/2024 5:30 PM, Krzysztof Kozlowski wrote:
-> On Fri, Oct 25, 2024 at 09:25:17AM +0530, Manikanta Mylavarapu wrote:
->> From: Devi Priya <quic_devipriy@quicinc.com>
->>
->> Add NSSCC clock and reset definitions for ipq9574.
->>
->> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
->> ---
->> Changes in V8:
->> 	- Replace bias_pll_cc_clk, bias_pll_ubi_nc_clk with CMN_PLL
->> 	  NSS_1200MHZ_CLK and PPE_353MHZ_CLK
->> 	- Remove bias_pll_nss_noc_clk because it's not required.
->> 	- Drop R-b tag
-> 
-> That's not really a change waranting re-review.
-> 
-> I wished you did not create here dependency, skipped the header and just
-> use some number for the clock. Having dependencies does not help anyone:
-> neither you to get this merged, nor us to see that it was tested.
-> 
-> Please confirm that this patch was fully tested.
-> 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
+Jonathan, sorry for the last minute update, but it seems I was thinking,
+but forgot to modify the initializers. Feel free to fold this one into
+the original commit if you can / want to do it.
 
-Yes, it's fully tested.
+ drivers/iio/accel/kxcjk-1013.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Thanks & Regards,
-Manikanta.
+diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+index a6621cd69707..28ed0e09d099 100644
+--- a/drivers/iio/accel/kxcjk-1013.c
++++ b/drivers/iio/accel/kxcjk-1013.c
+@@ -190,6 +190,7 @@ static const struct kx_odr_start_up_time kxcjk1013_odr_start_up_times[] = {
+ 	{ 0x05, 3900 },
+ 	{ 0x06, 2700 },
+ 	{ 0x07, 2100 },
++	{ }
+ };
+ 
+ /* KXCJ9-1008 */
+@@ -206,6 +207,7 @@ static const struct kx_odr_start_up_time kxcj91008_odr_start_up_times[] = {
+ 	{ 0x05, 3900 },
+ 	{ 0x06, 2700 },
+ 	{ 0x07, 2100 },
++	{ }
+ };
+ 
+ /* KXCTJ2-1009 */
+@@ -222,6 +224,7 @@ static const struct kx_odr_start_up_time kxtj21009_odr_start_up_times[] = {
+ 	{ 0x05, 4000 },
+ 	{ 0x06, 3000 },
+ 	{ 0x07, 2000 },
++	{ }
+ };
+ 
+ /* KXTF9 */
+@@ -232,6 +235,7 @@ static const struct kx_odr_start_up_time kxtf9_odr_start_up_times[] = {
+ 	{ 0x04, 11000 },
+ 	{ 0x05, 5100 },
+ 	{ 0x06, 2700 },
++	{ }
+ };
+ 
+ /* KX023-1025 */
+@@ -249,6 +253,7 @@ static const struct kx_odr_start_up_time kx0231025_odr_start_up_times[] = {
+ 	{ 0x05, 4400 },
+ 	{ 0x06, 3000 },
+ 	{ 0x07, 3000 },
++	{ }
+ };
+ 
+ enum kx_acpi_type {
+-- 
+2.43.0.rc1.1336.g36b5255a03ac
+
 
