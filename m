@@ -1,169 +1,135 @@
-Return-Path: <linux-kernel+bounces-384660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D499B2CED
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:32:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECEE59B2CF2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:33:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A2D281706
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:32:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAFCB281850
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:33:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251D9192D70;
-	Mon, 28 Oct 2024 10:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E7D1D1E64;
+	Mon, 28 Oct 2024 10:33:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QK7KUgAz"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQkyS3uZ"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB081865FA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19EC52F9B;
+	Mon, 28 Oct 2024 10:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111553; cv=none; b=LqXIdD0SsBczvTpVccp8Q47GzguzZptzqc7Fslj606CSidERYC4xvMxZP5MmuS0wp92wl0AQ2UCgLT70ub8YQyJXk2c6NDzZ+dvz85p/MB0QHH1QBP4g0186aGu6CWhNX9Hlci3nK7Vjftouiqyvae3ZEUl5kJR8IzBX1SL6T2M=
+	t=1730111619; cv=none; b=N71Uoz7RhqmikznWT9ja8lHjDLM95eVKz17eBZoTQGsGfFNc5mxDfxc7YHWVKgQV6yJhca/tvOmE7igkls7c/qmH8yGwu9FtAys5jii48xWrjV4qIyYanLIH5rXMAvCYNgX7iHh9XeQfh4tV+3YAa1T1tJT/pMsNihTzL+E88Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111553; c=relaxed/simple;
-	bh=DniOfXgTLSa71MQcWVYJDh48rOCPLZsPLOazK/gFzhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gT2sG/W7cj7354L21e/Ih3aB/e4CEoR/0pt2lCLfQXVBx1LXaAUbjjl2rygdVjX+eNEabC3ooI1rvxn2dMtLjGxZ30WMMjXTU+RwelZXF3Rz0MwcuaQjWbb4Mlf6IyE3ce6+6rH9LJ4kBq0+HjsJtkxwDGSm7TFSghwBmnbzvgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=QK7KUgAz; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e29327636f3so4280362276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:32:31 -0700 (PDT)
+	s=arc-20240116; t=1730111619; c=relaxed/simple;
+	bh=JROHXBIeZdt3db7N5COy1zG+pjgiCF8B9N7N0nSjH0M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=YjzcsHAEU6n61fUzyF/D8DfG8tSDxbbrSHYb8CX68iPxPsqpsqz17kzw7JZURg57LdRAz8CEJxbDXY8m1SpSiFDe4TYIoorJxvI6nmOaRLSmLizKUEVSaX8o4YonRtLRfdrliHy6NWd5qHrVNzDEVtGFD+0vCH8gLTY7jgR0IP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQkyS3uZ; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e5a62031aso2937728b3a.1;
+        Mon, 28 Oct 2024 03:33:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1730111550; x=1730716350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730111617; x=1730716417; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sifr2jJTKHUjzilORSWtcX+eJYT6NU0RJzPCM1a85Qs=;
-        b=QK7KUgAzThEOc+ejjef4xQSe+iSM9rqt0jklHfwcpKzTCOPyun4Rx6wZ5eWyPWgBr4
-         4Cn/n2PsdirqQ0Z7G2pjZpZMxA5He4cq899WnUhVG2LzefGdZDon6qM0WVDvcfOAj4G9
-         BAt2sFSorLPuoH7LhsC9xyqviTrKpJtAcgnSg=
+        bh=vDtpeCsUULnDX/AGBcUbQD0iiRBGAC9oEPoVEF4zK+c=;
+        b=UQkyS3uZlCNNMJHGh0iVwCReRRkGJrBx9q2AXpOBQZXJkRieK9kUcWIhi8E4XpNsxP
+         r6Q2IMSTylLBwnJZ7p1B7GTAtPUjuLc+brT5Ky7AgtcDlLYTg1M6xODDmkiHXFAWSIbR
+         2J5fybAvTAQV6dHY11Nz62NOMcTRXD32/R2cccSLsDpOuKId+7zkKiwz51jobBc7V2bp
+         GmjdUXy3bAgO5dWljRh6NIzi0ZikTFnqqaD3Sn67TYH5pU/OXT1f33r/uSW1+GYO+mKN
+         dM3wqCIV7+lRsUDqagytqQ/E5Zq4WmudaljiRRoOmRtOYARUjx2hFY1kOKMqLptaMiwU
+         hD7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730111550; x=1730716350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1730111617; x=1730716417;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sifr2jJTKHUjzilORSWtcX+eJYT6NU0RJzPCM1a85Qs=;
-        b=qqAPEHpbm9A6uwzxSUfgFUzSECK9oYMsqRhLhLq9mkSmD0Fe6dk8hzefSRwaYeuSRD
-         1LXnrHuIq90EsYA9P3dHZpkzLISS0e00Z2TFs+WgpkaIWVKWraYAIago1FqnJ0UEV48c
-         PtcU5MUAXE4sV9F7cC5Zi3QEXBaDrBZVZrkZOFvrY5I0RowYzYZVbdy7oRJJlwRQsyf1
-         a1WmlIpll53jtR606/mgSMPW9CaS5OaMvrg0VoawF0Dd59aN7e8Vkx2FGMcNEJ7m2XDt
-         UP81lXZSAgDq4R1FlnX70lgNNn7hcfJuofOX55vXN2hoaX0Az75Rknf3wRAThgBdYNsc
-         8OEw==
-X-Gm-Message-State: AOJu0YwYljqKdqsEPp+Lsm7WY3yH15CKEloVYAgQUdxCMFunLvFX5D3g
-	zMg8plpe5JPfmyMeKZH4oaIf2IWLOD4YCAOkkNXUuzKJcSfVArud+Vl4SQ/aeNzmWbqMgyPgXOh
-	1b7im6ETTBUlSVurI81j8+B/Cs8UlIxim5FIHqw==
-X-Google-Smtp-Source: AGHT+IF9ddqHdtij3qzgutlZYqDdqye4Y0X7im5D9JxYtJ3EWaxqlKOCIp8dtlSZCbbCN0feWNn58wnCJ9/AjxCbxos=
-X-Received: by 2002:a05:6902:18d6:b0:e1d:194a:51ee with SMTP id
- 3f1490d57ef6-e3087a4cabcmr6741526276.12.1730111550644; Mon, 28 Oct 2024
- 03:32:30 -0700 (PDT)
+        bh=vDtpeCsUULnDX/AGBcUbQD0iiRBGAC9oEPoVEF4zK+c=;
+        b=vGEyHC964rTyeJ6b90ljkBCmkSOv6CkMFP5GMPZT7y/kqFS3V6PLEbH99tazSjj8zT
+         bkpqn60rjTUkvHOoKJm9UkdZ5mdwf9T/0B6iAknHmnNrvAHl+QW99bkJUdlA3oUzhGx8
+         D+qLze5xVnRFsOU1QkC2ek03+TyMIrSiFS4cG/Pigg9JEYgqxydE5Qjhb6r2cAVSBTWS
+         eYO6Yz2MaqIEZfqMx5bEzw8K84r/95oQWpDTeiBN+Vo2iomUsPAs0x/m2jzECyGNPc0k
+         KgJJH+/v2neq3fRHw9Hj2mgoB+jXd9dcUN/UWMR827DKvfKJ633xlXgRwUhpM9nsfghk
+         /DUw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3LMehC575ckADI5DidfUzkleq5MajQFgr5uilxtUk6J+Sf9yTEz/uf99/usJmXtsIrF6JA9bdkNjT+/s=@vger.kernel.org, AJvYcCUPrddWsJsfidSyl3Nyq8sr6W8ynwiA/7lxev6Qw0gruPkFEjM7UobU/gOFgj12X+cKB4x6f7tLln18@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWDJGB//j/XmGu0mIgw+K1jrNMjw+W44v1D/8fFeJoqH1Fs95O
+	ui0REh5LB7WLOF4AowmETL/MfN8Plw310riCFIwaaBPPJDrhLZN1
+X-Google-Smtp-Source: AGHT+IF+G5SIfouuYelc2e74bWDnZ8aTqiM2MpOhtiKcPZntnoHBitZewarYJ0C/nn0f80ejGh23QQ==
+X-Received: by 2002:a05:6a00:b1d:b0:71e:148c:4611 with SMTP id d2e1a72fcca58-72062f4bee2mr9131361b3a.6.1730111616957;
+        Mon, 28 Oct 2024 03:33:36 -0700 (PDT)
+Received: from localhost.localdomain ([119.28.17.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720757322d5sm2569179b3a.91.2024.10.28.03.33.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 03:33:36 -0700 (PDT)
+From: Jinliang Zheng <alexjlzheng@gmail.com>
+X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
+To: alexjlzheng@gmail.com
+Cc: alexjlzheng@tencent.com,
+	cem@kernel.org,
+	chandanbabu@kernel.org,
+	dchinner@redhat.com,
+	djwong@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	zhangjiachen.jaycee@bytedance.com
+Subject: Re: [PATCH] xfs: fix the judgment of whether the file already has extents
+Date: Mon, 28 Oct 2024 18:33:32 +0800
+Message-ID: <20241028103332.1108203-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
+In-Reply-To: <20241026180116.10536-1-alexjlzheng@tencent.com>
+References: <20241026180116.10536-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
- <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
- <566859c1-a397-4465-987e-0682b07a703e@kernel.org> <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
- <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org> <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
- <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org> <CABGWkvqXZ+YAvo-AtUy+Ftdu0xxXKuhOwcSTwO5Fv6D3yzttNg@mail.gmail.com>
- <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org> <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
- <7bce31c0-8c74-4d65-812f-01951a0d75d1@kernel.org> <CABGWkvqFi_y8OzKbi=K7ucW4RuY_zh6Z4a=uO2oqQRoVE8LaCQ@mail.gmail.com>
- <CABGWkvrR-vVTpNSBD_etjn4SteO8cpUed+dTvYguHR67UUSsYA@mail.gmail.com> <fdb76466-3258-4c71-bca3-50fd3cc94a0e@kernel.org>
-In-Reply-To: <fdb76466-3258-4c71-bca3-50fd3cc94a0e@kernel.org>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Mon, 28 Oct 2024 11:32:19 +0100
-Message-ID: <CABGWkvpTospGbdPtEz-Fn5OL52+Fp6tQxdoAVFZUP_HeG=a7aA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
- spectrum clocking
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Peng Fan <peng.fan@nxp.com>, Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 7:49=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
+On Mon, 28 Oct 2024 02:41:01 -0700, hch@infradead.org wrote:
+> On Sun, Oct 27, 2024 at 02:01:16AM +0800, alexjlzheng@gmail.com wrote:
+> > From: Jinliang Zheng <alexjlzheng@tencent.com>
+> > 
+> > When we call create(), lseek() and write() sequentially, offset != 0
+> > cannot be used as a judgment condition for whether the file already
+> > has extents.
+> > 
+> > This patch uses prev.br_startoff instead of offset != 0.
 >
-> On 23/10/2024 16:58, Dario Binacchi wrote:
-> >>>>
-> >>>> This is another commit [1] on enabling spread spectrum that I
-> >>>> implemented some time ago for
-> >>>> the am335x. The most evident difference is that in that case the nod=
-e
-> >>>> was a clock node and not
-> >>>> a clock controller, as in the case of anatop. The parameters are als=
-o
-> >>>> not exactly the same, but
-> >>>> that depends on the platform.
-> >>>>
-> >>>> [1] 4a8bc2644ef0cbf8e ("dt-bindings: ti: dpll: add spread spectrum s=
-upport")
-> >>>
-> >>>
-> >>> OK, I still do not know what "0" was, but the items are fixed, so you
-> >>> know exactly which clock you are configuring here.
-> >>
-> >> So, after delving deeper into the topic, is it now acceptable to use
-> >> the property
-> >> "fsl,ssc-clocks" instead of "clocks"?  As in the patch I applied local=
-ly?
-> >
-> > A gentle ping.
-> > Sorry, but I haven't yet received your response to the previous email,
-> > and I'm not sure how to proceed.
-> >
->
-> Yeah, the property is fine, but I don't think you need the clock index.
-
-So it then becomes reviewable v2, which I had already sent some time ago?
-
-https://patchwork.kernel.org/project/linux-clk/patch/20240929172743.1758292=
--2-dario.binacchi@amarulasolutions.com/
-
-Thanks and regards,
-Dario
-
-> The lists - like clocks and your spread property - have strictly defined
-> items, so it is enough if schema lists items and says which spread
-> points to which clock.
->
->
-> P.S. I think you might pinged me on IRC, but you know,
-> https://nohello.net/en/
->
->
-> Best regards,
-> Krzysztof
->
+> This changed the predicate from "are we at offset 0" to "are there
+> any allocations before that".  That's a pretty big semantic change.
+> Maybe a good one, maybe not.  Can you explain what workload it helps
+> you with?
 
 
---=20
+Thanks for your reply.
 
-Dario Binacchi
+I noticed this because I was confused when reading the code here. The code
+comment here says:
 
-Senior Embedded Linux Developer
+/*
+ * If there are already extents in the file, try an exact EOF block
+ * allocation to extend the file as a contiguous extent. If that fails,
+ * or it's the first allocation in a file, just try for a stripe aligned
+ * allocation.
+ */
 
-dario.binacchi@amarulasolutions.com
+But as you said, the semantics of the current code is "are we at offset 0",
+not "are there any allocations before that".
 
-__________________________________
+Therefore, I think it is better to use "prev.br_startoff != NULLFILEOFF"
+instead of the current "offset != 0", at least its semantics are more
+consistent with the intention in the code comment and reduce confusion.
 
+But if the semantics here have indeed changed to the point where it is
+inconsistent with the code comment, my suggestion is to update the code
+comment here.
 
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Thank you. :)
+Jinliang Zheng
 
