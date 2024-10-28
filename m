@@ -1,121 +1,202 @@
-Return-Path: <linux-kernel+bounces-384523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 910A29B2B44
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:21:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE7A9B2B4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:23:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 557DE281EEE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:21:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3AB281EB9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:23:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FDD819309E;
-	Mon, 28 Oct 2024 09:21:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C4F1B6D10;
+	Mon, 28 Oct 2024 09:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="obnKKrr9"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtMA6nfr"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AD4199247
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FAC8472;
+	Mon, 28 Oct 2024 09:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730107289; cv=none; b=tCGoayeMb5htrJonFvQormwZ0G0e4TAxu6Kk8th+v9ahh22eEhTc3kM27cEWDrWQJ+v3JhxDJXjsopYxUhhPeRobGtyX4F/mM2YfQkFtDhMrJA2OA0h0jKn8qvuIiaC8sQTL+yULAV4NCaV/HPz4KRGFzN0qGx89QG/uQMayy78=
+	t=1730107376; cv=none; b=hUCKnj14lVH5m3hNSv0qJODmQFc9JRO05I7p029NeUexOyFlwmLWtI9l/5FYO2ZVPpMGDcSGSTLdJyebwbQy7BBUwQzdsQk5aiT6MZ8SENkqeQABrJHyoIoUMH6sZVi1OVfZeAoQubwVhvhb9QSlHVG/1ESwhkKYU/dAGLcATi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730107289; c=relaxed/simple;
-	bh=0jA2nKhDLnxRGiEvYnV+NPzqXUb511R/IyOADJWqmrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U6y0RUZRuaqilZPI+ahhbEK79H4PCechoaxAw5YM8zR1EGpFpxUu5Gtvh5S1HK7zKwaIB9YB8US4Elc3SNbHFvDgzYot1TO6iA/fLvi8tJnwYDkQAccmcaLFQ5UZ+vw6OTOmsBTScHC+xeyhSwrhDOm2t/7yzz/t/JrO/WL4DJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=obnKKrr9; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e59dadebso4736796e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 02:21:27 -0700 (PDT)
+	s=arc-20240116; t=1730107376; c=relaxed/simple;
+	bh=LaoIjVefHly8xHuPd7wZXRSEeRjEx9/k2jRv27uNo9o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZL82Sd4c6lH97mOkIlaWDNXPylLaN4qoslPAKzg2oAmHPVJL0uOFSn3txbX2RoUhfgkqG/uibGkL1mX4hqBuCj71Y3eSk9imaD+5ttM+SQc+mi+BOiP4agp1gdkvI0g46eRIathXlGU7ymApArEWz8avb88R/sSTI4YJL/mm0qw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtMA6nfr; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53a0c160b94so4431117e87.2;
+        Mon, 28 Oct 2024 02:22:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730107286; x=1730712086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NMxl3S3T78M4ZDclpZfWNpG18/6HovRsXKrq1tEEQMc=;
-        b=obnKKrr9bcGtI22biGFCH6jqRu5nHnyw1yVRYV6r2urGWcRKWRqEvX9sHIcYSNNOoc
-         BrICVcISxcXlNHjr+UYNq24s7K3rLJpet0bJfJYxrLl9853WgK0sphCKLjsDefh1TXke
-         jKDkNoB9LCC2fcXauUI6zW40u71uac+IGP9k3jhYgDMVPwMWgvdGKHKsR37eiVIWdop3
-         tl0U5x0Rfanr/b2EvyYQv7RteAm97FBQZYTCyoZ7iKvX/0QJi4rj/z9UBizYwfdPLk39
-         KQfXqJaFmvy5r+tM8px/DziFB8g/ubCZ2J51bhTsvzEhBgfWtOura8ww9Rn7WGM9taJw
-         iCHw==
+        d=gmail.com; s=20230601; t=1730107372; x=1730712172; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jJZ/N5H/92rMRLmF3zGIuUS3kiG8D/BSE0Wn8eb2g+g=;
+        b=jtMA6nfrLUOo6RWMtOmpPhgwQSKpskMdEDK+dUE7fdkD3tY8wQSRBdiGT9iMeC+zL/
+         p/bTqtrF6xZv8gdR71t4TM9/onDopiDz3w9ZojKwkQq+pMSkLO62rijJUu9iwCbDN8nj
+         elZUnJeZ1CuN70yzEHn3LHFSISQEF7qlgIWSRbylPauxctyw7v0UMb8+s4UUErPRhN1k
+         iHzZk8qFWcsqVEaVHGINhlqnM6EduudFzWvq2A4rWNaBx62CcIJjhie3GeTHftwxeMPx
+         8pUmiGeBNKsgV+1IpYIqbdq3vBJ8BuFIWz3WZeP3EAeJgR6LrjDQSTYdRlauBKvnxxyW
+         d3rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730107286; x=1730712086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMxl3S3T78M4ZDclpZfWNpG18/6HovRsXKrq1tEEQMc=;
-        b=cQoeGZ1pGOtjzZh/gl4OxIxlOlHpPiakp6eMhdSgRbPa7pEabWf0iYa0xGQTN2pQj5
-         1WSy1veBxqVoq1o7JLGPS1zn68McHxZVpC0QuJlIAhf2NpYFun9eGC12OGNOlW5ZEDAu
-         MiM/5HQZw5GoyMvwqrn/XVaOQR0zvhqi87w+sq6YPrTh3t3WTbzpTq3b5uD7ntUjpE9p
-         IhPn6rMiHGuTbywKSelVCojcCvjfWFVT1fQOf7gDGkO4CRXdRW05GrdHF1/Ig8WzkRA7
-         fS1Y8VF00r5oggXL7/RqZBhJDfCCeNhOM9CW3uIA/xeznFY9VJM80NYoaJqq+8/4gvCW
-         agnw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEkIxzk7t4zkyorGHp/QTlRzHmuWX3jAhP1dAB2kDDRQ5NggHKg2YM78Vriy2y07cUrrUdEKtTP7Njufc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxps1q7zTMDcyzodt4eOV4f+pUl6PwKAHKNAYjmHepRy97ZRmWf
-	gnvI1dC8DntsFpQkkelg1qL5croj/XD0fJRisx5xLOwt1LKzQo6iytmJ7xkR0co=
-X-Google-Smtp-Source: AGHT+IFLri/jKsB1rbBwLcG+4d/hkJZCTM08WJqeMH6Xd736MsKNNG7MWeqbuGnrpaHJPvqDTjFhqw==
-X-Received: by 2002:a05:6512:2256:b0:539:edea:9ed9 with SMTP id 2adb3069b0e04-53b348ec028mr2877777e87.1.1730107285683;
-        Mon, 28 Oct 2024 02:21:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c9ecasm1026060e87.218.2024.10.28.02.21.24
+        d=1e100.net; s=20230601; t=1730107372; x=1730712172;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jJZ/N5H/92rMRLmF3zGIuUS3kiG8D/BSE0Wn8eb2g+g=;
+        b=COGL3PzhxJfs9xvu0qGpagNxELF5bWsm/2HKdmuLNuZzApLjrnP61LhpKBBVL/5ZPU
+         bU/AHiPe70qvNZDbTxQAW8V7QCGpMxOaIxCpnWU6SjtanzKG/vojsuAqq48QYogrJIgt
+         KJVfQtUomi9kp7fkw/ZFTWYQze3KLdhNWqIkZgEmobHAcOTbZdIfSbkUVs32SRpvbRyX
+         XOLdq62NJXpXNNDTvZkZjf/EDL5e/MBQs/TgRWE7kWyXrPZ51dtUBJyIJBjttMKXwDLc
+         rpDY8h5WkfQhCxK/IoiBt4m23aLVAD8F1jJBZXjKdtO1/9Sujp6MsBr3VSx2IowfbYO5
+         ubBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXI340Db2TkFEr1f9NHKSiM689o/70tiUBVkMlTkNSc/42Sjwd9wymB0MOr+6/KRr/8JCs4c+awrW/@vger.kernel.org, AJvYcCWXyYqnD+aBOE+8yabEMa9+sFR+TxaDIdMHRxY3x9CPsBKSSaZMoAlyxP/8uaX9Ec5aCOZpLhxB9ngEpHgE@vger.kernel.org, AJvYcCXH3njgDIRJRfILEW/8pCUWEB23W2UNJZr071WmheTyycRXqn1rt9mkrRPTpe9wsNtzbRIUDwdkYsqF3EsEhqNqxeI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxijCij4QqTKpsP4YnU0YSh2rh5/Z90TnJvXAWr1vo+5YAw2/bB
+	BYGaj1c9cV1oxx6ckfa7wQLBAaXiXCIouyNrh7xjUK3RX6bZeOR1
+X-Google-Smtp-Source: AGHT+IG0x9Scdcs+etVMXKYxChdUdHKQu6TV5m9I0D5Jl1MaNkhUK8rWpK4GF+NFN4LwhTItKkiezg==
+X-Received: by 2002:a05:6512:3e08:b0:539:9f3c:3bfd with SMTP id 2adb3069b0e04-53b34a359bbmr2132385e87.58.1730107371611;
+        Mon, 28 Oct 2024 02:22:51 -0700 (PDT)
+Received: from [192.168.1.105] ([178.136.36.129])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1af331sm1043785e87.152.2024.10.28.02.22.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 02:21:25 -0700 (PDT)
-Date: Mon, 28 Oct 2024 11:21:22 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org, 
-	rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, 
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, quic_jesszhan@quicinc.com, 
-	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
-	kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	sakari.ailus@linux.intel.com, hverkuil@xs4all.nl, tomi.valkeinen@ideasonboard.com, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com, 
-	thierry.reding@gmail.com, prabhakar.mahadev-lad.rj@bp.renesas.com, sam@ravnborg.org, 
-	marex@denx.de, biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v4 13/13] MAINTAINERS: Add maintainer for ITE IT6263
- driver
-Message-ID: <izlahf3rnobapkvaxvq2lpyz6vsurdhkhnigzogstljpupn37x@3a7ziz63n2zt>
-References: <20241028023740.19732-1-victor.liu@nxp.com>
- <20241028023740.19732-14-victor.liu@nxp.com>
+        Mon, 28 Oct 2024 02:22:51 -0700 (PDT)
+From: Markuss Broks <markuss.broks@gmail.com>
+Subject: [PATCH v4 00/10] Add support for Exynos9810 SoC and Samsung Galaxy
+ S9 (SM-G960F)
+Date: Mon, 28 Oct 2024 11:22:28 +0200
+Message-Id: <20241028-exynos9810-v4-0-6191f9d0c0f1@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028023740.19732-14-victor.liu@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANRXH2cC/22Qyw6CMBBFf8V0bU1fEOrK/zAuWjpAE6HaYgMh/
+ LsFXYBxMYs7yTmTOxMK4C0EdD5MyEO0wbouBXE8oLJRXQ3YmpQRI0zQNBiGsXNBFpRgzQGMlJk
+ mWqIEPDxUdlhl11vKjQ298+PqjnTZ/tVEigkGQ4UhJieGFJe6VfZ+Kl2LFk1kWzTboSyhUpaKV
+ 5zmwOgvyrdovkN5QnUhDUghKKjd1fnTxsPzlT7SfyvN8xsq9xhGLwEAAA==
+X-Change-ID: 20241024-exynos9810-b3eed995b0b9
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Tomasz Figa <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>, 
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
+ Markuss Broks <markuss.broks@gmail.com>, 
+ Maksym Holovach <nergzd@nergzd723.xyz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730107370; l=4187;
+ i=markuss.broks@gmail.com; s=20241024; h=from:subject:message-id;
+ bh=LaoIjVefHly8xHuPd7wZXRSEeRjEx9/k2jRv27uNo9o=;
+ b=NwrL3Z8glQieV9u8Lg0G6hcirIBC6uZIfEOkVuPlwdcHRMx/7CX0LiAxUBApm85oxFRdLUOrs
+ 52EQG6iq9kpBR7tbAkA12oK70ga38ZibZQq35ldXSwdb1nm0H2pC69c
+X-Developer-Key: i=markuss.broks@gmail.com; a=ed25519;
+ pk=p3Bh4oPpeCrTpffJvGch5WsWNikteWHJ+4LBICPbZg0=
 
-On Mon, Oct 28, 2024 at 10:37:40AM +0800, Liu Ying wrote:
-> Add myself as the maintainer of ITE IT6263 LVDS TO HDMI BRIDGE DRIVER.
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> v4:
-> * No change.
-> 
-> v3:
-> * No change.
-> 
-> v2:
-> * New patch.  (Maxime)
-> 
->  MAINTAINERS | 8 ++++++++
->  1 file changed, 8 insertions(+)
+Hello,
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+This series adds initial SoC support for the Samsung Exynos 9810
+SoC and initial board support for Samsung Galaxy S9 phone (SM-G960F),
+codenamed starlte.
 
+The Exynos 9810 SoC is also used in S9 Plus (star2lte), Note 9 (crownlte),
+and perhaps more devices. Currently only Galaxy S9 DTS file is added but it
+should be fairly simple to add support for other devices based on this SoC,
+considering they're quite similar.
+
+The support added in this series includes:
+- cpus
+- pinctrl and gpio
+- simple-framebuffer
+
+This is enough to boot to a minimal initramfs shell.
+
+The preferred way to boot this device is by using a small shim bl called
+uniLoader [1], which packages the mainline kernel and DT and jumps to
+the kernel. This is done in order to work around some issues caused by
+the stock, and non-replacable Samsung S-Boot bootloader. For example,
+S-Boot leaves the decon trigger control unset, which causes the framebuffer
+to not refresh, so simple-framebuffer wouldn't work without a secondary loader.
+Ideally, there'll be a kernel driver for the display subsystem some day to
+resolve this issue.
+
+[1] https://github.com/ivoszbg/uniLoader
+
+Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+---
+Changes in v4:
+- make DTS build again [typo, misplaced ;] (krzk)
+- lowercase hex in pinctrl (ivo)
+- removed the perf patchset from dependencies (krzk)
+- Link to v3: https://lore.kernel.org/r/20241026-exynos9810-v3-0-b89de9441ea8@gmail.com
+
+Changes in v3:
+- fix a blank line between tags (krzk)
+- align with the opening " in eint-controller (krzk)
+- sort the memory node (ivo)
+- drop the \n (ivo)
+- drop the perf patches into separate series (krzk)
+- elaborate a bit more on dt-bindings (krzk)
+- Link to v2: https://lore.kernel.org/r/20241025-exynos9810-v2-0-99ca3f316e21@gmail.com
+
+Changes in v2:
+- sort the pinctrl nodes alphabetically (ivo)
+- move the interrupts from pinctrl file to SoC dtsi (krzk)
+- move the wakeup-eint from pinctrl file to SoC dtsi (krzk)
+- sort gpio-keys pinctrl-0 and pinctrl-names (ivo)
+- rename the bixby key node to "wink" (ivo)
+- sort gpio-keys subnodes (ivo)
+- sort pinctrl_alive gpio-keys pin descriptions (ivo)
+- fix the Co-developed-by tags and add a signoff (krzk)
+
+- Link to v1: https://lore.kernel.org/r/20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com
+
+---
+Markuss Broks (10):
+      dt-bindings: arm: cpus: Add Samsung Mongoose M3
+      dt-bindings: hwinfo: samsung,exynos-chipid: Add Samsung exynos9810 compatible
+      dt-bindings: pinctrl: samsung: Add compatible for Exynos9810 SoC
+      dt-bindings: pinctrl: samsung: Add compatible for exynos9810-wakeup-eint
+      dt-bindings: soc: samsung: exynos-pmu: Add exynos9810 compatible
+      dt-bindings: arm: samsung: Document Exynos9810 and starlte board binding
+      soc: samsung: exynos-chipid: Add support for Exynos9810 SoC
+      pinctrl: samsung: Add Exynos9810 SoC specific data
+      arm64: dts: exynos: Add Exynos9810 SoC support
+      arm64: dts: exynos: Add initial support for Samsung Galaxy S9 (SM-G960F)
+
+ Documentation/devicetree/bindings/arm/cpus.yaml    |   1 +
+ .../bindings/arm/samsung/samsung-boards.yaml       |   6 +
+ .../bindings/hwinfo/samsung,exynos-chipid.yaml     |   1 +
+ .../pinctrl/samsung,pinctrl-wakeup-interrupt.yaml  |   1 +
+ .../bindings/pinctrl/samsung,pinctrl.yaml          |   1 +
+ .../bindings/soc/samsung/exynos-pmu.yaml           |   1 +
+ arch/arm64/boot/dts/exynos/Makefile                |   1 +
+ arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi | 503 +++++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos9810-starlte.dts  | 119 +++++
+ arch/arm64/boot/dts/exynos/exynos9810.dtsi         | 273 +++++++++++
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c     | 154 +++++++
+ drivers/pinctrl/samsung/pinctrl-samsung.c          |   2 +
+ drivers/pinctrl/samsung/pinctrl-samsung.h          |   1 +
+ drivers/soc/samsung/exynos-chipid.c                |   1 +
+ 14 files changed, 1065 insertions(+)
+---
+base-commit: f2493655d2d3d5c6958ed996b043c821c23ae8d3
+change-id: 20241024-exynos9810-b3eed995b0b9
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Markuss Broks <markuss.broks@gmail.com>
+
 
