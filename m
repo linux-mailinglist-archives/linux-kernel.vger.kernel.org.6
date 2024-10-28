@@ -1,402 +1,154 @@
-Return-Path: <linux-kernel+bounces-384625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35AC39B2C87
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:14:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796049B2C8C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:15:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CA99B23ED5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:14:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7906D1C21F6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1B51D270B;
-	Mon, 28 Oct 2024 10:14:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFDE01D2B24;
+	Mon, 28 Oct 2024 10:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b="ATZmbN9y"
-Received: from mx0.riseup.net (mx0.riseup.net [198.252.153.6])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OuokBvtN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E401CCEE6;
-	Mon, 28 Oct 2024 10:14:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.252.153.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088ECA59;
+	Mon, 28 Oct 2024 10:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110444; cv=none; b=T+iuVH3DeccWjbet6hGbRf2vvDmPyWatSoKv+NMcpaQ4CNLQIx+YHXxYBwZGBMua5qSNMeairQ6R+EBjVvP8EwNJkEhGZpsfdi8ogjyWqmVSlcuJsDuR/I++Zoad1YWsTESondDFDKmhn13ozVXduCwsq4NXpQjtQu+lBEribrs=
+	t=1730110544; cv=none; b=N9zxfN0AtivIcytmLYIIg8RHiCXatg5Tprjt+M6fjPDfnL728KOWV9reDtzcJIq6H5WJkKNVUVPMIajyDz8MN6cSr3rbw57nijjJKCAiX9/BY2WQJGiQZOMYc81l/YxMP5saAq4Lwv+ooJFogyrw9Rnaif9cV6+WFyoTbmTsSJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110444; c=relaxed/simple;
-	bh=YtL7XBpxJk6ROHIqvUfHeTpLoBni23YAgmaSPnpnFrM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ju4Zhd7ikCamKWj8XajNwU2L0Zrod2tZ3DdvtCAmscFcGImtZYQKvQiu5UuvqU6AABWLTeBwevYGRYOMYJ/Tdl2WqfSAbaNHCeh00/jUNgH/RcL2TY8qbTgrBe6qSR5XJJY1QjktNsPdEBdZJHbdq130Woc0Sz3+sFDTF3vVRxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net; spf=pass smtp.mailfrom=riseup.net; dkim=pass (1024-bit key) header.d=riseup.net header.i=@riseup.net header.b=ATZmbN9y; arc=none smtp.client-ip=198.252.153.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riseup.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riseup.net
-Received: from fews02-sea.riseup.net (fews02-sea-pn.riseup.net [10.0.1.112])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx0.riseup.net (Postfix) with ESMTPS id 4XcTkV3cyBz9vB8;
-	Mon, 28 Oct 2024 10:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=riseup.net; s=squak;
-	t=1730110434; bh=YtL7XBpxJk6ROHIqvUfHeTpLoBni23YAgmaSPnpnFrM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=ATZmbN9yJgeJoNwb5uFNFJBJGiXahaiJ+vLZ78IB9dBFBq/1KGN4hJ7JZ5v2bWcKJ
-	 wkDj0FAHAEYD1/ZbPO5iVJCBEqNqnQ0Jl6JozjTUOQVJHNfFpWqGySJi1B4s/TCaL2
-	 yPJYlnkKUUwbF9w2A4ygAFWJXhOYDq3CEOq87sFM=
-X-Riseup-User-ID: 34E57D653E943C86F088611FC6F853262CC686371EA5F3C86E0378228CA93968
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	 by fews02-sea.riseup.net (Postfix) with ESMTPSA id 4XcTk62JbLzFv8y;
-	Mon, 28 Oct 2024 10:13:34 +0000 (UTC)
-Message-ID: <c3f35eb2-2197-46f6-838d-c1e832d1750c@riseup.net>
-Date: Mon, 28 Oct 2024 07:13:31 -0300
+	s=arc-20240116; t=1730110544; c=relaxed/simple;
+	bh=FNlGLpo7ThFgdkXFr0K2A7/imjFw4XYgmYXIs27D2C0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m0CK+Mbwe4gdKWOxk6j7oh4gQMfnr9nbYl5UQrafctEmALMFDupehoAD3gPZqOc2izE2Bort0uB+Db+C/j1faLi1aQtydGfGkTsqISnjxwPhsYqd1KR6ZLjnyBtDey/uEi5kmy12lFYKFHXx2+ELfOwHtmGyG1+GxdvmB3kLDes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OuokBvtN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFD2BC4CEC3;
+	Mon, 28 Oct 2024 10:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730110543;
+	bh=FNlGLpo7ThFgdkXFr0K2A7/imjFw4XYgmYXIs27D2C0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OuokBvtNFNZMki3pSHIjGzx63J/7nixUiryJ3SYdiBZD5oG7tzDC/rbcQ+K66/9KQ
+	 nM+ngcqiMRKxpTeSbP+FJzn03qqie8T6mTKojTU+sviDw2hcKkJHgDvhaNxNDkFJ0f
+	 JwRlE48oJNkINFvUXwkLjOY2cfq7ucMA4AhW7D2N6wf+Xnag5hqnXlJl6+5bt3F0K9
+	 Uwlj9bgIwZuqyogtOxiTOAFz7gtVwq9KYSfVfpEavk34jBHo7GgHyY14e3kkwmxL3I
+	 TJSWQLKLcqyjQpnS0PCLRrCxvxhZXX2aFvNr7/V1wV9jmuakzbIX1uiCkE6t5k5fwq
+	 OJ7fUY80ShSyQ==
+Date: Mon, 28 Oct 2024 11:15:35 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <Zx9kR4OhT1pErzEk@pollux>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-16-dakr@kernel.org>
+ <20241022234712.GB1848992-robh@kernel.org>
+ <ZxibWpcswZxz5A07@pollux>
+ <20241023142355.GA623906-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v12 08/15] drm/vkms: Re-introduce line-per-line
- composition algorithm
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
- Melissa Wen <melissa.srw@gmail.com>,
- Haneen Mohammed <hamohammed.sa@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
- Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
- arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
- Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- thomas.petazzoni@bootlin.com, jeremie.dautheribes@bootlin.com,
- miquel.raynal@bootlin.com, seanpaul@google.com, marcheu@google.com,
- nicolejadeyee@google.com, Pekka Paalanen <pekka.paalanen@collabora.com>
-References: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
- <20241007-yuv-v12-8-01c1ada6fec8@bootlin.com>
- <be1a9147-efbd-4c98-a0a4-7cf5a730fc70@riseup.net> <Zx9eblYbZsFqn-hX@fedora>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mairacanal@riseup.net>
-In-Reply-To: <Zx9eblYbZsFqn-hX@fedora>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023142355.GA623906-robh@kernel.org>
 
-Hi Louis,
-
-On 28/10/24 06:50, Louis Chauvet wrote:
-> On 26/10/24 - 11:26, Maíra Canal wrote:
->> Hi Louis,
->>
->> On 07/10/24 13:10, Louis Chauvet wrote:
->>> Re-introduce a line-by-line composition algorithm for each pixel format.
->>> This allows more performance by not requiring an indirection per pixel
->>> read. This patch is focused on readability of the code.
->>>
->>> Line-by-line composition was introduced by [1] but rewritten back to
->>> pixel-by-pixel algorithm in [2]. At this time, nobody noticed the impact
->>> on performance, and it was merged.
->>>
->>> This patch is almost a revert of [2], but in addition efforts have been
->>> made to increase readability and maintainability of the rotation handling.
->>> The blend function is now divided in two parts:
->>> - Transformation of coordinates from the output referential to the source
->>> referential
->>> - Line conversion and blending
->>>
->>> Most of the complexity of the rotation management is avoided by using
->>> drm_rect_* helpers. The remaining complexity is around the clipping, to
->>> avoid reading/writing outside source/destination buffers.
->>>
->>> The pixel conversion is now done line-by-line, so the read_pixel_t was
->>> replaced with read_pixel_line_t callback. This way the indirection is only
->>> required once per line and per plane, instead of once per pixel and per
->>> plane.
->>>
->>> The read_line_t callbacks are very similar for most pixel format, but it
->>> is required to avoid performance impact. Some helpers for color
->>> conversion were introduced to avoid code repetition:
->>> - *_to_argb_u16: perform colors conversion. They should be inlined by the
->>>     compiler, and they are used to avoid repetition between multiple variants
->>>     of the same format (argb/xrgb and maybe in the future for formats like
->>>     bgr formats).
->>>
->>> This new algorithm was tested with:
->>> - kms_plane (for color conversions)
->>> - kms_rotation_crc (for rotations of planes)
->>> - kms_cursor_crc (for translations of planes)
->>> - kms_rotation (for all rotations and formats combinations) [3]
->>> The performance gain was mesured with kms_fb_stress [4] with some
->>> modification to fix the writeback format.
->>>
->>> The performance improvement is around 5 to 10%.
->>>
->>> [1]: commit 8ba1648567e2 ("drm: vkms: Refactor the plane composer to accept
->>>        new formats")
->>>        https://lore.kernel.org/all/20220905190811.25024-7-igormtorrente@gmail.com/
->>> [2]: commit 322d716a3e8a ("drm/vkms: isolate pixel conversion
->>>        functionality")
->>>        https://lore.kernel.org/all/20230418130525.128733-2-mcanal@igalia.com/
->>> [3]: https://lore.kernel.org/igt-dev/20240313-new_rotation-v2-0-6230fd5cae59@bootlin.com/
->>> [4]: https://lore.kernel.org/all/20240422-kms_fb_stress-dev-v5-0-0c577163dc88@riseup.net/
->>>
->>> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
->>> Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
->>>
->>> # Conflicts:
->>> #	drivers/gpu/drm/vkms/vkms_composer.c
+On Wed, Oct 23, 2024 at 09:23:55AM -0500, Rob Herring wrote:
+> On Wed, Oct 23, 2024 at 08:44:42AM +0200, Danilo Krummrich wrote:
+> > On Tue, Oct 22, 2024 at 06:47:12PM -0500, Rob Herring wrote:
+> > > On Tue, Oct 22, 2024 at 11:31:52PM +0200, Danilo Krummrich wrote:
+> > > > +///     ]
+> > > > +/// );
+> > > > +///
+> > > > +/// impl platform::Driver for MyDriver {
+> > > > +///     type IdInfo = ();
+> > > > +///     const ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+> > > > +///
+> > > > +///     fn probe(
+> > > > +///         _pdev: &mut platform::Device,
+> > > > +///         _id_info: Option<&Self::IdInfo>,
+> > > > +///     ) -> Result<Pin<KBox<Self>>> {
+> > > > +///         Err(ENODEV)
+> > > > +///     }
+> > > > +/// }
+> > > > +///```
+> > > > +/// Drivers must implement this trait in order to get a platform driver registered. Please refer to
+> > > > +/// the `Adapter` documentation for an example.
+> > > > +pub trait Driver {
+> > > > +    /// The type holding information about each device id supported by the driver.
+> > > > +    ///
+> > > > +    /// TODO: Use associated_type_defaults once stabilized:
+> > > > +    ///
+> > > > +    /// type IdInfo: 'static = ();
+> > > > +    type IdInfo: 'static;
+> > > > +
+> > > > +    /// The table of device ids supported by the driver.
+> > > > +    const ID_TABLE: IdTable<Self::IdInfo>;
 > 
-> I jut noticed this, I will remove it...
-> 
->>> ---
->>>    drivers/gpu/drm/vkms/vkms_composer.c | 234 ++++++++++++++++++++++++++++-------
->>>    drivers/gpu/drm/vkms/vkms_drv.h      |  28 +++--
->>>    drivers/gpu/drm/vkms/vkms_formats.c  | 224 ++++++++++++++++++++-------------
->>>    drivers/gpu/drm/vkms/vkms_formats.h  |   2 +-
->>>    drivers/gpu/drm/vkms/vkms_plane.c    |   5 +-
->>>    5 files changed, 344 insertions(+), 149 deletions(-)
->>>
->>
->> [...]
->>
->>> -static void RGB565_to_argb_u16(const u8 *in_pixel, struct pixel_argb_u16 *out_pixel)
->>> +static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
->>>    {
->>> -	__le16 *pixel = (__le16 *)in_pixel;
->>> +	struct pixel_argb_u16 out_pixel;
->>>    	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
->>>    	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
->>> @@ -226,40 +194,120 @@ static void RGB565_to_argb_u16(const u8 *in_pixel, struct pixel_argb_u16 *out_pi
->>>    	s64 fp_g = drm_int2fixp((rgb_565 >> 5) & 0x3f);
->>>    	s64 fp_b = drm_int2fixp(rgb_565 & 0x1f);
->>> -	out_pixel->a = (u16)0xffff;
->>> -	out_pixel->r = drm_fixp2int_round(drm_fixp_mul(fp_r, fp_rb_ratio));
->>> -	out_pixel->g = drm_fixp2int_round(drm_fixp_mul(fp_g, fp_g_ratio));
->>> -	out_pixel->b = drm_fixp2int_round(drm_fixp_mul(fp_b, fp_rb_ratio));
->>> +	out_pixel.a = (u16)0xffff;
->>> +	out_pixel.r = drm_fixp2int_round(drm_fixp_mul(fp_r, fp_rb_ratio));
->>> +	out_pixel.g = drm_fixp2int_round(drm_fixp_mul(fp_g, fp_g_ratio));
->>> +	out_pixel.b = drm_fixp2int_round(drm_fixp_mul(fp_b, fp_rb_ratio));
->>> +
->>> +	return out_pixel;
->>>    }
->>> -/**
->>> - * vkms_compose_row - compose a single row of a plane
->>> - * @stage_buffer: output line with the composed pixels
->>> - * @plane: state of the plane that is being composed
->>> - * @y: y coordinate of the row
->>> +/*
->>> + * The following functions are read_line function for each pixel format supported by VKMS.
->>> + *
->>> + * They read a line starting at the point @x_start,@y_start following the @direction. The result
->>> + * is stored in @out_pixel and in the format ARGB16161616.
->>> + *
->>> + * These functions are very repetitive, but the innermost pixel loops must be kept inside these
->>> + * functions for performance reasons. Some benchmarking was done in [1] where having the innermost
->>> + * loop factored out of these functions showed a slowdown by a factor of three.
->>>     *
->>> - * This function composes a single row of a plane. It gets the source pixels
->>> - * through the y coordinate (see get_packed_src_addr()) and goes linearly
->>> - * through the source pixel, reading the pixels and converting it to
->>> - * ARGB16161616 (see the pixel_read() callback). For rotate-90 and rotate-270,
->>> - * the source pixels are not traversed linearly. The source pixels are queried
->>> - * on each iteration in order to traverse the pixels vertically.
->>> + * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
->>>     */
->>> -void vkms_compose_row(struct line_buffer *stage_buffer, struct vkms_plane_state *plane, int y)
->>> +
->>> +static void ARGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
->>> +			       enum pixel_read_direction direction, int count,
->>> +			       struct pixel_argb_u16 out_pixel[])
->>>    {
->>> -	struct pixel_argb_u16 *out_pixels = stage_buffer->pixels;
->>> -	struct vkms_frame_info *frame_info = plane->frame_info;
->>> -	u8 *src_pixels = get_packed_src_addr(frame_info, y, 0);
->>> -	int limit = min_t(size_t, drm_rect_width(&frame_info->dst), stage_buffer->n_pixels);
->>> +	struct pixel_argb_u16 *end = out_pixel + count;
->>> +	u8 *src_pixels;
->>> +
->>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
->>> +
->>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
->>> +
->>> +	while (out_pixel < end) {
->>> +		u8 *px = (u8 *)src_pixels;
->>
->> Why are you converting u8* to u8*? There are repetitions of this pattern
->> in this patch.
-> 
-> I think it was to be consistent between all the conversion functions. They
-> are exactly the same, so having the casting (even useless one) at the same
-> place may help to understand the code.
-> 
-> I will remove this cast if you prefer.
+> Another thing. I don't think this is quite right. Well, this part is 
+> fine, but assigning the DT table to it is not. The underlying C code has 
+> 2 id tables in struct device_driver (DT and ACPI) and then the bus 
+> specific one in the struct ${bus}_driver.
 
-I only suggested to remove as we are going to delete this function when
-we push [1]. So, I believe it's better to add as little code as
-possible.
+The assignment of this table in `Adapter::register` looks like this:
 
-[1] 
-https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
+`pdrv.driver.of_match_table = T::ID_TABLE.as_ptr();`
 
-Best Regards,
-- Maíra
+What do you think is wrong with this assignment?
 
 > 
->>> +		*out_pixel = argb_u16_from_u8888(px[3], px[2], px[1], px[0]);
->>> +		out_pixel += 1;
->>> +		src_pixels += step;
->>> +	}
->>> +}
->>> +
->>> +static void XRGB8888_read_line(const struct vkms_plane_state *plane, int x_start, int y_start,
->>> +			       enum pixel_read_direction direction, int count,
->>> +			       struct pixel_argb_u16 out_pixel[])
->>> +{
->>> +	struct pixel_argb_u16 *end = out_pixel + count;
->>> +	u8 *src_pixels;
->>> +
->>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
->>> +
->>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
->>> +
->>> +	while (out_pixel < end) {
->>> +		u8 *px = (u8 *)src_pixels;
->>> +		*out_pixel = argb_u16_from_u8888(255, px[2], px[1], px[0]);
->>> +		out_pixel += 1;
->>> +		src_pixels += step;
->>> +	}
->>> +}
->>> +
->>> +static void ARGB16161616_read_line(const struct vkms_plane_state *plane, int x_start,
->>> +				   int y_start, enum pixel_read_direction direction, int count,
->>> +				   struct pixel_argb_u16 out_pixel[])
->>> +{
->>> +	struct pixel_argb_u16 *end = out_pixel + count;
->>> +	u8 *src_pixels;
->>> +
->>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
->>> +
->>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
->>> +
->>> +	while (out_pixel < end) {
->>> +		u16 *px = (u16 *)src_pixels;
->>> +		*out_pixel = argb_u16_from_u16161616(px[3], px[2], px[1], px[0]);
->>> +		out_pixel += 1;
->>> +		src_pixels += step;
->>> +	}
->>> +}
->>> +
->>> +static void XRGB16161616_read_line(const struct vkms_plane_state *plane, int x_start,
->>> +				   int y_start, enum pixel_read_direction direction, int count,
->>> +				   struct pixel_argb_u16 out_pixel[])
->>> +{
->>> +	struct pixel_argb_u16 *end = out_pixel + count;
->>> +	u8 *src_pixels;
->>> +
->>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
->>> +
->>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
->>> +
->>> +	while (out_pixel < end) {
->>> +		__le16 *px = (__le16 *)src_pixels;
->>> +		*out_pixel = argb_u16_from_le16161616(cpu_to_le16(0xFFFF), px[2], px[1], px[0]);
->>> +		out_pixel += 1;
->>> +		src_pixels += step;
->>> +	}
->>> +}
->>> +
->>> +static void RGB565_read_line(const struct vkms_plane_state *plane, int x_start,
->>> +			     int y_start, enum pixel_read_direction direction, int count,
->>> +			     struct pixel_argb_u16 out_pixel[])
->>> +{
->>> +	struct pixel_argb_u16 *end = out_pixel + count;
->>> +	u8 *src_pixels;
->>> +
->>> +	packed_pixels_addr_1x1(plane->frame_info, x_start, y_start, 0, &src_pixels);
->>> -	for (size_t x = 0; x < limit; x++, src_pixels += frame_info->fb->format->cpp[0]) {
->>> -		int x_pos = get_x_position(frame_info, limit, x);
->>> +	int step = get_block_step_bytes(plane->frame_info->fb, direction, 0);
->>> -		if (drm_rotation_90_or_270(frame_info->rotation))
->>> -			src_pixels = get_packed_src_addr(frame_info, x + frame_info->rotated.y1, 0)
->>> -				+ frame_info->fb->format->cpp[0] * y;
->>> +	while (out_pixel < end) {
->>> +		__le16 *px = (__le16 *)src_pixels;
->>> -		plane->pixel_read(src_pixels, &out_pixels[x_pos]);
->>> +		*out_pixel = argb_u16_from_RGB565(px);
->>> +		out_pixel += 1;
->>> +		src_pixels += step;
->>>    	}
->>>    }
->>> @@ -359,25 +407,25 @@ void vkms_writeback_row(struct vkms_writeback_job *wb,
->>>    }
->>>    /**
->>> - * get_pixel_read_function() - Retrieve the correct read_pixel function for a specific
->>> + * get_pixel_read_line_function() - Retrieve the correct read_line function for a specific
->>>     * format. The returned pointer is NULL for unsupported pixel formats. The caller must ensure that
->>>     * the pointer is valid before using it in a vkms_plane_state.
->>>     *
->>>     * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
->>>     */
->>> -pixel_read_t get_pixel_read_function(u32 format)
->>> +pixel_read_line_t get_pixel_read_line_function(u32 format)
->>>    {
->>>    	switch (format) {
->>>    	case DRM_FORMAT_ARGB8888:
->>> -		return &ARGB8888_to_argb_u16;
->>> +		return &ARGB8888_read_line;
->>>    	case DRM_FORMAT_XRGB8888:
->>> -		return &XRGB8888_to_argb_u16;
->>> +		return &XRGB8888_read_line;
->>>    	case DRM_FORMAT_ARGB16161616:
->>> -		return &ARGB16161616_to_argb_u16;
->>> +		return &ARGB16161616_read_line;
->>>    	case DRM_FORMAT_XRGB16161616:
->>> -		return &XRGB16161616_to_argb_u16;
->>> +		return &XRGB16161616_read_line;
->>>    	case DRM_FORMAT_RGB565:
->>> -		return &RGB565_to_argb_u16;
->>> +		return &RGB565_read_line;
->>>    	default:
->>>    		/*
->>>    		 * This is a bug in vkms_plane_atomic_check(). All the supported
->>> diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
->>> index 3ecea4563254..8d2bef95ff79 100644
->>> --- a/drivers/gpu/drm/vkms/vkms_formats.h
->>> +++ b/drivers/gpu/drm/vkms/vkms_formats.h
->>> @@ -5,7 +5,7 @@
->>>    #include "vkms_drv.h"
->>> -pixel_read_t get_pixel_read_function(u32 format);
->>> +pixel_read_line_t get_pixel_read_line_function(u32 format);
->>>    pixel_write_t get_pixel_write_function(u32 format);
->>> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
->>> index 10e9b23dab28..8875bed76410 100644
->>> --- a/drivers/gpu/drm/vkms/vkms_plane.c
->>> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
->>> @@ -112,7 +112,6 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
->>>    	frame_info = vkms_plane_state->frame_info;
->>>    	memcpy(&frame_info->src, &new_state->src, sizeof(struct drm_rect));
->>>    	memcpy(&frame_info->dst, &new_state->dst, sizeof(struct drm_rect));
->>> -	memcpy(&frame_info->rotated, &new_state->dst, sizeof(struct drm_rect));
->>
->> If you won't use rotated anymore, delete it from the struct.
+> > > > +
+> > > > +    /// Platform driver probe.
+> > > > +    ///
+> > > > +    /// Called when a new platform device is added or discovered.
+> > > > +    /// Implementers should attempt to initialize the device here.
+> > > > +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>>;
+> > > > +
+> > > > +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`] matching the given [`Device`], if any.
+> > > > +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceId> {
+> > > 
+> > > Is this visible to drivers? It shouldn't be.
+> > 
+> > Yeah, I think we should just remove it. Looking at struct of_device_id, it
+> > doesn't contain any useful information for a driver. I think when I added this I
+> > was a bit in "autopilot" mode from the PCI stuff, where struct pci_device_id is
+> > useful to drivers.
 > 
-> It is already done in this patch.
-> 
-> Thanks for your reviews,
-> Louis Chauvet
-> 
->> Best Regards,
->> - Maíra
->>
->>>    	frame_info->fb = fb;
->>>    	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
->>>    	drm_framebuffer_get(frame_info->fb);
->>> @@ -122,10 +121,8 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
->>>    									  DRM_MODE_REFLECT_X |
->>>    									  DRM_MODE_REFLECT_Y);
->>> -	drm_rect_rotate(&frame_info->rotated, drm_rect_width(&frame_info->rotated),
->>> -			drm_rect_height(&frame_info->rotated), frame_info->rotation);
->>> -	vkms_plane_state->pixel_read = get_pixel_read_function(fmt);
->>> +	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
->>>    }
->>>    static int vkms_plane_atomic_check(struct drm_plane *plane,
->>>
+> TBC, you mean other than *data, right? If so, I agree. 
 
+Yes.
+
+> 
+> The DT type and name fields are pretty much legacy, so I don't think the 
+> rust bindings need to worry about them until someone converts Sparc and 
+> PowerMac drivers to rust (i.e. never).
+> 
+> I would guess the PCI cases might be questionable, too. Like DT, drivers 
+> may be accessing the table fields, but that's not best practice. All the 
+> match fields are stored in pci_dev, so why get them from the match 
+> table?
+
+Fair question, I'd like to forward it to Greg. IIRC, he explicitly requested to
+make the corresponding struct pci_device_id available in probe() at Kangrejos.
+
+> 
+> Rob
+> 
 
