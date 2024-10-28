@@ -1,260 +1,678 @@
-Return-Path: <linux-kernel+bounces-384035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5ABB9B2379
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:15:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DFB49B237C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:18:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E27F1F217EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:15:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ECC21F214D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9483518785D;
-	Mon, 28 Oct 2024 03:15:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C731B815;
+	Mon, 28 Oct 2024 03:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hvlbrItw"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011020.outbound.protection.outlook.com [52.101.70.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="SkTSZ3N5"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D1028EF;
-	Mon, 28 Oct 2024 03:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.20
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730085343; cv=fail; b=HTttyoH2mGJk1tRVjTHb4SpG6SoWmfe5Wlb4Tcrvufw2YlhKDA23qxQFUtLhnO7fyCHTKr+1va/4pAbwqM65l2OxL/aG2p4lfowljlBRzlpF0C0FziS4cpYs3hFjJuvroU8JKAUn/pdv7qCpRV2cP68vbHA9wat4LxjjC5eLzrg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730085343; c=relaxed/simple;
-	bh=7r+JhS+3jKWUhGcZCPfAjpK1dxyicKdhg485ly68WP0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cJ44uwGH4JKYhJ9iwE3YPVkNFGHS85PF80N53XoASum1pKXXsbeWTPjeQV7jnptYSOdl/5iUcUVCe4u0BxTIoPQJa3KR9wrYK89PJGfsGxThkt/iRpTMyj1PSkelYK9e13U0/Ov7K2UzgQjS9tW0toB54nBuojV38pbbQWaUtIY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hvlbrItw; arc=fail smtp.client-ip=52.101.70.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=boiUPI8fn9G5ulHZevD/h25awJ9l1wGHr5UA3ta9H8qWEdhaJD+N0HVTREbKR9I5CDBgr424UGixUfQ9aJVivI+U7o1jwPSu4/dliXoLJfZiL8FN9NePuBSMUS1C67KbRnDEh2K61fBmefVwTzQaNTJu2ODw8smDYeUhRf5YvRZoHzweg5G27u6w/+jxwgRmNr7skAp7KW0Jm16IzDzwFZarWrLoVsqAwU/spZukpNj5l35AA9qzNNNK4yLFW6G9omMvkkQ6bf6WlP8bjtHnqKxosz3w09J60ZffhkWjbVmraBYX2L9kLYtSiDWml07Zbf8wlwkXkuwXiVgUvECW7w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7r+JhS+3jKWUhGcZCPfAjpK1dxyicKdhg485ly68WP0=;
- b=tPc6s0/FxoG1o/iLL6Q8PcK+mqh+PLWrsw38qdz/RhDH3YYlVutHuos0/SJyYtbPMdSa7paALtsAz/+C1+7v8nGCgog/p0i9Fu+d2pjql9ONSIpH34YRZgyp+iCCqCZEblSfO1EzBlHBWWcrWH8aIucSGCfSJWtGhyzJ3EAlN8TjietIBISuqXRA84HJQgJb3uEBfYVQCg7KerYbHUDg2hFkMOdBPgdSm5jvDW4eQfNmzrvIpbig2tGZszXnhPS9/Z5ZL4WBGY4mxe4w1y25EynmC2stONUBFO7ypKMJ8odgd7T9iZEVF/Z7iV24cWKFFXTy2IxPF+7Ndc7Q10bCxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7r+JhS+3jKWUhGcZCPfAjpK1dxyicKdhg485ly68WP0=;
- b=hvlbrItwfxfo434OK0ip33LrpPDgKcF6GbUSkQ9Lf4w7M0dLr5uBn+4HODCL2FIF6WrmmVkJAGJSGfpVbe1c9Lk1OQ1xbiXTNUQqApQrFq2AAw5WhJzZptT6tqPORisezhcKKwStw2l/cfvbM67iGR9/a4MDn+PRNkSZhyxqDKNX6dkmOHhpMi9xFvENXFwfRiDbJzn/LqMbN4KMaBMhyzKQkQ+V952bj1W4vOfVSzidhnmXn7AmV6A2OevZd128/rzi4fW35YwKL2W4odMxo/1s/gz0L+tbOIevPnjgepYXWSBwK7uYuayFFlDWGD2XXL9J4E9ptM+bgjqIsnnYjw==
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
- by AS5PR04MB9756.eurprd04.prod.outlook.com (2603:10a6:20b:677::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Mon, 28 Oct
- 2024 03:15:37 +0000
-Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
- ([fe80::4fa3:7420:14ed:5334%7]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
- 03:15:36 +0000
-From: Bough Chen <haibo.chen@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>, Josua Mayer <josua@solid-run.com>, Adrian
- Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Shawn
- Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
- Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>
-CC: yazan.shhady <yazan.shhady@solid-run.com>, Rabeeh Khoury
-	<rabeeh@solid-run.com>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, dl-S32
-	<S32@nxp.com>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] mmc: host: sdhci-esdhc-imx: implement emmc hardware reset
-Thread-Topic: [PATCH] mmc: host: sdhci-esdhc-imx: implement emmc hardware
- reset
-Thread-Index: AQHbKH5LcX/pcU7hiEe46rC2ml7debKba/0AgAAN+EA=
-Date: Mon, 28 Oct 2024 03:15:36 +0000
-Message-ID:
- <DU0PR04MB9496769805197714F198EC0F904A2@DU0PR04MB9496.eurprd04.prod.outlook.com>
-References: <20241027-imx-emmc-reset-v1-1-d5d0c672864a@solid-run.com>
- <PAXPR04MB84591664B7A4455E6F0BD19E884A2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To:
- <PAXPR04MB84591664B7A4455E6F0BD19E884A2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9496:EE_|AS5PR04MB9756:EE_
-x-ms-office365-filtering-correlation-id: c2603eb2-c498-4361-78b7-08dcf6fecae3
-x-ld-processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TmVXN0tKZmp3Z0ZYdmt2V3FqT0tlcWtiUnZ2cXlhM25TWURHdTFTUjQwUm1S?=
- =?utf-8?B?Kys3Tk1MaDNORTZxd3RMazNOYmZFbmFZNWxYLzBoTUdIWVZFQThMR1FqL3lT?=
- =?utf-8?B?dmorcHlFbmsyQnNVZ0pZUm85eE5hdXNhZjAvbFhPelFUZThmTy93KzdtczVw?=
- =?utf-8?B?azJhdWFuc0Vya3FEZXhaSjJldWRKQVg0RXhKMnJIZzFWTmZmUmk3OWpTZUll?=
- =?utf-8?B?RXZ0c3E3V29CLzYxOERlRzBGZEt1eDhDOE1Ic09NWGszTkpLWFZkeHRTR3pa?=
- =?utf-8?B?S200UXlWRlljeFdEMU9Od1JkTUJQWFU2NTRoS1NCeTY1cStjOHB6SkJTTWRk?=
- =?utf-8?B?VU0va3VPRS9WZ3BSVDZ3MkxQYWpiU01wVHQvbWtGaVo0WVc1b1dlbTVRcVE2?=
- =?utf-8?B?M3VnQ2JqZ2JVdVZHVXpNK3ZYU2xONnVIZ1lWL3QwQzlFMkNPWlludFU5WXVt?=
- =?utf-8?B?N29Cbi8xR3hKY2Z4anp4Tkh0emZTYXNpMlJYYy9XQVVCUno4cllmN1psc1NO?=
- =?utf-8?B?aS9Da2wzbUZlZlVwaFhIRHkrc1FjWEVwQnVCdnVISzNWeGZMRWg5UDcrMVpZ?=
- =?utf-8?B?YytudGVHVzl2WE5KTTRNQVZRTWFmd3cxYUMwYkdEN2Zvbk1SakgwQVpaaW9R?=
- =?utf-8?B?d1huTTdTTEpHVXFpeWptN0w3ZnNkVTI5RVFLSzY3Z2JDMlV3SmZOa25lQzdt?=
- =?utf-8?B?aUNleC9zYTZFd1RmQ3g2cU9YaEdkMk9pVGdyMVdpRmg0cXAzRmdsZzRINlBq?=
- =?utf-8?B?V3NldFU3MWRTV2hZMUhEYVM1MnlwamhTaFZJQi9vSk9YV2FtNTZEV043bmJB?=
- =?utf-8?B?V1VnRTZLNUJ5dkZVVUhnNE5yVDNWNFg2QXFtUkMraHhNbllxSTdkZEh6ak5M?=
- =?utf-8?B?bjhxQ0N1Q3NCdUN4MVVkRUFUMjk3bnd2cEdMdUpnUzcxQXU4N1hlMzF2aXRy?=
- =?utf-8?B?MzFEYk9zQldSbTZPR3lweE5MSjNZR0h0SHpsb2xmWUZBYm96TWtYazhsSjdO?=
- =?utf-8?B?MWpzVHY1VkpsbjBsMnlYL3JPSmZCK25UZHhOOWpIdjgxZEtDQVZ0RXF2MW5H?=
- =?utf-8?B?cFBYL1R5aUZhcU05ekJoTzdvQVlQMVpPanBLZ2JENFlyVEpkdUV4NXZZRVNP?=
- =?utf-8?B?dFBTRFUzMWJWQVRLUFlNeWtPK0dZMzE1VVVXeGVyR1NBM21RNHltUE9CVm50?=
- =?utf-8?B?K0s5cE1vN08waENhZXBoVGRoNTB3T2ZLbGRaSS8rTlRQZ1VjekRra1NkbVAr?=
- =?utf-8?B?eEFRRTRubFUvNDdRQm5sZWExUVFBQVM5dXJZR3dpWTM3WFp5cVBGakZVcXor?=
- =?utf-8?B?ekNzTEt4R0FVdXZHTlhYSTB6aXhoSXRHZU9RRWRiUmt1dzNZK3IyVW80emFw?=
- =?utf-8?B?ZmxrMlRrSk5RaWNHNWFDUW9sNmFQOG02cS8rZ0ZDUkpFWEZMa3hlYXpVR1Jz?=
- =?utf-8?B?dlNvR0VYVDEwSEtOcDloenhsNFpBTlJzT2NSWW85Vm5jTGhoNlVYMXZiTHMw?=
- =?utf-8?B?VUY0SE1TUWJ3RER1QzN3ZXZhRTBrSFBqUmlFUXVxQ3JoUFNPOXpyMXdIVkJJ?=
- =?utf-8?B?OExNcEZXQjVuSjNqdy9McDJ4TlFNb0ZkOStFSmttc0EyRWhReEU3dlkwdGVn?=
- =?utf-8?B?NHFOZnEzQmF1b3RVRXJ4VE5YNGcxWGF0UTk3T0VrOHFxQkNnYnMzblRVZndx?=
- =?utf-8?B?emN1TDJTNm0xSTZaeEJKSmcveTV4Uy9jQU1WYlYwMmxFSVMrcThMc0FrbEVx?=
- =?utf-8?B?eG9BdzJ4UE1uYmkvLzFuK2xRajRmVFNtbld1UEFNd0dHTUFqWlVzR0FCaWI2?=
- =?utf-8?Q?EtTDOe/GZuWKyEEJufqS3yyrnaqT0RKYxTrxg=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?S1JhbEcrMUlJOWRQSW1uaHYxQ3Y2WFpocU4xL1lXRmxQQ2kyM1RHN01NQzBP?=
- =?utf-8?B?Ti9NTnRqRllTbzF5NFVYTUsvNWdQM3o2alpFNTNiWEJGeTg0b1htUEpwMUl6?=
- =?utf-8?B?UTI5cXkzV2p3WmtDS1J0M1FObnNpQTEvQVVWejhnYWlFTG1Xb3kwMU5ud0cz?=
- =?utf-8?B?VXdPNHNmdWJGMnI3SzRDekx2ZFpOSnRyR0JQelc0SXB3akw1U1hURnhTb1V6?=
- =?utf-8?B?RklQQ0FXMTZISGlyWGlteFFuL0RlRFBnUTJCYUE4ZDFzaURyQ1BJdCtITms2?=
- =?utf-8?B?YjAweGQzYXEzejZMcnM1bDFnUmIvVS9qWGRpNVhKZEl0Tmx4WDk0NmszeFli?=
- =?utf-8?B?QzZTZ0FBTDFmQi9hejZNamc3WGhiNFZrejdYMkdZKytSWXFpTHJJS0ZMWWhI?=
- =?utf-8?B?SDNjODJHU1RsZ1lrRFMzTmplM1doMlpneUt1QVFCRVI4dlNGcXFQZWJLeXBF?=
- =?utf-8?B?ckYvdHJVUmhsblF2Q0VPSDNKRnFGdDlseU9rMWZ1TUhoSUlhQ3VCN1AvS2ts?=
- =?utf-8?B?WHBhdFRSdWpEeXpDdHRqY2wzTWpvdmt0dTByRlpUZTZpMGIzalRXakZhSmtH?=
- =?utf-8?B?aGlOS0JqVXZrb3phcERIMnZSTXEweGVGS1M0anBKa3dUNGJIQTYyMStycFR1?=
- =?utf-8?B?NFNvT2xwRFNBZmM2TjkwcHlobkl3NncyZ0N6bW9NM1RZYUY5VFBNZkZHOXha?=
- =?utf-8?B?RnpQejh2VXQyRlI2amxnbmhsZVlGTXRSdGhVZlJZbFVHZEEzWFFYb2pRWmhK?=
- =?utf-8?B?VWxuazByZWhkZ2tGRUdaTmRWQktxUWV3UThvL0ttb2hwbzQ2RTUrOUdxYlpa?=
- =?utf-8?B?UlByRE9LYTBlUS92aUtidE1zUUxSYUhZNDNuTG0wdkxXNGluZ09lZ1crWWYw?=
- =?utf-8?B?R21raWJpUVFPbGtjMlhpa3FqNjlHek9qMGhCb0xYY1FHNGxMN3AzcHBTSmt3?=
- =?utf-8?B?NEcyclhSNVpwNVRhRGxBS0FNcjVxMmt3TktZU2J2dkh2cHI2SDRVeUgwOGdD?=
- =?utf-8?B?OUpFb2ljWld5RUczZThpOGRvYXU0RkFhTDQ0NmdLS0ozRndZbXBiR3Rtd3Vz?=
- =?utf-8?B?YmlPWm5UNUpXdnVhRjgwUGRmZFIzaXdhSkMxNXpjVms1NDAvb3YvY2lxR1NU?=
- =?utf-8?B?WlJCR212aE5YQXNpNmRDai9WYkZ0YS9iWkZrWi8vMWhtYS9HUEdIOTdZM3VO?=
- =?utf-8?B?K2R5c2xhVlNzNFNGT2FXaEJ4UkFzMG9MbTZlMi93RFdSWDBPd25PS29RSnR4?=
- =?utf-8?B?SE9Db2pQMWlPQjZyYWZvV2lvOThEODNMUGtkcUo0Tk5TemkrQ1RkMlY4Q2x5?=
- =?utf-8?B?UGVlUUFyeVdNcWhlejEyWWtKaEZCWXZkdk5iMDFETXR3eHIwK2plR0FscG9u?=
- =?utf-8?B?Z2UxaEZXT3BXMktTSGZQNG83WU9iL3krejN0cHdlZE5JL3pMbGxncGx3TUZo?=
- =?utf-8?B?VmhKNWFKcEZ1cWVKUFBTakpPenQyK0tCdHJHR0tOOWhzeFN6aWdleDJtWVVq?=
- =?utf-8?B?cElvd3d3YzF4Skh1SWhFMmswK083QnJrbVhzZTBWK1BDenB0RWhzYWo0RS9R?=
- =?utf-8?B?Y2FzTUpqSWJaSUZhZjBHd1JwZWFFbVBxTkR2SmVSaWFjdUw5ai9YbWQrVjUz?=
- =?utf-8?B?RUxYdkhxMHoyWDZiSDA3N3MxVDFEZEZESU8xM040czVqYVIxRm9ZNWFqVVUv?=
- =?utf-8?B?VUNwclpqQm9OcFVrd2lUNGlXeVZFRktDVWV1dzJPL0dzRndxalVsbjVCZnpC?=
- =?utf-8?B?ZVU2Ykx1RFVnTWFmMjgvYW0ycXVlSFhieFZQb2dRSlZ5RXU5Y2FjTlNvZzZ2?=
- =?utf-8?B?Ky94WWRCTnMraW05MVZMYkk3TTliNk5yVnh1a1VlME80ZGV3c3NwWkZibitj?=
- =?utf-8?B?emhYbHRGalNkV1NwYUphSWw2Q21TVXZoVzh6V0Nsa1QzT2x2Y2RUV3RhOGpa?=
- =?utf-8?B?dzdpRlN6aWdQYXNMdG81bE53Z1pNV3Bqa29XQ0ZjRVZmUUUrNHYyeUx0emFo?=
- =?utf-8?B?ZTBPUEo5bnRWY05UQVZOa0U0RmFyS2FJVkNnRk56S2NDbmp5czdnTVUwaUVP?=
- =?utf-8?B?T3cySVIyaE8xY2dCaC9ET0RhNERYTVJVcW5TK3NuelRLb0wxc0VaVW9lMEFD?=
- =?utf-8?Q?O/Kg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C038C11
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730085474; cv=none; b=sdsXiz2j6H53XhGy4XtyTxt+CrVQ9KQPLBNtHkpwfvf4FXmDSNK7a3NxkF8HVn8Yvyr9WYpsnkFA2Ek4GzW+IClMR1T5eOc3b71Lg4/chqgVRKDvHVR6CquEZLPQZq4WrY5euykskmqNpprfIZNiLGcfHy9PpXI2CMqi5jRQuyc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730085474; c=relaxed/simple;
+	bh=uy8WQwtDjiz/H/Xgw+GZFCf26YmItF/JOdY1cWB2wiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=geNs6yUmc0ynN4lFTd+I8FyGZRETCuGGyJwitYvUdkP4Tbq9/aE9t/vSlo0QMNR4u3ihSQ2N7p3XJmwoBiebOAu+WC5efcp4AjLV1cb4ygFZ8Vx8zHMCe3vYto/0n1tfc/9tIW2GkYnMdKaGZmA7k/j+dYP0A+Llh/p6rGJP/yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=SkTSZ3N5; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a394418442so12345135ab.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 20:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1730085470; x=1730690270; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Prri2dYQsM3wWXMJ+WBIQitbqT7/I2sazF6lBWfGqZQ=;
+        b=SkTSZ3N5jOryNG0Z/X1aH6vc7fDsRSeDsWVIUceR+P/w+uxNG4JslpFjvZpX5azrcN
+         Vz9SVjlNl4ZtgDlYAaONgYiJ8vfQuY9t3sWHcRUWEPU92C0de6PD6EfO+KSOueToJ9at
+         lGEPvYUJLLJhnkXf1tBvUW6iBNzGBBcPRoCQA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730085470; x=1730690270;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Prri2dYQsM3wWXMJ+WBIQitbqT7/I2sazF6lBWfGqZQ=;
+        b=Y0VsUOX5u/qaQCvkjvzA7rictBchwoueocft44yjkQ9KwxPIkNm7UfKuiIkXNQ0qyj
+         m/Ny1HfY32QeT84bzJ668U+aP/0D+NXvpMVP3SPrZAr1gWzM+S89bNGDC738XU1GMf7J
+         0Hs7KeyyPwTpl2iwrzYbJ25Kejt1Z/5hlCwJqTNtBBKZ06607tjGtEP1CArCCanvSluD
+         V/2LpFBijj/kEFly380H4rf83PrgIBFH24BGY4ZSwd7aVUk0XZtCAsUy4WJg1wwlqgGA
+         7paNh464d5DmgerumJAnn6DnmFFm8P0EpJMcmDBKxzVN57AkKSHFLS3pPH6JaMYrrvtk
+         aWKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXxg4TV0gDSmATxzJvGGGGVAm3rBA9vZvKju2MODp2SbH0P9jepSLiKvTi15Ph5qUdE7BrQrR0MKGKh7Ec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxH8maev9i96B0snYndvITIQ3jWAOxlSXnIqIqrQGs638CVnGJF
+	4m7GS0xEp7G79GhYtSUnfKkQO+SuG2N49Lyp/fb+1f42ZYRGGbXnkvYEELQPMio=
+X-Google-Smtp-Source: AGHT+IHLcXmSRpQaB8dgcKXa9nntACIzV6WJaAH+pB/3cFTdV2WNuVzz50l53KRezE5TAptO6GBBdw==
+X-Received: by 2002:a05:6e02:b22:b0:3a4:e63e:550 with SMTP id e9e14a558f8ab-3a4ed27817dmr54715425ab.1.1730085469594;
+        Sun, 27 Oct 2024 20:17:49 -0700 (PDT)
+Received: from [10.200.3.216] (fs96f9c361.tkyc007.ap.nuro.jp. [150.249.195.97])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc867a2ffsm4687687a12.28.2024.10.27.20.17.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 20:17:49 -0700 (PDT)
+Message-ID: <e31ef46a-ebaa-4040-9e56-b83afb414683@linuxfoundation.org>
+Date: Sun, 27 Oct 2024 21:17:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2603eb2-c498-4361-78b7-08dcf6fecae3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2024 03:15:36.5555
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FRjZTuL6KMQjiChr7wb+TiIXtjNEsFb2WVtL5UjwQXXf8YMQtf+GljC9wYv8zHqtiHEaa98BMY6oYyup1J9gfA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9756
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb:core: Remove unused parameter struct usb_hcd *hcd in
+ usb_hcd_unlink_urb_from_ep
+To: =?UTF-8?B?5p2O5ZOy?= <sensor1010@163.com>, gregkh@linuxfoundation.org,
+ linus.walleij@linaro.org, stern@rowland.harvard.edu, ok@artecdesign.ee,
+ mathias.nyman@intel.com, b-liu@ti.com, valentina.manea.m@gmail.com,
+ shuah@kernel.org, i@zenithal.me, niko.mauno@vaisala.com, dvyukov@google.com,
+ andreyknvl@gmail.com, tj@kernel.org, viro@zeniv.linux.org.uk,
+ christophe.jaillet@wanadoo.fr, stanley_chang@realtek.com, sylv@sylv.io,
+ lee@kernel.org, colin.i.king@gmail.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org
+References: <20241027163130.5368-1-sensor1010@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241027163130.5368-1-sensor1010@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5A
-bnhwLmNvbT4NCj4gU2VudDogMjAyNOW5tDEw5pyIMjjml6UgMTA6MTANCj4gVG86IEpvc3VhIE1h
-eWVyIDxqb3N1YUBzb2xpZC1ydW4uY29tPjsgQWRyaWFuIEh1bnRlcg0KPiA8YWRyaWFuLmh1bnRl
-ckBpbnRlbC5jb20+OyBCb3VnaCBDaGVuIDxoYWliby5jaGVuQG54cC5jb20+OyBVbGYgSGFuc3Nv
-bg0KPiA8dWxmLmhhbnNzb25AbGluYXJvLm9yZz47IFNoYXduIEd1byA8c2hhd25ndW9Aa2VybmVs
-Lm9yZz47IFNhc2NoYSBIYXVlcg0KPiA8cy5oYXVlckBwZW5ndXRyb25peC5kZT47IFBlbmd1dHJv
-bml4IEtlcm5lbCBUZWFtDQo+IDxrZXJuZWxAcGVuZ3V0cm9uaXguZGU+OyBGYWJpbyBFc3RldmFt
-IDxmZXN0ZXZhbUBnbWFpbC5jb20+DQo+IENjOiB5YXphbi5zaGhhZHkgPHlhemFuLnNoaGFkeUBz
-b2xpZC1ydW4uY29tPjsgUmFiZWVoIEtob3VyeQ0KPiA8cmFiZWVoQHNvbGlkLXJ1bi5jb20+OyBp
-bXhAbGlzdHMubGludXguZGV2OyBsaW51eC1tbWNAdmdlci5rZXJuZWwub3JnOw0KPiBkbC1TMzIg
-PFMzMkBueHAuY29tPjsgbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnOw0KPiBs
-aW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJFOiBbUEFUQ0hdIG1tYzog
-aG9zdDogc2RoY2ktZXNkaGMtaW14OiBpbXBsZW1lbnQgZW1tYyBoYXJkd2FyZQ0KPiByZXNldA0K
-PiANCj4gPiBTdWJqZWN0OiBbUEFUQ0hdIG1tYzogaG9zdDogc2RoY2ktZXNkaGMtaW14OiBpbXBs
-ZW1lbnQgZW1tYyBoYXJkd2FyZQ0KPiA+IHJlc2V0DQo+ID4NCj4gPiBOWFAgRVNESEMgc3VwcG9y
-dHMgY29udHJvbCBvZiBuYXRpdmUgZW1tYyByZXNldCBzaWduYWwgd2hlbiBwaW5tdXggaXMNCj4g
-PiBzZXQgYWNjb3JkaW5nbHksIHVzaW5nIHVTREhDeF9TWVNfQ1RSTCByZWdpc3RlciBJUFBfUlNU
-X04gYml0Lg0KPiA+IERvY3VtZW50YXRpb24gaXMgYXZhaWxhYmxlIGluIE5YUCBpLk1YNlEgUmVm
-ZXJlbmNlIE1hbnVhbC4NCj4gDQo+IEJ1dCB0aGlzIHJlbGllcyBvbiB0aGUgUEFEIGJlZW4gY29u
-ZmlndXJlZCBhcyBSRVNFVCwgc2hvdWxkIHRoaXMgZmxvdyBiZWluZw0KPiBkZWZhdWx0IGVuYWJs
-ZWQgd2hldGhlciB0aGUgUEFEIGlzIGNvbmZpZ3VyZWQgYXMgUkVTRVQgb3Igbm90Pw0KDQpObywg
-ZnJvbSBteSB1bmRlcnN0YW5kaW5nLCBldmVuIHRoZSBQQUQgaXMgY29uZmlndXJlZCBhcyBSRVNF
-VCwgc3RpbGwgbmVlZCBTVyB0byBjb25maWcgSVBQX1JTVF9OIHRvIGNvbnRyb2wgdGhlIG91dHB1
-dCBvZiB0aGlzIHBhZC4NCkpvc3VhLCB5b3UgY2FuIGRvdWJsZSBjb25maXJtIHRoaXMgb24geW91
-ciBib2FyZC4gQnkgdGhlIHdheSwgSSBjaGVjayB0aGUgY29kZSwgd2hlbiB5b3UgZG8gdGhlIHRl
-c3QgdG8gc3VwcG9ydCB0aGlzIHJlc2V0IG9wZXJhdGlvbiBvbiBlTU1DLCBkaWQgeW91IGFkZCAg
-ImNhcC1tbWMtaHctcmVzZXQiIGluIGR0cz8NCkZyb20gY3VycmVudCBjb2RlIGxvZ2ljLCB0aGUg
-Y2FsbGJhY2sgeW91IGFkZCBoZXJlIHNlZW1zIG9ubHkgY2FuIGJlIGNhbGxlZCBieSBlTU1DIGRl
-dmljZSwgc28gd2lsbCBiZSBzYWZlIGZvciBzZCBhbmQgc2RpbyBkZXZpY2UuIEFuZCBpZiB5b3Vy
-IGFuc3dlciBmb3IgbXkgcXVlc3Rpb24gaXMgInllcyIsIHRoZW4geW91ciBjaGFuZ2Ugd2lsbCBh
-bHNvIGJlIHNhZmUgZm9yIGVNTUMgZGV2aWNlIHdoaWNoIGRvIG5vdCB1c2UgdGhpcyByZXNldCBm
-dW5jdGlvbiBiZWZvcmUuDQoNCg0KPiANCj4gPg0KPiA+IEltcGxlbWVudCB0aGUgaHdfcmVzZXQg
-ZnVuY3Rpb24gaW4gc2RoY2lfb3BzIGFzc2VydGluZyByZXNldCBmb3IgYXQNCj4gPiBsZWFzdCAx
-MHVzIGFuZCB3YWl0aW5nIGFuIGV4dHJhIDMwMHVzIGFmdGVyIGRlYXNzZXJ0aW9uLg0KPiA+IFRo
-ZXNlIHBhcnRpY3VsYXIgZGVsYXlzIHdlcmUgaW5zcGlyZWQgYnkgc3VueGktbW1jIGh3X3Jlc2V0
-IGZ1bmN0aW9uLg0KPiA+DQo+ID4gVGVzdGVkIG9uIFNvbGlkUnVuIGkuTVg4RFhMIFNvTSB3aXRo
-IGEgc2NvcGUsIGFuZCBjb25maXJtZWQgdGhhdCBlTU1DDQo+ID4gaXMgc3RpbGwgYWNjZXNzaWJs
-ZSBhZnRlciBib290LiBlTU1DIGV4dGNzZCBoYXMgUlNUX05fRlVOQ1RJT049MHgwMSwNCj4gPiBp
-LmUuDQo+ID4gcmVzZXQgaW5wdXQgZW5hYmxlZCwgTGludXggdjUuMTUuDQo+ID4NCj4gPiBTaWdu
-ZWQtb2ZmLWJ5OiBKb3N1YSBNYXllciA8am9zdWFAc29saWQtcnVuLmNvbT4NCj4gPiAtLS0NCj4g
-PiAgZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1lc2RoYy1pbXguYyB8IDEyICsrKysrKysrKysrKw0K
-PiA+ICAxIGZpbGUgY2hhbmdlZCwgMTIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMNCj4gPiBiL2RyaXZlcnMvbW1j
-L2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMNCj4gPiBpbmRleA0KPiA+IDhmMGJjNmRjYTJiMDQwMmZk
-MmEwNjk1OTAzY2YyNjFhNWI0ZTE5ZGMuLmViY2ZhNDI3Y2NhNmNjMjc5MQ0KPiA+IGExNzAxYTM1
-MTVlZjY1MTU3NzlhYTQgMTAwNjQ0DQo+ID4gLS0tIGEvZHJpdmVycy9tbWMvaG9zdC9zZGhjaS1l
-c2RoYy1pbXguYw0KPiA+ICsrKyBiL2RyaXZlcnMvbW1jL2hvc3Qvc2RoY2ktZXNkaGMtaW14LmMN
-Cj4gPiBAQCAtMzMsNiArMzMsOCBAQA0KPiA+ICAjZGVmaW5lIEVTREhDX1NZU19DVFJMX0RUT0NW
-X01BU0sJMHgwZg0KPiA+ICAjZGVmaW5lCUVTREhDX0NUUkxfRDNDRAkJCTB4MDgNCj4gPiAgI2Rl
-ZmluZSBFU0RIQ19CVVJTVF9MRU5fRU5fSU5DUgkJKDEgPDwgMjcpDQo+ID4gKyNkZWZpbmUgRVNE
-SENfU1lTX0NUUkwJCQkweDJjDQo+ID4gKyNkZWZpbmUgRVNESENfU1lTX0NUUkxfSVBQX1JTVF9O
-CUJJVCgyMykNCj4gPiAgLyogVkVORE9SIFNQRUMgcmVnaXN0ZXIgKi8NCj4gPiAgI2RlZmluZSBF
-U0RIQ19WRU5ET1JfU1BFQwkJMHhjMA0KPiA+ICAjZGVmaW5lICBFU0RIQ19WRU5ET1JfU1BFQ19T
-RElPX1FVSVJLCSgxIDw8IDEpDQo+ID4gQEAgLTE0MDIsNiArMTQwNCwxNSBAQCBzdGF0aWMgdTMy
-IGVzZGhjX2NxaGNpX2lycShzdHJ1Y3Qgc2RoY2lfaG9zdA0KPiA+ICpob3N0LCB1MzIgaW50bWFz
-aykNCj4gPiAgCXJldHVybiAwOw0KPiA+ICB9DQo+ID4NCj4gPiArc3RhdGljIHZvaWQgZXNkaGNf
-aHdfcmVzZXQoc3RydWN0IHNkaGNpX2hvc3QgKmhvc3QpIHsNCj4gPiArCWVzZGhjX2NscnNldF9s
-ZShob3N0LCBFU0RIQ19TWVNfQ1RSTF9JUFBfUlNUX04sIDAsDQo+ID4gRVNESENfU1lTX0NUUkwp
-Ow0KPiA+ICsJdWRlbGF5KDEwKTsNCj4gPiArCWVzZGhjX2NscnNldF9sZShob3N0LCBFU0RIQ19T
-WVNfQ1RSTF9JUFBfUlNUX04sDQo+ID4gKwkJCUVTREhDX1NZU19DVFJMX0lQUF9SU1RfTiwNCj4g
-PiBFU0RIQ19TWVNfQ1RSTCk7DQo+ID4gKwl1ZGVsYXkoMzAwKTsNCj4gDQo+IFBsZWFzZSBhZGQg
-YSBjb21tZW50IG9uIHdoeSAxMHVzIG9yIDMwMHVzPyBUaGlzIGlzIGJvYXJkIHJlbGF0ZWQgb3Ig
-c29jDQo+IHJlbGF0ZWQgb3IgY2FyZCByZWxhdGVkPw0KDQpBZ3JlZSwgcGxlYXNlIGFkZCBjb21t
-ZW50IGFuZCBleHBsYWluLg0KDQpSZWdhcmRzDQpIYWlibyBDaGVuDQo+IA0KPiBUaGFua3MsDQo+
-IFBlbmcuDQo+IA0KPiA+ICt9DQo+ID4gKw0KPiA+ICBzdGF0aWMgc3RydWN0IHNkaGNpX29wcyBz
-ZGhjaV9lc2RoY19vcHMgPSB7DQo+ID4gIAkucmVhZF9sID0gZXNkaGNfcmVhZGxfbGUsDQo+ID4g
-IAkucmVhZF93ID0gZXNkaGNfcmVhZHdfbGUsDQo+ID4gQEAgLTE0MjAsNiArMTQzMSw3IEBAIHN0
-YXRpYyBzdHJ1Y3Qgc2RoY2lfb3BzIHNkaGNpX2VzZGhjX29wcyA9IHsNCj4gPiAgCS5yZXNldCA9
-IGVzZGhjX3Jlc2V0LA0KPiA+ICAJLmlycSA9IGVzZGhjX2NxaGNpX2lycSwNCj4gPiAgCS5kdW1w
-X3ZlbmRvcl9yZWdzID0gZXNkaGNfZHVtcF9kZWJ1Z19yZWdzLA0KPiA+ICsJLmh3X3Jlc2V0ID0g
-ZXNkaGNfaHdfcmVzZXQsDQo+ID4gIH07DQo+ID4NCj4gPiAgc3RhdGljIGNvbnN0IHN0cnVjdCBz
-ZGhjaV9wbHRmbV9kYXRhIHNkaGNpX2VzZGhjX2lteF9wZGF0YSA9IHsNCj4gPg0KPiA+IC0tLQ0K
-PiA+IGJhc2UtY29tbWl0OiA5ODUyZDg1ZWM5ZDQ5MmViZWY1NmRjNWYyMjk0MTZjOTI1NzU4ZWRj
-DQo+ID4gY2hhbmdlLWlkOiAyMDI0MTAyNy1pbXgtZW1tYy1yZXNldC03MTI3ZDMxMTE3NGMNCj4g
-Pg0KPiA+IEJlc3QgcmVnYXJkcywNCj4gPiAtLQ0KPiA+IEpvc3VhIE1heWVyIDxqb3N1YUBzb2xp
-ZC1ydW4uY29tPg0KPiA+DQoNCg==
+On 10/27/24 10:31, 李哲 wrote:
+> The first parameter of the usb_hcd_unlink_urb_from_ep() is not used.
+> This causes many callers to have to pass an additional parameter
+> unnecessarily. Let's remove it
+
+How did you find this problem and how did you test this?
+Even if hcd isn't used, usb_hcd_link_urb_to_ep() which
+is link counter part takes hcd
+
+It makses sense to specify hcd to which this urb belongs
+to. Can you give more details on why this change would
+make sense here.
+
+> 
+> Signed-off-by: 李哲 <sensor1010@163.com>
+> ---
+>   drivers/usb/c67x00/c67x00-sched.c    |  6 +++---
+>   drivers/usb/core/hcd.c               |  9 ++++-----
+>   drivers/usb/fotg210/fotg210-hcd.c    | 10 +++++-----
+>   drivers/usb/gadget/udc/dummy_hcd.c   |  2 +-
+>   drivers/usb/host/ehci-q.c            |  4 ++--
+>   drivers/usb/host/ehci-sched.c        |  6 +++---
+>   drivers/usb/host/fhci-q.c            |  2 +-
+>   drivers/usb/host/isp116x-hcd.c       |  4 ++--
+>   drivers/usb/host/isp1362-hcd.c       |  4 ++--
+>   drivers/usb/host/max3421-hcd.c       |  4 ++--
+>   drivers/usb/host/octeon-hcd.c        |  6 +++---
+>   drivers/usb/host/ohci-hcd.c          |  2 +-
+>   drivers/usb/host/ohci-q.c            |  2 +-
+>   drivers/usb/host/r8a66597-hcd.c      |  4 ++--
+>   drivers/usb/host/sl811-hcd.c         |  4 ++--
+>   drivers/usb/host/uhci-q.c            |  4 ++--
+>   drivers/usb/host/xhci-ring.c         |  4 ++--
+>   drivers/usb/host/xhci.c              |  2 +-
+>   drivers/usb/musb/musb_host.c         |  6 +++---
+>   drivers/usb/renesas_usbhs/mod_host.c |  2 +-
+>   drivers/usb/usbip/vhci_hcd.c         |  6 +++---
+>   drivers/usb/usbip/vhci_rx.c          |  4 ++--
+>   include/linux/usb/hcd.h              |  2 +-
+>   23 files changed, 49 insertions(+), 50 deletions(-)
+> 
+> diff --git a/drivers/usb/c67x00/c67x00-sched.c b/drivers/usb/c67x00/c67x00-sched.c
+> index a09fa68a6ce7..28f07e9bb708 100644
+> --- a/drivers/usb/c67x00/c67x00-sched.c
+> +++ b/drivers/usb/c67x00/c67x00-sched.c
+> @@ -429,7 +429,7 @@ int c67x00_urb_enqueue(struct usb_hcd *hcd,
+>   	return 0;
+>   
+>   err_epdata:
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   err_not_linked:
+>   	spin_unlock_irqrestore(&c67x00->lock, flags);
+>   	kfree(urbp);
+> @@ -450,7 +450,7 @@ int c67x00_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   		goto done;
+>   
+>   	c67x00_release_urb(c67x00, urb);
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   
+>   	spin_unlock(&c67x00->lock);
+>   	usb_hcd_giveback_urb(hcd, urb, status);
+> @@ -484,7 +484,7 @@ c67x00_giveback_urb(struct c67x00_hcd *c67x00, struct urb *urb, int status)
+>   	list_del_init(&urbp->hep_node);
+>   
+>   	c67x00_release_urb(c67x00, urb);
+> -	usb_hcd_unlink_urb_from_ep(c67x00_hcd_to_hcd(c67x00), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&c67x00->lock);
+>   	usb_hcd_giveback_urb(c67x00_hcd_to_hcd(c67x00), urb, status);
+>   	spin_lock(&c67x00->lock);
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index 500dc35e6477..c0e159ad7bae 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -707,7 +707,7 @@ static int rh_call_control (struct usb_hcd *hcd, struct urb *urb)
+>   
+>   	/* any errors get returned through the urb completion */
+>   	spin_lock_irq(&hcd_root_hub_lock);
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	usb_hcd_giveback_urb(hcd, urb, status);
+>   	spin_unlock_irq(&hcd_root_hub_lock);
+>   	return 0;
+> @@ -753,7 +753,7 @@ void usb_hcd_poll_rh_status(struct usb_hcd *hcd)
+>   			urb->actual_length = length;
+>   			memcpy(urb->transfer_buffer, buffer, length);
+>   
+> -			usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +			usb_hcd_unlink_urb_from_ep(urb);
+>   			usb_hcd_giveback_urb(hcd, urb, status);
+>   		} else {
+>   			length = 0;
+> @@ -845,7 +845,7 @@ static int usb_rh_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   			del_timer (&hcd->rh_timer);
+>   		if (urb == hcd->status_urb) {
+>   			hcd->status_urb = NULL;
+> -			usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +			usb_hcd_unlink_urb_from_ep(urb);
+>   			usb_hcd_giveback_urb(hcd, urb, status);
+>   		}
+>   	}
+> @@ -1210,7 +1210,6 @@ EXPORT_SYMBOL_GPL(usb_hcd_check_unlink_urb);
+>   
+>   /**
+>    * usb_hcd_unlink_urb_from_ep - remove an URB from its endpoint queue
+> - * @hcd: host controller to which @urb was submitted
+>    * @urb: URB being unlinked
+>    *
+>    * Host controller drivers should call this routine before calling
+> @@ -1218,7 +1217,7 @@ EXPORT_SYMBOL_GPL(usb_hcd_check_unlink_urb);
+>    * interrupts must be disabled.  The actions carried out here are required
+>    * for URB completion.
+>    */
+> -void usb_hcd_unlink_urb_from_ep(struct usb_hcd *hcd, struct urb *urb)
+> +void usb_hcd_unlink_urb_from_ep(struct urb *urb)
+>   {
+>   	/* clear all state linking urb to this dev (and hcd) */
+>   	spin_lock(&hcd_urb_list_lock);
+> diff --git a/drivers/usb/fotg210/fotg210-hcd.c b/drivers/usb/fotg210/fotg210-hcd.c
+> index 3d404d19a205..1b7285885915 100644
+> --- a/drivers/usb/fotg210/fotg210-hcd.c
+> +++ b/drivers/usb/fotg210/fotg210-hcd.c
+> @@ -2221,7 +2221,7 @@ __acquires(fotg210->lock)
+>   #endif
+>   
+>   	/* complete() can reenter this HCD */
+> -	usb_hcd_unlink_urb_from_ep(fotg210_to_hcd(fotg210), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&fotg210->lock);
+>   	usb_hcd_giveback_urb(fotg210_to_hcd(fotg210), urb, status);
+>   	spin_lock(&fotg210->lock);
+> @@ -3043,7 +3043,7 @@ static int submit_async(struct fotg210_hcd *fotg210, struct urb *urb,
+>   
+>   	qh = qh_append_tds(fotg210, urb, qtd_list, epnum, &urb->ep->hcpriv);
+>   	if (unlikely(qh == NULL)) {
+> -		usb_hcd_unlink_urb_from_ep(fotg210_to_hcd(fotg210), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		rc = -ENOMEM;
+>   		goto done;
+>   	}
+> @@ -3855,7 +3855,7 @@ static int intr_submit(struct fotg210_hcd *fotg210, struct urb *urb,
+>   
+>   done:
+>   	if (unlikely(status))
+> -		usb_hcd_unlink_urb_from_ep(fotg210_to_hcd(fotg210), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   done_not_linked:
+>   	spin_unlock_irqrestore(&fotg210->lock, flags);
+>   	if (status)
+> @@ -4553,14 +4553,14 @@ static int itd_submit(struct fotg210_hcd *fotg210, struct urb *urb,
+>   		status = -ESHUTDOWN;
+>   		goto done_not_linked;
+>   	}
+> -	status = usb_hcd_link_urb_to_ep(fotg210_to_hcd(fotg210), urb);
+> +	status = usb_hcd_link_urb_to_ep(urb);
+>   	if (unlikely(status))
+>   		goto done_not_linked;
+>   	status = iso_stream_schedule(fotg210, urb, stream);
+>   	if (likely(status == 0))
+>   		itd_link_urb(fotg210, urb, fotg210->periodic_size << 3, stream);
+>   	else
+> -		usb_hcd_unlink_urb_from_ep(fotg210_to_hcd(fotg210), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   done_not_linked:
+>   	spin_unlock_irqrestore(&fotg210->lock, flags);
+>   done:
+> diff --git a/drivers/usb/gadget/udc/dummy_hcd.c b/drivers/usb/gadget/udc/dummy_hcd.c
+> index 081ac7683c0b..d6ff455ed9ba 100644
+> --- a/drivers/usb/gadget/udc/dummy_hcd.c
+> +++ b/drivers/usb/gadget/udc/dummy_hcd.c
+> @@ -1988,7 +1988,7 @@ static enum hrtimer_restart dummy_timer(struct hrtimer *t)
+>   		if (ep)
+>   			ep->already_seen = ep->setup_stage = 0;
+>   
+> -		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		spin_unlock(&dum->lock);
+>   		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
+>   		spin_lock(&dum->lock);
+> diff --git a/drivers/usb/host/ehci-q.c b/drivers/usb/host/ehci-q.c
+> index ba37a9fcab92..af3f39d28f65 100644
+> --- a/drivers/usb/host/ehci-q.c
+> +++ b/drivers/usb/host/ehci-q.c
+> @@ -271,7 +271,7 @@ ehci_urb_done(struct ehci_hcd *ehci, struct urb *urb, int status)
+>   		urb->actual_length, urb->transfer_buffer_length);
+>   #endif
+>   
+> -	usb_hcd_unlink_urb_from_ep(ehci_to_hcd(ehci), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	usb_hcd_giveback_urb(ehci_to_hcd(ehci), urb, status);
+>   }
+>   
+> @@ -1133,7 +1133,7 @@ submit_async (
+>   
+>   	qh = qh_append_tds(ehci, urb, qtd_list, epnum, &urb->ep->hcpriv);
+>   	if (unlikely(qh == NULL)) {
+> -		usb_hcd_unlink_urb_from_ep(ehci_to_hcd(ehci), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		rc = -ENOMEM;
+>   		goto done;
+>   	}
+> diff --git a/drivers/usb/host/ehci-sched.c b/drivers/usb/host/ehci-sched.c
+> index 7e834587e7de..7f78b63010d1 100644
+> --- a/drivers/usb/host/ehci-sched.c
+> +++ b/drivers/usb/host/ehci-sched.c
+> @@ -957,7 +957,7 @@ static int intr_submit(
+>   
+>   done:
+>   	if (unlikely(status))
+> -		usb_hcd_unlink_urb_from_ep(ehci_to_hcd(ehci), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   done_not_linked:
+>   	spin_unlock_irqrestore(&ehci->lock, flags);
+>   	if (status)
+> @@ -1964,7 +1964,7 @@ static int itd_submit(struct ehci_hcd *ehci, struct urb *urb,
+>   		status = 0;
+>   		ehci_urb_done(ehci, urb, 0);
+>   	} else {
+> -		usb_hcd_unlink_urb_from_ep(ehci_to_hcd(ehci), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   	}
+>    done_not_linked:
+>   	spin_unlock_irqrestore(&ehci->lock, flags);
+> @@ -2341,7 +2341,7 @@ static int sitd_submit(struct ehci_hcd *ehci, struct urb *urb,
+>   		status = 0;
+>   		ehci_urb_done(ehci, urb, 0);
+>   	} else {
+> -		usb_hcd_unlink_urb_from_ep(ehci_to_hcd(ehci), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   	}
+>    done_not_linked:
+>   	spin_unlock_irqrestore(&ehci->lock, flags);
+> diff --git a/drivers/usb/host/fhci-q.c b/drivers/usb/host/fhci-q.c
+> index 669c240523fe..108d19907036 100644
+> --- a/drivers/usb/host/fhci-q.c
+> +++ b/drivers/usb/host/fhci-q.c
+> @@ -198,7 +198,7 @@ void fhci_urb_complete_free(struct fhci_hcd *fhci, struct urb *urb)
+>   			urb->status = 0;
+>   	}
+>   
+> -	usb_hcd_unlink_urb_from_ep(fhci_to_hcd(fhci), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   
+>   	spin_unlock(&fhci->lock);
+>   
+> diff --git a/drivers/usb/host/isp116x-hcd.c b/drivers/usb/host/isp116x-hcd.c
+> index a82d8926e922..f2c001cd526a 100644
+> --- a/drivers/usb/host/isp116x-hcd.c
+> +++ b/drivers/usb/host/isp116x-hcd.c
+> @@ -304,7 +304,7 @@ __releases(isp116x->lock) __acquires(isp116x->lock)
+>   
+>   	urb_dbg(urb, "Finish");
+>   
+> -	usb_hcd_unlink_urb_from_ep(isp116x_to_hcd(isp116x), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&isp116x->lock);
+>   	usb_hcd_giveback_urb(isp116x_to_hcd(isp116x), urb, status);
+>   	spin_lock(&isp116x->lock);
+> @@ -824,7 +824,7 @@ static int isp116x_urb_enqueue(struct usb_hcd *hcd,
+>   
+>         fail:
+>   	if (ret)
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>         fail_not_linked:
+>   	spin_unlock_irqrestore(&isp116x->lock, flags);
+>   	return ret;
+> diff --git a/drivers/usb/host/isp1362-hcd.c b/drivers/usb/host/isp1362-hcd.c
+> index 31059c8f94e6..ba52edd31d09 100644
+> --- a/drivers/usb/host/isp1362-hcd.c
+> +++ b/drivers/usb/host/isp1362-hcd.c
+> @@ -466,7 +466,7 @@ static void finish_request(struct isp1362_hcd *isp1362_hcd, struct isp1362_ep *e
+>   		"short_ok" : "", urb->status);
+>   
+>   
+> -	usb_hcd_unlink_urb_from_ep(isp1362_hcd_to_hcd(isp1362_hcd), urb);
+> +	usb_hcd_unlink_urb_from_ep(isp1362_hcd_to_hcd(urb));
+>   	spin_unlock(&isp1362_hcd->lock);
+>   	usb_hcd_giveback_urb(isp1362_hcd_to_hcd(isp1362_hcd), urb, status);
+>   	spin_lock(&isp1362_hcd->lock);
+> @@ -1384,7 +1384,7 @@ static int isp1362_urb_enqueue(struct usb_hcd *hcd,
+>   	}
+>    fail:
+>   	if (retval)
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   
+>   
+>    fail_not_linked:
+> diff --git a/drivers/usb/host/max3421-hcd.c b/drivers/usb/host/max3421-hcd.c
+> index 9fe4f48b1898..f7a1d8fb3085 100644
+> --- a/drivers/usb/host/max3421-hcd.c
+> +++ b/drivers/usb/host/max3421-hcd.c
+> @@ -779,7 +779,7 @@ max3421_check_unlink(struct usb_hcd *hcd)
+>   				retval = 1;
+>   				dev_dbg(&spi->dev, "%s: URB %p unlinked=%d",
+>   					__func__, urb, urb->unlinked);
+> -				usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +				usb_hcd_unlink_urb_from_ep(urb);
+>   				spin_unlock_irqrestore(&max3421_hcd->lock,
+>   						       flags);
+>   				usb_hcd_giveback_urb(hcd, urb, 0);
+> @@ -1352,7 +1352,7 @@ max3421_urb_done(struct usb_hcd *hcd)
+>   
+>   		max3421_hcd->curr_urb = NULL;
+>   		spin_lock_irqsave(&max3421_hcd->lock, flags);
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		spin_unlock_irqrestore(&max3421_hcd->lock, flags);
+>   
+>   		/* must be called without the HCD spinlock: */
+> diff --git a/drivers/usb/host/octeon-hcd.c b/drivers/usb/host/octeon-hcd.c
+> index 19d5777f5db2..2f13b3e2475f 100644
+> --- a/drivers/usb/host/octeon-hcd.c
+> +++ b/drivers/usb/host/octeon-hcd.c
+> @@ -2036,7 +2036,7 @@ static void octeon_usb_urb_complete_callback(struct octeon_hcd *usb,
+>   		urb->status = -EPROTO;
+>   		break;
+>   	}
+> -	usb_hcd_unlink_urb_from_ep(octeon_to_hcd(usb), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&usb->lock);
+>   	usb_hcd_giveback_urb(octeon_to_hcd(usb), urb, urb->status);
+>   	spin_lock(&usb->lock);
+> @@ -3161,7 +3161,7 @@ static int octeon_usb_urb_enqueue(struct usb_hcd *hcd,
+>   					   >> 11) & 0x3,
+>   					  split_device, split_port);
+>   		if (!pipe) {
+> -			usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +			usb_hcd_unlink_urb_from_ep(urb);
+>   			spin_unlock_irqrestore(&usb->lock, flags);
+>   			dev_dbg(dev, "Failed to create pipe\n");
+>   			return -ENOMEM;
+> @@ -3231,7 +3231,7 @@ static int octeon_usb_urb_enqueue(struct usb_hcd *hcd,
+>   		break;
+>   	}
+>   	if (!transaction) {
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		spin_unlock_irqrestore(&usb->lock, flags);
+>   		dev_dbg(dev, "Failed to submit\n");
+>   		return -ENOMEM;
+> diff --git a/drivers/usb/host/ohci-hcd.c b/drivers/usb/host/ohci-hcd.c
+> index 9b24181fee60..47f4b071322c 100644
+> --- a/drivers/usb/host/ohci-hcd.c
+> +++ b/drivers/usb/host/ohci-hcd.c
+> @@ -226,7 +226,7 @@ static int ohci_urb_enqueue (
+>   	if (ed->state == ED_IDLE) {
+>   		retval = ed_schedule (ohci, ed);
+>   		if (retval < 0) {
+> -			usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +			usb_hcd_unlink_urb_from_ep(urb);
+>   			goto fail;
+>   		}
+>   
+> diff --git a/drivers/usb/host/ohci-q.c b/drivers/usb/host/ohci-q.c
+> index 3b445312beea..ad96205510ef 100644
+> --- a/drivers/usb/host/ohci-q.c
+> +++ b/drivers/usb/host/ohci-q.c
+> @@ -70,7 +70,7 @@ __acquires(ohci->lock)
+>   	}
+>   
+>   	/* urb->complete() can reenter this HCD */
+> -	usb_hcd_unlink_urb_from_ep(ohci_to_hcd(ohci), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock (&ohci->lock);
+>   	usb_hcd_giveback_urb(ohci_to_hcd(ohci), urb, status);
+>   	spin_lock (&ohci->lock);
+> diff --git a/drivers/usb/host/r8a66597-hcd.c b/drivers/usb/host/r8a66597-hcd.c
+> index 6576515a29cd..3002e0b1442a 100644
+> --- a/drivers/usb/host/r8a66597-hcd.c
+> +++ b/drivers/usb/host/r8a66597-hcd.c
+> @@ -823,7 +823,7 @@ __acquires(r8a66597->lock)
+>   			flush_dcache_page(virt_to_page(ptr));
+>   	}
+>   
+> -	usb_hcd_unlink_urb_from_ep(r8a66597_to_hcd(r8a66597), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&r8a66597->lock);
+>   	usb_hcd_giveback_urb(r8a66597_to_hcd(r8a66597), urb, status);
+>   	spin_lock(&r8a66597->lock);
+> @@ -1943,7 +1943,7 @@ static int r8a66597_urb_enqueue(struct usb_hcd *hcd,
+>   
+>   error:
+>   	if (ret)
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   error_not_linked:
+>   	spin_unlock_irqrestore(&r8a66597->lock, flags);
+>   	return ret;
+> diff --git a/drivers/usb/host/sl811-hcd.c b/drivers/usb/host/sl811-hcd.c
+> index 92f2d1238448..2bb21437671c 100644
+> --- a/drivers/usb/host/sl811-hcd.c
+> +++ b/drivers/usb/host/sl811-hcd.c
+> @@ -429,7 +429,7 @@ static void finish_request(
+>   	if (usb_pipecontrol(urb->pipe))
+>   		ep->nextpid = USB_PID_SETUP;
+>   
+> -	usb_hcd_unlink_urb_from_ep(sl811_to_hcd(sl811), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&sl811->lock);
+>   	usb_hcd_giveback_urb(sl811_to_hcd(sl811), urb, status);
+>   	spin_lock(&sl811->lock);
+> @@ -951,7 +951,7 @@ static int sl811h_urb_enqueue(
+>   	sl811_write(sl811, SL11H_IRQ_ENABLE, sl811->irq_enable);
+>   fail:
+>   	if (retval)
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   fail_not_linked:
+>   	spin_unlock_irqrestore(&sl811->lock, flags);
+>   	return retval;
+> diff --git a/drivers/usb/host/uhci-q.c b/drivers/usb/host/uhci-q.c
+> index 35fcb826152c..7980bc666af1 100644
+> --- a/drivers/usb/host/uhci-q.c
+> +++ b/drivers/usb/host/uhci-q.c
+> @@ -1472,7 +1472,7 @@ static int uhci_urb_enqueue(struct usb_hcd *hcd,
+>   	uhci_free_urb_priv(uhci, urbp);
+>   done:
+>   	if (ret)
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   done_not_linked:
+>   	spin_unlock_irqrestore(&uhci->lock, flags);
+>   	return ret;
+> @@ -1550,7 +1550,7 @@ __acquires(uhci->lock)
+>   	}
+>   
+>   	uhci_free_urb_priv(uhci, urbp);
+> -	usb_hcd_unlink_urb_from_ep(uhci_to_hcd(uhci), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   
+>   	spin_unlock(&uhci->lock);
+>   	usb_hcd_giveback_urb(uhci_to_hcd(uhci), urb, status);
+> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
+> index b6eb928e260f..4c3eb475147b 100644
+> --- a/drivers/usb/host/xhci-ring.c
+> +++ b/drivers/usb/host/xhci-ring.c
+> @@ -775,7 +775,7 @@ static void xhci_giveback_urb_in_irq(struct xhci_hcd *xhci,
+>   		}
+>   	}
+>   	xhci_urb_free_priv(urb_priv);
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	trace_xhci_urb_giveback(urb);
+>   	usb_hcd_giveback_urb(hcd, urb, status);
+>   }
+> @@ -4178,7 +4178,7 @@ static int xhci_queue_isoc_tx(struct xhci_hcd *xhci, gfp_t mem_flags,
+>   	ep_ring->enqueue = urb_priv->td[0].first_trb;
+>   	ep_ring->enq_seg = urb_priv->td[0].start_seg;
+>   	ep_ring->cycle_state = start_cycle;
+> -	usb_hcd_unlink_urb_from_ep(bus_to_hcd(urb->dev->bus), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	return ret;
+>   }
+>   
+> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
+> index 899c0effb5d3..780c2c89407e 100644
+> --- a/drivers/usb/host/xhci.c
+> +++ b/drivers/usb/host/xhci.c
+> @@ -1789,7 +1789,7 @@ static int xhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   err_giveback:
+>   	if (urb_priv)
+>   		xhci_urb_free_priv(urb_priv);
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock_irqrestore(&xhci->lock, flags);
+>   	usb_hcd_giveback_urb(hcd, urb, -ESHUTDOWN);
+>   	return ret;
+> diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
+> index bc4507781167..7d574b40af6a 100644
+> --- a/drivers/usb/musb/musb_host.c
+> +++ b/drivers/usb/musb/musb_host.c
+> @@ -280,7 +280,7 @@ __acquires(musb->lock)
+>   {
+>   	trace_musb_urb_gb(musb, urb);
+>   
+> -	usb_hcd_unlink_urb_from_ep(musb->hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock(&musb->lock);
+>   	usb_hcd_giveback_urb(musb->hcd, urb, status);
+>   	spin_lock(&musb->lock);
+> @@ -2157,7 +2157,7 @@ static int musb_urb_enqueue(
+>   	qh = kzalloc(sizeof *qh, mem_flags);
+>   	if (!qh) {
+>   		spin_lock_irqsave(&musb->lock, flags);
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		spin_unlock_irqrestore(&musb->lock, flags);
+>   		return -ENOMEM;
+>   	}
+> @@ -2292,7 +2292,7 @@ static int musb_urb_enqueue(
+>   done:
+>   	if (ret != 0) {
+>   		spin_lock_irqsave(&musb->lock, flags);
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		spin_unlock_irqrestore(&musb->lock, flags);
+>   		kfree(qh);
+>   	}
+> diff --git a/drivers/usb/renesas_usbhs/mod_host.c b/drivers/usb/renesas_usbhs/mod_host.c
+> index ae54221011c3..a3646bace962 100644
+> --- a/drivers/usb/renesas_usbhs/mod_host.c
+> +++ b/drivers/usb/renesas_usbhs/mod_host.c
+> @@ -652,7 +652,7 @@ static void usbhsh_queue_done(struct usbhs_priv *priv, struct usbhs_pkt *pkt)
+>   
+>   	usbhsh_pipe_detach(hpriv, usbhsh_ep_to_uep(urb->ep));
+>   
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	usb_hcd_giveback_urb(hcd, urb, status);
+>   }
+>   
+> diff --git a/drivers/usb/usbip/vhci_hcd.c b/drivers/usb/usbip/vhci_hcd.c
+> index 8dac1edc74d4..a182ffa32c99 100644
+> --- a/drivers/usb/usbip/vhci_hcd.c
+> +++ b/drivers/usb/usbip/vhci_hcd.c
+> @@ -806,7 +806,7 @@ static int vhci_urb_enqueue(struct usb_hcd *hcd, struct urb *urb, gfp_t mem_flag
+>   	return 0;
+>   
+>   no_need_xmit:
+> -	usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   no_need_unlink:
+>   	spin_unlock_irqrestore(&vhci->lock, flags);
+>   	if (!ret) {
+> @@ -912,7 +912,7 @@ static int vhci_urb_dequeue(struct usb_hcd *hcd, struct urb *urb, int status)
+>   		 * vhci_rx will receive RET_UNLINK and give back the URB.
+>   		 * Otherwise, we give back it here.
+>   		 */
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   
+>   		spin_unlock_irqrestore(&vhci->lock, flags);
+>   		usb_hcd_giveback_urb(hcd, urb, urb->status);
+> @@ -977,7 +977,7 @@ static void vhci_cleanup_unlink_list(struct vhci_device *vdev,
+>   
+>   		urb->status = -ENODEV;
+>   
+> -		usb_hcd_unlink_urb_from_ep(hcd, urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   
+>   		list_del(&unlink->list);
+>   
+> diff --git a/drivers/usb/usbip/vhci_rx.c b/drivers/usb/usbip/vhci_rx.c
+> index 7f2d1c241559..236d0dd95d3b 100644
+> --- a/drivers/usb/usbip/vhci_rx.c
+> +++ b/drivers/usb/usbip/vhci_rx.c
+> @@ -101,7 +101,7 @@ static void vhci_recv_ret_submit(struct vhci_device *vdev,
+>   	usbip_dbg_vhci_rx("now giveback urb %u\n", pdu->base.seqnum);
+>   
+>   	spin_lock_irqsave(&vhci->lock, flags);
+> -	usb_hcd_unlink_urb_from_ep(vhci_hcd_to_hcd(vhci_hcd), urb);
+> +	usb_hcd_unlink_urb_from_ep(urb);
+>   	spin_unlock_irqrestore(&vhci->lock, flags);
+>   
+>   	usb_hcd_giveback_urb(vhci_hcd_to_hcd(vhci_hcd), urb, urb->status);
+> @@ -172,7 +172,7 @@ static void vhci_recv_ret_unlink(struct vhci_device *vdev,
+>   		pr_info("urb->status %d\n", urb->status);
+>   
+>   		spin_lock_irqsave(&vhci->lock, flags);
+> -		usb_hcd_unlink_urb_from_ep(vhci_hcd_to_hcd(vhci_hcd), urb);
+> +		usb_hcd_unlink_urb_from_ep(urb);
+>   		spin_unlock_irqrestore(&vhci->lock, flags);
+>   
+>   		usb_hcd_giveback_urb(vhci_hcd_to_hcd(vhci_hcd), urb, urb->status);
+> diff --git a/include/linux/usb/hcd.h b/include/linux/usb/hcd.h
+> index ac95e7c89df5..9a451658a779 100644
+> --- a/include/linux/usb/hcd.h
+> +++ b/include/linux/usb/hcd.h
+> @@ -425,7 +425,7 @@ static inline bool hcd_uses_dma(struct usb_hcd *hcd)
+>   extern int usb_hcd_link_urb_to_ep(struct usb_hcd *hcd, struct urb *urb);
+>   extern int usb_hcd_check_unlink_urb(struct usb_hcd *hcd, struct urb *urb,
+>   		int status);
+> -extern void usb_hcd_unlink_urb_from_ep(struct usb_hcd *hcd, struct urb *urb);
+> +extern void usb_hcd_unlink_urb_from_ep(struct urb *urb);
+>   
+>   extern int usb_hcd_submit_urb(struct urb *urb, gfp_t mem_flags);
+>   extern int usb_hcd_unlink_urb(struct urb *urb, int status);
+
+thanks,
+-- Shuah
+
 
