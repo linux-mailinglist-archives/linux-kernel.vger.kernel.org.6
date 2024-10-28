@@ -1,148 +1,100 @@
-Return-Path: <linux-kernel+bounces-384194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721229B273D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:46:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0E39B2745
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:47:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7174B21341
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:46:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 237011C2138B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4195918F2EA;
-	Mon, 28 Oct 2024 06:46:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 127B318D65C;
+	Mon, 28 Oct 2024 06:46:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWYQWbvV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pXfr6iuk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E0817109B;
-	Mon, 28 Oct 2024 06:46:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AC118A924;
+	Mon, 28 Oct 2024 06:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730097991; cv=none; b=lnA9gOssa5KvdX2gh/J4so7ikO41nxonTOwRLhxiBVHTRpC7tIOy1S1hRSTgToZqm6dJ0zkSJgWAIIG4cVZHOnhjzJrpvX9HMJRrCx9EIbums+fjxspP5ihY4eq8t8OHx121e6CDXkafAe/88qQnitqQ0vpFSyPyQhR9NhzNhtA=
+	t=1730097998; cv=none; b=J3ZtHsAZyrH8qGEVw+MaJQv9SHD0kf5mw//1+ssxKo/DvDrFAiZMCX0Wxg88ujEV4HIcDwuoQNtwPi6Rj5yorl8526qHnrQJvlCfpxH2YBDcd/zAAd8dy+1xngecpo/G5lXlok0KIBbaYpOuRq/8pova5ks7UJNcK/rK/i7lppk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730097991; c=relaxed/simple;
-	bh=zraLD1i4NLRGpVjSLjiBSQ0TaidWFCShHsYJEYMdNVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pi9YR8WcF+LSdqWOD8i2U4gnTA4uvpianRaLk04z3aJ16D2djWMWskyVc+7yRFiKB/VvXwiFLWRBt4haOAiHiklNOAHw6Ym+iFjSpDKFJxwcIYOitWRI+uZyxmdFm0X/tCg4iVSNiTQQz+9Ka+RyjIxX/sheCKW6PeZBFAiHXd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWYQWbvV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FC8C4CEC7;
-	Mon, 28 Oct 2024 06:46:25 +0000 (UTC)
+	s=arc-20240116; t=1730097998; c=relaxed/simple;
+	bh=JxpLCeEPUhJrMkdL0TYudbC/XbTxYSrHktHQOg5tBzY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pajR0/ucKNIQXo/E8COdMX0upwc/8LRvqEdlN1DPHe3PvwIBxvHrdcJgyZVhaAbyaEiRtpSxQuiGXN2OTXcnm8WUid/G/JObx3NVF3ToBjf6LZSiAF1IenFBisuWbL8HC9T3pElTmPKXM+2hP0ROzci1+tLjYsooP8wvZLS3KcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pXfr6iuk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA05C4CEC3;
+	Mon, 28 Oct 2024 06:46:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730097991;
-	bh=zraLD1i4NLRGpVjSLjiBSQ0TaidWFCShHsYJEYMdNVs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hWYQWbvVy1k6DMW5nmUi93yFgKf0h/FGq7oSvUPoUiONJH3g2ykXYQH3NYDFK7byG
-	 M8j9q0rG/ftKVgGAPwvE44aTdVwK1gHvenUawFHRZ++ugYmmGJ5tt5NytBccdN+djr
-	 RjzduoUtEtPlzgjiGT2I9P1IYq5cmoxBFDhtmZxBiECo4Ms9p0UXKQWaSYSV0BYS9l
-	 mYDpky2w94ILP4yFLUz5Qpj/hp2R1gUYMIYSDPENSUtNRU+DR/oOSVug2ksV8Cz1/B
-	 UagMxIsLWUk2jk33fos1o9ammE8lpeBrKel60Dswk0geewTsxujArCWashdph04sNr
-	 JVYSTfZD6D4TQ==
-Message-ID: <775b56c6-a7dd-4123-8868-69ca01a35af5@kernel.org>
-Date: Mon, 28 Oct 2024 07:46:23 +0100
+	s=k20201202; t=1730097998;
+	bh=JxpLCeEPUhJrMkdL0TYudbC/XbTxYSrHktHQOg5tBzY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pXfr6iukpFNitgAKIIVSyCYtDDCh3B1GaWuseUbNm4XLfuvHiPNIEI1RqzgXGCn+r
+	 T8x3ffU9NvEGqhEZOlcisSCjWlq5PsrCdXVG8sEw7pR+jCveH56xttouEjDQJDV8WY
+	 bx5SFdkmU/eJH7Hrzmkv07xrrIzZ4Y8X8n46X7ryPLmoTBBwUTYHLhLxEw9x3XHUY1
+	 Sze57dE6qj3rdN/EwuSVQ8/g13tIxT1HqDmg5aZ6q77NA2Bid5WHDDtaexWJgT2Sgx
+	 tKYkFMMAg8RNVBv4t74ApVds33Nr2L4PoRFdOrDOZnsgk8sPPHU+TQP6pn8GBLAoZx
+	 12xZsB0TjAqdA==
+Date: Mon, 28 Oct 2024 08:46:34 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Srinivasulu Thanneeru <dev.srinivasulu@gmail.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>, Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 05/18] dma: Provide an interface to allow allocate IOVA
+Message-ID: <20241028064634.GE1615717@unreal>
+References: <cover.1730037276.git.leon@kernel.org>
+ <844f3dcf9c341b8178bfbc90909ef13d11dd2193.1730037276.git.leon@kernel.org>
+ <CAMtOeKJeVrELCp5JpYTC64KdfKpbnW9a8QrnL6ziCYL48nc=qQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v3 09/10] arm64: dts: exynos: Add Exynos9810 SoC
- support
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Markuss Broks <markuss.broks@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Maksym Holovach <nergzd@nergzd723.xyz>
-References: <20241026-exynos9810-v3-0-b89de9441ea8@gmail.com>
- <20241026-exynos9810-v3-9-b89de9441ea8@gmail.com>
- <173005920218.11546.3963593817214010231.b4-ty@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <173005920218.11546.3963593817214010231.b4-ty@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMtOeKJeVrELCp5JpYTC64KdfKpbnW9a8QrnL6ziCYL48nc=qQ@mail.gmail.com>
 
-On 27/10/2024 21:00, Krzysztof Kozlowski wrote:
+On Mon, Oct 28, 2024 at 09:54:49AM +0530, Srinivasulu Thanneeru wrote:
+> On Sun, Oct 27, 2024 at 10:23 PM Leon Romanovsky <leon@kernel.org> wrote:
+> >
+> > From: Leon Romanovsky <leonro@nvidia.com>
+> >
+> > The existing .map_page() callback provides both allocating of IOVA
+> > and linking DMA pages. That combination works great for most of the
+> > callers who use it in control paths, but is less effective in fast
+> > paths where there may be multiple calls to map_page().
 > 
-> On Sat, 26 Oct 2024 23:32:40 +0300, Markuss Broks wrote:
->> Exynos 9810 is an ARMv8 mobile SoC found in various Samsung devices,
->> such as Samsung Galaxy S9 (starlte), S9 Plus (star2lte),
->> Note 9 (crownlte) and perhaps others.
->>
->> Add minimal support for this SoC, including basic stuff like:
->> - PSCI for bringing up secondary cores
->> - ARMv8 generic timer
->> - GPIO and pinctrl.
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [09/10] arm64: dts: exynos: Add Exynos9810 SoC support
->         https://git.kernel.org/krzk/linux/c/6c1fe47df5a79f1efc2d5c73e506c8d34692527a
-> 
+> Can you please share perf stats with this patch in fast path, if available?
 
-And dropped (also DTS): does not even build!
+I don't have this data for HMM and VFIO as they have other benefits from this
+series except performance. For NVMe, I don't have the data yet, but it will
+come https://lore.kernel.org/all/cover.1730037261.git.leon@kernel.org/,
+as it is the main performant user of this API.
 
-exynos9810-starlte.dts:72.9-10 syntax error
+This is the main reason why NVMe series is marked as RFC yet.
 
-I should not have trusted this and blindly take the patches for next. Or
-at least wait till my CI finishes building before calling it a day.
-
-Best regards,
-Krzysztof
-
+Thanks
 
