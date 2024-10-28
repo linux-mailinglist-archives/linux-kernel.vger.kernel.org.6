@@ -1,47 +1,73 @@
-Return-Path: <linux-kernel+bounces-384691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37DA9B2D42
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:49:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70149B2D49
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:49:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319941C21967
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:49:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AA21F214A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:49:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BBAD1D2B37;
-	Mon, 28 Oct 2024 10:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADB81D433F;
+	Mon, 28 Oct 2024 10:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2/MnGix"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx1CqIXv"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9490C15E8B;
-	Mon, 28 Oct 2024 10:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163E0192B98;
+	Mon, 28 Oct 2024 10:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112560; cv=none; b=gHpiSmgadaNNh0AMVDHSCKdhIQPoMX5/3Esv1T1aBp9xBo76v1tdQgFlvHw0LRY8kiMG6IghRm57zpQB9cG72CHIevenzWyzS0eWUF48pXZcgsITBb/rm4woZ6Y7lB8F9H77M6mZiN93+Wsaa+gH76jEwdi6rk7OGx4ukdKII5g=
+	t=1730112587; cv=none; b=WvrvYc9xyJ0V5GgAW+KS/t2PPD0AHunbqO2FUunuUt2H/LG0Gv8bHfhaFtUV2zdFbF1QwCemJ5J3DZg+HNlrhux0oTkH2Su0SvBYsr/NeKVinfAK3OJsgdBUeE/Ka5XjA9OjPoWDGqHquAm/Ox8C6xmCZ0vjXlMRcLUbv47/quc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112560; c=relaxed/simple;
-	bh=v6EHhhVXOSG8ZL9YvhzZLZdGXNHG3JkKEDntfhN7X50=;
+	s=arc-20240116; t=1730112587; c=relaxed/simple;
+	bh=OIlWErpCErhhvqC1O/BLstj0Os973FkT8FU9m2dF2y4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gc10uQ5vy63yAC9t0z0Y7HjkFNEaTgdN4kT/CL754Hf+RlqvywgN8jx9JmQ+5rbf2/LhLZY/V/0sxX/Z5/C/7FFICxRWbUHzDkc0tZugglVdOYTtQ83MFGMPYlSWhF5omLZADAIZ18Di20cD+WAB+aGyFQZ56jxJVqStYv4iBWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2/MnGix; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87550C4CEC3;
-	Mon, 28 Oct 2024 10:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730112558;
-	bh=v6EHhhVXOSG8ZL9YvhzZLZdGXNHG3JkKEDntfhN7X50=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i2/MnGixTaxiehclVcN4zqa7p3XLhvQW7/CPplOhhQvO2aff5bsKSW43W/qdjwiU6
-	 CcNygD0rbjq+XAh7SW1ad5DMijLq4X4ynkjpplqD4kjO5x/Vkad7cqk7FwSkuBEepw
-	 3KYjcNqZzfjvWxQuIfFsZLPfAZ/XV/9XW1en3aFWGql/BUe1+W1V3XEWabxq3KdApC
-	 fGKerSYGOqbpGbVp8r38t+xsZ/aCFZRGr3Ejg5/q7bPYMm1xsWv982Pebn/3+Zqdzp
-	 o4rbw7fPmGjJgSAZzjopKGovrl7+/0462308enC8ZzctTD4iT2VXkW6M6vLAUAEI+A
-	 zViFJePMVFqeA==
-Message-ID: <fd4fffb3-44d3-4efb-8c74-4d94e1f26298@kernel.org>
-Date: Mon, 28 Oct 2024 11:49:10 +0100
+	 In-Reply-To:Content-Type; b=izqtUc2c3bZTE8+5jnpvpn5d1+3uU4PZtsNmx5EX6aIGBlxnkXndUR7xg9bvflUS48cn/+ZBoz8w783z9z6KRCLu3pDzKVoNWetr6A8soGs3Te7GpYndCKpiuhoZWkpL6RIoY7sVfq07mlPvg2SCRqmRJAzozp4FMGRIzeo5Cwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jx1CqIXv; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cbb0900c86so3105476a12.0;
+        Mon, 28 Oct 2024 03:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730112582; x=1730717382; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BADti5TEboUpz7hQZAwm95LJ4r/iBnqor7lFpH91gUs=;
+        b=Jx1CqIXvA9KUrVhiqPZYG5ZulMclVp0nks7EDlZlnubKOwpSEDj79jG4v1PfVrXh8Z
+         /N/cxdXlpFJ1nbkOiE/stbgMZvuNO4ic4owt6tvJqHe3Q+HDdgzH70jgUlhPRUjdgHOK
+         ODA+YSMTcyJ/6DOPalw7lknWUdNWnF4VhzeasF7A2JLZzaEwC2KlLDDDQNpnnwRZls77
+         FPj2bj9cHd/3Pul62ybfmt88z25YYCVYhlDCN5QLPo1KBCQg69/VAUYiig0kjRc7FAnj
+         avAhDnAp3aN21MmtYCkahxhWSRIR4mldIrlNfOGgsbbnxWpxtL2JEETPgc7ApTY492oL
+         Jk9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730112582; x=1730717382;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=BADti5TEboUpz7hQZAwm95LJ4r/iBnqor7lFpH91gUs=;
+        b=sspJDpOadx36kJGAyMsSs/SL6+QCa52a9iEpYVSL9p6SbwCc+lBAzWXqwjjyc5TzSB
+         VYF/myZYrwqwpVvHqqu+izhYN8LtqCNgGbqirUWbV7Er5Ng8wHiy3wQg9Ucbf1Hkq1UD
+         SOpP+84hWK7BBecX/GxFmYmbhBKngW4Ssnd7UMLOmmJJK59LtYPZ19HhYtSjjunHAftM
+         QvSOeExtbPZ9hsTUYDwrBz2pNcwAwqHRqzHrOQDyOotHcIIs8ulcbiKWKBUDINED8uWU
+         sH2CrEqJjCOyzntV2/4IhLTZGT/45efjxY1HcBtHZJbOa6EATAU1kXcA/PBaa1p0OPtS
+         d24Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURs8OxEEkoXIyzXv3EFJ4h9dSCWFjWdCxaHP+C/cTzX4j/5ZJXgSLC1Rt8KNVvEPo/bhtwAfRJYjAMDLZj@vger.kernel.org, AJvYcCUVbmRYMTy/ZmWRoaCYUSgiSnG7Kdom31zAshgNw0ptyr2iJiFVqK+uvdjdDBjx8ZZE1Satraw5z2lv@vger.kernel.org, AJvYcCVvd7xfA12kTw5lkO08D7XoLQBxRRxarbgPIm5P8sql1pdGG0+vakAxytdLOLO9EQwYUFhwR6MCcLGR1w==@vger.kernel.org, AJvYcCWOa2M1/vkM1w5UCbEATTQr0QXBK+QgTwKFTd9Qpw/iJztUA7myZfcHlbOO0uYttIk4awSJGMJc0ARbsDaQMTY=@vger.kernel.org, AJvYcCWYswW85swLkgzkNesROMkLHIk8dIwvdbYA3XC4Dny6FNdN4eZJ3HJ67QNK4n3YWRACOeZFH7k7TY354g==@vger.kernel.org, AJvYcCWwP+SMGuKAMcgVbTHo4feZCLh8dPTX7WQFfTG/cl/liwpMfc9YKAjwM0p2VNQeMJx8ZkZ95qgy1sw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYaWCUiejFLYTcAPOMv9RJ8lb455tS1VjCZ+URCIXdd0hyyIX8
+	Ue1PdAHs1jijyA/lB+p07kFPXy2PNQUj8bStq0F6Ztv5uhcbQacH
+X-Google-Smtp-Source: AGHT+IEm+HFLbPsaDOWlAHThJ3+XtoGjdhXujglmfhVMP7yNqtZqIoTJpMUXVSYjXbaSqnnT3/SHtw==
+X-Received: by 2002:a05:6402:5202:b0:5c9:5cff:3cc2 with SMTP id 4fb4d7f45d1cf-5cbbfa71a66mr5776613a12.29.1730112582021;
+        Mon, 28 Oct 2024 03:49:42 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::5:1494])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6258683sm3063919a12.20.2024.10.28.03.49.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 03:49:41 -0700 (PDT)
+Message-ID: <71decb01-4241-4fb0-bc38-187e180d6ee5@gmail.com>
+Date: Mon, 28 Oct 2024 10:49:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,203 +75,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] arm64: dts: imx8mp: add aristainetos3 board
- support
-To: hs@denx.de, linux-kernel@vger.kernel.org
-Cc: Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20241028082332.21672-1-hs@denx.de>
- <20241028082332.21672-3-hs@denx.de>
- <f4150aa3-4c0e-45fa-9c9c-879ac04c4364@kernel.org>
- <bf2c81e1-4e97-cfa2-326f-0a6125b2cff9@denx.de>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2] of/fdt: add dt_phys arg to early_init_dt_scan and
+ early_init_dt_verify
+To: Rob Herring <robh@kernel.org>
+Cc: mark.rutland@arm.com, will@kernel.org, leitao@debian.org,
+ catalin.marinas@arm.com, tglx@linutronix.de, chris@zankel.net,
+ saravanak@google.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ kexec@lists.infradead.org, loongarch@lists.linux.dev,
+ linux-sh@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, linux-openrisc@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-csky@vger.kernel.org
+References: <20241023171426.452688-1-usamaarif642@gmail.com>
+ <CAL_JsqLBuzRYgnYHCdbdO4wneFNPe5_iEfbehvKK5M7bBuiyfA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <bf2c81e1-4e97-cfa2-326f-0a6125b2cff9@denx.de>
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAL_JsqLBuzRYgnYHCdbdO4wneFNPe5_iEfbehvKK5M7bBuiyfA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/10/2024 11:41, Heiko Schocher wrote:
-> Hello Krzysztof,
-> 
-> On 28.10.24 11:24, Krzysztof Kozlowski wrote:
->> On 28/10/2024 09:23, Heiko Schocher wrote:
->>> Add support for the i.MX8MP based aristainetos3 boards from ABB.
->>>
->>> The board uses a ABB specific SoM from ADLink, based on NXP
->>> i.MX8MP SoC. The SoM is used on 3 different carrier boards,
->>> with small differences, which are all catched up in
->>> devicetree overlays. The kernel image, the basic dtb
->>> and all dtbos are collected in a fitimage. As bootloader
->>> is used U-Boot which detects in his SPL stage the carrier
->>> board by probing some i2c devices. When the correct
->>> carrier is probed, the SPL applies all needed dtbos to
->>> the dtb with which U-Boot gets loaded. Same principle
->>> later before linux image boot, U-Boot applies the dtbos
->>> needed for the carrier board before booting Linux.
->>>
->>> Signed-off-by: Heiko Schocher <hs@denx.de>
->>> ---
->>> checkpatch dropped the following warnings:
->>> arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi:248: warning: DT compatible string "ethernet-phy-id2000.a231" appears un-documented -- check ./Documentation/devicetree/bindings/
->>>
->>> ignored, as this compatible string is usedin other dts too, for example in
->>>
->>> arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
->>>
->>>   arch/arm64/boot/dts/freescale/Makefile        |    5 +
->>>   .../imx8mp-aristainetos3-adpismarc.dtsi       |   64 +
->>>   .../imx8mp-aristainetos3-adpismarc.dtso       |   14 +
->>>   .../imx8mp-aristainetos3-helios-lvds.dtsi     |   89 ++
->>>   .../imx8mp-aristainetos3-helios-lvds.dtso     |   13 +
->>>   .../imx8mp-aristainetos3-helios.dtsi          |  103 ++
->>>   .../imx8mp-aristainetos3-helios.dtso          |   13 +
->>>   .../imx8mp-aristainetos3-proton2s.dtsi        |  176 +++
->>>   .../imx8mp-aristainetos3-proton2s.dtso        |   13 +
->>>   .../imx8mp-aristainetos3a-som-v1.dts          |   18 +
->>>   .../imx8mp-aristainetos3a-som-v1.dtsi         | 1210 +++++++++++++++++
->>>   11 files changed, 1718 insertions(+)
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtso
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtsi
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtsi
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtso
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtsi
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtso
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dts
->>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
->>>
->>> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
->>> index 9d3df8b218a2..7c3586509b8b 100644
->>> --- a/arch/arm64/boot/dts/freescale/Makefile
->>> +++ b/arch/arm64/boot/dts/freescale/Makefile
->>> @@ -163,6 +163,11 @@ imx8mn-tqma8mqnl-mba8mx-usbotg-dtbs += imx8mn-tqma8mqnl-mba8mx.dtb imx8mn-tqma8m
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mn-tqma8mqnl-mba8mx-lvds-tm070jvhg33.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mn-tqma8mqnl-mba8mx-usbotg.dtb
->>>   
->>> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-aristainetos3a-som-v1.dtb \
->>> +			  imx8mp-aristainetos3-adpismarc.dtbo \
->>> +			  imx8mp-aristainetos3-proton2s.dtbo \
->>> +			  imx8mp-aristainetos3-helios.dtbo \
->>> +			  imx8mp-aristainetos3-helios-lvds.dtbo
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-beacon-kit.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-data-modul-edm-sbc.dtb
->>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-debix-model-a.dtb
->>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
->>> new file mode 100644
->>> index 000000000000..cc0cddaa33ea
->>> --- /dev/null
->>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
->>> @@ -0,0 +1,64 @@
->>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>> +/*
->>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
->>> + */
->>> +
->>> +#include <dt-bindings/gpio/gpio.h>
->>> +#include <dt-bindings/interrupt-controller/irq.h>
->>> +
->>> +&ecspi1 {
->>> +	spidev0: spi@0 {
->>> +		reg = <0>;
->>> +		compatible = "rohm,dh2228fv";
+
+
+On 25/10/2024 23:15, Rob Herring wrote:
+> On Wed, Oct 23, 2024 at 12:14 PM Usama Arif <usamaarif642@gmail.com> wrote:
 >>
->> Hm? I have some doubts, what device is here?
-> 
-> $ grep -lr dh2228fv drivers/
-> drivers/spi/spidev.c
-> 
-> Customer uses an userspace implementation...
-
-That's not the question. I asked what device is here.
-
-
-> 
+>>  __pa() is only intended to be used for linear map addresses and using
+>> it for initial_boot_params which is in fixmap for arm64 will give an
+>> incorrect value. Hence save the physical address when it is known at
+>> boot time when calling early_init_dt_scan for arm64 and use it at kexec
+>> time instead of converting the virtual address using __pa().
 >>
->>> +		spi-max-frequency = <500000>;
->>> +	};
->>> +};
->>> +
->>> +&ecspi2 {
->>> +	spidev1: spi@0 {
->>> +		reg = <0>;
->>> +		compatible = "rohm,dh2228fv";
->>> +		spi-max-frequency = <500000>;
->>> +	};
->>> +};
->>> +
->>> +&i2c2 {
->>> +	/* SX1509(2) U1001@IPi SMARC Plus */
->>> +	gpio8: i2c2_gpioext0@3e {
->>
->> Uh, no, please never send us downstream code.
->>
->> Please follow DTS coding style in all upstream submissions.
+>> Reported-by: Breno Leitao <leitao@debian.org>
+>> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+>> Fixes: ac10be5cdbfa ("arm64: Use common of_kexec_alloc_and_setup_fdt()")
 > 
-> driver is in here:
+> This looks fine, but what is the symptom without this compared to
+> before the above change? The original code in the referenced commit
+> above didn't remove the reservation at all. Unless the current code
+> does something worse, this is new functionality more than a fix (for
+> stable).
 > 
-> $ grep -lr probe-reset drivers/pinctrl/
-> drivers/pinctrl/pinctrl-sx150x.c
+> Rob
 
-This so not related... Your driver does not matter. You send us poor
-quality downstream code.
+After the series in [1] was merged, we always get a warning when kexecing
+a debug kernel, which was reported by Breno in [2].
+The issue is using __pa for a fixmap address in arm64 as described in [2],
+which could result in removing a memory reservation for a completely
+unrelated area.
+That was introduced by the patch just before 
+"arm64: Use common of_kexec_alloc_and_setup_fdt" [3], but arm64 switched to
+using the common kexec fdt function in that commit. This commit is trying
+to fix removing and corrupting any random memory reservation (and get rid
+of the warning) that was introduced by [1], not adding a new functionality.
 
-...
+[1] https://lore.kernel.org/all/20210221174930.27324-7-nramas@linux.microsoft.com/ 
+[2] https://lore.kernel.org/all/ZnFKEtqfqJkYflwL@gmail.com/
+[3] https://lore.kernel.org/all/20210221174930.27324-6-nramas@linux.microsoft.com/
 
-> 
->> And why this is DTSO, I have no clue...
-
-Why is this a DTSO, not a DTS?
-
-
-Best regards,
-Krzysztof
-
+Thanks,
+Usama
 
