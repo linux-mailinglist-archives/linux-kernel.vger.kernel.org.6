@@ -1,189 +1,165 @@
-Return-Path: <linux-kernel+bounces-386026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E34899B3E48
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:03:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74D399B3E4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6630B1F23241
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:03:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36C41F2313D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BEA1E0B93;
-	Mon, 28 Oct 2024 23:03:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6DD1E883F;
+	Mon, 28 Oct 2024 23:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AQkP2GAw"
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ycjjJILE"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F3F188CDC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:03:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF5F18F2EF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:07:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730156605; cv=none; b=nUvEJeXZr3ETORnJPMBvoWkfAV3t8GNS+eIdoLP3Bp2SpsoouT2Y/LHcRjRYjatkz923k4ork3YcGJUNtFTdu2mwNv5pcER5I7TiYQcP0+RrPEweieVtSxOdPo9O4NIY2aanOastxW44I9DivFF8vrPxkWgRMW9Fm5LHyhnzPEw=
+	t=1730156880; cv=none; b=MzKL8uKMRV6G/8dv8tIT+rV8RgdViTLTav+48XT1/aJoPoCkGGjwCrryfrargqP6HEJlgqfk4Uxg4Y10UPF9A4vKvktvc/lwIdfxBxM+Y6/Lz8prsKBBnc+VCu61Bx9U7j15zwCXT+FDElywraIg1daE2gRzkEDgIDS62sUH438=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730156605; c=relaxed/simple;
-	bh=Azy0v9jtjkVLRmMSUwvVawjYHa/FT9WykC0F8frkrbY=;
+	s=arc-20240116; t=1730156880; c=relaxed/simple;
+	bh=r8m29dut7CLv0z4M6Eneeh9RovMTQuy+Mm0z00mqUhQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YBMobys6LDb0CL7EfI735LxsfDuOJhkfdXdRoQfz7eOYA94Kgp8/tGMUBbJ5iVpDdznWVenil3dXMOVNe1DzR+suS3UWDbRaaKSapc8M/0Vlqm1azuvtJNfqTMKOx/EEUy0jYdOpmS7fnZrIcyQlLTsQUxg2QNaHcLWRiJcSUsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AQkP2GAw; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-84fd616acf0so1596594241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:03:23 -0700 (PDT)
+	 To:Cc:Content-Type; b=F5I0D0VUptP1WjYyqOFAM02uBNTWtXO/m1vXYSGSSp//QMt9LDQOhR1dOlxSN+2JflMidQutfY+67Z077cLQLq1omLtzoLQ/aF/zQr6huIgzHK8k7qx750fppqDmQ/5HYurNgkk/bhoYbDkIkOJph7cFbDMsDVU3G04dviFJjP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ycjjJILE; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so3157376f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:07:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730156602; x=1730761402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Azy0v9jtjkVLRmMSUwvVawjYHa/FT9WykC0F8frkrbY=;
-        b=AQkP2GAwGC5YcGUc95vdpaVRkie+HgndxqHxLe+OjxZAy8b8X+ER0psvqXXjkUKABH
-         uYAOseWdAf5dvse0x15FizNacmSjzmHdgeFCtGOkpk4Sco2SHQNslxoyq87a6k9XSIuM
-         nqMfTU9EHvFfKexYXs9Dq8o0NOeyL9E3+S46lNtKvSmT7OKQiw3vowJ2wyt4Scn29Irf
-         q0f/qkm4MIiV8Cvb55uYNvYaoKVU2aTqEE0rjFJRHOqt3DTgKGe7n6E31zxt1GczZg0G
-         0i6MrzFIkN+ZWTKGi1oGdhU78qoZ/MDBlibQgDGM6bC+h7Fbld7ykkfr2HBXWdfOXP6P
-         WtIA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730156876; x=1730761676; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VP/iVVZlPSA4JgGDAYpI3asuv9cK2lkgkGe5iKIY9fU=;
+        b=ycjjJILEAxL19Kn6R2JJI/dUAWzuwFpcihs3wIbp+kkkIrqCgckculcnmvX43VK1iN
+         OuTp/qmrqY9jOkRpUze8wXRksFRv3BJt4WWnMNd5HYAcJOSvUsTpO0ihd5B2agb4eKM/
+         TRdPuA0+yVuh/dBrdm7hi3uxLLS52oqedqU62dxenDkbLx5G/ZwjN6cvuzSZ/OX6bkOh
+         TdLq+qZT0E6/6mRC5h7gsR+Sjx0ZiC17GMRwB11AR6pCoj64cSTQjWGNpTpKkSB++kBp
+         y8gLl+JPaqeoW1pOyJ7QoQB4/TLyYLCxB/RPKzNY3pN1njlB8mVYKknCuDuOnwqVy3wW
+         iMAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730156602; x=1730761402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Azy0v9jtjkVLRmMSUwvVawjYHa/FT9WykC0F8frkrbY=;
-        b=U3XVRs7HOXNRTtJKIZ22RTF7WkMlPYNslcr3gFMiBmCc1omXCGLptCdfOnfMDlpvFJ
-         ynpZDmyuHyaDUwNVPEaV/zTHXKBSghtvSFrArdEPcaW+ZEHMmQ58+XNy5OuR0n9zJrkg
-         LRyJW+TtA34kwhQrReUMjDHfXgccb+LpVB82QUODXvHTDWOtS9J9q8IjjKj7mut4dlsw
-         cZP/0/xwCzGkchJKj0Qy7WfgRe+4/99STDTJaUTxykfMwwtdkRRCM7DMpyNgCDtTwMpf
-         IXBZSKidTgNlvNYXHw942yNZbRyh06vuRm2D3et9YDCLFWLriGfEP+ERju19Za3c7aKV
-         vcyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXYy/Xu+KEHS/YSbVuD/fFzr0B0/OSWtdgxsuSY8ltcwJP2tpP/GBO70c+CLhPDBIQ8FPGpRAcutwik1iY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB+0u1wg18ftqNURcTgkY5TbQgAHZGd19PpOjZNInqINp5vrTh
-	IvGZ/wb45j29Z/Hd3c0u75isFECWfFXax2N5r3pRHd8CWZuJMHwFMm5OO1QDyeD/RrNphyzLVpB
-	33m5gsoN8wszte8DVjY+4RK3oXoI=
-X-Google-Smtp-Source: AGHT+IEGbeMUDYWfp+H60X5Eb7NfSJtT/bmNi74QInOCuoBT3cy9A90I/F9VBhCDZLNwMJsfzZ8QBVFvElzFOSBbR/c=
-X-Received: by 2002:a05:6122:1796:b0:50d:a577:dec0 with SMTP id
- 71dfb90a1353d-510150306e9mr6602082e0c.5.1730156602563; Mon, 28 Oct 2024
- 16:03:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730156876; x=1730761676;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VP/iVVZlPSA4JgGDAYpI3asuv9cK2lkgkGe5iKIY9fU=;
+        b=iji+cs6uhhKrc4lwgP6SNiMKlnEnpNWaNQqnxiYJbINOy8GO/t9/2NEEQ0ZDevBlsr
+         j10NxfBopH3FWPVgcQoSlZYqQY6SIpYsCt6BXeafAsDgZDnLq+4qoXn7sNQCguqxzw1k
+         I4XUA6CCC6wqlXnzbK3RDyqI3luevujUDIMww4fNne4FpCw4RKASc79NVCvQfi6CzuNP
+         ZMpMOzB4ykrqfOXVKyGAMAKioJ0oUKmosD+rx7iz5j6BqWU1SghSP0ZaYdj29Mymn9vw
+         FvHnqV5beLTpelwEH3U796nX1p6YPVINIdGoDh5VE4ZLkV6sEnTcMg6z9fhTRh/3E3k+
+         EHaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX027/YcTBlhOIADXFrlIDogOtIVuzIhT8eOAh42u+RDSXItpWm/KDihP6VZ4A4Y18pg/JJRNfsufbSUQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQPOAHD3MiDKGReKA/bpSd8t5HN0D5Km/LneVyul0n/l7ZlOtV
+	AiHcmECps8C1UM/TtbWfJwL9cc4+zVUzCgmFiN9t3xiTfv+gS+GiM5/MU2aMqh+rjaPbXoBQrgq
+	I5amp+L3Fu9NCdX4Yf6QHLTc9WIXiNVj7r7aeVA==
+X-Google-Smtp-Source: AGHT+IH3IRGqEzsZIcZx1mMWA2ayFdlukEiYHLiKh3l+Pmq6hwsflbOGf2Z3lYNjBwlhvWUulskbv2DJzBbGuREWywA=
+X-Received: by 2002:a05:6000:cc7:b0:37d:4e03:ff86 with SMTP id
+ ffacd0b85a97d-380611fe549mr6247995f8f.49.1730156875731; Mon, 28 Oct 2024
+ 16:07:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027011959.9226-1-21cnbao@gmail.com> <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
- <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
- <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com> <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
- <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com> <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
- <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com> <CAGsJ_4zQmaGxG2Ega61Jm5UMgHH-jtYC4ZCxsRX6+QS9ta25kQ@mail.gmail.com>
- <882008b6-13e0-41d8-91fa-f26c585120d8@gmail.com> <CAGsJ_4yBkry-rw75AciT8OiYWrw+=D0okcxiyXzzNrz=QJxiBA@mail.gmail.com>
- <cba36cb0-66c7-45c1-97c3-a96ea48a6cf0@gmail.com> <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
- <228c428d-d116-4be1-9d0d-0591667b7ccb@gmail.com> <CAGsJ_4zLNA-1+3j4snNLiujT3NLcmKEVFA4+eD1Sk1bOkqAGYw@mail.gmail.com>
- <03d4c776-4b2e-4f3d-94f0-9b716bfd74d2@gmail.com> <CAGsJ_4zRZFpJ0rWQ3XzspfSXN6xXN4eftCdL3xHPTqqYLUhQcA@mail.gmail.com>
- <CAJD7tkYPB=2c23LMi1+=qrPO+rcr5zJB4+2TPrcjAZHhsm=Vsw@mail.gmail.com>
- <CAGsJ_4yxoBVEY-Zpp3YNbiCCwbKO+v3-9R984uGVRHAtMSLDLQ@mail.gmail.com> <CAJD7tkYmBgp5WK9pD=ap=WuqWiiHvEhG0N0J_TiYdGRNaxwLVA@mail.gmail.com>
-In-Reply-To: <CAJD7tkYmBgp5WK9pD=ap=WuqWiiHvEhG0N0J_TiYdGRNaxwLVA@mail.gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 29 Oct 2024 07:03:11 +0800
-Message-ID: <CAGsJ_4yvWjkYNXu7+FkovEA3RGHu31g1DRAYtNdoQYKhnWcYwQ@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Usama Arif <usamaarif642@gmail.com>, Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
+References: <20241028071118.699951-1-ahaslam@baylibre.com> <20241028071118.699951-3-ahaslam@baylibre.com>
+ <oy25ajhj7hgg2lk6i2xpkceisoveloc6i6z5sank44jc7i4f6k@xpqgqjpcgn34>
+In-Reply-To: <oy25ajhj7hgg2lk6i2xpkceisoveloc6i6z5sank44jc7i4f6k@xpqgqjpcgn34>
+From: Axel Haslam <ahaslam@baylibre.com>
+Date: Tue, 29 Oct 2024 00:07:19 +0100
+Message-ID: <CAKXjFTPwN2TYW6sq1kj3miZ0f5OqKX0aTk8eGf1sj9TBk1_e=A@mail.gmail.com>
+Subject: Re: [PATCH 2/6] dt-bindings: iio: dac: ad5791: Add required voltage supplies
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com, 
+	dlechner@baylibre.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 6:54=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com>=
- wrote:
+On Mon, 28 Oct 2024 at 09:06, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> On Mon, Oct 28, 2024 at 3:52=E2=80=AFPM Barry Song <21cnbao@gmail.com> wr=
-ote:
+> On Mon, Oct 28, 2024 at 08:11:14AM +0100, ahaslam@baylibre.com wrote:
+> > From: Axel Haslam <ahaslam@baylibre.com>
 > >
-> > On Tue, Oct 29, 2024 at 6:33=E2=80=AFAM Yosry Ahmed <yosryahmed@google.=
-com> wrote:
-> > >
-> > > [..]
-> > > > > > By the way, I recently had an idea: if we can conduct the zerom=
-ap check
-> > > > > > earlier - for example - before allocating swap slots and pageou=
-t(), could
-> > > > > > we completely eliminate swap slot occupation and allocation/rel=
-ease
-> > > > > > for zeromap data? For example, we could use a special swap
-> > > > > > entry value in the PTE to indicate zero content and directly fi=
-ll it with
-> > > > > > zeros when swapping back. We've observed that swap slot allocat=
-ion and
-> > > > > > freeing can consume a lot of CPU and slow down functions like
-> > > > > > zap_pte_range and swap-in. If we can entirely skip these steps,=
- it
-> > > > > > could improve performance. However, I'm uncertain about the ben=
-efits we
-> > > > > > would gain if we only have 1-2% zeromap data.
-> > > > >
-> > > > > If I remember correctly this was one of the ideas floated around =
-in the
-> > > > > initial version of the zeromap series, but it was evaluated as a =
-lot more
-> > > > > complicated to do than what the current zeromap code looks like. =
-But I
-> > > > > think its definitely worth looking into!
-> > >
-> > > Yup, I did suggest this on the first version:
-> > > https://lore.kernel.org/linux-mm/CAJD7tkYcTV_GOZV3qR6uxgFEvYXw1rP-h7W=
-QjDnsdwM=3Dg9cpAw@mail.gmail.com/
-> > >
-> > > , and Usama took a stab at implementing it in the second version:
-> > > https://lore.kernel.org/linux-mm/20240604105950.1134192-1-usamaarif64=
-2@gmail.com/
-> > >
-> > > David and Shakeel pointed out a few problems. I think they are
-> > > fixable, but the complexity/benefit tradeoff was getting unclear at
-> > > that point.
-> > >
-> > > If we can make it work without too much complexity, that would be
-> > > great of course.
-> > >
-> > > >
-> > > > Sorry for the noise. I didn't review the initial discussion. But my=
- feeling
-> > > > is that it might be valuable considering the report from Zhiguo:
-> > > >
-> > > > https://lore.kernel.org/linux-mm/20240805153639.1057-1-justinjiang@=
-vivo.com/
-> > > >
-> > > > In fact, our recent benchmark also indicates that swap free could a=
-ccount
-> > > > for a significant portion in do_swap_page().
-> > >
-> > > As Shakeel mentioned in a reply to Usama's patch mentioned above, we
-> > > would need to check the contents of the page after it's unmapped. So
-> > > likely we need to allocate a swap slot, walk the rmap and unmap, chec=
-k
-> > > contents, walk the rmap again and update the PTEs, free the swap slot=
-.
-> > >
+> > Vcc, iovcc, vrefp, and vrefn are needed for the DAC to work.
+> > Add them as required bindings for ad5791.
 > >
-> > So the issue is that we can't check the content before allocating slots=
- and
-> > unmapping during reclamation? If we find the content is zero, can we sk=
-ip
-> > all slot operations and go directly to rmap/unmap by using a special PT=
-E?
+> > Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
+> > ---
+> >  .../bindings/iio/dac/adi,ad5791.yaml          | 24 +++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> > index fe664378c966..79cb4b78a88a 100644
+> > --- a/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> > +++ b/Documentation/devicetree/bindings/iio/dac/adi,ad5791.yaml
+> > @@ -26,6 +26,22 @@ properties:
+> >    vdd-supply: true
+> >    vss-supply: true
+> >
+> > +  vcc-supply:
+> > +    description:
+> > +      Supply that powers the chip.
+> > +
+> > +  iovcc-supply:
+> > +    description:
+> > +      Supply for the digital interface.
+> > +
+> > +  vrefp-supply:
+> > +    description:
+> > +      Positive referance input voltage range. From 5v to (vdd - 2.5)
+> > +
+> > +  vrefn-supply:
+> > +    description:
+> > +      Negative referance input voltage range. From (vss + 2.5) to 0.
+> > +
+> >    adi,rbuf-gain2-en:
+> >      description: Specify to allow an external amplifier to be connected in a
+> >        gain of two configuration.
+> > @@ -47,6 +63,10 @@ required:
+> >    - reg
+> >    - vdd-supply
+> >    - vss-supply
+> > +  - vcc-supply
+> > +  - iovcc-supply
+> > +  - vrefp-supply
+> > +  - vrefn-supply
 >
-> We need to unmap first before checking the content, otherwise the
-> content can change right after we check it.
+> So you have six required supplies?
+>
+> Datasheet says "A voltage range of 2.7 V to 5.5 V *can* be connected",
+> so doesn't it mean this is optional? Although similar wording is for
+> other supplies, so maybe it's just imprecise language?
 
-Well, do we have a way to terminate the unmap if we find pte_dirty and ensu=
-re
-the folio is still mapped after try_to_unmap_one()? Then we could
-activate it again
-after try_to_unmap.
+looks like unfortunate wording. Like you said, Vdd, Vss are already required
+and have the same *can* word in their description like all other supplies
+which i think its meant for the voltage level options of the power supply.
 
-It might just be noise. Let me take some more time to think about it. :-)
+Vcc:  is mentioned as need to "power on" in the startup sequence
+section of the datasheet,
+iovcc: we can't interface the chip without this supply.
+vrefp: minimum input of 5v.
+vrefn: from vss up to 0 volts max.
+
+so vcc, iovcc, and vrefp to me, look required for the hw to work.
+but i have a small doubt about vrefn since it could potentially be 0V.
+Does this mean it should be an optional binding where we assume its 0
+if not present?
+or is it ok to leave it as required?
+
+Regards
+Axel.
+
+
+>
+> Best regards,
+> Krzysztof
+>
 
