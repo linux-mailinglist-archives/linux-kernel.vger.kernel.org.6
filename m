@@ -1,174 +1,115 @@
-Return-Path: <linux-kernel+bounces-385761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D73719B3B54
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:23:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9A29B3BAE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820071F2278C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:23:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228781F22C9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259C71E04A1;
-	Mon, 28 Oct 2024 20:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 266131EBFFA;
+	Mon, 28 Oct 2024 20:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="av7GQBxM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YSeYfq1G"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74A5D1DFE1C;
-	Mon, 28 Oct 2024 20:23:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B491E766F;
+	Mon, 28 Oct 2024 20:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730147018; cv=none; b=s9JgtNlopUFkwT4izm3cSgo6TM1FGCpCKwgpbNMe7Ws3rolzxSw+8kdl5wk5ZaWr21wWfGgfRsrWrOImM3wZFwJzksjAKCKjN8CCVzYiEw4CeIWoKaSCpDAS7daA703O0WjP5/ih8Mo1Le1sZ2/ZH3UNpl3vMu2XtaOAWAtncLk=
+	t=1730147184; cv=none; b=tGTef5H/miOEFcb8RuqOnIZc6av0la5vnPAvVzMLuRHjuWZYfTheaU6VIrGtxFN+u0ZPvqLxV4SUpvligs4nFGbZq/uL1rMelZ7afNXXHdgX/dDOuLIdMDWNKKQhN/cUwJGQoOcXZLsEwOZ0DQG/gShhpJA/9CkGcgsCOYSFNyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730147018; c=relaxed/simple;
-	bh=ygxt109xKE1bMCf6lGpv/3u6u0A5LB3R6ch8sQBAzGE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N4QTarOMZlnz7pGhE6YGleUofBia+jQ4T3TZ5jVpQfHtJyjn91eiaXrbFutAkiUGTaF+dPN2p++VFPSEJ6GNrM7vS5YeXITlytL/kfkFLzgfcf7QBeAYb6BDDeR4OOD5JRNixvkr24riQpuppW8H6QfsphIyug4gDFIcrzh5Eq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=av7GQBxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0B58C4CEE3;
-	Mon, 28 Oct 2024 20:23:37 +0000 (UTC)
+	s=arc-20240116; t=1730147184; c=relaxed/simple;
+	bh=sol/MuipOzf7KPplFOyD2hmajqHTW1hr8fw/YDH04Sw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pQV5IfvWAJpf9k4UY6aSlEQDpEyA00NE5nPcOamXzZAGyl+MFhbc9b6SXaUn6dREks6cNgBf5LcA+NhLMBAfhkzMJRpsAlXKf81giP6nY1beTmtyk7UHZiuMi1uVHSEa1wH+TpEl8lqJ7uwK1/imS9vR2MdcptlBlp3Uh0HdhpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YSeYfq1G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7768AC4CEC3;
+	Mon, 28 Oct 2024 20:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730147018;
-	bh=ygxt109xKE1bMCf6lGpv/3u6u0A5LB3R6ch8sQBAzGE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=av7GQBxMizERkeAvSNQzZ6LT9Y3Wa3PuAXd2dEG2SAVCTNWo46fKTLLB7z6QJieFL
-	 8HhlcfIACN4d0+7PIbaGVgnHpaTDE+COzauxkmMp2OtbSf5P8QXC21a5gyqdf8GDQr
-	 IzUcy97nHbWnc5nFXl+45VosXBc+/UuxtIK0qHsLlpv7S/1zMrz6eB4/+UW73stCD5
-	 CnG+2BRs4kThdTRG1sx14y8HKSKgVBUzLJ13Ja2r/k+E35gA2TW450p/BowVDf2dqm
-	 Fcs+Jfb9mbJxsHgMJ714iQp6i3jT2mVQumk5/vDh7LGFji5hPalhqUNHS2Uf0G/WnA
-	 Cm2Db2HRtBmXg==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf mem: Add -H/--hierarchy option for report subcommand
-Date: Mon, 28 Oct 2024 13:23:36 -0700
-Message-ID: <20241028202336.1478570-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+	s=k20201202; t=1730147184;
+	bh=sol/MuipOzf7KPplFOyD2hmajqHTW1hr8fw/YDH04Sw=;
+	h=From:Subject:Date:To:Cc:From;
+	b=YSeYfq1GuuUN74PjNeQwmirBJkoKp/sKxRnF1E0Cnxy/y1QoLmAM2vqqeGHE9VqDr
+	 24AYIkLN6LpsE7bzTaIbUdsFgKjnReK2OgfaOgRW5hxOcDVzNXaS3i3cgGk1wXaaul
+	 r1wlMOU1pRtvOgrZBVgnvUszYGAWfdhP9fqsqdr2zYnuEDxDOAbbtm7usJX9zzv2oH
+	 912tL0BaXFWuCmy/tbYZvRaCjB6yl81KS5PBdTRFJXggknNLWr7Y6U4YbYk/Io+fXI
+	 LZEOjy5wj/rk9qBqs6z9g8a2dxjAN5hXmx6kYDKFHOCwG4RC3d4jo/Ip2lIm9rmdTS
+	 2FXDR7Le6+nvQ==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/9] arm64: Support 2024 dpISA extensions
+Date: Mon, 28 Oct 2024 20:24:09 +0000
+Message-Id: <20241028-arm64-2024-dpisa-v1-0-a38d08b008a8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOryH2cC/x3MQQqAIBBA0avErBsYQ9K6SrSQGmsWWShEIN49a
+ /kW/2dIHIUTjE2GyLckOUOFahtYdhc2RlmroaNOKyKLLh69xo+4XpIcWhoUGe2M1xZqdkX28vz
+ LaS7lBStH7MRiAAAA
+X-Change-ID: 20241008-arm64-2024-dpisa-8091074a7f48
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+ Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+ Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, 
+ linux-kselftest@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1654; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=sol/MuipOzf7KPplFOyD2hmajqHTW1hr8fw/YDH04Sw=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnH/Nlf7bEh5sJxyS9APvTiice6ZVXCG3VF3/2rCov
+ VfneMG+JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZx/zZQAKCRAk1otyXVSH0Dy2B/
+ wOJiOkm/F/QceJ5m1SqfcfVDltQ/WB5NLgUx/abPOvKJKrbmWPOVlM4ZOcWcoqqwm2WUnLTJinRb6D
+ Yrk0wRqPes1owib+tQ9R4rxSXf5pOUI0d1/DzGdycCoMa4QUmrMSYBlvAAIerccegORPfVM/lL5YxG
+ PzZ7UhJatVuiXQyhCOb/8kB98i26M6ojfWJXd6gMxUI1eRRgIAEdQ0wqmQq5QIHJilv/Hn/UHB5/Qi
+ nUG1pfjtnTrYw68Py5XqNo0+tE24AhPFSxitA88NKsolV34Po9NAz9/wdhSxQBKlHiSh21iaPaMQIr
+ HPhCbK9eSGiCoQ/zjsALkEuGLYb77P
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-Like in perf report, the -H/--hierarchy mode supports hierarchical
-output using the given sort key.  But with -T/--type-profile option it
-would be better to have the 'type' sort key in the beginning so that
-users can see something like following:
+The 2024 architecture release includes a number of data processing
+extensions, mostly SVE and SME additions with a few others.  These are
+all very straightforward extensions which add instructions but no
+architectural state so only need hwcaps and exposing of the ID registers
+to KVM guests and userspace.
 
-  $ perf mem report -T -H
-  ...
-  #
-  #          Overhead       Samples  Data Type / Memory access / Snoop / TLB access
-  # ...............................  ..............................................
-  #
-      97.96%          4099           (unknown)
-         97.05%          4089           L1 hit
-            97.05%          4089           None
-               97.05%          4089           L1 or L2 hit
-          0.71%             6           RAM hit
-             0.71%             6           Hit
-                0.71%             6           L1 or L2 hit
-          0.16%             2           L2 hit
-             0.16%             2           None
-                0.16%             2           L1 or L2 hit
-          0.04%             2           LFB/MAB hit
-             0.04%             2           None
-                0.04%             2           L1 or L2 hit
-       0.98%            12           struct folio
-          0.61%             9           L1 hit
-             0.61%             9           None
-                0.61%             9           L1 or L2 hit
-          0.37%             3           LFB/MAB hit
-             0.37%             3           None
-                0.37%             3           L1 or L2 hit
-       0.45%             5           unsigned char
-          0.45%             5           LFB/MAB hit
-             0.45%             5           None
-
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- tools/perf/Documentation/perf-mem.txt |  6 ++++++
- tools/perf/builtin-mem.c              | 10 +++++++++-
- 2 files changed, 15 insertions(+), 1 deletion(-)
+Mark Brown (9):
+      arm64/sysreg: Update ID_AA64PFR2_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ISAR3_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64FPFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ZFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64SMFR0_EL1 to DDI0601 2024-09
+      arm64/sysreg: Update ID_AA64ISAR2_EL1 to DDI0601 2024-09
+      arm64/hwcap: Describe 2024 dpISA extensions to userspace
+      KVM: arm64: Allow control of dpISA extensions in ID_AA64ISAR3_EL1
+      kselftest/arm64: Add 2024 dpISA extensions to hwcap test
 
-diff --git a/tools/perf/Documentation/perf-mem.txt b/tools/perf/Documentation/perf-mem.txt
-index 8a1bd9ff0f86dfb8..ac16c1b276e3912c 100644
---- a/tools/perf/Documentation/perf-mem.txt
-+++ b/tools/perf/Documentation/perf-mem.txt
-@@ -125,6 +125,12 @@ REPORT OPTIONS
- 	Specify the field separator used when dump raw samples (-D option). By default,
- 	The separator is the space character.
- 
-+-H::
-+--hierarchy::
-+	Enable hierarchical output.  In the hierarchy mode, each sort key groups
-+	samples based on the criteria and then sub-divide it using the lower
-+	level sort key.  See linkperf:perf-report[1] for details.
-+
- In addition, for report all perf report options are valid, and for record
- all perf record options.
- 
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index 651188c1d8259842..2efa01947cf17aa0 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -39,6 +39,7 @@ struct perf_mem {
- 	bool			all_kernel;
- 	bool			all_user;
- 	bool			data_type;
-+	bool			report_hierarchy;
- 	int			operation;
- 	const char		*cpu_list;
- 	DECLARE_BITMAP(cpu_bitmap, MAX_NR_CPUS);
-@@ -329,6 +330,8 @@ static char *get_sort_order(struct perf_mem *mem)
- 
- 	if (mem->sort_key)
- 		scnprintf(sort, sizeof(sort), "--sort=%s", mem->sort_key);
-+	else if (mem->report_hierarchy && mem->data_type)
-+		strcpy(sort, "--sort=type,mem,snoop,tlb");
- 	else if (mem->data_type)
- 		strcpy(sort, "--sort=mem,snoop,tlb,type");
- 	/*
-@@ -374,7 +377,7 @@ static int __cmd_report(int argc, const char **argv, struct perf_mem *mem,
- 	if (mem->dump_raw)
- 		return report_raw_events(mem);
- 
--	rep_argc = argc + 3;
-+	rep_argc = argc + 5;
- 	rep_argv = calloc(rep_argc + 1, sizeof(char *));
- 	if (!rep_argv)
- 		return -1;
-@@ -387,6 +390,9 @@ static int __cmd_report(int argc, const char **argv, struct perf_mem *mem,
- 	if (new_sort_order)
- 		rep_argv[i++] = new_sort_order;
- 
-+	if (mem->report_hierarchy)
-+		rep_argv[i++] = "-H";
-+
- 	for (j = 0; j < argc; j++, i++)
- 		rep_argv[i] = argv[j];
- 
-@@ -513,6 +519,8 @@ int cmd_mem(int argc, const char **argv)
- 		   sort_order_help),
- 	OPT_BOOLEAN('T', "type-profile", &mem.data_type,
- 		    "Show data-type profile result"),
-+	OPT_BOOLEAN('H', "hierarchy", &mem.report_hierarchy,
-+		    "Show entries in a hierarchy"),
- 	OPT_PARENT(mem_options)
- 	};
- 	const char *const mem_subcommands[] = { "record", "report", NULL };
+ Documentation/arch/arm64/elf_hwcaps.rst   |  51 ++++++
+ arch/arm64/include/asm/hwcap.h            |  17 ++
+ arch/arm64/include/uapi/asm/hwcap.h       |  17 ++
+ arch/arm64/kernel/cpufeature.c            |  35 ++++
+ arch/arm64/kernel/cpuinfo.c               |  17 ++
+ arch/arm64/kvm/sys_regs.c                 |   3 +-
+ arch/arm64/tools/sysreg                   |  87 +++++++++-
+ tools/testing/selftests/arm64/abi/hwcap.c | 273 +++++++++++++++++++++++++++++-
+ 8 files changed, 490 insertions(+), 10 deletions(-)
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241008-arm64-2024-dpisa-8091074a7f48
+
+Best regards,
 -- 
-2.47.0.163.g1226f6d8fa-goog
+Mark Brown <broonie@kernel.org>
 
 
