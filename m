@@ -1,74 +1,82 @@
-Return-Path: <linux-kernel+bounces-384926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548439B3043
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:29:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91F429B3046
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B8EF6B24CE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:29:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C44FC1C21985
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:29:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E479D1D9699;
-	Mon, 28 Oct 2024 12:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8931DB928;
+	Mon, 28 Oct 2024 12:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="CY+JEtDP"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hT902mQE"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656A31D9320;
-	Mon, 28 Oct 2024 12:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9531DA2F6
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730118537; cv=none; b=kW/fhgEPn5a01ARMCNMs4+mhRJnj22BDI2Zd1A2GBIZlyPx+zKWWWNN2/gRQtT1rMj3hA0wlbSqHOGhjELbY2WdWMk+3mtATmPOExOaYsQzuxfOFz3QEAcXn7Wp0UZ5bAa/4T4D6VVZPMWoZEh+t6LhpkF5PNMsvGRfZGntSnrM=
+	t=1730118545; cv=none; b=lfayM+2u6SCqasIlVk4wfmmZemtZcYm2FTufHwbDnC7SGvOKX8m74uR5xwql7G/E0kLVzjZVb1jyLmMAMOaZKriFKNmgv09Ca04MLlDWRr1/OteVdwJR4u0MVCZNPRca/JqLjAt4rMC/1o9/AhbcibAH524Ph4h7+SC5HqZGrzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730118537; c=relaxed/simple;
-	bh=wt73btPmeDGo2H2UrDyLd61eZc1kRtDNzSOLxXMmrYg=;
+	s=arc-20240116; t=1730118545; c=relaxed/simple;
+	bh=jdiD+4YvVxe5A9U3JRwM1NrERMckSmmLcbMZEQoZewc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hsfu61tqm09VDFe4sVzybcbsZmP/R/O8gsLTK2EMh+9u40oX4Z6LiY9O2zxCS3QR1mHN+D49coo42/+pqQ6D2VrCC7RoIphImYaH6lNOK8b5gfOZkEFoOO3yGeJqrdJdUz9IJk0zYg/cfQihsPj/P2AI0CX/U3+BJ8J5Gbnf6GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=CY+JEtDP; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=dUdrVGx+Nn/r2w710Uhyv3zhFpLcxZLGQqQHzcftc10=; b=CY+JEtDP6/n6Bgu5W0n8hNIPDr
-	yK1oqEf5NyFJBLMlSXT6Yc9dNAV0rqWsE9hE2eFKuFSFye4Y1GgRJT4LlEKbfMjtsIw4zwQIgMf06
-	qEUzDoHbo76B97PLu9PBp9YB296dZqVpkHbWSVotMal/Y0vl+iALa0TMMVHfXgrQgpWM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t5OrT-00BRYK-Pb; Mon, 28 Oct 2024 13:28:43 +0100
-Date: Mon, 28 Oct 2024 13:28:43 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH net-next v5 2/2] net: stmmac: Add glue layer for T-HEAD
- TH1520 SoC
-Message-ID: <81cafa27-1c66-4f4f-97b4-0ec16d32a19f@lunn.ch>
-References: <20241025-th1520-gmac-v5-0-38d0a48406ff@tenstorrent.com>
- <20241025-th1520-gmac-v5-2-38d0a48406ff@tenstorrent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0un7u32WAJP/bA3Bn+pp6hj++zaXdCluMC0RGZwOZ9eFFfkCzWvMyXcIRXctLIMrW7wiZ8GcrOQgXjGg0eQoqBVkFf/79DpuYXlIokILGjY4mz7XI1AvGFG3xUXjekPwWmIZSQIGRyDgJ7x98uNkkiOzuD6axZrIEily4a5CSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hT902mQE; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so5592400e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:29:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730118542; x=1730723342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GcQJoiIk7CelcpwsD+uDY3x3UE1zm1ocbD5DK7VzGYA=;
+        b=hT902mQEeiSj32kaPBdi4Ut5TeBe7BjnWvKT1S0ti8VD1g8mDFP1bS1/rtFzVgL9H8
+         TH3hgU7wU1JTX5c4+1uN/CEY5mON267vwPw+OjQXwUZw2mAOD4pk6UMm338HpsnTCQy8
+         r1PoQLmVwqJqO3ST9W7cZ5nnvvdAsBze/DCY/zeSxbv4t6fSL6bTo/AblONcsIEwrsfr
+         IlZoa6Ql/gxzSPlgHXePrbqOknaij6GWMCZwhe3HZ3rOiruz7hi67OE4JZPOmoXtwkLM
+         g0Sm4gJ5gxAezLp0r2KK7iUNThZPCY/PAaRHAOKKGuGBCMQYyazQZsAaNyYotbYuyHbM
+         HBAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730118542; x=1730723342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GcQJoiIk7CelcpwsD+uDY3x3UE1zm1ocbD5DK7VzGYA=;
+        b=Vq4ShZGGWl2n7O2jTK3aVvNCa/AaUdL54XxjvrMhLsQ0W704+NJBIUeBpNoetor1dc
+         UzoDRRL3nTI5YIGZEB22EyO4rvM8ZImdRXEBAaopV0aO0TZ2oWY3ZeQBIQ0d/YZQWHUy
+         Gez6pvQKQot4U4+UhLfKvOWw92rP4G45DESJNBm/fv//mtjGxd0ja2tZDsvsFbmBPMne
+         kQYXgFqr/vGjvVbR+DPfCHG7EpBKy4ihtYTAZDbmQBsTJeiEWpDgHKEMtvQH6dzQpvZQ
+         kS+rZ7x/p9XPsQ7yBjO/Z6OjSfqm/T9Gf4btDdXFT1hhhKipfrLqcq3fTyKIKQVbh+Z/
+         5hfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFR9GXJI0lwZzFynXhX+Zl1nJUJ9lv0mtBDQRd1pn8z60HvdF+lIufcidJvwQGbZLED3fr46guZjSuBPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypvMRsO4+yvCNIYJNYM70bodC6KVHxzkHRfT7Eu6yuAzWrnLnG
+	nVlx/becmMupUabNsLMfMlwji9E4LxoavMIKFCAAqSL6Zx+iZhb/y4936a0mR3I=
+X-Google-Smtp-Source: AGHT+IFCxlmmj4PXNk8Ayq4JeRi/aB3fgQDvRaLLC2w/HfBqAL/CnTtv0LpWLs9ji3TRpHir9A4QqQ==
+X-Received: by 2002:a05:6512:1304:b0:53b:1f77:e95e with SMTP id 2adb3069b0e04-53b34c5f595mr2981345e87.44.1730118541574;
+        Mon, 28 Oct 2024 05:29:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1dcbbdsm1067212e87.236.2024.10.28.05.29.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 05:29:01 -0700 (PDT)
+Date: Mon, 28 Oct 2024 14:28:59 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, andersson@kernel.org, 
+	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
+Subject: Re: [PATCH v1] arm64: dts: qcom: qcs615: Add QUPv3 configuration
+Message-ID: <my3im4zjjozoze4s5vkwlraailrd6njbof75acn7lqt5oxzgor@eu6aq2754uqf>
+References: <20241011103346.22925-1-quic_vdadhani@quicinc.com>
+ <15238992-4ede-4b85-9947-391baaa4c8a9@oss.qualcomm.com>
+ <332f7a0a-d9df-49bd-81d5-cc04c50183b9@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,23 +85,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241025-th1520-gmac-v5-2-38d0a48406ff@tenstorrent.com>
+In-Reply-To: <332f7a0a-d9df-49bd-81d5-cc04c50183b9@quicinc.com>
 
-On Fri, Oct 25, 2024 at 10:39:09AM -0700, Drew Fustini wrote:
-> From: Jisheng Zhang <jszhang@kernel.org>
+On Mon, Oct 28, 2024 at 04:49:43PM +0530, Viken Dadhaniya wrote:
 > 
-> Add dwmac glue driver to support the DesignWare-based GMAC controllers
-> on the T-HEAD TH1520 SoC.
 > 
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> [esmil: rename plat->interface -> plat->mac_interface,
->         use devm_stmmac_probe_config_dt()]
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> [drew: convert from stmmac_dvr_probe() to devm_stmmac_pltfr_probe(),
->        convert register access from regmap to regular mmio]
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> On 10/26/2024 1:10 AM, Konrad Dybcio wrote:
+> > On 11.10.2024 12:33 PM, Viken Dadhaniya wrote:
+> > > Add DT support for QUPv3 Serial Engines.
+> > > 
+> > > Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> > > Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> > > Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> > > ---
+> > 
+> > [...]
+> > 
+> > > @@ -392,6 +427,24 @@
+> > >   			#size-cells = <1>;
+> > >   		};
+> > > +		gpi_dma0: qcom,gpi-dma@800000  {
+> > > +			compatible = "qcom,sdm845-gpi-dma";
+> > 
+> > You must define a new compatible for qcs615, sdm845 is used as a fallback
+> > (so that we don't have to add new driver entries). You will however need
+> > to submit a separate dt-bindings change.
+> 
+> We have added sdm845 in compatible due to below comment in driver file
+> 
+> File: https://github.com/torvalds/linux/blob/81983758430957d9a5cb3333fe324fd70cf63e7e/drivers/dma/qcom/gpi.c#L2284
+> 
+>   /*
+>    * Do not grow the list for compatible devices. Instead use
+>    * qcom,sdm845-gpi-dma (for ee_offset = 0x0) or qcom,sm6350-gpi-dma
+>    * (for ee_offset = 0x10000).
+>    */
+> 
+> Do we still require new compatible for qcs615 ?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+You are not living in the void space. `git grep qcom,sdm845-gpi-dma`
+immediately shows what is being expected. Please don't ignore existing
+work.
 
-    Andrew
+> 
+> > 
+
+-- 
+With best wishes
+Dmitry
 
