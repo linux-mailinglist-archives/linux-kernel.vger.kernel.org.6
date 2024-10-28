@@ -1,477 +1,105 @@
-Return-Path: <linux-kernel+bounces-384784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 269E09B2E50
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:14:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 982B99B2E58
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA30D281041
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:14:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 25212B23C8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F071DE2B6;
-	Mon, 28 Oct 2024 11:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E2F61DE3A8;
+	Mon, 28 Oct 2024 11:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="gl1TAKl3";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kmyNWHmA"
-Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJzuZtHO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAE91D90AD;
-	Mon, 28 Oct 2024 11:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023EA1DA0FC;
+	Mon, 28 Oct 2024 11:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730113339; cv=none; b=oJhrzYead/NK58GYVP2xJCq4DTIYg+BdF/U6yflncIMgw72j4+/s6Tm+dvhiHHRiE+SYdDv7Vq2uJBtwq4kFaeHuBZ827etBcVV4V1KMhZjSww9hR2wIXp1C0auUPChSAyIshEf5FC3nL5U3bS9nEF3E3fBY5uLytRuNj2fRFN4=
+	t=1730113466; cv=none; b=NwXHPB8F6ZUU2Brs3F5aHKs4vGE9ZVOEy2WJLu+O0OS/qnhtyW86XGZBYygmfZUBoTWKrrzi+R2Vl0yYooRoUMA6kzmTA3GDy1cAil/MMZ3Uk8Mn+HjyQuu5YFI57x6k7iN1TRlB1ZkCipg8cqpD4VHpVz1Tc+CPE8CRRs5rhL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730113339; c=relaxed/simple;
-	bh=G4DEvRIB1hy/Xi0AYjOXvOLiwjdiW56J3Xa8p9tdjWQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=PMSx8STs44T7Jjp/7Y1FWzZ5TUBdQ4hzfPwPxQJWTmlIubIVi2YY5XgkmO24ciV9NpoS337ivKOxQ4/tA2TPM1CLRAvdsYpVKRaffaxPz20lHgl/hVr5BT+JFPzzdrX2DgQMmwOkVrm7BT3heuukZLouzQy0MD9lswwkrPc1Em0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=gl1TAKl3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kmyNWHmA; arc=none smtp.client-ip=202.12.124.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 451D32540090;
-	Mon, 28 Oct 2024 07:02:14 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-02.internal (MEProxy); Mon, 28 Oct 2024 07:02:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730113334;
-	 x=1730199734; bh=O/D+6f3GkJ3PO4skFYQQ3StKkecOTla7RKcV9O6QbpY=; b=
-	gl1TAKl3HJOeCJNLbO4XW8ZsOExI+KS2HxxPOPqyxV0I9f80w5fc/8Yqb9CJYSp4
-	57PFlNFc7oWZrs1Xp+ScU1+KfTh1gLa2+zvX3hUO7IQ//DvWvEYN88RYwimLYl4Q
-	rTibjkYUG6CEtDqCN/AzqEJVpgGZZX227hk56ek48yf2tAVIefuhjqg/T3aSFv4X
-	o1/C7GtQwEvni98jv3VMIkrY4AWp1l352W0VCJzBTe6+45EfCgpIxHzLoZSUId7g
-	COgmUFLyEU8jZexJ4142BJa6eijOGGnk3wFaXrG1dY1pw+xncvkZgIFtgQ2SZBHm
-	yfUJ5PbVmcGWe9oy926row==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730113334; x=
-	1730199734; bh=O/D+6f3GkJ3PO4skFYQQ3StKkecOTla7RKcV9O6QbpY=; b=k
-	myNWHmAirwhhnkHaf9XO5UYOM4dLW+10QVsQCQ14YXyhXIAgukXsLqVfc/bhM6WD
-	YcANeVOLxUZwbFFWccao9e1/MYqRIoQh54PBTmzJfxBaz/iJObKJL6haYTMdl53v
-	U3oLAahr/ZG2hT4AnhkXIuLOwufUD+VltgjmsEcCzeLGR9fDIH1FdXWcBuuE7u4h
-	QSvX6T9qYbcdu3noQHCqcDHgzYgSnPRODPbrNKbZLcJP1kZ2T/ttodllLfRU/EfW
-	sh69DahD0buwHDPrsobfUX3fMzL9QuII6UxNpAIRTNb/UdxJankAYtMvao87N72O
-	49kp90orZCaRMNRdreEAw==
-X-ME-Sender: <xms:NW8fZ34pneBAaMV_PK7IQkBmPpOKYZiV2g07SEZQ-Tjm_sNPaEPTVg>
-    <xme:NW8fZ876T6IMUEKepPazEORH6TLzyI6HIc3PW0JI6uw89FZ5fK8o3EQoObtt1VYO3
-    qty7HOq9Uejhg1l4qA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejkedgvdduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
-    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
-    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
-    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhr
-    tghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtph
-    htthhopehikhgvrdhprghnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtoheprghl
-    vgigsggvlhhmgeeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrd
-    gthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuiihmrgigihhmihhlihgr
-    nhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhhrdgvnhhgrdgsrhdprh
-    gtphhtthhopehsohihvghrsehirhhlrdhhuhdprhgtphhtthhopehlvghnsgeskhgvrhhn
-    vghlrdhorhhg
-X-ME-Proxy: <xmx:NW8fZ-c1q8gRXTDsQYxqGyMatxZMnhyu1xid5NkPZrrRq9i6aRW4Sw>
-    <xmx:NW8fZ4LpKovAmhJsNxsv4BTTMDl7SMicWBWd_4X9T2w5hWzrxVdmPQ>
-    <xmx:NW8fZ7L8KwtmFi6MCm6wa2l87AYr25Wj8_kFxC7kuEAlKSQVVOfkWQ>
-    <xmx:NW8fZxwgwRebr1bcMvzRMQUgRBdENoQN3diT0Y-kWM5x51bbb5kzww>
-    <xmx:Nm8fZzKzQtVABJIEyV6Y9LhORHRZ0MCBAauwfRWGo-XLIukJA-fr-2TB>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4D4033C0066; Mon, 28 Oct 2024 07:02:13 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730113466; c=relaxed/simple;
+	bh=ZzXP1X2euIq6WJQ9CY/nAkmNmvDugntVm3ieSCeNhCE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=oE35Vwq0vaghdEmriJ9b57MneGO+s/Zfu6thZAs4UDvOj/8W/BgdIIqMf+uypJdGl6wcNdFGYoy1rcaK6KOfXGJHqME6ofmp8UjUJUw0l7dNWXmMer5lJ2XU4egwZ8jVlC/4cRuOG4iGnA2AZQxp6QM7/uG8iVk4QTVXjUVGiKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJzuZtHO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60260C4CEC3;
+	Mon, 28 Oct 2024 11:04:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730113465;
+	bh=ZzXP1X2euIq6WJQ9CY/nAkmNmvDugntVm3ieSCeNhCE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oJzuZtHO739zDDjHnGtIWKxPaQJmHiawQdH9o1WvIdkDkW1phgmxS2oPcqpdBYvd6
+	 NUHcQABVqW6vNq9U5lBNKdbxwx2inFRwCFdJw9hFCFBk90x+UH+tNbWrbj9DTnzuoV
+	 0pkEKeBRRaVZT9Aeopj6yITkurYR9N4KQ5lG7NayOXibHk1Ftd5tnFBn/EfMtMi2zN
+	 roGeY71HBCN6OxmXZ+4M/wPbLMsCV52T4DF4usu64AZ62zymWY/q4TLRjDT26cbhOt
+	 x/oPciKFU0EgTOizW84bhOmQOsHyMnmaJIBJcWkUdO0K4kaPmXfthmFoG8BO+C8wDX
+	 BQD2MCm9BA+pA==
+Received: by pali.im (Postfix)
+	id 105A0A58; Mon, 28 Oct 2024 12:04:18 +0100 (CET)
+From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>,
+	Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/5] cifs: Fixes for SMB1 non-UNICODE 8-bit mode
+Date: Mon, 28 Oct 2024 12:03:35 +0100
+Message-Id: <20241028110340.29911-1-pali@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 28 Oct 2024 07:01:53 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Limonciello, Mario" <mario.limonciello@amd.com>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
- "Maximilian Luz" <luzmaximilian@gmail.com>, "Lee Chun-Yi" <jlee@suse.com>,
- "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>,
- "Corentin Chary" <corentin.chary@gmail.com>,
- "Luke D . Jones" <luke@ljones.dev>, "Ike Panhc" <ike.pan@canonical.com>,
- "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
- "Alexis Belmonte" <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Ai Chao" <aichao@kylinos.cn>, "Gergo Koteles" <soyer@irl.hu>,
- "open list" <linux-kernel@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
- "Matthew Schwartz" <matthew.schwartz@linux.dev>
-Message-Id: <bfafd7c5-6757-42e5-a3cf-d4695b6723cd@app.fastmail.com>
-In-Reply-To: <20241025193055.2235-8-mario.limonciello@amd.com>
-References: <20241025193055.2235-1-mario.limonciello@amd.com>
- <20241025193055.2235-8-mario.limonciello@amd.com>
-Subject: Re: [PATCH 7/8] ACPI: platform_profile: Add support for multiple handlers
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Mario,
+SMB1 protocol supports non-UNICODE (8-bit OEM character set) and
+UNICODE (UTF-16) modes. Linux SMB1 client implements both of them but
+there are few bugs in processing non-UNICODE mode.
 
-On Fri, Oct 25, 2024, at 3:30 PM, Mario Limonciello wrote:
-> Multiple drivers may attempt to register platform profile handlers,
-> but only one may be registered and the behavior is non-deterministic
-> for which one wins.  It's mostly controlled by probing order.
->
-> This can be problematic if one driver changes CPU settings and another
-> driver notifies the EC for changing fan curves.
->
-> Modify the ACPI platform profile handler to let multiple drivers
-> register platform profile handlers and abstract this detail from userspace.
->
-> From userspace perspective the user will see profiles available across
-> both drivers.  However to avoid chaos only allow changing to profiles
-> that are common in both drivers.
->
-> If any problems occur when changing profiles for any driver, then revert
-> back to the previous profile.
->
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/acpi/platform_profile.c | 203 ++++++++++++++++++--------------
->  1 file changed, 117 insertions(+), 86 deletions(-)
->
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index 091ca6941a925..915e3c49f0b5f 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -9,7 +9,6 @@
->  #include <linux/platform_profile.h>
->  #include <linux/sysfs.h>
-> 
-> -static struct platform_profile_handler *cur_profile;
->  static LIST_HEAD(platform_profile_handler_list);
->  static DEFINE_MUTEX(profile_lock);
-> 
-> @@ -36,26 +35,26 @@ static ssize_t platform_profile_choices_show(struct 
-> device *dev,
->  					struct device_attribute *attr,
->  					char *buf)
->  {
-> +	struct platform_profile_handler *handler;
-> +	unsigned long seen = 0;
->  	int len = 0;
-> -	int err, i;
-> -
-> -	err = mutex_lock_interruptible(&profile_lock);
-> -	if (err)
-> -		return err;
-> -
-> -	if (!cur_profile) {
-> -		mutex_unlock(&profile_lock);
-> -		return -ENODEV;
-> +	int i;
-> +
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +			for_each_set_bit(i, handler->choices, PLATFORM_PROFILE_LAST) {
-> +				if (seen & BIT(i))
-> +					continue;
-> +				if (len == 0)
-> +					len += sysfs_emit_at(buf, len, "%s", profile_names[i]);
-> +				else
-> +					len += sysfs_emit_at(buf, len, " %s", profile_names[i]);
-> +				seen |= BIT(i);
-> +			}
-> +		}
->  	}
-> 
-> -	for_each_set_bit(i, cur_profile->choices, PLATFORM_PROFILE_LAST) {
-> -		if (len == 0)
-> -			len += sysfs_emit_at(buf, len, "%s", profile_names[i]);
-> -		else
-> -			len += sysfs_emit_at(buf, len, " %s", profile_names[i]);
-> -	}
->  	len += sysfs_emit_at(buf, len, "\n");
-> -	mutex_unlock(&profile_lock);
->  	return len;
->  }
-> 
-> @@ -64,22 +63,20 @@ static ssize_t platform_profile_show(struct device *dev,
->  					char *buf)
->  {
->  	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
-> +	struct platform_profile_handler *handler;
->  	int err;
-> 
-> -	err = mutex_lock_interruptible(&profile_lock);
-> -	if (err)
-> -		return err;
-> 
-> -	if (!cur_profile) {
-> -		mutex_unlock(&profile_lock);
-> -		return -ENODEV;
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> +		if (!platform_profile_is_registered())
-> +			return -ENODEV;
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +			err = handler->profile_get(handler, &profile);
-> +			if (err)
-> +				return err;
-> +		}
->  	}
-> 
-> -	err = cur_profile->profile_get(cur_profile, &profile);
-> -	mutex_unlock(&profile_lock);
-> -	if (err)
-> -		return err;
-> -
->  	/* Check that profile is valid index */
->  	if (WARN_ON((profile < 0) || (profile >= ARRAY_SIZE(profile_names))))
->  		return -EIO;
-> @@ -91,37 +88,48 @@ static ssize_t platform_profile_store(struct device *dev,
->  			    struct device_attribute *attr,
->  			    const char *buf, size_t count)
->  {
-> +	struct platform_profile_handler *handler;
-> +	enum platform_profile_option profile;
->  	int err, i;
-> 
-> -	err = mutex_lock_interruptible(&profile_lock);
-> -	if (err)
-> -		return err;
-> -
-> -	if (!cur_profile) {
-> -		mutex_unlock(&profile_lock);
-> -		return -ENODEV;
-> -	}
-> -
->  	/* Scan for a matching profile */
->  	i = sysfs_match_string(profile_names, buf);
->  	if (i < 0) {
-> -		mutex_unlock(&profile_lock);
->  		return -EINVAL;
->  	}
-> 
-> -	/* Check that platform supports this profile choice */
-> -	if (!test_bit(i, cur_profile->choices)) {
-> -		mutex_unlock(&profile_lock);
-> -		return -EOPNOTSUPP;
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> +		if (!platform_profile_is_registered())
-> +			return -ENODEV;
-> +
-> +		/* Check that all handlers support this profile choice */
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +			if (!test_bit(i, handler->choices))
-> +				return -EOPNOTSUPP;
-> +
-> +			/* save the profile so that it can be reverted if necessary */
-> +			err = handler->profile_get(handler, &profile);
-> +			if (err)
-> +				return err;
-> +		}
-> +
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +			err = handler->profile_set(handler, i);
-> +			if (err) {
-> +				pr_err("Failed to set profile for handler %s\n", handler->name);
-> +				break;
-> +			}
-> +		}
-> +		if (err) {
-> +			list_for_each_entry_continue_reverse(handler, 
-> &platform_profile_handler_list, list) {
-> +				if (handler->profile_set(handler, profile))
-> +					pr_err("Failed to revert profile for handler %s\n", 
-> handler->name);
-> +			}
-> +			return err;
-> +		}
->  	}
-> 
-> -	err = cur_profile->profile_set(cur_profile, i);
-> -	if (!err)
-> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> -
-> -	mutex_unlock(&profile_lock);
-> -	if (err)
-> -		return err;
-> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->  	return count;
->  }
-> 
-> @@ -140,7 +148,8 @@ static const struct attribute_group 
-> platform_profile_group = {
-> 
->  void platform_profile_notify(void)
->  {
-> -	if (!cur_profile)
-> +	guard(mutex)(&profile_lock);
-> +	if (!platform_profile_is_registered())
->  		return;
->  	sysfs_notify(acpi_kobj, NULL, "platform_profile");
->  }
-> @@ -148,40 +157,65 @@ EXPORT_SYMBOL_GPL(platform_profile_notify);
-> 
->  int platform_profile_cycle(void)
->  {
-> +	struct platform_profile_handler *handler;
->  	enum platform_profile_option profile;
-> -	enum platform_profile_option next;
-> +	enum platform_profile_option next = PLATFORM_PROFILE_LAST;
-> +	enum platform_profile_option next2 = PLATFORM_PROFILE_LAST;
->  	int err;
-> 
-> -	err = mutex_lock_interruptible(&profile_lock);
-> -	if (err)
-> -		return err;
-> -
-> -	if (!cur_profile) {
-> -		mutex_unlock(&profile_lock);
-> -		return -ENODEV;
-> -	}
-> -
-> -	err = cur_profile->profile_get(cur_profile, &profile);
-> -	if (err) {
-> -		mutex_unlock(&profile_lock);
-> -		return err;
-> -	}
-> -
-> -	next = find_next_bit_wrap(cur_profile->choices, PLATFORM_PROFILE_LAST,
-> -				  profile + 1);
-> -
-> -	if (WARN_ON(next == PLATFORM_PROFILE_LAST)) {
-> -		mutex_unlock(&profile_lock);
-> -		return -EINVAL;
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-> +		/* first pass, make sure all handlers agree on the definition of 
-> "next" profile */
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +
-> +			err = handler->profile_get(handler, &profile);
-> +			if (err)
-> +				return err;
-> +
-> +			if (next == PLATFORM_PROFILE_LAST)
-> +				next = find_next_bit_wrap(handler->choices,
-> +							  PLATFORM_PROFILE_LAST,
-> +							  profile + 1);
-> +			else
-> +				next2 = find_next_bit_wrap(handler->choices,
-> +							   PLATFORM_PROFILE_LAST,
-> +							   profile + 1);
-> +
-> +			if (WARN_ON(next == PLATFORM_PROFILE_LAST))
-> +				return -EINVAL;
-> +
-> +			if (next2 == PLATFORM_PROFILE_LAST)
-> +				continue;
-> +
-> +			if (next != next2) {
-> +				pr_warn("Next profile to cycle to is ambiguous between 
-> platform_profile handlers\n");
-> +				return -EINVAL;
-> +			}
-> +			next = next2;
-> +		}
-> +
-> +		/*
-> +		 * Second pass: apply "next" to each handler
-> +		 * If any failures occur unwind and revert all back to the original 
-> profile
-> +		 */
-> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +			err = handler->profile_set(handler, next);
-> +			if (err) {
-> +				pr_err("Failed to set profile for handler %s\n", handler->name);
-> +				break;
-> +			}
-> +		}
-> +		if (err) {
-> +			list_for_each_entry_continue_reverse(handler, 
-> &platform_profile_handler_list, list) {
-> +				err = handler->profile_set(handler, profile);
-> +				if (err)
-> +					pr_err("Failed to revert profile for handler %s\n", 
-> handler->name);
-> +			}
-> +		}
->  	}
-> 
-> -	err = cur_profile->profile_set(cur_profile, next);
-> -	mutex_unlock(&profile_lock);
-> -
-> -	if (!err)
-> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
-> 
-> -	return err;
-> +	return 0;
->  }
->  EXPORT_SYMBOL_GPL(platform_profile_cycle);
-> 
-> @@ -190,21 +224,19 @@ int platform_profile_register(struct 
-> platform_profile_handler *pprof)
->  	int err;
-> 
->  	guard(mutex)(&profile_lock);
-> -	/* We can only have one active profile */
-> -	if (cur_profile)
-> -		return -EEXIST;
-> 
->  	/* Sanity check the profile handler field are set */
->  	if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
->  		!pprof->profile_set || !pprof->profile_get)
->  		return -EINVAL;
-> 
-> -	err = sysfs_create_group(acpi_kobj, &platform_profile_group);
-> -	if (err)
-> -		return err;
-> +	if (!platform_profile_is_registered()) {
-> +		err = sysfs_create_group(acpi_kobj, &platform_profile_group);
-> +		if (err)
-> +			return err;
-> +	}
->  	list_add_tail(&pprof->list, &platform_profile_handler_list);
-> 
-> -	cur_profile = pprof;
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(platform_profile_register);
-> @@ -215,7 +247,6 @@ int platform_profile_remove(struct 
-> platform_profile_handler *pprof)
-> 
->  	list_del(&pprof->list);
-> 
-> -	cur_profile = NULL;
->  	if (!platform_profile_is_registered())
->  		sysfs_remove_group(acpi_kobj, &platform_profile_group);
-> 
-> -- 
-> 2.43.0
+This patch series add a new mount option -o nounicode to disable UNICODE
+mode and force usage of non-UNICODE (8-bit OEM character set) mode. This
+allows to test non-UNICODE code path against modern/recent SMB servers
+which implements and prefer UNICODE mode.
 
-I'm still going thru the code changes - but I'm a bit unsure on the implementation itself.
+And this patch series fixes SMB1 session setup and reading symlinks when
+UNICODE mode is not active.
 
-I'd expect that one of the advantages of having different profile handlers register is that you could support extra & new profiles that might be wanted. For example the recent discussion of the AMD handler providing better tools to tweak advanced system settings for gaming etc. Won't this approach limit that? You'll only be able to have common settings.
+Tested against Windows Server 2022 SMB1 server and older Samba SMB1
+server.
 
-I find having a common profile and two different handlers a bit tricky on how to handle. My concern is it can easily lead to conflict in settings. 
-If two handlers are doing different operations to provide the same effect - then neither handler is (probably) providing what they think is required. With your CPU vs EC example, the EC will often set CPU clock thresholds and the CPU profile handler will be changing that. If this is done I think it should be explicit to the user (admittedly I'm doing this with my Lenovo hat on - but we certify our platforms with our EC profile handler)
+Pali Rohár (5):
+  cifs: Add new mount option -o nounicode to disable SMB1 UNICODE mode
+  cifs: Fix encoding of SMB1 Session Setup Kerberos Request in
+    non-UNICODE mode
+  cifs: Add support for SMB1 Session Setup NTLMSSP Request in
+    non-UNICODE mode
+  cifs: Fix parsing reparse point with native symlink in SMB1
+    non-UNICODE session
+  cifs: Remove unicode parameter from parse_reparse_point() function
 
-I could see providing two separate handlers. e.g. balanced-A and balanced-B (for driver-A and driver-B) and the user maybe choosing which one they want (or both - though the user interface for that is definitely tricky) 
-But choosing one option for two different drivers seems confusing and with unknown side-effects. I appreciate it's complicated by your example wanting to add CPU and EC - I know how much work you've been doing on the AMD CPU front which benefits all systems.
+ fs/smb/client/cifsfs.c     |  4 ++
+ fs/smb/client/cifsglob.h   |  2 +
+ fs/smb/client/cifsproto.h  |  2 +-
+ fs/smb/client/cifssmb.c    |  5 ++-
+ fs/smb/client/connect.c    | 32 +++++++++++++--
+ fs/smb/client/fs_context.c | 11 ++++++
+ fs/smb/client/fs_context.h |  2 +
+ fs/smb/client/reparse.c    | 25 ++++++------
+ fs/smb/client/sess.c       | 81 ++++++++++++++++++++++++--------------
+ fs/smb/client/smb1ops.c    |  4 +-
+ fs/smb/client/smb2file.c   |  1 -
+ fs/smb/client/smb2proto.h  |  2 +-
+ 12 files changed, 118 insertions(+), 53 deletions(-)
 
-Another concern - would this mean that another driver could limit the options available? For instance if someone wrote a new 'mega-turbo' only profile driver and it loaded - it would then mean no profiles were available for anything as no profiles matched?
+-- 
+2.20.1
 
-Let me know if I've misunderstood the architecture. I didn't fully get how the ASUS and Framework platforms were impacted in the intro I'm afraid.
-
-Thanks!
-Mark
 
