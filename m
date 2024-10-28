@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-385647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A487D9B39EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:04:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6309B39E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:03:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7891F2230B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:04:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD44C1C21C22
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3561DFDBE;
-	Mon, 28 Oct 2024 19:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A16831DF740;
+	Mon, 28 Oct 2024 19:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="D5FXZdoQ"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kg7Va6Qc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AB2618B03;
-	Mon, 28 Oct 2024 19:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 085E518B03;
+	Mon, 28 Oct 2024 19:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730142250; cv=none; b=vCjamLZPNu4wS0jO0Nr/Bi+vPFQfmroyl3Txznaaw54bdQ8aUhwI+XOFFgJxcNoFBX0VzoHar4qhUEPx65Oe4lWcSjRp+pBz0FfqSRdqmXBcLdoMK8Uy8FlBxoH0Z+DXngDjVfZo0etQ2iXJ2HzC1uTogiLRl9AwygMfJCLG+0o=
+	t=1730142216; cv=none; b=KgPcQk/RgQqEF9Wv6uFRUe7DMO1rS1xrSJLfYi1An2+GA2IYx4GTwLyKy7FaHyvZVdnb/04la02n/aeCEZ9a3jWpBIFv3pyJZ+icx9TQLN3+LEKH1YF6JcodXIvpY3R450wE9gR4PokYl3uQTWlFDHKyJoEbK5zUiqPu/CFX2tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730142250; c=relaxed/simple;
-	bh=q5Q8IBgjedCRqgzwvX4hN/KkdoiKiEG3yT0aFX2BRBA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RDh2RZgl4MWcb2KAFQUQL1B7pUuJIA0w9Z1KRAkpZET0BKN87qI7JcjfbsKUvQAKdiDUTTqj6f/KOp8fnbJz1FH+28PUFjz0YFCtZKdoqkyNfmG0WnI0c7Ei8wltp+HRjJLkxs92yHnEkM34ECud5qvwsIqAL078taslTY1FYyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=D5FXZdoQ; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730142246;
-	bh=q5Q8IBgjedCRqgzwvX4hN/KkdoiKiEG3yT0aFX2BRBA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D5FXZdoQPL0GLbRlSBPe9CplLr1NiUjEay9oOZjdKwilIPXIJm00d3SAmBhIy4BB+
-	 J0/6++mk0r7mUZ2XI92aau7QCxGbPjbazBaVLB4qB13HYTtbzUYaHtCIkEcqqMzWr9
-	 AIVpnknOtLBq5flTl2IvNhCLVs/mbuOSVeO+sNj6y1TQGjmwQzQk3YcnpEb7KEyOUZ
-	 A4I5MfA6qqflxtLGo3wRw7T3TmHg7AZZgnrkyj8GrDhBfKM+lUXXg6xcJsYEJG6dn1
-	 HwFPeYvWwQcyKUmBAmCftGhLv1rc0Pme/v5TBCBsyKifQRJI7qparCgSJ5JakECtSF
-	 O9MsXgAU1HG7A==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XcjVG0k1XzrvQ;
-	Mon, 28 Oct 2024 15:04:06 -0400 (EDT)
-Message-ID: <f6caee5c-9d4d-449c-b697-a0a27993bd33@efficios.com>
-Date: Mon, 28 Oct 2024 15:02:26 -0400
+	s=arc-20240116; t=1730142216; c=relaxed/simple;
+	bh=9HQJv16h5LhhxIogkby1ewurJuAMF6zMm/cYD8ioHCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H313FyvsKrfONNmRSJ5dkkyJG8kSxwpW/+ILhMYQ9NmQSDbWLU7b/aJ0b8idiW2TsSchaE3XOFramRcWlQyjNtVkjqFhc6uLyI00qmdXdnZLHe+i1LOsboLvC2hkdjw6cFByONYrOdTw/Sw9v0O6rBbPjPmv3qM1DjoQmQTVcRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kg7Va6Qc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CD569C4CEC3;
+	Mon, 28 Oct 2024 19:03:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730142214;
+	bh=9HQJv16h5LhhxIogkby1ewurJuAMF6zMm/cYD8ioHCc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Kg7Va6QcfXaTNnUc44ccKdbV3fWXzCjMMnxHNMarc+dZwCvTwq5facf942KHO482C
+	 lVns3rw4iJP15JjvBCQJFPm3hDLV2L3agHrLQng59gSz+GtiHyrt4h27+rFjzh6yxh
+	 Wck/sufsaatjtiXjvfubG5qnbMYJSk0Ea4ZnyoNNHVsrtMYM0OI0rJibyNYXbRg+uB
+	 +25j4SSYWJHfi4GK/HJmZg1ZRXigsYGNQTCTKTsAFgupw1KZMSfUfy4F/47oVo468O
+	 hDuYuomO9y0iBNmwUTnLGtFguQXcDPyqVFJSibD8HM50ayvLR7RgFeUj8xsA8mISOx
+	 U1TLxaFCfFH8Q==
+Date: Mon, 28 Oct 2024 19:03:28 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lars-Peter Clausen
+ <lars@metafoo.de>
+Subject: Re: [PATCH v1 1/1] iio: accel: kxcjk-1013: Add missing terminator
+ entries
+Message-ID: <20241028190328.3b694d97@jic23-huawei>
+In-Reply-To: <20241028075123.615813-1-andriy.shevchenko@linux.intel.com>
+References: <20241028075123.615813-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH resend 6/8] tracing/ftrace: Add might_fault check to
- syscall probes
-To: Thomas Gleixner <tglx@linutronix.de>, Steven Rostedt
- <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>,
- "Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, linux-trace-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>
-References: <20240930192357.1154417-1-mathieu.desnoyers@efficios.com>
- <20240930192357.1154417-7-mathieu.desnoyers@efficios.com>
- <87cyjk2kgg.ffs@tglx>
-Content-Language: en-US
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-In-Reply-To: <87cyjk2kgg.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024-10-28 13:42, Thomas Gleixner wrote:
-> On Mon, Sep 30 2024 at 15:23, Mathieu Desnoyers wrote:
->> diff --git a/kernel/trace/trace_syscalls.c b/kernel/trace/trace_syscalls.c
->> index a3d8ac00793e..0430890cbb42 100644
->> --- a/kernel/trace/trace_syscalls.c
->> +++ b/kernel/trace/trace_syscalls.c
->> @@ -303,6 +303,7 @@ static void ftrace_syscall_enter(void *data, struct pt_regs *regs, long id)
->>   	 * Syscall probe called with preemption enabled, but the ring
->>   	 * buffer and per-cpu data require preemption to be disabled.
->>   	 */
->> +	might_fault();
->>   	guard(preempt_notrace)();
+On Mon, 28 Oct 2024 09:50:26 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> Add missing terminator entries to struct kx_odr_start_up_time
+> initializators.
 > 
-> I find it odd that the might_fault() check is in all the implementations
-> and not in the tracepoint itself:
+> Fixes: d381089dda44 ("iio: accel: kxcjk-1013: Convert ODR times array to variable in chip_info")
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 > 
->      if (syscall) {
->          might_fault();
->   	rcu_read_unlock_trace();
->     } else ...
-> 
-> That's where I would have expected it to be.
+> Jonathan, sorry for the last minute update, but it seems I was thinking,
+> but forgot to modify the initializers. Feel free to fold this one into
+> the original commit if you can / want to do it.
+No problem. Folded in.
 
-You raise a good point: we should also add a might_fault() check in
-__DO_TRACE() in the syscall case, so we can catch incorrect use of the
-syscall tracepoint even if no probes are registered to it.
+Thanks for the quick fix,
 
-I've added the might_fault() in each tracer syscall probe to make sure
-a tracer don't end up registering a faultable probe on a tracepoint
-protected with preempt_disable by mistake. It validates that the tracers
-are using the tracepoint registration as expected.
-
-I'll prepare separate a patch adding this and will add it to this
-series.
-
-Thanks,
-
-Mathieu
+Jonathan
 
 > 
-> Thanks,
+>  drivers/iio/accel/kxcjk-1013.c | 5 +++++
+>  1 file changed, 5 insertions(+)
 > 
->          tglx
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+> diff --git a/drivers/iio/accel/kxcjk-1013.c b/drivers/iio/accel/kxcjk-1013.c
+> index a6621cd69707..28ed0e09d099 100644
+> --- a/drivers/iio/accel/kxcjk-1013.c
+> +++ b/drivers/iio/accel/kxcjk-1013.c
+> @@ -190,6 +190,7 @@ static const struct kx_odr_start_up_time kxcjk1013_odr_start_up_times[] = {
+>  	{ 0x05, 3900 },
+>  	{ 0x06, 2700 },
+>  	{ 0x07, 2100 },
+> +	{ }
+>  };
+>  
+>  /* KXCJ9-1008 */
+> @@ -206,6 +207,7 @@ static const struct kx_odr_start_up_time kxcj91008_odr_start_up_times[] = {
+>  	{ 0x05, 3900 },
+>  	{ 0x06, 2700 },
+>  	{ 0x07, 2100 },
+> +	{ }
+>  };
+>  
+>  /* KXCTJ2-1009 */
+> @@ -222,6 +224,7 @@ static const struct kx_odr_start_up_time kxtj21009_odr_start_up_times[] = {
+>  	{ 0x05, 4000 },
+>  	{ 0x06, 3000 },
+>  	{ 0x07, 2000 },
+> +	{ }
+>  };
+>  
+>  /* KXTF9 */
+> @@ -232,6 +235,7 @@ static const struct kx_odr_start_up_time kxtf9_odr_start_up_times[] = {
+>  	{ 0x04, 11000 },
+>  	{ 0x05, 5100 },
+>  	{ 0x06, 2700 },
+> +	{ }
+>  };
+>  
+>  /* KX023-1025 */
+> @@ -249,6 +253,7 @@ static const struct kx_odr_start_up_time kx0231025_odr_start_up_times[] = {
+>  	{ 0x05, 4400 },
+>  	{ 0x06, 3000 },
+>  	{ 0x07, 3000 },
+> +	{ }
+>  };
+>  
+>  enum kx_acpi_type {
 
 
