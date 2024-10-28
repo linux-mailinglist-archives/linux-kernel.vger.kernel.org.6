@@ -1,102 +1,82 @@
-Return-Path: <linux-kernel+bounces-384895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B39E79B2FE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:12:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0FC9B2FE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FB87B224AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFA4281073
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DCE1D8A14;
-	Mon, 28 Oct 2024 12:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B8E1D86CB;
+	Mon, 28 Oct 2024 12:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uTA10aeL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Mgtkup+w"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E2A1D86DC;
-	Mon, 28 Oct 2024 12:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB7831D7982;
+	Mon, 28 Oct 2024 12:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117524; cv=none; b=CpTSqwPCAIwx+9aUvdjzZtkOrapSZDnZv7Opbu2Fu9svJSPfhOOCkrM5pm9JqkDSjmfC3z2xAjq+IUeM1fnKbpGaVNrss44dVLGS6Qgz+qmr0ETiCpcFLxq3Xi+DAjKF8jhb1bJTcyfllsn9W9kXHTnJUUwL90GIyWkvAqPkQI0=
+	t=1730117578; cv=none; b=j9LsSJRshkPMXQtZbfdWTGml2D1x6cqfdZkiz3JjAez+9E5fiQXk2ViegALe93ikExrHkQXmwW63f0+5aD9WGEHeOebhUHPZINmtBF4fb0P0DMvi2CYPoO0YZW7AeDEHV4sSGhZ5Niv3YEdagsFN7VmcULQ8r9gJq7/68Hmdqug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117524; c=relaxed/simple;
-	bh=NAZkhhTeYWBcCRnnAZH+eZCWBsmCMSLDc9mRceexjgU=;
+	s=arc-20240116; t=1730117578; c=relaxed/simple;
+	bh=1UUETNFUD4kivyXbN+Uk5x79jZSmLY3Fg5MmGDvdzfE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PVLUDhNxgnBNhi4mfDSH4lu4yX3XaRxbcv5O6KqJZdXCF99aUlO2BnAwfKLx7opD5EZCAj0d7slPmo7IbYI/rfckl4ScAPs+BMk/N/5+GrTZfPGbI5uBDLcnTYS6pV4NN7wYQe/AjSCfBaF3r0/Ro5aJ+azRArYDv1Llb3bqVaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uTA10aeL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FB9FC4CEC3;
-	Mon, 28 Oct 2024 12:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730117523;
-	bh=NAZkhhTeYWBcCRnnAZH+eZCWBsmCMSLDc9mRceexjgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uTA10aeL4xtGd63PUIPx4KhhP7HDf7HveJCfWaAvK3qMB3bC8jLKkEhFESanGKbGf
-	 uhuDju3v8m3q6ieocv7/yEBPF18Cm83bCKgYPTn2qye5/6F6nwYL+lAxM0hDQ1du8V
-	 Dh/ZPyGjrWiPXyKtiTxIol4e2/k0WxJX+/8AtT6n40dTRWQ6cmbQyboWn5RSmZglPA
-	 IbMxrtYqDvMPSdSB2BvEZtP6NHs/n63XsT/dRKP97i6mPmFZuEeHcDLhqQx9yYFICM
-	 PkHz47nn0gx8oL6zQVXRROwud3Sjg/7pm75NIrx5uhJzzS+wGzJ9liRCwrMSQ+e+/y
-	 8X53OSDt6bqxw==
-Date: Mon, 28 Oct 2024 12:11:58 +0000
-From: Mark Brown <broonie@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CeqQg55RrGEeShwOp3oVi4CUS/HfITIj7Q1HppOOrMPWH4oBr4NYBxkqpqeO+NlpQM1JExUAxK1D7UKtvU+XLEuY7UyLFQycSqr0Wo/wdNL6gx4dyHdjnle0tduZxKdRy7o1EuL8s0wZl3l/IwVYWH4cjtY3+7yvHkkeKbeBkfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Mgtkup+w; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+	:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=7i2YECRB/bozAkFcEXDnmtUZXJNHHUMUdwAHJ9qlN4c=; b=Mgtkup+wyRHeXOvez20yHXrvMS
+	y+k59ruuLRxOqmZVnSICbtxLylCATHBa2I4AWjRPQcqqf0VOmGFBoLhQbowcCTHbR0HzfVzmF3Gcy
+	T2PgLSXFdIvathqSfXww0j8G0r5HVJv/gt+7aieZEpymke8yXaTrqDGBr80HvgKmVSDAelfXaK7Hr
+	HyQdiuTTXFMT+nP8N+AFTT5XsYMKqUS8gFuW6ZmFZR0IKQ40I1Fe9QRLUKTOZTnecLxBst5wO1WUq
+	HjHdV6rsW3Ip5fnuZ1I9TRbg8MFjYP+8yE7XsjWWsuycskSsMfp7wdUcBoMDwziedpes+OfHFKfLe
+	+iCapKMQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5OcC-0000000Ahk3-0exj;
+	Mon, 28 Oct 2024 12:12:56 +0000
+Date: Mon, 28 Oct 2024 05:12:56 -0700
+From: Christoph Hellwig <hch@infradead.org>
 To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com, lgirdwood@gmail.com, perex@perex.cz,
-	tiwai@suse.com, linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH AUTOSEL 6.11 05/32] ASoC: fsl_esai: change dev_warn to
- dev_dbg in irq handler
-Message-ID: <1ad8216d-c24d-4d35-9562-4106e2aafa34@sirena.org.uk>
-References: <20241028105050.3559169-1-sashal@kernel.org>
- <20241028105050.3559169-5-sashal@kernel.org>
+Cc: torvalds@linux-foundation.org, kuba@kernel.org, davem@davemloft.net,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pabeni@redhat.com, kees@kernel.org, mpe@ellerman.id.au,
+	broonie@kernel.org
+Subject: Re: [GIT PULL] Networking for v6.12-rc5
+Message-ID: <Zx9_yOLrWzFS_DoC@infradead.org>
+References: <20241024140101.24610-1-pabeni@redhat.com>
+ <ZxpZcz3jZv2wokh8@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Jw04mRIq6Tcvx3ro"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241028105050.3559169-5-sashal@kernel.org>
-X-Cookie: Remember the... the... uhh.....
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ZxpZcz3jZv2wokh8@sashalap>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Thu, Oct 24, 2024 at 10:28:03AM -0400, Sasha Levin wrote:
+> Days in linux-next:
+> ----------------------------------------
+>  0 | █████████████████████████████████████████████████ (14)
+>  1 | ███████ (2)
+>  2 | █████████████████████ (6)
+>  3 | ██████████████████████████████████████████ (12)
+>  4 |
 
---Jw04mRIq6Tcvx3ro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can you replace the full block filling "characters" with a say "+"
+characters as in diff statistics to make this hurt the eyes a little
+less?
 
-On Mon, Oct 28, 2024 at 06:49:47AM -0400, Sasha Levin wrote:
-> From: Shengjiu Wang <shengjiu.wang@nxp.com>
->=20
-> [ Upstream commit 54c805c1eb264c839fa3027d0073bb7f323b0722 ]
->=20
-> Irq handler need to be executed as fast as possible, so
-> the log in irq handler is better to use dev_dbg which needs
-> to be enabled when debugging.
-
-This is very marginal for stable material.
-
---Jw04mRIq6Tcvx3ro
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcff40ACgkQJNaLcl1U
-h9CXwAf/dKgisn32gugwOj7kv0kcdBJdUWmANJAOcx1EOHgkOSaJivv+5thFldfv
-7oqPwtMJ7fY3dgB+F9mBaeEme5UEhSHLoawxHLf4C5paoOTr4z3YcXrdwYgwrF3Q
-n+sGIw5qXOgLhuHyOaGLyaMsGaHuI4yB4PfFi/muoWK98SQex0M6iC3+WbAY41D+
-0ghy0A9fIIAy/xK9Q309x9hV6dwfUE4Sg4+DHC2kH9E5JBD9sY4EaGmkdZ7azV2A
-tqwaPUgw34Hip+veM7UMb4m/G3jM6BwAUJporndNYVBmo3O06bDGvZulrRDsUkEi
-7PvclJ+x+hhfc90E9zZn2mCpDj9trg==
-=yJsI
------END PGP SIGNATURE-----
-
---Jw04mRIq6Tcvx3ro--
 
