@@ -1,154 +1,136 @@
-Return-Path: <linux-kernel+bounces-384644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3030F9B2CBD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:25:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1924F9B2CC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:25:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3BD0282997
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A68B1C21E66
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D531D5171;
-	Mon, 28 Oct 2024 10:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448A518C939;
+	Mon, 28 Oct 2024 10:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S7wJXbIH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GmShF6Px"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B4A1990AD
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03FD1990AD
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111087; cv=none; b=CChMGsoziDuX668VUjM9R+Bkan1GWArteXQgk2WbSPrb0W0UEXKsVD4+4GxcPByd1ux6jlaPE5NWA/R0L1y2IvOmDwPZssfs93dh8rjCm5RgNE7XC1N5vd9NrATB5JQpTyxB/prB3zD55NrHWnOQJSEYZ5dG/LnLdnmx30R5mvA=
+	t=1730111099; cv=none; b=sjKfhNllpPSvHyuv1EIoj3ykcsmasDXyzyD4E6nbcHveJfoViez72bEWc5VQRdrlKnqfaBOrEieAFZ3D6zt8KkKxXAdM643sDP4HNk7toQjAZM6/sUA7gPctnFOsERaIy5fLh0AKm8IofL81lDSjREnghVIjjwMGczlPJWSnm14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111087; c=relaxed/simple;
-	bh=PSXcW8y52t+sS2GK5KwCBNYCko4EWdoLOtCU9synXEE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MspvjUNCRvibtpq4FxXQuKO4IboHSEPPfMydqW31uoNBnu314W0oey+p25AOq2ktufeHM29B13Tgk/6m29MNIORxKk40VLU8oWZ1EC/+yy2CD1ho05coEtw5WJDboKcbmlN6HlUwnczS4a878ZlUd+vDRh0aM50gJXrZDj5mR/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S7wJXbIH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730111084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Xc/RGz11YWPABh0H4B1/0347FqzAk6dVpdVvZMq9SS8=;
-	b=S7wJXbIHtH1eCJtA/mjJOzfSp3d+URhpouGWsZYuYaA8fB8Yi1E221EnTDXBDt5r1ihuH/
-	qn+w4GC14qE898r4xL4R/zWNvTE+/DM9Emd+gQjBNNq30yzughj3Rf9pGJgV//3VlC4xwb
-	Ytmr6dlJH6g+l7b4rzzc3PzyCmW8Jwc=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-324-OZt_YqqIPUq6eN0npqc2Pg-1; Mon, 28 Oct 2024 06:24:41 -0400
-X-MC-Unique: OZt_YqqIPUq6eN0npqc2Pg-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d67fe93c6so2175629f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:24:41 -0700 (PDT)
+	s=arc-20240116; t=1730111099; c=relaxed/simple;
+	bh=fbtunhKLM67bLa2qu23S88glusv6bfpysmOgMaktmbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rcS+A9EaVt1TybdlvogdQjB5vW15hrreuG+780c2IDN90JOw5/PGmD6fAbHYJBChe8ACco/UfemsQYnJgu0Ew8dnkf4eRBcLbGZ0eUWS6RwmZw+LttGKDonzo4mwLu00Zs4iVQ8VG+70WBwZHI12L3+4hrMzy2k2o3M/u+q2TYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GmShF6Px; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RMZhj4006720
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:24:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fg9jSsM2x5+eCKxffj8Vjk5A547zvvC9R2DqGq/9wok=; b=GmShF6Pxdex6D+XI
+	Q7uD8E9NN8lBbja18R1/MeSvfBWP7oK5FjzhaKc8l/isGDj439YMBrBzaOuQtG9B
+	9LFRXsWIZys/bcI9idwyiElDDL0ED92m5J7g+c73BNrBI+g7zTK+68+U3t8Aiepu
+	Dnuy7Y88czX3pZ/+6Eu+CGKpCFeoVmiDP7aDUKEc7D41fZNA8VMYQpOYatRuCfaL
+	O1R+xdsNFNEJa17TBVwZmgTxTBSdd5Y7Uys2v00hUnNQXmZgGAd5W2Khzn5ZF2Jd
+	HGVaBFtiZ3LIoHN3m9a2HdEYjhqKMMJvbmWGUiirnv55XtTrd1X/X5Cnww7Pwl4S
+	q/i3yg==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gskjvdsx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:24:57 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6cbe91571easo15222856d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:24:56 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730111080; x=1730715880;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xc/RGz11YWPABh0H4B1/0347FqzAk6dVpdVvZMq9SS8=;
-        b=kzQlUThLqkwbKMs2ojwGzrm/3E8j/M+k6LYiOB7/K2mWEh/muiB1sLY5ccUXXDZLHe
-         mUGBHKFB7CCoKCR5Zbl52/zRN344WzWSylJsKvYx/Zbvx7E0uTIQFLnxErqby6B8fz5Z
-         X+Pz8U66C956l1z4b8rSz61QaYogG9VV6RZEm8AASuSiYDterqFA3eL9Pyi7Fgowh7lD
-         1xjfFVE43abk46/fJS3iVblaAC9Oyn38VYHzYUPX4g3BT9ukE3hRMSqoMX/5k9QSR2V2
-         J4x/Srg1Lc94p++132ULQj+GxvzUs+tavfE+Y03v+PLayIQYE5iZqIjfaf4hcsJPptT1
-         wt3w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwEbwBfnCZkwbOatGMhO6+j8LlwVQFUPNY8IHXAfsPhUrF6t8jaN8dVgBhQB2w6nPQ5WhsKKLSAQPxdr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2Zl/8MRW9q6L2n1ksp5wYyO4tSWUfDifVjV6TS5ol9qyCrDmc
-	LfnfuAg/ZhjgeptvNq2JTXHI1RjXHiMsnVevgl9I97yENf+OUT72l2AfKAtdyp4xCXNBAhB3Ft2
-	DBZp6AwGmrTHl1wRS0jOLZ2yzaNbJLWcs/g57mzfHJvXCBGh6m0A5pqii24SQeA==
-X-Received: by 2002:adf:f106:0:b0:37d:3dfd:cd92 with SMTP id ffacd0b85a97d-3806117dceamr5365154f8f.28.1730111080018;
-        Mon, 28 Oct 2024 03:24:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGExDH7Nq1hm7ppK1jbeRo2k+cJOHRjlhoUA91SFSHg9aqnEaUekKi+z3ICfdmUg8xcIHYp+Q==
-X-Received: by 2002:adf:f106:0:b0:37d:3dfd:cd92 with SMTP id ffacd0b85a97d-3806117dceamr5365142f8f.28.1730111079680;
-        Mon, 28 Oct 2024 03:24:39 -0700 (PDT)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193595c51sm103279845e9.20.2024.10.28.03.24.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 03:24:39 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Pedro Sousa <pedrom.sousa@synopsys.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>,
-	Minwoo Im <minwoo.im@samsung.com>,
-	Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH] scsi: ufs: Replace deprecated PCI functions
-Date: Mon, 28 Oct 2024 11:24:29 +0100
-Message-ID: <20241028102428.23118-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1730111096; x=1730715896;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fg9jSsM2x5+eCKxffj8Vjk5A547zvvC9R2DqGq/9wok=;
+        b=Qf+QQ+tXDKZYL0lF+0nma+vM9fx+lZVeS50oH6BoCOQyNzscrQ64M6qpSX33FkXuFD
+         6omBgRSRg/KyCGO9Wf3ZyatgTI6Vtk3wlQ4zyF8b0b5U8MNx+bqR30rizWTSaCAQaIqp
+         wCcp8st+BcPsjIbLNwgCTfkAymOGjVTHw3NYUFJuJkm77nfwGclVmziwilLevSIZA298
+         DuVDVst8Oy621GN6dSHzHQ0AffF9mKeRrl2V0k6OWCiELNFH63SQWMtstIC0pI3hu9wC
+         BS61QMYUKZtYsSyOiOZkVyL0bGb3WAi6KRc4LEhBtNDQTj+T2oLKITZop/br21oZ3Ctx
+         DvMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeSejTAuQenc7TEtbyOwHetpUeQRsif+DzBRuqLK4ZUzTIK4SDg74Bsc6Pj2wLOZp1rA0WcVujjPig0Fw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+Koq33TOUrVBEssKH5MtDrjz7KASAATxRK+3cBswvx96UkhPI
+	JQZvbhH5qSdG1zHqLlbmThl7nXhk0Ved0JjdUNC6VvmTetUu/OPH8n6eFyfdgvmW4X7zCVxpHr7
+	fZO8YpXQSROgxloEGGTfi783RhNWG8H8KpKfzJigiJ0WLfN2BF/5PVJ22SwglxHs=
+X-Received: by 2002:ad4:5bc1:0:b0:6c3:6d25:2578 with SMTP id 6a1803df08f44-6d185816bf1mr54129666d6.8.1730111095780;
+        Mon, 28 Oct 2024 03:24:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1LCyhTsx+s4J7iCqfSqv0uRemX/kPrSPNh3ahugTm/b+6Nqx8Iut8S7BU/6LdyG6nwn7IXA==
+X-Received: by 2002:ad4:5bc1:0:b0:6c3:6d25:2578 with SMTP id 6a1803df08f44-6d185816bf1mr54129576d6.8.1730111095455;
+        Mon, 28 Oct 2024 03:24:55 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f298ef6sm363536566b.136.2024.10.28.03.24.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 03:24:54 -0700 (PDT)
+Message-ID: <465ee5c1-2fca-4099-b618-f80484445dac@oss.qualcomm.com>
+Date: Mon, 28 Oct 2024 11:24:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 5/5] arm: dts: qcom-ipq5018-linksys-jamaica: Include
+ dts from arm64
+To: Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Karl Chan <exxxxkc@getgoogleoff.me>,
+        Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, andersson@kernel.org,
+        konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org
+References: <20241002232804.3867-1-exxxxkc@getgoogleoff.me>
+ <20241002232804.3867-6-exxxxkc@getgoogleoff.me>
+ <f2eck3tudqoqyylcknfvz77wj52fornxevp6po3y7sov7swikt@asez6wepyl6h>
+ <768a1c92-6e1d-4d6c-90f6-efe66f68dd0e@oss.qualcomm.com>
+ <c154d164-57c8-4407-8b07-543676d21206@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <c154d164-57c8-4407-8b07-543676d21206@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: AbeBxkilZhklwbp0wFLpus4pQLa3pEHZ
+X-Proofpoint-ORIG-GUID: AbeBxkilZhklwbp0wFLpus4pQLa3pEHZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=747 bulkscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280085
 
-pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
-commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-pcim_iomap_regions_request_all()").
+On 28.10.2024 7:33 AM, Sricharan Ramabadhran wrote:
+> 
+> 
+> On 10/26/2024 5:08 PM, Konrad Dybcio wrote:
+>> Would you folks know anything about it? Do we have an open source
+>> U-Boot release that could be sideloaded as a secondary bootloader to
+>> kick it into 64-bit mode
+> 
+> Yes slightly older u-boot release [1] supports booting both 32/64 bit
+> kernels.
+> 
+> [1] https://git.codelinaro.org/clo/qsdk/oss/boot/u-boot-2016/-/tree/win.coretech.1.0?ref_type=heads
 
-Replace these functions with pcim_iomap_region().
+Thank you!
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/ufs/host/tc-dwc-g210-pci.c | 8 +++-----
- drivers/ufs/host/ufshcd-pci.c      | 8 +++-----
- 2 files changed, 6 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/ufs/host/tc-dwc-g210-pci.c b/drivers/ufs/host/tc-dwc-g210-pci.c
-index 876781fd6861..0167d8bef71a 100644
---- a/drivers/ufs/host/tc-dwc-g210-pci.c
-+++ b/drivers/ufs/host/tc-dwc-g210-pci.c
-@@ -80,14 +80,12 @@ tc_dwc_g210_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	pci_set_master(pdev);
- 
--	err = pcim_iomap_regions(pdev, 1 << 0, UFSHCD);
--	if (err < 0) {
-+	mmio_base = pcim_iomap_region(pdev, 0, UFSHCD);
-+	if (IS_ERR(mmio_base)) {
- 		dev_err(&pdev->dev, "request and iomap failed\n");
--		return err;
-+		return PTR_ERR(mmio_base);
- 	}
- 
--	mmio_base = pcim_iomap_table(pdev)[0];
--
- 	err = ufshcd_alloc_host(&pdev->dev, &hba);
- 	if (err) {
- 		dev_err(&pdev->dev, "Allocation failed\n");
-diff --git a/drivers/ufs/host/ufshcd-pci.c b/drivers/ufs/host/ufshcd-pci.c
-index 54e0cc0653a2..ea39c5d5b8cf 100644
---- a/drivers/ufs/host/ufshcd-pci.c
-+++ b/drivers/ufs/host/ufshcd-pci.c
-@@ -588,14 +588,12 @@ ufshcd_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	pci_set_master(pdev);
- 
--	err = pcim_iomap_regions(pdev, 1 << 0, UFSHCD);
--	if (err < 0) {
-+	mmio_base = pcim_iomap_region(pdev, 0, UFSHCD);
-+	if (IS_ERR(mmio_base)) {
- 		dev_err(&pdev->dev, "request and iomap failed\n");
--		return err;
-+		return PTR_ERR(mmio_base);
- 	}
- 
--	mmio_base = pcim_iomap_table(pdev)[0];
--
- 	err = ufshcd_alloc_host(&pdev->dev, &hba);
- 	if (err) {
- 		dev_err(&pdev->dev, "Allocation failed\n");
--- 
-2.47.0
-
+Konrad
 
