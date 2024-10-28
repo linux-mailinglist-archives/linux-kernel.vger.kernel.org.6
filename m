@@ -1,127 +1,176 @@
-Return-Path: <linux-kernel+bounces-385779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AD89B3BA3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:31:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19049B3BCE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C211F22C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619792832EA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1B0203711;
-	Mon, 28 Oct 2024 20:25:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B621F4296;
+	Mon, 28 Oct 2024 20:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NzHAzrEh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gCA0o8iF"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78D1201105;
-	Mon, 28 Oct 2024 20:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285F81EE00C;
+	Mon, 28 Oct 2024 20:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730147132; cv=none; b=bqqMhBKA8kciwJw114E975MIHTHI4ciATTlrxOO06a1O8p4Ci96zeQbUosXZ7nnN7Bv56mKvjkOPFzbrEVBR2mXai6Dvy7NWI/AqZFmYlglNAeJvOYuFQLQnsBEZDFaLBpC3P/eLoDv0vOy+bSIWaYfuFsAg/OOBwPVC2ThTrsU=
+	t=1730147256; cv=none; b=p7ats6x+qoXJI61rUd0I/TwZ7g1U/sUwkgDtvrO2BJ4D/GuAdXuaB8E9+Sa6TBsXwPv/UMnme79bQb6pI397uMG6Ln9KgeEM9cthXmoBm/YCcsYnET+XLivKmEkQy8c36wovdXJlxjBA1eAbUBpo8Y9XRf9b9qOlilsrP05dLfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730147132; c=relaxed/simple;
-	bh=rnjL8n+F/4v2n2O6orIt130j6FPaOE/7lllW+0hIfX8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T/uH0N4UcSuZsZmMohxTxZI+yJdixudcsk1VnkkMehMuR/ourSCHfA/UbSkNYyX6F05f+8++RNspbY5n9qhV1VXXnng0rTXBNcxkLtR4T2KSwucNzwTyDFMh9KaQqRL5jqrQ9eHs0tUFmTdHefp8W/uCjuYwoTaE5dGqhqz9tWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NzHAzrEh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40147C4CEE4;
-	Mon, 28 Oct 2024 20:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730147132;
-	bh=rnjL8n+F/4v2n2O6orIt130j6FPaOE/7lllW+0hIfX8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=NzHAzrEh8IT+ZzT4RZDDB7mz2M3do9Md0mZc/l6A4fYPgznaFDnxSSWk6aCS+WR4x
-	 K/j42/PRnZ1f3TQ5WritR5lOizr6SihIYpx2eaLAIQd1w1Kb9OLAPcV/rI726/9Bw0
-	 HGyX6Wu7gHQUQZ7qf6dyXzY9XkSWtHLl9K5mAJ6DwqPV1HYrXV+a0y8Qk/nQTKmjle
-	 xmMoNaALMZsKebxz+R4jdGbABBGykq/7AWN/dfvvDGjrhBd28YyWx1Ym42sD5/x0zD
-	 +3X5Fn9GvJWK+ft22fsvXB5Q2VKB/fxMFD69QeTC5iqbBB8x8Temo4xR+0IlqUKhfy
-	 Q12qGVY8etvDg==
-Date: Mon, 28 Oct 2024 20:25:23 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: ahaslam@baylibre.com
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
- dlechner@baylibre.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] iio: dac: ad5791: Use devm_iio_device_register
-Message-ID: <20241028202523.5c876f99@jic23-huawei>
-In-Reply-To: <20241028071118.699951-7-ahaslam@baylibre.com>
-References: <20241028071118.699951-1-ahaslam@baylibre.com>
-	<20241028071118.699951-7-ahaslam@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730147256; c=relaxed/simple;
+	bh=XDAZhSYAaVkmM4dFq8nal7tVXdbanH7syiZOM+auQxs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dPpsXwDT7BFF3Lq9g+VFeM2UahhxR6VODvdMCHfmc95iJkihuCLjwNxnplG/dWHo87em5LwqGjOjygTtTG2IwgOwcHkHK9OHG8CIfynUhLFqUcKR5+NWIa1yd+qvsUxh0dHv/6faSOzo+DU4T7RPDE2HapMgez1VMBZRX2gkb2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gCA0o8iF; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1730147253;
+	bh=XDAZhSYAaVkmM4dFq8nal7tVXdbanH7syiZOM+auQxs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gCA0o8iFNotPHu8YJdQ0zgNyNddjKrHOyPHkS6d9zzTRQz5Q1SCYa0bMXEkcKbeIi
+	 OZhocwgEgC0ajHj8oGg7IUU3x97Std4QUSTxP0zzqIIcGwrKoVZBpt5Tiqzapxxwud
+	 mH7eD2HAtr+VeC/6U2fNQbyeUnoR2MEqcIiY1O1O2baVSHUmA//dQMwNBAE3gz37Wj
+	 PQfzXlfdLD5BgMNs11HMkz3NUVd1bc9/zJPgHXpjq/Fog6NUidwJahkD87XPcm+p2W
+	 Lerc1xiM2ekLyfsQ/8G0zvIxL7YzysPx5eCujNwA7qlnJQ4nfpL2tybvvmuI9wGBAo
+	 e/jd3fgcxHT5g==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XclLX62mRzsb2;
+	Mon, 28 Oct 2024 16:27:32 -0400 (EDT)
+Message-ID: <588eb8e1-5035-499f-b19b-8b40a9877433@efficios.com>
+Date: Mon, 28 Oct 2024 16:25:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v4 4/4] tracing: Add might_fault() check in
+ __DO_TRACE() for syscall
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Jordan Rife <jrife@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
+ Thomas Gleixner <tglx@linutronix.de>, Michael Jeanson
+ <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
+ Joel Fernandes <joel@joelfernandes.org>
+References: <20241028190927.648953-1-mathieu.desnoyers@efficios.com>
+ <20241028190927.648953-5-mathieu.desnoyers@efficios.com>
+ <e18e953b-9030-487c-bb8a-125521568e9e@efficios.com>
+ <CAEf4BzZgSPXyvtBZuB+W3fp=C8QYSHsd0TduxWE3Le+9e80-UA@mail.gmail.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <CAEf4BzZgSPXyvtBZuB+W3fp=C8QYSHsd0TduxWE3Le+9e80-UA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Oct 2024 08:11:18 +0100
-ahaslam@baylibre.com wrote:
-
-> From: Axel Haslam <ahaslam@baylibre.com>
+On 2024-10-28 16:20, Andrii Nakryiko wrote:
+> On Mon, Oct 28, 2024 at 12:59 PM Mathieu Desnoyers
+> <mathieu.desnoyers@efficios.com> wrote:
+>>
+>> On 2024-10-28 15:09, Mathieu Desnoyers wrote:
+>>> Catch incorrect use of syscall tracepoints even if no probes are
+>>> registered by adding a might_fault() check in __DO_TRACE() when
+>>> syscall=1.
+>>>
+>>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
+>>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>> Cc: Michael Jeanson <mjeanson@efficios.com>
+>>> Cc: Steven Rostedt <rostedt@goodmis.org>
+>>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+>>> Cc: Peter Zijlstra <peterz@infradead.org>
+>>> Cc: Alexei Starovoitov <ast@kernel.org>
+>>> Cc: Yonghong Song <yhs@fb.com>
+>>> Cc: Paul E. McKenney <paulmck@kernel.org>
+>>> Cc: Ingo Molnar <mingo@redhat.com>
+>>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+>>> Cc: Mark Rutland <mark.rutland@arm.com>
+>>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+>>> Cc: Namhyung Kim <namhyung@kernel.org>
+>>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+>>> Cc: bpf@vger.kernel.org
+>>> Cc: Joel Fernandes <joel@joelfernandes.org>
+>>> Cc: Jordan Rife <jrife@google.com>
+>>> ---
+>>>    include/linux/tracepoint.h | 6 ++++--
+>>>    1 file changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
+>>> index 259f0ab4ece6..7bed499b7055 100644
+>>> --- a/include/linux/tracepoint.h
+>>> +++ b/include/linux/tracepoint.h
+>>> @@ -226,10 +226,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
+>>>                if (!(cond))                                            \
+>>>                        return;                                         \
+>>>                                                                        \
+>>> -             if (syscall)                                            \
+>>> +             if (syscall) {                                          \
+>>>                        rcu_read_lock_trace();                          \
+>>> -             else                                                    \
+>>> +                     might_fault();                                  \
+>>
+>> Actually, __DO_TRACE() is not the best place to put this, because it's
+>> only executed when the tracepoint is enabled.
+>>
+>> I'll move this to __DECLARE_TRACE_SYSCALL()
+>>
+>> #define __DECLARE_TRACE_SYSCALL(name, proto, args, cond, data_proto)    \
+>>           __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), cond, PARAMS(data_proto)) \
+>>           static inline void trace_##name(proto)                          \
+>>           {                                                               \
+>>                   might_fault();                                          \
+>>                   if (static_branch_unlikely(&__tracepoint_##name.key))   \
+>>                           __DO_TRACE(name,                                \
+>>                                   TP_ARGS(args),                          \
+>>                                   TP_CONDITION(cond), 1);                 \
+>> [...]
+>>
+>> instead in v5.
 > 
-> Use devm_iio_device_register to automatically free the iio device.
-> since this is the last remaining resource that was not automatically
-> freed, we can drop the ".remove" callback.
+> please drop the RFC tag while at it
+
+I'm still awaiting for Jordan (or someone else) to come back with
+testing results before I feel confident dropping the RFC tag.
+
+Thanks,
+
+Mathieu
+
 > 
-> Suggested-by: David Lechner <dlechner@baylibre.com>
-> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-Hi Axel,
+>>
+>> Thanks,
+>>
+>> Mathieu
+>>
+>>> +             } else {                                                \
+>>>                        preempt_disable_notrace();                      \
+>>> +             }                                                       \
+>>>                                                                        \
+>>>                __DO_TRACE_CALL(name, TP_ARGS(args));                   \
+>>>                                                                        \
+>>
+>> --
+>> Mathieu Desnoyers
+>> EfficiOS Inc.
+>> https://www.efficios.com
+>>
 
-The bot did a much better review job than me this time.
-Other than the obvious solutions to the things it pointed out,
-this series looks fine to me.
-
-Jonathan
-
-> ---
->  drivers/iio/dac/ad5791.c | 15 +--------------
->  1 file changed, 1 insertion(+), 14 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/ad5791.c b/drivers/iio/dac/ad5791.c
-> index cf3d41a10c20..21332c9aca5d 100644
-> --- a/drivers/iio/dac/ad5791.c
-> +++ b/drivers/iio/dac/ad5791.c
-> @@ -405,24 +405,12 @@ static int ad5791_probe(struct spi_device *spi)
->  	if (ret)
->  		return dev_err_probe(&spi->dev, ret, "fail to write ctrl register\n");
->  
-> -	spi_set_drvdata(spi, indio_dev);
->  	indio_dev->info = &ad5791_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
->  	indio_dev->channels = &st->chip_info->channel;
->  	indio_dev->num_channels = 1;
->  	indio_dev->name = st->chip_info->name;
-> -	ret = iio_device_register(indio_dev);
-> -	if (ret)
-> -		return dev_err_probe(&spi->dev, ret, "unable to register iio device\n");
-> -
-> -	return 0;
-> -}
-> -
-> -static void ad5791_remove(struct spi_device *spi)
-> -{
-> -	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-> -
-> -	iio_device_unregister(indio_dev);
-> +	return devm_iio_device_register(&spi->dev, indio_dev);
->  }
->  
->  static const struct of_device_id ad5791_of_match[] = {
-> @@ -451,7 +439,6 @@ static struct spi_driver ad5791_driver = {
->  		   .of_match_table = ad5791_of_match,
->  		   },
->  	.probe = ad5791_probe,
-> -	.remove = ad5791_remove,
->  	.id_table = ad5791_id,
->  };
->  module_spi_driver(ad5791_driver);
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
