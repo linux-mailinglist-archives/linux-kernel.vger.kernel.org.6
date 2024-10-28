@@ -1,127 +1,107 @@
-Return-Path: <linux-kernel+bounces-385059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 073539B31DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:39:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F8D59B31DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390591C21A0D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:39:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814201C21AB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061D21DC046;
-	Mon, 28 Oct 2024 13:39:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4BE91DB92A;
+	Mon, 28 Oct 2024 13:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hGOAgT/i"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b="JGmD6ePJ"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD91D5178;
-	Mon, 28 Oct 2024 13:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC3C38DC0
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122749; cv=none; b=iNducZNfxm322ZCdcoNWbGy0RDUzK2keK/oyNqovrLKDaOe0r16BXR2zHpFkqbEzE3GYQogJeMkw5EacMUVPZFh1DpcfV0vf6BNg0N2t4KRVnn3F/uc5Qb8wxOVk5tq86wyfYmXvEkoDeKwsnZbqPDBHLis3OL3/ctrOoiwc6VM=
+	t=1730122851; cv=none; b=IJOS2ggAgRRenWtobSzPNTI3+WT9/io79FrOa2Oow5nx+B4+MJFOcLxh2TABJQkkttiCV1lUafOstjqxWIzz4gk95B4kqp2hJeWowZTvMa5w5b6zrE67XET7nI9+F9ozJRxfjYAAPRdPQ03wr2Dr+ot0+Wd87RDBS3js+JdfBww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122749; c=relaxed/simple;
-	bh=J6TygS9PS/UbaVj4c/knKhqWU5qE1QtSevjNgC5vI7E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GGYQYkyTo0wFqB4QF00qfazqUQQ2pynysXMJVYnFqRVfMpio64e9e6Zr6iBwB3ge3VDPbWB+6fuJsdoYliHGeNuMCSOlWPP9D4E1p0/QFnFcM8n08DOfWYIKtoHvsrGYALf662kikUt+uRvsk36GAZ5Ep2q+vxaM52/ILdVFUnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hGOAgT/i; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DE5F324000D;
-	Mon, 28 Oct 2024 13:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730122745;
+	s=arc-20240116; t=1730122851; c=relaxed/simple;
+	bh=Z3QgBrI30/msXmDPJceTnnyYhSrEPG/2kS8Plg2+sH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ORp2xqancw4p9vTbYFS8xkXCs4z5AnNFNGQwTeo5Mz7LNGBoUzyBMh4BgTDmUtU8EeV8kX1rbCIYKXD0KH+rGFfJwGRD7t5vx5AeCCpmw2730R91+nYoQ1vCWS3Fup3a8xaNnl1AMh9IQCED7cw38CNjZQOEQSMNnwYpo6kxDF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc; spf=pass smtp.mailfrom=steffen.cc; dkim=pass (2048-bit key) header.d=steffen.cc header.i=@steffen.cc header.b=JGmD6ePJ; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffen.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffen.cc
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XcZK75skPz9skW;
+	Mon, 28 Oct 2024 14:40:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffen.cc; s=MBO0001;
+	t=1730122843;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=J6TygS9PS/UbaVj4c/knKhqWU5qE1QtSevjNgC5vI7E=;
-	b=hGOAgT/iQxsWL1uStdCNwfhUTRbMQXtpmTXqUoeJLFB26KR/yQ5OmibLA+MliAaZATzpOE
-	K109JGcBrWxYgELGMSgrz5+J90iLjVeB8TYARbMMrOgzOSZqu+bLLmGRraCVWhgBkxLgE6
-	D51igWNDdIzO0OFMgDiXVB2Cqchl+keSf6kwuIP1/Zosh5vzsJhhPWr2bQl/bFYvnl625A
-	ccwEZCb2wGEnuPC/9WtXshEfHKmXWUFwC7BGU/KBa0uQAAdV5uxPzPPmukv5GYO1afyNWS
-	jaw5yuWtmcXJxit/7n6aDm45i5UN0HsZf1bldWIpBbL7SY9Wixbxa8ESQymfpw==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Aleksandar Rikalo <arikalo@gmail.com>
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Chao-ying Fu
- <cfu@wavecomp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, Hauke
- Mehrtens <hauke@hauke-m.de>, Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
- Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Paul Burton
- <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Serge
- Semin <fancer.lancer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Tiezhu Yang <yangtiezhu@loongson.cn>
-Subject: Re: [PATCH v7 00/12] MIPS: Support I6500 multi-cluster configuration
-In-Reply-To: <CAGQJe6pywUi8dnhxFopkMfP2U1PceHjTPX-CysT0bajSk_AKKg@mail.gmail.com>
-References: <20241019071037.145314-1-arikalo@gmail.com>
- <87plnob4qq.fsf@BLaptop.bootlin.com>
- <CAGQJe6pywUi8dnhxFopkMfP2U1PceHjTPX-CysT0bajSk_AKKg@mail.gmail.com>
-Date: Mon, 28 Oct 2024 14:39:01 +0100
-Message-ID: <87cyjkbb4a.fsf@BLaptop.bootlin.com>
+	bh=GuPaYH7muQ+6E50D/hZ/FPeAmhYFh1B9WY+/CGXP/jw=;
+	b=JGmD6ePJLdyNqUmEpNYA5tmL7WTHmkPHpPd+WNxAMn3lX0JLJJmqz0Flwg/0FBdcX9jShB
+	ioumr8aoo8JhrZY8ky2obBNuGIDsUiHWFpCYZ1EfSEyBgWSwUdTo9Co4MVuaGpmZWDxdiy
+	Ez2ttjEQYEgkqrWs3Uhq+6+lJzQkk/nhGcngAVGinQjCygmRXvPy7NfrU46wDcOlQ7fpo8
+	ExjJmnyrckkz/NQocmuZifI2zzGxQReQAFbrEn6W4ameGg7VP+i2qMva9GRuxGPZbw53to
+	aSDDEm+W3+sXw9QMMcdOwttxGomeTvwWx0sbjzx1MNIwi6B8wRxobTMN+iXm+A==
+From: Steffen Dirkwinkel <lists@steffen.cc>
+To: dri-devel@lists.freedesktop.org,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Anatoliy Klymenko <anatoliy.klymenko@amd.com>
+Cc: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Michal Simek <michal.simek@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm: xlnx: zynqmp_disp: layer may be null while releasing
+Date: Mon, 28 Oct 2024 14:39:40 +0100
+Message-ID: <20241028133941.54264-1-lists@steffen.cc>
+In-Reply-To: <79aca344-b27e-4b77-aa92-6e4c079486e0@ideasonboard.com>
+References: <79aca344-b27e-4b77-aa92-6e4c079486e0@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: gregory.clement@bootlin.com
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 4XcZK75skPz9skW
 
-Hello Aleksandar,
+From: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
 
-> Hello Gregory,
->
-> Thank you!
-> Just to be clear, which patches can I put your "tested-by" on?
+layer->info can be null if we have an error on the first layer in
+zynqmp_disp_create_layers
 
-Good question ! :)
+Fixes: 1836fd5ed98d ("drm: xlnx: zynqmp_dpsub: Minimize usage of global flag")
+Signed-off-by: Steffen Dirkwinkel <s.dirkwinkel@beckhoff.com>
+---
+ drivers/gpu/drm/xlnx/zynqmp_disp.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I've tested the entire series of patches together, rather than applying
-each individual patch separately. Although I'm not entirely certain, my
-best guess would be that you can safely put my 'tested-by' tag on each
-one.
+diff --git a/drivers/gpu/drm/xlnx/zynqmp_disp.c b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+index 9368acf56eaf..e4e0e299e8a7 100644
+--- a/drivers/gpu/drm/xlnx/zynqmp_disp.c
++++ b/drivers/gpu/drm/xlnx/zynqmp_disp.c
+@@ -1200,6 +1200,9 @@ static void zynqmp_disp_layer_release_dma(struct zynqmp_disp *disp,
+ {
+ 	unsigned int i;
+ 
++	if (!layer->info)
++		return;
++
+ 	for (i = 0; i < layer->info->num_channels; i++) {
+ 		struct zynqmp_disp_layer_dma *dma = &layer->dmas[i];
+ 
+-- 
+2.47.0
 
->
-> I'm preparing series v8.
-
-You could also include the other patches I sent on Friday in this
-series, as suggested by Thomas.
-
-Thanks,
-
-Gregory
-
->
-> --
-> Aleksandar
->
-> On Fri, Oct 25, 2024 at 5:07=E2=80=AFPM Gregory CLEMENT <gregory.clement@=
-bootlin.com>
-> wrote:
->
->> Hello Aleksandar,
->>
->>
->> I successfully tested it on an EyeQ6H SoC. On top of v6.12-rc4 I also
->> added only one patch needed for EyeQ6H:
->>
->> https://lore.kernel.org/lkml/20241011-eyeq6h-smp-v2-1-8381edf8a5c6@bootl=
-in.com/#t
->>
->> So for EyeQ6H, you can then add my
->> Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
->>
->> Then I also tested it on an EyeQ5, where the VP topology is
->> {2,2,2,2},{}. In this case there is no CPU core in the second
->> cluster. While some part of your series seems to support this case, it
->> was not complete. I am about to send a new patch for it
->>
->> Thanks,
->> Gregory
->>
 
