@@ -1,424 +1,164 @@
-Return-Path: <linux-kernel+bounces-384062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B91299B23BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:53:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07989B23C5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:02:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15184B21853
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:53:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43326B21980
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6DAB18C922;
-	Mon, 28 Oct 2024 03:50:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369A9189BAC;
+	Mon, 28 Oct 2024 04:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RIyJC6Ih"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="fzXyhj4i"
+Received: from mail-io1-f54.google.com (mail-io1-f54.google.com [209.85.166.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6706A18E34D;
-	Mon, 28 Oct 2024 03:50:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE601E517
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730087441; cv=none; b=OeaJIfYSjZN22ccTK24cAKx60Um3UG481phhc/NtzdIlh7ci3/HEI0FMDTrdoMNiRYrWx0dOClT+mVVrLeGIVz8SkTOpom3wacKJvo7oEIVJIGZumCwjOaH3SZBK36S2zALvC/m4q2sTzY1WO76wrdjqUUfe1KrF28PVCi1/NiQ=
+	t=1730088125; cv=none; b=RFBjFCkEz+GMBJYYvpG/0mes3oO6SxMIKox52r48WSTHIe8B6SCCDYgz5sNWcPUDCWOUzUfEyk4lWYnM00LmsfDf68t2XpPMgMGW2xzWJotJOxzYMBPvX5zk0pdByyH7NCovculkFNmSkwWX2D+1uaSDYh/3fAYldyH4gAwCoHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730087441; c=relaxed/simple;
-	bh=XJkq5TaJeUl/Z1usdrYPxI317H4YZvx4Ify2uy3XAhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=luAmOjK+SkJK+s38KBvftOROjD0IUfupxqwUANzKQit85kUaNFJSuwxHbFRVfSnN8ohtRF96h6jM+Ad1HckV98bbIc4hQ35nSMuLIRzRwiVHqBHKRJevHKimv/yfyCaI+Txe7yoT5FWAgG8079OZzWJcWo0M4pcZFiORpn8nWoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RIyJC6Ih; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7e6ed072cdaso2636386a12.0;
-        Sun, 27 Oct 2024 20:50:38 -0700 (PDT)
+	s=arc-20240116; t=1730088125; c=relaxed/simple;
+	bh=psagsNYH98WauCnOVMkpjCJ+weoMGD1z6i2lBdwupgQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PXeZcNYxTmtE5fPVJq88pezLYJJet/xvcWbwnyoSYAJFvw1ofBuqUlQMRj+rGjq+LHnQfKcxMNTzCJNc79mFpu0fTp7dRYtuShwxmEylUdRdP5zm+dnOb+WXIECuewwuqJyK3j6BNa1AtdnIL7ZQMTCT6VQOD9QGVkpqRy5cty4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=fzXyhj4i; arc=none smtp.client-ip=209.85.166.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-io1-f54.google.com with SMTP id ca18e2360f4ac-83b2a41b81cso33184939f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 21:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730087438; x=1730692238; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDz5Wn2zOpQMKbGl8TBVx7XbmXnH5uPH4A79K/giBFY=;
-        b=RIyJC6IhnRTTNWyox0+eccGySqgCzlRYl06af/ULkBolgWyWoALG9T7ESOlrlzW3er
-         T1Jf+ZLC71afUygrVlmSix5tjxhNPE7nN07XiJ4tsRBIOllrYVl/aRyRepba+mDMhwME
-         8VTZ5GOZFZGLgOnKTmRmF7KMVkUF9g8XW0jz+eSwVEPrzQBA2SJdY/pGqEvwFBLnjR1q
-         5t4IuFnUHiX/NZEUBmsj2S+YPggURPZQPiExySPtWdkF0QH7MLiszFC8oiiG27gS9lIX
-         XH4KfBbf4vTrBBMrBfTowscLZjNc2lE1E0OtltgfmOBpzDhP8eKLm7lOGPK29pellyOM
-         1PDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730087438; x=1730692238;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1730088121; x=1730692921; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jDz5Wn2zOpQMKbGl8TBVx7XbmXnH5uPH4A79K/giBFY=;
-        b=OUhIZQCROyIjHD04RsDqx0Qg77AdlzpP8URubyOCaEaD2Jxe4jAuh93eUF3GGbatXi
-         Bk7at1Z6z3SSOcT/qiNNHKlSI5MoaXeLC1nIcF3q0cihG4udmKqBHTi/FVIhnZ+8kfTS
-         fC/yroiO8i/9Mhk7aZ3+/n9A4iJQ1q8SAMK/JcoDbJmdUmL1JqHcBJmNjcwYpBH8Ckyy
-         YOwVq1/d0w3EXC8yxHxpEoazei+CpLfcetijT9Z/VyXjtk568PVf1cT3DyF7eVLoJO5y
-         0DTPPd/3sHbWIdwoo/+FKpsSNmuZseDX0qYxAWtNFR27kyt0fQ2hlQO0B3EVWWNJNLmw
-         OL1A==
-X-Forwarded-Encrypted: i=1; AJvYcCUjMMpSPa92+qf0VcV7GjdtRWAKWFwY68humpYF8yMNKBvJEFxJzog8BdVnIYDGj3irOXoSBuXmLRPwx9CL0+bbpg==@vger.kernel.org, AJvYcCXUIEaYD+pYoBNUh2z+ecgtAwVihIognCFW5EPhIwhZzSYmQKPUxK6+xajkPE2hRTnS+91eaLCheUcKzXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5dVH39tECD1m4gauyVAMXD7H+E/OOpfzZusdiKK9MnWcvLKRz
-	oTT7JHWnFZ5DBqzD2zrZ2gmZ2PpP6fAGIZx+5y914cyawlNDTdlL
-X-Google-Smtp-Source: AGHT+IGJuCbl+H0J4p0AFC8fLl64GwcQQpm7VYoLRCtbbASvvz6XweA3qxB5RXrlEXjOB9cxzY8wdg==
-X-Received: by 2002:a05:6a21:168e:b0:1d8:ae07:bf8 with SMTP id adf61e73a8af0-1d9a84b8d11mr8473186637.31.1730087437477;
-        Sun, 27 Oct 2024 20:50:37 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02e97asm41801665ad.195.2024.10.27.20.50.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 20:50:36 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 6767049E58E2; Mon, 28 Oct 2024 10:50:31 +0700 (WIB)
-Date: Mon, 28 Oct 2024 10:50:30 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: anish kumar <yesanishhere@gmail.com>, andersson@kernel.org,
-	mathieu.poirier@linaro.orgi, corbet@lwn.net
-Cc: linux-doc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH V5] remoteproc: Documentation: update with details
-Message-ID: <Zx8KBkBPX5qJYWWg@archie.me>
-References: <20241026212259.31950-1-yesanishhere@gmail.com>
+        bh=bTkrMIwVXtDibKqC0zJplXVw97dLp3stcJak0OUNlGQ=;
+        b=fzXyhj4i+utg/FI1u2iBocrhxpXCaPc/j/G3887F8UkkTUnWXd2CSGMSEFTtH8T/o0
+         wSMpKpOT9orkm9G3jzFOU+sy1+oMTKinGV/yS6grLGndg5tyjGDapYORSypUohVo6FH3
+         1CAi2R9GfteV/Mb7srTC5TGoK5lSD36n05HMKk/fNa2O+rvflO76oTSpUResPOm4iSQM
+         COle50zNtKRZ5D6wMffJma66sAEwC8LCcO98zFvy6eDxkGNFoINm5ey5jupassAAMAEe
+         2gkMGm/nxJx98VPOP/mGJ0gemU3pXyTsNGGHnhzvc9JBIFrgyYVRrkJJazBVPkLw9WRY
+         39Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730088121; x=1730692921;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bTkrMIwVXtDibKqC0zJplXVw97dLp3stcJak0OUNlGQ=;
+        b=UdsP1iliWxpnGT8IInQ5HY/4MNU5FyDlnqiux10bamFdBqPUYiyvk6dB0s+sR2V7cz
+         N2BIWiFnAdEgpT+rXahlp9ozBDbNnWi6A6qxGYxkYrDOK+iWlPq5jIB+UeBgIzgpg+I2
+         LCGgTvkWGDKokxHqe39jy12AougpAKKNhPygUpOU8PtFBHGO3jr0WA/SQH93l58Cug3z
+         JL/PbCLSpCP2wgPcrf808+ENYFvPGw0BgjmX537ZsgyUMXbLP7OCG+8qWQy7lSLkIWFO
+         nlZGQHtHjsWBUAfA7z3gEEMhb+MkWom4NrG2po4n8OnfyD3pgmyUZ+d7eReHn3/8mszl
+         dAug==
+X-Forwarded-Encrypted: i=1; AJvYcCUv115uO5h64D4RjfxCYX3pBz+pKQCeWs09NIm4JspSvWIqI1LTV5lGQ4fLQOXmM9qzIAhdSsc4zo3r/es=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykKVQXNguyAysAUn+Vwc3x6w64Qz3FegurRfXVFTAPM+kUSxUJ
+	Qw9g05uLNNxsi0JtSQC01nmPq14zR7ZyfQ2mCSP7/x2fS4JQLxYk1TTABVSuWQkSeJNW98MtApD
+	N0a/D8S5AtGX/SCfw1CRigRHHuoMGROLAhJ3Ebg==
+X-Google-Smtp-Source: AGHT+IEW3RMxsb+OkLSwXzoPgDRun4PeWtdHYycalmOdPki2HQ/g+qJQULY+edvSYHMAhxM7DrjE17H2RyAh5VkTZ8A=
+X-Received: by 2002:a05:6e02:16cf:b0:3a0:8d60:8b7d with SMTP id
+ e9e14a558f8ab-3a4ed2aaddfmr68350065ab.11.1730088121508; Sun, 27 Oct 2024
+ 21:02:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iP+H4GMYQ8a8jVrB"
-Content-Disposition: inline
-In-Reply-To: <20241026212259.31950-1-yesanishhere@gmail.com>
-
-
---iP+H4GMYQ8a8jVrB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20241028033928.223218-1-nick.hu@sifive.com> <20241028033928.223218-2-nick.hu@sifive.com>
+In-Reply-To: <20241028033928.223218-2-nick.hu@sifive.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Mon, 28 Oct 2024 09:31:49 +0530
+Message-ID: <CAAhSdy1AmSmnGV6GbHgcWe2pXuS4sF8wat_po05Mpiho2hD4SQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] riscv: Add stimecmp save and restore
+To: Nick Hu <nick.hu@sifive.com>
+Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andrew Jones <ajones@ventanamicro.com>, 
+	Samuel Holland <samuel.holland@sifive.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Sunil V L <sunilvl@ventanamicro.com>, linux-pm@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 26, 2024 at 02:22:59PM -0700, anish kumar wrote:
-> +The rproc device structure looks like this::
-> +
-> +  struct rproc {
-> +	struct list_head node;
-> +	struct iommu_domain *domain;
-> +	const char *name;
-> +	const char *firmware;
-> +	void *priv;
-> +	struct rproc_ops *ops;
-> +	struct device dev;
-> +	atomic_t power;
-> +	unsigned int state;
-> +	enum rproc_dump_mechanism dump_conf;
-> +	struct mutex lock;
-> +	struct dentry *dbg_dir;
-> +	struct list_head traces;
-> +	int num_traces;
-> +	struct list_head carveouts;
-> +	struct list_head mappings;
-> +	u64 bootaddr;
-> +	struct list_head rvdevs;
-> +	struct list_head subdevs;
-> +	struct idr notifyids;
-> +	int index;
-> +	struct work_struct crash_handler;
-> +	unsigned int crash_cnt;
-> +	bool recovery_disabled;
-> +	int max_notifyid;
-> +	struct resource_table *table_ptr;
-> +	struct resource_table *clean_table;
-> +	struct resource_table *cached_table;
-> +	size_t table_sz;
-> +	bool has_iommu;
-> +	bool auto_boot;
-> +	bool sysfs_read_only;
-> +	struct list_head dump_segments;
-> +	int nb_vdev;
-> +	u8 elf_class;
-> +	u16 elf_machine;
-> +	struct cdev cdev;
-> +	bool cdev_put_on_release;
-> +	DECLARE_BITMAP(features, RPROC_MAX_FEATURES);
-> +  };
-> +
-> +It contains following fields:
-> +
-> +* node: list node of this rproc object
-> +* domain: iommu domain
-> +* name: human readable name of the rproc
-> +* firmware: name of firmware file to be loaded
-> +* priv: private data which belongs to the platform-specific rproc module
-> +* ops: platform-specific start/stop rproc handlers
-> +* dev: virtual device for refcounting and common remoteproc behavior
-> +* power: refcount of users who need this rproc powered up
-> +* state: state of the device
-> +* dump_conf: Currently selected coredump configuration
-> +* lock: lock which protects concurrent manipulations of the rproc
-> +* dbg_dir: debugfs directory of this rproc device
-> +* traces: list of trace buffers
-> +* num_traces: number of trace buffers
-> +* carveouts: list of physically contiguous memory allocations
-> +* mappings: list of iommu mappings we initiated, needed on shutdown
-> +* bootaddr: address of first instruction to boot rproc with (optional)
-> +* rvdevs: list of remote virtio devices
-> +* subdevs: list of subdevices, to following the running state
-> +* notifyids: idr for dynamically assigning rproc-wide unique notify ids
-> +* index: index of this rproc device
-> +* crash_handler: workqueue for handling a crash
-> +* crash_cnt: crash counter
-> +* recovery_disabled: flag that state if recovery was disabled
-> +* max_notifyid: largest allocated notify id.
-> +* table_ptr: pointer to the resource table in effect
-> +* clean_table: copy of the resource table without modifications.  Used
-> +*      	 when a remote processor is attached or detached from the core
-> +* cached_table: copy of the resource table
-> +* table_sz: size of @cached_table
-> +* has_iommu: flag to indicate if remote processor is behind an MMU
-> +* auto_boot: flag to indicate if remote processor should be auto-started
-> +* sysfs_read_only: flag to make remoteproc sysfs files read only
-> +* dump_segments: list of segments in the firmware
-> +* nb_vdev: number of vdev currently handled by rproc
-> +* elf_class: firmware ELF class
-> +* elf_machine: firmware ELF machine
-> +* cdev: character device of the rproc
-> +* cdev_put_on_release: flag to indicate if remoteproc should be shutdown=
- on @char_dev release
-> +* features: indicate remoteproc features
+On Mon, Oct 28, 2024 at 9:09=E2=80=AFAM Nick Hu <nick.hu@sifive.com> wrote:
+>
+> If the HW support the SSTC extension, we should save and restore the
+> stimecmp register while cpu non retention suspend.
+>
+> Signed-off-by: Nick Hu <nick.hu@sifive.com>
 
-clean_table list item, has two separated bullets instead of being spanned
-across two lines, so I fix its formatting:
+LGTM.
 
----- >8 ----
-diff --git a/Documentation/staging/remoteproc.rst b/Documentation/staging/r=
-emoteproc.rst
-index 1c15f4d1b9eb43..b456f94a1d73f1 100644
---- a/Documentation/staging/remoteproc.rst
-+++ b/Documentation/staging/remoteproc.rst
-@@ -260,7 +260,7 @@ It contains following fields:
- * max_notifyid: largest allocated notify id.
- * table_ptr: pointer to the resource table in effect
- * clean_table: copy of the resource table without modifications.  Used
--*      	 when a remote processor is attached or detached from the core
-+  when a remote processor is attached or detached from the core
- * cached_table: copy of the resource table
- * table_sz: size of @cached_table
- * has_iommu: flag to indicate if remote processor is behind an MMU
+Reviewed-by: Anup Patel <anup@brainfault.org>
 
-> +
-> +The list of rproc operations is defined as::
-> +
-> +  struct rproc_ops {
-> +	int (*prepare)(struct rproc *rproc);
-> +	int (*unprepare)(struct rproc *rproc);
-> +	int (*start)(struct rproc *rproc);
-> +	int (*stop)(struct rproc *rproc);
-> +	int (*attach)(struct rproc *rproc);
-> +	int (*detach)(struct rproc *rproc);
-> +	void (*kick)(struct rproc *rproc, int vqid);
-> +	void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len, bool *is_io=
-mem);
-> +	int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
-> +	int (*handle_rsc)(struct rproc *rproc, u32 rsc_type, void *rsc,
-> +			  int offset, int avail);
-> +	struct resource_table *(*find_loaded_rsc_table)(
-> +				struct rproc *rproc, const struct firmware *fw);
-> +	struct resource_table *(*get_loaded_rsc_table)(
-> +				struct rproc *rproc, size_t *size);
-> +	int (*load)(struct rproc *rproc, const struct firmware *fw);
-> +	int (*sanity_check)(struct rproc *rproc, const struct firmware *fw);
-> +	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
-> +	unsigned long (*panic)(struct rproc *rproc);
-> +	void (*coredump)(struct rproc *rproc);
-> +  };
-> +
-> <snipped>...
-> +Drivers must fill the `rproc_ops` structure and call `rproc_alloc`
-> +to register themselves with the framework.
-> +
-> +.. code-block:: c
-> +
-> +   struct rproc_ops {
-> +       int (*prepare)(struct rproc *rproc);
-> +       int (*unprepare)(struct rproc *rproc);
-> +       int (*start)(struct rproc *rproc);
-> +       int (*stop)(struct rproc *rproc);
-> +       int (*attach)(struct rproc *rproc);
-> +       int (*detach)(struct rproc *rproc);
-> +       void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len,
-> +                          bool *is_iomem);
-> +       int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
-> +       int (*handle_rsc)(struct rproc *rproc, u32 rsc_type,
-> +                         void *rsc, int offset, int avail);
-> +       int (*load)(struct rproc *rproc, const struct firmware *fw);
-> +       //snip
-> +   };
-> +
->  ::
-> =20
->    struct rproc *rproc_alloc(struct device *dev, const char *name,
-> @@ -190,6 +485,35 @@ platform specific rproc implementation. This should =
-not be called from a
->  non-remoteproc driver. This function can be called from atomic/interrupt
->  context.
-> =20
-> +To add a subdev corresponding driver can call
-> +
-> +::
-> +
-> +  void rproc_add_subdev(struct rproc *rproc, struct rproc_subdev *subdev)
-> +
-> +To remove a subdev, driver can call.
-> +
-> +::
-> +
-> +  void rproc_remove_subdev(struct rproc *rproc, struct rproc_subdev *sub=
-dev)
-> +
-> +To work with ELF coredump below function can be called
-> +
-> +::
-> +
-> +  void rproc_coredump_cleanup(struct rproc *rproc)
-> +  void rproc_coredump(struct rproc *rproc)
-> +  void rproc_coredump_using_sections(struct rproc *rproc)
-> +  int rproc_coredump_add_segment(struct rproc *rproc, dma_addr_t da, siz=
-e_t size)
-> +  int rproc_coredump_add_custom_segment(struct rproc *rproc,
-> +                                        dma_addr_t da, size_t size,
-> +                                        void (*dumpfn)(struct rproc *rpr=
-oc,
-> +                                        struct rproc_dump_segment *segme=
-nt,
-> +                                        void *dest, size_t offset,
-> +                                        size_t size))
-> +
+Regards,
+Anup
 
-For consistency, all other C snippets should be syntax-highlighted as such
-by ``code-block:: c`` directive.
-
-> +Below set of commands can be used to start and stop the rproc
-> +where 'X' refers to instance of associated remoteproc. There can be syst=
-ems
-> +where there are more than one rprocs such as multiple DSP's
-> +connected to application processors running Linux.
+> ---
+>  arch/riscv/include/asm/suspend.h |  4 ++++
+>  arch/riscv/kernel/suspend.c      | 14 ++++++++++++++
+>  2 files changed, 18 insertions(+)
+>
+> diff --git a/arch/riscv/include/asm/suspend.h b/arch/riscv/include/asm/su=
+spend.h
+> index 4ffb022b097f..dc5782b5fbad 100644
+> --- a/arch/riscv/include/asm/suspend.h
+> +++ b/arch/riscv/include/asm/suspend.h
+> @@ -18,6 +18,10 @@ struct suspend_context {
+>         unsigned long ie;
+>  #ifdef CONFIG_MMU
+>         unsigned long satp;
+> +       unsigned long stimecmp;
+> +#if __riscv_xlen < 64
+> +       unsigned long stimecmph;
+> +#endif
+>  #endif
+>  };
+>
+> diff --git a/arch/riscv/kernel/suspend.c b/arch/riscv/kernel/suspend.c
+> index 9a8a0dc035b2..24b3f57d467f 100644
+> --- a/arch/riscv/kernel/suspend.c
+> +++ b/arch/riscv/kernel/suspend.c
+> @@ -30,6 +30,13 @@ void suspend_save_csrs(struct suspend_context *context=
+)
+>          */
+>
+>  #ifdef CONFIG_MMU
+> +       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
+> +               context->stimecmp =3D csr_read(CSR_STIMECMP);
+> +#if __riscv_xlen < 64
+> +               context->stimecmph =3D csr_read(CSR_STIMECMPH);
+> +#endif
+> +       }
 > +
-> +.. code-block:: c
+>         context->satp =3D csr_read(CSR_SATP);
+>  #endif
+>  }
+> @@ -43,6 +50,13 @@ void suspend_restore_csrs(struct suspend_context *cont=
+ext)
+>         csr_write(CSR_IE, context->ie);
+>
+>  #ifdef CONFIG_MMU
+> +       if (riscv_has_extension_unlikely(RISCV_ISA_EXT_SSTC)) {
+> +               csr_write(CSR_STIMECMP, context->stimecmp);
+> +#if __riscv_xlen < 64
+> +               csr_write(CSR_STIMECMPH, context->stimecmph);
+> +#endif
+> +       }
 > +
-> +   echo start > /sys/class/remoteproc/remoteprocX/state
-> +   echo stop > /sys/class/remoteproc/remoteprocX/state
-
-Shouldn't this and following shell snippets use bash syntax highlighting
-(``code-block:: bash``) or simply double colon (``::``) instead?
-
-> +
-> +To know the state of rproc:
-"To retrieve ..."
-> +
-> +.. code-block:: c
-> +
-> +   cat /sys/class/remoteproc/remoteprocX/state
-> +
-> +
-> +To dynamically replace firmware, execute the following commands:
-> +
-> +.. code-block:: c
-> +
-> +   echo stop > /sys/class/remoteproc/remoteprocX/state
-> +   echo -n <firmware_name> >
-> +   /sys/class/remoteproc/remoteprocX/firmware
-> +   echo start > /sys/class/remoteproc/remoteprocX/state
-> +
-> +To simulate a remote crash, execute:
-> +
-> +.. code-block:: c
-> +
-> +   echo 1 > /sys/kernel/debug/remoteproc/remoteprocX/crash
-> +
-> +To get the trace logs, execute
-> +
-> +.. code-block:: c
-> +
-> +   cat /sys/kernel/debug/remoteproc/remoteprocX/crashX
-> +
-> +where X will be 0 or 1 if there are 2 resources. Also, this
-> +file will only exist if resources are defined in ELF firmware
-> +file.
-> +
-> +The coredump feature can be disabled with the following command:
-> +
-> +.. code-block:: c
-> +
-> +   echo disabled > /sys/kernel/debug/remoteproc/remoteprocX/coredump
-> +
-> +Userspace can also control start/stop of rproc by using a
-> +remoteproc Character Device, it can open the open a file descriptor
-> +and write `start` to initiate it, and `stop` to terminate it.
-> +Below set of api's can be used to start and stop the rproc
-> +where 'X' refers to instance of associated remoteproc. There can be syst=
-ems
-> +where there are more than one rprocs such as multiple DSP's
-> +connected to application processors running Linux.
-> +
-> +.. code-block:: c
-> +
-> +   echo start > /sys/class/remoteproc/remoteprocX/state
-> +   echo stop > /sys/class/remoteproc/remoteprocX/state
-> +
-> +To know the state of rproc:
-> +
-> +.. code-block:: c
-> +
-> +   cat /sys/class/remoteproc/remoteprocX/state
-> +
-> +
-> +To dynamically replace firmware, execute the following commands:
-> +
-> +.. code-block:: c
-> +
-> +   echo stop > /sys/class/remoteproc/remoteprocX/state
-> +   echo -n <firmware_name> >
-> +   /sys/class/remoteproc/remoteprocX/firmware
-> +   echo start > /sys/class/remoteproc/remoteprocX/state
-> +
-> +To simulate a remote crash, execute:
-> +
-> +.. code-block:: c
-> +
-> +   echo 1 > /sys/kernel/debug/remoteproc/remoteprocX/crash
-> +
-> +To get the trace logs, execute
-> +
-> +.. code-block:: c
-> +
-> +   cat /sys/kernel/debug/remoteproc/remoteprocX/crashX
-> +
-> +where X will be 0 or 1 if there are 2 resources. Also, this
-> +file will only exist if resources are defined in ELF firmware
-> +file.
-> +
-> +The coredump feature can be disabled with the following command:
-> +
-> +.. code-block:: c
-> +
-> +   echo disabled > /sys/kernel/debug/remoteproc/remoteprocX/coredump
-> +
-> +Userspace can also control start/stop of rproc by using a
-> +remoteproc Character Device, it can open the open a file descriptor
-> +and write `start` to initiate it, and `stop` to terminate it.
-> +
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---iP+H4GMYQ8a8jVrB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZx8KAQAKCRD2uYlJVVFO
-owe+AP9JpaT4JtqabOBVLmu3FqpNiBW81HKM7wSE1rHyUupDSwEAh7rD2/ulV5pb
-DiDnxPyrfxu1yc9hrIEjvfJAAk2HsQA=
-=4S+W
------END PGP SIGNATURE-----
-
---iP+H4GMYQ8a8jVrB--
+>         csr_write(CSR_SATP, context->satp);
+>  #endif
+>  }
+> --
+> 2.34.1
+>
+>
 
