@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-384079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524EF9B2400
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:05:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F499B2402
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6D571F214FF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:05:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF1528204D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B02618C911;
-	Mon, 28 Oct 2024 05:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XC9uW5+X"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0A018C01E;
+	Mon, 28 Oct 2024 05:06:54 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6F918A922;
-	Mon, 28 Oct 2024 05:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D74D4685;
+	Mon, 28 Oct 2024 05:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730091896; cv=none; b=OnEcsHOQYSii8QeU4g9Vt6ni4M/pdIcPs3VBTZYfOOiafp5rj+1wh2QJbea7tHnBAmd2HOdP6OXG7ExnCIa+X7qlvO2Xzx8HOh/MNpIya7g1AL7HJXI0GJqy08GGzkuulECp4t1bLX5DbrFNDJVk48RxxgxyuSuZMvGaZ2MteMc=
+	t=1730092014; cv=none; b=iS23tVC57FRkAVDQjL00mCL/SzelKKaLl7Z2OsPBPBUfRszAZ4Vn3qoyAHbG8/QLprj6lqd7fLz82ZAa73EwBDJJZYJ3QZKEQzwb9wSmft4+q50gzCKqn+1Ao/wll6DGnNlSSJtl/bOpykU798mKawBvYRQJ685XWTo8r3Y9Mww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730091896; c=relaxed/simple;
-	bh=KuSSNhqQmzngUtpZ6jNSAOFuo/FQ56fjZ1xFMr/wqYI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rvZUov9ghAXFLkoZMz4FVeTL6kns0ySv5viwZ0YxR50KXTr16352Mjg3S13T78rInTAVIaFn5l4sjXmEVkzlW9JV7x6G/f2Bu3yF3Xgl466TLgAZVIJ4SoKN33qtQpBpRO9PIvxjpLMI9owNnm0WtEgQL6C6HKFN5QzqI2L1OEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XC9uW5+X; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso31680155ad.2;
-        Sun, 27 Oct 2024 22:04:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730091894; x=1730696694; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KuSSNhqQmzngUtpZ6jNSAOFuo/FQ56fjZ1xFMr/wqYI=;
-        b=XC9uW5+XczWtbwH8VkSC4XYfJFtYoctLkL+RHQawyW2AtS7fRDB+2b29RydMoewZhv
-         HdZQnMJfxBZk6uBbc0MBGs8syquc/daT9eItGIU+OmfuLPneB/9sB5bQL2cEtrhXik2j
-         FIWiJZHOuxjxcYZjTrqSODOakZPRHyK95PEZpYnZYl8CR24SjCr+RTGTcNth+YSFzqv8
-         nXeU1JJAga4ReahdcLigpd8zcw6lY+OZgcR0uMrA6Vfl6oycXvI1M0jTvqYYjALhMJ26
-         NB5GiovNNoM5v0oc4IKCPR+NJDs1JCYPeIcW3Sk4zkgMML2lKf7k4XXl/dblO+pqg85g
-         pv+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730091894; x=1730696694;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KuSSNhqQmzngUtpZ6jNSAOFuo/FQ56fjZ1xFMr/wqYI=;
-        b=vGJJMPj7gyuPNdXzSN0dDbzBh9/I15qobw3ihh1p5IsaKr5JstHJWwUQpGwFvqUOYZ
-         Oqz0E8iv0sqcGphjLbzq+Ub7bzma+Jtfh1PFOpyO6Q/GDEaC/4dh22YQN6kaiCMCRziL
-         /CcKIQ3yfEB847r/jGLVFLc6n/PZRdQr4vFDfl+d//nbefxvrK7pU1HPJ8wvoIoE+cHd
-         EQWF4II6ZvlW97Zj55bpKhHswas1lUy6yffTCvn6c6yMDYeX/MvuCivYQlbr1EZE3EGQ
-         fFDF8PAB2RKVM6Qw2w4ig/lhmKZaGqnBeSQ+T7X048t0GDbGLxQcScYAFeI2YWPICuCi
-         CgMg==
-X-Forwarded-Encrypted: i=1; AJvYcCUJO1j2StY18lqaR1iMZnlmalRD3LkgBzqrxpGYi+B41lE8fgt+jHYWjItzkMLBuytsMhATZvAXcq/jzkk=@vger.kernel.org, AJvYcCW1NeXoHrtLzJaYgpZ2uu35bfLoW1W1imk1kDYKfUNwX/tBOu59yzrWql9i2cVwfPIcsVZxjtMLLZm44N5QvlzfAg==@vger.kernel.org, AJvYcCWa0dVTCpQoR/BuaXatsEFbBvdkchr4opz55GhsZooftf+0NLPNYtYSxTq5bGAI7qmy9AD6DF8qRHoQJVqd@vger.kernel.org, AJvYcCWuBFWTGZFbL5WPyBitsrqiNtGb5EB8Tu0f5JvDN+ePiTlNB1HI3CPtcRKzVp3+AgQktnZFgqQdoC2H@vger.kernel.org, AJvYcCXRDsaycE7DJSUfLnGV2GeCYt0xacJokEvHT2Z4lbCTdd7eod14zrc4bFj54xLwoU5ox5DACpqiGeboBmoOBH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzO/Ekhbm8HQpYsmJ65p/n+6Sz9e6E5IJSWTJzVZADCD+kIO+dU
-	Tr34/IQI/QUSG8VsqjazHdjz78RCPdzPIn9/UectwFiH63CMTHF1
-X-Google-Smtp-Source: AGHT+IFjK2HF1Z+Lhqb8mZhwem9i4EjiyHfk2esq+mfa/s946c5Oe9L6ORNV02D3IRkDrGQj3ss3Jg==
-X-Received: by 2002:a17:903:2286:b0:20c:f648:e3a3 with SMTP id d9443c01a7336-210c6ccf557mr87225585ad.60.1730091893804;
-        Sun, 27 Oct 2024 22:04:53 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc012fd7sm42876435ad.180.2024.10.27.22.04.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 22:04:52 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 6BFB54433471; Mon, 28 Oct 2024 12:04:50 +0700 (WIB)
-Date: Mon, 28 Oct 2024 12:04:50 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
-	corbet@lwn.net, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, namhyung@kernel.org, akpm@linux-foundation.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, willy@infradead.org,
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 00/10] Enhance min heap API with non-inline functions
- and optimizations
-Message-ID: <Zx8bcny4yPuLTxD7@archie.me>
-References: <20241020040200.939973-1-visitorckw@gmail.com>
- <ZxYf8VvQIZv9_Y1j@archie.me>
- <ZxZbgWc2IsztAOOx@visitorckw-System-Product-Name>
+	s=arc-20240116; t=1730092014; c=relaxed/simple;
+	bh=prY2IVSkiqU1T7tj9uznRv0r6Xzl/QHeNDgh6J5hwlc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=APzCUmQWMfJkHUNzAc1xEWv9WFFpEf9bSGIAgNOfCRPzyAkPGox0i+ThkJneoZuTEJ3Fgk9uYvfXj/QTVTvhMZI2RvHxW/KNScys4nOJRafa/zH57TD0AZ7x82uqvRSLwIVXhkwdF7ASZTYV0F0JAoiCYcQrD+6xsPuIx3anaZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C4F2C4CEC3;
+	Mon, 28 Oct 2024 05:06:50 +0000 (UTC)
+Date: Mon, 28 Oct 2024 01:06:47 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-kernel@vger.kernel.org, Michael Jeanson <mjeanson@efficios.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Yonghong Song
+ <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, bpf@vger.kernel.org, Joel
+ Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>, Linus
+ Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [RFC PATCH v3 2/3] tracing: Introduce tracepoint_is_syscall()
+Message-ID: <20241028010647.38f4847f@rorschach.local.home>
+In-Reply-To: <933ab148-2a28-4912-9bca-150a0643eecd@efficios.com>
+References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
+	<20241026154629.593041-2-mathieu.desnoyers@efficios.com>
+	<20241026200840.17171eb2@rorschach.local.home>
+	<933ab148-2a28-4912-9bca-150a0643eecd@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Zbhjczx96AMnlB/2"
-Content-Disposition: inline
-In-Reply-To: <ZxZbgWc2IsztAOOx@visitorckw-System-Product-Name>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Sun, 27 Oct 2024 08:30:54 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> > 
+> > I wonder if we should call it "sleepable" instead? For this patch set
+> > do we really care if it's a system call or not? It's really if the
+> > tracepoint is sleepable or not that's the issue. System calls are just
+> > one user of it, there may be more in the future, and the changes to BPF
+> > will still be needed.  
+> 
+> Remember that syscall tracepoint probes are allowed to handle page
+> faults, but should not generally block, otherwise it would postpone the
+> grace periods of all RCU tasks trace users.
+> 
+> So naming this "sleepable" would be misleading, because probes are
+> not allowed general blocking, just to handle page faults.
 
---Zbhjczx96AMnlB/2
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'm fine with "faultable" too.
 
-On Mon, Oct 21, 2024 at 09:47:45PM +0800, Kuan-Wei Chiu wrote:
-> On Mon, Oct 21, 2024 at 04:33:37PM +0700, Bagas Sanjaya wrote:
-> > On Sun, Oct 20, 2024 at 12:01:50PM +0800, Kuan-Wei Chiu wrote:
-> > > Add non-inline versions of the min heap API functions in lib/min_heap=
-=2Ec
-> > > and updates all users outside of kernel/events/core.c to use these
-> > > non-inline versions. To mitigate the performance impact of indirect
-> > > function calls caused by the non-inline versions of the swap and
-> > > compare functions, a builtin swap has been introduced that swaps
-> > > elements based on their size. Additionally, it micro-optimizes the
-> > > efficiency of the min heap by pre-scaling the counter, following the
-> > > same approach as in lib/sort.c. Documentation for the min heap API has
-> > > also been added to the core-api section.
-> >=20
-> > What tree (and commit) this series is based on?
-> >=20
-> > Confused...
-> >=20
-> This patchset is based on Linus' tree, commit 715ca9dd687f ("Merge tag
-> 'io_uring-6.12-20241019' of git://git.kernel.dk/linux"). Since it
-> touches multiple subsystems, I'm not entirely sure which tree I should
-> base it on. Should it be linux-next, perhaps?
+> 
+> If we look at the history of this tracepoint feature, we went with
+> the following naming over the various versions of the patch series:
+> 
+> 1) Sleepable tracepoints: until we understood that we just want to
+>     allow page fault, not general sleeping, so we needed to change
+>     the name,
+> 
+> 2) Faultable tracepoints: until Linus requested that we aim for
+>     something that is specific to system calls, rather than a generic
+>     thing.
+> 
+>     https://lore.kernel.org/lkml/CAHk-=wggDLDeTKbhb5hh--x=-DQd69v41137M72m6NOTmbD-cw@mail.gmail.com/
 
-Nope.
+Reading that thread again, I believe that Linus was talking more about
+all the infrastructure going around to make a special "faultable"
+tracepoint (I could be wrong, and Linus may correct me here). When in
+fact, the only user is system calls. But from the BPF POV, it doesn't
+care if it's a system call, it cares that it is faultable, and the
+check should be on that. Having BPF check if it's a system call is
+requiring that BPF knows the implementation details of system call
+tracepoints. But if it knows it is faultable, then it needs to do
+something special.
 
-Anyway, series applied for docs review. Thanks!
+> 
+> 3) Syscall tracepoints: This is what we currently have.
+> 
+> > Other than that, I think this could work.  
+> 
+> Calling this field "sleepable" would be misleading. Calling it "faultable"
+> would be a better fit, but based on Linus' request, I'm tempted to stick
+> with "syscall" for now.
+> 
+> Your concern is to name this in a way that is general and future-proof.
+> Linus' point was to make it syscall-specific rather than general. My
+> position is that we should wait until we face other use-cases (if we
+> even do) before consider changing the naming from "syscall" to something
+> more generic.
 
---=20
-An old man doll... just what I always wanted! - Clara
+Yes, but that was for the infrastructure itself. It really doesnt' make
+sense that BPF needs to know which type of tracepoint can fault. That's
+telling BPF, you need to know the implementation of this type of
+tracepoint.
 
---Zbhjczx96AMnlB/2
-Content-Type: application/pgp-signature; name="signature.asc"
+-- Steve
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZx8bbgAKCRD2uYlJVVFO
-o6sgAQDOkl5ght0n7cwDsycgwxL9nCtWIpsch3Hr4knwbp1t6gEAy9bIkKuWrBqb
-t32VfpdXUndKdvmFzkg/I0/Jqw1yvAc=
-=BNr4
------END PGP SIGNATURE-----
-
---Zbhjczx96AMnlB/2--
 
