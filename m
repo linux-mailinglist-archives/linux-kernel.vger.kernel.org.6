@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 499909B2939
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:51:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7A6B9B2940
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E63728237A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:51:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04AB81C217C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575BE1FE10A;
-	Mon, 28 Oct 2024 07:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E14B20110F;
+	Mon, 28 Oct 2024 07:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i+I+5Euz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VdAryi5k"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wwsokf7b";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="YxKDlbxs"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717111EF92A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5331F4FA9
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100942; cv=none; b=VVPh5wJG3PMIlnecliY//ZToV81eQ7dA0fszRMOCwJpqdjRn88mW723f4UE+Ae6tiudCQZogo+Iphr7UYb4DXsjNSMUmgP7E1x25p1f/X0X2xdcgUX5sPg61Z7JUIaJkm1N6b0zRDyjMeXTfZ6XZdxRqibmq3svVeMPzey20uwA=
+	t=1730100945; cv=none; b=rA4MFp8nTiSguRreIzJB23mF/XImeaOhpChGT5SWC6ZTO6B07gGx6qVxcAtp/NufTNxVvlmoEeEDMcqmk8DFeW0Bue+cPuiUFwyUcXhzcBHmjlMO1SpKyB+QaNBFZnZm7Xift6ghYsoIZc8BydHFBbg4wxG3b4NekOh7IbsA39Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100942; c=relaxed/simple;
-	bh=EPkvy45eVSUHipqlaDurGAp7pgrNaVpAtaQpHmvsqcw=;
+	s=arc-20240116; t=1730100945; c=relaxed/simple;
+	bh=AHF5o5vNEOXkzMJVYoznmT+6csMX/dc0lZOFe+Mr7dk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mEk3Imtaw+Dim7Xn1W/B+ycsh+N2iJUCrnqmaFXJcnqqOwpioylfyce0L4hG4jqDLsBT71W+aQicr+IG+KWuuCB5KvgKDcapnFN0BYjsP16jV8PQWTYV5KqBAitokbJeaPsf9gRhfPfkQ6yJz9m1098LJ3koNYepOpLQ5SMJqMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i+I+5Euz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VdAryi5k; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=FVyhc1IQlsWdn7Ze92CLVQ+nHZnzg/cGC4vG9kFB0llIDcv4bdlKu+3MoaqsP2P/lrNAWempQ6rQChh+wehBBajppM70jomQJ7ci38r+f85SnmbFZymThV/kd0iE1IZFuDTbem+Uy4hS0cw9ZSOoo3NNI0/HdjxvMhZAUm4IFjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wwsokf7b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=YxKDlbxs; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pGO2/skIrnyTgss75i/snh3hyXg3vEmnpgGNi1VNx8o=;
-	b=i+I+5EuzrRQFslV6/iKNQXuy7k43XcKFlcalosmFpXjtfIF+HUZST0kyfSelhtJhik14kw
-	aCf/1hQkXDWD/GRkTb6nyBPD6Xw7xKUwY9bjuspV2dVl2CGQ2R9UkGUDLL1P57M1y2sRQ2
-	1qFU4cRI4IRBAfSVMzTk5Re1T3Jwz1YJwKfRPpw79XG7pISOJjfWqFgRmNmVJWI2AXZsLt
-	JdW+zAM58pxKej7d6LxnfQlZfZEHZSoXzqk/fQGPiCh3CZOvh+GA8t2pVlN9SY+J6qXQ07
-	MLaBQuiZHM8BaCcLFMS1P2mmsvvj7u4kDxwyWLescWfyKVgon5cUZ9mTkoLl5A==
+	bh=MihCUk6iO67SYt64qJ0M+dIX/dEuDX6YcAJM7Mh4EKY=;
+	b=wwsokf7bSD9VCqJlMfI3Vmu1rPWnyUw8ir4KtQdE0OVthwJkiTSqw0MzIWaEt0FQIxiU1c
+	UifDMQIViyNaoMMDi8N+3LSQ1ykLxWeknP+2kPo2H7FDhpiXrd24svDBnxL5p+9hJGllQN
+	qndtHGuowHnpa+/CJ32vNDSrvM8lbHWVLmTzxwtWP8quC7NjRsLGo8odqjIRIFBz4QzVdL
+	Zy8Y9LUBq749KSwemsp4zj/vOvcVW1AgWTGUaGgqe6mE99Nh45x93EM0Ke0MT+uTW9MZ1h
+	YuVyfubgZS2qeuG6PszcrxXBlmWJk3wH/FOqRbDpqGMpraodD81ltr8qdc9B+w==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100938;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=pGO2/skIrnyTgss75i/snh3hyXg3vEmnpgGNi1VNx8o=;
-	b=VdAryi5kUER5p54Sspq5OPV0Tb1Yi+NmTeu8UWfEIJjDfI6q22VqfAtSB6w1sEFgS9E7YA
-	9Ao8a/uo2sOfHzBA==
+	bh=MihCUk6iO67SYt64qJ0M+dIX/dEuDX6YcAJM7Mh4EKY=;
+	b=YxKDlbxsl+pfSPSvzUvME/8kPLBvNgtEE+ZpWCKtWaOrBmbegRnyiFoaDx8JzmnZiaIYUC
+	k8WronQsq48QniBA==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 16/44] power: supply: ab8500_chargalg: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:52 +0100
-Message-Id: <f4e18d2fafd5a412626456ec3d5be427ad1035e2.1729865485.git.namcao@linutronix.de>
+	Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH 17/44] power: reset: ltc2952-poweroff: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:53 +0100
+Message-Id: <da657b931d74d712e7185a0b9e63263f1ac59291.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,37 +86,35 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Sebastian Reichel <sre@kernel.org>
 ---
- drivers/power/supply/ab8500_chargalg.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/power/reset/ltc2952-poweroff.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/=
-ab8500_chargalg.c
-index 854491ad3ecd..56afd5d1f8c3 100644
---- a/drivers/power/supply/ab8500_chargalg.c
-+++ b/drivers/power/supply/ab8500_chargalg.c
-@@ -1788,13 +1788,12 @@ static int ab8500_chargalg_probe(struct platform_de=
-vice *pdev)
- 	psy_cfg.drv_data =3D di;
+diff --git a/drivers/power/reset/ltc2952-poweroff.c b/drivers/power/reset/l=
+tc2952-poweroff.c
+index fa25fbd53934..f87ce4686d4f 100644
+--- a/drivers/power/reset/ltc2952-poweroff.c
++++ b/drivers/power/reset/ltc2952-poweroff.c
+@@ -162,11 +162,11 @@ static void ltc2952_poweroff_default(struct ltc2952_p=
+oweroff *data)
+ 	data->wde_interval =3D 300L * NSEC_PER_MSEC;
+ 	data->trigger_delay =3D ktime_set(2, 500L * NSEC_PER_MSEC);
 =20
- 	/* Initilialize safety timer */
--	hrtimer_init(&di->safety_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	di->safety_timer.function =3D ab8500_chargalg_safety_timer_expired;
-+	hrtimer_setup(&di->safety_timer, ab8500_chargalg_safety_timer_expired, CL=
-OCK_MONOTONIC,
+-	hrtimer_init(&data->timer_trigger, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	data->timer_trigger.function =3D ltc2952_poweroff_timer_trigger;
++	hrtimer_setup(&data->timer_trigger, ltc2952_poweroff_timer_trigger, CLOCK=
+_MONOTONIC,
 +		      HRTIMER_MODE_REL);
 =20
- 	/* Initilialize maintenance timer */
--	hrtimer_init(&di->maintenance_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	di->maintenance_timer.function =3D
--		ab8500_chargalg_maintenance_timer_expired;
-+	hrtimer_setup(&di->maintenance_timer, ab8500_chargalg_maintenance_timer_e=
-xpired,
-+		      CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	hrtimer_init(&data->timer_wde, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	data->timer_wde.function =3D ltc2952_poweroff_timer_wde;
++	hrtimer_setup(&data->timer_wde, ltc2952_poweroff_timer_wde, CLOCK_MONOTON=
+IC,
++		      HRTIMER_MODE_REL);
+ }
 =20
- 	/* Init work for chargalg */
- 	INIT_DEFERRABLE_WORK(&di->chargalg_periodic_work,
+ static int ltc2952_poweroff_init(struct platform_device *pdev)
 --=20
 2.39.5
 
