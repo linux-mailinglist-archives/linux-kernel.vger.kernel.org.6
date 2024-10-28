@@ -1,132 +1,207 @@
-Return-Path: <linux-kernel+bounces-384161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2029B2519
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:10:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E84A9B251F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DB0B1F2199E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:10:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E2F1F21941
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 589C318CC18;
-	Mon, 28 Oct 2024 06:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846EE18DF7D;
+	Mon, 28 Oct 2024 06:13:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gIAErrbr"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="BddidM2x"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2056.outbound.protection.outlook.com [40.107.220.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C6018CC12;
-	Mon, 28 Oct 2024 06:10:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730095830; cv=none; b=CBGt9AvTJEOqDZJ+30ouLhXh0/nB5VjVwQTcduyjmdQVVPGuEcCU67VJY6USB3b36jvwfzjYjoCJYzGzoCq1n6FDFYIQSUdDp4N6IaPjzebdkWAqYGxkMbrhgrOM4gqtD/il4n1yuuOzCL7azvL+V8nzRPX2rLXjEDZwSuhALSk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730095830; c=relaxed/simple;
-	bh=KZQQWIa0NmTXTrvgtfvfI9/FAmsddMyzm4sTOgHcISU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpgTxoNqrnw0OJLFVePpGEZBX8Jum08lwmgQUHSRlfXguH5DwQT4HfBW2DSGyiX2EpouhKEhJ08Mpgf4jolE13BiwvhLLfyojmMyAOlbkttMoQKJvRitJSAIK+1NudAPFGUsfKzsLCaY3XGbuTNQp+4+owITU+/ONF7W6VAD/6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gIAErrbr; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e91403950dso158656a91.3;
-        Sun, 27 Oct 2024 23:10:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730095828; x=1730700628; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KZQQWIa0NmTXTrvgtfvfI9/FAmsddMyzm4sTOgHcISU=;
-        b=gIAErrbrq/rfW6kpv6cAW1j8ST3mx6kmfQsRWQfhM52jAogG6Tz/b+yZ+yPC8B3cTr
-         RQ3SpzZ8wi8JFa+XZMzVUvqkLstrHh3q1776kmIxNxxZPcQvJ8SbKYcyZcbhAvBeyB2g
-         XWFWl0gcjSGKfXzyxLJXFyd0ex2jUTliasReIqpOU0NtS4hBxu3Eod8GyiP+8Q2l1Wuc
-         YZlaGlCQFqkGO+MqNt+D6NWInQXHvBThgfjZiyOyVyMBiMkkHcOiU6SIFKygGx/Ddrzu
-         HEJYgTRDzUfZCAxO+pW93r3h0+qSBTLjS/5QK+RLC2d3wFrANoE6gc2KsYOiZJ782E0u
-         YENA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730095828; x=1730700628;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KZQQWIa0NmTXTrvgtfvfI9/FAmsddMyzm4sTOgHcISU=;
-        b=AXwrvU4VRjZXJtBO5C/G1fhCMogg9ijeJq2SsvALC0Iizu3TTCO9a/LmEI04terTBr
-         mtDxasaEfGSFSsykhdy2mi5wH5fgaBBnwJxAow0LYB7Ty5uercOK+hnvBBkEYFIx7Ezs
-         8T3y8UBqxdGkhm92O31JtCaF0rUNJE9WI92RUTwU6IMmcYKc7hweLK2z29OjI6TonTnS
-         kzNnmoeSYJTWcFTlmRxMkCaMgkfDN51Nq9SDWRRNCbbtMOfHMzqjlyvRzbMmSAibbn39
-         o43G2TSXdqYVsVlSeDpj/RGaDuVhIiEgdzZ5CFvRxBOtjWNtx+cg7TjnvKEN1+J3ATEL
-         2AKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfAzg2BckHw1+p4tiPuS/gYEBdtUKu2EIMlY47jD249aVSqU171kD+YmRwxapWPRLj7azi/huOdrbqFMxd@vger.kernel.org, AJvYcCVNzZGu6tnx8lVjRY2kJlS41oA6ZX09hm27tHcohU33ZdO6C1/MWPmLUhV1NvxSSpZsP5cKWlCpX5MeDK8=@vger.kernel.org, AJvYcCVumhveR07IHfEiO+X1tnwh4mVgLrqHOlc/jchYJV1PpPY+ikgC7zNiPPILG+PzURVlQ5bekUDWSxaKzM89Teh8tg==@vger.kernel.org, AJvYcCWeqYxmMZ8WY2ZvoFtnAjPNpRn8vxtYNWtdryCGeBAD+OrVcJclADLE8uIMZvrZ6wy0stW2WY9jkzSe@vger.kernel.org, AJvYcCWiAlvBOc4VhiGG9N32r7WZO4SxvcykHKGbUcusRNRciqmOnIuXMMogB/8Oj6V4qpWHjcm1BmJYBvbOzD36Klo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx+aMrw/W5uvIbg1mkdtS5jF/dv1NvnsCuR9wue06bjUKdLHQH
-	3ps+MvgVlTRPri/+sCjcLDgtD1fedhBWYp7sJxBP9xtCfFXoal48
-X-Google-Smtp-Source: AGHT+IGY/C3RpGygdeotrpMgURVeqHdXpqhUm2OR3yBXK+vE2HSGrXjWe+261uWQUYpiIK17xtVVKw==
-X-Received: by 2002:a17:90a:9a8c:b0:2c9:9658:d704 with SMTP id 98e67ed59e1d1-2e8f11dcf62mr7128993a91.40.1730095828058;
-        Sun, 27 Oct 2024 23:10:28 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3572d4esm6331419a91.15.2024.10.27.23.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 23:10:26 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 50A114229D6A; Mon, 28 Oct 2024 13:10:24 +0700 (WIB)
-Date: Mon, 28 Oct 2024 13:10:24 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>, colyli@suse.de,
-	kent.overstreet@linux.dev, msakai@redhat.com, corbet@lwn.net,
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, akpm@linux-foundation.org
-Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, willy@infradead.org,
-	jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org,
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev,
-	linux-bcachefs@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 10/10] Documentation/core-api: Add min heap API
- introduction
-Message-ID: <Zx8q0C6NhVPwqLgG@archie.me>
-References: <20241020040200.939973-1-visitorckw@gmail.com>
- <20241020040200.939973-11-visitorckw@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47CF18A92C;
+	Mon, 28 Oct 2024 06:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730095998; cv=fail; b=rKikX70VvS2BE3NoQ5NghoTtD0gmWcZU2XKwv7Edky1ncIzf28tx04q48cRcIpqY/FpRMHTWEUwXdO0Io38eknBgrCfSIq3LtCPUmLUus4mVSZy2H1pPuFPd5OWVwNsr+BgM2zMNtI4vZlOM0BVgqA2PwKJcs8wAObzOc4oWrJ4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730095998; c=relaxed/simple;
+	bh=mvffEVszlAo/nNHH4B4EctSt0ZLguEqUh2sqe2r+Je8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ss5GMjmOSI+DmglBRTqIL5uytadK8P5FFPsawbo4SimS2UI/spd7+0yJbJ02pKZc1K5lpiAdlHw4U1C6qHWc380SopL0GRIGotPSZET4RrfzgKvffGIbT9SmUlRiuZpzYQRoyeZXCY8YaLzYNeRx/6evm8p2pWuKO6MWXm0u2So=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=BddidM2x; arc=fail smtp.client-ip=40.107.220.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Nl3pnpVY3D95hkuQ7zhQE6ocsW/yngXAYeefC72UqclPUEv5wPGHqezh3VCxhn6nG654uI5wVynTvjbeyxinJLmO6XpZN+CQb9lbzE5EsasXynl9lWufJ8SrHy2QqMIMNXU0uFjd05Ioee05OTIiaAOTkVK0Wpa84FUwdLh7OF0KjOaKPUkS/aPZODObVk3WmjTp+aPUZ6dalugPHLLOs9pv/AwIDiwnYyXIAJyLGVjzOsE4ME2H4Pa4t5KgpTGjYchRKoEwITmS7QFQEkAvxMSLot9n0D8aFptn6Bi5tG0Hxd64SbM7c/mjmJZHklFd+36ilW/+Sj38wmZFozOhrg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gvjYe24q2kRGN/usIBdQq/cXfP/mhw4OxmttNValpjI=;
+ b=CY+6xqS6bNq9VA7S0pm9z7i3yRj+zKHGnjXKwkblPdl61+tFE4GkcsXsFir2oCCJ5h2nn2cNC1kA0LnXGjkR2+4PoT9YMXUNHBG6ollmqI8d5klo54pcywTtd/CQINZAtXvZzhIj9k1HiFOFof7yv4zGLxbRj97eQsDDd7m6RjwVkxwlsO82bTtC1iroZWhkTFr4YkBcxlVNUB4GBJE85rPt0d/1P++6aJ6wEsYZzAxDMD63g3NKJUQd2dW01zlXOtLXvGv1Wd+9MERpPOHoKQz5tLdIpd05uq45OYibcb3YB1bY/NMmzYPQ7tQJFVn41vVtTw79rnBYcaQBAz7VHQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gvjYe24q2kRGN/usIBdQq/cXfP/mhw4OxmttNValpjI=;
+ b=BddidM2xhcWbyrQBd5xcn2/eRHDVZKgvoBUN/23FwAnVp37ZmX5Vob9wypfIpVX/oko7gBB3xI2Zg+kAX55R6gB5skUImug7RvAamyAMbWxvcdf2tGhMxhyEpcWAULEfCeuKtl2P5IEhQuYULzaZ4EuKs4kIvcaGkPh7hdUgGos=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ IA0PR12MB8973.namprd12.prod.outlook.com (2603:10b6:208:48e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Mon, 28 Oct
+ 2024 06:13:12 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
+ 06:13:12 +0000
+Date: Mon, 28 Oct 2024 11:42:58 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, rui.zhang@intel.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, ananth.narayan@amd.com,
+	kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/10] perf/x86/rapl: Remove the unused
+ get_rapl_pmu_cpumask() function
+Message-ID: <Zx8ragiP5JBVuKvy@BLRRASHENOY1.amd.com>
+References: <20241025111348.3810-1-Dhananjay.Ugwekar@amd.com>
+ <20241025111348.3810-2-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025111348.3810-2-Dhananjay.Ugwekar@amd.com>
+X-ClientProxiedBy: PN3PR01CA0059.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:99::13) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9FVjYyjZ5YvF0M+J"
-Content-Disposition: inline
-In-Reply-To: <20241020040200.939973-11-visitorckw@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|IA0PR12MB8973:EE_
+X-MS-Office365-Filtering-Correlation-Id: 41f5c83e-9178-4da0-7f22-08dcf71799e8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?aTDQ1t/l/ihoql/3wusvXee0AzOdpA6ToRMtTxnx9qnVOzhzg3SF31oTVLgo?=
+ =?us-ascii?Q?WtIEemmwX4b8Nww6esvK1fYRzLv5bE2v6cwrBSRQe8JfywVBwGHFrvV8HLSU?=
+ =?us-ascii?Q?sIIISREBsMSJmoUA0Zm6L10yEnhTQlRi+LumGMYGCrxCdR2hGeOcA/RJJCgs?=
+ =?us-ascii?Q?BfhEtvoxvWT+O0Mt/OZdSPP0U8+miD4MHbMuksJkUy8AeD4f/WP1WutdQHcB?=
+ =?us-ascii?Q?hWK/BgQhsRWhXxAc4V8Imm5WwKz5MYisgWzWDhkXYAOFOUThVOeRc11Rm17u?=
+ =?us-ascii?Q?0dcLIxRv6EIAg+KGco9TnI72RQj1SkBNSRy9/q+hj3NuVaqpOBP8EGNWmXrE?=
+ =?us-ascii?Q?V9/5UKfqR4hPdYpcP0TPQSOD/C7t+MAjh7QU5wx5qZy0VP0oUUHg/iPD2hAe?=
+ =?us-ascii?Q?bjIGk0/2Xx3W5ORa0e6U/vWdplm6xJ26uy0QYI0nGdX2ETNlW7eIZojLfza8?=
+ =?us-ascii?Q?Dp6tZRYA4d1FWLFKFY6iumQdPW5flz4YQ2CDzWXZ3cnEgqdE905VjDb/Rfeu?=
+ =?us-ascii?Q?oful/fSXhbD+MC/cve5FJsq0LUEAMuBrcCxRgeuAZj7YECTLp4Wc7gVRfrr7?=
+ =?us-ascii?Q?lDX017FcAklo8n5otxKBKy1++abl+cAUc7ywn4PiSe0qJiYQmfroFwgURcZu?=
+ =?us-ascii?Q?4lrV2tAa8K96Lv6wKiiicz9P61KrOHOHxvwraNvW+GzQWCJEcIAtvP6oKYN1?=
+ =?us-ascii?Q?Ta7L8o/z3QLSCn3gDwCoRDwUH/MM+TbLjiTNLh6SGsfGObTccKLUvWlAvT62?=
+ =?us-ascii?Q?QyUkMGsuYjf4hZzOEAHKStTjNij7WD3AHyM9QlOfSTGwvGirsLh9KEfWvyAr?=
+ =?us-ascii?Q?WiZ/TN8FpbCI0UQMiAqORTemB8sN/7nvkd2FDUugSyJcqRMA/iq+d4Kf7Otp?=
+ =?us-ascii?Q?W3cBgg1/Y+eBHR/Eme3b2ILtqCxyAouEsqUwbvhdQDtcM90Ahgc49Vs2/ALG?=
+ =?us-ascii?Q?+rq5LwIZHWSWfBNuJwGdHqi0GojEUrwM0xVplJcq0jq+ZjR68C8D2Wa4kKmP?=
+ =?us-ascii?Q?9tthSVit5gSDRA7UO7THaQs/4GYltT+dvHRWMTnzygN4ogP7McmBAX9VDvAl?=
+ =?us-ascii?Q?lbwl6h2MBNI1kZms1gdAUb0gbjYOnVKgGfVxpI8kx8R9QCDNyLW9Q/172vYG?=
+ =?us-ascii?Q?gppat6Szne40FiFD4BSO2hOzGoZvZk5K/8PBlEw7V2Gafk+x+CniTtMaLP+U?=
+ =?us-ascii?Q?hHbBdjWU8ao1VKpA/mPbY1yS+ApqOXR3+tInYzdlEIyLvPzePAbVcQabyoWT?=
+ =?us-ascii?Q?ImzEPEvgbTTYN35vNC/GXzyfGVj3KXDNWnWPRxuPGoBNFyHXYhcN9U4FaHoF?=
+ =?us-ascii?Q?hFJBOQVMRZk6CcnnVf2pD2dd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4fdsslLfd3SrawLx20oyi3y84GdHF242HGt37D4BDUFMQ9tLe1f40uYtHWSj?=
+ =?us-ascii?Q?qkOo1/EjcdbdikC6rTlo3DWkSKvhxuwf1ZJoEpZw0MuVXFyLcOzI/g/mCB4T?=
+ =?us-ascii?Q?fR5DFRgjA432fhH14FnmMO5qATUd8ZyGBjGmdGKaKkUUKpwCq6oSmZska2n9?=
+ =?us-ascii?Q?HFUOtp8evwr+0EMDiniXpUQmI9UKnbuUVqSL5WCbiAqc6xgOHhah3/7tMU+T?=
+ =?us-ascii?Q?7ygdOhngiWMqPm0EYpRbgmXUCTVsdiC+JiuRgeUXW/JZF28/Lnq3g8XkyD8R?=
+ =?us-ascii?Q?fTTDIUI93Fgpc85/tINjg/f5wIyS+8VnD3ILWtC+h0XUUgXf6Ikuoftcln9W?=
+ =?us-ascii?Q?8x5vvkZO7v/qMDA/EFWGet1AbE9Y3dA62EBYCQJB2cUp1ydzR+omfvRB4Mnd?=
+ =?us-ascii?Q?sDJnTq2R+w+BI4QcAfjNQXueQtJOOvJuA9VrxSD38ia2POQ7uHUZXLM6GHG2?=
+ =?us-ascii?Q?Lvhv8gyFtfTSGkFlNymeJ+OW9veLn6GZyqHLQWUVFI+ltleZ5/9ctUYdUI8q?=
+ =?us-ascii?Q?Fp2GL2lpoYWUWAwRznEhxc2O+T765dckZUADWTPRcEqnJ809uM5xmi0Yf0aM?=
+ =?us-ascii?Q?eGt3ZzxygIWjHLmhznFK+Ad8LxPvxN9GPsKXtOLLRIVwuwvlk4eeRNnagRvo?=
+ =?us-ascii?Q?2H4i8QUj8uSALFafGctz4zOcchf5XQoDWY84yPTt5C55Fuc+kv24YFIh1I8P?=
+ =?us-ascii?Q?9+3Rc/TmchAsek+SaQ/0IhS0rUy0mW/os8AV2/hkZ8/jCO9O5u2SwZWIiVwM?=
+ =?us-ascii?Q?x2ttQziuUTuvklIPw1WV+0gGSsJQxaNiCjjju7acRh8NYQ2mDo6WNnB4A2B1?=
+ =?us-ascii?Q?cVerw4gxlwTnmvZBRvNsi/sp+pTuNCmWZS/LIJKz7af9Af4sRgqpo5ouqgyz?=
+ =?us-ascii?Q?TNmCIpaCIUthTjf9+Ej+xFTHsIjWfYjixseJf/fs2VmHXbAANh9laYsiGb3/?=
+ =?us-ascii?Q?kxfGgs8AmKre/F7qIYNVw4BagUpUSJgeUeNSp24NtL5BL724AC8gZlfTWQJH?=
+ =?us-ascii?Q?EwrLp1UNqhnbLXg0o35mbbgJnDqv3LGG7qZrnS+kZs3nVhlhg+bJ6wHsSW3z?=
+ =?us-ascii?Q?wqRh1XoeFG1GvcZH2KkC5I0MTyRR0zJzmolNRz90iiSnmKpB4kj8MvkHO+Vd?=
+ =?us-ascii?Q?2dLFhs0CfgLWmy0pIq50GZrb7YtIiiOCmsid8o8JY4ZwSJml+Lh5Vg2LS3FU?=
+ =?us-ascii?Q?hEfqP8G5PxPCHc+uZZ3Lk96aWuBS0NGkszX86ISkIqb4xwhIt67uMd1acwtm?=
+ =?us-ascii?Q?TH+eFs9tgJCWiTbCKAXWizp66wMDNxh3Km/3+upTTxgvoJGVCep4Jkruiwxf?=
+ =?us-ascii?Q?YIj/aRIRlUuMlpEytWKgs8s80r9Dnu4pH9UM+QEZP5NfzcWjEB4p+YgepjoD?=
+ =?us-ascii?Q?bv3HepEOejjW2QEKbT9okyQSd96m0V7TBPB823GxrfYIMXC2aeiXym4hh4mo?=
+ =?us-ascii?Q?E8M5cmXzKsu0zJD4eAtRvX6CN7yoUGNNvHNwCX9azLd71vRscNXHtbiFu34B?=
+ =?us-ascii?Q?thGLbC56QcWOssfxqrOb9zvuzwFcOz8J9fgD8ImgatHjWDxtdJxx32BbjSDa?=
+ =?us-ascii?Q?dw9TMSjDAs0/6U4RcqY3lfOakG0uOvr2bUiyQwOo?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41f5c83e-9178-4da0-7f22-08dcf71799e8
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 06:13:12.7217
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wbcQuNiz7Ezoey4qQTBFjpp/mLF4vWZxdAwNNkCKdr4W4IS2aGycOXsC9BqrbwIEQCrYSY2uB5h68djy9ygzLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8973
 
+Hello Dhananjay,
 
---9FVjYyjZ5YvF0M+J
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, Oct 25, 2024 at 11:13:39AM +0000, Dhananjay Ugwekar wrote:
+> An earlier commit eliminates the need for this function, so remove it.
 
-On Sun, Oct 20, 2024 at 12:02:00PM +0800, Kuan-Wei Chiu wrote:
-> Introduce an overview of the min heap API, detailing its usage and
-> functionality. The documentation aims to provide developers with a
-> clear understanding of how to implement and utilize min heaps within
-> the Linux kernel, enhancing the overall accessibility of this data
-> structure.
->=20
+If the commit is merged, please provide the commit id. If it is not
+merged, please share the shortlog here with the link to the patch on
+the mailing list.
 
-The doc LGTM, thanks!
+--
+Thanks and Regards
+gautham.
 
-Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---9FVjYyjZ5YvF0M+J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZx8qywAKCRD2uYlJVVFO
-oxK8AQCkweSLHKQum/kN2ZlFuOSI7PY2IFPhUHf7EgVFWMUZ1QD/fIPIofBxwULy
-ZiQmQ7b0Lko4m4TJTzn6NFKQGFQ8tAY=
-=8Dk+
------END PGP SIGNATURE-----
-
---9FVjYyjZ5YvF0M+J--
+> 
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+> ---
+>  arch/x86/events/rapl.c | 8 +-------
+>  1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+> index a8defc813c36..f70c49ca0ef3 100644
+> --- a/arch/x86/events/rapl.c
+> +++ b/arch/x86/events/rapl.c
+> @@ -153,7 +153,7 @@ static u64 rapl_timer_ms;
+>  static struct perf_msr *rapl_msrs;
+>  
+>  /*
+> - * Helper functions to get the correct topology macros according to the
+> + * Helper function to get the correct topology id according to the
+>   * RAPL PMU scope.
+>   */
+>  static inline unsigned int get_rapl_pmu_idx(int cpu)
+> @@ -162,12 +162,6 @@ static inline unsigned int get_rapl_pmu_idx(int cpu)
+>  					 topology_logical_die_id(cpu);
+>  }
+>  
+> -static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
+> -{
+> -	return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
+> -					 topology_die_cpumask(cpu);
+> -}
+> -
+>  static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
+>  {
+>  	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
+> -- 
+> 2.34.1
+> 
 
