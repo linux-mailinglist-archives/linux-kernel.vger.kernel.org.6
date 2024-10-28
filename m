@@ -1,94 +1,191 @@
-Return-Path: <linux-kernel+bounces-384899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E26A9B2FF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:18:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B11FD9B2FF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9070B1C218EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:18:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7032D28273A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2961D8A04;
-	Mon, 28 Oct 2024 12:18:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632161D90D7;
+	Mon, 28 Oct 2024 12:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QKpH/xlX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M54QznVP"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3CE217C61;
-	Mon, 28 Oct 2024 12:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC1D1990DB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117925; cv=none; b=oZhmryqwBKLs/O8Pv8eWY56GmoP5E95Hj4Btla+cVgwFg+BS0ClCyNjGpnhZWJSEcIegqc/DcQ4TNYxbK1Y2piEG9dx78JNsGLiOZzJZcHORcquTTVJvETMYPmqMCTbrvBwuT6bhkbZPFZI5CiYA5No/4imL3bOwAECosbDkrZU=
+	t=1730117967; cv=none; b=k/kLFchBFLFPBMk0aJzN1QyJVymxJ7/040FdKB4jDkAFtINTfNkdg+o86RLImqF+YX4gAzBSOWjGotTtIi1kHVL9Bv5Pjyy5O4SOfawP845qJSjjV0Xr8xEHJsi3OpCJ9Nc0BU0ViXthHW+p2Y91M2fe6MBNnh2zxVoUpollJME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117925; c=relaxed/simple;
-	bh=0H8r7TBHT37tjzCNRwO0VZNVQ8S36hpd0jKeDGVcZik=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=knqLdU4Ceav3Qz2oDYU4YBVuI+59A0DmD8SZcE3c9UIUvTOlXOtO+fkX5VqCwJkw7kxAGJoH0InQtJm7d97DKlgmZ06mxr2n7cMIE7Lofequ5fq3lL9nxBTRUFxlLf2UXErOlvs6ng1H2Os6I/ehy2k7mbh74sEtgYsWhiU6Vis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QKpH/xlX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C67E1C4CEC3;
-	Mon, 28 Oct 2024 12:18:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730117925;
-	bh=0H8r7TBHT37tjzCNRwO0VZNVQ8S36hpd0jKeDGVcZik=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QKpH/xlXRxMKcdNtTRHI7tjVhS3KsWBpLiVeqHxpekiGCWHsZp3lsaK2JD74E20CS
-	 6vNs4prZ7MwLJwuqhw+hGthiYZ4Ndy1DNAhkOeCWVrfrfgiJvgjsWXCcgFdUph8AFe
-	 b4B0YyUkDD+4drWqBj6Sdv17dTsMULxP8ESE/MjIHRg+jXvyxfm3msbUoDtmWCVb5h
-	 IylKJWjNMeHqH+FWB+kA1OD6EVuNhZFa7razs7Ul4OAmispAjXn1X61EmkQNuM9ktb
-	 e7pHevDdQK8NEY5zHZiP2mJCq1arj+Kq9AqhUgFgwkij8jjBx9XmCedesmppXZsAnL
-	 23ed9Q/sQNWBg==
-From: Christian Brauner <brauner@kernel.org>
-To: Ian Kent <raven@themaw.net>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Al Viro <viro@ZenIV.linux.org.uk>,
-	autofs mailing list <autofs@vger.kernel.org>,
-	Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH] autofs: fix thinko in validate_dev_ioctl()
-Date: Mon, 28 Oct 2024 13:18:39 +0100
-Message-ID: <20241028-filmt-lesebrille-20feb7581897@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241027224732.5507-1-raven@themaw.net>
-References: <20241027224732.5507-1-raven@themaw.net>
+	s=arc-20240116; t=1730117967; c=relaxed/simple;
+	bh=GXWGcR0pyZQhCcbI+Gc3gunB3SMdKAUS2ZKBSmfDDXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZR+XClYFAGHP/dlsGCykgFvclwbmulMnv8VT4HN9SWa3iC/5Wh/UUTlhUDBfxVQA1Zk4EJFJNsUgFxy56vDrd6Vux4Hl/ceD0N7Vv8scCU9fVYQ3q8QzwjUYo1mi/bgLQVJJG+1bCWlD/brPIkeLP3r3MN+Lh0Indc+cRv42hPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M54QznVP; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53b1fbb8be5so4215355e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730117963; x=1730722763; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kewq0jun/sKTyFEkBiL9iXhIasxDz8VGr2qCbe0+u6U=;
+        b=M54QznVPBSqJkn7JRvwzrJIua9+HDQZtCJagYVs9YKxT/VtfJF597CQTesQgusnc2Z
+         G4/kYEQIMPJnoCL7/NIbDTi49VqI6qVRHB23e2cT/j/eQm9NirplGbLVm7n9m/xj+KRR
+         HUpM2/c/jpXZFZnPo0MVl4KSw4DgoGkpk/a0ifYOVFV54DfIhiXaxKaKlXSzUCKRassx
+         00+J5XAs1GUMJUU11FhIq1+49VETveRs1Uxpf0epokEo+1wbZVQi2qH3+twOmSpk1Tr6
+         WQV7lwcf/c/zaGlR4RTFSM72a+tN3ABJ5R7+7onyig/UilfRTLZTT3UeGJfoZx6AWM26
+         WLmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730117963; x=1730722763;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kewq0jun/sKTyFEkBiL9iXhIasxDz8VGr2qCbe0+u6U=;
+        b=p6tcAcCNPpzCq1Xu++2osgFrLgQenEztpKoE7o0+3eqLUEXFq8sFn4P/PhDU3/ZmyB
+         qP96Hy4aTNNTriZHHeEj71jf3gGkS9V3Itym7pz+7ZdBx7kJUKVwdi4EjvZiVFSA7b19
+         xJQ+67uxS2tPo7PdL90oDIZ03p3D4mKn6ZMqPfHCPuEszanY2WzLDA/yInCGTYsKfxc+
+         oWdjEQkmT78wiW4YtgxMgpo2wHzqPanEvH+HMBrAFokJKUCMSKEIm/xKVHR65rK9ZNe3
+         9mcHtN2mPJA2cKQvv7HptTqT4LaXLCeeYdj1BJBIz9MGBiMRpJItfkRdpurywt4d5xfD
+         7fcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTknjYZduCKxoY/UFtTnTJl6wQuzFiv3geDCVG19uNVBVker/dL4P3mHJnOmejMKWdaLywafTZ3ddN0Qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyOyWs2Qpx+S5vLRgEjQSUDyWCpU6sk6FLy+1WOG32XmPOY4oo
+	dOsHhW1f8d9+XM41fNg43AJls3zWzzX7hbVk663BuB8rEbJm6jhIddUAgASpf3I=
+X-Google-Smtp-Source: AGHT+IFcJ911YncxzDz+vUGU2wKxP//zFGp4XOAPitX3IxTT9WIuDtrsNPSJE+JGqHL6nbUCTYefbQ==
+X-Received: by 2002:a05:6512:33d5:b0:539:eb97:61d7 with SMTP id 2adb3069b0e04-53b236a6912mr4462705e87.4.1730117963369;
+        Mon, 28 Oct 2024 05:19:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a7bcsm1047277e87.21.2024.10.28.05.19.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 05:19:22 -0700 (PDT)
+Date: Mon, 28 Oct 2024 14:19:21 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Liu Ying <victor.liu@nxp.com>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
+	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
+	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"tzimmermann@suse.de" <tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"simona@ffwll.ch" <simona@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>, "mchehab@kernel.org" <mchehab@kernel.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
+	"sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>, 
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>, "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>, 
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "arnd@arndb.de" <arnd@arndb.de>, 
+	"nfraprado@collabora.com" <nfraprado@collabora.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, "sam@ravnborg.org" <sam@ravnborg.org>, 
+	"marex@denx.de" <marex@denx.de>
+Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI converter support
+Message-ID: <5ycxltnw3vhik3iype6ncuh4nelwwtom745o5dlf32qyiqh5bv@yjj5l6kb2psm>
+References: <20241028023740.19732-1-victor.liu@nxp.com>
+ <CAA8EJprFBbC_=kBHi86j-nE_K68QeG+c2OBzJCbUyNWs5zQK0Q@mail.gmail.com>
+ <TY3PR01MB11346F956733032EC10E997AF864A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1064; i=brauner@kernel.org; h=from:subject:message-id; bh=0H8r7TBHT37tjzCNRwO0VZNVQ8S36hpd0jKeDGVcZik=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTLN8rr/SrTW8ukyDXD4lva61nluXsruCp+b1rgdWFp4 7xAaZcjHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOxmMvwP/L2r2WGwZf7jKN0 bC5J6QR/cdl5Z+K0LF+uiSU3GNYGejMyvF5nv/tYfNivgI5CMy8OH86Pl/1PlX0RMdv8KjTlRPs fNgA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB11346F956733032EC10E997AF864A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On Mon, 28 Oct 2024 06:47:17 +0800, Ian Kent wrote:
-> I was so sure the per-dentry expire timeout patch worked ok but my
-> testing was flawed.
+On Mon, Oct 28, 2024 at 11:12:00AM +0000, Biju Das wrote:
+> Hi Dmitry, Liu,
 > 
-> In validate_dev_ioctl() the check for ioctl AUTOFS_DEV_IOCTL_TIMEOUT_CMD
-> should use the ioctl number not the passed in ioctl command.
+> > -----Original Message-----
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Sent: 28 October 2024 10:20
+> > Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI converter support
+> > 
+> > Hi,
+> > 
+> > On Mon, 28 Oct 2024 at 04:37, Liu Ying <victor.liu@nxp.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > This patch series aims to add ITE IT6263 LVDS to HDMI converter on
+> > > i.MX8MP EVK.  Combined with LVDS receiver and HDMI 1.4a transmitter,
+> > > the IT6263 supports LVDS input and HDMI 1.4 output by conversion
+> > > function.  IT6263 product link can be found at [1].
+> > >
+> > > Patch 1 is a preparation patch to allow display mode of an existing
+> > > panel to pass the added mode validation logic in patch 3.
+> > >
+> > > Patch 2 allows i.MX8MP LVDS Display Bridge(LDB) bridge driver to find
+> > > the next non-panel bridge, that is the IT6263 in this case.
+> > >
+> > > Patch 3 adds mode validation logic to i.MX8MP LDB bridge driver
+> > > against "ldb" clock so that it can filter out unsupported display
+> > > modes read from EDID.
+> > >
+> > > Patch 4 adds MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG,JEIDA} support, as
+> > > they are supported by IT6263(with LVDS data bit reversed order).
+> > >
+> > > Patch 5 makes drm_of.c use MEDIA_BUS_FMT_RGB101010_1X7X5_{JEIDA,SPWG}.
+> > >
+> > > Patch 6 supports getting dual-link LVDS pixel order for the sink side
+> > > as needed by IT6263 driver.
+> > >
+> > > Patch 7 documents jeida-30 and vesa-30 data mappings in
+> > > lvds-data-mapping.yaml, as needed by IT6263 DT binding.
+> > >
+> > > Patch 8 extracts common dual-link LVDS display properties into new
+> > > lvds-dual-ports.yaml so that IT6263 DT binding can reference it.
+> > >
+> > > Patch 9 adds DT binding for IT6263.
+> > >
+> > > Patch 10 adds IT6263 bridge driver.  Only video output is supported.
+> > >
+> > > Patch 11 adds DT overlays to support NXP adapter cards[2][3] with
+> > > IT6263 populated.
+> > >
+> > > Patch 12 enables the IT6263 bridge driver in defconfig.
+> > >
+> > > Patch 13 updates MAINTAINERS to add maintainer for IT6263 driver.
+> > 
+> > This has pretty complicated structure from the merging point of view.
+> > 
+> > I propose we take patches 6, 8, 9 (without 30-bit formats, they can be dropped while applying), 11, 12
+> > (?) and 13 through drm-misc in one batch (once DT maintainers review the binding parts). This looks
+> > like a minimal set, having no extra dependencies.
 > 
+> > 
+> > The second set might be 4, 5 + new patch, re-adding 30-bit formats to
+> > IT6263 binding (no driver changes are necessary). This can go in separately, after an Ack from media
+> > maintainers.
+> > 
+> > Of course both sets can go together if linux-media maintainers reacts quickly and ack merging media-
+> > formats patch through drm-misc tree.
+> > 
+> > The rest of the patches don't have such strong dependencies and go in once ready / reviewed.
+> > 
+> > WDYT?
 > 
-> [...]
+> I guess, 6,8,9(without 30-bit formats), 10, 12 and 13.
+> 
+> 11 may have dependency on 1, 2 and 3 as it is SoC specific.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+Yes, of course, 10, not 11.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+> Then 4, 5 + new patch, re-adding 30-bit formats to IT6263 binding.
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] autofs: fix thinko in validate_dev_ioctl()
-      https://git.kernel.org/vfs/vfs/c/f19910006eff
+-- 
+With best wishes
+Dmitry
 
