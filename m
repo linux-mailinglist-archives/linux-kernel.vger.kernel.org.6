@@ -1,149 +1,129 @@
-Return-Path: <linux-kernel+bounces-383975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9FDB9B22B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:25:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE49B22B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A167E1F21BD6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:25:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F30781F21B6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17793156F5D;
-	Mon, 28 Oct 2024 02:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAFE15B153;
+	Mon, 28 Oct 2024 02:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iqnzIY1c"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ihryl5ms"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F524BA2E;
-	Mon, 28 Oct 2024 02:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF28374FF;
+	Mon, 28 Oct 2024 02:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730082295; cv=none; b=PxGSHspZbXwUa7Qgnht6XqADmpSTWp78T4j/nMgGf8MiA4298sJ+Z9TLjsx0F0AYMAbjQ/Y5A7TA0XwYvA7EsTTwwnMBj0HpyOcocTvOy6MR7OR1JK4Bqk1T6nsSMW/bKKr+d0pGYDzxc0WvTTA/MBdFsBHhLIkf0UMiRSkmHEM=
+	t=1730082435; cv=none; b=pVVw/f5a1F9uvrEiMqm1jAR8cZ2+xR7HGiaIROXkRnPMyWHSn2E+sE4v/UM0aqA3ERjyUxgbDcMNxIZy42lECUPRmps8drN1T5RhbS2MYAlRmpLfA/qp/jBNBcsyWqezrklbO0eeskhGpf7ZftpEKamiFVsfEmHZyb0TednuVrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730082295; c=relaxed/simple;
-	bh=HppDK1KBHgwXWd97r4y7pDQyIQn+aZh+fNatrCH9F5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xy3zx1eAVcKX8QfyMUy8U3aNeWl23YlHJ8lkVHDFoqdZIzYcJHVjjfdMTVrVHaxNaDUOJXLPUVzj6ttji9SgpRKi9jF9Hd5D1rxrKOdmglftnL6u+KkFR5zDrVVNCCD1e8aLi/o0TSAgcg6mBXg5be0t1C/WIEZHlRfy3IfVrSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iqnzIY1c; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49S0oV2C017701;
-	Mon, 28 Oct 2024 02:24:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HkDjI98CtlrdRe7sP1PxE3fSr+qwlpfBpu6cO6fteoE=; b=iqnzIY1cYqa3dBwS
-	xJ4caoGgF1YX+t91/gewQ8lHy81Nq4gKaGWAfPYh+Ij5W7tIR8+SUH65DtGsFvrD
-	wdkkG9/L11Oc2++9azlO/IA/Ir59g3TWE1R5sxt4PLCNO5RJt6/Sg6frMX6eLzRY
-	jkhkVmFkuSilwdhs+CI2uJb2c0n5UcHfevivsay3czVDVgfKq8WdBpqfmXADs+n0
-	Mq4C6vg+OBb5FesRdE/g4chxQHiOskLu5w0iM7EnB/XT3myj7ts5fM9R/v1EpHlw
-	xHhZJQM6pyQCWRYk9JZSegn0fvN8o11pmDhurC5GRtgvmY2nBxfm2t1ds4TExWAZ
-	MjFGPA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgubd23-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 02:24:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S2Omko006283
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 02:24:48 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 19:24:45 -0700
-Message-ID: <40418fcd-7bdd-4bfb-b0b3-60d9f4665fe3@quicinc.com>
-Date: Mon, 28 Oct 2024 10:24:42 +0800
+	s=arc-20240116; t=1730082435; c=relaxed/simple;
+	bh=O6n5LU5cQ2aUUdKZldlVNw7gP2/0RTzZWr3RLU4EMAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xk6awpjfwaKYeRC7D/bgG5DpBu2xjn2UuAmnWGlIJCt5cKHhfvcYDZtslYOKn0mJV890U+lp6GbYHxBcj8LU3mHaQhzJr2c8hDmNZA0N6BTkqI7s7mu03SDPevNtTONsLx4l+8Bhfzrzia4x7+fe5euF8rT2IsRku1Hp3iW4I0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ihryl5ms; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730082427;
+	bh=PTgMcrh/DjlRMa4Xvz3XtnTZ7EL8OuqbXeeGiXcMhDs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ihryl5msw++sO6kks9izFyyBxe1jmaTGqRA1FdPxfWyCLOTplIt0yWH8Vy5Rtt1R1
+	 u2gxgNgP9me+9aHldp/XsiftsKx/qVSH1KR3KAeji+Y0SjSUctrGVBTODgPTkkis/O
+	 jQaPyRYIqaujmgFQzJwsuc8X94Y+XzMbjfzjdEBsp209SnnPHPLR6BrN6inUn4IJCc
+	 VwR0Sj/QRTMYcOUghjN6YpxXEa3C90IaKnKslFQvUbTJPx56XiFglnT6v6iZfVCpeP
+	 PSZwBhLabeDoibS3Zl9BzQNdQLJJfIFabfCnyKqV5r3QDfkRgGQIAv76hoRpl+D99m
+	 CrnnTHgBQ6oaQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcHMt35B4z4w2L;
+	Mon, 28 Oct 2024 13:27:06 +1100 (AEDT)
+Date: Mon, 28 Oct 2024 13:27:07 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: DRI <dri-devel@lists.freedesktop.org>, Arnd Bergmann <arnd@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Niklas Schnelle
+ <schnelle@linux.ibm.com>, Thomas Zimmermann <tzimmermann@suse.de>
+Subject: linux-next: manual merge of the drm tree with the asm-generic tree
+Message-ID: <20241028132707.24aded7d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Add LLCC configuration for the
- QCS8300 platform
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Conor Dooley
-	<conor@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <quic_tengfan@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>
-References: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
- <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
- <8e49de35-59dc-4308-b93a-19791e6b05e2@oss.qualcomm.com>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <8e49de35-59dc-4308-b93a-19791e6b05e2@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 3r95bpphilHtf2_nbJkOrPm68I9eGXsV
-X-Proofpoint-GUID: 3r95bpphilHtf2_nbJkOrPm68I9eGXsV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410280020
+Content-Type: multipart/signed; boundary="Sig_/5erwJwIlhclGCrUd=HJmnLP";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/5erwJwIlhclGCrUd=HJmnLP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 10/26/2024 1:41 AM, Konrad Dybcio wrote:
-> On 10.10.2024 12:08 PM, Jingyi Wang wrote:
->> Add LLCC configuration for the QCS8300 platform. There is an errata on
->> LB_CNT information on QCS8300 platform, override the value to get the
->> right number of banks.
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  drivers/soc/qcom/llcc-qcom.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 72 insertions(+)
->>
->> diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
->> index a470285f54a8..d867b1596725 100644
->> --- a/drivers/soc/qcom/llcc-qcom.c
->> +++ b/drivers/soc/qcom/llcc-qcom.c
->> @@ -2225,6 +2225,56 @@ static const struct llcc_slice_config sm8650_data[] = {
->>  	},
->>  };
->>  
->> +static const struct llcc_slice_config qcs8300_data[] = {
-> 
-> This part looks good and in line with the data I have
-> 
-> [...]
-> 
->>  
->> +	/* LB_CNT information is wrong on QCS8300, override the value */
->> +	if (of_device_is_compatible(dev->of_node, "qcom,qcs8300-llcc")) {
->> +		num_banks = 4;
->> +		drv_data->num_banks = 4;
->> +	}
-> 
-> This, please rebase on <20241025-sar2130p-llcc-v2-0-7455dc40e952@linaro.org>
-> and reuse the thing added there
+Today's linux-next merge of the drm tree got a conflict in:
 
-Well noted, thanks for review.
+  drivers/gpu/drm/gma500/Kconfig
 
-> 
-> Konrad
+between commit:
 
-Thanks,
-Jingyi
+  65f5bf96750f ("drm: handle HAS_IOPORT dependencies")
 
+from the asm-generic tree and commit:
+
+  aecdbfe459a0 ("drm/gma500: Run DRM default client setup")
+
+from the drm tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/gpu/drm/gma500/Kconfig
+index 23b7c14de5e2,c2927c37c40b..000000000000
+--- a/drivers/gpu/drm/gma500/Kconfig
++++ b/drivers/gpu/drm/gma500/Kconfig
+@@@ -1,7 -1,8 +1,8 @@@
+  # SPDX-License-Identifier: GPL-2.0-only
+  config DRM_GMA500
+  	tristate "Intel GMA500/600/3600/3650 KMS Framebuffer"
+ -	depends on DRM && PCI && X86 && MMU
+ +	depends on DRM && PCI && X86 && MMU && HAS_IOPORT
++ 	select DRM_CLIENT_SELECTION
+  	select DRM_KMS_HELPER
+  	select FB_IOMEM_HELPERS if DRM_FBDEV_EMULATION
+  	select I2C
+
+--Sig_/5erwJwIlhclGCrUd=HJmnLP
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmce9nsACgkQAVBC80lX
+0GwrDwf/U8EXNf+9GHqdDXPK+6i658p6nGaSKnn6EDmLrMSUd/aG4Br+G6bNya/u
+hHclK2DTDhNkFyplojeMwHEQXHhOMTImJubHzD4qcnLZxGvYtutSAOWPCtZVDz1K
+ku7pwQOo2TenTlGnqX+QH1t8fWaNWh65s5Y5YLH+DgEHFmSr2UdilnEQZklT/m9b
+qzZOWEGCFCVqT12+ffzgEoBCbuC9Uv79oZnzeT8cXT97dJZprhrhqUzuKUJr6xMO
+/0Oisko/PVKbtCmgaNSjp3D0NWOJnNGqjXzVN/hOpyr0I944rNsXmJ3qFiqFK5zF
+6IX8QB1xtQtAQFR27bovyyfcyMrFtg==
+=gHTb
+-----END PGP SIGNATURE-----
+
+--Sig_/5erwJwIlhclGCrUd=HJmnLP--
 
