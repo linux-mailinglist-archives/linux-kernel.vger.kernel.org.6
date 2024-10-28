@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67D669B2935
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:50:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC4FA9B2937
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12A4F1F2123A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DCF71C21039
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:50:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0FA1F7551;
-	Mon, 28 Oct 2024 07:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E763D1FBF75;
+	Mon, 28 Oct 2024 07:35:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cxZJQMxm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bUeeXWSS"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GawyjlE+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KoOegUpt"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CC21E7C1A
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25701EC009
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100941; cv=none; b=slSvoN+iMIGzs7DrGndfVmmpCVXSk5CeBRC/j4M1rVaCCNFMZhs89herOg3z7qq1acj1karT8wKv92rwui7YO7UBD/QqYcLLxiTLgmJr8Vp3Ep0eA6zeYa59VclXngpcI+jjmjKyAeT9aik2y6yRf0ij1Cgek8Q7kI+mBc59Llk=
+	t=1730100941; cv=none; b=cXKRdVwMpJDcyQNuqA3L3k7ZyJ+PAYurFLOi/FzrnTC0FIGFabJWQzP/EGwOp0zhYkGpK0qIWQuqmkZ74mfHEzItdEHdvEebQPr8Fa4YMcr43WDTG3rojgvZ/+V1Ly3gWzMOVBhGuq9FgMvdwUIQ8pQwoDpkmKKbYQ0C7FCML6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100941; c=relaxed/simple;
-	bh=XyDLzycutE3haSnlwMMFjd/eXRDfpKNC5x78QccVAnk=;
+	bh=yxYaRz5YYKNw3qdQtujufTAlDrtbm5aDY9tbNBu2xDs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LwAhPeQCm/LJBvUXF0PpBJc0RCaCa04hzTksWneqQfQslWYpGZyil0IzJhnPT1Z9UZsQvM0vRrfsFlf0+Y0/CNjgCf5pwuHZDFHciRNFA9xTCNeeF6vkf2bfiKJdtadGMsMwmhTw0krPKetCLh6iG5ZzMZlIUQJy/01xdzPGsmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cxZJQMxm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bUeeXWSS; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=sTj6wqHxxxBJqZgmdaTkr/6/s5W7mDkzuW0pE0VC2OikfgrnSdbhdWx0BN+EqWBjnHXYiUNUQXMT2e5cc/fZubU0r5ktrP3HiJGQg8lfURZvjYOQW/vFxO1kRLU2ZQx4YmLL7fvtYyC5slvdidcCcMhtJPzcCPfIDMqlAzNkW2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GawyjlE+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KoOegUpt; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uNvhzJvkORL21CY5jsD75ElrQToYLN+MvRbU7d88fDs=;
-	b=cxZJQMxmnZPgnrXiCh+hwIfVrMMQ9DiOdgZnxMWjUtSthX8ZVCjaM0Wa64RNXRKU3YG0bl
-	+8hyeAH/cN0IMrbR2ls/sd3uR9AGCil2R4p27TXUSKn/sYKvB1d7w4cLFW03TsdZJlorkc
-	6DFgL8OwnZVKE94wyZJTTaYXPC7T08Yt/G2DcloP319obc5gVtEek9hYRgg8hbz2n0DlPy
-	h701bXrsPczcob9S9pWcgcCli1N80TxmpHX6/NjrQTi4N4LghXfw4raYzr3WkOK4ySWanm
-	dnWfh59LHWtTsKTMPJGfWgQMZXw9uS/qrfqimZfHGm+qSFLEXOm6fOIAkSJb3A==
+	bh=aDNK2Ol6tPyckkAlsSArdJh2aHoZHCL7LbAKeA5xR+k=;
+	b=GawyjlE+iDtRyDMlUdbk4ZMRObPUTperX5IwKMW32d/pn1+AFiqitO6x1h/YhMctybmJg4
+	dHcm6TEcQJEJlw2r3ODxJbq1ILt6/IKr6FzXKpD21/FaTMqarU/4xs23SD7Nc8gkU/cHWt
+	MlnitDtP/JF9UcbA+KP8gfS3UQmN1De61uIXHRQF3Yw0/LJ2RehS/hcJsNDweQk2ixhULr
+	rpc1+ZX/uymuhNO+3kK+rv9hUL/SAmqH1BP127waLVgnfvTiu4B9R6Dx7Zlpe8+BL5NGx5
+	LTnox6yGO3lsY+DRWtgo1Ceepx5qhL61AeSs6LCtp89N6ba4oEz9PuqW9nKShg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100937;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uNvhzJvkORL21CY5jsD75ElrQToYLN+MvRbU7d88fDs=;
-	b=bUeeXWSSCxxxkgHySzzMBOVcDVKB776tTdGKSXLOQx7y553Td0CXQGa0NrbpvDETpcnQBm
-	tkqXPqWFnU2+6VDg==
+	bh=aDNK2Ol6tPyckkAlsSArdJh2aHoZHCL7LbAKeA5xR+k=;
+	b=KoOegUptPjcWL84/CWz6Db7RjRv5xw4C4g2nXz7QfOfPXc9QDColFQEACSg9VvueMQvdOS
+	Vt6FIk41dZcfIABw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH 13/44] rtc: class: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:49 +0100
-Message-Id: <558650cb8c501ba6ec3f054e9173701f493a2ae9.1729865485.git.namcao@linutronix.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 14/44] pps: generators: pps_gen_parport: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:50 +0100
+Message-Id: <2600255ebe981f4ca08ab529d18ed961fe01472e.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,26 +86,27 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/rtc/class.c | 3 +--
+ drivers/pps/generators/pps_gen_parport.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
-index e31fa0ad127e..b88cd4fb295b 100644
---- a/drivers/rtc/class.c
-+++ b/drivers/rtc/class.c
-@@ -240,8 +240,7 @@ static struct rtc_device *rtc_allocate_device(void)
- 	/* Init uie timer */
- 	rtc_timer_init(&rtc->uie_rtctimer, rtc_uie_update_irq, rtc);
- 	/* Init pie timer */
--	hrtimer_init(&rtc->pie_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	rtc->pie_timer.function =3D rtc_pie_update_irq;
-+	hrtimer_setup(&rtc->pie_timer, rtc_pie_update_irq, CLOCK_MONOTONIC, HRTIM=
-ER_MODE_REL);
- 	rtc->pie_enabled =3D 0;
+diff --git a/drivers/pps/generators/pps_gen_parport.c b/drivers/pps/generat=
+ors/pps_gen_parport.c
+index d46eed159495..f5eeb4dd01ad 100644
+--- a/drivers/pps/generators/pps_gen_parport.c
++++ b/drivers/pps/generators/pps_gen_parport.c
+@@ -208,8 +208,7 @@ static void parport_attach(struct parport *port)
 =20
- 	set_bit(RTC_FEATURE_ALARM, rtc->features);
+ 	calibrate_port(&device);
+=20
+-	hrtimer_init(&device.timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
+-	device.timer.function =3D hrtimer_event;
++	hrtimer_setup(&device.timer, hrtimer_event, CLOCK_REALTIME, HRTIMER_MODE_=
+ABS);
+ 	hrtimer_start(&device.timer, next_intr_time(&device), HRTIMER_MODE_ABS);
+=20
+ 	return;
 --=20
 2.39.5
 
