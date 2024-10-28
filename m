@@ -1,152 +1,167 @@
-Return-Path: <linux-kernel+bounces-385721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE6B9B3ADD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:54:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052CC9B3ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A52E282964
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:54:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A52E1F20FC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2699B1DF972;
-	Mon, 28 Oct 2024 19:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6371DF75C;
+	Mon, 28 Oct 2024 19:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="UMGho6vI";
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b="akjZjtMG"
-Received: from fallback20.i.mail.ru (fallback20.i.mail.ru [79.137.243.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSrWnXGr"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A9518D65D;
-	Mon, 28 Oct 2024 19:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA55118D65D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:54:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145269; cv=none; b=b76xyRBNJLcUzGQZ3UrcKXFZi3tQO+tO3GQzfU22qyEkwP/Zu2Z5p1wJ+itM3bD6SubmxZO5yFZZAx3bRwJ/pa1AEAHlySyQkoGH6IfE7x0x6rHg4j4PHWeCcULOctK46HxlQC8CNp5ITDZoAoHlC+lFS4n4/qEwt8s4efwAHP8=
+	t=1730145277; cv=none; b=Ihv4D53Fp91BhKSSrhW+63dPBGVksc3lS+KZra00YwA/t1MkL83rW3+ypplPo/fzlXkdS1tG9odRp/gjlWZjD9yNMyNm/nFbcEiuBQQi7ylY8cP+Kp9tQGZbEVQy5We1OzkESjMgaY+o72XL0RaxHh8dN9s4zaOtaqQ/Pkt7UrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145269; c=relaxed/simple;
-	bh=Sojk6N7wnwWRlGdzWuCbA+vYrY8wNmzrWlgb7x5jdHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ns+UMvjZx/c5Ad7TxTGp1SCcBpIYKnys4/PBHYjY4AuveBNkFZTd6P0fIOnJLcNiUg8sDF6NzzKAPPeModndYKbgLd6paj6Jznmuhg2OwikAbHmQkvVCujaIKTS97EFWHG+woXmtl0l8nvAz1UUaLfF8kRLRumOq9LxoFN7Z3Zc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru; spf=pass smtp.mailfrom=mail.ru; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=UMGho6vI; dkim=pass (2048-bit key) header.d=mail.ru header.i=@mail.ru header.b=akjZjtMG; arc=none smtp.client-ip=79.137.243.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mail.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.ru
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru; s=mail4;
-	h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=CXtGQsra+jGQcjm2CHPFPwXmSP8B/c+y+d6L5EVC1rk=;
-	t=1730145266;x=1730235266; 
-	b=UMGho6vI7gb+W7OEnWh4DvXyE/7H1egBNADM2Eg/vFa//qOfChglKMQCwAwmh67Kjba87BUtKdvoCDCX1eazq5mX3AXYqOO8SGSm+PPCzPlKKdIynyCkOwo7pgsXjyPX7rWL6YghYEIXhkLN2/nSr8IqwrrqICMuaz5aLLYYfm2hwbxJyXRU/D0itbIYH7GzqNOaOsPzC45v3RbhQLPlOLDay0lY+9opK7N0me+9WXyP45pdqFfeWjjIwVkK8+5RJW5xZaJV58n3TeDmor1VkgcHJPjl5OJcMr64wnCnHLbCtw1AcFcigSyJXtphCBA2l2kl9204+KGtRRlKe63Niw==;
-Received: from [10.113.110.223] (port=54746 helo=smtp36.i.mail.ru)
-	by fallback20.i.mail.ru with esmtp (envelope-from <rabbelkin@mail.ru>)
-	id 1t5Vof-00A98b-Ek; Mon, 28 Oct 2024 22:54:17 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mail.ru;
-	s=mail4; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
-	X-Cloud-Ids:Disposition-Notification-To;
-	bh=CXtGQsra+jGQcjm2CHPFPwXmSP8B/c+y+d6L5EVC1rk=; t=1730145257; x=1730235257; 
-	b=akjZjtMGa8IIZo/b5EFVieZ9a9hWJqCg3TxrikEz+cBjyy9b2wbi1cbV2E4iSPd5XNiLJqW5gQu
-	hASch+vr9DB4H6lT6tNHAsMc5QDLNHVvcWU5QVQQCU/2/yUnb7J/P0XdDhkqyeLJjSItXAvgRFptc
-	S5XzKoJLulWtiduqN9gLeYYrHAxNEVy5pbgnJal19Q4Ati8MzCj3GwSwMSpxPlEHOsP0c8NXZqR5S
-	wUWRfm0XlK1+cnjnXSN+NZyfazsGqlX7SiwkjGrrGQlAsdIVErKVKDG9rGXd+hKlGg7vf8VJdIPy8
-	+SserecpOtrPNNuZjg88MFz41qL4zZxqA0cg==;
-Received: by exim-smtp-7fbf7c596c-sbqxq with esmtpa (envelope-from <rabbelkin@mail.ru>)
-	id 1t5VoR-000000006rV-0o0p; Mon, 28 Oct 2024 22:54:03 +0300
-From: Ilya Shchipletsov <rabbelkin@mail.ru>
-To: bpf@vger.kernel.org
-Cc: Ilya Shchipletsov <rabbelkin@mail.ru>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Florent Revest <revest@chromium.org>,
-	Nikita Marushkin <hfggklm@gmail.com>,
-	lvc-project@linuxtesting.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH bpf v2 2/2] selftests/bpf: Add test cases for various pointer specifiers
-Date: Mon, 28 Oct 2024 19:53:41 +0000
-Message-ID: <20241028195343.2104-3-rabbelkin@mail.ru>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241028195343.2104-1-rabbelkin@mail.ru>
-References: <20241028195343.2104-1-rabbelkin@mail.ru>
+	s=arc-20240116; t=1730145277; c=relaxed/simple;
+	bh=xEqSFdphUj/m4lVNP4wwRMew36LE0V9bUPR/s/JiXY0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QqRApMDJf3bmIx+mI7sshGqwwKpFRTsFNrHUkYj9N8gp9/pvTIUkF0uni8Q7jg7IwsLY8OspehNvxzpGCf0RiTeh0+rdE8oD3KlWfsyfOMx7RETuO+2XY/d63Fl+QLiidpDQZiXNZziEcYWTVhUl09h3ycPxpDQhHwOGF0XFLds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bSrWnXGr; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a5b15cedd6so1574406137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730145274; x=1730750074; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xEqSFdphUj/m4lVNP4wwRMew36LE0V9bUPR/s/JiXY0=;
+        b=bSrWnXGrSBhkukdg67gWkbaJaGTdsIsonU0BDW/KXjST8S3A9L9xV+paEJCzNCHLCS
+         ZInQu+1ycgk3nFrRLBC82WXqLlzwFeX+AV6hSfk781xmmskLw28pYcguR1/a2TA2h1Wl
+         eHVUG8aO6TEf1yFEr+GC4omdA9SPLEkfm9Hokfqgkj/eQzkS6JuUiQRVK6lBzacVIM+O
+         0SafF1K2hLilLWP2Uu1AYhPZpZAtaKL2nFi7f7MUxMsroGJjFkqf8BHtuC55qBP+YJEv
+         m+co6oOshGB3cSpMRNdV1FZHJaxxXy/yPT2OJlHC2M01qiFkuDIfgWZA9w9kLr6LXOa1
+         cmMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730145274; x=1730750074;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xEqSFdphUj/m4lVNP4wwRMew36LE0V9bUPR/s/JiXY0=;
+        b=U6483RbKM8qlGABXC2Z0HsmVa78stw+9RFRRyIDbo6fb7B3BYV8YH+ctXeYv73SKno
+         90W6zDRcrMC04G153SliHqPe07E3x5Lv1O41nXOnjdKeDUaZojATbG9/jPWfPJ9dR7fn
+         OGa6uVH/wdeGpy94AXWNtL/eot1AHlOtFYRxQSEKUaAaQ1IseLsmoLC7CKH1UBQCPRoc
+         N9fQftgAIF7csTY+Ty8y3q2TXaOUrKGfS7MQPuQTs68UL8nCAENv2dZ5u8d8Dqu75Ivt
+         VOWbIQJZCDRRQPNbdOiFjFYNY80fFnI3kZgp1aYbP603cRKblPDO9/9PJ1MIBZsfrmfV
+         z3jA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKH2vcjVJVOipy308w1uKWJ3UCnYCOYnBsJpsI7lFeJwDpekRLH8OKwecvq9LoL0xBgdGej2e3DOqiTDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8W9bo3iWgLIyA4uLhyCvxRs1jZPGwznWKO6QdrXKxjrkiz8BK
+	Sh7BQ4Q91pKhscJi3S88kl0p3AYmO85M2ZJiLSTYOYplhjSR8JzurVcmafppwKPEiB/nA1QuNua
+	166nmtS1YZwslaXoU12LJtk8dPrY=
+X-Google-Smtp-Source: AGHT+IE6nUCB0gz9ZT81xKQAodQPYCEtrgM8tH4oLOMLzbv9hVWzWlWjq9nnbsIhqCd39U4jbUlo2rcB8J5m7nf9CkE=
+X-Received: by 2002:a05:6102:dcf:b0:4a3:cb2b:9745 with SMTP id
+ ada2fe7eead31-4a8cfd3abfbmr8429227137.22.1730145273747; Mon, 28 Oct 2024
+ 12:54:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-4EC0790: 1
-X-7564579A: 78E4E2B564C1792B
-X-77F55803: 4F1203BC0FB41BD93D9A9D6B1727919203E986ABC9713261204B89095A57F04B00894C459B0CD1B9568215A4BAEEE74E2EB5D77EF37489D192E38BE355DC526B1905FAAC1F16330F0DE140DF427568CF
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE78CB87876C5D626D4EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637B997C8222C70C3D98638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8FE72B00C5E033244E21390611866FCBA8F180F406BA0658820879F7C8C5043D14489FFFB0AA5F4BF176DF2183F8FC7C09DFF8554865147A68941B15DA834481FA18204E546F3947C8ED1AC82D843A2BBF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F790063765D76192D7FB77C9389733CBF5DBD5E9B5C8C57E37DE458BD9DD9810294C998ED8FC6C240DEA76428AA50765F7900637B775EF3F08B89AD9D81D268191BDAD3DBD4B6F7A4D31EC0BE2F48590F00D11D6D81D268191BDAD3D78DA827A17800CE70A00A20C944AFE51EC76A7562686271ED91E3A1F190DE8FD2E808ACE2090B5E14AD6D5ED66289B5259CC434672EE63711DD303D21008E298D5E8D9A59859A8B64854413538E1713F75ECD9A6C639B01B78DA827A17800CE79178F0054B4A1A06731C566533BA786AA5CC5B56E945C8DA
-X-C1DE0DAB: 0D63561A33F958A5B872DB04080F9CAF5002B1117B3ED6966ECC317AAAB105878D59E407A97E9958823CB91A9FED034534781492E4B8EEADA3FB0D9844EF8EC5C79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
-X-C8649E89: 1C3962B70DF3F0AD93B9BA3C444D644977DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFF6B5B75E24BA7EBF81CA81DF586A8CD290030A42D67C25CC886D4A63DB510BC766971B16C155F0C962F6083D2AD86BCEE3427642E114ED56B13A1D2A028F3448B9E4FD7E1D165CABF59F2EA2782EDE9C02C26D483E81D6BE52C818B45C5DF227C6320D7D8A56C4C1F0A6D2C91ED28CB6
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojxgmIyQdMaRrbAqndhKQjBA==
-X-Mailru-Sender: 520A125C2F17F0B129A91D4D2C73336DE9C4242A76238EA83DE06ABAFEAF6705181C09B76A668D6B87BBD21BC54961EB7D4011A27D7B18D45A92E71CC7C3152D768DA86FCF4447625FD6419AF7853D25851DE5097B8401C6C89D8AF824B716EB3E16B1F6FB27E47C394C4C78ECC52E263DDE9B364B0DF289AE208404248635DF
-X-Mras: Ok
-X-4EC0790: 1
-X-7564579A: 646B95376F6C166E
-X-77F55803: 6242723A09DB00B4EB5CF5EDE64A1802999F17DC78C05B0033072310252532FE049FFFDB7839CE9E1556864DF1AA0A9177A516F59BF4FE68F40B670EE0ECBCA6A3C0A5EA3412347B
-X-7FA49CB5: 0D63561A33F958A505C10219E8DBF734CB31C400650F64C9D0011A75FF71EC74CACD7DF95DA8FC8BD5E8D9A59859A8B64071617579528AACCC7F00164DA146DAFE8445B8C89999728AA50765F79006375AF8D92B4C156C50389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC88AC305E826530DECF6B57BC7E6449061A352F6E88A58FB86F5D81C698A659EA775ECD9A6C639B01B78DA827A17800CE7897BF32459B96943731C566533BA786AA5CC5B56E945C8DA
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojxgmIyQdMaRq9oEuoHmpBPQ==
-X-Mailru-MI: 8002000000000800
-X-Mras: Ok
+References: <20241027011959.9226-1-21cnbao@gmail.com> <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
+ <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
+ <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com> <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
+ <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com> <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
+ <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com>
+In-Reply-To: <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com>
+From: Barry Song <21cnbao@gmail.com>
+Date: Tue, 29 Oct 2024 03:54:22 +0800
+Message-ID: <CAGsJ_4zQmaGxG2Ega61Jm5UMgHH-jtYC4ZCxsRX6+QS9ta25kQ@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Extend snprintf negative tests to cover pointer specifiers to prevent possible
-invalid handling of %p% from happening again.
+On Tue, Oct 29, 2024 at 1:20=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 28/10/2024 17:08, Yosry Ahmed wrote:
+> > On Mon, Oct 28, 2024 at 10:00=E2=80=AFAM Usama Arif <usamaarif642@gmail=
+.com> wrote:
+> >>
+> >>
+> >>
+> >> On 28/10/2024 16:33, Nhat Pham wrote:
+> >>> On Mon, Oct 28, 2024 at 5:23=E2=80=AFAM Usama Arif <usamaarif642@gmai=
+l.com> wrote:
+> >>>>
+> >>>> I wonder if instead of having counters, it might be better to keep t=
+rack
+> >>>> of the number of zeropages currently stored in zeromap, similar to h=
+ow
+> >>>> zswap_same_filled_pages did it. It will be more complicated then thi=
+s
+> >>>> patch, but would give more insight of the current state of the syste=
+m.
+> >>>>
+> >>>> Joshua (in CC) was going to have a look at that.
+> >>>
+> >>> I don't think one can substitute for the other.
+> >>
+> >> Yes agreed, they have separate uses and provide different information,=
+ but
+> >> maybe wasteful to have both types of counters? They are counters so ma=
+ybe
+> >> dont consume too much resources but I think we should still think abou=
+t
+> >> it..
+> >
+> > Not for or against here, but I would say that statement is debatable
+> > at best for memcg stats :)
+> >
+> > Each new counter consumes 2 longs per-memcg per-CPU (see
+> > memcg_vmstats_percpu), about 16 bytes, which is not a lot but it can
+> > quickly add up with a large number of CPUs/memcgs/stats.
+> >
+> > Also, when flushing the stats we iterate all of them to propagate
+> > updates from per-CPU counters. This is already a slowpath so adding
+> > one stat is not a big deal, but again because we iterate all stats on
+> > multiple CPUs (and sometimes on each node as well), the overall flush
+> > latency becomes a concern sometimes.
+> >
+> > All of that is not to say we shouldn't add more memcg stats, but we
+> > have to be mindful of the resources.
+>
+> Yes agreed! Plus the cost of incrementing similar counters (which ofcours=
+e is
+> also not much).
+>
+> Not trying to block this patch in anyway. Just think its a good point
+> to discuss here if we are ok with both types of counters. If its too wast=
+eful
+> then which one we should have.
 
- ./test_progs -t snprintf
- #302/1   snprintf/snprintf_positive:OK
- #302/2   snprintf/snprintf_negative:OK
- #302     snprintf:OK
- #303     snprintf_btf:OK
- Summary: 2/2 PASSED, 0 SKIPPED, 0 FAILED
+Hi Usama,
+my point is that with all the below three counters:
+1. PSWPIN/PSWPOUT
+2. ZSWPIN/ZSWPOUT
+3. SWAPIN_SKIP/SWAPOUT_SKIP or (ZEROSWPIN, ZEROSWPOUT what ever)
 
-Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
-Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
-Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
----
- tools/testing/selftests/bpf/prog_tests/snprintf.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Shouldn't we have been able to determine the portion of zeromap
+swap indirectly?
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/snprintf.c b/tools/testing/selftests/bpf/prog_tests/snprintf.c
-index 4be6fdb78c6a..b5b6371e09bb 100644
---- a/tools/testing/selftests/bpf/prog_tests/snprintf.c
-+++ b/tools/testing/selftests/bpf/prog_tests/snprintf.c
-@@ -116,6 +116,21 @@ static void test_snprintf_negative(void)
- 	ASSERT_ERR(load_single_snprintf("%llc"), "invalid specifier 7");
- 	ASSERT_ERR(load_single_snprintf("\x80"), "non ascii character");
- 	ASSERT_ERR(load_single_snprintf("\x1"), "non printable character");
-+
-+	ASSERT_OK(load_single_snprintf("valid %p"), "valid usage");
-+
-+	ASSERT_ERR(load_single_snprintf("%p%"), "too many specifiers 1");
-+	ASSERT_ERR(load_single_snprintf("%pK%"), "too many specifiers 2");
-+	ASSERT_ERR(load_single_snprintf("%px%"), "too many specifiers 3");
-+	ASSERT_ERR(load_single_snprintf("%ps%"), "too many specifiers 4");
-+	ASSERT_ERR(load_single_snprintf("%pS%"), "too many specifiers 5");
-+	ASSERT_ERR(load_single_snprintf("%pB%"), "too many specifiers 6");
-+	ASSERT_ERR(load_single_snprintf("%pi4%"), "too many specifiers 7");
-+	ASSERT_ERR(load_single_snprintf("%pI4%"), "too many specifiers 8");
-+	ASSERT_ERR(load_single_snprintf("%pi6%"), "too many specifiers 9");
-+	ASSERT_ERR(load_single_snprintf("%pI6%"), "too many specifiers 10");
-+	ASSERT_ERR(load_single_snprintf("%pks%"), "too many specifiers 11");
-+	ASSERT_ERR(load_single_snprintf("%pus%"), "too many specifiers 12");
- }
- 
- void test_snprintf(void)
--- 
-2.43.0
-
+Thanks
+Barry
 
