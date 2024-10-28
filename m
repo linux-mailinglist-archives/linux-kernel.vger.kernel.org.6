@@ -1,137 +1,165 @@
-Return-Path: <linux-kernel+bounces-384133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A819B2497
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:50:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9A59B24AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:51:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCA7F1F21605
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:50:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE21F1C20977
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B2718DF77;
-	Mon, 28 Oct 2024 05:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B20EB18DF90;
+	Mon, 28 Oct 2024 05:51:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BcxZTpQF"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Y5PhFGdk"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE1F156960;
-	Mon, 28 Oct 2024 05:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE58A18C92D;
+	Mon, 28 Oct 2024 05:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730094624; cv=none; b=EtTZl7WNbef0dluwvPHeoXm6Ltq9mHrIbqK2/usTdyuocaK4A+B1YUfQ2+Xl0Z5Vw8TGIxvWCHDU841OcnvAbY2jNzW/mXX41bB8k2FMrzol9IsILMX8XOF3foTTlCCYGvbYOLiTpCfBNNy1+RYohBZ+72zPDlVGT4u4347zVGQ=
+	t=1730094672; cv=none; b=SDAQJfAgIzkf/38dan6E6qLGmKiX1LjseFZ27QQgGIPEA2YfosUoJXknFv8+GZd1aBw/xvb/vgeeO0pgGHua7r0SiY1W1NVvvz2SDuVzdbZhzOf5fd6/O4qdedYqbfH4mdo9lxbCpt0G2Nlx0RPaycsnAOchLe8LW20Lt75Budw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730094624; c=relaxed/simple;
-	bh=6089eLmYoYCs9n4wvoEj5jL3O+euu1IPR5Om6YXpsik=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y8WofajZg/GPeT72ZdTglg8DYTI2ZUIhOfYsLad0J3zrnijRNV6+w8hvEhoAYvPjKdWIwBAXLgFQEq4W2qw1XXr5ubgw6B9TlBMEwNgsbbPXdnd5aa6BMlPcNU0T1U3OQJmLrRQ/D1cxcmXqCRbKboUSHm7dcdbSTgVSkNiZS9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BcxZTpQF; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-656d8b346d2so2505877a12.2;
-        Sun, 27 Oct 2024 22:50:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730094622; x=1730699422; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDmzN5DfzsOxVfEZOdwvRauJb5doMI+saJqSFlyjXMQ=;
-        b=BcxZTpQFnp0lw67/lvAluAK+9LhNaBNtgznoB3AZ6XojEQTnLxDtnMN/QGAEw4QcZv
-         ZwsVyOJNp1G/qLNi7p2ukn6jkGEw5OPHzpDJSO5W1rrEiX5ArrIozbNmfmj4s2f+3K50
-         ava0uWPT9025yrFBUmt2T0ag8aIoX9WEWcLdCsKwKuYn8gjDEn2P/bLIDXw4cxkRVBl1
-         XxurTI+0MGCcxfNZ0FgISJ2BloP0zzgkKDqqVaIcD+bseQU/Ije/MNThzyNYDy30mXlo
-         1Lej3KDGwL9jX25/in9zC3LMGtKXhT3Yc4J6ND5QvgJSY81gfqDkbA0TEnstQLp45hk0
-         Lf0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730094622; x=1730699422;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jDmzN5DfzsOxVfEZOdwvRauJb5doMI+saJqSFlyjXMQ=;
-        b=JBVIenTMFiZVovNngyFuPnMutViCOGtrSFpSiICTB+HCG7ARM/TjKDXsh0AYaasaET
-         pzCcRapOuTJ9sz361w+P6lM2YqGbeSZB90MPSgFz2IcG1la8eUveb9+rmTn1kT12kXM0
-         AgYbBrHaRrO9i9aaGuLUdnUkKrr1tbA+nj2o8zd1iNsJAMBSnA0FE8zY+jAAnO4Krrij
-         PPAtSkGq37moPdzVtZIkYYxzjPrmXQg7YoE/c+ttQWYAKrAtlLOUsVIjjDFJ2gISmNAn
-         4tNyL8PuWn7eGPiIpZU+Scu9fKRnyvDOusbkUSbytsgmph21GzHBlg/wXbo26qJWJEzI
-         8eWA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2iQtriO9NpSmdbcp8/ZbymU5NOIWQHzYvcTAloI0EAKfcZ04dyrAkgbXk6kVypwHLMwcmUHbp+c90qH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzkz13FCaXBXSeFPjeN7ZS5XhUE/YsFFW46JAOQ9uiaO5lio1rI
-	pJAjG5rF59U2thmzlZM4CsOpbyOcbV9fCmclrxUs9m1+trd7RA4Zh6Vn8Q==
-X-Google-Smtp-Source: AGHT+IHS7TzPyJ3jlTTpkwZmntE8lF1SJInROpJkcO4cGW6fy3Ig2oPWNSMvqiq/rJ7NTSKgts0ROw==
-X-Received: by 2002:a05:6a20:bf27:b0:1d9:c615:944e with SMTP id adf61e73a8af0-1d9c615a15cmr2749603637.4.1730094621603;
-        Sun, 27 Oct 2024 22:50:21 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:e9cd:720b:a97f:8af8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e36a044bsm6225854a91.25.2024.10.27.22.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 22:50:21 -0700 (PDT)
-Date: Sun, 27 Oct 2024 22:50:18 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: linux-input@vger.kernel.org
-Cc: Erick Archer <erick.archer@outlook.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] Input: maple_keyb - use guard notation when acquiring
- mutex
-Message-ID: <Zx8mGiWOw1Av28TX@google.com>
-References: <Zxr4TeGwDGIIyzwH@google.com>
+	s=arc-20240116; t=1730094672; c=relaxed/simple;
+	bh=1T0Tr9mZQEGQqImwT6yGFd02N18Tv3ShbpHI+DOXh6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fuBAclkOVSITgXVBKNuMN2J2Dv4qL+eKj2xUAh98H420BiDedDxMOlvyZxQcL85fqYxW4teGhyyMT5vBH9FIYxzCdL4O9OZ7r68JUwppx9SV/dQICyjfYvD0DsSfMQFelTT+wwF3+qK1G2Ue1mYIFJmli26ytVw3KBZVne40cfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Y5PhFGdk; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RMr3js008480;
+	Mon, 28 Oct 2024 05:51:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	3G2BDM3URpd2ddqyA/ruuzoqDHBYGIvb5Qk/rkeCHkw=; b=Y5PhFGdkkw52PswR
+	o2mJHdicYY6vgg/HkAClzfv/lXT9TJQ/mBZv1dyLdNDwqcw5fyf2bDRh/4mnNL/V
+	X4s/TlighKM5YHA1KMzuWfcGQ3onod4JmPepz9WXUpqwMAmqZVkAL+BZTVHyQJT1
+	1JsqxR787FIaVuElcxx6ClqZE7ar65bgSBgm+Ma8Hdg4MGz69NZ2fpY985VjOAPE
+	hLpl/KYxP/mMACPww+QG/AupP2sfxssSJ+wReoVvAScDMUgryz1x+xcJOXHPhwDK
+	68sZRyNTvsBS+RAKkuCMFnVBxKJqqMYvvYYDQ7804Pb89bEQW7QWdjPmYW8UIhvH
+	C78zJw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqrgksf8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 05:51:00 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S5oxju027661
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 05:50:59 GMT
+Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 22:50:53 -0700
+Message-ID: <0051c8b8-f7dc-4da1-8c9a-8d8c07db5d31@quicinc.com>
+Date: Mon, 28 Oct 2024 11:20:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxr4TeGwDGIIyzwH@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/5] dt-bindings: dmaengine: qcom: gpi: Add additional
+ arg to dma-cell property
+To: Vinod Koul <vkoul@kernel.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Andi Shyti <andi.shyti@kernel.org>,
+        Sumit Semwal <sumit.semwal@linaro.org>,
+        =?UTF-8?Q?Christian_K=C3=B6nig?=
+	<christian.koenig@amd.com>,
+        <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
+ <20241015120750.21217-2-quic_jseerapu@quicinc.com> <Zw9HHRyvfd66Qn4a@vaman>
+Content-Language: en-US
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+In-Reply-To: <Zw9HHRyvfd66Qn4a@vaman>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: a5NXBK4gM358xuIV7LZTtlc8kglh-J7H
+X-Proofpoint-GUID: a5NXBK4gM358xuIV7LZTtlc8kglh-J7H
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=999 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280048
 
-Using guard notation makes the code more compact and error handling
-more robust by ensuring that mutexes are released in all code paths
-when control leaves critical section.
 
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
----
 
-v2: fix typo pointed out by the kernel test robot
+On 10/16/2024 10:24 AM, Vinod Koul wrote:
+> On 15-10-24, 17:37, Jyothi Kumar Seerapu wrote:
+>> When high performance with multiple i2c messages in a single transfer
+>> is required, employ Block Event Interrupt (BEI) to trigger interrupts
+>> after specific messages transfer and the last message transfer,
+>> thereby reducing interrupts.
+>>
+>> For each i2c message transfer, a series of Transfer Request Elements(TREs)
+>> must be programmed, including config tre for frequency configuration,
+>> go tre for holding i2c address and dma tre for holding dma buffer address,
+>> length as per the hardware programming guide. For transfer using BEI,
+>> multiple I2C messages may necessitate the preparation of config, go,
+>> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
+>> potentially leading to failures due to inadequate memory space.
+>>
+>> Add additional argument to dma-cell property for channel TRE size.
+>> With this, adjust the channel TRE size via the device tree.
+>> The default size is 64, but clients can modify this value based on
+>> their specific requirements.
+>>
+>> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 6 ++++--
+>>   1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+>> index 4df4e61895d2..002495921643 100644
+>> --- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
+>> @@ -54,14 +54,16 @@ properties:
+>>       maxItems: 13
+>>   
+>>     "#dma-cells":
+>> -    const: 3
+>> +    minItems: 3
+>> +    maxItems: 4
+>>       description: >
+>>         DMA clients must use the format described in dma.txt, giving a phandle
+>> -      to the DMA controller plus the following 3 integer cells:
+>> +      to the DMA controller plus the following 4 integer cells:
+>>         - channel: if set to 0xffffffff, any available channel will be allocated
+>>           for the client. Otherwise, the exact channel specified will be used.
+>>         - seid: serial id of the client as defined in the SoC documentation.
+>>         - client: type of the client as defined in dt-bindings/dma/qcom-gpi.h
+>> +      - channel-tre-size: size of the channel TRE (transfer ring element)
+> 
+> This is a firmware /software property, why should this be in hardware
+> description?
+> 
+Hi, Yes, this is a software property and added as a 4th argument of 
+"dma-cells" for configuring channel tre size, so added the description 
+for dma-cells.
+In V2 patch, i reverted the changes and will handle with the default 
+channel tre size present in the GPI driver.
 
- drivers/input/keyboard/maple_keyb.c |    9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/input/keyboard/maple_keyb.c b/drivers/input/keyboard/maple_keyb.c
-index 91a1d2958109..1a8f1fa53fbb 100644
---- a/drivers/input/keyboard/maple_keyb.c
-+++ b/drivers/input/keyboard/maple_keyb.c
-@@ -132,14 +132,11 @@ static void dc_kbd_callback(struct mapleq *mq)
- 	 * We should always get the lock because the only
- 	 * time it may be locked is if the driver is in the cleanup phase.
- 	 */
--	if (likely(mutex_trylock(&maple_keyb_mutex))) {
--
-+	scoped_guard(mutex_try, &maple_keyb_mutex) {
- 		if (buf[1] == mapledev->function) {
- 			memcpy(kbd->new, buf + 2, 8);
- 			dc_scan_kbd(kbd);
- 		}
--
--		mutex_unlock(&maple_keyb_mutex);
- 	}
- }
- 
-@@ -211,14 +208,12 @@ static int remove_maple_kbd(struct device *dev)
- 	struct maple_device *mdev = to_maple_dev(dev);
- 	struct dc_kbd *kbd = maple_get_drvdata(mdev);
- 
--	mutex_lock(&maple_keyb_mutex);
-+	guard(mutex)(&maple_keyb_mutex);
- 
- 	input_unregister_device(kbd->dev);
- 	kfree(kbd);
- 
- 	maple_set_drvdata(mdev, NULL);
--
--	mutex_unlock(&maple_keyb_mutex);
- 	return 0;
- }
- 
-
--- 
-Dmitry
+Regards,
+JyothiKumar
 
