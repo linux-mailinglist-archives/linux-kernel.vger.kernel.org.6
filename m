@@ -1,237 +1,102 @@
-Return-Path: <linux-kernel+bounces-384514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14159B2B1E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:15:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22189B2B9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:35:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5634B1F223C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:15:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B94CB21A7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C234E1925AD;
-	Mon, 28 Oct 2024 09:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CD71917F6;
+	Mon, 28 Oct 2024 09:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dbWt5/vc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iD8z4mXa"
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A085B8472
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:15:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A273E155744;
+	Mon, 28 Oct 2024 09:35:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730106950; cv=none; b=YmSoFJY/YMT3F8wGS1j1164Syzn9Bq+3Yl6uD/3aYzxIp9EJq9fsuvTjsd+r4RIUdyk69XYyGKWKBoH+SGflGGILmTiLtvfNdRtBKRGBRgVHL6Z9Gh5egv9muu2QvSpmhEr9HTn8Cp/Uv9IliodvYj99WyWazaq4RnpSWEvj30E=
+	t=1730108140; cv=none; b=gcLdi63dm8dw9zgI9ZCpmO8sW+WZAdx0utKUgPTJ61eiiiT1cGV3PyrlJpMDvHJGCf5rgEm/ZWETz2Eu78uFaNM1hqZ9jj7a1HN5DxSlaL2+DOo15Mra5ZspazQPtLP5ZqJRm3p7HKo6pBDbBPKW5I09rzynhOACAZE4Q+5D8aA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730106950; c=relaxed/simple;
-	bh=oZyLRnaQSadJQweLa9GSaQLcuK9wRKBQ+f0KBLvZ3Q8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=reNot40GraY3lAAbEDgjKOgEQDQVpaL1+D+U6TWVFkqu+4BGGdvTrdGRZa6l5SyVOUDOtGzteyezn3PgY2jk8PLlsoFQ9XEOVHRgpvdm8BVk7BMtVARsVibjpKfZ6FYHFKZESPZBI71ZMtkpVbxx6DOQ5KjMyZ+kzAXS9HCavpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dbWt5/vc; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4314b316495so38011735e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 02:15:46 -0700 (PDT)
+	s=arc-20240116; t=1730108140; c=relaxed/simple;
+	bh=1xLSzKHe1GGEJ0z0ie9jcyKew1Ekg9jOq+7qM4LEs4k=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
+	 MIME-Version:Content-Type; b=M4mQXI1pM9kNjtQ4f2uSYKfc+ccNwmsD0w1mCB06ifiPrzVZKuw39yrbrE1tieWlhSllGJx/ZIiNZF7I2MRB23kSwzLu4bdBbSdubRsYv8EwZl5Ch4z4p0FzMVQbUrIdNZgdyV5ZJmixuwUadLZvWI2b2BkGnkBk1Wp3p8VatVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iD8z4mXa; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43159c9f617so40228755e9.2;
+        Mon, 28 Oct 2024 02:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730106945; x=1730711745; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aFl7hG9APtv3+aifN3HCuVVr9QjPzn9re0x6vzwqTPw=;
-        b=dbWt5/vc7DSRMBLNOjB19esujSFl62vS41nxE0xFxna04mIq+t7aeEzgX3zAPEwvCt
-         g54cqkV0SknwtFitv1GYhq9YFilKu2qKRZyxXeeRkNty9u9dz2MT8bPRuP9yqxiVNvZf
-         lxKXjBbgAuCHNZFhMl329f7kmvLGEhHYfzhytYDJq11usEf9yb3L7SpzFYVPIFemU5e5
-         PCW85YZdbFy9S4+ANYfJ7nouiftRjzkCNZeeNkxEzOOg9Rera9JGrfDXn5ZNa4dOSVlA
-         wn1i3ygQkrzZcTVhGZxkfsvrPiSVXAPwFQRZTZyU7zfa7pncBzUsKWmssGNjVc+3Mx7E
-         K8UQ==
+        d=gmail.com; s=20230601; t=1730108137; x=1730712937; darn=vger.kernel.org;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1xLSzKHe1GGEJ0z0ie9jcyKew1Ekg9jOq+7qM4LEs4k=;
+        b=iD8z4mXaPh2pEjvUdLVeeAMuNCXk/tC0SS2OjbGjcqu1md6RQ6MjdONGQIL4g14RU4
+         lGVximczL/pgtn4vYj/ajBpGvHpQQsCyhvzwXX6YgPnNdUKbNr9T14c4pnh6Twg9qOpZ
+         IjQ2eqNmuSKoy5Uai3pdC2pRiMwDJCQa0bxR8sLuB7h8BCgLYdWdKs/YKXbX/CSLxDBn
+         /1bbh1LoCI46I3hwAglQhHFMSFZXhNsTbCHvts6ZZeCtisIKujm0CSHFOi4oQmtZj4Ax
+         DZilOgkqjR6+Ky7ILzYJr89GjvoyJwnrttDsE4JdsDIPuPzFqyh0H3mKzasMzsxIF9a+
+         qIuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730106945; x=1730711745;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1730108137; x=1730712937;
+        h=mime-version:user-agent:references:message-id:date:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aFl7hG9APtv3+aifN3HCuVVr9QjPzn9re0x6vzwqTPw=;
-        b=iLaqjBKXC+dmrNQx8iXkOib0DpMsSu3pieFdkPRcFNwC2afFfKzWATlhfOdYoJ5rCH
-         kcIpys6SbsvnMJSYgdftGjPgmwFxaxZ/nPzJW3LejVousvdNKhpUktnubx/3lQsCnkNF
-         WlYQgIvuu43drwJ4RvSeaCc9AOlOZQNnkWOQSIQ/ev4Ql4KgW5l8kzk7F2Uvt39DgDY/
-         wrzpuyu7OOHT6TWyNjy2di6ltJfguZ8cJmn3zc36Qf3zSXwQsKnu3tpaaXqhONbC+2gD
-         VWj6PIKmE7Duz/cLJsV6Y8ovIONQ7iDcqlulqfQmYC6cSejL/pJ93zedwfDGXVxSFicN
-         8unA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTMu4ZmwfIRarMNBUNpfKWsSXKWvN/ry+lPOK+HU52ZfWW824N+lePh5cVKjaVfKig+hxhrtNiWkRh5Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0hYOb6qTe8dXdqEJeY4P/sDg7VlcoBJCnz2Y49f15qH354jps
-	k/+msO+1K1L01BOEmlHwCtJPh0V0zuNthDgc9U1rRB/VpRlf1U30XmjQhcVvEKM=
-X-Google-Smtp-Source: AGHT+IFdLvrC+MErOR++5DexXxcgqyL1Q7tYBy5PcHkbh3y1oxzE1IWhdO6YoyYcmx448jkYqA49lg==
-X-Received: by 2002:a7b:cd8e:0:b0:42c:bd27:4c12 with SMTP id 5b1f17b1804b1-431a0c394b6mr48163875e9.10.1730106944878;
-        Mon, 28 Oct 2024 02:15:44 -0700 (PDT)
-Received: from dfj (host-95-245-34-85.retail.telecomitalia.it. [95.245.34.85])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193595c51sm101439625e9.20.2024.10.28.02.15.42
+        bh=1xLSzKHe1GGEJ0z0ie9jcyKew1Ekg9jOq+7qM4LEs4k=;
+        b=YUxTyZxuxoyJLZu66pJ5OCRtPQL1MQR3XU2v126HguqI/sNREGOgyLCpcdX+kZk4KX
+         FgTSEeLc9JQpU67Y5uxbtdvdSSvPz+Vi38bIwPJ2Vjnp84/kW61omBDk9aya0AYTB7fB
+         JEE2RvKMPpm74c1d1EBuHWu8yUj0kSilN1dzMdlTGPcMJ5bJ6k20o6PsqCGTjnDp6zXu
+         ywxi/pjlTHsBkYbMuHLthNIPcC/bUuFepJ5ZeNkSAtWriPqWRL4+gG2LAx8eqWKAZgj8
+         6kP/7eB7HQi2IbQx+DzFvzLd2n/M9djyoZG28ZM40j8uU1/SPOu10vfrPmtsHiW7yr9+
+         lcrw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9DI+yE0c3+wdwtVwwWfokVKqHprpT5kXm17wIP4HPQNa67v34ZKlC0uxKrtzPuZ1uHIMJxxOY@vger.kernel.org, AJvYcCUdt/evCD7GrFRTfmPTkpg9JrGPcDGB1eBl2ZRZa9oO6f5EKBZ0E953gSCw7Ha46jASxw8KvA25Jjo0lv8G9Uil@vger.kernel.org, AJvYcCUpuuWwsjeXky0g74uiLDkrLzLYrvvI8JGN5qE7tYzYtzH+S/K3SiYudzqFIGYQNFrRnC5Mfls91tWhu80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUuE3q3LzF0sgzA/Zs32ZRphrRvjmWGDvi+3Ztc3ZwxsHH4QA0
+	NCSWRje58W2Q6tsas/vFk+cg8VMpXBivXic3zQVNKex1P685n/kMMwV2kg==
+X-Google-Smtp-Source: AGHT+IHUMTU6asWT8OCzQlwfhSgv1lTFG5PXHONENrgG8beai824mHwTT76W8XevaHGE9Y+DamEFqg==
+X-Received: by 2002:a05:600c:5118:b0:42c:de2f:da27 with SMTP id 5b1f17b1804b1-4319ac6f848mr70292885e9.2.1730108134901;
+        Mon, 28 Oct 2024 02:35:34 -0700 (PDT)
+Received: from imac ([2a02:8010:60a0:0:b570:335a:e9b5:2b42])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b54303fsm133428765e9.7.2024.10.28.02.35.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 02:15:43 -0700 (PDT)
-Date: Mon, 28 Oct 2024 10:14:25 +0100
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, dlechner@baylibre.com
-Subject: Re: [PATCH v8 7/8] iio: dac: ad3552r: add high-speed platform driver
-Message-ID: <3boluky2zvz6n4u3gjgxuzlo2cm3a4xcbfq5sjmzoz3i5lfsml@j3wikyf74xyj>
-References: <20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-0-74ca7dd60567@baylibre.com>
- <20241025-wip-bl-ad3552r-axi-v0-iio-testing-v8-7-74ca7dd60567@baylibre.com>
- <20241026185740.4144f6c8@jic23-huawei>
+        Mon, 28 Oct 2024 02:35:34 -0700 (PDT)
+From: Donald Hunter <donald.hunter@gmail.com>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Eric Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,
+  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
+  sd@queasysnail.net,  ryazanov.s.a@gmail.com,  Andrew Lunn
+ <andrew@lunn.ch>,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next v10 01/23] netlink: add NLA_POLICY_MAX_LEN macro
+In-Reply-To: <20241025-b4-ovpn-v10-1-b87530777be7@openvpn.net> (Antonio
+	Quartulli's message of "Fri, 25 Oct 2024 11:14:00 +0200")
+Date: Mon, 28 Oct 2024 09:14:50 +0000
+Message-ID: <m2bjz4wpv9.fsf@gmail.com>
+References: <20241025-b4-ovpn-v10-0-b87530777be7@openvpn.net>
+	<20241025-b4-ovpn-v10-1-b87530777be7@openvpn.net>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026185740.4144f6c8@jic23-huawei>
+Content-Type: text/plain
 
-Hi Jonathan,
+Antonio Quartulli <antonio@openvpn.net> writes:
 
-On 26.10.2024 18:57, Jonathan Cameron wrote:
-> On Fri, 25 Oct 2024 11:49:40 +0200
-> Angelo Dureghello <adureghello@baylibre.com> wrote:
-> 
-> > From: Angelo Dureghello <adureghello@baylibre.com>
-> > 
-> > Add High Speed ad3552r platform driver.
-> > 
-> > The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
-> > through the current AXI backend, or similar alternative IIO backend.
-> > 
-> > Compared to the existing driver (ad3552r.c), that is a simple SPI
-> > driver, this driver is coupled with a DAC IIO backend that finally
-> > controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
-> > maximum transfer rate of 33MUPS using dma stream capabilities.
-> > 
-> > All commands involving QSPI bus read/write are delegated to the backend
-> > through the provided APIs for bus read/write.
-> > 
-> > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > ---
-> Hi Angelo,
-> 
-> I'd missed a build issue in previous reviews. :(
-> 
-> >  drivers/iio/dac/Kconfig      |  14 ++
-> >  drivers/iio/dac/Makefile     |   1 +
-> >  drivers/iio/dac/ad3552r-hs.c | 530 +++++++++++++++++++++++++++++++++++++++++++
-> >  drivers/iio/dac/ad3552r-hs.h |  19 ++
-> >  drivers/iio/dac/ad3552r.h    |   4 +
-> >  5 files changed, 568 insertions(+)
-> > 
-> > diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> > index 26f9de55b79f..f76eaba140d8 100644
-> > --- a/drivers/iio/dac/Kconfig
-> > +++ b/drivers/iio/dac/Kconfig
-> > @@ -6,6 +6,20 @@
-> >  
-> >  menu "Digital to analog converters"
-> >  
-> > +config AD3552R_HS
-> > +	tristate "Analog Devices AD3552R DAC High Speed driver"
-> > +	select ADI_AXI_DAC
-> > +	help
-> > +	  Say yes here to build support for Analog Devices AD3552R
-> > +	  Digital to Analog Converter High Speed driver.
-> > +
-> > +          The driver requires the assistance of an IP core to operate,
-> > +          since data is streamed into target device via DMA, sent over a
-> > +	  QSPI + DDR (Double Data Rate) bus.
-> 
-> Tabs and space mix that needs fixing.
-> 
-> > +
-> > +	  To compile this driver as a module, choose M here: the
-> > +	  module will be called ad3552r-hs.
-> > +
-> >  config AD3552R
-> >  	tristate "Analog Devices AD3552R DAC driver"
-> >  	depends on SPI_MASTER
-> > diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> > index c92de0366238..d92e08ca93ca 100644
-> > --- a/drivers/iio/dac/Makefile
-> > +++ b/drivers/iio/dac/Makefile
-> > @@ -4,6 +4,7 @@
-> >  #
-> >  
-> >  # When adding new entries keep the list in alphabetical order
-> > +obj-$(CONFIG_AD3552R_HS) += ad3552r-hs.o ad3552r-common.o
-> >  obj-$(CONFIG_AD3552R) += ad3552r.o ad3552r-common.o
-> 
-> This causes all sorts of issues. The same code should not be linked into two
-> separate drivers.  Try building one as a module and one built in.
-> 
-right now, seems i cannot catch any issue, nor building or in runtime:
+> Similarly to NLA_POLICY_MIN_LEN, NLA_POLICY_MAX_LEN defines a policy
+> with a maximum length value.
+>
+> The netlink generator for YAML specs has been extended accordingly.
+>
+> Cc: donald.hunter@gmail.com
+> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
 
-ad3552r     [M]
-ad3552r-hs  [*]
-(ad3552r-common stays built in), ad3552r visible in lsmod, ad3552r-hs works
-
-ad3552r     [*]
-ad3552r-hs  [M]
-(ad3552r-common stays built in), ad3552r-hs visible in lsmod, ad3552r-hs works
-
-ad3552r     [M]
-ad3552r-hs  [M]
-(ad3552r-common.ko), ad3552r, ad3552r-hs and ad3552r-common are visible in lsmod,
-ad3552r-hs works, probe and removal, and also link/unlink tested).
-
-Please let me know, i can proceed modifying as you require, if it's the case.
-
-
-> The trick is a hidden symbol in Kconfig and an extra line in here
-> obj-$(CONFIG_AD3352R_LIB) += ad3552-common.o
-> 
-> and 
-> //note no text as we don't want this to be user selectable
-> 
-> config AD3352R_LIB
-> 	tristate
-> 
-> config AD3552R_HS
-> 	tristate "Analog Devices AD3552R DAC High Speed driver"
-> 	select ADI_AXI_DAC
-> 	select AD3352R_LIB
-> 	help
-> 	  Say yes here to build support for Analog Devices AD3552R
-> 	  Digital to Analog Converter High Speed driver.
-> 
-> 	  The driver requires the assistance of an IP core to operate,
-> 	  since data is streamed into target device via DMA, sent over a
-> 	  QSPI + DDR (Double Data Rate) bus.
-> 
-> 	  To compile this driver as a module, choose M here: the
-> 	  module will be called ad3552r-hs.
-> 
-> 
-> config AD3552R
->  	tristate "Analog Devices AD3552R DAC driver"
->  	depends on SPI_MASTER
-> 	select AD3352R_LIB
-> 	help
-> 	  ...
-> 
-> The pressure/mpl115 is done like this.
-> 
-> 
-> >  obj-$(CONFIG_AD5360) += ad5360.o
-> >  obj-$(CONFIG_AD5380) += ad5380.o
-> 
-> Anyhow, to me the code looks ready to go subject to this.
-> 
-> If nothing else comes up I'm almost confident enough of the fix to just
-> do it (and the few trivial things in previous review), but probably quicker
-> and less prone to error if you have time to spin a v9, perhaps after letting others
-> have a day or two to review v8 next week.
-> 
-> rc5 is tomorrow, so we have a little time left this cycle.
-> 
-> Jonathan
-
-Regards,
-  angelo
+Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
 
