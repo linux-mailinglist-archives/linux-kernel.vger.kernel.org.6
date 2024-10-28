@@ -1,133 +1,107 @@
-Return-Path: <linux-kernel+bounces-384977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074059B30E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:49:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 209769B30FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:50:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C097B282A73
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3930281B22
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AED071DA2E0;
-	Mon, 28 Oct 2024 12:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69A251DA0ED;
+	Mon, 28 Oct 2024 12:50:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="uKzPpCki"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcDndwQg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078C5143888
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38E21D63D2;
+	Mon, 28 Oct 2024 12:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119727; cv=none; b=n/g9ADrWcm1Zet5fzG3c1/hcdbtDrlbQyzFaGbyuI5qHMvlaQjcqbuAb/e2gZ9YvcAZ+PPhZfblnvUi+ecWqAGBeYMDgA1VqUKwCGBbKiEDWvwPAyG9/GkwWU1pUw4nGm4lNZf9WWphAL7gV9/3xXKezEDO6GYpmsmcrDRvInsU=
+	t=1730119830; cv=none; b=IcgHOHtF5iUqvsW297scuEOQjBkplZvmZSDuS9JTIMFYiE+45Zm3O9iAHx56pfifhd6ysB3equdrgtI7z2fKzMQVM3dmAXOrAwsB2azYqbG9Mafh4TAKGWI/1Akw39YZCW6kL28+whtNr4DvfDia6yM/zmk86kYsW9BwkpSScFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119727; c=relaxed/simple;
-	bh=JoPSXOQeJqMKZgY81YXFOztSG1vOJXM3CX4fstflfPQ=;
+	s=arc-20240116; t=1730119830; c=relaxed/simple;
+	bh=UAWAyR01I3hYWVt/4e6p7NuejTZKa/FOWee47xPl4BY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BUbRbIeynpfU+K0yDs3uQixUye/lVc64BgQMVhZtSoamNUdIvsv9rIE+twMpgA31LVz+dZspGMfNqDbzk/otUSDrWOf7Mv1Bj/2rAiKRYpIvZjPyle3pc1suaZx+PW71+QlUtOVIsQc3LxTI7jhrVQScCJHpwMclGyWz67ZgNvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=uKzPpCki; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e681bc315so2891081b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:48:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1730119724; x=1730724524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ReVN0cLvWmqthK71mUPz9Vh7INJT2/+SuZUXMARwOEU=;
-        b=uKzPpCkiNHGgrfKjIwM37Xq1pe3YpqnWCc95TaBk7ZIWR4J57QBhpMvMVLk2TltuUn
-         ghI+2bK4zAP1/gqx23U1Ccpiczz1NIFlzuWn2ugbcRwLxv8Aiyraeee91jCipnYUlOmL
-         gW587I3BHRgIMPjgZQj76Xm3Wb4u/ZPlQAuPJpXJuQYAddVJ97Z8Ag17EzDKyaI5/9sn
-         bud03Tlhx2HJkz9Lh0QEkpUpDgmN1CcAMCK+Z4OSW/CvUDla3/P3SXmHZtMqQPDwAShN
-         lH3dAcNjp2krWynG9mOdbLe4EvLUmhnYSuXm12/tbyLFgJtJknHAZ+um5AX6Fzue00Fh
-         jyJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730119724; x=1730724524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ReVN0cLvWmqthK71mUPz9Vh7INJT2/+SuZUXMARwOEU=;
-        b=QTNbEYGqMkJBfyYkFgm3YjnhWbLbY403kGUKcF7XYCC6lGXTUkl7Y/y3AKEe7+k2BD
-         hev6kcfNgnKIKyFBeGZZGF/YwtJYktQDULR9e8ny3tUFqf14wMpcl1e2DCSZQFsfWbxE
-         oEWP/7yc+vaiApcTmsmsgt6X++ObjGzWq7pGbSfrNzBHCa/weAzB1QQStVaeaHa2xf8a
-         IqIvip5QiSQ0QYz+u7Ua5+KfidUxR40iL9r+5Ni1miaq4Dejjc7wW/fcS//kIq3TEd9I
-         A1gtELOZPh7snq0z54uUuiqIR4xV3b09nerbuqcVjTdDs633SHL3qk1t9or3ttpL4Mfn
-         IWjA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8asPLQOA+ZmjvSRt2EkjbhebnnnjGVbEQnNBCcz0ZrvBosCZikJC43WkUmWbkWtCILu72lTTPpZ38jk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBQnALr3np2dCaDIDtFZdr9kbkzBgtJAj9ylARVCxnhePNQSln
-	3zozfc5maosimgyGTfCjgh0UAlIRv1l+gbypXs2lEPQdUqPsFdoYC5mTrumrzMmmduQyOOgvx71
-	3nco+MSG6AUzBj0vEc4yt7TQLf9XI3kaXIAlvDQ==
-X-Google-Smtp-Source: AGHT+IGhLfmQkrVqP4HYAOjiKc7239c27pDkdxqrymPqmidDyewNr77EbQ//qBWctOJ8VAhkGWdsckBMrKZ6g9++IUQ=
-X-Received: by 2002:a05:6a00:1954:b0:71e:44f6:690f with SMTP id
- d2e1a72fcca58-72062fb21e7mr11792989b3a.8.1730119724055; Mon, 28 Oct 2024
- 05:48:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=sibqvtc93d5hJnqj44E3WUMtrWM0Qn0txEwxx1d6ssxOMQ2cbqSnIAr4gD/VW0Hwb0VDB6RwTn4Get8YzXBcgmnQThICfFapQTMTWp1s3C++yE3O+y46skFwQUJPIlXk3oz4GjXFdI2uUS8v1llRM+GJOE7YUUFmmvTyMlWi8L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pcDndwQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AB74C4CEE3;
+	Mon, 28 Oct 2024 12:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730119830;
+	bh=UAWAyR01I3hYWVt/4e6p7NuejTZKa/FOWee47xPl4BY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pcDndwQg8DwslK7k3FkLM5FHGL0r/WssvP6HFHi7iq/2sCVfVtbViM/2S7TAimojU
+	 Bv0oIr1ft/cNdQPzT73nu4OcHXmuCPV7+A1tW0tREm83LI/RX12FkGooSKQ7hAIDPE
+	 NJei1cznLtbVzFYrZ8T+rcLND7gxp84Dsv/IT8dPKjUPg/xDNd/WHH+NK8znt8Zn3+
+	 VrIvzrTMdZEE2LgjRj5p/TUT7zMGqmgpRlaCMcDm48O1QTGctxQZWBjxZyfXmkvcwQ
+	 tzbkgdZsYLGY6sh+t9zBhCBwPzD7vK022E+3X7rP5UrmVska4RmGgp95XO9I0BYG3r
+	 DKbsnQPnm5ExA==
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so41377341fa.3;
+        Mon, 28 Oct 2024 05:50:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVxLes+6ncTGMEozPeFlnaI3MHXaP5KoXLS2WtUuTi8u3u87WwEUs4rDEXwQW1dLU2s46+RzQk6yLk3N5Vc@vger.kernel.org, AJvYcCXZ3cmVKJLya/BwAoD4EryFuLrLui+9WrGl24uF7jA5QqOTBGOGMNZtsrObx8NVour4tG/azFNfrcKaurqGgN/zJ0bZ7Q==@vger.kernel.org, AJvYcCXzLqirmpq+E5tQoyZgsyxJmIIpcmTrE8guPJWMX1PHMG96a0CMJ69aIOOMvoEC8z9TfC5capZoPDzaYcg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw36gzv3vRULZFHbxFtnray0ibE/iGJz0wQvcH0R57GOCHIkxKO
+	pyvSTb4QwYl4+84oEignp1qwgrgMTM2WCfls+Ee/2ShkD9Vmi2GWqQ6LBQTkMi1nphzL2RgZarH
+	oNjv17XqBuNk/hL9P933KPTwAIq4=
+X-Google-Smtp-Source: AGHT+IEPH/vsyhlYbZBSQfpt74PIBZDc637XfIO94wliOphfRHhmuxTZpBgQg5TnUQS1pGraTduFLtJ+cheGNO55no0=
+X-Received: by 2002:a05:651c:19a3:b0:2fa:c59d:1af3 with SMTP id
+ 38308e7fff4ca-2fcbdfc5f15mr31251831fa.20.1730119828919; Mon, 28 Oct 2024
+ 05:50:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028062306.649733554@linuxfoundation.org>
-In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Mon, 28 Oct 2024 21:48:33 +0900
-Message-ID: <CAKL4bV5XW+xCFSSie3tBE1GiB4pFZ1vSpHS9qkyzZg6ibxDVbg@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org
+References: <20241016105950.785820-2-andriy.shevchenko@linux.intel.com> <Zx9uSIWOwTgclmBF@smile.fi.intel.com>
+In-Reply-To: <Zx9uSIWOwTgclmBF@smile.fi.intel.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 28 Oct 2024 13:49:52 +0100
+X-Gmail-Original-Message-ID: <CAK7LNAS1xg2CLvTB-9dwGikAGNZRFOhknE_sbkxqyw=f6BNNog@mail.gmail.com>
+Message-ID: <CAK7LNAS1xg2CLvTB-9dwGikAGNZRFOhknE_sbkxqyw=f6BNNog@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] platform/x86: intel: Add 'intel' prefix to the
+ modules automatically
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Tero Kristo <tero.kristo@linux.intel.com>, Hans de Goede <hdegoede@redhat.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, platform-driver-x86@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, David Gow <davidgow@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Greg
-
-On Mon, Oct 28, 2024 at 3:39=E2=80=AFPM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Mon, Oct 28, 2024 at 11:58=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> This is the start of the stable review cycle for the 6.6.59 release.
-> There are 208 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+> On Wed, Oct 16, 2024 at 01:59:51PM +0300, Andy Shevchenko wrote:
+> > Rework Makefile to add 'intel' prefix to the modules automatically.
+> > This removes a lot of boilerplate code in it and also makes robust
+> > against mistypos in the prefix.
 >
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
+> > ---
+> >
+> > v2: fixed obvious typos (LKP), Cc'ed to Kbuild ML (Ilpo), dropped RFC m=
+arker
+> >
+> > Note to Kbuild people: TBH I rather want to have something like this
+> > to be available on the level of Kbuild for any of the subdirectories
+> > in question.
 >
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.59-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+> Anyone, any comments on this?
+> This already passed a CI tests without failure so far. Perhaps it's good
+> to apply to show the demand of such a feature in Kbuild in the future?
+> Because I want to do the same for various */tests/ folders where we have
+> tons of test*, *kunit modules effectively duplicating the folder name.
 
-6.6.59-rc1 tested.
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+I do not like what you are doing here, but
+it is up to you whatever you do in Makefiles you maintain.
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
-[    0.000000] Linux version 6.6.59-rc1rv
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20240910, GNU ld (GNU
-Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC Mon Oct 28 20:41:12 JST 2024
-
-Thanks
-
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+--=20
+Best Regards
+Masahiro Yamada
 
