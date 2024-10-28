@@ -1,137 +1,78 @@
-Return-Path: <linux-kernel+bounces-384388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2689B2975
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:00:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F39B297A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:01:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B6B61C21A1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:00:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125E2281664
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6663F1DA10C;
-	Mon, 28 Oct 2024 07:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28F21DAC9D;
+	Mon, 28 Oct 2024 07:38:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LehP+hVh"
-Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f10JEsuc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031DB190497;
-	Mon, 28 Oct 2024 07:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCEB190497;
+	Mon, 28 Oct 2024 07:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730101098; cv=none; b=bwNxKFjLG1MXeJMLEDt9eEIMRwDj2Um483VSOwilR3q3BNpHnwCTzLwUdxE2uIr7kh6d9QHc4iS1MkDgBYH/DbDWB2CaEgNZ2a5CXO21J883jXXQa0bgx3LRUzQYSQsE0e7gJyOaVtOqg4uhWLUgs4SNBQs6WbQCAVK1abntTE0=
+	t=1730101135; cv=none; b=O7K3FABHvIqX9OXfAxGJJGXy8vh2GkIklEhNpZuKx8YMDfj1L/xW77joDTw+GyB7TsxU7yFPnacwSVNTYX05HidJ5O3f1P9FGZlF7fGoUCdNUy/MRjew1hldY3ZONIl/ygt67Wc/UvsjCmrzfaNOxKkDlJD9DAs4aO0VWikfWkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730101098; c=relaxed/simple;
-	bh=mHL5eTsDx81dznD2XHpI6gh/TNkyu/7U/1ufhRQdCY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ISPI+xLPFT2pbQFD+kvHTL85kV/1punrwfZ5gNwNDKj1t3ZhyLmSMf8X1JCyQBUia5FVahiDbtj53Aickh0yXdCuFjQOQnOj7NNw5YXPLFub8hUEhgbcYXyPG5IYRWp35DgoFYOCIcQh7BxF4p0ahlrLG3i7LKPTnKkVfiZZTp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LehP+hVh; arc=none smtp.client-ip=209.85.214.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20c9978a221so41484065ad.1;
-        Mon, 28 Oct 2024 00:38:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730101096; x=1730705896; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9Jn9b1SoHwPkzr1uX2+IeCKA6+vPqFBEeVSpXW1yoU=;
-        b=LehP+hVhJOdiPhkrRrsw3i81B0f9NRfZnzM6PWAECPZWbbxdqpUmKIcvuW7pGisVMs
-         tYJ6whtc4YQwsr4NBlm+DZCMktRtcE4GRQBz+QlhIBakKME61jVSxmx7HQvBFU56pcfH
-         KigrM0q416oV7yd3pyjL1yAO9AL6xurb0cg+UqFAG0ikS+uzgTPAkUzzoHWdCzEEvWHA
-         pmeZjEbac9FsjQ8xTUrRRB2QWtjBrurPFvyBFkqmiNCe/z7ffhmH34IhPTtsah0WT6HR
-         c/xM9+2AM3OVu+OJc5Zfl+6HgfhIsADZyHI3swegVDWpMNzIZ9xGVM/v93ziTYkgeoKm
-         wU0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730101096; x=1730705896;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S9Jn9b1SoHwPkzr1uX2+IeCKA6+vPqFBEeVSpXW1yoU=;
-        b=MHejow0njTq+FRqAqrcSpQsGKsotvt9g6yrNiE1tEpD9ch0mz3sNxsJ0SkPRg45CQl
-         dQ1fGcBYR4m0BMj3SnFygSfkgtfXOcpJnxAl1ZzEXVard4CMhlDXHkI/YOHdYj2AvvuX
-         Nl7Fun9jOW9HTswwuzV1MJBeWAq4lMccKvvDel7Qkisj0ZUbVcKfDhh4kvZOkxPQ3nix
-         BNWC9yWROmPILBahS7u1kEhhwQ8/Rgp81Zv60eve7Emz/dmw/FdbpfPqz57Wjgt+xQt+
-         VP8Jn/3RLqgAa/c0B2StgrrZPE9NypwZghEhNlwwRQKgnZ7/pIs7fsMB4YiTniPSkpLq
-         8NQA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdvmzvbVbcxvvvJ5gKys5QkrpSRB/UqVNDN/Q6wDb61Z0H0tzY9VBFbMCFQ2K1rwU6r1nflTiegIk=@vger.kernel.org, AJvYcCXNejH/E6yrwIFbgCzw2F4mD2+uKgKO2euu74b8f2kSqk8h4HlPEpPleX0Pom1hpGehqH5vp/JQWbqNFVJX@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCiZKsN5m3qBlzkBsEMa7ANiC+fjRE0q6HHHh/HgT+JY4VKnTy
-	JEOfpptNOxw43PxAN/jpUSjDkjIh99IWVOKGQ5Dr3u/fS2cohVM1
-X-Google-Smtp-Source: AGHT+IGxSKQGIz43se9nrgtLUp6fdhXdXWR2R/qH8wtV35tb/u1Z+NxtbSi/ZhTn+RHZlGAYgj2KAw==
-X-Received: by 2002:a17:903:2442:b0:20c:5cdd:a9e with SMTP id d9443c01a7336-210c6c02482mr75533615ad.28.1730101096090;
-        Mon, 28 Oct 2024 00:38:16 -0700 (PDT)
-Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6bc6fsm44951945ad.63.2024.10.28.00.38.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 00:38:15 -0700 (PDT)
-From: xu xin <xu.xin.sc@gmail.com>
-X-Google-Original-From: xu xin <xu.xin16@zte.com.cn>
-To: corbet@lwn.net
-Cc: alexs@kernel.org,
-	fan.yu9@zte.com.cn,
-	he.peilin@zte.com.cn,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mudongliangabcd@gmail.com,
-	qiu.yutan@zte.com.cn,
-	seakeel@gmail.com,
-	si.yanteng@linux.dev,
-	tu.qiang35@zte.com.cn,
-	wang.yaxin@zte.com.cn,
-	xu.xin.sc@gmail.com,
-	xu.xin16@zte.com.cn,
-	zhang.yunkai@zte.com.cn
-Subject: Re: [PATCH linux-next v8] Docs/zh_CN: Translate physical_memory.rst to Simplified Chinese
-Date: Mon, 28 Oct 2024 07:38:11 +0000
-Message-Id: <20241028073811.2980032-1-xu.xin16@zte.com.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <87h68xw6nr.fsf@trenco.lwn.net>
-References: <87h68xw6nr.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1730101135; c=relaxed/simple;
+	bh=JuicChqAxrZATICnsbGhsPkuOFQw8eOyMB5wZTaLbds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FUcaAB0tNckQnhpTuVeYHCm3L6e4Tk65miTeI8SH/IBZseVX+nFfNHpoetbn2i1ts+FafSklETaYG8NNcKCg9z5UqQzfJ4ztnZibMKAYDwl/TOnB8Ovmx/W+8QAtUaR4evdQajgMXOYIf+gMCSfcMu5h5BPVf7FsnlWLw/rR35o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f10JEsuc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DCFC4CEC3;
+	Mon, 28 Oct 2024 07:38:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730101134;
+	bh=JuicChqAxrZATICnsbGhsPkuOFQw8eOyMB5wZTaLbds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f10JEsucxU7RFGwNbz89W7LzTXTOmDvvby2TiNbe0GJMt8T/lMlrtP9Fm3RMJx+un
+	 MndPr8oIb4/tpYIOELIzySjZMq3s0VBT/cPRX3UcgzvL4/QlVrGMlFDYVaCVY2FMwC
+	 gb6l7yfMJEkJ4FFLDrHd2dkyzzBLwLoWkDV0DUPdUWgoAzHFuj67gzt+Qhd6xFBThx
+	 MPuT7YNxnQGhz+E18N5OufyOAU1T7YhY+Vf4d3ZLG6/i6aym1Fv23QRPPOI3qMhvst
+	 gs5ICkgKRecsyp2NbyrgU2/0kyIiLWaZOzNiYjkhgXTelDFfo41bYJSoQV3giIT9iq
+	 jCjV5WLLHN4uQ==
+Date: Mon, 28 Oct 2024 08:38:50 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Troy Mitchell <troymitchell988@gmail.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
+Message-ID: <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
+References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ <20241028053220.346283-2-TroyMitchell988@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241028053220.346283-2-TroyMitchell988@gmail.com>
 
-> >> > From: Yaxin Wang <wang.yaxin@zte.com.cn>
-> >> >
-> >> > This patch translates the "physical_memory.rst" document into
-> >> > Simplified Chinese to improve accessibility for Chinese-speaking
-> >> > developers and users.
-> >> >
-> >> > The translation was done with attention to technical accuracy
-> >> > and readability, ensuring that the document remains informative
-> >> > and useful in its translated form.
-> >> >
-> >> > Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
-> >> >
-> >> > Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
-> >> > Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-> >> > Reviewed-by: xu xin <xu.xin16@zte.com.cn>
-> >> 
-> >> One does not normally put a Reviewed-by tag on one's own patches, so now
-> >> I am confused.  What is the role of you and Jiang Kung in the
-> >> presentation of this patch?
-> >> 
-> >
-> >  Let me explain that, it's because of our company email permission policy,
-> >  The author of this patch, Yaxin, has no permission to send out the patch
-> >  temporarily. So I'm just helping to send it on their behalf. and at the same time,
-> >  I'm a just reviewer, not the owner of this patch.
+On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
+> The I2C of K1 supports fast-speed-mode and high-speed-mode,
+> and supports FIFO transmission.
 > 
-> If you handle the patch and send it onward, you need to add your own
-> Signed-off-by tag stating your right to do so.
->
- Ok, I have resent once with adding Signed-off-by.
- https://lore.kernel.org/all/20241028135321916ZWK032bHhlbncjvmzDkZs@zte.com.cn/
+> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+> ---
 
- Thanks.
+Where is the changelog? Nothing here, nothing in cover letter.
 
-> Thanks,
-> 
-> jon
+I asked for several changes, so now I don't know if you implemented
+them.
+
+Best regards,
+Krzysztof
+
 
