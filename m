@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C52B9B28C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:32:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B579B28CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:32:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFD32281D8F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:32:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A4211F211E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 649F9198E84;
-	Mon, 28 Oct 2024 07:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F6A1CC8B0;
+	Mon, 28 Oct 2024 07:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ketm5QGj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="8NQyUa0l"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CrNm3WSv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0oBJUaiF"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52174191F9C
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EE94685
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100634; cv=none; b=H+jN9jNDJN4vb9D9FoDJGT12PIYUV5SV7XhAKtOdTGt73nH0le/1wjsOgqG3BYiPQvF4fHzBjyreIylA+rzCKhje12R7/gYs7OkRUvcUZeuLpvC15K10ZDFajOEtTFPD1+U7MEVYHgMJR/JM9b5yhxMigWT2z2TnAkKQLv1PGps=
+	t=1730100635; cv=none; b=qCb7OkQioHWIPAsuNw4D0xzVCHXcgzAG5t30XTtat62+mxShNnIpq6ADsf1OrH4Vd/22wqXAP8O9kJ48UztuHQKq0hrGiIEDidIssog/Ws29yMQ5VoWJQO4aYwrRz+nO1iCanbcnJ6+qrsstR33i/IOUWHoVAbi4s0opMgboIlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100634; c=relaxed/simple;
-	bh=/TiV3JZyyoDCuhZwy3q7qmd+NClcP5OpUDNnTdfw/FQ=;
+	s=arc-20240116; t=1730100635; c=relaxed/simple;
+	bh=m95rj/Pg7jxnHdOd2G91tOu5rlRz/g+shSHe+A0RntA=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Nx0yQnNd4YLEzr2fTjfEjr236olq4vA3znHusmNEtmuQpjWFEaiH4q7lbJ/yrWRu7WdDDutKlpUX+HGk/oy8/5nKsc8+8ZQRSBXPOUSJUIvFeVDO5TWMtfjBYf9GLneKLdC3ANcVeAtfAJDUaKUxSpX77Qz60H3IaqUZFcAyzFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ketm5QGj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=8NQyUa0l; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=NDgsEkzBRu4dEWsC0pUbD0FfgyzYlWWjXZfwqGluwuJvb8J4cpsRtdGXk9xUIKBdygQPrTSZz3adiGyvBL3ahDRonfW0C1r88/xu5LtNFQ/wXZyFYyJnqt8EmD5XnoiyzF8GCZgO0sy9qj7ojzhb71eUmK/mtAa+lpXbb0iCP4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CrNm3WSv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0oBJUaiF; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100630;
+	s=2020; t=1730100631;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C0XVO90iLQ7PE7PoHD7NMl5oQGpGsAUbSQs5v9r9boQ=;
-	b=Ketm5QGjD10DDXZX/BACxxPNHvKwPglzdn3L6ds75Ki7ZDbEfujHtVIlySXg+vn36MMc+7
-	qu53k6bZVyx0fMrMv6oCKiSqCQ67G6ric1udyi1HuvPwo9NoGSaHcXIYbqDERfrRwp5+FX
-	te7y7JY0nyGHyM8tY1LNQ4+1hQIy2z+KLS+J0sBW50RaKTzHhaiLnRBt2I/rIF30rhFgSN
-	pLrwXnyEG/NuWaqV4V314DRkRMSmX//ITTXawGQFb7FJz4/Ackxmhh3tjxu0LibMzZKVpF
-	/6h+YwbOV3EhUx8SRqKeuCznkYYayT6D3RxKWlqyBgYFluHZei9xDMC2+OV1Jw==
+	bh=nItAbF4ba+O/4+a1zT7+rDPb5gC8aLbVN70IhsEWi5o=;
+	b=CrNm3WSvd/eXu96nMLarF3jc/5M6TRPlAdCMyJc6Gv40XtHR7pg2Kqiw00fkaRRJY4ebXQ
+	5UwOQJdOf45IWV01hw7ObZqDG21tjvv/CrZiXhxT2JENijW1LfUFhklu13vh8VeNdp6d/r
+	Oy/OF4SE0XigbvfeevCntWgtuL405aEz7hDyOD5r/2xjLEj6MNeYQeEcaNmZOtqxZy6o9N
+	y6neix1MsdNXiknlAEkp95o+TozADJfDv6nKrq2gf0xgpyT9o+mRXEX521gpTmf5fzJ+33
+	ARCLajaOELT7FzUe6k78Gd3jq52nCh3cytF1X3oShXjtqttAABhSoZz2kmSu9g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100630;
+	s=2020e; t=1730100631;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C0XVO90iLQ7PE7PoHD7NMl5oQGpGsAUbSQs5v9r9boQ=;
-	b=8NQyUa0lGolXaPje5Zv5PuTAERG/5LjcVtBJu9vVLC+y438xoSuqXu4+c8wpt92C8w9iCJ
-	mUgRPA4Bwg/4jyCg==
+	bh=nItAbF4ba+O/4+a1zT7+rDPb5gC8aLbVN70IhsEWi5o=;
+	b=0oBJUaiFQQiKU3UoUcH8Jh1kDJalFcN+5fErzKyoN0PD17CC/Sdxy7ZCSzt2Gy8MQBEfFO
+	FLlgKVPfeUwK9gAg==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,9 +62,9 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 09/21] hrtimers: Introduce hrtimer_setup_on_stack()
-Date: Mon, 28 Oct 2024 08:29:28 +0100
-Message-Id: <bfe414f8d99ef0d752ce9bc5958f492f7d0d627c.1729864615.git.namcao@linutronix.de>
+Subject: [PATCH 10/21] hrtimers: Introduce hrtimer_setup_sleeper_on_stack()
+Date: Mon, 28 Oct 2024 08:29:29 +0100
+Message-Id: <77c7c39cc8ae350c14a2116f8b827f71c41bcacb.1729864615.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729864615.git.namcao@linutronix.de>
 References: <cover.1729864615.git.namcao@linutronix.de>
 Precedence: bulk
@@ -75,72 +75,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-To initialize hrtimer on stack, hrtimer_init_on_stack() needs to be called
-and also struct hrtimer::function must be set. Introduce
-hrtimer_setup_on_stack() which does both of these things, so that users of
-hrtimer can be simplified.
-
-This function also does sanity check on the callback function pointer. If
-the callback function pointer is invalid, set 'function' to a dummy
-callback function, so that the kernel does not blow up later on.
-
-hrtimer_init_on_stack() will be removed as soon as all of its users have
-been converted to the new function.
+hrtimer_setup() and hrtimer_setup_on_stack() have been introduced to
+replace hrtimer_init() and hrtimer_init_on_stack(). To keep the names
+consistent, also introduce hrtimer_setup_sleeper_on_stack(). The old name
+hrtimer_init_sleeper_on_stack() will be removed as soon as all of its users
+have been updated.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
- include/linux/hrtimer.h |  3 +++
- kernel/time/hrtimer.c   | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ include/linux/hrtimer.h |  2 ++
+ kernel/time/hrtimer.c   | 14 ++++++++++++++
+ 2 files changed, 16 insertions(+)
 
 diff --git a/include/linux/hrtimer.h b/include/linux/hrtimer.h
-index bcc0715c59a8..2da513f8d66a 100644
+index 2da513f8d66a..48872a2b4071 100644
 --- a/include/linux/hrtimer.h
 +++ b/include/linux/hrtimer.h
-@@ -232,6 +232,9 @@ extern void hrtimer_setup(struct hrtimer *timer, enum h=
-rtimer_restart (*function
- 			  clockid_t clock_id, enum hrtimer_mode mode);
- extern void hrtimer_init_on_stack(struct hrtimer *timer, clockid_t which_c=
-lock,
- 				  enum hrtimer_mode mode);
-+extern void hrtimer_setup_on_stack(struct hrtimer *timer,
-+				   enum hrtimer_restart (*function)(struct hrtimer *),
-+				   clockid_t clock_id, enum hrtimer_mode mode);
+@@ -238,6 +238,8 @@ extern void hrtimer_setup_on_stack(struct hrtimer *time=
+r,
  extern void hrtimer_init_sleeper_on_stack(struct hrtimer_sleeper *sl,
  					  clockid_t clock_id,
  					  enum hrtimer_mode mode);
++extern void hrtimer_setup_sleeper_on_stack(struct hrtimer_sleeper *sl, clo=
+ckid_t clock_id,
++					   enum hrtimer_mode mode);
+=20
+ #ifdef CONFIG_DEBUG_OBJECTS_TIMERS
+ extern void destroy_hrtimer_on_stack(struct hrtimer *timer);
 diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index a5ef67edcda9..daee4e27f839 100644
+index daee4e27f839..1d1f5c03673c 100644
 --- a/kernel/time/hrtimer.c
 +++ b/kernel/time/hrtimer.c
-@@ -1646,6 +1646,25 @@ void hrtimer_init_on_stack(struct hrtimer *timer, cl=
-ockid_t clock_id,
+@@ -2065,6 +2065,20 @@ void hrtimer_init_sleeper_on_stack(struct hrtimer_sl=
+eeper *sl,
  }
- EXPORT_SYMBOL_GPL(hrtimer_init_on_stack);
+ EXPORT_SYMBOL_GPL(hrtimer_init_sleeper_on_stack);
 =20
 +/**
-+ * hrtimer_setup_on_stack - initialize a timer on stack memory
-+ * @timer:	The timer to be initialized
-+ * @function:	the callback function
-+ * @clock_id:	The clock to be used
-+ * @mode:       The timer mode
-+ *
-+ * Similar to hrtimer_setup(), except that this one must be used if struct=
- hrtimer is in stack
-+ * memory.
++ * hrtimer_setup_sleeper_on_stack - initialize a sleeper in stack memory
++ * @sl:		sleeper to be initialized
++ * @clock_id:	the clock to be used
++ * @mode:	timer mode abs/rel
 + */
-+void hrtimer_setup_on_stack(struct hrtimer *timer,
-+			    enum hrtimer_restart (*function)(struct hrtimer *),
-+			    clockid_t clock_id, enum hrtimer_mode mode)
++void hrtimer_setup_sleeper_on_stack(struct hrtimer_sleeper *sl,
++				    clockid_t clock_id, enum hrtimer_mode mode)
 +{
-+	debug_init_on_stack(timer, clock_id, mode);
-+	__hrtimer_setup(timer, function, clock_id, mode);
++	debug_init_on_stack(&sl->timer, clock_id, mode);
++	__hrtimer_init_sleeper(sl, clock_id, mode);
 +}
-+EXPORT_SYMBOL_GPL(hrtimer_setup_on_stack);
++EXPORT_SYMBOL_GPL(hrtimer_setup_sleeper_on_stack);
 +
- /*
-  * A timer is active, when it is enqueued into the rbtree or the
-  * callback function is running or it's in the state of being migrated
+ int nanosleep_copyout(struct restart_block *restart, struct timespec64 *ts)
+ {
+ 	switch(restart->nanosleep.type) {
 --=20
 2.39.5
 
