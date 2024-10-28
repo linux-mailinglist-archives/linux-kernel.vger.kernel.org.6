@@ -1,134 +1,204 @@
-Return-Path: <linux-kernel+bounces-385541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB2C9B385C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:57:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 999EF9B385E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:58:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59B1E1C223F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:57:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8641C223E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFA41DF735;
-	Mon, 28 Oct 2024 17:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mOWIRcf6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35451DF735;
+	Mon, 28 Oct 2024 17:57:52 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E585221106;
-	Mon, 28 Oct 2024 17:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5C021106;
+	Mon, 28 Oct 2024 17:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730138263; cv=none; b=MHkpE2Q5HRSp7LESN4k1umnce6ySaGiUuY/Xj0GXO3NDDG80PlC/X7K9mmGVHQXBaMBVzWH81rW5xDyJ4BRmdxOE6rPFf7kIM10DYjjpP51eaXBZBqkgRH0heUlyolrj7orql3wzvBJ3WNZKF6Q5PZXBgNx78zu07KaDeog+MkY=
+	t=1730138272; cv=none; b=gGUgxlGmGbSzly/809vuPd9I8232OBfOf1YLoY2HK3mwCtIXQZMjNvT0rrhn0LoYjiSk94JTnUU2ck4nWoJGqROjErZxlhE3pye++om/uTaid1u6lbbymA/GMZm7q89C6boUdZy4JzyUBaZI19kqYaXPH3F0Gjf8vdpiu6Xk5Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730138263; c=relaxed/simple;
-	bh=U6WYDMeT3X6Fc0vu9KGp38q+fAgGQDfoSSz5io5BqFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IrSoq7/0ynZgG7fNHUHQCq1hirK/4JnPrc/dtiReFLhj08u9U7ydAAPKHRGQCeykDRrf0fiG4hUvmeyNE3j7JlXURpWf0hH5WB7SOG4/owpFlST5wO75qUO23LqVmUu3REfXzGybk1pjfi4wLkhioLSjjVhw9jzX30EAIL8XsHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mOWIRcf6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D41B9C4CEC3;
-	Mon, 28 Oct 2024 17:57:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730138262;
-	bh=U6WYDMeT3X6Fc0vu9KGp38q+fAgGQDfoSSz5io5BqFI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mOWIRcf6tCa/l/ZPuKWCi66PtS4pL/hIFBYmQ1EO73fLhgS6mkZmgLEROmT5Xm/EG
-	 ViDVcU8nEFZ8+b2Z21nadT09uVEXSEx6umpJzh1YiIeleRcuU+RA+/zlFWF5oh24EE
-	 KMSeRnGOKExuYss/1873Qn9SFDDP/jqLj5YEmSQiL3SvpFn9a5k+/DnlN6YahZWADN
-	 HwHOQSgmPdvRXo9BnYqu/JMXQB9JSvgz0uBFppASiluCMkfq0MqsLwEsXQQoAgeGc2
-	 9EXaqVM7Unc/lkSfZ3RBmJ/CwzMpQ2qJkP+9nwRyJpkTN23m7VkIWJ7JlHJklOXcaI
-	 2WUoFK22/9oQQ==
-Message-ID: <ce2892c4-f759-40ca-a188-11a83b0164b3@kernel.org>
-Date: Mon, 28 Oct 2024 18:57:29 +0100
+	s=arc-20240116; t=1730138272; c=relaxed/simple;
+	bh=9n2kql9SOdKu6PRWDOsoEfPHOf5PZ6YTER7Rby7nT7w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l21Dv8pBgsp74uwYpoVG2kdHS4UXEo7NVJJHR5VyDOkl67bXIaP9lGhebpZGf63YSPMesZ6jMvASZ7W9SZSUPL3lpyoUzVYx/3yCNA30H6HYSHubF0k/Rbrbi/thvIqyjcgdiFLkdo9tbNEzkBeGRkrLKFT1LxZ9iI61/BM8kns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e39bf12830so33479927b3.1;
+        Mon, 28 Oct 2024 10:57:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730138269; x=1730743069;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KLLFa6WS4xfeiEtOHxziXZIgc98NLKWXcmokIkVFE5s=;
+        b=HD4f62auDOV6tIoIc3VNKjQ0SvnFTSgeL8Sbfk8E8faCxY+ZEP2diithaH7ewUMElf
+         HSujJYwuSVk/FNPOJ5FdLPd8DaQZsNgDSKg4yEsa7Kyex9D+5SR+pvf4Rd55Qh2qCsGa
+         p+YeCoDXgPSfk4rhuhfbogZ14+xkJflH6ln/Uc3m55XJQnYgWOBIVuBcGISoTExlFnDC
+         vorOkOHa/TYx3iWtkww06A/s0Pl3aPsgsZ5co9gJKyDjVo9Dyiovf6UHvi+w2iaamg0r
+         ASphSPwBXxUSD/WIf3dPEqIC39OBTW7UvKT1eRyuKvnRVg9kXyZw9Muj1e9vcv3LbYQQ
+         NI+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWdjY6wJhtL/6vGNxrjW7S7Jr3WQMC2loUkeJnN5NDxc5T4EwHP27GA6lwHAUsR1T10SX1CywNuf7xrL7E+@vger.kernel.org, AJvYcCXM9lzVz5o854fS3Kfkv9kziqFLu6YSa3N/+Tj/wb7FKDAnUa3bL4QtxfFv8m4Q3K4fTnatQYnEZ3bC@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAegJCWiGgy8CWxLbJI83GQXWXFjl0PrQRc4JsAS3NI090Z1OI
+	jURLWKr1S9S1MpfL+9Id2yBOtgUgOChZ2m+pePDdjq+sFbJgpmz5mIo8Gks+
+X-Google-Smtp-Source: AGHT+IHsa1ltsWOZLCvylljjjxP+724mRZ7QqT/iP5IFvx09mgnH+ZSgO6WfTgWDk5eFoEN18icaxA==
+X-Received: by 2002:a05:690c:60c3:b0:64b:b7e:3313 with SMTP id 00721157ae682-6ea22daffadmr7117777b3.13.1730138268569;
+        Mon, 28 Oct 2024 10:57:48 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c18650sm15121487b3.64.2024.10.28.10.57.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 10:57:48 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e330b7752cso39391987b3.1;
+        Mon, 28 Oct 2024 10:57:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVpbrxBHHgkOc9OvGBOWH/Qu4Uk2bclOQWt6t/bnwVj/uaHdFBkVHD55KPJqkDIFB+afiBP60353PMOkUN3@vger.kernel.org, AJvYcCWvrNJSuxIK85dKmKerlWQuoyMRWBBuSJsqqpZ7Y3vVwhFq9XqTp5jZQAeXFUmZUL20u4C9/nh4DIC7@vger.kernel.org
+X-Received: by 2002:a05:690c:9a06:b0:6e3:1d8c:1224 with SMTP id
+ 00721157ae682-6ea22e5e851mr6027417b3.20.1730138268189; Mon, 28 Oct 2024
+ 10:57:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next 1/2] net: netconsole: selftests: Change the IP
- subnet
-Content-Language: en-GB
-To: Breno Leitao <leitao@debian.org>, kuba@kernel.org, horms@kernel.org,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, Shuah Khan <shuah@kernel.org>
-Cc: thepacketgeek@gmail.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, davej@codemonkey.org.uk, vlad.wing@gmail.com,
- max@kutsevol.com, kernel-team@meta.com, aehkn@xenhub.one,
- Petr Machata <petrm@nvidia.com>,
- "open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-References: <20241028154805.1394611-1-leitao@debian.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20241028154805.1394611-1-leitao@debian.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240219-add-am64-som-v7-0-0e6e95b0a05d@solid-run.com>
+ <20240219-add-am64-som-v7-4-0e6e95b0a05d@solid-run.com> <CAMuHMdXTgpTnJ9U7egC2XjFXXNZ5uiY1O+WxNd6LPJW5Rs5KTw@mail.gmail.com>
+ <a65e17e9-0055-4e5a-902f-8ee2807a86df@ti.com> <299b6b75-beef-46aa-9203-b96009226677@solid-run.com>
+In-Reply-To: <299b6b75-beef-46aa-9203-b96009226677@solid-run.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 28 Oct 2024 18:57:35 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW6p-xp96rXqt_dhSNkJSmyQCrh+EOmHv9vgiAWyioMOQ@mail.gmail.com>
+Message-ID: <CAMuHMdW6p-xp96rXqt_dhSNkJSmyQCrh+EOmHv9vgiAWyioMOQ@mail.gmail.com>
+Subject: Re: [PATCH v7 4/4] arm64: dts: ti: hummingboard-t: add overlays for
+ m.2 pci-e and usb-3
+To: Josua Mayer <josua@solid-run.com>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Yazan Shhady <yazan.shhady@solid-run.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Breno,
+Hi Josua,
 
-On 28/10/2024 16:48, Breno Leitao wrote:
-> Use a less populated IP range to run the tests, as suggested by Petr in
-> Link: https://lore.kernel.org/netdev/87ikvukv3s.fsf@nvidia.com/.
+On Mon, Oct 28, 2024 at 6:19=E2=80=AFPM Josua Mayer <josua@solid-run.com> w=
+rote:
+> Am 28.10.24 um 16:31 schrieb Vignesh Raghavendra:
+> > On 25/10/24 19:27, Geert Uytterhoeven wrote:
+> >> On Mon, Feb 19, 2024 at 4:05=E2=80=AFPM Josua Mayer <josua@solid-run.c=
+om> wrote:
+> >>> HummingBoard-T features two M.2 connectors labeled "M1" and "M2".
+> >>> The single SerDes lane of the SoC can be routed to either M1 pci-e
+> >>> signals, or M2 usb-3 signals by a gpio-controlled mux.
+> >>>
+> >>> Add overlays for each configuration.
+> >>>
+> >>> Signed-off-by: Josua Mayer <josua@solid-run.com>
+> >> Thanks for your patch, which is now commit bbef42084cc170cb ("arm64:
+> >> dts: ti: hummingboard-t: add overlays for m.2 pci-e and usb-3") in v6.=
+9.
+> >>
+> >>> --- /dev/null
+> >>> +++ b/arch/arm64/boot/dts/ti/k3-am642-hummingboard-t-usb3.dtso
+> >>> @@ -0,0 +1,44 @@
+> >>> +// SPDX-License-Identifier: GPL-2.0+
+> >>> +/*
+> >>> + * Copyright (C) 2023 Josua Mayer <josua@solid-run.com>
+> >>> + *
+> >>> + * Overlay for SolidRun AM642 HummingBoard-T to enable USB-3.1.
+> >>> + */
+> >>> +
+> >>> +/dts-v1/;
+> >>> +/plugin/;
+> >>> +
+> >>> +#include <dt-bindings/phy/phy.h>
+> >>> +
+> >>> +#include "k3-serdes.h"
+> >>> +
+> >>> +&serdes0 {
+> >>> +       #address-cells =3D <1>;
+> >>> +       #size-cells =3D <0>;
+> >>> +
+> >>> +       serdes0_link: phy@0 {
+> >>> +               reg =3D <0>;
+> >>> +               cdns,num-lanes =3D <1>;
+> >>> +               cdns,phy-type =3D <PHY_TYPE_USB3>;
+> >>> +               #phy-cells =3D <0>;
+> >>> +               resets =3D <&serdes_wiz0 1>;
+> >>> +       };
+> >>> +};
+> >>> +
+> >>> +&serdes_ln_ctrl {
+> >>> +       idle-states =3D <AM64_SERDES0_LANE0_USB>;
+> >>> +};
+> >>> +
+> >>> +&serdes_mux {
+> >>> +       idle-state =3D <0>;
+> >>> +};
+> >>> +
+> >>> +&usbss0 {
+> >>> +       /delete-property/ ti,usb2-only;
+> >> /delete-property/ (and /delete-node/) to delete something in the base =
+DTS
+> >> does not work.
+>
+> My understanding is that flags are equivalent to boolean, i.e:
+>
+> ti,usb2-only =3D <true>;
+> ti,usb2-only;
+>
+> are equivalent.
+>
+> If so, can we assign <false> within the overlay?
 
-It looks like this is the same version as the one you sent on Friday,
-without the modification suggested by Petr:
+Unfortunately not. My first thought was "it depends on the actual code
+in the driver", but that turns out to be wrong:
 
-  https://lore.kernel.org/20241025161415.238215-1-leitao@debian.org
+    static inline bool of_property_read_bool(const struct device_node *np,
+                                             const char *propname)
+    {
+            const struct property *prop =3D of_find_property(np, propname, =
+NULL);
 
-I supposed these new patches have been sent by accident, right?
+            return prop ? true : false;
+    }
 
-(BTW: it is often better to include a cover letter when there is more
-than one patch: some CIs might not take patches sent without it.)
+    static inline bool of_property_present(const struct device_node
+*np, const char *propname)
+    {
+            return of_property_read_bool(np, propname);
+    }
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+So both methods just check if the property is present, and do not use
+its value, when present (i.e. the former does not "read" the bool).
 
+drivers/usb/cdns3/cdns3-ti.c uses device_property_read_bool:
+
+    static inline bool device_property_read_bool(const struct device *dev,
+                                                 const char *propname)
+    {
+            return device_property_present(dev, propname);
+    }
+
+so (at least for DT) that should map to the above.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
