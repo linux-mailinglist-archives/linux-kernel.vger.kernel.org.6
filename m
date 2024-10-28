@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-385734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9CFB9B3AFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:02:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EB99B3AFC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:02:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80236282B11
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:02:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DC07B21E72
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A812E1DFE25;
-	Mon, 28 Oct 2024 20:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BC81E00AB;
+	Mon, 28 Oct 2024 20:01:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0GFnts/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XtxLxeFH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA3B1DF251;
-	Mon, 28 Oct 2024 20:01:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9242F1DFE12
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 20:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145716; cv=none; b=U+BVLyh9TqfupN1ZgM6qS4GhjQMNuE2QgdHEntPwfG08MYqsTqhlSupDyt2O+V+azXxlnjBVJSxRxOznTj46Zfed5vvJvjTl7cToyI6s4QuG/SubTZN5TvvP1jcprgqCQfuzfMdOMIE+Hcnq91JzEDrNCaH49nOnoSUV4G3xV/8=
+	t=1730145716; cv=none; b=goKoFUpXU60/qnPPQVazx/33Jepo3CQf73NATnCtXjLD06VHtCA7E7CqsOtv7OcS2ztWNVBYzoim6+SumJsV9rRX5B5yWmfzdYSFbaKam+gsr/EIRtqa46OFyZ1JV4hhsfz4XtzSjyoRkldWwWmZJUlqqf9kISM4cHOH2INhpws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730145716; c=relaxed/simple;
-	bh=alW+GZ8j4gr7HOS6AYR6GnNg+XUrR8zbkobMAqgoutU=;
+	bh=vazwNXzl6zu/BX8ApcGD1m+GHblgBaqtTA7Uer/W7EE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MT7kSElYRIhUGhK642uMRlG37LjSKXRWy2RTk4CYxY6xQi4SM/xRhdOFloB/zIg+T8gdcvp2yEKqHln6lt2t1Ubj4cfjZJIuackGoHozcb8lPTsKTN/ERr8S+FimOebhhE+GuCvIEcZ3h8EUbES4kIDFJPJJFY4ZLygdvryZLBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0GFnts/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08FCFC4CEE3;
+	 MIME-Version; b=V298MqbvX36P24F15ZO7PQI7XJzXVAGOiC0z/ORIzueJQXtzfjQXsnC6TQAd5RUynn9EYQu5Vd4qEMOC/kMhR6+pri2CteF7PDR8hwWTBDR4Z2RfcfHklf5AWuMORRsBdyMbBsJibRue3k2SvDLw2aakD74INXUvC+bxR6E3FXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XtxLxeFH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3A35C4CEE4;
 	Mon, 28 Oct 2024 20:01:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730145715;
-	bh=alW+GZ8j4gr7HOS6AYR6GnNg+XUrR8zbkobMAqgoutU=;
+	s=k20201202; t=1730145716;
+	bh=vazwNXzl6zu/BX8ApcGD1m+GHblgBaqtTA7Uer/W7EE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=R0GFnts/HH7g1i+lsxOpuLi4QYSaND0fJXLT3IUJtoLNU2PhsriDE0LRde5cACpFs
-	 32YkyxajMqH1RU4ASTYuqAai9cCqC3YiAKH6vBIyPterVOGYOK6UKovJKllML5RD+s
-	 XPPB3OIS8doSyAzwSt1YcP9iteYMem+ef3eQJNaOuJICMq82X+WZK/SgiewO/5ItX/
-	 ceZ4qWtd/dIEr37jIzhiMVsqvu+70fd9uf+0p5gFoUtZ7VT/aNbYcGjAuLGb2O2V75
-	 C1HgmCz/2kX/iFjjkJVm1VQ67xtLQFv4sOAEr4QkYqiEhpRbMlJcfDJMODbrivS7NZ
-	 J5q0aEvSb+Dng==
+	b=XtxLxeFHxv3XLiiVFvKdBxgsiz3yTZLNqwpbyK5FM1CvVtHx2Y0+G3IGWsKvYitIU
+	 gJ/Bz2Le80F+1HtByyLNVztg8GBN+yqvSf8o5gNKiAU2C9CmTYK5Vd7aFJWJSVrp3H
+	 SeWwvygMzMz3c6Z35C5+w5Zc7eI113lBd7EILWP7r5TKWOmwamXqLeoHY7srfv+8Ir
+	 vZiosLup1Jj+cxqcLSLLrlEB5r3QQba6kMDNfEODPitP4fg+bE5Pvoso/SVYk8D+Qb
+	 2fdPfje9DriHIXRwnmxhid62ixV7zL+X1YAYq+UShZL0SLLK8PhyOdXmKtLz/65geo
+	 ApFUdVpSyKGYw==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@kernel.org>
@@ -51,16 +51,10 @@ Cc: Kan Liang <kan.liang@linux.intel.com>,
 	Stephane Eranian <eranian@google.com>,
 	Ravi Bangoria <ravi.bangoria@amd.com>,
 	Sandipan Das <sandipan.das@amd.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	linux-s390@vger.kernel.org
-Subject: [PATCH v5 1/2] perf/core: Export perf_exclude_event()
-Date: Mon, 28 Oct 2024 13:01:52 -0700
-Message-ID: <20241028200153.1466731-2-namhyung@kernel.org>
+	Ananth Narayan <ananth.narayan@amd.com>
+Subject: [PATCH v5 2/2] perf/x86: Relax privilege filter restriction on AMD IBS
+Date: Mon, 28 Oct 2024 13:01:53 -0700
+Message-ID: <20241028200153.1466731-3-namhyung@kernel.org>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 In-Reply-To: <20241028200153.1466731-1-namhyung@kernel.org>
 References: <20241028200153.1466731-1-namhyung@kernel.org>
@@ -72,91 +66,201 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-While at it, rename the same function in s390 cpum_sf PMU.
+While IBS is available for per-thread profiling, still regular users
+cannot open an event due to the default paranoid setting (2) which
+doesn't allow unprivileged users to get kernel samples.  That means
+it needs to set exclude_kernel bit in the attribute but IBS driver
+would reject it since it has PERF_PMU_CAP_NO_EXCLUDE.  This is not what
+we want and I've been getting requests to fix this issue.
 
-Acked-by: Thomas Richter <tmricht@linux.ibm.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org
+This should be done in the hardware, but until we get the HW fix we may
+allow exclude_{kernel,user,hv} in the attribute and silently drop the
+samples in the PMU IRQ handler.  It won't guarantee the sampling
+frequency or even it'd miss some with fixed period too.  Not ideal,
+but that'd still be helpful to regular users.
+
+To minimize the confusion, let's add 'swfilt' bit to attr.config2 which
+is exposed in the sysfs format directory so that users can figure out
+if the kernel support the privilege filters by software.
+
+  $ perf record -e ibs_op/swfilt=1/u true
+
+This uses perf_exclude_event() which checks regs->cs.  But it should be
+fine because set_linear_ip() also updates the CS according to the RIP
+provided by IBS.
+
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Ananth Narayan <ananth.narayan@amd.com>
+Cc: Sandipan Das <sandipan.das@amd.com>
+Cc: Stephane Eranian <eranian@google.com>
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_sf.c | 6 +++---
- include/linux/perf_event.h      | 6 ++++++
- kernel/events/core.c            | 3 +--
- 3 files changed, 10 insertions(+), 5 deletions(-)
+ arch/x86/events/amd/ibs.c | 59 +++++++++++++++++++++++++++------------
+ 1 file changed, 41 insertions(+), 18 deletions(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 5b765e3ccf0cadc8..d1398b23113b5b1a 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -996,7 +996,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
- 	cpuhw->flags &= ~PMU_F_ENABLED;
- }
+diff --git a/arch/x86/events/amd/ibs.c b/arch/x86/events/amd/ibs.c
+index e91970b01d6243e4..d89622880a9fbbb9 100644
+--- a/arch/x86/events/amd/ibs.c
++++ b/arch/x86/events/amd/ibs.c
+@@ -31,6 +31,8 @@ static u32 ibs_caps;
+ #define IBS_FETCH_CONFIG_MASK	(IBS_FETCH_RAND_EN | IBS_FETCH_MAX_CNT)
+ #define IBS_OP_CONFIG_MASK	IBS_OP_MAX_CNT
  
--/* perf_exclude_event() - Filter event
-+/* perf_event_exclude() - Filter event
-  * @event:	The perf event
-  * @regs:	pt_regs structure
-  * @sde_regs:	Sample-data-entry (sde) regs structure
-@@ -1005,7 +1005,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
-  *
-  * Return non-zero if the event shall be excluded.
-  */
--static int perf_exclude_event(struct perf_event *event, struct pt_regs *regs,
-+static int perf_event_exclude(struct perf_event *event, struct pt_regs *regs,
- 			      struct perf_sf_sde_regs *sde_regs)
- {
- 	if (event->attr.exclude_user && user_mode(regs))
-@@ -1088,7 +1088,7 @@ static int perf_push_sample(struct perf_event *event,
- 	data.tid_entry.pid = basic->hpp & LPP_PID_MASK;
++/* attr.config2 */
++#define IBS_SW_FILTER_MASK	1
  
- 	overflow = 0;
--	if (perf_exclude_event(event, &regs, sde_regs))
-+	if (perf_event_exclude(event, &regs, sde_regs))
- 		goto out;
- 	if (perf_event_overflow(event, &data, &regs)) {
- 		overflow = 1;
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index fb908843f209288d..68c5001ea3102581 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1648,6 +1648,8 @@ static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
- 	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
- }
+ /*
+  * IBS states:
+@@ -290,6 +292,16 @@ static int perf_ibs_init(struct perf_event *event)
+ 	if (has_branch_stack(event))
+ 		return -EOPNOTSUPP;
  
-+extern int perf_exclude_event(struct perf_event *event, struct pt_regs *regs);
++	/* handle exclude_{user,kernel} in the IRQ handler */
++	if (event->attr.exclude_host || event->attr.exclude_guest ||
++	    event->attr.exclude_idle)
++		return -EINVAL;
 +
- extern void perf_event_init(void);
- extern void perf_tp_event(u16 event_type, u64 count, void *record,
- 			  int entry_size, struct pt_regs *regs,
-@@ -1831,6 +1833,10 @@ static inline u64 perf_event_pause(struct perf_event *event, bool reset)
- {
- 	return 0;
- }
-+static inline int perf_exclude_event(struct perf_event *event, struct pt_regs *regs)
-+{
-+	return 0;
-+}
- #endif
++	if (!(event->attr.config2 & IBS_SW_FILTER_MASK) &&
++	    (event->attr.exclude_kernel || event->attr.exclude_user ||
++	     event->attr.exclude_hv))
++		return -EINVAL;
++
+ 	ret = validate_group(event);
+ 	if (ret)
+ 		return ret;
+@@ -550,24 +562,14 @@ static struct attribute *attrs_empty[] = {
+ 	NULL,
+ };
  
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index e3589c4287cb458c..6960c15f85b1a5ad 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -9989,8 +9989,7 @@ static void perf_swevent_event(struct perf_event *event, u64 nr,
- 	perf_swevent_overflow(event, 0, data, regs);
+-static struct attribute_group empty_format_group = {
+-	.name = "format",
+-	.attrs = attrs_empty,
+-};
+-
+ static struct attribute_group empty_caps_group = {
+ 	.name = "caps",
+ 	.attrs = attrs_empty,
+ };
+ 
+-static const struct attribute_group *empty_attr_groups[] = {
+-	&empty_format_group,
+-	&empty_caps_group,
+-	NULL,
+-};
+-
+ PMU_FORMAT_ATTR(rand_en,	"config:57");
+ PMU_FORMAT_ATTR(cnt_ctl,	"config:19");
++PMU_FORMAT_ATTR(swfilt,		"config2:0");
+ PMU_EVENT_ATTR_STRING(l3missonly, fetch_l3missonly, "config:59");
+ PMU_EVENT_ATTR_STRING(l3missonly, op_l3missonly, "config:16");
+ PMU_EVENT_ATTR_STRING(zen4_ibs_extensions, zen4_ibs_extensions, "1");
+@@ -578,8 +580,9 @@ zen4_ibs_extensions_is_visible(struct kobject *kobj, struct attribute *attr, int
+ 	return ibs_caps & IBS_CAPS_ZEN4 ? attr->mode : 0;
  }
  
--static int perf_exclude_event(struct perf_event *event,
--			      struct pt_regs *regs)
-+int perf_exclude_event(struct perf_event *event, struct pt_regs *regs)
- {
- 	if (event->hw.state & PERF_HES_STOPPED)
- 		return 1;
+-static struct attribute *rand_en_attrs[] = {
++static struct attribute *fetch_attrs[] = {
+ 	&format_attr_rand_en.attr,
++	&format_attr_swfilt.attr,
+ 	NULL,
+ };
+ 
+@@ -593,9 +596,9 @@ static struct attribute *zen4_ibs_extensions_attrs[] = {
+ 	NULL,
+ };
+ 
+-static struct attribute_group group_rand_en = {
++static struct attribute_group group_fetch_formats = {
+ 	.name = "format",
+-	.attrs = rand_en_attrs,
++	.attrs = fetch_attrs,
+ };
+ 
+ static struct attribute_group group_fetch_l3missonly = {
+@@ -611,7 +614,7 @@ static struct attribute_group group_zen4_ibs_extensions = {
+ };
+ 
+ static const struct attribute_group *fetch_attr_groups[] = {
+-	&group_rand_en,
++	&group_fetch_formats,
+ 	&empty_caps_group,
+ 	NULL,
+ };
+@@ -628,6 +631,11 @@ cnt_ctl_is_visible(struct kobject *kobj, struct attribute *attr, int i)
+ 	return ibs_caps & IBS_CAPS_OPCNT ? attr->mode : 0;
+ }
+ 
++static struct attribute *op_attrs[] = {
++	&format_attr_swfilt.attr,
++	NULL,
++};
++
+ static struct attribute *cnt_ctl_attrs[] = {
+ 	&format_attr_cnt_ctl.attr,
+ 	NULL,
+@@ -638,6 +646,11 @@ static struct attribute *op_l3missonly_attrs[] = {
+ 	NULL,
+ };
+ 
++static struct attribute_group group_op_formats = {
++	.name = "format",
++	.attrs = op_attrs,
++};
++
+ static struct attribute_group group_cnt_ctl = {
+ 	.name = "format",
+ 	.attrs = cnt_ctl_attrs,
+@@ -650,6 +663,12 @@ static struct attribute_group group_op_l3missonly = {
+ 	.is_visible = zen4_ibs_extensions_is_visible,
+ };
+ 
++static const struct attribute_group *op_attr_groups[] = {
++	&group_op_formats,
++	&empty_caps_group,
++	NULL,
++};
++
+ static const struct attribute_group *op_attr_update[] = {
+ 	&group_cnt_ctl,
+ 	&group_op_l3missonly,
+@@ -667,7 +686,6 @@ static struct perf_ibs perf_ibs_fetch = {
+ 		.start		= perf_ibs_start,
+ 		.stop		= perf_ibs_stop,
+ 		.read		= perf_ibs_read,
+-		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	},
+ 	.msr			= MSR_AMD64_IBSFETCHCTL,
+ 	.config_mask		= IBS_FETCH_CONFIG_MASK,
+@@ -691,7 +709,6 @@ static struct perf_ibs perf_ibs_op = {
+ 		.start		= perf_ibs_start,
+ 		.stop		= perf_ibs_stop,
+ 		.read		= perf_ibs_read,
+-		.capabilities	= PERF_PMU_CAP_NO_EXCLUDE,
+ 	},
+ 	.msr			= MSR_AMD64_IBSOPCTL,
+ 	.config_mask		= IBS_OP_CONFIG_MASK,
+@@ -1111,6 +1128,12 @@ static int perf_ibs_handle_irq(struct perf_ibs *perf_ibs, struct pt_regs *iregs)
+ 		regs.flags |= PERF_EFLAGS_EXACT;
+ 	}
+ 
++	if ((event->attr.config2 & IBS_SW_FILTER_MASK) &&
++	    perf_exclude_event(event, &regs)) {
++		throttle = perf_event_account_interrupt(event);
++		goto out;
++	}
++
+ 	if (event->attr.sample_type & PERF_SAMPLE_RAW) {
+ 		raw = (struct perf_raw_record){
+ 			.frag = {
+@@ -1228,7 +1251,7 @@ static __init int perf_ibs_op_init(void)
+ 	if (ibs_caps & IBS_CAPS_ZEN4)
+ 		perf_ibs_op.config_mask |= IBS_OP_L3MISSONLY;
+ 
+-	perf_ibs_op.pmu.attr_groups = empty_attr_groups;
++	perf_ibs_op.pmu.attr_groups = op_attr_groups;
+ 	perf_ibs_op.pmu.attr_update = op_attr_update;
+ 
+ 	return perf_ibs_pmu_init(&perf_ibs_op, "ibs_op");
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
