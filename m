@@ -1,279 +1,218 @@
-Return-Path: <linux-kernel+bounces-383921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEDD09B21F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:23:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07AD89B21F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1755AB21015
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:23:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC4E28141B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:24:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FF8517C22A;
-	Mon, 28 Oct 2024 01:23:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1292155312;
+	Mon, 28 Oct 2024 01:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCH6GoaG"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYttEtIA"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D0F515B54C;
-	Mon, 28 Oct 2024 01:23:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B6144D1A;
+	Mon, 28 Oct 2024 01:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730078597; cv=none; b=IEtuZxsLtTSuQEaAFv3xAR35h0RtOrzVqC/pFtoT2sFAsCPKA2y5U3iWpIwXKT9XYTKg4Sd+5jkImFcP22kkRY1weSEuCCjX2P4166+CEzeGZUzJOyuASv9h+OiL856WVLCI10Mhr+ij1JK9HUh6+KUKTItcW72reHKe66Yjmf0=
+	t=1730078611; cv=none; b=raSFqW+EvlFx+eGMm74e78bz2wH17khRI5+/lvQ75PFDZpf7uKiYOw3sMFDeVWHsUMFbnFiybxnr27fE0rmcAhTjPUC8vEh4MM8tBDn40njxePGm7LHg0EUCLhegqNiR6UqeJCkVc6EcpnaJuJPPy91w/W6m+K4bRV/A5mdSae0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730078597; c=relaxed/simple;
-	bh=X3EuTQofuz1Kxnka9/FKpWrAjVj8yOB+qFkui64TXOU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DtwoUeB2wno3ZLwHkx6embvZL3fKTYx8FB6gjBqhT1IjcyGRogHnO6RtBdDgPSJp2+aW+9pRknBezcDshciioQ2KCeWtgABt5Imr7lpQzxRCvuV4MzLOLBTMzVCnxOoXfS4YGgZIQUUBzJOJBZ8iFUC0mzsthTVl4/v4eG0hL64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCH6GoaG; arc=none smtp.client-ip=209.85.210.180
+	s=arc-20240116; t=1730078611; c=relaxed/simple;
+	bh=HJi+BJjn7Ve/jnnDiDUG9g7kNP0SYinfTEVPempkbqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tyG7AB1wxHqhiAy5qjDBrCOzful56x5vnsNCEWoA1o1v2LV7ARcvH6F3S4nsRUUp9Q4T5wD06SLVqRwAUp/aormlAD/4iXD19sHh6DwED9BgTbbCMeCZyKZ5ENfNCcmYbLy4iJyshO0mXAIukuZUsmwYnwta6dRwLaX2+4oQdng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYttEtIA; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7204dff188eso2289644b3a.1;
-        Sun, 27 Oct 2024 18:23:14 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c805a0753so35354955ad.0;
+        Sun, 27 Oct 2024 18:23:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730078594; x=1730683394; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6pfcoM/US+S0lxcgB18NajQIE9x2OryfsBIrSKD3lDA=;
-        b=fCH6GoaG7WBFo7GlSKehAB47RShPv4uuX3kJ2+Dvf/7MUdzt9A5BLnTfH7DB5eURL4
-         6GvEyKQWHpuUo1AePVFDtoIhdE0B3tRMea5Iy7YiIY8V1dj99/QTBNHS8KrQjNAqDwp7
-         h6ZnB+87Bj84jlayUq0YdeCvCE02YWt8fs1WWDMFimQqzBqN14DCjEP6j+SNBhr9Pyih
-         OCyatrnDm+IU/Hfok8tn+NzRc/EQqpDS/NOvq9wAkUvcJa3ev0kPOkVfx1/m5diiUIy+
-         mKa/k3btbf7YiDmifxlb4uplk/rjy6VrAdSuNSGOtDdYFyrjICqPG8ao/JzdoDKFvcwa
-         n/uA==
+        d=gmail.com; s=20230601; t=1730078609; x=1730683409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=N5mbMT7c/xF5gJ/9esVEkt4fmWDi68Ivvmcpowxh1iI=;
+        b=VYttEtIAeH08E8mqUcUCAAaLmrCT7/0et5II4T8qVV5kms8aIdvSMF+GislWo244W9
+         5VSel8S8EiLxTRkkhkcOJLWoWe+gfeBcdZPoR58V3cN9CWXPQA6GkMm0Nbze7ZrWlqsJ
+         nU9VTpLhy+Pg3zJzvd4yvKGWDultjdiOc/Wtq2GlwoJX2UNwZrTozXqwiWweLovIMEo7
+         iUQW4QIYBTaKax8JwaN3fMkquktuvieEFKSh5OPBB7/NJ4/znUGpwvexDiQEHDqaSuPM
+         2F15/6R59747/SkWYYcpxO0KXG5JF9+JRbUuYe4RxnRd/Hu97Z9qSmZgn42BiH5hMg1p
+         K7ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730078594; x=1730683394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6pfcoM/US+S0lxcgB18NajQIE9x2OryfsBIrSKD3lDA=;
-        b=VW+H7w+/N6M7oNFjsTdmfrgaWLcfB9nFld/556gMkbVAAvnDfCx5rFNb0pd0R6BNIG
-         LMJubQMr0QXkJPMVZ6S08+bCUL+2j0EC8xlGyaNlhHxRlqtvFTEKrUO1rYbVO0F+mLmn
-         uIAYKv1RqtGOHp5BItx8j2pOLEIlGIyPlwqJVnmeNEtls3XUzlWdv0t6tSbSlq+x0Oql
-         mT2MqlOJGjZHiURJnEuijUZEvjhhicXydwzbi7lzHfv61Z+NH06XlsAwiz9VUJ0pOXce
-         DpZgBhgUI+NrlT/Uws5fXR+m4S8ix2tgrksTQIYNmf9CCq3PiX3v4BkXdYdZ55d3E3k7
-         BkYw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0347voD8Cb/1n3AAFiTbinTPKGcPg+j523q2daJmNHcqDqEJ2I4uoWvFNZRJbhA30i0s=@vger.kernel.org, AJvYcCWzcxLMd8sRgZXHBRMZ1CNYHk94Kuwzrl7/qv7+WF+Yq3JeZl0htcXuxfikTo4wskOCxMypCA+9/v7VDCKS@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfihF/x0EVyl4XX7MPKWQ9+fYuTSSgzCzRt/KHUQzAF1Ty5gy9
-	B5FygebLobLUBxjBXXVanLfYKivfmGNnW1IV2g41sy90GkATNPxS67y8DUWRgD+kPdeftKIY1R7
-	z4XQ6Las4ppOCE7C49ObuCw75Et4=
-X-Google-Smtp-Source: AGHT+IFmI51q+curoO9sESfuD3FdMG3xomI5/3q6ImU1u6/guUyld/KIFlV2AL53Wp7FaLlGWGQXlV0FCVTTqbJzZP8=
-X-Received: by 2002:a05:6a21:6816:b0:1d9:911:af03 with SMTP id
- adf61e73a8af0-1d9a85600femr8290690637.49.1730078594385; Sun, 27 Oct 2024
- 18:23:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730078609; x=1730683409;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=N5mbMT7c/xF5gJ/9esVEkt4fmWDi68Ivvmcpowxh1iI=;
+        b=fYpFQf4wFEly/4FVf9oGwD3nP/jqS3UjebZTmyBp3WKvEpEznr4g76jpMrsB55GMax
+         efWKHG8/alITVcftDKcBUImRO7HWOSL+DH9zaNr75ceuppl+3ZlP8JrceMu35J92tUav
+         3EE7FponHPA8O0fPs5B1pbPsfYp1Lipe2dtAcxhpaI3qdUM8ma8x3v/tkG6ArW/jNtpq
+         N9wqlgLYWG6Duo7MMUflGXjxO2hCL33z1nJi5FcF44OGsR4iJRVhyJhEuxAjtn0/STk0
+         iU7sClI/uia6ACw3rRHPsqcstYv7c/H/cHgKcuUHGk9cm5bjhwHttl/fNn9vk/zj5TaS
+         3bIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKBed22hXBitsGYF76hToatKNRokge8OuMs+A0UTn8o/hMuc6ueIgP3s6TN8wHRArpQwsRJQDzi6jnEKs=@vger.kernel.org, AJvYcCVqVtUoR9uOLBN0U/5y4C+u40nqWT0+HCyXEe9UK6rK8gDwCjkrpGboS1Z/DJaRv2QMVtdLAbaWVn5D@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBlp8C0zR1mVdJoXZWcqAh+8PadeJZBIq9EH19dRXiVoaOy5oo
+	IDu7PgV/jkO0l942D/A7qf3NsCQ+Ho2FjeU7+TCLY3RKAbPKqmib
+X-Google-Smtp-Source: AGHT+IGPTqON5yczkQQZ40CfVtwv0LqbTvJQFsIl8Iev1gtt606RwXiUBJItJfMCD5Qy+h9NFZ7Ayg==
+X-Received: by 2002:a17:902:d50c:b0:20c:9eb3:c1ff with SMTP id d9443c01a7336-210c6cc5afbmr97513125ad.59.1730078608609;
+        Sun, 27 Oct 2024 18:23:28 -0700 (PDT)
+Received: from [172.19.1.43] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc04b201sm40225325ad.272.2024.10.27.18.23.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 18:23:28 -0700 (PDT)
+Message-ID: <e018fd4a-2af0-4062-8128-e2465dba8728@gmail.com>
+Date: Mon, 28 Oct 2024 09:23:24 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
- <20241026154629.593041-2-mathieu.desnoyers@efficios.com> <20241026200840.17171eb2@rorschach.local.home>
- <20241027231930.941d6c1f21e2b4668af44df8@kernel.org>
-In-Reply-To: <20241027231930.941d6c1f21e2b4668af44df8@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Sun, 27 Oct 2024 18:23:02 -0700
-Message-ID: <CAEf4BzbeE6n7E6K8_dhZ26ZHoVsz8V9mUSxm3CYzz2npmdpbiQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 2/3] tracing: Introduce tracepoint_is_syscall()
-To: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	linux-kernel@vger.kernel.org, Michael Jeanson <mjeanson@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, 
-	"Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	Jordan Rife <jrife@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Sun, Oct 27, 2024 at 7:19=E2=80=AFAM Masami Hiramatsu <mhiramat@kernel.o=
-rg> wrote:
->
-> On Sat, 26 Oct 2024 20:08:40 -0400
-> Steven Rostedt <rostedt@goodmis.org> wrote:
->
-> > On Sat, 26 Oct 2024 11:46:28 -0400
-> > Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> >
-> > > Introduce a "syscall" flag within the extended structure to know whet=
-her
-> > > a tracepoint needs rcu tasks trace grace period before reclaim.
-> > > This can be queried using tracepoint_is_syscall().
-> > >
-> > > Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > > Cc: Michael Jeanson <mjeanson@efficios.com>
-> > > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > > Cc: Peter Zijlstra <peterz@infradead.org>
-> > > Cc: Alexei Starovoitov <ast@kernel.org>
-> > > Cc: Yonghong Song <yhs@fb.com>
-> > > Cc: Paul E. McKenney <paulmck@kernel.org>
-> > > Cc: Ingo Molnar <mingo@redhat.com>
-> > > Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> > > Cc: Mark Rutland <mark.rutland@arm.com>
-> > > Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> > > Cc: bpf@vger.kernel.org
-> > > Cc: Joel Fernandes <joel@joelfernandes.org>
-> > > Cc: Jordan Rife <jrife@google.com>
-> > > ---
-> > >  include/linux/tracepoint-defs.h |  2 ++
-> > >  include/linux/tracepoint.h      | 24 ++++++++++++++++++++++++
-> > >  include/trace/define_trace.h    |  2 +-
-> > >  3 files changed, 27 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoi=
-nt-defs.h
-> > > index 967c08d9da84..53119e074c87 100644
-> > > --- a/include/linux/tracepoint-defs.h
-> > > +++ b/include/linux/tracepoint-defs.h
-> > > @@ -32,6 +32,8 @@ struct tracepoint_func {
-> > >  struct tracepoint_ext {
-> > >     int (*regfunc)(void);
-> > >     void (*unregfunc)(void);
-> > > +   /* Flags. */
-> > > +   unsigned int syscall:1;
-> >
-> > I wonder if we should call it "sleepable" instead? For this patch set
-> > do we really care if it's a system call or not? It's really if the
-> > tracepoint is sleepable or not that's the issue. System calls are just
-> > one user of it, there may be more in the future, and the changes to BPF
-> > will still be needed.
->
-> I agree with this. Even if currently we restrict only syscall events
-> can be sleep, "tracepoint_is_syscall()" requires to add comment to
-> explain why on all call sites e.g.
->
-
-+1 to naming this "sleepable" (or at least "faultable"). BPF world
-uses "sleepable BPF" terminology for BPF programs and attachment hooks
-that can take page fault (and wait/sleep waiting for those to be
-handled), so this would be consistent with that. Also, from BPF
-standpoint this will be advertised as attaching to sleepable
-tracepoints regardless, so "syscall" terminology is too specific and
-misleading, because while current set of tracepoints are
-syscall-specific, the important part is taking page fault, no tracing
-syscalls.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ mjchen@nuvoton.com, peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de,
+ conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
+ dmitry.torokhov@gmail.com
+References: <20241022063158.5910-1-mjchen0829@gmail.com>
+ <20241022063158.5910-2-mjchen0829@gmail.com>
+ <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
+ <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
+ <ef407e89-950f-4874-9dca-474d107f6a52@kernel.org>
+Content-Language: en-US
+From: Ming-Jen Chen <mjchen0829@gmail.com>
+In-Reply-To: <ef407e89-950f-4874-9dca-474d107f6a52@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
->  /*
->   * The syscall event is only sleepable event, so we ensure it is
->   * syscall event for checking sleepable or not.
->   */
+On 2024/10/25 下午 07:42, Krzysztof Kozlowski wrote:
+> On 25/10/2024 07:36, Ming-Jen Chen wrote:
+>>>> +      0  = 0 clock
+>>>> +      1  = 0 clock
+>>>> +      2  = 0 clock
+>>> Heh? So this is just 0
+>>>
+>>>> +      3  = 8 clocks
+>>> This is 8
+>>>
+>>>> +      4  = 16 clocks
+>>> 16, not 4
+>>>
+>>>> +      5  = 32 clocks
+>>>> +      6  = 64 clocks
+>>>> +      7  = 128 clocks
+>>>> +      8  = 256 clocks
+>>>> +      9  = 512 clocks
+>>>> +      10 = 1024 clocks
+>>>> +      11 = 2048 clocks
+>>>> +      12 = 4096 clocks
+>>>> +      13 = 8192 clocks
+>>> Use proper enum
+>> I will update the definition to specify the debounce period in terms of
+>> keypad IP clock cycles, as follow:
+>>
+>> nuvoton,debounce-period:
+>>       type: integer
+>>       enum: [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+>>       description: |
+>>           Key debounce period select, specified in terms of keypad IP
+>> clock cycles.
+>>           This value corresponds to the register setting for the keypad
+>> interface.
+>>           The following values indicate the debounce time:
+>>           - 0 = 0 clock cycles (no debounce)
+>>           - 3 = 8 clock cycles
+>>           - 4 = 16 clock cycles
+>>           - 5 = 32 clock cycles
+>>           - 6 = 64 clock cycles
+>>           - 7 = 128 clock cycles
+>>           - 8 = 256 clock cycles
+>>           - 9 = 512 clock cycles
+>>           - 10 = 1024 clock cycles
+>>           - 11 = 2048 clock cycles
+>>           - 12 = 4096 clock cycles
+>>           - 13 = 8192 clock cycles
+> No. 0, 8, 16, 32 , 64 etc.
+
+I will change it to the following content:
+
+nuvoton,debounce-period:
+   type:  integer
+   enum:  [0,8,16,32,64,128,256,512,1024,2048,4096,8192]
+   description:  | Key debounce period select, specified in terms of keypad IP clock 
+cycles. Valid values include 0 (no debounce) and specific clock cycle 
+values: 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, and 8192.
+
+>>>
+>>>> +
+>>>> +  per-scale:
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
+>>> Missing constraints
+>>>
+>>>> +
+>>>> +  per-scalediv:
+>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>>>> +    description: Per-scale divider (1 to 256).
+>>> Missing constraints
+>>>
+>>> Both properties are unexpected... aren't you duplicating existing
+>>> properties?
+>> pre-scale:
+>> This value configures the IC register for the row scan cycle
+>> pre-scaling, with valid values ranging from 1 to 256
+>> per-scalediv:(I will change pre-scalediv to pre-scale-div)
+> Please look for matching existing properties first.
+
+I will change it to the following content:
+
+nuvoton,scan-time:
+   type:  uint32
+   description:  | Set the scan time for each key, in IP clock cycles. The valid range is 
+from 1 to 256.    minimum:  1
+   maximum:  256
+
+nuvoton,scan-time-div:
+   type:  uint32
+   description:  | Divider for the scan-time, further adjusting the scan frequency for 
+the keypad. The valid range is from 1 to 256.    minimum:  1
+   maximum:  256
+
+>> This will describe its role in setting the divisor for the row scan
+>> cycle pre-scaling, allowing for finer control over the keypad scanning
+>> frequency
+>>
+>> I will change it to the following content:
+>> nuvoton,pre-scale:
+>>       type: uint32
+>>       description: |
+>>           Row Scan Cycle Pre-scale Value, used to pre-scale the row scan
+>> cycle. The valid range is from 1 to 256.
+>>       minimum: 1
+>>       maximum: 256
+>>
+>> nuvoton,pre-scale-div:
+>>       type: uint32
+>>       description: |
+>>           Divider for the pre-scale value, further adjusting the scan
+>> frequency for the keypad.
+>>       minimum: 1
+>>       maximum: 256
 >
-> If it called tracepoint_is_sleepable(), we don't need such comment.
->
-> Thank you,
->
-> >
-> > Other than that, I think this could work.
-> >
-> > -- Steve
-> >
-> >
-> > >  };
-> > >
-> > >  struct tracepoint {
-> > > diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> > > index 83dc24ee8b13..93e70bc64533 100644
-> > > --- a/include/linux/tracepoint.h
-> > > +++ b/include/linux/tracepoint.h
-> > > @@ -104,6 +104,12 @@ void for_each_tracepoint_in_module(struct module=
- *mod,
-> > >   * tracepoint_synchronize_unregister must be called between the last=
- tracepoint
-> > >   * probe unregistration and the end of module exit to make sure ther=
-e is no
-> > >   * caller executing a probe when it is freed.
-> > > + *
-> > > + * An alternative is to use the following for batch reclaim associat=
-ed
-> > > + * with a given tracepoint:
-> > > + *
-> > > + * - tracepoint_is_syscall() =3D=3D false: call_rcu()
-> > > + * - tracepoint_is_syscall() =3D=3D true:  call_rcu_tasks_trace()
-> > >   */
-> > >  #ifdef CONFIG_TRACEPOINTS
-> > >  static inline void tracepoint_synchronize_unregister(void)
-> > > @@ -111,9 +117,17 @@ static inline void tracepoint_synchronize_unregi=
-ster(void)
-> > >     synchronize_rcu_tasks_trace();
-> > >     synchronize_rcu();
-> > >  }
-> > > +static inline bool tracepoint_is_syscall(struct tracepoint *tp)
-> > > +{
-> > > +   return tp->ext && tp->ext->syscall;
-> > > +}
-> > >  #else
-> > >  static inline void tracepoint_synchronize_unregister(void)
-> > >  { }
-> > > +static inline bool tracepoint_is_syscall(struct tracepoint *tp)
-> > > +{
-> > > +   return false;
-> > > +}
-> > >  #endif
-> > >
-> > >  #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
-> > > @@ -345,6 +359,15 @@ static inline struct tracepoint *tracepoint_ptr_=
-deref(tracepoint_ptr_t *p)
-> > >     struct tracepoint_ext __tracepoint_ext_##_name =3D {             =
- \
-> > >             .regfunc =3D _reg,                                       =
- \
-> > >             .unregfunc =3D _unreg,                                   =
- \
-> > > +           .syscall =3D false,                                      =
- \
-> > > +   };                                                              \
-> > > +   __DEFINE_TRACE_EXT(_name, &__tracepoint_ext_##_name, PARAMS(_prot=
-o), PARAMS(_args));
-> > > +
-> > > +#define DEFINE_TRACE_SYSCALL(_name, _reg, _unreg, _proto, _args)   \
-> > > +   struct tracepoint_ext __tracepoint_ext_##_name =3D {             =
- \
-> > > +           .regfunc =3D _reg,                                       =
- \
-> > > +           .unregfunc =3D _unreg,                                   =
- \
-> > > +           .syscall =3D true,                                       =
- \
-> > >     };                                                              \
-> > >     __DEFINE_TRACE_EXT(_name, &__tracepoint_ext_##_name, PARAMS(_prot=
-o), PARAMS(_args));
-> > >
-> > > @@ -389,6 +412,7 @@ static inline struct tracepoint *tracepoint_ptr_d=
-eref(tracepoint_ptr_t *p)
-> > >  #define __DECLARE_TRACE_SYSCALL    __DECLARE_TRACE
-> > >
-> > >  #define DEFINE_TRACE_FN(name, reg, unreg, proto, args)
-> > > +#define DEFINE_TRACE_SYSCALL(name, reg, unreg, proto, args)
-> > >  #define DEFINE_TRACE(name, proto, args)
-> > >  #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)
-> > >  #define EXPORT_TRACEPOINT_SYMBOL(name)
-> > > diff --git a/include/trace/define_trace.h b/include/trace/define_trac=
-e.h
-> > > index ff5fa17a6259..63fea2218afa 100644
-> > > --- a/include/trace/define_trace.h
-> > > +++ b/include/trace/define_trace.h
-> > > @@ -48,7 +48,7 @@
-> > >
-> > >  #undef TRACE_EVENT_SYSCALL
-> > >  #define TRACE_EVENT_SYSCALL(name, proto, args, struct, assign, print=
-, reg, unreg) \
-> > > -   DEFINE_TRACE_FN(name, reg, unreg, PARAMS(proto), PARAMS(args))
-> > > +   DEFINE_TRACE_SYSCALL(name, reg, unreg, PARAMS(proto), PARAMS(args=
-))
-> > >
-> > >  #undef TRACE_EVENT_NOP
-> > >  #define TRACE_EVENT_NOP(name, proto, args, struct, assign, print)
-> >
->
->
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Best regards,
+> Krzysztof
+
+Best regards,
+
+Ming-Jen Chen
+
 
