@@ -1,231 +1,161 @@
-Return-Path: <linux-kernel+bounces-385129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5249B32DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:11:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 160489B32DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 539B31F227C9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:11:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C66B5282FEB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:12:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456001DDA39;
-	Mon, 28 Oct 2024 14:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F25C91DE2B2;
+	Mon, 28 Oct 2024 14:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hTY/NJej"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="goLHCIdE"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620D71DD547;
-	Mon, 28 Oct 2024 14:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0B51DD547;
+	Mon, 28 Oct 2024 14:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124546; cv=none; b=DzTAoYYG0Q0QyrdZWxJu8JqWqfMROUdi8GGA392ATJHJ45dtL5SJYOm6OWDTmpi8NpDuoUY9Cyn1OAnsX/YfM4jZlYyXY3g7K4QxWx16OCDRDYY9BJQR7Zzm4SlYNxA4iHZHkwPoS6aRPoEHlydJEbhuxbTMBL8FZW6J+vi5SGQ=
+	t=1730124564; cv=none; b=fbC4/NO7UnrGw349eM1hDaLM2JUopRe2xRHuj9/z0hhNTV26GxuWY+xhkX3UJtACj1p0J23nuwNi9H/oPOcSuzO6D9+l72jgBWx8qmmIu4wM2wWgQBHNUS2AzzWNDdYwfCVQ8AnUCKD405tB3s5DJ64HrUx3+me/gYoRaN++rTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124546; c=relaxed/simple;
-	bh=oKhIZPEnSEfcEKdXa3+2tY+wLlmSTAmm3LOY8kq93dQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=eV+Jz0LLF8O65HfYvNF+ZA6KMfgXlNatQg6EiHMl4pjIheini8rQFUy2DHPqML7qykMq+ToTvOymgFQfZCYLUh9L01rnYrIhXHT/Vc5i3Ty2w3/7fXwI2TsoAmzSMtqsdnox0XCFwL77VRAI6X3Z/R6kd2SF4ks3sc1i0CRryP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hTY/NJej; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SAj2Uf022992;
-	Mon, 28 Oct 2024 14:08:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=02KEb+GZb3EqyEdbi0ZKCQ
-	J9sjYgLaBg4YbjIePF+Dk=; b=hTY/NJej0mzt75cQm5YqobRBZBFxY4ihZTEpgd
-	FQ1ylOwveK5WxlXNKr7WbLPJ1HZffOS30CG0HFeiSDMG6t3M5b5LTj/IZS3wCGaH
-	VSPR5XxgNezusB85raVvfZ0Xnc3lIfKtYVTFF3PzqI+/sisHuyzgERYivKpYUIjS
-	egagvo6jSGMpJQex1Kj+//ZZ4m19k7wecfNMG37TpK+NDP2hfx6Ma1qLC5FxzMhp
-	wP7MXAeMdCGgxb3J20ZUpNhMtgnJiSVNecuTbkdT+bVd8ALIeqXIUITR/s4wh9+T
-	eHwoorMwY8GJ898cX1pwofBL8NuAwgSS/8fwXDDLpggdE6xw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6w5mc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 14:08:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SE8pCI001886
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 14:08:51 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 07:08:50 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 28 Oct 2024 07:08:40 -0700
-Subject: [PATCH] wifi: ath12k: mark QMI driver event helpers as noinline
+	s=arc-20240116; t=1730124564; c=relaxed/simple;
+	bh=vqoGhruWTddXwQFCpV5QRmAXabpqZ3gPLxSq+7FzWno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJBmeidQTV+6Ka9TxpBBJuY/G4QrJ1h52CbLEAuWDg8vgHmZdk/ArVUzvJyCgEWv6I19XEOUtSWdoDtUjALHxzOaBIY+g9X8aijV0WycjJ52sYbg/IMQwAnPHxaEQTrCyOBuajV76FCcd3Ef1MBRSYCWKtdQf+6kKTOFy8Vko6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=goLHCIdE; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 32267641;
+	Mon, 28 Oct 2024 15:09:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730124558;
+	bh=vqoGhruWTddXwQFCpV5QRmAXabpqZ3gPLxSq+7FzWno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=goLHCIdEdCsBdmeSZl7qwr/YqJu/7JtfBcobv/GiIqDsGCbrAwhLBPHyz8QybfMl/
+	 C7bNNHkd0nOoETAJWTWcplKOQg0DuFFAYViFJHzui38tGrPUj+fiuzj5N+uwfPwLti
+	 hRWefLjrLIRrp10ala3tn8FurjJwA7B2NqUnfTLU=
+Date: Mon, 28 Oct 2024 16:09:13 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Herve Codina <herve.codina@bootlin.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+Message-ID: <20241028140913.GG6081@pendragon.ideasonboard.com>
+References: <20241024095539.1637280-1-herve.codina@bootlin.com>
+ <20241024095539.1637280-3-herve.codina@bootlin.com>
+ <20241027162350.GA15853@pendragon.ideasonboard.com>
+ <20241028091331.6f67e29e@bootlin.com>
+ <20241028112857.GF24052@pendragon.ideasonboard.com>
+ <20241028-nebulous-yellow-dragon-2cfb5f@houat>
+ <20241028132858.GE6081@pendragon.ideasonboard.com>
+ <20241028-great-charming-flounder-23fc9b@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241028-ath12k_qmi_driver_event_work-v1-1-0d532eb593fa@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAOeaH2cC/42O0Q6CIBiFX8VxHU2Q1LrqPZpjCH/xzwkJRjXnu
- 4c+QZffds53zkIiBIRILsVCAiSM6F0GdiiItso9gKLJTHjJBSv5iarZMj7IaURpAiYIEhK4Wb5
- 9GCioc1NWWghlGpIVzwB3/Oz6W5e5VxFoH5TTdpNmFx0Vui1qMc4+fPcjiW2FPzcTo4y2fV3xl
- rO2NuI6vVCj00ftR9Kt6/oDzFJSGeUAAAA=
-To: <ath12k-devel-internal@qti.qualcomm.com>, Kalle Valo <kvalo@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, Arnd Bergmann <arnd@kernel.org>
-CC: <linux-wireless@vger.kernel.org>, <ath12k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
-        Jeff Johnson
-	<quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: lCpZeS_j_RfWys6-w64f4zA4uqEA4Ei4
-X-Proofpoint-GUID: lCpZeS_j_RfWys6-w64f4zA4uqEA4Ei4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- adultscore=0 clxscore=1011 impostorscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280113
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241028-great-charming-flounder-23fc9b@houat>
 
-As described in [1], compiling the ath12k driver using clang with
-KASAN enabled warns about some functions with excessive stack usage,
-with the worst case being:
+On Mon, Oct 28, 2024 at 02:55:47PM +0100, Maxime Ripard wrote:
+> On Mon, Oct 28, 2024 at 03:28:58PM +0200, Laurent Pinchart wrote:
+> > On Mon, Oct 28, 2024 at 01:21:45PM +0100, Maxime Ripard wrote:
+> > > On Mon, Oct 28, 2024 at 01:28:57PM +0200, Laurent Pinchart wrote:
+> > > > On Mon, Oct 28, 2024 at 09:13:31AM +0100, Herve Codina wrote:
+> > > > > On Sun, 27 Oct 2024 18:23:50 +0200 Laurent Pinchart wrote:
+> > > > > 
+> > > > > [...]
+> > > > > > > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
+> > > > > > > +{
+> > > > > > > +	struct drm_device *dev = sn65dsi83->bridge.dev;
+> > > > > > > +	struct drm_modeset_acquire_ctx ctx;
+> > > > > > > +	struct drm_atomic_state *state;
+> > > > > > > +	int err;
+> > > > > > > +
+> > > > > > > +	/* Use operation done in drm_atomic_helper_suspend() followed by
+> > > > > > > +	 * operation done in drm_atomic_helper_resume() but without releasing
+> > > > > > > +	 * the lock between suspend()/resume()
+> > > > > > > +	 */
+> > > > > > > +
+> > > > > > > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
+> > > > > > > +
+> > > > > > > +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
+> > > > > > > +	if (IS_ERR(state)) {
+> > > > > > > +		err = PTR_ERR(state);
+> > > > > > > +		goto unlock;
+> > > > > > > +	}
+> > > > > > > +
+> > > > > > > +	err = drm_atomic_helper_disable_all(dev, &ctx);
+> > > > > > > +	if (err < 0)
+> > > > > > > +		goto unlock;
+> > > > > > > +
+> > > > > > > +	drm_mode_config_reset(dev);
+> > > > > > > +
+> > > > > > > +	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);  
+> > > > > > 
+> > > > > > Committing a full atomic state from a bridge driver in an asynchronous
+> > > > > > way seems quite uncharted territory, and it worries me. It's also a very
+> > > > > > heavyweight, you disable all outputs here, instead of focussing on the
+> > > > > > output connected to the bridge. Can you either implement something more
+> > > > > > local, resetting the bridge only, or create a core helper to handle this
+> > > > > > kind of situation, on a per-output basis ?
+> > > > > 
+> > > > > A full restart of the bridge (power off/on) is needed and so we need to
+> > > > > redo the initialization sequence. This initialization sequence has to be
+> > > > > done with the DSI data lanes (bridge inputs) driven in LP11 state and so
+> > > > > without any video stream. Only focussing on bridge outputs will not be
+> > > > > sufficient. That's why I brought the pipeline down and restarted it.
+> > > > 
+> > > > Fair point.
+> > > > 
+> > > > > Of course, I can copy/paste sn65dsi83_reset_pipeline() to a core helper
+> > > > > function. Is drm_atomic_helper_reset_all() could be a good candidate?
+> > > > 
+> > > > The helper should operate on a single output, unrelated outputs should
+> > > > not be affected.
+> > > 
+> > > Also, you don't want to reset anything, you just want the last commit to
+> > > be replayed.
+> > 
+> > I'm not sure about that. If the last commit is just a page flip, that
+> > won't help, will it ?
+> 
+> The alternative would be that you start anew with a blank state, which
+> effectively drops every configuration that has been done by userspace.
+> This is terrible.
+> 
+> And a page flip wouldn't have affected the connector and
+> connector->state would still be to the last state that affected it, so
+> it would work.
 
-drivers/net/wireless/ath/ath12k/qmi.c:3546:13: warning: stack frame size (2456) exceeds limit (1024) in 'ath12k_qmi_driver_event_work' [-Wframe-larger-than]
+Ah right, you didn't mean replaying the last commit then, but first
+disabling the output and then restoring the current state ? That should
+work.
 
-Nathan [2] highlighted work done by Arnd [3] to address similar
-issues in other portions of the kernel.
+-- 
+Regards,
 
-ath12k_qmi_driver_event_work() itself is a pretty lightweight
-function, but it dispatches to several other functions which do the
-real work:
-ath12k_qmi_driver_event_work()
-	ath12k_qmi_event_server_arrive()
-		ath12k_qmi_host_cap_send()
-	ath12k_qmi_event_mem_request()
-		ath12k_qmi_respond_fw_mem_request()
-	ath12k_qmi_event_load_bdf()
-		ath12k_qmi_request_target_cap()
-		ath12k_qmi_load_bdf_qmi()
-		ath12k_qmi_wlanfw_m3_info_send()
-
-Mark all of those underlying functions as 'noinline_for_stack' to
-prevent them from being inlined in ath12k_qmi_driver_event_work(),
-thereby eliminating the excessive stack usage.
-
-Link: https://msgid.link/bc214795-1c51-4cb7-922f-67d6ef98bff2@quicinc.com # [1]
-Link: https://msgid.link/20241025223321.GA3647469@thelio-3990X # [2]
-Link: https://lore.kernel.org/all/?q=f:arnd@kernel.org+Wframe-larger-than # [3]
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/qmi.c | 34 +++++++++++++++++++++++++---------
- 1 file changed, 25 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/qmi.c b/drivers/net/wireless/ath/ath12k/qmi.c
-index b93ce9f87f61..d2d9d03c7a28 100644
---- a/drivers/net/wireless/ath/ath12k/qmi.c
-+++ b/drivers/net/wireless/ath/ath12k/qmi.c
-@@ -2066,7 +2066,9 @@ static void ath12k_host_cap_parse_mlo(struct ath12k_base *ab,
- 	req->mlo_chip_info_valid = 1;
- }
- 
--static int ath12k_qmi_host_cap_send(struct ath12k_base *ab)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_host_cap_send(struct ath12k_base *ab)
- {
- 	struct qmi_wlanfw_host_cap_req_msg_v01 req = {};
- 	struct qmi_wlanfw_host_cap_resp_msg_v01 resp = {};
-@@ -2275,7 +2277,9 @@ static int ath12k_qmi_fw_ind_register_send(struct ath12k_base *ab)
- 	return ret;
- }
- 
--static int ath12k_qmi_respond_fw_mem_request(struct ath12k_base *ab)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_respond_fw_mem_request(struct ath12k_base *ab)
- {
- 	struct qmi_wlanfw_respond_mem_req_msg_v01 *req;
- 	struct qmi_wlanfw_respond_mem_resp_msg_v01 resp = {};
-@@ -2433,7 +2437,9 @@ static int ath12k_qmi_alloc_target_mem_chunk(struct ath12k_base *ab)
- 	return 0;
- }
- 
--static int ath12k_qmi_request_target_cap(struct ath12k_base *ab)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_request_target_cap(struct ath12k_base *ab)
- {
- 	struct qmi_wlanfw_cap_req_msg_v01 req = {};
- 	struct qmi_wlanfw_cap_resp_msg_v01 resp = {};
-@@ -2619,8 +2625,10 @@ static int ath12k_qmi_load_file_target_mem(struct ath12k_base *ab,
- 	return ret;
- }
- 
--static int ath12k_qmi_load_bdf_qmi(struct ath12k_base *ab,
--				   enum ath12k_qmi_bdf_type type)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_load_bdf_qmi(struct ath12k_base *ab,
-+			    enum ath12k_qmi_bdf_type type)
- {
- 	struct device *dev = ab->dev;
- 	char filename[ATH12K_QMI_MAX_BDF_FILE_NAME_SIZE];
-@@ -2791,7 +2799,9 @@ static int ath12k_qmi_m3_load(struct ath12k_base *ab)
- 	return ret;
- }
- 
--static int ath12k_qmi_wlanfw_m3_info_send(struct ath12k_base *ab)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_wlanfw_m3_info_send(struct ath12k_base *ab)
- {
- 	struct m3_mem_region *m3_mem = &ab->qmi.m3_mem;
- 	struct qmi_wlanfw_m3_info_req_msg_v01 req = {};
-@@ -3079,7 +3089,9 @@ ath12k_qmi_driver_event_post(struct ath12k_qmi *qmi,
- 	return 0;
- }
- 
--static int ath12k_qmi_event_server_arrive(struct ath12k_qmi *qmi)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_event_server_arrive(struct ath12k_qmi *qmi)
- {
- 	struct ath12k_base *ab = qmi->ab;
- 	int ret;
-@@ -3101,7 +3113,9 @@ static int ath12k_qmi_event_server_arrive(struct ath12k_qmi *qmi)
- 	return ret;
- }
- 
--static int ath12k_qmi_event_mem_request(struct ath12k_qmi *qmi)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_event_mem_request(struct ath12k_qmi *qmi)
- {
- 	struct ath12k_base *ab = qmi->ab;
- 	int ret;
-@@ -3115,7 +3129,9 @@ static int ath12k_qmi_event_mem_request(struct ath12k_qmi *qmi)
- 	return ret;
- }
- 
--static int ath12k_qmi_event_load_bdf(struct ath12k_qmi *qmi)
-+/* clang stack usage explodes if this is inlined */
-+static noinline_for_stack
-+int ath12k_qmi_event_load_bdf(struct ath12k_qmi *qmi)
- {
- 	struct ath12k_base *ab = qmi->ab;
- 	int ret;
-
----
-base-commit: 8a58dcd8db9c7af1187f0236d71a99cbbe146f6a
-change-id: 20241025-ath12k_qmi_driver_event_work-ea9703c44ad7
-
+Laurent Pinchart
 
