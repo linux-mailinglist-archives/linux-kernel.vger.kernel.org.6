@@ -1,185 +1,163 @@
-Return-Path: <linux-kernel+bounces-385578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D3799B38DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:13:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E2A9B38D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:13:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2260B22E8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB51C1F2307A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EF01DFE29;
-	Mon, 28 Oct 2024 18:12:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SZRcYieq"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE311DF278;
+	Mon, 28 Oct 2024 18:12:31 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3B31DF749;
-	Mon, 28 Oct 2024 18:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED821DF738
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730139157; cv=none; b=hr9TfUuu7LCB9J+N9ZHqziRY0N5XhvfrasVqX+G+eum7Ou8G3Kkt3w472Vdgm/kooZi7VVdzhywNSHtnABHjTOoqViqn5+dmW3v1AqFqNIVKL1xu0t7ycrkO96JPBq6tjeyp+IcuozGbEbcTWZAG8IybDRC8krQbZ0XbryMbaHI=
+	t=1730139151; cv=none; b=i5/Dxr7qAcWSiQiiqKVWdSntCVPPRk4zZbhYztZLTXBhsQtvISZgpknW70MQpU8h1arjSF/pyGDULidnAzPt1TgET8WfrZE8C59KXjdsuMMdEP/mLpZNTkLRbteFjoIOZJME8w4QwbB4uWJy/4LgjnOWGXLyHs9cIeu1R+SRkZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730139157; c=relaxed/simple;
-	bh=sEUoxC02iCpTxcYJhl7YWFX1HCD6NzBw0eWUjpJiVwg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sKCeEubkksHf8hNBZ2PXE5tnDu33GGCN1VlKiZPUyUVJAJFqUC23J6yB9tRoaL5oOTy8labF863NY5NMxBr7e20RU3Q6VcCd94j5pNfNL2GFG1hGqI85ubNE15dXUMzp8qUFSh8rtjJRIu5hbZeOzm8Cy9s7W4voZP2p7wl9qBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SZRcYieq; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SAv1pG005093;
-	Mon, 28 Oct 2024 18:12:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sEUoxC02iCpTxcYJhl7YWFX1HCD6NzBw0eWUjpJiVwg=; b=SZRcYieqr1duO6jN
-	yNPU+IPfmU5epd+/o81r40LC4ldLZCIxxkZjlAkUm0IpqlMxvPWXcCU1XBkzNRaC
-	TP7nTfoabSBoIEFd9oUJxyH8ssxT3RMVVy6b1jtpFrGzR4Qr9S53G356VCRfaWGR
-	e0AnvtjH6VYpYYPfGf1XC09U3+7KSWJYNeVHPyXSb/F5vqb519sM99cu5UY56mKi
-	nLQWpX+LNtMePMDN4WQu5efqc5IUJX7MFL7F5AKVFzVhpOnpRjh5Yo1iOH3bw7nE
-	D/KHDSkVLNE3b5W37aYUqFwulXlJTuqei1PCdAs0SH8ah1ZumWVhoYwIz0PpMB8r
-	sMF64w==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8dw7k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 18:12:09 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SIC861013622
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 18:12:08 GMT
-Received: from [10.110.31.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 11:12:07 -0700
-Message-ID: <8f6e35c0-8cd6-495d-92ad-21d76a726785@quicinc.com>
-Date: Mon, 28 Oct 2024 11:12:07 -0700
+	s=arc-20240116; t=1730139151; c=relaxed/simple;
+	bh=q6FpP2QA5N4r3dgwc3meUU6xGy7EzmpuvymXwJ1K8RM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ojv2vpsPHfo6UkNDdHKeLRbnzGhrVPBLkrQBHVaFQJYycS9CDOmeVHF2X/dP0As60pVV73KyjYeyo3xoiHHI8DRzmF3E537pOIJL/T1+1P0gJM8QiLKiQDeiioXN7av3MEAFiaO0uChyggQ7bIANCCeSM0FvkgmKz6TB7KYg9Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4e5c68f6bso38149515ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:12:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730139148; x=1730743948;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=St+fKTQI1ljguXNK5rR1GNwGlKeuluur0G4UkXay8fI=;
+        b=Pr5OMZTzcJkOoDCUONUYYNevIjETl2GCa+9ZL3PBtI+u8CAmKjYbwr/uQNMMRm7NkV
+         mvmpg25KLdlh0boukZ8SSagMA0noCDpcwVYMTQz/4QYgl8ChLr5N9v4MDfhL/vBZKavb
+         5Ah5l8Mog9q0h+TH7JIzDmfVMgzB8FFXT+Eo8UMl4ONgBqSbQcUdha3fPKgHkGTf+bWB
+         3a2h+E56R8/++p51B+wicVjP/OjKUNoFbxACMHnctcGA+s28qNhF3WKS6dxhqK3noeXk
+         55Tg1D7dze53snpHNwFQ1S2GSB9b4PGsJCUQbWW5wV+lxhjaHeAv37TtDBx+uB2YEms1
+         o4Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+bBiq3lBeattP8DlfSNgFAFnoYK4/BGCC7jFjl6ZGdoq/nANKUF3Yz+zzRu2Kb2A5G5FBI9/+cmQHRP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvSOzROc82eH7y7qPVYhRI3XTBXJt79L0ZBRmGGCN+F3+aCW/9
+	syZjtf/QZgL4GL84pJ22D/gYWZA7Ph+dS1e/GdPXvRj6Rv8UJgAr98BINUof2VP252YGAJ8c13a
+	4u79/cWMxS1nC8GfGaNNIJG2cPcYi26geunoHx979wRMAq47QiFZqx9M=
+X-Google-Smtp-Source: AGHT+IHTno+3mCcY2BMZQ3BatgETWv2efZ1dJCqFsErEnhDuipDHMcmEfutcotiC9PB8+iXsAVq12kDBEW65QDvIDwpeqUzYZrbb
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v29 01/33] xhci: support setting interrupt moderation IMOD
- for secondary interrupters
-To: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
-	<amadeuszx.slawinski@linux.intel.com>,
-        Greg KH <gregkh@linuxfoundation.org>, Takashi Iwai <tiwai@suse.de>
-CC: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <lgirdwood@gmail.com>, <tiwai@suse.com>,
-        <krzk+dt@kernel.org>, <pierre-louis.bossart@linux.intel.com>,
-        <Thinh.Nguyen@synopsys.com>, <broonie@kernel.org>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
- <20241015212915.1206789-2-quic_wcheng@quicinc.com>
- <2024101747-defog-squiggly-ef54@gregkh>
- <5847c380-75ce-492a-9a30-0899b7ebe98c@quicinc.com>
- <2024101824-hammock-elastic-8d38@gregkh> <87wmi02qcj.wl-tiwai@suse.de>
- <2024102240-gag-famished-245c@gregkh>
- <8795c4ad-e3ac-47aa-92dd-f899042cefc0@linux.intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <8795c4ad-e3ac-47aa-92dd-f899042cefc0@linux.intel.com>
+X-Received: by 2002:a05:6e02:156b:b0:3a4:ebfa:2ac7 with SMTP id
+ e9e14a558f8ab-3a4ed2ef57bmr77193655ab.12.1730139148294; Mon, 28 Oct 2024
+ 11:12:28 -0700 (PDT)
+Date: Mon, 28 Oct 2024 11:12:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671fd40c.050a0220.4735a.024f.GAE@google.com>
+Subject: [syzbot] [overlayfs?] WARNING in ovl_encode_real_fh
+From: syzbot <syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-unionfs@vger.kernel.org, miklos@szeredi.hu, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3VvqAHZW17ni7Z9fnrpLfG7y2SqeBCje
-X-Proofpoint-ORIG-GUID: 3VvqAHZW17ni7Z9fnrpLfG7y2SqeBCje
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1011 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410280143
+
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=178bf640580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=ec07f6f5ce62b858579f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=112628a7980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=104bf640580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-c2ee9f59.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8a3541902b13/vmlinux-c2ee9f59.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a00efacc2604/bzImage-c2ee9f59.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ec07f6f5ce62b858579f@syzkaller.appspotmail.com
+
+RDX: 0000000000000000 RSI: 0000000020000440 RDI: 00000000ffffff9c
+RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000003932
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc9b4e42fc
+R13: 0000000000000004 R14: 431bde82d7b634db R15: 00007ffc9b4e4330
+ </TASK>
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 5103 at fs/overlayfs/copy_up.c:448 ovl_encode_real_fh+0x2e2/0x410 fs/overlayfs/copy_up.c:448
+Modules linked in:
+CPU: 0 UID: 0 PID: 5103 Comm: syz-executor195 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:ovl_encode_real_fh+0x2e2/0x410 fs/overlayfs/copy_up.c:448
+Code: 41 5c 41 5d 41 5e 41 5f 5d c3 cc cc cc cc e8 05 b6 75 fe 90 0f 0b 90 eb 14 e8 fa b5 75 fe 90 0f 0b 90 eb 09 e8 ef b5 75 fe 90 <0f> 0b 90 4c 89 ff e8 b3 6a d3 fe 49 c7 c7 fb ff ff ff eb 8b 89 d1
+RSP: 0018:ffffc9000b1f73c0 EFLAGS: 00010293
+RAX: ffffffff831f21f1 RBX: 1ffff9200163ee80 RCX: ffff88801fbc2440
+RDX: 0000000000000000 RSI: 00000000000000ff RDI: 00000000000000ff
+RBP: ffffc9000b1f7470 R08: ffffffff831f208c R09: 1ffffffff2039fdd
+R10: dffffc0000000000 R11: fffffbfff2039fde R12: 00000000000000ff
+R13: 0000000000000080 R14: 1ffff9200163ee7c R15: ffff888036790300
+FS:  0000555590223480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6fdf3d7709 CR3: 0000000040e6e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ovl_get_origin_fh fs/overlayfs/copy_up.c:484 [inline]
+ ovl_do_copy_up fs/overlayfs/copy_up.c:961 [inline]
+ ovl_copy_up_one fs/overlayfs/copy_up.c:1203 [inline]
+ ovl_copy_up_flags+0x1068/0x46f0 fs/overlayfs/copy_up.c:1258
+ ovl_setattr+0x11d/0x5a0 fs/overlayfs/inode.c:40
+ notify_change+0xbca/0xe90 fs/attr.c:503
+ chown_common+0x501/0x850 fs/open.c:793
+ do_fchownat+0x16a/0x240 fs/open.c:824
+ __do_sys_fchownat fs/open.c:839 [inline]
+ __se_sys_fchownat fs/open.c:836 [inline]
+ __x64_sys_fchownat+0xb5/0xd0 fs/open.c:836
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6fdf3812f9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 31 1b 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc9b4e42a8 EFLAGS: 00000246 ORIG_RAX: 0000000000000104
+RAX: ffffffffffffffda RBX: 00007ffc9b4e42b0 RCX: 00007f6fdf3812f9
+RDX: 0000000000000000 RSI: 0000000020000440 RDI: 00000000ffffff9c
+RBP: 0000000000000002 R08: 0000000000000000 R09: 0000000000003932
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffc9b4e42fc
+R13: 0000000000000004 R14: 431bde82d7b634db R15: 00007ffc9b4e4330
+ </TASK>
 
 
-On 10/22/2024 8:04 AM, Amadeusz Sławiński wrote:
-> On 10/22/2024 4:02 PM, Greg KH wrote:
->> On Tue, Oct 22, 2024 at 03:56:44PM +0200, Takashi Iwai wrote:
->>> On Fri, 18 Oct 2024 07:52:35 +0200,
->>> Greg KH wrote:
->>>>
->>>> On Thu, Oct 17, 2024 at 05:07:12PM -0700, Wesley Cheng wrote:
->>>>> Hi Greg,
->>>>>
->>>>> On 10/16/2024 11:40 PM, Greg KH wrote:
->>>>>> On Tue, Oct 15, 2024 at 02:28:43PM -0700, Wesley Cheng wrote:
->>>>>>> From: Mathias Nyman <mathias.nyman@linux.intel.com>
->>>>>>>
->>>>>>> Allow creators of xHCI secondary interrupters to specify the interrupt
->>>>>>> moderation interval value in nanoseconds when creating the interrupter.
->>>>>>>
->>>>>>> If not sure what value to use then use the xhci driver default
->>>>>>> xhci->imod_interval
->>>>>>>
->>>>>>> Suggested-by: Wesley Cheng <quic_wcheng@quicinc.com>
->>>>>>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->>>>>>> Link: https://lore.kernel.org/r/20240905143300.1959279-13-mathias.nyman@linux.intel.com
->>>>>>> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>>>>>> ---
->>>>>>>   drivers/usb/host/xhci-mem.c | 8 +++++++-
->>>>>>>   drivers/usb/host/xhci.c     | 4 ++--
->>>>>>>   drivers/usb/host/xhci.h     | 5 ++++-
->>>>>>>   3 files changed, 13 insertions(+), 4 deletions(-)
->>>>>> This is already in 6.12-rc1, which makes me confused as to what tree you
->>>>>> made this series against.
->>>>>
->>>>> Sorry, I didn't fetch the latest changes from usb-next.
->>>>
->>>> It wasn't even usb-next, it was 6.12-rc1, so I don't know what tree you
->>>> based this on :(
->>>>
->>>>> In this case, should I rebase and resbumit?
->>>>
->>>> As the series can't be applied as-is, probably.  But I think you might
->>>> want to collect some acks from the sound people and xhci developers, as
->>>> I can't do anything with this until they look at the changes.
->>>
->>> Honestly speaking, I couldn't follow fully the discussions about the
->>> fundamental design -- IIRC, Pierre and others had concerns to the way
->>> to manage the offload device via kcontrols.  Did we get consensus?
->>
->> I don't think so.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-As mentioned by Amadeusz, the overall USB offload concept hasn't changed significantly since the initial series, and will rely on having two sounds cards, ie leaving the one created by USB SND untouched (and still usable), while creating a path to an ASoC based platform card, which handles the offload path.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-The follow ups that I've had with Pierre was more towards how the offload parameters are going to be exposed to userspace, so that it can be properly utilized.  I think for the most part, we've agreed that the set of kcontrols we have now are sufficient, and there is proper controls for userspace to know which devices to use.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
->>
->>> I believe that's the biggest obstacle in the audio side, i.e. what's
->>> visible to users.  The kernel internals can be corrected at any time
->>> later.
->>
->> I would like to see that agreed on before I even look at the usb side.
->
-> My main concern is still that one USB audio device can be accessed via two different cards exposed in userspace. Usual USB one, and the one from device which does "offload". Suggested implementation achieves it by adding additional controls, which need to be set in specific way to achieve offload. Overall while I understand the mechanism, I'm not exactly convinced that it is the best way from end user point of view.
->
-> "Implementation" part in Documentation added in patch 19 shows how it looks in userspace now.
->
-> If you don't mind two sound cards being used to access same piece of HW, current implementation looks ok to me.
->
-@Takashi, this was something we discussed really early on, even before the series was made, and I think it was agreed upon to avoid doing this with a single card.  I remember putting in the initial work to scope out this path, but it was going to require significant/major modifications to USB SND core, hence why we decided on the path to have two sound cards. (USB SND legacy path still usable)
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
-Thanks
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
-Wesley Cheng 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
 
-> See also:
-> https://lore.kernel.org/linux-sound/75ffde3a-7fef-4c15-bfc8-87756e1c3f11@linux.intel.com/
-> where I described how I would prefer it to look.
+If you want to undo deduplication, reply with:
+#syz undup
 
