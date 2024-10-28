@@ -1,153 +1,283 @@
-Return-Path: <linux-kernel+bounces-384606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B26F9B2C4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:05:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EB639B2C51
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C9291C21F92
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:05:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C6B1F22629
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89BEE1CF2AB;
-	Mon, 28 Oct 2024 10:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515891D0DF7;
+	Mon, 28 Oct 2024 10:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aaOhBppD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Bz3gPrvS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NWdQ7+GI"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50B418B46E;
-	Mon, 28 Oct 2024 10:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2786018B46E;
+	Mon, 28 Oct 2024 10:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109952; cv=none; b=QrMwNNFLo8J75LV0VejoOagbp1KnaSyFaM1PeG5bukGpeFJJO+RayNtXv5IZJpabNsI6lyXjhsoUiQ5jPg0+GPYQcbuQMGmihgPen34fw+yjYBFVaLtFyXi1ED5i9dDJWTnSzO+lojZGqIwfeZd7NvX+VIZ1E5V12/sadvOu5IQ=
+	t=1730110064; cv=none; b=DC5DVYmspCB6jLYWoRa0Ry/qWQzo6JlirYJxCqR+LsXAskZ+zGwKzPH36e+Qtwf4lGI9OdpKDbF3tH41UT6/jqBTu9lng2dBNteAkbeWPRRPQoNnxZ7QwlAxsny/8nXCLLnK8WtajOgjYy3TVGgi8j4jyag/k3dWk0y+4DiuUgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109952; c=relaxed/simple;
-	bh=Z2fr1jJxkc2nUFejeQVSYNaVA/Ey1sprE8dbblumJVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=otf5gTIAr8e+G1QCLGj8SklV2echMfNTPGNSgH/2WzZdrcnf8Y9mUn+c6satpe+L02XGrdEChsgl4iFr4EKpRMq48u92RdPlCmrxBqzcda+yEjp0cgA7tlj6a7MdeLnjPNJtER7TBRu3bpxYhD6NL82hnQyETx6iVsYlrf1HD5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aaOhBppD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E927C4CEC3;
-	Mon, 28 Oct 2024 10:05:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730109951;
-	bh=Z2fr1jJxkc2nUFejeQVSYNaVA/Ey1sprE8dbblumJVU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aaOhBppDvy01NoN85ZBGyg7R9bgjbbNHd4ZXHKnG8ehSDkfnYt/1UXzrme1sAUxnq
-	 3FHCpVXmGmvwdkzsimAutjlw3P9mE+f7JnSxV79dEFVlx11rDEq7Ebvc7uPMxMsTRH
-	 tUhZ3zPo9VmkJm2zP4zG4iAH2AcMlK39dZJsf5ca0QSzF95x/8bq2N9/Won3Xgwuhd
-	 mcKIjNcLmvlMW4Ygz4UmhUNChHC4wPut7umYjDwvWG3cVNHVEK9Dkl7K27NLFd4bT0
-	 zYBzKutajMYcOLdqhT7mYVLgTAjKDE0aLjJefVlsHMa6Q0bpPvwJDhDUWfqC6BbTOg
-	 gUkurUyWh/9TQ==
-Date: Mon, 28 Oct 2024 11:05:48 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org, 
-	linux-mm@kvack.org
-Subject: Re: [PATCH 0/7] kernel/cgroups: Add "dev" memory accounting cgroup.
-Message-ID: <20241028-meaty-mega-nuthatch-3d74b1@houat>
-References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
- <ZxlRLMwkabTaOrjc@slm.duckdns.org>
- <20241024-beautiful-spaniel-of-youth-f75b61@houat>
- <Zxp-nLXOJXoSy8BN@slm.duckdns.org>
+	s=arc-20240116; t=1730110064; c=relaxed/simple;
+	bh=fPb8qQLzBRJvCvTo05/AaCTxKl1g8V/bXqxYAZzNU9E=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=DxNZoLkAOdcGqCLRmzMwX5KZubL1dfvB8V0lw9u7qDF1D0R3LkIftJVy/mJVN/BUybj4RkknuWo/Thul5BkgHfY8roSoKhAvsNAQqHzAbp/DNpvnxY7BVl61Ubo0bc1++I3d+rmC4zquBj+UCCL4eLM4/wjKXgD0U2TvpUBF144=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Bz3gPrvS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NWdQ7+GI; arc=none smtp.client-ip=202.12.124.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfout.stl.internal (Postfix) with ESMTP id 9990E11400FC;
+	Mon, 28 Oct 2024 06:07:39 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-02.internal (MEProxy); Mon, 28 Oct 2024 06:07:40 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1730110059;
+	 x=1730196459; bh=zpVCVnKNAbqxoyZ/9RQal9LIDE3t1qOufDxKPWWH5zM=; b=
+	Bz3gPrvSE1u2Jp3zcvNqLIgtS7gDWMUnjYMZwbN9jT0laM+CoThXEGY5b8gRoiHd
+	YDzGI+8HQP5xXE77HxV/LglCXiU6zz4fpUExBPX2qEmH+wo8FBMn62SRi1yYfPzw
+	Zu4NkaD8cNaiU/0ybJqyCWOl6cPmU029/bQdFAfwma1AhNRF3+bEkwE2TbOdSWgZ
+	hKPo3avc4gQ7m5oiGNw+c6ZoJbH/id3P0yeu82lcDCycOSOy/tnNjwgnu7cfosC2
+	tU0cRFzIbL4UAkpPudUvI2G8912MlMzd39qaShQusIEQJHoHCPyz+I4yiSXuTztj
+	SdAfrJ6EwxOwWzNUH2jOlQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730110059; x=
+	1730196459; bh=zpVCVnKNAbqxoyZ/9RQal9LIDE3t1qOufDxKPWWH5zM=; b=N
+	WdQ7+GI2ygJZ7I+cYyb9tXX8HC6956Uclg4Q3v2NfImYW3tvzkEaKdhbR19Xpp4H
+	So+KxxThq2XslwtVrBv0y77qRMXMbAZkxEDEJB7P8y+FGW1x5KdufrocBNvxmIf7
+	8sME9CeQOB3EzkyfuUGuDfDrpZ56Llm6grv12lk0DCY05JN1ZAAURpZSNBgAR0gK
+	hhTYHkFmu8m1mhy48CwDcGYelv3v7yKM3WLwVbsr+ovV+Qsr8eCQkB0+DaSCn0Qd
+	uVRqD+Y8xHbmxjq2oTKuIT/Ib59YPK1IZn3ESZ5FBlwOYjtp5H20IOcq22pUwslD
+	RKJSe0Frk5r/1tkXH6Fjw==
+X-ME-Sender: <xms:aWIfZ8n4NI9jOTrhs_B-s3cAwpFYqVDbSBoPD_JPNdLAMV5_519pMg>
+    <xme:aWIfZ72fVIDaVXnD70Tv6g_0gCGgOt_yCcNYQyT3tG6gq4ETRDKFylefTXImAcyAw
+    6W_s1SheLB0GTLkE9A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejkedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
+    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
+    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
+    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhr
+    tghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtph
+    htthhopehikhgvrdhprghnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtoheprghl
+    vgigsggvlhhmgeeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrd
+    gthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuiihmrgigihhmihhlihgr
+    nhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhhrdgvnhhgrdgsrhdprh
+    gtphhtthhopehsohihvghrsehirhhlrdhhuhdprhgtphhtthhopehlvghnsgeskhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:aWIfZ6opKMutfh8H0IjY5UvPokSKzzK8DOsnhaZH1ZzFzOdXEBky-A>
+    <xmx:aWIfZ4nlI68s1IQGm7PiDVmEtktDibFd9EavHboWC_B1PH6EaVqglw>
+    <xmx:aWIfZ62VEXeSovcriCz6wwmmyKYd15xgwIywFpBkqFn9D7S33LXq9A>
+    <xmx:aWIfZ_vEWAFwfQvS6OoHbqDiF3VXHvLYnMM7HUzKjaaFAl6bpsvp9A>
+    <xmx:a2IfZ0WG9t8KGBr82f2tt_TAJ27K_GAnM7KWXlB_lghM0g6sEIZvD_KL>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C94833C0066; Mon, 28 Oct 2024 06:07:37 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="t7lydr677wzslm3o"
-Content-Disposition: inline
-In-Reply-To: <Zxp-nLXOJXoSy8BN@slm.duckdns.org>
+Date: Mon, 28 Oct 2024 06:07:16 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
+ "Maximilian Luz" <luzmaximilian@gmail.com>, "Lee Chun-Yi" <jlee@suse.com>,
+ "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>,
+ "Corentin Chary" <corentin.chary@gmail.com>,
+ "Luke D . Jones" <luke@ljones.dev>, "Ike Panhc" <ike.pan@canonical.com>,
+ "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
+ "Alexis Belmonte" <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Ai Chao" <aichao@kylinos.cn>, "Gergo Koteles" <soyer@irl.hu>,
+ "open list" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
+ "Matthew Schwartz" <matthew.schwartz@linux.dev>
+Message-Id: <c5d52213-cb1b-408c-8fb5-a7401f690d24@app.fastmail.com>
+In-Reply-To: <20241025193055.2235-2-mario.limonciello@amd.com>
+References: <20241025193055.2235-1-mario.limonciello@amd.com>
+ <20241025193055.2235-2-mario.limonciello@amd.com>
+Subject: Re: [PATCH 1/8] ACPI: platform-profile: Add a name member to handlers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
+Thanks Mario,
 
---t7lydr677wzslm3o
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 0/7] kernel/cgroups: Add "dev" memory accounting cgroup.
-MIME-Version: 1.0
+On Fri, Oct 25, 2024, at 3:30 PM, Mario Limonciello wrote:
+> In order to prepare for allowing multiple handlers, introduce
+> a name field that can be used to distinguish between different
+> handlers.
+>
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/platform/surface/surface_platform_profile.c | 1 +
+>  drivers/platform/x86/acer-wmi.c                     | 1 +
+>  drivers/platform/x86/amd/pmf/sps.c                  | 1 +
+>  drivers/platform/x86/asus-wmi.c                     | 1 +
+>  drivers/platform/x86/dell/dell-pc.c                 | 1 +
+>  drivers/platform/x86/hp/hp-wmi.c                    | 1 +
+>  drivers/platform/x86/ideapad-laptop.c               | 1 +
+>  drivers/platform/x86/inspur_platform_profile.c      | 1 +
+>  drivers/platform/x86/thinkpad_acpi.c                | 1 +
+>  include/linux/platform_profile.h                    | 1 +
+>  10 files changed, 10 insertions(+)
+>
+> diff --git a/drivers/platform/surface/surface_platform_profile.c 
+> b/drivers/platform/surface/surface_platform_profile.c
+> index 3de864bc66108..61aa488a80eb5 100644
+> --- a/drivers/platform/surface/surface_platform_profile.c
+> +++ b/drivers/platform/surface/surface_platform_profile.c
+> @@ -211,6 +211,7 @@ static int surface_platform_profile_probe(struct 
+> ssam_device *sdev)
+> 
+>  	tpd->sdev = sdev;
+> 
+> +	tpd->handler.name = "Surface Platform Profile";
+>  	tpd->handler.profile_get = ssam_platform_profile_get;
+>  	tpd->handler.profile_set = ssam_platform_profile_set;
+> 
+> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
+> index d09baa3d3d902..53fbc9b4d3df7 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -1878,6 +1878,7 @@ static int acer_platform_profile_setup(void)
+>  	if (quirks->predator_v4) {
+>  		int err;
+> 
+> +		platform_profile_handler.name = "acer-wmi";
+>  		platform_profile_handler.profile_get =
+>  			acer_predator_v4_platform_profile_get;
+>  		platform_profile_handler.profile_set =
+> diff --git a/drivers/platform/x86/amd/pmf/sps.c 
+> b/drivers/platform/x86/amd/pmf/sps.c
+> index 92f7fb22277dc..e2d0cc92c4396 100644
+> --- a/drivers/platform/x86/amd/pmf/sps.c
+> +++ b/drivers/platform/x86/amd/pmf/sps.c
+> @@ -405,6 +405,7 @@ int amd_pmf_init_sps(struct amd_pmf_dev *dev)
+>  		amd_pmf_set_sps_power_limits(dev);
+>  	}
+> 
+> +	dev->pprof.name = "amd-pmf";
+>  	dev->pprof.profile_get = amd_pmf_profile_get;
+>  	dev->pprof.profile_set = amd_pmf_profile_set;
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 2ccc23b259d3e..c7c104c65a85a 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -3910,6 +3910,7 @@ static int platform_profile_setup(struct asus_wmi *asus)
+> 
+>  	dev_info(dev, "Using throttle_thermal_policy for platform_profile support\n");
+> 
+> +	asus->platform_profile_handler.name = "asus-wmi";
+>  	asus->platform_profile_handler.profile_get = asus_wmi_platform_profile_get;
+>  	asus->platform_profile_handler.profile_set = asus_wmi_platform_profile_set;
+> 
+> diff --git a/drivers/platform/x86/dell/dell-pc.c 
+> b/drivers/platform/x86/dell/dell-pc.c
+> index 972385ca1990b..3cf79e55e3129 100644
+> --- a/drivers/platform/x86/dell/dell-pc.c
+> +++ b/drivers/platform/x86/dell/dell-pc.c
+> @@ -247,6 +247,7 @@ static int thermal_init(void)
+>  	thermal_handler = kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
+>  	if (!thermal_handler)
+>  		return -ENOMEM;
+> +	thermal_handler->name = "dell-pc";
+>  	thermal_handler->profile_get = thermal_platform_profile_get;
+>  	thermal_handler->profile_set = thermal_platform_profile_set;
+> 
+> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
+> index 81ccc96ffe40a..26cac73caf2b9 100644
+> --- a/drivers/platform/x86/hp/hp-wmi.c
+> +++ b/drivers/platform/x86/hp/hp-wmi.c
+> @@ -1624,6 +1624,7 @@ static int thermal_profile_setup(void)
+>  		set_bit(PLATFORM_PROFILE_COOL, platform_profile_handler.choices);
+>  	}
+> 
+> +	platform_profile_handler.name = "hp-wmi";
+>  	set_bit(PLATFORM_PROFILE_BALANCED, platform_profile_handler.choices);
+>  	set_bit(PLATFORM_PROFILE_PERFORMANCE, platform_profile_handler.choices);
+> 
+> diff --git a/drivers/platform/x86/ideapad-laptop.c 
+> b/drivers/platform/x86/ideapad-laptop.c
+> index 9d8c3f064050e..1f94c14c3b832 100644
+> --- a/drivers/platform/x86/ideapad-laptop.c
+> +++ b/drivers/platform/x86/ideapad-laptop.c
+> @@ -1102,6 +1102,7 @@ static int ideapad_dytc_profile_init(struct 
+> ideapad_private *priv)
+> 
+>  	mutex_init(&priv->dytc->mutex);
+> 
+> +	priv->dytc->pprof.name = "ideapad-laptop";
+>  	priv->dytc->priv = priv;
+>  	priv->dytc->pprof.profile_get = dytc_profile_get;
+>  	priv->dytc->pprof.profile_set = dytc_profile_set;
+> diff --git a/drivers/platform/x86/inspur_platform_profile.c 
+> b/drivers/platform/x86/inspur_platform_profile.c
+> index 8440defa67886..03da2c8cf6789 100644
+> --- a/drivers/platform/x86/inspur_platform_profile.c
+> +++ b/drivers/platform/x86/inspur_platform_profile.c
+> @@ -177,6 +177,7 @@ static int inspur_wmi_probe(struct wmi_device 
+> *wdev, const void *context)
+>  	priv->wdev = wdev;
+>  	dev_set_drvdata(&wdev->dev, priv);
+> 
+> +	priv->handler.name = "inspur-wmi";
+>  	priv->handler.profile_get = inspur_platform_profile_get;
+>  	priv->handler.profile_set = inspur_platform_profile_set;
+> 
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c 
+> b/drivers/platform/x86/thinkpad_acpi.c
+> index 4c1b0553f8720..c8c316b8507a5 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -10549,6 +10549,7 @@ static void dytc_profile_refresh(void)
+>  }
+> 
+>  static struct platform_profile_handler dytc_profile = {
+> +	.name = "thinkpad-acpi",
+>  	.profile_get = dytc_profile_get,
+>  	.profile_set = dytc_profile_set,
+>  };
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
+> index f5492ed413f36..6fa988e417428 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -27,6 +27,7 @@ enum platform_profile_option {
+>  };
+> 
+>  struct platform_profile_handler {
+> +	const char *name;
+>  	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
+>  	int (*profile_get)(struct platform_profile_handler *pprof,
+>  				enum platform_profile_option *profile);
+> -- 
+> 2.43.0
 
-On Thu, Oct 24, 2024 at 07:06:36AM -1000, Tejun Heo wrote:
-> Hello,
->=20
-> On Thu, Oct 24, 2024 at 09:20:43AM +0200, Maxime Ripard wrote:
-> ...
-> > > Yeah, let's not use "dev" name for this. As Waiman pointed out, it co=
-nflicts
-> > > with the devices controller from cgroup1. While cgroup1 is mostly
-> > > deprecated, the same features are provided through BPF in systemd usi=
-ng the
-> > > same terminologies, so this is going to be really confusing.
-> >=20
-> > Yeah, I agree. We switched to dev because we want to support more than
-> > just DRM, but all DMA-able memory. We have patches to support for v4l2
-> > and dma-buf heaps, so using the name DRM didn't feel great either.
-> >=20
-> > Do you have a better name in mind? "device memory"? "dma memory"?
->=20
-> Maybe just dma (I think the term isn't used heavily anymore, so the word =
-is
-> kinda open)? But, hopefully, others have better ideas.
->=20
-> > > What happened with Tvrtko's weighted implementation? I've seen many p=
-roposed
-> > > patchsets in this area but as far as I could see none could establish
-> > > consensus among GPU crowd and that's one of the reasons why nothing e=
-ver
-> > > landed. Is the aim of this patchset establishing such consensus?
-> >=20
-> > Yeah, we have a consensus by now I think. Valve, Intel, Google, and Red
-> > Hat have been involved in that series and we all agree on the implement=
-ation.
->=20
-> That's great to hear.
->=20
-> > Tvrtko aims at a different feature set though: this one is about memory
-> > allocation limits, Tvrtko's about scheduling.
-> >=20
-> > Scheduling doesn't make much sense for things outside of DRM (and even
-> > for a fraction of all DRM devices), and it's pretty much orthogonal. So
-> > i guess you can expect another series from Tvrtko, but I don't think
-> > they should be considered equivalent or dependent on each other.
->=20
-> Yeah, I get that this is about memory and that is about processing capaci=
-ty,
-> so the plan is going for separate controllers for each? Or would it be
-> better to present both under the same controller interface? Even if they'=
-re
-> going to be separate controllers, we at least want to be aligned on how
-> devices and their configurations are presented in the two controllers.
+Looks good to me.
+Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
 
-It's still up in the air, I think.
-
-My personal opinion is that there's only DRM (and accel) devices that
-really care about scheduling constraints anyway, so it wouldn't (have
-to) be as generic as this one.
-
-And if we would call it dma, then the naming becomes a bit weird since
-DMA doesn't have much to do with scheduling.
-
-But I guess it's just another instance of the "naming is hard" problem :)
-
-Maxime
-
---t7lydr677wzslm3o
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZx9h9gAKCRAnX84Zoj2+
-dlU+AYCxActcJs1M7HcXNvi88y4oVEf4bnodKMwcVHc/s5JEvI4cja+MhosCF+3b
-uptlsFIBgKwWkcuonwZQCL1tmx5YQCFFg4+etI8Oz58IK+o0xVJKfuYCyXvSKQzs
-7Ws0CK5uUQ==
-=O7zl
------END PGP SIGNATURE-----
-
---t7lydr677wzslm3o--
+Mark
 
