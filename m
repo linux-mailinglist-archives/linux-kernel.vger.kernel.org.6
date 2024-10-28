@@ -1,214 +1,165 @@
-Return-Path: <linux-kernel+bounces-384201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF80C9B2848
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:58:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBF229B286C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D23371C21336
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:58:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ABF72823E1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E2918FC91;
-	Mon, 28 Oct 2024 06:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D13418FDCC;
+	Mon, 28 Oct 2024 07:09:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fWjopX/E"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="P7fbbknc"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E897518FC74
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D80F18E05A;
+	Mon, 28 Oct 2024 07:09:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730098718; cv=none; b=L/U5/qtIO7t/DJvhywlsF7LhT0I6/yTaxPuufvGqf8Qln7Wq+SmI+hpG0Wy2SaRafEfQbXpoJE14Zgp72m3yrkbNUgGKz6DU+Gim2UZa39K5vRMQIz9AD9nbndExZA+GXpNGdA2izqCsQUNspubW64LDMxy7KYZTKVbnmVdeIhM=
+	t=1730099377; cv=none; b=eY3DSanorE6f//ohCFDOjXIWmjb3+D8IMrgr81XF8LRrKL/OqmB0rVfmuqnNk0Oi1NTfHaM3HUoAa0nFkwVK7CqSvXxzCN4zAMKy1E/QA06gUSkbyhjLDu+BpxUkbeaOP4Vs71M6HMFszFPqm4kj1F8WfLW10n8lzSGs24Q3OTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730098718; c=relaxed/simple;
-	bh=iBtFal+VbXMv3skYB4e56SQ3UqidkU1gErX+/J1ZiLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Gbttyr//TnwAepFi1qIAv3ICOfMzGxGl+3w6NT0k43Uf7FXWN5Rkr5iJJoMXSmnOjHuVOGhyz42w+AuepdJAEICdxcD4VWLe5ZqHMjIx9cdyCYgFjhYfEcYRdtEohzc8Qq25raZP1IwE2onwWcfoL22bRJobERG8UOtFcJojiEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fWjopX/E; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730098715; x=1761634715;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=iBtFal+VbXMv3skYB4e56SQ3UqidkU1gErX+/J1ZiLQ=;
-  b=fWjopX/EE+7D9Tu6Im6xM2LNeZk1D0IyEbcBI+Pur6URAgnpcYcuR/fq
-   Fb7tXA5IQva7ps22Cqn35bxbez2P4Q6Re2MPZ6NDDPXhPSeLH+6Z6Uvo5
-   kGBDBS+iVBZYrJJb2tOgHfnqy1YzPHa2JUK2PCfsZfUbuKBc1X9Hqu4HU
-   25PDMRzn3lP8p/kG1eWmwR4p8JxildpsKMAWsO9fUe9qFbghM9lDmuZjw
-   w8Xay/BY3EPWNpLbus5kJqa4P08GTJBC+P4Zm9xMFUu/yQtxvksDavuyl
-   C+fWJbbz5E+yD08iseMzRFhWDchZsjX/I+6URnFwcdVcdFMJdBVDgTBkR
-   Q==;
-X-CSE-ConnectionGUID: jMEZuR+6QCik/fGaJ0Z6bg==
-X-CSE-MsgGUID: CkXZNHBAQXe8zZD4Bf/jrQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="55092655"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="55092655"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 23:58:34 -0700
-X-CSE-ConnectionGUID: bIHabTgwSOeWF4JSKoZpDw==
-X-CSE-MsgGUID: YjY/wKSIRsi8aN+mS9XCCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="118988087"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 27 Oct 2024 23:58:33 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5Jhu-000bzg-1r;
-	Mon, 28 Oct 2024 06:58:30 +0000
-Date: Mon, 28 Oct 2024 14:58:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Kent Overstreet <kent.overstreet@linux.dev>
-Subject: fs/bcachefs/btree_cache.c:502:13-14: Unneeded semicolon
-Message-ID: <202410281421.V62F8rHI-lkp@intel.com>
+	s=arc-20240116; t=1730099377; c=relaxed/simple;
+	bh=VWC1nHpOnQMfHS2IajS5B1U2ElXAuNB+4YFi0LN9JSI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nwbvr8qL/KoHSzlFJce4NwwCvzSf7KdlpewItAeH8HCioSB/gro5JvSqMEopLBVoPUsKmLjoJ0672wogBZ+4KWh7PG+LDqLu1eGEVkBKNB0gqxITMx425Ma2UEBaGv5JmqagaZzfoHXQeYYQhZ+EJ8nzDff8ODwo9DiAkBbG/EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=P7fbbknc; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id 1DE7D100003;
+	Mon, 28 Oct 2024 10:00:10 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1730098810; bh=RN2mSQ9y2BkKPqjSxY5ISepC6Gm0Q+p6EoQS4iqNWM0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=P7fbbknceZNWh/5zRJW8GY5t4hhL3fpEPt7AMK7crnGQwEf++n1J+eRvsbIh6JMcp
+	 Wd2P0fD6B3oW5y6m+5DnmOsqZbSmd0dQAVKiCwsJUL/VL29IsFBhLbbfigdtAgo3x1
+	 1Z0rV98sA5qQAyBDfgFfAAUSWhhbYSNLKo4On3+TDW1jQHYFupoIESE2pntln7DdB6
+	 aLxN6+gZMln0Uf03LnLzjk6NWKUeGtGSfXcgengB1ADzPIXKDZic3iZf6Arb+BRBbB
+	 vhdM68F3Z5LY77dEz2ZwsXHt7bjP8Zfzj3mhruRCS43NAdQZGrVtpsOVZzXYPYkAwg
+	 G+Bjjwz7O9b3Q==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Mon, 28 Oct 2024 09:59:01 +0300 (MSK)
+Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 28 Oct
+ 2024 09:58:41 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Igal Liberman <igal.liberman@freescale.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, Madalin Bucur
+	<madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lvc-project@linuxtesting.org>
+Subject: [PATCH net v4] fsl/fman: Validate cell-index value obtained from Device Tree
+Date: Mon, 28 Oct 2024 09:58:24 +0300
+Message-ID: <20241028065824.15452-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188748 [Oct 28 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 40 0.3.40 cefee68357d12c80cb9cf2bdcf92256b1d238d22, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/28 05:10:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/10/28 06:18:00 #26808967
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hi Guenter,
+Cell-index value is obtained from Device Tree and then used to calculate
+the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
+In case of broken DT due to any error cell-index can contain any value
+and it is possible to go beyond the array boundaries which can lead
+at least to memory corruption.
 
-First bad commit (maybe != root cause):
+Validate cell-index value obtained from Device Tree.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   81983758430957d9a5cb3333fe324fd70cf63e7e
-commit: 2007d28ec0095c6db0a24fd8bb8fe280c65446cd bcachefs: rename version -> bversion for big endian builds
-date:   4 weeks ago
-config: m68k-randconfig-r051-20241027 (https://download.01.org/0day-ci/archive/20241028/202410281421.V62F8rHI-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
+Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410281421.V62F8rHI-lkp@intel.com/
+Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
+Reviewed-by: Sean Anderson <sean.anderson@seco.com>
+Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+---
+v4:
+  - Update patch after refcount leaks fix
+    (https://lore.kernel.org/all/20241015060122.25709-1-amishin@t-argos.ru/)
+	as suggested by Jakub
+	(https://lore.kernel.org/all/20240904072307.1b17227c@kernel.org/)
+v3: https://lore.kernel.org/all/20240904060920.9645-1-amishin@t-argos.ru/
+  - Add Reviewed-by: Sean Anderson <sean.anderson@seco.com>
+    (https://lore.kernel.org/all/e0b8c69a-3cc0-4034-b3f7-d8bdcc480c4d@seco.com/)
+v2: https://lore.kernel.org/all/20240702140124.19096-1-amishin@t-argos.ru/
+  - Move check to mac.c to avoid allmodconfig build errors and reference leaks
+v1: https://lore.kernel.org/all/20240702095034.12371-1-amishin@t-argos.ru/
 
-cocci warnings: (new ones prefixed by >>)
->> fs/bcachefs/btree_cache.c:502:13-14: Unneeded semicolon
+ drivers/net/ethernet/freescale/fman/fman.c | 1 -
+ drivers/net/ethernet/freescale/fman/fman.h | 3 +++
+ drivers/net/ethernet/freescale/fman/mac.c  | 5 +++++
+ 3 files changed, 8 insertions(+), 1 deletion(-)
 
-vim +502 fs/bcachefs/btree_cache.c
-
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  441  
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  442  static unsigned long bch2_btree_cache_scan(struct shrinker *shrink,
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  443  					   struct shrink_control *sc)
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  444  {
-7a51608d012546 Kent Overstreet 2024-09-04  445  	struct btree_cache_list *list = shrink->private_data;
-7a51608d012546 Kent Overstreet 2024-09-04  446  	struct btree_cache *bc = container_of(list, struct btree_cache, live[list->idx]);
-7a51608d012546 Kent Overstreet 2024-09-04  447  	struct bch_fs *c = container_of(bc, struct bch_fs, btree_cache);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  448  	struct btree *b, *t;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  449  	unsigned long nr = sc->nr_to_scan;
-7c7e071d90ac27 Kent Overstreet 2022-04-03  450  	unsigned long can_free = 0;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  451  	unsigned long freed = 0;
-c36ff038fd3af6 Kent Overstreet 2022-09-25  452  	unsigned long touched = 0;
-97c0e19502549c Kent Overstreet 2020-10-15  453  	unsigned i, flags;
-c7ce813fe49a58 Kent Overstreet 2021-12-27  454  	unsigned long ret = SHRINK_STOP;
-7a51608d012546 Kent Overstreet 2024-09-04  455  	bool trigger_writes = atomic_long_read(&bc->nr_dirty) + nr >= list->nr * 3 / 4;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  456  
-29364f34530d30 Kent Overstreet 2020-11-02  457  	if (bch2_btree_shrinker_disabled)
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  458  		return SHRINK_STOP;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  459  
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  460  	mutex_lock(&bc->lock);
-97c0e19502549c Kent Overstreet 2020-10-15  461  	flags = memalloc_nofs_save();
-97c0e19502549c Kent Overstreet 2020-10-15  462  
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  463  	/*
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  464  	 * It's _really_ critical that we don't free too many btree nodes - we
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  465  	 * have to always leave ourselves a reserve. The reserve is how we
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  466  	 * guarantee that allocating memory for a new btree node can always
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  467  	 * succeed, so that inserting keys into the btree can always succeed and
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  468  	 * IO can always make forward progress:
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  469  	 */
-7a51608d012546 Kent Overstreet 2024-09-04  470  	can_free = btree_cache_can_free(list);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  471  	nr = min_t(unsigned long, nr, can_free);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  472  
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  473  	i = 0;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  474  	list_for_each_entry_safe(b, t, &bc->freeable, list) {
-c043a3303c11cd Kent Overstreet 2021-12-27  475  		/*
-c043a3303c11cd Kent Overstreet 2021-12-27  476  		 * Leave a few nodes on the freeable list, so that a btree split
-c043a3303c11cd Kent Overstreet 2021-12-27  477  		 * won't have to hit the system allocator:
-c043a3303c11cd Kent Overstreet 2021-12-27  478  		 */
-c043a3303c11cd Kent Overstreet 2021-12-27  479  		if (++i <= 3)
-c043a3303c11cd Kent Overstreet 2021-12-27  480  			continue;
-c043a3303c11cd Kent Overstreet 2021-12-27  481  
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  482  		touched++;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  483  
-54b2db3d58eadb Kent Overstreet 2021-11-11  484  		if (touched >= nr)
-c36ff038fd3af6 Kent Overstreet 2022-09-25  485  			goto out;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  486  
-bceacfa97ec8b6 Daniel Hill     2022-09-30  487  		if (!btree_node_reclaim(c, b, true)) {
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  488  			btree_node_data_free(c, b);
-c43a6ef9a0747e Kent Overstreet 2020-06-06  489  			six_unlock_write(&b->c.lock);
-c43a6ef9a0747e Kent Overstreet 2020-06-06  490  			six_unlock_intent(&b->c.lock);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  491  			freed++;
-691f2cba229189 Kent Overstreet 2024-09-05  492  			bc->nr_freed++;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  493  		}
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  494  	}
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  495  restart:
-7a51608d012546 Kent Overstreet 2024-09-04  496  	list_for_each_entry_safe(b, t, &list->list, list) {
-c36ff038fd3af6 Kent Overstreet 2022-09-25  497  		touched++;
-c36ff038fd3af6 Kent Overstreet 2022-09-25  498  
-05a49d22750ec4 Kent Overstreet 2022-03-03  499  		if (btree_node_accessed(b)) {
-05a49d22750ec4 Kent Overstreet 2022-03-03  500  			clear_btree_node_accessed(b);
-3340dee2350954 Kent Overstreet 2024-09-01  501  			bc->not_freed[BCH_BTREE_CACHE_NOT_FREED_access_bit]++;
-ad5dbe3ce533ec Kent Overstreet 2024-09-04 @502  			--touched;;
-bceacfa97ec8b6 Daniel Hill     2022-09-30  503  		} else if (!btree_node_reclaim(c, b, true)) {
-91ddd7151000c0 Kent Overstreet 2024-09-05  504  			bch2_btree_node_hash_remove(bc, b);
-91ddd7151000c0 Kent Overstreet 2024-09-05  505  
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  506  			freed++;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  507  			btree_node_data_free(c, b);
-691f2cba229189 Kent Overstreet 2024-09-05  508  			bc->nr_freed++;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  509  
-c43a6ef9a0747e Kent Overstreet 2020-06-06  510  			six_unlock_write(&b->c.lock);
-c43a6ef9a0747e Kent Overstreet 2020-06-06  511  			six_unlock_intent(&b->c.lock);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  512  
-c36ff038fd3af6 Kent Overstreet 2022-09-25  513  			if (freed == nr)
-c36ff038fd3af6 Kent Overstreet 2022-09-25  514  				goto out_rotate;
-c36ff038fd3af6 Kent Overstreet 2022-09-25  515  		} else if (trigger_writes &&
-c36ff038fd3af6 Kent Overstreet 2022-09-25  516  			   btree_node_dirty(b) &&
-c36ff038fd3af6 Kent Overstreet 2022-09-25  517  			   !btree_node_will_make_reachable(b) &&
-c36ff038fd3af6 Kent Overstreet 2022-09-25  518  			   !btree_node_write_blocked(b) &&
-c36ff038fd3af6 Kent Overstreet 2022-09-25  519  			   six_trylock_read(&b->c.lock)) {
-7a51608d012546 Kent Overstreet 2024-09-04  520  			list_move(&list->list, &b->list);
-c36ff038fd3af6 Kent Overstreet 2022-09-25  521  			mutex_unlock(&bc->lock);
-46fee692eebb85 Kent Overstreet 2022-10-28  522  			__bch2_btree_node_write(c, b, BTREE_WRITE_cache_reclaim);
-c36ff038fd3af6 Kent Overstreet 2022-09-25  523  			six_unlock_read(&b->c.lock);
-c36ff038fd3af6 Kent Overstreet 2022-09-25  524  			if (touched >= nr)
-c36ff038fd3af6 Kent Overstreet 2022-09-25  525  				goto out_nounlock;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  526  			mutex_lock(&bc->lock);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  527  			goto restart;
-05a49d22750ec4 Kent Overstreet 2022-03-03  528  		}
-05a49d22750ec4 Kent Overstreet 2022-03-03  529  
-c36ff038fd3af6 Kent Overstreet 2022-09-25  530  		if (touched >= nr)
-05a49d22750ec4 Kent Overstreet 2022-03-03  531  			break;
-05a49d22750ec4 Kent Overstreet 2022-03-03  532  	}
-c36ff038fd3af6 Kent Overstreet 2022-09-25  533  out_rotate:
-7a51608d012546 Kent Overstreet 2024-09-04  534  	if (&t->list != &list->list)
-7a51608d012546 Kent Overstreet 2024-09-04  535  		list_move_tail(&list->list, &t->list);
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  536  out:
-c36ff038fd3af6 Kent Overstreet 2022-09-25  537  	mutex_unlock(&bc->lock);
-c36ff038fd3af6 Kent Overstreet 2022-09-25  538  out_nounlock:
-7c7e071d90ac27 Kent Overstreet 2022-04-03  539  	ret = freed;
-e648448ca562af Kent Overstreet 2020-11-11  540  	memalloc_nofs_restore(flags);
-674cfc26240b78 Kent Overstreet 2022-08-27  541  	trace_and_count(c, btree_cache_scan, sc->nr_to_scan, can_free, ret);
-c7ce813fe49a58 Kent Overstreet 2021-12-27  542  	return ret;
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  543  }
-1c6fdbd8f2465d Kent Overstreet 2017-03-16  544  
-
-:::::: The code at line 502 was first introduced by commit
-:::::: ad5dbe3ce533ec13abacad78076050672e3d39eb bcachefs: Don't count "skipped access bit" as touched in btree cache scan
-
-:::::: TO: Kent Overstreet <kent.overstreet@linux.dev>
-:::::: CC: Kent Overstreet <kent.overstreet@linux.dev>
-
+diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
+index d96028f01770..fb416d60dcd7 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.c
++++ b/drivers/net/ethernet/freescale/fman/fman.c
+@@ -24,7 +24,6 @@
+ 
+ /* General defines */
+ #define FMAN_LIODN_TBL			64	/* size of LIODN table */
+-#define MAX_NUM_OF_MACS			10
+ #define FM_NUM_OF_FMAN_CTRL_EVENT_REGS	4
+ #define BASE_RX_PORTID			0x08
+ #define BASE_TX_PORTID			0x28
+diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
+index 2ea575a46675..74eb62eba0d7 100644
+--- a/drivers/net/ethernet/freescale/fman/fman.h
++++ b/drivers/net/ethernet/freescale/fman/fman.h
+@@ -74,6 +74,9 @@
+ #define BM_MAX_NUM_OF_POOLS		64 /* Buffers pools */
+ #define FMAN_PORT_MAX_EXT_POOLS_NUM	8  /* External BM pools per Rx port */
+ 
++/* General defines */
++#define MAX_NUM_OF_MACS			10
++
+ struct fman; /* FMan data */
+ 
+ /* Enum for defining port types */
+diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
+index 11da139082e1..1916a2ac48b9 100644
+--- a/drivers/net/ethernet/freescale/fman/mac.c
++++ b/drivers/net/ethernet/freescale/fman/mac.c
+@@ -259,6 +259,11 @@ static int mac_probe(struct platform_device *_of_dev)
+ 		err = -EINVAL;
+ 		goto _return_dev_put;
+ 	}
++	if (val >= MAX_NUM_OF_MACS) {
++		dev_err(dev, "cell-index value is too big for %pOF\n", mac_node);
++		err = -EINVAL;
++		goto _return_dev_put;
++	}
+ 	priv->cell_index = (u8)val;
+ 
+ 	/* Get the MAC address */
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.30.2
+
 
