@@ -1,144 +1,214 @@
-Return-Path: <linux-kernel+bounces-383935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9C89B2225
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:01:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 796B29B2229
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:02:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B291F21648
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:01:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A66D1F21B84
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A520D17A584;
-	Mon, 28 Oct 2024 02:01:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEE53160884;
+	Mon, 28 Oct 2024 02:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FEAgzFUH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PEaLAsom"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2062.outbound.protection.outlook.com [40.107.94.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086C74C6C;
-	Mon, 28 Oct 2024 02:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730080872; cv=none; b=EljFwNStEK1a9jF9olcr8EuC2x6PSr9+hoPH/MEYK6RdkMP1HQKCQr30SLPOpqb3IF29dKlLTq4hEJti2K4P0mDrSBoyQwUXvXxpufu4FWzvUOrmZ+z4RBh6L+TbiW1MyByJxtmKA6CMNJJJxSdq4q69NHuV7TGmW9f1MOTmNCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730080872; c=relaxed/simple;
-	bh=O3Ovtbf3MrmDzHqqK2oXEfGTFDsY4Dl/uMRNNzQ0jlU=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NHTFbKDZlCpS/mOegY+6MSe+a2RlkVGVBRLp582Z0qGmss3m7YcE7jLCe6AFgXBRIlOOdIW7fSSzSomjASh7HATQ1XNaKPVlPGVXLlzDJiB/56cQ8vwILwAG3usEE7Evq4cy+/7b/+zDq077HqzxTrp2hzkJB3pyApSHJW1z7uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FEAgzFUH; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730080870; x=1761616870;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=O3Ovtbf3MrmDzHqqK2oXEfGTFDsY4Dl/uMRNNzQ0jlU=;
-  b=FEAgzFUHr3EQeuWhjCD3MszQyI86wPqnDx/ufKLi4m/0yXVv62m/0PdX
-   Qb34JnriCtA7T64jegh2/b/ygqDorvKBw2ODy6ltR+yqCqlfmerDhpNG1
-   DLqJIUQtzk1ueG0x9u1ZglHJWfAjIAgEiQVV7L2ZsCwCXcsn7qmMBN2ib
-   caBi6uRteHLVW07jY7GM7ol+1yuZlXtzwshj0qfK7XQB45iur85AwtdZm
-   QFnHEdXxT5aINA4SqwEKL2oEeueg/ApaXiXrTga0JvE74MDtu34m/QmM5
-   gxaVbagNjoFTDRRaDpL1fsWSi2xAaK40GBg8JHWj7z597sKNXq5ehYJtH
-   A==;
-X-CSE-ConnectionGUID: GUE7Y+dvRjSSYU6F1TMxbw==
-X-CSE-MsgGUID: NYnuvrPVSNiuuMueSjJUfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="32530610"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="32530610"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 19:01:09 -0700
-X-CSE-ConnectionGUID: qpBwISFYS46tXapmQ++WeA==
-X-CSE-MsgGUID: cTaC7appS+WESSNDD4yrMw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="104792722"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.238.0.51]) ([10.238.0.51])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 19:00:28 -0700
-Message-ID: <6a9366a5-7c5b-449c-b259-8e2492aae2a1@linux.intel.com>
-Date: Mon, 28 Oct 2024 10:00:25 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAF021DA5A;
+	Mon, 28 Oct 2024 02:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730080923; cv=fail; b=R1+E7vgiRQ459ofyqEywd/hPjvk4A3/ZATATj//GuTkBccg3SmAA5kwUEKKZuUbYjRIYGKSzG3V5BryzeBwi9CV9WJOs2pPAR4HZJJXB28EpxMrBKJcrtRYHfNYOP+O42TiRJopBiLOv9h2xaCgnGQWnwB0MHgHUqEOty5f2HWw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730080923; c=relaxed/simple;
+	bh=edLuP1KV8bi7kPKEgc9KJU4e22Z6N6dRC9HOaBQSjWE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d+rqrXUAFUgP1RJ0cbGK6hS62bYfgDjU5kE7JrHBqe3oAN3h7oLH13nE0/QclRh5TmTCbuMvvcPw3rwWEhiuTpqt0zdjTvjqg9E7i/wUMaX8a6q0N6mx7db+x+reChboeJ8mxg8e4TcTZheh9N5gCqjArJyRX43pRKtm3oMGBBg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PEaLAsom; arc=fail smtp.client-ip=40.107.94.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y73dotOE8Gg55xGpcWs6W9WhZB/mr1SfbIqmUocU3nRld5czjrTB3CM1eNrYgJYUZ9olGGxjoq0nHAopdEMrX9u43QSKn+b6LfMuHaQY64ri+zzLNL2sKjL/AqsVc1KzGPr/rKOovUoRocCM9hMIKT1dRg3c8762Z/RN2aAbhgiQKkuP/V5FmlI2RNSuOhOWTLxKYqAzFfOhaNlIGziB6TkK0vvHbfIC9ndk1IjIcoAEAmG+3t3zXhqZKCY8BZtQbdSAjDecB7SfNShBErkRiWS9aRuRrPRX4fN/jnG/S4yV2EbgobLskwgJ2x7OygR3rWrSvQpPElRcXiXl1duyFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Woup2oO7qjAL1nUWO7zY4NXRiNlo+EFKnv932ZK6EAw=;
+ b=I1Sfpq7kE7E9d8Tb9rGeEZcOyfdGrVVx0LyAuaV5JAvKWKNr1gC2msGJ6ONW6xuHQFLXfX5mFWHON/JbuG7gPTqwRz6MYdtnPzRXqR6q5y3z5SgYqZ8t5HMsUb7lxRwA7EsKwvpmSesgwYMIreRVaqnB2p9fPpkKZQBbeQSTG87/4FCh2TgKpwv9xCBz0MD1Dd+i8lRaSrLuGJLgt6SfHX1S/owl3HZIZukEKE+rtC6FTzhw/fp30xl/su4TQwMwLQg9egHneKgiSnNxvZxlm1GOVTuZA4qMoKe+UFmfMNx9aTjQw4YxpAAdBVl/8I3MQPlgMr4x7cV88H8k4BCFDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Woup2oO7qjAL1nUWO7zY4NXRiNlo+EFKnv932ZK6EAw=;
+ b=PEaLAsomTXHoKz/Ru6QfUIrJtGQDhfxcO7aNY0AY0oPYTuaboNJlSB7WV5+HQWJvnfQPE++fOJMpRsyohDi4kv/hekKS6w7CwN6C/FQ+op9rbfiAMXquxVaSEd2h4A2y2OKMtzoTuJwFFdRRbpmwbQ8HnKSGqnH2ZfaoAeuTi04=
+Received: from BN9PR03CA0791.namprd03.prod.outlook.com (2603:10b6:408:13f::16)
+ by SJ1PR12MB6028.namprd12.prod.outlook.com (2603:10b6:a03:489::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Mon, 28 Oct
+ 2024 02:01:55 +0000
+Received: from BL02EPF00021F6B.namprd02.prod.outlook.com
+ (2603:10b6:408:13f:cafe::28) by BN9PR03CA0791.outlook.office365.com
+ (2603:10b6:408:13f::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.26 via Frontend
+ Transport; Mon, 28 Oct 2024 02:01:55 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00021F6B.mail.protection.outlook.com (10.167.249.7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.14 via Frontend Transport; Mon, 28 Oct 2024 02:01:55 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 27 Oct
+ 2024 21:01:53 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?=
+	<ilpo.jarvinen@linux.intel.com>
+CC: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+	Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, "Shyam
+ Sundar S K" <Shyam-sundar.S-k@amd.com>, Corentin Chary
+	<corentin.chary@gmail.com>, "Luke D . Jones" <luke@ljones.dev>, Ike Panhc
+	<ike.pan@canonical.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+	"Alexis Belmonte" <alexbelm48@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
+	<u.kleine-koenig@pengutronix.de>, Ai Chao <aichao@kylinos.cn>, Gergo Koteles
+	<soyer@irl.hu>, open list <linux-kernel@vger.kernel.org>, "open list:ACPI"
+	<linux-acpi@vger.kernel.org>, "open list:MICROSOFT SURFACE PLATFORM PROFILE
+ DRIVER" <platform-driver-x86@vger.kernel.org>, "open list:THINKPAD ACPI
+ EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, Mark Pearson
+	<mpearson-lenovo@squebb.ca>, Matthew Schwartz <matthew.schwartz@linux.dev>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v2 00/15] Add support for binding ACPI platform profile to multiple drivers
+Date: Sun, 27 Oct 2024 21:01:16 -0500
+Message-ID: <20241028020131.8031-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Leon Romanovsky <leonro@nvidia.com>,
- Keith Busch <kbusch@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
- Logan Gunthorpe <logang@deltatee.com>, Yishai Hadas <yishaih@nvidia.com>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-block@vger.kernel.org, linux-rdma@vger.kernel.org,
- iommu@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-pci@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 07/18] dma-mapping: Implement link/unlink ranges API
-To: Leon Romanovsky <leon@kernel.org>, Jens Axboe <axboe@kernel.dk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
- Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
-References: <cover.1730037276.git.leon@kernel.org>
- <b434f2f6d3c601649c9b6973a2ec3ec2149bba37.1730037276.git.leon@kernel.org>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <b434f2f6d3c601649c9b6973a2ec3ec2149bba37.1730037276.git.leon@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6B:EE_|SJ1PR12MB6028:EE_
+X-MS-Office365-Filtering-Correlation-Id: c1640493-ed6f-4a79-3a5c-08dcf6f47f9d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BsJXv2BXtINcFqOfSrkGlcvdZNA2uH+CkrZtfuOVlcvZVYC2P3TJh6BipVmY?=
+ =?us-ascii?Q?eMsAv4VdWfQd0Bu7LKp9HrbnJ94FMjvCMc3gh794khgSSgp1Q5r/hFm5NiXo?=
+ =?us-ascii?Q?jHQ5W4efiWhJs0IE9Coqb2CeXslES978bIdyclLasDMHe0IdNzGJfbZ0pMcD?=
+ =?us-ascii?Q?Q9FKaeUMMoYxirImKhJnOVwtT6HvwUvFv3kH7IhzkIDU88aouuy7LjWX+rhU?=
+ =?us-ascii?Q?CX136WboM23HkOC+c412QNnV3NBfBj0F2kL7kpdtayh/BGlWbgdczOlrvRtG?=
+ =?us-ascii?Q?RKEb1BIEPBXil3LdTccNoGO7plsHhrkmRpEr+3Z4kNOWG3wkRyPUUBBkiyqU?=
+ =?us-ascii?Q?0mvr/dzlGHO0Zakl3ptt7YyjM3lHqWYkii5mUmrGwL+jSUX7r+sQj24XC/ul?=
+ =?us-ascii?Q?EL1BHZv7FP5pBokrZZ7CY/slYnsr/boRUdu9Bu6EV4Dtdu7iDDz47s2AatmW?=
+ =?us-ascii?Q?z/9kkEz2OF0BT81ZeB7CNk481Wst03p1qSbv9Tz5P8YQwo7Q9COzSylbyFfq?=
+ =?us-ascii?Q?hy/m44S8HK8sMHwFUQDs32TI9yaRzpvy9737aoBOOTa7TdZmE25r2rtHgNxa?=
+ =?us-ascii?Q?Cp/C4dxD1TcbdmYvEEmVXiTDSe62ZUT6TFJnsfN19YNCWpRycXBiQbYrRtkk?=
+ =?us-ascii?Q?O7JsfTRhTUlvQlM19ZZuq9jfD8wkzED/LMeWK9jWL/pzjH6YS6iUJh7Og7v+?=
+ =?us-ascii?Q?74/JStYrjmy5PBAmSowfak2XLYftu0CbgBVr1DdvrUXmWyR5IXRiGpI6RryV?=
+ =?us-ascii?Q?ANMPeNk88oQ0iNRbY8Hh5e2SKRGjP8B48NPmwThpE2qjFOrGCBOrI+2ujG2z?=
+ =?us-ascii?Q?xYIbJ49a0gn0LI4BxhRhCap8R2F0xE72aJF1tRRAeD79c7yM9v72kYS8rer7?=
+ =?us-ascii?Q?Coxfl+i3h3DyQHcsAL/rkA8tGETriYSrhC4JpDx1hnXOfBd4wHqlcUVKhBMm?=
+ =?us-ascii?Q?r6k99793XzdeMPm0YQuXB2roKwbBsLtW3CdJR4GfTa89Mz49M6epA3nsZwrV?=
+ =?us-ascii?Q?va9uPCxeb0h3N0qNA6XsMyGewtoHzfbWOZy6yRfl5I6wtRQ1qpgOrbwymuq8?=
+ =?us-ascii?Q?/c4Sc9jpQgTkDxZw42EkeZ/7suJpkKFgL6BDvga0GTxAE7OMJj0QLkrpR0VM?=
+ =?us-ascii?Q?AynLTSQzf2tx8qytWFbi+/CnVY3Bc7l+aSJDHJA7fqgC0zgIfrvR4mox8oP6?=
+ =?us-ascii?Q?pq9aWPaKms3LjyBTNhvX9sAL+9pmeVms96WkvT+0zZFBMVGXDjMsQm88ncJp?=
+ =?us-ascii?Q?qLvvQaCOi0H0hFlcGgt4f3LyXIVXtWiEcGNSgtSvzS/EiElwZ7zjlQ2WaIg0?=
+ =?us-ascii?Q?xTEkfooNggsaPhIiucAd9Q55a6DgTNq0S0Ip7H66aHZl1AUhll4A3P3oiFXZ?=
+ =?us-ascii?Q?/yi1UwnAel1yR5W237L7GtafyQjtypT4D0pC1xRN+MbWAzpvUg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 02:01:55.2606
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: c1640493-ed6f-4a79-3a5c-08dcf6f47f9d
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F6B.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6028
 
-On 2024/10/27 22:21, Leon Romanovsky wrote:
-> +/**
-> + * dma_iova_sync - Sync IOTLB
-> + * @dev: DMA device
-> + * @state: IOVA state
-> + * @offset: offset into the IOVA state to sync
-> + * @size: size of the buffer
-> + * @ret: return value from the last IOVA operation
-> + *
-> + * Sync IOTLB for the given IOVA state. This function should be called on
-> + * the IOVA-contigous range created by one ore more dma_iova_link() calls
-> + * to sync the IOTLB.
-> + */
-> +int dma_iova_sync(struct device *dev, struct dma_iova_state *state,
-> +		size_t offset, size_t size, int ret)
-> +{
-> +	struct iommu_domain *domain = iommu_get_dma_domain(dev);
-> +	struct iommu_dma_cookie *cookie = domain->iova_cookie;
-> +	struct iova_domain *iovad = &cookie->iovad;
-> +	dma_addr_t addr = state->addr + offset;
-> +	size_t iova_start_pad = iova_offset(iovad, addr);
-> +
-> +	addr -= iova_start_pad;
-> +	size = iova_align(iovad, size + iova_start_pad);
-> +
-> +	if (!ret)
-> +		ret = iommu_sync_map(domain, addr, size);
-> +	if (ret)
-> +		iommu_unmap(domain, addr, size);
+Currently there are a number of ASUS products on the market that happen to
+have ACPI objects for amd-pmf to bind to as well as an ACPI platform profile
+provided by asus-wmi.
 
-It appears strange that mapping is not done in this helper, but
-unmapping is added in the failure path. Perhaps I overlooked anything?
-To my understanding, it should like below:
+The ACPI platform profile support created by amd-pmf on these ASUS products is "Function 9"
+which is specifically for "BIOS or EC notification" of power slider position.
+This feature is actively used by some designs such as Framework 13 and Framework 16.
 
-	return iommu_sync_map(domain, addr, size);
+On these ASUS designs we keep on quirking more and more of them to turn off this
+notification so that asus-wmi can bind.
 
-In the drivers that make use of this interface should do something like
-below:
+This however isn't how Windows works.  "Multiple" things are notified for the power
+slider position. This series adjusts Linux to behave similarly.
 
-	ret = dma_iova_sync(...);
-	if (ret)
-		dma_iova_destroy(...)
+Multiple drivers can now register an ACPI platform profile and will react to set requests.
 
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(dma_iova_sync);
+To avoid chaos, only positions that are common to both drivers are accepted.
 
-Thanks,
-baolu
+This also allows dropping all of the PMF quirks from amd-pmf.
+
+v2:
+ * Split to many more patches
+ * Account for feedback from M/L
+
+Mario Limonciello (15):
+  ACPI: platform-profile: Add a name member to handlers
+  platform/surface: aggregator: Add platform handler pointer to device
+  ACPI: platform_profile: Add platform handler argument to
+    platform_profile_remove()
+  ACPI: platform_profile: Add a list to platform profile handler
+  ACPI: platform_profile: Move sanity check out of the mutex
+  ACPI: platform_profile: Use guard(mutex) for register/unregister
+  ACPI: platform_profile: Only remove group when no more handler
+    registered
+  ACPI: platform_profile: Require handlers to support balanced profile
+  ACPI: platform_profile: Notify change events on register and
+    unregister
+  ACPI: platform_profile: Only show profiles common for all handlers
+  ACPI: platform_profile: Set profile for all registered handlers
+  ACPI: platform_profile: Make sure all profile handlers agree on
+    profile
+  ACPI: platform_profile: Check all profile handler to calculate next
+  ACPI: platform_profile: Allow multiple handlers
+  platform/x86/amd: pmf: Drop all quirks
+
+ drivers/acpi/platform_profile.c               | 258 +++++++++++-------
+ .../surface/surface_platform_profile.c        |   7 +-
+ drivers/platform/x86/acer-wmi.c               |   5 +-
+ drivers/platform/x86/amd/pmf/Makefile         |   2 +-
+ drivers/platform/x86/amd/pmf/core.c           |   1 -
+ drivers/platform/x86/amd/pmf/pmf-quirks.c     |  66 -----
+ drivers/platform/x86/amd/pmf/pmf.h            |   3 -
+ drivers/platform/x86/amd/pmf/sps.c            |   3 +-
+ drivers/platform/x86/asus-wmi.c               |   5 +-
+ drivers/platform/x86/dell/dell-pc.c           |   3 +-
+ drivers/platform/x86/hp/hp-wmi.c              |   3 +-
+ drivers/platform/x86/ideapad-laptop.c         |   3 +-
+ .../platform/x86/inspur_platform_profile.c    |   5 +-
+ drivers/platform/x86/thinkpad_acpi.c          |   3 +-
+ include/linux/platform_profile.h              |   4 +-
+ 15 files changed, 190 insertions(+), 181 deletions(-)
+ delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+
+-- 
+2.43.0
+
 
