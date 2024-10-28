@@ -1,243 +1,81 @@
-Return-Path: <linux-kernel+bounces-385994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 989359B3DE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:38:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC0BF9B3DE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:38:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D7DE1F22FF8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:38:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B079F28225F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7F62200BAF;
-	Mon, 28 Oct 2024 22:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D041F4265;
+	Mon, 28 Oct 2024 22:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="gG0RGd56"
-Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="bLb3h18w"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40EA18E05D;
-	Mon, 28 Oct 2024 22:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12CF618FDC2;
+	Mon, 28 Oct 2024 22:37:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730154992; cv=none; b=DJe/mcAsYh0fkSRSNL//3IY4iLuSUABxZ7Q71jn2m/BaxjI8pQ02gIDsrGiTey1yiN040Iu95CDOj8FxkmkjarwBbg1Sv04KP33bKdRoBBnb3p1mDh/PbBbcyJYsEMWKGVP63JTkjNEMuTAPCV+/UgKNtSZetTkRXnkTH1kmMYk=
+	t=1730155037; cv=none; b=QAGazQYNV5heWUM4/GHp5e1YrqQNdkfTW0Si7zJ2869Bb18g+GvJIVk5OT4VChOSd8X1CotfgZEFEz50KIb6uMYFeFTIpfVNG2ln8N6yX4bSWYLU8qDCc8sKHWeuog+NyBa0dRTLVFEF+xivI4Yk5ShhOhu1kbSfLxkoYAH2iAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730154992; c=relaxed/simple;
-	bh=fcb6/ZXqWJIFRDmjDhyI8ULDpI0uIWrmsfpnD3tx5PU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=EtgSniMXUCmjZ9guIzr5S3j06ar7mP2CgsyXqboQfx5BtdJqcFda/IgD1gfS7cmjM+EtUZopmuJumKBKEWTnvAFZ6jsJhYkGyV1Gnx0umc3KIAvp0RA9AtyOH/k3VBPAdVqK13A/EpDLEXJX1mxOXeGLNf4N4TfzhARLjfNF/38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=gG0RGd56; arc=none smtp.client-ip=139.165.32.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
-Received: from localhost.localdomain (unknown [10.29.254.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 8BB20200DF96;
-	Mon, 28 Oct 2024 23:36:26 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 8BB20200DF96
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
-	s=ulg20190529; t=1730154988;
-	bh=tYfpbkPNAjaZpZFMkRWmpEDluZdW9RukyEp0aeELqDs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gG0RGd56fYB4i6Mr0y1PANR29LyYM4pZRZpo/J+glpj2805OJcCj3az+topCl5OZg
-	 DKVUdI0Y3+MtB1/siLcaPSI0qAChSa0Tgn2vwGO5FDxTeUXUogVTXhy47IqtgPVAv6
-	 isuf73tPvxsq2RRL4PmgAYZf1DSIdwbqzR+MdxEF/qhkemjaqlnr+h207oAUZieTQ2
-	 Uoe34ZILjWuEOGWcozgX8IyJ95L8NJOgpP7bjouwJ/lR+5eUN8T+Noh9DWHKsGQRXH
-	 b2pL8A5gi43UV7YB8MUyA8Q51r+RVNyA/Noth3S/hPaFPOtKFvspKfhN9+fUA3F0UB
-	 +niZ4lEhokyGA==
-From: Justin Iurman <justin.iurman@uliege.be>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	dsahern@kernel.org,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	linux-kernel@vger.kernel.org,
-	justin.iurman@uliege.be,
-	Alexander Aring <aahringo@redhat.com>
-Subject: [PATCH net-next v3 3/3] net: ipv6: rpl_iptunnel: mitigate 2-realloc issue
-Date: Mon, 28 Oct 2024 23:36:11 +0100
-Message-Id: <20241028223611.26599-4-justin.iurman@uliege.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241028223611.26599-1-justin.iurman@uliege.be>
-References: <20241028223611.26599-1-justin.iurman@uliege.be>
+	s=arc-20240116; t=1730155037; c=relaxed/simple;
+	bh=txZ5FjWCswLrn5R55z+wYaLbR9OTGv+7YeGcXUxb8wU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ML+ezt6WKKAOL86rs8BCGhWYb5kbmlyKFE3U1cL+2tqZqTqAjhLtxxLZJh7qlpAdDaC5dUaL70H9CIFEcZaiMGDKDDoyep1mQYD8VCWUtykFuh21Y5KIk5JcWcNCs9CFq3mr/qbDQbgryVaqXnaSqtdBGU7KUtoSrEcHnH8KoJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=bLb3h18w; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1730155035;
+	bh=txZ5FjWCswLrn5R55z+wYaLbR9OTGv+7YeGcXUxb8wU=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=bLb3h18wgG+pWjMR3LBhLa5H3cOjWb4ZEVRL0zBy/sDAOIROkHifR2SEggXt+FZl9
+	 IJ6DUCoQqHVdne3vCbwAt0YMT3brstrJrt/p0B9q+GH9jj3rhbTv5sbev7GL84AvkN
+	 SrUNrq5CrpzNSxczBYaIuVFfdWcGptTYeYHizNVQ=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 3012340262; Mon, 28 Oct 2024 15:37:15 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 2EFAE401C8;
+	Mon, 28 Oct 2024 15:37:15 -0700 (PDT)
+Date: Mon, 28 Oct 2024 15:37:15 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, mingo@redhat.com, 
+    dvhart@infradead.org, dave@stgolabs.net, andrealmeid@igalia.com, 
+    Andrew Morton <akpm@linux-foundation.org>, urezki@gmail.com, 
+    hch@infradead.org, lstoakes@gmail.com, Arnd Bergmann <arnd@arndb.de>, 
+    linux-api@vger.kernel.org, linux-mm@kvack.org, linux-arch@vger.kernel.org, 
+    malteskarupke@web.de, llong@redhat.com
+Subject: Re: [PATCH 2/6] futex: Implement FUTEX2_NUMA
+In-Reply-To: <20241028094618.GL9767@noisy.programming.kicks-ass.net>
+Message-ID: <50dc2133-5f43-3a02-38a9-234e8acb5b8c@gentwo.org>
+References: <20241025090347.244183920@infradead.org> <20241025093944.485691531@infradead.org> <dce4d83c-fb3f-3581-71e4-33dad3f91e07@gentwo.org> <20241028094618.GL9767@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-This patch mitigates the two-reallocations issue with rpl_iptunnel by
-providing the dst_entry (in the cache) to the first call to
-skb_cow_head(). As a result, the very first iteration would still
-trigger two reallocations (i.e., empty cache), while next iterations
-would only trigger a single reallocation.
+On Mon, 28 Oct 2024, Peter Zijlstra wrote:
 
-Performance tests before/after applying this patch, which clearly shows
-there is no impact (it even shows improvement):
-- before: https://ibb.co/nQJhqwc
-- after: https://ibb.co/4ZvW6wV
+> Using get_task_policy() seems very dangerous to me. It is explicitly
+> possible for different tasks in a process to have different policies,
+> which means (private) futexes would fail to work correctly.
+>
+> We need something that is process wide consistent -- like the vma
+> policies. Except at current, those are to expensive to readily access.
 
-Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
-Cc: Alexander Aring <aahringo@redhat.com>
----
- net/ipv6/rpl_iptunnel.c | 67 +++++++++++++++++++++++------------------
- 1 file changed, 38 insertions(+), 29 deletions(-)
+The vma policies are bound to addresses that in turn yields address space
+wide validity.
 
-diff --git a/net/ipv6/rpl_iptunnel.c b/net/ipv6/rpl_iptunnel.c
-index db3c19a42e1c..c518728460a2 100644
---- a/net/ipv6/rpl_iptunnel.c
-+++ b/net/ipv6/rpl_iptunnel.c
-@@ -124,8 +124,17 @@ static void rpl_destroy_state(struct lwtunnel_state *lwt)
- 	dst_cache_destroy(&rpl_lwt_lwtunnel(lwt)->cache);
- }
- 
-+static inline int dev_overhead(struct dst_entry *dst, struct sk_buff *skb)
-+{
-+	if (likely(dst))
-+		return LL_RESERVED_SPACE(dst->dev);
-+
-+	return skb->mac_len;
-+}
-+
- static int rpl_do_srh_inline(struct sk_buff *skb, const struct rpl_lwt *rlwt,
--			     const struct ipv6_rpl_sr_hdr *srh)
-+			     const struct ipv6_rpl_sr_hdr *srh,
-+			     struct dst_entry *dst)
- {
- 	struct ipv6_rpl_sr_hdr *isrh, *csrh;
- 	const struct ipv6hdr *oldhdr;
-@@ -153,7 +162,7 @@ static int rpl_do_srh_inline(struct sk_buff *skb, const struct rpl_lwt *rlwt,
- 
- 	hdrlen = ((csrh->hdrlen + 1) << 3);
- 
--	err = skb_cow_head(skb, hdrlen + skb->mac_len);
-+	err = skb_cow_head(skb, hdrlen + dev_overhead(dst, skb));
- 	if (unlikely(err)) {
- 		kfree(buf);
- 		return err;
-@@ -186,36 +195,35 @@ static int rpl_do_srh_inline(struct sk_buff *skb, const struct rpl_lwt *rlwt,
- 	return 0;
- }
- 
--static int rpl_do_srh(struct sk_buff *skb, const struct rpl_lwt *rlwt)
-+static int rpl_do_srh(struct sk_buff *skb, const struct rpl_lwt *rlwt,
-+		      struct dst_entry *dst)
- {
--	struct dst_entry *dst = skb_dst(skb);
- 	struct rpl_iptunnel_encap *tinfo;
- 
- 	if (skb->protocol != htons(ETH_P_IPV6))
- 		return -EINVAL;
- 
--	tinfo = rpl_encap_lwtunnel(dst->lwtstate);
-+	tinfo = rpl_encap_lwtunnel(skb_dst(skb)->lwtstate);
- 
--	return rpl_do_srh_inline(skb, rlwt, tinfo->srh);
-+	return rpl_do_srh_inline(skb, rlwt, tinfo->srh, dst);
- }
- 
- static int rpl_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- {
--	struct dst_entry *orig_dst = skb_dst(skb);
--	struct dst_entry *dst = NULL;
-+	struct dst_entry *dst;
- 	struct rpl_lwt *rlwt;
- 	int err;
- 
--	rlwt = rpl_lwt_lwtunnel(orig_dst->lwtstate);
--
--	err = rpl_do_srh(skb, rlwt);
--	if (unlikely(err))
--		goto drop;
-+	rlwt = rpl_lwt_lwtunnel(skb_dst(skb)->lwtstate);
- 
- 	local_bh_disable();
- 	dst = dst_cache_get(&rlwt->cache);
- 	local_bh_enable();
- 
-+	err = rpl_do_srh(skb, rlwt, dst);
-+	if (unlikely(err))
-+		goto drop;
-+
- 	if (unlikely(!dst)) {
- 		struct ipv6hdr *hdr = ipv6_hdr(skb);
- 		struct flowi6 fl6;
-@@ -237,15 +245,15 @@ static int rpl_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 		local_bh_disable();
- 		dst_cache_set_ip6(&rlwt->cache, dst, &fl6.saddr);
- 		local_bh_enable();
-+
-+		err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
-+		if (unlikely(err))
-+			goto drop;
- 	}
- 
- 	skb_dst_drop(skb);
- 	skb_dst_set(skb, dst);
- 
--	err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
--	if (unlikely(err))
--		goto drop;
--
- 	return dst_output(net, sk, skb);
- 
- drop:
-@@ -255,36 +263,37 @@ static int rpl_output(struct net *net, struct sock *sk, struct sk_buff *skb)
- 
- static int rpl_input(struct sk_buff *skb)
- {
--	struct dst_entry *orig_dst = skb_dst(skb);
--	struct dst_entry *dst = NULL;
-+	struct dst_entry *dst;
- 	struct rpl_lwt *rlwt;
- 	int err;
- 
--	rlwt = rpl_lwt_lwtunnel(orig_dst->lwtstate);
--
--	err = rpl_do_srh(skb, rlwt);
--	if (unlikely(err))
--		goto drop;
-+	rlwt = rpl_lwt_lwtunnel(skb_dst(skb)->lwtstate);
- 
- 	local_bh_disable();
- 	dst = dst_cache_get(&rlwt->cache);
-+	local_bh_enable();
-+
-+	err = rpl_do_srh(skb, rlwt, dst);
-+	if (unlikely(err))
-+		goto drop;
- 
- 	if (!dst) {
- 		ip6_route_input(skb);
- 		dst = skb_dst(skb);
- 		if (!dst->error) {
-+			local_bh_disable();
- 			dst_cache_set_ip6(&rlwt->cache, dst,
- 					  &ipv6_hdr(skb)->saddr);
-+			local_bh_enable();
- 		}
-+
-+		err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
-+		if (unlikely(err))
-+			goto drop;
- 	} else {
- 		skb_dst_drop(skb);
- 		skb_dst_set(skb, dst);
- 	}
--	local_bh_enable();
--
--	err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
--	if (unlikely(err))
--		goto drop;
- 
- 	return dst_input(skb);
- 
--- 
-2.34.1
+However, different threads may run on processes on different nodes and
+therefore having different numa nodes close to them etc.
 
 
