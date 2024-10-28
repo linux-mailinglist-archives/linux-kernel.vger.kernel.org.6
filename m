@@ -1,194 +1,270 @@
-Return-Path: <linux-kernel+bounces-385856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6DA19B3CA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:25:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CC619B3CA7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:29:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC741C2232C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:25:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0A4728342B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EB41E1C0D;
-	Mon, 28 Oct 2024 21:25:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE701EE008;
+	Mon, 28 Oct 2024 21:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="XC62+How"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HAKBBP9J";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="GV96HfFF"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE5D1D2796
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:25:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730150714; cv=none; b=nTqhNgzBPhuTEKfeDND9zz9KU9zB97hgozVTfILs4Emt4RAJoY8Lo2pgyPcc8O4Dz46TV4ZHL1DQhQyLae+Zt7Og/ik5ZYUaKWYKGToeEf9eX0s32xkayiOwxo+BDSez6zDdKgNzBw+dpGgL41/UST++VEGHoc4gqWVBVEqrf/8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730150714; c=relaxed/simple;
-	bh=pLRRnqJAPwskef6FrBxl1E3683EQf+jkK+gJCpfUKQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sq2KW61ofxou6idLgS4W3plGU1IgJ+e8fJDe9nSTa14k2UgFesOe4UEm2AuupityMY013V3cadZIeDKvrNLPQAbfUnlTrwvlbI5EIBvlZsdTGFbypBgsaRHQNFsLBNenvDgCaJYBbGJFI2a14bmSkybG1v5wPLUdk1hoAuDBjlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=XC62+How; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b148919e82so386354585a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:25:12 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4448B1E25F7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730150923; cv=fail; b=cfFxXN2uIblD6/o17xltZ8K6LqjAN0jPe+gnkn1G0hDTKh3q6y/X0ogiCPUxopFNz7dq6zFJMlW07VTsK5CFaEd5ku75SwGNq7CpcleHwQMle8MuPNXqfFe+a8CQl0GRi8PPmhL1e3kBNyJDU21kwS0zR/EK+Pela81H8rt5tIg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730150923; c=relaxed/simple;
+	bh=h0X6s6xffbvpBo0SAYvLBtR+DLcwNrwCtLGUYUnaEXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=on8BywjW6L8xz1x7yGonpXuVYePRJaTVmEZ/0IHmzyB5URIZo0V/cqaZy8CFVVgp3uuNfhR8Kqs9JY7rlyMX5qBc0gLUyReLYEZhFk5VRZNJLaqZAkdcxSVgeP0+9PJ1RR5I2XsyTyo0bltNTUFWTI4OR8TGhCpapgO1ML2Ejio=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=HAKBBP9J; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=GV96HfFF; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SKtb1Y031947;
+	Mon, 28 Oct 2024 21:28:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2023-11-20; bh=f/SIYhufACABXuN202
+	P6QTnajwjlgK4L0bX3mB+7hRs=; b=HAKBBP9JHusIP/jb30hfZgFNLyXXaUZAMj
+	9yNDRRL5upba4HO9DFKYs6kbQJLRoH5hX93lcVice9DcSfDsa4IlTdErW4tmeNTB
+	p15+D8+PFC/xU+dLc9xQBz2tHyPEUwqRWZmWCm+rmytcnWCAn+eK23BOqDhkPtnW
+	Y1k4JqVH6OlbkU31AsvJWmGo5Ge7uAnbSKj4bU0V8LczwVdMAsJKK0yGqEafxJH9
+	tMl1riaOvuXujJDSwHOBHEb8KZ8ZjVCAm3fBVHtIyOAky80wURLgFGhB1FtESlVz
+	YZY+KQDl95AoGXeUNfy4hO6NgyQM10XFBlUJD5Zu92J8g6Sek6Gw==
+Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grc8v1bd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Oct 2024 21:28:23 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49SJvUWQ004866;
+	Mon, 28 Oct 2024 21:28:22 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2041.outbound.protection.outlook.com [104.47.70.41])
+	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42jb2t7v4c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 28 Oct 2024 21:28:22 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DSsCaW6xyWhMzGK6j/asJAcwHx6ULPnBebzh45fliTZIzUOKhlQkp7j7PGWXhGmiViuyItU+mB+tHSXqJ/6h4miTzR7kGJdCy2rbELc4gVCudBcxoBY6RmPaRuprRbldI3BUBTNTNppk39oJv0ZROObQlpu5VvMT2VlbZHUtbEgwv2SB0ZuaAyB6HktsIpYRg4QVy+ELdVW9pj1479Qedu30VfjIFnBDFDD1zbzSZs1F+wsY2tWgpJAMauz+5gskTzAfACH+cc/+ZmYdHjvRcdPbXh+vTkOkEldcu+JiXIgg4jmHdi7QzAcgqFkjYXKltVm+1Jc9lbufBG27sJeWoA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f/SIYhufACABXuN202P6QTnajwjlgK4L0bX3mB+7hRs=;
+ b=duEWSdrcYQmOUz+G+V+B8rsASDsEIFrcCRs4uZl146+y7qORfWHPfDfbCtsuySuCN9oxi/assiJk0EKJ4wPSO6kl1bWwbs8SZlEtxcNEv7jmO+JZzNgs8zBiuOmgzS/bcS4qKzFJ/Q+P+uVlMm3Fteq/PknL1fRBrucgYFNs7KUnNtU2Jd51vBgRb9Zlo5m2ffm77vyWy/5wlNVQRg8g+soruzdBlReamOjsa4D/oXZm7lTO+OadVwkGEd9UknwJYwM2L4nBZ6AoreiDHyZwjKtUaW3Fr3Rr9kVUK4T+ZDCimeS0Dnd4Jz44dKcVmmfX0OuLJFBLh0jbi5zpIRg8qQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730150711; x=1730755511; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=585mKsRT7d06ESGh3mIJ8b6bPBzsGlMV5JaQkeOeFsk=;
-        b=XC62+HowIJktyI/3WW5ZLGPefmhKPm3wy+9PmDYAPVHcFC9mtB59PtecfTUDIfU/s+
-         X5UIPHFspbHkTTtmtWHnbv0yw63RljM5HbPR9OMyQj2xonxR2ds9wiCYPaxmJnXZvBww
-         c41SFDh0bCV0IdMXHqNjVdpzHCFvgV5yFPtNxkgQ/bBneUMS64yLMsmxDbQmT2ouFsmh
-         10w+x1NSXmEdyxCZnXhlF7xL9oHJYVGUXy6WZ1LkrpxvS9aF4OXOk6GJYSDqwcLOpq0o
-         o70KA3l6bVvu2Ni/P0WSRTh8zZUtGOf9xSirPUjldRndpKfnIo8ze4zaz0+ZkFJZyf2p
-         OQHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730150711; x=1730755511;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=585mKsRT7d06ESGh3mIJ8b6bPBzsGlMV5JaQkeOeFsk=;
-        b=mFjY+27DJbBig7lvm720vJhGoYFCk5oc3UjZ2Bz0g1dSFIYhiqm6UKSFQvmLXxBcKb
-         6G4+NcteO8cnG18nLvg0DuO5t9EDdOUuSsC2xk4FpjeiclYYBYHanpupZhArUciQFQTD
-         P3su1FHfmvYr6WHKHp897I8K9vgIOkAEYqkY+o7LeMgN86g44pi1goGwzuCBkrShiyfY
-         eptlaLiy3BGDoD51ZhDw5J5hEUcHDwCLV4RrQIHg1s68Hy7pmkBAXQFVvO+AlnhwNV4V
-         bHIkFLjgFVkASrwugmsf13mnye12L4Omx0zSTVeKkbUtoyd64eS8xXGavSljtWzmQMaQ
-         +Qdw==
-X-Gm-Message-State: AOJu0YzMRTfjEPqVDFpcWBrPeQ+D9s6J/pcLadyOYg/ze//bJuj0mnik
-	mOpF33O0TEGaw2q0G/CLPl/3upsh7b/y3/ZZqtqxBcqeuXJCqckl2E/HxqpbqIg=
-X-Google-Smtp-Source: AGHT+IFzTlrI74jY4d3DbIaVjhK5zLVVE83AfXgTDT4O8X7A3dLUwf3PsR3yfJKmz8swudu8twoovw==
-X-Received: by 2002:a05:620a:29c3:b0:7b1:54f6:d1e0 with SMTP id af79cd13be357-7b193f59b61mr1413923985a.62.1730150711346;
-        Mon, 28 Oct 2024 14:25:11 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d3484b6sm356677985a.124.2024.10.28.14.25.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 14:25:10 -0700 (PDT)
-Date: Mon, 28 Oct 2024 17:25:15 -0400
-From: Gregory Price <gourry@gourry.net>
-To: Yang Shi <shy828301@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
-	akpm@linux-foundation.org, ying.huang@intel.com, weixugc@google.com,
-	dave.hansen@linux.intel.com, osalvador@suse.de,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
- demoting pages
-Message-ID: <ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com>
-References: <20241025141724.17927-1-gourry@gourry.net>
- <CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f/SIYhufACABXuN202P6QTnajwjlgK4L0bX3mB+7hRs=;
+ b=GV96HfFF8HrYefRKqvAtkx85khV5aa7mnt28UnWOkzkiRUFtHaiP1JqPi7r8+wTYp1kNW07dzj5H70wolJE8QnEbyIGoOH4yR18ukUuhLBZUJAPBAs7QGgg5kN74t7zuwb+ZsZYSbidudCOHcg9GIBqUiyOETOHFW0DVo6ux3Mo=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by PH8PR10MB6597.namprd10.prod.outlook.com (2603:10b6:510:226::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Mon, 28 Oct
+ 2024 21:28:19 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%6]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
+ 21:28:19 +0000
+Date: Mon, 28 Oct 2024 21:28:14 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
+ error path behaviour
+Message-ID: <14cb2815-a5a4-4336-887a-01b305e6289f@lucifer.local>
+References: <61461dcc-e455-450d-9c01-5465003fc31c@sirena.org.uk>
+ <c24a174d-c8f3-4267-87ae-cf77fa587e82@lucifer.local>
+ <CAHk-=whD9MrPwPMBgVG16T_u+my8xYtZg2tUGz932HeodVX7Bg@mail.gmail.com>
+ <438f50c5-8b8c-444f-ae85-10e5151f3f24@lucifer.local>
+ <57mgmdx7wgfwci3yo3ggkmcnm3ujamgkwcccm77ypvmer5tegn@opiq3ceh2uvy>
+ <ykzmur56ms7fm4midi6tbncjvcvf7ue4lp7e4orblrmwnefw3e@oa3enlpdrcrr>
+ <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local>
+ <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
+ <a1ffccb8-3f53-4486-a250-282ddc7054dd@lucifer.local>
+ <91d9f81c-b971-4764-8f21-4011023628c0@sirena.org.uk>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <91d9f81c-b971-4764-8f21-4011023628c0@sirena.org.uk>
+X-ClientProxiedBy: LO4P123CA0089.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:190::22) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|PH8PR10MB6597:EE_
+X-MS-Office365-Filtering-Correlation-Id: 48d318b4-eaac-453c-d368-08dcf7977123
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?POXlVIjyZA7El4gka9AyJ+Aa69huGMnbJEjLghb5VNQho6ySFcEHt41uXQzL?=
+ =?us-ascii?Q?al6RO+HQqXEGTLNolo5HF1ma4r8Qow2K0BP/tYiKeQl/JTm5V5E6aFk1s0Ts?=
+ =?us-ascii?Q?Ex1po9WMI3flqiywZ0ole5+TZLUX9xpxvCYblnBbhMSqSqvTNuVzVW8syaJ6?=
+ =?us-ascii?Q?sEUwJr5GaDYUNG4nVXgtk3tOn0AQxdHv3AE6F8EUlMnqj9PlZI/xFuyeAi0S?=
+ =?us-ascii?Q?3EkfiIDR4Di8iXS1G1IEuTbDmFD1rhC5jjwrF6kUhmfRhfSsqM8F+r8fM7QL?=
+ =?us-ascii?Q?vay6/KfjSu74+c8RKR4Qxia3SkmNOy13NDzCZUsFD+xixhbiVojoTL2hgubF?=
+ =?us-ascii?Q?UDMIyEcgYyJeZtUOSHCgg/rVzWM5s/jn3L9Qh4fdSvFViHTnPhrllpK185cC?=
+ =?us-ascii?Q?plHOGc2kyxJJGepo87UW3utt6agdpI+6idw2YibMbzdpKlUWm1Kd6V0dYNXL?=
+ =?us-ascii?Q?zUjoFdif1Xzg6HY2XcNfLDHRZcGBH2aXuyB9xug7C+R5/C84RrsiTa09tbID?=
+ =?us-ascii?Q?Ml9LiaqPfS6LbL/4l16w4+F60I1o58X2ogxWbBpifSJBIARaaWsqRu2K1WY5?=
+ =?us-ascii?Q?ByeUshZ4Fd2nHGJvuiSAH6WcV6RVJudWoJTj/4vPMmOrV4HO+NOz/mMJ7GpT?=
+ =?us-ascii?Q?mnm5q4kgounvh+wZDEJAmNZ03C0SXFFbA4eolcy6Moy4UFKS8XrpnPBI5H8u?=
+ =?us-ascii?Q?xBxL2GNVGrxv1aYHjchGKMITRs5MaROTOtXz11qWdv2z+MpwhtZkC0NP5e1I?=
+ =?us-ascii?Q?njOBjhkUBEC4LsxGyfcsZHV21zxW0E/Y42kKtuKb1I1N1xTM2+s/zKk460/I?=
+ =?us-ascii?Q?atKXUBe288tkbx4wthXbM9D0ptyLJqttWEZH5MUkfb3HjIebxswxf02tDdZa?=
+ =?us-ascii?Q?scq+VCEpc+3RnQngPjmr4K0ERY1g7Kj8pIlO9zfcYIGWmnJNJdqJy5DXzPxG?=
+ =?us-ascii?Q?b/VGK5v3mnr3nZ58ib2GS6eNo1Y5Bdg7eGeNpQOlkXPHvUrtiKnVNbVAFZOi?=
+ =?us-ascii?Q?0nGqzC3rK3XFtTn0J7tok06ho3zMWmTZf+qENRXxnVKWhkeVZN6DpIdwuu/r?=
+ =?us-ascii?Q?rMnQDVFjBUw79+psaFEOJpVNkEtSqQIXX+N4gughTa0vsbhAjzs/PTvudoFJ?=
+ =?us-ascii?Q?L79sn3wvw1oRq4IzwfHt4izWNQEoTiSh0d9r1F2BgWj73oLncAa9kEwCC8zd?=
+ =?us-ascii?Q?DlznUxAaBd9RP/0LfEFkkSuFdobIVSvR3X9yzS91tinTr38LFxNsJj/Fua2r?=
+ =?us-ascii?Q?YMStlMwqyG2eyLASTCcqdE18ld0YneV4DMsrNK7EwRe65ZTyrkbW+oLzQrj1?=
+ =?us-ascii?Q?JJ3JzJQBSfs1q0c2VlCE+4w1?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?jdyCMO0IJ5udt4YIVGL95IcMWjcJg2O1WgBJbMfVgmPPlovTda+3K71+xJO/?=
+ =?us-ascii?Q?Ndtinl0ThHCfKQot+W/12J8IF+bnmFLx4iwxK3+6LlKCamfpguWE2YYxmq9U?=
+ =?us-ascii?Q?SAJZpXd0xqRKW013fDdcXONqNefz3wjS4FIS6CT2CTKwWn/Bo7ZSBmH8/X/u?=
+ =?us-ascii?Q?EPMMSEFELNsX0YfGuCS2xE8HC44jKQ3HXQy5zQpl02wPh44JiJohogutoAp1?=
+ =?us-ascii?Q?3sWA1nkLlFpgDXDRvWH7SAValK8R1Vx7tEwRWLwQRqDPuAFrFW4Q5NUnPYvr?=
+ =?us-ascii?Q?bHd7PKo+66gycRQLdOQvrJiuY5SdThww47jSKKvA06euXq96BGS6eRFjnbMf?=
+ =?us-ascii?Q?x6bQwnYr/hcTXSHfQWljXJ3aS2ypzokXmBOWbyPuEKWvr7vppI5Op6kQ+dCM?=
+ =?us-ascii?Q?tPascATcvNEr8E3Ygcpcrkl1fBFRXJYflVi9blpieulOvxFekgqPyi0F786l?=
+ =?us-ascii?Q?GoAqm2Ubyc+Wd/SWnPtWJnQ2PxIcR8otO6I8DluiX4lKf1CqvP05wJWup+Sv?=
+ =?us-ascii?Q?DnWzZNfki5IhZDgTLOXPTdZ/jXrSjn3PCEqe3zzAAV/twIbvsAuxaLZwyo3I?=
+ =?us-ascii?Q?RZUUGcK4FvLeeTWStt6DqED9+C3VeVsa+NnzoKVW+BqArBdWXtqCjanDA9K9?=
+ =?us-ascii?Q?YCM8j4EOZ1gqUX+xW2uuI7biojelhgxznPyM6DSl3g7rgQFONgMNoo0HtCWh?=
+ =?us-ascii?Q?cu2to9KWHYAjq+tBcNUa8SLyfMuIMJtgsk4H6lWO47zm/BJkfPOYjXiMMvUc?=
+ =?us-ascii?Q?kULq4/mQbKbBuy/NhV2ygw/CClNkYNMnM61nKqb0yOULfNU9XuJl+MDqveiQ?=
+ =?us-ascii?Q?CnbLD08NWXckbDg+dkLZe2yY0D8OdVtWJqvXhGIiAcFBGMtGUMIxMzvOHbXU?=
+ =?us-ascii?Q?gwBo7b9iCvtIXUWt9Vwuvry+KBnSJmZgiI4BsXlOIOA6tnCq0ItWzx6jlXeY?=
+ =?us-ascii?Q?SJSxOWL0QRAq/NKq4EHLQyyKB+FYU8pCAfm+AfQycbryPnNqWg3BzdQkN5ep?=
+ =?us-ascii?Q?g1f+WCxdOMM7oRZFtppZ+Xv2igk49RnWecb98SSm99/zGgVok6WdvbFRrJ+d?=
+ =?us-ascii?Q?+1DBMYozqWd7GV/RYraZIFRYzYTesNekJCynDl3FGKuTygRbc08x8hK5pSxv?=
+ =?us-ascii?Q?0jc0AiRKCWcclJ/zn/fe2CL4RDJPxqwSVZ/+3AJsCIEV/xtU27lDmBwUow7j?=
+ =?us-ascii?Q?iiNb6zmfqrMvXo9D5kPU03eZfIaOfzseXHqkB1AW2O1R3MPGSPyiz6fnkYN/?=
+ =?us-ascii?Q?93Ga+ujAncGq7sg8fzC2fzMWNKslKFxdMEhvquEHyf7pZk1PAtnlRXg3be7w?=
+ =?us-ascii?Q?dBz/3cx+NmqZWl+O7DDRVuf4c0AXM8VU7oFjzDBF5teipoe7xKizXZjtJIS0?=
+ =?us-ascii?Q?QN/xooSNRj8GpDPO+9IYhR2yGayozx9cIgufN/DJF4kN7Bgok23x7vvGT2R3?=
+ =?us-ascii?Q?Dc+bO32NiEJYqu74SJBFbPhfwITaNRpqKoWVrI8Cp9nfwzjq2rXZfF/DUpdZ?=
+ =?us-ascii?Q?MK7ann5g52Y1giiEuNjJ2Bp83zJjgAdqiPBXrgN3EnuMlvB+TKLgebwcep4+?=
+ =?us-ascii?Q?CEH/kwcp42LtaBvKhoPay9NL3y/XTHCcTa2QsDDdUpZcWC2FmU2hXvpiDCnH?=
+ =?us-ascii?Q?aQ=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	zQ/bDy6dDQUkdXmkA+wqmuE5T/956kar6Wo8wPCrxx/F66KGYrruFj7slIyeitemgg5nkrHlPX05mr4uy1GRbMUNWjLxTvNR/U58K6hOPSSeEcxmSc9Ho6XxpdQ9GUBgr8FsN3SA/o26Jiidg4uTii3hZc3M+b8RPEMGDLYH+u3w5J5iEuUk8QV5srFGyS6UbtqXqusGM7EdpXXOLEn1PWd3PxQ5pirvN6B2hg6w90dT8YlKt8nJc0Wd24toQgpTG7jwJi/aqoSvW5ujHKfDB7WXpS9u5q/6+47qxNDHxBSs8+w3a96hzbLC00+3+WfCMkvjyTnkPmJTjcagy+9DwkEQwAauMiQ5w7UPZPAtYzPyEMglU3zJM8o6Yq8ge7vjANtIqwTM8SiFPc71ysjW9YhN7IQlQfKSMuxHuE4QywzEcEChIIhyFZL0j3tpnDIKS7/kIt6AbZuL1k88Yatdg+8EbsjuAWH/saKuSuZ3AFzEL+ArtLhidYp6JORF2nQ1tvGNvsbXxD4cxVMdaZ6OCxhODO+viQjrX1TwoN0Ho45h0SvoFPOplN3FBQg4yWt3SLdcdHSPwCiH0XOnU91RRDnbkX3wL3pQ6Ov+IsIv18A=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 48d318b4-eaac-453c-d368-08dcf7977123
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 21:28:19.1020
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1y9omqYpUbBSBySqiZgkhtOhO5BQQDMBnNxfknkqm+XetAW6cQakk2HYyRn3FNNBrNdny04TFBWR4x+XOvq/z3TIzfYHDyhbYTK+P2U5Krg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR10MB6597
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-28_10,2024-10-28_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 suspectscore=0 bulkscore=0
+ adultscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410280167
+X-Proofpoint-GUID: N-3Z7Iydx8ROMUqQgT0pWNLW0K0UVHrl
+X-Proofpoint-ORIG-GUID: N-3Z7Iydx8ROMUqQgT0pWNLW0K0UVHrl
 
-On Mon, Oct 28, 2024 at 01:45:48PM -0700, Yang Shi wrote:
-> On Fri, Oct 25, 2024 at 7:17 AM Gregory Price <gourry@gourry.net> wrote:
-> >
-> > When numa balancing is enabled with demotion, vmscan will call
-> > migrate_pages when shrinking LRUs.  Successful demotions will
-> > cause node vmstat numbers to double-decrement, leading to an
-> > imbalanced page count.  The result is dmesg output like such:
-> >
-> > $ cat /proc/sys/vm/stat_refresh
-> >
-> > [77383.088417] vmstat_refresh: nr_isolated_anon -103212
-> > [77383.088417] vmstat_refresh: nr_isolated_file -899642
-> >
-> > This negative value may impact compaction and reclaim throttling.
-> >
-> > The double-decrement occurs in the migrate_pages path:
-> >
-> > caller to shrink_folio_list decrements the count
-> >   shrink_folio_list
-> >     demote_folio_list
-> >       migrate_pages
-> >         migrate_pages_batch
-> >           migrate_folio_move
-> >             migrate_folio_done
-> >               mod_node_page_state(-ve) <- second decrement
-> >
-> > This path happens for SUCCESSFUL migrations, not failures. Typically
-> > callers to migrate_pages are required to handle putback/accounting for
-> > failures, but this is already handled in the shrink code.
-> 
-> AFAIK, MGLRU doesn't dec/inc this counter, so it is not
-> double-decrement for MGLRU. Maybe "imbalance update" is better?
-> Anyway, it is just a nit. I'd suggest capturing the MGLRU case in the
-> commit log too.
+On Mon, Oct 28, 2024 at 09:05:33PM +0000, Mark Brown wrote:
+> On Mon, Oct 28, 2024 at 08:43:08PM +0000, Lorenzo Stoakes wrote:
 >
+> > +/*
+> > + * We check VMA flag validity early in the mmap() process, however this can
+> > + * cause issues for arm64 when using MTE, which requires that it be used with
+> > + * shmem and in this instance and only then is VM_MTE_ALLOWED set permitting
+> > + * this operation.
+> > + *
+> > + * To avoid having to tear down a partially complete mapping we do this ahead of
+> > + * time.
+> > + */
+> > +static vm_flags_t arch_adjust_flags(struct file *file, vm_flags_t vm_flags)
+> > +{
+> > +	if (!IS_ENABLED(CONFIG_ARM64))
+> > +		return vm_flags;
+> > +
+> > +	if (shmem_file(file))
+> > +		return vm_flags | VM_MTE_ALLOWED;
+> > +}
+>
+> This doesn't build:
+>
+> mm/mmap.c:1595:1: error: non-void function does not return a value in all control paths [-Werror,-Wreturn-type]
+>  1595 | }
+>       | ^
 
-Gotcha, so yeah saying it's an imbalance fix is more accurate.
+Doh that'll teach me for rushing this...
 
-So more accurate changelog is:
+>
+> with that corrected:
+>
+> diff --git a/mm/mmap.c b/mm/mmap.c
+> index d1ab4301c671..cea051c5fef3 100644
+> --- a/mm/mmap.c
+> +++ b/mm/mmap.c
+> @@ -1587,11 +1587,10 @@ static unsigned long __mmap_region(struct file *file, unsigned long addr,
+>   */
+>  static vm_flags_t arch_adjust_flags(struct file *file, vm_flags_t vm_flags)
+>  {
+> -	if (!IS_ENABLED(CONFIG_ARM64))
+> -		return vm_flags;
+> +	if (IS_ENABLED(CONFIG_ARM64) && shmem_file(file))
+> +		vm_flags |= VM_MTE_ALLOWED;
+>
+> -	if (shmem_file(file))
+> -		return vm_flags | VM_MTE_ALLOWED;
+> +	return vm_flags;
+>  }
+>
+>  unsigned long mmap_region(struct file *file, unsigned long addr,
+>
+> the relevant tests all pass for me.
+>
+> Tested-by: Mark Brown <broonie@kernel.org>
 
+Thanks!
 
-[PATCH] vmscan,migrate: fix page count imbalance on node stats when demoting pages
+>
+> I'd have expected arch_adjust_flags() to be something overridden by the
+> arch headers (probably like arch_calc_vm_prot_bits() and friends), but
+> if this is juat a short lived fix it's probably not worth the trouble.
 
-When numa balancing is enabled with demotion, vmscan will call
-migrate_pages when shrinking LRUs.  migrate_pages will decrement the
-the node's isolated page count, leading to an imbalanced count when
-invoked from (MG)LRU code.
+Yeah this is just a sample solution that I had put together when Linus
+suggested a sensible alternative which I'll code up...
 
-The result is dmesg output like such:
-
-$ cat /proc/sys/vm/stat_refresh
-
-[77383.088417] vmstat_refresh: nr_isolated_anon -103212
-[77383.088417] vmstat_refresh: nr_isolated_file -899642
-
-This negative value may impact compaction and reclaim throttling.
-
-The following path produces the decrement:
-
-shrink_folio_list
-  demote_folio_list
-    migrate_pages
-      migrate_pages_batch
-        migrate_folio_move
-          migrate_folio_done
-            mod_node_page_state(-ve) <- decrement
-
-This path happens for SUCCESSFUL migrations, not failures. Typically
-callers to migrate_pages are required to handle putback/accounting for
-failures, but this is already handled in the shrink code.
-
-When accounting for migrations, instead do not decrement the count
-when the migration reason is MR_DEMOTION. As of v6.11, this demotion
-logic is the only source of MR_DEMOTION.
-
-
-> >
-> > Signed-off-by: Gregory Price <gourry@gourry.net>
-> > Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
-> > Cc: stable@vger.kernel.org
-> 
-> Thanks for catching this. Reviewed-by: Yang Shi <shy828301@gmail.com>
-> 
-> > ---
-> >  mm/migrate.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/mm/migrate.c b/mm/migrate.c
-> > index 923ea80ba744..e3aac274cf16 100644
-> > --- a/mm/migrate.c
-> > +++ b/mm/migrate.c
-> > @@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
-> >          * not accounted to NR_ISOLATED_*. They can be recognized
-> >          * as __folio_test_movable
-> >          */
-> > -       if (likely(!__folio_test_movable(src)))
-> > +       if (likely(!__folio_test_movable(src)) && reason != MR_DEMOTION)
-> >                 mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
-> >                                     folio_is_file_lru(src), -folio_nr_pages(src));
-> >
-> > --
-> > 2.43.0
-> >
+Good to confirm this is definitely the issue thanks for testing!
 
