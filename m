@@ -1,331 +1,370 @@
-Return-Path: <linux-kernel+bounces-385961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0C99B3D87
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:11:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1155A9B3D8B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:12:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CC6F283702
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:11:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4D8282448
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:12:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAA419005F;
-	Mon, 28 Oct 2024 22:11:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7EB1EE021;
+	Mon, 28 Oct 2024 22:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DoGxTwl4"
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="D9pbPpQh"
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5FD1CF5CA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 22:11:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20CC1EE015
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 22:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730153502; cv=none; b=jonOJWG/Eerji6DZTjDvFz1evnrPPYTt8i0NuwwYE6IFtOIr1/HuNmhrtx65O0soBTxNLTKFwxTvmjH4mpKZgYIc+v9ARd/aBkliN5fG0O2hnYE1X9dZiCWayiZBFqRJ36kk9l7s+LuOxXTMOsdhenyHT+RjEkdnZ0dGTgztcWA=
+	t=1730153553; cv=none; b=iB/g0OI0hdimDJ/gMm0tCnRvpMB0tq0TCbN4h73md4JBGxtPl+ZUWJAenoPij5ApvsFYpRrAerl6RmZV5n1WexGHrrLWeUKMA4yl1AQmdAqq0Bxbk9qIxYtnjSfdWVwkTEpZ0LfoglDxImJaABccbEuj5GDOJnbzwW5w4BL+LyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730153502; c=relaxed/simple;
-	bh=X/BU+pdAKTbnfpAfLFBXKeutwwFr70bY4iy5qLivOUQ=;
+	s=arc-20240116; t=1730153553; c=relaxed/simple;
+	bh=hhs0utQtD+384xAHaF5FZAquaCI6CWjmvEnhz8nqyD8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=V6IWr+S6UlIGkb5FVeDs0WeJXlWukCV/c4+KI5o8mwW1toAvAQUo5j/4hSOsYxoz5tb1X8/ldupC062Qbzxq8uwNKctO6ZwTTA07xh1tt+1BR9GvHzACctkVNbc1UK4ny9wgXiZdGmmPTq3k6FF31CNaK0jw5D96Kop96OpBhgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DoGxTwl4; arc=none smtp.client-ip=209.85.222.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-84fc7b58d4dso1135421241.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:11:40 -0700 (PDT)
+	 To:Cc:Content-Type; b=E89uFAgenxDKapjpx7Gt3Lrhz8lQdkVvLUE/lsBA0Cl6L+iqmg2o9RjD1b0zdorOr6GpxW8sPlUWSLoTgGIw0C9Ww/AZ1SrLS/tvbI9pQXZjq08aXItZpJlCY9tdVfUmUXtzjzkKbRpy5x/f3W+BQRlum8v9+AFhSW3Ylawt9VM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=D9pbPpQh; arc=none smtp.client-ip=209.85.217.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-4a47d70cd8aso1454422137.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:12:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730153499; x=1730758299; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730153549; x=1730758349; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X/BU+pdAKTbnfpAfLFBXKeutwwFr70bY4iy5qLivOUQ=;
-        b=DoGxTwl4UFzFMQnUWwybAsSqxxv4YjMdGo0fYOlySjnSq9xgSzTj1hPoDknF4zaU7q
-         JJaLD4vgqvQIyRZSpe7DxIK+0I2/nKB8TVKMwVzyxiei5qfx0Q2W3o9XndUFJ80oEhMj
-         oU/i/e4B+bqE4GBPdGgscdMN/UqDgqeL/wlTwE/KrzYZ+oWEmG2cyl1F1u2zFzqBWMaI
-         qd4P9sM9VknAFDT2asaCERsJEDxpBJX9ouPtSwI15pGx/kNPsOxyfPvHGKDqTl8E5cG+
-         MQpGSG2DSkHIdwzQWky0aR93wBJ+bjdTeVsPlcdq7kLFEmePtu0UoYtqoOVynX4+S1t3
-         9Ebg==
+        bh=mLJb+MSFeIuMjaWbZFbinF8pHkgM5h+mk8sFEoJ/Tys=;
+        b=D9pbPpQh3MozMH5g/33hG+aJmDKUvBzTZEOc93zEQ/eQq6+lXRh2FPpHXmUq/TYrlL
+         E8EErj0x/D3xl4xjEYgMuhul0o3hst1I6mrSi9QHuggU3QTktNG6KNsteVyTmcW+2t57
+         aVSmlPuR1DcsMJEPzVOM8eZ6LMU2wNSUlI/tIJYyDsn1xgj1a7PhGWJSixTRFykdvpU9
+         EVEffcwKhzSmxdKSBJrkrnMIaQH4xcXdc8VyaEqag34LHB1agps+JMm9SNow2AAQKDrA
+         wgPCX257Be+kOxy/2PNAkCPHMVZAaGJUx+QIArtpB8/2wm5gT/zBNputl7WpNGV6MQRN
+         jeyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730153499; x=1730758299;
+        d=1e100.net; s=20230601; t=1730153549; x=1730758349;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X/BU+pdAKTbnfpAfLFBXKeutwwFr70bY4iy5qLivOUQ=;
-        b=B/QpKmkKtuD4jf5d7sbHRhCfCqx/07whpgWUEDwthKO02WD8eROb8mJoT7zvzkby5R
-         69se6nbsx8j9MhtWK8/TNFC/euCxA9NnEDUlnByMGtADdZiuaMwrfcS8m4XKhAY3Mzux
-         oVXeW/18n8TiftnpWwAvIZb7frbqgxn68XpvnwEjRpoTC8x5mcDotuZY6805Cm7HED4s
-         QJcaDdxCHmxjaAWgGzn/MC6qK4AW03i3PhTClb9QiWPIIvCypSOCENsnvrNcrUNIKH+j
-         JkZHZLqM6oDpbqPk5CbbJskugqDK8eoieA8noU+TH0VRM3cGNNVLgAnuP4W0N+4tdOKP
-         v4mg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAbPMX6uD5KhUthGM+6/us0MuznMWDzTjD0g6aFAY5H7i08J512waIL3qVaj+jw3s3Egib01lGln8p7M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmdhGZfX3Tz6AthTou/W15UqDBaFROF3Y8Q6p3pf5jd5lgKbGz
-	RlyMkqcwJ7FZ82U9Px5moZ6EF1Q6JaJFuzu6RLy3IfQO3BQGtNDYxBn00QOCisycHWAAsn2R76e
-	t9qZpIx59tSJmkAKxNNFjHI7H1jk=
-X-Google-Smtp-Source: AGHT+IEVO+AkNDqaXEljKov4umzoPqup0Z2wBZCcXV/aYqkRSYSjyQ3ZZBQy5CvP3f2DYkF5MrO1b5lWNq5YlszWXuE=
-X-Received: by 2002:a05:6122:7cc:b0:50f:fe39:a508 with SMTP id
- 71dfb90a1353d-5101523f155mr7128353e0c.11.1730153499113; Mon, 28 Oct 2024
- 15:11:39 -0700 (PDT)
+        bh=mLJb+MSFeIuMjaWbZFbinF8pHkgM5h+mk8sFEoJ/Tys=;
+        b=Yvk55bNSDKprmbKdP+xDciEdH5M4IPDb+sBUWTp/KIbdXxjz9XFrqHHq8SyJwP6ZRG
+         OBPf1HjnOczyR6pbEZn85DSFkY8L4z5NwvKImH5+J0aJAkxPW7xF6n+cuYYvtelYUknW
+         OWWgYDCqUD25nlLeS3KnmYpiyQlQTtP/fz4iOZP+6ensbJ4mQSycR2ZxDWMDGLqGBWgK
+         ZrPn0Se8IWOZHQWjXy0Ir62zBYjgk1auRXC1UXi+NATB7kacVFW1396eZttr67VpaF2N
+         U6Lhx5cqoTIRSsiUy9d0AQJfkbYg6f6F2Vv2iCAdG/NoyepPwWvtggz4wRyJC87GnEda
+         z4RA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHkQgJ/v8J+ALROXe75Itrgfh9ZXA5NaDszERqmCSDcPcu/yk13uGRcAcD7WXvQIToR1/XbbTrseUuQZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfvHhz5azXH0RHxQq5elKg7RgnCgOnFDAkFyDy8yLRAnBSfMfs
+	YWUikXYZz9MrLgLg+7TFs08homjwW4uGv1JiRQ0Fyv1CyFEFdyxphUpsvPSvqpPfYpFi17Yvj6l
+	a0PiQJQkM747+1grkmYNITn+lSkQLdI71qHYJ
+X-Google-Smtp-Source: AGHT+IGhZjhk8TWm4Ox13TlDPCl1f+no887h0FoY5bya9X/aDkGoU1CVHkU9ScAAG7rcSvUbBqANUY0rSjFirr2oCPk=
+X-Received: by 2002:a05:6102:290e:b0:4a5:e63f:3655 with SMTP id
+ ada2fe7eead31-4a8cfb27a53mr8607614137.1.1730153549305; Mon, 28 Oct 2024
+ 15:12:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027011959.9226-1-21cnbao@gmail.com> <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
- <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
- <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com> <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
- <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com> <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
- <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com> <CAGsJ_4zQmaGxG2Ega61Jm5UMgHH-jtYC4ZCxsRX6+QS9ta25kQ@mail.gmail.com>
- <882008b6-13e0-41d8-91fa-f26c585120d8@gmail.com> <CAGsJ_4yBkry-rw75AciT8OiYWrw+=D0okcxiyXzzNrz=QJxiBA@mail.gmail.com>
- <cba36cb0-66c7-45c1-97c3-a96ea48a6cf0@gmail.com> <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
- <228c428d-d116-4be1-9d0d-0591667b7ccb@gmail.com> <CAGsJ_4zLNA-1+3j4snNLiujT3NLcmKEVFA4+eD1Sk1bOkqAGYw@mail.gmail.com>
- <03d4c776-4b2e-4f3d-94f0-9b716bfd74d2@gmail.com>
-In-Reply-To: <03d4c776-4b2e-4f3d-94f0-9b716bfd74d2@gmail.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Tue, 29 Oct 2024 06:11:27 +0800
-Message-ID: <CAGsJ_4zRZFpJ0rWQ3XzspfSXN6xXN4eftCdL3xHPTqqYLUhQcA@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
+References: <20241021042218.746659-1-yuzhao@google.com> <20241021042218.746659-5-yuzhao@google.com>
+ <868qug3yig.wl-maz@kernel.org>
+In-Reply-To: <868qug3yig.wl-maz@kernel.org>
+From: Yu Zhao <yuzhao@google.com>
+Date: Mon, 28 Oct 2024 16:11:52 -0600
+Message-ID: <CAOUHufabSWTZ+cBjXEDTRh61GeALL5b6uh0M76=2ninZP3KAzQ@mail.gmail.com>
+Subject: Re: [PATCH v1 4/6] arm64: broadcast IPIs to pause remote CPUs
+To: Marc Zyngier <maz@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Muchun Song <muchun.song@linux.dev>, Thomas Gleixner <tglx@linutronix.de>, 
+	Will Deacon <will@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Nanyong Sun <sunnanyong@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 5:49=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
- wrote:
+On Tue, Oct 22, 2024 at 10:15=E2=80=AFAM Marc Zyngier <maz@kernel.org> wrot=
+e:
 >
->
->
-> On 28/10/2024 21:40, Barry Song wrote:
-> > On Tue, Oct 29, 2024 at 5:24=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
-com> wrote:
-> >>
-> >>
-> >>
-> >> On 28/10/2024 21:15, Barry Song wrote:
-> >>> On Tue, Oct 29, 2024 at 4:51=E2=80=AFAM Usama Arif <usamaarif642@gmai=
-l.com> wrote:
-> >>>>
-> >>>>
-> >>>>
-> >>>> On 28/10/2024 20:42, Barry Song wrote:
-> >>>>> On Tue, Oct 29, 2024 at 4:00=E2=80=AFAM Usama Arif <usamaarif642@gm=
-ail.com> wrote:
-> >>>>>>
-> >>>>>>
-> >>>>>>
-> >>>>>> On 28/10/2024 19:54, Barry Song wrote:
-> >>>>>>> On Tue, Oct 29, 2024 at 1:20=E2=80=AFAM Usama Arif <usamaarif642@=
-gmail.com> wrote:
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>>
-> >>>>>>>> On 28/10/2024 17:08, Yosry Ahmed wrote:
-> >>>>>>>>> On Mon, Oct 28, 2024 at 10:00=E2=80=AFAM Usama Arif <usamaarif6=
-42@gmail.com> wrote:
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> On 28/10/2024 16:33, Nhat Pham wrote:
-> >>>>>>>>>>> On Mon, Oct 28, 2024 at 5:23=E2=80=AFAM Usama Arif <usamaarif=
-642@gmail.com> wrote:
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> I wonder if instead of having counters, it might be better t=
-o keep track
-> >>>>>>>>>>>> of the number of zeropages currently stored in zeromap, simi=
-lar to how
-> >>>>>>>>>>>> zswap_same_filled_pages did it. It will be more complicated =
-then this
-> >>>>>>>>>>>> patch, but would give more insight of the current state of t=
-he system.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> Joshua (in CC) was going to have a look at that.
-> >>>>>>>>>>>
-> >>>>>>>>>>> I don't think one can substitute for the other.
-> >>>>>>>>>>
-> >>>>>>>>>> Yes agreed, they have separate uses and provide different info=
-rmation, but
-> >>>>>>>>>> maybe wasteful to have both types of counters? They are counte=
-rs so maybe
-> >>>>>>>>>> dont consume too much resources but I think we should still th=
-ink about
-> >>>>>>>>>> it..
-> >>>>>>>>>
-> >>>>>>>>> Not for or against here, but I would say that statement is deba=
-table
-> >>>>>>>>> at best for memcg stats :)
-> >>>>>>>>>
-> >>>>>>>>> Each new counter consumes 2 longs per-memcg per-CPU (see
-> >>>>>>>>> memcg_vmstats_percpu), about 16 bytes, which is not a lot but i=
-t can
-> >>>>>>>>> quickly add up with a large number of CPUs/memcgs/stats.
-> >>>>>>>>>
-> >>>>>>>>> Also, when flushing the stats we iterate all of them to propaga=
-te
-> >>>>>>>>> updates from per-CPU counters. This is already a slowpath so ad=
-ding
-> >>>>>>>>> one stat is not a big deal, but again because we iterate all st=
-ats on
-> >>>>>>>>> multiple CPUs (and sometimes on each node as well), the overall=
- flush
-> >>>>>>>>> latency becomes a concern sometimes.
-> >>>>>>>>>
-> >>>>>>>>> All of that is not to say we shouldn't add more memcg stats, bu=
-t we
-> >>>>>>>>> have to be mindful of the resources.
-> >>>>>>>>
-> >>>>>>>> Yes agreed! Plus the cost of incrementing similar counters (whic=
-h ofcourse is
-> >>>>>>>> also not much).
-> >>>>>>>>
-> >>>>>>>> Not trying to block this patch in anyway. Just think its a good =
-point
-> >>>>>>>> to discuss here if we are ok with both types of counters. If its=
- too wasteful
-> >>>>>>>> then which one we should have.
-> >>>>>>>
-> >>>>>>> Hi Usama,
-> >>>>>>> my point is that with all the below three counters:
-> >>>>>>> 1. PSWPIN/PSWPOUT
-> >>>>>>> 2. ZSWPIN/ZSWPOUT
-> >>>>>>> 3. SWAPIN_SKIP/SWAPOUT_SKIP or (ZEROSWPIN, ZEROSWPOUT what ever)
-> >>>>>>>
-> >>>>>>> Shouldn't we have been able to determine the portion of zeromap
-> >>>>>>> swap indirectly?
-> >>>>>>>
-> >>>>>>
-> >>>>>> Hmm, I might be wrong, but I would have thought no?
-> >>>>>>
-> >>>>>> What if you swapout a zero folio, but then discard it?
-> >>>>>> zeromap_swpout would be incremented, but zeromap_swapin would not.
-> >>>>>
-> >>>>> I understand. It looks like we have two issues to tackle:
-> >>>>> 1. We shouldn't let zeromap swap in or out anything that vanishes i=
-nto
-> >>>>> a black hole
-> >>>>> 2. We want to find out how much I/O/memory has been saved due to ze=
-romap so far
-> >>>>>
-> >>>>> From my perspective, issue 1 requires a "fix", while issue 2 is mor=
-e
-> >>>>> of an optimization.
-> >>>>
-> >>>> Hmm I dont understand why point 1 would be an issue.
-> >>>>
-> >>>> If its discarded thats fine as far as I can see.
-> >>>
-> >>> it is fine to you and probably me who knows zeromap as well :-) but
-> >>> any userspace code
-> >>> as below might be entirely confused:
-> >>>
-> >>> p =3D malloc(1G);
-> >>> write p to 0; or write part of p to 0
-> >>> madv_pageout(p, 1g)
-> >>> read p to swapin.
-> >>>
-> >>> The entire procedure used to involve 1GB of swap out and 1GB of swap =
-in by any
-> >>> means. Now, it has recorded 0 swaps counted.
-> >>>
-> >>> I don't expect userspace is as smart as you :-)
-> >>>
-> >> Ah I completely agree, we need to account for it in some metric. I pro=
-bably
-> >> misunderstood when you said "We shouldn't let zeromap swap in or out a=
-nything that
-> >> vanishes into a black hole", by we should not have the zeromap optimiz=
-ation for those
-> >> cases. What I guess you meant is we need to account for it in some met=
-ric.
-> >>
-> >>>>
-> >>>> As a reference, memory.stat.zswapped !=3D memory.stat.zswapout - mem=
-ory.stat.zswapin.
-> >>>> Because zswapped would take into account swapped out anon memory fre=
-ed, MADV_FREE,
-> >>>> shmem truncate, etc as Yosry said about zeromap, But zswapout and zs=
-wapin dont.
-> >>>
-> >>> I understand. However, I believe what we really need to focus on is
-> >>> this: if we=E2=80=99ve
-> >>> swapped out, for instance, 100GB in the past hour, how much of that 1=
-00GB is
-> >>> zero? This information can help us assess the proportion of zero data=
- in the
-> >>> workload, along with the potential benefits that zeromap can provide =
-for memory,
-> >>> I/O space, or read/write operations. Additionally, having the second =
-count
-> >>> can enhance accuracy when considering MADV_DONTNEED, FREE, TRUNCATE,
-> >>> and so on.
-> >>>
-> >> Yes completely agree!
-> >>
-> >> I think we can look into adding all three metrics, zeromap_swapped, ze=
-romap_swpout,
-> >> zeromap_swpin (or whatever name works).
+> On Mon, 21 Oct 2024 05:22:16 +0100,
+> Yu Zhao <yuzhao@google.com> wrote:
 > >
-> > It's great to reach an agreement. Let me work on some patches for it.
->
-> Thanks!
->
+> > Broadcast pseudo-NMI IPIs to pause remote CPUs for a short period of
+> > time, and then reliably resume them when the local CPU exits critical
+> > sections that preclude the execution of remote CPUs.
 > >
-> > By the way, I recently had an idea: if we can conduct the zeromap check
-> > earlier - for example - before allocating swap slots and pageout(), cou=
-ld
-> > we completely eliminate swap slot occupation and allocation/release
-> > for zeromap data? For example, we could use a special swap
-> > entry value in the PTE to indicate zero content and directly fill it wi=
-th
-> > zeros when swapping back. We've observed that swap slot allocation and
-> > freeing can consume a lot of CPU and slow down functions like
-> > zap_pte_range and swap-in. If we can entirely skip these steps, it
-> > could improve performance. However, I'm uncertain about the benefits we
-> > would gain if we only have 1-2% zeromap data.
+> > A typical example of such critical sections is BBM on kernel PTEs.
+> > HugeTLB Vmemmap Optimization (HVO) on arm64 was disabled by
+> > commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+> > HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the folllowing reason:
+> >
+> >   This is deemed UNPREDICTABLE by the Arm architecture without a
+> >   break-before-make sequence (make the PTE invalid, TLBI, write the
+> >   new valid PTE). However, such sequence is not possible since the
+> >   vmemmap may be concurrently accessed by the kernel.
+> >
+> > Supporting BBM on kernel PTEs is one of the approaches that can make
+> > HVO theoretically safe on arm64.
 >
-> If I remember correctly this was one of the ideas floated around in the
-> initial version of the zeromap series, but it was evaluated as a lot more
-> complicated to do than what the current zeromap code looks like. But I
-> think its definitely worth looking into!
+> Is the safety only theoretical? I would have expected that we'd use an
+> approach that is absolutely rock-solid.
 
-Sorry for the noise. I didn't review the initial discussion. But my feeling
-is that it might be valuable considering the report from Zhiguo:
+We've been trying to construct a repro against the original HVO
+(missing BBM), but so far no success. Hopefully a repro does exist,
+and then we'd be able to demonstrate the effectiveness of this series,
+which is only theoretical at the moment.
 
-https://lore.kernel.org/linux-mm/20240805153639.1057-1-justinjiang@vivo.com=
-/
-
-In fact, our recent benchmark also indicates that swap free could account
-for a significant portion in do_swap_page().
-
+> > Note that it is still possible for the paused CPUs to perform
+> > speculative translations. Such translations would cause spurious
+> > kernel PFs, which should be properly handled by
+> > is_spurious_el1_translation_fault().
 >
-> >
-> > I'm just putting this idea out there to see if you're interested in mov=
-ing
-> > forward with it. :-)
-> >
-> >>
-> >>>>
-> >>>>
-> >>>>>
-> >>>>> I consider issue 1 to be more critical because, after observing a p=
-hone
-> >>>>> running for some time, I've been able to roughly estimate the porti=
-on
-> >>>>> zeromap can
-> >>>>> help save using only PSWPOUT, ZSWPOUT, and SWAPOUT_SKIP, even witho=
-ut a
-> >>>>> SWPIN counter. However, I agree that issue 2 still holds significan=
-t value
-> >>>>> as a separate patch.
-> >>>>>
-> >>>
-> >
+> Speculative translation faults are never reported, that'd be a CPU
+> bug.
 
-Thanks
-Barry
+Right, I meant to say "speculative accesses that cause translations".
+
+> *Spurious* translation faults can be reported if the CPU doesn't
+> implement FEAT_ETS2, for example, and that has to do with the ordering
+> of memory access wrt page-table walking for the purpose of translations.
+
+Just want to make sure I fully understand: after the local CPU sends
+TLBI (followed by DSB & ISB), FEAT_ETS2 would act like DSB & ISB on
+remote CPUs when they perform the invalidation, and therefore
+speculative accesses are ordered as well on remote CPUs.
+
+Also I'm assuming IPIs on remote CPUs don't act like a full barrier,
+and whatever they interrupt still can be speculatively executed even
+though the IPI hander itself doesn't access the vmemmap area
+undergoing BBM. Is this correct?
+
+> > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > ---
+> >  arch/arm64/include/asm/smp.h |  3 ++
+> >  arch/arm64/kernel/smp.c      | 92 +++++++++++++++++++++++++++++++++---
+> >  2 files changed, 88 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/smp.=
+h
+> > index 2510eec026f7..cffb0cfed961 100644
+> > --- a/arch/arm64/include/asm/smp.h
+> > +++ b/arch/arm64/include/asm/smp.h
+> > @@ -133,6 +133,9 @@ bool cpus_are_stuck_in_kernel(void);
+> >  extern void crash_smp_send_stop(void);
+> >  extern bool smp_crash_stop_failed(void);
+> >
+> > +void pause_remote_cpus(void);
+> > +void resume_remote_cpus(void);
+> > +
+> >  #endif /* ifndef __ASSEMBLY__ */
+> >
+> >  #endif /* ifndef __ASM_SMP_H */
+> > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> > index 3b3f6b56e733..68829c6de1b1 100644
+> > --- a/arch/arm64/kernel/smp.c
+> > +++ b/arch/arm64/kernel/smp.c
+> > @@ -85,7 +85,12 @@ static int ipi_irq_base __ro_after_init;
+> >  static int nr_ipi __ro_after_init =3D NR_IPI;
+> >  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+> >
+> > -static bool crash_stop;
+> > +enum {
+> > +     SEND_STOP =3D BIT(0),
+> > +     CRASH_STOP =3D BIT(1),
+> > +};
+> > +
+> > +static unsigned long stop_in_progress;
+> >
+> >  static void ipi_setup(int cpu);
+> >
+> > @@ -917,6 +922,79 @@ static void __noreturn ipi_cpu_crash_stop(unsigned=
+ int cpu, struct pt_regs *regs
+> >  #endif
+> >  }
+> >
+> > +static DEFINE_SPINLOCK(cpu_pause_lock);
+>
+> PREEMPT_RT will turn this into a sleeping lock. Is it safe to sleep as
+> you are dealing with kernel mappings?
+
+Right, it should be a raw spinlock -- the caller disabled preemption,
+which as you said is required when dealing with the kernel mappings.
+
+> > +static cpumask_t paused_cpus;
+> > +static cpumask_t resumed_cpus;
+> > +
+> > +static void pause_local_cpu(void)
+> > +{
+> > +     int cpu =3D smp_processor_id();
+> > +
+> > +     cpumask_clear_cpu(cpu, &resumed_cpus);
+> > +     /*
+> > +      * Paired with pause_remote_cpus() to confirm that this CPU not o=
+nly
+> > +      * will be paused but also can be reliably resumed.
+> > +      */
+> > +     smp_wmb();
+> > +     cpumask_set_cpu(cpu, &paused_cpus);
+> > +     /* paused_cpus must be set before waiting on resumed_cpus. */
+> > +     barrier();
+>
+> I'm not sure what this is trying to enforce. Yes, the compiler won't
+> reorder the set and the test.
+
+Sorry I don't follow: does cpumask_set_cpu(), i.e., set_bit(), already
+contain a compiler barrier?
+
+My understanding is that the compiler is free to reorder the set and
+test on those two independent variables, and make it like this:
+
+  while (!cpumask_test_cpu(cpu, &resumed_cpus))
+      cpu_relax();
+  cpumask_set_cpu(cpu, &paused_cpus);
+
+So the CPU sent the IPI would keep waiting on paused_cpus being set,
+and this CPU would keep waiting on resumed_cpus being set, which would
+end up with a deadlock.
+
+> But your comment seems to indicate that
+> also need to make sure the CPU preserves that ordering
+> and short of a
+> DMB, the test below could be reordered.
+
+If this CPU reorders the set and test like above, it wouldn't be a
+problem because the set would eventually appear on the other CPU that
+sent the IPI.
+
+> > +     while (!cpumask_test_cpu(cpu, &resumed_cpus))
+> > +             cpu_relax();
+> > +     /* A typical example for sleep and wake-up functions. */
+>
+> I'm not sure this is "typical",...
+
+Sorry, this full barrier isn't needed. Apparently I didn't properly
+fix this from the previous attempt to use wfe()/sev() to make this
+function the sleeper for resume_remote_cpus() to wake up.
+
+> > +     smp_mb();
+> > +     cpumask_clear_cpu(cpu, &paused_cpus);
+> > +}
+> > +
+> > +void pause_remote_cpus(void)
+> > +{
+> > +     cpumask_t cpus_to_pause;
+> > +
+> > +     lockdep_assert_cpus_held();
+> > +     lockdep_assert_preemption_disabled();
+> > +
+> > +     cpumask_copy(&cpus_to_pause, cpu_online_mask);
+> > +     cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
+>
+> This bitmap is manipulated outside of your cpu_pause_lock. What
+> guarantees you can't have two CPUs stepping on each other here?
+
+Do you mean cpus_to_pause? If so, that's a local bitmap.
+
+> > +
+> > +     spin_lock(&cpu_pause_lock);
+> > +
+> > +     WARN_ON_ONCE(!cpumask_empty(&paused_cpus));
+> > +
+> > +     smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
+> > +
+> > +     while (!cpumask_equal(&cpus_to_pause, &paused_cpus))
+> > +             cpu_relax();
+>
+> This can be a lot of things to compare, specially that you are
+> explicitly mentioning large systems. Why can't this be implemented as
+> a counter instead?
+
+Agreed - that'd be sufficient and simpler.
+
+> Overall, this looks like stop_machine() in disguise. Why can't this
+> use the existing infrastructure?
+
+This came up during the previous discussion [1]. There are
+similarities. The main concern with reusing stop_machine() (or part of
+its current implementation) is that it may not meet the performance
+requirements. Refactoring might be possible, however, it seems to me
+(after checking the code again) that such a refactoring unlikely ends
+up cleaner or simpler codebase, especially after I got rid of CPU
+masks, as you suggested.
+
+[1] https://lore.kernel.org/all/ZbKjHHeEdFYY1xR5@arm.com/
+
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 3b3f6b56e733..b672af2441a3 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -917,6 +922,64 @@ static void __noreturn
+ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs
+ #endif
+ }
+
++static DEFINE_RAW_SPINLOCK(cpu_pause_lock);
++static bool __cacheline_aligned_in_smp cpu_paused;
++static atomic_t __cacheline_aligned_in_smp nr_cpus_paused;
++
++static void pause_local_cpu(void)
++{
++ atomic_inc(&nr_cpus_paused);
++
++ while (READ_ONCE(cpu_paused))
++ cpu_relax();
++
++ atomic_dec(&nr_cpus_paused);
++}
++
++void pause_remote_cpus(void)
++{
++ cpumask_t cpus_to_pause;
++ int nr_cpus_to_pause =3D num_online_cpus() - 1;
++
++ lockdep_assert_cpus_held();
++ lockdep_assert_preemption_disabled();
++
++ if (!nr_cpus_to_pause)
++ return;
++
++ cpumask_copy(&cpus_to_pause, cpu_online_mask);
++ cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
++
++ raw_spin_lock(&cpu_pause_lock);
++
++ WARN_ON_ONCE(cpu_paused);
++ WARN_ON_ONCE(atomic_read(&nr_cpus_paused));
++
++ cpu_paused =3D true;
++
++ smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
++
++ while (atomic_read(&nr_cpus_paused) !=3D nr_cpus_to_pause)
++ cpu_relax();
++
++ raw_spin_unlock(&cpu_pause_lock);
++}
++
++void resume_remote_cpus(void)
++{
++ if (!cpu_paused)
++ return;
++
++ raw_spin_lock(&cpu_pause_lock);
++
++ WRITE_ONCE(cpu_paused, false);
++
++ while (atomic_read(&nr_cpus_paused))
++ cpu_relax();
++
++ raw_spin_unlock(&cpu_pause_lock);
+
++}
++
+ static void arm64_backtrace_ipi(cpumask_t *mask)
+ {
+  __ipi_send_mask(ipi_desc[IPI_CPU_BACKTRACE], mask);
 
