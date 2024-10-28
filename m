@@ -1,145 +1,159 @@
-Return-Path: <linux-kernel+bounces-384796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7589C9B2E89
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:19:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4BB9B2EA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:21:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25EF11F2251A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:19:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A2B01F21DDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FDFF1D61AC;
-	Mon, 28 Oct 2024 11:08:01 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02A0194080;
+	Mon, 28 Oct 2024 11:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PeHK4msd"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 820091D3573
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:07:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4392C1D2F73
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730113681; cv=none; b=Aq0KdecUDCcijupPlPDN0QWSSdI1458c2o0N+i1aPAyFIUxSUcizIk8kivuFe8R8E1i8O4DZrkJJpIG319DbHGZZylh7OnWJrdGmcv+B+AoZQvj92UptYgxKjGclDf3y7qitIL2gPXGJl1GnG5giR0g+a+dvqk9oXSYVfrPeKoU=
+	t=1730114090; cv=none; b=u550UPWnCS6qsZK8+aTpS8CMX5Zd5yTtwtq2KGAIXnZXXwRPo9ayu6aTYkxh3QUy5JD5mCMT/Fb4rdlhRHZpHunsb1wJvaHouQCGTQeFidJv277zxnDEcMT/r4P69JCY6anMhuKReoox1OrMMW4v/UDj7ikP+EHKxDC1q7gPVm4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730113681; c=relaxed/simple;
-	bh=XUONsI6HwpAEJTCHhtFfjirndssaQjEyANAOk39iUko=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lSpMn3boIAT/3ZPWPGtLVNrrT5rGq48WcFx0AgoWzX5lboNgJF9w9JSdJSeqHCu0yMhT+g8TapWDN6KTh8hMmDhn1q/ez0m92mVVVDc83vCL6K9DNp991mOxjGEFqJBgx4D4L5eCbIllVaJNZi8BU/Be4n+0lvUf6Cu2Vk+pHXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XcVt3131Zz6K76L;
-	Mon, 28 Oct 2024 19:05:31 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8BB3D140429;
-	Mon, 28 Oct 2024 19:07:49 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Oct
- 2024 12:07:48 +0100
-Date: Mon, 28 Oct 2024 11:07:47 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
-CC: <mingo@redhat.com>, James Morse <james.morse@arm.com>, Gavin Shan
-	<gshan@redhat.com>, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
-	Thomas Gleixner <tglx@linutronix.de>, Simon Deziel
-	<simon.deziel@canonical.com>, Peter Zijlstra <peterz@infradead.org>, "Juri
- Lelli" <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, "Mel Gorman"
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched/cpuacct: show only present CPUs to userspace
-Message-ID: <20241028110747.00002556@Huawei.com>
-In-Reply-To: <CAEivzxdUC=R1oTdrwRDdrfdU7AUcRdTQum_cUUt__Zvi6xr+3w@mail.gmail.com>
-References: <20241017102138.92504-1-aleksandr.mikhalitsyn@canonical.com>
-	<CAEivzxdUC=R1oTdrwRDdrfdU7AUcRdTQum_cUUt__Zvi6xr+3w@mail.gmail.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730114090; c=relaxed/simple;
+	bh=jis7Kv52BEjG9fhKdic+D6aCcwWpTNhVCT1ZsGHn5WU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c6UOIoU9yZntGmiw+N1aAQTtWQVddIbRy7iCsCeUbZuT5Jno8XHNAZggd68SrhNdJDIExkC0wCiULAmwWUBf7SSGNA53PLwTZAOd+jaBGNgKyLgSpspjMfd6Rf0uqgJHnbXcQTnaAI6KghZSeDmLRkYBbaDIUN+IKeZko/PeX1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PeHK4msd; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3e605ffe10cso2488929b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:14:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730114087; x=1730718887; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ANRl9fyJhN3L3pKsYoqtRh0fyM37Mr+toNEHHpk2z1g=;
+        b=PeHK4msdH6kUQ50cbtxr4GvP0rk4Wcj/FbGLUt+qdQcWM6X31/Jdk9UqDq7/QEBVF2
+         tTutzWAHDXMOxw36wjgN3L03ceJSwSncd3CWoakQ9hbhdGWO/RGMFVXNpOLFIS4HlNLJ
+         8wQXj8xF4sM53v/ucVIlxLgVk37FrawTHsSso=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730114087; x=1730718887;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ANRl9fyJhN3L3pKsYoqtRh0fyM37Mr+toNEHHpk2z1g=;
+        b=HGHXVJ2L0kon2ZEjlu4ZFZEP8EjCfsAibzevvT7CpEmpeAuyu997m2tNQGqByHQLFX
+         QE7xSmvtKVVHgUBc4gNqHXEkJpBsF7Kz0MEfM+kvoq7gHophO1Wt2mKbPTDptC8sAJl0
+         /UHV1xAEXHABf4JlJH8GhdyaqWG/rY37NW4FPNwhxXEyFkNKbRsYtYYQdHe+i+AEQT+B
+         Any5BITSn3bOtrQyhFbj6R9d604tyJhmg5cJVqVAVKfArhRBr5/QihwAJaJHneB+2Rb9
+         KqfHVhPVGXUZ+Y3BMRErqO6Nc7ngGOeprR54F7ILs3cWT5Ro++UHkc4bfvKgeBRlxtYU
+         hUAw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8r6wDb16oWjOXSmwsm/h2sw14qgByDp/wqSuLUaaEV95ndnaq4FndYh92fFwbmTvOXfDFwwGx9jRIZc8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRN2tgp55x0VgngC1yD56mbrF0Fg3SmqNP5LpsNwW/Vp6iUEOe
+	JOnERvaD2PDZbZQDqQJrjsxigRKSHTYTfsBHGl5bgyaGwVeEw4+Zsz8NVcvynZJaWo6lcxpY5s4
+	=
+X-Google-Smtp-Source: AGHT+IE23MwwE93nlj7/w2cFqZanijivdUXiWjNQyBoz+N6Em86YN27KRuKxCe7S3PV2W4vsumO3Bw==
+X-Received: by 2002:a05:6808:1a20:b0:3db:1cd1:cadd with SMTP id 5614622812f47-3e638248ba8mr5613337b6e.18.1730114087023;
+        Mon, 28 Oct 2024 04:14:47 -0700 (PDT)
+Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e6324957f8sm1438751b6e.29.2024.10.28.04.14.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 04:14:46 -0700 (PDT)
+Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e605ffe10cso2488916b6e.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:14:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWdxu6S+ImVCkSKT33T7KkPfPL5/eJMyoDGCjhuzsgw33yLRPofbgFWadhLLptMBfOAOQXCXhUiEsz4qE8=@vger.kernel.org
+X-Received: by 2002:a05:6122:2a41:b0:50d:5f75:f7d9 with SMTP id
+ 71dfb90a1353d-51015109f5dmr4172633e0c.9.1730113723870; Mon, 28 Oct 2024
+ 04:08:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241025104310.1210946-1-fshao@chromium.org> <5vjaxo652w5hici5hxi3t6o2r5vkggrz25lqvm3or5fip3svke@fttqk5wabxqb>
+In-Reply-To: <5vjaxo652w5hici5hxi3t6o2r5vkggrz25lqvm3or5fip3svke@fttqk5wabxqb>
+From: Fei Shao <fshao@chromium.org>
+Date: Mon, 28 Oct 2024 19:08:05 +0800
+X-Gmail-Original-Message-ID: <CAC=S1ng7zRR-Ek1AQ7W6DhhB82=yVpMZq6JfzPEbWWb67knCVg@mail.gmail.com>
+Message-ID: <CAC=S1ng7zRR-Ek1AQ7W6DhhB82=yVpMZq6JfzPEbWWb67knCVg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: display: mediatek: dp: Add #sound-dai-cells property
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Conor Dooley <conor+dt@kernel.org>, David Airlie <airlied@gmail.com>, 
+	Jitao shi <jitao.shi@mediatek.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, Maxime Ripard <mripard@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Simona Vetter <simona@ffwll.ch>, Thomas Zimmermann <tzimmermann@suse.de>, devicetree@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 25 Oct 2024 17:35:56 +0200
-Aleksandr Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com> wrote:
-
-> Gentle ping.
->=20
-> On Thu, Oct 17, 2024 at 12:22=E2=80=AFPM Alexander Mikhalitsyn
-> <aleksandr.mikhalitsyn@canonical.com> wrote:
+On Mon, Oct 28, 2024 at 4:52=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On Fri, Oct 25, 2024 at 06:42:45PM +0800, Fei Shao wrote:
+> > The MediaTek DP hardware supports audio, and the "#sound-dai-cells"
+> > property is required to describe DAI links and audio routing.
 > >
-> > After commit b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_=
-CPU_DEVICES")
-> > changed which CPUs are shown in /sys/devices/system/cpu/ (only "present=
-" ones)
-> > it also makes sense to change cpuacct cgroupv1 code not to report CPUs
-> > which are not present in the system as it confuses userspace.
-> > Let's make it consistent.
+> > Add "#sound-dai-cells" property to the binding and filter out non-DP
+> > compatibles, as MediaTek eDP doesn't support audio.
 > >
-> > A configuration when #(present CPUs) < #(possible CPUs) is easy to get =
-with:
-> > qemu-system-x86_64
-> >         -smp 3,maxcpus=3D12 \
-> >         ...
-> >
-
-On a general basis, we definitely want these to line up, but I'm not famili=
-ar
-enough with this code to give more specific review.
-
-Other than that, I'm curious as to what userspace is tripping over this?
-
-Jonathan
-=20
-> > Cc: James Morse <james.morse@arm.com>
-> > Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> > Cc: Gavin Shan <gshan@redhat.com>
-> > Cc: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Reported-by: Simon Deziel <simon.deziel@canonical.com>
-> > Closes: https://github.com/canonical/lxd/issues/13324
-> > Co-developed-by: Simon Deziel <simon.deziel@canonical.com>
-> > Signed-off-by: Simon Deziel <simon.deziel@canonical.com>
-> > Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.c=
-om>
+> > Signed-off-by: Fei Shao <fshao@chromium.org>
 > > ---
-> >  kernel/sched/cpuacct.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > >
-> > diff --git a/kernel/sched/cpuacct.c b/kernel/sched/cpuacct.c
-> > index 0de9dda09949..0f07fbfdb20e 100644
-> > --- a/kernel/sched/cpuacct.c
-> > +++ b/kernel/sched/cpuacct.c
-> > @@ -213,7 +213,7 @@ static int __cpuacct_percpu_seq_show(struct seq_fil=
-e *m,
-> >         u64 percpu;
-> >         int i;
+> >  .../bindings/display/mediatek/mediatek,dp.yaml   | 16 ++++++++++++++++
+> >  1 file changed, 16 insertions(+)
 > >
-> > -       for_each_possible_cpu(i) {
-> > +       for_each_present_cpu(i) {
-> >                 percpu =3D cpuacct_cpuusage_read(ca, i, index);
-> >                 seq_printf(m, "%llu ", (unsigned long long) percpu);
-> >         }
-> > @@ -247,7 +247,7 @@ static int cpuacct_all_seq_show(struct seq_file *m,=
- void *V)
-> >                 seq_printf(m, " %s", cpuacct_stat_desc[index]);
-> >         seq_puts(m, "\n");
+> > diff --git a/Documentation/devicetree/bindings/display/mediatek/mediate=
+k,dp.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dp.=
+yaml
+> > index 2aef1eb32e11..c05c2b409780 100644
+> > --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dp.ya=
+ml
+> > +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dp.ya=
+ml
+> > @@ -42,6 +42,9 @@ properties:
+> >    interrupts:
+> >      maxItems: 1
 > >
-> > -       for_each_possible_cpu(cpu) {
-> > +       for_each_present_cpu(cpu) {
-> >                 seq_printf(m, "%d", cpu);
-> >                 for (index =3D 0; index < CPUACCT_STAT_NSTATS; index++)
-> >                         seq_printf(m, " %llu",
-> > --
-> > 2.34.1
-> > =20
+> > +  "#sound-dai-cells":
+> > +    const: 0
+> > +
+> >    ports:
+> >      $ref: /schemas/graph.yaml#/properties/ports
+> >      properties:
+> > @@ -87,6 +90,19 @@ required:
+> >
+>
+> You need to reference dai-common instead, since this is DAI.
 
+I'll add that. And if I understand your feedback in another patch
+correctly, I assume I need to reference dai-common and also keep the
+original #sound-dai-cells lines for the number of DAIs, so I'll keep
+that. Please correct me if I'm wrong.
+
+>
+> >  additionalProperties: false
+>
+> and this becomes unevaluatedProperties: false
+
+Acknowledged.
+
+Regards,
+Fei
+
+>
+> Best regards,
+> Krzysztof
+>
 
