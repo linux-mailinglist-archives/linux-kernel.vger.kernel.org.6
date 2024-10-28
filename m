@@ -1,145 +1,143 @@
-Return-Path: <linux-kernel+bounces-385098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2539B3262
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:02:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A5F19B325E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:02:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DEB8E1C21EAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:02:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88101B21353
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7112A1DD540;
-	Mon, 28 Oct 2024 14:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78FB21DD547;
+	Mon, 28 Oct 2024 14:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ea1ZHKin";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="hO0xGr3d"
-Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIej2On7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E851D5CC5;
-	Mon, 28 Oct 2024 14:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFAFE1885A1;
+	Mon, 28 Oct 2024 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124134; cv=none; b=Wf36Rv9u8E39VnvWEYJ7N/0222J2KuxgNVQMnBQqOMelif1cnXbKOExKcs9C3ZvQYsFUk3JY/foEgm0Y9V+wrlRmG55dGrWlM+6LN8+bHPBdJU57E2Fkmc3NmvFDVEerwrS1eiyd8NPBCe8x7BrYBlYj9Uat0MmYbzRZYjI2WT4=
+	t=1730124118; cv=none; b=rhqa4OdNaFTZ2g02u31oi8qDBFV1xa7Fmwxf7WhNrKlsLntM9KLhwBOnBv2ypK8moB78yKQDAX0uWkKub+SVKWINqAdZlQTJycxmMySWMDKOd5Scn8eTuvkskXeodmDgUelIHRJVl+YRCHbPt6iUlm5Tfz3E/12ss5ceL6s07+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124134; c=relaxed/simple;
-	bh=pRzYsZTf/6WaLODzzERgIiPto/LwdVPBcgk0H488f7o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=U9NHLwzWWYkfhCPodt7HE1HJ+fREzimqkQDPyyP4MAMrH5EDNiEUBuYwBl8rDpkPcOXdhH+1Yb6g0oxAzPByli5JMRutybXB1uEWPpAPQVC0DvVM96Zae0fKYrA+y6lKkmkK827P4QQtmIY4AvEJy86uzmWsc0Dt7DMps1yNAPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ea1ZHKin; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=hO0xGr3d; arc=none smtp.client-ip=103.168.172.147
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 005041380145;
-	Mon, 28 Oct 2024 10:02:10 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 28 Oct 2024 10:02:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1730124129;
-	 x=1730210529; bh=r+OiIDFujfOkX27UX0KnwST8oK9dQeo/ifyz/Fg5BH4=; b=
-	ea1ZHKinNqus8IGzLA0oTFE4P8eRvXz95Gu5TPOZKkfCwqi3o86yRLUeKd+xjsV/
-	VAdxqjBHMU4mbZ1NNQIL+AkizkZFo7uPqB4Dhy0dzlTs7C2kOqkJDkkVqKYiTqRQ
-	2sHm3uJd/fNIYWIKiHQpAxXr78IkZuLZf/teNibdYoCgWD/y2xBMWRwAWo7+2kXB
-	mOz2QneV3wkZ9SVACHGRZaSpIuMORxksHPJQTpqREkvsZvMnLqmnqydFlnIE11Ar
-	1zWCeU0jIcyS7FHjICFf9GIVaCcC7WOYoezrJ4p0Pv+VXd/jFCozyvCh+W95kFn5
-	2OjJd4ndjB03ePJdylFrGg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730124129; x=
-	1730210529; bh=r+OiIDFujfOkX27UX0KnwST8oK9dQeo/ifyz/Fg5BH4=; b=h
-	O0xGr3doGLlUkgjlmoh7OqE6Go73AJPRNJ2+M0xnafE48wa5BDYmecI4VeFFd8wy
-	1mR2cyj3hCZ7Vs7addrbq1jmRaWoyV6MWOcq/h/G//pspPLPYi6dbnPKR+GO8lZO
-	exwodB+SzfiurYhUkZ1oEr3hG5WjoMRqCo1locWNOEbi2ww4RTzCyKOP6XJyjhqb
-	UAbp68IQ028mACjJez/rn3Fx9hvzf5AU6cvXtsujM0b+JsjAmfqXkbn/swagzZWM
-	jr8qhlNh5hpPqiNHDl3YQs3hBUBNB5Wdzu5viL726P4ZAdgQac9kcjF+KRExX+48
-	uEbtRzMFWC1CCrC6GXZ2Q==
-X-ME-Sender: <xms:X5kfZyu8FRLBspgYiFbjf8P-xpnCwI95vxq0l8upbbCjWMgcmc1z7w>
-    <xme:X5kfZ3fc6UOl0mPo73rbzhtaeEyYJWp60srptDLhksqRQ00UFj5br5I_aosHE182S
-    EGrJ-S29tHFEYG1EqE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejledgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepvddu
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvihgurdhlrghighhhthesrg
-    gtuhhlrggsrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghr
-    mhdrtghomhdprhgtphhtthhopehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrd
-    gtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthho
-    pehjvhgvthhtvghrsehkrghlrhgrhihinhgtrdgtohhmpdhrtghpthhtohephihsihhonh
-    hnvggruheskhgrlhhrrgihihhntgdrtghomhdprhgtphhtthhopegthhgvnhhhuhgrtggr
-    iheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhuohhrvghnsehkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:X5kfZ9wgum0vvTNY1_U0ODv_2hT3VzRXXqsoqGCFXJatAt-kYV9s-Q>
-    <xmx:X5kfZ9MReUmx1MBBGvppBNMDflMti1A1ib7yK1lGTPUhGJaOsGjOmg>
-    <xmx:X5kfZy_tV7OnRqQq6ThR68huUTWAZzMP9XA_XEIB-auxNDKldbHnvw>
-    <xmx:X5kfZ1XTwkUgXd3mnM15tMHPPAFtGGOyXiRe_PgN1W2pD24wGcTU4g>
-    <xmx:YZkfZ1e_9DtjsPEP3MRLaDDdRCCDjyFM2DBoRbPq0Elqbi-AM0p0ROSp>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C7E272220071; Mon, 28 Oct 2024 10:02:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730124118; c=relaxed/simple;
+	bh=r+tAXgNrbfhZmW4PuLb692rBzxWN1DsgXFcatraEYyk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEOgP7ilZlExrdKLROlxodiBDJGNXdRIFoViwoOmS0sH4ILUCvxR1TsQXaVbrcMZoPknA6wgbTufS+wC2L1k7IbNkS3dMP9HyOPRfT6oz6ZMfvePvp1BAWXvOvTwA/9bvFrffJ+gg7o4SEmeWeE5tFcgDiJ8Piw5ABU56DfQUV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIej2On7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E05CEC4CEC3;
+	Mon, 28 Oct 2024 14:01:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730124118;
+	bh=r+tAXgNrbfhZmW4PuLb692rBzxWN1DsgXFcatraEYyk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RIej2On7tiF0JM3OwwuHNvqiJQy9bb1n2OGCQl6qlIo2xKy3mhGKw0J96sMyFhCqS
+	 APeyCn6UlbGRfvlztP5AwWBsYwv7iAQOqKXE7rkqr0Ut/0KjSg9xI24K1N1slPZBYP
+	 ZBDwPCUpndG9ksmRNWJzPiLuLVWvMB3X3sKP2mxfMFN4OlZimP9guzSaWvU6/gERss
+	 aedeRKjpM0SokEWm1OEtq+0XhK2EFdhWsjjMs3AUyth6f7aSUofhVXzzVsRkC1ItMZ
+	 cMgIVOiCkf63OUGlEbuct32Tz+EG8XkyLAOov6ENSNnnQbftIUeMURa7mDTmbxMlgO
+	 9rENFrgW7J88A==
+Date: Mon, 28 Oct 2024 15:01:55 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 3/3] softirq: Use a dedicated thread for timer wakeups
+ on PREEMPT_RT.
+Message-ID: <Zx-ZUyMLWWsxR8nL@localhost.localdomain>
+References: <20241024150413.518862-1-bigeasy@linutronix.de>
+ <20241024150413.518862-4-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 28 Oct 2024 14:01:42 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Julian Vetter" <jvetter@kalrayinc.com>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>,
- guoren <guoren@kernel.org>, "Huacai Chen" <chenhuacai@kernel.org>,
- "WANG Xuerui" <kernel@xen0n.name>,
- "Andrew Morton" <akpm@linux-foundation.org>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Richard Henderson" <richard.henderson@linaro.org>,
- "Niklas Schnelle" <schnelle@linux.ibm.com>, "Takashi Iwai" <tiwai@suse.com>,
- "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "David Laight" <David.Laight@aculab.com>,
- "Johannes Berg" <johannes@sipsolutions.net>,
- "Christoph Hellwig" <hch@infradead.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- loongarch@lists.linux.dev, Linux-Arch <linux-arch@vger.kernel.org>,
- "Yann Sionneau" <ysionneau@kalrayinc.com>
-Message-Id: <52edd934-a1ca-427f-81f8-7d7dff2d626f@app.fastmail.com>
-In-Reply-To: <20241028134227.4020894-1-jvetter@kalrayinc.com>
-References: <20241028134227.4020894-1-jvetter@kalrayinc.com>
-Subject: Re: [PATCH v11 0/4] Replace fallback for IO memcpy and IO memset
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241024150413.518862-4-bigeasy@linutronix.de>
 
-On Mon, Oct 28, 2024, at 13:42, Julian Vetter wrote:
-> Thank you Arnd for your feedback and no problem. I should have asked
-> before, to clarify what you meant. I have now addressed what you
-> proposed. I have kept the iomem_copy.c and only made the minimal changes
-> to asm-generic/io.h and kept them in place just modifiying the content.
-> Not sure though about the commit message of patch 1. Let me know if I
-> should rephrase it.
->
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+Le Thu, Oct 24, 2024 at 04:55:51PM +0200, Sebastian Andrzej Siewior a écrit :
+> A timer/ hrtimer softirq is raised in-IRQ context. With threaded
+> interrupts enabled or on PREEMPT_RT this leads to waking the ksoftirqd
+> for the processing of the softirq. ksoftirqd runs as SCHED_OTHER which
+> means it will compete with other tasks for CPU ressources.
+> This can introduce long delays for timer processing on heavy loaded
+> systems and is not desired.
+> 
+> Split the TIMER_SOFTIRQ and HRTIMER_SOFTIRQ processing into a dedicated
+> timers thread and let it run at the lowest SCHED_FIFO priority.
+> Wake-ups for RT tasks happen from hardirq context so only timer_list timers
+> and hrtimers for "regular" tasks are processed here. The higher priority
+> ensures that wakeups are performed before scheduling SCHED_OTHER tasks.
+> 
+> Using a dedicated variable to store the pending softirq bits values
+> ensure that the timer are not accidentally picked up by ksoftirqd and
+> other threaded interrupts.
+> It shouldn't be picked up by ksoftirqd since it runs at lower priority.
+> However if ksoftirqd is already running while a timer fires, then
+> ksoftird will be PI-boosted due to the BH-lock to ktimer's priority.
+> Ideally we try to avoid having ksoftirqd running.
+> 
+> The timer thread can pick up pending softirqs from ksoftirqd but only
+> if the softirq load is high. It is not be desired that the picked up
+> softirqs are processed at SCHED_FIFO priority under high softirq load
+> but this can already happen by a PI-boost by a force-threaded interrupt.
+> 
+> [ frederic@kernel.org: rcutorture.c fixes, storm fix by introduction of
+>   local_timers_pending() for tick_nohz_next_event() ]
+> 
+> [ junxiao.chang@intel.com: Ensure ktimersd gets woken up even if a
+>   softirq is currently served. ]
+> 
+> Reviewed-by: Paul E. McKenney <paulmck@kernel.org> [rcutorture]
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+
+Just a few nits:
+
+
 > ---
-> Changes for v11:
-> - Restored iomem_copy.c
-> - Updated asm-generic/io.h to just contain the changes suggested by Arnd
+>  include/linux/interrupt.h | 44 +++++++++++++++++++++++++
+>  kernel/rcu/rcutorture.c   |  6 ++++
+>  kernel/softirq.c          | 69 ++++++++++++++++++++++++++++++++++++++-
+>  kernel/time/hrtimer.c     |  4 +--
+>  kernel/time/tick-sched.c  |  2 +-
+>  kernel/time/timer.c       |  2 +-
+>  6 files changed, 122 insertions(+), 5 deletions(-)
+> 
+> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> index 457151f9f263d..9637af78087f3 100644
+> --- a/include/linux/interrupt.h
+> +++ b/include/linux/interrupt.h
+> @@ -616,6 +616,50 @@ extern void __raise_softirq_irqoff(unsigned int nr);
+>  extern void raise_softirq_irqoff(unsigned int nr);
+>  extern void raise_softirq(unsigned int nr);
+>  
+> +/*
+> + * Handle timers in a dedicated thread at a low SCHED_FIFO priority instead in
+> + * ksoftirqd as to be prefred over SCHED_NORMAL tasks.
+> + */
 
-I've applied it to the asm-generic tree now.
+This doesn't parse. How about, inspired by your changelog:
 
-It's always possible to improve the commit messages, but I'll
-call this good enough, as it's more important to give this some
-time testing in linux-next.
+"""
+Wake-ups for RT tasks happen from hardirq context so only timer_list timers
+and hrtimers for SCHED_OTHER tasks are processed from softirq. As they are
+raised from hardirq, their processing would normally happen from ksoftirqd
+which runs as SCHED_OTHER and compete with other tasks. Moving timers softirqs
+to a low-prio SCHED_FIFO kthread instead ensures that wakeups from timers are
+performed before scheduling the target SCHED_OTHER tasks.
+"""
 
-Thanks for your work work on this!
-
-     Arnd
+Thanks.
 
