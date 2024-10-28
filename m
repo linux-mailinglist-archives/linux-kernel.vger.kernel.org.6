@@ -1,176 +1,187 @@
-Return-Path: <linux-kernel+bounces-385794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A19049B3BCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:34:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 252C99B3BAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 619792832EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A60C1F224A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B621F4296;
-	Mon, 28 Oct 2024 20:27:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37E11E1A2F;
+	Mon, 28 Oct 2024 20:26:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gCA0o8iF"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="US8JWQ2a"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285F81EE00C;
-	Mon, 28 Oct 2024 20:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53861E0DDF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 20:26:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730147256; cv=none; b=p7ats6x+qoXJI61rUd0I/TwZ7g1U/sUwkgDtvrO2BJ4D/GuAdXuaB8E9+Sa6TBsXwPv/UMnme79bQb6pI397uMG6Ln9KgeEM9cthXmoBm/YCcsYnET+XLivKmEkQy8c36wovdXJlxjBA1eAbUBpo8Y9XRf9b9qOlilsrP05dLfo=
+	t=1730147180; cv=none; b=cAxgpnWZW5zIe+MX5yXk5P3YYhc2OgQULjB/MdMkFRBckhHbZgQ/BL3L+zpoJYK7TF7UNJPExca0sN3pHgso6wzsKWu8B92vd6h67ldMyleUw/lZ9SUF/Af1vlLlap7lRokKUayRQY2aiPdXhAch2esHvhGn2fPJ8ImWivPmaco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730147256; c=relaxed/simple;
-	bh=XDAZhSYAaVkmM4dFq8nal7tVXdbanH7syiZOM+auQxs=;
+	s=arc-20240116; t=1730147180; c=relaxed/simple;
+	bh=K73twS9ZNiv/QnZpRSZucEJbRp8Szc3Ew1O3XtrHI5I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dPpsXwDT7BFF3Lq9g+VFeM2UahhxR6VODvdMCHfmc95iJkihuCLjwNxnplG/dWHo87em5LwqGjOjygTtTG2IwgOwcHkHK9OHG8CIfynUhLFqUcKR5+NWIa1yd+qvsUxh0dHv/6faSOzo+DU4T7RPDE2HapMgez1VMBZRX2gkb2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=gCA0o8iF; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730147253;
-	bh=XDAZhSYAaVkmM4dFq8nal7tVXdbanH7syiZOM+auQxs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gCA0o8iFNotPHu8YJdQ0zgNyNddjKrHOyPHkS6d9zzTRQz5Q1SCYa0bMXEkcKbeIi
-	 OZhocwgEgC0ajHj8oGg7IUU3x97Std4QUSTxP0zzqIIcGwrKoVZBpt5Tiqzapxxwud
-	 mH7eD2HAtr+VeC/6U2fNQbyeUnoR2MEqcIiY1O1O2baVSHUmA//dQMwNBAE3gz37Wj
-	 PQfzXlfdLD5BgMNs11HMkz3NUVd1bc9/zJPgHXpjq/Fog6NUidwJahkD87XPcm+p2W
-	 Lerc1xiM2ekLyfsQ/8G0zvIxL7YzysPx5eCujNwA7qlnJQ4nfpL2tybvvmuI9wGBAo
-	 e/jd3fgcxHT5g==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XclLX62mRzsb2;
-	Mon, 28 Oct 2024 16:27:32 -0400 (EDT)
-Message-ID: <588eb8e1-5035-499f-b19b-8b40a9877433@efficios.com>
-Date: Mon, 28 Oct 2024 16:25:53 -0400
+	 In-Reply-To:Content-Type; b=JVKHqZ6x4xcTJriZ6TYucLDnmZ6wlWVXxPh9q7YW+V8ejee9xgs6hXQQXrlhTxgaFOIZt7e5RVnsWoiMlnLQm6B99iT3CbtfviKPCTzkUPB1gswxokPs1UGKoF04jmsuQsxXfxC0ZPUNQ+g0lj5EcMCbOXgzdC7NtOagDIuGxH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=US8JWQ2a; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ebff6ffc-9471-4393-aa8b-bbfe158335ea@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730147173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=yJtp3D5sNaPQ5R+iB/evMchUa9BNhvaLU71XvBoElyU=;
+	b=US8JWQ2aZ87q7EVcA3PPn6LGSVD4decHD9rk7WyWzLtvA1csrzG5j/RskZFLT5/lIbTnqi
+	+VEaZI112BajQnXQbi2Aa0EdlsMJTYT8W/XoNB9sDW5ZHUzpopC6q4bkIgWl9BpRcBhqjc
+	aM9l2/m6ziR6hIcn115dtlWRFTmr+I4=
+Date: Mon, 28 Oct 2024 21:26:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v4 4/4] tracing: Add might_fault() check in
- __DO_TRACE() for syscall
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jordan Rife <jrife@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- Thomas Gleixner <tglx@linutronix.de>, Michael Jeanson
- <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>
-References: <20241028190927.648953-1-mathieu.desnoyers@efficios.com>
- <20241028190927.648953-5-mathieu.desnoyers@efficios.com>
- <e18e953b-9030-487c-bb8a-125521568e9e@efficios.com>
- <CAEf4BzZgSPXyvtBZuB+W3fp=C8QYSHsd0TduxWE3Le+9e80-UA@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEf4BzZgSPXyvtBZuB+W3fp=C8QYSHsd0TduxWE3Le+9e80-UA@mail.gmail.com>
+Subject: Re: [PATCH for-next v8 3/6] RDMA/rxe: Add page invalidation support
+To: "Daisuke Matsuda (Fujitsu)" <matsuda-daisuke@fujitsu.com>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "leon@kernel.org" <leon@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+ "zyjzyj2000@gmail.com" <zyjzyj2000@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rpearsonhpe@gmail.com" <rpearsonhpe@gmail.com>,
+ "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+References: <20241009015903.801987-1-matsuda-daisuke@fujitsu.com>
+ <20241009015903.801987-4-matsuda-daisuke@fujitsu.com>
+ <e4d71ae6-0a90-4fed-9ab2-6c0abec52756@linux.dev>
+ <OS3PR01MB986527D371D3840D1534A555E54A2@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <OS3PR01MB986527D371D3840D1534A555E54A2@OS3PR01MB9865.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On 2024-10-28 16:20, Andrii Nakryiko wrote:
-> On Mon, Oct 28, 2024 at 12:59 PM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> On 2024-10-28 15:09, Mathieu Desnoyers wrote:
->>> Catch incorrect use of syscall tracepoints even if no probes are
->>> registered by adding a might_fault() check in __DO_TRACE() when
->>> syscall=1.
+在 2024/10/28 8:25, Daisuke Matsuda (Fujitsu) 写道:
+> On Sun, Oct 13, 2024 3:16 PM Zhu Yanjun wrote:
+>> 在 2024/10/9 9:59, Daisuke Matsuda 写道:
+>>> On page invalidation, an MMU notifier callback is invoked to unmap DMA
+>>> addresses and update the driver page table(umem_odp->dma_list). It also
+>>> sets the corresponding entries in MR xarray to NULL to prevent any access.
+>>> The callback is registered when an ODP-enabled MR is created.
 >>>
->>> Suggested-by: Thomas Gleixner <tglx@linutronix.de>
->>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->>> Cc: Thomas Gleixner <tglx@linutronix.de>
->>> Cc: Michael Jeanson <mjeanson@efficios.com>
->>> Cc: Steven Rostedt <rostedt@goodmis.org>
->>> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->>> Cc: Peter Zijlstra <peterz@infradead.org>
->>> Cc: Alexei Starovoitov <ast@kernel.org>
->>> Cc: Yonghong Song <yhs@fb.com>
->>> Cc: Paul E. McKenney <paulmck@kernel.org>
->>> Cc: Ingo Molnar <mingo@redhat.com>
->>> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->>> Cc: Namhyung Kim <namhyung@kernel.org>
->>> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
->>> Cc: bpf@vger.kernel.org
->>> Cc: Joel Fernandes <joel@joelfernandes.org>
->>> Cc: Jordan Rife <jrife@google.com>
+>>> Signed-off-by: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
 >>> ---
->>>    include/linux/tracepoint.h | 6 ++++--
->>>    1 file changed, 4 insertions(+), 2 deletions(-)
+>>>    drivers/infiniband/sw/rxe/Makefile  |  2 +
+>>>    drivers/infiniband/sw/rxe/rxe_odp.c | 57 +++++++++++++++++++++++++++++
+>>>    2 files changed, 59 insertions(+)
+>>>    create mode 100644 drivers/infiniband/sw/rxe/rxe_odp.c
 >>>
->>> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
->>> index 259f0ab4ece6..7bed499b7055 100644
->>> --- a/include/linux/tracepoint.h
->>> +++ b/include/linux/tracepoint.h
->>> @@ -226,10 +226,12 @@ static inline struct tracepoint *tracepoint_ptr_deref(tracepoint_ptr_t *p)
->>>                if (!(cond))                                            \
->>>                        return;                                         \
->>>                                                                        \
->>> -             if (syscall)                                            \
->>> +             if (syscall) {                                          \
->>>                        rcu_read_lock_trace();                          \
->>> -             else                                                    \
->>> +                     might_fault();                                  \
+>>> diff --git a/drivers/infiniband/sw/rxe/Makefile b/drivers/infiniband/sw/rxe/Makefile
+>>> index 5395a581f4bb..93134f1d1d0c 100644
+>>> --- a/drivers/infiniband/sw/rxe/Makefile
+>>> +++ b/drivers/infiniband/sw/rxe/Makefile
+>>> @@ -23,3 +23,5 @@ rdma_rxe-y := \
+>>>    	rxe_task.o \
+>>>    	rxe_net.o \
+>>>    	rxe_hw_counters.o
+>>> +
+>>> +rdma_rxe-$(CONFIG_INFINIBAND_ON_DEMAND_PAGING) += rxe_odp.o
+>>> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
+>>> new file mode 100644
+>>> index 000000000000..ea55b79be0c6
+>>> --- /dev/null
+>>> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
+>>> @@ -0,0 +1,57 @@
+>>> +// SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB
+>>> +/*
+>>> + * Copyright (c) 2022-2023 Fujitsu Ltd. All rights reserved.
+>>> + */
+>>> +
+>>> +#include <linux/hmm.h>
+>>> +
+>>> +#include <rdma/ib_umem_odp.h>
+>>> +
+>>> +#include "rxe.h"
+>>> +
+>>> +static void rxe_mr_unset_xarray(struct rxe_mr *mr, unsigned long start,
+>>> +				unsigned long end)
+>>> +{
+>>> +	unsigned long upper = rxe_mr_iova_to_index(mr, end - 1);
+>>> +	unsigned long lower = rxe_mr_iova_to_index(mr, start);
+>>> +	void *entry;
+>>> +
+>>> +	XA_STATE(xas, &mr->page_list, lower);
+>>> +
+>>> +	/* make elements in xarray NULL */
+>>> +	xas_lock(&xas);
+>>> +	xas_for_each(&xas, entry, upper)
+>>> +		xas_store(&xas, NULL);
+>>> +	xas_unlock(&xas);
+>>> +}
+>>> +
+>>> +static bool rxe_ib_invalidate_range(struct mmu_interval_notifier *mni,
+>>> +				    const struct mmu_notifier_range *range,
+>>> +				    unsigned long cur_seq)
+>>> +{
+>>> +	struct ib_umem_odp *umem_odp =
+>>> +		container_of(mni, struct ib_umem_odp, notifier);
+>>> +	struct rxe_mr *mr = umem_odp->private;
+>>> +	unsigned long start, end;
+>>> +
+>>> +	if (!mmu_notifier_range_blockable(range))
+>>> +		return false;
+>>> +
+>>> +	mutex_lock(&umem_odp->umem_mutex);
 >>
->> Actually, __DO_TRACE() is not the best place to put this, because it's
->> only executed when the tracepoint is enabled.
+>> guard(mutex)(&umem_odp->umem_mutex);
 >>
->> I'll move this to __DECLARE_TRACE_SYSCALL()
->>
->> #define __DECLARE_TRACE_SYSCALL(name, proto, args, cond, data_proto)    \
->>           __DECLARE_TRACE_COMMON(name, PARAMS(proto), PARAMS(args), cond, PARAMS(data_proto)) \
->>           static inline void trace_##name(proto)                          \
->>           {                                                               \
->>                   might_fault();                                          \
->>                   if (static_branch_unlikely(&__tracepoint_##name.key))   \
->>                           __DO_TRACE(name,                                \
->>                                   TP_ARGS(args),                          \
->>                                   TP_CONDITION(cond), 1);                 \
->> [...]
->>
->> instead in v5.
+>> It seems that the above is more popular.
 > 
-> please drop the RFC tag while at it
+> Thanks for the comment.
+> 
+> I have no objection to your suggestion since the increasing number of
+> kernel components use "guard(mutex)" syntax these days, but I would rather
+> suggest making the change to the whole infiniband subsystem at once because
+> there are multiple mutex lock/unlock pairs to be converted.
 
-I'm still awaiting for Jordan (or someone else) to come back with
-testing results before I feel confident dropping the RFC tag.
+If you want to make the such changes to the whole infiniband subsystem, 
+I am fine with it.
 
-Thanks,
+The "guard(mutex)" is used in the following patch.
 
-Mathieu
+https://patchwork.kernel.org/project/linux-rdma/patch/20241009210048.4122518-1-bvanassche@acm.org/
+
+Zhu Yanjun
 
 > 
+> Regards,
+> Daisuke Matsuda
+> 
 >>
->> Thanks,
->>
->> Mathieu
->>
->>> +             } else {                                                \
->>>                        preempt_disable_notrace();                      \
->>> +             }                                                       \
->>>                                                                        \
->>>                __DO_TRACE_CALL(name, TP_ARGS(args));                   \
->>>                                                                        \
->>
->> --
->> Mathieu Desnoyers
->> EfficiOS Inc.
->> https://www.efficios.com
->>
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+>> Zhu Yanjun
+>>> +	mmu_interval_set_seq(mni, cur_seq);
+>>> +
+>>> +	start = max_t(u64, ib_umem_start(umem_odp), range->start);
+>>> +	end = min_t(u64, ib_umem_end(umem_odp), range->end);
+>>> +
+>>> +	rxe_mr_unset_xarray(mr, start, end);
+>>> +
+>>> +	/* update umem_odp->dma_list */
+>>> +	ib_umem_odp_unmap_dma_pages(umem_odp, start, end);
+>>> +
+>>> +	mutex_unlock(&umem_odp->umem_mutex);
+>>> +	return true;
+>>> +}
+>>> +
+>>> +const struct mmu_interval_notifier_ops rxe_mn_ops = {
+>>> +	.invalidate = rxe_ib_invalidate_range,
+>>> +};
+> 
 
 
