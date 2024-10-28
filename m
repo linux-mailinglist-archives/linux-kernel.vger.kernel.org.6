@@ -1,94 +1,84 @@
-Return-Path: <linux-kernel+bounces-386051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B80A89B3E8D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:37:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB0539B3E90
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:38:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 633F31F23286
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:37:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00502834F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED6941FB3DA;
-	Mon, 28 Oct 2024 23:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4F41FAC33;
+	Mon, 28 Oct 2024 23:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oLZqu6YZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V1ujTSIo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3271E0B62;
-	Mon, 28 Oct 2024 23:37:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5171925B3;
+	Mon, 28 Oct 2024 23:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730158637; cv=none; b=OFhFSa5sUaLTbJKii3ms2puFnDNu6KHWk1iUrD82LnbaglHNW3V0us+nGCo/YjImIbUuXq3pA41hfTGdILlkthR4kDeYeTatZ0btnjAMVv9kDZJsOV7OZ3M5jP3R8TjtKIz5wsdvPgbComaba+Wjt/WQlBpbo7F6OC5G58IsFyM=
+	t=1730158683; cv=none; b=DiD4H/oxOYl4B0TUEfL7nQu3SHibeJcqHoDeGvNNXuL6pfL5h+51W2cqY9a7Orh3Y4/hd2RTSlCoPTdHqb9YmqG5uWqthtVqZ4GhoPW3OkyFFlZLGbqnXmHUALqwExte2fBq3KD8qbO8Am1UZAeN5/BZY+AQreardH3iwGh4MWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730158637; c=relaxed/simple;
-	bh=S47lYuLvJr2byEk7lZ68+wZXEnpqqU3QlilyzPP2pTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UtbY041V7S5HIB2xh448GbZph7AOpAh/HA3rwP/oeH8U90g3GVRaP5f34jICxgzKRJ6ZfoGmjsnvzq2E1w8SQFox+W7B275lSabGyjsrccNrXTTF1G5rOnPpAHw/30rYsQ0VPIPQ3F9Yw57e+a+D2J4sBFGQPhtg6uB4hiHOIp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oLZqu6YZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1313C4CEC3;
-	Mon, 28 Oct 2024 23:37:16 +0000 (UTC)
+	s=arc-20240116; t=1730158683; c=relaxed/simple;
+	bh=ZGY1bK+sHnLUkH88C1pwQz0YVPZ7fB5D5JiY1sN7onk=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=GzZvgjqC8HZqmzdKXWX7l67j1MwiEXXHjOXcX04AxRyU1+qv8QGrGT+WsVJHIVMPcgGYjz1jaKRraV4ue3zMZSUfOs44JnOlhK42vE4y3SB3Gu46L/Vil4zHwcrWWZEF8dOnRGOQHYSI16XiQG+o1jrpME90Utleq1JZnElYBtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V1ujTSIo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1727C4CEC3;
+	Mon, 28 Oct 2024 23:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730158637;
-	bh=S47lYuLvJr2byEk7lZ68+wZXEnpqqU3QlilyzPP2pTQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oLZqu6YZKO6pIOVA84u2CXTBq/CHtCq7is5wPbCe6aEDMmS5kdRP6uXbjz0u9+Fwo
-	 P3ofV5oNNwlSvahrN2hCm+M7mWgv0NwNu112S5CWcRp2osulnb33UVoFVO/mvIqa+9
-	 Sc9/vfMJCLfS29o7yCvvPlU+eaSNQvGmOgkjJVPHIOdIJhQWX/nI4LLp8NXpH9Cq2z
-	 4vliL78nJRLeRV3A9MgXLpPhF8VojI3vbelczSz2RXq/rtSedS2WLNvf+Ko1T3n1BX
-	 MA9bHIBBARLbzpOnLFNcCUjmzuMpbbhoNKmUJahb2f6qVJ6fpQK6hr1lVqD+kNcpcK
-	 ZDeD1Hfb9Z4yQ==
-Date: Mon, 28 Oct 2024 16:37:14 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	David Ahern <dsahern@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2 4/4][next] uapi: net: Avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <202410281637.68A4BCF7@keescook>
-References: <cover.1729802213.git.gustavoars@kernel.org>
- <cc80c778ce791f3f0a873b01aecb90934d6fd17a.1729802213.git.gustavoars@kernel.org>
+	s=k20201202; t=1730158682;
+	bh=ZGY1bK+sHnLUkH88C1pwQz0YVPZ7fB5D5JiY1sN7onk=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=V1ujTSIob5uW9cDHujdRroOfNOniLOotz92izX4K8tlhoo7+sT37Gy3U1zrpZ6sGA
+	 cbbg8TXfJlUBW0tocfmsacMZHx7yb3jC1mgVyKr06wnBJrJfimqiQu31z9kTBHv6HK
+	 cEm/l6Fk8qXm+RBg6m/rVV0T8AMlJJEwyNEBOolO36o8Hh6BDUSmkgydPIlSiKzQ9d
+	 zmrHbgEjVi5P4rsc5Pevi29ybB6gwqAhksHF0OkVaA6QL4yVhlS61KIKWrrbPdLJYx
+	 hBT03MW7Ahlsr01yYkMfTwYBaNwnpbmciLjYWvih2sHmDb2iBMguhLSoktZn4zDN+8
+	 OVPVcsuwiKJew==
+Message-ID: <1be883e74445353163ed94f273aa4a0d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cc80c778ce791f3f0a873b01aecb90934d6fd17a.1729802213.git.gustavoars@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241023-mbly-clk-v6-1-ca83e43daf93@bootlin.com>
+References: <20241023-mbly-clk-v6-1-ca83e43daf93@bootlin.com>
+Subject: Re: [PATCH v6] clk: eyeq: add driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory?= Clement <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+To: Michael Turquette <mturquette@baylibre.com>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Mon, 28 Oct 2024 16:38:00 -0700
+User-Agent: alot/0.10
 
-On Thu, Oct 24, 2024 at 03:14:31PM -0600, Gustavo A. R. Silva wrote:
-> -Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-> getting ready to enable it, globally.
-> 
-> Address the following warnings by changing the type of the middle struct
-> members in a couple of composite structs, which are currently causing
-> trouble, from `struct sockaddr` to `struct __kernel_sockaddr_legacy` in 
-> UAPI, and `struct sockaddr_legacy` for the rest of the kernel code.
-> 
-> include/uapi/linux/route.h:33:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> include/uapi/linux/route.h:34:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> include/uapi/linux/route.h:35:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end
-> include/net/compat.h:34:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> include/net/compat.h:35:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-> 
-> Also, update some related code, accordingly.
-> 
-> Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+Quoting Th=C3=A9o Lebrun (2024-10-23 03:58:40)
+> Add Mobileye EyeQ5, EyeQ6L and EyeQ6H clock controller driver. It is
+> both a platform driver and a hook onto of_clk_init() used for clocks
+> required early (GIC timer, UARTs).
+>=20
+> For some compatible, it is both at the same time. eqc_early_init()
+> initialises early PLLs and exposes its own clock provider. It marks
+> other clocks as deferred. eqc_probe() adds all remaining clocks using
+> another clock provider.
+>=20
+> It exposes read-only PLLs derived from the main crystal on board.
+> It also exposes another type of clocks: divider clocks.
+> They always have even divisors and have one PLL as parent.
+>=20
+> This driver also bears the responsability for optional reset and pinctrl
+> auxiliary devices. The match data attached to the devicetree node
+> compatible indicate if such devices should be created. They all get
+> passed a pointer to the start of the OLB region.
+>=20
+> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> ---
 
-Looks right, including the helper prototype update.
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--- 
-Kees Cook
+Applied to clk-next
 
