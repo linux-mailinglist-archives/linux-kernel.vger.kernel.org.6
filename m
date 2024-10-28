@@ -1,102 +1,201 @@
-Return-Path: <linux-kernel+bounces-384548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C22189B2B9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:35:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1A79B2B24
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B94CB21A7D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:35:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD3901C214F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CD71917F6;
-	Mon, 28 Oct 2024 09:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B1C192D65;
+	Mon, 28 Oct 2024 09:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iD8z4mXa"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="liRLP6S8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A273E155744;
-	Mon, 28 Oct 2024 09:35:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E8E8472;
+	Mon, 28 Oct 2024 09:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730108140; cv=none; b=gcLdi63dm8dw9zgI9ZCpmO8sW+WZAdx0utKUgPTJ61eiiiT1cGV3PyrlJpMDvHJGCf5rgEm/ZWETz2Eu78uFaNM1hqZ9jj7a1HN5DxSlaL2+DOo15Mra5ZspazQPtLP5ZqJRm3p7HKo6pBDbBPKW5I09rzynhOACAZE4Q+5D8aA=
+	t=1730107007; cv=none; b=Mqiu/e0H6XjyNbRx30zvhcACGizcwOdVG5vXkIS7Te6fgHrYANO4HnnwjkvOzCN7LPj0tIVwsMHzYUNca7MroIsKcLh2QQR1fPE9Akx+4nMipHfUUZsBLfCDyd6wB6I7wEXVFrPlK220ORzCVL+16jEUjmMDK0p+cRpEuSiIxQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730108140; c=relaxed/simple;
-	bh=1xLSzKHe1GGEJ0z0ie9jcyKew1Ekg9jOq+7qM4LEs4k=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References:
-	 MIME-Version:Content-Type; b=M4mQXI1pM9kNjtQ4f2uSYKfc+ccNwmsD0w1mCB06ifiPrzVZKuw39yrbrE1tieWlhSllGJx/ZIiNZF7I2MRB23kSwzLu4bdBbSdubRsYv8EwZl5Ch4z4p0FzMVQbUrIdNZgdyV5ZJmixuwUadLZvWI2b2BkGnkBk1Wp3p8VatVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iD8z4mXa; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43159c9f617so40228755e9.2;
-        Mon, 28 Oct 2024 02:35:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730108137; x=1730712937; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1xLSzKHe1GGEJ0z0ie9jcyKew1Ekg9jOq+7qM4LEs4k=;
-        b=iD8z4mXaPh2pEjvUdLVeeAMuNCXk/tC0SS2OjbGjcqu1md6RQ6MjdONGQIL4g14RU4
-         lGVximczL/pgtn4vYj/ajBpGvHpQQsCyhvzwXX6YgPnNdUKbNr9T14c4pnh6Twg9qOpZ
-         IjQ2eqNmuSKoy5Uai3pdC2pRiMwDJCQa0bxR8sLuB7h8BCgLYdWdKs/YKXbX/CSLxDBn
-         /1bbh1LoCI46I3hwAglQhHFMSFZXhNsTbCHvts6ZZeCtisIKujm0CSHFOi4oQmtZj4Ax
-         DZilOgkqjR6+Ky7ILzYJr89GjvoyJwnrttDsE4JdsDIPuPzFqyh0H3mKzasMzsxIF9a+
-         qIuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730108137; x=1730712937;
-        h=mime-version:user-agent:references:message-id:date:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1xLSzKHe1GGEJ0z0ie9jcyKew1Ekg9jOq+7qM4LEs4k=;
-        b=YUxTyZxuxoyJLZu66pJ5OCRtPQL1MQR3XU2v126HguqI/sNREGOgyLCpcdX+kZk4KX
-         FgTSEeLc9JQpU67Y5uxbtdvdSSvPz+Vi38bIwPJ2Vjnp84/kW61omBDk9aya0AYTB7fB
-         JEE2RvKMPpm74c1d1EBuHWu8yUj0kSilN1dzMdlTGPcMJ5bJ6k20o6PsqCGTjnDp6zXu
-         ywxi/pjlTHsBkYbMuHLthNIPcC/bUuFepJ5ZeNkSAtWriPqWRL4+gG2LAx8eqWKAZgj8
-         6kP/7eB7HQi2IbQx+DzFvzLd2n/M9djyoZG28ZM40j8uU1/SPOu10vfrPmtsHiW7yr9+
-         lcrw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9DI+yE0c3+wdwtVwwWfokVKqHprpT5kXm17wIP4HPQNa67v34ZKlC0uxKrtzPuZ1uHIMJxxOY@vger.kernel.org, AJvYcCUdt/evCD7GrFRTfmPTkpg9JrGPcDGB1eBl2ZRZa9oO6f5EKBZ0E953gSCw7Ha46jASxw8KvA25Jjo0lv8G9Uil@vger.kernel.org, AJvYcCUpuuWwsjeXky0g74uiLDkrLzLYrvvI8JGN5qE7tYzYtzH+S/K3SiYudzqFIGYQNFrRnC5Mfls91tWhu80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUuE3q3LzF0sgzA/Zs32ZRphrRvjmWGDvi+3Ztc3ZwxsHH4QA0
-	NCSWRje58W2Q6tsas/vFk+cg8VMpXBivXic3zQVNKex1P685n/kMMwV2kg==
-X-Google-Smtp-Source: AGHT+IHUMTU6asWT8OCzQlwfhSgv1lTFG5PXHONENrgG8beai824mHwTT76W8XevaHGE9Y+DamEFqg==
-X-Received: by 2002:a05:600c:5118:b0:42c:de2f:da27 with SMTP id 5b1f17b1804b1-4319ac6f848mr70292885e9.2.1730108134901;
-        Mon, 28 Oct 2024 02:35:34 -0700 (PDT)
-Received: from imac ([2a02:8010:60a0:0:b570:335a:e9b5:2b42])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b54303fsm133428765e9.7.2024.10.28.02.35.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 02:35:34 -0700 (PDT)
-From: Donald Hunter <donald.hunter@gmail.com>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Eric Dumazet <edumazet@google.com>,  Jakub Kicinski <kuba@kernel.org>,
-  Paolo Abeni <pabeni@redhat.com>,  Shuah Khan <shuah@kernel.org>,
-  sd@queasysnail.net,  ryazanov.s.a@gmail.com,  Andrew Lunn
- <andrew@lunn.ch>,  netdev@vger.kernel.org,  linux-kernel@vger.kernel.org,
-  linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v10 01/23] netlink: add NLA_POLICY_MAX_LEN macro
-In-Reply-To: <20241025-b4-ovpn-v10-1-b87530777be7@openvpn.net> (Antonio
-	Quartulli's message of "Fri, 25 Oct 2024 11:14:00 +0200")
-Date: Mon, 28 Oct 2024 09:14:50 +0000
-Message-ID: <m2bjz4wpv9.fsf@gmail.com>
-References: <20241025-b4-ovpn-v10-0-b87530777be7@openvpn.net>
-	<20241025-b4-ovpn-v10-1-b87530777be7@openvpn.net>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730107007; c=relaxed/simple;
+	bh=cpowFjQL5ac0sI9lTiCKHPvqkdNL5V66GtX0gY1Wto4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JySexRBgTVV0Iew9hmq7+jZbzYS5RfaumQbhTwJRbWXCquMOQJ8O/axDaZLlagSwG+Q76Pl4j5AEv7aimy64odh3gtLVViVTnaKH9MpqLDObGssP7GGfoWrluK5JChLgwNQxRScruL2Qb27N5KhxpdHYHdQ2gZ6L8E0pgCBKOJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=liRLP6S8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49488C4CEC7;
+	Mon, 28 Oct 2024 09:16:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730107006;
+	bh=cpowFjQL5ac0sI9lTiCKHPvqkdNL5V66GtX0gY1Wto4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=liRLP6S8dPdHMGGezPquS547M4OGL/QwBBDlg0wvtvrvnMg9YuA9Sib/paBHb/0cZ
+	 qm+K+Po8enANPOgYX+p5ZzTbmLr87O8PInA4VXydND4SaeZwg5QBETzAkWtTXsIdMI
+	 WPNZ3g/fv5PbVuZ79mMnc9UOzsQ3G3+NcfJ/OFxU82xe95Uvw0Asgs9ELApW/qPD2y
+	 ybgGosJ+J1rpXG0ioE79UQV+cE0CUe2YssJHgYO2kHoqvD3up/s/X7CdJUzX6zQ1kk
+	 wWv9W4u+h6vg9l+LSLZRmAKkPq/DVkwQD6RlS08KiXPtMmPZjokXw4ADwdaF28EPGv
+	 RorCDQdgiwMgA==
+Date: Mon, 28 Oct 2024 10:16:38 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Herve Codina <herve.codina@bootlin.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+Message-ID: <20241028-thankful-boar-of-camouflage-3de96c@houat>
+References: <20241024095539.1637280-1-herve.codina@bootlin.com>
+ <20241024095539.1637280-3-herve.codina@bootlin.com>
+ <20241027162350.GA15853@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3wpjo5aswujp76pt"
+Content-Disposition: inline
+In-Reply-To: <20241027162350.GA15853@pendragon.ideasonboard.com>
 
-Antonio Quartulli <antonio@openvpn.net> writes:
 
-> Similarly to NLA_POLICY_MIN_LEN, NLA_POLICY_MAX_LEN defines a policy
-> with a maximum length value.
->
-> The netlink generator for YAML specs has been extended accordingly.
->
-> Cc: donald.hunter@gmail.com
-> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+--3wpjo5aswujp76pt
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
+ mechanism
+MIME-Version: 1.0
 
-Reviewed-by: Donald Hunter <donald.hunter@gmail.com>
+On Sun, Oct 27, 2024 at 06:23:50PM +0200, Laurent Pinchart wrote:
+> On Thu, Oct 24, 2024 at 11:55:38AM +0200, Herve Codina wrote:
+> > In some cases observed during ESD tests, the TI SN65DSI83 cannot recover
+> > from errors by itself. A full restart of the bridge is needed in those
+> > cases to have the bridge output LVDS signals again.
+> >=20
+> > The TI SN65DSI83 has some error detection capabilities. Introduce an
+> > error recovery mechanism based on this detection.
+> >=20
+> > The errors detected are signaled through an interrupt. On system where
+> > this interrupt is not available, the driver uses a polling monitoring
+> > fallback to check for errors. When an error is present, the recovery
+> > process is launched.
+> >=20
+> > Restarting the bridge needs to redo the initialization sequence. This
+> > initialization sequence has to be done with the DSI data lanes driven in
+> > LP11 state. In order to do that, the recovery process resets the entire
+> > pipeline.
+> >=20
+> > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 128 ++++++++++++++++++++++++++
+> >  1 file changed, 128 insertions(+)
+> >=20
+> > diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/br=
+idge/ti-sn65dsi83.c
+> > index 96e829163d87..22975b60e80f 100644
+> > --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> > @@ -35,9 +35,12 @@
+> >  #include <linux/of_graph.h>
+> >  #include <linux/regmap.h>
+> >  #include <linux/regulator/consumer.h>
+> > +#include <linux/timer.h>
+> > +#include <linux/workqueue.h>
+> > =20
+> >  #include <drm/drm_atomic_helper.h>
+> >  #include <drm/drm_bridge.h>
+> > +#include <drm/drm_drv.h> /* DRM_MODESET_LOCK_ALL_BEGIN() need drm_drv_=
+uses_atomic_modeset() */
+> >  #include <drm/drm_mipi_dsi.h>
+> >  #include <drm/drm_of.h>
+> >  #include <drm/drm_panel.h>
+> > @@ -147,6 +150,9 @@ struct sn65dsi83 {
+> >  	struct regulator		*vcc;
+> >  	bool				lvds_dual_link;
+> >  	bool				lvds_dual_link_even_odd_swap;
+> > +	bool				use_irq;
+> > +	struct delayed_work		monitor_work;
+> > +	struct work_struct		reset_work;
+> >  };
+> > =20
+> >  static const struct regmap_range sn65dsi83_readable_ranges[] =3D {
+> > @@ -321,6 +327,92 @@ static u8 sn65dsi83_get_dsi_div(struct sn65dsi83 *=
+ctx)
+> >  	return dsi_div - 1;
+> >  }
+> > =20
+> > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
+> > +{
+> > +	struct drm_device *dev =3D sn65dsi83->bridge.dev;
+> > +	struct drm_modeset_acquire_ctx ctx;
+> > +	struct drm_atomic_state *state;
+> > +	int err;
+> > +
+> > +	/* Use operation done in drm_atomic_helper_suspend() followed by
+> > +	 * operation done in drm_atomic_helper_resume() but without releasing
+> > +	 * the lock between suspend()/resume()
+> > +	 */
+> > +
+> > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
+> > +
+> > +	state =3D drm_atomic_helper_duplicate_state(dev, &ctx);
+> > +	if (IS_ERR(state)) {
+> > +		err =3D PTR_ERR(state);
+> > +		goto unlock;
+> > +	}
+> > +
+> > +	err =3D drm_atomic_helper_disable_all(dev, &ctx);
+> > +	if (err < 0)
+> > +		goto unlock;
+> > +
+> > +	drm_mode_config_reset(dev);
+> > +
+> > +	err =3D drm_atomic_helper_commit_duplicated_state(state, &ctx);
+>=20
+> Committing a full atomic state from a bridge driver in an asynchronous
+> way seems quite uncharted territory, and it worries me. It's also a very
+> heavyweight, you disable all outputs here, instead of focussing on the
+> output connected to the bridge. Can you either implement something more
+> local, resetting the bridge only, or create a core helper to handle this
+> kind of situation, on a per-output basis ?
+
+I think you can't just shut down the bridge and restart it, since some
+require particular power sequences that will only occur if you also shut
+down the upstream controller.
+
+So I think we'd need to tear down the CRTC, connector and everything
+in between.
+
+I do agree that it needs to be a generic helper though. In fact, it
+looks awfully similar to what vc4 and i915 are doing in reset_pipe and
+and intel_modeset_commit_pipes, respectively. It looks like a good
+opportunity to make it a helper.
+
+Maxime
+
+--3wpjo5aswujp76pt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZx9WdQAKCRAnX84Zoj2+
+dlU0AX9oM8QWND/c5jJedY7GC5KGs5tPBWxgQdpkaDgCAkA2xDZe1sujWA6/BpOi
+AKivYFIBgOk6f4fkqoalxTQNntOLqoMyo+UGX3d5x7hLpOIfGbWxp9sYQUhuwJEm
+WZEELz9SOQ==
+=Tvr/
+-----END PGP SIGNATURE-----
+
+--3wpjo5aswujp76pt--
 
