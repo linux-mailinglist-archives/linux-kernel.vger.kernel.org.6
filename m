@@ -1,164 +1,114 @@
-Return-Path: <linux-kernel+bounces-385853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7FD59B3C96
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:16:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72BE89B3C99
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:19:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19801C2231C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2AE2834A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94B0E1E25F5;
-	Mon, 28 Oct 2024 21:16:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595EC1E131B;
+	Mon, 28 Oct 2024 21:19:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QNLY9pTv"
-Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MzcI5eq0"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CDF1E230E;
-	Mon, 28 Oct 2024 21:16:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9430E1D2796
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:19:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730150198; cv=none; b=Uz/erCfjqZn8D+JvOpEGXQYgqIx5nvNXpUusb5gZsmaBZnr199QofIA8e0rzJEFrt7jqJdfzwSQzQImcLu3CG4evbJq+RlTPo4ih+UqbtYGi3sYYwtCYi5Bd626/7WrAQCVz+NZoXwez2P2hW9tu5Iyhodhw5h2vdLXERLZIEWM=
+	t=1730150379; cv=none; b=uCpDP4W5uv9Eoza8wL5rNVvkLHz04E6ZZ3PJwnOFuRK/bSxCMPLaQya4RcUv/BV/TGY940xR3QqjVIiyA52xipWczxmSMxHyX8gGTh6/1TbBAq5GWTUZbd5N6V54lx8o3nko35uzhHxAko+pyr0rM1sZWUh7bMIqb2PbWMvx36M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730150198; c=relaxed/simple;
-	bh=TB/aR6e8qqZZ/NbQWYKoSmUDPWYT7mmVzJZlaNyn1Cw=;
+	s=arc-20240116; t=1730150379; c=relaxed/simple;
+	bh=qnYSOkyMUfx970F2JttE5wT/wD2MOoWszsIrP+Tu/YA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y1U21oXVlIeeucaAVlSEkPH8OdOoPv9E+q9zM2NBiFCdhW4Apf09s4/ozH3Yn+dAnWPJcqA/rG26GhuTVYtIzy611nyXMb4Vwyd8kdKdsKwgtnyxY9XjzZA8P0fNt/9av7n78LcAMb5FzYedtOKmIbU6e2oIdFQ7sp/m1ux+xzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QNLY9pTv; arc=none smtp.client-ip=209.85.166.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3a3a6abcbf1so19036955ab.2;
-        Mon, 28 Oct 2024 14:16:35 -0700 (PDT)
+	 To:Cc:Content-Type; b=pDYlf9zZ9+s4yJ0QdFQQ38y0M+7l/G/wOE3sClWBzJ7dDIzjsFNPLCnptlx9KEJzUO7/DkHmrT4srIZDP2lV2p+U8K9PTWoYUIsr+rdWDkduUq+HTmY6FvTZ2IIgi6mJgZsP0IpaSGh4n9ycyFvn21ilaTNLUVhZ+cqbBMLFYTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MzcI5eq0; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so6088448a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:19:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730150194; x=1730754994; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ktS5JZlVOvEaixmraj14grQIGS0mOTMVZfsZ8ze71Ik=;
-        b=QNLY9pTv2nfTzLOwYKn+SlblMm7RVI3vfd1hNUfhhhnqhLS5Sy1Me1z488asMr096a
-         xPERt9Sr+llVogyUV2qE3GiyC0MWfamD0UUuiReARlJIsh1uM0ndc2joL5qX1SqBE3Nj
-         8cUbzSFSSKyjwwBalLB4xvFUzOX/HR4W+lDI/Jt4X6WLlLeVp6WRIsMb8tz2QzoaQnAx
-         jrrt/KqD5it+/GXnX6h0kL29PCNLksKM6xrgZyJPh1xO4nLFgg7npCNJHkq7JxXBm55U
-         zBygiI2gwoSvfcfy2BjSsgI3WsfapHtzP5YuV0ZkA+Hqiypoz8UltGwn7cGAZ15waSoT
-         kTlQ==
+        d=linux-foundation.org; s=google; t=1730150376; x=1730755176; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=LzKMMOiYz+t4fL3FqCrSRgCEZ8AU86AJ+y2q5X06rvw=;
+        b=MzcI5eq0tFgJ4pf637FmPOVYDDnvYq/P0AgO8PczEDoA+SdsG+kHUiQV0/RqpZpvBX
+         zmN30L7curbDzqnCGxu7m2MhaevX+E8UHXSJdxcrTw/kUdNgpysMKUgtNAxeF+byE0/q
+         kHvSeT3MLUqPhqQRHOijeV5BVlfCiN8uFJgoc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730150194; x=1730754994;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ktS5JZlVOvEaixmraj14grQIGS0mOTMVZfsZ8ze71Ik=;
-        b=YAQL94noBJFA96KXPp/3in+jJHWwNOxjVFysR4Q8EIca0cF+MJQAq2WVrtk2SOoQZk
-         d2mNx/R+QBIqSnuqbUfackrwJlZOdP8sSLl+lJZXcOV+HqQsJRutqX3bUbNsu89acmfR
-         JpgcECNVRW3RPZorEu/R+51ZywVJqkiIK0PCG7Jn/bQEF2iJGva/K2hqhO4zGzblMUnr
-         MRHm4Nlc5vaOUiYNoiLqgquKtxCVACLQDYI/b9b499IEc4k+f1KT3UMwI7DI92dJDThM
-         Vjabljg2jtDlRrvzLIDmRDqm5BJRLTQJvtC1tHHQ56GTJqLOTB6xAUot1VXILieYgiEU
-         zZ2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWP2uVdJErQR2parsNsX3FufHyYOtX0yizGplRTV8OIfdsQfRArqYYRg0FcwMX2nGMiV5AsgSg5zzbrA5TK@vger.kernel.org, AJvYcCXF8nJjIjfCRhHcyrqkSMCzwBtQa+bvRJmvoh1DwA4smRUC3kedO0NUZXYhVhaNi6lfXZtX0Bg3fTEA+3Le@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYF4AYhltHc4m4gzon5holaJfbw2luJwxHTNRwvnmkR/hJK4s6
-	y48qO7XTFKHVRXGHnuOoOt1L2cW/927PpQg+KaBJm0YKt8kGL132Q/hvpvvX4puWSiXAfZCn85D
-	dJph8dPfQuuxYX2ciciUMYUA/MuWH123V
-X-Google-Smtp-Source: AGHT+IG9XrLh5NKIexOxyfcazqPge3CPHDgNBsyKjId3gtC/MJJHMtgd1LcfGFYvXzXYtIB2lAVzQZdmZdFDCxa0qBU=
-X-Received: by 2002:a05:6e02:20c8:b0:3a0:8c68:7705 with SMTP id
- e9e14a558f8ab-3a4ed3012b2mr68380955ab.21.1730150194399; Mon, 28 Oct 2024
- 14:16:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730150376; x=1730755176;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LzKMMOiYz+t4fL3FqCrSRgCEZ8AU86AJ+y2q5X06rvw=;
+        b=jgor86OXWGAykm1OpxLPAKnvdPA1IjuYk2MCrz3EV/BkajqpUvQYfyYq9pw2x3OiKA
+         T4L4SmZ9t8KOam7wiP6gCR6OsNSS0HwNiFY5fR3zF4ch2Ey0T5QA1Plw900sfKC9EvjI
+         LRTdmbKHHD+peF/IZisoMh8g50mRomm0xzPseh6VPaVZFotnEhYGV4Pv7Jo0FKnH/7Ix
+         Adef45WuaLUJO/m32wpdfLiAFmKbaf9juNzO9WrRnBR0Ty9T0YG5KxVEJntHxzHRntFk
+         6Lq9ALv/4M/Ds6FDC3drdA1eOrm5QfkWqrGAQeaCAaJato1RUuOL47ZBCXswovweTqYW
+         GtGw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7bGUVTMNe2cY+O6P0Y+c/zhE8/OD/fjBvQnoEkMG4DWjH4bXIoQnIx7YUvcxBCcb2y0fPuiOhRLML+Zg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/AotPF3bbR3teGgx55y7RBULHQ5UfoKl4kTdMZvs/TLLr9YDW
+	OM8fGo6Q3VBlYtOQawGmsG9B6AdLLhgL2Z4AwakX6X2/CvG+Cgl6Wu6mU7GA+vNKTdSwGXuJJGE
+	AODvAXQ==
+X-Google-Smtp-Source: AGHT+IG7/ALQyz4IO2iHWvF+zVKhZQKd3uqYphy2hidFfpJMhjUf7SV55vwTnOHDo1JXGWAXH8g0QA==
+X-Received: by 2002:a05:6402:5203:b0:5c2:6d16:ad5e with SMTP id 4fb4d7f45d1cf-5cbbf8c616fmr6945264a12.19.1730150375716;
+        Mon, 28 Oct 2024 14:19:35 -0700 (PDT)
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c4547sm3439460a12.53.2024.10.28.14.19.33
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 14:19:34 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9454f3bfaso5642642a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:19:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6OMYuD8R5/q8Tb+TJMj5W5z8YMC5p26Gu3JeLW/B1LwCYojzCzTcj0aK3kUcLV8ZB2Wf78UDHFV56PK0=@vger.kernel.org
+X-Received: by 2002:a17:907:d2a:b0:a99:87ea:de57 with SMTP id
+ a640c23a62f3a-a9de5ca5ec8mr765253066b.2.1730150373413; Mon, 28 Oct 2024
+ 14:19:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com> <20241008125410.3422512-6-quic_bibekkum@quicinc.com>
-In-Reply-To: <20241008125410.3422512-6-quic_bibekkum@quicinc.com>
-From: Rob Clark <robdclark@gmail.com>
-Date: Mon, 28 Oct 2024 14:16:22 -0700
-Message-ID: <CAF6AEGtOn3+99KMVRvpH=8Qs-g52ajVQyeBkxThSES_dEdVH+Q@mail.gmail.com>
-Subject: Re: [PATCH v16 5/5] iommu/arm-smmu: add ACTLR data and support for qcom_smmu_500
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org, jgg@ziepe.ca, 
-	jsnitsel@redhat.com, robh@kernel.org, krzysztof.kozlowski@linaro.org, 
-	quic_c_gdjako@quicinc.com, dmitry.baryshkov@linaro.org, iommu@lists.linux.dev, 
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <cover.1729715266.git.lorenzo.stoakes@oracle.com>
+ <6e8deda970b982e1e8ffd876e3cef342c292fbb5.1729715266.git.lorenzo.stoakes@oracle.com>
+ <61461dcc-e455-450d-9c01-5465003fc31c@sirena.org.uk> <c24a174d-c8f3-4267-87ae-cf77fa587e82@lucifer.local>
+ <CAHk-=whD9MrPwPMBgVG16T_u+my8xYtZg2tUGz932HeodVX7Bg@mail.gmail.com>
+ <438f50c5-8b8c-444f-ae85-10e5151f3f24@lucifer.local> <57mgmdx7wgfwci3yo3ggkmcnm3ujamgkwcccm77ypvmer5tegn@opiq3ceh2uvy>
+ <ykzmur56ms7fm4midi6tbncjvcvf7ue4lp7e4orblrmwnefw3e@oa3enlpdrcrr>
+ <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local> <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
+ <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
+In-Reply-To: <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 28 Oct 2024 11:19:16 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
+Message-ID: <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
+Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region() error
+ path behaviour
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 8, 2024 at 5:55=E2=80=AFAM Bibek Kumar Patro
-<quic_bibekkum@quicinc.com> wrote:
+On Mon, 28 Oct 2024 at 11:00, Vlastimil Babka <vbabka@suse.cz> wrote:
 >
-> Add ACTLR data table for qcom_smmu_500 including
-> corresponding data entry and set prefetch value by
-> way of a list of compatible strings.
+> VM_MTE_ALLOWED is also set by arm64's arch_calc_vm_flag_bits():
 >
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 24 ++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
->
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/a=
-rm/arm-smmu/arm-smmu-qcom.c
-> index 2d2c1e75632c..dd4fb883ebcd 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -25,8 +25,31 @@
->
->  #define CPRE                   (1 << 1)
->  #define CMTLB                  (1 << 0)
-> +#define PREFETCH_SHIFT         8
-> +#define PREFETCH_DEFAULT       0
-> +#define PREFETCH_SHALLOW       (1 << PREFETCH_SHIFT)
-> +#define PREFETCH_MODERATE      (2 << PREFETCH_SHIFT)
-> +#define PREFETCH_DEEP          (3 << PREFETCH_SHIFT)
->  #define GFX_ACTLR_PRR          (1 << 5)
->
-> +static const struct of_device_id qcom_smmu_actlr_client_of_match[] =3D {
-> +       { .compatible =3D "qcom,adreno",
-> +                       .data =3D (const void *) (PREFETCH_DEEP | CPRE | =
-CMTLB) },
-> +       { .compatible =3D "qcom,adreno-gmu",
-> +                       .data =3D (const void *) (PREFETCH_DEEP | CPRE | =
-CMTLB) },
-> +       { .compatible =3D "qcom,adreno-smmu",
-> +                       .data =3D (const void *) (PREFETCH_DEEP | CPRE | =
-CMTLB) },
-> +       { .compatible =3D "qcom,fastrpc",
-> +                       .data =3D (const void *) (PREFETCH_DEEP | CPRE | =
-CMTLB) },
-> +       { .compatible =3D "qcom,sc7280-mdss",
-> +                       .data =3D (const void *) (PREFETCH_SHALLOW | CPRE=
- | CMTLB) },
-> +       { .compatible =3D "qcom,sc7280-venus",
-> +                       .data =3D (const void *) (PREFETCH_SHALLOW | CPRE=
- | CMTLB) },
-> +       { .compatible =3D "qcom,sm8550-mdss",
-> +                       .data =3D (const void *) (PREFETCH_DEFAULT | CMTL=
-B) },
-> +       { }
-> +};
+>         if (system_supports_mte() && (flags & MAP_ANONYMOUS))
+>                 return VM_MTE_ALLOWED;
 
-I guess by now there are some more entries to add
-("qcom,x1e80100-mdss", for example), but I guess those could be
-followup patches
+Yeah, but that should just move into arch_validate_flags() too.
+There's no reason why that's done in a separate place.
 
-Reviewed-by: Rob Clark <robdclark@gmail.com>
-
-> +
->  static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->  {
->         return container_of(smmu, struct qcom_smmu, smmu);
-> @@ -640,6 +663,7 @@ static const struct qcom_smmu_match_data qcom_smmu_50=
-0_impl0_data =3D {
->         .impl =3D &qcom_smmu_500_impl,
->         .adreno_impl =3D &qcom_adreno_smmu_500_impl,
->         .cfg =3D &qcom_smmu_impl0_cfg,
-> +       .client_match =3D qcom_smmu_actlr_client_of_match,
->  };
->
->  /*
-> --
-> 2.34.1
->
+                     Linus
 
