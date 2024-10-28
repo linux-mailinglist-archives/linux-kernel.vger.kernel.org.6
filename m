@@ -1,304 +1,113 @@
-Return-Path: <linux-kernel+bounces-384813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A89889B2EBA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:23:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD0CD9B2EB6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66D1E284FEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:23:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 65560B2145F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012EB1DE3AE;
-	Mon, 28 Oct 2024 11:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F631DDC28;
+	Mon, 28 Oct 2024 11:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RgtdbxM4"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7iQhJO+"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C44E51DAC9F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9040E1D61A2;
+	Mon, 28 Oct 2024 11:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730114244; cv=none; b=q1ZqBx8CR27m2cZjKNNUCdZmHi1nQcQJQ+Q3WpcrWmN3Nm8ka/fXoE1lNhTEK5ykvDaG6VapE8paL/OjKBd9atCG/WjqCdUgpprq9ekQpYoNrJcKoTlX4D8u8t+QN5muBaIL4iiC11R9NLi99huUus0GCqUWEAYm+42bQEYgMWI=
+	t=1730114225; cv=none; b=fQ/QBj6xTwsBHuWrEIwQNyKvQyrEjqkxs4I3pqQmbgnxKMfLiJVb/ybUNYdGbySwwxbsWOgJSZc4YReoDPtDkxjpm3O1SE50x5+KPEBwUXqlFZ4fR1rLX8A/H1Ml7iDmCfhWJ1AXOQzGuzDCPEKtsiGSXyYcwQPlr7/WTPcA4pk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730114244; c=relaxed/simple;
-	bh=Q+Izx9CUJhJ7KmTt+C+xoI5zATsydey1cYfMDV4wNKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jxWyPehF0B1BtbSQl38rZOBqj3FhsLvzg/+odLQFlNcjMmwqsx/KOkTRt7DkX5h2DgY6zoEXd83GkwLBuhczXYSpLNnqx6clFmZwQyvisw/H3aUwM0/0WTPP0N6Y+rs17FCtP1TR2dZ29wTVGL5OcVztYbbXk6+9DiZue4IuVOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=RgtdbxM4; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4a47f8a9168so1402955137.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:17:21 -0700 (PDT)
+	s=arc-20240116; t=1730114225; c=relaxed/simple;
+	bh=Mxx597M/sVwtRXKyXQ3t/slPbGemI4c1oBODxSYTCAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hlZdehutrBqDNzH3C50M49NGo/Y+GjvMoj4GAUPpSclQcBFVUREgNPMmYIt+2Z/v6DDoY6GsSGzDx5OOKAukNEKf77PnPxTZ2Q0845iy3DspTcP3lu33HJbQLrp4XKX8zvD7xoPaPww6043zAWI3+mAYM6bYMPodmxvM0mCDV7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I7iQhJO+; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e8235f0b6so3053051b3a.3;
+        Mon, 28 Oct 2024 04:17:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730114240; x=1730719040; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9g6YjlVbvnFbuJwRrpmbG7D+MwzdvrH5uhaL6ujW6ig=;
-        b=RgtdbxM4E2quKMEfdcisgo+M5kUzFFV0aeS5wIJ5SE1yMvWYtNi4pOgSyku1qOpBOM
-         qcuFSlWi1P/H0gYW2+v67OP4nWgeb9Cumeb8FLZWR1ff0hGe3ZEoru65qG0f32eCE6HS
-         0SF5wi0tXnIXRNwbSjCKEwYO6giiApM6JkRvA=
+        d=gmail.com; s=20230601; t=1730114223; x=1730719023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ORjMty/TkXC30xWgYYYlVcOJ2nYVBxh1DhXJWSe7Un8=;
+        b=I7iQhJO++w1/FqCCtuO5QJmrbGzXus6voTUwwGldtYDU4W0p0VAOIsyAhUpjmcFvXv
+         WVUEn32MkgTIoOlbbDvr6+yNL52Hd4f8uLMkHqNlBLPU+WhX3YLcq8Vv/rInBiYU6Nsr
+         c7S6pILIHwhYcz5TMP9ZOyzmfZ7NmIUKIJ5meYNxYTMqapkBAI6Fqh1LTyq9d1AwY7PR
+         RJE/SqTXGShnskYcGgIpm3zndvbQAzhlIqQJ5FJRTjOkiTEhbem4UJ6DYWfriW3Yqn4r
+         /u4I/Df62OCHYj3sbugI+yTMLZX0Z2ANlKB9NAQdxCVbaT7zBm5X3n/QJjZ0K4FQod7Q
+         pslw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730114240; x=1730719040;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9g6YjlVbvnFbuJwRrpmbG7D+MwzdvrH5uhaL6ujW6ig=;
-        b=JUPkLiWqb6s9LUcnscVLZJPCfv3lY5F9VzwyaRxOQZKduNTHO/f8oTnlIogA4GjpSu
-         BUwFxkUN5NRciqxi+eDlRqC1xRnawgB21XcvlRVi8mphhCiwTIGN4ASirJkOc6IpsWo4
-         7Xlf2tEkZHuCJtKmaLr2VorRX6RY9X3xp0FX+0BbVl2ZXInYhEldGA9nJSsjBATj8rQc
-         7JwjFEU7c33mvng0JFqQjIcRcaccPdvJ0pZz1Nw2kGZsKXCTg8frJCtO0AlHgAuqdVWM
-         jp8iJZPCySB+Xfn3tFCzSY6Doebsk9QmAPtES003xiP9swpeYhKqn1KLIPlXvKUzX50o
-         GQbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkYFXMcBdp3KmYdYjgRsmLWpAdO5/15sUBuzKmTL6Bit7h8boOfsd3d1YW93pJvm/Hi9Dy78updhT798k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziG6gX5HMpOWYbubUesuaYx9qOHI/RGpIGrHhujl8HD2MQaGUT
-	x3TK4ZihvF/xHREohjphLSZmBnfHRpEYlIusPYjptRsBzbMOHyVZwM6euIAl/SL2zh7rjFHXTLk
-	=
-X-Google-Smtp-Source: AGHT+IFzv3yQStYLApQTe9/lK3a3cetpp1BPJShh5zJfZGBIcV6VTKJkJzbj0tvFexFcnQGoHr2+IQ==
-X-Received: by 2002:a05:6102:26d0:b0:4a5:c297:7d5a with SMTP id ada2fe7eead31-4a8cfb83226mr5647828137.16.1730114240333;
-        Mon, 28 Oct 2024 04:17:20 -0700 (PDT)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4a8c52677a9sm1065943137.19.2024.10.28.04.17.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 04:17:19 -0700 (PDT)
-Received: by mail-vs1-f51.google.com with SMTP id ada2fe7eead31-4a47fd930b8so1203496137.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:17:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3/U1NsEkQ4L1Keb3dK+uhHP8eqgIpyQw2fT9tehWbRzMrV1yOugcuqQRu7+ZVoDIyRBdRfFVivUqsupI=@vger.kernel.org
-X-Received: by 2002:a05:6102:3049:b0:4a3:d2e5:f097 with SMTP id
- ada2fe7eead31-4a8cfd6d0d4mr4759861137.24.1730114238879; Mon, 28 Oct 2024
- 04:17:18 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730114223; x=1730719023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ORjMty/TkXC30xWgYYYlVcOJ2nYVBxh1DhXJWSe7Un8=;
+        b=pUmTCBU5/kOP6fUOXV+9fiFlomJgrLbo45AO4aEtzoGCWhDbpCXBMMn7irWDlVObEh
+         chde6lXXllPs365u/VBMHS5DckomRS7C3N0JX1s6kx1d6rO5//55qlDBia8U26VxRCQy
+         q95GeUAbcCtDwvnhZy7m+gpKjM6Gn8tteQGzSX++OJi/PDk0yVH9wR+K/NxjqaxToE9T
+         t2avX848NUpHWu0mjR0mJG8i5QAHICI24+Inos09CzFXJBFe3NX5HseA/wQhSNQQAtFF
+         w6M7d4SDTSWqNdbK7ZUue7UhP6h4Q2HV8c0od1urPxTb16Se1K6c4F29Mzb2DSRzDQFT
+         VClQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUYT1yt/6Q/+b6XDTTX9TS/Gaay9v14bTxIahDud88bEuV2r6LrhepxgC+29hAfkvwdS04DykSabO4BA1A=@vger.kernel.org, AJvYcCV+6dDjtiB+pvGd1VD09bPcUEk3HDHHJYWneD1FJKmxEbpEq7YLtyA2F0joNvl0KVOV4H3SYqJdgRPmaw==@vger.kernel.org, AJvYcCWPg8QFNfxwEv8T2HQDqzMHKdSRtN5YSKdw7mRiohi1cAVxHWhKxx5nW68iHPicFhY1v9nz8j8CmNU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhqCivElHwRQ32qidoH6IVD1dcKV/LI2CWcqbEuiR2qfEzjzDK
+	0KQZBnEYhodzT8CZdKgg3fUEWlgm5pr6uUvS3AcazTRkHOkWiMwd
+X-Google-Smtp-Source: AGHT+IEs3xJO2VaS6OLu/ZG4EsgKrQMwterQHy96fotP+n8dGvJPA95DEczzR1ej4HZ3Rlo8vkQqpg==
+X-Received: by 2002:a05:6a00:9286:b0:71e:db72:3c87 with SMTP id d2e1a72fcca58-7206306effemr9510452b3a.20.1730114222596;
+        Mon, 28 Oct 2024 04:17:02 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72083fee549sm1107848b3a.106.2024.10.28.04.17.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 04:17:00 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id C2E0F4207D11; Mon, 28 Oct 2024 18:16:57 +0700 (WIB)
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Sound System <linux-sound@vger.kernel.org>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	=?UTF-8?q?Amadeusz=20S=C5=82awi=C5=84ski?= <amadeuszx.slawinski@linux.intel.com>,
+	Palmer Dabbelt <palmer@rivosinc.com>,
+	Bagas Sanjaya <bagasdotme@gmail.com>
+Subject: [PATCH 0/2] Documentation fixes for ALSA Co-processor Acceleration API
+Date: Mon, 28 Oct 2024 18:16:45 +0700
+Message-ID: <20241028111647.17378-1-bagasdotme@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025110111.1321704-1-fshao@chromium.org> <20241025110111.1321704-3-fshao@chromium.org>
- <iupuwxxslb3t76mzy3ufsruwwpd47fuop7y6tfcbwkosdagkxf@fnklbp6t6au2>
-In-Reply-To: <iupuwxxslb3t76mzy3ufsruwwpd47fuop7y6tfcbwkosdagkxf@fnklbp6t6au2>
-From: Fei Shao <fshao@chromium.org>
-Date: Mon, 28 Oct 2024 19:16:43 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nic3HgEGeS6up_MsYh3UoM_piHC6=uuRep5bne4zOWbxQ@mail.gmail.com>
-Message-ID: <CAC=S1nic3HgEGeS6up_MsYh3UoM_piHC6=uuRep5bne4zOWbxQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] arm64: dts: mediatek: Introduce MT8188 Geralt
- platform based Ciri
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=669; i=bagasdotme@gmail.com; h=from:subject; bh=Mxx597M/sVwtRXKyXQ3t/slPbGemI4c1oBODxSYTCAE=; b=owGbwMvMwCX2bWenZ2ig32LG02pJDOnyhYt+6iSZGfYern2XkGP2yPJY1azL75fvVfk+pblwu btDQMXRjlIWBjEuBlkxRZZJiXxNp3cZiVxoX+sIM4eVCWQIAxenAEykoY6R4enETRyH9qVcPHNy 071ZdZeWqbvL/O3751st686r87Te3Yjhn+7tv/sLVPPOhT/zfZyxdsXzlpgz68p8fZgfsrBP9tv KygIA
+X-Developer-Key: i=bagasdotme@gmail.com; a=openpgp; fpr=701B806FDCA5D3A58FFB8F7D7C276C64A5E44A1D
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 5:02=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On Fri, Oct 25, 2024 at 06:59:36PM +0800, Fei Shao wrote:
-> > Introduce MT8188-based Chromebook Ciri, also known commercially as
-> > Lenovo Chromebook Duet (11", 9).
-> >
-> > Ciri is a detachable device based on the Geralt design, where Geralt is
-> > the codename for the MT8188 platform. Ciri offers 8 SKUs to accommodate
-> > different combinations of second-source components, including:
-> > - audio codecs (RT5682S and ES8326)
-> > - speaker amps (TAS2563 and MAX98390)
-> > - MIPI-DSI panels (BOE NV110WUM-L60 and IVO t109nw41)
-> >
-> > Signed-off-by: Fei Shao <fshao@chromium.org>
-> > ---
-> >
-> >  arch/arm64/boot/dts/mediatek/Makefile         |    8 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku0.dts  |   11 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku1.dts  |   63 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku2.dts  |   54 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku3.dts  |   20 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku4.dts  |   43 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku5.dts  |   76 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku6.dts  |   67 +
-> >  .../dts/mediatek/mt8188-geralt-ciri-sku7.dts  |   52 +
-> >  .../boot/dts/mediatek/mt8188-geralt-ciri.dtsi |  413 +++++
-> >  .../boot/dts/mediatek/mt8188-geralt.dtsi      | 1497 +++++++++++++++++
-> >  11 files changed, 2304 insertions(+)
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-0.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-1.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-2.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-3.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-4.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-5.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-6.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku=
-7.dts
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri.dts=
-i
-> >  create mode 100644 arch/arm64/boot/dts/mediatek/mt8188-geralt.dtsi
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dt=
-s/mediatek/Makefile
-> > index 8fd7b2bb7a15..c6c34d99316b 100644
-> > --- a/arch/arm64/boot/dts/mediatek/Makefile
-> > +++ b/arch/arm64/boot/dts/mediatek/Makefile
-> > @@ -69,6 +69,14 @@ dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-volt=
-orb-sku589824.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-corsola-voltorb-sku589825.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8186-evb.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-evb.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku0.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku1.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku2.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku3.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku4.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku5.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku6.dtb
-> > +dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8188-geralt-ciri-sku7.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8192-asurada-hayato-r1.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8192-asurada-hayato-r5-sku2.dtb
-> >  dtb-$(CONFIG_ARCH_MEDIATEK) +=3D mt8192-asurada-spherion-r0.dtb
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dts b=
-/arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dts
-> > new file mode 100644
-> > index 000000000000..7a2edbaa74f1
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dts
-> > @@ -0,0 +1,11 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +/*
-> > + * Copyright 2023 Google LLC
-> > + */
-> > +/dts-v1/;
-> > +#include "mt8188-geralt-ciri.dtsi"
-> > +
-> > +/ {
-> > +     model =3D "Google Ciri sku0 board";
-> > +     compatible =3D "google,ciri-sku0", "google,ciri", "mediatek,mt818=
-8";
-> > +};
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dts b=
-/arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dts
-> > new file mode 100644
-> > index 000000000000..53fdd5acaa3f
-> > --- /dev/null
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dts
-> > @@ -0,0 +1,63 @@
-> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
-> > +/*
-> > + * Copyright 2023 Google LLC
-> > + */
-> > +/dts-v1/;
-> > +#include "mt8188-geralt-ciri.dtsi"
-> > +
-> > +/ {
-> > +     model =3D "Google Ciri sku1 board";
-> > +     compatible =3D "google,ciri-sku1", "google,ciri", "mediatek,mt818=
-8";
-> > +};
-> > +
-> > +&dsi_panel {
-> > +     compatible =3D "ivo,t109nw41", "himax,hx83102";
-> > +};
-> > +
-> > +&touchscreen {
-> > +     himax,pid =3D <0x1003>;
->
-> Why do you add more of undocumented properties?
+A small (two-patches) series fixing htmldocs warnings on sound tree that
+first being noticed in linux-next integration [1].
 
-I think I'll drop the Himax related thing until Himax finishes
-upstreaming their drivers, so there's a standardized binding to
-follow.
+[1]: https://lore.kernel.org/linux-next/20241028193242.11597640@canb.auug.org.au/
 
->
-> > +     firmware-name =3D "himax_i2chid_1003.bin";
-> > +};
-> > +
-> > +&i2c0 {
-> > +     /delete-node/ audio-codec@1a;
-> > +
-> > +     es8326: audio-codec@19 {
-> > +             compatible =3D "everest,es8326";
-> > +             reg =3D <0x19>;
-> > +             interrupts-extended =3D <&pio 108 IRQ_TYPE_LEVEL_LOW>;
-> > +             #sound-dai-cells =3D <0>;
-> > +             everest,jack-pol =3D [0e];
-> > +             everest,interrupt-clk =3D [00];
-> > +     };
-> > +};
-> > +
-> > +&sound {
-> > +     compatible =3D "mediatek,mt8188-es8326";
-> > +     model =3D "mt8188_m98390_8326";
-> > +
-> > +     audio-routing =3D
-> > +             "ETDM1_OUT", "ETDM_SPK_PIN",
-> > +             "ETDM2_OUT", "ETDM_HP_PIN",
-> > +             "ETDM1_IN", "ETDM_SPK_PIN",
-> > +             "ETDM2_IN", "ETDM_HP_PIN",
-> > +             "ADDA Capture", "MTKAIF_PIN",
-> > +             "Headphone Jack", "HPOL",
-> > +             "Headphone Jack", "HPOR",
-> > +             "MIC1", "Headset Mic",
-> > +             "Left Spk", "Front Left BE_OUT",
-> > +             "Right Spk", "Front Right BE_OUT";
-> > +     status =3D "okay";
-> > +
-> > +     hs-capture-dai-link {
->
-> Nope, that's not how DAI links are called.
+Bagas Sanjaya (2):
+  ALSA: docs: compress-accel: Format state machine flowchart as code
+    block
+  ALSA: docs: Add toctree index entry for co-processor acceleration API
 
-Acknowledged, but I'm still figuring out what you want to suggest here
-- does the `^dai-link@[0-9]+$` pattern sound okay?
+ Documentation/sound/designs/compress-accel.rst | 2 +-
+ Documentation/sound/designs/index.rst          | 1 +
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
->
-> > +             codec {
-> > +                     sound-dai =3D <&es8326>;
-> > +             };
-> > +     };
->
-> ...
->
-> > +&i2c2 {
-> > +     status =3D "disabled";
-> > +};
-> > +
-> > +&i2c_tunnel {
-> > +     /delete-node/ sbs-battery@b;
-> > +
-> > +     battery: sbs-battery@f {
-> > +             compatible =3D "sbs,sbs-battery";
-> > +             reg =3D <0xf>;
-> > +             sbs,i2c-retry-count =3D <2>;
-> > +             sbs,poll-retry-count =3D <1>;
-> > +     };
-> > +};
-> > +
-> > +&max98390_38 {
-> > +     sound-name-prefix =3D "Front Right";
-> > +     maxim,dsm_param_name =3D "dsm_param.bin";
->
-> NAK. Not a DT property. You cannot send us ACPI stuff.
->
-> Go through internal review first, which should tell you that ACPI is not
-> accepted into DT. There are just few exceptions and codecs do not
-> qualify.
 
-I'll drop all these invalid lines. It was likely a misunderstanding
-when the lines were added. Thanks for clarifying.
+base-commit: 0216ded72db896b24cbdd8cd6531482571b25cf6
+-- 
+An old man doll... just what I always wanted! - Clara
 
-Regards,
-Fei
-
->
-> Best regards,
-> Krzysztof
->
 
