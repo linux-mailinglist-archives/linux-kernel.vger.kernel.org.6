@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26A349B293C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:52:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83ABE9B293E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587A81C21759
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:52:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 390B21F22244
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:52:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCDE20101F;
-	Mon, 28 Oct 2024 07:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C646201101;
+	Mon, 28 Oct 2024 07:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WUz/V0ti";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IZ4FYzFN"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HO4fKTp6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1DA/IYkr"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A96F1F4264
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0CC1F428A
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100943; cv=none; b=Q7B1r9aG54kcMnCoryUSe8BzxfNmhm0FuOKfo2hQmFyYx1tc1urZGkBFWS5U4GxpCovxK8O/+t7oAWkRYAK+frHPa8/9xEcYUVJf8IU4B99+1Ib6of1TCt2Gt7u2FeDqFoqXm9nH0RsvRk2toPH6+DWBWSsew7eWEigL20KbPpQ=
+	t=1730100944; cv=none; b=jO084vNEnGwGqLl3iflKju1/ylW6X5AdpvMYgYLYaTtvOdT3+3NEOZBDCHe9jr3IA8tVXhSOKk1gOhWyp80FyBLfE7e8q7wEUmsQ4/zeOTVpXsOW3qxJeAXJU64LikZwNySB6LMZnPuyTi2sdoU0tpTwswDD2Csee221uP6Gewg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100943; c=relaxed/simple;
-	bh=lEpQxL9xXuQFToIcVd6yy5VJRuxNaTDofAFptwuN6Zo=;
+	s=arc-20240116; t=1730100944; c=relaxed/simple;
+	bh=dfhV6QTj4uKGmAcfXlfFgeGsNNdxnJT6m4fdmZvkJ9Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NJ/1GGa7tuHSylPerFP4NOs5Axwnmd6PiQ892mNTMrG+LqeOwE8mzU7kKQV3pURPuEc8KrzsGOfioWFl7S4pb7cyIuxgm21VDLQzULAeLqgocKj3iZN/SLD7OPvfnQjkJQ4URykAK87HV4wOvB0rrbLnB2sbU4XlRFHSwEl9Sjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WUz/V0ti; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IZ4FYzFN; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=R/vzfBwLCtVihV2h2pCGzzpIH6+UaIWFmFD1EyDKcp6HO229DFtUr38P5hvBxJalMCYBqIFoMMX896aP0hVNq0NM+eYExOGZ2E/1UqpPqUbrosgu9teH7g9DrSZ8MSl9g9RS29w1CftwwAnJBoAd1LRDw8sLznbnCSeFk+0TV5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HO4fKTp6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1DA/IYkr; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100939;
+	s=2020; t=1730100940;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ab5B+FqZ3WhkZ6WaAXYb+YI7fVubcn8HVzkt7ibXae4=;
-	b=WUz/V0tiYnaI0K58Zo/cv9WTcRPFZZ1GtFxqaVZMYoMsSqxtek0mHFdrEW4HE6ME3E61HA
-	ncDqSy9DiY1th1FIo5QUKTcLber0N7qnXJKkZA1q0SqEdrLta+KVYkTcPDNu628w4s1vJ/
-	HqjAKgjSP2sf+2Pn87OfFG3RWQ5pFRcbwDWuTf4hSnBp8fwx/tZjxLXoFBbb0I3c5fsCRi
-	rU+l3I5HoDpyOpK+ab283hjd9jnh2CILuANV5ka/6eyUe/5/L9jNQfVTO27rLeTvrG8h99
-	ooBXBwZ3vM3KX6vaubkGuEH+cQJt2B6f8Vaz+S2eVaHy/SalqjREENG0e9jaEQ==
+	bh=J7SqXAyAu95z0uwouEaFv/TdsfEFGlIdHdkVNRvQbQA=;
+	b=HO4fKTp6HmSoShxSHRM24sSkLFnkfXFetdwbF48uqlkmaO/x6KgBELbQARo+gvb5i1G3n0
+	7EgGMNBX1VcWMTG0e4B0LwZYHbfmxvZpvLMujSBiUUp4/qdUIVq3dZfyEYuQzuBmgaCiu1
+	7InviRAdSPaOyoPVS9TguXBDeD02f7aZRkP6TapJCQmM9UVx1IfKoq8nrMi/OmXSBWSGkj
+	AoxdtyZMLGQcJHKPYve8ZMlvr0IinnTKlvFu0lhdBJPmx6WevtE3onF5nDXFW8scisArDc
+	vUbTcCKuI5rwO35M2I5HVhB4DhQfFUxD0pRpo1GexpSybJm6T69I8WObAhpKmA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100939;
+	s=2020e; t=1730100940;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Ab5B+FqZ3WhkZ6WaAXYb+YI7fVubcn8HVzkt7ibXae4=;
-	b=IZ4FYzFNXzDXaaEYm6ftTDcL/AV2ys1Kz9wKcUNKgT01cUOAeY90kzx6WFVJa19nyPa7ms
-	YjmbUMve1VLCamDA==
+	bh=J7SqXAyAu95z0uwouEaFv/TdsfEFGlIdHdkVNRvQbQA=;
+	b=1DA/IYkrTVrNbRMSQ8L+zA+U0OP0guimX9FekS9rUlgs0uWKtp9e53H9CzKo2F7yqa9B39
+	WhzMdxSAWdwqieDw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Jaehoon Chung <jh80.chung@samsung.com>
-Subject: [PATCH 20/44] mmc: dw_mmc: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:56 +0100
-Message-Id: <36c90360480ab8c4c13f1034393f53e531ca5855.1729865485.git.namcao@linutronix.de>
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 21/44] misc: vcpu_stall_detector: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:57 +0100
+Message-Id: <c240a4d0e142a0942308a563c841a79f8e72d250.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,26 +86,27 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Jaehoon Chung <jh80.chung@samsung.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/mmc/host/dw_mmc.c | 3 +--
+ drivers/misc/vcpu_stall_detector.c | 3 +--
  1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
-index 41e451235f63..3a15af97e4e1 100644
---- a/drivers/mmc/host/dw_mmc.c
-+++ b/drivers/mmc/host/dw_mmc.c
-@@ -1875,8 +1875,7 @@ static void dw_mci_init_fault(struct dw_mci *host)
- {
- 	host->fail_data_crc =3D (struct fault_attr) FAULT_ATTR_INITIALIZER;
+diff --git a/drivers/misc/vcpu_stall_detector.c b/drivers/misc/vcpu_stall_d=
+etector.c
+index 41b8c2119e20..dea5f8290895 100644
+--- a/drivers/misc/vcpu_stall_detector.c
++++ b/drivers/misc/vcpu_stall_detector.c
+@@ -111,8 +111,7 @@ static int start_stall_detector_cpu(unsigned int cpu)
+ 	ping_timeout_ms =3D vcpu_stall_config.stall_timeout_sec *
+ 			  MSEC_PER_SEC / 2;
 =20
--	hrtimer_init(&host->fault_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	host->fault_timer.function =3D dw_mci_fault_timer;
-+	hrtimer_setup(&host->fault_timer, dw_mci_fault_timer, CLOCK_MONOTONIC, HR=
-TIMER_MODE_REL);
- }
- #else
- static void dw_mci_init_fault(struct dw_mci *host)
+-	hrtimer_init(vcpu_hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	vcpu_hrtimer->function =3D vcpu_stall_detect_timer_fn;
++	hrtimer_setup(vcpu_hrtimer, vcpu_stall_detect_timer_fn, CLOCK_MONOTONIC, =
+HRTIMER_MODE_REL);
+ 	vcpu_stall_detector->is_initialized =3D true;
+=20
+ 	hrtimer_start(vcpu_hrtimer, ms_to_ktime(ping_timeout_ms),
 --=20
 2.39.5
 
