@@ -1,130 +1,149 @@
-Return-Path: <linux-kernel+bounces-384490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171809B2AD1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:57:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893DE9B2ADC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:58:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF44128193E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:57:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C326B212EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01016192B75;
-	Mon, 28 Oct 2024 08:57:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0110F1925B6;
+	Mon, 28 Oct 2024 08:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9J7bE5N"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BFucrraw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A4E155C97;
-	Mon, 28 Oct 2024 08:57:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CD2155C97
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730105821; cv=none; b=OuqgZAkElnukYnjk+gc1HG8aGQxIkQf4NGOaLURJBsDhc4lT06LtMU6Rp6bLC5B/ojF3v2qQ6Y+gFNGULSVa+svG9OE/RKonVId3+55sLbgZ8mCbGvhbZiQ7S/SG+TrSouyfzYd0E+3RFMnId2cLJ7x9ZT8aShX/0RGYaaZs8qE=
+	t=1730105925; cv=none; b=mUj+IQV0VN5b6A7VZnXcqNRPorga7JnWXDaCX0f1VYRHsRwADGyUyENbYcX2IvfG+lGrYQXmvpolIPlPg8VNp3pcfThqiT7lr7wVyUeLnTQRJDx9abdJAoTdWo85QR8is/xsUq5gpsaIo6rA4TXBlr2As0lgYsj1bIlAR+2cV0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730105821; c=relaxed/simple;
-	bh=3sts8k5+tb3FQXlcmLEg3kWQ357GDylhII0LfM/cohk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NhCA+R/Vi7AGZ5/OqnnfIWYLxq1pOMd8xLob/y3YzOiDmBRQhy389NPsBNJMTqvTQwP084cF+W//uqXAiUrOXf9ikDP63duI+fcCqAaGke7lu5Wi171vZbGNHqpTJFUxQX0qzIYbG9gTRVvXKTVIKFSRndva9WRbn7N7gDb6M3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9J7bE5N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EF9C4CEC3;
-	Mon, 28 Oct 2024 08:56:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730105821;
-	bh=3sts8k5+tb3FQXlcmLEg3kWQ357GDylhII0LfM/cohk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=r9J7bE5Ne9AYYC+24+fg5K0NZJo/0qjrEd52zjhezn3KMaWIM7k3Cv2HldEy6qNH+
-	 CE2SOqWOnPfyymblWJftdOjrMB79csrM1gEGAc2T7jAIUW5u1/pdZ+yFIYnsbUlA5b
-	 7VS+P7f1GQ6k+t/TvbZPnbK2UFs35rlRIyaeFoB1RlJiqAm3LOxpnwssYUv27dvYHv
-	 xnuSCISqsT5yhW8jy/WeAFyA/l+tDKV6el/SdbR3joEvyL0bHFJK9yrQROV09mXJ8P
-	 MStASTAzmw1X5onqrrhAlCbDmW8eGNp4mKfqkV7tukPPDbtBBHTxWyVikHWKfFFBtw
-	 aCEVpMI6/DAXA==
-Message-ID: <8a46cfac-73c2-411a-b5d0-ba55ab9f544a@kernel.org>
-Date: Mon, 28 Oct 2024 09:56:56 +0100
+	s=arc-20240116; t=1730105925; c=relaxed/simple;
+	bh=KIBZkEQKwG2vsUBvKGjwFPZYZDY9aZXu2ruXx2f15ho=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=W52LXGZdkSc1pueE9GysFTzi+QbJjSFMFOfSeK+iu8F0tbmcRVpPuYL1zMoehq5V2VtMTeoJcYvsqVT+edUQbYR9vfkvlLyXY8UZa28mz9WusY7dLOubggKneOTJRd5WtjqIKtgIzksRNUtP4xcePY9a98oUt5cPucLrOtN2Oq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BFucrraw; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730105923; x=1761641923;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=KIBZkEQKwG2vsUBvKGjwFPZYZDY9aZXu2ruXx2f15ho=;
+  b=BFucrraw4hmSPYR62eMbEwTVaaH0oeZq2XdjLGld6Xec9JN22GKcNUrQ
+   i00IxQQe2e7+C64J1YzNl9dvUMmCSeBqv+JF9Ne9xdHQjBXJ2v28iQ4wr
+   +tzPBmJe76revm7svVXjNFZE0vDyJRKwEP8N0KIH5q5WHbCaCPjTxqmnE
+   ve9qj2W9dpbKRqUKrBYNN9cG7MbKZ+5+/6EcvGHGV/o2zQQJfMONxff9q
+   uECFzaDgI1szI9t8cXCxJkdXyhlodf3WYF3IwYv8OInJlKnv1mjT4JqBR
+   itA3QJyD94cKH77+eX2LnaMxNl/g216tHL2QYnCdz7/972XRDvtp6jBpB
+   Q==;
+X-CSE-ConnectionGUID: 8w5CcSwXSxaCtwl04uNW5g==
+X-CSE-MsgGUID: o1hpaFeQSY2qZXv+Ll/fXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29904811"
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="29904811"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 01:58:42 -0700
+X-CSE-ConnectionGUID: 3xGqxhKITtGP8LFkIYidmQ==
+X-CSE-MsgGUID: yStzSllZQA6rLRRdaYPPSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="81657512"
+Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
+  by fmviesa008.fm.intel.com with ESMTP; 28 Oct 2024 01:58:35 -0700
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Nam Cao <namcao@linutronix.de>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Andreas Hindborg
+ <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda
+ <ojeda@kernel.org>, Kees Cook <kees@kernel.org>,
+ linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Martin K. Petersen"
+ <martin.petersen@oracle.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Sebastian Reichel
+ <sre@kernel.org>, Will Deacon <will@kernel.org>, Jon Mason
+ <jdmason@kudzu.us>, Jaehoon Chung <jh80.chung@samsung.com>, Hans Verkuil
+ <hverkuil-cisco@xs4all.nl>, Jassi Brar <jassisinghbrar@gmail.com>, Pavel
+ Machek <pavel@ucw.cz>, Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Jonathan Cameron <jic23@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Alex Deucher <alexander.deucher@amd.com>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Rob Clark <robdclark@gmail.com>, Lucas De
+ Marchi <lucas.demarchi@intel.com>, Zack Rusin <zack.rusin@broadcom.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>, Uwe
+ =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Takashi Iwai
+ <tiwai@suse.com>,
+ alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH 00/44] hrtimers: Switch to new hrtimer interface
+ functions (4/5)
+In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
+References: <cover.1729865485.git.namcao@linutronix.de>
+Date: Mon, 28 Oct 2024 10:58:34 +0200
+Message-ID: <87y128txhh.fsf@ubik.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the samsung-krzk tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Maksym Holovach <nergzd@nergzd723.xyz>,
- Markuss Broks <markuss.broks@gmail.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241028195302.748c7a5a@canb.auug.org.au>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241028195302.748c7a5a@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 28/10/2024 09:53, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the samsung-krzk tree, today's linux-next build (arm64
-> defconfig) failed like this:
-> 
-> Error: arch/arm64/boot/dts/exynos/exynos9810-starlte.dts:72.9-10 syntax error
-> FATAL ERROR: Unable to parse input tree
-> 
-> Caused by commit
-> 
->   229cf465b9f6 ("arm64: dts: exynos: Add initial support for Samsung Galaxy S9 (SM-G960F)")
-> 
-> I have reverted that commit for today.
+Nam Cao <namcao@linutronix.de> writes:
 
-Yeah, I spotted it too late. Tomorrow's next will be fine. Thanks for
-fixup and apologies for letting this slip in.
+> This is the forth part of a 5-part series (split for convenience). All 5
+> parts are:
+>
+> Part 1: https://lore.kernel.org/lkml/cover.1729864615.git.namcao@linutronix.de
+> Part 2: https://lore.kernel.org/lkml/cover.1729864823.git.namcao@linutronix.de
+> Part 3: https://lore.kernel.org/lkml/cover.1729865232.git.namcao@linutronix.de
+> Part 4: https://lore.kernel.org/lkml/cover.1729865485.git.namcao@linutronix.de
+> Part 5: https://lore.kernel.org/lkml/cover.1729865740.git.namcao@linutronix.de
 
-Best regards,
-Krzysztof
+Which one do I need to click on to see the actual hrtimer_setup*()
+implementations? Why is it even a separate series? Please, don't make
+people click on things.
 
+> To use hrtimer, hrtimer_init() (or one of its variant) must be called, and
+> also the timer's callfack function must be setup separately.
+
+"callback", right?
+
+> That can cause misuse of hrtimer. For example, because:
+>   - The callback function is not setup
+>   - The callback function is setup while it is not safe to do so
+
+These are not examples, these are hypotheticals. Do either of these
+things actually happen in the codebase?
+
+> To prevent misuse of hrtimer, this series:
+>   - Introduce new functions hrtimer_setup*(). These new functions are
+>     similar to hrtimer_init*(), except that they also sanity-check and
+>     initialize the callback function.
+
+No, it doesn't. This series only converts some drivers. I'd like to see
+the sanity-checking in question, since it's the big selling point.
+But IMO, "switching to a cleaner hrtimer API" or some words to that
+effect is a better justification than sanity checking.
+
+I'm not objecting to the idea, it's just carried out weirdly.
+
+>   - Introduce hrtimer_update_function() which checks that it is safe to
+>     change the callback function. The 'function' field of hrtimer is then
+>     made private.
+
+Also not in this series.
+
+>   - Convert all users to use the new functions.
+>   - Some minor cleanups on the way.
+
+Thanks,
+--
+Alex
 
