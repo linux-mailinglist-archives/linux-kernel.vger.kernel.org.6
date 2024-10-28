@@ -1,130 +1,165 @@
-Return-Path: <linux-kernel+bounces-385947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA019B3D6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:03:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04E6A9B3D6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:04:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A241B24BCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:03:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73214B221CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:04:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3381E5720;
-	Mon, 28 Oct 2024 22:00:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC8231F81AF;
+	Mon, 28 Oct 2024 22:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pr5s7lsV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b="2tkZUdAg"
+Received: from serv108.segi.ulg.ac.be (serv108.segi.ulg.ac.be [139.165.32.111])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF0917DFF1;
-	Mon, 28 Oct 2024 22:00:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FC81EF0AC;
+	Mon, 28 Oct 2024 22:02:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=139.165.32.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730152854; cv=none; b=Uv8hFyaSeJtQOQOV8CZ2cAof0FVgxxCk8PMMPJ25LC69eCgWc6MJVSGitZoIbr5IvihUDUSd8GM3R0kPt8P/57ILkCUOCkILPyquHmQCQv807MTHljfwadWXuIjOdbdpPbvAp+mNmPAWDHRYbSV3Lz5Cxswl6bnTo4o6Q0Yc87k=
+	t=1730152965; cv=none; b=G+6fjRuElQS56eUKHnmbw02/Kq75jkRH3D1/qCUuxvj+g6IPp9/VG36D4+b2NDRzSZSX+x8oPQqwybe65ndfl0yQWkMIRHzm1py2ik8dbQV8kAwT8OVC8oyx8OcoYCFMVB89CtyhM/tN7FoBVFAxtjRuVVUm4Vi5AExcbuoGkTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730152854; c=relaxed/simple;
-	bh=J0cj6572cT41BEImfr7FQU44fU/3kuMbptIfwmfZeMs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=A32lPSX6+bVWz+5ZSWBMZSUdjitr/t8PXssiJKcvppgyXbSjfaZ0Hod3/IasMz9pc8Ku/lPlvfjCp0meQjsEG7/+4pfgbYB9SyJzRpCq8Bn+aRt+7LjD0SNgagxyEriF4gbfK9dID2UKJYHbRq44Ta81alG8Bc0yEPj5jjqVs5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pr5s7lsV; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730152852; x=1761688852;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=J0cj6572cT41BEImfr7FQU44fU/3kuMbptIfwmfZeMs=;
-  b=Pr5s7lsVtqP3DHyakmiDWupMk13GAFvmWs+duOrjWwEiEWcUPb1b8VmU
-   bua5V2HaZivJwPJTQ26fyt2bVh2EoBSI58QTVgS2F/P7OJQdfKkA2Dozq
-   FrqkAq7lxkgT7DN3skAjmu3OvpaOS5XpjZMIXv77Hh5r28DGrE4oAqPkM
-   mG6gys92Auxv7FWKweOSZ/bLZEU3aqVftJw1nG4RYGuT+Zd9zeOepbjWL
-   jw95qAjGn6uxAAoNHjPWCbgR3LGdcjPt9zObkS7sXm4AHRXfdqPmnNXb/
-   Hf5Li8utiTYtKFEHfDsc5S05dhUhnvEge/9Hil+7zaWp/C49I5M31jeIA
-   g==;
-X-CSE-ConnectionGUID: 9lt0vBrlQy2K8NWUXLHePQ==
-X-CSE-MsgGUID: 9nSb9x7yT4O2kfdm55BcLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="40347782"
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="40347782"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 15:00:51 -0700
-X-CSE-ConnectionGUID: O2pVeB6cQBqhdhUJbCUfWg==
-X-CSE-MsgGUID: qf9XLHZ/SseSNwdSQW5EgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="86541125"
-Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
-  by orviesa005.jf.intel.com with ESMTP; 28 Oct 2024 15:00:39 -0700
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel
- <ardb@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Xiongwei Song <xiongwei.song@windriver.com>, Xin Li
- <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh
- Singh <brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, Tony
- Luck <tony.luck@intel.com>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Alexey Kardashevskiy <aik@amd.com>,
- Jonathan Corbet <corbet@lwn.net>, Sohil Mehta <sohil.mehta@intel.com>,
- Ingo Molnar <mingo@kernel.org>, Pawan Gupta
- <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon
- <daniel.sneddon@linux.intel.com>, Kai Huang <kai.huang@intel.com>,
- Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>, Alexei Starovoitov
- <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross
- <jgross@suse.com>, Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook
- <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, Jason Gunthorpe
- <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Andrew
- Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>,
- Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes
- <linux@rasmusvillemoes.dk>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du
- <changbin.du@huawei.com>, Huang Shijie <shijie@os.amperecomputing.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Namhyung Kim
- <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-efi@vger.kernel.org, alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH v5 16/16] Revert "x86/lam: Disable ADDRESS_MASKING in
- most cases"
-In-Reply-To: <qhnyso6yukxdyox5hkod2yzrgg56vkr7er4howolgat35dvtd4@6qh6f5r425hi>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
- <20241028160917.1380714-17-alexander.shishkin@linux.intel.com>
- <qhnyso6yukxdyox5hkod2yzrgg56vkr7er4howolgat35dvtd4@6qh6f5r425hi>
-Date: Tue, 29 Oct 2024 00:00:38 +0200
-Message-ID: <87sesfubuh.fsf@ubik.fi.intel.com>
+	s=arc-20240116; t=1730152965; c=relaxed/simple;
+	bh=ujp1/jKeDc5NDfVkWom7tc8Ol4j64Ig2kDBcViWgXNA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mwo8qsIUQAF1VDhZHBK89XvG5DJLQOAFiSHeOEafsSIbnY5IeWpL1fNuGhbnkh6xbhjjJeTUqhT1+VzmnxPUo743wIeDklMVdESVzWG8Kq4QYN5Kq3A+ZZCniiu59XfpkOs6NpOp2oYLDFUhuZ8Mfe+rExsY+hQvyCCzwzRKyQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be; spf=pass smtp.mailfrom=uliege.be; dkim=pass (2048-bit key) header.d=uliege.be header.i=@uliege.be header.b=2tkZUdAg; arc=none smtp.client-ip=139.165.32.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uliege.be
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uliege.be
+Received: from localhost.localdomain (modemcable174.147-130-66.mc.videotron.ca [66.130.147.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by serv108.segi.ulg.ac.be (Postfix) with ESMTPSA id 7250420167D1;
+	Mon, 28 Oct 2024 23:02:32 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 serv108.segi.ulg.ac.be 7250420167D1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uliege.be;
+	s=ulg20190529; t=1730152954;
+	bh=xhgerrHTTO59y44c3Jm6bkvSuMQT6i0Ogkew4CBYgPY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=2tkZUdAgWnqA2nOi0QIrOp4trdaaEWkL77Wdwch3Do+9HAh8hM3Pagi06gXSQDdw8
+	 3BmZcf/bp8cqLR3yHbEAILnGiwswomzEGwPW8/AHvD4B9Sbk26voAgdVNR1sBTSkJW
+	 nPBl8O2BOdVUNl6xI7GyTilKXejQBycGNZBy9o6vYwIUpvOWeIcZikFxVgQzY2uTtv
+	 jwrCXvVVPaAOf4ppLjOylbiZ6yBHeexaYHPM0Mcoa9B36FWvm4RA98+DU8WhrqGx9Q
+	 ScDCfdJPPZVhOEq+HM31DG818Dz2mDIptEUXYfgf/rcnPReQkIhGx+n03NR+DUPBc9
+	 hFbQrYY1RzX4A==
+From: Justin Iurman <justin.iurman@uliege.be>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	dsahern@kernel.org,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	linux-kernel@vger.kernel.org,
+	justin.iurman@uliege.be
+Subject: [PATCH net-next v2 0/3] Mitigate the two-reallocations issue for iptunnels
+Date: Mon, 28 Oct 2024 23:02:09 +0100
+Message-Id: <20241028220212.24132-1-justin.iurman@uliege.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-"Kirill A. Shutemov" <kirill@shutemov.name> writes:
+v2:
+- add missing "static" keywords in seg6_iptunnel
+- use a static-inline function to return the dev overhead (as suggested
+  by Olek, thanks)
 
-> On Mon, Oct 28, 2024 at 06:08:04PM +0200, Alexander Shishkin wrote:
->> This reverts commit 3267cb6d3a174ff83d6287dcd5b0047bbd912452.
->> 
->> LASS mitigates the Spectre based on LAM (SLAM) [1] and an earlier
->> commit made LAM depend on LASS, so we no longer need to disable LAM at
->> compile time, so revert the commit that disables LAM.
->> 
->> [1] https://download.vusec.net/papers/slam_sp24.pdf
->> 
->> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> CC: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
->
-> Before re-enabling LAM, you need to uncomment X86_FEATURE_LAM check in
-> arch/x86/kernel/cpu/common.c introduced in recent 86e6b1547b3d ("x86: fix
-> user address masking non-canonical speculation issue").
+The same pattern is found in ioam6, rpl6, and seg6. Basically, it first
+makes sure there is enough room for inserting a new header:
 
-Forgot about that one. Thanks!
+(1) err = skb_cow_head(skb, len + skb->mac_len);
 
-Regards,
---
-Alex
+Then, when the insertion (encap or inline) is performed, the input and
+output handlers respectively make sure there is enough room for layer 2:
+
+(2) err = skb_cow_head(skb, LL_RESERVED_SPACE(dst->dev));
+
+skb_cow_head() does nothing when there is enough room. Otherwise, it
+reallocates more room, which depends on the architecture. Briefly,
+skb_cow_head() calls __skb_cow() which then calls pskb_expand_head() as
+follows:
+
+pskb_expand_head(skb, ALIGN(delta, NET_SKB_PAD), 0, GFP_ATOMIC);
+
+"delta" represents the number of bytes to be added. This value is
+aligned with NET_SKB_PAD, which is defined as follows:
+
+NET_SKB_PAD = max(32, L1_CACHE_BYTES)
+
+... where L1_CACHE_BYTES also depends on the architecture. In our case
+(x86), it is defined as follows:
+
+L1_CACHE_BYTES = (1 << CONFIG_X86_L1_CACHE_SHIFT)
+
+... where (again, in our case) CONFIG_X86_L1_CACHE_SHIFT equals 6
+(=X86_GENERIC).
+
+All this to say, skb_cow_head() would reallocate to the next multiple of
+NET_SKB_PAD (in our case a 64-byte multiple) when there is not enough
+room.
+
+Back to the main issue with the pattern: in some cases, two
+reallocations are triggered, resulting in a performance drop (i.e.,
+lines (1) and (2) would both trigger an implicit reallocation). How's
+that possible? Well, this is kind of bad luck as we hit an exact
+NET_SKB_PAD boundary and when skb->mac_len (=14) is smaller than
+LL_RESERVED_SPACE(dst->dev) (=16 in our case). For an x86 arch, it
+happens in the following cases (with the default needed_headroom):
+
+- ioam6:
+ - (inline mode) pre-allocated data trace of 236 or 240 bytes
+ - (encap mode) pre-allocated data trace of 196 or 200 bytes
+- seg6:
+ - (encap mode) for 13, 17, 21, 25, 29, 33, ...(+4)... prefixes
+
+Let's illustrate the problem, i.e., when we fall on the exact
+NET_SKB_PAD boundary. In the case of ioam6, for the above problematic
+values, the total overhead is 256 bytes for both modes. Based on line
+(1), skb->mac_len (=14) is added, therefore passing 270 bytes to
+skb_cow_head(). At that moment, the headroom has 206 bytes available (in
+our case). Since 270 > 206, skb_cow_head() performs a reallocation and
+the new headroom is now 206 + 64 (NET_SKB_PAD) = 270. Which is exactly
+the room we needed. After the insertion, the headroom has 0 byte
+available. But, there's line (2) where 16 bytes are still needed. Which,
+again, triggers another reallocation.
+
+The same logic is applied to seg6 (although it does not happen with the
+inline mode, i.e., -40 bytes). It happens with other L1 cache shifts too
+(the larger the cache shift, the less often it happens). For example,
+with a +32 cache shift (instead of +64), the following number of
+segments would trigger two reallocations: 11, 15, 19, ... With a +128
+cache shift, the following number of segments would trigger two
+reallocations: 17, 25, 33, ... And so on and so forth. Note that it is
+the same for both the "encap" and "l2encap" modes. For the "encap.red"
+and "l2encap.red" modes, it is the same logic but with "segs+1" (e.g.,
+14, 18, 22, 26, etc for a +64 cache shift). Note also that it may happen
+with rpl6 (based on some calculations), although it did not in our case.
+
+This series provides a solution to mitigate the aforementioned issue for
+ioam6, seg6, and rpl6. It provides the dst_entry (in the cache) to
+skb_cow_head() **before** the insertion (line (1)). As a result, the
+very first iteration would still trigger two reallocations (i.e., empty
+cache), while next iterations would only trigger a single reallocation.
+
+Justin Iurman (3):
+  net: ipv6: ioam6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: seg6_iptunnel: mitigate 2-realloc issue
+  net: ipv6: rpl_iptunnel: mitigate 2-realloc issue
+
+ net/ipv6/ioam6_iptunnel.c |  90 ++++++++++++++++---------------
+ net/ipv6/rpl_iptunnel.c   |  67 +++++++++++++----------
+ net/ipv6/seg6_iptunnel.c  | 108 ++++++++++++++++++++++----------------
+ 3 files changed, 150 insertions(+), 115 deletions(-)
+
+-- 
+2.34.1
+
 
