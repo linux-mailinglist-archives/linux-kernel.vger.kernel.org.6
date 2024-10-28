@@ -1,83 +1,72 @@
-Return-Path: <linux-kernel+bounces-384187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B09C9B2650
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:38:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB249B2681
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:40:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ECDE1C212ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2297B281034
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143DA18EFE6;
-	Mon, 28 Oct 2024 06:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nlHk9zBQ"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC65618E77D;
+	Mon, 28 Oct 2024 06:40:06 +0000 (UTC)
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01on2127.outbound.protection.outlook.com [40.107.222.127])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27B018D65C;
-	Mon, 28 Oct 2024 06:38:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCEB2C697;
+	Mon, 28 Oct 2024 06:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.222.127
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730097505; cv=fail; b=YdcZhb5uliQ4v3iMaas+a4pE/WeGs0sInlKwdt7vVj51BBxePVjpVkjCbsK7K4/URB4oR4/7xBCsfRpc6Y8M9Le1KqtakRNdmuUynkAhzyUKP76N8WLNiUNsxn0G6JBnTMkxV/lEYv12drkRAHbSYQjpg2fm8QrXmpWUD6b7aWc=
+	t=1730097606; cv=fail; b=daQ8uXmN0I/v34t16gVf8lRP8MOBv52R8/LIh7u+oaWek3EO/moxJbz40JfBhVWstEQMEC/mGTpMqmIlVORseEB3A7D0z7vtO94n/AUKIZIQLKsN08vgJI8/NABoSF7CO+pi//zZMhfsevpyYkHHFfcMp0nGwUhGYxR5j8aZd1g=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730097505; c=relaxed/simple;
-	bh=aODwcidz0mW/rEEA+5PXbbFsSWxhVId78PcSAKpX8QI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Uw5rmLb7apdwL+WJNQPNVuRrwt/1X82QaIvkOHdF1cNUsD8bRBtVPGDy+qFfTGYCBGdmGKzMkg2nOLXqoBzKqC0vqGZwnWcpkBm7LKiGE5aoKn/nE8tnBJ53KGSkK31YZFIEwJhtmCuPihAH/xTVrFue5QXWNNur/6QKT+C+Hw4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nlHk9zBQ; arc=fail smtp.client-ip=40.107.236.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1730097606; c=relaxed/simple;
+	bh=njfJMboeJhZbkSQmAT0hyy/0tk2iXeAsrHHviDP9Us4=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=HfQLUuURvs7KyKXqpb+IVqO+F0MzOBuDPUGvKj9Wm5882RcHyUCeBJhKFiqkLqdUEjYoyF+yF7xK8tzXl0x5GkuIxmqk1vDl4T1Gut5/m+p3WLp0aZdRkKjEQv99XlpQvlDUGoU6K8YNnmHK8vWqXNeVwZCvwHGh98yamsF0iw0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=40.107.222.127
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=B8fkQIpTiAF7fFwwuv7tN0bUikZ4gYHj6GPSRnpIkIj5nJkOMwrgOVgx0CFj2upajTjgQc4lxpqFvY4otcci9gReb32rozQwctLjHCV5EM5v6BPn71nZL7w+CftdI/5GbAgAXYtTkULnWZm/b61DYzTeb/LyxVMe1FrXEAgUC5Zvd2SiV+pg4BjMREvmTvChmYMlRXbiQmr3ztwCBthB75pkIsGoMUsxFWxNK55n/W6+UwlWPkSnjlM+t/FRtSCPWSPS6g+0vUj8GI7c22DlsjV3Hd/VMGOD/lDcNiRzBE/8I7mghzrWIaoL202I2pUdzN59KtSDfn53Jg3M9peAxg==
+ b=jQO6oGwaBOZ8c+eRLko+VufNqqac/Ve8PTTiYHammm6YdnrjNrqkgtiLkie4OOoMPo+9Lerh0KSZ66CP9ulKKfnVCsbdhOIpYUyEKbPP9eky2VCABz0rq/yDWwIGV3UemIUkkPrMX/qXG0QfUBSQ2drSnLh0nZDIBZekFUK3CcLFbqrkHTctBu6GwXNFwPX6ClRAUxXmejJYyrHnLGYzXHoi0gDhEQqNuSjPVTNYx/8f/Khh1SehtxvnN80GNrSEJACPqQHQEvVlJnC3EswjVUIeSNrOCV9WItYY3SKXPMaCOA74V5upAUkcaVwRVMG/LJDr6eU0kEZVO+bya979vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dvVKBb1fzfqiaNdEMwy0Li9SJ0DAZSmxjhJ40gWEzVM=;
- b=gDAdrwFibyXQah0nERU9vM9jOY3xsGSYsswdXVDgFwKxsvs4T8EQ+o1tZ8A4QrZ8wFLBtO6pkIW9ZqX6mxni66NZiHkad48T9/pM2UWVN9UrhzjVuZtYN7dz9HnCv5X5vdXqRb9f2DSTx/b9E0qohvco6YbG8svS/5hfeuCPoT3ZsDZMQ4znuIr2nMXh/P6HuzSmK2YJDBzs4QCkdD1V9oUKhR3AZFLftEufonVgubnigvaey1i7nYdd4INl8bVGQDQ044BYEJuNV67+n5LXPu5EDA8ftrcAxVy6B01URMCbSd8AhywArBm+ILALCA0+Os2h6DIEiv8q0y16uSjMSA==
+ bh=yf3rx+NeayroWSJAq8nIH4bmgh6yuV+pQAJkirVMYZI=;
+ b=rzi3QJValZvn7pgdD1MXeUw8lXMUhyksf+aDNZOekRwFAlwOrAbUtfR3987oMDx+ZP5iZmoXVb65ZfOrKuwV0J1NO6yCo3Bbgb/LR6Z+Bkp3/ZNkEh+sJfcNFWin7h4Qi6yqQDKdhOnGzAhLBRMSYPsgUOwuJVSlIO789Yg7kO1A/n7oqXKJ4ajnsXMyAQvKxkIGP0Jn9rMitgVKdM9mRqz57eU/BD4VHK8nVD2gEOQZWkAMr98b+nIoIVybKClKbtw8OWiyzNWr/w7p2lWSiGuHYAXNDMseMHhH3fOQ3m1TvrNAyfIdVBj30wlEoZ7j5o9lA1P/B9+A/KWZsTT2DQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dvVKBb1fzfqiaNdEMwy0Li9SJ0DAZSmxjhJ40gWEzVM=;
- b=nlHk9zBQwOFKFT8Q65hOE25XD9nN9vfP4xCcNPB9VkahfVOLPIjZ9MPNFRvmJTiuhQerpzywGFVD0TReZWXU3htpaxbi4ACQ4FCclZzaL9RbRMNE9g0DzUn0wsKiUIZ3PXkOFSGfFXlcPa2Pu5A4vZgh74HKSIZKCm9kmwYrbqI=
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by CH3PR12MB8755.namprd12.prod.outlook.com (2603:10b6:610:17e::16) with
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN0P287MB2019.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1b8::9)
+ by PN3P287MB1253.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:196::9) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
- 2024 06:38:19 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8048.017; Mon, 28 Oct 2024
- 06:38:19 +0000
-Message-ID: <1b1aaccc-c31c-492d-bd21-b56d5fba69b2@amd.com>
-Date: Mon, 28 Oct 2024 12:08:05 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 01/10] perf/x86/rapl: Remove the unused
- get_rapl_pmu_cpumask() function
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, rui.zhang@intel.com,
- acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
- alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com,
- adrian.hunter@intel.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, ananth.narayan@amd.com,
- kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241025111348.3810-1-Dhananjay.Ugwekar@amd.com>
- <20241025111348.3810-2-Dhananjay.Ugwekar@amd.com>
- <Zx8ragiP5JBVuKvy@BLRRASHENOY1.amd.com>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <Zx8ragiP5JBVuKvy@BLRRASHENOY1.amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGXP274CA0021.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::33)
- To LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
+ 2024 06:39:58 +0000
+Received: from PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
+ ([fe80::368a:445f:b1be:4bd6]) by PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
+ ([fe80::368a:445f:b1be:4bd6%6]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
+ 06:39:58 +0000
+From: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org
+Cc: tarang.raval@siliconsignals.io,
+	Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to yaml format
+Date: Mon, 28 Oct 2024 12:09:11 +0530
+Message-ID: <20241028063939.6276-1-himanshu.bhavani@siliconsignals.io>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: PN3PR01CA0101.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9b::7) To PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:1b8::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,158 +74,437 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|CH3PR12MB8755:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e3a017d-b761-4cd3-41d8-08dcf71b1c71
+X-MS-TrafficTypeDiagnostic: PN0P287MB2019:EE_|PN3P287MB1253:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7fb2e368-1ebc-44ad-181b-08dcf71b573d
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SEZoZHUxZ0UwQi9mTU1HOTBzRkwyTUs5cmJLZWF0djZBWDkxYWQvVGxQSDMr?=
- =?utf-8?B?ZUgvb3Yvc3orTUYrYkczdWJjRmpZS290NWtxYjNhY0RmN1JneVhvd1QyRFA5?=
- =?utf-8?B?QWI4YlFZQVdyaVRQMVhPYXFIUE8rWGFVV1REZlVZTE8wR2V6L1A5L1dIREVj?=
- =?utf-8?B?U0dtbnNoRkVVeWJaL3RldUc2T1h0dVBkZEdjaHhZZFZ0c0dKem1JMm9aZDRj?=
- =?utf-8?B?R2gySEpMZ3JrYjJ2MGEyWTU3N0ZNL2ZMYXRXUXBzQkZ2MXNLb0RsUGNQZnZa?=
- =?utf-8?B?cUlzUndMU1hPMVE3TWZQVjI4S05vU0xDUVV4cXh4Z1dYQ1YrenRSeVhIL1NG?=
- =?utf-8?B?UmJwaCt6MkRtbzh0aVVraXgzQVZ0V3U5WjVmMHduMVJGMHcxYk1TRnIyMGtV?=
- =?utf-8?B?YnRzNGdLVS9WR0dzK1hJbnNtQlhEdXhQQWM2Ti90UjZISmlpN3Izb1VPTTBR?=
- =?utf-8?B?c2d6UUp0MEVLYXNCTG1LRGd0ZFdpQ0tkRmpuQXZxZjFHZDVKT1dWMTRXTVNL?=
- =?utf-8?B?NkFSeHJLNUtVUG1yR2IwdXp0a2hSc05RdTFOdWRYMmVHdWM3YkNWMERDeVJu?=
- =?utf-8?B?NFhMQ0hBTkZOdllkSTJ1RGU5WDFOdVJTSFdadGxmK3JzOGdQcS93VG9nbGxE?=
- =?utf-8?B?SVhuQ1IxQnVGQ1NZTkhtaUE1cGpMQjI0ZUR1ajVxd1orRTcyNElTOStERjZC?=
- =?utf-8?B?Y1RaUkd4N05ub0tXWGVBODZ2NVNmeDVvajQ1R1JFcnYycXZ6cHRkdnhPNVZM?=
- =?utf-8?B?K0ZQdGtrTmt3ZHZFL3d0T0I1amVSeEtpdFNjN25vZ2R3NGtTbW1qaTdBT1pn?=
- =?utf-8?B?c1Jvc1h1TFVvVHZRNUg3Zzd2YlZLN2VHaERnUElNUzNiemJPOE9oWDhVL09K?=
- =?utf-8?B?byt1VHNXQTh1bzRQZm5NMUxyaWlSSUhjT1BFNGZDRTB2ZHFYcmhGU1k0VktT?=
- =?utf-8?B?WkQ4U2dlUkM5L1ZZZjNsNWpZd0dhc2NSNDZXRUtSbnNCUHJzYXMrbmJrTnhB?=
- =?utf-8?B?KzVsOUxjN3lDelQyYkM2MWVHcWpjckxNcFY2ZUtPd0NLVXFVcHRmd0hxS1pS?=
- =?utf-8?B?ZGJ1b3VEWnA1ZFBmTTlPaWNBQmV5OTBHaGd6Y0QxcXpYWnIybGNWU0FRQ2tG?=
- =?utf-8?B?VnI4OVI3QXIveGhROVVoNmVWQnNFQVJOeFU1OXZGb1Y3TGtqdC9kQWkvYXl6?=
- =?utf-8?B?WUt2RzJPRHcxYi9yNDVyUVNJbjFYVHh2R1hYRmdaSy85YUVIN0V1U09xZVM5?=
- =?utf-8?B?UzJLeWt5blIrVTNEa3hScGJEdjcwTU01ZVg3TUVudUJLK0E4d2hkOUM2UTBN?=
- =?utf-8?B?U1JoZWdQbUtQU0F2NzFLL0F4TnBIUC9EOWdLTjJZVHV1MTJYQmRldnkvc3lr?=
- =?utf-8?B?TEt1UVBQcHp0cGlVc3E1d1Q4Yzhwd3pvWk5YMEYyNTd0R2N3c3RjaUd1SGcy?=
- =?utf-8?B?ZStIUkl1WXVsUk95aHdVbDU5TVRTKzZaR2t3WXN6TXRUWWM0Y3JYUWV6Vzc0?=
- =?utf-8?B?Rmp5OHZuMnpxL1NtdXNaMmVxdXlaQ0tROTgyZEUxc3lQOUpWR1hCT0EwdWRQ?=
- =?utf-8?B?OGNDODhNZ1U5dnNTUUxDYWtPQnA0TEl4M2syclFrQzlwaGN6Q0c2WWdqMjg4?=
- =?utf-8?B?N1kzTDJXb0x2MUJGRGt5NkxjaVhqeDNEOUlXWXJ1SUNnalJGdjNlZmM4Q29B?=
- =?utf-8?B?M0NmMG1PU1MyVlhtV2NzNjA2VUE2S1lxelpVc3hkNW05THFQMUJyZ0VVMmdR?=
- =?utf-8?Q?uGGFrmEH0oe6dHP2Oy32QM+yyLHUzW9FDuTOxin?=
+	=?us-ascii?Q?RGVkM5u9zj8ScHIB1rRoEZ2a1fRIpJn2q35H0vAmm41EjxSQ2rfWv2+tnpez?=
+ =?us-ascii?Q?ZW9sjwizyyEoNlIhuZmGf2tnvyBrc7lrbXv8sbZ7UcW2/FkYDw1yCluOXUoY?=
+ =?us-ascii?Q?PTQ91XxQqZivAr1SIfWtYeFRCWGBRlHVwnOkSRZdhlC2PC+dPBNbj/AhJ782?=
+ =?us-ascii?Q?BEyGcSZjOlg2t5BDVATXm/tqid16II1E/90BGwHALv2l4cnrRPu4daxnK2v1?=
+ =?us-ascii?Q?73RiB775vaeU0qdQrEsZcTmoZm231lLx5+gKa28hQP2vGWZ6dl2ru4aBfzY7?=
+ =?us-ascii?Q?hruCKo/fBTzQpHRpvq/Tb4FeCo9e21ejapqGHtHJPC/AbS9R7Jq1ZSnIPGXS?=
+ =?us-ascii?Q?AzIf8hj8XjSdyRTw/XTq4sVPylbUUFNZFxAvpqdm0PMtqU4BQuCri/BzSuWw?=
+ =?us-ascii?Q?YIr7khkAfFNFddW6GSuni6L/UlPm6UiESxqO8AeXVJ1suQnutTAeOUbhB4Vf?=
+ =?us-ascii?Q?U8CTrmg93hY6EmY2R7Eb2qETnky19zYdEf2cMR0fYCpaj9hgofvvkNXJrKHy?=
+ =?us-ascii?Q?s7/80cyxpeYQnWyFaJR9z4Jd7TzSBP4ohmlO2MBZwPMY9I6VEAhNdWYVN+Y0?=
+ =?us-ascii?Q?6fikh+jcTRg2qmqb3q2aMLmYIsHQ++SckWBmdzW+NSWDdOGWfFOPGXYVP81a?=
+ =?us-ascii?Q?yW7YHFV8qolVPbb5xmtrY1Q1nEJAn/eMFvUMSuNP6f5iMO+DwYHd6H/E6sm4?=
+ =?us-ascii?Q?C3SjH37bneCkeOlWd4SYTx1+7POUfVHwHi2MBz+H2dKj9mFNUswcKHNtHCfX?=
+ =?us-ascii?Q?6uIPCZXqFFJX4GgOU5fFT4aelGvKLS1TRjkNgQDp8yBUTaZA/DO0WZDYk3Gl?=
+ =?us-ascii?Q?O5ctpYVXHxSdwkftfpbxYdQWwajJsOUeAujd/p6aHn0B/Ai4J/OACmt8GXVc?=
+ =?us-ascii?Q?d/0uO9NXoprHnjU0I7H8OH38lNOdUeaZuF9Dw6vdQiAQUAhRhNBTInaRJ9Qj?=
+ =?us-ascii?Q?9DVo52Wjo3JrJR0q+ENdVa+DlP07ArRxj1THux35vGoBr2eZ1ujyJ2WCXeTV?=
+ =?us-ascii?Q?JXcn4MO8H9ahHenIiFF9+C4lsZfuUCwOK45zlRvFHV5vlHKppetZrxpxOCHz?=
+ =?us-ascii?Q?fzdTChY1546rmRm13Fm98Z/9+JQeVeED84A19fLZHrmYGJ6T2eX1O9rkvUnR?=
+ =?us-ascii?Q?lHyezdjnKThu2+mBccPfGuPGq3mePnihigRxwR7K2YS4RY77hAmAgQ3pjE37?=
+ =?us-ascii?Q?aWp6gppjZP7GEjNViKYthPrz5Pjt/y52f+eskq5KHdlnx7Fb+/u3UIOJZkXX?=
+ =?us-ascii?Q?xO3/khfjYlsbWWDOCSOw1UaCQ1GOFyTqb6q2jl9IymNk7JyylgmJt/B5t2SA?=
+ =?us-ascii?Q?lq4EoxVFxVAh1m+n5+dHcl/d?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN0P287MB2019.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?c25hTFA5bU5hZURlUVl0OU50eWxaUTZpU05md2JpUUdzclZEbU5SaE5JYjc2?=
- =?utf-8?B?UU5QeXN4eFhpc1BWdUFTVDBMSzhHM3UxbEFQR3hEaWRLZjVBdUkrVkd1WndZ?=
- =?utf-8?B?VlNIWldyaVRxUFk0MmhIOGdveHR1eUNJZGVxWXc5NVpXZmRId21lQjdJTytI?=
- =?utf-8?B?cG5HM3I1VERpbWQ2RXVPbk9FSkkrSWFKWURSbGQzaTRKNTVnYW9COFhLT2RC?=
- =?utf-8?B?d2wrV1FOUjJOQXkyOXNndjVVNDVsOGlBaVVXRGltZndCMkZ5dlNhazdUanlQ?=
- =?utf-8?B?Tmd6MnZIVHMweHp2VUJJL0w3dDNKN3krM0FLM3RUU1pTSlB0RHBKSmRDT1BM?=
- =?utf-8?B?VzZaSE9jNWtsMjBsNlNpSkw1WUZDMi9NRStZdnhPaWdjVEYrT3cyREcrUEFY?=
- =?utf-8?B?NDBidXphNGhPUVFXN3ZyWG55b0hkeEQyM3ZTaHdhYSs1cjQzSi9qc3BKR2w1?=
- =?utf-8?B?R2hhQ2V4dXR0LzVWMDZTWHlIZ1RDMEVZQ3A1b2ZYV05IUmdCWC8rcklWQmxi?=
- =?utf-8?B?Q3RCVDRPK0pQazdqLzhyZGhkL3FNZkFJQVp0NGxrODJNcUprUVVmaDJmWXlL?=
- =?utf-8?B?M3FFeFd6UXlGQ291dXo0cTVNZmNnN0N5TldTZFYvemREUWhkdFdlTXJpaUhE?=
- =?utf-8?B?OGdYRXltSHl0c2YvSCtQS2VxUjd4Mk9JK3Qxb09PWXFnUmpSK1ZTellXZFJT?=
- =?utf-8?B?RDh6UHpwMHQzeEtBb3AxQktTeEcyaHRUVUlNSGk3eStGNWx6Nk9mbzVHTFhT?=
- =?utf-8?B?eDZCNElNcVNSZkJoQk04aHU1SW9ncEIvVGJBc0RZRlZqT1pmQ0xvUkJPVW1v?=
- =?utf-8?B?dnp3eVp4TGJ6TVhxUG9qcUR3b1F4Wit2TDIxNTExZ0pER1JWRi9CWm5yV3hB?=
- =?utf-8?B?aE1MRU42U1pvSDIvdkhTd1ppYXN6VlRiK3R2YzZocEtQVVNVcnArYTFJNTBu?=
- =?utf-8?B?SVltYjRocnlpbXBrUnV6d1p3ZSs5YW51aXhtWTYyd1J4KzFHTlgrejhMdUI5?=
- =?utf-8?B?MGp6TXFQSDAwQis5aSswUnpHbkZROWhaZjhRYWhDUEhrd2ErK2MzSlZKQkxO?=
- =?utf-8?B?ZG9rZW5pbUlPeEJqWHg2SEI3b1VWYXJzYWtCb2ZRVHVhbWpvQ1NwOFdsdXFX?=
- =?utf-8?B?TWZwUFdrREVCYVNObjFXZmVMM3VkNkRmUHJRcm5CWWZRUG5vZm1MdEZVVHZP?=
- =?utf-8?B?OTV3d1E0WjJkU3NEUlAway9WNUpEdTJaYnIyUWlUaTJ1NUtSNkhmb3RhK2Mw?=
- =?utf-8?B?OUNJWEZRdGpLcE5iTlpIeSt4Q1Jhc0dwN1l4V2VndjJNNCs0REJSTVhRMCtF?=
- =?utf-8?B?emVvZGM0azdhenlOdzkzcXlvZnVSTllQRzMzT0pnUDRORXJWdjVhK0VOSTRO?=
- =?utf-8?B?MTBxYTNEa1lsMFRwYzRrVlIvQk1lVGoxcU5FK1dVbi9kaXY2dEtOaWRiMHlz?=
- =?utf-8?B?QzVpejc5UGlkQzUvQy9aTEwwWnRlemR0NlpEV2JhWXROUkNjTjhkc21VYXdi?=
- =?utf-8?B?dlIvUzVSNmZsQWV2UzFRbzl1U1Y4cnZBVjRUZncrT1ViZFp3Qm5GTGlLV1k5?=
- =?utf-8?B?SWdrTjlFcUd5ZitOaUdiK3VBMmNOdUZuSjdMY2hEamcrWmlYbGp2eEhvc1BB?=
- =?utf-8?B?VTdhYytRUGt3TUNMWlhzWnJoM0g1Ym94eU4zdk1ZY0hJZU4xSkdRelRJSGlv?=
- =?utf-8?B?THNHUUdOYWZlU3c3ZjNxVy9oYWxnczlxQ2FwTmM5UVFrUkVKeXBXNzg2cVl4?=
- =?utf-8?B?SWxCUVVsbjQwOFpvODVBSDQ0VG5hYWZ1ZC96NU4wenovRmVrUkk5MHlrYURX?=
- =?utf-8?B?eE00VWxpM1NUdVBmRWJQS1lJdVlETk1jZE1vT0xKS25qclpydGd4bmRQRUtR?=
- =?utf-8?B?am9qUVVLa2FaODlhWEN6VzBmR1dYLzNmZy90cU9HVE1HL0NweFU0WWIrU0ZT?=
- =?utf-8?B?KzdrV2ZMR0owVnFPSTJaYmJjdDZXSGhUYVZBSFNPUDRscjVzWlBIV0o2QW56?=
- =?utf-8?B?NXl5ZCtmdGdLcjRmWnlGc2hnQWhHNlkwSlV3Z3Vqb29iV3lkN0ZQbDVHMFZ4?=
- =?utf-8?B?TE0zRW9YMWpmczJCWVhtK3RMVlBNQ2hFME9sbWt4a3ZIUXFYb0N4M3NWTldY?=
- =?utf-8?Q?lt0fBce66NGEyrtVUgeFyrGUt?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e3a017d-b761-4cd3-41d8-08dcf71b1c71
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
+	=?us-ascii?Q?Ltj3OrMOiuCXcGEfzghuafmYSITo8C/jyqd9aFV6f5NTEJavyqmn3jbXybKY?=
+ =?us-ascii?Q?2zPdVIFnz04aAEe5yU1vHnvnMqs1xrMA19Gs5NVCoaLY92qECGgO89bNXvbE?=
+ =?us-ascii?Q?TWi64EWsOTrEhcHpDgVH4KDhQZ2eAfEg4BDq3Lg29Hgp022hsc3xTn18LhTT?=
+ =?us-ascii?Q?wabE6Wn/RoeStPqJSP3wmLAT4wLH05tmddZE0wkvEbsi+Xh32FtgsJsyee8D?=
+ =?us-ascii?Q?2dNQrrmiAdol5ntcTYDlyxWzANjs/5ExKFFOYXQ5n6IPhnSmIX+SlRu8L84Z?=
+ =?us-ascii?Q?BHCU7lmTcOpGejlPgMs6WOtrQFQyry3BcdzCpCmGl7hwtWV6/pK9KRPeTSED?=
+ =?us-ascii?Q?DH3zMFbp7SnfqoKKznHbBcG0cZ+pmtX4ze+uwBac/zzmqWJubjUbpkd6+AbG?=
+ =?us-ascii?Q?9tOkji3G0YodveQoq4isS3WQpSzdIbX09T9Ff9O1EeqpKdX1Q9P/MDReAotF?=
+ =?us-ascii?Q?A1MYtrxsGQO/hBBvUfw8nb1lFalk8wnN6ewn+d4lZPozQPWuKhF4PotcxAxY?=
+ =?us-ascii?Q?ti0gp26y13XYqY2MXYAQtnnq6FYI7NdnMam/4n2Svzw/cIhlgLNywTg37w8L?=
+ =?us-ascii?Q?StLQoKKcsSeZMqJKwOO1tav7Xw6wuth+UDg/HJRjHiHFCcQT5eRhNS0aJFpt?=
+ =?us-ascii?Q?btUT3LAsqIOI7IwOxcsdnHlLzovNUGF9UBy02DJmynDodprpxlOr5qNjGkg6?=
+ =?us-ascii?Q?mdWh2aRzOIbGDxOUW8I5kgJpJniIr+wCHxx1pp7bU4MElARufW+KSKs+9q96?=
+ =?us-ascii?Q?s4WKM1k/xEn7C/lN9hp4LVfdB+bcRLMgG6G9egN7lx3yaUKQ9t9Qs4gvJq4p?=
+ =?us-ascii?Q?K/noHbvchIW4IuKBJAdsAcCZKnIMZP25oWp5loUAhGBOA0ubCZXGp2HnAkwY?=
+ =?us-ascii?Q?6NScLDeD79pf4cUO/OX3iv7SQTO4HoJXLvKsjFOuxJsxpu1YB26LxgNq9dfS?=
+ =?us-ascii?Q?vkddX/kl4e3w1JWmg/zykXOFdTHilXzYwsoK7ZLU36c4ytUKcQw53wgMJeZt?=
+ =?us-ascii?Q?MZnz4lbFPlsWcQGbZ3KRhNG141IcbqMOjno1JoMI2Uk1fK4Ine7LZ9o09k9K?=
+ =?us-ascii?Q?V09sC4txsuK5fkemA1aeZSvxRxFu4HYdXNZ/PXExq/iN6CYq8STV1U6wGlhX?=
+ =?us-ascii?Q?ZuLMQFwhGxC6Pj28qFAGmeCdZXw3gFOkqYu3TI+PLQMhr5GMnPc10KEI5FMo?=
+ =?us-ascii?Q?0HGZez46M2xpcTMDOZmpyzRJuQsRo+ED7DNPmiXn2hgNHop8pKn52mKAnUbB?=
+ =?us-ascii?Q?ZZw707sskxseQ0jAiaICmSqzWYGpF++Qubt3BSbZBAkwF8NB28ojG31flIxy?=
+ =?us-ascii?Q?VbJ2LBiaGobLZ7nQI5F18+iF7F5IYp6Mu5mhVkB0MXVbZD/oMHeAQ+JAIJrC?=
+ =?us-ascii?Q?iOL/hyTJ5QDOc4CjU9gtMTtiM3Ypwpkjzwi/CBZe+570GRbaxV+Nk150AIr+?=
+ =?us-ascii?Q?x7exhLUuNFLxqwYCg4KUBjwXQ65CKgmoT0C9phhS5tO/sqbGWf/Qiyt1Ui3g?=
+ =?us-ascii?Q?1WiD+5fXyyDQkP3WPASOlAK8xjpYKqrRqYXN1VFaXdh+PR4oSzdWeMvOY8E8?=
+ =?us-ascii?Q?6aREMXZr8Tf2NyJIes6axIzlRFxr+dIWX9P8foaHY68WLn/qmn9u8f1zCM8U?=
+ =?us-ascii?Q?NcLjwJrNT1qa1SMjvGQ8vts=3D?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7fb2e368-1ebc-44ad-181b-08dcf71b573d
+X-MS-Exchange-CrossTenant-AuthSource: PN0P287MB2019.INDP287.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 06:38:19.6735
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 06:39:58.2804
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rmq2cUuYLtLrDkUPF2kthGjQTwCNvdYbVHhGMY9Fjc/3517jRqmLVFvrFzDojxOmGvceQFK9ucVK+dJbTbuaKw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8755
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6jVLCQzH0Y5XgLksITXG9ZJd38rw5HwRIasdqaUV6eMuUPmrBuRIbkP+Kiu8HZVr4GC+dpo0u2DwWLmg0pq3EhHpxNa55Q1OiNi0IaQPRoZy/daQli2Ii6yQ6bl/bNjV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1253
 
-Hello Gautham,
+YAML binding file provides the conversion of the original text-based
+binding for the pinctrl-mcp23s08 to microchip,mcp23s08.yaml.
 
-On 10/28/2024 11:42 AM, Gautham R. Shenoy wrote:
-> Hello Dhananjay,
-> 
-> On Fri, Oct 25, 2024 at 11:13:39AM +0000, Dhananjay Ugwekar wrote:
->> An earlier commit eliminates the need for this function, so remove it.
-> 
-> If the commit is merged, please provide the commit id. If it is not
-> merged, please share the shortlog here with the link to the patch on
-> the mailing list.
+following compatible strings using the deprecated mcp prefix have been
+removed from this binding:
 
-Sure, The commit I'm referring to here is 
-"[PATCH V2 2/2] perf/x86/rapl: Clean up cpumask and hotplug"
-(https://lore.kernel.org/all/20241010142604.770192-2-kan.liang@linux.intel.com/)
-It is not yet merged, but I've taken it as base for this patch series.
+- mcp,mcp23s08
+- mcp,mcp23s17
+- mcp,mcp23008
+- mcp,mcp23017
 
-It removes the cpumask handling from rapl.c. Hence, we no longer need the 
-get_rapl_pmu_cpumask() function.
+Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+---
 
-I can post a new version or provide newly drafted commit msg here, whichever way is 
-okay with the maintainers.
+Change in V2:
 
-Thanks,
-Dhananjay
+- Change the commit message
+- Remove copyright
+- Change the file name to microchip,mcp23s08.yaml
+- Remove '|'
+- Add 'spi-peripheral-props' reference
+- Remove pull-up from required properties
 
-> 
-> --
-> Thanks and Regards
-> gautham.
-> 
->>
->> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
->> ---
->>  arch/x86/events/rapl.c | 8 +-------
->>  1 file changed, 1 insertion(+), 7 deletions(-)
->>
->> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
->> index a8defc813c36..f70c49ca0ef3 100644
->> --- a/arch/x86/events/rapl.c
->> +++ b/arch/x86/events/rapl.c
->> @@ -153,7 +153,7 @@ static u64 rapl_timer_ms;
->>  static struct perf_msr *rapl_msrs;
->>  
->>  /*
->> - * Helper functions to get the correct topology macros according to the
->> + * Helper function to get the correct topology id according to the
->>   * RAPL PMU scope.
->>   */
->>  static inline unsigned int get_rapl_pmu_idx(int cpu)
->> @@ -162,12 +162,6 @@ static inline unsigned int get_rapl_pmu_idx(int cpu)
->>  					 topology_logical_die_id(cpu);
->>  }
->>  
->> -static inline const struct cpumask *get_rapl_pmu_cpumask(int cpu)
->> -{
->> -	return rapl_pmu_is_pkg_scope() ? topology_core_cpumask(cpu) :
->> -					 topology_die_cpumask(cpu);
->> -}
->> -
->>  static inline struct rapl_pmu *cpu_to_rapl_pmu(unsigned int cpu)
->>  {
->>  	unsigned int rapl_pmu_idx = get_rapl_pmu_idx(cpu);
->> -- 
->> 2.34.1
->>
+Change in V3:
+
+- Use correct quotes (')
+- Drop Unused label
+- Drop one i2c example
+---
+ .../bindings/pinctrl/microchip,mcp23s08.yaml  | 161 ++++++++++++++++++
+ .../bindings/pinctrl/pinctrl-mcp23s08.txt     | 148 ----------------
+ 2 files changed, 161 insertions(+), 148 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/microchip,mcp23s08.yaml
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/microchip,mcp23s08.yaml b/Documentation/devicetree/bindings/pinctrl/microchip,mcp23s08.yaml
+new file mode 100644
+index 000000000000..e07f4723de17
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/microchip,mcp23s08.yaml
+@@ -0,0 +1,161 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/pinctrl/microchip,mcp23s08.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Microchip I/O expander with serial interface (I2C/SPI)
++
++maintainers:
++  - Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
++
++description:
++  Microchip MCP23008, MCP23017, MCP23S08, MCP23S17, MCP23S18 GPIO expander
++  chips.These chips provide 8 or 16 GPIO pins with either I2C or SPI interface.
++
++allOf:
++  - $ref: /schemas/spi/spi-peripheral-props.yaml#
++
++properties:
++  compatible:
++    enum:
++      - microchip,mcp23s08
++      - microchip,mcp23s17
++      - microchip,mcp23s18
++      - microchip,mcp23008
++      - microchip,mcp23017
++      - microchip,mcp23018
++
++  reg:
++    maxItems: 1
++
++  gpio-controller: true
++
++  '#gpio-cells':
++    const: 2
++
++  interrupt-controller: true
++
++  '#interrupt-cells':
++    const: 2
++
++  interrupts:
++    maxItems: 1
++
++  reset-gpios:
++    description: GPIO specifier for active-low reset pin.
++    maxItems: 1
++
++  microchip,spi-present-mask:
++    description:
++      Multiple SPI chips can share the same SPI chipselect. Set a bit in
++      bit0-7 in this mask to 1 if there is a chip connected with the
++      corresponding spi address set. For example if you have a chip with
++      address 3 connected, you have to set bit3 to 1, which is 0x08. mcp23s08
++      chip variant only supports bits 0-3. It is not possible to mix mcp23s08
++      and mcp23s17 on the same chipselect. Set at least one bit to 1 for SPI
++      chips.
++    $ref: /schemas/types.yaml#/definitions/uint8
++
++  microchip,irq-mirror:
++    type: boolean
++    description:
++      Sets the mirror flag in the IOCON register. Devices with two interrupt
++      outputs (these are the devices ending with 17 and those that have 16 IOs)
++      have two IO banks IO 0-7 form bank 1 and IO 8-15 are bank 2. These chips
++      have two different interrupt outputs One for bank 1 and another for
++      bank 2. If irq-mirror is set, both interrupts are generated regardless of
++      the bank that an input change occurred on. If it is not set,the interrupt
++      are only generated for the bank they belong to.
++
++  microchip,irq-active-high:
++    type: boolean
++    description:
++      Sets the INTPOL flag in the IOCON register.This configures the IRQ output
++      polarity as active high.
++
++  drive-open-drain:
++    type: boolean
++    description:
++      Sets the ODR flag in the IOCON register. This configures the IRQ output as
++      open drain active low.
++
++  pinmux:
++    type: object
++    properties:
++      pins:
++        description:
++          The list of GPIO pins controlled by this node. Each pin name
++          corresponds to a physical pin on the GPIO expander.
++        items:
++          pattern: '^gpio([0-9]|[1][0-5])$'
++        maxItems: 16
++
++      bias-pull-up:
++        type: boolean
++        description:
++          Configures pull-up resistors for the GPIO pins. Absence of this
++          property will leave the configuration in its default state.
++
++    required:
++      - pins
++
++    additionalProperties: false
++
++required:
++  - compatible
++  - reg
++  - gpio-controller
++  - '#gpio-cells'
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/gpio/gpio.h>
++
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        gpio@21 {
++            compatible = "microchip,mcp23017";
++            reg = <0x21>;
++            gpio-controller;
++            #gpio-cells = <2>;
++
++            interrupt-parent = <&gpio1>;
++            interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
++            interrupt-controller;
++            #interrupt-cells = <2>;
++
++            microchip,irq-mirror;
++            pinctrl-names = "default";
++            pinctrl-0 = <&pinctrl_i2c_gpio0>, <&gpiopullups>;
++            reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
++
++            gpiopullups: pinmux {
++                pins = "gpio0", "gpio1", "gpio2", "gpio3",
++                       "gpio4", "gpio5", "gpio6", "gpio7",
++                       "gpio8", "gpio9", "gpio10", "gpio11",
++                       "gpio12", "gpio13", "gpio14", "gpio15";
++                bias-pull-up;
++            };
++        };
++    };
++
++  - |
++    spi {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        gpio@0 {
++            compatible = "microchip,mcp23s17";
++            reg = <0>;
++            gpio-controller;
++            #gpio-cells = <2>;
++            spi-max-frequency = <1000000>;
++            microchip,spi-present-mask = /bits/ 8 <0x01>;
++        };
++    };
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
+deleted file mode 100644
+index 2fa5edac7a35..000000000000
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
++++ /dev/null
+@@ -1,148 +0,0 @@
+-Microchip MCP2308/MCP23S08/MCP23017/MCP23S17 driver for
+-8-/16-bit I/O expander with serial interface (I2C/SPI)
+-
+-Required properties:
+-- compatible : Should be
+-    - "mcp,mcp23s08" (DEPRECATED) for  8 GPIO SPI version
+-    - "mcp,mcp23s17" (DEPRECATED) for 16 GPIO SPI version
+-    - "mcp,mcp23008" (DEPRECATED) for  8 GPIO I2C version or
+-    - "mcp,mcp23017" (DEPRECATED) for 16 GPIO I2C version of the chip
+-
+-    - "microchip,mcp23s08" for  8 GPIO SPI version
+-    - "microchip,mcp23s17" for 16 GPIO SPI version
+-    - "microchip,mcp23s18" for 16 GPIO SPI version
+-    - "microchip,mcp23008" for  8 GPIO I2C version or
+-    - "microchip,mcp23017" for 16 GPIO I2C version of the chip
+-    - "microchip,mcp23018" for 16 GPIO I2C version
+-    NOTE: Do not use the old mcp prefix any more. It is deprecated and will be
+-    removed.
+-- #gpio-cells : Should be two.
+-  - first cell is the pin number
+-  - second cell is used to specify flags as described in
+-    'Documentation/devicetree/bindings/gpio/gpio.txt'. Allowed values defined by
+-    'include/dt-bindings/gpio/gpio.h' (e.g. GPIO_ACTIVE_LOW).
+-- gpio-controller : Marks the device node as a GPIO controller.
+-- reg : For an address on its bus. I2C uses this a the I2C address of the chip.
+-        SPI uses this to specify the chipselect line which the chip is
+-        connected to. The driver and the SPI variant of the chip support
+-        multiple chips on the same chipselect. Have a look at
+-        microchip,spi-present-mask below.
+-
+-Required device specific properties (only for SPI chips):
+-- mcp,spi-present-mask (DEPRECATED)
+-- microchip,spi-present-mask : This is a present flag, that makes only sense for SPI
+-        chips - as the name suggests. Multiple SPI chips can share the same
+-        SPI chipselect. Set a bit in bit0-7 in this mask to 1 if there is a
+-        chip connected with the corresponding spi address set. For example if
+-        you have a chip with address 3 connected, you have to set bit3 to 1,
+-        which is 0x08. mcp23s08 chip variant only supports bits 0-3. It is not
+-        possible to mix mcp23s08 and mcp23s17 on the same chipselect. Set at
+-        least one bit to 1 for SPI chips.
+-    NOTE: Do not use the old mcp prefix any more. It is deprecated and will be
+-    removed.
+-- spi-max-frequency = The maximum frequency this chip is able to handle
+-
+-Optional properties:
+-- #interrupt-cells : Should be two.
+-  - first cell is the pin number
+-  - second cell is used to specify flags.
+-- interrupt-controller: Marks the device node as a interrupt controller.
+-- drive-open-drain: Sets the ODR flag in the IOCON register. This configures
+-        the IRQ output as open drain active low.
+-- reset-gpios: Corresponds to the active-low RESET# pin for the chip
+-
+-Optional device specific properties:
+-- microchip,irq-mirror: Sets the mirror flag in the IOCON register. Devices
+-        with two interrupt outputs (these are the devices ending with 17 and
+-        those that have 16 IOs) have two IO banks: IO 0-7 form bank 1 and
+-        IO 8-15 are bank 2. These chips have two different interrupt outputs:
+-        One for bank 1 and another for bank 2. If irq-mirror is set, both
+-        interrupts are generated regardless of the bank that an input change
+-        occurred on. If it is not set, the interrupt are only generated for the
+-        bank they belong to.
+-        On devices with only one interrupt output this property is useless.
+-- microchip,irq-active-high: Sets the INTPOL flag in the IOCON register. This
+-        configures the IRQ output polarity as active high.
+-
+-Example I2C (with interrupt):
+-gpiom1: gpio@20 {
+-        compatible = "microchip,mcp23017";
+-        gpio-controller;
+-        #gpio-cells = <2>;
+-        reg = <0x20>;
+-
+-        interrupt-parent = <&gpio1>;
+-        interrupts = <17 IRQ_TYPE_LEVEL_LOW>;
+-        interrupt-controller;
+-        #interrupt-cells=<2>;
+-        microchip,irq-mirror;
+-};
+-
+-Example SPI:
+-gpiom1: gpio@0 {
+-        compatible = "microchip,mcp23s17";
+-        gpio-controller;
+-        #gpio-cells = <2>;
+-        microchip,spi-present-mask = <0x01>;
+-        reg = <0>;
+-        spi-max-frequency = <1000000>;
+-};
+-
+-Pull-up configuration
+-=====================
+-
+-If pins are used as output, they can also be configured with pull-ups. This is
+-done with pinctrl.
+-
+-Please refer file <devicetree/bindings/pinctrl/pinctrl-bindings.txt>
+-for details of the common pinctrl bindings used by client devices,
+-including the meaning of the phrase "pin configuration node".
+-
+-Optional Pinmux properties:
+---------------------------
+-Following properties are required if default setting of pins are required
+-at boot.
+-- pinctrl-names: A pinctrl state named per <pinctrl-bindings.txt>.
+-- pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
+-		<pinctrl-bindings.txt>.
+-
+-The pin configurations are defined as child of the pinctrl states node. Each
+-sub-node have following properties:
+-
+-Required properties:
+-------------------
+-- pins: List of pins. Valid values of pins properties are:
+-		      gpio0 ... gpio7 for the devices with 8 GPIO pins and
+-		      gpio0 ... gpio15 for the devices with 16 GPIO pins.
+-
+-Optional properties:
+--------------------
+-The following optional property is defined in the pinmux DT binding document
+-<pinctrl-bindings.txt>. Absence of this property will leave the configuration
+-in its default state.
+-	bias-pull-up
+-
+-Example with pinctrl to pull-up output pins:
+-gpio21: gpio@21 {
+-	compatible = "microchip,mcp23017";
+-	gpio-controller;
+-	#gpio-cells = <0x2>;
+-	reg = <0x21>;
+-	interrupt-parent = <&socgpio>;
+-	interrupts = <0x17 0x8>;
+-	interrupt-names = "mcp23017@21 irq";
+-	interrupt-controller;
+-	#interrupt-cells = <0x2>;
+-	microchip,irq-mirror;
+-	pinctrl-names = "default";
+-	pinctrl-0 = <&i2cgpio0irq>, <&gpio21pullups>;
+-	reset-gpios = <&gpio6 15 GPIO_ACTIVE_LOW>;
+-
+-	gpio21pullups: pinmux {
+-		pins =	"gpio0", "gpio1", "gpio2", "gpio3",
+-			"gpio4", "gpio5", "gpio6", "gpio7",
+-			"gpio8", "gpio9", "gpio10", "gpio11",
+-			"gpio12", "gpio13", "gpio14", "gpio15";
+-		bias-pull-up;
+-	};
+-};
+-- 
+2.43.0
+
 
