@@ -1,113 +1,172 @@
-Return-Path: <linux-kernel+bounces-385193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0270D9B33D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:40:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C60A9B33D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:41:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1F9B1F225B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:40:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC741C21A7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C21D1DE2AC;
-	Mon, 28 Oct 2024 14:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529CB1DE2BD;
+	Mon, 28 Oct 2024 14:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="BJJbRpVT"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpy725/H"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14BC1DB350;
-	Mon, 28 Oct 2024 14:39:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48551DDC05
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730126399; cv=none; b=HHeV20ZXWm951QD4S6Yi0lpt3huED3DAsXjIk9Dn64+TuKFkxGG048XCzi/RLlkxm4F7zmTVx8sy3QAqmX5Mv/lFwGsTnu5T2qO8BTUkY2FHinEXW/i3bSTvVPpVwXxEYoK9gGwC9xXRPd3xgwJfq196jCxIqiOnzWX92hzV4zA=
+	t=1730126455; cv=none; b=IoOEBVSNN2yAQyNbLBce014KGg3ZHs6VrqSUpoo9GiA18E59ma0W6wOPQ59+HHGGVlh/C+jxfJT3c0HAmPrBgh99Svuu+E1qEqSzqa7UvfBtp+zh28f99azKKCFthNTIPqIQGa0ujbgprIgZFXfvqzng+sg/RzHG8wJoa+A3G4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730126399; c=relaxed/simple;
-	bh=E+CTjqbOgsVd7Q+yuf2w4U33hEJIAOKyzwWAl68X3nE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VRfjIxhmlhAM1DC11JGAcQ+zX4VKjt4/Nk8UotYsgqxF53S/4sPZBqVOC4Pz/4OmBtwHaueUgmKbnd3JPhhd6jrFZVX5a7JF5187XppIOJi+i427bkVyhuHZDwugltuS3ZHHG+rIC+4QXMpuHolrQFj/rG1IZitUvgehlZ+a1Fw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=BJJbRpVT; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vRww08Q3DwcVMPJumShFmx9sBaWYzBTGKTpUIyGlJDk=; b=BJJbRpVT9nXvKzcjb4B8eSwP5Y
-	97PvsLJ9mqqOapFRjsEnVncllq8dmY5GR9I4YoAe5hSjioT7LhxTfhB6APNf8AKnXjnyJeoU7z/Oy
-	5SkTmYauN+6NQbKFreNjmp29WHS0mCNW7QSAR85AP2fPC74G0kugsntZY+4Xh2S7NDtjVvPKVPG8X
-	aWBKfAglmnEmSbMetwFYhSqnN7c4ByaHc7FNXROtWyXgrC8qXxLzE4sRcpICn+vtOYKPHZ2NtwycS
-	E7k5XH4KqlDljWWJKMI29pEB5WuxADkHY9lMXUkjqUF+G1ddLy8iLkceZ+K0QCUwBzrv3RB+nscwi
-	sCOy5e9A==;
-Received: from [189.79.117.125] (helo=[192.168.1.60])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t5QuL-00G7DH-P7; Mon, 28 Oct 2024 15:39:50 +0100
-Message-ID: <61aae4ff-8f80-252e-447a-cd8a51a325a1@igalia.com>
-Date: Mon, 28 Oct 2024 11:39:42 -0300
+	s=arc-20240116; t=1730126455; c=relaxed/simple;
+	bh=5OXWCdXlYFEC82+QeLBrMiVngK/dtDPdLzFwiOlEeKY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ig3idqmLD0RuHLiUAdA0w7f7shlKQvmAdmdSz6qpYzdmf8Wwavx5DT6HrNX3nTf9pxJV8mOtKGtJzI1DHwrYw152DT5zwgVN3/QEGM1f9ApzVT3lNUNel+5I/j9zlQ0XSFkIo8GsNa4gtD92sza1Qc6UJ1xL8v/oHlCSXScTUzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpy725/H; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso4630492276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730126453; x=1730731253; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6GUxmQDCroRcD5PADBIPqWMHqU8j4+rH6VILtabqlNM=;
+        b=cpy725/HVTgBQhagyHnn5Ec3bjluLIfyedVlNB9S9EczxBkIEPPrZXaT0wMyDoGCsR
+         1anonubkrVjMgglbUcqxObA7cYkohqZ4jhM1RaPKWK62ktXSP+ASnfGkvfRZxvXYTYk7
+         vw3g2wez9ljBc4+yofdEXx8mqwNFy8KoRdkjZ7o5pR2UfJ21LULjcGSqNjat9wKHiviZ
+         zslsJ+8Iewe79yXi1WkcRImPQFe+5SQA0FIp0l/d/EM2DBbsAV/0zkXczE+u2kABcssI
+         2oa4+eV4NoGCZ4dyYxq4h/TeB05aqyikVXhUBSpmNwLpBOQPOpz4cvfveq7xwxX3ePGn
+         yvCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730126453; x=1730731253;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6GUxmQDCroRcD5PADBIPqWMHqU8j4+rH6VILtabqlNM=;
+        b=rdOt/OqzqggygDwUsgk0z+K65JClSA5UdO+pXgJxpSwJSjttCxRwS1Z4aNLmyvyKh/
+         MyB0EvRka0XtffbaI+Ug4B2skjT4tl2M4hzWYzPkBguhbmkH1rWP5PBVh9pljgCkrEkY
+         SCxzHRLXXC1pG6Xh0zl7dmZ3T/1AdRYhNCMzXRmjxP1DIrWnfBTtNat+dVkTxuooAQMS
+         OiOCV31wGYGx6PlOX52sCMdfEPCQYtm+X2Ji5M1qH78B45iDaOWqkB95+bStpQNaY5uB
+         D+dLJGXNgjTN/HuKyo1qOLaXGs0/kpXUXqiL8e5nF2BYQ9CMXOONbgIL03AHsVBGNp45
+         GAGg==
+X-Gm-Message-State: AOJu0Yw5xEazCPseQxmpoAgAcIWBi8VjdY1YFisojwfls0Qq73xvyWH3
+	9Iq39GVtybG6BTmbdoUy5QqAH67Ea8j2ZRw7bDqMurMrUiO5KUKh
+X-Google-Smtp-Source: AGHT+IF6p8JXy5eD9IeeaSNMTrkEwu1Z0077ihk2q6rpvti0E4hqVsqXakpLffDqPISARjgUzPqmnQ==
+X-Received: by 2002:a05:690c:6f89:b0:6e3:37a7:8a98 with SMTP id 00721157ae682-6e9d896fc93mr84770867b3.14.1730126452702;
+        Mon, 28 Oct 2024 07:40:52 -0700 (PDT)
+Received: from localhost (c-24-129-28-254.hsd1.fl.comcast.net. [24.129.28.254])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6bb1e2esm14342747b3.28.2024.10.28.07.40.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 07:40:52 -0700 (PDT)
+Date: Mon, 28 Oct 2024 07:40:51 -0700
+From: Yury Norov <yury.norov@gmail.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Namhyung Kim <namhyung@kernel.org>
+Subject: Re: [PATCH 1/1 fyi] tools headers: Synchronize {uapi/}linux/bits.h
+ with the kernel sources
+Message-ID: <Zx-icwjwSxT1T9K5@yury-ThinkPad>
+References: <Zx-ZVH7bHqtFn8Dv@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH] wifi: rtlwifi: Drastically reduce the attempts to read
- efuse bytes in case of failures
-Content-Language: en-US
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "kvalo@kernel.org" <kvalo@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
- "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com"
- <syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
-References: <20241025150226.896613-1-gpiccoli@igalia.com>
- <ed8114c231d1423893d3c90c458f35f3@realtek.com>
-From: "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <ed8114c231d1423893d3c90c458f35f3@realtek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zx-ZVH7bHqtFn8Dv@x1>
 
-On 27/10/2024 22:44, Ping-Ke Shih wrote:
-> Guilherme G. Piccoli <gpiccoli@igalia.com> wrote:
->>
->> This procedure for reading efuse bytes relies in a loop that performs an
->> I/O read up to *10k* times in case of failures. We measured the time of
->> the loop inside read_efuse_byte() alone, and in this reproducer (which
->> involves the dummy_hcd emulation layer), it takes 15 seconds each.
+On Mon, Oct 28, 2024 at 11:01:56AM -0300, Arnaldo Carvalho de Melo wrote:
+> tldr; Just FYI, I'm carrying this on the perf tools tree.
 > 
-> The I/O read of 10k times is to polling if efuse is ready, and then following
-> statement is to actually read efuse content back. For USB devices, I/O is
-> slow, so it might be fine to reduce retry times. But For PCIE devices,
-> I think this will be risky without testing with real hardware.
+> Full explanation:
 > 
-> Possible way is to use "rtlhal->interface == INTF_PCI" to keep original times
-> for PCIE devices, and only reduce retry times for USB devices. But USB can
-> operate on USB-2/-3 modes, so maybe still need experiments with real hardware 
-> to get reasonable retry times. 
+> There used to be no copies, with tools/ code using kernel headers
+> directly. From time to time tools/perf/ broke due to legitimate kernel
+> hacking. At some point Linus complained about such direct usage. Then we
+> adopted the current model.
 > 
+> See further details at:
+> 
+>  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
+> 
+> To pick up the changes in this cset:
+> 
+>   947697c6f0f75f98 ("uapi: Define GENMASK_U128")
+> 
+> This addresses these perf build warnings:
+> 
+>   Warning: Kernel ABI header differences:
+>     diff -u tools/include/uapi/linux/bits.h include/uapi/linux/bits.h
+>     diff -u tools/include/linux/bits.h include/linux/bits.h
+> 
+> Please see tools/include/uapi/README for further details.
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Yury Norov <yury.norov@gmail.com>
+> Link: https://lore.kernel.org/lkml/
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Thanks a bunch for the review and extra details Ping-Ke Shih!
+Thanks,
 
-The idea of guarding with "rtlhal->interface == INTF_PCI" is very good
-and I can implement in a V2.
+Acked-by: Yury Norov <yury.norov@gmail.com>
 
-But can you help me on finding a USB adapter that runs this path? If you
-know a commodity model that uses this specific driver, could you point
-me so I can buy one for testing?
-
-Meanwhile I'll try to find a model based on some kernel reports online,
-hope I can!
-
-Cheers,
-
-
-Guilherme
+> ---
+>  tools/include/linux/bits.h      | 15 +++++++++++++++
+>  tools/include/uapi/linux/bits.h |  3 +++
+>  2 files changed, 18 insertions(+)
+> 
+> diff --git a/tools/include/linux/bits.h b/tools/include/linux/bits.h
+> index 0eb24d21aac2142c..60044b6088172b3f 100644
+> --- a/tools/include/linux/bits.h
+> +++ b/tools/include/linux/bits.h
+> @@ -36,4 +36,19 @@
+>  #define GENMASK_ULL(h, l) \
+>  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
+>  
+> +#if !defined(__ASSEMBLY__)
+> +/*
+> + * Missing asm support
+> + *
+> + * __GENMASK_U128() depends on _BIT128() which would not work
+> + * in the asm code, as it shifts an 'unsigned __init128' data
+> + * type instead of direct representation of 128 bit constants
+> + * such as long and unsigned long. The fundamental problem is
+> + * that a 128 bit constant will get silently truncated by the
+> + * gcc compiler.
+> + */
+> +#define GENMASK_U128(h, l) \
+> +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
+> +#endif
+> +
+>  #endif	/* __LINUX_BITS_H */
+> diff --git a/tools/include/uapi/linux/bits.h b/tools/include/uapi/linux/bits.h
+> index 3c2a101986a314f6..5ee30f882736cbd1 100644
+> --- a/tools/include/uapi/linux/bits.h
+> +++ b/tools/include/uapi/linux/bits.h
+> @@ -12,4 +12,7 @@
+>          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
+>           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
+>  
+> +#define __GENMASK_U128(h, l) \
+> +	((_BIT128((h)) << 1) - (_BIT128(l)))
+> +
+>  #endif /* _UAPI_LINUX_BITS_H */
+> -- 
+> 2.47.0
 
