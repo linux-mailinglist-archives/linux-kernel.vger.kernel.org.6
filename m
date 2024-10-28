@@ -1,110 +1,99 @@
-Return-Path: <linux-kernel+bounces-385827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74DB19B3C48
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:50:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 882519B3C4A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39ACD28352A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:50:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A8231F23AAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:50:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45FE1E0B7F;
-	Mon, 28 Oct 2024 20:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2FE1E0B89;
+	Mon, 28 Oct 2024 20:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQNtG1Id"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ad+Km1h5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394AC185B54;
-	Mon, 28 Oct 2024 20:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4EA1E0E12;
+	Mon, 28 Oct 2024 20:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730148625; cv=none; b=iHGlOnG4sjkZ1cI4bhOjov7S3zSaM+cSiAhaFDmpCDbCfHdkNMEFDyvWw7ikZgbqC7kxkxCK2IJVeTTY1ljVF1TOTASCStDDDMJDb6LoyEJyEarKCljcZBAGB1auihPXzxXdg1zMUsnYDcQAE1IIYf7s+36XgOOBJi+GPRCdsRE=
+	t=1730148633; cv=none; b=BXwNUal8XuKwsB5nbbLlh/V+jLSPKNDd3b9AWfLtUdAWxrYasm25W2X3k+tDeMPtCRqBkKtsJAs/V1cQdDDY0av4IgweK+G+L7m5GU3V2+ySJE4QHv2gVQfLIOnVL8oep9hoUeKbtqk3iZeEcl3LeU5/NhcDP5fvbP9+3M14caM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730148625; c=relaxed/simple;
-	bh=0d0bnpYrqLf1Gz1ewdv5lG608wrvqcCrLqPXxCzJmXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=szACvLk3+/AoKLG5UGgPqvmPniAwEL4QWV32ncPu8S3EagDnU+e6v4t0DG4zx6xTdwm43CpfIKT64ObNBA8IxFa+Ev04KE3RefXRwdMj56pAARdIxLKjoHNJWpW4gmUBcpY5s916iDR3nyYBbasJLlD6lRyOmj8xp2Tq33Rj6as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQNtG1Id; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4FBBC4CEC3;
-	Mon, 28 Oct 2024 20:50:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730148624;
-	bh=0d0bnpYrqLf1Gz1ewdv5lG608wrvqcCrLqPXxCzJmXU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uQNtG1Id/5lshA4iIa6GkvJGi8b+JhEqwJXetiYWHNCHmpolrKcEdb5Z1hnXnORBR
-	 ZTM+kRnVU8IU0TdVKusjcYCKsXiC9HKN/axX9MJfbs8iXSNh7lX2KdTzV9PrVaxaI7
-	 EXM6dNb5MvDvC+YWDdIm1SkPfIHDX2sCRQpMRlJwgd2m7yVEbulN70c3sRqP/ci4XE
-	 catd2M7zLzqczRsDyogeKSWTkPljXDlOOTCEaXT4UNg0+cXCKNnI+nINJYmecTIze2
-	 dFxdpzU7edfLAk1f2cexiLqGeNmvE17LMElah2HmtnIlvCtTKFTyyck/Hal/Zh1nT2
-	 rB/dAnwG2XoAA==
-Date: Mon, 28 Oct 2024 20:50:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Zicheng Qu <quzicheng@huawei.com>
-Cc: <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
- <patrick.vasseur@c-s.fr>, <christophe.leroy@c-s.fr>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
- <judy.chenhui@huawei.com>, Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>,
- Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>
-Subject: Re: [PATCH] ad7923: fix array out of bounds in
- ad7923_update_scan_mode()
-Message-ID: <20241028205004.2298af74@jic23-huawei>
-In-Reply-To: <20241028142357.1032380-1-quzicheng@huawei.com>
-References: <20241028142357.1032380-1-quzicheng@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730148633; c=relaxed/simple;
+	bh=51gYubsqkYynHlGCldDrHkYfPi4+3KF6xcB40O/1zss=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MVnDvLy9LRsaPSkelfBqOk3NOwwoxfRLnOFhr7OcmCxQV+0GCVUQtezvtQM3Jk28LEvPy5oD3LpA3kA8PlUsYO69FJx1yUmLGAvIanrxTm7fnou8xgX+0aRaGmaWjns0em5iXUNYZGRiJaI03X/qAs/BdSWQl+/BeqsWj0O0sGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ad+Km1h5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730148622;
+	bh=nuPBMF007fmKMpoEF9JeBunJhfhlIJ9szqp1ee7v6yg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ad+Km1h5aPCrdcU32+P/Penm8DYMsV7YvfumAVFozxmUetnLc0q4JLj/ZzxJVw3Ju
+	 pDKlmEFqWuvDL/RKSqxlpzu9ZvUdAUvecKZv2dZ6KUD+sokMDVUirQMuMxKK4AEK+R
+	 xjnH1dlZd+D1oZnn2e2yF3DGfREcTcx0yqYKrl1Pn4wfQfcbqRwnEW+ynsUN7eiQni
+	 ZlmO2UsYxKfZ1tR2bghAaMo57QHa7XRA3dUl04kw77Ea2sl9vQhaUevkrfa+S5uRVS
+	 cCbW9lAXpQUs9gdryVQ2MuW1od4Hg+puh0Lt4QODp76XDj1dOxqere58xnNIO5W/FU
+	 6v6hrNXqf2ZXg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Xclrr3xG5z4x8S;
+	Tue, 29 Oct 2024 07:50:20 +1100 (AEDT)
+Date: Tue, 29 Oct 2024 07:50:21 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the tip tree
+Message-ID: <20241029075021.107877f4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/JO_WOYw+GI5x404KKobtcXC";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/JO_WOYw+GI5x404KKobtcXC
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024 14:23:57 +0000
-Zicheng Qu <quzicheng@huawei.com> wrote:
+Hi all,
 
-> In the ad7923_update_scan_mode() , the variable len may exceed the length
-> of the st->tx_buf array, leading to an array overflow issue. The final
-> value of len depends on active_scan_mask (an unsigned long) and
-> num_channels-1 (an integer), with an upper limit of num_channels-1. In
-> the ad7923_probe() function, when assigning to indio_dev->num_channels,
-> its  size is not checked. Therefore, in ad7923_update_scan_mode(), since
-> active_scan_mask is an unsigned long and num_channels has no set upper
-> limit, an overflow might occur.
-> 
-> Fixes: 0eac259db28f ("IIO ADC support for AD7923")
-> Cc: <stable@vger.kernel.org>
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-Thanks.
-This looks to be a valid bug but a wrong fix. Fairly sure the number of channels
-supported has changed at somepoint (probably with addition of more parts)
-and the size of tx has not increased to match.
+Commit
 
-Nuno, could you take a look?
+  b4f5f4934b58 ("sched: Pass correct scheduling policy to __setscheduler_cl=
+ass")
 
-Jonathan
+is missing a Signed-off-by from its committer.
 
+--=20
+Cheers,
+Stephen Rothwell
 
-> ---
->  drivers/iio/adc/ad7923.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
-> index 09680015a7ab..82b341709a64 100644
-> --- a/drivers/iio/adc/ad7923.c
-> +++ b/drivers/iio/adc/ad7923.c
-> @@ -170,6 +170,8 @@ static int ad7923_update_scan_mode(struct iio_dev *indio_dev,
->  	 * skip that one.
->  	 */
->  	for_each_set_bit(i, active_scan_mask, indio_dev->num_channels - 1) {
-> +		if (len >= 4)
-> +			return -EINVAL;
->  		cmd = AD7923_WRITE_CR | AD7923_CHANNEL_WRITE(i) |
->  			AD7923_SEQUENCE_WRITE(AD7923_SEQUENCE_OFF) |
->  			st->settings;
+--Sig_/JO_WOYw+GI5x404KKobtcXC
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcf+Q0ACgkQAVBC80lX
+0GyEbwf/cCtsRfLyKUwvlq+a0UxdGXYPDrS6Nw9MCLNC2yXapBY+ROKZgyyCUV9J
+GBedy3RdgfQZRyZJkB5wV27FljeQm6gwEKLTY0N/v/j9qfiEcg7FMRfVvgXZXNTj
+fNfue/d11lHYvkRJf6EaHPtliPczs27/Cqtq4h+Fa6KMtCtsSSzduqiSHNAykWFC
+RvJ+OXOLXrB3NitmLT9di5MuxBvU5LuraIYeLPuIuoVmnDEdy+k62n+L1gB/S07t
+7f/D7Tg1Sk5BA18NwlBXUHakP+wFTHoTMBYTCdHDFSvzVCaPb5dM62C1gEwlwj91
+jHXyZpiLc8Xie5V8r0t68REio+EiHQ==
+=kDun
+-----END PGP SIGNATURE-----
+
+--Sig_/JO_WOYw+GI5x404KKobtcXC--
 
