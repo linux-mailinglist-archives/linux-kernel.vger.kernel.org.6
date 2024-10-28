@@ -1,83 +1,84 @@
-Return-Path: <linux-kernel+bounces-384587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A8189B2BFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:52:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218949B2BE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:50:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A52A282B0F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441781C21FA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A787F1D86EC;
-	Mon, 28 Oct 2024 09:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2A01D079F;
+	Mon, 28 Oct 2024 09:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TeicfwQY"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f8jaX2Sf"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E081D363D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6299B1CC890
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109050; cv=none; b=MG0qVm1eB5V1sxokQCH/PzVJJm5iVtLE8iUsE4MO9w2XlMfMslNIdjx0nqiRIIuZzf6eA7TPFJZObOHR7VRXQsdAmkqLCvmhi2MaZz1zXJzv0Ihax3GAU4JTdgQE6eQDW4LNYpLuiRVVB6lO9mB37eV08B7khbsHnyEKo9ZEYWs=
+	t=1730109043; cv=none; b=UDYeXqzC0L9oevJwAn1b/eSCIXoXML1hib+YPtPjOiHqHe8MW2xh+EY0khGEXHHm6CzvkWyEZAmoXiaidZ3Tk2RZiI7rwDd5XCe9Di5iz+r4D+86A3+TXbITHvt6q6RXOW74gQCJhQe7qKQCuI/L4nbYL3kRKXDua2Lo9DqMU/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109050; c=relaxed/simple;
-	bh=Py2heN5Nk04cpotVnHLgSk0DgG7n+NggS5OMQbSe+2U=;
+	s=arc-20240116; t=1730109043; c=relaxed/simple;
+	bh=eg5NddVvSS9tONraIxzxM9y4kKPiQ3XdvqW+Ci40mrM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f3jbZOSYl4RY+QlUlfaPmRQRKwyUmxtZJN6gsUmsweWNuoJoop2Jmfws+K6qvycStKIURUEEgP2NoT9+HOee1QHGhDQZIeIizhusxG/RxPdXs4Iz9mRfRUofrsO+IkBpWtctsERefCSABl5aCvOmqojW5WRyB1m6PQvuXbUv0AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TeicfwQY; arc=none smtp.client-ip=217.70.183.197
+	 Content-Type:Content-Disposition:In-Reply-To; b=e0Yv5+ECUM3qi+NkUz+B6nDTy3zreIQTTybLyi6sBAH98KiHL3J6sEWf9L295LndzTi4PSAHxX9nPC9y4KnH8e6084vBgJjyftM3D4DjJpQKSTuKdBuCy80zaSy4P8R/YVWHMpuI60vLM6TjZNnPt67XyfmzpwVMjp0EnvOpytU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f8jaX2Sf; arc=none smtp.client-ip=217.70.183.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D27D1C0002;
-	Mon, 28 Oct 2024 09:50:37 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 79FAF60007;
+	Mon, 28 Oct 2024 09:50:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
 	t=1730109039;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=k4Uld/XzlZkt0kotB0XcPCVJ2OcddeGdLloVqOZpOZE=;
-	b=TeicfwQYnZa7PIaL0cr3mPF7MjZi+SJaL/p59FfhaznE2xwWSHrUTn5AHuk4Daz3gekvjr
-	G/1lgdrXwjGV0Cjstuc9qDPyqkHlTqiThTjaUf/fObt8ed//LTGLHpKmKT6ri7Eb4oaOxu
-	VQc1GU/jCe3FyyKl/Pu8liAmItVwSrTPdzvvtULyBlXjP8ebQBlqVcT2/TL/f6yC4tYc2f
-	gSSzcUGD9FdYyMUDI2RGDuIWC0sXlbz3o2kiJnd4EWaxX5aHPeyOt8Ndhs52aqNifN6DOw
-	b0tCZdLErZNjNq00AF1eZ58o1ZkZa8i577cVThB6OhgUvMMOGncCmcxiISnQ1A==
-Date: Mon, 28 Oct 2024 10:50:36 +0100
+	bh=fi6pq1NACgWnfMa0+CNbK0vFieEFrjbAN/bOLYefu4M=;
+	b=f8jaX2Sfp9dwpsG5JUXlrHJGU3snaYBsr8HmAW/8KtTBRFMWZ5QKXB38oc2pfmN9wIxOQs
+	YS0LAA4LKHNXP8vWIkxPhqCK4QsXDYlT494jKapS5EcxvsvHF2xWeBxPVleFBFR0cL8/UN
+	LssiVoCTMWWZHe0y8tn9S+/e5pZQRuVEVGt7AjdGMgyZSZSXLUTkB1hiGMk6BkowkNcLBZ
+	u1AOGKBEgbweXpoaHAeEP/5oIzPftZBinZjNU25XmBj2Rqn3s+qqUyHKkpmX+79MqLMu7t
+	+cVfPRB0Z38fJAX4V/MWsjUs/2VpTrlwVNXq3jgv3U3FiG01vv5s9bayJHZ6JQ==
+Date: Mon, 28 Oct 2024 10:50:37 +0100
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>
 Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
 	Melissa Wen <melissa.srw@gmail.com>,
 	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-Subject: Re: [PATCH v2 1/3] drm/vkms: Re-introduce line-by-line algorithm for
- writeback
-Message-ID: <Zx9ebNKW3YdIuA-D@fedora>
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+	20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
+Subject: Re: [PATCH RESEND v2 5/8] drm/vkms: Add support for RGB888 formats
+Message-ID: <Zx9ebXIlkCAKz52F@fedora>
 Mail-Followup-To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
 	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
 	Melissa Wen <melissa.srw@gmail.com>,
 	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, dri-devel@lists.freedesktop.org,
-	arthurgrillo@riseup.net, linux-kernel@vger.kernel.org,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	thomas.petazzoni@bootlin.com, seanpaul@google.com,
-	nicolejadeyee@google.com
-References: <20240814-writeback_line_by_line-v2-0-36541c717569@bootlin.com>
- <20240814-writeback_line_by_line-v2-1-36541c717569@bootlin.com>
- <107a8f2b-9bdc-435c-a6f0-c427a4b79579@riseup.net>
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
+	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
+	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
+	20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
+References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
+ <20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com>
+ <53d04022-7199-4880-9b41-1ee7abdad997@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,303 +88,78 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <107a8f2b-9bdc-435c-a6f0-c427a4b79579@riseup.net>
+In-Reply-To: <53d04022-7199-4880-9b41-1ee7abdad997@riseup.net>
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 26/10/24 - 12:05, Maíra Canal wrote:
+On 26/10/24 - 11:51, Maíra Canal wrote:
 > Hi Louis,
 > 
-> On 14/08/24 05:42, Louis Chauvet wrote:
-> > Re-introduce a line-by-line writeback algorithm for each pixel format.
-> > This allows more performance by not requiring an indirection per pixel
-> > write.
-> > 
-> > Line-by-line writeback was introduced by [1] but rewritten back to
-> > pixel-by-pixel algorithm in [2]. At this time, nobody noticed the impact
-> > on performance, and it was merged.
-> > 
-> > This patch is almost a revert of [2], but with some effort to avoid code
-> > duplication. Now only the loop is repeated, but it is required to have
-> > good performances.
-> > 
-> > The performance gain is around 5 to 10%.
-> > 
-> > [1]: https://lore.kernel.org/all/20211005201637.58563-7-igormtorrente@gmail.com/
-> > [2]: https://lore.kernel.org/all/20230515135204.115393-4-mcanal@igalia.com/
+> On 07/10/24 13:46, Louis Chauvet wrote:
+> > Add the support for:
+> > - RGB888
+> > - BGR888
 > > 
 > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > > ---
-> >   drivers/gpu/drm/vkms/vkms_composer.c  |  17 +++++
-> >   drivers/gpu/drm/vkms/vkms_drv.h       |  20 +++---
-> >   drivers/gpu/drm/vkms/vkms_formats.c   | 117 +++++++++++++++++++++++++++-------
-> >   drivers/gpu/drm/vkms/vkms_formats.h   |   2 +-
-> >   drivers/gpu/drm/vkms/vkms_writeback.c |   2 +-
-> >   5 files changed, 124 insertions(+), 34 deletions(-)
+> >   drivers/gpu/drm/vkms/vkms_formats.c | 7 +++++++
+> >   drivers/gpu/drm/vkms/vkms_plane.c   | 2 ++
+> >   2 files changed, 9 insertions(+)
 > > 
-> > diff --git a/drivers/gpu/drm/vkms/vkms_composer.c b/drivers/gpu/drm/vkms/vkms_composer.c
-> > index 76d4aa8a0ef6..f0cae142ac22 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_composer.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_composer.c
-> > @@ -176,6 +176,23 @@ static enum pixel_read_direction direction_for_rotation(unsigned int rotation)
-> >   	return READ_LEFT_TO_RIGHT;
-> >   }
-> > +/**
-> > + * Write a line to the writeback buffer > + *
-> > + * @wb: Job where to insert the final image
-> > + * @src_buffer: Line to write
-> > + * @y: Row to write in the writeback buffer
-> > + */
-> 
-> Please, review the documentation using the kernel-doc format.
-> 
-> > +static void vkms_writeback_row(struct vkms_writeback_job *wb,
-> > +			       const struct line_buffer *src_buffer, size_t y_start)
-> > +{
-> > +	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
-> > +	int x_start = frame_info->dst.x1;
-> > +	int count = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
-> > +
-> > +	wb->pixel_write(wb, src_buffer->pixels, count, x_start, y_start);
-> > +}
-> > +
-> >   /**
-> >    * clamp_line_coordinates() - Compute and clamp the coordinate to read and write during the blend
-> >    * process.
-> > diff --git a/drivers/gpu/drm/vkms/vkms_drv.h b/drivers/gpu/drm/vkms/vkms_drv.h
-> > index 3870e825da81..526bf5207524 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_drv.h
-> > +++ b/drivers/gpu/drm/vkms/vkms_drv.h
-> > @@ -52,20 +52,25 @@ struct line_buffer {
-> >   	struct pixel_argb_u16 *pixels;
-> >   };
-> > +struct vkms_writeback_job;
-> >   /**
-> > - * typedef pixel_write_t - These functions are used to read a pixel from a
-> > - * &struct pixel_argb_u16, convert it in a specific format and write it in the @dst_pixels
-> > - * buffer.
-> > + * typedef pixel_write_line_t - These functions are used to read a pixel line from a
-> > + * struct pixel_argb_u16 buffer, convert it and write it in the @wb job.
-> >    *
-> > - * @out_pixel: destination address to write the pixel
-> > - * @in_pixel: pixel to write
-> > + * @wb: the writeback job to write the output of the conversion
-> > + * @in_pixels: Source buffer containing the line to convert
-> > + * @count: The width of a line
-> > + * @x_start: The x (width) coordinate in the destination plane
-> > + * @y_start: The y (height) coordinate in the destination plane
-> >    */
-> > -typedef void (*pixel_write_t)(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel);
-> > +typedef void (*pixel_write_line_t)(struct vkms_writeback_job *wb,
-> > +			      struct pixel_argb_u16 *in_pixels, int count, int x_start,
-> > +			      int y_start);
-> >   struct vkms_writeback_job {
-> >   	struct iosys_map data[DRM_FORMAT_MAX_PLANES];
-> >   	struct vkms_frame_info wb_frame_info;
-> > -	pixel_write_t pixel_write;
-> > +	pixel_write_line_t pixel_write;
-> >   };
-> >   /**
-> > @@ -232,7 +237,6 @@ int vkms_verify_crc_source(struct drm_crtc *crtc, const char *source_name,
-> >   /* Composer Support */
-> >   void vkms_composer_worker(struct work_struct *work);
-> >   void vkms_set_composer(struct vkms_output *out, bool enabled);
-> > -void vkms_writeback_row(struct vkms_writeback_job *wb, const struct line_buffer *src_buffer, int y);
-> >   /* Writeback */
-> >   int vkms_enable_writeback_connector(struct vkms_device *vkmsdev);
 > > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> > index d1abfb1c3e3c..d1309f6d307f 100644
+> > index e34bea5da752..2376ea8661ac 100644
 > > --- a/drivers/gpu/drm/vkms/vkms_formats.c
 > > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> > @@ -587,7 +587,7 @@ static void planar_yuv_read_line(const struct vkms_plane_state *plane, int x_sta
-> >    * The following functions take one &struct pixel_argb_u16 and convert it to a specific format.
-> >    * The result is stored in @out_pixel.
-> >    *
-> > - * They are used in vkms_writeback_row() to convert and store a pixel from the src_buffer to
-> > + * They are used in the `write_line` functions to convert and store a pixel from the src_buffer to
-> >    * the writeback buffer.
-> >    */
-> >   static void argb_u16_to_ARGB8888(u8 *out_pixel, const struct pixel_argb_u16 *in_pixel)
-> > @@ -654,28 +654,97 @@ static void argb_u16_to_RGB565(u8 *out_pixel, const struct pixel_argb_u16 *in_pi
-> >   	*pixel = cpu_to_le16(r << 11 | g << 5 | b);
-> >   }
-> > -/**
-> > - * vkms_writeback_row() - Generic loop for all supported writeback format. It is executed just
-> > - * after the blending to write a line in the writeback buffer.
-> > +/*
-> > + * The following functions are write_line function for each pixel format supported by VKMS.
-> > + *
-> > + * They write a full line at index y. They must read data from the line src_pixels.
-> > + *
-> > + * The caller must ensure that count is not larger than the framebuffer and the src_pixels.
-> > + *
-> > + * Those function are very similar, but it is required for performance reason. In the past, some
-> > + * experiment were done, and with a generic loop the performance are very reduced [1].
-> >    *
-> > - * @wb: Job where to insert the final image
-> > - * @src_buffer: Line to write
-> > - * @y: Row to write in the writeback buffer
-> > + * [1]: https://lore.kernel.org/dri-devel/d258c8dc-78e9-4509-9037-a98f7f33b3a3@riseup.net/
+> > @@ -461,6 +461,9 @@ READ_LINE_ARGB8888(ABGR8888_read_line, px, px[3], px[0], px[1], px[2])
+> >   READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
+> >   READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
+> > +READ_LINE_ARGB8888(RGB888_read_line, px, 255, px[2], px[1], px[0])
+> > +READ_LINE_ARGB8888(BGR888_read_line, px, 255, px[0], px[1], px[2])
+> > +
+> >   READ_LINE_16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0])
+> >   READ_LINE_16161616(ABGR16161616_read_line, px, px[3], px[0], px[1], px[2])
+> >   READ_LINE_16161616(XRGB16161616_read_line, px, 0xFFFF, px[2], px[1], px[0])
+> > @@ -679,6 +682,10 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
+> >   		return &RGBX8888_read_line;
+> >   	case DRM_FORMAT_BGRX8888:
+> >   		return &BGRX8888_read_line;
+> > +	case DRM_FORMAT_RGB888:
+> > +		return RGB888_read_line;
 > 
-> I'm not sure if a link is approriate here.
+> Shouldn't it be &RGB888_read_line?
 
-It was to have some context about the comment. If someone wants to modify 
-this in the future (for example, factorise again the code :)), he will 
-have some informations.
- 
-> >    */
-> > -void vkms_writeback_row(struct vkms_writeback_job *wb,
-> > -			const struct line_buffer *src_buffer, int y)
-> > +
-> > +static void ARGB8888_write_line(struct vkms_writeback_job *wb,
-> > +				struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> > +				int y_start)
-> >   {
-> > -	struct vkms_frame_info *frame_info = &wb->wb_frame_info;
-> > -	int x_dst = frame_info->dst.x1;
-> >   	u8 *dst_pixels;
-> > -	int rem_x, rem_y;
-> > -	packed_pixels_addr(frame_info, x_dst, y, 0, &dst_pixels, &rem_x, &rem_y);
-> > -	struct pixel_argb_u16 *in_pixels = src_buffer->pixels;
-> > -	int x_limit = min_t(size_t, drm_rect_width(&frame_info->dst), src_buffer->n_pixels);
-> > +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> > -	for (size_t x = 0; x < x_limit; x++, dst_pixels += frame_info->fb->format->cpp[0])
-> > -		wb->pixel_write(dst_pixels, &in_pixels[x]);
-> > +	while (count) {
-> > +		argb_u16_to_ARGB8888(dst_pixels, src_pixels);
-> > +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> > +		src_pixels += 1;
-> > +		count--;
-> > +	}
-> > +}
-> > +
-> > +static void XRGB8888_write_line(struct vkms_writeback_job *wb,
-> > +				struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> > +				int y_start)
-> > +{
-> > +	u8 *dst_pixels;
-> > +
-> > +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> > +
-> > +	while (count) {
-> > +		argb_u16_to_XRGB8888(dst_pixels, src_pixels);
-> > +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> > +		src_pixels += 1;
-> > +		count--;
-> > +	}
-> > +}
-> > +
-> > +static void ARGB16161616_write_line(struct vkms_writeback_job *wb,
-> > +				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> > +				    int y_start)
-> > +{
-> > +	u8 *dst_pixels;
-> > +
-> > +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> > +
-> > +	while (count) {
-> > +		argb_u16_to_ARGB16161616(dst_pixels, src_pixels);
-> > +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> > +		src_pixels += 1;
-> > +		count--;
-> > +	}
-> > +}
-> > +
-> > +static void XRGB16161616_write_line(struct vkms_writeback_job *wb,
-> > +				    struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> > +				    int y_start)
-> > +{
-> > +	u8 *dst_pixels;
-> > +
-> > +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> > +
-> > +	while (count) {
-> > +		argb_u16_to_XRGB16161616(dst_pixels, src_pixels);
-> > +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> > +		src_pixels += 1;
-> > +		count--;
-> > +	}
-> > +}
-> > +
-> > +static void RGB565_write_line(struct vkms_writeback_job *wb,
-> > +			      struct pixel_argb_u16 *src_pixels, int count, int x_start,
-> > +			      int y_start)
-> > +{
-> > +	u8 *dst_pixels;
-> > +
-> > +	packed_pixels_addr_1x1(&wb->wb_frame_info, x_start, y_start, 0, &dst_pixels);
-> > +
-> > +	while (count) {
-> > +		argb_u16_to_RGB565(dst_pixels, src_pixels);
-> > +		dst_pixels += wb->wb_frame_info.fb->format->char_per_block[0];
-> > +		src_pixels += 1;
-> > +		count--;
-> > +	}
-> >   }
-> >   /**
-> > @@ -936,25 +1005,25 @@ void get_conversion_matrix_to_argb_u16(u32 format,
-> >   }
-> >   /**
-> > - * get_pixel_write_function() - Retrieve the correct write_pixel function for a specific format.
-> > + * get_pixel_write_function() - Retrieve the correct write_line function for a specific format.
-> 
-> Correct the docs.
+According to [1], &function, function, ***function are understood the 
+same by gcc.
 
-Nice catch!
+But this is ugly and I will change to use & everywhere, thanks!
+
+[1]:https://stackoverflow.com/questions/6893285/why-do-function-pointer-definitions-work-with-any-number-of-ampersands-or-as
 
 Thanks,
 Louis Chauvet
-
+ 
+> > +	case DRM_FORMAT_BGR888:
+> > +		return BGR888_read_line;
+> 
+> Same.
+> 
 > Best Regards,
 > - Maíra
 > 
-> >    * The returned pointer is NULL for unsupported pixel formats. The caller must ensure that the
-> >    * pointer is valid before using it in a vkms_writeback_job.
-> >    *
-> >    * @format: DRM_FORMAT_* value for which to obtain a conversion function (see [drm_fourcc.h])
-> >    */
-> > -pixel_write_t get_pixel_write_function(u32 format)
-> > +pixel_write_line_t get_pixel_write_line_function(u32 format) >   {
-> >   	switch (format) {
-> >   	case DRM_FORMAT_ARGB8888:
-> > -		return &argb_u16_to_ARGB8888;
-> > +		return &ARGB8888_write_line;
-> >   	case DRM_FORMAT_XRGB8888:
-> > -		return &argb_u16_to_XRGB8888;
-> > +		return &XRGB8888_write_line;
 > >   	case DRM_FORMAT_ARGB16161616:
-> > -		return &argb_u16_to_ARGB16161616;
-> > +		return &ARGB16161616_write_line;
-> >   	case DRM_FORMAT_XRGB16161616:
-> > -		return &argb_u16_to_XRGB16161616;
-> > +		return &XRGB16161616_write_line;
-> >   	case DRM_FORMAT_RGB565:
-> > -		return &argb_u16_to_RGB565;
-> > +		return &RGB565_write_line;
-> >   	default:
-> >   		/*
-> >   		 * This is a bug in vkms_writeback_atomic_check. All the supported
-> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
-> > index eeb208cdd6b1..852ab9a4cee5 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_formats.h
-> > +++ b/drivers/gpu/drm/vkms/vkms_formats.h
-> > @@ -7,7 +7,7 @@
-> >   pixel_read_line_t get_pixel_read_line_function(u32 format);
-> > -pixel_write_t get_pixel_write_function(u32 format);
-> > +pixel_write_line_t get_pixel_write_line_function(u32 format);
-> >   void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encoding,
-> >   				       enum drm_color_range range,
-> > diff --git a/drivers/gpu/drm/vkms/vkms_writeback.c b/drivers/gpu/drm/vkms/vkms_writeback.c
-> > index c8582df1f739..f6ed3aa69af8 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_writeback.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_writeback.c
-> > @@ -150,7 +150,7 @@ static void vkms_wb_atomic_commit(struct drm_connector *conn,
-> >   	crtc_state->wb_pending = true;
-> >   	spin_unlock_irq(&output->composer_lock);
-> >   	drm_writeback_queue_job(wb_conn, connector_state);
-> > -	active_wb->pixel_write = get_pixel_write_function(wb_format);
-> > +	active_wb->pixel_write = get_pixel_write_line_function(wb_format);
-> >   	drm_rect_init(&wb_frame_info->src, 0, 0, crtc_width, crtc_height);
-> >   	drm_rect_init(&wb_frame_info->dst, 0, 0, crtc_width, crtc_height);
-> >   }
+> >   		return &ARGB16161616_read_line;
+> >   	case DRM_FORMAT_ABGR16161616:
+> > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> > index a243a706459f..0fa589abc53a 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> > @@ -21,6 +21,8 @@ static const u32 vkms_formats[] = {
+> >   	DRM_FORMAT_XBGR8888,
+> >   	DRM_FORMAT_RGBX8888,
+> >   	DRM_FORMAT_BGRX8888,
+> > +	DRM_FORMAT_RGB888,
+> > +	DRM_FORMAT_BGR888,
+> >   	DRM_FORMAT_XRGB16161616,
+> >   	DRM_FORMAT_XBGR16161616,
+> >   	DRM_FORMAT_ARGB16161616,
 > > 
 
