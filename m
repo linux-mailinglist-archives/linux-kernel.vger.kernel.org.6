@@ -1,63 +1,45 @@
-Return-Path: <linux-kernel+bounces-385478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E918C9B37A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:29:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFDC49B3798
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12F581C21B7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:29:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B96D1F22B9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366751DF276;
-	Mon, 28 Oct 2024 17:28:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cT3xRtho"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B035A1DF269;
+	Mon, 28 Oct 2024 17:25:39 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90D0C1DD533;
-	Mon, 28 Oct 2024 17:28:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514071DD533;
+	Mon, 28 Oct 2024 17:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730136537; cv=none; b=gFTyMBl1vhfxyU97JyN/P3X+N3DQ5bALJHRODT4Nv3Is3+W18BodOYUXT+J9X/4n6ur5XW/lDY43AnjjSVVtxMg31V+xaex3qI8HyRemkUTsZIATmn2V0saZ93EzIEWwg9PzUcCWYeKz3NM24aElF361LEGurXHorVGn0q/Z1IY=
+	t=1730136339; cv=none; b=i9GlIku9lEVFsfEGT0EFwtvSNOdF1lem4K4RsxkKJ/ADPateWyb1aAhB1QXeiRLir5i79FL3UVNKrQ9FdHOwvpRlTNq01nLojUfsK+VE9ZHrQDkHkPhy/lqixVhHo3F5TX3R8OPXO0gMyGZXPMKp2XzP7unKJMu9qVT8h7vunrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730136537; c=relaxed/simple;
-	bh=GMw9tnIqWm+cDbQ2JkNYh5ueM+04Z5tH7xQN/ccSh5w=;
+	s=arc-20240116; t=1730136339; c=relaxed/simple;
+	bh=iaTWtMHLiTwucLoUe168uEVtDWBELL2YYHxagSN8uDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pU8Ib8iN00Ky1PQ8V7qsAraa7jyqpc0Hx193bPNHPM0S94UHay+k8iPQoh2xmkHYb04U/7ePgp5jWx6aA9YqZaJnOv08G39e+dfOExB0rn/M65hAT4EL9ZBTNK3Qh68xk/8YSfRp5mEd2gDaA4tK9znaZDpT9DZ0OT0fMwwVSn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cT3xRtho; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8E37C4CEC3;
-	Mon, 28 Oct 2024 17:28:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730136537;
-	bh=GMw9tnIqWm+cDbQ2JkNYh5ueM+04Z5tH7xQN/ccSh5w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cT3xRtho1COzvSIOKQ/DHwqhHI8WdIzYDPMeDHykv1W41JcyXeKtj8lrwTEmKOLHJ
-	 S8veFLIU1f9GOWpAGSGNubqH7/bda9doKyx0ezzIhz5ZKDEzB5NbDnnXuce3zw3fjL
-	 ZTtlM49KXRqpsegh0Y4QxZZGL8T0hvurAN0ThaKmKeoDzFwYHSISRBPEiO+6eYsqsB
-	 boLj8ue2yCIk4Bbplv9CgaaxEHyjZ98fZR0O/MBZsMkQvZH/OKmuPpwCc4/5dsEySZ
-	 ywdQrCi552PYCON4EWI2l9MsLovmXRUnPsnUrXs5i0RwOmCHq452fKcN6rCWS4Jpq4
-	 bxmP9GRDxhZBg==
-Date: Mon, 28 Oct 2024 19:24:54 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-mm@kvack.org, linux-cxl@kvack.org,
-	Jonathan.Cameron@huawei.com, dan.j.williams@intel.com,
-	rrichter@amd.com, Terry.Bowman@amd.com, dave.jiang@intel.com,
-	ira.weiny@intel.com, alison.schofield@intel.com,
-	dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
-	rafael@kernel.org, lenb@kernel.org, david@redhat.com,
-	osalvador@suse.de, gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org
-Subject: Re: [PATCH v3 3/3] acpi,srat: give memory block size advice based on
- CFMWS alignment
-Message-ID: <Zx_I5vPrXmZhQNj0@kernel.org>
-References: <20241022213450.15041-1-gourry@gourry.net>
- <20241022213450.15041-4-gourry@gourry.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/rc+orfN4uGVCjaFgsTCvoBNe1m5cdiEUD2VNvIQ5I92P8Enzc6O11KTo7zHsmOwXgtTlLqJKlWwE0hAEtXOl7vDwhFXyB/pEDtl1HPRoPUJLCCL/tFqLV1ggKmILxlOb4fnA+7qpR6+Jy45edHflhCjHeUVV/Qo6okl/rCigs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74405C4CEC3;
+	Mon, 28 Oct 2024 17:25:36 +0000 (UTC)
+Date: Mon, 28 Oct 2024 17:25:34 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Will Deacon <will@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>
+Subject: Re: linux-next: manual merge of the arm64 tree with the mm tree
+Message-ID: <Zx_JDg9e61KKan3H@arm.com>
+References: <20241028111058.4419a9ed@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,97 +48,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022213450.15041-4-gourry@gourry.net>
+In-Reply-To: <20241028111058.4419a9ed@canb.auug.org.au>
 
-On Tue, Oct 22, 2024 at 05:34:50PM -0400, Gregory Price wrote:
-> Capacity is stranded when CFMWS regions are not aligned to block size.
-> On x86, block size increases with capacity (2G blocks @ 64G capacity).
+On Mon, Oct 28, 2024 at 11:10:58AM +1100, Stephen Rothwell wrote:
+> Hi all,
 > 
-> Use CFMWS base/size to report memory block size alignment advice.
+> Today's linux-next merge of the arm64 tree got a conflict in:
 > 
-> After the alignment, the acpi code begins populating numa nodes with
-> memblocks, so probe the value just prior to lock it in.  All future
-> callers should be providing advice prior to this point.
+>   include/linux/mm.h
 > 
-> Suggested-by: Dan Williams <dan.j.williams@intel.com>
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> ---
->  drivers/acpi/numa/srat.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
+> between commit:
 > 
-> diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-> index 44f91f2c6c5d..35e6f7c17f60 100644
-> --- a/drivers/acpi/numa/srat.c
-> +++ b/drivers/acpi/numa/srat.c
-> @@ -14,6 +14,7 @@
->  #include <linux/errno.h>
->  #include <linux/acpi.h>
->  #include <linux/memblock.h>
-> +#include <linux/memory.h>
->  #include <linux/numa.h>
->  #include <linux/nodemask.h>
->  #include <linux/topology.h>
-> @@ -333,6 +334,29 @@ acpi_parse_memory_affinity(union acpi_subtable_headers *header,
->  	return 0;
->  }
->  
-> +/* Advise memblock on maximum block size to avoid stranded capacity. */
-> +static int __init acpi_align_cfmws(union acpi_subtable_headers *header,
-> +				   void *arg, const unsigned long table_end)
-> +{
-> +	struct acpi_cedt_cfmws *cfmws = (struct acpi_cedt_cfmws *)header;
-> +	u64 start = cfmws->base_hpa;
-> +	u64 size = cfmws->window_size;
-> +	unsigned long bz;
-
-Maybe unsigned long size?
-
-> +
-> +	for (bz = SZ_64T; bz >= SZ_256M; bz >>= 1) {
-> +		if (IS_ALIGNED(start, bz) && IS_ALIGNED(size, bz))
-> +			break;
-> +	}
-> +
-> +	if (bz >= SZ_256M) {
-> +		if (memory_block_advise_max_size(bz) < 0)
-> +			pr_warn("CFMWS: memblock size advise failed\n");
-> +	} else
-
-Nit: braces needed for else arm as well
-
-> +		pr_err("CFMWS: [BIOS BUG] base/size alignment violates spec\n");
-> +
-> +	return 0;
-> +}
-> +
->  static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
->  				   void *arg, const unsigned long table_end)
->  {
-> @@ -545,6 +569,15 @@ int __init acpi_numa_init(void)
->  	 * Initialize a fake_pxm as the first available PXM to emulate.
->  	 */
->  
-> +	/* Align memblock size to CFMW regions if possible */
-> +	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_align_cfmws, NULL);
-> +
-> +	/*
-> +	 * Nodes start populating with blocks after this, so probe the max
-> +	 * block size to prevent it from changing in the future.
-> +	 */
-> +	memory_block_probe_max_size();
-> +
-
-It won't change, but how drivers/base/memory.c will know about the probed
-size if architecture does not override memory_block_size_bytes()?
-
->  	/* fake_pxm is the next unused PXM value after SRAT parsing */
->  	for (i = 0, fake_pxm = -1; i < MAX_NUMNODES; i++) {
->  		if (node_to_pxm_map[i] > fake_pxm)
-> -- 
-> 2.43.0
+>   e87ec503cf2e ("mm/codetag: uninline and move pgalloc_tag_copy and pgalloc_tag_split")
 > 
+> from the mm-unstable branch of the mm tree and commit:
+> 
+>   91e102e79740 ("prctl: arch-agnostic prctl for shadow stack")
+> 
+> from the arm64 tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+
+This looks fine. Thanks.
 
 -- 
-Sincerely yours,
-Mike.
+Catalin
 
