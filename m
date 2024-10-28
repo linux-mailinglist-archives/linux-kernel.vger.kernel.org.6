@@ -1,171 +1,109 @@
-Return-Path: <linux-kernel+bounces-385607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E8369B3951
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:39:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5D29B38E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:17:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E37C281112
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:39:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED48C1F2211C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:17:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28121DFD8F;
-	Mon, 28 Oct 2024 18:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF8C01DF962;
+	Mon, 28 Oct 2024 18:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tu8XwCxf"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA041DE4DE;
-	Mon, 28 Oct 2024 18:39:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="K84pRsMA"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C8863B9;
+	Mon, 28 Oct 2024 18:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140753; cv=none; b=Hi6GRxCJPGqXG3g3O6i/wzFeOL8X8u3+aQtSldtAqbhMJ6+ErPJVYCXx06cXFnL36ivS6qbe7cZNavnLEmDdYIJkkZjuIbb8myIvdf/+FgEhU2qFdpBbiZUUKNFVP9FzK+FObJ4PoSaTt35yp0HaM5bFb6/Sr05v/vBNVmdX6lw=
+	t=1730139417; cv=none; b=EpYFltXhFFMpNkgpFWtli0mCSFc6gRWfquLec31bO1qurBdP1NfP5NpEWtMVxZIbCKRTQmMUlhgELsKu0bYD15jK7IVYtHgwmWaTpnR9t9K6b6zARpeAFKZFNVioioxIzzvvDAGZqCjoVe77fNY4KBMt/QaNJ2kpYtGaxmgriC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140753; c=relaxed/simple;
-	bh=AYtJEjGo8gcP80huS1IqoXQUq0zkyVAYCgidNOLpDm8=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=WKol566BQ/2h6DEQLmY3iNG4KeTMy5/ItaivOLi0H/lz10yaY5CCEFIqbOSaY5etYN1URme5czJvGupwhdd4XurSP+UI2nbnKKQOP/KXpmpp87tygOdc4BHZ3hvh9tTATs0CepUyDyuNQPeftJBcpDJayT7itwoz5v5iizIMtj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tu8XwCxf; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cb47387ceso41100015ad.1;
-        Mon, 28 Oct 2024 11:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730140750; x=1730745550; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=SZiPmgj2dPJ6tCBHtrpUtVtByhB4f+Nr2hhGHzMBNas=;
-        b=Tu8XwCxfHL0EPB/QK3zerXs48rE/wLhGuSaE2Ko/c/V+17m0xjRhjegpHhAQdudXYA
-         jraGmJdUaH+c5hcXxC17+OVYAJwatnH+Wwn+LgxcFnGeyKfXBjIb2dF5qQcHPWLn5rp7
-         UjCUJCACrMVtdfXr1bHTOgQ3NC6fWXWlfaBp13bOKpPPQqJ4kRwgz5yIwpKhzxjiu6GO
-         XN2eh95cNDp58QHmNI9tvNZ42AOLYFJgC7mghJz0CfPpJVTwEVUIxPPhEvtXtAXaOYJy
-         KGFDArBOLvL2ZipAoTPC+bnEWCUMwh2cUjN5TffKuAc1UwFHF87Rg5KfslSTaICy1wYx
-         6+ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730140750; x=1730745550;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZiPmgj2dPJ6tCBHtrpUtVtByhB4f+Nr2hhGHzMBNas=;
-        b=Z7HHslonJYXDqm0Qr8dttwouSJDoY4fGtl11vEuwYZf2BdAhCFl/o0W4uHXBD7wVbz
-         ED7gk8XwG0S2s/IKX9ulUv6XgQzmNTuedhImqKI3/ZscJC0raa8Q2YRtFhMwSHt2m/D1
-         QpqmfYM52a7ak2y1P17G4uhqqiRWth/0xcUenclXUlwV4/M2FNqRuXlophuuI+GhNdf1
-         fd6Q/qHoT278Cri5emenCr3gBHW6eG+qugyXZuLw71EbLYHrDvwOeLz9u2tXOiERRPnA
-         yPBLA2cDb/hQmtaDsmgb6Ucpkj9k0NojLI6NwHB5/PKt6eMPnO2+N/zBQ+N9BlvJPej3
-         wVMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYtmJGfDQQ4tFOYLLayR/zvH72EFimH20zqzaAuNxqtJo3kxUHHyeOp60NLMpwmEkUDbHZuHOHxDP8@vger.kernel.org, AJvYcCX36ZwTsccqgcXqXY49wL7z0XW/nxMDOvDll04YWtFpS/cBzpYjMK5rKxZ9z2sT9B8IQKDEA5VMP36cUz7X@vger.kernel.org, AJvYcCX9aoIZrQGoeWVxbjK5D1BclPLDvuYmYPVeGJCYwQTm1jJyLrlTquT29IJObLsGhZnkz0H0if4hYW2QMlU6@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywybj9gSkeXkyy4KhMjjTIVnuq3IqrfuOezDgj7K9TtVsawPp0p
-	vNJ9XOGmL0JpswFT0QR78PN5mghEaEkZ4FJgSWyBuS5vtT9EZw+QqH194w==
-X-Google-Smtp-Source: AGHT+IGsUjCFz3IRvH+sm1iBtHXYzpWXPl8/usgsJfUshZ6e3iWqYhjikKEhPIHCn1AfVf0B/C6ZOw==
-X-Received: by 2002:a17:902:f693:b0:20b:7be8:8ecf with SMTP id d9443c01a7336-210c6c7f095mr108266405ad.53.1730140749888;
-        Mon, 28 Oct 2024 11:39:09 -0700 (PDT)
-Received: from dw-tp ([171.76.83.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6dcfbsm53600815ad.103.2024.10.28.11.39.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 11:39:09 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Dave Chinner <david@fromorbit.com>
-Cc: linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, John Garry <john.g.garry@oracle.com>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 4/6] ext4: Warn if we ever fallback to buffered-io for DIO atomic writes
-In-Reply-To: <Zx8ga59h0JgU/YIC@dread.disaster.area>
-Date: Mon, 28 Oct 2024 23:44:00 +0530
-Message-ID: <87a5eom6xj.fsf@gmail.com>
-References: <cover.1729825985.git.ritesh.list@gmail.com> <7c4779f1f0c8ead30f660a2cfbdf4d7cc08e405a.1729825985.git.ritesh.list@gmail.com> <Zx6+F4Cl1owSDspD@dread.disaster.area> <87iktdm3sf.fsf@gmail.com> <Zx8ga59h0JgU/YIC@dread.disaster.area>
+	s=arc-20240116; t=1730139417; c=relaxed/simple;
+	bh=21Gr/zI9x8LsSQ5eNIX5ikEJIYFfIMNxCsblj6I7lqk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FqX2G32nHkN0lVO5Nna/Z70JZAhxJk9FI7PyN0xLzM1/BIYG4eIqkdrygV5SF/vhcS/G2ukOs57uirSDZskUiivuEkJ6BjJYDQxLlnXVcv6Hc7Qq5N9EByjijB3s7pLUX02KEgarsNGKXaHP07cXRl87jpkjMWFH2JXRAQzvFfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=K84pRsMA; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from skinsburskii. (unknown [20.236.10.120])
+	by linux.microsoft.com (Postfix) with ESMTPSA id C1496211F5ED;
+	Mon, 28 Oct 2024 11:16:54 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com C1496211F5ED
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1730139414;
+	bh=RZ7qeYFAVjUZDQN0watSSOiugMyzyFTjkpQSGiv31s8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K84pRsMAMFZhYu5Z/cYY2OMmrR66LHiLFH0yjcFbFr1C3syWMVja8bgjvBgMNtoHI
+	 DEPeyV1tkdb2xeRBFZ1oSji3TxhXkaVDoShSME5Oy/8yzNFraolImoWt/7sfMEAbhQ
+	 UaoO9XrMeY+/123mPuHcjG/dwUD+m5zKFKhdapY0=
+Date: Mon, 28 Oct 2024 11:16:52 -0700
+From: Stanislav Kinsburskii <skinsburskii@linux.microsoft.com>
+To: Rae Moar <rmoar@google.com>
+Cc: brendan.higgins@linux.dev, davidgow@google.com,
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kunit: Introduce autorun option
+Message-ID: <20241028181652.GA825@skinsburskii.>
+References: <172920085854.4578.9203147717033046574.stgit@skinsburskii-cloud-desktop.internal.cloudapp.net>
+ <CA+GJov4Kfo5EwjXRe8vufhMetsYzHG7bJS6VERaE8+1rNL69Vg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+GJov4Kfo5EwjXRe8vufhMetsYzHG7bJS6VERaE8+1rNL69Vg@mail.gmail.com>
 
+On Tue, Oct 22, 2024 at 05:16:31PM -0400, Rae Moar wrote:
+> > diff --git a/lib/kunit/executor.c b/lib/kunit/executor.c
+> > index 34b7b6833df3..340723571b0f 100644
+> > --- a/lib/kunit/executor.c
+> > +++ b/lib/kunit/executor.c
+> > @@ -29,6 +29,22 @@ const char *kunit_action(void)
+> >         return action_param;
+> >  }
+> >
+> > +/*
+> > + * Run KUnit tests after initialization
+> > + */
+> > +#ifdef CONFIG_KUNIT_AUTORUN_ENABLED
+> > +static bool autorun_param = true;
+> > +#else
+> > +static bool autorun_param;
+> > +#endif
+> > +module_param_named(autorun, autorun_param, bool, 0);
+> > +MODULE_PARM_DESC(autorun, "Run KUnit tests after initialization");
+> > +
+> > +bool kunit_autorun(void)
+> > +{
+> > +       return autorun_param;
+> > +}
+> > +
+> >  static char *filter_glob_param;
+> >  static char *filter_param;
+> >  static char *filter_action_param;
+> > @@ -266,7 +282,7 @@ void kunit_exec_run_tests(struct kunit_suite_set *suite_set, bool builtin)
+> >                 pr_info("1..%zu\n", num_suites);
+> 
+> When using this feature, I still see some KTAP output that are printed
+> from this function (kunit_exec_run_tests). I think it would be great
+> if we could remove this output as to not clutter the kernel log.
+> 
+> At first, I was confused as to why we needed to call this function and
+> initialize the tests but I realized the debugfs suites need to be
+> created.
+> 
+> So instead, could we check for kunit_autorun() here instead as a
+> condition before printing the output?
+> 
 
-Hi Dave, 
+Sure, I'll address it in the next revision.
 
-Dave Chinner <david@fromorbit.com> writes:
-
-> On Mon, Oct 28, 2024 at 06:39:36AM +0530, Ritesh Harjani wrote:
->> 
->> Hi Dave, 
->> 
->> Dave Chinner <david@fromorbit.com> writes:
->> 
->> > On Fri, Oct 25, 2024 at 09:15:53AM +0530, Ritesh Harjani (IBM) wrote:
->> >> iomap will not return -ENOTBLK in case of dio atomic writes. But let's
->> >> also add a WARN_ON_ONCE and return -EIO as a safety net.
->> >> 
->> >> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> >> ---
->> >>  fs/ext4/file.c | 10 +++++++++-
->> >>  1 file changed, 9 insertions(+), 1 deletion(-)
->> >> 
->> >> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
->> >> index f9516121a036..af6ebd0ac0d6 100644
->> >> --- a/fs/ext4/file.c
->> >> +++ b/fs/ext4/file.c
->> >> @@ -576,8 +576,16 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
->> >>  		iomap_ops = &ext4_iomap_overwrite_ops;
->> >>  	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
->> >>  			   dio_flags, NULL, 0);
->> >> -	if (ret == -ENOTBLK)
->> >> +	if (ret == -ENOTBLK) {
->> >>  		ret = 0;
->> >> +		/*
->> >> +		 * iomap will never return -ENOTBLK if write fails for atomic
->> >> +		 * write. But let's just add a safety net.
->> >> +		 */
->> >> +		if (WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC))
->> >> +			ret = -EIO;
->> >> +	}
->> >
->> > Why can't the iomap code return EIO in this case for IOCB_ATOMIC?
->> > That way we don't have to put this logic into every filesystem.
->> 
->> This was origially intended as a safety net hence the WARN_ON_ONCE.
->> Later Darrick pointed out that we still might have an unconverted
->> condition in iomap which can return ENOTBLK for DIO atomic writes (page
->> cache invalidation).
->
-> Yes. That's my point - iomap knows that it's an atomic write, it
-> knows that invalidation failed, and it knows that there is no such
-> thing as buffered atomic writes. So there is no possible fallback
-> here, and it should be returning EIO in the page cache invalidation
-> failure case and not ENOTBLK.
->
-
-So the iomap DIO can return following as return values which can make
-some filesystems fallback to buffered-io (if they implement fallback
-logic) - 
-(1) -ENOTBLK -> this is only returned for pagecache invalidation failure.
-(2) 0 or partial write size -> This can never happen for atomic writes
-(since we are only allowing for single fsblock as of now).
-
-Now looking at XFS, it never fallsback to buffered-io ever except just 2
-cases - 
-1. When pagecache invalidation fails in iomap (can never happen for
-atomic writes)
-2. On unaligned DIO writes to reflinked CoW (not possible for atomic writes)
-
-So it anyways should never happen that XFS ever fallback to buffered-io
-for DIO atomic writes. Even today it does not fallback to buffered-io
-for non-atomic short DIO writes.
-
->> You pointed it right that it should be fixed in iomap. However do you
->> think filesystems can still keep this as safety net (maybe no need of
->> WARN_ON_ONCE).
->
-> I don't see any point in adding "impossible to hit" checks into
-> filesystems just in case some core infrastructure has a bug
-> introduced....
-
-Yes, that is true for XFS. EXT4 however can return -ENOTBLK for short
-writes, though it should not happen for current atomic write case where
-we are only allowing for 1 fsblock. 
-
-However given there are several places in EXT4 which has got fallback logic,
-I would still like to go with a WARN_ON_ONCE where we are calling ext4
-buffered-io handling for DIO fallback writes. This is to catch any bugs
-even in future when we move to multi-fsblock case (until we have atomic
-write support for buffered-io).
-
-Thanks!
--ritesh
+Thanks,
+Stanislav
 
