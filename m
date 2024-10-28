@@ -1,222 +1,203 @@
-Return-Path: <linux-kernel+bounces-384791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3985B9B2E5E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:15:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B968A9B2E4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:13:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBED2280F69
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:15:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C6D0B23577
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD6FC1DE3DE;
-	Mon, 28 Oct 2024 11:04:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3462C1D95AA;
+	Mon, 28 Oct 2024 11:01:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="If6dcUvX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GdQsWPUh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tw695dtk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GdQsWPUh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Tw695dtk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4FD1DE3A5;
-	Mon, 28 Oct 2024 11:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B14D1D5178
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730113466; cv=none; b=a+P6UTGP8HA30brzclWO3MhWyG0cN7xJebeeSF8t7CMmSAu+nLel30/k7P+kcFLFidz0Z4rjfkt+cvzYomFuLoWNo6q4Y3AM6fUtEqgdM2wFk+bWblMETWg9XqDdV4o1RBDxp0I3xC19gg1QgDRnS/4ppcmv8B8LUVOX5mMjWFE=
+	t=1730113278; cv=none; b=Mv62Q8lMaAg/HNNe8CeGxRE1WTvnVRUGGAXTYV+uL3gmxpLf+CV7JKCM/HFJS+yMWukoZSC6Je3/ita5aOKCV8du8v27S/OqiPZJ19VMFxMVWKvdznr4InhKMNgTHmWcef1SXUj0unn1D7m0RRBYOoISXEP1pKC+mDrqqyas6nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730113466; c=relaxed/simple;
-	bh=DSYo+AMOz9V76UAeqSyE83YB2PapFnpd3VyO1UD2pp0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Trn4AQu9e7VRsE2GxBsGjRc6NZ0727b6DIfuLkwQ4gt2BjOkr2R5kq7AS5+BaXttwE5s23ahAwBF9jSj4NrDnCHb2wPFmKG68OxPK8NnH59hk+zVSuorMAh11X3Q8xkzEvzUFq0nABMyg6bHr6UjLPCT3TP3ApOIQfGrH88QRJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=If6dcUvX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0E7C4CEE8;
-	Mon, 28 Oct 2024 11:04:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730113466;
-	bh=DSYo+AMOz9V76UAeqSyE83YB2PapFnpd3VyO1UD2pp0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=If6dcUvXcpr9DbEotD3tkvORgL/EMBq6sDBfGuIkicUczKXxXiwLGrVENDJ9nqQtR
-	 o4GtNOA9MyCRuvxjZvhvSfpT7ZmAMeNQFvNYOoIs8jtJH4mgQ349iA+UaqFQFqA/I2
-	 TDG4RiPUsgW+6fs9wEctQ5b3DzBbiVXwkxvcW93YTtOceWb9La24vxVCuVvKUnfkqW
-	 9SeTF6VrP6ZoEe8uRGym+E1CD3dxQhw1sBXokvxz0WF82gXKpTkEOtFYc6wBlJpgZO
-	 P9X0PNK1Dl7b9njoF7bbaPtDEBpS80CBNAsPw1h05acL9tlBvDK80gmwxciDTldnJC
-	 gp+AwpY9L418A==
-Received: by pali.im (Postfix)
-	id 02ACADEC; Mon, 28 Oct 2024 12:04:19 +0100 (CET)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 5/5] cifs: Remove unicode parameter from parse_reparse_point() function
-Date: Mon, 28 Oct 2024 12:03:40 +0100
-Message-Id: <20241028110340.29911-6-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241028110340.29911-1-pali@kernel.org>
-References: <20241028110340.29911-1-pali@kernel.org>
+	s=arc-20240116; t=1730113278; c=relaxed/simple;
+	bh=4AvCjYyEYWBCxN6UTZy/b2uJDHjMdjZ3KenXLcf+q4I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CukSNGYOkdELhpLj/LB5Zo6bYzYmeaBDlu6hMQE671RQ6R4yqxTKa7LNf62e4AgyOz7PpJX1+k0Wql53OkfvrSkPYTt+uBRMYug5FbudBq23avFFmpjZApNt3QqI1MGM3NG3QpWxxkzYPFCx45/FWDuwM4Aaf1xZeJdJmIkYcsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GdQsWPUh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tw695dtk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GdQsWPUh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Tw695dtk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 05637219FB;
+	Mon, 28 Oct 2024 11:01:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730113274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fPErEHvWrwDTtY0/hCiF+bKl1VxPwxAdWFCd/773/fs=;
+	b=GdQsWPUhXwTNbduKQKsBCapXTFfekkye0woEwDyJJ6mudy7c/ujKVYPeaXrqHe9/Epz4ha
+	IvfJDOfdIkctlZaiZ69C+1w5YBJ3qCVKsbo5IWBB7kfK8TwEmRHihW6exqLM6TJT5PLlGJ
+	cJH3JrEoJCJdyTZWMCV/L6lj69kyEPA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730113274;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fPErEHvWrwDTtY0/hCiF+bKl1VxPwxAdWFCd/773/fs=;
+	b=Tw695dtkgNrxC3d+ujvpGV+T6UkZS4gXHMSZZ1bnwvyboFJOC9tK08HP4f51Q3iYmGhZnr
+	2IwcwIZYE1h99oDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=GdQsWPUh;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Tw695dtk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730113274; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fPErEHvWrwDTtY0/hCiF+bKl1VxPwxAdWFCd/773/fs=;
+	b=GdQsWPUhXwTNbduKQKsBCapXTFfekkye0woEwDyJJ6mudy7c/ujKVYPeaXrqHe9/Epz4ha
+	IvfJDOfdIkctlZaiZ69C+1w5YBJ3qCVKsbo5IWBB7kfK8TwEmRHihW6exqLM6TJT5PLlGJ
+	cJH3JrEoJCJdyTZWMCV/L6lj69kyEPA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730113274;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fPErEHvWrwDTtY0/hCiF+bKl1VxPwxAdWFCd/773/fs=;
+	b=Tw695dtkgNrxC3d+ujvpGV+T6UkZS4gXHMSZZ1bnwvyboFJOC9tK08HP4f51Q3iYmGhZnr
+	2IwcwIZYE1h99oDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B8B0D136DC;
+	Mon, 28 Oct 2024 11:01:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id BkIMLPluH2eqQgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 28 Oct 2024 11:01:13 +0000
+Message-ID: <fb1db044-e5da-4a77-b0ba-9a059a5f5ad9@suse.cz>
+Date: Mon, 28 Oct 2024 12:04:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-unstable v2] mm/page_alloc: keep track of free
+ highatomic
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+ Mel Gorman <mgorman@techsingularity.net>,
+ Matt Fleming <mfleming@cloudflare.com>, David Rientjes
+ <rientjes@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Link Lin <linkl@google.com>
+References: <20241026033625.2237102-1-yuzhao@google.com>
+ <37a28ef7-e477-40b0-a8e4-3d74b747e323@suse.cz>
+ <CAOUHufaS-dGAPGs1Y1=imW_nusaTDeysN3qfJc9-76DBVEHScQ@mail.gmail.com>
+ <8459b884-5877-41bd-a882-546e046b9dad@suse.cz>
+ <CAOUHufbHVXNZpW1mVhuF+4p8PbPq44w4chQX7Q6QYVDCjSqa1Q@mail.gmail.com>
+ <6ac7a38f-30df-4403-8723-a43829bcdba5@suse.cz>
+ <CAOUHufYyEjDG1+MEqRhuWPL037aSqrDhi_FT5gfyktbpQBmDVA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Content-Language: en-US
+In-Reply-To: <CAOUHufYyEjDG1+MEqRhuWPL037aSqrDhi_FT5gfyktbpQBmDVA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 05637219FB
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-This parameter is always true, so remove it and also remove dead code which
-is never called (for all false code paths).
+On 10/28/24 1:24 AM, Yu Zhao wrote:
+> On Sun, Oct 27, 2024 at 3:05 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> On 10/27/24 21:51, Yu Zhao wrote:
+>>> On Sun, Oct 27, 2024 at 2:36 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>>>
+>>>> On 10/27/24 21:17, Yu Zhao wrote:
+>>>>> On Sun, Oct 27, 2024 at 1:53 PM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>>>>>
+>>>>
+>>>> For example:
+>>>>
+>>>> - a page is on pcplist in MIGRATE_MOVABLE list
+>>>> - we reserve its pageblock as highatomic, which does nothing to the page on
+>>>> the pcplist
+>>>> - page above is flushed from pcplist to zone freelist, but it remembers it
+>>>> was MIGRATE_MOVABLE, merges with another buddy/buddies from the
+>>>> now-highatomic list, the resulting order-X page ends up on the movable
+>>>> freelist despite being in highatomic pageblock. The counter of free
+>>>> highatomic is now wrong wrt the freelist reality
+>>>
+>>> This is the part I don't follow: how is it wrong w.r.t. the freelist
+>>> reality? The new nr_free_highatomic should reflect how many pages are
+>>> exactly on free_list[MIGRATE_HIGHATOMIC], because it's updated
+>>> accordingly.
+>>
+>> You'd have to try implementing your change in the kernel without that
+>> migratetype hygiene series, and see how it would either not work, or you'd
+>> end up implementing the series as part of that.
+> 
+> A proper backport would need to track the MT of the free_list a page
+> is deleted from, and I see no reason why in such a proper backport
+> "the counter could drift easily" or "the counter of free highatomic is
+> now wrong wrt the freelist reality". So I assume you actually mean
+> this patch can't be backported cleanly? (Which I do agree.)
 
-Signed-off-by: Pali Rohár <pali@kernel.org>
----
- fs/smb/client/cifsproto.h |  2 +-
- fs/smb/client/reparse.c   | 25 +++++++++++--------------
- fs/smb/client/smb1ops.c   |  2 +-
- fs/smb/client/smb2file.c  |  1 -
- fs/smb/client/smb2proto.h |  2 +-
- 5 files changed, 14 insertions(+), 18 deletions(-)
+Yes you're right. But since we don't plan to backport it beyond 6.12,
+sorry for sidetracking the discussion unnecessarily. More importantly,
+is it possible to change the implementation as I suggested? [1] Hooking
+to __del_page_from_free_list() and __add_to_free_list() means extra work
+in every loop iteration in expand() and __free_one_page(). The
+migratetype hygiene should ensure it's not necessary to intercept every
+freelist add/move and hooking to account_freepages() should be
+sufficient and in line with the intended design.
 
-diff --git a/fs/smb/client/cifsproto.h b/fs/smb/client/cifsproto.h
-index a7906c193647..31445d40f179 100644
---- a/fs/smb/client/cifsproto.h
-+++ b/fs/smb/client/cifsproto.h
-@@ -667,7 +667,7 @@ char *extract_sharename(const char *unc);
- int parse_reparse_point(struct reparse_data_buffer *buf,
- 			u32 plen, struct cifs_sb_info *cifs_sb,
- 			const char *full_path,
--			bool unicode, struct cifs_open_info_data *data);
-+			struct cifs_open_info_data *data);
- int __cifs_sfu_make_node(unsigned int xid, struct inode *inode,
- 			 struct dentry *dentry, struct cifs_tcon *tcon,
- 			 const char *full_path, umode_t mode, dev_t dev,
-diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
-index 3de91331c96c..50720142813e 100644
---- a/fs/smb/client/reparse.c
-+++ b/fs/smb/client/reparse.c
-@@ -775,7 +775,7 @@ static int parse_reparse_posix(struct reparse_posix_data *buf,
- }
- 
- int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
--			      bool unicode, bool relative,
-+			      bool relative,
- 			      const char *full_path,
- 			      struct cifs_sb_info *cifs_sb)
- {
-@@ -789,26 +789,24 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- 	int rc;
- 	int i;
- 
--	/* Check that length it valid for unicode/non-unicode mode */
--	if (!len || (unicode && (len % 2))) {
-+	/* Check that length it valid */
-+	if (!len || (len % 2)) {
- 		cifs_dbg(VFS, "srv returned malformed symlink buffer\n");
- 		rc = -EIO;
- 		goto out;
- 	}
- 
- 	/*
--	 * Check that buffer does not contain UTF-16 null codepoint in unicode
--	 * mode or null byte in non-unicode mode because Linux cannot process
--	 * symlink with null byte.
-+	 * Check that buffer does not contain UTF-16 null codepoint
-+	 * because Linux cannot process symlink with null byte.
- 	 */
--	if ((unicode && UniStrnlen((wchar_t *)buf, len/2) != len/2) ||
--	    (!unicode && strnlen(buf, len) != len)) {
-+	if (UniStrnlen((wchar_t *)buf, len/2) != len/2) {
- 		cifs_dbg(VFS, "srv returned null byte in native symlink target location\n");
- 		rc = -EIO;
- 		goto out;
- 	}
- 
--	smb_target = cifs_strndup_from_utf16(buf, len, unicode, cifs_sb->local_nls);
-+	smb_target = cifs_strndup_from_utf16(buf, len, true, cifs_sb->local_nls);
- 	if (!smb_target) {
- 		rc = -ENOMEM;
- 		goto out;
-@@ -985,7 +983,7 @@ int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
- }
- 
- static int parse_reparse_native_symlink(struct reparse_symlink_data_buffer *sym,
--				 u32 plen, bool unicode,
-+				 u32 plen,
- 				 struct cifs_sb_info *cifs_sb,
- 				 const char *full_path,
- 				 struct cifs_open_info_data *data)
-@@ -1005,7 +1003,6 @@ static int parse_reparse_native_symlink(struct reparse_symlink_data_buffer *sym,
- 	return smb2_parse_native_symlink(&data->symlink_target,
- 					 sym->PathBuffer + offs,
- 					 len,
--					 unicode,
- 					 le32_to_cpu(sym->Flags) & SYMLINK_FLAG_RELATIVE,
- 					 full_path,
- 					 cifs_sb);
-@@ -1060,7 +1057,7 @@ static int parse_reparse_wsl_symlink(struct reparse_wsl_symlink_data_buffer *buf
- int parse_reparse_point(struct reparse_data_buffer *buf,
- 			u32 plen, struct cifs_sb_info *cifs_sb,
- 			const char *full_path,
--			bool unicode, struct cifs_open_info_data *data)
-+			struct cifs_open_info_data *data)
- {
- 	struct cifs_tcon *tcon = cifs_sb_master_tcon(cifs_sb);
- 
-@@ -1074,7 +1071,7 @@ int parse_reparse_point(struct reparse_data_buffer *buf,
- 	case IO_REPARSE_TAG_SYMLINK:
- 		return parse_reparse_native_symlink(
- 			(struct reparse_symlink_data_buffer *)buf,
--			plen, unicode, cifs_sb, full_path, data);
-+			plen, cifs_sb, full_path, data);
- 	case IO_REPARSE_TAG_LX_SYMLINK:
- 		return parse_reparse_wsl_symlink(
- 			(struct reparse_wsl_symlink_data_buffer *)buf,
-@@ -1108,7 +1105,7 @@ int smb2_parse_reparse_point(struct cifs_sb_info *cifs_sb,
- 
- 	buf = (struct reparse_data_buffer *)((u8 *)io +
- 					     le32_to_cpu(io->OutputOffset));
--	return parse_reparse_point(buf, plen, cifs_sb, full_path, true, data);
-+	return parse_reparse_point(buf, plen, cifs_sb, full_path, data);
- }
- 
- static void wsl_to_fattr(struct cifs_open_info_data *data,
-diff --git a/fs/smb/client/smb1ops.c b/fs/smb/client/smb1ops.c
-index f552951cfc04..3667fb94cbf5 100644
---- a/fs/smb/client/smb1ops.c
-+++ b/fs/smb/client/smb1ops.c
-@@ -1004,7 +1004,7 @@ static int cifs_parse_reparse_point(struct cifs_sb_info *cifs_sb,
- 
- 	buf = (struct reparse_data_buffer *)((__u8 *)&io->hdr.Protocol +
- 					     le32_to_cpu(io->DataOffset));
--	return parse_reparse_point(buf, plen, cifs_sb, full_path, true, data);
-+	return parse_reparse_point(buf, plen, cifs_sb, full_path, data);
- }
- 
- static bool
-diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
-index 91b8d00fb88e..b0037058e8d9 100644
---- a/fs/smb/client/smb2file.c
-+++ b/fs/smb/client/smb2file.c
-@@ -132,7 +132,6 @@ int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const struct kvec
- 	return smb2_parse_native_symlink(path,
- 					 (char *)sym->PathBuffer + sub_offs,
- 					 sub_len,
--					 true,
- 					 le32_to_cpu(sym->Flags) & SYMLINK_FLAG_RELATIVE,
- 					 full_path,
- 					 cifs_sb);
-diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-index 5390d5a61039..c62493c0afc7 100644
---- a/fs/smb/client/smb2proto.h
-+++ b/fs/smb/client/smb2proto.h
-@@ -115,7 +115,7 @@ extern int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
- 			  unsigned int *pbytes_read);
- int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb);
- int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
--			      bool unicode, bool relative,
-+			      bool relative,
- 			      const char *full_path,
- 			      struct cifs_sb_info *cifs_sb);
- int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb,
--- 
-2.20.1
+Thanks,
+Vlastimil
 
+[1]
+https://lore.kernel.org/all/37a28ef7-e477-40b0-a8e4-3d74b747e323@suse.cz/
 
