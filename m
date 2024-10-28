@@ -1,83 +1,76 @@
-Return-Path: <linux-kernel+bounces-385005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9579B314B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:06:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CA149B314E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:07:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1C721F21AFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:06:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E5D4282A43
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295021DACB4;
-	Mon, 28 Oct 2024 13:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08E81DACB4;
+	Mon, 28 Oct 2024 13:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="np3PLJB0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eeT5KRSU"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 297ED1D5CC5;
-	Mon, 28 Oct 2024 13:05:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988042AE8C;
+	Mon, 28 Oct 2024 13:07:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730120756; cv=none; b=PWZHkmVuvvMZPBKX1QEqE3a/4R/RSnYQf//aQqtvS/fwFLkms6815B7VV7EwDLSV4rMNV68xtdRDZiVU9ZnYov0QzUFk5ohdoaE+Uvy4tvxZjScC2VDh8zFY+v+oP06nEg79hiU+ElCI1y1smb3FfSCprIZWrwDK7rXdbgpmH20=
+	t=1730120843; cv=none; b=fVl/wZ6621vYZWucdzq1tngsrLJ1Qlkxf/pFoCkU0gB2HzrtPqtJMQ4zBYecNQCU6lVR/+1i5d7EZfYrx/pyUF9ETB1t3OD0YfW4S1hUTmPsUBCaWBOU3fRXWEMMwb3DN6a2kTNaBTyytmo8PIMlGY5XqxxQy96GHqPzOt6eo9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730120756; c=relaxed/simple;
-	bh=xVkha/3t0CkcBj2lIfJGChfeJqTY6+JJHEsmaAXn9uI=;
+	s=arc-20240116; t=1730120843; c=relaxed/simple;
+	bh=EAf+q/0bHB6df79KwR1+x1+/r4GFQp9Y3COiC0gEsXc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N93jZN7IXaqOsA3jItWmPfvt8qL4V92a3hB3uf2ijktW+C73mRHtu0xCVpLmCpjIs8iV8Hne4DtZFiA5BX8uAccpJdEvjjl7w9w414++UnYi/84APq9DtY0/+B0SIg7bRypE6ONEH6hjdz0jd+3Cjnh+xNO/lJXE/+WHqjcC1Jo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=np3PLJB0; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730120755; x=1761656755;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=xVkha/3t0CkcBj2lIfJGChfeJqTY6+JJHEsmaAXn9uI=;
-  b=np3PLJB0Q7K0qJWxmC5Q02Dw7sLiyLCUUpnP1hp1JGDrRnZ/lcQ+ABp1
-   gdSDhDu5Y+yo6pQFQV8wi/x7kmtklHdDiuJzbGiW74TrPLjQMR9qpp1Oi
-   3JFealuZ1ACuYuCwCikEhgNQfr5xJKF1wcaJLie2lQTbCdQgibsZuaiDh
-   qdFfxMCfI0J3Q0l4JCkxfSIDo2No1jtsS6YgrCkSOD2SjV5cXBmEzv8mY
-   +GZ3xLt2Q791mhkB3cCHX3lhEHjr+/YLFq0gcBlJekZT0ITXikvMH9Dya
-   0ASxHjZlWQtS9Sux1wd40NGuJh+gydYiX3eP0kfyVO9s3juCEPyTygdM9
-   w==;
-X-CSE-ConnectionGUID: VzSNiVy8SqKK24x9AwhTmg==
-X-CSE-MsgGUID: 4ljupiUzQaiHo6fJTmYjUA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29145771"
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="29145771"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 06:05:53 -0700
-X-CSE-ConnectionGUID: E9YSedCRSEa3dYJ9VhBk4A==
-X-CSE-MsgGUID: DTV+ALmAShSCLDWBO2c6VQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="81711772"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 06:05:51 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t5PRM-00000008427-2A8k;
-	Mon, 28 Oct 2024 15:05:48 +0200
-Date: Mon, 28 Oct 2024 15:05:48 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Tero Kristo <tero.kristo@linux.intel.com>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-kbuild@vger.kernel.org,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	David Gow <davidgow@google.com>
-Subject: Re: [PATCH v2 1/1] platform/x86: intel: Add 'intel' prefix to the
- modules automatically
-Message-ID: <Zx-MLAyyNWiQg-sq@smile.fi.intel.com>
-References: <20241016105950.785820-2-andriy.shevchenko@linux.intel.com>
- <Zx9uSIWOwTgclmBF@smile.fi.intel.com>
- <CAK7LNAS1xg2CLvTB-9dwGikAGNZRFOhknE_sbkxqyw=f6BNNog@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTzuhA+RxcpgPlH1LFDlvCOMsTxZuW7qrbNBL9lkcB6JPj3G4k/79wInj87N73SPi/Hby8F873jlvcVF0f5yvUhptUDp9noGd9wwMR5wrro5/wx0TK624/yriy1f7wdl1MXZjB7P3SLSqZTz7ULh0eJHw/eh13OLv2t8JXRz3fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eeT5KRSU; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0D5EE40E0219;
+	Mon, 28 Oct 2024 13:07:16 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id 3l4fyaIPtlg5; Mon, 28 Oct 2024 13:07:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730120831; bh=YckLSljqu9xEozoNAj4eikFtKDm8vIiY4UFulPKns2Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eeT5KRSUa6E5MVhXjs85bZZ09byRJVaBa7+bzh25kYTwoeD77FeQOc7axye+y5RD3
+	 o3d33Fq9r7RVxo37C1I8ihs4/qk750igPU39XiYelCUJNqQPBcVAJj5f3EizGF75P3
+	 okT47E9aaKmJu7rhLIw7EgeSX7MT79iWjgYpcHC7O/+3ycE/rRlXor3VR3/P67ZTxt
+	 4bwDJQwbKijdJLTJiLL9WHo8LFeVdRnLAchaGbianoZcGln1seuAzrXcJctmtYeRFp
+	 xdECguV251uG2JbuQCmc885MGJ+r2jv2E0KjbvgFaZZGjLGDY4J3Mfp+gbNmo6dJm1
+	 GOtEnPCyi99pPjVe6SXVFDuv6IH+68YY50hPyxoTUbiX01JogqEKGgZvW6vx042MMr
+	 ua23L4MzcjVqzwZdYAmg9XaVm4gPxd7D693CWmoW/AUdaPjo3o3af/hnOK8zz/XtIx
+	 4Uh8iaclZ/bf4qTghMF3w+K8pYGxZ9JN27g46TvnFsS/5Re8Tj+AS3KkOu+JoJ1kAF
+	 Oiju3+xKBnjYWId/7Ghpr+BCWKtkfvutqsP91jcTzS+uZ4VXH3sz+xfyfDxpUVVoD/
+	 4U002cGf5JIbRqdcNKIDclKwyMhkuRjQHRCtz9ndr1JL8TgoMlRT5X2lzlIx1c1Khp
+	 1KgOtoiKdVWcegt2s4EED1tQ=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9B26540E0184;
+	Mon, 28 Oct 2024 13:07:02 +0000 (UTC)
+Date: Mon, 28 Oct 2024 14:06:56 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+Cc: tony.luck@intel.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+	linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 03/10] x86/mce: Make several functions return bool and
+ rename a function
+Message-ID: <20241028130656.GTZx-McByoo3wsR3__@fat_crate.local>
+References: <20241016123036.21366-1-qiuxu.zhuo@intel.com>
+ <20241025024602.24318-1-qiuxu.zhuo@intel.com>
+ <20241025024602.24318-4-qiuxu.zhuo@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,44 +79,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAK7LNAS1xg2CLvTB-9dwGikAGNZRFOhknE_sbkxqyw=f6BNNog@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241025024602.24318-4-qiuxu.zhuo@intel.com>
 
-On Mon, Oct 28, 2024 at 01:49:52PM +0100, Masahiro Yamada wrote:
-> On Mon, Oct 28, 2024 at 11:58 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Wed, Oct 16, 2024 at 01:59:51PM +0300, Andy Shevchenko wrote:
-> > > Rework Makefile to add 'intel' prefix to the modules automatically.
-> > > This removes a lot of boilerplate code in it and also makes robust
-> > > against mistypos in the prefix.
-> >
-> > > ---
-> > >
-> > > v2: fixed obvious typos (LKP), Cc'ed to Kbuild ML (Ilpo), dropped RFC marker
-> > >
-> > > Note to Kbuild people: TBH I rather want to have something like this
-> > > to be available on the level of Kbuild for any of the subdirectories
-> > > in question.
-> >
-> > Anyone, any comments on this?
-> > This already passed a CI tests without failure so far. Perhaps it's good
-> > to apply to show the demand of such a feature in Kbuild in the future?
-> > Because I want to do the same for various */tests/ folders where we have
-> > tons of test*, *kunit modules effectively duplicating the folder name.
-> 
-> I do not like what you are doing here,
+On Fri, Oct 25, 2024 at 10:45:55AM +0800, Qiuxu Zhuo wrote:
+> @@ -1748,7 +1748,7 @@ static void mce_timer_delete_all(void)
+>   * Can be called from interrupt context, but not from machine check/NMI
+>   * context.
+>   */
+> -int mce_notify_irq(void)
+> +bool mce_notify_user(void)
 
-That's why the question is to Kbuild if it's possible to have this feature
-available treewide for users in a form that you like?
+So why are you not fixing the comment above it too then?
 
-> but it is up to you whatever you do in Makefiles you maintain.
+Have you audited all the code to make sure this function is not called from
+IRQ context anymore?
 
-Thanks! Ilpo, what do you think about applying this in its current form?
+Did you do git archeology to find out why it was called "_irq" at all in the
+first place and why is it ok to change the name and adjust the comment above
+it now?
+
+In any case, this change needs to be a separate patch along with all the
+explanations why is it ok to rename it.
+
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
