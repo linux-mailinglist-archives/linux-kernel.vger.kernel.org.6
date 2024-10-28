@@ -1,104 +1,111 @@
-Return-Path: <linux-kernel+bounces-385517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8E629B381B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:47:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8F39B3811
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:46:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 700CC1F22DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:47:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE72E1F216C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90AF1DFDB9;
-	Mon, 28 Oct 2024 17:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A3C1200C93;
+	Mon, 28 Oct 2024 17:40:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="brPWufeU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJZXsoaP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B6401DFDAA;
-	Mon, 28 Oct 2024 17:41:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48281DF963;
+	Mon, 28 Oct 2024 17:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730137280; cv=none; b=LZTQRJ41Kn34yGmCs7t5+Yp4MQ3QXPUgp04OjgL9CjRA4N38hoEzWwRlyL2BiiIh6aunth8MXFXFb12js60JavQ5btxsuub7EyAUUkaay63fmUavV1dxM5Zu5Cj5i550HS6rhtN33ZWBzFlAj1RD8NFLIUYdyXSk9t9dDzhlfMo=
+	t=1730137241; cv=none; b=YIr7S93eUvE8kfVMp9jltrqM5n4y6N1Fe1KuNXWZc7WRUGK0sYYzdno0k8a+O8/0W8YWuANlleZ9LEhdZAxZO7PfADTflfwmIRnL4ROPxn+jhyu9D9nCzhhCrGR46SvCvfc9ekrwf+WfOaIQ3nFXPXo7t0LYufYAQwJnB9kJmms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730137280; c=relaxed/simple;
-	bh=i5G90KkQo1fIqXBoB1CFEzaeiEeL+pJMdkG2HU1GL00=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b0Hsye3Noeflp+BAorHR3p7JtSkZ6nJUyE/jV/nkrGm/ogvnFvfjdFLfoKRLE5iFp7U7ySEVacGrx/KBPW4BY6eC0MmUQ68zksIqTTgcHgvGOYq0Ujne8icThBoXjYBeKY7/fhXPXrEuik6VK8XwChoXKvHNE+/7Z8G/ZccNX/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=brPWufeU; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730137279; x=1761673279;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=i5G90KkQo1fIqXBoB1CFEzaeiEeL+pJMdkG2HU1GL00=;
-  b=brPWufeU+KstfCdNaOB5ko4vrysCHYOrhmw/BhoeR85vyaG8dFkDYs2l
-   +7bGbVj6b2TnwfgaJtVWZ94b7nUQdBdFnZSSqD2/7d8uc8as67EeveEhC
-   3dzopRC0dgWGX/rXK6Zmpbqt/QNgczSTeFe+JBLfZ//ig33guNw+gcEFv
-   Omv/PFaTluBUkrzvefPlYyxFRqsM60aAoVAwyPf4GBaJIRhzKly9m1Cki
-   hx9/qfjMX1WCuOk6ALd3q8uM3n4h5vvywcawPvGu6n90kPDg0GGR9lEwf
-   byHFAQ8eWcAnWZ6jjB0BbEqQ6svTLyg6LwfcBnYjg/Yms2BiiS3R1bOuZ
-   w==;
-X-CSE-ConnectionGUID: +fcSXBVJTO6GvvJBgr6HmQ==
-X-CSE-MsgGUID: DtKrlSs4STu+eEwQOjCaIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33440579"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33440579"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 10:41:18 -0700
-X-CSE-ConnectionGUID: 7bLXcGqfTEK8dvoZSnBbXA==
-X-CSE-MsgGUID: AQdj4EpOTIC7AvZKB/2FCg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="105015063"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.203])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 10:41:16 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 3/3] PCI/sysfs: Remove unnecessary zero in initializer
-Date: Mon, 28 Oct 2024 19:40:46 +0200
-Message-Id: <20241028174046.1736-4-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241028174046.1736-1-ilpo.jarvinen@linux.intel.com>
-References: <20241028174046.1736-1-ilpo.jarvinen@linux.intel.com>
+	s=arc-20240116; t=1730137241; c=relaxed/simple;
+	bh=kpJcVW/EFeg82s9DqGxirpAkIKtxE8wORBMCHE/olj0=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=aXwl2Tw+FQ4VNB1HfsBorMzeU4jF1EX0nMLLQhNBywAxRZ/tfqIK2sZQmuncAGQBh4U0HbV4fDSknZfIsKr5XA82WEyiVfAJhGGRPETxDNn5hWHbU4Ie3Cq1f9VkE9I3QVOubW+yLf+2NCoUbLq4miNEDwzB0i7gzy321Y5+tvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJZXsoaP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE9EC4CEC3;
+	Mon, 28 Oct 2024 17:40:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730137240;
+	bh=kpJcVW/EFeg82s9DqGxirpAkIKtxE8wORBMCHE/olj0=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hJZXsoaPeYMrAKfrAo7igcd5lhPjfIoUGs60u4X8HC4X9L+J/607xFDJYyepG6BwX
+	 IKznh9OSBXxpcH7h3GUljg6YvtXgkGKRskKLy4fZr0eh8+yq0FRg5KsnDUamkl0Lrt
+	 6lCVaFO8lTgo4lqFXPbFX6UdnaBqOAfGT+iROGFo2ZECzf/cO96OHS6Sfh0zXK3LVi
+	 kntKPK8ip9FwVggIOGeVewtIA1AJO4+rfnyiOuH0xEEpLAuZyXypBfHUfCfHDCx7DC
+	 W7IXBuagIRb1/2bjSfQ4PfA37lsEnG2yQNwGsZ4q6Du8n2siYehbnrSAWLP8WRbhJx
+	 oBGChQAIeNvjQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAEAC380AC1C;
+	Mon, 28 Oct 2024 17:40:48 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH] f2fs: fix to do sanity check on node blkaddr in
+ truncate_node()
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <173013724745.126843.2488678512223387224.git-patchwork-notify@kernel.org>
+Date: Mon, 28 Oct 2024 17:40:47 +0000
+References: <20241016081337.598979-1-chao@kernel.org>
+In-Reply-To: <20241016081337.598979-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, syzbot+33379ce4ac76acf7d0c7@syzkaller.appspotmail.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-Providing empty initializer for an array is enough to set its elements
-to zero. Thus, remove the redundant 0 from the initializer.
+Hello:
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/pci-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index 74e4e0917898..19da2f8e98e4 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1433,7 +1433,7 @@ static ssize_t reset_method_store(struct device *dev,
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	char *tmp_options, *name;
- 	int m, n;
--	u8 reset_methods[PCI_NUM_RESET_METHODS] = { 0 };
-+	u8 reset_methods[PCI_NUM_RESET_METHODS] = {};
- 
- 	if (sysfs_streq(buf, "")) {
- 		pdev->reset_methods[0] = 0;
+On Wed, 16 Oct 2024 16:13:37 +0800 you wrote:
+> syzbot reports a f2fs bug as below:
+> 
+> ------------[ cut here ]------------
+> kernel BUG at fs/f2fs/segment.c:2534!
+> RIP: 0010:f2fs_invalidate_blocks+0x35f/0x370 fs/f2fs/segment.c:2534
+> Call Trace:
+>  truncate_node+0x1ae/0x8c0 fs/f2fs/node.c:909
+>  f2fs_remove_inode_page+0x5c2/0x870 fs/f2fs/node.c:1288
+>  f2fs_evict_inode+0x879/0x15c0 fs/f2fs/inode.c:856
+>  evict+0x4e8/0x9b0 fs/inode.c:723
+>  f2fs_handle_failed_inode+0x271/0x2e0 fs/f2fs/inode.c:986
+>  f2fs_create+0x357/0x530 fs/f2fs/namei.c:394
+>  lookup_open fs/namei.c:3595 [inline]
+>  open_last_lookups fs/namei.c:3694 [inline]
+>  path_openat+0x1c03/0x3590 fs/namei.c:3930
+>  do_filp_open+0x235/0x490 fs/namei.c:3960
+>  do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+>  do_sys_open fs/open.c:1430 [inline]
+>  __do_sys_openat fs/open.c:1446 [inline]
+>  __se_sys_openat fs/open.c:1441 [inline]
+>  __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0010:f2fs_invalidate_blocks+0x35f/0x370 fs/f2fs/segment.c:2534
+> 
+> [...]
+
+Here is the summary with links:
+  - [f2fs-dev] f2fs: fix to do sanity check on node blkaddr in truncate_node()
+    https://git.kernel.org/jaegeuk/f2fs/c/e767ae13e67d
+
+You are awesome, thank you!
 -- 
-2.39.5
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
