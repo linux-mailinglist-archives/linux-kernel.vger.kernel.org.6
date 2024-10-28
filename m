@@ -1,330 +1,161 @@
-Return-Path: <linux-kernel+bounces-385603-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9571B9B3945
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:37:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A04C9B3949
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DC5B219E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:37:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1130EB21D11
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8321DFDAD;
-	Mon, 28 Oct 2024 18:37:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CB01DF99B;
+	Mon, 28 Oct 2024 18:38:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5Y7agbr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aoZH+JwG"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A6D1DFD95;
-	Mon, 28 Oct 2024 18:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D7C1DFDB2
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140648; cv=none; b=tN/5DGCgkx8+yqSWtAaav3UgVzeX6MqgvmIsTe5arEUrnXt7vA/R4oyGwGS/IloyO/FQt07DhcR6w1OEWlp0RZGqhChRBVII4piL9/XM0RjIkzRAocGJQz6TN9fyccmUwMH/GLmPjBk33sgUBdhFkTCoXiS7DimBa6yTiiv0Gw8=
+	t=1730140683; cv=none; b=EBNretS/vSPvxVzzQY9lbjnz+jLpBIeLGerKJEEudgJxZEwfTMJmSJLPkv20TGuSFtc+JxpTSSFvQ1eiCdT4EMHIZ2uAR5QZ48tlpNtIGz+R+HhMG7Yi3s478uNT9QXXthredxfwcfzAxpL8MnJZcQeiRoHBZxi22buXzaN1DuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140648; c=relaxed/simple;
-	bh=8CbXDcVuo9k+di5CjlwiPaTTcw2cZ7PEvxl4QrnMpS8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ay6UPlLAUATRVeUmZcYWybc3IsFmYx4/NnUMTDH7sQ076/YQ2fqfekj6ZsW2v6ADKGFQOsaVd6ojWt718wBPSooEG2IgmusrIW/aRldib0IuHxI9K6VtQ7fh8fxyYtUIqE88TZCoLWB+OfsXZ0ClGDLVBuHgQeYIm+AxYJv2bj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5Y7agbr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA42C4CEC3;
-	Mon, 28 Oct 2024 18:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730140646;
-	bh=8CbXDcVuo9k+di5CjlwiPaTTcw2cZ7PEvxl4QrnMpS8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=M5Y7agbrpI0En6Vw4bZu/NShw2kpS2pLp1e3a2ziR3EMAdikd/t6Ua4eaj1nwE34J
-	 zlgSq1TOpo9QBecVcJI8hRlH55aeWZ4qwoDRyZV+uiUr0/n1A5A9DqOWTwI4nKdU+q
-	 RtE/r3jJa2yAxsoOH9kHmb75UvyYc5O8uQYx+GlQxMSlEsMazAZgmf/f1Rmd9DPi+c
-	 tonfrVu8tFHrIt1WVFkeL+tPrZybE8MxxGSI+UDNaMgLeyTg4fAhMBTamGiVxQGRYk
-	 65KBXSkPaeJnrOVREqgwkHqCWmGkN6c74ZGYBHaveX9WbETXLWc5j0nkyA88XzmLdm
-	 R4DhHO27wNhaQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5UcF-007g2P-M1;
-	Mon, 28 Oct 2024 18:37:23 +0000
-Date: Mon, 28 Oct 2024 18:37:23 +0000
-Message-ID: <87jzdst6os.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute if supported
-In-Reply-To: <yq5ar080cq5x.fsf@kernel.org>
-References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
-	<20241028094014.2596619-5-aneesh.kumar@kernel.org>
-	<87o734ts4m.wl-maz@kernel.org>
-	<yq5ar080cq5x.fsf@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1730140683; c=relaxed/simple;
+	bh=YI12pm3tkB3Vc8m/bTmlRrn6TtIngqpFTRtQCUc/kM8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ToQLXhiIz2c8i7jIh2Tr+SlTnoipbRs2NpV4UD8p9c/KoqPD6QeUwrAcsIC83B63yG9Y+HVvWikFte7dU6uV7NepcapWhaTUfnyE4b80vuwYdsvpnion4+BEJYfql21YAaDqQrjc4EtKWqnExYHCXU2y7B9x4Jmj0YVJabJuz9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aoZH+JwG; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso41581651fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:38:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730140679; x=1730745479; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6mCmmrBqrwBBNHAYFi5nvtCwYkQdKfmKUY6CuxD0pIc=;
+        b=aoZH+JwGF/sZbPCQhELo/t54GFPx6fwWfalBzRUywPyvjJnQEbVLLDdLDHs2f1P46/
+         DzGNSnZ7CbclSPZH/EQqXuDVk1oaL4aN6lfwh4bcsPR+DdCbqKBC3PUxab5zoV/0uUoL
+         D6iS9YTzIAjLaU1u8uSNAfViVi5UBkpsL0Y08gGEhwM04+qfrw20ODkvuC55/knJD1HI
+         ChapqMvvHW4cP1hgF1AqrL4l6hKBN9oMuiYoc3vGc8gQB9/j/SJZJUVvOjkOprSqBVS4
+         SEacq+l1Gl+W05HfWqixccmNdkiaDdO3BaM0exyJHBgAvij1Abg0sO9spa21hwG8WvPB
+         S42A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730140679; x=1730745479;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6mCmmrBqrwBBNHAYFi5nvtCwYkQdKfmKUY6CuxD0pIc=;
+        b=sUN56OVN/37UnwXODvi9MeZNCuUWB5tDMrqKxDt8lE1KThguqx3OD9uVLxc/xmgKV8
+         cr1cEpU+8fdqMqAkkKGb5/GX/P4qH4PDISgE97dF0HrIsTmF857mvaSE0fPFNjV5npzx
+         QdEA5f1KQva2kxxYk6OJgEhKxLNjvnpqGdDG80au//2kbr6JQWNXyOAJjIsZ3EBPmyuf
+         onsGQUsUR6+j0Y/b5ls2xmKg4DA++vS69IYM9cYXkKFWjWxkRVGBZuJOPbg3ivNfwE0c
+         bl2xc4pIxCvUz0DM7YjUlLg+T9p5lN+EUoJK/vdufWrnTSxDoehz0FaqLi3mimsYKjc+
+         Ppow==
+X-Forwarded-Encrypted: i=1; AJvYcCU3lZbonFV9bKLAPgL4DxlAu4yzibjcOrNvXrs8iI7D9oL7zMb4P9lxcQRMpEx9EqQvuRRSSX76YghA7bI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfQBUmNf+FG4riggAwaG3DiI5LNuszzHf/Sb6DUu4uZD72tSGi
+	xJQknmmQ7ABIXJHjtEHwVJe94MkZpJoyf9qftPCg5K91hj+vCKL6GZMEEnSkqFRFdNw+CqCYZYK
+	HxmRIsEiGbnnUcHp7l3OTTechu+7+1A==
+X-Google-Smtp-Source: AGHT+IGj9vDsgFF7Rl8j8yeOh9b8zyNZNy8GvabiZtXorwUqfIqcxNgE+yeFuonlz9qIHRk/d8tczdt7WFJYEdw6ywo=
+X-Received: by 2002:a2e:80a:0:b0:2fb:8df2:13eb with SMTP id
+ 38308e7fff4ca-2fcbe063702mr33376021fa.36.1730140678504; Mon, 28 Oct 2024
+ 11:37:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Suzuki.Poulose@arm.com, steven.price@arm.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <d9985d6a-293e-176b-e63d-82fdfd28c139@google.com>
+In-Reply-To: <d9985d6a-293e-176b-e63d-82fdfd28c139@google.com>
+From: Yang Shi <shy828301@gmail.com>
+Date: Mon, 28 Oct 2024 11:37:46 -0700
+Message-ID: <CAHbLzkq+0GPckUWXZ0-DLkOhVv7JyuKfdUbXWGVEn5fcBfGmHQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: delete the unused put_pages_list()
+To: Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Pasha Tatashin <pasha.tatashin@soleen.com>, 
+	Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024 13:28:42 +0000,
-Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
-> 
-> Marc Zyngier <maz@kernel.org> writes:
-> 
-> > On Mon, 28 Oct 2024 09:40:14 +0000,
-> > "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
-> >> 
-> >> Currently, the kernel won't start a guest if the MTE feature is enabled
-> >> and the guest RAM is backed by memory which doesn't support access tags.
-> >> Update this such that the kernel uses the NoTagAccess memory attribute
-> >> while mapping pages from VMAs for which MTE is not allowed. The fault
-> >> from accessing the access tags with such pages is forwarded to VMM so
-> >> that VMM can decide to kill the guest or remap the pages so that
-> >> access tag storage is allowed.
-> >
-> > I only have questions here:
-> >
-> > - what is the benefit of such approach? why shouldn't that be the
-> >   kernel's job to fix it?
-> >
-> 
-> IMHO leaving that policy decision to VMM makes the kernel changes
-> simpler. In most cases, VMM will kill the guest, because these
-> restrictions of MTE_ALLOWED are applied at the memslot/vma.
+On Sun, Oct 27, 2024 at 1:15=E2=80=AFPM Hugh Dickins <hughd@google.com> wro=
+te:
+>
+> The last user of put_pages_list() converted away from it in 6.10 commit
+> 06c375053cef ("iommu/vt-d: add wrapper functions for page allocations"):
+> delete put_pages_list().
+>
+> Signed-off-by: Hugh Dickins <hughd@google.com>
 
-Where is that captured? The whole idea behind FEAT_MTE_PERM was that
-it would be the hypervisor's task to lazily allocate MTE-capable
-memory as tagged-access would occur.
+Reviewed-by: Yang Shi <shy828301@gmail.com>
 
-> 
-> >
-> > - where is the documentation for this new userspace ABI?
-> >
-> 
-> I will add the details if we agree that this should be a separate EXIT
-> as outlined in this patch.
-
-Woooot??? This isn't a *DETAIL*. This is the very first thing you
-should write. Everything *else* is an implementation detail.
-
-> 
-> >
-> > - are you expecting the VMM to create a new memslot for this?
-> >
-> 
-> I guess there are examples of configs where some memory regions are
-> backed by page cache where we don't directly use those memory regions as
-> allocatable memory in the guest. This change allows us to enable MTE in such
-> configs.
-
-This doesn't answer my question. What is expected sequence a VMM
-should apply to provide tagged memory to the guest?
-
-> 
-> > - where is the example of a VMM using this?
-> >
-> 
-> I do have changes to kvmtool which won't do any fixup on receiving that
-> VM exit. I expect other VMM to do the same by default when they get a
-> VM exit with an unknown exit_reason. So unless VMM wants to do any
-> special handling, we don't need any change in the VMM.
-
-OK, so this has never been tested. I'm sorry, but for something of
-this magnitude, with expected userspace interactions, and requiring
-VMM handling, I want to see the full end-to-end thing.
-
-> 
-> 
-> diff --git a/arm/kvm-cpu.c b/arm/kvm-cpu.c
-> index 3b95750ecec7..4760bad07476 100644
-> --- a/arm/kvm-cpu.c
-> +++ b/arm/kvm-cpu.c
-> @@ -239,6 +239,17 @@ static bool handle_memoryfault(struct kvm_cpu *vcpu)
->  	return true;
+> ---
+>  include/linux/mm.h |  2 --
+>  mm/swap.c          | 31 -------------------------------
+>  2 files changed, 33 deletions(-)
+>
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index ecf63d2b0582..8524bf86dd74 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1286,8 +1286,6 @@ static inline struct folio *virt_to_folio(const voi=
+d *x)
+>
+>  void __folio_put(struct folio *folio);
+>
+> -void put_pages_list(struct list_head *pages);
+> -
+>  void split_page(struct page *page, unsigned int order);
+>  void folio_copy(struct folio *dst, struct folio *src);
+>  int folio_mc_copy(struct folio *dst, struct folio *src);
+> diff --git a/mm/swap.c b/mm/swap.c
+> index b8e3259ea2c4..638a3f001676 100644
+> --- a/mm/swap.c
+> +++ b/mm/swap.c
+> @@ -127,37 +127,6 @@ void __folio_put(struct folio *folio)
 >  }
->  
-> +static bool handle_notag_access(struct kvm_cpu *vcpu)
-> +{
-> +	u64 gpa = vcpu->kvm_run->memory_fault.gpa;
-> +	u64 size = vcpu->kvm_run->memory_fault.size;
-> +
-> +	/* For now VMM just panic */
-> +	pr_err("Tag Access to a wrong memory region 0x%lx size 0x%lx\n",
-> +	       (unsigned long)gpa, (unsigned long)size);
-> +	return false;
-> +}
-> +
->  bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
->  {
->  	switch (vcpu->kvm_run->exit_reason) {
-> @@ -246,6 +257,8 @@ bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
->  		return handle_hypercall(vcpu);
->  	case KVM_EXIT_MEMORY_FAULT:
->  		return handle_memoryfault(vcpu);
-> +	case KVM_EXIT_ARM_NOTAG_ACCESS:
-> +		return handle_notag_access(vcpu);
->  	}
->  
->  	return false;
-> diff --git a/include/linux/kvm.h b/include/linux/kvm.h
-> index 32cff22f0e4d..deef6614f577 100644
-> --- a/include/linux/kvm.h
-> +++ b/include/linux/kvm.h
-> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
->  #define KVM_EXIT_NOTIFY           37
->  #define KVM_EXIT_LOONGARCH_IOCSR  38
->  #define KVM_EXIT_MEMORY_FAULT     39
-> +#define KVM_EXIT_ARM_NOTAG_ACCESS 40
->  
->  /* For KVM_EXIT_INTERNAL_ERROR */
->  /* Emulate instruction failed. */
-> @@ -429,10 +430,17 @@ struct kvm_run {
->  		/* KVM_EXIT_MEMORY_FAULT */
->  		struct {
->  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
-> +#define KVM_MEMORY_EXIT_FLAG_NOTAGACCESS (1ULL << 4)
->  			__u64 flags;
->  			__u64 gpa;
->  			__u64 size;
->  		} memory_fault;
-> +  		/* KVM_EXIT_ARM_NOTAG_ACCESS */
-> +		struct {
-> +			__u64 flags;
-> +			__u64 gpa;
-> +			__u64 size;
-> +		} notag_access;
->  		/* Fix the size of the union. */
->  		char padding[256];
->  	};
-> 
-> >> 
-> >> NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
-> >> add a new EXIT type because this is arm64 specific exit type.
-> >> 
-> >> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> >> ---
-> >>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
-> >>  arch/arm64/include/asm/kvm_pgtable.h |  1 +
-> >>  arch/arm64/kvm/hyp/pgtable.c         | 16 +++++++++++++---
-> >>  arch/arm64/kvm/mmu.c                 | 28 ++++++++++++++++++++++------
-> >>  include/uapi/linux/kvm.h             |  7 +++++++
-> >>  5 files changed, 48 insertions(+), 9 deletions(-)
-> >> 
-> >> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> >> index a601a9305b10..fa0149a0606a 100644
-> >> --- a/arch/arm64/include/asm/kvm_emulate.h
-> >> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> >> @@ -373,6 +373,11 @@ static inline bool kvm_vcpu_trap_is_exec_fault(const struct kvm_vcpu *vcpu)
-> >>  	return kvm_vcpu_trap_is_iabt(vcpu) && !kvm_vcpu_abt_iss1tw(vcpu);
-> >>  }
-> >>  
-> >> +static inline bool kvm_vcpu_trap_is_tagaccess(const struct kvm_vcpu *vcpu)
-> >> +{
-> >> +	return !!(ESR_ELx_ISS2(kvm_vcpu_get_esr(vcpu)) & ESR_ELx_TagAccess);
-> >> +}
-> >> +
-> >>  static __always_inline u8 kvm_vcpu_trap_get_fault(const struct kvm_vcpu *vcpu)
-> >>  {
-> >>  	return kvm_vcpu_get_esr(vcpu) & ESR_ELx_FSC;
-> >> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-> >> index 03f4c3d7839c..5657ac1998ad 100644
-> >> --- a/arch/arm64/include/asm/kvm_pgtable.h
-> >> +++ b/arch/arm64/include/asm/kvm_pgtable.h
-> >> @@ -252,6 +252,7 @@ enum kvm_pgtable_prot {
-> >>  
-> >>  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
-> >>  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
-> >> +	KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS	= BIT(5),
-> >
-> > This seems wrong. NOTAGACCESS is a *permission*, not a memory type.
-> >
-> 
-> Are you suggesting the name is wrong? The memory attribute value I
-> wanted to use is
-> 
-> MemAttr[3:0] = 0b0100 which is Normal, NoTagAccess, writeback cacheable.
-> 
-> I am following the changes similar to KVM_PGTABLE_PROT_NORMAL_NC.
-
-But that's entirely different. This really isn't a memory type. Quite
-the opposite, actually. This is a stage-2 permission setting, which
-you are conflating with the actual memory type.
-
-Also, I don't see why that should be incompatible with something other
-than Normal memory.
-
-> 
-> >
-> >>  
-> >>  	KVM_PGTABLE_PROT_SW0			= BIT(55),
-> >>  	KVM_PGTABLE_PROT_SW1			= BIT(56),
-> >> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> >> index b11bcebac908..bc0d9f08c49a 100644
-> >> --- a/arch/arm64/kvm/hyp/pgtable.c
-> >> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> >> @@ -677,9 +677,11 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
-> >>  {
-> >>  	kvm_pte_t attr;
-> >>  	u32 sh = KVM_PTE_LEAF_ATTR_LO_S2_SH_IS;
-> >> +	unsigned long prot_mask = KVM_PGTABLE_PROT_DEVICE |
-> >> +				  KVM_PGTABLE_PROT_NORMAL_NC |
-> >> +				  KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
-> >>  
-> >> -	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
-> >> -			KVM_PGTABLE_PROT_NORMAL_NC)) {
-> >> +	switch (prot & prot_mask) {
-> >>  	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
-> >>  		return -EINVAL;
-> >>  	case KVM_PGTABLE_PROT_DEVICE:
-> >> @@ -692,6 +694,12 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
-> >>  			return -EINVAL;
-> >>  		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
-> >>  		break;
-> >> +	case KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS:
-> >> +		if (system_supports_notagaccess())
-> >> +			attr = KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS);
-> >> +		else
-> >> +			return -EINVAL;
-> >> +		break;
-> >
-> > How do you see this working when migrating a VM from one host to
-> > another, one that supports FEAT_MTE_PERM and one that doesn't? The
-> > current assumptions are that the VMM will replay the *exact same*
-> > setup on the target host, and this obviously doesn't work.
-> >
-> 
-> I missed looking at kvm migration. I guess I will have to expose this as
-> a capability and only allow migration if the target also supports the
-> same capability?
-
-I don't think so. This doesn't affect the guest at all, as the guest
-doesn't know anything about S2, unless you decide to expose
-FEAT_MTE_PERM to NV.
-
-It affects the VMM though, and that's because you are making a
-difference in handling between having FEAT_MTE_PERM or not. Given that
-this is invisible to userspace, that's not a great design.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+>  EXPORT_SYMBOL(__folio_put);
+>
+> -/**
+> - * put_pages_list() - release a list of pages
+> - * @pages: list of pages threaded on page->lru
+> - *
+> - * Release a list of pages which are strung together on page.lru.
+> - */
+> -void put_pages_list(struct list_head *pages)
+> -{
+> -       struct folio_batch fbatch;
+> -       struct folio *folio, *next;
+> -
+> -       folio_batch_init(&fbatch);
+> -       list_for_each_entry_safe(folio, next, pages, lru) {
+> -               if (!folio_put_testzero(folio))
+> -                       continue;
+> -               if (folio_test_hugetlb(folio)) {
+> -                       free_huge_folio(folio);
+> -                       continue;
+> -               }
+> -               /* LRU flag must be clear because it's passed using the l=
+ru */
+> -               if (folio_batch_add(&fbatch, folio) > 0)
+> -                       continue;
+> -               free_unref_folios(&fbatch);
+> -       }
+> -
+> -       if (fbatch.nr)
+> -               free_unref_folios(&fbatch);
+> -       INIT_LIST_HEAD(pages);
+> -}
+> -EXPORT_SYMBOL(put_pages_list);
+> -
+>  typedef void (*move_fn_t)(struct lruvec *lruvec, struct folio *folio);
+>
+>  static void lru_add(struct lruvec *lruvec, struct folio *folio)
+> --
+> 2.35.3
 
