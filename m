@@ -1,116 +1,173 @@
-Return-Path: <linux-kernel+bounces-384733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C58119B2DC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:01:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F36C79B2DB7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:59:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B75A1F215D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:01:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AFD1F21CFF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EDB41DFE2F;
-	Mon, 28 Oct 2024 10:52:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2931DF278;
+	Mon, 28 Oct 2024 10:52:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="scLm5Aji"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0qOw4mV"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEB51D9662;
-	Mon, 28 Oct 2024 10:52:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0C1DF26D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112750; cv=none; b=vGh9oEg2AQuz/3CaTZFojCj4A/JjgGX9PYKvENTzddIm1sv0tosQZI1j0Jl+u7FM/d+874U+dGhuekrG8iq8LDJ+YC+gKtn2SDGJKbQcEqlW/kFITCtxJmZ8o0Ld4CiG+cXnIuH+/IgChrvo16wY+8jugq7TmVGBaQBCoQIvsJY=
+	t=1730112728; cv=none; b=afi0FDEzGcfYuwckdLsbYjMYVIBzzQfgnlXoCuizuVbnwTzypUE770jV4vArWcKj7nmda3e1hLqAB4EiwwomnTTDa/iIuywGBgmH08eo0KJTx1zh//MJxYWaamWTcV4mFczdz8USWYHiPB7qrMDAosDGduMOpOwLMoNxTpAhfXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112750; c=relaxed/simple;
-	bh=arMwxinWHAgbPzKFM5f5eoyycVjW9OhBsBK9DIjViqI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=iLMi7bJDVirvxoQSv47Tv8o/zjwJG7VZOwFPmvSBI4Wp14O/pbIq5Ee7atpBN5RdNYqIauW3mh64va63ZBLCo0JTLP3MVdTfgRnfDpJZWymOUiXx2ixor5weVk0G9OuRTrInJLZEEERcK909nVQQGCoURLUyJjQ7WOZK7xRGKD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=scLm5Aji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0CDAC4CEE7;
-	Mon, 28 Oct 2024 10:52:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730112750;
-	bh=arMwxinWHAgbPzKFM5f5eoyycVjW9OhBsBK9DIjViqI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=scLm5AjixamLqZr+WlVPGYusQs/ii9Y9scD0TMklDYMf+FCPHmaV7JiZnNJP4cNzd
-	 s59+8ZJ4pEg3VrOTTGEBSHgghpj6TBuIVx+NKWgd3kYeUzueMYB744XfYNk3hbWGG0
-	 ueQs0GnC9vdIzfD+cvFYvGW0e6RGP4+YoVtDOC5UyyDKw798bcECP3E380TJ5dS6ot
-	 I6we+a8ibY3GfmyNIretDoBoMQmqwRNnZIDUtj5sNFKy6VBzG0/UdmqbfOehUZjVVY
-	 +0IftKMw6b1rRK5rykeP5/eTcXcL2/1muTJ1HK3/J/Jntrolh6l1hdkhxFXx2RloTy
-	 TWMS2SqZFwtRg==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Alessandro Zanni <alessandro.zanni87@gmail.com>,
-	syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com,
-	Jan Kara <jack@suse.cz>,
-	Christian Brauner <brauner@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	mark@fasheh.com,
-	jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	ocfs2-devel@lists.linux.dev
-Subject: [PATCH AUTOSEL 6.6 05/15] fs: Fix uninitialized value issue in from_kuid and from_kgid
-Date: Mon, 28 Oct 2024 06:52:01 -0400
-Message-ID: <20241028105218.3559888-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241028105218.3559888-1-sashal@kernel.org>
-References: <20241028105218.3559888-1-sashal@kernel.org>
+	s=arc-20240116; t=1730112728; c=relaxed/simple;
+	bh=CS4BmsjI1HWkQUrlqadLWnMo+QLiDGjMl5le7XlpIeU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UQCqYZXKsVFtUwd7VTihB+1E1iP6pjdtx/CJ09ATv82h+jaI1jfdDcFk6HoJcnLG1LWiVPO8ZfEHCBHJSqOysVhUqPQtmBodVrdfv8+NogT7fF4QlegJ13ln/JkJIHiNL/YwVYSQ1WI7jivIhOjagYQrSYe5z9hw+RU/kOurBcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y0qOw4mV; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f2b95775so4718675e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730112724; x=1730717524; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=75RMsbUWQqHekparXFuWHBkmwh5mRCxsXcIEwNzMOBY=;
+        b=Y0qOw4mVPtEmhT348OXQky1bC0CfLNXqVPGXKsSgwK+63r4HblMnHuftCW8rVgZ2kD
+         CbGWS9J0iIvGybhU9o38ReRpxEAgLs3SxYGZvPUBeb7ka9jb0Mj+SQayDWIO0k+MxkTk
+         YnwpDmtPESVSBP57f9yCDffWxAXbhW25he9kPPMniyEGxLq3Zkfl8SyWADvcKnAZxi0Z
+         AYPqet727QtGdUk8dT2mFaYcXIpvCPI/xOHzKBNCqfFJNijl2X5BtfxelGcD4Hjwdh3N
+         cPmX9UUnxi4/a6aJ4FDGNc2VOeuQ9UibLYc+DaiKpNtI10ldMFE//rZLBGjTthS/dLyX
+         QhJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730112724; x=1730717524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=75RMsbUWQqHekparXFuWHBkmwh5mRCxsXcIEwNzMOBY=;
+        b=iwJNidQquIEWp1iIFxCkD+I3TujSxjHM7suLDrmf+ib1AGBWXVtXsPQiQI6InEJw5c
+         nsTsSB5zMxxQK5tfiweYPcQMNvFFZzJ98rrGPPbXeDaii+kYoUggCTMMxcnnBOQsoC0z
+         HOQantY0d1/JZWjueOIZ9i3cZF2WzavSbvnEfI0k7SEt4cECbMB2epjB/6kgqRtpw64v
+         WNClSF8gzGDhbuFU5/bKsm3bVy9WRFz/uc2/Vn8t6ngEKesKFX1J/57a5BxiW9H1WUlV
+         oFonmSor77KSophfjunXJhCnJxlDlM47IerLFBL6gvrplxbX7pOS5BdlfL/WhOv5qGZC
+         g8aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuOn2djWp/reHaBS/MkODfiDnlyExg9zg+TVPd/buSCnS8jpoHNpgttuerlK/LANHcW2oRXUnqqkmQZ5I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiEmeqpM0F80Iz2QsyZV/Sx/u/h8Tb3RYq8g2BLzxskE4GiOOB
+	P3N/+bbIqKP3mjG0tlSZpY3FRqqbPOp4jzU1Y2hWuuXH+28kP8rNQLSd/k5af+Y=
+X-Google-Smtp-Source: AGHT+IF5XS7brW24GwzPn8C79xMYDDlFcF/p3I5r6p+BJD+JCe/k5iD0/fpLRAMX38xJREuHzHCMcA==
+X-Received: by 2002:a05:6512:4009:b0:539:94f5:bf with SMTP id 2adb3069b0e04-53b34c3f9b6mr5770526e87.59.1730112723695;
+        Mon, 28 Oct 2024 03:52:03 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e126dd1sm1049798e87.77.2024.10.28.03.52.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 03:52:03 -0700 (PDT)
+Date: Mon, 28 Oct 2024 12:52:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
+Message-ID: <vtj3yahojkozge4bvq66ax2c2idbw27c3hs7l6cy3e7ucz4jqb@qge2nckj3mr4>
+References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+ <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
+ <6fea85fc-ccdc-46ec-b612-3712e9431301@quicinc.com>
+ <CAA8EJpodjP3rY0Twe9sP37LWwk5ppP36dyLC9WKD6CTDOtmwzA@mail.gmail.com>
+ <b7f72f38-2758-405b-abc7-60b73448d8bb@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.6.58
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7f72f38-2758-405b-abc7-60b73448d8bb@oss.qualcomm.com>
 
-From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+On Mon, Oct 28, 2024 at 11:36:15AM +0100, Konrad Dybcio wrote:
+> On 28.10.2024 11:27 AM, Dmitry Baryshkov wrote:
+> > On Mon, 28 Oct 2024 at 12:08, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+> >>
+> >> On 10/28/2024 1:56 PM, Dmitry Baryshkov wrote:
+> >>> On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
+> >>>> Clang-19 and above sometimes end up with multiple copies of the large
+> >>>> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+> >>>> a6xx_hfi_send_bw_table() calls a number of device specific functions to
+> >>>> fill the structure, but these create another copy of the structure on
+> >>>> the stack which gets copied to the first.
+> >>>>
+> >>>> If the functions get inlined, that busts the warning limit:
+> >>>>
+> >>>> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+> >>>>
+> >>>> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
+> >>>> the stack. Also, use this opportunity to skip re-initializing this table
+> >>>> to optimize gpu wake up latency.
+> >>>>
+> >>>> Cc: Arnd Bergmann <arnd@kernel.org>
+> >>>>
+> >>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> >>>> ---
+> >>>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+> >>>>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
+> >>>>  2 files changed, 23 insertions(+), 12 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> >>>> index 94b6c5cab6f4..b4a79f88ccf4 100644
+> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> >>>> @@ -99,6 +99,7 @@ struct a6xx_gmu {
+> >>>>      struct completion pd_gate;
+> >>>>
+> >>>>      struct qmp *qmp;
+> >>>> +    struct a6xx_hfi_msg_bw_table *bw_table;
+> >>>>  };
+> >>>>
+> >>>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> >>>> index cdb3f6e74d3e..55e51c81be1f 100644
+> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> >>>> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+> >>>>
+> >>>>  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+> >>>>  {
+> >>>> -    struct a6xx_hfi_msg_bw_table msg = { 0 };
+> >>>> +    struct a6xx_hfi_msg_bw_table *msg;
+> >>>>      struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+> >>>>      struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+> >>>>
+> >>>> +    if (gmu->bw_table)
+> >>>> +            goto send;
+> >>>> +
+> >>>> +    msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
+> >>>
+> >>> Is it necessary after being sent? Isn't it better to just kzalloc() it
+> >>> and then kfree() it at the end of the function?
+> >>
+> >> Keeping it around will help to cut down unnecessary work during
+> >> subsequent gpu wake ups.
+> > 
+> > Then, I'd say, it is better to make it a part of the a6xx_gpu struct.
+> 
+> I think a6xx_gmu makes more logical sense here.
+> 
+> FWIW, the driver allocates both _gmu and _gpu for all GPUs regardless
 
-[ Upstream commit 15f34347481648a567db67fb473c23befb796af5 ]
+Hmm, are we expected to handle / perform BW requests in case of GMU-less
+devices?
 
-ocfs2_setattr() uses attr->ia_mode, attr->ia_uid and attr->ia_gid in
-a trace point even though ATTR_MODE, ATTR_UID and ATTR_GID aren't set.
-
-Initialize all fields of newattrs to avoid uninitialized variables, by
-checking if ATTR_MODE, ATTR_UID, ATTR_GID are initialized, otherwise 0.
-
-Reported-by: syzbot+6c55f725d1bdc8c52058@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=6c55f725d1bdc8c52058
-Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
-Link: https://lore.kernel.org/r/20241017120553.55331-1-alessandro.zanni87@gmail.com
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Christian Brauner <brauner@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/ocfs2/file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-index 8bbe4a2b48a2a..4ee2f109b9e59 100644
---- a/fs/ocfs2/file.c
-+++ b/fs/ocfs2/file.c
-@@ -1128,9 +1128,12 @@ int ocfs2_setattr(struct mnt_idmap *idmap, struct dentry *dentry,
- 	trace_ocfs2_setattr(inode, dentry,
- 			    (unsigned long long)OCFS2_I(inode)->ip_blkno,
- 			    dentry->d_name.len, dentry->d_name.name,
--			    attr->ia_valid, attr->ia_mode,
--			    from_kuid(&init_user_ns, attr->ia_uid),
--			    from_kgid(&init_user_ns, attr->ia_gid));
-+			    attr->ia_valid,
-+				attr->ia_valid & ATTR_MODE ? attr->ia_mode : 0,
-+				attr->ia_valid & ATTR_UID ?
-+					from_kuid(&init_user_ns, attr->ia_uid) : 0,
-+				attr->ia_valid & ATTR_GID ?
-+					from_kgid(&init_user_ns, attr->ia_gid) : 0);
- 
- 	/* ensuring we don't even attempt to truncate a symlink */
- 	if (S_ISLNK(inode->i_mode))
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
