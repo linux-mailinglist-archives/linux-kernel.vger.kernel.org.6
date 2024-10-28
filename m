@@ -1,51 +1,54 @@
-Return-Path: <linux-kernel+bounces-384680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777909B2D27
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:44:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15DD19B2D2A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:44:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E48E1F229E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:44:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 430A31C21A32
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:44:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64BD51D54D1;
-	Mon, 28 Oct 2024 10:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39331D8E1E;
+	Mon, 28 Oct 2024 10:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Nkv1DdEp";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GHdXiOkR"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uFVucZTZ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WwsBABA4"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC8D1D54C1
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0D71D88B1
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112224; cv=none; b=dy1pe70DvN0AOqW5XOrjSnQktCf7z5Ov9U5S5BBe1MTghyYom1rBP9kkcg8x0qn30Or4FkNG9+mV/p1z8w7dVfJFzfSiCEoEmUVh+f3onE0hz/VfhoI8uuaWZvwZcignk4KhaMIVl0mneJIrBCjnE4XKddlzEHEhfD2KcFjdl0o=
+	t=1730112226; cv=none; b=UKp+MJZVFFCEW3W2WQcrMqI1JDqU5EMJ2jmxMOEWqaEItlzL416k5XXMxpQFmT6JoV62/c7i84nW6K/7sl7f11mAE5gmQ6drswLb/O+N40fJEG90XBWjq1NxRiBqsvXJ1jreGz3AMx7lN5YESpBFCIotKUmTCdqi/TjkpAWWyro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112224; c=relaxed/simple;
-	bh=TVVoa6zValIpm2R83qLfqDTHFUKv0QrZFO8km4fmR/E=;
-	h=Message-ID:From:To:Cc:Subject:Date; b=UWcRyRyD67m80Nl4klkzdP8n0Ny2sMzNLcg/oQkULjxWWyeOVgn7n1ixKm7wxuwGhvgQB7UOmfG7QO7D+hXenj9rMqBcDxTCRMCmQOzNzgGkfftcse8l5cdXNkJy/nJ57L+xq73d45apiMazx0cXysIiD4WVIMdpifIQ1FwqyOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Nkv1DdEp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GHdXiOkR; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1730112226; c=relaxed/simple;
+	bh=ipQrO0L1c/KaKus/S+ob2UFnyolNm0aZT1lrfgIVT7Q=;
+	h=Message-ID:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Date; b=hNXFeVyzYAq6cItuWLM0uWPrR08oIvL2ozr0C8m7/TxtBni+szX5VVqMfY1I3JkLq1n/vFCI3WMppcoFbSXnbH2jAy7lz+RpZs23AYEiUU6DsKOSIeAcrJpfdvkp+iFWo51GHWfY481PYglc/VI+4V3KtDtgCZBCAIkj7zuPF2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uFVucZTZ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WwsBABA4; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Message-ID: <20241028103006.008053168@linutronix.de>
+Message-ID: <20241028103142.359584747@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730112221;
+	s=2020; t=1730112222;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=6sj0JEZY3BM0xvsQ1KegsWwPKQ86j0SrdNkdVLgM0/E=;
-	b=Nkv1DdEpp5p3vdHjQliX4o7c28GWmrAqHNayZZo5yhH25uheLFB2Ltr2iaK5Ta49W4IR4c
-	8xuyrUZkfsVMCKMBex0HLaYSGVMucbeA3qVIWU2YF+3E5hUm1XyTck4/P1lJixJ2YufN7b
-	w88oHOrFvo1wUqlPvcUfLsPSkpNY8QdUNvOxuGApCJBPpyycYLArT3+mJA15ix8XbU1ZLP
-	NUS3qgUtaSCJZZQcXmqTDbfL/09ETGczvM6YJnHmUmiTYFHcOvE+1i5MTEE6I8BYEnIzBx
-	Vf8mSbqNCCh3TGLVnmiTOpPDnl6P71rtNVzTlrgkaM6joyTmQ6HZ4xXk2rpIEA==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=IygJzwRz1dGBlMSu6nhuCmf8n7Jtd/1+VfsTEUY9q7Y=;
+	b=uFVucZTZR+4InRh4oIsyea3Tk+ZQCQtJRIejn13qgu8WIAjGxJ5tsgb9Pl+wkCFtnS/FJC
+	6wcJwicOImjb9K1ZKYvinzGfvdNRBg3F/NLLsHbhe1vTCu4Fw252X2QCF8pahNBJUD4ufI
+	VXdatPkVARH+mncL7ND9+SJ+VQl4DPXW9IiZfilFSlSq2wvlM/4nRJhJjGjHhd5f0DKFEj
+	YwPlLne7U65iVFGrFSDeVNur/ounaMXa4P7gtS/b67umrK0sqSuxleBr4K2bO9j72iw7Dg
+	mvzgTe9OHMbVCvjIcKns+06qrDudS3uMrEFJzNTvvzHSv3X+ISuzKVM0qpDgkQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730112221;
+	s=2020e; t=1730112222;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc; bh=6sj0JEZY3BM0xvsQ1KegsWwPKQ86j0SrdNkdVLgM0/E=;
-	b=GHdXiOkRo7+DeyO7KHAxW1mWiRk/Ge24oadELmdFkj2iq9BHre3NW0bIYDqbqvq9sb28OC
-	S4WTQLmDq7EfRTBg==
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 references:references; bh=IygJzwRz1dGBlMSu6nhuCmf8n7Jtd/1+VfsTEUY9q7Y=;
+	b=WwsBABA4vKDg8E7/elp1uQpqZ2Q18/D1Du8Ds6GhCYLbgUMK3WIYu+otF4yqtbU5i1zdHU
+	49b1mrgIMoNm7+BA==
 From: Thomas Gleixner <tglx@linutronix.de>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>,
@@ -60,31 +63,92 @@ Cc: Peter Zijlstra <peterz@infradead.org>,
  Tejun Heo <tj@kernel.org>,
  David Vernet <void@manifault.com>,
  Ingo Molnar <mingo@kernel.org.com>
-Subject: [patch 0/2] sched: Cleanup idle task double initialization
-Date: Mon, 28 Oct 2024 11:43:40 +0100 (CET)
+Subject: [patch 1/2] sched: Initialize idle tasks only once
+References: <20241028103006.008053168@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Oct 2024 11:43:42 +0100 (CET)
 
-Idle tasks are initialized via __sched_fork() twice, which can be trivially
-avoided as pointed out here:
+Idle tasks are initialized via __sched_fork() twice:
 
-    https://lore.kernel.org/all/8734p4ymqj.ffs@tglx
+     fork_idle()
+        copy_process()
+	  sched_fork()
+             __sched_fork()
+	init_idle()
+          __sched_fork()
+  
+Instead of cleaning this up, sched_ext hacked around it. Even when analyis
+and solution were provided in a discussion, nobody cared to clean this up.
 
-As this got ignored, the tasteless hack in init_scx_entity() to work around
-it stayed and found it's way into mainline.
+init_idle() is also invoked from sched_init() to initialize the boot CPU's
+idle task, which requires the __sched_fork() invocation. But this can be
+trivially solved by invoking __sched_fork() before init_idle() in
+sched_init() and removing the __sched_fork() invocation from init_idle().
 
-Mop it up after the fact to not further proliferate technical debt.
+Do so and clean up the comments explaining this historical leftover.
 
-Thanks,
-
-	tglx
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/8734p4ymqj.ffs@tglx
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Juri Lelli <juri.lelli@redhat.com>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Segall <bsegall@google.com>
+Cc: Mel Gorman <mgorman@suse.de>
+Cc: Valentin Schneider <vschneid@redhat.com>
 ---
- core.c |   13 ++++---------
- ext.c  |    7 +------
- 2 files changed, 5 insertions(+), 15 deletions(-)
+ kernel/sched/core.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4424,7 +4424,8 @@ int wake_up_state(struct task_struct *p,
+  * Perform scheduler related setup for a newly forked process p.
+  * p is forked by current.
+  *
+- * __sched_fork() is basic setup used by init_idle() too:
++ * __sched_fork() is basic setup which is also used by sched_init() to
++ * initialize the boot CPU's idle task.
+  */
+ static void __sched_fork(unsigned long clone_flags, struct task_struct *p)
+ {
+@@ -7680,8 +7681,6 @@ void __init init_idle(struct task_struct
+ 	struct rq *rq = cpu_rq(cpu);
+ 	unsigned long flags;
+ 
+-	__sched_fork(0, idle);
+-
+ 	raw_spin_lock_irqsave(&idle->pi_lock, flags);
+ 	raw_spin_rq_lock(rq);
+ 
+@@ -7696,10 +7695,8 @@ void __init init_idle(struct task_struct
+ 
+ #ifdef CONFIG_SMP
+ 	/*
+-	 * It's possible that init_idle() gets called multiple times on a task,
+-	 * in that case do_set_cpus_allowed() will not do the right thing.
+-	 *
+-	 * And since this is boot we can forgo the serialization.
++	 * No validation and serialization required at boot time and for
++	 * setting up the idle tasks of not yet online CPUs.
+ 	 */
+ 	set_cpus_allowed_common(idle, &ac);
+ #endif
+@@ -8543,6 +8540,7 @@ void __init sched_init(void)
+ 	 * but because we are the idle thread, we just pick up running again
+ 	 * when this runqueue becomes "idle".
+ 	 */
++	__sched_fork(0, current);
+ 	init_idle(current, smp_processor_id());
+ 
+ 	calc_load_update = jiffies + LOAD_FREQ;
 
 
