@@ -1,165 +1,104 @@
-Return-Path: <linux-kernel+bounces-384211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBF229B286C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:09:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8859B284C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:00:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ABF72823E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8898C1F21937
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D13418FDCC;
-	Mon, 28 Oct 2024 07:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C6718FC9F;
+	Mon, 28 Oct 2024 07:00:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="P7fbbknc"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ewz72AmO"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D80F18E05A;
-	Mon, 28 Oct 2024 07:09:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BBDC156960
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:00:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730099377; cv=none; b=eY3DSanorE6f//ohCFDOjXIWmjb3+D8IMrgr81XF8LRrKL/OqmB0rVfmuqnNk0Oi1NTfHaM3HUoAa0nFkwVK7CqSvXxzCN4zAMKy1E/QA06gUSkbyhjLDu+BpxUkbeaOP4Vs71M6HMFszFPqm4kj1F8WfLW10n8lzSGs24Q3OTM=
+	t=1730098844; cv=none; b=t/t/4y258ZyXtD52RNk9HvUwD1nlzO3imrhzi2o0XavBXZjAdaeaQ4rXUxJpPbm/no3+BgtEfkCusvUbH57udH5/kuUoKVKmoVyWqJcxZuxzH0HrnMek6uX7UoF2MneTvWt1maqJ0V4L1CiGDPfKWQ8/ClUgsVyVlhLiAMD0ipg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730099377; c=relaxed/simple;
-	bh=VWC1nHpOnQMfHS2IajS5B1U2ElXAuNB+4YFi0LN9JSI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=nwbvr8qL/KoHSzlFJce4NwwCvzSf7KdlpewItAeH8HCioSB/gro5JvSqMEopLBVoPUsKmLjoJ0672wogBZ+4KWh7PG+LDqLu1eGEVkBKNB0gqxITMx425Ma2UEBaGv5JmqagaZzfoHXQeYYQhZ+EJ8nzDff8ODwo9DiAkBbG/EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=P7fbbknc; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 1DE7D100003;
-	Mon, 28 Oct 2024 10:00:10 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1730098810; bh=RN2mSQ9y2BkKPqjSxY5ISepC6Gm0Q+p6EoQS4iqNWM0=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=P7fbbknceZNWh/5zRJW8GY5t4hhL3fpEPt7AMK7crnGQwEf++n1J+eRvsbIh6JMcp
-	 Wd2P0fD6B3oW5y6m+5DnmOsqZbSmd0dQAVKiCwsJUL/VL29IsFBhLbbfigdtAgo3x1
-	 1Z0rV98sA5qQAyBDfgFfAAUSWhhbYSNLKo4On3+TDW1jQHYFupoIESE2pntln7DdB6
-	 aLxN6+gZMln0Uf03LnLzjk6NWKUeGtGSfXcgengB1ADzPIXKDZic3iZf6Arb+BRBbB
-	 vhdM68F3Z5LY77dEz2ZwsXHt7bjP8Zfzj3mhruRCS43NAdQZGrVtpsOVZzXYPYkAwg
-	 G+Bjjwz7O9b3Q==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Mon, 28 Oct 2024 09:59:01 +0300 (MSK)
-Received: from Comp.ta.t-argos.ru (172.17.44.124) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 28 Oct
- 2024 09:58:41 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Igal Liberman <igal.liberman@freescale.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, Madalin Bucur
-	<madalin.bucur@nxp.com>, Sean Anderson <sean.anderson@seco.com>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
- Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH net v4] fsl/fman: Validate cell-index value obtained from Device Tree
-Date: Mon, 28 Oct 2024 09:58:24 +0300
-Message-ID: <20241028065824.15452-1-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1730098844; c=relaxed/simple;
+	bh=oXeJH9+dd3cazFRcmOcTf4KQwEKjtruutzeaxtbL0pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aXOnkdxzZu67BIBYzYo34DIXaJbwAQrxC14qRJbGuTAwBzvi448V/77csSYfwefshmWSUwULP4CpTKGgMFMkkNmsjZ1a3xKh+j4fCizTR0qmUVgL/r0HV6/bN+H8mTz9G/qoiScTz5FYGXbhZFPZ0SsEL26ZN46cq4tEeDS0xDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Ewz72AmO; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e59dadebso4580613e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 00:00:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730098841; x=1730703641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oXeJH9+dd3cazFRcmOcTf4KQwEKjtruutzeaxtbL0pk=;
+        b=Ewz72AmOE7o2HKbvwGZTGFqWiR6TFCecQrEUYj/JFkxR6twAB7ULmyBz9jkTyCgPfJ
+         f5PI6tkq1bOHkxGira8EwTeDOgf2ciuCm0j9K+8350AQM8EKmY9EFCNUxuRESbZmI7pM
+         7jb63oW55pTP6LbqM5M0mSoIr9PNPy4FzbLy8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730098841; x=1730703641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oXeJH9+dd3cazFRcmOcTf4KQwEKjtruutzeaxtbL0pk=;
+        b=Ky7K4reB+iguTnyyuh0+yv/L+JtuN/eTSD6pNXTu8j3VN9Dj2h42lQbB3NZoJMoKDK
+         jowR3iRBsmprb/+gMY8sTeOO8/5NUIjb5gyGJ+wfttXPzllyUWjeA6Ey6Y3XWukg0xlo
+         4CxhGILtuM78W8bby0GXPEDQuEp2+I6T9d0amieFASzVfBnRLzpDNQclsusJYqXZGAg2
+         3SUNssGRL7L+gyauAoHKctNToL36bZ6afhlXmudf4CSknaOIErSNMwhclVOvrIIkbHZp
+         Z4HXy5ZO4ZzNdYzJbNZbXKi3DDrimym0mfjBB/RPxniyZtAqdY4pHhUkae6FlQzoWOlZ
+         K4Yw==
+X-Forwarded-Encrypted: i=1; AJvYcCVx52G0f21VNMJuqz7shc3C0G/gU8jLDUzWEK1dPsn4AL6nZLgNzgoKXlhf8yLIhVSMy1C5n3rIlFw8/oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yynx3Wg1mj0NEG/RWSHEXx1WogGasMUtCWOMOYaDvrpiRpk26Mo
+	CKIF9EpR8moDXuJffu04Z/OZutjDoXxa6PJ/hTSE6fynECybKKopBX4zfOnqXBJJgKGlKbYTLUS
+	eOEZG6BIFkVai4x2ThPVYW1sSpWk7WGQgpKa5
+X-Google-Smtp-Source: AGHT+IG0bSkKwUt4vIe/DSFsd27a0aZcM775T78oioXCX/0ert+iimxun6TtbNvBDPU5UOHkKZf2rc0Rt4hi62j6fcI=
+X-Received: by 2002:a05:6512:3ba3:b0:539:eb44:7ec3 with SMTP id
+ 2adb3069b0e04-53b3490fabamr2408370e87.31.1730098840615; Mon, 28 Oct 2024
+ 00:00:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188748 [Oct 28 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 40 0.3.40 cefee68357d12c80cb9cf2bdcf92256b1d238d22, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;127.0.0.199:7.1.2;mx1.t-argos.ru.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/28 05:10:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/10/28 06:18:00 #26808967
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20241011-mtk_drm_drv_memleak-v1-0-2b40c74c8d75@gmail.com> <20241011-mtk_drm_drv_memleak-v1-1-2b40c74c8d75@gmail.com>
+In-Reply-To: <20241011-mtk_drm_drv_memleak-v1-1-2b40c74c8d75@gmail.com>
+From: Chen-Yu Tsai <wenst@chromium.org>
+Date: Mon, 28 Oct 2024 15:00:29 +0800
+Message-ID: <CAGXv+5Ge_qcXaSBQ9d8QZOWe3x_9-6r9LhDGvAbUHNKYMwevUA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/mediatek: Fix child node refcount handling in
+ early exit
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Alexandre Mergnat <amergnat@baylibre.com>, CK Hu <ck.hu@mediatek.com>, 
+	"Jason-JH.Lin" <jason-jh.lin@mediatek.com>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Cell-index value is obtained from Device Tree and then used to calculate
-the index for accessing arrays port_mfl[], mac_mfl[] and intr_mng[].
-In case of broken DT due to any error cell-index can contain any value
-and it is possible to go beyond the array boundaries which can lead
-at least to memory corruption.
+On Sat, Oct 12, 2024 at 3:22=E2=80=AFAM Javier Carrasco
+<javier.carrasco.cruz@gmail.com> wrote:
+>
+> Early exits (goto, break, return) from for_each_child_of_node() required
+> an explicit call to of_node_put(), which was not introduced with the
+> break if cnt =3D=3D MAX_CRTC.
+>
+> Add the missing of_node_put() before the break.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: d761b9450e31 ("drm/mediatek: Add cnt checking for coverity issue")
+>
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-Validate cell-index value obtained from Device Tree.
-
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
-
-Fixes: 414fd46e7762 ("fsl/fman: Add FMan support")
-Reviewed-by: Sean Anderson <sean.anderson@seco.com>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
----
-v4:
-  - Update patch after refcount leaks fix
-    (https://lore.kernel.org/all/20241015060122.25709-1-amishin@t-argos.ru/)
-	as suggested by Jakub
-	(https://lore.kernel.org/all/20240904072307.1b17227c@kernel.org/)
-v3: https://lore.kernel.org/all/20240904060920.9645-1-amishin@t-argos.ru/
-  - Add Reviewed-by: Sean Anderson <sean.anderson@seco.com>
-    (https://lore.kernel.org/all/e0b8c69a-3cc0-4034-b3f7-d8bdcc480c4d@seco.com/)
-v2: https://lore.kernel.org/all/20240702140124.19096-1-amishin@t-argos.ru/
-  - Move check to mac.c to avoid allmodconfig build errors and reference leaks
-v1: https://lore.kernel.org/all/20240702095034.12371-1-amishin@t-argos.ru/
-
- drivers/net/ethernet/freescale/fman/fman.c | 1 -
- drivers/net/ethernet/freescale/fman/fman.h | 3 +++
- drivers/net/ethernet/freescale/fman/mac.c  | 5 +++++
- 3 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/freescale/fman/fman.c b/drivers/net/ethernet/freescale/fman/fman.c
-index d96028f01770..fb416d60dcd7 100644
---- a/drivers/net/ethernet/freescale/fman/fman.c
-+++ b/drivers/net/ethernet/freescale/fman/fman.c
-@@ -24,7 +24,6 @@
- 
- /* General defines */
- #define FMAN_LIODN_TBL			64	/* size of LIODN table */
--#define MAX_NUM_OF_MACS			10
- #define FM_NUM_OF_FMAN_CTRL_EVENT_REGS	4
- #define BASE_RX_PORTID			0x08
- #define BASE_TX_PORTID			0x28
-diff --git a/drivers/net/ethernet/freescale/fman/fman.h b/drivers/net/ethernet/freescale/fman/fman.h
-index 2ea575a46675..74eb62eba0d7 100644
---- a/drivers/net/ethernet/freescale/fman/fman.h
-+++ b/drivers/net/ethernet/freescale/fman/fman.h
-@@ -74,6 +74,9 @@
- #define BM_MAX_NUM_OF_POOLS		64 /* Buffers pools */
- #define FMAN_PORT_MAX_EXT_POOLS_NUM	8  /* External BM pools per Rx port */
- 
-+/* General defines */
-+#define MAX_NUM_OF_MACS			10
-+
- struct fman; /* FMan data */
- 
- /* Enum for defining port types */
-diff --git a/drivers/net/ethernet/freescale/fman/mac.c b/drivers/net/ethernet/freescale/fman/mac.c
-index 11da139082e1..1916a2ac48b9 100644
---- a/drivers/net/ethernet/freescale/fman/mac.c
-+++ b/drivers/net/ethernet/freescale/fman/mac.c
-@@ -259,6 +259,11 @@ static int mac_probe(struct platform_device *_of_dev)
- 		err = -EINVAL;
- 		goto _return_dev_put;
- 	}
-+	if (val >= MAX_NUM_OF_MACS) {
-+		dev_err(dev, "cell-index value is too big for %pOF\n", mac_node);
-+		err = -EINVAL;
-+		goto _return_dev_put;
-+	}
- 	priv->cell_index = (u8)val;
- 
- 	/* Get the MAC address */
--- 
-2.30.2
-
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
 
