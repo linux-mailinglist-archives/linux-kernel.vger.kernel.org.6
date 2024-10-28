@@ -1,169 +1,223 @@
-Return-Path: <linux-kernel+bounces-385704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8941A9B3A8E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:36:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4373A9B3A93
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BDD0280FF9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:36:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E12222827E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15DA18FC74;
-	Mon, 28 Oct 2024 19:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 085AE18FC7E;
+	Mon, 28 Oct 2024 19:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gk9RscLT"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q4bNcoQh"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CF818B03
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577ED18B03
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730144185; cv=none; b=qF8WDYekoBszLNWqHTW+NpMLjuHWPaQN8MR3UaUn/phHbV/12lydRVua5cA623QnSB4ODJaTE4pmnCCKYcQ5vvGk4pI0CVl7/RFXQ2SwsNALohKb1WP1/EdciKz78KmqVpN4AHK/4LUGddC0QcSIXgUuLhcEOQs3sDZWLNG7glk=
+	t=1730144443; cv=none; b=WylxNeiJ7MPX803H954p92I35yS5oR89Rm4r0OLSYFCkTcYnHR+wPd31pcZM/5UmN6D9st7c/U40sIxMIL9pdaZR+ZlCJP9mn98jI348XwfCgtcpvDdf85OisQwCR5N7RQmvF24DdWvcsA3TU2YnpKNYq6zYAFfiSTXBCNLBKHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730144185; c=relaxed/simple;
-	bh=viqJIcjf2TXOv5DBWOT5NyB73K2UIrJGjSw23TdvG3g=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ezaDh5DERByTDPGtH0z4bSLBLmB69hKqvoYI8FD1MEnkkU+dMZV4OUNxFW+XCctNWzjChfzYn21Usd/2eXQIdjpDVIQeJO/dkFsIC1Q4h71GbJiBgFiEaeCbl/1PBPT/wqTpR2xEMcQI6rt9ctFEFxOYACXvjjLRhPP4YLQQpvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gk9RscLT; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3705b2883so94405367b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:36:23 -0700 (PDT)
+	s=arc-20240116; t=1730144443; c=relaxed/simple;
+	bh=qiXvLF3S+Unm89QsxQaNOyESbqGWkPfdMW2thCMLs0I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PScO9KsBKjQfziF/UeixYBnOuzocjqvjSGPMsiUasGFRf8FnnbRYDQOrJa0VaOrqcyQYR3SUHXDi2mDzC//jLM8X8JRxE76YethE8RcYh7Ao1m+BvxMan5Kszy0a4QHad9GqzfRUYHAuzbjzWBzAut0NVzfDao+MWbfPVvaoGSo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Q4bNcoQh; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso62593015e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:40:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730144182; x=1730748982; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=yF5sdmQv/v38/bFXfks7Mw1baK2Tg6j2c6FqlkJRLPU=;
-        b=Gk9RscLTx+k/RdNnyW0itxHlRtwo1zWw6WckpzUN4efH9vq2DbZbRG/aBUTibZEIHv
-         +X6g1a+tkyjMgtSDBlNzPo/xtzHb1hxaWxoHN3bss6XnPuHBQvIfpHDZfzE7++rQA41U
-         2xBCkiGIW3lOudtd8tUE9EOd48g0yseryvRIFMenw5TckXgLegvNkqzXHOjvMA+QpwdK
-         0mHABLuZXaNiL4zozKeuXTHC34gaDKzBPbsU9+8IdZFs6JMotOKXh+JsKWHzwds3n1wh
-         xeuUkY/ytifUgzd/9230Wn39Q1UvIQ8pd7+pIGUU68A8/+ywfH1zGyak9X5T07OeXVmS
-         pI1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730144182; x=1730748982;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=linaro.org; s=google; t=1730144439; x=1730749239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=yF5sdmQv/v38/bFXfks7Mw1baK2Tg6j2c6FqlkJRLPU=;
-        b=pxLOYzC07sNxCYK8/c4qWa8PovkSZ1iG3vD7TQgeUj9mBT/xAk88z0CwaHgHCMs4LX
-         eoRclS0KMEBqYd1c7BtvcjA507+eKt8HQKznJu8EdN0jZAiZRDBlOLZIyJPdzb5IfRwU
-         BGzP/ONoBr0FCfYeXhyYY12dQZnlIDvhhhSpJ57pevVN61aag6tj+sOLoVVL/CmgDRXe
-         z44wh86vUVV+gNu6oY6G0nm4sQWsFtrxU5obBXGFGMSTAlca0viv2TZ3G0PrAzIyL+yj
-         z4ifAd+ZpPxwzutpsK/eOw5TSbdaK5e3bnRt87x1GHU/GnGqa0DL6tO5ta5/tOBbSWaW
-         PiJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUDLxsJAfHdJ3ru1pqycczh89eV+f0OvMn170z3e9JPDII1FEzqcux5stiQsVdgr3lbJo8JXyvNYMMyI58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweKbZX9Vx4/8NB/V5jAr5JSwnL9I+DlpqimDuSbGZR5LA2Mf0k
-	F8HAa4TsMpgTyrbx6ebXym8QVBi1tMN9PystJsVa6FVJVlBZu/Ddx7JkhKIrRXTCNXr2bTBg+Nt
-	LMEREyg==
-X-Google-Smtp-Source: AGHT+IHb9ku3VWFkQuxz8YshxF9EpG++pYbx6Ld7Dpt2cU20aAZO00WQlfm55K+qpKPmZmKL2x/h856TNzt6
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:7532:f6ae:e607:9ac3])
- (user=irogers job=sendgmr) by 2002:a05:690c:490a:b0:6e2:1ab6:699a with SMTP
- id 00721157ae682-6e9d8acaf1bmr4842907b3.7.1730144182230; Mon, 28 Oct 2024
- 12:36:22 -0700 (PDT)
-Date: Mon, 28 Oct 2024 12:36:19 -0700
-Message-Id: <20241028193619.247727-1-irogers@google.com>
+        bh=S+kKUfoBX23Sor6KobG/qUnY9A1Z5gyX56cC+F+MFnk=;
+        b=Q4bNcoQheKpgI9O1XViMybWE3TGHwXG51rteqGMStTEHaNFp8vkq+B6rW1NVqZ61Cf
+         QQaBp6IibOmXunIMd2oiuf+aRqeHdC22JHOv227nH9EYtn1det96efNg5NkVJD2rFQY3
+         0SknM73hMxcTnlblCRH6VUTe1iYRmF2NNhdmfAJxbMxaXBHNJQbHfrYoD1L6ihpshscU
+         rMSphGhSwMrxYFxg69veNzBXKx9bPD3bYRJ8ju7ctl4C5/JYndYF4f+PHAU15SzUfpxM
+         KKnXF8LA11yPERMB/kfk/88icDeom4ZfpJp9WL+PAgfZvB8NTzsneGg8jrqrw7e9pxVz
+         FYoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730144439; x=1730749239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S+kKUfoBX23Sor6KobG/qUnY9A1Z5gyX56cC+F+MFnk=;
+        b=EoVbMnCglrqkwzHd4NPBSwkdBFAW8XY7ou/lUY08BvQUxCuSbv/8K7lsD6rc7PAqVl
+         1W0b3H/U01lEUF6MfxBiEmSuc6ImSIn1j8jYn8ksM3QTDaRKdkJR5AlkaVg7IiNWGDUW
+         3K4ol954J3urp66ql0qtRE0gJsYI6UUsQoJj3Vdn9Lee3nTdyToov/2+lA9X3OpFnzS0
+         yzNQgNV+KeAhZ4axoZJBicPPFU1oRMVs1Vwk38NvcvbXsI3FT+S2qDE3kx5z9wsEHOXu
+         NV/+KUxcOAZg/aqMb6n0CY9t/N8YQtSD7DpktXidYqJRKHiXHJ/UcZuopESs3+D0qujL
+         /UgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWg6pJuE+DU5wgzRdxlPzyL0PVt8UmgtQC+iY8DLxxaZSpK/wxizedxpstb+/yPO1qUjYvn8e2DEO5hbhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyA1e26H14aw5nx2K0juT3mIoKJOVTw0hu3h2ROvmQ2kraG2Pzv
+	qo5EFzh829s1QMTTeJcCBw58KPivpyc7iKlHxEvhZ0nVwXcBU7VynY8bE5Ps4og=
+X-Google-Smtp-Source: AGHT+IEU4tu9B1TDjT+VrZOb8r9GoSjG4dzAgGM46tX/RCMYrZ0ctNgYBnf/BeKoq66hA4H6UcNOWQ==
+X-Received: by 2002:a05:600c:19c8:b0:431:9a26:3cf6 with SMTP id 5b1f17b1804b1-4319ac6f6b7mr88553215e9.4.1730144438685;
+        Mon, 28 Oct 2024 12:40:38 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b5707e8sm149734565e9.36.2024.10.28.12.40.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 12:40:37 -0700 (PDT)
+Message-ID: <061c84bf-5e47-4ee8-9e78-40f0d4d02fd0@linaro.org>
+Date: Mon, 28 Oct 2024 20:40:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v2] perf build: Make libunwind opt-in rather than opt-out
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] clocksource: Add Ralink System Tick Counter driver
+To: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+Cc: linux-mips@vger.kernel.org, tglx@linutronix.de,
+ tsbogend@alpha.franken.de, john@phrozen.org, linux-kernel@vger.kernel.org,
+ yangshiji66@outlook.com
+References: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
+ <20240920075306.704665-2-sergio.paracuellos@gmail.com>
+ <b7ebc645-3b3b-41a0-80e4-1537f7d41205@linaro.org>
+ <CAMhs-H-vYFGbjJ163_ZA8ieamAHb3TWQdaDj4JLrHw0xuJv-vA@mail.gmail.com>
+ <e21c00b0-a8ce-48f3-9ec9-72540701a78b@linaro.org>
+ <CAMhs-H9-QdfiuajhmiAJN_BWi4Hc_9A_cq7Fc8XxZXiDJdaYTA@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAMhs-H9-QdfiuajhmiAJN_BWi4Hc_9A_cq7Fc8XxZXiDJdaYTA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Having multiple unwinding libraries makes the perf code harder to
-understand and we have unused/untested code paths.
+On 28/10/2024 20:02, Sergio Paracuellos wrote:
+> Hi Daniel,
+> 
+> Thanks a lot for the detailed explanation. It was really helpful.
+> 
+> On Mon, Oct 28, 2024 at 7:44 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 28/10/2024 19:04, Sergio Paracuellos wrote:
+>>> Hi Daniel,
+>>>
+>>> Thanks for reviewing this.
+>>>
+>>> On Mon, Oct 28, 2024 at 5:29 PM Daniel Lezcano
+>>> <daniel.lezcano@linaro.org> wrote:
+>>>>
+>>>> On 20/09/2024 09:53, Sergio Paracuellos wrote:
+>>>>> System Tick Counter is present on Ralink SoCs RT3352 and MT7620. This
+>>>>> driver has been in 'arch/mips/ralink' directory since the beggining of
+>>>>> Ralink architecture support. However, it can be moved into a more proper
+>>>>> place in 'drivers/clocksource'. Hence add it here adding also support for
+>>>>> compile test targets.
+>>>>>
+>>>>> Signed-off-by: Sergio Paracuellos <sergio.paracuellos@gmail.com>
+>>>>> ---
+>>>>>     drivers/clocksource/Kconfig        |  10 ++
+>>>>>     drivers/clocksource/Makefile       |   1 +
+>>>>>     drivers/clocksource/timer-ralink.c | 150 +++++++++++++++++++++++++++++
+>>>>>     3 files changed, 161 insertions(+)
+>>>>>     create mode 100644 drivers/clocksource/timer-ralink.c
+>>>>>
+>>>>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>>>>> index 95dd4660b5b6..50339f4d3201 100644
+>>>>> --- a/drivers/clocksource/Kconfig
+>>>>> +++ b/drivers/clocksource/Kconfig
+>>>>> @@ -753,4 +753,14 @@ config EP93XX_TIMER
+>>>>>           Enables support for the Cirrus Logic timer block
+>>>>>           EP93XX.
+>>>>>
+>>>>> +config CLKSRC_RALINK
+>>>>
+>>>> It is a timer
+>>>>
+>>>>           RALINK_TIMER
+>>>
+>>> Sure, I will change to RALINK_TIMER instead.
+>>>
+>>>>
+>>>>> +     bool "Ralink System Tick Counter"
+>>>>
+>>>> Silent option please if possible.
+>>>>
+>>>> Let the platform Kconfig selects the driver
+>>>>
+>>>>> +     depends on SOC_RT305X || SOC_MT7620 || COMPILE_TEST
+>>>>> +     default y if SOC_RT305X || SOC_MT7620
+>>>>
+>>>> You should have something similar the RISCV option, no default option
+>>>
+>>> Sorry, I am not the best with Kconfig so I am not sure what you are
+>>> exactly expecting here.MT7620
+>>> Does the following work for you?
+>>>
+>>> config RALINK_TIMER
+>>>      bool "Ralink System Tick Counter" if COMPILE_TEST
+>>>      depends on SOC_RT305X || SOC_MT7620
+>>>      select CLKSRC_MMIO
+>>>      select TIMER_OF
+>>>      help
+>>>        Enables support for system tick counter present on
+>>>        Ralink SoCs RT3352 and MT7620.
+>>
+>> Basically the idea is to have the platform's Kconfig selecting the
+>> RALINK_TIMER. If I'm not wrong the Kconfig in arch/riscv/ralink should
+>> select RALINK_TIMER under the "config SOC_RT305X" and "config
+>> SOC_MT7620". The block "config CLKEVT_RT3352" has to be removed.
+>>
+>> Then this (clocksource) Kconfig option is a silent option. The user
+>> won't have to figure out which option to enable because that will be
+>> done directly when selecting RT305X or MT7620.
+>>
+>> The only reason to not have it silent is if you really want to opt-out
+>> this timer because it is not present on a different version of RT305X or
+>> MT7620.
+> 
+> Ok, then I don't want to silence it since those ralink's platform
+> SOC_RT305X and SOC_MT7620 includes other SoCs models that do not have
+> this timer (rt3050, mt7628 for example). Only models
+> rt3352 and mt7620 include this. So I guess having this is the correct
+> thing to do:
+> 
+> config RALINK_TIMER
+>      bool "Ralink System Tick Counter" if COMPILE_TEST
+>      depends on SOC_RT305X || SOC_MT7620
+>      select CLKSRC_MMIO
+>      select TIMER_OF
+>      help
+>         Enables support for system tick counter present on
+>         Ralink SoCs RT3352 and MT7620.
+> 
+> Are you ok with this?
 
-Perf made BPF support an opt-out rather than opt-in feature. As libbpf
-has a libelf dependency, elfutils that provides libelf will also
-provide libdw. When libdw is present perf will use libdw unwinding
-rather than libunwind unwinding even if libunwind support is compiled
-in.
 
-Rather than have libunwind built into perf and never used, explicitly
-disable the support and make it opt-in.
+No because it is a compile test option only. You may want to do the same as:
 
-Signed-off-by: Ian Rogers <irogers@google.com>
-Closes: https://lore.kernel.org/linux-perf-users/CAP-5=fUXkp-d7gkzX4eF+nbjb2978dZsiHZ9abGHN=BN1qAcbg@mail.gmail.com/
----
-v2: update build tests.
----
- tools/perf/Makefile.config | 4 ++++
- tools/perf/Makefile.perf   | 2 +-
- tools/perf/tests/make      | 6 +++---
- 3 files changed, 8 insertions(+), 4 deletions(-)
+https://lore.kernel.org/all/20241001-arm64-vexpress-sp804-v3-1-0a2d3f7883e4@kernel.org/
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index b93ed2b7623f..707d7355ff18 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -91,6 +91,10 @@ ifneq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc s390 csky riscv loon
-   NO_LIBDW_DWARF_UNWIND := 1
- endif
- 
-+ifneq ($(LIBUNWIND),1)
-+  NO_LIBUNWIND := 1
-+endif
-+
- ifeq ($(LIBUNWIND_LIBS),)
-   NO_LIBUNWIND := 1
- endif
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index b4dee7c20ed1..d74241a15131 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -52,7 +52,7 @@ include ../scripts/utilities.mak
- #
- # Define NO_LIBELF if you do not want libelf dependency (e.g. cross-builds)
- #
--# Define NO_LIBUNWIND if you do not want libunwind dependency for dwarf
-+# Define LIBUNWIND if you do not want libunwind dependency for dwarf
- # backtrace post unwind.
- #
- # Define NO_BACKTRACE if you do not want stack backtrace debug feature
-diff --git a/tools/perf/tests/make b/tools/perf/tests/make
-index a5040772043f..a7fcbd589752 100644
---- a/tools/perf/tests/make
-+++ b/tools/perf/tests/make
-@@ -81,7 +81,7 @@ make_no_gtk2        := NO_GTK2=1
- make_no_ui          := NO_SLANG=1 NO_GTK2=1
- make_no_demangle    := NO_DEMANGLE=1
- make_no_libelf      := NO_LIBELF=1
--make_no_libunwind   := NO_LIBUNWIND=1
-+make_libunwind      := LIBUNWIND=1
- make_no_libdw_dwarf_unwind := NO_LIBDW_DWARF_UNWIND=1
- make_no_backtrace   := NO_BACKTRACE=1
- make_no_libcapstone := NO_CAPSTONE=1
-@@ -121,7 +121,7 @@ make_static         := LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX3
- 
- # all the NO_* variable combined
- make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_GTK2=1
--make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1
-+make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_BACKTRACE=1
- make_minimal        += NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1
- make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
- make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
-@@ -153,7 +153,7 @@ run += make_no_gtk2
- run += make_no_ui
- run += make_no_demangle
- run += make_no_libelf
--run += make_no_libunwind
-+run += make_libunwind
- run += make_no_libdw_dwarf_unwind
- run += make_no_backtrace
- run += make_no_libcapstone
+It should be:
+
+config RALINK_TIMER
+	bool "Ralink System Tick Counter"
+	depends on SOC_RT305X || SOC_MT7620 || COMPILE_TEST
+	select CLKSRC_MMIO
+	select TIMER_OF
+	help
+	  Enables support for system tick counter present on
+	  Ralink SoCs RT3352 and MT7620.
+
+so very similar to the initial patch except no default is needed as it 
+should be set from SOC_RT305X or SOC_MT7620
+
+
 -- 
-2.47.0.163.g1226f6d8fa-goog
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
