@@ -1,108 +1,79 @@
-Return-Path: <linux-kernel+bounces-385016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16AD9B316C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:14:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79129B3169
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:13:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 120EB281AF6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:14:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130801C214FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:13:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEEE1DBB24;
-	Mon, 28 Oct 2024 13:14:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B01E1DB548;
+	Mon, 28 Oct 2024 13:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYZdU+03"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CcoFZ3Sb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C5321E48A;
-	Mon, 28 Oct 2024 13:14:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A7A1E48A;
+	Mon, 28 Oct 2024 13:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121254; cv=none; b=AO3nEaTQggxwmovnwP+/qLr1bMNcjGkafnO4SqeDW/E1d2OV6gb96S61tbTNAXfCd7Fd6K8oqbn+6gBG2ZcnZLMJomvYYKP3LFz4C70PPjtkgv+P/lmlgIkpWlG35/x06QG5MUX67DD8GDFg/BRzR5LiPg0u6n0seKrtvdJHASw=
+	t=1730121233; cv=none; b=VBjouISz96jXuW5hoAncmQgDBLFG4ckwsLjoFrsLJfykvwNPRn44UY9lS45eanvpQLNEoAz8BzfnuRvNOKS1VCmjfUNzdXLNQYXVBq39RmJAqF4VbUud5L1RH06euk/d1ue2+0vNjQgYNjP7tKegcmlUWFve70LqWFARFS4LhME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121254; c=relaxed/simple;
-	bh=umXgkxvsn6pDDf/HDvjTuNRj/50/wdrGHMkq15iPbhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DYWv5X/plFQO/7QXiuhujgs/vnCYB9qF+zO30AqakjmSOBdrgiwOTz9D90uWMRYZWIlFBO1G0dUgNUhhBWGrxC1g1MlOTOjySECkNzNn3YyfyfQgQlF0F5qJTbjUKVCqUdTFDgo+1ClXMa0TvJ5mO0Dj6GgURHLSn52s49oCGt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYZdU+03; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CEA1C4CEEC;
-	Mon, 28 Oct 2024 13:14:14 +0000 (UTC)
+	s=arc-20240116; t=1730121233; c=relaxed/simple;
+	bh=oakMzO7Cn0cA3jBZvy82va2r/vv8HzUeFj/p9lV6Mb8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V2KKmEx2hI1Mx2/1Hpu7h3utkKoWkGGu41ayeRxM1FTpaCgqwNoXyQiNKqDh6bNe1l1Du7q59LFtUiO9sZdeQeOqQ2yet768ma2AW+a9sUfzdKj0rIbCqhaXnBUU+A15WXazuKPC7oMavKwiODM4cXc9Ce4EqRzWUAdhSMlyXQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CcoFZ3Sb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552DDC4CEC3;
+	Mon, 28 Oct 2024 13:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730121254;
-	bh=umXgkxvsn6pDDf/HDvjTuNRj/50/wdrGHMkq15iPbhc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=DYZdU+03iEdFhVk6XAp+TgXryYadk927GCLCnF/cjY1oEcuv1ykc2UbVIA35FN92j
-	 oTbxzoRmr7/iyleb+67SXJQk/AWyK9bUhn4Z0eJ/8nRaKnz51vyMi5mhhsdLSWHF1d
-	 Lb38yEAt7DwS89iHYA7KCK5vhLWRnv0c0mN1L4F2Me8JrPL0Ac1JaH5CFtTsrby4as
-	 MM/1qIY5BNOQ26XP78kKBUzGGfrbYdUGgtZg1wFeizzEYp/H4r8tgjb2EgOjUIL35Y
-	 AcBteTQDzJOWcUPavb2SMWIbP5LpY6zP/uWn9xkv0krN7WMQGN1xySJ+0g4pgZD5x+
-	 IB4sMXh3eStUw==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb3da341c9so40504411fa.2;
-        Mon, 28 Oct 2024 06:14:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCV7tWww33e2GWEwVlyVM3mhul2iST+6ypTS/4czmG23j5P9tu03TDS0ll2FqMmwFx1Nz9dVY6AsYE/EpwkP@vger.kernel.org, AJvYcCVAd/PYGPqSbRMp4oXYtcX15IeINEW8IudXmVbtmQ0gubIk1YPPI1GVlRBsIEAk1ZK+yo0Dp+SZJZ5Q8QQ=@vger.kernel.org, AJvYcCWC6rKGFQwt70l2sdOlHm/W396yYGAvKCIRfHXV/+g5X0s+pjkvqWaw9AdkjIqbMxRBAU0RskqedJmqjTrz0A==@vger.kernel.org, AJvYcCX39l6soPmMvWJNyTwj5P7XPcfvyTxOJGj7lvsl24jLWiGm+TSZq+Ivys8zXFvdwX3sRYw02cYJI/aJKf+jIyU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YywsB1RgtquwRh9Oh9PcDQTmo+Xfu29cQMWt3CCprc9YS58z1Hn
-	z76nGKqqI/5AOvaZZYhl40A+x6xKjFoFagQmz1vHnxaPZMh4moZh5UPi3yNYs5/4Gfd5GfFPOxS
-	yUOsdRS2MgDd3tY7cwHaqyeuoyLg=
-X-Google-Smtp-Source: AGHT+IG9gyko7VXssgM2SznITKHdLjhPfPryjecLgn1FTNeKz7JFR7J+mcsrozK/vjiUGUaUbgu6OiWUprCs1uMwqR8=
-X-Received: by 2002:a05:651c:1504:b0:2fb:5014:c998 with SMTP id
- 38308e7fff4ca-2fcbe08cf24mr28249331fa.28.1730121252616; Mon, 28 Oct 2024
- 06:14:12 -0700 (PDT)
+	s=k20201202; t=1730121233;
+	bh=oakMzO7Cn0cA3jBZvy82va2r/vv8HzUeFj/p9lV6Mb8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CcoFZ3SbHQmKt0HKeyFXNomW/+VGn1JtXzzrDCLw+eH4tJn6ZdaPc4SR7UR2CyMbM
+	 lo7NTGFVv316wMdiQkIdb1rovC+s7ABGNn49GBqryhdNLtJ+DdYpAGPjy8VDatNsJP
+	 eeFvN35SE7chB10bB3BPoqcoNJ4g8qK5CSf6FJtIMXVYI1omCZhQ9zMD3tgPNWMKTn
+	 0qIwUU9Lfe2TeshkwlllhSCR/s9uxYC3ECFvqHNbL6JMAUOQ/NP2cdMX6lH1e+BVIV
+	 5KcEAv2co5dVvk7tRYtQfws9OSzaSPHnCCuZTvJGFM93iNS++qI6DAJYiQrBEeWnUH
+	 juGzxODPr1zXw==
+Date: Mon, 28 Oct 2024 14:13:49 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 2/3] timers: Use __raise_softirq_irqoff() to raise the
+ softirq.
+Message-ID: <Zx-ODfHKAEkXfLHD@localhost.localdomain>
+References: <20241024150413.518862-1-bigeasy@linutronix.de>
+ <20241024150413.518862-3-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015231925.3854230-1-mmaurer@google.com> <20241015231925.3854230-2-mmaurer@google.com>
-In-Reply-To: <20241015231925.3854230-2-mmaurer@google.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Mon, 28 Oct 2024 14:13:36 +0100
-X-Gmail-Original-Message-ID: <CAK7LNASAbDNZYcSZ+F+4JrbGFWiV4qO-W=HfaBEieKhcg+=jCw@mail.gmail.com>
-Message-ID: <CAK7LNASAbDNZYcSZ+F+4JrbGFWiV4qO-W=HfaBEieKhcg+=jCw@mail.gmail.com>
-Subject: Re: [PATCH v6 1/5] export_report: Rehabilitate script
-To: Matthew Maurer <mmaurer@google.com>
-Cc: ndesaulniers@google.com, ojeda@kernel.org, gary@garyguo.net, 
-	mcgrof@kernel.org, Alex Gaynor <alex.gaynor@gmail.com>, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, neal@gompa.dev, 
-	marcan@marcan.st, j@jannau.net, asahi@lists.linux.dev, 
-	linux-modules@vger.kernel.org, samitolvanen@google.com, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241024150413.518862-3-bigeasy@linutronix.de>
 
-On Wed, Oct 16, 2024 at 1:19=E2=80=AFAM Matthew Maurer <mmaurer@google.com>=
- wrote:
->
-> The `export_report.pl` script was broken [1] a while back due to a code
-> cleanup causing the regex to no longer match.
+Le Thu, Oct 24, 2024 at 04:55:50PM +0200, Sebastian Andrzej Siewior a écrit :
+> As an optimisation use __raise_softirq_irqoff() to raise the softirq.
+> This is always called from an interrupt handler, interrupts are already
+> disabled so it can be reduced to just or set softirq flag and let
+> softirq be invoked on return from interrupt.
+> 
+> Use __raise_softirq_irqoff() to raise the softirq.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Instead of the link to lore, you can refer to
-commit a3d0cb04f7df ("modpost: use __section in the output to *.mod.c")
-
-
-
-> Additionally, it assumes a
-> `modules.order` file containing `.ko` in a build directory with `.mod.c`
-> files. I cannot find when this would have been the case in the history,
-> as normally `.ko` files only appear in `modules.order` in installed
-> modules directories, and those do not contain `.mod.c` files.
-
-If necessary, you can refer to
-commit f65a486821cf ("kbuild: change module.order to list *.o instead of *.=
-ko")
-
-
-As suggested, I vote for the removal since it has been broken for 5 years
-since a3d0cb04f7df.
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
