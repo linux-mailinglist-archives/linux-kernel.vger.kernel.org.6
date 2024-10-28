@@ -1,119 +1,159 @@
-Return-Path: <linux-kernel+bounces-384695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C74A99B2D52
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:50:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D0A9B2DDA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64860B21759
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:50:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75B571C211B7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:02:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FD61D31B2;
-	Mon, 28 Oct 2024 10:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a4vCtvoH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lPGH5J01"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA9518800D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA5DA1E261C;
+	Mon, 28 Oct 2024 10:52:43 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94DB51D9A40;
+	Mon, 28 Oct 2024 10:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112648; cv=none; b=PjKa2Qw2+tuqU35/vraEhpOresQ8ZJMaZIqIK3B91lS2i4yjO53zVYBKI1to5rsIbtLClfZiqBngTAjP9lpiWpY2oRBc9rcMCb+TBhTzDRw/vWJWTA6gjfwUi577Wgc+JdqZo+jPM97P91PmJVU+Q2QGyCPmxkwLGGDBFrAEhEU=
+	t=1730112763; cv=none; b=jMAXGOZVWU4Eqmrx6IaThLIniE2sysuEcGI3fmFVlGY7Qa4W0ZLJuhqsLTUPo76NM5mQO8tPDtc28SFQy/zI1CBoJXmEgMXL43zcsbFp7duzn7Hv7bmwPlyWGlvXyZAxyA9DkvCj0CfePg6v7FEHfOV/zGu7B4VSBXYJpr1ospI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112648; c=relaxed/simple;
-	bh=wqGwTO/B9VLq+ufockMh1tjLLRCCtGr8xfuPjuvwMiI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=idv8phz5LYgRsScOmhor7Z9TR38eSQ7bAPd4mnhzfvIw1Bq4miFvIwhkDB7M77kzs9u+ljARQGSiVzhI7tDtibEPOddocPRa81PSjNUCJ93E9Cg6mF3r4d34oHk0gOTZq5VQ28iXGmcQ62DgYsAJdwn40NYfeqVdYTK/A2ydGRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a4vCtvoH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lPGH5J01; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730112644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nqQG03k8oEOKsEUJfrDOlwgggVXYfbII+l2kN5wTX7U=;
-	b=a4vCtvoHx00dy+wnVAVjTy93dsHLAhOYAxPg4lkShdLG9fXdbqg+X5j4Dhpmr9JJh26xb+
-	/jjzqzRCO52fEzJGkRDV1I3WdJ8QBSLzYz2zZq5gQ+eYrlvJb5uO7gFwpgXwnisN63yEKc
-	3+fy3xyySNhv4PCiXAdjpvF2e5P/zVTCUe976ZjHQLDR5G3fqGnX4IwgJBGo9ChFCuAujQ
-	5vBJL8YaptVAm0KMs4uuD/h6EsZdczhDIASEXieamwoiAJE5D1A7mYVGtMXL9PNC0TLFWC
-	J/fuaWrdWQRGX7M0dy9Tvx1YszAPxVSgqwtcMGGs2G6yEVLRWXbivcnu5GA+Jg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730112644;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nqQG03k8oEOKsEUJfrDOlwgggVXYfbII+l2kN5wTX7U=;
-	b=lPGH5J01BFztScHBkoBl0Lbw5rOgAhicuJ5XwFxPYM/evQfyFRtljKsRzIIJsMzUIDJhmg
-	2kLvo6W0wnhDqHDA==
-To: Peter Zijlstra <peterz@infradead.org>, Nam Cao <namcao@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
- <frederic@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
- Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook
- <kees@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 18/21] sched/idle: Switch to use hrtimer_setup_on_stack()
-In-Reply-To: <20241028090927.GI9767@noisy.programming.kicks-ass.net>
-References: <cover.1729864615.git.namcao@linutronix.de>
- <db5daed82f8ba69eb155171ed96f3a5a83cd483b.1729864615.git.namcao@linutronix.de>
- <20241028090927.GI9767@noisy.programming.kicks-ass.net>
-Date: Mon, 28 Oct 2024 11:50:44 +0100
-Message-ID: <871q004i2j.ffs@tglx>
+	s=arc-20240116; t=1730112763; c=relaxed/simple;
+	bh=0NUfeZpExgQD/jaY64QZAJ4+7NcquB3ZJ+Ai2F6kn3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MDYRf2nHp+nbDtCNUXJoXtdCyrouWjilo4AVxJDdrPQP0ghkiP51CBu2CVcDh9zP9QHGobGyfrZm+HcZ8HlHpufRt5atqVhzuLRBVEWVJKjI6k79aAWdFIL+2fnUiPYsIYrkcURGSSqGHn/7erw7RCyLzJepze4FZ6poTryEmGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 87500497;
+	Mon, 28 Oct 2024 03:53:09 -0700 (PDT)
+Received: from e126645.nice.arm.com (e126645.nice.Arm.com [10.34.111.162])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C7E73F73B;
+	Mon, 28 Oct 2024 03:52:35 -0700 (PDT)
+From: Pierre Gondois <pierre.gondois@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Pierre Gondois <pierre.gondois@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Steffen Persvold <spersvold@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-acpi@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: [PATCH] ACPI: CPPC: Make rmw_lock a raw_spin_lock
+Date: Mon, 28 Oct 2024 11:51:49 +0100
+Message-Id: <20241028105200.1205509-1-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28 2024 at 10:09, Peter Zijlstra wrote:
-> On Mon, Oct 28, 2024 at 08:29:37AM +0100, Nam Cao wrote:
->> There is a newly introduced function hrtimer_setup_on_stack(), which will
->> replace hrtimer_init_on_stack(). In addition to what
->> hrtimer_init_on_stack() does, this new function also sanity-checks and
->> initializes the callback function pointer.
->> 
->> Switch to use the new function.
->> 
->> Patch was created by using Coccinelle.
->> 
->> Signed-off-by: Nam Cao <namcao@linutronix.de>
->> ---
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> ---
->>  kernel/sched/idle.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->> 
->> diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
->> index d2f096bb274c..631e42802925 100644
->> --- a/kernel/sched/idle.c
->> +++ b/kernel/sched/idle.c
->> @@ -399,8 +399,8 @@ void play_idle_precise(u64 duration_ns, u64 latency_ns)
->>  	cpuidle_use_deepest_state(latency_ns);
->>  
->>  	it.done = 0;
->> -	hrtimer_init_on_stack(&it.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_HARD);
->> -	it.timer.function = idle_inject_timer_fn;
->> +	hrtimer_setup_on_stack(&it.timer, idle_inject_timer_fn, CLOCK_MONOTONIC,
->> +			       HRTIMER_MODE_REL_HARD);
->
-> WTF is hrtimer_setup_on_stack() ?
->
-> Do NOT send partial series. How the hell am I supposed to review things
-> if I don't even get to see the implementation of things,eh?
+The following BUG was triggered. sugov_update_shared() locks a
+raw_spinlock while cpc_write() locks a spinlock. To have a correct
+wait-type order, update rmw_lock to a raw_spinlock.
 
-Can you tone down a bit? This was an oversight and I did not notice when
-going over it. The full thread is in your LKML inbox, so can you just
-move on?
+Also save irq state.
 
-Thanks,
+=============================
+[ BUG: Invalid wait context ]
+6.12.0-rc2-XXX #406 Not tainted
+-----------------------------
+kworker/1:1/62 is trying to lock:
+ffffff8801593030 (&cpc_ptr->rmw_lock){+.+.}-{3:3}, at: cpc_write+0xcc/0x370
+other info that might help us debug this:
+context-{5:5}
+2 locks held by kworker/1:1/62:
+  #0: ffffff897ef5ec98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2c/0x50
+  #1: ffffff880154e238 (&sg_policy->update_lock){....}-{2:2}, at: sugov_update_shared+0x3c/0x280
+stack backtrace:
+CPU: 1 UID: 0 PID: 62 Comm: kworker/1:1 Not tainted 6.12.0-rc2-g9654bd3e8806 #406
+Workqueue:  0x0 (events)
+Call trace:
+  dump_backtrace+0xa4/0x130
+  show_stack+0x20/0x38
+  dump_stack_lvl+0x90/0xd0
+  dump_stack+0x18/0x28
+  __lock_acquire+0x480/0x1ad8
+  lock_acquire+0x114/0x310
+  _raw_spin_lock+0x50/0x70
+  cpc_write+0xcc/0x370
+  cppc_set_perf+0xa0/0x3a8
+  cppc_cpufreq_fast_switch+0x40/0xc0
+  cpufreq_driver_fast_switch+0x4c/0x218
+  sugov_update_shared+0x234/0x280
+  update_load_avg+0x6ec/0x7b8
+  dequeue_entities+0x108/0x830
+  dequeue_task_fair+0x58/0x408
+  __schedule+0x4f0/0x1070
+  schedule+0x54/0x130
+  worker_thread+0xc0/0x2e8
+  kthread+0x130/0x148
+  ret_from_fork+0x10/0x20
 
-        tglx
+Fixes: 60949b7b8054 ("ACPI: CPPC: Fix MASK_VAL() usage")
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+---
+ drivers/acpi/cppc_acpi.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index 1a40f0514eaa..e7e4bf932e28 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -1127,7 +1127,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 			return -ENODEV;
+ 		}
+ 
+-		raw_spin_lock_irqsave(&cpc_desc->rmw_lock, flags);
++		raw_spin_lock(&cpc_desc->rmw_lock);
+ 		switch (size) {
+ 		case 8:
+ 			prev_val = readb_relaxed(vaddr);
+@@ -1142,7 +1142,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 			prev_val = readq_relaxed(vaddr);
+ 			break;
+ 		default:
+-			raw_spin_unlock_irqrestore(&cpc_desc->rmw_lock, flags);
++			raw_spin_unlock(&cpc_desc->rmw_lock);
+ 			return -EFAULT;
+ 		}
+ 		val = MASK_VAL_WRITE(reg, prev_val, val);
+@@ -1175,7 +1175,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 	}
+ 
+ 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
+-		raw_spin_unlock_irqrestore(&cpc_desc->rmw_lock, flags);
++		raw_spin_unlock(&cpc_desc->rmw_lock);
+ 
+ 	return ret_val;
+ }
+-- 
+2.25.1
 
 
