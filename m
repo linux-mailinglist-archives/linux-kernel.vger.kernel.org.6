@@ -1,122 +1,113 @@
-Return-Path: <linux-kernel+bounces-384785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6785F9B2E52
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:14:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98F69B2E46
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10E93B21E0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:14:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF17A1C22125
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C351D9A70;
-	Mon, 28 Oct 2024 11:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4858F1DD9AD;
+	Mon, 28 Oct 2024 10:58:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bfs.de header.i=@bfs.de header.b="mkzQiqWx"
-Received: from mxdmz01-muc.bfs.de (mxdmz01-muc.bfs.de [193.174.230.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dbvh8JFn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD221D6191;
-	Mon, 28 Oct 2024 11:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.174.230.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EEC91D5CD3;
+	Mon, 28 Oct 2024 10:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730113459; cv=none; b=TiU59A0XVlUyXuEnt74AHaDivnFqIXF6NgKBqUaGEzFWLcAf+yNIr9X15pWJgbqUk93SXDipeFItc7J7i+P7rmQcJMdy7J5AjDjWM5lgziXKsjxGqNbm7xmffz/zXPmDKIPSrF/DPIWoFOBdpAWtrMu+d9BKcnJ1Erl4ObXiLFw=
+	t=1730113104; cv=none; b=O0XcW48XNQ10gtiuTcWctGXUz1y8QiEJswBg6EfQJgqy0BMHH5km2gkXPMNf2HIX+O6Shf0ShhNjMT6/qQiwvUenwD5TKzGMEkN2GAZejBaKl3LbnzMXWkZbyIYaw03i84MoHHYqpKjzLzGs+H4m41qUfcnPo3DrOUrNslEDR+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730113459; c=relaxed/simple;
-	bh=QmlUvMqA+sOKktJ9K/nU4F2jHihqNwUBY58epILBHuw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nHqeAUrHh0lrnVepkRCy7iBDTGFqXoRAYYkYh6ce8WRX1rKHG+teBGX2XSrJvCf4sNLnUTxkzJuAus8ljplJ2QDfljdfkfSgroHyaBgNEMUz+0cx/EPEmDfnqgcpX+3ZSsrdjDSurTUtCvOJnpRuoIMNQRrVV/+OBk3WfS6T9Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bfs.de; spf=pass smtp.mailfrom=bfs.de; dkim=pass (2048-bit key) header.d=bfs.de header.i=@bfs.de header.b=mkzQiqWx; arc=none smtp.client-ip=193.174.230.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bfs.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bfs.de
-Received: from mxint01-sz.bfs.intern (unknown [10.175.16.17])
-	by mxdmz01-muc.bfs.de (Postfix) with ESMTPS id 20A9E200B41E;
-	Mon, 28 Oct 2024 11:58:08 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bfs.de; s=dkim201901;
-	t=1730113088;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QmlUvMqA+sOKktJ9K/nU4F2jHihqNwUBY58epILBHuw=;
-	b=mkzQiqWx88PkHYKkeuCB/EbxeQZFfygKOocRnEFinpgi15OpTOMg3HCaiYGOoJ20L8iH7y
-	+HNRyfMk5M0boGzi0FiGYt5zJmakmHi4OZoUXF4I3Y8gWGOeVjy/Rzp8AOmS5UmQXldNnd
-	HhUWWoM/yYbX6mjvnLDtcomuz/c/u+ZqGtG6v9suk21u0+rKAW/DSn0sCTKNuGpHGUUaLX
-	rC7R4Kqb8vnk3WEH27saG5RADTud/RVaQd7UM7B83WKmRBexRGeqLElBPsBdKo0hqeRHbp
-	FTuNuoeTYQ/Cm4+z9q2c/4kLzxj8AfvxY1l19FHOIRiHGrLg7dCtPC51iC06PQ==
-Received: from SRVEX01-MUC.bfs.intern (SRVEX01-MUC.bfs.intern [10.161.90.31])
-	by mxint01-sz.bfs.intern (Postfix) with ESMTP id E368A121E9;
-	Mon, 28 Oct 2024 11:58:07 +0100 (CET)
-Received: from SRVEX01-MUC.bfs.intern (10.161.90.31) by SRVEX01-MUC.bfs.intern
- (10.161.90.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Oct
- 2024 11:58:07 +0100
-Received: from SRVEX01-MUC.bfs.intern ([fe80::e8ba:5ab1:557f:4aad]) by
- SRVEX01-MUC.bfs.intern ([fe80::e8ba:5ab1:557f:4aad%5]) with mapi id
- 15.01.2507.039; Mon, 28 Oct 2024 11:58:07 +0100
-From: Walter Harms <wharms@bfs.de>
-To: Alejandro Colomar <alx@kernel.org>
-CC: "linux-man@vger.kernel.org" <linux-man@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: AW: Linux man-pages project maintenance
-Thread-Topic: Linux man-pages project maintenance
-Thread-Index: AQHbAF0LU22OOupWbUqeh2kqDP3GT7JPAh8AgE1MSS8=
-Date: Mon, 28 Oct 2024 10:58:06 +0000
-Message-ID: <9b278997317141558aff37afeaff153e@bfs.de>
-References: <4d7tq6a7febsoru3wjium4ekttuw2ouocv6jstdkthnacmzr6x@f2zfbe5hs7h5>,<CACKs7VB_GEt_u463R4JvWveghBBscQeqaWtKrMmxNSQ2mn+-VA@mail.gmail.com>
-In-Reply-To: <CACKs7VB_GEt_u463R4JvWveghBBscQeqaWtKrMmxNSQ2mn+-VA@mail.gmail.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-tm-as-product-ver: SMEX-14.0.0.3197-9.1.2019-28758.007
-x-tm-as-result: No-10--12.807400-5.000000
-x-tmase-matchedrid: zwpC2WOSP9V3vIGb4JF4peZcuYJz1PU5N0X64jGy2dZJTOxleK2tZvTh
-	5ZG51qRLtxo6Bb+iP2/IuNKfYHvw6VkLLUsH7hZSwrtF+y9i1an6hXFsBGSLz4cBR6etkh29rcF
-	NuDgWZ83ACjBe8fI4NQ9HVZG0CfkMzPvigSWE1EEhPK2mn+OsTGnTqal/GlimMNBqjpGQEyCFlr
-	BwBrGB/sb6oVhOl7WulD0yNK/lHn+FUp9a5vCd5DSI4WraM54/ZrTG9WaiuOD1cpbEcVEOoLfaM
-	gQ7+FGaRH8WZZlSEHxX099pNHuCkqY9Pv8gh/n0ju2XlcEx9HRV0rSepB3ZeNshC9xp7YwHr54J
-	Ix46I6T3t3pfLmJRU9vIAMT/07OiB73xunbyKrq0QRlrBF3eZY7k0IXv+jygF7gkeTtWM1OsBCV
-	XXb1XzwZCcOD0tvCT7oAAJpC+qWE=
-x-tm-as-user-approved-sender: No
-x-tm-as-user-blocked-sender: No
-x-tmase-result: 10--12.807400-5.000000
-x-tmase-version: SMEX-14.0.0.3197-9.1.2019-28758.007
-x-tm-snts-smtp: 4FAC0822D45D150C43447CF595E1615B7326BED2DEFE659E58EF041E7E362BE32000:9
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1730113104; c=relaxed/simple;
+	bh=B+KjeCsXxwZWAdYZAfeBkrJopsMVECXbceBduFTZdBk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sFup0qeaUZgnTNwb4asumUM24ttYmomuM9E1HT+nvC7K9dVK3DaIgvldB+ggDuvawf3oUpwfuXq8CDjLL4H4A/xmpCdSygEzFcIKWmVt8Z14xCYZPcI3H01+zSx/IDw3O6f7LdXGJT0gaD/Jn2xXyK6nZ8j3LFs62O4U+8tMDUk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dbvh8JFn; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730113103; x=1761649103;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=B+KjeCsXxwZWAdYZAfeBkrJopsMVECXbceBduFTZdBk=;
+  b=dbvh8JFnS2TeVGGFcYfZfzq868arHq2i0XyflNtZMSbyy5nFABgeilV1
+   W2lG5h1xXzdG9eSbc3v6Y1sRaMwbnq7quTRTpdEcuoqUlhbVbzO+yH6+M
+   IjK+y5cf6HzVbGGAsLSZ6ridJfvKW7dCRTOA+OGYU3bSnShIDIhzg7GIG
+   FtcDmMXxA3XfHsIeJKdtPAomuprnrFJY2j6VQ7D7w1Ti9y1gNafp3bTWf
+   Yl+5Cxc8LY9LC36RyuhliHf2J8y0sGkjfpAiDqX9pYY+tryrSTzQ3zhqk
+   /4hM+XLrOnGWUQM4zsSFIlcTos6qaUWeJOuxa1KC9f6YEAmLxAyW6zJqY
+   w==;
+X-CSE-ConnectionGUID: ne4ExaFKST+6AABoprM5xw==
+X-CSE-MsgGUID: jVgCX6UeR+aPpd4RrjVNtA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="52256479"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="52256479"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 03:58:22 -0700
+X-CSE-ConnectionGUID: D8J/N7OAS3WvSVWALB/CTw==
+X-CSE-MsgGUID: /Q08lrUJQWOtM1NvI4edKg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="86158696"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 03:58:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t5NRw-00000007v9B-3Yr3;
+	Mon, 28 Oct 2024 12:58:16 +0200
+Date: Mon, 28 Oct 2024 12:58:16 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Tero Kristo <tero.kristo@linux.intel.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: linux-kbuild@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	David Gow <davidgow@google.com>
+Subject: Re: [PATCH v2 1/1] platform/x86: intel: Add 'intel' prefix to the
+ modules automatically
+Message-ID: <Zx9uSIWOwTgclmBF@smile.fi.intel.com>
+References: <20241016105950.785820-2-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241016105950.785820-2-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-SGVsbG8gQWxleCwNCg0KMS4gdGh4IGZvciBhbGxsIHlvdXIgd29yaw0KMi4gaSBjYW4gZnVsbCB1
-bmRlcnN0YW5kLCBpIGFsc28gaGFkIHRvIHJlZHVjZSB0aGUgdGltZSBpIHNwZW5kIHdpdGggc2V2
-ZXJhbCBPUyBwcm9qZWN0cw0KMy4gaXMgdGhlcmUgYSBwbGFuIGhvdyB0byBnbyBmb3J3YXJkIChi
-ZXNpZGUgYSB3aGl0ZSBrbmlnaHQpID8NCg0KQ1UNCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18NClZvbjogU3RlZmFuIFB1aXUgPHN0ZWZhbi5wdWl1QGdtYWlsLmNvbT4N
-Ckdlc2VuZGV0OiBNb250YWcsIDkuIFNlcHRlbWJlciAyMDI0IDEwOjI4DQpBbjogQWxlamFuZHJv
-IENvbG9tYXINCkNjOiBsaW51eC1tYW5Admdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnOyBsaWJjLWFscGhhQHNvdXJjZXdhcmUub3JnDQpCZXRyZWZmOiBSZTogTGlu
-dXggbWFuLXBhZ2VzIHByb2plY3QgbWFpbnRlbmFuY2UNCg0KSGkgQWxleCwNCg0KT24gRnJpLCBT
-ZXAgNiwgMjAyNCBhdCA0OjA24oCvUE0gQWxlamFuZHJvIENvbG9tYXIgPGFseEBrZXJuZWwub3Jn
-PiB3cm90ZToNCj4NCj4gSGkgYWxsLA0KPg0KPiBBcyB5b3Uga25vdywgSSd2ZSBiZWVuIG1haW50
-YWluaW5nIHRoZSBMaW51eCBtYW4tcGFnZXMgcHJvamVjdCBmb3IgdGhlDQo+IGxhc3QgNCB5ZWFy
-cyBhcyBhIHZvbHVudGFyeS4gIEkndmUgYmVlbiBkb2luZyBpdCBpbiBteSBmcmVlIHRpbWUsIGFu
-ZCBubw0KPiBjb21wYW55IGhhcyBzcG9uc29yZWQgdGhhdCB3b3JrIGF0IGFsbC4gIEF0IHRoZSBt
-b21lbnQsIEkgY2Fubm90IHN1c3RhaW4NCj4gdGhpcyB3b3JrIGVjb25vbWljYWxseSBhbnkgbW9y
-ZSwgYW5kIHdpbGwgdGVtcG9yYXJpbHkgYW5kIGluZGVmaW5pdGVseQ0KPiBzdG9wIHdvcmtpbmcg
-b24gdGhpcyBwcm9qZWN0LiAgSWYgYW55IGNvbXBhbnkgaGFzIGludGVyZXN0cyBpbiB0aGUNCj4g
-ZnV0dXJlIG9mIHRoZSBwcm9qZWN0LCBJJ2Qgd2VsY29tZSBhbiBvZmZlciB0byBzcG9uc29yIG15
-IHdvcmsgaGVyZTsgaWYNCj4gc28sIHBsZWFzZSBsZXQgbWUga25vdy4NCg0KVGhhbmtzIGZvciBh
-bGwgdGhlIHdvcmsgeW91IHB1dCBpbi4gSXQncyB0cnVlLCBvZnRlbnRpbWVzIGluIHRoZSBMaW51
-eA0Kd29ybGQgZG9jdW1lbnRhdGlvbiBkb2VzIG5vdCBnZXQgdGhlIGF0dGVudGlvbiBpdCBkZXNl
-cnZlcywgc28ga3Vkb3MNCnRvIHlvdSAoYW5kIE1pY2hhZWwgYmVmb3JlIHlvdSkgZm9yIHRha2lu
-ZyB1cCB0aGlzIHVuZGVyYXBwcmVjaWF0ZWQNCnRhc2shDQoNClN0ZWZhbi4NCg0KPg0KPiBIYXZl
-IGEgbG92ZWx5IGRheSENCj4gQWxleA0KPg0KPiAtLQ0KPiA8aHR0cHM6Ly93d3cuYWxlamFuZHJv
-LWNvbG9tYXIuZXMvPg0KDQo=
+On Wed, Oct 16, 2024 at 01:59:51PM +0300, Andy Shevchenko wrote:
+> Rework Makefile to add 'intel' prefix to the modules automatically.
+> This removes a lot of boilerplate code in it and also makes robust
+> against mistypos in the prefix.
+
+> ---
+> 
+> v2: fixed obvious typos (LKP), Cc'ed to Kbuild ML (Ilpo), dropped RFC marker
+> 
+> Note to Kbuild people: TBH I rather want to have something like this
+> to be available on the level of Kbuild for any of the subdirectories
+> in question.
+
+Anyone, any comments on this?
+This already passed a CI tests without failure so far. Perhaps it's good
+to apply to show the demand of such a feature in Kbuild in the future?
+Because I want to do the same for various */tests/ folders where we have
+tons of test*, *kunit modules effectively duplicating the folder name.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
