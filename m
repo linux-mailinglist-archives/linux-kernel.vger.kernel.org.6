@@ -1,157 +1,119 @@
-Return-Path: <linux-kernel+bounces-384802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5374D9B2E9D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:20:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649279B2E96
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0970F1F2111A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27D4D28128A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A6EA1D5AC7;
-	Mon, 28 Oct 2024 11:13:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F78B1DC1A5;
+	Mon, 28 Oct 2024 11:11:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qG25LAP5"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YRmfjaEI"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 028891D2B37;
-	Mon, 28 Oct 2024 11:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721921D5171
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:11:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730113992; cv=none; b=Qze1//NzlROMCeKEkM2dImesVZWwiZHwN0UeYwWFBoEu3+/N4iR1jcRrr85grOIjdpx17voFcpntr66QAXTRsVa2s7Q8W9CTaXilOzB9Or3F3peJe0uYjaMtY6Nf+K/WSIxzIY1YzZAXuITutMGYidOcmGNn10cLsYmrdxZbun8=
+	t=1730113905; cv=none; b=IUndtdIzIlmorha4rWSCG/QXpes2I7+cStfe1dIGb8kjlaM10RQWOVQuE0VyTjCVwrpJ5ezGWopWBKlHYURKVdBaFRptCtbV1J2JGx+k6F+yZHR3oYGZmb/tR2a7/j/1pXZiXJI/9mEZijfEeWOEAqTKB/0xAPryqhv7qsc+GPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730113992; c=relaxed/simple;
-	bh=4eVSmPw77MiybtV92bX+EBjPWWE81quUsOMS2GIbdlA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=biaN2/08SgQfXcGe0w4aZANuBuvsmDzAmRCb//6VF+9beflLYUpBPg8fwlnkAOyCJyzdbWKPQpR3aZUAVgyjEFHKLULq2SPToceNbp6l+mxl/9KWdqtNWq4vH8gfeadb3a9fWwwYBQ2vqB7FqAbn7e4MQJW/kZmno4YGEQsH78s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=qG25LAP5; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49SBCOtR024786;
-	Mon, 28 Oct 2024 06:12:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730113944;
-	bh=J3ddcrfgye+/HdaRhg7pJh3MNd6nUm1/2A/gEQxQhVE=;
-	h=From:To:CC:Subject:Date;
-	b=qG25LAP5UZoe4PSg0njZavSRFDQoHMSgbkJTC/nuuSrr0mCLxS03k3VVxOq/1Uoa4
-	 teo2mtWnoMiL+XoFghxa9PRzb2I98ZJe3F2VWSUZbOPJJeWAp9cShEdnE9OVy4g0gr
-	 HnBpHxRCLEQirdtXFnCuRKFuxEC269TEjiK42N+4=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49SBCODp039166
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 28 Oct 2024 06:12:24 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
- Oct 2024 06:12:23 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 28 Oct 2024 06:12:24 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SBCNbL107215;
-	Mon, 28 Oct 2024 06:12:23 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49SBCMUk028004;
-	Mon, 28 Oct 2024 06:12:23 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <vigneshr@ti.com>, <grygorii.strashko@ti.com>, <horms@kernel.org>,
-        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>,
-        <m-malladi@ti.com>, "Vadim
- Fedorenko" <vadim.fedorenko@linux.dev>
-Subject: [PATCH net v3] net: ti: icssg-prueth: Fix 1 PPS sync
-Date: Mon, 28 Oct 2024 16:40:52 +0530
-Message-ID: <20241028111051.1546143-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730113905; c=relaxed/simple;
+	bh=f9/PsUAOENGCO2p9cGP/XHigmN80YiQDiKgPnCLMWxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ii8Cn0jbnqTqx99orNuNZXIOOXZZjoXspBxeFGwiNvpM1+wGKoD5Gf30M/i+TbfFI2mu1XWk0CXlXwjeQ0wu2CH2vpNYTyyiE/iIjjwFs9HXU+dDsQLTXxCXHB8RQxDyG4QbzgeKeJVldTuEHLbTOy+lTi2c/CcwJn2eUMxorGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YRmfjaEI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso41122175e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:11:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730113902; x=1730718702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w9kc/MvcCGqsHKnuIn7RBxtKONFpaars6wfvKoTsFt0=;
+        b=YRmfjaEIFhwnetaZLw7VFd0WhFbtSpWDXE6440URyncI3yA8RfRDGs8cRbWO7G4FfC
+         28uVUUHqBzYrbCje3T/syuvx2fh65YooCvSo9m6G1wKhE+96uGK+0RnyeCOgmW3371wB
+         gqO6UNxxgGqchZfzAwVJzoi2iwqvbJ9ZADvEnPgXs0HcE45Owiiro1rcQ41dhdH0cFJk
+         y3+ZG3Fmas8+gW9KGz4/kgvbz+E3BZJS3P/lamx/pIPp/zTVgWgA1sZ0lGPhcKgLyWYy
+         6U77Z+q9XnkKQJk+axSjk/0NEoGXPTQiXxa3AvysHr7Kqg/lrdnitZsnRaVc2j5hl+6C
+         wqPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730113902; x=1730718702;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w9kc/MvcCGqsHKnuIn7RBxtKONFpaars6wfvKoTsFt0=;
+        b=f1XwcC6BOnEYeqHQL9tjdRr/3xXFMIbrGMSxb/SjQD7bJv3+lAg+SJ+0/J0UyzmFIi
+         moBAlw3FzXy1AZTN4RtXP9efyCuGJbzlug6AtOT3yXez4JC4znQUX9mbCYL1nVdfvtY5
+         gzUOl7kDaHry/cku1nJgLDArPLjotfuuHaEjJ9WimDzjOCrCd+6qYcgkOlC3xbn/JdCV
+         o3lkWespvWoFykBVzIRksCWo20r/ZYiketJ53HtPIUNjNzD+nASUlSTxe0ABeOKrOfOK
+         sUzk27d9YP75c8cUHFDPMaLva3t6hpJh/gDEmfS4G/JRnYXyfAiSTp8GecBYJ619h9kC
+         a/lA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqvvW8DXlM61IY9AFy8+iigmTjLp+RjZTL0nYPY5wxeL69zfSi4+AuR5ALQZqACyLTKpJABZFk2j5R8KA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynbZJMjNwfSmULX5ZQbWhkW7VC2yd/+AMlOFrAMtUmKPE8F+Ga
+	brZzCSyn3j4YY9MYvSoqb/IXXFgEKMVWfK6kYS1f6L5dvfhDtamt+CwLB6av9Ao=
+X-Google-Smtp-Source: AGHT+IE+Z165sXrl550KdLAVYhJzn5VZwWhbSDKWVfm/qVBNZ5a2SDbV2JU/QTEhxtpAj9JuK3Plsg==
+X-Received: by 2002:a05:600c:511c:b0:42c:a580:71cf with SMTP id 5b1f17b1804b1-4319ad24423mr63292375e9.30.1730113901661;
+        Mon, 28 Oct 2024 04:11:41 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43193594fe7sm105537645e9.14.2024.10.28.04.11.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 04:11:41 -0700 (PDT)
+Message-ID: <f87a0f0d-8501-438c-b05e-7e4554547c79@linaro.org>
+Date: Mon, 28 Oct 2024 12:11:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] clocksource: sp804: Make user selectable
+To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ David Abdurachmanov <david.abdurachmanov@gmail.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Ross Burton <ross.burton@arm.com>, Mark Rutland <mark.rutland@arm.com>
+References: <20241001-arm64-vexpress-sp804-v3-1-0a2d3f7883e4@kernel.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241001-arm64-vexpress-sp804-v3-1-0a2d3f7883e4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The first PPS latch time needs to be calculated by the driver
-(in rounded off seconds) and configured as the start time
-offset for the cycle. After synchronizing two PTP clocks
-running as master/slave, missing this would cause master
-and slave to start immediately with some milliseconds
-drift which causes the PPS signal to never synchronize with
-the PTP master.
+On 01/10/2024 13:23, Mark Brown wrote:
+> The sp804 is currently only user selectable if COMPILE_TEST, this was
+> done by commit dfc82faad725 ("clocksource/drivers/sp804: Add
+> COMPILE_TEST to CONFIG_ARM_TIMER_SP804") in order to avoid it being
+> spuriously offered on platforms that won't have the hardware since it's
+> generally only seen on Arm based platforms.  This config is overly
+> restrictive, while platforms that rely on the SP804 do select it in
+> their Kconfig there are others such as the Arm fast models which have a
+> SP804 available but currently unused by Linux.  Relax the dependency to
+> allow it to be user selectable on arm and arm64 to avoid surprises and
+> in case someone comes up with a use for extra timer hardware.
+> 
+> Fixes: dfc82faad725 ("clocksource/drivers/sp804: Add COMPILE_TEST to CONFIG_ARM_TIMER_SP804")
+> Reported-by: Ross Burton <ross.burton@arm.com>
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
 
-Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
-Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-Reviewed-by: MD Danish Anwar <danishanwar@ti.com>
----
+Applied, thanks
 
-Hello,
 
-This patch is based on net-next tagged next-2024102.
-v2:https://lore.kernel.org/all/20241024113140.973928-1-m-malladi@ti.com/
-Changes since v2 (v3-v2):
-- Use hi_lo_writeq() and hi_lo_readq() instead of own helpers
-(icssg_readq() & iccsg_writeq()) as asked by Andrew Lunn <andrew@lunn.ch>
-- Collected Reviewed-by tags from Vadim and Danish
-
-Regards,
-Meghana.
-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 0556910938fa..678a99882627 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -16,6 +16,7 @@
- #include <linux/if_hsr.h>
- #include <linux/if_vlan.h>
- #include <linux/interrupt.h>
-+#include <linux/io-64-nonatomic-hi-lo.h>
- #include <linux/kernel.h>
- #include <linux/mfd/syscon.h>
- #include <linux/module.h>
-@@ -411,6 +412,8 @@ static int prueth_perout_enable(void *clockops_data,
- 	struct prueth_emac *emac = clockops_data;
- 	u32 reduction_factor = 0, offset = 0;
- 	struct timespec64 ts;
-+	u64 current_cycle;
-+	u64 start_offset;
- 	u64 ns_period;
- 
- 	if (!on)
-@@ -449,8 +452,14 @@ static int prueth_perout_enable(void *clockops_data,
- 	writel(reduction_factor, emac->prueth->shram.va +
- 		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
- 
--	writel(0, emac->prueth->shram.va +
--		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
-+	current_cycle = hi_lo_readq(emac->prueth->shram.va +
-+				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
-+
-+	/* Rounding of current_cycle count to next second */
-+	start_offset = roundup(current_cycle, MSEC_PER_SEC);
-+
-+	hi_lo_writeq(start_offset, emac->prueth->shram.va +
-+		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
- 
- 	return 0;
- }
-
-base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
 -- 
-2.25.1
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
