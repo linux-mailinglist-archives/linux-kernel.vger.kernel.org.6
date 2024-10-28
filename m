@@ -1,122 +1,106 @@
-Return-Path: <linux-kernel+bounces-385397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026F59B36AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:37:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC3079B36B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:37:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD8E51F22733
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:37:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 194BB1C223A1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C895A1DF24C;
-	Mon, 28 Oct 2024 16:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2625F1DEFE7;
+	Mon, 28 Oct 2024 16:37:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="B5DrNiN0"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="QL4KLo94"
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E6E1DE8B3;
-	Mon, 28 Oct 2024 16:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D378418B48C
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133414; cv=none; b=PyGeRRopillqFrPY31Pz6gLDZVD2fNdjSOh2WbMHdru/dJiPVINksv8/9QV/92FbV9Cx9ndkw2d+WPPJvuWbn2jieZ2Vmoka0cLCId5PH/aRreGPVH/AOFckIwv6vQKExHrHT+kiTCNqsNreH/ZcbFd9k4cpkBQRdW3RJ6/FdWY=
+	t=1730133424; cv=none; b=FMJmcA5ZUc6NflCoWQUqPvYmmD8OJdf+HkiBv+hR90cfq4jYe/lryWm0J/StYf4+0K2Mut35iFB2W0kqtCa4+0YAAHrkRXQ0+NsswPruyIsNrtuPQeLtpHRVtc/JSqhTfdsYvR2iySc1XALSQVluddH0fyvynN+9/DGsGl2/AWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133414; c=relaxed/simple;
-	bh=QeH5x+SqklQ8CnprYEyXo/Gm/MMehhFlTWuVhjoGnTU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hxj7a4kMBSIX0sOJV5hp7NAd+97fpjbmA7o9IWNgzgtNZRHdv5hs8UrchA26gtKCuFfmsgXfB8VyRoujDRJmfsNoCacC5Y+Aajn+92r5AlgM74IMl+efG/Xb4cnpmUkYb7medfRdJJAXhgNEDfdTFCk3+7tGIAdF+w5YttOm/8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=B5DrNiN0; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49SGajEu053859;
-	Mon, 28 Oct 2024 11:36:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730133405;
-	bh=h/gCeVTPDfCZ9Sq1m6pfoJ1aYry8ZWlrjxDFFQhYtRk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=B5DrNiN0pEhLp8QSnCI5A2+V2KDXIFqTp+MceeqNiuSE+sLDK7LuHXunemDEZG2AE
-	 5gfegkfufNVCYnh0U0MIk3UHD6u7zBBwgmJ9UmOydfoBIuJn+y3ccMxbMFL76uL5MD
-	 2r1gGviVduJDS9WGCwLYZ8PiquWBzESUSiSXScMk=
-Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SGajIk109530;
-	Mon, 28 Oct 2024 11:36:45 -0500
-Received: from DLEE112.ent.ti.com (157.170.170.23) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
- Oct 2024 11:36:45 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 28 Oct 2024 11:36:45 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SGafbs106057;
-	Mon, 28 Oct 2024 11:36:42 -0500
-Message-ID: <b2dadb0a-fd85-42fc-b340-6c77fe5ded0a@ti.com>
-Date: Mon, 28 Oct 2024 22:06:41 +0530
+	s=arc-20240116; t=1730133424; c=relaxed/simple;
+	bh=A1cFervhOMCuUn1qMqZ24mOHhDxMc2MaSueVuQ58tpM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lUhhvXu6f8hOJAtgSkek+mr1cE7MjbHbnuaPmg4J/UdnvoSrB20m0ZG1fXiIcUjPi+fEl1Amq4RaUflsH1ARj5aZcpKTCb6R84Iffj5IOJIypcx0RU+WPCVcHJHmfDtXTQs5P9Iys/g+8GjTAvuDDwA/eFQk3XLupf6HnY24qqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=QL4KLo94; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2e33f614e1so4784367276.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:37:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1730133421; x=1730738221; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JC3jVJVkR0vXjc9v4X5cqN3AeydRxh4u+9f7UYh0hzo=;
+        b=QL4KLo94HsXvdRICxiDuQJ3PVBugrW0AUDDLQaUqDewXpA/OdPnUfAoiGRbvoseDpX
+         Ohjrfv4wYFXICHSvhpf6RP2hPaocKZeWIyu+NRQ+Ng8SYaetmCBT8xqFqgaJxK4ypo0W
+         ympdDK/qdEuv4Fcz3GEL+NermkJosAO1OG7M2+ymGR0t29b4wkmKyorR3Vsa/M0WQHqv
+         90VUAC4reIdNd9PcXSUbckPctQJbUGP2voPshCZoBuWpgmYG5mi9zCRV9oUB8By8a9MX
+         3Pmq5N+dQhxFeNb9uLmEoi6acyFp3q3T5XeiHr/rPodbB+52REp8o4Hcxa+OfVYq7RhQ
+         LQQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730133421; x=1730738221;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JC3jVJVkR0vXjc9v4X5cqN3AeydRxh4u+9f7UYh0hzo=;
+        b=wc0u6DAaPhcDg+C1TcLknC350++DgWUveAW6AR9WlvA8Nezyb1E4bQLERnAkMZhQae
+         u7g1stBXm4yhX0+I4DZXqeZyjRBkQs9Lq77o41zaJCsvkvs1/A13Q2CEsB04pJpnENZe
+         pvHpr08MtTJKBtyBEH0z7l3bSlSPTxg0yOaDdsPbjKPsKSFI2wznlRoN9gK538lUErj/
+         ubCIq7ttbhk/piVwVywDeLNy8eS/o1xajoE1AVcdymPjuV0qGhQ8pzLFX3EoJueGH5b6
+         UISysoQxLWfAKMcFjAq0TqU7/0aaNgByGgV5KyCOF0YSHwEom9aMmDeYEZqkDDeiiBAe
+         dmdg==
+X-Forwarded-Encrypted: i=1; AJvYcCVf8TUxOqat2eW/34aykEAI6X2basOwdSsUN3oIVLAwXLAyPwJSOSXm0QSq27kKpe9Fsxtl2sjHIR5neII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFv+PqHsL+ZInjJetaNyhZSpoGwR1x4CzcBZiG4MbheY64y6AP
+	OVWLl7dM671b2pGc4ON4S3Fi7CVDEb+KfK0wUgX+ZXkwC1zU91PxvgefAQIOPSDWZ0J3FKKofUR
+	GuhH1N/m0zaglvI3H9zYWB6Z8ByuKKSCjH4JJ
+X-Google-Smtp-Source: AGHT+IHkyOUSrZWPFA3y75jsiO35BBFsma2xgU/eoM7XLdj4xLkzEHV54DlON8lAoxScSinKd0bNayTWXt4280H+XTs=
+X-Received: by 2002:a25:d645:0:b0:e2e:2b20:492a with SMTP id
+ 3f1490d57ef6-e3087c21336mr7425173276.46.1730133420732; Mon, 28 Oct 2024
+ 09:37:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-am62x-sk-common: Add bootph-all
- property in cpsw_mac_syscon node
-To: Chintan Vankar <c-vankar@ti.com>, Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Tero
- Kristo <kristo@kernel.org>,
-        Nishanth Menon <nm@ti.com>
-CC: <s-vadapalli@ti.com>, <srk@ti.com>, <danishanwar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241011110207.600678-1-c-vankar@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20241011110207.600678-1-c-vankar@ti.com>
+References: <20241028123435.3495916-1-dongtai.guo@linux.dev>
+In-Reply-To: <20241028123435.3495916-1-dongtai.guo@linux.dev>
+From: Paul Moore <paul@paul-moore.com>
+Date: Mon, 28 Oct 2024 12:36:50 -0400
+Message-ID: <CAHC9VhTC3OgGy7FrmPTOG_qLoPFbUFqYa+bJvfB2q+uMkQWPWQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v2] netlabel: document doi_remove field of struct netlbl_calipso_ops
+To: George Guo <dongtai.guo@linux.dev>
+Cc: horms@kernel.org, davem@davemloft.net, edumazet@google.com, 
+	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	George Guo <guodongtai@kylinos.cn>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 11/10/24 16:32, Chintan Vankar wrote:
-> Add bootph-all property in CPSW MAC's eFuse node cpsw_mac_syscon.
-> 
-
-Why?
-
-Please make sure commit message is verbose enough to say why the change
-is needed vs what that change is (latter is obvious lookng at the diff)
-
-> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+On Mon, Oct 28, 2024 at 8:34=E2=80=AFAM George Guo <dongtai.guo@linux.dev> =
+wrote:
+>
+> From: George Guo <guodongtai@kylinos.cn>
+>
+> Add documentation of doi_remove field to Kernel doc for struct netlbl_cal=
+ipso_ops.
+>
+> Flagged by ./scripts/kernel-doc -none.
+>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
 > ---
-> 
-> This patch is based on linux-next tagged next-20241011.
-> 
->  arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> index 44ff67b6bf1e..82d34dfb91ed 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> @@ -303,6 +303,10 @@ AM62X_MCU_IOPAD(0x028, PIN_OUTPUT, 0) /* (C5/C6) WKUP_UART0_TXD */
->  	};
->  };
->  
-> +&cpsw_mac_syscon {
-> +	bootph-all;
-> +};
-> +
->  &wkup_uart0 {
->  	/* WKUP UART0 is used by DM firmware */
->  	bootph-pre-ram;
+>  include/net/netlabel.h | 1 +
+>  1 file changed, 1 insertion(+)
 
--- 
-Regards
-Vignesh
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+--=20
+paul-moore.com
 
