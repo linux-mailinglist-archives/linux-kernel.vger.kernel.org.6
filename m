@@ -1,1320 +1,245 @@
-Return-Path: <linux-kernel+bounces-383892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2B89B217B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:43:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AD99B217D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:09:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9DEB1C20A04
-	for <lists+linux-kernel@lfdr.de>; Sun, 27 Oct 2024 23:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5676EB20C5A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2527418E35B;
-	Sun, 27 Oct 2024 23:42:39 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08210A47;
+	Mon, 28 Oct 2024 00:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4OFT20C"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104C4188A0E
-	for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 23:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7ED36C;
+	Mon, 28 Oct 2024 00:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730072556; cv=none; b=P2kZ7G3uVIjAe0KuSdq/neq4lWzGUDDwe+jmy0m295rnXZKoAGW2WbmhOuOEsQeRwHlRn001bJpBY7toENfzlJSuKda9q8cTF2pFEE25c0LSlCD63i55OP0s+QcRSBe8pKBHQe2gSHIH4BVRqpZKUqTnijtj197pmvRWV3S4jXE=
+	t=1730074167; cv=none; b=tyuWlWM6O8nImVGUdCGK7GrVrW2GVpIjBJF8x9u569C0Zk8znluBFimW2uDgHJIreIynHN9wc2VWi855LFBlQKHXMWartBr+yBFvpdhxitRzmh6jhfgSBEHFRGo9Tf9gNfXH2pAkFi0UqOYssVuS0kajMZJL0/QKr3sNaji18yQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730072556; c=relaxed/simple;
-	bh=faHaNbTN083q2wDqSoWxuZ2pTNRTB20FkmO9QOI4CeM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DWNrCZYXo900J6lOwg9j0VdnadgNTphp/yTybU6uVmUgKLhQo3Z/JihaGS7GCZC+dKX5ZuXPAA9bWvTBWX7xT1VtlijoVf09FQ3im9VkzwucJKBKK2ZvSpnXG4M6VcAJ3WU8BnL6I9fGD/59EwSWpfwcU3h4Np2ujyx41EDfbvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83a8c0df400so370289139f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 16:42:28 -0700 (PDT)
+	s=arc-20240116; t=1730074167; c=relaxed/simple;
+	bh=ANF5axTXMVVS3gzJ3zqs59bDfLQorgMkuXmKY5BvbIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C7ONZpxd7LsWAW9B7F8snHDdhuCRBDWKVXbo/2a/IfW/J9onpEeLQi8ZrI0Rnc1juLbvKTzLpPSQiFtYj6MczAr1qxj7Z0DpjOfs9rh/bIQGgcX1C0Eg/jjCABYdFHLkV7EkNYWrrzBCOUIHlFCf8NgKT4N+/tph1ibaEv+AFwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4OFT20C; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c9388a00cfso4267689a12.3;
+        Sun, 27 Oct 2024 17:09:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730074163; x=1730678963; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l4jVhDJUCPbZ0g26fsXUoO4mush0279W/qJ7q2uEVOs=;
+        b=P4OFT20CTQwqws3rvEN26dECZ74q5Opj2+llqORlVDZ2llQD48hqY/6hoQSLQW8aHU
+         4WqQO9FbcfNtzanqUuauNyehVSPWsL7/gGAmQWCtV3kRgmU05X+bmRWbVs+rExwN+gJT
+         gmojUM2s/r3hMcpi25so7QBxUKnDJOlTLnwaZPH/kh+FPWh9f6lsGNOrYiaAE8vZzDME
+         X8weOaYmPb6LQjlIet3ndGSzfs1bkluj6bGG2KTrHKGD5UDW8l8SrJ/4uJPBj0miDfOG
+         DPnSLYlQuQ5r0zoTnxcKXDwkYNRZsiaWfpSihuH+DIdzHaegMuhWOfs7E68YLVTnjMxj
+         xasg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730072548; x=1730677348;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jI/zmEkmJYLI8/seXSqQiGlHzFSs5yqy9L9LFXTQWQs=;
-        b=o9j1lh3gpuLWDDuPCi7e9A21wPf3VtrFgZDOFdmIlpEB2zuDHLFjqcvcLP7YRVPTQ0
-         EQFhERiufp/4m+v9eFdGNT9AjrQXZPwpfGkIgvKtVGU0/cjVyc7mouLRGQk8mtQotOCT
-         WYqtbBOo7FnuQ/f9CFrSCc+xtvbHRSV3rTAQebEfGQGDaVOwzV+XB1hRTE8iBXiAc+Xl
-         CmI5ot4UzmPVcrQYnCKtpmvPssN9b4jSNvATgxsEqkvBIPQWRHOweXGSnSgg5ZmPCg6M
-         Rb4X7K8/h/cDxgmkdbgM3t12nCPeschu1MEaJ/S8qA0zEVlRb7HoeclsyNRA2fW4Ybiw
-         +s9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV67mveI07kHQ1pUlo7GaF+w8Yt2jQDrTtHqlIHa84eUqoG9uDJhCOhqKBFuzWkhMu5Cwl19yziXZfT7Co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS/sRxy9vo5lQqbxG7JwccWBhBFDvnB/ESl0HyKhCwOmtxBfOB
-	rLNXwGOG4pjrkMSJJyU9ou3KCIEVdSNZUpv4vCjdLN04bshhznuCjF71gK/WKzfATT0pP2lb/57
-	Mk0Qa2i/gt2zB8h0O3AW6+j76xksJS8OvqJ2t5ZeMVyVcu5Ga3OrN+HQ=
-X-Google-Smtp-Source: AGHT+IHfVkwYslgxrHLvsI15SITOf4htYvm+oIUvyT/Ra3iwviJ19VP/EXRjKoQmDAZSW1Yl3MgIynEV529jSsratNZUVIhL027h
+        d=1e100.net; s=20230601; t=1730074163; x=1730678963;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l4jVhDJUCPbZ0g26fsXUoO4mush0279W/qJ7q2uEVOs=;
+        b=rt541M8LLfNfh5ZCN+P1W7MfRSKrjuRhp3dumYto3u21j2icWe+WMbiHz1w2cdX/XQ
+         jYtEP1B0fpd4rqaDFZgcIOBYiA/ilbo9LVdGXlMnaIptmFzfmOich1okGikKKsJkzs9u
+         8UHBi8zu7r1gCo8EUyUeozVPGZy+clOVQPYMG4eQpbKgrbuVBSGu2qq18jtuiKYVFs//
+         5yCfmxqe326jML1lNStMvvF5Wxnx2F3XtJwWwnyaCF0W6tJPK6I9aPJ8K1qYRej04zJ6
+         d6cMwb/nB/ut+q3Q+dDcctMp0eSV+gfJPYATKHpiTHcaw64FTJmMN/nMYRifJY/oBF1g
+         aKsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrCTms0gO2ySh93YN5JfBRoYkr7GUs3nvhaNiz89UOnrUk/fOxfLhKXafw6+k05BtmculWsFRIMVB1@vger.kernel.org, AJvYcCX/Hwqa6FIs4M7qOKzXYTJKDImZ+3cCoBNdVR3tzRkmwJCWI0s9DZ0E0jUx0y6Wb5uTWsFv5L7Su4FBRcA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmrUyDEuvaW9MM3UfheFUGH6DtpPZchmECHTUGMi1sA6HNwSB5
+	XJB1vhDhplURGBv3FT+n8bUupQik/2KBJ3qsEjRdnyDDyRXLakMtLGPfQCuqGA/edtDg8wg0bXn
+	mTItnSqNCIoGOdGkNhMTAZ4N9X9Q=
+X-Google-Smtp-Source: AGHT+IFOBVWLyNKQF9dOMrgGt05/88DCBl1fgz0RWe1gW1ND3s2UGMyTVN0kRDlppBNjAP48Othci5Ht78QsnGVn79s=
+X-Received: by 2002:a05:6402:2742:b0:5c9:ba84:d3a with SMTP id
+ 4fb4d7f45d1cf-5cbbf8a41f6mr5473210a12.10.1730074163113; Sun, 27 Oct 2024
+ 17:09:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1687:b0:837:7f1a:40af with SMTP id
- ca18e2360f4ac-83b1c5d45efmr500894539f.14.1730072548113; Sun, 27 Oct 2024
- 16:42:28 -0700 (PDT)
-Date: Sun, 27 Oct 2024 16:42:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671ecfe4.050a0220.2b8c0f.01ed.GAE@google.com>
-Subject: [syzbot] [net?] BUG: Bad page state in bpf_test_run_xdp_live
-From: syzbot <syzbot+d121e098da06af416d23@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, davem@davemloft.net, edumazet@google.com, 
-	hawk@kernel.org, ilias.apalodimas@linaro.org, kuba@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+References: <20241025060017.1663697-1-benchuanggli@gmail.com> <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
+In-Reply-To: <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
+From: Ben Chuang <benchuanggli@gmail.com>
+Date: Mon, 28 Oct 2024 08:08:49 +0800
+Message-ID: <CACT4zj-JC4FAN1qVhROX+7+wV1d426boqkNUPM4TR88A7TjBqg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the
+ set clock function
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: adrian.hunter@intel.com, victor.shih@genesyslogic.com.tw, 
+	greg.tu@genesyslogic.com.tw, ben.chuang@genesyslogic.com.tw, 
+	HL.Liu@genesyslogic.com.tw, Lucas.Lai@genesyslogic.com.tw, 
+	victorshihgli@gmail.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Georg Gottleuber <ggo@tuxedocomputers.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Oct 25, 2024 at 9:23=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> + Georg
+>
+> On Fri, 25 Oct 2024 at 08:01, Ben Chuang <benchuanggli@gmail.com> wrote:
+> >
+> > From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> >
+> > On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-only
+> > after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz().
+> > So the low power negotiation mode cannot be enabled again.
+> > Introduce gl9767_set_low_power_negotiation() function to fix it.
+> >
+> > The explanation process is as below.
+> >
+> > static void sdhci_gl9767_set_clock()
+> > {
+> >         ...
+> >         gl9767_vhs_write();
+> >         ...
+> >         value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> >         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <--- (a=
+)
+> >
+> >         gl9767_disable_ssc_pll(); <--- (b)
+> >         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> >
+> >         if (clock =3D=3D 0)
+> >                 return;  <-- (I)
+> >
+> >         ...
+> >         if (clock =3D=3D 200000000 && ios->timing =3D=3D MMC_TIMING_UHS=
+_SDR104) {
+> >                 ...
+> >                 gl9767_set_ssc_pll_205mhz(); <--- (c)
+> >         }
+> >         ...
+> >         value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> >         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- (II=
+)
+> >         gl9767_vhs_read();
+> > }
+> >
+> > (a) disable low power negotiation mode. When return on (I), the low pow=
+er
+> > mode is disabled.  After (b) and (c), VHS is read-only, the low power m=
+ode
+> > cannot be enabled on (II).
+> >
+> > Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205MHz =
+and enable SSC for GL9767")
+>
+> Is this the same problem as being reported in
+> https://lore.kernel.org/all/41c1c88a-b2c9-4c05-863a-467785027f49@tuxedoco=
+mputers.com/
+>
+> ?
+>
+> > Signed-off-by: Ben Chuang <benchuanggli@gmail.com>
+>
+> Not sure the above SoB makes sense. The below is perfectly sufficient, ri=
+ght?
 
-syzbot found the following issue on:
+Yes, just keep the company's SOB. Thanks.
 
-HEAD commit:    6d858708d465 Merge branch 'net-ethernet-freescale-use-pa-t..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=15d6a65f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e7f0cac6eaefe81d
-dashboard link: https://syzkaller.appspot.com/bug?extid=d121e098da06af416d23
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=156b48a7980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=144db640580000
+Best regards,
+Ben Chuang
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/88c678a36ec8/disk-6d858708.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b19b4fbbd593/vmlinux-6d858708.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/18fef9c3fe20/bzImage-6d858708.xz
-
-The issue was bisected to:
-
-commit dba1b8a7ab6853a84bf3afdbeac1c2f2370d3444
-Author: Jesper Dangaard Brouer <hawk@kernel.org>
-Date:   Fri Nov 24 10:16:52 2023 +0000
-
-    mm/page_pool: catch page_pool memory leaks
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1578f640580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1778f640580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1378f640580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+d121e098da06af416d23@syzkaller.appspotmail.com
-Fixes: dba1b8a7ab68 ("mm/page_pool: catch page_pool memory leaks")
-
-BUG: Bad page state in process syz-executor203  pfn:278e1
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e1dc0 pfn:0x278e1
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e1dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248414468, free_ts 71048141035
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Not tainted 6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:278e2
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e2dc0 pfn:0x278e2
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e2dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248403197, free_ts 71048146269
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:278e3
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e3dc0 pfn:0x278e3
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e3dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248392499, free_ts 71048151461
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:278e4
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e4dc0 pfn:0x278e4
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e4dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248381341, free_ts 71048156641
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:278e5
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e5dc0 pfn:0x278e5
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e5dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248370083, free_ts 71048161843
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:278e6
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e6dc0 pfn:0x278e6
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e6dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248358846, free_ts 71048190667
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:278e7
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff8880278e7dc0 pfn:0x278e7
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff8880278e7dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248347054, free_ts 71048196073
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:6a1f0
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806a1f0dc0 pfn:0x6a1f0
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff88806a1f0dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248335775, free_ts 71048201729
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:6a1f1
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806a1f1dc0 pfn:0x6a1f1
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff88806a1f1dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248324385, free_ts 71048206965
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:6a1f2
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806a1f2dc0 pfn:0x6a1f2
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff88806a1f2dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248313104, free_ts 71048212188
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:6a1f3
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806a1f3dc0 pfn:0x6a1f3
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff88806a1f3dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248301669, free_ts 71048217415
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inline]
- skb_free_head net/core/skbuff.c:1096 [inline]
- skb_release_data+0x6dc/0x8a0 net/core/skbuff.c:1125
- skb_release_all net/core/skbuff.c:1190 [inline]
- __kfree_skb net/core/skbuff.c:1204 [inline]
- sk_skb_reason_drop+0x1c9/0x380 net/core/skbuff.c:1242
- kfree_skb_reason include/linux/skbuff.h:1262 [inline]
- __netif_receive_skb_core+0x3edd/0x4570 net/core/dev.c:5642
- __netif_receive_skb_list_core+0x2b1/0x980 net/core/dev.c:5743
- __netif_receive_skb_list net/core/dev.c:5810 [inline]
- netif_receive_skb_list_internal+0xa51/0xe30 net/core/dev.c:5901
- netif_receive_skb_list+0x55/0x4b0 net/core/dev.c:5953
- xdp_recv_frames net/bpf/test_run.c:279 [inline]
- xdp_test_run_batch net/bpf/test_run.c:360 [inline]
- bpf_test_run_xdp_live+0x1b0d/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7effeb162d19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 1c 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007effeb0f4228 EFLAGS: 00000246 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00007effeb1e5338 RCX: 00007effeb162d19
-RDX: 0000000000000048 RSI: 0000000020000600 RDI: 000000000000000a
-RBP: 00007effeb1e5330 R08: 00007effeb0f46c0 R09: 00007effeb0f46c0
-R10: 00007effeb0f46c0 R11: 0000000000000246 R12: 00007effeb1b21bc
-R13: 2caa1414ac000000 R14: 656c6c616b7a7973 R15: 00007ffc0d3b6078
- </TASK>
-BUG: Bad page state in process syz-executor203  pfn:6a1f4
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88806a1f4dc0 pfn:0x6a1f4
-flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000000 dead000000000040 ffff888026a8f000 0000000000000000
-raw: ffff88806a1f4dc0 0000000000000001 00000000ffffffff 0000000000000000
-page dumped because: page_pool leak
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(GFP_ATOMIC|__GFP_NOWARN), pid 5947, tgid 5944 (syz-executor203), ts 71248290591, free_ts 71048222589
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
- alloc_pages_bulk_noprof+0x729/0xd40 mm/page_alloc.c:4681
- alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
- __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
- page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
- page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
- page_pool_dev_alloc_pages include/net/page_pool/helpers.h:96 [inline]
- xdp_test_run_batch net/bpf/test_run.c:305 [inline]
- bpf_test_run_xdp_live+0x950/0x2160 net/bpf/test_run.c:389
- bpf_prog_test_run_xdp+0x805/0x11e0 net/bpf/test_run.c:1317
- bpf_prog_test_run+0x2e4/0x360 kernel/bpf/syscall.c:4247
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5652
- __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5739
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-page last free pid 5938 tgid 5938 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
- discard_slab mm/slub.c:2677 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3145
- put_cpu_partial+0x17c/0x250 mm/slub.c:3220
- __slab_free+0x2ea/0x3d0 mm/slub.c:4449
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:247 [inline]
- slab_post_alloc_hook mm/slub.c:4085 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_noprof+0x135/0x2a0 mm/slub.c:4141
- taskstats_tgid_alloc kernel/taskstats.c:582 [inline]
- taskstats_exit+0x360/0xa60 kernel/taskstats.c:621
- do_exit+0x9ad/0x28e0 kernel/exit.c:924
- do_group_exit+0x207/0x2c0 kernel/exit.c:1088
- __do_sys_exit_group kernel/exit.c:1099 [inline]
- __se_sys_exit_group kernel/exit.c:1097 [inline]
- __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1097
- x64_sys_call+0x2634/0x2640 arch/x86/include/generated/asm/syscalls_64.h:232
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-Modules linked in:
-CPU: 1 UID: 0 PID: 5947 Comm: syz-executor203 Tainted: G    B              6.12.0-rc2-syzkaller-00631-g6d858708d465 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- bad_page+0x166/0x1b0 mm/page_alloc.c:501
- free_page_is_bad mm/page_alloc.c:918 [inline]
- free_pages_prepare mm/page_alloc.c:1100 [inline]
- free_unref_page+0xed0/0xf20 mm/page_alloc.c:2638
- skb_free_frag include/linux/skbuff.h:3405 [inl
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+>
+> Kind regards
+> Uffe
+>
+>
+> > ---
+> >  drivers/mmc/host/sdhci-pci-gli.c | 35 +++++++++++++++++++-------------
+> >  1 file changed, 21 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/mmc/host/sdhci-pci-gli.c b/drivers/mmc/host/sdhci-=
+pci-gli.c
+> > index 0f81586a19df..22a927ce2c88 100644
+> > --- a/drivers/mmc/host/sdhci-pci-gli.c
+> > +++ b/drivers/mmc/host/sdhci-pci-gli.c
+> > @@ -892,28 +892,40 @@ static void gl9767_disable_ssc_pll(struct pci_dev=
+ *pdev)
+> >         gl9767_vhs_read(pdev);
+> >  }
+> >
+> > +static void gl9767_set_low_power_negotiation(struct pci_dev *pdev, boo=
+l enable)
+> > +{
+> > +       u32 value;
+> > +
+> > +       gl9767_vhs_write(pdev);
+> > +
+> > +       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+> > +       if (enable)
+> > +               value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> > +       else
+> > +               value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> > +       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+> > +
+> > +       gl9767_vhs_read(pdev);
+> > +}
+> > +
+> >  static void sdhci_gl9767_set_clock(struct sdhci_host *host, unsigned i=
+nt clock)
+> >  {
+> >         struct sdhci_pci_slot *slot =3D sdhci_priv(host);
+> >         struct mmc_ios *ios =3D &host->mmc->ios;
+> >         struct pci_dev *pdev;
+> > -       u32 value;
+> >         u16 clk;
+> >
+> >         pdev =3D slot->chip->pdev;
+> >         host->mmc->actual_clock =3D 0;
+> >
+> > -       gl9767_vhs_write(pdev);
+> > -
+> > -       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+> > -       value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> > -       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+> > -
+> > +       gl9767_set_low_power_negotiation(pdev, false);
+> >         gl9767_disable_ssc_pll(pdev);
+> >         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> >
+> > -       if (clock =3D=3D 0)
+> > +       if (clock =3D=3D 0) {
+> > +               gl9767_set_low_power_negotiation(pdev, true);
+> >                 return;
+> > +       }
+> >
+> >         clk =3D sdhci_calc_clk(host, clock, &host->mmc->actual_clock);
+> >         if (clock =3D=3D 200000000 && ios->timing =3D=3D MMC_TIMING_UHS=
+_SDR104) {
+> > @@ -922,12 +934,7 @@ static void sdhci_gl9767_set_clock(struct sdhci_ho=
+st *host, unsigned int clock)
+> >         }
+> >
+> >         sdhci_enable_clk(host, clk);
+> > -
+> > -       pci_read_config_dword(pdev, PCIE_GLI_9767_CFG, &value);
+> > -       value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> > -       pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value);
+> > -
+> > -       gl9767_vhs_read(pdev);
+> > +       gl9767_set_low_power_negotiation(pdev, true);
+> >  }
+> >
+> >  static void gli_set_9767(struct sdhci_host *host)
+> > --
+> > 2.47.0
+> >
 
