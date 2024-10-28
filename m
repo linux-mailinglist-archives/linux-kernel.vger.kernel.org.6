@@ -1,179 +1,180 @@
-Return-Path: <linux-kernel+bounces-385717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3239F9B3ACE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:52:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45479B3AD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:53:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA39B21F22
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:52:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040AF1C21B70
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E4E1DE3D2;
-	Mon, 28 Oct 2024 19:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5A91DFD98;
+	Mon, 28 Oct 2024 19:53:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hy7mVKkO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="J8SUB4wI"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFAF524C;
-	Mon, 28 Oct 2024 19:52:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C7118E05D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145145; cv=none; b=puwNduhMEn7vxKhWHMa5JE1Z+GMdPn3lW/2fQK4puzzOewxtKBkMZIBTFYW7IZvbF6vNUVsN03FTbdZFSf+4E5Njf2QFsSz8g/pecpDe4t1lwxBAAdrH/aESOZTus+zsjPrc1GkDmpeBgm1jpznxT/TJs7bCdinf8HC7QzHGQvc=
+	t=1730145179; cv=none; b=R7f5yQSxDFU+Aterq+Lm4h9m5DV+apqnzOOj54niXRfK43EzNNLson2uTOl62E2yF77FeBVg4Z3Cwkt6GqcDXhFWiv2sAGRnNkw2Pnqzpm4HEl1o740lFSlYn15GWfzxQ3soyNP8TN0Vs9BGx9D710iMGSWqJn+E/foRKlACHEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145145; c=relaxed/simple;
-	bh=Ul+QBVc+YnNy2tXI88GGtUMlSaX13YfqOBf387SSnCA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=McwsezeSQynOGaVNsQkL2DFIjHKLghYJll83rDHauvYC9bzWGbMFDrQlumK4VvE31dong1UKh2Zvc2sr/68F2tI/6Osh7iQuXLBcShtThstTl+LfhJOPxMmTR81vtibvFIixpyq1if+XCNNKnaNC7KKfZIgsz4u1u3ZnziMtOUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hy7mVKkO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230D7C4AF0B;
-	Mon, 28 Oct 2024 19:52:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730145145;
-	bh=Ul+QBVc+YnNy2tXI88GGtUMlSaX13YfqOBf387SSnCA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Hy7mVKkO3XRYO8YWVrUTgHYinB3RiMlhYWP11k1m52FZ+ii3U61nFlGXTdSJQjOJs
-	 slNtI7p1h8mB/ZzCQsZo4AFl+/9NWGv7zBc7OOybScNasnNc4ZmgX3B4vauP0vfHE+
-	 6TzsmkQAhm+SVulymqgjaKwf2Q3K4SmddGQF/TYxL/yvK+LgwlHLgpen18QFw5y0cU
-	 UPBupjnkFBG8/AJq9OAkn+O//L3/nWZNwZ+967EW8yx6eBeDz8qD4TcMyZu7TY9JLJ
-	 h7Nb3uhYaEu6BE0rw1ByScNbrHN15rzP1FjYlUoBNf5heDwtKxMaCWICzPiapPsKrh
-	 9pPiJaxhBcjlQ==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so5787892e87.1;
-        Mon, 28 Oct 2024 12:52:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVKgtVq7oAu4oWVIYjJYsh575ox2v+zkCqcbGUuemFZxUSpimL7LvdB4VGT65pG/eoxEL1qLzDTWOLXUQ==@vger.kernel.org, AJvYcCVXjV1Fu3iTcmtTicNB7Bhu6/2ZIPG5uUXoIdZ4dUzigax1YsqXwfNA/OTlVHsbZrcNq/kZKEQaQH/9Bcs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy69gab0qbVIf6LR4DJkOdhlE01eEtIpVKluF6SO5XchyzgNMrd
-	cvYkIckXWz9t9EZlt6A8NRDvxeBbeTzpN+PZo6ARS2WIK8FF7PipG6WMaQ9x5Yjwq2sTDl90q6A
-	WnsPApT+ak4ZxG2w/4GKMTswATQ==
-X-Google-Smtp-Source: AGHT+IHZQIXoMf901p3J/xgrany/8b01LghURtWvew8IISJPoYjj2YNAA8I9ZSkMEW+VoWXGPDwYES18VSeZo2tXQbU=
-X-Received: by 2002:a05:6512:230a:b0:53b:1f7a:9bf8 with SMTP id
- 2adb3069b0e04-53b34a34190mr3665907e87.55.1730145143491; Mon, 28 Oct 2024
- 12:52:23 -0700 (PDT)
+	s=arc-20240116; t=1730145179; c=relaxed/simple;
+	bh=dehkDJB9WQDCgvah8osMPwjYFl7T5sv+Vt2PLRrgMZE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gdI+Ko70MZLqxjjQIj2IwCgIz2wCatHxGFekpv72ahbpMq+qRIm1+9LKfdDLYKryFoJ0MBFIyV/Fqz6Pr+rKkOX1MIuNgDAzsMkZOhQfgqKBuCOb1V/GHpjqnIzPLt/Wza4Bz4mOK8BTpyE+eS/yfWsAgmPfJnIFPRfdNOiuFkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=J8SUB4wI; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso3302324a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:52:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730145176; x=1730749976; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dOgHVETNvwv0GrKYIJJt6UQ/Zkj1FG5o1aowTjEXfjQ=;
+        b=J8SUB4wIyDU1yMchKcAO4ZX1KzyWLHCh5fFmIqQBy/IcuWmYaTOXH9HuiuzPzmNfk7
+         JD2zw3wtRQUIpmnFlVXnIgcdQU2zB66X2qCSuXtn2rJ3mE5ZuRIoiJ/1Ewrjd8YtPa+t
+         stirQaB7nofG9MlMvdSQQIBE8y5HhaAoOJ7t0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730145176; x=1730749976;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dOgHVETNvwv0GrKYIJJt6UQ/Zkj1FG5o1aowTjEXfjQ=;
+        b=Dw0kX1RtrSmurfpJLbtgJsEpxU23G7VtiFdLSXss6UWKW01XAovs76MKi9Pozw0PzE
+         HWLB+TV2Gc435x87kbmWiJhe6mfrUlN0UDzUEwlSiucPK00ksrHZ1fU8stST28EuG749
+         DCAqtpPz0XxolVAh2BCA4Oc5p8OiqPO1+k3row0lhf+DBoW1e0juZOFf45ySs2rpmqlT
+         5UzCY6cMc7crvcH+HzZ5vfPG9vzqX2bxaBj4QADAKCiXFnL4h63wPn5gVTECRzUv1q+W
+         esxnqCGvw3Sbev14LZJ/f5tGX0VxtDWbY8rYolG7EfJpBjOMona6ivcWTf6KaBwoH4ms
+         50dA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSbL2AE+PjS2JpEaWiR1ggaEHolIBylgkA15ILyP/6ciPL7v8ZJZO5TTX3jeDcGEwk+hauBq4cs/cVK0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzspR82oE0W8CZ6xwzPmJOhSr3dfIQD17a55XJSmc76bZ32G/C8
+	Ed/wQdHBSEv1Ld9JicJjIKzEfLyK7B6JUB1QoUqkrshAWohthGxGV9oaEvbiZ08=
+X-Google-Smtp-Source: AGHT+IExbYvofPHEquOHcWrySfi2hLqRWDZWOOEDh1nkJ7OI4InzrhdBk3weEUkkN59f4LvmjpwrkA==
+X-Received: by 2002:a17:90b:2d8c:b0:2e2:ca67:dade with SMTP id 98e67ed59e1d1-2e8f11b8b96mr11239428a91.32.1730145176542;
+        Mon, 28 Oct 2024 12:52:56 -0700 (PDT)
+Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3771e64sm7695247a91.50.2024.10.28.12.52.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 12:52:55 -0700 (PDT)
+From: Joe Damato <jdamato@fastly.com>
+To: netdev@vger.kernel.org
+Cc: vitaly.lifshits@intel.com,
+	jacob.e.keller@intel.com,
+	kurt@linutronix.de,
+	vinicius.gomes@intel.com,
+	Joe Damato <jdamato@fastly.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	bpf@vger.kernel.org (open list:XDP (eXpress Data Path)),
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	linux-kernel@vger.kernel.org (open list),
+	Paolo Abeni <pabeni@redhat.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>
+Subject: [PATCH iwl-next v5 0/2] igc: Link IRQs and queues to NAPIs
+Date: Mon, 28 Oct 2024 19:52:40 +0000
+Message-Id: <20241028195243.52488-1-jdamato@fastly.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028122405.27090-1-herve.codina@bootlin.com>
- <20241028122405.27090-2-herve.codina@bootlin.com> <CAL_JsqK7SjfJ7Re4k-A8fQB+tNHyM3r2Rcpct_zUfR2yhEj+iQ@mail.gmail.com>
- <20241028184343.74ad5a26@bootlin.com>
-In-Reply-To: <20241028184343.74ad5a26@bootlin.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 28 Oct 2024 14:52:09 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+_VHsMKufVwUj3Q0pv1X6d8Xe0FN6A9svCmWJ3cuuUqQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+_VHsMKufVwUj3Q0pv1X6d8Xe0FN6A9svCmWJ3cuuUqQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] misc: lan966x_pci: Fix dtc warns 'missing or empty
- reg/ranges property'
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
-	Steen Hegelund <steen.hegelund@microchip.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 12:43=E2=80=AFPM Herve Codina <herve.codina@bootlin=
-.com> wrote:
->
-> Hi Rob,
->
-> On Mon, 28 Oct 2024 08:55:24 -0500
-> Rob Herring <robh@kernel.org> wrote:
->
-> > On Mon, Oct 28, 2024 at 7:24=E2=80=AFAM Herve Codina <herve.codina@boot=
-lin.com> wrote:
-> > >
-> > > dtc generates the following warnings when building the LAN966x device
-> > > tree overlay (lan966x_pci.dtso):
-> > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/cpu_=
-clk: missing or empty reg/ranges property
-> > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/ddr_=
-clk: missing or empty reg/ranges property
-> > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/sys_=
-clk: missing or empty reg/ranges property
-> > >
-> > > Indeed, related nodes are under the pci-ep-bus (simple-bus) which is =
-not
-> > > correct.
-> > >
-> > > Put them outside this node.
-> > >
-> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> > > Closes: https://lore.kernel.org/all/20241025110919.64b1cffb@canb.auug=
-.org.au/
-> > > Fixes: 185686beb464 ("misc: Add support for LAN966x PCI device")
-> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> > > ---
-> > > The referenced commit is in the reset tree
-> > > ---
-> > >  drivers/misc/lan966x_pci.dtso | 36 +++++++++++++++++----------------=
---
-> > >  1 file changed, 18 insertions(+), 18 deletions(-)
-> > >
-> > > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci=
-.dtso
-> > > index 7282687df25f..5466d013da7d 100644
-> > > --- a/drivers/misc/lan966x_pci.dtso
-> > > +++ b/drivers/misc/lan966x_pci.dtso
-> > > @@ -19,6 +19,24 @@ __overlay__ {
-> > >                         #address-cells =3D <3>;
-> > >                         #size-cells =3D <2>;
-> > >
-> > > +                       cpu_clk: cpu_clk {
-> >
-> > Preferred node name is "clock-<freq-in-hz>"
->
-> I based the name on the lan966x.dtsi
-> https://elixir.bootlin.com/linux/v6.12-rc1/source/arch/arm/boot/dts/micro=
-chip/lan966x.dtsi#L38
+Greetings:
 
-That should be fixed too.
+Welcome to v5.
 
-> Of course, I can rename the cpu_clk, ddr_clk and sys_clk nodes but this w=
-ill create
-> a difference against lan966x.dtsi on some points that should be identical=
-.
+See changelog below and in each patch for changes from v4 [1].
 
-Then maybe they should be sharing a .dtsi?
+This revision was created due to a report from Vitaly [2], that my v4
+was re-introducing a potential deadlock in runtime_resume which was
+fixed in commit: 6f31d6b: "igc: Refactor runtime power management flow."
 
-> Let me know with that in mind if I need to rename those nodes in this ser=
-ies.
+As you'll see, I've modified patch 2 to include a small wrapper to
+either hold rtnl (or not) depending on whether runtime_resume or resume
+are being called.
 
-Yes, easier now than later.
+Overall, this series adds support for netdev-genl to igc so that
+userland apps can query IRQ, queue, and NAPI instance relationships.
+This is useful because developers who have igc NICs (for example, in
+their Intel NUCs) who are working on epoll-based busy polling apps and
+using SO_INCOMING_NAPI_ID, need access to this API to map NAPI IDs back
+to queues.
 
-> > Also, as a general rule, don't use "_" in node names (and properties).
-> >
-> > Isn't there a schema for the device which needs these nodes added to
-> > it? If not, there should be.
-> >
->
-> No, there is no schema yet for this device.
->
-> How can we describe schema for this kind of devices that are using
-> device-tree overlays?
+See the commit messages of each patch for example output I got on my igc
+hardware.
 
-Describing is not the issue. Running the checks is. Though you can run
-the checks at runtime.
+Thanks to reviewers and maintainers for their comments/feedback!
 
-> I mean, this overlay is applied on a PCI device DT node. This DT node is
-> computed at runtime. It is, in the end, available in the base DT before
-> applying the overlay.
-> The compatible string that could be used to check the dtso against schema
-> cannot be set in the overlay (at least not at the correct place in the
-> hierarchy) without causing a property memory leak at runtime. An overlay
-> cannot add a property in a base DT node without generating a memory leak
-> and so, we avoid adding such properties in the base DT from the overlay.
+Thanks,
+Joe
 
-That's a problem with overlays in general which we need to solve at some po=
-int.
+[1]: https://lore.kernel.org/netdev/20241022215246.307821-1-jdamato@fastly.com/
+[2]: https://lore.kernel.org/netdev/d7799132-7e4a-0ac2-cbda-c919ce434fe2@intel.com/
 
-> Is this missing schema blocking for this series ?
+v5:
+  - Add a small wrapper to patch 2 to only hold rtnl when resume is
+    called, but avoid rtnl when runtime_resume is called which would
+    trigger a deadlock.
 
-No.
+v4: https://lore.kernel.org/netdev/20241022215246.307821-1-jdamato@fastly.com/
+  - Fixed a typo in Patch 1's commit message for the "other" IRQ number
+  - Based on a bug report for e1000, closer scrutiny of the code
+    revealed two paths where rtnl_lock / rtnl_unlock should be added in
+    Patch 2: igc_resume and igc_io_error_detected. The code added to
+    igc_io_error_detected is inspired by ixgbe's
+    ixgbe_io_error_detected
 
-Rob
+v3: https://lore.kernel.org/netdev/20241018171343.314835-1-jdamato@fastly.com/
+  - No longer an RFC
+  - Patch 1: no changes
+  - Patch 2:
+      - Replace igc_unset_queue_napi with igc_set_queue_napi(..., NULL),
+        as suggested by Vinicius Costa Gomes
+      - Simplify implementation of igc_set_queue_napi as suggested by Kurt
+        Kanzenbach, with a minor change to use the ring->queue_index
+
+rfcv2: https://lore.kernel.org/netdev/20241014213012.187976-1-jdamato@fastly.com/
+  - Patch 1: update line wrapping to 80 chars
+  - Patch 2:
+    - Update commit message to include output for IGC_FLAG_QUEUE_PAIRS
+      enabled and disabled
+    - Significant refactor to move queue mapping code to helpers to be
+      called from multiple locations
+    - Adjusted code to handle IGC_FLAG_QUEUE_PAIRS disabled as suggested
+      by Kurt Kanzenbach
+    - Map / unmap queues in igc_xdp_disable_pool and
+      igc_xdp_enable_pool, respectively, as suggested by Vinicius Costa
+      Gomes to handle the XDP case
+
+rfcv1: https://lore.kernel.org/lkml/20241003233850.199495-1-jdamato@fastly.com/
+
+Joe Damato (2):
+  igc: Link IRQs to NAPI instances
+  igc: Link queues to NAPI instances
+
+ drivers/net/ethernet/intel/igc/igc.h      |  2 +
+ drivers/net/ethernet/intel/igc/igc_main.c | 55 ++++++++++++++++++++---
+ drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 +
+ 3 files changed, 52 insertions(+), 7 deletions(-)
+
+
+base-commit: b8ee7a11c75436b85fa1641aa5f970de0f8a575c
+-- 
+2.25.1
+
 
