@@ -1,118 +1,87 @@
-Return-Path: <linux-kernel+bounces-385563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832AD9B38B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:05:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D52419B38B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:05:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6EDA1C20F59
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 123C01C220A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:05:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 002AD1DF266;
-	Mon, 28 Oct 2024 18:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D881DF75A;
+	Mon, 28 Oct 2024 18:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wqnz5mGb";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ILAs6NsC"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aCWAHIkV"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F7D1DE889
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A979E189B98;
+	Mon, 28 Oct 2024 18:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730138713; cv=none; b=hEtOzFJ8EiBndRZ5d+zPu/a4VzBIGEJyhqf3cz142V6pEmOHU4g8WWq/L4sb69xjaFHDUUQZpX3UxiTfTGrFeWvzV7icW3DkaEUp6l9k3EQx/0NGO7zDAXaLlkKQ4d71xQcsg0VLrpcnoDG1haAqJmEHuv+C6q36d9Rasr+ZCko=
+	t=1730138742; cv=none; b=frJvnS0QWDnboZ3+xzfekzkCPSG3WkbpkYNt8NcErB4WhaW3UvL1Z6f1J/SMSEblRysoEvDbsCdq9bQJeFts+hherRYKZ37d6mZCq494MzsJw8JlfbKp3TTcuA4/2rTaTrRdyliONKYHogTxPiQzFu5pYp3O+E2iN2GGQ/Vn3c4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730138713; c=relaxed/simple;
-	bh=fRlbN0InUEXs0zuP8f30G39Kp0WFE/xogpDAJIV2xMA=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cKezSmk8ng70tOWHf85q/pcpH7pyc2Idvu3Q8MvRC1Qf6keKGtxf8bb04FYOxhARtk9AaPLwihDZPY8dIifZkRfwCyMMubYHV/Vpp82S3Hhe8hat74A6mOn9Xp2HRoWbIHGQbnPpsC8wr5TSi3iFkbLMWul4MzfYVAhkXy0siwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wqnz5mGb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ILAs6NsC; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730138709;
+	s=arc-20240116; t=1730138742; c=relaxed/simple;
+	bh=t/AkSjq3S9Zhaq9PHBnxKgvJFcfCiEQtgXiQdd4roo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A13WwvJv9vo9sRF6LQ47wF0fYJ/eEfuHGZwi++LFWhTELm/1Je/x5QbhviXGKuG5gbVBo2seRHYPrRyzc8+Ao6TOIQbCsq+ZaDGxqj3JTVXGg74MT+nb8+Say5I2pB0+z3ZcS41gEyh/1Btt/LpLaUq458qknzIpBm079PXtwiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aCWAHIkV; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 4F9F01C0003;
+	Mon, 28 Oct 2024 18:05:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730138736;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3IDfOXFVv8kBd1AWaPkUULk3ghdxFNcDz4iKI1BeRtc=;
-	b=Wqnz5mGb7wOtrf9nVF/4H2cqx3QmYeROhop48+HP4GxGtvpocb2uj7sdq2yFVnZ0q9F29U
-	S+JlT7AO5CpAf2L5/XQgWa7vy8CwvL2ez68664dVHWmz4p7h1OIzQH4PD6qiHCm6sYppXq
-	uFWFycKuH4BjHl0raEvghxhP6NtizoqCpMKn44SzdcZdUHk1XYSwf2zXtP5r7hBBPW/liA
-	3yST+e+jmLJ17SHvFHgwCqTjCO7bPf5tLX1ThjGlRpTdbHRqI0m3IbHEEHTjE6YLUkOXyp
-	4nPqYOMVhjxyoEe4OcupaaxSruikYjaCRWn+RiUUeaKIB81qxZ6PcG/HqJqZBA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730138709;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3IDfOXFVv8kBd1AWaPkUULk3ghdxFNcDz4iKI1BeRtc=;
-	b=ILAs6NsCraYSC6mSWPKyHlbMSkWOol2nsWAsk/dQyIBpFI0D369S7UBifZ1p1UghPbvNKc
-	Xvv8KS2I+za31LBg==
-To: Jinjie Ruan <ruanjinjie@huawei.com>, oleg@redhat.com,
- linux@armlinux.org.uk, will@kernel.org, mark.rutland@arm.com,
- catalin.marinas@arm.com, sstabellini@kernel.org, maz@kernel.org,
- peterz@infradead.org, luto@kernel.org, kees@kernel.org, wad@chromium.org,
- akpm@linux-foundation.org, samitolvanen@google.com, arnd@arndb.de,
- ojeda@kernel.org, rppt@kernel.org, hca@linux.ibm.com,
- aliceryhl@google.com, samuel.holland@sifive.com, paulmck@kernel.org,
- aquini@redhat.com, petr.pavlu@suse.com, ruanjinjie@huawei.com,
- viro@zeniv.linux.org.uk, rmk+kernel@armlinux.org.uk, ardb@kernel.org,
- wangkefeng.wang@huawei.com, surenb@google.com, linus.walleij@linaro.org,
- yangyj.ee@gmail.com, broonie@kernel.org, mbenes@suse.cz,
- puranjay@kernel.org, pcc@google.com, guohanjun@huawei.com,
- sudeep.holla@arm.com, Jonathan.Cameron@huawei.com, prarit@redhat.com,
- liuwei09@cestc.cn, dwmw@amazon.co.uk, oliver.upton@linux.dev,
- kristina.martsenko@arm.com, ptosi@google.com, frederic@kernel.org,
- vschneid@redhat.com, thiago.bauermann@linaro.org, joey.gouly@arm.com,
- liuyuntao12@huawei.com, leobras@redhat.com, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -next v4 15/19] entry: Add arch
- irqentry_exit_need_resched() for arm64
-In-Reply-To: <20241025100700.3714552-16-ruanjinjie@huawei.com>
-References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
- <20241025100700.3714552-16-ruanjinjie@huawei.com>
-Date: Mon, 28 Oct 2024 19:05:09 +0100
-Message-ID: <878qu82je2.ffs@tglx>
+	bh=t/AkSjq3S9Zhaq9PHBnxKgvJFcfCiEQtgXiQdd4roo4=;
+	b=aCWAHIkVupaq3TQFbvSiGkBTxV20bTdhv/LvX7PiVJdH7zc3k617Dp5mj/fv8EUiy9UIvf
+	7oRUJwTCoJCBU8s2ZvrFqYRTNlIu9meD9xkP25qspXj2b3k0YyTD7dZAtmPQmeh946jVKW
+	X8ve44DHwDMKzyDLwm+iyYAfOzIxTVnoofCCEKyScJCHslqiBw6B1NJXGSb81VDY0CHjfv
+	kQgbJdMPEQo2oidgtYg+axqgd1NG+Arj8zlD1EUie6jQzWh0NHEPNhFNDR5escHlxRw5UC
+	3pvZeICXcIRrQZzMuBg40wtOuaSk6NFxYbFBoDaYFJ20nuFS6uEEVpddA50g5w==
+Date: Mon, 28 Oct 2024 19:05:34 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Simon Horman <horms@kernel.org>,
+ thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH net-next v2] Documentation: networking: Add missing
+ PHY_GET command in the message list
+Message-ID: <20241028190534.429733f2@fedora.home>
+In-Reply-To: <20241028132351.75922-1-kory.maincent@bootlin.com>
+References: <20241028132351.75922-1-kory.maincent@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, Oct 25 2024 at 18:06, Jinjie Ruan wrote:
+Hello K=C3=B6ry,
 
-> As the front patch 6 ~ 13 did, the arm64_preempt_schedule_irq() is
+On Mon, 28 Oct 2024 14:23:51 +0100
+Kory Maincent <kory.maincent@bootlin.com> wrote:
 
-Once this series is applied nobody knows what 'front patch 6 ~ 13' did.
+> ETHTOOL_MSG_PHY_GET/GET_REPLY/NTF is missing in the ethtool message list.
+> Add it to the ethool netlink documentation.
+>=20
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 
-> same with the irq preempt schedule code of generic entry besides those
-> architecture-related logic called arm64_irqentry_exit_need_resched().
->
-> So add arch irqentry_exit_need_resched() to support architecture-related
-> need_resched() check logic, which do not affect existing architectures
-> that use generic entry, but support arm64 to use generic irq entry.
+Thanks for spotting and fixing this.
 
-Simply say:
+Reviewed-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
- ARM64 requires an additional whether to reschedule on return from
- interrupt.
-
- Add arch_irqentry_exit_need_resched() as the default NOOP
- implementation and hook it up into the need_resched() condition in
- raw_irqentry_exit_cond_resched().
-
- This allows ARM64 to implement the architecture specific version for
- switchting over to the generic entry code.
-
-That explains things completely independently. Hmm?
-
-Thanks,
-
-        tglx
-
+Maxime
 
