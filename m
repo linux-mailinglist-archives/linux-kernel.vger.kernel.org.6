@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-385194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C60A9B33D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:41:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F4D99B33DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FC741C21A7A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:41:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32DE51C21D97
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529CB1DE2BD;
-	Mon, 28 Oct 2024 14:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56351DE2A8;
+	Mon, 28 Oct 2024 14:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpy725/H"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZCvjvipb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48551DDC05
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28EE21DB350;
+	Mon, 28 Oct 2024 14:41:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730126455; cv=none; b=IoOEBVSNN2yAQyNbLBce014KGg3ZHs6VrqSUpoo9GiA18E59ma0W6wOPQ59+HHGGVlh/C+jxfJT3c0HAmPrBgh99Svuu+E1qEqSzqa7UvfBtp+zh28f99azKKCFthNTIPqIQGa0ujbgprIgZFXfvqzng+sg/RzHG8wJoa+A3G4c=
+	t=1730126502; cv=none; b=nPxtaakp26c/yqSl4BmZYU01Zr1Dt0Ok5ZkD6ZhntX36KC9d+OvTfhdNQGh/qhkrp17TMl/pb5BVgDfYUB7YPnLaiVfbxZlprUWoFP3Z7xvXoIA+Ta4cjHep+FLeaL4PGpTVM45RQaStw0KIoQbPzvoU7kAFO8wRnaKrCKWdFbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730126455; c=relaxed/simple;
-	bh=5OXWCdXlYFEC82+QeLBrMiVngK/dtDPdLzFwiOlEeKY=;
+	s=arc-20240116; t=1730126502; c=relaxed/simple;
+	bh=iDR3Xj6nglLd6JXk8qWi2FL2TJGzRt+aL0T8F2fg1/Q=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ig3idqmLD0RuHLiUAdA0w7f7shlKQvmAdmdSz6qpYzdmf8Wwavx5DT6HrNX3nTf9pxJV8mOtKGtJzI1DHwrYw152DT5zwgVN3/QEGM1f9ApzVT3lNUNel+5I/j9zlQ0XSFkIo8GsNa4gtD92sza1Qc6UJ1xL8v/oHlCSXScTUzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpy725/H; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso4630492276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:40:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730126453; x=1730731253; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6GUxmQDCroRcD5PADBIPqWMHqU8j4+rH6VILtabqlNM=;
-        b=cpy725/HVTgBQhagyHnn5Ec3bjluLIfyedVlNB9S9EczxBkIEPPrZXaT0wMyDoGCsR
-         1anonubkrVjMgglbUcqxObA7cYkohqZ4jhM1RaPKWK62ktXSP+ASnfGkvfRZxvXYTYk7
-         vw3g2wez9ljBc4+yofdEXx8mqwNFy8KoRdkjZ7o5pR2UfJ21LULjcGSqNjat9wKHiviZ
-         zslsJ+8Iewe79yXi1WkcRImPQFe+5SQA0FIp0l/d/EM2DBbsAV/0zkXczE+u2kABcssI
-         2oa4+eV4NoGCZ4dyYxq4h/TeB05aqyikVXhUBSpmNwLpBOQPOpz4cvfveq7xwxX3ePGn
-         yvCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730126453; x=1730731253;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GUxmQDCroRcD5PADBIPqWMHqU8j4+rH6VILtabqlNM=;
-        b=rdOt/OqzqggygDwUsgk0z+K65JClSA5UdO+pXgJxpSwJSjttCxRwS1Z4aNLmyvyKh/
-         MyB0EvRka0XtffbaI+Ug4B2skjT4tl2M4hzWYzPkBguhbmkH1rWP5PBVh9pljgCkrEkY
-         SCxzHRLXXC1pG6Xh0zl7dmZ3T/1AdRYhNCMzXRmjxP1DIrWnfBTtNat+dVkTxuooAQMS
-         OiOCV31wGYGx6PlOX52sCMdfEPCQYtm+X2Ji5M1qH78B45iDaOWqkB95+bStpQNaY5uB
-         D+dLJGXNgjTN/HuKyo1qOLaXGs0/kpXUXqiL8e5nF2BYQ9CMXOONbgIL03AHsVBGNp45
-         GAGg==
-X-Gm-Message-State: AOJu0Yw5xEazCPseQxmpoAgAcIWBi8VjdY1YFisojwfls0Qq73xvyWH3
-	9Iq39GVtybG6BTmbdoUy5QqAH67Ea8j2ZRw7bDqMurMrUiO5KUKh
-X-Google-Smtp-Source: AGHT+IF6p8JXy5eD9IeeaSNMTrkEwu1Z0077ihk2q6rpvti0E4hqVsqXakpLffDqPISARjgUzPqmnQ==
-X-Received: by 2002:a05:690c:6f89:b0:6e3:37a7:8a98 with SMTP id 00721157ae682-6e9d896fc93mr84770867b3.14.1730126452702;
-        Mon, 28 Oct 2024 07:40:52 -0700 (PDT)
-Received: from localhost (c-24-129-28-254.hsd1.fl.comcast.net. [24.129.28.254])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6bb1e2esm14342747b3.28.2024.10.28.07.40.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 07:40:52 -0700 (PDT)
-Date: Mon, 28 Oct 2024 07:40:51 -0700
-From: Yury Norov <yury.norov@gmail.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 1/1 fyi] tools headers: Synchronize {uapi/}linux/bits.h
- with the kernel sources
-Message-ID: <Zx-icwjwSxT1T9K5@yury-ThinkPad>
-References: <Zx-ZVH7bHqtFn8Dv@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lc/XGhYNbjo6fAkTx7oQiDFFt11dWWVOsa3E4T7lIdUG13JJ5GUhE1P0kCqz/IBzK/Yfdx028LE88NWaWW/hnSeibSfrvcaIEFEVaZSD/Pfn+plTYPjGhKZ14wByF3POt+NF9GXikSsDFjs0JmhhzuC09ea6o4E0Q6a567qDSwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZCvjvipb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34219C4CEC3;
+	Mon, 28 Oct 2024 14:41:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730126501;
+	bh=iDR3Xj6nglLd6JXk8qWi2FL2TJGzRt+aL0T8F2fg1/Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZCvjvipb9Xw/NpUdRMbQX7UVhFg27V14zdPRu/GsX60IhJydkL/JLLWdFFMTR3hhZ
+	 eoN35D3pbBtO+0ATcZkNWv+o+ALdADvxH9XIMttwPUtgFDRart8VSrTk6VuqQyHIR5
+	 dBXkZ+EMGAlVGtM6XBMx2oqYtu3xwwkQLlKkKbAhI/8Ih7PsG1EeJBFcPhtvk1CYSr
+	 UKkdcay7x0WkavMNtsU+AKMccuBvrvZbn9g9u5wWjssb3977bJBr3bIDpp8TaHVuKi
+	 Z29bREUl6Nwq46nszaXaQNk/PcfpBvteZDVagp4tEQJKmYT/e1tIFBd6kzAd0J8pTy
+	 88zkwJc/m7zdA==
+Date: Mon, 28 Oct 2024 15:41:37 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	yosryahmed@google.com, nphamcs@gmail.com, chengming.zhou@linux.dev, 
+	usamaarif642@gmail.com, ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org, ebiggers@google.com, 
+	surenb@google.com, kristen.c.accardi@intel.com, zanussi@kernel.org, 
+	viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, mcgrof@kernel.org, 
+	kees@kernel.org, bfoster@redhat.com, willy@infradead.org, 
+	linux-fsdevel@vger.kernel.org, wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [RFC PATCH v1 13/13] mm: vmscan, swap, zswap: Compress batching
+ of folios in shrink_folio_list().
+Message-ID: <eg5ld76leezya7hbyuj4lrp4idjb3npgfu5u4oaitzrocwrht2@mqa3ur2l4yz5>
+References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
+ <20241018064101.336232-14-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,89 +65,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Zx-ZVH7bHqtFn8Dv@x1>
+In-Reply-To: <20241018064101.336232-14-kanchana.p.sridhar@intel.com>
 
-On Mon, Oct 28, 2024 at 11:01:56AM -0300, Arnaldo Carvalho de Melo wrote:
-> tldr; Just FYI, I'm carrying this on the perf tools tree.
+On Thu, Oct 17, 2024 at 11:41:01PM -0700, Kanchana P Sridhar wrote:
+> This patch enables the use of Intel IAA hardware compression acceleration
+> to reclaim a batch of folios in shrink_folio_list(). This results in
+> reclaim throughput and workload/sys performance improvements.
 > 
-> Full explanation:
-> 
-> There used to be no copies, with tools/ code using kernel headers
-> directly. From time to time tools/perf/ broke due to legitimate kernel
-> hacking. At some point Linus complained about such direct usage. Then we
-> adopted the current model.
-> 
-> See further details at:
-> 
->  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
-> 
-> To pick up the changes in this cset:
-> 
->   947697c6f0f75f98 ("uapi: Define GENMASK_U128")
-> 
-> This addresses these perf build warnings:
-> 
->   Warning: Kernel ABI header differences:
->     diff -u tools/include/uapi/linux/bits.h include/uapi/linux/bits.h
->     diff -u tools/include/linux/bits.h include/linux/bits.h
-> 
-> Please see tools/include/uapi/README for further details.
-> 
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Anshuman Khandual <anshuman.khandual@arm.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Yury Norov <yury.norov@gmail.com>
-> Link: https://lore.kernel.org/lkml/
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> The earlier patches on compress batching deployed multiple IAA compress
+> engines for compressing up to SWAP_CRYPTO_SUB_BATCH_SIZE pages within a
+> large folio that is being stored in zswap_store(). This patch further
+> propagates the efficiency improvements demonstrated with IAA "batching
+> within folios", to vmscan "batching of folios" which will also use
+> batching within folios using the extensible architecture of
+> the __zswap_store_batch_core() procedure added earlier, that accepts
+> an array of folios.
 
-Thanks,
+...
 
-Acked-by: Yury Norov <yury.norov@gmail.com>
-
-> ---
->  tools/include/linux/bits.h      | 15 +++++++++++++++
->  tools/include/uapi/linux/bits.h |  3 +++
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/tools/include/linux/bits.h b/tools/include/linux/bits.h
-> index 0eb24d21aac2142c..60044b6088172b3f 100644
-> --- a/tools/include/linux/bits.h
-> +++ b/tools/include/linux/bits.h
-> @@ -36,4 +36,19 @@
->  #define GENMASK_ULL(h, l) \
->  	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
->  
-> +#if !defined(__ASSEMBLY__)
-> +/*
-> + * Missing asm support
-> + *
-> + * __GENMASK_U128() depends on _BIT128() which would not work
-> + * in the asm code, as it shifts an 'unsigned __init128' data
-> + * type instead of direct representation of 128 bit constants
-> + * such as long and unsigned long. The fundamental problem is
-> + * that a 128 bit constant will get silently truncated by the
-> + * gcc compiler.
-> + */
-> +#define GENMASK_U128(h, l) \
-> +	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_U128(h, l))
-> +#endif
+> +static inline void zswap_store_batch(struct swap_in_memory_cache_cb *simc)
+> +{
+> +}
 > +
->  #endif	/* __LINUX_BITS_H */
-> diff --git a/tools/include/uapi/linux/bits.h b/tools/include/uapi/linux/bits.h
-> index 3c2a101986a314f6..5ee30f882736cbd1 100644
-> --- a/tools/include/uapi/linux/bits.h
-> +++ b/tools/include/uapi/linux/bits.h
-> @@ -12,4 +12,7 @@
->          (((~_ULL(0)) - (_ULL(1) << (l)) + 1) & \
->           (~_ULL(0) >> (__BITS_PER_LONG_LONG - 1 - (h))))
->  
-> +#define __GENMASK_U128(h, l) \
-> +	((_BIT128((h)) << 1) - (_BIT128(l)))
-> +
->  #endif /* _UAPI_LINUX_BITS_H */
-> -- 
-> 2.47.0
+>  static inline bool zswap_store(struct folio *folio)
+>  {
+>  	return false;
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index 79e6cb1d5c48..b8d6b599e9ae 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -2064,6 +2064,15 @@ static struct ctl_table vm_table[] = {
+>  		.extra1		= SYSCTL_ZERO,
+>  		.extra2		= (void *)&page_cluster_max,
+>  	},
+> +	{
+> +		.procname	= "compress-batchsize",
+> +		.data		= &compress_batchsize,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= proc_dointvec_minmax,
+Why not use proc_douintvec_minmax? These are the reasons I think you
+should use that (please correct me if I miss-read your patch):
+
+1. Your range is [1,32] -> so no negative values
+2. You are using the value to compare with an unsinged int
+   (simc->nr_folios) in your `struct swap_in_memory_cache_cb`. So
+   instead of going from int to uint, you should just do uint all
+   around. No?
+3. Using proc_douintvec_minmax will automatically error out on negative
+   input without event considering your range, so there is less code
+   executed at the end.
+
+> +		.extra1		= SYSCTL_ONE,
+> +		.extra2		= (void *)&compress_batchsize_max,
+> +	},
+>  	{
+>  		.procname	= "dirtytime_expire_seconds",
+>  		.data		= &dirtytime_expire_interval,
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index a28d28b6b3ce..065db25309b8 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -226,6 +226,131 @@ static void swap_zeromap_folio_clear(struct folio *folio)
+>  	}
+>  }
+
+...
+
+Best
+
+-- 
+
+Joel Granados
 
