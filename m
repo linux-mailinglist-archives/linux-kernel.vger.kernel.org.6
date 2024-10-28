@@ -1,121 +1,136 @@
-Return-Path: <linux-kernel+bounces-385256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E5669B34A5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 633BA9B3509
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:37:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 343B22822A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:20:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2809728291F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549281DE2C1;
-	Mon, 28 Oct 2024 15:20:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B381DE3AA;
+	Mon, 28 Oct 2024 15:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cq73vevG"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfp3OCps"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A825D55E73
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:20:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A751DE2D8
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730128838; cv=none; b=V+ey/eHu/ykppB2QnLPkv38Fv+ZcSUonbw9aOmiA3aKgg1tghLEqLXSPG2/qBV8B5k9CpdT1m8DFqFf7yFJIwynVO/PxjLy1kmPgHVqiVcVgvQZQJPpHbkwfwY/ZZzVRpKKoGl1vX9rULiH3vtaRuAn1zODboW6kkBRW7muZMbU=
+	t=1730129850; cv=none; b=QltxzJ4wgCMpHd0isvocLmm1xD7fTyXRyxd9jelEGepghTMm3E2OfL91Na/CTVWX8n3WRIfbfPo3aQ1Lg7TadZGUNMSVFT1lGbeVFG2k0LnB57UMEoKTjkiLa3Bb4fh2QD3VWa69QPD3re1HnQwtqiiMG4cJV5nv4DE37liQ5F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730128838; c=relaxed/simple;
-	bh=9vOfV1nv3dJamdMcGcAvkjeuuuehU7scnrXHevP4JGE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FVlhzOEtatOrso+kJQ2W9G2l1VkLfOeZHwAw2C/nxRM5+KlEPuo+l74EhPWy+vhkKU5o/oTqCqvuzlgdJLX5tbc819nuUwV9UQe1ykPyH2QdpLpuIC/d2fDPShOcZ1QAg1FM15OgGe7q1kOJBfELtVKHC+8E+QkplV/WfFB4V4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cq73vevG; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so5648476a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:20:36 -0700 (PDT)
+	s=arc-20240116; t=1730129850; c=relaxed/simple;
+	bh=XY8IqEjmiR/k6mOfN74XcFBXQneq68BIlwqWEmj5YnI=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=fkQLtvx7DMao/H8a7b0o+1Ol558tqRmsCKPhFeDTLlVGE6fghWIayMIzcczfaTh+7jQsttF46OAz4Q4TB80Yq1T7+I1XY0QyeqkUVfihW3B2qOo9damiG19vUJICKTh3Vzfs+kXxgg5OybS/f1EGSaemkVmlNuTm+ETkQ9jlGws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dfp3OCps; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e8607c2aso4551318e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:37:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730128835; x=1730733635; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8A7Y1smH5iLgDTBZI8wqoHylFq2drR/RaP5ssz22jRY=;
-        b=cq73vevGHyRwIo3onMOUSZCq/5fCVwCwI2Zmq0CVeeGcSLFkUdjS5Qazhx88arGFIh
-         chMDQfnHa6zZAQP9XT3v0lG1nrh31OHKeQi/nqZz5ha0rycIj54kdb5NC7mL7Fn/qHCU
-         TN+aaNfFPjvYE16QHs56zBOwg8zO/qP9YRt1OBkOygIxWt0ZERRLNrq5DIHGg2ZGceHj
-         XAHyYElaU7xHbQnm15tzBL0VFiFBjK9E1o2zHlnqyREtVReJobRG3ubgJ1zW4nc4BoZp
-         V0WWW1DBVwdh5d5SeYJtMm8w4JOjAXBLUqKvEgq9ntHQYZpKUPnfGMuRIEV/emBqD/Cm
-         WCZA==
+        d=gmail.com; s=20230601; t=1730129846; x=1730734646; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=7e74bDnvczhbgPY2hFm8VtRHbs4Ka+p6FF5bmoD6B5w=;
+        b=dfp3OCps1S1mtO9li2mEKy0lyfaoWN05TaDpg0NX+6gB0WXiy1AFo3781RSrnQ8Cpr
+         9O3RI3+XVlMxQqpSiltNUOb62SemMwvbYHltAJ6M/KIyN3kFYL9eZcDzkftiCf9Bpy+j
+         S5oO/w4WI4PMYuF+SKC6/xLd1YffRtGalBoU5vlmIO8oEJ29a0kSZX/8zMrcRXX5XDz7
+         l2EVZ8iuuGtPvun9RAl3wTfn8vxtGYn38DIKYkv2v3++chHRc3U/1LorPofIIOIGnAzU
+         rDnUeTwgeLhoQuKMMfgYlnAQs+b1EDGczPoQHqnyRB+do7w5bG3spp9hRE7FpDqEoVUE
+         Cskg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730128835; x=1730733635;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8A7Y1smH5iLgDTBZI8wqoHylFq2drR/RaP5ssz22jRY=;
-        b=kB1ek5NOrZdxVNcV8GHgHRZXaEwYTtseh+2l/ETyvcXujHPK0swjXUsPxnDE/ulEFw
-         z2uytT1vXNOwoqe35MEbiRFqHz8mhv9N8kVRGizG34HeU9R7y0kUMME3+++zKUGkJwWf
-         v/Eo+orafsPy9xSo7oKu+GhFfJHAVSSx1Yk610CZ2UtEAyHKTOVc67tLA51BEtAH3Ipd
-         +bKvZTb/1elFmhiuCXdmbERAKgoEH+ne8faJTx4bnxHrNe/cdha8pGNCNwrzK5S17sCe
-         M5zQxhy+uFM/JIPiXtUqP+Lqfb6TeFuG/XPYK1jbeceFLJbbDtWj2Q8zEKzX2BJ9VXxl
-         uwXg==
-X-Forwarded-Encrypted: i=1; AJvYcCW8AxmtSUXzS7EobZXqDqACcnL7xR8ug/m46dW1asvH6QpH5pzTyD8LttWXFC2UiI6LpLpzzdsa1q7R5v4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHGD4ln6aI30LoyEBOgVa/QnZ5x1adq9xIsH3OTgdfR34hq6o9
-	Ls7OJwMo8k6vhWHLUNQuGr5e6UF880YjeWU5zcARqsy4tJfkf7LfGylfIRtH0aIrWhYvGHWXh0i
-	yh8KG5JI68iBQOQcwD6dk3k4y2Z/AMVIC/yKK
-X-Google-Smtp-Source: AGHT+IGQlWvncSWyRjU0MqLvkzq7zgdmh8ci7LTfgESO71eUgRKbiRnKH3tfmeMsJw+1nj1dpvpgLjvAzpaqngtva14=
-X-Received: by 2002:a05:6402:40d5:b0:5c9:4022:872d with SMTP id
- 4fb4d7f45d1cf-5cbbfa66f3dmr7608343a12.32.1730128834716; Mon, 28 Oct 2024
- 08:20:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730129846; x=1730734646;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7e74bDnvczhbgPY2hFm8VtRHbs4Ka+p6FF5bmoD6B5w=;
+        b=gfxkTfJTEWp9vG34Qq39/c5NwGJA1ASzmvruzo1R9KQ1zmxVpxa+/biOwFu5RfXjLG
+         ryBisXiogEjjD3ecGg9DychXcggmLTKjOOLoIa5Lhkf78SsR1ob5HzvPp25TG96gEkk5
+         ja8jBmYFelJZZ2c34H8kE6D9dnGud4X+v3SdQGP4AFOjZCGPsIrr1S7kEF1E/B9UBJ9U
+         BCeARW6kOS5NM1/YQu61jDYeLoB0XYTWAGtBXx7oHaXSn+g6z0+c76veHw/YpAlthapg
+         xXkPe7/eQTC5gEUKT41uX5imfB/Sg+z38T4ockb1+u/UiSSTlwo4gLedM/4gsHANxhwm
+         vJGg==
+X-Gm-Message-State: AOJu0YwjtN7E6LPaoAZfeepvgfweO2uB535GEAoGWeBu/odkAmIP7PQw
+	slrAA2xKCvNyL+x5RTfmR91jQycg8A0vFrb2GkORwzG46H6V1TIa
+X-Google-Smtp-Source: AGHT+IEKqRcc/BlM5jdtPFigKOcuoyKaziXHTFpzuCBlf/+AQSM1aLQDV5fQ2Q5I6XrKnFzSoZmINQ==
+X-Received: by 2002:a05:6512:401f:b0:52c:9383:4c16 with SMTP id 2adb3069b0e04-53b348cea2amr3986159e87.22.1730129845496;
+        Mon, 28 Oct 2024 08:37:25 -0700 (PDT)
+Received: from razdolb ([45.12.135.46])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1dcbbdsm1110984e87.236.2024.10.28.08.37.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 08:37:24 -0700 (PDT)
+References: <20241017-rk809-dcdc3-v1-1-e3c3de92f39c@gmail.com>
+User-agent: mu4e 1.10.8; emacs 29.4.50
+From: Mikhail Rudenko <mike.rudenko@gmail.com>
+To: linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+    Mark Brown <broonie@kernel.org>,
+    Alex Bee <knaerzche@gmail.com>,
+    Lee Jones <lee@kernel.org>,
+    Quentin Schulz <foss+kernel@0leil.net>,
+    Linus Walleij <linus.walleij@linaro.org>,
+    Chris Zhong <zyw@rock-chips.com>,
+    Zhang Qing <zhangqing@rock-chips.com>,
+    Mikhail Rudenko <mike.rudenko@gmail.com>
+Subject: Re: [PATCH] regulator: rk808: Add apply_bit for BUCK3 on RK809
+Date: Mon, 28 Oct 2024 18:20:55 +0300
+In-reply-to: <20241017-rk809-dcdc3-v1-1-e3c3de92f39c@gmail.com>
+Message-ID: <87v7xcp7bh.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028080515.3540779-1-ruanjinjie@huawei.com>
-In-Reply-To: <20241028080515.3540779-1-ruanjinjie@huawei.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 28 Oct 2024 16:20:20 +0100
-Message-ID: <CANn89iJCshHRan=w_YMp7bEeBadOjNS7PU392q2K4qNTRtz=Ow@mail.gmail.com>
-Subject: Re: [PATCH net] netlink: Fix off-by-one error in netlink_proto_init()
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
-	kuniyu@amazon.com, a.kovaleva@yadro.com, lirongqing@baidu.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Mon, Oct 28, 2024 at 9:05=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
- wrote:
+Gentle ping.
+
+Also Cc more potential reviewers.
+
+On 2024-10-17 at 21:37 +03, Mikhail Rudenko <mike.rudenko@gmail.com> wrote:
+
+> Currently, RK809's BUCK3 regulator is modelled in the driver as a
+> configurable regulator with 0.5-2.4V voltage range. But the voltage
+> setting is not actually applied, because when bit 6 of
+> PMIC_POWER_CONFIG register is set to 0 (default), BUCK3 output voltage
+> is determined by the external feedback resistor. Fix this, by setting
+> bit 6 when voltage selection is set. Existing users which do not
+> specify voltage constraints in their device trees will not be affected
+> by this change, since no voltage setting is applied in those cases,
+> and bit 6 is not enabled.
 >
-> In the error path of netlink_proto_init(), frees the already allocated
-> bucket table for new hash tables in a loop, but the loop condition
-> terminates when the index reaches zero, which fails to free the first
-> bucket table at index zero.
->
-> Check for >=3D 0 so that nl_table[0].hash is freed as well.
->
-> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> Signed-off-by: Mikhail Rudenko <mike.rudenko@gmail.com>
 > ---
->  net/netlink/af_netlink.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/regulator/rk808-regulator.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
-> index 0a9287fadb47..9601b85dda95 100644
-> --- a/net/netlink/af_netlink.c
-> +++ b/net/netlink/af_netlink.c
-> @@ -2936,7 +2936,7 @@ static int __init netlink_proto_init(void)
->         for (i =3D 0; i < MAX_LINKS; i++) {
->                 if (rhashtable_init(&nl_table[i].hash,
->                                     &netlink_rhashtable_params) < 0) {
-> -                       while (--i > 0)
-> +                       while (--i >=3D 0)
->                                 rhashtable_destroy(&nl_table[i].hash);
->                         kfree(nl_table);
->                         goto panic;
-> --
+> diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
+> index 14b60abd6afc..01a8d0487918 100644
+> --- a/drivers/regulator/rk808-regulator.c
+> +++ b/drivers/regulator/rk808-regulator.c
+> @@ -1379,6 +1379,8 @@ static const struct regulator_desc rk809_reg[] = {
+>  		.n_linear_ranges = ARRAY_SIZE(rk817_buck1_voltage_ranges),
+>  		.vsel_reg = RK817_BUCK3_ON_VSEL_REG,
+>  		.vsel_mask = RK817_BUCK_VSEL_MASK,
+> +		.apply_reg = RK817_POWER_CONFIG,
+> +		.apply_bit = RK817_BUCK3_FB_RES_INTER,
+>  		.enable_reg = RK817_POWER_EN_REG(0),
+>  		.enable_mask = ENABLE_MASK(RK817_ID_DCDC3),
+>  		.enable_val = ENABLE_MASK(RK817_ID_DCDC3),
+>
+> ---
+> base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+> change-id: 20241017-rk809-dcdc3-388632b4da03
+>
 
-Note that the host is going to panic, many other pieces of memory are
-left behind.
-
-A Fixes: tag seems unnecessary.
+--
+Best regards,
+Mikhail Rudenko
 
