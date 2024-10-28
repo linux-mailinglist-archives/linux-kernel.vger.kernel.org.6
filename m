@@ -1,111 +1,89 @@
-Return-Path: <linux-kernel+bounces-384646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8451E9B2CC6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:26:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECAE49B2CC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:26:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41990282AC0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:26:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27568B21980
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:26:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67E41D3573;
-	Mon, 28 Oct 2024 10:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A9B1D5164;
+	Mon, 28 Oct 2024 10:26:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HLTpS552"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="T0Fd6yjB"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76E7E1990AD
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C181D0E38
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111174; cv=none; b=M9MddoYUBmmwG6ZRhoVZT6efWdZRjR4m/AG7z3uH7xyheKywndQzG1CIpJR4hkqj7u033PtceS2KOEF08wHkXYjBCGAibXlu0ot3eCTajolUklpjViWFipxtmGjdaq6hZRpjuXDayEhjOxsfSsbJ7oqEfvBe1YFUaPmDq9kGj5k=
+	t=1730111175; cv=none; b=hNj8R4x+4H+7KV+rKYHu6HYhL/Vc2KAtAaFfeM0VyK1Zx5HFan1aBA44J7cmOwxk9drEGGwHYLhgpK96jCqoRh45JF7+nGMun8yk9cOsXCcrcOjJEuPDxdCFO+Y8wwCiTHbVct95RFeT0Fq57750/mi1ERKYEeoRH10ULK+XQ7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111174; c=relaxed/simple;
-	bh=Je0XRsrSlkfhC1gNXF4h9w/Pw1MLL8ees5oNHb91sd8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SRg2JL5zdMohvFM0ocOsJ5Mfs5F0MZlZS9Z24QekWd8Jjul2DFhLhF7CWrKMzCWhcO/Ar4sVlmyOBA57V4kJnYVJcvukzbv9h0hfTERqgzLjO72jzKEB7JLFe7KMUB0oUl8FPQqFDnVyfbox97GWGvDlWWliiaZboTUIKUsZxBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=HLTpS552; arc=none smtp.client-ip=209.85.218.52
+	s=arc-20240116; t=1730111175; c=relaxed/simple;
+	bh=R93VMLohkk+JmS520PXpYqfQBg15NGWIzpjAwA+J2Kw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IDGQiUjfImUG4TDbA41bMuKnhbzHESiPrOgvXqLDww247ca3QPAl69UhwuY81B0XJMQ8eqkTCbV0CcK+nZBmoQz5CcaiObSCiSFy7p7VoBDXxlOH8mre3nn1432yONQxcxrUJ81VArbt1JQNuWtP2pg/NzW2EyX4dGPSU3TF3KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=T0Fd6yjB; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso635018666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:26:11 -0700 (PDT)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso4087374e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:26:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1730111170; x=1730715970; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tjf17nGxadGEosYCdQe1mRaeFLEYOHfj3xwJxxS9C4Y=;
-        b=HLTpS552jQkZZB10vKPKMtLZRZXGk/NFO8+BWun9DuiUqfXtI82pTgpqH3ebDic1qH
-         V+df77KeC51u72QCPrh+DTCO8ROAaB1TmfvRF7PAGBLvHof7d82dCPIhqD7z8e8zbDCz
-         09ADarA9UYfCdRw4UePh5RD5r5oQ1ETM04Q54=
+        d=amarulasolutions.com; s=google; t=1730111171; x=1730715971; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vYexXqsopB/TorltyWtW3DQvmZVEoLO13n0GfiFkuag=;
+        b=T0Fd6yjBYEgaZb3zDq1s5h/LV2LLRVDrIggdpQqSuJBtWs+/Ecd395woqs512paGqG
+         xm54xRsDTAko01E/OdqIbwHLAboe3l44XDazR8QlAtOSMvkls9yVHhC/3pG+3fI5qhIp
+         AHZTdlgJs1LqETco2MRl6O/kgWaD/WHHW7f5Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730111170; x=1730715970;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tjf17nGxadGEosYCdQe1mRaeFLEYOHfj3xwJxxS9C4Y=;
-        b=uDGCI1Ll58cHzfSZ5DEt9u3cUDWb7oFp+2U0irytoeL6zETv4FRqzQmEoLTrNW4zd1
-         x2so4O4y5471CQHSIJMa8PE03khp2RHv2qbn1qD7gqyw14ImzbAm1tRg21hWqnRXeePz
-         rcp+dd1YvlpIdTSDwH21pghpEntYnOxHx5V57x/HT/Jt1RUx/s9YiiO8IcT2/6TkuEux
-         qx4R6d/QuVsNG2TyygcfxZOSBSeIVWtBnsIISqJ/ObqOWQjP0ooZK0ZCLWTqAHSuOvyF
-         QjA41BeO4ljpb9AsS+4sowCSnLZYcDKQc4mcqzaK6V2b9NGiawLjqJ5OTjE6UmUE+BNr
-         uiUQ==
-X-Gm-Message-State: AOJu0Yz0MUHGgaL4W5vfWV5F3CRRY7ZNhcuHs9ViTULRvwd+rGxXOrX5
-	JuYetjcTtXrythjuvY6/OK8WjxYBl+810Oy9N1FIUHXwTwmRR/56p5HF5D3dsa5wFhv5u6VRWXV
-	ryLA=
-X-Google-Smtp-Source: AGHT+IH1B0ko3VIpWkPI4RC1oi+MD1rEEYyYDNnVuUIYAatTCka4T6be6wD1IPac0B/RcE+iH3t9Yg==
-X-Received: by 2002:a17:907:3f23:b0:a8a:8d81:97ac with SMTP id a640c23a62f3a-a9de5c9f5f9mr669847666b.4.1730111169568;
-        Mon, 28 Oct 2024 03:26:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730111171; x=1730715971;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vYexXqsopB/TorltyWtW3DQvmZVEoLO13n0GfiFkuag=;
+        b=Yv1u963woagsyu+xETeGyGv+iI9WRMMrX+VgdIx2gtNzQRx7IdC1AbN2tgCyEh1hTJ
+         y2vkCLaJe+X+Z5Gv8On1UY1NWMN4OJv9n3NFkmvemGByDbrI+nzq9CNpR5H3a+COrSls
+         Y5Nu/Htq1JBg3zfMD0fxM3xGpslIGLk30x8JfClu6JUdNo5eR0DBjAT629d2YBwqTaaj
+         wllKV5e45BImk1lPtOfQvC47JxIQn82Q6/el37kpnhypA/S9YeYKu7n56+lgag+46tog
+         hFUsIaRkfo5kvb9+LU6cJ6zCm7Wy99nv24cHrIcfrBplx1AKJ3VEpNKzs4JjA4HowgKv
+         dBVQ==
+X-Gm-Message-State: AOJu0Yw1dA5TvgHPSYf1gWmnfvwSJNCro9818z7ziaIrunbJqWbpBsmv
+	MvpC3SON7C7diF71CLNYrS9Rtffo+KVHl2vxgnofGimxn8ZdbBUNFD4L9dYVCfDNUB8X+9RO+zj
+	yK90=
+X-Google-Smtp-Source: AGHT+IFPiWSMUJsvLDsFUQKEPXeJtOq9dyzWbF9cm4SlPeUZQ8cIi4gauJvX3gywzP7yEJIBk1InHA==
+X-Received: by 2002:ac2:4c46:0:b0:535:82eb:21d1 with SMTP id 2adb3069b0e04-53b34a3516cmr2517575e87.57.1730111171159;
+        Mon, 28 Oct 2024 03:26:11 -0700 (PDT)
 Received: from dario-ThinkPad-T14s-Gen-2i.amarulasolutions.com ([2.196.41.121])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f297b04sm363613966b.134.2024.10.28.03.26.07
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f297b04sm363613966b.134.2024.10.28.03.26.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 03:26:09 -0700 (PDT)
+        Mon, 28 Oct 2024 03:26:10 -0700 (PDT)
 From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 To: linux-kernel@vger.kernel.org
 Cc: linux-amarula@amarulasolutions.com,
 	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Andrey Smirnov <andrew.smirnov@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
 	Conor Dooley <conor+dt@kernel.org>,
-	David Airlie <airlied@gmail.com>,
 	Fabio Estevam <festevam@gmail.com>,
-	Inki Dae <inki.dae@samsung.com>,
-	Jagan Teki <jagan@amarulasolutions.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
 	Lucas Stach <l.stach@pengutronix.de>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Marek Vasut <marex@denx.de>,
-	Maxime Ripard <mripard@kernel.org>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Peng Fan <peng.fan@nxp.com>,
 	Pengutronix Kernel Team <kernel@pengutronix.de>,
 	Rob Herring <robh@kernel.org>,
-	Robert Foss <rfoss@kernel.org>,
 	Sascha Hauer <s.hauer@pengutronix.de>,
 	Shawn Guo <shawnguo@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Stefan Agner <stefan@agner.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
 	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
 	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: [RFC PATCH 00/10] Support simple-framebuffer on imx8m
-Date: Mon, 28 Oct 2024 11:25:23 +0100
-Message-ID: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
+	linux-arm-kernel@lists.infradead.org
+Subject: [RFC PATCH 01/10] dt-bindings: soc: imx-blk-ctrl: add 'fsl,power-domains-boot-on' property
+Date: Mon, 28 Oct 2024 11:25:24 +0100
+Message-ID: <20241028102559.1451383-2-dario.binacchi@amarulasolutions.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
+References: <20241028102559.1451383-1-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,53 +92,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This series is the Linux counterpart of what was sent to U-Boot [1]
-for the support of the simple-framebuffer for the BSH SMM S2Pro board.
+This property lists the state of the power domains, indicating whether
+they have been left on or off by the bootloader/firmware.
+This information becomes relevant, for example, in the case of supporting
+the simple framebuffer.
 
-The need to avoid re-initializing the hardware (power domains,
-controllers, bridges, display panels) that has already been initialized
-and kept powered on by the bootloader has required updating more than
-one YAML file, with the addition of boolean properties to inform the
-driver that the corresponding hardware has been initialized and left
-on by the bootloader. All these properties are added on the fly by the
-bootloader to the various relevant nodes.
+Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+---
 
-Support for the simple framebuffer for the dts of imx8mn-bsh-smm-s2/pro
-board has been sent with a separate patch from this series [2].
+ .../bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml       | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-[1] https://lore.kernel.org/all/20240913095622.72377-18-dario.binacchi@amarulasolutions.com/T/
-[2] https://lore.kernel.org/imx/20241024102800.3481574-1-dario.binacchi@amarulasolutions.com/T/
-
-
-Dario Binacchi (10):
-  dt-bindings: soc: imx-blk-ctrl: add 'fsl,power-domains-boot-on'
-    property
-  pmdomain: imx8m-blk-ctrl: don't turn on a power domain already on
-  dt-bindings: power: gpcv2: add 'fsl,boot-on' property
-  pmdomain: imx: gpcv2: don't turn on a power domain already on
-  dt-bindings: display: panel: add 'syna,boot-on' property
-  drm/panel: synaptics-r63353: don't re-activate the panel if already
-    setup
-  dt-bindings: bridge: samsung-dsim: add 'samsung,boot-on' property
-  drm: bridge: samsung-dsim: don't re-activate the bridge if already
-    setup
-  dt-bindings: lcdif: add 'fsl,boot-on' property
-  drm/mxsfb: stop controller and drain FIFOs if already initialized
-
- .../display/bridge/samsung,mipi-dsim.yaml     |  5 ++
- .../bindings/display/fsl,lcdif.yaml           |  5 ++
- .../display/panel/synaptics,r63353.yaml       |  5 ++
- .../bindings/power/fsl,imx-gpcv2.yaml         |  6 +++
- .../soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml     |  9 ++++
- drivers/gpu/drm/bridge/samsung-dsim.c         | 13 ++++-
- drivers/gpu/drm/mxsfb/mxsfb_drv.c             |  3 ++
- drivers/gpu/drm/mxsfb/mxsfb_drv.h             |  1 +
- drivers/gpu/drm/mxsfb/mxsfb_kms.c             | 14 ++++-
- .../gpu/drm/panel/panel-synaptics-r63353.c    | 10 +++-
- drivers/pmdomain/imx/gpcv2.c                  | 32 +++++++++++-
- drivers/pmdomain/imx/imx8m-blk-ctrl.c         | 51 ++++++++++++++++++-
- 12 files changed, 148 insertions(+), 6 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml
+index eeec9965b091..00aa0b8d8ea9 100644
+--- a/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml
++++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx8mn-disp-blk-ctrl.yaml
+@@ -56,6 +56,15 @@ properties:
+       - const: csi-aclk
+       - const: csi-pclk
+ 
++  fsl,power-domains-boot-on:
++    description: |
++      Provide the on/off (1/0) status of the power domains. It allows
++      specifying whether one or more power domains have already been
++      initialized and left powered on by the bootloader.
++    $ref: /schemas/types.yaml#/definitions/uint32-array
++    minItems: 5
++    maxItems: 5
++
+ required:
+   - compatible
+   - reg
 -- 
 2.43.0
 
