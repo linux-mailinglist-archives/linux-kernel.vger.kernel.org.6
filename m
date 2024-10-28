@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-385410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0ACE9B36D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:41:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6D749B36D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A72CC1F21820
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:41:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C1D2283E5C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C351DEFCD;
-	Mon, 28 Oct 2024 16:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E05D1DEFF5;
+	Mon, 28 Oct 2024 16:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="YDPMWx+V"
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GXJfc0l7"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC67F186E27
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B1531DEFCD
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133657; cv=none; b=ihY51g5vMd3x/z+BcLLGpEVhsvnWCHHDRDJ+uy49m48gqn4HHmbNcc26dp9OZN7QRZstTKmp2Hf9yfazZ4HrRUHd2N2ro6OayltyKeLglmw/wYo22YHFZtPy84GealT9JTOWj5tbL8EfsIOwgIyOtqb35bIbkx/bbFnY3kH6RwE=
+	t=1730133655; cv=none; b=Sxz0iUCXj0nZlA4sTU3OrBZ+/g5uyzH4hzr0R8aHTr+eYj+fNOaVO0kVcion2ztyCkh6uYedElWf6SI0k3KL3JeuF+E0xXwOk+u1+dsDiD70qjkNUkDPDLWXX7fdg1j65apyzo2XSjQG5xUhTv3vFSKMOjsS6vNKMvxXALzOuRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133657; c=relaxed/simple;
-	bh=YnLp2twzv2TNQbo4aCFZTZoiRr0XaMjJP+UKxGSJsRk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=le9ht183HydWXHPuDItU4/3xzmHUvCwD55XOWMpCIXsD9h7cSV3ut/u8ADshZPDCOJ3RngWPWm/HprCZySZ/aNMBmcNsu/gZdTuq2++Qxih8JPOZswhyAfUELeRKVvHujgWYbxgk0mn+CZ5MkIGhxuMMaHG2G+53lCPvv3tjcAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=YDPMWx+V; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1730133652; x=1730392852;
-	bh=YnLp2twzv2TNQbo4aCFZTZoiRr0XaMjJP+UKxGSJsRk=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=YDPMWx+VopN7IYplxBpOGlkFuWwiT0GjcLnCz/I7w3zK8cYhr/x9MRkDkWtFKNbt0
-	 GuokZV2xiVMslVNXUso5BClJwe29PB0anTiGBGDxkAH4/4g/0Pdq/ZQYpn1tbsis8d
-	 Jh/j1593zuLLkEzL9LtnyXZiyk1dsrdn/4GOXE9o+SzVZclfjLV25zyy4eABWHjZXo
-	 ReRwqZJjW7aUN0dQyecLkqMMwEg4saP5paeE4yNMUL+uPOQp2W+WM/cuuDVY7VukL/
-	 p2OCHCd9MA/8rzOp1+hz9J9t+5YSuQPGA8qkRUx2Kdddk4PakB/P4Ex23rK+F2UQDU
-	 rqdNzkUVc3Qdw==
-Date: Mon, 28 Oct 2024 16:40:46 +0000
-To: Andy Yan <andyshrk@163.com>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: hjc@rock-chips.com, heiko@sntech.de, andy.yan@rock-chips.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, Daniel Stone <daniel@fooishbar.org>, Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>
-Subject: Re:Re: [PATCH v6] rockchip/drm: vop2: add support for gamma LUT
-Message-ID: <-rVNN65kgfRzFJBJDIwQF3jNMfXIZFP8GibtUgB_p-eWGLBkNZhYFr-BXEas8IjjofHxWQUqNicUSTp5rb9XmuLi35XsDd0PzJPz79j-M-8=@proton.me>
-In-Reply-To: <2bb58a1c.6287.192d1dc9b2d.Coremail.andyshrk@163.com>
-References: <20241016223558.673145-2-pZ010001011111@proton.me> <DurUfF_0TBHKv4DHKIP3ggQh_85nRY0usYWn_fu_oJ45txO7dGKv-OK5rl6EDEPmX5l8WzrwPCzAvYz0xFPfeKGyx7enu1g-prsWIpilv88=@proton.me> <2bb58a1c.6287.192d1dc9b2d.Coremail.andyshrk@163.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: 70c53b22f6b3d3f24ee6b0df1f6f75d1e7f29476
+	s=arc-20240116; t=1730133655; c=relaxed/simple;
+	bh=FuzDX4w5ksbOtt62LrKHOv6t3WZNEVlMo5Jwg+lRz8A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=emLO3Bx1oqqGvEjysOAZNywvr7PVsxQ5Kmh71eQADt4tDTDrVb/O2UNdGFS6cOJQeH5YbB7Ld1pNgm9r8Xw8aSo2EX80h1aa6jqqeSFldSX/mNRGQd9GuEHQmnXECMXbJpvNjmiDu+AIe8iuWwjZGCFt5VUna7kKMyCIyXtZZZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GXJfc0l7; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158625112so46044755e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:40:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730133652; x=1730738452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z7H7MOZKwUSVXW/SZzObgRj+x6rST0JwI+YL7Wp/UUE=;
+        b=GXJfc0l7cQvGwu0u5KVA2QMyWdlIL/+5sPnDNkIEGzfJ0K/yBybzljcg+zBwCyKmeW
+         3OZauka0LjvOXLAfL/IpbtsCUxEHUrTgduduxxRxCwPZ7cu9UPn27QrrY9enXjbPn9BZ
+         3eNlGhLzNZ+HU4E/+Y5ZXI/MoxnBAWrqyfGVdVY8APtd5NKn5RTZe29W23/w8kzCJwvq
+         FBDBQ/o+zf3vDwk8JeMX3Fcn2akpnfiZDyDgZdIMwFRSatWlvccB2vdlemROIGa9x6sA
+         U0PkvWvHZiMf8YjIW7PWFPuNMhbeibGGIAiMXmGvfB+yrfvebHHtK2v616gruO8cETeA
+         /GCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730133652; x=1730738452;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z7H7MOZKwUSVXW/SZzObgRj+x6rST0JwI+YL7Wp/UUE=;
+        b=B9kNiOXylNkD9lKHLodeXDebxGqXlW3oqBadvDUmAQS89OZDOivfUGucgh+Md81Ape
+         c8gmQooq5RAdJdj+zby3RTdf0+qEVGGtjNDP47Ar+sE0Nb5M6GZfVtI4I5f+lQyDeQ32
+         ZtcHJkS2VgiM00cIN7s5xZSKeTLBuRMn1guG87ao+FX0eGwHp7YB9exWTA4kRWPSdjFT
+         EPefUHWCpB3wIs6G3HrqPtborPZQwyp8nqn7CmeZeGXHYkSw9awAko0ZkZrS7BrVmSIX
+         cS7J1Ubcqgb7kLkMU03IZrAz0e5QPi0+3qr00gnL/1iMSlb8vwIlkc86tGOUe14lOFgD
+         b0ww==
+X-Forwarded-Encrypted: i=1; AJvYcCWsLmfLUDDCkY03rzKRx8vunY6/H+SeJo5KPYk5anqgriNxY7Nb5cBI3o16yDrwD2S/12rDDvfvRwNJMVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0AGDEvlFDjW8ztaXURBTfKsHwURhOtSwM738MUZEGo6jez2nV
+	T2G3b5TOY5C34pEpXb/Slcl3+nbafEc+zUcTK8+TGkMKkGsTwfAHINwDwGnw5gc=
+X-Google-Smtp-Source: AGHT+IHD7ecehSeRSersefttuZxWWc/yvJLPk3kslyGa7nuUur+ExAiKbF2BIlY7ADLI6KIVbs9TAw==
+X-Received: by 2002:a05:600c:4fce:b0:431:54d9:da57 with SMTP id 5b1f17b1804b1-4319ad20fb6mr68256455e9.30.1730133651812;
+        Mon, 28 Oct 2024 09:40:51 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b5433f2sm146420585e9.1.2024.10.28.09.40.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 09:40:50 -0700 (PDT)
+Message-ID: <0f626477-7af1-4f8e-a770-39f69d9b6cbb@linaro.org>
+Date: Mon, 28 Oct 2024 17:40:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH][next] thermal/drivers/mediatek/lvts_thermal: make
+ read-only arrays static const
+To: Colin Ian King <colin.i.king@gmail.com>,
+ "Rafael J . Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Nicolas Pitre <npitre@baylibre.com>, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20241022184622.1296044-1-colin.i.king@gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241022184622.1296044-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Monday, October 28th, 2024 at 7:42 AM, Andy Yan <andyshrk@163.com> wrote=
-:
+On 22/10/2024 20:46, Colin Ian King wrote:
+> Don't populate the read-only arrays on the stack at run time, instead
+> make them static const.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
 
-> Hi Piotr=EF=BC=8C
+Applied, thanks
 
-Hi Andy
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-> Tested on top of Linux 6.12-rc5 with rk3566-box-demo in a buildroot + wes=
-ton environment:
-> weston --backend=3Ddrm-backend.so -i 0 --continue-without-input
-> weston-simple-egl
-
-Thank you for testing it!
-
-> simple-egl will draw a triangle on the desktop.
-> After the patch applied=EF=BC=8Cthe triangle will flicker again and agian=
-=E3=80=82
-> So it break some function=E3=80=82
-
-Did you have gamma on? The screen flickered for me when I ran something=20
-writing gamma LUT frequently because of disable step I reckon.
-
-> I've been quite busy lately, and it will take some time before I can anal=
-yze what the specific reason is.
-
-Np, I will try to reproduce this behavior with weston on Pinetab2 in the
-meantime.
-
-Best Regards, Piotr Zalewski
-
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
