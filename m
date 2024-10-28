@@ -1,208 +1,256 @@
-Return-Path: <linux-kernel+bounces-385944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7956F9B3D63
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:03:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CF09B3D64
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CAA1F207C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:03:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FC8D289835
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B49720402B;
-	Mon, 28 Oct 2024 21:55:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83EEE1F4267;
+	Mon, 28 Oct 2024 21:56:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ph/SMWCt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b="VrNPN6eB"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6471EF92F;
-	Mon, 28 Oct 2024 21:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730152535; cv=fail; b=QuUERZayYYwv2TAwCKOsBRpbjZxdj3FZqpeToSF5pyVWJsgNPUYCzKDqceZIhrByMRit2j+ExaGNKLS5p10d13dHqKRh+9m1nfCWpx6VQiOvxcFNTHijmU7kONfSKBPrCb7RRTcIqQOOzTdxprAwL0XOe/7xn0qhBig63ejJY5M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730152535; c=relaxed/simple;
-	bh=odSo9+VhgCyBdia0VA88yzv4IAxYoZaH2BuaVv+WSkQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=CzX1FfazFcVhITOmoG+Jr0wCAgrPFl+Gg/VsSGIVp5lxbqQAY6tW1mk0/H5cJHsIxXpqbQfMD+plNPDTCdUFKX20RaQiCOwIgJzUyi0r7mpU4cYSCCFc5skxxJ/hvOMlSij62kVRbrg89/EYUblRgnIxF0+5DOBZELJAZJriB/k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ph/SMWCt; arc=fail smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730152534; x=1761688534;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=odSo9+VhgCyBdia0VA88yzv4IAxYoZaH2BuaVv+WSkQ=;
-  b=Ph/SMWCtAzWOv85x0K7obGu53MYIZeMAz4oBPYuZm/Fl27dayrcX/AFx
-   b77hBnzXqw80zF2v0gqwcBAyA/20CjTRH3NEwIuzQzNkE1z2TunxYeqRA
-   A/XPYmxeZCg0jYsyFZvX0Rqy32p26wEuadAOa3gGgcy1cj/uCtKn/U9mk
-   W5M88qkK9cxzprixaMPdDUAi4WF/TwILyPKfARvaOOs7Pbt4empFu/Niv
-   Ei6Liskoqni5h0VqiLboKYMZCmpyR+l3l99w5ThlGuM3mqn761EBfrUgK
-   wvryq52A/C+gADUtQ4nu443ihzbfjSkJYiC7ecDmOhhlJgqrAOrvFx+U2
-   g==;
-X-CSE-ConnectionGUID: 60MrflhlQV6rK80c8izTww==
-X-CSE-MsgGUID: f38oZkrjTdmRfRCDVcb4ZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="41132964"
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="41132964"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 14:55:33 -0700
-X-CSE-ConnectionGUID: FBjsACWIQ3WUfzQRpmkEjw==
-X-CSE-MsgGUID: GeYBfFXcRGCMZTqjH/BVkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="82076877"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Oct 2024 14:55:32 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 28 Oct 2024 14:55:31 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 28 Oct 2024 14:55:31 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.47) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 28 Oct 2024 14:55:31 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=gMrc3Jf5Ko5zK9/8F85Mx5yQel6KMpI0K6u07J/rIkdiobOmIowiGp6qkEuCLqg1omPj46750srJWAKBDVrYY49AOOQKngxW1Wf1rlh0/84ju+MPB5acZzL0xqYdVsQPgPk+b+PVs0RP568//SZpC9ugtyg3MRBjoD5mJ/D+VL5o+c5SCx3gWSbRW69bUK94chsY/cpF5CBpgdlcUTG3Es0mZ4Pur62q8w4n9QNIdi4Q5lglOijHs4PqhV7iDbUykUhyhRo7rBwhD7DE9D9uYI9vGTgQDNzQqcxSVOQQkZUDchfXn5VAQwuj0Wa4ttfBU8xzuGtONz77tUgnmXb76w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=AW08gIZRN4NpHQBcYJF1/YmOC2InXTqYvxfJDVEwNGE=;
- b=J5cuXEmKMx63auE/IO6fm/H3kmI2726PFLSPDLpKwsMY42hnqX05uaaLMWC9ozFt+mSMk7ny403LNtqsoPLqkTHVO6Lpemuj7zW+F5cr2kN9dkqdpvXlzxYktgbSRW7oqx9EOgqbJOE2KInHKnrFEgIQhRWxRLPEDsuzKl4OZpFvtwxmgF9ES+FUt8KSryr8+/eDIoTmsXagj/CYak4POlN75FtakaUmvDaye+0n3YZB2cAXuKEmAh4zZo+DgJXZ008Mi5aWTTus8mrvWOQe//jr38F2z4mdJnts03Jsuzcz5GxhfCScNT7vgWLBkfE1QREOYHTbTg9ATHysygrCDg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by CO1PR11MB5201.namprd11.prod.outlook.com (2603:10b6:303:95::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Mon, 28 Oct
- 2024 21:55:25 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
- 21:55:25 +0000
-Date: Mon, 28 Oct 2024 14:55:22 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Kai Huang <kai.huang@intel.com>, <dave.hansen@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <tglx@linutronix.de>, <bp@alien8.de>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <hpa@zytor.com>,
-	<dan.j.williams@intel.com>, <seanjc@google.com>, <pbonzini@redhat.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<rick.p.edgecombe@intel.com>, <isaku.yamahata@intel.com>,
-	<adrian.hunter@intel.com>, <nik.borisov@suse.com>, <kai.huang@intel.com>
-Subject: Re: [PATCH v6 05/10] x86/virt/tdx: Add missing header file inclusion
- to local tdx.h
-Message-ID: <6720084a3e6fd_bc69d2946d@dwillia2-xfh.jf.intel.com.notmuch>
-References: <cover.1730118186.git.kai.huang@intel.com>
- <3f268f096b7427ffbf39358d8559d884c85bec88.1730118186.git.kai.huang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3f268f096b7427ffbf39358d8559d884c85bec88.1730118186.git.kai.huang@intel.com>
-X-ClientProxiedBy: MW3PR05CA0001.namprd05.prod.outlook.com
- (2603:10b6:303:2b::6) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E658C1F4263
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:56:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730152581; cv=none; b=JL3/IC7JdsGd5WJoZcwKKVVZ/EVe+3iI3lsg9rHDVXcNu7WUEOHsye8S517iojy2AvNZi4CjuxrHg5P+N2ORAgCRSFJudcdNbV4Wsf1g5OH3O+ViDI881AhyOxDOgHCXYDkR5/3q/NQFxZoP4qaZCmCAWnxBcws1SB7Gkxq0nec=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730152581; c=relaxed/simple;
+	bh=b3YInCy/u1fqsZj0Shaluhv41U/l3cQiYFh5DB7oUVw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=fig7cqXuB/S0yZpRFaig7LiEiSSDT6WMkRP1xK78Zl0YNb+17MwSIroEAGIFq6ABhuGNGngY4O2Zt266wyqEFpb2uWalUO/JgRSOx+rSuw7Tmwmf5C5Usoe7m8LcMWERC63FeFPh1AF7fp7g14twBKzPm2E54XYIrXa6Ayi4Wy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com; spf=pass smtp.mailfrom=kruces.com; dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b=VrNPN6eB; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kruces.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99e3b3a411so932492166b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:56:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kruces-com.20230601.gappssmtp.com; s=20230601; t=1730152577; x=1730757377; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b3YInCy/u1fqsZj0Shaluhv41U/l3cQiYFh5DB7oUVw=;
+        b=VrNPN6eBpbS9Ktnk2ojbrEQJP4YKCD9oSFgmJBroeg/FZqegrqHouz7+Z/0SzhO9KP
+         uhuZWOF+zT//ZOzFGne+9CsRVP/gbT/0BWFSOskaOn0R2DBeEoka1PJD+uE0Esv13LfQ
+         B8//tqi7mUhwuNZXxuIhh0cQr/yqAVXvOCkhA+dsT8h2fU3bppmBbn523D+mYH1OKnx7
+         tfltP/n9NfHTHqChh2QP99YUj+mxrtt5bW8UUiiZQ+CUSahb+QhLNDf+pi6G5KS8qx8a
+         el94jZRt8o2/RNvNBA0M8ypY2t097sUI8AURzIvKHBUN1p6bAAduhuiqa2ZtwI7jb1sF
+         Z4xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730152577; x=1730757377;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=b3YInCy/u1fqsZj0Shaluhv41U/l3cQiYFh5DB7oUVw=;
+        b=oQ1GY0d7A8f8lOao1D4vr2tA4Jw6OIQ7g0Hrz8JMIEDFaopRg7fg/Ltgir+PbgWx3V
+         c9GCJK7GxkOOZQYdmnUih4i3MOnV7EfqQQAHZwwBFcowvLyzfq8TvkNalTACaKs9TZyT
+         QDJTXWgSuuXTUVezOKuQf7a73ewS5Lmm/XzlHmzFd82cYm+MO/PQZ7Fej+1cGc8Ufn1s
+         y+jsXCd5YMnrCbY6naNj0cLITtXt5FCba0027Zu6Sn+tUb2zljGQqT/u9NCQkUmLKBGB
+         CcO4K7gFOFF2FGqvgfkQleUk4+6EZP3kkHQOUuc6+FVESunX9M7DwbYMhnM9IYElxzwg
+         l5Mg==
+X-Forwarded-Encrypted: i=1; AJvYcCVuxNrhEaQ4peWLzxOi3NfGqEbR0OA2TbDSjm/E6CFS6o4w7JDBaBVtdIZxtVXiWrg8684TJBw4jryheaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3+QksAgD0oXevNLojdcdlGeWY33UiJvLrSDSiuAwnuzW1aAJn
+	KdV6G5zdSmDBuRARXsM+SJGsuY5Z/RaKhWNN9nnRYD4mPAkV2JeeUwRBW0M6ypM=
+X-Google-Smtp-Source: AGHT+IERPrEOhpPVB7RdZhvQZ/Zjp5f2pTrwA6ldA/PVGUWSwSABELjXqI9J3It3J6qGSNvLvWOPdg==
+X-Received: by 2002:a17:906:6a14:b0:a99:4e74:52aa with SMTP id a640c23a62f3a-a9e22b3b4acmr109292766b.33.1730152576931;
+        Mon, 28 Oct 2024 14:56:16 -0700 (PDT)
+Received: from localhost (89-23-255-189.ip4.fiberby.net. [89.23.255.189])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f29a934sm409096466b.118.2024.10.28.14.56.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 14:56:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|CO1PR11MB5201:EE_
-X-MS-Office365-Filtering-Correlation-Id: de6b996a-ac3b-4de0-f88b-08dcf79b3a43
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?FhxG1vEtSV4l3zod8gSYSBdjIuFFHubB2cjxpKm1GPXmDZYyBiURW3LreDJt?=
- =?us-ascii?Q?cnG8L8FMRRyNCNYkqOu+zIyWClf9zp7SYQM22+MCCvsduRDL+GysjJNV33Qh?=
- =?us-ascii?Q?goSnZafPfNMnCFDKstEVIyWd+SJEZpTuKK5IrucBOcw6Iv6e7Ab2/n9D/TgZ?=
- =?us-ascii?Q?YABHiPcPYGCLt1DmYYleiMF0ZGyv2BluAy/YM1kW8XsgqKCjoVwSIDWK7ykz?=
- =?us-ascii?Q?cs4AufYsTCWYJmz9fMgYA+LrY+zUEl4AtRwlCceT9xtEREvGglWhDYmNqaQn?=
- =?us-ascii?Q?qtn0bSLVjsAgEdNQHiEZ1iOHE9C2TaF+r4eervu78rGcuKeJs2CTxAIxRBZz?=
- =?us-ascii?Q?k6xEEs2BS4LppeWBfsbvUObJ0y+3ZZY+KY0LXJXNSYE5TP7s05TXKfJOGdGY?=
- =?us-ascii?Q?wpl1gexCE/2UV+7lYcHCembExnAzKjK/C1daIIJf0rd6T2xdo4PhxdyaRthc?=
- =?us-ascii?Q?X1LsFJIEQUx/FHjludevMOLO/yp+d5FRJQ6MJE5cmBhubuYxPYct6VBbsBJ0?=
- =?us-ascii?Q?aRlSvixPIAJSn58Xil8yQHwnReIdCMZ73OCrAIw+5rFiK8UMg6UaFtSgefNz?=
- =?us-ascii?Q?f+eqoDoxGV6LBqlLK/aWjQtCulE1XMz0wHlM7U4VluESXbBpXIg3i9RIDYq1?=
- =?us-ascii?Q?I3KFeD5aVk4qwuKz3zpqn9e1scsIakiyQpDAA397KOt9rEyG5MLCLf36Q4KY?=
- =?us-ascii?Q?qfx1YnJXfsO5vtwot4qKtBYl8JiknRH1zC3NPVSF/8CRL2acCbtAr8P3VdCw?=
- =?us-ascii?Q?nxAIMI8o77EX36aueLeolGDwQfaufEl3St33x2UsjHSxtsY58weGlRY7IPIF?=
- =?us-ascii?Q?TBzNwQRFs+u8LpNzR1lLP+t5LZe/2aNrC0MMocgYpdzFVt1EtkWEMDpPGbD7?=
- =?us-ascii?Q?Icz22sNCe78J5U3r9ivMrd2qSfR1j6kjQOWSbj8uzzeG+isj+GCW1dayIWt7?=
- =?us-ascii?Q?traAxYTV0nNAv+r5O8WGtRidIIauSboAieEG9YGmq1gw53gaKlTROm4QW8a+?=
- =?us-ascii?Q?WC+jBZfWaBPUADuCJJbzzf3ZZXc05d3erT+KqM2u+PjgD+4ATJGfUyo8WO+w?=
- =?us-ascii?Q?Df2gbETSjj618zYoCM847C2TJhHUF5Jop1ZEaSEfARd2nmh7aWZtMBbp0NPc?=
- =?us-ascii?Q?qa4sCLjR92PQYdH/oXiBIqcNdrEJbOQGOv1SXAT0KgSrIp2410+BAbrKxe+0?=
- =?us-ascii?Q?8x2Jmrmm2UtR0rIIIQkvm3EBajE5aJXX8KADQ4XOTZiZ7rh/ljCB9RTQvYnQ?=
- =?us-ascii?Q?ynK/M+g4EkQiNRl1ArHkt1ZGklBaNnEXYzxfWJzUWtROFQ50jS2oKfJnYQRo?=
- =?us-ascii?Q?E2TaYtwuN83bzyOuzg4WJ4xtpWT57ajUMtHcqnwLrt422L2vvDOHpO0EQ0Si?=
- =?us-ascii?Q?hxEqMFg=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?cumQeaBZB1lOrMrGeyE7tLx7naFlCfvuTYmZPRKxbGgHeEBZX1KQPCK+mq+3?=
- =?us-ascii?Q?Id+ESlc3PKrXoV6iea2fnLQCTQFpmWTjsVL/DKms7FeQH3NVjNR5u+n8D5rX?=
- =?us-ascii?Q?swEne5MTloFhJKNN0qlJYh68cVnnqDbm/uvoXxtT/OZBHun20Jrc2om+Yv3R?=
- =?us-ascii?Q?nm4B/PI/qmiDN6++kmqh72XIRGpUgchNoGBTiNgLXMdtIGIYimuofkoSBgSb?=
- =?us-ascii?Q?tUtlz6eo1IvxYp2SlOfG/5LV4UkjkNx55DQ8VXDguERSkTRcngvmZ1FpfvSZ?=
- =?us-ascii?Q?c8hh+wTNRj56IQD0ilUuFuYN5jADiYi9GyNuniBXPcFGQOOSrd1xvpJEIMu0?=
- =?us-ascii?Q?4PlPi0Aeg2CRsKn+dWd1SpHlPmGI3vsfoA/Rw8iLjyDS0rDYVuryZEYs7VvA?=
- =?us-ascii?Q?t69V/Nz11r/2FKu+UIf681eM+YVp9SGADXVEFD+2J8EXHMtERPASfZSQKJGJ?=
- =?us-ascii?Q?4ZLR+YapUHihn8gDI3wCX7eYlHyO8zpRwqDplPqFUItiNYEV8vyjDzMV6onv?=
- =?us-ascii?Q?FIzC7vGaOIAjY6hT1+XYbRJDS/UBaTyLw3xkPf4d2ABNJmIE338shrHpTDKz?=
- =?us-ascii?Q?td1TL6OD2/hl8Jy6wYwwkowKT1D/8BuogJwSjtu7i/MtXK45DmDzXcz9v9Qj?=
- =?us-ascii?Q?8HgPIt/+GiYMs3N3PD2s5wJhPmr1fal9jsPvRdg24HZlrk88laEFDCLuuQ0c?=
- =?us-ascii?Q?PoBSpX1gIaIigRrJ76mXvTU00eW7+Z0A1GzRlNHrFVTxFrb10x3Qhqymfyxr?=
- =?us-ascii?Q?IqljHR65zesebRV4rNhsQ/n9y5fiGn3oHPMVex5KKNiuaEZ9YYFieO6N2GCJ?=
- =?us-ascii?Q?TPyPOfbV6uX+v2FH0q6q+naUZUBfpqmEdjd1sX8NEtjM1LCTx5mp2Vhtdxvw?=
- =?us-ascii?Q?H98IflxDtKbsEGXnV/uS5kYj7EMv+aphh8Wakn1lDReUoL2zHOIpycIzPM1c?=
- =?us-ascii?Q?2MV73TkLyYVsUj90BmlogeDQfuyxy/ZBPwrvOpcs6J/f5hLEZPf9yWRJxPIv?=
- =?us-ascii?Q?pU4z6UBSvZGl+qiPqTbTnXdTTW9JdYNBKcgTNnFLLhUlKqfVJslcj1od5Ett?=
- =?us-ascii?Q?FiGm0Oo+0ttTjImztPRlOqL7P7785yaxNfY/ojEMNpgKjI+Dxhe9XQ/KZgu5?=
- =?us-ascii?Q?n7rPLf4U/fRw01ImTluaqw5ihQDx+qUa+2KDJJsUY6mBsAIagOhH0A4yOz74?=
- =?us-ascii?Q?l25x40FQC3PBgzfXK32IP3Cu6Gqqk3PCXsymY/q3F2IFNxnXkoy3QdQnkYyq?=
- =?us-ascii?Q?6+llfU4qgMc81jOwzQwflk2zc8pBt1oy9oPt7mJMmsyaBj84YyaZqb3Y5u37?=
- =?us-ascii?Q?LBSIbypO4WlbQj3v5msie2kpgNs85Z/eQJ2l3yZ5J/5iAbmo3IA+7PdVpfuh?=
- =?us-ascii?Q?fFrDWdp8mB9O+ixKQnDJh+lMVemAdlhfCCGgyP1oM08Vr2FOB3HYECxnbaf+?=
- =?us-ascii?Q?+dTVY28MXqzkbRECK99aKIagCM8zxI4jueC6LDPUye6S3GVcHeKy9AGXyHl6?=
- =?us-ascii?Q?vtoo6QCrn3GMFEMnxOcrJSvA6vb4+cfDVppn4bo32nmHtaCwQkioU4FWXjBQ?=
- =?us-ascii?Q?bDlEY8/CJxvAw7YBA60Rf5q0MUFccLVP2gBAWHTlNRuMwy/PD7F6zh4yb8/c?=
- =?us-ascii?Q?sg=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: de6b996a-ac3b-4de0-f88b-08dcf79b3a43
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 21:55:25.4212
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ahhjaOUNHHhE8OPgDlYRMXxFZXt70EnB5p4AdokzpQdH5DEOw18QarKvQiL55JzZwbH0IBinnqb+xg0mmfJNfGAOk8nl01CqB4ZF4uyx/a8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5201
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Oct 2024 22:56:14 +0100
+Message-Id: <D57RWGA2IIFD.2EWIDM7HVYF5U@kruces.com>
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+Cc: "Matthew Wilcox" <willy@infradead.org>, <akpm@linux-foundation.org>,
+ <hughd@google.com>, <wangkefeng.wang@huawei.com>, <21cnbao@gmail.com>,
+ <ryan.roberts@arm.com>, <ioworker0@gmail.com>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, "Kirill A . Shutemov"
+ <kirill.shutemov@linux.intel.com>
+To: "David Hildenbrand" <david@redhat.com>, "Baolin Wang"
+ <baolin.wang@linux.alibaba.com>, "Daniel Gomez" <da.gomez@samsung.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>
+From: "Daniel Gomez" <d@kruces.com>
+X-Mailer: aerc 0.18.2
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <Zw_IT136rxW_KuhU@casper.infradead.org>
+ <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
+ <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
+ <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
+ <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com> <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx> <D51IU4N746MI.FDS6C7GYO4RP@samsung.com> <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com> <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com> <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com> <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com> <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com> <cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com>
+In-Reply-To: <cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com>
 
-Kai Huang wrote:
-> Compiler attributes __packed and __aligned, and DECLARE_FLEX_ARRAY() are
-> currently used in arch/x86/virt/vmx/tdx/tdx.h, but the relevant headers
-> are not included explicitly.
-> 
-> There's no build issue in the current code since this "tdx.h" is only
-> included by arch/x86/virt/vmx/tdx/tdx.c and it includes bunch of other
-> <linux/xxx.h> before including "tdx.h".  But for the better explicitly
-> include the relevant headers to "tdx.h".  Also include <linux/types.h>
-> for basic variable types like u16.
-> 
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+On Fri Oct 25, 2024 at 10:21 PM CEST, David Hildenbrand wrote:
+> Sorry for the late reply!
+>
+> >>>>> IMHO, as I discussed with Kirill, we still need maintain compatibil=
+ity
+> >>>>> with the 'huge=3D' mount option. This means that if 'huge=3Dnever' =
+is set
+> >>>>> for tmpfs, huge page allocation will still be prohibited (which can
+> >>>>> address Hugh's request?). However, if 'huge=3D' is not set, we can
+> >>>>> allocate large folios based on the write size.
+> >=20
+> > So, in order to make tmpfs behave like other filesystems, we need to
+> > allocate large folios by default. Not setting 'huge=3D' is the same as
+> > setting it to 'huge=3Dnever' as per documentation. But 'huge=3D' is mea=
+nt to
+> > control THP, not large folios, so it should not have a conflict here, o=
+r
+> > else, what case are you thinking?
+>
+> I think we really have to move away from "huge/thp =3D=3D PMD", that's a=
+=20
+> historical artifact. Everything else will simply be inconsistent and=20
+> confusing in the future -- and I don't see any real need for that. For=20
+> anonymous memory and anon shmem we managed the transition. (there is a=20
+> longer writeup from me about this topic, so I won't go into detail).
+>
+>
+> I think I raised this in the past, but tmpfs/shmem is just like any=20
+> other file system .. except it sometimes really isn't and behaves much=20
+> more like (swappable) anonymous memory. (or mlocked files)
+>
+> There are many systems out there that run without swap enabled, or with=
+=20
+> extremely minimal swap (IIRC until recently kubernetes was completely=20
+> incompatible with swapping). Swap can even be disabled today for shmem=20
+> using a mount option.
+>
+> That's a big difference to all other file systems where you are=20
+> guaranteed to have backend storage where you can simply evict under=20
+> memory pressure (might temporarily fail, of course).
+>
+> I *think* that's the reason why we have the "huge=3D" parameter that also=
+=20
+> controls the THP allocations during page faults (IOW possible memory=20
+> over-allocation). Maybe also because it was a new feature, and we only=20
+> had a single THP size.
+>
+> There is, of course also the "fallocate() might not free up memory if=20
+> there is an unexpected reference on the page because splitting it will=20
+> fail" problem, that even exists when not over-allocating memory in the=20
+> first place ...
+>
+>
+> So ...I don't think tmpfs behaves like other file system in some cases.=
+=20
+> And I don't think ignoring these points is a good idea.
 
-Makes sense
+Assuming a system without swap, what's the difference you are concern
+about between using the current tmpfs allocation method vs large folios
+implementation?
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+>
+> Fortunately I don't maintain that code :)
+>
+>
+> If we don't want to go with the shmem_enabled toggles, we should=20
+> probably still extend the documentation to cover "all THP sizes", like=20
+> we did elsewhere.
+>
+> huge=3Dnever: no THPs of any size
+> huge=3Dalways: THPs of any size (fault/write/etc)
+> huge=3Dfadvise: like "always" but only with fadvise/madvise
+> huge=3Dwithin_size: like "fadvise" but respect i_size
+>
+> We could think about adding a "nowaste" extension and try make it the=20
+> default.
+>
+> For example
+>
+> "huge=3Dalways:nowaste: THPs of any size as long as we don't over-allocat=
+e=20
+> memory (write)"
+
+This is the default behaviour in other fs too. I don't think is
+necessary to make it explicit.
+
+>
+> The sysfs toggles have their beauty as well and could be useful (I'm=20
+> pretty sure they will be useful :) ):
+>
+> "huge=3Dalways;sysfs": THPs of any size (fault/write/etc) as configured i=
+n=20
+> sysfs.
+>
+> Too many options here to explore, too little time I have to spend on=20
+> this. Just to throw out some ideas.
+>
+> What I can really suggest is not making this one of the remaining=20
+> interfaces where "huge" means "PMD-sized" once other sizes exist.
+>
+> >=20
+> >>>>
+> >>>> I consider allocating large folios in shmem/tmpfs on the write path =
+less
+> >>>> controversial than allocating them on the page fault path -- especia=
+lly
+> >>>> as long as we stay within the size to-be-written.
+> >>>>
+> >>>> I think in RHEL THP on shmem/tmpfs are disabled as default (e.g.,
+> >>>> shmem_enabled=3Dnever). Maybe because of some rather undesired
+> >>>> side-effects (maybe some are historical?): I recall issues with VMs =
+with
+> >>>> THP+ memory ballooning, as we cannot reclaim pages of folios if
+> >>>> splitting fails). I assume most of these problematic use cases don't=
+ use
+> >>>> tmpfs as an ordinary file system (write()/read()), but mmap() the wh=
+ole
+> >>>> thing.
+> >>>>
+> >>>> Sadly, I don't find any information about shmem/tmpfs + THP in the R=
+HEL
+> >>>> documentation; most documentation is only concerned about anon THP.
+> >>>> Which makes me conclude that they are not suggested as of now.
+> >>>>
+> >>>> I see more issues with allocating them on the page fault path and no=
+t
+> >>>> having a way to disable it -- compared to allocating them on the wri=
+te()
+> >>>> path.
+> >>>
+> >>> I may not understand your issues. IIUC, you can disable allocating hu=
+ge
+> >>> pages on the page fault path by using the 'huge=3Dnever' mount option=
+ or
+> >>> setting shmem_enabled=3Ddeny. No?
+> >>
+> >> That's what I am saying: if there is some way to disable it that will
+> >> keep working, great.
+> >=20
+> > I agree. That aligns with what I recall Hugh requested. However, I
+> > believe if that is the way to go, we shouldn't limit it to tmpfs.
+> > Otherwise, why should tmpfs be prevented from allocating large folios i=
+f
+> > other filesystems in the system are allowed to allocate them?
+>
+> See above. On systems without/little swap you might not want them for=20
+> shmem/tmpfs, but would happily use them elsewhere.
+>
+> The "write() won't waste memory" case is really interesting, the=20
+> "fallocate cannot free the memory" still exists. A shrinker might help.
+
+The previous implementation with large folios allocation was wrong
+and was actually wasting memory by rounding up while trying to find
+the order. Matthew already pointed it out [1]. So, with that fixed, we
+should not end up wasting memory.
+
+https://lore.kernel.org/all/ZvVQoY8Tn_BNc79T@casper.infradead.org/
+
 
