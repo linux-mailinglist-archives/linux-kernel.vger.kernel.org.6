@@ -1,368 +1,150 @@
-Return-Path: <linux-kernel+bounces-384433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EB269B2A10
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:19:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB4B89B2A13
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:20:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B655A1F22236
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:18:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923911F21F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:20:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDE0190468;
-	Mon, 28 Oct 2024 08:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC956191473;
+	Mon, 28 Oct 2024 08:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JVo2gvMe"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwZgXXKp"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC5B6F2FE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA1416FF45;
+	Mon, 28 Oct 2024 08:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730103533; cv=none; b=Ypm+qLOaUrIJw6WMWbY2KY502EHgs3a6WK3Bfk+Xm3kJoQXWam0SCoZC3eBfE0lfE9Ro0Zjs3rAvld8nq0XVUV/hn/j7HVsa/+xEsCrq/36EhRA8MWB+w1fp51PJj2EaBm7qcK6dhZz4TMkd5A9sXbYkKMQPlNtkvH5krzjGNOg=
+	t=1730103607; cv=none; b=mfrOX5YOg9Ophaf0LDJl2P6Knf1WaQ2FZZh6tpuuVBKZNyxxCUn1gbY6STOjWKYkBqv8d8X3lYBcPZ8f51m0ot80SQjeTqSYUK596Mt0pHOIYiijKuTTcMxOaX/TJq61SbUoSHQplrTTkbe4jmjco4jI+wqd/Lfy5iZ9VcU2xVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730103533; c=relaxed/simple;
-	bh=oTZcLPgcKD+r+j82teHUk2WjErDiTFdhz3SQ/oyqBBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ndC+EYwVW8RhS1+XyNP5kTAx5rtRp4eKlEe4YCX3rtBMiJsbMviaL9Sqz5g5xLm3dq0YCL4EzC5nmFiA2tObePH1EQagieTjlunTt3esuJZQOm0M83sa+3KqSSIe8hcJR1JQocJwGCrmGpeLG0uMCWCE3zaoJbmVvb0Dd3vJqCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JVo2gvMe; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4A6EB346;
-	Mon, 28 Oct 2024 09:18:36 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730103518;
-	bh=oTZcLPgcKD+r+j82teHUk2WjErDiTFdhz3SQ/oyqBBY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JVo2gvMep981S+CQqvIUtYkte+efuo8Gy2cKxpe9ltI3KEGG2BnjW4sbXiOdm8SEp
-	 Eymlwwtme+7uZU+z7NxXw/vZTln2U6zv18VU+HB61PkfHtHo3367KQmrr9nbQMf8oa
-	 HkvPWD1z5L+9lk6dEfjlR7l/cXyLrykT9CvEdsXQ=
-Message-ID: <3d1d1008-0178-412a-ba26-2e1a956cfed3@ideasonboard.com>
-Date: Mon, 28 Oct 2024 10:18:32 +0200
+	s=arc-20240116; t=1730103607; c=relaxed/simple;
+	bh=9KgzYqnG6iqO+36iW/hPKk0FuDDy3HBUJ77k1H9GQQ0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BhaWJiCsWboXPr2PmL++5OzeIPGn6J3VJ+KZS4ewXfPMQAlDIDQaGaN2hX7RjOXRNK0IPpO28pvevgT7lBB+hq+NhgKHDBrWFVxSCOWK6VNbMk/r21fQf1wmffTMZvc7Dpn303ea7YZc0cWsbFAwM/jxcyu8YhU1jaKUsrWDwV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwZgXXKp; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdda5cfb6so37069645ad.3;
+        Mon, 28 Oct 2024 01:20:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730103605; x=1730708405; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v8sdPDR1cu1RSy6KGnm0bu4ImucaLAk6cLvG3PELIM8=;
+        b=dwZgXXKp+P3qZ5XM5hBatyo+zcashu2FPHyfRTOVuN4oNGdo+0ku/jmU2sSvCpQnjV
+         QJW3DlqnsiKVCB8ENd/lRzJkfFpIAx2b69ajrBiw2/4NwaSLNEPHyi0sdfJPnCL3E20f
+         9IVGgS1vBN0JCk+y8+kkWVt2RGDYpnDSLAn8YCL/aDq/IlTjm5bqvwYKtHyXtMleNxwE
+         RVPIatQJ71cEvRJBrIwoN/7UeSpSv96UbkoxwaHXgsIaO7s167MENIyw8eJa9aH0pQes
+         7jNy+Dzw6VngkmzoVm+H2CXFyvFw/WEeglJ84an9sJCcFfslzb4xnjVcElYR0Ae1Qvsd
+         /9yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730103605; x=1730708405;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v8sdPDR1cu1RSy6KGnm0bu4ImucaLAk6cLvG3PELIM8=;
+        b=L1u+W4ZYhaOZBR8TFbdMS65MbCa178TTv9XEF4cr1mzqY0uhAe0/jCnx4XetgJeq79
+         akHImDjl+pIt4h/v3QTqBfg/2t9ZJMwNSmSY8txpgyp41bRekUGqymrNLRXKryl+GyB2
+         h/0mY0T0HGUyA2eyqbdbKB2FQY9SwYzEK0AYntV+w3Xh0+Hu/ZyCz7YWXWlga+wr9Fwv
+         LVZruIWo/fRR/maCxHOEIQY9zfMoGHtJ4WlH5V7z9xT+SsmIiFX8XbuZ1eNEKSfMrWCx
+         PTE5QhJ3DTFVdMbTndnp8KjRrhoLGcD2053TTM/xLV7+546Zz8lQvUZI8V+I72Ceb7Cl
+         zdsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVyZ1hWBFot6n+xovELrjOGW4YQVKQlu5YEdXOOCq3XDeur0FKkcmDR61CUnEV7Sgvgar8UvkbjF8cU@vger.kernel.org, AJvYcCWQWHD1Z3xV/ZjUX5U1NHormzjri4sANwPjhNyf6NzEIKuuoX20DviE5+C91F/Is7N/GX6UG8ZidenstAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpnWlQ3A9LTfX9R8FB/QcJdyAVPEQ+VeyO/rR059OkbL/CsJuK
+	LF2CDU4zFSuEDpIXx4gTZIPirCw2OfD8lwvpSnqS2zc+z1S167gN
+X-Google-Smtp-Source: AGHT+IEpo881PxiXGmEfrUuaYO7xAm9Y2eiflJg/dlJsCht9s6H07Rednce93QydQNZDFVKY4bnXpg==
+X-Received: by 2002:a17:902:da86:b0:20b:8109:2c90 with SMTP id d9443c01a7336-210c6d6b2b2mr88077225ad.61.1730103604665;
+        Mon, 28 Oct 2024 01:20:04 -0700 (PDT)
+Received: from localhost ([2402:7500:488:6621:2441:dc7a:ff1b:984a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02dbb4sm45603115ad.183.2024.10.28.01.20.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 01:20:04 -0700 (PDT)
+From: wojackbb@gmail.com
+To: johan@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jack Wu <wojackbb@gmail.com>
+Subject: [PATCH] USB: serial: qcserial: add support for Sierra Wireless EM86xx
+Date: Mon, 28 Oct 2024 16:19:49 +0800
+Message-Id: <20241028081949.699921-1-wojackbb@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/omap: Clean up deadcode functions
-To: linux@treblig.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch
-References: <20241026220010.93773-1-linux@treblig.org>
-Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <20241026220010.93773-1-linux@treblig.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Jack Wu <wojackbb@gmail.com>
 
-On 27/10/2024 01:00, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> dispc_enable_fifomerge() last use was removed by 2012's
-> commit 85099f11bd03 ("Revert "OMAPDSS: APPLY: add fifo merge support
-> funcs"")
-> 
-> dispc_has_writeback(), dispc_wb_get_framedone_irq(), dispc_wb_go(),
-> dispc_wb_go_busy() and dispc_wb_setup() were changed from statics
-> to public symbols and unwired from a structure by 2020's
-> commit dac62bcafeaa ("drm/omap: remove dispc_ops")
-> but didn't have any users.
-> 
-> dispc_mgr_get_clock_div() got renamed from dispc_get_clock_div()
-> and it's last use was removed in 2011 by commit
-> 42c9dee82129 ("OMAP: DSS2: Remove FB_OMAP_BOOTLOADER_INIT support")
-> 
-> Remove them.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->   drivers/gpu/drm/omapdrm/dss/dispc.c | 146 ----------------------------
->   drivers/gpu/drm/omapdrm/dss/dss.h   |  13 ---
->   2 files changed, 159 deletions(-)
-> 
+Add support for Sierra Wireless EM86xx with 
+USB-id 0x1199:0x90e5 & 0x1199:0x90e4.
 
-Thanks, looks good to me. I'll push to drm-misc-next.
+0x1199:0x90e5
+T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 14 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=1199 ProdID=90e5 Rev= 5.15
+S:  Manufacturer=Sierra Wireless, Incorporated
+S:  Product=Semtech EM8695 Mobile Broadband Adapter
+S:  SerialNumber=004403161882339
+C:* #Ifs= 6 Cfg#= 1 Atr=a0 MxPwr=500mA
+A:  FirstIf#=12 IfCount= 2 Cls=02(comm.) Sub=0e Prot=00
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=qcserial
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=usbfs
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=82(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=40 Driver=qcserial
+E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=32ms
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 1 Cls=ff(vend.) Sub=ff Prot=ff Driver=(none)
+E:  Ad=85(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+I:* If#=12 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=0e Prot=00 Driver=cdc_mbim
+E:  Ad=87(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+I:  If#=13 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:* If#=13 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-  Tomi
+0x1199:0x90e4
+T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 16 Spd=480  MxCh= 0
+D:  Ver= 2.00 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+P:  Vendor=1199 ProdID=90e4 Rev= 0.00
+S:  Manufacturer=Sierra Wireless, Incorporated
+S:  SerialNumber=004403161882339
+C:* #Ifs= 1 Cfg#= 1 Atr=a0 MxPwr=  2mA
+I:* If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=10 Driver=qcserial
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-> diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
-> index 993691b3cc7e..9344855c4887 100644
-> --- a/drivers/gpu/drm/omapdrm/dss/dispc.c
-> +++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
-> @@ -691,11 +691,6 @@ u32 dispc_mgr_get_sync_lost_irq(struct dispc_device *dispc,
->   	return mgr_desc[channel].sync_lost_irq;
->   }
->   
-> -u32 dispc_wb_get_framedone_irq(struct dispc_device *dispc)
-> -{
-> -	return DISPC_IRQ_FRAMEDONEWB;
-> -}
-> -
->   void dispc_mgr_enable(struct dispc_device *dispc,
->   			     enum omap_channel channel, bool enable)
->   {
-> @@ -726,30 +721,6 @@ void dispc_mgr_go(struct dispc_device *dispc, enum omap_channel channel)
->   	mgr_fld_write(dispc, channel, DISPC_MGR_FLD_GO, 1);
->   }
->   
-> -bool dispc_wb_go_busy(struct dispc_device *dispc)
-> -{
-> -	return REG_GET(dispc, DISPC_CONTROL2, 6, 6) == 1;
-> -}
-> -
-> -void dispc_wb_go(struct dispc_device *dispc)
-> -{
-> -	enum omap_plane_id plane = OMAP_DSS_WB;
-> -	bool enable, go;
-> -
-> -	enable = REG_GET(dispc, DISPC_OVL_ATTRIBUTES(plane), 0, 0) == 1;
-> -
-> -	if (!enable)
-> -		return;
-> -
-> -	go = REG_GET(dispc, DISPC_CONTROL2, 6, 6) == 1;
-> -	if (go) {
-> -		DSSERR("GO bit not down for WB\n");
-> -		return;
-> -	}
-> -
-> -	REG_FLD_MOD(dispc, DISPC_CONTROL2, 1, 6, 6);
-> -}
-> -
->   static void dispc_ovl_write_firh_reg(struct dispc_device *dispc,
->   				     enum omap_plane_id plane, int reg,
->   				     u32 value)
-> @@ -1498,17 +1469,6 @@ void dispc_ovl_set_fifo_threshold(struct dispc_device *dispc,
->   				min(high, 0xfffu));
->   }
->   
-> -void dispc_enable_fifomerge(struct dispc_device *dispc, bool enable)
-> -{
-> -	if (!dispc_has_feature(dispc, FEAT_FIFO_MERGE)) {
-> -		WARN_ON(enable);
-> -		return;
-> -	}
-> -
-> -	DSSDBG("FIFO merge %s\n", enable ? "enabled" : "disabled");
-> -	REG_FLD_MOD(dispc, DISPC_CONFIG, enable ? 1 : 0, 14, 14);
-> -}
-> -
->   void dispc_ovl_compute_fifo_thresholds(struct dispc_device *dispc,
->   				       enum omap_plane_id plane,
->   				       u32 *fifo_low, u32 *fifo_high,
-> @@ -2814,95 +2774,6 @@ int dispc_ovl_setup(struct dispc_device *dispc,
->   	return r;
->   }
->   
-> -int dispc_wb_setup(struct dispc_device *dispc,
-> -		   const struct omap_dss_writeback_info *wi,
-> -		   bool mem_to_mem, const struct videomode *vm,
-> -		   enum dss_writeback_channel channel_in)
-> -{
-> -	int r;
-> -	u32 l;
-> -	enum omap_plane_id plane = OMAP_DSS_WB;
-> -	const int pos_x = 0, pos_y = 0;
-> -	const u8 zorder = 0, global_alpha = 0;
-> -	const bool replication = true;
-> -	bool truncation;
-> -	int in_width = vm->hactive;
-> -	int in_height = vm->vactive;
-> -	enum omap_overlay_caps caps =
-> -		OMAP_DSS_OVL_CAP_SCALE | OMAP_DSS_OVL_CAP_PRE_MULT_ALPHA;
-> -
-> -	if (vm->flags & DISPLAY_FLAGS_INTERLACED)
-> -		in_height /= 2;
-> -
-> -	DSSDBG("dispc_wb_setup, pa %x, pa_uv %x, %d,%d -> %dx%d, cmode %x, "
-> -		"rot %d\n", wi->paddr, wi->p_uv_addr, in_width,
-> -		in_height, wi->width, wi->height, wi->fourcc, wi->rotation);
-> -
-> -	r = dispc_ovl_setup_common(dispc, plane, caps, wi->paddr, wi->p_uv_addr,
-> -		wi->buf_width, pos_x, pos_y, in_width, in_height, wi->width,
-> -		wi->height, wi->fourcc, wi->rotation, zorder,
-> -		wi->pre_mult_alpha, global_alpha, wi->rotation_type,
-> -		replication, vm, mem_to_mem, DRM_COLOR_YCBCR_BT601,
-> -		DRM_COLOR_YCBCR_LIMITED_RANGE);
-> -	if (r)
-> -		return r;
-> -
-> -	switch (wi->fourcc) {
-> -	case DRM_FORMAT_RGB565:
-> -	case DRM_FORMAT_RGB888:
-> -	case DRM_FORMAT_ARGB4444:
-> -	case DRM_FORMAT_RGBA4444:
-> -	case DRM_FORMAT_RGBX4444:
-> -	case DRM_FORMAT_ARGB1555:
-> -	case DRM_FORMAT_XRGB1555:
-> -	case DRM_FORMAT_XRGB4444:
-> -		truncation = true;
-> -		break;
-> -	default:
-> -		truncation = false;
-> -		break;
-> -	}
-> -
-> -	/* setup extra DISPC_WB_ATTRIBUTES */
-> -	l = dispc_read_reg(dispc, DISPC_OVL_ATTRIBUTES(plane));
-> -	l = FLD_MOD(l, truncation, 10, 10);	/* TRUNCATIONENABLE */
-> -	l = FLD_MOD(l, channel_in, 18, 16);	/* CHANNELIN */
-> -	l = FLD_MOD(l, mem_to_mem, 19, 19);	/* WRITEBACKMODE */
-> -	if (mem_to_mem)
-> -		l = FLD_MOD(l, 1, 26, 24);	/* CAPTUREMODE */
-> -	else
-> -		l = FLD_MOD(l, 0, 26, 24);	/* CAPTUREMODE */
-> -	dispc_write_reg(dispc, DISPC_OVL_ATTRIBUTES(plane), l);
-> -
-> -	if (mem_to_mem) {
-> -		/* WBDELAYCOUNT */
-> -		REG_FLD_MOD(dispc, DISPC_OVL_ATTRIBUTES2(plane), 0, 7, 0);
-> -	} else {
-> -		u32 wbdelay;
-> -
-> -		if (channel_in == DSS_WB_TV_MGR)
-> -			wbdelay = vm->vsync_len + vm->vback_porch;
-> -		else
-> -			wbdelay = vm->vfront_porch + vm->vsync_len +
-> -				vm->vback_porch;
-> -
-> -		if (vm->flags & DISPLAY_FLAGS_INTERLACED)
-> -			wbdelay /= 2;
-> -
-> -		wbdelay = min(wbdelay, 255u);
-> -
-> -		/* WBDELAYCOUNT */
-> -		REG_FLD_MOD(dispc, DISPC_OVL_ATTRIBUTES2(plane), wbdelay, 7, 0);
-> -	}
-> -
-> -	return 0;
-> -}
-> -
-> -bool dispc_has_writeback(struct dispc_device *dispc)
-> -{
-> -	return dispc->feat->has_writeback;
-> -}
-> -
->   int dispc_ovl_enable(struct dispc_device *dispc,
->   			    enum omap_plane_id plane, bool enable)
->   {
-> @@ -3742,23 +3613,6 @@ void dispc_mgr_set_clock_div(struct dispc_device *dispc,
->   				  cinfo->pck_div);
->   }
->   
-> -int dispc_mgr_get_clock_div(struct dispc_device *dispc,
-> -			    enum omap_channel channel,
-> -			    struct dispc_clock_info *cinfo)
-> -{
-> -	unsigned long fck;
-> -
-> -	fck = dispc_fclk_rate(dispc);
-> -
-> -	cinfo->lck_div = REG_GET(dispc, DISPC_DIVISORo(channel), 23, 16);
-> -	cinfo->pck_div = REG_GET(dispc, DISPC_DIVISORo(channel), 7, 0);
-> -
-> -	cinfo->lck = fck / cinfo->lck_div;
-> -	cinfo->pck = cinfo->lck / cinfo->pck_div;
-> -
-> -	return 0;
-> -}
-> -
->   u32 dispc_read_irqstatus(struct dispc_device *dispc)
->   {
->   	return dispc_read_reg(dispc, DISPC_IRQSTATUS);
-> diff --git a/drivers/gpu/drm/omapdrm/dss/dss.h b/drivers/gpu/drm/omapdrm/dss/dss.h
-> index 4ff02fbc0e71..a8b231ed4f4b 100644
-> --- a/drivers/gpu/drm/omapdrm/dss/dss.h
-> +++ b/drivers/gpu/drm/omapdrm/dss/dss.h
-> @@ -416,7 +416,6 @@ u32 dispc_mgr_get_framedone_irq(struct dispc_device *dispc,
->   				       enum omap_channel channel);
->   u32 dispc_mgr_get_sync_lost_irq(struct dispc_device *dispc,
->   				       enum omap_channel channel);
-> -u32 dispc_wb_get_framedone_irq(struct dispc_device *dispc);
->   
->   u32 dispc_get_memory_bandwidth_limit(struct dispc_device *dispc);
->   
-> @@ -458,20 +457,11 @@ int dispc_ovl_setup(struct dispc_device *dispc,
->   int dispc_ovl_enable(struct dispc_device *dispc,
->   			    enum omap_plane_id plane, bool enable);
->   
-> -bool dispc_has_writeback(struct dispc_device *dispc);
-> -int dispc_wb_setup(struct dispc_device *dispc,
-> -		   const struct omap_dss_writeback_info *wi,
-> -		   bool mem_to_mem, const struct videomode *vm,
-> -		   enum dss_writeback_channel channel_in);
-> -bool dispc_wb_go_busy(struct dispc_device *dispc);
-> -void dispc_wb_go(struct dispc_device *dispc);
-> -
->   void dispc_enable_sidle(struct dispc_device *dispc);
->   void dispc_disable_sidle(struct dispc_device *dispc);
->   
->   void dispc_lcd_enable_signal(struct dispc_device *dispc, bool enable);
->   void dispc_pck_free_enable(struct dispc_device *dispc, bool enable);
-> -void dispc_enable_fifomerge(struct dispc_device *dispc, bool enable);
->   
->   typedef bool (*dispc_div_calc_func)(int lckd, int pckd, unsigned long lck,
->   		unsigned long pck, void *data);
-> @@ -494,9 +484,6 @@ void dispc_ovl_compute_fifo_thresholds(struct dispc_device *dispc,
->   void dispc_mgr_set_clock_div(struct dispc_device *dispc,
->   			     enum omap_channel channel,
->   			     const struct dispc_clock_info *cinfo);
-> -int dispc_mgr_get_clock_div(struct dispc_device *dispc,
-> -			    enum omap_channel channel,
-> -			    struct dispc_clock_info *cinfo);
->   void dispc_set_tv_pclk(struct dispc_device *dispc, unsigned long pclk);
->   
->   #ifdef CONFIG_OMAP2_DSS_COLLECT_IRQ_STATS
+Signed-off-by: Jack Wu <wojackbb@gmail.com>
+---
+ drivers/usb/serial/qcserial.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/usb/serial/qcserial.c b/drivers/usb/serial/qcserial.c
+index c7de9585feb2..933589ba5869 100644
+--- a/drivers/usb/serial/qcserial.c
++++ b/drivers/usb/serial/qcserial.c
+@@ -168,6 +168,8 @@ static const struct usb_device_id id_table[] = {
+ 	{DEVICE_SWI(0x1199, 0x90d2)},	/* Sierra Wireless EM9191 QDL */
+ 	{DEVICE_SWI(0x1199, 0xc080)},	/* Sierra Wireless EM7590 QDL */
+ 	{DEVICE_SWI(0x1199, 0xc081)},	/* Sierra Wireless EM7590 */
++	{DEVICE_SWI(0x1199, 0x90e4)},	/* Sierra Wireless EM86xx QDL*/
++	{DEVICE_SWI(0x1199, 0x90e5)},	/* Sierra Wireless EM86xx */
+ 	{DEVICE_SWI(0x413c, 0x81a2)},	/* Dell Wireless 5806 Gobi(TM) 4G LTE Mobile Broadband Card */
+ 	{DEVICE_SWI(0x413c, 0x81a3)},	/* Dell Wireless 5570 HSPA+ (42Mbps) Mobile Broadband Card */
+ 	{DEVICE_SWI(0x413c, 0x81a4)},	/* Dell Wireless 5570e HSPA+ (42Mbps) Mobile Broadband Card */
+-- 
+2.34.1
 
 
