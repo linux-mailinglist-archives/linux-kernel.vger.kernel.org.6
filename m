@@ -1,175 +1,271 @@
-Return-Path: <linux-kernel+bounces-385294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 267969B352C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:43:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FCD59B3533
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7F41F223A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:43:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CB01C21334
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7DB1DE886;
-	Mon, 28 Oct 2024 15:43:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34231DE4E1;
+	Mon, 28 Oct 2024 15:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mkow0958"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C7F1LMsk"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80FCB1DE4F3
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E9012F585
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730130199; cv=none; b=nLXCSPsAWNok/un4a4F5/tJKnH5OveNet2LB90pxz3odpDTVltwa7fukLSoUOcdZbs8ZAPUFkpNp+XLLvTHGDDuKyivj9tsm+G8vBXGIWD4C1UhJtDpkVn/qy3m3DTGp/LqRbD9zhL71UfD4sAfK2bhBo8cdweAbpdhh92uk0/Y=
+	t=1730130313; cv=none; b=If8QK3vLxqXxuPUexAU9uKSW/ZfBGqT6t8cecsA8XlvWbrYx104mvVckS9Fh0oJAYcr7huiBqBTrpXQ6OzNZTz9v5aLT7cW6ryBjzVer5QOB7ZWimA2I2EQR+l29C8TCfOaiSgrYLqF2ykZOOoFAbyKPxBwZVumt9XlqMN8HzM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730130199; c=relaxed/simple;
-	bh=IlBBjm72DKIw/XuEiNkxw4eSSDZpdFL6BcX9NUOV1OE=;
+	s=arc-20240116; t=1730130313; c=relaxed/simple;
+	bh=U2QXffbO67R3C2xSt619DnG+5G2mHfdrhPPetMCeFeI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Lu5KnSmXNNPACZD01XHb3RKntP8/5beTkprfZoXkqhSBv+uC9LrNcIySSTqq4UiAEYREJ+jw/lmK+O+JxCCkCmpzxdRvG98AxC/xmcNH+PdNmcUgbuga9zCXJ0JFyYSNFQHpcPuYfti+aYnGipQEEi3DzM5iApv1kRbuuWuvT+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mkow0958; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so3320320f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:43:17 -0700 (PDT)
+	 To:Cc:Content-Type; b=E1B4OsFiC/VdO2xwy6CGlYjDfQ4fFJNeKCy+V33/q8ceUpvRZ/g6pJHCys01q16Y3HXqoCPSbxukO/517ZnYJGP718hzq7Nl/TnimezF8auUiT/0Q1d3GS/Vx4fzFdK24UKHvpA/I/qKliGt1pWkSpApzDAO9HakfDxJHwVh/yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C7F1LMsk; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a47dc2ef46so1318510137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:45:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730130196; x=1730734996; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vkB8rijGowJHc7ApNinf8Nlc0DfdTCUjppLIF5zI/v4=;
-        b=mkow0958oktCIrrTjGyr3hnD0lTpQEUklSATUtyaN240yUEIDZSd27f+Nq+4RPzd/L
-         RlysOy/6jKuzeQeftrbrCmCIv0fIpVtd/2kuqbt/1OGc/TxTblPNdyzhBmIHWW+Tgdrw
-         gk2Nt2o8mSxNPT78F01LsPCFeCQ9syjfbEhkqkxlv3wFBkbUlj+16xv8srJWeTkfCFmJ
-         M87jIn2vF2X6cPSmn0xZYjN078jP4ogjAIwfH7IcG08iNq3+P0s7FreuzQKRyF4d2pq4
-         6mp/Ppu11GAt0LuM4v7BX3IGTG+HQlIsLa42OZ97cxOoKM3E5DgDQgJTbHARE3ctJEF6
-         q9qA==
+        d=linaro.org; s=google; t=1730130310; x=1730735110; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=75XNMAa64Nrib7pgLMg1Z1XYi4OYy86joo0hy0CXwKI=;
+        b=C7F1LMskcwmVdB6gsY8Wx85/eRsPQuE+y3uOgeZZwI5yZsmq6Y8hfJd034y84WlTEW
+         IRzLpP6Ds2ZwA6a0Ck1JupKiq2v9FWwFNCYgvBhK8YTnrzW2liw3jzUWO/1xbSum/zdH
+         MQdOjHMXW0VHmlpdD+mB5Pt9/unn+O6STJaTvBIwscGLUzk5UksbTQ++6whUAQmqFOZG
+         Bn6qNCY5ab8xbSwHLB5iyIzBNXaPh9xFeIuIo2F+JY+yGaCRAJxHdfllivBwd52QtT71
+         llxdA3lfZr369VsxCiNXzp0/rhWvKkjEsA7N23vai9jBvA6SpmeD86nJq2U2B4CIkqJ6
+         zedw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730130196; x=1730734996;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vkB8rijGowJHc7ApNinf8Nlc0DfdTCUjppLIF5zI/v4=;
-        b=m0PsyzqIv1DloBDXIirTFQsro4suMS6J9dtYth2TKvn8k/ZN5KCYMpOM/vIZipdsOD
-         +9pJZqbER1o+AOLzDQ+3+fnAIvtp9MDwwiIrrQZfUghw2V39UTFBQpzSCz5UGWVM5VaL
-         kNyCyMuino27LaPKPvmEXLpR1ckjP+53OakkEGwxkkb6C2/qqfK3gwfSRBS8D8Dl5NAU
-         E2+Ivp6kqmCAhKbmpx0DTj9NkQl6oSDpt2kNfj/blTDgm8dK8hQa05VB2qDPD7YXabA9
-         AlfcRtew57a32go1xT+VFZIN75EO+RBRryUorstC6xpA+j+8v4YIwFDctWU8Q3wlc9cS
-         6E5g==
-X-Forwarded-Encrypted: i=1; AJvYcCVY3Jj48JawMEBEZJ8pw4UDgr9AFTJpsjfHHJ4tv3uLfQyQMd1bWEaagibgOWuqBXh9OqJS+ouZSa6uvBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTsQ0PirJqv1WBLxyXNaQl2HWFfKZ944ThbimWGvvTLc87C17I
-	dpfWuqNWcl25/JSK6g1lBOSdgfGYpNhKgoglo1Jj7306WBwibLsWeXlWH4qBoEwWg2crxOb2Vsl
-	QJcPDIukE5ifzX6Jf5sXlVEuhTWEnkxn//9Gb
-X-Google-Smtp-Source: AGHT+IE1qO2/N5gbw3WcB8+fHdcuKTaKJxDuV5TxTMiR2W6fNk9ELaoYbYNgwfXegVSEMJJPvVjvp/JEygeFXanRY/8=
-X-Received: by 2002:a5d:4c46:0:b0:378:89be:1825 with SMTP id
- ffacd0b85a97d-380611f55a1mr5497562f8f.49.1730130195719; Mon, 28 Oct 2024
- 08:43:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730130310; x=1730735110;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=75XNMAa64Nrib7pgLMg1Z1XYi4OYy86joo0hy0CXwKI=;
+        b=qS78Xb+qXsuMwJ0WSZQb8QpzAC78b/2tetqMU6LPfn1Wn12vLkTuIuDM/KtqLVO4fj
+         OOn4jjFQ6VkEdSQxTY5APogA5ne0EZG0lIV85nzb0lV1iDMqI1fXwXdu2FNmZgbsCr+/
+         j5DatLB8AsNij0tvLWTbRtAoV9k6vQ8nTlI9EmnfPSx8ZbMHhsfZ+lh/sdGx80h4TY0f
+         w58amu4a/1F2kl/PR02rp3HjL4FukBh/gQQ0cRYBvBco0t8cuVAM/GvoYAEvzx4VJxgb
+         aJ1V9OmutYvv3sI23AZmwVn6wkMV0sJ47R/3q1XgnYdjnlhr34tktV68nYKKHqkFnbUL
+         IHXA==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ0JFn8jPE8PvapVBWbDBkliCz31a2CFwu3ueCba9AhVaqNzSBZbtyW8kqSeUDLPyL3jJLXRgmWqn00MA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM9Rb/sQIdTeL9DF0b11X70eJcF1ft64ned9JabiYIRUjO6kta
+	Sl+zJBj6W7I6z7tt9nSZFixmhA6/Q/MzKK119fzCEUzklDfbAqSYJe90uA1JjPhjmTirVVrqty2
+	9vUcjoDROgZxg9uBRpgz1UCjm9hDzXNeSOJlN0A==
+X-Google-Smtp-Source: AGHT+IGLxPJJ2NCoGI8hRsiiwLEAN/a5Dqx+FocGdkHpFfwjM3keyeu4LatSC2h948xtYi1UWvkv7JVZmh/VHgunRi4=
+X-Received: by 2002:a05:6102:2924:b0:4a5:b543:ee64 with SMTP id
+ ada2fe7eead31-4a8cfb5f764mr5871139137.11.1730130309682; Mon, 28 Oct 2024
+ 08:45:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-10-dakr@kernel.org>
-In-Reply-To: <20241022213221.2383-10-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 28 Oct 2024 16:43:02 +0100
-Message-ID: <CAH5fLggFD7pq0WCfMPYTZcFkvrXajPbxTBtkvSeh-N2isT1Ryw@mail.gmail.com>
-Subject: Re: [PATCH v3 09/16] rust: add `io::Io` base type
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241028062312.001273460@linuxfoundation.org>
+In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Mon, 28 Oct 2024 21:14:57 +0530
+Message-ID: <CA+G9fYu-tpwX=09=VOjniFnBz3MSXpaHb_gir2AqyNpihERT2Q@mail.gmail.com>
+Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org, Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
+	Suzuki K Poulose <suzuki.poulose@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
+On Mon, 28 Oct 2024 at 12:16, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
-> I/O memory is typically either mapped through direct calls to ioremap()
-> or subsystem / bus specific ones such as pci_iomap().
+> This is the start of the stable review cycle for the 6.11.6 release.
+> There are 261 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Even though subsystem / bus specific functions to map I/O memory are
-> based on ioremap() / iounmap() it is not desirable to re-implement them
-> in Rust.
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
 >
-> Instead, implement a base type for I/O mapped memory, which generically
-> provides the corresponding accessors, such as `Io::readb` or
-> `Io:try_readb`.
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.6-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
 >
-> `Io` supports an optional const generic, such that a driver can indicate
-> the minimal expected and required size of the mapping at compile time.
-> Correspondingly, calls to the 'non-try' accessors, support compile time
-> checks of the I/O memory offset to read / write, while the 'try'
-> accessors, provide boundary checks on runtime.
-
-And using zero works because the user then statically knows that zero
-bytes are available ... ?
-
-> `Io` is meant to be embedded into a structure (e.g. pci::Bar or
-> io::IoMem) which creates the actual I/O memory mapping and initializes
-> `Io` accordingly.
+> thanks,
 >
-> To ensure that I/O mapped memory can't out-live the device it may be
-> bound to, subsystems should embedd the corresponding I/O memory type
-> (e.g. pci::Bar) into a `Devres` container, such that it gets revoked
-> once the device is unbound.
+> greg k-h
 
-I wonder if `Io` should be a reference type instead. That is:
 
-struct Io<'a, const SIZE: usize> {
-    addr: usize,
-    maxsize: usize,
-    _lifetime: PhantomData<&'a ()>,
-}
+The selftests: kvm: vgic_init test failed on stable-rc linux-6.11.y,
+also seen on Linux next-20241023 onwards and Linus v6.12-rc5
+on the Graviton4 and rk3399-rock-pi.
 
-and then the constructor requires "addr must be valid I/O mapped
-memory for maxsize bytes for the duration of 'a". And instead of
-embedding it in another struct, the other struct creates an `Io` on
-each access?
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-> Co-developed-by: Philipp Stanner <pstanner@redhat.com>
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+Test log:
+---------
+# selftests: kvm: vgic_init
+# Random seed: 0x6b8b4567
+# Running GIC_v3 tests.
+# ==== Test Assertion Failure ====
+#   lib/kvm_util.c:727: false
+#   pid=2680 tid=2680 errno=5 - Input/output error
+#      1 0x0000000000404eaf: __vm_mem_region_delete at kvm_util.c:727
+(discriminator 5)
+#      2 0x0000000000405d0f: kvm_vm_free at kvm_util.c:765 (discriminator 12)
+#      3 0x0000000000402d5f: vm_gic_destroy at vgic_init.c:101
+#      4 (inlined by) test_vcpus_then_vgic at vgic_init.c:368
+#      5 (inlined by) run_tests at vgic_init.c:720
+#      6 0x0000000000401a6f: main at vgic_init.c:748
+#      7 0x0000ffff8620773f: ?? ??:0
+#      8 0x0000ffff86207817: ?? ??:0
+#      9 0x0000000000401b6f: _start at ??:?
+#   KVM killed/bugged the VM, check the kernel log for clues
+not ok 9 selftests: kvm: vgic_init # exit=254
 
-[...]
+Upstream discussion thread on this failures,
+ - https://lore.kernel.org/linux-arm-kernel/20241009183603.3221824-1-maz@kernel.org/
 
-> diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
-> new file mode 100644
-> index 000000000000..750af938f83e
-> --- /dev/null
-> +++ b/rust/kernel/io.rs
-> @@ -0,0 +1,234 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Memory-mapped IO.
-> +//!
-> +//! C header: [`include/asm-generic/io.h`](srctree/include/asm-generic/i=
-o.h)
-> +
-> +use crate::error::{code::EINVAL, Result};
-> +use crate::{bindings, build_assert};
-> +
-> +/// IO-mapped memory, starting at the base address @addr and spanning @m=
-axlen bytes.
-> +///
-> +/// The creator (usually a subsystem / bus such as PCI) is responsible f=
-or creating the
-> +/// mapping, performing an additional region request etc.
-> +///
-> +/// # Invariant
-> +///
-> +/// `addr` is the start and `maxsize` the length of valid I/O mapped mem=
-ory region of size
-> +/// `maxsize`.
+Test failed log:
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11.4-397-g4ccf0b49d5b6/testrun/25583294/suite/kselftest-kvm/test/kvm_vgic_init/log
+ - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11.4-397-g4ccf0b49d5b6/testrun/25583294/suite/kselftest-kvm/test/kvm_vgic_init/history/
 
-Do you not also need an invariant that `SIZE <=3D maxsize`?
+## Build
+* kernel: 6.11.6-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* git commit: 4ccf0b49d5b6ec739a290593658bebd035bb5f10
+* git describe: v6.11.4-397-g4ccf0b49d5b6
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11.4-397-g4ccf0b49d5b6
 
-Alice
+## Test Regressions (compared to v6.11.4-136-g96563e3507d7)
+* graviton4-metal, kselftest-kvm
+  - kvm_vgic_init
+
+* rk3399-rock-pi-4b-nvhe, kselftest-kvm
+  - kvm_vgic_init
+
+* rk3399-rock-pi-4b-protected, kselftest-kvm
+  - kvm_vgic_init
+
+* rk3399-rock-pi-4b-vhe, kselftest-kvm
+  - kvm_vgic_init
+
+## Metric Regressions (compared to v6.11.4-136-g96563e3507d7)
+
+## Test Fixes (compared to v6.11.4-136-g96563e3507d7)
+
+## Metric Fixes (compared to v6.11.4-136-g96563e3507d7)
+
+## Test result summary
+total: 143710, pass: 118866, fail: 1602, skip: 23242, xfail: 0
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 131 total, 129 passed, 2 failed
+* arm64: 43 total, 43 passed, 0 failed
+* i386: 18 total, 16 passed, 2 failed
+* mips: 26 total, 25 passed, 1 failed
+* parisc: 4 total, 4 passed, 0 failed
+* powerpc: 36 total, 35 passed, 1 failed
+* riscv: 16 total, 14 passed, 2 failed
+* s390: 14 total, 13 passed, 1 failed
+* sh: 5 total, 5 passed, 0 failed
+* sparc: 4 total, 3 passed, 1 failed
+* x86_64: 35 total, 35 passed, 0 failed
+
+## Test suites summary
+* boot
+* commands
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-kvm
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-rust
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
