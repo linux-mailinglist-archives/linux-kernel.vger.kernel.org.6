@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 331AC9B2949
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:53:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 89FC49B294A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:53:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654FC1C21253
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC58F1C217DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:53:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0306320262B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF80202634;
 	Mon, 28 Oct 2024 07:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Pzgx8mhv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="musIYBWa"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H6TVH1G3";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xxxT2y7m"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54D891FF7DE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BD51FF7C7
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100948; cv=none; b=Hb3MRez9lU6rXioW/SzkL/vBGd9mCzJXSC7NIZ7LIOHKOLVpEm4EYHUeijzaWKATRcpVOxCTOb7dusbjwjTJanwyD6DWZUBuZzsL9+4Cp1xR3V4N4bSOYFabXI2axTLMTTmPkPDZAR6VdnCpCK6z+cjlHG29rbNLg3A3Uh92ltU=
+	t=1730100947; cv=none; b=K1t6rV8+j0LZX88f3pt4B3zctcj6pq9SUW8ybwgpG7Za0sxd33LE+nUzF7TptRg3p9LqJ8CLxRCGjBsTJ3peoA/bb2Cq/POK4Ei01aXvI7fuznqYFUjVbqLmhJi10u1VwWQf+6wclqf2RFubru8hqaZslx9r1PQcGAHjgQzvNhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100948; c=relaxed/simple;
-	bh=Cq0ZzGu90SucZ8ajRc3od8UJWqbgFmp+Py2FeFdl0CY=;
+	s=arc-20240116; t=1730100947; c=relaxed/simple;
+	bh=PHW3uWUFg3kPDXSMJT3XFZrMVuxH+JEUmKjcZc6HOow=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VWQbGjLRpFffFZvDQLc8kxE4vSTwJjoMhTUKMB1QsC6a/fKiCjKpzMgeceWG/CK+o5MoNeHoh8pYsSQscoIMk/jtgCCq4ylm7AKIo6qnRDBYvHaXdC66Brzc6x8OakYSekGSzR8QU9t9q4NYBJLxV+LDY3hSlvn2G9NWozW8cvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Pzgx8mhv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=musIYBWa; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=VH3rMv7YARPdC28QY2oz0xCTY85GXEInepBM6xt7ldiw1gF90hkdzSj351p60ud/6tb1aQLgC9reCMGlU6PFU9+LD2jEuQf0Fv70VXT7+ZBnqrl+dGyXmi+q40x1qFFH6OxblhZe+XjGHHn25ukScM7BTMSRfus+l0xL10hM//E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H6TVH1G3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xxxT2y7m; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iEI2R8CFsxxO8R3+8zaBmsgZn012uBT8pRI4pMPBjzQ=;
-	b=Pzgx8mhv6ZUVyj2g9o0d1CJi1vrO1uiyG0Q9GYVQ/X4uQKtI8+nZpucLKMfhe2rvVZBCeh
-	kIvFxJQvZFYcgsLCc9pVZx5uopznfymmnz0fIwwGnJnWZfwnVyrAn0Jl+KSjc6gF5wMCdy
-	PabFHuh05prA6rnWfFWGIpGmUo0MA3uwo5nb9cuRA1X7qUVAPX9OcEO23BNoxNmCRT+XW+
-	aOYIH+h0O7m8Vlr8wWIr3wglrcy8nQoUIFgDrkDZDP6BKRwdnzEg7kDJclPJJQBFXyV2wY
-	tms0uTH1srF00OoLIz10Hp/aaR9x1yBSZBYKpN3gh2QLqvX9v1PWqHHAoDEYvQ==
+	bh=oQvlrZTQO/eppjto19VpVjTAhhmXdR6H5TyrBCfrBFQ=;
+	b=H6TVH1G3unPhA6f/SalYvNMRqlq87vb4VsvHGMSaT3G+oxPqzzgV1VwE8lxzYNTDgNJhUC
+	pPnVQkQVJyP+j1KaQ9c9Vku+e1QPTZgpzD+JT81/mV1Y101D3HDqV/v3BC1VheqV7D1rvs
+	yTm8WSOnm8sKxbh8lRis1tsinyWC8++1LSEGjFn2zYHMAiiw5t8f7LhprKd3GmfiOw/Jgh
+	cT4ap1uyCR6PJWxThCFFywBXqhUWPcgc2R1GB+mm5riJ4Fbk/5Zor9p4WedNObLQyFDk3y
+	ydF/pnrVEAv2xp0Bbcyux+XtDzYwzMHRelvtyrlx2x/iTHDKsriqY6306W7qSw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100943;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=iEI2R8CFsxxO8R3+8zaBmsgZn012uBT8pRI4pMPBjzQ=;
-	b=musIYBWarZ9xT5ao6lENWmIRFqCUCS8NovER9/6RsEwHj3mHK3VjE4FP0blHRD7/MxqUdH
-	gHuXKlktcKb8AjAg==
+	bh=oQvlrZTQO/eppjto19VpVjTAhhmXdR6H5TyrBCfrBFQ=;
+	b=xxxT2y7m4brZMjIE/83kH8bN1BePRUBsFOXvhF7FfrAEhUGGjJGzisIh0g//8GfeceUFt8
+	FLL2R5rZ5bWwmZCw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 29/44] drm/amdgpu: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:35:05 +0100
-Message-Id: <3caf17b166eadf57ff9b10f49895519759ae8ed5.1729865485.git.namcao@linutronix.de>
+	Jani Nikula <jani.nikula@linux.intel.com>
+Subject: [PATCH 30/44] drm/i915/huc: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:35:06 +0100
+Message-Id: <afeea4a8ddf80814f9fba05b8df428164abb940e.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,30 +86,28 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c | 4 ++--
+ drivers/gpu/drm/i915/gt/uc/intel_huc.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c b/drivers/gpu/drm/amd=
-/amdgpu/amdgpu_vkms.c
-index d4c2afafbb73..9f78dd176057 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_vkms.c
-@@ -188,8 +188,8 @@ static int amdgpu_vkms_crtc_init(struct drm_device *dev=
-, struct drm_crtc *crtc,
- 	amdgpu_crtc->connector =3D NULL;
- 	amdgpu_crtc->vsync_timer_enabled =3D AMDGPU_IRQ_STATE_DISABLE;
+diff --git a/drivers/gpu/drm/i915/gt/uc/intel_huc.c b/drivers/gpu/drm/i915/=
+gt/uc/intel_huc.c
+index 2d9152eb7282..1c1582aef8b9 100644
+--- a/drivers/gpu/drm/i915/gt/uc/intel_huc.c
++++ b/drivers/gpu/drm/i915/gt/uc/intel_huc.c
+@@ -231,8 +231,8 @@ static void delayed_huc_load_init(struct intel_huc *huc)
+ 			   sw_fence_dummy_notify);
+ 	i915_sw_fence_commit(&huc->delayed_load.fence);
 =20
--	hrtimer_init(&amdgpu_crtc->vblank_timer, CLOCK_MONOTONIC, HRTIMER_MODE_RE=
-L);
--	amdgpu_crtc->vblank_timer.function =3D &amdgpu_vkms_vblank_simulate;
-+	hrtimer_setup(&amdgpu_crtc->vblank_timer, &amdgpu_vkms_vblank_simulate, C=
-LOCK_MONOTONIC,
+-	hrtimer_init(&huc->delayed_load.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	huc->delayed_load.timer.function =3D huc_delayed_load_timer_callback;
++	hrtimer_setup(&huc->delayed_load.timer, huc_delayed_load_timer_callback, =
+CLOCK_MONOTONIC,
 +		      HRTIMER_MODE_REL);
-=20
- 	return ret;
  }
+=20
+ static void delayed_huc_load_fini(struct intel_huc *huc)
 --=20
 2.39.5
 
