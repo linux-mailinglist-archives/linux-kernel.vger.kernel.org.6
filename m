@@ -1,140 +1,134 @@
-Return-Path: <linux-kernel+bounces-384073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D759B23EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:42:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F6DC9B23EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:46:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD79B2820E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:42:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6487E282088
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:46:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ECE718C01E;
-	Mon, 28 Oct 2024 04:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D0A18A92D;
+	Mon, 28 Oct 2024 04:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EbY4JJPf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="arqpY7Em"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782E5188012;
-	Mon, 28 Oct 2024 04:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E9EA47
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:46:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730090563; cv=none; b=cEld6hSl0PmCFcRcdVEvlFLiwkURiTfMfRVwBHwAdpCRsUslqNN5oy/xjvl1CMtdGIg7cd3LG9GwEZyu4q2ZtV11d5wR6iHA9aJL5y8xYuz+fCQFHIAd+rU6jp+looA/vw4Bxh7WzNme+0NxgldwYIF4N5qbD+gJESGAaqaQIoU=
+	t=1730090788; cv=none; b=HU/9FDRTA4Zw4BBii+7D+4PlJdFflTvj6eWC2MPMAwdRaUi5kBf0xCVHa8lwGVupCgM7nEOaweDpsV6izPWcDrgbAsLRRijTCvkgsOyIlE/WR0aNm//tW8/SkVlRpvs19Pz9H5m8orTyYFWY1Vf7njsSXHNSE5wVPlwxXUYAteA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730090563; c=relaxed/simple;
-	bh=pAbyscq/8o1RULEwswI7SeZXYGter4pYg9fdxDjM0I4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bq4fSTCK7rxCffCF6FqYwXwoOG6NGptzQO6s4S/B3lbLCTcVF3/sfZ9/XmhdmrGqKYh+6TSGD9sB2eBvo9li3w8IJWuDzR6EPsden1j2HbIsZmN6+FmL/6ki8jYJiAgeSX6tJeUWWPeLJC05A7Yx50vsK8+QzTsFeea6M/Vn0uc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EbY4JJPf; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730090561; x=1761626561;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=pAbyscq/8o1RULEwswI7SeZXYGter4pYg9fdxDjM0I4=;
-  b=EbY4JJPf+dWs31IcpQpunuGgwoofAYPOjzgcopDT7QMsiVGMnX6Nv4Fb
-   73vvrQsVMmxeQ9kyPiP+cT89GFVvwOzbu+cbgPlzOh6mdqhAGTjnezQk6
-   veTa6QZAp5C+RwREm83wZc/URJsNJQPr4Ap9PRKxuNhEviZbo9pqyj36A
-   2w1BFOBsHcpEJO3xNn2xjH6799C8NiCiwcJ1SKDkglLv+q0/jRyyJTVC4
-   XHJiLtopJOOVh/D2KraR2b8/KfFM7QLwJcDfAJSQp5FS5G9dY3ZkjUYUl
-   BDjDUfwM6p99NRafJYj8txos/hdAn32XP3T1KXgPv8Ky6e7fgKcbjnI/V
-   w==;
-X-CSE-ConnectionGUID: 6mc6sIWOT7+1reefvKb8nQ==
-X-CSE-MsgGUID: IEYifgGTQR2wil7VUp/8rw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="33583992"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="33583992"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 21:42:41 -0700
-X-CSE-ConnectionGUID: 5L2RfXbES6WMB5cZrm5fzQ==
-X-CSE-MsgGUID: U0FUjabDR+mSHTYumqPmSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="81547893"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 21:42:38 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
-  kernel-team@meta.com,  akpm@linux-foundation.org,  weixugc@google.com,
-  dave.hansen@linux.intel.com,  osalvador@suse.de,  shy828301@gmail.com,
-  stable@vger.kernel.org
-Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
- demoting pages
-In-Reply-To: <20241025141724.17927-1-gourry@gourry.net> (Gregory Price's
-	message of "Fri, 25 Oct 2024 10:17:24 -0400")
-References: <20241025141724.17927-1-gourry@gourry.net>
-Date: Mon, 28 Oct 2024 12:39:05 +0800
-Message-ID: <878qu8yh7a.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730090788; c=relaxed/simple;
+	bh=2EbHWBfLhGkuOGHGIk7T56Pwh0KL7XKK8so6hCxKmC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=PI8Q8boTdezNlhrO0yIAww7+ZdZ6GtVdEzCuVV4L8IziNz56zG4LTcfSNjJG35p9Akv05b46aw4Vkf/GBMd1xKv+HZzaBChd6VidaI/BlyAfWMNlkvSpUgrQhO2D0bkAPNZgJJLTR8i1fDDBamDTXuikcyhOFNnoIVE4clPSMds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=arqpY7Em; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c70abba48so28908675ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 21:46:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730090786; x=1730695586; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ru6TZnJsC9elzyNrY/cvzQ4CwnpZ6FeXob1OQjHoMmg=;
+        b=arqpY7EmgtRpliEc5oseVdMl5rD5Wad0juTh689491S9BLB2t1oCVCwHZ9YlJ9yinr
+         KUmHUfKPjQPPShW0n6mSvb9stwypPLLL8OBtT84EUOlHoJYX9ikqB0Yb5AVf/NMSMhG2
+         62+noveLxjRANAdNV5iOAyQAp0XuXjEPMY6rg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730090786; x=1730695586;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ru6TZnJsC9elzyNrY/cvzQ4CwnpZ6FeXob1OQjHoMmg=;
+        b=WYhvwyJzjIFhALZWb67ILIDAiq5CNdlRjgtOtYq36RmZOUS0Un542NPUJAOtYvMj17
+         0hjvfHIqz+USrA0udxE46qJMQlXOxnQP8GSliobfjEWuijyq6LGenHABKa2Dius/LAtm
+         B+Efrg+9L4BKg8tN7mjwApYkg7ZL5PNbrMQi8He9ESQKroknvEzfmvSzzHg7PN/xbQoJ
+         mtUyqz+GTNFCPorRqu7PII9RemM6kGQEI3HnQJ6OtcFcru0JhVbGoJCnl79adSuEKH6A
+         8jAYbyBDfEaW+GyS1tADbRXByZMcbUoAdoAIESjZi4mzIMYi324uN8nBSFHF3unlvVmi
+         /xGg==
+X-Gm-Message-State: AOJu0YwZvVpAIdboTAkCrxIzFHLhZh42IyfI3tNNYJoHtnAkZG1UpZtE
+	jidjA7PaL44xpHqDXPEIRVy8wXXjO3P48V3an1NZYJplyqQBy8JGQLFjnrtyig==
+X-Google-Smtp-Source: AGHT+IG4o8SyC/xd2sK4623mdcAb/BEs5cFjcwjBL9FvVlKtFVsTbOeeecs/bZqY7tko4MXRQ5EkAA==
+X-Received: by 2002:a17:902:e883:b0:20c:7d75:bd5b with SMTP id d9443c01a7336-210c6c75ae4mr88521365ad.42.1730090785735;
+        Sun, 27 Oct 2024 21:46:25 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:33df:d367:fdc8:47a0])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf464ecsm43014535ad.28.2024.10.27.21.46.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 21:46:25 -0700 (PDT)
+Date: Mon, 28 Oct 2024 13:46:21 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org
+Subject: i915: intel_gt_reset() deadlock
+Message-ID: <20241028044621.GS1279924@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Gregory Price <gourry@gourry.net> writes:
+Hi,
 
-> When numa balancing is enabled with demotion, vmscan will call
-> migrate_pages when shrinking LRUs.  Successful demotions will
-> cause node vmstat numbers to double-decrement, leading to an
-> imbalanced page count.  The result is dmesg output like such:
->
-> $ cat /proc/sys/vm/stat_refresh
->
-> [77383.088417] vmstat_refresh: nr_isolated_anon -103212
-> [77383.088417] vmstat_refresh: nr_isolated_file -899642
->
-> This negative value may impact compaction and reclaim throttling.
->
-> The double-decrement occurs in the migrate_pages path:
->
-> caller to shrink_folio_list decrements the count
->   shrink_folio_list
->     demote_folio_list
->       migrate_pages
->         migrate_pages_batch
->           migrate_folio_move
->             migrate_folio_done
->               mod_node_page_state(-ve) <- second decrement
->
-> This path happens for SUCCESSFUL migrations, not failures. Typically
-> callers to migrate_pages are required to handle putback/accounting for
-> failures, but this is already handled in the shrink code.
->
-> When accounting for migrations, instead do not decrement the count
-> when the migration reason is MR_DEMOTION. As of v6.11, this demotion
-> logic is the only source of MR_DEMOTION.
->
-> Signed-off-by: Gregory Price <gourry@gourry.net>
-> Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
-> Cc: stable@vger.kernel.org
-> ---
->  mm/migrate.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index 923ea80ba744..e3aac274cf16 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
->  	 * not accounted to NR_ISOLATED_*. They can be recognized
->  	 * as __folio_test_movable
->  	 */
-> -	if (likely(!__folio_test_movable(src)))
-> +	if (likely(!__folio_test_movable(src)) && reason != MR_DEMOTION)
->  		mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
->  				    folio_is_file_lru(src), -folio_nr_pages(src));
+I'm currently looking at i915 deadlock report, the report
+is for 5.15, but I don't see any significant difference in
+linux-next code, so it looks relevant to current upstream
+code.
 
-Good catch!  Thanks for doing this!  Feel free to add
+Basically, intel_gt_reset() grabs gt->reset.mutex and then sleeps
+in flush_work().  Worker, meanwhile, cannot make progress because
+it sleeps on gt->reset.mutex in intel_gt_set_wedged().
 
-Reviewed-by: "Huang, Ying" <ying.huang@intel.com>
+INFO: task kworker/2:1:68 blocked for more than 122 seconds.
+Tainted: G U W 5.15.135-lockdep-20721-gd26c0f5bff55 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/2:1 state:D stack:26184 pid: 68 ppid: 2 flags:0x00004000
+Workqueue: events intel_wedge_me
+Call Trace:
+<TASK>
+__schedule+0xe1b/0x3bae
+schedule+0xc8/0x247
+schedule_preempt_disabled+0x18/0x28
+__mutex_lock_common+0x99f/0x1532
+mutex_lock_nested+0x20/0x2a
+intel_gt_set_wedged+0xbf/0x122
+process_one_work+0x8f0/0x157c
+worker_thread+0x4c2/0xa4a
+kthread+0x32b/0x442
+ret_from_fork+0x1f/0x30
+</TASK>
 
-in the future versions.
+INFO: task kworker/2:1H:156 blocked for more than 122 seconds.
+Tainted: G U W 5.15.135-lockdep-20721-gd26c0f5bff55 #1
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:kworker/2:1H state:D stack:27112 pid: 156 ppid: 2 flags:0x00004000
+Workqueue: events_highpri heartbeat
+Call Trace:
+<TASK>
+__schedule+0xe1b/0x3bae
+schedule+0xc8/0x247
+schedule_timeout+0x15e/0x215
+do_wait_for_common+0x2d3/0x3f9
+wait_for_completion+0x51/0x5d
+__flush_work+0xd9/0x131
+__cancel_work_timer+0x247/0x544
+intel_guc_submission_reset_prepare+0xbf/0xb01
+intel_uc_reset_prepare+0x11c/0x1e0
+reset_prepare+0x35/0x20d
+intel_gt_reset+0x3c3/0xa3d
+intel_gt_handle_error+0xb4b/0xf24
+heartbeat+0xaa7/0xce5
+process_one_work+0x8f0/0x157c
+worker_thread+0x4c2/0xa4a
+kthread+0x32b/0x442
+ret_from_fork+0x1f/0x30
+</TASK>
 
