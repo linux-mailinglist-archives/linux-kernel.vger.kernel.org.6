@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-384013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2947B9B233A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:53:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 508929B2326
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE0C1281570
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 677BA1C21794
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A8C3185B54;
-	Mon, 28 Oct 2024 02:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B59B816F8F5;
+	Mon, 28 Oct 2024 02:49:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AmjVkMTT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="r2ibeKvG"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283A415E5B8;
-	Mon, 28 Oct 2024 02:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A95A2C697;
+	Mon, 28 Oct 2024 02:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730083978; cv=none; b=HZ6t2zysz8OPmuZdkslyRTfh4mWN+KfUf1ZWN8+gMSnUOuqlSzWtcMpIaeKWFwyy4LIUQkzCnKurSAhhd5SlIldQ2F0yp3qoVW/yYdh55DeWfEc/pkpNNiT96mR9/+le2ep0oWa7Ceyq1l+A3NLc4XZAFWT/zhjbBynxFTF0kxg=
+	t=1730083783; cv=none; b=gHTqlYon2QjNj+KfRvVVsf+b04+K+b/oU9m2wxXjlywgrEh5sHx8H9iGmCyPAJx+ovgQzOpk9/LnB75nlbd4MnlGURGy5tztFCehR0VyxRlhl8Fc62pkL54S2PLGv63JtDUHyX8SCFSEIZeJ9KuwmdyzsXLO1V1VJ9XFsoTypUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730083978; c=relaxed/simple;
-	bh=gbA2PCwdnxgqssCr7s6U4TSBzXN4+/DsTBMqtrHDBhA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ileo/0rTzP1q5t/FCNnCTTNsRSFeX5LTy7IuDZpP+8KQIuQYOXBr5cV+TvfcjrtZ85QOCopbnYakhfjxxhtZAdj3wWO+KHnzXi54GgUhF+pOaPnmn3lMuzROktEG4+/iTBAdUy+XhKua0t8Fqfity+MdVJ9MJbDpLmmmwo07miY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AmjVkMTT; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730083977; x=1761619977;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=gbA2PCwdnxgqssCr7s6U4TSBzXN4+/DsTBMqtrHDBhA=;
-  b=AmjVkMTTQa8K19m95aI10N+rblIfrkb6iSFy8NDk+QBxZFgXKCggWWeI
-   yvWn30n2cvOqVf4XqApGFbKc49MBr1J6nTzQnZnsfLl+pi0XZNUnCP/RV
-   Aq9iPNJJ82mcXQoCQ1czZQH1RG33ZzvtD9jkr246UYVqmnPpeF4IwNFvk
-   GeWjmLRml2CT2kckoavgMnpVLHCmvCCIVFrFNydPtCMbh4r1aey2rbt3K
-   /5D6J5AB8sfD5aXaBOoARuTZzxLc/wbfiz6H5DE3xwOi2zxu2NbSBfk9i
-   RW6wZsnAGBpf3UUzHUbCPSEGmFk9c/00uZSGzDnISqZNOOxjvjqur62cN
-   A==;
-X-CSE-ConnectionGUID: OCpFXOkkRaSumjHv+oH0uQ==
-X-CSE-MsgGUID: rhRAgnN4Ro2tDNE3DcC1Yw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="40249551"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="40249551"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 19:52:57 -0700
-X-CSE-ConnectionGUID: QfcbvVwjR+ix2rgzDazo2g==
-X-CSE-MsgGUID: Xq4F7E1QRX2iXcCKUazCxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="81421254"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Oct 2024 19:52:53 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  David Hildenbrand
- <david@redhat.com>,  Andrew Morton <akpm@linux-foundation.org>,
-  linux-mm@kvack.org,  linux-kernel@vger.kernel.org,
-  linux-cxl@vger.kernel.org,  Davidlohr Bueso <dave@stgolabs.net>,
-  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
- <apopple@nvidia.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Baoquan He
- <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison Schofield
- <alison.schofield@intel.com>
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-In-Reply-To: <671bb5d165_10e592941e@dwillia2-xfh.jf.intel.com.notmuch> (Dan
-	Williams's message of "Fri, 25 Oct 2024 08:14:25 -0700")
-References: <20241010065558.1347018-1-ying.huang@intel.com>
-	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
-	<87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
-	<671965a8b37a2_1bbc629489@dwillia2-xfh.jf.intel.com.notmuch>
-	<ZxnvyIme98Q8ey1c@smile.fi.intel.com>
-	<87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZxpFQBRqWMDjhtSY@smile.fi.intel.com>
-	<671ac2d2b7bea_10e59294f2@dwillia2-xfh.jf.intel.com.notmuch>
-	<ZxubhuEwL5GrhBdu@smile.fi.intel.com>
-	<671bb5d165_10e592941e@dwillia2-xfh.jf.intel.com.notmuch>
-Date: Mon, 28 Oct 2024 10:49:19 +0800
-Message-ID: <87plnl0wnk.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730083783; c=relaxed/simple;
+	bh=1Spm69gr7rLPdHlHF6QFHhxwT5B1oPEfxNHWBWZDx7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=p5ILc2kXEHZ98xWKeHqXDevss9H9xn7FVo1yfUgwwN4+q2wU2yCj5IBnpiN7MqMfQ04Rdq7izQAcIuRwL88M2AnRvzd1lEUg9/NQMhLq68sH69HT6bdO1XmC0AI9aJlDX5NOcQ5Kp+ckK0fzOgEJzNap3+10CBtLbNuz8hdhvxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=r2ibeKvG; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730083775;
+	bh=mRYf9ZVWENutyeZOw1NtAF39x5//TNGDCafQQZFRw/g=;
+	h=Date:From:To:Cc:Subject:From;
+	b=r2ibeKvG1WMKLsFQddoMtpcwhIl7dY8pLV7luCEEeegIHsKndLIIX7HI3ESKbT8cn
+	 V2CCOJ1VNkacGdM0sP48+jHUq+w0uKMOZMa7DEqqw9Q2ULZ+5VOwRl9vuLwa+o21uZ
+	 PiHwQaOjUuX5X3m0kmzEldXIFZElAKnKGcmCyRuPahZ+8czsA0ddkJM31ZT8TeV2hE
+	 qTMNL6tu28UEUiKuzqbZEaIdhaDEK3k6fU3AKwZPc4IURfM+LEclEL5LqWI2vTaBmI
+	 Ee3/0WerCr661hg8SlVhV0K3UPxcf+DYpUYQyFE+Hlbhr8w7e57u8R709zn99mUokG
+	 nul9K0Imvx1iw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcHsp6BVJz4x6k;
+	Mon, 28 Oct 2024 13:49:34 +1100 (AEDT)
+Date: Mon, 28 Oct 2024 13:49:35 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Dave Airlie <airlied@redhat.com>
+Cc: DRI <dri-devel@lists.freedesktop.org>, Badal Nilawar
+ <badal.nilawar@intel.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Lucas De Marchi <lucas.demarchi@intel.com>,
+ Matthew Auld <matthew.auld@intel.com>, Matthew Brost
+ <matthew.brost@intel.com>
+Subject: linux-next: manual merge of the drm tree with Linus' tree
+Message-ID: <20241028134935.48828a6d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: multipart/signed; boundary="Sig_/z_6=.=V7=hBop7w1tE+Ht2Q";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Dan Williams <dan.j.williams@intel.com> writes:
+--Sig_/z_6=.=V7=hBop7w1tE+Ht2Q
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> Andy Shevchenko wrote:
-> [..]
->> > > but if you want to stick with your variant some improvements can be done:
->> > > 
->> > > #define for_each_resource_XXX(_root, _p)				\
->> > > 	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
->> > > 	     __p && _p; _p = next_resource_XXX(__root, _p))
->> > > 
->> > > 
->> > > 1) no need to have local variable in parentheses;
->> > > 2) no need to have iterator in parentheses, otherwise it would be crazy code
->> > > that has put something really wrong there and still expect the thing to work.
->> > 
->> > Why not:
->> > 
->> > #define for_each_resource_XXX(_root, _p)				\
->> > 	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
->> > 	     _p; _p = next_resource_XXX(__root, _p))
->> > 
->> > The __p is only to allow for _p to be initialized in the first statement
->> > without causing a new "_p" shadow to be declared.
->> 
->> If people think this would be better than the existing patterns, okay. fine.
->
-> I think this case is different than the existing patterns in that the
-> iterator variable needs to be initiatlized from a declared variable, and
-> as Ying said, my proposal is busted.
->
-> To your point though, lets add a comment on why this macro is a bit
-> different to avoid people like me making bad cleanup suggestions.
+Hi all,
 
-Sure.  Will do that.
+Today's linux-next merge of the drm tree got a conflict in:
 
---
-Best Regards,
-Huang, Ying
+  drivers/gpu/drm/xe/xe_guc_ct.c
+
+between commits:
+
+  db7f92af6261 ("drm/xe/ct: prevent UAF in send_recv()")
+  22ef43c78647 ("drm/xe/guc/ct: Flush g2h worker in case of g2h response ti=
+meout")
+
+from Linus' tree and commits:
+
+  52789ce35c55 ("drm/xe/ct: prevent UAF in send_recv()")
+  11bfc4a2cfea ("drm/xe/ct: drop irq usage of xa_erase()")
+
+from the drm tree.
+
+I fixed it up (if it wasn't for db7f92af6261 and 52789ce35c55 there
+would be no confict) and can carry the fix as necessary. This is now
+fixed as far as linux-next is concerned, but any non trivial conflicts
+should be mentioned to your upstream maintainer when your tree is
+submitted for merging.  You may also want to consider cooperating with
+the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/z_6=.=V7=hBop7w1tE+Ht2Q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmce+78ACgkQAVBC80lX
+0Gw6uwf+Prp+wtXTzKLVefrHz5qr0H27/IXiB+umUkmZqG4FfIe3FsCFjtqeEN0s
+ybBASn4Ra0R94YfPJqt+k3OwdjCyJktG7Mqy71KACyVBJhkwXKHKxAofdJA0RH+J
+fKH+mnoRAUaH5qD2RqC0cVWdFMehKMvR/nkxzET/mFTPwuU3Tbus7B//UOL1EISi
+Fk29ndeu/cjJWzN0AKtPP9GnE5ETDWzG73+Ll3ndC6ml48fLLzN1PS8KMSFhfldi
+D5IuBcEgnGxHxV+dssHzU7S1NQ1z0Xb8FEShoh3hgcJ8M1RJR4YNQzOAkRTLF7LZ
+pVZV8Z8GQBEBNQMaVSu4BGiumKFc6w==
+=o1nE
+-----END PGP SIGNATURE-----
+
+--Sig_/z_6=.=V7=hBop7w1tE+Ht2Q--
 
