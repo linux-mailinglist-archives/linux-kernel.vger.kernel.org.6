@@ -1,202 +1,157 @@
-Return-Path: <linux-kernel+bounces-383972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F3BB9B22A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:15:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F449B22A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:23:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4159C1C2146F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:15:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F9FB214BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264B915383B;
-	Mon, 28 Oct 2024 02:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731AF155A2F;
+	Mon, 28 Oct 2024 02:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="q77f2JYA"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hCwlZrya"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DA62629D;
-	Mon, 28 Oct 2024 02:15:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3420BA2E;
+	Mon, 28 Oct 2024 02:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730081712; cv=none; b=KHLd49Q/dfw46X8HqUs6CvWLYzM4D+4p/j7066SnZTGB4pXTR7n+52wzr8XEgONoJXj5PStpMbKI80zGuahapc+C2yAnaynWjDwB8c8IjgMZPJ1P+GW4KqQuUAFrFB73tpB70Fs8R7EpGA7FMCWtY2ne/pgkbolyGRQeyoWslSo=
+	t=1730082180; cv=none; b=Ci0Pm9fRvClqa6/Tyu1QSQB7GZlAXhUEo/8SWh7u6TefUkgJBHCM43IDOPtQ+6FJAxl2KxiRrQak+LFVMxYGL3KNGONaOoTOoKcovlAGQpZXmf5DZvXNK7smZd56UwQVKUixIOf3lL4bXj81fZEfIWiz6Dz1RbuMIzxKr9W+cRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730081712; c=relaxed/simple;
-	bh=qOpmfzq1zZPVrbZu6jEOURF8rOtlQ47Zc0Oox+5/794=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pWaC14t1yZfGhjiOyn0ewyOmEMwpFl8LJt0iZkrF/5GMlQmwF6YShZr7YFWOWxIA2+dI4lgaxkCQgcy7VYzk7fe/k4d4bRh88Xf9dCrGqu3vyIn+xvJ6CJLQgLWrpP6aODhNaobI3xHll7MvLtI2cP+ZiUl+Vk6gfcJY/zVNHz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=q77f2JYA; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=G9A9dhYXFghwDACfgYuSKfIOqKKGDpFfQkzXRmV9zrw=; b=q77f2JYAT4NJHTLD
-	b8lTsQUHXLIVQYeiAGaHz5IeOtY+SyBUWgt41Zi0XjocuNgx5w9QxCOa8djKyfgobPC6mzsvdaJp4
-	hRj6ICltFv+V5gKcogeI5vLHYJ/NbqD0wwOom+Sg83D56gU9PUelwpMUWOTdbggDgAfRG1cn8fyCw
-	xw/JD5GQk+JFpIaP0WypfcySOUUCAMWe98G/RHNUYrxImCoMoYxwdZVh5S07iXHl43gs7XsEAGt9L
-	SCsQ+MRHJJEVf+/Gt5MoeRdovRE9NnOC2Jz2lvLr5repbgf/DMrb6U4/9MzCHJXRYIkLOI5im58n8
-	XCanXhbaZuyG/NsdwA==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1t5FHZ-00Dq0T-1E;
-	Mon, 28 Oct 2024 02:15:01 +0000
-From: linux@treblig.org
-To: lgirdwood@gmail.com,
-	broonie@kernel.org
-Cc: linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] regulator: devres: Remove unused devm_regulator_bulk_register_supply_alias
-Date: Mon, 28 Oct 2024 02:15:00 +0000
-Message-ID: <20241028021500.478043-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730082180; c=relaxed/simple;
+	bh=4Cb0Uz9yDAx0qUk8WJJgsrAPvs/AGZQr34EqcVw7jRo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BmhOPIVDQSWu/gRbKV91AbhXGYrjsNaU+E1GEY1+Y2FZsNqLY6JIllCLyd5OXlsosukAwt/DdA5XmKaBkKZqWtoc2KNbG3yq5G1oStMBj8TRXwsyI2InrkqhGrkzz+Hu2nSJO4ExorksOhM13Jdowf9AAFfRmv7pjo1LdvsLKYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hCwlZrya; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RMrq8G009480;
+	Mon, 28 Oct 2024 02:22:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	W6dHfwb8MHs9adbndSIVkXvifgbrBFRDFCo/tHA7NSc=; b=hCwlZryanqs/GiZy
+	ryaW2kAzqSVDDbgH+b+32PUf13XMqgG30jx/qptb4TwFtCWKp7FXYTsGX3kqHWh2
+	7TrbWl8k7klP9mQaG4ljdfaoyFHkbAIpyrDo8lSjOxweebt68c7MnQUo1Gb+vDms
+	b7v4fHvPF7gVs3neGCXbzxRrl3Pg0gS0zJauOB+rOWnv++CfIJxrd9rCjEY4r657
+	IGUg5C+zjOukp+QGyHvCbNRF8mibRePk03zu2O4qiflefDqAKvyFk/ObrSMVIqro
+	3NsQbU5nWnNZHXH7kTzuayvxYDUrtDgL/xz6/Zob3CEGrwHoOLxXsm2LcrBdTYGD
+	R7teCw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4duk5x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 02:22:54 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S2Mrqv020809
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 02:22:53 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 19:22:49 -0700
+Message-ID: <b914945e-4de2-436e-afdf-3c3ce07f4073@quicinc.com>
+Date: Mon, 28 Oct 2024 10:22:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Add LLCC configuration for the
+ QCS8300 platform
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Conor Dooley <conor@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <quic_tengfan@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>
+References: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
+ <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
+ <v73v4qniygxvqgdjcuydgpir2fgxmnltqaxcexoktzesnqfxod@55k43u2gmqqt>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <v73v4qniygxvqgdjcuydgpir2fgxmnltqaxcexoktzesnqfxod@55k43u2gmqqt>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: JoLX0gpvhuwoy2ClGUIsWANAOfZDDYXf
+X-Proofpoint-GUID: JoLX0gpvhuwoy2ClGUIsWANAOfZDDYXf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=959 clxscore=1015 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280019
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-devm_regulator_bulk_register_supply_alias() has been unused since 2014's
-commit d137be00ee01 ("mfd: core: Don't use devres functions before device
-is added")
 
-Remove it, and the static helpers only it used.
+On 10/20/2024 12:29 AM, Dmitry Baryshkov wrote:
+> On Thu, Oct 10, 2024 at 06:08:47PM +0800, Jingyi Wang wrote:
+>> Add LLCC configuration for the QCS8300 platform. There is an errata on
+>> LB_CNT information on QCS8300 platform, override the value to get the
+>> right number of banks.
+>>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>> ---
+>>  drivers/soc/qcom/llcc-qcom.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
+>>  1 file changed, 72 insertions(+)
+>>
+>> @@ -3391,6 +3456,12 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>>  	num_banks >>= LLCC_LB_CNT_SHIFT;
+>>  	drv_data->num_banks = num_banks;
+>>  
+>> +	/* LB_CNT information is wrong on QCS8300, override the value */
+>> +	if (of_device_is_compatible(dev->of_node, "qcom,qcs8300-llcc")) {
+>> +		num_banks = 4;
+>> +		drv_data->num_banks = 4;
+>> +	}
+> 
+> Nit: I think it might be better to skip reading LLCC_COMMON_STATUS0
+> register completely and just set num_banks instead. See [1]
+> 
+> [1] https://lore.kernel.org/linux-arm-msm/20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org/
+> 
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../driver-api/driver-model/devres.rst        |  1 -
- drivers/regulator/devres.c                    | 74 -------------------
- include/linux/regulator/consumer.h            |  6 --
- 3 files changed, 81 deletions(-)
+Just went through the series and the follow up sereies, I think it is a good idea to
+add the property in the config. Thanks!
 
-diff --git a/Documentation/driver-api/driver-model/devres.rst b/Documentation/driver-api/driver-model/devres.rst
-index 5f2ee8d717b1..a1995a16febf 100644
---- a/Documentation/driver-api/driver-model/devres.rst
-+++ b/Documentation/driver-api/driver-model/devres.rst
-@@ -426,7 +426,6 @@ PWM
-   devm_fwnode_pwm_get()
- 
- REGULATOR
--  devm_regulator_bulk_register_supply_alias()
-   devm_regulator_bulk_get()
-   devm_regulator_bulk_get_const()
-   devm_regulator_bulk_get_enable()
-diff --git a/drivers/regulator/devres.c b/drivers/regulator/devres.c
-index 1b893cdd1aad..6d6ddeb62f57 100644
---- a/drivers/regulator/devres.c
-+++ b/drivers/regulator/devres.c
-@@ -491,15 +491,6 @@ struct regulator_supply_alias_match {
- 	const char *id;
- };
- 
--static int devm_regulator_match_supply_alias(struct device *dev, void *res,
--					     void *data)
--{
--	struct regulator_supply_alias_match *match = res;
--	struct regulator_supply_alias_match *target = data;
--
--	return match->dev == target->dev && strcmp(match->id, target->id) == 0;
--}
--
- static void devm_regulator_destroy_supply_alias(struct device *dev, void *res)
- {
- 	struct regulator_supply_alias_match *match = res;
-@@ -548,71 +539,6 @@ int devm_regulator_register_supply_alias(struct device *dev, const char *id,
- }
- EXPORT_SYMBOL_GPL(devm_regulator_register_supply_alias);
- 
--static void devm_regulator_unregister_supply_alias(struct device *dev,
--						   const char *id)
--{
--	struct regulator_supply_alias_match match;
--	int rc;
--
--	match.dev = dev;
--	match.id = id;
--
--	rc = devres_release(dev, devm_regulator_destroy_supply_alias,
--			    devm_regulator_match_supply_alias, &match);
--	if (rc != 0)
--		WARN_ON(rc);
--}
--
--/**
-- * devm_regulator_bulk_register_supply_alias - Managed register
-- * multiple aliases
-- *
-- * @dev:       device to supply
-- * @id:        list of supply names or regulator IDs
-- * @alias_dev: device that should be used to lookup the supply
-- * @alias_id:  list of supply names or regulator IDs that should be used to
-- *             lookup the supply
-- * @num_id:    number of aliases to register
-- *
-- * @return 0 on success, a negative error number on failure.
-- *
-- * This helper function allows drivers to register several supply
-- * aliases in one operation, the aliases will be automatically
-- * unregisters when the source device is unbound.  If any of the
-- * aliases cannot be registered any aliases that were registered
-- * will be removed before returning to the caller.
-- */
--int devm_regulator_bulk_register_supply_alias(struct device *dev,
--					      const char *const *id,
--					      struct device *alias_dev,
--					      const char *const *alias_id,
--					      int num_id)
--{
--	int i;
--	int ret;
--
--	for (i = 0; i < num_id; ++i) {
--		ret = devm_regulator_register_supply_alias(dev, id[i],
--							   alias_dev,
--							   alias_id[i]);
--		if (ret < 0)
--			goto err;
--	}
--
--	return 0;
--
--err:
--	dev_err(dev,
--		"Failed to create supply alias %s,%s -> %s,%s\n",
--		id[i], dev_name(dev), alias_id[i], dev_name(alias_dev));
--
--	while (--i >= 0)
--		devm_regulator_unregister_supply_alias(dev, id[i]);
--
--	return ret;
--}
--EXPORT_SYMBOL_GPL(devm_regulator_bulk_register_supply_alias);
--
- struct regulator_notifier_match {
- 	struct regulator *regulator;
- 	struct notifier_block *nb;
-diff --git a/include/linux/regulator/consumer.h b/include/linux/regulator/consumer.h
-index b9ce521910a0..adaacd7676b6 100644
---- a/include/linux/regulator/consumer.h
-+++ b/include/linux/regulator/consumer.h
-@@ -185,12 +185,6 @@ int devm_regulator_register_supply_alias(struct device *dev, const char *id,
- 					 struct device *alias_dev,
- 					 const char *alias_id);
- 
--int devm_regulator_bulk_register_supply_alias(struct device *dev,
--					      const char *const *id,
--					      struct device *alias_dev,
--					      const char *const *alias_id,
--					      int num_id);
--
- /* regulator output control and status */
- int __must_check regulator_enable(struct regulator *regulator);
- int regulator_disable(struct regulator *regulator);
--- 
-2.47.0
+
+>> +
+>>  	drv_data->regmaps = devm_kcalloc(dev, num_banks, sizeof(*drv_data->regmaps), GFP_KERNEL);
+>>  	if (!drv_data->regmaps) {
+>>  		ret = -ENOMEM;
+>> @@ -3484,6 +3555,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
+>>  }
+>>  
+>>  static const struct of_device_id qcom_llcc_of_match[] = {
+>> +	{ .compatible = "qcom,qcs8300-llcc", .data = &qcs8300_cfgs},
+>>  	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
+>>  	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
+>>  	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
+>>
+>> -- 
+>> 2.25.1
+>>
+> 
+Thanks，
+Jingyi
 
 
