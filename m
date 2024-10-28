@@ -1,233 +1,270 @@
-Return-Path: <linux-kernel+bounces-385752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F37869B3B3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:19:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B90C79B3B39
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:19:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2260E1C22145
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB0E71C21F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8A9A1E04BE;
-	Mon, 28 Oct 2024 20:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uv6v0KOx"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4131E009C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436AC1E008B;
 	Mon, 28 Oct 2024 20:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p0yWTmjH"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94ADF18EFC9;
+	Mon, 28 Oct 2024 20:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730146763; cv=none; b=f8YKaDf8ldNPiB/UGpO4TRo2T4TtDnDfu5aQ9OYzVHTma5Mlq/ML9YMo0f49if3HtIT5Cvp3ENK6wEkTAVAqMPA0pJ7LKwMO5D/zEo7V7wTcPbZ1CcI+xoXEv5h2MymNrELWi9DUiZ6mNUC71mUpNhKkHoXQ1cEs4yPZzX0KnnY=
+	t=1730146759; cv=none; b=kqsoClMjMxRzJkiY9dGZMFnjq5bTbmrZe5dk+G7+kPrY2BOfhZ03aOtWAwDteVMogl413JkPc9jSOMy8RHldwrR/Nnf97ylP+QPZXy+Lnc0u4ayeNOyfJSN3oLKTOV0vqQQ//Qo4MsK5hkNtSZibDmwW58NR2bk8ayc9md9gJBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730146763; c=relaxed/simple;
-	bh=NRWtSOC+lEz9k6UbmC+lnZcOEDLhy8WSHnCrE9fqZ4s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HkGJQwyg1e0mCgJmeJJRZmABDPxiGFQ7wRTr1j/EORKumVfUZdCtyYUERkG7JWycuwDtGvUisU31DLUFmTxFxDmgO4el9RsEQCmrzXZSAlp9/vABrkCG9vXkIp4bqLMsU3cXYyAIc23TirHePYGgEP3mgYDvzHvWpfNdUphd/cE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uv6v0KOx; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e61b47c6cso3819060b3a.2;
-        Mon, 28 Oct 2024 13:19:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730146760; x=1730751560; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=13Qc9db0gISrV8wY86ltcLxpy9cIe+7+41QoOq6EjMk=;
-        b=Uv6v0KOxz8r4QafUYXHakzII14fZy/583BLlAWD243fBMmT0IHn0D2fX+G8wl+gg+g
-         3xJ4ym7jgc5p8tAy25wAQzsj3b3N71DRbZmqpzx57cqMKAev+8oNeDfSnmacnyZhP3Vq
-         eRCSoumSWufN9THMZvqtSGtci+CT4iMpAAxIf4fFGhV8dQaToyIzWo1tAWMlGu6UztYk
-         BHWr0f69pUX7LRUrT0lFRSuXscMoL8P7zJ3FYzI09AvoJ6D/AacYkfgWjNUZoDdbtI6x
-         cLmGtjTsK2wqDhIod70oNDySD11yC0k3SzpUTtlHH6mZQtlPfCVda27ehelAPRZqkeSv
-         i2xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730146760; x=1730751560;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=13Qc9db0gISrV8wY86ltcLxpy9cIe+7+41QoOq6EjMk=;
-        b=FR4ebIl3sRGnzGzR7j3NxNRgn50WwiKdkjkCZ3SlprHgP0CbNrOti0cqvhqm+50ZTx
-         AwS8jAymc8cKodpXh8UBRRqtt1qFajHMdqI+qjYmi1lu9qCxCxv/EqSNtYkjveXJunAc
-         ijuOnhPvXFE9P7JgXX6BySCAEDypJg6BDGejY2OiwB22NziZzFO2BCrF9ZSpWZNlCjCu
-         yY5ud6dZQ6Eo0ACaNb1ORsB1FxwL1ArFOCnv+zDWlucv1LvNuPHdm8Plh6tKbm3nnS7a
-         387iYWPeJLzWDXkJBmU1GRfZmLeUexSw8lfmTLhgDO9vXsgDiNDptv8vjt2gFODKofHl
-         MAFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV41hzuBTKRBJAiNjZmgTZgxVRl6VmubEp7D8O4eT0sF4fxyRdxVAskMKtkQPH2eTU5iyU=@vger.kernel.org, AJvYcCWq2431FRrJqVpfDgCwSlUlzWSxK5F5RdFecKSHXignjb3ynCFENk5i3vjo3Jagmmya4JXVI1PmFrhmfKBY@vger.kernel.org
-X-Gm-Message-State: AOJu0YxysOKT93SmJzX2IaNvvdY24ZHvvxzAH+jVYga8QOZPv7Nt0Jl5
-	DA4zs9bKb2PE6XC9vxMKa6li3DZe6iByLyjbpgtz6egPYM711kYE7biyXwRvOHoXHToDz/UBWTC
-	EnsZIaH5WAISR8XQ9euUUPbdMDTI=
-X-Google-Smtp-Source: AGHT+IFmSOsqbPR2jqw2E0aLoR61UwDL+koBCcmMDB4ZgcEOBaplBk6EHfZ0V0lRMU2djXuvDpacp/suUkdcV81hrRE=
-X-Received: by 2002:a05:6a00:1910:b0:71e:5e04:be9b with SMTP id
- d2e1a72fcca58-72062fb21f2mr16001814b3a.12.1730146760304; Mon, 28 Oct 2024
- 13:19:20 -0700 (PDT)
+	s=arc-20240116; t=1730146759; c=relaxed/simple;
+	bh=RbYkSlujsGnfrrSc/RXoJgq2re22jesjHYy+grYlGKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kCnePH5LE1A6tsX5s54jeAzewn4EYpbF67eEGzHLeOT4DGMLCmM1nC8Y0VbwopK8zxDeMIoXj3gQOF37Ehw8KUS9CG8mbhQZmc8vNda3zUACXfQudTAK/zd04JKLYqnwkSiekdokejZ1Mi8Wn/Kj0w1PihJSN0QZ1VxY8pUX9L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p0yWTmjH; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <e6580d85-2c57-4ca1-9846-7af831bfceb7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730146753;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iC0SyFOBqKv7K1vchCcjd076apOvYvJHYgGggSyFBm4=;
+	b=p0yWTmjHcIwu4+3h0AQH5/1Mntgl5HjnN1rnP11QngAyl3yw51C5T+0w2MHaavjswa0UQh
+	ihZwR7sucib2780r3J/j0196fOThxPfcml4Ze4p/be4Jw4OJGatvTHiF5exeSEGqlGsnj+
+	7mPolsSdCRztgpcC45iPQz+6v3dGYkU=
+Date: Mon, 28 Oct 2024 21:19:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028190927.648953-1-mathieu.desnoyers@efficios.com> <20241028190927.648953-3-mathieu.desnoyers@efficios.com>
-In-Reply-To: <20241028190927.648953-3-mathieu.desnoyers@efficios.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 28 Oct 2024 13:19:08 -0700
-Message-ID: <CAEf4BzZA30dEOxqtwWcMsGLLU0na77rmRANMMYQaNJ8D8o5-bQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v4 2/4] tracing: Introduce tracepoint_is_faultable()
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Michael Jeanson <mjeanson@efficios.com>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
-	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
-	Jordan Rife <jrife@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH for-next v8 0/6] On-Demand Paging on SoftRoCE
+To: "Daisuke Matsuda (Fujitsu)" <matsuda-daisuke@fujitsu.com>,
+ "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+ "leon@kernel.org" <leon@kernel.org>, "jgg@ziepe.ca" <jgg@ziepe.ca>,
+ "zyjzyj2000@gmail.com" <zyjzyj2000@gmail.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "rpearsonhpe@gmail.com" <rpearsonhpe@gmail.com>,
+ "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>
+References: <20241009015903.801987-1-matsuda-daisuke@fujitsu.com>
+ <ac2d7fcc-024f-4913-949f-11cbe5d09f63@linux.dev>
+ <OS3PR01MB9865DCDAEDDA8187267429AFE54A2@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Zhu Yanjun <yanjun.zhu@linux.dev>
+In-Reply-To: <OS3PR01MB9865DCDAEDDA8187267429AFE54A2@OS3PR01MB9865.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 28, 2024 at 12:11=E2=80=AFPM Mathieu Desnoyers
-<mathieu.desnoyers@efficios.com> wrote:
->
-> Introduce a "faultable" flag within the extended structure to know
-> whether a tracepoint needs rcu tasks trace grace period before reclaim.
-> This can be queried using tracepoint_is_faultable().
->
-> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Michael Jeanson <mjeanson@efficios.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
-> Cc: Yonghong Song <yhs@fb.com>
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-> Cc: bpf@vger.kernel.org
-> Cc: Joel Fernandes <joel@joelfernandes.org>
-> Cc: Jordan Rife <jrife@google.com>
-> ---
->  include/linux/tracepoint-defs.h |  2 ++
->  include/linux/tracepoint.h      | 24 ++++++++++++++++++++++++
->  include/trace/define_trace.h    |  2 +-
->  3 files changed, 27 insertions(+), 1 deletion(-)
->
+在 2024/10/28 8:59, Daisuke Matsuda (Fujitsu) 写道:
+> On Fri, Oct 18, 2024 4:07 PM Zhu Yanjun wrote:
+>> 在 2024/10/9 3:58, Daisuke Matsuda 写道:
+>>> This patch series implements the On-Demand Paging feature on SoftRoCE(rxe)
+>>> driver, which has been available only in mlx5 driver[1] so far.
+>>>
+>>> This series has been blocked because of the hang issue of srp 002 test[2],
+>>> which was believed to be caused after applying the commit 9b4b7c1f9f54
+>>> ("RDMA/rxe: Add workqueue support for rxe tasks"). My patches are dependent
+>>> on the commit because the ODP feature requires sleeping in kernel space,
+>>> and it is impossible with the former tasklet implementation.
+>>>
+>>> According to the original reporter[3], the hang issue is already gone in
+>>> v6.10. Additionally, tasklet is marked deprecated[4]. I think the rxe
+>>> driver is ready to accept this series since there is no longer any reason
+>>> to consider reverting back to the old tasklet.
+>>>
+>>> I omitted some contents like the motive behind this series from the cover-
+>>> letter. Please see the cover letter of v3 for more details[5].
+>>>
+>>> [Overview]
+>>> When applications register a memory region(MR), RDMA drivers normally pin
+>>> pages in the MR so that physical addresses are never changed during RDMA
+>>> communication. This requires the MR to fit in physical memory and
+>>> inevitably leads to memory pressure. On the other hand, On-Demand Paging
+>>> (ODP) allows applications to register MRs without pinning pages. They are
+>>> paged-in when the driver requires and paged-out when the OS reclaims. As a
+>>> result, it is possible to register a large MR that does not fit in physical
+>>> memory without taking up so much physical memory.
+>>>
+>>> [How does ODP work?]
+>>> "struct ib_umem_odp" is used to manage pages. It is created for each
+>>> ODP-enabled MR on its registration. This struct holds a pair of arrays
+>>> (dma_list/pfn_list) that serve as a driver page table. DMA addresses and
+>>> PFNs are stored in the driver page table. They are updated on page-in and
+>>> page-out, both of which use the common interfaces in the ib_uverbs layer.
+>>>
+>>> Page-in can occur when requester, responder or completer access an MR in
+>>> order to process RDMA operations. If they find that the pages being
+>>> accessed are not present on physical memory or requisite permissions are
+>>> not set on the pages, they provoke page fault to make the pages present
+>>> with proper permissions and at the same time update the driver page table.
+>>> After confirming the presence of the pages, they execute memory access such
+>>> as read, write or atomic operations.
+>>>
+>>> Page-out is triggered by page reclaim or filesystem events (e.g. metadata
+>>> update of a file that is being used as an MR). When creating an ODP-enabled
+>>> MR, the driver registers an MMU notifier callback. When the kernel issues a
+>>> page invalidation notification, the callback is provoked to unmap DMA
+>>> addresses and update the driver page table. After that, the kernel releases
+>>> the pages.
+>>>
+>>> [Supported operations]
+>>> All traditional operations are supported on RC connection. The new Atomic
+>>> write[6] and RDMA Flush[7] operations are not included in this patchset. I
+>>> will post them later after this patchset is merged. On UD connection, Send,
+>>> Recv, and SRQ-Recv are supported.
+>>>
+>>> [How to test ODP?]
+>>> There are only a few resources available for testing. pyverbs testcases in
+>>> rdma-core and perftest[8] are recommendable ones. Other than them, the
+>>> ibv_rc_pingpong command can also be used for testing. Note that you may
+>>> have to build perftest from upstream because old versions do not handle ODP
+>>> capabilities correctly.
+>>
+>> Thanks a lot. I have tested these patches with perftest. Because ODP (On
+>> Demand Paging) is a feature, can you also add some testcases into rdma
+>> core? So we can use rdma-core to make tests with this feature of rxe.
+> 
+> I added Read/Write/Atomics tests two years ago.
+> Cf. https://github.com/linux-rdma/rdma-core/pull/1229
+> 
+> Each of ODP testcases causes page invalidation so that RDMA traffic
+> access triggers ODP page-in flow.
+> 
+> Currently, 7 testcases below can pass on rxe ODP v8 implementation.
+>    test_odp_rc_atomic_cmp_and_swp
+>    test_odp_rc_atomic_fetch_and_add
+>    test_odp_rc_mixed_mr
+>    test_odp_rc_rdma_read
+>    test_odp_rc_rdma_write
+>    test_odp_rc_traffic
+>    test_odp_ud_traffic
+> The rest 11 tests are just skipped because of lack of capabilities.
 
-LGTM
+Thanks. Run rdma-core, the above tests can also work successfully in my 
+test environment.
+I am fine with this.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Zhu Yanjun
 
-> diff --git a/include/linux/tracepoint-defs.h b/include/linux/tracepoint-d=
-efs.h
-> index 967c08d9da84..aebf0571c736 100644
-> --- a/include/linux/tracepoint-defs.h
-> +++ b/include/linux/tracepoint-defs.h
-> @@ -32,6 +32,8 @@ struct tracepoint_func {
->  struct tracepoint_ext {
->         int (*regfunc)(void);
->         void (*unregfunc)(void);
-> +       /* Flags. */
-> +       unsigned int faultable:1;
->  };
->
->  struct tracepoint {
-> diff --git a/include/linux/tracepoint.h b/include/linux/tracepoint.h
-> index 83dc24ee8b13..259f0ab4ece6 100644
-> --- a/include/linux/tracepoint.h
-> +++ b/include/linux/tracepoint.h
-> @@ -104,6 +104,12 @@ void for_each_tracepoint_in_module(struct module *mo=
-d,
->   * tracepoint_synchronize_unregister must be called between the last tra=
-cepoint
->   * probe unregistration and the end of module exit to make sure there is=
- no
->   * caller executing a probe when it is freed.
-> + *
-> + * An alternative is to use the following for batch reclaim associated
-> + * with a given tracepoint:
-> + *
-> + * - tracepoint_is_faultable() =3D=3D false: call_rcu()
-> + * - tracepoint_is_faultable() =3D=3D true:  call_rcu_tasks_trace()
->   */
->  #ifdef CONFIG_TRACEPOINTS
->  static inline void tracepoint_synchronize_unregister(void)
-> @@ -111,9 +117,17 @@ static inline void tracepoint_synchronize_unregister=
-(void)
->         synchronize_rcu_tasks_trace();
->         synchronize_rcu();
->  }
-> +static inline bool tracepoint_is_faultable(struct tracepoint *tp)
-> +{
-> +       return tp->ext && tp->ext->faultable;
-> +}
->  #else
->  static inline void tracepoint_synchronize_unregister(void)
->  { }
-> +static inline bool tracepoint_is_faultable(struct tracepoint *tp)
-> +{
-> +       return false;
-> +}
->  #endif
->
->  #ifdef CONFIG_HAVE_SYSCALL_TRACEPOINTS
-> @@ -345,6 +359,15 @@ static inline struct tracepoint *tracepoint_ptr_dere=
-f(tracepoint_ptr_t *p)
->         struct tracepoint_ext __tracepoint_ext_##_name =3D {             =
- \
->                 .regfunc =3D _reg,                                       =
- \
->                 .unregfunc =3D _unreg,                                   =
- \
-> +               .faultable =3D false,                                    =
- \
-> +       };                                                              \
-> +       __DEFINE_TRACE_EXT(_name, &__tracepoint_ext_##_name, PARAMS(_prot=
-o), PARAMS(_args));
-> +
-> +#define DEFINE_TRACE_SYSCALL(_name, _reg, _unreg, _proto, _args)       \
-> +       struct tracepoint_ext __tracepoint_ext_##_name =3D {             =
- \
-> +               .regfunc =3D _reg,                                       =
- \
-> +               .unregfunc =3D _unreg,                                   =
- \
-> +               .faultable =3D true,                                     =
- \
->         };                                                              \
->         __DEFINE_TRACE_EXT(_name, &__tracepoint_ext_##_name, PARAMS(_prot=
-o), PARAMS(_args));
->
-> @@ -389,6 +412,7 @@ static inline struct tracepoint *tracepoint_ptr_deref=
-(tracepoint_ptr_t *p)
->  #define __DECLARE_TRACE_SYSCALL        __DECLARE_TRACE
->
->  #define DEFINE_TRACE_FN(name, reg, unreg, proto, args)
-> +#define DEFINE_TRACE_SYSCALL(name, reg, unreg, proto, args)
->  #define DEFINE_TRACE(name, proto, args)
->  #define EXPORT_TRACEPOINT_SYMBOL_GPL(name)
->  #define EXPORT_TRACEPOINT_SYMBOL(name)
-> diff --git a/include/trace/define_trace.h b/include/trace/define_trace.h
-> index ff5fa17a6259..63fea2218afa 100644
-> --- a/include/trace/define_trace.h
-> +++ b/include/trace/define_trace.h
-> @@ -48,7 +48,7 @@
->
->  #undef TRACE_EVENT_SYSCALL
->  #define TRACE_EVENT_SYSCALL(name, proto, args, struct, assign, print, re=
-g, unreg) \
-> -       DEFINE_TRACE_FN(name, reg, unreg, PARAMS(proto), PARAMS(args))
-> +       DEFINE_TRACE_SYSCALL(name, reg, unreg, PARAMS(proto), PARAMS(args=
-))
->
->  #undef TRACE_EVENT_NOP
->  #define TRACE_EVENT_NOP(name, proto, args, struct, assign, print)
-> --
-> 2.39.5
->
+> 
+> Please let me know if you have any suggestions for improvement.
+> 
+> Thanks,
+> Daisuke Matsuda
+> 
+>>
+>> That is, add some testcases in run_tests.py, so use run_tests.py to
+>> verify this (ODP) feature on rxe.
+>>
+>> Thanks,
+>> Zhu Yanjun
+>>
+>>>
+>>> The latest ODP tree is available from github:
+>>> https://github.com/ddmatsu/linux/tree/odp_v8
+>>>
+>>> [Future work]
+>>> My next work is to enable the new Atomic write[6] and RDMA Flush[7]
+>>> operations with ODP. After that, I am going to implement the prefetch
+>>> feature. It allows applications to trigger page fault using
+>>> ibv_advise_mr(3) to optimize performance. Some existing software like
+>>> librpma[9] use this feature. Additionally, I think we can also add the
+>>> implicit ODP feature in the future.
+>>>
+>>> [1] Understanding On Demand Paging (ODP)
+>>> https://enterprise-support.nvidia.com/s/article/understanding-on-demand-paging--odp-x
+>>>
+>>> [2] [bug report] blktests srp/002 hang
+>>> https://lore.kernel.org/linux-rdma/dsg6rd66tyiei32zaxs6ddv5ebefr5vtxjwz6d2ewqrcwisogl@ge7jzan7dg5u/T/
+>>>
+>>> [3] blktests failures with v6.10-rc1 kernel
+>>> https://lore.kernel.org/linux-block/wnucs5oboi4flje5yvtea7puvn6zzztcnlrfz3lpzlwgblrxgw@7wvqdzioejgl/
+>>>
+>>> [4] [00/15] ethernet: Convert from tasklet to BH workqueue
+>>> https://patchwork.kernel.org/project/linux-rdma/cover/20240621050525.3720069-1-allen.lkml@gmail.com/
+>>>
+>>> [5] [PATCH for-next v3 0/7] On-Demand Paging on SoftRoCE
+>>> https://lore.kernel.org/lkml/cover.1671772917.git.matsuda-daisuke@fujitsu.com/
+>>>
+>>> [6] [PATCH v7 0/8] RDMA/rxe: Add atomic write operation
+>>> https://lore.kernel.org/linux-rdma/1669905432-14-1-git-send-email-yangx.jy@fujitsu.com/
+>>>
+>>> [7] [for-next PATCH 00/10] RDMA/rxe: Add RDMA FLUSH operation
+>>> https://lore.kernel.org/lkml/20221206130201.30986-1-lizhijian@fujitsu.com/
+>>>
+>>> [8] linux-rdma/perftest: Infiniband Verbs Performance Tests
+>>> https://github.com/linux-rdma/perftest
+>>>
+>>> [9] librpma: Remote Persistent Memory Access Library
+>>> https://github.com/pmem/rpma
+>>>
+>>> v7->v8:
+>>>    1) Dropped the first patch because the same change was made by Bob Pearson.
+>>>    cf. https://github.com/torvalds/linux/commit/23bc06af547f2ca3b7d345e09fd8d04575406274
+>>>    2) Rebased to 6.12.1-rc2
+>>>
+>>> v6->v7:
+>>>    1) Rebased to 6.6.0
+>>>    2) Disabled using hugepages with ODP
+>>>    3) Addressed comments on v6 from Jason and Zhu
+>>>      cf. https://lore.kernel.org/lkml/cover.1694153251.git.matsuda-daisuke@fujitsu.com/
+>>>
+>>> v5->v6:
+>>>    Fixed the implementation according to Jason's suggestions
+>>>      cf. https://lore.kernel.org/all/ZIdFXfDu4IMKE+BQ@nvidia.com/
+>>>      cf. https://lore.kernel.org/all/ZIdGU709e1h5h4JJ@nvidia.com/
+>>>
+>>> v4->v5:
+>>>    1) Rebased to 6.4.0-rc2+
+>>>    2) Changed to schedule all works on responder and completer to workqueue
+>>>
+>>> v3->v4:
+>>>    1) Re-designed functions that access MRs to use the MR xarray.
+>>>    2) Rebased onto the latest jgg-for-next tree.
+>>>
+>>> v2->v3:
+>>>    1) Removed a patch that changes the common ib_uverbs layer.
+>>>    2) Re-implemented patches for conversion to workqueue.
+>>>    3) Fixed compile errors (happened when CONFIG_INFINIBAND_ON_DEMAND_PAGING=n).
+>>>    4) Fixed some functions that returned incorrect errors.
+>>>    5) Temporarily disabled ODP for RDMA Flush and Atomic Write.
+>>>
+>>> v1->v2:
+>>>    1) Fixed a crash issue reported by Haris Iqbal.
+>>>    2) Tried to make lock patters clearer as pointed out by Romanovsky.
+>>>    3) Minor clean ups and fixes.
+>>>
+>>> Daisuke Matsuda (6):
+>>>     RDMA/rxe: Make MR functions accessible from other rxe source code
+>>>     RDMA/rxe: Move resp_states definition to rxe_verbs.h
+>>>     RDMA/rxe: Add page invalidation support
+>>>     RDMA/rxe: Allow registering MRs for On-Demand Paging
+>>>     RDMA/rxe: Add support for Send/Recv/Write/Read with ODP
+>>>     RDMA/rxe: Add support for the traditional Atomic operations with ODP
+>>>
+>>>    drivers/infiniband/sw/rxe/Makefile    |   2 +
+>>>    drivers/infiniband/sw/rxe/rxe.c       |  18 ++
+>>>    drivers/infiniband/sw/rxe/rxe.h       |  37 ----
+>>>    drivers/infiniband/sw/rxe/rxe_loc.h   |  39 ++++
+>>>    drivers/infiniband/sw/rxe/rxe_mr.c    |  34 +++-
+>>>    drivers/infiniband/sw/rxe/rxe_odp.c   | 282 ++++++++++++++++++++++++++
+>>>    drivers/infiniband/sw/rxe/rxe_resp.c  |  18 +-
+>>>    drivers/infiniband/sw/rxe/rxe_verbs.c |   5 +-
+>>>    drivers/infiniband/sw/rxe/rxe_verbs.h |  37 ++++
+>>>    9 files changed, 419 insertions(+), 53 deletions(-)
+>>>    create mode 100644 drivers/infiniband/sw/rxe/rxe_odp.c
+>>>
+> 
+
 
