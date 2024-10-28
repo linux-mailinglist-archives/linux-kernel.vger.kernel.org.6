@@ -1,71 +1,50 @@
-Return-Path: <linux-kernel+bounces-384411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22FB39B29CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:06:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EA3C9B29CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:07:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7AF285036
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4ADC11F22CE7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA2818FDBC;
-	Mon, 28 Oct 2024 08:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAMlfA3W"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC18190664;
+	Mon, 28 Oct 2024 08:03:34 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F61319005F;
-	Mon, 28 Oct 2024 08:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5AF18D64F;
+	Mon, 28 Oct 2024 08:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102566; cv=none; b=mlVksBJAJENxHzO2PmVYqE7IM5H1rLKSDsriBF5RuQGkSQH/FFpfOm9NJ9IqTA4g3yGUVsU4eDKnxXWmtlXWShTT20lfC55QNg3rASE+1W+ex19UxtAYZgw1PhF3tmF+hFhBsj9Ljb5n+XDGt9h3KSsBromrS/H3GMGdZleV1i4=
+	t=1730102613; cv=none; b=kzX9wr6drE5D2gIf8OsW/QodrTUI2OgffJOvWCTlzZJkPXc8paK+NorAY8gKv5qK8KVvh1g08CpXR2kZaLjOg5zRBRJDAyqD3xucFRPyao1oT2QP8p4rhtfaG3owh+iH1PU4IPZsDjrbccKs3zxgDGkC3GKFmrPoY//k8s8QLbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102566; c=relaxed/simple;
-	bh=K8ruHr4Vpi6UuS7UYRX7Do+93K2LGPQkisXuaj/syr4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kpqg5t2IH0iZforrMAGUxsjY+Y3WSN1NLQrBqpAcnixXP7yggfvT9ZPA5w2Z3J5dZPjJ3AAEzivJfODiRmXDPagg4iDzo3Zg+fYYoF4hBo9SUyz4MGrSfPy3ZQGSTRCC1+UPj+zTRz6voJYbJ/viqGKCSTcQneXqqnbEjKL6Zr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAMlfA3W; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81376C4CEC3;
-	Mon, 28 Oct 2024 08:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730102566;
-	bh=K8ruHr4Vpi6UuS7UYRX7Do+93K2LGPQkisXuaj/syr4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=JAMlfA3WanPo/YvYH/hFi5moQ1zRFVz5T20FSKviO0FbXMlxafGT66PmrS3aQXxHG
-	 3U0qygwaQilMl8bR46BygNTi7JK8jKlGby+LBBuoS9d22nEJQp0qU6aqE7tjvC7WVb
-	 C1Kci0jnyeosZAIIf0AvKsdpcm9coPQJgwb2NgkNdRL5WEVsQMSuDXiQ2/Z6SgFeQv
-	 Mz9bgr5v8QSULJIZtc5myt5pAqouiXwR3L5lWOIgmewILbcq4XPXSa1I1Vo7DvCKac
-	 vxcw8oGxr3VhW7G1P69m9eXwuKXAwobdleyXEhDaOxR/U+tAw4C9jGkCy/uP73copZ
-	 +sbsn0Xp5VeNQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-Date: Mon, 28 Oct 2024 09:02:32 +0100
-Message-ID: <20241028080232.589602-1-ojeda@kernel.org>
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
-References: <20241028062312.001273460@linuxfoundation.org>
+	s=arc-20240116; t=1730102613; c=relaxed/simple;
+	bh=qP9Kmjy8aL7ga+PxwoatJoc2KZiMKEe1PqJ2a8W9278=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OBxHEFvv0ASo+A0JSGD17hcHCLPlnV9ejKjwsgjQZpUaQ6T9ysxPgBzu8cYIJkH8oIXr7EBtu2k45yQAaPEdiVfBtag0laXyb7veyUf7r1Oa3K26i59c0Z8PwUg5usNIOHs96Wnb/p9UPR+es/xO+4bssIZc2Oprn00LGyO0Oto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XcQr72YJyz1ynYN;
+	Mon, 28 Oct 2024 16:03:35 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id 1826B18002B;
+	Mon, 28 Oct 2024 16:03:27 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 28 Oct
+ 2024 16:03:26 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <hverkuil@xs4all.nl>, <mchehab@kernel.org>, <moinejf@free.fr>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] media: gspca: ov534-ov772x: Fix off-by-one error in set_frame_rate()
+Date: Mon, 28 Oct 2024 16:02:56 +0800
+Message-ID: <20241028080256.3537188-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,24 +52,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On Mon, 28 Oct 2024 07:22:22 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
+In set_frame_rate(), select a rate in rate_0 or rate_1 by checking
+sd->frame_rate >= r->fps in a loop, but the loop condition terminates when
+the index reaches zero, which fails to check the last elememt in rate_0 or
+rate_1.
 
-Boot-tested under QEMU for Rust x86_64, arm64 and riscv64; built-tested
-for loongarch64:
+Check for >= 0 so that the last one in rate_0 or rate_1 is also checked.
 
-Tested-by: Miguel Ojeda <ojeda@kernel.org>
+Fixes: 189d92af707e ("V4L/DVB (13422): gspca - ov534: ov772x changes from Richard Kaswy.")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ drivers/media/usb/gspca/ov534.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
+diff --git a/drivers/media/usb/gspca/ov534.c b/drivers/media/usb/gspca/ov534.c
+index 8b6a57f170d0..bdff64a29a33 100644
+--- a/drivers/media/usb/gspca/ov534.c
++++ b/drivers/media/usb/gspca/ov534.c
+@@ -847,7 +847,7 @@ static void set_frame_rate(struct gspca_dev *gspca_dev)
+ 		r = rate_1;
+ 		i = ARRAY_SIZE(rate_1);
+ 	}
+-	while (--i > 0) {
++	while (--i >= 0) {
+ 		if (sd->frame_rate >= r->fps)
+ 			break;
+ 		r++;
+-- 
+2.34.1
 
-Cheers,
-Miguel
 
