@@ -1,173 +1,121 @@
-Return-Path: <linux-kernel+bounces-384726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36C79B2DB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:59:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 304229B2DCA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:01:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78AFD1F21CFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:59:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0EA7B23F05
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB2931DF278;
-	Mon, 28 Oct 2024 10:52:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1E761E0096;
+	Mon, 28 Oct 2024 10:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y0qOw4mV"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jFaaTZVL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5B0C1DF26D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378591DFE3E;
+	Mon, 28 Oct 2024 10:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112728; cv=none; b=afi0FDEzGcfYuwckdLsbYjMYVIBzzQfgnlXoCuizuVbnwTzypUE770jV4vArWcKj7nmda3e1hLqAB4EiwwomnTTDa/iIuywGBgmH08eo0KJTx1zh//MJxYWaamWTcV4mFczdz8USWYHiPB7qrMDAosDGduMOpOwLMoNxTpAhfXA=
+	t=1730112752; cv=none; b=T1gslverHg2Yb8UPfrR2bYButv9jvFBNIw3npUAByJoGKFS/dmOU+vWAdFoHud9OtHs4jr6jWQW1uLeLBl5X2WtQNIJbPxHaWNMiGr9k1V4JrO9deUWNzQT2upRo57guBO1Fl9zQ5bJvQu1wlrUEJhJxmuVCINC+le6GyNT8lSw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112728; c=relaxed/simple;
-	bh=CS4BmsjI1HWkQUrlqadLWnMo+QLiDGjMl5le7XlpIeU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UQCqYZXKsVFtUwd7VTihB+1E1iP6pjdtx/CJ09ATv82h+jaI1jfdDcFk6HoJcnLG1LWiVPO8ZfEHCBHJSqOysVhUqPQtmBodVrdfv8+NogT7fF4QlegJ13ln/JkJIHiNL/YwVYSQ1WI7jivIhOjagYQrSYe5z9hw+RU/kOurBcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y0qOw4mV; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f2b95775so4718675e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:52:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730112724; x=1730717524; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=75RMsbUWQqHekparXFuWHBkmwh5mRCxsXcIEwNzMOBY=;
-        b=Y0qOw4mVPtEmhT348OXQky1bC0CfLNXqVPGXKsSgwK+63r4HblMnHuftCW8rVgZ2kD
-         CbGWS9J0iIvGybhU9o38ReRpxEAgLs3SxYGZvPUBeb7ka9jb0Mj+SQayDWIO0k+MxkTk
-         YnwpDmtPESVSBP57f9yCDffWxAXbhW25he9kPPMniyEGxLq3Zkfl8SyWADvcKnAZxi0Z
-         AYPqet727QtGdUk8dT2mFaYcXIpvCPI/xOHzKBNCqfFJNijl2X5BtfxelGcD4Hjwdh3N
-         cPmX9UUnxi4/a6aJ4FDGNc2VOeuQ9UibLYc+DaiKpNtI10ldMFE//rZLBGjTthS/dLyX
-         QhJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730112724; x=1730717524;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=75RMsbUWQqHekparXFuWHBkmwh5mRCxsXcIEwNzMOBY=;
-        b=iwJNidQquIEWp1iIFxCkD+I3TujSxjHM7suLDrmf+ib1AGBWXVtXsPQiQI6InEJw5c
-         nsTsSB5zMxxQK5tfiweYPcQMNvFFZzJ98rrGPPbXeDaii+kYoUggCTMMxcnnBOQsoC0z
-         HOQantY0d1/JZWjueOIZ9i3cZF2WzavSbvnEfI0k7SEt4cECbMB2epjB/6kgqRtpw64v
-         WNClSF8gzGDhbuFU5/bKsm3bVy9WRFz/uc2/Vn8t6ngEKesKFX1J/57a5BxiW9H1WUlV
-         oFonmSor77KSophfjunXJhCnJxlDlM47IerLFBL6gvrplxbX7pOS5BdlfL/WhOv5qGZC
-         g8aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuOn2djWp/reHaBS/MkODfiDnlyExg9zg+TVPd/buSCnS8jpoHNpgttuerlK/LANHcW2oRXUnqqkmQZ5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiEmeqpM0F80Iz2QsyZV/Sx/u/h8Tb3RYq8g2BLzxskE4GiOOB
-	P3N/+bbIqKP3mjG0tlSZpY3FRqqbPOp4jzU1Y2hWuuXH+28kP8rNQLSd/k5af+Y=
-X-Google-Smtp-Source: AGHT+IF5XS7brW24GwzPn8C79xMYDDlFcF/p3I5r6p+BJD+JCe/k5iD0/fpLRAMX38xJREuHzHCMcA==
-X-Received: by 2002:a05:6512:4009:b0:539:94f5:bf with SMTP id 2adb3069b0e04-53b34c3f9b6mr5770526e87.59.1730112723695;
-        Mon, 28 Oct 2024 03:52:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e126dd1sm1049798e87.77.2024.10.28.03.52.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 03:52:03 -0700 (PDT)
-Date: Mon, 28 Oct 2024 12:52:01 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>, 
-	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
-Message-ID: <vtj3yahojkozge4bvq66ax2c2idbw27c3hs7l6cy3e7ucz4jqb@qge2nckj3mr4>
-References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
- <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
- <6fea85fc-ccdc-46ec-b612-3712e9431301@quicinc.com>
- <CAA8EJpodjP3rY0Twe9sP37LWwk5ppP36dyLC9WKD6CTDOtmwzA@mail.gmail.com>
- <b7f72f38-2758-405b-abc7-60b73448d8bb@oss.qualcomm.com>
+	s=arc-20240116; t=1730112752; c=relaxed/simple;
+	bh=MXlDEerogANDkiRhMcJNVEq94oLrRBj5G8iOGmxcs6o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=mWSp+uU0xZi8fTnOM5sm8Pq7X0awIQ2FzlxkKxCstfqx2iRB1lla7zW2qjbEnYEsiXO+9uJY9TNsH2dzOCmbZoy4JNUdJ5loQLc3Hk+ECRk6XMbMyM1q9qZI7npLvFnwVo9DRVGz5LLFByQdIAVybN/hvMgZD7u47Yy4Q+ngD4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jFaaTZVL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA960C4CEC3;
+	Mon, 28 Oct 2024 10:52:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730112751;
+	bh=MXlDEerogANDkiRhMcJNVEq94oLrRBj5G8iOGmxcs6o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jFaaTZVLF1XbZmTAxbSH8pKq8HlzzbIlD0hbIGGq12dDGj8k+KXIP1HOzAQQ+iD6j
+	 Xe68k/wokFHFlMcmom045OmII2wzNEpGAT9kkQoYkL2CQDnVt0Lj/Rlp/HQS0Kzs1l
+	 L1n+t1CH+nPUzV16rAmsBocIlaZ7Z5ymHXo1QM25hVEA5TMZ6RXtNNAoVx3cy/7hR/
+	 skstZrBFx1WZ7t+XxgHzCk8IIPb+thh1MuP4ft4NJQONANhQGj2Z7u8auuBS3oeNaJ
+	 Da1M9vUwXZapYwgeFFFuicYsxa06PMbvQRnKguQaxlIR3aenU6M017QJLlVGu8o1OT
+	 1EzsLXA+FX7Qg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Kenneth Albanowski <kenalba@chromium.org>,
+	Jiri Kosina <jkosina@suse.com>,
+	Sasha Levin <sashal@kernel.org>,
+	jikos@kernel.org,
+	bentiss@kernel.org,
+	linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.6 06/15] HID: multitouch: Add quirk for Logitech Bolt receiver w/ Casa touchpad
+Date: Mon, 28 Oct 2024 06:52:02 -0400
+Message-ID: <20241028105218.3559888-6-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241028105218.3559888-1-sashal@kernel.org>
+References: <20241028105218.3559888-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7f72f38-2758-405b-abc7-60b73448d8bb@oss.qualcomm.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.58
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 11:36:15AM +0100, Konrad Dybcio wrote:
-> On 28.10.2024 11:27 AM, Dmitry Baryshkov wrote:
-> > On Mon, 28 Oct 2024 at 12:08, Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
-> >>
-> >> On 10/28/2024 1:56 PM, Dmitry Baryshkov wrote:
-> >>> On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
-> >>>> Clang-19 and above sometimes end up with multiple copies of the large
-> >>>> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
-> >>>> a6xx_hfi_send_bw_table() calls a number of device specific functions to
-> >>>> fill the structure, but these create another copy of the structure on
-> >>>> the stack which gets copied to the first.
-> >>>>
-> >>>> If the functions get inlined, that busts the warning limit:
-> >>>>
-> >>>> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
-> >>>>
-> >>>> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
-> >>>> the stack. Also, use this opportunity to skip re-initializing this table
-> >>>> to optimize gpu wake up latency.
-> >>>>
-> >>>> Cc: Arnd Bergmann <arnd@kernel.org>
-> >>>>
-> >>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> >>>> ---
-> >>>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
-> >>>>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
-> >>>>  2 files changed, 23 insertions(+), 12 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> >>>> index 94b6c5cab6f4..b4a79f88ccf4 100644
-> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> >>>> @@ -99,6 +99,7 @@ struct a6xx_gmu {
-> >>>>      struct completion pd_gate;
-> >>>>
-> >>>>      struct qmp *qmp;
-> >>>> +    struct a6xx_hfi_msg_bw_table *bw_table;
-> >>>>  };
-> >>>>
-> >>>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
-> >>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> >>>> index cdb3f6e74d3e..55e51c81be1f 100644
-> >>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> >>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> >>>> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
-> >>>>
-> >>>>  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
-> >>>>  {
-> >>>> -    struct a6xx_hfi_msg_bw_table msg = { 0 };
-> >>>> +    struct a6xx_hfi_msg_bw_table *msg;
-> >>>>      struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
-> >>>>      struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
-> >>>>
-> >>>> +    if (gmu->bw_table)
-> >>>> +            goto send;
-> >>>> +
-> >>>> +    msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
-> >>>
-> >>> Is it necessary after being sent? Isn't it better to just kzalloc() it
-> >>> and then kfree() it at the end of the function?
-> >>
-> >> Keeping it around will help to cut down unnecessary work during
-> >> subsequent gpu wake ups.
-> > 
-> > Then, I'd say, it is better to make it a part of the a6xx_gpu struct.
-> 
-> I think a6xx_gmu makes more logical sense here.
-> 
-> FWIW, the driver allocates both _gmu and _gpu for all GPUs regardless
+From: Kenneth Albanowski <kenalba@chromium.org>
 
-Hmm, are we expected to handle / perform BW requests in case of GMU-less
-devices?
+[ Upstream commit 526748b925185e95f1415900ee13c2469d4b64cc ]
 
+The Logitech Casa Touchpad does not reliably send touch release signals
+when communicating through the Logitech Bolt wireless-to-USB receiver.
+
+Adjusting the device class to add MT_QUIRK_NOT_SEEN_MEANS_UP to make
+sure that no touches become stuck, MT_QUIRK_FORCE_MULTI_INPUT is not
+needed, but harmless.
+
+Linux does not have information on which devices are connected to the
+Bolt receiver, so we have to enable this for the entire device.
+
+Signed-off-by: Kenneth Albanowski <kenalba@chromium.org>
+Signed-off-by: Jiri Kosina <jkosina@suse.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/hid/hid-ids.h        | 1 +
+ drivers/hid/hid-multitouch.c | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index d4f6066dbbc59..1a05e22685895 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -868,6 +868,7 @@
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1	0xc539
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_LIGHTSPEED_1_1	0xc53f
+ #define USB_DEVICE_ID_LOGITECH_NANO_RECEIVER_POWERPLAY	0xc53a
++#define USB_DEVICE_ID_LOGITECH_BOLT_RECEIVER	0xc548
+ #define USB_DEVICE_ID_SPACETRAVELLER	0xc623
+ #define USB_DEVICE_ID_SPACENAVIGATOR	0xc626
+ #define USB_DEVICE_ID_DINOVO_DESKTOP	0xc704
+diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+index e7199ae2e3d91..8800893b098bf 100644
+--- a/drivers/hid/hid-multitouch.c
++++ b/drivers/hid/hid-multitouch.c
+@@ -2131,6 +2131,10 @@ static const struct hid_device_id mt_devices[] = {
+ 		HID_DEVICE(BUS_BLUETOOTH, HID_GROUP_MULTITOUCH_WIN_8,
+ 			USB_VENDOR_ID_LOGITECH,
+ 			USB_DEVICE_ID_LOGITECH_CASA_TOUCHPAD) },
++	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
++		HID_DEVICE(BUS_USB, HID_GROUP_MULTITOUCH_WIN_8,
++			USB_VENDOR_ID_LOGITECH,
++			USB_DEVICE_ID_LOGITECH_BOLT_RECEIVER) },
+ 
+ 	/* MosArt panels */
+ 	{ .driver_data = MT_CLS_CONFIDENCE_MINUS_ONE,
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
