@@ -1,162 +1,272 @@
-Return-Path: <linux-kernel+bounces-385038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC6E9B31A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:24:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05429B31AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:29:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E94CB1F22850
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BE51C2179C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1755418A921;
-	Mon, 28 Oct 2024 13:24:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D28C1DD0F5;
+	Mon, 28 Oct 2024 13:28:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TnDu+usz"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QRJt2rVQ"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A6538396
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11491DC747
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121881; cv=none; b=CpVFSXGJu5fk8mgdoRwtphMEp2pKiKyCd7iEl11gov/DPSaKT1+FZVi4CBHoKi6g07B4aF3l5Rro/t+pCPmngjDs82LMrmSf8hFF8L2tXJsjV38zDD94Hs3N6wvq0/GRnBcBUnrZWs8UkFlanZbULO6+y7rx4AL/dJ7xBfAHSUQ=
+	t=1730122123; cv=none; b=N+BMrDh4jtdl81A6ZG3+um4V+isBUvZSBRewkkv0cpfQ8FuZbIrhLDTpXmqoTqYu1C7HSsKC3XNuX1fJjjMJb7TREh+rApvN9sQFFuu7TQMIyg3OOnzfAJGGwGN6sS3O1h2Ck7VK7804krd7OQFmTNrs6NC1ktS/xfe147qFX3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121881; c=relaxed/simple;
-	bh=t1DyrFQzCxA9ZT8I4k0y+yZcOp2aPGHQ06v/4c0F5y0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HcG7qZGXqonAm+DgX/urjZXtQSxsB0HIL6MdHS2EQsC1Ke2A9vUnm3waYuIALva13x+oE9+vWXP21t5Z1Qd32SolTg4tKcgambQ8S8OZzBbEnMGgOtPHPGDPtMNYU2htuYndzteifAvVDS30OLd+gGh6+lNcqJqSP8yHZg0+T6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TnDu+usz; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1730122123; c=relaxed/simple;
+	bh=RBeBzMmvK34PNPhhtb5HQD8f/GMEXSn61Z4rg5hsvc8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F4D5gB6dGGnHHSZidOTso7WlWUG23mU8lEDWfY9PIi5Y7omj4uozKS6ijE0JhdLyHI2nWzDsmadth8UQAbcLq3w4gwKDNXpsc1MA49v4X48DVXclURDP3uVpbI1USp4exUTkz+M2rLEPXGcWvG9vUzWCjrjsvFQR6tSr7nzbZfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QRJt2rVQ; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f53973fdso3618695e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:24:38 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e3c3da5bcdso41163957b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:28:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730121877; x=1730726677; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NMNuqUjYdGsI/ewyp+O0XBZx++mguLN0/SFzlXkx3Qs=;
-        b=TnDu+usztAonUkHd6UmBZEskXIPdMwe6sDDeACo+1TdfL1VpBd0dyGM7LFLndZngL3
-         +oPXWeKYz6Itc5pJtCSgFf9yp578oTz3rRpkBTnD/pR54NW5L3llSHTVq1RXDNEG5abF
-         3PJmg3i5fs2hRN2Etj86K9gExHfrKafnE/vOacHTT6HR0cOpj9Yn/HoOCLMSeW1fWiz7
-         s3u3Bqn5z+wk4S3MrTmat8dRDv23hcPeKixqlgBTVjL63WXjHg2mm8vgAWHPgd8fee1b
-         Is8gO7WayChv6YzPx0Vodtq8++hGde9JNTMlZwPQY7Ay5/NoIF1AjPm2CFjQSjUzLNTr
-         mOlQ==
+        d=linaro.org; s=google; t=1730122119; x=1730726919; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ODHQvvFv62Zx/xb7/IaX9zhCggWHAAlTCQGt9XP7bv8=;
+        b=QRJt2rVQ7Zwjm9fdMkbPBExQdC3Y9GGQhzxqtB9ApdEm3U6WS2HiCpxqURX22e3iXT
+         PZR12pMDl2HLzP1c9vNMtzNIgxHy/dQGW/U63pwbBiS55Ao6VqOck3lQHKIF10NEIqgU
+         2328tg12Pi6vL2GB/gS+FA4pOk8+XRXXaPsOx6J32C9uTIPGrUnjwsQtpL40g6oJr3jz
+         OBX2Ppbx2bU1OtLsLkXyMNZTMVDRrTasE3nfCMZWjeVH24T7ujWysUlPnEXG8aTXExFA
+         Y2DwhPEr6EQ2MoVQpBgpj8fun9w6JJs9YQaWqbIMsP6m+Dlux8q+7ZtzfMyHDwC7IGgp
+         GZ0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730121877; x=1730726677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMNuqUjYdGsI/ewyp+O0XBZx++mguLN0/SFzlXkx3Qs=;
-        b=Q40Gv+khg55CfXqClXUPKcciGmssPUHlPprfyrij3OTKlhTg617zqIS3gCX6fsl9Py
-         zYED4bm/vL42/BfVKEwLrN5Hnf9KxZSP56Kr/K42d4HIzJ9SI3JqSPrHdsLFEOSLhgf9
-         /tIS3Gf1MuNlyF0tX4vTYBBC7tJ4C1AnUb0tHlf8F1RlG4+RUrrPlTqUL5fm1NHENlBq
-         4zfHQ9Dt471xSylTiU8RdyDReYntFYZ0pLjam0o9/wTgp7CM0x4Md0XhjE1gpppqQui6
-         gFixWu8vtGHYp1ITXDeiEJhiZ4j7GYeiyt+gr/Lz5yMAEHpd5zu8v7eCsuGMmlQSu+X5
-         aX2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU2hKGZi33YfUdPBqnTz34Rs3ZMODSCzH4Zt+qFtVtdRdAG6i3JiV1B9jN9dOSkghfxlvWNzcBZm0C3pfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzF972e3iTLXMRsiIHaLkNmEpAmsuznrux5M8BIfMo+zrUyRqob
-	kiALdEKJVdDgTu8wyZtdXhzjxy4bvry+OHJ6cDt4rS2xjfr7UweMI1rl1iJt+F0=
-X-Google-Smtp-Source: AGHT+IFlXAGD3sK0EGlwnEyIN1CvxY4RrY4KK2nu6cRisAMsP9krXv9MwqNzhjFQoZf2iPSWh3OkvQ==
-X-Received: by 2002:a05:6512:1190:b0:52f:27e:a82e with SMTP id 2adb3069b0e04-53b33e4fab9mr2642044e87.21.1730121877021;
-        Mon, 28 Oct 2024 06:24:37 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1ec88fsm1069465e87.282.2024.10.28.06.24.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 06:24:36 -0700 (PDT)
-Date: Mon, 28 Oct 2024 15:24:35 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: linux@treblig.org
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/5] drm/client: Remove unused drm_client_modeset_check
-Message-ID: <zvhtltfbu6dpwri7yuwwrpnno6g2hu7tv2q7ua73epfj6gi5e6@x2snh7otbalb>
-References: <20241022232934.238124-1-linux@treblig.org>
- <20241022232934.238124-6-linux@treblig.org>
+        d=1e100.net; s=20230601; t=1730122119; x=1730726919;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ODHQvvFv62Zx/xb7/IaX9zhCggWHAAlTCQGt9XP7bv8=;
+        b=CGlrhHKfaEmHqkmYpfzehoHUJKHd2Nm1HUjbsGXMelVQiRRfVdZ4OGYlfYYlbnyLZl
+         +voaWBC349YvYU6+V8RNFnHRyH33KbW3QYgSJdb/DWb6FcNdizrPtb8Moy6Qwbl1vad1
+         RRIypRqk9O6BMZ1KLMq15Ehzj10HPbDbESErnFqntpuXDyLK+pN2u/WYKa9hMjpOnQ4d
+         saIGyH3d0AFU8cHhFUyLmC4sxyGz6v52rzfCID/QBMVkgqj8TY10Y4jMji94pXKt3Boa
+         9Zf2n230vtzKF6QT0Ui6f/79D+XAIhEf+upj6F3CrkBHgAdr4bOD/p4k6Ng7BBBp7TqB
+         A6GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0DUrIasPk+694n7VCCELGY4cGQAU7hwSUNAuVioHHKXXmax5Eah2p0E3WVNxdZ28/RK6y5kDfOev74jM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZaKNA3NTD+fH0S1cNFTnP4TaNZH6a1TW13v6BII4xILXfn6PW
+	RA0Ad8IejpY4IEK3WSioroWLxmQ2eUbEn8+K+/84ihOFDL5UzBS5cyHUXHXKnE/MNtYgcR7D8M1
+	11pUkAXJSlNQsZbJ7ZB05BsRK4dbu4eM75aKjpw==
+X-Google-Smtp-Source: AGHT+IFh/cJQhvJy2qy0gX3xlkp0CbLK8TXymrBa9x8XNk/di4wG/TzrWy42DG2ickeR3FscqmzTTLIBVMvxckF62og=
+X-Received: by 2002:a05:690c:ec7:b0:6e2:1527:4447 with SMTP id
+ 00721157ae682-6e9d8994a3amr76420097b3.1.1730122118910; Mon, 28 Oct 2024
+ 06:28:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022232934.238124-6-linux@treblig.org>
+References: <20241023102148.1698910-1-quic_sibis@quicinc.com> <20241023102148.1698910-4-quic_sibis@quicinc.com>
+In-Reply-To: <20241023102148.1698910-4-quic_sibis@quicinc.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 28 Oct 2024 14:28:02 +0100
+Message-ID: <CAPDyKFrVopgySevDVZtkZdHBBxiiVNh73VOXLqaHfXs9MyiZ+w@mail.gmail.com>
+Subject: Re: [PATCH V4 3/4] pmdomain: core: Fix debugfs node creation failure
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, jassisinghbrar@gmail.com, 
+	dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, 
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, johan@kernel.org, konradybcio@kernel.org, 
+	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org, 
+	Johan Hovold <johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 23, 2024 at 12:29:34AM +0100, linux@treblig.org wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> drm_client_modeset_check() was explicitly added in 2020 by
-> commit 64593f2a6fc9 ("drm/client: Add drm_client_modeset_check()")
-> but has never been used.
-> 
-> Remove it.
-
-If you are removing it, it makes more sense to revert the mentioned
-commit completely, dropping the third argument of
-drm_client_modeset_commit_atomic().
-
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Wed, 23 Oct 2024 at 12:22, Sibi Sankar <quic_sibis@quicinc.com> wrote:
+>
+> The domain attributes returned by the perf protocol can end up
+> reporting identical names across domains, resulting in debugfs
+> node creation failure. Fix this failure by ensuring that pm domains
+> get a unique name using ida in pm_genpd_init.
+>
+> Logs: [X1E reports 'NCC' for all its scmi perf domains]
+> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+> debugfs: Directory 'NCC' with parent 'pm_genpd' already present!
+>
+> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+> Closes: https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> Fixes: 718072ceb211 ("PM: domains: create debugfs nodes when adding power domains")
+> Suggested-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
 > ---
->  drivers/gpu/drm/drm_client_modeset.c | 24 ------------------------
->  include/drm/drm_client.h             |  1 -
->  2 files changed, 25 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_client_modeset.c b/drivers/gpu/drm/drm_client_modeset.c
-> index cee5eafbfb81..69e1ce4d18cd 100644
-> --- a/drivers/gpu/drm/drm_client_modeset.c
-> +++ b/drivers/gpu/drm/drm_client_modeset.c
-> @@ -1126,30 +1126,6 @@ static int drm_client_modeset_commit_legacy(struct drm_client_dev *client)
->  	return ret;
+>
+> v3:
+> * Update device names only when a name collision occurs [Dmitry/Ulf]
+> * Drop Johan's T-b from "fix debugfs node creation failure"
+>
+>  drivers/pmdomain/core.c   | 65 ++++++++++++++++++++++++++++++---------
+>  include/linux/pm_domain.h |  1 +
+>  2 files changed, 51 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
+> index 76490f0bf1e2..756ed0975788 100644
+> --- a/drivers/pmdomain/core.c
+> +++ b/drivers/pmdomain/core.c
+> @@ -7,6 +7,7 @@
+>  #define pr_fmt(fmt) "PM: " fmt
+>
+>  #include <linux/delay.h>
+> +#include <linux/idr.h>
+>  #include <linux/kernel.h>
+>  #include <linux/io.h>
+>  #include <linux/platform_device.h>
+> @@ -23,6 +24,9 @@
+>  #include <linux/cpu.h>
+>  #include <linux/debugfs.h>
+>
+> +/* Provides a unique ID for each genpd device */
+> +static DEFINE_IDA(genpd_ida);
+> +
+>  #define GENPD_RETRY_MAX_MS     250             /* Approximate */
+>
+>  #define GENPD_DEV_CALLBACK(genpd, type, callback, dev)         \
+> @@ -189,7 +193,7 @@ static inline bool irq_safe_dev_in_sleep_domain(struct device *dev,
+>
+>         if (ret)
+>                 dev_warn_once(dev, "PM domain %s will not be powered off\n",
+> -                               genpd->name);
+> +                             dev_name(&genpd->dev));
+>
+>         return ret;
 >  }
->  
-> -/**
-> - * drm_client_modeset_check() - Check modeset configuration
-> - * @client: DRM client
-> - *
-> - * Check modeset configuration.
-> - *
-> - * Returns:
-> - * Zero on success or negative error code on failure.
-> - */
-> -int drm_client_modeset_check(struct drm_client_dev *client)
-> -{
-> -	int ret;
-> -
-> -	if (!drm_drv_uses_atomic_modeset(client->dev))
-> -		return 0;
-> -
-> -	mutex_lock(&client->modeset_mutex);
-> -	ret = drm_client_modeset_commit_atomic(client, true, true);
-> -	mutex_unlock(&client->modeset_mutex);
-> -
-> -	return ret;
-> -}
-> -EXPORT_SYMBOL(drm_client_modeset_check);
-> -
+> @@ -274,7 +278,7 @@ static void genpd_debug_remove(struct generic_pm_domain *genpd)
+>         if (!genpd_debugfs_dir)
+>                 return;
+>
+> -       debugfs_lookup_and_remove(genpd->name, genpd_debugfs_dir);
+> +       debugfs_lookup_and_remove(dev_name(&genpd->dev), genpd_debugfs_dir);
+>  }
+>
+>  static void genpd_update_accounting(struct generic_pm_domain *genpd)
+> @@ -731,7 +735,7 @@ static int _genpd_power_on(struct generic_pm_domain *genpd, bool timed)
+>         genpd->states[state_idx].power_on_latency_ns = elapsed_ns;
+>         genpd->gd->max_off_time_changed = true;
+>         pr_debug("%s: Power-%s latency exceeded, new value %lld ns\n",
+> -                genpd->name, "on", elapsed_ns);
+> +                dev_name(&genpd->dev), "on", elapsed_ns);
+>
+>  out:
+>         raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_ON, NULL);
+> @@ -782,7 +786,7 @@ static int _genpd_power_off(struct generic_pm_domain *genpd, bool timed)
+>         genpd->states[state_idx].power_off_latency_ns = elapsed_ns;
+>         genpd->gd->max_off_time_changed = true;
+>         pr_debug("%s: Power-%s latency exceeded, new value %lld ns\n",
+> -                genpd->name, "off", elapsed_ns);
+> +                dev_name(&genpd->dev), "off", elapsed_ns);
+>
+>  out:
+>         raw_notifier_call_chain(&genpd->power_notifiers, GENPD_NOTIFY_OFF,
+> @@ -1941,7 +1945,7 @@ int dev_pm_genpd_add_notifier(struct device *dev, struct notifier_block *nb)
+>
+>         if (ret) {
+>                 dev_warn(dev, "failed to add notifier for PM domain %s\n",
+> -                        genpd->name);
+> +                        dev_name(&genpd->dev));
+>                 return ret;
+>         }
+>
+> @@ -1988,7 +1992,7 @@ int dev_pm_genpd_remove_notifier(struct device *dev)
+>
+>         if (ret) {
+>                 dev_warn(dev, "failed to remove notifier for PM domain %s\n",
+> -                        genpd->name);
+> +                        dev_name(&genpd->dev));
+>                 return ret;
+>         }
+>
+> @@ -2014,7 +2018,7 @@ static int genpd_add_subdomain(struct generic_pm_domain *genpd,
+>          */
+>         if (!genpd_is_irq_safe(genpd) && genpd_is_irq_safe(subdomain)) {
+>                 WARN(1, "Parent %s of subdomain %s must be IRQ safe\n",
+> -                               genpd->name, subdomain->name);
+> +                    dev_name(&genpd->dev), subdomain->name);
+>                 return -EINVAL;
+>         }
+>
+> @@ -2089,7 +2093,7 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+>
+>         if (!list_empty(&subdomain->parent_links) || subdomain->device_count) {
+>                 pr_warn("%s: unable to remove subdomain %s\n",
+> -                       genpd->name, subdomain->name);
+> +                       dev_name(&genpd->dev), subdomain->name);
+>                 ret = -EBUSY;
+>                 goto out;
+>         }
+> @@ -2199,6 +2203,23 @@ static void genpd_lock_init(struct generic_pm_domain *genpd)
+>         }
+>  }
+>
+> +static bool genpd_name_present(const char *name)
+> +{
+> +       bool ret = false;
+> +       const struct generic_pm_domain *gpd;
+> +
+> +       mutex_lock(&gpd_list_lock);
+> +       list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
+> +               if (!strcmp(dev_name(&gpd->dev), name)) {
+> +                       ret = true;
+> +                       break;
+> +               }
+> +       }
+> +       mutex_unlock(&gpd_list_lock);
+> +
+> +       return ret;
+> +}
+> +
 >  /**
->   * drm_client_modeset_commit_locked() - Force commit CRTC configuration
->   * @client: DRM client
-> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
-> index 560aae47e06d..e1fd32adb3e9 100644
-> --- a/include/drm/drm_client.h
-> +++ b/include/drm/drm_client.h
-> @@ -176,7 +176,6 @@ int drm_client_modeset_create(struct drm_client_dev *client);
->  void drm_client_modeset_free(struct drm_client_dev *client);
->  int drm_client_modeset_probe(struct drm_client_dev *client, unsigned int width, unsigned int height);
->  bool drm_client_rotation(struct drm_mode_set *modeset, unsigned int *rotation);
-> -int drm_client_modeset_check(struct drm_client_dev *client);
->  int drm_client_modeset_commit_locked(struct drm_client_dev *client);
->  int drm_client_modeset_commit(struct drm_client_dev *client);
->  int drm_client_modeset_dpms(struct drm_client_dev *client, int mode);
-> -- 
-> 2.47.0
-> 
+>   * pm_genpd_init - Initialize a generic I/O PM domain object.
+>   * @genpd: PM domain object to initialize.
+> @@ -2226,6 +2247,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+>         genpd->status = is_off ? GENPD_STATE_OFF : GENPD_STATE_ON;
+>         genpd->device_count = 0;
+>         genpd->provider = NULL;
+> +       genpd->device_id = -ENXIO;
+>         genpd->has_provider = false;
+>         genpd->accounting_time = ktime_get_mono_fast_ns();
+>         genpd->domain.ops.runtime_suspend = genpd_runtime_suspend;
+> @@ -2266,7 +2288,18 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
+>                 return ret;
+>
+>         device_initialize(&genpd->dev);
+> -       dev_set_name(&genpd->dev, "%s", genpd->name);
+> +
+> +       if (!genpd_name_present(genpd->name)) {
+> +               dev_set_name(&genpd->dev, "%s", genpd->name);
+> +       } else {
+> +               ret = ida_alloc(&genpd_ida, GFP_KERNEL);
+> +               if (ret < 0) {
+> +                       put_device(&genpd->dev);
+> +                       return ret;
+> +               }
+> +               genpd->device_id = ret;
+> +               dev_set_name(&genpd->dev, "%s_%u", genpd->name, genpd->device_id);
+> +       }
 
--- 
-With best wishes
-Dmitry
+If we can't assume that the genpd->name is unique, I think we need to
+hold the gpd_list_lock over this entire new section, until we have
+added the new genpd in the gpd_list. I am not sure we really want this
+as it could hurt (theoretically at least) boot/probing on systems
+where a lot of genpds are being used.
+
+That said, I would suggest we go for Dmitry's suggestion to make this
+genpd provider specific. Let's add a new genpd flag that genpd
+providers can set, if they need an ida to be tagged on to their
+device-name. Then we should set that flag for SCMI perf/power domains.
+
+[...]
+
+Kind regards
+Uffe
 
