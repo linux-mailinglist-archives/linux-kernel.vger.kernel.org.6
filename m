@@ -1,133 +1,185 @@
-Return-Path: <linux-kernel+bounces-384836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 131509B2F11
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:39:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E93B9B2F12
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:42:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26491F227DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:39:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4769328274B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020A71D63F8;
-	Mon, 28 Oct 2024 11:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yo/Lu7Iu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EE26143888;
-	Mon, 28 Oct 2024 11:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D8E1D63DF;
+	Mon, 28 Oct 2024 11:42:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8912A1D47CD
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730115588; cv=none; b=MNcX6zq4SyOWzIne12L4b3TqcD2ctKnDOXtjrIbf/kv5bGm4i/txx5zUGOIrzWBi4SRrAK+uBM4q+WYbQIP4ETDMsNNB0k944UuOTK+2DZjsFfjdti6EyPIwNzl5+K0cGXGH5qs8pyRPbIAfYc3Nr7dx0jOB0254+89feYXEpgU=
+	t=1730115738; cv=none; b=QSzKz94i0AJr9Rn2zIRfNQvg7KYIXTOEeFlLslkwZlrGDgxpoLnm9qkAVUCjlmP8P/R2S/cdZZJlzM/0dCO6g3tlqnJohSlAWUsdTUWasJy3hQ12nFeNLqj8ZdthPHmfxDWqc0RvMf4U6aWE56a8lM6dk9gqd2Bi/HLyUSKde5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730115588; c=relaxed/simple;
-	bh=SnA2owK3Wh51XGmITR8PBTFZ5GSTlL47esiUlTgErgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/0lDsoB91T2dkxKfwXCqqsoZdjPAehYwbv2Qf9LsCASlibOtCxCemQx/glfhKnO/JTA7O54W0/zjEn64TVdSNEH7LddDnQNjKvau4q1E2khyceF+2IlVuYN8W8+5esnDPaQ6TFiPFdNVY7c5CUy/0N/qUiUqW9L3fO/m/lcV14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yo/Lu7Iu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19A17C4CEE8;
-	Mon, 28 Oct 2024 11:39:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730115588;
-	bh=SnA2owK3Wh51XGmITR8PBTFZ5GSTlL47esiUlTgErgk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Yo/Lu7IuDlYQgr3bDqc6QyInFOtBotCnOnf0q1Layoh3Cw7xKSPNxg9GbTxuzXr1O
-	 c9AiPEPsweAssaX1KPch6+yfL77tWOSCJ9sBZ7wWO3zoaEaW0ogNlsHvM70ecTuev9
-	 bcRlxF64fhXp7jnHzJgqAvrijxQWT3v6OqD/YuLjYPZEGzDJseIHO7o8kBfON1rFYi
-	 QSdOPfmDqZEQAQ+fW1xGHPOI2zON6uoqx1DFnZ+LMCdzfAp1UqMR7hkLF2i5Fvm8a+
-	 CUTb6lFv3lOAC73bE5LFF/XNnNV4luKDflqeyrzwCTTCcIif/Qh0BIuMmw21MrCpyB
-	 81s4LCPtP8jxA==
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-28c7f207806so1816441fac.3;
-        Mon, 28 Oct 2024 04:39:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrHFzR+IoELb6B7jd/L2Y10cbl7+qC17EFE/coJJsjoPTLXR2ppNkZWp1uwMTMuUqWpMLHhH9Wz5A0ijaE@vger.kernel.org, AJvYcCWXD2T1DsQD0C9ek5BVvXkG5OxwW8oKl+5GLTM0eZsJ6/THppwNFP9tmevvbCKIUjYLIFgQk/MjpNjR@vger.kernel.org, AJvYcCXnRzXuxVJXc9xVLS/b1wu6DDKHLvFg+yqH0z359Ca5HKVCuJSGPkM4FLPcXo4I/V8p1rqJ/bTdtgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl2qwCTL7B31LioJG2lLxdIpbJbJum6Sy6Lzt1AfMyq0ayiAQT
-	PT93f03la8Zo7oppcq5YPLG6slAkWepqOwrSzwup/z2tbihwFXuXNietixzGIOlzyGGKIQ0XoXa
-	OxzfL6k7zq3ynaoFWYuzqfePAKCc=
-X-Google-Smtp-Source: AGHT+IFpYNi0n2+EpwfJw+aYg1SZVLsAaWJ0o1EJSLnlNBvj6WIP7nhfCWI+y6q/QZiT/At+3/RZ5OUb5Tw59F2BoTc=
-X-Received: by 2002:a05:6870:8186:b0:278:222c:98c4 with SMTP id
- 586e51a60fabf-29051bccd06mr6661783fac.21.1730115587412; Mon, 28 Oct 2024
- 04:39:47 -0700 (PDT)
+	s=arc-20240116; t=1730115738; c=relaxed/simple;
+	bh=UlEo/D0PYwaOTSjDIdE48t8eIJw1DEC00/1qLQKjeHI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WXDV4nBniGgEDVanyffa3wLsg70iEfZEBe+mAsNsvhLYu1WswRBEpCvtmtQ+K7khPCk42kKLbIuTl5ENrXhVKjCW/tRCmmy9LBuVgudn5fY/v3o4kdiMJ6HgcO4SD2N8ngOeh+3bYcGOgBexA7HYriY/yw0cAQbtuWO/8jtIssk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6A52B497;
+	Mon, 28 Oct 2024 04:42:44 -0700 (PDT)
+Received: from [10.57.89.58] (unknown [10.57.89.58])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59E0C3F73B;
+	Mon, 28 Oct 2024 04:42:12 -0700 (PDT)
+Message-ID: <3d2041e7-95eb-4d60-92ab-d67e2f46531e@arm.com>
+Date: Mon, 28 Oct 2024 11:41:25 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240919000837.1004642-1-davidai@google.com> <20241001092544.2tlydouyyc7jwuja@vireshk-i7>
- <CAGETcx8GomM0znaYKsS412dRvnUQd7_78pKuV82t2b14VBvKVQ@mail.gmail.com>
-In-Reply-To: <CAGETcx8GomM0znaYKsS412dRvnUQd7_78pKuV82t2b14VBvKVQ@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 28 Oct 2024 12:39:31 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iTLX9NAT0PN804QahQ7D=+=D1uJ7PVnZfk5UrpP5uXpg@mail.gmail.com>
-Message-ID: <CAJZ5v0iTLX9NAT0PN804QahQ7D=+=D1uJ7PVnZfk5UrpP5uXpg@mail.gmail.com>
-Subject: Re: [PATCH v7 0/2] Improve VM CPUfreq and task placement behavior
-To: Saravana Kannan <saravanak@google.com>, Viresh Kumar <viresh.kumar@linaro.org>
-Cc: David Dai <davidai@google.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Quentin Perret <qperret@google.com>, 
-	Masami Hiramatsu <mhiramat@google.com>, Will Deacon <will@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Pavan Kondeti <quic_pkondeti@quicinc.com>, 
-	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/arm-smmu: Add judgment on the size and granule
+ parameters passed in
+To: goutongchen@uniontech.com
+Cc: dmitry.baryshkov@linaro.org, gouhao@uniontech.com, iommu@lists.linux.dev,
+ jgg@ziepe.ca, joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, robdclark@chromium.org, will@kernel.org
+References: <20241024100224.62942-1-goutongchen@uniontech.com>
+ <20241028034823.22838-1-goutongchen@uniontech.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241028034823.22838-1-goutongchen@uniontech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sat, Oct 26, 2024 at 12:26=E2=80=AFAM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> On Tue, Oct 1, 2024 at 2:25=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.=
-org> wrote:
-> >
-> > On 18-09-24, 17:08, David Dai wrote:
-> > > Hi,
-> > >
-> > > This patch series is a continuation of the talk Saravana gave at LPC =
-2022
-> > > titled "CPUfreq/sched and VM guest workload problems" [1][2][3]. The =
-gist
-> > > of the talk is that workloads running in a guest VM get terrible task
-> > > placement and CPUfreq behavior when compared to running the same work=
-load
-> > > in the host. Effectively, no EAS(Energy Aware Scheduling) for threads
-> > > inside VMs. This would make power and performance terrible just by ru=
-nning
-> > > the workload in a VM even if we assume there is zero virtualization
-> > > overhead.
-> >
-> > > David Dai (2):
-> > >   dt-bindings: cpufreq: add virtual cpufreq device
-> > >   cpufreq: add virtual-cpufreq driver
-> > >
-> > >  .../cpufreq/qemu,virtual-cpufreq.yaml         |  48 +++
-> > >  drivers/cpufreq/Kconfig                       |  14 +
-> > >  drivers/cpufreq/Makefile                      |   1 +
-> > >  drivers/cpufreq/virtual-cpufreq.c             | 333 ++++++++++++++++=
-++
-> > >  include/linux/arch_topology.h                 |   1 +
-> > >  5 files changed, 397 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/qemu,vi=
-rtual-cpufreq.yaml
-> > >  create mode 100644 drivers/cpufreq/virtual-cpufreq.c
-> >
-> > LGTM.
-> >
-> > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
->
-> Rafael/Viresh,
->
-> Nudge... Any chance this will get pulled into 6.12?
+On 2024-10-28 3:48 am, goutongchen@uniontech.com wrote:
+> From: goutongchen <goutongchen@uniontech.com>
+> 
+> In the arm_smmu_tlb_inv_range_s1 and arm_smmu_tlb_inv_range_s2
+> functions, the size and granule passed in must be judged.
+> It must be ensured that the passed in parameter is not 0 and
+> the size is an integer multiple of the granule, otherwise it
+> will cause an infinite while loop.
+> 
+> This was encountered during testing, and was initially triggered
+> by passing in a size value of 0, causing the kernel to crash.
 
-This is not a fix AFAICS, so 6.12 is out of the question.
+Still NAK. If there is a bug in the upstream io-pgtable-arm code which 
+can actually cause this, please send a patch to fix *that* bug. 
+Otherwise, if you've made a broken downstream change then it is not 
+upstream's responsibility to maintain unnecessary code in a questionable 
+attempt to paper over (some small subset of) such brokenness.
 
-As for 6.13, Viresh thinks that this change is a good idea (or he
-wouldn't have ACKed it), so it's up to him.  I'm still not convinced
-that it will work on x86 or anything that doesn't use DT.
+If you pass any sufficiently large size value which *does* happen to be 
+a multiple of the granule, you're still going to see the same RCU stalls 
+and failure to progress within reasonable time. If you pass something 
+inappropriate for the "cookie" pointer, you're likely to corrupt memory 
+or really crash. If you pass arguments which all look plausible but 
+still don't match what actually needs invalidating, the consequences of 
+under-invalidation can be even more subtle, nasty and hard to debug.
 
-Viresh, I think that this falls into your bucket.
+The iommu_flush_ops are not a public interface intended to be called 
+arbitrarily from anywhere in the kernel with unchecked input, they are a 
+low-level private interface between IOMMU drivers and their respective 
+io-pgtable implementations, and as such they are designed for their 
+callers to call them correctly by construction. Calling them incorrectly 
+indicates a serious bug in the caller, since getting mapping and/or TLB 
+invalidation wrong often leads to memory corruption or other issues down 
+the line. Hence I'm not convinced this change is actually even desirable 
+as a downstream debugging aid - if you're lucky enough to get stuck on 
+an obviously-wrong call here, that's surely the clearest possible 
+indication of the source of the bug in its calling context, far better 
+than trying to ignore it and then having it drowned out by more distant 
+things blowing up later due to 2nd- and 3rd-order effects.
+
+Thanks,
+Robin.
+
+> [    8.214378][  T675] xhci_hcd 0000:0b:00.0: new USB bus registered, assigned bus number 1
+> [   68.246185][    C0] rcu: INFO: rcu_sched self-detected stall on CPU
+> [   68.246866][    C0] rcu:     0-....: (5999 ticks this GP) idle=796c/1/0x4000000000000000 softirq=161/161 fqs=2999
+> [   68.247924][    C0] rcu:     (t=6000 jiffies g=-699 q=1 ncpus=128)
+> [   68.248452][    C0] CPU: 0 PID: 675 Comm: kworker/0:2 Not tainted 6.6.0-25.02.2500.002.uos25.aarch64 #1
+> [   68.249237][    C0] Hardware name: Inspur     CS5260F     /CS5260F          , BIOS 4.0.16 05/31/22 16:53:51
+> [   68.250029][    C0] Workqueue: events work_for_cpu_fn
+> [   68.250497][    C0] pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   68.251188][    C0] pc : arm_smmu_tlb_inv_range_s1+0xf0/0x158
+> [   68.251704][    C0] lr : arm_smmu_tlb_inv_walk_s1+0x44/0x68
+> [   68.252189][    C0] sp : ffff80008044b780
+> [   68.252530][    C0] x29: ffff80008044b780 x28: 0000000000000000 x27: 0000000000001000
+> [   68.253212][    C0] x26: 0000000000000600 x25: 0000000000000001 x24: 0000000000000600
+> [   68.253857][    C0] x23: 0000000000000000 x22: 0000000000001000 x21: fffffc64e2e59000
+> [   68.254544][    C0] x20: 0000000039c1d1a6 x19: ffff3fe944c40280 x18: 0000000000000000
+> [   68.255240][    C0] x17: 626d756e20737562 x16: ffffb0e7e08c1008 x15: 0000000000000000
+> [   68.255930][    C0] x14: ffff3ef8c1ea15cd x13: ffff3ef8c1ea15cb x12: fffffcfba30e3880
+> [   68.256538][    C0] x11: 00000000ffff7fff x10: ffff80008044b6b0 x9 : ffffb0e7decd1b5c
+> [   68.257126][    C0] x8 : 0000000000000dc0 x7 : ffff3ee8c4148000 x6 : ffff3ee8c4148000
+> [   68.257822][    C0] x5 : 0000000000000008 x4 : 0000000000000000 x3 : ffff3fe944c40800
+> [   68.258497][    C0] x2 : 0000000000000010 x1 : 0000000000000020 x0 : ffffb0e7dfd6c3d0
+> [   68.259185][    C0] Call trace:
+> [   68.259451][    C0]  arm_smmu_tlb_inv_range_s1+0xf0/0x158
+> [   68.259933][    C0]  arm_smmu_tlb_inv_walk_s1+0x44/0x68
+> [   68.260384][    C0]  __arm_lpae_map+0x1f0/0x2c0
+> [   68.260796][    C0]  arm_lpae_map_pages+0xec/0x150
+> [   68.261215][    C0]  arm_smmu_map_pages+0x48/0x130
+> [   68.261654][    C0]  __iommu_map+0x134/0x2a8
+> [   68.262098][    C0]  iommu_map_sg+0xb8/0x1c8
+> [   68.262500][    C0]  __iommu_dma_alloc_noncontiguous.constprop.0+0x180/0x270
+> [   68.263145][    C0]  iommu_dma_alloc+0x178/0x238
+> [   68.263557][    C0]  dma_alloc_attrs+0xf8/0x108
+> [   68.263962][    C0]  xhci_mem_init+0x1e8/0x6d0
+> [   68.264372][    C0]  xhci_init+0x88/0x1d0
+> [   68.264736][    C0]  xhci_gen_setup+0x284/0x468
+> [   68.265121][    C0]  xhci_pci_setup+0x60/0x1f8
+> [   68.265506][    C0]  usb_add_hcd+0x278/0x650
+> [   68.265860][    C0]  usb_hcd_pci_probe+0x218/0x458
+> [   68.266256][    C0]  xhci_pci_probe+0x7c/0x270
+> [   68.266660][    C0]  local_pci_probe+0x48/0xb8
+> [   68.267074][    C0]  work_for_cpu_fn+0x24/0x40
+> [   68.267548][    C0]  process_one_work+0x170/0x3c0
+> [   68.267999][    C0]  worker_thread+0x234/0x3b8
+> [   68.268383][    C0]  kthread+0xf0/0x108
+> [   68.268704][    C0]  ret_from_fork+0x10/0x20
+> 
+> Signed-off-by: goutongchen <goutongchen@uniontech.com>
+> ---
+>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> index 8321962b3714..fdd7d7e9ce06 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> @@ -282,6 +282,13 @@ static void arm_smmu_tlb_inv_range_s1(unsigned long iova, size_t size,
+>   	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>   	int idx = cfg->cbndx;
+>   
+> +	if (size == 0 || granule == 0 || (size % granule) != 0) {
+> +		dev_err(smmu->dev,
+> +				 "The size or granule passed in is err. size=%zu, granule=%zu\n",
+> +				 size, granule);
+> +		return;
+> +	}
+> +
+>   	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>   		wmb();
+>   
+> @@ -309,6 +316,13 @@ static void arm_smmu_tlb_inv_range_s2(unsigned long iova, size_t size,
+>   	struct arm_smmu_device *smmu = smmu_domain->smmu;
+>   	int idx = smmu_domain->cfg.cbndx;
+>   
+> +	if (size == 0 || granule == 0 || (size % granule) != 0) {
+> +		dev_err(smmu->dev,
+> +				 "The size or granule passed in is err. size=%zu, granule=%zu\n",
+> +				 size, granule);
+> +		return;
+> +	}
+> +
+>   	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>   		wmb();
+>   
+
 
