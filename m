@@ -1,177 +1,105 @@
-Return-Path: <linux-kernel+bounces-385150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23749B332E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:19:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A339B3328
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32931B21D0B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:19:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C457C1C21077
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:18:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DB31DDA20;
-	Mon, 28 Oct 2024 14:18:36 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C23C1DDA39;
+	Mon, 28 Oct 2024 14:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TX5VTTHr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4AE1DE2A3
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D95AC1DA631
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730125116; cv=none; b=K+hoqLfZRC3BKoBa8gyxJqdQzi6sV1Mu7d5Jk94T9+02oyIuhQ1vM3C0ysZ1hRBW28WCWgLZwYmScFhGIjmoBbcdswo6S2TQIZIT3UXNvIJyr6x8htMAFfTHAZR2g/30aGQBq17K15X/aTco1hz+Cym+XAzqGJOeUORYrGHO0b4=
+	t=1730125103; cv=none; b=T4Rw/UihHaVHPfuQv0bC0m+YC1pQ14+VnLjDmmCN4RH7CZmOWD1fKcluj4KRWup3KywP8n4HcyFWvCOdUu42zFF+cAPeFTU5AxdtgB6v9YGoYXJuEtm7r0W3icqfq5JdwcKNTi9zjSSSJPaLbWO5jJFtOkNM44sl5wQwGCkUNj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730125116; c=relaxed/simple;
-	bh=GDxeko3+Dn9RuaYdTtgwmg1aQ7/CFFrKZY1eCCjQzsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pm0NE9cIuTV2d4rF95PMh7cfsDJAKHGtWumtY8uMoX67h7ozv5mLPMgpcyLTPTVUIE4Xoc5U/NuHjsDhx261rfgYGAFKdgh5ofdYODWfn9NtMs+DLJr6UC84PyzwbUqzOrj7fKuuthh55W5uTLQboy8cyo3hUv+5Z0pn4B5FP+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5QZN-0002bl-NX; Mon, 28 Oct 2024 15:18:09 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5QZK-000s76-0y;
-	Mon, 28 Oct 2024 15:18:06 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id D06AA360975;
-	Mon, 28 Oct 2024 14:18:05 +0000 (UTC)
-Date: Mon, 28 Oct 2024 15:18:05 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Hal Feng <hal.feng@starfivetech.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
-	William Qiu <william.qiu@starfivetech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
-Message-ID: <20241028-great-worm-of-snow-494fa0-mkl@pengutronix.de>
-References: <20240922145151.130999-1-hal.feng@starfivetech.com>
- <20240922145151.130999-4-hal.feng@starfivetech.com>
- <cf17f15b-cbd7-4692-b3b2-065e549cb21e@lunn.ch>
- <ZQ2PR01MB13071A093EB33F48340F753EE66F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1730125103; c=relaxed/simple;
+	bh=mBpXWXxLTTeSoq4/zHpXkTzNWRmP/T91PZm9hTMvR5Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qomjfeKLY5h5FCA9qHnUjDPetW7Ymq+ZnrU7uxDH/F+KYx5LU03qgDhexTkiTpTLVyHLw9jRFktxdnbNSucyxMb6emiTnongEPb2gSWSV84sGht1REY8tB5Lku+QZ5nMXhmAQjR1WJpoAzARgKnN8bsMma42toW9WuwNM7FBg0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TX5VTTHr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350D2C4CECD;
+	Mon, 28 Oct 2024 14:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730125103;
+	bh=mBpXWXxLTTeSoq4/zHpXkTzNWRmP/T91PZm9hTMvR5Y=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TX5VTTHrj/S3bZq59zkXs5KsRejQfiRD+lUTwopzolVO+Jb8R21LmVsbCw02m1DT0
+	 ScBOY/323X9N++YYfw4catzZ+yrFixcORLTlBL+2RmQ5xvKX/h2te3Pe/hzrM1qmbG
+	 ST8CqcN1ZAlcWVKNQ3H8VXi8bCFg2zRbLBvm45QzYXNQX3OrCOJfqS9a7aes5WazML
+	 jckrgpNpv0GgYRro7mpbbBw07uMDmess/tGs72UVxw+4RG96pesXHbtIgi8bUnygdi
+	 VNOpX/vPBmsBZ30pSCQkosfOdCi6N9DvN5agai8CXHWHdLtDYPGGuyyIus23/m75Ln
+	 Tx8YnK/yHIZlg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Song Liu <song@kernel.org>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] alloc_tag: hide execmem_vmap() on !MMU
+Date: Mon, 28 Oct 2024 14:18:09 +0000
+Message-Id: <20241028141818.622917-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="d6ye2orfo4iuw6ou"
-Content-Disposition: inline
-In-Reply-To: <ZQ2PR01MB13071A093EB33F48340F753EE66F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+From: Arnd Bergmann <arnd@arndb.de>
 
---d6ye2orfo4iuw6ou
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
-MIME-Version: 1.0
+The newly added function fails to link on nommu kernels, but is also
+not needed there:
 
-On 23.09.2024 07:53:24, Hal Feng wrote:
-> > > +static inline u8 ccan_read_reg_8bit(const struct ccan_priv *priv,
-> > > +				    enum ccan_reg reg)
-> > > +{
-> > > +	u8 reg_down;
-> > > +	union val {
-> > > +		u8 val_8[4];
-> > > +		u32 val_32;
-> > > +	} val;
-> > > +
-> > > +	reg_down =3D ALIGN_DOWN(reg, 4);
-> > > +	val.val_32 =3D ccan_read_reg(priv, reg_down);
-> > > +	return val.val_8[reg - reg_down];
-> >=20
-> > There is an ioread8(). Is it invalid to do a byte read for this hardwar=
-e? If so, it is
-> > probably worth a comment.
->=20
-> The hardware has been initially developed as peripheral component for 8 b=
-it systems
-> and therefore control and status registers defined as 8 bit groups. Never=
-theless
-> the hardware is designed as a 32 bit component finally. It prefers 32-bit=
- read/write
-> interfaces. I will add a comment later.
+ld.lld-20: error: undefined symbol: __get_vm_area_node
+>>> referenced by execmem.c
+>>>               mm/execmem.o:(execmem_vmap) in archive vmlinux.a
+>>> referenced by execmem.c
+>>>               mm/execmem.o:(execmem_vmap) in archive vmlinux.a
 
-As mentioned in my v1 review, you are doing proper u32 accesses.
+Fixes: 57bc3834fb6f ("alloc_tag: populate memory for module tags as needed")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ mm/execmem.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-> > > +static int ccan_bittime_configuration(struct net_device *ndev) {
-> > > +	struct ccan_priv *priv =3D netdev_priv(ndev);
-> > > +	struct can_bittiming *bt =3D &priv->can.bittiming;
-> > > +	struct can_bittiming *dbt =3D &priv->can.data_bittiming;
-> > > +	u32 bittiming, data_bittiming;
-> > > +	u8 reset_test;
-> > > +
-> > > +	reset_test =3D ccan_read_reg_8bit(priv, CCAN_CFG_STAT);
-> > > +
-> > > +	if (!(reset_test & CCAN_RST_MASK)) {
-> > > +		netdev_alert(ndev, "Not in reset mode, cannot set bit
-> > timing\n");
-> > > +		return -EPERM;
-> > > +	}
-> >=20
-> >=20
-> > You don't see nedev_alert() used very often. If this is fatal then netd=
-ev_err().
-> >=20
-> > Also, EPERM? man 3 errno say:
-> >=20
-> >        EPERM           Operation not permitted (POSIX.1-2001).
-> >=20
-> > Why is this a permission issue?
->=20
-> Will use netdev_err() and return -EWOULDBLOCK instead.
+diff --git a/mm/execmem.c b/mm/execmem.c
+index 5c0f9f2d6f83..b04cfece7356 100644
+--- a/mm/execmem.c
++++ b/mm/execmem.c
+@@ -368,6 +368,7 @@ void execmem_free(void *ptr)
+ 		vfree(ptr);
+ }
+ 
++#ifdef CONFIG_MMU
+ struct vm_struct *execmem_vmap(size_t size)
+ {
+ 	struct execmem_range *range = &execmem_info->ranges[EXECMEM_MODULE_DATA];
+@@ -383,6 +384,7 @@ struct vm_struct *execmem_vmap(size_t size)
+ 
+ 	return area;
+ }
++#endif
+ 
+ void *execmem_update_copy(void *dst, const void *src, size_t size)
+ {
+-- 
+2.39.5
 
-You have a dedicated function to put the IP core into reset
-"ccan_set_reset_mode()". If you don't trust you IP core or it needs some
-time, add a poll to that function and return an error.
-
-Then there's no need on ccan_bittime_configuration() to check for reset
-mode.
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---d6ye2orfo4iuw6ou
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcfnRsACgkQKDiiPnot
-vG+52Qf9EYytqiZDcw1r+TVbTIDJoUzjC6e0XKFkbT2/IBKG1usCbI8BwlKdXwu+
-uIU8xA7v62V41WBLyNHAXgeQTnjy1aNsMRUi8pJxVADI/PS91RzdWQXcHb1h6HPQ
-HfhJvmk0/nz6CFOXoIlPg9bwm2uB7MxPIS3y/aZ7Mo0e6vW5ChjtcmMXW9Ma/u08
-CrOsC92UX2ERW3o9nVhGqTgeKAFxiagUZMYFFMkqCDn1Pzas1EhixcpMmgbtff/q
-4cesN3k0tY37qg279JvVVBZhCDcbE2ueHSxjHwITsVxKvsL8HdWp+4c5o48EP3kD
-QQd+hao+9llKWOEpwduz8XmDjq3W5g==
-=TefK
------END PGP SIGNATURE-----
-
---d6ye2orfo4iuw6ou--
 
