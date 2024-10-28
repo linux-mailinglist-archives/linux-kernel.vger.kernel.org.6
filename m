@@ -1,120 +1,204 @@
-Return-Path: <linux-kernel+bounces-385707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853BA9B3AA5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:45:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 086CC9B3AAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AD1D282DE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCB1E28304D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367F0190049;
-	Mon, 28 Oct 2024 19:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64739190049;
+	Mon, 28 Oct 2024 19:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OREgAOIl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZoO2GHdk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B2pJYZy0"
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5A1524C;
-	Mon, 28 Oct 2024 19:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5222F3A1DB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730144746; cv=none; b=NjU4RzT3CyTtt85C6vdrbw4to7loqQmO+iKUMvCvOinNRBBrgnRTi+cUZesjs3OtNj0uEnFWTRevHkr8VYutow8cb4DiacNbt/Fdnca2bizmNn4uBgiNeMCCrRpNPgC78enWWQ0KXNYONDZlMapP6NY+rLg2NNjO9mc1kCz/I0A=
+	t=1730144807; cv=none; b=pmewuEOI0/qWoJNO5p3dGDUabluwnx4jpL9BS3JgVvfoy20Qx5S1bsO5wosBTfo3f3O1wShtDCcZqhxJdVJDVtH5TgNka27cReUjaUCqH+Xh62ZRkgJ2eQqAmxoUUOasr4HH96tDQSQuLtFmSYVMjvtZ7u7ARy7T9WHJMRre6I0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730144746; c=relaxed/simple;
-	bh=dWXzW9OdAxNBOpcuUtYAZ0dy5OTXyQn4DEo0G3cfyQU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Jiq1jyR2bwUhWTLuKD+cx08mWlZ/g7nRxNV3j/CWmh7wSjL10p6p7aalhJ/FYpVXTAuvqf0Tqlml7kfvsiVD0nY41UeZ6mwct74Jp0muhtaWO/Lcs8FUXXuVQXl5PEgDN4NFjafs3g8St6aovB2fzDwdoVw6SrPRGE1iHEAA8yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OREgAOIl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZoO2GHdk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730144740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LV/cJW54bEOUypztN5jc6/PScSgJuPuoFS6xeGBV3qs=;
-	b=OREgAOIl9y6wwE9tgf7xAw4Geho4bcPa2u4Omhe/BTnyy38qwRKdJVvCPfeHLhJfxU7glS
-	0amdyRwyckY88mn/DXFw0l4dWt7ZqG8vRxgYcO/4YMfZLvk1TZEdEZniTPXnS7gQziLiYy
-	oOrQ7HqKmdlyAj4iHzQ3a3iAAHG+GuFVj61LNeAdbbnG/EHpAlflwye8H9K6j6c8uAih9F
-	6I4cHzc+MAcKWhKwd6tIMa0DzqG+F980B5IDe/PIEzxI0hCuwJQXHYSG/uee9Lcypj6NFC
-	gVqBSSVgMYMcm16tVd68/925DVSpkA4e/0IiRBvv/46durTOyEBl0C1RJKWonQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730144740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LV/cJW54bEOUypztN5jc6/PScSgJuPuoFS6xeGBV3qs=;
-	b=ZoO2GHdkjqw95wk537vluVEpeKIP9VcwkuaQHRo1hUQCCxUYap7pU4+Svf920Fl3fzhefV
-	oZOHYtzsiySBemDg==
-To: Aleksandar Rikalo <arikalo@gmail.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Vladimir Kondratiev
- <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT
- <gregory.clement@bootlin.com>, Theo Lebrun <theo.lebrun@bootlin.com>, Arnd
- Bergmann <arnd@arndb.de>, devicetree@vger.kernel.org, Djordje Todorovic
- <djordje.todorovic@htecgroup.com>, Chao-ying Fu <cfu@wavecomp.com>, Daniel
- Lezcano <daniel.lezcano@linaro.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens
- <hauke@hauke-m.de>, Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>, Jiaxun
- Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Paul Burton
- <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Serge
- Semin <fancer.lancer@gmail.com>, Tiezhu Yang <yangtiezhu@loongson.cn>,
- Aleksandar Rikalo <arikalo@gmail.com>
-Subject: Re: [PATCH v8 04/13] irqchip/mips-gic: Multi-cluster support
-In-Reply-To: <20241028175935.51250-5-arikalo@gmail.com>
-References: <20241028175935.51250-1-arikalo@gmail.com>
- <20241028175935.51250-5-arikalo@gmail.com>
-Date: Mon, 28 Oct 2024 20:45:40 +0100
-Message-ID: <87wmhs1063.ffs@tglx>
+	s=arc-20240116; t=1730144807; c=relaxed/simple;
+	bh=Wrs9JhiATMWL0KsGQ/kqNx9VR2O0tggm+HVJNv2F/io=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=VNk/29OWfBBvtuIKRIbBEjLVnplioSL9sfB6TGTzqkFoSPSdHqPV1kVpikHJUTeaJfG1mIJXtGjkIL6jKu4Bq0rTRyw3hZkum1fxzEU7lW3vyfjBXF3cznnZColyqTjxIQE561iJ9nCl4TigIc+qOfWAuVE7XdcuMFU1oU2vBmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B2pJYZy0; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-4a47177cf6bso1582873137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:46:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730144804; x=1730749604; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=j5XRrBUeW9Wl3ksjbcOXPj9gNcJLkL1Vlbum4WC6ah4=;
+        b=B2pJYZy0i592JVnT0LtcmwgGRy256ikDCz2MXBvv7NdTO/r3XBh9JrE4V143wvu/MT
+         ESbrBLNdYcBzeuUbgOnx2TIc4muhRx1uGZHVIS8xrsJKJqzZ0Aksk9Snm9ENAvVMGGUF
+         bFgSvCkHGvLhzQHnAMTSkMXot725Yk57ToP6NsplUForySMMNN1I90z+GsqrufRowmBV
+         s8om3r6HWp6iJCwBdb+rYEdpep5OzXmidq1XvRtbU8FDpSGhlNLxHickQUUzPHAHxt+3
+         fWCEg2xjbzHeGMgRnPr+yJv5+1MsHuvYorPRu3mn5PHGALwrzpghXN43upKBMweKEpXf
+         TgSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730144804; x=1730749604;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=j5XRrBUeW9Wl3ksjbcOXPj9gNcJLkL1Vlbum4WC6ah4=;
+        b=vXSxRNI8peVEKdQL9dkX9z/55xhmXejIgLUeP2BVQnNjsDwwXX/j/xotKpgO9p/YBT
+         +7ohnNP/adMxA9TPsvJ1IVKc1ZmN5b1zREUD8n1rCIRFOZPritrkHlCBBsG5Szlf/YUx
+         ejo5vvR4h1HdUrXnjRiyjcTSEvfEYR6zIbSUw5GszqyOOmUPZUcpA3Uu2ep65rffv+Vd
+         i1rIZvyba5U8MZspwr5s/9mB++/lUA3/VcMSOpfXiLFgJBT6t1jBt/Fx5ZLvqhnNktQ8
+         3ccQAcTgwCbt+Vf9bJ00WdonlN6NqkRsTD+/bz8qhwzlr0xpgIJFOk1QfXIwcMhX3GEp
+         3PSA==
+X-Gm-Message-State: AOJu0Yzc0xRYUsWN2xk6vlh/a1WQ6bAyNV4luG8g9rDPchaBybBYXC/w
+	Utr9RG9ZDu1Rdd+HVtm/TPz8ODkDUeinQX8XvTl3TKiyBrqIJEwoY+Z4ARwJJ9BnVj3OPgqUrsz
+	XInFECcw835IkjlfX8OW6rsO8/cpD19mavELZ8bi08bKpsDETopI=
+X-Google-Smtp-Source: AGHT+IH6BXN+34x6/Q4FZwz5j6uquVhYmRBikZ0QKoU5eshCI12u7ivTDuCHpv6wXsxYB2wLgvjIZwpib6ufggFyI1Y=
+X-Received: by 2002:a05:6102:3707:b0:4a5:c0e2:c42d with SMTP id
+ ada2fe7eead31-4a8cfb45762mr7377334137.8.1730144803771; Mon, 28 Oct 2024
+ 12:46:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 29 Oct 2024 01:16:32 +0530
+Message-ID: <CA+G9fYt0pqM_f-uiK=xH0RWrhfABdjy743yyxu4CLtb+kkS6-w@mail.gmail.com>
+Subject: kselftest:arm64/FVP: arm64_check_buffer_fill - failed on Linux next-20241025
+To: open list <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, lkft-triage@lists.linaro.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Mark Brown <broonie@kernel.org>, 
+	Andre Przywara <andre.przywara@arm.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Aishwarya TCV <Aishwarya.TCV@arm.com>, 
+	Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 28 2024 at 18:59, Aleksandar Rikalo wrote:
-> + * In summary, if this function returns true then the caller should access GIC
-> + * registers using redirect register block accessors & then call
-> + * mips_cm_unlock_other() when done. If this function returns false then the
-> + * caller should trivially access GIC registers in the local cluster.
-> + *
-> + * Returns true if locking performed, else false.
-> + */
-> +static bool gic_irq_lock_cluster(struct irq_data *d)
-> +{
-> +	unsigned int cpu, cl;
-> +
-> +	cpu = cpumask_first(irq_data_get_effective_affinity_mask(d));
-> +	BUG_ON(cpu >= NR_CPUS);
-> +
-> +	cl = cpu_cluster(&cpu_data[cpu]);
-> +	if (cl == cpu_cluster(&current_cpu_data))
-> +		return false;
+The following kselftest arm64 and FVP failed with Linux next-20241025 on
+  - Qemu-arm64
+  - FVP
 
-Not that I personally care much about the performance of this. But why
-aren't you caching the cluster or at least the target CPU in irq_data
-somewhere? cpumask_first() is not cheap on a large system when the cpu
-is at the very end of the bitmask. AFAICT nothing here uses chip_data,
-so you can do:
+running Linux next-20241025 kernel.
 
-       unsigned long cl = (unsigned long)irq_data_get_irq_chip_data(d);
+First seen on next-20241025
+  Good: next-20241024
+  BAD:  next-20241025
 
-which is a single load operation and you can update it in the
-set_affinity() callback and during setup. No?
+ kselftest-arm64, FVP
+    * arm64_check_buffer_fill
+    * arm64_check_mmap_options
+    * arm64_check_child_memory
 
-I'll take the irqchip bits as is if nobody complains within the next
-days and you can optimize on top if you care.
+Anyone have seen these failures ?
 
-Thanks,
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-        tglx
+Test log:
+----------
+# selftests: arm64: check_buffer_fill
+# 1..20
+# ok 1 Check buffer correctness by byte with sync err mode and mmap memory
+# ok 2 Check buffer correctness by byte with async err mode and mmap memory
+# ok 3 Check buffer correctness by byte with sync err mode and
+mmap/mprotect memory
+# ok 4 Check buffer correctness by byte with async err mode and
+mmap/mprotect memory
+# ok 5 Check buffer write underflow by byte with sync mode and mmap memory
+# ok 6 Check buffer write underflow by byte with async mode and mmap memory
+# ok 7 Check buffer write underflow by byte with tag check fault
+ignore and mmap memory
+# ok 8 Check buffer write underflow by byte with sync mode and mmap memory
+# ok 9 Check buffer write underflow by byte with async mode and mmap memory
+# ok 10 Check buffer write underflow by byte with tag check fault
+ignore and mmap memory
+# ok 11 Check buffer write overflow by byte with sync mode and mmap memory
+# ok 12 Check buffer write overflow by byte with async mode and mmap memory
+# ok 13 Check buffer write overflow by byte with tag fault ignore mode
+and mmap memory
+# ok 14 Check buffer write correctness by block with sync mode and mmap memory
+# ok 15 Check buffer write correctness by block with async mode and mmap memory
+# ok 16 Check buffer write correctness by block with tag fault ignore
+and mmap memory
+# # FAIL: mmap allocation
+# # FAIL: memory allocation
+# not ok 17 Check initial tags with private mapping, sync error mode
+and mmap memory
+# ok 18 Check initial tags with private mapping, sync error mode and
+mmap/mprotect memory
+# # FAIL: mmap allocation
+# # FAIL: memory allocation
+# not ok 19 Check initial tags with shared mapping, sync error mode
+and mmap memory
+# ok 20 Check initial tags with shared mapping, sync error mode and
+mmap/mprotect memory
+# # Totals: pass:18 fail:2 xfail:0 xpass:0 skip:0 error:0
+not ok 21 selftests: arm64: check_buffer_fill # exit=1
+# timeout set to 45
+# selftests: arm64: check_child_memory
+# 1..12
+# ok 1 Check child anonymous memory with private mapping, precise mode
+and mmap memory
+# ok 2 Check child anonymous memory with shared mapping, precise mode
+and mmap memory
+# ok 3 Check child anonymous memory with private mapping, imprecise
+mode and mmap memory
+# ok 4 Check child anonymous memory with shared mapping, imprecise
+mode and mmap memory
+# ok 5 Check child anonymous memory with private mapping, precise mode
+and mmap/mprotect memory
+# ok 6 Check child anonymous memory with shared mapping, precise mode
+and mmap/mprotect memory
+# # FAIL: mmap allocation
+# # FAIL: memory allocation
+# not ok 7 Check child file memory with private mapping, precise mode
+and mmap memory
+# # FAIL: mmap allocation
+# # FAIL: memory allocation
+# not ok 8 Check child file memory with shared mapping, precise mode
+and mmap memory
+# ok 9 Check child file memory with private mapping, imprecise mode
+and mmap memory
+# ok 10 Check child file memory with shared mapping, imprecise mode
+and mmap memory
+# ok 11 Check child file memory with private mapping, precise mode and
+mmap/mprotect memory
+# ok 12 Check child file memory with shared mapping, precise mode and
+mmap/mprotect memory
+# # Totals: pass:10 fail:2 xfail:0 xpass:0 skip:0 error:0
+not ok 22 selftests: arm64: check_child_memory # exit=1
+
+boot Log links,
+--------
+  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586532/suite/kselftest-arm64/test/arm64_check_buffer_fill/log
+  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586576/suite/kselftest-arm64/test/arm64_check_mmap_options/log
+
+
+Test results history:
+----------
+  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586532/suite/kselftest-arm64/test/arm64_check_buffer_fill/history/
+  - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241028/testrun/25586532/suite/kselftest-arm64/test/arm64_check_mmap_options/history/
+
+metadata:
+----
+  git describe: next-20241028
+  git repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git sha: dec9255a128e19c5fcc3bdb18175d78094cc624d
+  kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2o3tMqzOtHXYQjlvfR5tnTcVMe5/config
+  build url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2o3tMqzOtHXYQjlvfR5tnTcVMe5/
+  toolchain: gcc-13
+
+Steps to reproduce:
+---------
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2o3tON5kNijMOtxu3bD6Cg6QFYC/reproducer
+- https://tuxapi.tuxsuite.com/v1/groups/linaro/projects/lkft/tests/2o3tON5kNijMOtxu3bD6Cg6QFYC/tux_plan
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
