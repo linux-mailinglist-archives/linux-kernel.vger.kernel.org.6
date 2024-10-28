@@ -1,90 +1,69 @@
-Return-Path: <linux-kernel+bounces-384075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D6C9B23F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:48:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 382809B23F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:55:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 017B81C2121E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:48:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDD61C2116B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:55:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC4618C322;
-	Mon, 28 Oct 2024 04:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D34818BC0F;
+	Mon, 28 Oct 2024 04:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hCPESFpQ"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="seNXGgsq"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBB09A47;
-	Mon, 28 Oct 2024 04:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D99186088F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730090915; cv=none; b=eEVTMdOJGwZQDtuzl7UrkbuPTYMcQxs2miqu39FwDeqMKCKko9XUvDBDTzCUAFXyCvhwXNfB22zh9PIypoAEwyMq7pv2RNNN361YFwT50Wpxps6/6Xp4quzeBWUc1HpnVEd8UQmcnlR/m0DHTrt8DcROc8dLN3gIqguj4UB5Pmg=
+	t=1730091306; cv=none; b=hrKuzF1SgiKqMT0y1FXL1vcHDOzfNyekBfsJFY9EfbqJzTBpDn+H908ARMHqhPaTZ1+DL1Rl5T22mXfWmalv4BR71aXPHktQ9fPF01PIJnMkHezTR6pmcLBIcn1QReV/4TsRBySAGo/AF5kNR7xV2deY2mJZEIn+jjZ+ByAiTmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730090915; c=relaxed/simple;
-	bh=M08gC1B6KovanNOLVcD0x6mPLM7QL169RqRn9Gnk/A4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MIi8CBi7kwSYRAHH0HFWtn9L6x6LhSQF9c4sSKZCcJgSwUfRl5mLw/adhJ29fFmXChBLwQGfK5Q/KX5DShfr3AJuT7nqmwHT7HUfrrAQGqkYpn0dcXgC63gve9gEtSdpn17gZj7XiRthpEC3xfvkQjSkQX3VNJEW3/xrEGndOEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hCPESFpQ; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso3061652a91.3;
-        Sun, 27 Oct 2024 21:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730090912; x=1730695712; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=CIadJeQjeosFNyQLqOFAkIcSeeTemptM85afMdf05NE=;
-        b=hCPESFpQdKRgCnUMo4K/yNGMtPNhfCbqNeWIHxS4bGmehDEJMTJ1n6ItUbXvZSMDHL
-         KDtOsjhR2q6bDHKeIejhFCmxqOEkjHbCXMACXEZWHIWzcKwfiRi/pOFRmFvotWguilSE
-         x98qoDOt5nYM+aDM8YwizG06vFc2kF1e9nJbHLZ/XUxGKGmPJbuGfaxejFw0OBMyQM8v
-         NA0jvOUpqA5ySEcVpiLCBlImop5pvb56yvtaGZ+qgONmRHfBxgLX61b35YkNiBdNxXKD
-         vBhQKs2zKpuIrhZAKgq6ye2rX48HufziC5+us4dKIqCW8DgiuYxjzdt5prXKBJa6eWVw
-         D1/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730090912; x=1730695712;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CIadJeQjeosFNyQLqOFAkIcSeeTemptM85afMdf05NE=;
-        b=LohbI0bji7INnAdy6oqW1w6eoac1SlYvqjvPOFJ+eO61rGbslWTRu4bPdHPaVCUcJX
-         a9yICgDiHcdk2JYa7G5+F7A2wtQd1HTQLIxB1PJrqgCu3WEq62eERNX/ZBvBvbpHRmwr
-         ZJM/yOcHMgVWq1e1F22kjAOSfIgYd2AwVrRHv9jecNgfjlQwh1cleqcYL2KnlHyEOWSS
-         7SeQcgTzbVXGyO8SolI2Z1ES/iNp6cr4b0xY+xowEb/zNfcNzSLa4rnJcwsOShO+8oFo
-         M1dcruR1ICL+EqSjxISPkAEWuETvIP9DbGAxZ8FDzMGofmHDeG/iYxjfh4lYzdy6tjwV
-         JWww==
-X-Forwarded-Encrypted: i=1; AJvYcCUi58uo27zja35kACckPQRygq5AqCf/yQ2l9dbcNA4xblFjWmgVP9B06//2VN7grhrsc4LeWm1hoNrMfOM=@vger.kernel.org, AJvYcCW6eeTHIuglhvz/REgOVMCo7kwvtiZUFQAUCAtAAXZN05F/9d268zWRsiP9Z5UAa8KAh8s6LxH0MAr+NCh3WMN50Vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGer2ZLc6pKgYBA00GjnD6f/4ODbbpPleHzp08+PQw9dmrBsPT
-	uZCMqm+DZoJGJsERkLKSESUdtebGVBbe6DNSyfdUzpkLAsRLu/GnoMWe4bL4
-X-Google-Smtp-Source: AGHT+IE9D7sbbvCHDoFaIPcFKl9kvXzS6BagJrMSuOvgIDHiBeKFPXeAXY36Bg+53U9aTz2E/9PlpA==
-X-Received: by 2002:a17:90a:a004:b0:2e2:a661:596a with SMTP id 98e67ed59e1d1-2e8f105e840mr9523525a91.13.1730090911837;
-        Sun, 27 Oct 2024 21:48:31 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e5a5831sm8051459a91.55.2024.10.27.21.48.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 21:48:31 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	UNGLinuxDriver@microchip.com (maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER),
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-	George McCollister <george.mccollister@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org (open list),
-	linux-renesas-soc@vger.kernel.org (open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER)
-Subject: [PATCHv4 net-next] net: dsa: use ethtool string helpers
-Date: Sun, 27 Oct 2024 21:48:28 -0700
-Message-ID: <20241028044828.1639668-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730091306; c=relaxed/simple;
+	bh=FmEPncprxPzpIMia5p+L1SxIPznqwz7g30nxYG5Fwxg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mqTVJm63QUUGTR0WofSqyduM+9dLmn0uI7A+TnX5vLxkRYWRggcw7GOVcZCSx5PkxOvZ4Okg0cNZG62Wf5yrd9lUyAdMFo68UKIem+jLSp1xromPGDbeYHZAgkdrcuStAqlW0Wva12FfFN5MQq9O7socB6x6+7pHaJ1bcaa0TC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=seNXGgsq; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49S4spXk112120;
+	Sun, 27 Oct 2024 23:54:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730091291;
+	bh=ypkCCVaEaIs7dc8MWz6dJgOgITRgbHvs0TASTmczAtU=;
+	h=From:To:CC:Subject:Date;
+	b=seNXGgsqwzBVIi3p0sTScWlKreRubQW/9DOw3aoIAUS0VIoginm4sb7ecoL8KgVUB
+	 o+qYUHkCm3KDcu2yVKkbXgqy47cbC2mX0MKLas6XeNOpk+A/J981ipuSX8hUtfvV8K
+	 /260PXIstUfT5TilpACXZ1B+LbhN/CUo9GDfp2s4=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49S4spi8055253
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Sun, 27 Oct 2024 23:54:51 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Sun, 27
+ Oct 2024 23:54:50 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Sun, 27 Oct 2024 23:54:50 -0500
+Received: from ula0507357.dhcp.ti.com (ula0507357.dhcp.ti.com [172.24.227.166])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49S4slVP076071;
+	Sun, 27 Oct 2024 23:54:47 -0500
+From: Suhaas Joshi <s-joshi@ti.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <s-vadapalli@ti.com>,
+        <devarsht@ti.com>, <vigneshr@ti.com>, <b-brnich@ti.com>,
+        <danishanwar@ti.com>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <c-shilwant@ti.com>, <praneeth@ti.com>, Suhaas Joshi <s-joshi@ti.com>
+Subject: [PATCH 6.6] arm64: configs: Enable additional docker configs
+Date: Mon, 28 Oct 2024 10:23:40 +0530
+Message-ID: <20241028045340.1079402-1-s-joshi@ti.com>
+X-Mailer: git-send-email 2.40.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,453 +71,173 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-These are the preferred way to copy ethtool strings.
+Docker requires a list of config options to be enabled in the kernel.
+This list is generated by the script at [1]. The list has "mandatory"
+configs and "optional" ones. The mandatory ones are already enabled, so
+Docker works well with some images. But many of the optional ones,
+particularly security and network configs, aren't enabled. So
+enable those so that Docker can pull and run all valid images.
 
-Avoids incrementing pointers all over the place.
+The configs generated are listed below.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
-(for hellcreek driver)
-Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
+Generally Necessary
+...
+- CONFIG_MEMCG_SWAP: enabled
+- CONFIG_BLK_DEV_THROTTLING: enabled
+- CONFIG_NET_CLS_CGROUP: enabled (as module)
+- CONFIG_CGROUP_NET_PRIO: enabled
+- CONFIG_CFS_BANDWIDTH: enabled
+- CONFIG_IP_NF_TARGET_REDIRECT: enabled (as module)
+- CONFIG_IP_VS_NFCT: enabled
+- CONFIG_IP_VS_PROTO_TCP: enabled
+- CONFIG_IP_VS_PROTO_UDP: enabled
+- CONFIG_IP_VS_RR: enabled (as module)
+- CONFIG_SECURITY_SELINUX: enabled
+- CONFIG_SECURITY_APPARMOR: enabled
+- CONFIG_EXT3_FS_XATTR: enabled
+- CONFIG_EXT3_FS_POSIX_ACL: enabled
+- CONFIG_EXT3_FS_SECURITY: enabled
+- CONFIG_EXT4_FS_SECURITY: enabled
+- CONFIG_VXLAN: enabled (as module)
+- CONFIG_CRYPTO_SEQIV: enabled (as module)
+- CONFIG_XFRM: enabled
+- CONFIG_XFRM_USER: enabled
+- CONFIG_XFRM_ALGO: enabled
+- CONFIG_INET_ESP: enabled
+- CONFIG_NETFILTER_XT_MATCH_BPF: enabled (as module)
+- CONFIG_IPVLAN: enabled (as module)
+- CONFIG_DUMMY: enabled (as module)
+- CONFIG_NF_NAT_FTP: enabled (as module)
+- CONFIG_NF_CONNTRACK_FTP: enabled (as module)
+- CONFIG_NF_NAT_TFTP: enabled (as module)
+- CONFIG_NF_CONNTRACK_TFTP: enabled (as module)
+...
+
+[1] https://github.com/moby/moby/blob/25.0/contrib/check-config.sh
+
+Signed-off-by: Suhaas Joshi <s-joshi@ti.com>
 ---
- v4: use double pointer parameters for mv88e6xxx
- v3: remove curly braces from ksz_common.c
- v2: remove curly braces from rzn1_a5psw.c
- drivers/net/dsa/b53/b53_common.c          |  3 +-
- drivers/net/dsa/bcm_sf2.c                 |  4 +-
- drivers/net/dsa/bcm_sf2.h                 |  4 +-
- drivers/net/dsa/bcm_sf2_cfp.c             | 22 +++------
- drivers/net/dsa/dsa_loop.c                |  3 +-
- drivers/net/dsa/hirschmann/hellcreek.c    |  8 +---
- drivers/net/dsa/microchip/ksz_common.c    |  6 +--
- drivers/net/dsa/mv88e6xxx/chip.c          | 57 +++++++++--------------
- drivers/net/dsa/mv88e6xxx/chip.h          |  6 +--
- drivers/net/dsa/mv88e6xxx/serdes.c        | 14 +++---
- drivers/net/dsa/mv88e6xxx/serdes.h        |  8 ++--
- drivers/net/dsa/rzn1_a5psw.c              |  6 +--
- drivers/net/dsa/sja1105/sja1105_ethtool.c |  7 +--
- drivers/net/dsa/xrs700x/xrs700x.c         |  6 +--
- net/dsa/user.c                            | 13 ++----
- 15 files changed, 64 insertions(+), 103 deletions(-)
+ arch/arm64/configs/defconfig | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index c39cb119e760..285785c942b0 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -989,8 +989,7 @@ void b53_get_strings(struct dsa_switch *ds, int port, u32 stringset,
- 
- 	if (stringset == ETH_SS_STATS) {
- 		for (i = 0; i < mib_size; i++)
--			strscpy(data + i * ETH_GSTRING_LEN,
--				mibs[i].name, ETH_GSTRING_LEN);
-+			ethtool_puts(&data, mibs[i].name);
- 	} else if (stringset == ETH_SS_PHY_STATS) {
- 		phydev = b53_get_phy_device(ds, port);
- 		if (!phydev)
-diff --git a/drivers/net/dsa/bcm_sf2.c b/drivers/net/dsa/bcm_sf2.c
-index 9201f07839ad..43bde1f583ff 100644
---- a/drivers/net/dsa/bcm_sf2.c
-+++ b/drivers/net/dsa/bcm_sf2.c
-@@ -1183,8 +1183,8 @@ static void bcm_sf2_sw_get_strings(struct dsa_switch *ds, int port,
- 	int cnt = b53_get_sset_count(ds, port, stringset);
- 
- 	b53_get_strings(ds, port, stringset, data);
--	bcm_sf2_cfp_get_strings(ds, port, stringset,
--				data + cnt * ETH_GSTRING_LEN);
-+	data += cnt * ETH_GSTRING_LEN;
-+	bcm_sf2_cfp_get_strings(ds, port, stringset, &data);
- }
- 
- static void bcm_sf2_sw_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/bcm_sf2.h b/drivers/net/dsa/bcm_sf2.h
-index 4fda075a3449..be9f3b29019f 100644
---- a/drivers/net/dsa/bcm_sf2.h
-+++ b/drivers/net/dsa/bcm_sf2.h
-@@ -228,8 +228,8 @@ int bcm_sf2_set_rxnfc(struct dsa_switch *ds, int port,
- int bcm_sf2_cfp_rst(struct bcm_sf2_priv *priv);
- void bcm_sf2_cfp_exit(struct dsa_switch *ds);
- int bcm_sf2_cfp_resume(struct dsa_switch *ds);
--void bcm_sf2_cfp_get_strings(struct dsa_switch *ds, int port,
--			     u32 stringset, uint8_t *data);
-+void bcm_sf2_cfp_get_strings(struct dsa_switch *ds, int port, u32 stringset,
-+			     uint8_t **data);
- void bcm_sf2_cfp_get_ethtool_stats(struct dsa_switch *ds, int port,
- 				   uint64_t *data);
- int bcm_sf2_cfp_get_sset_count(struct dsa_switch *ds, int port, int sset);
-diff --git a/drivers/net/dsa/bcm_sf2_cfp.c b/drivers/net/dsa/bcm_sf2_cfp.c
-index c88ee3dd4299..e22362e6f0cd 100644
---- a/drivers/net/dsa/bcm_sf2_cfp.c
-+++ b/drivers/net/dsa/bcm_sf2_cfp.c
-@@ -1279,27 +1279,19 @@ static const struct bcm_sf2_cfp_stat {
- 	},
- };
- 
--void bcm_sf2_cfp_get_strings(struct dsa_switch *ds, int port,
--			     u32 stringset, uint8_t *data)
-+void bcm_sf2_cfp_get_strings(struct dsa_switch *ds, int port, u32 stringset,
-+			     uint8_t **data)
- {
- 	struct bcm_sf2_priv *priv = bcm_sf2_to_priv(ds);
--	unsigned int s = ARRAY_SIZE(bcm_sf2_cfp_stats);
--	char buf[ETH_GSTRING_LEN];
--	unsigned int i, j, iter;
-+	unsigned int i, j;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 1; i < priv->num_cfp_rules; i++) {
--		for (j = 0; j < s; j++) {
--			snprintf(buf, sizeof(buf),
--				 "CFP%03d_%sCntr",
--				 i, bcm_sf2_cfp_stats[j].name);
--			iter = (i - 1) * s + j;
--			strscpy(data + iter * ETH_GSTRING_LEN,
--				buf, ETH_GSTRING_LEN);
--		}
--	}
-+	for (i = 1; i < priv->num_cfp_rules; i++)
-+		for (j = 0; j < ARRAY_SIZE(bcm_sf2_cfp_stats); j++)
-+			ethtool_sprintf(data, "CFP%03d_%sCntr", i,
-+					bcm_sf2_cfp_stats[j].name);
- }
- 
- void bcm_sf2_cfp_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/dsa_loop.c b/drivers/net/dsa/dsa_loop.c
-index c70ed67cc188..adbab544c60f 100644
---- a/drivers/net/dsa/dsa_loop.c
-+++ b/drivers/net/dsa/dsa_loop.c
-@@ -121,8 +121,7 @@ static void dsa_loop_get_strings(struct dsa_switch *ds, int port,
- 		return;
- 
- 	for (i = 0; i < __DSA_LOOP_CNT_MAX; i++)
--		memcpy(data + i * ETH_GSTRING_LEN,
--		       ps->ports[port].mib[i].name, ETH_GSTRING_LEN);
-+		ethtool_puts(&data, ps->ports[port].mib[i].name);
- }
- 
- static void dsa_loop_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/hirschmann/hellcreek.c b/drivers/net/dsa/hirschmann/hellcreek.c
-index d798f17cf7ea..283ec5a6e23c 100644
---- a/drivers/net/dsa/hirschmann/hellcreek.c
-+++ b/drivers/net/dsa/hirschmann/hellcreek.c
-@@ -294,12 +294,8 @@ static void hellcreek_get_strings(struct dsa_switch *ds, int port,
- {
- 	int i;
- 
--	for (i = 0; i < ARRAY_SIZE(hellcreek_counter); ++i) {
--		const struct hellcreek_counter *counter = &hellcreek_counter[i];
--
--		strscpy(data + i * ETH_GSTRING_LEN,
--			counter->name, ETH_GSTRING_LEN);
--	}
-+	for (i = 0; i < ARRAY_SIZE(hellcreek_counter); ++i)
-+		ethtool_puts(&data, hellcreek_counter[i].name);
- }
- 
- static int hellcreek_get_sset_count(struct dsa_switch *ds, int port, int sset)
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index 5290f5ad98f3..f73833e24622 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -2112,10 +2112,8 @@ static void ksz_get_strings(struct dsa_switch *ds, int port,
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 0; i < dev->info->mib_cnt; i++) {
--		memcpy(buf + i * ETH_GSTRING_LEN,
--		       dev->info->mib_names[i].string, ETH_GSTRING_LEN);
--	}
-+	for (i = 0; i < dev->info->mib_cnt; i++)
-+		ethtool_puts(&buf, dev->info->mib_names[i].string);
- }
- 
- /**
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.c b/drivers/net/dsa/mv88e6xxx/chip.c
-index 4f5193d86e65..4e8bbaa1ea1f 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.c
-+++ b/drivers/net/dsa/mv88e6xxx/chip.c
-@@ -1153,42 +1153,37 @@ static uint64_t _mv88e6xxx_get_ethtool_stat(struct mv88e6xxx_chip *chip,
- 	return value;
- }
- 
--static int mv88e6xxx_stats_get_strings(struct mv88e6xxx_chip *chip,
--				       uint8_t *data, int types)
-+static void mv88e6xxx_stats_get_strings(struct mv88e6xxx_chip *chip,
-+					uint8_t **data, int types)
- {
- 	const struct mv88e6xxx_hw_stat *stat;
--	int i, j;
-+	int i;
- 
--	for (i = 0, j = 0; i < ARRAY_SIZE(mv88e6xxx_hw_stats); i++) {
-+	for (i = 0; i < ARRAY_SIZE(mv88e6xxx_hw_stats); i++) {
- 		stat = &mv88e6xxx_hw_stats[i];
--		if (stat->type & types) {
--			memcpy(data + j * ETH_GSTRING_LEN, stat->string,
--			       ETH_GSTRING_LEN);
--			j++;
--		}
-+		if (stat->type & types)
-+			ethtool_puts(data, stat->string);
- 	}
--
--	return j;
- }
- 
--static int mv88e6095_stats_get_strings(struct mv88e6xxx_chip *chip,
--				       uint8_t *data)
-+static void mv88e6095_stats_get_strings(struct mv88e6xxx_chip *chip,
-+					uint8_t **data)
- {
--	return mv88e6xxx_stats_get_strings(chip, data,
--					   STATS_TYPE_BANK0 | STATS_TYPE_PORT);
-+	mv88e6xxx_stats_get_strings(chip, data,
-+				    STATS_TYPE_BANK0 | STATS_TYPE_PORT);
- }
- 
--static int mv88e6250_stats_get_strings(struct mv88e6xxx_chip *chip,
--				       uint8_t *data)
-+static void mv88e6250_stats_get_strings(struct mv88e6xxx_chip *chip,
-+					uint8_t **data)
- {
--	return mv88e6xxx_stats_get_strings(chip, data, STATS_TYPE_BANK0);
-+	mv88e6xxx_stats_get_strings(chip, data, STATS_TYPE_BANK0);
- }
- 
--static int mv88e6320_stats_get_strings(struct mv88e6xxx_chip *chip,
--				       uint8_t *data)
-+static void mv88e6320_stats_get_strings(struct mv88e6xxx_chip *chip,
-+					uint8_t **data)
- {
--	return mv88e6xxx_stats_get_strings(chip, data,
--					   STATS_TYPE_BANK0 | STATS_TYPE_BANK1);
-+	mv88e6xxx_stats_get_strings(chip, data,
-+				    STATS_TYPE_BANK0 | STATS_TYPE_BANK1);
- }
- 
- static const uint8_t *mv88e6xxx_atu_vtu_stats_strings[] = {
-@@ -1199,21 +1194,18 @@ static const uint8_t *mv88e6xxx_atu_vtu_stats_strings[] = {
- 	"vtu_miss_violation",
- };
- 
--static void mv88e6xxx_atu_vtu_get_strings(uint8_t *data)
-+static void mv88e6xxx_atu_vtu_get_strings(uint8_t **data)
- {
- 	unsigned int i;
- 
- 	for (i = 0; i < ARRAY_SIZE(mv88e6xxx_atu_vtu_stats_strings); i++)
--		strscpy(data + i * ETH_GSTRING_LEN,
--			mv88e6xxx_atu_vtu_stats_strings[i],
--			ETH_GSTRING_LEN);
-+		ethtool_puts(data, mv88e6xxx_atu_vtu_stats_strings[i]);
- }
- 
- static void mv88e6xxx_get_strings(struct dsa_switch *ds, int port,
- 				  u32 stringset, uint8_t *data)
- {
- 	struct mv88e6xxx_chip *chip = ds->priv;
--	int count = 0;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
-@@ -1221,15 +1213,12 @@ static void mv88e6xxx_get_strings(struct dsa_switch *ds, int port,
- 	mv88e6xxx_reg_lock(chip);
- 
- 	if (chip->info->ops->stats_get_strings)
--		count = chip->info->ops->stats_get_strings(chip, data);
-+		chip->info->ops->stats_get_strings(chip, &data);
- 
--	if (chip->info->ops->serdes_get_strings) {
--		data += count * ETH_GSTRING_LEN;
--		count = chip->info->ops->serdes_get_strings(chip, port, data);
--	}
-+	if (chip->info->ops->serdes_get_strings)
-+		chip->info->ops->serdes_get_strings(chip, port, &data);
- 
--	data += count * ETH_GSTRING_LEN;
--	mv88e6xxx_atu_vtu_get_strings(data);
-+	mv88e6xxx_atu_vtu_get_strings(&data);
- 
- 	mv88e6xxx_reg_unlock(chip);
- }
-diff --git a/drivers/net/dsa/mv88e6xxx/chip.h b/drivers/net/dsa/mv88e6xxx/chip.h
-index 48399ab5355a..9fe8e8a7856b 100644
---- a/drivers/net/dsa/mv88e6xxx/chip.h
-+++ b/drivers/net/dsa/mv88e6xxx/chip.h
-@@ -606,7 +606,7 @@ struct mv88e6xxx_ops {
- 
- 	/* Return the number of strings describing statistics */
- 	int (*stats_get_sset_count)(struct mv88e6xxx_chip *chip);
--	int (*stats_get_strings)(struct mv88e6xxx_chip *chip,  uint8_t *data);
-+	void (*stats_get_strings)(struct mv88e6xxx_chip *chip, uint8_t **data);
- 	size_t (*stats_get_stat)(struct mv88e6xxx_chip *chip, int port,
- 				 const struct mv88e6xxx_hw_stat *stat,
- 				 uint64_t *data);
-@@ -633,8 +633,8 @@ struct mv88e6xxx_ops {
- 
- 	/* Statistics from the SERDES interface */
- 	int (*serdes_get_sset_count)(struct mv88e6xxx_chip *chip, int port);
--	int (*serdes_get_strings)(struct mv88e6xxx_chip *chip,  int port,
--				  uint8_t *data);
-+	int (*serdes_get_strings)(struct mv88e6xxx_chip *chip, int port,
-+				  uint8_t **data);
- 	size_t (*serdes_get_stats)(struct mv88e6xxx_chip *chip, int port,
- 				   uint64_t *data);
- 
-diff --git a/drivers/net/dsa/mv88e6xxx/serdes.c b/drivers/net/dsa/mv88e6xxx/serdes.c
-index 01ea53940786..b3330211edbc 100644
---- a/drivers/net/dsa/mv88e6xxx/serdes.c
-+++ b/drivers/net/dsa/mv88e6xxx/serdes.c
-@@ -132,8 +132,8 @@ int mv88e6352_serdes_get_sset_count(struct mv88e6xxx_chip *chip, int port)
- 	return ARRAY_SIZE(mv88e6352_serdes_hw_stats);
- }
- 
--int mv88e6352_serdes_get_strings(struct mv88e6xxx_chip *chip,
--				 int port, uint8_t *data)
-+int mv88e6352_serdes_get_strings(struct mv88e6xxx_chip *chip, int port,
-+				 uint8_t **data)
- {
- 	struct mv88e6352_serdes_hw_stat *stat;
- 	int err, i;
-@@ -144,8 +144,7 @@ int mv88e6352_serdes_get_strings(struct mv88e6xxx_chip *chip,
- 
- 	for (i = 0; i < ARRAY_SIZE(mv88e6352_serdes_hw_stats); i++) {
- 		stat = &mv88e6352_serdes_hw_stats[i];
--		memcpy(data + i * ETH_GSTRING_LEN, stat->string,
--		       ETH_GSTRING_LEN);
-+		ethtool_puts(data, stat->string);
- 	}
- 	return ARRAY_SIZE(mv88e6352_serdes_hw_stats);
- }
-@@ -394,8 +393,8 @@ int mv88e6390_serdes_get_sset_count(struct mv88e6xxx_chip *chip, int port)
- 	return ARRAY_SIZE(mv88e6390_serdes_hw_stats);
- }
- 
--int mv88e6390_serdes_get_strings(struct mv88e6xxx_chip *chip,
--				 int port, uint8_t *data)
-+int mv88e6390_serdes_get_strings(struct mv88e6xxx_chip *chip, int port,
-+				 uint8_t **data)
- {
- 	struct mv88e6390_serdes_hw_stat *stat;
- 	int i;
-@@ -405,8 +404,7 @@ int mv88e6390_serdes_get_strings(struct mv88e6xxx_chip *chip,
- 
- 	for (i = 0; i < ARRAY_SIZE(mv88e6390_serdes_hw_stats); i++) {
- 		stat = &mv88e6390_serdes_hw_stats[i];
--		memcpy(data + i * ETH_GSTRING_LEN, stat->string,
--		       ETH_GSTRING_LEN);
-+		ethtool_puts(data, stat->string);
- 	}
- 	return ARRAY_SIZE(mv88e6390_serdes_hw_stats);
- }
-diff --git a/drivers/net/dsa/mv88e6xxx/serdes.h b/drivers/net/dsa/mv88e6xxx/serdes.h
-index ff5c3ab31e15..ad887d8601bc 100644
---- a/drivers/net/dsa/mv88e6xxx/serdes.h
-+++ b/drivers/net/dsa/mv88e6xxx/serdes.h
-@@ -125,13 +125,13 @@ unsigned int mv88e6352_serdes_irq_mapping(struct mv88e6xxx_chip *chip,
- unsigned int mv88e6390_serdes_irq_mapping(struct mv88e6xxx_chip *chip,
- 					  int port);
- int mv88e6352_serdes_get_sset_count(struct mv88e6xxx_chip *chip, int port);
--int mv88e6352_serdes_get_strings(struct mv88e6xxx_chip *chip,
--				 int port, uint8_t *data);
-+int mv88e6352_serdes_get_strings(struct mv88e6xxx_chip *chip, int port,
-+				 uint8_t **data);
- size_t mv88e6352_serdes_get_stats(struct mv88e6xxx_chip *chip, int port,
- 				  uint64_t *data);
- int mv88e6390_serdes_get_sset_count(struct mv88e6xxx_chip *chip, int port);
--int mv88e6390_serdes_get_strings(struct mv88e6xxx_chip *chip,
--				 int port, uint8_t *data);
-+int mv88e6390_serdes_get_strings(struct mv88e6xxx_chip *chip, int port,
-+				 uint8_t **data);
- size_t mv88e6390_serdes_get_stats(struct mv88e6xxx_chip *chip, int port,
- 				  uint64_t *data);
- 
-diff --git a/drivers/net/dsa/rzn1_a5psw.c b/drivers/net/dsa/rzn1_a5psw.c
-index 1135a32e4b7e..66974379334a 100644
---- a/drivers/net/dsa/rzn1_a5psw.c
-+++ b/drivers/net/dsa/rzn1_a5psw.c
-@@ -802,10 +802,8 @@ static void a5psw_get_strings(struct dsa_switch *ds, int port, u32 stringset,
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (u = 0; u < ARRAY_SIZE(a5psw_stats); u++) {
--		memcpy(data + u * ETH_GSTRING_LEN, a5psw_stats[u].name,
--		       ETH_GSTRING_LEN);
--	}
-+	for (u = 0; u < ARRAY_SIZE(a5psw_stats); u++)
-+		ethtool_puts(&data, a5psw_stats[u].name);
- }
- 
- static void a5psw_get_ethtool_stats(struct dsa_switch *ds, int port,
-diff --git a/drivers/net/dsa/sja1105/sja1105_ethtool.c b/drivers/net/dsa/sja1105/sja1105_ethtool.c
-index decc6c931dc1..2ea64b1d026d 100644
---- a/drivers/net/dsa/sja1105/sja1105_ethtool.c
-+++ b/drivers/net/dsa/sja1105/sja1105_ethtool.c
-@@ -586,7 +586,6 @@ void sja1105_get_strings(struct dsa_switch *ds, int port,
- {
- 	struct sja1105_private *priv = ds->priv;
- 	enum sja1105_counter_index max_ctr, i;
--	char *p = data;
- 
- 	if (stringset != ETH_SS_STATS)
- 		return;
-@@ -597,10 +596,8 @@ void sja1105_get_strings(struct dsa_switch *ds, int port,
- 	else
- 		max_ctr = __MAX_SJA1105PQRS_PORT_COUNTER;
- 
--	for (i = 0; i < max_ctr; i++) {
--		strscpy(p, sja1105_port_counters[i].name, ETH_GSTRING_LEN);
--		p += ETH_GSTRING_LEN;
--	}
-+	for (i = 0; i < max_ctr; i++)
-+		ethtool_puts(&data, sja1105_port_counters[i].name);
- }
- 
- int sja1105_get_sset_count(struct dsa_switch *ds, int port, int sset)
-diff --git a/drivers/net/dsa/xrs700x/xrs700x.c b/drivers/net/dsa/xrs700x/xrs700x.c
-index de3b768f2ff9..4dbcc49a9e52 100644
---- a/drivers/net/dsa/xrs700x/xrs700x.c
-+++ b/drivers/net/dsa/xrs700x/xrs700x.c
-@@ -91,10 +91,8 @@ static void xrs700x_get_strings(struct dsa_switch *ds, int port,
- 	if (stringset != ETH_SS_STATS)
- 		return;
- 
--	for (i = 0; i < ARRAY_SIZE(xrs700x_mibs); i++) {
--		strscpy(data, xrs700x_mibs[i].name, ETH_GSTRING_LEN);
--		data += ETH_GSTRING_LEN;
--	}
-+	for (i = 0; i < ARRAY_SIZE(xrs700x_mibs); i++)
-+		ethtool_puts(&data, xrs700x_mibs[i].name);
- }
- 
- static int xrs700x_get_sset_count(struct dsa_switch *ds, int port, int sset)
-diff --git a/net/dsa/user.c b/net/dsa/user.c
-index 91a1fa5f8ab0..f7b0630dd2b6 100644
---- a/net/dsa/user.c
-+++ b/net/dsa/user.c
-@@ -1042,15 +1042,12 @@ static void dsa_user_get_strings(struct net_device *dev,
- 	struct dsa_switch *ds = dp->ds;
- 
- 	if (stringset == ETH_SS_STATS) {
--		int len = ETH_GSTRING_LEN;
--
--		strscpy_pad(data, "tx_packets", len);
--		strscpy_pad(data + len, "tx_bytes", len);
--		strscpy_pad(data + 2 * len, "rx_packets", len);
--		strscpy_pad(data + 3 * len, "rx_bytes", len);
-+		ethtool_puts(&data, "tx_packets");
-+		ethtool_puts(&data, "tx_bytes");
-+		ethtool_puts(&data, "rx_packets");
-+		ethtool_puts(&data, "rx_bytes");
- 		if (ds->ops->get_strings)
--			ds->ops->get_strings(ds, dp->index, stringset,
--					     data + 4 * len);
-+			ds->ops->get_strings(ds, dp->index, stringset, data);
- 	} else if (stringset ==  ETH_SS_TEST) {
- 		net_selftest_get_strings(data);
- 	}
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 7ffb46b74ae5..c37f18bddd38 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -1,6 +1,7 @@
+ CONFIG_SYSVIPC=y
+ CONFIG_POSIX_MQUEUE=y
+ CONFIG_AUDIT=y
++CONFIG_DUMMY=m
+ CONFIG_NO_HZ_IDLE=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_BPF_SYSCALL=y
+@@ -16,7 +17,9 @@ CONFIG_IKCONFIG=y
+ CONFIG_IKCONFIG_PROC=y
+ CONFIG_NUMA_BALANCING=y
+ CONFIG_MEMCG=y
++CONFIG_MEMCG_SWAP=y
+ CONFIG_BLK_CGROUP=y
++CONFIG_CFS_BANDWIDTH=y
+ CONFIG_CGROUP_PIDS=y
+ CONFIG_CGROUP_FREEZER=y
+ CONFIG_CGROUP_HUGETLB=y
+@@ -28,6 +31,7 @@ CONFIG_CGROUP_BPF=y
+ CONFIG_USER_NS=y
+ CONFIG_SCHED_AUTOGROUP=y
+ CONFIG_BLK_DEV_INITRD=y
++CONFIG_BLK_DEV_THROTTLING=y
+ CONFIG_KALLSYMS_ALL=y
+ CONFIG_PROFILING=y
+ CONFIG_KEXEC=y
+@@ -135,22 +139,33 @@ CONFIG_IP_PNP=y
+ CONFIG_IP_PNP_DHCP=y
+ CONFIG_IP_PNP_BOOTP=y
+ CONFIG_IPV6=m
++CONFIG_IPVLAN=m
+ CONFIG_NETFILTER=y
+ CONFIG_BRIDGE_NETFILTER=m
+ CONFIG_NF_CONNTRACK=m
+ CONFIG_NF_CONNTRACK_EVENTS=y
++CONFIG_NF_NAT_FTP=m
++CONFIG_NF_NAT_TFTP=m
++CONFIG_NF_CONNTRACK_FTP=m
++CONFIG_NF_CONNTRACK_TFTP=m
+ CONFIG_NETFILTER_XT_MARK=m
+ CONFIG_NETFILTER_XT_TARGET_CHECKSUM=m
+ CONFIG_NETFILTER_XT_TARGET_LOG=m
+ CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=m
+ CONFIG_NETFILTER_XT_MATCH_CONNTRACK=m
+ CONFIG_NETFILTER_XT_MATCH_IPVS=m
++CONFIG_NETFILTER_XT_MATCH_BPF=m
+ CONFIG_IP_VS=m
++CONFIG_IP_VS_PROTO_TCP=y
++CONFIG_IP_VS_PROTO_UDP=y
++CONFIG_IP_VS_RR=m
++CONFIG_IP_VS_NFCT=y
+ CONFIG_IP_NF_IPTABLES=m
+ CONFIG_IP_NF_FILTER=m
+ CONFIG_IP_NF_TARGET_REJECT=m
+ CONFIG_IP_NF_NAT=m
+ CONFIG_IP_NF_TARGET_MASQUERADE=m
++CONFIG_IP_NF_TARGET_REDIRECT=m
+ CONFIG_IP_NF_MANGLE=m
+ CONFIG_IP6_NF_IPTABLES=m
+ CONFIG_IP6_NF_FILTER=m
+@@ -171,6 +186,7 @@ CONFIG_NET_SCH_TAPRIO=m
+ CONFIG_NET_SCH_MQPRIO=m
+ CONFIG_NET_SCH_INGRESS=m
+ CONFIG_NET_CLS_BASIC=m
++CONFIG_NET_CLS_CGROUP=m
+ CONFIG_NET_CLS_ROUTE4=m
+ CONFIG_NET_CLS_FW=m
+ CONFIG_NET_CLS_U32=m
+@@ -198,6 +214,7 @@ CONFIG_NET_ACT_GATE=m
+ CONFIG_HSR=m
+ CONFIG_QRTR_SMD=m
+ CONFIG_QRTR_TUN=m
++CONFIG_CGROUP_NET_PRIO=y
+ CONFIG_CAN=m
+ CONFIG_BT=m
+ CONFIG_BT_HIDP=m
+@@ -1573,7 +1590,12 @@ CONFIG_HTE_TEGRA194=y
+ CONFIG_HTE_TEGRA194_TEST=m
+ CONFIG_EXT2_FS=y
+ CONFIG_EXT3_FS=y
++CONFIG_EXT3_FS_XATTR=y
++CONFIG_EXT3_FS_POSIX_ACL=y
++CONFIG_EXT3_FS_SECURITY=y
+ CONFIG_EXT4_FS_POSIX_ACL=y
++CONFIG_EXT4_FS_SECURITY=y
++CONFIG_VXLAN=m
+ CONFIG_BTRFS_FS=m
+ CONFIG_BTRFS_FS_POSIX_ACL=y
+ CONFIG_FANOTIFY=y
+@@ -1598,6 +1620,8 @@ CONFIG_9P_FS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+ CONFIG_SECURITY=y
++CONFIG_SECURITY_SELINUX=y
++CONFIG_SECURITY_APPARMOR=y
+ CONFIG_CRYPTO_USER=y
+ CONFIG_CRYPTO_TEST=m
+ CONFIG_CRYPTO_ECHAINIV=y
+@@ -1628,6 +1652,11 @@ CONFIG_CRYPTO_DEV_HISI_HPRE=m
+ CONFIG_CRYPTO_DEV_HISI_TRNG=m
+ CONFIG_CRYPTO_DEV_SA2UL=m
+ CONFIG_CRYPTO_DEV_TI_MCRC64=m
++CONFIG_CRYPTO_SEQIV=m
++CONFIG_XFRM=y
++CONFIG_XFRM_USER=y
++CONFIG_XFRM_ALGO=y
++CONFIG_INET_ESP=y
+ CONFIG_DMA_RESTRICTED_POOL=y
+ CONFIG_CMA_SIZE_MBYTES=32
+ CONFIG_PRINTK_TIME=y
 -- 
-2.47.0
+2.40.0
 
 
