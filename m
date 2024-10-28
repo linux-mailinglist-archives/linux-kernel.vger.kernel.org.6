@@ -1,297 +1,249 @@
-Return-Path: <linux-kernel+bounces-385882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAA29B3CFF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:47:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2FA9B3D03
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39E73282F4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:47:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D501B21C8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:48:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8925B1EBA1F;
-	Mon, 28 Oct 2024 21:47:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0E31EE001;
+	Mon, 28 Oct 2024 21:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X+DqSovk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lpTlFbZ0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1609B18B03;
-	Mon, 28 Oct 2024 21:46:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730152021; cv=fail; b=Rvw36BuYyFAgeVzZBqcRZ19/YkyZngzqPbkWpnaq5phFKh9UNnsQrftDkCYNkNq+FSnkYvFtuYgs/u9OFw5vlJtHrfLOfgeVyA+5B5+25MKtDt9QqP8B/+SGUBzeUyfudYk0F9KzY1o1oD655kc9AgXSRYAVTj2shuUKQGr+qZI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730152021; c=relaxed/simple;
-	bh=+pfOR6UMT2eGb+YBBgi/z15t8jRWkuClBogCuPMHofo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=k0hEiVnVV3lsne9PKaSzxwKT4/PpDNH2aK0FbtAqCx5t8t9BCkhSzwOIUm4C1HqB9+UFYPN2uVJTJiAyvBd+ovMdYy6reyrWnbCRAkCD6fRCf6Gpn03qvRKpS2bxnh9JGY/KtOXHT7qKGRMIUnUnB1/yXi7x/q1kUuVjxJ3QrKQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X+DqSovk; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730152019; x=1761688019;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=+pfOR6UMT2eGb+YBBgi/z15t8jRWkuClBogCuPMHofo=;
-  b=X+DqSovkEN01uTKi/XtzhLKwIPpIg+LDAu+WbL8zUbXOYJt48juLn9Hp
-   QaLpCVZAXMP9y+CtFptRuRHdqbw9pvtEkan27TXvAowZo5GqbAhkigQbj
-   uaZIEuz90dplZBTuN1yOnqb5VVKvGb9xM3DsuWEdWqN+aLCxSeI6O7ztc
-   XpLaxvr9Zj2odwSa9ZiYqY2ubCRbijs6g7M3SFXnUVCzPpnCvWPMyoQe+
-   tPGmWKARiK8wNFQUoTg1t18bbagxc7rxD0bio1uARChZJxnZuGgCYdb3U
-   q3xu+Ct9qUJ0PlosE5aRefSfD8fyEkY3q+meq0BFK016F61wA+9VXrigL
-   A==;
-X-CSE-ConnectionGUID: IA54t4bXQS2rVr5kURHhuQ==
-X-CSE-MsgGUID: wRred3tNTk+yzLLVwR6CUw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29911549"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29911549"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 14:46:59 -0700
-X-CSE-ConnectionGUID: iDIB63HzRFmiRwtm0Hc5DQ==
-X-CSE-MsgGUID: 7I/mPazGT/24SRU9ag9yOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="86495055"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Oct 2024 14:46:58 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 28 Oct 2024 14:46:57 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 28 Oct 2024 14:46:57 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 28 Oct 2024 14:46:57 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tp8pkDRyWQHooIyOXU4eJcfQr18Lu6PvHdeLsueXgx4fytDhTorl+O/vhLUlrfHnudzdpHDL68K98KkXP0jKKzcY8+3rpSJfzQIjUQhNClqUEQmn13et9uvlm7Qf1OCvAnNd7BwIkyLTxRzRYeudipdQdepk1ijAmkrVzoZR8vqA6Rwj0S/BCRLkSLFdt3HralKtX5Nm9kZPew0Xl7+uJMI5+ufr1Eu53ZvLq9Jg1qikpJLrYChX+L/wmaAv8fgwEHmYR6qrgZAydfZEYwESH1bG//NCaduo6/t1ZO74XwORkARL/GgVZ+Cr2XD25sdKRLLHgKJRzOZ2uMu08a3+Qg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zk0pnZNbLRagr1fECLnlTjwRH0UPUji0mB888HJ6wGc=;
- b=xQgb9olL9X+0G4KDsLv2msNj1e9AYNAXDgf6PsGALQ/aIhm+sR7Y8eoDaDkytosNwj5lNnX6ZOiI12NeKdSmZjibiRia2LlbcVfeCan9eEkR8nvDc7oMmn4V6RS7rdQEmPFKiG7gf/12SZz0LeLUFntRZ+RRxa2CJUfCUi8W0b7cxUNinVLpgsScvNasUb9LeINyjVkMrWc3nOSsFe5De7cF+MEe1NgykVaztHl0VlNGlUcKf1p/Jra3gEAPsw/8Olzg1Fl/N3yvyKvDRbEni5Tgd7XxTqASDWdS+qcpGxUsZuiUTi//md/CO8tQqRelOhyCDsYxwYYDDs/IOnDUwA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SN7PR11MB8264.namprd11.prod.outlook.com (2603:10b6:806:26c::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
- 2024 21:46:54 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%5]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
- 21:46:54 +0000
-Date: Mon, 28 Oct 2024 14:46:52 -0700
-From: Dan Williams <dan.j.williams@intel.com>
-To: Kai Huang <kai.huang@intel.com>, <dave.hansen@intel.com>,
-	<kirill.shutemov@linux.intel.com>, <tglx@linutronix.de>, <bp@alien8.de>,
-	<peterz@infradead.org>, <mingo@redhat.com>, <hpa@zytor.com>,
-	<dan.j.williams@intel.com>, <seanjc@google.com>, <pbonzini@redhat.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>,
-	<rick.p.edgecombe@intel.com>, <isaku.yamahata@intel.com>,
-	<adrian.hunter@intel.com>, <nik.borisov@suse.com>, <kai.huang@intel.com>
-Subject: Re: [PATCH v6 03/10] x86/virt/tdx: Use auto-generated code to read
- global metadata
-Message-ID: <6720064bf2c69_bc69d2947b@dwillia2-xfh.jf.intel.com.notmuch>
-References: <cover.1730118186.git.kai.huang@intel.com>
- <8955c0e6f0ae801a8166c920b669746da037bccd.1730118186.git.kai.huang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <8955c0e6f0ae801a8166c920b669746da037bccd.1730118186.git.kai.huang@intel.com>
-X-ClientProxiedBy: MW4PR03CA0324.namprd03.prod.outlook.com
- (2603:10b6:303:dd::29) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EED8A185B54;
+	Mon, 28 Oct 2024 21:48:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730152090; cv=none; b=IP2bC0WWGT4yAppS1yp9wOsR4cZ+porS3MNHe5qb5JlNt9CA/F+lkQ8GJS1XXoJRnv3fUvJCtjIvDUq5ShIIOMSC60g0BdTjB+/a+E3yHBArNbsZ4Sce0+OXoJdSaJpO17XMTgeS1m5hvBM8FkC9XSX1ZX49l5jQhdZYJd7JVAA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730152090; c=relaxed/simple;
+	bh=DigfQVMbSZDd+BKHqmNjpUWl4LLpGFKZjeEsBqtUWCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HH7kmkU4jEYQ7PX6/A6wTMcbqashEDUD4UtOSQXWPhaGNlLJY1/EvhS2DQB0tb4JQZOwEFOqkCaN2/L5BaAWbp/RfpsuUI8WTqc7gFNIHUaT+1cp6GTjiCMjO/JdmMZcZKdleyCwK9ZQX39zD1CTpTIJ7UVYKyYvVe+phWZp9Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lpTlFbZ0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABD49C4CEC3;
+	Mon, 28 Oct 2024 21:48:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730152089;
+	bh=DigfQVMbSZDd+BKHqmNjpUWl4LLpGFKZjeEsBqtUWCE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lpTlFbZ0eJ2GKwZN3DKIgewhkZtShBVoTlU+Xh4XZBr0LTzecJj3WfBt9KrKLyziI
+	 N5HEskwnp7JiENik1G6NHbiIriRFJcQlME0P7WwOfHShu2JPcrKONgAw9s4IL959mE
+	 /+8eo8m1wtpss/OFllrOgJznfidF+d/WYMbr37AM21myT9Fi5JQyfxMaM29jWS0iGl
+	 /pos+6PfFXhCaTlXakr5Lg6YGjJBD3nWZ7/5PjbtHR1xoEeyTHav8x8B45cvfrYP8O
+	 jvDiI8VEKhhRPW+vDTP5HK2pLCSLgXLrIDyyek/Aouqujzhm/gtmzj/vRPgTojctHF
+	 dgLuTVB8GPwVw==
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org,
+	Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>,
+	linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: [PATCH v3 00/19] unwind, perf: sframe user space unwinding
+Date: Mon, 28 Oct 2024 14:47:27 -0700
+Message-ID: <cover.1730150953.git.jpoimboe@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SN7PR11MB8264:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1c732fa-9e58-4ad3-0e3d-08dcf79a0a29
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ISvcBWZj1TlCMS7BkGEo//B3Q5rsFCzyc80sd2zXvvcsI89evZLmsqVW9Pto?=
- =?us-ascii?Q?pAhlt0Uj2ZE3PuRl9g2rrxNPXZ4PwasjLC7w06Po6z/9/qR5+uBW8EBgWk5h?=
- =?us-ascii?Q?02PhfrC4cDMZ0vG2gZUYQG3Dqii4d8UoCN87AUbA8nKuxVyln+q2oaiyrYnL?=
- =?us-ascii?Q?m6gry62k5MioE8v6kGs04OAFjRJvlVE25OMhzBD5mphfFZV+wrSLoIg1zYEd?=
- =?us-ascii?Q?pL3bmK3muHYxZOCUHlGWUmzj4f1MzRrDQqbJ11+K5+PUjgiwNAu3Dra954Mk?=
- =?us-ascii?Q?RMf4s1U2XIaE+hLkCNv8bMXRXZEEkvYIkGMsoUlY6DpHNi49++4FyDrOTx5Y?=
- =?us-ascii?Q?5Wv6SypSeU6YVmKrV2vAd547/5bSRMCwWu9NMzOqASALgdXeiJiK4rgT/mil?=
- =?us-ascii?Q?bpC3I3m4t/L/yJ1uZc8DKlP5loXY0uQcqx3dslqCQnjoObEJOUVEQHJsb/N9?=
- =?us-ascii?Q?cjtqEE3lcc9tI8pm2ho5eRDdKsLu3bQ+OVzbwcAzNOSzorXeIutT4GAnB8jH?=
- =?us-ascii?Q?bQCts8G8UZp4lWbyfE/b1HPeC/NVRT0hiWS3i+r+5aGF+dRAw1u5fGqouhnv?=
- =?us-ascii?Q?ir/4fVVd6pRVW5nlr9q2oeZPOk/R5X+Gl6Eh6LNvLQq9FF66pSriDcDBeZ1N?=
- =?us-ascii?Q?+30NCI2Rar07hdRY9DeqAsqjAXxXU48VCAk0k1cfV6XIic3cx6p5Ese3oeo5?=
- =?us-ascii?Q?1qiDou/6eHOw6MRLwZhgfBYRne0FncLVksTag3IlMGsTeq+uVKP2jaSjQHBq?=
- =?us-ascii?Q?6VboART8gsLYYWtsO4ilPtdIh58V7fcOaErsdmJBwGNMJpIRAh0iyxhc4fZF?=
- =?us-ascii?Q?3e48/vpeyhpqqMPzvcYSfIT0avoLT9JCLM9t685CSr32dwqFFzJ5jvEoYNWh?=
- =?us-ascii?Q?jYcy4AxJ1HFPORuIjbvbQkipuhrY/AODDtFXhdjsl8Tp+Emg1O6E3D/zb4ju?=
- =?us-ascii?Q?/czxMCZrTbZhrLThJMvIm4NQYy1kQx7bG210NyUpAP8iRVGhQNXZtUCRTV5R?=
- =?us-ascii?Q?iwtQroABhRpHlOUaApgQZmcb30PCqpTjKVxi1Hpf0lAYhTQtqDCRDv9PA7Jc?=
- =?us-ascii?Q?VdYjBsHcoC1riG9qe4xlue92jAeue52o069Mw0wFn010nun8zj+D0jnBCKCf?=
- =?us-ascii?Q?GrB5vzT6Le+TMXq5jjACUJpVSksBHDvwJ4ucGiqYIII6mB7hFdLn78OikQcm?=
- =?us-ascii?Q?QNHpy0uUE6fgM6KwyZxEvY01aYYKV9veVC9lXrxuM0hueKga+IzmyCgWCSUf?=
- =?us-ascii?Q?a6OJJiXCRBUnb0qQ2RhA4h2QHABstyrQkjntJMBMJrfGFllGg+FRLPB8gyYd?=
- =?us-ascii?Q?v3t77yhgQdmGNAueqiFiimXl/JsQtrhdR/CS62zAp5czLjXwo8pR7Ed20Zzn?=
- =?us-ascii?Q?yv6DSlhW7/1GNugtT5acNz80XHvn?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?Nu9tiZpz2T3Cjud1YatT1eEDUkYbrunpaLkN2pxynxmSVjFlQlPT4j9k0Tlb?=
- =?us-ascii?Q?hZm1/8dTS/ups2vZjN3cM1Vr6+Je3P9wu7Fsk8wS+7hdEPhCK4hg4bYPrN4D?=
- =?us-ascii?Q?FmZh7a3Z4sKPylotKgXKOZyTB+1P2v+DoIGe3L0dWvyK3TEddIIEQbO8CG5X?=
- =?us-ascii?Q?9tV9JP1yvtDvGUd4rVuxjHBvEGzNJMgMCSnkqXi73Hc8yy2as8gXsuYRkKO2?=
- =?us-ascii?Q?s69VenfuZl25cJxKGoJ4E2Eomq8ly5mzrh5yDH0vCaOJmblNqkSuaw1JdqwI?=
- =?us-ascii?Q?gytpohuEzajoH9CLKhzEWhZQVxaATOf+nonf0EkYYvi/tytqAQvy2pRb6Chj?=
- =?us-ascii?Q?1S4bJBw2FscGpB8hp3a+vAYzD/o/SALkUYzEXECkOtHP6cLayzlfrxNqVE+E?=
- =?us-ascii?Q?qHm2PkgAz0CJXkAL6mT5xff/cnyDpQ4+xvUZ9vImT20Tear80KgYG2S//PSn?=
- =?us-ascii?Q?yK0wcvzCvvmSBqgqxi47hwt0g30sj2ziYvLpD1sJNvKDhFrvyA83D+5plhp/?=
- =?us-ascii?Q?84697dLKXkcalvozKPO3En7mgH1IEH6I75j2fJCFwtXAhSHh0BwBFHkcOlze?=
- =?us-ascii?Q?SlS+mBBp5ztqtgPmxsJivKkItHY4JHWvfS0ptDrKfmN2nyGkKgO8R/10V4Sg?=
- =?us-ascii?Q?GFssB+Yea4dE/iyFs2VcAW3Rc44NP+j+yyE7O+OFRkH09eX4ChKCa6TQg6x9?=
- =?us-ascii?Q?+6vmJuvfXTueg1gTVLxF3GjVccI2y0CRoQTBtCSXcodOtO2bDIeA0cxOxZst?=
- =?us-ascii?Q?vJWJC8RJVvN6J36G+oTP2poe+1TRE6ZKM12R8C2CiFKDclB8X9suVfY6FhXy?=
- =?us-ascii?Q?HW8roJM0+PlHJRXqOjdQzb8Vf1O5AB93Q1q2BnOMBD4Ptln34tMdy4Sh+8l2?=
- =?us-ascii?Q?7q9uar3riKxuK0bddJOaynnypuqivZ1mDYCQwG5kG9jYS3xVbJV2eimf4Io7?=
- =?us-ascii?Q?uUsqSxnXY0jmkgRcSoYwSqF1FnhYaTPRrCYTLh84PKwjUtEwX7j7P3sthyjp?=
- =?us-ascii?Q?y7KK/6UUzp4J4RQUv0XHCkxMTgikIVVKDzN5q33oW9QDzqcx/hi7a6KTchku?=
- =?us-ascii?Q?6IUM3RuyDDx6QLhkul6p5B+e/win45SqPp2DegYFivfLTrPYw8mP5iUkKkSn?=
- =?us-ascii?Q?Wd7i+55XYx8SBRt/n2vmx0Uca/656y6SRsL4ApJdxZcySMqNngGyh8QvNSgZ?=
- =?us-ascii?Q?gyVA1PDRiA0IvwWfTSvbnySGGKaloAoeRdiAtcl/vr2V13+dOjiUsk46+I8D?=
- =?us-ascii?Q?RQbxAagXfWqBXfiEA0qEJ86CcgvOqR0GAEO6z4WsBC2Ax6Wgf/v2QPtwC5cY?=
- =?us-ascii?Q?nLtezaLsC5JELqk/gtUDLxZyxI0Ya5VivkJChrc9osQXDm8bIPiZvHVKSY6f?=
- =?us-ascii?Q?f/SmR7eSx0TEPLPKxNNbq5A5cDtS8aRBQoi9brWoJU89Xbfvy9PNAtOWvmuI?=
- =?us-ascii?Q?sMXpIUWuiiIlzYyRwqBCkjsM/ANMhmRy1xOOEeMLd/oGwFM6ElTSkboRP8Qg?=
- =?us-ascii?Q?GdCiOMvor3OC9R37kBBiQsc6WUuaycovHg73ZtG7e0YsrsXqsGTzfTyEGCsW?=
- =?us-ascii?Q?1fAeWuf6zG7ZtKm9yC2Sl4xX8VBOwCNc8bp9tp6CW1MegA64exCfF5tSV1EJ?=
- =?us-ascii?Q?/g=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1c732fa-9e58-4ad3-0e3d-08dcf79a0a29
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 21:46:54.8688
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: +MB5ZdqcprRPGEsF57EF0TesFHZSTH1/tMFJWJoLyV3fjXrDOX9HOfU9NJ2bm9On34NiBTrUgOLqXX/Vc5pFR4BX6tV6DxsDasviDXo4bzQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB8264
-X-OriginatorOrg: intel.com
+Content-Transfer-Encoding: 8bit
 
-Kai Huang wrote:
-> From: Paolo Bonzini <pbonzini@redhat.com>
-> 
-> The TDX module provides a set of "Global Metadata Fields".  Currently
-> the kernel only reads "TD Memory Region" (TDMR) related fields for
-> module initialization.  There are needs to read more global metadata
-> fields including TDX module version [1], supported features [2] and
-> "Convertible Memory Regions" (CMRs) to fix a module initialization
-> failure [3].  Future changes to support KVM TDX and other features like
-> TDX Connect will need to read more.
-> 
-> The current global metadata reading code has limitations (e.g., it only
-> has a primitive helper to read metadata field with 16-bit element size,
-> while TDX supports 8/16/32/64 bits metadata element sizes).  It needs
-> tweaks in order to read more metadata fields.
-> 
-> But even with the tweaks, when new code is added to read a new field,
-> the reviewers will still need to review against the spec to make sure
-> the new code doesn't screw up things like using the wrong metadata
-> field ID (each metadata field is associated with a unique field ID,
-> which is a TDX-defined u64 constant) etc.
-> 
-> TDX documents all global metadata fields in a 'global_metadata.json'
-> file as part of TDX spec [4].  JSON format is machine readable.  Instead
-> of tweaking the metadata reading code, use a script [5] to generate the
-> code so that:
-> 
->   1) Using the generated C is simple.
->   2) Adding a field is dirty simple, e.g., the script just pulls the
+This has all the changes discussed in v2, plus VDSO sframe support and
+Namhyung's perf tool patches (see detailed changelog below).
 
-Probably meant "dirt simple", but if this is fixed up on apply I'd drop
-the idiom and just say "simple".
+I did quite a bit of testing, it seems to work well.  It still needs
+some binutils and glibc patches which I'll send in a reply.
 
-...don't spin the patch just for this nit.
+Questions for perf experts:
 
->      field ID out of the JSON for a given field thus no manual review is
->      needed.
-> 
-> Specifically, to match the layout of the 'struct tdx_sys_info' and its
-> sub-structures, the script uses a table with each entry containing the
-> the name of the sub-structures (which reflects the "Class") and the
-> "Field Name" of all its fields, and auto-generate:
-> 
->   1) The 'struct tdx_sys_info' and all 'struct tdx_sys_info_xx'
->      sub-structures in 'tdx_global_metadata.h'
-> 
->   2) The main function 'get_tdx_sys_info()' which reads all metadata to
->      'struct tdx_sys_info' and the 'get_tdx_sys_info_xx()' functions
->      which read 'struct tdx_sys_info_xx()' in 'tdx_global_metadata.c'.
-> 
-> Using the generated C is simple: 1) include "tdx_global_metadata.h" to
-> the local "tdx.h"; 2) explicitly include "tdx_global_metadata.c" to the
-> local "tdx.c" after the read_sys_metadata_field() primitive (which is a
-> wrapper of TDH.SYS.RD SEAMCALL to read global metadata).
-> 
-> Adding a field is also simple: 1) just add the new field to an existing
-> structure, or add it with a new structure; 2) re-run the script to
-> generate the new code; 3) update the existing tdx_global_metadata.{hc}
-> with the new ones.
-> 
-> For now, use the auto-generated code to read the aforesaid metadata
-> fields: 1) TDX module version; 2) supported features; 3) CMRs.
-> 
-> Reading CMRs is more complicated than reading a simple field, since
-> there are two arrays containing the "CMR_BASE" and "CMR_SIZE" for each
-> CMR respectively.
-> 
-> TDX spec [3] section "Metadata Access Interface", sub-section "Arrays of
-> Metadata Fields" defines the way to read metadata fields in an array.
-> There's a "Base field ID" (say, X) for the array and the field ID for
-> entry array[i] is X + i.
-> 
-> For CMRs, the field "NUM_CMRS" reports the number of CMR entries that
-> can be read, and the code needs to use the value reported via "NUM_CMRS"
-> to loop despite the JSON file says the "Num Fields" of both "CMR_BASE"
-> and "CMR_SIZE" are 32.
-> 
-> The tdx_global_metadata.{hc} can be generated by running below:
-> 
->  #python tdx.py global_metadata.json tdx_global_metadata.h \
-> 	tdx_global_metadata.c
-> 
-> .. where tdx.py can be found in [5] and global_metadata.json can be
-> fetched from [4].
-> 
-> Link: https://lore.kernel.org/lkml/4b3adb59-50ea-419e-ad02-e19e8ca20dee@intel.com/ [1]
-> Link: https://lore.kernel.org/all/fc0e8ab7-86d4-4428-be31-82e1ece6dd21@intel.com/ [2]
-> Link: https://lore.kernel.org/kvm/0853b155ec9aac09c594caa60914ed6ea4dc0a71.camel@intel.com/ [5]
+  - Is the perf_event lifetime managed correctly or do we need to do
+    something to ensure it exists in unwind_user_task_work()?
 
-Just an fyi, that lore accepts the simple:
+    Or alternatively is the original perf_event even needed in
+    unwind_user_task_work() or can a new one be created on demand?
 
-https://lore.kernel.org/$msg_id
+  - Is --call-graph=sframe needed for consistency?
 
-...format, no need to record the list name in the URL (127734e23aed
-("Documentation: best practices for using Link trailers"))
+  - Should perf use the context cookie?  Note that because the callback
+    is usually only called once for multiple NMIs in the same entry
+    context, it's possible for the PERF_RECORD_CALLCHAIN_DEFERRED event
+    to arrive *before* some of the corresponding kernel events.  The
+    context cookie disambiguates the corner cases.
 
-> Link: https://github.com/canonical/tdx/issues/135 [3]
-> Link: https://cdrdv2.intel.com/v1/dl/getContent/795381 [4]
-> Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> Co-developed-by: Kai Huang <kai.huang@intel.com>
-> Signed-off-by: Kai Huang <kai.huang@intel.com>
+Based on tip/master.
 
-Looks good to me, with or without the above nits addressed.
+Also at:
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+  git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git sframe-v3
+
+
+v3:
+- move the "deferred" logic out of perf and into unwind_user with new
+  unwind_user_deferred() interface [Steven, Mathieu]
+- add more sframe sanity checks [Steven]
+- make frame pointers optional depending on arch [Jens]
+- fix perf event output [Namhyung]
+- include Namhyung's perf tool patches
+- enable sframe generation in VDSO
+- fix build errors [robot]
+
+v2: https://lore.kernel.org/cover.1726268190.git.jpoimboe@kernel.org
+- rebase on v6.11-rc7
+- reorganize the patches to add sframe first
+- change to sframe v2
+- add new perf event type: PERF_RECORD_CALLCHAIN_DEFERRED
+- add new perf attribute: defer_callchain
+
+v1: https://lore.kernel.org/cover.1699487758.git.jpoimboe@kernel.org
+
+Some distros have started compiling frame pointers into all their
+packages to enable the kernel to do system-wide profiling of user space.
+Unfortunately that creates a runtime performance penalty across the
+entire system.  Using DWARF (or .eh_frame) instead isn't feasible
+because of complexity and slowness.
+
+For in-kernel unwinding we solved this problem with the creation of the
+ORC unwinder for x86_64.  Similarly, for user space the GNU assembler
+has created the SFrame ("Simple Frame") v2 format starting with binutils
+2.41.
+
+These patches add support for unwinding user space from the kernel using
+SFrame with perf.  It should be easy to add user unwinding support for
+other components like ftrace.
+
+There were two main challenges:
+
+1) Finding .sframe sections in shared/dlopened libraries
+
+   The kernel has no visibility to the contents of shared libraries.
+   This was solved by adding a PR_ADD_SFRAME option to prctl() which
+   allows the runtime linker to manually provide the in-memory address
+   of an .sframe section to the kernel.
+
+2) Dealing with page faults
+
+   Keeping all binaries' sframe data pinned would likely waste a lot of
+   memory.  Instead, read it from user space on demand.  That can't be
+   done from perf NMI context due to page faults, so defer the unwind to
+   the next user exit.  Since the NMI handler doesn't do exit work,
+   self-IPI and then schedule task work to be run on exit from the IPI.
+
+Special thanks to Indu for the original concept, and to Steven and Peter
+for helping a lot with the design.  And to Steven for letting me do it ;-)
+
+
+
+Josh Poimboeuf (15):
+  x86/vdso: Fix DWARF generation for getrandom()
+  x86/asm: Avoid emitting DWARF CFI for non-VDSO
+  x86/asm: Fix VDSO DWARF generation with kernel IBT enabled
+  x86/vdso: Use SYM_FUNC_{START,END} in __kernel_vsyscall()
+  x86/vdso: Use CFI macros in __vdso_sgx_enter_enclave()
+  x86/vdso: Enable sframe generation in VDSO
+  unwind: Add user space unwinding API
+  unwind/x86: Enable CONFIG_HAVE_UNWIND_USER_FP
+  unwind: Introduce sframe user space unwinding
+  unwind/x86: Enable CONFIG_HAVE_UNWIND_USER_SFRAME
+  unwind: Add deferred user space unwinding API
+  perf: Remove get_perf_callchain() 'init_nr' argument
+  perf: Remove get_perf_callchain() 'crosstask' argument
+  perf: Simplify get_perf_callchain() user logic
+  perf: Add deferred user callchains
+
+Namhyung Kim (4):
+  perf tools: Minimal CALLCHAIN_DEFERRED support
+  perf record: Enable defer_callchain for user callchains
+  perf script: Display PERF_RECORD_CALLCHAIN_DEFERRED
+  perf tools: Merge deferred user callchains
+
+ arch/Kconfig                              |  14 +
+ arch/x86/Kconfig                          |   2 +
+ arch/x86/entry/vdso/Makefile              |   6 +-
+ arch/x86/entry/vdso/vdso-layout.lds.S     |   5 +-
+ arch/x86/entry/vdso/vdso32/system_call.S  |  10 +-
+ arch/x86/entry/vdso/vgetrandom-chacha.S   |   3 +-
+ arch/x86/entry/vdso/vsgx.S                |  19 +-
+ arch/x86/include/asm/dwarf2.h             |  40 ++-
+ arch/x86/include/asm/linkage.h            |  29 +-
+ arch/x86/include/asm/mmu.h                |   2 +-
+ arch/x86/include/asm/unwind_user.h        |  11 +
+ arch/x86/include/asm/vdso.h               |   1 -
+ fs/binfmt_elf.c                           |  35 +-
+ include/linux/entry-common.h              |   3 +
+ include/linux/mm_types.h                  |   3 +
+ include/linux/perf_event.h                |  12 +-
+ include/linux/sched.h                     |   5 +
+ include/linux/sframe.h                    |  41 +++
+ include/linux/unwind_user.h               |  99 ++++++
+ include/uapi/linux/elf.h                  |   1 +
+ include/uapi/linux/perf_event.h           |  22 +-
+ include/uapi/linux/prctl.h                |   3 +
+ kernel/Makefile                           |   1 +
+ kernel/bpf/stackmap.c                     |  14 +-
+ kernel/events/callchain.c                 |  47 +--
+ kernel/events/core.c                      |  70 +++-
+ kernel/fork.c                             |  14 +
+ kernel/sys.c                              |  11 +
+ kernel/unwind/Makefile                    |   2 +
+ kernel/unwind/sframe.c                    | 380 ++++++++++++++++++++++
+ kernel/unwind/sframe.h                    | 215 ++++++++++++
+ kernel/unwind/user.c                      | 318 ++++++++++++++++++
+ mm/init-mm.c                              |   6 +
+ tools/include/uapi/linux/perf_event.h     |  22 +-
+ tools/lib/perf/include/perf/event.h       |   7 +
+ tools/perf/Documentation/perf-script.txt  |   5 +
+ tools/perf/builtin-script.c               |  92 ++++++
+ tools/perf/util/callchain.c               |  24 ++
+ tools/perf/util/callchain.h               |   3 +
+ tools/perf/util/event.c                   |   1 +
+ tools/perf/util/evlist.c                  |   1 +
+ tools/perf/util/evlist.h                  |   1 +
+ tools/perf/util/evsel.c                   |  32 +-
+ tools/perf/util/evsel.h                   |   1 +
+ tools/perf/util/machine.c                 |   1 +
+ tools/perf/util/perf_event_attr_fprintf.c |   1 +
+ tools/perf/util/sample.h                  |   3 +-
+ tools/perf/util/session.c                 |  78 +++++
+ tools/perf/util/tool.c                    |   2 +
+ tools/perf/util/tool.h                    |   4 +-
+ 50 files changed, 1634 insertions(+), 88 deletions(-)
+ create mode 100644 arch/x86/include/asm/unwind_user.h
+ create mode 100644 include/linux/sframe.h
+ create mode 100644 include/linux/unwind_user.h
+ create mode 100644 kernel/unwind/Makefile
+ create mode 100644 kernel/unwind/sframe.c
+ create mode 100644 kernel/unwind/sframe.h
+ create mode 100644 kernel/unwind/user.c
+
+-- 
+2.47.0
+
 
