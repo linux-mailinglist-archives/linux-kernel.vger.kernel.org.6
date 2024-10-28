@@ -1,55 +1,71 @@
-Return-Path: <linux-kernel+bounces-384422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B166B9B29E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:09:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F13E9B29E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D5128736F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:09:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40E501C21B2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9800193094;
-	Mon, 28 Oct 2024 08:06:58 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19137192B78;
+	Mon, 28 Oct 2024 08:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GP75+83D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 144CF1917D8;
-	Mon, 28 Oct 2024 08:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F847190674;
+	Mon, 28 Oct 2024 08:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102818; cv=none; b=pVaa70PxEAeYK+/wVStF1yX2jFG8AMk3vEn9nM4ZYkxnht3PizITatQi8PKD4usN0q9+dn3rE8TU1RgAaXarls/6J/5wQQUjbbdoePc+bgYIAAT9WE5UnO4vdGazznjvwx9YhUvbLp1s/odEGxWZEQvEI8lans7NSeVoYp2unBk=
+	t=1730102797; cv=none; b=WHwlfaCvlC0yhn/JlcgiPS4rxr8uVjh+dlNpCCzBPfRPfEUQ5ZOrODqyTENh3CfzHKR93DxmoLZ9iAulbz+Zp/P8g+ZnqMzWPsNZXGOw9wz81E69eD5gQRlymB8TXZJsAGu+TG2f6AvBa0qUSvbiHrsewuns6bV+gVHJ0AWm/D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102818; c=relaxed/simple;
-	bh=30EIEzsbTiM7pdJuXATL4PYo2bASkKIMoENwNv7p/Hs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V2tuav8okr3k6aA1vIVj0g/xXlOzP0F5JEJa9yn0UHGoDWkFKSq7ywBWt1xCS9Ddkrg5jlKGNGsyWFf6wuBBVlWrrHoP8FrxWO49du/bURopEYzKgYtSaI5doNI40QTuwinovIaCkaa1Fs6Ptd6nHdahh2SCkliqqrwZ8rydJmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XcQsN0whrz1T9Bq;
-	Mon, 28 Oct 2024 16:04:40 +0800 (CST)
-Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2D1F21800DE;
-	Mon, 28 Oct 2024 16:06:48 +0800 (CST)
-Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
- (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 28 Oct
- 2024 16:06:47 +0800
-From: Jinjie Ruan <ruanjinjie@huawei.com>
-To: <chandrashekar.devegowda@intel.com>, <chiranjeevi.rapolu@linux.intel.com>,
-	<haijun.liu@mediatek.com>, <m.chetan.kumar@linux.intel.com>,
-	<ricardo.martinez@linux.intel.com>, <loic.poulain@linaro.org>,
-	<ryazanov.s.a@gmail.com>, <johannes@sipsolutions.net>,
-	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <ilpo.jarvinen@linux.intel.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <ruanjinjie@huawei.com>
-Subject: [PATCH net] net: wwan: t7xx: off-by-one error in t7xx_dpmaif_rx_buf_alloc()
-Date: Mon, 28 Oct 2024 16:06:18 +0800
-Message-ID: <20241028080618.3540907-1-ruanjinjie@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730102797; c=relaxed/simple;
+	bh=wxNUnJ/4aK4LOb+bDBEkRDwTNg9OSthS+kn91U2Rtfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=dIFszk5PPwgwrXnTJqKrdQyWP8CxMJYbSXdQtPxCa3WpMyvn4I1vRo8jEaRLTLPiDkqNTPdWwBAhdbGrGJt8A8G83cuBsVgKVWKt1PKvPogL0pevmF4/9XSA6i7UKTi4438WuIYQMUMPvCB5qAvbVaWNM1w0m/llNfK+xZdvrw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GP75+83D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E6A2C4CEC3;
+	Mon, 28 Oct 2024 08:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730102797;
+	bh=wxNUnJ/4aK4LOb+bDBEkRDwTNg9OSthS+kn91U2Rtfs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GP75+83DC1WzDI8nBeRMGTdRn2cJYLU9ZdGZCTLxJ41BhPLpW43re+hhXaYO/Ghh1
+	 ECFyM7bPnvVMr3z0TsKGv+bAr+1m75v+/icXZIFLuiYvHWIhpEyZSSmLnQgAHtedLj
+	 SXuoe/y5IEcrFmaJ77IUitmYn2oYizLvo3hLRTC/v+3q3rP1VR6QzJgtOu/Qp9ERe2
+	 4I52C8l88bWPUQq5fn7FdfrHEg4IMuwEOhPngNnAMMOxz7avY5UBvUDdsbsuUhALg0
+	 UJTWlunh6BOOAulmDKrnYp/JILZ8bpGJ2F5NDmdIrBHFyknwqP0+FsEG/adVe1p0qr
+	 PhaZUzDww95Vg==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org,
+	Miguel Ojeda <ojeda@kernel.org>
+Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
+Date: Mon, 28 Oct 2024 09:06:19 +0100
+Message-ID: <20241028080619.589960-1-ojeda@kernel.org>
+In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
+References: <20241028062306.649733554@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,37 +73,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemg200008.china.huawei.com (7.202.181.35)
 
-The error path in t7xx_dpmaif_rx_buf_alloc(), free and unmap the already
-allocated and mapped skb in a loop, but the loop condition terminates when
-the index reaches zero, which fails to free the first allocated skb at
-index zero.
+On Mon, 28 Oct 2024 07:23:00 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.59 release.
+> There are 208 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
 
-Check for >= 0 so that skb at index 0 is freed as well.
+Boot-tested under QEMU for Rust x86_64:
 
-Fixes: d642b012df70 ("net: wwan: t7xx: Add data path interface")
-Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
----
- drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested-by: Miguel Ojeda <ojeda@kernel.org>
 
-diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
-index 210d84c67ef9..f2298330e05b 100644
---- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
-+++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
-@@ -226,7 +226,7 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl *dpmaif_ctrl,
- 	return 0;
- 
- err_unmap_skbs:
--	while (--i > 0)
-+	while (--i >= 0)
- 		t7xx_unmap_bat_skb(dpmaif_ctrl->dev, bat_req->bat_skb, i);
- 
- 	return ret;
--- 
-2.34.1
+Thanks!
 
+Cheers,
+Miguel
 
