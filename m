@@ -1,164 +1,223 @@
-Return-Path: <linux-kernel+bounces-385594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E619B392C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:29:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5851E9B392D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:30:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 160EC1C2133C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:29:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C19C1C215A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:30:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A92881DF996;
-	Mon, 28 Oct 2024 18:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F4D1DFD80;
+	Mon, 28 Oct 2024 18:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKZ+EjwX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oCSueELu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wX/ujxz2";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oCSueELu";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wX/ujxz2"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99101DF266
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0886C1DF99B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 18:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140183; cv=none; b=O9dQw4n269tG5hDcyBh6XiqPXnDpF4BR2wA8TnzMJ47TtB07E2CtPyBDsAMgppVt+3EfdhGll35EoU6QAmbsXXXXtUWNrVhLm3YTQoowfnXwjGSN1ST2T0HPYCqH5d2ZepJGkW6df5ItiTMUiYnPOaRQztfWs26Cca43q1/jMkI=
+	t=1730140190; cv=none; b=stbo71UnWGonzsGw8MkV/zMs8cgOACl484hOu+s6sBTJIJqj/fZoOY+IIbclF9szMdP1REleOnCdeLVb3t2BjvC9FhpKsimTlJlirivlNLrZMXYYANZgB6+IXPbRBZ+0o/FkitLSoVvctWXNMgnAEKwnd4hDIe9Y+nwEutN1wRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140183; c=relaxed/simple;
-	bh=8OmpXILBuI+6wKvs6RAK06K+NY8fg730oVtwqZY18UQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Avy6R8WRxcOGE7jkih3tqvb0BcUlczW5Fmm7LtcARkHTWmf5WLXZdYncpqLR+nnwQ70RxmVWRBrRvN/4V5CogLBXwsZz2R9Zprhz037zXPtl5GuFrFm0DOyGsjAIcL9GSz55qY6JsLFSxCox/qaGPT+KgPZjYEux4MiPPd6/IRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKZ+EjwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 685AFC4CEC3;
-	Mon, 28 Oct 2024 18:29:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730140182;
-	bh=8OmpXILBuI+6wKvs6RAK06K+NY8fg730oVtwqZY18UQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KKZ+EjwX/7ENZi02x0H84gmYRS+6nYEdTYYmv3JVRcIYUiL0g8alPTrZJb/wRgz4K
-	 wnwK+MTAQAAEh1fuI+T8wKQ8T6OI0ZoXv9HzFnUs0R0L6I62Xx7WtYMEHA8R8NH/yA
-	 wQemdJeMWet1dUmuqPEQEdScuLJw/4IHhKXR+arYs5mvUvGHHDTToPxWTyiBmQ5wVv
-	 fS9qgCgrcvFZLXz/Jm9cdhUh+eX31wEbPBLJhuuE+ku1bmxHLR4Y6ggrc17qdTSRsz
-	 Rpu0J8LrsZ5ZOgWoBbMURK+7smXajPukz1umnwtdS/3El/Jc1t3HFZXrPiFN1oWRdH
-	 XuxUslM5c2Hyg==
-Date: Mon, 28 Oct 2024 18:29:36 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Aishwarya TCV <Aishwarya.TCV@arm.com>
-Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
- error path behaviour
-Message-ID: <61461dcc-e455-450d-9c01-5465003fc31c@sirena.org.uk>
-References: <cover.1729715266.git.lorenzo.stoakes@oracle.com>
- <6e8deda970b982e1e8ffd876e3cef342c292fbb5.1729715266.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1730140190; c=relaxed/simple;
+	bh=noGkfmA48H8dK3fsnzk21qx102QZxKW+iVdhmsqqLlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZqlSHJrS61QbcLma3Ofpo9KsHi6GQ/zqL28IJg3P46SUfKll1RTU/6p3VPcCiqHWCMoKthXJiiboC9/oaE3NL4YjJSCDi8aNbcZuyaKEEzx+9WX2EyJxwgEgACTkRPoQkhJO5xzD1xF+JYhH6rxYt24+aZOo9GbX1EkW9CcWsSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oCSueELu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wX/ujxz2; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oCSueELu; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wX/ujxz2; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B3A51FB62;
+	Mon, 28 Oct 2024 18:29:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730140186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=213glbXl/1qSbIMVUl4+5cBSg28or7+yDk4VHI1koAw=;
+	b=oCSueELu8IA0OCbepnUM6YGzidGEK2XA9FbNEt7BOJ69YcRnB80diiP0VyEFs8v8jn3eYc
+	9B+mpVTym27TL08U1ZOCbYlvXfz0y3iilmAnk6uvxbAOnlUIL7RwGu/Af+rgordh63FSn0
+	ZS8e9XW/tPHNTCQ+JnGsKg/ru04Wbt0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730140186;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=213glbXl/1qSbIMVUl4+5cBSg28or7+yDk4VHI1koAw=;
+	b=wX/ujxz2/XziEglzAszlmYO48uTevYm1trbsegtBdJcJlgSpjJizUTz5VCJ5KVpiqXmbso
+	WTye9NSu4UNEcKCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1730140186; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=213glbXl/1qSbIMVUl4+5cBSg28or7+yDk4VHI1koAw=;
+	b=oCSueELu8IA0OCbepnUM6YGzidGEK2XA9FbNEt7BOJ69YcRnB80diiP0VyEFs8v8jn3eYc
+	9B+mpVTym27TL08U1ZOCbYlvXfz0y3iilmAnk6uvxbAOnlUIL7RwGu/Af+rgordh63FSn0
+	ZS8e9XW/tPHNTCQ+JnGsKg/ru04Wbt0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1730140186;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=213glbXl/1qSbIMVUl4+5cBSg28or7+yDk4VHI1koAw=;
+	b=wX/ujxz2/XziEglzAszlmYO48uTevYm1trbsegtBdJcJlgSpjJizUTz5VCJ5KVpiqXmbso
+	WTye9NSu4UNEcKCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E4F1C137D4;
+	Mon, 28 Oct 2024 18:29:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HhgkNhnYH2eNRwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 28 Oct 2024 18:29:45 +0000
+Message-ID: <0c8205b3-29e2-4edb-be5d-5abf0183696b@suse.cz>
+Date: Mon, 28 Oct 2024 19:29:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="AN/SqrqcdGLKIaZP"
-Content-Disposition: inline
-In-Reply-To: <6e8deda970b982e1e8ffd876e3cef342c292fbb5.1729715266.git.lorenzo.stoakes@oracle.com>
-X-Cookie: Results vary by individual.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-unstable v2] mm/page_alloc: keep track of free
+ highatomic
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, Zi Yan <ziy@nvidia.com>,
+ Mel Gorman <mgorman@techsingularity.net>,
+ Matt Fleming <mfleming@cloudflare.com>, David Rientjes
+ <rientjes@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Link Lin <linkl@google.com>
+References: <20241026033625.2237102-1-yuzhao@google.com>
+ <37a28ef7-e477-40b0-a8e4-3d74b747e323@suse.cz>
+ <CAOUHufaS-dGAPGs1Y1=imW_nusaTDeysN3qfJc9-76DBVEHScQ@mail.gmail.com>
+ <8459b884-5877-41bd-a882-546e046b9dad@suse.cz>
+ <CAOUHufbHVXNZpW1mVhuF+4p8PbPq44w4chQX7Q6QYVDCjSqa1Q@mail.gmail.com>
+ <6ac7a38f-30df-4403-8723-a43829bcdba5@suse.cz>
+ <CAOUHufYyEjDG1+MEqRhuWPL037aSqrDhi_FT5gfyktbpQBmDVA@mail.gmail.com>
+ <fb1db044-e5da-4a77-b0ba-9a059a5f5ad9@suse.cz>
+ <CAOUHufZB8zCwO4nT3aeZWxJO99SD9vUJxhkGedWrmmz3J-Sczw@mail.gmail.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAOUHufZB8zCwO4nT3aeZWxJO99SD9vUJxhkGedWrmmz3J-Sczw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
+On 10/28/24 18:54, Yu Zhao wrote:
+> On Mon, Oct 28, 2024 at 5:01 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>>
+>> Yes you're right. But since we don't plan to backport it beyond 6.12,
+>> sorry for sidetracking the discussion unnecessarily. More importantly,
+>> is it possible to change the implementation as I suggested?
+> 
+> The only reason I didn't fold account_highatomic_freepages() into
+> account_freepages() is because the former must be called under the
+> zone lock, which is also how the latter is called but not as a
+> requirement.
 
---AN/SqrqcdGLKIaZP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Ah, I guess we can document the requirement/add an lockdep assert. Using
+__mod_zone_page_state() already implies some context restrictions although
+not zone lock specifically.
 
-On Wed, Oct 23, 2024 at 09:38:29PM +0100, Lorenzo Stoakes wrote:
-> The mmap_region() function is somewhat terrifying, with spaghetti-like
-> control flow and numerous means by which issues can arise and incomplete
-> state, memory leaks and other unpleasantness can occur.
+> I understand where you come from when suggesting a new per-cpu counter
+> for free highatomic. I have to disagree with that because 1) free
+> highatomic is relatively small and drifting might defeat its purpose;
+> 2) per-cpu memory is among the top kernel memory overhead in our fleet
+> -- it really adds up. So I prefer not to use per-cpu counters unless
+> necessary.
 
-Today's pending-fixes is showing a fairly large set of failures in the
-arm64 MTE selftests on all the platforms that have MTE (currently just
-the software ones).  Bisection points at this change which is
-0967bf7fbd0e0 in -next which seems plausible but I didn't investigate in
-any meaingful detail.  There's nothing particularly instructive in the
-test logs, just plain reports that the tests failed:
+OK, didn't think of these drawbacks.
 
-  # # FAIL: mmap allocation
-  # # FAIL: memory allocation
-  # not ok 17 Check initial tags with private mapping, sync error mode and mmap memory
-  # ok 18 Check initial tags with private mapping, sync error mode and mmap/mprotect memory
-  # # FAIL: mmap allocation
-  # # FAIL: memory allocation
-  # not ok 19 Check initial tags with shared mapping, sync error mode and mmap memory
-  # ok 20 Check initial tags with shared mapping, sync error mode and mmap/mprotect memory
-  # # Totals: pass:18 fail:2 xfail:0 xpass:0 skip:0 error:0
-  not ok 42 selftests: arm64: check_buffer_fill # exit=1
+> So if it's ok with you, I'll just fold account_highatomic_freepages()
+> into account_freepages(), but keep the counter as per zone, not per
+> cpu.
 
-(and more, mainly on mmap related things).  A full log for a sample run
-on the FVP can be seen at:
+OK, thanks!
 
-  https://lava.sirena.org.uk/scheduler/job/901638#L3693
+>> [1] Hooking
+>> to __del_page_from_free_list() and __add_to_free_list() means extra work
+>> in every loop iteration in expand() and __free_one_page(). The
+>> migratetype hygiene should ensure it's not necessary to intercept every
+>> freelist add/move and hooking to account_freepages() should be
+>> sufficient and in line with the intended design.
+> 
+> Agreed.
 
-and one from qemu here:
-
-  https://lava.sirena.org.uk/scheduler/job/901630#L3031
-
-Both of these logs include links to filesystem/firmware images and
-command lines to run the model.
-
-Bisects converge cleanly (there's some random extra good commits logged
-at the start as my tooling feeds test results it already has on hand
-between the good and bad commits into the bisect):
-
-# bad: [6560005f01c3c14aab4c2ce35d97b75796d33d81] Merge branch 'for-linux-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
-# good: [ea1fda89f5b23734e10c62762990120d5ae23c43] Merge tag 'x86_urgent_for_v6.12_rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip
-# good: [6668610b4d8ce9a3ee3ed61a9471f62fb5f05bf9] ASoC: Intel: sst: Support LPE0F28 ACPI HID
-# good: [2feb023110843acce790e9089e72e9a9503d9fa5] regulator: rtq2208: Fix uninitialized use of regulator_config
-# good: [0107f28f135231da22a9ad5756bb16bd5cada4d5] ASoC: Intel: bytcr_rt5640: Add DMI quirk for Vexia Edu Atla 10 tablet
-# good: [25f00a13dccf8e45441265768de46c8bf58e08f6] spi: spi-fsl-dspi: Fix crash when not using GPIO chip select
-# good: [032532f91a1d06d0750f16c49a9698ef5374a68f] ASoC: codecs: rt5640: Always disable IRQs from rt5640_cancel_work()
-# good: [d48696b915527b5bcdd207a299aec03fb037eb17] ASoC: Intel: bytcr_rt5640: Add support for non ACPI instantiated codec
-# good: [d0ccf760a405d243a49485be0a43bd5b66ed17e2] spi: geni-qcom: Fix boot warning related to pm_runtime and devres
-# good: [f2b5b8201b1545ef92e050735e9c768010d497aa] spi: mtk-snfi: fix kerneldoc for mtk_snand_is_page_ops()
-# good: [b5a468199b995bd8ee3c26f169a416a181210c9e] spi: stm32: fix missing device mode capability in stm32mp25
-git bisect start '6560005f01c3c14aab4c2ce35d97b75796d33d81' 'ea1fda89f5b23734e10c62762990120d5ae23c43' '6668610b4d8ce9a3ee3ed61a9471f62fb5f05bf9' '2feb023110843acce790e9089e72e9a9503d9fa5' '0107f28f135231da22a9ad5756bb16bd5cada4d5' '25f00a13dccf8e45441265768de46c8bf58e08f6' '032532f91a1d06d0750f16c49a9698ef5374a68f' 'd48696b915527b5bcdd207a299aec03fb037eb17' 'd0ccf760a405d243a49485be0a43bd5b66ed17e2' 'f2b5b8201b1545ef92e050735e9c768010d497aa' 'b5a468199b995bd8ee3c26f169a416a181210c9e'
-# bad: [6560005f01c3c14aab4c2ce35d97b75796d33d81] Merge branch 'for-linux-next-fixes' of https://gitlab.freedesktop.org/drm/misc/kernel.git
-git bisect bad 6560005f01c3c14aab4c2ce35d97b75796d33d81
-# bad: [4a2901b5d394f58cdc60bc25e32c381bb2b83891] Merge branch 'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless.git
-git bisect bad 4a2901b5d394f58cdc60bc25e32c381bb2b83891
-# bad: [4093d34d740447b23a1ea916dabcf902aa767812] Merge branch 'fs-current' of linux-next
-git bisect bad 4093d34d740447b23a1ea916dabcf902aa767812
-# bad: [0967bf7fbd0e03cee0525035762150a91ba1bb7c] mm: resolve faulty mmap_region() error path behaviour
-git bisect bad 0967bf7fbd0e03cee0525035762150a91ba1bb7c
-# good: [633e7df6cfdf97f8acf2a59fbfead01e31d0e492] tools: testing: add expand-only mode VMA test
-git bisect good 633e7df6cfdf97f8acf2a59fbfead01e31d0e492
-# good: [315add1ace71306a7d8518fd417466d938041ff1] mseal: update mseal.rst
-git bisect good 315add1ace71306a7d8518fd417466d938041ff1
-# good: [bcbb8b25ab80347994e33c358481e65f95f665fd] mm: fix PSWPIN counter for large folios swap-in
-git bisect good bcbb8b25ab80347994e33c358481e65f95f665fd
-# good: [8438cf67b86bf8c966f32612a7e12b2eb910396b] mm: unconditionally close VMAs on error
-git bisect good 8438cf67b86bf8c966f32612a7e12b2eb910396b
-# good: [a220e219d89c2d574ad9ffda627575e11334fede] mm: refactor map_deny_write_exec()
-git bisect good a220e219d89c2d574ad9ffda627575e11334fede
-# first bad commit: [0967bf7fbd0e03cee0525035762150a91ba1bb7c] mm: resolve faulty mmap_region() error path behaviour
-
---AN/SqrqcdGLKIaZP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcf2A8ACgkQJNaLcl1U
-h9Ax4Af/Vm4bnquLf/9D2o7eiOwiYvrtHWp4UiY1AuXoe5f/eJCSwNvhaFpdcUqb
-5mV1GuTj7LTJ/eGz/Shd4HLB61WcWrWBiUGa4xPswMJYrUsjpmWhz8M2gW28Hftx
-RVT3lBUFm0ggGwW28fmQolEcxlzemFF00our0Mw+DWvic4pdWiG4K7q4Q6NtY+C9
-SjOdtYEBuvthbmyrdJkfwePdOnc3k/ZbkDgSsySclvSqIPYWp9C5O3PP/oLyziz9
-4IduHyuJ3AeJ6l2xxeXfrXiBxM1CputDNr1O2SqXFB4Dc+Je2LMY/n5UBY/OB2fM
-Roib+Pv1dBYudYiThz9RaCpktKZbrQ==
-=u0Vu
------END PGP SIGNATURE-----
-
---AN/SqrqcdGLKIaZP--
 
