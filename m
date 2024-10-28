@@ -1,158 +1,122 @@
-Return-Path: <linux-kernel+bounces-385238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2C879B346D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:07:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02669B346F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D9BA1F228B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F07701C21F54
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:08:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C13B1DD88F;
-	Mon, 28 Oct 2024 15:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0414A1DE2B5;
+	Mon, 28 Oct 2024 15:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Dqd61ePl"
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="klecebep"
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07AE91DE3C6
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93FD154433
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730128044; cv=none; b=G55sFKLxOa+xxQCLMKXgPL8aKI8tT9Qk1mlZES3frZICu/6jF69DvSHULQrX+faFYir5dYsjpcoG24JiOFr61rcOJPsvHyUhGYedOBVF2G+9im9WMl+8uFN3BK3KbEzsR+VH5Cirj9CPjtkoCXxF0+98epN5qOx+U1Xt4XTBqdg=
+	t=1730128084; cv=none; b=YhiX8QHVBx15l13WSX3Nz2xRBoeTI1tarPhT9UWvL6B9GNpybiKEk0Qn4OQ+bLQniSBYrTg/eXFA0E4cg/3W+UH5tl1n0oSG4ouAoGE57Rxv0FRSUM0HPZzpsb20vY0uTPmFluJ4feMQSZNX4nH5yid87LKduLK78p/u+sfexE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730128044; c=relaxed/simple;
-	bh=CimpsCOYMgsWETM1szMTbewpbQ+dQp+1fcyvCiBqs7Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uI3oUW0d5iiAIQYfcUGedC3gimP6vPylqA6/mjmJmEJgOwWsmwJR9ToladOwfvrxOpziypOJl3oLC3euKGuJkvmp5ApQZ/7G9TPxEgMKHqJtgt5mrtUoDDhSiPW+rnBscrJtKc6Pkv5Ac/vyEBnwOtZVuR0PNDzFeG3t20k4xzQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=Dqd61ePl; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e9ba45d67fso35359517b3.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:07:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1730128039; x=1730732839; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F6O4jglmADBFdb5cCGurguIuIM8SEZnGdEDSwKFhYFc=;
-        b=Dqd61ePlWZ4syzO6eZgvT2dE2MViwItSQmpOWXPd6yGI1Pmn4CMcxU57pnAEel9G8m
-         HVJTonJB+uZ1uWhc5sMEyf0P317Ur7ep0TUfPrrS+KILEr2+iB6dub4PJJ+sX+kb4fsQ
-         MitfGZoKyjkndo7t1RHfrf2ZZiohAt7UhrMXw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730128039; x=1730732839;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F6O4jglmADBFdb5cCGurguIuIM8SEZnGdEDSwKFhYFc=;
-        b=WXpOEULx5kYP6BnBleV225t7vRR6JtxTGePiD1Fjip1d6+WkMUJPIDQcVewsxsT3Rn
-         /62LRUhfYoCq0xx33vFJ/GWg1Tb/oVhIPMEfApVv2jvHdlA84nk/bKmSDzVyRS0GliXn
-         wlOmmt82amWlCA1AdgHApRv0frZsYVxFNpMj1rd2qK8A6EDOCOmzjj3HERNmnE2gOGI8
-         jSja06q3qz32PnGw2d6+3fVsX/fk1VaCCImWTmShYn372bhe1NuL7Alwvyr2akKZWzCd
-         frrPzJpzQIWR7mWr+jFw++HPsXxmomBToGS/U1m7naQSfuhLWfE2ppamPMIYv2JH0gGy
-         VyFA==
-X-Gm-Message-State: AOJu0YwFDrdJIMwgqU+/Lc+5JhL1oBJQVF8HGuVeHbMrqpbgD2aIfYre
-	cFfCX2ItV++WOlS7813qcE4syubXkF+xgnhpLEjWsuuMFgMDpsGLHHFFGsw1e09eCB4kTCP+YAt
-	2CbUvyQvICGNQLPUGLFU29lMsIzUplD6/3lNdm2eM6Q/z7RTifBwtRA==
-X-Google-Smtp-Source: AGHT+IFqui6wNSxoTwWnJIJHlVatiBkIoXdvwJ0um02G+DFgaufXJo1xlrNhf/8t5iD5prAKnr8XPktd7hAEMwnrgFc=
-X-Received: by 2002:a05:690c:12:b0:6af:6762:eba1 with SMTP id
- 00721157ae682-6e9d8a42c2dmr78811917b3.20.1730128038855; Mon, 28 Oct 2024
- 08:07:18 -0700 (PDT)
+	s=arc-20240116; t=1730128084; c=relaxed/simple;
+	bh=bTkOOclMFzY6PGJSiqRt7P0MiUzbfdzYbsNpNdCHGKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YqlumBI0qeKrUlFA0Z3iRvpyQD5/eZTvPkotHMuhhbzNURun/0RWDWG0tHgAXORgbdgZZRoHZ0j8Onf245YNvQ3BmonRhk9MrjhGoVi52Fq3CWxtIPVtqJkhtNYvqw5w89uI6nZxOxFT7TQCNzaHxfa//P62JYijuR22vGS8WWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=klecebep; arc=none smtp.client-ip=95.215.58.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 28 Oct 2024 15:07:53 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730128079;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G9p4eTT42fRRi/aG3dYCIILkL00If6Y9C4jHec4Ibr8=;
+	b=klecebeplNRZUQqOUCeOw34Qixgb8QzGW9DuqiouxKrHB5W5WWItPRZJ6eKtfTMlUDe4iK
+	P8yqkinF5WEWL1Gu34xZIJewEXbVjnWdOU1q18KnQrsf6uigR/0x9ei5xi1pSNykkLLWbC
+	dTiCxPfF+le0YHnc3FQM5rMIp+MZwSs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>, Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Joey Gouly <joey.gouly@arm.com>, Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute
+ if supported
+Message-ID: <Zx-oyZWF12M_ka-m@linux.dev>
+References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+ <20241028094014.2596619-5-aneesh.kumar@kernel.org>
+ <Zx-jWyF7xvFS-Vs6@linux.dev>
+ <yq5amsiocmb1.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024094930.3221729-1-dario.binacchi@amarulasolutions.com> <CAPDyKFqqCWt5oCj6qBuP_oZ=O1kmkfMirYETPXEeW-AmiA9P+g@mail.gmail.com>
-In-Reply-To: <CAPDyKFqqCWt5oCj6qBuP_oZ=O1kmkfMirYETPXEeW-AmiA9P+g@mail.gmail.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Mon, 28 Oct 2024 16:07:08 +0100
-Message-ID: <CABGWkvqbiuvBNy2wBT4yVgwP+CY67__+sNxN3vS3Bwss7AwQhA@mail.gmail.com>
-Subject: Re: [PATCH] pmdomain: core: fix "sd_count" field setting
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Michael Trimarchi <michael@amarulasolutions.com>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <yq5amsiocmb1.fsf@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Oct 28, 2024 at 2:34=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> On Thu, 24 Oct 2024 at 11:49, Dario Binacchi
-> <dario.binacchi@amarulasolutions.com> wrote:
+On Mon, Oct 28, 2024 at 08:22:02PM +0530, Aneesh Kumar K.V wrote:
+> 
+> Hi Oliver,
+> 
+> 
+> Thanks for reviewing the changes.
+> 
+> Oliver Upton <oliver.upton@linux.dev> writes:
+> 
+> > On Mon, Oct 28, 2024 at 03:10:14PM +0530, Aneesh Kumar K.V (Arm) wrote:
 > >
-> > The "sd_count" field keeps track of the number of subdomains with power
-> > "on," so if pm_genpd_init() is called with the "is_off" parameter set t=
-o
-> > false, it means that the power domain is already on, and therefore its
-> > "sd_count" must be 1.
->
-> genpd_sd_counter_inc() is being called when adding subdomains. Doesn't
-> that work correctly for you?
-
-In my use case the genpd_add_subdomain() is not called.
-I am working on :
-drivers/pmdomain/imx/gpcv2.c
-drivers/pmdomain/imx/imx8m-blk-ctrl.c
-
-Thanks and regards,
-Dario
-
->
+> 
+> > NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
+> > add a new EXIT type because this is arm64 specific exit type.
 > >
-> > Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-> > Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> >
->
-> Kind regards
-> Uffe
->
+> > Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
 > > ---
+> 
+> I have used KVM_EXIT_MEMORY_FAULT as part of the initial prototype.
+
+Ah, apologies, I clearly didn't read the changelog.
+
+> >> +		/* KVM_EXIT_ARM_NOTAG_ACCESS */
+> >> +		struct {
+> >> +			__u64 flags;
+> >> +			__u64 gpa;
+> >> +			__u64 size;
+> >> +		} notag_access;
 > >
-> >  drivers/pmdomain/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > Can you please look into reusing the memory fault exit infrastructure?
 > >
-> > diff --git a/drivers/pmdomain/core.c b/drivers/pmdomain/core.c
-> > index 5ede0f7eda09..2df6dda98021 100644
-> > --- a/drivers/pmdomain/core.c
-> > +++ b/drivers/pmdomain/core.c
-> > @@ -2221,7 +2221,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd=
-,
-> >         genpd_lock_init(genpd);
-> >         genpd->gov =3D gov;
-> >         INIT_WORK(&genpd->power_off_work, genpd_power_off_work_fn);
-> > -       atomic_set(&genpd->sd_count, 0);
-> > +       atomic_set(&genpd->sd_count, is_off ? 0 : 1);
-> >         genpd->status =3D is_off ? GENPD_STATE_OFF : GENPD_STATE_ON;
-> >         genpd->device_count =3D 0;
-> >         genpd->provider =3D NULL;
-> > --
-> > 2.43.0
+> > The entire point of that is for KVM to tell the VMM it cannot make
+> > forward progress because of ${SOMETHING} unexpected at the specified
+> > GPA. You can add a new flag that describes tag access.
 > >
+> 
+> The only reason I dropped the change was because the flag will be very much
+> arm64 specific.
 
+Eh, making it arm64-specific is very much the right call. There's no
+shortage of available bits in that structure, and we should make no
+attempt to provide a generic description of what is otherwise a very
+architecture-specific thing.
 
+> Based on your feedback, I will switch to KVM_EXIT_MEMORY_FAULT in the next
+> update.
 
---=20
+Excellent, thanks!
 
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+-- 
+Thanks,
+Oliver
 
