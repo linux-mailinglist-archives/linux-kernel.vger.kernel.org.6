@@ -1,87 +1,94 @@
-Return-Path: <linux-kernel+bounces-384960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2845B9B30A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:44:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59969B30B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:45:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3FDC21F21E69
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:44:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7EA91C21D5E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAD01DE2DB;
-	Mon, 28 Oct 2024 12:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F52D1DC748;
+	Mon, 28 Oct 2024 12:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SJADRT44"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="huTbvfHC"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABE641DB928;
-	Mon, 28 Oct 2024 12:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1AB91DA2F6;
+	Mon, 28 Oct 2024 12:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119334; cv=none; b=uNkPJ5zgU9htjIQUIfM/Z6mAhp11Gm13X5tsKzY18EkewzhLC7SrwcW6dRG4r4fhExMCvfQfN887no6j2CNobDVGqtUi2QB8md1GWUpVjN5PFY+nKetWyx7hd76bkozdIFMs/ErxL2mdlQxt9V5GBOyzMi+R6+R0mW4oDLqp6+4=
+	t=1730119361; cv=none; b=jcpzdT+SOcPE6iVmnMdPCARsib/eAMThTYkz3k/iD02g3kfNbJMVtFO46nWyTRQcBB4mG3c5+4Gsx/AEd1oa/JPq3cCya8wK93UfTcB1WjQAxalRbem3gF9FLoiYJP5ebm6LG+HOE8zLuhA5BUFrqvegBNw1SxuQN7V2uw0kTQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119334; c=relaxed/simple;
-	bh=URmEjMJeWmPfaZ7ekc/vyFJ1i248/g1nmASADfGoXeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UbJ9tmxk2ZXc2xCUYUr9BSh4MdZu2y2NBXjmxLqCTSHVvfzbBOTS0Tjct21phSWw2OJ/ocH6aR3WAS9XWkP0cF6ccY2HxzCkwG1JNwyoQuoh/saSqT4aqSk4aMjpZyUatW9EzjRADAMPSe91LZixfgTmgRFt4HMxr4aJkh1ELqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SJADRT44; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730119333; x=1761655333;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=URmEjMJeWmPfaZ7ekc/vyFJ1i248/g1nmASADfGoXeY=;
-  b=SJADRT44HUDwDp7Wwkqb5POl5nW3RyzUBzzZSvjqA7gmWnZD+eNoLhsV
-   ZpJHYRBwtLqhyMC2fDiLhLwKypc1IyTDM7GnG8nAZa6HWrebcMZu/qCDk
-   1/Kg94+ol03HibSpUw51EJ87y153pGsb1lPMDnXIwxCSfUuHhlBWQWupc
-   avX0QQj9PGz1f+ygBDL891i/MM0cHXgRHVOHyOks0V4UpCGIEnvbQ3fDI
-   w0utX1iS/h5vQ496NTM/EthdC4C6jjNG8uSwKeyOLkzf44I/HS+PT4RnJ
-   CBgil11FkdO/UbekHp5t8UeWqaDYZozAwaDG9hGpUwDEsHt8GU0EiF7Ug
-   g==;
-X-CSE-ConnectionGUID: MwN0k7neSMugMP3AQXgsrQ==
-X-CSE-MsgGUID: LF3/VYIEQn2kmceVx6ggZw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="32575345"
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="32575345"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 05:42:12 -0700
-X-CSE-ConnectionGUID: 16UT0wELThuvJ8OP+tYWYQ==
-X-CSE-MsgGUID: vTK4IaBcQcOuodK6CdP5KQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="82420960"
-Received: from gargmani-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.169])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 05:42:02 -0700
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	kirill.shutemov@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	dan.j.williams@intel.com,
-	seanjc@google.com,
-	pbonzini@redhat.com
-Cc: x86@kernel.org,
+	s=arc-20240116; t=1730119361; c=relaxed/simple;
+	bh=YamZzvhmaDu6jNuMTIZ5BlSZQSa1W1+FOr371olPtTw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=IGdrCEjlUhaHBNKRuoXpzXrlmuMzuG1TEuGQQBjKjH9RFd8z9X/7YDX2utLeuqKww467wYP1tH95+6fQ2FrMH5zGcQbvO99xML915KvNp7ZMLNnhUcwctEic8Z8n7dG2lVl0aFPxIeSheao2U+ZcXMbyqdhM05U2TrhCGZpv5Dw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=huTbvfHC; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so2994181f8f.0;
+        Mon, 28 Oct 2024 05:42:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730119358; x=1730724158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=CXMuB9N8iV8ohwDfKCUDi+5Z+yxX91mIom7ZPwIqV+s=;
+        b=huTbvfHC6rvJ48hocCda4hrMfxzlPh+s+Skjg20kHM/o5Kv8phrVdAmauewXfx8a6o
+         l93HTyawLy+7KQHZyYKTrqNPU9HMoUC0TAtUtngy+WFgklMeYayTaHZDP0RdgZqeAiRL
+         nkQPuBIJoC9tCCMlQUk8XM8LAfEgffcYZsLZW1MHNAVE1loyPpGbEkaYoFFe/h3Ktej4
+         vU1tD5JIa/ZFvFtfvNTfCOVTzHgWFy31ATf05OPtSSW7dPWFleabuyhoV/OSLHz1In/V
+         slMr6YLi/BGOmNQofdxQnNq4GMOIVBGrB97q6jeR9iSDGJt2TH7iPhtAJvECxaTP2yv+
+         tiRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730119358; x=1730724158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CXMuB9N8iV8ohwDfKCUDi+5Z+yxX91mIom7ZPwIqV+s=;
+        b=B98nljSxILlKmkSCK7qr869NgmzN5qsdN7XMOzEP64CZY5mn6FQ9mRsBduk1beu9Ol
+         xobNQ6Y6u3bMxxhE617QScytGS/0ypYXPteRw+klCtqe+1K25fxaQOQ9zi+jiW+ngbUh
+         LtyAGzd3qN6TgloOp7e7HTh+4fvtI+TcfzRyEQahaVS5bVKBWIjtGk8HnBuTpSeVaAq0
+         kBURTywjlRnxI8n7POuQA17+qlPkMI9gKh88XerUhzkNYsOb2og0btub/3ceNH8EHQn1
+         brGznsj7R6G0ZSqd6xDs+wvTEkElJGGJDy9P48hyE64GhpNnbck8VTBOOK+/JRVy6b8+
+         Q4Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUM5IApVkcQ7uqMCoTXqT0TFtdVr2pW2IzMdr+nvxtmfV0kCgYFWHs1c7U2hnO8JIJof8ZdNtwKjEpFuqCr@vger.kernel.org, AJvYcCWR4eWABB2BJSY00XYyA+udFdD1SnFxEMCuteYwF6+rMWS54g7d3FHbTimbpp4hQQ9wRTxybjiflVE0@vger.kernel.org, AJvYcCXbEVSglfoNC2eHf0duJc3OeOE5jfVgB//F/dHWXhP+vEhyEjI5u2bXAiGX34gxrR7jrak4i79HIRkYa0HX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzev0LGdY0OqIJ8pIQC7/QyCCwBJi6v62rPORe0KBoTPrIEGJHf
+	8dSpfTTA/VoSGoaMbvQQTejgKZknKZkcfaW+XGt8bRhzJBz+Mw/i
+X-Google-Smtp-Source: AGHT+IGSNkzbM6+B2nzURo8UwNG27pnjBN5LqzCF0OK8RLWSWY8HEXRszgdqRunm2dHG0ZmdMlqgGw==
+X-Received: by 2002:adf:a444:0:b0:37d:46f4:35 with SMTP id ffacd0b85a97d-380611dc87dmr5821481f8f.45.1730119357792;
+        Mon, 28 Oct 2024 05:42:37 -0700 (PDT)
+Received: from localhost.localdomain (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-38058b71231sm9352608f8f.66.2024.10.28.05.42.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 05:42:37 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Christian Marangi <ansuelsmth@gmail.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	isaku.yamahata@intel.com,
-	adrian.hunter@intel.com,
-	nik.borisov@suse.com,
-	kai.huang@intel.com
-Subject: [PATCH v6 10/10] x86/virt/tdx: Print TDX module version
-Date: Tue, 29 Oct 2024 01:41:12 +1300
-Message-ID: <57eaa1b17429315f8b5207774307f3c1dd40cf37.1730118186.git.kai.huang@intel.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <cover.1730118186.git.kai.huang@intel.com>
-References: <cover.1730118186.git.kai.huang@intel.com>
+	llvm@lists.linux.dev,
+	upstream@airoha.com
+Subject: [PATCH v5 1/3] spinlock: extend guard with spinlock_bh variants
+Date: Mon, 28 Oct 2024 13:41:41 +0100
+Message-ID: <20241028124206.24321-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,67 +97,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently the kernel doesn't print any TDX module version information.
-In practice such information is useful, especially to the developers.
+Extend guard APIs with missing raw/spinlock_bh variants.
 
-For instance:
-
-1) When something goes wrong around using TDX, the module version is
-   normally the first information the users want to know [1].
-
-2) The users want to quickly know module version to see whether the
-   loaded module is the expected one.
-
-Dump TDX module version.  The actual dmesg will look like:
-
-  virt/tdx: module version: 1.5.00.00.0481 (build_date 20230323).
-
-And dump right after reading global metadata, so that this information is
-printed no matter whether module initialization fails or not.
-
-Link: https://lore.kernel.org/lkml/4b3adb59-50ea-419e-ad02-e19e8ca20dee@intel.com/ [1]
-Signed-off-by: Kai Huang <kai.huang@intel.com>
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 ---
- arch/x86/virt/vmx/tdx/tdx.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Changes v5:
+- Add Ack tag
+Changes v4:
+- Out of RFC
+Changes v2:
+- Add this patch
 
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 9bc827a6cee8..6982e100536d 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -312,6 +312,23 @@ static void print_cmrs(struct tdx_sys_info_cmr *sysinfo_cmr)
- 	}
- }
+ include/linux/spinlock.h | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/include/linux/spinlock.h b/include/linux/spinlock.h
+index 63dd8cf3c3c2..d3561c4a080e 100644
+--- a/include/linux/spinlock.h
++++ b/include/linux/spinlock.h
+@@ -548,6 +548,12 @@ DEFINE_LOCK_GUARD_1(raw_spinlock_irq, raw_spinlock_t,
  
-+static void print_module_version(struct tdx_sys_info_version *version)
-+{
-+       /*
-+	* TDX module version encoding:
-+	*
-+	*   <major>.<minor>.<update>.<internal>.<build_num>
-+	*
-+	* When printed as text, <major> and <minor> are 1-digit,
-+	* <update> and <internal> are 2-digits and <build_num>
-+	* is 4-digits.
-+	*/
-+	pr_info("module version: %u.%u.%02u.%02u.%04u (build_date %u).\n",
-+			version->major_version,	 version->minor_version,
-+			version->update_version, version->internal_version,
-+			version->build_num,	 version->build_date);
-+}
+ DEFINE_LOCK_GUARD_1_COND(raw_spinlock_irq, _try, raw_spin_trylock_irq(_T->lock))
+ 
++DEFINE_LOCK_GUARD_1(raw_spinlock_bh, raw_spinlock_t,
++		    raw_spin_lock_bh(_T->lock),
++		    raw_spin_unlock_bh(_T->lock))
 +
- static int init_tdx_sys_info(struct tdx_sys_info *sysinfo)
- {
- 	int ret;
-@@ -322,6 +339,7 @@ static int init_tdx_sys_info(struct tdx_sys_info *sysinfo)
++DEFINE_LOCK_GUARD_1_COND(raw_spinlock_bh, _try, raw_spin_trylock_bh(_T->lock))
++
+ DEFINE_LOCK_GUARD_1(raw_spinlock_irqsave, raw_spinlock_t,
+ 		    raw_spin_lock_irqsave(_T->lock, _T->flags),
+ 		    raw_spin_unlock_irqrestore(_T->lock, _T->flags),
+@@ -569,6 +575,13 @@ DEFINE_LOCK_GUARD_1(spinlock_irq, spinlock_t,
+ DEFINE_LOCK_GUARD_1_COND(spinlock_irq, _try,
+ 			 spin_trylock_irq(_T->lock))
  
- 	trim_null_tail_cmrs(&sysinfo->cmr);
- 	print_cmrs(&sysinfo->cmr);
-+	print_module_version(&sysinfo->version);
- 
- 	return 0;
- }
++DEFINE_LOCK_GUARD_1(spinlock_bh, spinlock_t,
++		    spin_lock_bh(_T->lock),
++		    spin_unlock_bh(_T->lock))
++
++DEFINE_LOCK_GUARD_1_COND(spinlock_bh, _try,
++			 spin_trylock_bh(_T->lock))
++
+ DEFINE_LOCK_GUARD_1(spinlock_irqsave, spinlock_t,
+ 		    spin_lock_irqsave(_T->lock, _T->flags),
+ 		    spin_unlock_irqrestore(_T->lock, _T->flags),
 -- 
-2.46.2
+2.45.2
 
 
