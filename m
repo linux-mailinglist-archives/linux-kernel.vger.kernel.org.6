@@ -1,257 +1,511 @@
-Return-Path: <linux-kernel+bounces-384397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB9689B299B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:03:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16C139B29A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:03:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B5692817CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A9BF1F25D44
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5091CC8B8;
-	Mon, 28 Oct 2024 07:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KwcMf3nP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D1F1CC898;
+	Mon, 28 Oct 2024 07:51:07 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C78218DF86
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730101577; cv=fail; b=S7dBFefwkEeUdWVaMDdxge4Vfdmz6ZrNKRCk7XA670UuR0i3JhKdkuywtOTPMMYRBytfSNXLY3PGs358QdvBWBpSlUxg+90z108CHAeXRayl+bqpWUXMWvp1/DSliW6/qZiW+CnKA+5xrhkqNHYFStaDcSKLA3jGR200pVmiEGE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730101577; c=relaxed/simple;
-	bh=pYk5Oei/wm9nuoJc+QQTnmewmfzMvkdrcx/WeOYNh20=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=dsgdCN8ygwSQC6S298bnHuMMjWO6996RyVBT3JRLlKTxPLZEXB/swmcX17detr1t+bLmmwtsKqskTgL/JoCQo4Gdd5wrEkY26jkM3FqhE5EX74Ot+yQnWJoL0kyEm8UJkmF9shHHge8x4yVu9JeBm8kXwnQyQ2FI81udrCLqgWY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KwcMf3nP; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730101574; x=1761637574;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=pYk5Oei/wm9nuoJc+QQTnmewmfzMvkdrcx/WeOYNh20=;
-  b=KwcMf3nPB7x+Thn/u3au/9mJLxJtweBEm3RHAVSB2eJJh6FlH9D7Brsp
-   ZJ2nmOeYDfal8ny36IGbw9Z25nFvr5NP4IlVdNoaYvIriwFA62k3899SZ
-   w4P4RUB/nxzmEdcAhPuX8mkmWto0VahQXID8p6GZ0O5I9MZjMdSRe6CFW
-   a3pZt7OBMgkgvyL854xwLLDsm1Iz9jRLhBtUZxLeDEikoe3RdlzqPHIR9
-   BHferNs/uM55tO0SENnnh37O0702IbDga0huhgL9lgArRq151Fv+VIwLM
-   HByAQSy6r0PAyY7fFzG0KGiaiSq9SquNZFpylZOFCXVzSQWY1ePCqDYJn
-   w==;
-X-CSE-ConnectionGUID: SgCcdtlkRMe+hkEb7w16UA==
-X-CSE-MsgGUID: IBoqU0bbRmqUVO7YmKJslw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29121849"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="29121849"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 00:46:13 -0700
-X-CSE-ConnectionGUID: K0TYtp9BT8KyuwXyjA+Nyw==
-X-CSE-MsgGUID: xlwSV4ywRny1qMzjEwA9KA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="118999168"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 28 Oct 2024 00:46:14 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 28 Oct 2024 00:46:13 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 28 Oct 2024 00:46:13 -0700
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 28 Oct 2024 00:46:12 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=quJM6lKG2ggk178QPw2q+vVXwwaxe8k988EVaDoyWi6vwCBWHoFAXsEY5MmVaUfHdQottSyw+NoLLwpd/NutXRzbfoa7oZlLNVN+I7dUYGS8SkjMLQm+AdgpPYmAtBBbKBiUlb8xX+aq9fSyHIPziPGGhxlo0M3FFSXJrxgavrtlfTFg3oEt4VZ2O1vuQNy10+4P4+O3ev9FQPXIy1s3gckbflEijt8G2dpKE+DYKRETWrN3OkuIwZv/BmqA7eQalzgE4zu09tP3fp6UDO5q7PtnOdObbTNl9fUVdMor6Yag/fvb6C5ActPY5lRhFDlA0ZSNRifX2JOOBTBK/UqO6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=34E5tEKe0+fDgu4I30rY3JwQ7fr3yK9rb+KZ3oXGV2c=;
- b=KAGo+LUlf40ccnf+8gHD4P+fwsUHy7RTexxDkOu+qWFifvPYY9SACWW2ar+hj+XrRTOPmWHOIhK4qTNrZWbsFB13XfUrEpa13svITeFMXIU6AtdH6/4hRvB9BIadyEqUXmIQOhhh1A9UDbr4X3V53XlPL3r6LxuBBORvs8GSEGcMuanpuj4/0h+VXBmCZRa5dyIJyuhCo0T/9F+iu3AnG13B1F+2QhtXHR3gvAVpqRJiA75VChXqVyvneChvRpB8IlRK1gdkJ/6r7gLlGkE2or2keo4GXKX2rFFeTAgQPLDY1bjDckFgZuFBI12biwE9ok08MLOxNLI4vVLuV56TBA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com (2603:10b6:8:141::20)
- by DS0PR11MB7786.namprd11.prod.outlook.com (2603:10b6:8:f2::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.23; Mon, 28 Oct 2024 07:46:11 +0000
-Received: from DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a]) by DS0PR11MB7529.namprd11.prod.outlook.com
- ([fe80::d244:15cd:1060:941a%4]) with mapi id 15.20.8093.023; Mon, 28 Oct 2024
- 07:46:11 +0000
-Message-ID: <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
-Date: Mon, 28 Oct 2024 15:50:46 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
- prq_event_thread
-To: Joel Granados <joel.granados@kernel.org>, David Woodhouse
-	<dwmw2@infradead.org>, Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel
-	<joro@8bytes.org>, Will Deacon <will@kernel.org>, Robin Murphy
-	<robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian
-	<kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>
-CC: <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>, Klaus Jensen
-	<k.jensen@samsung.com>
-References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
- <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
-Content-Language: en-US
-From: Yi Liu <yi.l.liu@intel.com>
-In-Reply-To: <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SG2PR02CA0137.apcprd02.prod.outlook.com
- (2603:1096:4:188::17) To DS0PR11MB7529.namprd11.prod.outlook.com
- (2603:10b6:8:141::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354BB1B373B;
+	Mon, 28 Oct 2024 07:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730101866; cv=none; b=DX2b7gLKBFFrE1mrcm3JMtN7FJKYRJ6163IgWqJwSvvFtfA5mNqWIWDK1g5qFIZExI9x00/MVNawU/cEEO+/Tvo/8lzcSxwZyncXv0k09KcYrmUVTDvWs7rpl72/a+BpfuuX8BkGCHHDt3ZsbW/jGZpKOY2d6FcldQtCgM/7DkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730101866; c=relaxed/simple;
+	bh=s8Q4rfWz/gaos6sXM0jhIFaGwJ02Sv7mW5XizBt+Odc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TffY8JF4uqBtPGjgotNrlZKeioSZqdLlLJboEhUpDsxwgWIuYuIxpriaEiM9Usm48NNlRDwX8gi00JulztZEBSsGH0rdYfLgardYwso0DCDBKpwfHmyMkzJES+x9L9lLAUo5eKo+ikPymG8Sbjr7R4SMTRfUhZ2rAKhwu05O694=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XcQYB4Srzz4f3nT5;
+	Mon, 28 Oct 2024 15:50:38 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 105C91A018D;
+	Mon, 28 Oct 2024 15:50:57 +0800 (CST)
+Received: from [10.67.110.36] (unknown [10.67.110.36])
+	by APP4 (Coremail) with SMTP id gCh0CgD304dfQh9n6JasAA--.54004S2;
+	Mon, 28 Oct 2024 15:50:56 +0800 (CST)
+Message-ID: <3d3c0add-0e6a-477a-87d1-f66314dafa0b@huaweicloud.com>
+Date: Mon, 28 Oct 2024 15:50:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR11MB7529:EE_|DS0PR11MB7786:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4525a46f-33b1-4957-2c13-08dcf7249736
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?N0l1TUx1QVlOOGE1Y0RBOWs2Y3JvWXlwbHZFNW9Yb2dqREdQcEhiUnhpb1Nk?=
- =?utf-8?B?UEFHNkdFUFpCUWhnM0R4dXdLQk5nc1I0ZU14ZXVPRmZtUU5KWG1kR3hjOWRw?=
- =?utf-8?B?cUM3RGx0S2tINzlkUW5nUndHK3BqV1JiMHdkS211L1JpR2Ivd01EU3dTVzRC?=
- =?utf-8?B?ZVVHc2VzSnhGcDNRRlJrVzZOa25mdFk2MllQMHpzMytNcW5DbzhDb3JEOUkw?=
- =?utf-8?B?aG56VkNmVjVWOHN0Q2RkQ3NIWWlKSEpOWDc2eFBLZDZ0KzZlNGNpZ25lM0Y2?=
- =?utf-8?B?TWVrS05FUFp5TDYwNkJQcVhwTUdDL3UrZzVISDRKNXdzQjJyeFRJbEw3c2I3?=
- =?utf-8?B?UUJPbldrdWZBYmhDclJSRDVJSytRMXA0NjhNaWdsbkQ5SVRWb3N5YVZTSUVT?=
- =?utf-8?B?aGtnM3VpempmczkzU0gzdEVJMit3MzlvbFZuQi9wdkhJVWN0M2xDWXJoV25y?=
- =?utf-8?B?Tlk2WGNuYkI1SXlVazZRZGEwN3dlNFhlM21XQ3dlZ3Z6RDJYTDJ1WFBkbGdj?=
- =?utf-8?B?dDdNbUJESEdhbXgvNEJ1UkNCbEkwWU51TEdoWTNhVnMrMitGUUZzTkwvUlZj?=
- =?utf-8?B?eGl4RzdHMFFCUlBKaUpPak1DOVR0b1QzNWg4WEFCVUhWR3UxT0xyUXBiQ3o2?=
- =?utf-8?B?MWtVQzRhdDlwc1l1YnkwNE51djVGY25HTGhPSUMzd0FXSVpNR3dJNk1nTThk?=
- =?utf-8?B?NnNoUWM2ekFndXZhR3BuMUYrWk44a3N4MmhxdGZ4T0xNZnhCK3MrUnN4UlhK?=
- =?utf-8?B?ZDd0Ri9WaFVBUVFRalh6d0Q2VlpjTnJlTU00K3hRMWdWTVluN0JUMDdRbk15?=
- =?utf-8?B?dWNQNjdtWDhGbWc0UnhaQVNHNm1VaDQ5YlV0ajExTnpvTmJNU1p6cERucDU5?=
- =?utf-8?B?a0JoTVZXVExVcUplU1p3bHF1eVVTZTZpaENVMzJzbGsrOUJJM2VnWVdHdnBQ?=
- =?utf-8?B?aVVhb3BKR2NodU5PRUxDVno1d0ZIK3lkbmN5aHY2SGhWV1dQMXdTcmg3cnJE?=
- =?utf-8?B?NUFQbS9mZ1N5MmNFRW50Yjh2QTRaWGg4eDVNVmtmRGt4VGlNS05YQWo0WkQ4?=
- =?utf-8?B?Q1gwd1FqVzJXdU9oTWFMSThHVmFUWEtsWENFdTB3WVJxaGV6UU41YTVNbGg4?=
- =?utf-8?B?clNaZENUVmRCZzluYTdMdmhCS1VYUFgvTFlKNEdkYUFFZHhXbFJRbG1RSkZ3?=
- =?utf-8?B?Ym05emk1alRVRzYwWnVEejJmMDBzdmNVbGVBYW8yWkdXOGpzRW5STnZ5QXlq?=
- =?utf-8?B?ZDYvRUZkL3FNWlBBNUdNUnFHMnNRaThVRVBDbFROMXBWQitKRDJ2L25IZWZm?=
- =?utf-8?B?bVRTWXVKZkg2bGZ3b29NV1Y3Q1Fzd2Z4YUhvSXN5S0NhbVVKdmJURlM0VjRD?=
- =?utf-8?B?UmNiSDVpUVFxaU4yOWFMbDg2c0JWYUY1dW5XT3BnK3czTCtrV3hWeTh3MzRs?=
- =?utf-8?B?bHN1UWZFT28zOGtxblp3YnVNOFpnalZHcG9Vd3N5Y3gxKzFtZmJiT0tFdi9E?=
- =?utf-8?B?WGVGVXRtdnQ2WGpaY2VIL0c3NUhqWTJuV2huRm5ubDNyc2NwQ3NBYnJleXBw?=
- =?utf-8?B?VEYzOU05UWRVQmYzL2FBZGNtR0FWRUh3RXVadDREWHUyeXdadENVbG9SbFFh?=
- =?utf-8?B?NVFtY3IrK3luMEY2RmFwcHg0QVV2cW9vVmYvekNMVGh6WWx4UDl4SFRkRmVK?=
- =?utf-8?B?SkMzU3poNmxRQ2NWVnFkYmxEWTRyUUNjNVE5UFM4aXZRZkkvSjcwSUFwVnl3?=
- =?utf-8?Q?scDWC4Irp9u1Q9i8lzhgbGLuwaYL7xBg53bmgrp?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR11MB7529.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?VFRRcjR4WHNFMUhsTEZmaVVSZ2YxK1hBVnUyWXhDSGZmNjdzMCtGek9BT1BL?=
- =?utf-8?B?c0RVNVN6bE0xL2dYTmVtNVJtb0RaVlFWU3FMaURQNExnaVdhR2ROVDZCSTdr?=
- =?utf-8?B?WTBxVFdOTm9vWlQxZ1hsNExVYTQ0b2pvbWtQek9wNGdOSlk1emY4VGJLZHRU?=
- =?utf-8?B?d3I1bVRidG40RTZyZzZHeER4Ynp4bzc5NC9UZjYzbU5DQS96U3J3QzlvQUlR?=
- =?utf-8?B?S0dGSjI0TmRQdngrblhydGYvdjcrNWFWTHJkYXVzbzdROWVSY0R4YkUrZmtX?=
- =?utf-8?B?UjIvQXVORW5tU3lubWgzd1UwQ1JOd3Z6eVRzdUVsMlV5SVBUV0pHdUY5WEVN?=
- =?utf-8?B?cmwrRnRXMkFKemxXdVBwU2Ria2JhdWFhTElCMHk1dVo0R2ZycXdRa0pUaisy?=
- =?utf-8?B?aUtHUVVCNFRKS1ExS21MV3VQaWhaWDdxRWxOb0t0RVJwQ0hieVJtVkRTMjBY?=
- =?utf-8?B?dHQ1cUVYbkdMVjNsK25tek1NNy9qNTQvSjNtb0JvcFNkWVo4elRZZ1ZuSitP?=
- =?utf-8?B?bTB4NlJBN0ZGdjkveGNFR25xRkVNWjlxaEx3Tk9vbnYyZzVNM2ZDS1ViM3Zs?=
- =?utf-8?B?ZzlDOEJNbGJXQVhRc2tlL1VaWlBFbk9PekMrWG5EdGlBcXViWmlQT2VFcnVi?=
- =?utf-8?B?S0tYUndTWHV2V1UvbGZGWGE4MWFtVmcwdVJrM1BhaWtMV0dqdDdyekd5blZj?=
- =?utf-8?B?RkQ2Mnd5UmVGaXcrNGJiOVpzSW41RjFPR3NWTTArVDBwQzFmMEdxS1dNRXBs?=
- =?utf-8?B?d0hYeld2cHV4UGwrL0NsTjFhYmpxdDdXc3ZZMG8yNlZjQjNvRnVvam45NHhN?=
- =?utf-8?B?VWltZHZiSVJUVndkcE1DSm8vSFNlRk9vU0pvVDk3OG9QMVB4Nzk3TU9kQUU3?=
- =?utf-8?B?TVYwamJjMWpvNXp2ODZwTUxrZTRscFQxSDJTUGR2V1NndmRhK3c2RmxlRzZ5?=
- =?utf-8?B?V3RRR09LM2Y3bmE1N2pZWG4xWktya3N2enBIaFZDMTVJWGhZMjlzWCtIbjhB?=
- =?utf-8?B?K3lzOTg5UGgrZDhoRUZtbFpqaG1RRU1kdFFmM1FiMWRPZVgrZTFKN3FrUHBC?=
- =?utf-8?B?STczemRreFJnMWpRNW52RFJJMVhZcmp5TlFEVDgzcy9GWkt2YXBHWEl6Z2sr?=
- =?utf-8?B?MnN6M2phMy9YOGZqckJTbDBVek5OSUVLQUNIWkNTZTIwTVZNMmNJRWNaZ0tU?=
- =?utf-8?B?VGRRTG5jclZaSTJTV0RYSndpY3FHcmc1K0k4ekFUTzBBbGNRUVNiai9DMlZa?=
- =?utf-8?B?RW5JVjBPRzFLMGRHd0FtYWlDa3cvbHRPMGhVamhNT1dUa3huVFNTYmFtbDZh?=
- =?utf-8?B?aHQ2QTJmMXdWNmg0VnJZWEk4cEN1R1A0T2FwKzlxWklidjZIT3hpWStQT2VV?=
- =?utf-8?B?TFVXWjVRK29uZDErbzhhTk9HZTlMaFpKMmZ2OXVpNVlMRko4bmdGZWc0T0Vh?=
- =?utf-8?B?ajZKTVh4a3ZscUpEdWFnaXM1V3YzNGtrNDF1WjFQQkRVaGFRTHMzVU50ejJL?=
- =?utf-8?B?MmV0ZGVvTE9KNVFCM3dUdVRocnJsV0d5U3ZBbUVzVk9Gd1UweDZyYk5nT1FV?=
- =?utf-8?B?QVZFaURtbnJKME5sdFQrbjlBM0RtK1JGOEp4bHNvejZUc0hmanQvZ1N0UTB5?=
- =?utf-8?B?czBibGozZkhKdjV4YWVaemYzQkd3emZxdWJQRUtIV3pqM3hnd245WmdDMVNW?=
- =?utf-8?B?bE10WkFHNmdhVVIwTm9nUHVHWHIwcFVvVG9rWWhnOTNlTGgvZHRlNThOOWZm?=
- =?utf-8?B?NGppempXTmRFaUZ6aG5Qbko3RjcrNENVT1FMMXpFb1ZoQ3FkSkJPV1FyVzlx?=
- =?utf-8?B?MHFaOHpMTGJRSm14RXcwWFBxNEVNSFhqVnlhUVZrdmNNYW5jMC91aHNmS2tT?=
- =?utf-8?B?L0E4Uk9IUG1QSmUvWVpESW10VlVNenpEVFhFeXc5RkRFeFpCVk1TOTlaRE1l?=
- =?utf-8?B?ajNVU3Z1endvdWp3bjlCSEE3NFkxOXNlMzFydExyVnVkdTRBSHlIWFhIUDNP?=
- =?utf-8?B?ZGRFRWpaSjduMzZ1T284cXphWllqYTlvdEtrbi9FR1o3bVVRaS84cXdvNC9K?=
- =?utf-8?B?bkZGZ0V4a2NmODQzUUJQRFhkRFJvTmt2dllLemt2TUtJcFlTeGtDblRmSUpu?=
- =?utf-8?Q?d4vZvqrS3BseheSQ5eNUcoqNI?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4525a46f-33b1-4957-2c13-08dcf7249736
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR11MB7529.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 07:46:11.0584
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 91h3N9m+LGPmdHqb09Mvbl+UZhV6NeQsQMpUY+0EdBRzszWXbY4qGczS0qQFKMniuboC3KXXq6QxCcJhZFvacA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR11MB7786
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next v5 1/2] perf stat: Support inherit events during
+ fork() for bperf
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, song@kernel.org,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, kan.liang@linux.intel.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20241021110201.325617-1-wutengda@huaweicloud.com>
+ <20241021110201.325617-2-wutengda@huaweicloud.com>
+ <ZxclNg9Y5hUXGXCf@google.com>
+ <e1faa3b2-5448-403f-93ab-78731daffce4@huaweicloud.com>
+ <Zxl8iRgHi0ZZKMf-@google.com>
+ <58fc2ccf-17ed-41eb-ac53-a3813ef75edc@huaweicloud.com>
+ <CAM9d7cgRmzoTeLRCCSL38cpoVFWOXNghML99qeYmmapPokLDfQ@mail.gmail.com>
+Content-Language: en-US
+From: Tengda Wu <wutengda@huaweicloud.com>
+In-Reply-To: <CAM9d7cgRmzoTeLRCCSL38cpoVFWOXNghML99qeYmmapPokLDfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgD304dfQh9n6JasAA--.54004S2
+X-Coremail-Antispam: 1UD129KBjvAXoWfJF1DKFyrurW3try5Kr47CFg_yoW8XryDCo
+	WrJF43Ja1rGry5AF1DA3srtr4Yy3WUJrWxJrWUWwn8Cwnrtw1jv3yrAr4fJan8AF1UGF4U
+	G34UJw4kZrZ5trn5n29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
+	AaLaJ3UjIYCTnIWjp_UUUY27kC6x804xWl14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK
+	8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4
+	AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF
+	7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7
+	CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8C
+	rVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4
+	IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kIc2xKxwCY1x0262kK
+	e7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
+	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
+	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
+	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v2
+	6r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07
+	UAwIDUUUUU=
+X-CM-SenderInfo: pzxwv0hjgdqx5xdzvxpfor3voofrz/
 
-On 2024/10/16 05:08, Joel Granados wrote:
-> From: Klaus Jensen <k.jensen@samsung.com>
-> 
-> PASID is not strictly needed when handling a PRQ event; remove the check
-> for the pasid present bit in the request. This change was not included
-> in the creation of prq.c to emphasize the change in capability checks
-> when handing PRQ events.
-> 
-> Signed-off-by: Klaus Jensen <k.jensen@samsung.com>
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
 
-looks like the PRQ draining is missed for the PRI usage. When a pasid
-entry is destroyed, it might need to add helper similar to the
-intel_drain_pasid_prq() to drain PRQ for the non-pasid usage.
 
-> ---
->   drivers/iommu/intel/prq.c | 12 +++---------
->   1 file changed, 3 insertions(+), 9 deletions(-)
+On 2024/10/28 14:23, Namhyung Kim wrote:
+> On Wed, Oct 23, 2024 at 7:11 PM Tengda Wu <wutengda@huaweicloud.com> wrote:
+>>
+>>
+>>
+>> On 2024/10/24 6:45, Namhyung Kim wrote:
+>>> On Tue, Oct 22, 2024 at 05:39:23PM +0800, Tengda Wu wrote:
+>>>>
+>>>>
+>>>> On 2024/10/22 12:08, Namhyung Kim wrote:
+>>>>> Hello,
+>>>>>
+>>>>> On Mon, Oct 21, 2024 at 11:02:00AM +0000, Tengda Wu wrote:
+>>>>>> bperf has a nice ability to share PMUs, but it still does not support
+>>>>>> inherit events during fork(), resulting in some deviations in its stat
+>>>>>> results compared with perf.
+>>>>>>
+>>>>>> perf stat result:
+>>>>>> $ ./perf stat -e cycles,instructions -- ./perf test -w sqrtloop
+>>>>>>    Performance counter stats for './perf test -w sqrtloop':
+>>>>>>
+>>>>>>        2,316,038,116      cycles
+>>>>>>        2,859,350,725      instructions
+>>>>>>
+>>>>>>          1.009603637 seconds time elapsed
+>>>>>>
+>>>>>>          1.004196000 seconds user
+>>>>>>          0.003950000 seconds sys
+>>>>>>
+>>>>>> bperf stat result:
+>>>>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>>>>>>       ./perf test -w sqrtloop
+>>>>>>
+>>>>>>    Performance counter stats for './perf test -w sqrtloop':
+>>>>>>
+>>>>>>           18,762,093      cycles
+>>>>>>           23,487,766      instructions
+>>>>>>
+>>>>>>          1.008913769 seconds time elapsed
+>>>>>>
+>>>>>>          1.003248000 seconds user
+>>>>>>          0.004069000 seconds sys
+>>>>>>
+>>>>>> In order to support event inheritance, two new bpf programs are added
+>>>>>> to monitor the fork and exit of tasks respectively. When a task is
+>>>>>> created, add it to the filter map to enable counting, and reuse the
+>>>>>> `accum_key` of its parent task to count together with the parent task.
+>>>>>> When a task exits, remove it from the filter map to disable counting.
+>>>>>>
+>>>>>> After support:
+>>>>>> $ ./perf stat --bpf-counters -e cycles,instructions -- \
+>>>>>>       ./perf test -w sqrtloop
+>>>>>>
+>>>>>>  Performance counter stats for './perf test -w sqrtloop':
+>>>>>>
+>>>>>>      2,316,252,189      cycles
+>>>>>>      2,859,946,547      instructions
+>>>>>>
+>>>>>>        1.009422314 seconds time elapsed
+>>>>>>
+>>>>>>        1.003597000 seconds user
+>>>>>>        0.004270000 seconds sys
+>>>>>>
+>>>>>> Signed-off-by: Tengda Wu <wutengda@huaweicloud.com>
+>>>>>> ---
+>>>>>>  tools/perf/builtin-stat.c                     |  1 +
+>>>>>>  tools/perf/util/bpf_counter.c                 | 35 +++++--
+>>>>>>  tools/perf/util/bpf_skel/bperf_follower.bpf.c | 98 +++++++++++++++++--
+>>>>>>  tools/perf/util/bpf_skel/bperf_u.h            |  5 +
+>>>>>>  tools/perf/util/target.h                      |  1 +
+>>>>>>  5 files changed, 126 insertions(+), 14 deletions(-)
+>>>>>>
+>>>>>> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+>>>>>> index 3e6b9f216e80..8bc880479417 100644
+>>>>>> --- a/tools/perf/builtin-stat.c
+>>>>>> +++ b/tools/perf/builtin-stat.c
+>>>>>> @@ -2620,6 +2620,7 @@ int cmd_stat(int argc, const char **argv)
+>>>>>>    } else if (big_num_opt == 0) /* User passed --no-big-num */
+>>>>>>            stat_config.big_num = false;
+>>>>>>
+>>>>>> +  target.inherit = !stat_config.no_inherit;
+>>>>>>    err = target__validate(&target);
+>>>>>>    if (err) {
+>>>>>>            target__strerror(&target, err, errbuf, BUFSIZ);
+>>>>>> diff --git a/tools/perf/util/bpf_counter.c b/tools/perf/util/bpf_counter.c
+>>>>>> index 7a8af60e0f51..73fcafbffc6a 100644
+>>>>>> --- a/tools/perf/util/bpf_counter.c
+>>>>>> +++ b/tools/perf/util/bpf_counter.c
+>>>>>> @@ -394,6 +394,7 @@ static int bperf_check_target(struct evsel *evsel,
+>>>>>>  }
+>>>>>>
+>>>>>>  static    struct perf_cpu_map *all_cpu_map;
+>>>>>> +static __u32 filter_entry_cnt;
+>>>>>>
+>>>>>>  static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>>>>>>                                   struct perf_event_attr_map_entry *entry)
+>>>>>> @@ -444,12 +445,32 @@ static int bperf_reload_leader_program(struct evsel *evsel, int attr_map_fd,
+>>>>>>    return err;
+>>>>>>  }
+>>>>>>
+>>>>>> +static int bperf_attach_follower_program(struct bperf_follower_bpf *skel,
+>>>>>> +                                   enum bperf_filter_type filter_type,
+>>>>>> +                                   bool inherit)
+>>>>>> +{
+>>>>>> +  struct bpf_link *link;
+>>>>>> +  int err = 0;
+>>>>>> +
+>>>>>> +  if ((filter_type == BPERF_FILTER_PID ||
+>>>>>> +      filter_type == BPERF_FILTER_TGID) && inherit)
+>>>>>> +          /* attach all follower bpf progs to enable event inheritance */
+>>>>>> +          err = bperf_follower_bpf__attach(skel);
+>>>>>> +  else {
+>>>>>> +          link = bpf_program__attach(skel->progs.fexit_XXX);
+>>>>>> +          if (IS_ERR(link))
+>>>>>> +                  err = PTR_ERR(link);
+>>>>>> +  }
+>>>>>> +
+>>>>>> +  return err;
+>>>>>> +}
+>>>>>> +
+>>>>>>  static int bperf__load(struct evsel *evsel, struct target *target)
+>>>>>>  {
+>>>>>>    struct perf_event_attr_map_entry entry = {0xffffffff, 0xffffffff};
+>>>>>>    int attr_map_fd, diff_map_fd = -1, err;
+>>>>>>    enum bperf_filter_type filter_type;
+>>>>>> -  __u32 filter_entry_cnt, i;
+>>>>>> +  __u32 i;
+>>>>>>
+>>>>>>    if (bperf_check_target(evsel, target, &filter_type, &filter_entry_cnt))
+>>>>>>            return -1;
+>>>>>> @@ -529,9 +550,6 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>>>>>>    /* set up reading map */
+>>>>>>    bpf_map__set_max_entries(evsel->follower_skel->maps.accum_readings,
+>>>>>>                             filter_entry_cnt);
+>>>>>> -  /* set up follower filter based on target */
+>>>>>> -  bpf_map__set_max_entries(evsel->follower_skel->maps.filter,
+>>>>>> -                           filter_entry_cnt);
+>>>>>>    err = bperf_follower_bpf__load(evsel->follower_skel);
+>>>>>>    if (err) {
+>>>>>>            pr_err("Failed to load follower skeleton\n");
+>>>>>> @@ -543,6 +561,7 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>>>>>>    for (i = 0; i < filter_entry_cnt; i++) {
+>>>>>>            int filter_map_fd;
+>>>>>>            __u32 key;
+>>>>>> +          struct bperf_filter_value fval = { i, 0 };
+>>>>>>
+>>>>>>            if (filter_type == BPERF_FILTER_PID ||
+>>>>>>                filter_type == BPERF_FILTER_TGID)
+>>>>>> @@ -553,12 +572,14 @@ static int bperf__load(struct evsel *evsel, struct target *target)
+>>>>>>                    break;
+>>>>>>
+>>>>>>            filter_map_fd = bpf_map__fd(evsel->follower_skel->maps.filter);
+>>>>>> -          bpf_map_update_elem(filter_map_fd, &key, &i, BPF_ANY);
+>>>>>> +          bpf_map_update_elem(filter_map_fd, &key, &fval, BPF_ANY);
+>>>>>>    }
+>>>>>>
+>>>>>>    evsel->follower_skel->bss->type = filter_type;
+>>>>>> +  evsel->follower_skel->bss->inherit = target->inherit;
+>>>>>>
+>>>>>> -  err = bperf_follower_bpf__attach(evsel->follower_skel);
+>>>>>> +  err = bperf_attach_follower_program(evsel->follower_skel, filter_type,
+>>>>>> +                                      target->inherit);
+>>>>>>
+>>>>>>  out:
+>>>>>>    if (err && evsel->bperf_leader_link_fd >= 0)
+>>>>>> @@ -623,7 +644,7 @@ static int bperf__read(struct evsel *evsel)
+>>>>>>    bperf_sync_counters(evsel);
+>>>>>>    reading_map_fd = bpf_map__fd(skel->maps.accum_readings);
+>>>>>>
+>>>>>> -  for (i = 0; i < bpf_map__max_entries(skel->maps.accum_readings); i++) {
+>>>>>> +  for (i = 0; i < filter_entry_cnt; i++) {
+>>>>>>            struct perf_cpu entry;
+>>>>>>            __u32 cpu;
+>>>>>>
+>>>>>> diff --git a/tools/perf/util/bpf_skel/bperf_follower.bpf.c b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+>>>>>> index f193998530d4..0595063139a3 100644
+>>>>>> --- a/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+>>>>>> +++ b/tools/perf/util/bpf_skel/bperf_follower.bpf.c
+>>>>>> @@ -5,6 +5,8 @@
+>>>>>>  #include <bpf/bpf_tracing.h>
+>>>>>>  #include "bperf_u.h"
+>>>>>>
+>>>>>> +#define MAX_ENTRIES 102400
+>>>>>> +
+>>>>>>  struct {
+>>>>>>    __uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
+>>>>>>    __uint(key_size, sizeof(__u32));
+>>>>>> @@ -22,25 +24,29 @@ struct {
+>>>>>>  struct {
+>>>>>>    __uint(type, BPF_MAP_TYPE_HASH);
+>>>>>>    __uint(key_size, sizeof(__u32));
+>>>>>> -  __uint(value_size, sizeof(__u32));
+>>>>>> +  __uint(value_size, sizeof(struct bperf_filter_value));
+>>>>>> +  __uint(max_entries, MAX_ENTRIES);
+>>>>>> +  __uint(map_flags, BPF_F_NO_PREALLOC);
+>>>>>>  } filter SEC(".maps");
+>>>>>>
+>>>>>>  enum bperf_filter_type type = 0;
+>>>>>>  int enabled = 0;
+>>>>>> +int inherit;
+>>>>>>
+>>>>>>  SEC("fexit/XXX")
+>>>>>>  int BPF_PROG(fexit_XXX)
+>>>>>>  {
+>>>>>>    struct bpf_perf_event_value *diff_val, *accum_val;
+>>>>>>    __u32 filter_key, zero = 0;
+>>>>>> -  __u32 *accum_key;
+>>>>>> +  __u32 accum_key;
+>>>>>> +  struct bperf_filter_value *fval;
+>>>>>>
+>>>>>>    if (!enabled)
+>>>>>>            return 0;
+>>>>>>
+>>>>>>    switch (type) {
+>>>>>>    case BPERF_FILTER_GLOBAL:
+>>>>>> -          accum_key = &zero;
+>>>>>> +          accum_key = zero;
+>>>>>>            goto do_add;
+>>>>>>    case BPERF_FILTER_CPU:
+>>>>>>            filter_key = bpf_get_smp_processor_id();
+>>>>>> @@ -49,22 +55,34 @@ int BPF_PROG(fexit_XXX)
+>>>>>>            filter_key = bpf_get_current_pid_tgid() & 0xffffffff;
+>>>>>>            break;
+>>>>>>    case BPERF_FILTER_TGID:
+>>>>>> -          filter_key = bpf_get_current_pid_tgid() >> 32;
+>>>>>> +          /* Use pid as the filter_key to exclude new task counts
+>>>>>> +           * when inherit is disabled. Don't worry about the existing
+>>>>>> +           * children in TGID losing their counts, bpf_counter has
+>>>>>> +           * already added them to the filter map via perf_thread_map
+>>>>>> +           * before this bpf prog runs.
+>>>>>> +           */
+>>>>>> +          filter_key = inherit ?
+>>>>>> +                       bpf_get_current_pid_tgid() >> 32 :
+>>>>>> +                       bpf_get_current_pid_tgid() & 0xffffffff;
+>>>>>
+>>>>> I'm not sure why this is needed.  Isn't the existing code fine?
+>>>>
+>>>> No, it's not. If I don't modify here, all child threads will always be counted
+>>>> when inherit is disabled.
+>>>>
+>>>>
+>>>> Before explaining this modification, we may need to first clarify what is included
+>>>> in the filter map.
+>>>>
+>>>> 1. The fexit_XXX prog determines whether to count by filter_key during each
+>>>>    context switch. If the key is found in the filter map, it will be counted,
+>>>>    otherwise not.
+>>>> 2. The keys in the filter map are synchronized from the perf_thread_map when
+>>>>    bperf__load().
+>>>> 3. The threads in perf_thread_map are added through cmd_stat()->evlist__create_maps()
+>>>>    before bperf__load().
+>>>> 4. evlist__create_maps() fills perf_thread_map by traversing the /proc/%d/task
+>>>>    directory, and these pids belong to the same tgid.
+>>>>
+>>>> Therefore, when the bperf command is issued, the filter map already holds all
+>>>> existing threads with the same tgid as the specified process.
+>>>>
+>>>>
+>>>> Now, let's take a look at the TGID case. We hope the behavior is as follows:
+>>>>
+>>>>  * TGID w/ inherit : specified process + all children from the processes
+>>>>  * TGID w/o inherit: specified process (all threads in the process) only
+>>>>
+>>>> Assuming that a new thread is created during bperf stats, the new thread should
+>>>> exhibit the following behavior in the fexit_XXX prog:
+>>>>
+>>>>  * TGID w/ inherit : do_add
+>>>>  * TGID w/o inherit: skip and return
+>>>>
+>>>> Let's now test the code before and after modification.
+>>>>
+>>>> Before modification: (filter_key = tgid)
+>>>>
+>>>>  * TGID w/ inherit:
+>>>>       create  : new thread
+>>>>       enter   : fexit_XXX prog
+>>>>       assign  : filter_key = new thread's tgid
+>>>>       match   : bpf_map_lookup_elem(&filter, &filter_key)
+>>>>       do_add
+>>>>    (PASS)
+>>>>
+>>>>  * TGID w/o inherit:
+>>>>       [...]   /* like above */
+>>>>       do_add
+>>>>    (FAILED, expect skip and return)
+>>>>
+>>>> After modification: (filter_key = inherit ? tgid : pid)
+>>>>
+>>>>  * TGID w/ inherit:
+>>>>       create  : new thread
+>>>>       enter   : fexit_XXX prog
+>>>>       assign  : filter_key = new thread's tgid
+>>>>       match   : bpf_map_lookup_elem(&filter, &filter_key)
+>>>>       do_add
+>>>>    (PASS)
+>>>>
+>>>>  * TGID w/o inherit:
+>>>>       create  : new thread
+>>>>       enter   : fexit_XXX prog
+>>>>       assign  : filter_key = new thread's pid
+>>>>       mismatch: bpf_map_lookup_elem(&filter, &filter_key)
+>>>>       skip and return
+>>>>    (PASS)
+>>>>
+>>>> As we can see, filter_key=tgid counts incorrectly in TGID w/o inherit case,
+>>>> and we need to change it to filter_key=pid to fix it.
+>>>
+>>> I'm sorry but I don't think I'm following.  A new thread in TGID mode
+>>> (regardless inherit) should be counted always, right?  Why do you
+>>> expect to skip it?
+>>
+>> This is how perf originally performs. To confirm this, I wrote a workload
+>> that creates one new thread per second and then stat it, as shown below.
+>> You can see that in 'TGID w/o inherit' case, perf does not count for the
+>> newly created threads.
+>>
+>> Perf TGID w/ inherit:
+>> ---
+>>   $ ./perf stat -e cpu-clock --timeout 5000 -- ./new_thread_per_second
+>>   thread 367444: start [main]
+>>   thread 367448: start
+>>   thread 367455: start
+>>   thread 367462: start
+>>   thread 367466: start
+>>   thread 367473: start
+>>   ./new_thread_per_second: Terminated
+>>
+>>   Performance counter stats for './new_thread_per_second':
+>>
+>>           10,017.71 msec cpu-clock
+>>
+>>         5.005538048 seconds time elapsed
+>>
+>>         10.018777000 seconds user
+>>         0.000000000 seconds sys
+>>
+>> Perf TGID w/o inherit:
+>> ---
+>>   $ ./perf stat -e cpu-clock --timeout 5000 -i -- ./new_thread_per_second
+>>   thread 366679: start [main]
+>>   thread 366686: start
+>>   thread 366693: start
+>>   thread 366697: start
+>>   thread 366704: start
+>>   thread 366708: start
+>>   ./new_thread_per_second: Terminated
+>>
+>>   Performance counter stats for './new_thread_per_second':
+>>
+>>                 4.29 msec cpu-clock
+>>
+>>         5.005539338 seconds time elapsed
+>>
+>>         10.019673000 seconds user
+>>         0.000000000 seconds sys
+>>
+>>
+>> Therefore, we also need to distinguish it in bperf so that the collection
+>> results can be consistent with perf.
+>>
+>> Bperf TGID w/o inherit: (BEFORE FIX)
+>> ---
+>>   $ ./perf stat --bpf-counters -e cpu-clock --timeout 5000 -i -- ./new_thread_per_second
+>>   thread 369127: start [main]
+>>   thread 369134: start
+>>   thread 369141: start
+>>   thread 369145: start
+>>   thread 369152: start
+>>   thread 369156: start
+>>   ./new_thread_per_second: Terminated
+>>
+>>   Performance counter stats for './new_thread_per_second':
+>>
+>>           10,019.05 msec cpu-clock
+>>
+>>         5.005567266 seconds time elapsed
+>>
+>>         10.018528000 seconds user
+>>         0.000000000 seconds sys
+>>
+>> Bperf TGID w/o inherit: (AFTER FIX)
+>> ---
+>>   $ ./perf stat --bpf-counters -e cpu-clock --timeout 5000 -i -- ./new_thread_per_second
+>>   thread 366616: start [main]
+>>   thread 366623: start
+>>   thread 366627: start
+>>   thread 366634: start
+>>   thread 366638: start
+>>   thread 366645: start
+>>   ./new_thread_per_second: Terminated
+>>
+>>   Performance counter stats for './new_thread_per_second':
+>>
+>>                 4.95 msec cpu-clock
+>>
+>>         5.005511173 seconds time elapsed
+>>
+>>         10.018790000 seconds user
+>>         0.000000000 seconds sys
+>>
+>>
+>> Thanks,
+>> Tengda
+>>
 > 
-> diff --git a/drivers/iommu/intel/prq.c b/drivers/iommu/intel/prq.c
-> index d4f18eb46475..3c50c848893f 100644
-> --- a/drivers/iommu/intel/prq.c
-> +++ b/drivers/iommu/intel/prq.c
-> @@ -223,18 +223,12 @@ static irqreturn_t prq_event_thread(int irq, void *d)
->   		req = &iommu->prq[head / sizeof(*req)];
->   		address = (u64)req->addr << VTD_PAGE_SHIFT;
->   
-> -		if (unlikely(!req->pasid_present)) {
-> -			pr_err("IOMMU: %s: Page request without PASID\n",
-> -			       iommu->name);
-> -bad_req:
-> -			handle_bad_prq_event(iommu, req, QI_RESP_INVALID);
-> -			goto prq_advance;
-> -		}
-> -
->   		if (unlikely(!is_canonical_address(address))) {
->   			pr_err("IOMMU: %s: Address is not canonical\n",
->   			       iommu->name);
-> -			goto bad_req;
-> +bad_req:
-> +			handle_bad_prq_event(iommu, req, QI_RESP_INVALID);
-> +			goto prq_advance;
->   		}
->   
->   		if (unlikely(req->pm_req && (req->rd_req | req->wr_req))) {
+> Thanks for the explanation.  Ok I think it's the limitation of the current
+> implementation of perf_event that works at thread-level.  Even if we
+> can count events at process-level with bperf, it might be important to
+> keep the compatibility with the existing behavior.
 > 
+> Thanks,
+> Namhyung
 
--- 
-Regards,
-Yi Liu
+Yeah, thanks for your every review!
+
+Best regards,
+Tengda
+
 
