@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-384208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0348C9B2863
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:06:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1569B2868
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:06:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2746D1C21185
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E4721F210AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5452718FDC9;
-	Mon, 28 Oct 2024 07:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4027D18FDDB;
+	Mon, 28 Oct 2024 07:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WsaUhUkT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VCUlQA93"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1541422AB;
-	Mon, 28 Oct 2024 07:05:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8543518FDA9;
+	Mon, 28 Oct 2024 07:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730099156; cv=none; b=TNrhexWFNV8BNQoB4UffcJj9CsSAEa0kG7Unqyx5Ttjze3mGdjV9si+0iiXeOYo1/V/2AjKKoi+E8byowXUyQh5odp47N49ZuQEINjGRJMYQsLKp1w01wQ61cA+qya80IixE8+SZQ7sLnIhLkVUMIR509IR6rtRI58CzeIOXYV0=
+	t=1730099197; cv=none; b=tldtgo4ZK8Za000mb49+5zJsaEBHQ1oZ1J0jyuEb0dmtWk1ob5oCsJHlEOcCxvmIMCGhPUUk6lIt5uupukeBrqz/amGepaHsJPPvB//MSrhaUWG60wxgTXx7yWmiizMYALEBw6Vr5eh7m6i58i36QzNyV/X6jfY9TedecnpTFvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730099156; c=relaxed/simple;
-	bh=OLwS2w9yv75eZgYa5L3i6ILstUnL/tJZe5Pf0n/3VLI=;
+	s=arc-20240116; t=1730099197; c=relaxed/simple;
+	bh=C6ecd/IilLnEJaRLZPz9N5mizdHDr5C84R9swhXE194=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gM/ZqrCRmFev2+doBGtLAcx15QHo7Jd8KNzGDW40CZ2Yta+ht5aDL4g7p0qoLlfyhlJ1gZGzxpIDfEMkCUkyZGSgZzjBxDiHAOMgThECfAnsSL+U/JzFXunQrpaEaGdvvmCzr5+tQUp8BnMlyX8KoUXJkFN4atHRgOlZpsUcWKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WsaUhUkT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD537C4CEC3;
-	Mon, 28 Oct 2024 07:05:50 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=JnB3LZJoIv/G9HO81ZqvPR04K+N1kKNUtzuC1vNCwZJWJrwrcJ2pGPqyBUVMv6ikTleuvQNSCoqxtZNVehtXRQGQfbOfCFJDqgLNjSe92s92gfr42YKb4KBAwoED748qfYtCFVJAMHe2lon3aGMShRtrnZMcKEwForXcyrRNSUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VCUlQA93; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13209C4CEC3;
+	Mon, 28 Oct 2024 07:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730099156;
-	bh=OLwS2w9yv75eZgYa5L3i6ILstUnL/tJZe5Pf0n/3VLI=;
+	s=k20201202; t=1730099197;
+	bh=C6ecd/IilLnEJaRLZPz9N5mizdHDr5C84R9swhXE194=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WsaUhUkT4eQ3WEeD2nDD46mgJTzjp7ogXaLeVk7tZkJEPEwb6829DroBhjmcVUoKj
-	 /4aXeplOPgiH5YJzYA1rLwps+DiaUdVoT7Rtn3zCurgoSBG2OBr/8WgH7b+f2CgzFo
-	 ScwnzPPJ+YMxtLZETW59GwJzNtP3Q51p/Ef9nSDQZLKSDKhD7whmSlzucTHr1zmSL3
-	 yUcb07olm+nwtDw5A8kglIUQwP2nAbIYruEA5csznP+lzL+9ZIbtXqc8/eja4ftJit
-	 56uaN+/DpJcDo/d1CWSCGR8UiUp7tSJq5wKkDTsJhpcU9enRXi7S5dG2VehfOOeGd9
-	 K11RRqxa03Gdg==
-Message-ID: <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
-Date: Mon, 28 Oct 2024 08:05:47 +0100
+	b=VCUlQA93gEIP1NchFREE5xQcXjzsAzjJIC+oFkDeVy452QZzmUGi5sZvLoVQaPtrk
+	 scwWaNnc7kMoUSpCnEYkUB51OcV+bxrHeRZQotNLpsCHPSOmRricfXNBWQfE8DtJFR
+	 DjSoA/QGAYRZH9+Oh9bdIF7lkuYvmjWZvDnwJzXbWnpNvqJrAeC34lu0ZDnnV+++07
+	 Xysk5czeUUhrXktJlYbj9CTiEOZ2dSz3PmO3GSuoZz3lxwmGdPIz7I7aRzBQm9Ftmo
+	 o+N5Fc3ZxK5nyzZMoyAARIU5/Wo9z78TBK3czpljO1wINA7TgavHydybaFsUfBhskw
+	 Zz80XJvXNYfeQ==
+Message-ID: <8eeb1f7c-3198-45ac-be9a-c3d4e5174f1f@kernel.org>
+Date: Mon, 28 Oct 2024 08:06:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
- QCS8300
-To: Imran Shaik <quic_imrashai@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 2/4] dt-bindings: net: Add support for Sophgo SG2044
+ dwmac
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
- Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
- <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
- <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
- <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+ <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>,
+ Longbin Li <looong.bin@gmail.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org
+References: <20241025011000.244350-1-inochiama@gmail.com>
+ <20241025011000.244350-3-inochiama@gmail.com>
+ <4avwff7m4puralnaoh6pat62nzpovre2usqkmp3q4r4bk5ujjf@j3jzr4p74v4a>
+ <mwlbdxw7yh5cqqi5mnbhelf4ihqihup4zkzppkxm7ggsb5itbb@mcbyevoat76d>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,28 +118,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+In-Reply-To: <mwlbdxw7yh5cqqi5mnbhelf4ihqihup4zkzppkxm7ggsb5itbb@mcbyevoat76d>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28/10/2024 06:15, Imran Shaik wrote:
-> 
-> 
-> On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
->> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
->>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
->>> QCS8300 has few additional clocks and minor differences. Hence, reuse
->>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
+On 28/10/2024 00:32, Inochi Amaoto wrote:
+> On Sun, Oct 27, 2024 at 09:38:00PM +0100, Krzysztof Kozlowski wrote:
+>> On Fri, Oct 25, 2024 at 09:09:58AM +0800, Inochi Amaoto wrote:
+>>> The GMAC IP on SG2044 is almost a standard Synopsys DesignWare MAC
+>>> with some extra clock.
+>>>
+>>> Add necessary compatible string for this device.
+>>>
+>>> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+>>> ---
 >>
->> IIUC, these clocks are not valid for SA8775p. How do we deal with such
->> cases for other Qualcomm SoCs?
->>
+>> This should be squashed with a corrected previous patch 
 > 
-> These newly added clocks are not applicable to SA8755P. In the 
-> gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P, 
-> ensuring they are not registered to the CCF.
+> Good, I will.
+> 
+>> (why do you need to select snps,dwmac-5.30a?), 
+> 
+> The is because the driver use the fallback versioned compatible 
+> string to set up some common arguments. (This is what the patch
 
-I meant bindings. And existing practice.
+Nope. Driver never relies on schema doing select. That's just incorrect.
+
+> 3 does). It is also better to have a accurate fallback compatible
+> if we already know what it is.
 
 Best regards,
 Krzysztof
