@@ -1,236 +1,145 @@
-Return-Path: <linux-kernel+bounces-386001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F149B3DF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:43:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B7939B3DFB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5B56282C41
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E40E6282D7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D51C1F4275;
-	Mon, 28 Oct 2024 22:43:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE4CF1F4272;
+	Mon, 28 Oct 2024 22:44:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DXknwB5V"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KURCSItT"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CA21D88D7
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 22:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45367190049;
+	Mon, 28 Oct 2024 22:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730155389; cv=none; b=LXr1ACcVDhsfutVvO/EMrYWaxE4PXQFiZpJJv6bnrsYg+xckEoPjCe1NA9vMallutLk2vBeMuHifTWu1DBHuHPtZk8cm0AGgg0gmLLOPxq27xiYxGrAymrFkE6u6atFF9inONNUq1mbyurMw+p73+zPFhtMfk7r91wkqM+zFS8c=
+	t=1730155476; cv=none; b=R86j3tROcpOZ4ayl4c/RlJOG9OxU/ygvpNp1MyItTc6C5weQyEwmWv+4kuHlza+n34PbZ3ETW9AW3OpVlj7XlMUmQEm7A58Q1oOMkRiSi5scsHx+3aZptMB/CQb7FZIKOFxOC4MWSFx7AMrG6bs8hr05X9XwaBIbPkQbefCL0aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730155389; c=relaxed/simple;
-	bh=8UYfq6xwx6PNtegsJSe3u2bb0htlA3pYvuHVzb2aZQk=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=IhCloWD0ztlbD3T8l22JOuipa7VRrrIJglGtuxiGf1gb1zMkdSxW2UzGik3WAoptsCknJ5pOmpn61uVMxFgmLwXzr7rk4KMArYyoKK3n+/3tQ7AF+Y2rZ8JTYAPWmRsh19FDZE73ZRnrT0gH//A8biBwTf7MZB9mcZf/MXyvQ9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DXknwB5V; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e30859e1580so3280787276.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:43:06 -0700 (PDT)
+	s=arc-20240116; t=1730155476; c=relaxed/simple;
+	bh=oFC5xLPzfVQG32+qWcuc3Y/1lCF6OHVwdkJz8EgHe7A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cX366trgWhkClSf07bzvYpaD9joUPWHc9WIxsiU640DORSzR0pmSVU3GvJUy1OHeprXCowuc08EDsp41x9qqySQlP7nOhGLZxjh4wruGuaOY7hfu5yQNhQQIr2ykLrCF4vDynL5s4wWQvLEZlBkCA6tK46JAZ6bKBQ+mtRDI2JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KURCSItT; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20e6981ca77so51790975ad.2;
+        Mon, 28 Oct 2024 15:44:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730155385; x=1730760185; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbBJoA36Gli9bgRVl0932SSYsBNkIONPnI8+Rr/oPns=;
-        b=DXknwB5V3P+WJ8Y9GA4B1yWZsi/sxWGqJ8uAeCqHlYgQ8anOasJQR5WnWI/6/Vfpox
-         zXhp4UgeW19jeK+ZcJ7BdcDMeR0j3HzsvkFZZWjiJsUqVDWejlCLB1m4Sz7cqD1LiDUn
-         yQhKKjAsVgQs7qLgE+vX377GYMGOBTOF0gDd+XG6KhuQEtVjF73DfQjZPv3g6oytKT97
-         LkagbQAZf6QgOb2YMTr7cRRs8QhKMvvuPYNritGesZrc/2GIrUeZnYfBVRNSz2oIOsei
-         UP1+ZKVdjrN4NfnT2q9NLUScAW/XqXHYW1Re3+XmKvaOZ8Gt47SgVosWCNsafpaXB7dC
-         Hz4w==
+        d=gmail.com; s=20230601; t=1730155473; x=1730760273; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgFwSqKxZi3FF7UkmPRYG9KwHiHgPKv/2vs0tc5OzUo=;
+        b=KURCSItTavul58JAA5FmNmASe2JxY46t/MaRrdfG6oEDye6os14++IeB0hXeKODZjm
+         uY7LAUalaFIipeJXULjUpHOkW8RVcwBADIeAFquOW5cTkSeHO3ZyKDF6hBLwbLXXvpOK
+         70coOvtqzqrWYULcV7M7wsyuqTnLCu5WvAzsGXrnT5QIh2uGN7lBf80ynNRT5IaJGsjI
+         KixmCPge6rCU8VXnM1Lt/bbTzvzAUW4yhTSSEL/yxL1bYq44FywDXR4xBB8FVuabI8ff
+         BLr0qMg0ADj046X51UxUEzCI7yRQ1SdTFWrSjfbCLD/5xQJBMZWNEgjt/8hstAT6nAJf
+         hqYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730155385; x=1730760185;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tbBJoA36Gli9bgRVl0932SSYsBNkIONPnI8+Rr/oPns=;
-        b=fWwgi5OdKE39GAloddSZIQ1J1foZj13AzfM9pgpu7xe+YXgLVvBsq2nUaWTx9fYi6K
-         m/2tV/LeZb7ny2FYa17WcD/Oja2adxddjL6ZObrSYLDLp/WSsJacAP+KGWkhVQbdgnmX
-         x0Ulu7+b0e/Zk5JDei5TMzd8A2zb4joz/nG0EpdIc3U4lzLTwQ0DdjtPiDh2saHEtm84
-         INHWWZW8d6r73QCIbLtWZiJqM+QzebLHkPuEV15qw2MLrzGgNIqZbOkXXToqUp+u4dVn
-         tvjbONONEK3lWxRWm110iq1dLsDW5mUv85tOazPKnqzeEbIDi+Eeqwqf4tgWoJRNVhIC
-         Nnxw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHpMWFBvooAA/P105hX7TuOqlx14oDKEPppEPRqw+L6xCDqtZbRB6UY3pCS/D+GL2lT0Sfl1TJ4ZWe7Vc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqvqHTnfcwVQIedHZHtu1DLKyL85N0qNtIZPLCktSomVf3Ld7n
-	v1NsjFndwNDuYbZCZldUu9KzzikPMNWl0tcmoIAOGAPJm0vsWh1zGPcQ6e11ieHx+wrTyOcArw=
-	=
-X-Google-Smtp-Source: AGHT+IFvatkdCtoyho0ieIBR6oSRfF86vOVmn/8Pd66qP1jxuO1WDjoku1lx3X6/JeabxEIVtMLEurx4nQ==
-X-Received: from rmoar-specialist.c.googlers.com ([fda3:e722:ac3:cc00:d3:4d64:ac12:6a5d])
- (user=rmoar job=sendgmr) by 2002:a05:6902:686:b0:e28:ef6f:3624 with SMTP id
- 3f1490d57ef6-e3087b82cecmr6608276.5.1730155385386; Mon, 28 Oct 2024 15:43:05
- -0700 (PDT)
-Date: Mon, 28 Oct 2024 22:42:42 +0000
-In-Reply-To: <20241028224242.3304844-1-rmoar@google.com>
+        d=1e100.net; s=20230601; t=1730155473; x=1730760273;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mgFwSqKxZi3FF7UkmPRYG9KwHiHgPKv/2vs0tc5OzUo=;
+        b=oasc9upHEyjUT3eCy6FA1Rh/gmmzGoVLCsWU0uib5RhfTsQ0nx5QtLlppwcUXk44RF
+         NfDwgjUfVPpgkhsxmx4ZqqXqgnSb3FgzwaSsr8mmUor9TkoPyesDQFwp2qK8RBoeXifM
+         cVm13vtWIyPBUp3gMrAdfi8CBtSEcj/5zoDP/CJssfyjKWgV1wwYirn56LrT4s899zAn
+         7zXnJI8kffzw4jVKQpzDb9bzbWv7TQzy6cBvvI0JeIaN8Ocgl88gnpyDlB5Bp0COlCp7
+         UvVW24uP1/aLXyH91BjQf2G7+UsBm4L2ruBZzN8UUPuXlJWAFoHL8wR0OJB/iQo9oFgf
+         +Vfg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3m3fhHjJcw221kwnByB07p+p/c/FW/E27LnuU5rSBjwUmoK/qaNTbK5cV2J+jQ8c4yKAZm+6ZA3OujJQE@vger.kernel.org, AJvYcCVYTwogLSlli8NDb4LDWhMrYlMUy0ngofBFKLT0H2X1EICia9rhZ9hrkIKRe64RfYCzzKjPnlnAWw9r@vger.kernel.org, AJvYcCXtyid0bMLtc81w7GSr4jLC78npV4i9IaJLfN/4sOreDsykzE4f6s7kj7i2hv+BXpG3Br17kP7A@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRoUnAQ2kCqPZTSz2jMHu2g0Bj6mXih6f3WSIzCGsCJK38iWQk
+	6ajM9sLZImlzFmz0+i/7RzGi90NqXmHc7o2VRak9tuTIyht+nQvn
+X-Google-Smtp-Source: AGHT+IHe9JwtrfAxRCZKliVLyemHgefPy4SbHNg75z53OjoVcWbOJ47y7AP7JlSm9J6WnP1SMot6OA==
+X-Received: by 2002:a17:90b:19c8:b0:2e2:b44d:119d with SMTP id 98e67ed59e1d1-2e8f11b9703mr10455615a91.39.1730155473542;
+        Mon, 28 Oct 2024 15:44:33 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e4e631esm9895493a91.27.2024.10.28.15.44.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 15:44:33 -0700 (PDT)
+Date: Tue, 29 Oct 2024 06:43:03 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Richard Cochran <richardcochran@gmail.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Liu Gui <kenneth.liu@sophgo.com>, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: sophgo: Add ethernet configuration for cv18xx
+Message-ID: <wgggariprpp2wczsljy3vw6kp7vhnrifg6soxdgiio2seyctym@4owbzlg3ngum>
+References: <20241028011312.274938-1-inochiama@gmail.com>
+ <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241028224242.3304844-1-rmoar@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241028224242.3304844-2-rmoar@google.com>
-Subject: [PATCH 2/2] kunit: tool: print failed tests only
-From: Rae Moar <rmoar@google.com>
-To: shuah@kernel.org, davidgow@google.com, brendanhiggins@google.com
-Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, Rae Moar <rmoar@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87e215a7-0b27-4336-9f9c-e63ade0772ef@lunn.ch>
 
-Add flag --failed to kunit.py to print only failed tests. This printing
-is done after running is over.
+On Mon, Oct 28, 2024 at 02:09:06PM +0100, Andrew Lunn wrote:
+> > +++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
+> > @@ -210,6 +210,55 @@ i2c4: i2c@4040000 {
+> >  			status = "disabled";
+> >  		};
+> >  
+> > +		gmac0: ethernet@4070000 {
+> > +			compatible = "snps,dwmac-3.70a";
+> > +			reg = <0x04070000 0x10000>;
+> > +			clocks = <&clk CLK_AXI4_ETH0>, <&clk CLK_ETH0_500M>;
+> > +			clock-names = "stmmaceth", "ptp_ref";
+> > +			interrupts = <31 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-names = "macirq";
+> > +			phy-handle = <&phy0>;
+> > +			phy-mode = "rmii";
+> > +			rx-fifo-depth = <8192>;
+> > +			tx-fifo-depth = <8192>;
+> > +			snps,multicast-filter-bins = <0>;
+> > +			snps,perfect-filter-entries = <1>;
+> > +			snps,aal;
+> > +			snps,txpbl = <8>;
+> > +			snps,rxpbl = <8>;
+> > +			snps,mtl-rx-config = <&gmac0_mtl_rx_setup>;
+> > +			snps,mtl-tx-config = <&gmac0_mtl_tx_setup>;
+> > +			snps,axi-config = <&gmac0_stmmac_axi_setup>;
+> > +			status = "disabled";
+> > +
+> > +			mdio {
+> > +				compatible = "snps,dwmac-mdio";
+> > +				#address-cells = <1>;
+> > +				#size-cells = <0>;
+> > +
+> > +				phy0: phy@0 {
+> > +					compatible = "ethernet-phy-ieee802.3-c22";
+> > +					reg = <0>;
+> > +				};
+> > +			};
+> 
+> It is not clear to me what cv18xx.dtsi represents, 
 
-This patch also adds the method print_test() that will also print your
-Test object. Before, all printing of tests occurred during parsing. This
-method could be useful in the future when converting to/from KTAP to this
-pretty-print output.
+This is a include file to define common ip for the whole
+cv18xx series SoCs (cv1800b, cv1812h, sg2000, sg2000).
 
-Signed-off-by: Rae Moar <rmoar@google.com>
----
- tools/testing/kunit/kunit.py           | 14 ++++++++++++--
- tools/testing/kunit/kunit_parser.py    | 25 +++++++++++++++++++++++++
- tools/testing/kunit/kunit_tool_test.py |  6 +++---
- 3 files changed, 40 insertions(+), 5 deletions(-)
+> and where the PHY node should be, here, or in a .dts file. 
+> Is this a SOM, and the PHY is on the SOM? 
 
-diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
-index 27c55a7fc1a0..676fa99a8b19 100755
---- a/tools/testing/kunit/kunit.py
-+++ b/tools/testing/kunit/kunit.py
-@@ -50,6 +50,7 @@ class KunitParseRequest:
- 	raw_output: Optional[str]
- 	json: Optional[str]
- 	summary: bool
-+	failed: bool
- 
- @dataclass
- class KunitExecRequest(KunitParseRequest):
-@@ -237,13 +238,15 @@ def parse_tests(request: KunitParseRequest, metadata: kunit_json.Metadata, input
- 		return KunitResult(KunitStatus.SUCCESS, parse_time), fake_test
- 
- 	default_printer = stdout
--	if request.summary:
-+	if request.summary or request.failed:
- 		default_printer = null_printer
- 
- 	# Actually parse the test results.
- 	test = kunit_parser.parse_run_tests(input_data, default_printer)
- 	parse_time = time.time() - parse_start
- 
-+	if request.failed:
-+		kunit_parser.print_test(test, request.failed, stdout)
- 	kunit_parser.print_summary_line(test, stdout)
- 
- 	if request.json:
-@@ -423,6 +426,10 @@ def add_parse_opts(parser: argparse.ArgumentParser) -> None:
- 			    help='Prints only the summary line for parsed test results.'
- 				'Does nothing if --raw_output is set.',
- 			    action='store_true')
-+	parser.add_argument('--failed',
-+			    help='Prints only the failed parsed test results and summary line.'
-+				'Does nothing if --raw_output is set.',
-+			    action='store_true')
- 
- 
- def tree_from_args(cli_args: argparse.Namespace) -> kunit_kernel.LinuxSourceTree:
-@@ -459,6 +466,7 @@ def run_handler(cli_args: argparse.Namespace) -> None:
- 					raw_output=cli_args.raw_output,
- 					json=cli_args.json,
- 					summary=cli_args.summary,
-+					failed=cli_args.failed,
- 					timeout=cli_args.timeout,
- 					filter_glob=cli_args.filter_glob,
- 					filter=cli_args.filter,
-@@ -507,6 +515,7 @@ def exec_handler(cli_args: argparse.Namespace) -> None:
- 					build_dir=cli_args.build_dir,
- 					json=cli_args.json,
- 					summary=cli_args.summary,
-+					failed=cli_args.failed,
- 					timeout=cli_args.timeout,
- 					filter_glob=cli_args.filter_glob,
- 					filter=cli_args.filter,
-@@ -532,7 +541,8 @@ def parse_handler(cli_args: argparse.Namespace) -> None:
- 	# We know nothing about how the result was created!
- 	metadata = kunit_json.Metadata()
- 	request = KunitParseRequest(raw_output=cli_args.raw_output,
--					json=cli_args.json, summary=cli_args.summary)
-+					json=cli_args.json, summary=cli_args.summary,
-+					failed=cli_args.failed)
- 	result, _ = parse_tests(request, metadata, kunit_output)
- 	if result.status != KunitStatus.SUCCESS:
- 		sys.exit(1)
-diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
-index 732f448263de..29fc27e8949b 100644
---- a/tools/testing/kunit/kunit_parser.py
-+++ b/tools/testing/kunit/kunit_parser.py
-@@ -574,7 +574,32 @@ def print_test_footer(test: Test, printer: Printer) -> None:
- 	printer.print_with_timestamp(format_test_divider(message,
- 		len(message) - printer.color_len()))
- 
-+def print_test(test: Test, failed_only: bool, printer: Printer) -> None:
-+	"""
-+	Prints Test object to given printer. For a child test, the result line is
-+	printed. For a parent test, the test header, all child test results, and
-+	the test footer are all printed. If failed_only is true, only failed/crashed
-+	tests will be printed.
- 
-+	Parameters:
-+	test - Test object to print
-+	failed_only - True if only failed/crashed tests should be printed.
-+	printer - Printer object to output results
-+	"""
-+	if test.name == "main":
-+		printer.print_with_timestamp(DIVIDER)
-+		for subtest in test.subtests:
-+			print_test(subtest, failed_only, printer)
-+		printer.print_with_timestamp(DIVIDER)
-+	elif test.subtests != []:
-+		if not failed_only or not test.ok_status():
-+			print_test_header(test, printer)
-+			for subtest in test.subtests:
-+				print_test(subtest, failed_only, printer)
-+			print_test_footer(test, printer)
-+	else:
-+		if not failed_only or not test.ok_status():
-+			print_test_result(test, printer)
- 
- def _summarize_failed_tests(test: Test) -> str:
- 	"""Tries to summarize all the failing subtests in `test`."""
-diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
-index 02aa296d8850..0bcb0cc002f8 100755
---- a/tools/testing/kunit/kunit_tool_test.py
-+++ b/tools/testing/kunit/kunit_tool_test.py
-@@ -811,7 +811,7 @@ class KUnitMainTest(unittest.TestCase):
- 		self.linux_source_mock.run_kernel.return_value = ['TAP version 14', 'init: random output'] + want
- 
- 		got = kunit._list_tests(self.linux_source_mock,
--				     kunit.KunitExecRequest(None, None, False, '.kunit', 300, 'suite*', '', None, None, 'suite', False, False))
-+				     kunit.KunitExecRequest(None, None, False, False, '.kunit', 300, 'suite*', '', None, None, 'suite', False, False))
- 		self.assertEqual(got, want)
- 		# Should respect the user's filter glob when listing tests.
- 		self.linux_source_mock.run_kernel.assert_called_once_with(
-@@ -824,7 +824,7 @@ class KUnitMainTest(unittest.TestCase):
- 
- 		# Should respect the user's filter glob when listing tests.
- 		mock_tests.assert_called_once_with(mock.ANY,
--				     kunit.KunitExecRequest(None, None, False, '.kunit', 300, 'suite*.test*', '', None, None, 'suite', False, False))
-+				     kunit.KunitExecRequest(None, None, False, False, '.kunit', 300, 'suite*.test*', '', None, None, 'suite', False, False))
- 		self.linux_source_mock.run_kernel.assert_has_calls([
- 			mock.call(args=None, build_dir='.kunit', filter_glob='suite.test*', filter='', filter_action=None, timeout=300),
- 			mock.call(args=None, build_dir='.kunit', filter_glob='suite2.test*', filter='', filter_action=None, timeout=300),
-@@ -837,7 +837,7 @@ class KUnitMainTest(unittest.TestCase):
- 
- 		# Should respect the user's filter glob when listing tests.
- 		mock_tests.assert_called_once_with(mock.ANY,
--				     kunit.KunitExecRequest(None, None, False, '.kunit', 300, 'suite*', '', None, None, 'test', False, False))
-+				     kunit.KunitExecRequest(None, None, False, False, '.kunit', 300, 'suite*', '', None, None, 'test', False, False))
- 		self.linux_source_mock.run_kernel.assert_has_calls([
- 			mock.call(args=None, build_dir='.kunit', filter_glob='suite.test1', filter='', filter_action=None, timeout=300),
- 			mock.call(args=None, build_dir='.kunit', filter_glob='suite.test2', filter='', filter_action=None, timeout=300),
--- 
-2.47.0.163.g1226f6d8fa-goog
+The phy is on the SoC, it is embedded, and no external phy
+is supported. So I think the phy node should stay here, not 
+in the dts file.
 
+Regards,
+Inochi
 
