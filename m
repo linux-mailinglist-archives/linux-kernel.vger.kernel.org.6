@@ -1,250 +1,194 @@
-Return-Path: <linux-kernel+bounces-385855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DD8C9B3C9F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:24:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6DA19B3CA1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85551F223FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:24:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDC741C2232C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602061E133E;
-	Mon, 28 Oct 2024 21:24:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79EB41E1C0D;
+	Mon, 28 Oct 2024 21:25:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCllN0g/"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="XC62+How"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DA31D2796
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE5D1D2796
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730150682; cv=none; b=Olr8SrsLGsbZQs7cbxnaOWFqDa9lE8I+3QW35cmF5pBTl7QtIqgHYCIzrvTi5mzr3Zh0/AXFCP4XUzEbWURsxrRsNvN7t/KLrKPV3u5qRQrrYt4J2IGKvS5ARKLW41blTRomSHyXZjjjJn52qcewnLGen1c0Z+ynhiiGy4vczrk=
+	t=1730150714; cv=none; b=nTqhNgzBPhuTEKfeDND9zz9KU9zB97hgozVTfILs4Emt4RAJoY8Lo2pgyPcc8O4Dz46TV4ZHL1DQhQyLae+Zt7Og/ik5ZYUaKWYKGToeEf9eX0s32xkayiOwxo+BDSez6zDdKgNzBw+dpGgL41/UST++VEGHoc4gqWVBVEqrf/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730150682; c=relaxed/simple;
-	bh=p2PYmucEQv6E4VxBKLKehv714MRmf+EhsbFgoLrbIEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MyoBRwrU+Sghz9hmQB/8uE2DXwoBIb/6bOs5LVbtpPUbCWw6yNNS8bb4tskYGxA5Ig4sXin1LBNRk1BPMRT89XlQazaGAV60mcHNlzDNjb02Dv6/xGaDxTUaNhYNAnXPRlxoOqfgLM9lZkBNdcrF4quiu5c3Kfp17+vpMcnyECg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCllN0g/; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431688d5127so46722865e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:24:39 -0700 (PDT)
+	s=arc-20240116; t=1730150714; c=relaxed/simple;
+	bh=pLRRnqJAPwskef6FrBxl1E3683EQf+jkK+gJCpfUKQc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sq2KW61ofxou6idLgS4W3plGU1IgJ+e8fJDe9nSTa14k2UgFesOe4UEm2AuupityMY013V3cadZIeDKvrNLPQAbfUnlTrwvlbI5EIBvlZsdTGFbypBgsaRHQNFsLBNenvDgCaJYBbGJFI2a14bmSkybG1v5wPLUdk1hoAuDBjlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=XC62+How; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b148919e82so386354585a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:25:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730150678; x=1730755478; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Oed+vVceGHLTzayqS+WrKDwhcbGWW3zACgltsulU49Q=;
-        b=ZCllN0g/hx0UdSYRdDfkyge8qqZod8p1y/OKzjj5yw2uirnrbUA4/T1axp2fovA5po
-         1oRmjL0ew6Z0qa7KfDwAbgaECKhXtGNZwem/y4zlMiQzVQ7FGaejNM6WwPEhaW/ruiT1
-         ZrucG7RHFJxXdEj6+ZGENDRbTdOOqbqn5MzCgKhDkrjOtO902HRWlWKzD6pEJyq0ZXAh
-         17x+uwDC7xJgMAJchd/VkPwK4pTMr3PeYztw0IkdAydW4HKUd0N1ELLdhSZYGA5ZUqtC
-         Ie0db/ShLWp+HUexYqDcqKyxZLUsaHFSFU2r7XsgnEO/nXqwUPp6e3Fho/xJQ/+lbu4Q
-         eXmg==
+        d=gourry.net; s=google; t=1730150711; x=1730755511; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=585mKsRT7d06ESGh3mIJ8b6bPBzsGlMV5JaQkeOeFsk=;
+        b=XC62+HowIJktyI/3WW5ZLGPefmhKPm3wy+9PmDYAPVHcFC9mtB59PtecfTUDIfU/s+
+         X5UIPHFspbHkTTtmtWHnbv0yw63RljM5HbPR9OMyQj2xonxR2ds9wiCYPaxmJnXZvBww
+         c41SFDh0bCV0IdMXHqNjVdpzHCFvgV5yFPtNxkgQ/bBneUMS64yLMsmxDbQmT2ouFsmh
+         10w+x1NSXmEdyxCZnXhlF7xL9oHJYVGUXy6WZ1LkrpxvS9aF4OXOk6GJYSDqwcLOpq0o
+         o70KA3l6bVvu2Ni/P0WSRTh8zZUtGOf9xSirPUjldRndpKfnIo8ze4zaz0+ZkFJZyf2p
+         OQHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730150678; x=1730755478;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1730150711; x=1730755511;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oed+vVceGHLTzayqS+WrKDwhcbGWW3zACgltsulU49Q=;
-        b=Dw1TTC9kbT45IOWJR85HnRt/aFdE4JixZp7e3bwkaW8rvNllhTvXUOWfLQJobRcMCR
-         ut0XSTQ3HGFvvdvgxMDHWmLNsW0MwDB++TX5+YSD/aRvG6gUrsUlz7aRBbYreMJrj4U9
-         aEsTDZC+X+TsptPta0WMfw4lMLGOZUCb/5SU0cznvznYZ9jLH6OPdPswksaiXEN0lBBY
-         rfmaIXLehUViBUDkt2Di71eBPcJ3OImeXuTvhDr4PNIYUwQf3wJyQTOXJkv1MAd7WGxC
-         i2P3rzTt0VFaNRGi6XWX88jDMw+hapcg5s/ex6y8MUlG+NE3rZ5ytp/WzxLupWwXP7Fk
-         s3rw==
-X-Forwarded-Encrypted: i=1; AJvYcCXbjUdevKbDMHuu80hL4aOKQ2yeDRumfIpv5FBy17KsYbzcBdvzfqFddoG/phJNoMmw/AIhEnCstVWgFx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD4Hi+RwT3OkgsWJZxxP95Oi9442Cl6Lx+dakBLnJwl0F8cRam
-	G2SO3Fyg5Fur/SQS3cUZi+18S2oG3SIvroG+SxWQEViEvLxcSfFK
-X-Google-Smtp-Source: AGHT+IHm9bK89VA/vyBQ6S6INiWqxPY/CUvqv1nLEHdrOQY2ODnDT1xf4fdBzl+QueUySBvoJNJXOQ==
-X-Received: by 2002:a05:600c:1d01:b0:42c:a6da:a149 with SMTP id 5b1f17b1804b1-4319ad048cdmr85905405e9.25.1730150678285;
-        Mon, 28 Oct 2024 14:24:38 -0700 (PDT)
-Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f74f9sm124399075e9.31.2024.10.28.14.24.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 14:24:38 -0700 (PDT)
-Message-ID: <228c428d-d116-4be1-9d0d-0591667b7ccb@gmail.com>
-Date: Mon, 28 Oct 2024 21:24:37 +0000
+        bh=585mKsRT7d06ESGh3mIJ8b6bPBzsGlMV5JaQkeOeFsk=;
+        b=mFjY+27DJbBig7lvm720vJhGoYFCk5oc3UjZ2Bz0g1dSFIYhiqm6UKSFQvmLXxBcKb
+         6G4+NcteO8cnG18nLvg0DuO5t9EDdOUuSsC2xk4FpjeiclYYBYHanpupZhArUciQFQTD
+         P3su1FHfmvYr6WHKHp897I8K9vgIOkAEYqkY+o7LeMgN86g44pi1goGwzuCBkrShiyfY
+         eptlaLiy3BGDoD51ZhDw5J5hEUcHDwCLV4RrQIHg1s68Hy7pmkBAXQFVvO+AlnhwNV4V
+         bHIkFLjgFVkASrwugmsf13mnye12L4Omx0zSTVeKkbUtoyd64eS8xXGavSljtWzmQMaQ
+         +Qdw==
+X-Gm-Message-State: AOJu0YzMRTfjEPqVDFpcWBrPeQ+D9s6J/pcLadyOYg/ze//bJuj0mnik
+	mOpF33O0TEGaw2q0G/CLPl/3upsh7b/y3/ZZqtqxBcqeuXJCqckl2E/HxqpbqIg=
+X-Google-Smtp-Source: AGHT+IFzTlrI74jY4d3DbIaVjhK5zLVVE83AfXgTDT4O8X7A3dLUwf3PsR3yfJKmz8swudu8twoovw==
+X-Received: by 2002:a05:620a:29c3:b0:7b1:54f6:d1e0 with SMTP id af79cd13be357-7b193f59b61mr1413923985a.62.1730150711346;
+        Mon, 28 Oct 2024 14:25:11 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d3484b6sm356677985a.124.2024.10.28.14.25.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 14:25:10 -0700 (PDT)
+Date: Mon, 28 Oct 2024 17:25:15 -0400
+From: Gregory Price <gourry@gourry.net>
+To: Yang Shi <shy828301@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+	akpm@linux-foundation.org, ying.huang@intel.com, weixugc@google.com,
+	dave.hansen@linux.intel.com, osalvador@suse.de,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
+ demoting pages
+Message-ID: <ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com>
+References: <20241025141724.17927-1-gourry@gourry.net>
+ <CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
-To: Barry Song <21cnbao@gmail.com>
-Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
- akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Barry Song <v-songbaohua@oppo.com>, Chengming Zhou
- <chengming.zhou@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
- David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
- Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
- Andi Kleen <ak@linux.intel.com>, Baolin Wang
- <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
- "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
- Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
-References: <20241027011959.9226-1-21cnbao@gmail.com>
- <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
- <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
- <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com>
- <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
- <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com>
- <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
- <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com>
- <CAGsJ_4zQmaGxG2Ega61Jm5UMgHH-jtYC4ZCxsRX6+QS9ta25kQ@mail.gmail.com>
- <882008b6-13e0-41d8-91fa-f26c585120d8@gmail.com>
- <CAGsJ_4yBkry-rw75AciT8OiYWrw+=D0okcxiyXzzNrz=QJxiBA@mail.gmail.com>
- <cba36cb0-66c7-45c1-97c3-a96ea48a6cf0@gmail.com>
- <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
+
+On Mon, Oct 28, 2024 at 01:45:48PM -0700, Yang Shi wrote:
+> On Fri, Oct 25, 2024 at 7:17 AM Gregory Price <gourry@gourry.net> wrote:
+> >
+> > When numa balancing is enabled with demotion, vmscan will call
+> > migrate_pages when shrinking LRUs.  Successful demotions will
+> > cause node vmstat numbers to double-decrement, leading to an
+> > imbalanced page count.  The result is dmesg output like such:
+> >
+> > $ cat /proc/sys/vm/stat_refresh
+> >
+> > [77383.088417] vmstat_refresh: nr_isolated_anon -103212
+> > [77383.088417] vmstat_refresh: nr_isolated_file -899642
+> >
+> > This negative value may impact compaction and reclaim throttling.
+> >
+> > The double-decrement occurs in the migrate_pages path:
+> >
+> > caller to shrink_folio_list decrements the count
+> >   shrink_folio_list
+> >     demote_folio_list
+> >       migrate_pages
+> >         migrate_pages_batch
+> >           migrate_folio_move
+> >             migrate_folio_done
+> >               mod_node_page_state(-ve) <- second decrement
+> >
+> > This path happens for SUCCESSFUL migrations, not failures. Typically
+> > callers to migrate_pages are required to handle putback/accounting for
+> > failures, but this is already handled in the shrink code.
+> 
+> AFAIK, MGLRU doesn't dec/inc this counter, so it is not
+> double-decrement for MGLRU. Maybe "imbalance update" is better?
+> Anyway, it is just a nit. I'd suggest capturing the MGLRU case in the
+> commit log too.
+>
+
+Gotcha, so yeah saying it's an imbalance fix is more accurate.
+
+So more accurate changelog is:
 
 
+[PATCH] vmscan,migrate: fix page count imbalance on node stats when demoting pages
 
-On 28/10/2024 21:15, Barry Song wrote:
-> On Tue, Oct 29, 2024 at 4:51 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>
->>
->> On 28/10/2024 20:42, Barry Song wrote:
->>> On Tue, Oct 29, 2024 at 4:00 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>
->>>>
->>>>
->>>> On 28/10/2024 19:54, Barry Song wrote:
->>>>> On Tue, Oct 29, 2024 at 1:20 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>>>
->>>>>>
->>>>>>
->>>>>> On 28/10/2024 17:08, Yosry Ahmed wrote:
->>>>>>> On Mon, Oct 28, 2024 at 10:00 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>>
->>>>>>>> On 28/10/2024 16:33, Nhat Pham wrote:
->>>>>>>>> On Mon, Oct 28, 2024 at 5:23 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>>>>>>>
->>>>>>>>>> I wonder if instead of having counters, it might be better to keep track
->>>>>>>>>> of the number of zeropages currently stored in zeromap, similar to how
->>>>>>>>>> zswap_same_filled_pages did it. It will be more complicated then this
->>>>>>>>>> patch, but would give more insight of the current state of the system.
->>>>>>>>>>
->>>>>>>>>> Joshua (in CC) was going to have a look at that.
->>>>>>>>>
->>>>>>>>> I don't think one can substitute for the other.
->>>>>>>>
->>>>>>>> Yes agreed, they have separate uses and provide different information, but
->>>>>>>> maybe wasteful to have both types of counters? They are counters so maybe
->>>>>>>> dont consume too much resources but I think we should still think about
->>>>>>>> it..
->>>>>>>
->>>>>>> Not for or against here, but I would say that statement is debatable
->>>>>>> at best for memcg stats :)
->>>>>>>
->>>>>>> Each new counter consumes 2 longs per-memcg per-CPU (see
->>>>>>> memcg_vmstats_percpu), about 16 bytes, which is not a lot but it can
->>>>>>> quickly add up with a large number of CPUs/memcgs/stats.
->>>>>>>
->>>>>>> Also, when flushing the stats we iterate all of them to propagate
->>>>>>> updates from per-CPU counters. This is already a slowpath so adding
->>>>>>> one stat is not a big deal, but again because we iterate all stats on
->>>>>>> multiple CPUs (and sometimes on each node as well), the overall flush
->>>>>>> latency becomes a concern sometimes.
->>>>>>>
->>>>>>> All of that is not to say we shouldn't add more memcg stats, but we
->>>>>>> have to be mindful of the resources.
->>>>>>
->>>>>> Yes agreed! Plus the cost of incrementing similar counters (which ofcourse is
->>>>>> also not much).
->>>>>>
->>>>>> Not trying to block this patch in anyway. Just think its a good point
->>>>>> to discuss here if we are ok with both types of counters. If its too wasteful
->>>>>> then which one we should have.
->>>>>
->>>>> Hi Usama,
->>>>> my point is that with all the below three counters:
->>>>> 1. PSWPIN/PSWPOUT
->>>>> 2. ZSWPIN/ZSWPOUT
->>>>> 3. SWAPIN_SKIP/SWAPOUT_SKIP or (ZEROSWPIN, ZEROSWPOUT what ever)
->>>>>
->>>>> Shouldn't we have been able to determine the portion of zeromap
->>>>> swap indirectly?
->>>>>
->>>>
->>>> Hmm, I might be wrong, but I would have thought no?
->>>>
->>>> What if you swapout a zero folio, but then discard it?
->>>> zeromap_swpout would be incremented, but zeromap_swapin would not.
->>>
->>> I understand. It looks like we have two issues to tackle:
->>> 1. We shouldn't let zeromap swap in or out anything that vanishes into
->>> a black hole
->>> 2. We want to find out how much I/O/memory has been saved due to zeromap so far
->>>
->>> From my perspective, issue 1 requires a "fix", while issue 2 is more
->>> of an optimization.
->>
->> Hmm I dont understand why point 1 would be an issue.
->>
->> If its discarded thats fine as far as I can see.
-> 
-> it is fine to you and probably me who knows zeromap as well :-) but
-> any userspace code
-> as below might be entirely confused:
-> 
-> p = malloc(1G);
-> write p to 0; or write part of p to 0
-> madv_pageout(p, 1g)
-> read p to swapin.
-> 
-> The entire procedure used to involve 1GB of swap out and 1GB of swap in by any
-> means. Now, it has recorded 0 swaps counted.
-> 
-> I don't expect userspace is as smart as you :-)
-> 
-Ah I completely agree, we need to account for it in some metric. I probably
-misunderstood when you said "We shouldn't let zeromap swap in or out anything that
-vanishes into a black hole", by we should not have the zeromap optimization for those
-cases. What I guess you meant is we need to account for it in some metric.
+When numa balancing is enabled with demotion, vmscan will call
+migrate_pages when shrinking LRUs.  migrate_pages will decrement the
+the node's isolated page count, leading to an imbalanced count when
+invoked from (MG)LRU code.
 
->>
->> As a reference, memory.stat.zswapped != memory.stat.zswapout - memory.stat.zswapin.
->> Because zswapped would take into account swapped out anon memory freed, MADV_FREE,
->> shmem truncate, etc as Yosry said about zeromap, But zswapout and zswapin dont.
-> 
-> I understand. However, I believe what we really need to focus on is
-> this: if we’ve
-> swapped out, for instance, 100GB in the past hour, how much of that 100GB is
-> zero? This information can help us assess the proportion of zero data in the
-> workload, along with the potential benefits that zeromap can provide for memory,
-> I/O space, or read/write operations. Additionally, having the second count
-> can enhance accuracy when considering MADV_DONTNEED, FREE, TRUNCATE,
-> and so on.
-> 
-Yes completely agree!
+The result is dmesg output like such:
 
-I think we can look into adding all three metrics, zeromap_swapped, zeromap_swpout,
-zeromap_swpin (or whatever name works).
+$ cat /proc/sys/vm/stat_refresh
 
->>
->>
->>>
->>> I consider issue 1 to be more critical because, after observing a phone
->>> running for some time, I've been able to roughly estimate the portion
->>> zeromap can
->>> help save using only PSWPOUT, ZSWPOUT, and SWAPOUT_SKIP, even without a
->>> SWPIN counter. However, I agree that issue 2 still holds significant value
->>> as a separate patch.
->>>
+[77383.088417] vmstat_refresh: nr_isolated_anon -103212
+[77383.088417] vmstat_refresh: nr_isolated_file -899642
+
+This negative value may impact compaction and reclaim throttling.
+
+The following path produces the decrement:
+
+shrink_folio_list
+  demote_folio_list
+    migrate_pages
+      migrate_pages_batch
+        migrate_folio_move
+          migrate_folio_done
+            mod_node_page_state(-ve) <- decrement
+
+This path happens for SUCCESSFUL migrations, not failures. Typically
+callers to migrate_pages are required to handle putback/accounting for
+failures, but this is already handled in the shrink code.
+
+When accounting for migrations, instead do not decrement the count
+when the migration reason is MR_DEMOTION. As of v6.11, this demotion
+logic is the only source of MR_DEMOTION.
+
+
+> >
+> > Signed-off-by: Gregory Price <gourry@gourry.net>
+> > Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
+> > Cc: stable@vger.kernel.org
 > 
-> Thanks
->  Barry
-
+> Thanks for catching this. Reviewed-by: Yang Shi <shy828301@gmail.com>
+> 
+> > ---
+> >  mm/migrate.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/mm/migrate.c b/mm/migrate.c
+> > index 923ea80ba744..e3aac274cf16 100644
+> > --- a/mm/migrate.c
+> > +++ b/mm/migrate.c
+> > @@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
+> >          * not accounted to NR_ISOLATED_*. They can be recognized
+> >          * as __folio_test_movable
+> >          */
+> > -       if (likely(!__folio_test_movable(src)))
+> > +       if (likely(!__folio_test_movable(src)) && reason != MR_DEMOTION)
+> >                 mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON +
+> >                                     folio_is_file_lru(src), -folio_nr_pages(src));
+> >
+> > --
+> > 2.43.0
+> >
 
