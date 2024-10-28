@@ -1,120 +1,392 @@
-Return-Path: <linux-kernel+bounces-385040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5749B31A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:28:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52AF29B31AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:29:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1196F1F21DA7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:28:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FCD12826A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:29:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01E81DBB38;
-	Mon, 28 Oct 2024 13:28:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4BF1DC747;
+	Mon, 28 Oct 2024 13:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jfctUK+A";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jsdJK5Qi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FlX3Tdqx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553A7191F82;
-	Mon, 28 Oct 2024 13:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F541DBB19;
+	Mon, 28 Oct 2024 13:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122119; cv=none; b=I0qxCDt6v5RGUmFmcGyWSIQPvc8OJZ7w0LUdEa576s3gNIztPweyLs4qzo9lSobkliebEVDWT6c1QnqYuL6rHcOCAdGhtkTQ7/VtGJPOGFQicnBAXN5SMb/sXVhBPIWpFiL0LF+D0CbI/44pLste986/65rIr63xCdGtkDO7nCk=
+	t=1730122130; cv=none; b=ia1zajeRDkWYNgXnx2gNzMkuWpsuQBdG07xc9CmKK2i4f5QunXTVtUni92Rv2gGTX4GqLrcd2C6yt+70gpqKMgWLERCRWrBEm0qerb3dF5+n1vlwMSGpDt2APcohvPuT7OoLnX6DwRx+Dx1xnSQsGn971U1dCr/ASHKe9G+lbPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122119; c=relaxed/simple;
-	bh=FfOtTeR/auU8m4QQ5/qPLZzm2zX1IScxEqxSMnEGVhs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SEJ6llLmMSaV9B08ZKD32bsisPH6eLYa3HesdN3WuJBF0wHRNAK4mu6isibjIVisNMYo9EEnzDb9hADAwE66hP6JK/xfEf6SJjfAZHprZXrwWntB3EsQKJFiJKjSxn6bV0IrmebpK95TW9fInWgzxb4XeR6aZ80vSvsX4HrlGzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jfctUK+A; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jsdJK5Qi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 28 Oct 2024 13:28:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730122114;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u4fsRrd14lXxAIgkEora+wBBF+LFp5IkLbbWqkL0FUU=;
-	b=jfctUK+AFyXq9yqlnVpb0FQWv9P0sw9u5tZE0UmfDnGChKy9G3F7kXn124XbrQsXWDfzp+
-	6BLnS1+zp/7KWDMHDKpLDxaLfbDmZyr29/8+jOx2QhzdtqCpJMa5DlUCqe60+/GHye5v5B
-	cwmW3+L+1YKNbw/a20yKdWgMKoWsP+Ljhf0Smq7vWnK60mPJAtYhcjwEdr1Y3OUn3AZ6TK
-	B1ZKOIcRfLVjc8CcQKRrz7ffnhAZU07V9TtJFYX54ZZKtbm8woOzOxdz9h5Pkfd1TF//tY
-	JY2SXd9J7WqRLDATVI9LX3by+hXNp71NplPaCKNdduz9qrzZuHYzGQVr3txkDg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730122114;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=u4fsRrd14lXxAIgkEora+wBBF+LFp5IkLbbWqkL0FUU=;
-	b=jsdJK5QiP+onj21xaK9FVwCZdNzLdpRwRMgClzdbe2B1/hSWVywbPhTH9BjvAmyHUCzbVl
-	4jRBHzH9IV8qWTAw==
-From: "tip-bot2 for Christian Loehle" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/core] sched/uclamp: Fix unnused variable warning
-Cc: kernel test robot <lkp@intel.com>,
- Christian Loehle <christian.loehle@arm.com>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <a1e9c342-01c9-44f0-a789-2c908e57942b@arm.com>
-References: <a1e9c342-01c9-44f0-a789-2c908e57942b@arm.com>
+	s=arc-20240116; t=1730122130; c=relaxed/simple;
+	bh=hQgBGWR+9gPD1qx+ev/6QCkND1wWB6PAFowow562+SQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IppYa/8XapmwVov4JY1jppj5mlN6mqhQ+BSlpxP3t2tmixw6ZPDRPFnt5xHls804buJUcLJcLHluPFM+arK1jwERm2TITxZaJ6kLMMOMdNOjG7P/OFHLRu9u2xFqtZJrENFtI3c76BPzJVUZ/craw9wz5TK+9eC6+pLsHaSjtk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FlX3Tdqx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F317C4CEE4;
+	Mon, 28 Oct 2024 13:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730122129;
+	bh=hQgBGWR+9gPD1qx+ev/6QCkND1wWB6PAFowow562+SQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FlX3TdqxrTVLdrddwWlCROLyhKZfMq6SpalXB55SVTTCJd+QmCyG+9GeLGu1MCQok
+	 OO9IrjzehpJs89vra2YZ0HImU0ESHaK2nnb0GbgjEtUk3VC88S2guCtossk2Yo88ey
+	 PY2N2K0rNRqYZaSYcz22TmFGnmhYMhYvevAT7U7K+eZxQu8dZGqVgvyDMFNZ8n76pI
+	 pKJjhIm7gY3BFW1anTFw3aa6phbVVzF3kuRskhqXJy6DaWvbsEJMDRdNAr+/VMk+4I
+	 x7nq8rkW38fib77Mk9BYQq2Yly08rQbhHLam6Ol1S2pZDvIobIuFWKKJUQSNkyAljT
+	 uBiXHGSighodA==
+X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory
+ attribute if supported
+In-Reply-To: <87o734ts4m.wl-maz@kernel.org>
+References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+ <20241028094014.2596619-5-aneesh.kumar@kernel.org>
+ <87o734ts4m.wl-maz@kernel.org>
+Date: Mon, 28 Oct 2024 18:58:42 +0530
+Message-ID: <yq5ar080cq5x.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173012211371.1442.12715311796066756881.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-The following commit has been merged into the sched/core branch of tip:
+Marc Zyngier <maz@kernel.org> writes:
 
-Commit-ID:     23f1178ad706a1aa69ac3dfaa6559f1fb876c14e
-Gitweb:        https://git.kernel.org/tip/23f1178ad706a1aa69ac3dfaa6559f1fb876c14e
-Author:        Christian Loehle <christian.loehle@arm.com>
-AuthorDate:    Fri, 25 Oct 2024 11:53:17 +01:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Sat, 26 Oct 2024 09:28:37 +02:00
+> On Mon, 28 Oct 2024 09:40:14 +0000,
+> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+>> 
+>> Currently, the kernel won't start a guest if the MTE feature is enabled
+>> and the guest RAM is backed by memory which doesn't support access tags.
+>> Update this such that the kernel uses the NoTagAccess memory attribute
+>> while mapping pages from VMAs for which MTE is not allowed. The fault
+>> from accessing the access tags with such pages is forwarded to VMM so
+>> that VMM can decide to kill the guest or remap the pages so that
+>> access tag storage is allowed.
+>
+> I only have questions here:
+>
+> - what is the benefit of such approach? why shouldn't that be the
+>   kernel's job to fix it?
+>
 
-sched/uclamp: Fix unnused variable warning
+IMHO leaving that policy decision to VMM makes the kernel changes
+simpler. In most cases, VMM will kill the guest, because these
+restrictions of MTE_ALLOWED are applied at the memslot/vma.
 
-uclamp_mutex is only used for CONFIG_SYSCTL or
-CONFIG_UCLAMP_TASK_GROUP so declare it __maybe_unused.
+>
+> - where is the documentation for this new userspace ABI?
+>
 
-Closes: https://lore.kernel.org/oe-kbuild-all/202410060258.bPl2ZoUo-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202410250459.EJe6PJI5-lkp@intel.com/
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Link: https://lkml.kernel.org/r/a1e9c342-01c9-44f0-a789-2c908e57942b@arm.com
----
- kernel/sched/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+I will add the details if we agree that this should be a separate EXIT
+as outlined in this patch.
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 114adac..9bad282 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1399,7 +1399,7 @@ void set_load_weight(struct task_struct *p, bool update_load)
-  * requests are serialized using a mutex to reduce the risk of conflicting
-  * updates or API abuses.
-  */
--static DEFINE_MUTEX(uclamp_mutex);
-+static __maybe_unused DEFINE_MUTEX(uclamp_mutex);
+>
+> - are you expecting the VMM to create a new memslot for this?
+>
+
+I guess there are examples of configs where some memory regions are
+backed by page cache where we don't directly use those memory regions as
+allocatable memory in the guest. This change allows us to enable MTE in such
+configs.
+
+> - where is the example of a VMM using this?
+>
+
+I do have changes to kvmtool which won't do any fixup on receiving that
+VM exit. I expect other VMM to do the same by default when they get a
+VM exit with an unknown exit_reason. So unless VMM wants to do any
+special handling, we don't need any change in the VMM.
+
+
+diff --git a/arm/kvm-cpu.c b/arm/kvm-cpu.c
+index 3b95750ecec7..4760bad07476 100644
+--- a/arm/kvm-cpu.c
++++ b/arm/kvm-cpu.c
+@@ -239,6 +239,17 @@ static bool handle_memoryfault(struct kvm_cpu *vcpu)
+ 	return true;
+ }
  
- /* Max allowed minimum utilization */
- static unsigned int __maybe_unused sysctl_sched_uclamp_util_min = SCHED_CAPACITY_SCALE;
++static bool handle_notag_access(struct kvm_cpu *vcpu)
++{
++	u64 gpa = vcpu->kvm_run->memory_fault.gpa;
++	u64 size = vcpu->kvm_run->memory_fault.size;
++
++	/* For now VMM just panic */
++	pr_err("Tag Access to a wrong memory region 0x%lx size 0x%lx\n",
++	       (unsigned long)gpa, (unsigned long)size);
++	return false;
++}
++
+ bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
+ {
+ 	switch (vcpu->kvm_run->exit_reason) {
+@@ -246,6 +257,8 @@ bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
+ 		return handle_hypercall(vcpu);
+ 	case KVM_EXIT_MEMORY_FAULT:
+ 		return handle_memoryfault(vcpu);
++	case KVM_EXIT_ARM_NOTAG_ACCESS:
++		return handle_notag_access(vcpu);
+ 	}
+ 
+ 	return false;
+diff --git a/include/linux/kvm.h b/include/linux/kvm.h
+index 32cff22f0e4d..deef6614f577 100644
+--- a/include/linux/kvm.h
++++ b/include/linux/kvm.h
+@@ -178,6 +178,7 @@ struct kvm_xen_exit {
+ #define KVM_EXIT_NOTIFY           37
+ #define KVM_EXIT_LOONGARCH_IOCSR  38
+ #define KVM_EXIT_MEMORY_FAULT     39
++#define KVM_EXIT_ARM_NOTAG_ACCESS 40
+ 
+ /* For KVM_EXIT_INTERNAL_ERROR */
+ /* Emulate instruction failed. */
+@@ -429,10 +430,17 @@ struct kvm_run {
+ 		/* KVM_EXIT_MEMORY_FAULT */
+ 		struct {
+ #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
++#define KVM_MEMORY_EXIT_FLAG_NOTAGACCESS (1ULL << 4)
+ 			__u64 flags;
+ 			__u64 gpa;
+ 			__u64 size;
+ 		} memory_fault;
++  		/* KVM_EXIT_ARM_NOTAG_ACCESS */
++		struct {
++			__u64 flags;
++			__u64 gpa;
++			__u64 size;
++		} notag_access;
+ 		/* Fix the size of the union. */
+ 		char padding[256];
+ 	};
+
+>> 
+>> NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
+>> add a new EXIT type because this is arm64 specific exit type.
+>> 
+>> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+>> ---
+>>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+>>  arch/arm64/include/asm/kvm_pgtable.h |  1 +
+>>  arch/arm64/kvm/hyp/pgtable.c         | 16 +++++++++++++---
+>>  arch/arm64/kvm/mmu.c                 | 28 ++++++++++++++++++++++------
+>>  include/uapi/linux/kvm.h             |  7 +++++++
+>>  5 files changed, 48 insertions(+), 9 deletions(-)
+>> 
+>> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+>> index a601a9305b10..fa0149a0606a 100644
+>> --- a/arch/arm64/include/asm/kvm_emulate.h
+>> +++ b/arch/arm64/include/asm/kvm_emulate.h
+>> @@ -373,6 +373,11 @@ static inline bool kvm_vcpu_trap_is_exec_fault(const struct kvm_vcpu *vcpu)
+>>  	return kvm_vcpu_trap_is_iabt(vcpu) && !kvm_vcpu_abt_iss1tw(vcpu);
+>>  }
+>>  
+>> +static inline bool kvm_vcpu_trap_is_tagaccess(const struct kvm_vcpu *vcpu)
+>> +{
+>> +	return !!(ESR_ELx_ISS2(kvm_vcpu_get_esr(vcpu)) & ESR_ELx_TagAccess);
+>> +}
+>> +
+>>  static __always_inline u8 kvm_vcpu_trap_get_fault(const struct kvm_vcpu *vcpu)
+>>  {
+>>  	return kvm_vcpu_get_esr(vcpu) & ESR_ELx_FSC;
+>> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+>> index 03f4c3d7839c..5657ac1998ad 100644
+>> --- a/arch/arm64/include/asm/kvm_pgtable.h
+>> +++ b/arch/arm64/include/asm/kvm_pgtable.h
+>> @@ -252,6 +252,7 @@ enum kvm_pgtable_prot {
+>>  
+>>  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
+>>  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
+>> +	KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS	= BIT(5),
+>
+> This seems wrong. NOTAGACCESS is a *permission*, not a memory type.
+>
+
+Are you suggesting the name is wrong? The memory attribute value I
+wanted to use is
+
+MemAttr[3:0] = 0b0100 which is Normal, NoTagAccess, writeback cacheable.
+
+I am following the changes similar to KVM_PGTABLE_PROT_NORMAL_NC. 
+
+>
+>>  
+>>  	KVM_PGTABLE_PROT_SW0			= BIT(55),
+>>  	KVM_PGTABLE_PROT_SW1			= BIT(56),
+>> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+>> index b11bcebac908..bc0d9f08c49a 100644
+>> --- a/arch/arm64/kvm/hyp/pgtable.c
+>> +++ b/arch/arm64/kvm/hyp/pgtable.c
+>> @@ -677,9 +677,11 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+>>  {
+>>  	kvm_pte_t attr;
+>>  	u32 sh = KVM_PTE_LEAF_ATTR_LO_S2_SH_IS;
+>> +	unsigned long prot_mask = KVM_PGTABLE_PROT_DEVICE |
+>> +				  KVM_PGTABLE_PROT_NORMAL_NC |
+>> +				  KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
+>>  
+>> -	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
+>> -			KVM_PGTABLE_PROT_NORMAL_NC)) {
+>> +	switch (prot & prot_mask) {
+>>  	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
+>>  		return -EINVAL;
+>>  	case KVM_PGTABLE_PROT_DEVICE:
+>> @@ -692,6 +694,12 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+>>  			return -EINVAL;
+>>  		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
+>>  		break;
+>> +	case KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS:
+>> +		if (system_supports_notagaccess())
+>> +			attr = KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS);
+>> +		else
+>> +			return -EINVAL;
+>> +		break;
+>
+> How do you see this working when migrating a VM from one host to
+> another, one that supports FEAT_MTE_PERM and one that doesn't? The
+> current assumptions are that the VMM will replay the *exact same*
+> setup on the target host, and this obviously doesn't work.
+>
+
+I missed looking at kvm migration. I guess I will have to expose this as
+a capability and only allow migration if the target also supports the
+same capability? 
+
+
+>
+>>  	default:
+>>  		attr = KVM_S2_MEMATTR(pgt, NORMAL);
+>>  	}
+>> @@ -872,7 +880,9 @@ static void stage2_unmap_put_pte(const struct kvm_pgtable_visit_ctx *ctx,
+>>  static bool stage2_pte_cacheable(struct kvm_pgtable *pgt, kvm_pte_t pte)
+>>  {
+>>  	u64 memattr = pte & KVM_PTE_LEAF_ATTR_LO_S2_MEMATTR;
+>> -	return kvm_pte_valid(pte) && memattr == KVM_S2_MEMATTR(pgt, NORMAL);
+>> +	return kvm_pte_valid(pte) &&
+>> +	       ((memattr == KVM_S2_MEMATTR(pgt, NORMAL)) ||
+>> +		(memattr == KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS)));
+>>  }
+>>  
+>>  static bool stage2_pte_executable(kvm_pte_t pte)
+>> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+>> index b5824e93cee0..e56c6996332e 100644
+>> --- a/arch/arm64/kvm/mmu.c
+>> +++ b/arch/arm64/kvm/mmu.c
+>> @@ -1647,12 +1647,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>>  		 *  not a permission fault implies a translation fault which
+>>  		 *  means mapping the page for the first time
+>>  		 */
+>> -		if (mte_allowed) {
+>> +		if (mte_allowed)
+>>  			sanitise_mte_tags(kvm, pfn, vma_pagesize);
+>> -		} else {
+>> -			ret = -EFAULT;
+>> -			goto out_unlock;
+>> -		}
+>> +		else
+>> +			prot |= KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
+>>  	}
+>>  
+>>  	if (writable)
+>> @@ -1721,6 +1719,15 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+>>  		kvm_set_pfn_accessed(kvm_pte_to_pfn(pte));
+>>  }
+>>  
+>> +static inline void kvm_prepare_notagaccess_exit(struct kvm_vcpu *vcpu,
+>> +						 gpa_t gpa, gpa_t size)
+>> +{
+>> +	vcpu->run->exit_reason = KVM_EXIT_ARM_NOTAG_ACCESS;
+>> +	vcpu->run->notag_access.flags = 0;
+>> +	vcpu->run->notag_access.gpa = gpa;
+>> +	vcpu->run->notag_access.size = size;
+>
+> Why does size matter here? It seems pretty pointless.
+>
+
+I agree that since the exit is only generated on fault and size will
+always be PAGE_SIZE, size field is not required. I will remove that in
+the next update.
+
+>
+>> +}
+>> +
+>>  /**
+>>   * kvm_handle_guest_abort - handles all 2nd stage aborts
+>>   * @vcpu:	the VCPU pointer
+>> @@ -1833,6 +1840,14 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+>>  
+>>  	gfn = ipa >> PAGE_SHIFT;
+>>  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
+>> +
+>> +	if (kvm_vcpu_trap_is_tagaccess(vcpu)) {
+>> +		/* exit to host and handle the error */
+>> +		kvm_prepare_notagaccess_exit(vcpu, gfn << PAGE_SHIFT, PAGE_SIZE);
+>> +		ret = 0;
+>> +		goto out;
+>> +	}
+>> +
+>>  	hva = gfn_to_hva_memslot_prot(memslot, gfn, &writable);
+>>  	write_fault = kvm_is_write_fault(vcpu);
+>>  	if (kvm_is_error_hva(hva) || (write_fault && !writable)) {
+>> @@ -2145,7 +2160,8 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+>>  		if (!vma)
+>>  			break;
+>>  
+>> -		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
+>> +		if (kvm_has_mte(kvm) && !system_supports_notagaccess() &&
+>> +		    !kvm_vma_mte_allowed(vma)) {
+>>  			ret = -EINVAL;
+>>  			break;
+>>  		}
+>> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>> index 637efc055145..a8268a164c4d 100644
+>> --- a/include/uapi/linux/kvm.h
+>> +++ b/include/uapi/linux/kvm.h
+>> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
+>>  #define KVM_EXIT_NOTIFY           37
+>>  #define KVM_EXIT_LOONGARCH_IOCSR  38
+>>  #define KVM_EXIT_MEMORY_FAULT     39
+>> +#define KVM_EXIT_ARM_NOTAG_ACCESS 40
+>>  
+>>  /* For KVM_EXIT_INTERNAL_ERROR */
+>>  /* Emulate instruction failed. */
+>> @@ -446,6 +447,12 @@ struct kvm_run {
+>>  			__u64 gpa;
+>>  			__u64 size;
+>>  		} memory_fault;
+>> +		/* KVM_EXIT_ARM_NOTAG_ACCESS */
+>> +		struct {
+>> +			__u64 flags;
+>> +			__u64 gpa;
+>> +			__u64 size;
+>> +		} notag_access;
+>>  		/* Fix the size of the union. */
+>>  		char padding[256];
+>>  	};
+>
+> How do you plan to handle the same thing for NV?
+>
+
+I will have to admit that I have not looked at nested virtualization. I
+will update that as part of the next update.
+
+-aneesh
 
