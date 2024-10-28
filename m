@@ -1,150 +1,142 @@
-Return-Path: <linux-kernel+bounces-384416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33FA59B29DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63D939B29D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:07:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25541F22AC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBD51F23307
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 301CA1D4176;
-	Mon, 28 Oct 2024 08:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EB71C9B61;
+	Mon, 28 Oct 2024 08:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nisJ7SSt"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dN3gTHU5"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DC941D2F73;
-	Mon, 28 Oct 2024 08:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3176E18D64F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102670; cv=none; b=QCeXaTAXFrZgikilyB10y0A9BvME+8XRHZvZvVSD4NfIKeeM9C9v8MDhoaHV6lHfakMTkBi1vCVfoCXyThFSs5LuGFeuUr2il7ZF1GdYm4r9gQ6/AgJbd3wyywWU+dl5pgXBI0sRF5+E/mT5L+Ks6cYWhuK5HnGKgWFkhrigO1M=
+	t=1730102657; cv=none; b=KPMAes3Bq7mGnb6K6zWeUp+iAlLE1KhY4xZxuKyHLyK13HYwudilCunOMuM2c0QaMzzU2Cr+CjZZfFjgv0fs/By9+ue59i9SPSboSw3e6KUoY3JFyKi7DIub69/2u/hvtVtQ8XRWuL2QT14IEr1S+3UeLwYMc1rbHTsYOg9OS94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102670; c=relaxed/simple;
-	bh=SfWMCDrw37k+QlNp8lTM1T2TiCypdeWGvkX0wbHZ4Fo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=cgF32Fm0EtGvEMZo2Z5idBjiyiGnku/dasRRfkWIf0U6Cgqspu/ITO+/Fm4K4wWRkAozEH3gT+9ZwC1KYDWel+5Eu+QMK5RZalGRqjR9Lq/IfSWmu4KY1U/XZYvUDclU2NG0R3xdb76CCLF3GeAuLyZFMAlCmvrspGFwSxTiCKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nisJ7SSt; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNt2nO001704;
-	Mon, 28 Oct 2024 08:04:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SSQZt3AbTqDfYD3OY3yo9jNzMh0cfZhesYRY0PCALrQ=; b=nisJ7SStkQYcXm/H
-	vEoRco0nB6LDaKO1EDvrLvdPkJnWXMm4VLzsOnpP1m9JbmVURGa2cPcfjC99NOXz
-	hlhSpKZp8C0q4af0/M8sunEZ5VtkxI02l2czl1ATQAwqRiql7uY9eeed+aAQwtYu
-	gw0GGVpNONa+WF0tv+DPD62Jii0MBzVVDGEbZJp88QC+JVGtLhUFWPuT60ORJ6l/
-	P5jg6VcQpMCiUtvk3GAwFlb4yfRtgTs+CQfuFdU3q34zGDYGc6FiN8nviYz6Ybws
-	ytZTPDWHh4jV9oKOKlxVWJo7yIZhU2LMCxkKxev9iepBXjT+h9/6JKhMQFDD+5Hs
-	wweExA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcqm6u0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 08:04:21 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S84LLD032007
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 08:04:21 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 28 Oct 2024 01:04:15 -0700
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Date: Mon, 28 Oct 2024 16:03:25 +0800
-Subject: [PATCH v3 2/2] arm64: dts: qcom: qcs615-ride: Enable PMIC
- peripherals
+	s=arc-20240116; t=1730102657; c=relaxed/simple;
+	bh=p6rK48nYUKGNYWK8dymIh1v4YV6ABvHs2RsfXgqGE9U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MwUaM89Ixn+PpMhE6kaMJognBXRRjDdgb4wtcHK1mm3YqgsoHbCuaGUSUuiolx4Nl60j65hv3Hac9IU2mGYtWdBya0Y1/dxprpSaG5oc4EBtff7CzW/6zR0fy6LFUFr+9NJHGggfMRcP2Iqqxy8JBQS56GASm722yUlii9klyLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dN3gTHU5; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 434141140112;
+	Mon, 28 Oct 2024 04:04:14 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-09.internal (MEProxy); Mon, 28 Oct 2024 04:04:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1730102654; x=1730189054; bh=vh6Bqs3XhY31Rdd+eH9z0d7RfUwQ
+	g80hOdmDGpnyyaM=; b=dN3gTHU5a6K7qe9F4uZhmfCic4UKC7TT7av+jbixAh0U
+	ThpQz13q79C4RpOK0f8QW1vzAF0Mkv92RdtMxWGDdvblpX2pzxb7M/gN1seYzveK
+	yqNpmYNT0GRpda43IyEy94GKFp4N0nNxMbYw9oBUjZsLEjYFwvcFJM1T4MPMpuyW
+	2Ol1YN0bwOH+5pHTfFwedMVMegoq/EtUlTu/vLs5RAmfLQgmDQTeBB7ANOyTUNqf
+	uGh7OhnXFICeNP4ewPbKnleBKjS/TFqFTFlMslT9y/pLlHI9S7dC9FEG+Wyh1Qt9
+	UfzVsNMOnHQyC0abXbaHtLe9aEVC90WQwvJ0yuYpig==
+X-ME-Sender: <xms:fUUfZ8Mf6LKlirkqBaRB3lUS7Doo2q2kj_ze2s0ujqifLs7942auBw>
+    <xme:fUUfZy_UGGN4XjwP_RBkUgpCL5vtLXeSLO3-oVV6Ydhkj7At-sL-eAa-w4NzmljzD
+    HPbVq3imR8dSSs>
+X-ME-Received: <xmr:fUUfZzTq6NRQno8ByfdttI2py8jVu-PJ1t79L9-LzaNYJuLvnC_RrlVncyRT>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejjedgudduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrd
+    horhhgqeenucggtffrrghtthgvrhhnpedvudefveekheeugeeftddvveefgfduieefudei
+    fefgleekheegleegjeejgeeghfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhnsggprhgtphht
+    thhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmh
+    grrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhies
+    rghrmhdrtghomhdprhgtphhtthhopehjohhroheskegshihtvghsrdhorhhgpdhrtghpth
+    htohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohhmmhhusehlihhs
+    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
+    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepiihhrghnghiivghkuhhnuddusehh
+    uhgrfigvihdrtghomhdprhgtphhtthhopehjohhhnhdrghdrghgrrhhrhiesohhrrggtlh
+    gvrdgtohhmpdhrtghpthhtohepughhvggvrhgrjhhkuhhmrghrrdhsrhhivhgrshhtrghv
+    rgesrghmugdrtghomh
+X-ME-Proxy: <xmx:fUUfZ0vcaS6GFCw896YuixOWmxS790Rnv0jut5ZdkJTDiziqrE_WhQ>
+    <xmx:fUUfZ0fyZTpn6WuLfa-Gwxj-HVNeLTSr5ttwGw6aEF22Fi9YerEw9g>
+    <xmx:fUUfZ42ObuEVrGg5DTuY5H9u9rYD7dqooHM8Wf5hBUl-tas0PIob0g>
+    <xmx:fUUfZ4_xvnLSmW8emyRgXoe_5jb_HOGlGCAHT_tbpyL-RQUrpWpXZw>
+    <xmx:fkUfZ86lqqvzn1Q3EZIbJ1BFcisrs02IMESSBkUlHdPDFGdkVbLyZ71n>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 28 Oct 2024 04:04:12 -0400 (EDT)
+Date: Mon, 28 Oct 2024 10:04:10 +0200
+From: Ido Schimmel <idosch@idosch.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	zhangzekun11@huawei.com, john.g.garry@oracle.com,
+	dheerajkumar.srivastava@amd.com, jsnitsel@redhat.com
+Subject: Re: [PATCH v3 0/2] iommu/iova: Make the rcache depot properly
+ flexible
+Message-ID: <Zx9Fepzvrs8b6_LX@shredder.mtl.com>
+References: <cover.1694535580.git.robin.murphy@arm.com>
+ <ZY1osaGLyT-sdKE8@shredder>
+ <c9cf02b5-7add-46ea-8db1-46fdce191c1c@arm.com>
+ <ZZ2AqZT4dD-s01q9@shredder>
+ <ab22c439-e7da-49b5-b20b-856daf376c02@arm.com>
+ <ZZ7atzgT6_kOvWnJ@arm.com>
+ <ZZ-ky9UCoHwbyqfn@shredder>
+ <ZZ-_LWz_4KxOkRsA@arm.com>
+ <ZaFbPnDrYT5uGqJD@shredder>
+ <ZaTb8KorPFPgRqD6@shredder>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-2-f0778572ee41@quicinc.com>
-References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
-In-Reply-To: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
-To: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730102647; l=1084;
- i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=SfWMCDrw37k+QlNp8lTM1T2TiCypdeWGvkX0wbHZ4Fo=;
- b=8j6KOV7Z9cy89+jiAPCiTzdJk16wxqBzrWLCJzR4dIjDNOupVOuAyD3xejsO6xscw4dygKdzT
- /ZeXk4ji2JXCvhWCFQPYCTGioMlKsIdWM1oucoPoakhWZpuo+cBamfM
-X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
- pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OQ0fS_3plxuziYK2srEh4OjJQPsQa5oK
-X-Proofpoint-GUID: OQ0fS_3plxuziYK2srEh4OjJQPsQa5oK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
- phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
- mlxlogscore=754 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZaTb8KorPFPgRqD6@shredder>
 
-Enable PMIC and PMIC peripherals for qcs615-ride board.
+On Mon, Jan 15, 2024 at 09:17:04AM +0200, Ido Schimmel wrote:
+> On Fri, Jan 12, 2024 at 05:31:15PM +0200, Ido Schimmel wrote:
+> > On Thu, Jan 11, 2024 at 10:13:01AM +0000, Catalin Marinas wrote:
+> > > On Thu, Jan 11, 2024 at 10:20:27AM +0200, Ido Schimmel wrote:
+> > > > On Wed, Jan 10, 2024 at 05:58:15PM +0000, Catalin Marinas wrote:
+> > > > > Transient false positives are possible, especially as the code doesn't
+> > > > > use a double-linked list (for the latter, kmemleak does checksumming and
+> > > > > detects the prev/next change, defers the reporting until the object
+> > > > > becomes stable). That said, if a new scan is forced (echo scan >
+> > > > > /sys/kernel/debug/kmemleak), are the same objects still listed as leaks?
+> > > > > If yes, they may not be transient.
+> > > > 
+> > > > We are doing "scan" and "clear" after each test. I will disable the
+> > > > "clear" and see if the leaks persist.
+> > > 
+> > > If it is indeed a false positive
+> > 
+> > Looks like the leaks are transient. After removing the "clear" step the
+> > leaks do not seem to persist.
+> > 
+> > > you can try the patch below (I haven't given it any run-time test,
+> > > only compiled):
+> > 
+> > Will try and let you know next week.
+> 
+> Looks good. Feel free to add:
+> 
+> Tested-by: Ido Schimmel <idosch@nvidia.com>
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+Catalin, we have been using this patch since you posted it and haven't
+seen any issues. Can please submit it upstream?
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6d71f29934a8debba3a832882abdd..37358f080827bbe4484c14c5f159e813810c2119 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -6,6 +6,7 @@
- 
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- #include "qcs615.dtsi"
-+#include "pm8150.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS615 Ride";
- 	compatible = "qcom,qcs615-ride", "qcom,qcs615";
-@@ -210,6 +211,20 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&pon {
-+	/delete-property/ mode-bootloader;
-+	/delete-property/ mode-recovery;
-+};
-+
-+&pon_pwrkey {
-+	status = "okay";
-+};
-+
-+&pon_resin {
-+	linux,code = <KEY_VOLUMEDOWN>;
-+	status = "okay";
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-
--- 
-2.34.1
-
+Thanks!
 
