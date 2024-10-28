@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-384098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1509B243E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:32:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 564CD9B2442
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A5EA1F21B30
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:32:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 014391F214F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB7518D627;
-	Mon, 28 Oct 2024 05:32:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4094C18CBED;
+	Mon, 28 Oct 2024 05:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AKN5qZU6"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="msouiy7c"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EAB318DF73
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98640170A14;
+	Mon, 28 Oct 2024 05:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730093519; cv=none; b=Db/sdYYUqnEaUBgLilEZ7BpHaGrGVA2nEV7OadNZEVZw/RJbKBfT6wiPvFXl4oWcY38FGoh9nYYwgrpBw84t8GbFpcuBM0nQI/AuVRCk/30CVXZ2bqHWyTR8HWc5+fvmrBvZWVIN3QYEXVhVWU4C74g8qaT8fT6QXhAR5p9tuVE=
+	t=1730093555; cv=none; b=qrvzLh5GDO0hg5qlk27cUwXwpaHmnJ1o9WPCkhc7cDDgD4RSmAgInzJIilMT8fdY7WZR6v16WUKnk5jAdUaV4Rm9U+DqoNVWl4ZVxUKPJcMQ0odPACZrtHCpYnkpDo6VB7Gd2rjOm5rN30jAVvcuinlDFuVYI9CJ5jcHO6/hSBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730093519; c=relaxed/simple;
-	bh=N8lsVrshF1R/zlRYKM1SLlKplyYpbQd2DmWEJusqdxA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VnUNhkZAMLn7kSsWSXrYz9alr0r80J+U4zrNR5jaIAcIXsg455lVuyAd/a9A+qLK0AHDHVA8gmZlYSNDFZ3u/umLxr4XvHz/yqcGicqvHO8yZzgGIZKxoTkqi1sVm11MpNffHv+wxJIFz3ZKMUHcJbMQb+81kzJCQVL3HQ89Rz8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AKN5qZU6; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ed9f1bcb6bso2512911a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 22:31:57 -0700 (PDT)
+	s=arc-20240116; t=1730093555; c=relaxed/simple;
+	bh=fDCPI3lenANlkSNM58eRToLtbXivAj9PpBU1pNoEn1k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sBSWLIkqnXu8Q/MYPr62MwSqLn5NwiAeWWnSaN8VneRUpysUbrKrHKhvbHIG/OBE8XwnSRburTh/cxNFqUlCQQ6gSXec5QEfUDsLLgxfhj1A1/3eo1qK8cJF8eaReyHKfCBvy1aBYPaHehnCztYr9aV+xJ/AG1MB6P3eqp68esg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=msouiy7c; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20c803787abso29810785ad.0;
+        Sun, 27 Oct 2024 22:32:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730093517; x=1730698317; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tnoPcb4o2POZFY1B4JdGuwdYqnl4s0N+bpobnVGDTEo=;
-        b=AKN5qZU6S7wzF4UNE3hLEMnHH3oAXtl7mvFuLYj6oEHgbEzN9uxNvHOKaSJhN1SW8e
-         YaT0JYgRrDeTv5lb3wi5e41mm9bJWcEabQ1o6unpqlBld2f3Ah3xgbQ/axSD2XtfYlza
-         +e4frXI8PRFPMWA0zWgGHR5R1SDI4ab7kYbeg=
+        d=gmail.com; s=20230601; t=1730093553; x=1730698353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OE9ZF53+aq50EW6IBKp07AsaB1tUWgDq0HfrchrCLw=;
+        b=msouiy7ckeqHnsSbGhtabZd5/7loW79dh4PKpU54Rbkfo0PlC4BfOs4TWW8C7ZEAV3
+         abQJcbZlUEf6JDxMfqWVzCFu4d8q8qcGVE06x3ik/hfnzwB+Rla7V0jl+Bjdy42zUQz9
+         gqlN86RdahOJfn/rsRXuPHFRE0Z5lysEGhWs5DnLMgE6hvd5mlBaJat7d/LdWbEe2gt2
+         RotC7brotSJCFXrbzsbqbPx0PKJzpmC+wTm0BUaIZG2PEkU7idS5wYnVx8fHIj6zGkiW
+         QiZGmdr5cC2CyAkuRnDh5yUPrZEOarMWHRBTqcUYFwBCPBDUBBE+rMpfxrrAaYsygX8o
+         r9zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730093517; x=1730698317;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tnoPcb4o2POZFY1B4JdGuwdYqnl4s0N+bpobnVGDTEo=;
-        b=l+SE3oXTG+pGVAx+oqrj8i/LPv0YKGgHDLYLiNSQ4jiXJu00lAglun6ouzsJKwAuVT
-         8qu61f4/uDT+kIZY9F4V89dCzRaGWJ5k4fQ6Id/IG3nSS4q+dhhAWlWlANEECEuZUhae
-         yyL0yoW64yNIVyTbDIkbLwg2e86i5Z1vNdKMA2Hzyo6jjjatFFzH6znsKITUVsprq93a
-         bB+/ba2RSUAD4wSRqJdfWIgxStYaE1ddmczGnn91p06czznuJRMnHEofNtTHfa9pzGJh
-         YjXoAQcjyBCg5gtnHs7m4U+xDzMrEPydl9h7MlesVebgX/wG/082QThtPArMOIIo/fXl
-         by6g==
-X-Forwarded-Encrypted: i=1; AJvYcCVCfkMCtde8/yjnL8djGD94Csw9vrlIZMzNoS7jOJpJ9hxLO8rLFG5pl+8Gkd23bFxAiJGKdf0Pv+LT1vs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbBsMZ81JsgEc8PKeKUQUrBvbEuN6Jb0oUwccinVBwZR835Xv5
-	YhrhTODVGgKDV2Va0TxqRu0Y4CV5yGnp+kyLIJBrh/YRvj+T6KxB2QkmnltWSc0=
-X-Google-Smtp-Source: AGHT+IETOlSvY+h4Ti/i9dwAqubW6ic1nYtb3qauehyAyGqGVwgT48Us6xjyARsnGHXBDm3NNTupoQ==
-X-Received: by 2002:a05:6a21:1707:b0:1d9:386b:5320 with SMTP id adf61e73a8af0-1d9a853a13fmr9289581637.48.1730093516575;
-        Sun, 27 Oct 2024 22:31:56 -0700 (PDT)
-Received: from [10.200.3.216] (fs96f9c361.tkyc007.ap.nuro.jp. [150.249.195.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720757322d5sm2052649b3a.91.2024.10.27.22.31.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 22:31:56 -0700 (PDT)
-Message-ID: <54cbf018-eba1-4227-b464-78bfa41fa4ae@linuxfoundation.org>
-Date: Sun, 27 Oct 2024 23:31:53 -0600
+        d=1e100.net; s=20230601; t=1730093553; x=1730698353;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3OE9ZF53+aq50EW6IBKp07AsaB1tUWgDq0HfrchrCLw=;
+        b=O2VO0hwQAAN68RwwvjbBFLX90+JEFUKB+RzEgG7fOoFFbEc0GLtYsfuN4s/axZG1De
+         ZaHLuSMsUknKD8wpFgQndOKqEjP/gHBPnn7w+qUX1FT9XT88+uPS+vC+ZLhigE34DiGD
+         s9gMLoq920sE6gbyAdWhoK7yMQK/qEL0HSFBrrbyGngK/2QJ6W+lB/687lW2HLm4YJ25
+         yV1ioglQWUQgizXNOO9nNDlCplYhYNjL9N6GR90pwewPFW+XjSN0dPoKcveDhBBsFvCt
+         XUDZ01w/4xfwsrd+QS0acR9v2T5Eki+tQKSAU0Hv9sh0GBiWFSNYvBZ+gDMltjDhaFcW
+         N4qw==
+X-Forwarded-Encrypted: i=1; AJvYcCU63GdbLzzx0s5IVrAryjBC0mWlC+0uMNvGeyVMEfNiQeM7vfuMu6lgX9PuVquooHJl4rVCJEau6Hpx@vger.kernel.org, AJvYcCVB2hztsWxhj/pg5fM0wLibKLPuQ8r2wSCZHnhTlS2oiT2GesRoyW2nhSF6AbcdtmIYuxEctA/+69SUUGhd@vger.kernel.org, AJvYcCWHroG8nivI3zxR19xbWgSPaGU/gYrvqljHBqb4nLKeeADrHX0f5iYDnGGz3Y4iI47Z7FgM+wUzNEsf@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7OsOEnQtQSu0XS1UumeILL1CBW9i+3l01U8Hf6YZEAiBMppAo
+	5pyD8KtjWfklsQUcvDwf6g42j6Gmiu0O5DPsa0Eh1cSgvRz1weIq
+X-Google-Smtp-Source: AGHT+IFOFxvoqutIEMDhLNVuDtQXabCz+PG2NaPsZlB4GWGiMQRlAcO6dUor3vgwVIJJgTxeFwwkwA==
+X-Received: by 2002:a17:902:ecc8:b0:20c:cb6b:3631 with SMTP id d9443c01a7336-210c5a76dabmr99486745ad.27.1730093552881;
+        Sun, 27 Oct 2024 22:32:32 -0700 (PDT)
+Received: from troy-WUJIE14-PRO.tailc1d423.ts.net ([120.211.145.167])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02e941sm43216475ad.204.2024.10.27.22.32.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 27 Oct 2024 22:32:32 -0700 (PDT)
+From: Troy Mitchell <troymitchell988@gmail.com>
+X-Google-Original-From: Troy Mitchell <TroyMitchell988@gmail.com>
+To: andi.shyti@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: troymitchell988@gmail.com,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH v2 0/2] riscv: spacemit: add i2c support to K1 SoC 
+Date: Mon, 28 Oct 2024 13:32:18 +0800
+Message-Id: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next 1/3] selftests/watchdog: add count parameter for
- watchdog-test
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc: "shuah@kernel.org" <shuah@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241025013933.6516-1-lizhijian@fujitsu.com>
- <c2cae7a7-1a0d-48ef-9b8f-8d2436532ea7@linuxfoundation.org>
- <0861d73d-4fd9-4118-91c8-5a619c7d7ca0@fujitsu.com>
- <e907e67d-9116-4dd2-9b61-f93191737de6@linuxfoundation.org>
- <b7b3deec-47fd-43e4-a9b5-7099e3c00623@fujitsu.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <b7b3deec-47fd-43e4-a9b5-7099e3c00623@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 10/27/24 22:02, Zhijian Li (Fujitsu) wrote:
-> 
-> 
-> On 28/10/2024 11:29, Shuah Khan wrote:
->> On 10/27/24 18:50, Zhijian Li (Fujitsu) wrote:
->>>
->>>
->>> On 27/10/2024 08:28, Shuah Khan wrote:
->>>> On 10/24/24 19:39, Li Zhijian wrote:
->>>>> Currently, watchdog-test keep running until it gets a SIGINT. However,
->>>>> when watchdog-test is executed from the kselftests framework, where it
->>>>> launches test via timeout which will send SIGTERM in time up. This could
->>>>> lead to
->>>>> 1. watchdog haven't stop, a watchdog reset is triggered to reboot the OS
->>>>>       in silent.
->>>>> 2. kselftests gets an timeout exit code, and judge watchdog-test as
->>>>>      'not ok'
->>>>>
->>>> This test isn't really supposed to be run from kselftest framework.
->>>> This is the reason why it isn't included in the default run.
->>>
->>> May I know what's the default run, is it different from `make run_tests` ?
->>
->> No it isn't. "make kselftest" runs only the targets mentioned in the
->> selftests Makefile. That is considered the kselftest default run.
-> 
-> Hey, Shuah,
-> 
-> 
-> Thanks for your explanation.
-> If that is the case, I do not have an urgent need for the current patch, expect
-> I'd like to avoid the reboot issue after an accidentally `make run_tests`
-> 
-> Some changes are make as below, please take a look. I will send it out we reach a consensus.
-> 
-> 
-> commit 2296f9d88fde4921758a45bf160a7f1b9d4678a0 (HEAD)
-> Author: Li Zhijian <lizhijian@fujitsu.com>
-> Date:   Mon Oct 28 11:54:03 2024 +0800
-> 
->       selftests/watchdog-test: Fix system accidentally reset after watchdog-test
->       
->       After `make run_tests` to run watchdog-test, a system reboot would
->       happen due to watchdog not stop.
->       ```
+Hi all,
 
-The system shouldn't reboot just because watchdog test is left running.
-watchdog test keeps calling ioctl() with WDIOC_KEEPALIVE to make sure
-the watchdog card timer is reset.
+This patch implements I2C driver for the SpacemiT K1 SoC,
+providing basic support for I2C read/write communication which
+compatible with standard I2C bus specifications.
 
-If you are seeing reboots, that means watchdog test couldn't reset the
-timer. This usually mean system is unresponsive or something is wrong
-with the watchdog card on your system.
+In this version, the driver defaults to use fast-speed-mode and
+interrupts for transmission, and does not support DMA, high-speed mode, or FIFO.
 
-This is the behavior you would expect from a watchdog timer. Does your
-system have a watchdog card ot or you enabling softdog module?
+The docs of I2C can be found here, in chapter 16.1 I2C [1]
 
-Either way there is some other reason for the system reboot.
+Link: https://developer.spacemit.com/documentation?token=Rn9Kw3iFHirAMgkIpTAcV2Arnkf#part5 [1]
 
-thanks,
--- Shuah
+Troy Mitchell (2):
+  dt-bindings: i2c: spacemit: add support for K1 SoC
+  i2c: spacemit: add support for SpacemiT K1 SoC
+
+ .../bindings/i2c/spacemit,k1-i2c.yaml         |  51 ++
+ drivers/i2c/busses/Kconfig                    |  18 +
+ drivers/i2c/busses/Makefile                   |   1 +
+ drivers/i2c/busses/i2c-k1.c                   | 658 ++++++++++++++++++
+ 4 files changed, 728 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/spacemit,k1-i2c.yaml
+ create mode 100644 drivers/i2c/busses/i2c-k1.c
+
+-- 
+2.34.1
+
 
