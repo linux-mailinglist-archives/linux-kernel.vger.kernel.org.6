@@ -1,107 +1,216 @@
-Return-Path: <linux-kernel+bounces-385364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DD29B362D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:15:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89E759B3632
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68B22B24C81
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:15:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE905B25014
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2967D1DFE31;
-	Mon, 28 Oct 2024 16:13:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99AF1DED68;
+	Mon, 28 Oct 2024 16:13:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C0q+lkSK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V3OYq5QK"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6383C1DED4F;
-	Mon, 28 Oct 2024 16:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51F81DED43
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730131979; cv=none; b=ABjNfRRe6WpvwB3rd7Yz/ffbaDXqU/vADN13n7D3yDuV/F+qRfziFGurIP2aU9B0MkG2/ZCc/rOOqtywEArJdOkhiiubu7XtyJkHHeh9c5Z0JQqtOLI4O7pAe76cM740nFONaLHeKOjuZ5VHUBSjYCWLezv13zIlRGf5+/LN05o=
+	t=1730132021; cv=none; b=ue0t1lvUxxoLQlpCUo93ZhcOIcqrAq1/wvJED6NcN6vkccG/a+3qQmEoSBEJBskGlF9D1vigqUZNlzAMcOH2IkIEEyF3DpczUd3sEv8njTokJK/L2X0FvNEeoGECjWBYxYnV1XYV8FhW3C31RaIHVIvfdZEGqDd+CO/iyfTyFFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730131979; c=relaxed/simple;
-	bh=xuzSVIC+24hcvUH3Uu6IJyxDoI8NF9z/u0YhE9kqbOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JNVP7hAqgExtXzxI3tlfkFXEQ2r0Oh9VSkcLoHN6QV+2RQCU6kL3CW+ZAP/NxVW14yT9xT0dmL9dKEgVRLYLbS8DHPjoPv+Z+Tpjruwq9rEhOBkjiE0niCqhpShKnshaYzgFDRP+drXMRIipma+Z8ZaiegD/BQozJXkLFlMxVrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C0q+lkSK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC1B6C4CEC3;
-	Mon, 28 Oct 2024 16:12:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730131979;
-	bh=xuzSVIC+24hcvUH3Uu6IJyxDoI8NF9z/u0YhE9kqbOY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=C0q+lkSKR1cXdmfA70QriKxNHoGAVcH+ZKCc+Zox4ygDHb48qTdn8VuHT2A4+o5V2
-	 zoili6j4ZeZdYddsbvCBmzv4/WQgpSj7kTlw06ahaK4hCP3zTRP9o3R85+DvpU2GYF
-	 JOfOD4cd4nqkmkIlo1feNr7WS5I7Lq9w9Ag0huIfm0H86flbsmELoeR1CWqpKwnAA6
-	 NYQH1pJbxeuWuW0ou07d6MW7v+ovxkDt0VgRA/OeSEyVzpisDjPRrKkn0IRURMLEiE
-	 huG9vkW7i5jsybC0co+F32KJLuGZov4R0mWfhQFuXfe18nE4zlmADox5tRHMwhBpHw
-	 r+wobvKfES9+g==
-Date: Mon, 28 Oct 2024 09:12:56 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Richard Cochran <richardcochran@gmail.com>, Peter Hilber
- <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org,
- virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>,
- virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Chashper,
- David" <chashper@amazon.com>, "Mohamed Abuelfotoh, Hazem"
- <abuehaze@amazon.com>, Paolo Abeni <pabeni@redhat.com>, "Christopher S .
- Hall" <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>,
- John Stultz <jstultz@google.com>, "Michael S . Tsirkin" <mst@redhat.com>,
- netdev@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, Thomas Gleixner
- <tglx@linutronix.de>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier
- <maz@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Alessandro Zummo <a.zummo@towertech.it>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>, qemu-devel
- <qemu-devel@nongnu.org>, Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH net-next v7] ptp: Add support for the AMZNC10C 'vmclock'
- device
-Message-ID: <20241028091256.1b0752b4@kernel.org>
-In-Reply-To: <c1eb33ffd66d45af77dea58db8bdca3dcd2468c4.camel@infradead.org>
-References: <78969a39b51ec00e85551b752767be65f6794b46.camel@infradead.org>
-	<20241009173253.5eb545db@kernel.org>
-	<c20d5f27c9106f3cb49e2d8467ade680f0092f91.camel@infradead.org>
-	<20241014131238.405c1e58@kernel.org>
-	<c1eb33ffd66d45af77dea58db8bdca3dcd2468c4.camel@infradead.org>
+	s=arc-20240116; t=1730132021; c=relaxed/simple;
+	bh=mROlKK52lgEqYiNfHo/ZXkh8akAZhq+V3ESgp9rVRBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lXgIEWd9aGElP8XeSuZQ3mMgfG+nA0GIngOM1kahV3FTCGXBW5MvVwYrk9VMbkTsTjzWaJ5EbL1TNjNhgtJJHvWGSh74ooVCOwyBxqJD37u0pIIBb6Ne9t69K0BSgasNF2IFVOvef6u8BJSLYSUrlEw4OVrX586HhPZwCowAnUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V3OYq5QK; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730132019; x=1761668019;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=mROlKK52lgEqYiNfHo/ZXkh8akAZhq+V3ESgp9rVRBU=;
+  b=V3OYq5QKEeZBjVtEBQWWEwR80fQz8kljwaWD2rrXnohwg4RcmOfzMler
+   VHb49Ew7WlXnIzbByIgqUiYsWxIa41toZBDsSJBEh4FVoULY9pLIEOov/
+   5F5Q0qB82a7L/k2k7ZwT2J1xe0ucxcGI1ytflodU7gMUi9NVWrhXojl12
+   rZv+QHvvD0bMUDtrPboy3n4fcyzeShL+7a9YCgbr0xJNZ6c1t+hUMgk5W
+   FxjoZ/kGRd7wo2IFUkJSr6RSh7F94h0ou6yraZ1Asc6/xFh1F04sumqnX
+   g+ZqTaFzbNLUOw6y9l7pAf3vubRaFJ2gP3uJ5c0o1Tork8KG5t91OJqO/
+   g==;
+X-CSE-ConnectionGUID: 1ch7j51OS+6lVOilh52SBA==
+X-CSE-MsgGUID: L8PO0ZkHQF2B6ix3QEZ2uw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="47217440"
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="47217440"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 09:13:38 -0700
+X-CSE-ConnectionGUID: o97lDHrNTLyjP91Ots4lFw==
+X-CSE-MsgGUID: o8x44AavSNW8mXaeKhAVvA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="81772224"
+Received: from stinkpipe.fi.intel.com (HELO stinkbox) ([10.237.72.74])
+  by fmviesa008.fm.intel.com with SMTP; 28 Oct 2024 09:13:34 -0700
+Received: by stinkbox (sSMTP sendmail emulation); Mon, 28 Oct 2024 18:13:34 +0200
+Date: Mon, 28 Oct 2024 18:13:34 +0200
+From: Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+To: linux@treblig.org
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/5] drm/vblank: Remove unused
+ drm_crtc_vblank_count_and_time
+Message-ID: <Zx-4LsWPQEB_1mED@intel.com>
+References: <20241022232934.238124-1-linux@treblig.org>
+ <20241022232934.238124-4-linux@treblig.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241022232934.238124-4-linux@treblig.org>
+X-Patchwork-Hint: comment
 
-On Sat, 19 Oct 2024 18:49:24 +0100 David Woodhouse wrote:
-> > Yes please and thank you! We gotta straighten it out before 
-> > the merge window.  
+On Wed, Oct 23, 2024 at 12:29:32AM +0100, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Hm, as I (finally) come to do that, I realise that many of the others
-> defined in drivers/ptp/Kconfig are also 'default y'. Which is only
-> really 'default PTP_1588_CLOCK' in practice since they all depend on
-> that.
+> drm_crtc_vblank_count_and_time() was explicitly added by
+> commit cf6483050e9b ("drm/irq: Add drm_crtc_vblank_count_and_time()")
+> in 2015, but never used.
 
-AFAICT nothing defaulted to enabled since 2017, so I'd chalk it up
-to us getting better at catching mistakes over time.
+I see a bunch of places that could trivially use it.
+That might be the more sensible thing to do so that
+we keep moving towards using the crtc for everything.
 
-> Most importantly, PTP_1588_CLOCK_KVM is 'default y'. And that one is
-> fundamentally broken (at least in the presence of live migration if
-> guests care about their clock suddenly being wrong) which is why it's
-> being superseded by the new VMCLOCK thing. We absolutely don't want to
-> leave the _KVM one enabled by default and not its _VMCLOCK replacement.
+The EXPORT_SYMBOL() looks completely pointless though.
 
-You can default to .._CLOCK_KVM, and provide the explanation in
-the commit message and Kconfig help.
-Or if you feel strongly even make CLOCK_KVM depend on the new one?
+> 
+> Remove it, and rework comments that reference it.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  drivers/gpu/drm/drm_vblank.c | 44 +++++++-----------------------------
+>  include/drm/drm_vblank.h     | 10 ++++----
+>  2 files changed, 12 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/drm_vblank.c b/drivers/gpu/drm/drm_vblank.c
+> index 94e45ed6869d..67d6367e9f4b 100644
+> --- a/drivers/gpu/drm/drm_vblank.c
+> +++ b/drivers/gpu/drm/drm_vblank.c
+> @@ -908,10 +908,10 @@ drm_get_last_vbltimestamp(struct drm_device *dev, unsigned int pipe,
+>   * drm_crtc_accurate_vblank_count() for such use-cases.
+>   *
+>   * Note that for a given vblank counter value drm_crtc_handle_vblank()
+> - * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+> - * provide a barrier: Any writes done before calling
+> - * drm_crtc_handle_vblank() will be visible to callers of the later
+> - * functions, if the vblank count is the same or a later one.
+> + * and drm_crtc_vblank_count() provide a barrier:
+> + * Any writes done before calling drm_crtc_handle_vblank() will be
+> + * visible to callers of the later functions, if the vblank count is
+> + * the same or a later one.
+>   *
+>   * See also &drm_vblank_crtc.count.
+>   *
+> @@ -936,7 +936,6 @@ EXPORT_SYMBOL(drm_crtc_vblank_count);
+>   * modesetting activity. Returns corresponding system timestamp of the time
+>   * of the vblank interval that corresponds to the current vblank counter value.
+>   *
+> - * This is the legacy version of drm_crtc_vblank_count_and_time().
+>   */
+>  static u64 drm_vblank_count_and_time(struct drm_device *dev, unsigned int pipe,
+>  				     ktime_t *vblanktime)
+> @@ -959,33 +958,6 @@ static u64 drm_vblank_count_and_time(struct drm_device *dev, unsigned int pipe,
+>  	return vblank_count;
+>  }
+>  
+> -/**
+> - * drm_crtc_vblank_count_and_time - retrieve "cooked" vblank counter value
+> - *     and the system timestamp corresponding to that vblank counter value
+> - * @crtc: which counter to retrieve
+> - * @vblanktime: Pointer to time to receive the vblank timestamp.
+> - *
+> - * Fetches the "cooked" vblank count value that represents the number of
+> - * vblank events since the system was booted, including lost events due to
+> - * modesetting activity. Returns corresponding system timestamp of the time
+> - * of the vblank interval that corresponds to the current vblank counter value.
+> - *
+> - * Note that for a given vblank counter value drm_crtc_handle_vblank()
+> - * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+> - * provide a barrier: Any writes done before calling
+> - * drm_crtc_handle_vblank() will be visible to callers of the later
+> - * functions, if the vblank count is the same or a later one.
+> - *
+> - * See also &drm_vblank_crtc.count.
+> - */
+> -u64 drm_crtc_vblank_count_and_time(struct drm_crtc *crtc,
+> -				   ktime_t *vblanktime)
+> -{
+> -	return drm_vblank_count_and_time(crtc->dev, drm_crtc_index(crtc),
+> -					 vblanktime);
+> -}
+> -EXPORT_SYMBOL(drm_crtc_vblank_count_and_time);
+> -
+>  /**
+>   * drm_crtc_next_vblank_start - calculate the time of the next vblank
+>   * @crtc: the crtc for which to calculate next vblank time
+> @@ -1978,10 +1950,10 @@ EXPORT_SYMBOL(drm_handle_vblank);
+>   * This is the native KMS version of drm_handle_vblank().
+>   *
+>   * Note that for a given vblank counter value drm_crtc_handle_vblank()
+> - * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+> - * provide a barrier: Any writes done before calling
+> - * drm_crtc_handle_vblank() will be visible to callers of the later
+> - * functions, if the vblank count is the same or a later one.
+> + * and drm_crtc_vblank_count() * provide a barrier:
+> + * Any writes done before calling * drm_crtc_handle_vblank() will be
+> + * visible to callers of the later functions, if the vblank count is
+> + * the same or a later one.
+>   *
+>   * See also &drm_vblank_crtc.count.
+>   *
+> diff --git a/include/drm/drm_vblank.h b/include/drm/drm_vblank.h
+> index 151ab1e85b1b..572e54425970 100644
+> --- a/include/drm/drm_vblank.h
+> +++ b/include/drm/drm_vblank.h
+> @@ -141,10 +141,10 @@ struct drm_vblank_crtc {
+>  	 * Current software vblank counter.
+>  	 *
+>  	 * Note that for a given vblank counter value drm_crtc_handle_vblank()
+> -	 * and drm_crtc_vblank_count() or drm_crtc_vblank_count_and_time()
+> -	 * provide a barrier: Any writes done before calling
+> -	 * drm_crtc_handle_vblank() will be visible to callers of the later
+> -	 * functions, iff the vblank count is the same or a later one.
+> +	 * and drm_crtc_vblank_count() provide a barrier:
+> +	 * Any writes done before calling drm_crtc_handle_vblank() will be
+> +	 * visible to callers of the later functions, iff the vblank count is
+> +	 * the same or a later one.
+>  	 *
+>  	 * IMPORTANT: This guarantee requires barriers, therefor never access
+>  	 * this field directly. Use drm_crtc_vblank_count() instead.
+> @@ -260,8 +260,6 @@ struct drm_vblank_crtc *drm_crtc_vblank_crtc(struct drm_crtc *crtc);
+>  int drm_vblank_init(struct drm_device *dev, unsigned int num_crtcs);
+>  bool drm_dev_has_vblank(const struct drm_device *dev);
+>  u64 drm_crtc_vblank_count(struct drm_crtc *crtc);
+> -u64 drm_crtc_vblank_count_and_time(struct drm_crtc *crtc,
+> -				   ktime_t *vblanktime);
+>  int drm_crtc_next_vblank_start(struct drm_crtc *crtc, ktime_t *vblanktime);
+>  void drm_crtc_send_vblank_event(struct drm_crtc *crtc,
+>  			       struct drm_pending_vblank_event *e);
+> -- 
+> 2.47.0
 
-> Please advise... I suspect the best answer is to leave it as it is? 
-
-I'd really rather not. Linus has complained to us about Kconfig symbols
-appearing / getting enabled by default multiple times in the past.
-
-Sorry for the delay, vacation time.
+-- 
+Ville Syrjälä
+Intel
 
