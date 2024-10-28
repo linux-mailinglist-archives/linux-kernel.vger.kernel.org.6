@@ -1,194 +1,108 @@
-Return-Path: <linux-kernel+bounces-385758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385760-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EDE9B3B4D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:22:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1B89B3B52
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 377941F22C1D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:22:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6745BB21E93
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:23:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49E2A1E00AB;
-	Mon, 28 Oct 2024 20:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC73F1DF74C;
+	Mon, 28 Oct 2024 20:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AAVPmWkO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsBl3R+v"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994811DF969;
-	Mon, 28 Oct 2024 20:22:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531091DEFCF;
+	Mon, 28 Oct 2024 20:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730146948; cv=none; b=HlDnhAoEIvdq2BUFkJ929trjVBONAubNxqhJwrbYa9No2rRB6nsS2Pz8paG/oqyIg0bWFzFTDeWistKpvWsUMGlFWMSNwwx7/bE2XfkLd66qIEFok3mMQSM6ZW/AAJCxWjUBwgRgVwsPKvf3D2lmaXFi6NEllRYrg/nCQQNX9es=
+	t=1730146981; cv=none; b=WfEOWNIXxlmRXcaYxwat6YwpZTIhwHgdFNHHvzHQ4+6qsJyd5kBDNbiX+gvOU12Eld0dMh0DWtwFnlXwlipULmyz2H+6OFXaZkWHJk5dF8EVMQgBA7kwDq2AXnwwzg76A+M8PWzm6PfTKTfn490gl4qwIWyIUflGgHV4OBCjRRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730146948; c=relaxed/simple;
-	bh=pT9vby1FTXJmcSXQkwFvclL5W11uGqMmkI13cHc4kTk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j5Wcy3HltGVABXmGEyr0W0g+yu2TFmHK6EIYEtI7aRniiCjJV9Y7kMMN+S/JzYFwYDHpsvbWot+leueAiAXoG37UoDTg72jvaCs+G+Wqa2zYhaf2NA/UhhQL++t84qUdPfbMk6uIYhidP1GoguH+tevwkq9BKciaRVBClmoZWF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AAVPmWkO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95097C4CEC3;
-	Mon, 28 Oct 2024 20:22:22 +0000 (UTC)
+	s=arc-20240116; t=1730146981; c=relaxed/simple;
+	bh=h/uAJKk9yowgbk3OaT+oWdhXXiH9RK517VPzloLbJs0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s8GHZOtI0AyBvBzOlb/3bgRhJ0DCnkrQcMxg8TvdWWVxnc+1c+rJDc1Ojh4bqQssOKNXam89tD9V9d0mxXr24v4peKGjlCTTp8ekFNG7XHPLeDTcBwI8m3T9FEFIr4nxMqcobLFS0N6leV35cbC1Mhk7w6RARRE8t9m4kB3XJD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsBl3R+v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D119C4CEE3;
+	Mon, 28 Oct 2024 20:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730146946;
-	bh=pT9vby1FTXJmcSXQkwFvclL5W11uGqMmkI13cHc4kTk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=AAVPmWkO4WSftmmQc+29HfYTGruEDuceF/k8m3cEJM04cBSrAafckXkADvDuWG/vV
-	 7MsVdYMvz/9cfbAONzoEWhwKk8qxZ/p4D5dftfLAwcDRr0d3LNWLWfNdn5WAL+eJGU
-	 aEMMDRUPmyBKSsNzN3TyBICCnUd2xYX4abDxNomYPHWe3RT9umhwdEjVaEfLKEFeN0
-	 vyPvKh22kk+kjnnuQ0WAQC9WKP02e4nL9fDJuwtx4mx1kXbyJYSSekNk7oiRtO7NuK
-	 5pMsMtxFGPDCWZFSKOjwspYfgWMqgf7pqNg8RM9vnEiQgRSRW+sZBUuss6/3miGWGZ
-	 toYjg0b1Rn9hA==
-Date: Mon, 28 Oct 2024 20:22:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: ahaslam@baylibre.com
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com,
- dlechner@baylibre.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/6] iio: dac: ad5791: Include chip_info in device match
- tables
-Message-ID: <20241028202218.0f0b3d14@jic23-huawei>
-In-Reply-To: <20241028071118.699951-4-ahaslam@baylibre.com>
-References: <20241028071118.699951-1-ahaslam@baylibre.com>
-	<20241028071118.699951-4-ahaslam@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1730146981;
+	bh=h/uAJKk9yowgbk3OaT+oWdhXXiH9RK517VPzloLbJs0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=FsBl3R+v8FbAqGjbUZCHo8pAb2LgdeS4sXhlPLjXPciJeru18Ltq//tbfvW/XOOzc
+	 dPxkCiQ/HD+RHGdnBPuH9wvg5mz22RK3kURBX93PH8MREV3mQRf41VFjqQARfdXg7v
+	 acyj7d6WD98UTV2B9t0GBMW+SXUhHDLNU+3JL/GCNjwnSoIV4jbaHqOLZJ8Ezcyidw
+	 IZQeKl1pt7/TbfjEsOUEHd18hFahFOe2GeN8SZqWdZI3tXtnPmF57RK/+pq5h0az+0
+	 2QF4YEYmFAJ/k3tyaWQZvkK5bTFVgkXYTJ40x0n5XPKR1QKbQPRmFbEXlE+GquZp6b
+	 PVG8YSBpBgsHw==
+From: Mark Brown <broonie@kernel.org>
+Date: Mon, 28 Oct 2024 20:22:31 +0000
+Subject: [PATCH] kselftest/arm64: Fix encoding for SVE B16B16 test
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241028-arm64-b16b16-test-v1-1-59a4a7449bdf@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAIbyH2cC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDINZNLMo1M9FNMjQDIt2S1OIS3UTDZPOkxBQjE3OLVCWgvoKi1LTMCrC
+ Z0bG1tQCGNGQSYwAAAA==
+X-Change-ID: 20241024-arm64-b16b16-test-a1c7bad2478e
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-9b746
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1107; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=h/uAJKk9yowgbk3OaT+oWdhXXiH9RK517VPzloLbJs0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnH/KiTZI1KXJe0z4HBNsQhRwJZzpV12/qfQwGfWxj
+ /JMMjJKJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZx/yogAKCRAk1otyXVSH0A2MB/
+ 0fPO4SRok6s/UUvAbL/isVyPqmA/03nUE6QHn9VxY3eP2r45ADD+X0zKSrpebv4SE8+CULRMla79ma
+ yvaQCQ9g+Wd8tibBFEDjn2/n7bybwjl6y+TacYNsspr3wtsRhT7sjheQyW63xSV+WP65GXX/E4Za7r
+ O+maPIYtPwwq7DAEOBy8GanTuYI5J1ySnFoUT1KM4OUKhJrgDp/ezC77JvHZORDSRARLYD8S6+VuT2
+ hvwUG7zcwa69ykMN23ejQfGa4rWx/beIQtOij9q42uN1xH57cJdrqTQZb0Ha9nzKPCIBC10zp6wtCq
+ OWMnQJxx/GhRaqr5iMyIv0zW4p03+Q
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On Mon, 28 Oct 2024 08:11:15 +0100
-ahaslam@baylibre.com wrote:
+The test for SVE_B16B16 had a cut'n'paste of a SME instruction, fix it with
+a relevant SVE instruction.
 
-> From: Axel Haslam <ahaslam@baylibre.com>
-> 
-> Include a chip info struct in device SPI and device OF match tables to
-> provide channel definitions for each particular ADC model and drop
-> device enum.
-> 
-> Suggested-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Axel Haslam <ahaslam@baylibre.com>
-> ---
->  drivers/iio/dac/ad5791.c | 107 +++++++++++++++++++--------------------
->  1 file changed, 51 insertions(+), 56 deletions(-)
-> 
-> diff --git a/drivers/iio/dac/ad5791.c b/drivers/iio/dac/ad5791.c
-> index 553431bf0232..a11e81211669 100644
-> --- a/drivers/iio/dac/ad5791.c
-> +++ b/drivers/iio/dac/ad5791.c
-> @@ -65,7 +65,9 @@
->   */
-Whilst adding the docs for the missing entries, please delete this
-blank line!
+Fixes: 44d10c27bd75 ("kselftest/arm64: Add 2023 DPISA hwcap test coverage")
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/arm64/abi/hwcap.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Otherwise patch looks good to me.
+diff --git a/tools/testing/selftests/arm64/abi/hwcap.c b/tools/testing/selftests/arm64/abi/hwcap.c
+index f2d6007a2b983eba77a880ec7e614396a6cb1377..1e4ed89802f76c2bcbe4bfd1a9a987970db8b97d 100644
+--- a/tools/testing/selftests/arm64/abi/hwcap.c
++++ b/tools/testing/selftests/arm64/abi/hwcap.c
+@@ -361,8 +361,8 @@ static void sveaes_sigill(void)
+ 
+ static void sveb16b16_sigill(void)
+ {
+-	/* BFADD ZA.H[W0, 0], {Z0.H-Z1.H} */
+-	asm volatile(".inst 0xC1E41C00" : : : );
++	/* BFADD Z0.H, Z0.H, Z0.H */
++	asm volatile(".inst 0x65000000" : : : );
+ }
+ 
+ static void svepmull_sigill(void)
 
-Jonathan
-	
->  
->  struct ad5791_chip_info {
-> -	int (*get_lin_comp)	(unsigned int span);
-> +	const char *name;
-> +	const struct iio_chan_spec channel;
-> +	int (*get_lin_comp)(unsigned int span);
->  };
->  
->  /**
-> @@ -98,13 +100,6 @@ struct ad5791_state {
->  	} data[3] __aligned(IIO_DMA_MINALIGN);
->  };
->  
-> -enum ad5791_supported_device_ids {
-> -	ID_AD5760,
-> -	ID_AD5780,
-> -	ID_AD5781,
-> -	ID_AD5791,
-> -};
-> -
->  static int ad5791_spi_write(struct ad5791_state *st, u8 addr, u32 val)
->  {
->  	st->data[0].d32 = cpu_to_be32(AD5791_CMD_WRITE |
-> @@ -228,20 +223,6 @@ static int ad5780_get_lin_comp(unsigned int span)
->  	else
->  		return AD5780_LINCOMP_10_20;
->  }
-> -static const struct ad5791_chip_info ad5791_chip_info_tbl[] = {
-> -	[ID_AD5760] = {
-> -		.get_lin_comp = ad5780_get_lin_comp,
-> -	},
-> -	[ID_AD5780] = {
-> -		.get_lin_comp = ad5780_get_lin_comp,
-> -	},
-> -	[ID_AD5781] = {
-> -		.get_lin_comp = ad5791_get_lin_comp,
-> -	},
-> -	[ID_AD5791] = {
-> -		.get_lin_comp = ad5791_get_lin_comp,
-> -	},
-> -};
->  
->  static int ad5791_read_raw(struct iio_dev *indio_dev,
->  			   struct iio_chan_spec const *chan,
-> @@ -289,30 +270,34 @@ static const struct iio_chan_spec_ext_info ad5791_ext_info[] = {
->  	{ },
->  };
->  
-> -#define AD5791_CHAN(bits, _shift) {			\
-> -	.type = IIO_VOLTAGE,				\
-> -	.output = 1,					\
-> -	.indexed = 1,					\
-> -	.address = AD5791_ADDR_DAC0,			\
-> -	.channel = 0,					\
-> -	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
-> -	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-> -		BIT(IIO_CHAN_INFO_OFFSET),		\
-> -	.scan_type = {					\
-> -		.sign = 'u',				\
-> -		.realbits = (bits),			\
-> -		.storagebits = 24,			\
-> -		.shift = (_shift),			\
-> -	},						\
-> -	.ext_info = ad5791_ext_info,			\
-> +#define AD5791_DEFINE_CHIP_INFO(_name, bits, _shift, _lin_comp)		\
-> +static const struct ad5791_chip_info _name##_chip_info = {		\
-> +	.name = #_name,							\
-> +	.get_lin_comp = &(_lin_comp),					\
-> +	.channel = {							\
-> +			.type = IIO_VOLTAGE,				\
-> +			.output = 1,					\
-> +			.indexed = 1,					\
-> +			.address = AD5791_ADDR_DAC0,			\
-> +			.channel = 0,					\
-> +			.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),	\
-> +			.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |	\
-> +				BIT(IIO_CHAN_INFO_OFFSET),		\
-> +			.scan_type = {					\
-> +				.sign = 'u',				\
-> +				.realbits = (bits),			\
-> +				.storagebits = 24,			\
-> +				.shift = (_shift),			\
-> +			},						\
-> +			.ext_info = ad5791_ext_info,			\
-> +	},								\
->  }
->  
-> -static const struct iio_chan_spec ad5791_channels[] = {
-> -	[ID_AD5760] = AD5791_CHAN(16, 4),
-> -	[ID_AD5780] = AD5791_CHAN(18, 2),
-> -	[ID_AD5781] = AD5791_CHAN(18, 2),
-> -	[ID_AD5791] = AD5791_CHAN(20, 0)
-> -};
-> +AD5791_DEFINE_CHIP_INFO(ad5760, 16, 4, ad5780_get_lin_comp);
-> +AD5791_DEFINE_CHIP_INFO(ad5780, 18, 2, ad5780_get_lin_comp);
-> +AD5791_DEFINE_CHIP_INFO(ad5781, 18, 2, ad5791_get_lin_comp);
-> +AD5791_DEFINE_CHIP_INFO(ad5790, 20, 0, ad5791_get_lin_comp);
-> +AD5791_DEFINE_CHIP_INFO(ad5791, 20, 0, ad5791_get_lin_comp);
+---
+base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
+change-id: 20241024-arm64-b16b16-test-a1c7bad2478e
 
+Best regards,
+-- 
+Mark Brown <broonie@kernel.org>
 
 
