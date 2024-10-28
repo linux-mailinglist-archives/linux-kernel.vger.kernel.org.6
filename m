@@ -1,96 +1,112 @@
-Return-Path: <linux-kernel+bounces-384345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D23089B293D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:52:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A349B293C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:52:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63088B21E1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:52:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 587A81C21759
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:52:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027122010F8;
-	Mon, 28 Oct 2024 07:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCDE20101F;
+	Mon, 28 Oct 2024 07:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DuW9KUai"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WUz/V0ti";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IZ4FYzFN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE1D1F427C
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A96F1F4264
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100944; cv=none; b=T7VRMgqhEOcq39mG5ZzVIIyMSix/C5QfzXnpJiN7FCC69YXvSLiqV7bWNhfOQ45dZLpesREDPkyW2DTwrGDtmXeswi7QaKGx3eGDs2Kcg9/L0oYw5IUmL5j0F0ZafDhu7EJZnCl3Lnj7GFMYHYtd1+NakZx+aRUu5YDk8X96viY=
+	t=1730100943; cv=none; b=Q7B1r9aG54kcMnCoryUSe8BzxfNmhm0FuOKfo2hQmFyYx1tc1urZGkBFWS5U4GxpCovxK8O/+t7oAWkRYAK+frHPa8/9xEcYUVJf8IU4B99+1Ib6of1TCt2Gt7u2FeDqFoqXm9nH0RsvRk2toPH6+DWBWSsew7eWEigL20KbPpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100944; c=relaxed/simple;
-	bh=Wv3yF4Ar9Pz3+Z4fWrJB94mZZwrOQZT58pweKP29aHg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=vAOiYvfKP9ETcUGswqRfVvSgbkx4sJLpBYgUJuA6K1niS099HSNAm6G94Z9LaVPs2NOmnax/wpK2wO95C5YIdJksQzyxcKbFFES+xc/vrc+XgCw/O6pG7drj5JY/vgRAjrr9RX8SiNo+iCs7PN+ouD9Ve4mId6vfZj0s4LXseqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=DuW9KUai; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e681bc315so2681278b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 00:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730100940; x=1730705740; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Imb3YZxrrE+5d5dvAE7g7R4yaDBgRwcYFIZJYRNaots=;
-        b=DuW9KUaigESK6K1IUIsH3+huo2kKZEtvBOmexMFUa0pFgOXUK6LDKaxi1chXNbIwsV
-         /xRT4ZfTOXGURXoT8PLFfP0HWp6wI3NMI0CWk7fCvtAf1Lgnz+5pRF3LS/1dayNOLQi7
-         zYva4WLaeXFDrYEcvrZr5m1ql6uPY/6TKXiUE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730100940; x=1730705740;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Imb3YZxrrE+5d5dvAE7g7R4yaDBgRwcYFIZJYRNaots=;
-        b=VH9lm18yIDw18EySUItTSeLlrIJ3mFLvFfH3gveZyp+tTfe4pLlNfAuewsmkmFc0iI
-         6JRa/eIleJYwWsJLVhIlP5ELQUCWlq8DL8TRsF9pGTSk2ijNsCZUqlg8AUgI1xQNWRpn
-         sNRSwU3Q8+nWwFxWvl8Fw60A9b8LJkEqP7FrgZ4j1/EG58Jt+6PO0cMi7t3rRoXZ1hIg
-         GBV8qyp4k9+yYLshbSdup0r2+kgmKmA7lrNYeRrX4uMlxJAkIArozav138tfHyAaq5wX
-         hoyWC2d9Fisj91CaeDX1+bRcXbcSr7v+Ui6DDHEYXl+kEBz/VkWlQPXgA1uliv+QG9aq
-         AIYg==
-X-Forwarded-Encrypted: i=1; AJvYcCX98p5m/NW6SCBkbqLV+RAGKrGTCpWae06TDvL4QHzYk8DBULIc8bv9s0BZ0J36YjD6nQwAK3rSkjbDnnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YybDEXu0mwg7kuGquY40t/5UPBDHNXoVl5vHDFhco8VpaAcm4Hd
-	zF4GCbTrUD25NC4EpDJyYji+ilMh24oyD68UC56j8BsOnknIiiTc2QrU3er1DZEXcRKu1LGjifc
-	=
-X-Google-Smtp-Source: AGHT+IHwsc3efwP7M/xqL8OXEAqdldWcrBCqHgefKT33dMhQ7sTYUY/HCt7Jqkx6Wte3ZFNOvJJnFg==
-X-Received: by 2002:a05:6a00:3d51:b0:71e:6a57:7288 with SMTP id d2e1a72fcca58-72062f7132amr10960362b3a.5.1730100940528;
-        Mon, 28 Oct 2024 00:35:40 -0700 (PDT)
-Received: from tigerii.tok.corp.google.com ([2401:fa00:8f:203:f1f8:97e1:9c5b:d66f])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720579360f5sm5131189b3a.88.2024.10.28.00.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 00:35:40 -0700 (PDT)
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Minchan Kim <minchan@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: [PATCH 0/2] zram: IDLE flag handling fixes
-Date: Mon, 28 Oct 2024 16:34:56 +0900
-Message-ID: <20241028073529.1383980-1-senozhatsky@chromium.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+	s=arc-20240116; t=1730100943; c=relaxed/simple;
+	bh=lEpQxL9xXuQFToIcVd6yy5VJRuxNaTDofAFptwuN6Zo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=NJ/1GGa7tuHSylPerFP4NOs5Axwnmd6PiQ892mNTMrG+LqeOwE8mzU7kKQV3pURPuEc8KrzsGOfioWFl7S4pb7cyIuxgm21VDLQzULAeLqgocKj3iZN/SLD7OPvfnQjkJQ4URykAK87HV4wOvB0rrbLnB2sbU4XlRFHSwEl9Sjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WUz/V0ti; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IZ4FYzFN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Nam Cao <namcao@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730100939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ab5B+FqZ3WhkZ6WaAXYb+YI7fVubcn8HVzkt7ibXae4=;
+	b=WUz/V0tiYnaI0K58Zo/cv9WTcRPFZZ1GtFxqaVZMYoMsSqxtek0mHFdrEW4HE6ME3E61HA
+	ncDqSy9DiY1th1FIo5QUKTcLber0N7qnXJKkZA1q0SqEdrLta+KVYkTcPDNu628w4s1vJ/
+	HqjAKgjSP2sf+2Pn87OfFG3RWQ5pFRcbwDWuTf4hSnBp8fwx/tZjxLXoFBbb0I3c5fsCRi
+	rU+l3I5HoDpyOpK+ab283hjd9jnh2CILuANV5ka/6eyUe/5/L9jNQfVTO27rLeTvrG8h99
+	ooBXBwZ3vM3KX6vaubkGuEH+cQJt2B6f8Vaz+S2eVaHy/SalqjREENG0e9jaEQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730100939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Ab5B+FqZ3WhkZ6WaAXYb+YI7fVubcn8HVzkt7ibXae4=;
+	b=IZ4FYzFNXzDXaaEYm6ftTDcL/AV2ys1Kz9wKcUNKgT01cUOAeY90kzx6WFVJa19nyPa7ms
+	YjmbUMve1VLCamDA==
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Kees Cook <kees@kernel.org>,
+	linux-kernel@vger.kernel.org
+Cc: Nam Cao <namcao@linutronix.de>,
+	Jaehoon Chung <jh80.chung@samsung.com>
+Subject: [PATCH 20/44] mmc: dw_mmc: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:56 +0100
+Message-Id: <36c90360480ab8c4c13f1034393f53e531ca5855.1729865485.git.namcao@linutronix.de>
+In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
+References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-zram can wrongly preserve ZRAM_IDLE flag on its entries
-which can result in premature post-processing (writeback
-and recompression) of such entries.
+There is a newly introduced hrtimer_setup() which will replace
+hrtimer_init(). This new function is similar to the old one, except that it
+also sanity-checks and initializes the timer's callback function.
 
-Sergey Senozhatsky (2):
-  zram: clear IDLE flag after recompression
-  zram: clear IDLE flag in mark_idle()
+Switch to use this new function.
 
- drivers/block/zram/zram_drv.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Patch was created by using Coccinelle.
 
--- 
-2.47.0.163.g1226f6d8fa-goog
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+---
+Cc: Jaehoon Chung <jh80.chung@samsung.com>
+---
+ drivers/mmc/host/dw_mmc.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/mmc/host/dw_mmc.c b/drivers/mmc/host/dw_mmc.c
+index 41e451235f63..3a15af97e4e1 100644
+--- a/drivers/mmc/host/dw_mmc.c
++++ b/drivers/mmc/host/dw_mmc.c
+@@ -1875,8 +1875,7 @@ static void dw_mci_init_fault(struct dw_mci *host)
+ {
+ 	host->fail_data_crc =3D (struct fault_attr) FAULT_ATTR_INITIALIZER;
+=20
+-	hrtimer_init(&host->fault_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	host->fault_timer.function =3D dw_mci_fault_timer;
++	hrtimer_setup(&host->fault_timer, dw_mci_fault_timer, CLOCK_MONOTONIC, HR=
+TIMER_MODE_REL);
+ }
+ #else
+ static void dw_mci_init_fault(struct dw_mci *host)
+--=20
+2.39.5
 
 
