@@ -1,107 +1,105 @@
-Return-Path: <linux-kernel+bounces-384987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BD549B3115
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:54:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDC39B3117
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:54:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47F711F2234A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:54:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46734B22EC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA00A1D9A52;
-	Mon, 28 Oct 2024 12:54:03 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23501E48A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546941DA309;
+	Mon, 28 Oct 2024 12:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cCgtsLct"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98B661D5CC5
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730120043; cv=none; b=YnS6I3weWLiXDoHqQRC7iq+g6YHwnEA2iS8gzWptD6iHGGTIXcXomiXSYBo6ABsrusZC0CHmZhSe9NwUIOOi0FGASIB2RWPj4mpdVwnLq+tqbwULd4Uco+PWF162ivuN9+WhccP5ZnEfE0oRvXSKUH0IKkScSokUwcvHG9K4H7U=
+	t=1730120081; cv=none; b=CNUiAnJExfNm+TLNRHFFkKPrkWMvg1R6hcZyfHZ7nsIyd9iQilBwJXDuxZjwUp4H4KvBiJh83YmID5k4l5a0Xu4g3raBQcQVDP0wvTfH7XeZ3pHJjT7p0loS5GOvjz6A4qhY8fjfrOz4P40UaWPG7nmV4DNYlMn9rCiO5+cHxWY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730120043; c=relaxed/simple;
-	bh=V3O64SwxXDnxNO4kw27eNVFasFBdRrQgpiVmx7vioa4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=euv9aNUa8VAU/LUl70cSn5/Inyd9pHGVr43s1DK7v+8HkcJe2Y6+ofodEEqx58SQyX4Z5/QjHByMTJIT0HouT/R+xBEI3W/+ap6ZyoiiRLM1qlnOBJgJcM8gdHr7pIFh95Gizg9XX+5DySgykR85o4MLqANr3S3UZ53DIVL3LPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1671f895a463-62d74;
-	Mon, 28 Oct 2024 20:53:50 +0800 (CST)
-X-RM-TRANSID:2ee1671f895a463-62d74
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[10.55.1.70])
-	by rmsmtp-syy-appsvr02-12002 (RichMail) with SMTP id 2ee2671f895d816-d9a0c;
-	Mon, 28 Oct 2024 20:53:50 +0800 (CST)
-X-RM-TRANSID:2ee2671f895d816-d9a0c
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: krzk@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Liu Jing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] w1: ds2413: Fix the wrong output format
-Date: Mon, 28 Oct 2024 20:53:48 +0800
-Message-Id: <20241028125348.3814-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1730120081; c=relaxed/simple;
+	bh=seI8UO8liH/MjIwO0BVJ3zPmW5DvN1lsIKmmEv7NXaM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ezbLR1g0DemYZTrYnjy2sHRQwl0JbVe4niBarn0M7QzBNOEFSyW0i1RYwX27WqQYlM9YouqAIdaARiwBlgB4uJEeO2Sq/crt/OCASQ5uoY+POvdEaOgvWk8AjbntKTSaI+IBjKXrDEkhdxwckiwmWncPwG48JntYJRQU7xzb0PY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cCgtsLct; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539983beb19so5039374e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:54:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730120078; x=1730724878; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=umup54zPr/YxS1kzJqH2Mzz16zItuDuoZj7kmVQKCCM=;
+        b=cCgtsLctISLLOVkD2JfHx3DXEAKRHbBvGVz2c3+v4KfWascqOPvaLBpS6DHQ4uWQBB
+         CHNn8/f7SxNrEqCV5zhHdRGrvaiUd6VxT5k8o5hI/kAx0ebEHRud7SorqlMSieIpNfQt
+         VeqZ2oaHDKQM4UojFdMIHlgDwSMmvXYWnczte2kKdZTUVGapjSL5z1LDSqVHBFs0fcj+
+         J4fFuYyp3kVoocZ35CIDJKa6cGuSbnmltDC3Q7Puu8vepXzTHJ4ZDw3L5gHlSAAeguwv
+         f1tqeNoOALR1Dm4jqdG8fehR6Yv4LB2G9Ar9I1UQxIN7ODeXwZvRAa26vzae/xhQGzjD
+         PJNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730120078; x=1730724878;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=umup54zPr/YxS1kzJqH2Mzz16zItuDuoZj7kmVQKCCM=;
+        b=HgIjwxHcPBsfBCH5ETvBaeSTPTr7jrx2hKjz0UOdsbMtH5qoxkz/GdxiOoT8u7r3sL
+         MlR4OTemk7xo++Qo3M0xfAePfN1vZXTAxS44OejlGET6Homf1doJtmsVj3DgAeEt+2Y7
+         sidJRJT7h/eUni8KylOerMDVG0FSbpDrCvwK2znhZYhYX5crTjPO4tSvqvAnevnNZcIh
+         Xy8s/lOv0w4NkxCPhX1hZVAOl8a5jjPpEfD66Zrs4UY6RtZ+3yLdiN/qtZ7CwaW/gBRV
+         rdMeBcwZokyn6YBbBsMOvDEx24yI7UqOuJf51Xht5gfll9JVLUFgHxu9HzoXmRZ6OWv2
+         7MAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQkpjBJjLnu6M6OK5hsgDv9pQ6Xs8b8kDcbENJynD/lsE+2uxM5rl8h5XUsaW73GTfGSroH4pMIfoBLSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9vYei+9378brAd0A/w6q66yovqS0ZHCqZGy9+6xraTyY5utdc
+	ZQXhKgRLKxEF/yjXRSKYGkJlLIF2CLr/MKKGbsBdYiU/98zQ7k48MlTt1AGiQq3xEQFJEsB5tJZ
+	mx6ZQ1e/PRNORFRhujgnre6mQ/UD6ovAAMEmBRg==
+X-Google-Smtp-Source: AGHT+IE0RFORu2qhCHVTzNL8EmTHxZvAv0CpOPcLoW/ThHRI1Ejo/uY+Ar9l2qfXZiVTY6d//qDHWFdO9TE8RAOq4Ro=
+X-Received: by 2002:a05:6512:3b98:b0:539:f51e:2465 with SMTP id
+ 2adb3069b0e04-53b348cad03mr3726018e87.22.1730120077585; Mon, 28 Oct 2024
+ 05:54:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+In-Reply-To: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 Oct 2024 13:54:26 +0100
+Message-ID: <CACRpkda=5rSCjoW0ScNg3pFFOjgSQEv8v+0ZkAw-d0pkF5CaZw@mail.gmail.com>
+Subject: Re: [PATCH next] pinctrl: spacemit: fix double free of map
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Yixun Lan <dlan@gentoo.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The output format of the retries variable should be %u instead of %d
+On Wed, Oct 23, 2024 at 10:39=E2=80=AFAM Dan Carpenter <dan.carpenter@linar=
+o.org> wrote:
 
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+> The map pointer is freed by pinctrl_utils_free_map().  It must not be a
+> devm_ pointer or it leads to a double free when the device is unloaded.
+>
+> This is similar to a couple bugs Harshit Mogalapalli fixed earlier in
+> commits 3fd976afe974 ("pinctrl: nuvoton: fix a double free in
+> ma35_pinctrl_dt_node_to_map_func()") and 4575962aeed6 ("pinctrl: sophgo:
+> fix double free in cv1800_pctrl_dt_node_to_map()").
+>
+> Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC"=
+)
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-diff --git a/drivers/w1/slaves/w1_ds2413.c b/drivers/w1/slaves/w1_ds2413.c
-index 739009806467..75c15a6a4fb4 100644
---- a/drivers/w1/slaves/w1_ds2413.c
-+++ b/drivers/w1/slaves/w1_ds2413.c
-@@ -61,19 +61,19 @@ static ssize_t state_read(struct file *filp, struct kobject *kobj,
- 		} else if (state == W1_F3A_INVALID_PIO_STATE) {
- 			/* slave didn't respond, try to select it again */
- 			dev_warn(&sl->dev, "slave device did not respond to PIO_ACCESS_READ, " \
--					    "reselecting, retries left: %d\n", retries);
-+					    "reselecting, retries left: %u\n", retries);
- 			goto next;
- 		}
- 
- 		if (w1_reset_resume_command(sl->master))
- 			goto out; /* unrecoverable error */
- 
--		dev_warn(&sl->dev, "PIO_ACCESS_READ error, retries left: %d\n", retries);
-+		dev_warn(&sl->dev, "PIO_ACCESS_READ error, retries left: %u\n", retries);
- 	}
- 
- out:
- 	mutex_unlock(&sl->master->bus_mutex);
--	dev_dbg(&sl->dev, "%s, mutex unlocked, retries: %d\n",
-+	dev_dbg(&sl->dev, "%s, mutex unlocked, retries: %u\n",
- 		(bytes_read > 0) ? "succeeded" : "error", retries);
- 	return bytes_read;
- }
-@@ -118,12 +118,12 @@ static ssize_t output_write(struct file *filp, struct kobject *kobj,
- 		if (w1_reset_resume_command(sl->master))
- 			goto out; /* unrecoverable error */
- 
--		dev_warn(&sl->dev, "PIO_ACCESS_WRITE error, retries left: %d\n", retries);
-+		dev_warn(&sl->dev, "PIO_ACCESS_WRITE error, retries left: %u\n", retries);
- 	}
- 
- out:
- 	mutex_unlock(&sl->master->bus_mutex);
--	dev_dbg(&sl->dev, "%s, mutex unlocked, retries: %d\n",
-+	dev_dbg(&sl->dev, "%s, mutex unlocked, retries: %u\n",
- 		(bytes_written > 0) ? "succeeded" : "error", retries);
- 	return bytes_written;
- }
--- 
-2.27.0
+Patch applied!
 
-
-
+Yours,
+Linus Walleij
 
