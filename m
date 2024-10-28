@@ -1,143 +1,177 @@
-Return-Path: <linux-kernel+bounces-385147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E08E9B3327
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:18:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D23749B332E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:19:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFB571C219B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:18:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32931B21D0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAEC01DD0F3;
-	Mon, 28 Oct 2024 14:18:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJ9D/JXZ"
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com [209.85.167.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DB31DDA20;
+	Mon, 28 Oct 2024 14:18:36 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D18F1DA631;
-	Mon, 28 Oct 2024 14:18:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4AE1DE2A3
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:18:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730125099; cv=none; b=kRsheXy+oT2C8Szvu2M6uRagF7PYwJFKrUyv2XEGAPLw5QvCZwEMiIv+abyTmMVIcqwHbnIDk3Rg4csbB8FTz08bSTS3qcp+vgITEV8GyGs2hQGvsMpG3MG1XFLrMUX9KaAVCy9fTRyD+twqPpQRF4Nb0Uv3xV0HDADMtDTVtEs=
+	t=1730125116; cv=none; b=K+hoqLfZRC3BKoBa8gyxJqdQzi6sV1Mu7d5Jk94T9+02oyIuhQ1vM3C0ysZ1hRBW28WCWgLZwYmScFhGIjmoBbcdswo6S2TQIZIT3UXNvIJyr6x8htMAFfTHAZR2g/30aGQBq17K15X/aTco1hz+Cym+XAzqGJOeUORYrGHO0b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730125099; c=relaxed/simple;
-	bh=30NcFE7W3QlEwFblG175ej6PI0H7YxOEUZArPsK4Syo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZXmJzpulb6pJEKPj80oy5tpbO3Yvek4ejZzgsjaWcQZk/DylJbTFpAWgDS7a/9qmMi++MARE4VHBHyQUfts3WCxIjsVGs8J6x/uqpMe12eNlqLMTJz43HKfyRVo/bPd3p7HqWIYkxMr50wvp1t9aGBR5LWnhyzjmF0aHSx1llP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJ9D/JXZ; arc=none smtp.client-ip=209.85.167.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f178.google.com with SMTP id 5614622812f47-3e619057165so2361509b6e.1;
-        Mon, 28 Oct 2024 07:18:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730125096; x=1730729896; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ImoXb51REQ7Fya2d4oChU+OCStxYaxddfmycRqcK10w=;
-        b=CJ9D/JXZgo2cj/+CQIuh1p70nnDNNxzCvgjhmLBg0nbeDnQdS8jQalgKCYPANos3QU
-         awVO+kTPiLrgYbL67X8LfaJg3ZUo5US3titDNtOatfUb4uwi6LqH/Cow2z6DP89afu3Z
-         fvavO3VkfqL2/1q6vVXFzrex/HXLXEOXg2IxRyVQEFZJWnbumPzMWLzg2rdnjveztCME
-         FFop7EUUjZHp3JHiTqMmCa8bLE+1NrGXAdTr9vQ8bODwXQ+nEOFKnire6d3wVoO5uv5D
-         GGI/kU5m2orXVu3ie2u3AoZbe8V0grqvXuHO7sWj51v8G5uXdyXeFwSmOrVQdCJI4nXF
-         YlMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730125096; x=1730729896;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ImoXb51REQ7Fya2d4oChU+OCStxYaxddfmycRqcK10w=;
-        b=Xf5JVlWJ6ssl0e7WWDh+k4Znde2geoskyXgqPF2yZQrPNkgW0vGRCjod0X0dSUOsK4
-         wpZN1q9yqvf8yLfURoFYc3snHO60sCuyOP/0h6XDsSu+lmRf6AG4OlWw22iPetpBi0AA
-         euwXdl+GsB+BAAurxQyt8ffVpxyesntDzCQJsecUfwHU3brKAvNRbjsGcPr6QgchRKXa
-         HcZnh1284et32a4kY1vngBz8+cVXkqK2wiKlRoRJoPLLNgHDSyfT3YZRLwyiaZf6dg6e
-         IqNl5pjiBFRBvdjM5Xdzl9IqG800KSYcbQGr7Ntt5OlW+EbL1GQy5xIToBFIVSZ+ERZU
-         dfCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQ88ijx9rH0iqDs+9qruo4QVFUqNwDwYtDW8H/4Tv8rRA/8Tcfasax2FPP29OiDhEmiUS7yQf9wbfdzrA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwIpR5bovYdm8QrD2FP/u4dD4Y4Au2Sp+JibxXPybCGK9Gwy3M
-	Qz5DAeZLxYgcJwpowcWjHPGoRwsb4E8JNimXSFhpJPpaT5etBn5UVSWaGk3+I//nobpp2HUZWq3
-	ENGcy+oVaAwXiK7a0eXR0A55BZMQ=
-X-Google-Smtp-Source: AGHT+IEIe21Vr8jKj6/bAsk2kCSM1b2UcE1pNqthB4zEAfVSKY/yptM9Yz5JVl8ZG5HH7Cjogzn4kd6vXEzuYuTyRsQ=
-X-Received: by 2002:a05:6808:2384:b0:3e6:30e2:5411 with SMTP id
- 5614622812f47-3e6384403b0mr6544230b6e.24.1730125096342; Mon, 28 Oct 2024
- 07:18:16 -0700 (PDT)
+	s=arc-20240116; t=1730125116; c=relaxed/simple;
+	bh=GDxeko3+Dn9RuaYdTtgwmg1aQ7/CFFrKZY1eCCjQzsI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pm0NE9cIuTV2d4rF95PMh7cfsDJAKHGtWumtY8uMoX67h7ozv5mLPMgpcyLTPTVUIE4Xoc5U/NuHjsDhx261rfgYGAFKdgh5ofdYODWfn9NtMs+DLJr6UC84PyzwbUqzOrj7fKuuthh55W5uTLQboy8cyo3hUv+5Z0pn4B5FP+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5QZN-0002bl-NX; Mon, 28 Oct 2024 15:18:09 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5QZK-000s76-0y;
+	Mon, 28 Oct 2024 15:18:06 +0100
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id D06AA360975;
+	Mon, 28 Oct 2024 14:18:05 +0000 (UTC)
+Date: Mon, 28 Oct 2024 15:18:05 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Hal Feng <hal.feng@starfivetech.com>
+Cc: Andrew Lunn <andrew@lunn.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	William Qiu <william.qiu@starfivetech.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-can@vger.kernel.org" <linux-can@vger.kernel.org>, "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
+Message-ID: <20241028-great-worm-of-snow-494fa0-mkl@pengutronix.de>
+References: <20240922145151.130999-1-hal.feng@starfivetech.com>
+ <20240922145151.130999-4-hal.feng@starfivetech.com>
+ <cf17f15b-cbd7-4692-b3b2-065e549cb21e@lunn.ch>
+ <ZQ2PR01MB13071A093EB33F48340F753EE66F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
- <CAMhs-H-ChXQSZ_6EBiTKtD7ve2j2QsVvgVm0B5O1O7BfGwKFmQ@mail.gmail.com> <4f4572c2-8436-41a6-8c8d-4811da8231b1@linaro.org>
-In-Reply-To: <4f4572c2-8436-41a6-8c8d-4811da8231b1@linaro.org>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Mon, 28 Oct 2024 15:18:05 +0100
-Message-ID: <CAMhs-H-RWLGP5DJ86U6j5dy6wJCqi2bNGx_Pnv2njbLCTyq5wg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] clocksource: move System Tick Counter from 'arch/mips/ralink'
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: linux-mips@vger.kernel.org, tglx@linutronix.de, tsbogend@alpha.franken.de, 
-	john@phrozen.org, linux-kernel@vger.kernel.org, yangshiji66@outlook.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d6ye2orfo4iuw6ou"
+Content-Disposition: inline
+In-Reply-To: <ZQ2PR01MB13071A093EB33F48340F753EE66F2@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+
+
+--d6ye2orfo4iuw6ou
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: RE: [PATCH v2 3/4] can: Add driver for CAST CAN Bus Controller
+MIME-Version: 1.0
 
-On Mon, Oct 28, 2024 at 3:16=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 28/10/2024 15:14, Sergio Paracuellos wrote:
-> > On Fri, Sep 20, 2024 at 9:53=E2=80=AFAM Sergio Paracuellos
-> > <sergio.paracuellos@gmail.com> wrote:
-> >>
-> >> Hi Daniel,
-> >>
-> >> System Tick Counter is present in RT3352 and MT7620 Ralink SoCs. This =
-driver has
-> >> been in 'arch/mips/ralink' from the beggining and can be easily moved =
-into a more
-> >> accurate place in 'drivers/clocksource' folder. This makes easier to e=
-nable it
-> >> for compile test targets as well as reduce LOC in architecture specifi=
-c folders.
-> >> Bindings are already mainlined and can be located here [0].
-> >>
-> >> Thanks in advance for your time.
-> >>
-> >> Best regards,
-> >>     Sergio Paracuellos
-> >>
-> >> [0]: https://elixir.bootlin.com/linux/latest/source/Documentation/devi=
-cetree/bindings/timer/ralink,cevt-systick.yaml
-> >>
-> >> Sergio Paracuellos (2):
-> >>    clocksource: Add Ralink System Tick Counter driver
-> >>    MIPS: ralink: remove System Tick Counter driver
-> >>
-> >>   arch/mips/ralink/Kconfig                              |  7 -------
-> >>   arch/mips/ralink/Makefile                             |  2 --
-> >>   drivers/clocksource/Kconfig                           | 10 +++++++++=
-+
-> >>   drivers/clocksource/Makefile                          |  1 +
-> >>   .../clocksource/timer-ralink.c                        | 11 ++++-----=
---
-> >>   5 files changed, 15 insertions(+), 16 deletions(-)
-> >>   rename arch/mips/ralink/cevt-rt3352.c =3D> drivers/clocksource/timer=
--ralink.c (91%)
-> >
-> > Gentle ping on this patch series :-)
->
-> I'm on it
+On 23.09.2024 07:53:24, Hal Feng wrote:
+> > > +static inline u8 ccan_read_reg_8bit(const struct ccan_priv *priv,
+> > > +				    enum ccan_reg reg)
+> > > +{
+> > > +	u8 reg_down;
+> > > +	union val {
+> > > +		u8 val_8[4];
+> > > +		u32 val_32;
+> > > +	} val;
+> > > +
+> > > +	reg_down =3D ALIGN_DOWN(reg, 4);
+> > > +	val.val_32 =3D ccan_read_reg(priv, reg_down);
+> > > +	return val.val_8[reg - reg_down];
+> >=20
+> > There is an ioread8(). Is it invalid to do a byte read for this hardwar=
+e? If so, it is
+> > probably worth a comment.
+>=20
+> The hardware has been initially developed as peripheral component for 8 b=
+it systems
+> and therefore control and status registers defined as 8 bit groups. Never=
+theless
+> the hardware is designed as a 32 bit component finally. It prefers 32-bit=
+ read/write
+> interfaces. I will add a comment later.
 
-Awesome, thanks!
+As mentioned in my v1 review, you are doing proper u32 accesses.
 
->
->
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+> > > +static int ccan_bittime_configuration(struct net_device *ndev) {
+> > > +	struct ccan_priv *priv =3D netdev_priv(ndev);
+> > > +	struct can_bittiming *bt =3D &priv->can.bittiming;
+> > > +	struct can_bittiming *dbt =3D &priv->can.data_bittiming;
+> > > +	u32 bittiming, data_bittiming;
+> > > +	u8 reset_test;
+> > > +
+> > > +	reset_test =3D ccan_read_reg_8bit(priv, CCAN_CFG_STAT);
+> > > +
+> > > +	if (!(reset_test & CCAN_RST_MASK)) {
+> > > +		netdev_alert(ndev, "Not in reset mode, cannot set bit
+> > timing\n");
+> > > +		return -EPERM;
+> > > +	}
+> >=20
+> >=20
+> > You don't see nedev_alert() used very often. If this is fatal then netd=
+ev_err().
+> >=20
+> > Also, EPERM? man 3 errno say:
+> >=20
+> >        EPERM           Operation not permitted (POSIX.1-2001).
+> >=20
+> > Why is this a permission issue?
+>=20
+> Will use netdev_err() and return -EWOULDBLOCK instead.
+
+You have a dedicated function to put the IP core into reset
+"ccan_set_reset_mode()". If you don't trust you IP core or it needs some
+time, add a poll to that function and return an error.
+
+Then there's no need on ccan_bittime_configuration() to check for reset
+mode.
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--d6ye2orfo4iuw6ou
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcfnRsACgkQKDiiPnot
+vG+52Qf9EYytqiZDcw1r+TVbTIDJoUzjC6e0XKFkbT2/IBKG1usCbI8BwlKdXwu+
+uIU8xA7v62V41WBLyNHAXgeQTnjy1aNsMRUi8pJxVADI/PS91RzdWQXcHb1h6HPQ
+HfhJvmk0/nz6CFOXoIlPg9bwm2uB7MxPIS3y/aZ7Mo0e6vW5ChjtcmMXW9Ma/u08
+CrOsC92UX2ERW3o9nVhGqTgeKAFxiagUZMYFFMkqCDn1Pzas1EhixcpMmgbtff/q
+4cesN3k0tY37qg279JvVVBZhCDcbE2ueHSxjHwITsVxKvsL8HdWp+4c5o48EP3kD
+QQd+hao+9llKWOEpwduz8XmDjq3W5g==
+=TefK
+-----END PGP SIGNATURE-----
+
+--d6ye2orfo4iuw6ou--
 
