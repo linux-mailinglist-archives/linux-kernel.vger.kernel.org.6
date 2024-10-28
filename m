@@ -1,182 +1,170 @@
-Return-Path: <linux-kernel+bounces-385075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DB19B3211
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:46:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECBE39B3210
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:46:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4891C21CBB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:46:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCB71C21D0E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABEE1DDC24;
-	Mon, 28 Oct 2024 13:45:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28581DDA18;
+	Mon, 28 Oct 2024 13:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IkdRhuFb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OWkfzVl/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XYRcD20A";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OWkfzVl/";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XYRcD20A"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C901E1DD88F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05D921D88B1;
+	Mon, 28 Oct 2024 13:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730123106; cv=none; b=GHNlt3KE7xQbJ52ZVS3Ss3mMl3Nq82Kcq/KI0HjgqDrV7lXo9x0scCbhwRZvpRjCM277jYauRg2Z9FzbW+3y8qNoJzchSuYKOQulTtGfKkIGXYlw0JdS6Lt4lfQWaXvdzOjOV/cAKf95maOanf85MDCEi6b1nB9OxcKKYiJqY58=
+	t=1730123106; cv=none; b=Xr/QwqmGQspKR8ZSJ3m5wP8t+m3fY+0cEG4BGh8VuYT2AFP787BZExPcIAJKrZyeGzUo+hNqiSsZGKDNWyLlHx2oGYuVxxlqHtqMqxfkHzjh9RIdCfkkDEMeDFBJWhAEOEvSgyW+AsLPxDBqjLFRMw+D3dbM9YFbFTLLWRTjqFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730123106; c=relaxed/simple;
-	bh=aEs7wkOs/9Tmtuzmg6k86fkOGprpHMB9+QFgot8mjSE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GMHVcdSyImEyOO0dhrOvsztTuKuc2rI2otN7Rox0GU0I3tdSCtFeyXkKtAASS53EHXFBzLxMADA1er0E1zenkcRr9pp+HpXmFr3tirzMbKn6MUHeyacGWo3Pm3GD1bY9UUQgUHOZWJibIXSg7vp8DlLMBnECs0Xjy/ni+PKOLfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IkdRhuFb; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730123099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	bh=cQW9V8JSZ1/2Nku45b9zhXjZpKnX1PdrIvNy2+t7gaE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=NKHSRiZ6ZBZsnClOFitfrmBg4gEqBo+70DUCt1V/qb27zQQFo21lhXOtcbW3atlVv1toOi2MgmND6IPG5wnKRnWRZjoKt491q+ROihtv77F0DIbw96JE6uKEYWg6arMM184GIT08/VDnC/DqFdOil+4vCpUYoKKrNeNMXdVbtYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OWkfzVl/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XYRcD20A; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OWkfzVl/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XYRcD20A; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from knuth.suse.de (unknown [IPv6:2a07:de40:a101:3:9249:faff:fe06:959])
+	by smtp-out2.suse.de (Postfix) with ESMTP id EDE7E1FD93;
+	Mon, 28 Oct 2024 13:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730123102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2vGL1SVZq+LgfXtvaR3j6jeveiqx6XHBU95MSTDGVg4=;
-	b=IkdRhuFbA051yei2uVynZt2C59dh0b5EN4InXNxmndL/eKGoP1g7D5sGvH1j7G6w8Z4RfI
-	7dM50i2h++R0IVY9ODdNXLSZyebcgg3EOzXBpywOunX98Fx0lidPtT00HMLtOShGhX+xnj
-	FTuxHuKz63lh9KWUa1bG/LFfpHeZzMM=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-k_cANhDHM6GpYi13mbtwjQ-1; Mon, 28 Oct 2024 09:44:58 -0400
-X-MC-Unique: k_cANhDHM6GpYi13mbtwjQ-1
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7ac8f684d9bso912118485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:44:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730123098; x=1730727898;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2vGL1SVZq+LgfXtvaR3j6jeveiqx6XHBU95MSTDGVg4=;
-        b=wU21IpHW0kyr6kectGyfP0pMWUifIX8czTCdk1GI3/d2hyMw5KQ+3Tp5u7lDZuWg9h
-         /Uo6ABamP8sXS25Iyi+nWjV+HXSRiVgooLSrttJsHEHVey8ByBtuNOtmtAF/crGdCTQz
-         uqVY0+yUpIYSZeySbYVAMBkLRPIhFH8nLrc5Dpj5ACf+kMe/YRgN8OxHjDFz8709Wtg2
-         Qqny3IL5ysB0pmHDxO+ciRmmixKutxqJhiaEli3/npCsrpHCisnDqqNxQfhXelFCudUl
-         5ECCnprlWl2EqqZ/w2rhAwYGIZqxTppauvtwmotkeh2/Awgz7TUoovTaB7UAn/Vc6h0N
-         rmbw==
-X-Forwarded-Encrypted: i=1; AJvYcCUej4iC7P0Q1f/3hbetPkD4y96dzsD4H0AP9fkqyen+WAWJp0xd51qQNHazg7uKE5ChgG1/bsP2vfo+LaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEAR67tJ07KWzp1c0DGIn+JVdObzxbBkgrnllFFYLiDOFf2BHr
-	TfPZEvdU7KmVX3A8xMV/jiYtClUOSa4ENo4v7OznTe4tximsd4Rnp5ackVZtondOmomCgTAfy3+
-	/ea2fs+pkj5GUDLk7TCw/qSi+GLZwWq93AvkJ7JvPUzY0qNrwzKSOe9rOFU+w5w==
-X-Received: by 2002:a05:620a:1a1c:b0:7b1:44f1:cb6d with SMTP id af79cd13be357-7b193f3f2d4mr1447475285a.42.1730123097800;
-        Mon, 28 Oct 2024 06:44:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGYDCoi09rdBp6AbuPJnFmwQMjbUbwDykG7M6wD0fUANXJfHN4wHVrUUk5Lqyj/Lt6o3xbXOQ==
-X-Received: by 2002:a05:620a:1a1c:b0:7b1:44f1:cb6d with SMTP id af79cd13be357-7b193f3f2d4mr1447469985a.42.1730123097245;
-        Mon, 28 Oct 2024 06:44:57 -0700 (PDT)
-Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d17973d8bdsm32521456d6.18.2024.10.28.06.44.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 06:44:56 -0700 (PDT)
-Date: Mon, 28 Oct 2024 14:44:53 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Konstantin Shkolnyy <kshk@linux.ibm.com>
-Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
-Subject: Re: [PATCH v3] vsock/test: fix failures due to wrong SO_RCVLOWAT
- parameter
-Message-ID: <s5mhlz5szowwse52t6u44u3despluqb2ucudmmolx55vmtvs2l@eptqoed2qwmv>
-References: <20241025154124.732008-1-kshk@linux.ibm.com>
+	bh=iR/AN4/y0s+RfThiBPrdliRlimEX/iA9QxHItnJi1QM=;
+	b=OWkfzVl/Fadez7L7yLlro93ZMyoT1WoW3wMDHMn2Tqg7tWdM8iTYQcadZAA70ad/mycRcF
+	sUj8y6BYW2n0sJTI3MxcAQ9Cl1+eXAruZXSwsXQE5GwBruaXz0ANRL3ExEEaIlPXcPCCHq
+	hkBm2yt9yLaVNGO59EZ+SEWn7fGvLhk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730123102;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iR/AN4/y0s+RfThiBPrdliRlimEX/iA9QxHItnJi1QM=;
+	b=XYRcD20AAWLrV7Fh6k8oNLsmQkPaw2PMQHhWUvHnUHd8Cs1l4w0drRPH9e8PhOnOQFTNK+
+	jvzhreVeb2GdJODw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="OWkfzVl/";
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XYRcD20A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730123102; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iR/AN4/y0s+RfThiBPrdliRlimEX/iA9QxHItnJi1QM=;
+	b=OWkfzVl/Fadez7L7yLlro93ZMyoT1WoW3wMDHMn2Tqg7tWdM8iTYQcadZAA70ad/mycRcF
+	sUj8y6BYW2n0sJTI3MxcAQ9Cl1+eXAruZXSwsXQE5GwBruaXz0ANRL3ExEEaIlPXcPCCHq
+	hkBm2yt9yLaVNGO59EZ+SEWn7fGvLhk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730123102;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iR/AN4/y0s+RfThiBPrdliRlimEX/iA9QxHItnJi1QM=;
+	b=XYRcD20AAWLrV7Fh6k8oNLsmQkPaw2PMQHhWUvHnUHd8Cs1l4w0drRPH9e8PhOnOQFTNK+
+	jvzhreVeb2GdJODw==
+Received: by knuth.suse.de (Postfix, from userid 10510)
+	id D5EFD53D6F9; Mon, 28 Oct 2024 14:45:01 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by knuth.suse.de (Postfix) with ESMTP id C2FBC53D6F8;
+	Mon, 28 Oct 2024 14:45:01 +0100 (CET)
+Date: Mon, 28 Oct 2024 14:45:01 +0100 (CET)
+From: Michael Matz <matz@suse.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+cc: Vlastimil Babka <vbabka@suse.cz>, 
+    Andrew Morton <akpm@linux-foundation.org>, 
+    "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>, 
+    Thorsten Leemhuis <regressions@leemhuis.info>, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, Petr Tesarik <ptesarik@suse.com>, 
+    Gabriel Krisman Bertazi <gabriel@krisman.be>, 
+    Matthias Bodenbinder <matthias@bodenbinder.de>, stable@vger.kernel.org, 
+    Rik van Riel <riel@surriel.com>, Yang Shi <yang@os.amperecomputing.com>
+Subject: Re: [PATCH hotfix 6.12] mm, mmap: limit THP aligment of anonymous
+ mappings to PMD-aligned sizes
+In-Reply-To: <2b89811b-5957-4fad-8979-86744678d296@lucifer.local>
+Message-ID: <fe231f2d-fcb1-05c9-49c3-405c533a0200@suse.de>
+References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info> <20241024151228.101841-2-vbabka@suse.cz> <2b89811b-5957-4fad-8979-86744678d296@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20241025154124.732008-1-kshk@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
+X-Spamd-Result: default: False [1.39 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
+	RDNS_NONE(2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HFILTER_HELO_IP_A(1.00)[knuth.suse.de];
+	HFILTER_HELO_NORES_A_OR_MX(0.30)[knuth.suse.de];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_NO_TLS_LAST(0.10)[];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RECEIVED_HELO_LOCALHOST(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	MISSING_XM_UA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	R_RATELIMIT(0.00)[from(RLrb5sztbum4xna9a5)];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: 1.39
+X-Rspamd-Queue-Id: EDE7E1FD93
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Bar: +
+X-Spam-Level: *
 
-On Fri, Oct 25, 2024 at 10:41:24AM -0500, Konstantin Shkolnyy wrote:
->This happens on 64-bit big-endian machines.
->SO_RCVLOWAT requires an int parameter. However, instead of int, the test
->uses unsigned long in one place and size_t in another. Both are 8 bytes
->long on 64-bit machines. The kernel, having received the 8 bytes, doesn't
->test for the exact size of the parameter, it only cares that it's >=
->sizeof(int), and casts the 4 lower-addressed bytes to an int, which, on
->a big-endian machine, contains 0. 0 doesn't trigger an error, SO_RCVLOWAT
->returns with success and the socket stays with the default SO_RCVLOWAT = 1,
->which results in vsock_test failures, while vsock_perf doesn't even notice
->that it's failed to change it.
->
->Fixes: b1346338fbae ("vsock_test: POLLIN + SO_RCVLOWAT test")
->Fixes: 542e893fbadc ("vsock/test: two tests to check credit update logic")
->Fixes: 8abbffd27ced ("test/vsock: vsock_perf utility")
->Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
->---
->
->Notes:
->    The problem was found on s390 (big endian), while x86-64 didn't show it. After this fix, all tests pass on s390.
->Changes for v3:
->- fix the same problem in vsock_perf and update commit message
->Changes for v2:
->- add "Fixes:" lines to the commit message
+Hello,
 
-Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+On Thu, 24 Oct 2024, Lorenzo Stoakes wrote:
 
->
-> tools/testing/vsock/vsock_perf.c | 6 +++---
-> tools/testing/vsock/vsock_test.c | 4 ++--
-> 2 files changed, 5 insertions(+), 5 deletions(-)
->
->diff --git a/tools/testing/vsock/vsock_perf.c b/tools/testing/vsock/vsock_perf.c
->index 4e8578f815e0..22633c2848cc 100644
->--- a/tools/testing/vsock/vsock_perf.c
->+++ b/tools/testing/vsock/vsock_perf.c
->@@ -133,7 +133,7 @@ static float get_gbps(unsigned long bits, time_t ns_delta)
-> 	       ((float)ns_delta / NSEC_PER_SEC);
-> }
->
->-static void run_receiver(unsigned long rcvlowat_bytes)
->+static void run_receiver(int rcvlowat_bytes)
-> {
-> 	unsigned int read_cnt;
-> 	time_t rx_begin_ns;
->@@ -163,7 +163,7 @@ static void run_receiver(unsigned long rcvlowat_bytes)
-> 	printf("Listen port %u\n", port);
-> 	printf("RX buffer %lu bytes\n", buf_size_bytes);
-> 	printf("vsock buffer %lu bytes\n", vsock_buf_bytes);
->-	printf("SO_RCVLOWAT %lu bytes\n", rcvlowat_bytes);
->+	printf("SO_RCVLOWAT %d bytes\n", rcvlowat_bytes);
->
-> 	fd = socket(AF_VSOCK, SOCK_STREAM, 0);
->
->@@ -439,7 +439,7 @@ static long strtolx(const char *arg)
-> int main(int argc, char **argv)
-> {
-> 	unsigned long to_send_bytes = DEFAULT_TO_SEND_BYTES;
->-	unsigned long rcvlowat_bytes = DEFAULT_RCVLOWAT_BYTES;
->+	int rcvlowat_bytes = DEFAULT_RCVLOWAT_BYTES;
-> 	int peer_cid = -1;
-> 	bool sender = false;
->
->diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
->index f851f8961247..30857dd4ca97 100644
->--- a/tools/testing/vsock/vsock_test.c
->+++ b/tools/testing/vsock/vsock_test.c
->@@ -833,7 +833,7 @@ static void test_stream_poll_rcvlowat_server(const struct test_opts *opts)
->
-> static void test_stream_poll_rcvlowat_client(const struct test_opts *opts)
-> {
->-	unsigned long lowat_val = RCVLOWAT_BUF_SIZE;
->+	int lowat_val = RCVLOWAT_BUF_SIZE;
-> 	char buf[RCVLOWAT_BUF_SIZE];
-> 	struct pollfd fds;
-> 	short poll_flags;
->@@ -1282,7 +1282,7 @@ static void test_stream_rcvlowat_def_cred_upd_client(const struct test_opts *opt
-> static void test_stream_credit_update_test(const struct test_opts *opts,
-> 					   bool low_rx_bytes_test)
-> {
->-	size_t recv_buf_size;
->+	int recv_buf_size;
-> 	struct pollfd fds;
-> 	size_t buf_size;
-> 	void *buf;
->-- 
->2.34.1
->
+> > benchmark seems to create many mappings of 4632kB, which would have
+> > merged to a large THP-backed area before commit efa7df3e3bb5 and now
+> > they are fragmented to multiple areas each aligned to PMD boundary with
+> > gaps between. The regression then seems to be caused mainly due to the
+> > benchmark's memory access pattern suffering from TLB or cache aliasing
+> > due to the aligned boundaries of the individual areas.
+> 
+> Any more details on precisely why?
 
+Anything we found out and theorized about is in the suse bugreport.  I 
+think the best theory is TLB aliasing when the mixing^Whash function in 
+the given hardware uses too few bits, and most of them in the low 21-12 
+bits of an address.  Of course that then still depends on the particular 
+access pattern.  cactuBSSN has about 20 memory streams in the hot loops, 
+and the accesses are fairly regular from step to step (plus/minus certain 
+strides in 3D arrays).  When their start addresses all differ only in the 
+upper bits, you will hit TLB aliasing from time to time, and when the 
+dimensions/strides are just right it occurs often, the N-way associativity 
+doesn't save you anymore and you will hit it very very hard.
+
+It was interesting to see how broad the range of CPUs and vendors was that 
+exhibited the problem (in various degrees of severity, from 50% to 600% 
+slowdown), and how more recent CPUs don't show the symptom anymore.  I 
+guess the micro-arch guys eventually convinced P&R management that hashing 
+another bit or two is worthwhile the silicon :-)
+
+
+Ciao,
+Michael.
 
