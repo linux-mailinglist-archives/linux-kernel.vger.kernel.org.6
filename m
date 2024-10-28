@@ -1,143 +1,91 @@
-Return-Path: <linux-kernel+bounces-385328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DB909B35A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:03:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D921C9B35AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:03:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 984AD1C21FDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:03:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8496A1F22160
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9AB1DE89B;
-	Mon, 28 Oct 2024 16:03:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32BAC1DE892;
+	Mon, 28 Oct 2024 16:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="iVkfrSkf"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2921DE4D7;
-	Mon, 28 Oct 2024 16:03:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LnDS4jMo"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FF81DE2D7;
+	Mon, 28 Oct 2024 16:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730131395; cv=none; b=XvWeHvl42xk1L7vwI33WfIOKWDRdr8TlJV++edCexT5faw5LHYsfBByIj15tGWP18JnXzOhVXAnUFYj33TNeymO/+NNryknfoIxNMPzfoLGMMgmpc/H8qztzvTQAT3X8EBkt3VYH5x8pwANqnfSPww4pLON1ChrTpR/uNf6JrH4=
+	t=1730131409; cv=none; b=PIdKn2Imf8R9cQpFOO6ZvDLKY4/xhKfMSjK1YBibX/tGi/i4eIiNVBYu6Yv0gbdZLO501Sty9QO2enC2XqQUQxpoj3YVw7/K85lZPvXdvO173KlZzoK+DlHphclSVns0NGTh0FuQpdRWGTrYqenqg4L/V05d1RdH9lyMTa0zQNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730131395; c=relaxed/simple;
-	bh=7MvWDbRgReMb4oWxzviab7n1ngXsZ//x54ni3s1qKWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VAQ+Ka//BE5YRqr4TMO6+sohMqEvV/QEmNc3bNzb1u+xs7Ja4awCWAA9iw5mwqPiUGgLayR2e6/E7ZyuNthno2WriR2kPHgFed+tEwS0WOxbJNDCo0BvyuTJLvBtNMwBj5qd+HEmrjtrqqUlS1kA8qNoEoRThuK119O/Fdo0kOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=iVkfrSkf; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from DESKTOP-0403QTC. (unknown [50.53.30.84])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A747A211F5E7;
-	Mon, 28 Oct 2024 09:03:12 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A747A211F5E7
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1730131393;
-	bh=DWUL2mPdKe3I13p5z61gbW4T4xaOhjwZlnNHegTzwUg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Reply-To:From;
-	b=iVkfrSkf95QZrzcYpwdyqMeWXi66DxVqoIHsp8moaRCpYdcVzQ1Ggi0sOBLYuDfbE
-	 G37oMo2530z9U1RbMBmF2iZLTpFTz3B+1VgzYt9jiRmxYrd+sNkWmRs9592y6NSd+5
-	 wrMr56ks+JwKFzYIGe9bYlSP2yfS5ysbvhkBpZ+A=
-Date: Mon, 28 Oct 2024 09:03:11 -0700
-From: Jacob Pan <jacob.pan@linux.microsoft.com>
-To: James Gowans <jgowans@amazon.com>
-Cc: jacob.pan@linux.microsoft.com, Saurabh Sengar
- <ssengar@linux.microsoft.com>, <linux-kernel@vger.kernel.org>, Jason
- Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>, "Joerg Roedel"
- <joro@8bytes.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?= <kw@linux.com>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, Mike
- Rapoport <rppt@kernel.org>, "Madhavan T. Venkataraman"
- <madvenka@linux.microsoft.com>, <iommu@lists.linux.dev>, "Sean
- Christopherson" <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
- <kvm@vger.kernel.org>, David Woodhouse <dwmw2@infradead.org>, Lu Baolu
- <baolu.lu@linux.intel.com>, Alexander Graf <graf@amazon.de>,
- <anthony.yznaga@oracle.com>, <steven.sistare@oracle.com>,
- <nh-open-source@amazon.com>, "Saenz Julienne, Nicolas" <nsaenz@amazon.es>
-Subject: Re: [RFC PATCH 05/13] iommufd: Serialise persisted iommufds and
- ioas
-Message-ID: <20241028090311.54bc537f@DESKTOP-0403QTC.>
-In-Reply-To: <20241016152047.2a604f08@DESKTOP-0403QTC.>
-References: <20240916113102.710522-1-jgowans@amazon.com>
-	<20240916113102.710522-6-jgowans@amazon.com>
-	<20241016152047.2a604f08@DESKTOP-0403QTC.>
-Reply-To: jacob.pan@linux.microsoft.com, "yi.l.liu@intel.com"
- <yi.l.liu@intel.com>
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730131409; c=relaxed/simple;
+	bh=UAtXx8qAoDQ9W+4K7wOWE4RA1ILQKmo8M8HZpFnFRl4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N8FnAuX67LSeRd14xSfh1qiyoFQwn0E0L3zLgfrLE9Zn5PQUX9nJ8KkbzV0Xt1AwXYau1qVcfeRPgqaMwf7r3/Kbh+6E81U3BEpjECHqVOH0khNTKQYWGPp2li8+YQ3ZlzXHyogltHjBYWA5/4J+yNIRqhJ8Zzp53/IqrO/5rcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LnDS4jMo; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730131405;
+	bh=UAtXx8qAoDQ9W+4K7wOWE4RA1ILQKmo8M8HZpFnFRl4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=LnDS4jMoeFC0t2aQWoYE+GGV+R+znjtyR+I4fqlUdFzXDENxMbydGAO+2AYQ6JujI
+	 Nrus3ld2aPMBWrL5IK+hiwv9Tnf+UHNun5BVByxU/cV+zj0JHd0Hw+j9vvSTrxXdpT
+	 d2OpMK9x5FqyOO43J5pNqMvU76QPmJPNVnHEWVlfvD5vjgwMzGoj5CxXAyAw8KqGG8
+	 dH2YpEjOQA6U6uk1o8H1U8pU6CiS27rQp8orw6Y5FsVx1PmRQl+mpNz/h5l/vmGvAu
+	 MiiioBuJJugeblyO4DOgrLb4dM9hYf4Me0vc8rapDwJf+qj6lFA7V7oEdt7pAo5Dka
+	 KOIOWXVeIi8hA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 95C2517E3662;
+	Mon, 28 Oct 2024 17:03:24 +0100 (CET)
+Message-ID: <45d10ac1-6c00-47a2-8024-ab97ebe6a6bc@collabora.com>
+Date: Mon, 28 Oct 2024 17:03:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] net: ethernet: mtk_wed: fix path of MT7988 WO
+ firmware
+To: Daniel Golle <daniel@makrotopia.org>, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Sujuan Chen <sujuan.chen@mediatek.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Paolo Abeni <pabeni@redhat.com>,
+ Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>,
+ "David S. Miller" <davem@davemloft.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Felix Fietkau <nbd@nbd.name>, John Crispin <john@phrozen.org>
+References: <Zxz0GWTR5X5LdWPe@pidgin.makrotopia.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <Zxz0GWTR5X5LdWPe@pidgin.makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi James,
+Il 26/10/24 15:52, Daniel Golle ha scritto:
+> linux-firmware commit 808cba84 ("mtk_wed: add firmware for mt7988
+> Wireless Ethernet Dispatcher") added mt7988_wo_{0,1}.bin in the
+> 'mediatek/mt7988' directory while driver current expects the files in
+> the 'mediatek' directory.
+> 
+> Change path in the driver header now that the firmware has been added.
+> 
+> Fixes: e2f64db13aa1 ("net: ethernet: mtk_wed: introduce WED support for MT7988")
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Just a gentle reminder. Let me also explain the problem we are trying
-to solve for the live update of OpenHCL paravisor[1]. OpenHCL has user
-space drivers based on VFIO noiommu mode, we are in the process of
-converting to iommufd cdev.
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Similarly, running DMA continuously across updates is required, but
-unlike your case, OpenHCL updates do not involve preserving the IO page
-tables in that it is managed by the hypervisor which is not part of the
-update.
-
-It seems reasonable to share the device persistence code path
-with the plan laid out in your cover letter. IOAS code path will be
-different since noiommu option does not have IOAS.
-
-If we were to revive noiommu support for iommufd cdev[2], can we use
-the persistent iommufd context to allow device persistence? Perhaps
-through IOMMUFD_OBJ_DEVICE and IOMMUFD_OBJ_ACCESS(used in [2])?
-
-@David, @Jason, @Alex, @Yi, any comments or suggestions?
-
-
-Thanks,
-
-Jacob
-
-1. (openvmm/Guide/src/reference/architecture/openhcl.md at main =C2=B7
-microsoft/openvmm.=20
-2. [PATCH v11 00/23] Add vfio_device cdev for
-iommufd support - Yi Liu
-
-On Wed, 16 Oct 2024 15:20:47 -0700 Jacob Pan
-<jacob.pan@linux.microsoft.com> wrote:
-
-> Hi James,
->=20
-> On Mon, 16 Sep 2024 13:30:54 +0200
-> James Gowans <jgowans@amazon.com> wrote:
->=20
-> > +static int serialise_iommufd(void *fdt, struct iommufd_ctx *ictx)
-> > +{
-> > +	int err =3D 0;
-> > +	char name[24];
-> > +	struct iommufd_object *obj;
-> > +	unsigned long obj_idx;
-> > +
-> > +	snprintf(name, sizeof(name), "%lu", ictx->persistent_id);
-> > +	err |=3D fdt_begin_node(fdt, name);
-> > +	err |=3D fdt_begin_node(fdt, "ioases");
-> > +	xa_for_each(&ictx->objects, obj_idx, obj) {
-> > +		struct iommufd_ioas *ioas;
-> > +		struct iopt_area *area;
-> > +		int area_idx =3D 0;
-> > +
-> > +		if (obj->type !=3D IOMMUFD_OBJ_IOAS)
-> > +			continue; =20
-> I was wondering how device state persistency is managed here. Is it
-> correct to assume that all devices bound to an iommufd context should
-> be persistent? If so, should we be serializing IOMMUFD_OBJ_DEVICE as
-> well?
->=20
-> I'm considering this from the perspective of user mode drivers,
-> including those that use noiommu mode (need to be added to iommufd
-> cdev). In this scenario, we only need to maintain the device states
-> persistently without IOAS.
 
 
