@@ -1,679 +1,469 @@
-Return-Path: <linux-kernel+bounces-384141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBB029B24B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:54:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A622A9B24B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:53:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7531F219E0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:54:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DB2CB20BDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:53:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DBD918CBF1;
-	Mon, 28 Oct 2024 05:54:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="TyJS4zbQ"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A5718D629;
+	Mon, 28 Oct 2024 05:53:37 +0000 (UTC)
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B259218CBED
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C4018CBE1;
+	Mon, 28 Oct 2024 05:53:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.40
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730094844; cv=none; b=FulhvngwivE7lQZXrAm2nUKRCFSnhcZMZO0SB/UjKvazKyjxcNDKPDIcs/3Ape4LwDYuyHRb/CFqzQN9lEqHHMW0zY8+4Eahbd/F1dJ5Pb9BnXgVhf4EEU9FclAviHB6XhoD02kZdacOxE/B2h3xERtKSY/eUwxcrT6BmpTclgo=
+	t=1730094816; cv=none; b=SM5UfOq0OvVqDi5A+VaYdNPhF37iVq1zPqX7lrAXNNzS78I5gSHdQ/JcB8B5+XP7UxMxQPgbb0G+74HzQMQsh1oPEBQst0TU5HuUsWE9MUNlZoKQEQef0jndAtIz8huDQP6dFE3AmlOruxM+Ms5487V58FXa1HMQt7O/Dz6Ve9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730094844; c=relaxed/simple;
-	bh=9K5PiMzwM++vx+d6HeuMrOXejD7kn4xe6xYVKBQcfLM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TMiLHWnTRPt4jgkDzJSzx9WP/OY1Q16f18c01kWd4/tKS9nIftvar7hDA561oqvvCSDYz0CzRTvM7KDbOOow6zsoe11GVf9dzUF/KuZgDZ78OIwKV5SiQoE25Ta4XAYs5tYay0FudziX82+EbzgYZVaEBnMaeGRykti04Mp3jPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=TyJS4zbQ; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNgmna023606;
-	Sun, 27 Oct 2024 22:53:37 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=laVQnM6vYt/0jqj3OZj/EPW
-	1rZAsyWlcz5nIfyE8biU=; b=TyJS4zbQ713pu1saVpRFUNhbtB254DPTaNKa1BC
-	c7eNKZmGQkBTWf+aiznoldxHtIcKOVRqabDBYSL8GnHnukc73xyO8CvEJ3PZQxMF
-	ewt35/3wjW7epZMGg02X2PSzbxZbnEmrTpRkOSN0g7gMtPwzSD4mwjeG4vUX+Scn
-	uPm62KB5KxDvQE+Sh6YQkwxySG6NjphLM4DfJFhcQQwnP24IzAzTu31t7s0iGx7P
-	m0UP02GhMp/FpQvc4ZBce8t64q1CTPwUu/3UVCO8LPBj5V3iEs1L4fuCX9zRTInH
-	8DYiWCqPf1SlVsz3wRf7gqoKowe4Gim7YK4+H1JTttbATcw==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42gwsjjtpt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 27 Oct 2024 22:53:37 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 27 Oct 2024 22:53:36 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 27 Oct 2024 22:53:36 -0700
-Received: from IPBU-BLR-SERVER1.marvell.com (IPBU-BLR-SERVER1.marvell.com [10.28.8.41])
-	by maili.marvell.com (Postfix) with ESMTP id D2AF43F7072;
-	Sun, 27 Oct 2024 22:53:33 -0700 (PDT)
-From: Gowthami Thiagarajan <gthiagarajan@marvell.com>
-To: <will@kernel.org>, <mark.rutland@arm.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <gcherian@marvell.com>, <sgoutham@marvell.com>, <lcherian@marvell.com>,
-        Gowthami Thiagarajan <gthiagarajan@marvell.com>
-Subject: [PATCH v10] perf/marvell: Marvell PEM performance monitor support
-Date: Mon, 28 Oct 2024 11:23:09 +0530
-Message-ID: <20241028055309.17893-1-gthiagarajan@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730094816; c=relaxed/simple;
+	bh=xDwxuH/D2TDdThNS84QnRziL+54XMW+R3KNFgxCgDVI=;
+	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=mt1s8PBewG1RMcIX4gf4QY8xpht4guROq8mff028mFKjbC0/9eJ+pRz1QhyGZRrzYP4hj6kHYTPbWc5KjkNB5unvVodevSMPNAf2tW04tecsVw13YQuKLNgClaDuVxofz8IWFYsCtfRdZ4yUDu0GQrylwY5e748HXzsp/D2EUso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
+Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4XcMxt3jQkz8R03x;
+	Mon, 28 Oct 2024 13:53:22 +0800 (CST)
+Received: from xaxapp01.zte.com.cn ([10.88.99.176])
+	by mse-fl1.zte.com.cn with SMTP id 49S5rJ0O066582;
+	Mon, 28 Oct 2024 13:53:19 +0800 (+08)
+	(envelope-from xu.xin16@zte.com.cn)
+Received: from mapi (xaxapp02[null])
+	by mapi (Zmail) with MAPI id mid32;
+	Mon, 28 Oct 2024 13:53:21 +0800 (CST)
+Date: Mon, 28 Oct 2024 13:53:21 +0800 (CST)
+X-Zmail-TransId: 2afa671f26d1ffffffffcfa-262de
+X-Mailer: Zmail v1.0
+Message-ID: <20241028135321916ZWK032bHhlbncjvmzDkZs@zte.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: FmzC76sD5L-lTCJomxfy68WiwiYB2fuB
-X-Proofpoint-ORIG-GUID: FmzC76sD5L-lTCJomxfy68WiwiYB2fuB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Mime-Version: 1.0
+From: <xu.xin16@zte.com.cn>
+To: <alexs@kernel.org>, <si.yanteng@linux.dev>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mudongliangabcd@gmail.com>, <seakeel@gmail.com>
+Cc: <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>,
+        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
+        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjggUkVTRU5EXSBEb2NzL3poX0NOOiBUcmFuc2xhdGUgcGh5c2ljYWxfbWVtb3J5LnJzdCB0byBTaW1wbGlmaWVkIENoaW5lc2U=?=
+Content-Type: text/plain;
+	charset="UTF-8"
+X-MAIL:mse-fl1.zte.com.cn 49S5rJ0O066582
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 671F26D2.000/4XcMxt3jQkz8R03x
 
-PCI Express Interface PMU includes various performance counters
-to monitor the data that is transmitted over the PCIe link. The
-counters track various inbound and outbound transactions which
-includes separate counters for posted/non-posted/completion TLPs.
-Also, inbound and outbound memory read requests along with their
-latencies can also be monitored. Address Translation Services(ATS)events
-such as ATS Translation, ATS Page Request, ATS Invalidation along with
-their corresponding latencies are also supported.
+From: Yaxin Wang <wang.yaxin@zte.com.cn>
 
-The performance counters are 64 bits wide.
+This patch translates the "physical_memory.rst" document into
+Simplified Chinese to improve accessibility for Chinese-speaking
+developers and users.
 
-For instance,
-perf stat -e ib_tlp_pr <workload>
-tracks the inbound posted TLPs for the workload.
+The translation was done with attention to technical accuracy
+and readability, ensuring that the document remains informative
+and useful in its translated form.
 
-Co-developed-by: Linu Cherian <lcherian@marvell.com>
-Signed-off-by: Linu Cherian <lcherian@marvell.com>
-Signed-off-by: Gowthami Thiagarajan <gthiagarajan@marvell.com>
+Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
+
+Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
+Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
+Reviewed-by: Yanteng Si <si.yanteng@linux.dev>
+Signed-off-by: xu xin <xu.xin16@zte.com.cn>
 ---
-v9->v10:
-- Changed MODULE_AUTHOR, made to be consistent with the author.
-- Added Co-Developed tag.
-v8->v9:
-- Removed additional commas and minor cosmetic changes 
+v7->v8:
+Some fixes according to:
+https://lore.kernel.org/all/87sesl2op0.fsf@trenco.lwn.net/
+1.add some suffixes "_zh_CN" to some duplicated labels
 
- Documentation/admin-guide/perf/index.rst      |   1 +
- .../admin-guide/perf/mrvl-pem-pmu.rst         |  56 +++
- MAINTAINERS                                   |   6 +
- drivers/perf/Kconfig                          |   7 +
- drivers/perf/Makefile                         |   1 +
- drivers/perf/marvell_pem_pmu.c                | 425 ++++++++++++++++++
- include/linux/cpuhotplug.h                    |   1 +
- 7 files changed, 497 insertions(+)
- create mode 100644 Documentation/admin-guide/perf/mrvl-pem-pmu.rst
- create mode 100644 drivers/perf/marvell_pem_pmu.c
+ Documentation/translations/zh_CN/mm/index.rst |   1 +
+ .../translations/zh_CN/mm/physical_memory.rst | 356 ++++++++++++++++++
+ 2 files changed, 357 insertions(+)
+ create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
 
-diff --git a/Documentation/admin-guide/perf/index.rst b/Documentation/admin-guide/perf/index.rst
-index 8502bc174640..a58bd3f7e190 100644
---- a/Documentation/admin-guide/perf/index.rst
-+++ b/Documentation/admin-guide/perf/index.rst
-@@ -26,3 +26,4 @@ Performance monitor support
-    meson-ddr-pmu
-    cxl
-    ampere_cspmu
-+   mrvl-pem-pmu
-diff --git a/Documentation/admin-guide/perf/mrvl-pem-pmu.rst b/Documentation/admin-guide/perf/mrvl-pem-pmu.rst
+diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
+index 960b6d2f3d18..c8726bce8f74 100644
+--- a/Documentation/translations/zh_CN/mm/index.rst
++++ b/Documentation/translations/zh_CN/mm/index.rst
+@@ -54,6 +54,7 @@ Linux内存管理文档
+    page_owner
+    page_table_check
+    page_tables
++   physical_memory
+    remap_file_pages
+    split_page_table_lock
+    vmalloced-kernel-stacks
+diff --git a/Documentation/translations/zh_CN/mm/physical_memory.rst b/Documentation/translations/zh_CN/mm/physical_memory.rst
 new file mode 100644
-index 000000000000..c39007149b97
+index 000000000000..4594d15cefec
 --- /dev/null
-+++ b/Documentation/admin-guide/perf/mrvl-pem-pmu.rst
-@@ -0,0 +1,56 @@
-+=================================================================
-+Marvell Odyssey PEM Performance Monitoring Unit (PMU UNCORE)
-+=================================================================
++++ b/Documentation/translations/zh_CN/mm/physical_memory.rst
+@@ -0,0 +1,356 @@
++.. SPDX-License-Identifier: GPL-2.0
 +
-+The PCI Express Interface Units(PEM) are associated with a corresponding
-+monitoring unit. This includes performance counters to track various
-+characteristics of the data that is transmitted over the PCIe link.
++.. include:: ../disclaimer-zh_CN.rst
 +
-+The counters track inbound and outbound transactions which
-+includes separate counters for posted/non-posted/completion TLPs.
-+Also, inbound and outbound memory read requests along with their
-+latencies can also be monitored. Address Translation Services(ATS)events
-+such as ATS Translation, ATS Page Request, ATS Invalidation along with
-+their corresponding latencies are also tracked.
++:Original: Documentation/mm/physical_memory.rst
 +
-+There are separate 64 bit counters to measure posted/non-posted/completion
-+tlps in inbound and outbound transactions. ATS events are measured by
-+different counters.
++:翻译:
 +
-+The PMU driver exposes the available events and format options under sysfs,
-+/sys/bus/event_source/devices/mrvl_pcie_rc_pmu_<>/events/
-+/sys/bus/event_source/devices/mrvl_pcie_rc_pmu_<>/format/
++   王亚鑫 Yaxin Wang <wang.yaxin@zte.com.cn>
 +
-+Examples::
++========
++物理内存
++========
 +
-+  # perf list | grep mrvl_pcie_rc_pmu
-+  mrvl_pcie_rc_pmu_<>/ats_inv/             [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ats_inv_latency/     [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ats_pri/             [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ats_pri_latency/     [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ats_trans/           [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ats_trans_latency/   [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_inflight/         [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_reads/            [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_req_no_ro_ebus/   [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_req_no_ro_ncb/    [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_tlp_cpl_partid/   [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_tlp_dwords_cpl_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_tlp_dwords_npr/   [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_tlp_dwords_pr/    [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_tlp_npr/          [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ib_tlp_pr/           [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_inflight_partid/  [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_merges_cpl_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_merges_npr_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_merges_pr_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_reads_partid/     [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_tlp_cpl_partid/   [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_tlp_dwords_cpl_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_tlp_dwords_npr_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_tlp_dwords_pr_partid/ [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_tlp_npr_partid/   [Kernel PMU event]
-+  mrvl_pcie_rc_pmu_<>/ob_tlp_pr_partid/    [Kernel PMU event]
++Linux可用于多种架构，因此需要一个与架构无关的抽象来表示物理内存。本章描述
++了管理运行系统中物理内存的结构。
++
++第一个与内存管理相关的主要概念是 `非一致性内存访问(NUMA)
++<https://en.wikipedia.org/wiki/Non-uniform_memory_access>`
++
++在多核和多插槽机器中，内存可能被组织成不同的存储区，这些存储区根据与处理器
++的距离“不同”而有不同的访问开销。例如，可能为每个CPU分配内存存储区，或者为
++外围设备在附近分配一个非常适合DMA的内存存储区。
++
++每个存储区被称为一个节点，节点在Linux中表示为 ``struct pglist_data``，
++即使是在UMA架构中也是这样表示。该结构总是通过 ``pg_data_t`` 来引用。特
++定节点的 ``pg_data_t`` 结构体可以通过NODE_DATA(nid)引用，其中nid被称
++为该节点的ID。
++
++对于非一致性内存访问（NUMA）架构，节点数据结构在引导时由特定于架构的代码早
++期分配。通常，这些结构在其所在的内存区上本地分配。对于一致性内存访问（UMA）
++架构，只使用一个静态的 ``pg_data_t`` 结构体，称为 ``contig_page_data``。
++节点将会在 :ref:`节点 <nodes>` 章节中进一步讨论。
++
++整个物理内存被划分为一个或多个被称为区域的块，这些区域表示内存的范围。这
++些范围通常由访问内存的架构限制来决定。在节点内，与特定区域对应的内存范围
++由 ``struct zone`` 结构体描述，该结构被定义为 ``zone_t``，每种区域都
++属于以下描述类型的一种。
++
++* ``ZONE_DMA`` 和 ``ZONE_DMA32`` 在历史上代表适用于DMA的内存，这些
++  内存由那些不能访问所有可寻址内存的外设访问。多年来，已经有了更好、更稳
++  固的接口来获取满足特定DMA需求的内存（这些接口由
++  Documentation/core-api/dma-api.rst 文档描述），但是 ``ZONE_DMA``
++  和 ``ZONE_DMA32`` 仍然表示访问受限的内存范围。
++
++取决于架构的不同，这两种区域可以在构建时通过关闭 ``CONFIG_ZONE_DMA`` 和
++``CONFIG_ZONE_DMA32`` 配置选项来禁用。一些64位的平台可能需要这两种区域，
++因为他们支持具有不同DMA寻址限制的外设。
++
++* ``ZONE_NORMAL`` 是普通内存的区域，这种内存可以被内核随时访问。如果DMA
++  设备支持将数据传输到所有可寻址的内存区域，那么可在该区域的页面上执行DMA
++  操作。``ZONE_NORMAL`` 总是开启的。
++
++* ``ZONE_HIGHMEM`` 是指那些没有在内核页表中永久映射的物理内存部分。该区
++  域的内存只能通过临时映射被内核访问。该区域只在某些32位架构上可用，并且是
++  通过 ``CONFIG_HIGHMEM`` 选项开启。
++
++* ``ZONE_MOVABLE`` 是指可访问的普通内存区域，就像 ``ZONE_NORMAL``
++  一样。不同之处在于 ``ZONE_MOVABLE`` 中的大多数页面内容是可移动的。
++  这意味着这些页面的虚拟地址不会改变，但它们的内容可能会在不同的物理页面
++  之间移动。通常，在内存热插拔期间填充 ``ZONE_MOVABLE``，在启动时也可
++  以使用 ``kernelcore``、``movablecore`` 和 ``movable_node``
++  这些内核命令行参数来填充。更多详细信息，请参阅内核文档
++  Documentation/mm/page_migration.rst 和
++  Documentation/admin-guide/mm/memory-hotplug.rst。
++
++* ``ZONE_DEVICE`` 表示位于持久性内存（PMEM）和图形处理单元（GPU）
++  等设备上的内存。它与RAM区域类型有不同的特性，并且它的存在是为了提供
++  :ref:`struct page<Pages>` 结构和内存映射服务，以便设备驱动程序能
++  识别物理地址范围。``ZONE_DEVICE`` 通过 ``CONFIG_ZONE_DEVICE``
++  选项开启。
++
++需要注意的是，许多内核操作只能使用 ``ZONE_NORMAL`` 来执行，因此它是
++性能最关键区域。区域在 :ref:`区域 <zones>` 章节中有更详细的讨论。
++
++节点和区域范围之间的关系由固件报告的物理内存映射决定，另外也由内存寻址
++的架构约束以及内核命令行中的某些参数决定。
++
++例如，在具有2GB RAM的x86统一内存架构（UMA）机器上运行32位内核时，整
++个内存将位于节点0，并且将有三个区域： ``ZONE_DMA``、 ``ZONE_NORMAL``
++和 ``ZONE_HIGHMEM``::
++
++  0                                                            2G
++  +-------------------------------------------------------------+
++  |                            node 0                           |
++  +-------------------------------------------------------------+
++
++  0         16M                    896M                        2G
++  +----------+-----------------------+--------------------------+
++  | ZONE_DMA |      ZONE_NORMAL      |       ZONE_HIGHMEM       |
++  +----------+-----------------------+--------------------------+
 +
 +
-+  # perf stat -e ib_inflight,ib_reads,ib_req_no_ro_ebus,ib_req_no_ro_ncb <workload>
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e9659a5a7fb3..b415f8bf29b5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13813,6 +13813,12 @@ S:	Supported
- F:	Documentation/networking/device_drivers/ethernet/marvell/octeontx2.rst
- F:	drivers/net/ethernet/marvell/octeontx2/af/
- 
-+MARVELL PEM PMU DRIVER
-+M:	Linu Cherian <lcherian@marvell.com>
-+M:	Gowthami Thiagarajan <gthiagarajan@marvell.com>
-+S:	Supported
-+F:	drivers/perf/marvell_pem_pmu.c
++在内核构建时关闭 ``ZONE_DMA`` 开启 ``ZONE_DMA32``，并且具有16GB
++RAM平均分配在两个节点上的arm64机器上，使用 ``movablecore=80%`` 参数
++启动时，``ZONE_DMA32``、``ZONE_NORMAL`` 和 ``ZONE_MOVABLE``
++位于节点0，而 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE`` 位于节点1::
 +
- MARVELL PRESTERA ETHERNET SWITCH DRIVER
- M:	Taras Chornyi <taras.chornyi@plvision.eu>
- S:	Supported
-diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
-index bab8ba64162f..4e268de351c4 100644
---- a/drivers/perf/Kconfig
-+++ b/drivers/perf/Kconfig
-@@ -284,4 +284,11 @@ config CXL_PMU
- 
- 	  If unsure say 'm'.
- 
-+config MARVELL_PEM_PMU
-+	tristate "MARVELL PEM PMU Support"
-+	depends on ARCH_THUNDER || (COMPILE_TEST && 64BIT)
-+	help
-+	  Enable support for PCIe Interface performance monitoring
-+	  on Marvell platform.
 +
- endmenu
-diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
-index 8268f38e42c5..de71d2574857 100644
---- a/drivers/perf/Makefile
-+++ b/drivers/perf/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_ARM_SPE_PMU) += arm_spe_pmu.o
- obj-$(CONFIG_ARM_DMC620_PMU) += arm_dmc620_pmu.o
- obj-$(CONFIG_MARVELL_CN10K_TAD_PMU) += marvell_cn10k_tad_pmu.o
- obj-$(CONFIG_MARVELL_CN10K_DDR_PMU) += marvell_cn10k_ddr_pmu.o
-+obj-$(CONFIG_MARVELL_PEM_PMU) += marvell_pem_pmu.o
- obj-$(CONFIG_APPLE_M1_CPU_PMU) += apple_m1_cpu_pmu.o
- obj-$(CONFIG_ALIBABA_UNCORE_DRW_PMU) += alibaba_uncore_drw_pmu.o
- obj-$(CONFIG_DWC_PCIE_PMU) += dwc_pcie_pmu.o
-diff --git a/drivers/perf/marvell_pem_pmu.c b/drivers/perf/marvell_pem_pmu.c
-new file mode 100644
-index 000000000000..29fbcd1848e4
---- /dev/null
-+++ b/drivers/perf/marvell_pem_pmu.c
-@@ -0,0 +1,425 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Marvell PEM(PCIe RC) Performance Monitor Driver
-+ *
-+ * Copyright (C) 2024 Marvell.
-+ */
++ 1G                                9G                         17G
++  +--------------------------------+ +--------------------------+
++  |              node 0            | |          node 1          |
++  +--------------------------------+ +--------------------------+
 +
-+#include <linux/acpi.h>
-+#include <linux/init.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/perf_event.h>
-+#include <linux/platform_device.h>
++  1G       4G        4200M          9G          9320M          17G
++  +---------+----------+-----------+ +------------+-------------+
++  |  DMA32  |  NORMAL  |  MOVABLE  | |   NORMAL   |   MOVABLE   |
++  +---------+----------+-----------+ +------------+-------------+
 +
-+/*
-+ * Each of these events maps to a free running 64 bit counter
-+ * with no event control, but can be reset.
-+ */
-+enum pem_events {
-+	IB_TLP_NPR,
-+	IB_TLP_PR,
-+	IB_TLP_CPL,
-+	IB_TLP_DWORDS_NPR,
-+	IB_TLP_DWORDS_PR,
-+	IB_TLP_DWORDS_CPL,
-+	IB_INFLIGHT,
-+	IB_READS,
-+	IB_REQ_NO_RO_NCB,
-+	IB_REQ_NO_RO_EBUS,
-+	OB_TLP_NPR,
-+	OB_TLP_PR,
-+	OB_TLP_CPL,
-+	OB_TLP_DWORDS_NPR,
-+	OB_TLP_DWORDS_PR,
-+	OB_TLP_DWORDS_CPL,
-+	OB_INFLIGHT,
-+	OB_READS,
-+	OB_MERGES_NPR,
-+	OB_MERGES_PR,
-+	OB_MERGES_CPL,
-+	ATS_TRANS,
-+	ATS_TRANS_LATENCY,
-+	ATS_PRI,
-+	ATS_PRI_LATENCY,
-+	ATS_INV,
-+	ATS_INV_LATENCY,
-+	PEM_EVENTIDS_MAX
-+};
 +
-+static u64 eventid_to_offset_table[] = {
-+	[IB_TLP_NPR]	     = 0x0,
-+	[IB_TLP_PR]	     = 0x8,
-+	[IB_TLP_CPL]	     = 0x10,
-+	[IB_TLP_DWORDS_NPR]  = 0x100,
-+	[IB_TLP_DWORDS_PR]   = 0x108,
-+	[IB_TLP_DWORDS_CPL]  = 0x110,
-+	[IB_INFLIGHT]	     = 0x200,
-+	[IB_READS]	     = 0x300,
-+	[IB_REQ_NO_RO_NCB]   = 0x400,
-+	[IB_REQ_NO_RO_EBUS]  = 0x408,
-+	[OB_TLP_NPR]         = 0x500,
-+	[OB_TLP_PR]          = 0x508,
-+	[OB_TLP_CPL]         = 0x510,
-+	[OB_TLP_DWORDS_NPR]  = 0x600,
-+	[OB_TLP_DWORDS_PR]   = 0x608,
-+	[OB_TLP_DWORDS_CPL]  = 0x610,
-+	[OB_INFLIGHT]        = 0x700,
-+	[OB_READS]	     = 0x800,
-+	[OB_MERGES_NPR]      = 0x900,
-+	[OB_MERGES_PR]       = 0x908,
-+	[OB_MERGES_CPL]      = 0x910,
-+	[ATS_TRANS]          = 0x2D18,
-+	[ATS_TRANS_LATENCY]  = 0x2D20,
-+	[ATS_PRI]            = 0x2D28,
-+	[ATS_PRI_LATENCY]    = 0x2D30,
-+	[ATS_INV]            = 0x2D38,
-+	[ATS_INV_LATENCY]    = 0x2D40,
-+};
++内存存储区可能位于交错的节点。在下面的例子中，一台x86机器有16GB的RAM分
++布在4个内存存储区上，偶数编号的内存存储区属于节点0，奇数编号的内存条属于
++节点1::
 +
-+struct pem_pmu {
-+	struct pmu pmu;
-+	void __iomem *base;
-+	unsigned int cpu;
-+	struct	device *dev;
-+	struct hlist_node node;
-+};
++  0              4G              8G             12G            16G
++  +-------------+ +-------------+ +-------------+ +-------------+
++  |    node 0   | |    node 1   | |    node 0   | |    node 1   |
++  +-------------+ +-------------+ +-------------+ +-------------+
 +
-+#define to_pem_pmu(p)	container_of(p, struct pem_pmu, pmu)
++  0   16M      4G
++  +-----+-------+ +-------------+ +-------------+ +-------------+
++  | DMA | DMA32 | |    NORMAL   | |    NORMAL   | |    NORMAL   |
++  +-----+-------+ +-------------+ +-------------+ +-------------+
 +
-+static int eventid_to_offset(int eventid)
-+{
-+	return eventid_to_offset_table[eventid];
-+}
++在这种情况下，节点0将覆盖从0到12GB的内存范围，而节点1将覆盖从4GB到16GB
++的内存范围。
 +
-+/* Events */
-+static ssize_t pem_pmu_event_show(struct device *dev,
-+				  struct device_attribute *attr,
-+				  char *page)
-+{
-+	struct perf_pmu_events_attr *pmu_attr;
++.. _nodes_zh_CN:
 +
-+	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
-+	return sysfs_emit(page, "event=0x%02llx\n", pmu_attr->id);
-+}
++节点
++====
 +
-+#define PEM_EVENT_ATTR(_name, _id)					\
-+	(&((struct perf_pmu_events_attr[]) {				\
-+	{ .attr = __ATTR(_name, 0444, pem_pmu_event_show, NULL),	\
-+		.id = _id, }						\
-+	})[0].attr.attr)
++正如我们所提到的，内存中的每个节点由 ``pg_data_t`` 描述，通过
++``struct pglist_data`` 结构体的类型定义。在分配页面时，默认情况下，Linux
++使用节点本地分配策略，从离当前运行CPU的最近节点分配内存。由于进程倾向于在同
++一个CPU上运行，很可能会使用当前节点的内存。分配策略可以由用户控制，如内核文
++档 Documentation/admin-guide/mm/numa_memory_policy.rst 中所述。
 +
-+static struct attribute *pem_perf_events_attrs[] = {
-+	PEM_EVENT_ATTR(ib_tlp_npr, IB_TLP_NPR),
-+	PEM_EVENT_ATTR(ib_tlp_pr, IB_TLP_PR),
-+	PEM_EVENT_ATTR(ib_tlp_cpl_partid, IB_TLP_CPL),
-+	PEM_EVENT_ATTR(ib_tlp_dwords_npr, IB_TLP_DWORDS_NPR),
-+	PEM_EVENT_ATTR(ib_tlp_dwords_pr, IB_TLP_DWORDS_PR),
-+	PEM_EVENT_ATTR(ib_tlp_dwords_cpl_partid, IB_TLP_DWORDS_CPL),
-+	PEM_EVENT_ATTR(ib_inflight, IB_INFLIGHT),
-+	PEM_EVENT_ATTR(ib_reads, IB_READS),
-+	PEM_EVENT_ATTR(ib_req_no_ro_ncb, IB_REQ_NO_RO_NCB),
-+	PEM_EVENT_ATTR(ib_req_no_ro_ebus, IB_REQ_NO_RO_EBUS),
-+	PEM_EVENT_ATTR(ob_tlp_npr_partid, OB_TLP_NPR),
-+	PEM_EVENT_ATTR(ob_tlp_pr_partid, OB_TLP_PR),
-+	PEM_EVENT_ATTR(ob_tlp_cpl_partid, OB_TLP_CPL),
-+	PEM_EVENT_ATTR(ob_tlp_dwords_npr_partid, OB_TLP_DWORDS_NPR),
-+	PEM_EVENT_ATTR(ob_tlp_dwords_pr_partid, OB_TLP_DWORDS_PR),
-+	PEM_EVENT_ATTR(ob_tlp_dwords_cpl_partid, OB_TLP_DWORDS_CPL),
-+	PEM_EVENT_ATTR(ob_inflight_partid, OB_INFLIGHT),
-+	PEM_EVENT_ATTR(ob_reads_partid, OB_READS),
-+	PEM_EVENT_ATTR(ob_merges_npr_partid, OB_MERGES_NPR),
-+	PEM_EVENT_ATTR(ob_merges_pr_partid, OB_MERGES_PR),
-+	PEM_EVENT_ATTR(ob_merges_cpl_partid, OB_MERGES_CPL),
-+	PEM_EVENT_ATTR(ats_trans, ATS_TRANS),
-+	PEM_EVENT_ATTR(ats_trans_latency, ATS_TRANS_LATENCY),
-+	PEM_EVENT_ATTR(ats_pri, ATS_PRI),
-+	PEM_EVENT_ATTR(ats_pri_latency, ATS_PRI_LATENCY),
-+	PEM_EVENT_ATTR(ats_inv, ATS_INV),
-+	PEM_EVENT_ATTR(ats_inv_latency, ATS_INV_LATENCY),
-+	NULL
-+};
++大多数NUMA（非统一内存访问）架构维护了一个指向节点结构的指针数组。这些实际
++的结构在启动过程中的早期被分配，这时特定于架构的代码解析了固件报告的物理内
++存映射。节点初始化的大部分工作是在由free_area_init()实现的启动过程之后
++完成，该函数在后面的小节 :ref:`初始化 <initialization>` 中有详细描述。
 +
-+static struct attribute_group pem_perf_events_attr_group = {
-+	.name = "events",
-+	.attrs = pem_perf_events_attrs,
-+};
++除了节点结构，内核还维护了一个名为 ``node_states`` 的 ``nodemask_t``
++位掩码数组。这个数组中的每个位掩码代表一组特定属性的节点，这些属性由
++``enum node_states`` 定义，定义如下：
 +
-+PMU_FORMAT_ATTR(event, "config:0-5");
++``N_POSSIBLE``
++节点可能在某个时刻上线。
 +
-+static struct attribute *pem_perf_format_attrs[] = {
-+	&format_attr_event.attr,
-+	NULL
-+};
++``N_ONLINE``
++节点已经上线。
 +
-+static struct attribute_group pem_perf_format_attr_group = {
-+	.name = "format",
-+	.attrs = pem_perf_format_attrs,
-+};
++``N_NORMAL_MEMORY``
++节点拥有普通内存。
 +
-+/* cpumask */
-+static ssize_t pem_perf_cpumask_show(struct device *dev,
-+				     struct device_attribute *attr,
-+				     char *buf)
-+{
-+	struct pem_pmu *pmu = dev_get_drvdata(dev);
++``N_HIGH_MEMORY``
++节点拥有普通或高端内存。当关闭 ``CONFIG_HIGHMEM`` 配置时，
++也可以称为 ``N_NORMAL_MEMORY``。
 +
-+	return cpumap_print_to_pagebuf(true, buf, cpumask_of(pmu->cpu));
-+}
++``N_MEMORY``
++节点拥有（普通、高端、可移动）内存。
 +
-+static struct device_attribute pem_perf_cpumask_attr =
-+	__ATTR(cpumask, 0444, pem_perf_cpumask_show, NULL);
++``N_CPU``
++节点拥有一个或多个CPU。
 +
-+static struct attribute *pem_perf_cpumask_attrs[] = {
-+	&pem_perf_cpumask_attr.attr,
-+	NULL
-+};
++对于具有上述属性的每个节点，``node_states[<property>]``
++掩码中对应于节点ID的位会被置位。
 +
-+static struct attribute_group pem_perf_cpumask_attr_group = {
-+	.attrs = pem_perf_cpumask_attrs,
-+};
++例如，对于具有常规内存和CPU的节点2，第二个bit将被设置::
 +
-+static const struct attribute_group *pem_perf_attr_groups[] = {
-+	&pem_perf_events_attr_group,
-+	&pem_perf_cpumask_attr_group,
-+	&pem_perf_format_attr_group,
-+	NULL
-+};
++  node_states[N_POSSIBLE]
++  node_states[N_ONLINE]
++  node_states[N_NORMAL_MEMORY]
++  node_states[N_HIGH_MEMORY]
++  node_states[N_MEMORY]
++  node_states[N_CPU]
 +
-+static int pem_perf_event_init(struct perf_event *event)
-+{
-+	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	struct perf_event *sibling;
++有关使用节点掩码（nodemasks）可能进行的各种操作，请参考
++``include/linux/nodemask.h``。
 +
-+	if (event->attr.type != event->pmu->type)
-+		return -ENOENT;
++除此之外，节点掩码（nodemasks）提供用于遍历节点的宏，即
++``for_each_node()`` 和 ``for_each_online_node()``。
 +
-+	if (event->attr.config >= PEM_EVENTIDS_MAX)
-+		return -EINVAL;
++例如，要为每个在线节点调用函数 foo()，可以这样操作::
 +
-+	if (is_sampling_event(event) ||
-+	    event->attach_state & PERF_ATTACH_TASK) {
-+		return -EOPNOTSUPP;
++  for_each_online_node(nid) {
++		pg_data_t *pgdat = NODE_DATA(nid);
++
++		foo(pgdat);
 +	}
 +
-+	if (event->cpu < 0)
-+		return -EOPNOTSUPP;
++节点数据结构
++------------
 +
-+	/*  We must NOT create groups containing mixed PMUs */
-+	if (event->group_leader->pmu != event->pmu &&
-+	    !is_software_event(event->group_leader))
-+		return -EINVAL;
++节点结构 ``struct pglist_data`` 在 ``include/linux/mmzone.h``
++中声明。这里我们将简要描述这个结构体的字段：
 +
-+	for_each_sibling_event(sibling, event->group_leader) {
-+		if (sibling->pmu != event->pmu &&
-+		    !is_software_event(sibling))
-+			return -EINVAL;
-+	}
-+	/*
-+	 * Set ownership of event to one CPU, same event can not be observed
-+	 * on multiple cpus at same time.
-+	 */
-+	event->cpu = pmu->cpu;
-+	hwc->idx = -1;
-+	return 0;
-+}
++通用字段
++~~~~~~~~
 +
-+static u64 pem_perf_read_counter(struct pem_pmu *pmu,
-+				 struct perf_event *event, int eventid)
-+{
-+	return readq_relaxed(pmu->base + eventid_to_offset(eventid));
-+}
++``node_zones``
++表示该节点的区域列表。并非所有区域都可能被填充，但这是
++完整的列表。它被该节点的node_zonelists以及其它节点的
++node_zonelists引用。
 +
-+static void pem_perf_event_update(struct perf_event *event)
-+{
-+	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	u64 prev_count, new_count;
++``node_zonelists``
++表示所有节点中所有区域的列表。此列表定义了分配内存时首选的区域
++顺序。``node_zonelists`` 在核心内存管理结构初始化期间，
++由 ``mm/page_alloc.c`` 中的 ``build_zonelists()``
++函数设置。
 +
-+	do {
-+		prev_count = local64_read(&hwc->prev_count);
-+		new_count = pem_perf_read_counter(pmu, event, hwc->idx);
-+	} while (local64_xchg(&hwc->prev_count, new_count) != prev_count);
++``nr_zones``
++表示此节点中已填充区域的数量。
 +
-+	local64_add((new_count - prev_count), &event->count);
-+}
++``node_mem_map``
++对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_mem_map``
++表示每个物理帧的struct pages数组。
 +
-+static void pem_perf_event_start(struct perf_event *event, int flags)
-+{
-+	struct pem_pmu *pmu = to_pem_pmu(event->pmu);
-+	struct hw_perf_event *hwc = &event->hw;
-+	int eventid = hwc->idx;
++``node_page_ext``
++对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_page_ext``
++是struct pages的扩展数组。只有在构建时开启了 ``CONFIG_PAGE_EXTENSION``
++选项的内核中才可用。
 +
-+	/*
-+	 * All counters are free-running and associated with
-+	 * a fixed event to track in Hardware
-+	 */
-+	local64_set(&hwc->prev_count,
-+		    pem_perf_read_counter(pmu, event, eventid));
++``node_start_pfn``
++表示此节点中起始页面帧的页面帧号。
 +
-+	hwc->state = 0;
-+}
++``node_present_pages``
++表示此节点中存在的物理页面的总数。
 +
-+static int pem_perf_event_add(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
++``node_spanned_pages``
++表示包括空洞在内的物理页面范围的总大小。
 +
-+	hwc->idx = event->attr.config;
-+	if (WARN_ON_ONCE(hwc->idx >= PEM_EVENTIDS_MAX))
-+		return -EINVAL;
-+	hwc->state |= PERF_HES_STOPPED;
++``node_size_lock``
++一个保护定义节点范围字段的锁。仅在开启了 ``CONFIG_MEMORY_HOTPLUG`` 或
++``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 配置选项中的某一个时才定义。提
++供了 ``pgdat_resize_lock()`` 和 ``pgdat_resize_unlock()`` 用来操作
++``node_size_lock``，而无需检查 ``CONFIG_MEMORY_HOTPLUG`` 或
++``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项。
 +
-+	if (flags & PERF_EF_START)
-+		pem_perf_event_start(event, flags);
++``node_id``
++节点的节点ID（NID），从0开始。
 +
-+	return 0;
-+}
++``totalreserve_pages``
++这是每个节点保留的页面，这些页面不可用于用户空间分配。
 +
-+static void pem_perf_event_stop(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
++``first_deferred_pfn``
++如果大型机器上的内存初始化被推迟，那么第一个PFN（页帧号）是需要初始化的。
++在开启了 ``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项时定义。
 +
-+	if (flags & PERF_EF_UPDATE)
-+		pem_perf_event_update(event);
++``deferred_split_queue``
++每个节点的大页队列，这些大页的拆分被推迟了。仅在开启了 ``CONFIG_TRANSPARENT_HUGEPAGE``
++配置选项时定义。
 +
-+	hwc->state |= PERF_HES_STOPPED;
-+}
++``__lruvec``
++每个节点的lruvec持有LRU（最近最少使用）列表和相关参数。仅在禁用了内存
++控制组（cgroups）时使用。它不应该直接访问，而应该使用 ``mem_cgroup_lruvec()``
++来查找lruvecs。
 +
-+static void pem_perf_event_del(struct perf_event *event, int flags)
-+{
-+	struct hw_perf_event *hwc = &event->hw;
++回收控制
++~~~~~~~~
 +
-+	pem_perf_event_stop(event, PERF_EF_UPDATE);
-+	hwc->idx = -1;
-+}
++另见内核文档 Documentation/mm/page_reclaim.rst 文件。
 +
-+static int pem_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
-+{
-+	struct pem_pmu *pmu = hlist_entry_safe(node, struct pem_pmu, node);
-+	unsigned int target;
++``kswapd``
++每个节点的kswapd内核线程实例。
 +
-+	if (cpu != pmu->cpu)
-+		return 0;
++``kswapd_wait``, ``pfmemalloc_wait``, ``reclaim_wait``
++同步内存回收任务的工作队列。
 +
-+	target = cpumask_any_but(cpu_online_mask, cpu);
-+	if (target >= nr_cpu_ids)
-+		return 0;
++``nr_writeback_throttled``
++等待写回脏页时，被限制的任务数量。
 +
-+	perf_pmu_migrate_context(&pmu->pmu, cpu, target);
-+	pmu->cpu = target;
-+	return 0;
-+}
++``kswapd_order``
++控制kswapd尝试回收的order。
 +
-+static int pem_perf_probe(struct platform_device *pdev)
-+{
-+	struct pem_pmu *pem_pmu;
-+	struct resource *res;
-+	void __iomem *base;
-+	char *name;
-+	int ret;
++``kswapd_highest_zoneidx``
++kswapd线程可以回收的最高区域索引。
 +
-+	pem_pmu = devm_kzalloc(&pdev->dev, sizeof(*pem_pmu), GFP_KERNEL);
-+	if (!pem_pmu)
-+		return -ENOMEM;
++``kswapd_failures``
++kswapd无法回收任何页面的运行次数。
 +
-+	pem_pmu->dev = &pdev->dev;
-+	platform_set_drvdata(pdev, pem_pmu);
++``min_unmapped_pages``
++无法回收的未映射文件支持的最小页面数量。由 ``vm.min_unmapped_ratio``
++系统控制台（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 配置时定义。
 +
-+	base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
++``min_slab_pages``
++无法回收的SLAB页面的最少数量。由 ``vm.min_slab_ratio`` 系统控制台
++（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 时定义。
 +
-+	pem_pmu->base = base;
++``flags``
++控制回收行为的标志位。
 +
-+	pem_pmu->pmu = (struct pmu) {
-+		.module	      = THIS_MODULE,
-+		.capabilities = PERF_PMU_CAP_NO_EXCLUDE,
-+		.task_ctx_nr = perf_invalid_context,
-+		.attr_groups = pem_perf_attr_groups,
-+		.event_init  = pem_perf_event_init,
-+		.add	     = pem_perf_event_add,
-+		.del	     = pem_perf_event_del,
-+		.start	     = pem_perf_event_start,
-+		.stop	     = pem_perf_event_stop,
-+		.read	     = pem_perf_event_update,
-+	};
++内存压缩控制
++~~~~~~~~~~~~
 +
-+	/* Choose this cpu to collect perf data */
-+	pem_pmu->cpu = raw_smp_processor_id();
++``kcompactd_max_order``
++kcompactd应尝试实现的页面order。
 +
-+	name = devm_kasprintf(pem_pmu->dev, GFP_KERNEL, "mrvl_pcie_rc_pmu_%llx",
-+			      res->start);
-+	if (!name)
-+		return -ENOMEM;
++``kcompactd_highest_zoneidx``
++kcompactd可以压缩的最高区域索引。
 +
-+	cpuhp_state_add_instance_nocalls(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
-+					 &pem_pmu->node);
++``kcompactd_wait``
++同步内存压缩任务的工作队列。
 +
-+	ret = perf_pmu_register(&pem_pmu->pmu, name, -1);
-+	if (ret)
-+		goto error;
++``kcompactd``
++每个节点的kcompactd内核线程实例。
 +
-+	return 0;
-+error:
-+	cpuhp_state_remove_instance_nocalls(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
-+					    &pem_pmu->node);
-+	return ret;
-+}
++``proactive_compact_trigger``
++决定是否使用主动压缩。由 ``vm.compaction_proactiveness`` 系统控
++制台（sysctl）参数控制。
 +
-+static void pem_perf_remove(struct platform_device *pdev)
-+{
-+	struct pem_pmu *pem_pmu = platform_get_drvdata(pdev);
++统计信息
++~~~~~~~~
 +
-+	cpuhp_state_remove_instance_nocalls(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
-+					    &pem_pmu->node);
++``per_cpu_nodestats``
++表示节点的Per-CPU虚拟内存统计信息。
 +
-+	perf_pmu_unregister(&pem_pmu->pmu);
-+}
++``vm_stat``
++表示节点的虚拟内存统计数据。
 +
-+#ifdef CONFIG_ACPI
-+static const struct acpi_device_id pem_pmu_acpi_match[] = {
-+	{"MRVL000E", 0},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(acpi, pem_pmu_acpi_match);
-+#endif
++.. _zones_zh_CN:
 +
-+static struct platform_driver pem_pmu_driver = {
-+	.driver	= {
-+		.name   = "pem-pmu",
-+		.acpi_match_table = ACPI_PTR(pem_pmu_acpi_match),
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe		= pem_perf_probe,
-+	.remove		= pem_perf_remove,
-+};
++区域
++====
 +
-+static int __init pem_pmu_init(void)
-+{
-+	int ret;
++.. admonition:: Stub
 +
-+	ret = cpuhp_setup_state_multi(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
-+				      "perf/marvell/pem:online", NULL,
-+				       pem_pmu_offline_cpu);
-+	if (ret)
-+		return ret;
++  本节内容不完整。请列出并描述相应的字段。
 +
-+	ret = platform_driver_register(&pem_pmu_driver);
-+	if (ret)
-+		cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE);
-+	return ret;
-+}
++.. _pages_zh_CN:
 +
-+static void __exit pem_pmu_exit(void)
-+{
-+	platform_driver_unregister(&pem_pmu_driver);
-+	cpuhp_remove_multi_state(CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE);
-+}
++页
++====
 +
-+module_init(pem_pmu_init);
-+module_exit(pem_pmu_exit);
++.. admonition:: Stub
 +
-+MODULE_DESCRIPTION("Marvell PEM Perf driver");
-+MODULE_AUTHOR("Gowthami Thiagarajan <gthiagarajan@marvell.com>");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 2361ed4d2b15..61d9a66d1807 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -227,6 +227,7 @@ enum cpuhp_state {
- 	CPUHP_AP_PERF_ARM_APM_XGENE_ONLINE,
- 	CPUHP_AP_PERF_ARM_CAVIUM_TX2_UNCORE_ONLINE,
- 	CPUHP_AP_PERF_ARM_MARVELL_CN10K_DDR_ONLINE,
-+	CPUHP_AP_PERF_ARM_MRVL_PEM_ONLINE,
- 	CPUHP_AP_PERF_POWERPC_NEST_IMC_ONLINE,
- 	CPUHP_AP_PERF_POWERPC_CORE_IMC_ONLINE,
- 	CPUHP_AP_PERF_POWERPC_THREAD_IMC_ONLINE,
++  本节内容不完整。请列出并描述相应的字段。
++
++.. _folios_zh_CN:
++
++页码
++====
++
++.. admonition:: Stub
++
++  本节内容不完整。请列出并描述相应的字段。
++
++.. _initialization_zh_CN:
++
++初始化
++======
++
++.. admonition:: Stub
++
++  本节内容不完整。请列出并描述相应的字段。
 -- 
-2.25.1
-
+2.27.0
 
