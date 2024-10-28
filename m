@@ -1,81 +1,62 @@
-Return-Path: <linux-kernel+bounces-384472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0599B2A80
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:40:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E5B9B2A85
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:40:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8F191F221EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:40:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90AFF1F21FE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31091190692;
-	Mon, 28 Oct 2024 08:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E501B191F84;
+	Mon, 28 Oct 2024 08:40:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="czX3r4zJ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dkRHnsf9"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C768618FDDA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7742317CA1B;
+	Mon, 28 Oct 2024 08:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730104804; cv=none; b=KdHzoHFBCRgaUXy0LZMTCAJOQb1OqnTLINNmprGyIDNbF0U+mBBB1q0fAGxYH+RY9pfkrOH+ANyQ/N4+bCypOVF5ylu878voNz2DHPeegAS223wi7Y0EaywWD5q8isbXV2TiS5mKygvcKtQMY1gxz+Ic2IR02neudiDIOsqioBQ=
+	t=1730104851; cv=none; b=keelkeGnhKiNUSAe1wT1LJjOxgUOVMjDp9/LssmsqEMGOmqCByxha1c+0i+oSuf/AcGSKNk8eICRHdyMcUDIzttcUBBHou7f2XNM9k1IVsD0LYCbr9zOFBULpVh+bsaN/AR10KQTJqaZHDqycgEp9OaCD4ixScFkUWQE11uYzUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730104804; c=relaxed/simple;
-	bh=U+bySkwdww0GjZS+fGCxIPS73iVLaSXe5m1HVzU/T/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nQs+FSI4isoqhqeoYsROCzC+uvJHx88X3IrqpXEHgrl2dWp4Z3pgOVWXId5mfVWHNe1KkM9/AOPXsp1de4dxcrKDS7VPSuBnIM5zpFBXKVsUWEVyOpQOZXsNeugFzWpT0JOkSEmVEFzatDK5hiNU8deGhqXwgQKv+7ZOG2cU7NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=czX3r4zJ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49S4WcVr014786;
-	Mon, 28 Oct 2024 08:39:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:to; s=pp1;
-	 bh=J+hcpOsanEoe3/2BLjDP9qZWp5J4IOAH7YmrOHq2f5s=; b=czX3r4zJN9SO
-	3uMBXOzjdNtoj3Oip1t3C2i3Ll1qM1WAXqq5DCj3cO6IoOvH0rscayW9L+77Iq0x
-	ZfYZEJ/EecFAezkSrWFCd+jOPehdXTL6BaHD9lOc8ZKzYkE3a48R5X/3LwnMh+In
-	1pb+6BDQ//UcIQ5efKMt5KF8nDEgB/yQTZ/SACxzdH4uoCqEYl4wB9nCDBGAiR7t
-	Jv7Sv5oDniiA8q/dqyyP6JAIBF7CS45yBGbxYlxqIDyB69X0CiCI/v88pRB2NfEv
-	SKbUBHdFLIW5IqgDIiDf2610vjo58DZOEZZNbKuIWLFUFrxh6OZIsnAzMAaHb+Ak
-	khcebAxveA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j3nsh5na-1
+	s=arc-20240116; t=1730104851; c=relaxed/simple;
+	bh=PsJeG1zFAPpT+bvowI6Wk68OnqNe68L+e2mXLpQCM+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=iIN82ZlejY1kZw0Od/lcCEp8KzSRC0gkQj80U3BVmdzPPrAUTUgYSaNRa895pEHAnWII+ZPMF/6CroAagcnt116fpDViSnC82IdyfZA44XAE3m1XQiRb2kNurEeBxnL62aNRqBmAjg6s2fOvuAmR1r9RCpk+7Jf4fQpZxIf55sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dkRHnsf9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RMnvrZ003314;
+	Mon, 28 Oct 2024 08:40:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	kiNo4LPRV7XQOGUYK9r0YZHDc65Gpy9Gqr6GqwLr4KE=; b=dkRHnsf9gjzkkLHS
+	mjAWEG/Bxc8kgMY3GWAfXKwetbH+QzFLLxSyTKjOw3BRWkImDCgMPY6U9UO4DFmS
+	k4QXN5lgeQKFGnTOMnzsqaqVT1mTQ3d4kJxrWHfoNzOej46PCERgsv7qL5Qyqj1L
+	CXzcjzYbQvxrfsQWSNBgagyA/+hhzwxbdpt73LkjyAOHq+CWFeiTre2w1/hvaZxl
+	iCioZ7DDdlEZHJcPkEWIGhJAvUU8J3WV1z+UAqcdQdplQkXFTXaeLgx8ktyxaowM
+	oqNC25iNwWVG0a94FvrmqwjA91eY6RlcRGDV13prMrJI9Y02wItaEMWHywMKC5kR
+	bHq6cg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqrgm6pj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 08:39:51 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49S8dorC003774;
-	Mon, 28 Oct 2024 08:39:50 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j3nsh5n5-1
+	Mon, 28 Oct 2024 08:40:45 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S8eiB0002215
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 08:39:50 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49S8QlXA018404;
-	Mon, 28 Oct 2024 08:39:49 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hc8jw9wa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 08:39:49 +0000
-Received: from smtpav02.wdc07v.mail.ibm.com (smtpav02.wdc07v.mail.ibm.com [10.39.53.229])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49S8dmLs31850756
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 28 Oct 2024 08:39:48 GMT
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6657C58058;
-	Mon, 28 Oct 2024 08:39:48 +0000 (GMT)
-Received: from smtpav02.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 859C958059;
-	Mon, 28 Oct 2024 08:39:45 +0000 (GMT)
-Received: from [9.204.206.228] (unknown [9.204.206.228])
-	by smtpav02.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 28 Oct 2024 08:39:45 +0000 (GMT)
-Message-ID: <28280e94-3d2b-4687-aef2-24a9f5893f8e@linux.ibm.com>
-Date: Mon, 28 Oct 2024 14:09:44 +0530
+	Mon, 28 Oct 2024 08:40:44 GMT
+Received: from [10.231.207.28] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 01:40:38 -0700
+Message-ID: <38cceae8-5203-4057-bd8b-f20fe3656474@quicinc.com>
+Date: Mon, 28 Oct 2024 16:40:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,75 +64,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched: Remove unused parameter from update_deadline()
-To: Benjamin Tang <tangsong8264@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-References: <c94702d2-c5db-42b3-9ff8-746be98ec2a7@gmail.com>
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs615-ride: Enable PMIC
+ peripherals
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
+ <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-2-f0778572ee41@quicinc.com>
+ <j4ggfrynyoriseef5r5x6uwgo6cespll2np7uitc64yagoa6pz@r3ro2cpqrrry>
 Content-Language: en-US
-Reply-To: c94702d2-c5db-42b3-9ff8-746be98ec2a7@gmail.com
-From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-In-Reply-To: <c94702d2-c5db-42b3-9ff8-746be98ec2a7@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: jzJxFdP0mm2wkOgJpFik9Z0wnjqV14uy
-X-Proofpoint-GUID: PTWoPp5hZUoANCkEPbishB7IjzcEtrrc
+From: Tingguo Cheng <quic_tingguoc@quicinc.com>
+In-Reply-To: <j4ggfrynyoriseef5r5x6uwgo6cespll2np7uitc64yagoa6pz@r3ro2cpqrrry>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uR0FCQ1kyGg2CObqUr5j4TBQ83k-LW5a
+X-Proofpoint-GUID: uR0FCQ1kyGg2CObqUr5j4TBQ83k-LW5a
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxlogscore=928 clxscore=1011 priorityscore=1501
- suspectscore=0 lowpriorityscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280068
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ clxscore=1015 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
+ adultscore=0 priorityscore=1501 mlxlogscore=865 phishscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280070
 
-On 15/10/24 19:08, Benjamin Tang wrote:
+
+
+On 10/28/2024 4:23 PM, Dmitry Baryshkov wrote:
+> On Mon, Oct 28, 2024 at 04:03:25PM +0800, Tingguo Cheng wrote:
+>> Enable PMIC and PMIC peripherals for qcs615-ride board.
+>>
+>> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
+>>   1 file changed, 15 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index ee6cab3924a6d71f29934a8debba3a832882abdd..37358f080827bbe4484c14c5f159e813810c2119 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -6,6 +6,7 @@
+>>   
+>>   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>>   #include "qcs615.dtsi"
+>> +#include "pm8150.dtsi"
+>>   / {
+>>   	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>>   	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+>> @@ -210,6 +211,20 @@ &rpmhcc {
+>>   	clocks = <&xo_board_clk>;
+>>   };
+>>   
+>> +&pon {
+>> +	/delete-property/ mode-bootloader;
+>> +	/delete-property/ mode-recovery;
 > 
-> After commit 85e511df3cec ("sched/eevdf: Allow shorter slices
-> to wakeup-preempt"), the 'cfs_rq' argument is no longer used
-> in update_deadline(). Remove it.
+> Why?
+Because boot modes will be supported on PSCI module from another patch, 
+reboot-modes are required to remove from PMIC side.
+> 
+>> +};
+>> +
+>> +&pon_pwrkey {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&pon_resin {
+>> +	linux,code = <KEY_VOLUMEDOWN>;
+>> +	status = "okay";
+>> +};
+>> +
+>>   &uart0 {
+>>   	status = "okay";
+>>   };
+>>
+>> -- 
+>> 2.34.1
+>>
 > 
 
-Yes, cfs_rq argument is not used anymore.
-
-Reviewed-by: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
-
-Thanks,
-Madadi Vineeth Reddy
-
-> Signed-off-by: Benjamin Tang <tangsong8264@gmail.com>
-> ---
->  kernel/sched/fair.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index d9c33f6c1d54..882802d79720 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -1004,7 +1004,7 @@ static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
->   * XXX: strictly: vd_i += N*r_i/w_i such that: vd_i > ve_i
->   * this is probably good enough.
->   */
-> -static bool update_deadline(struct cfs_rq *cfs_rq, struct sched_entity *se)
-> +static bool update_deadline(struct sched_entity *se)
->  {
->     if ((s64)(se->vruntime - se->deadline) < 0)
->         return false;
-> @@ -1228,7 +1228,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
->         return;
-> 
->     curr->vruntime += calc_delta_fair(delta_exec, curr);
-> -   resched = update_deadline(cfs_rq, curr);
-> +   resched = update_deadline(curr);
->     update_min_vruntime(cfs_rq);
-> 
->     if (entity_is_task(curr)) {
-> -- 
-> 2.11.0
+-- 
+Thank you & BRs
+Tingguo
 
 
