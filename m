@@ -1,183 +1,288 @@
-Return-Path: <linux-kernel+bounces-385414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D9719B36EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:43:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9AD39B36E3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D27AE1F21BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:43:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A3831F2224B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E5E1DF266;
-	Mon, 28 Oct 2024 16:43:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31C3F1DF251;
+	Mon, 28 Oct 2024 16:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JOPMXrE0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="CCktmkk5"
+Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EB251DF247
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446C41DE3C4;
+	Mon, 28 Oct 2024 16:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133804; cv=none; b=M8icVk5umjEKlQ2/QIhtb2XCGhBupbMvUR24IUb+HWStpQbkw7Vv9LLmJcEwi1sBUVqO+8uq9QxGNe4g7l40ULP10onKJQPaCIqNT46t32yABvmBiQ2IEcE5osn0L9iC0K3ZhRitWw9MbydSh9KOGwcJZw17Y3jisXdoizQJ2DQ=
+	t=1730133784; cv=none; b=V1hCeV94W8QAFDnYhsHA40OfbaN4AK/v6xPNCaVqVp2UlH4HhfalmqmSNuboV8LA9H5FskZoyIRb11F52de2d+lQt8Fjzd3VWDpXESidjbrn1aeZXmCX+Gg2nFcXM72RDmWZTASeB8hq8ld/f/jC6gmLV2+33K+KLYVmdoooCnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133804; c=relaxed/simple;
-	bh=yfqmIms7MfM3JICle95HGeL9mH6XVa55qkpY5FxeOJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PcdmUhLZvxDfx2ZzIfogNU3PPOFZ2XlA2+jbwUEmIODBISE3TS9rMOPyzw5n+4fDO55cWDwOxWacWX4CWQRmbET7daQZFnL4/L0X8q1KhsO21/r8/xN3hw0V0Rfufn5/o7gL/wy89EOEzOcQbArtCcM0B7MUIqx5Lo+UPLeBZQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JOPMXrE0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730133801;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=51/Vb7GBfqvT7hRJvby3BGC7jh1OqW8AguMsa1iyHpM=;
-	b=JOPMXrE0m4l4l1mV/O0/rXt9mLohbhSmAcSHJneT8Wd7QdP7+lK7JBiR1qgZ953JK5fZ9g
-	TDISdoBFwKDsmz8brDTXE47iyQL3HpBpkj3UoKpJL7AVokP+miMs+eqq1vPjRvWZ2gIBK1
-	QvsvqYUg5XDonU+GWXa+9KjlFOjJelw=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-335-LlFqgUKGPZe2niyUpoNl9w-1; Mon,
- 28 Oct 2024 12:43:16 -0400
-X-MC-Unique: LlFqgUKGPZe2niyUpoNl9w-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3B5941955F41;
-	Mon, 28 Oct 2024 16:43:14 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.4])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3BC3B1956086;
-	Mon, 28 Oct 2024 16:43:13 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id 6B0B340103218; Mon, 28 Oct 2024 13:42:54 -0300 (-03)
-Date: Mon, 28 Oct 2024 13:42:54 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: "Nikunj A. Dadhania" <nikunj@amd.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
-	pbonzini@redhat.com, Sean Christopherson <seanjc@google.com>,
-	chao.gao@intel.com, rick.p.edgecombe@intel.com,
-	yan.y.zhao@intel.com, linux-kernel@vger.kernel.org,
-	isaku.yamahata@gmail.com, Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
-Message-ID: <Zx+/Dl0F73GUrzI2@tpad>
-References: <cover.1728719037.git.isaku.yamahata@intel.com>
- <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com>
- <ZxvGPZDQmqmoT0Sj@tpad>
- <81e6604b-fa84-4b74-b9e6-2a37e8076fd7@intel.com>
+	s=arc-20240116; t=1730133784; c=relaxed/simple;
+	bh=hfxfnDn52geDLFQ8Mw1FoWnOKLtSrLItsMKH3nc3vSM=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=tIBQ3ndfaIYa6z6IMhECzog0llWcVBvGWW04n7dKIXAuIO1PGjvdsJKlmrzT6hXUHnC7shbvITNmUZ57/kt6OFaFFBgSR4iy0s/7MkonzJ+40UAGo+58BtOHk3T7uHN8oznmsLXbVV2bGga6x1xY1bNwufvgVr1ngDah3YrEhqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=CCktmkk5; arc=none smtp.client-ip=51.222.15.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
+	s=default; t=1730133780;
+	bh=hfxfnDn52geDLFQ8Mw1FoWnOKLtSrLItsMKH3nc3vSM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CCktmkk5ETNhFgJVayeiuWBBvWFtz9i2eH85Alx5ONZZGx7Xh9lUvO6YnDWdqVAA4
+	 J6Mhc7juRyZ5fekUyNi+P0zPsmzohLXHJSMMfuDzcwNeaBqSQ0bTFLMWsXLc/gGCEP
+	 wXOwVta/0ETlbhN+6yQaut26MFDKtzmaXIK0bOP3uN/Qa5XhNaS5QyVON5vx0ja0Zj
+	 wJP3uGsZqYa0SSNdFlvzCO4/HCUyhBMR6Dizwx67IhuoYiN4RTsGazv5eQwpy+pH+I
+	 KwpBUonnE9W0iPT1J2Lssw/4S+QWxKI52C+11V02kRmPIubHaYeWZVH81DcEW+5lk4
+	 0GL6aKp3te/xg==
+X-Virus-Scanned: by epochal.quest
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <81e6604b-fa84-4b74-b9e6-2a37e8076fd7@intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Date: Mon, 28 Oct 2024 13:42:59 -0300
+From: Cody Eksal <masterr3c0rd@epochal.quest>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
+ Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Parthiban <parthiban@linumiz.com>, Yangtao Li
+ <frank@allwinnertech.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Vinod Koul <vkoul@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Thierry Reding <treding@nvidia.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Maxime Ripard <mripard@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Yangtao Li
+ <tiny.windzz@gmail.com>, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon
+ <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Shuosheng
+ Huang <huangshuosheng@allwinnertech.com>
+Subject: Re: [PATCH 13/13] arm64: dts: allwinner: a100: Add CPU Operating
+ Performance Points table
+In-Reply-To: <20241025132739.3d0f116d@donnerap.manchester.arm.com>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+ <20241024170540.2721307-14-masterr3c0rd@epochal.quest>
+ <20241025132739.3d0f116d@donnerap.manchester.arm.com>
+Message-ID: <b0fdfffd6b840eeabd2c9ab748915dd8@epochal.quest>
+X-Sender: masterr3c0rd@epochal.quest
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 27, 2024 at 10:06:17PM +0800, Xiaoyao Li wrote:
-> On 10/26/2024 12:24 AM, Marcelo Tosatti wrote:
-> > On Mon, Oct 14, 2024 at 08:17:19PM +0530, Nikunj A. Dadhania wrote:
-> > > Hi Isaku,
-> > > 
-> > > On 10/12/2024 1:25 PM, Isaku Yamahata wrote:
-> > > > This patch series is for the kvm-coco-queue branch.  The change for TDX KVM is
-> > > > included at the last.  The test is done by create TDX vCPU and run, get TSC
-> > > > offset via vCPU device attributes and compare it with the TDX TSC OFFSET
-> > > > metadata.  Because the test requires the TDX KVM and TDX KVM kselftests, don't
-> > > > include it in this patch series.
-> > > > 
-> > > > 
-> > > > Background
-> > > > ----------
-> > > > X86 confidential computing technology defines protected guest TSC so that the
-> > > > VMM can't change the TSC offset/multiplier once vCPU is initialized and the
-> > > > guest can trust TSC.  The SEV-SNP defines Secure TSC as optional.  TDX mandates
-> > > > it.  The TDX module determines the TSC offset/multiplier.  The VMM has to
-> > > > retrieve them.
-> > > > 
-> > > > On the other hand, the x86 KVM common logic tries to guess or adjust the TSC
-> > > > offset/multiplier for better guest TSC and TSC interrupt latency at KVM vCPU
-> > > > creation (kvm_arch_vcpu_postcreate()), vCPU migration over pCPU
-> > > > (kvm_arch_vcpu_load()), vCPU TSC device attributes (kvm_arch_tsc_set_attr()) and
-> > > > guest/host writing to TSC or TSC adjust MSR (kvm_set_msr_common()).
-> > > > 
-> > > > 
-> > > > Problem
-> > > > -------
-> > > > The current x86 KVM implementation conflicts with protected TSC because the
-> > > > VMM can't change the TSC offset/multiplier.  Disable or ignore the KVM
-> > > > logic to change/adjust the TSC offset/multiplier somehow.
-> > > > 
-> > > > Because KVM emulates the TSC timer or the TSC deadline timer with the TSC
-> > > > offset/multiplier, the TSC timer interrupts are injected to the guest at the
-> > > > wrong time if the KVM TSC offset is different from what the TDX module
-> > > > determined.
-> > > > 
-> > > > Originally the issue was found by cyclic test of rt-test [1] as the latency in
-> > > > TDX case is worse than VMX value + TDX SEAMCALL overhead.  It turned out that
-> > > > the KVM TSC offset is different from what the TDX module determines.
-> > > 
-> > > Can you provide what is the exact command line to reproduce this problem ?
-> > 
-> > Nikunj,
-> > 
-> > Run cyclictest, on an isolated CPU, in a VM. For the maximum latency
-> > metric, rather than 50us, one gets 500us at times.
-> > 
-> > > Any links to this reported issue ?
-> > 
-> > This was not posted publically. But its not hard to reproduce.
-> > 
-> > > > Solution
-> > > > --------
-> > > > The solution is to keep the KVM TSC offset/multiplier the same as the value of
-> > > > the TDX module somehow.  Possible solutions are as follows.
-> > > > - Skip the logic
-> > > >    Ignore (or don't call related functions) the request to change the TSC
-> > > >    offset/multiplier.
-> > > >    Pros
-> > > >    - Logically clean.  This is similar to the guest_protected case.
-> > > >    Cons
-> > > >    - Needs to identify the call sites.
-> > > > 
-> > > > - Revert the change at the hooks after TSC adjustment
-> > > >    x86 KVM defines the vendor hooks when the TSC offset/multiplier are
-> > > >    changed.  The callback can revert the change.
-> > > >    Pros
-> > > >    - We don't need to care about the logic to change the TSC offset/multiplier.
-> > > >    Cons:
-> > > >    - Hacky to revert the KVM x86 common code logic.
-> > > > 
-> > > > Choose the first one.  With this patch series, SEV-SNP secure TSC can be
-> > > > supported.
-> > > 
-> > > I am not sure how will this help SNP Secure TSC, as the GUEST_TSC_OFFSET and
-> > > GUEST_TSC_SCALE are only available to the guest.
-> > 
-> > Nikunj,
-> > 
-> > FYI:
-> > 
-> > SEV-SNP processors (at least the one below) do not seem affected by this problem.
+On 2024/10/25 9:27 am, Andre Przywara wrote:
+> On Thu, 24 Oct 2024 14:05:31 -0300
+> Cody Eksal <masterr3c0rd@epochal.quest> wrote:
 > 
-> Did you apply Secure TSC patches of (guest kernel, KVM and QEMU) manualy?
-> because none of them are merged. 
+>> From: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+>> 
+>> Add an Operating Performance Points table for the CPU cores to
+>> enable Dynamic Voltage & Frequency Scaling on the A100.
+>> 
+>> Signed-off-by: Shuosheng Huang <huangshuosheng@allwinnertech.com>
+>> [masterr3c0rd@epochal.quest: fix typos in -cpu-opp, use compatible]
+>> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+>> ---
+>>  .../allwinner/sun50i-a100-allwinner-perf1.dts |  5 ++
+>>  .../dts/allwinner/sun50i-a100-cpu-opp.dtsi    | 90 
+>> +++++++++++++++++++
+>>  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi |  8 ++
+>>  3 files changed, 103 insertions(+)
+>>  create mode 100644 
+>> arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi
+>> 
+>> diff --git 
+>> a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts 
+>> b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+>> index 29e9d24da8b6..99b1b2f7b92a 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-allwinner-perf1.dts
+>> @@ -6,6 +6,7 @@
+>>  /dts-v1/;
+>> 
+>>  #include "sun50i-a100.dtsi"
+>> +#include "sun50i-a100-cpu-opp.dtsi"
+>> 
+>>  #include <dt-bindings/gpio/gpio.h>
+>> 
+>> @@ -67,6 +68,10 @@ &usb_otg {
+>>  	status = "okay";
+>>  };
+>> 
+>> +&cpu0 {
+>> +	cpu-supply = <&reg_dcdc2>;
+>> +};
+>> +
+>>  &pio {
+>>  	vcc-pb-supply = <&reg_dcdc1>;
+>>  	vcc-pc-supply = <&reg_eldo1>;
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi 
+>> b/arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi
+>> new file mode 100644
+>> index 000000000000..eeb8d20f3fb4
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100-cpu-opp.dtsi
+>> @@ -0,0 +1,90 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +// Copyright (c) 2020 Yangtao Li <frank@allwinnertech.com>
+>> +// Copyright (c) 2020 ShuoSheng Huang 
+>> <huangshuosheng@allwinnertech.com>
+>> +
+>> +/ {
+>> +	cpu_opp_table: cpu-opp-table {
+>> +		compatible = "allwinner,sun50i-a100-operating-points";
+>> +		nvmem-cells = <&cpu_speed_grade>;
+>> +		opp-shared;
+>> +
+>> +		opp@408000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <408000000>;
+>> +
+>> +			opp-microvolt-speed0 = <900000 900000 1200000>;
+>> +			opp-microvolt-speed1 = <900000 900000 1200000>;
+>> +			opp-microvolt-speed2 = <900000 900000 1200000>;
+> 
+> Is there actually an advantage when using the three cells version?
+> I wonder if we should go with just the target voltage (the first cell
+> here), as done for the H616.
+It probably makes sense to follow precedent; I've updated V2 to make 
+these single-cell.
+> Apart from that it looks fine to me.
+I did get a comment from Rob's bot that picked up some issues with the 
+namings of these nodes; I've updated that as well.
 
-Yes. cyclictest latency, on a system configured with tuned
-realtime-virtual-host/realtime-virtual-guest tuned profiles,
-goes from 30us to 50us.
-
-> Otherwise, I think SNP guest is still using
-> KVM emulated TSC.
-
-Not in the case the test was made.
-
+Thanks!
+- Cody
+> Cheers,
+> Andre.
+> 
+>> +		};
+>> +
+>> +		opp@600000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <600000000>;
+>> +
+>> +			opp-microvolt-speed0 = <900000 900000 1200000>;
+>> +			opp-microvolt-speed1 = <900000 900000 1200000>;
+>> +			opp-microvolt-speed2 = <900000 900000 1200000>;
+>> +		};
+>> +
+>> +		opp@816000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <816000000>;
+>> +
+>> +			opp-microvolt-speed0 = <940000 940000 1200000>;
+>> +			opp-microvolt-speed1 = <900000 900000 1200000>;
+>> +			opp-microvolt-speed2 = <900000 900000 1200000>;
+>> +		};
+>> +
+>> +		opp@1080000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <1080000000>;
+>> +
+>> +			opp-microvolt-speed0 = <1020000 1020000 1200000>;
+>> +			opp-microvolt-speed1 = <980000 980000 1200000>;
+>> +			opp-microvolt-speed2 = <950000 950000 1200000>;
+>> +		};
+>> +
+>> +		opp@1200000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <1200000000>;
+>> +
+>> +			opp-microvolt-speed0 = <1100000 1100000 1200000>;
+>> +			opp-microvolt-speed1 = <1020000 1020000 1200000>;
+>> +			opp-microvolt-speed2 = <1000000 1000000 1200000>;
+>> +		};
+>> +
+>> +		opp@1320000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <1320000000>;
+>> +
+>> +			opp-microvolt-speed0 = <1160000 1160000 1200000>;
+>> +			opp-microvolt-speed1 = <1060000 1060000 1200000>;
+>> +			opp-microvolt-speed2 = <1030000 1030000 1200000>;
+>> +		};
+>> +
+>> +		opp@1464000000 {
+>> +			clock-latency-ns = <244144>; /* 8 32k periods */
+>> +			opp-hz = /bits/ 64 <1464000000>;
+>> +
+>> +			opp-microvolt-speed0 = <1180000 1180000 1200000>;
+>> +			opp-microvolt-speed1 = <1180000 1180000 1200000>;
+>> +			opp-microvolt-speed2 = <1130000 1130000 1200000>;
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&cpu0 {
+>> +	operating-points-v2 = <&cpu_opp_table>;
+>> +};
+>> +
+>> +&cpu1 {
+>> +	operating-points-v2 = <&cpu_opp_table>;
+>> +};
+>> +
+>> +&cpu2 {
+>> +	operating-points-v2 = <&cpu_opp_table>;
+>> +};
+>> +
+>> +&cpu3 {
+>> +	operating-points-v2 = <&cpu_opp_table>;
+>> +};
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi 
+>> b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>> index 6dca766ea222..747a0292ef98 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>> @@ -23,6 +23,7 @@ cpu0: cpu@0 {
+>>  			device_type = "cpu";
+>>  			reg = <0x0>;
+>>  			enable-method = "psci";
+>> +			clocks = <&ccu CLK_CPUX>;
+>>  		};
+>> 
+>>  		cpu1: cpu@1 {
+>> @@ -30,6 +31,7 @@ cpu1: cpu@1 {
+>>  			device_type = "cpu";
+>>  			reg = <0x1>;
+>>  			enable-method = "psci";
+>> +			clocks = <&ccu CLK_CPUX>;
+>>  		};
+>> 
+>>  		cpu2: cpu@2 {
+>> @@ -37,6 +39,7 @@ cpu2: cpu@2 {
+>>  			device_type = "cpu";
+>>  			reg = <0x2>;
+>>  			enable-method = "psci";
+>> +			clocks = <&ccu CLK_CPUX>;
+>>  		};
+>> 
+>>  		cpu3: cpu@3 {
+>> @@ -44,6 +47,7 @@ cpu3: cpu@3 {
+>>  			device_type = "cpu";
+>>  			reg = <0x3>;
+>>  			enable-method = "psci";
+>> +			clocks = <&ccu CLK_CPUX>;
+>>  		};
+>>  	};
+>> 
+>> @@ -142,6 +146,10 @@ efuse@3006000 {
+>>  			ths_calibration: calib@14 {
+>>  				reg = <0x14 8>;
+>>  			};
+>> +
+>> +			cpu_speed_grade: cpu-speed-grade@1c {
+>> +				reg = <0x1c 0x2>;
+>> +			};
+>>  		};
+>> 
+>>  		watchdog@30090a0 {
 
