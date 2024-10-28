@@ -1,123 +1,257 @@
-Return-Path: <linux-kernel+bounces-386055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 223129B3E9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:45:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84EB9B3E9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD773B21EE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:45:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7E61C21AF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 624C21FBF75;
-	Mon, 28 Oct 2024 23:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B121C1FCF66;
+	Mon, 28 Oct 2024 23:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+NNTwvv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nk6AqaI9"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4001F9ED6;
-	Mon, 28 Oct 2024 23:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99F101F754F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730159101; cv=none; b=JnIeVzi+xmgOeqE8m6EB6UaNcbGGsFfim4cb4/XbdXE0I3Z6PERx/Onqiq3eZ0oLRMKplDmMq6ctN6JLZKiTuS+vtBmB7M5tqgYuUg5tEu475D/apawPppgNO4LSltYTkUBErdT1hXve3YN4EWDbzNP24jnn1MSn0Anj17RT37M=
+	t=1730159142; cv=none; b=VC0n64i8n73DTtwBMkOa+mYxua/VCsTkKoVZporqayjRRqLDZsRTJFTAhLuo6QySDGjib3Wp3Y/+BDXMf1FoPZInkUuRGf/xoXbLQg/C/wsEkI7bNr7IhemK6TFCHz0chPII7Uyz6/xljZOJONlyg+08k2TPyG9iv/h2MQKgDqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730159101; c=relaxed/simple;
-	bh=5COAbv3VoIHsgbAwNn1ky7bzcLv3VohmsdFzVQBHrOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dPh+Z6o+f7trTm6sc3WOe3Wlx1Ynn4E4PLxwkYlX4CFPGzB0+SaQ4ty3DbkKndORBSeHrDiqHUNw9hEkMD6ffRXY8V8udNVD+rAGto6Ay1uHFQ4weM4Tl/4Qp+PuLcg1bPxVWwUBNmjaYXEpp0kJ2/ONiRyu90RhIU6U9NRInv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+NNTwvv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240FBC4CECD;
-	Mon, 28 Oct 2024 23:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730159101;
-	bh=5COAbv3VoIHsgbAwNn1ky7bzcLv3VohmsdFzVQBHrOc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H+NNTwvvL2PrGedyo8EhCWjLLnF3FekeUL33JewZHd3tJpDIbbCQquhagOvV8AkZu
-	 As3rZTXbM+naBTPSx2w+a98a1EBhB/Ormnnf10Sk+6B1T5NsQDfb7qo1nNkEJjzmZJ
-	 fHL3wSWM9HCI00zRU+8J/r9ncxZ6I6no3bmETD8JtBmMNqV2QHtwDB4A9jqLZw54K0
-	 xp5cMIhp5/d/fQEludaOh5SyJgGV8tK56W6ney2AvNSuqUjpKpiy6jgqVPXPt3wgFs
-	 aNtYDeVlEMWVCi0tf5hog5ToIW92Be3nxKiUknZqfY6C2LYP3xQBa113o0x2HgHx+U
-	 4XsIgL/KtGHbw==
-Date: Mon, 28 Oct 2024 16:44:58 -0700
-From: Kees Cook <kees@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: vvvvvv@google.com, Johannes Berg <johannes@sipsolutions.net>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] wifi: nl80211: fix bounds checker error in
- nl80211_parse_sched_scan
-Message-ID: <202410281644.77B7BEF8E@keescook>
-References: <20241028-nl80211_parse_sched_scan-bounds-checker-fix-v1-1-bb640be0ebb7@google.com>
- <bf27a7bf-04ce-4720-a13c-f19e0069541a@embeddedor.com>
+	s=arc-20240116; t=1730159142; c=relaxed/simple;
+	bh=9V3FbFyXgQzKFK6AQW5eG6dWWdm+z29ILibwly8RDYw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=VRAWIKEQVptwfOwRYjw7/0128oW3Q+Ds5GnP//KpwNX2I0uG1gDtDh+GRoUrdy8yUlRhvm71d3TtazK0pWIEymdouP66YrV+nqWytDHEoNbma5EJbIovv8t6pebYdK403wud540QyHQtO64/QYK+OZCpjUqefaJg/XhJ3TxzbHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nk6AqaI9; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rananta.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e35a643200so92440117b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:45:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730159139; x=1730763939; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=weKc7pUE07xNeQr09+d551wOOvD9evRa1kruXuN5EzI=;
+        b=Nk6AqaI9vfEgFdI44BhgXMQW0gJhfcqEFZqaUYBMB8/Dmzh5k16GbCjIzZ7CmD7XIk
+         /XN2xfHZRe8IyExKF4552eC0hpSRJ5JRd2hF23JshpkSNSQWbvb/sM8EPm99ru9O9cIm
+         RfNS4zFJ4kkpSMWr6oOoIZFP+7zyMq0a3ai5nGtZgXulXHs47QleIbxeaDGclisVwbrx
+         Fe6MErhaUaZAT1LNEASwLLphADHU+q7V1LEMh4735thYNez7ausNs8DJioOmvVb+KUHn
+         GErYu3SlLm/a1h4zOv+VATG0cuhAMMxlqVH6jmAuvW0ZBl8ZuEQAhT7MBVaayFkT8LOQ
+         AueQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730159139; x=1730763939;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=weKc7pUE07xNeQr09+d551wOOvD9evRa1kruXuN5EzI=;
+        b=PuKx7kt4YDzuHLKqRUAYdfUR8/ut6aJi3UQkLOD4K2pJsBb5uMv3R/F58AxT3mKJbA
+         kPC2F1Qi1mo/VqYVOzBiZ375AG3GoVuWAbaqsmcOZNjPO6xgfWSfKfjeXiSbjSsoV8M3
+         pI+9ra6CoK4aJYK7okw4wf8d4MlZOofir/h9hD5K/jC0yQQcfFgrDEubjoOiHl9sGCtm
+         M0Vhk79RfbMkLxpHZHB3APwb/ZDaDhdGiwaz5r7sUGbX/5PLnpP1uFUNBTQ0Xlz98ftd
+         kMOh6TdBJnXeUz1klDtsDjogfNENC9OXF6Wr4MkD0mIuHa+/LtPTBixjBjYMyVR5p5Tf
+         WYSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLSf2YSk2+el6P9dAohowHAsS0vxMV337w8UkOMyi30FxjEM8ER83HpslXEQCANX4ZwijXxvjrpiAQtUc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBspkn8DyHGmwxVhAAhHa4TqOuosrca9pcTfDAZQHrdlWb0lYm
+	OFJ/np18aNeX7wQlqo2+rkK5zcx40A4LTucEDklZBT6CR8zV4edI/EG4489C1+X67+CvUiqojZp
+	f8bQwpg==
+X-Google-Smtp-Source: AGHT+IF4LmiHNOFeP+dSBPOKHULSDdtDWGw1BAC4q4CWY/ss/tKZYDeGiq6b6X1zvQASXhcbrNhz5/FwP0y8
+X-Received: from rananta-linux.c.googlers.com ([fda3:e722:ac3:cc00:11b:3898:ac11:fac1])
+ (user=rananta job=sendgmr) by 2002:a25:c50a:0:b0:e2b:e955:d57f with SMTP id
+ 3f1490d57ef6-e3087bcecebmr5816276.7.1730159139417; Mon, 28 Oct 2024 16:45:39
+ -0700 (PDT)
+Date: Mon, 28 Oct 2024 23:45:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bf27a7bf-04ce-4720-a13c-f19e0069541a@embeddedor.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241028234533.942542-1-rananta@google.com>
+Subject: [PATCH v2] KVM: arm64: Get rid of userspace_irqchip_in_use
+From: Raghavendra Rao Ananta <rananta@google.com>
+To: Oliver Upton <oliver.upton@linux.dev>, Marc Zyngier <maz@kernel.org>
+Cc: Raghavendra Rao Anata <rananta@google.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	stable@vger.kernel.org, syzbot <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Oct 28, 2024 at 04:54:43PM -0600, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 28/10/24 16:18, Aleksei Vetrov via B4 Relay wrote:
-> > From: Aleksei Vetrov <vvvvvv@google.com>
-> > 
-> > The channels array in the cfg80211_scan_request has a __counted_by
-> > attribute attached to it, which points to the n_channels variable. This
-> > attribute is used in bounds checking, and if it is not set before the
-> > array is filled, then the bounds sanitizer will issue a warning or a
-> > kernel panic if CONFIG_UBSAN_TRAP is set.
-> > 
-> > This patch sets the size of allocated memory as the initial value for
-> > n_channels. It is updated with the actual number of added elements after
-> > the array is filled.
-> > 
-> 
-> This should include the following tag (and probably CC stable):
-> 
-> Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
+Improper use of userspace_irqchip_in_use led to syzbot hitting the
+following WARN_ON() in kvm_timer_update_irq():
 
-Agreed.
+WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
+kvm_timer_update_irq+0x21c/0x394
+Call trace:
+  kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
+  kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
+  kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
+  kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
+  kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
+  kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
+  kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
+  vfs_ioctl fs/ioctl.c:51 [inline]
+  __do_sys_ioctl fs/ioctl.c:907 [inline]
+  __se_sys_ioctl fs/ioctl.c:893 [inline]
+  __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
+  __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+  invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
+  el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
+  do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
+  el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
+  el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+  el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+The following sequence led to the scenario:
+ - Userspace creates a VM and a vCPU.
+ - The vCPU is initialized with KVM_ARM_VCPU_PMU_V3 during
+   KVM_ARM_VCPU_INIT.
+ - Without any other setup, such as vGIC or vPMU, userspace issues
+   KVM_RUN on the vCPU. Since the vPMU is requested, but not setup,
+   kvm_arm_pmu_v3_enable() fails in kvm_arch_vcpu_run_pid_change().
+   As a result, KVM_RUN returns after enabling the timer, but before
+   incrementing 'userspace_irqchip_in_use':
+   kvm_arch_vcpu_run_pid_change()
+       ret = kvm_arm_pmu_v3_enable()
+           if (!vcpu->arch.pmu.created)
+               return -EINVAL;
+       if (ret)
+           return ret;
+       [...]
+       if (!irqchip_in_kernel(kvm))
+           static_branch_inc(&userspace_irqchip_in_use);
+ - Userspace ignores the error and issues KVM_ARM_VCPU_INIT again.
+   Since the timer is already enabled, control moves through the
+   following flow, ultimately hitting the WARN_ON():
+   kvm_timer_vcpu_reset()
+       if (timer->enabled)
+          kvm_timer_update_irq()
+              if (!userspace_irqchip())
+                  ret = kvm_vgic_inject_irq()
+                      ret = vgic_lazy_init()
+                          if (unlikely(!vgic_initialized(kvm)))
+                              if (kvm->arch.vgic.vgic_model !=
+                                  KVM_DEV_TYPE_ARM_VGIC_V2)
+                                      return -EBUSY;
+                  WARN_ON(ret);
 
--Kees
+Theoretically, since userspace_irqchip_in_use's functionality can be
+simply replaced by '!irqchip_in_kernel()', get rid of the static key
+to avoid the mismanagement, which also helps with the syzbot issue.
 
-> 
-> Thanks
-> --
-> Gustavo
-> 
-> > Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
-> > ---
-> >   net/wireless/nl80211.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-> > index d7d099f7118ab5d5c745905abdea85d246c2b7b2..9b1b9dc5a7eb2a864da7b0212bc6a156b7757a9d 100644
-> > --- a/net/wireless/nl80211.c
-> > +++ b/net/wireless/nl80211.c
-> > @@ -9776,6 +9776,7 @@ nl80211_parse_sched_scan(struct wiphy *wiphy, struct wireless_dev *wdev,
-> >   	request = kzalloc(size, GFP_KERNEL);
-> >   	if (!request)
-> >   		return ERR_PTR(-ENOMEM);
-> > +	request->n_channels = n_channels;
-> >   	if (n_ssids)
-> >   		request->ssids = (void *)request +
-> > 
-> > ---
-> > base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-> > change-id: 20241028-nl80211_parse_sched_scan-bounds-checker-fix-c5842f41b863
-> > 
-> > Best regards,
-> 
+Cc: <stable@vger.kernel.org>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Signed-off-by: Raghavendra Rao Ananta <rananta@google.com>
+---
 
+v2:
+  - Picked the diff shared by Marc to get rid of
+    'userspace_irqchip_in_use' (thanks).
+  - Adjusted the commit message accordingly.
+v1: https://lore.kernel.org/all/20241025221220.2985227-1-rananta@google.com/
+
+ arch/arm64/include/asm/kvm_host.h |  2 --
+ arch/arm64/kvm/arch_timer.c       |  3 +--
+ arch/arm64/kvm/arm.c              | 18 +++---------------
+ 3 files changed, 4 insertions(+), 19 deletions(-)
+
+diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+index 329619c6fa961..9f96594a0e05d 100644
+--- a/arch/arm64/include/asm/kvm_host.h
++++ b/arch/arm64/include/asm/kvm_host.h
+@@ -73,8 +73,6 @@ enum kvm_mode kvm_get_mode(void);
+ static inline enum kvm_mode kvm_get_mode(void) { return KVM_MODE_NONE; };
+ #endif
+ 
+-DECLARE_STATIC_KEY_FALSE(userspace_irqchip_in_use);
+-
+ extern unsigned int __ro_after_init kvm_sve_max_vl;
+ extern unsigned int __ro_after_init kvm_host_sve_max_vl;
+ int __init kvm_arm_init_sve(void);
+diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+index 879982b1cc739..1215df5904185 100644
+--- a/arch/arm64/kvm/arch_timer.c
++++ b/arch/arm64/kvm/arch_timer.c
+@@ -206,8 +206,7 @@ void get_timer_map(struct kvm_vcpu *vcpu, struct timer_map *map)
+ 
+ static inline bool userspace_irqchip(struct kvm *kvm)
+ {
+-	return static_branch_unlikely(&userspace_irqchip_in_use) &&
+-		unlikely(!irqchip_in_kernel(kvm));
++	return unlikely(!irqchip_in_kernel(kvm));
+ }
+ 
+ static void soft_timer_start(struct hrtimer *hrt, u64 ns)
+diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+index a0d01c46e4084..63f5c05e9dec6 100644
+--- a/arch/arm64/kvm/arm.c
++++ b/arch/arm64/kvm/arm.c
+@@ -69,7 +69,6 @@ DECLARE_KVM_NVHE_PER_CPU(struct kvm_cpu_context, kvm_hyp_ctxt);
+ static bool vgic_present, kvm_arm_initialised;
+ 
+ static DEFINE_PER_CPU(unsigned char, kvm_hyp_initialized);
+-DEFINE_STATIC_KEY_FALSE(userspace_irqchip_in_use);
+ 
+ bool is_kvm_arm_initialised(void)
+ {
+@@ -503,9 +502,6 @@ void kvm_arch_vcpu_postcreate(struct kvm_vcpu *vcpu)
+ 
+ void kvm_arch_vcpu_destroy(struct kvm_vcpu *vcpu)
+ {
+-	if (vcpu_has_run_once(vcpu) && unlikely(!irqchip_in_kernel(vcpu->kvm)))
+-		static_branch_dec(&userspace_irqchip_in_use);
+-
+ 	kvm_mmu_free_memory_cache(&vcpu->arch.mmu_page_cache);
+ 	kvm_timer_vcpu_terminate(vcpu);
+ 	kvm_pmu_vcpu_destroy(vcpu);
+@@ -848,14 +844,6 @@ int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+ 			return ret;
+ 	}
+ 
+-	if (!irqchip_in_kernel(kvm)) {
+-		/*
+-		 * Tell the rest of the code that there are userspace irqchip
+-		 * VMs in the wild.
+-		 */
+-		static_branch_inc(&userspace_irqchip_in_use);
+-	}
+-
+ 	/*
+ 	 * Initialize traps for protected VMs.
+ 	 * NOTE: Move to run in EL2 directly, rather than via a hypercall, once
+@@ -1072,7 +1060,7 @@ static bool kvm_vcpu_exit_request(struct kvm_vcpu *vcpu, int *ret)
+ 	 * state gets updated in kvm_timer_update_run and
+ 	 * kvm_pmu_update_run below).
+ 	 */
+-	if (static_branch_unlikely(&userspace_irqchip_in_use)) {
++	if (unlikely(!irqchip_in_kernel(vcpu->kvm))) {
+ 		if (kvm_timer_should_notify_user(vcpu) ||
+ 		    kvm_pmu_should_notify_user(vcpu)) {
+ 			*ret = -EINTR;
+@@ -1194,7 +1182,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+ 			vcpu->mode = OUTSIDE_GUEST_MODE;
+ 			isb(); /* Ensure work in x_flush_hwstate is committed */
+ 			kvm_pmu_sync_hwstate(vcpu);
+-			if (static_branch_unlikely(&userspace_irqchip_in_use))
++			if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
+ 				kvm_timer_sync_user(vcpu);
+ 			kvm_vgic_sync_hwstate(vcpu);
+ 			local_irq_enable();
+@@ -1240,7 +1228,7 @@ int kvm_arch_vcpu_ioctl_run(struct kvm_vcpu *vcpu)
+ 		 * we don't want vtimer interrupts to race with syncing the
+ 		 * timer virtual interrupt state.
+ 		 */
+-		if (static_branch_unlikely(&userspace_irqchip_in_use))
++		if (unlikely(!irqchip_in_kernel(vcpu->kvm)))
+ 			kvm_timer_sync_user(vcpu);
+ 
+ 		kvm_arch_vcpu_ctxsync_fp(vcpu);
+
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
 -- 
-Kees Cook
+2.47.0.163.g1226f6d8fa-goog
+
 
