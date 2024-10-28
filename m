@@ -1,84 +1,102 @@
-Return-Path: <linux-kernel+bounces-385411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2509B36DA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:41:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DCFA9B36E6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF57F1C22114
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64F4281B15
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:43:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD311DEFE7;
-	Mon, 28 Oct 2024 16:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F5EB1DF278;
+	Mon, 28 Oct 2024 16:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVjNZgn2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fAbfWwJA"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A6E1DE8AA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:41:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726C71DEFE7
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133691; cv=none; b=D8Yz9xa5GdORv8BisEeEpKOd+oOtdWE48wzy88MjcMcJiJDNnmxRRM51wfXsBNzYcAGckJRu3LIJuBOooYoFI0jAknW49RVf65jOeYhQyyoevd1mMi13L0ly0nXlL9lS5PPIkt45uSvhOLaoYnRM5i5ZLu63/Vzug/+o+MGxroU=
+	t=1730133787; cv=none; b=Q7ZU6GB2UrttY4/lh3dHG4zHMH/mJ09X6x1f/d7ryVvTkgphSkyTbOqkCNicjTem0ddD9Pm+BP+JU+EwIxpbFAF6etJejod5DTTaqj+G5FUOgFuOFdJ8lDPku9cQwb6EiIoUBpO4vTKh3GFfh4jeu6dYmdmutNel40n5QFMteAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133691; c=relaxed/simple;
-	bh=B4oB+FNa7mrAonbfQzqwsVGJ6I/lQD0mexpFz6uiXTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tOgHxZ5MCLeHAUBkD4Ad7QrTebAEwyvJxsno20gliy4SRE+8KDfxaol8jyuhBuTp4qKpwlJQwX7CIMps+llvffyapB1FW2nWEFWbuV9sh6RbDB2/ii1f57XAHXdDpKfLVA6oLMJoLKIMPT18EcmsXlaLLrFuthPl+AUqxAzOvjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVjNZgn2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49217C4CEC3;
-	Mon, 28 Oct 2024 16:41:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730133690;
-	bh=B4oB+FNa7mrAonbfQzqwsVGJ6I/lQD0mexpFz6uiXTc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MVjNZgn2G/PfOqfRF005VcRxpefUgBHwOykTsUj/dg5eXwQpU5MsLGCMdF3PVG82x
-	 KsxyT8Y/0LbX2rZ8lL2bXBINxEIrkfIfSivdLo9ClpJTD98np2gmQD9drzQ8DCro6G
-	 it3QXLzwfeLwKpBjsl/wZenfGDZhfOgJdQLuapgZl4qrMUZSvNxvpCMC5Thnt/NK6p
-	 DlGT1MMEk1t0owPJWT+gVxrv0M7uqTBxNRt43d09jitt+kF0E3nQMHYj9AFXkJEtS9
-	 w7i4p6yOHbexQuvABOQRCjLVw3mrpDsiY43Riy53tPhFdqrqF8rM1eLnF6bnoUrzgw
-	 uGUIzcFJdIn3A==
-Date: Mon, 28 Oct 2024 17:41:27 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 12/26] signal: Split up __sigqueue_alloc()
-Message-ID: <Zx--t23RDsIc0qVq@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083835.971100589@linutronix.de>
+	s=arc-20240116; t=1730133787; c=relaxed/simple;
+	bh=JNJOKl46jLJGslGf5ErGbfwDYIGBl5tbyg7Z4INFYnE=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=BIPueNbAbVSIRBDCOOGEI0zUJeonBgAgUdomvP+8NA1CiCice9fbt+T76dVRurrwRj02diqecdsV8jUmg02bMH3RQsdgBRVmB4WzxEJj7MvzTE84juXXux9Fb6oJseZGtoP5+5s74/g89Sb8YAxbt38Dm1aTTuU0b3rR5YCezw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fAbfWwJA; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730133782;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4O8OJBMmnm9/5Y9Az0M1fjT/ZmToxjWCi2Zmw5OLgU4=;
+	b=fAbfWwJAKII7zSjhj2Ie8iww6pzvSWrpog9UAo7EosWHY2MI9W4RTI4KYFiybWs6NtduNI
+	nmogNGZgJXsxQY5382OFMNyl8/ixOCKC+PeJDWRQXR77aMNNj6qlkGCZDnl5/5xiwS8pUn
+	SrCHRMUe/mUTG16FX1WPA0MHFrB+Pbc=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083835.971100589@linutronix.de>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH net-next] ieee802154: Replace BOOL_TO_STR() with
+ str_true_false()
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <173013100436.1993507.7802081149320563849.b4-ty@datenfreihafen.org>
+Date: Mon, 28 Oct 2024 17:42:47 +0100
+Cc: Alexander Aring <alex.aring@gmail.com>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ linux-wpan@vger.kernel.org,
+ netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3B24A2C8-B684-4A86-AEC7-198891897F56@linux.dev>
+References: <20241020112313.53174-2-thorsten.blum@linux.dev>
+ <173013100436.1993507.7802081149320563849.b4-ty@datenfreihafen.org>
+To: Stefan Schmidt <stefan@datenfreihafen.org>
+X-Migadu-Flow: FLOW_OUT
 
-Le Tue, Oct 01, 2024 at 10:42:16AM +0200, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> To cure the SIG_IGN handling for posix interval timers, the preallocated
-> sigqueue needs to be embedded into struct k_itimer to prevent life time
-> races of all sorts.
-> 
-> Reorganize __sigqueue_alloc() so the ucounts retrieval and the
-> initialization can be used independently.
-> 
-> No functional change.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Hi Stefan,
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> On 28. Oct 2024, at 16:57, Stefan Schmidt wrote:
+>=20
+> Hello Thorsten Blum.
+>=20
+> On Sun, 20 Oct 2024 13:23:13 +0200, Thorsten Blum wrote:
+>> Replace the custom BOOL_TO_STR() macro with the str_true_false() =
+helper
+>> function and remove the macro.
+>>=20
+>>=20
+>=20
+> Applied to wpan/wpan-next.git, thanks!
+>=20
+> [1/1] ieee802154: Replace BOOL_TO_STR() with str_true_false()
+>     https://git.kernel.org/wpan/wpan-next/c/299875256571
+
+I'm actually not sure this works after getting feedback on a similar
+patch [1].
+
+I'd probably revert it to be safe.
+
+Thanks,
+Thorsten
+
+[1] =
+https://lore.kernel.org/linux-kernel/afe1839843d8d4dd38dd9368b2e30f0aa6864=
+b9a.camel@sipsolutions.net/=
 
