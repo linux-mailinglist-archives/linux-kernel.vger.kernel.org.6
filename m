@@ -1,223 +1,337 @@
-Return-Path: <linux-kernel+bounces-384608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1469B2C55
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:08:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D0C9B2C59
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0771C2176F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:08:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3578F1C21800
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:09:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9DB1D0E39;
-	Mon, 28 Oct 2024 10:08:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9BAC1D0E39;
+	Mon, 28 Oct 2024 10:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WpXAxDHH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Uj6S+w3E";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="m06uzmj6"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4A018E77B;
-	Mon, 28 Oct 2024 10:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5635918B46E;
+	Mon, 28 Oct 2024 10:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110091; cv=none; b=mh80Fu5ptx2I5I8Ha3Z/tjxdoo14KjKp7WKhb5WVTgDB7kzyZax6BtxQzqVxJe+8dyt6H84di9XUogjOpx6xDIif8/KA0LnAehECfM6ezlvHb9dCm19t6r0Uz82/9f5BwSqgSJBk73L++uEcXfP64NfvTnq8ZAJqIsTSukDFPDE=
+	t=1730110159; cv=none; b=IsKB/EDkDv0vcP+7PJ1tHwj0g+908E7axID/enZA959RPM6KqeCYrGCFjO1xvKFXGLoAwGIzdMGXVL9kXogQEClZt8ExoYWVUyAZb/G0gBce5OtlAv+F2m8WVPKOmP0e/XVDSjxYfG9OE1oezbP/47rzHZ1aoXtZw3hu5UxQbPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110091; c=relaxed/simple;
-	bh=NLtcM1hkjof1fTLdSDHcaZ6iQK8KqH/wzHVn0jh3deY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=seaQqtJBvVHFrop9f2vCT5PpfEtet9pfWXd/4gEpAqLmGcdtR2u+t3KJDVZOcW5uNFqyC9UHMXwupKa4UvI0T0HqLNkz1eMENN3aTykslF/0xun4bMVaQdIyl9nCWg6yAY7x2wJGj6pu/SqpVasjVRuCUGqoc9xP8c78XVAd4Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WpXAxDHH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNnA4K017530;
-	Mon, 28 Oct 2024 10:07:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	u6w09vuiLva5b8cnrEum/UWUMtRM/0/5HzAWBBqc9eQ=; b=WpXAxDHHSWUl947b
-	jXMxOO5ewytWmwojDUfj5Y3opOccO99hO7nPOk2mVAYMUdGuyTMk8rwVGv0OTLCT
-	70EvAsHyy8dxdWRWNa8gEoGt8BljfGwFFX2sBN1VQj0146YeVLwZJ1WcLEKSl9ne
-	t5aV0xbnjudpUTa/vRhBbhxxe99dbqP0NwLNv0dNpWuKossxZqkmkyB7SY+f8yYj
-	g+biBBf6A5cDvoT4x+oJFpdKtuvYFvADskZ03kR9FfNHMGx1pu/wjqOBd28CEKqj
-	7zdUoWM1dUMosZv39FVXuC1ULCwDc/uJIEVrTe1ufLkXSK/F0htY9UJkRiqWC22A
-	E/bDew==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6vd4r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 10:07:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SA7qfZ025319
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 10:07:52 GMT
-Received: from [10.216.3.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 03:07:46 -0700
-Message-ID: <6fea85fc-ccdc-46ec-b612-3712e9431301@quicinc.com>
-Date: Mon, 28 Oct 2024 15:37:44 +0530
+	s=arc-20240116; t=1730110159; c=relaxed/simple;
+	bh=ctBpJEXIXgw8Zs2ARo2OhQ5KKmdvndE9TdmFFNIuhsE=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=eRBF3LoUCsaM5eDGByHnnRVEQ7SZ1jPW2CFsypJwYXFw/ZZe/1iBRrQVE0umEy/T+MrayMR8q3IHTK/UANfVSPN5/yLPwy+SNdFojM+8bx7nhTsipVsz1VFj3o0HAn6cbGCf47s0x3fThJ+EmqU+G4HxvDV1nKo0RCdW755i/Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Uj6S+w3E; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=m06uzmj6; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id A4E0825400E3;
+	Mon, 28 Oct 2024 06:09:15 -0400 (EDT)
+Received: from phl-imap-10 ([10.202.2.85])
+  by phl-compute-02.internal (MEProxy); Mon, 28 Oct 2024 06:09:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1730110155;
+	 x=1730196555; bh=sar9VsxVQKkAejXjEiNOhId5O63SyubO6yyvZ3N3wos=; b=
+	Uj6S+w3EsK7vBGgYgRiNHAeBCOjO+hluLm/ZDEx16mTCxKPnbtQc8xJN4zWjXo+i
+	+ddku4qMcPJ4Jw/zggHuT75VDnU8ZB3nKvJYcDaZDuaS27FunM5GfPsxHW9Tfzuu
+	Cro6LlUUFiT3fc3XJjrii9/UpciZIgUsh5p+Z5/uR02KoApd9QNbWhPpOvXPyQ+B
+	aQkqN3xyfaRQOw/2BQOwtyWCm79QhePNv0GlARInbliOp54dZEb7ZsyojJbhQPn9
+	r6VMhLdWFNeHxR8quV3svsp6W/NBihxCzkHKMudb76Qf7ZODKsfrhJZpf5E/DKuu
+	cMoPfN3bYbLpzOAn9uloKA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730110155; x=
+	1730196555; bh=sar9VsxVQKkAejXjEiNOhId5O63SyubO6yyvZ3N3wos=; b=m
+	06uzmj6UrsA6Qz3BrugQ3VMh8EJHifVlKz31dTerIC8Nc/uYJ4vxWwKugOAsdHQc
+	ZoIxWHi13/tWPB1tYPW9PQzDqAkk7vYETZ9YVuF0SGdhtTeEr4kR7APZvdpTZGNZ
+	LhgaO7P0KHxKCzoKGcZ2Gd/wLN24FIyHAz1CjRPorRe8mkO+R1cNmk3fMp7l/5mq
+	Wo0zaS0ei9YUl+ndJbphQ9OGE8UTvPmlt7h+9wWZek9J4PMddY/5TT0P1PUTiRgG
+	hV39SjLaYHGOK3sc0cSJqLSgPd7CoFJc7alnXef37CD81ZGzA5ggtuCPwGkY2h2r
+	lzQsS58+Gn0bbevWyJeEA==
+X-ME-Sender: <xms:ymIfZ7DP-SF0NnlxihdXVJPG84rrLBdEZwOv9RMk9xt6oZPm-6UdbA>
+    <xme:ymIfZxiqK0ZpDAGFME6hJUvwyIb-i0TZyjXOTUBUnVJOw2IIJs5qEPhPA4zoOKn6X
+    BN07IVqGFvXKw7OlCo>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejkedgudduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
+    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
+    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
+    gvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
+    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouh
+    htpdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhr
+    tghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtph
+    htthhopehikhgvrdhprghnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtoheprghl
+    vgigsggvlhhmgeeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrd
+    gthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuiihmrgigihhmihhlihgr
+    nhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhhrdgvnhhgrdgsrhdprh
+    gtphhtthhopehsohihvghrsehirhhlrdhhuhdprhgtphhtthhopehlvghnsgeskhgvrhhn
+    vghlrdhorhhg
+X-ME-Proxy: <xmx:ymIfZ2lU6bB_nQCB6QBhlau5S4mCOfg0wNDw6Gt1fX5qugpWIGO-vw>
+    <xmx:ymIfZ9yy3hjeaciaQQCLZdLt7xqyRPMJLVcbpCZWRpP9RS14dQJNJQ>
+    <xmx:ymIfZwSUl5KDdYo8NaAWlKR78KTG9jzZOXYUKjxdAJvmq3Gzox5_Uw>
+    <xmx:ymIfZwY6HAZmRpVLn3OBYd6TSHHOTOwv17FI7JRTaJEsJ62XvjaHsw>
+    <xmx:y2IfZ5SmE_-4EeWtNR4G_HnlCuKLDtuqjDRmS9XG1jgOSEtuP99Fajk3>
+Feedback-ID: ibe194615:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 5C2A73C0066; Mon, 28 Oct 2024 06:09:14 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie
-	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Nathan Chancellor
-	<nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        "Bill
- Wendling" <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
-        Arnd Bergmann <arnd@kernel.org>
-References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
- <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
-Content-Type: text/plain; charset="UTF-8"
+Date: Mon, 28 Oct 2024 06:08:54 -0400
+From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
+To: "Limonciello, Mario" <mario.limonciello@amd.com>,
+ "Hans de Goede" <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
+ "Maximilian Luz" <luzmaximilian@gmail.com>, "Lee Chun-Yi" <jlee@suse.com>,
+ "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>,
+ "Corentin Chary" <corentin.chary@gmail.com>,
+ "Luke D . Jones" <luke@ljones.dev>, "Ike Panhc" <ike.pan@canonical.com>,
+ "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
+ "Alexis Belmonte" <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ "Ai Chao" <aichao@kylinos.cn>, "Gergo Koteles" <soyer@irl.hu>,
+ "open list" <linux-kernel@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
+ "Matthew Schwartz" <matthew.schwartz@linux.dev>
+Message-Id: <67ce52b7-d63b-432d-8cad-50063c06c394@app.fastmail.com>
+In-Reply-To: <20241025193055.2235-4-mario.limonciello@amd.com>
+References: <20241025193055.2235-1-mario.limonciello@amd.com>
+ <20241025193055.2235-4-mario.limonciello@amd.com>
+Subject: Re: [PATCH 3/8] ACPI: platform_profile: Add platform handler argument to
+ platform_profile_remove()
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yM4lroPHSvQX2DwzVgWCZySGtX_3rfx5
-X-Proofpoint-GUID: yM4lroPHSvQX2DwzVgWCZySGtX_3rfx5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280083
 
-On 10/28/2024 1:56 PM, Dmitry Baryshkov wrote:
-> On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
->> Clang-19 and above sometimes end up with multiple copies of the large
->> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
->> a6xx_hfi_send_bw_table() calls a number of device specific functions to
->> fill the structure, but these create another copy of the structure on
->> the stack which gets copied to the first.
->>
->> If the functions get inlined, that busts the warning limit:
->>
->> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
->>
->> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
->> the stack. Also, use this opportunity to skip re-initializing this table
->> to optimize gpu wake up latency.
->>
->> Cc: Arnd Bergmann <arnd@kernel.org>
->>
->> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> ---
->>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
->>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
->>  2 files changed, 23 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
->> index 94b6c5cab6f4..b4a79f88ccf4 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
->> @@ -99,6 +99,7 @@ struct a6xx_gmu {
->>  	struct completion pd_gate;
->>  
->>  	struct qmp *qmp;
->> +	struct a6xx_hfi_msg_bw_table *bw_table;
->>  };
->>  
->>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
->> index cdb3f6e74d3e..55e51c81be1f 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
->> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->>  
->>  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
->>  {
->> -	struct a6xx_hfi_msg_bw_table msg = { 0 };
->> +	struct a6xx_hfi_msg_bw_table *msg;
->>  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
->>  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
->>  
->> +	if (gmu->bw_table)
->> +		goto send;
->> +
->> +	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
+
+
+On Fri, Oct 25, 2024, at 3:30 PM, Mario Limonciello wrote:
+> To allow registering and unregistering multiple platform handlers calls
+> to platform_profile_remove() will need to know which handler is to be
+> removed.  Add an argument for this.
+>
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c                     | 2 +-
+>  drivers/platform/surface/surface_platform_profile.c | 2 +-
+>  drivers/platform/x86/acer-wmi.c                     | 4 ++--
+>  drivers/platform/x86/amd/pmf/sps.c                  | 2 +-
+>  drivers/platform/x86/asus-wmi.c                     | 4 ++--
+>  drivers/platform/x86/dell/dell-pc.c                 | 2 +-
+>  drivers/platform/x86/hp/hp-wmi.c                    | 2 +-
+>  drivers/platform/x86/ideapad-laptop.c               | 2 +-
+>  drivers/platform/x86/inspur_platform_profile.c      | 4 +++-
+>  drivers/platform/x86/thinkpad_acpi.c                | 2 +-
+>  include/linux/platform_profile.h                    | 2 +-
+>  11 files changed, 15 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/acpi/platform_profile.c 
+> b/drivers/acpi/platform_profile.c
+> index d2f7fd7743a13..c24744da20916 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -205,7 +205,7 @@ int platform_profile_register(struct 
+> platform_profile_handler *pprof)
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_register);
 > 
-> Is it necessary after being sent? Isn't it better to just kzalloc() it
-> and then kfree() it at the end of the function?
-
-Keeping it around will help to cut down unnecessary work during
-subsequent gpu wake ups.
-
--Akhil.
-
+> -int platform_profile_remove(void)
+> +int platform_profile_remove(struct platform_profile_handler *pprof)
+>  {
+>  	sysfs_remove_group(acpi_kobj, &platform_profile_group);
 > 
->> +	if (!msg)
->> +		return -ENOMEM;
->> +
->>  	if (adreno_is_a618(adreno_gpu))
->> -		a618_build_bw_table(&msg);
->> +		a618_build_bw_table(msg);
->>  	else if (adreno_is_a619(adreno_gpu))
->> -		a619_build_bw_table(&msg);
->> +		a619_build_bw_table(msg);
->>  	else if (adreno_is_a640_family(adreno_gpu))
->> -		a640_build_bw_table(&msg);
->> +		a640_build_bw_table(msg);
->>  	else if (adreno_is_a650(adreno_gpu))
->> -		a650_build_bw_table(&msg);
->> +		a650_build_bw_table(msg);
->>  	else if (adreno_is_7c3(adreno_gpu))
->> -		adreno_7c3_build_bw_table(&msg);
->> +		adreno_7c3_build_bw_table(msg);
->>  	else if (adreno_is_a660(adreno_gpu))
->> -		a660_build_bw_table(&msg);
->> +		a660_build_bw_table(msg);
->>  	else if (adreno_is_a690(adreno_gpu))
->> -		a690_build_bw_table(&msg);
->> +		a690_build_bw_table(msg);
->>  	else if (adreno_is_a730(adreno_gpu))
->> -		a730_build_bw_table(&msg);
->> +		a730_build_bw_table(msg);
->>  	else if (adreno_is_a740_family(adreno_gpu))
->> -		a740_build_bw_table(&msg);
->> +		a740_build_bw_table(msg);
->>  	else
->> -		a6xx_build_bw_table(&msg);
->> +		a6xx_build_bw_table(msg);
->> +
->> +	gmu->bw_table = msg;
->>  
->> -	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, &msg, sizeof(msg),
->> +send:
->> +	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, gmu->bw_table, sizeof(*(gmu->bw_table)),
->>  		NULL, 0);
->>  }
->>  
->>
->> ---
->> base-commit: 74c374648ed08efb2ef339656f2764c28c046956
->> change-id: 20241024-stack-size-fix-28af7abd3fab
->>
->> Best regards,
->> -- 
->> Akhil P Oommen <quic_akhilpo@quicinc.com>
->>
+> diff --git a/drivers/platform/surface/surface_platform_profile.c 
+> b/drivers/platform/surface/surface_platform_profile.c
+> index 958afd7bce223..0879b739c5e8b 100644
+> --- a/drivers/platform/surface/surface_platform_profile.c
+> +++ b/drivers/platform/surface/surface_platform_profile.c
+> @@ -228,7 +228,7 @@ static int surface_platform_profile_probe(struct 
+> ssam_device *sdev)
 > 
+>  static void surface_platform_profile_remove(struct ssam_device *sdev)
+>  {
+> -	platform_profile_remove();
+> +	platform_profile_remove(&sdev->tpd->handler);
+>  }
+> 
+>  static const struct ssam_device_id ssam_platform_profile_match[] = {
+> diff --git a/drivers/platform/x86/acer-wmi.c 
+> b/drivers/platform/x86/acer-wmi.c
+> index 53fbc9b4d3df7..71761d4220c26 100644
+> --- a/drivers/platform/x86/acer-wmi.c
+> +++ b/drivers/platform/x86/acer-wmi.c
+> @@ -2546,7 +2546,7 @@ static int acer_platform_probe(struct 
+> platform_device *device)
+> 
+>  error_hwmon:
+>  	if (platform_profile_support)
+> -		platform_profile_remove();
+> +		platform_profile_remove(&platform_profile_handler);
+>  error_platform_profile:
+>  	acer_rfkill_exit();
+>  error_rfkill:
+> @@ -2569,7 +2569,7 @@ static void acer_platform_remove(struct 
+> platform_device *device)
+>  	acer_rfkill_exit();
+> 
+>  	if (platform_profile_support)
+> -		platform_profile_remove();
+> +		platform_profile_remove(&platform_profile_handler);
+>  }
+> 
+>  #ifdef CONFIG_PM_SLEEP
+> diff --git a/drivers/platform/x86/amd/pmf/sps.c 
+> b/drivers/platform/x86/amd/pmf/sps.c
+> index e2d0cc92c4396..cfa88c0c9e594 100644
+> --- a/drivers/platform/x86/amd/pmf/sps.c
+> +++ b/drivers/platform/x86/amd/pmf/sps.c
+> @@ -425,5 +425,5 @@ int amd_pmf_init_sps(struct amd_pmf_dev *dev)
+> 
+>  void amd_pmf_deinit_sps(struct amd_pmf_dev *dev)
+>  {
+> -	platform_profile_remove();
+> +	platform_profile_remove(&dev->pprof);
+>  }
+> diff --git a/drivers/platform/x86/asus-wmi.c 
+> b/drivers/platform/x86/asus-wmi.c
+> index c7c104c65a85a..f5f8cda7fd19c 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -4885,7 +4885,7 @@ static int asus_wmi_add(struct platform_device 
+> *pdev)
+>  fail_custom_fan_curve:
+>  fail_platform_profile_setup:
+>  	if (asus->platform_profile_support)
+> -		platform_profile_remove();
+> +		platform_profile_remove(&asus->platform_profile_handler);
+>  fail_fan_boost_mode:
+>  fail_platform:
+>  	kfree(asus);
+> @@ -4912,7 +4912,7 @@ static void asus_wmi_remove(struct 
+> platform_device *device)
+>  	asus_wmi_battery_exit(asus);
+> 
+>  	if (asus->platform_profile_support)
+> -		platform_profile_remove();
+> +		platform_profile_remove(&asus->platform_profile_handler);
+> 
+>  	kfree(asus);
+>  }
+> diff --git a/drivers/platform/x86/dell/dell-pc.c 
+> b/drivers/platform/x86/dell/dell-pc.c
+> index 3cf79e55e3129..4196154cc37d9 100644
+> --- a/drivers/platform/x86/dell/dell-pc.c
+> +++ b/drivers/platform/x86/dell/dell-pc.c
+> @@ -273,7 +273,7 @@ static int thermal_init(void)
+>  static void thermal_cleanup(void)
+>  {
+>  	if (thermal_handler) {
+> -		platform_profile_remove();
+> +		platform_profile_remove(thermal_handler);
+>  		kfree(thermal_handler);
+>  	}
+>  }
+> diff --git a/drivers/platform/x86/hp/hp-wmi.c 
+> b/drivers/platform/x86/hp/hp-wmi.c
+> index 26cac73caf2b9..bb8771d8b5cd8 100644
+> --- a/drivers/platform/x86/hp/hp-wmi.c
+> +++ b/drivers/platform/x86/hp/hp-wmi.c
+> @@ -1692,7 +1692,7 @@ static void __exit hp_wmi_bios_remove(struct 
+> platform_device *device)
+>  	}
+> 
+>  	if (platform_profile_support)
+> -		platform_profile_remove();
+> +		platform_profile_remove(&platform_profile_handler);
+>  }
+> 
+>  static int hp_wmi_resume_handler(struct device *device)
+> diff --git a/drivers/platform/x86/ideapad-laptop.c 
+> b/drivers/platform/x86/ideapad-laptop.c
+> index 1f94c14c3b832..50819ac919e87 100644
+> --- a/drivers/platform/x86/ideapad-laptop.c
+> +++ b/drivers/platform/x86/ideapad-laptop.c
+> @@ -1135,7 +1135,7 @@ static void ideapad_dytc_profile_exit(struct 
+> ideapad_private *priv)
+>  	if (!priv->dytc)
+>  		return;
+> 
+> -	platform_profile_remove();
+> +	platform_profile_remove(&priv->dytc->pprof);
+>  	mutex_destroy(&priv->dytc->mutex);
+>  	kfree(priv->dytc);
+> 
+> diff --git a/drivers/platform/x86/inspur_platform_profile.c 
+> b/drivers/platform/x86/inspur_platform_profile.c
+> index 03da2c8cf6789..f6bc5ca9da91d 100644
+> --- a/drivers/platform/x86/inspur_platform_profile.c
+> +++ b/drivers/platform/x86/inspur_platform_profile.c
+> @@ -190,7 +190,9 @@ static int inspur_wmi_probe(struct wmi_device 
+> *wdev, const void *context)
+> 
+>  static void inspur_wmi_remove(struct wmi_device *wdev)
+>  {
+> -	platform_profile_remove();
+> +	struct inspur_wmi_priv *priv;
+> +	priv = dev_get_drvdata(&wdev->dev);
+> +	platform_profile_remove(&priv->handler);
+>  }
+> 
+>  static const struct wmi_device_id inspur_wmi_id_table[] = {
+> diff --git a/drivers/platform/x86/thinkpad_acpi.c 
+> b/drivers/platform/x86/thinkpad_acpi.c
+> index c8c316b8507a5..619a4db74e5f3 100644
+> --- a/drivers/platform/x86/thinkpad_acpi.c
+> +++ b/drivers/platform/x86/thinkpad_acpi.c
+> @@ -10637,7 +10637,7 @@ static int tpacpi_dytc_profile_init(struct 
+> ibm_init_struct *iibm)
+> 
+>  static void dytc_profile_exit(void)
+>  {
+> -	platform_profile_remove();
+> +	platform_profile_remove(&dytc_profile);
+>  }
+> 
+>  static struct ibm_struct  dytc_profile_driver_data = {
+> diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
+> index 6fa988e417428..58279b76d740e 100644
+> --- a/include/linux/platform_profile.h
+> +++ b/include/linux/platform_profile.h
+> @@ -36,7 +36,7 @@ struct platform_profile_handler {
+>  };
+> 
+>  int platform_profile_register(struct platform_profile_handler *pprof);
+> -int platform_profile_remove(void);
+> +int platform_profile_remove(struct platform_profile_handler *pprof);
+>  int platform_profile_cycle(void);
+>  void platform_profile_notify(void);
+> 
+> -- 
+> 2.43.0
 
+Looks good to me.
+Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+
+Mark
 
