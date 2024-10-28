@@ -1,79 +1,105 @@
-Return-Path: <linux-kernel+bounces-385013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB269B3164
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:11:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 364919B3168
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF2921F226D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:11:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D56E41F228A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27F81DB548;
-	Mon, 28 Oct 2024 13:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F6741DB548;
+	Mon, 28 Oct 2024 13:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y187vtra"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="UQseZHBF"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A28EDE;
-	Mon, 28 Oct 2024 13:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001301E48A;
+	Mon, 28 Oct 2024 13:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121084; cv=none; b=dyNg8CYmT/7m3caafCEVT7d1PfcDPNm3qmRUXqq5uXwwg25kMBoYDTwIWRkHF96Bp/iwH4rHeEtzKOCr8sQgtjm3HUduChcOouhD4zrEHwUD1jbMiuQJIn38W4fzcKgd4P6b5+U2d7aeT16WavCyDkqp5j2hmiwYuyVndZMWKP4=
+	t=1730121154; cv=none; b=P8c1sWASSG8XigbIERnao9hyv5NhkcXpOOABHzfarl+DPGPpqnQF3ffhboI+xEHaoYvQKtDcvZy2V2Hsk993OS5nvQ5cZPXXkB1dtWNivKHcqm0LBqfuo/Lnf88mxYl3ACk/zZFlBK7f72irUizLcMmomXa8DOKv/dTin75wk9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121084; c=relaxed/simple;
-	bh=53ulgl2L6YVILmp/0t8Yz2mrHhjsp+6XVmz1KvpwTew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jRQc1xnVkXKanHP0f5kRzo3TBEQBlQlGAZdakzK/YH3SaE6kjXpQ4z6IDZBtQpzJvUxaoKOObbTIglR7k6gYeFcp0/wRF8F5FOrKtmDkC2NtULgn742FY/N7plouqg0ot+UfMFMd1EE5BrIJJ2Q9lFoCRn5VoOnCEGGTLuCLzMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y187vtra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53D14C4CEC3;
-	Mon, 28 Oct 2024 13:11:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730121083;
-	bh=53ulgl2L6YVILmp/0t8Yz2mrHhjsp+6XVmz1KvpwTew=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y187vtraRi+Owyni8cOpxz0cH+DEoHaSjkqt+DZpHV+yLESw9x+n5zhS9gHHvGtPv
-	 e4GCdBAAS9vN1ZBX/hC3+UBleBZ8eTkCLFygEEOEzkFeUzaCXQn0nr489fAi+r4TYm
-	 lovAteL60/UFMRTjrLEsEvoqMEzI/nLlf5dIXa6WpA1gfqSnBSrIgxDe4v5Y1lEb9k
-	 QQLcgw6GUB6/awkcDKzznwt0oa/VF2RX/rdIApmhJvMFVMJ/5ntKEOkGBkboO49lpe
-	 tdBcQc1yVWbHoxfCyK5ufzTMKiyq+BkruVmh9gx+1kWH2VDjrKxZoRp6B6fcxy3Nwf
-	 W2KjcxkAy8Pqw==
-Date: Mon, 28 Oct 2024 14:11:20 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v2 1/3] hrtimer: Use __raise_softirq_irqoff() to raise
- the softirq.
-Message-ID: <Zx-NeHWC0LX-75s0@localhost.localdomain>
-References: <20241024150413.518862-1-bigeasy@linutronix.de>
- <20241024150413.518862-2-bigeasy@linutronix.de>
+	s=arc-20240116; t=1730121154; c=relaxed/simple;
+	bh=KgZ8HaWvNp4BAfTHvrXH0/8Skj751PewZrW2Mn65rI8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lJMZBMBgDLA9OMqVvzhTcC/WAHCI810jGqqiqlCBEGnb7uxwG495UqcHNjF/yN/Qx5zQcO1tLhD6X/OHwgg2c8A7ExTaPI/KxD/LJmhXr2H6XyDizHQ/Q9fsrS2YI9aEamP8nV9xQYJBkPG90htX+a93nlWYLqrQwOfXPxoIJD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=UQseZHBF; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 998F7A09F1;
+	Mon, 28 Oct 2024 14:12:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=a/Km0duaUxN9zrPZeOy2
+	RJQXZwW6MUMmomrvB9hLoAo=; b=UQseZHBFhaIAsUXZ58dfmX3kXyOr9KsCgXPS
+	SvuPoNSgAFOOUl0/qNd3141M6WDsLsFoSJC9JjZn4ivvS5+kBpqngIkhOaMwCNQA
+	KF9fqHW8dSodcN9PKeBElOXmZ/Cc9XR6fMS5zYOp5eHGprkGKm4+JYL3TKRv1lrV
+	IwDjMqW9TiEPX0ROUTWXUUgXhaBee6TuaOxGoh/QkJaHcxRuuWJvRPFEhCrghNU3
+	Wmluxl01SWWNsb4JT/xp7OFcnmbzEhMchUJRKB4xfmoKwe86k6Zr4UvuR9fQE52x
+	o9dUohQCkaQCuvxubzo5yxWjXUvMzYgs0h8fdtf2wbXcpj2KuaXiHt9chN4011Kg
+	NyV1Rb9pbRzbTl3NPDdb3A422KwNadY7u65YL7tPNavAz6HP0cvMXeoi6OE9Tufs
+	TJbMGsiTimrxoP2HPth+1UadXhZcoCG3nBiDXgBzuhnM0c8l+5azFD68+TMHYDUo
+	vCKaiXeak4hGeMKvtkia51+se47Rj1vf6CmQSb/RSwyL/A4vVMK7IPCMDa/rXCfe
+	z3uleYY5GPW2+FT9T3fw/Akugxsk0c6hfBFdpIxDBkoLy8ej+oP+cQVpJRvZaE30
+	L72tb6TkN9X+9ZNPRyl9r+AilBTLusns99Yctynj3xNHUPEaSjZ5SMoNVVdF4C7P
+	JdnmnSo=
+Message-ID: <1811aa2a-3d19-4ce4-83c5-863aa0f4daab@prolan.hu>
+Date: Mon, 28 Oct 2024 14:12:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241024150413.518862-2-bigeasy@linutronix.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 02/10] dma-engine: sun4i: Add has_reset option to quirk
+To: <wens@kernel.org>
+CC: Krzysztof Kozlowski <krzk@kernel.org>, <dmaengine@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-sunxi@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>, Mesih Kilinc <mesihkilinc@gmail.com>, "Vinod
+ Koul" <vkoul@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, "Samuel
+ Holland" <samuel@sholland.org>, Philipp Zabel <p.zabel@pengutronix.de>
+References: <20241027091440.1913863-1-csokas.bence@prolan.hu>
+ <20241027091440.1913863-2-csokas.bence@prolan.hu>
+ <nlhsxigg3rbfvua76ekmub4p6df2asps2ihueouuk6zkbn56zl@xdj6jzzt4gfb>
+ <b74dafed-197a-4644-a546-54c7a1639484@prolan.hu>
+ <CAGb2v65ZXftjrG9+f1_88=EsU7rM8vnOPZCszWfWYFQ+Do9Xsg@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <CAGb2v65ZXftjrG9+f1_88=EsU7rM8vnOPZCszWfWYFQ+Do9Xsg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855677C6B
 
-Le Thu, Oct 24, 2024 at 04:55:49PM +0200, Sebastian Andrzej Siewior a écrit :
-> As an optimisation use __raise_softirq_irqoff() to raise the softirq.
-> This is always called from an interrupt handler so it can be reduced to
-> just or set softirq flag and let softirq be invoked on return from
-> interrupt.
-> 
-> Use __raise_softirq_irqoff() to raise the softirq.
-> 
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+
+On 2024. 10. 28. 8:44, Chen-Yu Tsai wrote:
+> I suggest adding a patch to switch the clk API calls to devm_clk_get_enabled()
+> which handles all the cleanup. Similarly you can switch to
+> 
+>      devm_reset_control_get_exclusive_deasserted()
+> 
+> for this patch.
+> 
+> 
+> ChenYu
+
+Huh, that's a new API! Thanks, I'll switch to that then.
+
+Regarding the change to devm_clk_get_enabled(), I think that should be a 
+separate patch from this series, where all the pre-existing dev_err()'s 
+get changed as well. If someone wants to work on that, go ahead, but if 
+no one does then after this series is merged I might get around to that too.
+
+Bence
+
 
