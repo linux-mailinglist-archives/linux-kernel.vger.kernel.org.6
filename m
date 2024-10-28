@@ -1,144 +1,170 @@
-Return-Path: <linux-kernel+bounces-384140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1896E9B24B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:54:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81DC9B24BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:55:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E0BFB21F34
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:54:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77FC9281F71
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB62218CBF1;
-	Mon, 28 Oct 2024 05:53:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD4618CC13;
+	Mon, 28 Oct 2024 05:55:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="avwbCJyf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="U6EAWtrS"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D3F18DF71;
-	Mon, 28 Oct 2024 05:53:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22AF618C35A
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:55:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730094825; cv=none; b=CtV2NAdGV3vwGqVjQzdpqjtQLZ+pwUjM6scCLp3S7M3F6jtgPOjLcMrza7zwBcTX24H+drnMONBtW9fpjuL9MTjrJCWL1vRKoIWYoaTHkJLH2qjqMiwtDmA6bnUc8rzZgqdPc3pIyL9T5NKJOQE1w6VS33jhIFKxdgcFlxqkgF4=
+	t=1730094910; cv=none; b=qwmvUuKeFryvtlOpV7WX+3AZotzCnyD4hOBPq/DWkv5P1IrWgJnAfKJeNVhxllfQ/JRpDcDCqEWy3esi9ByYCqIJ1aiuppohJ0gdRIciBczKDQxBKYBRBFkpePOk4HgFr5kYho+ZGxe7m3vcgBw812ZvpDsHwWz4jCSy8Mg61j0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730094825; c=relaxed/simple;
-	bh=rhCAryFbARbugCTN8KIRFGGBFfR/gteFgNj5llYw3dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=QqqO7IMdWGGrS17I7t3DYoPQCl9DerGek1/lsuObdKI+KsSh2adsWvTxbRCEj+x4/lpMytQ6/D+wQADXQIxFInw7BZ6pgaFICKHztbBLnlTyiiuljM1y5PGskh4e76ATWsIWJNS5DCq5e66hxIt4jdrxMyrAsp0ousgZMvAiP6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=avwbCJyf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730094816;
-	bh=nUcg8oV8gwkO1fNWusvM6ib0bCbmsoYFngaS/uXoum4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=avwbCJyfug+LXYzyycyT+kORzM0GNM1kZZncxCo69nXLPs+bMub03oaWWnrkzBNMz
-	 ciP+DRCbNqXNSqEql6BbuRPZun+bV2Zoyty2mLqdH2sOrH4lEFDB0Mldbop/y5FuNd
-	 hVXigx1hOdoxcJI2uV0iXNGCs6toqR/KH4dhitJVxipLMm4ZS6LZyD2MxUqS+2/uF9
-	 fncP4a/Z2iiYtjpqDh3G5nNzPR5BwS19UTgD9qjOjf7b6CDZqfEc3beuGtoYZYyQkq
-	 B2Hg2eIqfxZjLSVIvCEM8k1t+jx6djaK5WbcT+c8rEIA9luG9qAhpLxvJ113OjPsNu
-	 Ysd0fKHQWX11Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcMy81hMqz4wbR;
-	Mon, 28 Oct 2024 16:53:36 +1100 (AEDT)
-Date: Mon, 28 Oct 2024 16:53:36 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>
-Cc: Przemek Kitszel <przemyslaw.kitszel@intel.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the tip tree
-Message-ID: <20241028165336.7b46ce25@canb.auug.org.au>
+	s=arc-20240116; t=1730094910; c=relaxed/simple;
+	bh=RFNoSYlj3/Wh73KtWJGXcsU30MLZzQBHnF/nevb0bjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LjlTGk9cT4p2xKB8SlUnYLWMb10TLcff4N1YXzYCAKehkI//doRmPQ5GTXYIko02NtR326AGaNlYwYi4DsBM2+dABLzsG4dVjWZHGJwpSYlsPL3iNYeKbiOF4z5XilTyzacSSDfkgzYtAdxTXLgNlBNal5ynQ6Q4Z2Ged1Com70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=U6EAWtrS; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20cb47387ceso33216575ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 22:55:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1730094907; x=1730699707; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Te0IbbXAnRNWlJ2Rd9606nbBkjynXrLQNO+BlYkZ/0Y=;
+        b=U6EAWtrSOXmdYrKmF62Z0350G+JwYx9xrIJZIuZiXsmKtvdB8KTfALEevk5JE5hUZs
+         3d2XVXGU2112Fi3e9yHhDxrro2y3qIQvlF4ySmsPBUP+HG8vy3qlRqtkPTr62us4EBRv
+         fvMkSigj81Fo/se/ZYcic8Ht4SwALfVz/E0/8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730094907; x=1730699707;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Te0IbbXAnRNWlJ2Rd9606nbBkjynXrLQNO+BlYkZ/0Y=;
+        b=d9no0hfB+iMgfXlRHcAxQRVBPfx7qtOdrNmeRt9eQCMnY6ZMnibvfwGzGZbbDqM6pI
+         NYW0AaqZe39Jsw1NxtTYwMa2aBvfGBP6HKe5SdfGO/bewcop0VstH3TJG/pJh7V12DLQ
+         6CGIDyBzy3qKpAvs2dN2QnB5G7VaaGl5Hc3SN0TeOrfCoQR4ewaP/KVqnFvYTcJYUpgY
+         /hfxouh4nltOYvdPsmGSJmLSkLrpPNJ98sDOstFwmaNs9V1PSthcJrM3Si5rc/rL81JJ
+         boVWmArDZxPk1iDmD4tG2YLmmVEFKwUUBlvSDkDYYrTUqaMw9WSTb6kbjhb5Uw8BN4NR
+         NHCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdISnLlAl2cF8jOGPWdA6fESpjJQJgfH9szKSVm7sI6l5ZiKmIM5H888uKJV4ow4EKC1EM60juDHyFbko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSfzE13gpYCAPoOofR8KKE7sMfv/LH6oWEqgoaikWiJl6xePXj
+	PAPBSSDhfEpnXU0aP9tpOZwS8tAKBM1YVgzBtHC0LgTvWZFFR2w88GwGw6WW7o4=
+X-Google-Smtp-Source: AGHT+IH2xhFbsQmtRs1tqwgCLeH90AKG1bx15t2eOH3VbGWha9pnJPt3YOJnQnyWiDz4qG4VG/r2Zg==
+X-Received: by 2002:a17:903:182:b0:20b:8a71:b5c1 with SMTP id d9443c01a7336-210c6872b1amr97655375ad.1.1730094907330;
+        Sun, 27 Oct 2024 22:55:07 -0700 (PDT)
+Received: from [10.200.3.216] (fs96f9c361.tkyc007.ap.nuro.jp. [150.249.195.97])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc063e7esm43020195ad.276.2024.10.27.22.55.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Oct 2024 22:55:07 -0700 (PDT)
+Message-ID: <f10e8a78-3b50-4212-9b5d-ba99a3421379@linuxfoundation.org>
+Date: Sun, 27 Oct 2024 23:55:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/yYVO9r_NglM5bcap3ZpYVdT";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH for-next 1/3] selftests/watchdog: add count parameter for
+ watchdog-test
+To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
+ "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Cc: "shuah@kernel.org" <shuah@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241025013933.6516-1-lizhijian@fujitsu.com>
+ <c2cae7a7-1a0d-48ef-9b8f-8d2436532ea7@linuxfoundation.org>
+ <0861d73d-4fd9-4118-91c8-5a619c7d7ca0@fujitsu.com>
+ <e907e67d-9116-4dd2-9b61-f93191737de6@linuxfoundation.org>
+ <b7b3deec-47fd-43e4-a9b5-7099e3c00623@fujitsu.com>
+ <54cbf018-eba1-4227-b464-78bfa41fa4ae@linuxfoundation.org>
+ <3ee0d14a-7f6b-4ef4-9349-d6b0f14ba9e8@fujitsu.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <3ee0d14a-7f6b-4ef4-9349-d6b0f14ba9e8@fujitsu.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/yYVO9r_NglM5bcap3ZpYVdT
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/27/24 23:45, Zhijian Li (Fujitsu) wrote:
+> 
+> 
+> On 28/10/2024 13:31, Shuah Khan wrote:
+>> On 10/27/24 22:02, Zhijian Li (Fujitsu) wrote:
+>>>
+>>>
+>>> On 28/10/2024 11:29, Shuah Khan wrote:
+>>>> On 10/27/24 18:50, Zhijian Li (Fujitsu) wrote:
+>>>>>
+>>>>>
+>>>>> On 27/10/2024 08:28, Shuah Khan wrote:
+>>>>>> On 10/24/24 19:39, Li Zhijian wrote:
+>>>>>>> Currently, watchdog-test keep running until it gets a SIGINT. However,
+>>>>>>> when watchdog-test is executed from the kselftests framework, where it
+>>>>>>> launches test via timeout which will send SIGTERM in time up. This could
+>>>>>>> lead to
+>>>>>>> 1. watchdog haven't stop, a watchdog reset is triggered to reboot the OS
+>>>>>>>        in silent.
+>>>>>>> 2. kselftests gets an timeout exit code, and judge watchdog-test as
+>>>>>>>       'not ok'
+>>>>>>>
+>>>>>> This test isn't really supposed to be run from kselftest framework.
+>>>>>> This is the reason why it isn't included in the default run.
+>>>>>
+>>>>> May I know what's the default run, is it different from `make run_tests` ?
+>>>>
+>>>> No it isn't. "make kselftest" runs only the targets mentioned in the
+>>>> selftests Makefile. That is considered the kselftest default run.
+>>>
+>>> Hey, Shuah,
+>>>
+>>>
+>>> Thanks for your explanation.
+>>> If that is the case, I do not have an urgent need for the current patch, expect
+>>> I'd like to avoid the reboot issue after an accidentally `make run_tests`
+>>>
+>>> Some changes are make as below, please take a look. I will send it out we reach a consensus.
+>>>
+>>>
+>>> commit 2296f9d88fde4921758a45bf160a7f1b9d4678a0 (HEAD)
+>>> Author: Li Zhijian <lizhijian@fujitsu.com>
+>>> Date:   Mon Oct 28 11:54:03 2024 +0800
+>>>
+>>>        selftests/watchdog-test: Fix system accidentally reset after watchdog-test
+>>>        After `make run_tests` to run watchdog-test, a system reboot would
+>>>        happen due to watchdog not stop.
+>>>        ```
+>>
+>> The system shouldn't reboot just because watchdog test is left running.
+>> watchdog test keeps calling ioctl() with WDIOC_KEEPALIVE to make sure
+>> the watchdog card timer is reset.
+> 
+> Err..
+> 
+> How watchdog test keep calling ioctl() with WDIOC_KEEPALIVE after ./watchdog_test has finished?
+> 
+> In my understanding, the cause is that, ./watchdog_test didn't goto neither
+> A)
+> 347 end:
+> 348         /*
+> 349          * Send specific magic character 'V' just in case Magic Close is
+> 350          * enabled to ensure watchdog gets disabled on close.
+> 351          */
+> 352         ret = write(fd, &v, 1);
+> 353         if (ret < 0)
+> 354                 printf("Stopping watchdog ticks failed (%d)...\n", errno);
+> 
+> nor B)
 
-Hi all,
+Can you send strace output from "make run_tests" from your system?
 
-After merging the tip tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+thanks,
+-- Shuah
 
-drivers/iio/magnetometer/af8133j.c: In function 'af8133j_set_scale':
-drivers/iio/magnetometer/af8133j.c:315:12: error: suggest explicit braces t=
-o avoid ambiguous 'else' [-Werror=3Ddangling-else]
-  315 |         if (!pm_runtime_status_suspended(dev))
-      |            ^
-cc1: all warnings being treated as errors
-
-Probably caused by commit
-
-  fcc22ac5baf0 ("cleanup: Adjust scoped_guard() macros to avoid potential w=
-arning")
-
-I have applied the following for today but I wonder if there may be
-others.
-
-=46rom 93183168618777d573cd809a971c4db59a8dc800 Mon Sep 17 00:00:00 2001
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Mon, 28 Oct 2024 16:01:15 +1100
-Subject: [PATCH] fix up for "cleanup: Adjust scoped_guard() macros to avoid
- potential warning"
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/iio/magnetometer/af8133j.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iio/magnetometer/af8133j.c b/drivers/iio/magnetometer/=
-af8133j.c
-index d81d89af6283..acd291f3e792 100644
---- a/drivers/iio/magnetometer/af8133j.c
-+++ b/drivers/iio/magnetometer/af8133j.c
-@@ -312,10 +312,11 @@ static int af8133j_set_scale(struct af8133j_data *dat=
-a,
- 	 * When suspended, just store the new range to data->range to be
- 	 * applied later during power up.
- 	 */
--	if (!pm_runtime_status_suspended(dev))
-+	if (!pm_runtime_status_suspended(dev)) {
- 		scoped_guard(mutex, &data->mutex)
- 			ret =3D regmap_write(data->regmap,
- 					   AF8133J_REG_RANGE, range);
-+	}
-=20
- 	pm_runtime_enable(dev);
-=20
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/yYVO9r_NglM5bcap3ZpYVdT
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcfJuAACgkQAVBC80lX
-0Gz4yggAkDqtFNdqC99ftr6usXN/bxYZGW4QT53BjFJPJv910B59vVbn/dsx2M9V
-7HUyha+DW+6WOAOVi4DjwJZwki8RKJUFEd7F4Ev4VXrQJZlZtv0KhyigN1/vvKJO
-YPFTkNqp0CSlKjifrxNRf4OunSPgioqb493KrNjRqvmXAcJjn5Ra3WlVAhuxuIJ7
-OlDbZBXtMM5VOPIahmkGno6/bCBvjzc8f5f/a85fDjfbo95kd31VOs+5WDevbMoe
-WreUxfpMjTgguV2mbs89pAn9J8Kpixxtdr5UW0NuurliFANSlL6zGvz6lMseyFNN
-4eyq3zKHigq9Cg14ESr8mGd97ihWxA==
-=lT4I
------END PGP SIGNATURE-----
-
---Sig_/yYVO9r_NglM5bcap3ZpYVdT--
 
