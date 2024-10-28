@@ -1,816 +1,237 @@
-Return-Path: <linux-kernel+bounces-384101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC649B2448
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:33:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9C1A9B244C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:34:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A204028180F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69A0528204F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:34:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EBE18CC0D;
-	Mon, 28 Oct 2024 05:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A8418CBFD;
+	Mon, 28 Oct 2024 05:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BBBGV18X"
-Received: from mail-pl1-f194.google.com (mail-pl1-f194.google.com [209.85.214.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="KKxCKzpa";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="IX/O8pFR"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 234D71DA5A;
-	Mon, 28 Oct 2024 05:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.194
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730093567; cv=none; b=nZ5FVUqj2DXexNg+BbeVrdoZ4PNJapEpHh3XlqZ5e+7BFuP9QVzUMTKtq7dKHXNpqUH44eubPwLpurpcDrCCfoCdsfkbCAfr/JZJw6ExIU2wGRKGwTXJLiB0v/diuxORC7UedmIKO2XHVaeSeDrYBO4ODkL7HulraqoDZk6KECc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730093567; c=relaxed/simple;
-	bh=o20HoDSw39tnvfuRTu/joVZWLy5gNkg9/sWlICNmnuU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rp6DmG0h1pLTshMHEX05Lnd8Gy12hAbMUfivByaEjb9R4EXQSZUJaUWBkasQ7uoH93YVCMhXXk/7V4GPevrq5Bh7nSYnBNSbq3JV90hW1fP0N4paHwnNbtH20jKWn23AuB3i5tJovYuywT1T4F/iMk0cVuYOT8c8E/G3zDyNw40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BBBGV18X; arc=none smtp.client-ip=209.85.214.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f194.google.com with SMTP id d9443c01a7336-20ca7fc4484so25835115ad.3;
-        Sun, 27 Oct 2024 22:32:44 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDA81DA5A;
+	Mon, 28 Oct 2024 05:34:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730093659; cv=fail; b=UJNouXrGdPZe1zyDV/G3KM0jGFSMPIbfVpvP+U8QKxdZpP3AjS5MlyRp3CSgz+fE1xFzLgmb/1Q0D3TlsbJ+8ukez+pwfro8wrB7tz+LgwwOVT78aczLBNf5on1f/82a+yQao+HF+wSGMDRSxuZnGZC4X1hMIeJRkH/ga1jkKWI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730093659; c=relaxed/simple;
+	bh=+r+fAd4vNxm6/AO4W7MSpl4pT+vNd9ypdUN5u8/jpXI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WB4L4ssKapeWtlox1p1t1Z8wOtXnHJ3QJwqcpo7C+2n7WiQ+0ADRJZAZDhlMN3uixa/zscgzU9mnmcy0Fr2ExwIbPNQ+uOJlVgDuJmNNoq4yVw4vcP4reZaZm1TFjn9QDWwRyGILCn7wo26HppshXdYSG/JMAA97/Yxv/amWzy0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=KKxCKzpa; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=IX/O8pFR; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 421c13ce94ee11efb88477ffae1fc7a5-20241028
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=+r+fAd4vNxm6/AO4W7MSpl4pT+vNd9ypdUN5u8/jpXI=;
+	b=KKxCKzpaPa0DMu/QOTU6D89wY616DjvHHWd6PXk+ar/ie44CkkEfAj0ZruHJhapZegwxghsvF4VUudGQ9AELcEbmqXxztjRTMdheInnISG0JKByk3hyd5JSuf1Hhl90IEYIe98bKVsD05sES0PBMn+twPsO4BfvQt4fF/t765u4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:7ef00c4f-3e5f-47d2-b3b4-b36bb957e21e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:557b342e-a7a0-4b06-8464-80be82133975,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 421c13ce94ee11efb88477ffae1fc7a5-20241028
+Received: from mtkmbs13n1.mediatek.inc [(172.21.101.193)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1812202449; Mon, 28 Oct 2024 13:34:10 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 28 Oct 2024 13:34:09 +0800
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 28 Oct 2024 13:34:09 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dQ7chN3EN4kA6gJJf0rFHJ+jvrNFZQV72Sh6b7y7rfKYEdqhfLUy7UGqFaF+o+OrWl87nBdSf99rshelJa7h9ribZbTKCdp01Z+UjMLg0V1Qh0r0nhObdrb+5Hs9kFRNf4CH1VgzWFDtB1NBbLRaaHadWsj3mMUg9J/IXS5obbPfq1PV0Lxz6uV0ZSEcDWjhcZILEJNHEOyjQgvfx+dn5gk1qhxzw0rhLvUQmgUBN/A7Bnil4Dj8uHeUKoYjnTL0u/V00uMjI2bq8GvthRtmcHbWHLcJPWeFeAyqTBM6P0YNnTHIpivjxqkffiiTQks9zfBWavV4zCgzfO9tBMdW7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+r+fAd4vNxm6/AO4W7MSpl4pT+vNd9ypdUN5u8/jpXI=;
+ b=RflnaROGh/aipkJ8TPBHRdFVksZ1z1Uy2FcamhsfDhqXjgDOK6maUlmrYt31lj7lRqWGajzTd4tWhUxScIG1LURCo8nxt/uTSi30pc8h9IaYL2euYLxmbrJ3baFGd8VqkDitOX5L0dI2sWqr5QHaP8TO6+lWt5hjl/l2Kmc6LxT6mTXqm1n6RmiaM7RJVa0Aw/FdexViUsIlw6hBdYVly+Gd5ZJ+s211Qz95jEG23aCuRnuzK5rzwA9eGsbr98L6ScA4Il7Xtg7S2Du9rDdPob7sRL//+iut0aMYoJGqgimt07zGj9TXME+Dj9OusodhZcDQcfgL9EqyrEjxeBJktw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730093563; x=1730698363; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e2boxZqsgzmAXMQP+Yr/T00L5rNoRmEc3fqLr5HLeNI=;
-        b=BBBGV18XodtjyrSQ025rFoU9WVft+1+K6PEZ4Dn62tmqlLIxOYZ1pv3tTb3wzr0X6a
-         GML3eYzIn3wT91QTRp4Ub2+l9e6ccooq6CWSBAhI95Rl1A29qzsrkYXptTWY41hXK9hU
-         GATKNvaAXqGG+5yv02ILhu9vYwmW1H1TyEyaArBya5KiJK8qRPOlWhTI64ewG9HmhLih
-         Hv6BpOrPUUSjd64cW6esi/QnTdmk1nV8LIdhVTtfo3zJ3lrTF/5ItmK+brTKVpjGoOzO
-         WIP3sR+zaDy7pbYx0pWhjMSTs+XNx13E4G3Vm357gOUKrYKO4aOa5SMUSj/1xOvwcEHB
-         WVaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730093563; x=1730698363;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e2boxZqsgzmAXMQP+Yr/T00L5rNoRmEc3fqLr5HLeNI=;
-        b=RTAlxq3qsR52tW9yHmyHb6gPy3/b2lh9rig1Nz0gGd/VFgV/IoMDT8gw9ora+h/igI
-         I7lqY/xdniZJ9V+CJjpX+cCHtD5sB5gX1yRee7NF0Ih3PqoTW5hTHGavEcqvndRYbp1N
-         N1+ax+VLMkxe71q8ak9yGLLjS2UXdMr0vEjG2dwGeO+h8VAUtdcEg/TUuCu9idCi4oxb
-         TL/7WfnJh4c45/yVZiZMs7Gm7FOC4PZiKAk3H7+dsuapkMV+EGxLVfB3dAWRhzZ4O2+i
-         zASOjS/bRekOIOyeh9Rt97HSwAPTPLka7QgSEbaiPJ1ynbi0PKnboE9VvUMPjehOcnpb
-         jb4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8jG0LQ7aZ5jGuKkkH3sdzKoyaZUXtcSq+yzcjQzCyaJUxzSM7l7Oh3jVb/A6mQvEX5CF6DfIBMMc0@vger.kernel.org, AJvYcCWbdMvJsBp3C8b+5/dreuiIowezQsx9Lz8V8iP8QpZi4m2ah3hvnlCoRJYoSOJFs2uSDPchNKkfAimHnZHH@vger.kernel.org, AJvYcCXkNmSRhi70AUE50pSmyc7Fa5MVXvvSh3u4qwkmLRQNOHb2ZQe4fXUVmpopXrQYvSEhGEUgqlJU/JPw@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxzdTdityCZQnz/t//YcyBOov/CLadkRl/5qTTvDSt3fK2iGAA
-	bOMzsbUVQ3/9KG+BKD8Q9nwYIrprbZTnT/eoIHtnQJMNYfP6vTf3
-X-Google-Smtp-Source: AGHT+IE+gm5K5E7r1O0TdDy/rukq5lyE89pmWig+/cILi8n03/tQgGxRWZ49XZPr3NYuBnrY9DDhwA==
-X-Received: by 2002:a17:903:2345:b0:20c:7be3:2832 with SMTP id d9443c01a7336-210c6ae34d3mr96973255ad.31.1730093563254;
-        Sun, 27 Oct 2024 22:32:43 -0700 (PDT)
-Received: from troy-WUJIE14-PRO.tailc1d423.ts.net ([120.211.145.167])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02e941sm43216475ad.204.2024.10.27.22.32.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 22:32:42 -0700 (PDT)
-From: Troy Mitchell <troymitchell988@gmail.com>
-X-Google-Original-From: Troy Mitchell <TroyMitchell988@gmail.com>
-To: andi.shyti@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org
-Cc: troymitchell988@gmail.com,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: [PATCH v2 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
-Date: Mon, 28 Oct 2024 13:32:20 +0800
-Message-Id: <20241028053220.346283-3-TroyMitchell988@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241028053220.346283-1-TroyMitchell988@gmail.com>
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+r+fAd4vNxm6/AO4W7MSpl4pT+vNd9ypdUN5u8/jpXI=;
+ b=IX/O8pFRpPxaKuPOGK9eKwH7Xgrh4L1M62JiUUQKY09Jzwmai9+Y2SUQ0jllSxLMDTlf+2aJmuFfmY51e2hTtchzPlrQIciNo3H1BFPQu7Ifn2dMv54i2uvVmLPLaatzzbqXu7/pwVHsx02tyUrUD2XIrCqgd0WsGmJ0lVi+tGE=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by SEYPR03MB8204.apcprd03.prod.outlook.com (2603:1096:101:1aa::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Mon, 28 Oct
+ 2024 05:34:04 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%7]) with mapi id 15.20.8093.021; Mon, 28 Oct 2024
+ 05:34:04 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: "sumit.semwal@linaro.org" <sumit.semwal@linaro.org>,
+	"christian.koenig@amd.com" <christian.koenig@amd.com>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?utf-8?B?U2h1LWhzaWFuZyBZYW5nICjmpYroiJLnv5Qp?=
+	<Shu-hsiang.Yang@mediatek.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"yunkec@chromium.org" <yunkec@chromium.org>, "linaro-mm-sig@lists.linaro.org"
+	<linaro-mm-sig@lists.linaro.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, =?utf-8?B?WWF5YSBDaGFuZyAo5by16ZuF5riFKQ==?=
+	<Yaya.Chang@mediatek.com>, Project_Global_Chrome_Upstream_Group
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	=?utf-8?B?VGVkZHkgQ2hlbiAo6Zmz5Lm+5YWDKQ==?= <Teddy.Chen@mediatek.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "hidenorik@chromium.org"
+	<hidenorik@chromium.org>, =?utf-8?B?U2h1bi1ZaSBXYW5nICjnjovpoIblhIQp?=
+	<Shun-Yi.Wang@mediatek.com>
+Subject: Re: [PATCH v1 08/10] media: platform: mediatek: add isp_7x state ctrl
+Thread-Topic: [PATCH v1 08/10] media: platform: mediatek: add isp_7x state
+ ctrl
+Thread-Index: AQHbGj2y1UKRq3h+wU6S0U6tpTQ9lbKbwYOA
+Date: Mon, 28 Oct 2024 05:34:04 +0000
+Message-ID: <ec7f2fe029cfebc06e047f9f91f8e37c671a8ceb.camel@mediatek.com>
+References: <20241009111551.27052-1-Shu-hsiang.Yang@mediatek.com>
+	 <20241009111551.27052-9-Shu-hsiang.Yang@mediatek.com>
+In-Reply-To: <20241009111551.27052-9-Shu-hsiang.Yang@mediatek.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|SEYPR03MB8204:EE_
+x-ms-office365-filtering-correlation-id: 7ebab8d9-1453-4b6e-d2f1-08dcf7122295
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?alhDdFVYclhBZkcvTFAyL2ZZWTJ1Ukl3cStLeTUzc0xiVDhxb0NoMGQ0RFl1?=
+ =?utf-8?B?aVptWVMvdG9IM1pwL091QkY2dk45aVVqbGQzdmFLV2ZnYTRhcWhoQ0hlV3VI?=
+ =?utf-8?B?VytzaEEveldyN21lcFhvRWdtd2FCbDk2WVVoMjgyell3VS9PaHU4Y0RCb2E0?=
+ =?utf-8?B?Q1lBZTVjVUdJenpEV3doYTFwY0FRU0YwY1dPSjB5ZmdIb01UcGRFZlNPVGdn?=
+ =?utf-8?B?a3JBTHh2YVZSLzdWUm1sQnNVYzN0amlUNWJDS1ROSHdXTytlSkhxZDNqZmFm?=
+ =?utf-8?B?WnZzUU9wV210bExkaUJWaE50Nld6ekMyeW1zV3NtdkVCU1Y0NVJSMTJxaWNx?=
+ =?utf-8?B?dTlTeWVpd01QZjVabWx3UWJCczlQR0FraUNrMnpwWG1SaDdDLzZML253ZTRI?=
+ =?utf-8?B?OGpyTXBCaEgvaXE3QldmNEZnNC9DVFRiZ3lWT0JOUUdDUldzY25jSVR3MTdB?=
+ =?utf-8?B?Qlh5cWdyRnFTczAvcURlQTZqeHovTHdQN0JybC8wSUtTL2ZZdlpRemJTVWc5?=
+ =?utf-8?B?ZjdxQ1pKODhSWXhqd3JXMytwWWpDMUNPWjJ4MktXMGpPL2tCTkdvanJoYmlV?=
+ =?utf-8?B?c2VxbkV4UHRJZThFU3NoV2t2YkUzcExyZHRCang1VEpZSUFobGJMM2ltVnZT?=
+ =?utf-8?B?cXo4S0J5T2c3RTB4aHpDNWJaRmM0NDUwL3JNa3RZc1RXdWlPVTRpVDZYS0lq?=
+ =?utf-8?B?M0loTmJIeEJpeEFYbUhPWEpUbit1QXdJRjRzYXJmd3VWd2dkU0szT3EyMnZj?=
+ =?utf-8?B?TmN5MGF5S2VtWDdMVUJEMlJFcWhLR21Uc3RXOEQ2RFh3N0lPVzlxY3J1WGNS?=
+ =?utf-8?B?d2U1Nkc0Y0tzZlZFV3orc3hSbG1WSENyWUJiaUJVRjhEc1AxMTEwVXIxc1Zp?=
+ =?utf-8?B?cHVCbk1Ed2Nhd0tRSytJcmNVWWtEazFyUGp4Q0doUE1yd0JlWFVzTmhXZ3VN?=
+ =?utf-8?B?dHd5ZHVIbk5vUklPZFNVRWduWUlDZ3crbFBLQk9sTm1oRnVwaXFaWXlIYWpr?=
+ =?utf-8?B?NkZlQjZ2RSt0UE9Ndy9qU2FDamtjRG00SzIwVlc3M0s3THpMNDJmL1UyaTM5?=
+ =?utf-8?B?NzRrVWdtblVjbndscmNRSE4wRGlIUnNqdmVsaEx1dUVxS2prb2QzMVFBZURM?=
+ =?utf-8?B?cGNjTUh1TFB1eTBDNEt3bEg2THZIaUdZOVpYUi9LUEF2NGZETmF0Rkx0M1Qr?=
+ =?utf-8?B?MCtOMFhsczNYVGFoRWpCb1pCMUJNbG9ZK3FXWnI2K0NsVzZEUDkxUUxWakpL?=
+ =?utf-8?B?K3Y5WE9lak92V3RZR0NhbmdtSDdnemxhTlZPbmh0eENsRmo0aFo1KzhNKzIx?=
+ =?utf-8?B?WWR5YTk3QjE5Q1V0eml0K09DR0RoMDVZb2RtUEw5RHZPRDNVYnNIUFlCclBo?=
+ =?utf-8?B?ek5rclZ2SEtmQ0YwVDBEeDVPVEExaTNsTlhlSnEvVFhiVXRMenZIeFVaWlpI?=
+ =?utf-8?B?NUhRNDJQQmhZYm1rTDFTZUNDbHI1UEtGa214OHZ6NGJmREJZczc3WmRFc1JS?=
+ =?utf-8?B?WEtqQ3pqK1hjOGNjNFkrQ2VRRDZxMStJVmR3VUxsakZRaFh4bmFFc3Q4NzZ3?=
+ =?utf-8?B?azlodTlYemtQQ1pkMy9oYWYxWUpRVUh2VUdFVUVHSUhWOUdnUjdjaCtLdUNV?=
+ =?utf-8?B?RmxKaWhFZTJOVFZ5YVlBeFY1TC94T1Q1VkwvSnhPYnptRW43c1hQZWFJK1Bt?=
+ =?utf-8?B?Ym1wWVFudUoxZmNBdEhzOGdpQ1kzRXBnbTlELzlYV0JveTBoTlJLQ3h5dGRq?=
+ =?utf-8?B?bFVmSERkMHVMMjhtYUVzYTk0QlZ6L1ZNZEplNWFNK2xDeVFBdisvaUsxYzdP?=
+ =?utf-8?Q?VEtmfwKxVrIWJzXJc13XE8WUNwh210wwQLyLs=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cmJtOUo2RWd5Yk4vSDc1eVVPMm84OExYNk1qMStDZENZWTNIdHdsOU5rMzQ4?=
+ =?utf-8?B?WWhOUVN6VUFCaEU4dldCc051NTFYL2JhY01IVFZFb2pBRllYUmQ4eDRDaWMv?=
+ =?utf-8?B?dEovd1Q1VThBU0ZWOEFYUHVISGFSZ0h5YlA5RE9jSnh2VXh2ZWhTNTM5bzJC?=
+ =?utf-8?B?NUdxOFM5NWVUZEVLUENsakNUYVViaHFsc1FYZklXazdaQmtXZGRXUjlCVkE3?=
+ =?utf-8?B?Nzk5UTJzUnR1S1h2RTJ4Z1J0SWRTVDhmOUZxbXFGSE52b2lodE5JeDloRjVN?=
+ =?utf-8?B?M1BkR0ZNSlh6WlJkMTd3V2NGQXFUS3pCRElPU3hEZEowWnAxTUFIR1dLYkda?=
+ =?utf-8?B?eXNiRTNuYVBCOTJKKy9QUmh1R29mOFRINS9rMmdBQVo5bmpmRGJ4bTJNc3Zj?=
+ =?utf-8?B?MEJodFdERGxHNFVScHdYdTFSL2VKdnkwSmdkVlVDNzJuLzd0aGRrTjVOTXR5?=
+ =?utf-8?B?cUo3NDBqdzROWmhhWVVNOVIvcjUzL3VJdWxFSlo0YWpENVdkcCtjWFQ4ZU4w?=
+ =?utf-8?B?ekhidW1Za3dESGpyRHdlbWt3T1F4MG4yaUZhVkorbW9LcDRCUTlDb3lnd2xB?=
+ =?utf-8?B?TGFwWkdzUVl5dkFzeXcveHRNUlh6Y3MzbG5QY2VpT2E3RUhPMWJQbmtPYmNs?=
+ =?utf-8?B?ZitFNVRqbVBVWVN6aDJoTG93Y1JhOEw2Q2xGd2ZGaHVqQTJsWGJtSkVVVklF?=
+ =?utf-8?B?d2ZWS0l2aHBqVFh6anExbkdlVElxZHpjd1RyTWlhLzFKY1pZNXVnOWhGcU1t?=
+ =?utf-8?B?OW9ESmdjdEhXRG9mVHpndFBBMWd5d0JDQVRkVERFR0F3c0N2a1lIRjR4QU52?=
+ =?utf-8?B?SEYyWE5wNTNRR1FqNnFiOEFhUjVybXI5Wi96RWRQK0FSNnVVYVhNU2x1cmp5?=
+ =?utf-8?B?UnpaOEc4YXRIU1cyMjBvWjR0TTJuMThaaW9FaktHWk40TEp2YkhGZWlmQnlZ?=
+ =?utf-8?B?dHBlWXpiNkl3Yjluamt5Um9VN21wa1RyRlJ2bGl0TXVVV2ZoamVYUldydGlQ?=
+ =?utf-8?B?WGw1UjhsQVBvN1BidHZtUSs5M2xvVGJidzNwanNpazdpTWUyYktxUm05akRM?=
+ =?utf-8?B?ZVdCZDhGNExRK1I3NkNzbDBJOFFBUFI1ejJVc0NPZlZsYzNJVTFZanZEaG1J?=
+ =?utf-8?B?ZW1jTTNaNVFMUmQ1L3pUWlJqRjNEYnNBTHRMT05mcTFia21HNVNVajQzL3Fz?=
+ =?utf-8?B?aHRWcUJ3QmlHN2w2TmpFb2xLQ3dMK1hMVEJkYkRFMmhFSkNTNTVZbFUyODZD?=
+ =?utf-8?B?MXhVUFZLSVpPRk9SU3dWMEE0YmN0OTdqa1JZZ3NoaFR1MURTaGNRODZza2VE?=
+ =?utf-8?B?MzZNbFYxVWMvRnlJKzZMWGxjUVNmL3lJOUxJZGM1YUMwb2hIM1hnT0lta0dk?=
+ =?utf-8?B?ZmJaNlRmUU9IeXpOcUovckJaZGZNMm95ZHBPbHlNemNoK1JPSXNxSk9IWWNj?=
+ =?utf-8?B?WVo5ZWVoUUFhdnhsVStlZm5PemdzbUd3alVRVlNjV2N1S2p6WEdwWTUrZUtX?=
+ =?utf-8?B?TW9OcXMvVVVVQzhncXBmb1hWZlpYUXZkME9DUlFibFpHQ1BwNUpjWWlCRFdw?=
+ =?utf-8?B?SzIwWFF3LzFYMC9pc01xNXpNWjBnak4ra0VxK2VuQjh4clZiVXpONkN0RkRT?=
+ =?utf-8?B?NFRSNkNna0gyQTh6UVhQTVZ0K1czZmp1TTdXWDhPQU9FWVlKUXRJUXRqNTFD?=
+ =?utf-8?B?RUV4Um9NOEpURnFXWkthN01zdHZqV21CL2VpRS9PMVpKcld4aVMzZm9ERFVR?=
+ =?utf-8?B?RW5PdE5RTjhET3p0U3JJK2lrVG5MZWRTSmpjdzFWck14RUY5UU5OTmxwbjFC?=
+ =?utf-8?B?QmFzV0MzcXV4c1RzSUJZWlNRdkdUWVhSQ21GT0R4K1FVSlBpTTNTM05ScGQ3?=
+ =?utf-8?B?d3RjcnAydnFuR1BNdzRmRWUwL2U1VkVIWmpsWVlmaU56aVJOeEJKLzlhSGdG?=
+ =?utf-8?B?ai9SMU9LcFVKbzZic2E1Szl0UGNCdy9CRWZ6VEpzVVJtYnZzZ296ZWp1RG9v?=
+ =?utf-8?B?MXkxYUNhb2NDUlZPbEkzbzNaMyt4T3NGR1plMGh5N04zdExxS3Z1QlJFdkcv?=
+ =?utf-8?B?YnBBS1J4cXdCT0k3eXNmV1cyazQ0eXNXeGQyd3o5THFQMGhNSHZYRjRQWkhE?=
+ =?utf-8?B?UUt5NnY5RkxQS1RhYkVNVXhpNVovOFlGczM0VGhXMjIwUG05ck9zdHozRjlV?=
+ =?utf-8?B?d3c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C9983BAF160D6F48A2FF98640BB5F23B@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7ebab8d9-1453-4b6e-d2f1-08dcf7122295
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2024 05:34:04.0866
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 01rOdJDcsggFdYjAcqT+Jwjkkf2HuxuiuM6eQOt2xq8UFkSaciR1flafOZdjEY/kgitFL4ToBzo2iLPYlild+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB8204
 
-This patch introduces basic I2C support for the SpacemiT K1 SoC,
-utilizing interrupts for transfers.
-
-The driver has been tested using i2c-tools on a Bananapi-F3 board,
-and basic I2C read/write operations have been confirmed to work.
-
-Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
----
- drivers/i2c/busses/Kconfig  |  18 +
- drivers/i2c/busses/Makefile |   1 +
- drivers/i2c/busses/i2c-k1.c | 658 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 677 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-k1.c
-
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 6b3ba7e5723a..38ebfd38dc41 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -779,6 +779,24 @@ config I2C_JZ4780
- 
- 	 If you don't know what to do here, say N.
- 
-+config I2C_K1
-+	tristate "Spacemit K1 I2C adapter"
-+	depends on HAS_IOMEM
-+	help
-+	  This option enables support for the I2C interface on the Spacemit K1
-+	  platform.
-+
-+	  If you enable this configuration, the kernel will include support for
-+	  the I2C adapter specific to the Spacemit K1 platform. This driver ca
-+	  be used to manage I2C bus transactions, which are necessary for
-+	  interfacing with I2C peripherals such as sensors, EEPROMs, and other
-+	  devices.
-+
-+	  This driver can also be compiled as a module. If you choose to build
-+	  it as a module, the resulting kernel module will be named `i2c-k1`.
-+	  Loading this module will enable the I2C functionality for the K1
-+	  platform dynamically, without requiring a rebuild of the kernel.
-+
- config I2C_KEBA
- 	tristate "KEBA I2C controller support"
- 	depends on HAS_IOMEM
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index ecc07c50f2a0..9744b0e58598 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -76,6 +76,7 @@ obj-$(CONFIG_I2C_IMX)		+= i2c-imx.o
- obj-$(CONFIG_I2C_IMX_LPI2C)	+= i2c-imx-lpi2c.o
- obj-$(CONFIG_I2C_IOP3XX)	+= i2c-iop3xx.o
- obj-$(CONFIG_I2C_JZ4780)	+= i2c-jz4780.o
-+obj-$(CONFIG_I2C_K1)		+= i2c-k1.o
- obj-$(CONFIG_I2C_KEBA)		+= i2c-keba.o
- obj-$(CONFIG_I2C_KEMPLD)	+= i2c-kempld.o
- obj-$(CONFIG_I2C_LPC2K)		+= i2c-lpc2k.o
-diff --git a/drivers/i2c/busses/i2c-k1.c b/drivers/i2c/busses/i2c-k1.c
-new file mode 100644
-index 000000000000..844d4a721760
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-k1.c
-@@ -0,0 +1,658 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2024 Troy Mitchell <troymitchell988@gmail.com>
-+ */
-+
-+ #include <linux/clk.h>
-+ #include <linux/i2c.h>
-+ #include <linux/iopoll.h>
-+ #include <linux/module.h>
-+ #include <linux/of_address.h>
-+ #include <linux/platform_device.h>
-+
-+/* spacemit i2c registers */
-+#define ICR          0x0		/* Control Register */
-+#define ISR          0x4		/* Status Register */
-+#define ISAR         0x8		/* Slave Address Register */
-+#define IDBR         0xc		/* Data Buffer Register */
-+#define ILCR         0x10		/* Load Count Register */
-+#define IWCR         0x14		/* Wait Count Register */
-+#define IRST_CYC     0x18		/* Bus reset cycle counter */
-+#define IBMR         0x1c		/* Bus monitor register */
-+#define IWFIFO       0x20		/* Write FIFO Register */
-+#define IWFIFO_WPTR  0x24		/* Write FIFO Write Pointer Register */
-+#define IWFIFO_RPTR  0x28		/* Write FIFO Read Pointer Register */
-+#define IRFIFO       0x2c		/* Read FIFO Register */
-+#define IRFIFO_WPTR  0x30		/* Read FIFO Write Pointer Register */
-+#define IRFIFO_RPTR  0x34		/* Read FIFO Read Pointer Register */
-+
-+/* register ICR fields */
-+#define CR_START        BIT(0)		/* start bit */
-+#define CR_STOP         BIT(1)		/* stop bit */
-+#define CR_ACKNAK       BIT(2)		/* send ACK(0) or NAK(1) */
-+#define CR_TB           BIT(3)		/* transfer byte bit */
-+#define CR_TXBEGIN      BIT(4)		/* transaction begin */
-+#define CR_FIFOEN       BIT(5)		/* enable FIFO mode */
-+#define CR_GPIOEN       BIT(6)		/* enable GPIO mode for SCL in HS */
-+#define CR_DMAEN        BIT(7)		/* enable DMA for TX and RX FIFOs */
-+#define CR_MODE_FAST    BIT(8)		/* bus mode (master operation) */
-+#define CR_MODE_HIGH    BIT(9)		/* bus mode (master operation) */
-+#define CR_UR           BIT(10)		/* unit reset */
-+#define CR_RSTREQ       BIT(11)		/* i2c bus reset request */
-+#define CR_MA           BIT(12)		/* master abort */
-+#define CR_SCLE         BIT(13)		/* master clock enable */
-+#define CR_IUE          BIT(14)		/* unit enable */
-+#define CR_HS_STRETCH   BIT(16)		/* I2C hs stretch */
-+#define CR_ALDIE        BIT(18)		/* enable arbitration interrupt */
-+#define CR_DTEIE        BIT(19)		/* enable tx interrupts */
-+#define CR_DRFIE        BIT(20)		/* enable rx interrupts */
-+#define CR_GCD          BIT(21)		/* general call disable */
-+#define CR_BEIE         BIT(22)		/* enable bus error ints */
-+#define CR_SADIE        BIT(23)		/* slave address detected int enable */
-+#define CR_SSDIE        BIT(24)		/* slave STOP detected int enable */
-+#define CR_MSDIE        BIT(25)		/* master STOP detected int enable */
-+#define CR_MSDE         BIT(26)		/* master STOP detected enable */
-+#define CR_TXDONEIE     BIT(27)		/* transaction done int enable */
-+#define CR_TXEIE        BIT(28)		/* transmit FIFO empty int enable */
-+#define CR_RXHFIE       BIT(29)		/* receive FIFO half-full int enable */
-+#define CR_RXFIE        BIT(30)		/* receive FIFO full int enable */
-+#define CR_RXOVIE       BIT(31)		/* receive FIFO overrun int enable */
-+
-+/* register ISR fields */
-+#define SR_RWM          BIT(13)		/* read/write mode */
-+#define SR_ACKNAK       BIT(14)		/* ACK/NACK status */
-+#define SR_UB           BIT(15)		/* unit busy */
-+#define SR_IBB          BIT(16)		/* i2c bus busy */
-+#define SR_EBB          BIT(17)		/* early bus busy */
-+#define SR_ALD          BIT(18)		/* arbitration loss detected */
-+#define SR_ITE          BIT(19)		/* tx buffer empty */
-+#define SR_IRF          BIT(20)		/* rx buffer full */
-+#define SR_GCAD         BIT(21)		/* general call address detected */
-+#define SR_BED          BIT(22)		/* bus error no ACK/NAK */
-+#define SR_SAD          BIT(23)		/* slave address detected */
-+#define SR_SSD          BIT(24)		/* slave stop detected */
-+#define SR_MSD          BIT(26)		/* master stop detected */
-+#define SR_TXDONE       BIT(27)		/* transaction done */
-+#define SR_TXE          BIT(28)		/* tx FIFO empty */
-+#define SR_RXHF         BIT(29)		/* rx FIFO half-full */
-+#define SR_RXF          BIT(30)		/* rx FIFO full */
-+#define SR_RXOV         BIT(31)		/* RX FIFO overrun */
-+
-+/* register ILCR fields */
-+#define LCR_SLV         0x000001FF	/* SLV: bit[8:0] */
-+#define LCR_FLV         0x0003FE00	/* FLV: bit[17:9] */
-+#define LCR_HLVH        0x07FC0000	/* HLVH: bit[26:18] */
-+#define LCR_HLVL        0xF8000000	/* HLVL: bit[31:27] */
-+
-+/* register IWCR fields */
-+#define WCR_COUNT       0x0000001F	/* COUNT: bit[4:0] */
-+#define WCR_COUNT1      0x000003E0	/* HS_COUNT1: bit[9:5] */
-+#define WCR_COUNT2      0x00007C00	/* HS_COUNT2: bit[14:10] */
-+
-+/* register IBMR fields */
-+#define BMR_SDA         BIT(0)		/* SDA line level */
-+#define BMR_SCL         BIT(1)		/* SCL line level */
-+
-+/* register IWFIFO fields */
-+#define WFIFO_DATA_MSK      0x000000FF  /* data: bit[7:0] */
-+#define WFIFO_CTRL_MSK      0x000003E0  /* control: bit[11:8] */
-+#define WFIFO_CTRL_START    BIT(8)      /* start bit */
-+#define WFIFO_CTRL_STOP     BIT(9)      /* stop bit */
-+#define WFIFO_CTRL_ACKNAK   BIT(10)     /* send ACK(0) or NAK(1) */
-+#define WFIFO_CTRL_TB       BIT(11)     /* transfer byte bit */
-+
-+/* status register init value */
-+#define I2C_INT_STATUS_MASK    0xfffc0000  /* SR bits[31:18] */
-+#define I2C_INT_CTRL_MASK      (CR_ALDIE | CR_DTEIE | CR_DRFIE | \
-+				CR_BEIE | CR_TXDONEIE | CR_TXEIE | \
-+				CR_RXHFIE | CR_RXFIE | CR_RXOVIE | \
-+				CR_MSDIE)
-+
-+/* i2c bus recover timeout: us */
-+#define I2C_BUS_RECOVER_TIMEOUT		(100000)
-+
-+#define I2C_FAST_MODE_FREQ		(400000)
-+
-+enum spacemit_i2c_state {
-+	STATE_IDLE,
-+	STATE_START,
-+	STATE_READ,
-+	STATE_WRITE,
-+};
-+
-+enum spacemit_i2c_dir {
-+	DIR_WRITE,
-+	DIR_READ
-+};
-+
-+/* i2c-spacemit driver's main struct */
-+struct spacemit_i2c_dev {
-+	struct device *dev;
-+	struct i2c_adapter adapt;
-+
-+	/* hardware resources */
-+	void __iomem *base;
-+	int irq;
-+
-+	struct i2c_msg *msgs;
-+	int msg_num;
-+	struct i2c_msg *cur_msg;
-+
-+	/* index of the current message being processed */
-+	int msg_idx;
-+	u8 *msg_buf;
-+	/* the number of unprocessed bytes remaining in each message  */
-+	size_t unprocessed;
-+
-+	enum spacemit_i2c_state state;
-+	enum spacemit_i2c_dir dir;
-+	struct completion complete;
-+	u32 status;
-+	u32 err;
-+};
-+
-+static void spacemit_i2c_enable(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 val;
-+
-+	val = readl(i2c->base + ICR);
-+	writel(val | CR_IUE, i2c->base + ICR);
-+}
-+
-+static void spacemit_i2c_disable(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 val;
-+
-+	val = readl(i2c->base + ICR);
-+	val &= ~CR_IUE;
-+	writel(val, i2c->base + ICR);
-+}
-+
-+static void spacemit_i2c_reset(struct spacemit_i2c_dev *i2c)
-+{
-+	writel(CR_UR, i2c->base + ICR);
-+	udelay(5);
-+	writel(0, i2c->base + ICR);
-+}
-+
-+static int spacemit_i2c_handle_err(struct spacemit_i2c_dev *i2c);
-+
-+static void spacemit_i2c_bus_reset(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 status;
-+
-+	/* if bus is locked, reset unit. 0: locked */
-+	status = readl(i2c->base + IBMR);
-+	if ((status & BMR_SDA) && (status & BMR_SCL))
-+		return;
-+
-+	spacemit_i2c_reset(i2c);
-+	usleep_range(10, 20);
-+
-+	/* check scl status again */
-+	status = readl(i2c->base + IBMR);
-+	if (!(status & BMR_SCL))
-+		dev_warn_ratelimited(i2c->dev, "unit reset failed\n");
-+}
-+
-+static int spacemit_i2c_recover_bus_busy(struct spacemit_i2c_dev *i2c)
-+{
-+	int ret = 0;
-+	u32 val;
-+
-+	val = readl(i2c->base + ISR);
-+	if (likely(!(val & (SR_UB | SR_IBB))))
-+		return 0;
-+
-+	ret = readl_poll_timeout(i2c->base + ISR, val, !(val & (SR_UB | SR_IBB)),
-+				 1500, I2C_BUS_RECOVER_TIMEOUT);
-+	if (unlikely(ret)) {
-+		spacemit_i2c_reset(i2c);
-+		ret = -EAGAIN;
-+	}
-+
-+	return ret;
-+}
-+
-+static void spacemit_i2c_check_bus_release(struct spacemit_i2c_dev *i2c)
-+{
-+	/* in case bus is not released after transfer completes */
-+	if (unlikely(readl(i2c->base + ISR) & SR_EBB)) {
-+		spacemit_i2c_bus_reset(i2c);
-+		usleep_range(90, 150);
-+	}
-+}
-+
-+static void spacemit_i2c_init(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 val = 0;
-+
-+	/*
-+	 * Unmask interrupt bits for all xfer mode:
-+	 * bus error, arbitration loss detected.
-+	 * For transaction complete signal, we use master stop
-+	 * interrupt, so we don't need to unmask CR_TXDONEIE.
-+	 */
-+	val |= CR_BEIE | CR_ALDIE;
-+
-+	/*
-+	 * Unmask interrupt bits for interrupt xfer mode:
-+	 * DBR rx full.
-+	 * For tx empty interrupt CR_DTEIE, we only
-+	 * need to enable when trigger byte transfer to start
-+	 * data sending.
-+	 */
-+	val |= CR_DRFIE;
-+
-+	/* set speed bits: default fast mode */
-+	val |= CR_MODE_FAST;
-+
-+	/* disable response to general call */
-+	val |= CR_GCD;
-+
-+	/* enable SCL clock output */
-+	val |= CR_SCLE;
-+
-+	/* enable master stop detected */
-+	val |= CR_MSDE | CR_MSDIE;
-+
-+	writel(val, i2c->base + ICR);
-+}
-+
-+static inline void
-+spacemit_i2c_clear_int_status(struct spacemit_i2c_dev *i2c, u32 mask)
-+{
-+	writel(mask & I2C_INT_STATUS_MASK, i2c->base + ISR);
-+}
-+
-+static void spacemit_i2c_start(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 slave_addr_rw, val;
-+
-+	i2c->dir = i2c->cur_msg->flags & I2C_M_RD;
-+	i2c->state = STATE_START;
-+
-+	if (i2c->cur_msg->flags & I2C_M_RD)
-+		slave_addr_rw = ((i2c->cur_msg->addr & 0x7f) << 1) | 1;
-+	else
-+		slave_addr_rw = (i2c->cur_msg->addr & 0x7f) << 1;
-+
-+	writel(slave_addr_rw, i2c->base + IDBR);
-+
-+	val = readl(i2c->base + ICR);
-+
-+	/* send start pulse */
-+	val &= ~CR_STOP;
-+	val |= CR_START | CR_TB | CR_DTEIE;
-+	writel(val, i2c->base + ICR);
-+}
-+
-+static void spacemit_i2c_stop(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 val;
-+
-+	val = readl(i2c->base + ICR);
-+
-+	val |= CR_STOP | CR_ALDIE | CR_TB;
-+
-+	if (i2c->dir == DIR_READ)
-+		val |= CR_ACKNAK;
-+
-+	writel(val, i2c->base + ICR);
-+}
-+
-+static int spacemit_i2c_xfer_msg(struct spacemit_i2c_dev *i2c)
-+{
-+	unsigned long time_left;
-+
-+	if (unlikely(i2c->err))
-+		return -1;
-+
-+	for (i2c->msg_idx = 0; i2c->msg_idx < i2c->msg_num; i2c->msg_idx++) {
-+		i2c->cur_msg = i2c->msgs + i2c->msg_idx;
-+		i2c->msg_buf = i2c->cur_msg->buf;
-+		i2c->err = 0;
-+		i2c->status = 0;
-+		i2c->unprocessed = i2c->cur_msg->len;
-+
-+		reinit_completion(&i2c->complete);
-+
-+		spacemit_i2c_start(i2c);
-+
-+		time_left = wait_for_completion_timeout(&i2c->complete,
-+							i2c->adapt.timeout);
-+		if (unlikely(time_left == 0)) {
-+			dev_alert(i2c->dev, "msg completion timeout\n");
-+			spacemit_i2c_bus_reset(i2c);
-+			spacemit_i2c_reset(i2c);
-+			return -ETIMEDOUT;
-+		}
-+
-+		if (unlikely(i2c->err))
-+			return spacemit_i2c_handle_err(i2c);
-+	}
-+
-+	return 0;
-+}
-+
-+static int spacemit_i2c_is_last_msg(struct spacemit_i2c_dev *i2c)
-+{
-+	if (i2c->dir == DIR_READ)
-+		if (i2c->unprocessed == 1 && i2c->msg_idx == i2c->msg_num - 1)
-+			return 1;
-+	else if (i2c->dir == DIR_WRITE)
-+		if (!i2c->unprocessed && i2c->msg_idx == i2c->msg_num - 1)
-+			return 1;
-+
-+	return 0;
-+}
-+
-+static void spacemit_i2c_handle_write(struct spacemit_i2c_dev *i2c)
-+{
-+	/* if transfer completes, ISR will handle it */
-+	if (i2c->status & SR_MSD)
-+		return;
-+
-+	if (i2c->unprocessed) {
-+		writel(*i2c->msg_buf++, i2c->base + IDBR);
-+		i2c->unprocessed--;
-+		return;
-+	}
-+
-+	/* STATE_IDLE avoids trigger next byte */
-+	i2c->state = STATE_IDLE;
-+	complete(&i2c->complete);
-+}
-+
-+static void spacemit_i2c_handle_read(struct spacemit_i2c_dev *i2c)
-+{
-+	if (i2c->unprocessed) {
-+		*i2c->msg_buf++ = readl(i2c->base + IDBR);
-+		i2c->unprocessed--;
-+	}
-+
-+	/* if transfer completes, ISR will handle it */
-+	if (i2c->status & (SR_MSD | SR_ACKNAK))
-+		return;
-+
-+	/* it has to append stop bit in icr that read last byte */
-+	if (i2c->unprocessed)
-+		return;
-+
-+	/* STATE_IDLE avoids trigger next byte */
-+	i2c->state = STATE_IDLE;
-+	complete(&i2c->complete);
-+}
-+
-+static void spacemit_i2c_handle_start(struct spacemit_i2c_dev *i2c)
-+{
-+	if (i2c->dir == DIR_READ) {
-+		i2c->state = STATE_READ;
-+		return;
-+	}
-+
-+	if (i2c->dir == DIR_WRITE) {
-+		i2c->state = STATE_WRITE;
-+		spacemit_i2c_handle_write(i2c);
-+	}
-+}
-+
-+static int spacemit_i2c_handle_err(struct spacemit_i2c_dev *i2c)
-+{
-+	if (!i2c->err)
-+		return 0;
-+
-+	dev_dbg(i2c->dev, "i2c error status: 0x%08x\n",	i2c->status);
-+
-+	if (i2c->err & (SR_BED | SR_ALD))
-+		spacemit_i2c_reset(i2c);
-+
-+	if (i2c->err & (SR_RXOV | SR_ALD))
-+		return -EAGAIN;
-+
-+	return (i2c->status & SR_ACKNAK) ? -ENXIO : -EIO;
-+}
-+
-+static void spacemit_i2c_err_check(struct spacemit_i2c_dev *i2c)
-+{
-+	u32 val;
-+	/*
-+	 * send transaction complete signal:
-+	 * error happens, detect master stop
-+	 */
-+	if (likely(i2c->err || (i2c->status & SR_MSD))) {
-+		/*
-+		 * Here the transaction is already done, we don't need any
-+		 * other interrupt signals from now, in case any interrupt
-+		 * happens before spacemit_i2c_xfer to disable irq and i2c unit,
-+		 * we mask all the interrupt signals and clear the interrupt
-+		 * status.
-+		 */
-+		val = readl(i2c->base + ICR);
-+		val &= ~I2C_INT_CTRL_MASK;
-+		writel(val, i2c->base + ICR);
-+
-+		spacemit_i2c_clear_int_status(i2c, I2C_INT_STATUS_MASK);
-+
-+		i2c->state = STATE_IDLE;
-+		complete(&i2c->complete);
-+	}
-+}
-+
-+static irqreturn_t spacemit_i2c_irq_handler(int irq, void *devid)
-+{
-+	struct spacemit_i2c_dev *i2c = devid;
-+	u32 status, val;
-+
-+	status = readl(i2c->base + ISR);
-+	if (!status)
-+		return IRQ_HANDLED;
-+
-+	i2c->status = status;
-+
-+	i2c->err = status & (SR_BED | SR_RXOV | SR_ALD);
-+
-+	spacemit_i2c_clear_int_status(i2c, status);
-+
-+	if (unlikely(i2c->err))
-+		goto err_out;
-+
-+	val = readl(i2c->base + ICR);
-+
-+	val &= ~(CR_TB | CR_ACKNAK | CR_STOP | CR_START);
-+	writel(val, i2c->base + ICR);
-+
-+	switch (i2c->state) {
-+	case STATE_START:
-+		spacemit_i2c_handle_start(i2c);
-+		break;
-+	case STATE_READ:
-+		spacemit_i2c_handle_read(i2c);
-+		break;
-+	case STATE_WRITE:
-+		spacemit_i2c_handle_write(i2c);
-+		break;
-+	default:
-+		break;
-+	}
-+
-+	if (i2c->state != STATE_IDLE) {
-+		if (spacemit_i2c_is_last_msg(i2c)) {
-+			/* trigger next byte with stop */
-+			spacemit_i2c_stop(i2c);
-+		} else {
-+			/* trigger next byte */
-+			val |= CR_ALDIE | CR_TB;
-+			writel(val, i2c->base + ICR);
-+		}
-+	}
-+
-+err_out:
-+	spacemit_i2c_err_check(i2c);
-+	return IRQ_HANDLED;
-+}
-+
-+static void spacemit_i2c_calc_timeout(struct spacemit_i2c_dev *i2c)
-+{
-+	unsigned long timeout;
-+	int idx = 0, cnt = 0, freq;
-+
-+	while (idx < i2c->msg_num) {
-+		cnt += (i2c->msgs + idx)->len + 1;
-+		idx++;
-+	}
-+
-+	freq = I2C_FAST_MODE_FREQ;
-+	/*
-+	 * multiply by 9 because each byte in I2C transmission requires
-+	 * 9 clock cycles: 8 bits of data plus 1 ACK/NACK bit.
-+	 */
-+	timeout = cnt * 9 * USEC_PER_SEC / freq;
-+
-+	i2c->adapt.timeout = usecs_to_jiffies(timeout + USEC_PER_SEC / 2) / i2c->msg_num;
-+}
-+
-+static inline int spacemit_i2c_xfer_core(struct spacemit_i2c_dev *i2c)
-+{
-+	int ret = 0;
-+
-+	spacemit_i2c_reset(i2c);
-+
-+	spacemit_i2c_calc_timeout(i2c);
-+
-+	spacemit_i2c_init(i2c);
-+
-+	spacemit_i2c_enable(i2c);
-+	enable_irq(i2c->irq);
-+
-+	/* i2c wait for bus busy */
-+	ret = spacemit_i2c_recover_bus_busy(i2c);
-+	if (unlikely(ret))
-+		return ret;
-+
-+	ret = spacemit_i2c_xfer_msg(i2c);
-+	if (unlikely(ret < 0)) {
-+		dev_dbg(i2c->dev, "i2c transfer error\n");
-+		/* timeout error should not be overridden, and the transfer
-+		 * error will be confirmed by err handle function latter,
-+		 * the reset should be invalid argument error.
-+		 */
-+		if (ret != -ETIMEDOUT)
-+			ret = -EINVAL;
-+	}
-+
-+	return ret;
-+}
-+
-+static int
-+spacemit_i2c_xfer(struct i2c_adapter *adapt, struct i2c_msg msgs[], int num)
-+{
-+	struct spacemit_i2c_dev *i2c = i2c_get_adapdata(adapt);
-+	int ret;
-+
-+	i2c->msgs = msgs;
-+	i2c->msg_num = num;
-+
-+	ret = spacemit_i2c_xfer_core(i2c);
-+	if (likely(!ret))
-+		spacemit_i2c_check_bus_release(i2c);
-+
-+	disable_irq(i2c->irq);
-+
-+	spacemit_i2c_disable(i2c);
-+
-+	if (unlikely((ret == -ETIMEDOUT || ret == -EAGAIN)))
-+		dev_alert(i2c->dev, "i2c transfer failed, ret %d err 0x%x\n", ret, i2c->err);
-+
-+	return ret < 0 ? ret : num;
-+}
-+
-+static u32 spacemit_i2c_func(struct i2c_adapter *adap)
-+{
-+	return I2C_FUNC_I2C | (I2C_FUNC_SMBUS_EMUL & ~I2C_FUNC_SMBUS_QUICK);
-+}
-+
-+static const struct i2c_algorithm spacemit_i2c_algo = {
-+	.xfer = spacemit_i2c_xfer,
-+	.functionality = spacemit_i2c_func,
-+};
-+
-+static int spacemit_i2c_probe(struct platform_device *pdev)
-+{
-+	struct spacemit_i2c_dev *i2c;
-+	struct device_node *of_node = pdev->dev.of_node;
-+	struct clk *clk;
-+	int ret = 0;
-+
-+	i2c = devm_kzalloc(&pdev->dev, sizeof(*i2c), GFP_KERNEL);
-+	if (!i2c)
-+		return -ENOMEM;
-+
-+	i2c->dev = &pdev->dev;
-+
-+	i2c->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (!i2c->base)
-+		return dev_err_probe(&pdev->dev, PTR_ERR(i2c->base), "failed to do ioremap");
-+
-+	i2c->irq = platform_get_irq(pdev, 0);
-+	if (i2c->irq < 0)
-+		return dev_err_probe(&pdev->dev, i2c->irq, "failed to get irq resource");
-+
-+	ret = devm_request_irq(i2c->dev, i2c->irq, spacemit_i2c_irq_handler,
-+			       IRQF_NO_SUSPEND | IRQF_ONESHOT, dev_name(i2c->dev), i2c);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "failed to request irq");
-+
-+	disable_irq(i2c->irq);
-+
-+	clk = devm_clk_get_enabled(&pdev->dev, NULL);
-+	if (IS_ERR(clk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(clk), "failed to enable clock");
-+
-+	i2c_set_adapdata(&i2c->adapt, i2c);
-+	i2c->adapt.owner = THIS_MODULE;
-+	i2c->adapt.algo = &spacemit_i2c_algo;
-+	i2c->adapt.dev.parent = i2c->dev;
-+	i2c->adapt.nr = pdev->id;
-+
-+	i2c->adapt.dev.of_node = of_node;
-+	i2c->adapt.algo_data = i2c;
-+
-+	strscpy(i2c->adapt.name, "spacemit-i2c-adapter", sizeof(i2c->adapt.name));
-+
-+	init_completion(&i2c->complete);
-+
-+	ret = i2c_add_numbered_adapter(&i2c->adapt);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret, "failed to add i2c adapter");
-+
-+	platform_set_drvdata(pdev, i2c);
-+
-+	return 0;
-+}
-+
-+static void spacemit_i2c_remove(struct platform_device *pdev)
-+{
-+	struct spacemit_i2c_dev *i2c = platform_get_drvdata(pdev);
-+
-+	i2c_del_adapter(&i2c->adapt);
-+}
-+
-+static const struct of_device_id spacemit_i2c_of_match[] = {
-+	{ .compatible = "spacemit,k1-i2c", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, spacemit_i2c_of_match);
-+
-+static struct platform_driver spacemit_i2c_driver = {
-+	.probe = spacemit_i2c_probe,
-+	.remove = spacemit_i2c_remove,
-+	.driver = {
-+		.name = "i2c-k1",
-+		.of_match_table = spacemit_i2c_of_match,
-+	},
-+};
-+module_platform_driver(spacemit_i2c_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("I2C bus driver for SpacemiT K1 SoC");
--- 
-2.34.1
-
+SGksIFNodS1oc2lhbmc6DQoNCk9uIFdlZCwgMjAyNC0xMC0wOSBhdCAxOToxNSArMDgwMCwgU2h1
+LWhzaWFuZyBZYW5nIHdyb3RlOg0KPiBJbnRyb2R1Y2VzIHN0YXRlIG1hbmFnZW1lbnQgYW5kIGRl
+YnVnZ2luZyBtZWNoYW5pc21zIGZvciB0aGUgTWVkaWFUZWsNCj4gSVNQNy54IGNhbXN5cyBwbGF0
+Zm9ybS4gU3RhdGUgbWFuYWdlbWVudCBlc3RhYmxpc2hlcyBjb250cm9sIG92ZXIgSVNQDQo+IG9w
+ZXJhdGlvbnMgYW5kIGV2ZW50cywgZGVmaW5pbmcgZGlzdGluY3Qgc3RhdGVzIGZvciByZXF1ZXN0
+IGhhbmRsaW5nLA0KPiBzZW5zb3IgY29udHJvbCwgYW5kIGZyYW1lIHN5bmNocm9uaXphdGlvbiwg
+ZW5zdXJpbmcgZXZlbnQgcHJvY2Vzc2luZy4NCj4gVGhlIGRlYnVnZ2luZyBtZWNoYW5pc20gZW5z
+dXJlcyBzdGFibGUgb3BlcmF0aW9uIGFuZCB0aW1lbHkgZGF0YQ0KPiBjb2xsZWN0aW9uIGR1cmlu
+ZyBhbm9tYWxpZXMuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBTaHUtaHNpYW5nIFlhbmcgPFNodS1o
+c2lhbmcuWWFuZ0BtZWRpYXRlay5jb20+DQo+IC0tLQ0KDQpbc25pcF0NCg0KPiArDQo+ICtlbnVt
+IE1US19DQU1TWVNfRU5HSU5FX1RZUEUgew0KPiArCUNBTVNZU19FTkdJTkVfUkFXLA0KPiArCUNB
+TVNZU19FTkdJTkVfTVJBVywNCj4gKwlDQU1TWVNfRU5HSU5FX0NBTVNWLA0KPiArCUNBTVNZU19F
+TkdJTkVfU0VOSU5GLA0KDQpPbmx5IENBTVNZU19FTkdJTkVfUkFXIGlzIHVzZWQsIHNvIGl0J3Mg
+bm90IG5lY2Vzc2FyeSB0byBkZWZpbmUgTVRLX0NBTVNZU19FTkdJTkVfVFlQRSBiZWNhdXNlIG9u
+bHkgb25lIHR5cGUuDQpDQU1TWVNfRU5HSU5FX1JBVyBjb3VsZCBhbHNvIGJlIGRyb3BwZWQgYmVj
+YXVzZSBvbmx5IHRoaXMgdHlwZSBzbyBpdCdzIG5vdCBuZWNlc3NhcnkgdG8gZGVmaW5lIGl0Lg0K
+DQpSZWdhcmRzLA0KQ0sNCg0KPiArfTsNCj4gKw0K
 
