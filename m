@@ -1,305 +1,100 @@
-Return-Path: <linux-kernel+bounces-384833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A6399B2EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C77E39B2F0A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8939D1F23140
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728361F233F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 059461D5CF5;
-	Mon, 28 Oct 2024 11:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8E41D5ACF;
+	Mon, 28 Oct 2024 11:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="eyuSdExE"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vtiIxZNz"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31B9454765;
-	Mon, 28 Oct 2024 11:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB1E1CC89D
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730115277; cv=none; b=U29wHFho0Ry1ZXm3vvvAA21LOQn1S+0BALRbsQlIJHbF1El4Kt+CC+282um/MoaanOSaql6/Bn+wiJbZR19Gj5yZ1QnEjjTGZiSK28tafycgKj6ZlDn6ibBEanpVkfmQ14lsHHv7oTzM0EsbJQUW+pixObHkJ2R1sfYmZEYAesg=
+	t=1730115416; cv=none; b=BF1VIi478bkvhcUestcZXTQkRZ+sjApTBQMo5f0K4ImJ9luXAkRjXwrCAqDmEBduWBpeT4fr8BogYu44cxo1vY/BcIk6UHHN0BMvIKgjlTh11zeNQKjwJJzLVfu7rp6P0PC9BzuYUxrbcXD2VQxkVp6GLRR4W6nvsj5jsd9VseM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730115277; c=relaxed/simple;
-	bh=8zxqfKY9KK4jWJmruiARdXw0fMxOVXDgxwAQ6L0DW70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tqjErg2+h5u9g6s8YRniCRChGHDoxZIDa6A/gmUfBbKSm7FidnSVXVt4BELgjtABuy8D8sHJPDCp7snYLazjeP12muTkTCNUOlkze7ihreW2U0IuVmExImbyAngJ6A9Qbk6RVa2XhklBYIu+ydrorZofwEU/3G0zcmp8Jog4umc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=eyuSdExE; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=odLg8OLtLEPB9lZYVjnwYcKDJqm1UOOqheOqN1GgRNM=; b=eyuSdExE91ixSVAYvRqlkQCeKW
-	BfPS2+HRPptimKZcKXtx5c/NMMds3ub3l3pzmN69ca0RMuz9l/5PRalx+MtbXIXBqkxyBIFUwxIGY
-	9QdYl0xhbBXuPKTUX7fIl0KIredaMV5/rw5aLTbYWXPqEusgIsYepvIc0TyZFSWs6d3fuRgGP8CSM
-	E022BzzYdi0G/a/kgMWoLsAKF1GDXVHMCynGbUw+vbr4WvEdZkWVva94PhsAGs4fR1gLjSvITbwZt
-	GSWkUss3/jotIdYiP0CTQo/YHV9bm+/7TU3WeIoLQ/GmFeH3Dpm4SvwMBP9NeYxQBpT8A73bLNVRi
-	oAa5fCCw==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t5O0m-00G3bt-6N; Mon, 28 Oct 2024 12:34:16 +0100
-Message-ID: <f1c35067-9381-424b-b962-526b85d59ea9@igalia.com>
-Date: Mon, 28 Oct 2024 08:34:08 -0300
+	s=arc-20240116; t=1730115416; c=relaxed/simple;
+	bh=RArrHGF2YIg63gV/XEn/Mjgwbf5E87zkb6MWL2Cs69w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QMSkPyoRwK1SaRssrCUdzd3M7Uo7cFO4xLeJrGdFx0XH4tVFwxfQaRWJ/qlLzSN73ajKHfUgtYLfN9Vqs2SLWEd4RLKk9J4kmEO0xegWDHzou7OTTpuoW1OVIk5UHwUQc3Ed7sCoR+FTB2Pd6ldc4tufymv/EmB/GRig1/+dBsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vtiIxZNz; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f58c68c5so6863220e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 04:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730115412; x=1730720212; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RArrHGF2YIg63gV/XEn/Mjgwbf5E87zkb6MWL2Cs69w=;
+        b=vtiIxZNzPF6iwiZiBck99Ic2G9vV+W+nP9ux4e18AY1rQ2vhpQulqE23yACVMsgCRX
+         VdeiTxi7A8ZJO1RrI+EAoihg4kXTvVHxwyhDOlllnRX0gI3fXrgpWa38sHfbngNxinN/
+         sRZZofpFaVR4mS3FciCGHXOAJ7zMaTCQHMQyE7KvcR+RkZTx3RESsGdlfV3t5wDo+mSc
+         3zLir7RWvmhHNHhD/KsTxMD/zBcyJu/xMw/2npZUEiGaIGHeer5mu0WTUewjA6Tp4LcJ
+         Wv8EIGyCS6+Yq1oaLMAWaZ7IIwiV2KmL5BPRZVSTLx9bPtKfyKyjy71705ZaMEOOndII
+         TEYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730115412; x=1730720212;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RArrHGF2YIg63gV/XEn/Mjgwbf5E87zkb6MWL2Cs69w=;
+        b=numKGyrq2KC/dYf2KF0nPiSgVSB9qCZbHi1FDEQ/bWHGu49qCg3w+7fWI7ggI9+PPA
+         FAsvERP1TGYcR32PED6H5EzqNxKC28DswAGCPH5aUul0G0UUbfX1gF4LhRcjQ1K4YfdY
+         1f9wbSOg58LYXeqQCK75LIPhf6Ne4htEfbep/jdP8DVidzmEwK3Hy4D3luApb6ymZEo7
+         pjpWOA9gkQ/DpXaazzSFBqd86CNTPzPZvrdCMY0gTnVGSG/mr6L3WQhdo8aSpnUX6bnk
+         G9IwBlmQUYVA8o53kjk7k0bg+b5UEkmBeRGfEmtwfEyeTa2/TRD4hAmxmC1X6JqPUGro
+         yOUA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgJjG7+KxdCON2ndo7V9ry2bO/IjUN9kBOkp0akaR7CnTudVQbZ2c+XM61TvlP9h+etF7P5SRQlmHjHb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrWa4JpmAEkOMmgsameGNclDtx51xsB6KbZXx2vWLv9py9UHWO
+	JWQtGV/LFaLRrNNlam6DZOmjU52kAeJ1/4XUndItb7zkbC6MwwthiYWFO794lsERcPmAuaVm+AG
+	WgseR4cSl/uQUMYKJpflsjaDpBhgj6TcoOTOqCg==
+X-Google-Smtp-Source: AGHT+IHCQ3wGv8ZOcI+3RyfHBAwIMvlM2QesKjoj+hXCwieVABwtxCo7klOO7mF1F+OJkyzlIbwSliMQSyYprcP+Nck=
+X-Received: by 2002:a05:6512:b8d:b0:539:89a8:600f with SMTP id
+ 2adb3069b0e04-53b348cfdefmr4961269e87.23.1730115412461; Mon, 28 Oct 2024
+ 04:36:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] mm: shmem: override mTHP shmem default with a kernel
- parameter
-To: Barry Song <21cnbao@gmail.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
- <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241027175743.1056710-1-mcanal@igalia.com>
- <20241027175743.1056710-4-mcanal@igalia.com>
- <CAGsJ_4xCw3OvkMo6cVr+U97C3SO+n+5c1j5XRodLDaLXW4ALjg@mail.gmail.com>
- <2505d52c-3454-4892-8c90-e3d9b2f0c84f@igalia.com>
- <CAGsJ_4y13T+KE1hJPb=14LBvGixd4uQTcN5pS=Hok6Ca6RD+7g@mail.gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <CAGsJ_4y13T+KE1hJPb=14LBvGixd4uQTcN5pS=Hok6Ca6RD+7g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241014192930.1539673-1-quic_mojha@quicinc.com>
+ <CACRpkdaAVE8VMNCFA4jQ1+YLuC9=4mc9Bp2PRxeNFQoHB+NJrA@mail.gmail.com> <Zx82vLyD1JMv4Cx6@hu-mojha-hyd.qualcomm.com>
+In-Reply-To: <Zx82vLyD1JMv4Cx6@hu-mojha-hyd.qualcomm.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Mon, 28 Oct 2024 12:36:39 +0100
+Message-ID: <CACRpkdbCox2VcTRRwN4EJ28SivP1R_bF6nAV0kMimDycZTsa6w@mail.gmail.com>
+Subject: Re: [PATCH v3] pinmux: Use sequential access to access desc->pinmux data
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Barry,
+On Mon, Oct 28, 2024 at 8:01=E2=80=AFAM Mukesh Ojha <quic_mojha@quicinc.com=
+> wrote:
 
-On 28/10/24 08:09, Barry Song wrote:
-> On Mon, Oct 28, 2024 at 6:10 PM Maíra Canal <mcanal@igalia.com> wrote:
->>
->> Hi Barry,
->>
->> On 27/10/24 18:54, Barry Song wrote:
->>> On Mon, Oct 28, 2024 at 6:58 AM Maíra Canal <mcanal@igalia.com> wrote:
->>>>
->>>> Add the ``thp_shmem=`` kernel command line to allow specifying the
->>>> default policy of each supported shmem hugepage size. The kernel parameter
->>>> accepts the following format:
->>>>
->>>> thp_shmem=<size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<policy>
->>>>
->>>> For example,
->>>>
->>>> thp_shmem=16K-64K:always;128K,512K:inherit;256K:advise;1M-2M:never;4M-8M:within_size
->>>>
->>>> By configuring the default policy of several shmem huge pages, the user
->>>> can take advantage of mTHP before it's been configured through sysfs.
->>>>
->>>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->>>> ---
->>>>    .../admin-guide/kernel-parameters.txt         |  10 ++
->>>>    Documentation/admin-guide/mm/transhuge.rst    |  17 +++
->>>>    mm/shmem.c                                    | 109 +++++++++++++++++-
->>>>    3 files changed, 135 insertions(+), 1 deletion(-)
->>>>
->>>
->>> Hi Maíra,
->>>
->>>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->>>> index acabb04d0dd4..595fa096e28b 100644
->>>> --- a/Documentation/admin-guide/kernel-parameters.txt
->>>> +++ b/Documentation/admin-guide/kernel-parameters.txt
->>>> @@ -6700,6 +6700,16 @@
->>>>                           Force threading of all interrupt handlers except those
->>>>                           marked explicitly IRQF_NO_THREAD.
->>>>
->>>> +       shmem_anon=     [KNL]
->>>> +                       Format: <size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<policy>
->>>> +                       Control the default policy of each hugepage size for the
->>>> +                       internal shmem mount. <policy> is one of policies available
->>>> +                       for the shmem mount ("always", "inherit", "never", "within_size",
->>>> +                       and "advise").
->>>> +                       It can be used multiple times for multiple shmem THP sizes.
->>>> +                       See Documentation/admin-guide/mm/transhuge.rst for more
->>>> +                       details.
->>>
->>> I'm not sure this is the right name. How about "thp_shmem"?
->>
->> Oops, sorry about that.
->>
->>>
->>>> +
->>>>           topology=       [S390,EARLY]
->>>>                           Format: {off | on}
->>>>                           Specify if the kernel should make use of the cpu
->>>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->>>> index 9b5b02c4d1ab..47e7fc30e22d 100644
->>>> --- a/Documentation/admin-guide/mm/transhuge.rst
->>>> +++ b/Documentation/admin-guide/mm/transhuge.rst
->>>> @@ -332,6 +332,23 @@ allocation policy for the internal shmem mount by using the kernel parameter
->>>>    seven valid policies for shmem (``always``, ``within_size``, ``advise``,
->>>>    ``never``, ``deny``, and ``force``).
->>>>
->>>> +In the same manner as ``thp_anon`` controls each supported anonymous THP
->>>> +size, ``thp_shmem`` controls each supported shmem THP size. ``thp_shmem``
->>>> +has the same format as ``thp_anon``, but also supports the policy
->>>> +``within_size``.
->>>> +
->>>> +``thp_shmem=`` may be specified multiple times to configure all THP sizes
->>>> +as required. If ``thp_shmem=`` is specified at least once, any shmem THP
->>>> +sizes not explicitly configured on the command line are implicitly set to
->>>> +``never``.
->>>> +
->>>> +``transparent_hugepage_shmem`` setting only affects the global toggle. If
->>>> +``thp_shmem`` is not specified, PMD_ORDER hugepage will default to
->>>> +``inherit``. However, if a valid ``thp_shmem`` setting is provided by the
->>>> +user, the PMD_ORDER hugepage policy will be overridden. If the policy for
->>>> +PMD_ORDER is not defined within a valid ``thp_shmem``, its policy will
->>>> +default to ``never``.
->>>> +
->>>>    Hugepages in tmpfs/shmem
->>>>    ========================
->>>>
->>>> diff --git a/mm/shmem.c b/mm/shmem.c
->>>> index 24cdeafd8260..0a7a7d04f725 100644
->>>> --- a/mm/shmem.c
->>>> +++ b/mm/shmem.c
+> How to check if this has passed the criteria and not regressing anything =
+?
+> Sorry, I have not subscribed to linux-next mailing list to get
+> regular update.
 
-[...]
+There are a number of automated build+boot tests going on on linux-next
+and no news is good news :D
 
->>>>    static int __init setup_transparent_hugepage_shmem(char *str)
->>>>    {
->>>>           int huge, ret = 0;
->>>> @@ -5206,6 +5228,91 @@ static int __init setup_transparent_hugepage_shmem(char *str)
->>>>    }
->>>>    __setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
->>>>
->>>> +static char str_dup[PAGE_SIZE] __initdata;
->>>> +static int __init setup_thp_shmem(char *str)
->>>> +{
->>>> +       char *token, *range, *policy, *subtoken;
->>>> +       unsigned long always, inherit, madvise, within_size;
->>>> +       char *start_size, *end_size;
->>>> +       int start, end, nr;
->>>> +       char *p;
->>>> +
->>>> +       if (!str || strlen(str) + 1 > PAGE_SIZE)
->>>> +               goto err;
->>>> +       strcpy(str_dup, str);
->>>> +
->>>> +       always = huge_shmem_orders_always;
->>>> +       inherit = huge_shmem_orders_inherit;
->>>> +       madvise = huge_shmem_orders_madvise;
->>>> +       within_size = huge_shmem_orders_within_size;
->>>> +       p = str_dup;
->>>> +       while ((token = strsep(&p, ";")) != NULL) {
->>>> +               range = strsep(&token, ":");
->>>> +               policy = token;
->>>> +
->>>> +               if (!policy)
->>>> +                       goto err;
->>>> +
->>>> +               while ((subtoken = strsep(&range, ",")) != NULL) {
->>>> +                       if (strchr(subtoken, '-')) {
->>>> +                               start_size = strsep(&subtoken, "-");
->>>> +                               end_size = subtoken;
->>>> +
->>>> +                               start = get_order_from_str(start_size);
->>>> +                               end = get_order_from_str(end_size);
->>>> +                       } else {
->>>> +                               start = end = get_order_from_str(subtoken);
->>>> +                       }
->>>> +
->>>> +                       if (start < 0 || end < 0 || start > end)
->>>> +                               goto err;
->>>> +
->>>> +                       nr = end - start + 1;
->>>> +                       if (!strcmp(policy, "always")) {
->>>> +                               bitmap_set(&always, start, nr);
->>>> +                               bitmap_clear(&inherit, start, nr);
->>>> +                               bitmap_clear(&madvise, start, nr);
->>>> +                               bitmap_clear(&within_size, start, nr);
->>>> +                       } else if (!strcmp(policy, "advise")) {
->>>> +                               bitmap_set(&madvise, start, nr);
->>>> +                               bitmap_clear(&inherit, start, nr);
->>>> +                               bitmap_clear(&always, start, nr);
->>>> +                               bitmap_clear(&within_size, start, nr);
->>>> +                       } else if (!strcmp(policy, "inherit")) {
->>>> +                               bitmap_set(&inherit, start, nr);
->>>> +                               bitmap_clear(&madvise, start, nr);
->>>> +                               bitmap_clear(&always, start, nr);
->>>> +                               bitmap_clear(&within_size, start, nr);
->>>> +                       } else if (!strcmp(policy, "within_size")) {
->>>> +                               bitmap_set(&within_size, start, nr);
->>>> +                               bitmap_clear(&inherit, start, nr);
->>>> +                               bitmap_clear(&madvise, start, nr);
->>>> +                               bitmap_clear(&always, start, nr);
->>>> +                       } else if (!strcmp(policy, "never")) {
->>>> +                               bitmap_clear(&inherit, start, nr);
->>>> +                               bitmap_clear(&madvise, start, nr);
->>>> +                               bitmap_clear(&always, start, nr);
->>>> +                               bitmap_clear(&within_size, start, nr);
->>>> +                       } else {
->>>> +                               pr_err("invalid policy %s in thp_shmem boot parameter\n", policy);
->>>> +                               goto err;
->>>> +                       }
->>>> +               }
->>>> +       }
->>>> +
->>>> +       huge_shmem_orders_always = always;
->>>> +       huge_shmem_orders_madvise = madvise;
->>>> +       huge_shmem_orders_inherit = inherit;
->>>> +       huge_shmem_orders_within_size = within_size;
->>>> +       shmem_orders_configured = true;
->>>> +       return 1;
->>>> +
->>>> +err:
->>>> +       pr_warn("thp_shmem=%s: error parsing string, ignoring setting\n", str);
->>>> +       return 0;
->>>> +}
->>>
->>> Can we share source code with thp_anon since there's a lot of duplication?
->>
->> I'm not a regular mm contributor and I'm most usually around drivers, so
->> I don't know exactly here I could add shared code. Should I add the
->> headers to "internal.h"?
-> 
-> My comment isn't related to drivers or memory management. It's solely about
-> avoiding code duplication. For example, we could create a shared function to
-> handle both controls, reducing redundant code :-)
+So far it seems fine.
 
-Let me rephrase it.
-
-I completely agree that we should avoid code duplication. I'm asking
-where is the best place to add the headers of the shared functions.
-"linux/shmem_fs.h" doesn't look appropriate to me, so I believe the
-remaining options would be "linux/huge_mm.h" or "internal.h".
-
-I would like to know your opinion about those two options.
-
-Best Regards,
-- Maíra
-
-> 
->>
->> Best Regards,
->> - Maíra
->>
->>>
->>>> +__setup("thp_shmem=", setup_thp_shmem);
->>>> +
->>>>    #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>>>
->>>>    #else /* !CONFIG_SHMEM */
->>>> --
->>>> 2.46.2
->>>>
->>>
->>> Thanks
->>> barry
->>
-
+Yours,
+Linus Walleij
 
