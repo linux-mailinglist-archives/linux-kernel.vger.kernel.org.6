@@ -1,180 +1,451 @@
-Return-Path: <linux-kernel+bounces-384672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36FC9B2D14
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:41:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3A59B2D1E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED6B1C2190B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:41:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF76428270B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:43:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61631D4337;
-	Mon, 28 Oct 2024 10:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EB21D54DC;
+	Mon, 28 Oct 2024 10:43:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hW0p+vWX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="t97Yt8tq"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F902192B98;
-	Mon, 28 Oct 2024 10:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E91D270B;
+	Mon, 28 Oct 2024 10:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112065; cv=none; b=kZNH0XjrePYaX+d5Hk/ua6bH9giR9ZC5EbsK/B1K6raMc7UP3gvcr+/47yyMB8V7mv0llr4SXVr3wGWBZnu6lFTXasdfkkqQzCu/L3LZ/K7G4gog+Iom7/JngFeQAt6E7HYI0N7k6CPbTrCoSdAlvrPxRQ5s6/N0zhqyKFw2beI=
+	t=1730112211; cv=none; b=X/mvGQDIJK0Ld52tDQtbF46ri/1tUonXQsFUntxhueOODdlN12BepH45OE/589Vqz8h2YSL5xdH5ThB8jlZpdogPcPh+B3gbW/YJnFNTPFGYIBFcnUe/YFwGR4NIYl5N/rvCllM6XHXbyq4GI6VFklcPltDsuVUBHSJenMGD9jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112065; c=relaxed/simple;
-	bh=UZSZxr/HG9RX28U6C4Z9wIsayGdx5uiLoXfcknt/cWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V31GLajFs1v7sGml0NyRiuA6LpC+p5otH7BymxCTW8CFvWm4uJJg9vwEM6DU7JPHH07owOdYsBj+purna8eFQODCRlZHXO855KCFflt7CG8u8sUiXoXjRg8yJnu2h/V1WzIT8PLED9+i7vEHRAeQ8hUTVuCU9wR+Y7orlEcLBT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hW0p+vWX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RLfHdp004837;
-	Mon, 28 Oct 2024 10:41:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nAg5WQp6r9XHYcfiTy3LVub8K2pf/58GuSBUm35yAV4=; b=hW0p+vWXWWppOLkr
-	yIJooWF09p0JvuTX21b1p5vVhlk3It7/TCf3jQWCiHM7ZroxCxtnY/R+uU52IoaW
-	IDsS8Wvsbu+nfNdfXnasn6E0Y0OFGu0MFvqgqenb5EWdAhDbL614TlZf2dwb2YPj
-	JJ9qn/L6AEolN61aCA74xXKF4DjiwMxG+A1yeLjFthilUSVUPJk/wd4rKJHOsvHo
-	60/ztP6Calv0JsAwe/WO6Qz7vmyi5J5weZjVf6FL7BuGbyTdEYh80C9WkAiJP89U
-	AZrx+3ro89AXkR1GeP+ZN1fVmp6IiPEUvnXOuBBNB0ZqLvUXc1aEX/L3P+oyaBDT
-	a+xLvg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6vg7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 10:40:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SAewdU013785
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 10:40:58 GMT
-Received: from [10.216.3.216] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 03:40:54 -0700
-Message-ID: <0a0647aa-1fa4-4149-a76d-da7e08034fe4@quicinc.com>
-Date: Mon, 28 Oct 2024 16:10:37 +0530
+	s=arc-20240116; t=1730112211; c=relaxed/simple;
+	bh=rBB1qNxga2xWH9zst/uYR/JIg6Fz1YN+uEMrWlWCRBo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YpSP9LId+3vcQT/FILs+5PRW1LdF2wid6lRYTW9g7OacNbAJf3ZpUb/mexrT+9lbYrfBIp22nEQB88vqk40rb6s1su+uHFeiHSZSomlVz8LF0VCMxpJ/XRzN8IAorEdVDyN5LfbnXAu5BOKwHkFOMwcFMu597oatvdm2C+fi8fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=t97Yt8tq; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [192.168.1.107] (89-186-114-4.pool.digikabel.hu [89.186.114.4])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: hs@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id D33CD89072;
+	Mon, 28 Oct 2024 11:43:24 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1730112206;
+	bh=m23Xw+IpzyeAGqOrRlyv/vUuKRnF8JR+m8z95mzGJ2s=;
+	h=Date:Subject:To:Cc:References:From:Reply-To:In-Reply-To:From;
+	b=t97Yt8tqGqp2+/hAIqhH6dzgmf60ssyji8IDhkHN/p38613XFI+J0BUH6SMoFTGPn
+	 fkrIiTuqAXykAGkBibzJUCXg7jqq7ldO7Mb7DzPUbf3f9tRRxwPYxLuXUgTFw4yUba
+	 HdjcCKq69tfSaJNSiz4Ufc/+3usdvhB/6HYdS/pM0653CgHQhY/crWubKy30mqHhbf
+	 M/hQlUPapaarbpvtPOfI3ekmNUCGqNHj9rHL/T6cFMbsvh4aqcPxJXSXoS4Bt3QYia
+	 yGjc59LYW4/OcuM8gpmhzRGLRr49HJ0s3e3euzhW0Z4Uhr2c2X5A9DIcy87tGXej68
+	 BOMg0AArbpYLw==
+Message-ID: <bf2c81e1-4e97-cfa2-326f-0a6125b2cff9@denx.de>
+Date: Mon, 28 Oct 2024 11:41:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-msm: Slot indexing for distinguishing multiple
- SDCC instances
-To: Adrian Hunter <adrian.hunter@intel.com>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
-        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
-        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
-        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
-        <quic_sartgarg@quicinc.com>
-References: <20241022141828.618-1-quic_sachgupt@quicinc.com>
- <3e2f8132-af87-40c0-9c31-c0103078fe39@intel.com>
- <1cb1e8c1-63f4-4752-8358-b5c7078f9c6b@quicinc.com>
- <be483786-d8d2-4d46-9ca2-fbb629ba0674@intel.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH v1 2/2] arm64: dts: imx8mp: add aristainetos3 board
+ support
 Content-Language: en-US
-From: Sachin Gupta <quic_sachgupt@quicinc.com>
-In-Reply-To: <be483786-d8d2-4d46-9ca2-fbb629ba0674@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: rM9oJELF4j0Aug5VMBmUjWNqiCQuSU4a
-X-Proofpoint-GUID: rM9oJELF4j0Aug5VMBmUjWNqiCQuSU4a
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
- adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280087
+To: Krzysztof Kozlowski <krzk@kernel.org>, linux-kernel@vger.kernel.org
+Cc: Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20241028082332.21672-1-hs@denx.de>
+ <20241028082332.21672-3-hs@denx.de>
+ <f4150aa3-4c0e-45fa-9c9c-879ac04c4364@kernel.org>
+From: Heiko Schocher <hs@denx.de>
+Reply-To: hs@denx.de
+In-Reply-To: <f4150aa3-4c0e-45fa-9c9c-879ac04c4364@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
+Hello Krzysztof,
 
-
-On 10/25/2024 6:03 PM, Adrian Hunter wrote:
-> On 25/10/24 13:37, Sachin Gupta wrote:
+On 28.10.24 11:24, Krzysztof Kozlowski wrote:
+> On 28/10/2024 09:23, Heiko Schocher wrote:
+>> Add support for the i.MX8MP based aristainetos3 boards from ABB.
 >>
+>> The board uses a ABB specific SoM from ADLink, based on NXP
+>> i.MX8MP SoC. The SoM is used on 3 different carrier boards,
+>> with small differences, which are all catched up in
+>> devicetree overlays. The kernel image, the basic dtb
+>> and all dtbos are collected in a fitimage. As bootloader
+>> is used U-Boot which detects in his SPL stage the carrier
+>> board by probing some i2c devices. When the correct
+>> carrier is probed, the SPL applies all needed dtbos to
+>> the dtb with which U-Boot gets loaded. Same principle
+>> later before linux image boot, U-Boot applies the dtbos
+>> needed for the carrier board before booting Linux.
 >>
->> On 10/24/2024 4:38 PM, Adrian Hunter wrote:
->>> On 22/10/24 17:18, Sachin Gupta wrote:
->>>> This update addresses the requirement for accurate slot indexing
->>>> in the sdhci-msm driver to differentiate between multiple SDCC
->>>> (Secure Digital Card Controller) instances, such as eMMC, SD card,
->>>> and SDIO.
->>>>
->>>> Additionally, it revises the slot indexing logic to comply with
->>>> the new device tree (DT) specifications.
->>>
->>> This patch seems incomplete because all it does is assign a global
->>> variable which is never used again.
->>>
+>> Signed-off-by: Heiko Schocher <hs@denx.de>
+>> ---
+>> checkpatch dropped the following warnings:
+>> arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi:248: warning: DT compatible string "ethernet-phy-id2000.a231" appears un-documented -- check ./Documentation/devicetree/bindings/
 >>
->> Qualcomm internal debugging tools utilize this global variable to
->> access and differentiate between all the instance's sdhci_msm_host
->> data structure (eMMC, SD card, and SDIO).
+>> ignored, as this compatible string is usedin other dts too, for example in
+>>
+>> arch/arm64/boot/dts/ti/k3-am62-verdin.dtsi
+>>
+>>   arch/arm64/boot/dts/freescale/Makefile        |    5 +
+>>   .../imx8mp-aristainetos3-adpismarc.dtsi       |   64 +
+>>   .../imx8mp-aristainetos3-adpismarc.dtso       |   14 +
+>>   .../imx8mp-aristainetos3-helios-lvds.dtsi     |   89 ++
+>>   .../imx8mp-aristainetos3-helios-lvds.dtso     |   13 +
+>>   .../imx8mp-aristainetos3-helios.dtsi          |  103 ++
+>>   .../imx8mp-aristainetos3-helios.dtso          |   13 +
+>>   .../imx8mp-aristainetos3-proton2s.dtsi        |  176 +++
+>>   .../imx8mp-aristainetos3-proton2s.dtso        |   13 +
+>>   .../imx8mp-aristainetos3a-som-v1.dts          |   18 +
+>>   .../imx8mp-aristainetos3a-som-v1.dtsi         | 1210 +++++++++++++++++
+>>   11 files changed, 1718 insertions(+)
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtso
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtso
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtsi
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-proton2s.dtso
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dts
+>>   create mode 100644 arch/arm64/boot/dts/freescale/imx8mp-aristainetos3a-som-v1.dtsi
+>>
+>> diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
+>> index 9d3df8b218a2..7c3586509b8b 100644
+>> --- a/arch/arm64/boot/dts/freescale/Makefile
+>> +++ b/arch/arm64/boot/dts/freescale/Makefile
+>> @@ -163,6 +163,11 @@ imx8mn-tqma8mqnl-mba8mx-usbotg-dtbs += imx8mn-tqma8mqnl-mba8mx.dtb imx8mn-tqma8m
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mn-tqma8mqnl-mba8mx-lvds-tm070jvhg33.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mn-tqma8mqnl-mba8mx-usbotg.dtb
+>>   
+>> +dtb-$(CONFIG_ARCH_MXC) += imx8mp-aristainetos3a-som-v1.dtb \
+>> +			  imx8mp-aristainetos3-adpismarc.dtbo \
+>> +			  imx8mp-aristainetos3-proton2s.dtbo \
+>> +			  imx8mp-aristainetos3-helios.dtbo \
+>> +			  imx8mp-aristainetos3-helios-lvds.dtbo
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-beacon-kit.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-data-modul-edm-sbc.dtb
+>>   dtb-$(CONFIG_ARCH_MXC) += imx8mp-debix-model-a.dtb
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
+>> new file mode 100644
+>> index 000000000000..cc0cddaa33ea
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtsi
+>> @@ -0,0 +1,64 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +&ecspi1 {
+>> +	spidev0: spi@0 {
+>> +		reg = <0>;
+>> +		compatible = "rohm,dh2228fv";
 > 
-> The kernel does not accept code that does not serve a functional
-> purpose.
-> 
-> You could look at using eBPF or KGDB to get the information,
-> otherwise you might just have to carry that kind of patch in
-> your internal tree.
-> 
+> Hm? I have some doubts, what device is here?
 
-Sorry for misleading sentence, the tool I use is lauterbach Trace32 and 
-when using Lauterbach Trace32 tool, having a global variable makes it 
-easier to load and inspect dumps. It will be easy to quickly locate and 
-analyze the sdhci_msm_host structure, which speeds up the debugging process.
+$ grep -lr dh2228fv drivers/
+drivers/spi/spidev.c
 
->>
->>>>
->>>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
->>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
->>>> Signed-off-by: Maramaina Naresh <quic_mnaresh@quicinc.com>
->>>> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
->>>> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
->>>> ---
->>>>    drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
->>>>    1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
->>>> index e113b99a3eab..3cb79117916f 100644
->>>> --- a/drivers/mmc/host/sdhci-msm.c
->>>> +++ b/drivers/mmc/host/sdhci-msm.c
->>>> @@ -292,6 +292,8 @@ struct sdhci_msm_host {
->>>>        bool vqmmc_enabled;
->>>>    };
->>>>    +static struct sdhci_msm_host *sdhci_slot[3];
->>>> +
->>>>    static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
->>>>    {
->>>>        struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->>>> @@ -2426,6 +2428,14 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->>>>        if (ret)
->>>>            goto pltfm_free;
->>>>    +    if (node) {
->>>> +        ret = of_alias_get_id(pdev->dev.of_node, "mmc");
->>>> +        if (ret < 0)
->>>> +            dev_err(&pdev->dev, "get slot index failed %d\n", ret);
->>>> +        else
->>>> +            sdhci_slot[ret] = msm_host;
->>>> +    }
->>>> +
->>>>        /*
->>>>         * Based on the compatible string, load the required msm host info from
->>>>         * the data associated with the version info.
->>>
->>
+Customer uses an userspace implementation...
+
 > 
+>> +		spi-max-frequency = <500000>;
+>> +	};
+>> +};
+>> +
+>> +&ecspi2 {
+>> +	spidev1: spi@0 {
+>> +		reg = <0>;
+>> +		compatible = "rohm,dh2228fv";
+>> +		spi-max-frequency = <500000>;
+>> +	};
+>> +};
+>> +
+>> +&i2c2 {
+>> +	/* SX1509(2) U1001@IPi SMARC Plus */
+>> +	gpio8: i2c2_gpioext0@3e {
+> 
+> Uh, no, please never send us downstream code.
+> 
+> Please follow DTS coding style in all upstream submissions.
 
+driver is in here:
+
+$ grep -lr probe-reset drivers/pinctrl/
+drivers/pinctrl/pinctrl-sx150x.c
+
+> Also:
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+
+Sorry for the nodenames...
+
+And yes, I remove the comments.
+
+>> +		/* GPIO Expander 2 Mapping :
+>> +		 * - 0: E_GPIO1_0	<=>	IPi SMARC Plus CN101_PIN29: E_GPIO1_0
+>> +		 * - 1: E_GPIO1_1	<=>	IPi SMARC Plus CN101_PIN31: E_GPIO1_1
+>> +		 * - 2: E_GPIO1_2	<=>	IPi SMARC Plus CN101_PIN32: E_GPIO1_2
+>> +		 * - 3: E_GPIO1_3	<=>	IPi SMARC Plus CN101_PIN33: E_GPIO1_3
+>> +		 * - 4: E_GPIO1_4	<=>	IPi SMARC Plus CN101_PIN35: E_GPIO1_4
+>> +		 * - 5: E_GPIO1_5	<=>	IPi SMARC Plus CN101_PIN36: E_GPIO1_5
+>> +		 * - 6: E_GPIO1_6	<=>	IPi SMARC Plus CN101_PIN37: E_GPIO1_6
+>> +		 * - 7: E_GPIO1_7	<=>	IPi SMARC Plus CN101_PIN38: E_GPIO1_7
+>> +		 * - 8: E_GPIO2_8	<=>	IPi SMARC Plus CN101_PIN40: E_GPIO2_8
+>> +		 * - 9: TP1002		<=>	IPi SMARC Plus TP1002 (won't use)
+>> +		 * - 10: TP1003		<=>	IPi SMARC Plus TP1003 (won't use)
+>> +		 * - 11: TP1004		<=>	IPi SMARC Plus TP1004 (won't use)
+>> +		 * - 12: TP1005		<=>	IPi SMARC Plus TP1005 (won't use)
+>> +		 * - 13: TP1006		<=>	IPi SMARC Plus TP1006 (won't use)
+>> +		 * - 14: TP1007		<=>	IPi SMARC Plus TP1007 (won't use)
+>> +		 * - 15: TP1008		<=>	IPi SMARC Plus TP1008 (won't use)
+>> +		 * - 16: OSCIO		<=>	IPi SMARC Plus TP1001 (won't use)
+>> +		 */
+>> +		#gpio-cells = <2>;
+>> +		#interrupt-cells = <2>;
+>> +		compatible = "semtech,sx1509q";
+>> +		reg = <0x3e>;
+>> +
+>> +		semtech,probe-reset;
+>> +		gpio-controller;
+>> +		interrupt-controller;
+>> +
+>> +		interrupt-parent = <&gpio6>;
+>> +		interrupts = <1 IRQ_TYPE_EDGE_FALLING>;
+>> +	};
+>> +
+> 
+> Drop
+> 
+>> +};
+>> +
+>> +&flexcan1 {
+>> +	status = "okay";
+>> +};
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtso b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtso
+>> new file mode 100644
+>> index 000000000000..5a9adccbf7cf
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-adpismarc.dtso
+>> @@ -0,0 +1,14 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
+>> + */
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +#include "imx8mp-aristainetos3-adpismarc.dtsi"
+>> +
+>> +&{/} {
+>> +	model = "Aristainetos3 ADLink PI SMARC carrier";
+>> +	compatible = "abb,aristainetos3-adpismarc", "imx8mp-aristianetos3",
+>> +		     "abb,aristianetos3-som", "fsl,imx8mp";
+> 
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=1` (see
+> Documentation/devicetree/bindings/writing-schema.rst or
+> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+> for instructions).
+
+Thanks for the hint! I have to fix my scripts...
+
+> And why this is DTSO, I have no clue...
+> 
+>> +};
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtsi
+>> new file mode 100644
+>> index 000000000000..55aabd6fc1f7
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtsi
+>> @@ -0,0 +1,89 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +#include <dt-bindings/input/input.h>
+>> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/pwm/pwm.h>
+>> +
+>> +&{/} {
+>> +	panel: panel {
+>> +		pinctrl-names = "default";
+>> +		pinctrl-0 = <&pinctrl_lcd0_vdd_en>;
+>> +		compatible = "lg,lb070wv8";
+>> +		backlight = <&lvds_backlight>;
+>> +		enable-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+>> +
+>> +		port {
+>> +			panel_in: endpoint {
+>> +				remote-endpoint = <&ldb_lvds_ch0>;
+>> +			};
+>> +		};
+>> +	};
+>> +};
+>> +
+>> +&gpio3 {
+>> +	mipi_lvds_select {
+> 
+> No, read coding style.
+> 
+> 
+>> +		gpio-hog;
+>> +		gpios = <23 GPIO_ACTIVE_HIGH>;
+>> +		output-low;
+>> +		line-name = "mipi_lvds_select";
+>> +	};
+>> +};
+>> +
+>> +&hdmi_blk_ctrl {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&hdmi_pvi {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&hdmi_tx {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&hdmi_tx_phy {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&irqsteer_hdmi {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&ldb_lvds_ch0 {
+>> +	fsl,data-mapping = "jeida";
+>> +	fsl,data-width = <24>;
+>> +	remote-endpoint = <&panel_in>;
+>> +};
+>> +
+>> +&lcdif1 {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&lcdif2 {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lcdif3 {
+>> +	status = "disabled";
+>> +};
+>> +
+>> +&lvds_backlight {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&lvds_bridge {
+>> +	status = "okay";
+>> +};
+>> +
+>> +&media_blk_ctrl {
+>> +	/*
+>> +	 * The internal divider will always divide the output LVDS clock by 7
+>> +	 * so our display needs 33246000 Hz, so set VIDEO_PLL1 to
+>> +	 * 33246000 * 7 = 232722000 Hz
+>> +	 */
+>> +	assigned-clock-rates = <500000000>, <200000000>, <0>, <0>, <232722000>;
+>> +};
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso
+>> new file mode 100644
+>> index 000000000000..06d1883b962a
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios-lvds.dtso
+>> @@ -0,0 +1,13 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
+>> + */
+>> +/dts-v1/;
+>> +/plugin/;
+>> +
+>> +#include "imx8mp-aristainetos3-helios-lvds.dtsi"
+>> +
+>> +&{/} {
+>> +	model = "Aristainetos3 helios LVDS carrier";
+>> +	compatible = "abb,aristainetos3-helios-lvds", "abb,aristainetos3-helios", "abb,aristianetos3-som", "fsl,imx8mp";
+> 
+> Read not only DTS coding style, but also kernel coding style. Lines are
+> supposed to be wrapped according to kernel coding style.
+
+Yes, indeed, I have to fix my scripts...
+
+>> +};
+>> diff --git a/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtsi
+>> new file mode 100644
+>> index 000000000000..b4b1cb3b0cb3
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/freescale/imx8mp-aristainetos3-helios.dtsi
+>> @@ -0,0 +1,103 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (C) 2024 Heiko Schocher <hs@denx.de>
+>> + */
+>> +
+>> +#include <dt-bindings/gpio/gpio.h>
+>> +
+>> +&{/} {
+>> +	helios_gpio_leds {
+> 
+> Node names should be generic. See also an explanation and list of
+> examples (not exhaustive) in DT specification:
+> https://devicetree-specification.readthedocs.io/en/latest/chapter2-devicetree-basics.html#generic-names-recommendation
+> 
+> 
+>> +		compatible = "gpio-leds";
+>> +
+>> +		helios_blue {
+> 
+> So this was absolutely never tested.
+> 
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=1` (see
+> Documentation/devicetree/bindings/writing-schema.rst or
+> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+> for instructions).
+> 
+>> +			label = "helios:blue";
+> 
+> Use function and color instead.
+> 
+> I finished review here. Rest of the code does not look good, really. You
+> have so many, really so many, trivial issues which tools point out, that
+> using humans for such review is just waste of our time.
+
+Sorry for that, will call the tools...
+
+bye,
+Heiko
+-- 
+DENX Software Engineering GmbH,      Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+Phone: +49-8142-66989-52   Fax: +49-8142-66989-80   Email: hs@denx.de
 
