@@ -1,116 +1,169 @@
-Return-Path: <linux-kernel+bounces-385713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B94D9B3AC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:50:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4F649B3AC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:51:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D0081C21936
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:50:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C71282A3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F12D51DE3D2;
-	Mon, 28 Oct 2024 19:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866BF1DF75C;
+	Mon, 28 Oct 2024 19:51:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Yzwm36ak"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="1Y/Ijz61"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66B4A19006B;
-	Mon, 28 Oct 2024 19:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45B63A1DB;
+	Mon, 28 Oct 2024 19:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145044; cv=none; b=MI03DG486pPkE9fzKfwvKOpiNMLlawM3khS7VzlFOpduB8nNOkq27s+e4jM2U0WGYkzgcsv2PUS+lsMRRbcIET4LmHvySj/FhnVH14K5q/AGj0BztfaEzS6enVQaNoc2lDQWkKbHbRB1DQ629ikE/EDEX2n+waVjgLIt4x2xqKM=
+	t=1730145060; cv=none; b=EOC3oKRNzN6tlapuY8qejONMxi9L9giVcvO2/F3pS3QoUdB+1eRRkT6ndhrZiHumsyVyFrWp3IF6ISN4qi9RdWteRRbgi9fPe7x2z6STnNhkH2eBsrrfL6645xmcppP/dO3mf7sBytKB1/oOuUV/h7sNuiClH65xGOYgkeXTbHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145044; c=relaxed/simple;
-	bh=R1DQ/KMwlmEJHrayoEuqobr4p9d+H1MRATU9t2npvC4=;
+	s=arc-20240116; t=1730145060; c=relaxed/simple;
+	bh=/59UInKs1jPdhye+ywI9zjMLf0geE/n+JAGYfww/9ss=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ke/3BdKcHWMjcfae5DuBxvkwCBLyGbuiz3bCacEbzdFXwPqKJhsjs25QSwX9wmLOAtTOTg+FHqfAs3fNMATrFKfw8q0ei5ABR9QS9nyUshdUpYBFCavaw53fActXWiAHliF/KPXvfUYz70p0LS/o9Dufi1uKDGVW96zuzsOuos4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Yzwm36ak; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d4ba20075so3246010f8f.0;
-        Mon, 28 Oct 2024 12:50:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1730145040; x=1730749840; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cfFITBV1myRi8hbtETvsv/FqFz4x6fCNMl87D1UqCjI=;
-        b=Yzwm36akZQnT56mkJjXxUN8fYJic9Tn0wM8ZHlJwss+N73+mnecwR1pzD5YNIAFIRb
-         T08ojZw4IFtFjX1iOUM+S+ehySoYAJxG0TQd0kO5NzZfeI3isLaZdVnpc3t592Dpc/nZ
-         jqxNPXE8BiSZrrPmvXVie5Ju24iF6yFo4e6O6eGm71l5NbJbNTIbRLofsrq62T07dxQV
-         ef1OY3AlofkLETQQMvK1dms4Gzksg0keeV+CPiNNJZEB5dUCw27i8hFekWcOFqq3Yq4e
-         X/gPtXVQvtr6H4nu0VivAEs7MHfWDf3NVouBIuNVGUOQCIprng5E2CNS0cvxUThqddxI
-         WmAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730145040; x=1730749840;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cfFITBV1myRi8hbtETvsv/FqFz4x6fCNMl87D1UqCjI=;
-        b=FFh3xdzfFWC+AHipLCilDFITeKFfc+idR4zZM8F06Ew7iA1O0M54GhyReRs8CJPxuN
-         2ULZGIhHwUmLL/k+FX0vPtknt0qrp4K0HB4mjVI/cRteZfbJfYI3L+YOqpZ7F2ha1vUK
-         loLP7DUuk4IeJ0ebtnp2hyh4Kee/moEyBlb0gdZNieyE7aiddaq0nwRYbKvxTL92noFn
-         l1eu2dJePlQ8yyxCQM15566Bauf6tFgh2z93OJVV3Vi5bqJKlPUgXoRCdFNae8n0Lard
-         UyGwWmuMRGFN7dngwFGa2Ojzs3epDqzCQKwmqQ0C7bbh7nkdN6jfoyeMOQ7Y9FqJN4ra
-         NsRA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjQ/IDwb4gu+gNXFh8olszk5W8Qp7/h3ru9iJqP7TBcxeLst5xdGIEk9bk+tY+Y5wB5THW8fuI@vger.kernel.org, AJvYcCXT1IcFDeAmctKw9CneOF+zwwSZlqIERbdF2d1yRZpZdEBQIMvCHnFe0f33sD3sPPkMSf9Z3Dxi69zameM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzqf7sTJaRkAZRElYnPoDrRX+ZcTCT4TwJtC5nUgr2nchs2wjpG
-	2u++U5taw3NtM70yzBdR+jrRviqy+D/G7bs21QcFFldTohAPnyo=
-X-Google-Smtp-Source: AGHT+IFQlnYqBOiIxhzO/n77Z3bG0kNkLNCXhKIBxoD2+dgyOR0Z6gaZV0BvDFitzSFNe/kS94R+2g==
-X-Received: by 2002:a5d:4b0b:0:b0:37d:524e:9431 with SMTP id ffacd0b85a97d-38061224a2cmr7063225f8f.57.1730145040463;
-        Mon, 28 Oct 2024 12:50:40 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2ace6d.dip0.t-ipconnect.de. [91.42.206.109])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9d70fsm10390697f8f.108.2024.10.28.12.50.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 12:50:39 -0700 (PDT)
-Message-ID: <1e751a01-01e1-448d-bc72-71a6fad24278@googlemail.com>
-Date: Mon, 28 Oct 2024 20:50:37 +0100
+	 In-Reply-To:Content-Type; b=A3f1Xy8q0FtHZH4k3j0MD50ULgS27ffWboedOv6hmlu9lNxVrNVpalI7UsNtMsR6ddzn0kT30yCZak4a2OGUbvHr1w/lST5fkNqQrV9XGYQttIDddTfjf2KMYIdxyrs21n2DzSz6o2VpQl8iYN+RoPksFMN51mQ9XQP0LngLal4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=1Y/Ijz61; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XckXL0h1Vz6Cnk9N;
+	Mon, 28 Oct 2024 19:50:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1730145045; x=1732737046; bh=tI4AfILStzPbfhtZq0bCJPMf
+	8+hLePNOOBQdMQ26eP0=; b=1Y/Ijz61vzLVRdeH2inV1Fb829PnUgbXolM5dJd/
+	grOg/3w/e8frnP6asQKOV8AHyDAlf/IE47Dow5djxaz/wXTn2XuTlE9GEfPuTcnQ
+	z6jEybHCqAxcss9lT4z+ZLKfy5SqF5BZjYpPmbomttv4Kcnk7RQzwdMoYW61a89H
+	8DPP5v5J11dGTiMD6f3bSva3VkbNqHpo6tmmUiLSvY8VZdTRWSBzgAvOlNnCqPqH
+	JiZzt7KNqwouBfSzuKA88m6uMdMLhOBEY3oFiL2TqIIfLdAc2v40SiyS+C6HE/+p
+	zVQIMNI/3fh7XG3LICDkBo7uBhsKB3quffL28Ez4aOqQIQ==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 9H1p7XdS2C7h; Mon, 28 Oct 2024 19:50:45 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XckX36P72z6Cnk9M;
+	Mon, 28 Oct 2024 19:50:43 +0000 (UTC)
+Message-ID: <13aff452-0ce8-4ebf-986c-dd3bb7c322de@acm.org>
+Date: Mon, 28 Oct 2024 12:50:43 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-Content-Language: de-DE
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241028062312.001273460@linuxfoundation.org>
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] ufs: core: Add WB buffer resize support
+To: Huan Tang <tanghuan@vivo.com>, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, beanhuo@micron.com, luhongfei@vivo.com,
+ quic_cang@quicinc.com, keosung.park@samsung.com, viro@zeniv.linux.org.uk,
+ quic_mnaresh@quicinc.com, peter.wang@mediatek.com,
+ manivannan.sadhasivam@linaro.org, ahalaney@redhat.com,
+ quic_nguyenb@quicinc.com, linux@weissschuh.net, ebiggers@google.com,
+ minwoo.im@samsung.com, linux-kernel@vger.kernel.org,
+ linux-scsi@vger.kernel.org
+Cc: opensource.kernel@vivo.com
+References: <20241028135205.188-1-tanghuan@vivo.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241028135205.188-1-tanghuan@vivo.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Am 28.10.2024 um 07:22 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 10/28/24 6:52 AM, Huan Tang wrote:
+> +What:		/sys/bus/platform/drivers/ufshcd/*/wb_toggle_buf_resize
+> +What:		/sys/bus/platform/devices/*.ufs/wb_toggle_buf_resize
+> +Date:		Qct 2024
+> +Contact:	Huan Tang <tanghuan@vivo.com>
+> +Description:
+> +		The host can decrease or increase the WriteBooster Buffer size by setting
+> +		this file.
+> +
+> +		======  ======================================
+> +		00h  Idle (There is no resize operation)
+> +		01h  Decrease WriteBooster Buffer Size
+> +		02h  Increase WriteBooster Buffer Size
+> +		Others  Reserved
+> +		======  ======================================
+> +
+> +		The file is write only.
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+The name "wb_toggle_buf_resize" is not clear and will make users guess
+what the purpose of this sysfs attribute is. Please choose a name that
+is more clear, e.g. "wb_resize_action".
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Additionally, please change the word "file" into "attribute" to maintain
+consistency with the rest of the sysfs documentation.
 
-Beste Grüße,
-Peter Schneider
+Please also make sure that the documentation is consistent with the
+code. The above documentation mentions the value 0 while the code
+doesn't allow writing the value zero.
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+> +
+> +What:		/sys/bus/platform/drivers/ufshcd/*/attributes/wb_buf_resize_status
+> +What:		/sys/bus/platform/devices/*.ufs/attributes/wb_buf_resize_status
+> +Date:		Qct 2024
+> +Contact:	Huan Tang <tanghuan@vivo.com>
+> +Description:
+> +		The host can check the Resize operation status of the WriteBooster Buffer
+> +		by reading this file.
+> +
+> +		======  ========================================
+> +		00h  Idle (resize operation is not issued)
+> +		01h  Resize operation in progress
+> +		02h  Resize operation completed successfully
+> +		03h  Resize operation general failure
+> +		Others  Reserved
+> +		======  ========================================
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+For the three new attributes: please use words in sysfs instead of 
+numbers. Using numbers is not user-friendly.
+
+> +static ssize_t wb_toggle_buf_resize_store(struct device *dev,
+> +		struct device_attribute *attr, const char *buf, size_t count)
+> +{
+> +	struct ufs_hba *hba = dev_get_drvdata(dev);
+> +	unsigned int wb_buf_resize_op;
+
+Please introduce an enumeration type instead of using 'unsigned int'. 
+Please also choose a more descriptive variable name than 'op'.
+
+> +int ufshcd_wb_toggle_buf_resize(struct ufs_hba *hba, u32 op)
+> +{
+> +	int ret;
+> +	u8 index;
+> +
+> +	index = ufshcd_wb_get_query_index(hba);
+> +	ret = ufshcd_query_attr_retry(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
+> +				   QUERY_ATTR_IDN_WB_BUF_RESIZE_EN, index, 0, &op);
+> +	if (ret)
+> +		dev_err(hba->dev, "%s: Enable WB buf resize operation failed %d\n",
+> +			__func__, ret);
+> +
+> +	return ret;
+> +}
+
+This function doesn't toggle anything - it sets the value of the
+bWriteBoosterBufferResizeEn attribute. Please reflect this in the
+function name, e.g. by renaming this function into
+ufshcd_wb_set_resize_en(). Additionally, the name of the 'op' argument
+doesn't reflect the purpose of that argument. How about renaming it into
+'enum wb_resize_en' where the wb_resize_en type support the three values
+idle = 0, decrease = 1 and increase = 2?
+
+Thanks,
+
+Bart.
 
