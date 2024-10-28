@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-385454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECB079B375B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:09:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 343E39B375D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B06962813D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:09:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657A91C20B58
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E4421DF246;
-	Mon, 28 Oct 2024 17:09:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8941DF266;
+	Mon, 28 Oct 2024 17:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TmF/e2PQ"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLeItSA3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7CE613AD11
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74271D5CC6;
+	Mon, 28 Oct 2024 17:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730135346; cv=none; b=Xa9jr8/FvjLQQ1/11FtZ8lA2Vjdarp4Kx9+bNORQX0xByu1gU2y99VpXak4qcjr12uP5cir/IJiHA3G+csE1cq4WWYD0zTI8sDN5K3yRBfdesnKm5CzdOd951bWhC8D1K9E5u0J+dYvW5QVqimc6iOvF9bMeXeh/f9seHWIbDtM=
+	t=1730135380; cv=none; b=A89QkRs7VsD7nrvLJLGk3UgDwNTvjfa3qFXV6NW8Lvi7x/ysmNnKOnobDmWYMHAoZBijbg6zu1ZzKaSqCVGnqmLUXCLXQwTEnrT22QDBUP7Gh937iAvryNQ1tTEFwX3OpMWgun1XfapkEhpiKzXemN6GFsEwSWtGEAfUOVulIBk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730135346; c=relaxed/simple;
-	bh=hVYwHgZdQjvMKbrkzQEcpOl++/2Fy888VkRK7VN6y2k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XWSNHkQSaBbkpEFcskNpx9OkOzu/ZQdve0AbHc6Vur8kLZnwNvzFfH+PK26gdohVCXeWIcDUX9OFWPz5jSzustssMfUScCiOMPktStS2CroItF9Em9/lWqsJd6iBKeFzcFLDALGQC0qN3A3zkYs5ckfShdl8LIk87ejVF2FgV2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TmF/e2PQ; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbf0769512so30867166d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:09:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730135344; x=1730740144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hVYwHgZdQjvMKbrkzQEcpOl++/2Fy888VkRK7VN6y2k=;
-        b=TmF/e2PQzG5WmrB4pPqRCDEpGHJsudCNOVYvW2yfX8ZlfkW7dYyTXVGwbb+2Zfa0ni
-         hsHpUXR4T2Rbnw2zzKsq+tsscvfxWk+e5X3U4tRUk9RPhn3cdltNvjLg+wYexnYVYazU
-         Vpa+kdGR2PLXuSZl5ivAKOQlQoS3VnQHoVfMnzjzZFQWLCxb++Hj3CRpRJvAOc0EUNdR
-         CfylkLfCpepZAcqCxrOG0IfqJAPXBMtBtbEQpCNaFNONCoieGa2Q9hYVN45ShgtTENqK
-         0IQkGTOmD7+dTKm9ifYkxntE80JxvmsUXz7FzqVbO1ZKjVa421dS4oytkcWNpPEKzr4A
-         GgzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730135344; x=1730740144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hVYwHgZdQjvMKbrkzQEcpOl++/2Fy888VkRK7VN6y2k=;
-        b=V5Mn2YYkrvt+6OZKG38RpxyHG/WVw8EiTdYy2gOIax+tnLEJjT+O5qica10/MFBmwj
-         +uxBFu0v47IJOHzXZNH4S0tcvYxTZDGb7MHKUKPYxcyu+Q8q4VihtI7jPl2iAthEXVoG
-         V+BJAc7EOv874S936mD2TcKvHG/QbYPW8cDw/VtLjTl3n6VRSkLm+LVNQIrEQeCUs1bB
-         4RqWHCCCOO8Kl71c6Fx3TAYehGngE5JTCUxIyTGsXrymdYLSi0DyUsOMmXXYu/hdwErI
-         0rhfVz0hoI+O8WnAYWFSWacrzSIEHvjkDhtzkqLwkhD5nMp1l5sPGpbCFf1cf1h7RriX
-         kn+A==
-X-Forwarded-Encrypted: i=1; AJvYcCV1MR/7/68D+LGIze5adhmPcR01BjW277qNnoyIqtBS3p27bF7Rj7bb1KN5TtP6NcaMo9qzc3QFbuf/X3k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy55cTfjgmaHCf6pZh1KjYfvYOgsSn/Mv8DD52hfORL+rQ/lbTd
-	LHngU8cmx4noSkmYag/FSYExwomKnpNVWc98oPoUGoYnjcamp1vSY28qO98V5piFQiIi96y930A
-	/i9NAAOrPbccEmsoQXyXaFXNUEAvnCFwrBWYy
-X-Google-Smtp-Source: AGHT+IEf8Xan5YN2lxVFxkPlg5MJ8Vug9skFQs3j11e9BUUzumrE5tyW5bdmM5Xp8uNUl5TYbvlM0f6UV9BYTCns0FE=
-X-Received: by 2002:a05:6214:4588:b0:6d1:8261:174f with SMTP id
- 6a1803df08f44-6d185816d6fmr136359396d6.36.1730135343409; Mon, 28 Oct 2024
- 10:09:03 -0700 (PDT)
+	s=arc-20240116; t=1730135380; c=relaxed/simple;
+	bh=WJDZhRtwghKuue3Ou1x958utvll99lUFzlZQbjrclpk=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=OhT0hHxr/2nKx9XjCGHg4u0hjaqL9NCdqwR2BEpefrAvvjnPbnIaNkTJfPfzoXpW0zzO9S7u1dQdFjstUWLH4Pkr6XG1NO1kO44yWHb4RhqMCM4j4AQjgw36Hd7lNxpsfzahKNbKLoQCf+Qm40hvakNkSzKOVOPiNJSJyPJQs5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLeItSA3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49BAEC4CEC3;
+	Mon, 28 Oct 2024 17:09:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730135378;
+	bh=WJDZhRtwghKuue3Ou1x958utvll99lUFzlZQbjrclpk=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=gLeItSA3fn2FDDa5nKD3HQn3kGWUx7nLbl492Fr0hM8uBGwuaa9HIRUnUsCTgLlSj
+	 gPOlTSXQNRRXdcuNjXI2pd0Pn4xIIArp164mNdhgkDTHa1ei2flF3eRE4iVNrdVz3a
+	 lBrfqDgYMI7h+hS+w2ECYH4VRGfinwWeliufn/mPq97hE5o+coSwPGemjeeoD9oojo
+	 mjBE1CCych3FIRr7FvQW1o7uRjhTCMkY1/+vAZ9XVj/AV9NYygA5kgyzRbtNc3wAXC
+	 K1RB3d1wJicYj7GHvBom3zQfyMELpqvdxIzJoWuMsiyqqDIHmhW9Mg9FRS/YUyDSZb
+	 6iFDOhOT+ecQA==
+Date: Mon, 28 Oct 2024 12:09:35 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027011959.9226-1-21cnbao@gmail.com> <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
- <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
- <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com> <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
- <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com>
-In-Reply-To: <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 28 Oct 2024 10:08:26 -0700
-Message-ID: <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
-Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
-	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
-	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
-	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Mark Rutland <mark.rutland@arm.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org
+In-Reply-To: <20241028-topic-cpu_suspend_s2ram-v1-1-9fdd9a04b75c@oss.qualcomm.com>
+References: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
+ <20241028-topic-cpu_suspend_s2ram-v1-1-9fdd9a04b75c@oss.qualcomm.com>
+Message-Id: <173013537587.887084.8594386084996855802.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: arm,psci: Allow S2RAM power_state
+ parameter description
 
-On Mon, Oct 28, 2024 at 10:00=E2=80=AFAM Usama Arif <usamaarif642@gmail.com=
-> wrote:
->
->
->
-> On 28/10/2024 16:33, Nhat Pham wrote:
-> > On Mon, Oct 28, 2024 at 5:23=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
-com> wrote:
-> >>
-> >> I wonder if instead of having counters, it might be better to keep tra=
-ck
-> >> of the number of zeropages currently stored in zeromap, similar to how
-> >> zswap_same_filled_pages did it. It will be more complicated then this
-> >> patch, but would give more insight of the current state of the system.
-> >>
-> >> Joshua (in CC) was going to have a look at that.
-> >
-> > I don't think one can substitute for the other.
->
-> Yes agreed, they have separate uses and provide different information, bu=
-t
-> maybe wasteful to have both types of counters? They are counters so maybe
-> dont consume too much resources but I think we should still think about
-> it..
 
-Not for or against here, but I would say that statement is debatable
-at best for memcg stats :)
+On Mon, 28 Oct 2024 15:22:57 +0100, Konrad Dybcio wrote:
+> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Certain firmware implementations (such as the ones found on Qualcomm
+> SoCs between roughly 2015 and 2023) expose an S3-like S2RAM state
+> through the CPU_SUSPEND call, as opposed to exposing PSCIv1.0's
+> optional PSCI_SYSTEM_SUSPEND.
+> 
+> This really doesn't work well with the model where we associate all
+> calls to CPU_SUSPEND with cpuidle. Allow specifying a single special
+> CPU_SUSPEND suspend parameter value that is to be treated just like
+> SYSTEM_SUSPEND from the OS's point of view.
+> 
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> ---
+>  Documentation/devicetree/bindings/arm/psci.yaml | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
 
-Each new counter consumes 2 longs per-memcg per-CPU (see
-memcg_vmstats_percpu), about 16 bytes, which is not a lot but it can
-quickly add up with a large number of CPUs/memcgs/stats.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Also, when flushing the stats we iterate all of them to propagate
-updates from per-CPU counters. This is already a slowpath so adding
-one stat is not a big deal, but again because we iterate all stats on
-multiple CPUs (and sometimes on each node as well), the overall flush
-latency becomes a concern sometimes.
+yamllint warnings/errors:
 
-All of that is not to say we shouldn't add more memcg stats, but we
-have to be mindful of the resources.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/psci.yaml: properties:arm,psci-s2ram-param:maxItems: False schema does not allow 1
+	hint: Scalar properties should not have array keywords
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241028-topic-cpu_suspend_s2ram-v1-1-9fdd9a04b75c@oss.qualcomm.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
