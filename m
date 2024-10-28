@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-385700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE669B3A85
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:34:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A57E59B3A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:34:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BECBA1C211F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:34:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6592628107F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03D061DFE11;
-	Mon, 28 Oct 2024 19:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66BCD1E0095;
+	Mon, 28 Oct 2024 19:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="A/nWdpB9"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2088.outbound.protection.outlook.com [40.107.93.88])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="YcPTFIl5"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56191DFE29
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A431E0090
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730144036; cv=fail; b=sj3X0ZBPHY/LGKYL1RHXiRyb+dYkB/r+yV9So4YUCSrexm9i/n4dUeINtWZeH+9KYzhtl0yMrEDiHqrAh9Vti/jH1t0/a22fKL9sKFCHNoPHZrQRipnRcWrzj4g2AT8OZ5NxcEv5XzpfrQYCr5c8G9b5PdyHOC0U0DZrbDE3UqE=
+	t=1730144044; cv=fail; b=gQ0GojUfyeBUQajPcNQJd3FnusVO0VO2Pnk8YuJVErlguezTDJvBBPqxOKx0CVtBLWov7GfaTxAzUHSHHiq8PXNaPbuivtxBobYaihP+pG8no5ifbMmoAjPfu2LdfjIH/5uxSjfjE+Bwwk7MKQpmPYYjF0pK3OZGjiEK4iKbLXA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730144036; c=relaxed/simple;
-	bh=OxrMk8ws3tMIuRhzLAJK1uXbtekGSTbC3orT2MR4t7g=;
+	s=arc-20240116; t=1730144044; c=relaxed/simple;
+	bh=Y2de6lUTpW1n177PS5GTnDQxROoZ6p4Hsl+aQ2YuLt4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bPM6i/TnHVVTSEQj6e1jZQO+FlAkcxIOybAIG7bUDgQU/XGDmg61rI6gIRyk6gh0gS4WSkCd9T0YtzMDKSwHbaWzI35gjMwjQx9pdtLEiYiXcXCBuqteYRMcENYWPbybcDdAP/3K2rWVHuxN/SMi2spFBKJKuPCxMD4N0NDUv0U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=A/nWdpB9; arc=fail smtp.client-ip=40.107.93.88
+	 MIME-Version:Content-Type; b=AEtLqgvZjdP4bxyF8Pk79utilfvMWzFrUCVgftIJF9HmER34QGtgSub9R5S5oAj2BU/IPit+xwDjktMT1Opyt4Xqw5wuk+hqYFqvGqWvAzsEoZV0XmkJ8HdGLY42IBuZ/osD3HPskxOZyjImffInFE6hHLAQSaj2OYHqCWyRoaU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=YcPTFIl5; arc=fail smtp.client-ip=40.107.94.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=WOJdXfSxDxLw5j/g/6y3R0xJcTQixwDxBn4tbYKrl0tzXh/zHFkuk2+QYMVhH0Di7kTtBXPv+/5OljocQWP3D9FrNtkaFUTknGuHKbliJ6h6T286hxR5+AzAlOlbhGHr5UisgPHc/+pPlMI3vwhQwVKl67SurvhWi3f0BfYXB5dqWmCCc6yZuLXx7IVITQklo4AbsjhDgFxKU6Bz3GOELV8jxsc/16oA9ZuXz7elfN0JxYA29Nr6rboTig6buoooYbA4/PpQGw03IpyfeUidGErPfb1w88wMx0r6b+RW7jBWRZ25WCoQhdDyDv2FLjzpw7YaYCf/ikzVmDDiqtjU+g==
+ b=Nc1UtuGW7KBL2AybNX0iARZktPjMy3Je5VyzQ61qdRxnbDwjS2kyggqW98z9UIz5h0pOhkLbdjWsgRxLPDApfF8oZaM4xOXkGyjypmClWt4G8foc8gcqbfipM93YnV975MtqJL0Dg/CE8EwZLj3REmKSOXRTCJ+1TM0KGZBaF28eQ+d67DvuqtOiiaoA2ObgaEkCLydlpxpFMLbYZJL7IMEg33z/QfHJON9OIGiZIBuPb6dUBFckwOL/k9ko7Mc46EblXkjjiL68NPa0Zo4yb/0zPZTEQhzbHDwIIeVRnOEt60YYHC/129L16j/myzOSENEs++Is0H/V4GnDJz1xWg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wA7vaalh1/LgqkQGsyQKBymXv0g5u5MoNxB6kCpNTvM=;
- b=MOF2tMTyhWknHFfgqq10Xhh8C/0Ur/uTZbLyT1TqwOWeiB0lfjmtUhS7XescwWEQS+VFm0MAK+4VrujulAXuZc0iU9ewUkbktayKacxWETWjxyinEaDXM9P7GjWhnPf2zwgsHiV9E4uw3B0yMrEEksTEjo3qJ8rWYmjwVoim89IU1z+sp8P7didtUYhu7W0MzSBpxR8JCKhlYrmUHXphVyxJKHakJwK1Bwf1ghTdofhrb3ipo/1IizlONaaweMPCehYldTOdyjHxdyiWW6qqAwtTUgQvS/dey87yBibFGR8U//uS4g43/5FkaiXgNFDZZ7cB+jrcBG2BRZsHbcnTew==
+ bh=/oKOCBMG11rkMNSBoVSobw7unon/+5oViYqKWvwSeNE=;
+ b=RDI74ovp4841a0gW2K0b/f4EY/1RTyeITqe1/zkwRbDi9rwDn6HXKIq/KMfLIUOPU7b9yEZ2OwyEphewOfllE0w7wo1l0XXULnnJck1Oijm85GcT+BTHeRjkpKvLIKcoc7bydBF96+0MESSZVxUiZuhYGPbX0+BaGmAZzGj5ThfHnOlXRw2f/dAZITilaQjcyhwc4/YskS+cxOaww0knTOc9EtkUB8+18AFVL6TpQwIWnKcL5PScWRzu0bG3s3vdVBk1RoDXH1Gg1Lt8bXJA+/qJjWYmT2nirMZ/01v1hxPdEXyYwsiEod4a3N/lgPUiBMtk0AFIk4jG8Bu9fR5YHQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wA7vaalh1/LgqkQGsyQKBymXv0g5u5MoNxB6kCpNTvM=;
- b=A/nWdpB93QEG2Poyh4QSuDpJNDRCiJANzi3swJwzCqxugGaS060KR9Rdi9DCKeqoylD8AT+TOQVy5vWpVdlXuy1x0vlabX4uaCCT+vpysRA/GsT9KilvhiiJ5tGC638CBAdn7zf5yuEHQ+WIsfDbNTMTReUN+JJsYo18MWqRKa4=
-Received: from BN6PR17CA0036.namprd17.prod.outlook.com (2603:10b6:405:75::25)
- by BY5PR12MB4049.namprd12.prod.outlook.com (2603:10b6:a03:201::23) with
+ bh=/oKOCBMG11rkMNSBoVSobw7unon/+5oViYqKWvwSeNE=;
+ b=YcPTFIl5ULZfIMLa9+zlY6uueJNsjyRmaLkMZOR2YPP1enOh9sWns4OMmCr0X0zlU/MXOEBWzLQooI8kdPO+bA4JTSp/+TZbb4gFhx4COZks/Kq+ijPWaQgmx8KLhlAYPCZogmz0LSkB9rQQI0QUwbLbAi7LmJaJO/iQlIXCcr8=
+Received: from BLAPR03CA0054.namprd03.prod.outlook.com (2603:10b6:208:32d::29)
+ by CH2PR12MB4229.namprd12.prod.outlook.com (2603:10b6:610:a5::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
- 2024 19:33:50 +0000
-Received: from BN3PEPF0000B073.namprd04.prod.outlook.com
- (2603:10b6:405:75:cafe::1c) by BN6PR17CA0036.outlook.office365.com
- (2603:10b6:405:75::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25 via Frontend
- Transport; Mon, 28 Oct 2024 19:33:49 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Mon, 28 Oct
+ 2024 19:33:56 +0000
+Received: from BN3PEPF0000B071.namprd04.prod.outlook.com
+ (2603:10b6:208:32d:cafe::69) by BLAPR03CA0054.outlook.office365.com
+ (2603:10b6:208:32d::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.19 via Frontend
+ Transport; Mon, 28 Oct 2024 19:33:56 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,22 +62,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B073.mail.protection.outlook.com (10.167.243.118) with Microsoft
+ BN3PEPF0000B071.mail.protection.outlook.com (10.167.243.116) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8093.14 via Frontend Transport; Mon, 28 Oct 2024 19:33:49 +0000
+ 15.20.8114.16 via Frontend Transport; Mon, 28 Oct 2024 19:33:56 +0000
 Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Oct
- 2024 14:33:48 -0500
+ 2024 14:33:55 -0500
 From: Tom Lendacky <thomas.lendacky@amd.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
 CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
 	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
 	Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: [PATCH v5 7/8] x86/sev: Add full support for a segmented RMP table
-Date: Mon, 28 Oct 2024 14:32:42 -0500
-Message-ID: <f3d398915350f8f71aec6acd3e5c1ff66185b436.1730143962.git.thomas.lendacky@amd.com>
+Subject: [PATCH v5 8/8] x86/sev/docs: Document the SNP Reverse Map Table (RMP)
+Date: Mon, 28 Oct 2024 14:32:43 -0500
+Message-ID: <93ce1f809af823eb82e557dfa627853d27aa9f4e.1730143962.git.thomas.lendacky@amd.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <cover.1730143962.git.thomas.lendacky@amd.com>
 References: <cover.1730143962.git.thomas.lendacky@amd.com>
@@ -93,458 +93,192 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B073:EE_|BY5PR12MB4049:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9a857878-8ede-4f19-6889-08dcf7877297
+X-MS-TrafficTypeDiagnostic: BN3PEPF0000B071:EE_|CH2PR12MB4229:EE_
+X-MS-Office365-Filtering-Correlation-Id: d02c07ab-d94d-41aa-e276-08dcf78776cf
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?swZWg4BybRdY/KjHvp4FEHFhFqhaYIspELNaJDHbDqx191WwwXD2zzQLxUPQ?=
- =?us-ascii?Q?1VY0JYS2eJ6N6mmpYjmy6VRmNLbgoSLA0HsZtOCgjZR4IfIGzQUfOfC7EmBD?=
- =?us-ascii?Q?vw1/WuYC+Mq41nQuG0b3dX5orWmpeetjXWqknASW5AFAZt+ilkzVsRjRbu3t?=
- =?us-ascii?Q?S8A41+5G1ru7ou8/2CjhEJAb8xopBiLEDir05bz88HikqFxXeGVrfBpONzPS?=
- =?us-ascii?Q?ISq1sn4gddgNDK/77k4Zg0A6PtfzbyHaAN1ShRBqNkpcS9B1hO+bfDOYc4tQ?=
- =?us-ascii?Q?YBmJSSGMLebkQ8Pbk/iZkwYNQ4krfY1SgR19qPCt9FOWIjLICqqoHvdQfO4k?=
- =?us-ascii?Q?ato0stYW48U97YQhHL2lPcUyljqsNOxgSuE6F6HHF31vxtrmyiPpP5ljoWOO?=
- =?us-ascii?Q?u9p2nlepJf8EUw93cC/uTe3D35hJBDtLnBVcaavgaxMw2yenZ1BeLu3EXWK2?=
- =?us-ascii?Q?cYKHo92u3kFe2uBZB1FkUwuCr8qHYSd/FbZCti8xOGIS0G0TKk86ztjlXzDP?=
- =?us-ascii?Q?qknE2qg07IoEajBJmIyMH9eRRUQjFtlekWQ8jR21xfqzMa9bDuzxTY0Px2T6?=
- =?us-ascii?Q?7ikES3o+3qOp1Mrdod1RLFAGCCdariHSPwbM7V8Aal80TUNdz1q56cX+XrhY?=
- =?us-ascii?Q?hdlkSPfA6myMW6jWrc3CGDRI3yU3xQSwb/j5Zi8EoQzDaFDNeKOhRmjaQ/P1?=
- =?us-ascii?Q?COLg0aY/1HYc2gNkTy+vBcuL1BxFhfZ1cEaBZv2034P71TZyZoaXy68Iyw0v?=
- =?us-ascii?Q?4dOYWvUgdxo3neExpX9J4MjIVrbVFwmrofGCtFKBY2ywahMMWUAoKeAtFZnh?=
- =?us-ascii?Q?jUCOGq57Nt7JtidBe/W3D65Ubq3c0t09bpxaSxzWwJOpGNFTqfPe5nwgsWOq?=
- =?us-ascii?Q?x69Mult1VouEpOf7c1TXCbjoxe8nqgTTw8C8ve50eyvj2FgyIVcPf3krxBzY?=
- =?us-ascii?Q?Ka4cileDdt2tF0CmhbcNLmtji41VcWj5QQtqH3/vPf+jgkXELQ9SGRX/mQrF?=
- =?us-ascii?Q?hOoei5rI/bz7wApNsF/5iKhI4A3CjiSxkhPy5lRYYMHmN8BC15/de+8mJW9c?=
- =?us-ascii?Q?rNk9hIyfxNXaOAwJz36Za7i6k8dqVj1BKfGik2AhTEpKUkyfIz/GImECf++g?=
- =?us-ascii?Q?9EApm0cfQMXyAV2/XoKW1SJEcT4QrWw1zp1Y7a74+HoX/8a/eHWlV2MNraKT?=
- =?us-ascii?Q?CfiOcUd3+YMhCXJ24QAR09YpgylJYwl+ufVWHH+do4JYxrlz2f55lxfzXIvg?=
- =?us-ascii?Q?M6XQtubOszZv+W7taOF4/vBBl3KwIq9HFijPmaZtNdfCDmbTZg7o1Tm04tB7?=
- =?us-ascii?Q?tnZBfHH4lLOPy5pDefcZK64l8GHqV71zVrP3LrT/exGBai00pNnQKVghM56d?=
- =?us-ascii?Q?FNJHsqGVBL7yx3lHsKPMVB6rEDZ5LQVs3gxGc7dbeRYbSJc8xg=3D=3D?=
+	=?us-ascii?Q?Qk07tBCWKKJVEVCff//V5v8Ys7DMVIBLXvHDrfMXC1BUsEtrl+a1KYyeXlwY?=
+ =?us-ascii?Q?Uh32p6IFq9tM5z99m2N9zqyvYxVIer3NvOI6yyoGPHvUXEg2gbWnCYqZdBsG?=
+ =?us-ascii?Q?k8n32CsZ8Pco8rQECU8k3fkP+eYPaqvUaLr0ojNm14qN1ZFPfRHSS9jrfMGZ?=
+ =?us-ascii?Q?z7usnq40CLpJvPhA3aiNUr1BdvxhcWoLzUbpu/CxNUXci1tGmYm9Bjz4L1ZP?=
+ =?us-ascii?Q?zj9cvUdgDzVQ4018R5/TVNgeGJHRxaUs2gTfEDkWtfIkKiILQKpFMksXUqC+?=
+ =?us-ascii?Q?ftlp72GBXeoncuZfrf60aWEMdBmqlXUqme0mK7nlJuDG3Y5cgt0oQC5fMTVX?=
+ =?us-ascii?Q?86EiB0XZPwpSnjV42LpFBmAM0+mUUVDSlONxFt485b3xymQSfGYNlLZriX9s?=
+ =?us-ascii?Q?Ij0+WSGk0sjFOR0W4n0xgRDqxwTiLx3qCHwRbomZdTQs77TollHLNRS719jk?=
+ =?us-ascii?Q?7JdRVgZ21pLixLBUH0OMBjydekixqWT2TIcShnbn+67FzRIGuHp8z3SHHmWV?=
+ =?us-ascii?Q?Ju/5oMVcKD4Us/uDZ7TeBoDPxnydqPHK9SahP1tgsUg0BfiIfyTRxTfqtl7N?=
+ =?us-ascii?Q?IAlE9kcPgseQHkCwYdF0vslubh2YFq4n6VN7qSYA4mBkvJrTKtVhfKNevjYO?=
+ =?us-ascii?Q?EmZbm2xLXD+PLL963j++NJvgOnJBic+HaczRmxOURaJtF4lDEZYPBv9YMMZK?=
+ =?us-ascii?Q?Cx8Ghb1RptWi5Aq4y9A0j+MAWnxedWbp4Bon4OZHQpwIGOK6CyzNjl0OW9Sr?=
+ =?us-ascii?Q?Nf3VIQTn7QAQY3eBuLCvdtTxXknu7gCDmSp1mPjCogx3iFrAr5xnhuochwAg?=
+ =?us-ascii?Q?0sz7cZ3Z25/apiymTyZnOwcoU27BaJBEkTb2g8ohZyrsQd5U3EbNPv5XrUEq?=
+ =?us-ascii?Q?Kl2v6ynNQQC1TfGXoNgTx2fLGMUVIbGmOor68eY9Bb7rQvcIjxfuRewaJoul?=
+ =?us-ascii?Q?73kcc89JqlFyBfZqfFPSJeV0TfxLy5+xcwbxFLTO4Qib3coU9KGXxeirqHlI?=
+ =?us-ascii?Q?fUWEMF2W+0JwWaCkOniSOz/YHwCY2tyFHvzaztHvsLsSzsalTXsFuHnPWl0k?=
+ =?us-ascii?Q?C0Xdx3ZJr4bU9Kt+vXWbczoxKQ2bb/709SbF9ww1EXxxP9pCHMB0qA3UCNCt?=
+ =?us-ascii?Q?yiREVbMmjlfWzsTPiXReClwT6THk07K9EgcitdU6zQbg+YNfcMO0WHLgTst3?=
+ =?us-ascii?Q?u1N2Q/dT4i9Eybm1Ap9MIdLxtXMnOaqmDPRGIFW77i11xtFp+xPvntfZNG+1?=
+ =?us-ascii?Q?/C4RGjOB08/nAHyj6W0tejff3XRDNCmMQmR75j1RGFvQmOnNXrK5cDOMxGmv?=
+ =?us-ascii?Q?KwfjOciiE3wmiPLZX8lftJnd4JpbnaNiMDL5QJr9gq5C+3KydkVyZzCyW64o?=
+ =?us-ascii?Q?KmX0/0pocVztIBMjbeqzFws+YrQMiaMkd3Cjy0np1itfpjqHHg=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 19:33:49.4313
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 19:33:56.4967
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9a857878-8ede-4f19-6889-08dcf7877297
+X-MS-Exchange-CrossTenant-Network-Message-Id: d02c07ab-d94d-41aa-e276-08dcf78776cf
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B073.namprd04.prod.outlook.com
+	BN3PEPF0000B071.namprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4049
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4229
 
-A segmented RMP table allows for improved locality of reference between
-the memory protected by the RMP and the RMP entries themselves.
-
-Add support to detect and initialize a segmented RMP table with multiple
-segments as configured by the system BIOS. While the RMPREAD instruction
-will be used to read an RMP entry in a segmented RMP, initialization and
-debugging capabilities will require the mapping of the segments.
-
-The RMP_CFG MSR indicates if segmented RMP support is enabled and, if
-enabled, the amount of memory that an RMP segment covers. When segmented
-RMP support is enabled, the RMP_BASE MSR points to the start of the RMP
-bookkeeping area, which is 16K in size. The RMP Segment Table (RST) is
-located immediately after the bookkeeping area and is 4K in size. The RST
-contains up to 512 8-byte entries that identify the location of the RMP
-segment and amount of memory mapped by the segment (which must be less
-than or equal to the configured segment size). The physical address that
-is covered by a segment is based on the segment size and the index of the
-segment in the RST. The RMP entry for a physical address is based on the
-offset within the segment.
-
-  For example, if the segment size is 64GB (0x1000000000 or 1 << 36), then
-  physical address 0x9000800000 is RST entry 9 (0x9000800000 >> 36) and
-  RST entry 9 covers physical memory 0x9000000000 to 0x9FFFFFFFFF.
-
-  The RMP entry index within the RMP segment is the physical address
-  AND-ed with the segment mask, 64GB - 1 (0xFFFFFFFFF), and then
-  right-shifted 12 bits or PHYS_PFN(0x9000800000 & 0xFFFFFFFFF), which
-  is 0x800.
-
-CPUID 0x80000025_EBX[9:0] describes the number of RMP segments that can
-be cached by the hardware. Additionally, if CPUID 0x80000025_EBX[10] is
-set, then the number of actual RMP segments defined cannot exceed the
-number of RMP segments that can be cached and can be used as a maximum
-RST index.
+Update the AMD memory encryption documentation to include information on
+the Reverse Map Table (RMP) and the two table formats.
 
 Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
 Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
 ---
- arch/x86/include/asm/cpufeatures.h |   1 +
- arch/x86/include/asm/msr-index.h   |   8 +-
- arch/x86/virt/svm/sev.c            | 251 ++++++++++++++++++++++++++---
- 3 files changed, 236 insertions(+), 24 deletions(-)
+ .../arch/x86/amd-memory-encryption.rst        | 118 ++++++++++++++++++
+ 1 file changed, 118 insertions(+)
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index d7395a55c04f..dd5481ee9c7e 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -449,6 +449,7 @@
- #define X86_FEATURE_SME_COHERENT	(19*32+10) /* AMD hardware-enforced cache coherency */
- #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" AMD SEV-ES full debug state swap support */
- #define X86_FEATURE_RMPREAD		(19*32+21) /* RMPREAD instruction */
-+#define X86_FEATURE_SEGMENTED_RMP	(19*32+23) /* Segmented RMP support */
- #define X86_FEATURE_SVSM		(19*32+28) /* "svsm" SVSM present */
+diff --git a/Documentation/arch/x86/amd-memory-encryption.rst b/Documentation/arch/x86/amd-memory-encryption.rst
+index 6df3264f23b9..bd840df708ea 100644
+--- a/Documentation/arch/x86/amd-memory-encryption.rst
++++ b/Documentation/arch/x86/amd-memory-encryption.rst
+@@ -130,8 +130,126 @@ SNP feature support.
  
- /* AMD-defined Extended Feature 2 EAX, CPUID level 0x80000021 (EAX), word 20 */
-diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-index 3ae84c3b8e6d..3f3e2bc99162 100644
---- a/arch/x86/include/asm/msr-index.h
-+++ b/arch/x86/include/asm/msr-index.h
-@@ -644,6 +644,7 @@
- #define MSR_AMD64_IBS_REG_COUNT_MAX	8 /* includes MSR_AMD64_IBSBRTARGET */
- #define MSR_AMD64_SVM_AVIC_DOORBELL	0xc001011b
- #define MSR_AMD64_VM_PAGE_FLUSH		0xc001011e
-+#define MSR_AMD64_VIRT_SPEC_CTRL	0xc001011f
- #define MSR_AMD64_SEV_ES_GHCB		0xc0010130
- #define MSR_AMD64_SEV			0xc0010131
- #define MSR_AMD64_SEV_ENABLED_BIT	0
-@@ -682,11 +683,12 @@
- #define MSR_AMD64_SNP_SMT_PROT		BIT_ULL(MSR_AMD64_SNP_SMT_PROT_BIT)
- #define MSR_AMD64_SNP_RESV_BIT		18
- #define MSR_AMD64_SNP_RESERVED_MASK	GENMASK_ULL(63, MSR_AMD64_SNP_RESV_BIT)
--
--#define MSR_AMD64_VIRT_SPEC_CTRL	0xc001011f
--
- #define MSR_AMD64_RMP_BASE		0xc0010132
- #define MSR_AMD64_RMP_END		0xc0010133
-+#define MSR_AMD64_RMP_CFG		0xc0010136
-+#define MSR_AMD64_SEG_RMP_ENABLED_BIT	0
-+#define MSR_AMD64_SEG_RMP_ENABLED	BIT_ULL(MSR_AMD64_SEG_RMP_ENABLED_BIT)
-+#define MSR_AMD64_RMP_SEGMENT_SHIFT(x)	(((x) & GENMASK_ULL(13, 8)) >> 8)
+ More details in AMD64 APM[1] Vol 2: 15.34.10 SEV_STATUS MSR
  
- #define MSR_SVSM_CAA			0xc001f000
- 
-diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index 37ff4f98e8d1..2051c527d1e5 100644
---- a/arch/x86/virt/svm/sev.c
-+++ b/arch/x86/virt/svm/sev.c
-@@ -100,6 +100,10 @@ struct rmp_segment_desc {
-  *     a specific portion of memory. There can be up to 512 8-byte entries,
-  *     one pages worth.
-  */
-+#define RST_ENTRY_MAPPED_SIZE(x)	((x) & GENMASK_ULL(19, 0))
-+#define RST_ENTRY_SEGMENT_BASE(x)	((x) & GENMASK_ULL(51, 20))
++Reverse Map Table (RMP)
++=======================
 +
-+#define RMP_SEGMENT_TABLE_SIZE	SZ_4K
- static struct rmp_segment_desc **rmp_segment_table __ro_after_init;
- static unsigned int rst_max_index __ro_after_init = 512;
- 
-@@ -110,6 +114,9 @@ static u64 rmp_segment_coverage_mask;
- #define RST_ENTRY_INDEX(x)	((x) >> rmp_segment_coverage_shift)
- #define RMP_ENTRY_INDEX(x)	((u64)(PHYS_PFN((x) & rmp_segment_coverage_mask)))
- 
-+static u64 rmp_cfg;
-+#define RMP_IS_SEGMENTED(x)	((x) & MSR_AMD64_SEG_RMP_ENABLED)
++The RMP is a structure in system memory that is used to ensure a one-to-one
++mapping between system physical addresses and guest physical addresses. Each
++page of memory that is potentially assignable to guests has one entry within
++the RMP.
 +
- /* Mask to apply to a PFN to get the first PFN of a 2MB page */
- #define PFN_PMD_MASK	GENMASK_ULL(63, PMD_SHIFT - PAGE_SHIFT)
- 
-@@ -201,7 +208,49 @@ static void __init __snp_fixup_e820_tables(u64 pa)
- void __init snp_fixup_e820_tables(void)
- {
- 	__snp_fixup_e820_tables(probed_rmp_base);
--	__snp_fixup_e820_tables(probed_rmp_base + probed_rmp_size);
++The RMP table can be either contiguous in memory or a collection of segments
++in memory.
 +
-+	if (RMP_IS_SEGMENTED(rmp_cfg)) {
-+		u64 pa, *rst, size, mapped_size;
-+		unsigned int i;
++Contiguous RMP
++--------------
 +
-+		pa = probed_rmp_base;
-+		pa += RMPTABLE_CPU_BOOKKEEPING_SZ;
-+		pa += RMP_SEGMENT_TABLE_SIZE;
-+		__snp_fixup_e820_tables(pa);
++Support for this form of the RMP is present when support for SEV-SNP is
++present, which can be determined using the CPUID instruction::
 +
-+		pa -= RMP_SEGMENT_TABLE_SIZE;
-+		rst = early_memremap(pa, RMP_SEGMENT_TABLE_SIZE);
-+		if (!rst)
-+			return;
++	0x8000001f[eax]:
++		Bit[4] indicates support for SEV-SNP
 +
-+		for (i = 0; i < rst_max_index; i++) {
-+			pa = RST_ENTRY_SEGMENT_BASE(rst[i]);
-+			mapped_size = RST_ENTRY_MAPPED_SIZE(rst[i]);
-+			if (!mapped_size)
-+				continue;
++The location of the RMP is identified to the hardware through two MSRs::
 +
-+			__snp_fixup_e820_tables(pa);
++        0xc0010132 (RMP_BASE):
++                System physical address of the first byte of the RMP
 +
-+			/*
-+			 * Mapped size in GB. Mapped size is allowed to exceed
-+			 * the segment coverage size, but gets reduced to the
-+			 * segment coverage size.
-+			 */
-+			mapped_size <<= 30;
-+			if (mapped_size > rmp_segment_coverage_size)
-+				mapped_size = rmp_segment_coverage_size;
++        0xc0010133 (RMP_END):
++                System physical address of the last byte of the RMP
 +
-+			/* Calculate the RMP segment size (16 bytes/page mapped) */
-+			size = PHYS_PFN(mapped_size);
-+			size <<= 4;
++Hardware requires that RMP_BASE and (RPM_END + 1) be 8KB aligned, but SEV
++firmware increases the alignment requirement to require a 1MB alignment.
 +
-+			__snp_fixup_e820_tables(pa + size);
-+		}
++The RMP consists of a 16KB region used for processor bookkeeping followed
++by the RMP entries, which are 16 bytes in size. The size of the RMP
++determines the range of physical memory that the hypervisor can assign to
++SEV-SNP guests. The RMP covers the system physical address from::
 +
-+		early_memunmap(rst, RMP_SEGMENT_TABLE_SIZE);
-+	} else {
-+		__snp_fixup_e820_tables(probed_rmp_base + probed_rmp_size);
-+	}
- }
- 
- static bool __init init_rmptable_bookkeeping(void)
-@@ -307,29 +356,17 @@ static bool __init alloc_rmp_segment_table(void)
- 	return true;
- }
- 
--/*
-- * Do the necessary preparations which are verified by the firmware as
-- * described in the SNP_INIT_EX firmware command description in the SNP
-- * firmware ABI spec.
-- */
--static int __init snp_rmptable_init(void)
-+static bool __init contiguous_rmptable_setup(void)
- {
--	u64 max_rmp_pfn, calc_rmp_sz, rmptable_segment, rmptable_size, rmp_end, val;
--	unsigned int i;
--
--	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
--		return 0;
--
--	if (!amd_iommu_snp_en)
--		goto nosnp;
-+	u64 max_rmp_pfn, calc_rmp_sz, rmptable_segment, rmptable_size, rmp_end;
- 
- 	if (!probed_rmp_size)
--		goto nosnp;
-+		return false;
- 
- 	rmp_end = probed_rmp_base + probed_rmp_size - 1;
- 
- 	/*
--	 * Calculate the amount the memory that must be reserved by the BIOS to
-+	 * Calculate the amount of memory that must be reserved by the BIOS to
- 	 * address the whole RAM, including the bookkeeping area. The RMP itself
- 	 * must also be covered.
- 	 */
-@@ -341,11 +378,11 @@ static int __init snp_rmptable_init(void)
- 	if (calc_rmp_sz > probed_rmp_size) {
- 		pr_err("Memory reserved for the RMP table does not cover full system RAM (expected 0x%llx got 0x%llx)\n",
- 		       calc_rmp_sz, probed_rmp_size);
--		goto nosnp;
-+		return false;
- 	}
- 
- 	if (!alloc_rmp_segment_table())
--		goto nosnp;
-+		return false;
- 
- 	/* Map only the RMP entries */
- 	rmptable_segment = probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ;
-@@ -353,9 +390,127 @@ static int __init snp_rmptable_init(void)
- 
- 	if (!alloc_rmp_segment_desc(rmptable_segment, rmptable_size, 0)) {
- 		free_rmp_segment_table();
--		goto nosnp;
-+		return false;
- 	}
- 
-+	return true;
-+}
++        0 to ((RMP_END + 1 - RMP_BASE - 16KB) / 16B) x 4KB.
 +
-+static bool __init segmented_rmptable_setup(void)
-+{
-+	u64 rst_pa, *rst, pa, ram_pa_end, ram_pa_max;
-+	unsigned int i, max_index;
++The current Linux support relies on BIOS to allocate/reserve the memory for
++the RMP and to set RMP_BASE and RMP_END appropriately. Linux uses the MSR
++values to locate the RMP and determine the size of the RMP. The RMP must
++cover all of system memory in order for Linux to enable SEV-SNP.
 +
-+	if (!probed_rmp_base)
-+		return false;
++Segmented RMP
++-------------
 +
-+	if (!alloc_rmp_segment_table())
-+		return false;
++Segmented RMP support is a new way of representing the layout of an RMP.
++Initial RMP support required the RMP table to be contiguous in memory.
++RMP accesses from a NUMA node on which the RMP doesn't reside
++can take longer than accesses from a NUMA node on which the RMP resides.
++Segmented RMP support allows the RMP entries to be located on the same
++node as the memory the RMP is covering, potentially reducing latency
++associated with accessing an RMP entry associated with the memory. Each
++RMP segment covers a specific range of system physical addresses.
 +
-+	/* Map the RMP Segment Table */
-+	rst_pa = probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ;
-+	rst = memremap(rst_pa, RMP_SEGMENT_TABLE_SIZE, MEMREMAP_WB);
-+	if (!rst) {
-+		pr_err("Failed to map RMP segment table addr %#llx\n", rst_pa);
-+		goto e_free;
-+	}
++Support for this form of the RMP can be determined using the CPUID
++instruction::
 +
-+	/* Get the address for the end of system RAM */
-+	ram_pa_max = max_pfn << PAGE_SHIFT;
++        0x8000001f[eax]:
++                Bit[23] indicates support for segmented RMP
 +
-+	/* Process each RMP segment */
-+	max_index = 0;
-+	ram_pa_end = 0;
-+	for (i = 0; i < rst_max_index; i++) {
-+		u64 rmp_segment, rmp_size, mapped_size;
++If supported, segmented RMP attributes can be found using the CPUID
++instruction::
 +
-+		mapped_size = RST_ENTRY_MAPPED_SIZE(rst[i]);
-+		if (!mapped_size)
-+			continue;
++        0x80000025[eax]:
++                Bits[5:0]  minimum supported RMP segment size
++                Bits[11:6] maximum supported RMP segment size
 +
-+		max_index = i;
++        0x80000025[ebx]:
++                Bits[9:0]  number of cacheable RMP segment definitions
++                Bit[10]    indicates if the number of cacheable RMP segments
++                           is a hard limit
 +
-+		/*
-+		 * Mapped size in GB. Mapped size is allowed to exceed the
-+		 * segment coverage size, but gets reduced to the segment
-+		 * coverage size.
-+		 */
-+		mapped_size <<= 30;
-+		if (mapped_size > rmp_segment_coverage_size) {
-+			pr_info("RMP segment %u mapped size (0x%llx) reduced to 0x%llx\n",
-+				i, mapped_size, rmp_segment_coverage_size);
-+			mapped_size = rmp_segment_coverage_size;
-+		}
++To enable a segmented RMP, a new MSR is available::
 +
-+		rmp_segment = RST_ENTRY_SEGMENT_BASE(rst[i]);
++        0xc0010136 (RMP_CFG):
++                Bit[0]     indicates if segmented RMP is enabled
++                Bits[13:8] contains the size of memory covered by an RMP
++                           segment (expressed as a power of 2)
 +
-+		/* Calculate the RMP segment size (16 bytes/page mapped) */
-+		rmp_size = PHYS_PFN(mapped_size);
-+		rmp_size <<= 4;
++The RMP segment size defined in the RMP_CFG MSR applies to all segments
++of the RMP. Therefore each RMP segment covers a specific range of system
++physical addresses. For example, if the RMP_CFG MSR value is 0x2401, then
++the RMP segment coverage value is 0x24 => 36, meaning the size of memory
++covered by an RMP segment is 64GB (1 << 36). So the first RMP segment
++covers physical addresses from 0 to 0xF_FFFF_FFFF, the second RMP segment
++covers physical addresses from 0x10_0000_0000 to 0x1F_FFFF_FFFF, etc.
 +
-+		pa = (u64)i << rmp_segment_coverage_shift;
++When a segmented RMP is enabled, RMP_BASE points to the RMP bookkeeping
++area as it does today (16K in size). However, instead of RMP entries
++beginning immediately after the bookkeeping area, there is a 4K RMP
++segment table (RST). Each entry in the RST is 8-bytes in size and represents
++an RMP segment::
 +
-+		/*
-+		 * Some segments may be for MMIO mapped above system RAM. These
-+		 * segments are used for Trusted I/O.
-+		 */
-+		if (pa < ram_pa_max)
-+			ram_pa_end = pa + mapped_size;
++        Bits[19:0]  mapped size (in GB)
++                    The mapped size can be less than the defined segment size.
++                    A value of zero, indicates that no RMP exists for the range
++                    of system physical addresses associated with this segment.
++        Bits[51:20] segment physical address
++                    This address is left shift 20-bits (or just masked when
++                    read) to form the physical address of the segment (1MB
++                    alignment).
 +
-+		if (!alloc_rmp_segment_desc(rmp_segment, rmp_size, pa))
-+			goto e_unmap;
++The RST can hold 512 segment entries but can be limited in size to the number
++of cacheable RMP segments (CPUID 0x80000025_EBX[9:0]) if the number of cacheable
++RMP segments is a hard limit (CPUID 0x80000025_EBX[10]).
 +
-+		pr_info("RMP segment %u physical address [%#llx - %#llx] covering [%#llx - %#llx]\n",
-+			i, rmp_segment, rmp_segment + rmp_size - 1, pa, pa + mapped_size - 1);
-+	}
++The current Linux support relies on BIOS to allocate/reserve the memory for
++the segmented RMP (the bookkeeping area, RST, and all segments), build the RST
++and to set RMP_BASE, RMP_END, and RMP_CFG appropriately. Linux uses the MSR
++values to locate the RMP and determine the size and location of the RMP
++segments. The RMP must cover all of system memory in order for Linux to enable
++SEV-SNP.
 +
-+	if (ram_pa_max > ram_pa_end) {
-+		pr_err("Segmented RMP does not cover full system RAM (expected 0x%llx got 0x%llx)\n",
-+		       ram_pa_max, ram_pa_end);
-+		goto e_unmap;
-+	}
++More details in the AMD64 APM Vol 2, section "15.36.3 Reverse Map Table",
++docID: 24593.
 +
-+	/* Adjust the maximum index based on the found segments */
-+	rst_max_index = max_index + 1;
+ Secure VM Service Module (SVSM)
+ ===============================
 +
-+	memunmap(rst);
-+
-+	return true;
-+
-+e_unmap:
-+	memunmap(rst);
-+
-+e_free:
-+	free_rmp_segment_table();
-+
-+	return false;
-+}
-+
-+static bool __init rmptable_setup(void)
-+{
-+	return RMP_IS_SEGMENTED(rmp_cfg) ? segmented_rmptable_setup()
-+					 : contiguous_rmptable_setup();
-+}
-+
-+/*
-+ * Do the necessary preparations which are verified by the firmware as
-+ * described in the SNP_INIT_EX firmware command description in the SNP
-+ * firmware ABI spec.
-+ */
-+static int __init snp_rmptable_init(void)
-+{
-+	unsigned int i;
-+	u64 val;
-+
-+	if (!cc_platform_has(CC_ATTR_HOST_SEV_SNP))
-+		return 0;
-+
-+	if (!amd_iommu_snp_en)
-+		goto nosnp;
-+
-+	if (!rmptable_setup())
-+		goto nosnp;
-+
- 	/*
- 	 * Check if SEV-SNP is already enabled, this can happen in case of
- 	 * kexec boot.
-@@ -423,7 +578,7 @@ static void set_rmp_segment_info(unsigned int segment_shift)
- 
- #define RMP_ADDR_MASK GENMASK_ULL(51, 13)
- 
--bool snp_probe_rmptable_info(void)
-+static bool probe_contiguous_rmptable_info(void)
- {
- 	u64 rmp_sz, rmp_base, rmp_end;
- 
-@@ -456,6 +611,60 @@ bool snp_probe_rmptable_info(void)
- 	return true;
- }
- 
-+static bool probe_segmented_rmptable_info(void)
-+{
-+	unsigned int eax, ebx, segment_shift, segment_shift_min, segment_shift_max;
-+	u64 rmp_base, rmp_end;
-+
-+	rdmsrl(MSR_AMD64_RMP_BASE, rmp_base);
-+	rdmsrl(MSR_AMD64_RMP_END, rmp_end);
-+
-+	if (!(rmp_base & RMP_ADDR_MASK)) {
-+		pr_err("Memory for the RMP table has not been reserved by BIOS\n");
-+		return false;
-+	}
-+
-+	WARN_ONCE(rmp_end & RMP_ADDR_MASK,
-+		  "Segmented RMP enabled but RMP_END MSR is non-zero\n");
-+
-+	/* Obtain the min and max supported RMP segment size */
-+	eax = cpuid_eax(0x80000025);
-+	segment_shift_min = eax & GENMASK(5, 0);
-+	segment_shift_max = (eax & GENMASK(11, 6)) >> 6;
-+
-+	/* Verify the segment size is within the supported limits */
-+	segment_shift = MSR_AMD64_RMP_SEGMENT_SHIFT(rmp_cfg);
-+	if (segment_shift > segment_shift_max || segment_shift < segment_shift_min) {
-+		pr_err("RMP segment size (%u) is not within advertised bounds (min=%u, max=%u)\n",
-+		       segment_shift, segment_shift_min, segment_shift_max);
-+		return false;
-+	}
-+
-+	/* Override the max supported RST index if a hardware limit exists */
-+	ebx = cpuid_ebx(0x80000025);
-+	if (ebx & BIT(10))
-+		rst_max_index = ebx & GENMASK(9, 0);
-+
-+	set_rmp_segment_info(segment_shift);
-+
-+	probed_rmp_base = rmp_base;
-+	probed_rmp_size = 0;
-+
-+	pr_info("Segmented RMP base table physical range [0x%016llx - 0x%016llx]\n",
-+		rmp_base, rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ + RMP_SEGMENT_TABLE_SIZE);
-+
-+	return true;
-+}
-+
-+bool snp_probe_rmptable_info(void)
-+{
-+	if (cpu_feature_enabled(X86_FEATURE_SEGMENTED_RMP))
-+		rdmsrl(MSR_AMD64_RMP_CFG, rmp_cfg);
-+
-+	return RMP_IS_SEGMENTED(rmp_cfg) ? probe_segmented_rmptable_info()
-+					 : probe_contiguous_rmptable_info();
-+}
-+
- static struct rmpentry_raw *get_raw_rmpentry(u64 pfn)
- {
- 	struct rmp_segment_desc *desc;
+ SNP provides a feature called Virtual Machine Privilege Levels (VMPL) which
+ defines four privilege levels at which guest software can run. The most
+ privileged level is 0 and numerically higher numbers have lesser privileges.
 -- 
 2.46.2
 
