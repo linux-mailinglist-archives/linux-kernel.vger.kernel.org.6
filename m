@@ -1,227 +1,134 @@
-Return-Path: <linux-kernel+bounces-384405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFC0C9B29B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:05:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15ED9B29BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7170B1F22D31
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:05:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45C32B2108E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:05:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17651D95B0;
-	Mon, 28 Oct 2024 07:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="362iNxE7"
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2047.outbound.protection.outlook.com [40.107.100.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E814F1DC06D;
+	Mon, 28 Oct 2024 07:57:37 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9230A198E80;
-	Mon, 28 Oct 2024 07:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102212; cv=fail; b=TuvlKI6T6n+aOEMuRC6KjHYmdCueM3ZxNiapmMPQPKXRRC1lfg+BZK8vBK5TpxLrMJoFf6tqu9Y0F/zjzDXA3RRlAnDeTip4ylZr51lT9JPpEqYy44eGXBo1A6wzRm3RXSauzc9FVYY4Yr0SnvISTr8ECRNjwcPysNOp6lfeW60=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102212; c=relaxed/simple;
-	bh=b0HW307QgDWip3m6eo+jikB6DwFdsVGXFAj6HTHujoE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ma7eDZtsT0dt9vzAXRdCQBLVoTlkHtYhG3ttvMXx5c0xqLlS/yYlUn4Q/Vvi9qvothClQA4ANYyuU++aYczGOgBPGcegytme9FYiPf6pEn3o4cL9z/KrH9Mpiol/IYRFFraMV5S3X2JI7dht5Os8Iia7KzgI8sgcKGzRXvVxpM8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=362iNxE7; arc=fail smtp.client-ip=40.107.100.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=k2NX+vEzAvrgNIy+aUIh8e1as5/fzgbK+QzoG8CJ3nvNh35UD4lcfNcVUxu9x7OLbTOEuxubK12fNKA4vM9WVSXihbe9do5K8vT49APyfwlwEMfp79kuvV0O/at+mcslSzVwjcdV6ds83nNcXIQwyw8cpK7hy+mSgwUjJl3MZ+J2G9AoOGBwczHic2NA6955mlb0xkwT309/UdcZye6MKzYIbdi6CRbSnKoINiZeQSWvhT1mZvLaSClyFkbOX4NvXgB5abtBLzSUwDuMhjjO1mDrz911WrkMgxsLXV5B0wk7NGwL43WvSepMTUjAoDUkSAcpodgiXA4QNh8XvmHDWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d45GKDiuYPQr++syHXSZZukAGgOOWGJq4iC3tAN1WI0=;
- b=VXXJsfTmMshsRxiHgY1Q8yI5RxYZBfrA1g+XYK8Lx+mNLHy/kBqXiQGeV5VuqXxVbnZ/6dqeZe7AyzSDL1t4HSuY/ho51zh6aGWwY2NPr4An7EEcWh95UAPRlEOyQc8xzP2TkFk5lU57bv9qBIqgsz/RLmrRU6l26OKZ6ZLtRVrdcU2GXDy+RPkWnpzOV9c3bv8cCVSlLQcOf/FraRg+FFjKZgdfkTt9nGyEQgjXjNuQyHEqtjEo/3kxyrx83srb3LJDDGs8iRrNCny2u0almey+B5hSIOQ9umjTt8jswHJe8EGHlYv1las6B33CfSAZe+WI0SarLxHqR/PX+0zDJQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d45GKDiuYPQr++syHXSZZukAGgOOWGJq4iC3tAN1WI0=;
- b=362iNxE7fv8wjUD4LO+Qn+NGeGBvwLF5XnWAOEQf+zUl6gQ8QadAW2/3Kepwmq8jc46pV27AzLmou8Vqtl3Y8T6HEFZGoEPY2obPrBxAFp/TxD3wP/lDxor9QXWrwO058HeNbUKMMhAgPd8uRjDVlZFoHOsLOGO6wOCqw365pgA=
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
- by CY8PR12MB7172.namprd12.prod.outlook.com (2603:10b6:930:5b::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Mon, 28 Oct
- 2024 07:56:47 +0000
-Received: from CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
- ([fe80::7fa2:65b3:1c73:cdbf%4]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
- 07:56:47 +0000
-From: "Yuan, Perry" <Perry.Yuan@amd.com>
-To: "Limonciello, Mario" <Mario.Limonciello@amd.com>, Borislav Petkov
-	<bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	=?iso-8859-1?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
-CC: "x86@kernel.org" <x86@kernel.org>, "Shenoy, Gautham Ranjal"
-	<gautham.shenoy@amd.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "platform-driver-x86@vger.kernel.org"
-	<platform-driver-x86@vger.kernel.org>, "S-k, Shyam-sundar"
-	<Shyam-sundar.S-k@amd.com>
-Subject: RE: [PATCH v5 11/13] cpufreq/amd-pstate: Disable preferred cores on
- designs with workload classification
-Thread-Topic: [PATCH v5 11/13] cpufreq/amd-pstate: Disable preferred cores on
- designs with workload classification
-Thread-Index: AQHbKN2WK53nmrm34Eejxnz83bfon7Kby3OA
-Date: Mon, 28 Oct 2024 07:56:47 +0000
-Message-ID:
- <CYYPR12MB86550A940AFAA3FE846D7CCE9C4A2@CYYPR12MB8655.namprd12.prod.outlook.com>
-References: <20241028020251.8085-1-mario.limonciello@amd.com>
- <20241028020251.8085-12-mario.limonciello@amd.com>
-In-Reply-To: <20241028020251.8085-12-mario.limonciello@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=257f7249-84a5-428e-ba0c-b84712af418a;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
- Internal Distribution
- Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-10-28T07:54:18Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|CY8PR12MB7172:EE_
-x-ms-office365-filtering-correlation-id: 4b8ec204-5a64-4923-094a-08dcf72612ed
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?44riqgh7VfFYSyN4RqIHpDRFXIO877CYHdCpxEbIGDJUTuCVbjDdnvH6NP?=
- =?iso-8859-1?Q?P1lqHsFXaxtIjbGbcNMzgCIo/eS3WMYmgU68Xw8dVkoUXT44kkXmwhI096?=
- =?iso-8859-1?Q?ksI35+j2E4ZLfM/muFhfr2NgIkP/9JFTuhf5EuIQE4Wl2Dq4N5Y2Hizlh0?=
- =?iso-8859-1?Q?tFIPceOTN03nKyE3sZRBxcI4hY+N6IXZYu2H2BuFb9qReFYadsc/rdCy61?=
- =?iso-8859-1?Q?bii35VIB7RVMVrA90qWrNPTWyk/Xdo9fBLtEehFvBCPiKu6cz0QvUkBt0P?=
- =?iso-8859-1?Q?qEq6O2nDzSwYWLzbJLYwIB/plBtUsdcOXXAh7n7MwwnR8VIxop7kKfrK9N?=
- =?iso-8859-1?Q?I6J13md5l7QZQli1G9jZDTXkhI0B3aGuODAyp1qW98EBcH1fDTLM+z+/fC?=
- =?iso-8859-1?Q?yzZ7wTL7m0KmdTPSqoLddnZDD4PCxCmftIwKeBC63tpwwx1a2HXNM4UUjH?=
- =?iso-8859-1?Q?XctJBoQuj3/0FWutdygckipJsZNjACqoX9rA4N6K7PkxGnOj5OEloDAqiS?=
- =?iso-8859-1?Q?fKWtwuo+i+SuoXyACdWQCGR5OHQ4VBK5SIUBNd1H15Q69Jty91NaQYMeWF?=
- =?iso-8859-1?Q?zceWBEO+aXiaRmwGV84Jd6FxXPS7SebQ5IkXguYnWrocXc5n/sUhy+tb/6?=
- =?iso-8859-1?Q?5Xbf2Hr2FHviVWyK9ENRY7gr5R2skonzGucDLkIwylnO2mSKIH5ux1EoV5?=
- =?iso-8859-1?Q?MPZjUhj1+hBr1gc2tO8dAdijKxUo4OQrHvx3Ff5D0nEuLixs/jTXSJJ5J3?=
- =?iso-8859-1?Q?YOgBFr7YlC8Pn3hwWQPnIBPcMB/hOUMJU8KWizcJk8h+XGTB71pB55b31D?=
- =?iso-8859-1?Q?KgiKSA6EirsZY+rvkC+7/qw8RWB705kIdFrsP025t8PPwYj/lGym6PNmyH?=
- =?iso-8859-1?Q?O6bQQwtNa4x27JeKcYQHvz8nN/R6uf+e6rkAz20T7hgfMLb/FxHFuDO/6r?=
- =?iso-8859-1?Q?z4kdjp1ildVsV3PCITAm1Kh2I5o9ZapvvqKPF1oEp0ttVqH1EXdHsgmjxt?=
- =?iso-8859-1?Q?WMqybH0JcsuloOocqy2BW1xxNucs/OgdkLBlgmI/k7DYa5oH9dELDH8C8D?=
- =?iso-8859-1?Q?ggMrEiNRzGoBbAvhJtctKERp8K8UudCOcg3rZf54oYL5nuC0U2G+Gy6NUk?=
- =?iso-8859-1?Q?7YQAN24xzJ460QKBwWaYt8kVk02Bc/WrCMjvZGagW+UizJZJlIJr+VtfKw?=
- =?iso-8859-1?Q?hvvER6RrwxIIdc3MXk/c+GsRg/AAnKN82hpvpV18Su/jKiH/1qD5mKL4zi?=
- =?iso-8859-1?Q?v7xefiOkE+su+KMV5zGsKLT3bvEYBdEhndCG8dG+yTYE+Sidy52dgi+VQC?=
- =?iso-8859-1?Q?kNySzhg3cDO5eRnRZLtmiyTm9B628yhA6IJyr5dEAzP92cLGSScnmBws5C?=
- =?iso-8859-1?Q?2+QlHBFCA2/F/IjMvxY7p4QUB2AtoKJtKWBU9VpCMARLdQxhModVE=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?8PwZ41cs3Uw5KH60KJGMEfvX0T4u4yzd1AI12tj7bv7mKtUhx6tC8bK7Kj?=
- =?iso-8859-1?Q?dKgYZKwi2EnSJKwXez9ZAMLb6FS1kKB1G9iQ/xeKM1/aIzCG9asE5dgKEy?=
- =?iso-8859-1?Q?spRUAehCyLr2Ag8YIK7Gct01OAPy+dj2Yt/CLDNm5AvF7op7MJIJA/h/01?=
- =?iso-8859-1?Q?81yQRR7NhSiKI/5s5nvJW/0wCDnHaPfFNiJpcauAW9/ZYzsLl4sMKRoSBH?=
- =?iso-8859-1?Q?wTwr/0z2uIeD4cmoYwD74bsR0wc9MIA3s7aVIITDst4IQqISMFIQZM2PKs?=
- =?iso-8859-1?Q?wLejzNE0UORh3WFefsm6NaSCt7CingM9vIbRWTpoRvW/9DINE8WMJDh+gv?=
- =?iso-8859-1?Q?wgeJwDbiIsh+5Sk+pdUpjwRLcasWFxBcrfR0kQhiO6f2inw9vR2SatmQVj?=
- =?iso-8859-1?Q?0tqN0ws7ggIwJJ3PIQnCQCDwqlZtTLBRXyQAzcrLd+E65fdGxn3WMDG8wV?=
- =?iso-8859-1?Q?8bHAloMu7WHSk3eWQH7K53jB/PzZn+oqNZy/BvphEAb9Tm5UwYTozx7X78?=
- =?iso-8859-1?Q?H01/Os9Zt2EQF+/2V6dMjtoFAjMP/ynqakF+yL//nMVoelievumKV3AdXS?=
- =?iso-8859-1?Q?+qHITXLektQ57qMPZVGMGp6VBx41hc5f6qnIzJZTQJJ6YOVJi7UlfbwA0q?=
- =?iso-8859-1?Q?pSRR60uEDZxozSng+H/tE3W5/T1NKNkBqQ9oMkXd5kMKbcH0OCU4n1Zd7i?=
- =?iso-8859-1?Q?fC0rHYncrkonloXq+vD/zlC/K6qk3kVDQCRvw/UXG/YNytfnVbEPxQgWrG?=
- =?iso-8859-1?Q?pfTa2QC5dJAOwkQR7dvbZuECbVlLj5dNBu8iMORi+uDQvGGwpUD8t9RHqd?=
- =?iso-8859-1?Q?P5VA7X9JnY9nM0ZVOZIUHYe71VT74DkvIuZzB26IlTyfqbSQoboRpL+H3j?=
- =?iso-8859-1?Q?BCy2+tKEBxrXRNjp+Ny79NdM6lplWImqQ9bprjJ8oV6rEwdnr40VcFb2bj?=
- =?iso-8859-1?Q?GMOYbca958sF+mfEgPMXfE/bEJ6g5TuTf4i4x3mqJNHuGLbKjO2W+By/Zq?=
- =?iso-8859-1?Q?JMs1XDrAYcggG9+H5afBL96LRNd/l+/AhEeBcrxolucbObaVBVG+/yF0cE?=
- =?iso-8859-1?Q?5KIYC+OxGwyMV55fR1RhllcciqsFPr1PdAGU4HX8ng6gIFGA3QOvLfyzCh?=
- =?iso-8859-1?Q?NLZJb16vmjZ8eZ8+DRUAULaDhmgVvZi5HLyhSLMXcVIOk0pPzQ1z3KbJNH?=
- =?iso-8859-1?Q?k3Ydkzr+6+ULtyfHSFlRSgbaZ4quLY64gttjwEZUuHbioGlOULFLuVLvKn?=
- =?iso-8859-1?Q?VMIMWu96gT8Zw3XqvbbiF2GYiJMDQqOvZgb6PIrIwH/KfY2YF/CuhqWzHk?=
- =?iso-8859-1?Q?NsAlig76Ihe/TAhLjNjJtiqzcO5F8NuIokFMwxN/w/dgOsOqrf6KTdkXa0?=
- =?iso-8859-1?Q?04qGWSLcc29gqydMGIHMFGBTbzaJjV07kX6yOB3zY+4Ahb9473Mxc+xSZV?=
- =?iso-8859-1?Q?IxKF+zWI2AfX/9pDwzvMkA8FKZqmoIahOPxOsyOFBW7ChvvYXxnHDeikCC?=
- =?iso-8859-1?Q?T1e1VjYlCzE9Lc4d9a4niXW5eJtOP+CfAi2ZTQW5SfC0tV93QK0HQUN6H3?=
- =?iso-8859-1?Q?dH4+vzrs7QVpjjgpT4m6YdJrm04FR8MZPvkxJrV81Twd2buzsVJLspNM3K?=
- =?iso-8859-1?Q?atHIbIjUgHMVI=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6F41917FA;
+	Mon, 28 Oct 2024 07:57:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730102257; cv=none; b=tV5A94/6STwpeAicyh1WbLfebJpwh44Td9+APGm4U17Z34BgD8mrmfTzIIImCEkoND2Kld/r+doiGQSoRC3B/r9gjne4BOVsoP6EA6KLs8cMiZdEL9NKPan5udcf0rfxVtyIE2KUz3Z8w1i3kYeRRiB2uHUG3hjfm8vU7F8IaWQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730102257; c=relaxed/simple;
+	bh=/q5iLojDhXm4Z/auFDre90JZh0Xi2xIkUxpp228HJWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YDWCqyV9t3sYOWAfkur4nWP6RvpJaWH+Kl9TW424fxNygmblaNT/vvkKr385+gfb7BRY7Xw5Kkk0AJxCkV4e3Qy1lbLcOp5T2Je8iOodx6cY6+J0UCLBeHE7Rzvqe7txNWQ5z8kSG/oVb3P4pqwqyUJr/NbixIcmBOVGrIlCfTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7706C4CEC3;
+	Mon, 28 Oct 2024 07:57:33 +0000 (UTC)
+Message-ID: <6b8004e2-57df-4760-a59d-77a712e9ca4d@xs4all.nl>
+Date: Mon, 28 Oct 2024 08:57:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4b8ec204-5a64-4923-094a-08dcf72612ed
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Oct 2024 07:56:47.8061
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Ns21kJgaEMJJKdHcev+uFwiJV8JooK1LJOUnj5+fcxH0Hmy4jJ14y9RYQmQsYrHyL1QGC4y8N6zQ+BLURGiUgg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7172
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v3 0/4] Add video encoder ROI ctrls
+To: Ming Qian <ming.qian@nxp.com>, mchehab@kernel.org
+Cc: yunkec@google.com, nicolas@ndufresne.ca, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+ xiahong.bao@nxp.com, ming.zhou@nxp.com, eagle.zhou@nxp.com,
+ tao.jiang_2@nxp.com, ming.qian@oss.nxp.com, imx@lists.linux.dev,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20241022084040.3390878-1-ming.qian@nxp.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20241022084040.3390878-1-ming.qian@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[AMD Official Use Only - AMD Internal Distribution Only]
+On 22/10/2024 10:40, Ming Qian wrote:
+> Hi,
+> 
+> This patch set implements region of interest (ROI) ctrls for video
+> encoder.
+> 
+> One video encoder IP may support the following two ROI configurations or
+> one of them:
+>     1. configure ROI as a rectangular region, and set a delta QP parameter.
+>     2. configure ROI as a rectangular region, and set a priority parameter.
+>     3. configure ROI as a QP map as an array. Each value represents the delta QP
+> of a block in raster scan order. The block size is determined by
+> the specific IP.
+>     4. configure ROI as a QP map as an array. Each value represents the absolute QP
+> of a block in raster scan order. The block size is determined by
+> the specific IP.
+> 
+> To achieve this, I made the following change:
+>     1. I reuse the type V4L2_CTRL_TYPE_RECT that is defined in the UVC ROI patchset
+>     2. Define a ctrl V4L2_CID_MPEG_VIDEO_ROI_MODE to choose ROI configuration
+>     3. Define some ctrl to configure ROI
+>     4. Define a ctrl V4L2_CID_MPEG_VIDEO_ROI_BLOCK_SIZE to query block size
+> 
+> I referred the patchset "Implement UVC v1.5 ROI" (https://lwn.net/Articles/953532/)
+> and pick some patches from it.
 
-> -----Original Message-----
-> From: Limonciello, Mario <Mario.Limonciello@amd.com>
-> Sent: Monday, October 28, 2024 10:03 AM
-> To: Borislav Petkov <bp@alien8.de>; Hans de Goede <hdegoede@redhat.com>;
-> Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-> Cc: x86@kernel.org; Shenoy, Gautham Ranjal <gautham.shenoy@amd.com>;
-> Limonciello, Mario <Mario.Limonciello@amd.com>; Yuan, Perry
-> <Perry.Yuan@amd.com>; linux-kernel@vger.kernel.org; linux-doc@vger.kernel=
-.org;
-> linux-pm@vger.kernel.org; platform-driver-x86@vger.kernel.org; S-k, Shyam=
--
-> sundar <Shyam-sundar.S-k@amd.com>
-> Subject: [PATCH v5 11/13] cpufreq/amd-pstate: Disable preferred cores on =
-designs
-> with workload classification
->
-> On designs that have workload classification, it's preferred that the amd=
--hfi driver is
-> used to provide hints to the scheduler of which cores to use instead of t=
-he amd-
-> pstate driver.
->
-> Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/cpufreq/amd-pstate.c | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c =
-index
-> 32ddbf37a9f0a..c60cc84866982 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -780,6 +780,12 @@ static void amd_pstate_init_prefcore(struct amd_cpud=
-ata
-> *cpudata)
->       /* user disabled or not detected */
->       if (!amd_pstate_prefcore)
->               return;
-> +     /* should use amd-hfi instead */
-> +     if (boot_cpu_has(X86_FEATURE_AMD_WORKLOAD_CLASS) &&
-> +         IS_ENABLED(CONFIG_AMD_HFI)) {
-> +             amd_pstate_prefcore =3D false;
-> +             return;
-> +     }
->
->       cpudata->hw_prefcore =3D true;
->
-> --
-> 2.43.0
+Please note that since this introduces the new TYPE_RECT and WHICH_MIN/MAX flags,
+you also need to update v4l-utils.
 
-LGTM, the legacy prefer core need to be disabled when HFI loaded.
+This was done last year:
 
-Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+https://lore.kernel.org/linux-media/20230817072537.2837504-1-yunkec@google.com/
+
+Can you pick this up and post a v2 for these v4l-utils changes? Note that I had some
+comments at the time, so please fix those before posting v2.
+
+Regards,
+
+	Hans
+
+> 
+> changelog:
+> 
+> v3
+> - Drop the type V4L2_CTRL_TYPE_REGION
+> - Split the compound control into 2 ctrls
+> - Define 4 ROI mode
+> 
+> v2
+> - export symbol of v4l2_ctrl_type_op_minimum
+> - export symbol of v4l2_ctrl_type_op_maximum
+> 
+> Hans Verkuil (1):
+>   media: v4l2-ctrls: add support for V4L2_CTRL_WHICH_MIN/MAX_VAL
+> 
+> Ming Qian (1):
+>   media: v4l2-ctrls: Add video encoder ROI ctrls
+> 
+> Yunke Cao (2):
+>   media: v4l2_ctrl: Add V4L2_CTRL_TYPE_RECT
+>   media: vivid: Add an rectangle control
+> 
+>  .../media/v4l/ext-ctrls-codec.rst             |  95 ++++++++++
+>  .../media/v4l/vidioc-g-ext-ctrls.rst          |  26 ++-
+>  .../media/v4l/vidioc-queryctrl.rst            |  14 ++
+>  .../media/videodev2.h.rst.exceptions          |   4 +
+>  drivers/media/i2c/imx214.c                    |   4 +-
+>  .../media/platform/qcom/venus/venc_ctrls.c    |   9 +-
+>  .../media/test-drivers/vivid/vivid-ctrls.c    |  34 ++++
+>  drivers/media/v4l2-core/v4l2-ctrls-api.c      |  54 ++++--
+>  drivers/media/v4l2-core/v4l2-ctrls-core.c     | 169 +++++++++++++++---
+>  drivers/media/v4l2-core/v4l2-ctrls-defs.c     |  46 +++++
+>  drivers/media/v4l2-core/v4l2-ioctl.c          |   4 +-
+>  include/media/v4l2-ctrls.h                    |  62 ++++++-
+>  include/uapi/linux/v4l2-controls.h            |  16 ++
+>  include/uapi/linux/videodev2.h                |   5 +
+>  14 files changed, 493 insertions(+), 49 deletions(-)
+> 
+
 
