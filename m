@@ -1,127 +1,103 @@
-Return-Path: <linux-kernel+bounces-385321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 795919B3594
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:00:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBB899B358D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:59:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC73282F45
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 806051F22327
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:59:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0BBD1DED73;
-	Mon, 28 Oct 2024 15:59:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC7C1DE894;
+	Mon, 28 Oct 2024 15:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SYGe6Fym"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="NMwJ3HrS";
+	dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b="seWpQ1BR"
+Received: from gofer.mess.org (gofer.mess.org [88.97.38.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0351DE3D1;
-	Mon, 28 Oct 2024 15:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE421D9324;
+	Mon, 28 Oct 2024 15:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=88.97.38.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730131190; cv=none; b=eXZAYBasr9wMIuJnyF72rxjtUgh7HJiHGeflF2/1mUWvVrusx9YRE2uJBYicyoWVijH22sOYkDLxUzw12i76EAqO+8eh9U83wSbJ2p8kehU4u14iuHSH0UOgan/r44MXn7CrqHLodx9NExLcwfXlHzh6KQ8xhHE1e0fn1HW4eFY=
+	t=1730131181; cv=none; b=TX5p8BLt4PZifqJ4hhG6Jof7m49GmT38i+7JUz5YLZuH7iQPBkbOxWx2DxYMNmJReUkCdAsOCXPUEh/mVya/RJ5X4t57ivZUUXBI2WqIdS0UY6xqaYjWe11OGyZYGOqhe6sE0GfWRlf6Pl1/N+RbBtAkGn2uciFaoqJkQW3rl7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730131190; c=relaxed/simple;
-	bh=M0le9V9Kdnc+SoqVOHgbafA8bV44ev7rfgdQq7f2H2o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uvmp2HTDWTL3lghSihsA34cEwCO/LwYkGzlJhS9vvBOXlBzkn2kygWmRHEEwMcP6cK+sDpnu8zmAu4GviyH0tcs0m39U9YSxmlbUI/C1gIqZKuTfITNDfSpJuGPjYsQJJi4nzDTVQtw4JoBesgI2TquPqt5Ot7GJDR7w5xNAa/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SYGe6Fym; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730131188; x=1761667188;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=M0le9V9Kdnc+SoqVOHgbafA8bV44ev7rfgdQq7f2H2o=;
-  b=SYGe6FymWEYf0B/JlHLFHItK7+pdPGR8x+75GsTH8nrA1cRdxQ4nJws1
-   CAIh98ooo75Uul53B41Wkswq8oYK+r0SIikvRRnmuiqHFY5tu8z8ktTok
-   +B5edx/EDgVTVMF5lHOMtztXLhM0gyEjVnjgdaDZl/D5aVvbB/uqhAql7
-   abiqCrmybLxPWQ5QWfz90Uh3DJe5ollGAx2xZ9c0VsM/R9baBXRo5ADHB
-   QTWNjLPt/ju9RNPFhkUJF0Sn8qMjPO/TqvE2JqpTaVRk4NALc6vwJnMI1
-   tKJPH+pvlh3PMRFGyZ9k04LpNtxDF4G+0wztHwUUq5N5ZK0PpiNOZkCiU
-   Q==;
-X-CSE-ConnectionGUID: CVYrT8BIRXyBecNTo2bfDQ==
-X-CSE-MsgGUID: 1EtnO4bwS/mWsBV6wUnalA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29506433"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29506433"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 08:59:33 -0700
-X-CSE-ConnectionGUID: iQc8wkRRTKWL3fpaCf50SQ==
-X-CSE-MsgGUID: ov8Po5UBSmyDzG3bh9zQUw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="112480471"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 08:59:28 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t5S9M-000000087nQ-3TE6;
-	Mon, 28 Oct 2024 17:59:24 +0200
-Date: Mon, 28 Oct 2024 17:59:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Aren <aren@peacevolution.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] iio: light: stk3310: log error if reading the
- chip id fails
-Message-ID: <Zx-03Era_8ulHjDb@smile.fi.intel.com>
-References: <20241028142000.1058149-1-aren@peacevolution.org>
- <20241028142000.1058149-6-aren@peacevolution.org>
- <Zx-jj8FEldW6sG55@smile.fi.intel.com>
- <xcavh66uxpl2orehtlzsy4g4udr3p2yqsq5pyhmxdqdmnegsvq@jpomr2uuwspz>
+	s=arc-20240116; t=1730131181; c=relaxed/simple;
+	bh=Z9XIvNhKb8BTGDUotNuKp2+dof/J9UUkLQozerD0tEY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kL09z08u11VeoG0ezwASLWoBKDhbFXAPlDkTGqgN3dIBDSURA0ijQK51wdpK+eQbRSA09SkevXvlvKzUkSmuDT/VYhentT2AhLeDsce5y5HpP7+bePBF/hsFP4fHWCypqKsFkwirGWu/7OoU3kLi/1iAZEuwecpXCPZOEhUplNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org; spf=pass smtp.mailfrom=mess.org; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=NMwJ3HrS; dkim=pass (2048-bit key) header.d=mess.org header.i=@mess.org header.b=seWpQ1BR; arc=none smtp.client-ip=88.97.38.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mess.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mess.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1730131177; bh=Z9XIvNhKb8BTGDUotNuKp2+dof/J9UUkLQozerD0tEY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=NMwJ3HrSt3OLVlyglfwaJuRhzbE82zIafCEaIOBWgOV5qLbwGXrQ3oEBN7HcqRL7o
+	 Abw3U5NYfgFb8xTUowfJuLTtWzA07+vzGX68W+kpEvThK/3gJtoN0uQg0WnGnwgzc2
+	 r5V9FTK19lWUp7RnDEwJ7yuZkVJoBgMB8ejV0cYQnSzTfTuH+DquSe9zVdKGqDWz9Z
+	 h69hHiHkov/57dP98TQATc/qBikWc22fFxlr50teMIvzRKh/Geb2aTUq3Jw2qtTnIk
+	 WggQRUkJTfjXQp8NppuIS+gJVMwOwMXZkdZIXX9te2sWG9kPQyB8TnVcP1z2ylUKhy
+	 4aoXkQFRYdC0A==
+Received: by gofer.mess.org (Postfix, from userid 501)
+	id 6077E1003C0; Mon, 28 Oct 2024 15:59:37 +0000 (GMT)
+X-Spam-Level: 
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mess.org; s=2020;
+	t=1730131176; bh=Z9XIvNhKb8BTGDUotNuKp2+dof/J9UUkLQozerD0tEY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=seWpQ1BRGZdFVSBSpBQQYEQwBrUuuxNgB8xsLn8j9O8mrUrSc87hVSEq1JTU0FzEx
+	 k3gc+vBN+kwF5HC1HYrFiXzFZZ4wvO+SPw8MBFkIy4iSW+xBIKp56irLXFNC0EYb+G
+	 19P5KOhxN4nfi/d+VnJta6qEUZIwZuv+BNz0gRswNdhr0Mw0KbbbzF0WX49eQky4B3
+	 jwzPNic/ShYUbDQWz3HzOryAze0g/YgoCzUw7JDHzamljxRDaUSXUAVVDjUERfJGWd
+	 +IXdkagW0cjE44s2CnoXdZyTmvR090Nu9aruSprvmZPZAFKl5chRC14c+hVhPyB8B2
+	 jLO6gLjsWajag==
+Received: from bigcore.mess.org (bigcore.local [IPv6:2a02:8011:d000:212:bc3c:1b4a:a6fa:362f])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by gofer.mess.org (Postfix) with ESMTPSA id 3D2EF1000B2;
+	Mon, 28 Oct 2024 15:59:36 +0000 (GMT)
+From: Sean Young <sean@mess.org>
+To: Sean Young <sean@mess.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] media: mceusb: don't push static constants on stack for %*ph
+Date: Mon, 28 Oct 2024 15:59:26 +0000
+Message-ID: <20241028155927.72244-1-sean@mess.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <xcavh66uxpl2orehtlzsy4g4udr3p2yqsq5pyhmxdqdmnegsvq@jpomr2uuwspz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 11:29:35AM -0400, Aren wrote:
-> On Mon, Oct 28, 2024 at 04:45:35PM +0200, Andy Shevchenko wrote:
-> > On Mon, Oct 28, 2024 at 10:19:59AM -0400, Aren Moynihan wrote:
-> > > If the chip isn't powered, this call is likely to return an error.
-> > > Without a log here the driver will silently fail to probe. Common errors
-> > > are ENXIO (when the chip isn't powered) and ETIMEDOUT (when the i2c bus
-> > > isn't powered).
-> > 
-> > The commit message does not explain why dev_err_probe() has been chosen
-> > and not simple dev_err().
-> 
-> This function is only called from stk3310_probe, and this condition
-> should propagate it's error, so it fits what dev_err_probe is designed
-> for. dev_err would be pretty much equivalent just longer, like this:
-> 
-> if (ret < 0) {
-> 	dev_err(&client->dev, "failed to read chip it: %d\n", ret);
-> 	return ret;
-> }
+There is no need to pass constants via stack. The width may be explicitly
+specified in the format.
 
-It's fine, the problem is the commit message in the patch. Please,
-update the commit message accordingly.
+Signed-off-by: Sean Young <sean@mess.org>
+---
+ drivers/media/rc/mceusb.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/media/rc/mceusb.c b/drivers/media/rc/mceusb.c
+index cd7af4d88b7f7..d5ea3868d5a3c 100644
+--- a/drivers/media/rc/mceusb.c
++++ b/drivers/media/rc/mceusb.c
+@@ -658,8 +658,8 @@ static void mceusb_dev_printdata(struct mceusb_dev *ir, u8 *buf, int buf_len,
+ 			if (len == 2)
+ 				dev_dbg(dev, "Get hw/sw rev?");
+ 			else
+-				dev_dbg(dev, "hw/sw rev %*ph",
+-					4, &buf[offset + 2]);
++				dev_dbg(dev, "hw/sw rev %4ph",
++					&buf[offset + 2]);
+ 			break;
+ 		case MCE_CMD_RESUME:
+ 			dev_dbg(dev, "Device resume requested");
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.0
 
 
