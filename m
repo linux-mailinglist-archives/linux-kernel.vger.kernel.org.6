@@ -1,70 +1,47 @@
-Return-Path: <linux-kernel+bounces-384192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B16B89B26FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:44:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 721229B273D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:46:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E02EB20D2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:44:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7174B21341
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:46:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA26518E77D;
-	Mon, 28 Oct 2024 06:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4195918F2EA;
+	Mon, 28 Oct 2024 06:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JKS2suAu"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hWYQWbvV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29DF818E354
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E0817109B;
+	Mon, 28 Oct 2024 06:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730097864; cv=none; b=sI3E69uojI3AGIgb2iEB/6wZXXBok47TH0NKJ+noxGxH6wJWsiQM0o0yvraTX5WH135Y6AYdqMl+U9sDnpJl+9RxcQHKIku8tz71OpfIxt/Uiv1OEhhvYDke4XQ0NWMe4U2kszCSyQsEu3O8Uleh1BqXFyKSMDNQ52AF0XU1CAE=
+	t=1730097991; cv=none; b=lnA9gOssa5KvdX2gh/J4so7ikO41nxonTOwRLhxiBVHTRpC7tIOy1S1hRSTgToZqm6dJ0zkSJgWAIIG4cVZHOnhjzJrpvX9HMJRrCx9EIbums+fjxspP5ihY4eq8t8OHx121e6CDXkafAe/88qQnitqQ0vpFSyPyQhR9NhzNhtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730097864; c=relaxed/simple;
-	bh=szX7EU9aLNv0+EZxN5RBKGnFWigvoANkwKvQRhGlAJQ=;
+	s=arc-20240116; t=1730097991; c=relaxed/simple;
+	bh=zraLD1i4NLRGpVjSLjiBSQ0TaidWFCShHsYJEYMdNVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DHQEniaZQo/BpfQI5wzHjbb6EWeSVo+Vz8txJvJBdyKH3TXO/wyszwsvFrL9AruszlcfAwRXusR2R04tHj4Lpmmuvp07sUP/1Q8lsJ6IZMBv1w9n7A8RWoTc8SrjKwbF/Y4wLgOP2fFIaMNitYs9QZvYc4U/f+Msv3Vc7uYLLbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JKS2suAu; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cd76c513cso34357895ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 23:44:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730097861; x=1730702661; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QfXQP1VNw9IcFrz8YyJuW87NPkl2MSBeUqUwC/i+Qyg=;
-        b=JKS2suAuUUX5pgKIgzT0NMNCudhSShpBYnKm7M6+vJ+zam2H3ibvw44XdtPjIxvIQG
-         Yp6LND8bWYFXZ/0H604Y4O55TV4YrvxGBKwFrCDnhvRBnldQ9Byy7hUUth4kRvT1TM9X
-         5VaKOjS7c0gzWLoOQbLuQLrwmyRQPfBYUnDhE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730097861; x=1730702661;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QfXQP1VNw9IcFrz8YyJuW87NPkl2MSBeUqUwC/i+Qyg=;
-        b=ajlPwb0Ts4UocpdXIqAsUCDDWrvZklrnCsNV15ySs8XmCz6SJcEP2w937ZOJclg/sO
-         mWWyNc2kF04fE3xNPbJ77CbZo1ExfHPuj3+H3sGVE5B22bFDXqUm8Q74e9wz8leB2k+5
-         2kdPsJG/5k9DYmnbVFpgvvGvgCijrnDHAQeixSX/uNymGqx7ZVgkl7TPv5RXuvzop3AO
-         dbc6hvQy9IsYwB3BC61FN8z6nRKjV1PFlcWLZUbWbSGVybrBfKFMuwVOzlRjRBFFfk1d
-         /wC9+ZWmQJ3bZOrSYma4Vf4+mHapAfEdv0EsK6DBriMhtL5yMKjSeRuacPAoNUKumtjE
-         aMmg==
-X-Forwarded-Encrypted: i=1; AJvYcCVo87MNmrCKCf/8lWFxP3Lbgp8YbGCRYQgPJep3oML9/s+ZiIEgdpSv0kPa865okrgBOZc4QTcDzdRMhac=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAk6Pe6z+zFGktNtCbyrbA4lHKzfRV/LK4c1rdxSmdSMIx1IDf
-	uUc/MEPuDjMJtbQuXzskATytYcksMSc4Wg9SXYIHIlvR8ftZPm0zUpVDGBa3kN4=
-X-Google-Smtp-Source: AGHT+IEVJPDfA5kV7131t/dI+va2tNzRfws46JA7Ih+iIvIxiw5uodkABFsq1KQRtPHKUx1dFSpYyg==
-X-Received: by 2002:a17:903:2449:b0:20c:d578:d712 with SMTP id d9443c01a7336-210c6ce56acmr117599405ad.59.1730097861348;
-        Sun, 27 Oct 2024 23:44:21 -0700 (PDT)
-Received: from [10.200.3.216] (fs96f9c361.tkyc007.ap.nuro.jp. [150.249.195.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc012fc1sm44792595ad.161.2024.10.27.23.44.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 23:44:21 -0700 (PDT)
-Message-ID: <e0bf1824-c476-490c-b63c-0789dabd788b@linuxfoundation.org>
-Date: Mon, 28 Oct 2024 00:44:18 -0600
+	 In-Reply-To:Content-Type; b=pi9YR8WcF+LSdqWOD8i2U4gnTA4uvpianRaLk04z3aJ16D2djWMWskyVc+7yRFiKB/VvXwiFLWRBt4haOAiHiklNOAHw6Ym+iFjSpDKFJxwcIYOitWRI+uZyxmdFm0X/tCg4iVSNiTQQz+9Ka+RyjIxX/sheCKW6PeZBFAiHXd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hWYQWbvV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2FC8C4CEC7;
+	Mon, 28 Oct 2024 06:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730097991;
+	bh=zraLD1i4NLRGpVjSLjiBSQ0TaidWFCShHsYJEYMdNVs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hWYQWbvVy1k6DMW5nmUi93yFgKf0h/FGq7oSvUPoUiONJH3g2ykXYQH3NYDFK7byG
+	 M8j9q0rG/ftKVgGAPwvE44aTdVwK1gHvenUawFHRZ++ugYmmGJ5tt5NytBccdN+djr
+	 RjzduoUtEtPlzgjiGT2I9P1IYq5cmoxBFDhtmZxBiECo4Ms9p0UXKQWaSYSV0BYS9l
+	 mYDpky2w94ILP4yFLUz5Qpj/hp2R1gUYMIYSDPENSUtNRU+DR/oOSVug2ksV8Cz1/B
+	 UagMxIsLWUk2jk33fos1o9ammE8lpeBrKel60Dswk0geewTsxujArCWashdph04sNr
+	 JVYSTfZD6D4TQ==
+Message-ID: <775b56c6-a7dd-4123-8868-69ca01a35af5@kernel.org>
+Date: Mon, 28 Oct 2024 07:46:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,63 +49,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next 1/3] selftests/watchdog: add count parameter for
- watchdog-test
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc: "shuah@kernel.org" <shuah@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241025013933.6516-1-lizhijian@fujitsu.com>
- <c2cae7a7-1a0d-48ef-9b8f-8d2436532ea7@linuxfoundation.org>
- <0861d73d-4fd9-4118-91c8-5a619c7d7ca0@fujitsu.com>
- <e907e67d-9116-4dd2-9b61-f93191737de6@linuxfoundation.org>
- <b7b3deec-47fd-43e4-a9b5-7099e3c00623@fujitsu.com>
- <54cbf018-eba1-4227-b464-78bfa41fa4ae@linuxfoundation.org>
- <3ee0d14a-7f6b-4ef4-9349-d6b0f14ba9e8@fujitsu.com>
- <f10e8a78-3b50-4212-9b5d-ba99a3421379@linuxfoundation.org>
- <6862e399-b169-4ffb-b9c6-904f99d96e56@fujitsu.com>
- <19579b1c-0a9b-4c72-be00-44871dd37b9a@linuxfoundation.org>
- <a6a5d13b-c550-4a99-9a84-b28e8314ccd1@fujitsu.com>
+Subject: Re: (subset) [PATCH v3 09/10] arm64: dts: exynos: Add Exynos9810 SoC
+ support
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Markuss Broks <markuss.broks@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241026-exynos9810-v3-0-b89de9441ea8@gmail.com>
+ <20241026-exynos9810-v3-9-b89de9441ea8@gmail.com>
+ <173005920218.11546.3963593817214010231.b4-ty@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <a6a5d13b-c550-4a99-9a84-b28e8314ccd1@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <173005920218.11546.3963593817214010231.b4-ty@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/28/24 00:32, Zhijian Li (Fujitsu) wrote:
+On 27/10/2024 21:00, Krzysztof Kozlowski wrote:
 > 
-> 
-> On 28/10/2024 14:25, Shuah Khan wrote:
->> On 10/28/24 00:06, Zhijian Li (Fujitsu) wrote:
->>> linux/tools/testing/selftests/watchdog# make run_tests
->>> TAP version 13
->>> 1..1
->>> # timeout set to 45
->>> # selftests: watchdog: watchdog-test
->>> # Watchdog Ticking Away!
->>> # .............................................#
->>> not ok 1 selftests: watchdog: watchdog-test # TIMEOUT 45 seconds
->>>
->>>
->>> And i got warning in dmesg
->>>
->>> [ 1953.229511] watchdog: watchdog0: watchdog did not stop!
->>>
->>>
->>>
->>>
+> On Sat, 26 Oct 2024 23:32:40 +0300, Markuss Broks wrote:
+>> Exynos 9810 is an ARMv8 mobile SoC found in various Samsung devices,
+>> such as Samsung Galaxy S9 (starlte), S9 Plus (star2lte),
+>> Note 9 (crownlte) and perhaps others.
 >>
->> Run "make run_tests" under strace and send me the output.
+>> Add minimal support for this SoC, including basic stuff like:
+>> - PSCI for bringing up secondary cores
+>> - ARMv8 generic timer
+>> - GPIO and pinctrl.
+>>
+>> [...]
 > 
+> Applied, thanks!
 > 
-> Could you share the exact command, how to 'Run "make run_tests" under strace'
+> [09/10] arm64: dts: exynos: Add Exynos9810 SoC support
+>         https://git.kernel.org/krzk/linux/c/6c1fe47df5a79f1efc2d5c73e506c8d34692527a
 > 
 
-strace make run_tests > strace.out 2>&1
+And dropped (also DTS): does not even build!
 
-Send me strace.out
+exynos9810-starlte.dts:72.9-10 syntax error
 
-thanks.
--- Shuah
+I should not have trusted this and blindly take the patches for next. Or
+at least wait till my CI finishes building before calling it a day.
+
+Best regards,
+Krzysztof
+
 
