@@ -1,182 +1,213 @@
-Return-Path: <linux-kernel+bounces-385957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 766409B3D7F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:06:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E7FD9B3D49
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36D51C20430
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:06:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA3EEB2457A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52EFB18FC67;
-	Mon, 28 Oct 2024 22:06:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ABFD20125A;
+	Mon, 28 Oct 2024 21:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XzAlhRyX"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b="Qn0/X6xO";
+	dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b="GeUJPRDY"
+Received: from mail.kernel-space.org (mail.kernel-space.org [195.201.34.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896AB1DF25A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 22:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1D11EE026;
+	Mon, 28 Oct 2024 21:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.201.34.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730153180; cv=none; b=eks+uAllqDURNSqRvPpWljgNdHqF8MC4gmZKUh4DL/4kfg3xSVnJJw2EkCik0rGIDQ9dnCSq8M3dv2ft0ZoPm339GaUQxNqfCQk7p1+DW6ayyciKqlp+yLTW5Q4fUynFEom31GaWP5lSUtASRUdYRU8mQ8YI7fXShDRpUkaAm40=
+	t=1730152414; cv=none; b=HOoDGQYycqJrcjJDVgfJ2cLB3K4GFGTHws8vLy2HuZRqNc2Zq4RDtSsxFtNY9qhBlLvtD4ARDFMb6FUcZJCksuCEdK0u+txoCNzBY3eRayHTl6nVVCrDYpjStrzWgOPx3ZgGpSvDifTyvTxSYox3DoHlplGmrlrwKXcmVMkA0HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730153180; c=relaxed/simple;
-	bh=lnNh2MyW6k3PPWKeZ3lkSphmqc6oZlzuJG2jDdoCDuc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CJrCK75779l4a/haKizjvzjOtl88xc/2GDcT7y1gZyqfltWg8uQF1+GJtkEmUriAkDwJ0kloIC84v33gutck3UmYIaZ33rNF4Khifg42KClS+G2ucP62FxAXITRznpYBJPpTvGrSmXXcsIq9IuWbsBR1CPnfxQYOzrMEtzAcqik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XzAlhRyX; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--kaleshsingh.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e32e8436adso69740287b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:06:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730153177; x=1730757977; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOY2vgqJ0KtVzbKcwr3dZPfuHJS0Y1wX9dhGpLmmysU=;
-        b=XzAlhRyXDt0IKtNwkAaZzgCReQ5z9gGMXRlpYyOcbv/yDhp601ZroIh90cW7z2oleL
-         PnnSDR1CtNDuegX5Do3uZpJweqKdDa1pgLKYP5rYL5uT0UW9A2xi5IR6LRQteerYcjSp
-         xarBu5PuG1rXsYEckqswbikk+Pzz/Qy5x3/N3FqN3gxEpCc6AbNJF9xmbyeo1H/opSke
-         SpFifHzlrVSGMO3AmFWr6oldlytnMYL48QItnldGPMwGA3Y8rMtehV1l3+lpwBJ8io5q
-         HzZO/pb2IcslBZjMLGBOhoqQzzHybdY6WY97Z0qSPjIB0SX9DMp7HCxntTQYXP4gEcSL
-         MM1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730153177; x=1730757977;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SOY2vgqJ0KtVzbKcwr3dZPfuHJS0Y1wX9dhGpLmmysU=;
-        b=Z8trMN3lkq5uYjjMkRUsT0o23/9G3mM+7VLMyz0gsDDtTE6riahQI/3MP+XzYU7NH9
-         +sRVQD6INEx7fi+YVcHzOiU4MISu7vN54O2u4O602VSqcJk6ZfJuY9RyfbDzqoprPG9T
-         RhSl8ARV2tYcNjVBTJJpbLUEK10En2oZ6P6dXlpw2MwxXAPVpX06d4cmE5vSCWIlCPq4
-         wGDCQf8yBZz4c05dEakD44s1G5rageFbyDrXk3PPg2/ibsNF6P9FWBHeJjPzeZgtCBM/
-         eXyX2oDHKUxUEYjSGqJsCkxQBmL0twn5M8siKJcOLi585FjCnuGshJkNwRS19chuDiub
-         wg8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVJBwe1Y/cbvzjGGruCzKr+usNlI7Hd94HtOr+XI1Hrlogm4Y13cwaEd3+GLFDbGK71cNvvLWSJHEYkQgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHvbXjby5rWe3hLZlsh5k3uUArfK0Hq/XnwgCn92fZKnEwoDDP
-	XBaiMb3fRAlHNOjCNJGCWjw5qELmdK5giJPanmiQTf1U7Rs4jdqGqwhuScOBHNQtFqZtKuYyhJe
-	i8sueRfiYaCZlrxeGEm6fsQ==
-X-Google-Smtp-Source: AGHT+IHJS7A7yrEb37MadLUrxRTDRexnft6XJqKZL6BE/v5PEF5d2AuI0hKlTnaiOAdoLKFKUc2XiD9OoW2teZTugQ==
-X-Received: from kalesh.mtv.corp.google.com ([2a00:79e0:2e3f:8:dd17:1d2c:7822:7fdf])
- (user=kaleshsingh job=sendgmr) by 2002:a05:690c:9682:b0:69b:c01:82a5 with
- SMTP id 00721157ae682-6e9d8b89f8amr7192987b3.7.1730153177563; Mon, 28 Oct
- 2024 15:06:17 -0700 (PDT)
-Date: Mon, 28 Oct 2024 14:43:59 -0700
-In-Reply-To: <20241028214550.2099923-1-kaleshsingh@google.com>
+	s=arc-20240116; t=1730152414; c=relaxed/simple;
+	bh=jfWQ+74Cn3YzM41SNakv42pmgAuveMyk8e6tyTlA21g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ax9g12JX+3d9OG5wWQzmCBkh2JeqDXmEq4w5EvDGVUmIOP8iCBhUFImoS9kfG1F34LyxHCQtFQdtDuaeWw9DYXm7GPBwEgPVNCK8FKAlve0mt1H8Mq4e3creL/UReNTPP4NLknGiIrsaajoDuQCtcQKMdcGeKV628QOPiZ1BXQg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernel-space.org; spf=pass smtp.mailfrom=kernel-space.org; dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b=Qn0/X6xO; dkim=pass (1024-bit key) header.d=kernel-space.org header.i=@kernel-space.org header.b=GeUJPRDY; arc=none smtp.client-ip=195.201.34.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kernel-space.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel-space.org
+Received: from kernel-space.org (localhost [127.0.0.1])
+	by kernel-space.org (OpenSMTPD) with ESMTP id c62766c0;
+	Mon, 28 Oct 2024 21:37:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=kernel-space.org; h=from
+	:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding:to:cc; s=s1; bh=iBu2nqJ+7pcNkwlePiJrM
+	6dCpbk=; b=Qn0/X6xOdWL2VthQBsdt7N/s0tJweJfv6LS1Yff8g1DIGWa7mdL25
+	2gIm3qa55tZMLeY7Ey4STrwu/LyqnVtAjqbRJmKsbuqjnE1Ga1zNsPsFN0kLh83J
+	EpJL6uIDXuwqi3+zaFIoxaZB19SftCYrtJBaafC9AN9pX8wTx6082Q=
+DomainKey-Signature: a=rsa-sha1; c=nofws; d=kernel-space.org; h=from
+	:subject:date:message-id:mime-version:content-type
+	:content-transfer-encoding:to:cc; q=dns; s=s1; b=W3qGHfxGFXjn9f2
+	WjrfAC5DKQAcBi1/tPCeijuY6yflHZNliWDAgABkovCz0f6Rnzo5HhZkb3eizHWI
+	gOZciQhCRc6Uw/Ac6V6RXwnTVR2axCYsSWDuU3zxr28zld8HO4Uz4DjVuEt6smck
+	1IqREc5eUPyA1V7cCJMaJf6ANBP0=
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kernel-space.org;
+	s=s1; t=1730151471;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aPml767mYe37WptDJOb/jG1/QTjLd7xBx2l8yEbtWIc=;
+	b=GeUJPRDYKRscLOFh+psNkm1khPYVTUi+wi/lTUZZP+teKt0Bj65AGBfat5jc7F2vKuofmu
+	X/hdfKjHDIYcSyXZHdcPjwvdcYD0Z9fj27GJVibDvWmolxDspuyu+9MiWVFHqGm4zYAYbr
+	opimS96t+rL7NBziacEHJ+r3fUns64o=
+Received: from [127.0.1.1] (host-95-245-34-85.retail.telecomitalia.it [95.245.34.85])
+	by kernel-space.org (OpenSMTPD) with ESMTPSA id dce36722 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+	Mon, 28 Oct 2024 21:37:51 +0000 (UTC)
+From: Angelo Dureghello <angelo@kernel-space.org>
+Subject: [PATCH v9 0/8] iio: add support for the ad3552r AXI DAC IP
+Date: Mon, 28 Oct 2024 22:45:27 +0100
+Message-Id: <20241028-wip-bl-ad3552r-axi-v0-iio-testing-v9-0-f6960b4f9719@kernel-space.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241028214550.2099923-1-kaleshsingh@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241028214550.2099923-4-kaleshsingh@google.com>
-Subject: [PATCH 3/3] tracing: Fix tracefs gid mount option
-From: Kalesh Singh <kaleshsingh@google.com>
-To: dhowells@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org
-Cc: surenb@google.com, jyescas@google.com, kernel-team@android.com, 
-	android-mm@google.com, Kalesh Singh <kaleshsingh@google.com>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Shuah Khan <shuah@kernel.org>, 
-	Ali Zahraee <ahzahraee@gmail.com>, Eric Sandeen <sandeen@redhat.com>, 
-	Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPcFIGcC/x3NQQqDMBBG4avIrB2I0RDTq0gX0Uz1hxIlESuId
+ zd0+W3euyhLgmR6VRclOZCxxgJXVzQtPs7CCMWkle4apXv+YePxyz60xujE/gQfioGVd8k74sw
+ 2TI1rO2WsdVQ6W5IPzv9jeN/3A9lKpBxzAAAA
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dlechner@baylibre.com, 
+ Mark Brown <broonie@kernel.org>, 
+ Angelo Dureghello <angelo@kernel-space.org>, 
+ Angelo Dureghello <adureghello@baylibre.com>, 
+ Conor Dooley <conor.dooley@microchip.com>
+X-Mailer: b4 0.14.1
 
-Commit 78ff64081949 ("vfs: Convert tracefs to use the new mount API")
-tracefs to use the new mount APIs caused mounting with the gid=<gid>
-option to not take effect.
+Purpose is to add ad3552r AXI DAC (fpga-based) support.
 
-The tracefs superblock can be updated from multiple paths:
-    - on fs_initcall() to init_trace_printk_function_export()
-    - form a work queue to initialize eventfs
-      tracer_init_tracefs_work_func()
-    - fsconfig() syscall to mount of remount sysfs
+The "ad3552r" AXI IP, a variant of the generic "DAC" AXI IP,
+has been created to reach the maximum speed (33MUPS) supported
+from the ad3552r. To obtain the maximum transfer rate, a custom
+IP core module has been implemented with a QSPI interface with
+DDR (Double Data Rate) mode.
 
-The tracefs super block root inode gets created early on in
-init_trace_printk_function_export().
+The design is actually using the DAC backend since the register
+map is the same of the generic DAC IP, except for some customized
+bitfields. For this reason, a new "compatible" has been added
+in adi-axi-dac.c.
 
-With the new mount API tracefs effectively uses get_tree_single() instead
-of the old API mount_single().
+Also, backend has been extended with all the needed functions
+for this use case, keeping the names gneric.
 
-Previously, mount_single() ensured that the options are alway applied to
-the superblock root inode:
-    (1) If the root inode didn't exist, called fill_super() to create it
-        and apply the options.
-    (2) If the root inode exists, called reconfigure_single() which
-        effectively called tracefs_apply_options() to parse and apply
-        options to the subperblock's fs_info and inode and remount
-        eventfs (if necessary)
+The following patch is actually applying to linux-iio/testing.
 
-On the other hand, get_tree_single() effectively calls vfs_get_super()
-which:
-    (3) If the root inode doesn't exists calls fill_super() to create it
-        and apply the options.
-    (4) If the root inode already exists, updates the fs_context root
-        with the superblock's root inode.
-
-(4) above is always the case for tracefs mounts, since the super block's
-root inode will already be created by init_trace_printk_function_export().
-
-This means that the gid mount option gets ignored:
-    - Since it isn't applied to the super block's root inode, it doesn't
-      get inherited by the children.
-    - Since eventfs is initialized from form a separate work queue and
-      before call to mount with the options, and it doesn't get remounted
-      for mount.
-
-Ensure that the mount options are applied to the super block and eventfs
-is remounted to respect the new mount options.
-
-[1] https://lore.kernel.org/r/536e99d3-345c-448b-adee-a21389d7ab4b@redhat.com/
-
-Fixes: 78ff64081949 ("vfs: Convert tracefs to use the new mount API")
-Cc: David Howells <dhowells@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
 ---
- fs/tracefs/inode.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+Changes in v2:
+- use unsigned int on bus_reg_read/write
+- add a compatible in axi-dac backend for the ad3552r DAC IP
+- minor code alignment fixes
+- fix a return value not checked
+- change devicetree structure setting ad3552r-axi as a backend
+  subnode
+- add synchronous_mode_available in the ABI doc
 
-diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
-index 1748dff58c3b..cfc614c638da 100644
---- a/fs/tracefs/inode.c
-+++ b/fs/tracefs/inode.c
-@@ -392,6 +392,9 @@ static int tracefs_reconfigure(struct fs_context *fc)
- 	struct tracefs_fs_info *sb_opts = sb->s_fs_info;
- 	struct tracefs_fs_info *new_opts = fc->s_fs_info;
- 
-+	if (!new_opts)
-+		return 0;
-+
- 	sync_filesystem(sb);
- 	/* structure copy of new mount options to sb */
- 	*sb_opts = *new_opts;
-@@ -478,14 +481,17 @@ static int tracefs_fill_super(struct super_block *sb, struct fs_context *fc)
- 	sb->s_op = &tracefs_super_operations;
- 	sb->s_d_op = &tracefs_dentry_operations;
- 
--	tracefs_apply_options(sb, false);
--
- 	return 0;
- }
- 
- static int tracefs_get_tree(struct fs_context *fc)
- {
--	return get_tree_single(fc, tracefs_fill_super);
-+	int err = get_tree_single(fc, tracefs_fill_super);
-+
-+	if (err)
-+		return err;
-+
-+	return tracefs_reconfigure(fc);
- }
- 
- static void tracefs_free_fc(struct fs_context *fc)
+Changes in v3:
+- changing AXI backend approach using a dac ip compatible
+- fdt bindings updates accordingly
+- fdt, ad3552r device must be a subnode of the backend
+- allow probe of child devices
+- passing QSPI bus access function by platform data
+- move synchronous mode as a fdt parameter
+- reorganizing defines in proper patches
+- fix make dt_binding_check errors
+- fix ad3552r maximum SPI speed
+- fix samplerate calulcation
+- minor code style fixes
+
+Changes in v4:
+- fix Kconfig
+- fix backend documentation
+- driver renamed to a more gneric "high speed" (ad3552r-hs)
+- restyled axi-dac register names
+- removed synchronous support, dead code
+  (could be added in the future with David sugestions if needed)
+- renaming backend buffer enable/disable calls
+- using model_data in common code
+- using devm_add_action_or_reset
+- minor code style fixes
+
+Changes in v5:
+- patch 2/11 set before fix of ADI_DAC_R1_MODE patch
+- fix dt binding check error
+- patch 4/11 removed
+- fix stream enable/disable call names
+- fix axi-dac clock names
+- fix axi-dac platform device unregistering
+- minor code style fixes
+
+Changes in v6:
+- remove patches (fixes) already accepted
+- move platform data include in drivers/iio/dac dir
+- minor notes added to commit description
+- fix axi-dac platform child-device creation
+- minor code style fixes
+
+Changes in v7:
+- add per channel offset and scale
+- change dac clock rate considering always buffering and DDR 
+- fix axi-dac fdt property conditionals 
+- fix getting clocks from high-speed driver, with a NULL as fallback
+- fix missing dma buffer free callback
+- minor code style fixes
+
+Changes in v8:
+- getting sclk from platform data
+- fix axi-dac yaml bindings
+- fix reset logic to active-low
+- remove dev_err_probe messages from gain/offset calc
+- minor code style fixes
+
+Changes in v9:
+- add locking to axi dac reg_read/write
+- fix dac Kconfig to have a separate common library
+- minor code style fixes
+
+Signed-off-by: Angelo Dureghello <angelo@kernel-space.org>
+
+---
+Angelo Dureghello (8):
+      dt-bindings: iio: dac: ad3552r: add iio backend support
+      dt-bindings: iio: dac: adi-axi-dac: add ad3552r axi variant
+      iio: backend: extend features
+      iio: dac: adi-axi-dac: extend features
+      iio: dac: ad3552r: changes to use FIELD_PREP
+      iio: dac: ad3552r: extract common code (no changes in behavior intended)
+      iio: dac: ad3552r: add high-speed platform driver
+      iio: dac: adi-axi-dac: add registering of child fdt node
+
+ .../devicetree/bindings/iio/dac/adi,ad3552r.yaml   |   7 +
+ .../devicetree/bindings/iio/dac/adi,axi-dac.yaml   |  69 ++-
+ drivers/iio/dac/Kconfig                            |  19 +
+ drivers/iio/dac/Makefile                           |   2 +
+ drivers/iio/dac/ad3552r-common.c                   | 249 +++++++++
+ drivers/iio/dac/ad3552r-hs.c                       | 529 +++++++++++++++++++
+ drivers/iio/dac/ad3552r-hs.h                       |  19 +
+ drivers/iio/dac/ad3552r.c                          | 557 +++------------------
+ drivers/iio/dac/ad3552r.h                          | 228 +++++++++
+ drivers/iio/dac/adi-axi-dac.c                      | 312 +++++++++++-
+ drivers/iio/industrialio-backend.c                 |  78 +++
+ include/linux/iio/backend.h                        |  17 +
+ 12 files changed, 1585 insertions(+), 501 deletions(-)
+---
+base-commit: e469c6c036907dec25c3979f527a102e44d6f9b8
+change-id: 20241028-wip-bl-ad3552r-axi-v0-iio-testing-7dc193405779
+
+Best regards,
 -- 
-2.47.0.163.g1226f6d8fa-goog
+Angelo Dureghello <angelo@kernel-space.org>
 
 
