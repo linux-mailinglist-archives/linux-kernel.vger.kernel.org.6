@@ -1,109 +1,121 @@
-Return-Path: <linux-kernel+bounces-385255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AADB09B349E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:19:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E5669B34A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:20:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D19282E6B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:19:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 343B22822A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:20:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43031DE3C7;
-	Mon, 28 Oct 2024 15:19:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549281DE2C1;
+	Mon, 28 Oct 2024 15:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l6v8TU8F"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cq73vevG"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 455A31DE3B3
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A825D55E73
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730128752; cv=none; b=iVOuwdJlBUhfa8ULJtLJaU0Fd7Y7qyc3DlCWVofYqAKDS+rH38fDaAZpqJGKxdBpWBW92t1Y+iv6Expt3/QgeXNIByyXZElCWbDyHCipQCHQTLkxNu7izeQFU1+vt7uD0sYTDt3uVmbiYZ9Nrs3EHjI9xFD9bu0SxgtzGPvnr+Y=
+	t=1730128838; cv=none; b=V+ey/eHu/ykppB2QnLPkv38Fv+ZcSUonbw9aOmiA3aKgg1tghLEqLXSPG2/qBV8B5k9CpdT1m8DFqFf7yFJIwynVO/PxjLy1kmPgHVqiVcVgvQZQJPpHbkwfwY/ZZzVRpKKoGl1vX9rULiH3vtaRuAn1zODboW6kkBRW7muZMbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730128752; c=relaxed/simple;
-	bh=VllxgaeAxK8ya5awbEYif/GTv+HwiWvVjE+QOtBgID8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q0D8E90/MgcHLkBPmFt1JO4mJAYRpD/PzlW/h1XysjRQMoXP5oNIG7xK32HnFa4yjZdaNbMbaBXD0UuPAVJQWGZq/h2Ia2LpFytjM29I4KZG7zjtCa7c5knpVscY+NVkr7IIF21Cu4gnbWtXSQFU2jPnLgs7YyeNPu5Z3XDzX+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l6v8TU8F; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-431695fa98bso43449305e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:19:10 -0700 (PDT)
+	s=arc-20240116; t=1730128838; c=relaxed/simple;
+	bh=9vOfV1nv3dJamdMcGcAvkjeuuuehU7scnrXHevP4JGE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FVlhzOEtatOrso+kJQ2W9G2l1VkLfOeZHwAw2C/nxRM5+KlEPuo+l74EhPWy+vhkKU5o/oTqCqvuzlgdJLX5tbc819nuUwV9UQe1ykPyH2QdpLpuIC/d2fDPShOcZ1QAg1FM15OgGe7q1kOJBfELtVKHC+8E+QkplV/WfFB4V4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cq73vevG; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so5648476a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:20:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730128749; x=1730733549; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YMehf1cmdH70vQG9fYSA+nflJUhXY7J4qMYXjLbnvAo=;
-        b=l6v8TU8FXWMJg1Jjqjr7hH0mmeOBEUqeP1LATELUIXzJ/SLXArLjMZ9N5NEQ2x76Nz
-         5m863gqIs0g0e50/qGGYeL61cxrO5r/AIy18ImW+WRgz2+XE32KBoAloMC0VeHalCMMI
-         1vbkd4oTwIAnuisJDdERwoRVd1Hm6OhWqSFNiwcXkuAXdK/oMH1HYeq9q9XxhMD1lY/o
-         uT8uZ9UHu7TLevifL4tDoVucMXPMn0oJUbML+dErC/ECV7yt4DiSvI0AF2aLQgXAszFS
-         2qEkYrlspOagCyETubqrUatOm19r0UmOCpunSVT57fYwU2sATpqVGYEaTct0Ovb4urDd
-         1S0g==
+        d=google.com; s=20230601; t=1730128835; x=1730733635; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8A7Y1smH5iLgDTBZI8wqoHylFq2drR/RaP5ssz22jRY=;
+        b=cq73vevGHyRwIo3onMOUSZCq/5fCVwCwI2Zmq0CVeeGcSLFkUdjS5Qazhx88arGFIh
+         chMDQfnHa6zZAQP9XT3v0lG1nrh31OHKeQi/nqZz5ha0rycIj54kdb5NC7mL7Fn/qHCU
+         TN+aaNfFPjvYE16QHs56zBOwg8zO/qP9YRt1OBkOygIxWt0ZERRLNrq5DIHGg2ZGceHj
+         XAHyYElaU7xHbQnm15tzBL0VFiFBjK9E1o2zHlnqyREtVReJobRG3ubgJ1zW4nc4BoZp
+         V0WWW1DBVwdh5d5SeYJtMm8w4JOjAXBLUqKvEgq9ntHQYZpKUPnfGMuRIEV/emBqD/Cm
+         WCZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730128749; x=1730733549;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YMehf1cmdH70vQG9fYSA+nflJUhXY7J4qMYXjLbnvAo=;
-        b=m4x5Zc0yGAmIZczQBSBmLyW+JWPIRDexCZJd5PH2v+8yQKa0A1ou4eKrFrijKotKze
-         46Oo+JujcEcYQL6jY+XbK2EBZ/imyhQRbjrpcxazAeJMOxBKGCRORwYpxmzs6bUkkf5Z
-         by54gW79DMD3s/RlJ+sQHF6rI5ytmvx+i/IVqqOCdqluQbTx4lUEVqI5R3QqexIpsqfA
-         yBI5q1aNYk3fDKsl8iGyy7q5yNFeUdB3p7pjylQVFfrAavJBw8vNRrTpbXBGGCW704uZ
-         YKetj2Eu3+tWstf9fUeAFkH6Qz5vxPr02f5tRN8c2wiNid9Eyw+XkTKfRx/Xb3wLwjnr
-         6Q+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXoa8h34x9aC53GKM3EXNrUTlYQ1MnxrlQvkxhlLMNkQsJkrZ/KxN3INNHuGAn+ha0nnPipBS5BIysjm04=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlWvgkAGItwuTSg5MMJJ+dmKJtxv8WBZKUEvxOeDRec+IJc0bo
-	kHi+DONRTGWOzE0mXgKh1w5Jr2lZPxRr1pOtIN0LO9OajwFgqWurbZPv1BZjMp4=
-X-Google-Smtp-Source: AGHT+IGqWBuggalF2VXXcJZ2EXD/713dHl0Cg5IYvuxKR1Y1NivxEcBCDFYslrN2INjSCJjCmJyyiw==
-X-Received: by 2002:a05:600c:4eca:b0:431:5c1c:71b6 with SMTP id 5b1f17b1804b1-4319acad842mr94286995e9.17.1730128748659;
-        Mon, 28 Oct 2024 08:19:08 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b58b79esm145072845e9.47.2024.10.28.08.19.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 08:19:07 -0700 (PDT)
-Message-ID: <56b07267-a192-42b7-a4e9-5fe7d86076f7@linaro.org>
-Date: Mon, 28 Oct 2024 16:19:06 +0100
+        d=1e100.net; s=20230601; t=1730128835; x=1730733635;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8A7Y1smH5iLgDTBZI8wqoHylFq2drR/RaP5ssz22jRY=;
+        b=kB1ek5NOrZdxVNcV8GHgHRZXaEwYTtseh+2l/ETyvcXujHPK0swjXUsPxnDE/ulEFw
+         z2uytT1vXNOwoqe35MEbiRFqHz8mhv9N8kVRGizG34HeU9R7y0kUMME3+++zKUGkJwWf
+         v/Eo+orafsPy9xSo7oKu+GhFfJHAVSSx1Yk610CZ2UtEAyHKTOVc67tLA51BEtAH3Ipd
+         +bKvZTb/1elFmhiuCXdmbERAKgoEH+ne8faJTx4bnxHrNe/cdha8pGNCNwrzK5S17sCe
+         M5zQxhy+uFM/JIPiXtUqP+Lqfb6TeFuG/XPYK1jbeceFLJbbDtWj2Q8zEKzX2BJ9VXxl
+         uwXg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8AxmtSUXzS7EobZXqDqACcnL7xR8ug/m46dW1asvH6QpH5pzTyD8LttWXFC2UiI6LpLpzzdsa1q7R5v4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHGD4ln6aI30LoyEBOgVa/QnZ5x1adq9xIsH3OTgdfR34hq6o9
+	Ls7OJwMo8k6vhWHLUNQuGr5e6UF880YjeWU5zcARqsy4tJfkf7LfGylfIRtH0aIrWhYvGHWXh0i
+	yh8KG5JI68iBQOQcwD6dk3k4y2Z/AMVIC/yKK
+X-Google-Smtp-Source: AGHT+IGQlWvncSWyRjU0MqLvkzq7zgdmh8ci7LTfgESO71eUgRKbiRnKH3tfmeMsJw+1nj1dpvpgLjvAzpaqngtva14=
+X-Received: by 2002:a05:6402:40d5:b0:5c9:4022:872d with SMTP id
+ 4fb4d7f45d1cf-5cbbfa66f3dmr7608343a12.32.1730128834716; Mon, 28 Oct 2024
+ 08:20:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource/drivers/timer-sprd: Select driver on ARM and
- ARM64
-To: Enlin Mu <enlin.mu@outlook.com>, tglx@linutronix.de, orsonzhai@gmail.com,
- baolin.wang@linux.alibaba.com, zhang.lyra@gmail.com,
- linux-kernel@vger.kernel.org, enlin.mu@unisoc.com, enlinmu@gmail.com
-Cc: linux-hardening@vger.kernel.org
-References: <TYSPR04MB70840448562705C21BA8DCCF8A632@TYSPR04MB7084.apcprd04.prod.outlook.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <TYSPR04MB70840448562705C21BA8DCCF8A632@TYSPR04MB7084.apcprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241028080515.3540779-1-ruanjinjie@huawei.com>
+In-Reply-To: <20241028080515.3540779-1-ruanjinjie@huawei.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 28 Oct 2024 16:20:20 +0100
+Message-ID: <CANn89iJCshHRan=w_YMp7bEeBadOjNS7PU392q2K4qNTRtz=Ow@mail.gmail.com>
+Subject: Re: [PATCH net] netlink: Fix off-by-one error in netlink_proto_init()
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, 
+	kuniyu@amazon.com, a.kovaleva@yadro.com, lirongqing@baidu.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19/09/2024 09:25, Enlin Mu wrote:
-> From: Enlin Mu <enlin.mu@unisoc.com>
-> 
-> sprd timer is currently available on ARM and ARM64 based devices.
-> Thus select it for ARM and ARM64
+On Mon, Oct 28, 2024 at 9:05=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
+ wrote:
+>
+> In the error path of netlink_proto_init(), frees the already allocated
+> bucket table for new hash tables in a loop, but the loop condition
+> terminates when the index reaches zero, which fails to free the first
+> bucket table at index zero.
+>
+> Check for >=3D 0 so that nl_table[0].hash is freed as well.
+>
+> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> ---
+>  net/netlink/af_netlink.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/net/netlink/af_netlink.c b/net/netlink/af_netlink.c
+> index 0a9287fadb47..9601b85dda95 100644
+> --- a/net/netlink/af_netlink.c
+> +++ b/net/netlink/af_netlink.c
+> @@ -2936,7 +2936,7 @@ static int __init netlink_proto_init(void)
+>         for (i =3D 0; i < MAX_LINKS; i++) {
+>                 if (rhashtable_init(&nl_table[i].hash,
+>                                     &netlink_rhashtable_params) < 0) {
+> -                       while (--i > 0)
+> +                       while (--i >=3D 0)
+>                                 rhashtable_destroy(&nl_table[i].hash);
+>                         kfree(nl_table);
+>                         goto panic;
+> --
 
+Note that the host is going to panic, many other pieces of memory are
+left behind.
 
-Can you answer Baolin's question ?
-
-Or can you tell what is the rational behind this change ?
-
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+A Fixes: tag seems unnecessary.
 
