@@ -1,122 +1,188 @@
-Return-Path: <linux-kernel+bounces-385101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A22CC9B326B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:03:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A549B326A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:03:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6381F22703
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:03:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B33F1C2115B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4E31DD553;
-	Mon, 28 Oct 2024 14:03:06 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F101DD864;
+	Mon, 28 Oct 2024 14:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BPKqAkDE"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446EA1DB95F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:03:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36AA1DC734;
+	Mon, 28 Oct 2024 14:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124186; cv=none; b=qMFWt/TVJ2O2cZJnLB9fE2BAPaTotacx9n5HCSRJB2fOE0+Es03Tqqw/VBJDQtCVBL5GTI6EHufO9EcsAR/qWpNS2NwZLi1WF0EMQdSkSLLjyujVcwWwjHH3/McPFAAqhNjXzV59y4M2itHeO1s1A2S2/3ZkLbDb8mAAKH38ME0=
+	t=1730124172; cv=none; b=VrUByxYpcelf1h9HyAc6hcnxNLSQ+p6/gRfAYd/MiT8plEXTVOnVuIaY9DOQi+oPCnfD12Z5WI69Kfbg2X4e4tZAMkLup74ToRycydmOW/dGb3RDNpoV2yN5hVIbriBkLJArR3YOZ8q6oJ8kW2Dg9+fgHhE20mMhko7IwHsXLXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124186; c=relaxed/simple;
-	bh=kJryATv559js9WGfKz+9Z7XSJF7osBWpwscqtGu0ehU=;
+	s=arc-20240116; t=1730124172; c=relaxed/simple;
+	bh=GARURTPO3rxpQXzZwj7FF8BdkvH2AjtCyCh0MqYT5vA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N0gS+Fqvm8OpWsjoSxpDppe7jZL+mdlLE+AvmfOWyI4XM7+2+FzoU/dMM3QJyrAfsV0sGmx0ihVW2+Hg/cVODoJhPU5KowJUSquDZrfd4EdPq7cWp+3gs/IIBrWa1oLnMXLlfUpYGI8PxhYbCGq6d5/+wwqDzpmvxyotxQicLU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5QKP-0000po-Es; Mon, 28 Oct 2024 15:02:41 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5QKP-000rbP-0W;
-	Mon, 28 Oct 2024 15:02:41 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	 Content-Type:Content-Disposition:In-Reply-To; b=nfVf2zIj34qUAZkS/kmfP/Q4iVcdk/VFV3vjEj5zxj8728xEp+sjOCunYSBfKiompapja0YgoWBdwjxw/fOtw7Yn6ja+Yl9ZkoIjePZ1Gz5+wyeLyMpxdrcMqon8FDrKHgc/0omXobgA0/CjB3wXfhxdencZf+Jiu7+2pDHCyAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BPKqAkDE; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730124166;
+	bh=GARURTPO3rxpQXzZwj7FF8BdkvH2AjtCyCh0MqYT5vA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BPKqAkDEwKSvzgI+d7NCdISq1yOm+4PmPcY/g1FvCeseJW1LI6xksrH7ivDzwWxY5
+	 sGqELxzRCfM4QwZcJkbonBxQkoQj/0zgG6NAKf4D5lL0u+4YE4Zr6yPVJkdfC0F3VL
+	 nwDEgq5fKNXFTNu4mJ/ZslyE8VgdhNLc7PcFvjAgUFw94CbWQWUPZRceD9j4Y/mBkt
+	 vfsLrVEOK56FqOR7pbYISoTvp5pHgDj4+zTYPHuwwWsxIRcL4FYFG93xlG0NR4USg7
+	 wV0JoYWq/+kUZY0slHTCCObmYSLpNOygG0WBNM207xU/wdum4dvi5nzqxu21z5TPhL
+	 l/sjPvx8i1Z4g==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id C79B7360938;
-	Mon, 28 Oct 2024 14:02:40 +0000 (UTC)
-Date: Mon, 28 Oct 2024 15:02:40 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH 05/24] can: m_can: Switch to use hrtimer_setup()
-Message-ID: <20241028-melodic-subtle-waxbill-a6f8ec-mkl@pengutronix.de>
-References: <cover.1729865232.git.namcao@linutronix.de>
- <16cb05a8163085445bd17b68ad54bb11d2b2c450.1729865232.git.namcao@linutronix.de>
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 321DF17E3613;
+	Mon, 28 Oct 2024 15:02:44 +0100 (CET)
+Date: Mon, 28 Oct 2024 10:02:41 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Bamvor Jian Zhang <bamv2005@gmail.com>,
+	Shuah Khan <shuah@kernel.org>
+Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, kernelci@lists.linux.dev
+Subject: Re: [PATCH RFC v2 0/5] Verify bias functionality for pinctrl_paris
+ driver through new gpio test
+Message-ID: <cda91b70-7179-49b5-9207-3fa3a1aaa4d5@notapiano>
+References: <20241025-kselftest-gpio-set-get-config-v2-0-040d748840bb@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="6dg3wjxgastupw3b"
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <16cb05a8163085445bd17b68ad54bb11d2b2c450.1729865232.git.namcao@linutronix.de>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241025-kselftest-gpio-set-get-config-v2-0-040d748840bb@collabora.com>
 
+On Fri, Oct 25, 2024 at 03:45:35PM -0400, Nícolas F. R. A. Prado wrote:
+> This series was motivated by the regression fixed by 166bf8af9122
+> ("pinctrl: mediatek: common-v2: Fix broken bias-disable for
+> PULL_PU_PD_RSEL_TYPE"). A bug was introduced in the pinctrl_paris driver
+> which prevented certain pins from having their bias configured.
+> 
+> Running this test on the mt8195-tomato platform with the test plan
+> included below[1] shows the test passing with the fix applied, but failing
+> without the fix:
+> 
+> With fix:
+>   $ ./gpio-setget-config.py
+>   TAP version 13
+>   # Using test plan file: ./google,tomato.yaml
+>   1..3
+>   ok 1 pinctrl_paris.34.pull-up
+>   ok 2 pinctrl_paris.34.pull-down
+>   ok 3 pinctrl_paris.34.disabled
+>   # Totals: pass:3 fail:0 xfail:0 xpass:0 skip:0 error:0
+> 
+> Without fix:
+>   $ ./gpio-setget-config.py
+>   TAP version 13
+>   # Using test plan file: ./google,tomato.yaml
+>   1..3
+>   # Bias doesn't match: Expected pull-up, read pull-down.
+>   not ok 1 pinctrl_paris.34.pull-up
+>   ok 2 pinctrl_paris.34.pull-down
+>   # Bias doesn't match: Expected disabled, read pull-down.
+>   not ok 3 pinctrl_paris.34.disabled
+>   # Totals: pass:1 fail:2 xfail:0 xpass:0 skip:0 error:0
+> 
+> In order to achieve this, the first three patches expose bias
+> configuration through the GPIO API in the MediaTek pinctrl drivers,
+> notably, pinctrl_paris, patch 4 extends the gpio-mockup-cdev utility for
+> use by patch 5, and patch 5 introduces a new GPIO kselftest that takes a
+> test plan in YAML, which can be tailored per-platform to specify the
+> configurations to test, and sets and gets back each pin configuration to
+> verify that they match and thus that the driver is behaving as expected.
+> 
+> Since the GPIO uAPI only allows setting the pin configuration, getting
+> it back is done through pinconf-pins in the pinctrl debugfs folder.
+> 
+> The test currently only verifies bias but it would be easy to extend to
+> verify other pin configurations.
+> 
+> The test plan YAML file can be customized for each use-case and is
+> platform-dependant. For that reason, only an example is included in
+> patch 3 and the user is supposed to provide their test plan. That said,
+> the aim is to collect test plans for ease of use at [2].
+> 
+> [1] This is the test plan used for mt8195-tomato:
+> 
+> - label: "pinctrl_paris"
+>   tests:
+>   # Pin 34 has type MTK_PULL_PU_PD_RSEL_TYPE and is unused.
+>   # Setting bias to MTK_PULL_PU_PD_RSEL_TYPE pins was fixed by
+>   # 166bf8af9122 ("pinctrl: mediatek: common-v2: Fix broken bias-disable for PULL_PU_PD_RSEL_TYPE")
+>   - pin: 34
+>     bias: "pull-up"
+>   - pin: 34
+>     bias: "pull-down"
+>   - pin: 34
+>     bias: "disabled"
+> 
+> [2] https://github.com/kernelci/platform-test-parameters
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+> Changes in v2:
+> - Added patches 2 and 3 enabling the extra GPIO pin configurations on
+>   the other mediatek drivers: pinctrl-moore and pinctrl-mtk-common
+> - Tweaked function name in patch 1:
+>   mtk_pinconf_set -> mtk_paris_pin_config_set,
+>   to make it clear it is not a pinconf_ops
+> - Adjusted commit message to make it clear the current support is
+>   limited to pins supported by the EINT controller
+> - Link to v1: https://lore.kernel.org/r/20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com
+> 
+> ---
+> Nícolas F. R. A. Prado (5):
+>       pinctrl: mediatek: paris: Expose more configurations to GPIO set_config
+>       pinctrl: mediatek: moore: Expose more configurations to GPIO set_config
+>       pinctrl: mediatek: common: Expose more configurations to GPIO set_config
 
---6dg3wjxgastupw3b
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 05/24] can: m_can: Switch to use hrtimer_setup()
-MIME-Version: 1.0
+I forgot to mention that I don't have hardware that uses the moore or the common
+drivers, so I'm not able to runtime test patches 2 and 3. So help with that is
+appreciated.
 
-On 28.10.2024 08:34:18, Nam Cao wrote:
-> There is a newly introduced hrtimer_setup() which will replace
-> hrtimer_init(). This new function is similar to the old one, except that =
-it
-> also sanity-checks and initializes the timer's callback function.
->=20
-> Switch to use this new function.
->=20
-> Patch was created by using Coccinelle.
->=20
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+Thanks,
+Nícolas
 
-Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---6dg3wjxgastupw3b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcfmXwACgkQKDiiPnot
-vG86Rgf/cyKVMSVHGYlNaprWA9pODJxJdFiDQY46vMooCuLf+hxT2akZ1h58ofI6
-ohhdbJBvvXDICS5HIfZVB5r/waEafKgtO2LMoUm5SIHmzINChI2eWnMcGA8ScL22
-Mg6yAaKd4Fzu/n/JufrwIUpIcRTlWFFmUqTQEIxUmIdN/rYus/Ew9xLbd3gVgZM0
-1gPWOrfDz1ug2omw1QClSvSIOZVgJoJWg+8vnCDWFSRlQJ/C/SvYIsATm6cszgHv
-XJQP4jrvYWY46ic2bHoIIJyxvPQbGC3rNl/WnWa1vpwDCMWUSZRGuCK270SfRlXu
-9NNzUgnROTw6svXG25T2xtKHytnPhg==
-=Z0Y2
------END PGP SIGNATURE-----
-
---6dg3wjxgastupw3b--
+>       selftest: gpio: Add wait flag to gpio-mockup-cdev
+>       selftest: gpio: Add a new set-get config test
+> 
+>  drivers/pinctrl/mediatek/pinctrl-moore.c           | 283 +++++++++++----------
+>  drivers/pinctrl/mediatek/pinctrl-mtk-common.c      |  48 ++--
+>  drivers/pinctrl/mediatek/pinctrl-paris.c           |  26 +-
+>  tools/testing/selftests/gpio/Makefile              |   2 +-
+>  tools/testing/selftests/gpio/gpio-mockup-cdev.c    |  14 +-
+>  .../gpio-set-get-config-example-test-plan.yaml     |  15 ++
+>  .../testing/selftests/gpio/gpio-set-get-config.py  | 183 +++++++++++++
+>  7 files changed, 395 insertions(+), 176 deletions(-)
+> ---
+> base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
+> change-id: 20240906-kselftest-gpio-set-get-config-6e5bb670c1a5
+> 
+> Best regards,
+> -- 
+> Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> 
 
