@@ -1,103 +1,122 @@
-Return-Path: <linux-kernel+bounces-385099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D2E9B3266
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:02:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22CC9B326B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:03:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728D51C21263
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6381F22703
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3CF01DDA14;
-	Mon, 28 Oct 2024 14:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="Dxvc1QSJ"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4E31DD553;
+	Mon, 28 Oct 2024 14:03:06 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 811A81DD55F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:02:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446EA1DB95F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124139; cv=none; b=VAiqfIRgHV3MyEpgwp6HCj5wUSeYyG+CM7i5CVhBYTzh8bkPpj31mpyvmguQpqNgvxIHcAPGKEP1Is+5WxKzkRl7uV+xyy2/DCn70ll4onOZoXpNx0uT/p3wRTeTJlK3ekvwpNnV6kz5t80Ye2JurFbxB96i0z6imGsv8fGKhuk=
+	t=1730124186; cv=none; b=qMFWt/TVJ2O2cZJnLB9fE2BAPaTotacx9n5HCSRJB2fOE0+Es03Tqqw/VBJDQtCVBL5GTI6EHufO9EcsAR/qWpNS2NwZLi1WF0EMQdSkSLLjyujVcwWwjHH3/McPFAAqhNjXzV59y4M2itHeO1s1A2S2/3ZkLbDb8mAAKH38ME0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124139; c=relaxed/simple;
-	bh=6NtzaLHH2RkqvPGHKKHItqVlr0xA+NQ34K5IMBIj8SI=;
+	s=arc-20240116; t=1730124186; c=relaxed/simple;
+	bh=kJryATv559js9WGfKz+9Z7XSJF7osBWpwscqtGu0ehU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mlRLdrW7IXdJ+WUXD97g6jT3T0H8cJWthDlo4MT3/m1pkzTWM8BxPRdjWZfNuIoLmqCQBsel2hFLfN7K3vxg9D0aRc3Ko5m270PTpWEO/rWOj10BJEP7G9z9bac6xkPNcUTpD11QSV7Il9XN7O/JQh3+qbmM3GyFotnPij0abJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=Dxvc1QSJ; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b150dc7bc0so338551385a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:02:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1730124135; x=1730728935; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y+pTNTU0CbesNOJj7SQS3n1+ZsJxzXX/EguUPHGGqgw=;
-        b=Dxvc1QSJ0ZlfUeHEFak9pl1ybz0uBBuW7WGZmCb5YIP+IS+cooc8Rin4T4OuTYfdwJ
-         /am/YWkFjNhe+tPkgqB4g4VVB+mKmVt/AQn1auM9GyQh1jC0PeWwnIOhTn9cxJR1DIyK
-         beN4cyetdPxClTvWpmVuWFTx8wrc5+KCXUEU8UHtEp51mogN0CyLArg72N5+RQbTny38
-         wxTSo3ZglAk6hO7zXnoinVN8cWFK8xHBZzMX8zs5ez17jQUt2/UkskZj1XC7sfHJMW9J
-         Q5Rt1wripWKQ26vNIIHfsqL10iNSqJG0n0dWXyBY+vSWTt7C/sKSpidoWY1HuOSaarqm
-         3mfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730124135; x=1730728935;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=y+pTNTU0CbesNOJj7SQS3n1+ZsJxzXX/EguUPHGGqgw=;
-        b=DaCA4xtPtBSDzusmkmW0fJ+YrBkrwpvUR0qLGeEABR1aoZZWpTJp/82dc1W0ka+7Ow
-         hDhc6Xh2+02znpmCeuFTPIAqGiKjgvX7LxgAZVASPWE5DSspljDPkhFXgbRO05FAcJYu
-         Jp46jAUDa9asGuTvew9JOHB3lQ6DgtdFy/ALTI+fTjutNYZhFiyBd109OPdNNNf0mvGr
-         0OVGNPPqcPlVhsTv0fqN4cqUONIvIAPgiUSSuJRcNku+HL1okBw7TniAs1XqRJFSQKDs
-         /OdWF9TmI7zZ5b4v2mBp7Z3GQqbSfd4N2cQXIJVE6ZyOgD91YDpDXCthkhkn50eFDdfN
-         S6kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7AhxcVfZL3dFtgdXxToSYBNFLOuebeh0yGL7AosCV9sZClbyUiR3Ony3SNlRxDFrYkMcXvuc5Z2dk2ic=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbJEKkSpOFROKofEHGkD4OtIptczNRyOb5eAIfJuYo+A5Yzxqn
-	KSDFLLSA2mhL4SmUW3BSDUSGetHuhsFJjk20QF5aD7Hmvx9jae2KLXzIki5f9HU=
-X-Google-Smtp-Source: AGHT+IER2ntkwj9uxtuQo4z+LCNsLMLN2s/pMek6zbEe6YjeeDquThbGY2qzmQ0x4cZ1k/agoHHi6A==
-X-Received: by 2002:a05:620a:4504:b0:7b1:49a4:d1df with SMTP id af79cd13be357-7b193f5d447mr1346573585a.53.1730124135325;
-        Mon, 28 Oct 2024 07:02:15 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d27a47asm321848585a.25.2024.10.28.07.02.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 07:02:13 -0700 (PDT)
-Date: Mon, 28 Oct 2024 10:02:12 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>,
-	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [PATCH v1 6/6] memcg-v1: remove memcg move locking code
-Message-ID: <20241028140212.GE10985@cmpxchg.org>
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
- <20241025012304.2473312-7-shakeel.butt@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N0gS+Fqvm8OpWsjoSxpDppe7jZL+mdlLE+AvmfOWyI4XM7+2+FzoU/dMM3QJyrAfsV0sGmx0ihVW2+Hg/cVODoJhPU5KowJUSquDZrfd4EdPq7cWp+3gs/IIBrWa1oLnMXLlfUpYGI8PxhYbCGq6d5/+wwqDzpmvxyotxQicLU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5QKP-0000po-Es; Mon, 28 Oct 2024 15:02:41 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5QKP-000rbP-0W;
+	Mon, 28 Oct 2024 15:02:41 +0100
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id C79B7360938;
+	Mon, 28 Oct 2024 14:02:40 +0000 (UTC)
+Date: Mon, 28 Oct 2024 15:02:40 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [PATCH 05/24] can: m_can: Switch to use hrtimer_setup()
+Message-ID: <20241028-melodic-subtle-waxbill-a6f8ec-mkl@pengutronix.de>
+References: <cover.1729865232.git.namcao@linutronix.de>
+ <16cb05a8163085445bd17b68ad54bb11d2b2c450.1729865232.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="6dg3wjxgastupw3b"
 Content-Disposition: inline
-In-Reply-To: <20241025012304.2473312-7-shakeel.butt@linux.dev>
+In-Reply-To: <16cb05a8163085445bd17b68ad54bb11d2b2c450.1729865232.git.namcao@linutronix.de>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Thu, Oct 24, 2024 at 06:23:03PM -0700, Shakeel Butt wrote:
-> The memcg v1's charge move feature has been deprecated. All the places
-> using the memcg move lock, have stopped using it as they don't need the
-> protection any more. Let's proceed to remove all the locking code
-> related to charge moving.
-> 
-> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+--6dg3wjxgastupw3b
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 05/24] can: m_can: Switch to use hrtimer_setup()
+MIME-Version: 1.0
+
+On 28.10.2024 08:34:18, Nam Cao wrote:
+> There is a newly introduced hrtimer_setup() which will replace
+> hrtimer_init(). This new function is similar to the old one, except that =
+it
+> also sanity-checks and initializes the timer's callback function.
+>=20
+> Switch to use this new function.
+>=20
+> Patch was created by using Coccinelle.
+>=20
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+
+Reviewed-by: Marc Kleine-Budde <mkl@pengutronix.de>
+
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--6dg3wjxgastupw3b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcfmXwACgkQKDiiPnot
+vG86Rgf/cyKVMSVHGYlNaprWA9pODJxJdFiDQY46vMooCuLf+hxT2akZ1h58ofI6
+ohhdbJBvvXDICS5HIfZVB5r/waEafKgtO2LMoUm5SIHmzINChI2eWnMcGA8ScL22
+Mg6yAaKd4Fzu/n/JufrwIUpIcRTlWFFmUqTQEIxUmIdN/rYus/Ew9xLbd3gVgZM0
+1gPWOrfDz1ug2omw1QClSvSIOZVgJoJWg+8vnCDWFSRlQJ/C/SvYIsATm6cszgHv
+XJQP4jrvYWY46ic2bHoIIJyxvPQbGC3rNl/WnWa1vpwDCMWUSZRGuCK270SfRlXu
+9NNzUgnROTw6svXG25T2xtKHytnPhg==
+=Z0Y2
+-----END PGP SIGNATURE-----
+
+--6dg3wjxgastupw3b--
 
