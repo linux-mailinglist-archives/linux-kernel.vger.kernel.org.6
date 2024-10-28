@@ -1,295 +1,140 @@
-Return-Path: <linux-kernel+bounces-384770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 206D89B2E32
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:10:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB2F59B2E3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7CB1F2127F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:10:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64EE21F21E97
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:11:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0863E1D47A6;
-	Mon, 28 Oct 2024 10:54:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C491DD523;
+	Mon, 28 Oct 2024 10:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9iLtQEM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BC0BDyHM"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3351D61AA;
-	Mon, 28 Oct 2024 10:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36FAF1DC19F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112860; cv=none; b=SZhzHRJ5iqvre8qdOJW7T6oJjhxdobJA8ePduECdZ4Rb0RF0S7aLbQvpVCtsRxzNqih6ck8CYoH4ajE8XDqju+tNk/k8+SOkbz06oOfzGqKouOMMbyIsTs0Q7mmeUR+NqhPY4LcFPSjYA1QqFSui+1ZUBzcXGBIPGiy5kJ+QfKc=
+	t=1730112891; cv=none; b=VVtCqNlAGahcx8T6MLE680XxNICbM0oG7wUQEFHyrYlkoNbEH2WPKYLq+fp2gMIl+hL/cbR8clKNdDPg6a7DhGGbH4mDQQ7EHeMzIZTx6pcBBbN0szirU696QsNSx/vIdQsm2wYIMfA0kqRaSny6kX7u+Stb/nveinhVdVXBnhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112860; c=relaxed/simple;
-	bh=zIOXzuRG3dc6vNZ1stnKzWp2pTIwZMS6vUh1dOBMtLQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=S6Y28Eum1lmaQvmxjcygC4yMnFVmdl4U7b3aPLyz+CepLbMamS7zbR+f/phVIyyv3hE1t+RnJvg/QBZVXrxBEABYVOTxMkmbX65LhR7opLt2kmLfMKaf9e1JJkMva1kxE8KXN8rVpCDQZL4+9HcvpeVygxLRtMfzuDPhAbaSK8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9iLtQEM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC13FC4CEC3;
-	Mon, 28 Oct 2024 10:54:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730112860;
-	bh=zIOXzuRG3dc6vNZ1stnKzWp2pTIwZMS6vUh1dOBMtLQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H9iLtQEMzLKjdhnTxEUC5FFzsYwGwY+mTpPCgosBKxyDl7wEcR1f/fASlpOPAawXB
-	 qHfblsangru8s7Cfc+8Qw/vbKqtmfBbv8efTB2GbzZFfdlwmrXtVMcjxoIhOwrXyf1
-	 bUQb7jbiBk5yQ/UqrR7gWc0H/ktuAkOhyQuqjh4Tlj4BbYfo9oqgEsr6sQ0Bv7MU/O
-	 Fo/9hxwRoHmHtv4WR7xizmplVSVRD6JBIuh9znF250lm4yrtur/59ke0S/vRjry5+d
-	 dWUK8QVwUUb9iC9n8LinOAZ9rNIU0ZfSxRVUaGhIAq9XEsGsZ24XRWy4ZcT8ftpRn+
-	 /N8wDW+EYwj5Q==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5NO5-007X6U-MV;
-	Mon, 28 Oct 2024 10:54:17 +0000
-Date: Mon, 28 Oct 2024 10:54:17 +0000
-Message-ID: <87o734ts4m.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute if supported
-In-Reply-To: <20241028094014.2596619-5-aneesh.kumar@kernel.org>
-References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
-	<20241028094014.2596619-5-aneesh.kumar@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1730112891; c=relaxed/simple;
+	bh=FRT7cTeBL9rzdgEqPmoGx0xaa7VbGPuT/dkMIqKmKWY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8QFB3GXfSX1cKg1hroDpIUw3o1J1ltNUlG/qhwZhqEvhvnu1NMFdA/WQHcnmRY2DHHCGAH4nonfJN+FrXaeVkS5UQMHT7G2V+4rES0dXg/Pu9ARDTavXPvwDyvZbricJXV6pFgSRD/QI7XC5MbL0WkOt6F9zuW8wtP80rZcfMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BC0BDyHM; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e4b7409fso4033196e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:54:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730112887; x=1730717687; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hIp8p1y9OYLmueWzt8+7yDMvWFfo7oDb41HmupTIZZA=;
+        b=BC0BDyHMp0F1W2+Oxad8nS1sZJD/7AYnLvvka7Y5aijQVAIQU4A5fyUnwqtaq9xekF
+         mHe98j/0ZilogO+nu/dYnffETmgItXyevdh2RKPnzFPihWdaYip1FWZ+snjYJNLbhDqE
+         qgNGVrcb/5lHdrPzfP4yq7xwR4JtO/S9NR3k4BtDlrnFWmcQTUx9ODYJxZZeisdph2ci
+         asIeqVu6qxqODjr96Fy9oHXgvJ9VfrI9b/Nel52/8r6N7J5c2pkFzv6X4st/wyvmSBbz
+         fxkjhH3ctP5vrUX2BzGARmr54EnTerzdKNd0v8IJGU/IGwyu34TdXFFtGNJxMgbPbjiR
+         ml3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730112887; x=1730717687;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hIp8p1y9OYLmueWzt8+7yDMvWFfo7oDb41HmupTIZZA=;
+        b=Q2j0A0vriyKTVSVqZENcnIjgsFyl70qaqhvqfzC/8kdrcAnSTtN+s2t5BFJkaaRT75
+         ui2CBjeIBYRXRXvfWq3nscMUDG74EaBh8DDZLF45MhrFFxYeNRJK+ru2nWdzBwTuyhFp
+         SRdoxrKaJpYahWuFKEnssMKHDNvxIyWOYt328ZALH7+BFY/3yLb8PoQU54D0r6mnBWVE
+         cvaRXsUmuTLtyEb1WwN9hncCUg/xUDsZbs9sG8K6cDPzfnWRBG+yTbgsMaxSzsQJsWig
+         moBcWrP2mBrI8ncJP1BtmG2lNOC4ECny40TCoCcCqtSRV6I4bnFIaOkzStWSXW2nlWYq
+         EPCg==
+X-Forwarded-Encrypted: i=1; AJvYcCXf/Zk1DJtmMZ4PND4A98521qMIu75fSo+h0Bs9nMIm5KDo0JeFtREM5mpcCGK2nuZag4aE2ZaATn0mtYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxV3GSDW7My79qLP5IaAftlCow/J/FobxMiQ9ZNiDss92FgYC5p
+	ap/+uojnX8RUM3P3hIRC5czLPNQu1exSK+krB1+Iru0fFS0qJ9Gw8eM7WJKGGUE=
+X-Google-Smtp-Source: AGHT+IEvzbs7iCzZXXfk6Ann3ZL3OW88AuVYQtULh9f4OSje5nI375zcEnnbchgjpRTSYmWkTUgo6Q==
+X-Received: by 2002:a05:6512:1107:b0:539:fbf8:5735 with SMTP id 2adb3069b0e04-53b33df7378mr2053614e87.8.1730112887274;
+        Mon, 28 Oct 2024 03:54:47 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a7efsm1043915e87.56.2024.10.28.03.54.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 03:54:46 -0700 (PDT)
+Date: Mon, 28 Oct 2024 12:54:45 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: kernel test robot <lkp@intel.com>
+Cc: Yongbang Shi <shiyongbang@huawei.com>, xinliang.liu@linaro.org, 
+	tiantao6@hisilicon.com, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch, 
+	kong.kongxinwei@hisilicon.com, oe-kbuild-all@lists.linux.dev, liangjian010@huawei.com, 
+	chenjianmin@huawei.com, lidongming5@huawei.com, libaihan@huawei.com, 
+	shenjian15@huawei.com, shaojijie@huawei.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
+Message-ID: <5sb3loc23nf45up3tx3z7nq2s4hvevhxdwhq7t6w5hrwnyw7vi@kjg4vshkuvjm>
+References: <20241022124148.1952761-2-shiyongbang@huawei.com>
+ <202410250305.UHKDhtxy-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Suzuki.Poulose@arm.com, steven.price@arm.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202410250305.UHKDhtxy-lkp@intel.com>
 
-On Mon, 28 Oct 2024 09:40:14 +0000,
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+On Fri, Oct 25, 2024 at 03:52:49AM +0800, kernel test robot wrote:
+> Hi Yongbang,
 > 
-> Currently, the kernel won't start a guest if the MTE feature is enabled
-> and the guest RAM is backed by memory which doesn't support access tags.
-> Update this such that the kernel uses the NoTagAccess memory attribute
-> while mapping pages from VMAs for which MTE is not allowed. The fault
-> from accessing the access tags with such pages is forwarded to VMM so
-> that VMM can decide to kill the guest or remap the pages so that
-> access tag storage is allowed.
+> kernel test robot noticed the following build errors:
+> 
+> [auto build test ERROR on drm-misc/drm-misc-next]
+> [also build test ERROR on linus/master v6.12-rc4 next-20241024]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Yongbang-Shi/drm-hisilicon-hibmc-add-dp-aux-in-hibmc/20241022-204925
+> base:   git://anongit.freedesktop.org/drm/drm-misc drm-misc-next
+> patch link:    https://lore.kernel.org/r/20241022124148.1952761-2-shiyongbang%40huawei.com
+> patch subject: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
+> config: arm64-randconfig-004-20241024 (https://download.01.org/0day-ci/archive/20241025/202410250305.UHKDhtxy-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 14.1.0
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410250305.UHKDhtxy-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    aarch64-linux-ld: drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.o: in function `dp_aux_init':
+> >> drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c:154: multiple definition of `dp_aux_init'; drivers/gpu/drm/msm/dp/dp_aux.o:dp_aux.c:(.text+0x8a0): first defined here
 
-I only have questions here:
-
-- what is the benefit of such approach? why shouldn't that be the
-  kernel's job to fix it?
-
-- where is the documentation for this new userspace ABI?
-
-- are you expecting the VMM to create a new memslot for this?
-
-- where is the example of a VMM using this?
+I think both of us should switch to a more generic names. I'll send a
+patchset for msm/dp, please use some less generic prefix for hibmc
+driver.
 
 > 
-> NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
-> add a new EXIT type because this is arm64 specific exit type.
 > 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
->  arch/arm64/include/asm/kvm_pgtable.h |  1 +
->  arch/arm64/kvm/hyp/pgtable.c         | 16 +++++++++++++---
->  arch/arm64/kvm/mmu.c                 | 28 ++++++++++++++++++++++------
->  include/uapi/linux/kvm.h             |  7 +++++++
->  5 files changed, 48 insertions(+), 9 deletions(-)
+> vim +154 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
 > 
-> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
-> index a601a9305b10..fa0149a0606a 100644
-> --- a/arch/arm64/include/asm/kvm_emulate.h
-> +++ b/arch/arm64/include/asm/kvm_emulate.h
-> @@ -373,6 +373,11 @@ static inline bool kvm_vcpu_trap_is_exec_fault(const struct kvm_vcpu *vcpu)
->  	return kvm_vcpu_trap_is_iabt(vcpu) && !kvm_vcpu_abt_iss1tw(vcpu);
->  }
->  
-> +static inline bool kvm_vcpu_trap_is_tagaccess(const struct kvm_vcpu *vcpu)
-> +{
-> +	return !!(ESR_ELx_ISS2(kvm_vcpu_get_esr(vcpu)) & ESR_ELx_TagAccess);
-> +}
-> +
->  static __always_inline u8 kvm_vcpu_trap_get_fault(const struct kvm_vcpu *vcpu)
->  {
->  	return kvm_vcpu_get_esr(vcpu) & ESR_ELx_FSC;
-> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-> index 03f4c3d7839c..5657ac1998ad 100644
-> --- a/arch/arm64/include/asm/kvm_pgtable.h
-> +++ b/arch/arm64/include/asm/kvm_pgtable.h
-> @@ -252,6 +252,7 @@ enum kvm_pgtable_prot {
->  
->  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
->  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
-> +	KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS	= BIT(5),
-
-This seems wrong. NOTAGACCESS is a *permission*, not a memory type.
-
->  
->  	KVM_PGTABLE_PROT_SW0			= BIT(55),
->  	KVM_PGTABLE_PROT_SW1			= BIT(56),
-> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> index b11bcebac908..bc0d9f08c49a 100644
-> --- a/arch/arm64/kvm/hyp/pgtable.c
-> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> @@ -677,9 +677,11 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
->  {
->  	kvm_pte_t attr;
->  	u32 sh = KVM_PTE_LEAF_ATTR_LO_S2_SH_IS;
-> +	unsigned long prot_mask = KVM_PGTABLE_PROT_DEVICE |
-> +				  KVM_PGTABLE_PROT_NORMAL_NC |
-> +				  KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
->  
-> -	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
-> -			KVM_PGTABLE_PROT_NORMAL_NC)) {
-> +	switch (prot & prot_mask) {
->  	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
->  		return -EINVAL;
->  	case KVM_PGTABLE_PROT_DEVICE:
-> @@ -692,6 +694,12 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
->  			return -EINVAL;
->  		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
->  		break;
-> +	case KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS:
-> +		if (system_supports_notagaccess())
-> +			attr = KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS);
-> +		else
-> +			return -EINVAL;
-> +		break;
-
-How do you see this working when migrating a VM from one host to
-another, one that supports FEAT_MTE_PERM and one that doesn't? The
-current assumptions are that the VMM will replay the *exact same*
-setup on the target host, and this obviously doesn't work.
-
->  	default:
->  		attr = KVM_S2_MEMATTR(pgt, NORMAL);
->  	}
-> @@ -872,7 +880,9 @@ static void stage2_unmap_put_pte(const struct kvm_pgtable_visit_ctx *ctx,
->  static bool stage2_pte_cacheable(struct kvm_pgtable *pgt, kvm_pte_t pte)
->  {
->  	u64 memattr = pte & KVM_PTE_LEAF_ATTR_LO_S2_MEMATTR;
-> -	return kvm_pte_valid(pte) && memattr == KVM_S2_MEMATTR(pgt, NORMAL);
-> +	return kvm_pte_valid(pte) &&
-> +	       ((memattr == KVM_S2_MEMATTR(pgt, NORMAL)) ||
-> +		(memattr == KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS)));
->  }
->  
->  static bool stage2_pte_executable(kvm_pte_t pte)
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index b5824e93cee0..e56c6996332e 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1647,12 +1647,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  		 *  not a permission fault implies a translation fault which
->  		 *  means mapping the page for the first time
->  		 */
-> -		if (mte_allowed) {
-> +		if (mte_allowed)
->  			sanitise_mte_tags(kvm, pfn, vma_pagesize);
-> -		} else {
-> -			ret = -EFAULT;
-> -			goto out_unlock;
-> -		}
-> +		else
-> +			prot |= KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
->  	}
->  
->  	if (writable)
-> @@ -1721,6 +1719,15 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
->  		kvm_set_pfn_accessed(kvm_pte_to_pfn(pte));
->  }
->  
-> +static inline void kvm_prepare_notagaccess_exit(struct kvm_vcpu *vcpu,
-> +						 gpa_t gpa, gpa_t size)
-> +{
-> +	vcpu->run->exit_reason = KVM_EXIT_ARM_NOTAG_ACCESS;
-> +	vcpu->run->notag_access.flags = 0;
-> +	vcpu->run->notag_access.gpa = gpa;
-> +	vcpu->run->notag_access.size = size;
-
-Why does size matter here? It seems pretty pointless.
-
-> +}
-> +
->  /**
->   * kvm_handle_guest_abort - handles all 2nd stage aborts
->   * @vcpu:	the VCPU pointer
-> @@ -1833,6 +1840,14 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
->  
->  	gfn = ipa >> PAGE_SHIFT;
->  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
-> +
-> +	if (kvm_vcpu_trap_is_tagaccess(vcpu)) {
-> +		/* exit to host and handle the error */
-> +		kvm_prepare_notagaccess_exit(vcpu, gfn << PAGE_SHIFT, PAGE_SIZE);
-> +		ret = 0;
-> +		goto out;
-> +	}
-> +
->  	hva = gfn_to_hva_memslot_prot(memslot, gfn, &writable);
->  	write_fault = kvm_is_write_fault(vcpu);
->  	if (kvm_is_error_hva(hva) || (write_fault && !writable)) {
-> @@ -2145,7 +2160,8 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
->  		if (!vma)
->  			break;
->  
-> -		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
-> +		if (kvm_has_mte(kvm) && !system_supports_notagaccess() &&
-> +		    !kvm_vma_mte_allowed(vma)) {
->  			ret = -EINVAL;
->  			break;
->  		}
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 637efc055145..a8268a164c4d 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
->  #define KVM_EXIT_NOTIFY           37
->  #define KVM_EXIT_LOONGARCH_IOCSR  38
->  #define KVM_EXIT_MEMORY_FAULT     39
-> +#define KVM_EXIT_ARM_NOTAG_ACCESS 40
->  
->  /* For KVM_EXIT_INTERNAL_ERROR */
->  /* Emulate instruction failed. */
-> @@ -446,6 +447,12 @@ struct kvm_run {
->  			__u64 gpa;
->  			__u64 size;
->  		} memory_fault;
-> +		/* KVM_EXIT_ARM_NOTAG_ACCESS */
-> +		struct {
-> +			__u64 flags;
-> +			__u64 gpa;
-> +			__u64 size;
-> +		} notag_access;
->  		/* Fix the size of the union. */
->  		char padding[256];
->  	};
-
-How do you plan to handle the same thing for NV?
-
-Thanks,
-
-	M.
+>    152	
+>    153	void dp_aux_init(struct dp_dev *dp)
+>  > 154	{
+> 
+> -- 
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
 
 -- 
-Without deviation from the norm, progress is not possible.
+With best wishes
+Dmitry
 
