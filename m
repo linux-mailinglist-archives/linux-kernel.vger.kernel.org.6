@@ -1,152 +1,169 @@
-Return-Path: <linux-kernel+bounces-385703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12DE59B3A8A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:35:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8941A9B3A8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:36:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 364951C214BB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BDD0280FF9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBB618EFC8;
-	Mon, 28 Oct 2024 19:35:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D15DA18FC74;
+	Mon, 28 Oct 2024 19:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NYe5SrQZ"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Gk9RscLT"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AF9F64D;
-	Mon, 28 Oct 2024 19:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CF818B03
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730144117; cv=none; b=YXXQxznuJqAozPsLsYX3dahbmSNCGs0mam1+BwcT/lWt1BJ9MQ2G0MTCMvOvwEcuMgdgWR1RqZJJqrORrHEg7vRsYChqtBw5pQQeS2rBXkkgQ7SEsp3LIzXwH0EZ3id+FF5pyPnuDuxPwQ5Odl3kjxUjUeCXCMUAobx9AiuR5rY=
+	t=1730144185; cv=none; b=qF8WDYekoBszLNWqHTW+NpMLjuHWPaQN8MR3UaUn/phHbV/12lydRVua5cA623QnSB4ODJaTE4pmnCCKYcQ5vvGk4pI0CVl7/RFXQ2SwsNALohKb1WP1/EdciKz78KmqVpN4AHK/4LUGddC0QcSIXgUuLhcEOQs3sDZWLNG7glk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730144117; c=relaxed/simple;
-	bh=kCjK7ZQR0hzLTvfPDmOJ9pz5sgD6xplYcCMIz1A4Vuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GymVRqB84upKehcCv87zWFcxzNMI/CSiuQkhrZBn3A4WzR9SpnPVIjNtSXzb++om29qeJrADM5IJDFvSDJlOp8LcnrlFPFIqLbEOJK7kUh79lEEWBT6+FRcKJbPXHdgZhsIb9Ubytc5k70q+vrJ5RAxvRhS6MmBSM5kBuZ53UQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NYe5SrQZ; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso3744177a91.3;
-        Mon, 28 Oct 2024 12:35:15 -0700 (PDT)
+	s=arc-20240116; t=1730144185; c=relaxed/simple;
+	bh=viqJIcjf2TXOv5DBWOT5NyB73K2UIrJGjSw23TdvG3g=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=ezaDh5DERByTDPGtH0z4bSLBLmB69hKqvoYI8FD1MEnkkU+dMZV4OUNxFW+XCctNWzjChfzYn21Usd/2eXQIdjpDVIQeJO/dkFsIC1Q4h71GbJiBgFiEaeCbl/1PBPT/wqTpR2xEMcQI6rt9ctFEFxOYACXvjjLRhPP4YLQQpvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Gk9RscLT; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3705b2883so94405367b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730144115; x=1730748915; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=05Ps8bH6tperHDUV0zR7gW4MElDmWPOYzP78oL34Egg=;
-        b=NYe5SrQZow5xPmcWkpR1aW2zPLWTtrSJqQzACSZxGt0hGchXP8l7TzvPL7+XUgtHxe
-         DxwyPSsynys83FXlNiFzRddO8kqsd7znS8+qiGD52v82oOqlT1ba8Kk/AzACqxb7uclF
-         UtT7chXizPkw3iZbiLuNahg8GpQx49PrBqDfRqlpSPysfuWOkSL1BCbz3Ub6MXp2wuAF
-         ISmPrM5ys/cy7LwizF4ysqtJPsPutUXH/pfbFb3ohbhikxnd+tQ/ULFtb1cjIIXUwn3K
-         mde/DUmNSk1jdLJxr6ZlEw3ufQ7VLkjH4VqSNBMK0S4ZWRTVzHzc+bC+2LDm0+RoIaDc
-         eFTA==
+        d=google.com; s=20230601; t=1730144182; x=1730748982; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yF5sdmQv/v38/bFXfks7Mw1baK2Tg6j2c6FqlkJRLPU=;
+        b=Gk9RscLTx+k/RdNnyW0itxHlRtwo1zWw6WckpzUN4efH9vq2DbZbRG/aBUTibZEIHv
+         +X6g1a+tkyjMgtSDBlNzPo/xtzHb1hxaWxoHN3bss6XnPuHBQvIfpHDZfzE7++rQA41U
+         2xBCkiGIW3lOudtd8tUE9EOd48g0yseryvRIFMenw5TckXgLegvNkqzXHOjvMA+QpwdK
+         0mHABLuZXaNiL4zozKeuXTHC34gaDKzBPbsU9+8IdZFs6JMotOKXh+JsKWHzwds3n1wh
+         xeuUkY/ytifUgzd/9230Wn39Q1UvIQ8pd7+pIGUU68A8/+ywfH1zGyak9X5T07OeXVmS
+         pI1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730144115; x=1730748915;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=05Ps8bH6tperHDUV0zR7gW4MElDmWPOYzP78oL34Egg=;
-        b=mdCVbI7PquK8JaYvTSPmiNIrfK6cYo5tjKRZTlSxWx/Jie3dgtXVWz26NPUDmMEpEI
-         vKjD6Np48oCAMTXIzeaszNsZx1OZpcs4BmJGZ5z/tH98t+uM6WeJcZ40a4YFfD61HB8l
-         NXXN89fu41K1xyo0Scv4Hj0y6yRqlFfxA0EJaksUWNK/j4nK1dZhbCA9cXOqMpyW1Vt4
-         sOh+x6tX9aXWzFdKM3X86BcRrk8o7AP/Q5qa19P52tX+Dy9YL1RDLlOXzLojfYRUY8yZ
-         eQQfkSj3TciqkHPfI117ZwMvKeaGGmi5My4GAUAcQD5GcoR3Eb25wkE5hgpLpNI7eDPn
-         vOzg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+XNrXNymiG7hssWAWPNZ/pLf7VO0OTe2OSBIZJjpG8WM4icPeYD1xhZeIf7ZRJuv+BcWk5dZR@vger.kernel.org, AJvYcCXo5HGgZ7OjmiAdt+CtCnh3fiEvPSV061uyFrZgXbQdJS4O0fDoVqI5+6VqU4uzsJ61uew+MS2Hqd8EIt4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyj5ljRaYQSWRv+MnvmMXckhhsFK7OotzWndF47qtP9e72VoOL4
-	8VSwWPAtq1I0w2K3C7ArfFlm1Mefcp9t3jSpadr6VLyUtaX35vd2
-X-Google-Smtp-Source: AGHT+IGYrpnAUPYQgHtJcW/vYMmrB2pB8zyWTPDhJxmPOeL9FIDKC3MMtdSyzAMmnFXE8mnze9oJcg==
-X-Received: by 2002:a17:90a:6fe3:b0:2e2:ca12:6bc7 with SMTP id 98e67ed59e1d1-2e8f11b884fmr12030788a91.33.1730144114691;
-        Mon, 28 Oct 2024 12:35:14 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48e4a2sm9880048a91.2.2024.10.28.12.35.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 12:35:14 -0700 (PDT)
-Message-ID: <733035ce-13dc-4695-ae4c-03fea1adb0ee@gmail.com>
-Date: Mon, 28 Oct 2024 12:35:12 -0700
+        d=1e100.net; s=20230601; t=1730144182; x=1730748982;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yF5sdmQv/v38/bFXfks7Mw1baK2Tg6j2c6FqlkJRLPU=;
+        b=pxLOYzC07sNxCYK8/c4qWa8PovkSZ1iG3vD7TQgeUj9mBT/xAk88z0CwaHgHCMs4LX
+         eoRclS0KMEBqYd1c7BtvcjA507+eKt8HQKznJu8EdN0jZAiZRDBlOLZIyJPdzb5IfRwU
+         BGzP/ONoBr0FCfYeXhyYY12dQZnlIDvhhhSpJ57pevVN61aag6tj+sOLoVVL/CmgDRXe
+         z44wh86vUVV+gNu6oY6G0nm4sQWsFtrxU5obBXGFGMSTAlca0viv2TZ3G0PrAzIyL+yj
+         z4ifAd+ZpPxwzutpsK/eOw5TSbdaK5e3bnRt87x1GHU/GnGqa0DL6tO5ta5/tOBbSWaW
+         PiJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUDLxsJAfHdJ3ru1pqycczh89eV+f0OvMn170z3e9JPDII1FEzqcux5stiQsVdgr3lbJo8JXyvNYMMyI58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweKbZX9Vx4/8NB/V5jAr5JSwnL9I+DlpqimDuSbGZR5LA2Mf0k
+	F8HAa4TsMpgTyrbx6ebXym8QVBi1tMN9PystJsVa6FVJVlBZu/Ddx7JkhKIrRXTCNXr2bTBg+Nt
+	LMEREyg==
+X-Google-Smtp-Source: AGHT+IHb9ku3VWFkQuxz8YshxF9EpG++pYbx6Ld7Dpt2cU20aAZO00WQlfm55K+qpKPmZmKL2x/h856TNzt6
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:7532:f6ae:e607:9ac3])
+ (user=irogers job=sendgmr) by 2002:a05:690c:490a:b0:6e2:1ab6:699a with SMTP
+ id 00721157ae682-6e9d8acaf1bmr4842907b3.7.1730144182230; Mon, 28 Oct 2024
+ 12:36:22 -0700 (PDT)
+Date: Mon, 28 Oct 2024 12:36:19 -0700
+Message-Id: <20241028193619.247727-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.1 000/137] 6.1.115-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241028062258.708872330@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20241028062258.708872330@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Subject: [PATCH v2] perf build: Make libunwind opt-in rather than opt-out
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/27/24 23:23, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.1.115 release.
-> There are 137 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.115-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Having multiple unwinding libraries makes the perf code harder to
+understand and we have unused/untested code paths.
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Perf made BPF support an opt-out rather than opt-in feature. As libbpf
+has a libelf dependency, elfutils that provides libelf will also
+provide libdw. When libdw is present perf will use libdw unwinding
+rather than libunwind unwinding even if libunwind support is compiled
+in.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Rather than have libunwind built into perf and never used, explicitly
+disable the support and make it opt-in.
+
+Signed-off-by: Ian Rogers <irogers@google.com>
+Closes: https://lore.kernel.org/linux-perf-users/CAP-5=fUXkp-d7gkzX4eF+nbjb2978dZsiHZ9abGHN=BN1qAcbg@mail.gmail.com/
+---
+v2: update build tests.
+---
+ tools/perf/Makefile.config | 4 ++++
+ tools/perf/Makefile.perf   | 2 +-
+ tools/perf/tests/make      | 6 +++---
+ 3 files changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index b93ed2b7623f..707d7355ff18 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -91,6 +91,10 @@ ifneq ($(SRCARCH),$(filter $(SRCARCH),x86 arm arm64 powerpc s390 csky riscv loon
+   NO_LIBDW_DWARF_UNWIND := 1
+ endif
+ 
++ifneq ($(LIBUNWIND),1)
++  NO_LIBUNWIND := 1
++endif
++
+ ifeq ($(LIBUNWIND_LIBS),)
+   NO_LIBUNWIND := 1
+ endif
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index b4dee7c20ed1..d74241a15131 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -52,7 +52,7 @@ include ../scripts/utilities.mak
+ #
+ # Define NO_LIBELF if you do not want libelf dependency (e.g. cross-builds)
+ #
+-# Define NO_LIBUNWIND if you do not want libunwind dependency for dwarf
++# Define LIBUNWIND if you do not want libunwind dependency for dwarf
+ # backtrace post unwind.
+ #
+ # Define NO_BACKTRACE if you do not want stack backtrace debug feature
+diff --git a/tools/perf/tests/make b/tools/perf/tests/make
+index a5040772043f..a7fcbd589752 100644
+--- a/tools/perf/tests/make
++++ b/tools/perf/tests/make
+@@ -81,7 +81,7 @@ make_no_gtk2        := NO_GTK2=1
+ make_no_ui          := NO_SLANG=1 NO_GTK2=1
+ make_no_demangle    := NO_DEMANGLE=1
+ make_no_libelf      := NO_LIBELF=1
+-make_no_libunwind   := NO_LIBUNWIND=1
++make_libunwind      := LIBUNWIND=1
+ make_no_libdw_dwarf_unwind := NO_LIBDW_DWARF_UNWIND=1
+ make_no_backtrace   := NO_BACKTRACE=1
+ make_no_libcapstone := NO_CAPSTONE=1
+@@ -121,7 +121,7 @@ make_static         := LDFLAGS=-static NO_PERF_READ_VDSO32=1 NO_PERF_READ_VDSOX3
+ 
+ # all the NO_* variable combined
+ make_minimal        := NO_LIBPERL=1 NO_LIBPYTHON=1 NO_GTK2=1
+-make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_LIBUNWIND=1 NO_BACKTRACE=1
++make_minimal        += NO_DEMANGLE=1 NO_LIBELF=1 NO_BACKTRACE=1
+ make_minimal        += NO_LIBNUMA=1 NO_LIBAUDIT=1 NO_LIBBIONIC=1
+ make_minimal        += NO_LIBDW_DWARF_UNWIND=1 NO_AUXTRACE=1 NO_LIBBPF=1
+ make_minimal        += NO_LIBCRYPTO=1 NO_SDT=1 NO_JVMTI=1 NO_LIBZSTD=1
+@@ -153,7 +153,7 @@ run += make_no_gtk2
+ run += make_no_ui
+ run += make_no_demangle
+ run += make_no_libelf
+-run += make_no_libunwind
++run += make_libunwind
+ run += make_no_libdw_dwarf_unwind
+ run += make_no_backtrace
+ run += make_no_libcapstone
 -- 
-Florian
+2.47.0.163.g1226f6d8fa-goog
+
 
