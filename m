@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3618A9B2923
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:47:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E0439B291E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2EC0282492
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D877F1F21889
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 997931DFE3A;
-	Mon, 28 Oct 2024 07:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E781DFDAD;
+	Mon, 28 Oct 2024 07:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3delRPNF";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ylZY3DFX"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AOdFjRQ2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zoQNfhFd"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8CF1D9A41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800BA1DA100
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:34:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100896; cv=none; b=WjAPP/uGe8/g8i1yWPHegr4FzOL8KXaOE1xrZsOVtIWfwu0bMd0kcNTWAltexLeraaza8O/edEuHfKOm1aneO5ZoCZTXfHf5TSmCRsLhe5OEcyAtn8zZf/qeimrDKmw1feV5ZGr1cqvQ9p5BfWXQUx/eQ8oBRAa1fulyW5Wtw+w=
+	t=1730100895; cv=none; b=pJVkJFJ2d0gzmhgKilCCuqVb22omjo5lJPasuHilsPRiW/2BtWBu2Z2Q09uAwP/xLcjyZqB3yAXuFHQGzMzyE0E0DiqE/B98hd8p+5yJaDhTfZLxZK9woG7Ki3KxiOoYbRBUakpVEd14mS+K9POyN6fRXGfPqSlxQRvPFTJy83c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100896; c=relaxed/simple;
-	bh=albjBGOrXlcjYPXZSQHgCZ9IdrYuovJW+KtvpXDggnI=;
+	s=arc-20240116; t=1730100895; c=relaxed/simple;
+	bh=k/+b4xdBHMNKHASg6Y/MWnH1t51sY5i1B8fzAQunBmQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uJ9DCRoMZnLQDj+w9a1aARi9ugHPgmF+lv6ZkWlkhsLJx1YD4YHQizbsGMGftsJe72f29qYhPeVsKV+tM5XpXprTfTExrA7K8xPUJFP7sq9QaKbg0RVI+hSsol+bbPzgCQvhUf0ib0wOFrBffAjyR5PHtns2Tbec5E3TPHUmXAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3delRPNF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ylZY3DFX; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=IIgu2lCj6IAyIZTaB/AL98qbXAMTpD+RASwYBbIzMsDgH/BjocJkcCPReTvAXPPP80bVqk2LWh6KQk9GxQ920ae3KkLJvEa56tgC464IKQ7TawuPV1fk2ZbzU5wfOcQ14LzZu4qB/35IrYCTekroy2YatIsNNtbVKfAlCt3+SrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AOdFjRQ2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zoQNfhFd; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100890;
+	s=2020; t=1730100891;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Lv2h/77aH+9nFUo7h9NGs+/N5o8hl722p+7yXY/Iaaw=;
-	b=3delRPNFYYre966VjU1bq+3/ilH+rfPC7bwjQJsni8WtlOdG1d+2KZYgl515nqAOYsYjRi
-	66qhoUkaVec42XSj1a0HbGgQI75/HjEUIWdpIWe8+Y44IdAOwjPhxBO64ezruZM5BhqqO1
-	zP22MHwPwrwXdvZuRYcnNZu4GzrX4UbkWC4RUPi1sFFMkLJDmsk+2QFnGYIC4eF0B1+hzx
-	6yPlldgRqmSeJUNbNFygixU9+2T6VOiMAqK/QEiLl5tfF+1J4hkKT8fHBncG5SuSdQXUHl
-	w1+Sz18Cy/ZtkFxb+wX2oAk5I4M+s9FnAp3RvWUrQ0tKSYhHPDn6sZ7P4CqDSA==
+	bh=LEebMZUUnqm+N8fGkKxXOzNj0uVNdxtaDjuByeScOX4=;
+	b=AOdFjRQ28euIuq0TlSX9keU44VNLscPykpJK96gV+ZLsj+RjPVjWcfUMK3yhBgjqMS4eVP
+	t2hORDH1ufRU1CocAQLWUgeD+LDuNgBzXRuvyUBXHsWCccFz9XK10+3h+GyQGalljRBTzG
+	V07DXRkbmv5gODbcX9n0rIRWyJ/zHfxWXazSg/l1PsRvkIcKjePsWxuC75K60porq0H5ZF
+	dS0lhAXzaina0dG6ujIgnwgxwRa6Gng/n+uEp4nnaHT6AOBrSZ6+J3H9SiqcqwSeq1z3iz
+	ESlbQdK9E3yDJVaqbgPVV7hbBEGL+D3DCGPnAJwCsrjLVbeNmX00Y7jtSx8quQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100890;
+	s=2020e; t=1730100891;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Lv2h/77aH+9nFUo7h9NGs+/N5o8hl722p+7yXY/Iaaw=;
-	b=ylZY3DFX5gIB95UcSLARB+ui68h0h+/rb1uTvTwXWHHofSNff1LnKve/67IBC9eSRCbxCO
-	9Dd6rLWkJ96Jg3Cw==
+	bh=LEebMZUUnqm+N8fGkKxXOzNj0uVNdxtaDjuByeScOX4=;
+	b=zoQNfhFdJw9EoV72XsztryK6VBW46DS/D5MV9Mi2JpKTH2EVEAE+70Rl6GMmOa046xyX06
+	L6TJASV4J/P0ZDCA==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -64,9 +64,9 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 Cc: Nam Cao <namcao@linutronix.de>,
 	Jakub Kicinski <kuba@kernel.org>,
 	Paolo Abeni <pabeni@redhat.com>
-Subject: [PATCH 16/24] net: stmmac: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:29 +0100
-Message-Id: <45aca4db7aa93cc60224ed630ef937418870702b.1729865232.git.namcao@linutronix.de>
+Subject: [PATCH 17/24] net: fec: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:30 +0100
+Message-Id: <37f6a100ed534ed45cc818ea106f3d8e15afbed6.1729865232.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865232.git.namcao@linutronix.de>
 References: <cover.1729865232.git.namcao@linutronix.de>
 Precedence: bulk
@@ -90,37 +90,27 @@ Signed-off-by: Nam Cao <namcao@linutronix.de>
 Cc: Jakub Kicinski <kuba@kernel.org>
 Cc: Paolo Abeni <pabeni@redhat.com>
 ---
- drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/net/ethernet/freescale/fec_ptp.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/ne=
-t/ethernet/stmicro/stmmac/stmmac_main.c
-index e2140482270a..61ed82561168 100644
---- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-@@ -3148,8 +3148,7 @@ static void stmmac_init_coalesce(struct stmmac_priv *=
-priv)
- 		priv->tx_coal_frames[chan] =3D STMMAC_TX_FRAMES;
- 		priv->tx_coal_timer[chan] =3D STMMAC_COAL_TX_TIMER;
+diff --git a/drivers/net/ethernet/freescale/fec_ptp.c b/drivers/net/etherne=
+t/freescale/fec_ptp.c
+index 4cffda363a14..b357967d56b6 100644
+--- a/drivers/net/ethernet/freescale/fec_ptp.c
++++ b/drivers/net/ethernet/freescale/fec_ptp.c
+@@ -738,8 +738,8 @@ void fec_ptp_init(struct platform_device *pdev, int irq=
+_idx)
 =20
--		hrtimer_init(&tx_q->txtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--		tx_q->txtimer.function =3D stmmac_tx_timer;
-+		hrtimer_setup(&tx_q->txtimer, stmmac_tx_timer, CLOCK_MONOTONIC, HRTIMER_=
-MODE_REL);
- 	}
+ 	INIT_DELAYED_WORK(&fep->time_keep, fec_time_keep);
 =20
- 	for (chan =3D 0; chan < rx_channel_count; chan++)
-@@ -6967,8 +6966,7 @@ int stmmac_xdp_open(struct net_device *dev)
- 		stmmac_set_tx_tail_ptr(priv, priv->ioaddr,
- 				       tx_q->tx_tail_addr, chan);
+-	hrtimer_init(&fep->perout_timer, CLOCK_REALTIME, HRTIMER_MODE_REL);
+-	fep->perout_timer.function =3D fec_ptp_pps_perout_handler;
++	hrtimer_setup(&fep->perout_timer, fec_ptp_pps_perout_handler, CLOCK_REALT=
+IME,
++		      HRTIMER_MODE_REL);
 =20
--		hrtimer_init(&tx_q->txtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--		tx_q->txtimer.function =3D stmmac_tx_timer;
-+		hrtimer_setup(&tx_q->txtimer, stmmac_tx_timer, CLOCK_MONOTONIC, HRTIMER_=
-MODE_REL);
- 	}
-=20
- 	/* Enable the MAC Rx/Tx */
+ 	irq =3D platform_get_irq_byname_optional(pdev, "pps");
+ 	if (irq < 0)
 --=20
 2.39.5
 
