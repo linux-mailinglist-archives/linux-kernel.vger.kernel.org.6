@@ -1,88 +1,77 @@
-Return-Path: <linux-kernel+bounces-385203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 304D69B33EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:45:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ACD39B33F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:46:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 487CA1C20349
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:45:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C185C282993
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0901DE2A8;
-	Mon, 28 Oct 2024 14:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7001DE2BB;
+	Mon, 28 Oct 2024 14:46:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xs1Y9ZPE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I20fvKWU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2869F18E778;
-	Mon, 28 Oct 2024 14:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0C281DDA1B;
+	Mon, 28 Oct 2024 14:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730126747; cv=none; b=oEhRmit7EQq88/gz9nrbhqPxfkCQbBj2mQ1Q3sHzue2KQPNJ61wpnWP2o7LtCwNoUqCjUdLUbZQe5MPJKUhhHfKi3+XKHL70tC2CRJXGkx5xQOD6gEyRdKmzBV6Tp5qiD1mkDTjUmqQT+73kmEZQtb/WJkVZos8mMZOWZyHsdl4=
+	t=1730126773; cv=none; b=e5+F5icTQvp4K5ifRNr0zo2sllxJxOVqFPNvxI4FATUQaplILrD+TeX5QJTDIxCxzJgc7ZviqxgsBDPWtZCPIMJbKVPEN4sqrRpfNCylJ72oUcbJcqy+u12/P+6v7VYUKOD3meRxxaAxVY5PViLsQKa8ezZmmZwZqr7tBpi8cbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730126747; c=relaxed/simple;
-	bh=UnDAvpzTjiJ2n7QorFmV93OWIKQH82nfR4Oun/gbU5A=;
+	s=arc-20240116; t=1730126773; c=relaxed/simple;
+	bh=MoiwdW45feoPpBQLvCm4IU9TkcFcNVfiMx4oM7HEuDo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gma3GAuedIa8FncakEUftL//DYpjffCRU/wDOiHzHn8n4eU6ByY3KGwfvvqoUNvwKkJ0x+eMG7IqRsjWg+M4XLqUcmqjZUo2J8IsaiCWmdMNXco+/m7xkRDEvzT9uFvDba9uC/37JtWMhiiySRT0S6vcqx77U4Bgn2EGfwLlxTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xs1Y9ZPE; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVpaVoyVtduqGmk6aljz8CSAVmEZUudUnWniG6OgLV5I7iqj62JdOsVrCnnvd2tJD+2A3eaUqmFr/x/8a78E5Tp8FO9iYsIs6gpp9NmT82wKoC7+c+UHxIWkKFMlUV0UD+YSE+7b4hVE4TTcXquyk5bDijMlG0ZcX+cMFopf3ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I20fvKWU; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730126745; x=1761662745;
+  t=1730126771; x=1761662771;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=UnDAvpzTjiJ2n7QorFmV93OWIKQH82nfR4Oun/gbU5A=;
-  b=Xs1Y9ZPEWNWyWt0jNvnjURxdH0O5es88ZJ3b7It5Ply6wcqK05UdD6iJ
-   3DJue9rO05Uofs9wA3PT6rvtyNTBjkPMQs8O5TlLWao1Wv9yScs7+ei/t
-   MP4NCzO2TtDEG5kpR2vwmkjwDG/3hEx5+E+PpRYl21gYc5pnn6mwY2vsP
-   gCrgUqDNobRyzIXT52Ho8SEtSu1GSk9G6VtiTadfbZ2y9qP3MJItYZR4F
-   zraXcvIZrPsl1mZu9Av2BFpuoZbuQnTt4Wr/SQLrLcNaMDtIJH4R4ay0+
-   G93Lvn/15PbuztMpwN7q2knw1FHkz9acrByFS4qwBiZOnGmOkghN+DyAR
+  bh=MoiwdW45feoPpBQLvCm4IU9TkcFcNVfiMx4oM7HEuDo=;
+  b=I20fvKWUXobDaXFfnzJY/4iztLxkEAPZ7gyph34iII6v0tuyk6r+ooMx
+   UihnZp632r+mCiOSaAYgfVYfDSTvnwCg400SELYP43GRAjbUIErpM5SfA
+   CbLPineJ6lYkIF4Ws/mB5mwuaqunG2Mp5p2xS+B3GaSzknOR+npii39lU
+   //Tn5ESffusNVrtlzKUj9vuSF7Uj7LkXbUS6fC3hEFhQCm9+Fbyu1udvu
+   LFTh6W3A81UHt/nPs2PTbDOx3lcvLgqsmqDOTyFTzBAPM5x+1TUNQdcob
+   /NhusqgUyv/7Dc1ylIZYT3qLQVEEcW1ZPdSX2Mt1quEOOZz85fVKavWzo
    g==;
-X-CSE-ConnectionGUID: kjmqCBqEQ72CB5/8FPF/vg==
-X-CSE-MsgGUID: W+5WEPZyTkiQ8x1w/9c1xw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47186266"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47186266"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 07:45:44 -0700
-X-CSE-ConnectionGUID: 4vzrq205TqGg5djw1tymcQ==
-X-CSE-MsgGUID: +juHO9pRRQC0nMF8RrENCw==
+X-CSE-ConnectionGUID: 3SL+osclRVa9GfWQAVK3Dg==
+X-CSE-MsgGUID: R9bph2toRPO0dZEDTkTh2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29155849"
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="29155849"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 07:46:11 -0700
+X-CSE-ConnectionGUID: ZLz1SwV9SY+/cvNcBPOTRg==
+X-CSE-MsgGUID: iSe3dLZWQcW3FLEJYu5IGw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
-   d="scan'208";a="82456817"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 07:45:39 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t5Qzv-000000085kO-3T5j;
-	Mon, 28 Oct 2024 16:45:35 +0200
-Date: Mon, 28 Oct 2024 16:45:35 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Aren Moynihan <aren@peacevolution.org>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Kaustabh Chakraborty <kauschluss@disroot.org>,
-	=?iso-8859-1?B?QmFybmFi4XMgQ3rpbeFu?= <trabarni@gmail.com>,
-	Ondrej Jirman <megi@xff.cz>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, Dragan Simic <dsimic@manjaro.org>,
-	phone-devel@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] iio: light: stk3310: log error if reading the
- chip id fails
-Message-ID: <Zx-jj8FEldW6sG55@smile.fi.intel.com>
-References: <20241028142000.1058149-1-aren@peacevolution.org>
- <20241028142000.1058149-6-aren@peacevolution.org>
+   d="scan'208";a="81535786"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 28 Oct 2024 07:46:07 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5R0P-000cXx-1V;
+	Mon, 28 Oct 2024 14:46:05 +0000
+Date: Mon, 28 Oct 2024 22:45:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	troymitchell988@gmail.com, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <202410282220.vl7podpG-lkp@intel.com>
+References: <20241028053220.346283-3-TroyMitchell988@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,21 +80,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028142000.1058149-6-aren@peacevolution.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241028053220.346283-3-TroyMitchell988@gmail.com>
 
-On Mon, Oct 28, 2024 at 10:19:59AM -0400, Aren Moynihan wrote:
-> If the chip isn't powered, this call is likely to return an error.
-> Without a log here the driver will silently fail to probe. Common errors
-> are ENXIO (when the chip isn't powered) and ETIMEDOUT (when the i2c bus
-> isn't powered).
+Hi Troy,
 
-The commit message does not explain why dev_err_probe() has been chosen
-and not simple dev_err().
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on robh/for-next linus/master v6.12-rc5 next-20241028]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Troy-Mitchell/dt-bindings-i2c-spacemit-add-support-for-K1-SoC/20241028-133452
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20241028053220.346283-3-TroyMitchell988%40gmail.com
+patch subject: [PATCH v2 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20241028/202410282220.vl7podpG-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241028/202410282220.vl7podpG-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410282220.vl7podpG-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/i2c/busses/i2c-k1.c:7:
+   In file included from include/linux/i2c.h:19:
+   In file included from include/linux/regulator/consumer.h:35:
+   In file included from include/linux/suspend.h:5:
+   In file included from include/linux/swap.h:9:
+   In file included from include/linux/memcontrol.h:21:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/i2c/busses/i2c-k1.c:343:2: warning: add explicit braces to avoid dangling else [-Wdangling-else]
+     343 |         else if (i2c->dir == DIR_WRITE)
+         |         ^
+   5 warnings generated.
+
+
+vim +343 drivers/i2c/busses/i2c-k1.c
+
+   337	
+   338	static int spacemit_i2c_is_last_msg(struct spacemit_i2c_dev *i2c)
+   339	{
+   340		if (i2c->dir == DIR_READ)
+   341			if (i2c->unprocessed == 1 && i2c->msg_idx == i2c->msg_num - 1)
+   342				return 1;
+ > 343		else if (i2c->dir == DIR_WRITE)
+   344			if (!i2c->unprocessed && i2c->msg_idx == i2c->msg_num - 1)
+   345				return 1;
+   346	
+   347		return 0;
+   348	}
+   349	
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
