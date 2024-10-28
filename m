@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-384962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A029B30AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:45:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2298D9B30A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:45:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 752E7282955
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEF061F218E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D6B1DC1A7;
-	Mon, 28 Oct 2024 12:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B06E81DE4C4;
+	Mon, 28 Oct 2024 12:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRgn8+Qd"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9MqfW95"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88DE1DA2E0;
-	Mon, 28 Oct 2024 12:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0722F1DC046;
+	Mon, 28 Oct 2024 12:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119340; cv=none; b=ddef5CQKJaaH9iP6epJO5NHkZM8UKcp/6K0PO5LGDPyYk0sYQ3sUacR8ZSQNi/wVn/lDGFcBL8Maay8WxTQm9s3xEiIzhDeEH2N9fAZn06IKdze46B2IQ6JVSUst70VY0o7L8Mz5DZUhw8LldrgNT+hzY1PyxrYygCHdI3v06J0=
+	t=1730119335; cv=none; b=FMuBtB28/ZZPpFnOviRx9FAIbXYC7SVyGUVRo6tICT+xUc0shssxGn+KYs5njQYMJsPPXTiCkWMC+sR8lMpYvcAhDWf07oV4hJloJR7k+vmFznuAq6iIGt5+XH21oRoz/OIR8o0wivevRBNr3WNSd25GX1IPiK2tmleEVSw31EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119340; c=relaxed/simple;
-	bh=2z2vAZJSINxFgk04FZyyCBPQt6tnf3YvM+5pNdERrCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aOGPh9xzE0/xUyTWTKi1iy9EvpAGhiHUx+0l/obl9w4MLzXdogzm26FMSk2R+JVFyeg0/LEzsSp5gUR6oW5247/1qRNXdY86SrJuY88HCEjCL5gYYAcH4f8ckXu1jEtN0qSn7VX5govFlbZoxX8vl22dhp+ApPJF2rwQWohNSN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mRgn8+Qd; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6d18cdab29dso12999456d6.0;
-        Mon, 28 Oct 2024 05:42:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730119338; x=1730724138; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UPDTP6OcnSRUiLPs44+AfRECa7TiYhhPi6crVGIBcxE=;
-        b=mRgn8+Qdi9pknUBFVxKjx3xsjIMKXWO5ZY7Fj9tV4BBlJQprmLl5nEqRCZYvlOGeoN
-         WFVjmwItRjglEGqAKUK1WWaIRJLGBnJg8wOTmzfbU+fllfYvjf9QfUB/1aTYMmjyEbSU
-         WjAPFjbz7bxuIaQHxB98azHcX0SwP46dPej6xUpZrSuwN7Tzbd8dRQfjECgtkxbdw7C3
-         rGAmkV8XPd/9r/ZWrCC0pH3rj7bAGjom74iOjp1l4LBt+9UCuF/5qcU+FAHZReG9CWUg
-         zsPfMkf38MaBVugaDkcfSrnVigggKN/cf3A/dYccbETDNzJOWu7kGhxiU2ukbdj32Hre
-         6hkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730119338; x=1730724138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UPDTP6OcnSRUiLPs44+AfRECa7TiYhhPi6crVGIBcxE=;
-        b=phayPrGPVSUhLILQnW68F/LNaBvy1uh098LaBqlS0obYPIs0OD7eI59lAwnmp3cOnZ
-         DNL3tPKmuMy49GKb1RrEdnqWMcSEhvzWkfkAw2iLxbBY62yLK+fNzA4+nIagY1rKgWFl
-         UJH71Kc2BvQtg9k3N41dPUsMw0sBGlxLF/4WYYLW11pKQwIZnBMjIMT1QcBPSbQ1pvCl
-         Q3LaKzVwUotid8XZis9w2/p/svQykZlXWNKPQ43rOHxjgd++0vf9Kp6CXC/q0yv2q7Vv
-         yFQqLFJE5SrdNje4+22RjBDUsAyGo7MR3CJIm7UOAuHzx+mz9lbD1Er7a2nu9AHhX5DY
-         RGsA==
-X-Forwarded-Encrypted: i=1; AJvYcCUhsN9Gl0+umx47Jg8cWPO9uFmr9dtqW3oNBFFNVSJH2AJHRly4vD/vUdCb3lvVse0RgTJcMQ6PKf1hVBA=@vger.kernel.org, AJvYcCVL1NsMPwuYUMHHs2hN2lK2Bc07CxvxaE6UYP8KIisvR65bNnzJqAhs+q2pS4gGytB5jrZ4iUH6p/5D@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT0luxNwDltb4rUvrgxicmSCu7e+E9D/fjaaCX2HcikzLUiIxZ
-	v9rTfoM6IpRP0PlVkTVWXAh7mSVzs5TxHr5f9Q5r7zlReLa6sIjwkjR3OpiaU/Th+csjVJneldF
-	pV06qvncRUq1Y82CKW43JKWvWO88=
-X-Google-Smtp-Source: AGHT+IFu30iVXKwfWOcaOmTLg0tzryyCqD5zvDtTitfx78e0NqXH+jxdsHIG/Ij1k8Kyf7CVM6WHH5Ee3xjuLN4KbnA=
-X-Received: by 2002:a05:6214:3292:b0:6cc:74e0:4fef with SMTP id
- 6a1803df08f44-6d1856744efmr108892196d6.1.1730119337611; Mon, 28 Oct 2024
- 05:42:17 -0700 (PDT)
+	s=arc-20240116; t=1730119335; c=relaxed/simple;
+	bh=yzOI+0XcZK+dILGOdMbfvaqHyZ/6pBLQQ1bn1noFbaE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=BQQdzbKDg6VzkA8nKDL7IN06RX8NRQZGkVuOB2BXuWwCvHo3I78ucrfX/CuEoR50l/GzXSqxovGqQBrDEQyB/jWn4ZSkFXO89Pb2uWpAbg/u50o05D10R2Tkfgzoyz4v/OGaqI+w7W/tyBSi6ftTF79xOgnNpsRK5RZFkGq46cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9MqfW95; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05E5AC4CEE4;
+	Mon, 28 Oct 2024 12:42:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730119334;
+	bh=yzOI+0XcZK+dILGOdMbfvaqHyZ/6pBLQQ1bn1noFbaE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=A9MqfW95W2xN+1gPg/R6kjFvo6Fdjumbpp4WzxYP75kaP5YvSj/BUb649TJMNNVOV
+	 /gYzMSkCrEtO6cX8wG898kzOZURDue3YZI+Zkq+ZvgBIg/pS0i0DqyajVhGxydpyYq
+	 pASb6j1RJJJEfI7Pwz8f1EANSO5yJbdmszgYUveb7LWiVNnjdqBmr+KMS6l4AHx8nv
+	 C7pirwl9dscoDF1wMWWiBhBP2QNPkVb8PGULbpdfFVjqBBpsajzC2F92avg2OVwKWM
+	 CrBXv3uDfQ0aJR869aZn3c0KJX9B8KLPG/blP/XNyoSbH/Tf6aKzHJeMHwv8hkKzzT
+	 KAwKJZINEgIvA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241026080535.444903-1-akinobu.mita@gmail.com>
- <20241026080535.444903-3-akinobu.mita@gmail.com> <ijdk5uuurnfd2shnwwj2nm64bno6lmrhdyqp42pzjc3i2e5cyh@v5ljkrsgo6ac>
-In-Reply-To: <ijdk5uuurnfd2shnwwj2nm64bno6lmrhdyqp42pzjc3i2e5cyh@v5ljkrsgo6ac>
-From: Akinobu Mita <akinobu.mita@gmail.com>
-Date: Mon, 28 Oct 2024 21:42:06 +0900
-Message-ID: <CAC5umyitFp7oGR-eYXMVaS8bY1AGe3QwEuSPoEz3DxWwH=dUsA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: hwmon: pwm-fan: add
- retain-state-shutdown property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Billy Tsai <billy_tsai@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Oct 2024 14:42:10 +0200
+Message-Id: <D57G47THRYCG.217GTO2ZF5333@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, "David Howells" <dhowells@redhat.com>,
+ "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
+ <roberto.sassu@huawei.com>, "Stefan Berger" <stefanb@linux.ibm.com>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+ "Eric Snowberg" <eric.snowberg@oracle.com>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v8 2/3] tpm: Rollback tpm2_load_null()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Paul Menzel" <pmenzel@molgen.mpg.de>,
+ <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+X-Mailer: aerc 0.18.2
+References: <20241028055007.1708971-1-jarkko@kernel.org>
+ <20241028055007.1708971-3-jarkko@kernel.org>
+ <88bfa0f8-4900-4c56-bd23-14d3b3c7de85@molgen.mpg.de>
+ <D57FFOHZQDUV.QA3SZQSP63Q2@kernel.org>
+ <abc37c7f-b069-4272-956d-77e099cadf11@molgen.mpg.de>
+In-Reply-To: <abc37c7f-b069-4272-956d-77e099cadf11@molgen.mpg.de>
 
-2024=E5=B9=B410=E6=9C=8828=E6=97=A5(=E6=9C=88) 5:38 Krzysztof Kozlowski <kr=
-zk@kernel.org>:
+On Mon Oct 28, 2024 at 2:38 PM EET, Paul Menzel wrote:
+> Dear Jarkko,
 >
-> On Sat, Oct 26, 2024 at 05:05:35PM +0900, Akinobu Mita wrote:
-> > Document new retain-state-shutdown property.
-> >
-> > Cc: Jean Delvare <jdelvare@suse.com>
-> > Cc: Guenter Roeck <linux@roeck-us.net>
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-> > Cc: Conor Dooley <conor+dt@kernel.org>
-> > Cc: Billy Tsai <billy_tsai@aspeedtech.com>
-> > Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-> > ---
-> >  Documentation/devicetree/bindings/hwmon/pwm-fan.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml b/Doc=
-umentation/devicetree/bindings/hwmon/pwm-fan.yaml
-> > index 4e5abf7580cc..86a069969e29 100644
-> > --- a/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
-> > +++ b/Documentation/devicetree/bindings/hwmon/pwm-fan.yaml
-> > @@ -40,6 +40,10 @@ properties:
-> >      maximum: 4
-> >      default: 2
-> >
-> > +  retain-state-shutdown:
-> > +    description: Retain the state of the PWM on shutdown.
 >
-> You described the desired Linux feature or behavior, not the actual
-> hardware. The bindings are about the latter, so instead you need to
-> rephrase the property and its description to match actual hardware
-> capabilities/features/configuration etc.
+> Am 28.10.24 um 13:10 schrieb Jarkko Sakkinen:
+> > On Mon Oct 28, 2024 at 8:13 AM EET, Paul Menzel wrote:
+>
+> >> Am 28.10.24 um 06:50 schrieb Jarkko Sakkinen:
+> >>> Do not continue on tpm2_create_primary() failure in tpm2_load_null().
+> >>
+> >> Could you please elaborate, why this is done, that means the motivatio=
+n
+> >> for your change?
+> >=20
+> > Which part of "not properly handling a return value" I should explain?
+>
+> Sorry, where is your quote from?
+>
+> Anyway, maybe explaining why a successful call to tpm2_create_primary()=
+=20
+> is needed to continue would at least help me.
 
-Is this description okay?
-(Reused the description of retain-state-shutdown in leds-gpio.yaml)
+It's not a void function.
 
-description:
-  Retain the state of the PWM on shutdown. Useful in BMC systems, for
-  example, when the BMC is rebooted while the host remains up, the fan
-  will not stop.
+BR, Jarkko
 
