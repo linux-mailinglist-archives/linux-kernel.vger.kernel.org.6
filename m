@@ -1,55 +1,51 @@
-Return-Path: <linux-kernel+bounces-385379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC2D9B3676
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:29:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B20E79B3679
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:30:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FBD71C21522
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:29:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39A71C21D0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81E41DED4B;
-	Mon, 28 Oct 2024 16:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F401C1DED7F;
+	Mon, 28 Oct 2024 16:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7S6iAj2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0hCc6Zq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE151DE896;
-	Mon, 28 Oct 2024 16:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1271DED5E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 16:30:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730132982; cv=none; b=tvuxBNpdlrTP0PDa8hK7mUC7wXou+0w6ID8KKfFBqxheuNOfryzok5Qp6jqFIVTSBerz3BsJYFTYnAQ0ta1g1W2Vi8BjdMfpjMq6Hoj2DsqQLzqznRLEBOPnZFOr8LOG/i0/yV5LZi1Pf8F/dGo/ryDYX2R4LOSsDDCW2BpeMAc=
+	t=1730133006; cv=none; b=Ct2dCLxoa6yEmIV4VDWMEHckv3XAfVsTGJ1qylVD6Cw4AXwu90/4ly8MKs5fHNA4sC25zwXqjx1U//jD6RNTvV8BlFLcTZHAvB4BYWlBUbTZJm8HJNkEVUgvg3CANNxVnX75CcR03XcHpMi94SnN1E9hSik4wKj+YC0INcch5a4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730132982; c=relaxed/simple;
-	bh=DolnAK1KZ/oHw0bM0p/mKe8AbWR+8hjG72u+kf3nPkw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Qq7cHMxE3682PUzrBSmi90wSatsh6U58sEy+jO5wCawZRpGpIQRE6KjMqD9sFT+LhuJOrYwnGiyGabuxly4NLRn7diqQE7ys+CDYR9Evt82neqU6wJSQ+F+7Ts4YT1CbzxqaT8mgeTgDF8nrwmIs+/OxeMn5DblIu7CZsK3ojfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7S6iAj2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19E4AC4CEC3;
-	Mon, 28 Oct 2024 16:29:39 +0000 (UTC)
+	s=arc-20240116; t=1730133006; c=relaxed/simple;
+	bh=jQFyOpqIMMDVdp3ou6dMZrH1Ej7KK1pQaLeymPARPo4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A4uGGgmES0krgefUTwvX5v6awSCWYWsl7hQsbZGZB/Ujg/2EUqbT0yZFExHDJIkYn4sAvTaCHmJmKxYiw5tkKa9bi6+HQdMkFk0oAlh/hd2SsR5ravjHGmdRf1IfwrZxgiBUX/7HUgLQUVB038IND1vyzWHFOYceimNb/0PIVjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0hCc6Zq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19F56C4CEC3;
+	Mon, 28 Oct 2024 16:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730132981;
-	bh=DolnAK1KZ/oHw0bM0p/mKe8AbWR+8hjG72u+kf3nPkw=;
+	s=k20201202; t=1730133006;
+	bh=jQFyOpqIMMDVdp3ou6dMZrH1Ej7KK1pQaLeymPARPo4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=N7S6iAj2Z9Bh8NqFA7C85XHeusxnye38qiUaWCz0o0noLc9ypBmHE9RusVDcWd6It
-	 NykHgtzd68DQpMfhegqAGZPGVdQl/ForS8Vh3xm2t1ZTshDorHn2jJLCf1Q7k2NhWO
-	 7czvEuW05ouPT75aDkWK/HmWTrvdHRFgf6HWUKoqfKCtIY1c33iIQ/dqFG2gQo47Cd
-	 kJVQVAWwbk9M+wOc7M12Fcx7VcmSuW8/Sv9zatEct7tYIWY62o0IlbbgSkR8phOkov
-	 Z6Sqt+Ws2mAeaK1s8rVeAVOaDPpm9cwetSumdpscsZqOC2E4JZfEBMx1RJQx127yaJ
-	 +UAKmY0JuNR/w==
+	b=t0hCc6ZquqSmefKdIYQZHWYA+Bj5JhxwDfm5DQwcVldnAaO/Yst2KO02knp/6wE5D
+	 mOHtlRiv/jNr8ZhFmiOek3OEjETWM7QVC0vHM6slT+RT+f5APo0NO1N8JOzOWsvKX0
+	 o25D1WR1CFNatZFuDpbEyrUUvWM13iilnrX+mhkdGajInGFdE49QzkfwaHB/JZcqmQ
+	 d8J63sFyy49qT/+fljEDiU8rdOlMVa+7RD9Ltr09hTHB6jMx3W0yPGX78XvY9fAoWk
+	 EE+/VtLDSz/Nl1fNBBtImsMJzUKqQkE7if4Qt6/CGtXhlen+SjdR4HSHtyPWhmC4/1
+	 YOjbsoxQfFY7Q==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>,
-	Ramona Alexandra Nechita <ramona.nechita@analog.com>
+To: Luis Chamberlain <mcgrof@kernel.org>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Nuno Sa <nuno.sa@analog.com>,
-	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: iio: adc: ad777x depends on CRC8
-Date: Mon, 28 Oct 2024 16:29:15 +0000
-Message-Id: <20241028162937.2171535-1-arnd@kernel.org>
+Subject: [PATCH] selftests: kallsyms: add MODULE_DESCRIPTION
+Date: Mon, 28 Oct 2024 16:29:54 +0000
+Message-Id: <20241028163000.2201045-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,32 +57,32 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-The newly added driver fails to link when CONFIG_CRC8 is not set:
+The newly added test script creates modules that are lacking
+a description line in order to build cleanly:
 
-ld.lld-20: error: undefined symbol: crc8_populate_msb
-ld.lld-20: error: undefined symbol: crc8
->>>               vmlinux.o:(ad7779_spi_read)
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/module/test_kallsyms_a.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/module/test_kallsyms_b.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/module/test_kallsyms_c.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/tests/module/test_kallsyms_d.o
 
-Select this from Kconfig as we do for other drivers like it.
-
-Fixes: cc20fa9e9ad4 ("drivers: iio: adc: add support for ad777x family")
+Fixes: 84b4a51fce4c ("selftests: add new kallsyms selftests")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/iio/adc/Kconfig | 1 +
+ lib/tests/module/gen_test_kallsyms.sh | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index d8abe28eec89..849c90203071 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -290,6 +290,7 @@ config AD7768_1
- config AD7779
- 	tristate "Analog Devices AD7779 ADC driver"
- 	depends on SPI
-+	select CRC8
- 	select IIO_BUFFER
- 	help
- 	  Say yes here to build support for Analog Devices AD777X family
+diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen_test_kallsyms.sh
+index e85f10dc11bd..ae5966f1f904 100755
+--- a/lib/tests/module/gen_test_kallsyms.sh
++++ b/lib/tests/module/gen_test_kallsyms.sh
+@@ -99,6 +99,7 @@ module_exit(auto_test_module_exit);
+ 
+ MODULE_AUTHOR("Luis Chamberlain <mcgrof@kernel.org>");
+ MODULE_LICENSE("GPL");
++MODULE_DESCRIPTION("Test module for kallsyms");
+ ____END_MODULE
+ }
+ 
 -- 
 2.39.5
 
