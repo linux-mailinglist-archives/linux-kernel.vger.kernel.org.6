@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D089C9B2938
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:50:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 499909B2939
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E9531C2175E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E63728237A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B51E1FC7E9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575BE1FE10A;
 	Mon, 28 Oct 2024 07:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GfFeZayu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9d//O7Ua"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i+I+5Euz";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="VdAryi5k"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D731EF92F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 717111EF92A
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100943; cv=none; b=m03OMWZ0CWjbYAlVNmofN8TeEd5OO5BxA2aRFlek25EnhNH+7LGVDbpyjyVHdSw88HSiVk8GNhz0nz7Rfgf3KV7WYrLZK2YvA50cBYz/a3WIwnBEPP/0gECifolkYMR97DCRBlUKVO/zAvZ0mS7VT4Rr4rIq5EoUqLQ2ibBN9Jo=
+	t=1730100942; cv=none; b=VVPh5wJG3PMIlnecliY//ZToV81eQ7dA0fszRMOCwJpqdjRn88mW723f4UE+Ae6tiudCQZogo+Iphr7UYb4DXsjNSMUmgP7E1x25p1f/X0X2xdcgUX5sPg61Z7JUIaJkm1N6b0zRDyjMeXTfZ6XZdxRqibmq3svVeMPzey20uwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100943; c=relaxed/simple;
-	bh=BxDhOeSQLPgECkty78KmlusSnACDaKkcsuLTWWzn/go=;
+	s=arc-20240116; t=1730100942; c=relaxed/simple;
+	bh=EPkvy45eVSUHipqlaDurGAp7pgrNaVpAtaQpHmvsqcw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Txcyq05nyGRLJHlgKDNk9MCGybcsGW2Sb/JmukzxVjs0jDZLIqutGMBW8XfEqFz6QuLRXCufoTBFQ+r7MSOQcJrvJxkpHUfPK0hBh88JgV3JV9dyF59H6P69bRYqoaUip1KqmWjwfbyonm2Ph5TAUnGR6WM73u69wDkrWNSncKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GfFeZayu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9d//O7Ua; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=mEk3Imtaw+Dim7Xn1W/B+ycsh+N2iJUCrnqmaFXJcnqqOwpioylfyce0L4hG4jqDLsBT71W+aQicr+IG+KWuuCB5KvgKDcapnFN0BYjsP16jV8PQWTYV5KqBAitokbJeaPsf9gRhfPfkQ6yJz9m1098LJ3koNYepOpLQ5SMJqMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i+I+5Euz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=VdAryi5k; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100937;
+	s=2020; t=1730100938;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BrDakq/+76kc3UqGRrwKcgMS8Vdnk/xc6PYxmxTJvB8=;
-	b=GfFeZayuAhpRvxADLlwRFO2boOh3VKl3i7CGYKwl350jfYcE6Cj2/fDATo5Dgr7ebejGTZ
-	s8BGyGNuo68LOB9ugTv0MnRQSMTpsRZWmyR2SvNuKkgkIMrRp2RudXGSP0BleFCaurMZnI
-	C1OV+DBDldE11YJjExct1EM7plJ6FsvopqotEarqW73FfCl731wS9BrhpjEH7E/ZxRhMOL
-	polBv5chR7/oDBwTWqAB6/yDjGwS+2PR2KEhSM9WaujKspSnweuY9dXLpFUj8sxRWW+6BF
-	/Oqyqg6JWJQ9AMP3UUeQjn5qXwOmdxprsVVgPZWvYYpzgJyeOH2BE8Ma+grrOg==
+	bh=pGO2/skIrnyTgss75i/snh3hyXg3vEmnpgGNi1VNx8o=;
+	b=i+I+5EuzrRQFslV6/iKNQXuy7k43XcKFlcalosmFpXjtfIF+HUZST0kyfSelhtJhik14kw
+	aCf/1hQkXDWD/GRkTb6nyBPD6Xw7xKUwY9bjuspV2dVl2CGQ2R9UkGUDLL1P57M1y2sRQ2
+	1qFU4cRI4IRBAfSVMzTk5Re1T3Jwz1YJwKfRPpw79XG7pISOJjfWqFgRmNmVJWI2AXZsLt
+	JdW+zAM58pxKej7d6LxnfQlZfZEHZSoXzqk/fQGPiCh3CZOvh+GA8t2pVlN9SY+J6qXQ07
+	MLaBQuiZHM8BaCcLFMS1P2mmsvvj7u4kDxwyWLescWfyKVgon5cUZ9mTkoLl5A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100937;
+	s=2020e; t=1730100938;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BrDakq/+76kc3UqGRrwKcgMS8Vdnk/xc6PYxmxTJvB8=;
-	b=9d//O7UawOVCZwaAIqrVzIs+eCMY/VtmYnZMhl5PWAN0luBblAgXTdpPD72MmyW8SbdJrh
-	K7o2oL3hPxMPuxBg==
+	bh=pGO2/skIrnyTgss75i/snh3hyXg3vEmnpgGNi1VNx8o=;
+	b=VdAryi5kUER5p54Sspq5OPV0Tb1Yi+NmTeu8UWfEIJjDfI6q22VqfAtSB6w1sEFgS9E7YA
+	9Ao8a/uo2sOfHzBA==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: [PATCH 15/44] powercap: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:34:51 +0100
-Message-Id: <d607a13a16b0e3c5b5d58b73869c83c0740214e4.1729865485.git.namcao@linutronix.de>
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: [PATCH 16/44] power: supply: ab8500_chargalg: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:34:52 +0100
+Message-Id: <f4e18d2fafd5a412626456ec3d5be427ad1035e2.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,44 +86,37 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
 ---
- drivers/powercap/idle_inject.c       | 3 +--
- drivers/powercap/intel_rapl_common.c | 3 +--
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ drivers/power/supply/ab8500_chargalg.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/powercap/idle_inject.c b/drivers/powercap/idle_inject.c
-index bafc59904ed3..29f9f452d445 100644
---- a/drivers/powercap/idle_inject.c
-+++ b/drivers/powercap/idle_inject.c
-@@ -339,8 +339,7 @@ struct idle_inject_device *idle_inject_register_full(st=
-ruct cpumask *cpumask,
- 		return NULL;
+diff --git a/drivers/power/supply/ab8500_chargalg.c b/drivers/power/supply/=
+ab8500_chargalg.c
+index 854491ad3ecd..56afd5d1f8c3 100644
+--- a/drivers/power/supply/ab8500_chargalg.c
++++ b/drivers/power/supply/ab8500_chargalg.c
+@@ -1788,13 +1788,12 @@ static int ab8500_chargalg_probe(struct platform_de=
+vice *pdev)
+ 	psy_cfg.drv_data =3D di;
 =20
- 	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
--	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	ii_dev->timer.function =3D idle_inject_timer_fn;
-+	hrtimer_setup(&ii_dev->timer, idle_inject_timer_fn, CLOCK_MONOTONIC, HRTI=
-MER_MODE_REL);
- 	ii_dev->latency_us =3D UINT_MAX;
- 	ii_dev->update =3D update;
+ 	/* Initilialize safety timer */
+-	hrtimer_init(&di->safety_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	di->safety_timer.function =3D ab8500_chargalg_safety_timer_expired;
++	hrtimer_setup(&di->safety_timer, ab8500_chargalg_safety_timer_expired, CL=
+OCK_MONOTONIC,
++		      HRTIMER_MODE_REL);
 =20
-diff --git a/drivers/powercap/intel_rapl_common.c b/drivers/powercap/intel_=
-rapl_common.c
-index 5e793b80fd6b..e675d4240d9f 100644
---- a/drivers/powercap/intel_rapl_common.c
-+++ b/drivers/powercap/intel_rapl_common.c
-@@ -2063,8 +2063,7 @@ int rapl_package_add_pmu(struct rapl_package *rp)
- 	raw_spin_lock_init(&data->lock);
- 	INIT_LIST_HEAD(&data->active_list);
- 	data->timer_interval =3D ms_to_ktime(rapl_pmu.timer_ms);
--	hrtimer_init(&data->hrtimer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	data->hrtimer.function =3D rapl_hrtimer_handle;
-+	hrtimer_setup(&data->hrtimer, rapl_hrtimer_handle, CLOCK_MONOTONIC, HRTIM=
-ER_MODE_REL);
+ 	/* Initilialize maintenance timer */
+-	hrtimer_init(&di->maintenance_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	di->maintenance_timer.function =3D
+-		ab8500_chargalg_maintenance_timer_expired;
++	hrtimer_setup(&di->maintenance_timer, ab8500_chargalg_maintenance_timer_e=
+xpired,
++		      CLOCK_MONOTONIC, HRTIMER_MODE_REL);
 =20
- 	return rapl_pmu_update(rp);
- }
+ 	/* Init work for chargalg */
+ 	INIT_DEFERRABLE_WORK(&di->chargalg_periodic_work,
 --=20
 2.39.5
 
