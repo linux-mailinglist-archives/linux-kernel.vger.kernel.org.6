@@ -1,165 +1,135 @@
-Return-Path: <linux-kernel+bounces-384127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABD609B2483
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:42:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 583639B2488
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CDE21F216B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:42:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0A93B22E35
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110E718A92C;
-	Mon, 28 Oct 2024 05:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8682218DF61;
+	Mon, 28 Oct 2024 05:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ok+qH6RR"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wwaYkLlz"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BE9A18CC12;
-	Mon, 28 Oct 2024 05:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC5C18C92E
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730093933; cv=none; b=sFLv7BpgGB5o5t+hB3Ivt+WwWZZkfzJty+TZ58qGVtauwC4qWodlUwYN596/bFS/gyIYWA5BDoJVe17ORq/aq+OcmDRuzyna5xNogCT0AnycbhCh0/MwUnJOm5LK8pNXYVNRGanydNH/ynLlYvGuIRJ7KDUoQNUMJ5vFlGaTdag=
+	t=1730094146; cv=none; b=Gf3yjCdkBb6+j6R8O7Uu6WcZNU1sodsF18JP5RMw62NGSKtsPbw0EUyPJteIoZZ4JfYsNW1RaSZMxYMyEp5DdqCzX9mWNawrKZR/PKpb2GeZRz7Rq8AgIt8xhF4OhEECaUri2LD1nUhsuuzb+KQnhGgOo6go8GNoPJaLvTe3wzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730093933; c=relaxed/simple;
-	bh=qLMvPy+Nw5sKuFqE+sCRJhSojBVTpz2zna/H5M/LTKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BW+QPcKLGmuQNELdDNMP6FQWyqpUwRwBGcK8ctnO1TN5uRbD3Sk4PWiI2WUo5ZZKgO38D0guwAmAhH9ql9yoxONu8yidTv6N5V0cYMWr3ixlvi+UzjXUtHpLoI6WqhCryJ6ODlV5jjzjrnI3HTIUDtunPpI/75y6AnbuXlzDspc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ok+qH6RR; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49S0ZGqP025601;
-	Mon, 28 Oct 2024 05:38:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DcGdkGJJ/AET7TDbqFvnfBOmocqE8x2uSTBFT46DlCA=; b=Ok+qH6RRbSjFCZCQ
-	QJ1q9JpS9ptRW+LhIILyKDG6pjsgxee0rh9p1mdmQF7p9MQzSduyiSarWktEG+VG
-	2qqQGQBHvuVZjdDpbte3o/OxjgQsi9w4gJXHlGjXaCWvNk6M6NYW6SNqAEzZe/5c
-	goXVe2KSNwPPpPMM5qS8rkwglTAI1DZWSk3TcOirHBjAJds5UCQkwuSTJX4R1MZW
-	0J6CUlcH4xbAx8cpW36bEhZNGWCXgDrGVxdmHpNt9Ee5jkp/cLNxjjrKvMRMXTkM
-	SmdPqLowW9tWUb3aiaUJhuhISRsrFRFK/IRGYPJ2gUgsgawU+6al1vgK+MAPHi6d
-	WCPtOQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgubrcq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:38:43 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S5cg5i029162
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:38:42 GMT
-Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 22:38:36 -0700
-Message-ID: <81531046-dc36-4b8a-9b2e-3c917d9632ee@quicinc.com>
-Date: Mon, 28 Oct 2024 11:08:33 +0530
+	s=arc-20240116; t=1730094146; c=relaxed/simple;
+	bh=iZJDBmewrqSqINIiyukj1T9906bliPxi/ce+MGLFIN8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fxEpdxiBbX626MnmbLXDanHKRfjUluLODXK01Mc6WeCzimKzGv69jfZDdWI6QUvmsS3EcOox+9QmMkKvM+BKhbJDwdaEaXvbVBjdXvYrOWlzC8M7tGJrbXme97fGC++YH0ocku07m1GCUuVNzJpH0/HctgUJmG7CmJmSSed+gEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wwaYkLlz; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <c0e98969-a75e-45a0-803c-1d69bf02623b@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730094140;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T69UsbBUL523sfFP32uSh2+sUnNKiKJ6dIRsDgjuqrg=;
+	b=wwaYkLlza+vQIXMqdX9AdzWvv0ci4ah34dpnpFgKG/gvinM0w7UWqmOIeuxU5HDX4y5hQ6
+	TzpMPnjDnZBhoymR5n/GWzjn0p8lO72kZGIf/KL6XaUrS0RqVknNUsV7KkYbV2jFwWywOj
+	V04hHDKQkJRmY2WqVs+E8cemAdcswh4=
+Date: Sun, 27 Oct 2024 22:42:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] dt-bindings: dmaengine: qcom: gpi: Add additional
- arg to dma-cell property
-To: Rob Herring <robh@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?=
-	<christian.koenig@amd.com>,
-        <cros-qcom-dts-watchers@chromium.org>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <linaro-mm-sig@lists.linaro.org>, <quic_msavaliy@quicinc.com>,
-        <quic_vtanuku@quicinc.com>
-References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
- <20241015120750.21217-2-quic_jseerapu@quicinc.com>
- <20241015140108.GA620512-robh@kernel.org>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <20241015140108.GA620512-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: mXmiI0bX_qo6pghMJMtRfyBFNtVPgxTS
-X-Proofpoint-GUID: mXmiI0bX_qo6pghMJMtRfyBFNtVPgxTS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410280046
+Subject: Re: [PATCH net] Drop packets with invalid headers to prevent KMSAN
+ infoleak
+Content-Language: en-GB
+To: Daniel Yang <danielyangkang@gmail.com>,
+ Martin KaFai Lau <martin.lau@linux.dev>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)"
+ <bpf@vger.kernel.org>,
+ "open list:BPF [NETWORKING] (tcx & tc BPF, sock_addr)"
+ <netdev@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ syzbot+346474e3bf0b26bd3090@syzkaller.appspotmail.com
+References: <20241019071149.81696-1-danielyangkang@gmail.com>
+ <c7d0503b-e20d-4a6d-aecf-2bd7e1c7a450@linux.dev>
+ <CAGiJo8R2PhpOitTjdqZ-jbng0Yg=Lxu6L+6FkYuUC1M_d10U2Q@mail.gmail.com>
+ <5c8fb835-b0cb-428b-ab07-e20f905eb19f@linux.dev>
+ <CAGiJo8RJ+0K-JYtCq4ZLg_4eq7HDkib9iwE-UTnimgEQE8rgtg@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <CAGiJo8RJ+0K-JYtCq4ZLg_4eq7HDkib9iwE-UTnimgEQE8rgtg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
 
+On 10/27/24 1:49 AM, Daniel Yang wrote:
+> On Tue, Oct 22, 2024 at 11:14 AM Martin KaFai Lau <martin.lau@linux.dev> wrote:
+>> On 10/21/24 6:37 PM, Daniel Yang wrote:
+>>>> A test in selftests/bpf is needed to reproduce and better understand this.
+>>> I don't know much about self tests but I've just been using the syzbot
+>>> repro and #syz test at the link in the patch:
+>>> https://syzkaller.appspot.com/bug?extid=346474e3bf0b26bd3090. Testing
+>>> the patch showed that the uninitialized memory was not getting written
+>>> to memory.
+>>>
+>>>> Only bpf_clone_redirect() is needed to reproduce or other bpf_skb_*() helpers calls
+>>>> are needed to reproduce?
+>> If only bpf_clone_redirect() is needed, it should be simple to write a selftest
+>> to reproduce it. It also helps to catch future regression.
+>>
+>> Please tag the next respin as "bpf" also.
+> I have a problem. I can't seem to build the bpf kselftests for some
+> reason. There is always a struct definition error:
+> In file included from progs/profiler1.c:5:
+> progs/profiler.inc.h:599:49: error: declaration of 'struct
+> syscall_trace_enter' will not be visible outside of t]
+>    599 | int tracepoint__syscalls__sys_enter_kill(struct
+> syscall_trace_enter* ctx)
+>        |                                                 ^
+> progs/profiler.inc.h:604:15: error: incomplete definition of type
+> 'struct syscall_trace_enter'
+>    604 |         int pid = ctx->args[0];
+>        |                   ~~~^
+> progs/profiler.inc.h:599:49: note: forward declaration of 'struct
+> syscall_trace_enter'
+>    599 | int tracepoint__syscalls__sys_enter_kill(struct
+> syscall_trace_enter* ctx)
+>        |                                                 ^
+> progs/profiler.inc.h:605:15: error: incomplete definition of type
+> 'struct syscall_trace_enter'
+>    605 |         int sig = ctx->args[1];
+>        |                   ~~~^
+> progs/profiler.inc.h:599:49: note: forward declaration of 'struct
+> syscall_trace_enter'
+>    599 | int tracepoint__syscalls__sys_enter_kill(struct
+> syscall_trace_enter* ctx)
+>
+> I just run the following to build:
+> $ cd tools/testing/selftests/bpf/
+> $ make
 
-On 10/15/2024 7:31 PM, Rob Herring wrote:
-> On Tue, Oct 15, 2024 at 05:37:46PM +0530, Jyothi Kumar Seerapu wrote:
->> When high performance with multiple i2c messages in a single transfer
->> is required, employ Block Event Interrupt (BEI) to trigger interrupts
->> after specific messages transfer and the last message transfer,
->> thereby reducing interrupts.
->>
->> For each i2c message transfer, a series of Transfer Request Elements(TREs)
->> must be programmed, including config tre for frequency configuration,
->> go tre for holding i2c address and dma tre for holding dma buffer address,
->> length as per the hardware programming guide. For transfer using BEI,
->> multiple I2C messages may necessitate the preparation of config, go,
->> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
->> potentially leading to failures due to inadequate memory space.
->>
->> Add additional argument to dma-cell property for channel TRE size.
-> 
-> No such property 'dma-cell'
+It might be due to your .config file.
+The 'struct syscall_trace_enter' is defined in kernel/trace/trace.h,
+which is used in kernel/trace/trace_syscalls.c. Maybe your config
+does not have CONFIG_FTRACE_SYSCALLS?
 
-Thanks for pointing it out, yeah it should be 'dma-cells'.
-> 
->> With this, adjust the channel TRE size via the device tree.
->> The default size is 64, but clients can modify this value based on
->> their specific requirements.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
->> index 4df4e61895d2..002495921643 100644
->> --- a/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
->> +++ b/Documentation/devicetree/bindings/dma/qcom,gpi.yaml
->> @@ -54,14 +54,16 @@ properties:
->>       maxItems: 13
->>   
->>     "#dma-cells":
->> -    const: 3
->> +    minItems: 3
->> +    maxItems: 4
->>       description: >
->>         DMA clients must use the format described in dma.txt, giving a phandle
->> -      to the DMA controller plus the following 3 integer cells:
->> +      to the DMA controller plus the following 4 integer cells:
->>         - channel: if set to 0xffffffff, any available channel will be allocated
->>           for the client. Otherwise, the exact channel specified will be used.
->>         - seid: serial id of the client as defined in the SoC documentation.
->>         - client: type of the client as defined in dt-bindings/dma/qcom-gpi.h
->> +      - channel-tre-size: size of the channel TRE (transfer ring element)
->>   
->>     iommus:
->>       maxItems: 1
->> -- 
->> 2.17.1
->>
+>
+> I can't find anyone else encountering the same error.
 
