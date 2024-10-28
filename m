@@ -1,58 +1,53 @@
-Return-Path: <linux-kernel+bounces-385302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F849B3549
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E1999B353E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F60828317F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:49:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 036B328320C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEC71DE883;
-	Mon, 28 Oct 2024 15:48:27 +0000 (UTC)
-Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A39A31DED6F;
-	Mon, 28 Oct 2024 15:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780CE1DE4DD;
+	Mon, 28 Oct 2024 15:48:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GEtRS9Fj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C547E189913;
+	Mon, 28 Oct 2024 15:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730130507; cv=none; b=D1D8unJm9XGDEmsSQ+2hYi54kwMVnvkrIXZ/57aOCzi+zM0EQJnqiRFi+KO/lVwteB9ron5T2lcM8PlFduFQorhHFyGqNiKEYdsnHdDPaK1/0S3aGZbuLYDXkEFjbeBXnuwepmE0T/UiWBGMnUH8i+B8r8MFNRDnmGomXjlk1ts=
+	t=1730130479; cv=none; b=YS/Zmgj/9Q/221DCXc+pm5zjq0h5MUBTqEqT2iigU2UHfhosmfFwHbo3m9Rsg4wS/jBG26tQrctxS5iR1i2+8Wj2axuqRcPAEfQ9BW2QSNe3h2w40OIe3OztZ4R9GnHiqeAj6G8vCZIl3i9W7nPPqGYRLJQw2JMsuYSOtUAw4Dc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730130507; c=relaxed/simple;
-	bh=ZRrch4ootEJ4ULxIvELRcvNDg+SmNed42LOYCz5Vd28=;
+	s=arc-20240116; t=1730130479; c=relaxed/simple;
+	bh=V26oUTnrhdOV6ch6VbSJmCvaGYoUVTbD/8XP0Iar1sY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Au3lHBZ4sdLCvIQMlRdZy+xKz3zqHCiX0yd7zWIl2bzvQE861I6ICacTwK/j2Seo2pFJCAOr1r+QCmNW/LkGStURDC7Kqz5cbx8+Q8E4gI49nmws94b3We0oZGF3vnzPkFioSVkfAkncR/Dsoyi3aDUDEzqg05iQtALt/r7H6nQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
-Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
-	id 1t5RyE-0005Ir-00; Mon, 28 Oct 2024 16:47:54 +0100
-Received: by alpha.franken.de (Postfix, from userid 1000)
-	id 0B333C0161; Mon, 28 Oct 2024 16:47:30 +0100 (CET)
-Date: Mon, 28 Oct 2024 16:47:30 +0100
-From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Aleksandar Rikalo <arikalo@gmail.com>, Chao-ying Fu <cfu@wavecomp.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>,
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
-	Paul Burton <paulburton@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: Re: [PATCH v7 05/12] clocksource: mips-gic-timer: Always use cluster
- 0 counter as clocksource
-Message-ID: <Zx+yEvWTUKZqOEPh@alpha.franken.de>
-References: <20241019071037.145314-1-arikalo@gmail.com>
- <20241019071037.145314-6-arikalo@gmail.com>
- <3c98775b-b61b-478f-838e-59f8e1cf8aed@linaro.org>
- <Zx+qrRVdv5EGXbCF@alpha.franken.de>
- <afda1ccc-d9fc-4025-b114-bd2ddf5f7ec1@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gY7TD9FIQkHcEAHRcTxd6mMbfncvGQkG3CZiZ1BupPCNZfNvCrjbPxSSMUlL2yZDior+ro3vqc8UZWi+G4ske/z6oUXvSuuPBji0UmuEpFPbuPR4arzzdgLG+qQ88HUOxdEM7Zdbu3+kVb+JPhNbfk/3ip22Z1WZ2/jquB0Yx5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GEtRS9Fj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB12C4CEC3;
+	Mon, 28 Oct 2024 15:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730130479;
+	bh=V26oUTnrhdOV6ch6VbSJmCvaGYoUVTbD/8XP0Iar1sY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GEtRS9Fj8c1s4XAli3FnoVY/FLjUH7WU+ZPveiEfLN506r77qlqjxmosp01KnddiF
+	 3N7gq63V7mk2NI8giEtuzFddnAdfXaGJVNQc6TTnHwlM567MhHOOB71t7RGIsR/wy9
+	 Lc3FPgcDF8jtcn1aEpj4PAl3BFnmhQIjZvKBU3tWFiI9Q/49tORMH9ESkuk8w+lU3R
+	 8ZA6ifcz6dpfc/OJVb7Y0UqtBpKC2bcceUdPp0r4EsUt+qowMq7JIDCQno7pfUbPal
+	 IebEyT4XI8rnPbpT0NuTEuFoW/9rOgZkPMJsPABgZZ1vLGc0bN1DU4mZgBg+LObmW3
+	 Ro8RvX8gDhq4Q==
+Date: Mon, 28 Oct 2024 16:47:55 +0100
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] HID: multitouch: make mt_set_mode() less cryptic
+Message-ID: <nqj6hx3yhw3q5e5qtyqdxwpxt2xe3u45vibjcjqmpmsvs7opq3@snxzjynjpwyp>
+References: <ZxwciG6YeVFgfDRU@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,44 +56,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <afda1ccc-d9fc-4025-b114-bd2ddf5f7ec1@linaro.org>
+In-Reply-To: <ZxwciG6YeVFgfDRU@google.com>
 
-On Mon, Oct 28, 2024 at 04:22:55PM +0100, Daniel Lezcano wrote:
-> On 28/10/2024 16:15, Thomas Bogendoerfer wrote:
-> > On Mon, Oct 28, 2024 at 03:54:48PM +0100, Daniel Lezcano wrote:
-> > > On 19/10/2024 09:10, Aleksandar Rikalo wrote:
-> > > > From: Paul Burton <paulburton@kernel.org>
-> > > > 
-> > > > In a multi-cluster MIPS system, there are multiple GICs - one in each
-> > > > cluster - each of which has its independent counter. The counters in
-> > > > each GIC are not synchronized in any way, so they can drift relative
-> > > > to one another through the lifetime of the system. This is problematic
-> > > > for a clock source which ought to be global.
-> > > > 
-> > > > Avoid problems by always accessing cluster 0's counter, using
-> > > > cross-cluster register access. This adds overhead so it is applied only
-> > > > on multi-cluster systems.
-> > > > 
-> > > > Signed-off-by: Paul Burton <paulburton@kernel.org>
-> > > > Signed-off-by: Chao-ying Fu <cfu@wavecomp.com>
-> > > > Signed-off-by: Dragan Mladjenovic <dragan.mladjenovic@syrmia.com>
-> > > > Signed-off-by: Aleksandar Rikalo <arikalo@gmail.com>
-> > > > Tested-by: Serge Semin <fancer.lancer@gmail.com>
-> > > > ---
-> > > 
-> > > May I take this patch through the clocksource tree ?
-> > 
-> > sure, should be the best option.
+On Oct 25 2024, Dmitry Torokhov wrote:
+> mt_set_mode() accepts 2 boolean switches indicating whether the device
+> (if it follows Windows Precision Touchpad specification) should report
+> hardware buttons and/or surface contacts. For a casual reader it is
+> completely not clear, as they look at the call site, which exact mode
+> is being requested.
 > 
-> Ok, thanks
+> Define report_mode enum and change mt_set_mode() to accept is as
+> an argument instead. This allows to write:
 > 
-> Can you add your tag ?
+> 	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+> 
+> or
+> 
+> 	mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_BUTTONS);
+> 
+> which makes intent much more clear.
+> 
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/hid/hid-multitouch.c | 29 +++++++++++++++++------------
+>  1 file changed, 17 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
+> index 99812c0f830b..e4bb2fb5596d 100644
+> --- a/drivers/hid/hid-multitouch.c
+> +++ b/drivers/hid/hid-multitouch.c
+> @@ -83,6 +83,13 @@ enum latency_mode {
+>  	HID_LATENCY_HIGH = 1,
+>  };
+>  
+> +enum report_mode {
+> +	TOUCHPAD_REPORT_NONE = 0,
+> +	TOUCHPAD_REPORT_BUTTONS = 1,
+> +	TOUCHPAD_REPORT_CONTACTS = 2,
 
-it's only touching drivers/clocksource, but if you want
+Maybe to be more obvious, BIT(0) and BIT(1) for the 2 values above?
 
-Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+I'm just concerned that someone adds "3" if we ever need to add a new
+value.
 
--- 
-Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
-good idea.                                                [ RFC1925, 2.3 ]
+> +	TOUCHPAD_REPORT_ALL = TOUCHPAD_REPORT_BUTTONS | TOUCHPAD_REPORT_CONTACTS,
+> +};
+> +
+>  #define MT_IO_FLAGS_RUNNING		0
+>  #define MT_IO_FLAGS_ACTIVE_SLOTS	1
+>  #define MT_IO_FLAGS_PENDING_SLOTS	2
+> @@ -1486,8 +1493,7 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+>  				     struct hid_field *field,
+>  				     struct hid_usage *usage,
+>  				     enum latency_mode latency,
+> -				     bool surface_switch,
+> -				     bool button_switch,
+> +				     enum report_mode report_mode,
+>  				     bool *inputmode_found)
+>  {
+>  	struct mt_device *td = hid_get_drvdata(hdev);
+> @@ -1542,11 +1548,11 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+>  		return true;
+>  
+>  	case HID_DG_SURFACESWITCH:
+> -		field->value[index] = surface_switch;
+> +		field->value[index] = report_mode & TOUCHPAD_REPORT_CONTACTS;
+
+Just to be on the safe side:
+!!(report_mode & TOUCHPAD_REPORT_CONTACTS);
+
+>  		return true;
+>  
+>  	case HID_DG_BUTTONSWITCH:
+> -		field->value[index] = button_switch;
+> +		field->value[index] = report_mode & TOUCHPAD_REPORT_BUTTONS;
+
+same here.
+
+>  		return true;
+>  	}
+>  
+> @@ -1554,7 +1560,7 @@ static bool mt_need_to_apply_feature(struct hid_device *hdev,
+>  }
+>  
+>  static void mt_set_modes(struct hid_device *hdev, enum latency_mode latency,
+> -			 bool surface_switch, bool button_switch)
+> +			 enum report_mode report_mode)
+>  {
+>  	struct hid_report_enum *rep_enum;
+>  	struct hid_report *rep;
+> @@ -1579,8 +1585,7 @@ static void mt_set_modes(struct hid_device *hdev, enum latency_mode latency,
+>  							     rep->field[i],
+>  							     usage,
+>  							     latency,
+> -							     surface_switch,
+> -							     button_switch,
+> +							     report_mode,
+>  							     &inputmode_found))
+>  					update_report = true;
+>  			}
+> @@ -1820,7 +1825,7 @@ static int mt_probe(struct hid_device *hdev, const struct hid_device_id *id)
+>  		dev_warn(&hdev->dev, "Cannot allocate sysfs group for %s\n",
+>  				hdev->name);
+>  
+> -	mt_set_modes(hdev, HID_LATENCY_NORMAL, true, true);
+> +	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+>  
+>  	return 0;
+>  }
+> @@ -1832,9 +1837,9 @@ static int mt_suspend(struct hid_device *hdev, pm_message_t state)
+>  	/* High latency is desirable for power savings during S3/S0ix */
+>  	if ((td->mtclass.quirks & MT_QUIRK_DISABLE_WAKEUP) ||
+>  	    !hid_hw_may_wakeup(hdev))
+> -		mt_set_modes(hdev, HID_LATENCY_HIGH, false, false);
+> +		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_NONE);
+>  	else
+> -		mt_set_modes(hdev, HID_LATENCY_HIGH, true, true);
+> +		mt_set_modes(hdev, HID_LATENCY_HIGH, TOUCHPAD_REPORT_ALL);
+>  
+>  	return 0;
+>  }
+> @@ -1842,7 +1847,7 @@ static int mt_suspend(struct hid_device *hdev, pm_message_t state)
+>  static int mt_reset_resume(struct hid_device *hdev)
+>  {
+>  	mt_release_contacts(hdev);
+> -	mt_set_modes(hdev, HID_LATENCY_NORMAL, true, true);
+> +	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+
+heh, I wonder if we actually need the split buttons/touches, because in
+all cases, we are either reporting None or All.
+
+Anyway, with the couple of nitpicks:
+Reviewed-by: Benjamin Tissoires <bentiss@kernel.org>
+
+Cheers,
+Benjamin
+
+>  	return 0;
+>  }
+>  
+> @@ -1854,7 +1859,7 @@ static int mt_resume(struct hid_device *hdev)
+>  
+>  	hid_hw_idle(hdev, 0, 0, HID_REQ_SET_IDLE);
+>  
+> -	mt_set_modes(hdev, HID_LATENCY_NORMAL, true, true);
+> +	mt_set_modes(hdev, HID_LATENCY_NORMAL, TOUCHPAD_REPORT_ALL);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
+> 
+> 
+> -- 
+> Dmitry
 
