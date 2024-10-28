@@ -1,167 +1,227 @@
-Return-Path: <linux-kernel+bounces-384906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2F29B3001
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:21:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFF369B3003
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:22:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4C631F215D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:21:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91791C21686
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:22:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1AF61D8E1D;
-	Mon, 28 Oct 2024 12:21:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760161D9699;
+	Mon, 28 Oct 2024 12:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aCPDdwAj"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="li/h3x9c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E547C1990DB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18B11D959B;
+	Mon, 28 Oct 2024 12:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730118100; cv=none; b=RDzTwT0Us35szRWnv1bZ33bp1k4PS1AJvG99hEUx+e/qL6YQnXQlowoRMToCZz5qdSUOqC6ZakaVdXBLvaOdpmmYW4ogJ8YxkA0Hdm2fA4YubC1HPYsS+Zzs4rZUNN6rHQ7lRn6aNqfbhNbexfiRMi2FZK94GMW8ub7sIz+rW0g=
+	t=1730118102; cv=none; b=JeOe5u7YjrTrtsh5ftrYmjqaKNtrwXpy0eygON80YBgdF9k7KDv6fq0FZq97tOPQZAV4//bdO/hw6IBO8C5Q+ACx2+RPPVE38il/NzV7UMEQxj2y0we9qPQWUesjYwklGqF5CF3VQ5AvdSGNbnqT9FrY+tyyPCH3SleJ98HWZHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730118100; c=relaxed/simple;
-	bh=0KJmnar0ENzo0Nmbqy2W7n987z5/A5L/VlLbTAuSoe0=;
+	s=arc-20240116; t=1730118102; c=relaxed/simple;
+	bh=JKM0ShELTOKoSqHWt3M5BDy+zBaQnH4xCraeC4T6Av0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qZtZV8lz0LEWYjOeFAvqLVp4Vjv58xBFuKNc76ISJhFkiz5RZq3N/bhhZDUNJe9CN6kv+D/jIra7q6iAWzUJ2TlruF7c7kmONiMO2EJXWhH2US88EroctqnfOWsZgHmXpdtyaNQfdEzsgOoqBO8iTgwoGVaW+C3QntU+QauyTAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aCPDdwAj; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53a0c160b94so4645822e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:21:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730118096; x=1730722896; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uZwvmXTI3rx+8d4K4ck0wQr/Ryjxkfv6hZd5Po8vYlY=;
-        b=aCPDdwAj85iMO/In7cy161VfGo9cF/kaZAQ2oOxyEFFzt45B0U2xoSW+xiYQRoZdCt
-         4QcznLyib5hIFsxukOF6Q/PNlo1TTFav6b2HB/QOmBXCsxK435ozTwFC5bkFe1rMufjm
-         VmiTcnSW6Pn31UOHYqwxN1Tfil5jEqhxgf7LN9Y3JyOKDfbu54n7I1G/HfT511V/Y7tf
-         CdkNU3uJpK73uDNt4o4PpKOE6+XBe5B/WvgY2eizNcIm6AN9nAhfX91DVqwEhhM8nUDi
-         3POXal89mb7j1x0WlHB6oJkNk1uQIC24r/hB9+XwxTO5kw3UKDuSoIEtSKU8Bq3b3pMW
-         XbaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730118096; x=1730722896;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uZwvmXTI3rx+8d4K4ck0wQr/Ryjxkfv6hZd5Po8vYlY=;
-        b=Be4jRSCTSsVpfmEwwehI1LABuClbqpKiZHfgj7rIwR0Yd1+1d9QQzvWvlj75juixZc
-         eEOqTbzbZ47b13MBTlZNE6Zb09YwR0Rc0CqVWbAVYbzercefVhCWNvgEAe09R3VvCfNu
-         Y9V88Jt5lBfWoxj3QDlelOn22AXO7q+iAsGAfFgFFzrS63nJ+GE8+PvLHINw9cJIWs8L
-         YtpWg2Oj/XVR0tFiIu7l9lUk1r2N1ov5FsscLAPTsPbcVFNQcs/nYu3152mXfHjksl7+
-         PtGKQqOahyqZsVFLstR1gOG01+qSySSrGjiFAezf+uaVMRr1aiqOUMjLJbHSKSOOLSWp
-         c3CA==
-X-Forwarded-Encrypted: i=1; AJvYcCXAEPWd+5tDXgU9JiV1faOvtoBGnoxJnWHRKZLUZUrRJFq7nlhAit/YQ98PdusDTLy/VEvs1Wkcr7uDJkU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUMU+mdslyn+ziIJwN0zMQ58rcY3p2jbsWrMtFqfG2dsm4ivCP
-	/eCyX5vsTJTJ7ppuE5DHk5Y+tClrM83zsrwkOj/NZrDnp/sdqXdwLV1IVdz1tgA=
-X-Google-Smtp-Source: AGHT+IGacAWVy3GFBz0pKlZcVPtx47HGkLAv1BBaK4EDC/lAvynm/V4JqWFS00dPEhyrQ8mVfYaTZQ==
-X-Received: by 2002:a05:6512:1090:b0:536:52ed:a23f with SMTP id 2adb3069b0e04-53b34728355mr2949537e87.0.1730118095954;
-        Mon, 28 Oct 2024 05:21:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c9e43sm1056755e87.214.2024.10.28.05.21.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 05:21:34 -0700 (PDT)
-Date: Mon, 28 Oct 2024 14:21:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andersson@kernel.org, 
-	konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	konrad.dybcio@oss.qualcomm.com, quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs615: Add QUPv3 configuration
-Message-ID: <hwan6cblfhvwmeos4izmhlzfaydxvs4s66wtjulk22aj3zhy6d@xkaqfgxe2sx2>
-References: <20241028112049.30734-1-quic_vdadhani@quicinc.com>
- <50a0a56d-55ce-4b59-a004-b8418309eb92@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o5QKCfYZWi9zy8m0ftDUi8LqY8tLNtDsoyQw4FHrI1zbYZRQB9PavXxg0rV+uS2MqGlDCHmIWmOPSDBCRei9k1sFO/R9fbv2XBjnvd2j8lWfoaS/fM0calV8R0GjzUx6Slp1kf/KulXSC8+xg/jWcGraUUzfnNqhnpxw7fqRJB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=li/h3x9c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0CBE5C4CEE4;
+	Mon, 28 Oct 2024 12:21:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730118102;
+	bh=JKM0ShELTOKoSqHWt3M5BDy+zBaQnH4xCraeC4T6Av0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=li/h3x9cAlRKxXqbtpqPOdWohkw358jNpkm5W7iT78GU7ghspb/W+n7WESsaaS+bF
+	 Fay1kDVsRRhAaIsCIZEbD3YIOdIjGlF7mDKB4S6rWD3F3MoCahd0/wUIc89Pp10v48
+	 iNveh0QPfxrUf8ur6vPb+mTNd+wJvnlVXi7M4akFjWIOr6SITi6oLyjAxLZaom6KUx
+	 MFfYnNtKWNsKmRzlzN/qmsByJLnNyOdHa7TALo5XzRN7H13RMkrX5rUKXhBeJ4DXo6
+	 L3/LcNTCGrnhDFp53FvSUfyY7Y6Z5bkSpKgIJT7m2Lwc6BMFrEcf+IB6KyRlDw510N
+	 ZWWnw3+qcAP2g==
+Date: Mon, 28 Oct 2024 13:21:39 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>, yi1.lai@intel.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH v4 2/6] perf: Enqueue SIGTRAP always via task_work.
+Message-ID: <Zx-B0wK3xqRQsCOS@localhost.localdomain>
+References: <20240624152732.1231678-1-bigeasy@linutronix.de>
+ <20240624152732.1231678-3-bigeasy@linutronix.de>
+ <Zx9Losv4YcJowaP/@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <50a0a56d-55ce-4b59-a004-b8418309eb92@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Zx9Losv4YcJowaP/@ly-workstation>
 
-On Mon, Oct 28, 2024 at 12:33:48PM +0100, Krzysztof Kozlowski wrote:
-> On 28/10/2024 12:20, Viken Dadhaniya wrote:
-> > Add DT support for QUPv3 Serial Engines.
-> > 
-> > Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> > Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> > Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> > ---
-> > 
-> > Build Dependencies:
-> > 
-> > Base:
-> > https://lore.kernel.org/linux-devicetree/20240926-add_initial_support_for_qcs615-v3-5-e37617e91c62@quicinc.com/
-> > https://lore.kernel.org/linux-devicetree/20240926-add_initial_support_for_qcs615-v3-6-e37617e91c62@quicinc.com/
-> > 
-> > Clock: https://lore.kernel.org/linux-devicetree/20240920-qcs615-clock-driver-v2-3-2f6de44eb2aa@quicinc.com/
-> > ICC: https://lore.kernel.org/linux-devicetree/20240924143958.25-2-quic_rlaggysh@quicinc.com/
-> > Apps SMMU: https://lore.kernel.org/all/20241011063112.19087-1-quic_qqzhou@quicinc.com/
-> > 
-> > v1 -> v2:
-> > 
-> > - Add opp-shared property.
-> > - Use QCOM_ICC_TAG_ALWAYS flag in interconnect property.
-> > 
-> > v1 Link: https://lore.kernel.org/all/20241011103346.22925-1-quic_vdadhani@quicinc.com/
-> > ---
-> >  arch/arm64/boot/dts/qcom/qcs615.dtsi | 642 ++++++++++++++++++++++++++-
-> >  1 file changed, 638 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > index 865ead601f85..1d1cdf6f9a74 100644
-> > --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> > @@ -5,6 +5,7 @@
-> >  
-> >  #include <dt-bindings/clock/qcom,qcs615-gcc.h>
-> >  #include <dt-bindings/clock/qcom,rpmh.h>
-> > +#include <dt-bindings/dma/qcom-gpi.h>
-> >  #include <dt-bindings/interconnect/qcom,icc.h>
-> >  #include <dt-bindings/interconnect/qcom,qcs615-rpmh.h>
-> >  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > @@ -17,6 +18,21 @@
-> >  	#address-cells = <2>;
-> >  	#size-cells = <2>;
-> >  
-> > +	aliases {
-> > +		i2c1 = &i2c1;
-> > +		i2c2 = &i2c2;
-> > +		i2c3 = &i2c3;
-> > +		i2c4 = &i2c4;
-> > +		i2c5 = &i2c5;
-> > +		i2c6 = &i2c6;
-> > +		i2c7 = &i2c7;
-> > +		spi2 = &spi2;
-> > +		spi4 = &spi4;
-> > +		spi6 = &spi6;
-> > +		spi7 = &spi7;
-> > +		serial0 = &uart0;
-> 
-> Comments from v1 apply.
-> 
+Le Mon, Oct 28, 2024 at 04:30:26PM +0800, Lai, Yi a écrit :
+> [  300.651268] INFO: task repro:671 blocked for more than 147 seconds.
+> [  300.651706]       Not tainted 6.12.0-rc4-42f7652d3eb5+ #1
+> [  300.652006] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> [  300.652430] task:repro           state:D stack:0     pid:671   tgid:671   ppid:670    flags:0x00004002
+> [  300.652939] Call Trace:
+> [  300.653088]  <TASK>
+> [  300.653221]  __schedule+0xe13/0x33a0
+> [  300.653474]  ? __pfx___schedule+0x10/0x10
+> [  300.653704]  ? lock_release+0x441/0x870
+> [  300.653946]  ? __pfx_lock_release+0x10/0x10
+> [  300.654184]  ? trace_lock_acquire+0x139/0x1b0
+> [  300.654439]  ? lock_acquire+0x80/0xb0
+> [  300.654651]  ? schedule+0x216/0x3f0
+> [  300.654859]  schedule+0xf6/0x3f0
+> [  300.655083]  _free_event+0x531/0x14c0
+> [  300.655317]  perf_event_release_kernel+0x648/0x870
+> [  300.655597]  ? __pfx_perf_event_release_kernel+0x10/0x10
+> [  300.655899]  ? trace_hardirqs_on+0x51/0x60
+> [  300.656176]  ? __sanitizer_cov_trace_const_cmp2+0x1c/0x30
+> [  300.656474]  ? __pfx_perf_release+0x10/0x10
+> [  300.656697]  perf_release+0x3a/0x50
+> [  300.656916]  __fput+0x414/0xb60
+> [  300.657163]  ____fput+0x22/0x30
+> [  300.657335]  task_work_run+0x19c/0x2b0
 
-[...]
+Ah the perf_pending_task work is pending but perf_pending_task_sync()
+fails to cancel there:
 
-> > @@ -392,6 +428,24 @@
-> >  			#size-cells = <1>;
-> >  		};
-> >  
-> > +		gpi_dma0: qcom,gpi-dma@800000  {
-> 
-> Nope. Don't post downstream code.
+	/*
+	 * If the task is queued to the current task's queue, we
+	 * obviously can't wait for it to complete. Simply cancel it.
+	 */
+	if (task_work_cancel(current, head)) {
+		event->pending_work = 0;
+		local_dec(&event->ctx->nr_no_switch_fast);
+		return;
+	}
 
-I'd say, as this has repeated the second time, please get the patches
-reviewed internally, before sending them for the third time.
+And that's because the work is not anymore on the task work
+list in task->task_works. Instead it's in the executing list
+in task_work_run(). It's a blind spot for task_work_cancel()
+if the current task is already running the task works. And it
+does since it's running the fput delayed work.
 
--- 
-With best wishes
-Dmitry
+Something like this untested?
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 449dd64ed9ac..035580fa2c81 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1163,6 +1163,7 @@ struct task_struct {
+ 	unsigned int			sas_ss_flags;
+ 
+ 	struct callback_head		*task_works;
++	struct callback_head		*task_works_running;
+ 
+ #ifdef CONFIG_AUDIT
+ #ifdef CONFIG_AUDITSYSCALL
+diff --git a/include/linux/task_work.h b/include/linux/task_work.h
+index cf5e7e891a77..fdd70f09a7f0 100644
+--- a/include/linux/task_work.h
++++ b/include/linux/task_work.h
+@@ -33,6 +33,7 @@ struct callback_head *task_work_cancel_match(struct task_struct *task,
+ 	bool (*match)(struct callback_head *, void *data), void *data);
+ struct callback_head *task_work_cancel_func(struct task_struct *, task_work_func_t);
+ bool task_work_cancel(struct task_struct *task, struct callback_head *cb);
++bool task_work_cancel_current(struct callback_head *cb);
+ void task_work_run(void);
+ 
+ static inline void exit_task_work(struct task_struct *task)
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index e3589c4287cb..1b15f3c83595 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -5305,7 +5305,7 @@ static void perf_pending_task_sync(struct perf_event *event)
+ 	 * If the task is queued to the current task's queue, we
+ 	 * obviously can't wait for it to complete. Simply cancel it.
+ 	 */
+-	if (task_work_cancel(current, head)) {
++	if (task_work_cancel_current(head)) {
+ 		event->pending_work = 0;
+ 		local_dec(&event->ctx->nr_no_switch_fast);
+ 		return;
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 89ceb4a68af2..1b898701d888 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -2450,6 +2450,7 @@ __latent_entropy struct task_struct *copy_process(
+ 
+ 	p->pdeath_signal = 0;
+ 	p->task_works = NULL;
++	p->task_works_running = NULL;
+ 	clear_posix_cputimers_work(p);
+ 
+ #ifdef CONFIG_KRETPROBES
+diff --git a/kernel/task_work.c b/kernel/task_work.c
+index 5d14d639ac71..2efa81a6cbf6 100644
+--- a/kernel/task_work.c
++++ b/kernel/task_work.c
+@@ -184,6 +184,26 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
+ 	return ret == cb;
+ }
+ 
++bool task_work_cancel_current(struct callback_head *cb)
++{
++	struct callback_head **running;
++
++	if (task_work_cancel(current, cb))
++		return true;
++
++	running = &current->task_works_running;
++	while (*running) {
++		if (*running == cb) {
++			*running = cb->next;
++			return true;
++		}
++		running = &(*running)->next;
++	}
++
++	return false;
++}
++
++
+ /**
+  * task_work_run - execute the works added by task_work_add()
+  *
+@@ -195,7 +215,7 @@ bool task_work_cancel(struct task_struct *task, struct callback_head *cb)
+ void task_work_run(void)
+ {
+ 	struct task_struct *task = current;
+-	struct callback_head *work, *head, *next;
++	struct callback_head *work, *head;
+ 
+ 	for (;;) {
+ 		/*
+@@ -223,10 +243,11 @@ void task_work_run(void)
+ 		raw_spin_lock_irq(&task->pi_lock);
+ 		raw_spin_unlock_irq(&task->pi_lock);
+ 
++		WARN_ON_ONCE(task->task_works_running);
+ 		do {
+-			next = work->next;
++			task->task_works_running = work->next;
+ 			work->func(work);
+-			work = next;
++			work = task->task_works_running;
+ 			cond_resched();
+ 		} while (work);
+ 	}
+
 
