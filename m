@@ -1,145 +1,138 @@
-Return-Path: <linux-kernel+bounces-385044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8AF9B31B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:30:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11CC89B31AF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B8941C214E8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40CEB1C21894
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599521DC18F;
-	Mon, 28 Oct 2024 13:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="B6w6wwQL"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DBD1DD0D4;
-	Mon, 28 Oct 2024 13:29:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F56F1DC748;
+	Mon, 28 Oct 2024 13:29:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B3B1DC734
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122157; cv=none; b=g+EdyZt7yXxCZBVaQmbv358e30EdG3fQXa8ygmrQX9Er/asMDo5fchi/JFbLYYmQNwo3HmjxGzDBxBNE+lT4kYcPIUjRWOX6Gv+zWucl9qAEFZmpH6SneWFbADWd8fKS0Xmv0m7WfE3jfrDaQk0GW0Xw39fiE5DHpaKJDXd+CHc=
+	t=1730122153; cv=none; b=qe0fWLaInlWVswvjACzFwoKU8ImSdRki3Y97UnRkTAeYnBbCQujXni65V7aiEsNA6Y5j9GqRdaTJQ/guINmBRiuz5Nc66gi/FFGoAHvvmbmx4XXGWkCUlooZe5mpyMpH07P6ElMM1FwBWuKCPZHwnrYNJ4vqyGGjs+R1faZH40Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122157; c=relaxed/simple;
-	bh=DMmxlKMEdktOdfKpfuiQaifeYi5aarkRCjz9qJVIe9Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U4J07SJ8QBO47GXcAbYl8H2N3/9ijBJFqZx0ifFXpKv6cE+dhVU/QzFRmLDXi+IbyVzlwpFpqnPpp3/njwrCBsbFkOvCgOdDDAsdmanPjVnVquc2s9NpimyGQk++aR6yXcP+1MCyXplzD7uLpCqsK/gtmyI3kCJjoPkUadViZmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=B6w6wwQL; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id DEE4A10C4;
-	Mon, 28 Oct 2024 14:29:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730122145;
-	bh=DMmxlKMEdktOdfKpfuiQaifeYi5aarkRCjz9qJVIe9Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B6w6wwQLc0E4rqMCWKkKZ7Dca5bKw8TjNqztrfipdQMc54WB1levWCjgVTV3ySv8l
-	 6BBx19QErgZeCCOlrIXHBRPqUL+ibZBMqwsX50P0H84nSGF3s3KrhKeJCqAhJ5DNAH
-	 5yJoELKr+vtw6pW8WLP/pgor+D0mO6cSuTH4DjNM=
-Date: Mon, 28 Oct 2024 15:28:58 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Herve Codina <herve.codina@bootlin.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
- mechanism
-Message-ID: <20241028132858.GE6081@pendragon.ideasonboard.com>
-References: <20241024095539.1637280-1-herve.codina@bootlin.com>
- <20241024095539.1637280-3-herve.codina@bootlin.com>
- <20241027162350.GA15853@pendragon.ideasonboard.com>
- <20241028091331.6f67e29e@bootlin.com>
- <20241028112857.GF24052@pendragon.ideasonboard.com>
- <20241028-nebulous-yellow-dragon-2cfb5f@houat>
+	s=arc-20240116; t=1730122153; c=relaxed/simple;
+	bh=mLO4sHkjjgqpMWZHhmi3y/M3MSZ7sNZpYWTIWg5667o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PbFk8Ysoec8lydzRlOsRUQ1zr0GBgTXCW6HgJiVb3CW5NRmIsgnriJpJApcZofK/0JsAPQFLtbz2IOxfmRIDHEYZSKF5abc68GzLc4Yiyj9s4w/g1EU7mK/LFKyQM7GR/l/tUutK/7zkaBd09JRZqy8AGXeAczFtU18sszdVXV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C492497;
+	Mon, 28 Oct 2024 06:29:39 -0700 (PDT)
+Received: from [10.1.196.72] (e119884-lin.cambridge.arm.com [10.1.196.72])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 493D93F66E;
+	Mon, 28 Oct 2024 06:29:08 -0700 (PDT)
+Message-ID: <c4e1b5c8-4830-4835-86b5-22171450f1b2@arm.com>
+Date: Mon, 28 Oct 2024 13:29:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028-nebulous-yellow-dragon-2cfb5f@houat>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] vdso: change PAGE_MASK to signed on all 32-bit
+ architectures
+To: Arnd Bergmann <arnd@kernel.org>, Andy Lutomirski <luto@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Arnd Bergmann <arnd@arndb.de>, Naresh Kamboju
+ <naresh.kamboju@linaro.org>, Anders Roxell <anders.roxell@linaro.org>,
+ Alex Bennee <alex.bennee@linaro.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org
+References: <20241024133447.3117273-1-arnd@kernel.org>
+Content-Language: en-US
+From: Vincenzo Frascino <vincenzo.frascino@arm.com>
+In-Reply-To: <20241024133447.3117273-1-arnd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 01:21:45PM +0100, Maxime Ripard wrote:
-> On Mon, Oct 28, 2024 at 01:28:57PM +0200, Laurent Pinchart wrote:
-> > On Mon, Oct 28, 2024 at 09:13:31AM +0100, Herve Codina wrote:
-> > > On Sun, 27 Oct 2024 18:23:50 +0200 Laurent Pinchart wrote:
-> > > 
-> > > [...]
-> > > > > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
-> > > > > +{
-> > > > > +	struct drm_device *dev = sn65dsi83->bridge.dev;
-> > > > > +	struct drm_modeset_acquire_ctx ctx;
-> > > > > +	struct drm_atomic_state *state;
-> > > > > +	int err;
-> > > > > +
-> > > > > +	/* Use operation done in drm_atomic_helper_suspend() followed by
-> > > > > +	 * operation done in drm_atomic_helper_resume() but without releasing
-> > > > > +	 * the lock between suspend()/resume()
-> > > > > +	 */
-> > > > > +
-> > > > > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> > > > > +
-> > > > > +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
-> > > > > +	if (IS_ERR(state)) {
-> > > > > +		err = PTR_ERR(state);
-> > > > > +		goto unlock;
-> > > > > +	}
-> > > > > +
-> > > > > +	err = drm_atomic_helper_disable_all(dev, &ctx);
-> > > > > +	if (err < 0)
-> > > > > +		goto unlock;
-> > > > > +
-> > > > > +	drm_mode_config_reset(dev);
-> > > > > +
-> > > > > +	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);  
-> > > > 
-> > > > Committing a full atomic state from a bridge driver in an asynchronous
-> > > > way seems quite uncharted territory, and it worries me. It's also a very
-> > > > heavyweight, you disable all outputs here, instead of focussing on the
-> > > > output connected to the bridge. Can you either implement something more
-> > > > local, resetting the bridge only, or create a core helper to handle this
-> > > > kind of situation, on a per-output basis ?
-> > > 
-> > > A full restart of the bridge (power off/on) is needed and so we need to
-> > > redo the initialization sequence. This initialization sequence has to be
-> > > done with the DSI data lanes (bridge inputs) driven in LP11 state and so
-> > > without any video stream. Only focussing on bridge outputs will not be
-> > > sufficient. That's why I brought the pipeline down and restarted it.
-> > 
-> > Fair point.
-> > 
-> > > Of course, I can copy/paste sn65dsi83_reset_pipeline() to a core helper
-> > > function. Is drm_atomic_helper_reset_all() could be a good candidate?
-> > 
-> > The helper should operate on a single output, unrelated outputs should
-> > not be affected.
+
+
+On 24/10/2024 14:34, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Also, you don't want to reset anything, you just want the last commit to
-> be replayed.
+> With the introduction of an architecture-independent defintion of
+> PAGE_MASK, we had to make a choice between defining it as 'unsigned
+> long' as on 64-bit architectures, or as signed 'long' as required for
+> architectures with a 64-bit phys_addr_t.
+> 
+> To reduce the risk for regressions and minimize the changes in behavior,
+> the result was using the signed value only when CONFIG_PHYS_ADDR_T_64BIT
+> is set, but that ended up causing a regression after all in the
+> early_init_dt_add_memory_arch() function that uses 64-bit integers for
+> address calculation.
+> 
+> Presumably the same regression also affects mips32 and powerpc32 when
+> dealing with large amounts of memory on DT platforms: like arm32, they
+> were using the signed version unconditionally.
+> 
+> The two most sensible options that I see for addressing the regiression
+> are either to go back to an architecture specific definition, using a
+> signed constant on arm/powerpc/mips and unsigned on the others, or to
+> use the same definition everywhere.
+> 
+> Use the simpler of those two and change them all to the signed version,
+> in the hope that this does not cause a different type of bug. Most
+> of the other 32-bit architectures have no large physical address
+> support and are rarely used, so it seems more likely that using the
+> same definition helps than hurts here.
+> 
+> In particular, x86-32 does have physical addressing extensions, so it
+> already changed to the signed version after the previous patch,
+> so it makes sense to use the same version on non-PAE as well.
+> 
+> Fixes: efe8419ae78d ("vdso: Introduce vdso/page.h")
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Tested-by: Anders Roxell <anders.roxell@linaro.org>
+> Cc: Alex Bennee <alex.bennee@linaro.org>,
+> Link: https://lore.kernel.org/lkml/CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com/
 
-I'm not sure about that. If the last commit is just a page flip, that
-won't help, will it ?
+Thanks Arnd, I tested it this morning and seems working correctly with qemu 9.1.1.
+
+With this:
+
+Reviewed-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+Tested-by: Vincenzo Frascino <vincenzo.frascino@arm.com>
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  include/vdso/page.h | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/vdso/page.h b/include/vdso/page.h
+> index 4ada1ba6bd1f..710ae2414e68 100644
+> --- a/include/vdso/page.h
+> +++ b/include/vdso/page.h
+> @@ -14,13 +14,14 @@
+>  
+>  #define PAGE_SIZE	(_AC(1,UL) << CONFIG_PAGE_SHIFT)
+>  
+> -#if defined(CONFIG_PHYS_ADDR_T_64BIT) && !defined(CONFIG_64BIT)
+> +#if !defined(CONFIG_64BIT)
+>  /*
+> - * Applies only to 32-bit architectures with a 64-bit phys_addr_t.
+> + * Applies only to 32-bit architectures.
+>   *
+>   * Subtle: (1 << CONFIG_PAGE_SHIFT) is an int, not an unsigned long.
+>   * So if we assign PAGE_MASK to a larger type it gets extended the
+> - * way we want (i.e. with 1s in the high bits)
+> + * way we want (i.e. with 1s in the high bits) while masking a
+> + * 64-bit value such as phys_addr_t.
+>   */
+>  #define PAGE_MASK	(~((1 << CONFIG_PAGE_SHIFT) - 1))
+>  #else
 
 -- 
 Regards,
-
-Laurent Pinchart
+Vincenzo
 
