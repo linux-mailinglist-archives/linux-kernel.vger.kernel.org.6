@@ -1,301 +1,224 @@
-Return-Path: <linux-kernel+bounces-385482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9BC9B37AF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:31:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265029B37B2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:32:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70BEB1F23070
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:31:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD3F28275E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:32:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579BC1DF27F;
-	Mon, 28 Oct 2024 17:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24481DF724;
+	Mon, 28 Oct 2024 17:32:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G9iva7Xd"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRi6v2AW"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2D2D1DE8BC;
-	Mon, 28 Oct 2024 17:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24741DF251;
+	Mon, 28 Oct 2024 17:32:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730136712; cv=none; b=GHRWW6T3WvmQUeuoX4g+sZTlWGcnhVWNWJRYOs/li2u3NGoJ8miHNYuKYN3RMRX1//mXl4MU5nMmp9Nc8+S163DV4nYQYJVFBzVaFmy7A99DhCaCubLhRCAw6e/lf8lB2dFhutc3qh8Fmo8ND57Zn2vjB164H30EPBXRJ+tB8Gc=
+	t=1730136759; cv=none; b=tW1oioB0k7SIp+hmcB0EQbsKZPmDk0Wj3zWKy3ya4aTHIs8+bPACwxsA9kqyYpFBw2ltGhPMzKv6uCrwVf3VTHZhh3RteApoiODYQE5YjYwR/rLxoaHEYoV/sZCEsF52n9ZChqzduFh4lspmNfOp7C4Q8CBEPlY1hDKIOY15dco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730136712; c=relaxed/simple;
-	bh=A6EgKmu/5pPYpqBsB+qry9zFLzRLAKjAcj21dW1vo0w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CsZlrafxrYnS4AozeFvk8feXr0qdiVvrJmdZ7ORurKb0sjWb9OhrtokFIriusWXwz8mAcICe55mBIGcOkx/GETxO793gy1B3/2Iq5gaTQZmhgqJe2kxBXCyDNOUlfAUVK/vRUcRSXEdZODuLFYh9fswEU37hPXiW4K2PHzKzg58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G9iva7Xd; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1730136759; c=relaxed/simple;
+	bh=ovhTjd8e0XI25whd5UTTdMSx258AGClEYaqz4D6Ch4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQOpkNC1MFWwG+yBR/AgOtisDgk9LvL5XTSNf5HCRGyVcTyvgBzNGqum8GxRjIgehcDb9lfnK7jsluu7ht1YzTmlDDWy8w2LTySfOTCa+uuH/Vqpi4h4v64HO7jOMJGx2VCow5v0MBfQYurW99j9U/Xj6jVslUospRA+8TnTfIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRi6v2AW; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315baec69eso46505335e9.2;
-        Mon, 28 Oct 2024 10:31:49 -0700 (PDT)
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e13375d3so5178352e87.3;
+        Mon, 28 Oct 2024 10:32:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730136708; x=1730741508; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JKyEdAhye6hzvO346v2kKw8A4cLUIEN8DkIhBXVC/Wk=;
-        b=G9iva7XddI1BHOhXXL7Q3YCZnQxOJwOu+ZYuQ32xhF3kzI/KtWwfggwV6JoWxx7K1X
-         VExlWzYJINqolpzU8SPtVx9GuH7KqErSxYcLSPVtA9H0EAbp4mJRswz+7K5YnpMukIMA
-         FEYKJFNtAdnYzUcy+tCDnzt12xMk+j+CnX+v7KzUKCFBfHbn2lEr4LBI7zgj2NiLoLdT
-         8Du/1DKUl3D05GPNIKVX0WVU/SrxEKVL4Aym+vp/jJ8K2QRsCjvVmJ7Gp3DMtibVuj9+
-         2dWToLNBGxPjGgsQ0vFs+u7ygSTsNX56MMvZGQr3PhwbwhpRpa033fVk9zRnr/IAzV3O
-         l7sQ==
+        d=gmail.com; s=20230601; t=1730136755; x=1730741555; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mj2liF4nx7VZnKh8QeIkwojRqh8+MN+fPrkECh/R5qw=;
+        b=PRi6v2AWKBNjfuvHKQZgSn4rwYlEBKFCsSdTVGEBbjRDKioYs6z3cAwR4q5mDt9qIJ
+         MA0EhKEP//9ZhqTsae3JIVwDoPWAnzLz0xnfXYvD8A3xz3ysXoqdjD2LBiYTGAGVs9Z7
+         P8M7nfnuZNAJ/315dDAP57AJEx1+ON3n9jCuTMaB1CmNWAbY7uuH7m4rhBmVhG9jbAET
+         eKFmIBJv7CqUo4ddpUrmNctq3vNZ52Qd1E4qL+8ZUKWUUkHQ9GHvb6a5H5PrQVMX1eCa
+         srbZlN161ZgQcS/dAmmaL7h/w35cHaXc2hmQ23KItyy5d/IXv5qrVAiCuVc4p71eLFkN
+         gzQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730136708; x=1730741508;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JKyEdAhye6hzvO346v2kKw8A4cLUIEN8DkIhBXVC/Wk=;
-        b=UJsPu7WkU6DIBbEmuBr2qWupVwauI+o0ZH7ilazEDdgoI2K8ZTOhpoJu+pfDKBnUkK
-         ssK/bZX4iClxokwPSR5aIJzdLFTnJyCl2VXVZKJMIVg7y4NC89YibZKYHEJz7v2Op4Mn
-         t9WBDjzryiBP4yMpTTEuiDUSzHLjXwkdy7NnTzy9geFC0HFSf8QboEyJGY/1bqj5l68L
-         4OJDvYbUQtA+WTPeRElX7NZLiPN32PSqMSA+PgLlN0iC0GwgIJR9Gy9zxlmQdhq2VQEr
-         8x3+sGp1A2DIUJjJpBUnWaKRl575i3E4+3IkwqlP5e72j6D368y90wxkT7jCPyV3Bit3
-         RQUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUyJXU/fa0RgsIzlGNSp48ZV+ew9yaCKct80oqO85If7SrLFADlm5nxwukMQWOjvyNSY5hpXzQWMlc@vger.kernel.org, AJvYcCVMqpMqKQbAoOF6yr9SrZaOk75+QAOhKKNCZmk+vk+rrOptoIz36RqZX0m2CQFfgP5R1+PV9yYLUXewN71M@vger.kernel.org, AJvYcCWawk1q9SRPymfFgSI29NsIGor4wZECtN0jUKEoAj3cicuENh+rQkvHra4k1gOEDTgeUxaywOf61WKdVeBWFjRlTI9aCw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTyORwYeXHF3aK8qiYfKw2oIjZj0e+cLOh3ue36JmqD7JWMGoR
-	lHRq3SKlwsMRVVEi6782ZJ/ZYtAFwgcD9O+0AddjWgq7cKL7Abfz
-X-Google-Smtp-Source: AGHT+IHCwI6Z8gzv/Lq7X0+NT/GzVU12aVJB+72QINu6jhNUvtpmD2T4QCKKe2f61dzzjukQOThGMg==
-X-Received: by 2002:adf:f18c:0:b0:37d:4a2d:6948 with SMTP id ffacd0b85a97d-38061163a43mr6623124f8f.33.1730136707889;
-        Mon, 28 Oct 2024 10:31:47 -0700 (PDT)
-Received: from ?IPV6:2a02:8071:b783:140:927c:82ba:d32d:99c1? ([2a02:8071:b783:140:927c:82ba:d32d:99c1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b49d20sm10011912f8f.62.2024.10.28.10.31.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 10:31:47 -0700 (PDT)
-Message-ID: <78cd20c2-de9d-4440-b487-77a1ac505f17@gmail.com>
-Date: Mon, 28 Oct 2024 18:31:46 +0100
+        d=1e100.net; s=20230601; t=1730136755; x=1730741555;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mj2liF4nx7VZnKh8QeIkwojRqh8+MN+fPrkECh/R5qw=;
+        b=MupSHUwCAKsbhk83UmsoxBClpD3qKChIRbcfjeqyd5Q2ALGN3r+iZgnyeMUfVG5bNe
+         NCTBSRdMEC245032EM93dUX0kw+RD9S5srBMYVxvzDMC/x+RzuSULtiuDbH69Cv4nWX0
+         L1CHyhhyEQNvflPCxTzv2MYN8TjzNIjefq1w1neycFHmgqTcIZfw2KrVvnRwcyFHIvMA
+         cDTYNv7ygsd8MbDV9aANU87RphiGJQzzrNeAbay0JVOVsbKULiRTwm4QcyJUm+mFtrV6
+         obLsTzuNL1rAAS7ZaerCfrqn3BSgLznTy9d/yZBxydPTk0+BrL/sCFx5YxZowbpUk24R
+         v6eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJFaeak237j+E4KFMMDD5BDcvlk/XTPwbrFzORQNaTk6mBzX6ymPsDJ4sXR6hj7s+7Hl3icIk8rxy2AOA=@vger.kernel.org, AJvYcCXIDLkWK4ba5x612Qp/7xWDT8SV3MvzVVkP+5w/PyFwzWH6fO0soLfaaCW/pWnkT03EZj8cs7ljpFl7LHQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6PnCER0ofGCmZAmO2c9siSfXMtTKAqDnRf6HWG0FtORvRvHcj
+	YOjyJVDIRXZmh14/8hY9WGOOdHPd05VHKC9vIPIewyph6VeV2ZTj
+X-Google-Smtp-Source: AGHT+IFV+6aSOEl6abiaqOBxdAUIdLFxGz+OaTJw++DV3keSeb3siTfJAxm04D1j03mDh3moa6Uu8g==
+X-Received: by 2002:a05:6512:1310:b0:535:d4e6:14e2 with SMTP id 2adb3069b0e04-53b348f1399mr4327085e87.36.1730136754512;
+        Mon, 28 Oct 2024 10:32:34 -0700 (PDT)
+Received: from tom-desktop (net-188-217-53-167.cust.vodafonedsl.it. [188.217.53.167])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3bddbsm10079036f8f.27.2024.10.28.10.32.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 10:32:34 -0700 (PDT)
+Date: Mon, 28 Oct 2024 18:32:32 +0100
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
+Message-ID: <Zx/KsKBtVBWfziXo@tom-desktop>
+References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
+ <20241020164354.GG7770@pendragon.ideasonboard.com>
+ <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+ <20241021073034.GC14328@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 03/15] ACPI: platform_profile: Add platform handler
- argument to platform_profile_remove()
-To: Mario Limonciello <mario.limonciello@amd.com>,
- Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Lee Chun-Yi <jlee@suse.com>, Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
- Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
- <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
- Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
- Alexis Belmonte <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
- open list <linux-kernel@vger.kernel.org>,
- "open list:ACPI" <linux-acpi@vger.kernel.org>,
- "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
- <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER"
- <ibm-acpi-devel@lists.sourceforge.net>,
- Mark Pearson <mpearson-lenovo@squebb.ca>,
- Matthew Schwartz <matthew.schwartz@linux.dev>
-References: <20241028020131.8031-1-mario.limonciello@amd.com>
- <20241028020131.8031-4-mario.limonciello@amd.com>
-Content-Language: en-US
-From: Maximilian Luz <luzmaximilian@gmail.com>
-In-Reply-To: <20241028020131.8031-4-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021073034.GC14328@pendragon.ideasonboard.com>
 
-On 10/28/24 3:01 AM, Mario Limonciello wrote:
-> To allow registering and unregistering multiple platform handlers calls
-> to platform_profile_remove() will need to know which handler is to be
-> removed.  Add an argument for this.
+Hi Laurent, Sakari,
+
+Sorry for the delay.
+Back on this topic.
+
+On Mon, Oct 21, 2024 at 10:30:34AM +0300, Laurent Pinchart wrote:
+> On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
+> > Hi Laurent,
+> > Thanks for your review.
+> > 
+> > On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
+> > > Hi Tommaso,
+> > > 
+> > > Thank you for the patch.
+> > > 
+> > > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
+> > > > Controls can be exposed to userspace via a v4l-subdevX device, and
+> > > > userspace has to be able to subscribe to control events so that it is
+> > > > notified when the control changes value.
+> > > > If a control handler is set for the subdev then set the HAS_EVENTS
+> > > > flag automatically into v4l2_subdev_init_finalize() and use
+> > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> > > > as default if subdev don't have .(un)subscribe control operations.
+> > > 
+> > > I would add here
+> > > 
+> > > This simplifies subdev drivers by avoiding the need to set the
+> > > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
+> > > consistency of the API exposed to userspace.
+> > > 
+> > > And you can also add
+> > > 
+> > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > > 
+> > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > 
+> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> > 
+> > Oks, Thanks again.
+> > 
+> > > Now, can we simplify sensor drivers to drop the event handlers and the
+> > > flag ? :-)
+> > 
+> > Yep, plan is add all to support v4l2_subdev_init_finalize()
+> > Removing:
+> > 
+> >  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> >  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > 
+> > if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
 > 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v2:
->   * Use ssam_device_get_drvdata() for surface
-> ---
->   drivers/acpi/platform_profile.c                     | 2 +-
->   drivers/platform/surface/surface_platform_profile.c | 5 ++++-
->   drivers/platform/x86/acer-wmi.c                     | 4 ++--
->   drivers/platform/x86/amd/pmf/sps.c                  | 2 +-
->   drivers/platform/x86/asus-wmi.c                     | 4 ++--
->   drivers/platform/x86/dell/dell-pc.c                 | 2 +-
->   drivers/platform/x86/hp/hp-wmi.c                    | 2 +-
->   drivers/platform/x86/ideapad-laptop.c               | 2 +-
->   drivers/platform/x86/inspur_platform_profile.c      | 5 ++++-
->   drivers/platform/x86/thinkpad_acpi.c                | 2 +-
->   include/linux/platform_profile.h                    | 2 +-
->   11 files changed, 19 insertions(+), 13 deletions(-)
+> What I meant is looking at the I2C sensor drivers that currently
 > 
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index d2f7fd7743a13..c24744da20916 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -205,7 +205,7 @@ int platform_profile_register(struct platform_profile_handler *pprof)
->   }
->   EXPORT_SYMBOL_GPL(platform_profile_register);
->   
-> -int platform_profile_remove(void)
-> +int platform_profile_remove(struct platform_profile_handler *pprof)
->   {
->   	sysfs_remove_group(acpi_kobj, &platform_profile_group);
->   
-> diff --git a/drivers/platform/surface/surface_platform_profile.c b/drivers/platform/surface/surface_platform_profile.c
-> index a18eb93eebb92..1c9e37b1f4761 100644
-> --- a/drivers/platform/surface/surface_platform_profile.c
-> +++ b/drivers/platform/surface/surface_platform_profile.c
-> @@ -228,7 +228,10 @@ static int surface_platform_profile_probe(struct ssam_device *sdev)
->   
->   static void surface_platform_profile_remove(struct ssam_device *sdev)
->   {
-> -	platform_profile_remove();
-> +	struct ssam_platform_profile_device *tpd;
-> +
-> +	tpd = ssam_device_get_drvdata(sdev);
-> +	platform_profile_remove(&tpd->handler);
->   }
->   
->   static const struct ssam_device_id ssam_platform_profile_match[] = {
-> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
-> index 53fbc9b4d3df7..71761d4220c26 100644
-> --- a/drivers/platform/x86/acer-wmi.c
-> +++ b/drivers/platform/x86/acer-wmi.c
-> @@ -2546,7 +2546,7 @@ static int acer_platform_probe(struct platform_device *device)
->   
->   error_hwmon:
->   	if (platform_profile_support)
-> -		platform_profile_remove();
-> +		platform_profile_remove(&platform_profile_handler);
->   error_platform_profile:
->   	acer_rfkill_exit();
->   error_rfkill:
-> @@ -2569,7 +2569,7 @@ static void acer_platform_remove(struct platform_device *device)
->   	acer_rfkill_exit();
->   
->   	if (platform_profile_support)
-> -		platform_profile_remove();
-> +		platform_profile_remove(&platform_profile_handler);
->   }
->   
->   #ifdef CONFIG_PM_SLEEP
-> diff --git a/drivers/platform/x86/amd/pmf/sps.c b/drivers/platform/x86/amd/pmf/sps.c
-> index e2d0cc92c4396..cfa88c0c9e594 100644
-> --- a/drivers/platform/x86/amd/pmf/sps.c
-> +++ b/drivers/platform/x86/amd/pmf/sps.c
-> @@ -425,5 +425,5 @@ int amd_pmf_init_sps(struct amd_pmf_dev *dev)
->   
->   void amd_pmf_deinit_sps(struct amd_pmf_dev *dev)
->   {
-> -	platform_profile_remove();
-> +	platform_profile_remove(&dev->pprof);
->   }
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index c7c104c65a85a..f5f8cda7fd19c 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -4885,7 +4885,7 @@ static int asus_wmi_add(struct platform_device *pdev)
->   fail_custom_fan_curve:
->   fail_platform_profile_setup:
->   	if (asus->platform_profile_support)
-> -		platform_profile_remove();
-> +		platform_profile_remove(&asus->platform_profile_handler);
->   fail_fan_boost_mode:
->   fail_platform:
->   	kfree(asus);
-> @@ -4912,7 +4912,7 @@ static void asus_wmi_remove(struct platform_device *device)
->   	asus_wmi_battery_exit(asus);
->   
->   	if (asus->platform_profile_support)
-> -		platform_profile_remove();
-> +		platform_profile_remove(&asus->platform_profile_handler);
->   
->   	kfree(asus);
->   }
-> diff --git a/drivers/platform/x86/dell/dell-pc.c b/drivers/platform/x86/dell/dell-pc.c
-> index 3cf79e55e3129..4196154cc37d9 100644
-> --- a/drivers/platform/x86/dell/dell-pc.c
-> +++ b/drivers/platform/x86/dell/dell-pc.c
-> @@ -273,7 +273,7 @@ static int thermal_init(void)
->   static void thermal_cleanup(void)
->   {
->   	if (thermal_handler) {
-> -		platform_profile_remove();
-> +		platform_profile_remove(thermal_handler);
->   		kfree(thermal_handler);
->   	}
->   }
-> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
-> index 26cac73caf2b9..bb8771d8b5cd8 100644
-> --- a/drivers/platform/x86/hp/hp-wmi.c
-> +++ b/drivers/platform/x86/hp/hp-wmi.c
-> @@ -1692,7 +1692,7 @@ static void __exit hp_wmi_bios_remove(struct platform_device *device)
->   	}
->   
->   	if (platform_profile_support)
-> -		platform_profile_remove();
-> +		platform_profile_remove(&platform_profile_handler);
->   }
->   
->   static int hp_wmi_resume_handler(struct device *device)
-> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
-> index 1f94c14c3b832..50819ac919e87 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -1135,7 +1135,7 @@ static void ideapad_dytc_profile_exit(struct ideapad_private *priv)
->   	if (!priv->dytc)
->   		return;
->   
-> -	platform_profile_remove();
-> +	platform_profile_remove(&priv->dytc->pprof);
->   	mutex_destroy(&priv->dytc->mutex);
->   	kfree(priv->dytc);
->   
-> diff --git a/drivers/platform/x86/inspur_platform_profile.c b/drivers/platform/x86/inspur_platform_profile.c
-> index 03da2c8cf6789..d8fd59b826f3a 100644
-> --- a/drivers/platform/x86/inspur_platform_profile.c
-> +++ b/drivers/platform/x86/inspur_platform_profile.c
-> @@ -190,7 +190,10 @@ static int inspur_wmi_probe(struct wmi_device *wdev, const void *context)
->   
->   static void inspur_wmi_remove(struct wmi_device *wdev)
->   {
-> -	platform_profile_remove();
-> +	struct inspur_wmi_priv *priv;
-> +
-> +	priv = dev_get_drvdata(&wdev->dev);
-> +	platform_profile_remove(&priv->handler);
->   }
->   
->   static const struct wmi_device_id inspur_wmi_id_table[] = {
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-> index c8c316b8507a5..619a4db74e5f3 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -10637,7 +10637,7 @@ static int tpacpi_dytc_profile_init(struct ibm_init_struct *iibm)
->   
->   static void dytc_profile_exit(void)
->   {
-> -	platform_profile_remove();
-> +	platform_profile_remove(&dytc_profile);
->   }
->   
->   static struct ibm_struct  dytc_profile_driver_data = {
-> diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
-> index 6fa988e417428..58279b76d740e 100644
-> --- a/include/linux/platform_profile.h
-> +++ b/include/linux/platform_profile.h
-> @@ -36,7 +36,7 @@ struct platform_profile_handler {
->   };
->   
->   int platform_profile_register(struct platform_profile_handler *pprof);
-> -int platform_profile_remove(void);
-> +int platform_profile_remove(struct platform_profile_handler *pprof);
->   int platform_profile_cycle(void);
->   void platform_profile_notify(void);
->   
+> - call v4l2_subdev_init_finalize()
+> - set V4L2_SUBDEV_FL_HAS_EVENTS
+> - set the .subscribe_event() and .unsubscribe_event() handlers
+> 
+> and dropping the flag and handlers from them. Is that what you plan to
+> work on ?
 
-Looks good to me, thanks!
+It's ok for you per/driver patch or you prefer a big single patch?
 
-Reviewed-by: Maximilian Luz <luzmaximilian@gmail.com>
+Meanwhile I've prepared something here:
+
+https://gitlab.freedesktop.org/linux-media/users/tmerciai/-/compare/next...v6.12.0-rc1-nxp?from_project_id=22111
+
+Let me know if you prefer (un)squashed version.
+Thanks in advance. :)
+
+Thanks & Regards,
+Tommaso
+
+> 
+> > Meanwhile I think I will send v3 with your
+> > suggestions. :)
+> > 
+> > > > ---
+> > > > Changes since v1:
+> > > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
+> > > >    SAilus
+> > > > 
+> > > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
+> > > >  1 file changed, 20 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > index 3a4ba08810d2..fad8fa1f63e8 100644
+> > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
+> > > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
+> > > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
+> > > >  
+> > > >  	case VIDIOC_SUBSCRIBE_EVENT:
+> > > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
+> > > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
+> > > > +			return v4l2_subdev_call(sd, core, subscribe_event,
+> > > > +						vfh, arg);
+> > > > +
+> > > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
+> > > > +		    vfh->ctrl_handler)
+> > > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
+> > > > +
+> > > > +		return -ENOIOCTLCMD;
+> > > >  
+> > > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
+> > > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
+> > > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
+> > > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
+> > > > +						vfh, arg);
+> > > > +
+> > > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
+> > > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
+> > > > +
+> > > > +		return -ENOIOCTLCMD;
+> > > >  
+> > > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
+> > > >  	case VIDIOC_DBG_G_REGISTER:
+> > > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
+> > > >  		}
+> > > >  	}
+> > > >  
+> > > > +	if (sd->ctrl_handler)
+> > > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> > > > +
+> > > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
+> > > >  	if (IS_ERR(state))
+> > > >  		return PTR_ERR(state);
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
