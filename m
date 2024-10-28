@@ -1,210 +1,209 @@
-Return-Path: <linux-kernel+bounces-385974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5498E9B3DB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:23:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 940EA9B3DB2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:24:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13CF3280EC2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 010302818A3
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA18C1EE034;
-	Mon, 28 Oct 2024 22:23:24 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCEB1EE034;
+	Mon, 28 Oct 2024 22:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUJNzU98"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39E918B463
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 22:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5A42E414;
+	Mon, 28 Oct 2024 22:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730154204; cv=none; b=UIZv4o425IhDRa7GOY5a9zTaAkyL0azdLqTLNbBOyC17uL/WBgd4fqH61mBr9b4D6qi8aL9VOpj68QfC8lsnGkYtReykceZsZDSw5nLwLnbrTseUDkAtK0Ze20xKj2l+e3t3B3BA0qVz5QDjxFG57+MBuRqSLqV3CH8sEhJIYmI=
+	t=1730154264; cv=none; b=T2+fZYt3SevpQ+HgH2hCYsIjrBmPIfCKyXKIKkWO1n1h5OIaCq287AgzFY05fLfdsR+JSx3bMmocr7i7YdPiOtTFr2xMV7wwxA56CsSgX9xW4DLpyDH6LDLwfb4V8W3BCSxew5bmhnSig3GICA3cMXzyXJcX3Fa99otx+yFPCV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730154204; c=relaxed/simple;
-	bh=WXOxYEeMCkHYPfA9arqGKyS0+VjxZnAss7CGRQJ9dzw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=tgq8uoKz8tDvyJbzJZ9JdGXb9SlnWece77vg1qadbYuGnWOzr2f2tSiVhixTGBIQeWGD3yT4vP6rG0ZubpHm70npPDooIZX8k/LcxA1eS2bgm/LP5Y8pcnbAmcCbaDxtrgGTwLO9j6bF/kWxupUE9hYuF9oL8xY+sViWPFUJexY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3bf44b0f5so32003465ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:23:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730154201; x=1730759001;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1CThvT4rZ2XhQHbDeTQuDJPUMFBOGec7BXymSfx7Unc=;
-        b=KJ6lKKsWH9khIa7uwZII0lLEySbG5j7lXT/67b0ao1QQboPf/PQruQrCvHMkTzcARG
-         QZ+od+gu1XuhC04rRm2kfcWFroDX4C1Fo+B2/RaKbebLH0LLBPLVSU2ZaON/Y9hlTfS6
-         ex6LyHgBbyeRl1v4bEiu8z4CGayBLCF1INZs1dDEHDw5p5hXrWqzLheVgAU7JVDlcc5c
-         MJ/iA2hWdSxm8/eFIMydqgySQRZGMYjlYrcuy+KxK8ztq/WQdHVF1Hq09uvKG4uts9fQ
-         aK911TCMV8nZ/HXFhzzvbEPLqE6joBQTk5DtpBij9Zi62n3Eug39AvkyXt5vCqbEkmod
-         WgdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXjY2IkTpUmr0U9RlnprB+K7KpP8S+hoQTcOjaqGv59sumpyjIXuCyMGxuKOW3dnd7OFVprU4y0m1yOlbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwROVq+aMtt/qpg+i5BZ9pa1LL6qZrdL/C6ERe2vaWSC3NyT+0L
-	X1lXlS+s3z5AVUak15zGYcFbATrQYMV6ngogfxN2ABLkxsHj826ptJdFJ4K1ZLMUy0jdoMc4UEH
-	xqLQ5/HAX2a4ARR3nMYvTkxb43ki+ZZs7SUz9Khh2RvcidiX/WYj8KFU=
-X-Google-Smtp-Source: AGHT+IFPM+RsyuYrZzYKKY5Et21s5ErO8PkxTg5KrcBKd+1CUsjO6237bHOXE2ebWPCJ4xLvTtAu1Y5dvsmCcqsw32iwaQ4oI09b
+	s=arc-20240116; t=1730154264; c=relaxed/simple;
+	bh=utzRzWn2WgVfj5Awm5sHq2hFk9MdCUocVEwrk6a3Cf8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T603dppMAoeg1H+ZS3ug1C/Ys8tOMuxm6S6+u3yJ+sSsFu8MKioXonF4FktKlqsV7iTpXF5E+6Mx9my4pasTDeNlE2I4xSJPcXANkWWMCNZidxuyOQGHY/VpuryotlQTlI5O4jZC1+mOdRZHg/fVB6tmHwKcn16t45L7u3dodus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUJNzU98; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E376C4CEE9;
+	Mon, 28 Oct 2024 22:24:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730154264;
+	bh=utzRzWn2WgVfj5Awm5sHq2hFk9MdCUocVEwrk6a3Cf8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=hUJNzU985L4AU4CjwZtTv3dNXMiNod+1oI+SYTvzfQ57U9bxhqmNqPBhj+zl4E9YJ
+	 sk6u3jHtjXOipRJxandHioOfGoM527siAa1RX4Wk3R0o7PSMAPEzU79ZEwvA2I/kz4
+	 I+elprpyW25fTm9g/GZdSo9RBopOI7PFL1STzHl5fk6ZexEFPARA05iPPiY7Ls2DOu
+	 76r3klcDjJlME57jjnyMIuk2YakDA5ngpZlhpilAcftBh7NrUoZaVPzGcir3tbvbgi
+	 EhLt7zg/N+bct58Wi5A+Y7oSLX6hx1EMM0n55RQXkgfKEc7J/CD48kiCNu0jpfJriK
+	 gK5cvLHqlLU/g==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e8607c2aso4949251e87.3;
+        Mon, 28 Oct 2024 15:24:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzHXC6FMdLPPVYL14YNZIr4w257ag11qwM1Mbm6/pCvzA2mr2rFgu2KCVniKQeb33AGBfdsuqZFl4nePGH@vger.kernel.org, AJvYcCX0WyhiXfODj0izt13IXV8aUsZHOphcP5NPqhCOVyyTJeBA9wX3ArpwXanAxJQHmlmkwEy5evwFI4mJ@vger.kernel.org, AJvYcCXPaxXKa88aacTs4A/tBHsnl8zpSTvcrXP+m4zkFw3NyXdsf6iN3AigMDBmcFZPjpu5SNIhf70255o6bCTMzv8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwDbPXyMncjec39NoIU3PhbZBljsTEapZfme9xYm5dHKCxOH7f
+	TBM4QMuEZjP2RpR06EhFiTH67Ck4k5er1AWWcwiacpYmLVUdHkE+nb70DgeskrrTsw57Hr2BlK8
+	7GrEjHjsjYINjRXd3xIxsk22NSw==
+X-Google-Smtp-Source: AGHT+IE3MvKjtwnN0E1z+stXGG7L2reCi29C8P66XqcQR5Sj+SPtsxowZHkbeS+IBi+G7QFS27w/i1TDE/R6kPFZv4c=
+X-Received: by 2002:a05:6512:4020:b0:52f:d0f0:e37e with SMTP id
+ 2adb3069b0e04-53b3491ac48mr3760256e87.42.1730154262507; Mon, 28 Oct 2024
+ 15:24:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4e:b0:3a0:90c7:f1b with SMTP id
- e9e14a558f8ab-3a4ed2aff69mr91699135ab.12.1730154200970; Mon, 28 Oct 2024
- 15:23:20 -0700 (PDT)
-Date: Mon, 28 Oct 2024 15:23:20 -0700
-In-Reply-To: <6710d2a2.050a0220.d9b66.0189.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67200ed8.050a0220.11b624.04b5.GAE@google.com>
-Subject: Re: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
-From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
-To: brauner@kernel.org, gregkh@linuxfoundation.org, jack@suse.cz, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, tj@kernel.org, viro@zeniv.linux.org.uk
+References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
+ <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAFRnB2WPEQaa6X6LqMk+JTxprguakNqFXvjaUGQ0QazxKH=z4Q@mail.gmail.com>
+In-Reply-To: <CAFRnB2WPEQaa6X6LqMk+JTxprguakNqFXvjaUGQ0QazxKH=z4Q@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 28 Oct 2024 17:24:09 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+nqFgK4D6ua+Kx8SiqCZFYaD-nse7vjPLqOLvP0hfo7A@mail.gmail.com>
+Message-ID: <CAL_Jsq+nqFgK4D6ua+Kx8SiqCZFYaD-nse7vjPLqOLvP0hfo7A@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
+To: Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has found a reproducer for the following issue on:
+On Fri, Oct 25, 2024 at 4:12=E2=80=AFPM Alex Gaynor <alex.gaynor@gmail.com>=
+ wrote:
+>
+> On Fri, Oct 25, 2024 at 5:06=E2=80=AFPM Rob Herring (Arm) <robh@kernel.or=
+g> wrote:
+> >
+> > The device property API is a firmware agnostic API for reading
+> > properties from firmware (DT/ACPI) devices nodes and swnodes.
+> >
+> > While the C API takes a pointer to a caller allocated variable/buffer,
+> > the rust API is designed to return a value and can be used in struct
+> > initialization. Rust generics are also utilized to support different
+> > sizes of properties (e.g. u8, u16, u32).
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> > Not sure if we need the KVec variant, but I kept it as that was my firs=
+t
+> > pass attempt. Most callers are filling in some value in a driver data
+> > struct. Sometimes the number of elements is not known, so the caller
+> > calls to get the array size, allocs the correct size buffer, and then
+> > reads the property again to fill in the buffer.
+> >
+> > I have not implemented a wrapper for device_property_read_string(_array=
+)
+> > because that API is problematic for dynamic DT nodes. The API just
+> > returns pointer(s) into the raw DT data. We probably need to return a
+> > copy of the string(s) instead for rust.
+> >
+> > After property accessors, next up is child node accessors/iterators.
+> > ---
+> >  rust/bindings/bindings_helper.h |   1 +
+> >  rust/kernel/device.rs           | 145 ++++++++++++++++++++++++++++++++=
++++++++-
+> >  2 files changed, 145 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_h=
+elper.h
+> > index 217c776615b9..65717cc20a23 100644
+> > --- a/rust/bindings/bindings_helper.h
+> > +++ b/rust/bindings/bindings_helper.h
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/pci.h>
+> >  #include <linux/phy.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/property.h>
+> >  #include <linux/refcount.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/slab.h>
+> > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> > index 0c28b1e6b004..bb66a28df890 100644
+> > --- a/rust/kernel/device.rs
+> > +++ b/rust/kernel/device.rs
+> > @@ -5,10 +5,14 @@
+> >  //! C header: [`include/linux/device.h`](srctree/include/linux/device.=
+h)
+> >
+> >  use crate::{
+> > +    alloc::KVec,
+> >      bindings,
+> > +    error::{to_result, Result},
+> > +    prelude::*,
+> > +    str::CStr,
+> >      types::{ARef, Opaque},
+> >  };
+> > -use core::{fmt, ptr};
+> > +use core::{fmt, mem::size_of, ptr};
+> >
+> >  #[cfg(CONFIG_PRINTK)]
+> >  use crate::c_str;
+> > @@ -189,6 +193,145 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::=
+Arguments<'_>) {
+> >              )
+> >          };
+> >      }
+> > +
+> > +    /// Returns if a firmware property `name` is true or false
+> > +    pub fn property_read_bool(&self, name: &CStr) -> bool {
+> > +        unsafe { bindings::device_property_present(self.as_raw(), name=
+.as_ptr() as *const i8) }
+> > +    }
+> > +
+> > +    /// Returns if a firmware string property `name` has match for `ma=
+tch_str`
+> > +    pub fn property_match_string(&self, name: &CStr, match_str: &CStr)=
+ -> Result<usize> {
+> > +        let ret =3D unsafe {
+> > +            bindings::device_property_match_string(
+> > +                self.as_raw(),
+> > +                name.as_ptr() as *const i8,
+> > +                match_str.as_ptr() as *const i8,
+> > +            )
+> > +        };
+> > +        to_result(ret)?;
+> > +        Ok(ret as usize)
+> > +    }
+> > +
+> > +    /// Returns firmware property `name` scalar value
+> > +    ///
+> > +    /// Valid types are i8, u8, i16, u16, i32, u32, i64, u64
+> > +    pub fn property_read<T: Copy>(&self, name: &CStr) -> Result<T> {
+> > +        let mut val: [T; 1] =3D unsafe { core::mem::zeroed() };
+> > +
+> > +        Self::_property_read_array(&self, name, &mut val)?;
+> > +        Ok(val[0])
+> > +    }
+> > +
+>
+> This, and several of the other methods are unsound, because they can
+> be used to construct arbitrary types for which may not allow all bit
+> patterns. You can use:
+> https://rust.docs.kernel.org/kernel/types/trait.FromBytes.html as the
+> bound to ensure only valid types are used.
+>
+> Also, instead of using mem::zeroed(), you should use MaybeUnininit
+> (https://doc.rust-lang.org/stable/core/mem/union.MaybeUninit.html)
+> which allows you to avoid needing to zero initialize.
 
-HEAD commit:    819837584309 Linux 6.12-rc5
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16356ca7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1940f73a609bb874
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171b4687980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10bd3230580000
+Something like this what you had in mind?:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5d6f005bb493/disk-81983758.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9e1428c416c8/vmlinux-81983758.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/970a44403f00/bzImage-81983758.xz
+pub fn property_read_array<T, const N: usize>(&self, name: &CStr) ->
+Result<[T; N]> {
+    let mut val: [MaybeUninit<T>; N] =3D [const { MaybeUninit::uninit() }; =
+N];
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com
+    Self::_property_read_array(self, name, &mut val)?;
 
-INFO: task syz-executor377:5856 blocked for more than 143 seconds.
-      Not tainted 6.12.0-rc5-syzkaller #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor377 state:D stack:28560 pid:5856  tgid:5854  ppid:5853   flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5328 [inline]
- __schedule+0xe55/0x5730 kernel/sched/core.c:6690
- __schedule_loop kernel/sched/core.c:6767 [inline]
- schedule+0xe7/0x350 kernel/sched/core.c:6782
- schedule_timeout+0x258/0x2a0 kernel/time/timer.c:2591
- do_wait_for_common kernel/sched/completion.c:95 [inline]
- __wait_for_common+0x3e1/0x600 kernel/sched/completion.c:116
- wait_for_common kernel/sched/completion.c:127 [inline]
- wait_for_completion_state+0x1c/0x40 kernel/sched/completion.c:264
- coredump_wait fs/coredump.c:418 [inline]
- do_coredump+0x82f/0x4160 fs/coredump.c:575
- get_signal+0x237c/0x26d0 kernel/signal.c:2902
- arch_do_signal_or_restart+0x90/0x7e0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x150/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc0089ce2e9
-RSP: 002b:00007fc008968218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: ffffffffffffffda RBX: 00007fc008a58318 RCX: 00007fc0089ce2e9
-RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007fc008a5831c
-RBP: 00007fc008a58310 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000005 R11: 0000000000000246 R12: 00007fc008a5831c
-R13: 0008000000000001 R14: 00004000000000df R15: 0000300000000000
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/30:
- #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
- #0: ffffffff8ddb7800 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x7f/0x390 kernel/locking/lockdep.c:6720
-2 locks held by syslogd/5195:
- #0: ffff8880b863ee98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x29/0x130 kernel/sched/core.c:598
- #1: ffffffff9a5faf30 (&obj_hash[i].lock){-.-.}-{2:2}, at: __skb_try_recv_datagram+0x149/0x4f0 net/core/datagram.c:263
-2 locks held by getty/5606:
- #0: ffff8880350da0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x24/0x80 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f062f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0xfba/0x1480 drivers/tty/n_tty.c:2211
-1 lock held by syz-executor377/5855:
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x27b/0x390 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x29c/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xf0c/0x1240 kernel/hung_task.c:379
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 5855 Comm: syz-executor377 Not tainted 6.12.0-rc5-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:sha256_transform_rorx+0xfd9/0x1120 arch/x86/crypto/sha256-avx2-asm.S:655
-Code: 38 09 d6 45 31 e6 41 89 cc 44 21 c6 41 21 d4 45 01 ef 41 01 d9 44 09 e6 44 01 f3 45 01 f9 44 01 fb 45 89 d7 c4 43 7b f0 e9 19 <c4> 43 7b f0 f1 0b 45 31 df 45 31 f5 c4 43 7b f0 f1 06 45 21 cf 01
-RSP: 0018:ffffc9000381f200 EFLAGS: 00000297
-RAX: 0000000082170eda RBX: 00000000aaf713b2 RCX: 00000000dd0d3fb4
-RDX: 0000000083a209e1 RSI: 00000000dd051db4 RDI: 00000000000001c0
-RBP: ffffc9000381f420 R08: 000000007d459d16 R09: 000000002d345c33
-R10: 00000000bb0c1e52 R11: 00000000ff949dec R12: 00000000810009a0
-R13: 000000009a2e1996 R14: 00000000fe1b74f0 R15: 00000000bb0c1e52
-FS:  00007fc0089896c0(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005614eea51680 CR3: 0000000079270000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- lib_sha256_base_do_update include/crypto/sha256_base.h:63 [inline]
- sha256_base_do_update include/crypto/sha256_base.h:81 [inline]
- _sha256_update arch/x86/crypto/sha256_ssse3_glue.c:74 [inline]
- _sha256_update+0x17e/0x220 arch/x86/crypto/sha256_ssse3_glue.c:58
- ima_calc_file_hash_tfm+0x302/0x3e0 security/integrity/ima/ima_crypto.c:491
- ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
- ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
- ima_collect_measurement+0x8a7/0xa10 security/integrity/ima/ima_api.c:293
- process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
- ima_file_mmap+0x1b1/0x1d0 security/integrity/ima/ima_main.c:462
- security_mmap_file+0x8bd/0x990 security/security.c:2979
- vm_mmap_pgoff+0xdb/0x360 mm/util.c:584
- ksys_mmap_pgoff+0x1c8/0x5c0 mm/mmap.c:542
- __do_sys_mmap arch/x86/kernel/sys_x86_64.c:86 [inline]
- __se_sys_mmap arch/x86/kernel/sys_x86_64.c:79 [inline]
- __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:79
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc0089ce2e9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc008989208 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
-RAX: ffffffffffffffda RBX: 00007fc008a58308 RCX: 00007fc0089ce2e9
-RDX: 00004000000000df RSI: 0008000000000001 RDI: 0000000000000000
-RBP: 00007fc008a58300 R08: 0000000000000401 R09: 0000300000000000
-R10: 0000000000040eb1 R11: 0000000000000246 R12: 00007fc008a5830c
-R13: 0008000000000001 R14: 00004000000000df R15: 0000300000000000
- </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 2.168 msecs
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+    // SAFETY: On success, _property_read_array has filled in the array
+    let val =3D unsafe { mem::transmute_copy(&val) };
+    Ok(val)
+}
 
