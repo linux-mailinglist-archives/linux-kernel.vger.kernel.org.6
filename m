@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A179B28D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:36:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922C19B28D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 200D31F21FB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56A2028209F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5B1191F94;
-	Mon, 28 Oct 2024 07:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09ABF1922F0;
+	Mon, 28 Oct 2024 07:32:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="j7NJ0eXt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pvr256dP"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iJAxSFkh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fnwSt15+"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB15419048F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46E5D191489
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100739; cv=none; b=pWOa11VqheHykPwoz1IQwtxl6z4An1tFEgwk7ayM4uRYH+4i5XMxxqb83xQe3z1JY9az/Nn/VmvoFgLbD8RZksXxaXXHnpIESHK0OEHPiTRXd1aWHzIOyNpH+74EvP0IWUsirNLxQkv3j0ZPL7F+GK0we+w2ySsGwkgZLNXInhc=
+	t=1730100740; cv=none; b=ZIp5t1KB48MMZoH56oElaLUGvFytl6FYACoGydXPt0jY3U+/WX0LA5nT4BWPS74NURRqPDyb7tTf9sm659rkhGorqMBEdWZtpb3j9AxAXG4IhdNPChFVEh01ofqqqZYaw29LgzstRyE/GE38B4N7vNsiKXo4jI34RNRqe3OMA5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100739; c=relaxed/simple;
-	bh=fM4326lBSlyItUCyDsvky8XLESJ8Yos7plcqwTdqh/w=;
+	s=arc-20240116; t=1730100740; c=relaxed/simple;
+	bh=uOTK8RK+qfQgPko1/kcfrp+dzTqwlYdG2SYVqyuVRVs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NNojAzJpih0jxjxGUDODceIScIiv3fXwN7q4m2wyJ//KR4va4dDZ0bRA8A7ooPuyupXIJBCqyGXpiQt6RuDc/+fzp58l80UJu1L5QSxyWanFz74tAhB8D8YkBawrea8c9a0AfMPeVRP2JAnTXzep18fOEMaANXcwyb0y80HX6dI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=j7NJ0eXt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pvr256dP; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=jqolk7eIxqSnXIJsbMiZGcE63M+mTpqSTbGbpgrlWNTpLJJKWsIjrMPoWVGxTLcUmWyT45h6PH+71bXrIn7nFJ8cmh8W9TKPemOlr3w7PDNk43rCNS3nzdctE+wOgahY5kHxhDZxEeh8Zm0WsBi44Cma49LvcBE7//i79zuC5HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iJAxSFkh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fnwSt15+; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=54OvKsvI4pcx+jFe2hba+Pmf5q/X4eFe1wCaotDkyFc=;
-	b=j7NJ0eXtcOZRq3ZpXc/xcw354TX8EcPCP7CH5CWdys4lFUwIHlKZGmvcpD03ak9fh096Yp
-	WjhtJSEImM/SYhDl4/1C34470XrZwiuYDDVnJDre6KaUcrH+ZHOixTzCZ2eOWcjrBsM/MH
-	ZwOJknNkqfZvf8rffR1syq3sW1Xp+wxrEFYwTIBu59njGssxHXsnExLITb6J/97rwkeQin
-	APUguyWnIHGAWVx59fx4ctYhiql248udkV1Q5A8iRjgceT+4BydvsMHjTmKjdrWpioQuwy
-	JJ5o8QbqzoD93zA3BT+/DdcTnVVSXMMsijlH2ruc+fWdeLHV6GOP9rWEFdZMwA==
+	bh=4OaCPpaLXjT7nuaYNyzJEa7vwLha/LCJBeNJ/YYGThk=;
+	b=iJAxSFkhI2ABfuuCozyySBhqF1nLpILkun7AdGnUB+9enkig4FKf2c3shVLOR9aeJ/+KSV
+	CtwEIFRy7BdYnEcqgZvoKEEHET3JUJKNF6vLdPZ2i5D6SJ5ivk5HPZcvUsUPDGTah8pTUc
+	q65HcY/DdGBGXMfB01MZRKu1yt9YGMG9mz1T7i6eZJwNdXamM17Qu/MBVZ2e4IKHMnC2m+
+	IwvrsQH2C42BFp6NgYGnHozU2k8rUzDtApmzCutyPOvO/MaDfgl9eEo1F+D80VJCiXWR9v
+	DYm502KIONVVkGP0fC0kPogNsSPW4w5W6MkJqD+d7GO5OebGelvfk1oeJHSDQg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100736;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=54OvKsvI4pcx+jFe2hba+Pmf5q/X4eFe1wCaotDkyFc=;
-	b=pvr256dPPkwfpTLYBWFYX3kvalpn8v9pn42JGtvtXTbHNVANm31dj0IKMFUbxHo8gsL7rM
-	7OMYnNYGmwDoNGBw==
+	bh=4OaCPpaLXjT7nuaYNyzJEa7vwLha/LCJBeNJ/YYGThk=;
+	b=fnwSt15+ep0Qqur193vbge3nr9ZoG42pgnmtVKxOXS2NeVaThOTtdYhgHf8q97ffh11IZf
+	Uj9ogU7upwJj/qBg==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Subject: [PATCH 01/31] KVM: MIPS: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:31:34 +0100
-Message-Id: <befa6be131e66c759d38ff2fd591ced9db068491.1729864823.git.namcao@linutronix.de>
+	Michael Ellerman <mpe@ellerman.id.au>
+Subject: [PATCH 02/31] KVM: PPC: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:31:35 +0100
+Message-Id: <83def641c1117ca6a1ffdb0c53813de97650fc2d.1729864823.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729864823.git.namcao@linutronix.de>
 References: <cover.1729864823.git.namcao@linutronix.de>
 Precedence: bulk
@@ -86,28 +86,27 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
 ---
- arch/mips/kvm/mips.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ arch/powerpc/kvm/powerpc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/mips/kvm/mips.c b/arch/mips/kvm/mips.c
-index 60b43ea85c12..cef3c423a41a 100644
---- a/arch/mips/kvm/mips.c
-+++ b/arch/mips/kvm/mips.c
-@@ -288,9 +288,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 	if (err)
- 		return err;
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index f14329989e9a..e6269ba3a839 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -769,8 +769,8 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+ {
+ 	int err;
 =20
--	hrtimer_init(&vcpu->arch.comparecount_timer, CLOCK_MONOTONIC,
--		     HRTIMER_MODE_REL);
--	vcpu->arch.comparecount_timer.function =3D kvm_mips_comparecount_wakeup;
-+	hrtimer_setup(&vcpu->arch.comparecount_timer, kvm_mips_comparecount_wakeu=
-p, CLOCK_MONOTONIC,
-+		      HRTIMER_MODE_REL);
+-	hrtimer_init(&vcpu->arch.dec_timer, CLOCK_REALTIME, HRTIMER_MODE_ABS);
+-	vcpu->arch.dec_timer.function =3D kvmppc_decrementer_wakeup;
++	hrtimer_setup(&vcpu->arch.dec_timer, kvmppc_decrementer_wakeup, CLOCK_REA=
+LTIME,
++		      HRTIMER_MODE_ABS);
 =20
- 	/*
- 	 * Allocate space for host mode exception handlers that handle
+ #ifdef CONFIG_KVM_EXIT_TIMING
+ 	mutex_init(&vcpu->arch.exit_timing_lock);
 --=20
 2.39.5
 
