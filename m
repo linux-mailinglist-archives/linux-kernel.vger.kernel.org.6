@@ -1,124 +1,188 @@
-Return-Path: <linux-kernel+bounces-384944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 065059B3075
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:38:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 153419B307A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:38:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A5F1F213EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:38:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C73DC282A42
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7071DAC8C;
-	Mon, 28 Oct 2024 12:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732EF1DA103;
+	Mon, 28 Oct 2024 12:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qi/wilZE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pPcuanI4"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768281DA0EB;
-	Mon, 28 Oct 2024 12:38:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDFB18FDBE;
+	Mon, 28 Oct 2024 12:38:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119084; cv=none; b=RhV2JqZPQbfK9RwtQzY+4VUFIPgRX5NPF8Y8vBOFhFpzSsRVVZX60nhGmirX2KAw7yANzV7j/aiQSMh5i8/h+luMgKPLz9HV4x+0XBSk2W7hKNXs39VhWhFDhKuTG86ROeDdbD7pWCU8/eaNGOeUOHv8lW5XRbwAOthO3L//wfA=
+	t=1730119092; cv=none; b=r+ai6c9aLgqvuL4VN/oLdoeZaGAMClq2LWycbt5CBQkr+eR0KfwHJHwJznVneeW9Jbt5PQHT3Db/z3/I8+ljvLsEjxR/K/1BUzhpkpEdX00BFrJ75/UF/QhuUTy1oeJGpV8s9MsL+BrDVphb+/aNZJ06Mv/iTwBfx5mRLUmeI8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119084; c=relaxed/simple;
-	bh=NqmQvkSNrzmvc95bi7m+zsa58QtgzwY83REKZHIaAVA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KeQGTafaK8ivCr4OHNKQEczxXaCpy9DKVh88D6AHVCTwIiuhs5ziGFc/MsQIC6cr+AtOFf3q/wds41VasXhWC2Cb7o8eSBDoLymwhJkvc1qAFYm3xU0kFKrPv/+G5VS9olwLR/MdCpyXVFbQgqlBqospIjL8I5Ta/pHkmA5DAwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qi/wilZE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDA0C4CEC3;
-	Mon, 28 Oct 2024 12:37:59 +0000 (UTC)
+	s=arc-20240116; t=1730119092; c=relaxed/simple;
+	bh=V1JXJL1vWwx7XP9YK/J1MZBdP+aQk/vvq7BuTE22XGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R7cFrjfZ3YDJXPu2PK8ut83wpz/X8UdnWfnUJPWTGjmt1+ovi8/Z5qJsWMiajuDLLkWKofinXoDYSpWbIJYisbP5st1FvZjC/S4cPAGpaecVqJLcOXqYhZ3rt+N/C7rbEVI+IHqPznrMuklJ8g4KRSQAMH6qemt45dE7Qw6FZSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pPcuanI4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65CB8C4CEE7;
+	Mon, 28 Oct 2024 12:38:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730119083;
-	bh=NqmQvkSNrzmvc95bi7m+zsa58QtgzwY83REKZHIaAVA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Qi/wilZE/fumEMCmXEmxt4ohnNPjbdJLPzteXFtpE3jdzVzhxnqx7/5q/kG+64sym
-	 rr9QaZxVAcl47vKl6+3Bm/QCYVbez6k4/O69I3DsxZwQve2VK+VswGf+4dlIahQz1Q
-	 fqKKJbTHVDhqLUK9xD1gRzftZaUCCWepagjMncyubRrGa4d+I3ZsiX+km3ta3D+w9I
-	 VyUlpHoxTtjTaYyL0xOBP4CmqqyWIyhJfsBfKpZGfmhZMBA7yV+FTxgePcBg+HQ4vw
-	 SGPpv1QruJin/kukNpjdinxBk08HI3LxNB646Q0DAUtUnDlfRYSf3THONovUf2vnfr
-	 Acxvf2RxeoQxQ==
-From: Christian Brauner <brauner@kernel.org>
-To: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	kernel-dev@igalia.com,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-ext4@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	Gabriel Krisman Bertazi <krisman@suse.de>,
-	Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Gabriel Krisman Bertazi <krisman@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>,
-	Hugh Dickins <hughd@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	smcv@collabora.com
-Subject: Re: [PATCH v8 0/9] tmpfs: Add case-insensitive support for tmpfs
-Date: Mon, 28 Oct 2024 13:37:45 +0100
-Message-ID: <20241028-weinkarte-weshalb-1495cc5086ab@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
-References: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
+	s=k20201202; t=1730119092;
+	bh=V1JXJL1vWwx7XP9YK/J1MZBdP+aQk/vvq7BuTE22XGM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=pPcuanI4L/9WHLvcEeESZlfco46yDS+cvw01ROOOs6ZBpPWbDhX7bdzaNH4kIZHWi
+	 u/Tc+1Lq56F6vDPKvI84Ub7g2Iq6FU9LUmZNwydfWyyMk5XROv1P+ngdZ22truySCI
+	 8M2kw96x8tdQfqGPyfDHCGAXb3nRv0K2D5TkZpzCwjDKWGte0QR9r1itWqW0EMxIRv
+	 RGiWOeG6SHr9fE/b3LYUgUxwt6fn8bNlPM6mnM71QNBL8B5HdB7mArKp5RI4MubYpN
+	 ku6exlDFjc3Fwpvdr+sE5TjHoHWOpBb2AWHyzv+Qv5ikzNwNXTOp30UINpKOmVsXRj
+	 HLtI5d+Z52QWA==
+Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7181eb9ad46so2597254a34.1;
+        Mon, 28 Oct 2024 05:38:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPfLnk1zuN0lllKT+MjPA4MyAYD/fo+UdfBZ0+jWvfrYhx+ei+geCHonAPnuFBioVEIgtvYg4QEsEy@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4r4Mg+mQz6NNuZtc/WzuIZaikUTv1Z5oPfvW8Z30tcRxO11xN
+	btv1D0PVTu5BTi9wKoInaPF+QXsJfosjx3LWWMF1msYuV/WvC5TgnayxcxzYSmESDQLYH30aMQe
+	rHLXBaxaDee7MWNq5O4L309b2OB8=
+X-Google-Smtp-Source: AGHT+IHcPpA8PwSHFKyy4jVsSoWz0exQdbIJ/BCQr8AmaXDfJKdcACxok+MuRtE7oJfCfUQ19KdoW2248k6Yc5vVjzs=
+X-Received: by 2002:a05:6870:3310:b0:25e:23b4:cf3e with SMTP id
+ 586e51a60fabf-29051e30582mr6787713fac.44.1730119091651; Mon, 28 Oct 2024
+ 05:38:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2089; i=brauner@kernel.org; h=from:subject:message-id; bh=NqmQvkSNrzmvc95bi7m+zsa58QtgzwY83REKZHIaAVA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTLty4SjWyV+euxuTR8W9hd5z/znucEadfnFC7L+dlpw WXL8f1aRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET+9DP8j/3isG+TaObMzqKb dn8nvJ8k+Pzvnt+y91SqV0k+TYtlz2X4wzPzZWiecewxuTmrzRh+bz3zdH33RYvOyAx/Oend60t +cAIA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+References: <20241028105200.1205509-1-pierre.gondois@arm.com>
+In-Reply-To: <20241028105200.1205509-1-pierre.gondois@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 28 Oct 2024 13:37:55 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0g=Q0aYEZUdy+F-bmptOvLVRxAs5gzGpbgrbCoFxMpcZQ@mail.gmail.com>
+Message-ID: <CAJZ5v0g=Q0aYEZUdy+F-bmptOvLVRxAs5gzGpbgrbCoFxMpcZQ@mail.gmail.com>
+Subject: Re: [PATCH] ACPI: CPPC: Make rmw_lock a raw_spin_lock
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: linux-kernel@vger.kernel.org, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Sudeep Holla <sudeep.holla@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Clark Williams <clrkwllms@kernel.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Jeremy Linton <jeremy.linton@arm.com>, 
+	Yunhui Cui <cuiyunhui@bytedance.com>, Conor Dooley <conor.dooley@microchip.com>, 
+	Steffen Persvold <spersvold@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, "Borislav Petkov (AMD)" <bp@alien8.de>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Tony Luck <tony.luck@intel.com>, 
+	Yury Norov <yury.norov@gmail.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-acpi@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 21 Oct 2024 13:37:16 -0300, André Almeida wrote:
-> This patchset adds support for case-insensitive file names lookups in
-> tmpfs. The main difference from other casefold filesystems is that tmpfs
-> has no information on disk, just on RAM, so we can't use mkfs to create a
-> case-insensitive tmpfs.  For this implementation, I opted to have a mount
-> option for casefolding. The rest of the patchset follows a similar approach
-> as ext4 and f2fs.
-> 
-> [...]
+On Mon, Oct 28, 2024 at 11:52=E2=80=AFAM Pierre Gondois <pierre.gondois@arm=
+.com> wrote:
+>
+> The following BUG was triggered. sugov_update_shared() locks a
+> raw_spinlock while cpc_write() locks a spinlock. To have a correct
+> wait-type order, update rmw_lock to a raw_spinlock.
+>
+> Also save irq state.
+>
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> [ BUG: Invalid wait context ]
+> 6.12.0-rc2-XXX #406 Not tainted
+> -----------------------------
+> kworker/1:1/62 is trying to lock:
+> ffffff8801593030 (&cpc_ptr->rmw_lock){+.+.}-{3:3}, at: cpc_write+0xcc/0x3=
+70
+> other info that might help us debug this:
+> context-{5:5}
+> 2 locks held by kworker/1:1/62:
+>   #0: ffffff897ef5ec98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_ne=
+sted+0x2c/0x50
+>   #1: ffffff880154e238 (&sg_policy->update_lock){....}-{2:2}, at: sugov_u=
+pdate_shared+0x3c/0x280
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 62 Comm: kworker/1:1 Not tainted 6.12.0-rc2-g9654bd3e8=
+806 #406
+> Workqueue:  0x0 (events)
+> Call trace:
+>   dump_backtrace+0xa4/0x130
+>   show_stack+0x20/0x38
+>   dump_stack_lvl+0x90/0xd0
+>   dump_stack+0x18/0x28
+>   __lock_acquire+0x480/0x1ad8
+>   lock_acquire+0x114/0x310
+>   _raw_spin_lock+0x50/0x70
+>   cpc_write+0xcc/0x370
+>   cppc_set_perf+0xa0/0x3a8
+>   cppc_cpufreq_fast_switch+0x40/0xc0
+>   cpufreq_driver_fast_switch+0x4c/0x218
+>   sugov_update_shared+0x234/0x280
+>   update_load_avg+0x6ec/0x7b8
+>   dequeue_entities+0x108/0x830
+>   dequeue_task_fair+0x58/0x408
+>   __schedule+0x4f0/0x1070
+>   schedule+0x54/0x130
+>   worker_thread+0xc0/0x2e8
+>   kthread+0x130/0x148
+>   ret_from_fork+0x10/0x20
+>
+> Fixes: 60949b7b8054 ("ACPI: CPPC: Fix MASK_VAL() usage")
+> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> ---
+>  drivers/acpi/cppc_acpi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index 1a40f0514eaa..e7e4bf932e28 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -1127,7 +1127,7 @@ static int cpc_write(int cpu, struct cpc_register_r=
+esource *reg_res, u64 val)
+>                         return -ENODEV;
+>                 }
+>
+> -               raw_spin_lock_irqsave(&cpc_desc->rmw_lock, flags);
+> +               raw_spin_lock(&cpc_desc->rmw_lock);
 
-Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
-Patches in the vfs.tmpfs branch should appear in linux-next soon.
+This won't apply because the current code is
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+spin_lock(&cpc_desc->rmw_lock);
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+and analogously below.  I think that it needs to be
+raw_spin_lock_irqsave(), though.
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
+Besides, a raw spin lock needs to be declared as such.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.tmpfs
-
-[1/9] libfs: Create the helper function generic_ci_validate_strict_name()
-      https://git.kernel.org/vfs/vfs/c/0e152beb5aa1
-[2/9] ext4: Use generic_ci_validate_strict_name helper
-      https://git.kernel.org/vfs/vfs/c/3f5ad0d21db8
-[3/9] unicode: Export latest available UTF-8 version number
-      https://git.kernel.org/vfs/vfs/c/04dad6c6d37d
-[4/9] unicode: Recreate utf8_parse_version()
-      https://git.kernel.org/vfs/vfs/c/142fa60f61f9
-[5/9] libfs: Export generic_ci_ dentry functions
-      https://git.kernel.org/vfs/vfs/c/458532c8dfeb
-[6/9] tmpfs: Add casefold lookup support
-      https://git.kernel.org/vfs/vfs/c/58e55efd6c72
-[7/9] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
-      https://git.kernel.org/vfs/vfs/c/5cd9aecbc72c
-[8/9] tmpfs: Expose filesystem features via sysfs
-      https://git.kernel.org/vfs/vfs/c/5132f08bd332
-[9/9] docs: tmpfs: Add casefold options
-      https://git.kernel.org/vfs/vfs/c/a713f830c903
+>                 switch (size) {
+>                 case 8:
+>                         prev_val =3D readb_relaxed(vaddr);
+> @@ -1142,7 +1142,7 @@ static int cpc_write(int cpu, struct cpc_register_r=
+esource *reg_res, u64 val)
+>                         prev_val =3D readq_relaxed(vaddr);
+>                         break;
+>                 default:
+> -                       raw_spin_unlock_irqrestore(&cpc_desc->rmw_lock, f=
+lags);
+> +                       raw_spin_unlock(&cpc_desc->rmw_lock);
+>                         return -EFAULT;
+>                 }
+>                 val =3D MASK_VAL_WRITE(reg, prev_val, val);
+> @@ -1175,7 +1175,7 @@ static int cpc_write(int cpu, struct cpc_register_r=
+esource *reg_res, u64 val)
+>         }
+>
+>         if (reg->space_id =3D=3D ACPI_ADR_SPACE_SYSTEM_MEMORY)
+> -               raw_spin_unlock_irqrestore(&cpc_desc->rmw_lock, flags);
+> +               raw_spin_unlock(&cpc_desc->rmw_lock);
+>
+>         return ret_val;
+>  }
+> --
+> 2.25.1
+>
 
