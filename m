@@ -1,112 +1,110 @@
-Return-Path: <linux-kernel+bounces-384597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0414B9B2C15
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:55:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2959B2BE1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:50:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32C451C21FD9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:55:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE258281DFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA621CC8BA;
-	Mon, 28 Oct 2024 09:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28FF1D0F56;
+	Mon, 28 Oct 2024 09:50:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="L/Aqgzaj"
-Received: from out203-205-221-240.mail.qq.com (out203-205-221-240.mail.qq.com [203.205.221.240])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FK4r5ISb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 675D4199247
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 711CA1922F2;
+	Mon, 28 Oct 2024 09:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109311; cv=none; b=I1xmt8RPurcdrul1XniO4Q5eyACtt6tXjUy79emqn8ky5/26qZcxe6IovIwSO7HvBbqNBLh3cXgPVRVtnDIKu8Mxcljhsn21C927om9bKIN4jyLQnzR0SG/w+h9OyG/ueFY5f/BI7TZ2Zix31oluRB3iGuWupqr4OQ4fduWzlSk=
+	t=1730109021; cv=none; b=LNUDIooxsypW6U+v4u/altXCNbqxNxr6Nhi7qmbmsoqvFn2U9Vh3DJ9jpoxT1xP0GsLdxwkYDAGLl8z9ErGZgefACoQsmjDJiNBR0JYCmiYf8Oxx4D68fMiLUiuKoaBLnawuadR6OFn9NRoP5AKFbi3Q/gF4So5CmDo4cywSjVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109311; c=relaxed/simple;
-	bh=eTqrp/K3avN9ztKXcg2YVkfVz1O4Uq2icFwjpENa77I=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=oUemT9pgNzGIE9xFBcu9/zOE28fP5tiaNEPCsdsAdfrvy/rQbOe1VM+krEVZS0laxlkr3rnp3n2v9OfdNWmudV05syN4BtqdM2VtcIjlgz2407yJ/fH2aIaIU9raBE/BxPLzguOU78d3Rw3bmQMEfq6UmQGT5gMFmEMpi4YkSLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=L/Aqgzaj; arc=none smtp.client-ip=203.205.221.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1730108999; bh=xeyQ4CVlwUPQjV1gtHpbGii9ZeSWJyc+nho/aGfUvpc=;
-	h=From:To:Cc:Subject:Date;
-	b=L/AqgzajXRmAsx6Nd/LoBT6A0qQ7S++mQin8xJPRaA5WacxVIk+T6YkjUd4AbWAb4
-	 lBXqCRJId6yUbR6oydefC7qThp4JjvdWSTGsPf0RMHAO160EpLTTyN8pbpusGCIt3w
-	 fIn67I7OkAd6+ZS2JaDqYPWS63Sh+TQkI5kbEb28=
-Received: from localhost.localdomain ([111.48.58.10])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id ACF3628A; Mon, 28 Oct 2024 17:43:15 +0800
-X-QQ-mid: xmsmtpt1730108595tmhr2h2n9
-Message-ID: <tencent_46D189AD021D29866D1A9806B47AB013700A@qq.com>
-X-QQ-XMAILINFO: M0yQCYO1Pk4BB9UWeDIUyjZs3jTlXV1Ox3W3489j2qduakf8YQmQky95WNP7w3
-	 kEHZJj3Swch0FXjcS5ciAQqliZAwisS8ib0v4l5b3DUHTMd94sPA9rtLDNodoek0O8Jrd8oEqaLo
-	 ExFEQ4QQIPxKCFuQBaQsKFs/hRIeCI6aiSwU1E8vutZ+QZmVNSkCwd+jugg8H3qZKE/9mLiKxAst
-	 KtB0lB2YA0wsY5n3L7hWDP0N39u+2zgCrW7cfVmyHfHRXijzrfjWiVH/n6/P+YYgc6zyJg7TS1uL
-	 OpxreeJs6/tG+g5BcGTTyZrjDZS3ynmd+LiDBwtuIMtYptjcDm8lEUrrUsPwHC+vVwqOIlNhP0wN
-	 tv8GtoQtJTQ+RRcxKebED7AnFpgYFung3bSpUFfS+gOfJywifJBp7UqgXyS8HQ5lUOwOc7nJOhdP
-	 ASpS8U6x/y6ZW6tlNZnHMRzwvJ1mjL9grTjqiymxBTvaO6/5lCy8LH8NBfmCqo22HLavODtKmdBb
-	 EpAdxq+TAN8v8ORiBVcaJyZ2QiN86d8TjGIugczIrewM5bC6vRhoF09Z4A3H9f6XHQorOBqoAi12
-	 CQpwhCYJLXMjMvSkW7N+AU/LHgvZUN01y9rNfofyeSQ7A34+vsmit1jxVqk8IH4Ok6MTqYcGhdwT
-	 XZP2ddKuDj0EDJ6wtJ3O7JjDc3rD/LIJRLrBstwOeExuOevfPaR8jgbGWm4kkyzcss6QjmAM9UH3
-	 pN52Otdku4RRkyRwxFhfwGUGC3YZssJ3kg8vWwIq4b1YKCtjMdiLwm76TDvBogw/E1ZTpF35trkY
-	 yLknEV0AyxEQqwnDIJJAFljlQs7wkRfZfqAkayQN9PV5d8Qprs1H8+pkqaUkJU2LL71VUkwKyRdU
-	 RJr0Z1vF4BNVjSJH1DPKFFnzK6FPIBStBBF/UOp+0ymBAb9omPafA=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-From: 1064094935@qq.com
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Thomas <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	intel-gfx@lists.freedesktop.org,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	pengfuyuan <pengfuyuan@kylinos.cn>
-Subject: [PATCH] drm/xe/hdcp: Fix logic errors
-Date: Mon, 28 Oct 2024 17:43:14 +0800
-X-OQ-MSGID: <20241028094314.524356-1-1064094935@qq.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730109021; c=relaxed/simple;
+	bh=D06NwUNc0DMMBCAufbwY2mpC5obADrVDATMmNT/46Fo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sEvFGfszDR+BxsMxWM8Yc9ls29TE+ujqSZNAUoFN5+sudszLUB6BG5IyQ1T0WJrUV+X6FtYo/+ldzOpQBHX6T+QhMVmiV+K5lBDkLKplKfN6B/3TLG6wtylgqBx+mpZLvGvenzV3bVsXpbgBndFwYqvKwwY2wTs0xuacu9DqR8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FK4r5ISb; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730109020; x=1761645020;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D06NwUNc0DMMBCAufbwY2mpC5obADrVDATMmNT/46Fo=;
+  b=FK4r5ISbe9QjsDsLVUscUGHZgfPh7ma7K3EV3uxMS0jWanJWCX4UZrWz
+   At0ftyCJ98itWam3og0tvLGqINvn5shC5HYe/3Zuw3U0nf2qM/U2xoVeh
+   +vNDn0ujJW93KBkXLzHlQuoF7tA4NH4urI3f/Vnz60GB9abG4GHpW9yxy
+   Cg0IWU3PAUs+vPyfuDsfp0rwjagfroY9hRmcjdDBT7AKpgccZZ8aabPFx
+   h6jJIdeoCPn1v5n50dRG0X9Xa3/MF/a2zxmz7b0rz/b35jKggcMcOzzZv
+   +66eEufAt9E3FvMOmZ/BcUvDs1STTUJ635d++LmSuSxMkUmf+7/Q5uhrL
+   Q==;
+X-CSE-ConnectionGUID: lNByK6zQTN26GkAlLwt+3Q==
+X-CSE-MsgGUID: UvbZO8zLS5uUjkxL9BBiYQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33395358"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33395358"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 02:50:19 -0700
+X-CSE-ConnectionGUID: ywQn8RbZQQqAc87PUiZvpg==
+X-CSE-MsgGUID: 3H2Q3DIsS+uh9/NWRbyV5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
+   d="scan'208";a="85525093"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 02:50:16 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t5MO6-00000007tm1-09nP;
+	Mon, 28 Oct 2024 11:50:14 +0200
+Date: Mon, 28 Oct 2024 11:50:13 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	Hans de Goede <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
+Subject: Re: [PATCH v3 14/24] iio: accel: kxcjk-1013: Get rid of enum
+ kx_chipset
+Message-ID: <Zx9eVcituFow8PTo@smile.fi.intel.com>
+References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+ <20241024191200.229894-15-andriy.shevchenko@linux.intel.com>
+ <20241026123736.5714fadd@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241026123736.5714fadd@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: pengfuyuan <pengfuyuan@kylinos.cn>
+On Sat, Oct 26, 2024 at 12:37:36PM +0100, Jonathan Cameron wrote:
+> On Thu, 24 Oct 2024 22:05:03 +0300
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > Instead of using enum, out of which only a couple of values
+> > are being actully used, make a comparisons against pointer
+> > to the respective chip_info structures.
+> > 
+> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Hmm. Maybe worth a revisit longer term to use callbacks for the
+> decisions instead of matching at all as this stuff tends not to end
+> up being specific to one version of a chip as more parts are added.
 
-Here the gsc struct null pointer check should use '||' instead of '&&'.
+As already mentioned in another reply, yes, the callbacks is the future.
 
-Fix the following patches:
-    drm/xe/hdcp: Check GSC structure validity
-
-Signed-off-by: pengfuyuan <pengfuyuan@kylinos.cn>
----
- drivers/gpu/drm/xe/display/xe_hdcp_gsc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/xe/display/xe_hdcp_gsc.c b/drivers/gpu/drm/xe/display/xe_hdcp_gsc.c
-index 6619a40aed15..f4332f06b6c8 100644
---- a/drivers/gpu/drm/xe/display/xe_hdcp_gsc.c
-+++ b/drivers/gpu/drm/xe/display/xe_hdcp_gsc.c
-@@ -42,7 +42,7 @@ bool intel_hdcp_gsc_check_status(struct xe_device *xe)
- 	struct xe_gsc *gsc = &gt->uc.gsc;
- 	bool ret = true;
- 
--	if (!gsc && !xe_uc_fw_is_enabled(&gsc->fw)) {
-+	if (!gsc || !xe_uc_fw_is_enabled(&gsc->fw)) {
- 		drm_dbg_kms(&xe->drm,
- 			    "GSC Components not ready for HDCP2.x\n");
- 		return false;
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
