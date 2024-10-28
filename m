@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-386068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C121A9B3EB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:56:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51379B3EBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8489F283A97
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:56:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5641C223EB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1691FB886;
-	Mon, 28 Oct 2024 23:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7031FB8B4;
+	Mon, 28 Oct 2024 23:56:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ht0DV9MH"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9X2dsx/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AC41EF92F;
-	Mon, 28 Oct 2024 23:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A1A1DFDB9;
+	Mon, 28 Oct 2024 23:56:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730159759; cv=none; b=kVyzwXgmr3yB5PTbBiv3G7I+bTe8Rla45Rj41HhSUwgq4/tJKTNgJ0/CSzk9kRY+Bcg6v3JZpGb3iEynDhNvJNmf7n8txRzpUprHi2+VWYIZQ2S2g1nent+nYh17FMRM7sPLrf4CP6g6DvMWaGPYeudk9YNLzl9+dW/s4elAA4M=
+	t=1730159813; cv=none; b=hIb30apFFglWuxvmQXjsNvNETUxrOe7blNfQh6kapAq/UO58A9JLciKLyQxtcxqa2I65zOkcY5FR1xdiTvzsW75+wYzShRW0xTX1u4SwqxmY6Fyf9YbS2kxW6+1eYKokQ4O9uWBs7oFfpnHbmMcYovtteZINvM1WylmnoVatzwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730159759; c=relaxed/simple;
-	bh=yn8pmXtMPDVwM/CL0GlzMzykBosCTjJtPJtVvsu4WQo=;
+	s=arc-20240116; t=1730159813; c=relaxed/simple;
+	bh=JUHufYIdqmKXSfDlteSW20zJ1BG7mrAiwl8Jxg4y7ik=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y+u55axvVzHauRywbR7Asg/qnq6Xei3kTaqXQUn1gtdo2IP0lejaFPf3aHdz1Gx/Pj/VZaWRodsk6ey71u5nkAwtc8hQtceTlJyDvFij7B+PLFvthUJZNmU3/sVXa0LIJpCJabjyNa/EV9PkrfoXiCNzg2OufOXQnrmW/hEQlu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ht0DV9MH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC76BC4CEC3;
-	Mon, 28 Oct 2024 23:55:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7oZeA0oemjaiQZqZhDmDJ/RScwRyXjQfd/XOW+D5YGxpyDB2qwsydp8BoaAdzFEHZtjj6TmUwbQwZknvbkTyU+bqTMEfKhd508RF8pri7bZlG1+dGkbGnvNddF2TdSm0kK8nXRU3zuEqCYb/MbuzHL/PTtyrgmnyEAbVp5qeYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9X2dsx/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D64CC4CEC3;
+	Mon, 28 Oct 2024 23:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730159758;
-	bh=yn8pmXtMPDVwM/CL0GlzMzykBosCTjJtPJtVvsu4WQo=;
+	s=k20201202; t=1730159813;
+	bh=JUHufYIdqmKXSfDlteSW20zJ1BG7mrAiwl8Jxg4y7ik=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ht0DV9MH6A+8IQp4lsAw/aOjztuUM86phGNdQvqcmddWXyin+EbwNUl5d/lYGLV2c
-	 1Y9ZM/IQQ43i5gdkEOthK/wxp23h517TIO3BJhlJsQaQ+DQOJKEP4SCYghTiN6TIgZ
-	 +6HTniG8JE+shaxwolQtFDsJ4/6DmVwJKGH4Sx6ocl7TOXmmz9rfcaD/NZ9omYhq19
-	 ORqZHOvNicnsk3ovMXx1E/HsBqQ9Wu5OIx3r2bdGQT38lV7igE8gdcw5PWyLZwFMWV
-	 EHW1N63/AM/WelLdYeEztAwMrz3pxPhH/eif1Oep67BxIxqiBxAmdDMNNFQPx3fOS+
-	 ZN4t+ie/6yvVA==
-Date: Mon, 28 Oct 2024 16:55:56 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: x86@kernel.org
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 00/19] unwind, perf: sframe user space unwinding
-Message-ID: <20241028235556.oyoyt3uvlau5vzsd@treble.attlocal.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
+	b=G9X2dsx/WYpU0XxlJqeLzjw0zCr9QzJRK5HuFPJyM7dSk5hyi7aawTA4vbgZaNv0F
+	 AsyBMVdxeXcdUsTNSnjUxHXjhAqkVrOvkUOuUku3uS1aI2ubXKvNfF8o9ALjmi7G7S
+	 WFOswp6TSosWO5exTTVSL05V2sCYUj3Xgk2hdXoet7p+5R5oHmLwTvmkyttUXzlaRU
+	 V3gjgFqybd0njHSVHNtHTHTVqMajCw7LWVWt3In/sE8G8Yuf6dcQStPNIIT41lWVSS
+	 +dk3sMa1oXSufeFef45CJwSDzJLHsCvwToSMNlk+5RGO5EHZykpYsHA4ARnzD+jMQi
+	 K0F5FD1ai5N7Q==
+Date: Mon, 28 Oct 2024 16:56:50 -0700
+From: Kees Cook <kees@kernel.org>
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Maksim Panchenko <max4bolt@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Yabin Cui <yabinc@google.com>,
+	Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Sriraman Tallam <tmsriram@google.com>,
+	Stephane Eranian <eranian@google.com>, x86@kernel.org,
+	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v6 4/7] Add markers for text_unlikely and text_hot
+ sections
+Message-ID: <202410281656.6A598E64@keescook>
+References: <20241026051410.2819338-1-xur@google.com>
+ <20241026051410.2819338-5-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1730150953.git.jpoimboe@kernel.org>
+In-Reply-To: <20241026051410.2819338-5-xur@google.com>
 
-On Mon, Oct 28, 2024 at 02:47:27PM -0700, Josh Poimboeuf wrote:
-> This has all the changes discussed in v2, plus VDSO sframe support and
-> Namhyung's perf tool patches (see detailed changelog below).
+On Fri, Oct 25, 2024 at 10:14:06PM -0700, Rong Xu wrote:
+> Add markers like __hot_text_start, __hot_text_end, __unlikely_text_start,
+> and __unlikely_text_end which will be included in System.map. These markers
+> indicate how the compiler groups functions, providing valuable information
+> to developers about the layout and optimization of the code.
 > 
-> I did quite a bit of testing, it seems to work well.  It still needs
-> some binutils and glibc patches which I'll send in a reply.
-> 
-> Questions for perf experts:
-> 
->   - Is the perf_event lifetime managed correctly or do we need to do
->     something to ensure it exists in unwind_user_task_work()?
-> 
->     Or alternatively is the original perf_event even needed in
->     unwind_user_task_work() or can a new one be created on demand?
-> 
->   - Is --call-graph=sframe needed for consistency?
-> 
->   - Should perf use the context cookie?  Note that because the callback
->     is usually only called once for multiple NMIs in the same entry
->     context, it's possible for the PERF_RECORD_CALLCHAIN_DEFERRED event
->     to arrive *before* some of the corresponding kernel events.  The
->     context cookie disambiguates the corner cases.
-> 
-> Based on tip/master.
-> 
-> Also at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git sframe-v3
+> Co-developed-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Han Shen <shenhan@google.com>
 
-Argh, apparently it's a bad idea to pass "*.patch" twice on the
-git-send-email cmdline ;-)  Sorry for sending it twice!
+Yup, this is good.
+
+Reviewed-by: Kees Cook <kees@kernel.org>
 
 -- 
-Josh
+Kees Cook
 
