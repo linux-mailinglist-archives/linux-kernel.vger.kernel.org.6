@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-383952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1BAB9B2259
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:06:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 053F29B225E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:06:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B0A9B22132
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:06:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A5B7B21BE0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B0D15C15E;
-	Mon, 28 Oct 2024 02:02:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D63D18871E;
+	Mon, 28 Oct 2024 02:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="wPP0NMi8"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2056.outbound.protection.outlook.com [40.107.243.56])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lJHOYuDF"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2083.outbound.protection.outlook.com [40.107.102.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7968E18F2DB;
-	Mon, 28 Oct 2024 02:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC9D51684AE;
+	Mon, 28 Oct 2024 02:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.83
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730080956; cv=fail; b=kNdnwis7SDGEIzZsBb0PnQU1BV0NYKaMPchfCPtVpVlnWn3sHrKi8jucXwdj111UfEihnvh5AF34EQITulWqDAxNcoFjLkdTiTGraVzAHkHt3CBwLggx0dAkjoZbEMvd6CRDhRfiHAofcTMz6/1Enr6jEtfRp/uzl7GktiBPfqU=
+	t=1730080995; cv=fail; b=rMaEB3YcDxb8Ba3ejydDEGliM8xdoeDuddwYszQpERQe9Ji49kLA2051gx6IzkFl+YOg2cLcN1S0N0/3Z2hVCsUfQWUxNiX0J/uEg9CVq+ylvCBgV0qy+rScJS2/NaZBuw8KDa3c0pWJo5mHRwTlXqJoSRB9jp4/aTFVeKmn3co=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730080956; c=relaxed/simple;
-	bh=l1NpPYbI1izrOBXlWSw8t//ZEymsa2FMxrONvbtd7M0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VS1+RGHFsUUyz01KBy6kjAudK3VrkIfJx9ubobQZF/0Gy+91RfqWgRtRfBV78170YBdxE5Dg1bMCzaa9FBAz/gJdX2i6oISMmyyEhd1wz08VD35h/76h7PmbxdukXj0ufxXzvb39PUcRYG1Tqc3HWZJOoDwzJ0hVY8Efun3rjDI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=wPP0NMi8; arc=fail smtp.client-ip=40.107.243.56
+	s=arc-20240116; t=1730080995; c=relaxed/simple;
+	bh=WGjN2u3iCoFaur2gU0r1I1LPPpfY7Ipos4p/K4ls2xE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d0egnUoinRzS1YZKXd9JwkhgjRDcxyGvy5RDaTWoD+ln2lnJ8lTxgl84y9Wm+3YOwIXb+JtSWvq1yH60Vbvd6AuYvL5BRDJMk9t0FLZznyaPO+RFVE3P3TZBKOjQUITcDJ0UnyXLgmKLyr3RGLtkARMBN/YjvyckvSHyfAt18JU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lJHOYuDF; arc=fail smtp.client-ip=40.107.102.83
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r0qnn14ul8J32WgWruz2ypJxaRIVd9FhKJIc4uf6jd+pHyBAXlEY27rjy06+RpAI5BrwbnP8yj3FyzrXMNJMHp9VDB5o9CKhIhrvdpNAYgzVqwGjH1kf0QuSZQzgaNtRLapKA93SIyugpfGPbgY2o76AbUcAJEkXDQ6sf5v4yWuFmvFeZ8luKw5387L1iG9qSHnDFHxTnY9KQjdiYYVvGJwqYtHOxz6AozpQcVgZHsDB46/pwficttcfSwOQQZWqYv9EPuHKirJQpMYlMV43Ze8iCob7b6SvN40OyjQTbdde7xVawMi8yyYcYA/Jtmvrx9iftFkA8LHeoq1IZgbzoQ==
+ b=vlgbGiHu+vBhhbowhw1nOulbxyD9BeEHuz7aE65eR4O6TL7+U3vyl+aM+7qQZdQi7MJa+W508a6LBIRA8jpbqHZDQw7Zn9Lel78qZ7p2Y580Symqoro2UG3hcsfPVARBpbs8aXKJ5M5ST0bLZzZxaqNrRXPzmQqohBPxmSCGyiqxP/q044MGfpf82uRsWN2vt8oFtBt7ZUwM4zUea2XMtI4xmKpNCgP6miwNkD+nuPDlIFjbmtr7KIySYH+jBWfdn6fzUvk5C9cFMCKi5E28a+IbZsAGFA212ek28LwR7jM9befQL5QZm2IFu0qZ5AskHT0eHU5JtLf7QEJv14I09Q==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wULtWbk/f8Xi0zwfoBxp2g6NVV/1PuBYHNNKAVq3ltM=;
- b=V1jilFHj/JGG4pZoEYSiENInOeZgKiqDg3bTLfampiPwKTkWeOopbCxBavvpoUJPu/N4SNvx58YeZRbXlp1bswkCfwrlnYPSYQUDWK3Ui3k9loPolmL8zsFd9dOUjWHBGAd3cYd3G13Y8HPcijaSn4f3342N+HB8ZjuZ2ahs86nOXduPwUkmyxw1yvZHXCJZAq6CtQC+Kw6RQNFKnPkd/VSDqDdc+mqUZnHni4BsdVOWshO2JUyI+x87ibPAW6/4zOtsRwJFANx6grAGopTG0xO00QMcRYHXD0KDCBsT6x6JYOIWMGjytJkSvgBavNFvvatLPRFB84MtVhzA0/gnQg==
+ bh=VtR7nD3RkhNehMqgD/FWAyujtGqqRYRa+//G8UIW1WU=;
+ b=kbd3I13M2ZH8iA2FUeCJY5O2+1f0+Kv5Nm5IgYrve5HDkNV+ffBugB3CpFUzHzHhwoLgHOuHL/c8frwtNtBkaFXs7JHVBfwxA4xyCYYOuF8r4F/AYNFpGaHRDu9DQ3tRCq1g9EVUXKmRS6uYfh9mBwjdYMSRxgp1o1VyEl3yT5PmL+dGy4iVWrmB/h/r5FIyr8PtDGOByqmG8JmTKb14z5LgNHkCiJI3RKz4ryKBPNKDig868UNYUXYfoXo84hkxSYir5aRPz+Q7o6obz5+NXRSKgdQ+HLAN9YG4JGktVwVcMbJ8GzjxZNAtTAdYlwSWf+Hp0Z2Crua4k50Vh44g1A==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ 165.204.84.17) smtp.rcpttodomain=alien8.de smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wULtWbk/f8Xi0zwfoBxp2g6NVV/1PuBYHNNKAVq3ltM=;
- b=wPP0NMi8Ib0ce+mLK04tpQPmBmM2xpTOEMXza8wPzq+3Z8+dhxtGcb4mvFqCwuqqy7JKKSk+6ITJiqN2xrHZKna1qDkC8UtOyOOTHEDDLt5VpefQwm3j59B4WcXP2f8MJmu0MF4PcIdgk2qIJ1EhDZyfOYiE1ou7Fpre89+K/OU=
-Received: from BL1P223CA0020.NAMP223.PROD.OUTLOOK.COM (2603:10b6:208:2c4::25)
- by IA1PR12MB8555.namprd12.prod.outlook.com (2603:10b6:208:44f::14) with
+ bh=VtR7nD3RkhNehMqgD/FWAyujtGqqRYRa+//G8UIW1WU=;
+ b=lJHOYuDFe5CkSkDUi2yGb7HZpPelYMqOyFEjgv8UklUKG9JoK5teqdh8V5MUvadAf0/yHMdE0Ltl3VmhYSuOQ2IbRYTpsQAkY3+U95cetBnzetV47loagUoX/EftKFMJtfmh2MPerTGaYXx1BNzXsKwyAkUfcce5Io4oIxbLkdM=
+Received: from MN2PR06CA0006.namprd06.prod.outlook.com (2603:10b6:208:23d::11)
+ by CY8PR12MB7635.namprd12.prod.outlook.com (2603:10b6:930:9e::6) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
- 2024 02:02:28 +0000
-Received: from BL02EPF00021F6C.namprd02.prod.outlook.com
- (2603:10b6:208:2c4:cafe::cc) by BL1P223CA0020.outlook.office365.com
- (2603:10b6:208:2c4::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25 via Frontend
- Transport; Mon, 28 Oct 2024 02:02:28 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Mon, 28 Oct
+ 2024 02:03:10 +0000
+Received: from BL02EPF00021F6F.namprd02.prod.outlook.com
+ (2603:10b6:208:23d:cafe::69) by MN2PR06CA0006.outlook.office365.com
+ (2603:10b6:208:23d::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24 via Frontend
+ Transport; Mon, 28 Oct 2024 02:03:10 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,35 +61,25 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL02EPF00021F6C.mail.protection.outlook.com (10.167.249.8) with Microsoft
+ BL02EPF00021F6F.mail.protection.outlook.com (10.167.249.11) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8093.14 via Frontend Transport; Mon, 28 Oct 2024 02:02:28 +0000
+ 15.20.8114.16 via Frontend Transport; Mon, 28 Oct 2024 02:03:09 +0000
 Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 27 Oct
- 2024 21:02:24 -0500
+ 2024 21:03:08 -0500
 From: Mario Limonciello <mario.limonciello@amd.com>
-To: Hans de Goede <hdegoede@redhat.com>, =?UTF-8?q?Ilpo=20J=C3=A4rvinen?=
-	<ilpo.jarvinen@linux.intel.com>
-CC: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, "Shyam
- Sundar S K" <Shyam-sundar.S-k@amd.com>, Corentin Chary
-	<corentin.chary@gmail.com>, "Luke D . Jones" <luke@ljones.dev>, Ike Panhc
-	<ike.pan@canonical.com>, Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	"Alexis Belmonte" <alexbelm48@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>, Ai Chao <aichao@kylinos.cn>, Gergo Koteles
-	<soyer@irl.hu>, open list <linux-kernel@vger.kernel.org>, "open list:ACPI"
-	<linux-acpi@vger.kernel.org>, "open list:MICROSOFT SURFACE PLATFORM PROFILE
- DRIVER" <platform-driver-x86@vger.kernel.org>, "open list:THINKPAD ACPI
- EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, Mark Pearson
-	<mpearson-lenovo@squebb.ca>, Matthew Schwartz <matthew.schwartz@linux.dev>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v2 15/15] platform/x86/amd: pmf: Drop all quirks
-Date: Sun, 27 Oct 2024 21:01:31 -0500
-Message-ID: <20241028020131.8031-16-mario.limonciello@amd.com>
+To: Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+CC: <x86@kernel.org>, "Gautham R . Shenoy" <gautham.shenoy@amd.com>, "Mario
+ Limonciello" <mario.limonciello@amd.com>, Perry Yuan <perry.yuan@amd.com>,
+	<linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <platform-driver-x86@vger.kernel.org>, "Shyam
+ Sundar S K" <Shyam-sundar.S-k@amd.com>
+Subject: [PATCH v5 00/13] Add support for AMD hardware feedback interface
+Date: Sun, 27 Oct 2024 21:02:38 -0500
+Message-ID: <20241028020251.8085-1-mario.limonciello@amd.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241028020131.8031-1-mario.limonciello@amd.com>
-References: <20241028020131.8031-1-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -103,171 +92,132 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL02EPF00021F6C:EE_|IA1PR12MB8555:EE_
-X-MS-Office365-Filtering-Correlation-Id: ea2de315-8ffc-4813-be7f-08dcf6f4938a
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F6F:EE_|CY8PR12MB7635:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1e58c06a-1e62-449d-5af0-08dcf6f4ac27
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|7416014|376014|82310400026;
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/QqFh49Hw54u4drJVFxIPflE0xX/QMJ2n/7avV+iY38U31bsMK+daBvfP4T5?=
- =?us-ascii?Q?+0mpSsvCwcsT9qYHDL8AhvnjyjgJA3F3q1SPI9lBXge71azoRydj5twZ+ViC?=
- =?us-ascii?Q?u0Gt1oZBlKNSiEjQrBG8O1RjEoO6rdZmoCT6zMmSoYv+5DPMHyQntlD2uLTY?=
- =?us-ascii?Q?s9O752NYo/7pCgTHgZ8N8kNCPAWEt7wmdcbmSDg1957SJSVxSzGToXDIVrka?=
- =?us-ascii?Q?PNOtRge8kImQGGTtUraxgF9V+BRmxAaKjYVAAiRHuXsLNk9mNOZrxi6zE7z+?=
- =?us-ascii?Q?cFPODNM1gu9QllbhARnVZGldSvWTcARSw3mqZ+MOsFR/gl22y/QnIla9K/Dm?=
- =?us-ascii?Q?4Mu2E9lJylsXzNA9rYD776KKwq8MRmXOe5lYQa2rQYZMiOxfhGLQCP/YCfhq?=
- =?us-ascii?Q?+4oqMxj8y4ka5I7By5PmFbJVhQqUmLjvO/puoP4h7/S3V8va/cfLhAS7BDn9?=
- =?us-ascii?Q?eC2uL01y5An1Pjc2EP9Nfh/M2Z08fqUp3blr2t5sOiSA42z7R0XgoF4Z+NbR?=
- =?us-ascii?Q?5j3IHkgClVk5BgcrRo3VFWebn3w1oSOifT+HlS2yYk/TqGzThQo9RmyJbQ8C?=
- =?us-ascii?Q?QNBT8kL3yHKCxqcQ6YlSdXhqUQ/P+tZvrk52XR6DBE+uRWzBL6KvylZLS5oQ?=
- =?us-ascii?Q?vBTMtNLF9ME+hHI3iAvP6UPPiTIuImzuX/+/mqKYuKDuenlCNt4u1C6nYEEk?=
- =?us-ascii?Q?tW+qAqFYjRBe7uJY9TzfIz0i0/r2leuB8qkrcGoCsG3VncjfYIB9tFhnxgaE?=
- =?us-ascii?Q?orOyCZMg1xcAUeZxvJZ2a9FgqLqFd5hS1ZEDH1CWjJFrjP6X1AnAm0vne7E/?=
- =?us-ascii?Q?sWef8P29TgoWavsbKimtaxhYgW1lXmMaCWVuHZLbaSaFpCJ8dgqt9YwPubeo?=
- =?us-ascii?Q?HkwRLJEcKWW4oFAbsTJuCM51Wi+Cp2REiAHp8NMMk03aET35QiwdzGDWglrO?=
- =?us-ascii?Q?XUtbEjlJy1Xzc97f5YXHl348H97Kep1a1bEd/7QuHlrrD1d4dAUPi6o+HpFf?=
- =?us-ascii?Q?qjriyxjLT5KvIMLrA1fBAYxP4lmB1LRC5m30uiVQCTvw3o2tkP+XkMzPoWfx?=
- =?us-ascii?Q?CMwVPEROPrTJh9NFw/9DOdE2csgULwqi6pfgW0ctYlIRxD6sDyKlL8Afg3+H?=
- =?us-ascii?Q?wnUJMVLlwmrUOeISrYJjRPkQOq21z72cJfg8QQgnEaSnfGhFYQabjIPwm+sM?=
- =?us-ascii?Q?ImpihDk3uYOIMNGdXgJf7uGwMcXac7zUZTzX/+V9GqU2bOyiYeDp6lczh/Sd?=
- =?us-ascii?Q?qck8Wiu7yISVA2MDYeY8ZyDVyavnU0Kh/sq1nyWoFj0UGuksCoPzMhUPLQyd?=
- =?us-ascii?Q?AEgPuX86iwNnnmArS3XRt+c0AAAH7jDdoJJoy6TYQWJr3pR5PlNMDwE7NyUt?=
- =?us-ascii?Q?WyDOhiwnaR/JDc8rP8+BoSa0qiP63B0ce+Ov8gpFSRTVHMU5Ew=3D=3D?=
+	=?us-ascii?Q?p+HFRP8/ZhZYzCJXFRflISU9KxVjNnwxBOZCimIjaVkihymLXO0N6dJZUx/5?=
+ =?us-ascii?Q?nfIgil9cvr4wWCLkvqb6zY9z09J7U/KLy/NXGfI9VOx1sjEVfrWWCytawV84?=
+ =?us-ascii?Q?pjpVNygksfCW6nAUOCMEhwnW5vtufvFiJ/dIFrLbSedj8GfiQ/f5wG9gG7eo?=
+ =?us-ascii?Q?1VJVwPaZZG3D+v+/3/saudgt6BaaniuoDwdt8vyGbR5GYa6zQsNdD6g2GwxK?=
+ =?us-ascii?Q?qSW1fMRzRizk+x5pE6o+HrGC64f/0U98FnyZyK1k2GWi7a9kgrMMo7QHZsvm?=
+ =?us-ascii?Q?damZl30Ql8ZYF2IT5cESruPijw/4uO2dx3GUbLGFmbAsUksUqIQYCpc2UJLf?=
+ =?us-ascii?Q?wz+cPu/RY9S4SVPAVq30BFzBjIGrON+fDQEmy/AGTu2qkeF/DjsnlmF8QrVc?=
+ =?us-ascii?Q?bJBUdnHHl09Xoa0sUpXQv8mbyyraNg5scEkynPqTIn0gTDqIUBJfUKuDxa/T?=
+ =?us-ascii?Q?6vVTyTVzc1EYTDTZY+AU3vlDiFMGC8JZzpALHW0BFWfg1rm6iAngnSgrbw3a?=
+ =?us-ascii?Q?SP0oX5vFNZdDvo9JAdgc2tBq9gYx/PRq08dWhiLXqP6SrP0GRQU8MRti+VaU?=
+ =?us-ascii?Q?/lDXJVZMwZQsPpjbYFm6tdhIAM7YdPuJ2Hx9e+gX1gkS7ti35M8v+XX6Kr2/?=
+ =?us-ascii?Q?kurdrmqyPTsxJU4Bs8KY3ZDruBoeHpr8Sa5NN+02oXIkfeWx6IGZHFgXbQB6?=
+ =?us-ascii?Q?mhHZ8P4g1Zx8rZyRTBKv3HWauYbR9aHIbRJAfUloqa9v0JqMIa3PRS6C+sOS?=
+ =?us-ascii?Q?P/pzrNEp4g63e3i01h3DotiE6cEYA11YtLfnyYAep6PBSQtB8vkDsj+SJxpP?=
+ =?us-ascii?Q?n77/K7/j4dMZ2xi/lyeGgLmhEDrlLJSPb2dxCnU/oQHaP45xQAD4YCsTMfgE?=
+ =?us-ascii?Q?UkoKT/hR28zQA0zMXZWNtjPy9lAPud8WkPmAQeghMxJLVCAJFaoh3aE2vzAU?=
+ =?us-ascii?Q?PIc6Asz58KpGGqU1/McuNCyh+QSuWwBCReuZ2oX4DgYjplyg2jFJG8r9cPKr?=
+ =?us-ascii?Q?oUylON9ZZYqZECOFxihRO0/RBxsCYIgwdAIhKeJMZi4JLlbPNKeh+4FaxGlX?=
+ =?us-ascii?Q?54gHYkQokHLbXonlBMUbyEr5N1AF7p/Hx1GEWOCQA1XBb8m3vBm1MznMdlyU?=
+ =?us-ascii?Q?vQR8gAwJCFQLQO/twBJFYnM+l+hkdsF6j8ASm0h2Ne+fACtnQ8Kbs67EB29Z?=
+ =?us-ascii?Q?qrczw1Cz/ia6LqxJY+FlaejE7WtYM/mWpkLUoKoJNGSOO99OtWrMfNVRS0HY?=
+ =?us-ascii?Q?CLtW8XmAwTO8tbP0qCrfx/4faVXVTkeqYi5zHRS0JB0M3+BJw2v2cHequVl0?=
+ =?us-ascii?Q?2T5/666t7kYu9ztalNbaIbsF1yrbWfpn5kkDIK/N+vouW2xg5Ndp1FECLVnf?=
+ =?us-ascii?Q?saMxKTxapCpbStw6Au/tPv99eoXd8o9WPky751Rr2fcKFwJvMQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(7416014)(376014)(82310400026);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 02:02:28.6939
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 02:03:09.9699
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ea2de315-8ffc-4813-be7f-08dcf6f4938a
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1e58c06a-1e62-449d-5af0-08dcf6f4ac27
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	BL02EPF00021F6C.namprd02.prod.outlook.com
+	BL02EPF00021F6F.namprd02.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8555
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7635
 
-As multiple platform profile handlers can now be registered, the quirks
-to avoid registering amd-pmf as a handler are no longer necessary.
-Drop them.
+The AMD Heterogeneous core design and Hardware Feedback Interface (HFI)
+provide behavioral classification and a dynamically updated ranking table
+for the scheduler to use when choosing cores for tasks.
 
-Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/platform/x86/amd/pmf/Makefile     |  2 +-
- drivers/platform/x86/amd/pmf/core.c       |  1 -
- drivers/platform/x86/amd/pmf/pmf-quirks.c | 66 -----------------------
- drivers/platform/x86/amd/pmf/pmf.h        |  3 --
- 4 files changed, 1 insertion(+), 71 deletions(-)
- delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+Threads are classified during runtime into enumerated classes.
+Currently, the driver supports 3 classes (0 through 2). These classes
+represent thread performance/power characteristics that may benefit from
+special scheduling behaviors. The real-time thread classification is
+consumed by the operating system and is used to inform the scheduler of
+where the thread should be placed for optimal performance or energy efficiency.
 
-diff --git a/drivers/platform/x86/amd/pmf/Makefile b/drivers/platform/x86/amd/pmf/Makefile
-index 7d6079b02589c..6b26e48ce8ad2 100644
---- a/drivers/platform/x86/amd/pmf/Makefile
-+++ b/drivers/platform/x86/amd/pmf/Makefile
-@@ -7,4 +7,4 @@
- obj-$(CONFIG_AMD_PMF) += amd-pmf.o
- amd-pmf-objs := core.o acpi.o sps.o \
- 		auto-mode.o cnqf.o \
--		tee-if.o spc.o pmf-quirks.o
-+		tee-if.o spc.o
-diff --git a/drivers/platform/x86/amd/pmf/core.c b/drivers/platform/x86/amd/pmf/core.c
-index 47126abd13ca0..6ad00b3d472fe 100644
---- a/drivers/platform/x86/amd/pmf/core.c
-+++ b/drivers/platform/x86/amd/pmf/core.c
-@@ -455,7 +455,6 @@ static int amd_pmf_probe(struct platform_device *pdev)
- 	mutex_init(&dev->lock);
- 	mutex_init(&dev->update_mutex);
- 
--	amd_pmf_quirks_init(dev);
- 	apmf_acpi_init(dev);
- 	platform_set_drvdata(pdev, dev);
- 	amd_pmf_dbgfs_register(dev);
-diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
-deleted file mode 100644
-index 7cde5733b9cac..0000000000000
---- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
-+++ /dev/null
-@@ -1,66 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0-or-later
--/*
-- * AMD Platform Management Framework Driver Quirks
-- *
-- * Copyright (c) 2024, Advanced Micro Devices, Inc.
-- * All Rights Reserved.
-- *
-- * Author: Mario Limonciello <mario.limonciello@amd.com>
-- */
--
--#include <linux/dmi.h>
--
--#include "pmf.h"
--
--struct quirk_entry {
--	u32 supported_func;
--};
--
--static struct quirk_entry quirk_no_sps_bug = {
--	.supported_func = 0x4003,
--};
--
--static const struct dmi_system_id fwbug_list[] = {
--	{
--		.ident = "ROG Zephyrus G14",
--		.matches = {
--			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
--			DMI_MATCH(DMI_PRODUCT_NAME, "GA403U"),
--		},
--		.driver_data = &quirk_no_sps_bug,
--	},
--	{
--		.ident = "ROG Ally X",
--		.matches = {
--			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
--			DMI_MATCH(DMI_PRODUCT_NAME, "RC72LA"),
--		},
--		.driver_data = &quirk_no_sps_bug,
--	},
--	{
--		.ident = "ASUS TUF Gaming A14",
--		.matches = {
--			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
--			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
--		},
--		.driver_data = &quirk_no_sps_bug,
--	},
--	{}
--};
--
--void amd_pmf_quirks_init(struct amd_pmf_dev *dev)
--{
--	const struct dmi_system_id *dmi_id;
--	struct quirk_entry *quirks;
--
--	dmi_id = dmi_first_match(fwbug_list);
--	if (!dmi_id)
--		return;
--
--	quirks = dmi_id->driver_data;
--	if (quirks->supported_func) {
--		dev->supported_func = quirks->supported_func;
--		pr_info("Using supported funcs quirk to avoid %s platform firmware bug\n",
--			dmi_id->ident);
--	}
--}
-diff --git a/drivers/platform/x86/amd/pmf/pmf.h b/drivers/platform/x86/amd/pmf/pmf.h
-index 8ce8816da9c16..b89aa38434faa 100644
---- a/drivers/platform/x86/amd/pmf/pmf.h
-+++ b/drivers/platform/x86/amd/pmf/pmf.h
-@@ -795,7 +795,4 @@ int amd_pmf_smartpc_apply_bios_output(struct amd_pmf_dev *dev, u32 val, u32 preq
- void amd_pmf_populate_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf_enact_table *in);
- void amd_pmf_dump_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf_enact_table *in);
- 
--/* Quirk infrastructure */
--void amd_pmf_quirks_init(struct amd_pmf_dev *dev);
--
- #endif /* PMF_H */
+The thread classification helps to select CPU from a ranking table that describes
+an efficiency and performance ranking for each classification from two dimensions.
+
+The ranking data provided by the ranking table are numbers ranging from 0 to 255,
+where a higher performance value indicates higher performance capability and a higher
+efficiency value indicates greater efficiency. All the CPU cores are ranked into
+different class IDs. Within each class ranking, the cores may have different ranking
+values. Therefore, picking from each classification ID will later allow the scheduler
+to select the best core while threads are classified into the specified workload class.
+
+This series was originally submitted by Perry Yuan [1] but he is now doing a different
+role and he asked me to take over.
+
+Link: https://lore.kernel.org/all/cover.1724748733.git.perry.yuan@amd.com/
+
+On applicable hardware this series has between a 2% and 5% improvement across various
+benchmarks.
+
+There is however a cost associated with clearing history on the process context switch.
+On average it increases the delay by 119ns, and also has a wider range in delays
+(the standard deviation is 25% greater).
+
+Although this series most prominently has changes to platform-x86 it is based
+off of tip x86/cpu due to changes queued up for 6.13-rc1 that are dependencies.
+
+v4->v5:
+ * Pick up tags
+ * Modify where setup_hreset() is called
+
+Mario Limonciello (4):
+  MAINTAINERS: Add maintainer entry for AMD Hardware Feedback Driver
+  cpufreq/amd-pstate: Disable preferred cores on designs with workload
+    classification
+  platform/x86/amd: hfi: Set ITMT priority from ranking data
+  platform/x86/amd: hfi: Add debugfs support
+
+Perry Yuan (9):
+  Documentation: x86: Add AMD Hardware Feedback Interface documentation
+  x86/cpufeatures: add X86_FEATURE_AMD_WORKLOAD_CLASS feature bit
+  x86/msr-index: define AMD heterogeneous CPU related MSR
+  platform/x86: hfi: Introduce AMD Hardware Feedback Interface Driver
+  platform/x86: hfi: parse CPU core ranking data from shared memory
+  platform/x86: hfi: init per-cpu scores for each class
+  platform/x86: hfi: add online and offline callback support
+  platform/x86: hfi: add power management callback
+  x86/process: Clear hardware feedback history for AMD processors
+
+ Documentation/arch/x86/amd-hfi.rst    | 129 ++++++
+ Documentation/arch/x86/index.rst      |   1 +
+ MAINTAINERS                           |   9 +
+ arch/x86/include/asm/cpufeatures.h    |   1 +
+ arch/x86/include/asm/hreset.h         |   6 +
+ arch/x86/include/asm/msr-index.h      |   5 +
+ arch/x86/kernel/cpu/common.c          |  15 +
+ arch/x86/kernel/cpu/scattered.c       |   1 +
+ arch/x86/kernel/process_32.c          |   3 +
+ arch/x86/kernel/process_64.c          |   3 +
+ drivers/cpufreq/amd-pstate.c          |   6 +
+ drivers/platform/x86/amd/Kconfig      |   1 +
+ drivers/platform/x86/amd/Makefile     |   1 +
+ drivers/platform/x86/amd/hfi/Kconfig  |  21 +
+ drivers/platform/x86/amd/hfi/Makefile |   7 +
+ drivers/platform/x86/amd/hfi/hfi.c    | 547 ++++++++++++++++++++++++++
+ 16 files changed, 756 insertions(+)
+ create mode 100644 Documentation/arch/x86/amd-hfi.rst
+ create mode 100644 arch/x86/include/asm/hreset.h
+ create mode 100644 drivers/platform/x86/amd/hfi/Kconfig
+ create mode 100644 drivers/platform/x86/amd/hfi/Makefile
+ create mode 100644 drivers/platform/x86/amd/hfi/hfi.c
+
 -- 
 2.43.0
 
