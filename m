@@ -1,85 +1,51 @@
-Return-Path: <linux-kernel+bounces-384097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9EB9B243D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:32:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3987A9B242C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:30:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E95AB21C3B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:32:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0EC5281ACC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9889C18C93D;
-	Mon, 28 Oct 2024 05:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ilXBkY/h"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9735218C924;
+	Mon, 28 Oct 2024 05:30:24 +0000 (UTC)
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C0D18B492;
-	Mon, 28 Oct 2024 05:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D155F1DA5A;
+	Mon, 28 Oct 2024 05:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730093505; cv=none; b=jIbHP6FWFgbi0gw4L011MixRN8OFr5tl0My9bW/NlbOZTiQ35H2yM4+BSWWmEY/LHvbSYKp8wnPrdHVfYJucxFPlcy+qcL8B0R07yK3AKV5aEaXY2FavcPMkAWD2tA+qqKLN184KPYjFgaGM2+GurzuDEH5PiaF5xl1o6Ba0uPU=
+	t=1730093424; cv=none; b=lBI+jnIzlCGVp9Nw82Wyq4HjX+ax+PYtstIQosbSYZxmuOrEVS8Bn0asSdbenmwWCrvkR1ceWgOhFayEFs4MUtNG+1QuIgDqj72B5FISSKnwMNReeUtQSHc+czYutnnROLrHT8ILOLksCiOgDA4P+fuX86KPC2pQwM6yWVxaKoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730093505; c=relaxed/simple;
-	bh=aNPNOoKVsPojEBhxia3xk3JbPFV30hk8lKIJ574hCTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=e8rH6m2tqIXscgGJVPBrqw32QE9raXhxCraJexROyKIoMdF8OMxZ2OpC+rbuQP68jRvEH8fR0frh39Di9JTj7Ms4Erget9X/7eWf3W8vWGkPuWy2CcUADLXsH6PKJO+3L4rj/+tgRCFd+z28o/ThH6qOkJpukSLtBkpcYAALYxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ilXBkY/h; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso2628679a12.2;
-        Sun, 27 Oct 2024 22:31:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730093503; x=1730698303; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xEQg2GoMuqIfSvIoQPeUZTxQLBpPTmz3yv4aNSrSx8I=;
-        b=ilXBkY/hCe8C7Fpz6naFbaWxSH/gwpNPoYGWTlCCxBqlJI4meJyJh1qoK9sSbCOzjv
-         U2lYIZxpRgTJ8nYCXjKB3rtV3UWw4Y+Jmq5rWU5mvZuruRASs51G+kpF97brZ3tDsfHX
-         IQOg8zQ/ZoEPXjon78u1l8luaUIis6Z4STbwNBC2dvXVCeelKC6ZU4YoTPYvX8p7MnkJ
-         M98Qmd7CW+PjG3iwFvLzcgBoMNSpYAN05gK8sDyAtsFxt+T0+TjrPTqB1QSBbEDMdEhP
-         ukwp5rEjSUkRT7ghMWMy8xJxDHpE9RumVO3Q+vTTB12QzI8MlyP2wMfvdqCOopE0ssQL
-         IwlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730093503; x=1730698303;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xEQg2GoMuqIfSvIoQPeUZTxQLBpPTmz3yv4aNSrSx8I=;
-        b=hk4TPAOQlE6dcV/S0fa2pjldDebiOw/8Mr5XrT9cJWdN8LsBCD2THwW953k1vpUqsQ
-         jlNUqpIcS9joFZh7LdE2Q1QBgGt2H0inzNg06+v81cVjqzLmrvzfVj0jl5CW+A2UaBt/
-         mbAfvnzOMrqOXTS4Kb7g+zfwFTfrBoDYN9mLTqcbthW0s0vEmyEK4bkrplOmM2PKWaLp
-         xEXQ81RhpqCHHFfbTMYBo4jUKGIT/5NSnPHFFGgs20pBNjzsnzYedQDz4hDRP9xt57kh
-         nstHtuJrCCp/gi9PNkNgjggi0dlqFy6J5T+2SdcIBNdg6iVTAmM4Z7j/f2JI65L9fPm7
-         U6jA==
-X-Forwarded-Encrypted: i=1; AJvYcCWd34GXt459IydelywBNKFCtPJVPTyQGzuPbz+uQJS+kb0nPc1d0iT7vOHoy/vjH4JQauY3INTkQP4EeMU=@vger.kernel.org, AJvYcCXuYb16KJcc172GE6FoI1jhQvaHQhGyj9y/ORqUu2FFeit/N9M6ETqViky0FhfuO8WlQKy6k36tXjn7@vger.kernel.org
-X-Gm-Message-State: AOJu0YwF9b9KpcUPvan5mmt0xgAdKzqWftyuKpj3gRiGj4PQ4N+wVrL6
-	shBipHSDqdRgrf9Sqf1HU53pe11XD0sMfPQ2CfUExg6285UJrIlyDNO8pwA9FnI=
-X-Google-Smtp-Source: AGHT+IGSIgLqaS9EfKl+irLis0mB+1g7+V3NTmH7i2LhfvWOB0rPfTqN7PSmEu+Fb2udknSnwC64ww==
-X-Received: by 2002:a05:6a20:d806:b0:1d9:6f7f:7ad7 with SMTP id adf61e73a8af0-1d9a855f791mr8603381637.48.1730093502558;
-        Sun, 27 Oct 2024 22:31:42 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.159.90])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e5769b9sm8157413a91.44.2024.10.27.22.31.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 27 Oct 2024 22:31:42 -0700 (PDT)
-From: Tony Chung <tony467913@gmail.com>
-To: lkp@intel.com
-Cc: gregkh@linuxfoundation.org,
-	johan@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	oe-kbuild-all@lists.linux.dev,
-	tony467913@gmail.com
-Subject: Re: [PATCH] usb: serial: mos7840: Fix coding style warnings 
-Date: Mon, 28 Oct 2024 13:27:33 +0800
-Message-ID: <20241028052732.4320-2-tony467913@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <202410251501.9hTgSYCH-lkp@intel.com>
-References: <202410251501.9hTgSYCH-lkp@intel.com>
+	s=arc-20240116; t=1730093424; c=relaxed/simple;
+	bh=IuqaJS20ADLLL8bkYgM9FMwE/0P4qnRb0lZTXLaOQ2s=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OrClrkdVuaXSSdhoAX0gN/WOQ90DctLTO42ffYCAHijGdnRZcaMW7YrVXtATUBaZNJN34WaI5ILziHoEDZasAIvlpeG+rmBFbxOdpVVQ3QcqGnRY6KYdaZRj+nxl42GG8TWiJ3tJ1gG9ZbN6EoNhyGYICIgAaRbDmwcbtRrdVbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Mon, 28 Oct
+ 2024 13:30:18 +0800
+Received: from twmbx02.aspeed.com (192.168.10.152) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Mon, 28 Oct 2024 13:30:18 +0800
+From: Ryan Chen <ryan_chen@aspeedtech.com>
+To: <ryan_chen@aspeedtech.com>, <lee@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <joel@jms.id.au>,
+	<andrew@codeconstruct.com.au>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<p.zabel@pengutronix.de>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<dmitry.baryshkov@linaro.org>
+Subject: [PATCH v7 0/3] [PATCH v6 0/3] Add support for AST2700 clk driver
+Date: Mon, 28 Oct 2024 13:30:15 +0800
+Message-ID: <20241028053018.2579200-1-ryan_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,9 +53,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-I've sent the PATCH v2 which has fixed this build error. 
-please check from the link below. Thanks.
+This patch series is add clk driver for AST2700.
 
-https://lore.kernel.org/lkml/20241025061711.198933-1-tony467913@gmail.com/
+AST2700 is the 8th generation of Integrated Remote Management Processor
+introduced by ASPEED Technology Inc. Which is Board Management controller
+(BMC) SoC family. AST2700 have two SoC connected, one is SoC0, another
+is SoC1, it has it's own scu, this driver inlcude SCU0 and SCU1 driver.
+
+v7:
+-reset-aspeed.h: fix declare static inline aspeed_reset_controller_register
+if the function is not used.
+
+v6:
+-patch-2: add reset-aspeed.h
+-reset-aspeed: add include cleanup.h for guard()
+-reset-aspeed: change ids name clk_aspeed to reset_aspeed
+-reset-aspeed: move aspeed_reset_controller_register,
+aspeed_reset_adev_release, aspeed_reset_unregister_adev from clk-ast2700.c
+-reset-aspeed: drop base check, since it check in clk-ast2700.c
+-clk-ast2700: sync each gate name from *clk to *clk-gate name.
+-clk-ast2700: add CLK_GATE_ASPEED to diff clk_hw_register_gate and
+ast2700_clk_hw_register_gate.
+
+v5:
+-patch-2 Kconfig: add select AUXILIARY_BUS
+-reset-aspeed: #define to_aspeed_reset(p) turn into static inline function.
+-reset-aspeed: modify spin_lock_irqsave to guard(spinlock_irqsave)
+-reset-aspeed: remove unnecessary parentheses.
+-clk-ast2700: use <linux/units.h> and refrain from define clk
+
+v4:
+-yaml: keep size-cells=<1>.
+-merge clk,reset dt binding header with yaml the same patch.
+-rename clk,reset dt binding header to aspeed,ast2700-scu.h
+-reset-aspeed: update tables tabs sapces to consistent spaces.
+-reset-aspeed: remove no use dev_set_drvdata.
+-clk-ast2700: modify reset_name to const int scu in struct clk_data.
+-clk-ast2700: use scu number in clk_data generate reset_name for reset
+ driver register.
+-clk-ast2700: fix pll number mix up scu0,scu1.
+-clk-ast2700: update dt-binding clock include file.
+
+v3:
+-yaml: v2 missing send yaml patch, v3 add.
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number.
+-dt-bindings: merge clk and reset to be one patch.
+-reset-aspeed: add auxiliary device for reset driver.
+-clk-ast2700: modify reset to be auxiliary add.
+-clk-ast2700: modify to be platform driver.
+-clk-ast2700: modify each clk to const clk array.
+
+v2:
+-yaml: drop 64bits address example.
+-yaml: add discription about soc0 and soc1
+-dt-bindings: remove (), *_NUMS, reserved.
+-dt-bindings: remove dulipated define number
+-clk-ast2700: drop WARN_ON, weird comment.
+
+Ryan Chen (3):
+  dt-bindings: mfd: aspeed: support for AST2700
+  reset: aspeed: register AST2700 reset auxiliary bus device
+  clk: aspeed: add AST2700 clock driver.
+
+ .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    8 +-
+ drivers/clk/Kconfig                           |    8 +
+ drivers/clk/Makefile                          |    1 +
+ drivers/clk/clk-ast2700.c                     | 1513 +++++++++++++++++
+ drivers/reset/Kconfig                         |    7 +
+ drivers/reset/Makefile                        |    1 +
+ drivers/reset/reset-aspeed.c                  |  302 ++++
+ .../dt-bindings/clock/aspeed,ast2700-scu.h    |  163 ++
+ .../dt-bindings/reset/aspeed,ast2700-scu.h    |  124 ++
+ include/soc/aspeed/reset-aspeed.h             |   21 +
+ 10 files changed, 2147 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/clk-ast2700.c
+ create mode 100644 drivers/reset/reset-aspeed.c
+ create mode 100644 include/dt-bindings/clock/aspeed,ast2700-scu.h
+ create mode 100644 include/dt-bindings/reset/aspeed,ast2700-scu.h
+ create mode 100644 include/soc/aspeed/reset-aspeed.h
+
+-- 
+2.34.1
+
 
