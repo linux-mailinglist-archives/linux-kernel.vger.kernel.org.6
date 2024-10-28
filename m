@@ -1,136 +1,90 @@
-Return-Path: <linux-kernel+bounces-384894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40F19B2FE1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:12:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E5B9B2FDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9BBE1C243C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7FB9B21A73
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5AE1D9337;
-	Mon, 28 Oct 2024 12:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 856F21D88A4;
+	Mon, 28 Oct 2024 12:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mvapyRVD"
-Received: from pv50p00im-ztdg10011201.me.com (pv50p00im-ztdg10011201.me.com [17.58.6.39])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s56hn1P0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE9F11D7982
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:11:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF34189B8D;
+	Mon, 28 Oct 2024 12:11:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117512; cv=none; b=dOT4EuR98cvFbKkFKTBhagZgOGRX3sY6cvRQQyng2qwhoTW/bdZ5aH86xYfYDace/b+korp5qZJtEwkeBRlLloe0Rdf6gQSaGnC8QGve0xWzXEE1sR7ffFqqwhxpYYioOZOkSxfS/g6RXzYexi7DBj/1AulUqTpEHFhUWKiwOG4=
+	t=1730117491; cv=none; b=lk9gkAK/zGvK4cgkG7m+PKNlnFKzqI5Aaw/7/4zlditpZ9MFaJG41/gh/nBB8tVqjWtH47ozCkuwEZet5jwlZZE6r7QjN8HEpiUiE52Ube+D3B8B6G5P8yBxt7vyF65klMqkukRGDbNrC0LlNzWq4PHL7Vxz3BMnwUIAZSPltFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117512; c=relaxed/simple;
-	bh=aqNiouNowU0/nT1bh7e513W9iCoKLbT4s+J+T3hJyBs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A7GoDv/gSL1OH4I0MTZm5K9Y0RzngSsdDT62nzDLpGw85Nlsi7RiR+JOMrWxnviNCEqqUIgWWnV52zRby1KdMsDS3UAs/hV2cr6JARWI7RuQ3zYWlmLzEw5QYKU5qmaa8rPo0e8zLuhmjr1eQA2A47LZyOG7Hgw2Px8KJexmpxQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mvapyRVD; arc=none smtp.client-ip=17.58.6.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1730117510;
-	bh=0g82I+it26+TLuelS001Lia4SSmrgncY6oesFfGXKuQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=mvapyRVDc86rAgu7e//VBupiPz0scTPM7T6sCzIXIVyKLeBmgyay458r5yUhAkm24
-	 f+h8TzOvQ3xSFz0ROFQtDyVbqNBBH7ztPcR7iSqbQV8/PkuR9sP/SFuSkhCLoEPeFX
-	 ZemRgrtgMHCV+7RtiRLNnMACTeARsynBXhPkC0HpNswU/J9NDGBgZuZkR0a1wVm/G2
-	 RcfDZxj0yOvyPQGSqJIq17rwQmnWOjXnXfaiPXAQRiadBJ0j7J413G4/G0pFsV+wlk
-	 K3KkStN5NstuO4kzphHqIAksDosOn/JmeC+vNGNpOXHJnyo3BPs91Ry68NSRP9xV4C
-	 Bqm8Uy47mzN8Q==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10011201.me.com (Postfix) with ESMTPSA id 3F7D66801FE;
-	Mon, 28 Oct 2024 12:11:45 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Mon, 28 Oct 2024 20:11:11 +0800
-Subject: [PATCH] driver core: Put device attribute @wakeup_last_time_ms and
- its show() together
+	s=arc-20240116; t=1730117491; c=relaxed/simple;
+	bh=rv69JvQBuERLoDd8e9ag5C41cMWOhw/9p+RshC/x6lU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CdrBpU7n/hncD2NYHMckYoEzdUptLI60E+WubywBihQQQe7MSKHLRRw4yKGbSQBvOE/YhTKY3VV3FwzCJLBq1jT1scwtqu3EZxvG/AHpH/zo0gg6bXjTv5D7bDV/ROjNl6M5mN/y7Xib+ZpwU+bYl1uYitPjeqgyt9iI44YDYjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s56hn1P0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AC3C4CEC3;
+	Mon, 28 Oct 2024 12:11:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730117491;
+	bh=rv69JvQBuERLoDd8e9ag5C41cMWOhw/9p+RshC/x6lU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s56hn1P0WYwxElh6FCKpnpSdxRyQaBzWC13T9yiz1VUQ9l8aYngJEp0QLxEHyfm/z
+	 +/0xA+LUyD1twvPJhCdvgueubcP1CvRLaQgy219IW38iLmi/ee8Yrd2ZiaZiUN1kft
+	 EGURvmnwxjx46cEj5TTKr5k+9hAIXTNmVKytyuueq7dxig19EdZ3QvjUXUd39zlDG3
+	 WMndXSkoDBneDiUqJ4/fKtKbTjQt4WAqgmeKrfPeh35qN+DXI8I1K/soTjZA/vmw6E
+	 yzd8F8vlybffYcVVwA34pPv0losWcviNasCETKIYwHn6tnOd93x7KwAvLkTp3b4r79
+	 RpA/ytWrLNJTw==
+Date: Mon, 28 Oct 2024 13:11:26 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: zhouyuhang <zhouyuhang1010@163.com>
+Cc: sforshee@kernel.org, shuah@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>
+Subject: Re: [PATCH v2] selftests/mount_setattr: fix idmap_mount_tree_invalid
+ failed to run
+Message-ID: <20241028-rodung-kotzen-577438c3b82c@brauner>
+References: <20241028084132.3212598-1-zhouyuhang1010@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241028-fix_power_sysfs-v1-1-7b2fbeb14d47@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAF5/H2cC/x2MSQqAMAwAvyI5W9AoiH5FpJSaai4qCbgg/bvB4
- 8DMvKAkTApD8YLQycr7ZlCXBcQ1bAs5no0BK2yrHhuX+PbHfpF4fTSpo6ZGRGpj6BCsOoRM+Y/
- jlPMHp94XHWEAAAA=
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Len Brown <len.brown@intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: Y2Lp68-d1v-FrdBTADXErByWHl2nHnZY
-X-Proofpoint-GUID: Y2Lp68-d1v-FrdBTADXErByWHl2nHnZY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-28_04,2024-10-28_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0
- clxscore=1015 bulkscore=0 mlxscore=0 spamscore=0 adultscore=0
- malwarescore=0 mlxlogscore=999 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2308100000 definitions=main-2410280098
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241028084132.3212598-1-zhouyuhang1010@163.com>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Mon, Oct 28, 2024 at 04:41:32PM +0800, zhouyuhang wrote:
+> From: zhouyuhang <zhouyuhang@kylinos.cn>
+> 
+> Test case idmap_mount_tree_invalid failed to run on the newer kernel
+> with the following output:
+> 
+>  #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>  # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
+>  # idmap_mount_tree_invalid: Test terminated by assertion
+> 
+> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
+> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
+> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
+> returns 0 instead of -EINVAL as expected.
+> 
+> Ramfs does not support idmap mounts, so we can use it here to test invalid mounts,
+> which allows the test case to pass with the following output:
+> 
+>  # Starting 1 tests from 1 test cases.
+>  #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>  #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
+>  ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
+>  # PASSED: 1 / 1 tests passed.
+> 
+> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+> ---
 
-Move location of dpm_sysfs_wakeup_change_owner() a bit to
-
-- Put device attribute @wakeup_last_time_ms and its show() together.
-- Put two different instances of dpm_sysfs_wakeup_change_owner() together.
-
-That will make better code layout.
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/power/sysfs.c | 17 +++++++++--------
- 1 file changed, 9 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/base/power/sysfs.c b/drivers/base/power/sysfs.c
-index a1474fb67db9..f8163b559bf9 100644
---- a/drivers/base/power/sysfs.c
-+++ b/drivers/base/power/sysfs.c
-@@ -509,14 +509,6 @@ static ssize_t wakeup_last_time_ms_show(struct device *dev,
- 	return sysfs_emit(buf, "%lld\n", msec);
- }
- 
--static inline int dpm_sysfs_wakeup_change_owner(struct device *dev, kuid_t kuid,
--						kgid_t kgid)
--{
--	if (dev->power.wakeup && dev->power.wakeup->dev)
--		return device_change_owner(dev->power.wakeup->dev, kuid, kgid);
--	return 0;
--}
--
- static DEVICE_ATTR_RO(wakeup_last_time_ms);
- 
- #ifdef CONFIG_PM_AUTOSLEEP
-@@ -541,6 +533,15 @@ static ssize_t wakeup_prevent_sleep_time_ms_show(struct device *dev,
- 
- static DEVICE_ATTR_RO(wakeup_prevent_sleep_time_ms);
- #endif /* CONFIG_PM_AUTOSLEEP */
-+
-+static inline int dpm_sysfs_wakeup_change_owner(struct device *dev, kuid_t kuid,
-+						kgid_t kgid)
-+{
-+	if (dev->power.wakeup && dev->power.wakeup->dev)
-+		return device_change_owner(dev->power.wakeup->dev, kuid, kgid);
-+	return 0;
-+}
-+
- #else /* CONFIG_PM_SLEEP */
- static inline int dpm_sysfs_wakeup_change_owner(struct device *dev, kuid_t kuid,
- 						kgid_t kgid)
-
----
-base-commit: 9bd133f05b1dca5ca4399a76d04d0f6f4d454e44
-change-id: 20240923-fix_power_sysfs-e31222e4ca72
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
-
+Reviewed-by: Christian Brauner <brauner@kernel.org>
 
