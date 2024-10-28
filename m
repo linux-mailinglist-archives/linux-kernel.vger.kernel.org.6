@@ -1,194 +1,134 @@
-Return-Path: <linux-kernel+bounces-384391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384392-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B03269B2980
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:01:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 705609B298A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F3E1F25A04
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AADF1F25E9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6721DBB35;
-	Mon, 28 Oct 2024 07:42:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1148C1DCB09;
+	Mon, 28 Oct 2024 07:42:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MupB10g9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KMQckb+5"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150541DB951;
-	Mon, 28 Oct 2024 07:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8A11DBB1D;
+	Mon, 28 Oct 2024 07:42:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730101341; cv=none; b=r2GbpWKFpw94E7CTtllP6DsGMdrswKNVLV3vsFyXf+Hfw674viSjkbHjaiAeRRTHaNRDokETMEVPjutGch+JFhhBwB6/XI/SboEnA7lADpgCWm7TmzAmecpTggQj3Hg3qi16rygQOQ4o1ZV/PiOVJKVy0XGv777pMNqlq+/01KQ=
+	t=1730101365; cv=none; b=uEIzJotUBfb7C/BLwZeT7s/NGVDaVldxUx0nVxdbWWzOZKNgOHs3mvH8k4PomgWB9UrFL07+QNXYwFao66/dz0zBxsX4sgloFkE5thwJXEao86lFxAHjHMshRGppgHKKFVlPSGSxKmRn45bC2AYvnG53G9umgDHvgokhNPyVhPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730101341; c=relaxed/simple;
-	bh=EWJQDD7obHTMVklwOprn4LOtstavOuKcai/H4EXO3xQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j34ck28LR9eQJkmU8vleQoK6Idu7R+3qWHJNvxbGWE69y8LRaafE6MLBRX2/Q4k0DPkr1tTwQttWRkDeTIOiMP60LLUn4FpvyUn2SBCj0DGx+N4VB34v+w7PDHqL7javXRjVGDbUwupvhiNyZbIySj64dH8yjm+hr6xks6O0E4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MupB10g9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD510C4CEC3;
-	Mon, 28 Oct 2024 07:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730101340;
-	bh=EWJQDD7obHTMVklwOprn4LOtstavOuKcai/H4EXO3xQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MupB10g9s5uE7FnsWht3D3JW07DASnhSjQMXk/eIKeUiLjoNB3nO7ZU+I9Q5+S7EW
-	 N64+vwYpmPwTPy1zLGilVR14kIOQ0VKz9BzqzZMPS883iTPgGmBepUHOf+47in15t+
-	 Ee9ysRPHKdlUUk2LvVf5S+5XvO5TZJ3MjxGtrXNDj/uHUQnf0jyfxrcScWl/B3cbJT
-	 OG6p7/v3KjnejT/iF0kod8PTohS+T2KbbMW7ECAh6xci6tfPDeSS6rJw69o4h4MrW5
-	 EAkKPKAGL88tANdPPhabKSwMW9Bln8BFGQvDsq+pIEknTL94F3RxwzVv6oaZyShryD
-	 Uv8Jp4haIB4Kg==
-Date: Mon, 28 Oct 2024 08:42:17 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: add ltc4296-1 support
-Message-ID: <3n65dk5apiscbsibv7va6eie2xpx5epwewzkewrf7pzjctjpwz@vuikaxmzicmu>
-References: <20241025115624.21835-1-antoniu.miclaus@analog.com>
- <20241025115624.21835-2-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1730101365; c=relaxed/simple;
+	bh=JXKFC5VpBEHlPtIfVygRx6UJGuI4jfPDIOIO3j1t/UI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MPC4bpXeNC3JaKQ4k0lXMjANUl0jl/g8eMGo/IzI+1cJtSBgYUVz/thFu9pulK2r+4lOe0jGf3g/K3pDTi+c6RkHbDLMdeLo061v7ZMu1r2WZYLPA5mMyVke8hgHKBnRyt4x+v4xKNmhB05Wy5ja1PsnqmDOV4JZoubJUVXWuEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KMQckb+5; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e2bdbdee559so4013304276.1;
+        Mon, 28 Oct 2024 00:42:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730101362; x=1730706162; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VfSo/759X3OS9N787muqObE8V5tHxeovvU61U0ecmlE=;
+        b=KMQckb+5T6gK2NSrN17OK8Xcm6Qj4tgxaLsZqEBhC2DtYsOcS52bpqDzxX71pMAOOg
+         4Sz1sEECWyIslcTdkkgaNPmpCb00fAR1Ur7zZxjYhpr8wtphrbUuCMzO4TX+eUWufDLx
+         b1Buy6GKmpuXuI4gP9BNRD18blCWwipi8BiWw9qcoIJypThNw8AeGqTyALrLfabQcrN6
+         SlxapW3jmEqeAv/CqcK0cQMqFAQ6IDl/Uc4Tbe1rCYUdVAWKB9QC04vn74GEfQl6JT6G
+         Lfyl3nmfzanlCpQaq+SkuSTr/VY+r6J2O2pV0gIJL4hTNJ+6kMFI+6CoqUp8GyEj7ysQ
+         NsFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730101362; x=1730706162;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VfSo/759X3OS9N787muqObE8V5tHxeovvU61U0ecmlE=;
+        b=ssFxPa5qD9uq/hkVwONu1DUzuMaEjygNOcudiGDAoSjKpq1Dt6xlyXrlwJabveIUfC
+         Wzjswe2S+TPOxNdGbxNz8b6BBXAQqQ7+kLfMd19ooC0cB991Sk4vbk+TQSSupMGEvSlN
+         MwQvBjoZJD0TlsacUsnbwaa4nLPrip1Jk8z+9TtOBxAsoIDPUQHSwGHFALo2T2wwPjcx
+         WM/QpKGFwQ97yY1QMJhLG1GJQuxL4tUvtuYHL94MEjCfca2RgbmPOjIRJAICXLemtqmw
+         ULk7tOx2rn0yPCPX3gI9RH1hm3EldmvMdLn55zbtEDs/hd40Glpn8mcjNO4rMQBoWMM5
+         SDFA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5VySnwaZk0UH+8rwIwzZwOxX3MpvSA/wB4xCgEEDmLMq+hMZk8H3SR+pJNl/PJYyl6JeUYMYk1/iLCn4zlrA=@vger.kernel.org, AJvYcCUNlLwLlOzJLMFftHDNmKY0YkBdLEM6dOuOyJ0EkkNP4IWCwKEgQynZ49Mpavmf3FELCC++BWFpLtnnmYW4@vger.kernel.org, AJvYcCUZRMLqTqR2K3Bkhaneg3fxcibV6oZrC43kWR7Q9cBoMWGyBKMXfw6E7ezTITQIXNYqXHxMws3pXI+xkm8=@vger.kernel.org, AJvYcCUud7YTywR2UfyJ8rmdPcGSm2zbd8s0cA0tRL3K9RVgGhlMZvZtPktcw49OWZ089MG8FyfMr1Sa@vger.kernel.org, AJvYcCUwFZoubqJHO65zruExH4E16s1yriVYNPut8js34NhPeYo5OmyWzYaf0JpqQj+A7hURI0IlEMVr/krD@vger.kernel.org, AJvYcCVG3NvXhj9tyxd45MjRiuamZAcsx3KZwQhyQvWCnv0Hb0QG0xU8waXC82IHKrOxHDu83c5BaFIEnqI=@vger.kernel.org, AJvYcCVLlnGkX6tc64QONhAHSCXK5JmHXHbSw98HcDg2a3JxBnxiTJ1yVBqxnjRwhwbIUMe/iUphsPPodRsR@vger.kernel.org, AJvYcCVeLpdHLOVyR/jkQnnVolYJXJJE2d1054dykJwKQQ5R1Iv8alQJo328bPYgWPi1mVJ1VbplSdLHqvVnmA==@vger.kernel.org, AJvYcCWzQmEsks6gGXeEBN3/xrNYin0mT2C2JmxUYLu1DJo6CAnUVK0L0dC4e6l5UeWkwMFu7oDsbK2P+5Fz@vger.kernel.org, AJvYcCXbKqO0Nj5w5SbEMTnI+WcQvEMpQFgV
+ GlPYFBS0N/B9fuoys5bKe/fiLoKaic69WNIiRb9miyPo5C/F@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGK6k9K8KaaZ2bs445ksmiQSY2km5+SKM9K3DeoTyb74Qqm3OV
+	t82PA10igC8c3nezB25h98gg9d76ThKfi9vHdODT/Drn31vJHYjYaDEfJQXOzk2ueq7wTLrCW5O
+	p7EdoWfxlqkvxRtsA9HrblkiHDt4=
+X-Google-Smtp-Source: AGHT+IE7sSyqDVHOJ/jdGq64MHZ+33bDq+P02VTEX3r+LWDoPL8/lqvTrSpBYuxjao1IdyrL/sL8NYhH1E5VS7+KILg=
+X-Received: by 2002:a25:2611:0:b0:e2b:ade5:b925 with SMTP id
+ 3f1490d57ef6-e3087becb3amr4891484276.43.1730101362407; Mon, 28 Oct 2024
+ 00:42:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241025115624.21835-2-antoniu.miclaus@analog.com>
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-7-tmyu0@nuvoton.com>
+ <CAH-L+nPGGhgDFge0Ov4rX_7vUyLN8uu51cks80=kt38h22N7zQ@mail.gmail.com>
+ <62ea5a91-816f-4600-bfec-8f70798051db@roeck-us.net> <CAOoeyxX=A5o5PhxpniPwPgMCBv1VwMstt=wXCxHiGPF59gm5wQ@mail.gmail.com>
+ <817d24e1-6fdd-4ce2-9408-eccc94134559@roeck-us.net>
+In-Reply-To: <817d24e1-6fdd-4ce2-9408-eccc94134559@roeck-us.net>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Mon, 28 Oct 2024 15:42:31 +0800
+Message-ID: <CAOoeyxXiihVEbCri5=0xdQ2EWO=NJv2Y5a-nRLFEez391Lnmbg@mail.gmail.com>
+Subject: Re: [PATCH v1 6/9] hwmon: Add Nuvoton NCT6694 HWMON support
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>, tmyu0@nuvoton.com, lee@kernel.org, 
+	linus.walleij@linaro.org, brgl@bgdev.pl, andi.shyti@kernel.org, 
+	mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, 
+	ukleinek@kernel.org, alexandre.belloni@bootlin.com, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 02:56:10PM +0300, Antoniu Miclaus wrote:
-> Add devicetree bindings for the ltc4296-1 device.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> ---
->  .../bindings/hwmon/adi,ltc4296-1.yaml         | 105 ++++++++++++++++++
->  1 file changed, 105 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/hwmon/adi,ltc4296-1.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/adi,ltc4296-1.yaml b/Documentation/devicetree/bindings/hwmon/adi,ltc4296-1.yaml
-> new file mode 100644
-> index 000000000000..be73d59a7d65
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/hwmon/adi,ltc4296-1.yaml
-> @@ -0,0 +1,105 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +
-
-If there is going to be new posting: drop blank line.
-
-> +$id: http://devicetree.org/schemas/hwmon/adi,ltc4296-1.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: LTC4296-1 5-Port SPoE PSE Controller
-> +
-> +maintainers:
-> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
-> +
-> +description: |
-> +  The LTC4296-1 is an IEEE 802.3cg-compliant, five port, single-pair
-> +  power over Ethernet (SPoE), power sourcing equipment (PSE)
-> +  controller. SPoE simplifies system design and installation with
-> +  standardized power and Ethernet data over a single-pair cable.
-> +
-> +  Datasheet:
-> +    https://www.analog.com/en/products/ltc4296-1.html
-> +
-> +$ref: /schemas/spi/spi-peripheral-props.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    const: adi,ltc4296-1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#address-cells'
-
-If there is going to be new posting: use consistent quotes, either ' or
-".
-
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 0
-> +
-> +  vin-supply: true
-> +
-> +patternProperties:
-> +  "^channel@[0-3]$":
-> +    type: object
-> +    description:
-> +      Represents the current monitoring channels.
-> +
-> +    properties:
-> +      reg:
-> +        description:
-> +          The channel number. ltc4296-1 can monitor 5 currents.
-> +        items:
-> +          minimum: 0
-> +          maximum: 4
-
-maximum is 3, right?
-
-> +
-> +      shunt-resistor-micro-ohms:
-> +        description:
-> +          The value of curent sense resistor in micro ohms.
-> +
-> +    required:
-> +      - reg
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - vin-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        hwmon@0 {
-> +            compatible = "adi,ltc4296-1";
-> +            reg = <0x0>;
-> +            vin-supply = <&vcc>;
-
-Why no channels here? What's the point of such node if you do not
-monitor any channels?
-
-> +        };
-> +    };
-> +  - |
-> +    spi {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        hwmon@0 {
-> +            #address-cells = <1>;
-> +            #size-cells = <0>;
-> +
-> +            compatible = "adi,ltc4296-1";
-> +            reg = <0x0>;
-> +            vin-supply = <&vin>;
-> +
-> +            channel@0 {
-> +                    reg = <0x0>;
-
-Use 4 spaces for example indentation.
+Understood,
+Thank you.
 
 Best regards,
-Krzysztof
+Ming
 
+Guenter Roeck <linux@roeck-us.net> =E6=96=BC 2024=E5=B9=B410=E6=9C=8825=E6=
+=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=8811:44=E5=AF=AB=E9=81=93=EF=BC=
+=9A
+>
+> On 10/25/24 08:22, Ming Yu wrote:
+> [ ... ]
+>
+> >>>> +static int nct6694_fan_write(struct device *dev, u32 attr, int chan=
+nel,
+> >>>> +                            long val)
+> >>>> +{
+> >>>> +       struct nct6694_hwmon_data *data =3D dev_get_drvdata(dev);
+> >>>> +       unsigned char enable_buf[REQUEST_HWMON_CMD0_LEN] =3D {0};
+> >>> [Kalesh] Please try to maintain RCT order for variable declaration
+> >>
+> >> Ok, but that is already the case here ?
+> >
+> > [Ming] Is there anything that needs to be changed?
+> >
+>
+> I don't think so, If two lines have the same length, the order is up
+> to the developer to decide.
+>
+> Question though is if the buffer needs to be initialized. You should drop
+> the initialization if it is not necessary. In that case the second line
+> would be shorter anyway, and the order question would not arise.
+>
+> Thanks,
+> Guenter
+>
 
