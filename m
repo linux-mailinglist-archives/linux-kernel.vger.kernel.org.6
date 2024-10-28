@@ -1,114 +1,250 @@
-Return-Path: <linux-kernel+bounces-385854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72BE89B3C99
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:19:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DD8C9B3C9F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E2AE2834A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:19:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C85551F223FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595EC1E131B;
-	Mon, 28 Oct 2024 21:19:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602061E133E;
+	Mon, 28 Oct 2024 21:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MzcI5eq0"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCllN0g/"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9430E1D2796
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39DA31D2796
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:24:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730150379; cv=none; b=uCpDP4W5uv9Eoza8wL5rNVvkLHz04E6ZZ3PJwnOFuRK/bSxCMPLaQya4RcUv/BV/TGY940xR3QqjVIiyA52xipWczxmSMxHyX8gGTh6/1TbBAq5GWTUZbd5N6V54lx8o3nko35uzhHxAko+pyr0rM1sZWUh7bMIqb2PbWMvx36M=
+	t=1730150682; cv=none; b=Olr8SrsLGsbZQs7cbxnaOWFqDa9lE8I+3QW35cmF5pBTl7QtIqgHYCIzrvTi5mzr3Zh0/AXFCP4XUzEbWURsxrRsNvN7t/KLrKPV3u5qRQrrYt4J2IGKvS5ARKLW41blTRomSHyXZjjjJn52qcewnLGen1c0Z+ynhiiGy4vczrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730150379; c=relaxed/simple;
-	bh=qnYSOkyMUfx970F2JttE5wT/wD2MOoWszsIrP+Tu/YA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pDYlf9zZ9+s4yJ0QdFQQ38y0M+7l/G/wOE3sClWBzJ7dDIzjsFNPLCnptlx9KEJzUO7/DkHmrT4srIZDP2lV2p+U8K9PTWoYUIsr+rdWDkduUq+HTmY6FvTZ2IIgi6mJgZsP0IpaSGh4n9ycyFvn21ilaTNLUVhZ+cqbBMLFYTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=MzcI5eq0; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cacb76e924so6088448a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:19:37 -0700 (PDT)
+	s=arc-20240116; t=1730150682; c=relaxed/simple;
+	bh=p2PYmucEQv6E4VxBKLKehv714MRmf+EhsbFgoLrbIEk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MyoBRwrU+Sghz9hmQB/8uE2DXwoBIb/6bOs5LVbtpPUbCWw6yNNS8bb4tskYGxA5Ig4sXin1LBNRk1BPMRT89XlQazaGAV60mcHNlzDNjb02Dv6/xGaDxTUaNhYNAnXPRlxoOqfgLM9lZkBNdcrF4quiu5c3Kfp17+vpMcnyECg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCllN0g/; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-431688d5127so46722865e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:24:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1730150376; x=1730755176; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LzKMMOiYz+t4fL3FqCrSRgCEZ8AU86AJ+y2q5X06rvw=;
-        b=MzcI5eq0tFgJ4pf637FmPOVYDDnvYq/P0AgO8PczEDoA+SdsG+kHUiQV0/RqpZpvBX
-         zmN30L7curbDzqnCGxu7m2MhaevX+E8UHXSJdxcrTw/kUdNgpysMKUgtNAxeF+byE0/q
-         kHvSeT3MLUqPhqQRHOijeV5BVlfCiN8uFJgoc=
+        d=gmail.com; s=20230601; t=1730150678; x=1730755478; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Oed+vVceGHLTzayqS+WrKDwhcbGWW3zACgltsulU49Q=;
+        b=ZCllN0g/hx0UdSYRdDfkyge8qqZod8p1y/OKzjj5yw2uirnrbUA4/T1axp2fovA5po
+         1oRmjL0ew6Z0qa7KfDwAbgaECKhXtGNZwem/y4zlMiQzVQ7FGaejNM6WwPEhaW/ruiT1
+         ZrucG7RHFJxXdEj6+ZGENDRbTdOOqbqn5MzCgKhDkrjOtO902HRWlWKzD6pEJyq0ZXAh
+         17x+uwDC7xJgMAJchd/VkPwK4pTMr3PeYztw0IkdAydW4HKUd0N1ELLdhSZYGA5ZUqtC
+         Ie0db/ShLWp+HUexYqDcqKyxZLUsaHFSFU2r7XsgnEO/nXqwUPp6e3Fho/xJQ/+lbu4Q
+         eXmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730150376; x=1730755176;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LzKMMOiYz+t4fL3FqCrSRgCEZ8AU86AJ+y2q5X06rvw=;
-        b=jgor86OXWGAykm1OpxLPAKnvdPA1IjuYk2MCrz3EV/BkajqpUvQYfyYq9pw2x3OiKA
-         T4L4SmZ9t8KOam7wiP6gCR6OsNSS0HwNiFY5fR3zF4ch2Ey0T5QA1Plw900sfKC9EvjI
-         LRTdmbKHHD+peF/IZisoMh8g50mRomm0xzPseh6VPaVZFotnEhYGV4Pv7Jo0FKnH/7Ix
-         Adef45WuaLUJO/m32wpdfLiAFmKbaf9juNzO9WrRnBR0Ty9T0YG5KxVEJntHxzHRntFk
-         6Lq9ALv/4M/Ds6FDC3drdA1eOrm5QfkWqrGAQeaCAaJato1RUuOL47ZBCXswovweTqYW
-         GtGw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7bGUVTMNe2cY+O6P0Y+c/zhE8/OD/fjBvQnoEkMG4DWjH4bXIoQnIx7YUvcxBCcb2y0fPuiOhRLML+Zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/AotPF3bbR3teGgx55y7RBULHQ5UfoKl4kTdMZvs/TLLr9YDW
-	OM8fGo6Q3VBlYtOQawGmsG9B6AdLLhgL2Z4AwakX6X2/CvG+Cgl6Wu6mU7GA+vNKTdSwGXuJJGE
-	AODvAXQ==
-X-Google-Smtp-Source: AGHT+IG7/ALQyz4IO2iHWvF+zVKhZQKd3uqYphy2hidFfpJMhjUf7SV55vwTnOHDo1JXGWAXH8g0QA==
-X-Received: by 2002:a05:6402:5203:b0:5c2:6d16:ad5e with SMTP id 4fb4d7f45d1cf-5cbbf8c616fmr6945264a12.19.1730150375716;
-        Mon, 28 Oct 2024 14:19:35 -0700 (PDT)
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com. [209.85.208.54])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb62c4547sm3439460a12.53.2024.10.28.14.19.33
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1730150678; x=1730755478;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oed+vVceGHLTzayqS+WrKDwhcbGWW3zACgltsulU49Q=;
+        b=Dw1TTC9kbT45IOWJR85HnRt/aFdE4JixZp7e3bwkaW8rvNllhTvXUOWfLQJobRcMCR
+         ut0XSTQ3HGFvvdvgxMDHWmLNsW0MwDB++TX5+YSD/aRvG6gUrsUlz7aRBbYreMJrj4U9
+         aEsTDZC+X+TsptPta0WMfw4lMLGOZUCb/5SU0cznvznYZ9jLH6OPdPswksaiXEN0lBBY
+         rfmaIXLehUViBUDkt2Di71eBPcJ3OImeXuTvhDr4PNIYUwQf3wJyQTOXJkv1MAd7WGxC
+         i2P3rzTt0VFaNRGi6XWX88jDMw+hapcg5s/ex6y8MUlG+NE3rZ5ytp/WzxLupWwXP7Fk
+         s3rw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbjUdevKbDMHuu80hL4aOKQ2yeDRumfIpv5FBy17KsYbzcBdvzfqFddoG/phJNoMmw/AIhEnCstVWgFx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzD4Hi+RwT3OkgsWJZxxP95Oi9442Cl6Lx+dakBLnJwl0F8cRam
+	G2SO3Fyg5Fur/SQS3cUZi+18S2oG3SIvroG+SxWQEViEvLxcSfFK
+X-Google-Smtp-Source: AGHT+IHm9bK89VA/vyBQ6S6INiWqxPY/CUvqv1nLEHdrOQY2ODnDT1xf4fdBzl+QueUySBvoJNJXOQ==
+X-Received: by 2002:a05:600c:1d01:b0:42c:a6da:a149 with SMTP id 5b1f17b1804b1-4319ad048cdmr85905405e9.25.1730150678285;
+        Mon, 28 Oct 2024 14:24:38 -0700 (PDT)
+Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f74f9sm124399075e9.31.2024.10.28.14.24.37
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 14:19:34 -0700 (PDT)
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9454f3bfaso5642642a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:19:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU6OMYuD8R5/q8Tb+TJMj5W5z8YMC5p26Gu3JeLW/B1LwCYojzCzTcj0aK3kUcLV8ZB2Wf78UDHFV56PK0=@vger.kernel.org
-X-Received: by 2002:a17:907:d2a:b0:a99:87ea:de57 with SMTP id
- a640c23a62f3a-a9de5ca5ec8mr765253066b.2.1730150373413; Mon, 28 Oct 2024
- 14:19:33 -0700 (PDT)
+        Mon, 28 Oct 2024 14:24:38 -0700 (PDT)
+Message-ID: <228c428d-d116-4be1-9d0d-0591667b7ccb@gmail.com>
+Date: Mon, 28 Oct 2024 21:24:37 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729715266.git.lorenzo.stoakes@oracle.com>
- <6e8deda970b982e1e8ffd876e3cef342c292fbb5.1729715266.git.lorenzo.stoakes@oracle.com>
- <61461dcc-e455-450d-9c01-5465003fc31c@sirena.org.uk> <c24a174d-c8f3-4267-87ae-cf77fa587e82@lucifer.local>
- <CAHk-=whD9MrPwPMBgVG16T_u+my8xYtZg2tUGz932HeodVX7Bg@mail.gmail.com>
- <438f50c5-8b8c-444f-ae85-10e5151f3f24@lucifer.local> <57mgmdx7wgfwci3yo3ggkmcnm3ujamgkwcccm77ypvmer5tegn@opiq3ceh2uvy>
- <ykzmur56ms7fm4midi6tbncjvcvf7ue4lp7e4orblrmwnefw3e@oa3enlpdrcrr>
- <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local> <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
- <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
-In-Reply-To: <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 28 Oct 2024 11:19:16 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
-Message-ID: <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
-Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region() error
- path behaviour
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Mark Brown <broonie@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Aishwarya TCV <Aishwarya.TCV@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
+To: Barry Song <21cnbao@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
+ akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Barry Song <v-songbaohua@oppo.com>, Chengming Zhou
+ <chengming.zhou@linux.dev>, Johannes Weiner <hannes@cmpxchg.org>,
+ David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>,
+ Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Andi Kleen <ak@linux.intel.com>, Baolin Wang
+ <baolin.wang@linux.alibaba.com>, Chris Li <chrisl@kernel.org>,
+ "Huang, Ying" <ying.huang@intel.com>, Kairui Song <kasong@tencent.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
+References: <20241027011959.9226-1-21cnbao@gmail.com>
+ <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
+ <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
+ <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com>
+ <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
+ <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com>
+ <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
+ <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com>
+ <CAGsJ_4zQmaGxG2Ega61Jm5UMgHH-jtYC4ZCxsRX6+QS9ta25kQ@mail.gmail.com>
+ <882008b6-13e0-41d8-91fa-f26c585120d8@gmail.com>
+ <CAGsJ_4yBkry-rw75AciT8OiYWrw+=D0okcxiyXzzNrz=QJxiBA@mail.gmail.com>
+ <cba36cb0-66c7-45c1-97c3-a96ea48a6cf0@gmail.com>
+ <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 28 Oct 2024 at 11:00, Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> VM_MTE_ALLOWED is also set by arm64's arch_calc_vm_flag_bits():
->
->         if (system_supports_mte() && (flags & MAP_ANONYMOUS))
->                 return VM_MTE_ALLOWED;
 
-Yeah, but that should just move into arch_validate_flags() too.
-There's no reason why that's done in a separate place.
 
-                     Linus
+On 28/10/2024 21:15, Barry Song wrote:
+> On Tue, Oct 29, 2024 at 4:51 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>
+>>
+>>
+>> On 28/10/2024 20:42, Barry Song wrote:
+>>> On Tue, Oct 29, 2024 at 4:00 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 28/10/2024 19:54, Barry Song wrote:
+>>>>> On Tue, Oct 29, 2024 at 1:20 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 28/10/2024 17:08, Yosry Ahmed wrote:
+>>>>>>> On Mon, Oct 28, 2024 at 10:00 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 28/10/2024 16:33, Nhat Pham wrote:
+>>>>>>>>> On Mon, Oct 28, 2024 at 5:23 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>> I wonder if instead of having counters, it might be better to keep track
+>>>>>>>>>> of the number of zeropages currently stored in zeromap, similar to how
+>>>>>>>>>> zswap_same_filled_pages did it. It will be more complicated then this
+>>>>>>>>>> patch, but would give more insight of the current state of the system.
+>>>>>>>>>>
+>>>>>>>>>> Joshua (in CC) was going to have a look at that.
+>>>>>>>>>
+>>>>>>>>> I don't think one can substitute for the other.
+>>>>>>>>
+>>>>>>>> Yes agreed, they have separate uses and provide different information, but
+>>>>>>>> maybe wasteful to have both types of counters? They are counters so maybe
+>>>>>>>> dont consume too much resources but I think we should still think about
+>>>>>>>> it..
+>>>>>>>
+>>>>>>> Not for or against here, but I would say that statement is debatable
+>>>>>>> at best for memcg stats :)
+>>>>>>>
+>>>>>>> Each new counter consumes 2 longs per-memcg per-CPU (see
+>>>>>>> memcg_vmstats_percpu), about 16 bytes, which is not a lot but it can
+>>>>>>> quickly add up with a large number of CPUs/memcgs/stats.
+>>>>>>>
+>>>>>>> Also, when flushing the stats we iterate all of them to propagate
+>>>>>>> updates from per-CPU counters. This is already a slowpath so adding
+>>>>>>> one stat is not a big deal, but again because we iterate all stats on
+>>>>>>> multiple CPUs (and sometimes on each node as well), the overall flush
+>>>>>>> latency becomes a concern sometimes.
+>>>>>>>
+>>>>>>> All of that is not to say we shouldn't add more memcg stats, but we
+>>>>>>> have to be mindful of the resources.
+>>>>>>
+>>>>>> Yes agreed! Plus the cost of incrementing similar counters (which ofcourse is
+>>>>>> also not much).
+>>>>>>
+>>>>>> Not trying to block this patch in anyway. Just think its a good point
+>>>>>> to discuss here if we are ok with both types of counters. If its too wasteful
+>>>>>> then which one we should have.
+>>>>>
+>>>>> Hi Usama,
+>>>>> my point is that with all the below three counters:
+>>>>> 1. PSWPIN/PSWPOUT
+>>>>> 2. ZSWPIN/ZSWPOUT
+>>>>> 3. SWAPIN_SKIP/SWAPOUT_SKIP or (ZEROSWPIN, ZEROSWPOUT what ever)
+>>>>>
+>>>>> Shouldn't we have been able to determine the portion of zeromap
+>>>>> swap indirectly?
+>>>>>
+>>>>
+>>>> Hmm, I might be wrong, but I would have thought no?
+>>>>
+>>>> What if you swapout a zero folio, but then discard it?
+>>>> zeromap_swpout would be incremented, but zeromap_swapin would not.
+>>>
+>>> I understand. It looks like we have two issues to tackle:
+>>> 1. We shouldn't let zeromap swap in or out anything that vanishes into
+>>> a black hole
+>>> 2. We want to find out how much I/O/memory has been saved due to zeromap so far
+>>>
+>>> From my perspective, issue 1 requires a "fix", while issue 2 is more
+>>> of an optimization.
+>>
+>> Hmm I dont understand why point 1 would be an issue.
+>>
+>> If its discarded thats fine as far as I can see.
+> 
+> it is fine to you and probably me who knows zeromap as well :-) but
+> any userspace code
+> as below might be entirely confused:
+> 
+> p = malloc(1G);
+> write p to 0; or write part of p to 0
+> madv_pageout(p, 1g)
+> read p to swapin.
+> 
+> The entire procedure used to involve 1GB of swap out and 1GB of swap in by any
+> means. Now, it has recorded 0 swaps counted.
+> 
+> I don't expect userspace is as smart as you :-)
+> 
+Ah I completely agree, we need to account for it in some metric. I probably
+misunderstood when you said "We shouldn't let zeromap swap in or out anything that
+vanishes into a black hole", by we should not have the zeromap optimization for those
+cases. What I guess you meant is we need to account for it in some metric.
+
+>>
+>> As a reference, memory.stat.zswapped != memory.stat.zswapout - memory.stat.zswapin.
+>> Because zswapped would take into account swapped out anon memory freed, MADV_FREE,
+>> shmem truncate, etc as Yosry said about zeromap, But zswapout and zswapin dont.
+> 
+> I understand. However, I believe what we really need to focus on is
+> this: if we’ve
+> swapped out, for instance, 100GB in the past hour, how much of that 100GB is
+> zero? This information can help us assess the proportion of zero data in the
+> workload, along with the potential benefits that zeromap can provide for memory,
+> I/O space, or read/write operations. Additionally, having the second count
+> can enhance accuracy when considering MADV_DONTNEED, FREE, TRUNCATE,
+> and so on.
+> 
+Yes completely agree!
+
+I think we can look into adding all three metrics, zeromap_swapped, zeromap_swpout,
+zeromap_swpin (or whatever name works).
+
+>>
+>>
+>>>
+>>> I consider issue 1 to be more critical because, after observing a phone
+>>> running for some time, I've been able to roughly estimate the portion
+>>> zeromap can
+>>> help save using only PSWPOUT, ZSWPOUT, and SWAPOUT_SKIP, even without a
+>>> SWPIN counter. However, I agree that issue 2 still holds significant value
+>>> as a separate patch.
+>>>
+> 
+> Thanks
+>  Barry
+
 
