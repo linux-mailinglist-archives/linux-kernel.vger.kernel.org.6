@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-384671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B804E9B2D11
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:40:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F36FC9B2D14
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBA651C218B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:40:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED6B1C2190B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:41:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83FA51D460B;
-	Mon, 28 Oct 2024 10:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61631D4337;
+	Mon, 28 Oct 2024 10:41:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ccWsdmg9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hW0p+vWX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5FE61D2B37
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F902192B98;
+	Mon, 28 Oct 2024 10:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112030; cv=none; b=UZKQ1cluTU/JBzp3RmfIRsa18MU2Sf778bsnQOSO7SYM8HzY1K2CSVcvWvT6QPx133nDLXD/M1TK0rSEdj7os3RvbvDxRMVexvGlJqi4bBX6MZ1/Rus3tKCVpBycI6142DI0UTp3xPP4fENgYUMos7s+fLSiBM/mPlUITHXLN3E=
+	t=1730112065; cv=none; b=kZNH0XjrePYaX+d5Hk/ua6bH9giR9ZC5EbsK/B1K6raMc7UP3gvcr+/47yyMB8V7mv0llr4SXVr3wGWBZnu6lFTXasdfkkqQzCu/L3LZ/K7G4gog+Iom7/JngFeQAt6E7HYI0N7k6CPbTrCoSdAlvrPxRQ5s6/N0zhqyKFw2beI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112030; c=relaxed/simple;
-	bh=wgvOFR93MVO34Tw2IcLbYfyQPbmBhtl0ULhFWXPap/s=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=msMLqhxlHrs7Z4XvMG9T1keeS1FrbUUr2tB5sVauGPq+JCp7fCeplPHcctW0rWx095BiuGmENeqciVbZSoE2x0sI7vwbq5Kdmb4OcWkyaavFM4QPphURCQgW44sCnuYjWV0Cf+Eg2GAgIgUFN016uuDYVWeITTiIKAnbvQKBmqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ccWsdmg9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730112027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BdaIiJhMXSQOqg5cTY+NEVANs9jRAw6a5nwQGChQ1Wk=;
-	b=ccWsdmg9DQxELAd5Sc2MNXvb/cUEtKGNH85idIbGDlIxUWeoq1oODLFiBDljkaT/ImQ3LI
-	xK3Nbo0nMwkOZO/yyrI0N6vA5igO+BinswP1T24Lqoj66va/f2x9MgTDUMLHWxWdo1+Wlx
-	bft/sAaPchyF6VP7t78ygfOPtkPZrl8=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-5-U6MzvDJ-MdWZPOnQQU91KA-1; Mon, 28 Oct 2024 06:40:26 -0400
-X-MC-Unique: U6MzvDJ-MdWZPOnQQU91KA-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d662dd3c8so2236608f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:40:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730112025; x=1730716825;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BdaIiJhMXSQOqg5cTY+NEVANs9jRAw6a5nwQGChQ1Wk=;
-        b=hhOFi+6b+EIz9/nSYe/VwesxLX1qWgKI0jWealRzCw1I/Y6x8MD4J/dsyU7sWTMFZI
-         ippBwihOL8KTQ5py1YDMc+5lBNACvMyYS8CANvNYm3h1sLwZQo3MvWN5tBQAp26jSfjY
-         Zy0MH7cZJJeyBb8CHb3CNF3EyjT56hqgnLUgkLiEHulyFWRXtNLpkaoyGxZuw9nnlehG
-         VqxFoTyxmWiB4FEX51VzabqIZLfbOuyM87AXKmzUOrf/BEvM0OccCh2X3IofozcI7nA6
-         ejUF2TuninTMuup21Vm7E2ITLG7sCoSk6PH3hSVdAeOVjpWHo/p6L5olI2G/MKQAmlNW
-         wzcw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRQiXcgUzoc3jFBYvAsv8vBPHFUl6b/YrRB6zOq3ojirXF4CRKeTx6fMqYDXZGDp5VZsmdf/QhWSuX8FE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoViGeh5RO4EQ4dau4JELMDjEVHgWH4xzo0fVRxlaSG0EMwpy8
-	BBf8If9er18kjOUm0/vP5LSVad258tPf5dHdh2p6LBOHVck1t0HiRId41R9+JsDCB5HhnluLUBO
-	DmE/i7ns2pQ/8BMqFBvamXNEaOlpSfoAMSsl+kP03j6v26g2yO29j0rMIvaocxw==
-X-Received: by 2002:a05:6000:10cc:b0:37c:cc4b:d1ea with SMTP id ffacd0b85a97d-380611f5ff0mr6235198f8f.53.1730112025332;
-        Mon, 28 Oct 2024 03:40:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGV0jRZSl++wHd4benXoWusxKV2hjEC/fjXGopqXIYY1Es/myN/5gcaoAwev1TcMGRGMWoTVw==
-X-Received: by 2002:a05:6000:10cc:b0:37c:cc4b:d1ea with SMTP id ffacd0b85a97d-380611f5ff0mr6235170f8f.53.1730112024946;
-        Mon, 28 Oct 2024 03:40:24 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b71231sm9077127f8f.66.2024.10.28.03.40.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 03:40:24 -0700 (PDT)
-Message-ID: <071fa927-dcaf-4df2-b175-5ed6a200f112@redhat.com>
-Date: Mon, 28 Oct 2024 11:40:23 +0100
+	s=arc-20240116; t=1730112065; c=relaxed/simple;
+	bh=UZSZxr/HG9RX28U6C4Z9wIsayGdx5uiLoXfcknt/cWw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V31GLajFs1v7sGml0NyRiuA6LpC+p5otH7BymxCTW8CFvWm4uJJg9vwEM6DU7JPHH07owOdYsBj+purna8eFQODCRlZHXO855KCFflt7CG8u8sUiXoXjRg8yJnu2h/V1WzIT8PLED9+i7vEHRAeQ8hUTVuCU9wR+Y7orlEcLBT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hW0p+vWX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RLfHdp004837;
+	Mon, 28 Oct 2024 10:41:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nAg5WQp6r9XHYcfiTy3LVub8K2pf/58GuSBUm35yAV4=; b=hW0p+vWXWWppOLkr
+	yIJooWF09p0JvuTX21b1p5vVhlk3It7/TCf3jQWCiHM7ZroxCxtnY/R+uU52IoaW
+	IDsS8Wvsbu+nfNdfXnasn6E0Y0OFGu0MFvqgqenb5EWdAhDbL614TlZf2dwb2YPj
+	JJ9qn/L6AEolN61aCA74xXKF4DjiwMxG+A1yeLjFthilUSVUPJk/wd4rKJHOsvHo
+	60/ztP6Calv0JsAwe/WO6Qz7vmyi5J5weZjVf6FL7BuGbyTdEYh80C9WkAiJP89U
+	AZrx+3ro89AXkR1GeP+ZN1fVmp6IiPEUvnXOuBBNB0ZqLvUXc1aEX/L3P+oyaBDT
+	a+xLvg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6vg7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 10:40:59 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SAewdU013785
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 10:40:58 GMT
+Received: from [10.216.3.216] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 03:40:54 -0700
+Message-ID: <0a0647aa-1fa4-4149-a76d-da7e08034fe4@quicinc.com>
+Date: Mon, 28 Oct 2024 16:10:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,92 +64,117 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/6] memcg-v1: remove charge move code
-From: David Hildenbrand <david@redhat.com>
-To: Shakeel Butt <shakeel.butt@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>,
- Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org,
- cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
- Meta kernel team <kernel-team@meta.com>, Michal Hocko <mhocko@suse.com>
-References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
- <20241025012304.2473312-3-shakeel.butt@linux.dev>
- <f18fa492-5d59-4708-95f6-9878fffdf859@redhat.com>
+Subject: Re: [PATCH] mmc: sdhci-msm: Slot indexing for distinguishing multiple
+ SDCC instances
+To: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_cang@quicinc.com>,
+        <quic_nguyenb@quicinc.com>, <quic_bhaskarv@quicinc.com>,
+        <quic_mapa@quicinc.com>, <quic_narepall@quicinc.com>,
+        <quic_nitirawa@quicinc.com>, <quic_rampraka@quicinc.com>,
+        <quic_sartgarg@quicinc.com>
+References: <20241022141828.618-1-quic_sachgupt@quicinc.com>
+ <3e2f8132-af87-40c0-9c31-c0103078fe39@intel.com>
+ <1cb1e8c1-63f4-4752-8358-b5c7078f9c6b@quicinc.com>
+ <be483786-d8d2-4d46-9ca2-fbb629ba0674@intel.com>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f18fa492-5d59-4708-95f6-9878fffdf859@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Sachin Gupta <quic_sachgupt@quicinc.com>
+In-Reply-To: <be483786-d8d2-4d46-9ca2-fbb629ba0674@intel.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: rM9oJELF4j0Aug5VMBmUjWNqiCQuSU4a
+X-Proofpoint-GUID: rM9oJELF4j0Aug5VMBmUjWNqiCQuSU4a
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280087
 
-On 28.10.24 11:22, David Hildenbrand wrote:
->> -
->> -	pgdat = folio_pgdat(folio);
->> -	from_vec = mem_cgroup_lruvec(from, pgdat);
->> -	to_vec = mem_cgroup_lruvec(to, pgdat);
->> -
->> -	folio_memcg_lock(folio);
->> -
->> -	if (folio_test_anon(folio)) {
->> -		if (folio_mapped(folio)) {
->> -			__mod_lruvec_state(from_vec, NR_ANON_MAPPED, -nr_pages);
->> -			__mod_lruvec_state(to_vec, NR_ANON_MAPPED, nr_pages);
+
+
+On 10/25/2024 6:03 PM, Adrian Hunter wrote:
+> On 25/10/24 13:37, Sachin Gupta wrote:
+>>
+>>
+>> On 10/24/2024 4:38 PM, Adrian Hunter wrote:
+>>> On 22/10/24 17:18, Sachin Gupta wrote:
+>>>> This update addresses the requirement for accurate slot indexing
+>>>> in the sdhci-msm driver to differentiate between multiple SDCC
+>>>> (Secure Digital Card Controller) instances, such as eMMC, SD card,
+>>>> and SDIO.
+>>>>
+>>>> Additionally, it revises the slot indexing logic to comply with
+>>>> the new device tree (DT) specifications.
+>>>
+>>> This patch seems incomplete because all it does is assign a global
+>>> variable which is never used again.
+>>>
+>>
+>> Qualcomm internal debugging tools utilize this global variable to
+>> access and differentiate between all the instance's sdhci_msm_host
+>> data structure (eMMC, SD card, and SDIO).
 > 
-> Good, because this code was likely wrong :) (-> partially mapped anon
-> folios)
+> The kernel does not accept code that does not serve a functional
+> purpose.
+> 
+> You could look at using eBPF or KGDB to get the information,
+> otherwise you might just have to carry that kind of patch in
+> your internal tree.
+> 
 
-Staring at the code some more, mem_cgroup_move_charge_pte_range() refuses
-PTE-mapped large folios, so that might have done the right thing.
+Sorry for misleading sentence, the tool I use is lauterbach Trace32 and 
+when using Lauterbach Trace32 tool, having a global variable makes it 
+easier to load and inspect dumps. It will be easy to quickly locate and 
+analyze the sdhci_msm_host structure, which speeds up the debugging process.
 
--- 
-Cheers,
-
-David / dhildenb
+>>
+>>>>
+>>>> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+>>>> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+>>>> Signed-off-by: Maramaina Naresh <quic_mnaresh@quicinc.com>
+>>>> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+>>>> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+>>>> ---
+>>>>    drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
+>>>>    1 file changed, 10 insertions(+)
+>>>>
+>>>> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+>>>> index e113b99a3eab..3cb79117916f 100644
+>>>> --- a/drivers/mmc/host/sdhci-msm.c
+>>>> +++ b/drivers/mmc/host/sdhci-msm.c
+>>>> @@ -292,6 +292,8 @@ struct sdhci_msm_host {
+>>>>        bool vqmmc_enabled;
+>>>>    };
+>>>>    +static struct sdhci_msm_host *sdhci_slot[3];
+>>>> +
+>>>>    static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+>>>>    {
+>>>>        struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>>>> @@ -2426,6 +2428,14 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>>>>        if (ret)
+>>>>            goto pltfm_free;
+>>>>    +    if (node) {
+>>>> +        ret = of_alias_get_id(pdev->dev.of_node, "mmc");
+>>>> +        if (ret < 0)
+>>>> +            dev_err(&pdev->dev, "get slot index failed %d\n", ret);
+>>>> +        else
+>>>> +            sdhci_slot[ret] = msm_host;
+>>>> +    }
+>>>> +
+>>>>        /*
+>>>>         * Based on the compatible string, load the required msm host info from
+>>>>         * the data associated with the version info.
+>>>
+>>
+> 
 
 
