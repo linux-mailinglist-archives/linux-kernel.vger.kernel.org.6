@@ -1,112 +1,160 @@
-Return-Path: <linux-kernel+bounces-385688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4CE49B3A5C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:22:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB2D9B3A62
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64F6F282774
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A8D31C216AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACEB18FC83;
-	Mon, 28 Oct 2024 19:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE461DE8B7;
+	Mon, 28 Oct 2024 19:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="R/jywdv4"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J47FdrG1"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D84155A52;
-	Mon, 28 Oct 2024 19:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8081C155A52;
+	Mon, 28 Oct 2024 19:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730143350; cv=none; b=uOR29OUUC/JcTuPIe3R4NG9VRTTtCpIMnZdr9wQzCEKFF+26hQPQLpgQHFyjkfu0LxTFa0YygvKXYoJRM7v/zn1eP630Sgc4lO022n/Iz6hMF6TIe3w7U9+iV346W/cFFgoVb7g5sBlZRZTgNWkMhbyaRf0y9gwmZj4ChXFtKH8=
+	t=1730143539; cv=none; b=p9D0hkl54640stvUmwRKi0w4I8t6HZ+t0s+iLLDB0fEcorPyk/MIvzxh1pqMruJMq9gXcutpRUc5yU1+w2oh1BdVg3wdgu1P9fsyTDsvhVCiwqrXAI2U8+myjVHd5YH80zvXmnYkMQujFq7n6p0s0jKqsCLDPhFA35JGWWn7t9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730143350; c=relaxed/simple;
-	bh=szimE7eBz9lG15cvVJZu71amUFqFA7UkiIsHssfIPCI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5GoAgmatJd4O0slfa8VLVEj9vm3ArspSPkkX67MARVryUEgjCTyxwYk5aBZAq8zZTtWfOTUE5G4g1Kx38LyaaAjEpBbp+W6UyF/HRC6eOkFCH3ketKi/PF2/ROuY8A95KLcCeu43UG8gw6plQXIsb41oVfdDslTtIRm4QgNIq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=R/jywdv4; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 37E6F177105; Mon, 28 Oct 2024 19:22:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1730143348; bh=szimE7eBz9lG15cvVJZu71amUFqFA7UkiIsHssfIPCI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/jywdv42FPkDQrTpWP48OpYogue+g+GhfVCISb5pVNwsXbtvtZ8km20XEiUQegzb
-	 O7FznrT4h9ELt/2pv82bOJgTqC6sNB5S5tIeq7px7bbj3mhksZpBrq3SazNfHqDRWJ
-	 Yx+JNEheHm1C10scgOBjLi/UZP0sXA7C9gZsOF7pX2HphD87aQaBm3mMEE/kHFxXbR
-	 fnksx5Ro5eF++OqzgHIHZucx45OJ/ph5NYa9G25w5i/8J3/UAh5vrAojgrFzun88l6
-	 gJXLK6Mxa3UwDhSkTzgKrSF3Cf9uOGXgeazHMT62aYp3OJYCl24R1T0Tjd3wjHHI9O
-	 u1EZAuMHzerSg==
-Date: Mon, 28 Oct 2024 19:22:28 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: kgdb-bugreport@lists.sourceforge.net,
-	linux-trace-kernel@vger.kernel.org
-Cc: yuran.pereira@hotmail.com, jason.wessel@windriver.com,
-	daniel.thompson@linaro.org, dianders@chromium.org,
-	rostedt@goodmis.org, mhiramat@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org
-Subject: [PATCH v4 3/3] kdb: Remove fallback interpretation of arbitrary
- numbers as hex
-Message-ID: <20241028192228.GC918454@lichtman.org>
-References: <20241028191700.GA918263@lichtman.org>
+	s=arc-20240116; t=1730143539; c=relaxed/simple;
+	bh=C7V4jnM///u5m7Dt/3VK+yG1FD4ImKYx2jbvgvZuoBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A8oRelb4cAirDimPijo6hD+KBPshbi13vcAqnIcBFpBr1dEY+HVegGBwOB831UxL5s0gpzcInlCmiFP9zMFPPhrg6JiDlTsTSJp5eq3m8XToeKIhoAgALW5BH+Zc3lASi8DdVi9NGm9mVvPPxw8JPQJ1zWz7iGrnecGtNcQ7ExM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J47FdrG1; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb49510250so45670841fa.0;
+        Mon, 28 Oct 2024 12:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730143536; x=1730748336; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MkQAJayFU9AcTexWWwk6v3avyn7IpkTY2pfgXXCLGk0=;
+        b=J47FdrG1v2i3qIWTOEbVl81Jmp1mhPqbL5itVE3MQDsUwyxPBdDn5eC4vmZsyyVWCu
+         KYqJUbkR3QpeDxZoT+ZZkrwb8Snb83W7bpUd2rHp2CdQQAQTGyR7f6h4TrwskAmUoK1z
+         96rCXa5GFIP32IUsayumu2j19uOhlM9vL/ZZV0p6wIdWUYQ/sfwwIKRj96U5YL4QPz8w
+         pht3T4hKm61I+RVmTCDDdUC5cl91MR9bSRVeBbRKyi6tk8P0dDN69xk06XDGm/ziHKGR
+         r2YQZVfc8f5rsXC+FlcwDKFa7SwZ9f9nJFDOb2lJ2WzK1C8JNqPwbUq6qBM5UZay6End
+         gQTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730143536; x=1730748336;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MkQAJayFU9AcTexWWwk6v3avyn7IpkTY2pfgXXCLGk0=;
+        b=THV+V0bpX0oWsCsyfnTZEcjHS7rHkVSsDEiJYludy/1Hi6ZHd5dSS7hSqDUqixV6kg
+         HM7vznuttQG1YgDr8SvuUFa3jJZJpt46Gv3GYI6trSbajNVdux1nye5sBNqF2M8bcf5+
+         ML3OfuaLbFGQxfYg4S2UTv8aiw5SIoAg9gJUgIjxgMkT5MLOpVIgygK6uybW1RLY7d1H
+         o0yZU2kA5aOPrphk0U2CqyOPLjB26//0L1wGWUdvfzuSVl/PZDSBxBjNpCSelPVoa8qF
+         rxH0C7zOGyiBq3LT2u2RpVuFlyuRSBBPG2vlvjIxcApujoLOIHoJHE/tFguEH7k8YtGB
+         ev9w==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ds4y85bJfWLsCEBoiHb+UWjOkdxEy/xj5fVPibieahorrnrlOmW/ELnheI/9tovuSH7wNhoxKPVRZf8m@vger.kernel.org, AJvYcCVgG8XviHPrAXolDL4hYBmSS1E/gUHms2LSPedo56EPFvl+ahsFOg7tU/TaEwveJp+Bi5U87/OJ8/SrmG5/10w=@vger.kernel.org, AJvYcCXIvmIanQmWQFmxDwiSt4o7pDmQzp3/RnPl9YO0zCdYIWzkyumZtzZwcikhHnRbopoHgAvwUzdrYHIMQXv2@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT2gha0i3CFB6hC1jlRyladPiUWp0VziMeArvepSI8yN6Rhzwk
+	Kryz9eSfU/z41nXZImONG8nF92/EARNGOZl/9YwmhtBcoSZKYViqKKqzoRAU4ixtRjXTBn69+Sc
+	PoimzOWcyK+PUiD7c0sTshCPBf5dOxwKH
+X-Google-Smtp-Source: AGHT+IEbRBQz+aQnxjwPcgER2o0cmQl54BbDEvkwXLGVRUcu8aNdMAp2W46P/aczgqbSSUb/5YPaFdBUuD0aZ/SM5fA=
+X-Received: by 2002:a2e:6112:0:b0:2fb:4b0d:909b with SMTP id
+ 38308e7fff4ca-2fcbdfc9d2emr36473061fa.26.1730143535209; Mon, 28 Oct 2024
+ 12:25:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028191700.GA918263@lichtman.org>
+References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
+ <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
+In-Reply-To: <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 28 Oct 2024 15:25:21 -0400
+Message-ID: <CABBYNZ+=W-PG5RqVVuoT=TVrcQ3qYaF79TfBP6nAzG1R4DaoAw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
+To: Easwar Hariharan <eahariha@linux.microsoft.com>
+Cc: "K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Michael Kelley <mhklinux@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Remove logic that enables a fallback of interpreting numbers supplied in KDB CLI
-to be interpreted as hex without explicit "0x" prefix as this can be confusing
-for the end users.
+Hi Easwar,
 
-Suggested-by: Douglas Anderson <dianders@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
- kernel/debug/kdb/kdb_main.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+On Mon, Oct 28, 2024 at 3:11=E2=80=AFPM Easwar Hariharan
+<eahariha@linux.microsoft.com> wrote:
+>
+> secs_to_jiffies() is defined in hci_event.c and cannot be reused by
+> other call sites. Hoist it into the core code to allow conversion of the
+> ~1150 usages of msecs_to_jiffies() that either:
+> - use a multiplier value of 1000 or equivalently MSEC_PER_SEC, or
+> - have timeouts that are denominated in seconds (i.e. end in 000)
+>
+> This will also allow conversion of yet more sites that use (sec * HZ)
+> directly, and improve their readability.
+>
+> TO: "K. Y. Srinivasan" <kys@microsoft.com>
+> TO: Haiyang Zhang <haiyangz@microsoft.com>
+> TO: Wei Liu <wei.liu@kernel.org>
+> TO: Dexuan Cui <decui@microsoft.com>
+> TO: linux-hyperv@vger.kernel.org
+> TO: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> TO: Thomas Gleixner <tglx@linutronix.de>
+> TO: Geert Uytterhoeven <geert@linux-m68k.org>
+> TO: Marcel Holtmann <marcel@holtmann.org>
+> TO: Johan Hedberg <johan.hedberg@gmail.com>
+> TO: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+> TO: linux-bluetooth@vger.kernel.org
+> TO: linux-kernel@vger.kernel.org
+> Suggested-by: Michael Kelley <mhklinux@outlook.com>
+> Signed-off-by: Easwar Hariharan <eahariha@linux.microsoft.com>
+> ---
+>  include/linux/jiffies.h   | 2 ++
+>  net/bluetooth/hci_event.c | 2 --
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+> index 1220f0fbe5bf..e5256bb5f851 100644
+> --- a/include/linux/jiffies.h
+> +++ b/include/linux/jiffies.h
+> @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiffies=
+(const unsigned int m)
+>         }
+>  }
+>
+> +#define secs_to_jiffies(_secs) ((_secs) * HZ)
+> +
+>  extern unsigned long __usecs_to_jiffies(const unsigned int u);
+>  #if !(USEC_PER_SEC % HZ)
+>  static inline unsigned long _usecs_to_jiffies(const unsigned int u)
+> diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
+> index 0bbad90ddd6f..7b35c58bbbeb 100644
+> --- a/net/bluetooth/hci_event.c
+> +++ b/net/bluetooth/hci_event.c
+> @@ -42,8 +42,6 @@
+>  #define ZERO_KEY "\x00\x00\x00\x00\x00\x00\x00\x00" \
+>                  "\x00\x00\x00\x00\x00\x00\x00\x00"
+>
+> -#define secs_to_jiffies(_secs) msecs_to_jiffies((_secs) * 1000)
+> -
+>  /* Handle HCI Event packets */
+>
+>  static void *hci_ev_skb_pull(struct hci_dev *hdev, struct sk_buff *skb,
+>
+> --
+> 2.34.1
+>
 
-diff --git a/kernel/debug/kdb/kdb_main.c b/kernel/debug/kdb/kdb_main.c
-index f8703ab760d9..5f4be507d79f 100644
---- a/kernel/debug/kdb/kdb_main.c
-+++ b/kernel/debug/kdb/kdb_main.c
-@@ -402,23 +402,15 @@ static void kdb_printenv(void)
-  */
- int kdbgetularg(const char *arg, unsigned long *value)
- {
--	/*
--	 * If the first fails, also try base 16, for us
--	 * folks too lazy to type the leading 0x...
--	 */
--	if (kstrtoul(arg, 0, value)) {
--		if (kstrtoul(arg, 16, value))
--			return KDB_BADINT;
--	}
-+	if (kstrtoul(arg, 0, value))
-+		return KDB_BADINT;
- 	return 0;
- }
- 
- int kdbgetu64arg(const char *arg, u64 *value)
- {
--	if (kstrtou64(arg, 0, value)) {
--		if (kstrtou64(arg, 16, value))
--			return KDB_BADINT;
--	}
-+	if (kstrtou64(arg, 0, value))
-+		return KDB_BADINT;
- 	return 0;
- }
- 
--- 
-2.39.2
+Reviewed-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
+
+--=20
+Luiz Augusto von Dentz
 
