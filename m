@@ -1,130 +1,133 @@
-Return-Path: <linux-kernel+bounces-384604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7959B2C32
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:00:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63ABC9B2C36
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:02:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B09711C2205B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:00:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7CB2B20BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E831D1724;
-	Mon, 28 Oct 2024 10:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B2B198836;
+	Mon, 28 Oct 2024 10:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V2Ow7YgB"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="dhLuGOvb"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B0261865EA
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94DC8472;
+	Mon, 28 Oct 2024 10:02:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109622; cv=none; b=eQaXbGDQwvWesSxNtsdpxWyGBtBxwetA3swL0IUU+6vwX9VVDqnd4uqjXVeUea8mk5b7kYolDojixnGMeCAu2s3OZr59KgZ6/FIppu+j8RFWissWFqB8VcmOe366jqZXjHCZRg7zuoEyUX2QZrkcV5S4iWc1BIpoR9JQFol+ZkA=
+	t=1730109768; cv=none; b=XmdTIL/oDAPVoWZdNulOwqruvsMFBQnVpI6xoC2NZ4Ay6jDLuh5+WzfSj/xQZsfD9qOO0N/72tUznz8muzspDRahJ1PVPE37AefMMYkIpsiUgh71HpvcFSfrXxK3vy5Tpj2XCWI5Ip5UynzqFeojpZL+5mA9ToU3SUq8lf+eT+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109622; c=relaxed/simple;
-	bh=cVMe9I+xf7ecSwjH1FSm/7gF6HNNdaU/Br9lzJNXdTU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bmPvDiARV0tvS2vYfBBKb8S+flczKz63r1GLgNDPfh5EpDSE40gFHzQ8lWCKvlkdpgPxWa2Gb9EwrlfX3WnfuIOARoDd3aePSPZfQvxj4ufOe2iKMrXY7ct+0ixUtiNjfABreN+1daO6KN1cg8Ps5LDAnv4KNIdi+7/z9Mveu8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V2Ow7YgB; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730109618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8YpabpOTIA5fu+COziF12YDYMmgu6EaSPVt0xaySJZw=;
-	b=V2Ow7YgBpnSslSIkNtXg6gwHyQkUvcdYvkt2ueoWDydAccphuLu2u36nDJmd9VZUTIkIDO
-	xMuFc7tVMFaDp4SybpIxdEUxASKqHfOY0Bsu5FUHJJpHe5Mqgrd4Yevi+TV80r6L2ii5Bl
-	AXLg3FKAloRsOV1OqYEmbn/v5ims3go=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-16-zdtcv0wYO--Bs2QvYhOldQ-1; Mon, 28 Oct 2024 06:00:17 -0400
-X-MC-Unique: zdtcv0wYO--Bs2QvYhOldQ-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d609ef9f7so2022512f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:00:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730109616; x=1730714416;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8YpabpOTIA5fu+COziF12YDYMmgu6EaSPVt0xaySJZw=;
-        b=cZmRTGhrP7Rrxh+ASztsrEt0bS75XN7Eb6hyVQyPfTxDZmFRL1hiUEK5oCELp95xJL
-         WlQrpuUQiWoYkcqFNbkw3vXcFC/Mjqawx5iDo99QPd+vcX57f8DyDUkLkDmfT9ROS19u
-         cYmyJ/aRtHzxRML+L0/00qOQcail8HuePKDi8qoz6JQ7ddGRYATO04kJpFCHxC2Cp311
-         ISUYKBsIfEdERMWzeLsXmSQ+WG8YBkYF7THKuDIdWQejlbFNNzIOkPLJezzgVHnD3ubn
-         oHKI7tQe9Zs8Lzbac/yL75gJx0J22urtprkj7zZQ+Pwd9g+gvszyZoDOTdggVMclac8l
-         1YKA==
-X-Forwarded-Encrypted: i=1; AJvYcCWCRYVFpfVpKLyQGDH7Q02SBdgIuBT23LGpza2NfFHBrgt0PVNjrnZqcoInjY8ARO9b5ICkCBAhLuqOtvQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUiU5nWIbvc8FJ1fGgR3KbT/tmWk69p3lOYxLtK8uaMqlZfgJJ
-	DZT7M2XrXWl7OREihK0TsZzc8E47o/lzMUYDVgeOTeBgBWpAON6KzWlBS9vLp20kzlALCzwfTqQ
-	RJlH2oxaEVUWEVj9716CLOjEuPj7qtUVMSoICES3wOGRiMerarlru1QU3wv4JtA==
-X-Received: by 2002:a5d:4a43:0:b0:37c:c5c4:627 with SMTP id ffacd0b85a97d-380610f4bb4mr5224635f8f.5.1730109615718;
-        Mon, 28 Oct 2024 03:00:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFIi6IZdt1MNfNyvMwAD0TZOBvib02WaB4Udm2NRudgqSX5IaZwE0C9f76/Y7ROIYfi1CqIoQ==
-X-Received: by 2002:a5d:4a43:0:b0:37c:c5c4:627 with SMTP id ffacd0b85a97d-380610f4bb4mr5224621f8f.5.1730109615369;
-        Mon, 28 Oct 2024 03:00:15 -0700 (PDT)
-Received: from eisenberg.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm9077706f8f.70.2024.10.28.03.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 03:00:15 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Richard Cochran <richardcochran@gmail.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Philipp Stanner <pstanner@redhat.com>
-Subject: [PATCH] ptp_pch: Replace deprecated PCI functions
-Date: Mon, 28 Oct 2024 10:59:44 +0100
-Message-ID: <20241028095943.20498-2-pstanner@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730109768; c=relaxed/simple;
+	bh=iv8JLu4WApAgyhbJH9xRaotZ5a8y4aYD9wpmNwPuv+w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CfTulNb/BztLERILVRfN5dBukrGhgzuPV1CIWu36O3N3R6DS/sDpERcmWFUVhWaRPpMlgThj01ak2CHzSPbANUiOD1vHI84JtvbodpVBMXyPbo4SFlMdMaObOlnXRO0OkMm1b5gu3nM5O9lwPaky4sJE3aqdc/Rj+WamzGpOCAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=dhLuGOvb; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=SnTIxToI00wx2bd48HW2rv0VU4fhPD6eP8i48CIPUs0=; t=1730109766;
+	x=1730541766; b=dhLuGOvbksvnjIL5EoOJxMRxfw97wtGHBYb9BUaOzMB9UgAB3pRV4Laxkyas/
+	xA/gLWg37TimP5n/pXZlhlJIsusveQb7cJrUQR9+txw+6h5FBRI9fXm6o8hXbalhrIJp/Vrm2ueRQ
+	9ToPQBRVox5ay+EqhzhMtLfkdG2xVL50PAR9S7NbYZjxMf179Xu2Q4vhl7FmgtS5rhcWGbaLUKQrZ
+	WhdzrJIX0s6Gvxa97HnKVhelO1Z1CnJ0lIvg6Cpju+EDp3F2lRXpg9G/pjleNJak9Cj8+ZO1Xomou
+	AFrHFp5XVxMODB6qgZeiQ6uRI5dIMSfmoRwhYsfjos3mt01W+Q==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t5Ma6-0005fN-8v; Mon, 28 Oct 2024 11:02:38 +0100
+Message-ID: <b1675bcb-41bd-41ab-8e10-ab80943b1ff8@leemhuis.info>
+Date: Mon, 28 Oct 2024 11:02:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: latest stable-rc tarballs missing? (was: Re: [PATCH 6.11 000/261]
+ 6.11.6-rc1 review)
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241028062312.001273460@linuxfoundation.org>
+From: Thorsten Leemhuis <linux@leemhuis.info>
+Content-Language: en-US, de-DE
+Autocrypt: addr=linux@leemhuis.info; keydata=
+ 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 n7RI
+In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730109766;1c2905aa;
+X-HE-SMSGID: 1t5Ma6-0005fN-8v
 
-pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
-commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-pcim_iomap_regions_request_all()").
+On 28.10.24 07:22, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.6 release.
+> There are 261 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.6-rc1.gz
 
-Replace these functions with pcim_iomap_region().
+I don't care much, but TWIMC: that URL gives a 404 here. Not idea if
+that is a issue with the local mirror or if the upload went sideways.
 
-Additionally, pass KBUILD_MODNAME to that function, since the 'name'
-parameter should indicate who (i.e., which driver) has requested the
-resource.
-
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
----
- drivers/ptp/ptp_pch.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/ptp/ptp_pch.c b/drivers/ptp/ptp_pch.c
-index 33355d5eb033..b8a9a54a176c 100644
---- a/drivers/ptp/ptp_pch.c
-+++ b/drivers/ptp/ptp_pch.c
-@@ -462,14 +462,14 @@ pch_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 		return ret;
- 	}
- 
--	ret = pcim_iomap_regions(pdev, BIT(IO_MEM_BAR), "1588_regs");
-+	/* get the virtual address to the 1588 registers */
-+	chip->regs = pcim_iomap_region(pdev, IO_MEM_BAR, KBUILD_MODNAME);
-+	ret = PTR_ERR_OR_ZERO(chip->regs);
- 	if (ret) {
- 		dev_err(&pdev->dev, "could not locate IO memory address\n");
- 		return ret;
- 	}
- 
--	/* get the virtual address to the 1588 registers */
--	chip->regs = pcim_iomap_table(pdev)[IO_MEM_BAR];
- 	chip->caps = ptp_pch_caps;
- 	chip->ptp_clock = ptp_clock_register(&chip->caps, &pdev->dev);
- 	if (IS_ERR(chip->ptp_clock))
--- 
-2.47.0
-
+Ciao, Thorsten
 
