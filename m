@@ -1,81 +1,57 @@
-Return-Path: <linux-kernel+bounces-384570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA459B2BD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:48:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C199B2BD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:48:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DFA211F23875
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0152F1C2115D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB461CC890;
-	Mon, 28 Oct 2024 09:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 074DD1D079F;
+	Mon, 28 Oct 2024 09:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aiSwxHHG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qL9XQruz"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17219A59;
-	Mon, 28 Oct 2024 09:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEA4E1CF2AB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730108898; cv=none; b=MRYRjGaK+nr6ui0/QAilZyece+k384Xhyz9rW+bJAFwWYVRnPRD22GQDfVy9+Q6oxYauD/YFRVQcTXpcpuAZmuGkRDfLSWfuboHHX9z0+xHQCBTxtRRIA1uLljMCxOJGUGG3oV9kJ8HynWVZ0ihHlxBiuy6Hgn9vgb5Yoe59tGY=
+	t=1730108903; cv=none; b=NEJeVEYzTT13mpGpRmiGsAGqwc8tgQZ7AnJ92T4xJ+AMhGCgTI2Xy/IOHEGuBogXpLaMjvNYsvvw5vn/iDuF2NV2q92e9dF5t+DGHoN77YufG5nhOjx0MIIK8CEqstWaXlyqotmpMO8x9ccon2AH92VKwlILxigo0asDRcjZKtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730108898; c=relaxed/simple;
-	bh=rh07UDCzEyL18Z+zxG4VMkJW3Ao7Ja2X9CP/jHWMTOw=;
+	s=arc-20240116; t=1730108903; c=relaxed/simple;
+	bh=LvYX3cME3AJ70VaRKqOhXq67JTgrCyZqrp93iN2wUHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b5M5uN0fYdCP8QIoa43UbhPrRdH60LAnRFavDGP9uE636bGqPVoANO5ftfcZhNq/PSwasX1tBzeUYjeo2pwaTRKiJM3P+KQ73tuYiJ932k8jMuMJ/xwZC44PnE7Ia0iKFlCJmr2ZoUFbPV+AkOA+E55Q/1xAAd10VPs1NbnzL4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aiSwxHHG; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730108897; x=1761644897;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rh07UDCzEyL18Z+zxG4VMkJW3Ao7Ja2X9CP/jHWMTOw=;
-  b=aiSwxHHGkrNJaHpFtzc6pbNEEkSGgYmGhmgjibiIbgmH41bLcKg7bvnt
-   WTEFQkOeQco7oxU9hMSjgibYOUVzfopwKNIhvPDG1uc99rBxzb3a4Npih
-   2Zux6svnLECzIksa4bTSxkE0tnX3PtcjcJkUq0InMdcTPY3Sg67fTmSzP
-   cbMdAcDPdmcEFhjAxIjO3QAbFxhlQNoX+7knZTtudh4DnFJG8M+As0Pbc
-   xIJLtDwiVPMH7p7dRwmZQMjEsX3Y01kGv1p5Yr55klaCNPAzt872ehsEL
-   FIk0lTM67iKZ2DwbUIcZUmptm4WUg8qlxkwXpxPlhnvLDtOmInJDBJeAr
-   g==;
-X-CSE-ConnectionGUID: knroarZBS3eJ9ANyjEFmBw==
-X-CSE-MsgGUID: CLfR2jcpQ8yQ2mrGYNwlCw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="40320163"
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="40320163"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 02:48:16 -0700
-X-CSE-ConnectionGUID: dDSPrsXpRH+k8byLplXkgA==
-X-CSE-MsgGUID: nWMzGgyJR2qCtvoCAXoSgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,238,1725346800"; 
-   d="scan'208";a="81616557"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 02:48:14 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t5MM7-00000007tkD-2Nhg;
-	Mon, 28 Oct 2024 11:48:11 +0200
-Date: Mon, 28 Oct 2024 11:48:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v3 11/24] iio: accel: kxcjk-1013: Start using chip_info
- variables instead of enum
-Message-ID: <Zx9d2_timtAOYqSI@smile.fi.intel.com>
-References: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
- <20241024191200.229894-12-andriy.shevchenko@linux.intel.com>
- <20241026122605.0ea7188c@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fmmQLD/kYF8gBjnxJgSlMhCTYtmK11LCLcthStrzzAZCjtlEZNOqQfFJcUD5RjJHhvMsSqFvvsaK7SSFSIXGFnkjonNbq2NIoAv0iFLhRdej7wTJPba55b/tg0vXM00KrGPbJKSboAMpyJMbHJGMm9nqusGQyoeVmCFYUaTaKJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qL9XQruz; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=G+IDj9bWpKqWiBt8Iz3SvHjmd4OIVVnq52tb3lSVp8E=; b=qL9XQruzYLdlpq8xypFjw42cmv
+	JiXcBp7oL/12Yd+LJ19WD6gPt7GgULScNnBTAezimGsr8d/C62SCNSMlJPaBhqQet51pEZzNS35wK
+	dG4btrI1Vw5nTBIqPQYwWuDU5R+gEoVX+wobcHj01UA4kWuxqKkHQa7lOKQNmKJYE0SK8Y3bryBUh
+	dnbpQ5MjqMlPusw6/1xIo0ntK0ayVg/xtQshvPreGg0w8jR0+LJRiosHaNM4p/8aOZlWvrIHxXPdA
+	XkvanIjIpK+Jj7+jLXxtrYykjTzq+6iLKG1LYaH7MwJlsvuAp8L+F8Y+eu3klVa2t0pgqjglb9zLM
+	/tFvlnWA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5MMH-0000000AI05-18PP;
+	Mon, 28 Oct 2024 09:48:21 +0000
+Date: Mon, 28 Oct 2024 02:48:21 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Edward Cree <ec429@cantab.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] CREDITS: do the decent thing
+Message-ID: <Zx9d5Xjk3XQGuZji@infradead.org>
+References: <ff3fcde5-f8b3-4b20-36c5-68d73d0e4757@cantab.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,36 +60,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241026122605.0ea7188c@jic23-huawei>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ff3fcde5-f8b3-4b20-36c5-68d73d0e4757@cantab.net>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Sat, Oct 26, 2024 at 12:26:13PM +0100, Jonathan Cameron wrote:
-> On Thu, 24 Oct 2024 22:05:00 +0300
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> Just because we can no longer work with someone does not mean we have
+>  to efface their name from history.  Whether we consider them to be
+>  good or bad people, I have seen no-one claiming that any of them were
+>  bad *kernel maintainers*.  As an international collaboration, Linux
+>  should be above national animosities, and where local laws force our
+>  hand we should not go one step further than those laws require.  Are
+>  we truly so small, so self-righteous?
+> Oh, and dear Linus: I'm not a Russian troll.  I hate Russian military
+>  expansionism (current and historic) just as much as you.  Try to use
+>  *your* mush to realise that opposing the ham-handed and secretive way
+>  the MAINTAINERS patch was done does not make one a supporter of
+>  Russian aggression.
 > 
-> > Instead of having a enum and keeping IDs as driver data pointers,
-> > just have a chip_info struct per supported device.
-> I'm not keen longer term on acpi_type, as the various bits dependent on that
-> should probably be done via optional callbacks in the kx_chipset_info
-> structure, but this is a sensible intermediate step.
+> Sent from my personal address rather than my work account, because I
+>  don't want to give my employer's lawyers any more of an aneurysm than
+>  I doubtless already am.
 
-Yeah, I decided to postpone that because the main point of this series is to
-clean up acpi_match_device(). And indeed I was thinking about callbacks and
-other things (flags, string literals, etc) to be moved to chip_info.
+Agreed with all of the above and:
 
-> I see the chipset one goes away later hence no comment on that.
-> 
-> I did a bit of white space massaging whilst applying this.
-> Hopefully that won't make me mess up applying the following patches.
+Acked-by: Christoph Hellwig <hch@lst.de>
 
-Thanks!
-
-(OTOH I'm not sure what spacing you meant because in the result it still seems
- slightly inconsistent.)
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+for the patch.  But please fix up the damaged whitespaces before
+the subsequent lines.
 
 
