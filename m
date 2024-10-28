@@ -1,70 +1,62 @@
-Return-Path: <linux-kernel+bounces-384174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0FDA9B253C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:25:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594F99B2541
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 840B82814CF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:25:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAA6BB20EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 555D318E049;
-	Mon, 28 Oct 2024 06:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C5018E357;
+	Mon, 28 Oct 2024 06:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="GOx5OKFM"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AYhsybgE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B7C18DF88
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333991885BE;
+	Mon, 28 Oct 2024 06:26:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730096749; cv=none; b=Fo81pomW/4CPG+/5p2oGy7drnVtdyAJ1f/02rY2KMICASnDWTvXyuZdEMOM89qyNOY+F5AfGSa4u9GhzAm/BcJ5Pjzzh3T12KplKN1FMttfeg1CI/8m2uGcjvfN7Tuuz6B7Ypcdi4i1MsmspaVu1mUPeYdlp9bWZhcLHtMOTw+c=
+	t=1730096784; cv=none; b=bdc9Rn1UFvOTrUeLIEq1OWz8tebwMDWUn8YEjFhNx+bZJrl1al+JauZx/u4+9XL+OBV0x3fxeF9BenvYU2GSlJ8JnLZg+GkyP4OetHbvfFbhiE5h/yZlDv4et/Yo0Vw/SQfW8sNZWEz6M0b/nVZgSgqPO2FjChAaZZAdcKBTheU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730096749; c=relaxed/simple;
-	bh=Ej3AeKhS5/abexGCtjpcoEfZrYldhNDzcJtRJE3vgls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WSNY1Gag1jtHrYG/H0ZnC9XWAfpFCtNjxlBdNI5fpPTjDQptJdkNNL8teUiqWaEzV9sNYw4XeTIzjfe3HUdQsDSn7URPlGwLr1cvzu+ZZ0Io7pzbfxPXN0bD2DCg2BiXZeMvtI8QvJfy4oXScXeuE+3Gjdlb+cX4siDuujwQZPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=GOx5OKFM; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cdda5cfb6so36321625ad.3
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Oct 2024 23:25:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730096747; x=1730701547; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8fAlQccG7+nYMAb+dll6jP8YdzAnpJv1Fs1IZeu8SYo=;
-        b=GOx5OKFMZPMVi9D7MFVYXETrbwuuhZ1jzwPLI8XmE8Ia+b3O7j6iDlR4wIA9nTC7dD
-         30vLop3pq9fqvoZ+u94SKqm3u1WmQPm3MNkR5e8RpLYQU+GbSGr7pphq/ckxoe0bkznB
-         4EbrpD+UqcBTN7s9xDs96WqrHWZO/Y2pHlSD4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730096747; x=1730701547;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8fAlQccG7+nYMAb+dll6jP8YdzAnpJv1Fs1IZeu8SYo=;
-        b=fJCvvZX5MlYonzc7M49ss4T5fCVVsEMPKm/swNVmomOd0z1CFQ814HUvzrsAOBIpWR
-         anOSlBiM1nKnZK9mrAOg4RhorYh7JZqLBXdZEsrMXKh1+VISsDbkW1osM6IiClGcaWGl
-         sk2u2XOKuSxIrUWHV3RIGoDK4xUxuTTpwrBxjlAnfrX9Y7GNqDUjj9fG0O09vQPr04WI
-         Xa1sA+JXS/IRPLI6GZv2vSQZvpH2s4hF12YwOHOF46su5aqGPWe6I0Hd1aDkYAvjB1LF
-         3rOK9y+eijNI7oIPGdWfh6a5aEsiJEZR/q8MZll5Uxa0XxWTJjdKpkXwRnhLyHqwHH1W
-         MI0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXKDHy2eGb+Khou3f+rUo/MkkApBnVgVLeoyJDr59pxvIlHVGPZr4cDasxrc9ZQoYxxPT0GX3mu57L8atQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyrTnJFHKDCRpcU/RS6qVRSvPah511X2dj0t9v8VEcVQKPam4V
-	RF3Uk8yxcxMRnJ5PkmjLxAev/hOu69YlvlPBBHz5DqAx6SpXqidvv84EH54A2V8=
-X-Google-Smtp-Source: AGHT+IFBoCs2QY2GYSDMjnCjHu0aK68+gTisee8FtRtpwIHjDkAm+Jokl2+buZlLblNszHpOkHGD/A==
-X-Received: by 2002:a17:902:ecc9:b0:20c:5cdd:aa7 with SMTP id d9443c01a7336-210c6cd3ba7mr108520635ad.43.1730096747327;
-        Sun, 27 Oct 2024 23:25:47 -0700 (PDT)
-Received: from [10.200.3.216] (fs96f9c361.tkyc007.ap.nuro.jp. [150.249.195.97])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc04b567sm43507695ad.274.2024.10.27.23.25.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 27 Oct 2024 23:25:46 -0700 (PDT)
-Message-ID: <19579b1c-0a9b-4c72-be00-44871dd37b9a@linuxfoundation.org>
-Date: Mon, 28 Oct 2024 00:25:44 -0600
+	s=arc-20240116; t=1730096784; c=relaxed/simple;
+	bh=1InsdEhVvlUlq9Xpg7bElsz6OR8ydGLFjk8W/ghjfV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QuwhXxRwHaBmJFXB6ejsdJ7Xjq7DlpiYsJIMav2pdnq0rH42dCOIE82WEwZmRS2znwyIxlrnE7FIR31vMuXZiPJpoboAfsea28I/UQnvxn7QR3NFI3xCEcQcUEbV8pv5siTPLIuHLlSWvhaMQGabxIR0+uWqLvbEB5b2CYBzHss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AYhsybgE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNafas024838;
+	Mon, 28 Oct 2024 06:26:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	D1xOgtuO0S3fe5QauXOXwWuKHL0NjkPFZoFxUlUTjso=; b=AYhsybgE7yU3+LS3
+	FTwJC5gjJStCBriAGbnCs7YGz3HwZ0tsPgtaGZIFiUiKp6bOgmD+wni41S0loytc
+	WP3xRZIZUdBr89oojp1zqY2klvsOZd50mEtwkIq8IGYLDfZfOVc+aqZlA8AXCVU4
+	Rf8d9hFX/PodAoj6gVtPdnZHC67PRaQu29EVcM29t4tVbjKAQA3uDs588Ku8YJrf
+	n3f+77hm79ogDPUA9BRCsHUb4E2vzcKL+P9Mf5nvGbQ5gK7wwyBN5tkWISsdHIym
+	GB0+AQGFCKj6YF6KqAgdSDOONUybWV9A1MJuAGBV3mzAcp52M/viT7MGzub55/uT
+	bgCasg==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgubumb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 06:26:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S6Q3ae005840
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 06:26:03 GMT
+Received: from [10.152.195.140] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
+ 2024 23:25:55 -0700
+Message-ID: <21365836-aa06-4269-885c-591f43e2e5fc@quicinc.com>
+Date: Mon, 28 Oct 2024 11:55:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,53 +64,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH for-next 1/3] selftests/watchdog: add count parameter for
- watchdog-test
-To: "Zhijian Li (Fujitsu)" <lizhijian@fujitsu.com>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Cc: "shuah@kernel.org" <shuah@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241025013933.6516-1-lizhijian@fujitsu.com>
- <c2cae7a7-1a0d-48ef-9b8f-8d2436532ea7@linuxfoundation.org>
- <0861d73d-4fd9-4118-91c8-5a619c7d7ca0@fujitsu.com>
- <e907e67d-9116-4dd2-9b61-f93191737de6@linuxfoundation.org>
- <b7b3deec-47fd-43e4-a9b5-7099e3c00623@fujitsu.com>
- <54cbf018-eba1-4227-b464-78bfa41fa4ae@linuxfoundation.org>
- <3ee0d14a-7f6b-4ef4-9349-d6b0f14ba9e8@fujitsu.com>
- <f10e8a78-3b50-4212-9b5d-ba99a3421379@linuxfoundation.org>
- <6862e399-b169-4ffb-b9c6-904f99d96e56@fujitsu.com>
+Subject: Re: [PATCH v8 5/7] clk: qcom: Add NSS clock Controller driver for
+ IPQ9574
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <p.zabel@pengutronix.de>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <angelogioacchino.delregno@collabora.com>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <nfraprado@collabora.com>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
+        <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
+References: <20241025035520.1841792-1-quic_mmanikan@quicinc.com>
+ <20241025035520.1841792-6-quic_mmanikan@quicinc.com>
+ <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <6862e399-b169-4ffb-b9c6-904f99d96e56@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+In-Reply-To: <jhykmuvgltvuqf74evvenbagmftam2gaeoknuq5msxop4mkh65@dya6vvqytfcx>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-
-On 10/28/24 00:06, Zhijian Li (Fujitsu) wrote:
-> linux/tools/testing/selftests/watchdog# make run_tests
-> TAP version 13
-> 1..1
-> # timeout set to 45
-> # selftests: watchdog: watchdog-test
-> # Watchdog Ticking Away!
-> # .............................................#
-> not ok 1 selftests: watchdog: watchdog-test # TIMEOUT 45 seconds
-> 
-> 
-> And i got warning in dmesg
-> 
->                                                                                                                     
-> [ 1953.229511] watchdog: watchdog0: watchdog did not stop!
-> 
-> 
-> 
-> 
-
-Run "make run_tests" under strace and send me the output.
-
-thanks,
--- Shuah
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bnY34kVo7iP_b84pRXnPvvGaTbPl5pPa
+X-Proofpoint-GUID: bnY34kVo7iP_b84pRXnPvvGaTbPl5pPa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=536 priorityscore=1501
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410280052
 
 
 
+On 10/25/2024 11:21 AM, Dmitry Baryshkov wrote:
+> On Fri, Oct 25, 2024 at 09:25:18AM +0530, Manikanta Mylavarapu wrote:
+>> From: Devi Priya <quic_devipriy@quicinc.com>
+>>
+>> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
+>> devices.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202410101431.tjpSRNTY-lkp@intel.com/
+> 
+> These tags are incorrect. Please read the text of the email that you've
+> got.
+
+Added these tags since the dependent patch [1] was included in v8.
+Please let me know if this should be removed.
+ 
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+>> ---
+>> Changes in V8:
+>> 	- Remove DT_BIAS_PLL_NSS_NOC_CLK and P_BIAS_PLL_NSS_NOC_CLK
+>> 	  because these are not required
+> 
+> What was changed to overcome the LKP error?
+
+The dependent patch was not included and hence got the error.
+In v8 included the dependent patch [1] also and added this info in cover letter as well.
+
+[1] https://lore.kernel.org/linux-arm-msm/20241025035520.1841792-2-quic_mmanikan@quicinc.com/
+
+
+Thanks & Regards,
+Manikanta.
 
