@@ -1,136 +1,216 @@
-Return-Path: <linux-kernel+bounces-385532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885C69B3842
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:52:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0DB99B3849
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:54:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9F2C1C21FEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46EE21F22E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24991DF251;
-	Mon, 28 Oct 2024 17:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0737D1DF720;
+	Mon, 28 Oct 2024 17:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iUVqrNBp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hIjmyJ86"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B2A21106;
-	Mon, 28 Oct 2024 17:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024B91552FC;
+	Mon, 28 Oct 2024 17:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730137952; cv=none; b=Y9mGT7eO/O9wCiPQo/wOLz0+ImVEriK/FZedFMxzZ4vCcXWEu0usM9ghqoPhRUKcAt1Pl2UwN4JkS/z98p4uCBl8NJG7Gs95B0CikCUKUPNR/SPSGy//tYbXr0WNlfwuUUkgIFp8g7QQOiG54VhdD7Fcmp/1TBwug4nbYZk6pRw=
+	t=1730138054; cv=none; b=TIgNi3cQkaKqQ9AaQsVwiqs/0NOVE70higEmmOQ9a8WZntb8BqNRiBtmZm/vX3qLiR3+gf9a0wyt2rSgeVUYZTZ2MA/4nblb+u1ktDR9ptMZKnxnIA6GSiaILrc4wzCWMYl2caVNXUQ1egSyjbHFxJcfQRzq+6h5sJaZ+TJoO+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730137952; c=relaxed/simple;
-	bh=fcPwTjX1HNmUkULnErWEzHJWCRTziYR6vypXu3nHVE8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sz5vloYwWUWnr3FcTbDwR3tyqbej83kzB6Oz/dOAKrbsEjqzia/QIhH+KwqRJbF2LC4pV2IuG74X3WkIQFNN1N2WTQuHeiyWkbRlVkGVNk4XW6qpcJPO/0QgSsiJitqiuLlBdPIGZcDtM8jnr6jZqBMyb0FCNHBUfsKO28OI818=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iUVqrNBp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE469C4CEC3;
-	Mon, 28 Oct 2024 17:52:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730137951;
-	bh=fcPwTjX1HNmUkULnErWEzHJWCRTziYR6vypXu3nHVE8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=iUVqrNBp8sNCnLdPjT5nBlZ9VdiH122aASmtJUy4Yosy24zzM34KH0o3xKwnPjC5n
-	 V284J8VebcDuflZjsuGJ56P3E1Ny0RZvG/yQIIrfrjMqg+vLt8r/kvQV6CDfPEDfFL
-	 csL5FC9G7xVxPDlMVGtl+bkxPQnTOJcy3Q2tyclDevQyXzoA2tiW1Zukt0H2iEWUP0
-	 qeJ4fjHZAyn3jbDZJdl70epUrSAyMwg6yMNeEzXJmLV/L4+iOij2jc8iIeVb/d4ycA
-	 xmH8DflhOTNtaf39uPrr5YTGEOp0XqgUqTMbAvhpeKwQagUTo2WtKrF9jSpwMJWK0u
-	 nouLpYfEHaM6Q==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-Date: Mon, 28 Oct 2024 10:52:13 -0700
-Message-Id: <20241028175213.276786-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1730138054; c=relaxed/simple;
+	bh=bPbqg2WP1InrE9RdXlMFH+zAOsQwV3DQCbqjQzAlBpg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kbI/CLm7Cdn/K/x8NUOWL9aGdGgLQgHlFgmj+eILRV4IeojvG0mEx6LJCTwC136rz2FZUju+mOqooifr1W7XA1+zuyGY4xIJn89RZVKZjaFeCFdV8RjanFF1Cqjezd4kIWAXBU97D1HUNhzuT72+3ooPvhC5v81DrI6ICsLwdpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hIjmyJ86; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso42605915e9.3;
+        Mon, 28 Oct 2024 10:54:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730138050; x=1730742850; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u6UuyopKZ4h5skfASyHzs29ZguAavZNLDhMYIlEaFJI=;
+        b=hIjmyJ865ci8KGChEfOpTHPC2V0ADRIohTUun9nsomMHlBFDrIascJ5MZIKlcKOYfW
+         bGF90bWunxzhGGWOTmJSYnrUXCDsqAwQLNaLoE3kFTBFaEpKJSWejcDX9sTE43yopC0o
+         fg1Q9tJSl3k/HdwKAd0hlxnKyfSEHPvCi3/bHdFKOJONoaVDA3pF9YNO216XaRtzYZx2
+         cSzbW4lP6QvWMLASErdBdAafI+Z4sx5iCOHlqVx0bQYMCcseYm4K4IPMY+oOQZZq1q8K
+         M8bBwsrBaGj/B0afLWHLecKSz8AeP0Eel/xU0c95iIqnh/w7ak4QU4+ccNtZGSIK/lVZ
+         xaMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730138050; x=1730742850;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u6UuyopKZ4h5skfASyHzs29ZguAavZNLDhMYIlEaFJI=;
+        b=rxLBW/rcuSxlXhnw/Zb3MIhwmcb8TFK4QQg/WptFuKoCy4tl6DVtxmTHK2rPX+2G46
+         RHFIM3F/HMNMVckoOhtXwekieKhluXLCNG/mEEUpQOHCYgazWEWnduG+tvnIXIV0nVRp
+         KhcTNQEcUcWjr3UIWuqUMfAyHvDJawhMHmCsboC2SHQ+vRVqTXzeXAVyqKDw+9DZrShz
+         CzChSyK5eyGO+djHvfFvFplQ4Q0vOaRdrMTIvuybXzgB0PRNcI17LNfi9zVBqAZqgLIz
+         v9Vbg4IfsOiQAIAVfLhH2gv2xJcD2yuarF8F3H4LxKtB2DhzBIIzg0P2PLMnpBoNszXl
+         YYbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUTDMIQvNehiyXsqR9h39zQHVRAyoWg5ahUHX2iVHIEYe36SuUseSGrB6+vDflvjbEZ6PoYpNMDZSw=@vger.kernel.org, AJvYcCVn+WSOegPk8LTnoPqF1mng5UIEmP9nn1kBElAmvh5qGsihUX4wPoq5lFGpdTQFoLBbVrfKOBs5@vger.kernel.org, AJvYcCXQCivsCCiJYR7DC/P0GPlJz2UWJTDmfPAQ8o7n7wl3+IqK2hBIN0+TUxTz6b54i7docLMKb+6I6VJZ1xp6@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrjYEWkVVC4UnK6nVvJTXJbajTRn0bUnuoPGKtxkSAM6v+3uor
+	zkbGyPJn6b8MJieYxd8VW/U9Cc0DtB1fsG674HJs04jhY2q/eXSuoXNVzRR6C/rqGmF/tXB0wJO
+	KjdXPO/rQ+wex76tvERxbwM3BtxvQRQ==
+X-Google-Smtp-Source: AGHT+IHDF4FKUdkCw3jvLqzaE+MRg8G7+oBY30wWy8t6CmWPzpsWrLHilSvHlQUUJLdmkQ9yX3dPsu9z4QHqCFKcAWo=
+X-Received: by 2002:adf:cf06:0:b0:37d:4afe:8c98 with SMTP id
+ ffacd0b85a97d-38061159506mr6015970f8f.26.1730138050108; Mon, 28 Oct 2024
+ 10:54:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241028115850.3409893-1-linyunsheng@huawei.com> <20241028115850.3409893-5-linyunsheng@huawei.com>
+In-Reply-To: <20241028115850.3409893-5-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 28 Oct 2024 10:53:33 -0700
+Message-ID: <CAKgT0UfouCZpX04yzvCrB_UBmy47p+=xm5qViYowerR9dPcCbg@mail.gmail.com>
+Subject: Re: [PATCH RFC 04/10] mm: page_frag: introduce page_frag_alloc_abort()
+ related API
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Linux-MM <linux-mm@kvack.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Oct 28, 2024 at 5:05=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> For some case as tun_build_skb() without the needing of
+> using complicated prepare & commit API, add the abort API to
+> abort the operation of page_frag_alloc_*() related API for
+> error handling knowing that no one else is taking extra
+> reference to the just allocated fragment, and add abort_ref
+> API to only abort the reference counting of the allocated
+> fragment if it is already referenced by someone else.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: Linux-MM <linux-mm@kvack.org>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  Documentation/mm/page_frags.rst |  7 +++++--
+>  include/linux/page_frag_cache.h | 20 ++++++++++++++++++++
+>  mm/page_frag_cache.c            | 21 +++++++++++++++++++++
+>  3 files changed, 46 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/mm/page_frags.rst b/Documentation/mm/page_frag=
+s.rst
+> index 34e654c2956e..339e641beb53 100644
+> --- a/Documentation/mm/page_frags.rst
+> +++ b/Documentation/mm/page_frags.rst
+> @@ -114,9 +114,10 @@ fragsz if there is an alignment requirement for the =
+size of the fragment.
+>  .. kernel-doc:: include/linux/page_frag_cache.h
+>     :identifiers: page_frag_cache_init page_frag_cache_is_pfmemalloc
+>                  __page_frag_alloc_align page_frag_alloc_align page_frag_=
+alloc
+> +                page_frag_alloc_abort
+>
+>  .. kernel-doc:: mm/page_frag_cache.c
+> -   :identifiers: page_frag_cache_drain page_frag_free
+> +   :identifiers: page_frag_cache_drain page_frag_free page_frag_alloc_ab=
+ort_ref
+>
+>  Coding examples
+>  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> @@ -143,8 +144,10 @@ Allocation & freeing API
+>          goto do_error;
+>
+>      err =3D do_something(va, size);
+> -    if (err)
+> +    if (err) {
+> +        page_frag_alloc_abort(nc, va, size);
+>          goto do_error;
+> +    }
+>
+>      ...
+>
+> diff --git a/include/linux/page_frag_cache.h b/include/linux/page_frag_ca=
+che.h
+> index a2b1127e8ac8..c3347c97522c 100644
+> --- a/include/linux/page_frag_cache.h
+> +++ b/include/linux/page_frag_cache.h
+> @@ -141,5 +141,25 @@ static inline void *page_frag_alloc(struct page_frag=
+_cache *nc,
+>  }
+>
+>  void page_frag_free(void *addr);
+> +void page_frag_alloc_abort_ref(struct page_frag_cache *nc, void *va,
+> +                              unsigned int fragsz);
+> +
+> +/**
+> + * page_frag_alloc_abort - Abort the page fragment allocation.
+> + * @nc: page_frag cache to which the page fragment is aborted back
+> + * @va: virtual address of page fragment to be aborted
+> + * @fragsz: size of the page fragment to be aborted
+> + *
+> + * It is expected to be called from the same context as the allocation A=
+PI.
+> + * Mostly used for error handling cases to abort the fragment allocation=
+ knowing
+> + * that no one else is taking extra reference to the just aborted fragme=
+nt, so
+> + * that the aborted fragment can be reused.
+> + */
+> +static inline void page_frag_alloc_abort(struct page_frag_cache *nc, voi=
+d *va,
+> +                                        unsigned int fragsz)
+> +{
+> +       page_frag_alloc_abort_ref(nc, va, fragsz);
+> +       nc->offset -=3D fragsz;
+> +}
+>
+>  #endif
+> diff --git a/mm/page_frag_cache.c b/mm/page_frag_cache.c
+> index d014130fb893..4d5626da42ed 100644
+> --- a/mm/page_frag_cache.c
+> +++ b/mm/page_frag_cache.c
+> @@ -201,3 +201,24 @@ void page_frag_free(void *addr)
+>                 free_unref_page(page, compound_order(page));
+>  }
+>  EXPORT_SYMBOL(page_frag_free);
+> +
+> +/**
+> + * page_frag_alloc_abort_ref - Abort the reference of allocated fragment=
+.
+> + * @nc: page_frag cache to which the page fragment is aborted back
+> + * @va: virtual address of page fragment to be aborted
+> + * @fragsz: size of the page fragment to be aborted
+> + *
+> + * It is expected to be called from the same context as the allocation A=
+PI.
+> + * Mostly used for error handling cases to abort the reference of alloca=
+ted
+> + * fragment if the fragment has been referenced for other usages, to aov=
+id the
+> + * atomic operation of page_frag_free() API.
+> + */
+> +void page_frag_alloc_abort_ref(struct page_frag_cache *nc, void *va,
+> +                              unsigned int fragsz)
+> +{
+> +       VM_BUG_ON(va + fragsz !=3D
+> +                 encoded_page_decode_virt(nc->encoded_page) + nc->offset=
+);
+> +
+> +       nc->pagecnt_bias++;
+> +}
+> +EXPORT_SYMBOL(page_frag_alloc_abort_ref);
 
-On Mon, 28 Oct 2024 07:22:22 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
-
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] 4ccf0b49d5b6 ("Linux 6.11.6-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 9 selftests: damon: damos_tried_regions.py
-ok 10 selftests: damon: damon_nr_regions.py
-ok 11 selftests: damon: reclaim.sh
-ok 12 selftests: damon: lru_sort.sh
-ok 13 selftests: damon: debugfs_empty_targets.sh
-ok 14 selftests: damon: debugfs_huge_count_read_write.sh
-ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 16 selftests: damon: debugfs_rm_non_contexts.sh
-ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+It isn't clear to me why you split this over two functions. It seems
+like you could just update the offset in this lower function rather
+than do it in the upper one since you are passing all the arguments
+here anyway.
 
