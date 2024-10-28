@@ -1,142 +1,148 @@
-Return-Path: <linux-kernel+bounces-384413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63D939B29D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:07:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221BF9B29DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:08:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BBD51F23307
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:07:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA303286562
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6EB71C9B61;
-	Mon, 28 Oct 2024 08:04:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B641D54D1;
+	Mon, 28 Oct 2024 08:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dN3gTHU5"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A4TMAKMv"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3176E18D64F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:04:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5CDC1D4605;
+	Mon, 28 Oct 2024 08:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730102657; cv=none; b=KPMAes3Bq7mGnb6K6zWeUp+iAlLE1KhY4xZxuKyHLyK13HYwudilCunOMuM2c0QaMzzU2Cr+CjZZfFjgv0fs/By9+ue59i9SPSboSw3e6KUoY3JFyKi7DIub69/2u/hvtVtQ8XRWuL2QT14IEr1S+3UeLwYMc1rbHTsYOg9OS94=
+	t=1730102685; cv=none; b=hML4f1w/C7gHsBAifsJ//HNCm5JtpJjbMvceWVmEKVuwcrlDo3flZ5SaNLrs/hltC33LpAvZgbzqXqO+tSyTyGJrD5ssiRe6VSUOAWyabXAqFz+5ILGW/SjWQg5lIhGUpJg9LUjQkLrNAG3IiXuJmtX7sC4UaA7S+At0Pb6zwGY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730102657; c=relaxed/simple;
-	bh=p6rK48nYUKGNYWK8dymIh1v4YV6ABvHs2RsfXgqGE9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MwUaM89Ixn+PpMhE6kaMJognBXRRjDdgb4wtcHK1mm3YqgsoHbCuaGUSUuiolx4Nl60j65hv3Hac9IU2mGYtWdBya0Y1/dxprpSaG5oc4EBtff7CzW/6zR0fy6LFUFr+9NJHGggfMRcP2Iqqxy8JBQS56GASm722yUlii9klyLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dN3gTHU5; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 434141140112;
-	Mon, 28 Oct 2024 04:04:14 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Mon, 28 Oct 2024 04:04:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1730102654; x=1730189054; bh=vh6Bqs3XhY31Rdd+eH9z0d7RfUwQ
-	g80hOdmDGpnyyaM=; b=dN3gTHU5a6K7qe9F4uZhmfCic4UKC7TT7av+jbixAh0U
-	ThpQz13q79C4RpOK0f8QW1vzAF0Mkv92RdtMxWGDdvblpX2pzxb7M/gN1seYzveK
-	yqNpmYNT0GRpda43IyEy94GKFp4N0nNxMbYw9oBUjZsLEjYFwvcFJM1T4MPMpuyW
-	2Ol1YN0bwOH+5pHTfFwedMVMegoq/EtUlTu/vLs5RAmfLQgmDQTeBB7ANOyTUNqf
-	uGh7OhnXFICeNP4ewPbKnleBKjS/TFqFTFlMslT9y/pLlHI9S7dC9FEG+Wyh1Qt9
-	UfzVsNMOnHQyC0abXbaHtLe9aEVC90WQwvJ0yuYpig==
-X-ME-Sender: <xms:fUUfZ8Mf6LKlirkqBaRB3lUS7Doo2q2kj_ze2s0ujqifLs7942auBw>
-    <xme:fUUfZy_UGGN4XjwP_RBkUgpCL5vtLXeSLO3-oVV6Ydhkj7At-sL-eAa-w4NzmljzD
-    HPbVq3imR8dSSs>
-X-ME-Received: <xmr:fUUfZzTq6NRQno8ByfdttI2py8jVu-PJ1t79L9-LzaNYJuLvnC_RrlVncyRT>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejjedgudduiecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefkughoucfutghhihhmmhgvlhcuoehiughoshgthhesihguohhstghhrd
-    horhhgqeenucggtffrrghtthgvrhhnpedvudefveekheeugeeftddvveefgfduieefudei
-    fefgleekheegleegjeejgeeghfenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehiughoshgthhesihguohhstghhrdhorhhgpdhnsggprhgtphht
-    thhopedutddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheptggrthgrlhhinhdrmh
-    grrhhinhgrshesrghrmhdrtghomhdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhies
-    rghrmhdrtghomhdprhgtphhtthhopehjohhroheskegshihtvghsrdhorhhgpdhrtghpth
-    htohepfihilhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehiohhmmhhusehlihhs
-    thhsrdhlihhnuhigrdguvghvpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvgh
-    gvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepiihhrghnghiivghkuhhnuddusehh
-    uhgrfigvihdrtghomhdprhgtphhtthhopehjohhhnhdrghdrghgrrhhrhiesohhrrggtlh
-    gvrdgtohhmpdhrtghpthhtohepughhvggvrhgrjhhkuhhmrghrrdhsrhhivhgrshhtrghv
-    rgesrghmugdrtghomh
-X-ME-Proxy: <xmx:fUUfZ0vcaS6GFCw896YuixOWmxS790Rnv0jut5ZdkJTDiziqrE_WhQ>
-    <xmx:fUUfZ0fyZTpn6WuLfa-Gwxj-HVNeLTSr5ttwGw6aEF22Fi9YerEw9g>
-    <xmx:fUUfZ42ObuEVrGg5DTuY5H9u9rYD7dqooHM8Wf5hBUl-tas0PIob0g>
-    <xmx:fUUfZ4_xvnLSmW8emyRgXoe_5jb_HOGlGCAHT_tbpyL-RQUrpWpXZw>
-    <xmx:fkUfZ86lqqvzn1Q3EZIbJ1BFcisrs02IMESSBkUlHdPDFGdkVbLyZ71n>
-Feedback-ID: i494840e7:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 28 Oct 2024 04:04:12 -0400 (EDT)
-Date: Mon, 28 Oct 2024 10:04:10 +0200
-From: Ido Schimmel <idosch@idosch.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Robin Murphy <robin.murphy@arm.com>, joro@8bytes.org, will@kernel.org,
-	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
-	zhangzekun11@huawei.com, john.g.garry@oracle.com,
-	dheerajkumar.srivastava@amd.com, jsnitsel@redhat.com
-Subject: Re: [PATCH v3 0/2] iommu/iova: Make the rcache depot properly
- flexible
-Message-ID: <Zx9Fepzvrs8b6_LX@shredder.mtl.com>
-References: <cover.1694535580.git.robin.murphy@arm.com>
- <ZY1osaGLyT-sdKE8@shredder>
- <c9cf02b5-7add-46ea-8db1-46fdce191c1c@arm.com>
- <ZZ2AqZT4dD-s01q9@shredder>
- <ab22c439-e7da-49b5-b20b-856daf376c02@arm.com>
- <ZZ7atzgT6_kOvWnJ@arm.com>
- <ZZ-ky9UCoHwbyqfn@shredder>
- <ZZ-_LWz_4KxOkRsA@arm.com>
- <ZaFbPnDrYT5uGqJD@shredder>
- <ZaTb8KorPFPgRqD6@shredder>
+	s=arc-20240116; t=1730102685; c=relaxed/simple;
+	bh=px0akK44Pnon/IUmYmPa0nxDuWcRJmwM/cXbQ0Y2yPc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=prfg7JaPmgjzpnIIuAUQZS18+UlUcqjlfpcU/iCfkfkoUqBOb3lqmNu5aOT7v4ULizvkj78SFL1pv/Ec0Ob3An/Dh4UGRLUj8txlVyQQSgWw8nWT0827sg0M2XMTfB+5kAKXJCE52lo7kyAzgy4O0qzVkNhv/95fwUv6uPcANoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A4TMAKMv; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ede82dbb63so512754a12.2;
+        Mon, 28 Oct 2024 01:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730102683; x=1730707483; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y1wPbpOHvrVR6b5Iz9OqlHN9S68A6RZqEvUNgT5njSQ=;
+        b=A4TMAKMvavhD8VfGhp9vAeSUC+JYyxhFexRSFOnpovsxz0pXzpCb8PeFITl9DveBG5
+         gBo7u7ZFzNz0AnAA9ueI0kZxkNYvwtyJoOExCj3n6oGMPo/JVw8uY3GkFEjvjwnqWffu
+         O949J+wHosDES1V0J4jV3AQxeEPA9DuIIFW9zu8RBZ4/e3foZpOABxWEHa+0+qWyeLqK
+         hCgmVEG3C3kTul9qj7DPMeVkyF4S3hVScYAa1rdE45wiqR9YKKSj/AuPqI3ljuOf5U5P
+         sUj7ReqPgqFIUNrNsOYwj2UD9mVHELduWS4EsCk99wxoB2zqziC+pTgqBU/D5dZhsWfi
+         HKIw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730102683; x=1730707483;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y1wPbpOHvrVR6b5Iz9OqlHN9S68A6RZqEvUNgT5njSQ=;
+        b=lHLL3RR4YS9a0n6ZYB96vjenburCB58lqAFwrL3O0p4jG1eqUsCi6vTZcYpmLqI39j
+         7CTrn/DDcBsanE/fsl8yRpYGhnL8Oqj4i/KZJpCrw7Mz8jhGlJmvH0/5DItzucTWHo02
+         iV5C5hTvzd6711wkt+7wnH+XdxLU582In4nC4Z8MnIF/VFUX5N7ot6TOFkddWksahLOH
+         jReY0oontWAxh9rg6iA1ltTX0oKkpHzSr0WmsMdpmaNCqt/KR3pL/FmWAWhZ/tWMcfZ7
+         wANH3Z3YZeCS9AYO3UZIU0M6yrGmegWWCSxwLtz5ihkkPrLwxsdSTCatNGrXG4tfRVbN
+         bxgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSTOGAUQ+SAEINcAGrzhsvsUt/iTTeeF5iEFhRpE8MlLFubXb/oNm7KR/AMSjC3+z/Kwa2F+srisizEBE=@vger.kernel.org, AJvYcCWSzA6GhfRGXT+aUTZT9ldbzmiklQkY7hqLVrZx0Wls1lu0aNglYUxr/npkdl3HgvdNlQSCE88PPV1f@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9bwvrYtElYC9A0PGBoMaAGym+Seg8vslKKRfQl6iGFlDn+63a
+	mkgA6zzQh2lYATFEhP6k7iHmy8Bs5R8L3FGHZ/tk4eetudx0n1my
+X-Google-Smtp-Source: AGHT+IGbSevwBYaqUV266/S43UKd21qQoPrJSj6hau3YriYsYTYyyfCW7RuMVTlyA8zlBEfKx39H5w==
+X-Received: by 2002:a05:6a21:2d8f:b0:1d8:f977:8cda with SMTP id adf61e73a8af0-1d9a8400813mr9274823637.27.1730102682848;
+        Mon, 28 Oct 2024 01:04:42 -0700 (PDT)
+Received: from localhost ([2402:7500:488:6621:2441:dc7a:ff1b:984a])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0d025sm5174882b3a.101.2024.10.28.01.04.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 01:04:42 -0700 (PDT)
+From: wojackbb@gmail.com
+To: johan@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jack Wu <wojackbb@gmail.com>
+Subject: [PATCH] USB: serial: option: add MediaTek T7XX compositions
+Date: Mon, 28 Oct 2024 16:04:15 +0800
+Message-Id: <20241028080415.697793-1-wojackbb@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZaTb8KorPFPgRqD6@shredder>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jan 15, 2024 at 09:17:04AM +0200, Ido Schimmel wrote:
-> On Fri, Jan 12, 2024 at 05:31:15PM +0200, Ido Schimmel wrote:
-> > On Thu, Jan 11, 2024 at 10:13:01AM +0000, Catalin Marinas wrote:
-> > > On Thu, Jan 11, 2024 at 10:20:27AM +0200, Ido Schimmel wrote:
-> > > > On Wed, Jan 10, 2024 at 05:58:15PM +0000, Catalin Marinas wrote:
-> > > > > Transient false positives are possible, especially as the code doesn't
-> > > > > use a double-linked list (for the latter, kmemleak does checksumming and
-> > > > > detects the prev/next change, defers the reporting until the object
-> > > > > becomes stable). That said, if a new scan is forced (echo scan >
-> > > > > /sys/kernel/debug/kmemleak), are the same objects still listed as leaks?
-> > > > > If yes, they may not be transient.
-> > > > 
-> > > > We are doing "scan" and "clear" after each test. I will disable the
-> > > > "clear" and see if the leaks persist.
-> > > 
-> > > If it is indeed a false positive
-> > 
-> > Looks like the leaks are transient. After removing the "clear" step the
-> > leaks do not seem to persist.
-> > 
-> > > you can try the patch below (I haven't given it any run-time test,
-> > > only compiled):
-> > 
-> > Will try and let you know next week.
-> 
-> Looks good. Feel free to add:
-> 
-> Tested-by: Ido Schimmel <idosch@nvidia.com>
+From: Jack Wu <wojackbb@gmail.com>
 
-Catalin, we have been using this patch since you posted it and haven't
-seen any issues. Can please submit it upstream?
+Add the MediaTek T7XX compositions:
 
-Thanks!
+T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 74 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0e8d ProdID=7129 Rev= 0.01
+S:  Manufacturer=MediaTek Inc.
+S:  Product=USB DATA CARD
+S:  SerialNumber=004402459035402
+C:* #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=02(comm.) Sub=0e Prot=00
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=0e Prot=00 Driver=cdc_mbim
+E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=32ms
+I:  If#= 1 Alt= 0 #EPs= 0 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+I:* If#= 1 Alt= 1 #EPs= 2 Cls=0a(data ) Sub=00 Prot=02 Driver=cdc_mbim
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=8a(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+
+Signed-off-by: Jack Wu <wojackbb@gmail.com>
+---
+ drivers/usb/serial/option.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 4f18f189f309..b6118f545386 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2244,6 +2244,7 @@ static const struct usb_device_id option_ids[] = {
+ 	  .driver_info = NCTRL(2) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff, 0x00, 0x00),
+ 	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7129, 0xff, 0x00, 0x00) },	/* MediaTek T7XX */
+ 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
+ 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
+ 	  .driver_info = RSVD(1) | RSVD(4) },
+-- 
+2.34.1
+
 
