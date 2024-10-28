@@ -1,108 +1,295 @@
-Return-Path: <linux-kernel+bounces-384771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62E449B2E35
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 206D89B2E32
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E7121F21851
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:11:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A7CB1F2127F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5578F1D5171;
-	Mon, 28 Oct 2024 10:54:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0863E1D47A6;
+	Mon, 28 Oct 2024 10:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="tUI/dh5U"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H9iLtQEM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBDA1DC1B2;
-	Mon, 28 Oct 2024 10:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3351D61AA;
+	Mon, 28 Oct 2024 10:54:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112873; cv=none; b=CtvTEtT3W5NB3O5AYwYFbKRFIcf/68i0mYNujPd99foP/37mU1x8U0/fC7JScN3B5pFriNAMri4wdhIE3TF+FjpqrQNwQso2qGwUTkznqT+D6ogJe+gpn/Ciktd9OmlPmOGAVZQKiuIt0klAMhne6ElxdDIUkJQUzfC4FvgmrXI=
+	t=1730112860; cv=none; b=SZhzHRJ5iqvre8qdOJW7T6oJjhxdobJA8ePduECdZ4Rb0RF0S7aLbQvpVCtsRxzNqih6ck8CYoH4ajE8XDqju+tNk/k8+SOkbz06oOfzGqKouOMMbyIsTs0Q7mmeUR+NqhPY4LcFPSjYA1QqFSui+1ZUBzcXGBIPGiy5kJ+QfKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112873; c=relaxed/simple;
-	bh=WWM5j4iyr5uf9zwNqp3cN4Hkp2o454JK/QH2zlUNTck=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=c8zr6+8f69Zo2Q+C/3IB6sVxa8ibqzF1A2jO+NqGSvpwx2IPrImD8KWAjHZB6A8etZBDZAgaaMFwp8BlMLVAhtZjvNrMq51wikJifw9gr6Th4udHiNPX+T1QWyUSqKBLaVVcwcsIXpWz4n0bPfmVn0+Bge5V+bMJEC6Gd4Egpuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=tUI/dh5U; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 621741F935;
-	Mon, 28 Oct 2024 11:54:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1730112862;
-	bh=Lh7fePJXXUmxKfVX2o4rq/UZ/vQBYBldJd5mNKxr/A4=; h=From:To:Subject;
-	b=tUI/dh5UrbTqI2w3m+gLhHOZd859Cft13v5ayaFkLG1GfnG3el/n/axi81YVHqjOy
-	 xio154WS2x1vP57HxbpUNcSogGVK7qQrpvmDHG/i8WgNRFdaaqEH//Jeowo9qwa91T
-	 YicDv8HBKZE3kexeJ83vknWpgsNZgvYE//XRi87tW2kV2h6RfpWgcYaqyNSLv4rJxx
-	 RhI0BlNhGB4tpYDl0sUjF1eESatdAsvXIMZcH5V2L+VAxUEVJ4rgcUd6wleqUTpWCd
-	 mRD70dwd2xNHH+udP2WGgiFir9QsJ+r/LsmYLGJlI9fyv55OqVbeFnEO/7RlkOko0i
-	 rafToiE6WxLEA==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] USB: xhci: add support for PWRON active high
-Date: Mon, 28 Oct 2024 11:54:13 +0100
-Message-Id: <20241028105413.146510-3-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241028105413.146510-1-francesco@dolcini.it>
-References: <20241028105413.146510-1-francesco@dolcini.it>
+	s=arc-20240116; t=1730112860; c=relaxed/simple;
+	bh=zIOXzuRG3dc6vNZ1stnKzWp2pTIwZMS6vUh1dOBMtLQ=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S6Y28Eum1lmaQvmxjcygC4yMnFVmdl4U7b3aPLyz+CepLbMamS7zbR+f/phVIyyv3hE1t+RnJvg/QBZVXrxBEABYVOTxMkmbX65LhR7opLt2kmLfMKaf9e1JJkMva1kxE8KXN8rVpCDQZL4+9HcvpeVygxLRtMfzuDPhAbaSK8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H9iLtQEM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC13FC4CEC3;
+	Mon, 28 Oct 2024 10:54:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730112860;
+	bh=zIOXzuRG3dc6vNZ1stnKzWp2pTIwZMS6vUh1dOBMtLQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=H9iLtQEMzLKjdhnTxEUC5FFzsYwGwY+mTpPCgosBKxyDl7wEcR1f/fASlpOPAawXB
+	 qHfblsangru8s7Cfc+8Qw/vbKqtmfBbv8efTB2GbzZFfdlwmrXtVMcjxoIhOwrXyf1
+	 bUQb7jbiBk5yQ/UqrR7gWc0H/ktuAkOhyQuqjh4Tlj4BbYfo9oqgEsr6sQ0Bv7MU/O
+	 Fo/9hxwRoHmHtv4WR7xizmplVSVRD6JBIuh9znF250lm4yrtur/59ke0S/vRjry5+d
+	 dWUK8QVwUUb9iC9n8LinOAZ9rNIU0ZfSxRVUaGhIAq9XEsGsZ24XRWy4ZcT8ftpRn+
+	 /N8wDW+EYwj5Q==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t5NO5-007X6U-MV;
+	Mon, 28 Oct 2024 10:54:17 +0000
+Date: Mon, 28 Oct 2024 10:54:17 +0000
+Message-ID: <87o734ts4m.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute if supported
+In-Reply-To: <20241028094014.2596619-5-aneesh.kumar@kernel.org>
+References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+	<20241028094014.2596619-5-aneesh.kumar@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Suzuki.Poulose@arm.com, steven.price@arm.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-From: Parth Pancholi <parth.pancholi@toradex.com>
+On Mon, 28 Oct 2024 09:40:14 +0000,
+"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+> 
+> Currently, the kernel won't start a guest if the MTE feature is enabled
+> and the guest RAM is backed by memory which doesn't support access tags.
+> Update this such that the kernel uses the NoTagAccess memory attribute
+> while mapping pages from VMAs for which MTE is not allowed. The fault
+> from accessing the access tags with such pages is forwarded to VMM so
+> that VMM can decide to kill the guest or remap the pages so that
+> access tag storage is allowed.
 
-Some PCIe-to-USB controllers such as TI's TUSB73x0 3.0 xHCI host
-controller supports controlling the PWRONx polarity via the USB
-control register (E0h). Add support for device tree property
-ti,tusb7320-pwron-active-high which indicates PWRONx to be
-active high and configure the E0h register accordingly.
-This enables the software control for the TUSB73x0's PWRONx
-outputs with an inverted polarity from the default configuration
-which could be used as USB EN signals for the other hubs or devices.
+I only have questions here:
 
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v4: no changes
-v3: no changes
-v2: s/polarity-invert/active-high
----
- drivers/usb/host/xhci-pci.c | 3 +++
- 1 file changed, 3 insertions(+)
+- what is the benefit of such approach? why shouldn't that be the
+  kernel's job to fix it?
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 91dccd25a551..4bdef01735eb 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -641,6 +641,9 @@ int xhci_pci_common_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 
- 	dma_set_max_seg_size(&dev->dev, UINT_MAX);
- 
-+	if (device_property_read_bool(&dev->dev, "ti,tusb7320-pwron-active-high"))
-+		pci_clear_and_set_config_dword(dev, 0xE0, 0, 1 << 22);
-+
- 	return 0;
- 
- put_usb3_hcd:
+- where is the documentation for this new userspace ABI?
+
+- are you expecting the VMM to create a new memslot for this?
+
+- where is the example of a VMM using this?
+
+> 
+> NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
+> add a new EXIT type because this is arm64 specific exit type.
+> 
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+>  arch/arm64/include/asm/kvm_pgtable.h |  1 +
+>  arch/arm64/kvm/hyp/pgtable.c         | 16 +++++++++++++---
+>  arch/arm64/kvm/mmu.c                 | 28 ++++++++++++++++++++++------
+>  include/uapi/linux/kvm.h             |  7 +++++++
+>  5 files changed, 48 insertions(+), 9 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> index a601a9305b10..fa0149a0606a 100644
+> --- a/arch/arm64/include/asm/kvm_emulate.h
+> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> @@ -373,6 +373,11 @@ static inline bool kvm_vcpu_trap_is_exec_fault(const struct kvm_vcpu *vcpu)
+>  	return kvm_vcpu_trap_is_iabt(vcpu) && !kvm_vcpu_abt_iss1tw(vcpu);
+>  }
+>  
+> +static inline bool kvm_vcpu_trap_is_tagaccess(const struct kvm_vcpu *vcpu)
+> +{
+> +	return !!(ESR_ELx_ISS2(kvm_vcpu_get_esr(vcpu)) & ESR_ELx_TagAccess);
+> +}
+> +
+>  static __always_inline u8 kvm_vcpu_trap_get_fault(const struct kvm_vcpu *vcpu)
+>  {
+>  	return kvm_vcpu_get_esr(vcpu) & ESR_ELx_FSC;
+> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+> index 03f4c3d7839c..5657ac1998ad 100644
+> --- a/arch/arm64/include/asm/kvm_pgtable.h
+> +++ b/arch/arm64/include/asm/kvm_pgtable.h
+> @@ -252,6 +252,7 @@ enum kvm_pgtable_prot {
+>  
+>  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
+>  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
+> +	KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS	= BIT(5),
+
+This seems wrong. NOTAGACCESS is a *permission*, not a memory type.
+
+>  
+>  	KVM_PGTABLE_PROT_SW0			= BIT(55),
+>  	KVM_PGTABLE_PROT_SW1			= BIT(56),
+> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+> index b11bcebac908..bc0d9f08c49a 100644
+> --- a/arch/arm64/kvm/hyp/pgtable.c
+> +++ b/arch/arm64/kvm/hyp/pgtable.c
+> @@ -677,9 +677,11 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+>  {
+>  	kvm_pte_t attr;
+>  	u32 sh = KVM_PTE_LEAF_ATTR_LO_S2_SH_IS;
+> +	unsigned long prot_mask = KVM_PGTABLE_PROT_DEVICE |
+> +				  KVM_PGTABLE_PROT_NORMAL_NC |
+> +				  KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
+>  
+> -	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
+> -			KVM_PGTABLE_PROT_NORMAL_NC)) {
+> +	switch (prot & prot_mask) {
+>  	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
+>  		return -EINVAL;
+>  	case KVM_PGTABLE_PROT_DEVICE:
+> @@ -692,6 +694,12 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+>  			return -EINVAL;
+>  		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
+>  		break;
+> +	case KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS:
+> +		if (system_supports_notagaccess())
+> +			attr = KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS);
+> +		else
+> +			return -EINVAL;
+> +		break;
+
+How do you see this working when migrating a VM from one host to
+another, one that supports FEAT_MTE_PERM and one that doesn't? The
+current assumptions are that the VMM will replay the *exact same*
+setup on the target host, and this obviously doesn't work.
+
+>  	default:
+>  		attr = KVM_S2_MEMATTR(pgt, NORMAL);
+>  	}
+> @@ -872,7 +880,9 @@ static void stage2_unmap_put_pte(const struct kvm_pgtable_visit_ctx *ctx,
+>  static bool stage2_pte_cacheable(struct kvm_pgtable *pgt, kvm_pte_t pte)
+>  {
+>  	u64 memattr = pte & KVM_PTE_LEAF_ATTR_LO_S2_MEMATTR;
+> -	return kvm_pte_valid(pte) && memattr == KVM_S2_MEMATTR(pgt, NORMAL);
+> +	return kvm_pte_valid(pte) &&
+> +	       ((memattr == KVM_S2_MEMATTR(pgt, NORMAL)) ||
+> +		(memattr == KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS)));
+>  }
+>  
+>  static bool stage2_pte_executable(kvm_pte_t pte)
+> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
+> index b5824e93cee0..e56c6996332e 100644
+> --- a/arch/arm64/kvm/mmu.c
+> +++ b/arch/arm64/kvm/mmu.c
+> @@ -1647,12 +1647,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
+>  		 *  not a permission fault implies a translation fault which
+>  		 *  means mapping the page for the first time
+>  		 */
+> -		if (mte_allowed) {
+> +		if (mte_allowed)
+>  			sanitise_mte_tags(kvm, pfn, vma_pagesize);
+> -		} else {
+> -			ret = -EFAULT;
+> -			goto out_unlock;
+> -		}
+> +		else
+> +			prot |= KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
+>  	}
+>  
+>  	if (writable)
+> @@ -1721,6 +1719,15 @@ static void handle_access_fault(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa)
+>  		kvm_set_pfn_accessed(kvm_pte_to_pfn(pte));
+>  }
+>  
+> +static inline void kvm_prepare_notagaccess_exit(struct kvm_vcpu *vcpu,
+> +						 gpa_t gpa, gpa_t size)
+> +{
+> +	vcpu->run->exit_reason = KVM_EXIT_ARM_NOTAG_ACCESS;
+> +	vcpu->run->notag_access.flags = 0;
+> +	vcpu->run->notag_access.gpa = gpa;
+> +	vcpu->run->notag_access.size = size;
+
+Why does size matter here? It seems pretty pointless.
+
+> +}
+> +
+>  /**
+>   * kvm_handle_guest_abort - handles all 2nd stage aborts
+>   * @vcpu:	the VCPU pointer
+> @@ -1833,6 +1840,14 @@ int kvm_handle_guest_abort(struct kvm_vcpu *vcpu)
+>  
+>  	gfn = ipa >> PAGE_SHIFT;
+>  	memslot = gfn_to_memslot(vcpu->kvm, gfn);
+> +
+> +	if (kvm_vcpu_trap_is_tagaccess(vcpu)) {
+> +		/* exit to host and handle the error */
+> +		kvm_prepare_notagaccess_exit(vcpu, gfn << PAGE_SHIFT, PAGE_SIZE);
+> +		ret = 0;
+> +		goto out;
+> +	}
+> +
+>  	hva = gfn_to_hva_memslot_prot(memslot, gfn, &writable);
+>  	write_fault = kvm_is_write_fault(vcpu);
+>  	if (kvm_is_error_hva(hva) || (write_fault && !writable)) {
+> @@ -2145,7 +2160,8 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+>  		if (!vma)
+>  			break;
+>  
+> -		if (kvm_has_mte(kvm) && !kvm_vma_mte_allowed(vma)) {
+> +		if (kvm_has_mte(kvm) && !system_supports_notagaccess() &&
+> +		    !kvm_vma_mte_allowed(vma)) {
+>  			ret = -EINVAL;
+>  			break;
+>  		}
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 637efc055145..a8268a164c4d 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
+>  #define KVM_EXIT_NOTIFY           37
+>  #define KVM_EXIT_LOONGARCH_IOCSR  38
+>  #define KVM_EXIT_MEMORY_FAULT     39
+> +#define KVM_EXIT_ARM_NOTAG_ACCESS 40
+>  
+>  /* For KVM_EXIT_INTERNAL_ERROR */
+>  /* Emulate instruction failed. */
+> @@ -446,6 +447,12 @@ struct kvm_run {
+>  			__u64 gpa;
+>  			__u64 size;
+>  		} memory_fault;
+> +		/* KVM_EXIT_ARM_NOTAG_ACCESS */
+> +		struct {
+> +			__u64 flags;
+> +			__u64 gpa;
+> +			__u64 size;
+> +		} notag_access;
+>  		/* Fix the size of the union. */
+>  		char padding[256];
+>  	};
+
+How do you plan to handle the same thing for NV?
+
+Thanks,
+
+	M.
+
 -- 
-2.39.5
-
+Without deviation from the norm, progress is not possible.
 
