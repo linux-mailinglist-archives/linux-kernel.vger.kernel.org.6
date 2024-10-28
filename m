@@ -1,113 +1,109 @@
-Return-Path: <linux-kernel+bounces-385394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B4479B36A1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:36:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2253B9B369F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09771C22124
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C301E1F2289B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2951DEFD3;
-	Mon, 28 Oct 2024 16:36:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF8B1DEFC6;
+	Mon, 28 Oct 2024 16:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="anMVQLCM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="ZgS7BZdH"
+Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C611C1DED59;
-	Mon, 28 Oct 2024 16:36:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 608AB1DE4D5;
+	Mon, 28 Oct 2024 16:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133360; cv=none; b=pQ0C2VymP6UrVuTbr6BAqidR2yVljzQwH4QiuhEzD8jhIFlheQhrAyuIRgzUFONUbvaHNItityb6q2eIno3YTMgigmPDNbIB+lUfIqYvvA3VT941ZzUKHA6sW0h7YF2J6+kacuuo73u2Dg7WOS1bdHMEnlWr6VefpC5i6GImBUI=
+	t=1730133351; cv=none; b=LULxMDN2iCDOp9kbNA+2JyusnFZOYXRaOOvQ7o9s+BE9vhckrwMiGhGZi+266Dp2qtM4+UUAEHsRWQHjd5/pkGTMUQ9eV14cXgL+hyisswnHM3eOOBYM+iiWo7LaUdVokI3GAx3z9UkwKrigCOAAD/c4F2BZ8vVNsiPwvEZ8s2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133360; c=relaxed/simple;
-	bh=xdGiQWMlOc2GWNr8BFQjy6F7f2VQLFtCYg1i3syZ90k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cshm2e0fRAVeuj045IaF/7dUFvyS+ntfWxN1bxaWx/SCbkJZG2vZLvnhfXfzw20mTHpnqulHr0iVDBo24d0UqWaCiUpHuOyTiv5hsXQ5H+8cbu+KOBcJgs3cRXzg2S2OrJ98quza6K9GSx7e6v2yvFtaGgvT6O6NcaOTmFrrvHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=anMVQLCM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE1AC4CEC3;
-	Mon, 28 Oct 2024 16:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730133360;
-	bh=xdGiQWMlOc2GWNr8BFQjy6F7f2VQLFtCYg1i3syZ90k=;
-	h=From:To:Cc:Subject:Date:From;
-	b=anMVQLCMntblLAEq/unrqH4pRumPIY59wMltOSYs/pD8k7zbxBjv4QO8VMmAIsTNt
-	 sDJpoE7/IgaN19QpESr5S67BnhDWJow4DKA8IE6U15/wNpP9LLFxsgjJMUzEkQm21+
-	 a/yinuejQA5PekFq3O6+9egw6Cg43IzO5LSJLb/gK/G+EWRk6oPeskkIDb+SQOBPVN
-	 pLqYrGTsd+HGZfHe/T3bfO/q4r4VNx0cfT7zCY8whsdsKwwqdYUiC75oa4xGtZgy/T
-	 OCorWtquqN33W3JENMFP+Qlb19OpM1xjKUdZKt3DI+rgXby2ahvZprYl/kUTU8bJ5+
-	 18rYNMUwSZZHg==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Suma Hegde <suma.hegde@amd.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86/amd/hsmp: mark hsmp_msg_desc_table[] as maybe_unused
-Date: Mon, 28 Oct 2024 16:35:46 +0000
-Message-Id: <20241028163553.2452486-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730133351; c=relaxed/simple;
+	bh=SgbZ6d/TsfOwGbc31ZKuYuZl628O9USHtGUALdy8B+A=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ij2wFfVjDjTc18Yob7pRoOShiQcvj2CNUyZ2osx2PtarrZX8c3+nYpE5b4cer5ENRZfnUotU/CfpAEiIZbyTvk9W4pXrky8eiiA5H7QTjnh7JgyrWmIGvulyICSqAkmoLL9sHPuR6ZaUgHlJNyaYJtk9stLlu/9BRKCSYeCjT3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=ZgS7BZdH; arc=none smtp.client-ip=51.222.15.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
+	s=default; t=1730133348;
+	bh=SgbZ6d/TsfOwGbc31ZKuYuZl628O9USHtGUALdy8B+A=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZgS7BZdH9XB4Xl54n/5i1z3TmXuFPGbZT7e1yyh6uidffhW5fJX3UtOgD2UeUYK1h
+	 aPieFahk0TWr7mrR5UR2vvYcP5G9n0GfgeYuBZezw2UKR5niDymDl8Chm2YXq1yxqd
+	 vV4KAWsY0azGRYxHjbp5QIGL1rr6H6czLNQ6yUZmoFu5Ga1u8VcJoyhLXkD0lsoVNi
+	 T2CoAgCcSGveBqJ5QOz7kqvpbcs/+pHyUxwaXhJI4d0jDTHHpou488yykXHXa3FNB2
+	 SauQb81+iQBLuqZg93k1S5j7eQe03frPSqwIwgzzfHf1Vz5qoXIeBK2irb+YrAK9yQ
+	 VpuH4DjlbmtDw==
+X-Virus-Scanned: by epochal.quest
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Date: Mon, 28 Oct 2024 13:35:46 -0300
+From: Cody Eksal <masterr3c0rd@epochal.quest>
+To: wens@csie.org
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ Andre Przywara <andre.przywara@arm.com>, Parthiban <parthiban@linumiz.com>,
+ Yangtao Li <frank@allwinnertech.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>, Linus
+ Walleij <linus.walleij@linaro.org>, Thierry Reding <treding@nvidia.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Maxime Ripard
+ <mripard@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Yangtao Li <tiny.windzz@gmail.com>, Viresh Kumar <vireshk@kernel.org>,
+ Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, Kishon Vijay
+ Abraham I <kishon@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 07/13] arm64: dts: allwinner: a100: add usb related nodes
+In-Reply-To: <CAGb2v64tQ_9C3mwJqt-tm-6SV=SHAk75sO5Ho7gT=p=iyRfLcw@mail.gmail.com>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+ <20241024170540.2721307-8-masterr3c0rd@epochal.quest>
+ <CAGb2v64tQ_9C3mwJqt-tm-6SV=SHAk75sO5Ho7gT=p=iyRfLcw@mail.gmail.com>
+Message-ID: <542c16a63ab228a7ed1cc81fc91b961f@epochal.quest>
+X-Sender: masterr3c0rd@epochal.quest
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 2024/10/25 10:29 pm, Chen-Yu Tsai wrote:
+> On Fri, Oct 25, 2024 at 1:09 AM Cody Eksal <masterr3c0rd@epochal.quest> 
+> wrote:
+>> 
+>> From: Yangtao Li <frank@allwinnertech.com>
+>> 
+>> Allwinner A64 have two HCI USB controllers, a OTG controller and a USB
+> 
+>             ^^^ Please update this.
+I wasn't sure if I was supposed to update the commit messages; a few 
+others have grammar errors as well. I'll fix those alongside this one in 
+V2.
 
-After the file got split, there are now W=1 warnings for users that
-include it without referencing hsmp_msg_desc_table:
-
-In file included from arch/x86/include/asm/amd_hsmp.h:6,
-                 from drivers/platform/x86/amd/hsmp/plat.c:12:
-arch/x86/include/uapi/asm/amd_hsmp.h:91:35: error: 'hsmp_msg_desc_table' defined but not used [-Werror=unused-const-variable=]
-   91 | static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
-      |                                   ^~~~~~~~~~~~~~~~~~~
-
-Mark it as __attribute__((maybe_unused)) to shut up the warning but
-keep it in the file in case it is used from userland. The __maybe_unused
-shorthand unfurtunately isn't available in userspace, so this has to
-be the long form.
-
-Fixes: e47c018a0ee6 ("platform/x86/amd/hsmp: Move platform device specific code to plat.c")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Ideally this array wouldn't be part of the UAPI at all, since it is
-not really a interface, but it's hard to know what part  of the header
-is actually used outside of the kernel.
----
- arch/x86/include/uapi/asm/amd_hsmp.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/uapi/asm/amd_hsmp.h b/arch/x86/include/uapi/asm/amd_hsmp.h
-index e5d182c7373c..4a7cace06204 100644
---- a/arch/x86/include/uapi/asm/amd_hsmp.h
-+++ b/arch/x86/include/uapi/asm/amd_hsmp.h
-@@ -88,7 +88,8 @@ struct hsmp_msg_desc {
-  *
-  * Not supported messages would return -ENOMSG.
-  */
--static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
-+static const struct hsmp_msg_desc hsmp_msg_desc_table[]
-+				__attribute__((unused)) = {
- 	/* RESERVED */
- 	{0, 0, HSMP_RSVD},
- 
--- 
-2.39.5
-
+Thanks!
+- Cody
+>> PHY device, let's add nodes on dts.
+>> 
+>> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
+>> [masterr3c0rd@epochal.quest: fallback to a33-musb instead of h3-musb]
+>> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+>> ---
+>>  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi | 91 
+>> +++++++++++++++++++
+>>  1 file changed, 91 insertions(+)
+>> 
+>> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi 
+>> b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>> index adb11b26045f..0aee1b578661 100644
+>> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
+>> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
 
