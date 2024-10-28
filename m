@@ -1,86 +1,82 @@
-Return-Path: <linux-kernel+bounces-385213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9489B3415
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:55:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABAF9B3417
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5330E1F22A64
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:55:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9560A1C21D9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456811DE2A7;
-	Mon, 28 Oct 2024 14:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758371DE2B8;
+	Mon, 28 Oct 2024 14:55:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kunbus.com header.i=@kunbus.com header.b="TMNjdtQ2"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2097.outbound.protection.outlook.com [40.107.20.97])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="v0wQt+xr"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2042.outbound.protection.outlook.com [40.107.237.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DD61DDA1B;
-	Mon, 28 Oct 2024 14:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.97
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 816401DDC3C;
+	Mon, 28 Oct 2024 14:55:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.42
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730127293; cv=fail; b=iaaTK+ePwWkfEeDLB5U/mly+Zp2iCBdnkIinji1FRYAXMq/z+dztvg0AXJENIgwuLWU3s7cbTFcGiA4JUGAa2QItKG0EUbwU5j2BYHiU/2irTuYWjGQ4dJBeLqHxgON6kvtADYGn6QG1D3PZnrtp/OllD4TTWhN1dr+wa68L1tI=
+	t=1730127313; cv=fail; b=oL83BtIUOFyUZQ++abs+MViVqmjf4jXdoarCkChYie1oLTy0gu3VN/k9Cu7EBk1Dy0hd5gL2hcuHCSnvPMji0G42cy9rbmQjnI9b0mUaJzs1jqLnX99cD8bRwRJscoiiBGOubCIx9vrBlomglI2MXgqtkcf2zKFOvoCjQDQTACU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730127293; c=relaxed/simple;
-	bh=+tqpwiIu5qjdc8gQnBCY3PEUcf7rUA9+E3VS/z9dzIs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZIKskl9hXTjfnhrzyMZhqC4RJnuWy+isaa79554OnX4FThkqTAo3PTdwiAdA40W3abHAt/aBK+uGbXOUb6NYivNlUR1uxCs5/Tr9GIUVo/yEr1xT/rOni2uR74ctHvnJtdWDYFVMfae4PaKuxHY8GrMB5srK1n4tJWGHBtREK+o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kunbus.com; spf=pass smtp.mailfrom=kunbus.com; dkim=pass (1024-bit key) header.d=kunbus.com header.i=@kunbus.com header.b=TMNjdtQ2; arc=fail smtp.client-ip=40.107.20.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=kunbus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kunbus.com
+	s=arc-20240116; t=1730127313; c=relaxed/simple;
+	bh=ZL0lwXSlkIR1076TYdsgS7xZ2gJzdtEiJ+3zF29MZXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=baz9sWxg/W/tvHLR9R2pJQ+DGFSPMGjE6czegKWWjWMAc5L3BabddwyOS+ZG9lwOgU5uqBppVxGqef/QJY4qOAvOozUVxjOGvOVkAWl/opw5J/TjjqJNbjEuRO2DX1iCIZyMceU67QkjFQuB854jdMyGiezlhm6jdT/npjNSYQ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=v0wQt+xr; arc=fail smtp.client-ip=40.107.237.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ylOvvg2bAHsHp20zWuLzkV5lhf646M5PYR5gc1CPPMaeVQp4HviOvH+syT46xkReOuz424Y/NmkM3inVQOWtTP93YmH9nbxOwF9UgghSwxnlUS2SZZMKNvFfPjAMVxFGmZLLB1FrUO2TWTf0m7/TNJgpcV2pVF7iqcbDH3MwrS7qys2y8OgrRCYujYeQaM6NLjNOGsmCklpsu+Sh+n93+IB2vanuUnO6H7KReTd1+iQhp8fp9ZOQtViiwEtehOs6qOVraWSDsJEkNGT0RDnrA3+eHVD+BJk5HbRm505sDcbm6DNeqAjmzacYw1E0SSqT+00B/VNzpRLQX3Mo2DyrVA==
+ b=Zb5s2pcvCZeabVddJJXtZzJmDrPWDy3tSqmrK+7s/0Q54jtF+kIAfnBuZahJTFiKLBuxVmYa+lfGbSw3WAFr25yHcqFJ/pUmETkvHf2VYB3pITUCqASACJudRgc4nz3PM6omQDozC1Q5vm/DPfXQANWe6yRhbSynjueGIBVv/zpwo7jB6HmcjfK1A0vOiSbadS1qg2PBbCAjoHnltU61m+perFI8yufc5jXdTOUFEXPWOFYxabOHY7IgbYvWW3XNBWJq4lwLnlB88G02b7AjLknf/dj8piECVM9wldse84OWFMFk9THGE8LJ0l+6tm0Uj+1kMuosYJ2SwIKDQUrqwQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jmcCMJT6yLxVPwe1FvDRJ9vm8Yhc2Qfa5iILgBiv7go=;
- b=Nu7N2FFSVfC92UcLqfufXBTbCd+/KZq4jPVrUi1ZixMMeHYkyetjk9CkekNIgL95pBSxrXRDhFMcKt5fEUMgLSgbR08nt5a2SQ5B1KcFufTevDm2FU/O3EZUM7kDOTE3jTm0TwcAOo4SNJD5SN9SFA5sxiQiJhqw2/LynPs5KW4VanQdtPHTdoYO1p2IFF8rUuuo8/LFKeLX6qc8IhAcfzStOskru3jx/v5j0xQ1mic6GGXXfpHEja/QH+H7PdKbgrkmpF/sPNPsVZhAZH08vp01ivwfVEl5+ldE+LFDS9C5dabfOqfiZ++TRPyaZXTNHzg3r3fv92+K5RGRKrQG+Q==
+ bh=2gJ/rkNKTJ1xEd5yvQ0UYwSfkE6pwCp/bUZ9Qtulp5w=;
+ b=K+l5JTmrKqiTj6T2sDVPoJF8/lIwyYbWP5WOfhhrH7U7ImDgbtCGzS1OljzIGPVTFv+5UFnofTfuTB0up72ald9g9/4ktztPvdZYFH63RzrkL6Dzg0mcOy5+MjOco4fj3fjXWbLeA6KZXCbNvtpsCIoxMnz27dKUewgZTocHZKh1pXxpQzB18OWDx8gLpGKuaBhYsWV+YA/2aYfycWIfKVQRLn9xmZDqwUCUgCbb74jNa6R7puNLFrjoBrhMrwzmz0ywaqCB8Edl3dtmlh5fu5uSmZzzPZ88ZN9oFi/S1k4rKyPV20FQVYIoAhj7MY4Zoy21JMWc4qGm24U8kaokpw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=kunbus.com; dmarc=pass action=none header.from=kunbus.com;
- dkim=pass header.d=kunbus.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kunbus.com;
- s=selector1;
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jmcCMJT6yLxVPwe1FvDRJ9vm8Yhc2Qfa5iILgBiv7go=;
- b=TMNjdtQ27xAJ9Gh2dIRRYKPfYGBB39jdIY7w4ZUAylU95fesWlsz3SvSUyG5N3qCN1ON0yoXzu7P0aBoly1eV+ci6irfj8zib2pi9FjcRFxzDFCY5EFqsw+x/AY90uSK+WfmXyBmMjLFngvhGxP2XMTFvem3Oeu9VpckZUGKD0Y=
+ bh=2gJ/rkNKTJ1xEd5yvQ0UYwSfkE6pwCp/bUZ9Qtulp5w=;
+ b=v0wQt+xraLj9jqMCWvBXWWUbX/bGBAGXwbOEMQBteLCZwHRCbScXCqHi+n9/Q0cNlb6LInsmlfIteaeyNsRNQL9JKBFAIqduHh7WXv6LOqWCpp1lk/YaP3t6xOORgSRjSo0ZUJdW1k2jNp6SUny5j1QQKeO8+URJNNi+FWTB98U=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=kunbus.com;
-Received: from AM0P193MB0738.EURP193.PROD.OUTLOOK.COM (2603:10a6:20b:160::8)
- by DBAP193MB0970.EURP193.PROD.OUTLOOK.COM (2603:10a6:10:1cf::9) with
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ LV8PR12MB9451.namprd12.prod.outlook.com (2603:10b6:408:206::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Mon, 28 Oct
- 2024 14:54:45 +0000
-Received: from AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
- ([fe80::2398:d74:da85:f90]) by AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
- ([fe80::2398:d74:da85:f90%3]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
- 14:54:45 +0000
-Message-ID: <b8c28db1-11b2-498d-a2d8-0302c7081251@kunbus.com>
-Date: Mon, 28 Oct 2024 15:54:43 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] dt-bindings: rtc: pcf2127: Add
- nxp,battery-switch-over property
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Conor Dooley <conor@kernel.org>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Lino Sanfilippo <l.sanfilippo@kunbus.com>
-References: <20241022092855.1609427-1-p.rosenberger@kunbus.com>
- <20241022092855.1609427-2-p.rosenberger@kunbus.com>
- <20241022-radiator-blemish-3819dd4d94e0@spud>
- <36f46d44-8852-4988-9ff9-5b8bf49e2aa8@kunbus.com>
- <pj3tgtsdsjsqqznxgzzmxrcozibqie6ubtythou7t23tfgde5w@t6nwxob4rjah>
-Content-Language: en-US
-From: Philipp Rosenberger <p.rosenberger@kunbus.com>
-In-Reply-To: <pj3tgtsdsjsqqznxgzzmxrcozibqie6ubtythou7t23tfgde5w@t6nwxob4rjah>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR4P281CA0003.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:c8::14) To AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:20b:160::8)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Mon, 28 Oct
+ 2024 14:55:02 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
+ 14:55:02 +0000
+Date: Mon, 28 Oct 2024 20:24:47 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: peterz@infradead.org, mingo@redhat.com, rui.zhang@intel.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+	dave.hansen@linux.intel.com, ananth.narayan@amd.com,
+	kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 09/10] perf/x86/rapl: Move the cntr_mask to rapl_pmus
+ struct
+Message-ID: <Zx+lt4KZXGNWSsEP@BLRRASHENOY1.amd.com>
+References: <20241025111348.3810-1-Dhananjay.Ugwekar@amd.com>
+ <20241025111348.3810-10-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025111348.3810-10-Dhananjay.Ugwekar@amd.com>
+X-ClientProxiedBy: PNYP287CA0011.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:23d::14) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,190 +84,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM0P193MB0738:EE_|DBAP193MB0970:EE_
-X-MS-Office365-Filtering-Correlation-Id: ce604c3a-e02d-4706-81fa-08dcf7607627
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|LV8PR12MB9451:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96a27db3-89ea-458f-c2ee-08dcf7608028
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?RVlwMjJlU1VPV1NBWmtZdGpPUWFZaUlSeExCSFczSEdsNUE0a1hKMVNtN0wv?=
- =?utf-8?B?ZG9JNzZ4N2lTMlZMMFhCaU5GdkhqYjdENjBLME54TTdOc3ZCcUtKREFocXRH?=
- =?utf-8?B?QUFYSUgrNGJEZy8wVXJ3NFNJdXQ2ckR3MW8rTC9QZzVrVXIxUWhIOXAwTmZO?=
- =?utf-8?B?RGZHS09lY0owVVJTSGcrU05Tci9kN1RldWhWcGh4RzNBTlFDRm1uMm5ERERE?=
- =?utf-8?B?WjBCaTBFYWF3T0dVMTRoUTgxUzlTejZNc0lxYXVRV1B2dVFXRG1YSENmU0ZS?=
- =?utf-8?B?QmFxVDFSUkNzNTR6R0gxc2VxRG9BTE5QRWdXbk05WFZXUXdZa2hTdmFPanN5?=
- =?utf-8?B?YkpxQTdvTnh2REZHblR3RlJobEpwTEgzMWowQzdoMnBuZmhMazg4TzNDMTNm?=
- =?utf-8?B?YkRpWS96WUFjUm0rMnR4MlFPdlZOUFdycEdubExReWx5VUk5eUlUYUo2Z0NQ?=
- =?utf-8?B?ODExa0tWL29aYUVCQitHZFNCa0dLLzFLbitkUm9IUTV2ZXI5aXpVbVBHeDgr?=
- =?utf-8?B?UkxDemZEVEpYbk1tZEphVGhxUDByL1RoSEY3Ry85VnpQUEpxeEVsd2JobGdo?=
- =?utf-8?B?dHQ0ajEwTmgzV21KTlA1RFJYQmZNUGtrbyt6c3Y3eTNaSjdMZFFEYXRJUVlm?=
- =?utf-8?B?WWN2L3FRdjJqUHk3TXdRZFlsQ0d0TmdjZU0vbGNFdTNGTjcySWl4ckRVVTh4?=
- =?utf-8?B?aEMxanA4WjU3ditNMzBTUVQ0YmFaUk8vcndrQURKV1dwU1hxV0x4RHJxZ21t?=
- =?utf-8?B?RlEvUzU4SnpXenZFclprcll0em05YlhHZTF5Z2NKUTRGTk9RMjFQYS9LM253?=
- =?utf-8?B?UFBBQUVMNk5WZGQyWGFUVHM3dUgybVdoRkdRSUlZNHU0bVhyYlBka3dDM0l0?=
- =?utf-8?B?QVA0SFU0bUQxSDBTdHFUbDlZLzh0a1BGeUlybmd3VGhzM3ZIekJKVnp5N2ll?=
- =?utf-8?B?SnZnR3VZWWJOblBNUm1QT00wTnlyWFVDbGZTZzE4Q0Rtd2dsVnFsa2hiY1pW?=
- =?utf-8?B?aVVQcEtBNTlXY3RZcmQ2UnBacXg5VVRxdTBWVFN3ZE5rQ3k0VDBOMGxMeW9i?=
- =?utf-8?B?Vk4vTy9IMXVrc1owbVZtc3dQbTNqU3pFc0FxOHNDNVY3Qms2ankrNTFnSmZX?=
- =?utf-8?B?OGJyK3FRUG9ORFpSM2g1V2VHRHBwdHRrZkp3K0xaY1lZSW56SE1TRFJaVzlT?=
- =?utf-8?B?VFk1T1d5bmx5MDJ1enpjVC9sU3RPVmZtVVJFNHQzUFY2VFFUSDdmeXFEZEZm?=
- =?utf-8?B?Z0hGRVNRNkZWOGo0VVhSejVvQTlmUHIzbDVtakJpL255NjA3anZZVmhsSG9F?=
- =?utf-8?B?VU9sK0p3dm90YXFBMFdlcWI0ZjEwdmR5UERLVXJxT0N3THRmdWlab21aU2NO?=
- =?utf-8?B?aVkvU3NXYXQrLy84dzdINnRLS2RhdFFvRXdSdkg3b0ptYnNJTmo1UjQyc0lI?=
- =?utf-8?B?M3c1T2NCc0JVNG1UUFNaTFNoZUtrdnpMbS9IM1g2UGdHOXN1eG1WUFNBQzdC?=
- =?utf-8?B?UTZGYWFaL2UzR0JzdS9RYldLRGJTeVRnVk5VcS9XczFqTXVUTElpVHhlcVZQ?=
- =?utf-8?B?TWI5eUp4TGY5K2NsUHE2ckxNaVQ0eHZOeW1xMkxBSE54RTNvTG95MEpJamRj?=
- =?utf-8?B?OVBaZUJraDVrdStiZ0JRSVlZWnlmS1RseHRqVC82RDNQZnNmWU9GakJMQ3ZE?=
- =?utf-8?B?R3BqaFRNR25mYXpJZ3AwZnhoZzZzeGhzdk1ycktYbGhsYXhTc0p0OWpjRGZN?=
- =?utf-8?Q?RP41BPLdoNQ1R3qyaOSf7gyZN8DNbLTFD9xA/5w?=
+	=?us-ascii?Q?0UySGkSYxTAt8+b8LGwtXy5FojUYbMXTz5//TDdmivPrGZfzErxZw7h1/MiW?=
+ =?us-ascii?Q?4Jz8EOc7sA8Ts9Cxex8yber5ZWKQ67/UiL9r/s2dEKpqcSdXvqE/C5GZvMuy?=
+ =?us-ascii?Q?VXxQVaBi4RCxS5aW4YG+u7lQkLHSp94Yrv5b0eDHUWJDqA/m1XeotGYiztL7?=
+ =?us-ascii?Q?NQlFu8Ln8tTSEvb/v7xjU5qFhTcs60fKsbWTiKRwgQT5p98Bbta7A712U/SJ?=
+ =?us-ascii?Q?lmOLVFxgw/a3+QJvUomQOJx3l0uzj4Cb4U4z6MkA640GRgOYQWSTb6xUf6HS?=
+ =?us-ascii?Q?DzIyn738/XmuIDnaGPc+ojcW9lPxNAk6NcXY9ycqK+vOIkVlm8pDa85JSTuX?=
+ =?us-ascii?Q?bdKEER8h6zMSB2l6lDORMoEUKPODu4ljE8AuP4DCFTpM6/Jt0Vh6xFsfbBlc?=
+ =?us-ascii?Q?/5RymB6782f/aLpeX6r33zObGteMDITLMgzR1Jb8YQYnSugrv8+NEWqwQJUk?=
+ =?us-ascii?Q?TJtZq/gELdbDWPlUQhZSCz7J5/oDcXnmX+Um88tFAAhF689Q1B0qqWnj+M9z?=
+ =?us-ascii?Q?kKkk1sMI05gc7vq9nBXaipZG2xJmIciHlXyrZ8wGYEgRRrpJZ/CCQH0gZyZZ?=
+ =?us-ascii?Q?bfmWpnkdp43tarW7n7OR7cPOv9uZp0bx8WAjSupA6KujBc76PyAWr2TtJFh0?=
+ =?us-ascii?Q?jhGPfbC7hwigxjLMQ31ORTnEXLfeufb/Il02DvP9o8YyrL94bRGckOnaKb0c?=
+ =?us-ascii?Q?k0RBShvWjb9NDipzT6e/ZNekmufxe//CX39ddv7w/1v8SWjz7h6aKZqbzXMQ?=
+ =?us-ascii?Q?iQgQ/ErJ3tmBJ7i2umDTfgAi53UpyGpcXMwoQZBQY8MFrEvqUzOa1WuTK2xV?=
+ =?us-ascii?Q?fWIjUviXkjtS+8De4mfjWNxrUlFJ0onbwvxsqOgs7UlM8A6wuZVA9R0p8X+b?=
+ =?us-ascii?Q?PUOajm43pKDvi342l6E0npGi1d0puUD48s08K6jZq4ZepuXA/5PuXxCpy2b8?=
+ =?us-ascii?Q?6wsfyb71Q+kiUyVLC6FXsd2Ugm8dPse4ZSBwr+Cn0ja4mr4F73D9XV5eoMlH?=
+ =?us-ascii?Q?I5mkyNVakiONXgWWrE3agUKo4NtMuTYYQSzulZulxUclvSfg0tjy1mhHv3zI?=
+ =?us-ascii?Q?VWoND4I8gpwCuk8T2o2zL+wzqnJclFvLqfYuL74DrOYgj+cs4QiPnXCSV69O?=
+ =?us-ascii?Q?FP49hP3bx2N696NtBzlfAQ4L9bJOP9y51kE+S/EkQz522ftdzdJCo/QaPuy+?=
+ =?us-ascii?Q?WzRNTOyPA1aQBJgkjcXtPGQY4h0NrMEcDrw0FO1v2nRmDBA/wyHzARhrlPe2?=
+ =?us-ascii?Q?5xTttcsRxlMXRAsKeId9mZJIu6r2Ey0Q9J8aneqAYkwilhVyctVh4U4Qid8V?=
+ =?us-ascii?Q?gG6T7Cd2UsD8HlUH01dQtzl3?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM0P193MB0738.EURP193.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZU5vMXk2UlBrdlBncy9kMTJ4V2dvNUpmVjdTQzR6WUNHTDYyKy9xK1lnT1Vr?=
- =?utf-8?B?NitRRGJ6bmZqVWVTVWhZTnNaNVlnQWVqY2VrL3dFYUlQSHdub1N5dkpzY3E5?=
- =?utf-8?B?aFljTWFKZUxNRm9DVHpMS1ZpdS9BQ3JrMndGeEMvL3UybEN6aVllN2xURWFG?=
- =?utf-8?B?Qy9jdVY5ZHhtNkY3dDJES3N1WHhqTllnTlpndVVPYlBmQ0Q2NjgwMWRuVDJm?=
- =?utf-8?B?VkNNY1ZHOS9jNjFqKzNaWXJtT0NLRnBBb0pUMVk1SHVUbFRyOFhsVldNM1VC?=
- =?utf-8?B?QTZhVzd3cFhpYlFOZmJKc2dWMFlVVm0zYjJHWUF5VS9vWlRva2NSVEhlSDU0?=
- =?utf-8?B?VngxTVRJSTg5OWJKU2V3Yk5QMk9hRWdWV2h0c0tZbzBNb0VHZGE5eHBoRko4?=
- =?utf-8?B?RGVNMFBwdmpCL2xveEExTVBrcE1KbER3T2FqMjNlLzVoWEF5aUVoN0NWNk01?=
- =?utf-8?B?czR3V2s4MnhIemE3aUk2MFpZQTdpdHFVWlBDT1NvOTFUeitsVUpjOGkvbUlU?=
- =?utf-8?B?dkR1MDlLY0laazlJMzNHRzZESFloNG1qaXpDbVp3Y2pDRUtEQ014dWM5QSs4?=
- =?utf-8?B?TG41ejlxb3Y3Q3h4VG1qczVlOXZEV2RQZ3hlS2lOVlpra2dlcVdYUDlyTWUz?=
- =?utf-8?B?a1ZxNHhva2JDZVUwZlBGMlNPM2hFUzEyTDRZZFQwK3FFRDV6c3hBdkV3cmFJ?=
- =?utf-8?B?aHpWZ3RzSFExSHN4Lzl6WHNzZ3F3N1EwRGZjdUFHakNqWll6d2ZZUWw3Q21w?=
- =?utf-8?B?L2ZZemw5cjc3UFBDeHRPMkN5NjVyYTBxRUdCVWkvYUtTZWZGRUxWaFhCSWFq?=
- =?utf-8?B?WWx1Q2gwYWtFbldpM3haTnVhWUs2RVJHYk1lcXEzY1loODFWRmFtc2VIZHI0?=
- =?utf-8?B?bXE5TndVMzZGSXM3bW8vUEwrcHVGL05aMGhTbW1sbjNqRjZldWpML3FtWHNK?=
- =?utf-8?B?NzBxVU51T1QyTHZpNGthWHN5UTl2aTQrOHZGNWdCeExudURTaEJJVExURmdx?=
- =?utf-8?B?TEtQeEF2ZWFWc1paNUFOUFprYXFCbHVzczdSMGJ2QXhOUnF5Tm1FUFBrYW9I?=
- =?utf-8?B?KzZXQTloaDBCdTRieXhRY1VUazZmL3NzZnNtNlAyYk9MMzJqNWJZWVFCRng3?=
- =?utf-8?B?MVNiV3NpZFI0cEUrR3dkSWxYU3JCSVgxamFsMjNDbG9EMHNEOXE0anNLdWtL?=
- =?utf-8?B?c2tGcHZNcEUvVTBlMjVmeGlOcHk5NVRuejYzRlpIa0VlOEhYVDBsRnZ1VFZ6?=
- =?utf-8?B?ZTI4dlkyWjVBQm9HUnpoZkgvenI2Z09ReHB1YjJaQWgzNEdYcFp0amNWSUZu?=
- =?utf-8?B?QVF4WlBTNjdoRGxVU3MzR0luS25tczczNG5MRDVNVXlkV0tFMnIyelRuQXNW?=
- =?utf-8?B?NHFWR1IwZUF4dE5jaGVKZWFmUDhORFd4RG9lRVhJTFdlaUpmVERCV2xtNkJw?=
- =?utf-8?B?NEw3ZWltamlyR25Dd0hya3pDck80Q0FWaGdMNlM2b0lFZDAwVTRaM3hjaFVr?=
- =?utf-8?B?S21hQk04dlFYN1grL0FNV3ZiQ0VPT2V6SlpSaVNLUkx6K09neVpJZmRSTFVa?=
- =?utf-8?B?L2Y2dE1SNGlrckFlN1lHM1JoN1dZL3ZSNjd4eUlER3RRbTljV0NQVk9nT0hW?=
- =?utf-8?B?U2VNZUxvUGg1NUh2RjFOOTIvWXZPdkZXWTU4OStxODBVWWRITUV3MlJkdDBX?=
- =?utf-8?B?WDdpbStvRmZDYkMxeDFpcWQzOTd1QUI4a2ZueTVVaXdIdno0VVRqOVp0Z0ZZ?=
- =?utf-8?B?b1YrODAzYnZvdlZhazQ4QkpidTdTUVMrU2tRNmtyNFJ5dUo1azVBMDI3LzA4?=
- =?utf-8?B?dU84eGtIcllLWjRBUndXak90MHBHWUc5SVhEaDNKbWdBMGo3YzdjUkJPUnY5?=
- =?utf-8?B?TEFDZkRiUURNbmpTdFVJVUNyek5Qa1M3Nzg3K2pHVTM1czJNUmIxN2ZTVkxk?=
- =?utf-8?B?K0dQODJsUFdVMjhuelRRU2lISGM5U0tVRVVnRDZGSXhWbXZGMlVNeTlIbnNm?=
- =?utf-8?B?ZS9nL3pkSDdwdXE2ZVZSMmdTOXpzM3krN3lvcmwvNTRKZC96Ny81V3Q5amdq?=
- =?utf-8?B?c0NQZVpCVGFQUWZoZ1NJSXJwRHJpbkxmQWw4VnA5bkxtNWFueTNtbjVLS3NB?=
- =?utf-8?B?ei9mZUJId2dPWEt5ZTQxOHF3d2hXUG05QjR1RHZLY2FTdWRLaWtLMjEvTkpI?=
- =?utf-8?B?VXc9PQ==?=
-X-OriginatorOrg: kunbus.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ce604c3a-e02d-4706-81fa-08dcf7607627
-X-MS-Exchange-CrossTenant-AuthSource: AM0P193MB0738.EURP193.PROD.OUTLOOK.COM
+	=?us-ascii?Q?+ZHarxl3pakINHtbNdB4vhWyAaxRUXByTl4QhwqZNWsTBwdHKwdA4VTrFJJ/?=
+ =?us-ascii?Q?P+P1LfYitiIAcHbTrwv69q3K1nRin8gC3ZR5HVpNySciWuIgbCQ+1Rvcae5v?=
+ =?us-ascii?Q?H7XOrvuMPGQ9S6XbRcCkoElkG86pAi+3qeQ97OWNYweuyDYPlDeiXOvBW5yp?=
+ =?us-ascii?Q?uzQLED9hlppAm+G2XeAJkjUYxpksaZU8kFJqKWRqMUjDi5tAWub+AAg/JgXU?=
+ =?us-ascii?Q?eeriy+c6EZ8YXIUXHSTOwUaoawJAjQj4/JHgw0B77TdsZYlr1WU5GEJrjGc+?=
+ =?us-ascii?Q?WMxT0aWUPrR2Sj5Cp6kx/mqWJRtW7LFOB93dmBQRn9q2xKaGTGckFgaipyR5?=
+ =?us-ascii?Q?b/rnOGD35PoJvdAmiF1lWomQ6PqOB+MZM8IdnQbzdyy2r5XyYGOTo3nDteDk?=
+ =?us-ascii?Q?ULNBZyWgcWSuXKFwu+G5aYIfm54PlMexWZHS1a5ByMVaBjpWvaHlXsmca+2N?=
+ =?us-ascii?Q?fOucyuM4rTnnIud7firDWXXIMXbtkCjaR4zpa/HXi0DlqL1kgK/r+QN46YLj?=
+ =?us-ascii?Q?Pm8pQDjkijY6dqdWwvTPEAA/eAkYRGKRxSnA5YIV+fdCvUWhrJ+/l++QzCO1?=
+ =?us-ascii?Q?GApHwXfmcwEfqJhPsSLosaENvUiK1haMGOFFttoYVNAteKIPr6h3bhc+IwkM?=
+ =?us-ascii?Q?11OmmMkzi2q3Gnfls0a0hUmUmcLHcEer4DAG+w7gdDMjZHcDBH46YoWB3G1l?=
+ =?us-ascii?Q?CedFrkTpRvoeTRBtA/dJhwRjBu3S2CJCLrNG4x3HLizUDAHAJP21cGpWLL9U?=
+ =?us-ascii?Q?jguYQelm3v+AwhulCMuyxt+M/5TSjCVDrTP/VGxNaQ1bw2iexwZENGHb/5gB?=
+ =?us-ascii?Q?nwpE51IUzXt9ihyVx2svJ/VjUlj/PkYJ2roXTnGaGAXRKtlEbovSmMvMmbPa?=
+ =?us-ascii?Q?qwtJyPAEdhvyn4tJZ6TvejVh25mhCAASMGzaQhj79o4gnB9rKiRZFi6blYPV?=
+ =?us-ascii?Q?F9Zdf/RO50dwMnwLxG+V8clnwZjOfYqe2Xxxu9G2Zv/TkquHGbdjzt+POPlY?=
+ =?us-ascii?Q?IOcpREqIU85EZqw6hhjf8Z+El0sW0d0AIfVY/QJSuAZnk79jjgNzh0vqnZ9s?=
+ =?us-ascii?Q?cV9yHfgAiMMX5dJ3TXxu2KluaHGo0q5lbapvsZpQbaN8gEnLtVMdE4mFrS7J?=
+ =?us-ascii?Q?It1cGgjyRqTwyQcQ2oeietxfhCwltoACZDzv+LGU1JmL9LCEtOaLD5dVirMA?=
+ =?us-ascii?Q?CSybZcVoNJYwwGikprRDAPcXEJAU/U7cxs81z9mf8tpppMpTw7MzqyV4aInH?=
+ =?us-ascii?Q?ibGtOiEWekew6Z1pVSoVIyn8vrXeW0ytPrV3ewfD7ePc89LQp0OiflXpTzPd?=
+ =?us-ascii?Q?qSk6AiexZd6kZWm4Y3IYVe14sdPlfli5ylrNXwPtdLcpOJ90EBnEsdwi1DwK?=
+ =?us-ascii?Q?tXYzLsX0d8BAA0Wp3597MqiFT+6j90dXRyqDcq6Ng3AOx70737aImdpoe7Oz?=
+ =?us-ascii?Q?IblCo8tl7/+fxRcSht6O+I8++uGpVPvyN0UqVXaeVDEZVMvHnoTgAdoT2xCy?=
+ =?us-ascii?Q?eBIzxBBUFoJuQftxHoKgz9oYbzZvmSJYpg2CXUrgkDylflSkJj9xDK9g66eG?=
+ =?us-ascii?Q?rjqHmuybEF8hpnv6fnph/+RTLGX7YOlYmnSW+Sy9?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96a27db3-89ea-458f-c2ee-08dcf7608028
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:54:45.2242
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:55:02.0589
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: aaa4d814-e659-4b0a-9698-1c671f11520b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: RnnCjoqQkGBB8leYiVhj6ghyvjErlFNv6pvwhCoMGbr68SW1lU7Tj+pSQYmfk3SZ0KbtRHU+RF3bnH0lrdHutn9FBxRuLsBKVsbjMJaFxCc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAP193MB0970
+X-MS-Exchange-CrossTenant-UserPrincipalName: SvbhNeI2362RA+SGNu+hW3EmMEGOQTzb2OwlZWl/smfXi2K0nJmwRvnGFZ6kJ9bDDFApG5WzFF7PVK0ypl3EmA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9451
 
-On 24.10.24 09:25, Krzysztof Kozlowski wrote:
-> On Thu, Oct 24, 2024 at 09:11:04AM +0200, Philipp Rosenberger wrote:
->> On 22.10.24 18:35, Conor Dooley wrote:
->>> On Tue, Oct 22, 2024 at 11:28:54AM +0200, Philipp Rosenberger wrote:
->>>> The nxp,battery-switch-over property is used to control the switch-over,
->>>> battery low detection and extra power fail detection functions.
->>>>
->>>> The PCF2131 has a different default value for the PWRMNG bits. It is set
->>>> to 0x7: battery switch-over function is disabled, only one power supply
->>>> (VDD); battery low detection function is disabled.
->>>> This is the opposite of the default of the PCF2127/PCA2129 and PCF2129.
->>>> With the nxp,battery-switch-over the behavior can be controlled through
->>>> the device tree.
->>>>
->>>> Signed-off-by: Philipp Rosenberger <p.rosenberger@kunbus.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml | 10 ++++++++++
->>>>    1 file changed, 10 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
->>>> index 2d9fe5a75b06..5739c3e371e7 100644
->>>> --- a/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
->>>> +++ b/Documentation/devicetree/bindings/rtc/nxp,pcf2127.yaml
->>>> @@ -30,6 +30,16 @@ properties:
->>>>      reset-source: true
->>>> +  nxp,battery-switch-over:
->>>> +    description:
->>>> +      Battery and power related configuration. This property is used to set the
->>>> +      PWRMNG bits of the Control_3 register to control the battery switch-over,
->>>> +      battery low detection and extra power fail detection functions.
->>>> +      The actual supported functions depend on the device capabilities.
->>>> +    $ref: /schemas/types.yaml#/definitions/uint8
->>>> +    minimum: 0
->>>> +    maximum: 7
->>>
->>> Beyond the fact that I dislike register-content properties like this, where
->>> it is not possible to grok the meaning by reading the property, what
->>
->> Yes, I'm not satisfied with this solution myself.
->> There are three different functions, which can be configured in the
->> register:
->> - battery switch-over mode: standard; direct; disabled
->> - battery low detection: enabled; disabled
->> - extra power fail detection: enabled; disabled
->>
->> I'm not sure what a proper way is to implement this in the devicetree.
->>
->>> even makes this suitable for DT in the first place? Reading the commit
->>> message this sounds like software policy, and that different users of
->>> the same board might want to configure these register bits in different
->>> ways.
->>
->> It is less a software policy, but a configuration how the hardware is
->> implemented. If the device has no battery, it is possible to disable the
->> battery switch-over function. In this case the V_BAT must be connected to
->> ground.
+On Fri, Oct 25, 2024 at 11:13:47AM +0000, Dhananjay Ugwekar wrote:
+> Prepare for the addition of RAPL core energy counter support.
 > 
-> monitored-battery property already tells you this.
-
-If I understand this correctly, the monitored-battery property is meant 
-for rechargeable batteries, not for a simple button cell to back up an RTC.
-
+> Move cntr_mask to rapl_pmus struct instead of adding a new global
+> cntr_mask for the new RAPL power_core PMU. This will also ensure that
+> the second "core_cntr_mask" is only created if needed (i.e. in case of
+> AMD CPUs).
 > 
->> If a battery is connected, the battery switchover will only work if the
->> battery switch-over function is in standard mode or direct switching mode.
->> Until now the driver has just ignored the PWRMNG bits. As the default was
->> battery switching in standard mode. Thus all use cases worked good enough.
->> Battery switching was working if a battery was connected. If no battery was
->> connected it did no real harm (the rtc may have used a tiny bit more power
->> then needed, I guess).
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+
+LGTM.
+Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
+--
+Thanks and Regards
+gautham.
+
+> ---
+>  arch/x86/events/rapl.c | 15 ++++++++-------
+>  1 file changed, 8 insertions(+), 7 deletions(-)
 > 
-> Why driver cannot use standard mode always? Or other way?
-
-This would overwrite any configuration set by a bootloader/firmware. For 
-the older chips (pre PCF2131) this was no problem. As the reset default, 
-was "battery switch-over in standard mode". The driver just left the 
-whole battery switch-over configuration untouched.
-If we decide to change the battery switch-over configuration 
-unconditionally, this could overwrite any third-party configuration.
-
->> With the new PCF2131 the default has changed to battery switch-over
->> disabled. Now even with a battery attached, the rtc will lose time after a
->> power cycle.
->> I guess I should describe this better in the commit message.
+> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+> index e80b62cf9abc..d3acc70a3d31 100644
+> --- a/arch/x86/events/rapl.c
+> +++ b/arch/x86/events/rapl.c
+> @@ -129,6 +129,7 @@ struct rapl_pmu {
+>  struct rapl_pmus {
+>  	struct pmu		pmu;
+>  	unsigned int		nr_rapl_pmu;
+> +	unsigned int		cntr_mask;
+>  	struct rapl_pmu		*rapl_pmu[] __counted_by(nr_rapl_pmu);
+>  };
+>  
+> @@ -148,7 +149,6 @@ struct rapl_model {
+>   /* 1/2^hw_unit Joule */
+>  static int rapl_pkg_hw_unit[NR_RAPL_PKG_DOMAINS] __read_mostly;
+>  static struct rapl_pmus *rapl_pmus_pkg;
+> -static unsigned int rapl_pkg_cntr_mask;
+>  static u64 rapl_timer_ms;
+>  static struct rapl_model *rapl_model;
+>  
+> @@ -358,7 +358,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
+>  	bit = cfg - 1;
+>  
+>  	/* check event supported */
+> -	if (!(rapl_pkg_cntr_mask & (1 << bit)))
+> +	if (!(rapl_pmus_pkg->cntr_mask & (1 << bit)))
+>  		return -EINVAL;
+>  
+>  	/* unsupported modes and filters */
+> @@ -586,10 +586,10 @@ static void __init rapl_advertise(void)
+>  	int i;
+>  
+>  	pr_info("API unit is 2^-32 Joules, %d fixed counters, %llu ms ovfl timer\n",
+> -		hweight32(rapl_pkg_cntr_mask), rapl_timer_ms);
+> +		hweight32(rapl_pmus_pkg->cntr_mask), rapl_timer_ms);
+>  
+>  	for (i = 0; i < NR_RAPL_PKG_DOMAINS; i++) {
+> -		if (rapl_pkg_cntr_mask & (1 << i)) {
+> +		if (rapl_pmus_pkg->cntr_mask & (1 << i)) {
+>  			pr_info("hw unit of domain %s 2^-%d Joules\n",
+>  				rapl_pkg_domain_names[i], rapl_pkg_hw_unit[i]);
+>  		}
+> @@ -804,9 +804,6 @@ static int __init rapl_pmu_init(void)
+>  
+>  	rapl_model = (struct rapl_model *) id->driver_data;
+>  
+> -	rapl_pkg_cntr_mask = perf_msr_probe(rapl_model->rapl_pkg_msrs, PERF_RAPL_PKG_EVENTS_MAX,
+> -					false, (void *) &rapl_model->pkg_events);
+> -
+>  	ret = rapl_check_hw_unit();
+>  	if (ret)
+>  		return ret;
+> @@ -815,6 +812,10 @@ static int __init rapl_pmu_init(void)
+>  	if (ret)
+>  		return ret;
+>  
+> +	rapl_pmus_pkg->cntr_mask = perf_msr_probe(rapl_model->rapl_pkg_msrs,
+> +						  PERF_RAPL_PKG_EVENTS_MAX, false,
+> +						  (void *) &rapl_model->pkg_events);
+> +
+>  	ret = perf_pmu_register(&rapl_pmus_pkg->pmu, "power", -1);
+>  	if (ret)
+>  		goto out;
+> -- 
+> 2.34.1
 > 
-> In any case this is pcf2131 related, right? So compatible implies it.
-
-The reason, why this property is necessary for our devices is the new 
-PCF2131. But the function is not limited to this device.
-
-I’m considering simplifying this to just a property that informs the 
-driver that a backup battery is available. If the property is available, 
-the driver will enable the battery switch-over function; otherwise, it 
-will not touch the configuration.
-
-Best regards,
-Philipp
 
