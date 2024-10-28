@@ -1,99 +1,85 @@
-Return-Path: <linux-kernel+bounces-385153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9179B3335
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:20:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA8B89B3330
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 838021F223A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:20:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 766AD1F22101
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487011DD54E;
-	Mon, 28 Oct 2024 14:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YromjrQF"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7221DD864;
+	Mon, 28 Oct 2024 14:18:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A030613D539;
-	Mon, 28 Oct 2024 14:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3451DA631;
+	Mon, 28 Oct 2024 14:18:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730125199; cv=none; b=UdYfGDIthjybOk67JsQanqYWiaYgXt7DFUu//k25SnrswF2IpJA7efe/ry+8h2fHQ05YEQ0NtgZHRegdQ9lt9KRHes3QnUlngTGoyZF+1vpNaDajn6YNJ09Jn9FrgdrLJRTbewjAcBYKkoCSsMilSuF6RAuO4JsF0/p24yxfUsE=
+	t=1730125136; cv=none; b=iUEwyjSGHZBaRy8CImH9x3Sg32jt3c3DSK4Kl7C6pw3cqaY2KRBUoU5UDXI1/zGAZf7NkHAWk6sDVO4mK+oj627RDMRsCzsAyJs3gV1m0P575M/JJsfEhYLNnSDZBNwG/8YTrGBPZOGcTBxzeX94X9kqs4ylrt0363wuATlJO7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730125199; c=relaxed/simple;
-	bh=tqIGXfWySVqmxwbK2vYBkyXaDOuE2luc6nOJqDyrECc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Fh+mujIKL+DF2PgT70pRW0C2sRCizWwz1CKb5tlLfvRoj2MnavHx0ucPoP9aiZ8Q2wndm5ncodo+dkIVhj5QjD0VjbaS7EmG1nGYe4c/sPD9vMW+DRl4oESbB3Ntbf0aF6CFe6A3Z3oxhOo0CPQEoAmMEM8nP/H9ni4VOTcAeT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YromjrQF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 139F5C4CEC3;
-	Mon, 28 Oct 2024 14:19:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730125199;
-	bh=tqIGXfWySVqmxwbK2vYBkyXaDOuE2luc6nOJqDyrECc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=YromjrQFrPchwFDEmAVQjA0yJg8/CYb4ec5x4sDlJ7HyTqtgIgFOjlEdummqsmOt0
-	 wJCQE9IH3EO/5j6V35PYYaLaC91lU2VyjdKiYxHXhJmgDh2UV2g0uKqC9p+tXq0ave
-	 nmtVzamzhU9S7zpHBO/3y6XS2M+EEeEnKgVseZ0DpmIH3uGwDUYE92C7dSGE92HKmY
-	 lKrrUavBuJnD42yTJd69n2FXa55I0FeiSCh2cnP0e63zABLsiTPX3w4iDZSjnIQZsq
-	 niNtKQ1quRfVErzRLJw1t9qwQgboXOUVDZBe5BN/wVoMgL8lbGRbYUKtGzhQe87wNR
-	 1965g4vlU9oiQ==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Tyler Hicks <code@tyhicks.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	ecryptfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] eccryptfs: select CONFIG_BUFFER_HEAD
-Date: Mon, 28 Oct 2024 14:18:45 +0000
-Message-Id: <20241028141955.639633-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730125136; c=relaxed/simple;
+	bh=3bu6BASM1fOVsLRziZGcyMrGRXJyUtI91nwotpR/K1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=vGizzIFlNzrp+yoiV6So1yXYpVRp25+VpHeIwuNTNGSW/XkUERcWnWdtjRQ+m2EbQRfPslN+TUucliXwV3O1oj8w3s6UR2SKl7FTCISv/oVpraCzC8a6iPLmx/m+meSJ9XPC5rt0/gQ2xWx5SUgZZQr7jghBm2IqXRXGIRlNEC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41535C4CEE4;
+	Mon, 28 Oct 2024 14:18:54 +0000 (UTC)
+Date: Mon, 28 Oct 2024 10:18:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 5/5] ftrace: Use guard to take ftrace_lock in
+ ftrace_graph_set_hash()
+Message-ID: <20241028101850.548f0fcd@rorschach.local.home>
+In-Reply-To: <20241028091656.GJ9767@noisy.programming.kicks-ass.net>
+References: <20241028071228.575900713@goodmis.org>
+	<20241028071308.406073025@goodmis.org>
+	<20241028091656.GJ9767@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, 28 Oct 2024 10:16:56 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-The ecryptfs file system uses functions from fs/buffer.c that
-are only available when CONFIG_BUFFER_HEAD is enabled:
+> > @@ -6846,13 +6844,8 @@ ftrace_graph_set_hash(struct ftrace_hash *hash, char *buffer)
+> >  			}
+> >  		}
+> >  	} while_for_each_ftrace_rec();
+> > -out:
+> > -	mutex_unlock(&ftrace_lock);
+> >  
+> > -	if (fail)
+> > -		return -EINVAL;
+> > -
+> > -	return 0;
+> > +	return fail ? -EINVAL : 0;
+> >  }  
+> 
+> Isn't the fail case more a case of -ESRCH / -ENOENT rather than -EINVAL?
 
-ld.lld-20: error: undefined symbol: block_dirty_folio
->>>               vmlinux.o:(ecryptfs_aops)
-ld.lld-20: error: undefined symbol: block_invalidate_folio
->>>               vmlinux.o:(ecryptfs_aops)
+Could be. Although this is mostly for internal use. I should check to
+see if this gets back to user space. And yeah, it probably should be
+changed.
 
-When CONFIG_BLOCK is turned off completely, this is not needed,
-so add a conditional 'select BUFFER_HEAD'.
+> 
+> Anyway, that's orthogonal, the patch preserves existing semantics and
+> looks okay (as do the others fwiw).
 
-Fixes: 7ba13abbd31e ("fs: Turn block_invalidatepage into block_invalidate_folio")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Ideally we would not depend on buffer heads and instead remove
-the dependency here, but I could not immediately figure out how
-to do that.
----
- fs/ecryptfs/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for the review!
 
-diff --git a/fs/ecryptfs/Kconfig b/fs/ecryptfs/Kconfig
-index 1bdeaa6d5790..b3c603c4f808 100644
---- a/fs/ecryptfs/Kconfig
-+++ b/fs/ecryptfs/Kconfig
-@@ -2,6 +2,7 @@
- config ECRYPT_FS
- 	tristate "eCrypt filesystem layer support"
- 	depends on KEYS && CRYPTO && (ENCRYPTED_KEYS || ENCRYPTED_KEYS=n)
-+	select BUFFER_HEAD if BLOCK
- 	select CRYPTO_ECB
- 	select CRYPTO_CBC
- 	select CRYPTO_MD5
--- 
-2.39.5
-
+-- Steve
 
