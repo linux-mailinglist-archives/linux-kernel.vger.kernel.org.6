@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-385011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A5F99B315F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:10:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 518029B3161
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:11:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4115B21F8B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:10:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74EB21C216DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7F21DACBF;
-	Mon, 28 Oct 2024 13:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7A8EDE;
+	Mon, 28 Oct 2024 13:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bXKI0SnL"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="O0FY/O/d"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 884E6EDE
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E231DA631
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121049; cv=none; b=oe/JS44jYPv/JaBEopKn0R0lYkUPaKtzObo/st8vijCpIyi29c0pJgaG7qbeEcktlNGPrQ9wWkSUAighH9EMxIYJaJwdxuzsi8vo5lEqKbogSrdM8VQq8RiKXtF4D3AwxaCJsOAeG3crEr3g9Jb8IAXsZprXwwFHjZO1Knkzq2g=
+	t=1730121061; cv=none; b=RegUddlKkH5pzlp+l1ThMhN1Nyk8TQPOQh1NiAL80k9SMGv4jma7vZw+lVFF+qoiDmK8UEct6cRjoHgRpCHiHf6cpWub+K5xlYrzJfPy9dBkQfBKVApqzjanPvYC9S2cVwITR9bWHXYvBbXS5op8dreTixACpiFxXNcwjhKEa/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121049; c=relaxed/simple;
-	bh=dL1SJrGZQ3D6lWB7/Wyjb/bBXGMBAdqEk7Evxm5pNAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z17uiTdOTzWT1Qckqrr/TZLCeooZ06hWHJvGl9RZ9Xr6jNIDLqnACIza5sQ6o8SO2R8iGTdklljXBCOvurr2DTBRW79zi2bCRE1Uf5mZlhpdM8XCFmIzkk7TpRb6JkvgtpC5PTA/tE6kUy2rzAneEVwl7Bc45XLIBNtEqOhf4YM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=bXKI0SnL; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=R8Dd+hjRXMeDXiIrfyLDS2ZFM1n3uCxyFjkAA3L4QU4=; b=bXKI0SnLh0Qe+ZLp56MxjgknWE
-	YkSij99o5z/F/Ojudl6uXGazbkQfOf6ayvfGpe0Ew6toZs3E34rPmrxvJDhlPolAGAK5Ns6VgZXnK
-	U6keLUwtMX0CWkMC3WoPFsd+KPAAbJ2SOJX7dET0YGC4i3Sgns+miQZL+hcPIKeRJh4md22kV++x3
-	Zufysd/7MuYWnF6pWm9r0rAXh8tKutLoXuTsd+q1dNENx1Bc2mn8FdXUaPNSEUuSpvKT/eg0vgLfE
-	MfG+Zulm5BWiHg21c0PYROemYMYLuEAe6CKbRu4SxzsKaG0ik9+ho8BLAfMuTMgKMSQSuFTQ+15KY
-	DGJxytyg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5PW6-00000008WfT-0NU9;
-	Mon, 28 Oct 2024 13:10:43 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D35E030083E; Mon, 28 Oct 2024 14:10:41 +0100 (CET)
-Date: Mon, 28 Oct 2024 14:10:41 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [RFC PATCH 2/3] futex: Add basic infrastructure for local task
- local hash.
-Message-ID: <20241028131041.GT33184@noisy.programming.kicks-ass.net>
-References: <20241026224306.982896-1-bigeasy@linutronix.de>
- <20241026224306.982896-3-bigeasy@linutronix.de>
- <20241028101633.GM9767@noisy.programming.kicks-ass.net>
- <20241028102408.GbFgnLMF@linutronix.de>
- <20241028104639.GO9767@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1730121061; c=relaxed/simple;
+	bh=e9/G2XYYF8CwOvtty/jbQJENgNEJnBUmgvIogS/mCVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fuh9ZN94HQVwNx9h11B9/BiONVJrML4hfiBazb2N/0gV4cbYUeTPkSjRWn8ldJ0Zx5vZbO61ZWc4RTwns8aCtq4rPyAST0B/e5J4we6s0iKaj/uSsKizMNisqGUpl4adn0lmJiXW4YU7N8a84lrzMs61M4GBrO05XMa/KgYbcr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=O0FY/O/d; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SAuxTU030997
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:10:59 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	v+/Vw05jKsCpvo+LzX33OBe8/nvt7U4c4yVqDeCabWg=; b=O0FY/O/dVowOE8F3
+	VV9ZUz+GsgRMhcyBLJJdhH1ot3T3b7Q2Vf8zSMVsJ9H23WfrACHHtR5psn3GHVm/
+	rluLJqeCEvLSP3hOTD1rQ/4Tf5E7J2C2FbptH1qgmd8Qh095Vq12dfmDWi0gbz5c
+	pNjzdOhv+Xop85LReGXFsMYlDrvTmwZL3bT1tVDWFgWfnxJTlSlufiziDIEjbojC
+	lPrFSiiCDUrqB17noqgIlDiWkdMGpJnOzfwyHd7bAGZ1W+JKeAk+VTD30zL4JIyd
+	oScRufDed9KUUds3W6G1aoWYJzBborHLYpQO74PFtoHdBhBYWwcAOFAuOg8GTpBL
+	ugzXQg==
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqcqn3m2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:10:59 +0000 (GMT)
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6cbf4770c18so15235106d6.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:10:58 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730121058; x=1730725858;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=v+/Vw05jKsCpvo+LzX33OBe8/nvt7U4c4yVqDeCabWg=;
+        b=tJ6EPOaa0mU00bQGjclv5LFG9prEj432mI17b4XaOl1nf+GvEq2+TaS4ecB9j3cvUs
+         gWmujjdkNTWdth16IDFhUeQfmByYWNhnqh6LDAHcXV4KYJQaBmeg6avw/nQo+4jtVfcd
+         Hy2PdtikkUvcPXKh/8Z2IOXOUNPDNFV3FvpTTkg2W4Q5z3+ILRN3blNY62jtNx7PNopH
+         aUUMd2rUJjzoCh1O+m7o2LUluo8xvxHTz4brf1dkjx5qSThSH0rm3mmQhjD6zs7TnfnH
+         s1FKjnhO9FvklwpKlefiaZXJ+vAYMJ41J7Tih5lrkSVN++NszYaKk5MXTz/GbFP1F068
+         SCdA==
+X-Forwarded-Encrypted: i=1; AJvYcCWnziBNXhkNZSOsrydvmzauTDCD/vdheiUPlXULwAn7F4SuPnBzT8YjAPBZZ17cZvDVi7bCeL4Oy2ak5Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0ChCNfvLrw4nK95W/vyQIWo54gufgadEnbuvS7QRUyCsGWG2S
+	/iKcGhh4Wl89gPWeaUC2TJuBxsZ7STh484D/CJVHHMrtXnLQtTibtMqM34JAT3pO7RZCsE77IGC
+	U28GpJ95MqC2Eovxcx4XU8Q7Kk3OP1EjB+kn+U2JhwJRoJQmHh35PXnjb05ff1d0=
+X-Received: by 2002:a05:6214:d45:b0:6cb:c6da:5fe3 with SMTP id 6a1803df08f44-6d18567a31cmr64568236d6.1.1730121057565;
+        Mon, 28 Oct 2024 06:10:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEq3HPWRKMYJD2jxgNWRBKn4gWDVDCn7ik3MY50U15z0QzhZx2GE41JYtE6eIwfAbDmYHRPSQ==
+X-Received: by 2002:a05:6214:d45:b0:6cb:c6da:5fe3 with SMTP id 6a1803df08f44-6d18567a31cmr64568066d6.1.1730121057254;
+        Mon, 28 Oct 2024 06:10:57 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1ef322ecsm375399966b.49.2024.10.28.06.10.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 06:10:56 -0700 (PDT)
+Message-ID: <327507d8-2dc7-4645-ac3d-d68ff31a84dd@oss.qualcomm.com>
+Date: Mon, 28 Oct 2024 14:10:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028104639.GO9767@noisy.programming.kicks-ass.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: x1e80100: Describe TLMM pins for
+ SDC2
+To: Abel Vesa <abel.vesa@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Johan Hovold <johan@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20241022-x1e80100-qcp-sdhc-v3-0-46c401e32cbf@linaro.org>
+ <20241022-x1e80100-qcp-sdhc-v3-2-46c401e32cbf@linaro.org>
+ <a282021f-5e61-480c-84c4-272049e28244@oss.qualcomm.com>
+ <Zx9P+HQMOkJsJGcj@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <Zx9P+HQMOkJsJGcj@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: UMH7eY76R-Una3Mo-J5W4O4KSzxRj6VQ
+X-Proofpoint-GUID: UMH7eY76R-Una3Mo-J5W4O4KSzxRj6VQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ phishscore=0 impostorscore=0 clxscore=1015 priorityscore=1501 mlxscore=0
+ mlxlogscore=887 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280106
 
-On Mon, Oct 28, 2024 at 11:46:39AM +0100, Peter Zijlstra wrote:
-> On Mon, Oct 28, 2024 at 11:24:08AM +0100, Sebastian Andrzej Siewior wrote:
-> > On 2024-10-28 11:16:33 [+0100], Peter Zijlstra wrote:
-> > > On Sun, Oct 27, 2024 at 12:34:51AM +0200, Sebastian Andrzej Siewior wrote:
-> > > 
-> > > > Introduce a task local hash map. The hashmap can be allocated via
-> > > > 	prctl(PR_FUTEX_HASH, PR_FUTEX_HASH_ALLOCATE, 0)
-> > > 
-> > > Per process, per task is useless and will make things malfunction.
-> > > 
-> > > Things missing in this patch are CLONE_THREAD / CLONE_VM, and create
-> > > must be absolutely forbidden once mm_users != 1.
-> > 
-> > I moved this to struct signal_struct and limited it for now to the
-> > group leader.
+On 28.10.2024 9:48 AM, Abel Vesa wrote:
+> On 24-10-25 20:34:19, Konrad Dybcio wrote:
+>> On 22.10.2024 12:46 PM, Abel Vesa wrote:
+>>> Describe the SDC2 default and sleep state pins configuration
+>>> in TLMM. Do this in SoC dtsi file since they will be shared
+>>> across multiple boards.
+>>>
+>>> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+>>> ---
+>>
+>> Not very useful on its own but okay..
 > 
-> That works I suppose.
-> 
-> 'process' is a really dodgy thing in Linux anyway :/
-> 
-> So CLONE_THREAD implies CLONE_SIGHAND, and CLONE_SIGHAND in turn implies
-> CLONE_VM -- however, you can do CLONE_VM without either SIGHAND or
-> THREAD, (or SIGHAND|VM without THREAD).
-> 
-> And it all quickly becomes a real mess.
-> 
-> 'Sane' userspace doesn't play such games, and insane userspace gets to
-> keep the pieces I suppose.
+> Fair enough. For some reason, I'm not able to get sdc4 pinconf
+> to work.
 
-Bah, I now remember there used to be (or maybe there still are, who
-knows) a JVM that used a 'naked' CLONE_VM. And JVMs are also known to
-use futex.
+Any chance you tried to define 'sdc4_cmd' etc.? This one seems to have
+sdc4 pins on gpio127..=132
 
-That would suggest putting the hash in mm_struct *or* make sure to
-disallow / warn about these private hash when !CLONE_THREAD.
-
+Konrad
 
