@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFCC9B2952
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:55:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 602E29B2955
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:55:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5B881B207BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:55:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24B6028211A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F46B204F68;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A79204F7F;
 	Mon, 28 Oct 2024 07:35:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oqszeuMK";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2hCEve9H"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lVNGM9EO";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dyjJPUnN"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417E12022D0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA357202626
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100952; cv=none; b=hSyd7b7m1E3fyYekn4dONVfRc3aNc9VfoHtLmr11O4p/oWUm2l6SUC47aof72bJmcWkfu/8dtDmAiLX4xFXp2E3Pbp6jHS9d1jeR4U9GbSBGAwvqZvdXsZuT4Hye7r0NkTH6H9E5TjGDVw1dDr/H22aeh+Bo7+oBNKsx3b/LKAM=
+	t=1730100952; cv=none; b=oBzqSdjqLWJU2qSxs5aFlvGaDJRtN9p8uEETXty4Wm6Y457dsHFy2pjnZxFjQ6gWWmPECNKoV4Dwi0d7+qzeVyLTxRKh3pybji8g7onkBijK99rsczbmnnshST8yG60rqkhzdUkjOzq3tvuwIRGvgPCjNevj2G7KNdxNsw6zEtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100952; c=relaxed/simple;
-	bh=7iC6RRwCdYvoSDxFq+nQQAXmQ+GO0wLJI95huJvUd1o=;
+	bh=iGuubNd75L4gJtaY4+cT6xHSUMdLacBg8Z6kJiSkeXY=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Pv3lEd6Lb/NGlg0W/lnedbTsskc1U13liO2WT3YnYox5EWzKsMlgcafupWGXHlZPBgPIwx2LshSZ4TQHRDN66Ux8X/0pz0RXotRu/uUltR/G0XgiRXuYQnw0STMYxEgdx37s8fQGHjAKDSJKSElg9ytwMhRq/n3OlydTCfUgkt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oqszeuMK; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2hCEve9H; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=RmfZu2qDCI2gsjn8s9uNRpXafVRGelsKao9i5kBsU8DftWmV01iFBaAqGoppLRC/bA71NOrCwvWFAkW8ZHB1RjfPtKU+RccWN7f0r3x/2JyYQPndBBWdIhyeJeC5u8Ze0Urg1kveXq4Z7QXtDl9DjYjhhsF5+HG0ESHwxQG1q+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lVNGM9EO; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dyjJPUnN; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100947;
+	s=2020; t=1730100948;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0m/zDMXphPDUZpg9M7CeUXorU39VZMKmmy3e7t0Ov7Q=;
-	b=oqszeuMKBYsdoHNxzDX9Av8s0OUKO1yY5zRXtJVPaiJQzyxlE/61Sx0q0ielkd3drxvEMg
-	W5Dt7q4tOeUQUreHD8qTuDEAjDzkEYkXkysLP39PdnDVxQ/b0ecgZdH4KZU3AjS0m9/USs
-	nagz4oWvaEk5rB4wPaZs6bgv6ShYp9qna3QZG92bqP/7c7rlqVcp6Q5QTWz11dXNfQIXWT
-	TVdnahu8pC8xwaKXcxHyKgqpayo6aAsl4KytFE0Pm1TBTKgFCohWft5TWbMNpMhCHT96LV
-	4I3Kc2UGCs6E/mlHw2jR/oyq0qO1Z+qct0PjLqpX1ncP4b2Px13PYBaL1Bwk8w==
+	bh=2yA05yfHMXuaBAIIxgU6jPpHHlnYMJ0AqN6uP9A4P8k=;
+	b=lVNGM9EOQSam/Z5KkgX6o7dS2kKF4npic9k9PvN1KDoGqZrMPKVgDoV5Gt+dy2vDMLA1UM
+	KhTtHzJOk7xGwK7FuSFz1/p1JRzIdZr1/iQJrXVSh5ARK+fkOd2lGYmW3217vr3nsV71se
+	4YLKB5gt0lwRIcreRoKCJS4pX6QbdiogbeAjZvlRMSsNZrTXxyueG9RUDTcoBkXFrexsLG
+	EXh6UWHDfHy5PYVK/cR0IN8KcWv4WnqdhoGcm7OC530AubkQXZn5RACUgh8HtEi6bSI4KZ
+	ZivYGfqkONlsKJ3KiFYZFZ4Cpk3XzCsL9WhhQdWobcw6SUsTP3+poln5IG+SWQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100947;
+	s=2020e; t=1730100948;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=0m/zDMXphPDUZpg9M7CeUXorU39VZMKmmy3e7t0Ov7Q=;
-	b=2hCEve9HvhsTnsDp/dww051IDuUdJsi3tKhn5NhrySUWx7TZ1+lVLmA4dvQCRYV8tegniS
-	OG2yZonJ2fmhOwDA==
+	bh=2yA05yfHMXuaBAIIxgU6jPpHHlnYMJ0AqN6uP9A4P8k=;
+	b=dyjJPUnNBbMsuvDiXYLrRg+pt1svwus5KseYsExnbuqSLknmUgGito5uItni34Nq0Bk2m6
+	BzXFbXUhaqCzn4Aw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,10 +62,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Zack Rusin <zack.rusin@broadcom.com>
-Subject: [PATCH 39/44] drm/vmwgfx: Switch to use hrtimer_setup()
-Date: Mon, 28 Oct 2024 08:35:15 +0100
-Message-Id: <318d94dc21f04ba85a29031a8973a4a3b76f3cf2.1729865485.git.namcao@linutronix.de>
+	"Michael S. Tsirkin" <mst@redhat.com>
+Subject: [PATCH 40/44] virtio: mem: Switch to use hrtimer_setup()
+Date: Mon, 28 Oct 2024 08:35:16 +0100
+Message-Id: <2df859f20f7922bdb99a7368effb558bad372629.1729865485.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729865485.git.namcao@linutronix.de>
 References: <cover.1729865485.git.namcao@linutronix.de>
 Precedence: bulk
@@ -84,26 +84,26 @@ Switch to use this new function.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Zack Rusin <zack.rusin@broadcom.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>
 ---
- drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c | 4 ++--
+ drivers/virtio/virtio_mem.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c b/drivers/gpu/drm/vmwgfx/=
-vmwgfx_vkms.c
-index 8651b788e98b..aec774fa4d7b 100644
---- a/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c
-+++ b/drivers/gpu/drm/vmwgfx/vmwgfx_vkms.c
-@@ -290,8 +290,8 @@ vmw_vkms_enable_vblank(struct drm_crtc *crtc)
-=20
- 	drm_calc_timestamping_constants(crtc, &crtc->mode);
-=20
--	hrtimer_init(&du->vkms.timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
--	du->vkms.timer.function =3D &vmw_vkms_vblank_simulate;
-+	hrtimer_setup(&du->vkms.timer, &vmw_vkms_vblank_simulate, CLOCK_MONOTONIC,
+diff --git a/drivers/virtio/virtio_mem.c b/drivers/virtio/virtio_mem.c
+index b0b871441578..a74ff1418282 100644
+--- a/drivers/virtio/virtio_mem.c
++++ b/drivers/virtio/virtio_mem.c
+@@ -2855,8 +2855,8 @@ static int virtio_mem_probe(struct virtio_device *vde=
+v)
+ 	mutex_init(&vm->hotplug_mutex);
+ 	INIT_LIST_HEAD(&vm->next);
+ 	spin_lock_init(&vm->removal_lock);
+-	hrtimer_init(&vm->retry_timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	vm->retry_timer.function =3D virtio_mem_timer_expired;
++	hrtimer_setup(&vm->retry_timer, virtio_mem_timer_expired, CLOCK_MONOTONIC,
 +		      HRTIMER_MODE_REL);
- 	du->vkms.period_ns =3D ktime_set(0, vblank->framedur_ns);
- 	hrtimer_start(&du->vkms.timer, du->vkms.period_ns, HRTIMER_MODE_REL);
+ 	vm->retry_timer_ms =3D VIRTIO_MEM_RETRY_TIMER_MIN_MS;
+ 	vm->in_kdump =3D is_kdump_kernel();
 =20
 --=20
 2.39.5
