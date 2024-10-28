@@ -1,381 +1,124 @@
-Return-Path: <linux-kernel+bounces-384943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D499B3077
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:38:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 065059B3075
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:38:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C331C21120
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6A5F1F213EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:38:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E161DACA9;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7071DAC8C;
 	Mon, 28 Oct 2024 12:38:05 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A024C83
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:38:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qi/wilZE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 768281DA0EB;
+	Mon, 28 Oct 2024 12:38:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119084; cv=none; b=NuMccxgSYjcjpo+rPyc9hrI7CLw76o6o4itA9b0AMz3U22nvhO1aIeEP3lwrpeF2vwVb4qes9wfeXFLptuKg65ShytEIZrk4ori5YubR0hqa2UAz2yD4axI3aKlxs1gMfO6BGQDZJlmA5T8wkfhzfc3FVtKlmGLGOz2u/SoCEu0=
+	t=1730119084; cv=none; b=RhV2JqZPQbfK9RwtQzY+4VUFIPgRX5NPF8Y8vBOFhFpzSsRVVZX60nhGmirX2KAw7yANzV7j/aiQSMh5i8/h+luMgKPLz9HV4x+0XBSk2W7hKNXs39VhWhFDhKuTG86ROeDdbD7pWCU8/eaNGOeUOHv8lW5XRbwAOthO3L//wfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730119084; c=relaxed/simple;
-	bh=LGNHK0G7gWBzl0+QwQfdRNQirGz2Iy9jnNdkAcr6DkE=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oSPZyvQBMxv5Q2XkN0N8EdRKlZRXNjuFrxjrUaLlNntdumBFCNycd/faBw3eBJ8zjKYheGSZJrxIjdfqin7p8tfWTTGwd5s7fQGafvvx8QcnP632Rk8rgRY6W+Kh+reEco/fACxMUgIhT2lsAE9mldjLwBVgKcPe2w02Ol2oGQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8CxyuClhR9nFQwZAA--.51600S3;
-	Mon, 28 Oct 2024 20:37:57 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDxvkeihR9nOLUiAA--.15528S3;
-	Mon, 28 Oct 2024 20:37:56 +0800 (CST)
-Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, lixianglai@loongson.cn,
- WANG Xuerui <kernel@xen0n.name>
-References: <20241021080418.644342-1-maobibo@loongson.cn>
- <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
- <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn>
- <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
-Date: Mon, 28 Oct 2024 20:37:29 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	bh=NqmQvkSNrzmvc95bi7m+zsa58QtgzwY83REKZHIaAVA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KeQGTafaK8ivCr4OHNKQEczxXaCpy9DKVh88D6AHVCTwIiuhs5ziGFc/MsQIC6cr+AtOFf3q/wds41VasXhWC2Cb7o8eSBDoLymwhJkvc1qAFYm3xU0kFKrPv/+G5VS9olwLR/MdCpyXVFbQgqlBqospIjL8I5Ta/pHkmA5DAwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qi/wilZE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCDA0C4CEC3;
+	Mon, 28 Oct 2024 12:37:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730119083;
+	bh=NqmQvkSNrzmvc95bi7m+zsa58QtgzwY83REKZHIaAVA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Qi/wilZE/fumEMCmXEmxt4ohnNPjbdJLPzteXFtpE3jdzVzhxnqx7/5q/kG+64sym
+	 rr9QaZxVAcl47vKl6+3Bm/QCYVbez6k4/O69I3DsxZwQve2VK+VswGf+4dlIahQz1Q
+	 fqKKJbTHVDhqLUK9xD1gRzftZaUCCWepagjMncyubRrGa4d+I3ZsiX+km3ta3D+w9I
+	 VyUlpHoxTtjTaYyL0xOBP4CmqqyWIyhJfsBfKpZGfmhZMBA7yV+FTxgePcBg+HQ4vw
+	 SGPpv1QruJin/kukNpjdinxBk08HI3LxNB646Q0DAUtUnDlfRYSf3THONovUf2vnfr
+	 Acxvf2RxeoQxQ==
+From: Christian Brauner <brauner@kernel.org>
+To: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	kernel-dev@igalia.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-ext4@vger.kernel.org,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	Gabriel Krisman Bertazi <krisman@suse.de>,
+	Gabriel Krisman Bertazi <gabriel@krisman.be>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Gabriel Krisman Bertazi <krisman@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Theodore Ts'o <tytso@mit.edu>,
+	Andreas Dilger <adilger.kernel@dilger.ca>,
+	Hugh Dickins <hughd@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	smcv@collabora.com
+Subject: Re: [PATCH v8 0/9] tmpfs: Add case-insensitive support for tmpfs
+Date: Mon, 28 Oct 2024 13:37:45 +0100
+Message-ID: <20241028-weinkarte-weshalb-1495cc5086ab@brauner>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
+References: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2089; i=brauner@kernel.org; h=from:subject:message-id; bh=NqmQvkSNrzmvc95bi7m+zsa58QtgzwY83REKZHIaAVA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTLty4SjWyV+euxuTR8W9hd5z/znucEadfnFC7L+dlpw WXL8f1aRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwET+9DP8j/3isG+TaObMzqKb dn8nvJ8k+Pzvnt+y91SqV0k+TYtlz2X4wzPzZWiecewxuTmrzRh+bz3zdH33RYvOyAx/Oend60t +cAIA
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxvkeihR9nOLUiAA--.15528S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW3Zw1UZryDuF18uF1UWr1kCrX_yoWDAr4fpr
-	yUCanxCr4rXry7G34Sq34Fgrn3tr1kKF17W3W3KayrZ3WqvF17Jr4kJry5uFyrWw48GF10
-	vFn5GFZIgFW5J3cCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvIb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
-	xVW8Jr0_Cr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6xACxx
-	1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv
-	67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07
-	AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02
-	F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw
-	1lIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7Cj
-	xVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r
-	4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x07jn
-	UUUUUUUU=
 
-Hi Huacai,
-
-On 2024/10/22 上午9:31, Huacai Chen wrote:
-> On Tue, Oct 22, 2024 at 9:17 AM maobibo <maobibo@loongson.cn> wrote:
->>
->>
->>
->> On 2024/10/21 下午10:32, Huacai Chen wrote:
->>> Hi, Bibo,
->>>
->>> This version still doesn't touch the round-robin method, but it
->>> doesn't matter, I think I misunderstood something since V1...
->> I do not understand why round-robin method need be modified, SRAT may be
->> disabled with general function disable_srat(). Then round-robin method
->> is required.
-> I don't mean round-robin should be modified, I mean I misunderstand round-robin.
+On Mon, 21 Oct 2024 13:37:16 -0300, André Almeida wrote:
+> This patchset adds support for case-insensitive file names lookups in
+> tmpfs. The main difference from other casefold filesystems is that tmpfs
+> has no information on disk, just on RAM, so we can't use mkfs to create a
+> case-insensitive tmpfs.  For this implementation, I opted to have a mount
+> option for casefolding. The rest of the patchset follows a similar approach
+> as ext4 and f2fs.
 > 
->>
->>>
->>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENABLED, in
->>> smp_prepare_boot_cpu() the round-robin node ids only apply to
->>> cpu_to_node(), but __cpuid_to_node[] still record the right node ids.
->>> early_cpu_to_node() returns NUMA_NO_NODE not because
->>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical_map()
->>> < 0.
->>>
->>> If the above is correct, we don't need so complicated, because the
->>> correct and simplest way is:
->>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae33839f49@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
->>>
->> It works also. Only that LoongArch kernel parsing about SRAT/MADT is
->> badly. If you do not mind, I do not mind neither. It is not my duty for
->> kernel side.
-> Yes, I don't mind, please use that simplest way.
-There is another problem with the simple way. eiointc reports error when 
-cpu is online. The error message is:
-   Loongson-64bit Processor probed (LA464 Core)
-   CPU2 revision is: 0014c010 (Loongson-64bit)
-   FPU2 revision is: 00000001
-   eiointc: Error: invalid nodemap!
-   CPU 2 UP state irqchip/loongarch/eiointc:starting (100) failed (-1)
+> [...]
 
-The problem is that node_map of eiointc is problematic,
+Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
+Patches in the vfs.tmpfs branch should appear in linux-next soon.
 
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-static int cpu_to_eio_node(int cpu)
-{
-         return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
-}
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
-                                u64 node_map)
-{
-         int i;
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-         node_map = node_map ? node_map : -1ULL;
-         for_each_possible_cpu(i) {
-                 if (node_map & (1ULL << (cpu_to_eio_node(i)))) {
-                         node_set(cpu_to_eio_node(i), priv->node_map);
-          ...
-The cause is that for possible not present cpu, *cpu_logical_map(cpu)* 
-is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eiointc is 
-problematic.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.tmpfs
 
-So cpu_logical_map(cpu) should be set during MADT parsing even if it is 
-not enabled at beginning, it should not be set at hotplug runtime.
-
-Regards
-Bibo Mao
-
-
-> 
-> Huacai
-> 
->>
->> Bibo Mao
->>>
->>> Huacai
->>>
->>> On Mon, Oct 21, 2024 at 4:04 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>>>
->>>> On LoongArch system, there are two places to set cpu numa node. One
->>>> is in arch specified function smp_prepare_boot_cpu(), the other is
->>>> in generic function early_numa_node_init(). The latter will overwrite
->>>> the numa node information.
->>>>
->>>> With hot-added cpu without numa information, cpu_logical_map() fails
->>>> to its physical cpuid at beginning since it is not enabled in ACPI
->>>> MADT table. So function early_cpu_to_node() also fails to get its
->>>> numa node for hot-added cpu, and generic function
->>>> early_numa_node_init() will overwrite with incorrect numa node.
->>>>
->>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like other
->>>> architectures logic cpu is allocated when parsing MADT table. When
->>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by searching
->>>> all allocated logical cpu with matched physical id. It solves such
->>>> problems such as:
->>>>     1. Boot cpu is not the first entry in MADT table, the first entry
->>>> will be overwritten with later boot cpu.
->>>>     2. Physical cpu id not presented in MADT table is invalid, in later
->>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is added
->>>>     3. For hot-add cpu, its logic cpu is allocated in MADT table parsing,
->>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_node()
->>>> is correct for hot-add cpu.
->>>>
->>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->>>> ---
->>>> v1 ... v2:
->>>>     1. Like other architectures, allocate logic cpu when parsing MADT table.
->>>>     2. Add invalid or duplicated physical cpuid parsing with SRAT table or
->>>> hot-add cpu DSDT information.
->>>> ---
->>>>    arch/loongarch/include/asm/smp.h |  3 ++
->>>>    arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
->>>>    arch/loongarch/kernel/setup.c    | 47 ++++++++++++++++++++++++++++++++
->>>>    arch/loongarch/kernel/smp.c      |  9 +++---
->>>>    4 files changed, 70 insertions(+), 13 deletions(-)
->>>>
->>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/include/asm/smp.h
->>>> index 3383c9d24e94..c61b75937a77 100644
->>>> --- a/arch/loongarch/include/asm/smp.h
->>>> +++ b/arch/loongarch/include/asm/smp.h
->>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int cpu)
->>>>    #define cpu_logical_map(cpu)   0
->>>>    #endif /* CONFIG_SMP */
->>>>
->>>> +int topo_add_cpu(int physid);
->>>> +int topo_get_cpu(int physid);
->>>> +
->>>>    #endif /* __ASM_SMP_H */
->>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.c
->>>> index f1a74b80f22c..84d9812d5f38 100644
->>>> --- a/arch/loongarch/kernel/acpi.c
->>>> +++ b/arch/loongarch/kernel/acpi.c
->>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 flags)
->>>>                   return -ENODEV;
->>>>
->>>>           }
->>>> -       if (cpuid == loongson_sysconf.boot_cpu_id)
->>>> -               cpu = 0;
->>>> -       else
->>>> -               cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
->>>> +
->>>> +       cpu = topo_add_cpu(cpuid);
->>>> +       if (cpu < 0)
->>>> +               return -EEXIST;
->>>>
->>>>           if (!cpu_enumerated)
->>>>                   set_cpu_possible(cpu, true);
->>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
->>>>                   goto fdt_earlycon;
->>>>           }
->>>>
->>>> -       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
->>>> -
->>>>           /*
->>>>            * Process the Multiple APIC Description Table (MADT), if present
->>>>            */
->>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, int to, int distance)
->>>>    void __init
->>>>    acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
->>>>    {
->>>> -       int pxm, node;
->>>> +       int pxm, node, cpu;
->>>>
->>>>           if (srat_disabled())
->>>>                   return;
->>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *pa)
->>>>                   return;
->>>>           }
->>>>
->>>> +       cpu = topo_get_cpu(pa->apic_id);
->>>> +       /* Check whether apic_id exists in MADT table */
->>>> +       if (cpu < 0)
->>>> +               return;
->>>> +
->>>>           early_numa_add_cpu(pa->apic_id, node);
->>>>
->>>>           set_cpuid_to_node(pa->apic_id, node);
->>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phys_cpuid_t physid, u32 acpi_id, int *pcpu
->>>>    {
->>>>           int cpu;
->>>>
->>>> -       cpu = set_processor_mask(physid, ACPI_MADT_ENABLED);
->>>> +       cpu = topo_get_cpu(physid);
->>>> +       /* Check whether apic_id exists in MADT table */
->>>>           if (cpu < 0) {
->>>>                   pr_info(PREFIX "Unable to map lapic to logical cpu number\n");
->>>>                   return cpu;
->>>>           }
->>>>
->>>> +       num_processors++;
->>>> +       set_cpu_present(cpu, true);
->>>> +       __cpu_number_map[physid] = cpu;
->>>> +       __cpu_logical_map[cpu] = physid;
->>>>           acpi_map_cpu2node(handle, cpu, physid);
->>>>
->>>>           *pcpu = cpu;
->>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
->>>> index 00e307203ddb..649e98640076 100644
->>>> --- a/arch/loongarch/kernel/setup.c
->>>> +++ b/arch/loongarch/kernel/setup.c
->>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
->>>>
->>>>    struct loongson_board_info b_info;
->>>>    static const char dmi_empty_string[] = "        ";
->>>> +static int possible_cpus;
->>>> +static bool bsp_added;
->>>>
->>>>    /*
->>>>     * Setup information
->>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char **cmdline_p)
->>>>           *cmdline_p = boot_command_line;
->>>>    }
->>>>
->>>> +int topo_get_cpu(int physid)
->>>> +{
->>>> +       int i;
->>>> +
->>>> +       for (i = 0; i < possible_cpus; i++)
->>>> +               if (cpu_logical_map(i) == physid)
->>>> +                       break;
->>>> +
->>>> +       if (i == possible_cpus)
->>>> +               return -ENOENT;
->>>> +
->>>> +       return i;
->>>> +}
->>>> +
->>>> +int topo_add_cpu(int physid)
->>>> +{
->>>> +       int cpu;
->>>> +
->>>> +       if (!bsp_added && (physid == loongson_sysconf.boot_cpu_id)) {
->>>> +               bsp_added = true;
->>>> +               return 0;
->>>> +       }
->>>> +
->>>> +       cpu = topo_get_cpu(physid);
->>>> +       if (cpu >= 0) {
->>>> +               pr_warn("Adding duplicated physical cpuid 0x%x\n", physid);
->>>> +               return -EEXIST;
->>>> +       }
->>>> +
->>>> +       if (possible_cpus >= nr_cpu_ids)
->>>> +               return -ERANGE;
->>>> +
->>>> +       __cpu_logical_map[possible_cpus] = physid;
->>>> +       cpu = possible_cpus++;
->>>> +       return cpu;
->>>> +}
->>>> +
->>>> +static void __init topo_init(void)
->>>> +{
->>>> +       loongson_sysconf.boot_cpu_id = read_csr_cpuid();
->>>> +       __cpu_logical_map[0] = loongson_sysconf.boot_cpu_id;
->>>> +       possible_cpus++;
->>>> +}
->>>> +
->>>>    void __init platform_init(void)
->>>>    {
->>>>           arch_reserve_vmcore();
->>>>           arch_reserve_crashkernel();
->>>> +       topo_init();
->>>>
->>>>    #ifdef CONFIG_ACPI
->>>>           acpi_table_upgrade();
->>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp.c
->>>> index 9afc2d8b3414..a3f466b89179 100644
->>>> --- a/arch/loongarch/kernel/smp.c
->>>> +++ b/arch/loongarch/kernel/smp.c
->>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
->>>>                   if (cpuid >= nr_cpu_ids)
->>>>                           continue;
->>>>
->>>> -               if (cpuid == loongson_sysconf.boot_cpu_id)
->>>> -                       cpu = 0;
->>>> -               else
->>>> -                       cpu = find_first_zero_bit(cpumask_bits(cpu_present_mask), NR_CPUS);
->>>> +               cpu = topo_add_cpu(cpuid);
->>>> +               if (cpu < 0)
->>>> +                       continue;
->>>>
->>>>                   num_processors++;
->>>>                   set_cpu_possible(cpu, true);
->>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
->>>>                   __cpu_number_map[cpuid] = cpu;
->>>>                   __cpu_logical_map[cpu] = cpuid;
->>>>
->>>> -               early_numa_add_cpu(cpu, 0);
->>>> +               early_numa_add_cpu(cpuid, 0);
->>>>                   set_cpuid_to_node(cpuid, 0);
->>>>           }
->>>>
->>>>
->>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
->>>> --
->>>> 2.39.3
->>>>
->>
->>
-
+[1/9] libfs: Create the helper function generic_ci_validate_strict_name()
+      https://git.kernel.org/vfs/vfs/c/0e152beb5aa1
+[2/9] ext4: Use generic_ci_validate_strict_name helper
+      https://git.kernel.org/vfs/vfs/c/3f5ad0d21db8
+[3/9] unicode: Export latest available UTF-8 version number
+      https://git.kernel.org/vfs/vfs/c/04dad6c6d37d
+[4/9] unicode: Recreate utf8_parse_version()
+      https://git.kernel.org/vfs/vfs/c/142fa60f61f9
+[5/9] libfs: Export generic_ci_ dentry functions
+      https://git.kernel.org/vfs/vfs/c/458532c8dfeb
+[6/9] tmpfs: Add casefold lookup support
+      https://git.kernel.org/vfs/vfs/c/58e55efd6c72
+[7/9] tmpfs: Add flag FS_CASEFOLD_FL support for tmpfs dirs
+      https://git.kernel.org/vfs/vfs/c/5cd9aecbc72c
+[8/9] tmpfs: Expose filesystem features via sysfs
+      https://git.kernel.org/vfs/vfs/c/5132f08bd332
+[9/9] docs: tmpfs: Add casefold options
+      https://git.kernel.org/vfs/vfs/c/a713f830c903
 
