@@ -1,152 +1,106 @@
-Return-Path: <linux-kernel+bounces-386037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BE669B3E6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:30:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB339B3E6E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:31:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E83E1C2141F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 944841F231B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:31:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04E381F8EE8;
-	Mon, 28 Oct 2024 23:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0721F7579;
+	Mon, 28 Oct 2024 23:31:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDWCKuF3"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="adxrEJO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8829018FDD8;
-	Mon, 28 Oct 2024 23:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CDF1E1C0D;
+	Mon, 28 Oct 2024 23:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730158238; cv=none; b=ip4GwRyikYpQhVu/HQywQVIh2uZyiYf3uQaQPB3rYjh2HIOKSFPXVXY4A9tNW2bA1kCXsuXsfq3sELaq/l4c706Ws37MvF6u3nybDscyJvYV7mzHYzoRXex8ibPT/cHgXr+pgLDPlMooDpGQcoxbAnScYhfB+CsPEpX39Xpsnjs=
+	t=1730158265; cv=none; b=Wg6cH42ww92cebEMCY57xISKFs/bLVqQn+iZdPBAfOItBhtyuHaT+VJV4UOZb4N3C0cautnUUVqot2jNXyfJvmmrqCkIAeqwOwBLu6w+30ky1CQdjaSYijvbTBTxPTddYHT9wVOUHCml//6Alp8QACM23KWyqfYH0xFUhUuzrH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730158238; c=relaxed/simple;
-	bh=Jsu2Q0T6DOFCldJgVCT+xnWtn4srBxJLJpFjAU23yzU=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=a3YTwn7dqWd5DzRJ4SnLf7KvwaLothY5mFOsRh8I7/VWMgZXfQOxAwHQNGDseiwrTSKDEkLnOo4WWbvp6kP1+wCT67DyzmGSq/wKbB6nC6twFRg/PcHJVeNE5ffpXITxMRL/qC5s6RUCinXdnZfIRIprGueHj2CNKd9uJP70Wek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LDWCKuF3; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-207115e3056so42193415ad.2;
-        Mon, 28 Oct 2024 16:30:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730158236; x=1730763036; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xyJaUlEgG3da8Ovm63SP1qrlwjIVojX8esngLKq16Rs=;
-        b=LDWCKuF3p8AWzRZrtytnUjml7yXbQbbDT4ryviUvb5t6PWCLJZQczT8zVoRhXo6x+N
-         4nn3f0ZnOS4m/shcqWQDxV+LyDU3DcL+CoewkJ1/LEJXjIJkRgtisAMEfaz20LP/ygFM
-         YA2w40bxI0YL+BapKW6M8gEkfh30gPrusfe7Y5JarqaIKj/R11SAMo/hVvrdMuTaglu8
-         Q7vVOb0phUYqm6RK0ZI+jNFxAOG9SmxwgZNpLL/vP9BQTCmNijU5SGEYl5cKEGs6BNe9
-         m+Kt0+heewfsz9PCQ4nXkefQSoT5BLU3TXuItrrs3k0flgphhHRcw1p8ztXvzo+YTGTL
-         10xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730158236; x=1730763036;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xyJaUlEgG3da8Ovm63SP1qrlwjIVojX8esngLKq16Rs=;
-        b=ALocc2IFvviiCAdYw0o00Rjcr9UNeWtJXqwkqLyudkRaukERvn2eaTBWqq90ZTxlCq
-         vxiU/DrEwbd0uOYuRLD0/qFlQGHx2T7WX7zktNr2hqJ+asqSMviA/fVMhT+TqiJoUULg
-         jS3rTg4UiTAhii2gEmwp5CAkc7n1bxhMEu8+CrND1RCnphResbJxGmPKErj6mT1TIBs2
-         kfVxgKXDXSev15EBw14XPrwNXz+S5I6RiLalg9eVJBwbK5Phz2FjgJJ3dlya8FLM62JE
-         McIwyNUa9ryzd4O7NM9zScMN8RSodnRPDuhOGRX46q+qUnSL4foGq9s2pTymnDrCqyJr
-         MMlA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMowsfjR1p9GRJL7INigQFRKAtfTM2wlZiGjqxEjirmAPyatX2SeAJLgQw7boR5Poa8SQdGHvZM8drBO8=@vger.kernel.org, AJvYcCUl+z8/7C6WeqWwPV8+lKiBNaN6N0bcEBhdmMVA+Gak7vzYRErSdvCKcmsvotCF/9gU0xQ3CtLx@vger.kernel.org, AJvYcCXkHJNVFGrh+IlDg/VRu8Oizvl8zGpLvhTTDBW7rJy9duoCQWNGm37h5q9epb6QFqE3GWdwKXV7p59D3f3aYe8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTZHQVSE5RYNnUsXh2mi8a2MEqCZ5WZxIik3tSr/Gq/8R3TsCB
-	5RXUYnsa9WKk2F3Qj4i1uc8Xs9MLzQ/DTXJdiIz13/CXfth+66K1
-X-Google-Smtp-Source: AGHT+IGKkE8Qj5alHRYQT/GtuS+Y+1Ctc8ChfOQBMOx0xiUAHzpYehQViFiP60/V/dAfs056kBniHQ==
-X-Received: by 2002:a17:902:d4ca:b0:20c:a387:7dc9 with SMTP id d9443c01a7336-210c69e32dfmr139076345ad.29.1730158235611;
-        Mon, 28 Oct 2024 16:30:35 -0700 (PDT)
-Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf87c1esm56083325ad.116.2024.10.28.16.30.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 16:30:35 -0700 (PDT)
-Date: Tue, 29 Oct 2024 08:30:29 +0900 (JST)
-Message-Id: <20241029.083029.72679397436968362.fujita.tomonori@gmail.com>
-To: boqun.feng@gmail.com
-Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
- frederic@kernel.org, tglx@linutronix.de, jstultz@google.com,
- sboyd@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
-Subject: Re: [PATCH v4 4/7] rust: time: Add wrapper for fsleep function
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Zx8VUety0BTpDGAL@Boquns-Mac-mini.local>
-References: <ZxwVuceNORRAI7FV@Boquns-Mac-mini.local>
-	<20241028.095030.2023085589483262207.fujita.tomonori@gmail.com>
-	<Zx8VUety0BTpDGAL@Boquns-Mac-mini.local>
+	s=arc-20240116; t=1730158265; c=relaxed/simple;
+	bh=HKc1o0/C7r3MGYeFYTfFeVOVH7j7sttnDPnYOtW0PLk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KqGydC8OY/lb/2hU883iMx4DYQB61zZjPSXh5D/Lwm7WfLpiHXf54nXJJMJs5XTsrqALM0umJGNV8TVwDbhWOhuZ1oIBiLMfFAX4jQbpqzePRe1z7b3FLo2U8avJOG1Wl5kZ5czGsyqnp9lnuQXbZnjfgK9m1Xr2a/IG6Xr9dH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=adxrEJO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC259C4CEC3;
+	Mon, 28 Oct 2024 23:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730158265;
+	bh=HKc1o0/C7r3MGYeFYTfFeVOVH7j7sttnDPnYOtW0PLk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=adxrEJO24bmDoUKOpxXJ2+XvWjOSq9UIh01TnE0Bz3BEZeD0H6ZyerkfxcL1Iz4M3
+	 pX0AAMPF8F8mTqdy8C3ptJFFUKkntaG42GqROikR8EKrOCppaWJUAToU2e6OWoy4iw
+	 MWYMH7eXYfOwR2xQpfQhzH3mPGDpAMJQg2+g9ZFXYB8/++wii+3DnkmL/17GSjlS+O
+	 Vvv3jTsECw3AWsGLUWz+MxSApzdEg6l6tatlHrQJBJkNgdZLPS2MtSd342YsdyFrQh
+	 TikkI6isIeTBjyqpn3FnHNlWu8oaA8ksuwoOwEb8adUWDEEdeKwneZXZjQCW7aC1LJ
+	 rGJKfwZtvVguA==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Paniakin <apanyaki@amazon.com>,
+	Shuah Khan <shuah@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org,
+	kunit-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/6] damon/{self,kunit}tests: minor fixups for DAMON debugfs interface tests
+Date: Mon, 28 Oct 2024 16:30:52 -0700
+Message-Id: <20241028233058.283381-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Sun, 27 Oct 2024 21:38:41 -0700
-Boqun Feng <boqun.feng@gmail.com> wrote:
+Fixup small broken window panes in DAMON selftests and kunit tests.
 
-> On Mon, Oct 28, 2024 at 09:50:30AM +0900, FUJITA Tomonori wrote:
->> On Fri, 25 Oct 2024 15:03:37 -0700
->> Boqun Feng <boqun.feng@gmail.com> wrote:
->> 
->> >> +/// Sleeps for a given duration at least.
->> >> +///
->> >> +/// Equivalent to the kernel's [`fsleep`], flexible sleep function,
->> >> +/// which automatically chooses the best sleep method based on a duration.
->> >> +///
->> >> +/// The function sleeps infinitely (MAX_JIFFY_OFFSET) if `Delta` is negative
->> >> +/// or exceedes i32::MAX milliseconds.
->> >> +///
->> > 
->> > I know Miguel has made his suggestion:
->> > 
->> > 	https://lore.kernel.org/rust-for-linux/CANiq72kWqSCSkUk1efZyAi+0ScNTtfALn+wiJY_aoQefu2TNvg@mail.gmail.com/
->> > 
->> > , but I think what we should really do here is just panic if `Delta` is
->> > negative or exceedes i32::MAX milliseconds, and document clearly that
->> > this function expects `Delta` to be in a certain range, i.e. it's the
->> > user's responsibility to check. Because:
->> > 
->> > *	You can simply call schedule() with task state set properly to
->> > 	"sleep infinitely".
->> > 
->> > *	Most of the users of fsleep() don't need this "sleep infinitely"
->> > 	functionality. Instead, they want to sleep with a reasonable
->> > 	short time.
->> 
->> I agree with the above reasons but I'm not sure about just panic with
->> a driver's invalid argument.
->> 
-> 
-> If a driver blindly trusts a user-space input or a value chosen by the
-> hardware, I would say it's a bug in the driver. So IMO drivers should
-> check the input of fsleep().
-> 
->> Can we just return an error instead?
->> 
-> 
-> That also works for me, but an immediate question is: do we put
-> #[must_use] on `fsleep()` to enforce the use of the return value? If
-> yes, then the normal users would need to explicitly ignore the return
-> value:
-> 
-> 	let _ = fsleep(1sec);
-> 
-> The "let _ =" would be a bit annoying for every user that just uses a
-> constant duration.
+First four patches clean up DAMON debugfs interface selftests output, by
+fixing segmentation fault of a test program (patch 1), removing
+unnecessary debugging messages (patch 2), and hiding error messages from
+expected failures (patches 3 and 4).
 
-Yeah, but I don't think that we have enough of an excuse here to break
-the rule "Do not crash the kernel".
+Following two patches fix copy-paste mistakes in DAMON Kconfig help
+message that copied from debugfs kunit test (patch 5) and a comment on
+the debugfs kunit test code (patch 6).
 
-Another possible option is to convert an invalid argument to a safe
-value (e.g., the maximum), possibly with WARN_ON_ONCE().
+Signed-off-by: SeongJae Park <sj@kernel.org>
+
+Andrew Paniakin (1):
+  selftests/damon/huge_count_read_write: provide sufficiently large
+    buffer for DEPRECATED file read
+
+SeongJae Park (5):
+  selftests/damon/huge_count_read_write: remove unnecessary debugging
+    message
+  selftests/damon/_debugfs_common: hide expected error message from
+    test_write_result()
+  selftests/damon/debugfs_duplicate_context_creation: hide errors from
+    expected file write failures
+  mm/damon/Kconfig: update DBGFS_KUNIT prompt copy for SYSFS_KUNIT
+  mm/damon/tests/dbgfs-kunit: fix the header double inclusion guarding
+    ifdef comment
+
+ mm/damon/Kconfig                                           | 2 +-
+ mm/damon/tests/dbgfs-kunit.h                               | 2 +-
+ tools/testing/selftests/damon/_debugfs_common.sh           | 7 ++++++-
+ .../selftests/damon/debugfs_duplicate_context_creation.sh  | 2 +-
+ tools/testing/selftests/damon/huge_count_read_write.c      | 4 +---
+ 5 files changed, 10 insertions(+), 7 deletions(-)
+
+
+base-commit: 13583c750117b4e10cdaf5578dcc7723b305ce4e
+-- 
+2.39.5
+
 
