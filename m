@@ -1,196 +1,330 @@
-Return-Path: <linux-kernel+bounces-385602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 090A69B3942
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:37:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9571B9B3945
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F3C21F227B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:37:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06DC5B219E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8671DFDBB;
-	Mon, 28 Oct 2024 18:37:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC8321DFDAD;
+	Mon, 28 Oct 2024 18:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MhfIttbR"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M5Y7agbr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B221DFD89;
-	Mon, 28 Oct 2024 18:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6A6D1DFD95;
+	Mon, 28 Oct 2024 18:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730140629; cv=none; b=C2K37OXrdChYvSEf+iSv0MdiFXnS7IU0NJZYMwi/UYUf8W8PrSj10dhiIHKiiavReVDJ3XpK53Q1DXi6x2PDQOgN4mh32riaZMVKlA7/7gTHyOSCwIkABoMNl2vekmpntpnB9Xd2QToEnBPSvQ5VND0lNT4FCskU+rGdQxC6loI=
+	t=1730140648; cv=none; b=tN/5DGCgkx8+yqSWtAaav3UgVzeX6MqgvmIsTe5arEUrnXt7vA/R4oyGwGS/IloyO/FQt07DhcR6w1OEWlp0RZGqhChRBVII4piL9/XM0RjIkzRAocGJQz6TN9fyccmUwMH/GLmPjBk33sgUBdhFkTCoXiS7DimBa6yTiiv0Gw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730140629; c=relaxed/simple;
-	bh=kCmPyYjjWXHxfuxWDJeY/5/Sf0Ji2AD9knLHw1d8mu0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=is5PBloCz3puKmu1sTSFLt5RwcvS9rxc/zgOkfHXlAoS8bepDGIfcnLANPzv+qOjloUK3XAOfe6ZeaRG1ODRqUTP/Uyatq4eUxc4oD0zyufBl2TtlPuftizgQN2sPvutcWL9oTxb+bqwKVHFVDJXbTc3OPFXVt2Fl45gJox5luQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MhfIttbR; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id AEFE6743;
-	Mon, 28 Oct 2024 19:37:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730140621;
-	bh=kCmPyYjjWXHxfuxWDJeY/5/Sf0Ji2AD9knLHw1d8mu0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MhfIttbRLbQVqdgGnkdZqJ2bK4AJhY6EAz6Zk1ai+fgLCdi1u9LgmPqykm++u9asm
-	 sGjVzCtgTQegee66JrctZPf9283L2tA7qY8R7IxQ0aseoMkiIs55TK9NhwccyHuzTe
-	 35IYukIeE3mchRb6iNcKGSgkSKqrXYyJqL44fYpQ=
-Date: Mon, 28 Oct 2024 20:36:57 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Tommaso Merciai <tomm.merciai@gmail.com>
-Cc: sakari.ailus@linux.intel.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
-Message-ID: <20241028183657.GE26852@pendragon.ideasonboard.com>
-References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
- <20241020164354.GG7770@pendragon.ideasonboard.com>
- <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <20241021073034.GC14328@pendragon.ideasonboard.com>
- <Zx/KsKBtVBWfziXo@tom-desktop>
+	s=arc-20240116; t=1730140648; c=relaxed/simple;
+	bh=8CbXDcVuo9k+di5CjlwiPaTTcw2cZ7PEvxl4QrnMpS8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ay6UPlLAUATRVeUmZcYWybc3IsFmYx4/NnUMTDH7sQ076/YQ2fqfekj6ZsW2v6ADKGFQOsaVd6ojWt718wBPSooEG2IgmusrIW/aRldib0IuHxI9K6VtQ7fh8fxyYtUIqE88TZCoLWB+OfsXZ0ClGDLVBuHgQeYIm+AxYJv2bj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M5Y7agbr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AA42C4CEC3;
+	Mon, 28 Oct 2024 18:37:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730140646;
+	bh=8CbXDcVuo9k+di5CjlwiPaTTcw2cZ7PEvxl4QrnMpS8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=M5Y7agbrpI0En6Vw4bZu/NShw2kpS2pLp1e3a2ziR3EMAdikd/t6Ua4eaj1nwE34J
+	 zlgSq1TOpo9QBecVcJI8hRlH55aeWZ4qwoDRyZV+uiUr0/n1A5A9DqOWTwI4nKdU+q
+	 RtE/r3jJa2yAxsoOH9kHmb75UvyYc5O8uQYx+GlQxMSlEsMazAZgmf/f1Rmd9DPi+c
+	 tonfrVu8tFHrIt1WVFkeL+tPrZybE8MxxGSI+UDNaMgLeyTg4fAhMBTamGiVxQGRYk
+	 65KBXSkPaeJnrOVREqgwkHqCWmGkN6c74ZGYBHaveX9WbETXLWc5j0nkyA88XzmLdm
+	 R4DhHO27wNhaQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t5UcF-007g2P-M1;
+	Mon, 28 Oct 2024 18:37:23 +0000
+Date: Mon, 28 Oct 2024 18:37:23 +0000
+Message-ID: <87jzdst6os.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>
+Subject: Re: [PATCH 4/4] arm64: mte: Use stage-2 NoTagAccess memory attribute if supported
+In-Reply-To: <yq5ar080cq5x.fsf@kernel.org>
+References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+	<20241028094014.2596619-5-aneesh.kumar@kernel.org>
+	<87o734ts4m.wl-maz@kernel.org>
+	<yq5ar080cq5x.fsf@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Zx/KsKBtVBWfziXo@tom-desktop>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Suzuki.Poulose@arm.com, steven.price@arm.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Hi Tommaso,
+On Mon, 28 Oct 2024 13:28:42 +0000,
+Aneesh Kumar K.V <aneesh.kumar@kernel.org> wrote:
+> 
+> Marc Zyngier <maz@kernel.org> writes:
+> 
+> > On Mon, 28 Oct 2024 09:40:14 +0000,
+> > "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+> >> 
+> >> Currently, the kernel won't start a guest if the MTE feature is enabled
+> >> and the guest RAM is backed by memory which doesn't support access tags.
+> >> Update this such that the kernel uses the NoTagAccess memory attribute
+> >> while mapping pages from VMAs for which MTE is not allowed. The fault
+> >> from accessing the access tags with such pages is forwarded to VMM so
+> >> that VMM can decide to kill the guest or remap the pages so that
+> >> access tag storage is allowed.
+> >
+> > I only have questions here:
+> >
+> > - what is the benefit of such approach? why shouldn't that be the
+> >   kernel's job to fix it?
+> >
+> 
+> IMHO leaving that policy decision to VMM makes the kernel changes
+> simpler. In most cases, VMM will kill the guest, because these
+> restrictions of MTE_ALLOWED are applied at the memslot/vma.
 
-On Mon, Oct 28, 2024 at 06:32:32PM +0100, Tommaso Merciai wrote:
-> On Mon, Oct 21, 2024 at 10:30:34AM +0300, Laurent Pinchart wrote:
-> > On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
-> > > On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
-> > > > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
-> > > > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > > > userspace has to be able to subscribe to control events so that it is
-> > > > > notified when the control changes value.
-> > > > > If a control handler is set for the subdev then set the HAS_EVENTS
-> > > > > flag automatically into v4l2_subdev_init_finalize() and use
-> > > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > > > as default if subdev don't have .(un)subscribe control operations.
-> > > > 
-> > > > I would add here
-> > > > 
-> > > > This simplifies subdev drivers by avoiding the need to set the
-> > > > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
-> > > > consistency of the API exposed to userspace.
-> > > > 
-> > > > And you can also add
-> > > > 
-> > > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > > 
-> > > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > > > 
-> > > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > 
-> > > Oks, Thanks again.
-> > > 
-> > > > Now, can we simplify sensor drivers to drop the event handlers and the
-> > > > flag ? :-)
-> > > 
-> > > Yep, plan is add all to support v4l2_subdev_init_finalize()
-> > > Removing:
-> > > 
-> > >  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-> > >  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> > > 
-> > > if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
-> > 
-> > What I meant is looking at the I2C sensor drivers that currently
-> > 
-> > - call v4l2_subdev_init_finalize()
-> > - set V4L2_SUBDEV_FL_HAS_EVENTS
-> > - set the .subscribe_event() and .unsubscribe_event() handlers
-> > 
-> > and dropping the flag and handlers from them. Is that what you plan to
-> > work on ?
-> 
-> It's ok for you per/driver patch or you prefer a big single patch?
+Where is that captured? The whole idea behind FEAT_MTE_PERM was that
+it would be the hypervisor's task to lazily allocate MTE-capable
+memory as tagged-access would occur.
 
-I'm fine either way. Maybe one large patch to address all the drivers
-where the flag and handlers are simply dropped, and then one patch per
-driver where changes are larger (such as adding calls to
-v4l2_subdev_init_finalize()) ?
+> 
+> >
+> > - where is the documentation for this new userspace ABI?
+> >
+> 
+> I will add the details if we agree that this should be a separate EXIT
+> as outlined in this patch.
 
-> Meanwhile I've prepared something here:
+Woooot??? This isn't a *DETAIL*. This is the very first thing you
+should write. Everything *else* is an implementation detail.
+
 > 
-> https://gitlab.freedesktop.org/linux-media/users/tmerciai/-/compare/next...v6.12.0-rc1-nxp?from_project_id=22111
+> >
+> > - are you expecting the VMM to create a new memslot for this?
+> >
 > 
-> Let me know if you prefer (un)squashed version.
-> Thanks in advance. :)
+> I guess there are examples of configs where some memory regions are
+> backed by page cache where we don't directly use those memory regions as
+> allocatable memory in the guest. This change allows us to enable MTE in such
+> configs.
+
+This doesn't answer my question. What is expected sequence a VMM
+should apply to provide tagged memory to the guest?
+
 > 
-> Thanks & Regards,
-> Tommaso
+> > - where is the example of a VMM using this?
+> >
 > 
-> > 
-> > > Meanwhile I think I will send v3 with your
-> > > suggestions. :)
-> > > 
-> > > > > ---
-> > > > > Changes since v1:
-> > > > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
-> > > > >    SAilus
-> > > > > 
-> > > > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
-> > > > >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > > > > 
-> > > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > > index 3a4ba08810d2..fad8fa1f63e8 100644
-> > > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> > > > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> > > > >  
-> > > > >  	case VIDIOC_SUBSCRIBE_EVENT:
-> > > > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > > > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > > > > +			return v4l2_subdev_call(sd, core, subscribe_event,
-> > > > > +						vfh, arg);
-> > > > > +
-> > > > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > > > > +		    vfh->ctrl_handler)
-> > > > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > > > > +
-> > > > > +		return -ENOIOCTLCMD;
-> > > > >  
-> > > > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> > > > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > > > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > > > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > > > > +						vfh, arg);
-> > > > > +
-> > > > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
-> > > > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> > > > > +
-> > > > > +		return -ENOIOCTLCMD;
-> > > > >  
-> > > > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> > > > >  	case VIDIOC_DBG_G_REGISTER:
-> > > > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
-> > > > >  		}
-> > > > >  	}
-> > > > >  
-> > > > > +	if (sd->ctrl_handler)
-> > > > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > > +
-> > > > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
-> > > > >  	if (IS_ERR(state))
-> > > > >  		return PTR_ERR(state);
+> I do have changes to kvmtool which won't do any fixup on receiving that
+> VM exit. I expect other VMM to do the same by default when they get a
+> VM exit with an unknown exit_reason. So unless VMM wants to do any
+> special handling, we don't need any change in the VMM.
+
+OK, so this has never been tested. I'm sorry, but for something of
+this magnitude, with expected userspace interactions, and requiring
+VMM handling, I want to see the full end-to-end thing.
+
+> 
+> 
+> diff --git a/arm/kvm-cpu.c b/arm/kvm-cpu.c
+> index 3b95750ecec7..4760bad07476 100644
+> --- a/arm/kvm-cpu.c
+> +++ b/arm/kvm-cpu.c
+> @@ -239,6 +239,17 @@ static bool handle_memoryfault(struct kvm_cpu *vcpu)
+>  	return true;
+>  }
+>  
+> +static bool handle_notag_access(struct kvm_cpu *vcpu)
+> +{
+> +	u64 gpa = vcpu->kvm_run->memory_fault.gpa;
+> +	u64 size = vcpu->kvm_run->memory_fault.size;
+> +
+> +	/* For now VMM just panic */
+> +	pr_err("Tag Access to a wrong memory region 0x%lx size 0x%lx\n",
+> +	       (unsigned long)gpa, (unsigned long)size);
+> +	return false;
+> +}
+> +
+>  bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
+>  {
+>  	switch (vcpu->kvm_run->exit_reason) {
+> @@ -246,6 +257,8 @@ bool kvm_cpu__handle_exit(struct kvm_cpu *vcpu)
+>  		return handle_hypercall(vcpu);
+>  	case KVM_EXIT_MEMORY_FAULT:
+>  		return handle_memoryfault(vcpu);
+> +	case KVM_EXIT_ARM_NOTAG_ACCESS:
+> +		return handle_notag_access(vcpu);
+>  	}
+>  
+>  	return false;
+> diff --git a/include/linux/kvm.h b/include/linux/kvm.h
+> index 32cff22f0e4d..deef6614f577 100644
+> --- a/include/linux/kvm.h
+> +++ b/include/linux/kvm.h
+> @@ -178,6 +178,7 @@ struct kvm_xen_exit {
+>  #define KVM_EXIT_NOTIFY           37
+>  #define KVM_EXIT_LOONGARCH_IOCSR  38
+>  #define KVM_EXIT_MEMORY_FAULT     39
+> +#define KVM_EXIT_ARM_NOTAG_ACCESS 40
+>  
+>  /* For KVM_EXIT_INTERNAL_ERROR */
+>  /* Emulate instruction failed. */
+> @@ -429,10 +430,17 @@ struct kvm_run {
+>  		/* KVM_EXIT_MEMORY_FAULT */
+>  		struct {
+>  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
+> +#define KVM_MEMORY_EXIT_FLAG_NOTAGACCESS (1ULL << 4)
+>  			__u64 flags;
+>  			__u64 gpa;
+>  			__u64 size;
+>  		} memory_fault;
+> +  		/* KVM_EXIT_ARM_NOTAG_ACCESS */
+> +		struct {
+> +			__u64 flags;
+> +			__u64 gpa;
+> +			__u64 size;
+> +		} notag_access;
+>  		/* Fix the size of the union. */
+>  		char padding[256];
+>  	};
+> 
+> >> 
+> >> NOTE: We could also use KVM_EXIT_MEMORY_FAULT for this. I chose to
+> >> add a new EXIT type because this is arm64 specific exit type.
+> >> 
+> >> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> >> ---
+> >>  arch/arm64/include/asm/kvm_emulate.h |  5 +++++
+> >>  arch/arm64/include/asm/kvm_pgtable.h |  1 +
+> >>  arch/arm64/kvm/hyp/pgtable.c         | 16 +++++++++++++---
+> >>  arch/arm64/kvm/mmu.c                 | 28 ++++++++++++++++++++++------
+> >>  include/uapi/linux/kvm.h             |  7 +++++++
+> >>  5 files changed, 48 insertions(+), 9 deletions(-)
+> >> 
+> >> diff --git a/arch/arm64/include/asm/kvm_emulate.h b/arch/arm64/include/asm/kvm_emulate.h
+> >> index a601a9305b10..fa0149a0606a 100644
+> >> --- a/arch/arm64/include/asm/kvm_emulate.h
+> >> +++ b/arch/arm64/include/asm/kvm_emulate.h
+> >> @@ -373,6 +373,11 @@ static inline bool kvm_vcpu_trap_is_exec_fault(const struct kvm_vcpu *vcpu)
+> >>  	return kvm_vcpu_trap_is_iabt(vcpu) && !kvm_vcpu_abt_iss1tw(vcpu);
+> >>  }
+> >>  
+> >> +static inline bool kvm_vcpu_trap_is_tagaccess(const struct kvm_vcpu *vcpu)
+> >> +{
+> >> +	return !!(ESR_ELx_ISS2(kvm_vcpu_get_esr(vcpu)) & ESR_ELx_TagAccess);
+> >> +}
+> >> +
+> >>  static __always_inline u8 kvm_vcpu_trap_get_fault(const struct kvm_vcpu *vcpu)
+> >>  {
+> >>  	return kvm_vcpu_get_esr(vcpu) & ESR_ELx_FSC;
+> >> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+> >> index 03f4c3d7839c..5657ac1998ad 100644
+> >> --- a/arch/arm64/include/asm/kvm_pgtable.h
+> >> +++ b/arch/arm64/include/asm/kvm_pgtable.h
+> >> @@ -252,6 +252,7 @@ enum kvm_pgtable_prot {
+> >>  
+> >>  	KVM_PGTABLE_PROT_DEVICE			= BIT(3),
+> >>  	KVM_PGTABLE_PROT_NORMAL_NC		= BIT(4),
+> >> +	KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS	= BIT(5),
+> >
+> > This seems wrong. NOTAGACCESS is a *permission*, not a memory type.
+> >
+> 
+> Are you suggesting the name is wrong? The memory attribute value I
+> wanted to use is
+> 
+> MemAttr[3:0] = 0b0100 which is Normal, NoTagAccess, writeback cacheable.
+> 
+> I am following the changes similar to KVM_PGTABLE_PROT_NORMAL_NC.
+
+But that's entirely different. This really isn't a memory type. Quite
+the opposite, actually. This is a stage-2 permission setting, which
+you are conflating with the actual memory type.
+
+Also, I don't see why that should be incompatible with something other
+than Normal memory.
+
+> 
+> >
+> >>  
+> >>  	KVM_PGTABLE_PROT_SW0			= BIT(55),
+> >>  	KVM_PGTABLE_PROT_SW1			= BIT(56),
+> >> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+> >> index b11bcebac908..bc0d9f08c49a 100644
+> >> --- a/arch/arm64/kvm/hyp/pgtable.c
+> >> +++ b/arch/arm64/kvm/hyp/pgtable.c
+> >> @@ -677,9 +677,11 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+> >>  {
+> >>  	kvm_pte_t attr;
+> >>  	u32 sh = KVM_PTE_LEAF_ATTR_LO_S2_SH_IS;
+> >> +	unsigned long prot_mask = KVM_PGTABLE_PROT_DEVICE |
+> >> +				  KVM_PGTABLE_PROT_NORMAL_NC |
+> >> +				  KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS;
+> >>  
+> >> -	switch (prot & (KVM_PGTABLE_PROT_DEVICE |
+> >> -			KVM_PGTABLE_PROT_NORMAL_NC)) {
+> >> +	switch (prot & prot_mask) {
+> >>  	case KVM_PGTABLE_PROT_DEVICE | KVM_PGTABLE_PROT_NORMAL_NC:
+> >>  		return -EINVAL;
+> >>  	case KVM_PGTABLE_PROT_DEVICE:
+> >> @@ -692,6 +694,12 @@ static int stage2_set_prot_attr(struct kvm_pgtable *pgt, enum kvm_pgtable_prot p
+> >>  			return -EINVAL;
+> >>  		attr = KVM_S2_MEMATTR(pgt, NORMAL_NC);
+> >>  		break;
+> >> +	case KVM_PGTABLE_PROT_NORMAL_NOTAGACCESS:
+> >> +		if (system_supports_notagaccess())
+> >> +			attr = KVM_S2_MEMATTR(pgt, NORMAL_NOTAGACCESS);
+> >> +		else
+> >> +			return -EINVAL;
+> >> +		break;
+> >
+> > How do you see this working when migrating a VM from one host to
+> > another, one that supports FEAT_MTE_PERM and one that doesn't? The
+> > current assumptions are that the VMM will replay the *exact same*
+> > setup on the target host, and this obviously doesn't work.
+> >
+> 
+> I missed looking at kvm migration. I guess I will have to expose this as
+> a capability and only allow migration if the target also supports the
+> same capability?
+
+I don't think so. This doesn't affect the guest at all, as the guest
+doesn't know anything about S2, unless you decide to expose
+FEAT_MTE_PERM to NV.
+
+It affects the VMM though, and that's because you are making a
+difference in handling between having FEAT_MTE_PERM or not. Given that
+this is invisible to userspace, that's not a great design.
+
+Thanks,
+
+	M.
 
 -- 
-Regards,
-
-Laurent Pinchart
+Without deviation from the norm, progress is not possible.
 
