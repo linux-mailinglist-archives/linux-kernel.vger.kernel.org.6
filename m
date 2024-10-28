@@ -1,204 +1,185 @@
-Return-Path: <linux-kernel+bounces-385542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999EF9B385E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:58:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8171B9B386F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:59:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8641C223E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3AC71C2231D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:59:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35451DF735;
-	Mon, 28 Oct 2024 17:57:52 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08A1A1DF961;
+	Mon, 28 Oct 2024 17:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="GgwjoFBP"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5C021106;
-	Mon, 28 Oct 2024 17:57:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 495B71DF73B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:59:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730138272; cv=none; b=gGUgxlGmGbSzly/809vuPd9I8232OBfOf1YLoY2HK3mwCtIXQZMjNvT0rrhn0LoYjiSk94JTnUU2ck4nWoJGqROjErZxlhE3pye++om/uTaid1u6lbbymA/GMZm7q89C6boUdZy4JzyUBaZI19kqYaXPH3F0Gjf8vdpiu6Xk5Sk=
+	t=1730138349; cv=none; b=Irfdv8ltGkNfqVzCKqTx35ie0+YOlBwtYa/KQyFeXJ4v9tpCChCgMXE2g5zMgJRK0sBc48dHgkseak5viO44V4BxKbpJY4SNX5HcHji/YAuF5eE6Q82Zc6A3WFHrpg8Y/Vn5VuIZT2pkU++AJegWxfLafBdKatdziD24wrFCv+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730138272; c=relaxed/simple;
-	bh=9n2kql9SOdKu6PRWDOsoEfPHOf5PZ6YTER7Rby7nT7w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l21Dv8pBgsp74uwYpoVG2kdHS4UXEo7NVJJHR5VyDOkl67bXIaP9lGhebpZGf63YSPMesZ6jMvASZ7W9SZSUPL3lpyoUzVYx/3yCNA30H6HYSHubF0k/Rbrbi/thvIqyjcgdiFLkdo9tbNEzkBeGRkrLKFT1LxZ9iI61/BM8kns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e39bf12830so33479927b3.1;
-        Mon, 28 Oct 2024 10:57:49 -0700 (PDT)
+	s=arc-20240116; t=1730138349; c=relaxed/simple;
+	bh=RgEyJ/UTXeiL2Rr1ZWAjbIYgSjcGw8e7cSxu/c67RCE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EPrsa2/ho+RDFusp0WFeTrD6036OcKtab4NTKfTOaQP8Xm9qg+wL8QGT1ysDgbhmoj58G+hsIq3t9kUEI2NfFjsTtqPlSmDuwhLOLOTDkp2qJZjk5r8nBpWbAiyA+5mqBYmTbIll8t6MoBNoPubDu3MiLZg7Lkvo3bDpg+4GX7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=GgwjoFBP; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730138345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VaEuGHwDHQ/7fxU81N7Mc5+UKCdEzJjxfEJniWKTOtw=;
+	b=GgwjoFBPJdI9b+6+C9ScotaR04jI3iQ9io6wzinHg3XahImOdD5w8uvujni0Mk2ApThNs3
+	cn1L8WpaHvbPpqTKSitkZF3Y6nUePxszM5KYP9mjqEvI54mHL7IxTU6VgVL04DFV06YDRT
+	S5lIT5U9ps2GGMlRf+aW+8IlMtx2d2k=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-688-94xUO4dnMDyxYjqtHgRBdQ-1; Mon, 28 Oct 2024 13:59:04 -0400
+X-MC-Unique: 94xUO4dnMDyxYjqtHgRBdQ-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4315544642eso33837545e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:59:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730138269; x=1730743069;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KLLFa6WS4xfeiEtOHxziXZIgc98NLKWXcmokIkVFE5s=;
-        b=HD4f62auDOV6tIoIc3VNKjQ0SvnFTSgeL8Sbfk8E8faCxY+ZEP2diithaH7ewUMElf
-         HSujJYwuSVk/FNPOJ5FdLPd8DaQZsNgDSKg4yEsa7Kyex9D+5SR+pvf4Rd55Qh2qCsGa
-         p+YeCoDXgPSfk4rhuhfbogZ14+xkJflH6ln/Uc3m55XJQnYgWOBIVuBcGISoTExlFnDC
-         vorOkOHa/TYx3iWtkww06A/s0Pl3aPsgsZ5co9gJKyDjVo9Dyiovf6UHvi+w2iaamg0r
-         ASphSPwBXxUSD/WIf3dPEqIC39OBTW7UvKT1eRyuKvnRVg9kXyZw9Muj1e9vcv3LbYQQ
-         NI+A==
-X-Forwarded-Encrypted: i=1; AJvYcCWdjY6wJhtL/6vGNxrjW7S7Jr3WQMC2loUkeJnN5NDxc5T4EwHP27GA6lwHAUsR1T10SX1CywNuf7xrL7E+@vger.kernel.org, AJvYcCXM9lzVz5o854fS3Kfkv9kziqFLu6YSa3N/+Tj/wb7FKDAnUa3bL4QtxfFv8m4Q3K4fTnatQYnEZ3bC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAegJCWiGgy8CWxLbJI83GQXWXFjl0PrQRc4JsAS3NI090Z1OI
-	jURLWKr1S9S1MpfL+9Id2yBOtgUgOChZ2m+pePDdjq+sFbJgpmz5mIo8Gks+
-X-Google-Smtp-Source: AGHT+IHsa1ltsWOZLCvylljjjxP+724mRZ7QqT/iP5IFvx09mgnH+ZSgO6WfTgWDk5eFoEN18icaxA==
-X-Received: by 2002:a05:690c:60c3:b0:64b:b7e:3313 with SMTP id 00721157ae682-6ea22daffadmr7117777b3.13.1730138268569;
-        Mon, 28 Oct 2024 10:57:48 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c18650sm15121487b3.64.2024.10.28.10.57.48
+        d=1e100.net; s=20230601; t=1730138343; x=1730743143;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VaEuGHwDHQ/7fxU81N7Mc5+UKCdEzJjxfEJniWKTOtw=;
+        b=saHDo15VYSAUnrYB925jEFR8JR6lQuU/qrIGoQLDtoaH4t2mKfRNCnTKrL7LS49GM1
+         rrvSIoX/XneSRl7kQ/Ulz6sSDXKtyPZUqt/OrhesxqQD5mdpjbCoZ2DmQXXLkytwYsNl
+         T/o8BwfWiTHgkLZ79/rVWK7Z6iwN9MGiWO+Pd8WEvi3ojPaHS2NH8jDkAH9fBj+LZrrh
+         sJcyy3rx659JOOg/QenHuRfX3VGup8Ovi8be5VZWhfX0Q49hfs6PD7QY29BkZAbYXVet
+         knb3KlvepaX3z5urT0PWQd7lQnUQQCNnriAuZc8cDRxviTKPvIB92v0sYc+ZqOFonjvX
+         O3vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrY3MI4SETKuXtxIp7EOyyZKZlMUhEsPlLc5AFs0pO61aXQHd4BcbdWktaoTv+Pf0PyL6N7gIj0CY89sI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7VnM96YvXDBjXUFCCHmqKHvFs6RGgi3bKTj5PxMlzkP42T8i+
+	bZYXNeoSCK8HlbdWJz6of9NnGzTd9tXC3/UPjOqKz2ERd6lrF/tazecvH2tnHsCD/94FG7m+4Ke
+	GMbM+h+lEpanNM0sufpcMqSUW3oWYlpgH1B/2VDesafQs50QAxrSweb6dbWAcEQ==
+X-Received: by 2002:a05:600c:4fc5:b0:42f:8515:e490 with SMTP id 5b1f17b1804b1-4319ac7427fmr75565955e9.5.1730138343300;
+        Mon, 28 Oct 2024 10:59:03 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFyXQIh6s0GdH8O151oWfGZtILg2E2LF4hvZ6KvK5FspFGuiLQ2aANV8VYQ8kDB08L+Agb2Lg==
+X-Received: by 2002:a05:600c:4fc5:b0:42f:8515:e490 with SMTP id 5b1f17b1804b1-4319ac7427fmr75565775e9.5.1730138342949;
+        Mon, 28 Oct 2024 10:59:02 -0700 (PDT)
+Received: from [192.168.10.3] ([151.49.226.83])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b57b5d9sm146350035e9.44.2024.10.28.10.59.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 10:57:48 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6e330b7752cso39391987b3.1;
-        Mon, 28 Oct 2024 10:57:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVpbrxBHHgkOc9OvGBOWH/Qu4Uk2bclOQWt6t/bnwVj/uaHdFBkVHD55KPJqkDIFB+afiBP60353PMOkUN3@vger.kernel.org, AJvYcCWvrNJSuxIK85dKmKerlWQuoyMRWBBuSJsqqpZ7Y3vVwhFq9XqTp5jZQAeXFUmZUL20u4C9/nh4DIC7@vger.kernel.org
-X-Received: by 2002:a05:690c:9a06:b0:6e3:1d8c:1224 with SMTP id
- 00721157ae682-6ea22e5e851mr6027417b3.20.1730138268189; Mon, 28 Oct 2024
- 10:57:48 -0700 (PDT)
+        Mon, 28 Oct 2024 10:59:02 -0700 (PDT)
+Message-ID: <e8677ccc-e25e-46f9-8cf1-e3ff8d28887d@redhat.com>
+Date: Mon, 28 Oct 2024 18:59:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240219-add-am64-som-v7-0-0e6e95b0a05d@solid-run.com>
- <20240219-add-am64-som-v7-4-0e6e95b0a05d@solid-run.com> <CAMuHMdXTgpTnJ9U7egC2XjFXXNZ5uiY1O+WxNd6LPJW5Rs5KTw@mail.gmail.com>
- <a65e17e9-0055-4e5a-902f-8ee2807a86df@ti.com> <299b6b75-beef-46aa-9203-b96009226677@solid-run.com>
-In-Reply-To: <299b6b75-beef-46aa-9203-b96009226677@solid-run.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 28 Oct 2024 18:57:35 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW6p-xp96rXqt_dhSNkJSmyQCrh+EOmHv9vgiAWyioMOQ@mail.gmail.com>
-Message-ID: <CAMuHMdW6p-xp96rXqt_dhSNkJSmyQCrh+EOmHv9vgiAWyioMOQ@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] arm64: dts: ti: hummingboard-t: add overlays for
- m.2 pci-e and usb-3
-To: Josua Mayer <josua@solid-run.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Yazan Shhady <yazan.shhady@solid-run.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 00/10] TDX host: metadata reading tweaks, bug fix and
+ info dump
+To: Kai Huang <kai.huang@intel.com>, dave.hansen@intel.com,
+ kirill.shutemov@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
+ peterz@infradead.org, mingo@redhat.com, hpa@zytor.com,
+ dan.j.williams@intel.com, seanjc@google.com
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+ rick.p.edgecombe@intel.com, isaku.yamahata@intel.com,
+ adrian.hunter@intel.com, nik.borisov@suse.com
+References: <cover.1730118186.git.kai.huang@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <cover.1730118186.git.kai.huang@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Josua,
+On 10/28/24 13:41, Kai Huang wrote:
 
-On Mon, Oct 28, 2024 at 6:19=E2=80=AFPM Josua Mayer <josua@solid-run.com> w=
-rote:
-> Am 28.10.24 um 16:31 schrieb Vignesh Raghavendra:
-> > On 25/10/24 19:27, Geert Uytterhoeven wrote:
-> >> On Mon, Feb 19, 2024 at 4:05=E2=80=AFPM Josua Mayer <josua@solid-run.c=
-om> wrote:
-> >>> HummingBoard-T features two M.2 connectors labeled "M1" and "M2".
-> >>> The single SerDes lane of the SoC can be routed to either M1 pci-e
-> >>> signals, or M2 usb-3 signals by a gpio-controlled mux.
-> >>>
-> >>> Add overlays for each configuration.
-> >>>
-> >>> Signed-off-by: Josua Mayer <josua@solid-run.com>
-> >> Thanks for your patch, which is now commit bbef42084cc170cb ("arm64:
-> >> dts: ti: hummingboard-t: add overlays for m.2 pci-e and usb-3") in v6.=
-9.
-> >>
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/ti/k3-am642-hummingboard-t-usb3.dtso
-> >>> @@ -0,0 +1,44 @@
-> >>> +// SPDX-License-Identifier: GPL-2.0+
-> >>> +/*
-> >>> + * Copyright (C) 2023 Josua Mayer <josua@solid-run.com>
-> >>> + *
-> >>> + * Overlay for SolidRun AM642 HummingBoard-T to enable USB-3.1.
-> >>> + */
-> >>> +
-> >>> +/dts-v1/;
-> >>> +/plugin/;
-> >>> +
-> >>> +#include <dt-bindings/phy/phy.h>
-> >>> +
-> >>> +#include "k3-serdes.h"
-> >>> +
-> >>> +&serdes0 {
-> >>> +       #address-cells =3D <1>;
-> >>> +       #size-cells =3D <0>;
-> >>> +
-> >>> +       serdes0_link: phy@0 {
-> >>> +               reg =3D <0>;
-> >>> +               cdns,num-lanes =3D <1>;
-> >>> +               cdns,phy-type =3D <PHY_TYPE_USB3>;
-> >>> +               #phy-cells =3D <0>;
-> >>> +               resets =3D <&serdes_wiz0 1>;
-> >>> +       };
-> >>> +};
-> >>> +
-> >>> +&serdes_ln_ctrl {
-> >>> +       idle-states =3D <AM64_SERDES0_LANE0_USB>;
-> >>> +};
-> >>> +
-> >>> +&serdes_mux {
-> >>> +       idle-state =3D <0>;
-> >>> +};
-> >>> +
-> >>> +&usbss0 {
-> >>> +       /delete-property/ ti,usb2-only;
-> >> /delete-property/ (and /delete-node/) to delete something in the base =
-DTS
-> >> does not work.
->
-> My understanding is that flags are equivalent to boolean, i.e:
->
-> ti,usb2-only =3D <true>;
-> ti,usb2-only;
->
-> are equivalent.
->
-> If so, can we assign <false> within the overlay?
+> v5 -> v6:
+>   - Change to use a script [*] to auto-generate metadata reading code.
+> 
+>    - https://lore.kernel.org/kvm/f25673ea-08c5-474b-a841-095656820b67@intel.com/
+>    - https://lore.kernel.org/kvm/CABgObfYXUxqQV_FoxKjC8U3t5DnyM45nz5DpTxYZv2x_uFK_Kw@mail.gmail.com/
+> 
+>     Per Dave, this patchset doesn't contain a patch to add the script
+>     to the kernel tree but append it in this cover letter in order to
+>     minimize the review effort.
 
-Unfortunately not. My first thought was "it depends on the actual code
-in the driver", but that turns out to be wrong:
+I think Dave did want to check it in, but not tie it to the build (so 
+that you don't need to have global_metadata.json).
 
-    static inline bool of_property_read_bool(const struct device_node *np,
-                                             const char *propname)
-    {
-            const struct property *prop =3D of_find_property(np, propname, =
-NULL);
+You can add an eleventh patch (or a v7 just for patch 3) that adds it in 
+scripts/.  Maybe also add a
 
-            return prop ? true : false;
-    }
+print("/* Generated from global_metadata.json by 
+scripts/tdx_parse_metadata.py */", file=f);
 
-    static inline bool of_property_present(const struct device_node
-*np, const char *propname)
-    {
-            return of_property_read_bool(np, propname);
-    }
+line to the script, for both hfile and cfile?
 
-So both methods just check if the property is present, and do not use
-its value, when present (i.e. the former does not "read" the bool).
+>   - Change to use auto-generated code to read TDX module version,
+>     supported features and CMRs in one patch, and made that from and
+>     signed by Paolo.
+>   - Couple of new patches due to using the auto-generated code
+>   - Remove the "reading metadata" part (due to they are auto-generated
+>     in one patch now) from the consumer patches.
 
-drivers/usb/cdns3/cdns3-ti.c uses device_property_read_bool:
+>      print(file=file)
+>      for f in fields:
+>          fname = f["Field Name"]
+>          field_id = f["Base FIELD_ID (Hex)"]
+>          num_fields = int(f["Num Fields"])
+>          num_elements = int(f["Num Elements"])
+>          struct_member = fname.lower()
+>          indent = "\t"
+>          if num_fields > 1:
+>              if fname == "CMR_BASE" or fname == "CMR_SIZE":
+>                  limit = "sysinfo_cmr->num_cmrs"
+>              elif fname == "CPUID_CONFIG_LEAVES" or fname == "CPUID_CONFIG_VALUES":
+>                  limit = "sysinfo_td_conf->num_cpuid_config"
 
-    static inline bool device_property_read_bool(const struct device *dev,
-                                                 const char *propname)
-    {
-            return device_property_present(dev, propname);
-    }
+Thanks Intel for not telling the whole story in the "Num Fields" value 
+of global_metadata.json. :)
 
-so (at least for DT) that should map to the above.
+Paolo
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
