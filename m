@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-384244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49AE19B28BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:31:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28729B28BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:31:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDA11B212E5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:31:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0ADBE1C2132E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549C1922DC;
-	Mon, 28 Oct 2024 07:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 680CC1922F9;
+	Mon, 28 Oct 2024 07:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Boi1Zg9U";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oCPdjNXn"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MamlcB/q";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0oBArcpf"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A52F191F79;
-	Mon, 28 Oct 2024 07:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E75191F85
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:30:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100632; cv=none; b=mpA6im63l9HgEnJBpJPPD8I/6gJ8pJmghSJgED0BEOd48NECMDmuf1tQtPTjU+QPNUbGr3VPbgSRCLhrvtf1g8D4VyrMcui/ReVdFqbCC4JUuy3OJY35ZH0G2nUQ/y5At4oPzr21NmDxpNVCUza1sqdiVWMja3WRlpTPgt6n5Wo=
+	t=1730100632; cv=none; b=AnVIHuQ3AD9NmyTOQVHrlFvkH8w75mmE85twOypSa/4z+v62i2GztyjLXtivRcYDMqXRXK/4yRqTwvRJrFzuHVN1uARFhu0yHvalGV3eNVu9hY3VxxFnvfsNZ/l2U2DEZPq1anfLR9gs1kYPAXr5lJQA1u4yGSr3Ls5e23V3RsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730100632; c=relaxed/simple;
-	bh=MxYhjBjf/tvzWtOpWKpyyouzFad91PQW0/nSkr7Pexk=;
+	bh=rPQoYBuvRBPxXxqFYU4bdWqAsBewz/w4trzATbcPrjs=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=T1EqeXFtL9Tv25m4pqluuZ1f4fdFsHQtF99pKGI/9Tgc/Nd9C4SdoKZFyG1JOGmDzkCx1AqhNf3taAR8icxQ8MBknLRR+DbMcT8269/yLmiIEMK52eGHkNoBpLNF6Wu6iEyJZLcOyuR9h+1x6t5PVJNmqrPjdKfEVQC+NQn7ZMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Boi1Zg9U; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oCPdjNXn; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=sM3YafgLk5b/6P5SDEmPq09X8nekAUkpwZDgN2otv4t2kOXkQPVdFlmetak8Jt2czxCWveS0GTK/TmIYnb5e80e9aOlZamZzFL4poaVTkVlu5LkC8BUrUzDb/L+uNO6+QIYAVGGmql7xMvmaV/Fn0CN6ccAd5qkDnie3STsSMzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MamlcB/q; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0oBArcpf; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730100628;
+	s=2020; t=1730100629;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7y7RWelbheRVtoq3d6yz9NK/DqZz1bs7H+wrQ4ILfpg=;
-	b=Boi1Zg9UPsIBQ0baY5dSSoJ9HKobMMBSJKP3iAFcGDSn19CBv5rPcRoSV6m5feerUFoXbL
-	bvayPi7EGctkW8iNAXKZOS9ZRAnqJVfQPXL/3Kyn1pTKbHu5mfUG4/XASpBBI8CTUbKnLu
-	v5gCJY+JusyPE5ZFK4nwahRONEt804X3N34SCTs9EZwk5b82lncFe1FNiMoRBs966Ye42S
-	1e10+hczqITjisQS5AUzf33Vs+9QDoEHW4IVgqotqsVfk0jTRezvsH0U47ZvTdbsIlcOjV
-	W5Ntzir0XClUR3UXoHWEX9NbF8KaKmgUKtcZjWZi4yBUB0o4cpTLOwUIv8wvQg==
+	bh=ZHu/npypZeEz0R4NmSfWBAjA0w4EAi3CAQjNRRB7z94=;
+	b=MamlcB/qDAXFjbOauft1QrKu+2nkd37sQA5djwbcMLqFjgsHvm/QH7u154lgcmp3yv3z2c
+	LaDgMYUR/o7kxvBYCrLV0WvkD59k7RtBUJ0TkI3Mew448U6XhTNezIwMDJiaIQXI74LzG2
+	FC0gDM95FlEq0SI9SVKFqDj0mo1aJI9tcye9sykWreF7al8FRjQxL3QMmsDxoX8rGyA2QR
+	iIhCV3UZcV5Owf/oPxMhA2EjkXN7rU+gyBKFRVEKhKwEGejuRGpL3fMixudnEoLfRhppOr
+	unfuTKMINDn5X/uAiRghbqTgg1oc1eU6fqIePl/gqMZxptKzBWzYMrNHLl6hzQ==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730100628;
+	s=2020e; t=1730100629;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7y7RWelbheRVtoq3d6yz9NK/DqZz1bs7H+wrQ4ILfpg=;
-	b=oCPdjNXn0ywzUwH4Xy1PuGBoOGiGNvKV7k37NYNpiuOo3iNllFN3pyyGcEBgg1w5YDfR6C
-	at10mMx7FCz1bsBg==
+	bh=ZHu/npypZeEz0R4NmSfWBAjA0w4EAi3CAQjNRRB7z94=;
+	b=0oBArcpfshtV+9LVfFhxbneYZdve1GjkPYUbe/PbTWgRRNzGRv9iMa5WDbtuYUGj1ZM9/C
+	4SO4+CenRYQvl6Cw==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -62,13 +62,11 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: Nam Cao <namcao@linutronix.de>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	x86@kernel.org,
-	kvm@vger.kernel.org
-Subject: [PATCH 04/21] KVM: x86/xen: Initialize hrtimer in kvm_xen_init_vcpu()
-Date: Mon, 28 Oct 2024 08:29:23 +0100
-Message-Id: <c8e184b7acf1e073c0d6cf489031bc7d2b6304b0.1729864615.git.namcao@linutronix.de>
+	Oliver Hartkopp <socketcan@hartkopp.net>,
+	Jakub Kicinski <kuba@kernel.org>
+Subject: [PATCH 05/21] can: bcm: Don't initialized an unused hrtimer
+Date: Mon, 28 Oct 2024 08:29:24 +0100
+Message-Id: <4e7dc11aa9ffb116678574889cda35b3cd5b7385.1729864615.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729864615.git.namcao@linutronix.de>
 References: <cover.1729864615.git.namcao@linutronix.de>
 Precedence: bulk
@@ -79,49 +77,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-The hrtimer is initialized in the KVM_XEN_VCPU_SET_ATTR ioctl. That caused
-problem in the past, because the hrtimer can be initialized multiple times,
-which was fixed by commit af735db31285 ("KVM: x86/xen: Initialize Xen timer
-only once"). This commit avoids initializing the timer multiple times by
-checking the field 'function' of struct hrtimer to determine if it has
-already been initialized.
+The hrtimer "thrtimer" is not used for TX. But this timer is initialized
+regardless.
 
-Instead of "abusing" the 'function' field, move the hrtimer initialization
-into kvm_xen_init_vcpu() so that it will only be initialized once.
+Remove the hrtimer_init() for the unused hrtimer and change bcm_remove_op()
+to make sure hrtimer_cancel() is not called with the uninitialized hrtimer.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: x86@kernel.org
-Cc: kvm@vger.kernel.org
+Cc: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: Jakub Kicinski <kuba@kernel.org>
 ---
- arch/x86/kvm/xen.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ net/can/bcm.c | 19 ++++++++-----------
+ 1 file changed, 8 insertions(+), 11 deletions(-)
 
-diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-index 622fe24da910..c386fbe6b58d 100644
---- a/arch/x86/kvm/xen.c
-+++ b/arch/x86/kvm/xen.c
-@@ -1070,9 +1070,6 @@ int kvm_xen_vcpu_set_attr(struct kvm_vcpu *vcpu, stru=
-ct kvm_xen_vcpu_attr *data)
- 			break;
+diff --git a/net/can/bcm.c b/net/can/bcm.c
+index 217049fa496e..792528f7bce2 100644
+--- a/net/can/bcm.c
++++ b/net/can/bcm.c
+@@ -780,10 +780,11 @@ static void bcm_free_op_rcu(struct rcu_head *rcu_head)
+ 	kfree(op);
+ }
+=20
+-static void bcm_remove_op(struct bcm_op *op)
++static void bcm_remove_op(struct bcm_op *op, bool is_tx)
+ {
+ 	hrtimer_cancel(&op->timer);
+-	hrtimer_cancel(&op->thrtimer);
++	if (!is_tx)
++		hrtimer_cancel(&op->thrtimer);
+=20
+ 	call_rcu(&op->rcu, bcm_free_op_rcu);
+ }
+@@ -844,7 +845,7 @@ static int bcm_delete_rx_op(struct list_head *ops, stru=
+ct bcm_msg_head *mh,
+ 						  bcm_rx_handler, op);
+=20
+ 			list_del(&op->list);
+-			bcm_remove_op(op);
++			bcm_remove_op(op, false);
+ 			return 1; /* done */
  		}
+ 	}
+@@ -864,7 +865,7 @@ static int bcm_delete_tx_op(struct list_head *ops, stru=
+ct bcm_msg_head *mh,
+ 		if ((op->can_id =3D=3D mh->can_id) && (op->ifindex =3D=3D ifindex) &&
+ 		    (op->flags & CAN_FD_FRAME) =3D=3D (mh->flags & CAN_FD_FRAME)) {
+ 			list_del(&op->list);
+-			bcm_remove_op(op);
++			bcm_remove_op(op, true);
+ 			return 1; /* done */
+ 		}
+ 	}
+@@ -1015,10 +1016,6 @@ static int bcm_tx_setup(struct bcm_msg_head *msg_hea=
+d, struct msghdr *msg,
+ 			     HRTIMER_MODE_REL_SOFT);
+ 		op->timer.function =3D bcm_tx_timeout_handler;
 =20
--		if (!vcpu->arch.xen.timer.function)
--			kvm_xen_init_timer(vcpu);
+-		/* currently unused in tx_ops */
+-		hrtimer_init(&op->thrtimer, CLOCK_MONOTONIC,
+-			     HRTIMER_MODE_REL_SOFT);
 -
- 		/* Stop the timer (if it's running) before changing the vector */
- 		kvm_xen_stop_timer(vcpu);
- 		vcpu->arch.xen.timer_virq =3D data->u.timer.port;
-@@ -2235,6 +2232,7 @@ void kvm_xen_init_vcpu(struct kvm_vcpu *vcpu)
- 	vcpu->arch.xen.poll_evtchn =3D 0;
+ 		/* add this bcm_op to the list of the tx_ops */
+ 		list_add(&op->list, &bo->tx_ops);
 =20
- 	timer_setup(&vcpu->arch.xen.poll_timer, cancel_evtchn_poll, 0);
-+	kvm_xen_init_timer(vcpu);
+@@ -1277,7 +1274,7 @@ static int bcm_rx_setup(struct bcm_msg_head *msg_head=
+, struct msghdr *msg,
+ 		if (err) {
+ 			/* this bcm rx op is broken -> remove it */
+ 			list_del(&op->list);
+-			bcm_remove_op(op);
++			bcm_remove_op(op, false);
+ 			return err;
+ 		}
+ 	}
+@@ -1581,7 +1578,7 @@ static int bcm_release(struct socket *sock)
+ #endif /* CONFIG_PROC_FS */
 =20
- 	kvm_gpc_init(&vcpu->arch.xen.runstate_cache, vcpu->kvm);
- 	kvm_gpc_init(&vcpu->arch.xen.runstate2_cache, vcpu->kvm);
+ 	list_for_each_entry_safe(op, next, &bo->tx_ops, list)
+-		bcm_remove_op(op);
++		bcm_remove_op(op, true);
+=20
+ 	list_for_each_entry_safe(op, next, &bo->rx_ops, list) {
+ 		/*
+@@ -1613,7 +1610,7 @@ static int bcm_release(struct socket *sock)
+ 	synchronize_rcu();
+=20
+ 	list_for_each_entry_safe(op, next, &bo->rx_ops, list)
+-		bcm_remove_op(op);
++		bcm_remove_op(op, false);
+=20
+ 	/* remove device reference */
+ 	if (bo->bound) {
 --=20
 2.39.5
 
