@@ -1,131 +1,111 @@
-Return-Path: <linux-kernel+bounces-386066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8903F9B3EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:55:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C121A9B3EB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:56:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAE1B1C22422
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:55:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8489F283A97
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:56:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07ED31F9ABE;
-	Mon, 28 Oct 2024 23:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1691FB886;
+	Mon, 28 Oct 2024 23:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kxp6uBow"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ht0DV9MH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 802DD18130D;
-	Mon, 28 Oct 2024 23:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16AC41EF92F;
+	Mon, 28 Oct 2024 23:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730159708; cv=none; b=EFlmi1IAcMWJPiezHAAvURwXADuUp/i0e+MgwEzT3JG2BbSS53MA/QGObeuZ1P4y+KbcBXXJCtT4coSzWZ2Hb0JO0m7iwa4lwslcNfvQy0o44W19pkWwvC1E1sRmpLik5gBNkkUe/2YZuvbhJtNK+Ny6+oIFVHFdZJ0u6xpdQLg=
+	t=1730159759; cv=none; b=kVyzwXgmr3yB5PTbBiv3G7I+bTe8Rla45Rj41HhSUwgq4/tJKTNgJ0/CSzk9kRY+Bcg6v3JZpGb3iEynDhNvJNmf7n8txRzpUprHi2+VWYIZQ2S2g1nent+nYh17FMRM7sPLrf4CP6g6DvMWaGPYeudk9YNLzl9+dW/s4elAA4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730159708; c=relaxed/simple;
-	bh=jXuNapBKxnt0vtqD6mgvhwwHIVj2R/3axufv96ykCbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Eq6YvIa8TyjJ2ytAUdOXXjupTqmct0emKi9Hxib+CyAIzXvXYGTf9L3cT6PT6C+ZnaO4k0jwmD5hD+Gae6rxRTPKtcGrgSjY7g7kYrGiRBnEX+v+UUIvfJm/OtN1nHnbJcR6bhMEpPeVAai57DFM3uArEB9I8kjSR+9Q+T/FYsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kxp6uBow; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso45008475e9.3;
-        Mon, 28 Oct 2024 16:55:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730159705; x=1730764505; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=jCSAb7w1GmldJWVOCxKoC0Mkn/M+7pIQZRhKt7cP6N8=;
-        b=Kxp6uBowYG9AoFpYzltZuWyROK6FticcsKV6fyli8GvSVXdd3emTyqgtj/6PYIXNyz
-         HOQhQ9Zdy2CIIuDBG1P2eih1atxK7LX/bHJcS/sfNUv7ljS0/Z9PNW9zhJUGstUBAxR1
-         MbDb0D5ujNAA1zqSXBKZNEBmEZ3UUqXq7E/F+/CW320EZlrhxhgGoHvvuE7w9+ckNCsS
-         okHrVdt7l3tIcZ1+lCFsogGEdkrez7VLeENlGFwcVLCgLrgsp3LtJgRNdhmOlcpmKoIu
-         o9pD9sq5Km+Glmc80SWpaAXsCYuKdwPWZcEMUcgiZNWtLa3tbKQMhZtH9K6mVSZm+nNc
-         NjPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730159705; x=1730764505;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jCSAb7w1GmldJWVOCxKoC0Mkn/M+7pIQZRhKt7cP6N8=;
-        b=dNn0RHFJiTYNnSzUVjMVluPDFDW+YfqJvFNIyG7kslFgaczrkVD/Usp7Cab22RX2PD
-         tXNlfk1OyFN3k4PTzgdKiB819nRnenJUnvuvFuL8+FjnsvjcqT4nlrJ9ldSIaAdTyIqD
-         pnGpz1ziCl4kD/i6JJYS2VyT+9BhWw8G+hv4r7BR33d0fO7y19niQ5S2epVn++8s+yP6
-         ApbsQMOMNtve32glax7jTmwZ45iZPJKyyd74cynx2/GXoiYhYOuTylc6XzUqKsmJ8qse
-         fRJ0PePRh7CpvyO7UJOx1kPaugwR7c5skS1EKmaqd89N5Nqaw0pbaypWDP5NflirFNwC
-         EotQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVkDk9zEgULO+cwQrwTt1ksvpm/s03XwqdoiZE81jV9uu8Cth6eE+v4okvX1bW0PcXntyxVzRuLYCUOd4I=@vger.kernel.org, AJvYcCW2MenY2+sVvkPWGi+OhlExuURpeGVukizwkH51eYXh7systrKE2pa/qJ+Vjwvlv5wFPXD0VrBV@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQtD5rg/IKmPSgwZdaOxjb7o5oRYqiHkT/kUM6VBygZIwS/Jc3
-	6EURy7HiDsStKWpTb+n0J0JJof7TeOGuTtTYnUBs+AdBzD8gsvNd
-X-Google-Smtp-Source: AGHT+IFlXOEKPWixM2CbBX4WfD114h41yRBeY/Sc/ldzOy807Z0Q7Ks0vBcHB52l5tm9G+aXMKALfA==
-X-Received: by 2002:a05:600c:3542:b0:42c:bae0:f05b with SMTP id 5b1f17b1804b1-4319ac7425cmr93676285e9.1.1730159704661;
-        Mon, 28 Oct 2024 16:55:04 -0700 (PDT)
-Received: from [192.168.0.2] ([69.6.8.124])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b58b79esm158332975e9.47.2024.10.28.16.55.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 16:55:04 -0700 (PDT)
-Message-ID: <34589bdb-8cbd-455d-9e5b-a237d5c2cd0c@gmail.com>
-Date: Tue, 29 Oct 2024 01:55:29 +0200
+	s=arc-20240116; t=1730159759; c=relaxed/simple;
+	bh=yn8pmXtMPDVwM/CL0GlzMzykBosCTjJtPJtVvsu4WQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+u55axvVzHauRywbR7Asg/qnq6Xei3kTaqXQUn1gtdo2IP0lejaFPf3aHdz1Gx/Pj/VZaWRodsk6ey71u5nkAwtc8hQtceTlJyDvFij7B+PLFvthUJZNmU3/sVXa0LIJpCJabjyNa/EV9PkrfoXiCNzg2OufOXQnrmW/hEQlu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ht0DV9MH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC76BC4CEC3;
+	Mon, 28 Oct 2024 23:55:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730159758;
+	bh=yn8pmXtMPDVwM/CL0GlzMzykBosCTjJtPJtVvsu4WQo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ht0DV9MH6A+8IQp4lsAw/aOjztuUM86phGNdQvqcmddWXyin+EbwNUl5d/lYGLV2c
+	 1Y9ZM/IQQ43i5gdkEOthK/wxp23h517TIO3BJhlJsQaQ+DQOJKEP4SCYghTiN6TIgZ
+	 +6HTniG8JE+shaxwolQtFDsJ4/6DmVwJKGH4Sx6ocl7TOXmmz9rfcaD/NZ9omYhq19
+	 ORqZHOvNicnsk3ovMXx1E/HsBqQ9Wu5OIx3r2bdGQT38lV7igE8gdcw5PWyLZwFMWV
+	 EHW1N63/AM/WelLdYeEztAwMrz3pxPhH/eif1Oep67BxIxqiBxAmdDMNNFQPx3fOS+
+	 ZN4t+ie/6yvVA==
+Date: Mon, 28 Oct 2024 16:55:56 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 00/19] unwind, perf: sframe user space unwinding
+Message-ID: <20241028235556.oyoyt3uvlau5vzsd@treble.attlocal.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: wwan: t7xx: off-by-one error in
- t7xx_dpmaif_rx_buf_alloc()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, chandrashekar.devegowda@intel.com,
- chiranjeevi.rapolu@linux.intel.com, haijun.liu@mediatek.com,
- m.chetan.kumar@linux.intel.com, ricardo.martinez@linux.intel.com,
- loic.poulain@linaro.org, johannes@sipsolutions.net, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, ilpo.jarvinen@linux.intel.com, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241028080618.3540907-1-ruanjinjie@huawei.com>
-Content-Language: en-US
-From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
-In-Reply-To: <20241028080618.3540907-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cover.1730150953.git.jpoimboe@kernel.org>
 
-Hello Jinjie,
-
-On 28.10.2024 10:06, Jinjie Ruan wrote:
-> The error path in t7xx_dpmaif_rx_buf_alloc(), free and unmap the already
-> allocated and mapped skb in a loop, but the loop condition terminates when
-> the index reaches zero, which fails to free the first allocated skb at
-> index zero.
+On Mon, Oct 28, 2024 at 02:47:27PM -0700, Josh Poimboeuf wrote:
+> This has all the changes discussed in v2, plus VDSO sframe support and
+> Namhyung's perf tool patches (see detailed changelog below).
 > 
-> Check for >= 0 so that skb at index 0 is freed as well.
-
-Nice catch! Still implementation needs some improvements, see below.
-
+> I did quite a bit of testing, it seems to work well.  It still needs
+> some binutils and glibc patches which I'll send in a reply.
 > 
-> Fixes: d642b012df70 ("net: wwan: t7xx: Add data path interface")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->   drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Questions for perf experts:
 > 
-> diff --git a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
-> index 210d84c67ef9..f2298330e05b 100644
-> --- a/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
-> +++ b/drivers/net/wwan/t7xx/t7xx_hif_dpmaif_rx.c
-> @@ -226,7 +226,7 @@ int t7xx_dpmaif_rx_buf_alloc(struct dpmaif_ctrl *dpmaif_ctrl,
->   	return 0;
->   
->   err_unmap_skbs:
-> -	while (--i > 0)
-> +	while (--i >= 0)
->   		t7xx_unmap_bat_skb(dpmaif_ctrl->dev, bat_req->bat_skb, i);
+>   - Is the perf_event lifetime managed correctly or do we need to do
+>     something to ensure it exists in unwind_user_task_work()?
+> 
+>     Or alternatively is the original perf_event even needed in
+>     unwind_user_task_work() or can a new one be created on demand?
+> 
+>   - Is --call-graph=sframe needed for consistency?
+> 
+>   - Should perf use the context cookie?  Note that because the callback
+>     is usually only called once for multiple NMIs in the same entry
+>     context, it's possible for the PERF_RECORD_CALLCHAIN_DEFERRED event
+>     to arrive *before* some of the corresponding kernel events.  The
+>     context cookie disambiguates the corner cases.
+> 
+> Based on tip/master.
+> 
+> Also at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/jpoimboe/linux.git sframe-v3
 
-The index variable declared as unsigned so changing the condition alone 
-will cause the endless loop. Can you change the variable type to signed 
-as well?
+Argh, apparently it's a bad idea to pass "*.patch" twice on the
+git-send-email cmdline ;-)  Sorry for sending it twice!
 
---
-Sergey
+-- 
+Josh
 
