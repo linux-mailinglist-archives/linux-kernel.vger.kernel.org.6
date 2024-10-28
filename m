@@ -1,34 +1,34 @@
-Return-Path: <linux-kernel+bounces-384253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8B19B28CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:33:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 276CC9B28CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:33:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67213B2195A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:33:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75CA1F21659
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B4761CF2BD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D56241D1724;
 	Mon, 28 Oct 2024 07:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="H3WYO9J7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Y/VaS/zF"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BDLVCkuW";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3fetGmtI"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4FE192B86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8877F192B9D
 	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:30:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730100636; cv=none; b=QPl06MoxLy6AjoJmBimovBJtzQG548K1G1bcO7Hll3unyzMwbkh1oOlrt08SaHFkxGWvwxrDiNFiZxNwJ2EYS6VTW47oDQaA6orBPZqd/bnn7Y0HDj7BPUjrsaxPqCYdTio5PYLfg4aj8ZOF7qFmSzBxwlX+QXBKgJf6pnUKR9U=
+	t=1730100637; cv=none; b=WDAdzPbnXO9tmSlYcHXg76ksYekUDQ27VdnfU9jSQiwmlb0ACn4XuXCfwqBGwFyruT4Anb7nap7LuYXrV1pafL73uZfyiugHx9KKE9v7jAl1HvzDLDFzwyDLwNsfJTbF0ONZK4cdjNamY0KOMNotSMMtB+MqDqgtnjVXvz1c71U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730100636; c=relaxed/simple;
-	bh=W8sSGd3DOu4dlaaIRbN4pNaB/WXYoZyugu3aIyeSMas=;
+	s=arc-20240116; t=1730100637; c=relaxed/simple;
+	bh=p1WNHHJsh//H3R31M4mEAZn/dExjkNeMnZF2QHlbd0s=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LUT2gN4OwRqqPh8q0Z1PoJCzYLkLa3fkU4HC+donrEtlBAlChe3xfOAtRQIrv7Dk419aE85YwbvQ6b2x+moYSnEyWR9eqFYA8OEaE9PUGJ4oVjAjUDjHPSd2jpMiLJExPpcoh/fhvHESbiqjclTRuPlRbwg5E20eAJ1E37W3pNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=H3WYO9J7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Y/VaS/zF; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=g1cEUeTfQ6T+cEqqbDggEYLE8Xwpd9195bioYnZ0UuhFCq2MF6LhtScf7lfD455C8467Tt48vJzHSH4rqe1kzNW0eCP0V0gs2Tfkeq4E9oBFMn4wwPodgbd1KMenIrjF6v807PCzbIiqRqoVEUm6f65AqW45ixOiELXDvQeSFiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BDLVCkuW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3fetGmtI; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
@@ -38,21 +38,21 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NppdOpxaoe2zPIqJ6mIEaou+D+Y+s1PgCXxaH7Okx+Y=;
-	b=H3WYO9J7r+mmJOFeLBpxElk6evq4e4e3ilpPtTHYgmpw+4wJnLROsVEVkultpC9j3j3Sb0
-	FUp7kfWrazQa1zvSGMr+Lgo8d26syMOt7t1PjsfjcATEMRDHrcPC/b82sj/RJoMFOnmXyk
-	TnIurDyThShXxxbzJK9vZD6Z7wOl2b1ymYUJkgJHMxgauu0sb5cu6M/uIgEFDU+39JO42B
-	IjI2D5gxzNIFDhGrNBnqux9lQIHUrJB8GC0eLhDAnAixQ7Ol+47u68vpnE5uRreeIE4b9O
-	Eh3urWcnZEtPM6YwT5ro6mkxuc6JU/Y9F2fGs0dho+lzN7OZ6j/Jw9uZ+f81hg==
+	bh=+Kc2BZUC1ebPDEVIRiKKvNYv3u35tkYwpWsAZQDECc0=;
+	b=BDLVCkuWXi66KLg8gA20FhuUkuvW0/+MimT+ESeZ0qEIfNpwO1cBSilOuA0902JiLQa8xd
+	+I1FEHwmAcbb28YMis78gUs/Su4UDRojowDOcbGuZQTSuYL8NtnBqkpGH3rALURoVfqO/D
+	yXjCBDc+g5YFZLxzXpCJnK5pLzZwf41MpO0D2F8V76T5blDg2F0HkTeRCwi0R4BuusdSup
+	qNFF8VQs6kTkBgW/FIq655oqqXv5SsPq4RuCBWuOJVe/XrqgE/PxJVPPRyrNrQuf7aqBEn
+	PGOnI3XMcpAlHUrUwwtk2+XlriXj0uRNXqpkBr7GTIeBC14XaM2EdeQFevNK1g==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1730100632;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NppdOpxaoe2zPIqJ6mIEaou+D+Y+s1PgCXxaH7Okx+Y=;
-	b=Y/VaS/zFUvIANDBwxw6fmH5Z15xuhQUdGoRB3Ogv25nhychWNHh6Y2nP8F0Wsh/vDOVS5w
-	mcbnrOPh1GPP4yBA==
+	bh=+Kc2BZUC1ebPDEVIRiKKvNYv3u35tkYwpWsAZQDECc0=;
+	b=3fetGmtIPSb/5FB9Qpv8MT6Li6TNJdacDtiGS3V8Hx9Dtg8rXxst4HMZdLK1WqcC6Q+4EW
+	jmWUl/oPUmgLP1AQ==
 To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Frederic Weisbecker <frederic@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -61,11 +61,10 @@ To: Anna-Maria Behnsen <anna-maria@linutronix.de>,
 	Miguel Ojeda <ojeda@kernel.org>,
 	Kees Cook <kees@kernel.org>,
 	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>,
-	Jakub Kicinski <kuba@kernel.org>
-Subject: [PATCH 14/21] net: pktgen: Switch to use hrtimer_setup_sleeper_on_stack()
-Date: Mon, 28 Oct 2024 08:29:33 +0100
-Message-Id: <e9d9ef31d1b443e358f5f3c50f7dbeda1ed2c0dd.1729864615.git.namcao@linutronix.de>
+Cc: Nam Cao <namcao@linutronix.de>
+Subject: [PATCH 15/21] timers: Switch to use hrtimer_setup_sleeper_on_stack()
+Date: Mon, 28 Oct 2024 08:29:34 +0100
+Message-Id: <868b994e1f724ef48c44f9e06d5968a3fc5e3f71.1729864615.git.namcao@linutronix.de>
 In-Reply-To: <cover.1729864615.git.namcao@linutronix.de>
 References: <cover.1729864615.git.namcao@linutronix.de>
 Precedence: bulk
@@ -89,25 +88,50 @@ Patch was created by using Coccinelle.
 
 Signed-off-by: Nam Cao <namcao@linutronix.de>
 ---
-Cc: Jakub Kicinski <kuba@kernel.org>
----
- net/core/pktgen.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/hrtimer.c       | 5 ++---
+ kernel/time/sleep_timeout.c | 2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/net/core/pktgen.c b/net/core/pktgen.c
-index 34f68ef74b8f..7e23cacbe66e 100644
---- a/net/core/pktgen.c
-+++ b/net/core/pktgen.c
-@@ -2285,7 +2285,7 @@ static void spin(struct pktgen_dev *pkt_dev, ktime_t =
-spin_until)
- 	s64 remaining;
+diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
+index 1d1f5c03673c..69430467a17d 100644
+--- a/kernel/time/hrtimer.c
++++ b/kernel/time/hrtimer.c
+@@ -2138,8 +2138,7 @@ static long __sched hrtimer_nanosleep_restart(struct =
+restart_block *restart)
  	struct hrtimer_sleeper t;
+ 	int ret;
 =20
--	hrtimer_init_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
-+	hrtimer_setup_sleeper_on_stack(&t, CLOCK_MONOTONIC, HRTIMER_MODE_ABS);
- 	hrtimer_set_expires(&t.timer, spin_until);
+-	hrtimer_init_sleeper_on_stack(&t, restart->nanosleep.clockid,
+-				      HRTIMER_MODE_ABS);
++	hrtimer_setup_sleeper_on_stack(&t, restart->nanosleep.clockid, HRTIMER_MO=
+DE_ABS);
+ 	hrtimer_set_expires_tv64(&t.timer, restart->nanosleep.expires);
+ 	ret =3D do_nanosleep(&t, HRTIMER_MODE_ABS);
+ 	destroy_hrtimer_on_stack(&t.timer);
+@@ -2153,7 +2152,7 @@ long hrtimer_nanosleep(ktime_t rqtp, const enum hrtim=
+er_mode mode,
+ 	struct hrtimer_sleeper t;
+ 	int ret =3D 0;
 =20
- 	remaining =3D ktime_to_ns(hrtimer_expires_remaining(&t.timer));
+-	hrtimer_init_sleeper_on_stack(&t, clockid, mode);
++	hrtimer_setup_sleeper_on_stack(&t, clockid, mode);
+ 	hrtimer_set_expires_range_ns(&t.timer, rqtp, current->timer_slack_ns);
+ 	ret =3D do_nanosleep(&t, mode);
+ 	if (ret !=3D -ERESTART_RESTARTBLOCK)
+diff --git a/kernel/time/sleep_timeout.c b/kernel/time/sleep_timeout.c
+index 3054e5232d20..dfe939f6e4ec 100644
+--- a/kernel/time/sleep_timeout.c
++++ b/kernel/time/sleep_timeout.c
+@@ -208,7 +208,7 @@ int __sched schedule_hrtimeout_range_clock(ktime_t *exp=
+ires, u64 delta,
+ 		return -EINTR;
+ 	}
+=20
+-	hrtimer_init_sleeper_on_stack(&t, clock_id, mode);
++	hrtimer_setup_sleeper_on_stack(&t, clock_id, mode);
+ 	hrtimer_set_expires_range_ns(&t.timer, *expires, delta);
+ 	hrtimer_sleeper_start_expires(&t, mode);
+=20
 --=20
 2.39.5
 
