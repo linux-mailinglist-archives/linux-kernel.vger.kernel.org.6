@@ -1,224 +1,173 @@
-Return-Path: <linux-kernel+bounces-385483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 265029B37B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:32:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 896DB9B37B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBD3F28275E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:32:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B291F22718
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D24481DF724;
-	Mon, 28 Oct 2024 17:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E1C1DF72C;
+	Mon, 28 Oct 2024 17:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRi6v2AW"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N2N8Pbhz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24741DF251;
-	Mon, 28 Oct 2024 17:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E497C1922FC;
+	Mon, 28 Oct 2024 17:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730136759; cv=none; b=tW1oioB0k7SIp+hmcB0EQbsKZPmDk0Wj3zWKy3ya4aTHIs8+bPACwxsA9kqyYpFBw2ltGhPMzKv6uCrwVf3VTHZhh3RteApoiODYQE5YjYwR/rLxoaHEYoV/sZCEsF52n9ZChqzduFh4lspmNfOp7C4Q8CBEPlY1hDKIOY15dco=
+	t=1730136848; cv=none; b=I6/3iFuxqkp8+peZ2vN5Q7eKbfO3dkvfZXPm+pFNgQo6IYUq2AMCpwzLiFHHmqKZzC8qmmoxIk9DY6ToI4peckAMswPSRc8wnIve4U7k3WDT6JdRdC1tQ3486LW3119K+2C0SFBjN9LbfmiE0odcmXb2EwzhO0vUIf4QjuNhB6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730136759; c=relaxed/simple;
-	bh=ovhTjd8e0XI25whd5UTTdMSx258AGClEYaqz4D6Ch4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fQOpkNC1MFWwG+yBR/AgOtisDgk9LvL5XTSNf5HCRGyVcTyvgBzNGqum8GxRjIgehcDb9lfnK7jsluu7ht1YzTmlDDWy8w2LTySfOTCa+uuH/Vqpi4h4v64HO7jOMJGx2VCow5v0MBfQYurW99j9U/Xj6jVslUospRA+8TnTfIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PRi6v2AW; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e13375d3so5178352e87.3;
-        Mon, 28 Oct 2024 10:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730136755; x=1730741555; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mj2liF4nx7VZnKh8QeIkwojRqh8+MN+fPrkECh/R5qw=;
-        b=PRi6v2AWKBNjfuvHKQZgSn4rwYlEBKFCsSdTVGEBbjRDKioYs6z3cAwR4q5mDt9qIJ
-         MA0EhKEP//9ZhqTsae3JIVwDoPWAnzLz0xnfXYvD8A3xz3ysXoqdjD2LBiYTGAGVs9Z7
-         P8M7nfnuZNAJ/315dDAP57AJEx1+ON3n9jCuTMaB1CmNWAbY7uuH7m4rhBmVhG9jbAET
-         eKFmIBJv7CqUo4ddpUrmNctq3vNZ52Qd1E4qL+8ZUKWUUkHQ9GHvb6a5H5PrQVMX1eCa
-         srbZlN161ZgQcS/dAmmaL7h/w35cHaXc2hmQ23KItyy5d/IXv5qrVAiCuVc4p71eLFkN
-         gzQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730136755; x=1730741555;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mj2liF4nx7VZnKh8QeIkwojRqh8+MN+fPrkECh/R5qw=;
-        b=MupSHUwCAKsbhk83UmsoxBClpD3qKChIRbcfjeqyd5Q2ALGN3r+iZgnyeMUfVG5bNe
-         NCTBSRdMEC245032EM93dUX0kw+RD9S5srBMYVxvzDMC/x+RzuSULtiuDbH69Cv4nWX0
-         L1CHyhhyEQNvflPCxTzv2MYN8TjzNIjefq1w1neycFHmgqTcIZfw2KrVvnRwcyFHIvMA
-         cDTYNv7ygsd8MbDV9aANU87RphiGJQzzrNeAbay0JVOVsbKULiRTwm4QcyJUm+mFtrV6
-         obLsTzuNL1rAAS7ZaerCfrqn3BSgLznTy9d/yZBxydPTk0+BrL/sCFx5YxZowbpUk24R
-         v6eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJFaeak237j+E4KFMMDD5BDcvlk/XTPwbrFzORQNaTk6mBzX6ymPsDJ4sXR6hj7s+7Hl3icIk8rxy2AOA=@vger.kernel.org, AJvYcCXIDLkWK4ba5x612Qp/7xWDT8SV3MvzVVkP+5w/PyFwzWH6fO0soLfaaCW/pWnkT03EZj8cs7ljpFl7LHQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6PnCER0ofGCmZAmO2c9siSfXMtTKAqDnRf6HWG0FtORvRvHcj
-	YOjyJVDIRXZmh14/8hY9WGOOdHPd05VHKC9vIPIewyph6VeV2ZTj
-X-Google-Smtp-Source: AGHT+IFV+6aSOEl6abiaqOBxdAUIdLFxGz+OaTJw++DV3keSeb3siTfJAxm04D1j03mDh3moa6Uu8g==
-X-Received: by 2002:a05:6512:1310:b0:535:d4e6:14e2 with SMTP id 2adb3069b0e04-53b348f1399mr4327085e87.36.1730136754512;
-        Mon, 28 Oct 2024 10:32:34 -0700 (PDT)
-Received: from tom-desktop (net-188-217-53-167.cust.vodafonedsl.it. [188.217.53.167])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3bddbsm10079036f8f.27.2024.10.28.10.32.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 10:32:34 -0700 (PDT)
-Date: Mon, 28 Oct 2024 18:32:32 +0100
-From: Tommaso Merciai <tomm.merciai@gmail.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: sakari.ailus@linux.intel.com,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-	=?utf-8?B?UGF3ZcWC?= Anikiel <panikiel@google.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] media: v4l2-subdev: Refactor events
-Message-ID: <Zx/KsKBtVBWfziXo@tom-desktop>
-References: <20241020163534.1720297-1-tomm.merciai@gmail.com>
- <20241020164354.GG7770@pendragon.ideasonboard.com>
- <ZxX2SVl/p0i7Nemi@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
- <20241021073034.GC14328@pendragon.ideasonboard.com>
+	s=arc-20240116; t=1730136848; c=relaxed/simple;
+	bh=pcLLhLxlquE4QPOlWW4Lr1bb5MuHYN7k6DZdbDCx9DQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cg0czanWR37a8+VicdPXU51Mhb17q24fWItfRuuxS73V4QSn27eBp4hLVajFLkt94+lj7mGU2rOsCDXUcmEnmg9Z7sR+db8PpmPayfbZYEorhG3k5q/ofNAHR+p9zOzbPuSUK9kD/wQlIWLyU/f9YOnNSoDaLEytiUzyKu0yLzA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N2N8Pbhz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94C90C4AF09;
+	Mon, 28 Oct 2024 17:34:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730136847;
+	bh=pcLLhLxlquE4QPOlWW4Lr1bb5MuHYN7k6DZdbDCx9DQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=N2N8PbhzCFAC8L9B/R+n6LS/2Vz3FY30Fm8hWgEopytD1knoRkeGPQKL3kqI2YZh4
+	 N66V/nX5SYYKx1XlmynUto9sGLWOvhBEmg5rJSntmjzIwGDKa6y6pQ5CqfVhu6ox3z
+	 XXy4qMSqLoaPINE/LE66ohBgCVuwypgcmHq7aI6zsMGsZnZ0NSH6AbSvbsTjET7iO5
+	 tM6H9w8I9wRriKG8/z+JwgusAW1OG4vSksb8DGG2Dt3CZPSWdvjdM4zjviLYwYBMsG
+	 60iDnfcMYPZgh5mphm7YYFd/flxuIVSEHd35xe9nF7CCH1OilerJX6R47wN1hlmM2E
+	 GJMGejqlT3Efw==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e6c754bdso4078000e87.2;
+        Mon, 28 Oct 2024 10:34:07 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAMWbrkn5mXVOFCzQeQEALwhN9lCwQEXEhXmTja0qVP3mjN3fDvzjrPHKaS1BRZRt+t4F8BQFetBP3Qw==@vger.kernel.org, AJvYcCUn9NdQr0SzJc3v9/rVBemhnQFXxEwqynQotrqJcrZYRYNYtq0K5pYNRWCA1WT0QspPXdJiAHKd+/Q=@vger.kernel.org, AJvYcCUuyhFZhhVIbJTGeWWVCDt7aqIGSLmifhTfJEuCXvSA2elvDiAifHciQL/pV5ZXfcQ21NyW3VTOcP/lPg==@vger.kernel.org, AJvYcCVcUN0fUkpPpa/+hcQ0PwdwIFwTJJHyLMDjo6K/qGxVoFCZqCsgIPGn+AQtZ6p73WvMpeooLyVNhE4m4cfOtfM=@vger.kernel.org, AJvYcCXDd1I/EmuzOevVcqR9CcJjQKSs/aTbF0iYiPNSRNTtpTP23haMG7qIcottTxsm5oh16w+4wdsTQX4F@vger.kernel.org, AJvYcCXMotUyL+EGndyxEgQTqNwCFjeAqv13+HJVzpA4nfVnOfbc4Jh73en3/tJ37s+ygx/1V7eY5L96ULOXEWZ9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxch5vVSIHlMv+6XJ/vz3TNRO5Z/BmsMRwMYIXpmSRMDuslMI9Z
+	qKiAiFc0+YtPYqzkVoPzu4FejX77YriVQ+ucqB/Jq6l4YzizWLemAzF6+wKaZK1uY+T2ezBSKvy
+	YWV7YpkP2jyliVquMj/kyFKJp/g==
+X-Google-Smtp-Source: AGHT+IF5IETAXGDmlx+LAKug+dwz64NqnsL1okXnnGJyl9RYKmQIgXl4x3+ziMcKV48JBCGh1PNtcevuXjcqmWy53WY=
+X-Received: by 2002:a05:6512:224e:b0:539:e85c:c888 with SMTP id
+ 2adb3069b0e04-53b34a1900emr4148343e87.40.1730136845913; Mon, 28 Oct 2024
+ 10:34:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021073034.GC14328@pendragon.ideasonboard.com>
+References: <20241023171426.452688-1-usamaarif642@gmail.com> <20241028154054.GE2484@willie-the-truck>
+In-Reply-To: <20241028154054.GE2484@willie-the-truck>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 28 Oct 2024 12:33:51 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK=cbknmjKa-rtr9vPhaOoYf26KNzvQ0uGabOwy19jcCA@mail.gmail.com>
+Message-ID: <CAL_JsqK=cbknmjKa-rtr9vPhaOoYf26KNzvQ0uGabOwy19jcCA@mail.gmail.com>
+Subject: Re: [PATCH v2] of/fdt: add dt_phys arg to early_init_dt_scan and early_init_dt_verify
+To: Will Deacon <will@kernel.org>
+Cc: Usama Arif <usamaarif642@gmail.com>, mark.rutland@arm.com, leitao@debian.org, 
+	catalin.marinas@arm.com, tglx@linutronix.de, chris@zankel.net, 
+	saravanak@google.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	kexec@lists.infradead.org, loongarch@lists.linux.dev, 
+	linux-sh@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-openrisc@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-csky@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent, Sakari,
+On Mon, Oct 28, 2024 at 10:41=E2=80=AFAM Will Deacon <will@kernel.org> wrot=
+e:
+>
+> On Wed, Oct 23, 2024 at 06:14:26PM +0100, Usama Arif wrote:
+> >  __pa() is only intended to be used for linear map addresses and using
+> > it for initial_boot_params which is in fixmap for arm64 will give an
+> > incorrect value. Hence save the physical address when it is known at
+> > boot time when calling early_init_dt_scan for arm64 and use it at kexec
+> > time instead of converting the virtual address using __pa().
+> >
+> > Reported-by: Breno Leitao <leitao@debian.org>
+> > Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> > Fixes: ac10be5cdbfa ("arm64: Use common of_kexec_alloc_and_setup_fdt()"=
+)
+> > ---
+> > v1 -> 2:
+> > - pass dt_phys in early_init_dt_scan instead of creating
+> >   anorther arch->dt function (Rob Herring)
+> > ---
+> >  arch/arc/kernel/devtree.c              |  2 +-
+> >  arch/arm/kernel/devtree.c              |  2 +-
+> >  arch/arm64/kernel/setup.c              |  6 +++++-
+> >  arch/csky/kernel/setup.c               |  4 ++--
+> >  arch/loongarch/kernel/setup.c          |  2 +-
+> >  arch/microblaze/kernel/prom.c          |  2 +-
+> >  arch/mips/kernel/prom.c                |  2 +-
+> >  arch/mips/kernel/relocate.c            |  2 +-
+> >  arch/nios2/kernel/prom.c               |  4 ++--
+> >  arch/openrisc/kernel/prom.c            |  2 +-
+> >  arch/powerpc/kernel/dt_cpu_ftrs.c      |  2 +-
+> >  arch/powerpc/kernel/prom.c             |  2 +-
+> >  arch/powerpc/platforms/pseries/plpks.c |  2 +-
+> >  arch/riscv/kernel/setup.c              |  2 +-
+> >  arch/sh/kernel/setup.c                 |  2 +-
+> >  arch/um/kernel/dtb.c                   |  2 +-
+> >  arch/x86/kernel/devicetree.c           |  2 +-
+> >  arch/xtensa/kernel/setup.c             |  2 +-
+> >  drivers/of/fdt.c                       | 14 ++++++++------
+> >  drivers/of/kexec.c                     |  2 +-
+> >  include/linux/of_fdt.h                 |  5 +++--
+> >  21 files changed, 36 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/arch/arc/kernel/devtree.c b/arch/arc/kernel/devtree.c
+> > index 4c9e61457b2f..cc6ac7d128aa 100644
+> > --- a/arch/arc/kernel/devtree.c
+> > +++ b/arch/arc/kernel/devtree.c
+> > @@ -62,7 +62,7 @@ const struct machine_desc * __init setup_machine_fdt(=
+void *dt)
+> >       const struct machine_desc *mdesc;
+> >       unsigned long dt_root;
+> >
+> > -     if (!early_init_dt_scan(dt))
+> > +     if (!early_init_dt_scan(dt, __pa(dt)))
+> >               return NULL;
+> >
+> >       mdesc =3D of_flat_dt_match_machine(NULL, arch_get_next_mach);
+> > diff --git a/arch/arm/kernel/devtree.c b/arch/arm/kernel/devtree.c
+> > index fdb74e64206a..3b78966e750a 100644
+> > --- a/arch/arm/kernel/devtree.c
+> > +++ b/arch/arm/kernel/devtree.c
+> > @@ -200,7 +200,7 @@ const struct machine_desc * __init setup_machine_fd=
+t(void *dt_virt)
+> >
+> >       mdesc_best =3D &__mach_desc_GENERIC_DT;
+> >
+> > -     if (!dt_virt || !early_init_dt_verify(dt_virt))
+> > +     if (!dt_virt || !early_init_dt_verify(dt_virt, __pa(dt_virt)))
+> >               return NULL;
+> >
+> >       mdesc =3D of_flat_dt_match_machine(mdesc_best, arch_get_next_mach=
+);
+> > diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> > index b22d28ec8028..177262739c49 100644
+> > --- a/arch/arm64/kernel/setup.c
+> > +++ b/arch/arm64/kernel/setup.c
+> > @@ -175,7 +175,11 @@ static void __init setup_machine_fdt(phys_addr_t d=
+t_phys)
+> >       if (dt_virt)
+> >               memblock_reserve(dt_phys, size);
+> >
+> > -     if (!dt_virt || !early_init_dt_scan(dt_virt)) {
+> > +     /*
+> > +      * dt_virt is a fixmap address, hence __pa(dt_virt) can't be used=
+.
+> > +      * Pass dt_phys directly.
+> > +      */
+> > +     if (!dt_virt || !early_init_dt_scan(dt_virt, dt_phys)) {
+>
+> nit: It looks like early_init_dt_verify() will now return false if
+> !dt_virt, so we can drop the additional check here.
 
-Sorry for the delay.
-Back on this topic.
+That was true before, but I'll fix this up when applying.
 
-On Mon, Oct 21, 2024 at 10:30:34AM +0300, Laurent Pinchart wrote:
-> On Mon, Oct 21, 2024 at 08:35:53AM +0200, Tommaso Merciai wrote:
-> > Hi Laurent,
-> > Thanks for your review.
-> > 
-> > On Sun, Oct 20, 2024 at 07:43:54PM +0300, Laurent Pinchart wrote:
-> > > Hi Tommaso,
-> > > 
-> > > Thank you for the patch.
-> > > 
-> > > On Sun, Oct 20, 2024 at 06:35:32PM +0200, Tommaso Merciai wrote:
-> > > > Controls can be exposed to userspace via a v4l-subdevX device, and
-> > > > userspace has to be able to subscribe to control events so that it is
-> > > > notified when the control changes value.
-> > > > If a control handler is set for the subdev then set the HAS_EVENTS
-> > > > flag automatically into v4l2_subdev_init_finalize() and use
-> > > > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
-> > > > as default if subdev don't have .(un)subscribe control operations.
-> > > 
-> > > I would add here
-> > > 
-> > > This simplifies subdev drivers by avoiding the need to set the
-> > > V4L2_SUBDEV_FL_HAS_EVENTS flag and plug the event handlers, and ensures
-> > > consistency of the API exposed to userspace.
-> > > 
-> > > And you can also add
-> > > 
-> > > Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > > 
-> > > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
-> > > 
-> > > Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> > 
-> > Oks, Thanks again.
-> > 
-> > > Now, can we simplify sensor drivers to drop the event handlers and the
-> > > flag ? :-)
-> > 
-> > Yep, plan is add all to support v4l2_subdev_init_finalize()
-> > Removing:
-> > 
-> >  .subscribe_event = v4l2_ctrl_subdev_subscribe_event,
-> >  .unsubscribe_event = v4l2_event_subdev_unsubscribe,
-> > 
-> > if are used. And ofc V4L2_SUBDEV_FL_HAS_EVENTS.
-> 
-> What I meant is looking at the I2C sensor drivers that currently
-> 
-> - call v4l2_subdev_init_finalize()
-> - set V4L2_SUBDEV_FL_HAS_EVENTS
-> - set the .subscribe_event() and .unsubscribe_event() handlers
-> 
-> and dropping the flag and handlers from them. Is that what you plan to
-> work on ?
-
-It's ok for you per/driver patch or you prefer a big single patch?
-
-Meanwhile I've prepared something here:
-
-https://gitlab.freedesktop.org/linux-media/users/tmerciai/-/compare/next...v6.12.0-rc1-nxp?from_project_id=22111
-
-Let me know if you prefer (un)squashed version.
-Thanks in advance. :)
-
-Thanks & Regards,
-Tommaso
-
-> 
-> > Meanwhile I think I will send v3 with your
-> > suggestions. :)
-> > 
-> > > > ---
-> > > > Changes since v1:
-> > > >  - Aligned event subscription with unsubscription as suggested by LPinchart,
-> > > >    SAilus
-> > > > 
-> > > >  drivers/media/v4l2-core/v4l2-subdev.c | 22 ++++++++++++++++++++--
-> > > >  1 file changed, 20 insertions(+), 2 deletions(-)
-> > > > 
-> > > > diff --git a/drivers/media/v4l2-core/v4l2-subdev.c b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > index 3a4ba08810d2..fad8fa1f63e8 100644
-> > > > --- a/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > +++ b/drivers/media/v4l2-core/v4l2-subdev.c
-> > > > @@ -691,10 +691,25 @@ static long subdev_do_ioctl(struct file *file, unsigned int cmd, void *arg,
-> > > >  		return v4l2_event_dequeue(vfh, arg, file->f_flags & O_NONBLOCK);
-> > > >  
-> > > >  	case VIDIOC_SUBSCRIBE_EVENT:
-> > > > -		return v4l2_subdev_call(sd, core, subscribe_event, vfh, arg);
-> > > > +		if (v4l2_subdev_has_op(sd, core, subscribe_event))
-> > > > +			return v4l2_subdev_call(sd, core, subscribe_event,
-> > > > +						vfh, arg);
-> > > > +
-> > > > +		if ((sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS) &&
-> > > > +		    vfh->ctrl_handler)
-> > > > +			return v4l2_ctrl_subdev_subscribe_event(sd, vfh, arg);
-> > > > +
-> > > > +		return -ENOIOCTLCMD;
-> > > >  
-> > > >  	case VIDIOC_UNSUBSCRIBE_EVENT:
-> > > > -		return v4l2_subdev_call(sd, core, unsubscribe_event, vfh, arg);
-> > > > +		if (v4l2_subdev_has_op(sd, core, unsubscribe_event))
-> > > > +			return v4l2_subdev_call(sd, core, unsubscribe_event,
-> > > > +						vfh, arg);
-> > > > +
-> > > > +		if (sd->flags & V4L2_SUBDEV_FL_HAS_EVENTS)
-> > > > +			return v4l2_event_subdev_unsubscribe(sd, vfh, arg);
-> > > > +
-> > > > +		return -ENOIOCTLCMD;
-> > > >  
-> > > >  #ifdef CONFIG_VIDEO_ADV_DEBUG
-> > > >  	case VIDIOC_DBG_G_REGISTER:
-> > > > @@ -1641,6 +1656,9 @@ int __v4l2_subdev_init_finalize(struct v4l2_subdev *sd, const char *name,
-> > > >  		}
-> > > >  	}
-> > > >  
-> > > > +	if (sd->ctrl_handler)
-> > > > +		sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
-> > > > +
-> > > >  	state = __v4l2_subdev_state_alloc(sd, name, key);
-> > > >  	if (IS_ERR(state))
-> > > >  		return PTR_ERR(state);
-> 
-> -- 
-> Regards,
-> 
-> Laurent Pinchart
+Rob
 
