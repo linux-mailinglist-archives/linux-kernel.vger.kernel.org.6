@@ -1,70 +1,77 @@
-Return-Path: <linux-kernel+bounces-385260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 729389B34BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:24:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5C89B34BD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:25:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0D1BB21AA0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:24:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB9D28133F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CEF91DE3C7;
-	Mon, 28 Oct 2024 15:24:16 +0000 (UTC)
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54DD81DE3DE;
+	Mon, 28 Oct 2024 15:25:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OnCDUrlv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 951221DE2C6
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51FE1D9324;
+	Mon, 28 Oct 2024 15:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730129055; cv=none; b=jqw5lCevpmA/cXBCTm2Hbdf4kTFveGCnfzaUa6gYYj8LqRM9T0NiGB9u6VdbIk4jaVTmc2bvMLsIfeoyY79MOdWVnaj9dgz0zZd8RcPthBL3ip8oAVgxG+LtPIkQ/6vy5QSrAzMnXgqcYkZvCrc5IdA9aFiG7NAirCPBJCTZlro=
+	t=1730129122; cv=none; b=E+xGvwCaSirv1ZIA2dF6a1FUmFdpgrRxYldD6Tq5hPaXbY5KD+nJCZ4WQ5GPaAipg4iV4FvaGVHWRoBxVkIJZQGJqEWglOoP9T0nBddHF7HqsWu1vwlP3tUOWTvoCoT+MuCTVV45Aoq8TSW6YpeckjOKx0QeR8ZXf99I9H8V0Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730129055; c=relaxed/simple;
-	bh=JtTrG/4GdXbrMkhit+ETrpCvKaheVe6oGpgIVECq6WU=;
+	s=arc-20240116; t=1730129122; c=relaxed/simple;
+	bh=JoX429j4Zj7g7EFQnQUQiXELq1ar7frfVq2eJPtKDUk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kOk1CNbBMVja8SZDLr0/UYLvJ1Aw/LCQf7Q45pjlhLPfsIciYoxjscrUegDkW+cZczZ1N4n879cn5LythirHngMzEY7GN6QoRWlS/IvqP4yM3gy1WnQiNjR+kt3Vzv5X8J5BmydFPbzSKflSYuPlN1a52i3qlvWWUSnFyX/WeKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so693606066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:24:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730129052; x=1730733852;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H87zT4Qpe727lS8z09w0nqgSuCfv7zoKQxxmfDjyp0c=;
-        b=SMGpgkT4gLioiu9Q3o9SDKtv82rmhJWPv9UCJ8elmdcg8+fGkBdofuTrY3Gmd6BGyv
-         xcD5+PSQYJq/KSO7pmz05YQki1xzTyzB4zNQJKy+l19cXqhTm+WfVj5F+P2J7FbrZrfu
-         vjBJ4bLyE1dCBSnvmxXkRbf5316SSUWERcGx183ojz/3BlAhSnlKTdwXb9pJvKz7BGZi
-         q9jESk8ecydi0WZHSDYyBmkBsRY7Vik30J7QN3H5TRIO5YOuJDQXC7ssgMkbLfWBydMu
-         4TcuA1NvacXe662OCk3+4BTpzjrnogE33PyAt6hgNXoZSHwhaZg6dS/B9Ao6RfqDSwaB
-         Jomg==
-X-Forwarded-Encrypted: i=1; AJvYcCU0DGqiZyu0YH8y0VMXi2mn8IFyFW+SdTBya2+cvDSYpdIrk3h8JN4khzRtJIitxbGFVdqCxrx4MvEz9cQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxioztk+OWPHExwwCCf17cAhkUPPsiwbw8/TcGzv58gV5WJekiQ
-	oAeiLNnxlbCbanPU31CbhOe7Z/DDxkORYoOqjmFrdOtxChEnnqIu
-X-Google-Smtp-Source: AGHT+IGLTpe4Nm/jo2HXoxCW0nbU+K+ZCwgom9UexWOG2gLUtmI2+KkwT3n6NFXwlzLf7M18Z1if4A==
-X-Received: by 2002:a17:907:9729:b0:a9a:7f92:782 with SMTP id a640c23a62f3a-a9de61ea441mr761303866b.52.1730129051562;
-        Mon, 28 Oct 2024 08:24:11 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f029564sm387822166b.51.2024.10.28.08.24.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 08:24:11 -0700 (PDT)
-Date: Mon, 28 Oct 2024 08:24:09 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: kernel test robot <lkp@intel.com>,
-	Madalin Bucur <madalin.bucur@nxp.com>,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Jakub Kicinski <kuba@kernel.org>
-Subject: Re: drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2745:24: sparse:
- sparse: cast to restricted __be32
-Message-ID: <20241028-silent-hissing-ant-aacb10@leitao>
-References: <202410271721.jiVrriXD-lkp@intel.com>
- <20241028-sticky-refined-lionfish-b06c0c@leitao>
- <20241028141051.eoltcyf37lf5dsyp@skbuf>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ie5Xl90rMDkdbsUmk1Eb8m8V8DQq6HgUqpkZN1GAQPwlllpfF20oO873LzVZz7/afO4456Asp4Nvn+fRzkMWT3H6UQFSU89cG/5HWm4qQVfSmzzp+X/0Nvq3A4dvFDyyE0EW5QEucd/iJeyDT0u38oC4ufOH7TL+48YNiXQXA1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OnCDUrlv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11844C4CEC3;
+	Mon, 28 Oct 2024 15:25:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730129122;
+	bh=JoX429j4Zj7g7EFQnQUQiXELq1ar7frfVq2eJPtKDUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OnCDUrlvKWOl4ui5qkrNelEEk6CP5hbi5EReMeY/fQBWS7hxQY6sjMmRtdyjeMXSG
+	 7o3ZV2QyQ0dRQ4AO6h+zs2QOXnNtsMdMnbI1pGiZDNZgcv4MN9/BMflRiAa7QdgWaj
+	 qzKxzGWGFv/KXOnjMKrO4KN+Q06FOQOjHZTiyHtfCQDNq+86O2RdRaQifs+BrE9Pti
+	 MnBBrjav/s1BKmwXFqmjq9tVcfYwxoemSoKyYKQFhdZ87gXvD5yoBJyefQZFPDB4wb
+	 +GUN8q16XfVYH2gpv+8cpeEhlk40VUeNiSS92NH3zfaon9ZyO/SQBWWErWRt/qNRz9
+	 oAhmNGbC4uMJA==
+Date: Mon, 28 Oct 2024 15:25:13 +0000
+From: Will Deacon <will@kernel.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>,
+	linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH v18 01/17] fgraph: Pass ftrace_regs to entryfunc
+Message-ID: <20241028152512.GB2484@willie-the-truck>
+References: <172991731968.443985.4558065903004844780.stgit@devnote2>
+ <172991733069.443985.15154246733356205391.stgit@devnote2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,51 +80,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028141051.eoltcyf37lf5dsyp@skbuf>
+In-Reply-To: <172991733069.443985.15154246733356205391.stgit@devnote2>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hello Vladimir,
-
-On Mon, Oct 28, 2024 at 04:10:51PM +0200, Vladimir Oltean wrote:
-> Hi Breno,
+On Sat, Oct 26, 2024 at 01:35:30PM +0900, Masami Hiramatsu (Google) wrote:
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 > 
-> On Mon, Oct 28, 2024 at 03:56:50AM -0700, Breno Leitao wrote:
-> > On Sun, Oct 27, 2024 at 05:36:56PM +0800, kernel test robot wrote:
-> > > Hi Breno,
-> > > 
-> > > First bad commit (maybe != root cause):
-> > > 
-> > > tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> > > head:   850925a8133c73c4a2453c360b2c3beb3bab67c9
-> > > commit: 782fe08e9861d00ce8aca370453dd9ceb9a23d50 soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
-> > > date:   3 months ago
-> > > config: arm-randconfig-r123-20241027 (https://download.01.org/0day-ci/archive/20241027/202410271721.jiVrriXD-lkp@intel.com/config)
-> > > compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
-> > > reproduce: (https://download.01.org/0day-ci/archive/20241027/202410271721.jiVrriXD-lkp@intel.com/reproduce)
-> > > 
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <lkp@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-kbuild-all/202410271721.jiVrriXD-lkp@intel.com/
-> > > 
-> > > sparse warnings: (new ones prefixed by >>)
-> > > >> drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:2745:24: sparse: sparse: cast to restricted __be32
-> > >    drivers/net/ethernet/freescale/dpaa/dpaa_eth.c: note: in included file (through include/linux/module.h):
-> > >    include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-> > >    drivers/net/ethernet/freescale/dpaa/dpaa_eth.c: note: in included file:
-> > > >> include/soc/fsl/qman.h:245:16: sparse: sparse: cast to restricted __be32
-> > > >> include/soc/fsl/qman.h:245:16: sparse: sparse: cast from restricted __be16
-> > 
-> > Thanks. The commit above "782fe08e98 ("soc: fsl: qbman: FSL_DPAA depends
-> > on COMPILE_TEST") was created to detect problems like this, since it is
-> > not possible to compile-test dpaa driver. 
-> > 
-> > Copying Madalin Bucur <madalin.bucur@nxp.com>, who currently maintains
-> > this driver.
+> Pass ftrace_regs to the fgraph_ops::entryfunc(). If ftrace_regs is not
+> available, it passes a NULL instead. User callback function can access
+> some registers (including return address) via this ftrace_regs.
 > 
-> I will handle the sparse warnings exposed by your COMPILE_TEST change,
-> there is nothing actionable for you, except review if you wish.
+> Note that the ftrace_regs can be NULL when the arch does NOT define:
+> HAVE_DYNAMIC_FTRACE_WITH_ARGS or HAVE_DYNAMIC_FTRACE_WITH_REGS.
+> More specifically, if HAVE_DYNAMIC_FTRACE_WITH_REGS is defined but
+> not the HAVE_DYNAMIC_FTRACE_WITH_ARGS, and the ftrace ops used to
+> register the function callback does not set FTRACE_OPS_FL_SAVE_REGS.
+> In this case, ftrace_regs can be NULL in user callback.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Huacai Chen <chenhuacai@kernel.org>
+> Cc: WANG Xuerui <kernel@xen0n.name>
+> Cc: Michael Ellerman <mpe@ellerman.id.au>
+> Cc: Nicholas Piggin <npiggin@gmail.com>
+> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+> Cc: Naveen N Rao <naveen@kernel.org>
+> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
+> Cc: Paul Walmsley <paul.walmsley@sifive.com>
+> Cc: Palmer Dabbelt <palmer@dabbelt.com>
+> Cc: Albert Ou <aou@eecs.berkeley.edu>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Borislav Petkov <bp@alien8.de>
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: x86@kernel.org
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> 
+> ---
+>  Changes in v18:
+>   - Remove unclear comment about `regs->fp` access on arm64.
+>  Changes in v16:
+>   - Add a note when the ftrace_regs can be NULL.
+>   - Update against for the latest kernel.
+>  Changes in v11:
+>   - Update for the latest for-next branch.
+>  Changes in v8:
+>   - Just pass ftrace_regs to the handler instead of adding a new
+>     entryregfunc.
+>   - Update riscv ftrace_graph_func().
+>  Changes in v3:
+>   - Update for new multiple fgraph.
+> ---
+>  arch/arm64/kernel/ftrace.c               |   15 ++++++++-
 
-Awesome. Thank you!
+For the arm64 bits:
 
---breno
+Acked-by: Will Deacon <will@kernel.org>
+
+Will
 
