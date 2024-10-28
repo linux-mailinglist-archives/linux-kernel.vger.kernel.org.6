@@ -1,114 +1,83 @@
-Return-Path: <linux-kernel+bounces-386065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC75A9B3EB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:53:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B334A9B3EB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:55:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36731F2334B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:53:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77E7B283A74
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E581F9ABE;
-	Mon, 28 Oct 2024 23:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E8B1FAC27;
+	Mon, 28 Oct 2024 23:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V7XjgYjM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="CNA8hmve"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E681EF92F;
-	Mon, 28 Oct 2024 23:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC541DFDB9;
+	Mon, 28 Oct 2024 23:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730159592; cv=none; b=RpLdEUjQ9wUvJ4dscvjS0K8hK+75WNu10iQKXURgn22eezOXet7UcDdzWB7YqTh5L1gXhonyFKOC3aTVM8d4tefXbHEtO6QJfXRJScMOg3mKPeSuMHY9vch/Jj500F5XITA0Yavew6Ik8LzJ82it1AAiMLVaixUQ/IxdXIJYi9I=
+	t=1730159738; cv=none; b=HyV6lWFa9pMudeAsQhqba3WQlMaiRgGBVi9wsk0bJj3u0qIiokhEG2tx/ecTdpBkaDRtnM/jDB2/3p6NZ2QcvoVyd3SGy5vT+uDk5dn67nSAiLrMFyBHhK5Ti6Fc6k0PDs7vlbrSywZyaPdt+atNWs2d+Bm66uWAOKDOZKQRPw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730159592; c=relaxed/simple;
-	bh=lWRCW+I7hWCkqI1/Qywg1Mar1bIibz0LJvPC/YB25Ts=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=hauGQpnbhsjiOWviQSASyDvu/jQzEodZpD/eUM4S1/MIUK4M4lWBzqHs8LIjN/rUIQqTjIGn4OeXVgQ3MNP875KXI2QYGFQVhhfzfpj1RIrmKDIhEyet/ANXG+C+84dPWEV723Fda/sdv3d6dMllP0FxWvcvaSqZO4Uj816XYRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V7XjgYjM; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730159591; x=1761695591;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=lWRCW+I7hWCkqI1/Qywg1Mar1bIibz0LJvPC/YB25Ts=;
-  b=V7XjgYjMp5ss5363AZ5UbrsCuAHjVkO4S+6npce6q6IpVdPzX5g9S6+f
-   eixxWSPtP4+McKXfIZMAYvxnMKh6R1CWyr0iLwi8qS2MPwd8aOTYCv2QW
-   Yk16LOZA4HIjebkwpsd7SABkX3CGCOTL3ObgaDZ0C2TEPa2yw3yKDslTO
-   Za5h/Z3FDm5yaYX5LUU2COi3WA2KCXiR3kFTgLUR8UCdIp43yDtaV6Fih
-   67H94yZF/fRZWN0UJFDYgep650e9Kley6BGprPohjQ4FkyhRwKzGZV+LG
-   Gem2Zlqdz5Addfmdesg7RKGghPEW2/gRNZz4N5oQo5WcA/Qvz1q2vkRmh
-   w==;
-X-CSE-ConnectionGUID: E4NOKMwWT6SB9lbSO/qACg==
-X-CSE-MsgGUID: ajMMbTZ/RCyp7al/SgO99g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29920772"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29920772"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:53:08 -0700
-X-CSE-ConnectionGUID: Sl41N38STqmnbF/wNKCgVg==
-X-CSE-MsgGUID: Rw5lo38OTR+htm7wc4P2nw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="81396685"
-Received: from salmansi-mobl.amr.corp.intel.com (HELO [10.125.80.18]) ([10.125.80.18])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:53:06 -0700
-Message-ID: <963f9a3e-71f2-41ba-ba46-e27aa8fe991a@linux.intel.com>
-Date: Mon, 28 Oct 2024 16:53:04 -0700
+	s=arc-20240116; t=1730159738; c=relaxed/simple;
+	bh=bjqlL3P9HBN4voyP2L5yXiRhMBCYac+G+6cqIX9zAoQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=dHd5aposqC4SiWh6jijHxAwCuyg0ybwxkAaaaV2lOcciFlaZmceu7YyPNov+fIxvi0q1KfLsTtQozc7u5PTygm8EqCUTE73vYcBf+ZMHaHOeMCvQepHrPPsb+BD5ItrApJF+Fmf0e1rkqEsb0CmGDWWNkt3dDiBZ4b9JVtdmuTA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=CNA8hmve; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1730159732;
+	bh=bjqlL3P9HBN4voyP2L5yXiRhMBCYac+G+6cqIX9zAoQ=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=CNA8hmvef1s42GR010rD7RxBEzuLHnOSLEfuTT4ohExeXOUCtAQ3i+ii9BKdYKgKV
+	 oo+ShgOBibYW+XnZbEV/vB+1TfNLRQXjyFJrz0LhuGlcgReHpnuvlFkW7MOxNEvdvd
+	 ww1dmGu+0KI665WZPEqhRujOC1/thS7nO3Rjd+GF5ltVm7gahHiv7Iu4N/GsSAxdx2
+	 l7lujEO43zAdpezhv6vA4WZmuVsYw2em11xjIbHBYTxBvLb6JIajA3ovfIYuJwq89Q
+	 8yOFQNx3fu39RpTxjMjnWcvV1eDs6PkTYpfahkMeC4b4BbiELz9EC3tL/4My1i9pUT
+	 ow3BSW4nRJKLw==
+Received: from [192.168.68.112] (ppp118-210-190-243.adl-adc-lon-bras34.tpg.internode.on.net [118.210.190.243])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 91D4F67728;
+	Tue, 29 Oct 2024 07:55:26 +0800 (AWST)
+Message-ID: <0b51600b1308d64e362b771f1bf8adde2fa0fc19.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v2 1/3] ARM: dts: aspeed: Add WDT controller into alias
+ field
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Chin-Ting Kuo <chin-ting_kuo@aspeedtech.com>, patrick@stwcx.xyz, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
+	wim@linux-watchdog.org, linux@roeck-us.net, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc: Peter.Yin@quantatw.com, Patrick_NC_Lin@wiwynn.com, Bonnie_Lo@wiwynn.com,
+  DELPHINE_CHIU@wiwynn.com, bmc-sw@aspeedtech.com,
+ chnguyen@amperecomputing.com
+Date: Tue, 29 Oct 2024 10:25:20 +1030
+In-Reply-To: <20241028024813.2416962-2-chin-ting_kuo@aspeedtech.com>
+References: <20241028024813.2416962-1-chin-ting_kuo@aspeedtech.com>
+	 <20241028024813.2416962-2-chin-ting_kuo@aspeedtech.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] VERW based clean-up
-From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-To: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: hpa@zytor.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- pawan.kumar.gupta@linux.intel.com
-References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Of course it isn't until after I hit send to realize I missed the "-v2" flag
-when I generated these patches! Sorry for the confusion!
+On Mon, 2024-10-28 at 10:48 +0800, Chin-Ting Kuo wrote:
+> Add WDT controller into alias field. After that, WDT index,
+> used to distinguish different WDT controllers in the driver,
+> can be gotten by using of_alias_get_id dts API.
 
-On 10/28/24 16:50, Daniel Sneddon wrote:
-> There are several mitigations that use the VERW instruction to clean
-> up internal CPU buffers.  Currently, each of these mitigations is
-> treated independently, but if VERW is needed for one of the
-> mitigations, it's on for all of them. This can lead to some confusion
-> if a user tries to disable one of the mitigations, but it is left
-> enabled for one of the others. The user needs to disable all 4 VERW-
-> based mitigations. Warn the user when one or more VERW mitigations are
-> disabled but not all of them. While we're messing with VERW
-> mitigations, might as well simplify them and remove the need to call
-> each of them twice.
-> 
-> V2:
-> Dropped the new knob previously introduced in the first patch (Borislav)
-> Add warning if not all 4 mitigations states match (Borislav)
-> Removed extra comment (Josh)
-> Code clean-up (Josh)
-> 
-> 
-> Daniel Sneddon (2):
->   x86/bugs: Check VERW mitigations for consistency
->   x86/bugs: Clean-up verw mitigations
-> 
->  arch/x86/include/asm/processor.h |   2 +-
->  arch/x86/kernel/cpu/bugs.c       | 206 +++++++++++++------------------
->  2 files changed, 90 insertions(+), 118 deletions(-)
-> 
+I feel it would be less brittle if we encode the mapping in the driver?
+Based on reg the driver can derive the watchdog index. That way there's
+no constraint on how the platform architect arranges the aliases for
+the watchdogs (if they define them at all).
 
+Andrew
 
