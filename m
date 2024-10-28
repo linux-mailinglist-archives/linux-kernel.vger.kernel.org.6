@@ -1,225 +1,124 @@
-Return-Path: <linux-kernel+bounces-385025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1648B9B3185
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:19:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007A69B3188
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:20:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 855DFB2159B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:19:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB941F21F91
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:20:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E9E1DBB36;
-	Mon, 28 Oct 2024 13:19:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDED91DBB37;
+	Mon, 28 Oct 2024 13:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lHUQmPxH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9uk/xw85"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nJ8DurAq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F5C18A921;
-	Mon, 28 Oct 2024 13:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C6F38396;
+	Mon, 28 Oct 2024 13:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121569; cv=none; b=ECsLxU0/+9FgiGJQaM9TE14UIOGp8cNxMDlWusjtpEByI15KnjGOpikjFwhRh6wFjd/Qdti2O6Yt47yR2UhmqvVOnnm4rmeYl9wXdK00O4rMy3pc8JiPm66hBP7cYg5Xen8Ynq+y/HaQw46QD3hZfJx7VTZsurvPOpPQJMH5cd8=
+	t=1730121630; cv=none; b=RSOHpQ+aB9Jyff6m22op3f6H987/cStzQyTg7UKtfjtJWKFlx4MPbXmK7jhBx1K6uiaYHXKlyfBbNbKZp/Am/oVziwU7GZf5W/6Jb0EkokNYqzVI1EkMJHPz9OQ0VpLDXVvwc9F9fKtElscurG0h34STErJiea1cn7ja/1m1NrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121569; c=relaxed/simple;
-	bh=KOdRD0iE960Gn5HQyNFOeQd7i9jT83XZMvPdg4CXJEs=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Q/kUJ5EAVdYH/zjUCsRkG16HBGXbkxgHm3EqelIDWVxDcmFT8wEHVO0hWT+kyRAqc+P/Pc/F2yO0EhQgGfKaGndtztuqVaTT1A2sLxZyntnNtvoNozCjS999RiFoJN4yVZcnU1gKd6k7+Eonz0ku3CzJy7Pcucttwn7JAMBRbQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lHUQmPxH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9uk/xw85; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 28 Oct 2024 13:19:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730121564;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=kFXPabox8t1GEJJE1PiZjeand7ByTf/XFVzNNwqQCk4=;
-	b=lHUQmPxHiueItZOuP3+u4MEKeiEPDPdeN60driZog8VOG+Vqfa8jPMtEcJaFjzzOFoThXd
-	gpVqimC1vgU+n1WscKShQTru5sgul33cCiyggKLIFkFhw9n8ckeGjldkgRlRjxzfYAsH8P
-	ib3sjbwwsUbq+aA3UBgaN9xitSOKqOLCpNroSqUEaH6T28hFU3rmXLpnYgmmGSjm4kn2BQ
-	IGu8UBDIX1s0WAfdBVrbgRaT5A0hpnN8QzqPd+AjA57a7kS6JGXg9UijhfwqvWF5US8Sp8
-	kki1rB6QQqWiG06XyfcROpjJ1Aa/sva1LPVGFXncZWeArg12ZPAiCQLpgF9OxQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730121564;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=kFXPabox8t1GEJJE1PiZjeand7ByTf/XFVzNNwqQCk4=;
-	b=9uk/xw85OJrf3taRJsYgERCkcdwteA+36KXUwZO5fxnhE3pP5TXbC4Bp7G2j56nP+mO+Sl
-	5/Vq2TypFQch7yCg==
-From: "tip-bot2 for Aboorva Devarajan" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: sched/urgent] sched: Pass correct scheduling policy to
- __setscheduler_class
-Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>, Tejun Heo <tj@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1730121630; c=relaxed/simple;
+	bh=8CIvnMB24vJGzN721kUQN9Rk9oVnLvV00Z0lshsSQDQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BUj9quxQ3ccJmrsaQh0nL3X3+TSq7Ghw3MyANSEZ/NmZAdKOAr5wi/Of9jW5YjDvXhlCr8rXnzYH22IuKikSSpZoKHrrYRrZzBPmoNtNmCxTjglOPypkt5yflCzNKryaC2SQJNtBMXrCNycQk3DiJHaS+PW2Z7G+B3Y/3l1Aibc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nJ8DurAq; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730121628; x=1761657628;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8CIvnMB24vJGzN721kUQN9Rk9oVnLvV00Z0lshsSQDQ=;
+  b=nJ8DurAqT02PO42Oto/yrqaQICctNOp6k2GV/QeZcohHRXOAGh33Nv/Q
+   yUx2wRoDHgE2LowX2O/NHWXaF66Fy3XNMV80TtqVFFBzNn6l1qhfKGpmk
+   bUf5hiOiP3rLmiR5YvpUo8EJpYks/wGQC+w+xo4BMeBEJXPip2iULVTDE
+   CJeWcWOWfdc+e0LWx63UxkoYa5KCmPZbxvmnrUt0CTLAt4Wcj6XpKJLtj
+   jOdUhUYNA8ZtJHWZJ+XKSO9YDRoEhpvUTECAdUOZ036Cm0wRk3sQCNwd3
+   oive+ED6BuYKw3jMVedF+DjHnCfO4rKE9VXKk0mQCCK2/SsjoKUXitCi7
+   A==;
+X-CSE-ConnectionGUID: cTRCuuFpSdeVJ+ge8rqOdw==
+X-CSE-MsgGUID: emZ0rkWeTd2pb77rNiZidQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="29820958"
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="29820958"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 06:20:27 -0700
+X-CSE-ConnectionGUID: cBj/10LMRCSvX4Z6i7Flng==
+X-CSE-MsgGUID: Aaeh0z1hSvq0UaOXJEKZ3w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="86397207"
+Received: from gargmani-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.169])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 06:20:25 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: pbonzini@redhat.com,
+	seanjc@google.com,
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com
+Cc: isaku.yamahata@intel.com,
+	reinette.chatre@intel.com,
+	binbin.wu@linux.intel.com,
+	xiaoyao.li@intel.com,
+	yan.y.zhao@intel.com,
+	adrian.hunter@intel.com,
+	tony.lindgren@intel.com,
+	kristen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	Kai Huang <kai.huang@intel.com>
+Subject: [PATCH 0/3] KVM: VMX: Initialize TDX when loading KVM module
+Date: Tue, 29 Oct 2024 02:20:13 +1300
+Message-ID: <cover.1730120881.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173012156318.1442.12163853247752661841.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the sched/urgent branch of tip:
+Hi Paolo/Sean,
 
-Commit-ID:     b4f5f4934b58c3729e83b13d44c9cb7cbe66efdb
-Gitweb:        https://git.kernel.org/tip/b4f5f4934b58c3729e83b13d44c9cb7cbe66efdb
-Author:        Aboorva Devarajan <aboorvad@linux.ibm.com>
-AuthorDate:    Sat, 26 Oct 2024 00:20:20 +05:30
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Sat, 26 Oct 2024 09:28:37 +02:00
+This series contains patches to initialize TDX when loading KVM module.
+This series is based on the discussion with Sean on the v19 patchset
+[*], hoping it has addressed most (if not all) comments.
 
-sched: Pass correct scheduling policy to __setscheduler_class
+This series has been in our internal TDX tree for long time and has been
+in kvm-coco-queue for some time thus it has been tested.
 
-Commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs
-switched_from_fair()") overlooked that __setscheduler_prio(), now
-__setscheduler_class() relies on p->policy for task_should_scx(), and
-moved the call before __setscheduler_params() updates it, causing it
-to be using the old p->policy value.
+The main purpose for sending out is to have a review but this series can
+also be applied to kvm/queue cleanly.
 
-Resolve this by changing task_should_scx() to take the policy itself
-instead of a task pointer, such that __sched_setscheduler() can pass
-in the updated policy.
+Thanks for your time!
 
-Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
-Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Acked-by: Tejun Heo <tj@kernel.org>
----
- kernel/sched/core.c     | 8 ++++----
- kernel/sched/ext.c      | 8 ++++----
- kernel/sched/ext.h      | 2 +-
- kernel/sched/sched.h    | 2 +-
- kernel/sched/syscalls.c | 2 +-
- 5 files changed, 11 insertions(+), 11 deletions(-)
+[*]: https://lore.kernel.org/kvm/f028d43abeadaa3134297d28fb99f283445c0333.1708933498.git.isaku.yamahata@intel.com/
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index dbfb571..719e0ed 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -4711,7 +4711,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
- 	if (rt_prio(p->prio)) {
- 		p->sched_class = &rt_sched_class;
- #ifdef CONFIG_SCHED_CLASS_EXT
--	} else if (task_should_scx(p)) {
-+	} else if (task_should_scx(p->policy)) {
- 		p->sched_class = &ext_sched_class;
- #endif
- 	} else {
-@@ -7025,7 +7025,7 @@ int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flag
- }
- EXPORT_SYMBOL(default_wake_function);
- 
--const struct sched_class *__setscheduler_class(struct task_struct *p, int prio)
-+const struct sched_class *__setscheduler_class(int policy, int prio)
- {
- 	if (dl_prio(prio))
- 		return &dl_sched_class;
-@@ -7034,7 +7034,7 @@ const struct sched_class *__setscheduler_class(struct task_struct *p, int prio)
- 		return &rt_sched_class;
- 
- #ifdef CONFIG_SCHED_CLASS_EXT
--	if (task_should_scx(p))
-+	if (task_should_scx(policy))
- 		return &ext_sched_class;
- #endif
- 
-@@ -7142,7 +7142,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
- 		queue_flag &= ~DEQUEUE_MOVE;
- 
- 	prev_class = p->sched_class;
--	next_class = __setscheduler_class(p, prio);
-+	next_class = __setscheduler_class(p->policy, prio);
- 
- 	if (prev_class != next_class && p->se.sched_delayed)
- 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 5900b06..40bdfe8 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -4256,14 +4256,14 @@ static const struct kset_uevent_ops scx_uevent_ops = {
-  * Used by sched_fork() and __setscheduler_prio() to pick the matching
-  * sched_class. dl/rt are already handled.
-  */
--bool task_should_scx(struct task_struct *p)
-+bool task_should_scx(int policy)
- {
- 	if (!scx_enabled() ||
- 	    unlikely(scx_ops_enable_state() == SCX_OPS_DISABLING))
- 		return false;
- 	if (READ_ONCE(scx_switching_all))
- 		return true;
--	return p->policy == SCHED_EXT;
-+	return policy == SCHED_EXT;
- }
- 
- /**
-@@ -4493,7 +4493,7 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
- 
- 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
- 
--		p->sched_class = __setscheduler_class(p, p->prio);
-+		p->sched_class = __setscheduler_class(p->policy, p->prio);
- 		check_class_changing(task_rq(p), p, old_class);
- 
- 		sched_enq_and_set_task(&ctx);
-@@ -5204,7 +5204,7 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
- 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
- 
- 		p->scx.slice = SCX_SLICE_DFL;
--		p->sched_class = __setscheduler_class(p, p->prio);
-+		p->sched_class = __setscheduler_class(p->policy, p->prio);
- 		check_class_changing(task_rq(p), p, old_class);
- 
- 		sched_enq_and_set_task(&ctx);
-diff --git a/kernel/sched/ext.h b/kernel/sched/ext.h
-index 2460195..b1675bb 100644
---- a/kernel/sched/ext.h
-+++ b/kernel/sched/ext.h
-@@ -18,7 +18,7 @@ bool scx_can_stop_tick(struct rq *rq);
- void scx_rq_activate(struct rq *rq);
- void scx_rq_deactivate(struct rq *rq);
- int scx_check_setscheduler(struct task_struct *p, int policy);
--bool task_should_scx(struct task_struct *p);
-+bool task_should_scx(int policy);
- void init_sched_ext_class(void);
- 
- static inline u32 scx_cpuperf_target(s32 cpu)
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 9f9d1cc..6c54a57 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -3830,7 +3830,7 @@ static inline int rt_effective_prio(struct task_struct *p, int prio)
- 
- extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
- extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
--extern const struct sched_class *__setscheduler_class(struct task_struct *p, int prio);
-+extern const struct sched_class *__setscheduler_class(int policy, int prio);
- extern void set_load_weight(struct task_struct *p, bool update_load);
- extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
- extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
-diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-index 0470bcc..24f9f90 100644
---- a/kernel/sched/syscalls.c
-+++ b/kernel/sched/syscalls.c
-@@ -707,7 +707,7 @@ change:
- 	}
- 
- 	prev_class = p->sched_class;
--	next_class = __setscheduler_class(p, newprio);
-+	next_class = __setscheduler_class(policy, newprio);
- 
- 	if (prev_class != next_class && p->se.sched_delayed)
- 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
+Kai Huang (3):
+  KVM: VMX: Refactor VMX module init/exit functions
+  KVM: Export hardware virtualization enabling/disabling functions
+  KVM: VMX: Initialize TDX during KVM module load
+
+ arch/x86/kvm/Makefile    |   1 +
+ arch/x86/kvm/vmx/main.c  |  38 +++++++++++++
+ arch/x86/kvm/vmx/tdx.c   | 115 +++++++++++++++++++++++++++++++++++++++
+ arch/x86/kvm/vmx/tdx.h   |  12 ++++
+ arch/x86/kvm/vmx/vmx.c   |  23 +-------
+ arch/x86/kvm/vmx/vmx.h   |   3 +
+ include/linux/kvm_host.h |   8 +++
+ virt/kvm/kvm_main.c      |  18 ++----
+ 8 files changed, 183 insertions(+), 35 deletions(-)
+ create mode 100644 arch/x86/kvm/vmx/tdx.c
+ create mode 100644 arch/x86/kvm/vmx/tdx.h
+
+
+base-commit: 5cb1659f412041e4780f2e8ee49b2e03728a2ba6
+-- 
+2.46.2
+
 
