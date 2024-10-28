@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-384935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B403E9B305E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:35:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A8A9B3061
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E695A1C2139E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04BC72825C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802691DA0ED;
-	Mon, 28 Oct 2024 12:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4D1D1DB92C;
+	Mon, 28 Oct 2024 12:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="dZPxq51+"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D31D18E03A
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="j0C/LCqQ"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2A11D934B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730118925; cv=none; b=Gvwjpu+ZjlvzIW3O0EEiAmdsszwfQR9RL5E6bKCJZeGOWb/FEn+Y4WzpdUOiuyEofVc9VQB27iAZ/qC5MClNZl6PuUehJjj/hchddBftYivTeBo5xieM5nqJNIMxVMrLXwaiggdjRYPHRJvaf4VJVrv9lIs1KiW/H2JI8d4JT98=
+	t=1730118928; cv=none; b=hiyJ1f1ruRg1hqp9RewSpCflJPmfJK1Rr2pqBWZqPw9UU4rm4TI3/X+/7W/uHM/ef3kPi98tWZpmiyEaieZT/94BsnKajLLMEcfb2BztFWl6G50Ta8Qv7LqKVPD0d6NZ785IrapHgAE80wJh6Qo1qJ7OKSRj95SyvLW3sP26j00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730118925; c=relaxed/simple;
-	bh=EcyrQPDgthkfdEcc10o2egX30s4Dev+MVbzErqEZlwo=;
+	s=arc-20240116; t=1730118928; c=relaxed/simple;
+	bh=G/XWiPL1tzKOA91NpkVzK6G0p+V96OLXdFuYCzGo71s=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=c+eLcRahyN16KZ51VAWVpULSFwGM3vI2pBw7jyMPZH5u7yM6WTdk/40TdU0LN4NsDchCqTCgQlhje4OaXMVNNIteaNgiQykKcZO8NhXE0SC2pwUiJ7bletjCfjSSiOUc5D5R3RICBW6w9dqkMB5MnnmOoRORYfLX0XqI4eP1Jc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=dZPxq51+; arc=none smtp.client-ip=117.135.210.5
+	 MIME-Version; b=mgttD2xYbpIw014AjkbpjsDU9kDTn5IdQ0O+fqvo8CxpQZMP/XaBh2RGQt7MOWp49Lg7g0pleoSN5zpryWjtHfvFyqf3dT1JP4oapSNJb3uYPTLCgB1tD9GPI2FGBRCfp9TS9hwa8IYrjaBGD0dkStDcJNqNf97pfytvWPhASQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=j0C/LCqQ; arc=none smtp.client-ip=220.197.31.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=sGXAv
-	ZN6OzVPvAHYYKDVulgxFxNefKXk3I0OnEojRD0=; b=dZPxq51+r33wrg9bHdss3
-	PnWA0Q7hx5WgDht40418kF2nMK7IV4uYviEUm1l+5KMScDVcjTKwpCTy1OVSVpe8
-	VAOaL6LL8ZXws0y3/NwLDC0Wuh/0Vn2a49Wvm0n63ADC6CieKQOawmKp/hQqHEvm
-	JlGgice12QzMkznHnQO0cs=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=344J5
+	ku+Gt/dhWff1sAIGZQvuDp5Q5kk2nVCCnwU/2c=; b=j0C/LCqQw9VuUP7JlFZLV
+	f7t5n7SqTmIbLkRGzGVmDFgqtRa/8lpjWQ5JzOuHVmPYWg+5PE2b2kyTtE7o33N2
+	0GxjSNIrkbxBoOCuhnLeWGyh3N35LWD3rcGnLYqYe8fH2sM22PI6/Mbp6wz3KB/g
+	km/StyM/8AuBxMMjGO9Nbg=
 Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3f+b5hB9nytgkBw--.9113S4;
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wD3f+b5hB9nytgkBw--.9113S5;
 	Mon, 28 Oct 2024 20:35:09 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
@@ -43,9 +43,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-rockchip@lists.infradead.org,
 	Andy Yan <andyshrk@163.com>
-Subject: [PATCH v2 2/3] arm64: dts: rockchip: Enable HDMI display for rk3588 Cool Pi 4B
-Date: Mon, 28 Oct 2024 20:34:57 +0800
-Message-ID: <20241028123503.384866-3-andyshrk@163.com>
+Subject: [PATCH v2 3/3] arm64: dts: rockchip: Enable HDMI display for rk3588 Cool Pi GenBook
+Date: Mon, 28 Oct 2024 20:34:58 +0800
+Message-ID: <20241028123503.384866-4-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241028123503.384866-1-andyshrk@163.com>
 References: <20241028123503.384866-1-andyshrk@163.com>
@@ -56,14 +56,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3f+b5hB9nytgkBw--.9113S4
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tFyrGFWfAw4xCFW7tr1fJFb_yoW8Ww43p3
-	ZrurZ5GrZ3urW7XwsxAF1xJrsYyws5CayxGw13ZFy3tr42gas5tw1xGrnYvFyDAFWxZ3y3
-	Cr1kJFyq9r4UXw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ziNVy3UUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqRGGXmcffS5+9gAAsD
+X-CM-TRANSID:_____wD3f+b5hB9nytgkBw--.9113S5
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tFy8GF45uw4rArykur18Grg_yoW8Ar4xp3
+	ZrCrZ5WFZ7WrW7JwsxAryxJFs8twsYkFWxGryfZFy7tF4aqFn5twn7Grn2vFyDAFWxZ3yf
+	CFykJF1j9r1DZaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0zRE_M-UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gSGXmcfgjoqQQAAsl
 
-Enable the micro HDMI on Cool Pi 4B.
+Enable hdmi display output on Cool Pi GenBook.
 
 Signed-off-by: Andy Yan <andyshrk@163.com>
 
@@ -71,30 +71,29 @@ Signed-off-by: Andy Yan <andyshrk@163.com>
 
 Changes in v2:
 - Remove enable-gpios as it is unevaluated
-- Remove pinctrl setting as it use the default
 
- .../boot/dts/rockchip/rk3588s-coolpi-4b.dts   | 47 +++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ .../rockchip/rk3588-coolpi-cm5-genbook.dts    | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-index 074c316a9a69..27a89a110085 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-coolpi-4b.dts
-@@ -11,6 +11,7 @@
- #include <dt-bindings/gpio/gpio.h>
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-genbook.dts b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-genbook.dts
+index 6418286efe40..da7a19f1fe58 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-genbook.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-coolpi-cm5-genbook.dts
+@@ -7,6 +7,7 @@
+ /dts-v1/;
+ 
  #include <dt-bindings/leds/common.h>
- #include <dt-bindings/pinctrl/rockchip.h>
 +#include <dt-bindings/soc/rockchip,vop2.h>
- #include "rk3588s.dtsi"
+ #include "rk3588-coolpi-cm5.dtsi"
  
  / {
-@@ -38,6 +39,17 @@ chosen {
- 		stdout-path = "serial2:1500000n8";
+@@ -35,6 +36,18 @@ charger: dc-charger {
+ 		gpios = <&gpio1 RK_PC0 GPIO_ACTIVE_LOW>;
  	};
  
 +	hdmi-con {
 +		compatible = "hdmi-connector";
-+		type = "d";
++		type = "a";
 +
 +		port {
 +			hdmi_con_in: endpoint {
@@ -103,15 +102,18 @@ index 074c316a9a69..27a89a110085 100644
 +		};
 +	};
 +
++
  	leds: leds {
  		compatible = "gpio-leds";
- 		pinctrl-names = "default";
-@@ -815,3 +827,38 @@ &usb_host1_ehci {
- &usb_host1_ohci {
+ 
+@@ -347,3 +360,40 @@ &usb_host1_xhci {
+ 	dr_mode = "host";
  	status = "okay";
  };
 +
++/* HDMI CEC is not used */
 +&hdmi0 {
++	pinctrl-0 = <&hdmim0_tx0_hpd &hdmim0_tx0_scl &hdmim0_tx0_sda>;
 +	status = "okay";
 +};
 +
