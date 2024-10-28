@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-384578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218949B2BE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:50:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0C69B2BE9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 441781C21FA1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:50:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB8CE282BC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:51:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2A01D079F;
-	Mon, 28 Oct 2024 09:50:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 454BF1D356C;
+	Mon, 28 Oct 2024 09:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f8jaX2Sf"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Z3uwQ5rK"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6299B1CC890
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B371CC8B2;
+	Mon, 28 Oct 2024 09:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109043; cv=none; b=UDYeXqzC0L9oevJwAn1b/eSCIXoXML1hib+YPtPjOiHqHe8MW2xh+EY0khGEXHHm6CzvkWyEZAmoXiaidZ3Tk2RZiI7rwDd5XCe9Di5iz+r4D+86A3+TXbITHvt6q6RXOW74gQCJhQe7qKQCuI/L4nbYL3kRKXDua2Lo9DqMU/s=
+	t=1730109045; cv=none; b=HLPs20UzBW09vvez8NLSP4itYU/SHRyL8oCYBfdeieRE+zIKFSDMPqfKBBTZ0I4QQbGGWASSaoW3CpuQPlPHmD00QhIpwJbvvuKLbQgUYAH3YD8h2cbKSCQT8ZuYFVI9vZwZOPs6nL8bLC5BL6zRiIWdEzpof4t1AopRfhZxDdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109043; c=relaxed/simple;
-	bh=eg5NddVvSS9tONraIxzxM9y4kKPiQ3XdvqW+Ci40mrM=;
+	s=arc-20240116; t=1730109045; c=relaxed/simple;
+	bh=ODx4FLHcP/vNnIHruibCcYFMQhWqWuYNqzd3qqRr5Yc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0Yv5+ECUM3qi+NkUz+B6nDTy3zreIQTTybLyi6sBAH98KiHL3J6sEWf9L295LndzTi4PSAHxX9nPC9y4KnH8e6084vBgJjyftM3D4DjJpQKSTuKdBuCy80zaSy4P8R/YVWHMpuI60vLM6TjZNnPt67XyfmzpwVMjp0EnvOpytU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f8jaX2Sf; arc=none smtp.client-ip=217.70.183.195
+	 Content-Type:Content-Disposition:In-Reply-To; b=NsagM2AbBtGSnwI6SwW9PUVxtlvPJNjpYSS3K+qknhHNf1c6TGVQkqn5ICE30/UnHjfLlcDVCuPJZhcbEu8hMD9ozYPnr7M33GV2Xol/tiafnYpyd3r0X4d4UMZ6b+J2xOUioKdkhdMx3Nyg19tydE8F2yBTNR4meyvP7b+mgGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Z3uwQ5rK; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 79FAF60007;
-	Mon, 28 Oct 2024 09:50:38 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2C7E940009;
+	Mon, 28 Oct 2024 09:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730109039;
+	t=1730109040;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=fi6pq1NACgWnfMa0+CNbK0vFieEFrjbAN/bOLYefu4M=;
-	b=f8jaX2Sfp9dwpsG5JUXlrHJGU3snaYBsr8HmAW/8KtTBRFMWZ5QKXB38oc2pfmN9wIxOQs
-	YS0LAA4LKHNXP8vWIkxPhqCK4QsXDYlT494jKapS5EcxvsvHF2xWeBxPVleFBFR0cL8/UN
-	LssiVoCTMWWZHe0y8tn9S+/e5pZQRuVEVGt7AjdGMgyZSZSXLUTkB1hiGMk6BkowkNcLBZ
-	u1AOGKBEgbweXpoaHAeEP/5oIzPftZBinZjNU25XmBj2Rqn3s+qqUyHKkpmX+79MqLMu7t
-	+cVfPRB0Z38fJAX4V/MWsjUs/2VpTrlwVNXq3jgv3U3FiG01vv5s9bayJHZ6JQ==
+	bh=R8ruWVrrdgwZg4KfUdgZhCywnGpkovTfIl1NmWeerMU=;
+	b=Z3uwQ5rKVQ6Kh9PHzk0d4sxl5wA0KD3uqjB3kYxP7kczmLEwD6zjab3VoBAp3l4DPwLgBB
+	BdX0EYBTtj+XeUAAAPQfsXs/PD+INQxN+Ywh3ZT32HhUerA9nNPhJdAuakyd4hnpuyIbmg
+	3wqgGGajwfG8QY5u+6W3M1+CbFM4VpNRBcZY+PLjnX7R73iQdSxpSDZI2xhTdN0GEGksdY
+	v1F/GyU3NcozqnwZvgi8XVdbLnu6uRMIZ42Ed3anszkQWtz0FzjYVdaWWddhfNZ3i4gv3Y
+	rIBjsvF/t/yNN/WLFrPzraGWyYplyH6jhZ7vlRX/LJNlp2yIZCx/b4qcmS0z4Q==
 Date: Mon, 28 Oct 2024 10:50:37 +0100
 From: Louis Chauvet <louis.chauvet@bootlin.com>
 To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>
@@ -53,15 +53,18 @@ Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
 	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
-	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
 	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-Subject: Re: [PATCH RESEND v2 5/8] drm/vkms: Add support for RGB888 formats
-Message-ID: <Zx9ebXIlkCAKz52F@fedora>
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+Subject: Re: [PATCH v12 13/15] drm/vkms: Create KUnit tests for YUV
+ conversions
+Message-ID: <Zx9ebb1sEehlM150@fedora>
 Mail-Followup-To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
 	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
 	Melissa Wen <melissa.srw@gmail.com>,
@@ -69,16 +72,18 @@ Mail-Followup-To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
 	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
-	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
 	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
- <20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com>
- <53d04022-7199-4880-9b41-1ee7abdad997@riseup.net>
+	Pekka Paalanen <pekka.paalanen@collabora.com>
+References: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
+ <20241007-yuv-v12-13-01c1ada6fec8@bootlin.com>
+ <d33f982f-f4ca-4bb2-9454-9d01a927d8b5@riseup.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,78 +93,160 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <53d04022-7199-4880-9b41-1ee7abdad997@riseup.net>
+In-Reply-To: <d33f982f-f4ca-4bb2-9454-9d01a927d8b5@riseup.net>
 X-GND-Sasl: louis.chauvet@bootlin.com
 
-On 26/10/24 - 11:51, Maíra Canal wrote:
+On 26/10/24 - 11:49, Maíra Canal wrote:
 > Hi Louis,
 > 
-> On 07/10/24 13:46, Louis Chauvet wrote:
-> > Add the support for:
-> > - RGB888
-> > - BGR888
+> On 07/10/24 13:10, Louis Chauvet wrote:
+> > From: Arthur Grillo <arthurgrillo@riseup.net>
 > > 
+> > Create KUnit tests to test the conversion between YUV and RGB. Test each
+> > conversion and range combination with some common colors.
+> > 
+> > The code used to compute the expected result can be found in comment.
+> > 
+> > [Louis Chauvet:
+> > - fix minor formating issues (whitespace, double line)
+> > - change expected alpha from 0x0000 to 0xffff
+> > - adapt to the new get_conversion_matrix usage
+> > - apply the changes from Arthur
+> > - move struct pixel_yuv_u8 to the test itself]
+> > 
+> > Signed-off-by: Arthur Grillo <arthurgrillo@riseup.net>
+> > Acked-by: Pekka Paalanen <pekka.paalanen@collabora.com>
 > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > > ---
-> >   drivers/gpu/drm/vkms/vkms_formats.c | 7 +++++++
-> >   drivers/gpu/drm/vkms/vkms_plane.c   | 2 ++
-> >   2 files changed, 9 insertions(+)
+> >   drivers/gpu/drm/vkms/Kconfig                  |  15 ++
+> >   drivers/gpu/drm/vkms/Makefile                 |   1 +
+> >   drivers/gpu/drm/vkms/tests/.kunitconfig       |   4 +
+> >   drivers/gpu/drm/vkms/tests/Makefile           |   3 +
+> >   drivers/gpu/drm/vkms/tests/vkms_format_test.c | 232 ++++++++++++++++++++++++++
+> >   drivers/gpu/drm/vkms/vkms_formats.c           |   7 +-
+> >   drivers/gpu/drm/vkms/vkms_formats.h           |   5 +
+> >   7 files changed, 265 insertions(+), 2 deletions(-)
 > > 
-> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> > index e34bea5da752..2376ea8661ac 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> > @@ -461,6 +461,9 @@ READ_LINE_ARGB8888(ABGR8888_read_line, px, px[3], px[0], px[1], px[2])
-> >   READ_LINE_ARGB8888(RGBA8888_read_line, px, px[0], px[3], px[2], px[1])
-> >   READ_LINE_ARGB8888(BGRA8888_read_line, px, px[0], px[1], px[2], px[3])
-> > +READ_LINE_ARGB8888(RGB888_read_line, px, 255, px[2], px[1], px[0])
-> > +READ_LINE_ARGB8888(BGR888_read_line, px, 255, px[0], px[1], px[2])
-> > +
-> >   READ_LINE_16161616(ARGB16161616_read_line, px, px[3], px[2], px[1], px[0])
-> >   READ_LINE_16161616(ABGR16161616_read_line, px, px[3], px[0], px[1], px[2])
-> >   READ_LINE_16161616(XRGB16161616_read_line, px, 0xFFFF, px[2], px[1], px[0])
-> > @@ -679,6 +682,10 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
-> >   		return &RGBX8888_read_line;
-> >   	case DRM_FORMAT_BGRX8888:
-> >   		return &BGRX8888_read_line;
-> > +	case DRM_FORMAT_RGB888:
-> > +		return RGB888_read_line;
 > 
-> Shouldn't it be &RGB888_read_line?
+> [...]
+> 
+> > +
+> > +static void vkms_format_test_yuv_u8_to_argb_u16(struct kunit *test)
+> > +{
+> > +	const struct yuv_u8_to_argb_u16_case *param = test->param_value;
+> > +	struct pixel_argb_u16 argb;
+> > +
+> > +	for (size_t i = 0; i < param->n_colors; i++) {
+> > +		const struct format_pair *color = &param->colors[i];
+> > +		struct conversion_matrix matrix;
+> > +
+> > +		get_conversion_matrix_to_argb_u16
+> > +			(DRM_FORMAT_NV12, param->encoding, param->range, &matrix);
+> > +
+> > +		argb = argb_u16_from_yuv888(color->yuv.y, color->yuv.u, color->yuv.v, &matrix);
+> 
+> This should be `argb_u16_from_yuv161616` as you fixed in [1].
 
-According to [1], &function, function, ***function are understood the 
-same by gcc.
+(I suppose you talk about [2]?)
 
-But this is ugly and I will change to use & everywhere, thanks!
+I understand that I change this function in a future series, but [2] is 
+not Acked-By yet. I prefer to have the opportunity to merge this 
+first series (with yuv888) quickly and to work on [2] later (I have less 
+conflicts between [2] and the rest of my work on configFS).
 
-[1]:https://stackoverflow.com/questions/6893285/why-do-function-pointer-definitions-work-with-any-number-of-ampersands-or-as
+If I get a Acked-by on [2], I can merge the two commits and directly use 
+yuv161616 conversion functions.
 
 Thanks,
 Louis Chauvet
+
+[2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-6-d47da50d4674@bootlin.com/
  
-> > +	case DRM_FORMAT_BGR888:
-> > +		return BGR888_read_line;
-> 
-> Same.
+> [1] https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-5-d47da50d4674@bootlin.com/
 > 
 > Best Regards,
 > - Maíra
 > 
-> >   	case DRM_FORMAT_ARGB16161616:
-> >   		return &ARGB16161616_read_line;
-> >   	case DRM_FORMAT_ABGR16161616:
-> > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> > index a243a706459f..0fa589abc53a 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> > @@ -21,6 +21,8 @@ static const u32 vkms_formats[] = {
-> >   	DRM_FORMAT_XBGR8888,
-> >   	DRM_FORMAT_RGBX8888,
-> >   	DRM_FORMAT_BGRX8888,
-> > +	DRM_FORMAT_RGB888,
-> > +	DRM_FORMAT_BGR888,
-> >   	DRM_FORMAT_XRGB16161616,
-> >   	DRM_FORMAT_XBGR16161616,
-> >   	DRM_FORMAT_ARGB16161616,
+> > +
+> > +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.a, color->argb.a), 257,
+> > +				    "On the A channel of the color %s expected 0x%04x, got 0x%04x",
+> > +				    color->name, color->argb.a, argb.a);
+> > +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.r, color->argb.r), 257,
+> > +				    "On the R channel of the color %s expected 0x%04x, got 0x%04x",
+> > +				    color->name, color->argb.r, argb.r);
+> > +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.g, color->argb.g), 257,
+> > +				    "On the G channel of the color %s expected 0x%04x, got 0x%04x",
+> > +				    color->name, color->argb.g, argb.g);
+> > +		KUNIT_EXPECT_LE_MSG(test, abs_diff(argb.b, color->argb.b), 257,
+> > +				    "On the B channel of the color %s expected 0x%04x, got 0x%04x",
+> > +				    color->name, color->argb.b, argb.b);
+> > +	}
+> > +}
+> > +
+> > +static void vkms_format_test_yuv_u8_to_argb_u16_case_desc(struct yuv_u8_to_argb_u16_case *t,
+> > +							  char *desc)
+> > +{
+> > +	snprintf(desc, KUNIT_PARAM_DESC_SIZE, "%s - %s",
+> > +		 drm_get_color_encoding_name(t->encoding), drm_get_color_range_name(t->range));
+> > +}
+> > +
+> > +KUNIT_ARRAY_PARAM(yuv_u8_to_argb_u16, yuv_u8_to_argb_u16_cases,
+> > +		  vkms_format_test_yuv_u8_to_argb_u16_case_desc
+> > +);
+> > +
+> > +static struct kunit_case vkms_format_test_cases[] = {
+> > +	KUNIT_CASE_PARAM(vkms_format_test_yuv_u8_to_argb_u16, yuv_u8_to_argb_u16_gen_params),
+> > +	{}
+> > +};
+> > +
+> > +static struct kunit_suite vkms_format_test_suite = {
+> > +	.name = "vkms-format",
+> > +	.test_cases = vkms_format_test_cases,
+> > +};
+> > +
+> > +kunit_test_suite(vkms_format_test_suite);
+> > +
+> > +MODULE_LICENSE("GPL");
+> > +MODULE_DESCRIPTION("Kunit test for vkms format conversion");
+> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
+> > index adb1228e5201..0b201185eae7 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_formats.c
+> > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
+> > @@ -7,6 +7,8 @@
+> >   #include <drm/drm_rect.h>
+> >   #include <drm/drm_fixed.h>
+> > +#include <kunit/visibility.h>
+> > +
+> >   #include "vkms_formats.h"
+> >   /**
+> > @@ -247,8 +249,8 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
+> >   	return out_pixel;
+> >   }
+> > -static struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
+> > -						  const struct conversion_matrix *matrix)
+> > +VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
+> > +							    const struct conversion_matrix *matrix)
+> >   {
+> >   	u16 r, g, b;
+> >   	s64 fp_y, fp_channel_1, fp_channel_2;
+> > @@ -278,6 +280,7 @@ static struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel
+> >   	return argb_u16_from_u16161616(0xffff, r, g, b);
+> >   }
+> > +EXPORT_SYMBOL_IF_KUNIT(argb_u16_from_yuv888);
+> >   /*
+> >    * The following functions are read_line function for each pixel format supported by VKMS.
+> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.h b/drivers/gpu/drm/vkms/vkms_formats.h
+> > index d583855cb320..b4fe62ab9c65 100644
+> > --- a/drivers/gpu/drm/vkms/vkms_formats.h
+> > +++ b/drivers/gpu/drm/vkms/vkms_formats.h
+> > @@ -13,4 +13,9 @@ void get_conversion_matrix_to_argb_u16(u32 format, enum drm_color_encoding encod
+> >   				       enum drm_color_range range,
+> >   				       struct conversion_matrix *matrix);
+> > +#if IS_ENABLED(CONFIG_KUNIT)
+> > +struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
+> > +					   const struct conversion_matrix *matrix);
+> > +#endif
+> > +
+> >   #endif /* _VKMS_FORMATS_H_ */
 > > 
 
