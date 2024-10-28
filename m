@@ -1,272 +1,165 @@
-Return-Path: <linux-kernel+bounces-385839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 392AC9B3C74
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:05:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3605A9B3C76
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA4E5282548
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:05:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EADE11F22B4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59ED1E131B;
-	Mon, 28 Oct 2024 21:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93871E1049;
+	Mon, 28 Oct 2024 21:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="auQDsa9M"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBUmn9j9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEEF18FC75;
-	Mon, 28 Oct 2024 21:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5108418FC75
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730149509; cv=none; b=uMWtCwT6/ThqSUtRmaEY71+M9eMxWpz8VHFPir/zjSMjG68afCyMt7IANQSqC0u0JO76Y4LcDZ9ueiGy93swtUvDSQvH10rIP89RYn0Sjr9NxJDTN8PTGl7CGrYXWxA5t9ynYjOhcXISG9icsKRZmyXlH3AitgoHDjiAJhUvoaw=
+	t=1730149541; cv=none; b=WjPL+y1bGoyAOI6MrOd6WLN0VAFrLErPnUi70Ylyem9DsokOeRh5kMUu6krz20tlyak8KldvX0KTPUu//PceA1wPk+4QspOvB+HizOoDq2e4J/uUmo/aQFEVLIYUlZBUOt3cANZ/ILrWyY06EF7RM6ZIIXARrsDh8866e92tDtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730149509; c=relaxed/simple;
-	bh=/eqOJMR5/kRv1PZUjhCMyPYy8GBp0CAd6+vdfLRQbdI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gkz1kV8NsMaJvfL14ryPE/WajsY/caB1/WnagiiT1D7tb6sFt0i0iTNnivSu3gc4FBkGxfpSGsGbGrWVYQyOIC0x2Ob6MFq2m5129THHADSzKcG+UoIabHi0136XMhKk4GKHZ5BSIXFE4pC4Cd9BATdXmfrpwzceX6hdKj9DL6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=auQDsa9M; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6ea051d04caso12213177b3.0;
-        Mon, 28 Oct 2024 14:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730149506; x=1730754306; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aLEBUO3zgTSFGN59d665N/08QPwfc0hewb2QT9/bCXo=;
-        b=auQDsa9MSurdqhXqznEynN05nQULs+sEUrDUJtpCKqMJcAyDCYdAghDJI36+VRjffh
-         iRhvJfuaUjpeELxtMxY+S1o0gIp9ya5zxCGvMiCmdb+9fKDg3hYRcLo+Xn5FS4dM599P
-         M6YIG+sMnIgDwiDm4C3ci/r18EoaPs/pN664w3OcKrWrOhLWS1hpeTsWJAy2Vw8Rjczz
-         X7ycBRcs9akzzS6CgpobV54lCblm+xy9C8CWBWNTJa+gwD/1DeUFTqpP6YCMXCQBwK5j
-         ugzmOSaUT2IwHeLDAdeBWzKUs0UlvezccU+CZyisHywOWB44PqlZWWBBJn/04UEks5yz
-         wooQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730149506; x=1730754306;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aLEBUO3zgTSFGN59d665N/08QPwfc0hewb2QT9/bCXo=;
-        b=uBVRJmsnYw+wl6S3rCR9Z0LBxqPIOoRi3lJhfL9BNGrY82oW4bNfNdmNslyxLS7n29
-         JkF+QRWaRlVqIkegij8KOmRmrGvKwXjriT7lvCAbBYtRYeAL1rnJwWCJ2yrKDuGuHJDW
-         T61yoIQ3vYegh4OiRXTTH+9YzFQWqSWsG4ZQI99haaZ1WzMBWchLHtBNstQe005Akq5C
-         P5I2RcUUw3wkeeEotizbC3AFRK+rg7jou0i4A2Hx8bDbVmrEQCnR2VqrDG9A9fPvxwo1
-         rKkTZ1HK2Il5HeZ0utjTz4Eg0/2IlgUGff+D3xGZppoc9u7nwzEXnIA6VzD0nBLYp5S0
-         sjFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUTwQjDCeUc5+/q0jqqqGHrS5T5U+UBAcnkLWyYD62h25ex4NpwTEWvjocXFnI7mdZWqKBEyXQNKt6CFi0n@vger.kernel.org, AJvYcCV33y/D5GMiilnqJ7IFB8o100Pe03BEj9wO1s7+diM42+d988SpxdKnYa4FarZMX3J/5gyrrIQmchnQ@vger.kernel.org, AJvYcCWlOYOKC3CnCQXn7qpyFZehC/SNtZrBsKnLKM0jjrFBZPfCdeYKgdEY8hjIqoOWNBsdYX7NLpew@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy52Bw98U5zEF9e18SujQolLmO+/tbaZzoCfT6C54INHge2kfk8
-	yiNBPcixAcshGGhLmRA8oBgNnzEwP9Qw3uSdKfIXwiDiy7Oa4N0N
-X-Google-Smtp-Source: AGHT+IG+IPKm2Fw3hNr6RVtM0QZGyoPz7y6L5l00CFINrofIoAx5v5ae8AlvQ2HENfUdx2ayHL2eZA==
-X-Received: by 2002:a05:690c:6085:b0:6d5:7b2f:60a0 with SMTP id 00721157ae682-6e9d8afb26dmr97249987b3.34.1730149506371;
-        Mon, 28 Oct 2024 14:05:06 -0700 (PDT)
-Received: from localhost (fwdproxy-frc-034.fbsv.net. [2a03:2880:21ff:22::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c76a07sm16223747b3.81.2024.10.28.14.05.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 14:05:06 -0700 (PDT)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: hannes@cmpxchg.org
-Cc: nphamcs@gmail.com,
-	shakeel.butt@linux.dev,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	muchun.song@linux.dev,
-	tj@kernel.org,
-	lizefan.x@bytedance.com,
-	mkoutny@suse.com,
-	corbet@lwn.net,
-	lnyng@meta.com,
-	akpm@linux-foundation.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
-Date: Mon, 28 Oct 2024 14:05:05 -0700
-Message-ID: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1730149541; c=relaxed/simple;
+	bh=jSREJ7Vl/o+COTD1EEPwv67TR+VkaOCYrWUpvL9ukks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ncjIcER0W7ulYba2JTpQ/W/ljcf/3VPMI/X9vYNMCMeJr6KMkbSV7lN/iNe6OdJMuPtAfPVbKZs6rfhK0heJ04tunE+U159nsJcaiABSmY5KgRetmcayKvg+CHaSdqNUeJzPkoq0Nhz3/jwggZ1oa30P5zsOn0er3mN0xf9WLYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oBUmn9j9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3440AC4CEC3;
+	Mon, 28 Oct 2024 21:05:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730149538;
+	bh=jSREJ7Vl/o+COTD1EEPwv67TR+VkaOCYrWUpvL9ukks=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oBUmn9j9Y+PRaVYQCasQncMKxmL+hWaAtwv+egQ0g6kcZ6hFFjEFIhVHx9CFoAUt3
+	 EigaqFyJCHORXAatM5pOdygAa+d80mA3Pdeid45b8co8LnBoUM3DuleeHRb8yRsTgK
+	 SZG++pY1owDVpgA3wRxYnsayqJbkPD8IJigeXEEgnWRWUxdRvxbUElMtYoMdJddQcg
+	 zuF3h7tgxKpMwMxGPk0Dx9Fs0SgSxoFqs2uUZ3a8ZP2F9JJjUVmJQIylZY/g9TJOaQ
+	 omHKQ7BwvoGb8jnYElL0AqhF0K//6gFAICjcXmpOGKfSn+pFa64lslrKkaMAB4FI+o
+	 LuolpX99WNJxQ==
+Date: Mon, 28 Oct 2024 21:05:33 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Peter Xu <peterx@redhat.com>, linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
+ error path behaviour
+Message-ID: <91d9f81c-b971-4764-8f21-4011023628c0@sirena.org.uk>
+References: <6e8deda970b982e1e8ffd876e3cef342c292fbb5.1729715266.git.lorenzo.stoakes@oracle.com>
+ <61461dcc-e455-450d-9c01-5465003fc31c@sirena.org.uk>
+ <c24a174d-c8f3-4267-87ae-cf77fa587e82@lucifer.local>
+ <CAHk-=whD9MrPwPMBgVG16T_u+my8xYtZg2tUGz932HeodVX7Bg@mail.gmail.com>
+ <438f50c5-8b8c-444f-ae85-10e5151f3f24@lucifer.local>
+ <57mgmdx7wgfwci3yo3ggkmcnm3ujamgkwcccm77ypvmer5tegn@opiq3ceh2uvy>
+ <ykzmur56ms7fm4midi6tbncjvcvf7ue4lp7e4orblrmwnefw3e@oa3enlpdrcrr>
+ <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local>
+ <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
+ <a1ffccb8-3f53-4486-a250-282ddc7054dd@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="30okYTcXzfb7tVuJ"
+Content-Disposition: inline
+In-Reply-To: <a1ffccb8-3f53-4486-a250-282ddc7054dd@lucifer.local>
+X-Cookie: Remember the... the... uhh.....
 
-This patch introduces a new counter to memory.stat that tracks hugeTLB
-usage, only if hugeTLB accounting is done to memory.current. This
-feature is enabled the same way hugeTLB accounting is enabled, via
-the memory_hugetlb_accounting mount flag for cgroupsv2.
 
-1. Why is this patch necessary?
-Currently, memcg hugeTLB accounting is an opt-in feature [1] that adds
-hugeTLB usage to memory.current. However, the metric is not reported in
-memory.stat. Given that users often interpret memory.stat as a breakdown
-of the value reported in memory.current, the disparity between the two
-reports can be confusing. This patch solves this problem by including
-the metric in memory.stat as well, but only if it is also reported in
-memory.current (it would also be confusing if the value was reported in
-memory.stat, but not in memory.current)
+--30okYTcXzfb7tVuJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Aside from the consistency between the two files, we also see benefits
-in observability. Userspace might be interested in the hugeTLB footprint
-of cgroups for many reasons. For instance, system admins might want to
-verify that hugeTLB usage is distributed as expected across tasks: i.e.
-memory-intensive tasks are using more hugeTLB pages than tasks that
-don't consume a lot of memory, or are seen to fault frequently. Note that
-this is separate from wanting to inspect the distribution for limiting
-purposes (in which case, hugeTLB controller makes more sense).
+On Mon, Oct 28, 2024 at 08:43:08PM +0000, Lorenzo Stoakes wrote:
 
-2. We already have a hugeTLB controller. Why not use that?
-It is true that hugeTLB tracks the exact value that we want. In fact, by
-enabling the hugeTLB controller, we get all of the observability
-benefits that I mentioned above, and users can check the total hugeTLB
-usage, verify if it is distributed as expected, etc.
+> +/*
+> + * We check VMA flag validity early in the mmap() process, however this =
+can
+> + * cause issues for arm64 when using MTE, which requires that it be used=
+ with
+> + * shmem and in this instance and only then is VM_MTE_ALLOWED set permit=
+ting
+> + * this operation.
+> + *
+> + * To avoid having to tear down a partially complete mapping we do this =
+ahead of
+> + * time.
+> + */
+> +static vm_flags_t arch_adjust_flags(struct file *file, vm_flags_t vm_fla=
+gs)
+> +{
+> +	if (!IS_ENABLED(CONFIG_ARM64))
+> +		return vm_flags;
+> +
+> +	if (shmem_file(file))
+> +		return vm_flags | VM_MTE_ALLOWED;
+> +}
 
-With this said, there are 2 problems:
-(a) They are still not reported in memory.stat, which means the
-    disparity between the memcg reports are still there.
-(b) We cannot reasonably expect users to enable the hugeTLB controller
-    just for the sake of hugeTLB usage reporting, especially since
-    they don't have any use for hugeTLB usage enforcing [2].
+This doesn't build:
 
-[1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com/
-[2] Of course, we can't make a new patch for every feature that can be
-    duplicated. However, since the existing solution of enabling the
-    hugeTLB controller is an imperfect solution that still leaves a
-    discrepancy between memory.stat and memory.curent, I think that it
-    is reasonable to isolate the feature in this case.
- 
-Suggested-by: Nhat Pham <nphamcs@gmail.com>
-Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+mm/mmap.c:1595:1: error: non-void function does not return a value in all c=
+ontrol paths [-Werror,-Wreturn-type]
+ 1595 | }
+      | ^
 
----
-Changelog
-v3:
-  * Removed check for whether CGRP_ROOT_HUGETLB_ACCOUNTING is on, since
-    this check is already handled by lruvec_stat_mod (and doing the
-    check in hugetlb.c actually breaks the build if MEMCG is not
-    enabled.
-  * Because there is now only one check for the flags, I've opted to
-    do all of the cleanup in a separate patch series.
-  * Added hugetlb information in cgroup-v2.rst
-  * Added Suggested-by: Shakeel Butt
-v2:
-  * Enables the feature only if memcg accounts for hugeTLB usage
-  * Moves the counter from memcg_stat_item to node_stat_item
-  * Expands on motivation & justification in commitlog
-  * Added Suggested-by: Nhat Pham
+with that corrected:
 
- Documentation/admin-guide/cgroup-v2.rst |  5 +++++
- include/linux/mmzone.h                  |  3 +++
- mm/hugetlb.c                            |  2 ++
- mm/memcontrol.c                         | 11 +++++++++++
- mm/vmstat.c                             |  3 +++
- 5 files changed, 24 insertions(+)
+diff --git a/mm/mmap.c b/mm/mmap.c
+index d1ab4301c671..cea051c5fef3 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -1587,11 +1587,10 @@ static unsigned long __mmap_region(struct file *fil=
+e, unsigned long addr,
+  */
+ static vm_flags_t arch_adjust_flags(struct file *file, vm_flags_t vm_flags)
+ {
+-	if (!IS_ENABLED(CONFIG_ARM64))
+-		return vm_flags;
++	if (IS_ENABLED(CONFIG_ARM64) && shmem_file(file))
++		vm_flags |=3D VM_MTE_ALLOWED;
+=20
+-	if (shmem_file(file))
+-		return vm_flags | VM_MTE_ALLOWED;
++	return vm_flags;
+ }
+=20
+ unsigned long mmap_region(struct file *file, unsigned long addr,
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 69af2173555f..bd7e81c2aa2b 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1646,6 +1646,11 @@ The following nested keys are defined.
- 	  pgdemote_khugepaged
- 		Number of pages demoted by khugepaged.
- 
-+	  hugetlb
-+		Amount of memory used by hugetlb pages. This metric only shows
-+		up if hugetlb usage is accounted for in memory.current (i.e.
-+		cgroup is mounted with the memory_hugetlb_accounting option).
-+
-   memory.numa_stat
- 	A read-only nested-keyed file which exists on non-root cgroups.
- 
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 17506e4a2835..972795ae5946 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -220,6 +220,9 @@ enum node_stat_item {
- 	PGDEMOTE_KSWAPD,
- 	PGDEMOTE_DIRECT,
- 	PGDEMOTE_KHUGEPAGED,
-+#ifdef CONFIG_HUGETLB_PAGE
-+	NR_HUGETLB,
-+#endif
- 	NR_VM_NODE_STAT_ITEMS
- };
- 
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 190fa05635f4..fbb10e52d7ea 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -1925,6 +1925,7 @@ void free_huge_folio(struct folio *folio)
- 				     pages_per_huge_page(h), folio);
- 	hugetlb_cgroup_uncharge_folio_rsvd(hstate_index(h),
- 					  pages_per_huge_page(h), folio);
-+	lruvec_stat_mod_folio(folio, NR_HUGETLB, -pages_per_huge_page(h));
- 	mem_cgroup_uncharge(folio);
- 	if (restore_reserve)
- 		h->resv_huge_pages++;
-@@ -3093,6 +3094,7 @@ struct folio *alloc_hugetlb_folio(struct vm_area_struct *vma,
- 
- 	if (!memcg_charge_ret)
- 		mem_cgroup_commit_charge(folio, memcg);
-+	lruvec_stat_mod_folio(folio, NR_HUGETLB, pages_per_huge_page(h));
- 	mem_cgroup_put(memcg);
- 
- 	return folio;
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 7845c64a2c57..5444d0e7bb64 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -310,6 +310,9 @@ static const unsigned int memcg_node_stat_items[] = {
- 	PGDEMOTE_KSWAPD,
- 	PGDEMOTE_DIRECT,
- 	PGDEMOTE_KHUGEPAGED,
-+#ifdef CONFIG_HUGETLB_PAGE
-+	NR_HUGETLB,
-+#endif
- };
- 
- static const unsigned int memcg_stat_items[] = {
-@@ -1346,6 +1349,9 @@ static const struct memory_stat memory_stats[] = {
- 	{ "unevictable",		NR_UNEVICTABLE			},
- 	{ "slab_reclaimable",		NR_SLAB_RECLAIMABLE_B		},
- 	{ "slab_unreclaimable",		NR_SLAB_UNRECLAIMABLE_B		},
-+#ifdef CONFIG_HUGETLB_PAGE
-+	{ "hugetlb",			NR_HUGETLB			},
-+#endif
- 
- 	/* The memory events */
- 	{ "workingset_refault_anon",	WORKINGSET_REFAULT_ANON		},
-@@ -1441,6 +1447,11 @@ static void memcg_stat_format(struct mem_cgroup *memcg, struct seq_buf *s)
- 	for (i = 0; i < ARRAY_SIZE(memory_stats); i++) {
- 		u64 size;
- 
-+#ifdef CONFIG_HUGETLB_PAGE
-+		if (unlikely(memory_stats[i].idx == NR_HUGETLB) &&
-+		    !(cgrp_dfl_root.flags & CGRP_ROOT_MEMORY_HUGETLB_ACCOUNTING))
-+			continue;
-+#endif
- 		size = memcg_page_state_output(memcg, memory_stats[i].idx);
- 		seq_buf_printf(s, "%s %llu\n", memory_stats[i].name, size);
- 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index b5a4cea423e1..871566b04b79 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1273,6 +1273,9 @@ const char * const vmstat_text[] = {
- 	"pgdemote_kswapd",
- 	"pgdemote_direct",
- 	"pgdemote_khugepaged",
-+#ifdef CONFIG_HUGETLB_PAGE
-+	"nr_hugetlb",
-+#endif
- 	/* system-wide enum vm_stat_item counters */
- 	"nr_dirty_threshold",
- 	"nr_dirty_background_threshold",
--- 
-2.43.5
+the relevant tests all pass for me.
 
+Tested-by: Mark Brown <broonie@kernel.org>
+
+I'd have expected arch_adjust_flags() to be something overridden by the
+arch headers (probably like arch_calc_vm_prot_bits() and friends), but
+if this is juat a short lived fix it's probably not worth the trouble.
+
+--30okYTcXzfb7tVuJ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcf/JwACgkQJNaLcl1U
+h9Cc7Af/aNeZKhCpi9WJcdYq9a3seoFWXO0Wh8lqOYlCIQBfxm+Y6ccCbS6kLiGc
+f8sGnyhIrPFULEy32UIKW/+4j3V9hrOiSLzqxwZPhFk7jiiXyeUiB2+ysFlwQBQS
+oM3cpTjdRGJh0KbskC9tV6oSr7lI2lZDQen5Uca/ZLIY92wT2cJpyXl5967J2T8r
+7gH7ft7wtwHPc4BLdaVinER6exeKFc8ulT4DvgkLTEoWIbKY1cvPGSDLKgzp8P/Y
+1z591P9PPF/CeSW2pyv40Oz+o0ywyAQAYYpRypIV8ClNn+y1JUd3wGPiNSYQtt7G
+j2jMvOVNQ0ArYO32KNoj714a1Uz1ZA==
+=pBTn
+-----END PGP SIGNATURE-----
+
+--30okYTcXzfb7tVuJ--
 
