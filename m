@@ -1,107 +1,94 @@
-Return-Path: <linux-kernel+bounces-385036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AE4F9B319D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:24:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3416A9B319F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:24:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30164282CC4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:24:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A8A1F227EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295581DBB37;
-	Mon, 28 Oct 2024 13:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E4C1DBB13;
+	Mon, 28 Oct 2024 13:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="njnJGrsW"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xd0uaURh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KBHtBEgY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68812AE8C;
-	Mon, 28 Oct 2024 13:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 423642AE8C;
+	Mon, 28 Oct 2024 13:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730121839; cv=none; b=Xv1/jYdHBuwDnC7XXBoRuMGkm6cGnwlm0QHrk+QKk/XlezWXsnbEu3OidAQPYoqh3Dsx+fOSo3alAimVHWmX374WZ7EdX/lBeJk55H32ku3DM2Cq9MoBzyB0zexh676ti7B5X7C8cSvqJRWzR7saRKpjH99tJfF+1d6cwP18DJo=
+	t=1730121852; cv=none; b=is6qlV8Oe3T17JZGdO6azZxMHMVBNGd4FdgjpBUVJSoNdBslpkDpteHvY0IyQMmCNrqaaJcFwjrzCFmaZa1sPlqp04mGcQmHnhajkmFat/l5xHz/Mg5QV1C/jHTXpiNQlauGKPs5E1w4F/FDhVw2vga00OI9FVXBBQVFPzQpSSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730121839; c=relaxed/simple;
-	bh=gEMbi5qxENymLNxKYAFczZWzBdAX+/dVNMjqLtq+TDs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KDOdlDgfLBlZA4AmSbu0anRx0Saxf/H8nURxNi86uv0dHf2U/Nv2tfBZq7lPv4Hr7+cy1XD/d5P9Ma5JFnmD+DY5EEkE8uxubFBQ3S1xQkDOBxzT7aJFDDtYrFWevBOZJ9SjnKnWq4OPgsub2m1J1Mf6gEd8umeUL2rbrWG2NOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=njnJGrsW; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 9ADEF240029;
-	Mon, 28 Oct 2024 13:23:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730121834;
+	s=arc-20240116; t=1730121852; c=relaxed/simple;
+	bh=OdvquLJql4T6/abFdDOsCg7zFxus9oufaJ6qBWWrzFM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=G94nfqDPXl5nzoPf0YCHb/4E9n5ES6+pYkBMHeE5XeDH+aXOb+lcc4h6w4RSqOz+4meiUtvxZ79sLLnm21QncvLPmmpTA3hb5JGV/XOuIW5sw/o3V1+YhnoYqxFJYuhNfd+aeirspOtHSKMTk7pEXnZ/ZFZs4FT5pP70cwfFblw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xd0uaURh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KBHtBEgY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730121848;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=APaln243WoT7nii0on9C4x7guubAGe/M53+of8eJv5s=;
-	b=njnJGrsWVK9asMCMPGMctmF57Kox69zCrCfsz+LOIqCN4moXKSfkEO3SYkl9CsF/SPUrgi
-	0/4NmfIhsL9hEFP4VdVjkp7IUK+57okxYbKVA0QtmylfKdVn2iboGERuCvL5kDgxTNVhKs
-	41LVaa8rv/S7CMaITreDvHqf+p688YhDrjOzZlOCN8FGRChLQoxQFaAczDfw2yKTHG7AbS
-	kfYqZM17n5yO7ICwMC8Pcxv49CJbyqm0ycBmSLT/ikYg4ayQgLjFiUSwmK0bRxwX/iIrg0
-	qHYA/sZr+fgzC+aVwMcQ0I21hb4lpAxG+Xl8pZCFyzujAmbUBa1n2ivThXkCpw==
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	Simon Horman <horms@kernel.org>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	thomas.petazzoni@bootlin.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH net-next v2] Documentation: networking: Add missing PHY_GET command in the message list
-Date: Mon, 28 Oct 2024 14:23:51 +0100
-Message-Id: <20241028132351.75922-1-kory.maincent@bootlin.com>
-X-Mailer: git-send-email 2.34.1
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VhsVqV5jYEkIynG0zz0Qr/t2rcHeHGuuP0ghYC3amZQ=;
+	b=xd0uaURhRcPWFXPlgN9+F5xTfkzRZgP2wP566k5nLlON0FZAjNFbTMAwLGoZAJDsbNiABz
+	t8kxR+SLIrCA9Zx2506smBI9pfdGCq/EFP92DedCS61HH8/1lWkUvbl5uKczAFCG7+5Mq8
+	Jgb4cLvH39qg/58or4RH2sGkaTAtZoUI9MBhndtz85t7/ob47mYLq2kkjmO+pYcdP6sVxd
+	AJiwnrTqN9aPhmaPC7sXCwGl2D8gni4LVhSJZIUsJ3y5yU9impvvyKcAuV7D3hyx+71VZF
+	pcD42I2Aj8tyYAR38CTJO9XeXjdj8T9eyUU2F2lpvbvNcEMi2rIXfquzJynsZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730121848;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VhsVqV5jYEkIynG0zz0Qr/t2rcHeHGuuP0ghYC3amZQ=;
+	b=KBHtBEgYX/1XuKxlCZzlyr16vfIGMxwA0EbzmS0YlxwlIV5maH8f1PlsXAeBBgddpZ2p2+
+	p2moWFIRWK7ytICA==
+To: Gregory CLEMENT <gregory.clement@bootlin.com>, Aleksandar Rikalo
+ <arikalo@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Vladimir Kondratiev
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?Q?Th=C3=A9o?= Lebrun
+ <theo.lebrun@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Gregory CLEMENT
+ <gregory.clement@bootlin.com>
+Subject: Re: [PATCH] irqchip: mips-gic: Handle case with cluster without CPU
+ cores
+In-Reply-To: <20241025-no-cpu-cluster-support-v1-1-5e81fcf9f25c@bootlin.com>
+References: <20241025-no-cpu-cluster-support-v1-1-5e81fcf9f25c@bootlin.com>
+Date: Mon, 28 Oct 2024 14:24:08 +0100
+Message-ID: <87iktc2wef.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: kory.maincent@bootlin.com
+Content-Type: text/plain
 
-ETHTOOL_MSG_PHY_GET/GET_REPLY/NTF is missing in the ethtool message list.
-Add it to the ethool netlink documentation.
+On Fri, Oct 25 2024 at 17:46, Gregory CLEMENT wrote:
+> It is possible to have no CPU cores in a cluster; in such cases, it is
+> not possible to access the GIC, and any indirect access leads to an
+> exception. This patch dynamically skips the indirect access in such
+> situations.
+>
+> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> ---
+> This patch is a follow-up of the series "MIPS: Support I6500
+> multi-cluster configuration"
+> https://lore.kernel.org/lkml/20241019071037.145314-1-arikalo@gmail.com/#t
 
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
+And should be integrated into the next iteration of that series.
 
-Change in v2:
-- Change PHY_NTF documentation
----
- Documentation/networking/ethtool-netlink.rst | 3 +++
- 1 file changed, 3 insertions(+)
+Thanks,
 
-diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
-index 295563e91082..b25926071ece 100644
---- a/Documentation/networking/ethtool-netlink.rst
-+++ b/Documentation/networking/ethtool-netlink.rst
-@@ -236,6 +236,7 @@ Userspace to kernel:
-   ``ETHTOOL_MSG_MM_GET``                get MAC merge layer state
-   ``ETHTOOL_MSG_MM_SET``                set MAC merge layer parameters
-   ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``   flash transceiver module firmware
-+  ``ETHTOOL_MSG_PHY_GET``               get Ethernet PHY information
-   ===================================== =================================
- 
- Kernel to userspace:
-@@ -283,6 +284,8 @@ Kernel to userspace:
-   ``ETHTOOL_MSG_PLCA_NTF``                 PLCA RS parameters
-   ``ETHTOOL_MSG_MM_GET_REPLY``             MAC merge layer status
-   ``ETHTOOL_MSG_MODULE_FW_FLASH_NTF``      transceiver module flash updates
-+  ``ETHTOOL_MSG_PHY_GET_REPLY``            Ethernet PHY information
-+  ``ETHTOOL_MSG_PHY_NTF``                  Ethernet PHY information change
-   ======================================== =================================
- 
- ``GET`` requests are sent by userspace applications to retrieve device
--- 
-2.34.1
-
+        tglx
 
