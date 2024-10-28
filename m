@@ -1,105 +1,125 @@
-Return-Path: <linux-kernel+bounces-384948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40819B3088
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:41:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3159B3095
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:43:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785521F210C0
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD81281A81
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3438C1DA313;
-	Mon, 28 Oct 2024 12:41:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A881DD55F;
+	Mon, 28 Oct 2024 12:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ql0dlzhw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WTDpBQ/5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881534C83;
-	Mon, 28 Oct 2024 12:41:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614B51DAC9B;
+	Mon, 28 Oct 2024 12:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119274; cv=none; b=ewUS8rqmXal0jiAs7Cv0VgmRNqTo3NHbMcJFnVhoke33UGK50U1m6KO5j7dDLK9XA6/JIHb0oC3sU2DnHCTHhe3eA3/ej4TbJA0YGIkxXl3x3ikb7Iiddx8xfKjxJ5/9mJpxhx/9TCxdJeMxv503DVum9iidPVwOjeQZqGieot0=
+	t=1730119308; cv=none; b=SI3Cpfx5EBvpvwmRR29f9meaU9+NhK952bBr297UiaoGJxIygv+Xh37C/1r7rfMi9eefIQ4Omrf0EFBO1KTwPFVRiXUPmS4EDGFhDxHjFW9dFMStwOicOULrhzB1m5LSahgcfZm4NePUp7lkOcaeDw8J9OlFDWInlZNvYVChd9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119274; c=relaxed/simple;
-	bh=bZuEglKDOjZNBOrJVtiQqz7AMNZWK2RhVSZWBNWNwys=;
+	s=arc-20240116; t=1730119308; c=relaxed/simple;
+	bh=4ONvF2I7OrjaYkXyRNDV3GuLYBaHROdWabfoSR9X7lI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B9DDDwfSnfiXT1FPnfyXQH9te19GGC8CBI1KwwVIGU+TSb4MQq2EJ8PfvasqhBh2w8enRjlN2CRgiM/99JieV3D3EzUBS3lXxHuZHqz4Mq1fYMANpC41MllC6jK1vQWygkuX3jaukio512ho/J9kOPWOnDqBu/+DdUVFSGCanvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ql0dlzhw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB43CC4CEC3;
-	Mon, 28 Oct 2024 12:41:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730119273;
-	bh=bZuEglKDOjZNBOrJVtiQqz7AMNZWK2RhVSZWBNWNwys=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ql0dlzhwYEguQ9IWl+y5rgXE/woq2d6vj+VTApVdyVxJhLxGlzpCImQ66ND0ppXkw
-	 1tg2361KwcQOhbnAiX7ZS579bQFejbtSDPiiEn7VZfLPxyOHx0dEenD1pkcFbMd3Eh
-	 POlLHzc5NZ+EsjV1EoRMtdAEdJxxqtnW3kpnOrcVsX9UwQF8juO1B1GMOSRKJopaFU
-	 7fDXJZTREMgmLasNOorp7X5g9sPJ9VhznhliNskLkZE0hJcfKfDLf0hxltlqWr/8HD
-	 /rmp42CvUdlTY1Dcpyaa61ne4uJzSVHy0b26HMR6oYoxxXmm5ou0deI9S1B3Qnnl1T
-	 3AZaEm7CSIBvg==
-From: Christian Brauner <brauner@kernel.org>
-To: Hugh Dickins <hughd@google.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Darrick J. Wong" <djwong@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-block@vger.kernel.org,
+	 MIME-Version; b=Dw8cXv8NyHp6jBWT0957AYL1AnxRr3AjIkRAoogodqFjRA1wwuwwkQPu5fP9Sj7+SqsOgabHRrLgGsGZQQ4vcVrIxI9QNpYUQ0JZaSSwsbd3NcnyWDjEcfDHHRWh5XBBRr+Pf0CEkCsKZv+Y1n8l1X/BqvBa4fUdoujcLjcKSag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WTDpBQ/5; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730119306; x=1761655306;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=4ONvF2I7OrjaYkXyRNDV3GuLYBaHROdWabfoSR9X7lI=;
+  b=WTDpBQ/5GNwOkKI11mbuB452pY8ArzIwnrwUzvGwf8n+oGM3SI1LzaXG
+   dQaeZVA0fSM8WTrw/hbZezWFMq9PxLuo0JIfEAehv6fJpjEBB8W+3bo/I
+   83t2YgQQFDnuWxHp3jCBKz8CjFx3TAgMcKzzpTD6kUSC4RL/gc86NELbo
+   xCsO/hw9BG5C26yxHa68MGPB5OZiLE2kc4BF3bKcCVcAQaQhiVIv11+Cc
+   oLzphv95xm6vyBmuYW3kdNVU0QoO09Et9KOqsDCz7qt/Dh8IyPs4s0Vba
+   Z5r6guackC2PcarLJh2JR2//N7YzRLVkIv8qMA+QiG6vpVq5RTtHXZD84
+   w==;
+X-CSE-ConnectionGUID: hexqLRDDTcO6Z24U6hnW7g==
+X-CSE-MsgGUID: Rh7yY9a8T8emJETM0Gie9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="32575283"
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="32575283"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 05:41:46 -0700
+X-CSE-ConnectionGUID: YYi/k7GeQ+OqpL4Hyvz6yA==
+X-CSE-MsgGUID: NhmYR+1pQrCeH/UFZxcYXg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="82420919"
+Received: from gargmani-mobl1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.222.169])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 05:41:42 -0700
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	kirill.shutemov@linux.intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	dan.j.williams@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: x86@kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH] iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP
-Date: Mon, 28 Oct 2024 13:41:06 +0100
-Message-ID: <20241028-gulasch-gestiegen-3b9502e5fbcc@brauner>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <dd5f0c89-186e-18e1-4f43-19a60f5a9774@google.com>
-References: <dd5f0c89-186e-18e1-4f43-19a60f5a9774@google.com>
+	kvm@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	isaku.yamahata@intel.com,
+	adrian.hunter@intel.com,
+	nik.borisov@suse.com,
+	kai.huang@intel.com
+Subject: [PATCH v6 05/10] x86/virt/tdx: Add missing header file inclusion to local tdx.h
+Date: Tue, 29 Oct 2024 01:41:07 +1300
+Message-ID: <3f268f096b7427ffbf39358d8559d884c85bec88.1730118186.git.kai.huang@intel.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <cover.1730118186.git.kai.huang@intel.com>
+References: <cover.1730118186.git.kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1265; i=brauner@kernel.org; h=from:subject:message-id; bh=bZuEglKDOjZNBOrJVtiQqz7AMNZWK2RhVSZWBNWNwys=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaTLtyVN3n33ZIhNyomEKRXvu63e3r107pHjZF33cAau5 I+lkU+KO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACay/y/Df9dST+UbM58nlZ3o /bXT+mhsLIvPiTMf/FQk/ZhtJNlmbmT4wyF24/KzX6k6/2/bSsxdcU5JfL1K8Y31F8sPBPTf9Uu 4yAYA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-On Sun, 27 Oct 2024 15:23:23 -0700, Hugh Dickins wrote:
-> generic/077 on x86_32 CONFIG_DEBUG_KMAP_LOCAL_FORCE_MAP=y with highmem,
-> on huge=always tmpfs, issues a warning and then hangs (interruptibly):
-> 
-> WARNING: CPU: 5 PID: 3517 at mm/highmem.c:622 kunmap_local_indexed+0x62/0xc9
-> CPU: 5 UID: 0 PID: 3517 Comm: cp Not tainted 6.12.0-rc4 #2
-> ...
-> copy_page_from_iter_atomic+0xa6/0x5ec
-> generic_perform_write+0xf6/0x1b4
-> shmem_file_write_iter+0x54/0x67
-> 
-> [...]
+Compiler attributes __packed and __aligned, and DECLARE_FLEX_ARRAY() are
+currently used in arch/x86/virt/vmx/tdx/tdx.h, but the relevant headers
+are not included explicitly.
 
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
+There's no build issue in the current code since this "tdx.h" is only
+included by arch/x86/virt/vmx/tdx/tdx.c and it includes bunch of other
+<linux/xxx.h> before including "tdx.h".  But for the better explicitly
+include the relevant headers to "tdx.h".  Also include <linux/types.h>
+for basic variable types like u16.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+---
+ arch/x86/virt/vmx/tdx/tdx.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
+diff --git a/arch/x86/virt/vmx/tdx/tdx.h b/arch/x86/virt/vmx/tdx/tdx.h
+index ec879d54eb5c..b1d705c3ab2a 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.h
++++ b/arch/x86/virt/vmx/tdx/tdx.h
+@@ -2,6 +2,9 @@
+ #ifndef _X86_VIRT_TDX_H
+ #define _X86_VIRT_TDX_H
+ 
++#include <linux/types.h>
++#include <linux/compiler_attributes.h>
++#include <linux/stddef.h>
+ #include <linux/bits.h>
+ 
+ /*
+-- 
+2.46.2
 
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] iov_iter: fix copy_page_from_iter_atomic() if KMAP_LOCAL_FORCE_MAP
-      https://git.kernel.org/vfs/vfs/c/c749d9b7ebbc
 
