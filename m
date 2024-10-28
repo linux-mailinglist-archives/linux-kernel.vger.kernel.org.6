@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-384553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76A359B2BA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:40:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 592F79B2BAB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 901D91C21D45
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 804CC1C21B06
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187F7192D64;
-	Mon, 28 Oct 2024 09:40:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE8731B0F3B;
+	Mon, 28 Oct 2024 09:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oyIlGhfJ"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E8Wy/uS8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72C3C1925A3;
-	Mon, 28 Oct 2024 09:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EA8193060;
+	Mon, 28 Oct 2024 09:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730108412; cv=none; b=cbsrvn3O1byhIOhlg0aDxrjmhzltLdxUrsP686qkqN0PWTNVYqItMwLSaCVa/JlAV/DlP+b9W2SiMntpjcDo6r2MQRjJiTYkCGOA9lCUmDR+hnrJUCLmkGeaFRkaFujBbLFL59zAnQn6K197WwI4siSClDPTxbdOIhgmcUK9iSY=
+	t=1730108427; cv=none; b=EmGA9Tfjngyu8dMybxTAHu+owc2KAhh9iJWvgk535iRcva3zMHTS45iknCY1nkyjofR4mP6fAk6zFXDJNqcU2y+QsYLvAt1LSMx8UbpIdOanHdgR5DwnfIhWsgVhaWubIC1gdy4Gx1TcqxCehXwt7v2buBU8Yfc5wCrzN2xY1zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730108412; c=relaxed/simple;
-	bh=O5kz1xCmlBQBdxeByLow7npJLRRLQ5WbRHyKWS0+WF4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lByJhzKJ4QiT51QDMWuKFq3XSD9Q8uGeITLvAvMtbx9x2ab0j3SlWIpcsYEj5MsklpACMPfJEhzdPFHG9AAh5x2L/+YjWwpRsVR8oaG5L9XX7B8VfYqgxVCoOWYYPPnuLW6Jq/6zWo4PYZmdcdibaj/k9L+RAccQ1YrHrRB6z+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oyIlGhfJ; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 4811CFF805;
-	Mon, 28 Oct 2024 09:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730108403;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JUWnLlSRZVzDl17/Xmn95kNcmJVCVGETdPtoa4YwkzQ=;
-	b=oyIlGhfJUjZosoDr3gShNqnj3ltRJvKaxhy54XnBVJLf3SqtwOvLhL60/UfW9dv3BW/DwE
-	ZB3zVKSNrvvkL+UEtiQzYkNSciVC4hFGciHWsrv7JDANNFize54gO3nny5BNEUIEc71MW4
-	UyBhytJY2ddfXR9S8J3BhmvdMULhCo4vexh/GFa5im7hutEGhle8gBJYfrFu5jnJzx1MpZ
-	pwiAQTvW1MoxCY1qsZtvlUCAExy3kBowk3VOELHFgxN71DQXN1HdzqciNzPJgp5SZ/Qb7n
-	+sqqhIHJvshVqB17c3Zk5ypnC2vNWpVBd2hbuiusmOeGvi4HMSUa1eCfeQtAGQ==
-Message-ID: <47d10f3f-3741-4a84-a1a5-8cd03bc22396@bootlin.com>
-Date: Mon, 28 Oct 2024 10:40:02 +0100
+	s=arc-20240116; t=1730108427; c=relaxed/simple;
+	bh=cJ+xOHKsd2TE6St+Y4s0cnha3ZN14d8zhSDTUgcPAJQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ls687QX1Rva06dIlgcQYpX42g0qAWL49WipH/S+3LxpQrMJkJ7hw2wW3oyw2TyixOcLJxECNNh9czzCpJm9/FMm7euQym7v3Q4T1cYIiDJ6ygN2wlnG8ZTxp2hZpxlsGqNX8mUmAmG8OWP4GAYhmm/83JvClLPBM6qiWgooUU7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E8Wy/uS8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD5BEC4CEC3;
+	Mon, 28 Oct 2024 09:40:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730108426;
+	bh=cJ+xOHKsd2TE6St+Y4s0cnha3ZN14d8zhSDTUgcPAJQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=E8Wy/uS8MmrVLrH6Eg66uVopyNyEs0D1w1NRIett4Jm9ho0cwd7BDvKUDI2tqtqaw
+	 FNEjL4wUvmmxz76o0sDV4u3FQ7LRJU8Z5dqiXscxE9iADdm+PKlmL31hftZLyNkwds
+	 fpmQ2gTPdz4S/s1bWxzzwDRc6iwzCuCkw9YVO4/1PhGsuxY296H0PYQ/YvOvcpfX5M
+	 BhQ+ppSTvKZP6Ydv6dCfxOJnCyi5/Z1G7Eb9L08+oKmBhT/fpiHASxEvKtaLp2AO78
+	 PIjd7hdol5g9Zzq1n1YpmJ7hZe/fLb6SdS+rvkCvFintECgOPDLReqiZWCA9QMgWj+
+	 e2sz3O+aLu6zQ==
+From: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Subject: [PATCH 0/4] Add support for NoTagAccess memory attribute
+Date: Mon, 28 Oct 2024 15:10:10 +0530
+Message-ID: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: gpib: Fix error handling paths in
- cb_gpib_probe()
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Dave Penkler <dpenkler@gmail.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-staging@lists.linux.dev
-References: <459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr>
-Content-Language: en-US
-From: Thomas Richard <thomas.richard@bootlin.com>
-In-Reply-To: <459c267de8c9bf48fcb555364930ae7e3cdc798b.1729940596.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: thomas.richard@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Christophe,
+A VMM allows assigning different types of memory regions to the guest and not
+all memory regions support storing allocation tags. Currently, the kernel
+doesn't allow enabling the MTE feature in the guest if any of the assigned
+memory regions don't allow MTE. This prevents the usage of MTE in the guest even
+though the guest will never use these memory regions as allocation tagged
+memory.
 
-On 10/26/24 13:03, Christophe JAILLET wrote:
-> If cb_gpib_config() fails, 'info' needs to be freed, as already done in the
-> remove function.
-> 
-> While at it, remove a pointless comment related to gpib_attach().
-> 
-> Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
+This patch series provides a way to enable MTE in such configs. Translations
+from non-MTE-allowed memory regions are installed in stage-2 with NoTagAccess
+memory attributes. Guest access of allocation tags with these memory regions
+will result in a VM Exit.
 
-The Fixes tag is not correct.
-I guess you did a wrong copy-paste as you sent a patch for the CGBC MFD
-driver few minutes before :)
+Note: We could use the existing KVM_EXIT_MEMORY_FAULT for this. I chose to add a
+new EXIT type because this is an arm64-specific exit type and I was not sure
+whether KVM_EXIT_MEMORY_FAULT needs a NoTagAccess flag.
 
-Regards,
 
-Thomas
+Aneesh Kumar K.V (Arm) (4):
+  arm64: Update the values to binary from hex
+  arm64: cpufeature: add Allocation Tag Access Permission (MTE_PERM)
+    feature
+  arm64: mte: update code comments
+  arm64: mte: Use stage-2 NoTagAccess memory attribute if supported
+
+ arch/arm64/include/asm/cpufeature.h  |  5 ++++
+ arch/arm64/include/asm/kvm_emulate.h |  5 ++++
+ arch/arm64/include/asm/kvm_pgtable.h |  1 +
+ arch/arm64/include/asm/memory.h      | 14 +++++-----
+ arch/arm64/kernel/cpufeature.c       |  9 +++++++
+ arch/arm64/kvm/hyp/pgtable.c         | 16 ++++++++---
+ arch/arm64/kvm/mmu.c                 | 40 +++++++++++++++++++---------
+ arch/arm64/tools/cpucaps             |  1 +
+ include/uapi/linux/kvm.h             |  7 +++++
+ 9 files changed, 77 insertions(+), 21 deletions(-)
+
+
+base-commit: c964ced7726294d40913f2127c3f185a92cb4a41
+-- 
+2.43.0
+
 
