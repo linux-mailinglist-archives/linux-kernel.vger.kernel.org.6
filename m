@@ -1,109 +1,140 @@
-Return-Path: <linux-kernel+bounces-384979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8736A9B3102
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:51:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D17A9B3110
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29CB6B2163B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:51:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE47FB22D3A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E901D88C4;
-	Mon, 28 Oct 2024 12:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C0B1DB360;
+	Mon, 28 Oct 2024 12:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MR/BUeRE"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y8iEhkDq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE3B21D0BA3
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4A411D63D2;
+	Mon, 28 Oct 2024 12:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119857; cv=none; b=WDxVSPTjv+LWnEesAquHq51sauPiLWxm7YGHGHYn2Ow09ZQxvHdLL4CTwLkhZF2g1RnotCigHm17s+CW8yhiR+01ZE/gPigOsVzBadYk5MXqWjsqhubgL2hBURuj3wCUHx60LthbjcyWemOywt4+zTdOw5c/y94Goo4xHHQroS8=
+	t=1730119925; cv=none; b=rtr5EWlmXLf9aoOogdm2AGHwq4dLGgHS/DoTdz1OJSoGvNRWwc/RYtrihxgfruFbIkj6jdnnxsWgCqFIdFo2VSwbJuNOyJ/wZ0GVl5DUHgufsI33hDDTrDQ1KSlYBoDN8Enmd2f8f6JHoY9PvYouPz2JuS6m18WAasYfJ6spDBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119857; c=relaxed/simple;
-	bh=AYO3PNcBJZeAAVOJ0pw64p0JkE8nuCZ2hxlHA8IKMcM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rclo2eBojYREkxOrX3IZa47QTSfZADEEuCZgtZvtV1Uazbws5pjuFQmojzV/RcAzlFysNQA3eQYrYOu/z5c1jdCd/KtDgKJ42wjhrmNo8LmlK+dfeSasvENcMIX5KSjqkxVPX/3wot+yR7qaKiJxJz8hmEbBNEWbsMSaI70KXlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MR/BUeRE; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb599aac99so37867241fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:50:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730119853; x=1730724653; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AYO3PNcBJZeAAVOJ0pw64p0JkE8nuCZ2hxlHA8IKMcM=;
-        b=MR/BUeREtJ8CZXFYmIQUB+WVgzshuVVlsLvr3Pgz5fmUORtruZHDapxwpdl5iiJTdV
-         +rkYdmLZaR2+3fvnqJ9dKaKv0n4XKK48CXCdYbe5pu+HQoGZ4AuR2rPMbXu+xm0UoJjq
-         G8VtV4T17ddI8PGh7XKb5igiYpM9BJ8wAtnCB41Lst8ukPzNjUARjXL0ErBqXyfyc+nC
-         4v+W9h7q8xbZ3f9YtshXxdCcJQvKKw6Y9p0SBo8jb25OKtHcjGWJelgWEW6666gLM+rB
-         VxUhpa87hw0fT611ushxLm/sl6VaC/Zo73+ee3ENwtE4EIcoWKF1MsHuI4aMrJL7qv81
-         pXmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730119853; x=1730724653;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AYO3PNcBJZeAAVOJ0pw64p0JkE8nuCZ2hxlHA8IKMcM=;
-        b=q3IJHZr3H8VXvvwWJDwlskEhRNA5CrLejyskAvxt9dKqA6llFg4ZEihVpFuKmH6/Kc
-         1qooIfRpGbhWeekpRq7sEjSGfvWRf5RiGU4lOXVT0XrBzlySX6r0wkl6llPtimBEuKMQ
-         tWYqZ36I+b7SPbysh92jhTAV/YJPcuVvV3tn2S5Oc85pEbLVNcgKCB3ao52WWb8/0gtj
-         /SIoBuedaU1eB9SIqshyCX0WyaDdts8iqtZplHnS/9SA/4qrO+hc+EUjgx4fctAbMqXx
-         HatHigKWN8QjQaUP8UkTlCIgN4cyroSiIJlTujsmCgtnim7Bw11VIIZerI3t/wU55gi5
-         4A9A==
-X-Forwarded-Encrypted: i=1; AJvYcCVatiqF6uhASpNY3uMT68xL4pJzYEJJwyMvbo8ucRdEjDH6hYxK6p6DRP1Rs70Z8rS0rD+xGVZG7teKhxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKnTOlS6nVe7SethyJiuxg3VJG8Q19Ug5KJvYOflO49bcwcmNI
-	f03JLiOAfhzjj/nhDkVURS4G+2JoKemYuyl38YP9NwdZokTx6WMT6buv5zUlH5vE3KZl7vg2mGC
-	+Kja4iVsCu1JqwD+XNN3i/c+yHsNCu7757nxdUQ==
-X-Google-Smtp-Source: AGHT+IFyS0VRzvcWtTYjPJ6aFo1370dNfA5Rzczcri/1+uh9IrNwUqO9gUn/qEejwvTdifyJ5bQ/y8gQDFfVYiaICms=
-X-Received: by 2002:a2e:bc0b:0:b0:2fb:5f9d:c2a3 with SMTP id
- 38308e7fff4ca-2fcbe067736mr32063691fa.29.1730119853038; Mon, 28 Oct 2024
- 05:50:53 -0700 (PDT)
+	s=arc-20240116; t=1730119925; c=relaxed/simple;
+	bh=ViqoxvYuvEE/rvI6dbIX3LUOrMTjFBetq6t2H5h8Knk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IpBdl0cwdVP2K23wOZ8JD1EhVO6k/26GQhuN83pYR4MvXEfy7Cpj3vDN7h7m/7+7Un+dwv9BXiXvU4fwjMlbJUHGYs7yVwe6Zx0w5wD5+3pYqwdwOFEXlLnKjM8hvNx5ty7cgHbkndqkYdd3c2ER0qIdTWwL936bFx81xZYioIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y8iEhkDq; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730119923; x=1761655923;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ViqoxvYuvEE/rvI6dbIX3LUOrMTjFBetq6t2H5h8Knk=;
+  b=Y8iEhkDqWfE3l1vrLtMuAGhw527w4NqtNuCh+B2VHop1bsD6f9eK8KWP
+   K+EemMiyeKjmivTCM5ouey82ao3kMPVI88oSXuOOHlQUXgJkvx66YNlw6
+   nedSOGzdbFMS+wtqAAT7SEYeYHfTRskLtDF84iRWPTVBXYgCpDw922XTq
+   vjLuLushcYB2irrbFN/GCvGrYMSvF2wTZTWADbIOuAw9j1WREJy1eyjut
+   ibffNjA5740R1lVyifTPrpxdWUPNTqwlSz43zUv6ugZg5iKQiyYSEEUHS
+   n/rPxf1cG2RCtwuiWqTvS1I3mne8wcJx3rlbf4JD2+kbfCVGPIJi6xtT9
+   Q==;
+X-CSE-ConnectionGUID: vAKTDLwtT4KMpUSqPTm1VQ==
+X-CSE-MsgGUID: fIl/nQ5VS0mUpdMlCSpSng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11238"; a="41105100"
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="41105100"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 05:52:03 -0700
+X-CSE-ConnectionGUID: V79q7ukSSDmnEIMuNayl+Q==
+X-CSE-MsgGUID: wRAFbqNRRaOdFfiRMs1v/Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="81668712"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 28 Oct 2024 05:52:01 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5PDy-000cRp-1u;
+	Mon, 28 Oct 2024 12:51:58 +0000
+Date: Mon, 28 Oct 2024 20:51:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Troy Mitchell <troymitchell988@gmail.com>, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, troymitchell988@gmail.com,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+Message-ID: <202410282041.JgAO0LV0-lkp@intel.com>
+References: <20241028053220.346283-3-TroyMitchell988@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028063939.6276-1-himanshu.bhavani@siliconsignals.io>
-In-Reply-To: <20241028063939.6276-1-himanshu.bhavani@siliconsignals.io>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Mon, 28 Oct 2024 13:50:42 +0100
-Message-ID: <CACRpkdZfeVfS4A_=L5GEjDd_1-oSyRAog08eehMUy0U-fSPAKw@mail.gmail.com>
-Subject: Re: [PATCH v3] dt-bindings: pinctrl: convert pinctrl-mcp23s08.txt to
- yaml format
-To: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
-Cc: robh@kernel.org, krzk+dt@kernel.org, tarang.raval@siliconsignals.io, 
-	Conor Dooley <conor+dt@kernel.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028053220.346283-3-TroyMitchell988@gmail.com>
 
-On Mon, Oct 28, 2024 at 7:40=E2=80=AFAM Himanshu Bhavani
-<himanshu.bhavani@siliconsignals.io> wrote:
+Hi Troy,
 
-> YAML binding file provides the conversion of the original text-based
-> binding for the pinctrl-mcp23s08 to microchip,mcp23s08.yaml.
->
-> following compatible strings using the deprecated mcp prefix have been
-> removed from this binding:
->
-> - mcp,mcp23s08
-> - mcp,mcp23s17
-> - mcp,mcp23008
-> - mcp,mcp23017
->
-> Signed-off-by: Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>
+kernel test robot noticed the following build warnings:
 
-Patch applied!
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on robh/for-next linus/master v6.12-rc5 next-20241028]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks for working on this Himanshu, excellent.
+url:    https://github.com/intel-lab-lkp/linux/commits/Troy-Mitchell/dt-bindings-i2c-spacemit-add-support-for-K1-SoC/20241028-133452
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20241028053220.346283-3-TroyMitchell988%40gmail.com
+patch subject: [PATCH v2 2/2] i2c: spacemit: add support for SpacemiT K1 SoC
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20241028/202410282041.JgAO0LV0-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241028/202410282041.JgAO0LV0-lkp@intel.com/reproduce)
 
-Yours,
-Linus Walleij
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410282041.JgAO0LV0-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/i2c/busses/i2c-k1.c: In function 'spacemit_i2c_is_last_msg':
+>> drivers/i2c/busses/i2c-k1.c:340:12: warning: suggest explicit braces to avoid ambiguous 'else' [-Wdangling-else]
+     340 |         if (i2c->dir == DIR_READ)
+         |            ^
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/else +340 drivers/i2c/busses/i2c-k1.c
+
+   337	
+   338	static int spacemit_i2c_is_last_msg(struct spacemit_i2c_dev *i2c)
+   339	{
+ > 340		if (i2c->dir == DIR_READ)
+   341			if (i2c->unprocessed == 1 && i2c->msg_idx == i2c->msg_num - 1)
+   342				return 1;
+   343		else if (i2c->dir == DIR_WRITE)
+   344			if (!i2c->unprocessed && i2c->msg_idx == i2c->msg_num - 1)
+   345				return 1;
+   346	
+   347		return 0;
+   348	}
+   349	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
