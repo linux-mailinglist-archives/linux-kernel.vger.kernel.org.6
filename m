@@ -1,129 +1,108 @@
-Return-Path: <linux-kernel+bounces-385136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAF929B32EC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:14:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD7D9B32EE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26EDC1C2032A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:14:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8202FB223CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E591DD55F;
-	Mon, 28 Oct 2024 14:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B82B31DD554;
+	Mon, 28 Oct 2024 14:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKKPzqIh"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ljbiRyat"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202AF63C;
-	Mon, 28 Oct 2024 14:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C6F63C;
+	Mon, 28 Oct 2024 14:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730124862; cv=none; b=pZzbRcxJQjMZQ/1fYGflyGNKkg49IkX3OFfDQ3/OidSrm4grF5O3lnxrd9+hiyc1bNioeR7Kg6vyk6tb4ZZQbUS9ptEgDwGsntSEsGxU+OCIX21Z7pk1QHpOdEVcSksq7MWNCcptXtDQJdgNkjlm0+dFNxTGXwH15baJr0EQqUs=
+	t=1730124868; cv=none; b=ErAgC6T+t4GFIBYeE1dgPcvjjIYPrZqrAkpl9uXWsTqawN/nV7IbKqNr8N7nRWpBV+g/UyAVlEehSGwV2stvaAjJOdlRWpplwBKyO9qqfzJXmzKu4BPKVL5f6/ypLtx+JdzbSjDENXk5FdAxrM79AKtF8b39e/J0YkGRVswSSrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730124862; c=relaxed/simple;
-	bh=GQX5Pb+IETNUOivIhCGCaePu+zRAB58rqRlXvBf8agI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SMENnu4J1jAcqmDspxXZDikUlwNnbiFYhRZKqk0bsxLsqXGX3hsVDDqcneAHTbKcPcSPM0JavXzT/j5FBaueE3fduKLOUKX1YM+wgdigF/yluSXDB2cVBzMtHk7opLEeVzGPuQv6BjirFAo1kcXc+seT2NZYGvVsyuLzM0ATd8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKKPzqIh; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5ebc349204cso2222000eaf.3;
-        Mon, 28 Oct 2024 07:14:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730124858; x=1730729658; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sQvmx8XCaZ5BumSb5F5FIZndVO4LQIIYW3NW5YxKSVU=;
-        b=SKKPzqIhveO1DmrOAE2K5vDX8nR3djNphV16f5/VY44cJ3NeBR2mJ+I96mzaFOCoJf
-         wAcvjcwGjea2s/fCHbekl18HQEpIjGmgu0VILR0RaS4g4lGisSPixjadIAGzWERhnUlx
-         Tx/U/qxSfyYaZjsiZGZvDpal+QXgN5PqFTGHxQmxKAvBjLrCGmg9OzM5KTT0XrbQ6YCK
-         ZGgZThRdS+c7WkVXXOMKzLuyjpTZnqGympPWY3ZzOx21S/637mv1RqAzO0CLvwcBfVYD
-         8TOuuIlxcpHlq0UGg4dL/j32gUVbB6rJ2wmQPP7K+o51qcy9p84CthgzZ4cPEyZGIunn
-         p+fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730124858; x=1730729658;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sQvmx8XCaZ5BumSb5F5FIZndVO4LQIIYW3NW5YxKSVU=;
-        b=H9Uph2B1EgtOzXpd4WyL+UV1WkLYEZj7Mauoas7PEmtR+yUqt5Omp5WGp2yXEquGxe
-         rPuPlYDFn/xvYjUJ/BU2+ztJomzYZsPT2R2XNmu3D54vKuCVfD/IbWWa/2L16scxqrlO
-         8GSLKAuiSNQTMkpFMbkCVMMcK2gMZJInwqyitvBvPnJhppOwkgqAraW9yTpGQbXraM7o
-         16hn5ThUf8v/cqX4ohyfW7nH+xckkv1LsS0mWmUtz9UArCKRXUMEw6Fl3MeqfyGKvgCs
-         qDFO/vqmJecHoA3mKHhXX+WNaQ/3We4J8H+gwprvxM/i0xT/vGamYfnooD1o0NvIGVF2
-         DKZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCg7Q1d05KieMi55pf/2gEUCEO5Lxvw/jkLBYpiAxMeF3oTL8qYhlXrvAnwGquH7m4dk+wL5/eXvPznXA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYtbcKOhdcBAR/EHb2TtiHY+BVBktTaQS/cMu7vVISJ6XnOyl7
-	7hkbUtNGpDtP7ox+jrqHkaZliFUCLRse1gWoWeK+WmdI8G9Z1SHFp8A8CIg/2xLIqQVPnqYl50c
-	H9VprsMjckmb/8sOsMUK6dk0FmdWNFQ==
-X-Google-Smtp-Source: AGHT+IHE30IXMwXuui4C/52gos9SY0fbJFI9FvqkR1z7gTNCRNEvJAkL2T+Ut8UfhfOTDqHwHG9kNbtGfEiUQhAHrCw=
-X-Received: by 2002:a05:6820:1e02:b0:5e1:ea03:928f with SMTP id
- 006d021491bc7-5ec23a6e68fmr4772280eaf.7.1730124857707; Mon, 28 Oct 2024
- 07:14:17 -0700 (PDT)
+	s=arc-20240116; t=1730124868; c=relaxed/simple;
+	bh=uUkjiW3ieirbS6YNuwJO2MWW+78ISJdxJh/yYlhJbyM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qUpZQmn3PHMj8Xy3mUc8c9NSM6L+xIFA0Ag/iE6/VnrmDvZQPZGULxZzJZ8p3sEs55j9DlpuO8V0009OjIf8LwB/yU4YFNuZoWxYEisyT/TdgZMrkPkNQ/CqWrGmGCxjX9ZPCm33tnVML9N/QhuR5zflcJD943Hvghvy9JNLtkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ljbiRyat; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB5EC4CECD;
+	Mon, 28 Oct 2024 14:14:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730124867;
+	bh=uUkjiW3ieirbS6YNuwJO2MWW+78ISJdxJh/yYlhJbyM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ljbiRyatUhdjoe4e8gVfxWIBSnHOfJWx7eF1TmMGjSgSiuzx+1vOSp1/P8BTHIOuc
+	 fMW/M3EAnxqWbmAO54/WODlFmmutNXtUroiWeJtAisgOtTIUOWsyBPPTYsmFowuX2w
+	 wdwNgz8meXp9tYYNziGtQ/P3GW4OmpOALc+hcEDfWyQKbIdRsuHlfmsj4WnEU8JRJe
+	 9FyOea+TljjlpquVZEVBn5xgh73wiNW9OTClVDxJurlgaNEUp7E4Q6ahSKkvHuxhDL
+	 24DhZbcT3MLp1yBEreMl9WxfMih56XAsVBT1wSGbL8WdM3qJW0Lxt2ay3JxZ+HmwYH
+	 NO6pKOyh6XuZA==
+Date: Mon, 28 Oct 2024 14:14:20 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com,
+	Marc Zyngier <maz@kernel.org>, Eric Auger <eauger@redhat.com>
+Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
+Message-ID: <b7b10796-5bbb-4cd3-b66b-64eb80208c49@sirena.org.uk>
+References: <20241028062312.001273460@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
-In-Reply-To: <20240920075306.704665-1-sergio.paracuellos@gmail.com>
-From: Sergio Paracuellos <sergio.paracuellos@gmail.com>
-Date: Mon, 28 Oct 2024 15:14:06 +0100
-Message-ID: <CAMhs-H-ChXQSZ_6EBiTKtD7ve2j2QsVvgVm0B5O1O7BfGwKFmQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] clocksource: move System Tick Counter from 'arch/mips/ralink'
-To: linux-mips@vger.kernel.org
-Cc: daniel.lezcano@linaro.org, tglx@linutronix.de, tsbogend@alpha.franken.de, 
-	john@phrozen.org, linux-kernel@vger.kernel.org, yangshiji66@outlook.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tvPZucr4J+gWp7S6"
+Content-Disposition: inline
+In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
+X-Cookie: Remember the... the... uhh.....
 
-On Fri, Sep 20, 2024 at 9:53=E2=80=AFAM Sergio Paracuellos
-<sergio.paracuellos@gmail.com> wrote:
->
-> Hi Daniel,
->
-> System Tick Counter is present in RT3352 and MT7620 Ralink SoCs. This dri=
-ver has
-> been in 'arch/mips/ralink' from the beggining and can be easily moved int=
-o a more
-> accurate place in 'drivers/clocksource' folder. This makes easier to enab=
-le it
-> for compile test targets as well as reduce LOC in architecture specific f=
-olders.
-> Bindings are already mainlined and can be located here [0].
->
-> Thanks in advance for your time.
->
-> Best regards,
->    Sergio Paracuellos
->
-> [0]: https://elixir.bootlin.com/linux/latest/source/Documentation/devicet=
-ree/bindings/timer/ralink,cevt-systick.yaml
->
-> Sergio Paracuellos (2):
->   clocksource: Add Ralink System Tick Counter driver
->   MIPS: ralink: remove System Tick Counter driver
->
->  arch/mips/ralink/Kconfig                              |  7 -------
->  arch/mips/ralink/Makefile                             |  2 --
->  drivers/clocksource/Kconfig                           | 10 ++++++++++
->  drivers/clocksource/Makefile                          |  1 +
->  .../clocksource/timer-ralink.c                        | 11 ++++-------
->  5 files changed, 15 insertions(+), 16 deletions(-)
->  rename arch/mips/ralink/cevt-rt3352.c =3D> drivers/clocksource/timer-ral=
-ink.c (91%)
 
-Gentle ping on this patch series :-)
+--tvPZucr4J+gWp7S6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Best regards,
-    Sergio Paracuellos
->
-> --
-> 2.25.1
->
+On Mon, Oct 28, 2024 at 07:22:22AM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.6 release.
+> There are 261 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+The KVM vgic_init selftest has started failing on all the stables that
+"KVM: arm64: Don't eagerly teardown the vgic on init error" has been
+backported to.  This also happens upstream, as discussed in the thread
+there:
+
+   https://lore.kernel.org/linux-arm-kernel/20241009183603.3221824-1-maz@kernel.org/
+
+this is a testsuite issue rather than an issue with the change itself.
+Other than that things look good:
+
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--tvPZucr4J+gWp7S6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcfnDwACgkQJNaLcl1U
+h9BaJQf/QTTf6k6tCWxSgHmMRBn8k89lHPr84RJyxWkK6Nt6x81yk97XHOn11g+n
+SPbZNqYiVjjTxHF5JXY0GWQebxyOoBbejis+pwvWUxgUkC8opEp+FyOHjrsCfaJK
++ZEk3pdo+DUiAWBj+bZB0cjTAZ2JGe1O1wicWAm44IBR5d89kuEuX7gbaKLOm77X
+Wxc2FJxh8MlXHKl8DELaQUEbFVpLsI0PNHj0m6EvVTuDdx9Z45Zkmedg6N1V1i8v
+D3N5O+LJ2vIcQ5FPnZYlYxnbb8mwLLhUvi/fQZFEf1bWRLt/o7Fq8BgTJNm6xH5D
+tdYsCkvZ4aa/w+mgIzt9Vqn2rQja8w==
+=xRCX
+-----END PGP SIGNATURE-----
+
+--tvPZucr4J+gWp7S6--
 
