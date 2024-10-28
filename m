@@ -1,449 +1,127 @@
-Return-Path: <linux-kernel+bounces-385058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65129B31D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:38:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073539B31DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93DA0284A83
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390591C21A0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97B21DA636;
-	Mon, 28 Oct 2024 13:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061D21DC046;
+	Mon, 28 Oct 2024 13:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="cvoVCWye"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hGOAgT/i"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5170A1DACBB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 13:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95DD91D5178;
+	Mon, 28 Oct 2024 13:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730122726; cv=none; b=nzhog3OypVrAYcfcRLGtqcFDwVYioW0XUHye2Mm47iijhH45ff05coTubo6gPRmaU83JHj5QG6dabtqVn63uRg388jQWQsKtZJhFRCMsdzNg3EqSRg/nFJt+DIDfAHUZM5EIxbA9NxjWl3U/bymnmHV1jBTWu+8JNBz5F7GvIa0=
+	t=1730122749; cv=none; b=iNducZNfxm322ZCdcoNWbGy0RDUzK2keK/oyNqovrLKDaOe0r16BXR2zHpFkqbEzE3GYQogJeMkw5EacMUVPZFh1DpcfV0vf6BNg0N2t4KRVnn3F/uc5Qb8wxOVk5tq86wyfYmXvEkoDeKwsnZbqPDBHLis3OL3/ctrOoiwc6VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730122726; c=relaxed/simple;
-	bh=ImCDSQfVPz/nLq+bQZp4fY5LSkrred7qiEcvfTY0HG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofT3NU3QWxzw8eRpNljFADvx84epCfjlfB+znqS75sIbKJCqHaDwrYFSA1x9smd7/q1JILbjrq+9ssoh19H5Xor6nQBw20qNsp5sl9IhlWZQ0UYHQESQ0C2oiplSTmh7GN9Ks/4ySLAnavjPueNqIye8eL/u80RzpN8GDVI4428=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=cvoVCWye; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb443746b8so39932311fa.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 06:38:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730122720; x=1730727520; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=02+v7YcuVfRITYlTx76F0pUGUkoAHD9bSCAexfHSrP0=;
-        b=cvoVCWyeVJlwNyTbC9mVfLmxb1zEjB1p+us+UakDy/gUtSpR2jTC/LH4FIfXa1YAnb
-         GwlHGV6U/OiOlHRrdb7Fxs7GMZE14ZTnspyteond0MDDe4BdYyCND+HjStYP0q/bPlvL
-         8JSvUmkYLrpzR+ABq5dHVKzSWPrbU0HJHQ7rzpUJNuZlFTfWP2JwMs+Y2sPs9YbEXC2H
-         BJLovmUcrt3pwbWdtB3d41EryO6vcHlsT8oDgCYzw7cncweeNQjvMuKjUPLbSxBs13H/
-         oJSXba1yTDOyZDK0si4wmVdOez6l3NUdqzRsnag/RY6lS3bD37tcgENxFibBfAjTuqzU
-         1BCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730122720; x=1730727520;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=02+v7YcuVfRITYlTx76F0pUGUkoAHD9bSCAexfHSrP0=;
-        b=jLnAWu9Ve+pC5u38F8QmrKbtC/YFod1aiPkhcn7ZPXN5/oISZw1yXGzWZjuSU70nf8
-         oVQicwKtNm3SSSX7QP1Az5fVUIKFqJWVUjuqGWYHdgfXp+lwWq1GNU512CMXab/zrJNC
-         JnQC23oSCAer8QkmYj8ruzLMf9FdNs9ynxN3agZQF4clm8wVNbFne8IEWoRW215Xg5ug
-         ixMrOomR10MckvoQN6gqM5B4Xn3me3F7IAN2RlEgr7z4EN5UEKaAZuAjjpFqDDQC40WP
-         +mgO4Vez+E5TnROw45LXyayvQOz+vvcQ3BFPADFpktdkMn1Bu8cNNg559+/bRVW23ePC
-         l6oA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7po2UOQdqDlWe9l4VZeGnFmtdP4XgU4on9MaRHCk/98VE7Br++iDCoK5R8ZEc3FSIL7Z46rqcfDdb7aI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKepZF5fc3qqcgoknpiAfHZB58eXaxHkDPTSpw8eXKcPgfwOus
-	s5fmPPKThNKFLNcPT6qgZMWeiypWvL4borqMLVisLtQ4ZLL4rVYLi2l08Fz1i8E=
-X-Google-Smtp-Source: AGHT+IHQ9kkDkDDwqrca3eXj9wkNdwUFStSj7GRVlo1X3afIuAZ0EnVWMqdzrUhsLSIY92JqDVlFAw==
-X-Received: by 2002:a05:6512:23a0:b0:539:f995:5b00 with SMTP id 2adb3069b0e04-53b348c3a47mr3138052e87.7.1730122720009;
-        Mon, 28 Oct 2024 06:38:40 -0700 (PDT)
-Received: from localhost (p200300f65f0c3200f401bf2b6011cd64.dip0.t-ipconnect.de. [2003:f6:5f0c:3200:f401:bf2b:6011:cd64])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f5e1sm142011765e9.14.2024.10.28.06.38.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 06:38:39 -0700 (PDT)
-Date: Mon, 28 Oct 2024 14:38:38 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Ben Zong-You Xie <ben717@andestech.com>
-Cc: linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Subject: Re: [PATCH 2/2] pwm: atcpit100: add Andes PWM driver support
-Message-ID: <3sd27d74rp4nb7h23dquynuytzsipceeue4b46dm6ti4yyuu57@txg5n3u5ztn6>
-References: <20241028102721.1961289-1-ben717@andestech.com>
- <20241028102721.1961289-3-ben717@andestech.com>
+	s=arc-20240116; t=1730122749; c=relaxed/simple;
+	bh=J6TygS9PS/UbaVj4c/knKhqWU5qE1QtSevjNgC5vI7E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GGYQYkyTo0wFqB4QF00qfazqUQQ2pynysXMJVYnFqRVfMpio64e9e6Zr6iBwB3ge3VDPbWB+6fuJsdoYliHGeNuMCSOlWPP9D4E1p0/QFnFcM8n08DOfWYIKtoHvsrGYALf662kikUt+uRvsk36GAZ5Ep2q+vxaM52/ILdVFUnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hGOAgT/i; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DE5F324000D;
+	Mon, 28 Oct 2024 13:39:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730122745;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=J6TygS9PS/UbaVj4c/knKhqWU5qE1QtSevjNgC5vI7E=;
+	b=hGOAgT/iQxsWL1uStdCNwfhUTRbMQXtpmTXqUoeJLFB26KR/yQ5OmibLA+MliAaZATzpOE
+	K109JGcBrWxYgELGMSgrz5+J90iLjVeB8TYARbMMrOgzOSZqu+bLLmGRraCVWhgBkxLgE6
+	D51igWNDdIzO0OFMgDiXVB2Cqchl+keSf6kwuIP1/Zosh5vzsJhhPWr2bQl/bFYvnl625A
+	ccwEZCb2wGEnuPC/9WtXshEfHKmXWUFwC7BGU/KBa0uQAAdV5uxPzPPmukv5GYO1afyNWS
+	jaw5yuWtmcXJxit/7n6aDm45i5UN0HsZf1bldWIpBbL7SY9Wixbxa8ESQymfpw==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+To: Aleksandar Rikalo <arikalo@gmail.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Chao-ying Fu
+ <cfu@wavecomp.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Greg Ungerer <gerg@kernel.org>, Hauke
+ Mehrtens <hauke@hauke-m.de>, Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>, Paul Burton
+ <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Serge
+ Semin <fancer.lancer@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Tiezhu Yang <yangtiezhu@loongson.cn>
+Subject: Re: [PATCH v7 00/12] MIPS: Support I6500 multi-cluster configuration
+In-Reply-To: <CAGQJe6pywUi8dnhxFopkMfP2U1PceHjTPX-CysT0bajSk_AKKg@mail.gmail.com>
+References: <20241019071037.145314-1-arikalo@gmail.com>
+ <87plnob4qq.fsf@BLaptop.bootlin.com>
+ <CAGQJe6pywUi8dnhxFopkMfP2U1PceHjTPX-CysT0bajSk_AKKg@mail.gmail.com>
+Date: Mon, 28 Oct 2024 14:39:01 +0100
+Message-ID: <87cyjkbb4a.fsf@BLaptop.bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="r2fscrji3kbonftc"
-Content-Disposition: inline
-In-Reply-To: <20241028102721.1961289-3-ben717@andestech.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: gregory.clement@bootlin.com
 
+Hello Aleksandar,
 
---r2fscrji3kbonftc
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 2/2] pwm: atcpit100: add Andes PWM driver support
-MIME-Version: 1.0
+> Hello Gregory,
+>
+> Thank you!
+> Just to be clear, which patches can I put your "tested-by" on?
 
-On Mon, Oct 28, 2024 at 06:27:21PM +0800, Ben Zong-You Xie wrote:
-> Add PWM driver suuport for Andes atcpit100.
+Good question ! :)
 
-s/uup/upp/
+I've tested the entire series of patches together, rather than applying
+each individual patch separately. Although I'm not entirely certain, my
+best guess would be that you can safely put my 'tested-by' tag on each
+one.
 
-> diff --git a/drivers/pwm/Makefile b/drivers/pwm/Makefile
-> index 9081e0c0e9e0..ad6e803f12d0 100644
-> --- a/drivers/pwm/Makefile
-> +++ b/drivers/pwm/Makefile
-> @@ -3,6 +3,7 @@ obj-$(CONFIG_PWM)		+= core.o
->  obj-$(CONFIG_PWM_AB8500)	+= pwm-ab8500.o
->  obj-$(CONFIG_PWM_ADP5585)	+= pwm-adp5585.o
->  obj-$(CONFIG_PWM_APPLE)		+= pwm-apple.o
-> +obj-$(CONFIG_PWM_ATCPIT100)	+= pwm-atcpit100.o
->  obj-$(CONFIG_PWM_ATMEL)		+= pwm-atmel.o
->  obj-$(CONFIG_PWM_ATMEL_HLCDC_PWM)	+= pwm-atmel-hlcdc.o
->  obj-$(CONFIG_PWM_ATMEL_TCB)	+= pwm-atmel-tcb.o
-> diff --git a/drivers/pwm/pwm-atcpit100.c b/drivers/pwm/pwm-atcpit100.c
-> new file mode 100644
-> index 000000000000..cf83e8702d60
-> --- /dev/null
-> +++ b/drivers/pwm/pwm-atcpit100.c
-> @@ -0,0 +1,240 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
+>
+> I'm preparing series v8.
 
-Please add a comment here to list hardware limitations (such that the
-gist is available from the output in
+You could also include the other patches I sent on Friday in this
+series, as suggested by Thomas.
 
-	sed -rn '/Limitations:/,/\*\/?$/p' drivers/pwm/*.c
+Thanks,
 
-. Check how other newer driver do it.) Questions to answer there (at
-least) include:
+Gregory
 
- - How does the hardware behave when disabled? (Typical: HighZ, constant
-   0, constant inactive)
- - Are there glitches during reconfiguration?
-
-> +#include <linux/err.h>
-> +#include <linux/math64.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pwm.h>
-> +#include <linux/regmap.h>
-> +#include <linux/time.h>
-> +#include <linux/types.h>
-> +
-> +#define ATCPIT100_CHANNEL_MAX			4
-> +#define ATCPIT100_CHANNEL_ENABLE		0x1C
-> +#define ATCPIT100_CHANNEL_ENABLE_PWM(ch)	BIT(3 + (4 * ch))
-> +#define ATCPIT100_CHANNEL_CTRL(ch)		(0x20 + (0x10 * ch))
-> +#define ATCPIT100_CHANNEL_CTRL_MODE_PWM		0x04
-> +#define ATCPIT100_CHANNEL_CTRL_CLK		BIT(3)
-> +#define ATCPIT100_CHANNEL_CTRL_MASK		GENMASK(4, 0)
-> +#define ATCPIT100_CHANNEL_RELOAD(ch)		(0x24 + (0x10 * ch))
-> +#define CLK_EXTERNAL				32768
-> +#define CLK_APB					60000000
-> +#define CYCLE_MIN				0x01
-> +#define CYCLE_MAX				0x010000
-
-Please give these last 4 constants a name that makes it clear that they
-belong to this driver. I.e. use "ATCPIT100_" as prefix.
-
-CYCLE_MIN is one because you have to write numcycles - 1 to the
-respective register, right? I would have use a plain 1 in the
-implementation then.
-
-> +struct atcpit100_pwm {
-> +	struct regmap *regmap;
-> +	u32 clk_src[ATCPIT100_CHANNEL_MAX];
-> +};
-> +
-> +static const struct regmap_config atcpit100_pwm_regmap_config = {
-> +	.reg_bits = 32,
-> +	.reg_stride = 4,
-> +	.val_bits = 32,
-> +};
-> +
-> +static inline struct atcpit100_pwm *to_atcpit100_pwm(struct pwm_chip *chip)
-> +{
-> +	return pwmchip_get_drvdata(chip);
-> +}
-> +
-> +static int of_atcpit100_pwm_set_clk_src(struct atcpit100_pwm *ap,
-> +					struct device_node *np)
-> +{
-> +	int ret;
-> +
-> +	for (int i = 0; i < ATCPIT100_CHANNEL_MAX; i++) {
-> +		ret = of_property_read_u32_index(np, "andestech,clock-source",
-> +						 i, &(ap->clk_src[i]));
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-
-Instead of having that statically configured in the dtb, it would be
-beneficial to switch the parent depending on the requested setting.
-
-> +static int atcpit100_pwm_enable(struct pwm_chip *chip, struct pwm_device *pwm,
-> +				bool enable)
-> +{
-> +	unsigned int channel = pwm->hwpwm;
-> +	unsigned int enable_bit = ATCPIT100_CHANNEL_ENABLE_PWM(channel);
-> +	struct atcpit100_pwm *ap = to_atcpit100_pwm(chip);
-> +
-> +	pwm->state.enabled = enable;
-
-The pwm core cares for that. Please drop that assignment.
-
-> +	return regmap_update_bits(ap->regmap, ATCPIT100_CHANNEL_ENABLE,
-> +				  enable_bit, enable ? enable_bit : 0);
-> +}
-> +
-> +static int atcpit100_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
-> +				const struct pwm_state *state)
-> +{
-> +	int ret;
-> +	u64 period_cycle;
-> +	u64 duty_cycle;
-> +	u16 pwm_high;
-> +	u16 pwm_low;
-> +	struct atcpit100_pwm *ap = to_atcpit100_pwm(chip);
-> +	unsigned int ctrl_val = 0;
-> +	unsigned int channel = pwm->hwpwm;
-> +	u64 rate = ap->clk_src[channel] ? CLK_APB : CLK_EXTERNAL;
-
-Huh, I would have expected a call to clk_get_rate() here.
-
-> +	/* cycle count = clock rate * time */
-> +	period_cycle = mul_u64_u64_div_u64(rate, state->period, NSEC_PER_SEC);
-> +	duty_cycle = mul_u64_u64_div_u64(rate, state->duty_cycle,
-> +					 NSEC_PER_SEC);
-> +	if (period_cycle < CYCLE_MIN || period_cycle > CYCLE_MAX ||
-> +	    duty_cycle < CYCLE_MIN || duty_cycle > CYCLE_MAX) {
-> +		dev_err(pwmchip_parent(chip),
-> +			"channel%d: period cycles = 0x%llx, duty cycles = 0x%llx\n",
-> +			channel, period_cycle, duty_cycle);
-> +		return -EINVAL;
-> +	}
-
-Don't error out on period_cycle > CYCLE_MAX or duty_cycle > CYCLE_MAX.
-Just continue with period_cycle = CYCLE_MAX (and duty_cycle = CYCLE_MAX
-resp.).
-
-> +	/*
-> +	 * In the PWM mode, the high period is (PWM16_Hi + 1) cycles, and the
-> +	 * low period is (PWM16_Lo + 1) cycles.
-> +	 * For example, if period is 30 cycles and duty_cycle is 10 cycles,
-> +	 * PWM16_Hi = 10 - 1 = 9, PWM16_Lo = 30 - 10 - 1 = 19.
-> +	 */
-> +	pwm_high = duty_cycle - 1;
-> +	pwm_low = period_cycle - duty_cycle - 1;
-
-If period_cycle == duty_cycle surprising things happen?
-
-I guess the hardware can neither do a 0% nor a 100% relative duty cycle?
-That's something to document in the above mentioned Limitations
-paragraph.
-
-> +
-> +	/* Set control register. */
-> +	ctrl_val |= ATCPIT100_CHANNEL_CTRL_MODE_PWM;
-> +	ctrl_val |= ap->clk_src[channel] ? ATCPIT100_CHANNEL_CTRL_CLK : 0;
-> +	ret = regmap_update_bits(ap->regmap, ATCPIT100_CHANNEL_CTRL(channel),
-> +				 ATCPIT100_CHANNEL_CTRL_MASK, ctrl_val);
-> +	if (ret)
-> +		return ret;
-
-What happens to the output here? I guess it might already change and so
-it might emit a wave form that is neither the old nor the new one?
-(=> Limitations)
-
-> +
-> +	/* Set reload register. */
-> +	ret = regmap_write(ap->regmap, ATCPIT100_CHANNEL_RELOAD(channel),
-> +			   (pwm_high << 16) | pwm_low);
-
-Please define proper bitfield accessors. E.g.
-
-	ATCPIT100_CHANNEL_RELOAD_HIGH	GENMASK(31, 16)
-	...
-
-and then use FIELD_PREP to assign.
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-This can be abbreviated to
-
-	return regmap_write(....);
-
-> +}
-> +
-> +static int atcpit100_pwm_apply(struct pwm_chip *chip, struct pwm_device *pwm,
-> +			       const struct pwm_state *state)
-> +{
-> +	int ret;
-> +
-> +	/* ATCPIT100 PWM driver now only supports normal polarity. */
-> +	if (state->polarity != PWM_POLARITY_NORMAL) {
-> +		dev_err(pwmchip_parent(chip),
-> +			"only supports normal polarity now\n");
-
-No error message in .apply() please. Returning an error code is enough.
-
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!state->enabled) {
-> +		if (pwm->state.enabled)
-> +			return atcpit100_pwm_enable(chip, pwm, 0);
-> +
-> +		return 0;
-> +	}
-> +
-> +	ret = atcpit100_pwm_config(chip, pwm, state);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return atcpit100_pwm_enable(chip, pwm, 1);
-> +}
-> +
-> +static int atcpit100_pwm_get_state(struct pwm_chip *chip,
-> +				   struct pwm_device *pwm,
-> +				   struct pwm_state *state)
-> +{
-> +	int ret;
-> +	unsigned int reload_val;
-> +	u16 pwm_high;
-> +	u16 pwm_low;
-> +	unsigned int channel = pwm->hwpwm;
-> +	struct atcpit100_pwm *ap = to_atcpit100_pwm(chip);
-> +	u64 rate = ap->clk_src[channel] ? CLK_APB : CLK_EXTERNAL;
-> +
-> +	state->enabled =
-> +		regmap_test_bits(ap->regmap, ATCPIT100_CHANNEL_ENABLE,
-> +				 ATCPIT100_CHANNEL_ENABLE_PWM(channel));
-> +	state->polarity = PWM_POLARITY_NORMAL;
-> +	ret = regmap_read(ap->regmap, ATCPIT100_CHANNEL_RELOAD(channel),
-> +			  &reload_val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	pwm_high = reload_val >> 16;
-> +	pwm_low = reload_val & 0xFFFF;
-> +	state->duty_cycle = mul_u64_u64_div_u64(pwm_high + 1, NSEC_PER_SEC,
-> +						rate);
-> +	state->period = mul_u64_u64_div_u64(pwm_low + pwm_high + 1,
-> +					    NSEC_PER_SEC, rate);
-> +
-
-Please enable PWM_DEBUG and test extensively. Hint: You have to round up
-here.
-
-> +	return 0;
-> +}
-> +
-> +static const struct pwm_ops atcpit_pwm_ops = {
-> +	.apply = atcpit100_pwm_apply,
-> +	.get_state = atcpit100_pwm_get_state,
-> +};
-> +
-> +static int atcpit100_pwm_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *np = dev->of_node;
-> +	struct atcpit100_pwm *ap;
-> +	struct pwm_chip *chip;
-> +	void __iomem *base;
-> +	int ret;
-> +
-> +	chip = devm_pwmchip_alloc(dev, ATCPIT100_CHANNEL_MAX, sizeof(*ap));
-> +	if (IS_ERR(chip))
-> +		return PTR_ERR(chip);
-> +
-> +	ap = to_atcpit100_pwm(chip);
-> +
-> +	/*
-> +	 * Each channel can select two different clock sources by toggling the
-> +	 * third bit in its control register. 0 means using an external clock,
-> +	 * and 1 means using APB clock from APB bus. Select the clock source for
-> +	 * each channel by DTS.
-> +	 */
-> +	ret = of_atcpit100_pwm_set_clk_src(ap, np);
-> +	if (ret)
-> +		return ret;
-> +
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	ap->regmap = devm_regmap_init_mmio(dev, base,
-> +					   &atcpit100_pwm_regmap_config);
-> +	if (IS_ERR(ap->regmap))
-> +		return dev_err_probe(dev, PTR_ERR(ap->regmap),
-> +				     "failed to init register map\n");
-> +
-> +	chip->ops = &atcpit_pwm_ops;
-> +	ret = devm_pwmchip_add(dev, chip);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to add PWM chip\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct of_device_id atcpit100_pwm_dt[] = {
-> +	{ .compatible = "andestech,atcpit100-pwm" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, atcpit100_pwm_dt);
-> +
-> +static struct platform_driver atcpit100_pwm_driver = {
-> +	.driver = {
-> +		.name = "atcpit100-pwm",
-> +		.of_match_table = atcpit100_pwm_dt,
-> +	},
-> +	.probe = atcpit100_pwm_probe,
-> +};
-> +module_platform_driver(atcpit100_pwm_driver);
-
-empty new line here
-
-> +MODULE_AUTHOR("Andes Technology Corporation <ben717@andestech.com>");
-
-I would have expected your name here given that's also your email
-address.
-
-> +MODULE_DESCRIPTION("Andes ATCPIT100 PWM driver");
-> +MODULE_LICENSE("GPL");
-
-Best regards
-Uwe
-
---r2fscrji3kbonftc
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcfk9sACgkQj4D7WH0S
-/k4ByAf/RPuya+EQVZbPB8hdgDSCU9CFzZPaxWt48ofcGae18KKNWNptmnirnpwL
-/7qibQkc6npUy8n19BpbVvRJkzpvyg/jQjVAm5G7+a+Wh4HGm/8ylATarsFmTPm/
-VQG0faE/d2aF8xR6ZmPQwPICMwvInw+mEq2PQZgPoSGN4gU9dPidXs4F/yB/xVRi
-XNX8YpLxAWgNCaTSGKKnUg5qRRxYucCvuToCAmt1h98R6RQop4dvk/MKB84WEnBv
-vEQgvKWZUUuBprF3rDnN9BnXlL/h7UHA2cEtUEcyPT0plPEI0dzSNwodR6+WZYCv
-9CfVT0LYCidtR7cY6XEGaSflbKYTpw==
-=yKMg
------END PGP SIGNATURE-----
-
---r2fscrji3kbonftc--
+>
+> --
+> Aleksandar
+>
+> On Fri, Oct 25, 2024 at 5:07=E2=80=AFPM Gregory CLEMENT <gregory.clement@=
+bootlin.com>
+> wrote:
+>
+>> Hello Aleksandar,
+>>
+>>
+>> I successfully tested it on an EyeQ6H SoC. On top of v6.12-rc4 I also
+>> added only one patch needed for EyeQ6H:
+>>
+>> https://lore.kernel.org/lkml/20241011-eyeq6h-smp-v2-1-8381edf8a5c6@bootl=
+in.com/#t
+>>
+>> So for EyeQ6H, you can then add my
+>> Tested-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+>>
+>> Then I also tested it on an EyeQ5, where the VP topology is
+>> {2,2,2,2},{}. In this case there is no CPU core in the second
+>> cluster. While some part of your series seems to support this case, it
+>> was not complete. I am about to send a new patch for it
+>>
+>> Thanks,
+>> Gregory
+>>
 
