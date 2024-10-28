@@ -1,86 +1,88 @@
-Return-Path: <linux-kernel+bounces-384891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C47449B2FD4
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:11:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6320C9B2FD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:11:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50070B2388E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:11:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C649F281EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F151DC05D;
-	Mon, 28 Oct 2024 12:10:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADFF1DD0C6;
+	Mon, 28 Oct 2024 12:10:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="c2mWlBFg"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EDlL1ozw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B511D7982;
-	Mon, 28 Oct 2024 12:10:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AF8F1DA2FD;
+	Mon, 28 Oct 2024 12:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730117409; cv=none; b=DbWllTkB9JS42PVG/H/1qGqaMsiQKc3cOCpjrZaKgPxQN9o0/KjHvz4Way0AStd4gSj9USjMlty1DhNAa8S4f61+Bz37anJg6LgW/ViarBID6QjNAEl6Xfzu2yJnGe0SvxRwvR1idkpbXDyI2rdVdNhcqknDhFSWSUgkyIbUBnY=
+	t=1730117412; cv=none; b=O9MBP0ZS4vi16aZIUEi96+SyQeklOk+czvOcLG9cmmR+Y++vshMn/FZcb16WHgtvASbANgQn/jFUdgv/7On5nOdaRHp9EW/fvQE6AGYU3Wel19S2k9+oEmtLcNg6czFPRdtPO3Q2QxdrXFNEGHyVrghz4/49RFMqvwNk+KoUQ84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730117409; c=relaxed/simple;
-	bh=PVQtlV4H+QsScox6KfoJ7jqd1+pGRd1gqCh8Yjrow1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uG5XmeTLyNlJrUZPzQyO7Y9m05Y/2hXfUfHnM99e4RlvoXjDLdKNZbLNVPxw/OZeWuWE52+KRFPS8RNV0eie8C8KqLSxA4oxwSrhtWJ8n6LuM2PEXQuM4vFO0x+EFLzSgOWs3Y7BkKsbQrN/OXzGGD+Qua1Pzg6xaUnMBrUxACM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=c2mWlBFg; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=/p4h6ktea/EimcSUjDOsklu3heEWy/psrnRW6kirqmE=; b=c2mWlBFgmx8oxtXstdVqAKUVFx
-	jN1SqWA40V6GUwovRcci3Z2THLuGKqiYnyXfy4yioqA52niy2CVPe1UA8eTWdcrsGpPSSfRgA9Ehb
-	7QOWKa/S/rNFVy6PJ3FNrKdYTa4mGZ2YiDddrhiuoG+xg/RQUMMXDeEQkUlVBMv0RtRk=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t5OZK-00BRPf-CC; Mon, 28 Oct 2024 13:09:58 +0100
-Date: Mon, 28 Oct 2024 13:09:58 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Rob Herring <robh+dt@kernel.org>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next v1 2/5] dt-bindings: net: dsa: ksz: add
- mdio-parent-bus property for internal MDIO
-Message-ID: <8195337c-e925-4c17-9764-e6241263cc4b@lunn.ch>
-References: <20241026063538.2506143-1-o.rempel@pengutronix.de>
- <20241026063538.2506143-3-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1730117412; c=relaxed/simple;
+	bh=l5qalQPiwCYhTC3zWpqOzDEvbB3Z5puNHOvHklAezwA=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Gry9jjep4+PKEJUXfUh5uWwKRGwsAsRxNX4DNdaQA3ZDXGq44ePiqrHeQdSttw7KH3FUL9nAt/OV0V/VpD8Vu4ShInmjXLl3KkOWCxS5gk57gQKcmOye6rrPvbKGeZSQ8K1xM00YRUGoVFLjtwpo4Hte9u6Ry2DiKo+vH+NSWXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EDlL1ozw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A34DC4CEE4;
+	Mon, 28 Oct 2024 12:10:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730117411;
+	bh=l5qalQPiwCYhTC3zWpqOzDEvbB3Z5puNHOvHklAezwA=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=EDlL1ozw1Wu3K3uSzBJ5adQi8VkhBdNP+GTmcAI/b+yah183t8I4np5OzbcAJy5HM
+	 PR1241pJnh4SP1Rx8700JfmXBeGRiRvLQjKX4fWkmGPbzYaBSL1apxUfDTQPhMbGHJ
+	 FSxFkDUUM8zHl7ZztgEAptrbCryJbM2r769Wd1xo1i6ykZeiblrYfQMbZB325/Nsdc
+	 tZuhY+xSlwRZeU1Jnh0LskNp3cIYO2zJSbclbnuKbJ+4zHegJfrPVZZgIGJ6O+snwO
+	 pAbXn1ZDfvq+LayFD6CyXYiB9TmG7aNHSZxQzk5lQZnsf7eRj52RyMPDytNPZ6Wcr8
+	 sa6cgOWVPuYKQ==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026063538.2506143-3-o.rempel@pengutronix.de>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 28 Oct 2024 14:10:07 +0200
+Message-Id: <D57FFOHZQDUV.QA3SZQSP63Q2@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, "David Howells" <dhowells@redhat.com>,
+ "Mimi Zohar" <zohar@linux.ibm.com>, "Roberto Sassu"
+ <roberto.sassu@huawei.com>, "Stefan Berger" <stefanb@linux.ibm.com>, "Paul
+ Moore" <paul@paul-moore.com>, "James Morris" <jmorris@namei.org>, "Serge E.
+ Hallyn" <serge@hallyn.com>, "Dmitry Kasatkin" <dmitry.kasatkin@gmail.com>,
+ "Eric Snowberg" <eric.snowberg@oracle.com>, <keyrings@vger.kernel.org>,
+ <linux-security-module@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v8 2/3] tpm: Rollback tpm2_load_null()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Paul Menzel" <pmenzel@molgen.mpg.de>,
+ <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+X-Mailer: aerc 0.18.2
+References: <20241028055007.1708971-1-jarkko@kernel.org>
+ <20241028055007.1708971-3-jarkko@kernel.org>
+ <88bfa0f8-4900-4c56-bd23-14d3b3c7de85@molgen.mpg.de>
+In-Reply-To: <88bfa0f8-4900-4c56-bd23-14d3b3c7de85@molgen.mpg.de>
 
-On Sat, Oct 26, 2024 at 08:35:35AM +0200, Oleksij Rempel wrote:
-> Introduce `mdio-parent-bus` property in the ksz DSA bindings to
-> reference the parent MDIO bus when the internal MDIO bus is attached to
-> it, bypassing the main management interface.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+On Mon Oct 28, 2024 at 8:13 AM EET, Paul Menzel wrote:
+> Dear Jarkko,
+>
+>
+> Thank you for your patch.
+>
+> Am 28.10.24 um 06:50 schrieb Jarkko Sakkinen:
+> > Do not continue on tpm2_create_primary() failure in tpm2_load_null().
+>
+> Could you please elaborate, why this is done, that means the motivation=
+=20
+> for your change?
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Which part of "not properly handling a return value" I should explain?
 
-    Andrew
+BR, Jarkko
 
