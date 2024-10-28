@@ -1,317 +1,203 @@
-Return-Path: <linux-kernel+bounces-384444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC0F9B2A2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:26:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1011C9B2A2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3AB21F21DD7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:26:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11E82817E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87F8E1922F0;
-	Mon, 28 Oct 2024 08:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C950192B76;
+	Mon, 28 Oct 2024 08:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="0DNgqjC7"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rVip6lkc"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DD319006F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285B1191F90
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:26:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730103995; cv=none; b=EgQd2tPE8DIwmgp5UvgcjkV6BI5+EVPTXAc0GbKaUby77PT/pSh3Oztvex4f75xEAH56Mo6mVfWb897c0bwDxv3wrewbM6xzPk9WNBjMJ/Odit7WCJgx1Ytd5WG7Pjh6ShwmX8ZRxgdo/AUlEA0BphL0k/tWND4NAuMCpAnjGtw=
+	t=1730103997; cv=none; b=X6V08oSa69YxBmDAtASMNfxes/Adhgo3DXwxNqySudi6HLQm8wrXlDfWu5VBq4FapAf2chNKXKcnHXv/LALoM+YIFmf2Og2K5Asu7e4zEVkIJNod2iv/lrSJBcqipCFiGMZ6E2G+UYb3U9MUjDA9qM685Q6v+fXI/iUQLfONmvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730103995; c=relaxed/simple;
-	bh=2RROZOcH+oga+LkTQCQ3HKoR/p0c6zp5n24zcxYyRyw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UKiKGPcw31xdQeNZvzIRuQci99IkazCI7/WJKXvC9bcmiZWZxieiCUfQqPt5iWcpisQxdfkvZSeTF6nt+A0u/NcJCDWXe5xUB19w6oQHmwRyglVQGdl21Oq5dZnPIUYR9XEJC9eiEd2+CS1VH1Lo+/zLpRC8yxpdasOplGpPyDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=0DNgqjC7; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so4749260e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 01:26:32 -0700 (PDT)
+	s=arc-20240116; t=1730103997; c=relaxed/simple;
+	bh=WB9vc9RAyVjT9j6XUyDnlnoza/GmoegASd97Em2M9Gg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qQqHT4SLyISCC2/IgKH32YsKlw4YqkJP5KYVBXhJxHV/vd6pQ5+IdxUsTvRzLnQUhsMgYZbYXJptEbPZZeAe3rKufbRe9LN/XijHz350nqyjrpLzck35pYRr8+GGMvjZlLfr+y/TuBun3eEgS7dN2k3QKy8eUHYtJyFHWwcfVas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rVip6lkc; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e6c754bdso3425888e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 01:26:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730103990; x=1730708790; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=j4lUb1leR//RH9HeSKC0++QvL2bwzenRxNlIlRUSSGA=;
-        b=0DNgqjC7+ceSq1UL0G5B2QRA5jcvCI0THpzm822Bmxcz3jwKmq3Dh5mSr/FgNAlB5t
-         sH2H3lxy4QpwGheQ20v4w/TSRtTJ966XOszGzz7Tuvc4470Bd2egw3QoHWCLIx9zI/oR
-         U7n0CcvQo573OQOSgRksi5o/DcEwiqmWqhSzVoYGiYHcukwISSnNnzzmDOu9oyMha1QJ
-         t3v36dFNhTrzaupvNOr7C3lnXeYzh3JaR+/Mg+ZbuYOWQ0tyy8960Idk3luS4AHGmyL9
-         3iNDrVyhnxdWqAfmV/4yEAWORIpA0gkDZRO9uLZZ1jpUAwo4IADY9XoCzwaJjOcA2l+5
-         JXqw==
+        d=linaro.org; s=google; t=1730103993; x=1730708793; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BITs+5gpronmacO+fw89Zra8b9FvogOeRWU3QBgDY7o=;
+        b=rVip6lkc0W4DGYecryo54GDUzbI+FQe7IbQqf9FhAQB4CWMVyVZWMEmKXPnRL/uPAH
+         LGReLNcJNLlZUzffY5tCZiUI9ICu2cKYK0HF1JC08wWv+9pmeVFsEdbuVglQoF4rdAge
+         gBXy7RUgstHTOO4Xac6vfnm6a86uI+tlHq/zPRoLeL6Pb9FbQwEqdgjfBsleiMjUR/d2
+         fqmYy+7fVsnJwUjQ0VeCLPhhgrkbtW8El2JJ3Zsvm+c7FsTco37a3udRwbEoIm3BJ3Pu
+         ChwSHcdIDF3kuGdsMQj+QDjnT1gOwuh9T2fPXUN4Zvk/KlIx63CZxCocXbyYiNqqS5hP
+         uQXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730103990; x=1730708790;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j4lUb1leR//RH9HeSKC0++QvL2bwzenRxNlIlRUSSGA=;
-        b=AstvSQw6Jc1hAIHUCb+KOhI5MzTMiurVtwOI2iWrn9Aybud5R8wwJ+wcCbeXGdNlsX
-         1S+GCcDbx/6mY3z+9+SKG1m7CpoFuhiEppm49iUMgbxAGyQ5CK/QRXFw/jIhKoyCJlVV
-         ayxhYCRt3ZJeI/j/QywWSJAsSq3R1flgPyGuJrz4twN1cggeTESHs+Q8TxXFANrx8tV0
-         wUKBVMlyffbo1u/y58+XpFgjYkYkCXYJyf2QdNBwTjK6exLZE1KBbJ0GY7z5UcOreJMO
-         n08bmleXVjBB0OxgxxbodIVbUMQ/bKRPDshs6YnkBqwSggPDTmzrie0K3V51JeM81Wa7
-         JOrQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCxsZhTElDpYPyDa5BbU4WPQuEB7xBum+oE1KE9Lkbb3Kerk6zQUtRL/h7aiMUdyMBC5UIdEAWRhhhxrE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7rhAOZA64uIJnLH7ZZCsHap1EjKMoZEIQ2UcQE1NcMqA4aJOj
-	PtXi+FSTJo94rPFD6wSdSiQlzW0oY9qWtjsrFyDfug/DNVdNq+c2WWltS8rGGoE=
-X-Google-Smtp-Source: AGHT+IGsx6b7R19/shmolSABawjSU1DLfRoeRAdMYcjKqH8zZId/xh3T0FxtiqljvTjayLaCaauwtQ==
-X-Received: by 2002:a05:6512:1386:b0:539:f699:4954 with SMTP id 2adb3069b0e04-53b34c36247mr2181986e87.58.1730103990357;
-        Mon, 28 Oct 2024 01:26:30 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03ea4asm108693965e9.0.2024.10.28.01.26.29
+        d=1e100.net; s=20230601; t=1730103993; x=1730708793;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BITs+5gpronmacO+fw89Zra8b9FvogOeRWU3QBgDY7o=;
+        b=IJmxTpPINQmQ6GEITL+n6XUs3Y9cAZbBZoL8yEsDMzSDAR71kmNTvbWKzgr6W631ym
+         A9kdDhkMNFi4vT7s6k08xajOcCdUeqPTTeZImprdRvgfUWfbln9RA2UoGwPxvDyo0qx/
+         PySRdut65rYrW9+HYjarIS63849NtlkxDZFiUncjx5bGlJdUcBrmUQvOcoGaFFIL/IPv
+         qbqwOVWxvKo3KUyFGLiN2YBjI+yYtwtdnurb4tS2K+FtjyWY5jFzKyQDC6cIg0I+YGJe
+         c4TNLuFyAIgN/n7wL7YCda0zLUzHwjBWfu5AFcBY3JoiZfJT62XnEijcilqrdXww6f/1
+         +1Bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWcV5qGqca4UNxuy0Q2KJIWGiEU/oMTyxFF9bRVA425xDELdK8Zl+YO28vhIrH4ZzJWAU0CQVbSshGitpM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCq2RDZYdTbv6bjF1eRfE+mM35Flh0XT/UYuSHYWDQ0stVse+J
+	BOzJP8dau6C699FnjVMKFBD8SmLEWgY9+sQlPW4654t7S4DWswmB42ztw7XWxv0=
+X-Google-Smtp-Source: AGHT+IE24xL8D3SXnXtqdBNqbz4ZSjA3URQxIZeML7v4SXR3TQncXvcqFR43I8ZLRP9xsv6pszixKg==
+X-Received: by 2002:a05:6512:1189:b0:539:ec87:bc7f with SMTP id 2adb3069b0e04-53b348d63ddmr2953106e87.19.1730103993172;
+        Mon, 28 Oct 2024 01:26:33 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e10a47asm998715e87.1.2024.10.28.01.26.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 01:26:29 -0700 (PDT)
-From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Benson Leung <bleung@chromium.org>,
-	Tzung-Bi Shih <tzungbi@kernel.org>
-Cc: Guenter Roeck <groeck@chromium.org>,
-	Prashant Malani <pmalani@chromium.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/chrome: Switch back to struct platform_driver::remove()
-Date: Mon, 28 Oct 2024 09:26:11 +0100
-Message-ID: <20241028082611.431723-2-u.kleine-koenig@baylibre.com>
-X-Mailer: git-send-email 2.45.2
+        Mon, 28 Oct 2024 01:26:32 -0700 (PDT)
+Date: Mon, 28 Oct 2024 10:26:31 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	Arnd Bergmann <arnd@kernel.org>
+Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
+Message-ID: <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
+References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8955; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=2RROZOcH+oga+LkTQCQ3HKoR/p0c6zp5n24zcxYyRyw=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnH0qkMUSO5Fz/R5dHF7h+xrROdaiCMDlI4oIHX iBN8ITSMPmJATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZx9KpAAKCRCPgPtYfRL+ Tk02B/0U9Xz9cdoNPwJj9Ib7XsJIZzjlVD353ChiFsftx4MXJon3RyGSzG7OKOGNrIFnhRAucqJ kjFgam2FdKYpLZEATWXOYH6lpYsF6xMJCK9ZQI38I0ryrhfMmEoS4v5e0Svi133F5FDm2iBMtWU mOoPPv26PjtOl4UEzCLpi+X9VYE6qcknKt9L3gZU1hQDc9qr20AAw+bLFgVdTtmLAlb7cb0Vd0r bTTD0oXoZSXYcbQwxrz2cSwn/HvbMRr0ZuIuHQA9l1UHiqmZB/YpUCnrg2xMkxkhAvdVMm1KKag AF1rQm1rdMFuwCbeatcrXFIAVv+5cnIQTslnUWcvyJEQk3mi
-X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
 
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers.
+On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
+> Clang-19 and above sometimes end up with multiple copies of the large
+> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+> a6xx_hfi_send_bw_table() calls a number of device specific functions to
+> fill the structure, but these create another copy of the structure on
+> the stack which gets copied to the first.
+> 
+> If the functions get inlined, that busts the warning limit:
+> 
+> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+> 
+> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
+> the stack. Also, use this opportunity to skip re-initializing this table
+> to optimize gpu wake up latency.
+> 
+> Cc: Arnd Bergmann <arnd@kernel.org>
+> 
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
+>  2 files changed, 23 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> index 94b6c5cab6f4..b4a79f88ccf4 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+> @@ -99,6 +99,7 @@ struct a6xx_gmu {
+>  	struct completion pd_gate;
+>  
+>  	struct qmp *qmp;
+> +	struct a6xx_hfi_msg_bw_table *bw_table;
+>  };
+>  
+>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> index cdb3f6e74d3e..55e51c81be1f 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>  
+>  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>  {
+> -	struct a6xx_hfi_msg_bw_table msg = { 0 };
+> +	struct a6xx_hfi_msg_bw_table *msg;
+>  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>  
+> +	if (gmu->bw_table)
+> +		goto send;
+> +
+> +	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
 
-Convert all platform drivers below drivers/platform/chrome to use
-.remove(), with the eventual goal to drop struct
-platform_driver::remove_new(). As .remove() and .remove_new() have the
-same prototypes, conversion is done by just changing the structure
-member name in the driver initializer.
+Is it necessary after being sent? Isn't it better to just kzalloc() it
+and then kfree() it at the end of the function?
 
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
----
-Hello,
+> +	if (!msg)
+> +		return -ENOMEM;
+> +
+>  	if (adreno_is_a618(adreno_gpu))
+> -		a618_build_bw_table(&msg);
+> +		a618_build_bw_table(msg);
+>  	else if (adreno_is_a619(adreno_gpu))
+> -		a619_build_bw_table(&msg);
+> +		a619_build_bw_table(msg);
+>  	else if (adreno_is_a640_family(adreno_gpu))
+> -		a640_build_bw_table(&msg);
+> +		a640_build_bw_table(msg);
+>  	else if (adreno_is_a650(adreno_gpu))
+> -		a650_build_bw_table(&msg);
+> +		a650_build_bw_table(msg);
+>  	else if (adreno_is_7c3(adreno_gpu))
+> -		adreno_7c3_build_bw_table(&msg);
+> +		adreno_7c3_build_bw_table(msg);
+>  	else if (adreno_is_a660(adreno_gpu))
+> -		a660_build_bw_table(&msg);
+> +		a660_build_bw_table(msg);
+>  	else if (adreno_is_a690(adreno_gpu))
+> -		a690_build_bw_table(&msg);
+> +		a690_build_bw_table(msg);
+>  	else if (adreno_is_a730(adreno_gpu))
+> -		a730_build_bw_table(&msg);
+> +		a730_build_bw_table(msg);
+>  	else if (adreno_is_a740_family(adreno_gpu))
+> -		a740_build_bw_table(&msg);
+> +		a740_build_bw_table(msg);
+>  	else
+> -		a6xx_build_bw_table(&msg);
+> +		a6xx_build_bw_table(msg);
+> +
+> +	gmu->bw_table = msg;
+>  
+> -	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, &msg, sizeof(msg),
+> +send:
+> +	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, gmu->bw_table, sizeof(*(gmu->bw_table)),
+>  		NULL, 0);
+>  }
+>  
+> 
+> ---
+> base-commit: 74c374648ed08efb2ef339656f2764c28c046956
+> change-id: 20241024-stack-size-fix-28af7abd3fab
+> 
+> Best regards,
+> -- 
+> Akhil P Oommen <quic_akhilpo@quicinc.com>
+> 
 
-I did a single patch for all of drivers/platform/chrome. While I usually
-prefer to do one logical change per patch, this seems to be
-overengineering here as the individual changes are really trivial and
-shouldn't be much in the way for stable backports. But I'll happily
-split the patch if you prefer it split.
-
-This is based on Friday's next, if conflicts arise when you apply it at
-some later time and don't want to resolve them, feel free to just drop
-the changes to the conflicting files. I'll notice and followup at a
-later time then. Or ask me for a fixed resend.
-
-Best regards
-Uwe
- drivers/platform/chrome/cros_ec_chardev.c    | 2 +-
- drivers/platform/chrome/cros_ec_debugfs.c    | 2 +-
- drivers/platform/chrome/cros_ec_lightbar.c   | 2 +-
- drivers/platform/chrome/cros_ec_lpc.c        | 2 +-
- drivers/platform/chrome/cros_ec_sysfs.c      | 2 +-
- drivers/platform/chrome/cros_ec_typec.c      | 2 +-
- drivers/platform/chrome/cros_ec_vbc.c        | 2 +-
- drivers/platform/chrome/cros_typec_switch.c  | 2 +-
- drivers/platform/chrome/cros_usbpd_logger.c  | 2 +-
- drivers/platform/chrome/cros_usbpd_notify.c  | 4 ++--
- drivers/platform/chrome/wilco_ec/core.c      | 2 +-
- drivers/platform/chrome/wilco_ec/debugfs.c   | 2 +-
- drivers/platform/chrome/wilco_ec/telemetry.c | 2 +-
- 13 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/platform/chrome/cros_ec_chardev.c b/drivers/platform/chrome/cros_ec_chardev.c
-index 7f034ead7ae4..21a484385fc5 100644
---- a/drivers/platform/chrome/cros_ec_chardev.c
-+++ b/drivers/platform/chrome/cros_ec_chardev.c
-@@ -415,7 +415,7 @@ static struct platform_driver cros_ec_chardev_driver = {
- 		.name = DRV_NAME,
- 	},
- 	.probe = cros_ec_chardev_probe,
--	.remove_new = cros_ec_chardev_remove,
-+	.remove = cros_ec_chardev_remove,
- 	.id_table = cros_ec_chardev_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_ec_debugfs.c b/drivers/platform/chrome/cros_ec_debugfs.c
-index 839154c46e46..92ac9a2f9c88 100644
---- a/drivers/platform/chrome/cros_ec_debugfs.c
-+++ b/drivers/platform/chrome/cros_ec_debugfs.c
-@@ -582,7 +582,7 @@ static struct platform_driver cros_ec_debugfs_driver = {
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.probe = cros_ec_debugfs_probe,
--	.remove_new = cros_ec_debugfs_remove,
-+	.remove = cros_ec_debugfs_remove,
- 	.id_table = cros_ec_debugfs_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-index 1e69f61115a4..87634f6921b7 100644
---- a/drivers/platform/chrome/cros_ec_lightbar.c
-+++ b/drivers/platform/chrome/cros_ec_lightbar.c
-@@ -608,7 +608,7 @@ static struct platform_driver cros_ec_lightbar_driver = {
- 		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- 	},
- 	.probe = cros_ec_lightbar_probe,
--	.remove_new = cros_ec_lightbar_remove,
-+	.remove = cros_ec_lightbar_remove,
- 	.id_table = cros_ec_lightbar_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_ec_lpc.c b/drivers/platform/chrome/cros_ec_lpc.c
-index c784119ab5dc..924bf4d3cc77 100644
---- a/drivers/platform/chrome/cros_ec_lpc.c
-+++ b/drivers/platform/chrome/cros_ec_lpc.c
-@@ -783,7 +783,7 @@ static struct platform_driver cros_ec_lpc_driver = {
- 		.probe_type = PROBE_FORCE_SYNCHRONOUS,
- 	},
- 	.probe = cros_ec_lpc_probe,
--	.remove_new = cros_ec_lpc_remove,
-+	.remove = cros_ec_lpc_remove,
- };
- 
- static struct platform_device cros_ec_lpc_device = {
-diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-index 9c944146ee50..bc1a5ba09528 100644
---- a/drivers/platform/chrome/cros_ec_sysfs.c
-+++ b/drivers/platform/chrome/cros_ec_sysfs.c
-@@ -359,7 +359,7 @@ static struct platform_driver cros_ec_sysfs_driver = {
- 		.name = DRV_NAME,
- 	},
- 	.probe = cros_ec_sysfs_probe,
--	.remove_new = cros_ec_sysfs_remove,
-+	.remove = cros_ec_sysfs_remove,
- 	.id_table = cros_ec_sysfs_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index f1324466efac..ae2f86296954 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -1326,7 +1326,7 @@ static struct platform_driver cros_typec_driver = {
- 		.pm = &cros_typec_pm_ops,
- 	},
- 	.probe = cros_typec_probe,
--	.remove_new = cros_typec_remove,
-+	.remove = cros_typec_remove,
- };
- 
- module_platform_driver(cros_typec_driver);
-diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-index 787a19db4911..7bdb489354c5 100644
---- a/drivers/platform/chrome/cros_ec_vbc.c
-+++ b/drivers/platform/chrome/cros_ec_vbc.c
-@@ -145,7 +145,7 @@ static struct platform_driver cros_ec_vbc_driver = {
- 		.name = DRV_NAME,
- 	},
- 	.probe = cros_ec_vbc_probe,
--	.remove_new = cros_ec_vbc_remove,
-+	.remove = cros_ec_vbc_remove,
- 	.id_table = cros_ec_vbc_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_typec_switch.c b/drivers/platform/chrome/cros_typec_switch.c
-index 07a19386dc4e..8d7c34abb0a1 100644
---- a/drivers/platform/chrome/cros_typec_switch.c
-+++ b/drivers/platform/chrome/cros_typec_switch.c
-@@ -318,7 +318,7 @@ static struct platform_driver cros_typec_switch_driver = {
- 		.acpi_match_table = ACPI_PTR(cros_typec_switch_acpi_id),
- 	},
- 	.probe = cros_typec_switch_probe,
--	.remove_new = cros_typec_switch_remove,
-+	.remove = cros_typec_switch_remove,
- };
- 
- module_platform_driver(cros_typec_switch_driver);
-diff --git a/drivers/platform/chrome/cros_usbpd_logger.c b/drivers/platform/chrome/cros_usbpd_logger.c
-index 930c2f47269f..cd71f1caea81 100644
---- a/drivers/platform/chrome/cros_usbpd_logger.c
-+++ b/drivers/platform/chrome/cros_usbpd_logger.c
-@@ -262,7 +262,7 @@ static struct platform_driver cros_usbpd_logger_driver = {
- 		.pm = &cros_usbpd_logger_pm_ops,
- 	},
- 	.probe = cros_usbpd_logger_probe,
--	.remove_new = cros_usbpd_logger_remove,
-+	.remove = cros_usbpd_logger_remove,
- 	.id_table = cros_usbpd_logger_id,
- };
- 
-diff --git a/drivers/platform/chrome/cros_usbpd_notify.c b/drivers/platform/chrome/cros_usbpd_notify.c
-index c83f81d86483..313d2bcd577b 100644
---- a/drivers/platform/chrome/cros_usbpd_notify.c
-+++ b/drivers/platform/chrome/cros_usbpd_notify.c
-@@ -156,7 +156,7 @@ static struct platform_driver cros_usbpd_notify_acpi_driver = {
- 		.acpi_match_table = cros_usbpd_notify_acpi_device_ids,
- 	},
- 	.probe = cros_usbpd_notify_probe_acpi,
--	.remove_new = cros_usbpd_notify_remove_acpi,
-+	.remove = cros_usbpd_notify_remove_acpi,
- };
- 
- #endif /* CONFIG_ACPI */
-@@ -230,7 +230,7 @@ static struct platform_driver cros_usbpd_notify_plat_driver = {
- 		.name = DRV_NAME,
- 	},
- 	.probe = cros_usbpd_notify_probe_plat,
--	.remove_new = cros_usbpd_notify_remove_plat,
-+	.remove = cros_usbpd_notify_remove_plat,
- 	.id_table = cros_usbpd_notify_id,
- };
- 
-diff --git a/drivers/platform/chrome/wilco_ec/core.c b/drivers/platform/chrome/wilco_ec/core.c
-index 3e6b6cd81a9b..9f978e531e1f 100644
---- a/drivers/platform/chrome/wilco_ec/core.c
-+++ b/drivers/platform/chrome/wilco_ec/core.c
-@@ -163,7 +163,7 @@ static struct platform_driver wilco_ec_driver = {
- 		.acpi_match_table = wilco_ec_acpi_device_ids,
- 	},
- 	.probe = wilco_ec_probe,
--	.remove_new = wilco_ec_remove,
-+	.remove = wilco_ec_remove,
- 	.id_table = wilco_ec_id,
- };
- 
-diff --git a/drivers/platform/chrome/wilco_ec/debugfs.c b/drivers/platform/chrome/wilco_ec/debugfs.c
-index 99486086af6a..0617292b5cd7 100644
---- a/drivers/platform/chrome/wilco_ec/debugfs.c
-+++ b/drivers/platform/chrome/wilco_ec/debugfs.c
-@@ -276,7 +276,7 @@ static struct platform_driver wilco_ec_debugfs_driver = {
- 		.name = DRV_NAME,
- 	},
- 	.probe = wilco_ec_debugfs_probe,
--	.remove_new = wilco_ec_debugfs_remove,
-+	.remove = wilco_ec_debugfs_remove,
- 	.id_table = wilco_ec_debugfs_id,
- };
- 
-diff --git a/drivers/platform/chrome/wilco_ec/telemetry.c b/drivers/platform/chrome/wilco_ec/telemetry.c
-index a87877e4300a..7d8ae2cbf72f 100644
---- a/drivers/platform/chrome/wilco_ec/telemetry.c
-+++ b/drivers/platform/chrome/wilco_ec/telemetry.c
-@@ -417,7 +417,7 @@ MODULE_DEVICE_TABLE(platform, telem_id);
- 
- static struct platform_driver telem_driver = {
- 	.probe = telem_device_probe,
--	.remove_new = telem_device_remove,
-+	.remove = telem_device_remove,
- 	.driver = {
- 		.name = DRV_NAME,
- 	},
-
-base-commit: a39230ecf6b3057f5897bc4744a790070cfbe7a8
 -- 
-2.45.2
-
+With best wishes
+Dmitry
 
