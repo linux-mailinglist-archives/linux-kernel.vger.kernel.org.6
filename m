@@ -1,95 +1,105 @@
-Return-Path: <linux-kernel+bounces-385093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E3239B324F
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:58:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D5E9B3256
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:00:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 450CC1F222CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F1C2E1C22958
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3181DC739;
-	Mon, 28 Oct 2024 13:58:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B6F1DD553;
+	Mon, 28 Oct 2024 14:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="lqcalzNo"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="aNe4lK9f"
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com [209.85.167.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D18B5191F91;
-	Mon, 28 Oct 2024 13:58:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E86E1D433F
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:00:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730123926; cv=none; b=d5CaeNoZuvF28TLqw819vZEJK7ynY02zl1XZ0d1VxXwWtCGaFNaFzkh2sdsy76brKTr/BdF90L0z35z7qgYs7UJ92Dx2gnWSfJjdHUiBd5/2/ZyNwgox5FQ2SXL7QV+7u8Hk1cNey9cPJmCiF7eoub2mrGZVJlGxNedBunJPyak=
+	t=1730124022; cv=none; b=YlsFHuADyP6Rjx0f/wXnFhj5PdcRB3tkTzbUyhJNwBG94UYwVlim77pOD1ZmVX9ovHGZuus+Y66tVt6IVbG63csnZfnjA3TSHXfVc3kC095EbqjW5Uo3QTN9SwJ0pK3pdZt7YNj8SCFKVdXIVHzjRp77snNvT45nU5lmkgP8ZH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730123926; c=relaxed/simple;
-	bh=jKlpDLntwOx/bEciULTrygGZaitePsUyKUBtvYE24xk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=newe90kr6q1aAWnF9doc3UrQopJeUy2g40L89oRM//Wea34pFrucKx84r59x2wRfsfSURMZz0uAEIP7qjOAHruWB3E1sqdCpPOB8W/ML4+Gj8bV28E5IRzRYxHv/b1bpr1OjhsawrpujQUbKS0HuORhj5LMB3mo/BvCOdVIXsqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=lqcalzNo; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=vv21Me7Pum0pDrJGfjUfkgjIwMKzfFeJ1meozzE/c8U=; b=lqcalzNoLvMxzvuobOhq89N7Ig
-	0M/4OReNTuTRlWMABDaJY8sp24E3pSg+MUf1zZoUUb0tIGLN2+2ndEMBiTCAmNF9UqSTnsobSOcfG
-	nDFS6sRG5yY1OGcUEqwIxKFAJqx2azmg9QwVexJCc6g1o9SJzpkdKg1JmJHwBF8JHDuB3blDy8mLk
-	hROKUJb1BqkAU2R0GW1c9DSQdkgAxeNJxYHLRlQdUJU27yBicRlROXF9/O3ASlW3hifLG7AHG1DnI
-	9Zw3YVqQ2gYC22V0cOSacjdrFlXsDqHMCjphXljEA7ust7DCYt4LmazwYQPp3LgBvyg+J1Wx/h8d5
-	HV16zuPg==;
-Received: from [189.78.222.89] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t5QGR-00G6Rl-6O; Mon, 28 Oct 2024 14:58:35 +0100
-Message-ID: <6a12e4a2-89ec-404f-ab96-e3cb7731e7e4@igalia.com>
-Date: Mon, 28 Oct 2024 10:58:28 -0300
+	s=arc-20240116; t=1730124022; c=relaxed/simple;
+	bh=v2HK0A45xfCW6LF3YFD2TPmEq4ihQfGG/Qxy38acCAU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cc2NO7LEpSLOwMPEZ6Uhp4eHvZKoshmuP2vtXHt7zEsfAsufv1bwk+7NSWS1Gv0nxAwWlmAt8JNHOYMs1/yUUD9c+E9eMF7m8xfehHerRfGlj2KVKD5W2oQWR9Uo0Ha53uvVAuQSvAbEL5xMPvRXmIOdBWe7SNqkQ7AyANyF12E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=aNe4lK9f; arc=none smtp.client-ip=209.85.167.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-oi1-f171.google.com with SMTP id 5614622812f47-3e602a73ba1so2394112b6e.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:00:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1730124018; x=1730728818; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FihaM4IoEI/TwOyPoeUguS8WS7IqmB9x82K637EGe5Y=;
+        b=aNe4lK9fRYs0brgi0ZiIPyRw8NmUo0obkPXCawojqJlIMKj/ka38Ak0yvj7cXS6rn+
+         Aslkr30lDPMowwatyN1o8R6nLDEE2Iptq+JvpIfHgLQ06WztZ0Ej91IjhGRXMVgmazth
+         1c2ru7VoW6pOEf5n6ho4RLcA3aoOMuDdAYB5rH++aZ7+F8DDM2X2StdcJ0ksAbBzH/g1
+         TUp13wwYymwEa/oGDc5avaEQWbQxAef4xkIgSUgqv2r2gt4LSjduLYpbjEca8iXgWNJw
+         nyc0XOw1SgCyV99O5388VKEtKVun3p9OtdOpB1C8nQPUobFjmcceqSz4QTtz3YVHsHLz
+         odhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730124018; x=1730728818;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FihaM4IoEI/TwOyPoeUguS8WS7IqmB9x82K637EGe5Y=;
+        b=ToCwUj7lbBJkwUiemle7tgVVCmSH1iRR70Enj72mggK5Y0lO0PY0o8XdlSJKr8V4vk
+         bqkZOxxDOyshJmQ+k8tkkS3YbdBxQgHR1+2uQLLJzKsTeIVDjbfYgnTXantzFzgGILzB
+         Lj5dLLn1SotN5IkNysdBgupuX0LgKlrjPPZ7omJAfpeA2zb55L8ZDCa3jCTN1zlLpTyN
+         1B39hVKTMuuf8B08osqqilUdVTyR5nJ0dv8AbGTC8OaPunPkLy1vQr8xevPKoqdOqQAU
+         fM2Xdk0PkViyOl6yVMcOi0E7lxIlZvfdoleyCd6t0XgDM2Q0/OvCrzxtiWiOu/bfg6QD
+         +c5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV37X+Z+StE4EO4x/FWlvp/boIzcLVj9cQsPuuxxBS9FzrNUkqBuLqwKUTYpAQbT+VJ7cjfgtxGrAcnWbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJdAv1FW8zn8lbL4v4E0GD3FzdJUL4sgnX5j2a3GS+7ZfQjSWY
+	xvpas2EgDsUSDUwRUlHx8HtocDMXsMvpyccBnd5FAWawe7A0YwMOMjSdlKLynMs=
+X-Google-Smtp-Source: AGHT+IH9co64vboTin+h8OS63UgFbBeD4w6rdjM3nCxgpXXvLvMDezoy7l2Ep0U63nuT2u+Cay9MJQ==
+X-Received: by 2002:a05:6808:444c:b0:3e6:4c48:8942 with SMTP id 5614622812f47-3e64c488acamr1321455b6e.35.1730124017959;
+        Mon, 28 Oct 2024 07:00:17 -0700 (PDT)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d17972f5d5sm32494226d6.23.2024.10.28.07.00.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 07:00:17 -0700 (PDT)
+Date: Mon, 28 Oct 2024 10:00:16 -0400
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>,
+	Yosry Ahmed <yosryahmed@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [PATCH v1 3/6] memcg-v1: no need for memcg locking for dirty
+ tracking
+Message-ID: <20241028140016.GC10985@cmpxchg.org>
+References: <20241025012304.2473312-1-shakeel.butt@linux.dev>
+ <20241025012304.2473312-4-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 0/9] tmpfs: Add case-insensitive support for tmpfs
-To: Christian Brauner <brauner@kernel.org>
-Cc: kernel-dev@igalia.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-mm@kvack.org, linux-doc@vger.kernel.org,
- Gabriel Krisman Bertazi <krisman@suse.de>,
- Gabriel Krisman Bertazi <gabriel@krisman.be>,
- Randy Dunlap <rdunlap@infradead.org>,
- Gabriel Krisman Bertazi <krisman@kernel.org>,
- Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>,
- Theodore Ts'o <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>,
- Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, smcv@collabora.com
-References: <20241021-tonyk-tmpfs-v8-0-f443d5814194@igalia.com>
- <20241028-weinkarte-weshalb-1495cc5086ab@brauner>
-Content-Language: en-US
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-In-Reply-To: <20241028-weinkarte-weshalb-1495cc5086ab@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025012304.2473312-4-shakeel.butt@linux.dev>
 
-Em 28/10/2024 09:37, Christian Brauner escreveu:
-> On Mon, 21 Oct 2024 13:37:16 -0300, André Almeida wrote:
->> This patchset adds support for case-insensitive file names lookups in
->> tmpfs. The main difference from other casefold filesystems is that tmpfs
->> has no information on disk, just on RAM, so we can't use mkfs to create a
->> case-insensitive tmpfs.  For this implementation, I opted to have a mount
->> option for casefolding. The rest of the patchset follows a similar approach
->> as ext4 and f2fs.
->>
->> [...]
+On Thu, Oct 24, 2024 at 06:23:00PM -0700, Shakeel Butt wrote:
+> During the era of memcg charge migration, the kernel has to be make sure
+> that the dirty stat updates do not race with the charge migration.
+> Otherwise it might update the dirty stats of the wrong memcg. Now with
+> the memcg charge migration deprecated, there is no more race for dirty
+> stat updates and the previous locking can be removed.
 > 
-> Applied to the vfs.tmpfs branch of the vfs/vfs.git tree.
-> Patches in the vfs.tmpfs branch should appear in linux-next soon.
-> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Thanks!
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
