@@ -1,197 +1,303 @@
-Return-Path: <linux-kernel+bounces-385383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA9389B3684
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:32:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE619B368A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:33:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB202283963
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:32:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08FD11F220C2
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD921DEFC6;
-	Mon, 28 Oct 2024 16:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC761DEFC4;
+	Mon, 28 Oct 2024 16:32:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b="W5Ki2/YM"
-Received: from thales.epochal.quest (thales.epochal.quest [51.222.15.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kYMdFsiA"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E41B5186616;
-	Mon, 28 Oct 2024 16:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.222.15.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1EBF18785D;
+	Mon, 28 Oct 2024 16:32:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730133122; cv=none; b=AC0MiQOPoOedXwb/pZv3yaNxrKGP5i0XRDVudTePj6bZxi1aRbOdqFvor71TcibvT0M0jbUOhUC9QRnIFCJ0dmef+WTSgfz+CcZlwhuPX2pWdJ7SAHNMpApqX3uATq9lqUa/xznbYKq4vJkQwYP7XjPyNXZERzCHmiv2YICMDxI=
+	t=1730133174; cv=none; b=YO9KPzmyUJ6iT5FK5BwYT8pINEW3Hq3dH0j6R6/mXY165qUbS9gSKevUYgJ+lRVncQMP1n+/qukM55TDLDjlHS7nWUq5Hn0xD/4GRDC8oilZqpSTTSbHNu2PSrqitJNyB5eXERgpgbbuYiXbeBqNfqzuN6tpv7cnPkGhCYwjFQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730133122; c=relaxed/simple;
-	bh=jbAf3Qjeh2+VzNtT5cDxQjaaHvxoKBVQwoZg6Fi/2qk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=SLd0/C/lJN+5lsoCsvyKqCUNHArqAUGJ1gAorxCG4UNW3TKftJJnmns/uN/HKYT5/Y1dd0+czHPjkHT//8rBnX2v8DqDmCCswv9+VUboyLA2enqEm0E9VjNKZwa6aGgJez6OhG6U0uwRlvcfVwhrUKbrBIbttI4ZOqZl4ys5W4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest; spf=pass smtp.mailfrom=epochal.quest; dkim=pass (2048-bit key) header.d=epochal.quest header.i=@epochal.quest header.b=W5Ki2/YM; arc=none smtp.client-ip=51.222.15.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=epochal.quest
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=epochal.quest
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=epochal.quest;
-	s=default; t=1730133119;
-	bh=jbAf3Qjeh2+VzNtT5cDxQjaaHvxoKBVQwoZg6Fi/2qk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=W5Ki2/YM/RJaBXLb0WwetrVYx8TZ94J/cCHj8BbY3l71bj2hxrEWdrfjDJd9qOV62
-	 DanrZm8ltb+h9YxswXmDiUNXrCPfOP6+rcdi4/i/J1UjqGbaHLgbVbKwgB3jcHbWtC
-	 CzIRjDLQ0xw9MpyBCLL1R2jldjpXZ0Po3Xnp5lMKrowVR9CU/run6txkPGCrJMnJ1t
-	 o6+pKf3EMhT/dTUsMatNhncGK13OpC0JoEIhV00vStt02VPabfY2MpGJ5U9dj/MP2L
-	 4SMAHDcko2GVG2kU5G0PL6ZY/Wnmixx4ugmRkPho+Y0+3SlCo5HOgnV6yKeOtlIICO
-	 WNIrjUtZe+zeA==
-X-Virus-Scanned: by epochal.quest
+	s=arc-20240116; t=1730133174; c=relaxed/simple;
+	bh=dX9dtqxTAZzZ8oaWbpxD+Vr5AqGKDD1hpjrSJQfrnfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y0U38qZbF9qitr+yy/OBnvJxP0N9+zd+uspYSazqLtEVKe41hbXx8SQ55PzYf4SMfKIWAtlqifxpHicQMD5GB8V/N/bJm1bxe6SctHV+sM0YLr0MLkugsESjhqagANjF5INBjg9dEUVQ9VyHt+qhp67RyGsCVR/s4Y6rLgkEpPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kYMdFsiA; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1A1B8641;
+	Mon, 28 Oct 2024 17:32:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730133167;
+	bh=dX9dtqxTAZzZ8oaWbpxD+Vr5AqGKDD1hpjrSJQfrnfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kYMdFsiAhe6U/DPUvrYAUG/AFfhcfJCMiTF/asy5Nugs5+urnvuPgDgilpeypMM8D
+	 kXt5MzHUDTqCTpxkP8vQehLnI4TeRWnKlQctyeF6ZJDrwh1c1cztZHZT1qwuEONDNT
+	 YTzzOT9ZUgXxEIGOzINNZah5hTPmnS2dyuLH7O6c=
+Date: Mon, 28 Oct 2024 18:32:43 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	Naushir Patuck <naush@raspberrypi.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH v6 3/4] media: raspberrypi: Add support for RP1-CFE
+Message-ID: <20241028163243.GB26852@pendragon.ideasonboard.com>
+References: <20241003-rp1-cfe-v6-3-d6762edd98a8@ideasonboard.com>
+ <4d9e340e-2ae7-495b-8623-0d10398e1c3d@xs4all.nl>
+ <02f05b61-08e7-45f8-8d59-f79bc20d076f@ideasonboard.com>
+ <74286a86-51b9-4742-bb0c-583d70b1b0a7@xs4all.nl>
+ <505c502e-b67a-4dca-8420-eb87eae4e170@ideasonboard.com>
+ <59cf95be-fb53-4a94-bc6e-f9dca322749d@xs4all.nl>
+ <5832a2f9-c908-4f5a-a3ee-9cb7d23ddab4@ideasonboard.com>
+ <563347aa-4155-47e1-b71a-0107aed83eb6@xs4all.nl>
+ <20241028151713.GI24052@pendragon.ideasonboard.com>
+ <62073d7a-0a4b-4440-90e5-dcce0dec72d7@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 28 Oct 2024 13:31:58 -0300
-From: Cody Eksal <masterr3c0rd@epochal.quest>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-usb@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu
- Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Parthiban <parthiban@linumiz.com>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Vinod Koul <vkoul@kernel.org>,
- Linus Walleij <linus.walleij@linaro.org>, Thierry Reding
- <treding@nvidia.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Yangtao Li <tiny.windzz@gmail.com>, Viresh
- Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
- <sboyd@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, "Rafael J.
- Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH 07/13] arm64: dts: allwinner: a100: add usb related nodes
-In-Reply-To: <20241026014444.12c8c99b@minigeek.lan>
-References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
- <20241024170540.2721307-8-masterr3c0rd@epochal.quest>
- <20241026014444.12c8c99b@minigeek.lan>
-Message-ID: <09bc7b6ac779caf7a5e5ebbd7243b165@epochal.quest>
-X-Sender: masterr3c0rd@epochal.quest
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <62073d7a-0a4b-4440-90e5-dcce0dec72d7@ideasonboard.com>
 
-On 2024/10/25 9:44 pm, Andre Przywara wrote:
-> On Thu, 24 Oct 2024 14:05:25 -0300
-> Cody Eksal <masterr3c0rd@epochal.quest> wrote:
+On Mon, Oct 28, 2024 at 05:32:27PM +0200, Tomi Valkeinen wrote:
+> On 28/10/2024 17:17, Laurent Pinchart wrote:
+> > On Mon, Oct 28, 2024 at 12:30:45PM +0100, Hans Verkuil wrote:
+> >> On 28/10/2024 12:25, Tomi Valkeinen wrote:
+> >>> On 28/10/2024 13:13, Hans Verkuil wrote:
+> >>>> On 28/10/2024 12:05, Tomi Valkeinen wrote:
+> >>>>> On 28/10/2024 12:11, Hans Verkuil wrote:
+> >>>>>> On 28/10/2024 10:21, Tomi Valkeinen wrote:
+> >>>>>>> On 24/10/2024 11:20, Hans Verkuil wrote:
+> >>>>>>>> Hi Tomi,
+> >>>>>>>>
+> >>>>>>>> I know this driver is already merged, but while checking for drivers that use
+> >>>>>>>> q->max_num_buffers I stumbled on this cfe code:
+> >>>>>>>>
+> >>>>>>>> <snip>
+> >>>>>>>>
+> >>>>>>>>> +/*
+> >>>>>>>>> + * vb2 ops
+> >>>>>>>>> + */
+> >>>>>>>>> +
+> >>>>>>>>> +static int cfe_queue_setup(struct vb2_queue *vq, unsigned int *nbuffers,
+> >>>>>>>>> +               unsigned int *nplanes, unsigned int sizes[],
+> >>>>>>>>> +               struct device *alloc_devs[])
+> >>>>>>>>> +{
+> >>>>>>>>> +    struct cfe_node *node = vb2_get_drv_priv(vq);
+> >>>>>>>>> +    struct cfe_device *cfe = node->cfe;
+> >>>>>>>>> +    unsigned int size = is_image_node(node) ?
+> >>>>>>>>> +                    node->vid_fmt.fmt.pix.sizeimage :
+> >>>>>>>>> +                    node->meta_fmt.fmt.meta.buffersize;
+> >>>>>>>>> +
+> >>>>>>>>> +    cfe_dbg(cfe, "%s: [%s] type:%u\n", __func__, node_desc[node->id].name,
+> >>>>>>>>> +        node->buffer_queue.type);
+> >>>>>>>>> +
+> >>>>>>>>> +    if (vq->max_num_buffers + *nbuffers < 3)
+> >>>>>>>>> +        *nbuffers = 3 - vq->max_num_buffers;
+> >>>>>>>>
+> >>>>>>>> This makes no sense: max_num_buffers is 32, unless explicitly set when vb2_queue_init
+> >>>>>>>> is called. So 32 + *nbuffers is never < 3.
+> >>>>>>>>
+> >>>>>>>> If the idea is that at least 3 buffers should be allocated by REQBUFS, then set
+> >>>>>>>> q->min_reqbufs_allocation = 3; before calling vb2_queue_init and vb2 will handle this
+> >>>>>>>> for you.
+> >>>>>>>>
+> >>>>>>>> Drivers shouldn't modify *nbuffers, except in very rare circumstances, especially
+> >>>>>>>> since the code is almost always wrong.
+> >>>>>>>
+> >>>>>>> Looking at this, the original code in the old BSP tree was, which somehow, along the long way, got turned into the above:
+> >>>>>>>
+> >>>>>>> if (vq->num_buffers + *nbuffers < 3)
+> >>>>>>>            *nbuffers = 3 - vq->num_buffers;
+> >>>>>>>
+> >>>>>>> So... I think that is the same as "q->min_reqbufs_allocation = 3"?
+> >>>>>>>
+> >>>>>>> The distinction between min_queued_buffers and
+> >>>>>>> min_reqbufs_allocation, or rather the need for the latter, still
+> >>>>>>> escapes me. If the HW/SW requires N buffers to be queued, why
+> >>>>>>> would we require allocating more than N buffers?
+> >>>>>>
+> >>>>>> min_queued_buffers is easiest to explain: that represents the requirements of the DMA
+> >>>>>> engine, i.e. how many buffers much be queued before the DMA engine can be started.
+> >>>>>> Typically it is 0, 1 or 2.
+> > 
+> > That's partly true only. Even if the hardware requires 2 buffers, a
+> > driver can allocate scratch buffers to lower the requirement for
+> > userspace. Setting min_queued_buffers to 1 is usually fine, as there are
+> > few use cases for userspace to start the hardware before a buffer is
+> > available to capture a frame to. A value of 2 is much more problematic,
+> > as it prevents operating with a single buffer. I know using a single
+> > buffer results in frame drops, but there are resource-constrained
+> > systems where application don't always need all the frames (such as the
+> > Raspberry Pi Zero for instance). I very strongly encourage drivers to
+> > never set a min_queued_buffers value higher than 1.
+> > 
+> >>>>>>
+> >>>>>> min_reqbufs_allocation is the minimum number of buffers that will be allocated when
+> >>>>>> calling VIDIOC_REQBUFS in order for userspace to be able to stream without blocking
+> >>>>>> or dropping frames.
+> >>>>>>
+> >>>>>> Typically this is 3 for video capture: one buffer is being DMAed, another is queued up
+> >>>>>> and the third is being processed by userspace. But sometimes drivers have other
+> >>>>>> requirements.
+> > 
+> > This is exactly why I dislike min_reqbufs_allocation when set based on
+> > this logic, it encodes assumption on userspace use cases that a capture
+> > driver really shouldn't make.
+> > 
+> >>>>>>
+> >>>>>> The reason is that some applications will just call VIDIOC_REQBUFS with count=1 and
+> >>>>>> expect it to be rounded up to whatever makes sense. See the VIDIOC_REQBUFS doc in
+> >>>>>> https://hverkuil.home.xs4all.nl/spec/userspace-api/v4l/vidioc-reqbufs.html
+> >>>>>>
+> >>>>>> "It can be smaller than the number requested, even zero, when the driver runs out of
+> >>>>>>     free memory. A larger number is also possible when the driver requires more buffers
+> >>>>>>     to function correctly."
+> >>>>>>
+> >>>>>> How drivers implement this is a mess, and usually the code in the driver is wrong as
+> >>>>>> well. In particular they often did not take VIDIOC_CREATE_BUFS into account, i.e.
+> >>>>>> instead of 'if (vq->num_buffers + *nbuffers < 3)' they would do 'if (*nbuffers < 3)'.
+> >>>>>
+> >>>>> Thanks, this was educational!
+> >>>>>
+> >>>>> So. If I have a driver that has min_queued_buffers = 1, I can use
+> >>>>> VIDIOC_CREATE_BUFS to allocate a single buffer, and then capture
+> >>>>> just one buffer, right? Whereas VIDIOC_REQBUFS would give me
+> >>>>> (probably) three (or two, if the driver does not set
+> >>>>> min_reqbufs_allocation). Three buffers makes sense for full
+> >>>>> streaming, of course.
+> >>>>>
+> >>>>>> When we worked on the support for more than 32 buffers we added min_reqbufs_allocation
+> >>>>>> to let the core take care of this. In addition, this only applies to VIDIOC_REQBUFS,
+> > 
+> > I agree it's better to handle it in the core than in drivers, even if I
+> > dislike the feature in the first place.
+> > 
+> >>>>>> if you want full control over the number of allocated buffers, then use VIDIOC_CREATE_BUFS,
+> >>>>>> with this ioctl the number of buffers will never be more than requested, although it
+> >>>>>> may be less if you run out of memory.
+> > 
+> > On a side note, we should transition libcamera to use VIDIOC_CREATE_BUFS
+> > unconditionally.
+> > 
+> >>>>>>
+> >>>>>> I really should go through all existing drivers and fix them up if they try to
+> >>>>>> handle this in the queue_setup function, I suspect a lot of them are quite messy.
+> >>>>>>
+> >>>>>> One thing that is missing in the V4L2 uAPI is a way to report the minimum number of
+> >>>>>> buffers that need to be allocated, i.e. min_queued_buffers + 1. Since if you want
+> >>>>>
+> >>>>> Hmm, so what I wrote above is not correct? One needs min_queued_buffers + 1? Why is that?
+> >>>>
+> >>>> The DMA engine always uses min_queued_buffers, so if there are only that many buffers,
+> >>>> then it can never return a buffer to userspace! So you need one more. That's the absolute
+> >>>> minimum. For smooth capture you need two more to allow time for userspace to process the
+> >>>> buffer.
+> >>>
+> >>> Hmm, ok, I see. Well, I guess my "I want to capture just a single frame" is not a very common case.
+> > 
+> > It's not that uncommon, see above.
+> > 
+> >>>
+> >>> Can I queue one buffer, start streaming, stop streaming, and get the
+> >>> filled buffer? But then I guess I don't when the buffer has been
+> >>> filled, i.e. when to call stop streaming.
+> >>
+> >> Exactly. If you really want that, then the driver has to be adapted in the way that Laurent
+> >> suggested, i.e. with one or more scratch buffers. But that is not always possible, esp. with
+> >> older hardware without an IOMMU.
+> > 
+> > Drivers can always allocate a full-frame scratch buffer in the worst
+> > case. That can waste memory though, which is less than ideal.
+> > 
+> >>> So, never mind, I don't actually have any use case for this, just wondering.
+> >>>
+> >>>>>
+> >>>>>> to use CREATE_BUFS you need that information so you know that you have to create
+> >>>>>> at least that number of buffers. We have the V4L2_CID_MIN_BUFFERS_FOR_CAPTURE control,
+> >>>>>> but it is effectively codec specific. This probably should be clarified.
+> >>>>>>
+> >>>>>> I wonder if it wouldn't be better to add a min_num_buffers field to
+> >>>>>> struct v4l2_create_buffers and set it to min_queued_buffers + 1.
+> > 
+> > Don't add the +1. We should give userspace the information it needs to
+> > make informed decisions, not make decisions on its behalf.
+> > 
+> >>>>>
+> >>>>> I think this makes sense (although I still don't get the +1).
+> >>>>>
+> >>>>> However, based on the experiences from adding the streams features
+> >>>>> to various ioctls, let's be very careful =). The new
+> >>>>> 'min_num_buffers' can be filled with garbage by the userspace. If
+> >>>>> we define the 'min_num_buffers' field to be always filled by the
+> >>>>> kernel, and any value provided from the userspace to be ignored, I
+> >>>>> think it should work.
+> >>>>
+> >>>> I've posted an RFC for this.
+> >>>
+> >>> Thanks, I'll check it out.
+> >>>
+> >>> For the original issue in this thread, I think the correct fix is to
+> >>> remove the lines from cfe_queue_setup(), and add
+> >>> "q->min_reqbufs_allocation = 3".
+> > 
+> > Or just don't set min_reqbufs_allocation ? This is a new driver, and it
+> > requires a device-specific userspace to operate the ISP. I don't think
+> > we need to care about applications blindly calling VIDIOC_REQBUFS(1) and
+> > expecting to get more buffers.
 > 
-> Hi,
+> It doesn't require a device-specific userspace for plain CSI-2 capture.
 > 
->> From: Yangtao Li <frank@allwinnertech.com>
->> 
->> Allwinner A64 have two HCI USB controllers, a OTG controller and a USB
->> PHY device, let's add nodes on dts.
->> 
->> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
->> [masterr3c0rd@epochal.quest: fallback to a33-musb instead of h3-musb]
->> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
->> ---
->>  .../arm64/boot/dts/allwinner/sun50i-a100.dtsi | 91 
->> +++++++++++++++++++
->>  1 file changed, 91 insertions(+)
->> 
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi 
->> b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
->> index adb11b26045f..0aee1b578661 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a100.dtsi
->> @@ -302,6 +302,97 @@ ths: thermal-sensor@5070400 {
->>  			#thermal-sensor-cells = <1>;
->>  		};
->> 
->> +		usbphy: phy@5100400 {
->> +			#phy-cells = <1>;
-> 
-> Please keep the compatible string first, and move #phy-cells to the 
-> end.
-Will be done in V2
->> +			compatible = "allwinner,sun50i-a100-usb-phy";
->> +			reg = <0x05100400 0x14>,
->> +			      <0x05101800 0x4>,
->> +			      <0x05200800 0x4>;
-> 
-> We need at least 0x24 for the phy_ctrl and 0x14 for the PMUs. But I
-> wonder if we should use 0x100 for all of them, like for the D1, as 
-> there
-> are more registers. The fact that the Linux driver doesn't use more
-> shouldn't prevent the DT from describing them.
-This as well.
->> +			reg-names = "phy_ctrl",
->> +				    "pmu0",
->> +				    "pmu1";
->> +			clocks = <&ccu CLK_USB_PHY0>,
->> +				 <&ccu CLK_USB_PHY1>;
->> +			clock-names = "usb0_phy",
->> +				      "usb1_phy";
->> +			resets = <&ccu RST_USB_PHY0>,
->> +				 <&ccu RST_USB_PHY1>;
->> +			reset-names = "usb0_reset",
->> +				      "usb1_reset";
->> +			status = "disabled";
->> +		};
->> +
->> +		ehci0: usb@5101000 {
-> 
-> The nodes are ordered by their MMIO base address, so please move them
-> around accordingly.
-I double checked; the only note that wasn't in order was MUSB, which 
-fits above the USB PHY in the memory map. I've moved those up.
->> +			compatible = "allwinner,sun50i-a100-ehci",
->> +				     "generic-ehci";
->> +			reg = <0x05101000 0x100>;
->> +			interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&ccu CLK_BUS_OHCI0>,
->> +				 <&ccu CLK_BUS_EHCI0>,
->> +				 <&ccu CLK_USB_OHCI0>;
->> +			resets = <&ccu RST_BUS_OHCI0>,
->> +				 <&ccu RST_BUS_EHCI0>;
->> +			phys = <&usbphy 0>;
->> +			phy-names = "usb";
->> +			status = "disabled";
->> +		};
->> +
->> +		ohci0: usb@5101400 {
->> +			compatible = "allwinner,sun50i-a100-ohci",
->> +				     "generic-ohci";
->> +			reg = <0x05101400 0x100>;
->> +			interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
->> +			clocks = <&ccu CLK_BUS_OHCI0>,
->> +				 <&ccu CLK_USB_OHCI0>;
->> +			resets = <&ccu RST_BUS_OHCI0>;
->> +			phys = <&usbphy 0>;
->> +			phy-names = "usb";
->> +			status = "disabled";
->> +		};
->> +
->> +		usb_otg: usb@5100000 {
->> +			compatible = "allwinner,sun50i-a100-musb",
->> +				     "allwinner,sun8i-a33-musb";
->> +			reg = <0x05100000 0x0400>;
->> +			clocks = <&ccu CLK_BUS_OTG>;
->> +			resets = <&ccu RST_BUS_OTG>;
->> +			interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
->> +			interrupt-names = "mc";
->> +			phys = <&usbphy 0>;
->> +			phy-names = "usb";
->> +			extcon = <&usbphy 0>;
->> +			dr_mode = "otg";
-> 
-> dr_mode should be set in the board .dts, so please remove that line
-> from here.
-Done, and updated the Perf1 DTS to reflect this
-> For the records: I checked the MMIO base addresses, clock and reset
-> names and the IRQs against the manual: they all match.
-Thanks again!
-- Cody
-> Cheers,
-> Andre
-> 
->> +			status = "disabled";
->> +		};
->> +
+> If I understood right, the expected behavior for VIDIOC_REQBUFS is to 
+> return enough buffers for "smooth streaming". So even if device-specific 
+> userspace would be required, doesn't it still make sense to have 
+> min_reqbufs_allocation = 3?
+
+"Smooth streaming" is use case-dependent, you will need different number
+of buffers for different use cases. That's why I don't like hardcoding
+this in a video capture driver. I'd rather expose information about the
+driver behaviour (in particular, how many buffers it will hold on
+without returning anything to userspace until a new buffer gets queued)
+and let applications make a decision. I don't expect applications
+relying on VIDIOC_REQBUFS(1) to work out-of-the-box on Pi 5 anyway, as
+the media graph needs to be configured.
+
+> Or is your point that even a device-specific userspace, which knows 
+> exactly what it's doing, would use VIDIOC_REQBUFS, instead of 
+> VIDIOC_CREATE_BUFS?
+
+I expect a device-specific userspace not to require drivers to make
+policy decisions on its behalf.
+
+> Also, if I don't set min_reqbufs_allocation, VIDIOC_REQBUFS(1) would 
+> still allocate two buffers, not one.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
