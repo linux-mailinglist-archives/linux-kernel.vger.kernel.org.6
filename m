@@ -1,212 +1,139 @@
-Return-Path: <linux-kernel+bounces-384917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601A79B301D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:24:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE619B3022
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 210BC282350
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:24:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABDF6B22C6C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:26:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77EC188733;
-	Mon, 28 Oct 2024 12:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139911D9586;
+	Mon, 28 Oct 2024 12:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vRwgHpkM"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="CFzMFMAJ"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A88DD1D7E3E
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1C717C61;
+	Mon, 28 Oct 2024 12:26:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730118280; cv=none; b=HoOxyUdcCDEnYwcR9fVyYOuhpqiWCDoMWUiNvtmwSQEH59z2fsflH3oCzZ5QP9gqwZS70ccP03ikfA9NFAZmedcs1zm7SQ09Xq2YLK0z1Y3C0XoOsY6GI5sW8dEtKgHDaPfdJhqx4U+cq7nQXL6xEw4LJ2zQd+rskD8zKscLg6U=
+	t=1730118404; cv=none; b=VVlx5xshWzG0I8xSI4EFLCtur5tzfvhk5Nq9gBRYnxMhOxfUIs6CYNZTT7opFGbL8OulbwFGBSY6KE1H6NKRBfsq/X7TQWqJf0WFlKbGpKg7FoBvTv5MCud/OxdW2bHgZyYnEoPVMeNB6EElO70xrR6IAJKg1EfHwLu9CHqLGCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730118280; c=relaxed/simple;
-	bh=mSaHE3v21lE8qms03Sk8jUDId6PqNL+b81JWEpgodG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hijg0jfVouhieLE96n0g1kETjuKaL6oOGykrbJETgmi4+5X6n7kuJfh8q5mt1SavVCDbV/kSZFjeCwuL7nfPLZ0mS1F+2vTnfTHaoejekBNBqU8DTXDASfVTgHRyL2O93ju6VU7C284dm2ZIzGkd8P0z3Y1SpZYtretmYX2ivyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vRwgHpkM; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb4fa17044so41864661fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730118276; x=1730723076; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hiakvBu5HWQteUMkqul4SIcxvJVDyv5yRsVh32mSkGg=;
-        b=vRwgHpkMIychKQjrSM3B/hC5AW//ktjoHTV2hbxDOd82osibbGeNUHBU/x4POSw6v4
-         0F1bFkgb8SlSBeATSvbO1/huR6OuhmJYp2Gr/znwnaWBVQlJIUqH6D5qAgNCtQP6LaSo
-         kbSfvFZR4/LQ+/NrZbGLUz+iWpkBwqCoCZBJADzvpbcTg30SwNnPEZCiWVFf2fgs4/ev
-         8Tn9fkVO6UIVOhwwq9o9Dk9RUBTwceyckXZ+CBT10mn/DwGAMAw/dZU/ZVXLuQfYKigv
-         KJtlR1HwU54CcOJy0QWpaBxZLgeAnmr+qyOFzsIsPv0lIDv3nOVN02/wkZKotqRRCr2O
-         fivw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730118276; x=1730723076;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hiakvBu5HWQteUMkqul4SIcxvJVDyv5yRsVh32mSkGg=;
-        b=lCXEwORKiQ9DtIn6lWmRZAztNcCWH65OaR22w7S4Mu41M0KhLgHUYGp3j6xjRnmwTe
-         TIfRjF3QwlyFCv2daan3nopX+WnGfeDkQzpq3v2D3SNoPS+U+h3Qcxml6tG7Yfft8Y0w
-         uBf8GVlmwH7tRPwbsv5D+Y8B1SyCAEdDDQ5X9a7x78jJ4psmZJmfnREIgj5NNvvYyiF7
-         EkbMb5S32rudx0OkotPD578MXulCuE15UmiD7HQFBxrW2KXANhoaWcBgNfSqkm6nmQmZ
-         NI2+bVmKoRk6VTI4Joq1xjuXIAs3+w81AfjN377LFQ0wmUUcQ3S3vooIWdBCDb8KtHG9
-         5vyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGAIcUrCLBZifgzOXxUtIbvERpSe6woVTP6aysE7shyiaUBmVKrCAvOIo6JKKGt9fQFjWRsDzgW6Efd/4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylIG4kUaAUwqr8utdv8P4kNaw4MRFsD3u/8RVKmok2uCaav+ii
-	qJQiutb9mpIr72Ky17MSBD6uVHia5z42mg/QJ0CZfGAGjdhwvWnFwkRbEyX+8bU=
-X-Google-Smtp-Source: AGHT+IHMzvTbKsXQiE7Sg+SLUe/8P7mNRx/fVvevQS58dQwaGnRtlPzMwEtJenkdv8S3A7kBzaWS/w==
-X-Received: by 2002:a2e:b8c3:0:b0:2fb:3445:a4af with SMTP id 38308e7fff4ca-2fcbdfe8b81mr29076191fa.21.1730118275722;
-        Mon, 28 Oct 2024 05:24:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fcb451a043sm11549741fa.46.2024.10.28.05.24.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 05:24:34 -0700 (PDT)
-Date: Mon, 28 Oct 2024 14:24:32 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
-Message-ID: <qvi32futhcoe4tklfsdffhpkorpxjqxyjsajrlyuxega6o2fzn@p37z7llhr7c2>
-References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+	s=arc-20240116; t=1730118404; c=relaxed/simple;
+	bh=rMSa2GblHCzLvcvkl4pyYdF3B9UzPJexGxowAWH/Rfg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uCM3bsVtrOB9ikr1ExWWuICRu0FRNKv/ZB/dPIqNwjdFypZaMl1At5FL5W40chWr2122F50Ku+k+idHJv97IKp64his0hj205LG/eGMZDhq7aIBDyddZujaIvsFv/pXT/K+eHJtsDzYZdFqU5V3pNHsPUFJqRq/42eU9gi78ZRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=CFzMFMAJ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SB3aeB027558;
+	Mon, 28 Oct 2024 08:26:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=B2yzXic/ytcByJ2vquRJuUQRg1/
+	c6Qn9AbDplfhz4Q0=; b=CFzMFMAJhonGDRJuZ8aMKm9qmgak6cXXGqSEJ4m4juB
+	JVzs/SRLXZalv6STli3h5715InjyRIeb2pZferxipv/0bhjNOGEPSffCEOWZtLbw
+	NpPIDqWziM4nDm+zcpkSlfQTEyHFTaXZI78A4UKOUW96smlaY4UFwiZf/txcDOtB
+	0wbT7oGEZBNT2pmRLYC3DNoNgSY5s6jrq8A77LpKsaal/QAeTpXQRr77TO8Gcxaz
+	iRYudEHYfYoCRKEXlxzfTk3i6OxYTzFXqrpdAbdmkmzOv+pzE4OawjGiAfnMPZHS
+	ARwu5y8/jsETjfSE6a6/s6K2X95avjcGYNfg5UQ1moA==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42gt92reva-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 08:26:15 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49SCQEnJ024341
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Oct 2024 08:26:14 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 28 Oct
+ 2024 08:26:14 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 28 Oct 2024 08:26:14 -0400
+Received: from dell-precision-robert.ad.analog.com ([10.48.65.123])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49SCQ0aK026080;
+	Mon, 28 Oct 2024 08:26:02 -0400
+From: Robert Budai <robert.budai@analog.com>
+To: Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Nuno Sa <nuno.sa@analog.com>,
+        Ramona
+ Gradinariu <ramona.gradinariu@analog.com>,
+        Antoniu Miclaus
+	<antoniu.miclaus@analog.com>,
+        Jonathan Cameron <jic23@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        Jagath Jog J
+	<jagathjog1996@gmail.com>,
+        Robert Budai <robert.budai@analog.com>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+CC: <robi_budai@yahoo.com>
+Subject: [PATCH 0/5] Add support for ADIS16550 and ADIS16550W
+Date: Mon, 28 Oct 2024 14:25:32 +0200
+Message-ID: <20241028122543.8078-1-robert.budai@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: 84cTicoNzj_1Vyn_LX_pcCrvYCq6x8Cl
+X-Proofpoint-ORIG-GUID: 84cTicoNzj_1Vyn_LX_pcCrvYCq6x8Cl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1011 adultscore=0
+ bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410280100
 
-On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
-> Clang-19 and above sometimes end up with multiple copies of the large
-> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
-> a6xx_hfi_send_bw_table() calls a number of device specific functions to
-> fill the structure, but these create another copy of the structure on
-> the stack which gets copied to the first.
-> 
-> If the functions get inlined, that busts the warning limit:
-> 
-> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
-> 
-> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
-> the stack. Also, use this opportunity to skip re-initializing this table
-> to optimize gpu wake up latency.
-> 
-> Cc: Arnd Bergmann <arnd@kernel.org>
-> 
+The ADIS16550 is a complete inertial system that includes a triaxis gyroscope
+and a triaxis accelerometer. Each inertial sensor in the ADIS16550 combines
+industry leading MEMS only technology with signal conditioning that optimizes
+dynamic performance. The factory calibration characterizes each sensor for
+sensitivity, bias, and alignment. As a result, each sensor has its own dynamic
+compensation formulas that provide accurate sensor measurements.
 
-Please no empty lines between tags.
+Nuno Sá (3):
+  iio: imu: adis: Add custom ops struct
+  iio: imu: adis: Add DIAG_STAT register size
+  iio: imu: adis16550: add adis16550 support
 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Ramona Gradinariu (2):
+  dt-bindings: iio: Add adis16550 bindings
+  docs: iio: add documentation for adis16550 driver
 
-After all the discussions:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
->  2 files changed, 23 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> index 94b6c5cab6f4..b4a79f88ccf4 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> @@ -99,6 +99,7 @@ struct a6xx_gmu {
->  	struct completion pd_gate;
->  
->  	struct qmp *qmp;
-> +	struct a6xx_hfi_msg_bw_table *bw_table;
->  };
->  
->  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> index cdb3f6e74d3e..55e51c81be1f 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->  
->  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
->  {
-> -	struct a6xx_hfi_msg_bw_table msg = { 0 };
-> +	struct a6xx_hfi_msg_bw_table *msg;
->  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
->  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
->  
-> +	if (gmu->bw_table)
-> +		goto send;
-> +
-> +	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
-> +	if (!msg)
-> +		return -ENOMEM;
-> +
->  	if (adreno_is_a618(adreno_gpu))
-> -		a618_build_bw_table(&msg);
-> +		a618_build_bw_table(msg);
->  	else if (adreno_is_a619(adreno_gpu))
-> -		a619_build_bw_table(&msg);
-> +		a619_build_bw_table(msg);
->  	else if (adreno_is_a640_family(adreno_gpu))
-> -		a640_build_bw_table(&msg);
-> +		a640_build_bw_table(msg);
->  	else if (adreno_is_a650(adreno_gpu))
-> -		a650_build_bw_table(&msg);
-> +		a650_build_bw_table(msg);
->  	else if (adreno_is_7c3(adreno_gpu))
-> -		adreno_7c3_build_bw_table(&msg);
-> +		adreno_7c3_build_bw_table(msg);
->  	else if (adreno_is_a660(adreno_gpu))
-> -		a660_build_bw_table(&msg);
-> +		a660_build_bw_table(msg);
->  	else if (adreno_is_a690(adreno_gpu))
-> -		a690_build_bw_table(&msg);
-> +		a690_build_bw_table(msg);
->  	else if (adreno_is_a730(adreno_gpu))
-> -		a730_build_bw_table(&msg);
-> +		a730_build_bw_table(msg);
->  	else if (adreno_is_a740_family(adreno_gpu))
-> -		a740_build_bw_table(&msg);
-> +		a740_build_bw_table(msg);
->  	else
-> -		a6xx_build_bw_table(&msg);
-> +		a6xx_build_bw_table(msg);
-
-Note for the future improvement: this begs to be migrated to the catalog
-data, adding device-specific callback instead of this if/else series.
-
-
-> +
-> +	gmu->bw_table = msg;
->  
-> -	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, &msg, sizeof(msg),
-> +send:
-> +	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, gmu->bw_table, sizeof(*(gmu->bw_table)),
->  		NULL, 0);
->  }
->  
-> 
-> ---
-> base-commit: 74c374648ed08efb2ef339656f2764c28c046956
-> change-id: 20241024-stack-size-fix-28af7abd3fab
-> 
-> Best regards,
-> -- 
-> Akhil P Oommen <quic_akhilpo@quicinc.com>
-> 
+ .../bindings/iio/imu/adi,adis16550.yaml       |   95 ++
+ Documentation/iio/adis16550.rst               |  389 ++++++
+ Documentation/iio/index.rst                   |    1 +
+ MAINTAINERS                                   |   10 +
+ drivers/iio/imu/Kconfig                       |   13 +
+ drivers/iio/imu/Makefile                      |    1 +
+ drivers/iio/imu/adis.c                        |   33 +-
+ drivers/iio/imu/adis16550.c                   | 1228 +++++++++++++++++
+ include/linux/iio/imu/adis.h                  |   33 +-
+ 9 files changed, 1788 insertions(+), 15 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+ create mode 100644 Documentation/iio/adis16550.rst
+ create mode 100644 drivers/iio/imu/adis16550.c
 
 -- 
-With best wishes
-Dmitry
+2.34.1
+
 
