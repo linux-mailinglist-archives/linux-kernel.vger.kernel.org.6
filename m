@@ -1,369 +1,201 @@
-Return-Path: <linux-kernel+bounces-383918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CEB9B21EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:22:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 332179B21ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:23:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08084281170
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:22:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E415B2811EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:23:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4109113D281;
-	Mon, 28 Oct 2024 01:22:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2526C13D8A0;
+	Mon, 28 Oct 2024 01:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQdNGoKk"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUYPh+XN"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7ED36C;
-	Mon, 28 Oct 2024 01:22:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8437836C;
+	Mon, 28 Oct 2024 01:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730078536; cv=none; b=upz94wCSP/apCEPxlYR4aWeOzoly4+bYjlxZ0s/2qUHqgMG7sJDmcHUHKEMZo01MzB/erjnJJsouqLOCH/szHxOESNFkxDSpC+EoOa2SMcHii5cUbJMQNGDhWYURERjvHogG574d1lQqu3ZFfUE6sjzJa+pz0eCQsiBB39J5Wts=
+	t=1730078589; cv=none; b=A2sz9XVjEGHaSZ9Hmkd7ulrsuMu2T3EwcgvVr8/seQhqQJLiJmaoiT/ASnxvFwBOKKk32Qaw8PkUSML1nRODDQS/VQblUSJ0oA5szuU1VomaTmP4jxKjpBxOozOit5C/FtmbvKKBs2+dnjN/QwLAZk24KwDA10DBZ92gJelxO6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730078536; c=relaxed/simple;
-	bh=ioL0LDm1XQoj/TX8NVsrVDojnr+XylCWobnzuvr4c0Y=;
+	s=arc-20240116; t=1730078589; c=relaxed/simple;
+	bh=3clKcpfjHoJ2vWVpZGgOiNVWowcSiHHETNe0z39scfk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KEdgRb1wtfasoKltuKQwIkO+WuT38Vo0A5tzkD2istmZeCNC21qD1JrAD+6d2td59TZ3G7XyU4fDS/87aSfVKjnZ8MWvqWOE4z32x7hOOg1pNAxQ8rMwEXYDDn2w+0ttRXndMQykzg5yayNCZMTYuLN0ULqGj94sFR99OEZAceE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQdNGoKk; arc=none smtp.client-ip=209.85.208.46
+	 To:Cc:Content-Type; b=Xbpv0AxljZ8uMnz3vbtJbrJJNM940He/jYo3NO4Xa0NOh215qKZ2AiJVmOaftsZaXpnOnMLvOpMY5QfYIqGqxjfKiYlyCoL5sWBvhUTYloIbwxBOfhU/AeAWmErRoDoYuQOtNLKCBosHuYGRenu6YwtfLIkhkz2bI2Wwiy80JME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUYPh+XN; arc=none smtp.client-ip=209.85.210.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c903f5bd0eso7315892a12.3;
-        Sun, 27 Oct 2024 18:22:13 -0700 (PDT)
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e467c3996so2740623b3a.2;
+        Sun, 27 Oct 2024 18:23:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730078532; x=1730683332; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730078587; x=1730683387; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=a6f/AWr5zkxqWz29d7KMm4yvU9ly5dS9dQi/PANUNoQ=;
-        b=KQdNGoKk6AM7av7sE6SHkXamcQDPd1XwyfLCB9WOGwbFiozHk+afodLHnwnVwOpzDZ
-         ZKwXeRy1D0DKrQaVuFXp0mJoIFgnRd7nApPvTIZrCncn8cHEp6KLEHQ7gqVJMfeKqp+S
-         8YQi994s8+ro2sua4AgvQ6OKsWEBr29ICtBOcqway0agk/Ps05LYSCvUJxnfWpolWYM7
-         A8vmaXY5keYzWCYeBbSAeV3TX+tb5gm9hLVLfbB2+RPO5omKviroh19VYuqMC0qV59mx
-         S9Owuh2T8BcOA48GVyp5C8z0kn9ivqbbbkE4A4GYVFuouBfEXJHcEHnjt7wcjG8U7y8F
-         bSTQ==
+        bh=gbd7mQXguTcXJtcB72uwvmxn4tt+BzOaf76K1S0JSgM=;
+        b=CUYPh+XNsvqrHkp3alemUdCt/WXqBIeFs3Q7bGaGuMCm93TevvRPio3LdpnKZKWL6n
+         NFanrUTf4CN9AnR1o+kG8v+4Djndw7IslJoY2OdX6yga5Kf/QELuC9zPwf6SmbJYyPOH
+         gXyN2MBZqvlbEUSNWsz0QOto53/cfJ9WDqZI50XE8qvDG6Kpfa870iygU1jlqmmqpqJl
+         5b42LPXghNC8hScEOCWF56qwrNEfxBIfQPq533C3CDf4loRWWYzGLkiLCvfgXdWGPYHt
+         Kl2rBvhcHSWZStaxBkpQn8uwIW/g+RZNNXTDZnX8tsmDnB/XPu5SdaH5X090EZS/5UTA
+         RBHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730078532; x=1730683332;
+        d=1e100.net; s=20230601; t=1730078587; x=1730683387;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=a6f/AWr5zkxqWz29d7KMm4yvU9ly5dS9dQi/PANUNoQ=;
-        b=gMcneIlN8w/wrHtSRrEi4tLgCCTTcw6FoluocFIAb0IXf1EgZPDmyG23P1Y6PFdGaz
-         VQFVvVph9l8xHEiKpyzfEFFg2A0CEamO7/QHe/hbBjPp/6ig5v2PXlb8F0DQucWQ0Aks
-         w4H4527BVosb2MzrOgeJgmZ6Ep/jWukytR5uGJA/nRXLsFuwtyEbPSfCEwxxuMd5oH1D
-         tKbpR2AkbGoP68+n1geUPLSO0xDioTE9wYISf2WNgbFWiLqjK3vSPLYgLu/FQ4Cl7BLN
-         zrLKNMSkBjMQEh2tT1zOr5znRALDb8HVJ0VoBjBmrJ6fnqlLbz1fH/gg0Yf1nF/ZgwtM
-         LTUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVfuvqhZiH6LMVTo9O3bCvokvSP+EEQfgnmwKSc2MrBsBng7qI6W0h7yUplOukPrKq7Pu/R6WDaTN0=@vger.kernel.org, AJvYcCWXs26H8GXkKddug5TJKsQ4hhOsjZ3/JoeFA0CHPyfGv5Iqkkp2+gFNnKPNM77x4/CKPxM5fHGIVk7bypyW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzmci24NsTvcWfzWGTRq95iXfWTPFYy0Celjo13uAW+AoaxUTrf
-	S/moY5A6PwngKSTb6OnZVFfUPcoj1EutdBsgrsGAMi6WAcAEdCEMtw8j+b4m46QWmLoUYS+8L4q
-	Y7cEhrWGzQ4oNp0Z0xxLWZ8kTVYM=
-X-Google-Smtp-Source: AGHT+IGHIspl0PUcPKyvAKfduJM0LgJ3OcZ24A+1rCnVANY0jKnUh36q4516dA33L2ENFJ94s6JdhUhSiEdZvRPlhYc=
-X-Received: by 2002:a05:6402:2803:b0:5c9:6ae4:332e with SMTP id
- 4fb4d7f45d1cf-5cbbf8b11ffmr5063792a12.8.1730078531832; Sun, 27 Oct 2024
- 18:22:11 -0700 (PDT)
+        bh=gbd7mQXguTcXJtcB72uwvmxn4tt+BzOaf76K1S0JSgM=;
+        b=xHF/5HM++93s3bNwBbtidxOcr9MVSeVi7VtEEvurV9gBuCjFgEdRKmFdCG1UISZ6GS
+         zMInKqKgnSh06aD/9L+2HQcSPfKjqInh0MOWir+i+jQYGD7r6NdayuYGOz4VrGnqC0FD
+         0uITAL11FwjlASDlEK2vwmS5SHfWxIT/F88jChqsM2hEm7OiuiI5MYlLY9gUsgPMTr4e
+         TxcOaqGIX2aNC2uHILesC+Zc2kaVnjeRK9YMSETU6Mgw2EZuJC+FRm02HHSn3jGTXj/A
+         PTXvINPwq4oWfvWqO+nW5BQCBUkAIsWqTjjkTNPuV+ADXmsOZkUdrxCBegbOeFvhQA+I
+         wgSg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwPl293RjbXG9zMnHT/uLKnDO7JIbO5AvH9EWhYMU7U6jjiV37QkLEjaTnloHajkr8eiI=@vger.kernel.org, AJvYcCX44YsFUaumfE+oWZBZHjqp/YGotxB+tTD3gZnEzFGWbBjvugkzcVvQo6WazrCeVzto0AXH385SKZJlKJyt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVrlUYIqvYc+W472cuTJSpZXuU7I/pgoDzS9sy1YqceJ0/b/W4
+	2NnmC0myqAcjTvDC9XzJn8w04xVp2pA2dvKaODdwX1qmZleIsX6McT8Td/5NBW9khE4/V2IDFwT
+	O2+8D5lBjTS78HGMn7NlJX936gUs=
+X-Google-Smtp-Source: AGHT+IE6S+GTd1AliA/Bb42MdYlnzo3ZnyT8vf9nlUdOljX7d8bNs2n/HjkzAgK+qr/oHrAgf16pMB3obR+dJx5orEQ=
+X-Received: by 2002:a05:6a00:18a0:b0:71e:786c:3fa9 with SMTP id
+ d2e1a72fcca58-72062a5d8e2mr11272201b3a.0.1730078586612; Sun, 27 Oct 2024
+ 18:23:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241027175743.1056710-1-mcanal@igalia.com> <20241027175743.1056710-4-mcanal@igalia.com>
- <CAGsJ_4xCw3OvkMo6cVr+U97C3SO+n+5c1j5XRodLDaLXW4ALjg@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xCw3OvkMo6cVr+U97C3SO+n+5c1j5XRodLDaLXW4ALjg@mail.gmail.com>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Mon, 28 Oct 2024 09:21:35 +0800
-Message-ID: <CAK1f24m9rfgWK-hXBD8nestq6BZ6eQpR6O=PZhAU3VnR54gz=A@mail.gmail.com>
-Subject: Re: [PATCH 3/3] mm: shmem: override mTHP shmem default with a kernel parameter
-To: Barry Song <21cnbao@gmail.com>
-Cc: =?UTF-8?B?TWHDrXJhIENhbmFs?= <mcanal@igalia.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-dev@igalia.com
+References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com> <20241026154629.593041-3-mathieu.desnoyers@efficios.com>
+In-Reply-To: <20241026154629.593041-3-mathieu.desnoyers@efficios.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Sun, 27 Oct 2024 18:22:54 -0700
+Message-ID: <CAEf4BzaD24V=Z6T3wNh27pv9OV_WaLNQeAPbUANQJYN0h5zHKw@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 3/3] tracing: Fix syscall tracepoint use-after-free
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org, 
+	Michael Jeanson <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>, 
+	Jordan Rife <jrife@google.com>, syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Ma=C3=ADra,
+On Sat, Oct 26, 2024 at 8:48=E2=80=AFAM Mathieu Desnoyers
+<mathieu.desnoyers@efficios.com> wrote:
+>
+> The grace period used internally within tracepoint.c:release_probes()
+> uses call_rcu() to batch waiting for quiescence of old probe arrays,
+> rather than using the tracepoint_synchronize_unregister() which blocks
+> while waiting for quiescence.
+>
+> With the introduction of faultable syscall tracepoints, this causes
+> use-after-free issues reproduced with syzkaller.
+>
+> Fix this by using the appropriate call_rcu() or call_rcu_tasks_trace()
+> before invoking the rcu_free_old_probes callback. This can be chosen
+> using the tracepoint_is_syscall() API.
+>
+> A similar issue exists in bpf use of call_rcu(). Fixing this is left to
+> a separate change.
+>
+> Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
+> Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to handle pa=
+ge faults")
+> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Cc: Michael Jeanson <mjeanson@efficios.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Yonghong Song <yhs@fb.com>
+> Cc: Paul E. McKenney <paulmck@kernel.org>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+> Cc: Mark Rutland <mark.rutland@arm.com>
+> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+> Cc: bpf@vger.kernel.org
+> Cc: Joel Fernandes <joel@joelfernandes.org>
+> Cc: Jordan Rife <jrife@google.com>
+> ---
+> Changes since v0:
+> - Introduce tracepoint_call_rcu(),
+> - Fix bpf_link_free() use of call_rcu as well.
+>
+> Changes since v1:
+> - Use tracepoint_call_rcu() for bpf_prog_put as well.
+>
+> Changes since v2:
+> - Do not cover bpf changes in the same commit, let bpf developers
+>   implement it.
+> ---
+>  kernel/tracepoint.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+> index 5658dc92f5b5..47569fb06596 100644
+> --- a/kernel/tracepoint.c
+> +++ b/kernel/tracepoint.c
+> @@ -106,13 +106,16 @@ static void rcu_free_old_probes(struct rcu_head *he=
+ad)
+>         kfree(container_of(head, struct tp_probes, rcu));
+>  }
+>
+> -static inline void release_probes(struct tracepoint_func *old)
+> +static inline void release_probes(struct tracepoint *tp, struct tracepoi=
+nt_func *old)
+>  {
+>         if (old) {
+>                 struct tp_probes *tp_probes =3D container_of(old,
+>                         struct tp_probes, probes[0]);
+>
+> -               call_rcu(&tp_probes->rcu, rcu_free_old_probes);
+> +               if (tracepoint_is_syscall(tp))
+> +                       call_rcu_tasks_trace(&tp_probes->rcu, rcu_free_ol=
+d_probes);
 
-On Mon, Oct 28, 2024 at 5:54=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Mon, Oct 28, 2024 at 6:58=E2=80=AFAM Ma=C3=ADra Canal <mcanal@igalia.c=
-om> wrote:
-> >
-> > Add the ``thp_shmem=3D`` kernel command line to allow specifying the
-> > default policy of each supported shmem hugepage size. The kernel parame=
-ter
-> > accepts the following format:
-> >
-> > thp_shmem=3D<size>[KMG],<size>[KMG]:<policy>;<size>[KMG]-<size>[KMG]:<p=
-olicy>
-> >
-> > For example,
-> >
-> > thp_shmem=3D16K-64K:always;128K,512K:inherit;256K:advise;1M-2M:never;4M=
--8M:within_size
-> >
-> > By configuring the default policy of several shmem huge pages, the user
-> > can take advantage of mTHP before it's been configured through sysfs.
-> >
-> > Signed-off-by: Ma=C3=ADra Canal <mcanal@igalia.com>
-> > ---
-> >  .../admin-guide/kernel-parameters.txt         |  10 ++
-> >  Documentation/admin-guide/mm/transhuge.rst    |  17 +++
-> >  mm/shmem.c                                    | 109 +++++++++++++++++-
-> >  3 files changed, 135 insertions(+), 1 deletion(-)
-> >
->
-> Hi Ma=C3=ADra,
->
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Document=
-ation/admin-guide/kernel-parameters.txt
-> > index acabb04d0dd4..595fa096e28b 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -6700,6 +6700,16 @@
-> >                         Force threading of all interrupt handlers excep=
-t those
-> >                         marked explicitly IRQF_NO_THREAD.
-> >
-> > +       shmem_anon=3D     [KNL]
-> > +                       Format: <size>[KMG],<size>[KMG]:<policy>;<size>=
-[KMG]-<size>[KMG]:<policy>
-> > +                       Control the default policy of each hugepage siz=
-e for the
-> > +                       internal shmem mount. <policy> is one of polici=
-es available
-> > +                       for the shmem mount ("always", "inherit", "neve=
-r", "within_size",
-> > +                       and "advise").
-> > +                       It can be used multiple times for multiple shme=
-m THP sizes.
-> > +                       See Documentation/admin-guide/mm/transhuge.rst =
-for more
-> > +                       details.
->
-> I'm not sure this is the right name. How about "thp_shmem"?
+should this be call_rcu_tasks_trace() -> call_rcu() chain instead of
+just call_rcu_tasks_trace()? While currently call_rcu_tasks_trace()
+implies RCU GP (as evidenced by rcu_trace_implies_rcu_gp() being
+hardcoded right now to returning true), this might not always be the
+case in the future, so it's best to have a guarantee that regardless
+of sleepable or not, we'll always have have RCU GP, and for sleepable
+tracepoint *also* RCU Tasks Trace GP.
 
-+1
-
-IHMO, it seems like 'thp_shmem' would be better, as it appears to fit well
-with 'thp_anon' in naming style ;)
-
-Thanks,
-Lance
-
+> +               else
+> +                       call_rcu(&tp_probes->rcu, rcu_free_old_probes);
+>         }
+>  }
 >
-> > +
-> >         topology=3D       [S390,EARLY]
-> >                         Format: {off | on}
-> >                         Specify if the kernel should make use of the cp=
-u
-> > diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation=
-/admin-guide/mm/transhuge.rst
-> > index 9b5b02c4d1ab..47e7fc30e22d 100644
-> > --- a/Documentation/admin-guide/mm/transhuge.rst
-> > +++ b/Documentation/admin-guide/mm/transhuge.rst
-> > @@ -332,6 +332,23 @@ allocation policy for the internal shmem mount by =
-using the kernel parameter
-> >  seven valid policies for shmem (``always``, ``within_size``, ``advise`=
-`,
-> >  ``never``, ``deny``, and ``force``).
-> >
-> > +In the same manner as ``thp_anon`` controls each supported anonymous T=
-HP
-> > +size, ``thp_shmem`` controls each supported shmem THP size. ``thp_shme=
-m``
-> > +has the same format as ``thp_anon``, but also supports the policy
-> > +``within_size``.
-> > +
-> > +``thp_shmem=3D`` may be specified multiple times to configure all THP =
-sizes
-> > +as required. If ``thp_shmem=3D`` is specified at least once, any shmem=
- THP
-> > +sizes not explicitly configured on the command line are implicitly set=
- to
-> > +``never``.
-> > +
-> > +``transparent_hugepage_shmem`` setting only affects the global toggle.=
- If
-> > +``thp_shmem`` is not specified, PMD_ORDER hugepage will default to
-> > +``inherit``. However, if a valid ``thp_shmem`` setting is provided by =
-the
-> > +user, the PMD_ORDER hugepage policy will be overridden. If the policy =
-for
-> > +PMD_ORDER is not defined within a valid ``thp_shmem``, its policy will
-> > +default to ``never``.
-> > +
-> >  Hugepages in tmpfs/shmem
-> >  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> >
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 24cdeafd8260..0a7a7d04f725 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> > @@ -136,6 +136,7 @@ static unsigned long huge_shmem_orders_always __rea=
-d_mostly;
-> >  static unsigned long huge_shmem_orders_madvise __read_mostly;
-> >  static unsigned long huge_shmem_orders_inherit __read_mostly;
-> >  static unsigned long huge_shmem_orders_within_size __read_mostly;
-> > +static bool shmem_orders_configured __initdata;
-> >  #endif
-> >
-> >  #ifdef CONFIG_TMPFS
-> > @@ -5013,7 +5014,8 @@ void __init shmem_init(void)
-> >          * Default to setting PMD-sized THP to inherit the global setti=
-ng and
-> >          * disable all other multi-size THPs.
-> >          */
-> > -       huge_shmem_orders_inherit =3D BIT(HPAGE_PMD_ORDER);
-> > +       if (!shmem_orders_configured)
-> > +               huge_shmem_orders_inherit =3D BIT(HPAGE_PMD_ORDER);
-> >  #endif
-> >         return;
-> >
-> > @@ -5174,6 +5176,26 @@ struct kobj_attribute thpsize_shmem_enabled_attr=
- =3D
-> >
-> >  #if defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> >
-> > +static inline int get_order_from_str(const char *size_str)
-> > +{
-> > +       unsigned long size;
-> > +       char *endptr;
-> > +       int order;
-> > +
-> > +       size =3D memparse(size_str, &endptr);
-> > +
-> > +       if (!is_power_of_2(size))
-> > +               goto err;
-> > +       order =3D get_order(size);
-> > +       if (BIT(order) & ~THP_ORDERS_ALL_FILE_DEFAULT)
-> > +               goto err;
-> > +
-> > +       return order;
-> > +err:
-> > +       pr_err("invalid size %s in thp_shmem boot parameter\n", size_st=
-r);
-> > +       return -EINVAL;
-> > +}
-> > +
-> >  static int __init setup_transparent_hugepage_shmem(char *str)
-> >  {
-> >         int huge, ret =3D 0;
-> > @@ -5206,6 +5228,91 @@ static int __init setup_transparent_hugepage_shm=
-em(char *str)
-> >  }
-> >  __setup("transparent_hugepage_shmem=3D", setup_transparent_hugepage_sh=
-mem);
-> >
-> > +static char str_dup[PAGE_SIZE] __initdata;
-> > +static int __init setup_thp_shmem(char *str)
-> > +{
-> > +       char *token, *range, *policy, *subtoken;
-> > +       unsigned long always, inherit, madvise, within_size;
-> > +       char *start_size, *end_size;
-> > +       int start, end, nr;
-> > +       char *p;
-> > +
-> > +       if (!str || strlen(str) + 1 > PAGE_SIZE)
-> > +               goto err;
-> > +       strcpy(str_dup, str);
-> > +
-> > +       always =3D huge_shmem_orders_always;
-> > +       inherit =3D huge_shmem_orders_inherit;
-> > +       madvise =3D huge_shmem_orders_madvise;
-> > +       within_size =3D huge_shmem_orders_within_size;
-> > +       p =3D str_dup;
-> > +       while ((token =3D strsep(&p, ";")) !=3D NULL) {
-> > +               range =3D strsep(&token, ":");
-> > +               policy =3D token;
-> > +
-> > +               if (!policy)
-> > +                       goto err;
-> > +
-> > +               while ((subtoken =3D strsep(&range, ",")) !=3D NULL) {
-> > +                       if (strchr(subtoken, '-')) {
-> > +                               start_size =3D strsep(&subtoken, "-");
-> > +                               end_size =3D subtoken;
-> > +
-> > +                               start =3D get_order_from_str(start_size=
-);
-> > +                               end =3D get_order_from_str(end_size);
-> > +                       } else {
-> > +                               start =3D end =3D get_order_from_str(su=
-btoken);
-> > +                       }
-> > +
-> > +                       if (start < 0 || end < 0 || start > end)
-> > +                               goto err;
-> > +
-> > +                       nr =3D end - start + 1;
-> > +                       if (!strcmp(policy, "always")) {
-> > +                               bitmap_set(&always, start, nr);
-> > +                               bitmap_clear(&inherit, start, nr);
-> > +                               bitmap_clear(&madvise, start, nr);
-> > +                               bitmap_clear(&within_size, start, nr);
-> > +                       } else if (!strcmp(policy, "advise")) {
-> > +                               bitmap_set(&madvise, start, nr);
-> > +                               bitmap_clear(&inherit, start, nr);
-> > +                               bitmap_clear(&always, start, nr);
-> > +                               bitmap_clear(&within_size, start, nr);
-> > +                       } else if (!strcmp(policy, "inherit")) {
-> > +                               bitmap_set(&inherit, start, nr);
-> > +                               bitmap_clear(&madvise, start, nr);
-> > +                               bitmap_clear(&always, start, nr);
-> > +                               bitmap_clear(&within_size, start, nr);
-> > +                       } else if (!strcmp(policy, "within_size")) {
-> > +                               bitmap_set(&within_size, start, nr);
-> > +                               bitmap_clear(&inherit, start, nr);
-> > +                               bitmap_clear(&madvise, start, nr);
-> > +                               bitmap_clear(&always, start, nr);
-> > +                       } else if (!strcmp(policy, "never")) {
-> > +                               bitmap_clear(&inherit, start, nr);
-> > +                               bitmap_clear(&madvise, start, nr);
-> > +                               bitmap_clear(&always, start, nr);
-> > +                               bitmap_clear(&within_size, start, nr);
-> > +                       } else {
-> > +                               pr_err("invalid policy %s in thp_shmem =
-boot parameter\n", policy);
-> > +                               goto err;
-> > +                       }
-> > +               }
-> > +       }
-> > +
-> > +       huge_shmem_orders_always =3D always;
-> > +       huge_shmem_orders_madvise =3D madvise;
-> > +       huge_shmem_orders_inherit =3D inherit;
-> > +       huge_shmem_orders_within_size =3D within_size;
-> > +       shmem_orders_configured =3D true;
-> > +       return 1;
-> > +
-> > +err:
-> > +       pr_warn("thp_shmem=3D%s: error parsing string, ignoring setting=
-\n", str);
-> > +       return 0;
-> > +}
+> @@ -334,7 +337,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
+>                 break;
+>         }
 >
-> Can we share source code with thp_anon since there's a lot of duplication=
-?
-
-
+> -       release_probes(old);
+> +       release_probes(tp, old);
+>         return 0;
+>  }
 >
-> > +__setup("thp_shmem=3D", setup_thp_shmem);
-> > +
-> >  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> >
-> >  #else /* !CONFIG_SHMEM */
-> > --
-> > 2.46.2
-> >
+> @@ -405,7 +408,7 @@ static int tracepoint_remove_func(struct tracepoint *=
+tp,
+>                 WARN_ON_ONCE(1);
+>                 break;
+>         }
+> -       release_probes(old);
+> +       release_probes(tp, old);
+>         return 0;
+>  }
 >
-> Thanks
-> barry
+> --
+> 2.39.5
+>
 
