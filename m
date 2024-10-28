@@ -1,311 +1,540 @@
-Return-Path: <linux-kernel+bounces-385844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D14249B3C80
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:11:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D45A9B3C84
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 22:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92B80282E7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:11:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F61A1F22903
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:12:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 309F41E1325;
-	Mon, 28 Oct 2024 21:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A871E1326;
+	Mon, 28 Oct 2024 21:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xc/1a5/C"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ayhiQMB+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7E6618FC75
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 21:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25C6518FC75;
+	Mon, 28 Oct 2024 21:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730149859; cv=none; b=IwPhJAvTgTk3KQJapypvS/A988eHhAk9gXQ0tkjKp7Lnu3aGHYffR9fhjBOlMx9n7YpBooTV+wrwRPN3bL8RTCJrKLv88+k0Q8nJvIkEOA27aaE03bper8xKjlUgmMmghutGw/cZ3pX3Mekxj8E/DCMim61nCMe5Suhc2CvaF1U=
+	t=1730149957; cv=none; b=TXHta0fBLPEuJ7O1SXvoTR3MrJl41MySCi/ud/3fO/RNME7JBQg3h3Hc4QPmUxizj3LaBRY8ssRFdtek4uiO5IQd4xzcmws8CtOEtFdzF3Q25p0bpLJ4Bb3aSnr4Q8Aexl/kBvVZCfBzFRReZdz+trSwRwTCKzKhUsMjTRi+M1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730149859; c=relaxed/simple;
-	bh=QgxtpWwBrDtjSgFTs4nWRUU3nSKBHHl/Pahr1EzZZ8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h3nzgfH8hfeJ3o/ifOQ9NWzSbHmoqgBnh6Sa9PwgmKvr7IcDV0p4djif7IfFfNw5DfVCwX/KCJKmHk6Z746Fiz01mtgnixnIT4s3RLX87it4O/pUwXdr1ugvl8hEfRYjN9mKgDPEeH9L+YUtdYuYWlmPsAXST/tCSDw3iacOdpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xc/1a5/C; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3e619057165so2590692b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 14:10:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730149856; x=1730754656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kXqaZgSFz5wEXFPr1dt9M0Rkvdhk0XgrtH0hauEDh8s=;
-        b=xc/1a5/CSQJLMNO1NTWA5DBfv9upxjGiXKqBaueSwxUypO4hfN6DlE/R1OLvnuIojv
-         BZ9CMIGKlEJNpgCiLa4ogHnacE1ElqE2gD8dNhKDenC6uoN4/DGa+rHxztDqo4CzxHH4
-         p44HhFYTRNfYQr2ddVPk/PZZG52i5r3bsbUaXaOPdToU/5fHtEWdyhCWVKEUbMP8ADwb
-         mlZe09KJhCrYC2A/hDX6Ftl9aBqhB8TGIHweZwR9PEUd9kJzmXeoHSm/11h3yTHbuTP6
-         UGCCt635r471efJMqmDetwVUv3UOPAPVA95mKiYMgiz+qtdhvoqS7fuqgMhfk7zuS5l1
-         /KKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730149856; x=1730754656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kXqaZgSFz5wEXFPr1dt9M0Rkvdhk0XgrtH0hauEDh8s=;
-        b=BjeF/unyMKkQV3XALgCsS4Lo+HSgivwqr1LO9gG7MsF+CE9wAOEX/sFzwYbIIsg2Dt
-         vBkklxeJAcz3K7+7XPr2Jkk9/l/J0PxM9vsdAwalOgU/5cAaCAh5gyadER7UqWDhCxKn
-         kRVUirIBe8fL2fIJDKLxXfROJDmYR/DaAgbk7EzHcmAk1zUa20h/eepo8YfXiPIZwvcI
-         ibMg3Fok6e6jy256uYZPikHTe+yI8ZbycjXq85DotDOhSYvUBdPMmQTaLQO7wb9U0z6S
-         PvUy+RlcPMH5/aGGpNiBS+lRy+eFhI2QR1eB/+GES+r0HPhpqVMwFspXYzjwh3R4FhHL
-         3ZfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWSQ4Fy8dpqTLCaUH07BsBbMar47A+yKLO5bJjkKLlo8FUM2xzgW8q+4+pMKu9tGcyzErPJNvk+6/Y4gs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxW1ugMxMv3lmNaXTe0m8eg2g3XJPEmYVIpOKfTEGQc7SvKv5ho
-	0qkYGyfAxNgRT2kOrhEE9uPtcVBTFkyJyi72mSLvC+TO+mawbbtaZYic9rB42iL3NTezxe9pAo7
-	WCEf2V++xBMu0kBp9iO+JDRXCsOVI9KKitbI+
-X-Google-Smtp-Source: AGHT+IE2uCb7fTM0JGKbE3yWC5xzimyzUcK3ERKrWedcHafsT4QugEpM+RdFvxLC2YiYdsbRTxTkiq2Bt/xh7jIFA4c=
-X-Received: by 2002:a05:6808:22a5:b0:3e6:769:b042 with SMTP id
- 5614622812f47-3e638482ea3mr7557916b6e.29.1730149855694; Mon, 28 Oct 2024
- 14:10:55 -0700 (PDT)
+	s=arc-20240116; t=1730149957; c=relaxed/simple;
+	bh=7vCr84x2AXd3twwPgs0aq4d+w7w8USJk6QglSiPPE+M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gYl6EXFd4GIfU300MUeVrSXfGI0vMNRHW5xKnkx9kFqNXmC/SHXzQk5lzDf7J6E4jA//bU/OdNXip5T5CGFcBDju3JKMXIGSBZyxBKied4+ZgEm0BcVhiWDcgfEvyDkafrZxqjYw22v10YSd4OdFK0NkSfI46VXDsdgN5gp2WG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ayhiQMB+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04B89C4CEC3;
+	Mon, 28 Oct 2024 21:12:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730149956;
+	bh=7vCr84x2AXd3twwPgs0aq4d+w7w8USJk6QglSiPPE+M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ayhiQMB+JHNBvGXrTPu/rbRAY60U5F5spMjiE59t0810MWp/2E+5Wtlan39RiVEY0
+	 w198fX9aeT+XvzUqYEseL7EgVPzyDs1xCFVvOCcAHSw0eeJk54GgVpmTZW7CZzDSRN
+	 6usWy3MIhcn0QRSC1vcPQTKz6R5I+kkLWg95q3bHKj+GKnDU34uecASpUUKWCTaVzU
+	 2qyVbXqsB2Z4JsVwfFK8ul03wzki6kVYyqfYEaB3DnOPNPY0/2p4i7V+nTtsO1k9/o
+	 VEoXduY9CnQzjLSyFTfJSVv75ExN86sl2Ey6F+aGsURlcN9Xg7iiQAqqeqHIxF2fN2
+	 zFJUhbm+c820w==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Brian Cain <bcain@quicinc.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Niklas Schnelle <schnelle@linux.ibm.com>,
+	linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hexagon: simplify asm/io.h for !HAS_IOPORT
+Date: Mon, 28 Oct 2024 21:12:03 +0000
+Message-Id: <20241028211227.2294887-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026115714.1437435-1-jingxiangzeng.cas@gmail.com>
-In-Reply-To: <20241026115714.1437435-1-jingxiangzeng.cas@gmail.com>
-From: Wei Xu <weixugc@google.com>
-Date: Mon, 28 Oct 2024 14:10:43 -0700
-Message-ID: <CAAPL-u92FvFvk50J0q6k=Zppj4DSGXVB+MB47hmtdSD120z0vA@mail.gmail.com>
-Subject: Re: [PATCH v6] mm/vmscan: wake up flushers conditionally to avoid
- cgroup OOM
-To: Jingxiang Zeng <linuszeng@tencent.com>
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, kasong@tencent.com, 
-	linux-kernel@vger.kernel.org, tjmercier@google.com, yuzhao@google.com, 
-	chrisl@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 26, 2024 at 4:57=E2=80=AFAM Jingxiang Zeng
-<jingxiangzeng.cas@gmail.com> wrote:
->
-> From: Zeng Jingxiang <linuszeng@tencent.com>
->
-> Commit 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> removed the opportunity to wake up flushers during the MGLRU page
-> reclamation process can lead to an increased likelihood of triggering OOM
-> when encountering many dirty pages during reclamation on MGLRU.
->
-> This leads to premature OOM if there are too many dirty pages in cgroup:
-> Killed
->
-> dd invoked oom-killer: gfp_mask=3D0x101cca(GFP_HIGHUSER_MOVABLE|__GFP_WRI=
-TE),
-> order=3D0, oom_score_adj=3D0
->
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x5f/0x80
->   dump_stack+0x14/0x20
->   dump_header+0x46/0x1b0
->   oom_kill_process+0x104/0x220
->   out_of_memory+0x112/0x5a0
->   mem_cgroup_out_of_memory+0x13b/0x150
->   try_charge_memcg+0x44f/0x5c0
->   charge_memcg+0x34/0x50
->   __mem_cgroup_charge+0x31/0x90
->   filemap_add_folio+0x4b/0xf0
->   __filemap_get_folio+0x1a4/0x5b0
->   ? srso_return_thunk+0x5/0x5f
->   ? __block_commit_write+0x82/0xb0
->   ext4_da_write_begin+0xe5/0x270
->   generic_perform_write+0x134/0x2b0
->   ext4_buffered_write_iter+0x57/0xd0
->   ext4_file_write_iter+0x76/0x7d0
->   ? selinux_file_permission+0x119/0x150
->   ? srso_return_thunk+0x5/0x5f
->   ? srso_return_thunk+0x5/0x5f
->   vfs_write+0x30c/0x440
->   ksys_write+0x65/0xe0
->   __x64_sys_write+0x1e/0x30
->   x64_sys_call+0x11c2/0x1d50
->   do_syscall_64+0x47/0x110
->   entry_SYSCALL_64_after_hwframe+0x76/0x7e
->
->  memory: usage 308224kB, limit 308224kB, failcnt 2589
->  swap: usage 0kB, limit 9007199254740988kB, failcnt 0
->
->   ...
->   file_dirty 303247360
->   file_writeback 0
->   ...
->
-> oom-kill:constraint=3DCONSTRAINT_MEMCG,nodemask=3D(null),cpuset=3Dtest,
-> mems_allowed=3D0,oom_memcg=3D/test,task_memcg=3D/test,task=3Ddd,pid=3D440=
-4,uid=3D0
-> Memory cgroup out of memory: Killed process 4404 (dd) total-vm:10512kB,
-> anon-rss:1152kB, file-rss:1824kB, shmem-rss:0kB, UID:0 pgtables:76kB
-> oom_score_adj:0
->
-> The flusher wake up was removed to decrease SSD wearing, but if we are
-> seeing all dirty folios at the tail of an LRU, not waking up the flusher
-> could lead to thrashing easily.  So wake it up when a mem cgroups is abou=
-t
-> to OOM due to dirty caches.
->
-> I did run the build kernel test[1] on V6, with -j16 1G memcg on my local
-> branch:
->
-> Without the patch(10 times):
-> user 1449.394
-> system 368.78 372.58 363.03 362.31 360.84 372.70 368.72 364.94 373.51
-> 366.58 (avg 367.399)
-> real 164.883
->
-> With the V6 patch(10 times):
-> user 1447.525
-> system 360.87 360.63 372.39 364.09 368.49 365.15 359.93 362.04 359.72
-> 354.60 (avg 362.79)
-> real 164.514
->
-> Test results show that this patch has about 1% performance improvement,
-> which should be caused by noise.
->
-> ---
-> Changes from v5:
-> - Make wake-up conditions stricter. [Wei Xu, Jingxiang Zeng]
-> - Use sc->nr.file_taken to count. [Wei Xu, Jingxiang Zeng]
-> - Link to v5: https://lore.kernel.org/all/20241018052942.3810740-1-jingxi=
-angzeng.cas@gmail.com/
-> Changes from v4:
-> - Add the number of unqueued dirty pages in the shrink_folio_list functio=
-n
->   to sc->nr.unqueued_dirty. [Wei Xu, Jingxiang Zeng]
-> - Reset sc->nr before calling lru_gen_shrink_node function.
->   [Wei Xu, Jingxiang Zeng]
-> - Modified the conditions for waking up the flusher thread to avoid
->   interference from unevictable and anonymous pages.
->   [Wei Xu, Jingxiang Zeng]
-> - Link to v4: https://lore.kernel.org/all/20240929113050.76079-1-jingxian=
-gzeng.cas@gmail.com/
-> Changes from v3:
-> - Avoid taking lock and reduce overhead on folio isolation by
->   checking the right flags and rework wake up condition, fixing the
->   performance regression reported by Chris Li.
->   [Chris Li, Kairui Song]
-> - Move the wake up check to try_to_shrink_lruvec to cover kswapd
->   case as well, and update comments. [Kairui Song]
-> - Link to v3: https://lore.kernel.org/all/20240924121358.30685-1-jingxian=
-gzeng.cas@gmail.com/
-> Changes from v2:
-> - Acquire the lock before calling the folio_check_dirty_writeback
->   function. [Wei Xu, Jingxiang Zeng]
-> - Link to v2: https://lore.kernel.org/all/20240913084506.3606292-1-jingxi=
-angzeng.cas@gmail.com/
-> Changes from v1:
-> - Add code to count the number of unqueued_dirty in the sort_folio
->   function. [Wei Xu, Jingxiang Zeng]
-> - Link to v1: https://lore.kernel.org/all/20240829102543.189453-1-jingxia=
-ngzeng.cas@gmail.com/
-> ---
->
-> Link: https://lore.kernel.org/all/CACePvbV4L-gRN9UKKuUnksfVJjOTq_5Sti2-e=
-=3Dpb_w51kucLKQ@mail.gmail.com/ [1]
-> Fixes: 14aa8b2d5c2e ("mm/mglru: don't sync disk for each aging cycle")
-> Suggested-by: Wei Xu <weixugc@google.com>
-> Signed-off-by: Zeng Jingxiang <linuszeng@tencent.com>
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-> Cc: T.J. Mercier <tjmercier@google.com>
-> Cc: Wei Xu <weixugc@google.com>
-> Cc: Yu Zhao <yuzhao@google.com>
-> ---
->  mm/vmscan.c | 25 ++++++++++++++++++++++---
->  1 file changed, 22 insertions(+), 3 deletions(-)
->
-> diff --git a/mm/vmscan.c b/mm/vmscan.c
-> index 084de0efe59b..794730c8c1de 100644
-> --- a/mm/vmscan.c
-> +++ b/mm/vmscan.c
-> @@ -4282,6 +4282,7 @@ static bool sort_folio(struct lruvec *lruvec, struc=
-t folio *folio, struct scan_c
->                        int tier_idx)
->  {
->         bool success;
-> +       bool dirty, writeback;
->         int gen =3D folio_lru_gen(folio);
->         int type =3D folio_is_file_lru(folio);
->         int zone =3D folio_zonenum(folio);
-> @@ -4327,9 +4328,17 @@ static bool sort_folio(struct lruvec *lruvec, stru=
-ct folio *folio, struct scan_c
->                 return true;
->         }
->
-> +       dirty =3D folio_test_dirty(folio);
-> +       writeback =3D folio_test_writeback(folio);
-> +       if (type =3D=3D LRU_GEN_FILE && dirty) {
-> +               sc->nr.file_taken +=3D delta;
-> +               if (!writeback)
-> +                       sc->nr.unqueued_dirty +=3D delta;
-> +       }
-> +
->         /* waiting for writeback */
-> -       if (folio_test_locked(folio) || folio_test_writeback(folio) ||
-> -           (type =3D=3D LRU_GEN_FILE && folio_test_dirty(folio))) {
-> +       if (folio_test_locked(folio) || writeback ||
-> +           (type =3D=3D LRU_GEN_FILE && dirty)) {
->                 gen =3D folio_inc_gen(lruvec, folio, true);
->                 list_move(&folio->lru, &lrugen->folios[gen][type][zone]);
->                 return true;
-> @@ -4445,7 +4454,8 @@ static int scan_folios(struct lruvec *lruvec, struc=
-t scan_control *sc,
->         trace_mm_vmscan_lru_isolate(sc->reclaim_idx, sc->order, MAX_LRU_B=
-ATCH,
->                                 scanned, skipped, isolated,
->                                 type ? LRU_INACTIVE_FILE : LRU_INACTIVE_A=
-NON);
-> -
-> +       if (type =3D=3D LRU_GEN_FILE)
-> +               sc->nr.file_taken +=3D isolated;
->         /*
->          * There might not be eligible folios due to reclaim_idx. Check t=
-he
->          * remaining to prevent livelock if it's not making progress.
-> @@ -4579,6 +4589,7 @@ static int evict_folios(struct lruvec *lruvec, stru=
-ct scan_control *sc, int swap
->                 return scanned;
->  retry:
->         reclaimed =3D shrink_folio_list(&list, pgdat, sc, &stat, false);
-> +       sc->nr.unqueued_dirty +=3D stat.nr_unqueued_dirty;
->         sc->nr_reclaimed +=3D reclaimed;
->         trace_mm_vmscan_lru_shrink_inactive(pgdat->node_id,
->                         scanned, reclaimed, &stat, sc->priority,
-> @@ -4787,6 +4798,13 @@ static bool try_to_shrink_lruvec(struct lruvec *lr=
-uvec, struct scan_control *sc)
->                 cond_resched();
->         }
->
-> +       /*
-> +        * If too many file cache in the coldest generation can't be evic=
-ted
-> +        * due to being dirty, wake up the flusher.
-> +        */
-> +       if (sc->nr.unqueued_dirty && sc->nr.unqueued_dirty =3D=3D sc->nr.=
-file_taken)
-> +               wakeup_flusher_threads(WB_REASON_VMSCAN);
-> +
->         /* whether this lruvec should be rotated */
->         return nr_to_scan < 0;
->  }
-> @@ -5932,6 +5950,7 @@ static void shrink_node(pg_data_t *pgdat, struct sc=
-an_control *sc)
->         bool reclaimable =3D false;
->
->         if (lru_gen_enabled() && root_reclaim(sc)) {
-> +               memset(&sc->nr, 0, sizeof(sc->nr));
->                 lru_gen_shrink_node(pgdat, sc);
->                 return;
->         }
-> --
-> 2.43.5
->
+From: Arnd Bergmann <arnd@arndb.de>
 
-Reviewed-by: Wei Xu <weixugc@google.com>
+Hexagon fails to build after the final patch that makes CONFIG_HAS_IOPORT
+optional:
+
+In file included from arch/hexagon/include/asm/io.h:328:
+include/asm-generic/io.h:854:18: error: static declaration of 'ioread8' follows non-static declaration
+  854 | static inline u8 ioread8(const volatile void __iomem *addr)
+      |                  ^
+include/asm-generic/io.h:853:17: note: expanded from macro 'ioread8'
+  853 | #define ioread8 ioread8
+      |                 ^
+include/asm-generic/iomap.h:29:21: note: previous declaration is here
+   29 | extern unsigned int ioread8(const void __iomem *);
+      |                     ^
+
+As it turns out, most of its asm/io.h and lib/io.c files is redundant now,
+and just removing all that makes it build again.
+
+As with the other architectures, defining the __raw_readl()/__raw_writel()
+type functions instead of the non-__raw ones is better here for consistency.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+I've applied this in the asm-generic tree on top of the HAS_IOPORT series
+as a fixup, let me know if I should change anything.
+
+ arch/hexagon/Kconfig          |   4 +-
+ arch/hexagon/include/asm/io.h | 223 ++--------------------------------
+ arch/hexagon/lib/Makefile     |   2 +-
+ arch/hexagon/lib/io.c         |  82 -------------
+ 4 files changed, 16 insertions(+), 295 deletions(-)
+ delete mode 100644 arch/hexagon/lib/io.c
+
+diff --git a/arch/hexagon/Kconfig b/arch/hexagon/Kconfig
+index 5ea1bf4b7d4f..3eb51fbe804e 100644
+--- a/arch/hexagon/Kconfig
++++ b/arch/hexagon/Kconfig
+@@ -30,7 +30,6 @@ config HEXAGON
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select NEED_SG_DMA_LENGTH
+-	select NO_IOPORT_MAP
+ 	select GENERIC_IOREMAP
+ 	select GENERIC_SMP_IDLE_THREAD
+ 	select STACKTRACE_SUPPORT
+@@ -58,6 +57,9 @@ config EARLY_PRINTK
+ config MMU
+ 	def_bool y
+ 
++config NO_IOPORT_MAP
++	def_bool y
++
+ config GENERIC_CSUM
+ 	def_bool y
+ 
+diff --git a/arch/hexagon/include/asm/io.h b/arch/hexagon/include/asm/io.h
+index 522d321ea85a..83b2eb5de60c 100644
+--- a/arch/hexagon/include/asm/io.h
++++ b/arch/hexagon/include/asm/io.h
+@@ -8,38 +8,13 @@
+ #ifndef _ASM_IO_H
+ #define _ASM_IO_H
+ 
+-#ifdef __KERNEL__
+-
+ #include <linux/types.h>
+-#include <asm/iomap.h>
+ #include <asm/page.h>
+ #include <asm/cacheflush.h>
+ 
+-/*
+- * We don't have PCI yet.
+- * _IO_BASE is pointing at what should be unused virtual space.
+- */
+-#define IO_SPACE_LIMIT 0xffff
+-#define _IO_BASE ((void __iomem *)0xfe000000)
+-
+-#define IOMEM(x)        ((void __force __iomem *)(x))
+-
+ extern int remap_area_pages(unsigned long start, unsigned long phys_addr,
+ 				unsigned long end, unsigned long flags);
+ 
+-/* Defined in lib/io.c, needed for smc91x driver. */
+-extern void __raw_readsw(const void __iomem *addr, void *data, int wordlen);
+-extern void __raw_writesw(void __iomem *addr, const void *data, int wordlen);
+-
+-extern void __raw_readsl(const void __iomem *addr, void *data, int wordlen);
+-extern void __raw_writesl(void __iomem *addr, const void *data, int wordlen);
+-
+-#define readsw(p, d, l)	__raw_readsw(p, d, l)
+-#define writesw(p, d, l) __raw_writesw(p, d, l)
+-
+-#define readsl(p, d, l)   __raw_readsl(p, d, l)
+-#define writesl(p, d, l)  __raw_writesl(p, d, l)
+-
+ /*
+  * virt_to_phys - map virtual address to physical
+  * @address:  address to map
+@@ -58,21 +33,12 @@ static inline void *phys_to_virt(unsigned long address)
+ 	return __va(address);
+ }
+ 
+-/*
+- * IO port access primitives.  Hexagon doesn't have special IO access
+- * instructions; all I/O is memory mapped.
+- *
+- * in/out are used for "ports", but we don't have "port instructions",
+- * so these are really just memory mapped too.
+- */
+-
+ /*
+  * readb - read byte from memory mapped device
+  * @addr:  pointer to memory
+  *
+- * Operates on "I/O bus memory space"
+  */
+-static inline u8 readb(const volatile void __iomem *addr)
++static inline u8 __raw_readb(const volatile void __iomem *addr)
+ {
+ 	u8 val;
+ 	asm volatile(
+@@ -82,8 +48,9 @@ static inline u8 readb(const volatile void __iomem *addr)
+ 	);
+ 	return val;
+ }
++#define __raw_readb __raw_readb
+ 
+-static inline u16 readw(const volatile void __iomem *addr)
++static inline u16 __raw_readw(const volatile void __iomem *addr)
+ {
+ 	u16 val;
+ 	asm volatile(
+@@ -93,8 +60,9 @@ static inline u16 readw(const volatile void __iomem *addr)
+ 	);
+ 	return val;
+ }
++#define __raw_readw __raw_readw
+ 
+-static inline u32 readl(const volatile void __iomem *addr)
++static inline u32 __raw_readl(const volatile void __iomem *addr)
+ {
+ 	u32 val;
+ 	asm volatile(
+@@ -104,6 +72,7 @@ static inline u32 readl(const volatile void __iomem *addr)
+ 	);
+ 	return val;
+ }
++#define __raw_readl __raw_readl
+ 
+ /*
+  * writeb - write a byte to a memory location
+@@ -111,7 +80,7 @@ static inline u32 readl(const volatile void __iomem *addr)
+  * @addr:  pointer to memory
+  *
+  */
+-static inline void writeb(u8 data, volatile void __iomem *addr)
++static inline void __raw_writeb(u8 data, volatile void __iomem *addr)
+ {
+ 	asm volatile(
+ 		"memb(%0) = %1;"
+@@ -120,8 +89,9 @@ static inline void writeb(u8 data, volatile void __iomem *addr)
+ 		: "memory"
+ 	);
+ }
++#define __raw_writeb __raw_writeb
+ 
+-static inline void writew(u16 data, volatile void __iomem *addr)
++static inline void __raw_writew(u16 data, volatile void __iomem *addr)
+ {
+ 	asm volatile(
+ 		"memh(%0) = %1;"
+@@ -131,8 +101,9 @@ static inline void writew(u16 data, volatile void __iomem *addr)
+ 	);
+ 
+ }
++#define __raw_writew __raw_writew
+ 
+-static inline void writel(u32 data, volatile void __iomem *addr)
++static inline void __raw_writel(u32 data, volatile void __iomem *addr)
+ {
+ 	asm volatile(
+ 		"memw(%0) = %1;"
+@@ -141,26 +112,7 @@ static inline void writel(u32 data, volatile void __iomem *addr)
+ 		: "memory"
+ 	);
+ }
+-
+-#define __raw_writeb writeb
+-#define __raw_writew writew
+-#define __raw_writel writel
+-
+-#define __raw_readb readb
+-#define __raw_readw readw
+-#define __raw_readl readl
+-
+-/*
+- * http://comments.gmane.org/gmane.linux.ports.arm.kernel/117626
+- */
+-
+-#define readb_relaxed __raw_readb
+-#define readw_relaxed __raw_readw
+-#define readl_relaxed __raw_readl
+-
+-#define writeb_relaxed __raw_writeb
+-#define writew_relaxed __raw_writew
+-#define writel_relaxed __raw_writel
++#define __raw_writel __raw_writel
+ 
+ /*
+  * I/O memory mapping functions.
+@@ -168,140 +120,6 @@ static inline void writel(u32 data, volatile void __iomem *addr)
+ #define _PAGE_IOREMAP (_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | \
+ 		       (__HEXAGON_C_DEV << 6))
+ 
+-#define __raw_writel writel
+-
+-static inline void memcpy_fromio(void *dst, const volatile void __iomem *src,
+-	int count)
+-{
+-	memcpy(dst, (void *) src, count);
+-}
+-
+-static inline void memcpy_toio(volatile void __iomem *dst, const void *src,
+-	int count)
+-{
+-	memcpy((void *) dst, src, count);
+-}
+-
+-static inline void memset_io(volatile void __iomem *addr, int value,
+-			     size_t size)
+-{
+-	memset((void __force *)addr, value, size);
+-}
+-
+-#define PCI_IO_ADDR	(volatile void __iomem *)
+-
+-/*
+- * inb - read byte from I/O port or something
+- * @port:  address in I/O space
+- *
+- * Operates on "I/O bus I/O space"
+- */
+-static inline u8 inb(unsigned long port)
+-{
+-	return readb(_IO_BASE + (port & IO_SPACE_LIMIT));
+-}
+-
+-static inline u16 inw(unsigned long port)
+-{
+-	return readw(_IO_BASE + (port & IO_SPACE_LIMIT));
+-}
+-
+-static inline u32 inl(unsigned long port)
+-{
+-	return readl(_IO_BASE + (port & IO_SPACE_LIMIT));
+-}
+-
+-/*
+- * outb - write a byte to a memory location
+- * @data: data to write to
+- * @addr:  address in I/O space
+- */
+-static inline void outb(u8 data, unsigned long port)
+-{
+-	writeb(data, _IO_BASE + (port & IO_SPACE_LIMIT));
+-}
+-
+-static inline void outw(u16 data, unsigned long port)
+-{
+-	writew(data, _IO_BASE + (port & IO_SPACE_LIMIT));
+-}
+-
+-static inline void outl(u32 data, unsigned long port)
+-{
+-	writel(data, _IO_BASE + (port & IO_SPACE_LIMIT));
+-}
+-
+-#define outb_p outb
+-#define outw_p outw
+-#define outl_p outl
+-
+-#define inb_p inb
+-#define inw_p inw
+-#define inl_p inl
+-
+-static inline void insb(unsigned long port, void *buffer, int count)
+-{
+-	if (count) {
+-		u8 *buf = buffer;
+-		do {
+-			u8 x = inb(port);
+-			*buf++ = x;
+-		} while (--count);
+-	}
+-}
+-
+-static inline void insw(unsigned long port, void *buffer, int count)
+-{
+-	if (count) {
+-		u16 *buf = buffer;
+-		do {
+-			u16 x = inw(port);
+-			*buf++ = x;
+-		} while (--count);
+-	}
+-}
+-
+-static inline void insl(unsigned long port, void *buffer, int count)
+-{
+-	if (count) {
+-		u32 *buf = buffer;
+-		do {
+-			u32 x = inw(port);
+-			*buf++ = x;
+-		} while (--count);
+-	}
+-}
+-
+-static inline void outsb(unsigned long port, const void *buffer, int count)
+-{
+-	if (count) {
+-		const u8 *buf = buffer;
+-		do {
+-			outb(*buf++, port);
+-		} while (--count);
+-	}
+-}
+-
+-static inline void outsw(unsigned long port, const void *buffer, int count)
+-{
+-	if (count) {
+-		const u16 *buf = buffer;
+-		do {
+-			outw(*buf++, port);
+-		} while (--count);
+-	}
+-}
+-
+-static inline void outsl(unsigned long port, const void *buffer, int count)
+-{
+-	if (count) {
+-		const u32 *buf = buffer;
+-		do {
+-			outl(*buf++, port);
+-		} while (--count);
+-	}
+-}
+-
+ /*
+  * These defines are necessary to use the generic io.h for filling in
+  * the missing parts of the API contract. This is because the platform
+@@ -310,23 +128,6 @@ static inline void outsl(unsigned long port, const void *buffer, int count)
+  */
+ #define virt_to_phys virt_to_phys
+ #define phys_to_virt phys_to_virt
+-#define memset_io memset_io
+-#define memcpy_fromio memcpy_fromio
+-#define memcpy_toio memcpy_toio
+-#define readb readb
+-#define readw readw
+-#define readl readl
+-#define writeb writeb
+-#define writew writew
+-#define writel writel
+-#define insb insb
+-#define insw insw
+-#define insl insl
+-#define outsb outsb
+-#define outsw outsw
+-#define outsl outsl
+ #include <asm-generic/io.h>
+ 
+-#endif /* __KERNEL__ */
+-
+ #endif
+diff --git a/arch/hexagon/lib/Makefile b/arch/hexagon/lib/Makefile
+index a64641e89d5f..107894c0910e 100644
+--- a/arch/hexagon/lib/Makefile
++++ b/arch/hexagon/lib/Makefile
+@@ -2,5 +2,5 @@
+ #
+ # Makefile for hexagon-specific library files.
+ #
+-obj-y = checksum.o io.o memcpy.o memset.o memcpy_likely_aligned.o \
++obj-y = checksum.o memcpy.o memset.o memcpy_likely_aligned.o \
+          divsi3.o modsi3.o udivsi3.o  umodsi3.o
+diff --git a/arch/hexagon/lib/io.c b/arch/hexagon/lib/io.c
+deleted file mode 100644
+index 55f75392857b..000000000000
+--- a/arch/hexagon/lib/io.c
++++ /dev/null
+@@ -1,82 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- * I/O access functions for Hexagon
+- *
+- * Copyright (c) 2010-2011, The Linux Foundation. All rights reserved.
+- */
+-
+-#include <asm/io.h>
+-
+-/*  These are all FIFO routines!  */
+-
+-/*
+- * __raw_readsw - read words a short at a time
+- * @addr:  source address
+- * @data:  data address
+- * @len: number of shorts to read
+- */
+-void __raw_readsw(const void __iomem *addr, void *data, int len)
+-{
+-	const volatile short int *src = (short int *) addr;
+-	short int *dst = (short int *) data;
+-
+-	if ((u32)data & 0x1)
+-		panic("unaligned pointer to readsw");
+-
+-	while (len-- > 0)
+-		*dst++ = *src;
+-
+-}
+-EXPORT_SYMBOL(__raw_readsw);
+-
+-/*
+- * __raw_writesw - read words a short at a time
+- * @addr:  source address
+- * @data:  data address
+- * @len: number of shorts to read
+- */
+-void __raw_writesw(void __iomem *addr, const void *data, int len)
+-{
+-	const short int *src = (short int *)data;
+-	volatile short int *dst = (short int *)addr;
+-
+-	if ((u32)data & 0x1)
+-		panic("unaligned pointer to writesw");
+-
+-	while (len-- > 0)
+-		*dst = *src++;
+-
+-
+-}
+-EXPORT_SYMBOL(__raw_writesw);
+-
+-/*  Pretty sure len is pre-adjusted for the length of the access already */
+-void __raw_readsl(const void __iomem *addr, void *data, int len)
+-{
+-	const volatile long *src = (long *) addr;
+-	long *dst = (long *) data;
+-
+-	if ((u32)data & 0x3)
+-		panic("unaligned pointer to readsl");
+-
+-	while (len-- > 0)
+-		*dst++ = *src;
+-
+-
+-}
+-EXPORT_SYMBOL(__raw_readsl);
+-
+-void __raw_writesl(void __iomem *addr, const void *data, int len)
+-{
+-	const long *src = (long *)data;
+-	volatile long *dst = (long *)addr;
+-
+-	if ((u32)data & 0x3)
+-		panic("unaligned pointer to writesl");
+-
+-	while (len-- > 0)
+-		*dst = *src++;
+-
+-
+-}
+-EXPORT_SYMBOL(__raw_writesl);
+-- 
+2.39.5
+
 
