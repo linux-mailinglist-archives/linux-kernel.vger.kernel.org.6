@@ -1,271 +1,138 @@
-Return-Path: <linux-kernel+bounces-385295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FCD59B3533
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:45:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBB49B3537
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:46:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42CB01C21334
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:45:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98DA21F22548
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34231DE4E1;
-	Mon, 28 Oct 2024 15:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA7411DE3CB;
+	Mon, 28 Oct 2024 15:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="C7F1LMsk"
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fVlT5111"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E9012F585
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 15:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360011D79A6;
+	Mon, 28 Oct 2024 15:46:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730130313; cv=none; b=If8QK3vLxqXxuPUexAU9uKSW/ZfBGqT6t8cecsA8XlvWbrYx104mvVckS9Fh0oJAYcr7huiBqBTrpXQ6OzNZTz9v5aLT7cW6ryBjzVer5QOB7ZWimA2I2EQR+l29C8TCfOaiSgrYLqF2ykZOOoFAbyKPxBwZVumt9XlqMN8HzM0=
+	t=1730130369; cv=none; b=KLSVGnAmd7qq9r4bTRgy41J9k+IZjWElqC8RS8JYhfSUEocgsWSQLOHmqZyNNfiUopYNPN/gFXVze1vbNm7D0my1FuwZVjsYGvVriTdkv6tz6n1mOERVZ+ANYMhUmSE6TWLyFKf9r81hPY8/Y8+7zx462roiVEbuoVaRKjdH6Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730130313; c=relaxed/simple;
-	bh=U2QXffbO67R3C2xSt619DnG+5G2mHfdrhPPetMCeFeI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E1B4OsFiC/VdO2xwy6CGlYjDfQ4fFJNeKCy+V33/q8ceUpvRZ/g6pJHCys01q16Y3HXqoCPSbxukO/517ZnYJGP718hzq7Nl/TnimezF8auUiT/0Q1d3GS/Vx4fzFdK24UKHvpA/I/qKliGt1pWkSpApzDAO9HakfDxJHwVh/yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=C7F1LMsk; arc=none smtp.client-ip=209.85.217.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a47dc2ef46so1318510137.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:45:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730130310; x=1730735110; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=75XNMAa64Nrib7pgLMg1Z1XYi4OYy86joo0hy0CXwKI=;
-        b=C7F1LMskcwmVdB6gsY8Wx85/eRsPQuE+y3uOgeZZwI5yZsmq6Y8hfJd034y84WlTEW
-         IRzLpP6Ds2ZwA6a0Ck1JupKiq2v9FWwFNCYgvBhK8YTnrzW2liw3jzUWO/1xbSum/zdH
-         MQdOjHMXW0VHmlpdD+mB5Pt9/unn+O6STJaTvBIwscGLUzk5UksbTQ++6whUAQmqFOZG
-         Bn6qNCY5ab8xbSwHLB5iyIzBNXaPh9xFeIuIo2F+JY+yGaCRAJxHdfllivBwd52QtT71
-         llxdA3lfZr369VsxCiNXzp0/rhWvKkjEsA7N23vai9jBvA6SpmeD86nJq2U2B4CIkqJ6
-         zedw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730130310; x=1730735110;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=75XNMAa64Nrib7pgLMg1Z1XYi4OYy86joo0hy0CXwKI=;
-        b=qS78Xb+qXsuMwJ0WSZQb8QpzAC78b/2tetqMU6LPfn1Wn12vLkTuIuDM/KtqLVO4fj
-         OOn4jjFQ6VkEdSQxTY5APogA5ne0EZG0lIV85nzb0lV1iDMqI1fXwXdu2FNmZgbsCr+/
-         j5DatLB8AsNij0tvLWTbRtAoV9k6vQ8nTlI9EmnfPSx8ZbMHhsfZ+lh/sdGx80h4TY0f
-         w58amu4a/1F2kl/PR02rp3HjL4FukBh/gQQ0cRYBvBco0t8cuVAM/GvoYAEvzx4VJxgb
-         aJ1V9OmutYvv3sI23AZmwVn6wkMV0sJ47R/3q1XgnYdjnlhr34tktV68nYKKHqkFnbUL
-         IHXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ0JFn8jPE8PvapVBWbDBkliCz31a2CFwu3ueCba9AhVaqNzSBZbtyW8kqSeUDLPyL3jJLXRgmWqn00MA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyM9Rb/sQIdTeL9DF0b11X70eJcF1ft64ned9JabiYIRUjO6kta
-	Sl+zJBj6W7I6z7tt9nSZFixmhA6/Q/MzKK119fzCEUzklDfbAqSYJe90uA1JjPhjmTirVVrqty2
-	9vUcjoDROgZxg9uBRpgz1UCjm9hDzXNeSOJlN0A==
-X-Google-Smtp-Source: AGHT+IGLxPJJ2NCoGI8hRsiiwLEAN/a5Dqx+FocGdkHpFfwjM3keyeu4LatSC2h948xtYi1UWvkv7JVZmh/VHgunRi4=
-X-Received: by 2002:a05:6102:2924:b0:4a5:b543:ee64 with SMTP id
- ada2fe7eead31-4a8cfb5f764mr5871139137.11.1730130309682; Mon, 28 Oct 2024
- 08:45:09 -0700 (PDT)
+	s=arc-20240116; t=1730130369; c=relaxed/simple;
+	bh=zQ0nkZewO9LUaj4pg5mC3fibDFKz+nR1/LTmJcZ88UA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fawA0sRanckr2H6mZ5MhifkG5v2HWIbrSncV7knINiRUFAYVDixYd+3qsM+6PWoiLynDJVVoq0NzqmetbbPRzB9eykN8bOpsmDxmHlOokkp6Om1kAnmd3n31ccZD0eSkZC+/8VqmM1TrINgU62jymBLrYvVQ2d1CdcRuU1wv0gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fVlT5111; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730130367; x=1761666367;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=zQ0nkZewO9LUaj4pg5mC3fibDFKz+nR1/LTmJcZ88UA=;
+  b=fVlT5111V6Xuw3zyoSankCzG2D465D445+Wf426dhqj15LyPUcK+28wK
+   NWkWjBc5u+R07NAwvPyknkYC614SiXDsXh4KiOy+2KqVOx56cTr6m/naW
+   H1zLs2kN1whQv9qpBzc4WYeS01avJU073HZrrXCFkKDIoIXWZUzixUEc8
+   3oVoePnVIYIjydhNRQVtbwGmikLXpyLsS+eDOyeLxPButd1GQAtH/RyAd
+   M8ZKvaYDnAKpg9Zs3Bwqgbk4FDHb8xDt+gh/DwPAQDJfjGCS+p61izSvy
+   dwIuNkA3QtgI+eply8k2AaKuuTQiTOmmZdkSDkga3ND41PHL3fxjNQvlO
+   g==;
+X-CSE-ConnectionGUID: IHl1yRwUSFS0YtsO6rZKdw==
+X-CSE-MsgGUID: 2r1QOKCATliObmNRBDDYmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29163438"
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="29163438"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 08:46:06 -0700
+X-CSE-ConnectionGUID: 6KvqN4XhTQKsuevqqilpiQ==
+X-CSE-MsgGUID: Axaa4WgbRgacyB1nmvzQlQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,239,1725346800"; 
+   d="scan'208";a="81549825"
+Received: from jairdeje-mobl1.amr.corp.intel.com (HELO [10.124.222.158]) ([10.124.222.158])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 08:46:06 -0700
+Message-ID: <628d6329-05cf-4bf1-b571-361d07b3266e@intel.com>
+Date: Mon, 28 Oct 2024 08:46:05 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028062312.001273460@linuxfoundation.org>
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Mon, 28 Oct 2024 21:14:57 +0530
-Message-ID: <CA+G9fYu-tpwX=09=VOjniFnBz3MSXpaHb_gir2AqyNpihERT2Q@mail.gmail.com>
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
-	broonie@kernel.org, Marc Zyngier <maz@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
-	Suzuki K Poulose <suzuki.poulose@arm.com>, Oliver Upton <oliver.upton@linux.dev>, 
-	Zenghui Yu <yuzenghui@huawei.com>, kvmarm@lists.linux.dev, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: WARNING in lmce_supported() during reboot.
+To: Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>, x86@kernel.org,
+ linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Tony Luck <tony.luck@intel.com>, Borislav Petkov <bp@alien8.de>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Alex Graf <graf@amazon.de>
+References: <20241025231320.45417-1-kuniyu@amazon.com>
+ <e1c50570-1b5b-40d2-bab3-05e9ead51a57@intel.com>
+ <7080ee37ce53d5559ba85f72a0ff59b4bc5a083d.camel@kernel.crashing.org>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <7080ee37ce53d5559ba85f72a0ff59b4bc5a083d.camel@kernel.crashing.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 28 Oct 2024 at 12:16, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.6-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 10/25/24 19:33, Benjamin Herrenschmidt wrote:
+> This is a KVM/Nitro guest, so the CPU is somewhat virtualized, but
+> /proc/cpuinfo says: Intel(R) Xeon(R) Platinum 8124M CPU @ 3.00GHz
+
+Oh, if it's a guest, I'd be 100% pointing fingers at some piece of the
+VMM.  While it's possible that the guest kernel screwed this up, it's
+not immediately obvious how it might do that.
 
 
-The selftests: kvm: vgic_init test failed on stable-rc linux-6.11.y,
-also seen on Linux next-20241023 onwards and Linus v6.12-rc5
-on the Graviton4 and rk3399-rock-pi.
-
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-Test log:
----------
-# selftests: kvm: vgic_init
-# Random seed: 0x6b8b4567
-# Running GIC_v3 tests.
-# ==== Test Assertion Failure ====
-#   lib/kvm_util.c:727: false
-#   pid=2680 tid=2680 errno=5 - Input/output error
-#      1 0x0000000000404eaf: __vm_mem_region_delete at kvm_util.c:727
-(discriminator 5)
-#      2 0x0000000000405d0f: kvm_vm_free at kvm_util.c:765 (discriminator 12)
-#      3 0x0000000000402d5f: vm_gic_destroy at vgic_init.c:101
-#      4 (inlined by) test_vcpus_then_vgic at vgic_init.c:368
-#      5 (inlined by) run_tests at vgic_init.c:720
-#      6 0x0000000000401a6f: main at vgic_init.c:748
-#      7 0x0000ffff8620773f: ?? ??:0
-#      8 0x0000ffff86207817: ?? ??:0
-#      9 0x0000000000401b6f: _start at ??:?
-#   KVM killed/bugged the VM, check the kernel log for clues
-not ok 9 selftests: kvm: vgic_init # exit=254
-
-Upstream discussion thread on this failures,
- - https://lore.kernel.org/linux-arm-kernel/20241009183603.3221824-1-maz@kernel.org/
-
-Test failed log:
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11.4-397-g4ccf0b49d5b6/testrun/25583294/suite/kselftest-kvm/test/kvm_vgic_init/log
- - https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11.4-397-g4ccf0b49d5b6/testrun/25583294/suite/kselftest-kvm/test/kvm_vgic_init/history/
-
-## Build
-* kernel: 6.11.6-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* git commit: 4ccf0b49d5b6ec739a290593658bebd035bb5f10
-* git describe: v6.11.4-397-g4ccf0b49d5b6
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.11.y/build/v6.11.4-397-g4ccf0b49d5b6
-
-## Test Regressions (compared to v6.11.4-136-g96563e3507d7)
-* graviton4-metal, kselftest-kvm
-  - kvm_vgic_init
-
-* rk3399-rock-pi-4b-nvhe, kselftest-kvm
-  - kvm_vgic_init
-
-* rk3399-rock-pi-4b-protected, kselftest-kvm
-  - kvm_vgic_init
-
-* rk3399-rock-pi-4b-vhe, kselftest-kvm
-  - kvm_vgic_init
-
-## Metric Regressions (compared to v6.11.4-136-g96563e3507d7)
-
-## Test Fixes (compared to v6.11.4-136-g96563e3507d7)
-
-## Metric Fixes (compared to v6.11.4-136-g96563e3507d7)
-
-## Test result summary
-total: 143710, pass: 118866, fail: 1602, skip: 23242, xfail: 0
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 131 total, 129 passed, 2 failed
-* arm64: 43 total, 43 passed, 0 failed
-* i386: 18 total, 16 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 36 total, 35 passed, 1 failed
-* riscv: 16 total, 14 passed, 2 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 5 total, 5 passed, 0 failed
-* sparc: 4 total, 3 passed, 1 failed
-* x86_64: 35 total, 35 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-rust
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-cpuhotplug
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-fs
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ipc
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
