@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-385491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AE7F9B37D9
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CFF9B37DC
 	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D1FE1C21FC1
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:40:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE64282A45
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:40:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2375F1DF978;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874C21DF98B;
 	Mon, 28 Oct 2024 17:40:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iftEwOQP"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="GxHuZaU2"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63C9D1552FC
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:40:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3DD1DF720
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730137224; cv=none; b=jgfe1G9sfdCO4mMZ8wZjlvHqzPetQ9UsFXBBxCa34pCHasf+FuYrCmqrrpUviDkGSKTrXhIHpPbuX7z2TRz+eH8f5XbvHJOTm2T6FO5pcu2FfIc3C6z5C4Fm2miEx/80ZYXP0HI1rtKbr7R56/+zG36QWx+ZXSmmhXBL6l8Ax0M=
+	t=1730137224; cv=none; b=QsogPXFKaIZEfRpr5rtEwxI0vjUgP4SKKqIKSmVV6p1GM7PJRTFAR8is6kx5CwlH9JwnByeZFEzaMObwSIfB15393+b0/CggUymP61kcgqCA6eQ+LPmzZUfeIyfRwgi8MpXevtKIQL30hzXFGPfo2FXa0mvOgmBBasiI6HLAW20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1730137224; c=relaxed/simple;
-	bh=PjmzZrky7c9XHiIloWKYccp5bYvY8EkYK6R8+nR4g8A=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=XjaUEfWdzxiAYtV81Y2Tr89xHaBrA+y6LL5S1tlt9XCJVtLR/tpUSHBoRXg/PA3hpptZI1qPnI+1Or66eti2gEVPc+rqlynTw2WPnwj13xfJ10uc55dFTfTK6YDcfAHR0nCs/19Ozqeni+24FDsVlcBaLNjh4T3mZKjBgia54rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iftEwOQP; arc=none smtp.client-ip=209.85.128.45
+	bh=Jw+WdBzdeJ1ejN6JFooZdebJTss0hVEiqW0IkRTOyf4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=ri/LndTfzZGvtvxkVrSz8b1Bhqvj5F5F1HNu7i9E7ta0qihkyBmxkyvXP1bzVtt25mkB0BjlYl2+w2uuQbLfSmuyQLU2mYpbQha821E0+9DmarLRjyiBwfxWORdgXeusI6snunLJEv26zmBsshy2HYaeX+LpikXDdhnqmEjCKQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=GxHuZaU2; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43159c9f617so44769215e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:40:20 -0700 (PDT)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43158625112so46544665e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:40:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730137219; x=1730742019; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+24tbWmwYqjI0PixvLwCG5KaQzbdJT94obj/v2TLFYw=;
-        b=iftEwOQPmfpp1sAIEhT51rV2Sfh1xe04uvb/ca//6tWKoAlssfSgXTcgdYPiPklstQ
-         B+wbapJAY1/wX9urD2+Yfk+slITcezsZ5NmQirOH1YzInaIk3dHvNiWl4+feZAx9XteM
-         Y5gVQWMXcl50PAcfUEQeOv65/FUixVTGCRsPdQdWTnHQ92ns0pEgTpEm5THG8rP7srIk
-         O5hte5vvSuMjjsKVyCYsUc5GHtnWn6ibmeSUKCfk0ZqWkKEddwnd2NR0v5+xHtYaWydi
-         jG3LfxJZnNfrC/6aTm6eHrLKDq9BTvoTbeUrgdqLGXqLxZNKS94Qi1VP+sTi0jm6ULHt
-         B4aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730137219; x=1730742019;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730137220; x=1730742020; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=+24tbWmwYqjI0PixvLwCG5KaQzbdJT94obj/v2TLFYw=;
-        b=go0VotidbE9BsSHrZMnYVFD6FnvFfMcuOwD91LCaKxjMgsHb7aNIWbBiPkgs2s96/2
-         Qpm7afjbpdhxo77RY4MOhAUaeEkoCData9kJhTxwL70xUUwXNGRYUZoSkIO1Xn7MvaVF
-         WKXB19RR1UVGpKp60CTQx9HMUB6dCuEk6qZPIYEQ0MPnKJYVZXRJKeuzKWcSXJD3XuL3
-         ee/2RLlIQ0rPVbRtIqkb11K2PR4dARUAe/h6WvLtYQGVm9VRCji2OVWQeBuSNtX3sRwS
-         BWwNSiUEe3/BFm3kM9moiP+5E8X34a0lha0VLPigOsXTTlmEc685Z7MGyDZSzRc42jkr
-         /w1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU3GiFVisDyLJCh1Vq22b3VHEaUzJ0k+FggJ854xMmi1pDrARwgz1d8dZ2m6+EbZcpCCx+jwLgjOo0px3M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySwAuFpebf0WISSaoef8UDRqna2y2EIMcf07983K9KmWKMOQfc
-	+EpNsAoX/LK/e6UYXjrMTcNQ+FQpjiOuI5iSuXm6HLMaN+ZshSY9T1NHxeI4MGc=
-X-Google-Smtp-Source: AGHT+IFE550FE2Nqygic/ljdueXDXIsWvxFQ/MLExhS5Kk1L7VSfa17/mmDjKm+s/AppiBgP1SXRCQ==
-X-Received: by 2002:adf:cc8f:0:b0:37d:52b5:451e with SMTP id ffacd0b85a97d-3806118aa34mr6936830f8f.33.1730137218641;
-        Mon, 28 Oct 2024 10:40:18 -0700 (PDT)
+        bh=BosgQ+kD0H5BJCs43wOOr0oQ/yjsIN/cdckDvbryFCI=;
+        b=GxHuZaU2jzuUPTxk2k87mXbUTN5lLd0KmzQRNQDiHY81WMFCX0qbJ1+expdGXkfOR0
+         cZP9L2xcMfcvg10abztgEFvAINc3FQuA82EWhJh4DpWZfhv7bIO0KHmiLOPeHR/ZHsZS
+         wgAvYdzx7fY/ORRydg849VZ2PXoQ57Qhme+O8VxNC9N/cbHm8ZrSnx7v6LoIQ4e2PUS4
+         ujz1FSiT8fJzND3YvF86GM9ksLcwkgM6h84SUS75z3anDkDm/uEK0o8tcxkGlXVPxXnq
+         YAZD204ic4xup7Ri3wDbrOQlCw60UcE0EOMzN+vrmqSc5y/WtshF+7vcQLcgpxkBG5cF
+         JCDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730137220; x=1730742020;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BosgQ+kD0H5BJCs43wOOr0oQ/yjsIN/cdckDvbryFCI=;
+        b=ml3FBEMGpOx8DvtwCSg+wSqCylX4HQ4fJxwFGo0n5bea/e6LJXEMz5Zbw+6agiXfkd
+         v0PlBk9VQerOqGUdeYL0V+Qjd1x1VabG8Lmnma/I5ERFKa2xBWM13Kq567L/2+UuwwZU
+         xuuj+hQ02IPYBBa64bGk5eDS0l/PhY1SypTPrDwmotHHsL4MrsZYLdqU2mKjRgT1WNoH
+         6sJHvrKJMz2zUEXHTMsiCLE/AEzUrAZ92I7PGCS6mqN/kuFeygLrMF0RQjmvGoIr/L2b
+         kP7Cv6XzMXadEHxeYRPRbs0QEY9+csOWONQ0GbKVXTdTE0Yn8NdS5gK1ROawTuEuUycK
+         QTAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXvjnAscROyXPBCklnIHfv1RGFgQ5ZWbeKbsikGKZS+N3kJfhLNm7YCxuraTh+Ke2k6hUt6u1NC90z4cMQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywwy9m8BcZYWkkjUYuBNRFlBZZQUOYfD+g4fSkQ8DAqbiv6fHtN
+	NptmGFD8NxQejOaOUVEGnWIrJupFUp0nODpGR5Be9kaobKgEq67VJqspICRU0HE=
+X-Google-Smtp-Source: AGHT+IEqqisyDCHRMO2yXr3fzu1rVySxQSqDU1ltOdB1gBn9xls9XzEdxtAs+MNmhWUihFO/tSzfJQ==
+X-Received: by 2002:a05:600c:4ecb:b0:42d:a024:d6bb with SMTP id 5b1f17b1804b1-4319acb8145mr62323225e9.20.1730137220010;
+        Mon, 28 Oct 2024 10:40:20 -0700 (PDT)
 Received: from localhost ([2001:4091:a245:81f4:340d:1a9d:1fa6:531f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f744esm117408815e9.34.2024.10.28.10.40.17
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5431c9sm147417555e9.0.2024.10.28.10.40.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 10:40:18 -0700 (PDT)
+        Mon, 28 Oct 2024 10:40:19 -0700 (PDT)
 From: Markus Schneider-Pargmann <msp@baylibre.com>
-Subject: [PATCH v5 0/9] can: m_can: Add am62 wakeup support
-Date: Mon, 28 Oct 2024 18:38:06 +0100
-Message-Id: <20241028-topic-mcan-wakeup-source-v6-12-v5-0-33edc0aba629@baylibre.com>
+Date: Mon, 28 Oct 2024 18:38:07 +0100
+Subject: [PATCH v5 1/9] dt-bindings: can: m_can: Add wakeup properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,11 +77,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAP7LH2cC/4XOTQ6CMBCG4auQrh3DlH9X3sO4KO0gjUpJC1VCu
- LuFuDBuWL6zeL6ZmSOrybFTNDNLXjttuhDZIWKyFd2NQKvQjMc8xTiuYDC9lvCUooOXuNPYgzO
- jlQQ+B+RQSlR5VSVYq5IFpLfU6Pc2cLmGbrUbjJ22PZ+s1y+NuEf7BGKoiozLAlOhkJ9rMT10b
- ekozZOtuk9/xWxXTIPYKBF+RiqEyP/EZVk+aKLTGSEBAAA=
-X-Change-ID: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8
+Message-Id: <20241028-topic-mcan-wakeup-source-v6-12-v5-1-33edc0aba629@baylibre.com>
+References: <20241028-topic-mcan-wakeup-source-v6-12-v5-0-33edc0aba629@baylibre.com>
+In-Reply-To: <20241028-topic-mcan-wakeup-source-v6-12-v5-0-33edc0aba629@baylibre.com>
 To: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
  Marc Kleine-Budde <mkl@pengutronix.de>, 
  Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
@@ -99,129 +98,71 @@ Cc: linux-can@vger.kernel.org, netdev@vger.kernel.org,
  Markus Schneider-Pargmann <msp@baylibre.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4574; i=msp@baylibre.com;
- h=from:subject:message-id; bh=PjmzZrky7c9XHiIloWKYccp5bYvY8EkYK6R8+nR4g8A=;
- b=owGbwMvMwCGm0rPl0RXRdfaMp9WSGNLlz3i1l97ltzN8+evMnOe3jCZNSGpdPbW6yWxf9o0tH
- rf657aadZSyMIhxMMiKKbLc/bDwXZ3c9QUR6x45wsxhZQIZwsDFKQATSc1h+O/LpDzV/p6y3/GN
- GW97zrY3nD+2aPPzKF+hJ4cjEnX4tDYzMnzpX3WNkzP8dNu9DdJ28rmFNzYE3VjNeatsHa/u3ZT
- aPgYA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1874; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=Jw+WdBzdeJ1ejN6JFooZdebJTss0hVEiqW0IkRTOyf4=;
+ b=owGbwMvMwCGm0rPl0RXRdfaMp9WSGNLlzwSUGSpPS0vrUKo/MalQaG9c6eXD7a217xauk64xV
+ vQ8/XFnRykLgxgHg6yYIsvdDwvf1cldXxCx7pEjzBxWJpAhDFycAjCRkxGMDPtK5r8O7H7EI3f9
+ tZXC1OXX9n22mT9R+OvnC/Pbwmd+WxXLyHA8SLDz636BllYXl6eGgh6izRv5wh6Un0/dE2Pd9P/
+ gOkYA
 X-Developer-Key: i=msp@baylibre.com; a=openpgp;
  fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-Hi,
+m_can can be a wakeup source on some devices. Especially on some of the
+am62* SoCs pins, connected to m_can in the mcu, can be used to wakeup
+the SoC.
 
-Series
-------
-am62, am62a and am62p support Partial-IO, a poweroff SoC state with a
-few pin groups being active for wakeup.
+The wakeup-source property defines on which devices m_can can be used
+for wakeup.
 
-To support mcu_mcan0 and mcu_mcan1 wakeup for the mentioned SoCs, the
-series introduces a notion of wake-on-lan for m_can. If the user decides
-to enable wake-on-lan for a m_can device, the device is set to wakeup
-enabled. A 'wakeup' pinctrl state is selected to enable wakeup flags for
-the relevant pins. If wake-on-lan is disabled the default pinctrl is
-selected.
+The pins associated with m_can have to have a special configuration to
+be able to wakeup the SoC. This configuration is described in the wakeup
+pinctrl state while the default state describes the default
+configuration.
 
-It is based on v6.12-rc1.
-
-Partial-IO
-----------
-This series is part of a bigger topic to support Partial-IO on am62,
-am62a and am62p. Partial-IO is a poweroff state in which some pins are
-able to wakeup the SoC. In detail MCU m_can and two serial port pins can
-trigger the wakeup.
-A documentation can also be found in section 6.2.4 in the TRM:
-  https://www.ti.com/lit/pdf/spruiv7
-
-This other series is relevant for the support of Partial-IO:
-
- - firmware: ti_sci: Partial-IO support
-   https://gitlab.baylibre.com/msp8/linux/-/tree/topic/am62-partialio/v6.12?ref_type=heads
-
-Testing
--------
-A test branch is available here that includes all patches required to
-test Partial-IO:
-
-https://gitlab.baylibre.com/msp8/linux/-/tree/integration/am62/v6.12?ref_type=heads
-
-After enabling Wake-on-LAN the system can be powered off and will enter
-the Partial-IO state in which it can be woken up by activity on the
-specific pins:
-    ethtool -s can0 wol p
-    ethtool -s can1 wol p
-    poweroff
-
-I tested these patches on am62-lp-sk.
-
-Best,
-Markus
-
-Previous versions:
- v1: https://lore.kernel.org/lkml/20240523075347.1282395-1-msp@baylibre.com/
- v2: https://lore.kernel.org/lkml/20240729074135.3850634-1-msp@baylibre.com/
- v3: https://lore.kernel.org/lkml/20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com
- v4: https://lore.kernel.org/r/20241015-topic-mcan-wakeup-source-v6-12-v4-0-fdac1d1e7aa6@baylibre.com
-
-Changes in v5:
- - Make the check of wol options nicer to read
-
-Changes in v4:
- - Remove leftover testing code that always returned -EIO in a specific
- - Redesign pincontrol setup to be easier understandable and less nested
- - Fix missing parantheses around wol_enable expression
- - Remove | from binding description
-
-Changes in v3:
- - Rebase to v6.12-rc1
- - Change 'wakeup-source' to only 'true'
- - Simplify m_can_set_wol by returning early on error
- - Add vio-suuply binding and handling of this optional property.
-   vio-supply is used to reflect the SoC architecture and which power
-   line powers the m_can unit. This is important as some units are
-   powered in special low power modes.
-
-Changes in v2:
- - Rebase to v6.11-rc1
- - Squash these two patches for the binding into one:
-   dt-bindings: can: m_can: Add wakeup-source property
-   dt-bindings: can: m_can: Add wakeup pinctrl state
- - Add error handling to multiple patches of the m_can driver
- - Add error handling in m_can_class_allocate_dev(). This also required
-   to add a new patch to return error pointers from
-   m_can_class_allocate_dev().
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
-Markus Schneider-Pargmann (8):
-      dt-bindings: can: m_can: Add wakeup properties
-      dt-bindings: can: m_can: Add vio-supply
-      can: m_can: Map WoL to device_set_wakeup_enable
-      can: m_can: Return ERR_PTR on error in allocation
-      can: m_can: Support pinctrl wakeup state
-      can: m_can: Add use of optional regulator
-      arm64: dts: ti: k3-am62: Mark mcu_mcan0/1 as wakeup-source
-      arm64: dts: ti: k3-am62a-mcu: Mark mcu_mcan0/1 as wakeup-source
+ .../devicetree/bindings/net/can/bosch,m_can.yaml       | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-Vibhore Vardhan (1):
-      arm64: dts: ti: k3-am62p-mcu: Mark mcu_mcan0/1 as wakeup-source
+diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+index c4887522e8fe97c3947357b4dbd4ecf20ee8100a..0c1f9fa7371897d45539ead49c9d290fb4966f30 100644
+--- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
++++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
+@@ -106,6 +106,22 @@ properties:
+         maximum: 32
+     minItems: 1
+ 
++  pinctrl-0:
++    description: Default pinctrl state
++
++  pinctrl-1:
++    description: Wakeup pinctrl state
++
++  pinctrl-names:
++    description:
++      When present should contain at least "default" describing the default pin
++      states. The second state called "wakeup" describes the pins in their
++      wakeup configuration required to exit sleep states.
++    minItems: 1
++    items:
++      - const: default
++      - const: wakeup
++
+   power-domains:
+     description:
+       Power domain provider node and an args specifier containing
+@@ -122,6 +138,8 @@ properties:
+     minItems: 1
+     maxItems: 2
+ 
++  wakeup-source: true
++
+ required:
+   - compatible
+   - reg
 
- .../devicetree/bindings/net/can/bosch,m_can.yaml   |  22 ++++
- arch/arm64/boot/dts/ti/k3-am62-mcu.dtsi            |   2 +
- arch/arm64/boot/dts/ti/k3-am62a-mcu.dtsi           |   2 +
- .../boot/dts/ti/k3-am62p-j722s-common-mcu.dtsi     |   2 +
- drivers/net/can/m_can/m_can.c                      | 117 ++++++++++++++++++++-
- drivers/net/can/m_can/m_can.h                      |   4 +
- drivers/net/can/m_can/m_can_pci.c                  |   4 +-
- drivers/net/can/m_can/m_can_platform.c             |   4 +-
- drivers/net/can/m_can/tcan4x5x-core.c              |   4 +-
- 9 files changed, 152 insertions(+), 9 deletions(-)
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241009-topic-mcan-wakeup-source-v6-12-8c1d69931bd8
-
-Best regards,
 -- 
-Markus Schneider-Pargmann <msp@baylibre.com>
+2.45.2
 
 
