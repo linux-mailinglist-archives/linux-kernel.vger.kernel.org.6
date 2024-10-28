@@ -1,157 +1,157 @@
-Return-Path: <linux-kernel+bounces-383973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F449B22A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:23:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3079B22AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:23:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42F9FB214BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A34561C2123B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 731AF155A2F;
-	Mon, 28 Oct 2024 02:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06A7156F3C;
+	Mon, 28 Oct 2024 02:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hCwlZrya"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="OZIawUAV"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3420BA2E;
-	Mon, 28 Oct 2024 02:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF7C14A088;
+	Mon, 28 Oct 2024 02:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730082180; cv=none; b=Ci0Pm9fRvClqa6/Tyu1QSQB7GZlAXhUEo/8SWh7u6TefUkgJBHCM43IDOPtQ+6FJAxl2KxiRrQak+LFVMxYGL3KNGONaOoTOoKcovlAGQpZXmf5DZvXNK7smZd56UwQVKUixIOf3lL4bXj81fZEfIWiz6Dz1RbuMIzxKr9W+cRs=
+	t=1730082212; cv=none; b=golnDRuYpIR52SqMwQwxbz8Pxqar1HnMS4Yyu21EQm9hlqZs46dPkyzHfnSQYv8GcuXkda9a9MMURSjmdcEw8rludFyIvVEq06Md4BkMzDqB3VRWXTt3m+4dasVDKo695w2cKWscIwPmf1VpIXUCiH7K0b75n34Z+BSQO6PE0vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730082180; c=relaxed/simple;
-	bh=4Cb0Uz9yDAx0qUk8WJJgsrAPvs/AGZQr34EqcVw7jRo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BmhOPIVDQSWu/gRbKV91AbhXGYrjsNaU+E1GEY1+Y2FZsNqLY6JIllCLyd5OXlsosukAwt/DdA5XmKaBkKZqWtoc2KNbG3yq5G1oStMBj8TRXwsyI2InrkqhGrkzz+Hu2nSJO4ExorksOhM13Jdowf9AAFfRmv7pjo1LdvsLKYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hCwlZrya; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RMrq8G009480;
-	Mon, 28 Oct 2024 02:22:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	W6dHfwb8MHs9adbndSIVkXvifgbrBFRDFCo/tHA7NSc=; b=hCwlZryanqs/GiZy
-	ryaW2kAzqSVDDbgH+b+32PUf13XMqgG30jx/qptb4TwFtCWKp7FXYTsGX3kqHWh2
-	7TrbWl8k7klP9mQaG4ljdfaoyFHkbAIpyrDo8lSjOxweebt68c7MnQUo1Gb+vDms
-	b7v4fHvPF7gVs3neGCXbzxRrl3Pg0gS0zJauOB+rOWnv++CfIJxrd9rCjEY4r657
-	IGUg5C+zjOukp+QGyHvCbNRF8mibRePk03zu2O4qiflefDqAKvyFk/ObrSMVIqro
-	3NsQbU5nWnNZHXH7kTzuayvxYDUrtDgL/xz6/Zob3CEGrwHoOLxXsm2LcrBdTYGD
-	R7teCw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4duk5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 02:22:54 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S2Mrqv020809
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 02:22:53 GMT
-Received: from [10.233.21.53] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 19:22:49 -0700
-Message-ID: <b914945e-4de2-436e-afdf-3c3ce07f4073@quicinc.com>
-Date: Mon, 28 Oct 2024 10:22:47 +0800
+	s=arc-20240116; t=1730082212; c=relaxed/simple;
+	bh=u/xTtnizdqRxZA7D0F1Ev2yUBsm0p/OFai4PrZAtDDg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Rxf7gLGvF7LrYNuxlV/bcyeA+11Zmtv7WgcOYFj3ueztQe/nc49zAQq4MqUMdiIcCltaKvIDg/7Q0hOOOwmBoQWkcK0e3HKdt2YJXuRJ1scyVZZzeE5MGYxU5ShlM9UPtmCoK2rl/cRC9Wbq+3JizAK2FFxBWgf1g1KGjWiCZEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=OZIawUAV; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1730082202;
+	bh=wVzoc2YabnIij5HP3bkYWkQB3e64c7slt7BMmOIG3vk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=OZIawUAVvihaiXSwIbUZzcTz/tSg3C1U5LEaVYgOz4QoVISgtL6WviXd3+smevP7j
+	 R/hVpxpqQA2czH0OgbOsdZ/XN9oOlY7sbOzvWwnvGYYyYJsAuLhD8D2cGXk3zQ3Qcf
+	 Xlmo8LCM81g3VdyYneWeZi52VsFp2ozQKki9ZSVwqAf7xk8cYqaSwqlX4Mipqjed6a
+	 eYbw3SKM3H8Y7R3CxIjshRL1I3sLTmewm9KYFwOuMGXWKXrkByPLjplT3Ne2Vy4WLv
+	 oS3+EntGWYqofeVy/dSgM+jb9ZxRrfbS0RYyedkF7axBWtyZppZ+q42fJGbmWcXti8
+	 0jDbtveRkr5HQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcHHX4W29z4x89;
+	Mon, 28 Oct 2024 13:23:20 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Hari Bathini <hbathini@linux.ibm.com>, linuxppc-dev
+ <linuxppc-dev@lists.ozlabs.org>, bpf@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: "Naveen N. Rao" <naveen@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Daniel Borkmann <daniel@iogearbox.net>, Masahiro
+ Yamada <masahiroy@kernel.org>, Nicholas Piggin <npiggin@gmail.com>, Alexei
+ Starovoitov <ast@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Vishal Chourasia
+ <vishalc@linux.ibm.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>
+Subject: Re: [PATCH v6 17/17] powerpc64/bpf: Add support for bpf trampolines
+In-Reply-To: <20241018173632.277333-18-hbathini@linux.ibm.com>
+References: <20241018173632.277333-1-hbathini@linux.ibm.com>
+ <20241018173632.277333-18-hbathini@linux.ibm.com>
+Date: Mon, 28 Oct 2024 13:23:13 +1100
+Message-ID: <87wmhtrmni.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] soc: qcom: llcc: Add LLCC configuration for the
- QCS8300 platform
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <quic_tengfan@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>
-References: <20241010-qcs8300_llcc-v2-0-d4123a241db2@quicinc.com>
- <20241010-qcs8300_llcc-v2-2-d4123a241db2@quicinc.com>
- <v73v4qniygxvqgdjcuydgpir2fgxmnltqaxcexoktzesnqfxod@55k43u2gmqqt>
-Content-Language: en-US
-From: Jingyi Wang <quic_jingyw@quicinc.com>
-In-Reply-To: <v73v4qniygxvqgdjcuydgpir2fgxmnltqaxcexoktzesnqfxod@55k43u2gmqqt>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: JoLX0gpvhuwoy2ClGUIsWANAOfZDDYXf
-X-Proofpoint-GUID: JoLX0gpvhuwoy2ClGUIsWANAOfZDDYXf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- priorityscore=1501 mlxlogscore=959 clxscore=1015 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
- mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280019
+Content-Type: text/plain
+
+Hari Bathini <hbathini@linux.ibm.com> writes:
+> From: Naveen N Rao <naveen@kernel.org>
+>
+> Add support for bpf_arch_text_poke() and arch_prepare_bpf_trampoline()
+> for 64-bit powerpc. While the code is generic, BPF trampolines are only
+> enabled on 64-bit powerpc. 32-bit powerpc will need testing and some
+> updates.
+
+Hi Hari,
+
+This is breaking the PCREL build for me:
+
+  ERROR: 11:49:18: Failed building ppc64le_defconfig+pcrel@fedora
+  INFO: 11:49:18: (skipped 41 lines) ...
+  INFO: 11:49:18: /linux/arch/powerpc/net/bpf_jit.h:90:9: note: in expansion of macro 'EMIT'
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |         ^~~~
+  /linux/arch/powerpc/include/asm/ppc-opcode.h:473:88: note: in expansion of macro 'IMM_DS'
+    473 | #define PPC_RAW_LD(r, base, i)          (0xe8000000 | ___PPC_RT(r) | ___PPC_RA(base) | IMM_DS(i))
+        |                                                                                        ^~~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:90:14: note: in expansion of macro 'PPC_RAW_LD'
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |              ^~~~~~~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:90:36: note: in expansion of macro 'offsetof'
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |                                    ^~~~~~~~
+  /linux/arch/powerpc/net/bpf_jit_comp.c:791:17: note: in expansion of macro 'PPC64_LOAD_PACA'
+    791 |                 PPC64_LOAD_PACA();
+        |                 ^~~~~~~~~~~~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:90:65: error: 'struct paca_struct' has no member named 'kernel_toc'; did you mean 'kernel_msr'?
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |                                                                 ^~~~~~~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:29:34: note: in definition of macro 'PLANT_INSTR'
+     29 |         do { if (d) { (d)[idx] = instr; } idx++; } while (0)
+        |                                  ^~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:90:9: note: in expansion of macro 'EMIT'
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |         ^~~~
+  /linux/arch/powerpc/include/asm/ppc-opcode.h:473:88: note: in expansion of macro 'IMM_DS'
+    473 | #define PPC_RAW_LD(r, base, i)          (0xe8000000 | ___PPC_RT(r) | ___PPC_RA(base) | IMM_DS(i))
+        |                                                                                        ^~~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:90:14: note: in expansion of macro 'PPC_RAW_LD'
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |              ^~~~~~~~~~
+  /linux/arch/powerpc/net/bpf_jit.h:90:36: note: in expansion of macro 'offsetof'
+     90 |         EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+        |                                    ^~~~~~~~
+  /linux/arch/powerpc/net/bpf_jit_comp.c:882:25: note: in expansion of macro 'PPC64_LOAD_PACA'
+    882 |                         PPC64_LOAD_PACA();
+        |                         ^~~~~~~~~~~~~~~
+  make[5]: *** [/linux/scripts/Makefile.build:229: arch/powerpc/net/bpf_jit_comp.o] Error 1
 
 
+To test it you need to enable CONFIG_POWER10_CPU, eg:
 
-On 10/20/2024 12:29 AM, Dmitry Baryshkov wrote:
-> On Thu, Oct 10, 2024 at 06:08:47PM +0800, Jingyi Wang wrote:
->> Add LLCC configuration for the QCS8300 platform. There is an errata on
->> LB_CNT information on QCS8300 platform, override the value to get the
->> right number of banks.
->>
->> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
->> ---
->>  drivers/soc/qcom/llcc-qcom.c | 72 ++++++++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 72 insertions(+)
->>
->> @@ -3391,6 +3456,12 @@ static int qcom_llcc_probe(struct platform_device *pdev)
->>  	num_banks >>= LLCC_LB_CNT_SHIFT;
->>  	drv_data->num_banks = num_banks;
->>  
->> +	/* LB_CNT information is wrong on QCS8300, override the value */
->> +	if (of_device_is_compatible(dev->of_node, "qcom,qcs8300-llcc")) {
->> +		num_banks = 4;
->> +		drv_data->num_banks = 4;
->> +	}
-> 
-> Nit: I think it might be better to skip reading LLCC_COMMON_STATUS0
-> register completely and just set num_banks instead. See [1]
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20241019-sar2130p-llcc-v1-2-4e09063d04f2@linaro.org/
-> 
+  CONFIG_POWERPC64_CPU=n
+  CONFIG_POWER10_CPU=y
+  CONFIG_PPC_KERNEL_PCREL=y
 
-Just went through the series and the follow up sereies, I think it is a good idea to
-add the property in the config. Thanks!
+This diff gets it building, but I haven't tested it actually works:
 
+diff --git a/arch/powerpc/net/bpf_jit.h b/arch/powerpc/net/bpf_jit.h
+index 2d04ce5a23da..af6ff3eb621a 100644
+--- a/arch/powerpc/net/bpf_jit.h
++++ b/arch/powerpc/net/bpf_jit.h
+@@ -86,9 +86,14 @@
+                                                        0xffff));             \
+                } } while (0)
+ #define PPC_LI_ADDR    PPC_LI64
++
++#ifndef CONFIG_PPC_KERNEL_PCREL
+ #define PPC64_LOAD_PACA()                                                    \
+        EMIT(PPC_RAW_LD(_R2, _R13, offsetof(struct paca_struct, kernel_toc)))
+ #else
++#define PPC64_LOAD_PACA() do {} while (0)
++#endif
++#else
+ #define PPC_LI64(d, i) BUILD_BUG()
+ #define PPC_LI_ADDR    PPC_LI32
+ #define PPC64_LOAD_PACA() BUILD_BUG()
 
->> +
->>  	drv_data->regmaps = devm_kcalloc(dev, num_banks, sizeof(*drv_data->regmaps), GFP_KERNEL);
->>  	if (!drv_data->regmaps) {
->>  		ret = -ENOMEM;
->> @@ -3484,6 +3555,7 @@ static int qcom_llcc_probe(struct platform_device *pdev)
->>  }
->>  
->>  static const struct of_device_id qcom_llcc_of_match[] = {
->> +	{ .compatible = "qcom,qcs8300-llcc", .data = &qcs8300_cfgs},
->>  	{ .compatible = "qcom,qdu1000-llcc", .data = &qdu1000_cfgs},
->>  	{ .compatible = "qcom,sa8775p-llcc", .data = &sa8775p_cfgs },
->>  	{ .compatible = "qcom,sc7180-llcc", .data = &sc7180_cfgs },
->>
->> -- 
->> 2.25.1
->>
-> 
-Thanks，
-Jingyi
-
+cheers
 
