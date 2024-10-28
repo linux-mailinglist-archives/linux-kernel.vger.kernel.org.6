@@ -1,175 +1,90 @@
-Return-Path: <linux-kernel+bounces-384144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78CE9B24C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:58:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EC89B24CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 07:00:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE5B1C206A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACA66281ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:00:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9A818DF73;
-	Mon, 28 Oct 2024 05:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ksoxl7Eu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD86518C92E;
+	Mon, 28 Oct 2024 06:00:30 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B5922629D;
-	Mon, 28 Oct 2024 05:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E714152E1C;
+	Mon, 28 Oct 2024 06:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730095091; cv=none; b=l0R0JfUhBVppJaYAFFCM1WcymLYxml0KiG/ODY5PMa7zr/OB5XSVLuo+acZyZNsaW2pForJCyjXySCnNjNKG6uLPm35OvZufN/Z9LjGyfHfnVM98joXdzoE7HzLDoWDSanoLozLRn4/Pn73sZEVvTGdlX/g5ymJULF+klFxbVxQ=
+	t=1730095230; cv=none; b=dSW5i8X2t6sVC25XsXdXq3yAQShYttjDWl3AvIxBItfsLsXAisDbv3je/tzySITlToGW/btD49VppVMRKBdodLiVQRmYniv2ziw0A9oahmHi2nsrgp8fGhS15LxQ00oFZfUCf41HrGhNMHqsWOy/FaemB84qBsltoJmQS7hHIiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730095091; c=relaxed/simple;
-	bh=TVnHvZr62rmVm2loqYHdo5pXcTEY1VqEKnk1v8vlDWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y3M5JN+rCGLj8uPyMnYoOygJ307VYN1Q/mbiaOk1d/3onXhLvF48U5bgmxn3mItqL2OKgjJ9zrFWekFbY/Pi3PnNi/YZSa9YH3ESVuMOg7q+OgPonS6hFZphOgzZCw5awg8Jdrg/ww1b9cYjWaokIaxV5DUatguhIRI8r6MiXxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ksoxl7Eu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49S0kHjw023659;
-	Mon, 28 Oct 2024 05:58:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NtU2mVAly4FjXRBeZWXyc452DAFhIhXB8rbwZqI+qk0=; b=ksoxl7EuyWDsBoTL
-	HyhqsD5ku5014iX3AKK04Lbg/UXfKLMkwy3tLt2dD2YPVk61MgNCbLWagPYM8UyW
-	lDyrNEKOT4eGA9DQDD9QugX77IFeq9nbS4BgV7MibRU7c0dfg7QzGRFtVXsozCmK
-	dgus3NAMAyFaUE6F32gyIV19GF4aJb6J8ew3I9pVSfup+ptP8toXiNl01w2ey04W
-	GDmzNclTRXPr1jeTh3zQrj+CR3DHjTFpWVFa4IvTBoxMy1HAD/KUodNUwp8TJi9J
-	E44k+jGHduaw0kU1MqzAi5pNkmSaC5tXDSXq/zEbimARZdkpbodDB91KWtLgu4Ya
-	mdmBuQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gskjuqs5-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:58:01 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S5w0AQ005536
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 05:58:00 GMT
-Received: from [10.217.219.62] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 27 Oct
- 2024 22:57:54 -0700
-Message-ID: <2cd4af43-e600-4a39-8b8e-cb25b8c0168d@quicinc.com>
-Date: Mon, 28 Oct 2024 11:27:52 +0530
+	s=arc-20240116; t=1730095230; c=relaxed/simple;
+	bh=jOnej1VE1Up5GjufugBusM9bGYnKUGvqSf+/jd/DV1I=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=tHlivWZPrSAAWWW/Yxk3NxDkzaXKHQcBlWV5Jt8Zofem+73EYqvuoe9rT4ZvhoC7DIH7WnoXTfOhFcfG3FgL9hrWVi8aXHgvW5ds6xhAoMyRNDBvlLZo6kPxNLgB31OowdIcUMSlMHh//d85DLWzinHh2sy0YpS+9nN5RQKn2vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BE91C4CEC3;
+	Mon, 28 Oct 2024 06:00:30 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1t5IoY-000000052nJ-3Dxe;
+	Mon, 28 Oct 2024 02:01:18 -0400
+Message-ID: <20241028060029.742310369@goodmis.org>
+User-Agent: quilt/0.68
+Date: Mon, 28 Oct 2024 02:00:29 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v2 0/2] fgraph: Free up function graph shadow stacks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] dt-bindings: dmaengine: qcom: gpi: Add additional
- arg to dma-cell property
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <linux-i2c@vger.kernel.org>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        Sumit Semwal
-	<sumit.semwal@linaro.org>, <quic_vtanuku@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>, <dmaengine@vger.kernel.org>,
-        Andi Shyti
-	<andi.shyti@kernel.org>, <linaro-mm-sig@lists.linaro.org>,
-        <linux-media@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
-        <devicetree@vger.kernel.org>, <cros-qcom-dts-watchers@chromium.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Vinod Koul
-	<vkoul@kernel.org>
-References: <20241015120750.21217-1-quic_jseerapu@quicinc.com>
- <20241015120750.21217-2-quic_jseerapu@quicinc.com>
- <172899877472.523926.14548368912530185631.robh@kernel.org>
-Content-Language: en-US
-From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
-In-Reply-To: <172899877472.523926.14548368912530185631.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4-JczcihqfZRpvgxpZxOrdCuTgT3y3sr
-X-Proofpoint-ORIG-GUID: 4-JczcihqfZRpvgxpZxOrdCuTgT3y3sr
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501
- mlxlogscore=999 bulkscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410280049
 
 
+Since the start of function graph tracing, shadow stacks were created for
+every task on the system when the first instance of function graph was used.
+But they were never freed due to the shadow stacks holding the return
+address that was hijacked for the function graph return trampoline. The
+stacks were only freed when a task exits. That means once you use function
+graph tracing, your system has PAGE_SIZE stack for every task in the system
+that was running when function graph was happening. That's a lot of memory
+being wasted that's not being used.
 
-On 10/15/2024 6:56 PM, Rob Herring (Arm) wrote:
-> 
-> On Tue, 15 Oct 2024 17:37:46 +0530, Jyothi Kumar Seerapu wrote:
->> When high performance with multiple i2c messages in a single transfer
->> is required, employ Block Event Interrupt (BEI) to trigger interrupts
->> after specific messages transfer and the last message transfer,
->> thereby reducing interrupts.
->>
->> For each i2c message transfer, a series of Transfer Request Elements(TREs)
->> must be programmed, including config tre for frequency configuration,
->> go tre for holding i2c address and dma tre for holding dma buffer address,
->> length as per the hardware programming guide. For transfer using BEI,
->> multiple I2C messages may necessitate the preparation of config, go,
->> and tx DMA TREs. However, a channel TRE size of 64 is often insufficient,
->> potentially leading to failures due to inadequate memory space.
->>
->> Add additional argument to dma-cell property for channel TRE size.
->> With this, adjust the channel TRE size via the device tree.
->> The default size is 64, but clients can modify this value based on
->> their specific requirements.
->>
->> Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/dma/qcom,gpi.yaml | 6 ++++--
->>   1 file changed, 4 insertions(+), 2 deletions(-)
->>
-> 
-> My bot found errors running 'make dt_binding_check' on your patch:
-> 
-> yamllint warnings/errors:
-> 
-> dtschema/dtc warnings/errors:
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/qcom,gpi.yaml: properties:#dma-cells: 'minItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/qcom,gpi.yaml: properties:#dma-cells: 'maxItems' is not one of ['description', 'deprecated', 'const', 'enum', 'minimum', 'maximum', 'multipleOf', 'default', '$ref', 'oneOf']
-> 	from schema $id: http://devicetree.org/meta-schemas/core.yaml#
-> 
-> doc reference errors (make refcheckdocs):
-> 
-> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241015120750.21217-2-quic_jseerapu@quicinc.com
-> 
-> The base for the series is generally the latest rc1. A different dependency
-> should be noted in *this* patch.
-> 
-> If you already ran 'make dt_binding_check' and didn't see the above
-> error(s), then make sure 'yamllint' is installed and dt-schema is up to
-> date:
-> 
-> pip3 install dtschema --upgrade
-> 
-> Please check and re-submit after running the above command yourself. Note
-> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-> your schema. However, it must be unset to test all examples with your schema.
-> 
+This series addresses this by now freeing shadow stacks that are no longer
+being used. This can be found by checking the shadow stack pointer on the
+task structure.
 
-Thanks, i followed the instructions and resolved errors which observed 
-with 'make dt_binding_check'.
-But in V2 patch, i have reverted the DT and binding changes related to 
-adding new argument for dma-cells property and instead used existing 
-value for channel TRE size in GPI driver.
+When function graph is finished, it will free all the shadow stacks that are
+no longer being used. For those still being used, the freeing of them is
+delayed until the funciton graph return is called by the task and it pops
+off the last return address. That will trigger a irq work which triggers a
+work queue to do shadow stack clean up again. A static_branch is used so
+that this check doesn't happen during normal tracing as it's in a very hot
+path.
 
-Regrads,
-JyothiKumar
+Note this patch series is based on my ftrace/urgent branch merged with my
+ftrace/for-next branch (and some patches that havent been pushed yet).
+
+Changse since v1: https://lore.kernel.org/linux-trace-kernel/20241024092723.817582319@goodmis.org/
+
+- Had to merge ftrace/urgent to the ftrace/for-next branch and that caused
+  some conflicts to these patches.
+
+Steven Rostedt (2):
+      fgraph: Free ret_stacks when graph tracing is done
+      fgraph: Free ret_stack when task is done with it
+
+----
+ kernel/trace/fgraph.c | 152 ++++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 136 insertions(+), 16 deletions(-)
+
 
