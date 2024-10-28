@@ -1,212 +1,158 @@
-Return-Path: <linux-kernel+bounces-385187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2E99B33A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:35:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC2F39B33A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 15:35:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF9A41C22BD3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:35:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57EC31F21971
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 14:35:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483AE1DE2B5;
-	Mon, 28 Oct 2024 14:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC6C1DE2A1;
+	Mon, 28 Oct 2024 14:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="acA0zMfQ"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bmfzCuF5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6A01DE2A6;
-	Mon, 28 Oct 2024 14:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730126132; cv=fail; b=BzjtbJRcXDtv+DAYwuR022dQsDFpN4LcvB8xvLtfhFb6xy/SroEVzvc8i3fkEX7JGXnFqYCJ0/eHQIingSr1P1Tfit/sMJhZHd1+MEwY1rL9F+egrP02c+jyokgiwNBx3gGMPDWwG92VoQf9mjbZsSs4zZJX4XRxgcv19Uvi17Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730126132; c=relaxed/simple;
-	bh=vL1U1VbtY/I8GEtjj9qHbzZnzKaqztESMFBRrR6xvZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=aEixJs1EF+VxQSPqMMTATb1hRopgDCZhiIf+JQfQGao1E9LdkbLG0FuYNykkI2lvWOx9UhsoBYcg+4EUMzsf2oz70Xc66Dwhka88n+aAEagPsHPJLgfIBgPfy/OWI3OADINsDxcq7XpRyrgyhsFeLqGkcHJwi7mZwdqFGXBLv7Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=acA0zMfQ; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=w6MiBkjksK7uG3tyd/b/Qpbi7Gu0KwuJbNoXFaFma5QDjiUUoYbqi0x2tETh7Quw/KUPw1sHKNE0JlcW6/UaDIuLuh8wbN3830sN2eN2R4tsoqk3kEQat93ZUdIN/Ff8R+X8xbWwgtAmEZwZX0j3x1W0K4Giay/t0DimNqz3cfHy6x6rXsVML8Ndn/1pGsqQoLcU41Y3CHbyTdDcQSKHXKFhAnFBuE5u333m3MCJFjbUREJ6sWG1bvWLnNp/NqTl+NPzv5JsZ5r8HAuF6g1TONpjaACVli9lzjjPbbKRQpYJk9Au27I29FqZLmq+pI0FLmHlWGs2hJcLRt5C2Fs/Cg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2aoCFkmR8ku/BbYgOG9jswlYj9DEVjwgIloiecez/1s=;
- b=DLDXVwvONgr2w477yd/rjgb3eYESbGMRYiYWD/CQP993/yN5xcQmyIdMcqbpA1FSKRIeGZCDp0hfv4+VK+Iu5fGF44X+WoZzqx+cJR/Ykr3TKcKV2mKvKcuBT8QCyKUS5GMpNSlI1nio+Fq16ndiVO8z3RpzB8hE5fCB/8gkW0uSVlbSv685FOsCK6JFe+vJACN+IIAKPyUfxzCF6m0JDeNovWKbFXSCi2R7DM5nS1jcRb8QMAiaCCTUUvX1od/Pz5noDVc2lOQydbUcPmuVt6sZ/MWRkU8IHTWlLd1iAMAOAU6Hq3aGwQhKupWVYp2a+yQDsBVnk1IMa1JVXLJZnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2aoCFkmR8ku/BbYgOG9jswlYj9DEVjwgIloiecez/1s=;
- b=acA0zMfQ4fEfHfwCobzsfDSUCbLXA85mtL9CpuVRlcNwEC8nt7KZrRqrf3Qwz9JKosEEq41O8yD6CeMM+Fwy9gWwkyQTtGLcq0S/fbEUUYs8Tt1VhqjYD28oIS9mJpX0FO5vf4ofRJzp2x3zE5IJ7Fuwr9fu4o2gLuCTbnMxtpI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- SJ2PR12MB8884.namprd12.prod.outlook.com (2603:10b6:a03:547::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Mon, 28 Oct
- 2024 14:35:27 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8093.018; Mon, 28 Oct 2024
- 14:35:27 +0000
-Date: Mon, 28 Oct 2024 20:05:15 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: peterz@infradead.org, mingo@redhat.com, rui.zhang@intel.com,
-	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, tglx@linutronix.de, bp@alien8.de,
-	dave.hansen@linux.intel.com, ananth.narayan@amd.com,
-	kprateek.nayak@amd.com, ravi.bangoria@amd.com, x86@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 08/10] perf/x86/rapl: Remove the global variable
- rapl_msrs
-Message-ID: <Zx+hI+8sRPRBvv8v@BLRRASHENOY1.amd.com>
-References: <20241025111348.3810-1-Dhananjay.Ugwekar@amd.com>
- <20241025111348.3810-9-Dhananjay.Ugwekar@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025111348.3810-9-Dhananjay.Ugwekar@amd.com>
-X-ClientProxiedBy: PN2PR01CA0158.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:26::13) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847F71DD87D;
+	Mon, 28 Oct 2024 14:35:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730126117; cv=none; b=tjlYtZ1qYIFjmH14A8VZeh6Afl7AmyAjwSpn9gjlqE/8MU5uJzjAtAOZVBCGyqoHZmNu3D/+HaDrgGEGavX32qrkt0bI9KAYQeA/9Ew+ecOWHWziaVvgMwGPCfD1WRlOSEIHmyKfVRewSOn90jsXHladAmo+p3SuGrEjKRm2/RE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730126117; c=relaxed/simple;
+	bh=sURJvKknHSgjTV+4lsbwxGEcIobcXzLf+Y5XDBTzmAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=X03OQjFZ6kvCSHC7mJDuh/jP4sey8a2haeZ0ixsMiF8nx29J/4dCM/fo37VmabbJJstf3aBREouRdcySwIhQU9uDvKcaMAlLQacd5g0E4JwZHnPkQUXEmA3trVPcDzeOwRr+jKMSUHHe41kv18ZwWGj5Q7ooU+9w9ssIYio8MC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bmfzCuF5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D48F7C4CEC3;
+	Mon, 28 Oct 2024 14:35:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730126117;
+	bh=sURJvKknHSgjTV+4lsbwxGEcIobcXzLf+Y5XDBTzmAs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bmfzCuF5/wJDXD530OXqnm3m6xoZv6gru82OZAGmdxFz3pPFg1Qndpns4xDdTbli7
+	 aZSMnOqPMLeWB9GmtE8l/RtdRch1JLAX+hn2Do9N70l5QkPsdYg9Cqcf/M3xSluy+r
+	 lVzKt9dpdDM1aqZlDrm2TulhuyI8+ypcJzV2C5S6NK2x0qtrQ6NsfGSiwg6BtaqRC/
+	 1JsYUK2ZabFQSGsGKoWUHWOMZKTQSVLiwhQglBeGGLbJh6sAB6u5EtC7nelP8LP2u5
+	 SsVPmKeCwvk4G+YWQNm8ZGgKYWJoMROzp5LN1N04J8t++tUkow7ciMnbh77Bp0KNcr
+	 kE8z0zCRnXUNg==
+Date: Mon, 28 Oct 2024 09:35:15 -0500
+From: Rob Herring <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>,
+	"David S. Miller" <davem@davemloft.net>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, upstream@airoha.com
+Subject: Re: [PATCH v5 2/3] dt-bindings: crypto: Add Inside Secure SafeXcel
+ EIP-93 crypto engine
+Message-ID: <20241028143515.GA792452-robh@kernel.org>
+References: <20241028124206.24321-1-ansuelsmth@gmail.com>
+ <20241028124206.24321-2-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|SJ2PR12MB8884:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4677b01b-c48f-4e34-5fb7-08dcf75dc3ab
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8TVSJ+vdPAOSKpa7oOBVQ+ly+9J0kEUUyK4+FlA9Fcm8mLIvFOURzz+i16xk?=
- =?us-ascii?Q?qD43lYi4oYd0ozgAJu7RN4Q4OO6JJmXvcuGQxU/atofb/5KlrJUBRQiMqKVX?=
- =?us-ascii?Q?qaEQMxShPo6RPFCgidk/UvlpurlkxRj/505eZ5SvBPKrsiC7qNVdOrwYgrQf?=
- =?us-ascii?Q?VUGmPscUJQjPHzfAI9X4N5TnwfgilQ5Cni8gx6BSofB4kx2aSiN1w26egmK2?=
- =?us-ascii?Q?qCJzal44v29wtW+lD4rJryUdClOf+PWZgSRaZyH9Kc4Go+bJULWPbYG5QMSu?=
- =?us-ascii?Q?nLdQ07s6Vj8OpWKaCaSTNiB/TaqQ8mNQOVsOP/mgvtx8Qav56SPHy0ttbx8A?=
- =?us-ascii?Q?ociFR13WRLimMaIG4IQ8kHYELlMAyukb4dL74UZI0AchZmnxnly0YtBIxQPW?=
- =?us-ascii?Q?PYQ3KLnpePc2VOEX+fKuZIoOeda0hPhV0TUiCaw9rcS1R6WyLp5fwEcdIJ4d?=
- =?us-ascii?Q?VRp1moMGBfAp4RzmqWu+SMQMWh9rW8KxTJKho6jDLfR1sensbkDCPGeF+FR1?=
- =?us-ascii?Q?vvtxr2K7koVG0wO9JibzP/B0J0pJJW/98IyjwvBflKzIdvgJUkfOxV/+7xAz?=
- =?us-ascii?Q?6OsEGJ+RJt4Fr9Hn86JeXam7Ahj8m3OpuESLt4dokXbNp0Vjhco+pmMDEVWE?=
- =?us-ascii?Q?ffdQA3WCDgK943xjq6sQ1bkDGYkl0iDqCL8fphbL5PfjVOBijyYciFlaJZSc?=
- =?us-ascii?Q?UyTPUQunPxZgyudrwRTiDcXCk2M3DCs8N1yWcK3z6URG/yw7o5YxwEJ4KP0d?=
- =?us-ascii?Q?8cnS4h39oiiu9z1fNnkyzZ+JDtlUFnWOBe2sIxv1BlaIRJg4De/kBm196Qt7?=
- =?us-ascii?Q?g6bFW4HOa2DlJNvkP7x7z2sLKSNC4E7+ZLN9A4/TB6m4+4Wue7WS9poMypFo?=
- =?us-ascii?Q?tkc+W8Ps6iAdsbouAA5t9SKadiVxUYi3gcHM22fSBky924KUyJmXWg4VkVJG?=
- =?us-ascii?Q?OgfezIkquXjs8GQ0Kg2WCNLGbjjEjfYxkSsXE2JB5Tq0kQhWdvBXxifFslJN?=
- =?us-ascii?Q?wnnqO3NHMjnAIB4LdWwJ+Rsr9iYbZgIDaNeqlNTuYoAQYhBo2zIFOFWooS+I?=
- =?us-ascii?Q?E2oRhruvm3d56Cvamzskxj4WV2rS27JXclCoHqiul9u8jkdzsW4u6M7ZQ4Eo?=
- =?us-ascii?Q?u/Wtj88FdtBUYlPGQt0NvHB5DrFvfh2P/UbJB57otBFkXQf8zY7/9CPuPKk6?=
- =?us-ascii?Q?aqwyothRNVubBjg7rtrmgHPvQHjYN8vyeRwh2Bc8QM+Tzi78aChMeQGu6sGO?=
- =?us-ascii?Q?/3j4EqpbI1xTVLFtuw+2MYyYTo5q+03ZTZVEALLVfJyJgF6HT4c/EmN8ziuE?=
- =?us-ascii?Q?M/jrqTSv8JtGRM34MiAJmc1I?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8wFJ5lgc2gyZGok8h+n8k1zu7KRaF1ws/PCPC+YIetjED9UHKiMho6vkYhjS?=
- =?us-ascii?Q?YzuiYL736U7bvq2taKzxcrqzsAPoehgFJwb/90vZxJ0/Z/9syvxKUilFRawm?=
- =?us-ascii?Q?46h3/Rj28GdbUQCIO9Ni4ajoAoK5lCTrMyKAeGt+gWap6SjvbU+il1DARJpA?=
- =?us-ascii?Q?c0YQ2/9aIQlJujaAb5pOY6ZQ2SWubgbc+BUpKQdS8fSNbdW/pThDVsLnU2Rw?=
- =?us-ascii?Q?W0ewT6z2bPPdFXrbLL5v/ZfhSq7QyGID8ZPwH97NF+sOlEacC17QyrdxmFBO?=
- =?us-ascii?Q?tOjEAwk2pPQp6rozEbwUVQpf5M60rGHWSFQo9wr+bjSn9lukk9EAHwn4HpTu?=
- =?us-ascii?Q?efO/491pPAEG3OgHcG6gJmTg9zzTb8lesiiP9kjvx84wkq+ozkg3kxywoabM?=
- =?us-ascii?Q?b8UiYMtjXP9/2Hlmog6tE6QawRf/yMIwxJMSYVnsdP/Yo7xT/ByvP8/lb1Yw?=
- =?us-ascii?Q?tXLIV07YFWywo5JCCldTVZLpNRvCmwh0MJQOOcQdXdsWITIELjNJLniosF8J?=
- =?us-ascii?Q?gE1uVHiwfgMo6OxS1lJi0/82/vrnIkQ6Y3vUyLg7oFbfL2AZfv9SxwRodq0W?=
- =?us-ascii?Q?PC/I3MFbS5Cfv0IZzHdCvCWBJk7nDU76KfyWZrYUf3u4xIJyHo6VAcqnD9hn?=
- =?us-ascii?Q?PDdEMDEnOJiJdjwDX1+xbuL6PYCObRhEv8r9GCRjyunbV15+PedvZeslMFjT?=
- =?us-ascii?Q?1u8Ke4VVRfmI+UA0x9m6VN/zgslG0CSHLC13QZ/+fub1LFmNgglfUs84JXT2?=
- =?us-ascii?Q?u7/lRTMu3pizG3TQVctmZrEtUlpy16Npz3GrqBDDI3iJ9S/04yciRR5cMqQ2?=
- =?us-ascii?Q?q2uPYuZZUaC5QSb3FNd4GkjUoRjOeNIRMXwoDTQGe8soxb3Tin9qfrBMfTmf?=
- =?us-ascii?Q?vHoSWQxxhX8zqSjnRzRjoYFP0IGCreXwYhAkgEzErf0ExseVb4mC/O3SZbpB?=
- =?us-ascii?Q?Y2BF2oBESZxsMFqAWhCMLhrhDOspaAlb/kRjZKakuheAPVbuTkSJp5+7L/+E?=
- =?us-ascii?Q?szi0lc1E+0MbJCoVklecjIDPep813/eXt4OWVTjQoFjDYvKpv91+fErEH31D?=
- =?us-ascii?Q?tCjZ7HmBN7S2282N3Y+ee/UOLdpjuSMp+pjgkaFN1vM/GJzGQaJr7JUxVNyT?=
- =?us-ascii?Q?yc0hUWIy5bQo/PiMjAankYL6HfwKr+t7JRgp9+avm0lXhxlOzz0gSCnmCBAm?=
- =?us-ascii?Q?EkA1OtEm+vCL8D9SkdkeDQJG123Elt1zFVnwRQ3Ipvy0EJ+xZAGSbn+OgHoy?=
- =?us-ascii?Q?W9tQmnx0ERIW49S8ZI1+AstYl8lF7eXGgUwhmaX6wQL0J/6IaOH3uHWMiaTg?=
- =?us-ascii?Q?BjZq+8SVvdjDt+2v59OBGvqNYG0Sh3p0Rtl0b47uHkyR62RdFZl8fjEXpajG?=
- =?us-ascii?Q?27iCQ+9gVf+7DAssSEr7Ak/3DkC93WnrSuZRp3glLBPoEu4/yrfAk6w2bopG?=
- =?us-ascii?Q?3d3etueZCAv3OzksTG7H/Mf+fbqPZyT1kdWO9ZK2GR2hZTilFJ4BwIwapAnO?=
- =?us-ascii?Q?W5+S3JCF5vLs8B/1E5IxzP0D8A9sDiOZHTy5kusREh5jgRQoKEGKQvgPezth?=
- =?us-ascii?Q?oVrNz7hwLV1CQW5yL8jvt6Axrc9JW8Bejgli3Qht?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4677b01b-c48f-4e34-5fb7-08dcf75dc3ab
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 14:35:27.0378
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GZg+lfWh1IEGCjus4kb+aw4joJFYeG/GBCDuDHWUDRS0d1j71pT+b2h5UO2dctnfZOSIjxLpDWUBRQhVUiT7Ww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8884
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028124206.24321-2-ansuelsmth@gmail.com>
 
-On Fri, Oct 25, 2024 at 11:13:46AM +0000, Dhananjay Ugwekar wrote:
-> Prepare for the addition of RAPL core energy counter support.
+On Mon, Oct 28, 2024 at 01:41:42PM +0100, Christian Marangi wrote:
+> Add bindings for the Inside Secure SafeXcel EIP-93 crypto engine.
 > 
-> After making the rapl_model struct global, the rapl_msrs global
-> variable isn't needed, so remove it.
+> The IP is present on Airoha SoC and on various Mediatek devices and
+> other SoC under different names like mtk-eip93 or PKTE.
 > 
-> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-
-Reviewed-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
-
---
-Thanks and Regards
-gautham.
-
+> All the compatible that currently doesn't have any user are left there
+> commented for reference.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  arch/x86/events/rapl.c | 7 ++-----
->  1 file changed, 2 insertions(+), 5 deletions(-)
+> Changes v5:
+> - Comment out compatible with no current user
+> Changes v4:
+> - Out of RFC
+> Changes v3:
+> - Add SoC compatible with generic one
+> Changes v2:
+> - Change to better compatible
+> - Add description for EIP93 models
 > 
-> diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-> index ae8b450caa9b..e80b62cf9abc 100644
-> --- a/arch/x86/events/rapl.c
-> +++ b/arch/x86/events/rapl.c
-> @@ -150,7 +150,6 @@ static int rapl_pkg_hw_unit[NR_RAPL_PKG_DOMAINS] __read_mostly;
->  static struct rapl_pmus *rapl_pmus_pkg;
->  static unsigned int rapl_pkg_cntr_mask;
->  static u64 rapl_timer_ms;
-> -static struct perf_msr *rapl_msrs;
->  static struct rapl_model *rapl_model;
->  
->  /*
-> @@ -376,7 +375,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
->  		return -EINVAL;
->  
->  	event->pmu_private = rapl_pmu;
-> -	event->hw.event_base = rapl_msrs[bit].msr;
-> +	event->hw.event_base = rapl_model->rapl_pkg_msrs[bit].msr;
->  	event->hw.config = cfg;
->  	event->hw.idx = bit;
->  
-> @@ -805,9 +804,7 @@ static int __init rapl_pmu_init(void)
->  
->  	rapl_model = (struct rapl_model *) id->driver_data;
->  
-> -	rapl_msrs = rapl_model->rapl_pkg_msrs;
-> -
-> -	rapl_pkg_cntr_mask = perf_msr_probe(rapl_msrs, PERF_RAPL_PKG_EVENTS_MAX,
-> +	rapl_pkg_cntr_mask = perf_msr_probe(rapl_model->rapl_pkg_msrs, PERF_RAPL_PKG_EVENTS_MAX,
->  					false, (void *) &rapl_model->pkg_events);
->  
->  	ret = rapl_check_hw_unit();
-> -- 
-> 2.34.1
+>  .../crypto/inside-secure,safexcel-eip93.yaml  | 67 +++++++++++++++++++
+>  1 file changed, 67 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
+> new file mode 100644
+> index 000000000000..188240b74110
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/crypto/inside-secure,safexcel-eip93.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/crypto/inside-secure,safexcel-eip93.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Inside Secure SafeXcel EIP-93 cryptographic engine
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description: |
+> +  The Inside Secure SafeXcel EIP-93 is a cryptographic engine IP block
+> +  integrated in varios devices with very different and generic name from
+> +  PKTE to simply vendor+EIP93. The real IP under the hood is actually
+> +  developed by Inside Secure and given to license to vendors.
+> +
+> +  The IP block is sold with different model based on what feature are
+> +  needed and are identified with the final letter. Each letter correspond
+> +  to a specific set of feature and multiple letter reflect the sum of the
+> +  feature set.
+> +
+> +  EIP-93 models:
+> +    - EIP-93i: (basic) DES/Triple DES, AES, PRNG, IPsec ESP, SRTP, SHA1
+> +    - EIP-93ie: i + SHA224/256, AES-192/256
+> +    - EIP-93is: i + SSL/DTLS/DTLS, MD5, ARC4
+> +    - EIP-93ies: i + e + s
+> +    - EIP-93iw: i + AES-XCB-MAC, AES-CCM
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - const: airoha,crypto-eip93
+
+Still doesn't look SoC specific...
+
+> +          - const: inside-secure,safexcel-eip93ies
+> +      # Compatible that doesn't have any current user.
+> +      # - items:
+> +      #     - const: SoC specific compatible
+> +      #     - enum:
+> +      #         - inside-secure,safexcel-eip93i
+> +      #         - inside-secure,safexcel-eip93ie
+> +      #         - inside-secure,safexcel-eip93is
+> +      #         - inside-secure,safexcel-eip93iw
+
+I should have looked at the driver before commenting before, but since 
+you are using these compatibles, you should go with my other suggestion 
+or these will be listed as undocumented.
+
+Rob
 
