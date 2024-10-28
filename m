@@ -1,177 +1,110 @@
-Return-Path: <linux-kernel+bounces-384131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B6A59B2491
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:47:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CE9599B2495
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:50:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F1991C2081D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:47:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 024321C20D20
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FB718DF64;
-	Mon, 28 Oct 2024 05:46:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0A2218CBF9;
+	Mon, 28 Oct 2024 05:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="hu8ku3x0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oR5yDFzY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF75188012;
-	Mon, 28 Oct 2024 05:46:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492AA156960;
+	Mon, 28 Oct 2024 05:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730094419; cv=none; b=COxE/COPS10geHOSypV8gB5IYhGElGQSW8rJpB8zHdsk+B2Ec2pH3eHUMKXNHfidtivPYeaXHWg+juOB7IKILxJmtW2c6jJx6yvLTGTYtgeQFTLOVtCjzapy116p/cjRqfZBg2fq9Wy7cJEFHSyUHFgB10/4HdIjks4fSHz5Tp8=
+	t=1730094619; cv=none; b=TEeLFiXeCz0w6tHA+q1o3YUJ1Hculp+X7NnGYez4mZfxCQm8iXCQNJSgBJOedTFoS73d2ynUoJlSDPucZMAZ2PLaeglbO7UchleBRqDUTfjtkRptyH2VCLNcCZH6/tESQz2q1WvRH2swCv498AYPOvnYR0xTll/q8JpwPpW3tF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730094419; c=relaxed/simple;
-	bh=OMDUt1JiIM60tJUhcbGeIusKB8rIA6ft0n0PF1UfVyE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ei9PKDD1JLIMK47uZ6h99f6FjF0QmVe+OMKWG3gKuy05JEgE1vb8lNBGka3ZGk0Gs4EUctxIq7P/S1e8QBnXSBZaqmFXbN5jM5YNC+JQD/w907VAVptUAEX2ADuhTzuqatpCMe4+SIidpubKa+vtzDyd7OJ+RcOX7DHwTuBsU9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=hu8ku3x0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1730094411;
-	bh=OMDUt1JiIM60tJUhcbGeIusKB8rIA6ft0n0PF1UfVyE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=hu8ku3x09JE6p7y7v7trn5lIhE4uz+agLI0UYSa1bU/zp+ThOALYVhMxPwrnpLjDa
-	 VxnyNnMyeobW4bT6UPlNhR49HcUcXRCjahiOVVAFfrVZkQDF9GTpr0VF44VJfUXpue
-	 H0h4nwwHMh9m2CqFwdu9zoQ0EsQ+oBQNTzP15qgIoEMh18Ckm0ely29JAZrK/9fyZh
-	 lS5CGxQtQJOgDFGkZwdOsHyT8BPjXIVMaMpovWqwnWLrzpfVIQaCMVDucRqL/eGsL/
-	 11olKF/2J3u0KwtipWgl2mVLRvKW1x5nJNLC2ti8gELad/8gziU37xEtdnNEtUqowl
-	 F1wvCaFKCzarA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcMpL4SL7z4x6k;
-	Mon, 28 Oct 2024 16:46:50 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Hari Bathini <hbathini@linux.ibm.com>, Alexei Starovoitov
- <alexei.starovoitov@gmail.com>
-Cc: linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, bpf <bpf@vger.kernel.org>,
- linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, Linux Kbuild
- mailing list <linux-kbuild@vger.kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, "Naveen N. Rao" <naveen@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Daniel Borkmann <daniel@iogearbox.net>,
- Masahiro Yamada <masahiroy@kernel.org>, Nicholas Piggin
- <npiggin@gmail.com>, Alexei Starovoitov <ast@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Andrii Nakryiko <andrii@kernel.org>, Christophe
- Leroy <christophe.leroy@csgroup.eu>, Vishal Chourasia
- <vishalc@linux.ibm.com>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH v5 17/17] powerpc64/bpf: Add support for bpf trampolines
-In-Reply-To: <a00df08a-605f-41c9-ba0d-2060e0d1e8b4@linux.ibm.com>
-References: <20240915205648.830121-1-hbathini@linux.ibm.com>
- <20240915205648.830121-18-hbathini@linux.ibm.com>
- <CAADnVQL60XXW95tgwKn3kVgSQAN7gr1STy=APuO1xQD7mz-aXA@mail.gmail.com>
- <32249e74-633d-4757-8931-742b682a63d3@linux.ibm.com>
- <CAADnVQKfSH_zkP0-TwOB_BLxCBH9efot9mk03uRuooCTMmWnWA@mail.gmail.com>
- <7afc9cc7-95cd-45c7-b748-28040206d9a0@linux.ibm.com>
- <CAADnVQJjqnSVqq2n70-uqfrYRHH3n=5s9=t3D2AMooxxAHYfJQ@mail.gmail.com>
- <875xq07qv6.fsf@mail.lhotse>
- <28d39117-c512-4165-b082-4ca54da7ba6c@linux.ibm.com>
- <a00df08a-605f-41c9-ba0d-2060e0d1e8b4@linux.ibm.com>
-Date: Mon, 28 Oct 2024 16:46:40 +1100
-Message-ID: <87r080srsv.fsf@mpe.ellerman.id.au>
+	s=arc-20240116; t=1730094619; c=relaxed/simple;
+	bh=PfOZmwADW0D5PEbSXfxlI5rAAaT285DqXghI1CR6cbY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lWBKYaNeqbBIpcE3rRw4i+jBFYdOTFPFx3bHi8OEIqJgvZLInNBiI6d+NRZjo9TGOeBQpJhI1XXrGCHOedV8JztPfQLPeSa6oCUE8whAaJaXtZvouCw83fi1jNaqnSMNDT3xaH2I0fxqGP+ulnPKMYA+c/EVEAkjOxu43FD9gBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oR5yDFzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BBE6C4CEC3;
+	Mon, 28 Oct 2024 05:50:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730094618;
+	bh=PfOZmwADW0D5PEbSXfxlI5rAAaT285DqXghI1CR6cbY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=oR5yDFzY41FkOeGqSlUPsbj9QfyGx5p5qr6vPW5BI11UmL4oh0TC1OwP5LjkYtUO6
+	 aJDAF1tAk774mfq80Rb+cXoDr5gHws2q+C+8sQsL1VElzc14Wjb3UISwZNeKRVDzKF
+	 kkAwQY1hoZLPAgYUV6ai4ZywAeR1eC8UsH+1bvw8NMan4uu+5V5S4PvQA/h5xWe5Nf
+	 1VKCaZq3zynoJHEsCWKlrcCwHSDUs3RASVtEd0LK3HApgjuPk8qZ18raw+Xw68Jub+
+	 eqoh4DPnl4yUgf/TGj74vxFlwn153oVu8GUbCJG13oexghtzDsHOj5aiZWXEmqHPrN
+	 dffy+eP4rwZdA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	Eric Snowberg <eric.snowberg@oracle.com>,
+	keyrings@vger.kernel.org (open list:KEYS-TRUSTED),
+	linux-security-module@vger.kernel.org (open list:SECURITY SUBSYSTEM)
+Subject: [PATCH v8 0/3] Lazy flush for the auth session
+Date: Mon, 28 Oct 2024 07:49:58 +0200
+Message-ID: <20241028055007.1708971-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: base64
+Content-Transfer-Encoding: 8bit
 
-SGFyaSBCYXRoaW5pIDxoYmF0aGluaUBsaW51eC5pYm0uY29tPiB3cml0ZXM6DQo+IE9uIDEwLzEw
-LzI0IDM6MDkgcG0sIEhhcmkgQmF0aGluaSB3cm90ZToNCj4+IE9uIDEwLzEwLzI0IDU6NDggYW0s
-IE1pY2hhZWwgRWxsZXJtYW4gd3JvdGU6DQo+Pj4gQWxleGVpIFN0YXJvdm9pdG92IDxhbGV4ZWku
-c3Rhcm92b2l0b3ZAZ21haWwuY29tPiB3cml0ZXM6DQo+Pj4+IE9uIFR1ZSwgT2N0IDEsIDIwMjQg
-YXQgMTI6MTjigK9BTSBIYXJpIEJhdGhpbmkgPGhiYXRoaW5pQGxpbnV4LmlibS5jb20+IA0KPj4+
-PiB3cm90ZToNCj4+Pj4+IE9uIDMwLzA5LzI0IDY6MjUgcG0sIEFsZXhlaSBTdGFyb3ZvaXRvdiB3
-cm90ZToNCj4+Pj4+PiBPbiBTdW4sIFNlcCAyOSwgMjAyNCBhdCAxMDozM+KAr1BNIEhhcmkgQmF0
-aGluaSANCj4+Pj4+PiA8aGJhdGhpbmlAbGludXguaWJtLmNvbT4gd3JvdGU6DQo+Pj4+Pj4+IE9u
-IDE3LzA5LzI0IDE6MjAgcG0sIEFsZXhlaSBTdGFyb3ZvaXRvdiB3cm90ZToNCj4+Pj4+Pj4+IE9u
-IFN1biwgU2VwIDE1LCAyMDI0IGF0IDEwOjU44oCvUE0gSGFyaSBCYXRoaW5pIA0KPj4+Pj4+Pj4g
-PGhiYXRoaW5pQGxpbnV4LmlibS5jb20+IHdyb3RlOg0KPj4+Pj4+Pj4+DQo+Pj4+Pj4+Pj4gKw0K
-Pj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqAgLyoNCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgwqAgKiBH
-ZW5lcmF0ZWQgc3RhY2sgbGF5b3V0Og0KPj4+Pj4+Pj4+ICvCoMKgwqDCoMKgwqDCoCAqDQo+Pj4+
-Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgICogZnVuYyBwcmV2IGJhY2sgY2hhaW7CoMKgwqDCoMKgwqDC
-oMKgIFsgYmFjayBjaGFpbsKgwqDCoMKgwqDCoMKgIF0NCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKg
-wqAgKsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqAgW8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBdDQo+Pj4+Pj4+Pj4g
-K8KgwqDCoMKgwqDCoMKgICogYnBmIHByb2cgcmVkem9uZS90YWlsY2FsbGNudCBbIC4uLsKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgXSA2NCANCj4+Pj4+Pj4+PiBieXRlcyAoNjQtYml0IHBv
-d2VycGMpDQo+Pj4+Pj4+Pj4gK8KgwqDCoMKgwqDCoMKgICrCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIFvCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgXSAtLQ0KPj4+Pj4+Pj4gLi4uDQo+Pj4+Pj4+Pj4gKw0KPj4+Pj4+
-Pj4+ICvCoMKgwqDCoMKgwqAgLyogRHVtbXkgZnJhbWUgc2l6ZSBmb3IgcHJvcGVyIHVud2luZCAt
-IGluY2x1ZGVzIDY0LSANCj4+Pj4+Pj4+PiBieXRlcyByZWQgem9uZSBmb3IgNjQtYml0IHBvd2Vy
-cGMgKi8NCj4+Pj4+Pj4+PiArwqDCoMKgwqDCoMKgIGJwZl9kdW1teV9mcmFtZV9zaXplID0gU1RB
-Q0tfRlJBTUVfTUlOX1NJWkUgKyA2NDsNCj4+Pj4+Pj4+DQo+Pj4+Pj4+PiBXaGF0IGlzIHRoZSBn
-b2FsIG9mIHN1Y2ggYSBsYXJnZSAicmVkIHpvbmUiID8NCj4+Pj4+Pj4+IFRoZSBrZXJuZWwgc3Rh
-Y2sgaXMgYSBsaW1pdGVkIHJlc291cmNlLg0KPj4+Pj4+Pj4gV2h5IHJlc2VydmUgNjQgYnl0ZXMg
-Pw0KPj4+Pj4+Pj4gdGFpbCBjYWxsIGNudCBjYW4gcHJvYmFibHkgYmUgb3B0aW9uYWwgYXMgd2Vs
-bC4NCj4+Pj4+Pj4NCj4+Pj4+Pj4gSGkgQWxleGVpLCB0aGFua3MgZm9yIHJldmlld2luZy4NCj4+
-Pj4+Pj4gRldJVywgdGhlIHJlZHpvbmUgb24gcHBjNjQgaXMgMjg4IGJ5dGVzLiBCUEYgSklUIGZv
-ciBwcGM2NCB3YXMgdXNpbmcNCj4+Pj4+Pj4gYSByZWR6b25lIG9mIDgwIGJ5dGVzIHNpbmNlIHRh
-aWxjYWxsIHN1cHBvcnQgd2FzIGludHJvZHVjZWQgWzFdLg0KPj4+Pj4+PiBJdCBjYW1lIGRvd24g
-dG8gNjQgYnl0ZXMgdGhhbmtzIHRvIFsyXS4gVGhlIHJlZCB6b25lIGlzIGJlaW5nIHVzZWQNCj4+
-Pj4+Pj4gdG8gc2F2ZSBOVlJzIGFuZCB0YWlsIGNhbGwgY291bnQgd2hlbiBhIHN0YWNrIGlzIG5v
-dCBzZXR1cC4gSSBkbw0KPj4+Pj4+PiBhZ3JlZSB0aGF0IHdlIHNob3VsZCBsb29rIGF0IG9wdGlt
-aXppbmcgaXQgZnVydGhlci4gRG8geW91IHRoaW5rDQo+Pj4+Pj4+IHRoZSBvcHRpbWl6YXRpb24g
-c2hvdWxkIGdvIGFzIHBhcnQgb2YgUFBDNjQgdHJhbXBvbGluZSBlbmFibGVtZW50DQo+Pj4+Pj4+
-IGJlaW5nIGRvbmUgaGVyZSBvciBzaG91bGQgdGhhdCBiZSB0YWtlbiB1cCBhcyBhIHNlcGFyYXRl
-IGl0ZW0sIG1heWJlPw0KPj4+Pj4+DQo+Pj4+Pj4gVGhlIGZvbGxvdyB1cCBpcyBmaW5lLg0KPj4+
-Pj4+IEl0IGp1c3Qgb2RkIHRvIG1lIHRoYXQgd2UgY3VycmVudGx5IGhhdmU6DQo+Pj4+Pj4NCj4+
-Pj4+PiBbwqDCoCB1bnVzZWQgcmVkIHpvbmUgXSAyMDggYnl0ZXMgcHJvdGVjdGVkDQo+Pj4+Pj4N
-Cj4+Pj4+PiBJIHNpbXBseSBkb24ndCB1bmRlcnN0YW5kIHdoeSB3ZSBuZWVkIHRvIHdhc3RlIHRo
-aXMgbXVjaCBzdGFjayBzcGFjZS4NCj4+Pj4+PiBXaHkgY2FuJ3QgaXQgYmUgemVybyB0b2RheSA/
-DQo+Pj4+Pg0KPj4+Pj4gVGhlIEFCSSBmb3IgcHBjNjQgaGFzIGEgcmVkem9uZSBvZiAyODggYnl0
-ZXMgYmVsb3cgdGhlIGN1cnJlbnQNCj4+Pj4+IHN0YWNrIHBvaW50ZXIgdGhhdCBjYW4gYmUgdXNl
-ZCBhcyBhIHNjcmF0Y2ggYXJlYSB1bnRpbCBhIG5ldw0KPj4+Pj4gc3RhY2sgZnJhbWUgaXMgY3Jl
-YXRlZC4gU28sIG5vIHdhc3RhZ2Ugb2Ygc3RhY2sgc3BhY2UgYXMgc3VjaC4NCj4+Pj4+IEl0IGlz
-IGp1c3QgcmVkIHpvbmUgdGhhdCBjYW4gYmUgdXNlZCBiZWZvcmUgYSBuZXcgc3RhY2sgZnJhbWUN
-Cj4+Pj4+IGlzIGNyZWF0ZWQuIFRoZSBjb21tZW50IHRoZXJlIGlzIG9ubHkgdG8gc2hvdyBob3cg
-cmVkem9uZSBpcw0KPj4+Pj4gYmVpbmcgdXNlZCBpbiBwcGM2NCBCUEYgSklULiBJIHRoaW5rIHRo
-ZSBjb25mdXNpb24gaXMgd2l0aCB0aGUNCj4+Pj4+IG1lbnRpb24gb2YgIjIwOCBieXRlcyIgYXMg
-cHJvdGVjdGVkLiBBcyBub3QgYWxsIG9mIHRoYXQgc2NyYXRjaA0KPj4+Pj4gYXJlYSBpcyB1c2Vk
-LCBpdCBtZW50aW9ucyB0aGUgcmVtYWluaW5nIGFzIHVudXNlZC4gRXNzZW50aWFsbHkNCj4+Pj4+
-IDI4OCBieXRlcyBiZWxvdyBjdXJyZW50IHN0YWNrIHBvaW50ZXIgaXMgcHJvdGVjdGVkIGZyb20g
-ZGVidWdnZXJzDQo+Pj4+PiBhbmQgaW50ZXJydXB0IGNvZGUgKHJlZCB6b25lKS4gTm90ZSB0aGF0
-IGl0IHNob3VsZCBiZSAyMjQgYnl0ZXMNCj4+Pj4+IG9mIHVudXNlZCByZWQgem9uZSBpbnN0ZWFk
-IG9mIDIwOCBieXRlcyBhcyByZWQgem9uZSB1c2FnZSBpbg0KPj4+Pj4gcHBjNjQgQlBGIEpJVCBj
-b21lIGRvd24gZnJvbSA4MCBieXRlcyB0byA2NCBieXRlcyBzaW5jZSBbMl0uDQo+Pj4+PiBIb3Bl
-IHRoYXQgY2xlYXJzIHRoZSBtaXN1bmRlcnN0YW5kaW5nLi4NCj4+Pj4NCj4+Pj4gSSBzZWUuIFRo
-YXQgbWFrZXMgc2Vuc2UuIFNvIGl0J3Mgc2ltaWxhciB0byBhbWQ2NCByZWQgem9uZSwNCj4+Pj4g
-YnV0IHRoZXJlIHdlIGhhdmUgYW4gaXNzdWUgd2l0aCBpcnFzLCBoZW5jZSB0aGUga2VybmVsIGlz
-DQo+Pj4+IGNvbXBpbGVkIHdpdGggLW1uby1yZWQtem9uZS4NCj4+Pg0KPj4+IEkgYXNzdW1lIHRo
-YXQgaXNzdWUgaXMgdGhhdCB0aGUgaW50ZXJydXB0IGVudHJ5IHVuY29uZGl0aW9uYWxseSB3cml0
-ZXMNCj4+PiBzb21lIGRhdGEgYmVsb3cgdGhlIHN0YWNrIHBvaW50ZXIsIGRpc3JlZ2FyZGluZyB0
-aGUgcmVkIHpvbmU/DQo+Pj4NCj4+Pj4gSSBndWVzcyBwcGMgYWx3YXlzIGhhcyBhIGRpZmZlcmVu
-dCBpbnRlcnJ1cHQgc3RhY2sgYW5kDQo+Pj4+IGl0J3Mgbm90IGFuIGlzc3VlPw0KPj4+DQo+Pj4g
-Tm8sIHRoZSBpbnRlcnJ1cHQgZW50cnkgYWxsb2NhdGVzIGEgZnJhbWUgdGhhdCBpcyBiaWcgZW5v
-dWdoIHRvIGNvdmVyDQo+Pj4gdGhlIHJlZCB6b25lIGFzIHdlbGwgYXMgdGhlIHNwYWNlIGl0IG5l
-ZWRzIHRvIHNhdmUgcmVnaXN0ZXJzLg0KPj4+DQo+Pj4gU2VlIFNUQUNLX0lOVF9GUkFNRV9TSVpF
-IHdoaWNoIGluY2x1ZGVzIEtFUk5FTF9SRURaT05FX1NJWkU6DQo+Pj4NCj4+PiDCoMKgIGh0dHBz
-Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4
-LmdpdC8gDQo+Pj4gdHJlZS9hcmNoL3Bvd2VycGMvaW5jbHVkZS9hc20vcHRyYWNlLmg/IA0KPj4+
-IGNvbW1pdD04Y2YwYjkzOTE5ZTEzZDFlOGQ0NDY2ZWI0MDgwYTRjNGQ5ZDY2ZDdiI24xNjUNCj4+
-Pg0KPj4+IFdoaWNoIGlzIHJlbmFtZWQgdG8gSU5UX0ZSQU1FX1NJWkUgaW4gYXNtLW9mZnNldHMu
-YyBhbmQgdGhlbiBpcyB1c2VkIGluDQo+Pj4gdGhlIGludGVycnVwdCBlbnRyeSBoZXJlOg0KPj4+
-DQo+Pj4gwqDCoCBodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dp
-dC90b3J2YWxkcy9saW51eC5naXQvIA0KPj4+IHRyZWUvYXJjaC9wb3dlcnBjL2tlcm5lbC9leGNl
-cHRpb25zLTY0cy5TPyANCj4+PiBjb21taXQ9OGNmMGI5MzkxOWUxM2QxZThkNDQ2NmViNDA4MGE0
-YzRkOWQ2NmQ3YiNuNDk3DQo+PiANCj4+IFRoYW5rcyBmb3IgY2xhcmlmeWluZyB0aGF0LCBNaWNo
-YWVsLg0KPj4gT25seSBhc3luYyBpbnRlcnJ1cHQgaGFuZGxlcnMgdXNlIGRpZmZlcmVudCBpbnRl
-cnJ1cHQgc3RhY2tzLCByaWdodD8NCj4NCj4gLi4uIGFuZCBzZXBhcmF0ZSBlbWVyZ2VuY3kgc3Rh
-Y2sgZm9yIHNvbWUgc3BlY2lhbCBjYXNlcy4uLg0KDQpUaGVyZSBpc24ndCBhIG5lYXQgcnVsZSBs
-aWtlIHN5bmMvYXN5bmMuDQoNCk1vc3QgaW50ZXJydXB0cyB1c2UgdGhlIG5vcm1hbCBrZXJuZWwg
-c3RhY2ssIHdoZXRoZXIgc3luYyBvciBhc3luYy4NCg0KRXh0ZXJuYWwgaW50ZXJydXB0cyBzd2l0
-Y2ggdG8gYSBzZXBhcmF0ZSBoYXJkIGludGVycnVwdCBzdGFjaw0KKGhhcmRpcnFfY3R4KSBpbiBj
-YWxsX2RvX2lycSgpLCBidXQgb25seSBhZnRlciBjb21pbmcgaW4gb24gdGhlIGtlcm5lbA0Kc3Rh
-Y2sgZmlyc3QuDQoNClNvbWUgaW50ZXJydXB0cyB1c2UgdGhlIGVtZXJnZW5jeSBzdGFjayAoaW4g
-c29tZSBjYXNlcyksIGVnLiBITUksIHNvZnQNCk5NSSAoZmFrZSksIFRNIGJhZCB0aGluZyAocHJv
-Z3JhbSBjaGVjayksIG9yIHRoZWlyIG93biBzdGFjaywgc3lzdGVtDQpyZXNldCAobm1pX2VtZXJn
-ZW5jeV9zcCksIG1hY2hpbmUgY2hlY2sgKG1jX2VtZXJnZW5jeV9zcCkuDQoNCmNoZWVycw0K
+Cc: David Howells <dhowells@redhat.com>
+Cc: James Bottomley <James.Bottomley@HansenPartnership.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>
+Cc: Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219229
+
+v7:
+https://lore.kernel.org/linux-integrity/20241021053921.33274-1-jarkko@kernel.org/
+v6:
+https://lore.kernel.org/linux-integrity/D501D1CY5SJ4.SUKXHV680B30@kernel.org/T/#t
+v5:
+https://lore.kernel.org/linux-integrity/D4WQ58T5O21X.CGFKGFKV630K@kernel.org/T/#m527d0466a02abaa448720999ff055de0540e7bb7
+v4:
+https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@kernel.org/
+v3:
+https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@kernel.org/
+v2:
+https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@kernel.org/
+v1:
+https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@kernel.org/
+
+Jarkko Sakkinen (3):
+  tpm: Return tpm2_sessions_init() when null key creation fails
+  tpm: Rollback tpm2_load_null()
+  tpm: Lazily flush the auth session
+
+ drivers/char/tpm/tpm-chip.c       |  10 +++
+ drivers/char/tpm/tpm-dev-common.c |   3 +
+ drivers/char/tpm/tpm-interface.c  |   6 +-
+ drivers/char/tpm/tpm2-sessions.c  | 100 ++++++++++++++++++------------
+ 4 files changed, 77 insertions(+), 42 deletions(-)
+
+-- 
+2.47.0
+
 
