@@ -1,61 +1,62 @@
-Return-Path: <linux-kernel+bounces-386060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5910D9B3EA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:50:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C77D49B3EA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:50:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA5A8B21DC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:50:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF7BA1C21B6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 23:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A9A1F4283;
-	Mon, 28 Oct 2024 23:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76801FBC86;
+	Mon, 28 Oct 2024 23:50:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d1gyHmCt"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ViQmBhi/"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81FDD1885B8;
-	Mon, 28 Oct 2024 23:50:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D4881D5171;
+	Mon, 28 Oct 2024 23:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730159444; cv=none; b=dxV7YKGDmpq/0iDCY7odrzEpsTT1BGfqQArh/LSFRb+pg+SeI53dO8i4pXLNvSUZfgTYRtQDXTYBKdJT4IAn+u51HAKbcA9l3N6aP3AVXmu0UiJgFJgy41+d5mkX9U8v59+heJLYMQN4OeQhjIcxrgjotH1cCd97BP4GOYmiGno=
+	t=1730159446; cv=none; b=rb6JGUGtIVwcWBNVC0YbNj2KZGASibJR7btk52Yu+ZtJ2K3QZp7ei60i1rlRXqY3HIkM2Dq2WDh2/p5jm5Zk19+IuNIWUFAce+dpq2XSxiO8I6o79ZLEpYmtpFsXzlMp5DSpU2ZI8fojlZf8EVYY8G6zMo1QnHJ+tT3nRHkdg30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730159444; c=relaxed/simple;
-	bh=s8saU6zgX1peEhwMsmeBMjiF1K0wc2wmMWaI9ipoKm0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BQyD7uJ9mVCFBIIYuqBlAiRkesy0zYHEEiJ/Dcd4PZZGHlc8KguElvBJyNK6IfmY0Ctsj+VnoR4nWVeodmGbLCu807ZhsWqEGCt15KBct4VFXXmOfBiUYCjPPDbUdrV0aVCtheu3c9XqhXg2clhNX0Q4S9pp1LRwB1EiuYhAD14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d1gyHmCt; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1730159446; c=relaxed/simple;
+	bh=oJqiwSMjDU4oPhhJBVFu9TLet5JypqFREiJbc+59QCw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=FVsmKxeYMa6Bx5R8zGbJyCeblnlS6SDDl3CadsDIbtxcZxDsY/dcc+Cbr3qBu9BgSi+WFWCEc4uurWLT/8dUY+eQXmlf8ohyT77yIT97Dv5jwlnl5yCTdbCvT5NFsKGi9qNBLDM4H9G7ckrHsN1AHQIqGFVFrhSQuLUiQ42zi9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ViQmBhi/; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730159442; x=1761695442;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=s8saU6zgX1peEhwMsmeBMjiF1K0wc2wmMWaI9ipoKm0=;
-  b=d1gyHmCtI1/pDE15R9Qklv14qYlNUxx2sQ5wP/nacvr37M03fsYncmuB
-   0ICEN4QYdOefheLy87xUxygsODkn1qpPVYuCohDg7/G+5Yl2B2pIlsl2y
-   5lLoGah2xXXvYwmC/g+CWpE+7Z64MSkytqcihKQxEp2cMqrCb6bmIamAD
-   dA3tfdkYVlu8xcCFjQT+I+h8KfKCqSiMjPa/j7R8jlcE4q/NtckbDJXMS
-   7F3Led3BqqlClwCTYDt/YogGBmbvN0eqtzXWGTHh4+qUjJZD/BXXfym/d
-   1aW+B8LrgZniPlNN0eW2GRDruKAIA7F0rQa/UjBP6bO1q+sydCpulub18
-   Q==;
-X-CSE-ConnectionGUID: 7RXZlgR/QC6No6jniUAOaw==
-X-CSE-MsgGUID: pPyLXQ2GR7qSKq03r0Fo5A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29987671"
+  t=1730159444; x=1761695444;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oJqiwSMjDU4oPhhJBVFu9TLet5JypqFREiJbc+59QCw=;
+  b=ViQmBhi/0ITSBW+nhNx5dLeGk7lJugXq/8yOx5z/W+KqlG5pV5vXXV2X
+   KHDWCXTmuerW3odFOO6tzFpXTC2J7rZ0fbajybEZgv7zUhhngN9TXQzFJ
+   BOw1VQkak+gSmtqPvtfqrhYPJSAuz/VM32x/4IC8zIr92ro+G+allY3nY
+   rVqj0HDfcZgPsQzyQwDXD0zCrPsoywqutuFsBK50+2gYyEjoS9xhVteU+
+   PWfaC4PwGZHCv0vxaW6Vohx61pSEsgJid8rd1zPuJbv6omb4dD9B13DGi
+   IK4vvUN7/TR75b28NSHw5N32yxiL1ePQmkraIgp5VE+fweFjVuNhL+Tfv
+   w==;
+X-CSE-ConnectionGUID: LQU4+TG0RcyVK9XDaxDjpg==
+X-CSE-MsgGUID: gee+u+bkQvyVZKJKfHGm8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29987680"
 X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="29987671"
+   d="scan'208";a="29987680"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:50:42 -0700
-X-CSE-ConnectionGUID: oeaqdOh8Tvenj3WzFJ5WEw==
-X-CSE-MsgGUID: ijBWzkzRT1eDZYbR/xgzWg==
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:50:44 -0700
+X-CSE-ConnectionGUID: xmV3xEJ4TImjjzyWq3TujA==
+X-CSE-MsgGUID: UJAXsTOBRvaOJ3c/co5+lw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="86381229"
+   d="scan'208";a="86381235"
 Received: from salmansi-mobl.amr.corp.intel.com (HELO dsneddon-desk.sneddon.lan) ([10.125.80.18])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:50:40 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 16:50:42 -0700
 From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
 To: Jonathan Corbet <corbet@lwn.net>,
 	Thomas Gleixner <tglx@linutronix.de>,
@@ -69,10 +70,12 @@ Cc: hpa@zytor.com,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	pawan.kumar.gupta@linux.intel.com
-Subject: [PATCH 0/2] VERW based clean-up
-Date: Mon, 28 Oct 2024 16:50:33 -0700
-Message-Id: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+Subject: [PATCH 1/2] x86/bugs: Check VERW mitigations for consistency
+Date: Mon, 28 Oct 2024 16:50:34 -0700
+Message-Id: <3ed45a10e2f7fbecce31d9964b1da1372e8cb838.1730158506.git.daniel.sneddon@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,32 +84,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-There are several mitigations that use the VERW instruction to clean
-up internal CPU buffers.  Currently, each of these mitigations is
-treated independently, but if VERW is needed for one of the
-mitigations, it's on for all of them. This can lead to some confusion
-if a user tries to disable one of the mitigations, but it is left
-enabled for one of the others. The user needs to disable all 4 VERW-
-based mitigations. Warn the user when one or more VERW mitigations are
-disabled but not all of them. While we're messing with VERW
-mitigations, might as well simplify them and remove the need to call
-each of them twice.
+There are currently 4 mitigations that use VERW: MDS, TAA,
+MMIO Stale Data, and Register File Data Sampling. Because
+all 4 use the same mitigation path, if any one of them is
+enabled, they're all enabled. Normally, this is what is
+wanted. However, if a user wants to disable the mitigation,
+this can cause problems. If the user misses disabling even
+one of these mitigations, then none of them will be
+disabled. This can cause confusion as the user expects to
+regain the performance lost to the mitigation but isn't
+seeing any improvement. Since there are already 4 knobs for
+controlling it, adding a 5th knob that controls all 4
+mitigations together would just overcomplicate things.
+Instead, let the user know their mitigations are out of sync
+when at least one of these mitigations is disabled but not
+all 4.
 
-V2:
-Dropped the new knob previously introduced in the first patch (Borislav)
-Add warning if not all 4 mitigations states match (Borislav)
-Removed extra comment (Josh)
-Code clean-up (Josh)
+Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+---
+ arch/x86/kernel/cpu/bugs.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-
-Daniel Sneddon (2):
-  x86/bugs: Check VERW mitigations for consistency
-  x86/bugs: Clean-up verw mitigations
-
- arch/x86/include/asm/processor.h |   2 +-
- arch/x86/kernel/cpu/bugs.c       | 206 +++++++++++++------------------
- 2 files changed, 90 insertions(+), 118 deletions(-)
-
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index d1915427b4ff..b26b3b554330 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -582,8 +582,26 @@ static void __init md_clear_update_mitigation(void)
+ 		pr_info("Register File Data Sampling: %s\n", rfds_strings[rfds_mitigation]);
+ }
+ 
++static void __init verw_mitigations_check(void)
++{
++	if (mds_mitigation == MDS_MITIGATION_OFF ||
++	    taa_mitigation == TAA_MITIGATION_OFF ||
++	    mmio_mitigation == MMIO_MITIGATION_OFF ||
++	    rfds_mitigation == RFDS_MITIGATION_OFF) {
++		if (mds_mitigation == MDS_MITIGATION_OFF &&
++		    taa_mitigation == TAA_MITIGATION_OFF &&
++		    mmio_mitigation == MMIO_MITIGATION_OFF &&
++		    rfds_mitigation == RFDS_MITIGATION_OFF)
++			return;
++
++		pr_info("MDS, TAA, MMIO Stale Data, and Register File Data Sampling all depend on VERW\n");
++		pr_info("In order to disable any one of them please ensure all 4 are disabled.\n");
++	}
++}
++
+ static void __init md_clear_select_mitigation(void)
+ {
++	verw_mitigations_check();
+ 	mds_select_mitigation();
+ 	taa_select_mitigation();
+ 	mmio_select_mitigation();
 -- 
 2.25.1
 
