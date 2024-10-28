@@ -1,57 +1,86 @@
-Return-Path: <linux-kernel+bounces-384111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A215F9B245C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:36:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563029B2474
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 06:40:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C58EB1C2158D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:36:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2341F21049
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 05:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163D818FDAA;
-	Mon, 28 Oct 2024 05:35:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F84E18FC8F
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730093709; cv=none; b=Ye3CA0LRHCi0vof3SvEkA78aYO0uiqULiypTOsMGhjYmK16+vB42T8sF4Ljll4QXtrqUsaC+z0narfbivrcO6gxa3sB/qzE9waX6t6L+evqgudZJQtFWglC2BUGk/l4FXKFb4AZg0tqtsfvK/e5XHSgu5G8emZq2MRhS3y/Ytso=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730093709; c=relaxed/simple;
-	bh=kk/qbJ8/usR0E4r18v0HxXu7/7YOt1ZcRKZLd1mHLJw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=stY3pM9xD5DL/yDYyJfILajclU7xJojqpIg/SMGCxL01yteazqOjWTDIQ2PNDStE1YUVrayb8MNHVbJJXrpTkqqcidslEMRWmS8dfnouLN1VhT0pnBVG7GKFyJU9XmicyFjO4AWHEmnWiDcHolpisiuTBnWCt9TcfYqXrMDx5RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C626497;
-	Sun, 27 Oct 2024 22:35:36 -0700 (PDT)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.16.84])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1AC1E3F66E;
-	Sun, 27 Oct 2024 22:35:02 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	kvmarm@lists.linux.dev
-Subject: [PATCH V2 7/7] arm64/hw_breakpoint: Enable FEAT_Debugv8p9
-Date: Mon, 28 Oct 2024 11:04:26 +0530
-Message-Id: <20241028053426.2486633-8-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241028053426.2486633-1-anshuman.khandual@arm.com>
-References: <20241028053426.2486633-1-anshuman.khandual@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A02E1CF5CA;
+	Mon, 28 Oct 2024 05:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="N7SfWOA0"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2057.outbound.protection.outlook.com [40.107.94.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 869AB1CF2AE;
+	Mon, 28 Oct 2024 05:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730093750; cv=fail; b=FwFsHgFnc8N6pe7L/3BTsejbq4/dExXDUhR9hoEjGRmnXLkUsWaPknByC6RGpQsMWC4o8dLfeqQXxx5lKEzFeveTVTRSwx4Cfl7aMVHIdK8aM9cWL/9sx1hoIKz2DuSqr00CsUlzNMt/VP7j+ZrdOr7tjywvfY51Hc5DG8MyFWA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730093750; c=relaxed/simple;
+	bh=KcuVe6tvnsfd+IKKQi4vkI1D0HN4ZCzvsoAIWepPZoI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=id9ofhoXxBjy/x8oFJSvxJf2r4UUhICLGLmFNqQyj0BuIKCJn8zdAMV+pQFsa/YmHacOU1KCMiuJnoD5fTSSiwmJPB2RPL7607akg6X2CwOrqod1EBWzvopXG9ETIgfM2nHDFxgX8TxNyZ44LsFZv56zwOr4/IRu2sdRTUOc07Y=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=N7SfWOA0; arc=fail smtp.client-ip=40.107.94.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OVC25jDXFs1xp3s/o4WqOeaw70f+3D3lMtxd07a70WNSre+90IzYSGSugy2ijBRQpLmYnWohNwZ0snsg6bxk/HqOgQG7NcsQHdyJpREq2UNhWZAJlb+FRgEqhFZcgwapcHXuP2RnJg5usVW6kyzX9NUbQ8ZB8r0lVElJR87NWuBnJJJrfgpw1IM8WU/sw19pgK/pV4Ny0ZJf65LC1aD3v53/zrp5++o77RSTRdOgosb5wSK1ZAEyEuVkP6BbuW9PaBJhfd7anlDfNiG6h/jOZqW0Q/yDsoECIQqRF3mBLGcQeNH0r9ZJtselBClnu579jRp2vg6zyMKs4mHM0wJfvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=U3brF1Z3m8W78VNKIzQdWgsHj8gOmkzBWQuD+SmGK3g=;
+ b=LYgsJAI9iG7ncnhJNg44V1uZrwO+OiM1z21RYG4R4/9U+MUMfzdEeu6pbXgziUia9/cZsgBhoXKvuk6fRNj02nyM3Cv7ew/BysomnaZ6P5t6C6xRJUZYH/sWHGUxdbaTBDrie496WlEpSBAR5/4xRzULgWgA5zA581oZ1bMJyUZ0wEdgJ15bo7UCmlOfqICfkIjgaqniWwpL0n4eF++8xgoE5Cd4ZSfGtf0xQyrgEwsZ+u230noOnF9q5C5gvIRr1EwzuJelCputpqgg+mJjVNUqoh8KTqj3hb8RNCIbfHlseozOodJwwvLvbxqIVR1bFemUss1H9KTTsU3qCU01Og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=U3brF1Z3m8W78VNKIzQdWgsHj8gOmkzBWQuD+SmGK3g=;
+ b=N7SfWOA08SXNpTVnvVApGkl820o6X/2E8gQwRdE9XOh2BMb/rHBTx6aDP8MX+/ccJe3MTy8+iKB9Dz7VoF5E2gSUaJb4KOyT7TIvVCP0ma+WNCo6yzVhRZI6fDagOnNAmWmNhicwLn2v6OY+1dj9+V7olfbguVZGMSPu3wipWPA=
+Received: from BN1PR14CA0005.namprd14.prod.outlook.com (2603:10b6:408:e3::10)
+ by SA1PR12MB8117.namprd12.prod.outlook.com (2603:10b6:806:334::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
+ 2024 05:35:42 +0000
+Received: from BL6PEPF0001AB58.namprd02.prod.outlook.com
+ (2603:10b6:408:e3:cafe::39) by BN1PR14CA0005.outlook.office365.com
+ (2603:10b6:408:e3::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25 via Frontend
+ Transport; Mon, 28 Oct 2024 05:35:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL6PEPF0001AB58.mail.protection.outlook.com (10.167.241.10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8114.16 via Frontend Transport; Mon, 28 Oct 2024 05:35:41 +0000
+Received: from gomati.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Oct
+ 2024 00:35:37 -0500
+From: Nikunj A Dadhania <nikunj@amd.com>
+To: <linux-kernel@vger.kernel.org>, <thomas.lendacky@amd.com>, <bp@alien8.de>,
+	<x86@kernel.org>, <kvm@vger.kernel.org>
+CC: <mingo@redhat.com>, <tglx@linutronix.de>, <dave.hansen@linux.intel.com>,
+	<pgonda@google.com>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<nikunj@amd.com>
+Subject: [PATCH v14 09/13] tsc: Use the GUEST_TSC_FREQ MSR for discovering TSC frequency
+Date: Mon, 28 Oct 2024 11:04:27 +0530
+Message-ID: <20241028053431.3439593-10-nikunj@amd.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241028053431.3439593-1-nikunj@amd.com>
+References: <20241028053431.3439593-1-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,262 +88,135 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB58:EE_|SA1PR12MB8117:EE_
+X-MS-Office365-Filtering-Correlation-Id: adb7418b-a61a-4fef-6817-08dcf7125cc5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?LbjwYDY9OnarOQIESl6sB2nUCmQ2yzop3cpx50O/m0sSapaiedQAJ/9n45lG?=
+ =?us-ascii?Q?dGsgAd51OdOKLZ0/c8eXQ9wXdkPfJgonZt5himbm8tofP88E21O9IvAznwUo?=
+ =?us-ascii?Q?w2KIBof0zkSS6SRyZsOxJ46BWk/d+v8g0Z4fZaVtLT8ycvFjeNBiwJ0dm71d?=
+ =?us-ascii?Q?6070PREp9Z6lZ0g3Kx46JgSuX0S6SxrHqjPLKXC8hx1rjn0CXWl0yb+EWNsm?=
+ =?us-ascii?Q?FYyZLDAz0xPp90GnFZpDyXvxmjp1pAnMoFJV2gh1vWXjuXedSmEAGBM7aZ/Y?=
+ =?us-ascii?Q?l7zU/WH8nVqe+iHODQMe19hRWLn8c1yzKJMt2kK6hOcSTNU4Rz+kiTa9OSBa?=
+ =?us-ascii?Q?0hTtYp2gQOUGUQQNjWbtK/nVj4eUTUdKv9aRrgCKED+Rz4rqA1e9YWKrrXIA?=
+ =?us-ascii?Q?1xBJsS7cfZtEYp5nfv8i01nH74lsxfwovI9leutzcI1xfQT+XHOmdK7FGRED?=
+ =?us-ascii?Q?sPXtTCLyNuXTqGRNMzHDOqaIoIJM/4jKqXM+WSOGPbydeSi8SFLt2xadIACH?=
+ =?us-ascii?Q?OrasKRDhY5/rGkrGbniTron6mS04eGPpPZfOaa34UtIe0fPil1DhD1Fx87Xa?=
+ =?us-ascii?Q?uwFWrBWOvJBX4Ck162z3hvxRXoXxuQFTeZVIGXr3oxVUQg/97r8TZuwYM41V?=
+ =?us-ascii?Q?3G+LezTk5YOoy2B54Mc2yY/M0wdFyR0G3bKFPCPgHraHBmg+YEvvKSDBneVx?=
+ =?us-ascii?Q?JAtjZLmP0r2Ovh4u8fXgeMfOlFhBg+Gb5TEm/r9dezNC4iCmiAFNpcDryLJH?=
+ =?us-ascii?Q?fRx6ocROgYH1DgA3JkrF+RjUTNX/pge6pTLrlNl/Bkc5F9yAvM3Xk9MPZcax?=
+ =?us-ascii?Q?DMEtiiadUG8QGEAbmgJYB9axWcHgWyaJpKUi/UhVz2yUYebCujU6bRclNwVQ?=
+ =?us-ascii?Q?OZNrA/Ms7ngdq0ba2LFKARXJxFuq+VnnC49XkNKLOkxWElg9uxjLREaJJdtO?=
+ =?us-ascii?Q?474b1zZIM8egTicxZjtJTrbOi3gzyGbCM3eUgwat1IkPG0xU5n368arGTTl6?=
+ =?us-ascii?Q?oYwbWOjHatR461J4jCTC3DHPIeQYiPZ3y6/rXXFfoSn7+sajQROogj1fef5c?=
+ =?us-ascii?Q?+Mmir7xPywFGsh4S88vJDJpVcdIFJdSOwmKbkPHahV/CYYufAq7VUMm2m2yV?=
+ =?us-ascii?Q?WNTDpn9NxQUFTB2zjcV9LhsOKh5vjq8/bzH8VjJRu72I+SV8s3vfbEVvAZeR?=
+ =?us-ascii?Q?K051gUHeIsrnW40/Pj4zw/4XfA7ZoNbGVfkmpLchSqSz0oFmxP8LUmms0G5J?=
+ =?us-ascii?Q?Zji74RSKmqVuXUW7Ougfb9gd8uzMq3WDvUU8PJDGTDxvPk3q86v3sJ8rTZ7u?=
+ =?us-ascii?Q?+2KB38jeEMAZFpqXokEHJNvPZBiBGR7Ci4II1B1gBIlgbW+iLdvWBn8mIITD?=
+ =?us-ascii?Q?/pxifS+jMDYwf/ij3gisM9X+ftA8BjYXzxUIuO5Qe/ACSI+dYg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 05:35:41.7055
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: adb7418b-a61a-4fef-6817-08dcf7125cc5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL6PEPF0001AB58.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8117
 
-Currently there can be maximum 16 breakpoints, and 16 watchpoints available
-on a given platform - as detected from ID_AA64DFR0_EL1.[BRPs|WRPs] register
-fields. But these breakpoint, and watchpoints can be extended further up to
-64 via a new arch feature FEAT_Debugv8p9.
+Calibrating the TSC frequency using the kvmclock is not correct for
+SecureTSC enabled guests. Use the platform provided TSC frequency via the
+GUEST_TSC_FREQ MSR (C001_0134h).
 
-This first enables banked access for the breakpoint and watchpoint register
-set via MDSELR_EL1, extended exceptions via MDSCR_EL1.EMBWE and determining
-available breakpoints and watchpoints in the platform from ID_AA64DFR1_EL1,
-when FEAT_Debugv8p9 is enabled.
-
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
 ---
-Changes in V2:
+ arch/x86/include/asm/sev.h |  2 ++
+ arch/x86/coco/sev/core.c   | 16 ++++++++++++++++
+ arch/x86/kernel/tsc.c      |  5 +++++
+ 3 files changed, 23 insertions(+)
 
-- Alphabetically order header files in debug-monitors.c
-- Dropped embwe_ref_count mechanism
-- Dropped preempt_enable() from AARCH64_DBG_READ
-- Dropped preempt_disable() from AARCH64_DBG_WRITE
-- Dropped set_bank_index()
-- Renamed read/write_wb_reg() as __read/__write_wb_reg()
-- Modified read/write_wb_reg() to have MDSELR_E1 based banked read/write
-
- arch/arm64/include/asm/debug-monitors.h |  1 +
- arch/arm64/include/asm/hw_breakpoint.h  | 46 +++++++++++++++++++------
- arch/arm64/kernel/debug-monitors.c      | 15 +++++---
- arch/arm64/kernel/hw_breakpoint.c       | 38 ++++++++++++++++++--
- 4 files changed, 84 insertions(+), 16 deletions(-)
-
-diff --git a/arch/arm64/include/asm/debug-monitors.h b/arch/arm64/include/asm/debug-monitors.h
-index 13d437bcbf58..a14097673ae0 100644
---- a/arch/arm64/include/asm/debug-monitors.h
-+++ b/arch/arm64/include/asm/debug-monitors.h
-@@ -20,6 +20,7 @@
- #define DBG_MDSCR_KDE		(1 << 13)
- #define DBG_MDSCR_MDE		(1 << 15)
- #define DBG_MDSCR_MASK		~(DBG_MDSCR_KDE | DBG_MDSCR_MDE)
-+#define DBG_MDSCR_EMBWE		(1UL << 32)
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index d27c4e0f9f57..9ee63ddd0d90 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -536,6 +536,7 @@ static inline int handle_guest_request(struct snp_msg_desc *mdesc, u64 exit_code
+ }
  
- #define	DBG_ESR_EVT(x)		(((x) >> 27) & 0x7)
+ void __init snp_secure_tsc_prepare(void);
++void __init snp_secure_tsc_init(void);
  
-diff --git a/arch/arm64/include/asm/hw_breakpoint.h b/arch/arm64/include/asm/hw_breakpoint.h
-index bd81cf17744a..ec7c7901c61a 100644
---- a/arch/arm64/include/asm/hw_breakpoint.h
-+++ b/arch/arm64/include/asm/hw_breakpoint.h
-@@ -79,8 +79,8 @@ static inline void decode_ctrl_reg(u32 reg,
-  * Limits.
-  * Changing these will require modifications to the register accessors.
-  */
--#define ARM_MAX_BRP		16
--#define ARM_MAX_WRP		16
-+#define ARM_MAX_BRP		64
-+#define ARM_MAX_WRP		64
+ #else	/* !CONFIG_AMD_MEM_ENCRYPT */
  
- /* Virtual debug register bases. */
- #define AARCH64_DBG_REG_BVR	0
-@@ -94,6 +94,14 @@ static inline void decode_ctrl_reg(u32 reg,
- #define AARCH64_DBG_REG_NAME_WVR	wvr
- #define AARCH64_DBG_REG_NAME_WCR	wcr
+@@ -584,6 +585,7 @@ static inline int handle_guest_request(struct snp_msg_desc *mdesc, u64 exit_code
+ 				       u32 resp_sz) { return -ENODEV; }
  
-+static inline bool is_debug_v8p9_enabled(void)
-+{
-+	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
-+	int dver = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_DebugVer_SHIFT);
+ static inline void __init snp_secure_tsc_prepare(void) { }
++static inline void __init snp_secure_tsc_init(void) { }
+ 
+ #endif	/* CONFIG_AMD_MEM_ENCRYPT */
+ 
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 140759fafe0c..0be9496b8dea 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -3064,3 +3064,19 @@ void __init snp_secure_tsc_prepare(void)
+ 
+ 	pr_debug("SecureTSC enabled");
+ }
 +
-+	return dver == ID_AA64DFR0_EL1_DebugVer_V8P9;
++static unsigned long securetsc_get_tsc_khz(void)
++{
++	unsigned long long tsc_freq_mhz;
++
++	setup_force_cpu_cap(X86_FEATURE_TSC_KNOWN_FREQ);
++	rdmsrl(MSR_AMD64_GUEST_TSC_FREQ, tsc_freq_mhz);
++
++	return (unsigned long)(tsc_freq_mhz * 1000);
 +}
 +
- /* Accessor macros for the debug registers. */
- #define AARCH64_DBG_READ(N, REG, VAL) do {\
- 	VAL = read_sysreg(dbg##REG##N##_el1);\
-@@ -138,19 +146,37 @@ static inline void ptrace_hw_copy_thread(struct task_struct *task)
- /* Determine number of BRP registers available. */
- static inline int get_num_brps(void)
- {
--	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
--	return 1 +
--		cpuid_feature_extract_unsigned_field(dfr0,
--						ID_AA64DFR0_EL1_BRPs_SHIFT);
-+	u64 dfr0, dfr1;
-+	int dver, brps;
-+
-+	dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
-+	dver = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_DebugVer_SHIFT);
-+	if (dver == ID_AA64DFR0_EL1_DebugVer_V8P9) {
-+		dfr1 = read_sanitised_ftr_reg(SYS_ID_AA64DFR1_EL1);
-+		brps = cpuid_feature_extract_unsigned_field_width(dfr1,
-+								  ID_AA64DFR1_EL1_BRPs_SHIFT, 8);
-+	} else {
-+		brps = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_BRPs_SHIFT);
-+	}
-+	return 1 + brps;
- }
- 
- /* Determine number of WRP registers available. */
- static inline int get_num_wrps(void)
- {
--	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
--	return 1 +
--		cpuid_feature_extract_unsigned_field(dfr0,
--						ID_AA64DFR0_EL1_WRPs_SHIFT);
-+	u64 dfr0, dfr1;
-+	int dver, wrps;
-+
-+	dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
-+	dver = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_DebugVer_SHIFT);
-+	if (dver == ID_AA64DFR0_EL1_DebugVer_V8P9) {
-+		dfr1 = read_sanitised_ftr_reg(SYS_ID_AA64DFR1_EL1);
-+		wrps = cpuid_feature_extract_unsigned_field_width(dfr1,
-+								  ID_AA64DFR1_EL1_WRPs_SHIFT, 8);
-+	} else {
-+		wrps = cpuid_feature_extract_unsigned_field(dfr0, ID_AA64DFR0_EL1_WRPs_SHIFT);
-+	}
-+	return 1 + wrps;
- }
- 
- #ifdef CONFIG_CPU_PM
-diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
-index 024a7b245056..b56716c654d8 100644
---- a/arch/arm64/kernel/debug-monitors.c
-+++ b/arch/arm64/kernel/debug-monitors.c
-@@ -21,6 +21,7 @@
- #include <asm/cputype.h>
- #include <asm/daifflags.h>
- #include <asm/debug-monitors.h>
-+#include <asm/hw_breakpoint.h>
- #include <asm/system_misc.h>
- #include <asm/traps.h>
- 
-@@ -34,7 +35,7 @@ u8 debug_monitors_arch(void)
- /*
-  * MDSCR access routines.
-  */
--static void mdscr_write(u32 mdscr)
-+static void mdscr_write(u64 mdscr)
- {
- 	unsigned long flags;
- 	flags = local_daif_save();
-@@ -43,7 +44,7 @@ static void mdscr_write(u32 mdscr)
- }
- NOKPROBE_SYMBOL(mdscr_write);
- 
--static u32 mdscr_read(void)
-+static u64 mdscr_read(void)
- {
- 	return read_sysreg(mdscr_el1);
- }
-@@ -79,7 +80,7 @@ static DEFINE_PER_CPU(int, kde_ref_count);
- 
- void enable_debug_monitors(enum dbg_active_el el)
- {
--	u32 mdscr, enable = 0;
-+	u64 mdscr, enable = 0;
- 
- 	WARN_ON(preemptible());
- 
-@@ -90,6 +91,9 @@ void enable_debug_monitors(enum dbg_active_el el)
- 	    this_cpu_inc_return(kde_ref_count) == 1)
- 		enable |= DBG_MDSCR_KDE;
- 
-+	if (is_debug_v8p9_enabled())
-+		enable |= DBG_MDSCR_EMBWE;
-+
- 	if (enable && debug_enabled) {
- 		mdscr = mdscr_read();
- 		mdscr |= enable;
-@@ -100,7 +104,7 @@ NOKPROBE_SYMBOL(enable_debug_monitors);
- 
- void disable_debug_monitors(enum dbg_active_el el)
- {
--	u32 mdscr, disable = 0;
-+	u64 mdscr, disable = 0;
- 
- 	WARN_ON(preemptible());
- 
-@@ -111,6 +115,9 @@ void disable_debug_monitors(enum dbg_active_el el)
- 	    this_cpu_dec_return(kde_ref_count) == 0)
- 		disable &= ~DBG_MDSCR_KDE;
- 
-+	if (is_debug_v8p9_enabled())
-+		disable &= ~DBG_MDSCR_EMBWE;
-+
- 	if (disable) {
- 		mdscr = mdscr_read();
- 		mdscr &= disable;
-diff --git a/arch/arm64/kernel/hw_breakpoint.c b/arch/arm64/kernel/hw_breakpoint.c
-index 722ac45f9f7b..630db607ca2b 100644
---- a/arch/arm64/kernel/hw_breakpoint.c
-+++ b/arch/arm64/kernel/hw_breakpoint.c
-@@ -103,7 +103,7 @@ int hw_breakpoint_slots(int type)
- 	WRITE_WB_REG_CASE(OFF, 14, REG, VAL);	\
- 	WRITE_WB_REG_CASE(OFF, 15, REG, VAL)
- 
--static u64 read_wb_reg(int reg, int n)
-+static u64 __read_wb_reg(int reg, int n)
- {
- 	u64 val = 0;
- 
-@@ -118,9 +118,27 @@ static u64 read_wb_reg(int reg, int n)
- 
- 	return val;
- }
-+
-+static u64 read_wb_reg(int reg, int n)
++void __init snp_secure_tsc_init(void)
 +{
-+	int mdsel_bank, index;
-+	u64 val;
-+
-+	if (!is_debug_v8p9_enabled())
-+		return __read_wb_reg(reg, n);
-+
-+	mdsel_bank = n / 16;
-+	index = n % 16;
-+	preempt_disable();
-+	write_sysreg_s(mdsel_bank << MDSELR_EL1_BANK_SHIFT, SYS_MDSELR_EL1);
-+	isb();
-+	val = __read_wb_reg(reg, index);
-+	preempt_enable();
-+	return val;
++	x86_platform.calibrate_cpu = securetsc_get_tsc_khz;
++	x86_platform.calibrate_tsc = securetsc_get_tsc_khz;
 +}
- NOKPROBE_SYMBOL(read_wb_reg);
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index dfe6847fd99e..730cbbd4554e 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -30,6 +30,7 @@
+ #include <asm/i8259.h>
+ #include <asm/topology.h>
+ #include <asm/uv/uv.h>
++#include <asm/sev.h>
  
--static void write_wb_reg(int reg, int n, u64 val)
-+static void __write_wb_reg(int reg, int n, u64 val)
- {
- 	switch (reg + n) {
- 	GEN_WRITE_WB_REG_CASES(AARCH64_DBG_REG_BVR, AARCH64_DBG_REG_NAME_BVR, val);
-@@ -132,6 +150,22 @@ static void write_wb_reg(int reg, int n, u64 val)
- 	}
- 	isb();
- }
+ unsigned int __read_mostly cpu_khz;	/* TSC clocks / usec, not used here */
+ EXPORT_SYMBOL(cpu_khz);
+@@ -1514,6 +1515,10 @@ void __init tsc_early_init(void)
+ 	/* Don't change UV TSC multi-chassis synchronization */
+ 	if (is_early_uv_system())
+ 		return;
 +
-+static void write_wb_reg(int reg, int n, u64 val)
-+{
-+	int mdsel_bank, index;
++	if (cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC))
++		snp_secure_tsc_init();
 +
-+	if (!is_debug_v8p9_enabled())
-+		return __write_wb_reg(reg, n, val);
-+
-+	mdsel_bank = n / 16;
-+	index = n % 16;
-+	preempt_disable();
-+	write_sysreg_s(mdsel_bank << MDSELR_EL1_BANK_SHIFT, SYS_MDSELR_EL1);
-+	isb();
-+	__write_wb_reg(reg, index, val);
-+	preempt_enable();
-+}
- NOKPROBE_SYMBOL(write_wb_reg);
- 
- /*
+ 	if (!determine_cpu_tsc_frequencies(true))
+ 		return;
+ 	tsc_enable_sched_clock();
 -- 
-2.25.1
+2.34.1
 
 
