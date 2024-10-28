@@ -1,125 +1,173 @@
-Return-Path: <linux-kernel+bounces-384989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACA489B311D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:56:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D3B9B311F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E3642825F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B47828226F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A811B1D63D2;
-	Mon, 28 Oct 2024 12:56:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="BiDCCJxy"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B549143888;
-	Mon, 28 Oct 2024 12:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18A361DA617;
+	Mon, 28 Oct 2024 12:57:39 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919831CCECE;
+	Mon, 28 Oct 2024 12:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730120206; cv=none; b=Od8F79FMIDCRKVkXxyzwigYaY2BUymJSxtnGoJ27dydJ3EoI0Gm+SoZ2WDOPQ/j0c87qt3yasm1gyiDC+eEdrytiUT20ZNe13EhuqSbOv850nLBBVhXikYLpF1s56cwiUHkXx1XK91Cf/8525TUYR3DyXplQNtk8IQhOEla8uhI=
+	t=1730120258; cv=none; b=koeohSqAQEvMMCUmnK2fst+dWfIsBnvZcfVtBelqCAIM5Yjklp/pOd9hMenPLxmCNh3yN0a+mR56d8PSXALJgXXfCj614awQEf8KSZPrCTjvh+WKLqMOwFmSnVNlwnlf1rNr/1VdLEp9YGAXMUUllS6aMABneNJNjrCxte0T9Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730120206; c=relaxed/simple;
-	bh=kMr7GkU4v/EaA4aAW3icfnmDITpSe81u1ha8Yh+/ApY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLgCjJEw1K8c604MBgKx46CCrVrLxXvJCwfeThkp/du+isrZGwqz6F/CN3inhP8Fi2eZePN53QTjHOCdEdxhUOaqd3KudKCNMuIJyOcZLHm1z4JkdOEKYYuBvKecqW/Qp50pYFv4/cmngzGW4GwbWmdbSNcs0z6ynXeZH5V0fYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=BiDCCJxy; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=mUoFKcSg2a6DsNvLf7qyuJ/R2E3VW/b3MDhNPevm1bw=; b=BiDCCJxyiu+46J60BTe8IIX1AA
-	MErDcXWuNw5wPxrnpWCs25FqB/oUHWneHSHopG6eD80v2LNufl3hivh+Bvp6W5muJs+k8Epyoo/01
-	KpjIzqTFS7wjdzumiNXJ2KHU0woHRiL0OivQ/uHNoxq4+gtt/EEXNtfMglSltdjhwylo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t5PIT-00BRl3-8E; Mon, 28 Oct 2024 13:56:37 +0100
-Date: Mon, 28 Oct 2024 13:56:37 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Moon Yeounsu <yyyynoom@gmail.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dlink: add get_ethtool_stats in ethtool
-Message-ID: <2502f12c-54ad-4c47-b9ef-6e5985903c1e@lunn.ch>
-References: <20241026192651.22169-3-yyyynoom@gmail.com>
+	s=arc-20240116; t=1730120258; c=relaxed/simple;
+	bh=R037N4ZBxlVFy9i4zvajlGa76uC952UqlgLrQAsvyds=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JL1crFqCgeGWQN+Cv/LzAv1bM+9xoV1TcbCs4mgvVSRayv7phHDqtKkCH9U7fYzLKFjXPKpKeGI6ynmXibZuA6kppU9NmpkmXelYsb8iDMbzTyV1R1QhC8GnfnH6AE/gCQn4fLD6lgXo6Rj6v4N83E2UYRnwtmPNBZIa9Q7rSDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9292C497;
+	Mon, 28 Oct 2024 05:58:04 -0700 (PDT)
+Received: from e126645.nice.arm.com (e126645.nice.Arm.com [10.34.111.162])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 026303F66E;
+	Mon, 28 Oct 2024 05:57:32 -0700 (PDT)
+From: Pierre Gondois <pierre.gondois@arm.com>
+To: linux-kernel@vger.kernel.org
+Cc: Pierre Gondois <pierre.gondois@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Robert Moore <robert.moore@intel.com>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
+	linux-acpi@vger.kernel.org,
+	acpica-devel@lists.linux.dev
+Subject: [PATCH v2] ACPI: CPPC: Make rmw_lock a raw_spin_lock
+Date: Mon, 28 Oct 2024 13:56:56 +0100
+Message-Id: <20241028125657.1271512-1-pierre.gondois@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026192651.22169-3-yyyynoom@gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 27, 2024 at 04:26:53AM +0900, Moon Yeounsu wrote:
-> This patch implement `get_ethtool_stats` to support `ethtool -S`.
-> 
-> Before applying the patch:
-> $ ethtool -S enp36s0
-> > no stats available
-> 
-> After applying the patch:
-> $ ethtool -S enp36s0
-> > NIC statistics:
-> 	tx_jumbo_frames: 0
-> 	rx_jumbo_frames: 0
-> 	tcp_checksum_errors: 0
-> 	udp_checksum_errors: 0
-> 	ip_checksum_errors: 0
-> 	tx_packets: 0
-> 	rx_packets: 74
-> 	tx_bytes: 0
-> 	rx_bytes: 14212
-> 	single_collisions: 0
-> 	multi_collisions: 0
-> 	late_collisions: 0
-> 	rx_frames_too_long_errors: 0
-> 	rx_in_range_length_errors: 776
-> 	rx_frames_check_seq_errors: 0
-> 	rx_frames_lost_errors: 0
-> 	tx_frames_abort: 0
-> 	tx_carrier_sense_errors: 0
-> 	tx_multicast_bytes: 0
-> 	rx_multicast_bytes: 360
-> 	tx_multicast_frames: 0
-> 	rx_multicast_frames: 6
-> 	tx_broadcast_frames: 0
-> 	rx_broadcast_frames: 68
-> 	tx_mac_control_frames: 0
-> 	rx_mac_control_frames: 0
-> 	tx_frames_deferred: 0
-> 	tx_frames_excessive_deferral: 0
-> 
-> Tested-on: D-Link DGE-550T Rev-A3
-> Signed-off-by: Moon Yeounsu <yyyynoom@gmail.com>
-> ---
->  drivers/net/ethernet/dlink/dl2k.c | 229 ++++++++++++++++++------------
+The following BUG was triggered. sugov_update_shared() locks a
+raw_spinlock while cpc_write() locks a spinlock. To have a correct
+wait-type order, update rmw_lock to a raw_spinlock.
 
-We can see there is a lot of code being deleted here, yet you are
-adding support for stats. It would be good to explain in the commit
-message what is really happening here.
+Also save irq state.
 
-> +	DEFINE_STATS(rmon_collisions, EtherStatsCollisions, u32),
-> +	DEFINE_STATS(rmon_crc_align_errors, EtherStatsCRCAlignErrors, u32),
-> +	DEFINE_STATS(rmon_under_size_packets, EtherStatsUndersizePkts, u32),
-> +	DEFINE_STATS(rmon_fragments, EtherStatsFragments, u32),
-> +	DEFINE_STATS(rmon_jabbers, EtherStatsJabbers, u32),
+=============================
+[ BUG: Invalid wait context ]
+6.12.0-rc2-XXX #406 Not tainted
+-----------------------------
+kworker/1:1/62 is trying to lock:
+ffffff8801593030 (&cpc_ptr->rmw_lock){+.+.}-{3:3}, at: cpc_write+0xcc/0x370
+other info that might help us debug this:
+context-{5:5}
+2 locks held by kworker/1:1/62:
+  #0: ffffff897ef5ec98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2c/0x50
+  #1: ffffff880154e238 (&sg_policy->update_lock){....}-{2:2}, at: sugov_update_shared+0x3c/0x280
+stack backtrace:
+CPU: 1 UID: 0 PID: 62 Comm: kworker/1:1 Not tainted 6.12.0-rc2-g9654bd3e8806 #406
+Workqueue:  0x0 (events)
+Call trace:
+  dump_backtrace+0xa4/0x130
+  show_stack+0x20/0x38
+  dump_stack_lvl+0x90/0xd0
+  dump_stack+0x18/0x28
+  __lock_acquire+0x480/0x1ad8
+  lock_acquire+0x114/0x310
+  _raw_spin_lock+0x50/0x70
+  cpc_write+0xcc/0x370
+  cppc_set_perf+0xa0/0x3a8
+  cppc_cpufreq_fast_switch+0x40/0xc0
+  cpufreq_driver_fast_switch+0x4c/0x218
+  sugov_update_shared+0x234/0x280
+  update_load_avg+0x6ec/0x7b8
+  dequeue_entities+0x108/0x830
+  dequeue_task_fair+0x58/0x408
+  __schedule+0x4f0/0x1070
+  schedule+0x54/0x130
+  worker_thread+0xc0/0x2e8
+  kthread+0x130/0x148
+  ret_from_fork+0x10/0x20
 
-Please report the standard RMON statistics via ethtool_rmon_stats. The
-unstructured ethtool -S without groups should be used for statistics
-which do not fit any of the well defined groups.
-
-    Andrew
-
+Fixes: 60949b7b8054 ("ACPI: CPPC: Fix MASK_VAL() usage")
+Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
 ---
-pw-bot: cr
+
+Notes:
+    v2:
+    - Do the actual changes.
+
+ drivers/acpi/cppc_acpi.c | 9 +++++----
+ include/acpi/cppc_acpi.h | 2 +-
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index c3fc2c05d868..1a40f0514eaa 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -867,7 +867,7 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
+ 
+ 	/* Store CPU Logical ID */
+ 	cpc_ptr->cpu_id = pr->id;
+-	spin_lock_init(&cpc_ptr->rmw_lock);
++	raw_spin_lock_init(&cpc_ptr->rmw_lock);
+ 
+ 	/* Parse PSD data for this CPU */
+ 	ret = acpi_get_psd(cpc_ptr, handle);
+@@ -1087,6 +1087,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
+ 	struct cpc_reg *reg = &reg_res->cpc_entry.reg;
+ 	struct cpc_desc *cpc_desc;
++	unsigned long flags;
+ 
+ 	size = GET_BIT_WIDTH(reg);
+ 
+@@ -1126,7 +1127,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 			return -ENODEV;
+ 		}
+ 
+-		spin_lock(&cpc_desc->rmw_lock);
++		raw_spin_lock_irqsave(&cpc_desc->rmw_lock, flags);
+ 		switch (size) {
+ 		case 8:
+ 			prev_val = readb_relaxed(vaddr);
+@@ -1141,7 +1142,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 			prev_val = readq_relaxed(vaddr);
+ 			break;
+ 		default:
+-			spin_unlock(&cpc_desc->rmw_lock);
++			raw_spin_unlock_irqrestore(&cpc_desc->rmw_lock, flags);
+ 			return -EFAULT;
+ 		}
+ 		val = MASK_VAL_WRITE(reg, prev_val, val);
+@@ -1174,7 +1175,7 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+ 	}
+ 
+ 	if (reg->space_id == ACPI_ADR_SPACE_SYSTEM_MEMORY)
+-		spin_unlock(&cpc_desc->rmw_lock);
++		raw_spin_unlock_irqrestore(&cpc_desc->rmw_lock, flags);
+ 
+ 	return ret_val;
+ }
+diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
+index 76e44e102780..62d368bcd9ec 100644
+--- a/include/acpi/cppc_acpi.h
++++ b/include/acpi/cppc_acpi.h
+@@ -65,7 +65,7 @@ struct cpc_desc {
+ 	int write_cmd_status;
+ 	int write_cmd_id;
+ 	/* Lock used for RMW operations in cpc_write() */
+-	spinlock_t rmw_lock;
++	raw_spinlock_t rmw_lock;
+ 	struct cpc_register_resource cpc_regs[MAX_CPC_REG_ENT];
+ 	struct acpi_psd_package domain_info;
+ 	struct kobject kobj;
+-- 
+2.25.1
+
 
