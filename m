@@ -1,164 +1,158 @@
-Return-Path: <linux-kernel+bounces-385757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09C229B3B49
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:22:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A09C9B3B2B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:15:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD5B328323D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390721C21568
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 077411E00BD;
-	Mon, 28 Oct 2024 20:22:14 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FF01DF74C;
+	Mon, 28 Oct 2024 20:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvtFQNq9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303351DEFCF;
-	Mon, 28 Oct 2024 20:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020DA18EFC9;
+	Mon, 28 Oct 2024 20:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730146933; cv=none; b=F7IqwNLnQMvphvQyJYUqO3sL5tzVD3RoASDgulr6Y3GJM+ps5hNpHQ3Ap36WXUaUVUOGrqE4jC+cqA3Qq+P+rsP/BKzym/9qcLFobs/9OQAKtIgjJaiJKYgNLmhVlIQRPu61v2Eho72BCPv2kofXrUopS96xKIlMFoYTL+9ANAY=
+	t=1730146505; cv=none; b=etX/Nb7VP+ti0DaidS9T9LqpcQFYXxGglQ/sV2pJg9HNxB2uPjMEdgmMGqqllECQe/ToLMoKPn+mKxjDgLaJifWmLxXjAux8V4LdVhV7SQz+PrIqzE1U62AdeT1EjwpboYgXKXJ4LlW7F9frzaZLcEghMck1eNzCv0zh/CUNeWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730146933; c=relaxed/simple;
-	bh=CHCbmADrldFg8+CkaQwy/6aOCUZ1BikaPLszOv7Ix0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9EPgQ8t+zP7A57K7i8Xgki88EOHL727THuAe3+TSaimbipMRu7/ge/1pIZC1+sEIlniVuhtNcultLDcNuw+iFm58BwVATdTT4L6cTI721ujvujjm/aqpan9+PELZuiDkhpYTQMh+gRKbJGR5zv5xFGpr7JnYbywss+oX0cYoqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 2726D1A02CA;
-	Mon, 28 Oct 2024 21:12:33 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0F99D1A12AE;
-	Mon, 28 Oct 2024 21:12:33 +0100 (CET)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 498682039A;
-	Mon, 28 Oct 2024 21:12:32 +0100 (CET)
-Date: Mon, 28 Oct 2024 21:12:32 +0100
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH v3 04/16] net: phy: Add helper for mapping RGMII link
- speed to clock rate
-Message-ID: <Zx/wMO0YjJ+QK7qT@lsv051416.swis.nl-cdc01.nxp.com>
-References: <20241013-upstream_s32cc_gmac-v3-0-d84b5a67b930@oss.nxp.com>
- <20241013-upstream_s32cc_gmac-v3-4-d84b5a67b930@oss.nxp.com>
- <4686019c-f6f1-4248-9555-c736813417b7@lunn.ch>
+	s=arc-20240116; t=1730146505; c=relaxed/simple;
+	bh=whISxXDf5ID2P0Jc0MdITHMQx1esHpJCMds7XrTvxtg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CjU7EsG8u79fQsnM8q7MfEnAcGoFs2rJs+9yFw5046X3iX6o1fptLgdm5TscO/FJRR2yVPRiIvdmLuHdhiRqqIbQ3V20M0D7oAiBM1pQ+K0HyFe0cWSeByhwwhYxMyXFxD9qfdyM3hEPjCNPAMRovTSt3rbc2o56Kyf56ceAk60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvtFQNq9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F383C4CEC3;
+	Mon, 28 Oct 2024 20:15:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730146504;
+	bh=whISxXDf5ID2P0Jc0MdITHMQx1esHpJCMds7XrTvxtg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mvtFQNq9qlbmGoEADh/bcgd4NgpUABacZWDHN078zcPBdkD8bZgzz4brM0yB1H0TM
+	 5I4Jh55vXzbWgePongy9zhrzf+ojew+WCM7/OjI2ZDS1WJiaXRke7zeDyytRE9RN6H
+	 YmP+ZeNvMZUtO01XajYsl1qEealTbBHtBj+5OzxVpBYLHCqkCD2M1ZdECPw191Jkca
+	 r4FRcZ+ike4kwseGHhcZklkfjf8uqFh+El5TWBD6UcCSJ3vfjlGP9vU5+5t2hjzNRR
+	 kn8x0A4OOHQGx+15EIIlvFDuXrZyuZD/SDZgrOKuvxr2QFlpf0Ux9Qkm+5vwnUue7x
+	 E5Rg5fnv/yGkQ==
+Date: Mon, 28 Oct 2024 20:14:56 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Justin Weiss <justin@justinweiss.com>, Alex Lanzano
+ <lanzano.alex@gmail.com>, Lars-Peter Clausen <lars@metafoo.de>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, "Derek J . Clark"
+ <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxlcg==?=
+ <philm@manjaro.org>
+Subject: Re: [PATCH v4 2/4] iio: imu: bmi270: Add scale and sampling
+ frequency to BMI270 IMU
+Message-ID: <20241028201456.0cbfa75b@jic23-huawei>
+In-Reply-To: <Zx9aR2h9pjdIMglO@smile.fi.intel.com>
+References: <20241027172029.160134-1-justin@justinweiss.com>
+	<20241027172029.160134-3-justin@justinweiss.com>
+	<Zx9aR2h9pjdIMglO@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4686019c-f6f1-4248-9555-c736813417b7@lunn.ch>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 03:40:51PM +0200, Andrew Lunn wrote:
-> On Sun, Oct 13, 2024 at 11:27:39PM +0200, Jan Petrous via B4 Relay wrote:
-> > From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> > 
-> > The helper rgmii_clock() implemented Russel's hint during stmmac
-> > glue driver review:
-> > 
-> >   > We seem to have multiple cases of very similar logic in lots of stmmac
-> >   > platform drivers, and I think it's about time we said no more to this.
-> >   > So, what I think we should do is as follows:
-> >   >
-> >   > add the following helper - either in stmmac, or more generically
-> >   > (phylib? - in which case its name will need changing.)
-> >   >
-> >   > static long stmmac_get_rgmii_clock(int speed)
-> >   > {
-> >   >        switch (speed) {
-> >   >        case SPEED_10:
-> >   >                return 2500000;
-> >   >
-> >   >        case SPEED_100:
-> >   >                return 25000000;
-> >   >
-> >   >        case SPEED_1000:
-> >   >                return 125000000;
-> >   >
-> >   >        default:
-> >   >                return -ENVAL;
-> >   >        }
-> >   > }
-> >   >
-> >   > Then, this can become:
-> >   >
-> >   >        long tx_clk_rate;
-> >   >
-> >   >        ...
-> >   >
-> >   >        tx_clk_rate = stmmac_get_rgmii_clock(speed);
-> >   >        if (tx_clk_rate < 0) {
-> >   >                dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
-> >   >                return;
-> >   >        }
-> >   >
-> >   >        ret = clk_set_rate(gmac->tx_clk, tx_clk_rate);
-> > 
-> > Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+On Mon, 28 Oct 2024 11:32:55 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+
+> On Sun, Oct 27, 2024 at 10:20:23AM -0700, Justin Weiss wrote:
+> > Add read and write functions and create _available entries.  
 > 
-> But of an unusual commit message, but it does explain the "Why?".
-
-I will reformulate description in v4.
-
+> ...
 > 
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> > +static int bmi270_set_scale(struct bmi270_data *data,
+> > +			    int chan_type, int uscale)  
+> 
+> There is available space in the previous line, (And I would even join them
+> despite being 83 characters long.)
+> 
+> ...
+> 
+> > +static int bmi270_get_scale(struct bmi270_data *bmi270_device,
+> > +			    int chan_type, int *uscale)  
+> 
+> Ditto (for chan_type).
+> 
+> ...
+> 
+> > +static int bmi270_set_odr(struct bmi270_data *data, int chan_type,
+> > +			  int odr, int uodr)  
+> 
+> Ditto.
+> 
+> ...
+> 
+> > +	for (i = 0; i < bmi270_odr_item.num; i++) {
+> > +		if (bmi270_odr_item.tbl[i].odr != odr ||
+> > +		    bmi270_odr_item.tbl[i].uodr != uodr)
+> > +			continue;
+> > +
+> > +		return regmap_update_bits(data->regmap, reg, mask,
+> > +					  bmi270_odr_item.vals[i]);
+> > +	}
+> > +
+> > +	return -EINVAL;  
+> 
+> Wouldn't be better to use regular patterns, i.e. checking for errors first?
+
+Hmm. This was my suggestion :(. For a simple case of match and do
+something if true, this is a reasonably common pattern - particularly
+in cases where there is a fallback option. I.e. you'd do something
+after the loop only if there is no match.
+
+Anyhow, given I suggested it I feel mean asking Justin to revert
+to what he had in the first place.  I don't feel that strongly about it
+though so if the two of you agree this is neater, send a follow up patch.
+
+Tweaked the line wraps whilst applying.
+> 
+> 	for (i = 0; i < bmi270_odr_item.num; i++) {
+> 		if (bmi270_odr_item.tbl[i].odr == odr ||
+> 		    bmi270_odr_item.tbl[i].uodr == uodr)
+
+That would be a bad idea && is fine though .
+
+> 			break;
+> 	}
+> 	if (i == bmi270_odr_item.num)
+> 		return -EINVAL;
+> 
+> 	return regmap_update_bits(data->regmap, reg, mask, bmi270_odr_item.vals[i]);
+> 
+> ...
+> 
+> > +static int bmi270_get_odr(struct bmi270_data *data, int chan_type,
+> > +			  int *odr, int *uodr)  
+> 
+> As per above.
+> 
+> > +	for (i = 0; i < bmi270_odr_item.num; i++) {
+> > +		if (val != bmi270_odr_item.vals[i])
+> > +			continue;
+> > +
+> > +		*odr = bmi270_odr_item.tbl[i].odr;
+> > +		*uodr = bmi270_odr_item.tbl[i].uodr;
+> > +		return 0;
+> > +	}
+> > +
+> > +	return -EINVAL;  
+> 
+> As per above.
 > 
 
-Thanks.
-
-> >  
-> > +/**
-> > + * rgmii_clock - map link speed to the clock rate
-> > + * @speed: link speed value
-> > + *
-> > + * Description: maps RGMII supported link speeds
-> > + * into the clock rates.
-> > + */
-> 
-> A Returns: line would be nice. 
-
- will add it in v4.
-
-Thanks
-/Jan
 
