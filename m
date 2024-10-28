@@ -1,161 +1,253 @@
-Return-Path: <linux-kernel+bounces-385813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BF899B3C0E
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:42:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5607C9B3C0B
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 21:42:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCE01286F69
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:42:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F2E5287147
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD321E0095;
-	Mon, 28 Oct 2024 20:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF5B1E009E;
+	Mon, 28 Oct 2024 20:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="B7aBkbFp";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Q3fPSrT4"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ff/T1fCi"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2042.outbound.protection.outlook.com [40.107.243.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BB9718E03D;
-	Mon, 28 Oct 2024 20:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730148139; cv=none; b=c0nbmXl+Iq2TRqcN248JizBlTGvatq8HHa6c/jQoGijZxGefQ57R+e9ZQr7lxUPwr1uHHFQsGfGUQylQjVblDUHCBYcaegqxClYSXAhaQxtV89wxsZ+i5rcduQ5UkkLCSvlmLZ8lMIq+OWypic+6olfeTEEweTI4JlNifn7vhKI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730148139; c=relaxed/simple;
-	bh=1b3wEfHTCpF0AXxOoU3n+1fQPTTY8V4zPHmhz1VF+UI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mvckNjf/+VCjlEwHF8glEoCS1DnHmfOrbTugLexbYgSf+Qv05AvPn4GPF5WGZq/IhjbGOENG3H/ZVnUsZsvbIK2Zsj6UB7EUnmhawGX/VcJTjfTxqE72QGtjmGIsKCeDzNaMz0chKgksAfohK749777+7ffm6N39yW/D9c9GGIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=B7aBkbFp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Q3fPSrT4; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailflow.phl.internal (Postfix) with ESMTP id 19B882006F0;
-	Mon, 28 Oct 2024 16:42:16 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Mon, 28 Oct 2024 16:42:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730148136; x=
-	1730155336; bh=qyX0k5CJSPl4swUA6LpoOKwTmR0F2riD6PvL9n3i/VI=; b=B
-	7aBkbFptw/oXycTtJhJ2C6gGtE5PZkkSC5Nj4HB0UiZTKAmPvrp6282Dt2T5/LBl
-	FjPJrHBt14f38y24uU46hz/HHBwXpkaPKXGpTTnd5nWEQc07NsEpHYiFFhpPS7zR
-	JIiB5auMsMT7CKcY43NyYO3zyNgHZfSlcei+/3dR9fGCLTF1cP7401lT8dU/vbAK
-	ugoxQjLexWIzCQEGvnXXkM+LwDbB20mec7omJGSWZJpvws+rNkNcA9ZPh2TMjmoN
-	2caeDOnyZn3IZBbLI/+gMF5FLkNSknel2mSkgGDp/2pyIAAS1qCTY4MX6AQDNmnG
-	InzHXwcvuibGR6yiEeixg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1730148136; x=1730155336; bh=qyX0k5CJSPl4swUA6LpoOKwTmR0F
-	2riD6PvL9n3i/VI=; b=Q3fPSrT4GLl0OulFr5HDlvaFEU7EXA4STiZcwrkgAp2k
-	1zeToNyJ5VmXlOKqRIDqTnmtGdjzZxNw2uSJn8SLrMTLz359WSXhN7hAQe7kVmK4
-	TqH4i9dnDbAdo12ss99gvb0ASaEDJG/soADnuOSZUYJxRFlurjbt97pUf8QeX1HZ
-	H+RN99T0PCWRHeJ4y+3dsQHeQJIbHzC1kVHWi99LV0+iS89WAbT9eJF6i65uMuNU
-	AFaNN2O/E4w2hptX97UrsjMF7YnVbxHgQX5fcPr1KrbCiBJ+/t7YVApWNt9yJOus
-	nYwf2MCNT5sw1/FU/iL57k5jhiXV3ZvqgQXDZAanJA==
-X-ME-Sender: <xms:JvcfZz_t21KkK0mw6erepLFmrrM_LY-A9WQ_2vcJB05j_o9keUUn-g>
-    <xme:JvcfZ_u51H4QfAC4uSl6bGSxk1cYiJfoDMhGlETWJRJFkU2QWy_ZXltVxjUrkxi9d
-    6WNs7ePvOdn9cZqPRE>
-X-ME-Received: <xmr:JvcfZxAKbzSkUXn-eDy4H8hOFLOtWxZo6Rf9Zhxj4qxbWblcAWak_5LgRZi9a2XUnbmk4w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejledguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdfstddttddv
-    necuhfhrohhmpedfmfhirhhilhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllh
-    esshhhuhhtvghmohhvrdhnrghmvgeqnecuggftrfgrthhtvghrnhepkeevteduffekleef
-    teevvefgudeltdettdeikeejkeeuudekvdetkeeffeeftedtnecuffhomhgrihhnpehvuh
-    hsvggtrdhnvghtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhf
-    rhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvpdhnsggprhgtphhtthhope
-    ehuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlvgigrghnuggvrhdrshhh
-    ihhshhhkihhnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtoheplhhuthhose
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdgu
-    vgdprhgtphhtthhopehmihhnghhosehrvgguhhgrthdrtghomhdprhgtphhtthhopegsph
-    esrghlihgvnhekrdguvgdprhgtphhtthhopegurghvvgdrhhgrnhhsvghnsehlihhnuhig
-    rdhinhhtvghlrdgtohhmpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohephhhprgesiiihthhorhdrtghomhdprhgtphhtthhopehpvghtvghriiesihhn
-    fhhrrgguvggrugdrohhrgh
-X-ME-Proxy: <xmx:JvcfZ_cU9YGCtH9KLR0DHxB_tC2Sr2ZhjE8ySD4IFQkZz3sKbIhvKQ>
-    <xmx:JvcfZ4ObJ0gQBv0jbp8LdkLks-xiQ27KNgFqceGmr1npGuVT-wUoBw>
-    <xmx:JvcfZxmFP8ad3skwpR-ZV8bdcVwzKEuU8ijIAtcZxf2NX1vQXfixQw>
-    <xmx:JvcfZyuzSU5oAKHiEl719bVQeOLcNg8beYJ_S4Xv5B9G8zsqL_Tnvw>
-    <xmx:KPcfZ0SgVfRC2UtF8RgPG45rq6wBV8LF8xgr4RWL5lm8XBdojhXtsijE>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 28 Oct 2024 16:42:00 -0400 (EDT)
-Date: Mon, 28 Oct 2024 22:41:56 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 	Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- 	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, 	Peter Zijlstra <peterz@infradead.org>,
- Ard Biesheuvel <ardb@kernel.org>,
- 	"Paul E. McKenney" <paulmck@kernel.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>,
- 	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>,
- 	"Mike Rapoport (IBM)" <rppt@kernel.org>,
- Brijesh Singh <brijesh.singh@amd.com>,
- 	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
- 	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Alexey Kardashevskiy <aik@amd.com>, 	Jonathan Corbet <corbet@lwn.net>,
- Sohil Mehta <sohil.mehta@intel.com>, 	Ingo Molnar <mingo@kernel.org>,
- Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- 	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Kai Huang <kai.huang@intel.com>, 	Sandipan Das <sandipan.das@amd.com>,
- Breno Leitao <leitao@debian.org>,
- 	Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Alexei Starovoitov <ast@kernel.org>, 	Hou Tao <houtao1@huawei.com>,
- Juergen Gross <jgross@suse.com>,
- 	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>,
- Eric Biggers <ebiggers@google.com>, 	Jason Gunthorpe <jgg@ziepe.ca>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
- 	Andrew Morton <akpm@linux-foundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>, 	Yuntao Wang <ytcoode@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- 	Christophe Leroy <christophe.leroy@csgroup.eu>,
- Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
- 	Huang Shijie <shijie@os.amperecomputing.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- 	Namhyung Kim <namhyung@kernel.org>,
- Arnaldo Carvalho de Melo <acme@redhat.com>, 	linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v5 16/16] Revert "x86/lam: Disable ADDRESS_MASKING in
- most cases"
-Message-ID: <qhnyso6yukxdyox5hkod2yzrgg56vkr7er4howolgat35dvtd4@6qh6f5r425hi>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
- <20241028160917.1380714-17-alexander.shishkin@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D28C018E03D;
+	Mon, 28 Oct 2024 20:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.42
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730148127; cv=fail; b=GFPy1JKdNL+Mf2ul7j5XjSGbo4ki8KXQa50C2x3B5MQuvCuIUPLJ4XY/J/uSbj0TP2XzfdvoKW17KUfYBWkrbQfzoR/qiRxjXOtktpRA4GwU7iZ+uPIt0sLATjSgXdPUahi2YQieiK8j76qVyue+oiVIBKWc9zpd66Rip6sh3tE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730148127; c=relaxed/simple;
+	bh=xAQ6PS4BMWy1lVKRXUE4yey9i2sVQDbC6Ts9OltcxDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aYUPQ06RJWtcn9Qz600NYdEJ02CLax3UqAKhALBBvNYtLVQsrou6ZIDIb5XZg7BkC9EZygCWh8G6Wt4qAeBWSavXanL/s4h7MgXx4JhcIH355F5TN/2itVPmkq8vZMCxKIoBSUjZD6luF/A0iUQA2kxZ57irk7CRSWG6gRD8GUU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ff/T1fCi; arc=fail smtp.client-ip=40.107.243.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RUz/to6yYq09stePRb/J9//ikKCFq4V1PISngd9Q6gvfLH3JUqAZK/8Ypo/EV3GgElqVBMIi1jzxWa+CaHY8p3woBnnR884+obu9TZ04GLobn8iUE5aOUsJvjT7MJl1Qpnm4NGmw4zNI85EebsXx/Jo/x5hfxrLH4KuRglJH8xvH2uvUmZ/CQVTlTW0hB2a200G/0H9DczbQA1FxrzNKdQhnXwphG4fpmx2dFlAXYO9I+H1eN1e+jv7bC1H2g4EW4hmTO2jX7j1IAIu2kutEcDI+QTtk6XAm1/HoqH+Cpgp7BUi+SFDbHq9wHI1NKJRxAs9ZoFGo/LRG+/fRbOmhGA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qDhD5dppCsY4cRUKzVEhB00cZFCNeWQmsAsS/2A8Flc=;
+ b=R/wrvIHxx8Au3JoE+X6puxL7HIFlhJHL86w1DYVQK94MGBKGtojJZIBAX3JgQZYxnXhj0F30TsFMoWoXPndlVKChjQ9hNZbNJt58TrriRQgZ0wVaVvm6Ef4ToH+PuzKYycjCXrqzneuJoZj4s5TDLi+hieDuhl0Eudabifm/XjbI24r/9m0gARKVWYHn6dNAL8G6WYkaDXLiPsBBDZk412v7FPFXn30Fq4tCV9oy2Twqwbe9dFAwLCr7LQ5/eVdeVz9SSSThnA6WglNJTf+TnDI36XDgEj74SR2qf6Zx/Gq7XkYJuUCnexk/cKjeiCTLmvUD5CcO/5XqGY0zzfKu9w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qDhD5dppCsY4cRUKzVEhB00cZFCNeWQmsAsS/2A8Flc=;
+ b=ff/T1fCiQu+0XUDbwyet5a0KOs8bgOPg2LEF7ajMGdQebRkffUi5Ees5+V9/tx9WlzsWCQZfFX9NJm2uggbJMM/9VifG6cICLhkq5Dbj1HAvVq88HwsJP395dJkY6cfC8JVxs/KSq39yjhq1enoj4zpS+9By5GjVYP37ivD6c7g=
+Received: from BN9PR03CA0743.namprd03.prod.outlook.com (2603:10b6:408:110::28)
+ by LV8PR12MB9336.namprd12.prod.outlook.com (2603:10b6:408:208::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Mon, 28 Oct
+ 2024 20:42:01 +0000
+Received: from BN2PEPF00004FBF.namprd04.prod.outlook.com
+ (2603:10b6:408:110:cafe::b6) by BN9PR03CA0743.outlook.office365.com
+ (2603:10b6:408:110::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25 via Frontend
+ Transport; Mon, 28 Oct 2024 20:42:01 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF00004FBF.mail.protection.outlook.com (10.167.243.185) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8114.16 via Frontend Transport; Mon, 28 Oct 2024 20:42:01 +0000
+Received: from [10.236.186.64] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 28 Oct
+ 2024 15:41:59 -0500
+Message-ID: <71f0fb41-d5a7-450b-ba47-ad6c39dce586@amd.com>
+Date: Mon, 28 Oct 2024 15:41:58 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028160917.1380714-17-alexander.shishkin@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/9] KVM: selftests: Add a basic SNP smoke test
+To: Sean Christopherson <seanjc@google.com>
+CC: <kvm@vger.kernel.org>, <pbonzini@redhat.com>, <pgonda@google.com>,
+	<thomas.lendacky@amd.com>, <michael.roth@amd.com>, <shuah@kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240905124107.6954-1-pratikrajesh.sampat@amd.com>
+ <20240905124107.6954-3-pratikrajesh.sampat@amd.com>
+ <Zw2fW2AJU-_Yi5U6@google.com> <4984cba7-427a-4065-9fcc-97b9f67163ed@amd.com>
+ <Zx_QJJ1iAYewvP-k@google.com>
+Content-Language: en-US
+From: "Pratik R. Sampat" <pratikrajesh.sampat@amd.com>
+In-Reply-To: <Zx_QJJ1iAYewvP-k@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF00004FBF:EE_|LV8PR12MB9336:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60a2d235-1a82-42c7-e9f4-08dcf790f996
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZzJsVzlqeE1RL05xbE9GSTBScmxnOVdvSGlyam52ZVlrTlpUblZHM3pjOFBi?=
+ =?utf-8?B?ZHRNTEgxZlJIYTFlZ3RyaURUQnVTekJ1QzFkNm9kT2VwZmxNYmVGdUdYUisx?=
+ =?utf-8?B?OFJpWlBKcEc3aXQraitmU3VqNk5jZVUrd2hUQ3RUYkNVMVZSU0lzeWpxeEVu?=
+ =?utf-8?B?WVFzZ296QlA2ZVJ2QmlNenc5NHFqdHpGWFQrazFWYWlZNzBLMmNlZTAyUHVa?=
+ =?utf-8?B?TndUTVRvSUNtM2ZiOWhSQkZablpIZjJ4bklIY0VRMWhDYVRHUExiVmw3eHg0?=
+ =?utf-8?B?ZWtkb2JjZm9oZmJTeENDOEFPTzJuMTQ5My9sTXF2c1NyVmtMWDRjeVp6MHJQ?=
+ =?utf-8?B?NERVWkRpR3JBdk5VbHFCVVMvdWRYeDZiaXdNZ01IR0pRQmpQeTdBS0gvdklL?=
+ =?utf-8?B?ZDhpdlBTMU5VeWY4VVUvREQ5WTN3em9aWExrMFBGK0M2NFIxeW9qWVRKdjNz?=
+ =?utf-8?B?RW8xV0pPRHg4dDFCdFlKOXlUV0thWnpJWGpibGNrQUpqRW9ZWDkvb2c2NllO?=
+ =?utf-8?B?Ny9icjJQVDJkNDF5alQyUHlSUEtGRlB4MU5rQmxiTXFhMUwzNkMzQnFOcEM0?=
+ =?utf-8?B?czUvTmkydWlnZTlNSU1rNFBndEx3MHBlYkFEUjBCcXFUMXNMcklxREViVzVK?=
+ =?utf-8?B?eThPREZwUFdXTnZFWDlFQmRwZG51dnBHL1RBNStQL21PWUhjUUVjUEZ4VXdp?=
+ =?utf-8?B?YXFxRzFBN29JYlRyTHErd0cwYlYxUHVCc3pXQTA5OFpIdXJJdU9ndUx4UElN?=
+ =?utf-8?B?OWQ3b1VZbnNEYVJOdE01ckRvenNhVG9JeHVzZDloSUdJU1JLUnRiQ1V3cDFj?=
+ =?utf-8?B?bVhXb3M5UG4wdFA5cFN2T3puMC8rU1NQdkJCSEZjWnhRbFRWaVFiVGxNTEYw?=
+ =?utf-8?B?TkNLWG5ORmVMWk92aEVMVTRrQ1R6c0xkTlZENm8xS2pvMzlBYisrZnhlYkJF?=
+ =?utf-8?B?Yjc1UDZiSWdnbjduWXF3SXcrVXQ3SVdGL2JRZlNrQTJJNTZNcE9VblRPVjFG?=
+ =?utf-8?B?N3pKTHo4cGxIZ21xdmFYaXB6UjhtQXdZckM2dTB3UHRXRndHdGJDUXZuaFU2?=
+ =?utf-8?B?K0twUWxnTWdzdWtnSGdSeWwzQ3JjNnorN1MrckVEOE1KSHR2RERDN1dLTXQv?=
+ =?utf-8?B?YUZjeE1BZ0FIQWMxa2c0SGVhTUFZVlZVNnYvSkpkQWo4dzZCUGh0TzloWEFN?=
+ =?utf-8?B?V1gzUkVUbXZMcGNYMDI5RnR4N3RMemw0bGZ5dXRqeE4wYU9YVi9yL2hJcjh2?=
+ =?utf-8?B?bjJDL0pCSVE3Z1RWQTVEV3B3di84Smk5WlhmTHJrVHdEZk51RG5UZnF0UkYw?=
+ =?utf-8?B?Q29tSWt6ZXRzdEo1amhPellhdUdONWw2U3ByS3RQb3JhZktSbld4TXlEWUxY?=
+ =?utf-8?B?eUZnNHBUallBb0N4UjFTcmhjKzF1eUVzSWRiYnBWdTVTbTBKTmFtQzVwM2tp?=
+ =?utf-8?B?eWtETGg2NWZ2TW8rWXpQUVNDYkNhMlIxbUJQU08xYUo1U1M0SExGSGF3cDhv?=
+ =?utf-8?B?R0szS3p4SjJ1czlMRGRDdHRpVzBRTUQxMnFVV2NPY21NaU1OMGIvelluWXYw?=
+ =?utf-8?B?RFAzU1VHTWMvZGd4TTM1YTcraHRmZFNmaGRNcnNKYUgxMndzbVFPd09SOVlR?=
+ =?utf-8?B?enJoSkZCdVptYkNpblhQd0dmTHBUZ1ZQdzc3d0FPQmJXVGVsVk44eFBBZDZs?=
+ =?utf-8?B?cDMrSkpwL0VzOVRCL1UwOUxOWWJqVzBXbEUzaEI1L0VQdmM5ZExZYzRwS3c4?=
+ =?utf-8?B?L1NPTFF0Z0lQcFZZbTNRcDh1Vmd2NUV0NDRDSkpTM2RGR3lXSEFMWnliaVRj?=
+ =?utf-8?B?VDA3eC9WMWozaUNra092VW04T2Z6RHhzQVFYNVVCTHZ6bDN3T2JFZmdFOFIy?=
+ =?utf-8?B?bWxEb2pXTUxNWUpiM0NIUGlIK0VxdEl6eWhTc3FKWFBiaFJMRXpqY2VNcUlJ?=
+ =?utf-8?Q?TtDHmqTEVSw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 20:42:01.2973
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60a2d235-1a82-42c7-e9f4-08dcf790f996
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF00004FBF.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9336
 
-On Mon, Oct 28, 2024 at 06:08:04PM +0200, Alexander Shishkin wrote:
-> This reverts commit 3267cb6d3a174ff83d6287dcd5b0047bbd912452.
-> 
-> LASS mitigates the Spectre based on LAM (SLAM) [1] and an earlier
-> commit made LAM depend on LASS, so we no longer need to disable LAM at
-> compile time, so revert the commit that disables LAM.
-> 
-> [1] https://download.vusec.net/papers/slam_sp24.pdf
-> 
-> Signed-off-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-> CC: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Hi Sean,
 
-Before re-enabling LAM, you need to uncomment X86_FEATURE_LAM check in
-arch/x86/kernel/cpu/common.c introduced in recent 86e6b1547b3d ("x86: fix
-user address masking non-canonical speculation issue").
+On 10/28/2024 12:55 PM, Sean Christopherson wrote:
+> On Mon, Oct 21, 2024, Pratik R. Sampat wrote:
+>>>> +		test_sev(guest_sev_es_code, KVM_X86_SEV_ES_VM, SEV_POLICY_ES);
+>>>>  
+>>>>  		test_sev_es_shutdown();
+>>>>  
+>>>>  		if (kvm_has_cap(KVM_CAP_XCRS) &&
+>>>>  		    (xgetbv(0) & XFEATURE_MASK_X87_AVX) == XFEATURE_MASK_X87_AVX) {
+>>>> -			test_sync_vmsa(0);
+>>>> -			test_sync_vmsa(SEV_POLICY_NO_DBG);
+>>>> +			test_sync_vmsa(KVM_X86_SEV_ES_VM, SEV_POLICY_ES);
+>>>> +			test_sync_vmsa(KVM_X86_SEV_ES_VM, SEV_POLICY_ES | SEV_POLICY_NO_DBG);
+>>>> +		}
+>>>> +	}
+>>>> +
+>>>> +	if (kvm_cpu_has(X86_FEATURE_SNP) && is_kvm_snp_supported()) {
+>>>
+>>> Why do we need both?  KVM shouldn't advertise SNP if it's not supported.
+>>
+>> My rationale behind needing this was that the feature can be advertised
+>> but it may not have the right API major or minor release which could be
+>> updated post boot and could determine it's support during runtime.
+> 
+> KVM will never determine support after KVM has been loaded.  If *KVM* has a
+> dependency on the API major.minor, then X86_FEATURE_SNP must be set if and only
+> if the supported API version is available.
+> 
+> If the API major.minor is purely a userspace thing, then is_kvm_snp_supported()
+> is misnamed, because the check has nothing to do with KVM.  E.g. something like
+> is_snp_api_version_supported() would be more appropriate.
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+That's fair. It is related to the FW supplied to it from userspace and
+naming it with kvm prefix is misleading. I'll change that.
+
+> 
+>>>> +		unsigned long snp_policy = SNP_POLICY;
+>>>
+>>> u64, no?
+>>
+>> Yes, sorry for the oversight. Will change it to u64.
+>>
+>>>
+>>>> +
+>>>> +		if (unlikely(!is_smt_active()))
+>>>> +			snp_policy &= ~SNP_POLICY_SMT;
+>>>
+>>> Why does SNP_POLICY assume SMT?  And what is RSVD_MBO?  E.g. why not this?
+>>>
+>>> 		u64 policy = is_smt_active() ? SNP_POLICY_SMT : SNP_POLICY;
+>>>
+>>
+>> I think most systems support SMT so I enabled the bit in by default and
+>> only unset it when there isn't any support.
+> 
+> That's confusing though, because you're mixing architectural defines with semi-
+> arbitrary selftests behavior.  RSVD_MBO on the other is apparently tightly coupled
+> with SNP, i.e. SNP can't exist without that bit, so it makes sense that RSVD_MBO
+> needs to be part of SNP_POLICY
+> 
+> If you want to have a *software*-defined default policy, then make it obvious that
+> it's software defined.  E.g. name the #define SNP_DEFAULT_POLICY, not simply
+> SNP_POLICY, because the latter is too easily misconstrued as the base SNP policy,
+> which it is not.  That said, IIUC, SMT *must* match the host configuration, i.e.
+> whether or not SMT is set is non-negotiable.  In that case, there's zero value in
+> defining SNP_DEFAULT_POLICY, because it can't be a sane default for all systems.
+> 
+
+Right, SMT should match the host configuration. Would a
+SNP_DEFAULT_POLICY work if we made it check for SMT too in the macro?
+
+Instead of,
+#define SNP_POLICY	(SNP_POLICY_SMT | SNP_POLICY_RSVD_MBO)
+
+Have something like this instead to make it generic and less ambiguous?
+#define SNP_DEFAULT_POLICY()		 			       \
+({								       \
+	SNP_POLICY_RSVD_MBO | (is_smt_active() ? SNP_POLICY_SMT : 0);  \
+})
+
+> Side topic, I assume one of SEV_POLICY_NO_DBG or SNP_POLICY_DBG *must* be specified, 
+> and that they are mutualy exclusive?  E.g. what happens if the full policy is simply
+> SNP_POLICY_RSVD_MBO?
+
+SEV_POLICY_NO_DBG is mainly for the guest policy structure of SEV and
+SEV-ES - pg 31, Table 2
+https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/programmer-references/55766_SEV-KM_API_Specification.pdf
+
+and, SNP_POLICY_DBG is a bit in the guest policy structure of SNP - pg
+27, Table 9
+https://www.amd.com/content/dam/amd/en/documents/epyc-technical-docs/specifications/56860.pdf
+
+In the former, a SEV guest disables debugging if SEV_POLICY_NO_DBG is
+set. Similarly, a SNP guest enables debugging if SNP_POLICY_DBG is set.
+
+An SNP guest can certainly just have the policy SNP_POLICY_RSVD_MBO,
+barring the case on a SMT system where that bit must be set too for a
+successful launch.
+
 
