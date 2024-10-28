@@ -1,115 +1,215 @@
-Return-Path: <linux-kernel+bounces-385455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343E39B375D
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:09:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178469B3763
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:12:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 657A91C20B58
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:09:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C06C92817D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:12:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8941DF266;
-	Mon, 28 Oct 2024 17:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gLeItSA3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23291DF26D;
+	Mon, 28 Oct 2024 17:11:55 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74271D5CC6;
-	Mon, 28 Oct 2024 17:09:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F3113AD11;
+	Mon, 28 Oct 2024 17:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730135380; cv=none; b=A89QkRs7VsD7nrvLJLGk3UgDwNTvjfa3qFXV6NW8Lvi7x/ysmNnKOnobDmWYMHAoZBijbg6zu1ZzKaSqCVGnqmLUXCLXQwTEnrT22QDBUP7Gh937iAvryNQ1tTEFwX3OpMWgun1XfapkEhpiKzXemN6GFsEwSWtGEAfUOVulIBk=
+	t=1730135515; cv=none; b=r/sPj5jeIXSOv0f2IcALRDXrCVqzsXhVg+Y4u7i+XljKRdSfF8p9Z7g9T5/bMPggcpQJBbhArAcgT+M+NQn5QyyL9/LnzgoRkc8RZZ6JTSu5NLAJfjrHsTznp81X4Vja6+rDecQE6R05K2Ru+tSssphI4T8lMFp4zDD/R26RM50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730135380; c=relaxed/simple;
-	bh=WJDZhRtwghKuue3Ou1x958utvll99lUFzlZQbjrclpk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=OhT0hHxr/2nKx9XjCGHg4u0hjaqL9NCdqwR2BEpefrAvvjnPbnIaNkTJfPfzoXpW0zzO9S7u1dQdFjstUWLH4Pkr6XG1NO1kO44yWHb4RhqMCM4j4AQjgw36Hd7lNxpsfzahKNbKLoQCf+Qm40hvakNkSzKOVOPiNJSJyPJQs5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gLeItSA3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49BAEC4CEC3;
-	Mon, 28 Oct 2024 17:09:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730135378;
-	bh=WJDZhRtwghKuue3Ou1x958utvll99lUFzlZQbjrclpk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gLeItSA3fn2FDDa5nKD3HQn3kGWUx7nLbl492Fr0hM8uBGwuaa9HIRUnUsCTgLlSj
-	 gPOlTSXQNRRXdcuNjXI2pd0Pn4xIIArp164mNdhgkDTHa1ei2flF3eRE4iVNrdVz3a
-	 lBrfqDgYMI7h+hS+w2ECYH4VRGfinwWeliufn/mPq97hE5o+coSwPGemjeeoD9oojo
-	 mjBE1CCych3FIRr7FvQW1o7uRjhTCMkY1/+vAZ9XVj/AV9NYygA5kgyzRbtNc3wAXC
-	 K1RB3d1wJicYj7GHvBom3zQfyMELpqvdxIzJoWuMsiyqqDIHmhW9Mg9FRS/YUyDSZb
-	 6iFDOhOT+ecQA==
-Date: Mon, 28 Oct 2024 12:09:35 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1730135515; c=relaxed/simple;
+	bh=ffodTM6IF0oBZFbsq4Qck8Pspk75k2WpADJL+sZmS3Q=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IZiX1wFhmna7zk6HHDPv6Ty9mZsgoJ0FLcQsElkVlDVwYQ8o76ehfzoU/ej5C6BALPnhgqW5rMUE9EnRo7uRoSVaGqkw9aI0k0yhtWH8vXnCnU9FqEVDDLAQpwoZed1xMkVae712030Aw09MfeU1s3nb4/mG7EAR8/9F+dEG/vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xcfy20k99z67wqY;
+	Tue, 29 Oct 2024 01:09:30 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 50BB7140C72;
+	Tue, 29 Oct 2024 01:11:49 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 28 Oct
+ 2024 18:11:48 +0100
+Date: Mon, 28 Oct 2024 17:11:46 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Robert Budai <robert.budai@analog.com>
+CC: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
+	<Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, "Ramona
+ Gradinariu" <ramona.gradinariu@analog.com>, Antoniu Miclaus
+	<antoniu.miclaus@analog.com>, Jonathan Cameron <jic23@kernel.org>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Jagath Jog
+ J" <jagathjog1996@gmail.com>, <linux-iio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <robi_budai@yahoo.com>
+Subject: Re: [PATCH 3/5] dt-bindings: iio: Add adis16550 bindings
+Message-ID: <20241028171146.0000676a@Huawei.com>
+In-Reply-To: <20241028123550.9128-2-robert.budai@analog.com>
+References: <20241028123550.9128-1-robert.budai@analog.com>
+	<20241028123550.9128-2-robert.budai@analog.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org
-In-Reply-To: <20241028-topic-cpu_suspend_s2ram-v1-1-9fdd9a04b75c@oss.qualcomm.com>
-References: <20241028-topic-cpu_suspend_s2ram-v1-0-9fdd9a04b75c@oss.qualcomm.com>
- <20241028-topic-cpu_suspend_s2ram-v1-1-9fdd9a04b75c@oss.qualcomm.com>
-Message-Id: <173013537587.887084.8594386084996855802.robh@kernel.org>
-Subject: Re: [PATCH 1/3] dt-bindings: arm,psci: Allow S2RAM power_state
- parameter description
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Mon, 28 Oct 2024 14:35:43 +0200
+Robert Budai <robert.budai@analog.com> wrote:
 
-On Mon, 28 Oct 2024 15:22:57 +0100, Konrad Dybcio wrote:
-> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> From: Ramona Gradinariu <ramona.gradinariu@analog.com>
 > 
-> Certain firmware implementations (such as the ones found on Qualcomm
-> SoCs between roughly 2015 and 2023) expose an S3-like S2RAM state
-> through the CPU_SUSPEND call, as opposed to exposing PSCIv1.0's
-> optional PSCI_SYSTEM_SUSPEND.
-> 
-> This really doesn't work well with the model where we associate all
-> calls to CPU_SUSPEND with cpuidle. Allow specifying a single special
-> CPU_SUSPEND suspend parameter value that is to be treated just like
-> SYSTEM_SUSPEND from the OS's point of view.
-> 
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Document the ADIS16550 device devicetree bindings.
+What is the difference between the 16550 and 16550w.
+Need to give an indication here of why the need separate compatibles.
+ 
+> Co-developed-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> Signed-off-by: Ramona Gradinariu <ramona.gradinariu@analog.com>
 > ---
->  Documentation/devicetree/bindings/arm/psci.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  .../bindings/iio/imu/adi,adis16550.yaml       | 95 +++++++++++++++++++
+>  MAINTAINERS                                   |  9 ++
+>  2 files changed, 104 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml b/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> new file mode 100644
+> index 000000000000..a4690b39f0bd
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> @@ -0,0 +1,95 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/imu/adi,adis16550.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Analog Devices ADIS16550 and similar IMUs
+> +
+> +maintainers:
+> +  - Nuno Sa <nuno.sa@analog.com>
+> +  - Ramona Gradinariu <ramona.gradinariu@analog.com>
+> +  - Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - adi,adis16550
+> +      - adi,adis16550w
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  spi-cpha: true
+> +
+> +  spi-cpol: true
+> +
+> +  spi-max-frequency:
+> +    maximum: 15000000
+> +
+> +  vdd-supply: true
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  reset-gpios:
+> +    description:
+> +      Must be the device tree identifier of the RESET pin. If specified,
+> +      it will be asserted during driver probe. As the line is active low,
+> +      it should be marked GPIO_ACTIVE_LOW.
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    description: If not provided, then the internal clock is used.
+> +
+> +  adi,sync-mode:
+> +    $ref: /schemas/types.yaml#/definitions/string
+> +    description: |
+> +      Configures the device SYNC pin.
+> +    enum:
+> +      - direct_sync
+> +      - scaled_sync
+More detail needed on this. I'm not sure why it belongs in DT and
+can't be controlled based on clock input and requested sampling
+frequency.  
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/psci.yaml: properties:arm,psci-s2ram-param:maxItems: False schema does not allow 1
-	hint: Scalar properties should not have array keywords
-	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241028-topic-cpu_suspend_s2ram-v1-1-9fdd9a04b75c@oss.qualcomm.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - spi-cpha
+> +  - spi-cpol
+> +  - spi-max-frequency
+> +  - vdd-supply
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        adi,sync-mode:
+> +          enum: [direct_sync, scaled_sync]
+> +
+> +    then:
+> +      dependencies:
+> +        adi,sync-mode: [ clocks ]
+> +
+> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/irq.h>
+> +    spi {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        imu@0 {
+> +            compatible = "adi,adis16550";
+> +            reg = <0>;
+> +            spi-max-frequency = <15000000>;
+> +            spi-cpol;
+> +            spi-cpha;
+> +            vdd-supply = <&vdd>;
+> +            interrupts = <4 IRQ_TYPE_EDGE_FALLING>;
+> +            interrupt-parent = <&gpio>;
+> +        };
+> +    };
+> +...
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a27407950242..4f45478d271a 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -1411,6 +1411,15 @@ W:	https://ez.analog.com/linux-software-drivers
+>  F:	Documentation/devicetree/bindings/iio/imu/adi,adis16475.yaml
+>  F:	drivers/iio/imu/adis16475.c
+>  
+> +ANALOG DEVICES INC ADIS16550 DRIVER
+> +M:	Nuno Sa <nuno.sa@analog.com>
+> +M:	Ramona Gradinariu <ramona.gradinariu@analog.com>
+> +M:	Antoniu Miclaus <antoniu.miclaus@analog.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +W:	https://ez.analog.com/linux-software-drivers
+> +F:	Documentation/devicetree/bindings/iio/imu/adi,adis16550.yaml
+> +
+>  ANALOG DEVICES INC ADM1177 DRIVER
+>  M:	Michael Hennerich <Michael.Hennerich@analog.com>
+>  L:	linux-hwmon@vger.kernel.org
 
 
