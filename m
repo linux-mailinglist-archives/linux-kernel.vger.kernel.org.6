@@ -1,283 +1,223 @@
-Return-Path: <linux-kernel+bounces-384607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EB639B2C51
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:07:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE1469B2C55
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:08:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C6B1F22629
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:07:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B0771C2176F
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515891D0DF7;
-	Mon, 28 Oct 2024 10:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9DB1D0E39;
+	Mon, 28 Oct 2024 10:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="Bz3gPrvS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NWdQ7+GI"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WpXAxDHH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2786018B46E;
-	Mon, 28 Oct 2024 10:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4A018E77B;
+	Mon, 28 Oct 2024 10:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110064; cv=none; b=DC5DVYmspCB6jLYWoRa0Ry/qWQzo6JlirYJxCqR+LsXAskZ+zGwKzPH36e+Qtwf4lGI9OdpKDbF3tH41UT6/jqBTu9lng2dBNteAkbeWPRRPQoNnxZ7QwlAxsny/8nXCLLnK8WtajOgjYy3TVGgi8j4jyag/k3dWk0y+4DiuUgI=
+	t=1730110091; cv=none; b=mh80Fu5ptx2I5I8Ha3Z/tjxdoo14KjKp7WKhb5WVTgDB7kzyZax6BtxQzqVxJe+8dyt6H84di9XUogjOpx6xDIif8/KA0LnAehECfM6ezlvHb9dCm19t6r0Uz82/9f5BwSqgSJBk73L++uEcXfP64NfvTnq8ZAJqIsTSukDFPDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110064; c=relaxed/simple;
-	bh=fPb8qQLzBRJvCvTo05/AaCTxKl1g8V/bXqxYAZzNU9E=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=DxNZoLkAOdcGqCLRmzMwX5KZubL1dfvB8V0lw9u7qDF1D0R3LkIftJVy/mJVN/BUybj4RkknuWo/Thul5BkgHfY8roSoKhAvsNAQqHzAbp/DNpvnxY7BVl61Ubo0bc1++I3d+rmC4zquBj+UCCL4eLM4/wjKXgD0U2TvpUBF144=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=Bz3gPrvS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NWdQ7+GI; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfout.stl.internal (Postfix) with ESMTP id 9990E11400FC;
-	Mon, 28 Oct 2024 06:07:39 -0400 (EDT)
-Received: from phl-imap-10 ([10.202.2.85])
-  by phl-compute-02.internal (MEProxy); Mon, 28 Oct 2024 06:07:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1730110059;
-	 x=1730196459; bh=zpVCVnKNAbqxoyZ/9RQal9LIDE3t1qOufDxKPWWH5zM=; b=
-	Bz3gPrvSE1u2Jp3zcvNqLIgtS7gDWMUnjYMZwbN9jT0laM+CoThXEGY5b8gRoiHd
-	YDzGI+8HQP5xXE77HxV/LglCXiU6zz4fpUExBPX2qEmH+wo8FBMn62SRi1yYfPzw
-	Zu4NkaD8cNaiU/0ybJqyCWOl6cPmU029/bQdFAfwma1AhNRF3+bEkwE2TbOdSWgZ
-	hKPo3avc4gQ7m5oiGNw+c6ZoJbH/id3P0yeu82lcDCycOSOy/tnNjwgnu7cfosC2
-	tU0cRFzIbL4UAkpPudUvI2G8912MlMzd39qaShQusIEQJHoHCPyz+I4yiSXuTztj
-	SdAfrJ6EwxOwWzNUH2jOlQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730110059; x=
-	1730196459; bh=zpVCVnKNAbqxoyZ/9RQal9LIDE3t1qOufDxKPWWH5zM=; b=N
-	WdQ7+GI2ygJZ7I+cYyb9tXX8HC6956Uclg4Q3v2NfImYW3tvzkEaKdhbR19Xpp4H
-	So+KxxThq2XslwtVrBv0y77qRMXMbAZkxEDEJB7P8y+FGW1x5KdufrocBNvxmIf7
-	8sME9CeQOB3EzkyfuUGuDfDrpZ56Llm6grv12lk0DCY05JN1ZAAURpZSNBgAR0gK
-	hhTYHkFmu8m1mhy48CwDcGYelv3v7yKM3WLwVbsr+ovV+Qsr8eCQkB0+DaSCn0Qd
-	uVRqD+Y8xHbmxjq2oTKuIT/Ib59YPK1IZn3ESZ5FBlwOYjtp5H20IOcq22pUwslD
-	RKJSe0Frk5r/1tkXH6Fjw==
-X-ME-Sender: <xms:aWIfZ8n4NI9jOTrhs_B-s3cAwpFYqVDbSBoPD_JPNdLAMV5_519pMg>
-    <xme:aWIfZ72fVIDaVXnD70Tv6g_0gCGgOt_yCcNYQyT3tG6gq4ETRDKFylefTXImAcyAw
-    6W_s1SheLB0GTLkE9A>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejkedgudduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedfofgrrhhkucfrvggrrhhsohhnfdcuoehmphgvrghrshhonhdqlhgvnh
-    hovhhosehsqhhuvggssgdrtggrqeenucggtffrrghtthgvrhhnpefhuedvheetgeehtdeh
-    tdevheduvdejjefggfeijedvgeekhfefleehkeehvdffheenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhho
-    sehsqhhuvggssgdrtggrpdhnsggprhgtphhtthhopedvuddpmhhouggvpehsmhhtphhouh
-    htpdhrtghpthhtohepshhhhigrmhdqshhunhgurghrrdhsqdhksegrmhgurdgtohhmpdhr
-    tghpthhtohepmhgrrhhiohdrlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtph
-    htthhopehikhgvrdhprghnsegtrghnohhnihgtrghlrdgtohhmpdhrtghpthhtoheprghl
-    vgigsggvlhhmgeeksehgmhgrihhlrdgtohhmpdhrtghpthhtoheptghorhgvnhhtihhnrd
-    gthhgrrhihsehgmhgrihhlrdgtohhmpdhrtghpthhtoheplhhuiihmrgigihhmihhlihgr
-    nhesghhmrghilhdrtghomhdprhgtphhtthhopehhmhhhsehhmhhhrdgvnhhgrdgsrhdprh
-    gtphhtthhopehsohihvghrsehirhhlrdhhuhdprhgtphhtthhopehlvghnsgeskhgvrhhn
-    vghlrdhorhhg
-X-ME-Proxy: <xmx:aWIfZ6opKMutfh8H0IjY5UvPokSKzzK8DOsnhaZH1ZzFzOdXEBky-A>
-    <xmx:aWIfZ4nlI68s1IQGm7PiDVmEtktDibFd9EavHboWC_B1PH6EaVqglw>
-    <xmx:aWIfZ62VEXeSovcriCz6wwmmyKYd15xgwIywFpBkqFn9D7S33LXq9A>
-    <xmx:aWIfZ_vEWAFwfQvS6OoHbqDiF3VXHvLYnMM7HUzKjaaFAl6bpsvp9A>
-    <xmx:a2IfZ0WG9t8KGBr82f2tt_TAJ27K_GAnM7KWXlB_lghM0g6sEIZvD_KL>
-Feedback-ID: ibe194615:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C94833C0066; Mon, 28 Oct 2024 06:07:37 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1730110091; c=relaxed/simple;
+	bh=NLtcM1hkjof1fTLdSDHcaZ6iQK8KqH/wzHVn0jh3deY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=seaQqtJBvVHFrop9f2vCT5PpfEtet9pfWXd/4gEpAqLmGcdtR2u+t3KJDVZOcW5uNFqyC9UHMXwupKa4UvI0T0HqLNkz1eMENN3aTykslF/0xun4bMVaQdIyl9nCWg6yAY7x2wJGj6pu/SqpVasjVRuCUGqoc9xP8c78XVAd4Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WpXAxDHH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RNnA4K017530;
+	Mon, 28 Oct 2024 10:07:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	u6w09vuiLva5b8cnrEum/UWUMtRM/0/5HzAWBBqc9eQ=; b=WpXAxDHHSWUl947b
+	jXMxOO5ewytWmwojDUfj5Y3opOccO99hO7nPOk2mVAYMUdGuyTMk8rwVGv0OTLCT
+	70EvAsHyy8dxdWRWNa8gEoGt8BljfGwFFX2sBN1VQj0146YeVLwZJ1WcLEKSl9ne
+	t5aV0xbnjudpUTa/vRhBbhxxe99dbqP0NwLNv0dNpWuKossxZqkmkyB7SY+f8yYj
+	g+biBBf6A5cDvoT4x+oJFpdKtuvYFvADskZ03kR9FfNHMGx1pu/wjqOBd28CEKqj
+	7zdUoWM1dUMosZv39FVXuC1ULCwDc/uJIEVrTe1ufLkXSK/F0htY9UJkRiqWC22A
+	E/bDew==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt6vd4r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 10:07:53 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49SA7qfZ025319
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 10:07:52 GMT
+Received: from [10.216.3.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 03:07:46 -0700
+Message-ID: <6fea85fc-ccdc-46ec-b612-3712e9431301@quicinc.com>
+Date: Mon, 28 Oct 2024 15:37:44 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 28 Oct 2024 06:07:16 -0400
-From: "Mark Pearson" <mpearson-lenovo@squebb.ca>
-To: "Limonciello, Mario" <mario.limonciello@amd.com>,
- "Hans de Goede" <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
- "Maximilian Luz" <luzmaximilian@gmail.com>, "Lee Chun-Yi" <jlee@suse.com>,
- "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>,
- "Corentin Chary" <corentin.chary@gmail.com>,
- "Luke D . Jones" <luke@ljones.dev>, "Ike Panhc" <ike.pan@canonical.com>,
- "Henrique de Moraes Holschuh" <hmh@hmh.eng.br>,
- "Alexis Belmonte" <alexbelm48@gmail.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- "Ai Chao" <aichao@kylinos.cn>, "Gergo Koteles" <soyer@irl.hu>,
- "open list" <linux-kernel@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
- "platform-driver-x86@vger.kernel.org" <platform-driver-x86@vger.kernel.org>,
- "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>,
- "Matthew Schwartz" <matthew.schwartz@linux.dev>
-Message-Id: <c5d52213-cb1b-408c-8fb5-a7401f690d24@app.fastmail.com>
-In-Reply-To: <20241025193055.2235-2-mario.limonciello@amd.com>
-References: <20241025193055.2235-1-mario.limonciello@amd.com>
- <20241025193055.2235-2-mario.limonciello@amd.com>
-Subject: Re: [PATCH 1/8] ACPI: platform-profile: Add a name member to handlers
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie
+	<airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Nathan Chancellor
+	<nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        "Bill
+ Wendling" <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>, <llvm@lists.linux.dev>,
+        Arnd Bergmann <arnd@kernel.org>
+References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+ <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <j2qapo66f64y7ddqlu63dqvog2fdbhnaq3t24wp2srvdt4v7xl@fyqu4ry4wmts>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: yM4lroPHSvQX2DwzVgWCZySGtX_3rfx5
+X-Proofpoint-GUID: yM4lroPHSvQX2DwzVgWCZySGtX_3rfx5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280083
 
-Thanks Mario,
+On 10/28/2024 1:56 PM, Dmitry Baryshkov wrote:
+> On Sun, Oct 27, 2024 at 11:35:47PM +0530, Akhil P Oommen wrote:
+>> Clang-19 and above sometimes end up with multiple copies of the large
+>> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+>> a6xx_hfi_send_bw_table() calls a number of device specific functions to
+>> fill the structure, but these create another copy of the structure on
+>> the stack which gets copied to the first.
+>>
+>> If the functions get inlined, that busts the warning limit:
+>>
+>> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' [-Werror,-Wframe-larger-than]
+>>
+>> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
+>> the stack. Also, use this opportunity to skip re-initializing this table
+>> to optimize gpu wake up latency.
+>>
+>> Cc: Arnd Bergmann <arnd@kernel.org>
+>>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>>  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  1 +
+>>  drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 34 ++++++++++++++++++++++------------
+>>  2 files changed, 23 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> index 94b6c5cab6f4..b4a79f88ccf4 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> @@ -99,6 +99,7 @@ struct a6xx_gmu {
+>>  	struct completion pd_gate;
+>>  
+>>  	struct qmp *qmp;
+>> +	struct a6xx_hfi_msg_bw_table *bw_table;
+>>  };
+>>  
+>>  static inline u32 gmu_read(struct a6xx_gmu *gmu, u32 offset)
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>> index cdb3f6e74d3e..55e51c81be1f 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
+>> @@ -630,32 +630,42 @@ static void a6xx_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
+>>  
+>>  static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
+>>  {
+>> -	struct a6xx_hfi_msg_bw_table msg = { 0 };
+>> +	struct a6xx_hfi_msg_bw_table *msg;
+>>  	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
+>>  	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
+>>  
+>> +	if (gmu->bw_table)
+>> +		goto send;
+>> +
+>> +	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
+> 
+> Is it necessary after being sent? Isn't it better to just kzalloc() it
+> and then kfree() it at the end of the function?
 
-On Fri, Oct 25, 2024, at 3:30 PM, Mario Limonciello wrote:
-> In order to prepare for allowing multiple handlers, introduce
-> a name field that can be used to distinguish between different
-> handlers.
->
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/platform/surface/surface_platform_profile.c | 1 +
->  drivers/platform/x86/acer-wmi.c                     | 1 +
->  drivers/platform/x86/amd/pmf/sps.c                  | 1 +
->  drivers/platform/x86/asus-wmi.c                     | 1 +
->  drivers/platform/x86/dell/dell-pc.c                 | 1 +
->  drivers/platform/x86/hp/hp-wmi.c                    | 1 +
->  drivers/platform/x86/ideapad-laptop.c               | 1 +
->  drivers/platform/x86/inspur_platform_profile.c      | 1 +
->  drivers/platform/x86/thinkpad_acpi.c                | 1 +
->  include/linux/platform_profile.h                    | 1 +
->  10 files changed, 10 insertions(+)
->
-> diff --git a/drivers/platform/surface/surface_platform_profile.c 
-> b/drivers/platform/surface/surface_platform_profile.c
-> index 3de864bc66108..61aa488a80eb5 100644
-> --- a/drivers/platform/surface/surface_platform_profile.c
-> +++ b/drivers/platform/surface/surface_platform_profile.c
-> @@ -211,6 +211,7 @@ static int surface_platform_profile_probe(struct 
-> ssam_device *sdev)
-> 
->  	tpd->sdev = sdev;
-> 
-> +	tpd->handler.name = "Surface Platform Profile";
->  	tpd->handler.profile_get = ssam_platform_profile_get;
->  	tpd->handler.profile_set = ssam_platform_profile_set;
-> 
-> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
-> index d09baa3d3d902..53fbc9b4d3df7 100644
-> --- a/drivers/platform/x86/acer-wmi.c
-> +++ b/drivers/platform/x86/acer-wmi.c
-> @@ -1878,6 +1878,7 @@ static int acer_platform_profile_setup(void)
->  	if (quirks->predator_v4) {
->  		int err;
-> 
-> +		platform_profile_handler.name = "acer-wmi";
->  		platform_profile_handler.profile_get =
->  			acer_predator_v4_platform_profile_get;
->  		platform_profile_handler.profile_set =
-> diff --git a/drivers/platform/x86/amd/pmf/sps.c 
-> b/drivers/platform/x86/amd/pmf/sps.c
-> index 92f7fb22277dc..e2d0cc92c4396 100644
-> --- a/drivers/platform/x86/amd/pmf/sps.c
-> +++ b/drivers/platform/x86/amd/pmf/sps.c
-> @@ -405,6 +405,7 @@ int amd_pmf_init_sps(struct amd_pmf_dev *dev)
->  		amd_pmf_set_sps_power_limits(dev);
->  	}
-> 
-> +	dev->pprof.name = "amd-pmf";
->  	dev->pprof.profile_get = amd_pmf_profile_get;
->  	dev->pprof.profile_set = amd_pmf_profile_set;
-> 
-> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-> index 2ccc23b259d3e..c7c104c65a85a 100644
-> --- a/drivers/platform/x86/asus-wmi.c
-> +++ b/drivers/platform/x86/asus-wmi.c
-> @@ -3910,6 +3910,7 @@ static int platform_profile_setup(struct asus_wmi *asus)
-> 
->  	dev_info(dev, "Using throttle_thermal_policy for platform_profile support\n");
-> 
-> +	asus->platform_profile_handler.name = "asus-wmi";
->  	asus->platform_profile_handler.profile_get = asus_wmi_platform_profile_get;
->  	asus->platform_profile_handler.profile_set = asus_wmi_platform_profile_set;
-> 
-> diff --git a/drivers/platform/x86/dell/dell-pc.c 
-> b/drivers/platform/x86/dell/dell-pc.c
-> index 972385ca1990b..3cf79e55e3129 100644
-> --- a/drivers/platform/x86/dell/dell-pc.c
-> +++ b/drivers/platform/x86/dell/dell-pc.c
-> @@ -247,6 +247,7 @@ static int thermal_init(void)
->  	thermal_handler = kzalloc(sizeof(*thermal_handler), GFP_KERNEL);
->  	if (!thermal_handler)
->  		return -ENOMEM;
-> +	thermal_handler->name = "dell-pc";
->  	thermal_handler->profile_get = thermal_platform_profile_get;
->  	thermal_handler->profile_set = thermal_platform_profile_set;
-> 
-> diff --git a/drivers/platform/x86/hp/hp-wmi.c b/drivers/platform/x86/hp/hp-wmi.c
-> index 81ccc96ffe40a..26cac73caf2b9 100644
-> --- a/drivers/platform/x86/hp/hp-wmi.c
-> +++ b/drivers/platform/x86/hp/hp-wmi.c
-> @@ -1624,6 +1624,7 @@ static int thermal_profile_setup(void)
->  		set_bit(PLATFORM_PROFILE_COOL, platform_profile_handler.choices);
->  	}
-> 
-> +	platform_profile_handler.name = "hp-wmi";
->  	set_bit(PLATFORM_PROFILE_BALANCED, platform_profile_handler.choices);
->  	set_bit(PLATFORM_PROFILE_PERFORMANCE, platform_profile_handler.choices);
-> 
-> diff --git a/drivers/platform/x86/ideapad-laptop.c 
-> b/drivers/platform/x86/ideapad-laptop.c
-> index 9d8c3f064050e..1f94c14c3b832 100644
-> --- a/drivers/platform/x86/ideapad-laptop.c
-> +++ b/drivers/platform/x86/ideapad-laptop.c
-> @@ -1102,6 +1102,7 @@ static int ideapad_dytc_profile_init(struct 
-> ideapad_private *priv)
-> 
->  	mutex_init(&priv->dytc->mutex);
-> 
-> +	priv->dytc->pprof.name = "ideapad-laptop";
->  	priv->dytc->priv = priv;
->  	priv->dytc->pprof.profile_get = dytc_profile_get;
->  	priv->dytc->pprof.profile_set = dytc_profile_set;
-> diff --git a/drivers/platform/x86/inspur_platform_profile.c 
-> b/drivers/platform/x86/inspur_platform_profile.c
-> index 8440defa67886..03da2c8cf6789 100644
-> --- a/drivers/platform/x86/inspur_platform_profile.c
-> +++ b/drivers/platform/x86/inspur_platform_profile.c
-> @@ -177,6 +177,7 @@ static int inspur_wmi_probe(struct wmi_device 
-> *wdev, const void *context)
->  	priv->wdev = wdev;
->  	dev_set_drvdata(&wdev->dev, priv);
-> 
-> +	priv->handler.name = "inspur-wmi";
->  	priv->handler.profile_get = inspur_platform_profile_get;
->  	priv->handler.profile_set = inspur_platform_profile_set;
-> 
-> diff --git a/drivers/platform/x86/thinkpad_acpi.c 
-> b/drivers/platform/x86/thinkpad_acpi.c
-> index 4c1b0553f8720..c8c316b8507a5 100644
-> --- a/drivers/platform/x86/thinkpad_acpi.c
-> +++ b/drivers/platform/x86/thinkpad_acpi.c
-> @@ -10549,6 +10549,7 @@ static void dytc_profile_refresh(void)
->  }
-> 
->  static struct platform_profile_handler dytc_profile = {
-> +	.name = "thinkpad-acpi",
->  	.profile_get = dytc_profile_get,
->  	.profile_set = dytc_profile_set,
->  };
-> diff --git a/include/linux/platform_profile.h b/include/linux/platform_profile.h
-> index f5492ed413f36..6fa988e417428 100644
-> --- a/include/linux/platform_profile.h
-> +++ b/include/linux/platform_profile.h
-> @@ -27,6 +27,7 @@ enum platform_profile_option {
->  };
-> 
->  struct platform_profile_handler {
-> +	const char *name;
->  	unsigned long choices[BITS_TO_LONGS(PLATFORM_PROFILE_LAST)];
->  	int (*profile_get)(struct platform_profile_handler *pprof,
->  				enum platform_profile_option *profile);
-> -- 
-> 2.43.0
+Keeping it around will help to cut down unnecessary work during
+subsequent gpu wake ups.
 
-Looks good to me.
-Reviewed-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+-Akhil.
 
-Mark
+> 
+>> +	if (!msg)
+>> +		return -ENOMEM;
+>> +
+>>  	if (adreno_is_a618(adreno_gpu))
+>> -		a618_build_bw_table(&msg);
+>> +		a618_build_bw_table(msg);
+>>  	else if (adreno_is_a619(adreno_gpu))
+>> -		a619_build_bw_table(&msg);
+>> +		a619_build_bw_table(msg);
+>>  	else if (adreno_is_a640_family(adreno_gpu))
+>> -		a640_build_bw_table(&msg);
+>> +		a640_build_bw_table(msg);
+>>  	else if (adreno_is_a650(adreno_gpu))
+>> -		a650_build_bw_table(&msg);
+>> +		a650_build_bw_table(msg);
+>>  	else if (adreno_is_7c3(adreno_gpu))
+>> -		adreno_7c3_build_bw_table(&msg);
+>> +		adreno_7c3_build_bw_table(msg);
+>>  	else if (adreno_is_a660(adreno_gpu))
+>> -		a660_build_bw_table(&msg);
+>> +		a660_build_bw_table(msg);
+>>  	else if (adreno_is_a690(adreno_gpu))
+>> -		a690_build_bw_table(&msg);
+>> +		a690_build_bw_table(msg);
+>>  	else if (adreno_is_a730(adreno_gpu))
+>> -		a730_build_bw_table(&msg);
+>> +		a730_build_bw_table(msg);
+>>  	else if (adreno_is_a740_family(adreno_gpu))
+>> -		a740_build_bw_table(&msg);
+>> +		a740_build_bw_table(msg);
+>>  	else
+>> -		a6xx_build_bw_table(&msg);
+>> +		a6xx_build_bw_table(msg);
+>> +
+>> +	gmu->bw_table = msg;
+>>  
+>> -	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, &msg, sizeof(msg),
+>> +send:
+>> +	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_BW_TABLE, gmu->bw_table, sizeof(*(gmu->bw_table)),
+>>  		NULL, 0);
+>>  }
+>>  
+>>
+>> ---
+>> base-commit: 74c374648ed08efb2ef339656f2764c28c046956
+>> change-id: 20241024-stack-size-fix-28af7abd3fab
+>>
+>> Best regards,
+>> -- 
+>> Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>
+> 
+
 
