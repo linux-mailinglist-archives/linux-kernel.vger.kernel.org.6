@@ -1,139 +1,155 @@
-Return-Path: <linux-kernel+bounces-384662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4105F9B2CF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:33:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A929B2CF8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7040B1C2156C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:33:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0516C1C213BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E570B1D0F56;
-	Mon, 28 Oct 2024 10:33:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB8E1D1E64;
+	Mon, 28 Oct 2024 10:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hgfL0+Yy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l91Da8yH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BDD17A58F;
-	Mon, 28 Oct 2024 10:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79AF052F9B;
+	Mon, 28 Oct 2024 10:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730111633; cv=none; b=nrzqwcV/C8RAH4bhadzO2eq/I4KtNxetmsejrcfee9JdZt6bhDoyiuUcdWDRR7krl1sxvuIXraZA55Sf5seMzbVD9HDHQA3Bm4Q3W0tPKZiTfEDSY2bNKRDmQ36mIXmlGzomBW7KDxZTcvaTaHaBfKCoTlc3heFDD563EoaAJcg=
+	t=1730111667; cv=none; b=bN30OcL0fNqx3MesEwMTMwMwbxtgITZ1DTBydfBQZHnr8ilAqb7fdOGtYryQ7f4aZlqI7k463HlnwcJM1nKbJTRriINsYCRvWadhbuDKyP5FIoIDwfSJ97FlPkSaiYTuQpeON5vhzaafjC48wgxADVaGaWec9/TF1U9Ava7goEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730111633; c=relaxed/simple;
-	bh=k1UfJG4wUYLjjRSm2i0WqLlzSLWlUdJsJRv0y6jMnQY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iRsBwM+cJ/rMNb+reeh4KYAnMe/qr4cs4hv39F0y+gGVtThIF+Yh2zJc4ebbR6SEctOrd9l69a2fS2kIH/HygxtLkt8fJGGTXXT3KjuOgq/FRKidhyJh8r1e9RRv4NysPht/MiA06gkXOn+bzH8JYUuXY7m0+6MERoJc/bGuL/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hgfL0+Yy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF655C4CEE3;
-	Mon, 28 Oct 2024 10:33:52 +0000 (UTC)
+	s=arc-20240116; t=1730111667; c=relaxed/simple;
+	bh=BMDEFuQeVZEJg877mQ38DYoOmNx83cPp9N8RmPmkZFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=metrGbzBE7lNPNQlBWZBj0rcf4VdiPW7uQk87mrJG+q1ryKaGJLrs/iydovk267qFD6Gamhxw7VjQOva6Cvl56ovBkW98iSZDmzro7p3cAOuydgcxhDKQ9IaQoQaR0KUS4AdZZGuvh+dznVCBqj8PFSzzLyE+xLmSpeqmQLh3Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l91Da8yH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BD6AC4CEE3;
+	Mon, 28 Oct 2024 10:34:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730111632;
-	bh=k1UfJG4wUYLjjRSm2i0WqLlzSLWlUdJsJRv0y6jMnQY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hgfL0+YyNiMIM2h1P8A3oeVeHsBbqnMU3gGTdAz9HE4+pvluUaN/CJ2ePYb4qnDuB
-	 W2fUmn7XuubX4Uodmth6W9y1txzjoT070YiSNLxEiSgBZgBEWL5VICAagn5xknN54L
-	 HNAWzDNtW06zdbs3tKx8Qv2R2OxWt2O+3TgTze3wx4ySpIGYtYn9GNoBg4/Go+5B/B
-	 0R910iLHrk3VvztDn1MKR0UCTrWOEoPPzi8urT26Hr7imjf5mXtUddSyJ6B0ZQSmYM
-	 O55jbnyhBw94KUDtb68XOYgf5ON1jJd2qn+fGQcv02uvkSfT/1kOjn3DAuQAbYdCB8
-	 p1xMKv2Xt+fkA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5N4I-007Wi1-Eb;
-	Mon, 28 Oct 2024 10:33:50 +0000
-Date: Mon, 28 Oct 2024 10:33:49 +0000
-Message-ID: <87plnktt2q.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>
-Subject: Re: [PATCH 3/4] arm64: mte: update code comments
-In-Reply-To: <20241028094014.2596619-4-aneesh.kumar@kernel.org>
-References: <20241028094014.2596619-1-aneesh.kumar@kernel.org>
-	<20241028094014.2596619-4-aneesh.kumar@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1730111667;
+	bh=BMDEFuQeVZEJg877mQ38DYoOmNx83cPp9N8RmPmkZFY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=l91Da8yHs/i7GCujEIGzJRNG4FL6DGQEZXXHd5EiRtQB5lI6cjy3A1XXEM0zLUd/u
+	 KPI6TWe8QO91T2LXs0fEpkC/B10rd4pFkoVkh3xkWtw5G0dNa4dc7Jgk0WbARtdMr3
+	 GD+63qAI6uBWKdENbf2xuLZ5JVxFo/zuZULqpLwC7gB2xqj0u4/ikFZ9qk3lAPzYjv
+	 vGPWwWR3u9LvhvrHuRhXznBMVm6SsLIJYBTKBUxk6jL4mkPzVd1mlplzdvBSlAD2Ll
+	 QKhpHn/2jf0N+J957m7yDH8Li6Y5V/FSujGjtY9PN7j6WxxeonfnrjMCWQcmdAxBKw
+	 6YYXtiVPSSlDw==
+Received: by pali.im (Postfix)
+	id 92F15A58; Mon, 28 Oct 2024 11:34:19 +0100 (CET)
+Date: Mon, 28 Oct 2024 11:34:19 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] cifs: Improve access without FILE_READ_ATTRIBUTES
+ permission
+Message-ID: <20241028103419.3whzfyrdvkvu5tpy@pali>
+References: <20241005160826.20825-1-pali@kernel.org>
+ <CAH2r5mtvp74nnU7ueqiyVrNLurM3ubQmBSTP=HcFqti=ZsWaNQ@mail.gmail.com>
+ <20241005184453.rdxetlsoszxzfqnt@pali>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: aneesh.kumar@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, Suzuki.Poulose@arm.com, steven.price@arm.com, will@kernel.org, catalin.marinas@arm.com, mark.rutland@arm.com, oliver.upton@linux.dev, joey.gouly@arm.com, yuzenghui@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241005184453.rdxetlsoszxzfqnt@pali>
+User-Agent: NeoMutt/20180716
 
-On Mon, 28 Oct 2024 09:40:13 +0000,
-"Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+On Saturday 05 October 2024 20:44:53 Pali Rohár wrote:
+> On Saturday 05 October 2024 13:32:12 Steve French wrote:
+> > The obvious question to check is whether this would lead to any issues
+> > if desired_access is not passed in in oparms in any cases (ie if it
+> > ends up 0),
 > 
-> commit d77e59a8fccd ("arm64: mte: Lock a page for MTE tag
-> initialisation") updated the locking such the kernel now allows
-> VM_SHARED mapping with MTE. Update the code comment to reflect this.
+> This is good point. IIRC if zero value is in OPEN/CREATE desired_access
+> request then SMB server returns STATUS_ACCESS_DENIED.
 > 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  arch/arm64/kvm/mmu.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> So it needs to be checked that desired_access is filled in all usage
+> correctly.
 
-This is a KVM patch. Please make sure you write the subject
-accordingly, matching the existing conventions (in this case, this
-should read something like: "KVM: arm64: MTE: Update...").
+I have done checks and seems that all callers put some non-zero desired
+access to smb2_open_file() call. So I think this should not be an issue.
 
+> > and also that this would not hurt any cases where we want
+> > to keep the handle cached (deferred close) but don't have sufficient
+> > permission for it to be usable by the subsequent operation (e.g.
+> > revalidate or stat)
 > 
-> diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-> index a509b63bd4dd..b5824e93cee0 100644
-> --- a/arch/arm64/kvm/mmu.c
-> +++ b/arch/arm64/kvm/mmu.c
-> @@ -1390,11 +1390,8 @@ static int get_vma_page_shift(struct vm_area_struct *vma, unsigned long hva)
->   * able to see the page's tags and therefore they must be initialised first. If
->   * PG_mte_tagged is set, tags have already been initialised.
->   *
-> - * The race in the test/set of the PG_mte_tagged flag is handled by:
-> - * - preventing VM_SHARED mappings in a memslot with MTE preventing two VMs
-> - *   racing to santise the same page
-> - * - mmap_lock protects between a VM faulting a page in and the VMM performing
-> - *   an mprotect() to add VM_MTE
-> + * The race in the test/set of the PG_mte_tagged flag is handled by
-> + * using PG_mte_lock and PG_mte_tagged together.
+> I see, so the code needs to be properly checked or tested that all these
+> conditions are handled.
 
-How? This comment is pretty content-free. TO be useful, you should
-elaborate on *how* these two are used together.
+It looks like that when rdwr_for_fscache is used then proper read/write
+desired access is asked.
 
->   */
->  static void sanitise_mte_tags(struct kvm *kvm, kvm_pfn_t pfn,
->  			      unsigned long size)
-> @@ -1646,7 +1643,10 @@ static int user_mem_abort(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
->  	}
->  
->  	if (!fault_is_perm && !device && kvm_has_mte(kvm)) {
-> -		/* Check the VMM hasn't introduced a new disallowed VMA */
-> +		/*
-> +		 *  not a permission fault implies a translation fault which
-> +		 *  means mapping the page for the first time
+During testing I have not spotted issues.
 
-How about an Access fault due to page ageing?
+Also to note, I checked SMB1 code and it already does not automatically
+add FILE_READ_ATTRIBUTES to desired access during open.
 
-Thanks,
+Could you schedule this change for some testing?
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+> > On Sat, Oct 5, 2024 at 11:10 AM Pali Rohár <pali@kernel.org> wrote:
+> > >
+> > > Linux SMB client currently is not able to access files for which do not
+> > > have FILE_READ_ATTRIBUTES permission.
+> > >
+> > > For example it is not able to write data into file on SMB server to
+> > > which has only write access (no read or read attributes access). And
+> > > applications are not able to get result of stat() syscall on such file.
+> > >
+> > > Test case against Windows SMB server:
+> > >
+> > > 1) On SMB server prepare file with only GENERIC_WRITE access for Everyone:
+> > >    ACL:S-1-1-0:ALLOWED/0x0/0x40000000
+> > >
+> > > 2) On SMB server remove all access for file's parent directory
+> > >
+> > > 3) Mount share by Linux SMB client and try to append data to that file:
+> > >    echo test >> /mnt/share/dir/file
+> > >
+> > > 4) Try to call: stat /mnt/share/dir/file
+> > >
+> > > Without this change the write test fails because Linux SMB client is trying
+> > > to open SMB path "\dir\file" with GENERIC_WRITE|FILE_READ_ATTRIBUTES. With
+> > > this change the test pass as Linux SMB client is not opening file with
+> > > FILE_READ_ATTRIBUTES access anymore.
+> > >
+> > > Similarly without this change the stat test always fails as Linux SMB
+> > > client is trying to read attributes via SMB2_OP_QUERY_INFO. With this
+> > > change, if SMB2_OP_QUERY_INFO fails then Linux SMB client fallbacks for
+> > > reading stat attributes via OPEN with MAXIMUM_ALLOWED access (which will
+> > > pass if there is some permission) and OPEN reply will contain attributes
+> > > required for stat().
+> > >
+> > > Pali Rohár (2):
+> > >   cifs: Do not issue SMB2 CREATE always with FILE_READ_ATTRIBUTES
+> > >   cifs: Improve stat() to work also without FILE_READ_ATTRIBUTES
+> > >
+> > >  fs/smb/client/cifspdu.h   |  1 +
+> > >  fs/smb/client/smb2file.c  |  1 -
+> > >  fs/smb/client/smb2glob.h  |  1 +
+> > >  fs/smb/client/smb2inode.c | 71 ++++++++++++++++++++++++++++++++++++++-
+> > >  4 files changed, 72 insertions(+), 2 deletions(-)
+> > >
+> > > --
+> > > 2.20.1
+> > >
+> > >
+> > 
+> > 
+> > -- 
+> > Thanks,
+> > 
+> > Steve
 
