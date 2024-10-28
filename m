@@ -1,75 +1,62 @@
-Return-Path: <linux-kernel+bounces-385376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5A69B366C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:26:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E2669B3672
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:27:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2707E1F230B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:26:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BED441C22298
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:27:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68055E73;
-	Mon, 28 Oct 2024 16:26:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034541DED59;
+	Mon, 28 Oct 2024 16:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLoTAyIs"
-Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k9rdmnsQ"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D135F18B48C;
-	Mon, 28 Oct 2024 16:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC5A18B48C;
+	Mon, 28 Oct 2024 16:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730132763; cv=none; b=TOKceCSTgm+dD2nIHt3xOMK8Ltq3o/7EM669cKrNIK0D+aOaceF5JLpPSKHZId4qBIEjM3MoeV2qgo0rEOCplNqkypA8vXb4gGglH4qOn5RhT7s7ofGQC53dFxN3hv410t32kUZbWdDyQa8i/Nyy/jaJCpbIjLazuWkMO+3O8JA=
+	t=1730132826; cv=none; b=YOFtVFgLrGAvk13dQRkbpo66kXl7y8hnPNmO/80NEaIzF2WniEYE/lp2W/3KCHkboyzrRNIGMYOw+MLjpJK1me4RaED6c9XhgAuu8AN21xRbiDzoWLVWlaR3yksLAH4j96rYII6/FaoUWvaFLg1KnCu1Pi4AwAqJDlSCucsC0yY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730132763; c=relaxed/simple;
-	bh=mQZSI004/P48i+HS6A49TOUpl/j7aAzwI0a9NzusncI=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KZQLIZXyxoBn6PGDEt6rR0jP+i6jBW9GftzVLSSN6LjfVamBZnQIL1RR7cdz5uIAaxSA2tcTR4jqxnqYq4ts9GiZPRahC0ZxiCJZoiORSIzdSZ+LL4jO8s/Suv1wA24majqxk1GvQfCpmfVBF8pJAXPJuIMj6ShGTPs1Ukbmbbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZLoTAyIs; arc=none smtp.client-ip=209.85.214.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20c693b68f5so46926015ad.1;
-        Mon, 28 Oct 2024 09:26:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730132761; x=1730737561; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zi/YPCKq2pnvwaWzJ1+lBWDNA5pML5O6ykDvgXbiSGY=;
-        b=ZLoTAyIsjJp2tCkoXregVU0jqwvJWlUrmKjicttVZsJ08q8eThIuEHEQCA+GvttNYH
-         naa39JshbnRvKbqC+S1t6UgQQjn3EDczP83tDb636kx3h31gUWZkTXD6Nmhr9wHSi0kH
-         U0iTQvVrW0vIoe7I5VJhSzJYZlSz1Q5uwsQMEvp2q/7dwtxfVA6xan/Q6q91H+UcUsuS
-         zb5NXE+7pR5D1duGSEB6laIePGf6R634tCC33++/Lj4SYKT1Q/XStbT0QvnAE57JyzPA
-         ogtlVZaqhaDDUBO+a0SyrWegJJWoM8lR/qgeQWZ4YJnr2USru+n35K0ByTZOzHRHYvev
-         p2Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730132761; x=1730737561;
-        h=content-transfer-encoding:in-reply-to:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zi/YPCKq2pnvwaWzJ1+lBWDNA5pML5O6ykDvgXbiSGY=;
-        b=liYladi3+hOWxsIzRxH81Rb9+m74DIYwe7Kusw6PY2tvftEH0Hl6Wfj3QFTE1oybsm
-         xbOJCsVPStvqgdilTfM2tYjuZdJQbMKk4IuCOhT0Fqcz50srpNqdntsZo7Rokobmlq5k
-         mG5YEOihIH6EywEdz3dgKntUCW6gG45H78e2XvU74asfX7wswv6fzoWVX3YiynOc2uRT
-         me4FVViYnLp+MOhTYXDH4fKXrPRlKSsDTF1u7LlktxWMRWl0jLqq7LRFLX9RtcSdZ0cw
-         2DLn3gyHXg46fNCNU5tdILo8b335uPAqb/XQ1taQxZwSvlkyhEt8a18mXsZpojJwxBug
-         VRjA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPGiS/OWTW3o1rUlvThUT293rmYAfXbirytWl9Qt8XMXDbpobfkMrlU1lKr7NRt9wnL3mYHbUW@vger.kernel.org, AJvYcCWfSWLe+GhetU8HaqYRkxzdYkAoHVznf5xtsQMoudfb5kihjjV8zyQ+f7aPb/rQjT4UmO47T2d3+tMbso4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3pwBZjoqppwa/A+G6Mq3DN9Tv3Z5CMPpxHvXZWH1ZlN5t3z0I
-	e5sauCgxEOQkLIfkMj/jMTzDo5rr99XQpLwcJEBWHR/5WsjikP1P
-X-Google-Smtp-Source: AGHT+IEEIhIcjSj9a4I/Em/9bk4VIo7UIAOODWRRjuGix7T52NUnL+2Mu/j8znXSNfqN/pfRwVna9Q==
-X-Received: by 2002:a17:902:e848:b0:20b:9998:e2f4 with SMTP id d9443c01a7336-210c6cf705bmr96246315ad.61.1730132760809;
-        Mon, 28 Oct 2024 09:26:00 -0700 (PDT)
-Received: from [127.0.0.1] ([103.156.242.194])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02eb81sm52187745ad.207.2024.10.28.09.25.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 09:26:00 -0700 (PDT)
-From: Celeste Liu <coelacanthushex@gmail.com>
-X-Google-Original-From: Celeste Liu <CoelacanthusHex@gmail.com>
-Message-ID: <109afaab-05c0-4228-8ea0-1dc1aabe904f@gmail.com>
-Date: Tue, 29 Oct 2024 00:25:54 +0800
+	s=arc-20240116; t=1730132826; c=relaxed/simple;
+	bh=qReZpycw9EEg3x9B00NH9Cf0otAKN/LgaoaGyoMOg1A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Lkjya48sqlE2g0arGD3k+8+kxrjISPh95lg9ub/wrEHU3H/1ZtHQ92IKk6/qqheL4iYYfnRQz5GqBwmgDOKNEVQmiRpFlTh1GSDnoPsbeRAPX0K/cqvYH7qNX4C2aAqVLGOd3uo1MfFxEDWz1vKZRC0Yy8tciUs8Spg7ZRhBl7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k9rdmnsQ; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49SGQtO5048725;
+	Mon, 28 Oct 2024 11:26:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730132815;
+	bh=jm8nliQ9ZSkhaHEqD8mj6U5Gqh4xXJKU1bvnESYYMic=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=k9rdmnsQ+q+KzBEe8t8WZfc7evxhT2486xYSVk1OmgM6DH5HgATHvyf/Q7Vcsd3EC
+	 BxUUplzOz4viktU0QM9cxevM3YzKyTOf263MN5ytUwrzjPT34lLVhoGd2hHXPo7G4O
+	 HvU8ZyLyEZ0YwNk3fwzv8jV1EkwnIXi6fBFxuYVs=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49SGQtZV101413
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 28 Oct 2024 11:26:55 -0500
+Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 28
+ Oct 2024 11:26:54 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 28 Oct 2024 11:26:54 -0500
+Received: from [137.167.6.238] (lt5cg1094w5k.dhcp.ti.com [137.167.6.238])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49SGQps4016257;
+	Mon, 28 Oct 2024 11:26:52 -0500
+Message-ID: <33f3b6a4-f907-4374-90ac-d81a81700936@ti.com>
+Date: Mon, 28 Oct 2024 18:26:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,55 +64,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv/entry: get correct syscall number from
- syscall_get_nr()
-Content-Language: en-GB-large
-To: Ron Economos <re@w6rz.net>, Thomas Gleixner <tglx@linutronix.de>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
- "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
- Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
- Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
- Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <87ldya4nv0.ffs@tglx>
- <3dc10d89-6c0c-4654-95ed-dd6f19efbad4@gmail.com> <87a5ep4k0n.ffs@tglx>
- <2b1a96b1-dbc5-40ed-b1b6-2c82d3df9eb2@gmail.com> <877c9t43jw.ffs@tglx>
- <81afb4bf-084b-e061-8ce4-90b76da16256@w6rz.net>
-In-Reply-To: <81afb4bf-084b-e061-8ce4-90b76da16256@w6rz.net>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH v3 12/17] wifi: cc33xx: Add scan.c, scan.h
+To: Simon Horman <horms@kernel.org>
+CC: Kalle Valo <kvalo@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Sabeeh Khan
+	<sabeeh-khan@ti.com>
+References: <20240806170018.638585-1-michael.nemanov@ti.com>
+ <20240806170018.638585-13-michael.nemanov@ti.com>
+ <20240809160355.GD1951@kernel.org>
+Content-Language: en-US
+From: "Nemanov, Michael" <michael.nemanov@ti.com>
+In-Reply-To: <20240809160355.GD1951@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-
-On 2024-10-28 08:17, Ron Economos wrote:
-> On 10/27/24 2:52 PM, Thomas Gleixner wrote:
->> On Mon, Oct 28 2024 at 01:01, Celeste Liu wrote:
->>> On 2024-10-27 23:56, Thomas Gleixner wrote:
->>>> Equivalently you need to be able to modify orig_a0 for changing arg0,
->>>> no?
->>> Ok.
->>>
->>> Greg, could you accept a backport a new API parameter for
->>> PTRACE_GETREGSET/PTRACE_SETREGSET to 4.19 LTS branch?
->> Fix the problem properly and put a proper Fixes tag on it and worry
->> about the backport later.
->>
->> Thanks,
->>
->>          tglx
->>
-> I wouldn't worry about backporting to the 4.19 kernel. It's essentially prehistoric for RISC-V. There's no device tree support for any hardware. Also, 4.19 will be going EOL very soon (December 2024).
-
-Ok, I will work on preparing a new patch to add a new set in 
-PTRACE_GETREGSET/PTRACE_SETREGSET.
-
+On 8/9/2024 7:03 PM, Simon Horman wrote:
+> On Tue, Aug 06, 2024 at 08:00:13PM +0300, Michael Nemanov wrote:
 > 
-> Ron
+> ...
 > 
+>> diff --git a/drivers/net/wireless/ti/cc33xx/scan.h b/drivers/net/wireless/ti/cc33xx/scan.h
+> 
+> ...
+> 
+>> +/**
+>> + * struct cc33xx_cmd_ssid_list - scan SSID list description
+>> + *
+>> + * @role_id:            roleID
+>> + *
+>> + * @num_of_ssids:       Number of SSID in the list. MAX 16 entries
+> 
+> @num_of_ssids -> @n_ssids
+> 
+>> + *
+>> + * @ssid_list:          SSIDs to scan for (active scan only)
+> 
+> @ssid_list -> @ssids
+ >
+
+Thanks for the feedback, will fix.
+
+> Please document all non-private fields,
+> and annotate those that are private.
+> 
+
+Not sure I follow. You mean mark private vs. non private members in the 
+documentation? If so, private to what (the CC33xx driver or the 
+underlying HW)?
+
+> There are a number of similar minor Kernel doc problems with this patch.
+> Please consider using W=1 builds or ./scripts/kernel-doc -none
+> (bonus points for -Wall)
+> 
+
+Ran both, got warning for "no structured comments found" on multiple 
+files. Is that it?
+
+Thanks and regards,
+Michael.
+
+
+
+
+
 
