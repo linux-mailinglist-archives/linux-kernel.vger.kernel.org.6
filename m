@@ -1,132 +1,368 @@
-Return-Path: <linux-kernel+bounces-384432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1BB9B2A0A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:13:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EB269B2A10
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:19:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C22E51F20595
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:13:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B655A1F22236
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F190518FDA9;
-	Mon, 28 Oct 2024 08:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DDE0190468;
+	Mon, 28 Oct 2024 08:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Vd3Deyy8"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="JVo2gvMe"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF3B8472;
-	Mon, 28 Oct 2024 08:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC5B6F2FE
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 08:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730103217; cv=none; b=KmFY+t68CoMMZzbsK3tzjU9Y8oGfeFooDflHTA27+NG3DsFDFBx7PDQPjI0xlk0UHPQP3qCtu2+NoX7w3mDkcS/SKjA0Ix57o336+aj1I8J29RQzn4pxH/htkMNLyxW8icUJfw9Qu8OdbudNUkcL3PZZtAHS07p4SRuvyXMqcbU=
+	t=1730103533; cv=none; b=Ypm+qLOaUrIJw6WMWbY2KY502EHgs3a6WK3Bfk+Xm3kJoQXWam0SCoZC3eBfE0lfE9Ro0Zjs3rAvld8nq0XVUV/hn/j7HVsa/+xEsCrq/36EhRA8MWB+w1fp51PJj2EaBm7qcK6dhZz4TMkd5A9sXbYkKMQPlNtkvH5krzjGNOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730103217; c=relaxed/simple;
-	bh=MNH+2CCeJjB+cw62GkUvxpkynf/ch6xltva3NsWETQQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HVrFgv/lNK4hhekWcVJRe/hHuBJt9MmnjIzhHwu/5Dgchm1yZv1N5mH37PjtY2ZI7O20SwK+0+4n59qRe/1hHD8RpXfyRfdhwvVfErmEse/1sFsQXdhqboMyi2FCrvbVv31mcnbt8oDIdCqo0zpIdcdDbVeDpw02afFAFJ6YZ4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Vd3Deyy8; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7EDF01BF203;
-	Mon, 28 Oct 2024 08:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730103213;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ftAOobpcZtzREeqCUhcS3Bfuff8MNGFDmOerJINyz3M=;
-	b=Vd3Deyy840DvizNWpyDBvqibEFEkpd4AH+xicihGDAQA60P8hMm0HHdtxC6zbGcY+186/d
-	aNMY/TrPzeMgXvQEova4qJvpmyMrP7DRpIzcenWvcZSEaJNbcrEf8aZDFl0gYdRgu6mFGZ
-	zFCSOuswcdp5zB6nMvRaDHQfW5jbzzD1b8ji10pPbpcljnsuvTAIiwzjM+7+TpcOugDW3r
-	hj+8aloU7gBSbVilWF2AbDd3V4epwnhjmkdNdnw+CEPN7cwL111wBjEgdW5uR6a2yt0pYR
-	TeRYFFnXQt8nZjuPMQluPrb6TpjTIK7UZUxGn00pX1QSk55TNCfK7URTRvOWUw==
-Date: Mon, 28 Oct 2024 09:13:31 +0100
-From: Herve Codina <herve.codina@bootlin.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Marek Vasut <marex@denx.de>,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery
- mechanism
-Message-ID: <20241028091331.6f67e29e@bootlin.com>
-In-Reply-To: <20241027162350.GA15853@pendragon.ideasonboard.com>
-References: <20241024095539.1637280-1-herve.codina@bootlin.com>
-	<20241024095539.1637280-3-herve.codina@bootlin.com>
-	<20241027162350.GA15853@pendragon.ideasonboard.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730103533; c=relaxed/simple;
+	bh=oTZcLPgcKD+r+j82teHUk2WjErDiTFdhz3SQ/oyqBBY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ndC+EYwVW8RhS1+XyNP5kTAx5rtRp4eKlEe4YCX3rtBMiJsbMviaL9Sqz5g5xLm3dq0YCL4EzC5nmFiA2tObePH1EQagieTjlunTt3esuJZQOm0M83sa+3KqSSIe8hcJR1JQocJwGCrmGpeLG0uMCWCE3zaoJbmVvb0Dd3vJqCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=JVo2gvMe; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4A6EB346;
+	Mon, 28 Oct 2024 09:18:36 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730103518;
+	bh=oTZcLPgcKD+r+j82teHUk2WjErDiTFdhz3SQ/oyqBBY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JVo2gvMep981S+CQqvIUtYkte+efuo8Gy2cKxpe9ltI3KEGG2BnjW4sbXiOdm8SEp
+	 Eymlwwtme+7uZU+z7NxXw/vZTln2U6zv18VU+HB61PkfHtHo3367KQmrr9nbQMf8oa
+	 HkvPWD1z5L+9lk6dEfjlR7l/cXyLrykT9CvEdsXQ=
+Message-ID: <3d1d1008-0178-412a-ba26-2e1a956cfed3@ideasonboard.com>
+Date: Mon, 28 Oct 2024 10:18:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/omap: Clean up deadcode functions
+To: linux@treblig.org
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch
+References: <20241026220010.93773-1-linux@treblig.org>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20241026220010.93773-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Laurent,
+Hi,
 
-On Sun, 27 Oct 2024 18:23:50 +0200
-Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
-
-[...]
-> > +static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
-> > +{
-> > +	struct drm_device *dev = sn65dsi83->bridge.dev;
-> > +	struct drm_modeset_acquire_ctx ctx;
-> > +	struct drm_atomic_state *state;
-> > +	int err;
-> > +
-> > +	/* Use operation done in drm_atomic_helper_suspend() followed by
-> > +	 * operation done in drm_atomic_helper_resume() but without releasing
-> > +	 * the lock between suspend()/resume()
-> > +	 */
-> > +
-> > +	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
-> > +
-> > +	state = drm_atomic_helper_duplicate_state(dev, &ctx);
-> > +	if (IS_ERR(state)) {
-> > +		err = PTR_ERR(state);
-> > +		goto unlock;
-> > +	}
-> > +
-> > +	err = drm_atomic_helper_disable_all(dev, &ctx);
-> > +	if (err < 0)
-> > +		goto unlock;
-> > +
-> > +	drm_mode_config_reset(dev);
-> > +
-> > +	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);  
+On 27/10/2024 01:00, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> Committing a full atomic state from a bridge driver in an asynchronous
-> way seems quite uncharted territory, and it worries me. It's also a very
-> heavyweight, you disable all outputs here, instead of focussing on the
-> output connected to the bridge. Can you either implement something more
-> local, resetting the bridge only, or create a core helper to handle this
-> kind of situation, on a per-output basis ?
+> dispc_enable_fifomerge() last use was removed by 2012's
+> commit 85099f11bd03 ("Revert "OMAPDSS: APPLY: add fifo merge support
+> funcs"")
+> 
+> dispc_has_writeback(), dispc_wb_get_framedone_irq(), dispc_wb_go(),
+> dispc_wb_go_busy() and dispc_wb_setup() were changed from statics
+> to public symbols and unwired from a structure by 2020's
+> commit dac62bcafeaa ("drm/omap: remove dispc_ops")
+> but didn't have any users.
+> 
+> dispc_mgr_get_clock_div() got renamed from dispc_get_clock_div()
+> and it's last use was removed in 2011 by commit
+> 42c9dee82129 ("OMAP: DSS2: Remove FB_OMAP_BOOTLOADER_INIT support")
+> 
+> Remove them.
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>   drivers/gpu/drm/omapdrm/dss/dispc.c | 146 ----------------------------
+>   drivers/gpu/drm/omapdrm/dss/dss.h   |  13 ---
+>   2 files changed, 159 deletions(-)
+> 
 
-A full restart of the bridge (power off/on) is needed and so we need to
-redo the initialization sequence. This initialization sequence has to be
-done with the DSI data lanes (bridge inputs) driven in LP11 state and so
-without any video stream. Only focussing on bridge outputs will not be
-sufficient. That's why I brought the pipeline down and restarted it.
+Thanks, looks good to me. I'll push to drm-misc-next.
 
-Of course, I can copy/paste sn65dsi83_reset_pipeline() to a core helper
-function. Is drm_atomic_helper_reset_all() could be a good candidate?
+  Tomi
 
-Best regards,
-Hervé
+> diff --git a/drivers/gpu/drm/omapdrm/dss/dispc.c b/drivers/gpu/drm/omapdrm/dss/dispc.c
+> index 993691b3cc7e..9344855c4887 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/dispc.c
+> +++ b/drivers/gpu/drm/omapdrm/dss/dispc.c
+> @@ -691,11 +691,6 @@ u32 dispc_mgr_get_sync_lost_irq(struct dispc_device *dispc,
+>   	return mgr_desc[channel].sync_lost_irq;
+>   }
+>   
+> -u32 dispc_wb_get_framedone_irq(struct dispc_device *dispc)
+> -{
+> -	return DISPC_IRQ_FRAMEDONEWB;
+> -}
+> -
+>   void dispc_mgr_enable(struct dispc_device *dispc,
+>   			     enum omap_channel channel, bool enable)
+>   {
+> @@ -726,30 +721,6 @@ void dispc_mgr_go(struct dispc_device *dispc, enum omap_channel channel)
+>   	mgr_fld_write(dispc, channel, DISPC_MGR_FLD_GO, 1);
+>   }
+>   
+> -bool dispc_wb_go_busy(struct dispc_device *dispc)
+> -{
+> -	return REG_GET(dispc, DISPC_CONTROL2, 6, 6) == 1;
+> -}
+> -
+> -void dispc_wb_go(struct dispc_device *dispc)
+> -{
+> -	enum omap_plane_id plane = OMAP_DSS_WB;
+> -	bool enable, go;
+> -
+> -	enable = REG_GET(dispc, DISPC_OVL_ATTRIBUTES(plane), 0, 0) == 1;
+> -
+> -	if (!enable)
+> -		return;
+> -
+> -	go = REG_GET(dispc, DISPC_CONTROL2, 6, 6) == 1;
+> -	if (go) {
+> -		DSSERR("GO bit not down for WB\n");
+> -		return;
+> -	}
+> -
+> -	REG_FLD_MOD(dispc, DISPC_CONTROL2, 1, 6, 6);
+> -}
+> -
+>   static void dispc_ovl_write_firh_reg(struct dispc_device *dispc,
+>   				     enum omap_plane_id plane, int reg,
+>   				     u32 value)
+> @@ -1498,17 +1469,6 @@ void dispc_ovl_set_fifo_threshold(struct dispc_device *dispc,
+>   				min(high, 0xfffu));
+>   }
+>   
+> -void dispc_enable_fifomerge(struct dispc_device *dispc, bool enable)
+> -{
+> -	if (!dispc_has_feature(dispc, FEAT_FIFO_MERGE)) {
+> -		WARN_ON(enable);
+> -		return;
+> -	}
+> -
+> -	DSSDBG("FIFO merge %s\n", enable ? "enabled" : "disabled");
+> -	REG_FLD_MOD(dispc, DISPC_CONFIG, enable ? 1 : 0, 14, 14);
+> -}
+> -
+>   void dispc_ovl_compute_fifo_thresholds(struct dispc_device *dispc,
+>   				       enum omap_plane_id plane,
+>   				       u32 *fifo_low, u32 *fifo_high,
+> @@ -2814,95 +2774,6 @@ int dispc_ovl_setup(struct dispc_device *dispc,
+>   	return r;
+>   }
+>   
+> -int dispc_wb_setup(struct dispc_device *dispc,
+> -		   const struct omap_dss_writeback_info *wi,
+> -		   bool mem_to_mem, const struct videomode *vm,
+> -		   enum dss_writeback_channel channel_in)
+> -{
+> -	int r;
+> -	u32 l;
+> -	enum omap_plane_id plane = OMAP_DSS_WB;
+> -	const int pos_x = 0, pos_y = 0;
+> -	const u8 zorder = 0, global_alpha = 0;
+> -	const bool replication = true;
+> -	bool truncation;
+> -	int in_width = vm->hactive;
+> -	int in_height = vm->vactive;
+> -	enum omap_overlay_caps caps =
+> -		OMAP_DSS_OVL_CAP_SCALE | OMAP_DSS_OVL_CAP_PRE_MULT_ALPHA;
+> -
+> -	if (vm->flags & DISPLAY_FLAGS_INTERLACED)
+> -		in_height /= 2;
+> -
+> -	DSSDBG("dispc_wb_setup, pa %x, pa_uv %x, %d,%d -> %dx%d, cmode %x, "
+> -		"rot %d\n", wi->paddr, wi->p_uv_addr, in_width,
+> -		in_height, wi->width, wi->height, wi->fourcc, wi->rotation);
+> -
+> -	r = dispc_ovl_setup_common(dispc, plane, caps, wi->paddr, wi->p_uv_addr,
+> -		wi->buf_width, pos_x, pos_y, in_width, in_height, wi->width,
+> -		wi->height, wi->fourcc, wi->rotation, zorder,
+> -		wi->pre_mult_alpha, global_alpha, wi->rotation_type,
+> -		replication, vm, mem_to_mem, DRM_COLOR_YCBCR_BT601,
+> -		DRM_COLOR_YCBCR_LIMITED_RANGE);
+> -	if (r)
+> -		return r;
+> -
+> -	switch (wi->fourcc) {
+> -	case DRM_FORMAT_RGB565:
+> -	case DRM_FORMAT_RGB888:
+> -	case DRM_FORMAT_ARGB4444:
+> -	case DRM_FORMAT_RGBA4444:
+> -	case DRM_FORMAT_RGBX4444:
+> -	case DRM_FORMAT_ARGB1555:
+> -	case DRM_FORMAT_XRGB1555:
+> -	case DRM_FORMAT_XRGB4444:
+> -		truncation = true;
+> -		break;
+> -	default:
+> -		truncation = false;
+> -		break;
+> -	}
+> -
+> -	/* setup extra DISPC_WB_ATTRIBUTES */
+> -	l = dispc_read_reg(dispc, DISPC_OVL_ATTRIBUTES(plane));
+> -	l = FLD_MOD(l, truncation, 10, 10);	/* TRUNCATIONENABLE */
+> -	l = FLD_MOD(l, channel_in, 18, 16);	/* CHANNELIN */
+> -	l = FLD_MOD(l, mem_to_mem, 19, 19);	/* WRITEBACKMODE */
+> -	if (mem_to_mem)
+> -		l = FLD_MOD(l, 1, 26, 24);	/* CAPTUREMODE */
+> -	else
+> -		l = FLD_MOD(l, 0, 26, 24);	/* CAPTUREMODE */
+> -	dispc_write_reg(dispc, DISPC_OVL_ATTRIBUTES(plane), l);
+> -
+> -	if (mem_to_mem) {
+> -		/* WBDELAYCOUNT */
+> -		REG_FLD_MOD(dispc, DISPC_OVL_ATTRIBUTES2(plane), 0, 7, 0);
+> -	} else {
+> -		u32 wbdelay;
+> -
+> -		if (channel_in == DSS_WB_TV_MGR)
+> -			wbdelay = vm->vsync_len + vm->vback_porch;
+> -		else
+> -			wbdelay = vm->vfront_porch + vm->vsync_len +
+> -				vm->vback_porch;
+> -
+> -		if (vm->flags & DISPLAY_FLAGS_INTERLACED)
+> -			wbdelay /= 2;
+> -
+> -		wbdelay = min(wbdelay, 255u);
+> -
+> -		/* WBDELAYCOUNT */
+> -		REG_FLD_MOD(dispc, DISPC_OVL_ATTRIBUTES2(plane), wbdelay, 7, 0);
+> -	}
+> -
+> -	return 0;
+> -}
+> -
+> -bool dispc_has_writeback(struct dispc_device *dispc)
+> -{
+> -	return dispc->feat->has_writeback;
+> -}
+> -
+>   int dispc_ovl_enable(struct dispc_device *dispc,
+>   			    enum omap_plane_id plane, bool enable)
+>   {
+> @@ -3742,23 +3613,6 @@ void dispc_mgr_set_clock_div(struct dispc_device *dispc,
+>   				  cinfo->pck_div);
+>   }
+>   
+> -int dispc_mgr_get_clock_div(struct dispc_device *dispc,
+> -			    enum omap_channel channel,
+> -			    struct dispc_clock_info *cinfo)
+> -{
+> -	unsigned long fck;
+> -
+> -	fck = dispc_fclk_rate(dispc);
+> -
+> -	cinfo->lck_div = REG_GET(dispc, DISPC_DIVISORo(channel), 23, 16);
+> -	cinfo->pck_div = REG_GET(dispc, DISPC_DIVISORo(channel), 7, 0);
+> -
+> -	cinfo->lck = fck / cinfo->lck_div;
+> -	cinfo->pck = cinfo->lck / cinfo->pck_div;
+> -
+> -	return 0;
+> -}
+> -
+>   u32 dispc_read_irqstatus(struct dispc_device *dispc)
+>   {
+>   	return dispc_read_reg(dispc, DISPC_IRQSTATUS);
+> diff --git a/drivers/gpu/drm/omapdrm/dss/dss.h b/drivers/gpu/drm/omapdrm/dss/dss.h
+> index 4ff02fbc0e71..a8b231ed4f4b 100644
+> --- a/drivers/gpu/drm/omapdrm/dss/dss.h
+> +++ b/drivers/gpu/drm/omapdrm/dss/dss.h
+> @@ -416,7 +416,6 @@ u32 dispc_mgr_get_framedone_irq(struct dispc_device *dispc,
+>   				       enum omap_channel channel);
+>   u32 dispc_mgr_get_sync_lost_irq(struct dispc_device *dispc,
+>   				       enum omap_channel channel);
+> -u32 dispc_wb_get_framedone_irq(struct dispc_device *dispc);
+>   
+>   u32 dispc_get_memory_bandwidth_limit(struct dispc_device *dispc);
+>   
+> @@ -458,20 +457,11 @@ int dispc_ovl_setup(struct dispc_device *dispc,
+>   int dispc_ovl_enable(struct dispc_device *dispc,
+>   			    enum omap_plane_id plane, bool enable);
+>   
+> -bool dispc_has_writeback(struct dispc_device *dispc);
+> -int dispc_wb_setup(struct dispc_device *dispc,
+> -		   const struct omap_dss_writeback_info *wi,
+> -		   bool mem_to_mem, const struct videomode *vm,
+> -		   enum dss_writeback_channel channel_in);
+> -bool dispc_wb_go_busy(struct dispc_device *dispc);
+> -void dispc_wb_go(struct dispc_device *dispc);
+> -
+>   void dispc_enable_sidle(struct dispc_device *dispc);
+>   void dispc_disable_sidle(struct dispc_device *dispc);
+>   
+>   void dispc_lcd_enable_signal(struct dispc_device *dispc, bool enable);
+>   void dispc_pck_free_enable(struct dispc_device *dispc, bool enable);
+> -void dispc_enable_fifomerge(struct dispc_device *dispc, bool enable);
+>   
+>   typedef bool (*dispc_div_calc_func)(int lckd, int pckd, unsigned long lck,
+>   		unsigned long pck, void *data);
+> @@ -494,9 +484,6 @@ void dispc_ovl_compute_fifo_thresholds(struct dispc_device *dispc,
+>   void dispc_mgr_set_clock_div(struct dispc_device *dispc,
+>   			     enum omap_channel channel,
+>   			     const struct dispc_clock_info *cinfo);
+> -int dispc_mgr_get_clock_div(struct dispc_device *dispc,
+> -			    enum omap_channel channel,
+> -			    struct dispc_clock_info *cinfo);
+>   void dispc_set_tv_pclk(struct dispc_device *dispc, unsigned long pclk);
+>   
+>   #ifdef CONFIG_OMAP2_DSS_COLLECT_IRQ_STATS
+
 
