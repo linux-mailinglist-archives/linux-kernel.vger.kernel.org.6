@@ -1,143 +1,101 @@
-Return-Path: <linux-kernel+bounces-384674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36419B2D1A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:43:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36A29B2D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:43:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF781F22AD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68665282B3D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:43:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8093C1D54C2;
-	Mon, 28 Oct 2024 10:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A548A1D416B;
+	Mon, 28 Oct 2024 10:43:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2SEh0Mr"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="DX2w+DMZ"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BC3192B7A;
-	Mon, 28 Oct 2024 10:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63F6F192B98;
+	Mon, 28 Oct 2024 10:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112169; cv=none; b=tc/j7j6qyh/ojYGg8gz5gd5SUDSlvPRFmp+X7vEf489zqM3ZUGWIk2KoxB9z+apFcD1cccWdOZxr7PbFvdaLcGa5mmTrjZYEwCE5sI/PTlg61LSHB4vlHiw/ULhKMon/RL3xdmLBTlTvvDTEhjTuEUuLCTgTpEgq4nCcE96tqX4=
+	t=1730112210; cv=none; b=ZjfExa+g28f+85xYA0knoCJLIoASsUYpWyELRlW0sk70LwEWrq8fwBfiBVibJ/+6zHVSo9IvTUe2Em6rSVItnKrMu14h9eL3sRy6ayfVgg0rmZFQHcgoOqqBEhQsQyD1+UmcbasNb6DWCeNZm5o5/feQEpXmDgCv1J281gmHei0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112169; c=relaxed/simple;
-	bh=PJtkT24Z/TTon2g/ozKDLIhO9vz+L3zrXxrTJsClTpw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dLXZnYLTGy7l+lD3t3lDWiE08S9SMmGzXAewrBTrCB1/SkjpdGUuEoZDi5ksu2lq1LJz8gfakF5ZcfzCnqysN3WamOF0kYVbjTKftMXleJngzpFjAxXVkcSbqNxWpvrYjvlpiuDB2pP5qgJzo8ypOustxV2dw+0pb17Aq7d8DCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2SEh0Mr; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-71806621d42so2369114a34.3;
-        Mon, 28 Oct 2024 03:42:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730112167; x=1730716967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOmFAfCnDJXvI8RF8TapIJvUf9gtYEA5J0bX0oM9YcA=;
-        b=Z2SEh0Mr0l8mRTpxLCuZnsFAlSfC4n6lyIMfRHLI2jQeJb8QnAUV1hM/q5GCIQDIGQ
-         uvxc3cJjtZxeqaCW9igwdXo5oZj2PICyrgq1/g//+Zg15wQ6CVPeDenQ9epezO/5HURd
-         T4EgKvKJhF7fCHJTcyQsRJaI5ulVYdyzgF8uuAskiqB5I6GJTz8A04d7z7Nz7RWjerFR
-         vu+XMsxN8SnPsXC5o+0LVnsl+jByR5rvBen3UuF0YF9yxYvdu/XGG4q+If5nJQwvNS3Y
-         GwIr59Zd9Xa8fhF7MJXDGGLzzGABgHqUPgWp17FvhP23PJ6Jy361ZEFF8q5unslaNbkN
-         HovA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730112167; x=1730716967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oOmFAfCnDJXvI8RF8TapIJvUf9gtYEA5J0bX0oM9YcA=;
-        b=o95NBmmZbk3yPaJhzJayrEaTLiYlV+m1vhoIh1pEXJsbyqjMklYJN2p8pDADNizPfy
-         p9Me1IP+dshbr8WlOZBS6TYGGNVyZAs4THqt4DFLZ4TB5XAccJHrL/AF3RLdmJm97ehp
-         RmcZwtAg6XRWWSAMiVOQOJVJ8QMGdxfon8Idt9AqjpnZAiERew8/84RKuRu0yMlN27bA
-         9WDknJtlHjXP/t/uXXsGKn9QbH0BL/hjGW2enJn4AGa8ZqjaXn9cNG4uNC9I5rAiaEuc
-         qjWc3xSZm3MnZ6elzP22SJcv84EsIpO/Nu3QsfOlkdvm0xk3dSWfFNJWl3n7nLwkCPkB
-         QU6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVRQxAcSNENMEXp2e39GnzuMTIEcDv8WZ0fhXeaUFN6/W2/PhbxQLa17/IQpfqUe4o7dyt+yerH0/0XHCk=@vger.kernel.org, AJvYcCXtiOdJl8xVajgXKuz+lbyDMX0R/2SE9yRkIlkg3zII5EnYxE33hrmjZxDhfiCEcdZ1Xr28Mj3gh9O4@vger.kernel.org
-X-Gm-Message-State: AOJu0YxdPmK7UgOmruE5djKFC6nWSbgLizo2ew5GTeu3eOIHZYRRQjOJ
-	Dp3lP54kPXKHD9+4RXRj6M2c55MD7Su/Xu6Z+EpEsjnyLDon+AXF
-X-Google-Smtp-Source: AGHT+IHuYND158uLrfePBzGMCJRxhcuOVOFc3RZKnszbWTqowu40j35MBXivAfLMiEsDRSYX7hagXQ==
-X-Received: by 2002:a05:6830:378a:b0:718:4198:f7ea with SMTP id 46e09a7af769-71868287219mr7017933a34.23.1730112167078;
-        Mon, 28 Oct 2024 03:42:47 -0700 (PDT)
-Received: from localhost.localdomain ([119.28.17.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc867995csm5443807a12.22.2024.10.28.03.42.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 03:42:46 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: alexjlzheng@gmail.com
-Cc: alexjlzheng@tencent.com,
-	cem@kernel.org,
-	chandanbabu@kernel.org,
-	dchinner@redhat.com,
-	djwong@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	zhangjiachen.jaycee@bytedance.com
-Subject: Re: [PATCH] xfs: fix the judgment of whether the file already has extents
-Date: Mon, 28 Oct 2024 18:42:42 +0800
-Message-ID: <20241028104242.1114200-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <20241028103332.1108203-1-alexjlzheng@tencent.com>
-References: <20241028103332.1108203-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1730112210; c=relaxed/simple;
+	bh=dKU44921LGxtTNZHWpKiGiGg9xvb/uYDKjrnzhUjTJg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pVe8rCemu+S4YWej62mSM02Lv/DrlFyMHQBLLtXQY9JkjbYdKWWuSvoM4c2ADJwp3BzMzcoGlBKTASR3GTAccie6rqoAoaCBPPflmN1l+M6BVoVYhP8CSyG9QCNIiMdUawY/s3kRDywc/NICePSfUfn6x6PEj8eSiIlexdJZkPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=DX2w+DMZ; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 67E5FC0003;
+	Mon, 28 Oct 2024 10:43:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730112205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=DOgf6ez67TZng8zwmp8sVft1rCsBn9PrKnSYU3fqd8Y=;
+	b=DX2w+DMZsjXeEOcfMxF897y+za+Vv2VoDcONqf09RAKxoi0f6P2gQfl9k8umxautxpMOaL
+	eft7mBMVLmj4RKfeVZBRdGFq2CF7z0YNOg+z1/nO75j0LAqqsgGtFThhwWZ6OZsh2mY+Uz
+	pUR0QuCuImCM5KYYtjbQ8t/bmxLGUQSN5sPjaucOBkOH68pdxaFVCaazioVD2ZBW6O6I/x
+	toG8itNFd5UBtlQIpH7QOAqyFV0KmM18OlCJyx9zINsQnPgLyR4GNk/c5K5cfpEGW5jmPz
+	4+9teLM9pq44NMQdGNkwZtotJygpYJGzkpsgFNFHTTNrTg3QsyPiayL5j8A2eA==
+From: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+Date: Mon, 28 Oct 2024 11:43:24 +0100
+Subject: [PATCH] riscv: dts: sophgo: fix pinctrl base-address
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241028-fix-address-v1-1-dcbe21e59ccf@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAMtqH2cC/x2MQQqAIBAAvyJ7TtBFKPpKdJB1rb1YuBCB+Pek4
+ zDMNFCuwgqraVD5EZWrDPCTATpjOdhKGgzoMHiHi83y2phSZVXLc3YUHEdCglHclYf+b9ve+we
+ 7JKHrXQAAAA==
+X-Change-ID: 20241028-fix-address-e7f0c40eac2c
+To: Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@outlook.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ =?utf-8?q?Miqu=C3=A8l_Raynal?= <miquel.raynal@bootlin.com>, 
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: thomas.bonnefille@bootlin.com
 
-On Mon, 28 Oct 2024 18:33:32 +0800, alexjlzheng@tencent.com wrote:
-> On Mon, 28 Oct 2024 02:41:01 -0700, hch@infradead.org wrote:
-> > On Sun, Oct 27, 2024 at 02:01:16AM +0800, alexjlzheng@gmail.com wrote:
-> > > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> > > 
-> > > When we call create(), lseek() and write() sequentially, offset != 0
-> > > cannot be used as a judgment condition for whether the file already
-> > > has extents.
-> > > 
-> > > This patch uses prev.br_startoff instead of offset != 0.
-> >
-> > This changed the predicate from "are we at offset 0" to "are there
-> > any allocations before that".  That's a pretty big semantic change.
-> > Maybe a good one, maybe not.  Can you explain what workload it helps
-> > you with?
-> 
-> 
-> Thanks for your reply.
-> 
-> I noticed this because I was confused when reading the code here. The code
-> comment here says:
-> 
-> /*
->  * If there are already extents in the file, try an exact EOF block
->  * allocation to extend the file as a contiguous extent. If that fails,
->  * or it's the first allocation in a file, just try for a stripe aligned
->  * allocation.
->  */
-> 
-> But as you said, the semantics of the current code is "are we at offset 0",
-> not "are there any allocations before that".
+Fix the base-address of the pinctrl controller to match its register
+address.
 
-By the way, we only get here if got is or after EOF, so "are there any allocations
-before that" means "are there already extents in the file".
+Signed-off-by: Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+---
+ arch/riscv/boot/dts/sophgo/sg2002.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thank you, again. :)
-Jinliang Zheng
+diff --git a/arch/riscv/boot/dts/sophgo/sg2002.dtsi b/arch/riscv/boot/dts/sophgo/sg2002.dtsi
+index 242fde84443f0d6a2c8476666dfa3d72727071b1..6616f578d190f7aa2a82b233fa9c55267b41ee0e 100644
+--- a/arch/riscv/boot/dts/sophgo/sg2002.dtsi
++++ b/arch/riscv/boot/dts/sophgo/sg2002.dtsi
+@@ -16,7 +16,7 @@ memory@80000000 {
+ 	};
+ 
+ 	soc {
+-		pinctrl: pinctrl@3008000 {
++		pinctrl: pinctrl@3001000 {
+ 			compatible = "sophgo,sg2002-pinctrl";
+ 			reg = <0x03001000 0x1000>,
+ 			      <0x05027000 0x1000>;
 
-> 
-> Therefore, I think it is better to use "prev.br_startoff != NULLFILEOFF"
-> instead of the current "offset != 0", at least its semantics are more
-> consistent with the intention in the code comment and reduce confusion.
-> 
-> But if the semantics here have indeed changed to the point where it is
-> inconsistent with the code comment, my suggestion is to update the code
-> comment here.
-> 
-> Thank you. :)
-> Jinliang Zheng
+---
+base-commit: 45a544a62ef7cac9ecc69585a90da72ca68af898
+change-id: 20241028-fix-address-e7f0c40eac2c
+
+Best regards,
+-- 
+Thomas Bonnefille <thomas.bonnefille@bootlin.com>
+
 
