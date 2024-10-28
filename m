@@ -1,99 +1,334 @@
-Return-Path: <linux-kernel+bounces-384624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E210F9B2C84
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:14:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA9A9B2C7E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9908B1F2233A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:14:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 113F6B21CD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA2C71D61AA;
-	Mon, 28 Oct 2024 10:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D0A1D3639;
+	Mon, 28 Oct 2024 10:13:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H1RJ0+9o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="b5QHTaPd"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295C21D5CFA;
-	Mon, 28 Oct 2024 10:13:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9551D2704
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 10:13:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730110395; cv=none; b=Era9zVzSyR7MDpqWEIFfNVmIJeUgZ14Wo19Fu5ZI0HalGsP8xzgckayNV9ZXPKWkCbOKRJrrhOQACvHhBHZeTWe2kr6bQ4zq8xJyLj7bvBrx4yRSvdalmclicBZscHp8aUMOstXr3IMYg5NAwAnRITVH8s2yNc9SKiU1PQNYZ2s=
+	t=1730110389; cv=none; b=fKoYllXs7w1NBozC981G+GVEtZJ+T05Ylk4Y8qkbDsOvgZDLu9QUTyEDkHA8jojah5Wo++oC/uNFAoPGLefAx1MsjTCmIhaW43TQpMIwBb7EaX5i/TDTuTTaSw6k52iQZEP+5A4EJp1sL+AsKhPLbYMYnH1XwD/XMvBfzTWffrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730110395; c=relaxed/simple;
-	bh=7KsvxSW61uQXonMB89EN9dZ0RmwQxvzG3blD9ztYLGQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QXDWY/1gDEtc2W0+7Ul8wWsWpbH1FxhyW26jszJHGOsHXGGlH/UZ+ne+uS/v924lVAO+rghHBMChnY4hycxbO7UMa3jDrt8Wufbg4Kk+X2lAmOWv+c3WRfTWlPI9qv5qY1xkz1sLBaXPqseYb4nMKWaMdlhOeq8/mQh6aPL3/84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H1RJ0+9o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52402C4CEE7;
-	Mon, 28 Oct 2024 10:13:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730110394;
-	bh=7KsvxSW61uQXonMB89EN9dZ0RmwQxvzG3blD9ztYLGQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H1RJ0+9ok5hGCX2SIgJq1YQA43g8Ak0DnLjrU3LfONI9aXLSU2qCtOesAJCLBrFuU
-	 1EPAkn1558RKuqpDnyUKmXTT9dNAKf81JFAfGmUjcKVfXL2t4rcfTm3KTn41/ddBCc
-	 qM8SZv9eUVrK4/ppwIL8C71MHMk0tla9GwC+/rdljCn/ynM3wAqF0IhSJ7XFofwONq
-	 XsEkQHRmfqMxFI5Wtoe535AhZ85wEbodKn5Xoldye20Nw0efbGycIvGRpCzhZpajrS
-	 IvjqcpsNYhfaw3t7OuWXbnX7ALkxvaBmFj94YjXuO2cYSgwBPNol5l0HUm+QK4W2bD
-	 L8cubPCBNA9qQ==
-Received: by pali.im (Postfix)
-	id 34EECA58; Mon, 28 Oct 2024 11:13:07 +0100 (CET)
-Date: Mon, 28 Oct 2024 11:13:07 +0100
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Allow to choose symlink and socket type
-Message-ID: <20241028101307.nestealisxlusehw@pali>
-References: <20241006100046.30772-1-pali@kernel.org>
- <20241012085252.560-1-pali@kernel.org>
+	s=arc-20240116; t=1730110389; c=relaxed/simple;
+	bh=AV3H95WuR7HgF4Hklt8Oa1y3SpNFAqrinNBZJEI3sJM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ooHPJvzwemVzdCSv+TaVmWMuGnKmTKObwspOJi/PvzAt75eQOt5UQpoQsuNKmhJaSLn2v99N42sBhtzUa2lf6tmhFSbmEyPYnyVURsijomunngHXVCzOd8XgSs7W2c8ygwJq7rpfLfTJyFQxETXS0uacR7wIw4f9Q6/ttgsLgT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=b5QHTaPd; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539e13375d3so4571896e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:13:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1730110385; x=1730715185; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=kTse+UIA/55vueNOi33xp+1Nvpf6FMXtF/RFvE7Aux4=;
+        b=b5QHTaPdKSKA/dDsnth1Xr5n7leH6WQBCer3hmfL5/kSJUp/3LFHpPne0203mKYfPy
+         dsks+82zeK89FdjdKjvD4hfL7lj+WHxFU1YYQIU7viVBuWJ1mVnrokFhPgQTM5rqX2Z0
+         rO+10z2K+4t6DDcTKjBVBPvPG2Fm6EXn7iWDkiA51b/KfkdGWFIVO8FflGgWe0TkjcWy
+         6i3rQd8pfjAtDqUeXnNb9E3JcdXX210Vv4dl5HNx///6FM72g+2uk94loBKG8svNPHaJ
+         F+sLAUUYYMDN+8u1YleiLVn3G5MU4MewJzesCJnPLpzdnachuy/ka3D6K2rRU6Z+lAhG
+         n42A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730110385; x=1730715185;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kTse+UIA/55vueNOi33xp+1Nvpf6FMXtF/RFvE7Aux4=;
+        b=kSburutbwM4mm3WDKQc88D5ZhhGpNtcmeABumyj1mXguQPr2IY6BkWPkUQ2OqOd6lJ
+         Ljv77w7QKxSsfXbHkgT2Kw1wWGTISorJqmOJlnUEZGSiLuG+wTXjU4uEg9H3AoeuG6PM
+         WexloPYNc2khisJ/orMpSSZQB57RXCJKnjG6QBGCYV2mGW2Xlu7O67vHhHAbHlZt71JG
+         xFdOuuJU8XKEAd5ldcjY0jkREmD/hjAOXgH7/3XbJTChsKzZJCS86uTzgrwfTC83Jtsu
+         d1Xr7KefRxXXKYqWI3x94IjNB/gF5M4/ayhoE+Ck7/P+hUSAFGNjOjeCnFOeEMz6Urlv
+         d9jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWOrTGb8FGYCN+KmcyFrIIw69ECk7aexot00nPgp5t5EXhC1S6DkjUfUjzUhLFK1qb3jOaw4qHUyMuDMBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2JnSy3u3xGSfFtrXuFnOSh2KN5dHfRp+UnK5iY4SvATeZrceY
+	OW0ZuPzRccIKDV1p6NPOIzxAH6pWSvEUEpisUNWQpEldvgKDRxrxMzJ7HsuonOo=
+X-Google-Smtp-Source: AGHT+IF1okyvZaKXse++KL2wEvd3Z6/OhR++/wqVVcCM7ZvtJyoTyPLnGArGk0C4r0iTm+16yUgihQ==
+X-Received: by 2002:a05:6512:12d1:b0:539:fcba:cc6d with SMTP id 2adb3069b0e04-53b34a19019mr2673820e87.42.1730110384195;
+        Mon, 28 Oct 2024 03:13:04 -0700 (PDT)
+Received: from ?IPV6:2001:67c:2fbc:1:e302:b53c:29e9:63b6? ([2001:67c:2fbc:1:e302:b53c:29e9:63b6])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43193573d47sm106146525e9.3.2024.10.28.03.13.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 03:13:03 -0700 (PDT)
+Message-ID: <feef6601-0e68-4913-b305-3be3face4a9e@openvpn.net>
+Date: Mon, 28 Oct 2024 11:13:18 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v10 23/23] testing/selftests: add test tool and
+ scripts for ovpn module
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Donald Hunter <donald.hunter@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
+ Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+ sd@queasysnail.net, Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+ Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org
+References: <20241025-b4-ovpn-v10-0-b87530777be7@openvpn.net>
+ <20241025-b4-ovpn-v10-23-b87530777be7@openvpn.net>
+ <fe2b641f-a8aa-428c-9f04-f099015e0eb9@linuxfoundation.org>
+Content-Language: en-US
+From: Antonio Quartulli <antonio@openvpn.net>
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <fe2b641f-a8aa-428c-9f04-f099015e0eb9@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241012085252.560-1-pali@kernel.org>
-User-Agent: NeoMutt/20180716
 
-Any opinion about this v2? Is it better now?
+On 27/10/2024 01:40, Shuah Khan wrote:
+> On 10/25/24 03:14, Antonio Quartulli wrote:
+>> The ovpn-cli tool can be compiled and used as selftest for the ovpn
+>> kernel module.
+>>
+>> It implements the netlink API and can thus be integrated in any
+>> script for more automated testing.
+>>
+>> Along with the tool, 4 scripts are added that perform basic
+>> functionality tests by means of network namespaces.
+>>
+>> Cc: shuah@kernel.org
+>> Cc: linux-kselftest@vger.kernel.org
+>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+>> ---
+>>   MAINTAINERS                                        |    1 +
+>>   tools/testing/selftests/Makefile                   |    1 +
+>>   tools/testing/selftests/net/ovpn/.gitignore        |    2 +
+>>   tools/testing/selftests/net/ovpn/Makefile          |   17 +
+>>   tools/testing/selftests/net/ovpn/config            |   10 +
+>>   tools/testing/selftests/net/ovpn/data64.key        |    5 +
+>>   tools/testing/selftests/net/ovpn/ovpn-cli.c        | 2370 ++++++++++ 
+>> ++++++++++
+>>   tools/testing/selftests/net/ovpn/tcp_peers.txt     |    5 +
+>>   .../testing/selftests/net/ovpn/test-chachapoly.sh  |    9 +
+>>   tools/testing/selftests/net/ovpn/test-float.sh     |    9 +
+>>   tools/testing/selftests/net/ovpn/test-tcp.sh       |    9 +
+>>   tools/testing/selftests/net/ovpn/test.sh           |  183 ++
+>>   tools/testing/selftests/net/ovpn/udp_peers.txt     |    5 +
+>>   13 files changed, 2626 insertions(+)
+>>
+> 
+> What does the test output look like? Add that to the change log.
 
-On Saturday 12 October 2024 10:52:45 Pali Rohár wrote:
-> This patch series improves choosing reparse format when creating new
-> special files.
+Hi Shuan,
+
+is there any expected output for kselftest scripts?
+Right now it just prints a bunch of messages about what is being tested, 
+plus the output from `ping` and `iperf`.
+
+My assumption is that the output would be useful in case of failures, to 
+understand where and what went wrong.
+
+I can document that, but I am not sure it is truly helpful (?).
+What do you think?
+
+Is there any specific output format I should obey to?
+
+
+[...]
+
+
+>> +
+>> +static void usage(const char *cmd)
+>> +{
+>> +    fprintf(stderr,
+>> +        "Usage %s <command> <iface> [arguments..]\n",
+>> +        cmd);
+>> +    fprintf(stderr, "where <command> can be one of the following\n\n");
+>> +
+>> +    fprintf(stderr, "* new_iface <iface> [mode]: create new ovpn 
+>> interface\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tmode:\n");
+>> +    fprintf(stderr, "\t\t- P2P for peer-to-peer mode (i.e. client)\n");
+>> +    fprintf(stderr, "\t\t- MP for multi-peer mode (i.e. server)\n");
+>> +
+>> +    fprintf(stderr, "* del_iface <iface>: delete ovpn interface\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* listen <iface> <lport> <peers_file> [ipv6]: listen for 
+>> incoming peer TCP connections\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tlport: TCP port to listen to\n");
+>> +    fprintf(stderr,
+>> +        "\tpeers_file: file containing one peer per line: Line 
+>> format:\n");
+>> +    fprintf(stderr, "\t\t<peer_id> <vpnaddr>\n");
+>> +    fprintf(stderr,
+>> +        "\tipv6: whether the socket should listen to the IPv6 
+>> wildcard address\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* connect <iface> <peer_id> <raddr> <rport> [key_file]: 
+>> start connecting peer of TCP-based VPN session\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tpeer_id: peer ID of the connecting peer\n");
+>> +    fprintf(stderr, "\traddr: peer IP address to connect to\n");
+>> +    fprintf(stderr, "\trport: peer TCP port to connect to\n");
+>> +    fprintf(stderr,
+>> +        "\tkey_file: file containing the symmetric key for 
+>> encryption\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* new_peer <iface> <peer_id> <lport> <raddr> <rport> 
+>> [vpnaddr]: add new peer\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
+>> +    fprintf(stderr,
+>> +        "\tpeer_id: peer ID to be used in data packets to/from this 
+>> peer\n");
+>> +    fprintf(stderr, "\traddr: peer IP address\n");
+>> +    fprintf(stderr, "\trport: peer UDP port\n");
+>> +    fprintf(stderr, "\tvpnaddr: peer VPN IP\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* new_multi_peer <iface> <lport> <peers_file>: add multiple 
+>> peers as listed in the file\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
+>> +    fprintf(stderr,
+>> +        "\tpeers_file: text file containing one peer per line. Line 
+>> format:\n");
+>> +    fprintf(stderr, "\t\t<peer_id> <raddr> <rport> <vpnaddr>\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* set_peer <iface> <peer_id> <keepalive_interval> 
+>> <keepalive_timeout>: set peer attributes\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
+>> +    fprintf(stderr,
+>> +        "\tkeepalive_interval: interval for sending ping messages\n");
+>> +    fprintf(stderr,
+>> +        "\tkeepalive_timeout: time after which a peer is timed out\n");
+>> +
+>> +    fprintf(stderr, "* del_peer <iface> <peer_id>: delete peer\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to delete\n");
+>> +
+>> +    fprintf(stderr, "* get_peer <iface> [peer_id]: retrieve peer(s) 
+>> status\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr,
+>> +        "\tpeer_id: peer ID of the peer to query. All peers are 
+>> returned if omitted\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* new_key <iface> <peer_id> <slot> <key_id> <cipher> 
+>> <key_dir> <key_file>: set data channel key\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr,
+>> +        "\tpeer_id: peer ID of the peer to configure the key for\n");
+>> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
+>> +    fprintf(stderr, "\tkey_id: an ID from 0 to 7\n");
+>> +    fprintf(stderr,
+>> +        "\tcipher: cipher to use, supported: aes (AES-GCM), 
+>> chachapoly (CHACHA20POLY1305)\n");
+>> +    fprintf(stderr,
+>> +        "\tkey_dir: key direction, must 0 on one host and 1 on the 
+>> other\n");
+>> +    fprintf(stderr, "\tkey_file: file containing the pre-shared key\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* del_key <iface> <peer_id> [slot]: erase existing data 
+>> channel key\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
+>> +    fprintf(stderr, "\tslot: slot to erase. PRIMARY if omitted\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* get_key <iface> <peer_id> <slot>: retrieve non sensible 
+>> key data\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to query\n");
+>> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* swap_keys <iface> <peer_id>: swap content of primary and 
+>> secondary key slots\n");
+>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
+>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
+>> +
+>> +    fprintf(stderr,
+>> +        "* listen_mcast: listen to ovpn netlink multicast messages\n");
+>> +}
 > 
-> Changes since v1:
-> * Instead of new -o reparse= mount option is now a new -o symlink= mount
->   option for choosing symlink type during creation, and new option
->   -o nonativesocket for choosing socket type
-> 
-> Pali Rohár (7):
->   cifs: Add mount option -o symlink= for choosing symlink create type
->   cifs: Add mount option -o reparse=none
->   cifs: Add support for creating native Windows sockets
->   cifs: Add support for creating NFS-style symlinks
->   cifs: Improve guard for excluding $LXDEV xattr
->   cifs: Add support for creating WSL-style symlinks
->   cifs: Validate content of WSL reparse point buffers
-> 
->  fs/smb/client/cifsfs.c     |   4 +
->  fs/smb/client/cifsglob.h   |  36 +++++++
->  fs/smb/client/connect.c    |   4 +
->  fs/smb/client/fs_context.c |  82 +++++++++++++++
->  fs/smb/client/fs_context.h |  19 ++++
->  fs/smb/client/link.c       |  60 ++++++++---
->  fs/smb/client/reparse.c    | 201 +++++++++++++++++++++++++++++++------
->  fs/smb/client/reparse.h    |   2 +
->  8 files changed, 364 insertions(+), 44 deletions(-)
-> 
-> -- 
-> 2.20.1
-> 
+> If this test is run from "make kselftest" as default run does this usage
+> output show up in the report?
+
+No.
+This usage is only printed when invoking ovpn-cli with wrong arguments 
+and this can't be the case in the kselftest.
+
+
+Other than documenting the output, do you think there is any other 
+critical part to be adjusted in this patch?
+
+Thanks a lot for your time and patience.
+
+Regards,
+
+
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
