@@ -1,78 +1,133 @@
-Return-Path: <linux-kernel+bounces-384389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7F39B297A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:01:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB8659B297D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:01:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 125E2281664
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:01:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6612BB20CDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 08:01:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28F21DAC9D;
-	Mon, 28 Oct 2024 07:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965EE1922F9;
+	Mon, 28 Oct 2024 07:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f10JEsuc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCEB190497;
-	Mon, 28 Oct 2024 07:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="O3ZDwoOa"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A442191F84
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 07:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730101135; cv=none; b=O7K3FABHvIqX9OXfAxGJJGXy8vh2GkIklEhNpZuKx8YMDfj1L/xW77joDTw+GyB7TsxU7yFPnacwSVNTYX05HidJ5O3f1P9FGZlF7fGoUCdNUy/MRjew1hldY3ZONIl/ygt67Wc/UvsjCmrzfaNOxKkDlJD9DAs4aO0VWikfWkM=
+	t=1730101332; cv=none; b=GY5adPYB77bo9q/ofscka/Ub7Rimoqcuqi549lIn5tIq90D5449VSOjPfKIzxKT9CmKx86umOqFX8x95PoOx05Q4kEMjVfflyR3i/k3ZcXw92hSQUVkXI7vodNW/etgYD41ZJ/XVADF5+5zlGVlsYGT3g4nHqELScQERUAZ36gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730101135; c=relaxed/simple;
-	bh=JuicChqAxrZATICnsbGhsPkuOFQw8eOyMB5wZTaLbds=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUcaAB0tNckQnhpTuVeYHCm3L6e4Tk65miTeI8SH/IBZseVX+nFfNHpoetbn2i1ts+FafSklETaYG8NNcKCg9z5UqQzfJ4ztnZibMKAYDwl/TOnB8Ovmx/W+8QAtUaR4evdQajgMXOYIf+gMCSfcMu5h5BPVf7FsnlWLw/rR35o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f10JEsuc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DCFC4CEC3;
-	Mon, 28 Oct 2024 07:38:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730101134;
-	bh=JuicChqAxrZATICnsbGhsPkuOFQw8eOyMB5wZTaLbds=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f10JEsucxU7RFGwNbz89W7LzTXTOmDvvby2TiNbe0GJMt8T/lMlrtP9Fm3RMJx+un
-	 MndPr8oIb4/tpYIOELIzySjZMq3s0VBT/cPRX3UcgzvL4/QlVrGMlFDYVaCVY2FMwC
-	 gb6l7yfMJEkJ4FFLDrHd2dkyzzBLwLoWkDV0DUPdUWgoAzHFuj67gzt+Qhd6xFBThx
-	 MPuT7YNxnQGhz+E18N5OufyOAU1T7YhY+Vf4d3ZLG6/i6aym1Fv23QRPPOI3qMhvst
-	 gs5ICkgKRecsyp2NbyrgU2/0kyIiLWaZOzNiYjkhgXTelDFfo41bYJSoQV3giIT9iq
-	 jCjV5WLLHN4uQ==
-Date: Mon, 28 Oct 2024 08:38:50 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Troy Mitchell <troymitchell988@gmail.com>
-Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: i2c: spacemit: add support for K1 SoC
-Message-ID: <6zx3tqdc5bma2vutexwigzlir6nr6adp7arg4qwl5ieyd3avbu@5yyhv57ttwcl>
-References: <20241028053220.346283-1-TroyMitchell988@gmail.com>
- <20241028053220.346283-2-TroyMitchell988@gmail.com>
+	s=arc-20240116; t=1730101332; c=relaxed/simple;
+	bh=lvpf4L9Rqv+7xoDBIQvnbk1TRjftRLEPcDgj/WlrS6c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lLk6TrdnbdEL7rXoS/0XIJCIf7+GXx1RQQpUX5wK68POcMwN4FIT5kmFOD8K0ByV/rPMEctf80qrHrk/XM4cij1BHW0pMLlyi/L2/4rwvuHxWlbPSF2d+zbuXL/Xcl9Y9ZWyC6Jjojs04uuCLIGgjl1PFHm1NiGeZOQa43T5Y+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=O3ZDwoOa; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=ReNNa
+	/bjIUuQfNRlBiXhYY/+3u8nvvMSOrGOZBdjHB0=; b=O3ZDwoOajOf3TPWHJlXlb
+	DnNxqlYO2fv0gRHOTg8W7dd/MUwDJwX1SFnWeH23dqRvT4GFRdXh3VWdWKT9UcgB
+	99EIr0BQe71NtFKty3glh2L9IFl5Pbo2YJxok4mrk0+ne3vmNOI9I799m1h3T0nC
+	jaaC+8sE4A5ZcXYto9eRP0=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDnr6c1QB9nigGjDg--.909S2;
+	Mon, 28 Oct 2024 15:41:44 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH] drm/rockchip: vop2: Don't spam logs in atomic update
+Date: Mon, 28 Oct 2024 15:41:34 +0800
+Message-ID: <20241028074140.382199-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028053220.346283-2-TroyMitchell988@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnr6c1QB9nigGjDg--.909S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJw13Gr1xCw4kAr4rZFyUGFg_yoW5WFW8pF
+	y7CF909r4Utr4qga47JrZxZr43K392ka4xtF4xW3W7K343trn7JrsxGF4xJrWYvF48u34U
+	AFn8J34Y9a4xZF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j-SdgUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gyGXmcfN0LRQQAAsb
 
-On Mon, Oct 28, 2024 at 01:32:19PM +0800, Troy Mitchell wrote:
-> The I2C of K1 supports fast-speed-mode and high-speed-mode,
-> and supports FIFO transmission.
-> 
-> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
-> ---
+From: Andy Yan <andy.yan@rock-chips.com>
 
-Where is the changelog? Nothing here, nothing in cover letter.
+Demote the error message to drm_dbg_kms to only print the message
+if the respective debug messages are enabled.
 
-I asked for several changes, so now I don't know if you implemented
-them.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
 
-Best regards,
-Krzysztof
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 16 +++++++++-------
+ 1 file changed, 9 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index 5c5459ee03076..e75b027674869 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -1373,8 +1373,9 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 	dsp_w = drm_rect_width(dest);
+ 
+ 	if (dest->x1 + dsp_w > adjusted_mode->hdisplay) {
+-		drm_err(vop2->drm, "vp%d %s dest->x1[%d] + dsp_w[%d] exceed mode hdisplay[%d]\n",
+-			vp->id, win->data->name, dest->x1, dsp_w, adjusted_mode->hdisplay);
++		drm_dbg_kms(vop2->drm,
++			    "vp%d %s dest->x1[%d] + dsp_w[%d] exceed mode hdisplay[%d]\n",
++			    vp->id, win->data->name, dest->x1, dsp_w, adjusted_mode->hdisplay);
+ 		dsp_w = adjusted_mode->hdisplay - dest->x1;
+ 		if (dsp_w < 4)
+ 			dsp_w = 4;
+@@ -1384,8 +1385,9 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 	dsp_h = drm_rect_height(dest);
+ 
+ 	if (dest->y1 + dsp_h > adjusted_mode->vdisplay) {
+-		drm_err(vop2->drm, "vp%d %s dest->y1[%d] + dsp_h[%d] exceed mode vdisplay[%d]\n",
+-			vp->id, win->data->name, dest->y1, dsp_h, adjusted_mode->vdisplay);
++		drm_dbg_kms(vop2->drm,
++			    "vp%d %s dest->y1[%d] + dsp_h[%d] exceed mode vdisplay[%d]\n",
++			    vp->id, win->data->name, dest->y1, dsp_h, adjusted_mode->vdisplay);
+ 		dsp_h = adjusted_mode->vdisplay - dest->y1;
+ 		if (dsp_h < 4)
+ 			dsp_h = 4;
+@@ -1398,14 +1400,14 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 	 */
+ 	if (!(win->data->feature & WIN_FEATURE_AFBDC)) {
+ 		if (actual_w > dsp_w && (actual_w & 0xf) == 1) {
+-			drm_err(vop2->drm, "vp%d %s act_w[%d] MODE 16 == 1\n",
++			drm_dbg_kms(vop2->drm, "vp%d %s act_w[%d] MODE 16 == 1\n",
+ 				vp->id, win->data->name, actual_w);
+ 			actual_w -= 1;
+ 		}
+ 	}
+ 
+ 	if (afbc_en && actual_w % 4) {
+-		drm_err(vop2->drm, "vp%d %s actual_w[%d] not 4 pixel aligned\n",
++		drm_dbg_kms(vop2->drm, "vp%d %s actual_w[%d] not 4 pixel aligned\n",
+ 			vp->id, win->data->name, actual_w);
+ 		actual_w = ALIGN_DOWN(actual_w, 4);
+ 	}
+@@ -1443,7 +1445,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
+ 		 */
+ 		stride = (fb->pitches[0] << 3) / bpp;
+ 		if ((stride & 0x3f) && (xmirror || rotate_90 || rotate_270))
+-			drm_err(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligned\n",
++			drm_dbg_kms(vop2->drm, "vp%d %s stride[%d] not 64 pixel aligned\n",
+ 				vp->id, win->data->name, stride);
+ 
+ 		uv_swap = vop2_afbc_uv_swap(fb->format->format);
+-- 
+2.34.1
 
 
