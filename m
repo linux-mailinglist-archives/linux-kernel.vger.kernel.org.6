@@ -1,170 +1,139 @@
-Return-Path: <linux-kernel+bounces-383896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6167C9B2181
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:16:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027859B2184
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 01:18:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25093281429
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAD351F2132A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 00:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98C763C24;
-	Mon, 28 Oct 2024 00:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9545F321D;
+	Mon, 28 Oct 2024 00:17:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ckJhEOpe"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="g2pnPtkt"
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CB2161;
-	Mon, 28 Oct 2024 00:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52E1CEADB
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 00:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730074573; cv=none; b=HVo7b9hl5+YQhm9/xSG0SgkfMEau+2w9m+PE30bW1Xvlg7wqiB0g3K+WwXZs6FKV0RNyeVL0cc4LT4jeW3bZOYNE91khVT9ALKOt1vR2ypEWswfZAsHdxX5rUrN1cJq/6WA4MplWJcb9cYxZkzGWrASJypD3OVx/2rgUTTzUQ+k=
+	t=1730074677; cv=none; b=BL4v+MZO0AZFDXDUmRkk32oeOncSsLJJuHo97HDNT72tKXSDnePhyLfbKwGNz5Nu7O4aPUcrvY7cBj6XqPKBiF1Btx/vJcL/Z7q5b++st8UDmEYBiDk8lFETmrrnjV2N03IAxILjaSsE+HHnS9al0ywO0kuQemYSW6XjILASkRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730074573; c=relaxed/simple;
-	bh=XEsBUcvJvka3MO2zGEOEk6jCMdSUXWKqLvyxaafKqfI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qdaX7Z/KD6aPbq24bH9B0v7TM68ruXrNVd8HdiJxfCddktJ2AmoKTqkD9bA4VJrn9NyxFMxw6DyuwZvndtTOLatPN76FFoCq3QO4OgfJxB1D1em5vLCJ15q2mzIl5UI04ZciG4V4jkv57A44QnohSu4Os3szMdMzvurQQGFopC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ckJhEOpe; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730074565;
-	bh=AM8Mh5IR3ec7B3Zvq0RNBEJpbmGSMSdmtjQG5R249FM=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ckJhEOpepV10T4BtAmlE/XntI5qWLrXFOP9TJfC0LwEgumzmP2vhX34CmPjzHMSbJ
-	 10s9Le+GSGUpaVccr67Ixf/bqlQzDxVNCUxDDv5sHKlD/e2h58JQdm5OgWK8vKB9yp
-	 sOoARRNgT4SCFETMUAN/KjZXH/JbYtBy6vZrKbD85I2NgJ9FXinb/ycGxxdlLQ4ZNr
-	 FnPBehcY2ct9DzZofxaNr5CRjdaoOSUzc52OarXfUAmGi96WTGCmSUn/888mh+yEhX
-	 /1sy3V0cwZjO1YNyfy5mWbWIvxwhbCVraOkgNup1O640RPjiF59H+EycdC6374EPD1
-	 tpeFluyZyGVYA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcDSj5HBJz4x33;
-	Mon, 28 Oct 2024 11:16:05 +1100 (AEDT)
-Date: Mon, 28 Oct 2024 11:16:06 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@de.ibm.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)"
- <rppt@kernel.org>
-Subject: linux-next: manual merge of the s390 tree with the mm tree
-Message-ID: <20241028111606.5c009055@canb.auug.org.au>
+	s=arc-20240116; t=1730074677; c=relaxed/simple;
+	bh=TO3XgbjTPNGOf09TT6fFo03Ha9ptp5O3ug5xR1pjpYw=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WucvAKhxfOy5lUL5qxtu7uGYns9u5Jy17y7GKJM19ucqsld6TJI+KqZ98G6X/7rIrS9QH16TipzCHQc3S1+99z0GxgaFQyjPLLAWYUt8bVaydA2W8Kv4rSRvKftmq0qQF3iCC1wE8GVnOAL/u8XZWOqQD24XShCRZ/12hwYYXU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=g2pnPtkt; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id 55zxtojR6qvuo5DS8twzh9; Mon, 28 Oct 2024 00:17:48 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 5DS7tQMgwO7uS5DS7tHg2N; Mon, 28 Oct 2024 00:17:47 +0000
+X-Authority-Analysis: v=2.4 cv=Acy3HWXG c=1 sm=1 tr=0 ts=671ed82b
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10
+ a=uxgLTjTjiylkul1d-vUA:9 a=QEXdDO2ut3YA:10 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
+	Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ct8wg4kLyMMfEQg5mOMY7RKn2GG8vdZ2NnPY3zDs58Y=; b=g2pnPtktSDLV7w0LvEuyzXDOVa
+	Hk56yvw2tiUIcOwVf1i2Gg2/DertkMuZ9Hj+WBBB4Nu+ezmi65YX7i4Ji1vmdaI5Fwo1uLg0IpbbY
+	j5Iwk/ENesWiyHO3kCdjf6kNbIuDHbYtou/3CzzwvhT4DQkwkJA4+e3vw1EAXF9dTFKDK4S/YdSKq
+	PEgTs//zKwdL748SqmzOkuvYBoTOCq3bItaYke1E3SKdqiE4a0k2LKjxSHOpTR9iwAXJsysH6Zw+1
+	nx2m6PkOEfNip1R7pQivJ4VAphdM0ftW42M2VLaryR4ty1AkYujn22ku0yWMbhkHmHLauXeW+In7T
+	9F5JPkxQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:35924 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t5DS6-001d97-0a;
+	Sun, 27 Oct 2024 18:17:46 -0600
+Subject: Re: [PATCH] riscv/entry: get correct syscall number from
+ syscall_get_nr()
+To: Thomas Gleixner <tglx@linutronix.de>,
+ Celeste Liu <coelacanthushex@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@kernel.org>,
+ Celeste Liu via B4 Relay <devnull+CoelacanthusHex.gmail.com@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Palmer Dabbelt <palmer@rivosinc.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ "Dmitry V. Levin" <ldv@strace.io>, Andrea Bolognani <abologna@redhat.com>,
+ Felix Yan <felixonmars@archlinux.org>, Ruizhe Pan <c141028@gmail.com>,
+ Shiqi Zhang <shiqi@isrc.iscas.ac.cn>, Guo Ren <guoren@kernel.org>,
+ Yao Zi <ziyao@disroot.org>, Han Gao <gaohan@iscas.ac.cn>,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <87ldya4nv0.ffs@tglx>
+ <3dc10d89-6c0c-4654-95ed-dd6f19efbad4@gmail.com> <87a5ep4k0n.ffs@tglx>
+ <2b1a96b1-dbc5-40ed-b1b6-2c82d3df9eb2@gmail.com> <877c9t43jw.ffs@tglx>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <81afb4bf-084b-e061-8ce4-90b76da16256@w6rz.net>
+Date: Sun, 27 Oct 2024 17:17:43 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/EeaFZ4ZAjaYoMeN=VzknrMx";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+In-Reply-To: <877c9t43jw.ffs@tglx>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t5DS6-001d97-0a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:35924
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 21
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOkBZq4V+pQyMGc90fvdRjeZRsgITxt5AD/PPMG9RkkFwY4m2Xj7T+mxIxcJHlhfHPDjO1RIgzti9Hum+5UxoXbm6fQAAI4MBi0TXH365w/tzTu+O/q8
+ BlD9T2OyKrBGpDdnO9FyFRJErGuLGs10bZ4JZhW3TPHUN2zRaCKhPvMxEg4rd9X6KsquvZ8yq0+1Yri8cg+SP/295B+dW7qblnk=
 
---Sig_/EeaFZ4ZAjaYoMeN=VzknrMx
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On 10/27/24 2:52 PM, Thomas Gleixner wrote:
+> On Mon, Oct 28 2024 at 01:01, Celeste Liu wrote:
+>> On 2024-10-27 23:56, Thomas Gleixner wrote:
+>>> Equivalently you need to be able to modify orig_a0 for changing arg0,
+>>> no?
+>> Ok.
+>>
+>> Greg, could you accept a backport a new API parameter for
+>> PTRACE_GETREGSET/PTRACE_SETREGSET to 4.19 LTS branch?
+> Fix the problem properly and put a proper Fixes tag on it and worry
+> about the backport later.
+>
+> Thanks,
+>
+>          tglx
+>
+I wouldn't worry about backporting to the 4.19 kernel. It's essentially 
+prehistoric for RISC-V. There's no device tree support for any hardware. 
+Also, 4.19 will be going EOL very soon (December 2024).
 
-Hi all,
+Ron
 
-Today's linux-next merge of the s390 tree got conflicts in:
-
-  arch/s390/include/asm/set_memory.h
-  arch/s390/mm/pageattr.c
-
-between commit:
-
-  4c5768ef0fd7 ("arch: introduce set_direct_map_valid_noflush()")
-
-from the mm-unstable branch of the mm tree and commit:
-
-  2835f8bf5530 ("s390/pageattr: Implement missing kernel_page_present()")
-
-from the s390 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/s390/include/asm/set_memory.h
-index 240bcfbdcdce,cb4cc0f59012..000000000000
---- a/arch/s390/include/asm/set_memory.h
-+++ b/arch/s390/include/asm/set_memory.h
-@@@ -62,6 -62,6 +62,7 @@@ __SET_MEMORY_FUNC(set_memory_4k, SET_ME
- =20
-  int set_direct_map_invalid_noflush(struct page *page);
-  int set_direct_map_default_noflush(struct page *page);
- +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool val=
-id);
-+ bool kernel_page_present(struct page *page);
- =20
-  #endif
-diff --cc arch/s390/mm/pageattr.c
-index 4c7ee74aa130,aec9eb16b6f7..000000000000
---- a/arch/s390/mm/pageattr.c
-+++ b/arch/s390/mm/pageattr.c
-@@@ -406,17 -406,21 +406,33 @@@ int set_direct_map_default_noflush(stru
-  	return __set_memory((unsigned long)page_to_virt(page), 1, SET_MEMORY_DEF=
-);
-  }
- =20
- +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool val=
-id)
- +{
- +	unsigned long flags;
- +
- +	if (valid)
- +		flags =3D SET_MEMORY_DEF;
- +	else
- +		flags =3D SET_MEMORY_INV;
- +
- +	return __set_memory((unsigned long)page_to_virt(page), nr, flags);
- +}
-++
-+ bool kernel_page_present(struct page *page)
-+ {
-+ 	unsigned long addr;
-+ 	unsigned int cc;
-+=20
-+ 	addr =3D (unsigned long)page_address(page);
-+ 	asm volatile(
-+ 		"	lra	%[addr],0(%[addr])\n"
-+ 		"	ipm	%[cc]\n"
-+ 		: [cc] "=3Dd" (cc), [addr] "+a" (addr)
-+ 		:
-+ 		: "cc");
-+ 	return (cc >> 28) =3D=3D 0;
-+ }
-+=20
-  #if defined(CONFIG_DEBUG_PAGEALLOC) || defined(CONFIG_KFENCE)
- =20
-  static void ipte_range(pte_t *pte, unsigned long address, int nr)
-
---Sig_/EeaFZ4ZAjaYoMeN=VzknrMx
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmce18YACgkQAVBC80lX
-0GwUvgf/bPi6r/B2cAREFSP/MfX12qMSSoIR9H5HQS5GMbGotWqbUeKntQPzW5IB
-1tTDOaWWG15yRzPZ/19R0ZOFof5eXCw1cLFxwteFDeOKIk3s2v3fmaNvLtt7er2L
-Us6Evp8qYi1zb9RHSD9uJhnEukkG8xvAcX70sljuZ/zukksrmJ7Y6wlJ36T5b3qt
-Z+SjYbRNvfvdqtMrksA4Nuz+Oi5M2z4mD2elwVBVO3i9Xo7hSZyQetPPTEHbqbW7
-8ePPHuGBnREhkjsRzI/vJyJML+WPh/l2Z4MZ/qzfZbDLtSM2itMaHK4EJL/VNtxr
-XVAoAvC/531qFlSHXNuHt0OSmVCkNA==
-=mD/2
------END PGP SIGNATURE-----
-
---Sig_/EeaFZ4ZAjaYoMeN=VzknrMx--
 
