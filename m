@@ -1,183 +1,169 @@
-Return-Path: <linux-kernel+bounces-384588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F8AF9B2BFE
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:52:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F09A99B2C0D
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:53:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 439EEB219CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:52:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B67BB282DBC
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 09:53:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD8F1D89EF;
-	Mon, 28 Oct 2024 09:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC7D1D3648;
+	Mon, 28 Oct 2024 09:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="W6aQO6tI"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iS3C3XX8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FDA1D5CDB
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 09:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49D891D0488;
+	Mon, 28 Oct 2024 09:53:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730109051; cv=none; b=LofLBX/M7IHDr2yrGPD0nRqKg0fu+P4m3THLK5/jf7xMwruxr0owDTLfaMJmwyjjA67e3VlHZb6IvL3H89wivsv7FcWO9gKruTfWODGWoCUG1JJad/qgisS0gkIFu0s9i5mQBcG7PUYJs4AGoMpgSblryqHXEfMAZYZYodvbSMk=
+	t=1730109183; cv=none; b=k80ZcGlwHflw4jthFcFop5SSvZOaS8+v9lsnjZ+0CJ3O0mZ3pd3efn+7yOJxwgM4xkdVo4TZc216Tni6DAyn0C1G3OahlmtDu/GA54hXd5Q60+LPnvOt2Z+g650R3hW7sOqu60G9f4Af4BD8yqqMNd7YNMC8k3Mc1F1o+/YcxM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730109051; c=relaxed/simple;
-	bh=gQYfa5S6EEe5LDjgzisqxSHHIBKU04vASPdUL5a04ZA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1MyCFEzNL5m1SsosfV3XrmaHwMhesMrmJ4mOg/6hfxI5Zh1hc8WMhbau2jNJ3mdyAmnwih5eLex6rnDjt8KOt5DimblOyKMh+IDC3cyFzaq01VPN+0G/uh2WeA7I5rmRtWe+CsnbxtwQHLA7jOI8GfysxwM5OmkP1Bw/x8xuBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=W6aQO6tI; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7B9FF1C0006;
-	Mon, 28 Oct 2024 09:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730109041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VeaOMU1TZIhIRYQ0x1moayff8wABo4up92bIIy3XXRs=;
-	b=W6aQO6tI46OHCFqyHWD8hWHzWAdWXb2/R+GKXVlXM8fCybdcDK7H92P0HGSvGwhFerZzv2
-	pOFhc6elvWm+QZxoe5sjaxAxMdQ5XVKiFYw5uBYoX9Rezg1aUL32juzhcye7kevGnTsNxQ
-	0VYtFZke6fB0jeqKNeJQn7CvU3gEZ0j1s23lNpDCMOYxCMaq+TMH0CjIAkl8KM4eam8AJK
-	8f/u3vda02F90WxEWFSI9C64Xy5aFqWUdjiyKOsOCLNTAx8zeh2uml4xSa9TOC6r8g9caI
-	kqAmx4j0IxRpRoWpVyHcmiTS2h1baay7qTE859fVsSj7dCUimAbMW0iMua+DJQ==
-Date: Mon, 28 Oct 2024 10:50:39 +0100
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
-	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-Subject: Re: [PATCH RESEND v2 4/8] drm/vkms: Add support for RGB565 formats
-Message-ID: <Zx9eby4wpmnYPc7Y@fedora>
-Mail-Followup-To: =?iso-8859-1?Q?Ma=EDra?= Canal <mairacanal@riseup.net>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, arthurgrillo@riseup.net,
-	linux-kernel@vger.kernel.org, jeremie.dautheribes@bootlin.com,
-	miquel.raynal@bootlin.com, thomas.petazzoni@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com,
-	20241007-yuv-v12-0-01c1ada6fec8@bootlin.com
-References: <20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com>
- <20241007-b4-new-color-formats-v2-4-d47da50d4674@bootlin.com>
- <63f0bf12-4df8-48d1-b8c8-2ed27a860937@riseup.net>
+	s=arc-20240116; t=1730109183; c=relaxed/simple;
+	bh=CxnwcxscJoEDAJI1YGtxfHqxFjS/FZMJYEBO1/MXSRk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=asiNUyAPTS7teUsx0OtcIcKj4vGhBJyf1d6UE0ESaTpp2lmnhDrmPzK2Ufmda4aNbomv2t3dheVZxe3HJ8etiYFOap2CIMk1HR9aBRoGl+Xy/jjnPWaAADhvqSMw9S63qIHBHLWp1T6PL+NyNUrpoNQB7AqkfSgX8LqXhX8ilmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iS3C3XX8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49RMuLuk022812;
+	Mon, 28 Oct 2024 09:52:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UkTxf4gaD036X0C6z7xJty9Jiq0rYK5X0z2wJjj4Rhs=; b=iS3C3XX8BTpl06zk
+	0o5qPYFsIRWeMvJp2fGsw24Za5j+LO3Y3y8t0BQGsJ/gAFZl/sQqHo4/vLW8gUYB
+	pAGev9niTlTnBNuhe3EkDr1nRCS+MyT03owpE2QGVAgCytyugPLxUFVZ1ntnr3JP
+	2axj+zGnYwfDZ/XqG94yAzTH2QNsV5Q5/50HsAzRLpxby4ErA+BSxGOtL27dq05M
+	GC1Af5fxrtA05YsLzgYvpJxzgpDy9WYXjP+KNcDn+c1BEvihwl3YN9POzBQuAgcY
+	Qvy4UvqjkLaGpe3bT2ywBlLt2iLgJcMPeV3Xpdy+q+yoXsoH1raFfo4LQvcA835h
+	y3Fk+Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqe5vd7b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 09:52:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49S9qg0d025032
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 28 Oct 2024 09:52:42 GMT
+Received: from [10.216.3.65] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 02:52:37 -0700
+Message-ID: <6b7c2ae7-3210-4d57-a7b0-2efea594b2b9@quicinc.com>
+Date: Mon, 28 Oct 2024 15:22:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <63f0bf12-4df8-48d1-b8c8-2ed27a860937@riseup.net>
-X-GND-Sasl: louis.chauvet@bootlin.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/a6xx: Fix excessive stack usage
+To: Arnd Bergmann <arnd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+        "Sean
+ Paul" <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav
+ Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Dave Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick
+ Desaulniers <ndesaulniers@google.com>,
+        "Bill Wendling" <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <llvm@lists.linux.dev>
+References: <20241027-stack-size-fix-v1-1-764e2e3566cb@quicinc.com>
+ <3fb376b3-2db7-4730-a2e1-958f1ddd9f5c@app.fastmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <3fb376b3-2db7-4730-a2e1-958f1ddd9f5c@app.fastmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: RLGzJP7jIKKYA0-T9wAJAa24yIyjvz53
+X-Proofpoint-ORIG-GUID: RLGzJP7jIKKYA0-T9wAJAa24yIyjvz53
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ phishscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0 adultscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 clxscore=1015
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410280080
 
-On 26/10/24 - 11:17, Maíra Canal wrote:
-> Hi Louis,
+On 10/28/2024 12:13 AM, Arnd Bergmann wrote:
+> On Sun, Oct 27, 2024, at 18:05, Akhil P Oommen wrote:
+>> Clang-19 and above sometimes end up with multiple copies of the large
+>> a6xx_hfi_msg_bw_table structure on the stack. The problem is that
+>> a6xx_hfi_send_bw_table() calls a number of device specific functions to
+>> fill the structure, but these create another copy of the structure on
+>> the stack which gets copied to the first.
+>>
+>> If the functions get inlined, that busts the warning limit:
+>>
+>> drivers/gpu/drm/msm/adreno/a6xx_hfi.c:631:12: error: stack frame size 
+>> (1032) exceeds limit (1024) in 'a6xx_hfi_send_bw_table' 
+>> [-Werror,-Wframe-larger-than]
+>>
+>> Fix this by kmalloc-ating struct a6xx_hfi_msg_bw_table instead of using
+>> the stack. Also, use this opportunity to skip re-initializing this table
+>> to optimize gpu wake up latency.
+>>
+>> Cc: Arnd Bergmann <arnd@kernel.org>
 > 
-> On 07/10/24 13:46, Louis Chauvet wrote:
-> > The format RGB565 was already supported. Add the support for:
-> > - BGR565
-> > 
-> > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > ---
-> >   drivers/gpu/drm/vkms/vkms_formats.c | 25 ++++++++++++++++++++++++-
-> >   drivers/gpu/drm/vkms/vkms_plane.c   |  1 +
-> >   2 files changed, 25 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/gpu/drm/vkms/vkms_formats.c b/drivers/gpu/drm/vkms/vkms_formats.c
-> > index c03a481f5005..e34bea5da752 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_formats.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_formats.c
-> > @@ -249,7 +249,7 @@ static struct pixel_argb_u16 argb_u16_from_RGB565(const __le16 *pixel)
-> >   	return out_pixel;
-> >   }
-> > -static struct pixel_argb_u16 argb_u16_from_gray8(u16 gray)
-> > +static struct pixel_argb_u16 argb_u16_from_gray8(u8 gray)
-> 
-> Again, fix the issue in the patch that introduce it.
+> Please change this to "Reported-by:"
 
-Will do for the v2!
+Sure.
 
-Thanks,
-Louis Chauvet
- 
-> Best Regards,
-> - Maíra
 > 
-> >   {
-> >   	return argb_u16_from_u8888(255, gray, gray, gray);
-> >   }
-> > @@ -259,6 +259,26 @@ static struct pixel_argb_u16 argb_u16_from_grayu16(u16 gray)
-> >   	return argb_u16_from_u16161616(0xFFFF, gray, gray, gray);
-> >   }
-> > +static struct pixel_argb_u16 argb_u16_from_BGR565(const __le16 *pixel)
-> > +{
-> > +	struct pixel_argb_u16 out_pixel;
-> > +
-> > +	s64 fp_rb_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(31));
-> > +	s64 fp_g_ratio = drm_fixp_div(drm_int2fixp(65535), drm_int2fixp(63));
-> > +
-> > +	u16 rgb_565 = le16_to_cpu(*pixel);
-> > +	s64 fp_b = drm_int2fixp((rgb_565 >> 11) & 0x1f);
-> > +	s64 fp_g = drm_int2fixp((rgb_565 >> 5) & 0x3f);
-> > +	s64 fp_r = drm_int2fixp(rgb_565 & 0x1f);
-> > +
-> > +	out_pixel.a = (u16)0xffff;
-> > +	out_pixel.b = drm_fixp2int_round(drm_fixp_mul(fp_b, fp_rb_ratio));
-> > +	out_pixel.g = drm_fixp2int_round(drm_fixp_mul(fp_g, fp_g_ratio));
-> > +	out_pixel.r = drm_fixp2int_round(drm_fixp_mul(fp_r, fp_rb_ratio));
-> > +
-> > +	return out_pixel;
-> > +}
-> > +
-> >   VISIBLE_IF_KUNIT struct pixel_argb_u16 argb_u16_from_yuv888(u8 y, u8 channel_1, u8 channel_2,
-> >   							    const struct conversion_matrix *matrix)
-> >   {
-> > @@ -447,6 +467,7 @@ READ_LINE_16161616(XRGB16161616_read_line, px, 0xFFFF, px[2], px[1], px[0])
-> >   READ_LINE_16161616(XBGR16161616_read_line, px, 0xFFFF, px[0], px[1], px[2])
-> >   READ_LINE(RGB565_read_line, px, __le16, argb_u16_from_RGB565, px)
-> > +READ_LINE(BGR565_read_line, px, __le16, argb_u16_from_BGR565, px)
-> >   READ_LINE(R8_read_line, px, u8, argb_u16_from_gray8, *px)
-> > @@ -668,6 +689,8 @@ pixel_read_line_t get_pixel_read_line_function(u32 format)
-> >   		return &XBGR16161616_read_line;
-> >   	case DRM_FORMAT_RGB565:
-> >   		return &RGB565_read_line;
-> > +	case DRM_FORMAT_BGR565:
-> > +		return &BGR565_read_line;
-> >   	case DRM_FORMAT_NV12:
-> >   	case DRM_FORMAT_NV16:
-> >   	case DRM_FORMAT_NV24:
-> > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> > index 1e971c7760d9..a243a706459f 100644
-> > --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> > @@ -26,6 +26,7 @@ static const u32 vkms_formats[] = {
-> >   	DRM_FORMAT_ARGB16161616,
-> >   	DRM_FORMAT_ABGR16161616,
-> >   	DRM_FORMAT_RGB565,
-> > +	DRM_FORMAT_BGR565,
-> >   	DRM_FORMAT_NV12,
-> >   	DRM_FORMAT_NV16,
-> >   	DRM_FORMAT_NV24,
-> > 
+> The patch looks correct to me, just one idea for improvement.
+> 
+>> b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> index 94b6c5cab6f4..b4a79f88ccf4 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
+>> @@ -99,6 +99,7 @@ struct a6xx_gmu {
+>>  	struct completion pd_gate;
+>>
+>>  	struct qmp *qmp;
+>> +	struct a6xx_hfi_msg_bw_table *bw_table;
+>>  };
+> 
+> I think the bw_table is better just embedded
+> in here rather than referenced as a pointer:
+> 
+There are some low tier chipsets with relatively lower RAM size that
+doesn't require this table. So, dynamically allocating this here helps
+to save 640 bytes (minus the overhead of tracking).
+
+-Akhil
+
+>> +	if (gmu->bw_table)
+>> +		goto send;
+>> +
+>> +	msg = devm_kzalloc(gmu->dev, sizeof(*msg), GFP_KERNEL);
+>> +	if (!msg)
+>> +		return -ENOMEM;
+> 
+> It looked like it's always allocated here when the device
+> is up, so you can avoid the extra overhead for keeping
+> track of the allocation.
+> 
+>       Arnd
+
 
