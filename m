@@ -1,152 +1,179 @@
-Return-Path: <linux-kernel+bounces-385716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 022489B3ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:51:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3239F9B3ACE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:52:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA9EB21F28
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:51:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBA39B21F22
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D87E31DF251;
-	Mon, 28 Oct 2024 19:51:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E4E1DE3D2;
+	Mon, 28 Oct 2024 19:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsLxyD9d"
-Received: from mail-oi1-f176.google.com (mail-oi1-f176.google.com [209.85.167.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hy7mVKkO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9FA18FC81;
-	Mon, 28 Oct 2024 19:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFAF524C;
+	Mon, 28 Oct 2024 19:52:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730145106; cv=none; b=IDWK8mk5k28iDsTUJ7nN38+2Z9+tF23cqxnvulQElRm+6k1mkXwkdnZX11EuSWIfXFWG4MEQfwsTglo62J7HLeaiCRVC3UZfopJTkYHjV5WLhttCUKZjGvjZ+mYdqYjJ0zZkoeSoE9uVNmWiUfTmRFnplJFk7YrrsDECRSqWjYg=
+	t=1730145145; cv=none; b=puwNduhMEn7vxKhWHMa5JE1Z+GMdPn3lW/2fQK4puzzOewxtKBkMZIBTFYW7IZvbF6vNUVsN03FTbdZFSf+4E5Njf2QFsSz8g/pecpDe4t1lwxBAAdrH/aESOZTus+zsjPrc1GkDmpeBgm1jpznxT/TJs7bCdinf8HC7QzHGQvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730145106; c=relaxed/simple;
-	bh=OysKxiFtR9eb8pBQUDLuFfXiT73sjKdQ5S+C84NlJhg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=vEhmPwr49eBHhQqCU/dElteAigB7wgwvbQcWsHl0nH40cF/nrA/3UurzndqlIoSs9NtubBMN/AJvPs/fLpHQVBZ391nWF7TYmJTkiu3StOE2qHFTdX51ORMbITtAur318cY32NSHK0F7gZxt7zXm8wuosqwuNoad2bUaA7am6LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsLxyD9d; arc=none smtp.client-ip=209.85.167.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e602a73ba1so2652016b6e.2;
-        Mon, 28 Oct 2024 12:51:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730145103; x=1730749903; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=RsDcw52Oo5myxmVMi9BMlO4Zohrt7dv1aGkPK46GCts=;
-        b=SsLxyD9dOM5x5g1q29zq/SyEe0xZYGGCJXUlpiWCo15EAy2sWhAXq7dm0thO57GL6t
-         cR0uU+Q48rZrHHKLO8+oKm09kn9aMsrOw/lJw3fzFXOCvzACFs3gJ0G11XxJVatkG2s9
-         nvmiVC0K+6uEC5NvQZxqd1MCuRFRX6XVevkgPgMZl5YdCK6NhBEdkV/kF2IT1tzUWr8a
-         +tfkGKxT0yo3YlsTdRVtgS2VHaC1KIWIatSSwtJq/ERwulgj2pAEx8xdmQY4AKtlHxgB
-         3btxVvNKY/0Rvo17WdXEpqA0p0clgGEPZ3pnkD3iyvJR5Z4U8VLb1Atg5YL4g1UOQgSW
-         bHAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730145103; x=1730749903;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RsDcw52Oo5myxmVMi9BMlO4Zohrt7dv1aGkPK46GCts=;
-        b=ECFJmwcv2SucX4DNDH1UauUlA5RutlFX6XbY69KT8tJLutuU2A9CikYlnj1TmWRmVr
-         oy2v1ltV9AToKC/Pwfyue9tUKUjuG93+AsGKZC9Y5e8mUmFLkYU7gatBgdVl52BHpEpe
-         FdvJM8Plf2jRMb6on/j6efNBD/XqyppXp2kumvuXMHPVT+GBg+aa2mMlV1Q+MLcB1ObF
-         Wq5Ew5iPaYutSySPI91nE7IQzTfIxQ2SG/qEXtgK/Q1i2znMurUFuBdgM770glhFMIcp
-         8/IoB3zkFt6ckRa58zWXfNLJaSCabNtRH2GXfUx0xYgpN9xwfbaK9Di/2QEWe/yP5ZRB
-         ygYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsfxvBoiu1WWGX46Ulox59cVTClLQZS8tNGbfQGqZsg32UGw3TMB9ayEhqlK6BFkxSVZw90KQt@vger.kernel.org, AJvYcCXvwzg/4em0pRaNa1uqavuRzXSES2unl3NE1X3V94PjTpVWLnNTN5dGxE9JQqZhX1+gepMOtwO/OhKXUnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywlx/3y53iSD11gZ0W8ZVVdX33kPeE+PO7JTdJvxl1bU6ZpYB//
-	LQlzG1tSkMTz4xQLoouEwM+CcyLzoMD19gGjO7I6fLHSusyzmvlu
-X-Google-Smtp-Source: AGHT+IGJehK2PDU10zfme5SYvRkAorNRLO8ZfYpRZCOj0EPzFvSR4QRppK+/+pLQjcKpvpMfRgGxSw==
-X-Received: by 2002:a05:6808:3097:b0:3e5:fbdc:ba03 with SMTP id 5614622812f47-3e63848a0d3mr7549656b6e.30.1730145103149;
-        Mon, 28 Oct 2024 12:51:43 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d17991329bsm35514136d6.58.2024.10.28.12.51.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 12:51:42 -0700 (PDT)
-Message-ID: <e7c9b9f1-53cd-41f7-bb5e-49ab8195f5ca@gmail.com>
-Date: Mon, 28 Oct 2024 12:51:39 -0700
+	s=arc-20240116; t=1730145145; c=relaxed/simple;
+	bh=Ul+QBVc+YnNy2tXI88GGtUMlSaX13YfqOBf387SSnCA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=McwsezeSQynOGaVNsQkL2DFIjHKLghYJll83rDHauvYC9bzWGbMFDrQlumK4VvE31dong1UKh2Zvc2sr/68F2tI/6Osh7iQuXLBcShtThstTl+LfhJOPxMmTR81vtibvFIixpyq1if+XCNNKnaNC7KKfZIgsz4u1u3ZnziMtOUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hy7mVKkO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 230D7C4AF0B;
+	Mon, 28 Oct 2024 19:52:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730145145;
+	bh=Ul+QBVc+YnNy2tXI88GGtUMlSaX13YfqOBf387SSnCA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Hy7mVKkO3XRYO8YWVrUTgHYinB3RiMlhYWP11k1m52FZ+ii3U61nFlGXTdSJQjOJs
+	 slNtI7p1h8mB/ZzCQsZo4AFl+/9NWGv7zBc7OOybScNasnNc4ZmgX3B4vauP0vfHE+
+	 6TzsmkQAhm+SVulymqgjaKwf2Q3K4SmddGQF/TYxL/yvK+LgwlHLgpen18QFw5y0cU
+	 UPBupjnkFBG8/AJq9OAkn+O//L3/nWZNwZ+967EW8yx6eBeDz8qD4TcMyZu7TY9JLJ
+	 h7Nb3uhYaEu6BE0rw1ByScNbrHN15rzP1FjYlUoBNf5heDwtKxMaCWICzPiapPsKrh
+	 9pPiJaxhBcjlQ==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so5787892e87.1;
+        Mon, 28 Oct 2024 12:52:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVKgtVq7oAu4oWVIYjJYsh575ox2v+zkCqcbGUuemFZxUSpimL7LvdB4VGT65pG/eoxEL1qLzDTWOLXUQ==@vger.kernel.org, AJvYcCVXjV1Fu3iTcmtTicNB7Bhu6/2ZIPG5uUXoIdZ4dUzigax1YsqXwfNA/OTlVHsbZrcNq/kZKEQaQH/9Bcs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy69gab0qbVIf6LR4DJkOdhlE01eEtIpVKluF6SO5XchyzgNMrd
+	cvYkIckXWz9t9EZlt6A8NRDvxeBbeTzpN+PZo6ARS2WIK8FF7PipG6WMaQ9x5Yjwq2sTDl90q6A
+	WnsPApT+ak4ZxG2w/4GKMTswATQ==
+X-Google-Smtp-Source: AGHT+IHZQIXoMf901p3J/xgrany/8b01LghURtWvew8IISJPoYjj2YNAA8I9ZSkMEW+VoWXGPDwYES18VSeZo2tXQbU=
+X-Received: by 2002:a05:6512:230a:b0:53b:1f7a:9bf8 with SMTP id
+ 2adb3069b0e04-53b34a34190mr3665907e87.55.1730145143491; Mon, 28 Oct 2024
+ 12:52:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241028062306.649733554@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241028122405.27090-1-herve.codina@bootlin.com>
+ <20241028122405.27090-2-herve.codina@bootlin.com> <CAL_JsqK7SjfJ7Re4k-A8fQB+tNHyM3r2Rcpct_zUfR2yhEj+iQ@mail.gmail.com>
+ <20241028184343.74ad5a26@bootlin.com>
+In-Reply-To: <20241028184343.74ad5a26@bootlin.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 28 Oct 2024 14:52:09 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+_VHsMKufVwUj3Q0pv1X6d8Xe0FN6A9svCmWJ3cuuUqQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+_VHsMKufVwUj3Q0pv1X6d8Xe0FN6A9svCmWJ3cuuUqQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] misc: lan966x_pci: Fix dtc warns 'missing or empty
+ reg/ranges property'
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Allan Nielsen <allan.nielsen@microchip.com>, Horatiu Vultur <horatiu.vultur@microchip.com>, 
+	Steen Hegelund <steen.hegelund@microchip.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/27/24 23:23, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.59 release.
-> There are 208 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.59-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+On Mon, Oct 28, 2024 at 12:43=E2=80=AFPM Herve Codina <herve.codina@bootlin=
+.com> wrote:
+>
+> Hi Rob,
+>
+> On Mon, 28 Oct 2024 08:55:24 -0500
+> Rob Herring <robh@kernel.org> wrote:
+>
+> > On Mon, Oct 28, 2024 at 7:24=E2=80=AFAM Herve Codina <herve.codina@boot=
+lin.com> wrote:
+> > >
+> > > dtc generates the following warnings when building the LAN966x device
+> > > tree overlay (lan966x_pci.dtso):
+> > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/cpu_=
+clk: missing or empty reg/ranges property
+> > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/ddr_=
+clk: missing or empty reg/ranges property
+> > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/sys_=
+clk: missing or empty reg/ranges property
+> > >
+> > > Indeed, related nodes are under the pci-ep-bus (simple-bus) which is =
+not
+> > > correct.
+> > >
+> > > Put them outside this node.
+> > >
+> > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Closes: https://lore.kernel.org/all/20241025110919.64b1cffb@canb.auug=
+.org.au/
+> > > Fixes: 185686beb464 ("misc: Add support for LAN966x PCI device")
+> > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > ---
+> > > The referenced commit is in the reset tree
+> > > ---
+> > >  drivers/misc/lan966x_pci.dtso | 36 +++++++++++++++++----------------=
+--
+> > >  1 file changed, 18 insertions(+), 18 deletions(-)
+> > >
+> > > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci=
+.dtso
+> > > index 7282687df25f..5466d013da7d 100644
+> > > --- a/drivers/misc/lan966x_pci.dtso
+> > > +++ b/drivers/misc/lan966x_pci.dtso
+> > > @@ -19,6 +19,24 @@ __overlay__ {
+> > >                         #address-cells =3D <3>;
+> > >                         #size-cells =3D <2>;
+> > >
+> > > +                       cpu_clk: cpu_clk {
+> >
+> > Preferred node name is "clock-<freq-in-hz>"
+>
+> I based the name on the lan966x.dtsi
+> https://elixir.bootlin.com/linux/v6.12-rc1/source/arch/arm/boot/dts/micro=
+chip/lan966x.dtsi#L38
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+That should be fixed too.
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+> Of course, I can rename the cpu_clk, ddr_clk and sys_clk nodes but this w=
+ill create
+> a difference against lan966x.dtsi on some points that should be identical=
+.
+
+Then maybe they should be sharing a .dtsi?
+
+> Let me know with that in mind if I need to rename those nodes in this ser=
+ies.
+
+Yes, easier now than later.
+
+> > Also, as a general rule, don't use "_" in node names (and properties).
+> >
+> > Isn't there a schema for the device which needs these nodes added to
+> > it? If not, there should be.
+> >
+>
+> No, there is no schema yet for this device.
+>
+> How can we describe schema for this kind of devices that are using
+> device-tree overlays?
+
+Describing is not the issue. Running the checks is. Though you can run
+the checks at runtime.
+
+> I mean, this overlay is applied on a PCI device DT node. This DT node is
+> computed at runtime. It is, in the end, available in the base DT before
+> applying the overlay.
+> The compatible string that could be used to check the dtso against schema
+> cannot be set in the overlay (at least not at the correct place in the
+> hierarchy) without causing a property memory leak at runtime. An overlay
+> cannot add a property in a base DT node without generating a memory leak
+> and so, we avoid adding such properties in the base DT from the overlay.
+
+That's a problem with overlays in general which we need to solve at some po=
+int.
+
+> Is this missing schema blocking for this series ?
+
+No.
+
+Rob
 
