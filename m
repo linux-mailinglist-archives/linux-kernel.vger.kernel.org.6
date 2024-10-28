@@ -1,180 +1,156 @@
-Return-Path: <linux-kernel+bounces-384966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C421A9B30BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:46:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F6619B30CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:46:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 828DB2820A9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:46:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEA5AB23A72
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73A441DD525;
-	Mon, 28 Oct 2024 12:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6EE1DDA39;
+	Mon, 28 Oct 2024 12:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfg9Xx0i"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL0y63KZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8441DB527
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3A21DB53A;
+	Mon, 28 Oct 2024 12:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730119418; cv=none; b=qdL8K7Yo1K6ZsMt4r/ExlTdxFKGIDP2GY2twFJwCzXM8klBUdvdJs73J4+mz6+etJmVKNGm+IXowuA8ieb1M5KwIqrAi2lAv42nz6e3ve2VkthEJvY7Xi45UYCQXRy6ZolAFSnglRUfUAkyCLwqhysFEYICcgvGWg1fub1cagJ8=
+	t=1730119435; cv=none; b=undA9YNhONiO0v72M26glXiSz3vdjJUGxOxAWi8twZMuDzKPonKUNMU9d2aGF/BtHw6ZjkrscN11H+Y9Yx1RTOvGPWpT8WRS56NLVOqXW/rNmx3UoQ8VZdMdzJy8Atc21qmhGizTerA/nzBF4025f1Pc0bd3rm8+hkgascbe2sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730119418; c=relaxed/simple;
-	bh=BXJ7Fa6rgi1Gkae8JEWMfGzU85rJWbX4anRz/PAmyvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jGOYbssNeFLHvfhXWeWElEam5Qxun80GvFQSstHLFl2iSYZPukgJ8QXf3xFpZhVF8oUPgB/N3f9tqqI5WsOxntyDijNX428bTJv9ZMb7QERKhtV48dvIsxVrBa8hUC2q97z3NiVoJkBYVwClICeUxW5zIbSAG6wPA2OdZ3/lt1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfg9Xx0i; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7edb6879196so2584047a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 05:43:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730119416; x=1730724216; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3FRgGM16VBkuEgKEXxMtfKp/CCHFRbja8EXJUXlUni0=;
-        b=nfg9Xx0iNysX9R417sq+inl3SSyfnHPVxVOsGAMR1M2fw4V5zlHlN6VPTBHC2ntsGl
-         OxtEhzWAkGe0pFyL8sFQS8yUjI78MsUQA7KpRuY5ALTcf5MTxvJi8b2pTsaGkrWy28rm
-         6HppVotco+RSI6zmjAQJ101CUWbDHrEM2YIYnQjdyl/Am3YMC8tlYMiB4adpFCGpQmcf
-         TOHFIXu/7NGXlsuC1s76hgGPBz5xBfV7djeSBN0VX5d5faP5le19yGPFbRVickeXAA/2
-         QOPyKktp1QSor131LCH/URF7wnaYERnsN0oYo+zsNJJ4Z4rPEZxyzhpqD6veefhiXWKG
-         PICQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730119416; x=1730724216;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3FRgGM16VBkuEgKEXxMtfKp/CCHFRbja8EXJUXlUni0=;
-        b=B+q8cePNdV+LoO4abeBIDFDdELvAvrycPorxyz75Da+SsqyuPiAe6NQW8KuvBIrKRn
-         SWB/NOUwz8JJrDUpIVHoVDOq/s+SjBArpka8f+ZbCjrNZ5WbfXxpulY6t85coJsNyVUf
-         +PZHvfSOZ/by9aBxZJK9UX/N9Cy5BDFt2aZtE1Bmqfrd+EtrH085wwj2IpxVXgTBUbfd
-         bLKXUiFmAIqBpZh5ILsEqQpD/RLps/Tt2iKQaF/4QPkVWIWwCupwf5AOduyKluVrQru5
-         dbJTz2xjUMQvVDf+ibbSQhIGT3eON67MFjVOU7rwn36FGJ5C0v79+uaviPgGO3Ko8iDk
-         Ukug==
-X-Forwarded-Encrypted: i=1; AJvYcCVrCgNQNPnfuSDHflHBQ5Hkeyd6+FUcNLi77MAIUou47MlNKH1ym+lGYv6TtKL2DAfjEoTKPhcmJ/tCl+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRJylohgdrJycIbTS7OnFPI3v1PGR91vSSdk/O4NDlNjk7YXTY
-	P4ev1/TJcJJJyKJ/bQQQxf06UMIy3h/0DK4OfjVQrKULxDBN1MZm
-X-Google-Smtp-Source: AGHT+IEan3pVYKpKAUNOnEppg/1Kzl65VAn8UbEyWi+0ByplnVFp49k1faXy9FP+s839bq4vvWCr5w==
-X-Received: by 2002:a05:6a20:c793:b0:1d5:144b:5941 with SMTP id adf61e73a8af0-1d9a840afc8mr11042289637.28.1730119416031;
-        Mon, 28 Oct 2024 05:43:36 -0700 (PDT)
-Received: from ?IPV6:2405:204:5403:2960:cfd7:84a5:5418:bd66? ([2405:204:5403:2960:cfd7:84a5:5418:bd66])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205791e4dasm5577827b3a.25.2024.10.28.05.43.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 05:43:35 -0700 (PDT)
-Message-ID: <c2e81a50-3716-4ee9-9ada-5d4d9287e564@gmail.com>
-Date: Mon, 28 Oct 2024 18:13:30 +0530
+	s=arc-20240116; t=1730119435; c=relaxed/simple;
+	bh=PmzRzCwShNmL4Avnj7jpxfgOTY0mlM0j8+YfSm+8k3Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wx236uv9Ry/RVjtHQNsHipZF5Oi/Fa/I2qWCIeIxkxHLPcxC1BiB2RbNWi5jI6TIXBultqzXfD4BwJEZSqi1nIJ5cWti6oIBvkqXnSZbVtjo4EEfFw/EXMIXbXD7mfgOSRTFpnSF2+TyyR/1AJu2EwiSPaiurBfXOWcWxkiJUNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL0y63KZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 052A9C4CEC3;
+	Mon, 28 Oct 2024 12:43:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730119435;
+	bh=PmzRzCwShNmL4Avnj7jpxfgOTY0mlM0j8+YfSm+8k3Q=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CL0y63KZWnW5uiINPni9CYwGJpGhLr1fmW9pkIJmQYc0pAWUr9ylHRVLJwS0eG6j7
+	 CRSVIEeTilc4kdUSs8LDMoRescbQBC9K7jpSJ9VNf8y9r3wvfBwYVZJVFrnt1P56W7
+	 FO08XuKxkM8Ju9UuneHwCTXopZfMVNP101H+MZMYR4kCZY8G7UJwTfxMNSTBXU8eOg
+	 XmHU/AiuIgpGeuesyQxYaj9s/f4CEJfQnHuOte2BlIyuWQ5PfVZUi62MLgV/Ozr7Yi
+	 nICP1PniuHXy4S4xbSpA35v9W5x8s3FqQJpnRym7feJzYZ2RP466HRc/Mn7CKq2Zi+
+	 LRhcLI+GSJ9Wg==
+Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-7180e07185bso1861746a34.3;
+        Mon, 28 Oct 2024 05:43:54 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6XUgKdgG6SqE1b3ZRduow27socNnGMXZpnaJANg+7kjW66zDwdMZuimbY9UzWgCYA53cIuSNmo03H@vger.kernel.org, AJvYcCVRrQ4FupE1CbchrFTt/5rOnnoacfBwhIw2haWlMDzvaCB4r51uIqfYO5itgQGSesTlwUmWOaYL32biGLbG@vger.kernel.org, AJvYcCX0y41OeC3T0dm/0aWJLYIIR9z4rGNsV0GLU8sAIKHF6LTLJt4YES5+Cs5qy2hYrPfauznvFnZYpoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSJc4Nm3ZwxjRxIiyxh89M49UcllWFts0hECfP/CT/poOeK/+z
+	MdFdIK1kB2A7vDooEkA3dwSm+tSpPYI4lOpFWhVX+dtgp/Fi3u2gzSl2FaFvT/YYfdrmB9Fm29r
+	PCnoR4sJLMI8P8xHjxzrdYUoNQ7k=
+X-Google-Smtp-Source: AGHT+IGQ9MyGzhtRLH4m8r7Cm5t2pkfk+XvoRhtqYm8hb4hBlseZb94+kKXybee7Jx19YthZkIopo/JaDENPDcdROZ8=
+X-Received: by 2002:a05:6870:9507:b0:277:e6f6:b383 with SMTP id
+ 586e51a60fabf-29051c04017mr6683115fac.24.1730119434391; Mon, 28 Oct 2024
+ 05:43:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] greybus: Fix null pointer dereference in
- gb_operation_response_send()
-To: Alex Elder <elder@ieee.org>, johan@kernel.org, elder@kernel.org,
- gregkh@linuxfoundation.org
-Cc: greybus-dev@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20241027075304.7301-1-surajsonawane0215@gmail.com>
- <106ff2db-befc-4899-8f28-6f8b6276cdd3@ieee.org>
-Content-Language: en-US
-From: Suraj Sonawane <surajsonawane0215@gmail.com>
-In-Reply-To: <106ff2db-befc-4899-8f28-6f8b6276cdd3@ieee.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240919000837.1004642-1-davidai@google.com> <20241001092544.2tlydouyyc7jwuja@vireshk-i7>
+ <CAGETcx8GomM0znaYKsS412dRvnUQd7_78pKuV82t2b14VBvKVQ@mail.gmail.com>
+ <CAJZ5v0iTLX9NAT0PN804QahQ7D=+=D1uJ7PVnZfk5UrpP5uXpg@mail.gmail.com> <Zx-Ek7IbpYNDbG9D@bogus>
+In-Reply-To: <Zx-Ek7IbpYNDbG9D@bogus>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Mon, 28 Oct 2024 13:43:38 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0iWX6B9hVP4nZKhKJPpO+Fm+ktNHaX1hAhMV_UAPYp33w@mail.gmail.com>
+Message-ID: <CAJZ5v0iWX6B9hVP4nZKhKJPpO+Fm+ktNHaX1hAhMV_UAPYp33w@mail.gmail.com>
+Subject: Re: [PATCH v7 0/2] Improve VM CPUfreq and task placement behavior
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Viresh Kumar <viresh.kumar@linaro.org>, David Dai <davidai@google.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Quentin Perret <qperret@google.com>, Masami Hiramatsu <mhiramat@google.com>, Will Deacon <will@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Pavan Kondeti <quic_pkondeti@quicinc.com>, 
+	Gupta Pankaj <pankaj.gupta@amd.com>, Mel Gorman <mgorman@suse.de>, kernel-team@android.com, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 27/10/24 19:30, Alex Elder wrote:
-> On 10/27/24 2:53 AM, Suraj Sonawane wrote:
->> Fix an issue detected by the Smatch static tool:
->> drivers/greybus/operation.c:852 gb_operation_response_send() error:
->> we previously assumed 'operation->response' could be null (see line 829)
-> 
-> There is no need for this.  This is a case where the code is
-> doing something that is too involved for "smatch" to know
-> things are OK.
-> 
-> A unidirectional operation includes only a request message, but
-> no response message.
-> 
-> There are two cases:
-> - Unidirectional
->    - There is no response buffer
->    - There will be no call to gb_operation_response_alloc(),
->      because the operation is unidirectional.
->    - The result gets set with the errno value.  If there's
->      an error (there shouldn't be), -EIO is returned.
->    - We return 0 early, because it's a unidirectional operation.
-> - Not unidirectional
->    - If there is a response, we attempt to allocate one.  If that
->      fails, we return -ENOMEM early.
->    - Otherwise there *is* a response (it was successfully allocated)
->    - The result is set
->    - It is not unidirectional, so we get a reference to the operation,
->      add it to the active list (or skip to the end if not connected)
->    - We record the result in the response header.  This is the line in
->      question, but we know the response pointer is good.
->    - We send the response.
->    - On error, we drop or references and return the error code.
-> 
->                      -Alex
-> 
-> 
-> 
->> The issue occurs because 'operation->response' may be null if the
->> response allocation fails at line 829. However, the code tries to
->> access 'operation->response->header' at line 852 without checking if
->> it was successfully allocated. This can cause a crash if 'response'
->> is null.
->>
->> To fix this, add a check to ensure 'operation->response' is not null
->> before accessing its header. If the response is null, log an error
->> message and return -ENOMEM to stop further processing, preventing
->> any crashes or undefined behavior.
->>
->> Signed-off-by: Suraj Sonawane <surajsonawane0215@gmail.com>
->> ---
->>   drivers/greybus/operation.c | 8 +++++++-
->>   1 file changed, 7 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/greybus/operation.c b/drivers/greybus/operation.c
->> index 8459e9bc0..521899fbc 100644
->> --- a/drivers/greybus/operation.c
->> +++ b/drivers/greybus/operation.c
->> @@ -849,7 +849,13 @@ static int gb_operation_response_send(struct 
->> gb_operation *operation,
->>           goto err_put;
->>       /* Fill in the response header and send it */
->> -    operation->response->header->result = gb_operation_errno_map(errno);
->> +    if (operation->response) {
->> +        operation->response->header->result = 
->> gb_operation_errno_map(errno);
->> +    } else {
->> +        dev_err(&connection->hd->dev, "failed to allocate response\n");
->> +        ret = -ENOMEM;
->> +        goto err_put_active;
->> +    }
->>       ret = gb_message_send(operation->response, GFP_KERNEL);
->>       if (ret)
-> 
+On Mon, Oct 28, 2024 at 1:33=E2=80=AFPM Sudeep Holla <sudeep.holla@arm.com>=
+ wrote:
+>
+> On Mon, Oct 28, 2024 at 12:39:31PM +0100, Rafael J. Wysocki wrote:
+> > On Sat, Oct 26, 2024 at 12:26=E2=80=AFAM Saravana Kannan <saravanak@goo=
+gle.com> wrote:
+> > >
+> > > On Tue, Oct 1, 2024 at 2:25=E2=80=AFAM Viresh Kumar <viresh.kumar@lin=
+aro.org> wrote:
+> > > >
+> > > > On 18-09-24, 17:08, David Dai wrote:
+> > > > > Hi,
+> > > > >
+> > > > > This patch series is a continuation of the talk Saravana gave at =
+LPC 2022
+> > > > > titled "CPUfreq/sched and VM guest workload problems" [1][2][3]. =
+The gist
+> > > > > of the talk is that workloads running in a guest VM get terrible =
+task
+> > > > > placement and CPUfreq behavior when compared to running the same =
+workload
+> > > > > in the host. Effectively, no EAS(Energy Aware Scheduling) for thr=
+eads
+> > > > > inside VMs. This would make power and performance terrible just b=
+y running
+> > > > > the workload in a VM even if we assume there is zero virtualizati=
+on
+> > > > > overhead.
+> > > >
+> > > > > David Dai (2):
+> > > > >   dt-bindings: cpufreq: add virtual cpufreq device
+> > > > >   cpufreq: add virtual-cpufreq driver
+> > > > >
+> > > > >  .../cpufreq/qemu,virtual-cpufreq.yaml         |  48 +++
+> > > > >  drivers/cpufreq/Kconfig                       |  14 +
+> > > > >  drivers/cpufreq/Makefile                      |   1 +
+> > > > >  drivers/cpufreq/virtual-cpufreq.c             | 333 ++++++++++++=
+++++++
+> > > > >  include/linux/arch_topology.h                 |   1 +
+> > > > >  5 files changed, 397 insertions(+)
+> > > > >  create mode 100644 Documentation/devicetree/bindings/cpufreq/qem=
+u,virtual-cpufreq.yaml
+> > > > >  create mode 100644 drivers/cpufreq/virtual-cpufreq.c
+> > > >
+> > > > LGTM.
+> > > >
+> > > > Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > >
+> > > Rafael/Viresh,
+> > >
+> > > Nudge... Any chance this will get pulled into 6.12?
+> >
+> > This is not a fix AFAICS, so 6.12 is out of the question.
+> >
+> > As for 6.13, Viresh thinks that this change is a good idea (or he
+> > wouldn't have ACKed it), so it's up to him.  I'm still not convinced
+> > that it will work on x86 or anything that doesn't use DT.
+> >
+>
+> +1, I was about to comment on DT bindings patch, but then I assumed it is
+> accepted to have a device object with similar CID and CRS(for register ad=
+dress)
+> in ACPI for example.
 
-Hello Alex,
+Well, where would the device ID be defined for this?  The spec or
+somewhere else?  If the latter, then where again?
 
-Thank you for your detailed explanation. I understand now that the 
-existing code already handles both unidirectional and non-unidirectional 
-cases properly, ensuring that operation->response is always allocated 
-when needed. It seems the Smatch tool flagged this as a potential issue 
-incorrectly.
+> But yes, the patch itself is not adding support for that
+> yet. If not is not the way, then we need to come up with a way that works
+> for both ACPI and DT.
 
-I appreciate your insights, and I'll make sure to be more cautious about 
-such false positives from static analysis in the future.
-
-Thanks again for your time.
-
-Best,
-Suraj
+The DT use case is there I think and so I don't want to block it just
+because there is no ACPI counterpart.  It can be added later if the
+use case is relevant enough.
 
