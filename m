@@ -1,198 +1,116 @@
-Return-Path: <linux-kernel+bounces-385687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF809B3A58
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:21:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D305F9B3A55
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 20:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B895281EC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:21:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E30A11C21B8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 19:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128351DE8B7;
-	Mon, 28 Oct 2024 19:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622201DE3B7;
+	Mon, 28 Oct 2024 19:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="NxHaSRSm"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Wpn2gb/e"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC8155A52;
-	Mon, 28 Oct 2024 19:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C221618EFF1;
+	Mon, 28 Oct 2024 19:20:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730143301; cv=none; b=RT2Z7uHnEePCiUGYOWQ6S5cST2KuxLKVNSs5E9YLLeD7edlojoEQBCVRImp+Y6RBDclA/t9BlbzuAgbj9+l74HZxrPl5U/V2VcbM5K5KihFPjwCzmJqpHk3ZNmpqjKRNim/RxQct/lEZueSpL9DL+COel4YQySxN2s1PtgxByDw=
+	t=1730143261; cv=none; b=GyEO3ZM0Ow93CNbv0y/DfHrfKs+bISbe6Cz8znH3mRLaQmud+LUQuz13oOrA0d8jZtmv+fUjsj8fA5kDnJEYlguwdiPdLkaJR+PVkHkAlI6ECMDNTeOSNrxGm/dC3dKgI7LA+4x6nZdp2aGwaq+SgM1UBg/kpRtDkZzrlFaVlRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730143301; c=relaxed/simple;
-	bh=kXzY6L3SAN9Fk+i9GMyzI23iyi05GrzWiz5zFLNj0O4=;
+	s=arc-20240116; t=1730143261; c=relaxed/simple;
+	bh=F981mQfK+GakF4x7z8yIC7+kOIceY26cwCoUqATTl8I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AdFA8qOe8ouecg5KzORVLuvOxUTDvU40sWt0bMIyBIqT0ukY0qLfi5yK3ZIUmaOj0J44f7LQi6y1nKfLVxtSv39lfg8VdTb370sBvjAq6N4LYRyLpDgT2vt65UPa8sIBY1sAPRBhd6YSR/+xdDbzFnG/YiCAXY8U+Yv6PoUHThw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=NxHaSRSm; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730143298;
-	bh=kXzY6L3SAN9Fk+i9GMyzI23iyi05GrzWiz5zFLNj0O4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NxHaSRSm9qxVb2mB90AtfmzPy5GjhRJHDJvmELP2qE09OOV1HWbLVnFx6/LpXbVeg
-	 k0VxfnRCgYdIevCqn6YjLLR8pbvqZaNbKudJGWyqmwm9czRfldFUZ+8Vrh7JSmpi8v
-	 5VRFDV9UCpi5Tz7tAe7wZ9LG6GHPUoMsaCh5SPgGjmsQIP1q5Ml8TI2NtRXQs/odbS
-	 VzCU/U0U1yBXPGp52EH8QXd+qb2r+0P9Yl2PxMlkRXXksgv87bOoQkHh4PKoTGLAXU
-	 bnxzCQTH+UzC7Lv6iGnTflTFhn2oEqLmWD43U3u1tPfVWagywBpVkvac87w8gchL5Q
-	 9qnlMuCnJjrEA==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XcjtT6McyzscJ;
-	Mon, 28 Oct 2024 15:21:37 -0400 (EDT)
-Message-ID: <7ef1d403-e6ca-4dee-85c6-e32446e52aa7@efficios.com>
-Date: Mon, 28 Oct 2024 15:19:58 -0400
+	 In-Reply-To:Content-Type; b=RyyfNb7qRD+9pQP+1UA0B5Hhqjn9ut8AVYTZ+xIFpyXYUUeq3fMMtKmAJ3srwjInZRdmexllE+luQqWG9yCbLuj26W/nRV+nai/SywjFX/7quwOtmphRNWKTUgMttUL/tPgH8yR+HMYs265n0WZ2MIlD+ZCPAT0fgfMTjrVOCEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Wpn2gb/e; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4315e9e9642so43418875e9.0;
+        Mon, 28 Oct 2024 12:20:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1730143258; x=1730748058; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nmyfLhJgqZpTB9dOyWQs56gLuQycztkSBu1M1yDh9Ag=;
+        b=Wpn2gb/eAMB/2+wEr27/rIg8p2Fcs/6Oa9bTzcrgaEMMCzI61J1wV2K/o09HTcf6Ob
+         n9j/IYOO2dDoiz1XQB23QDYJdcizG9L5VzAcU0TwPRBdAipsL43SWdSpTIKUqjwtpZnD
+         zhbODrRiOxUrXMQMZpPuf5pLocBC4PoeLCoSsjs3GNbs+zi77sObU3vdszZDYPsMB/Oo
+         UFAASlUtEgPW9LWbJoZvz/glRMeID7i9YPWji80qUN/6c9n5L3r3uOpb9foNRaUG3yYs
+         brHtj0/HHiPzb2S0DjIkAI3C55aPcSjJDeYiRb19aTQPg4dlsxsaPyb4HSAAzJFtU3/v
+         IJHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730143258; x=1730748058;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nmyfLhJgqZpTB9dOyWQs56gLuQycztkSBu1M1yDh9Ag=;
+        b=V3N5Tcd9WbLWT8Kw83EzV2Zalr691laGzHO98xC/Bdso+fmEXFYAhq5/2in+t1LLck
+         mGDdsRiQGCQJ+qOQiRUuBdWRlpLexyYnZr+3dQ9Fe1oriqwtGciOTfPuZlPrdWCzR14K
+         f37s6KqDwhv/hBrVoEN1GNXQY1pqqTv3az0yN124g/I/b6ujppICpgUDiNt+rmPFmWIl
+         7RvbwFKipqiGtsqIDduZGqG20PZ26ay+eonJCMI+oTr+zJRk5XhFz2r8gECwgIJ4qIge
+         ShkMFgxJL8v3kKveK2rvHjJqrlNp14C4GGp/2+an7cc2+ifnIYg0J2JC29cVs55OqO3Y
+         YNMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUP3Y075nJy2AfwDHUwkgweRcz3sY8r+YKlkTAf315drP2cetJSyg/wqNzbLfpJunoBWr5Kdw5u@vger.kernel.org, AJvYcCVmDQRrDqQcFlo2ODIG46s/b++RscXLVOLrTmeEM/u0K66YUV4S745vRqeUyzQ2NqemrSQBtXuIPNrUcSc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFN2pOXKxKZV3AWU59Y8w57ijkVFhXZ3m8NUb2q7JE9QvOBu9T
+	7QlwZTLG/quXjvQU7kZcYCTtGR42FcN5wc5I/ka5pmIK6wYul2ukvqYlNUo=
+X-Google-Smtp-Source: AGHT+IHdJPH8eCW/evibf4e02yyUQeiLZFkHgIBy7hWOQsM3sVPbez5w+tlVulpQhfUSmgb2F6Wm7g==
+X-Received: by 2002:a05:600c:1d15:b0:431:4a83:2d80 with SMTP id 5b1f17b1804b1-4319ab94761mr79671595e9.0.1730143257909;
+        Mon, 28 Oct 2024 12:20:57 -0700 (PDT)
+Received: from [192.168.1.3] (p5b2ace6d.dip0.t-ipconnect.de. [91.42.206.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b8c394sm10322778f8f.90.2024.10.28.12.20.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 12:20:57 -0700 (PDT)
+Message-ID: <7d6ae25f-0ad4-47a4-a155-e3efc6d9ee1a@googlemail.com>
+Date: Mon, 28 Oct 2024 20:20:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 3/3] tracing: Fix syscall tracepoint use-after-free
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
- Michael Jeanson <mjeanson@efficios.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
- Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Namhyung Kim <namhyung@kernel.org>, bpf@vger.kernel.org,
- Joel Fernandes <joel@joelfernandes.org>, Jordan Rife <jrife@google.com>,
- syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
-References: <20241026154629.593041-1-mathieu.desnoyers@efficios.com>
- <20241026154629.593041-3-mathieu.desnoyers@efficios.com>
- <CAEf4BzaD24V=Z6T3wNh27pv9OV_WaLNQeAPbUANQJYN0h5zHKw@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEf4BzaD24V=Z6T3wNh27pv9OV_WaLNQeAPbUANQJYN0h5zHKw@mail.gmail.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
+Content-Language: de-DE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241028062306.649733554@linuxfoundation.org>
+From: Peter Schneider <pschneider1968@googlemail.com>
+In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 2024-10-27 21:22, Andrii Nakryiko wrote:
-> On Sat, Oct 26, 2024 at 8:48 AM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
->>
->> The grace period used internally within tracepoint.c:release_probes()
->> uses call_rcu() to batch waiting for quiescence of old probe arrays,
->> rather than using the tracepoint_synchronize_unregister() which blocks
->> while waiting for quiescence.
->>
->> With the introduction of faultable syscall tracepoints, this causes
->> use-after-free issues reproduced with syzkaller.
->>
->> Fix this by using the appropriate call_rcu() or call_rcu_tasks_trace()
->> before invoking the rcu_free_old_probes callback. This can be chosen
->> using the tracepoint_is_syscall() API.
->>
->> A similar issue exists in bpf use of call_rcu(). Fixing this is left to
->> a separate change.
->>
->> Reported-by: syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com
->> Fixes: a363d27cdbc2 ("tracing: Allow system call tracepoints to handle page faults")
->> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
->> Cc: Michael Jeanson <mjeanson@efficios.com>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Cc: Masami Hiramatsu <mhiramat@kernel.org>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Alexei Starovoitov <ast@kernel.org>
->> Cc: Yonghong Song <yhs@fb.com>
->> Cc: Paul E. McKenney <paulmck@kernel.org>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
->> Cc: Mark Rutland <mark.rutland@arm.com>
->> Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
->> Cc: Namhyung Kim <namhyung@kernel.org>
->> Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>
->> Cc: bpf@vger.kernel.org
->> Cc: Joel Fernandes <joel@joelfernandes.org>
->> Cc: Jordan Rife <jrife@google.com>
->> ---
->> Changes since v0:
->> - Introduce tracepoint_call_rcu(),
->> - Fix bpf_link_free() use of call_rcu as well.
->>
->> Changes since v1:
->> - Use tracepoint_call_rcu() for bpf_prog_put as well.
->>
->> Changes since v2:
->> - Do not cover bpf changes in the same commit, let bpf developers
->>    implement it.
->> ---
->>   kernel/tracepoint.c | 11 +++++++----
->>   1 file changed, 7 insertions(+), 4 deletions(-)
->>
->> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
->> index 5658dc92f5b5..47569fb06596 100644
->> --- a/kernel/tracepoint.c
->> +++ b/kernel/tracepoint.c
->> @@ -106,13 +106,16 @@ static void rcu_free_old_probes(struct rcu_head *head)
->>          kfree(container_of(head, struct tp_probes, rcu));
->>   }
->>
->> -static inline void release_probes(struct tracepoint_func *old)
->> +static inline void release_probes(struct tracepoint *tp, struct tracepoint_func *old)
->>   {
->>          if (old) {
->>                  struct tp_probes *tp_probes = container_of(old,
->>                          struct tp_probes, probes[0]);
->>
->> -               call_rcu(&tp_probes->rcu, rcu_free_old_probes);
->> +               if (tracepoint_is_syscall(tp))
->> +                       call_rcu_tasks_trace(&tp_probes->rcu, rcu_free_old_probes);
-> 
-> should this be call_rcu_tasks_trace() -> call_rcu() chain instead of
-> just call_rcu_tasks_trace()? While currently call_rcu_tasks_trace()
-> implies RCU GP (as evidenced by rcu_trace_implies_rcu_gp() being
-> hardcoded right now to returning true), this might not always be the
-> case in the future, so it's best to have a guarantee that regardless
-> of sleepable or not, we'll always have have RCU GP, and for sleepable
-> tracepoint *also* RCU Tasks Trace GP.
+Am 28.10.2024 um 07:23 schrieb Greg Kroah-Hartman:
+> This is the start of the stable review cycle for the 6.6.59 release.
+> There are 208 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Given that faultable tracepoints only use RCU tasks trace for the
-read-side and do not rely on preempt disable, I don't see why we would
-need to chain both grace periods there ?
+Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
+oddities or regressions found.
 
-Thanks,
+Tested-by: Peter Schneider <pschneider1968@googlemail.com>
 
-Mathieu
-
-> 
->> +               else
->> +                       call_rcu(&tp_probes->rcu, rcu_free_old_probes);
->>          }
->>   }
->>
->> @@ -334,7 +337,7 @@ static int tracepoint_add_func(struct tracepoint *tp,
->>                  break;
->>          }
->>
->> -       release_probes(old);
->> +       release_probes(tp, old);
->>          return 0;
->>   }
->>
->> @@ -405,7 +408,7 @@ static int tracepoint_remove_func(struct tracepoint *tp,
->>                  WARN_ON_ONCE(1);
->>                  break;
->>          }
->> -       release_probes(old);
->> +       release_probes(tp, old);
->>          return 0;
->>   }
->>
->> --
->> 2.39.5
->>
+Beste Grüße,
+Peter Schneider
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+Climb the mountain not to plant your flag, but to embrace the challenge,
+enjoy the air and behold the view. Climb it so you can see the world,
+not so the world can see you.                    -- David McCullough Jr.
 
+OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
+Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
+https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
