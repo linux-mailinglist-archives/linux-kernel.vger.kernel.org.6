@@ -1,129 +1,176 @@
-Return-Path: <linux-kernel+bounces-383976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-383977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADE49B22B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:27:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 816B19B22B9
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:29:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F30781F21B6C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:27:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE78E1C211D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 02:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAFE15B153;
-	Mon, 28 Oct 2024 02:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5CA1156F3C;
+	Mon, 28 Oct 2024 02:29:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ihryl5ms"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="hKVMhQBT"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF28374FF;
-	Mon, 28 Oct 2024 02:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D0B374FF
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 02:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730082435; cv=none; b=pVVw/f5a1F9uvrEiMqm1jAR8cZ2+xR7HGiaIROXkRnPMyWHSn2E+sE4v/UM0aqA3ERjyUxgbDcMNxIZy42lECUPRmps8drN1T5RhbS2MYAlRmpLfA/qp/jBNBcsyWqezrklbO0eeskhGpf7ZftpEKamiFVsfEmHZyb0TednuVrc=
+	t=1730082566; cv=none; b=lNy6zfxbxL2+DWZ7t5LsIWnRygS/CvhJjvPvWXw5H9UyMVxf6qLliMlDsLN4ZpfwrTVoWO9BVf3Z0mCwN0RL1U4QkAkXT1cYQrQTHUDn+zcDZkcuiEa8jG7z6S1NLclZ7pJC7k8SCHm747+sklWEbPJmxUedBGZcI2mSLawYPO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730082435; c=relaxed/simple;
-	bh=O6n5LU5cQ2aUUdKZldlVNw7gP2/0RTzZWr3RLU4EMAw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Xk6awpjfwaKYeRC7D/bgG5DpBu2xjn2UuAmnWGlIJCt5cKHhfvcYDZtslYOKn0mJV890U+lp6GbYHxBcj8LU3mHaQhzJr2c8hDmNZA0N6BTkqI7s7mu03SDPevNtTONsLx4l+8Bhfzrzia4x7+fe5euF8rT2IsRku1Hp3iW4I0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ihryl5ms; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1730082427;
-	bh=PTgMcrh/DjlRMa4Xvz3XtnTZ7EL8OuqbXeeGiXcMhDs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ihryl5msw++sO6kks9izFyyBxe1jmaTGqRA1FdPxfWyCLOTplIt0yWH8Vy5Rtt1R1
-	 u2gxgNgP9me+9aHldp/XsiftsKx/qVSH1KR3KAeji+Y0SjSUctrGVBTODgPTkkis/O
-	 jQaPyRYIqaujmgFQzJwsuc8X94Y+XzMbjfzjdEBsp209SnnPHPLR6BrN6inUn4IJCc
-	 VwR0Sj/QRTMYcOUghjN6YpxXEa3C90IaKnKslFQvUbTJPx56XiFglnT6v6iZfVCpeP
-	 PSZwBhLabeDoibS3Zl9BzQNdQLJJfIFabfCnyKqV5r3QDfkRgGQIAv76hoRpl+D99m
-	 CrnnTHgBQ6oaQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcHMt35B4z4w2L;
-	Mon, 28 Oct 2024 13:27:06 +1100 (AEDT)
-Date: Mon, 28 Oct 2024 13:27:07 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Dave Airlie <airlied@redhat.com>, Arnd Bergmann <arnd@arndb.de>
-Cc: DRI <dri-devel@lists.freedesktop.org>, Arnd Bergmann <arnd@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, Niklas Schnelle
- <schnelle@linux.ibm.com>, Thomas Zimmermann <tzimmermann@suse.de>
-Subject: linux-next: manual merge of the drm tree with the asm-generic tree
-Message-ID: <20241028132707.24aded7d@canb.auug.org.au>
+	s=arc-20240116; t=1730082566; c=relaxed/simple;
+	bh=ZHSv9Xu1PFvwTAmvaFu/PaWhs9wKQRlU/HEVz+jswIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rgHKZvRgNHuQJ/X0zFzEZyZkK2ncTIDXYB3yzCCbcVLUMgzWrnAq3QqxojG1xkiSi7dQ5l6eMYZnvosJRzsmzyKyEOs7+cHpuoz4HtCEil39lE7depHd1T4uYX59rMdmT4NKvT7oZPeLdaezhkD81P3Qf7IgIFXBYmfzGBqT70w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=hKVMhQBT; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1730082555; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=qrUz0Mm8myz58np+kw3p9Sjhn9DNIeB0R92nfRVgAU8=;
+	b=hKVMhQBTt74lFLAgX1iiW8QKAs9wCTGyrxylS0oM6MLorLWri1z7QDmgi31s9FQ/sYnrrzv2MwE0zYwXrZcmqt0Ey5lwIxDhkNJ1XYrF8/is11/0Hg3gfWdOy+jH/0DaycPMYblJIBkEPLE3zvRMQd0hrrgDNRM1b5AoCVVFU5c=
+Received: from 30.74.144.158(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHzA9IO_1730082552 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 28 Oct 2024 10:29:13 +0800
+Message-ID: <73ddad71-47c2-4258-bfc3-a5c5283689fb@linux.alibaba.com>
+Date: Mon, 28 Oct 2024 10:29:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/5erwJwIlhclGCrUd=HJmnLP";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: add per-order mTHP swpin counters
+To: Barry Song <21cnbao@gmail.com>, akpm@linux-foundation.org,
+ linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+ David Hildenbrand <david@redhat.com>, Chris Li <chrisl@kernel.org>,
+ Yosry Ahmed <yosryahmed@google.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Kanchana P Sridhar <kanchana.p.sridhar@intel.com>,
+ Usama Arif <usamaarif642@gmail.com>
+References: <20241026082423.26298-1-21cnbao@gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <20241026082423.26298-1-21cnbao@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
---Sig_/5erwJwIlhclGCrUd=HJmnLP
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-Today's linux-next merge of the drm tree got a conflict in:
+On 2024/10/26 16:24, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
+> 
+> This helps profile the sizes of folios being swapped in. Currently,
+> only mTHP swap-out is being counted.
+> 
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+> Cc: Chris Li <chrisl@kernel.org>
+> Cc: Yosry Ahmed <yosryahmed@google.com>
+> Cc: "Huang, Ying" <ying.huang@intel.com>
+> Cc: Kairui Song <kasong@tencent.com>
+> Cc: Ryan Roberts <ryan.roberts@arm.com>
+> Cc: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> Cc: Usama Arif <usamaarif642@gmail.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 
-  drivers/gpu/drm/gma500/Kconfig
+Looks reasonable to me.
+Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 
-between commit:
-
-  65f5bf96750f ("drm: handle HAS_IOPORT dependencies")
-
-from the asm-generic tree and commit:
-
-  aecdbfe459a0 ("drm/gma500: Run DRM default client setup")
-
-from the drm tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc drivers/gpu/drm/gma500/Kconfig
-index 23b7c14de5e2,c2927c37c40b..000000000000
---- a/drivers/gpu/drm/gma500/Kconfig
-+++ b/drivers/gpu/drm/gma500/Kconfig
-@@@ -1,7 -1,8 +1,8 @@@
-  # SPDX-License-Identifier: GPL-2.0-only
-  config DRM_GMA500
-  	tristate "Intel GMA500/600/3600/3650 KMS Framebuffer"
- -	depends on DRM && PCI && X86 && MMU
- +	depends on DRM && PCI && X86 && MMU && HAS_IOPORT
-+ 	select DRM_CLIENT_SELECTION
-  	select DRM_KMS_HELPER
-  	select FB_IOMEM_HELPERS if DRM_FBDEV_EMULATION
-  	select I2C
-
---Sig_/5erwJwIlhclGCrUd=HJmnLP
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmce9nsACgkQAVBC80lX
-0GwrDwf/U8EXNf+9GHqdDXPK+6i658p6nGaSKnn6EDmLrMSUd/aG4Br+G6bNya/u
-hHclK2DTDhNkFyplojeMwHEQXHhOMTImJubHzD4qcnLZxGvYtutSAOWPCtZVDz1K
-ku7pwQOo2TenTlGnqX+QH1t8fWaNWh65s5Y5YLH+DgEHFmSr2UdilnEQZklT/m9b
-qzZOWEGCFCVqT12+ffzgEoBCbuC9Uv79oZnzeT8cXT97dJZprhrhqUzuKUJr6xMO
-/0Oisko/PVKbtCmgaNSjp3D0NWOJnNGqjXzVN/hOpyr0I944rNsXmJ3qFiqFK5zF
-6IX8QB1xtQtAQFR27bovyyfcyMrFtg==
-=gHTb
------END PGP SIGNATURE-----
-
---Sig_/5erwJwIlhclGCrUd=HJmnLP--
+> ---
+>   Documentation/admin-guide/mm/transhuge.rst | 3 +++
+>   include/linux/huge_mm.h                    | 1 +
+>   mm/huge_memory.c                           | 3 +++
+>   mm/page_io.c                               | 3 +++
+>   4 files changed, 10 insertions(+)
+> 
+> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+> index 2a171ed5206e..203ba7aaf5fc 100644
+> --- a/Documentation/admin-guide/mm/transhuge.rst
+> +++ b/Documentation/admin-guide/mm/transhuge.rst
+> @@ -533,6 +533,9 @@ anon_fault_fallback_charge
+>   zswpout
+>   	is incremented every time a huge page is swapped out to zswap in one
+>   	piece without splitting.
+> +swpin
+> +	is incremented every time a huge page is swapped in from a non-zswap
+> +	swap device in one piece.
+>   
+>   swpout
+>   	is incremented every time a huge page is swapped out to a non-zswap
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index c59e5aa9b081..b94c2e8ee918 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -120,6 +120,7 @@ enum mthp_stat_item {
+>   	MTHP_STAT_ANON_FAULT_FALLBACK,
+>   	MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE,
+>   	MTHP_STAT_ZSWPOUT,
+> +	MTHP_STAT_SWPIN,
+>   	MTHP_STAT_SWPOUT,
+>   	MTHP_STAT_SWPOUT_FALLBACK,
+>   	MTHP_STAT_SHMEM_ALLOC,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 830d6aa5bf97..846c1a43f61c 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -616,6 +616,7 @@ DEFINE_MTHP_STAT_ATTR(anon_fault_alloc, MTHP_STAT_ANON_FAULT_ALLOC);
+>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback, MTHP_STAT_ANON_FAULT_FALLBACK);
+>   DEFINE_MTHP_STAT_ATTR(anon_fault_fallback_charge, MTHP_STAT_ANON_FAULT_FALLBACK_CHARGE);
+>   DEFINE_MTHP_STAT_ATTR(zswpout, MTHP_STAT_ZSWPOUT);
+> +DEFINE_MTHP_STAT_ATTR(swpin, MTHP_STAT_SWPIN);
+>   DEFINE_MTHP_STAT_ATTR(swpout, MTHP_STAT_SWPOUT);
+>   DEFINE_MTHP_STAT_ATTR(swpout_fallback, MTHP_STAT_SWPOUT_FALLBACK);
+>   #ifdef CONFIG_SHMEM
+> @@ -635,6 +636,7 @@ static struct attribute *anon_stats_attrs[] = {
+>   	&anon_fault_fallback_charge_attr.attr,
+>   #ifndef CONFIG_SHMEM
+>   	&zswpout_attr.attr,
+> +	&swpin_attr.attr,
+>   	&swpout_attr.attr,
+>   	&swpout_fallback_attr.attr,
+>   #endif
+> @@ -666,6 +668,7 @@ static struct attribute_group file_stats_attr_grp = {
+>   static struct attribute *any_stats_attrs[] = {
+>   #ifdef CONFIG_SHMEM
+>   	&zswpout_attr.attr,
+> +	&swpin_attr.attr,
+>   	&swpout_attr.attr,
+>   	&swpout_fallback_attr.attr,
+>   #endif
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index c69fab5060a1..5d9b6e6cf96c 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -487,6 +487,7 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
+>   		for (p = 0; p < sio->pages; p++) {
+>   			struct folio *folio = page_folio(sio->bvec[p].bv_page);
+>   
+> +			count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
+>   			count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>   			folio_mark_uptodate(folio);
+>   			folio_unlock(folio);
+> @@ -573,6 +574,7 @@ static void swap_read_folio_bdev_sync(struct folio *folio,
+>   	 * attempt to access it in the page fault retry time check.
+>   	 */
+>   	get_task_struct(current);
+> +	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
+>   	count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>   	count_vm_events(PSWPIN, folio_nr_pages(folio));
+>   	submit_bio_wait(&bio);
+> @@ -589,6 +591,7 @@ static void swap_read_folio_bdev_async(struct folio *folio,
+>   	bio->bi_iter.bi_sector = swap_folio_sector(folio);
+>   	bio->bi_end_io = end_swap_bio_read;
+>   	bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
+> +	count_mthp_stat(folio_order(folio), MTHP_STAT_SWPIN);
+>   	count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>   	count_vm_events(PSWPIN, folio_nr_pages(folio));
+>   	submit_bio(bio);
 
