@@ -1,120 +1,91 @@
-Return-Path: <linux-kernel+bounces-384932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF7EC9B3056
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:34:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2A29B3058
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 13:34:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86B781F2202C
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6FB6282245
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 12:34:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30A751DA100;
-	Mon, 28 Oct 2024 12:34:00 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A2D1D5CC5
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A30D1DA100;
+	Mon, 28 Oct 2024 12:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AmydIm7Y"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F3F1D934B
+	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 12:34:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730118839; cv=none; b=Xk7r5AAJ2GDJA2UOBhqUI8iUREz2RbiP7Whe1uYqtHOISofxwbd/7N88gYRSMDt62OxqG+smxWbqD7FZqeUT7sjPSEfgJoy4aYkT5R8Tvdp4OrOIi03zfwUtAZpyvlYb0cgQ82ZLk44XImgrw/LerfTAjZ7WgO2fS9ZbXXn6FAY=
+	t=1730118890; cv=none; b=AketDohWwFUt+EucvNqPATIQT9lIQJgwmdB+HEJWIKn5YQqeaibNwB8iz1HaMbi3ivyZEuIAaKtmh5bEHGPGrw7EmDe4rXwvnO6ax/QCKMvjWVtTcsBR8MHvV3QyJbOdVA7S25Xy8Di6hB8WwtOhvET/y058g4bf7W6lzRTJZZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730118839; c=relaxed/simple;
-	bh=vfrObvnJXXHQraRw1B1SpIKAxVyhi1xIz9oC0vghcas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hgfbNYVL8esq4FlmQZHC56x/zw7Z+xn/T9rOulsOrhYM/A3Me2h24dIxACFJhQ9IQ6wSx7s4ZRUEPmQZty4g50YtJBS19+pIgC3pTenmU2suOghwIVVS8ZmvEyULQnQXjICyZXy1J7S392WjtZYZE9zdwmHLW+B+9w6mYR0YsSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C253E497;
-	Mon, 28 Oct 2024 05:34:26 -0700 (PDT)
-Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 421A03F73B;
-	Mon, 28 Oct 2024 05:33:55 -0700 (PDT)
-Date: Mon, 28 Oct 2024 12:33:46 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Anshuman Khandual <anshuman.khandual@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Brown <broonie@kernel.org>,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 1/3] arm64/cpufeature: Add field details for
- ID_AA64DFR1_EL1 register
-Message-ID: <Zx-EqqkQL_FQMRuu@J2N7QTR9R3>
-References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
- <20241001043602.1116991-2-anshuman.khandual@arm.com>
- <ZxfLEqlbGLnK15sf@J2N7QTR9R3>
- <2c51de68-fcca-4457-b8e9-b488d8030738@arm.com>
+	s=arc-20240116; t=1730118890; c=relaxed/simple;
+	bh=54620GN/b8tzXBU3NRajAw15Isqlyf4C7qPxGP7Pq/M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=c1UzKA/j8broBy4CN3m5unU6Sw2GizEBQOBRmr3ZwuG/jTVcyCvq390dgVg7nXWLlANrSQY0b6Gp7SDcw7L8wN88kjUiBNV9AXvt0FB9eWwUHB6n9FWeE41UdsBj6VheSALQmP8VxKxb/XBHKsldVNYajzjsixVY3my+PnkodaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AmydIm7Y; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730118886;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MREqdIhMV696ufnyoHe89T22c4ii2X74R+5suzL/X8U=;
+	b=AmydIm7Ypwe3nC3I/+piTl+Jlavhxf+BB9uIb5scDerBELhPUKMK4qxWEEYXwawXaeS3+K
+	ROVi3t3mpejBh4vFbRLLVLfPWkPVd6oK6rLevZw2HgnFVh82GF3QoWoEuGsDkcrVE5RcEw
+	FLkkbfGRITjGgur0ZkGWoKF1tim3UUY=
+From: George Guo <dongtai.guo@linux.dev>
+To: horms@kernel.org,
+	paul@paul-moore.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: netdev@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	George Guo <guodongtai@kylinos.cn>
+Subject: [PATCH net-next v2] netlabel: document doi_remove field of struct netlbl_calipso_ops
+Date: Mon, 28 Oct 2024 20:34:35 +0800
+Message-Id: <20241028123435.3495916-1-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2c51de68-fcca-4457-b8e9-b488d8030738@arm.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 23, 2024 at 11:18:12AM +0530, Anshuman Khandual wrote:
-> 
-> 
-> On 10/22/24 21:26, Mark Rutland wrote:
-> > On Tue, Oct 01, 2024 at 10:06:00AM +0530, Anshuman Khandual wrote:
-> >> This adds required field details for ID_AA64DFR1_EL1, and also drops dummy
-> >> ftr_raz[] array which is now redundant. These register fields will be used
-> >> to enable increased breakpoint and watchpoint registers via FEAT_Debugv8p9
-> >> later.
+From: George Guo <guodongtai@kylinos.cn>
 
-> >> +static const struct arm64_ftr_bits ftr_id_aa64dfr1[] = {
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABL_CMPs_SHIFT, 8, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_DPFZS_SHIFT, 4, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_EBEP_SHIFT, 4, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ITE_SHIFT, 4, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_ABLE_SHIFT, 4, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_PMICNTR_SHIFT, 4, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SPMU_SHIFT, 4, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_CTX_CMPs_SHIFT, 8, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_WRPs_SHIFT, 8, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_NONSTRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_BRPs_SHIFT, 8, 0),
-> >> +	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR1_EL1_SYSPMUID_SHIFT, 8, 0),
-> >> +	ARM64_FTR_END,
-> >> +};
-> >> +
-> > 
-> > Is there some general principle that has been applied here? e.g. is this
-> > STRICT unless we know of variation in practice?
-> 
-> Yes, that's correct. STRICT unless there is a known variation in practice.
+Add documentation of doi_remove field to Kernel doc for struct netlbl_calipso_ops.
 
-Please mention that somewhere, e.g. in the commit message.
+Flagged by ./scripts/kernel-doc -none.
 
-> > e.g. it seems a bit odd that ABLE cannot vary while the number of
-> > breakpoints can...
-> But all these (ABL_CMPs, CTX_CMPs, WRPs, BRPs) are marked as FTR_NONSTRICT.
-> Would not that allow ABL_CMPs to vary as well ?
+Signed-off-by: George Guo <guodongtai@kylinos.cn>
+---
+ include/net/netlabel.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-I asked about ABLE, not ABL_CMPs.
+diff --git a/include/net/netlabel.h b/include/net/netlabel.h
+index 529160f76cac..4afd934b1238 100644
+--- a/include/net/netlabel.h
++++ b/include/net/netlabel.h
+@@ -208,6 +208,7 @@ struct netlbl_lsm_secattr {
+  * struct netlbl_calipso_ops - NetLabel CALIPSO operations
+  * @doi_add: add a CALIPSO DOI
+  * @doi_free: free a CALIPSO DOI
++ * @doi_remove: remove a CALIPSO DOI
+  * @doi_getdef: returns a reference to a DOI
+  * @doi_putdef: releases a reference of a DOI
+  * @doi_walk: enumerate the DOI list
+-- 
+2.39.2
 
-ABL_CMPs is marked as FTR_NONSTRICT, but ABLE is marked as FTR_STRICT.
-
-> Although the existing break-point numbers are currently marked FTR_STRICT,
-> should they be changed first ?
-> 
-> static const struct arm64_ftr_bits ftr_id_aa64dfr0[] = {
-> 	...................
-> 	ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_CTX_CMPs_SHIFT, 4, 0),
->         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_WRPs_SHIFT, 4, 0),
->         ARM64_FTR_BITS(FTR_HIDDEN, FTR_STRICT, FTR_LOWER_SAFE, ID_AA64DFR0_EL1_BRPs_SHIFT, 4, 0),
-> 	...................
-> }
-
-My point was that the above didn't seem to be logically consistent; I
-think you didn't handle ABLE as you should have.
-
-Mark.
 
