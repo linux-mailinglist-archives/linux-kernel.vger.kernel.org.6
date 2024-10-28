@@ -1,138 +1,388 @@
-Return-Path: <linux-kernel+bounces-384692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70149B2D49
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F73D9B2D55
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 11:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44AA21F214A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:49:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9009C1F209B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 10:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AADB81D433F;
-	Mon, 28 Oct 2024 10:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 347F01CC89D;
+	Mon, 28 Oct 2024 10:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jx1CqIXv"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KujC+W+j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163E0192B98;
-	Mon, 28 Oct 2024 10:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D50518800D;
+	Mon, 28 Oct 2024 10:50:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730112587; cv=none; b=WvrvYc9xyJ0V5GgAW+KS/t2PPD0AHunbqO2FUunuUt2H/LG0Gv8bHfhaFtUV2zdFbF1QwCemJ5J3DZg+HNlrhux0oTkH2Su0SvBYsr/NeKVinfAK3OJsgdBUeE/Ka5XjA9OjPoWDGqHquAm/Ox8C6xmCZ0vjXlMRcLUbv47/quc=
+	t=1730112654; cv=none; b=FNBpYwhFw2kjf3qmZOaYCJu4faXijmFCXhs+xlGa/FKEejxd56MEjNM/577phEJ20lsL8RbYNXraS3G9LUFCfi/onJhzWkqrt6sBmJmSdiyGuRFoEZC6+D/sP93sv5Abrz9mcTTLjIcg6YQ1EI0NXaoPimqb0j8wU/7wM+/ItjE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730112587; c=relaxed/simple;
-	bh=OIlWErpCErhhvqC1O/BLstj0Os973FkT8FU9m2dF2y4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=izqtUc2c3bZTE8+5jnpvpn5d1+3uU4PZtsNmx5EX6aIGBlxnkXndUR7xg9bvflUS48cn/+ZBoz8w783z9z6KRCLu3pDzKVoNWetr6A8soGs3Te7GpYndCKpiuhoZWkpL6RIoY7sVfq07mlPvg2SCRqmRJAzozp4FMGRIzeo5Cwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jx1CqIXv; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5cbb0900c86so3105476a12.0;
-        Mon, 28 Oct 2024 03:49:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730112582; x=1730717382; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BADti5TEboUpz7hQZAwm95LJ4r/iBnqor7lFpH91gUs=;
-        b=Jx1CqIXvA9KUrVhiqPZYG5ZulMclVp0nks7EDlZlnubKOwpSEDj79jG4v1PfVrXh8Z
-         /N/cxdXlpFJ1nbkOiE/stbgMZvuNO4ic4owt6tvJqHe3Q+HDdgzH70jgUlhPRUjdgHOK
-         ODA+YSMTcyJ/6DOPalw7lknWUdNWnF4VhzeasF7A2JLZzaEwC2KlLDDDQNpnnwRZls77
-         FPj2bj9cHd/3Pul62ybfmt88z25YYCVYhlDCN5QLPo1KBCQg69/VAUYiig0kjRc7FAnj
-         avAhDnAp3aN21MmtYCkahxhWSRIR4mldIrlNfOGgsbbnxWpxtL2JEETPgc7ApTY492oL
-         Jk9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730112582; x=1730717382;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BADti5TEboUpz7hQZAwm95LJ4r/iBnqor7lFpH91gUs=;
-        b=sspJDpOadx36kJGAyMsSs/SL6+QCa52a9iEpYVSL9p6SbwCc+lBAzWXqwjjyc5TzSB
-         VYF/myZYrwqwpVvHqqu+izhYN8LtqCNgGbqirUWbV7Er5Ng8wHiy3wQg9Ucbf1Hkq1UD
-         SOpP+84hWK7BBecX/GxFmYmbhBKngW4Ssnd7UMLOmmJJK59LtYPZ19HhYtSjjunHAftM
-         QvSOeExtbPZ9hsTUYDwrBz2pNcwAwqHRqzHrOQDyOotHcIIs8ulcbiKWKBUDINED8uWU
-         sH2CrEqJjCOyzntV2/4IhLTZGT/45efjxY1HcBtHZJbOa6EATAU1kXcA/PBaa1p0OPtS
-         d24Q==
-X-Forwarded-Encrypted: i=1; AJvYcCURs8OxEEkoXIyzXv3EFJ4h9dSCWFjWdCxaHP+C/cTzX4j/5ZJXgSLC1Rt8KNVvEPo/bhtwAfRJYjAMDLZj@vger.kernel.org, AJvYcCUVbmRYMTy/ZmWRoaCYUSgiSnG7Kdom31zAshgNw0ptyr2iJiFVqK+uvdjdDBjx8ZZE1Satraw5z2lv@vger.kernel.org, AJvYcCVvd7xfA12kTw5lkO08D7XoLQBxRRxarbgPIm5P8sql1pdGG0+vakAxytdLOLO9EQwYUFhwR6MCcLGR1w==@vger.kernel.org, AJvYcCWOa2M1/vkM1w5UCbEATTQr0QXBK+QgTwKFTd9Qpw/iJztUA7myZfcHlbOO0uYttIk4awSJGMJc0ARbsDaQMTY=@vger.kernel.org, AJvYcCWYswW85swLkgzkNesROMkLHIk8dIwvdbYA3XC4Dny6FNdN4eZJ3HJ67QNK4n3YWRACOeZFH7k7TY354g==@vger.kernel.org, AJvYcCWwP+SMGuKAMcgVbTHo4feZCLh8dPTX7WQFfTG/cl/liwpMfc9YKAjwM0p2VNQeMJx8ZkZ95qgy1sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYaWCUiejFLYTcAPOMv9RJ8lb455tS1VjCZ+URCIXdd0hyyIX8
-	Ue1PdAHs1jijyA/lB+p07kFPXy2PNQUj8bStq0F6Ztv5uhcbQacH
-X-Google-Smtp-Source: AGHT+IEm+HFLbPsaDOWlAHThJ3+XtoGjdhXujglmfhVMP7yNqtZqIoTJpMUXVSYjXbaSqnnT3/SHtw==
-X-Received: by 2002:a05:6402:5202:b0:5c9:5cff:3cc2 with SMTP id 4fb4d7f45d1cf-5cbbfa71a66mr5776613a12.29.1730112582021;
-        Mon, 28 Oct 2024 03:49:42 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::5:1494])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6258683sm3063919a12.20.2024.10.28.03.49.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 03:49:41 -0700 (PDT)
-Message-ID: <71decb01-4241-4fb0-bc38-187e180d6ee5@gmail.com>
-Date: Mon, 28 Oct 2024 10:49:40 +0000
+	s=arc-20240116; t=1730112654; c=relaxed/simple;
+	bh=yxc88EGY8BTq6kA+t7l3aV10CWSV+eLxY7Brsmkf3NI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EhMfiA7oFf0bZY1hqUUCqjlmHtQqjufvQ93o1lVwrKscekPbsVR1yZiQwPFFMz2Vooo/5v65UHD5t1KRXk3Q5PKr0jbPtVsZv5qlmI6Qyq/RZ0AJ6Z/uIGQJz4olHeX3yh28YkBcOJNDlMqS1WkE3vRlIxV8MDDcG6CYqnFZFpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KujC+W+j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B376C4CEC3;
+	Mon, 28 Oct 2024 10:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730112653;
+	bh=yxc88EGY8BTq6kA+t7l3aV10CWSV+eLxY7Brsmkf3NI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=KujC+W+jI+fo3ZgrJZ+VMTUb/6llnBL/WsBAvdIM/5ionUS+BZLu3MaA/qQFC3DG3
+	 NPqK/m14H2QcljxWMiyqFrFIzIDygbrDDoZZhJ8Xx/U6E8kbcychdhytgtTwYrYLl+
+	 SlaKVW26mUrqvFRZ2VWvBcdANmUINJlVMDGVNgFQV8+AZAM2RJ19N2dBcp5st48EJV
+	 emS3MJ6oEVPg5tzhfXyNsRerLTKBXFYINF8BgwkZayZPxJ4S4WYCZ/RQhUZEwvsDKq
+	 KMyR8aWq7YFJcSV96ol+RJoS0vy98jbRTSKP7p/BS+dLbkD78Vk8K8v09qNTK6HrgA
+	 m+1w2DVKmFtpA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Eyal Birger <eyal.birger@gmail.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Sasha Levin <sashal@kernel.org>,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	dsahern@kernel.org,
+	netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.11 01/32] xfrm: extract dst lookup parameters into a struct
+Date: Mon, 28 Oct 2024 06:49:43 -0400
+Message-ID: <20241028105050.3559169-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] of/fdt: add dt_phys arg to early_init_dt_scan and
- early_init_dt_verify
-To: Rob Herring <robh@kernel.org>
-Cc: mark.rutland@arm.com, will@kernel.org, leitao@debian.org,
- catalin.marinas@arm.com, tglx@linutronix.de, chris@zankel.net,
- saravanak@google.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- kexec@lists.infradead.org, loongarch@lists.linux.dev,
- linux-sh@vger.kernel.org, linux-riscv@lists.infradead.org,
- linuxppc-dev@lists.ozlabs.org, linux-openrisc@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-csky@vger.kernel.org
-References: <20241023171426.452688-1-usamaarif642@gmail.com>
- <CAL_JsqLBuzRYgnYHCdbdO4wneFNPe5_iEfbehvKK5M7bBuiyfA@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAL_JsqLBuzRYgnYHCdbdO4wneFNPe5_iEfbehvKK5M7bBuiyfA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11.5
 Content-Transfer-Encoding: 8bit
 
+From: Eyal Birger <eyal.birger@gmail.com>
 
+[ Upstream commit e509996b16728e37d5a909a5c63c1bd64f23b306 ]
 
-On 25/10/2024 23:15, Rob Herring wrote:
-> On Wed, Oct 23, 2024 at 12:14 PM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>  __pa() is only intended to be used for linear map addresses and using
->> it for initial_boot_params which is in fixmap for arm64 will give an
->> incorrect value. Hence save the physical address when it is known at
->> boot time when calling early_init_dt_scan for arm64 and use it at kexec
->> time instead of converting the virtual address using __pa().
->>
->> Reported-by: Breno Leitao <leitao@debian.org>
->> Suggested-by: Mark Rutland <mark.rutland@arm.com>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> Fixes: ac10be5cdbfa ("arm64: Use common of_kexec_alloc_and_setup_fdt()")
-> 
-> This looks fine, but what is the symptom without this compared to
-> before the above change? The original code in the referenced commit
-> above didn't remove the reservation at all. Unless the current code
-> does something worse, this is new functionality more than a fix (for
-> stable).
-> 
-> Rob
+Preparation for adding more fields to dst lookup functions without
+changing their signatures.
 
-After the series in [1] was merged, we always get a warning when kexecing
-a debug kernel, which was reported by Breno in [2].
-The issue is using __pa for a fixmap address in arm64 as described in [2],
-which could result in removing a memory reservation for a completely
-unrelated area.
-That was introduced by the patch just before 
-"arm64: Use common of_kexec_alloc_and_setup_fdt" [3], but arm64 switched to
-using the common kexec fdt function in that commit. This commit is trying
-to fix removing and corrupting any random memory reservation (and get rid
-of the warning) that was introduced by [1], not adding a new functionality.
+Signed-off-by: Eyal Birger <eyal.birger@gmail.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ include/net/xfrm.h      | 26 +++++++++++++-------------
+ net/ipv4/xfrm4_policy.c | 38 ++++++++++++++++----------------------
+ net/ipv6/xfrm6_policy.c | 28 +++++++++++++---------------
+ net/xfrm/xfrm_device.c  | 11 ++++++++---
+ net/xfrm/xfrm_policy.c  | 35 +++++++++++++++++++++++------------
+ 5 files changed, 73 insertions(+), 65 deletions(-)
 
-[1] https://lore.kernel.org/all/20210221174930.27324-7-nramas@linux.microsoft.com/ 
-[2] https://lore.kernel.org/all/ZnFKEtqfqJkYflwL@gmail.com/
-[3] https://lore.kernel.org/all/20210221174930.27324-6-nramas@linux.microsoft.com/
+diff --git a/include/net/xfrm.h b/include/net/xfrm.h
+index 54cef89f6c1ec..0f49f70dfd141 100644
+--- a/include/net/xfrm.h
++++ b/include/net/xfrm.h
+@@ -349,20 +349,23 @@ struct xfrm_if_cb {
+ void xfrm_if_register_cb(const struct xfrm_if_cb *ifcb);
+ void xfrm_if_unregister_cb(void);
+ 
++struct xfrm_dst_lookup_params {
++	struct net *net;
++	int tos;
++	int oif;
++	xfrm_address_t *saddr;
++	xfrm_address_t *daddr;
++	u32 mark;
++};
++
+ struct net_device;
+ struct xfrm_type;
+ struct xfrm_dst;
+ struct xfrm_policy_afinfo {
+ 	struct dst_ops		*dst_ops;
+-	struct dst_entry	*(*dst_lookup)(struct net *net,
+-					       int tos, int oif,
+-					       const xfrm_address_t *saddr,
+-					       const xfrm_address_t *daddr,
+-					       u32 mark);
+-	int			(*get_saddr)(struct net *net, int oif,
+-					     xfrm_address_t *saddr,
+-					     xfrm_address_t *daddr,
+-					     u32 mark);
++	struct dst_entry	*(*dst_lookup)(const struct xfrm_dst_lookup_params *params);
++	int			(*get_saddr)(xfrm_address_t *saddr,
++					     const struct xfrm_dst_lookup_params *params);
+ 	int			(*fill_dst)(struct xfrm_dst *xdst,
+ 					    struct net_device *dev,
+ 					    const struct flowi *fl);
+@@ -1735,10 +1738,7 @@ static inline int xfrm_user_policy(struct sock *sk, int optname,
+ }
+ #endif
+ 
+-struct dst_entry *__xfrm_dst_lookup(struct net *net, int tos, int oif,
+-				    const xfrm_address_t *saddr,
+-				    const xfrm_address_t *daddr,
+-				    int family, u32 mark);
++struct dst_entry *__xfrm_dst_lookup(int family, const struct xfrm_dst_lookup_params *params);
+ 
+ struct xfrm_policy *xfrm_policy_alloc(struct net *net, gfp_t gfp);
+ 
+diff --git a/net/ipv4/xfrm4_policy.c b/net/ipv4/xfrm4_policy.c
+index 0294fef577fab..ac1a28ef0c560 100644
+--- a/net/ipv4/xfrm4_policy.c
++++ b/net/ipv4/xfrm4_policy.c
+@@ -17,47 +17,41 @@
+ #include <net/ip.h>
+ #include <net/l3mdev.h>
+ 
+-static struct dst_entry *__xfrm4_dst_lookup(struct net *net, struct flowi4 *fl4,
+-					    int tos, int oif,
+-					    const xfrm_address_t *saddr,
+-					    const xfrm_address_t *daddr,
+-					    u32 mark)
++static struct dst_entry *__xfrm4_dst_lookup(struct flowi4 *fl4,
++					    const struct xfrm_dst_lookup_params *params)
+ {
+ 	struct rtable *rt;
+ 
+ 	memset(fl4, 0, sizeof(*fl4));
+-	fl4->daddr = daddr->a4;
+-	fl4->flowi4_tos = tos;
+-	fl4->flowi4_l3mdev = l3mdev_master_ifindex_by_index(net, oif);
+-	fl4->flowi4_mark = mark;
+-	if (saddr)
+-		fl4->saddr = saddr->a4;
+-
+-	rt = __ip_route_output_key(net, fl4);
++	fl4->daddr = params->daddr->a4;
++	fl4->flowi4_tos = params->tos;
++	fl4->flowi4_l3mdev = l3mdev_master_ifindex_by_index(params->net,
++							    params->oif);
++	fl4->flowi4_mark = params->mark;
++	if (params->saddr)
++		fl4->saddr = params->saddr->a4;
++
++	rt = __ip_route_output_key(params->net, fl4);
+ 	if (!IS_ERR(rt))
+ 		return &rt->dst;
+ 
+ 	return ERR_CAST(rt);
+ }
+ 
+-static struct dst_entry *xfrm4_dst_lookup(struct net *net, int tos, int oif,
+-					  const xfrm_address_t *saddr,
+-					  const xfrm_address_t *daddr,
+-					  u32 mark)
++static struct dst_entry *xfrm4_dst_lookup(const struct xfrm_dst_lookup_params *params)
+ {
+ 	struct flowi4 fl4;
+ 
+-	return __xfrm4_dst_lookup(net, &fl4, tos, oif, saddr, daddr, mark);
++	return __xfrm4_dst_lookup(&fl4, params);
+ }
+ 
+-static int xfrm4_get_saddr(struct net *net, int oif,
+-			   xfrm_address_t *saddr, xfrm_address_t *daddr,
+-			   u32 mark)
++static int xfrm4_get_saddr(xfrm_address_t *saddr,
++			   const struct xfrm_dst_lookup_params *params)
+ {
+ 	struct dst_entry *dst;
+ 	struct flowi4 fl4;
+ 
+-	dst = __xfrm4_dst_lookup(net, &fl4, 0, oif, NULL, daddr, mark);
++	dst = __xfrm4_dst_lookup(&fl4, params);
+ 	if (IS_ERR(dst))
+ 		return -EHOSTUNREACH;
+ 
+diff --git a/net/ipv6/xfrm6_policy.c b/net/ipv6/xfrm6_policy.c
+index b1d81c4270ab3..fc3f5eec68985 100644
+--- a/net/ipv6/xfrm6_policy.c
++++ b/net/ipv6/xfrm6_policy.c
+@@ -23,23 +23,21 @@
+ #include <net/ip6_route.h>
+ #include <net/l3mdev.h>
+ 
+-static struct dst_entry *xfrm6_dst_lookup(struct net *net, int tos, int oif,
+-					  const xfrm_address_t *saddr,
+-					  const xfrm_address_t *daddr,
+-					  u32 mark)
++static struct dst_entry *xfrm6_dst_lookup(const struct xfrm_dst_lookup_params *params)
+ {
+ 	struct flowi6 fl6;
+ 	struct dst_entry *dst;
+ 	int err;
+ 
+ 	memset(&fl6, 0, sizeof(fl6));
+-	fl6.flowi6_l3mdev = l3mdev_master_ifindex_by_index(net, oif);
+-	fl6.flowi6_mark = mark;
+-	memcpy(&fl6.daddr, daddr, sizeof(fl6.daddr));
+-	if (saddr)
+-		memcpy(&fl6.saddr, saddr, sizeof(fl6.saddr));
++	fl6.flowi6_l3mdev = l3mdev_master_ifindex_by_index(params->net,
++							   params->oif);
++	fl6.flowi6_mark = params->mark;
++	memcpy(&fl6.daddr, params->daddr, sizeof(fl6.daddr));
++	if (params->saddr)
++		memcpy(&fl6.saddr, params->saddr, sizeof(fl6.saddr));
+ 
+-	dst = ip6_route_output(net, NULL, &fl6);
++	dst = ip6_route_output(params->net, NULL, &fl6);
+ 
+ 	err = dst->error;
+ 	if (dst->error) {
+@@ -50,15 +48,14 @@ static struct dst_entry *xfrm6_dst_lookup(struct net *net, int tos, int oif,
+ 	return dst;
+ }
+ 
+-static int xfrm6_get_saddr(struct net *net, int oif,
+-			   xfrm_address_t *saddr, xfrm_address_t *daddr,
+-			   u32 mark)
++static int xfrm6_get_saddr(xfrm_address_t *saddr,
++			   const struct xfrm_dst_lookup_params *params)
+ {
+ 	struct dst_entry *dst;
+ 	struct net_device *dev;
+ 	struct inet6_dev *idev;
+ 
+-	dst = xfrm6_dst_lookup(net, 0, oif, NULL, daddr, mark);
++	dst = xfrm6_dst_lookup(params);
+ 	if (IS_ERR(dst))
+ 		return -EHOSTUNREACH;
+ 
+@@ -68,7 +65,8 @@ static int xfrm6_get_saddr(struct net *net, int oif,
+ 		return -EHOSTUNREACH;
+ 	}
+ 	dev = idev->dev;
+-	ipv6_dev_get_saddr(dev_net(dev), dev, &daddr->in6, 0, &saddr->in6);
++	ipv6_dev_get_saddr(dev_net(dev), dev, &params->daddr->in6, 0,
++			   &saddr->in6);
+ 	dst_release(dst);
+ 	return 0;
+ }
+diff --git a/net/xfrm/xfrm_device.c b/net/xfrm/xfrm_device.c
+index 9a44d363ba620..fcd67fdfe79bd 100644
+--- a/net/xfrm/xfrm_device.c
++++ b/net/xfrm/xfrm_device.c
+@@ -269,6 +269,8 @@ int xfrm_dev_state_add(struct net *net, struct xfrm_state *x,
+ 
+ 	dev = dev_get_by_index(net, xuo->ifindex);
+ 	if (!dev) {
++		struct xfrm_dst_lookup_params params;
++
+ 		if (!(xuo->flags & XFRM_OFFLOAD_INBOUND)) {
+ 			saddr = &x->props.saddr;
+ 			daddr = &x->id.daddr;
+@@ -277,9 +279,12 @@ int xfrm_dev_state_add(struct net *net, struct xfrm_state *x,
+ 			daddr = &x->props.saddr;
+ 		}
+ 
+-		dst = __xfrm_dst_lookup(net, 0, 0, saddr, daddr,
+-					x->props.family,
+-					xfrm_smark_get(0, x));
++		memset(&params, 0, sizeof(params));
++		params.net = net;
++		params.saddr = saddr;
++		params.daddr = daddr;
++		params.mark = xfrm_smark_get(0, x);
++		dst = __xfrm_dst_lookup(x->props.family, &params);
+ 		if (IS_ERR(dst))
+ 			return (is_packet_offload) ? -EINVAL : 0;
+ 
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index c56c61b0c12ef..1025b5b3a1dd6 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -267,10 +267,8 @@ static const struct xfrm_if_cb *xfrm_if_get_cb(void)
+ 	return rcu_dereference(xfrm_if_cb);
+ }
+ 
+-struct dst_entry *__xfrm_dst_lookup(struct net *net, int tos, int oif,
+-				    const xfrm_address_t *saddr,
+-				    const xfrm_address_t *daddr,
+-				    int family, u32 mark)
++struct dst_entry *__xfrm_dst_lookup(int family,
++				    const struct xfrm_dst_lookup_params *params)
+ {
+ 	const struct xfrm_policy_afinfo *afinfo;
+ 	struct dst_entry *dst;
+@@ -279,7 +277,7 @@ struct dst_entry *__xfrm_dst_lookup(struct net *net, int tos, int oif,
+ 	if (unlikely(afinfo == NULL))
+ 		return ERR_PTR(-EAFNOSUPPORT);
+ 
+-	dst = afinfo->dst_lookup(net, tos, oif, saddr, daddr, mark);
++	dst = afinfo->dst_lookup(params);
+ 
+ 	rcu_read_unlock();
+ 
+@@ -293,6 +291,7 @@ static inline struct dst_entry *xfrm_dst_lookup(struct xfrm_state *x,
+ 						xfrm_address_t *prev_daddr,
+ 						int family, u32 mark)
+ {
++	struct xfrm_dst_lookup_params params;
+ 	struct net *net = xs_net(x);
+ 	xfrm_address_t *saddr = &x->props.saddr;
+ 	xfrm_address_t *daddr = &x->id.daddr;
+@@ -307,7 +306,14 @@ static inline struct dst_entry *xfrm_dst_lookup(struct xfrm_state *x,
+ 		daddr = x->coaddr;
+ 	}
+ 
+-	dst = __xfrm_dst_lookup(net, tos, oif, saddr, daddr, family, mark);
++	params.net = net;
++	params.saddr = saddr;
++	params.daddr = daddr;
++	params.tos = tos;
++	params.oif = oif;
++	params.mark = mark;
++
++	dst = __xfrm_dst_lookup(family, &params);
+ 
+ 	if (!IS_ERR(dst)) {
+ 		if (prev_saddr != saddr)
+@@ -2440,15 +2446,15 @@ int __xfrm_sk_clone_policy(struct sock *sk, const struct sock *osk)
+ }
+ 
+ static int
+-xfrm_get_saddr(struct net *net, int oif, xfrm_address_t *local,
+-	       xfrm_address_t *remote, unsigned short family, u32 mark)
++xfrm_get_saddr(unsigned short family, xfrm_address_t *saddr,
++	       const struct xfrm_dst_lookup_params *params)
+ {
+ 	int err;
+ 	const struct xfrm_policy_afinfo *afinfo = xfrm_policy_get_afinfo(family);
+ 
+ 	if (unlikely(afinfo == NULL))
+ 		return -EINVAL;
+-	err = afinfo->get_saddr(net, oif, local, remote, mark);
++	err = afinfo->get_saddr(saddr, params);
+ 	rcu_read_unlock();
+ 	return err;
+ }
+@@ -2477,9 +2483,14 @@ xfrm_tmpl_resolve_one(struct xfrm_policy *policy, const struct flowi *fl,
+ 			remote = &tmpl->id.daddr;
+ 			local = &tmpl->saddr;
+ 			if (xfrm_addr_any(local, tmpl->encap_family)) {
+-				error = xfrm_get_saddr(net, fl->flowi_oif,
+-						       &tmp, remote,
+-						       tmpl->encap_family, 0);
++				struct xfrm_dst_lookup_params params;
++
++				memset(&params, 0, sizeof(params));
++				params.net = net;
++				params.oif = fl->flowi_oif;
++				params.daddr = remote;
++				error = xfrm_get_saddr(tmpl->encap_family, &tmp,
++						       &params);
+ 				if (error)
+ 					goto fail;
+ 				local = &tmp;
+-- 
+2.43.0
 
-Thanks,
-Usama
 
