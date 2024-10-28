@@ -1,125 +1,107 @@
-Return-Path: <linux-kernel+bounces-385525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1A559B3831
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:49:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 036159B3834
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 18:50:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1FF31B23A82
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:49:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCEEA282EB4
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAE71DF97D;
-	Mon, 28 Oct 2024 17:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4682A1DF720;
+	Mon, 28 Oct 2024 17:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XhLUsFPs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TR8zCYpd"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5643F1DF972;
-	Mon, 28 Oct 2024 17:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BA571684AE;
+	Mon, 28 Oct 2024 17:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730137759; cv=none; b=SAyn7Jh3Y+XoLqVrQxx6pTPKWTse2EAQd8LnsQPIHxThz5fc74BKKiRpXNtDcHOYaLx0TSEANyaepPDmnJXUYGWiANsljnDUTe0W25K90nZ+T4I2guIz74TIkbHwZ9Bkoh8p6CvqGYGGUAE13ogc6YJOiZwh2wGln84Oby4L988=
+	t=1730137793; cv=none; b=fw4g0Q3vZnw+CPdwILhqHZnLw4yFBTvn0oL0jB7KKx8H86b8/G5I9/88bQ8bkb6QIBjwWBl3lsGviPlegNO1t5NKJ3Pm93ua5TeM0rrFNIXDQojNnaUt9AbVpPwOaHn2Slbrz2ti+2zxczyAEXxXDsvb+WBqekFmJg9BLuS9jzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730137759; c=relaxed/simple;
-	bh=Hroi2NQYXOr47zG5Kz6WK7ouM5FbBDqTfo6anyTINnI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QpKEB0NsTr6dW8mLzjM4Fwu9cXvAgdYLJT+TQLOQqKDbFbTkWD9Jmgph0EtmPzsVgDA6HmkY3mHXz7XW55lGayzVfuhJbg6+CNN5D85pV2sEKfX4rfjHBYH3LMvmQuowuZN5ZMK/l5aRNx/BXSPSw1aABbv5deYHU7fBQETPgKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XhLUsFPs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3726C4CEC3;
-	Mon, 28 Oct 2024 17:49:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730137758;
-	bh=Hroi2NQYXOr47zG5Kz6WK7ouM5FbBDqTfo6anyTINnI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XhLUsFPskUJSqgYjxgrEDJWM+0cMhsVI4Q7ms71TcdkDUOW4/OTHl/AtYbXMpxcu+
-	 6U12U0VvKlNiPuhnClKKEnYQ5kP5IEvV5Y7BMmipk9Kd8tcnpZ1T2GnxBL693VI2mN
-	 yxwb0wGWVGJ72yCQD4XJvJW8GYVCS9H35i+ZhhvkwtaVb29BcZz2OVRyfpzNgwA6Cs
-	 s+XdaT6SZCSuDk28mB82Uoop7AfxR5Z4pKFZ+sZYeAgalnU4MFRuyoZBWfiusRz6R2
-	 xt09eSgS1z4z9LECSsJ0sGLYZTd95mq6+h0sS4sY+UizhKOFGPBwzNZIQXv34t+gwe
-	 s1KZaAwJUm30A==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	allen.lkml@gmail.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 5.15 00/80] 5.15.170-rc1 review
-Date: Mon, 28 Oct 2024 10:49:12 -0700
-Message-Id: <20241028174912.276586-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241028062252.611837461@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1730137793; c=relaxed/simple;
+	bh=E//W8m4YIl+8TPawrXItaAVzCM6WdsT2a+xP/caSd88=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Umrs/dU4ep8LiJMgJyfhRjzvKoxQggJdCfRieEjIhXtFLeNfc9EzR7c3m6oS+cuvi1mtkE820QbmYdFv+FAQSCJjlqOVzI3ajbYRIX7oeIz6MYFrVcdjEZ8sTALwyJiWCcUX3IVAEW36jqKbangsAgktoUl5a5Lj5nMmuHGqK5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TR8zCYpd; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431ac30d379so9710815e9.1;
+        Mon, 28 Oct 2024 10:49:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730137790; x=1730742590; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dS+CDaRqLDX9OzIJihQbnIilfInW0I2/bW/aL1LjTwM=;
+        b=TR8zCYpdqaV7iV72k6m5LHctycktex7XJxjR1odaivTXBjOl3u3UssvEN52bflzOLV
+         IYrS3xgP+vkkciGWdz/0+f91uTaNs9dYc9C+yLsetDKwZJJobZN6IlFOr3eAhZFL9MBy
+         N53xEwzzxiXwUAeLKfpeKom71VDwnVOf4ivAE4ISSlDZcSDNLQgaUbcyG/YpWnMI/zA6
+         a2S/j5c9mS/H9ck55glqMr8N93WIQP2dUIZFsEOyn5lTVWK9JbgqunZOsdPOKrAVuNFa
+         ZVnDZML6NwXcjQ2Xs70RluJHn0c2QAFAJpxXG2NfPuD+ku2K4YCT9oYPqg/Ia7Us9YYP
+         hN/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730137790; x=1730742590;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dS+CDaRqLDX9OzIJihQbnIilfInW0I2/bW/aL1LjTwM=;
+        b=Agx9ddz7ecnxmmdOa3/LSPP5a44S1y+LX+kvOElrmhKk8UTewBx2S4iVQHNUfcQj2D
+         YkDW3rKkabVWlbzAvqXLRr1HYaxORfWVagMh8IyzxNSdjYrJCXjTwpYo71zyIPdLQooB
+         4CRiJyqoyuzA/GI+I3+YnKkvtDl/H6MSmy/+Ha6jI3h3bj4hVLNDgOS66AM507pC8xDE
+         EMpJzi+0mWg69fr3411XLJRyMLspP1+gPwWcyZhw0TXW1aFG+Ns7XKevf7tsA0fbj1OY
+         My9x9g5NQMk7/dODDXgEpKPgjhQmKobXN2IT0v1xWezpoCqDa26/wyTeHh0rUG7CIOEV
+         ClPA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2jWcicPsxv4P8I9zW6i7mLLTFMiEyCO62OirJfJlzLYDmd3T1jf04wU3LEZ/dpxY6by4uz8q3@vger.kernel.org, AJvYcCX9C1sANcrsD/ix0Cf2UHwlsiA706bZwAA0Zm8EMVFlKhosyZ0hlPJ1YdylG+wmwHQ+4KbkeP58MWoR+XI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHcLDsBdiV6Hq7H+EJHZzOakIAjwR6DZLJl0XkET/kdlD/9dfc
+	RqJMfhmdNofGz184sXqt106x2LmPsfgK9gAFGqYKgpn15IlqFwlStm5WbxvUiSPeYUivO4JIbV6
+	3QPhu0VUSKDTXX5ISDbCpKqssjt8=
+X-Google-Smtp-Source: AGHT+IEZiLVIqCI0cfYUlRzU/AbFdJ9mVCLjbS6yx75u6/19fy5sdAACVuuh5PZYe5RJd1iUMLtWWGteS29/GiRwVks=
+X-Received: by 2002:a05:600c:3593:b0:430:54a4:5ad7 with SMTP id
+ 5b1f17b1804b1-4319ac76449mr84448105e9.1.1730137789737; Mon, 28 Oct 2024
+ 10:49:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241028115850.3409893-1-linyunsheng@huawei.com> <20241028115850.3409893-3-linyunsheng@huawei.com>
+In-Reply-To: <20241028115850.3409893-3-linyunsheng@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 28 Oct 2024 10:49:13 -0700
+Message-ID: <CAKgT0UfAyx54KW-Fx7_+DRx2sspYci21XvuL0MmwZ4c+Cpe2nQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 02/10] net: rename skb_copy_to_page_nocache() helper
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Linux-MM <linux-mm@kvack.org>, 
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>, David Ahern <dsahern@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Mon, Oct 28, 2024 at 5:05=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
+m> wrote:
+>
+> Rename skb_copy_to_page_nocache() to skb_copy_to_frag_nocache()
+> to avoid calling virt_to_page() as we are about to pass virtual
+> address directly.
+>
+> CC: Alexander Duyck <alexander.duyck@gmail.com>
+> CC: Andrew Morton <akpm@linux-foundation.org>
+> CC: Linux-MM <linux-mm@kvack.org>
+> Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
+> ---
+>  include/net/sock.h | 9 ++++-----
+>  net/ipv4/tcp.c     | 7 +++----
+>  net/kcm/kcmsock.c  | 7 +++----
+>  3 files changed, 10 insertions(+), 13 deletions(-)
 
-On Mon, 28 Oct 2024 07:24:40 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Looks good to me.
 
-> This is the start of the stable review cycle for the 5.15.170 release.
-> There are 80 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
-
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] be79a1947245 ("Linux 5.15.170-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 1 selftests: damon: debugfs_attrs.sh
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+Reviewed-by: Alexander Duyck <alexanderduyck@fb.com>
 
