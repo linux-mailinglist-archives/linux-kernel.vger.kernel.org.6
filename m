@@ -1,166 +1,96 @@
-Return-Path: <linux-kernel+bounces-385339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-385340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B8BF9B35DB
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:08:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13D419B35DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 17:09:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD1B81C2180A
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:08:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B42371F22F50
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 16:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BCEC1DED4B;
-	Mon, 28 Oct 2024 16:08:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60DA81DE8B2;
+	Mon, 28 Oct 2024 16:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lLTDTCDT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LnP7lfOS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A286B1DE8B4;
-	Mon, 28 Oct 2024 16:08:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EAC15C13A;
+	Mon, 28 Oct 2024 16:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730131708; cv=none; b=JoV0fvgMSKpBqM4zYJE+uqmH7Ktd6tUWXZCTdC2HDLahe2DQrnHdYWDpG2G8BtnhAJ43+rpuCE0BvHoFvocISlTnVE8j/Jiau6L03kMGjTO8vebRV/b1jh0l+ykgMQB49Jn5G5zBh2Jw1sci9rQN5kYguNtEoiwuSrSuY9TjOnw=
+	t=1730131741; cv=none; b=HLXqPXSH8LrTvLaQPALdLtzB5W6dQhzeDxMHsHz3wzFTtzxiLiPAaGdAsJIFwC8gue0/FXopJ74PokMEdqobcb/VqKvexmQmfyuiOXBz0CCPE1Jsfeo7rj//nzMQ/zU74iS2eTX4KzQvd0Mey8kX4oKQuroDYqZKBXNhW63Sjms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730131708; c=relaxed/simple;
-	bh=QCl5kdGtws/gZEzPILUveMBgYMgEM6pFSQgc8jF1ex8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9rTaCAoc4RSFmnB9lWJQYOZ8Jy0HDWEJxTCgI+L4nGSMcR1M8q2q12YxU1VFTI6hO0vOy4YRBBOs8HHnVx0o2WEq3QeGHv8NSOA8SNnlC5mdt0h+SPfvPxlLRp4fABPXqiD4ET4+iv47CNage+mgNliSxMHP438xVinadnnMOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lLTDTCDT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C43FCC4CEC3;
-	Mon, 28 Oct 2024 16:08:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730131708;
-	bh=QCl5kdGtws/gZEzPILUveMBgYMgEM6pFSQgc8jF1ex8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lLTDTCDTfp1wfbTG1RD4IoUOpGEz7Pvg8zU0OsKGxnoxCo6EFMb06hKcDrkCTVKFf
-	 WI7s6xIC28tQiKocBr595ncOCPm3LzHHD1hwwdLpGjVxChSMzxJIcjZ3xHl+GsRgdE
-	 8x5o3t3MvnDE0QaFOvNRHIOOxhiXC2kRED2nvTED4Mas3UKYkpgg2JJWyvaZLP/DD4
-	 HD5+lnd596RjdJg+LiiR86+SbZqeZzvmHhk/lZBR71OBf4t07BgtS2oCjb0qjn34cQ
-	 d7bYLYZ2DPweIegank0CHenREu0UM4vpwoPEDa7kQ5HtuU76dzHQuWVlNRGYvkzzhS
-	 EvlgguRh+0f8w==
-Date: Mon, 28 Oct 2024 13:08:24 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v1] perf cap: Add __NR_capget to arch/x86 unistd
-Message-ID: <Zx-2-GhdII3ZIizi@x1>
-References: <20241026055448.312247-1-irogers@google.com>
- <CAP-5=fXLL1dB4MEfe7Z+fhp_RzC9DV91gBLBHjjywW-_RXmM-Q@mail.gmail.com>
- <c19ca53b-b0e6-4763-8691-09ee4a095492@intel.com>
+	s=arc-20240116; t=1730131741; c=relaxed/simple;
+	bh=RFIuHkEL9QlURGA8odJLQx+5TzCk9F/XU/g4Ze+ayaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e0RnLbNDTIPOYnTiZBHm2E2Fw3qshNrpAPwLytMs2sbsda+7cY0tyDYnrWu96W1iBWqtgXgnVfYQ++MvXvkANNCwIPagji/sPY3kSKg4Hqlo+XYnKfyXPO/Plx+abPU9z6ebIfkauVY/TtY1BSaBqa+LEhTv0WZOdKn0KhzK47g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LnP7lfOS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1730131737;
+	bh=RFIuHkEL9QlURGA8odJLQx+5TzCk9F/XU/g4Ze+ayaY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LnP7lfOS/ZKF0gdhu6J4yKLLyvp6/z6MZnb8GwOvInLDSODHuT4wcS3dC36ZFWSKM
+	 oUMo6abWT5nc69ETfNHy0ZTItIvwU1ZjooRzCz+Hh3PoBNanqgrlbV3/5v+kPRdU9h
+	 xEc1vCOOm1ysf/9jwW6gUZl5AunFMwPuCE6RE4SjsmWHSkmbIZm/fPvIzUw/gWIdMz
+	 1GqSGykSd5VCOjWf0c7pCksRO/yjQKJF78jnY0xAfLcLWow1xgPgAzfjH77o8xz5WV
+	 iW6u9KiYfsn35uS+sVN/lCVBHdYllJt48fAnq1qjV8pqqIW0Ldk6vxEJ0rmbAeMZxP
+	 1p1Ry3c1FgwGA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A783217E3663;
+	Mon, 28 Oct 2024 17:08:56 +0100 (CET)
+Message-ID: <006dfe88-25fd-47a1-a57c-3345af2bff21@collabora.com>
+Date: Mon, 28 Oct 2024 17:08:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c19ca53b-b0e6-4763-8691-09ee4a095492@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] dt-bindings: mfd: mediatek: mt6397: add adc, codec
+ and regulators for mt6359
+To: Macpaul Lin <macpaul.lin@mediatek.com>, Sen Chu <sen.chu@mediatek.com>,
+ Sean Wang <sean.wang@mediatek.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Alexandre Mergnat <amergnat@baylibre.com>
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+ MediaTek Chromebook Upstream
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ Chen-Yu Tsai <wenst@chromium.org>
+References: <20241004030148.13366-1-macpaul.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241004030148.13366-1-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 09:25:36AM +0200, Adrian Hunter wrote:
-> On 26/10/24 09:00, Ian Rogers wrote:
-> > On Fri, Oct 25, 2024 at 10:54 PM Ian Rogers <irogers@google.com> wrote:
-> >>
-> >> As there are duplicated kernel headers in tools/include libc can pick
-> >> up the wrong definitions. This was causing the wrong system call for
-> >> capget in perf.
-> >>
-> >> Closes: https://lore.kernel.org/lkml/cc7d6bdf-1aeb-4179-9029-4baf50b59342@intel.com/
-> >> Signed-off-by: Ian Rogers <irogers@google.com>
-> > 
-> > Forgot:
-> > Fixes: e25ebda78e23 ("perf cap: Tidy up and improve capability testing")
+Il 04/10/24 05:01, Macpaul Lin ha scritto:
+> Since MT6359 PMIC has been added as one of the compatibles of
+> "mediatek,mt6397.yaml", the sub-device node of "MT6359 PMIC AUXADC",
+> "MT6359 Audio Codec"  and "MT6359 PMIC Regulators" should also be
+> contained in this DT Schema as well.
 > 
-> Works for me, thank you!
+> This patch includes:
+>   - add 'adc' property and $ref for 'mediatek,mt6359-auxadc'.
+>   - add 'mt6359-regulator' to the compatibles of regulators.
+>   - add 'mt6359-codec' to the compatibles of audio-codec.
 > 
-> Tested-by: Adrian Hunter <adrian.hunter@intel.com>
+> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
 
-Thanks, I also added this:
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com
 
-Reported-by: Adrian Hunter <adrian.hunter@intel.com>
-
-Applied to perf-tools, for v6.12-rc.
-
-- Arnaldo
- 
-> > 
-> > Thanks,
-> > Ian
-> > 
-> >> ---
-> >>  tools/arch/x86/include/uapi/asm/unistd_32.h |  3 +++
-> >>  tools/arch/x86/include/uapi/asm/unistd_64.h |  3 +++
-> >>  tools/perf/util/cap.c                       | 10 +++-------
-> >>  3 files changed, 9 insertions(+), 7 deletions(-)
-> >>
-> >> diff --git a/tools/arch/x86/include/uapi/asm/unistd_32.h b/tools/arch/x86/include/uapi/asm/unistd_32.h
-> >> index 9de35df1afc3..63182a023e9d 100644
-> >> --- a/tools/arch/x86/include/uapi/asm/unistd_32.h
-> >> +++ b/tools/arch/x86/include/uapi/asm/unistd_32.h
-> >> @@ -11,6 +11,9 @@
-> >>  #ifndef __NR_getpgid
-> >>  #define __NR_getpgid 132
-> >>  #endif
-> >> +#ifndef __NR_capget
-> >> +#define __NR_capget 184
-> >> +#endif
-> >>  #ifndef __NR_gettid
-> >>  #define __NR_gettid 224
-> >>  #endif
-> >> diff --git a/tools/arch/x86/include/uapi/asm/unistd_64.h b/tools/arch/x86/include/uapi/asm/unistd_64.h
-> >> index d0f2043d7132..77311e8d1b5d 100644
-> >> --- a/tools/arch/x86/include/uapi/asm/unistd_64.h
-> >> +++ b/tools/arch/x86/include/uapi/asm/unistd_64.h
-> >> @@ -11,6 +11,9 @@
-> >>  #ifndef __NR_getpgid
-> >>  #define __NR_getpgid 121
-> >>  #endif
-> >> +#ifndef __NR_capget
-> >> +#define __NR_capget 125
-> >> +#endif
-> >>  #ifndef __NR_gettid
-> >>  #define __NR_gettid 186
-> >>  #endif
-> >> diff --git a/tools/perf/util/cap.c b/tools/perf/util/cap.c
-> >> index 7574a67651bc..69d9a2bcd40b 100644
-> >> --- a/tools/perf/util/cap.c
-> >> +++ b/tools/perf/util/cap.c
-> >> @@ -7,13 +7,9 @@
-> >>  #include "debug.h"
-> >>  #include <errno.h>
-> >>  #include <string.h>
-> >> -#include <unistd.h>
-> >>  #include <linux/capability.h>
-> >>  #include <sys/syscall.h>
-> >> -
-> >> -#ifndef SYS_capget
-> >> -#define SYS_capget 90
-> >> -#endif
-> >> +#include <unistd.h>
-> >>
-> >>  #define MAX_LINUX_CAPABILITY_U32S _LINUX_CAPABILITY_U32S_3
-> >>
-> >> @@ -21,9 +17,9 @@ bool perf_cap__capable(int cap, bool *used_root)
-> >>  {
-> >>         struct __user_cap_header_struct header = {
-> >>                 .version = _LINUX_CAPABILITY_VERSION_3,
-> >> -               .pid = getpid(),
-> >> +               .pid = 0,
-> >>         };
-> >> -       struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S];
-> >> +       struct __user_cap_data_struct data[MAX_LINUX_CAPABILITY_U32S] = {};
-> >>         __u32 cap_val;
-> >>
-> >>         *used_root = false;
-> >> --
-> >> 2.47.0.163.g1226f6d8fa-goog
-> >>
 
