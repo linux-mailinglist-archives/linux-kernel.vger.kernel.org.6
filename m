@@ -1,190 +1,315 @@
-Return-Path: <linux-kernel+bounces-384061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-384048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8636B9B23B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:52:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B800F9B239E
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 04:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A341C20F60
-	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:52:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA9721F21E16
+	for <lists+linux-kernel@lfdr.de>; Mon, 28 Oct 2024 03:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9674318FC7E;
-	Mon, 28 Oct 2024 03:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFD11898FB;
+	Mon, 28 Oct 2024 03:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Q4kXXmjv"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PhshJbJs"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2068.outbound.protection.outlook.com [40.107.93.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E2118E34D
-	for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 03:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730087433; cv=none; b=bLTJMGL+Ett3x9gaTkUKkE4JCnu/8vrMptj78cG5Sn2sgEb9X/2+fp16skgsH961ujhrPq3OhOvqSD26OhVO9E0kx+pEpsYqoU4q5rY+cGy+H3ne9BeXrvE6sL0eTONB0eQC9Xxq9JGJG6WaN7NEut0ABsEP5JSRcTAebf6hEpU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730087433; c=relaxed/simple;
-	bh=GKiYYsQxIjPYaFa4vLHh2atXLmYtIlb6yAhPioyEZik=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QGEFWPnQd6jo2lL4cHwEMNvUVrI0v3WXnEQ/6QZWvV71BOmdfn4jmetjDC7qUY6Q88wcI01k1z8iAaFGH8o4GTHGdoe5yMy7yTTomMigGEqFyzIbf5KnWl5LMMN0EDsVrdmL/mREwe+syEIGPzPwrY8R863AsN+wtcqCV2rhWhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Q4kXXmjv; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1730087334;
-	bh=ZfepWoHjCZNG7Hnofx9+U1FeKOBzJSKxe0L62gLgiEw=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version;
-	b=Q4kXXmjvf/ibWt6l3MKLMYR2k+cgSWSaU73TW60lxgVH1DvnLf70gLUh5i3G0nrre
-	 8/vZ3fBKX+uqdYc8dGuaxOgp9MWrDifqZ3/9IrXr5w2qDY4Xw9iBH7g7JXOyM+0lpB
-	 Up/59/wmO3fa2k7+Mpf9Ha5nU04oD7E77u0T5A/Q=
-X-QQ-mid: bizesmtp85t1730087307tdhqh0l2
-X-QQ-Originating-IP: dCYFQrp0v7vMRUT66sXnuY2O2ebBilMy96q78ZgxUEE=
-Received: from localhost.localdomain ( [123.124.208.226])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 28 Oct 2024 11:48:25 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 2145193820470880376
-From: goutongchen@uniontech.com
-To: goutongchen@uniontech.com
-Cc: dmitry.baryshkov@linaro.org,
-	gouhao@uniontech.com,
-	iommu@lists.linux.dev,
-	jgg@ziepe.ca,
-	joro@8bytes.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	robdclark@chromium.org,
-	robin.murphy@arm.com,
-	will@kernel.org
-Subject: [PATCH v2] iommu/arm-smmu: Add judgment on the size and granule parameters passed in
-Date: Mon, 28 Oct 2024 11:48:23 +0800
-Message-Id: <20241028034823.22838-1-goutongchen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20241024100224.62942-1-goutongchen@uniontech.com>
-References: <20241024100224.62942-1-goutongchen@uniontech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B467F1422AB;
+	Mon, 28 Oct 2024 03:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730087370; cv=fail; b=X8GytPdA6l8WpiU80aqNCXkwCyixaVj9LeRkPcuaGWqVCFUGIr2sM9FRDqfhv4Lgyoy/JLenITX1R7ieKc/lxNP5aLLJ6wkSbwrJFeCtDBgHBJAfJFWVVP6g9yU+1gL80LNH633ZNRFTaVwpMTB/fj5mY7UvUcC68Xwlo1d3ypI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730087370; c=relaxed/simple;
+	bh=TsAexFjPB+V8+dOS5d8ZWRp/mkS1rDKaGTx4d7ITDr4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=RtW4eWiZOauYx0QWZ66mLKOqUgHJOZjC/qh03ctqs6Eol8T2FLO/Yk54UgI46UTjckm66ocyvOY4RFyVI3y51rHU/jYRcetxFZxbN1mClPIPW1LFyMSHlpwoW+DXp4P98s1G8gdFpFLZIzE0C9s78IYC7H+p0zs6FivVVrSjSxE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PhshJbJs; arc=fail smtp.client-ip=40.107.93.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bFYHKx7MPKA4B/iQZZ940sWtkRYOIa9jsi6TWbPSpqdQEbCyfeiJetLueh1641rBt6aArSicKYbzfC0DkVgkELIIrSXGDUI+6rk/B/CbeJ0+G1VTtIXye6JFUs4PwRsWcTpP7NB8C5uviQiUYu1qZQQzx3AKTHXGcrpfOdRuIIryQR74diFZ4C+V853JqxCRVstTi6lYh7icxnwqenhN2wEcBR+27uX+14QD1v1wmNm7Ps+y7UEE4pVHBB1Z9gA47x6I2PRA/3qKXeO7/HsHZKfrobOQZ2GmF+TQd5ghR8qFsYBuM+ytyYnrEDheOjTvA8aojouoA7VNi98SQLgSWg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oRAroteoRTROGdko4p2sTxD4QCrNPHUvLR1uPtpvdRg=;
+ b=eVAUwMkDHqrvEqYeMog3BbSlVLxpdeYG9DpKnCW0Fp5bRII9scDDzCJUtjLrOqUXhYzzl9ifqMZLWxNM6199mNm6tdhRGmUqMfTysvhQ3aPP9NIQfEd2xLq/Wv9WqfTTE2zy3GI30e2kBDI/d8XHb1xOPtHcq8O71SAhvhERlMwUrwtelU0jF91Jrsk1D5oUbT1bleBO2imgrOEjlk+b0BgrVOidX2zlEdIacAVpj2bDcL/JFPkGTsNY16RQMABbeR6MXN+zy11TvHNtT5WeKf+bfADdRtXWe75cgL60RkrK5WW/VYDI4k3AzBeB+ABA3NWtqIhlHgtPZcgMXcx09Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oRAroteoRTROGdko4p2sTxD4QCrNPHUvLR1uPtpvdRg=;
+ b=PhshJbJs89iFLTm++lmL3uRh+645oQ/77DJTXOva+u65DNMwYfxqKp/C47uooV2HgrvJh3iazvaMo5YURQ7jfv27gxzafDThMk5VB48DTUg872IoV4Xy63Y0Am8bmVW488bJeXm5lzM1iXWxDHNKbOdfuI7aI5758WXLs2ikfeI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com (2603:10b6:208:311::19)
+ by CY8PR12MB7489.namprd12.prod.outlook.com (2603:10b6:930:90::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Mon, 28 Oct
+ 2024 03:49:26 +0000
+Received: from BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4]) by BL1PR12MB5176.namprd12.prod.outlook.com
+ ([fe80::ed5b:dd2f:995a:bcf4%5]) with mapi id 15.20.8093.024; Mon, 28 Oct 2024
+ 03:49:25 +0000
+Message-ID: <20e11ae0-988d-40ec-862c-fdef2dcfcfb9@amd.com>
+Date: Mon, 28 Oct 2024 09:19:15 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/15] platform/x86/amd: pmf: Drop all quirks
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241028020131.8031-1-mario.limonciello@amd.com>
+ <20241028020131.8031-16-mario.limonciello@amd.com>
+Content-Language: en-US
+From: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+In-Reply-To: <20241028020131.8031-16-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PNYP287CA0035.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:23e::8) To BL1PR12MB5176.namprd12.prod.outlook.com
+ (2603:10b6:208:311::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-0
-X-QQ-XMAILINFO: NQUMxZLa5thm4xRs+e6BAyU8MEa4v1Ukbo2NA5f/ZsRBzbZ2YvgxoQMx
-	X9UxtHdeGXbC4fhKbDcaqTp8R2LuBFuJN80dB/6Gb7pg75jkcZ9kKsQuFbeFPWo13InuE2J
-	5OReAl0fIwuQaFyK4a4Rj9+OceainLGPd0/uk+BgCgIY23CpF077kui5/mYETGQpntHxN4h
-	3b5/EILDINCbDzgOFehTU+NVMyzLBbS1bSUuAOlZS2Cn8aBdr4DJCSv5idr0igSF3NsSIpi
-	2f1lqdsDNozx57w8gMA1WnJ2px5LA86jSSLhjW26zyCvnPPQADHcayucXYetN/JNhkNT+8J
-	vj72s5ZQfwpHlrwciz+4WekpzHGg+CJzM0ykZmB71Oc01Wcr5z7UeXQcwcb/2bIF1HkO8eA
-	92klhG6Gi0251f5MPBXmRSbO2mv3wXSEb4iJ3d9izaCXQgqKrimD1MvJB0GRJTRh8xwkYWP
-	qVgA/MmT327xSmdxMdRh63EkKwF+uey17hbco6I9LSvFvmL2x4wYukt9SAuVDxdD0+ocuT1
-	XCanopbBecLIaSffRIxeR61VZW+Oen3mQT0999z3xvVRKUfkcm1Ocz7SWc8GReDbrxibdoO
-	jscSxx4sNVIa4KEe2z4KtSoNOPRivBpXD/aqf94a7eTEY3akgj/DI1MFeYZcssIPY5gAD7t
-	jHYlTdbANyiTYmKQKzysPzxoV+2cbKiZdPd4/0Gm3V8ukDM9Uw3K7/n7X21eKtfycKQuUSZ
-	IXpxcgCGmVJXCxZ1Bv+25SMvwBHa97KRh8y+fLuL2eG3wG97YJnESPNZBVYWZYPQL7uz9zH
-	aqSis3LgjWvRT7mHQGI4wdYOgAHMmi93jcaA8MP9+kZEit7jcCe+y/yWUi+E41Q6sdlTtKn
-	PYhr3Mn9mGou9f+mYQdASNH1pAqoJbcURP9r8Z0gS30JSzSDfZ7oGKU7aX1/nJQMAO2gipd
-	RXRbTH/aSTmlW5NpaRiNkyHlN3cY4piDyZP8=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5176:EE_|CY8PR12MB7489:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7db911f9-0ca4-4bb0-cbed-08dcf703843f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TTI5VTBQSlFXOGxPM1MybENFOHdQdnhsOFF6ZkhhWFJHem5OczYrRUF1MXZq?=
+ =?utf-8?B?RkVWalhrNHg3amxhUGRTUE1LcElsMmw4T05YeWVGc2JMcE9YS1RjM3dDSWE1?=
+ =?utf-8?B?RDA3Q1lYbW9FeFRXK0JrNEVPWDRMYjcveEpwbWoxVGRNM05aRDF0cDFMa3li?=
+ =?utf-8?B?M3lWMlJUVzNSMHNtQjZoeUFRZDRTTi9iNDFYTkk1MjJXY0JPZWpHb3Z0QzVZ?=
+ =?utf-8?B?RFR1eHZsZ2lubDlveWdkVVJ5QWc5QjBUejhSNDZxOGJaWC9iR3IzVkJzdUNP?=
+ =?utf-8?B?YmJRUW1MeUtaODB1VFZJaURhQ0txT3VjSkRJeVdFWUpwL3FyT0taTWZxd0Y5?=
+ =?utf-8?B?RXY1eXh5VVAxcno4K2xja0JvaE0vOFV2VUJKbVJVMVQrbHNtdnF4eTM1dmty?=
+ =?utf-8?B?bzR0T2FqbW5PVFVKS1YrcEhrOWlaWDR5Z2JHVVA3dDBkMW1uYzJZcHBCaWtE?=
+ =?utf-8?B?a2ZPbGFYcWd3M3hBK2V1SFlHUmw3bGp0LzF6Zm9ZK3dWQzRrYzk5NnAzcVl2?=
+ =?utf-8?B?Y0Y4MFhXaHEzaXRjeFMyOEx6KzdOdjlseUcvUGZyMlBBRUdKMWIwQ0ZaaVNq?=
+ =?utf-8?B?Y2VOSHJBZUl3WlpET1pRcnoxRWd6RWVKWTVpQ2NHWVhWM3BNd05jTU5JYzVF?=
+ =?utf-8?B?bUhDWlJjOU9XUUlZMVhOYUFMdC9IU2VmeVVqcUJLc0wra1JtOVVaclFoRzJI?=
+ =?utf-8?B?a0xHQUpZcVNjZ0psaXZaUHdaMVRrVE52dW9xUWRzUWhjMm94cFNwV0dBQzRI?=
+ =?utf-8?B?SGlnSGYvRm84Y08yVUlsb05UK0dmRFkyalFIekt3T2xDRWZMVjZ5ejlqVlZE?=
+ =?utf-8?B?NGpXWGhMZG43VjY4aTEwV1BrSE1yMXJjTUJES3ZuS2lSQVhrT2hST0RoYkh0?=
+ =?utf-8?B?bFoybmUvTVNwU2dIN0ZIQXNTZHBzSWlvRzU3UGJ0aW1WMEc3ZzV2cno1ckFq?=
+ =?utf-8?B?TFpiS29qdGFmT1NvODhjd0o2Qk9Rc2sxV2tjNWtCTzY3UUdnaFRpa3E3cGZL?=
+ =?utf-8?B?Y3l3U29zUGFESCsvazN0M3JZVEh2VVlXa0xXSVd6c3cvY1hGc0UzZ21yd2tP?=
+ =?utf-8?B?SElYeGp0c2NFWk9BZXpyL1BZNE1KSmRRR1J0NzlnNUx2WEhGV1ZkODhoWDVw?=
+ =?utf-8?B?V0NXSS9nZ2N0ZndkQ2ZLcVNMcWpVNjJwUDdxV3VwL3RCUy9kZVJLeFRqdVNV?=
+ =?utf-8?B?NDJhRzhST2pIdGRjTmJkTXZXR1NreFJZMGlsb1dZTHF0WHhIbThDUDM0dk1P?=
+ =?utf-8?B?RjdLckl5SlFQMEZ0RnFBMnN4b1o1VXJ3dDdvS1VwWXUzUndYVURSWkVEWXp4?=
+ =?utf-8?B?SC9tRXFXUjBoQ1gxS1p6ZmVkTVY3Q0ZZZC9PMlhyUUQ0VGhSRjBHWlNnNWJB?=
+ =?utf-8?B?M2hTeThaZHp5bHk3cDBTbEw5cTJOWWJQSmt5QzVOZGtJN29DbjNJM1ZhQ0JF?=
+ =?utf-8?B?TlpWMlBlYmRUbHZPQUdZdlhtTU5KTXFJM3Z0VUYxUjFsdlBGYzBMRFpmTjlP?=
+ =?utf-8?B?Yzd6L01Wbm9nYTBDUTlJTkwrS1pZQXQ3TGFKckczSFJTMWdHQ2puSlV2bzNp?=
+ =?utf-8?B?VkhzandyUW9kT3F1bTQ0K3haYkwyd1VpQUx3OGhCTllBZEdlSGhFRTk3LzFN?=
+ =?utf-8?B?dXFXQ3hnUWIzWlY5TFR0b3YwaUg5bU9hdUVFWEU4a3hkTU11SDYreUd5RzlZ?=
+ =?utf-8?B?T242N3lZd1RISy9WeVk4d3hXQVhVS2g0MlhHSmlFaWkrOVlZbkNNUnhxVVZm?=
+ =?utf-8?Q?Ko/bpbV6kjrvW3nXVZIs0zk3J6Qn2hWX+k7AJ4P?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5176.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WDBBaXY3U0ZyektDdFdJZEpKMmhNVmVWejArN3FXakJEdzJ6QVJLbCt4STlI?=
+ =?utf-8?B?aWtodm5ONUtSWkZaZjdjSjJXUzJpOU1XTzY0a0hON0hzbkdpam13TFFMUUdh?=
+ =?utf-8?B?UU8vQWpaN3h3QXF4d2RhaDYraTg1c1dHeGMwWm1weDVJem9Pb1lUV3NENDIw?=
+ =?utf-8?B?TzRwYVBaU3JFNWJRYlJqZnF5TnVGSWVlcm8va0dIcVJHK25MYTMrL3B1NU1Z?=
+ =?utf-8?B?RXZaSks3Tlo0RHA0KzJyK21TN0doOE5VUkdBNXVYL2xOblFUaERHc2EyMVJZ?=
+ =?utf-8?B?R2loY0wzMHpCdlBiUk9MWXQ1ZXp3eitKOWpQakZBY0JpOTlhL3VhTG5jVVdH?=
+ =?utf-8?B?TjlRR3B0czIyNGIvOVp2dUI4WjJUekNOSDA2dzhTNVhDMk85ZWdWcUhTdzBq?=
+ =?utf-8?B?akJqRmV5OVlrTUt5UEdWMXhNMGNDQlZFajhmU0tmNVFwU054S2J6TXgvU3F0?=
+ =?utf-8?B?bDJadnRZZVRvcjZhdEtaM3RNMzlveHFobGp2Wk1kRTAzbThQZjNFSmgvWlVh?=
+ =?utf-8?B?MkxQdWRBb2ZBb0QwOHhBWG9WQ3k5SExwYTRKdVZhRjNHM0F0VlpzK1lRRStP?=
+ =?utf-8?B?TkRqOExvakx2dE04Sk5nVHhUa3Z6OTB2ZUNJVVNZQlYrNXlkSU5UQkdScTZ1?=
+ =?utf-8?B?b0JpSVZDWFY5dXY0Y0c2L2FQbm14QnVoeS9JL1l0R1lHY1pOcXhTdFBETnZP?=
+ =?utf-8?B?bWtNTHhUY0cwRHdlZzQzUXdrTEFtZklacldjSllqVmE5NEY3NElRZmxpRDFr?=
+ =?utf-8?B?ZDY2Z0h0eXArbVpkQ0V6S3J0T2dSYkRubG5QbnhmLzR3OTJVQzlOaFpLaXJp?=
+ =?utf-8?B?OEJnZG4rQUFtODcxOGZRM0tpN05yb3F5bStLRVcvK1QrSjVEd3RtK1JzTzJI?=
+ =?utf-8?B?cExubjRUeEliU3N1Vkc4S3ozdmRXbHNnU3NkQ01vMWFzaUQxWmh1Z3o1ei9E?=
+ =?utf-8?B?TWtUVGxLRzlGT1JoQ3Y4L2dVZU1SendQSXNSVG9IRWttdHlMWlhrMStDUzVm?=
+ =?utf-8?B?N2oxaFduVlhSVHRFT0ROcTIrYzdid01oNzhqRTY2V1cvSklWV1VWbXJSRXpI?=
+ =?utf-8?B?dzdXV2NQRDRpRHFDdEk0SGRNTU1FTHlYaGdIWkMyWXZqYis0aDdrcVJGZ3la?=
+ =?utf-8?B?SE5EaWZVTm9UMmpxa0tPRExWQnFwZG44dWNUbnVvWmdBZGZ6dmNBenN3WjVp?=
+ =?utf-8?B?OHJQb3plS1hpSW5oQ0hvejA2L294RlEwWVBrNXRwc1kxRENyb1h6UzdSdTBS?=
+ =?utf-8?B?NXVNQkhIc2lZMUFLRUp5YlNmbXJSazRIeHpXVWlqajd1WjdhY2VZOVJIamFN?=
+ =?utf-8?B?TnYvMTlUU2gwamxDM2FZSlVlVjUvWU8xdDN6YmFzSG5EeFVHN1JIeEg0cUto?=
+ =?utf-8?B?ODFEYWVNR01aeVZjNWhBTnNOYllIa3hQWHo1dFV4S2VVYS8zK0lQZC9HMGF5?=
+ =?utf-8?B?cy9ZVFMyaHNuc0xYOFZ6R01tN0hTZTVoSWVzMVkrMTdwZ0FtSXhsY2RvaGgr?=
+ =?utf-8?B?S2VoNTZRWlFPdk1HcWE2S0Z5QkQ1NVFTVlhPZjYwZUlPVU5TazFXV0NsYk83?=
+ =?utf-8?B?N0pRQzY4ajE2b2Z6c0VGd0hVU0JtOUp6RnFlblZpV25idEtscWxQYWJqSnlR?=
+ =?utf-8?B?UlQzdHQ1Z2JiVzBKZ2wwbXVvbDlveWptdGNzRTVlUVBicGg3NEZjMDJOb3Az?=
+ =?utf-8?B?U295V3RoZWRlSEFTdU81eEFSREdoTVFBdVNGVXFJYWljdXlBMmZYNzVCZUoy?=
+ =?utf-8?B?b1I0SFlUU2VOaXNjaG9MakQ3a05mWTNadnUyTEMyZWFNNkpWd1cxVThNRnUz?=
+ =?utf-8?B?TU1IdElnay81N0p6cWNUNGNVeVB1a3FBZXA2V0tYbkI5TjcvcUl1L3E0bVBK?=
+ =?utf-8?B?ZlREZnpCdWJneU9NTWswSk5PeEtTZXRNYVdGYmZFS3BPYzgyWVhaZmRJbWZa?=
+ =?utf-8?B?aFNJeWRTbkEwQ25KSkhJUnZrYllralQ5L2ZGUUdkSThCcjFIQUpVRm9LcGp5?=
+ =?utf-8?B?V01xNXpyVytCRzZVcDdRcWxlYTVnYnc2aFo3dk1ycVdVaUZzWDZTNDFhTkdP?=
+ =?utf-8?B?cFhKMjdvSnlIY2lJK3dyYUN3aEtrOHU2UUVaM1F5aXFFNHpSVmN0YldQRnd1?=
+ =?utf-8?Q?AacUiOGEp/6BpJiRR5H1BFfGZ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7db911f9-0ca4-4bb0-cbed-08dcf703843f
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5176.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Oct 2024 03:49:25.8484
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rRvunxp4HsJJe+QMlKJ2FX1O+kBwq4E7yA4ltARtDrG2l30C6bTQNaZQWH4BmFu7aPAsH4zQd6vyg2H4ARq9Vw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7489
 
-From: goutongchen <goutongchen@uniontech.com>
 
-In the arm_smmu_tlb_inv_range_s1 and arm_smmu_tlb_inv_range_s2
-functions, the size and granule passed in must be judged.
-It must be ensured that the passed in parameter is not 0 and
-the size is an integer multiple of the granule, otherwise it
-will cause an infinite while loop.
 
-This was encountered during testing, and was initially triggered
-by passing in a size value of 0, causing the kernel to crash.
+On 10/28/2024 07:31, Mario Limonciello wrote:
+> As multiple platform profile handlers can now be registered, the quirks
+> to avoid registering amd-pmf as a handler are no longer necessary.
+> Drop them.
+> 
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
 
-[    8.214378][  T675] xhci_hcd 0000:0b:00.0: new USB bus registered, assigned bus number 1
-[   68.246185][    C0] rcu: INFO: rcu_sched self-detected stall on CPU
-[   68.246866][    C0] rcu:     0-....: (5999 ticks this GP) idle=796c/1/0x4000000000000000 softirq=161/161 fqs=2999
-[   68.247924][    C0] rcu:     (t=6000 jiffies g=-699 q=1 ncpus=128)
-[   68.248452][    C0] CPU: 0 PID: 675 Comm: kworker/0:2 Not tainted 6.6.0-25.02.2500.002.uos25.aarch64 #1
-[   68.249237][    C0] Hardware name: Inspur     CS5260F     /CS5260F          , BIOS 4.0.16 05/31/22 16:53:51
-[   68.250029][    C0] Workqueue: events work_for_cpu_fn
-[   68.250497][    C0] pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-[   68.251188][    C0] pc : arm_smmu_tlb_inv_range_s1+0xf0/0x158
-[   68.251704][    C0] lr : arm_smmu_tlb_inv_walk_s1+0x44/0x68
-[   68.252189][    C0] sp : ffff80008044b780
-[   68.252530][    C0] x29: ffff80008044b780 x28: 0000000000000000 x27: 0000000000001000
-[   68.253212][    C0] x26: 0000000000000600 x25: 0000000000000001 x24: 0000000000000600
-[   68.253857][    C0] x23: 0000000000000000 x22: 0000000000001000 x21: fffffc64e2e59000
-[   68.254544][    C0] x20: 0000000039c1d1a6 x19: ffff3fe944c40280 x18: 0000000000000000
-[   68.255240][    C0] x17: 626d756e20737562 x16: ffffb0e7e08c1008 x15: 0000000000000000
-[   68.255930][    C0] x14: ffff3ef8c1ea15cd x13: ffff3ef8c1ea15cb x12: fffffcfba30e3880
-[   68.256538][    C0] x11: 00000000ffff7fff x10: ffff80008044b6b0 x9 : ffffb0e7decd1b5c
-[   68.257126][    C0] x8 : 0000000000000dc0 x7 : ffff3ee8c4148000 x6 : ffff3ee8c4148000
-[   68.257822][    C0] x5 : 0000000000000008 x4 : 0000000000000000 x3 : ffff3fe944c40800
-[   68.258497][    C0] x2 : 0000000000000010 x1 : 0000000000000020 x0 : ffffb0e7dfd6c3d0
-[   68.259185][    C0] Call trace:
-[   68.259451][    C0]  arm_smmu_tlb_inv_range_s1+0xf0/0x158
-[   68.259933][    C0]  arm_smmu_tlb_inv_walk_s1+0x44/0x68
-[   68.260384][    C0]  __arm_lpae_map+0x1f0/0x2c0
-[   68.260796][    C0]  arm_lpae_map_pages+0xec/0x150
-[   68.261215][    C0]  arm_smmu_map_pages+0x48/0x130
-[   68.261654][    C0]  __iommu_map+0x134/0x2a8
-[   68.262098][    C0]  iommu_map_sg+0xb8/0x1c8
-[   68.262500][    C0]  __iommu_dma_alloc_noncontiguous.constprop.0+0x180/0x270
-[   68.263145][    C0]  iommu_dma_alloc+0x178/0x238
-[   68.263557][    C0]  dma_alloc_attrs+0xf8/0x108
-[   68.263962][    C0]  xhci_mem_init+0x1e8/0x6d0
-[   68.264372][    C0]  xhci_init+0x88/0x1d0
-[   68.264736][    C0]  xhci_gen_setup+0x284/0x468
-[   68.265121][    C0]  xhci_pci_setup+0x60/0x1f8
-[   68.265506][    C0]  usb_add_hcd+0x278/0x650
-[   68.265860][    C0]  usb_hcd_pci_probe+0x218/0x458
-[   68.266256][    C0]  xhci_pci_probe+0x7c/0x270
-[   68.266660][    C0]  local_pci_probe+0x48/0xb8
-[   68.267074][    C0]  work_for_cpu_fn+0x24/0x40
-[   68.267548][    C0]  process_one_work+0x170/0x3c0
-[   68.267999][    C0]  worker_thread+0x234/0x3b8
-[   68.268383][    C0]  kthread+0xf0/0x108
-[   68.268704][    C0]  ret_from_fork+0x10/0x20
+Acked-by: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
 
-Signed-off-by: goutongchen <goutongchen@uniontech.com>
----
- drivers/iommu/arm/arm-smmu/arm-smmu.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Thanks,
+Shyam
 
-diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-index 8321962b3714..fdd7d7e9ce06 100644
---- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
-+++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
-@@ -282,6 +282,13 @@ static void arm_smmu_tlb_inv_range_s1(unsigned long iova, size_t size,
- 	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
- 	int idx = cfg->cbndx;
- 
-+	if (size == 0 || granule == 0 || (size % granule) != 0) {
-+		dev_err(smmu->dev,
-+				 "The size or granule passed in is err. size=%zu, granule=%zu\n",
-+				 size, granule);
-+		return;
-+	}
-+
- 	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
- 		wmb();
- 
-@@ -309,6 +316,13 @@ static void arm_smmu_tlb_inv_range_s2(unsigned long iova, size_t size,
- 	struct arm_smmu_device *smmu = smmu_domain->smmu;
- 	int idx = smmu_domain->cfg.cbndx;
- 
-+	if (size == 0 || granule == 0 || (size % granule) != 0) {
-+		dev_err(smmu->dev,
-+				 "The size or granule passed in is err. size=%zu, granule=%zu\n",
-+				 size, granule);
-+		return;
-+	}
-+
- 	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
- 		wmb();
- 
--- 
-2.20.1
-
+> ---
+>  drivers/platform/x86/amd/pmf/Makefile     |  2 +-
+>  drivers/platform/x86/amd/pmf/core.c       |  1 -
+>  drivers/platform/x86/amd/pmf/pmf-quirks.c | 66 -----------------------
+>  drivers/platform/x86/amd/pmf/pmf.h        |  3 --
+>  4 files changed, 1 insertion(+), 71 deletions(-)
+>  delete mode 100644 drivers/platform/x86/amd/pmf/pmf-quirks.c
+> 
+> diff --git a/drivers/platform/x86/amd/pmf/Makefile b/drivers/platform/x86/amd/pmf/Makefile
+> index 7d6079b02589c..6b26e48ce8ad2 100644
+> --- a/drivers/platform/x86/amd/pmf/Makefile
+> +++ b/drivers/platform/x86/amd/pmf/Makefile
+> @@ -7,4 +7,4 @@
+>  obj-$(CONFIG_AMD_PMF) += amd-pmf.o
+>  amd-pmf-objs := core.o acpi.o sps.o \
+>  		auto-mode.o cnqf.o \
+> -		tee-if.o spc.o pmf-quirks.o
+> +		tee-if.o spc.o
+> diff --git a/drivers/platform/x86/amd/pmf/core.c b/drivers/platform/x86/amd/pmf/core.c
+> index 47126abd13ca0..6ad00b3d472fe 100644
+> --- a/drivers/platform/x86/amd/pmf/core.c
+> +++ b/drivers/platform/x86/amd/pmf/core.c
+> @@ -455,7 +455,6 @@ static int amd_pmf_probe(struct platform_device *pdev)
+>  	mutex_init(&dev->lock);
+>  	mutex_init(&dev->update_mutex);
+>  
+> -	amd_pmf_quirks_init(dev);
+>  	apmf_acpi_init(dev);
+>  	platform_set_drvdata(pdev, dev);
+>  	amd_pmf_dbgfs_register(dev);
+> diff --git a/drivers/platform/x86/amd/pmf/pmf-quirks.c b/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> deleted file mode 100644
+> index 7cde5733b9cac..0000000000000
+> --- a/drivers/platform/x86/amd/pmf/pmf-quirks.c
+> +++ /dev/null
+> @@ -1,66 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-or-later
+> -/*
+> - * AMD Platform Management Framework Driver Quirks
+> - *
+> - * Copyright (c) 2024, Advanced Micro Devices, Inc.
+> - * All Rights Reserved.
+> - *
+> - * Author: Mario Limonciello <mario.limonciello@amd.com>
+> - */
+> -
+> -#include <linux/dmi.h>
+> -
+> -#include "pmf.h"
+> -
+> -struct quirk_entry {
+> -	u32 supported_func;
+> -};
+> -
+> -static struct quirk_entry quirk_no_sps_bug = {
+> -	.supported_func = 0x4003,
+> -};
+> -
+> -static const struct dmi_system_id fwbug_list[] = {
+> -	{
+> -		.ident = "ROG Zephyrus G14",
+> -		.matches = {
+> -			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> -			DMI_MATCH(DMI_PRODUCT_NAME, "GA403U"),
+> -		},
+> -		.driver_data = &quirk_no_sps_bug,
+> -	},
+> -	{
+> -		.ident = "ROG Ally X",
+> -		.matches = {
+> -			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> -			DMI_MATCH(DMI_PRODUCT_NAME, "RC72LA"),
+> -		},
+> -		.driver_data = &quirk_no_sps_bug,
+> -	},
+> -	{
+> -		.ident = "ASUS TUF Gaming A14",
+> -		.matches = {
+> -			DMI_MATCH(DMI_SYS_VENDOR, "ASUSTeK COMPUTER INC."),
+> -			DMI_MATCH(DMI_PRODUCT_NAME, "FA401W"),
+> -		},
+> -		.driver_data = &quirk_no_sps_bug,
+> -	},
+> -	{}
+> -};
+> -
+> -void amd_pmf_quirks_init(struct amd_pmf_dev *dev)
+> -{
+> -	const struct dmi_system_id *dmi_id;
+> -	struct quirk_entry *quirks;
+> -
+> -	dmi_id = dmi_first_match(fwbug_list);
+> -	if (!dmi_id)
+> -		return;
+> -
+> -	quirks = dmi_id->driver_data;
+> -	if (quirks->supported_func) {
+> -		dev->supported_func = quirks->supported_func;
+> -		pr_info("Using supported funcs quirk to avoid %s platform firmware bug\n",
+> -			dmi_id->ident);
+> -	}
+> -}
+> diff --git a/drivers/platform/x86/amd/pmf/pmf.h b/drivers/platform/x86/amd/pmf/pmf.h
+> index 8ce8816da9c16..b89aa38434faa 100644
+> --- a/drivers/platform/x86/amd/pmf/pmf.h
+> +++ b/drivers/platform/x86/amd/pmf/pmf.h
+> @@ -795,7 +795,4 @@ int amd_pmf_smartpc_apply_bios_output(struct amd_pmf_dev *dev, u32 val, u32 preq
+>  void amd_pmf_populate_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf_enact_table *in);
+>  void amd_pmf_dump_ta_inputs(struct amd_pmf_dev *dev, struct ta_pmf_enact_table *in);
+>  
+> -/* Quirk infrastructure */
+> -void amd_pmf_quirks_init(struct amd_pmf_dev *dev);
+> -
+>  #endif /* PMF_H */
 
