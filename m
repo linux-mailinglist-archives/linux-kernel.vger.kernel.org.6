@@ -1,237 +1,201 @@
-Return-Path: <linux-kernel+bounces-386636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 761BE9B4634
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:57:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3F329B463C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:58:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2ADFB22706
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:57:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E251F2389A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F725205ABC;
-	Tue, 29 Oct 2024 09:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C9CC206048;
+	Tue, 29 Oct 2024 09:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="hzqWU9A+"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8425C204097;
-	Tue, 29 Oct 2024 09:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bfSP3Fs/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE547205E0E;
+	Tue, 29 Oct 2024 09:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730195760; cv=none; b=XDHtqhFPF6hCARCxIKnkLGbfceTCkIXONQzsTF6rZVGz40Dfm9aMawgCmGSOlSxAA+RCy/i3Xu5esjvl9bjwichbdd2pTydzYD1/aVAhaGcl84gcSWGJUuyN++yMqcagLeVepjwyQZ+MgMEvszHhB/1f7nRYz7IC2f9egP8hpvM=
+	t=1730195764; cv=none; b=pi74Qm0ftlCOiCaD0ZYeR3QYvrhNoC2X8f1UMK8sa9J7L6ISu3h9+REnk46egB5TPgos3E35ZLeUKn2h/ARyjHhZ6GYdMk8a8AHf/NXv7d1R5JXNkRAuLjwu7mf/oJk+x7GpjuMMadkNOgN/hAmdp5VcVLRj1yMiYd2HxeDkhFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730195760; c=relaxed/simple;
-	bh=M/OLozoaWcpSltR/+XxFqYORzFwgx+2l1XNaE3lnpnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RFDkAiPyps3EjoTvqwwU6xxgEwpS249ZafgdEsryQtuqproNS0gYHbXFKqImmQQImaZVBLX+/DwfuvP8Im1YzFqczmEXNXzZkn3A/O7IVQLiWomzg4XnggwAz3B9XMW/9VfDBQ5qEdEpIF0TKlds0gm5zKMqxaXwQI8B1mtCo/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=hzqWU9A+; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=2K18z
-	rS3b6QRZrom3kgySEmB2nRHDJXT/VicnhzDTCo=; b=hzqWU9A+TwHh3NZoeeVBt
-	vaOPgffeIj0OayE25mXs1qJqXmGcVrvUy9FW2DL7TDLbDZAI0F3reHiQiDatugdl
-	CbTi4uTfHaLrLSbIYJEQvV/z+1fYJuDl4dGp6pL9zeZ99e75sJuBqkdUvDNcTN/V
-	4GO3GALYxAisKfVte06Eks=
-Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3nxoCsSBn8+3dEA--.3291S12;
-	Tue, 29 Oct 2024 17:55:29 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	krzk+dt@kernel.org,
-	s.hauer@pengutronix.de,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	minhuadotchen@gmail.com,
-	detlev.casanova@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>
-Subject: [PATCH v4 10/14] drm/rockchip: vop2: Register the primary plane and overlay plane separately
-Date: Tue, 29 Oct 2024 17:55:03 +0800
-Message-ID: <20241029095513.391006-11-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241029095513.391006-1-andyshrk@163.com>
-References: <20241029095513.391006-1-andyshrk@163.com>
+	s=arc-20240116; t=1730195764; c=relaxed/simple;
+	bh=UfI0Ixag2dwAPeNNXqkWkliOPPIn35EDbuIlsihqvfc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NO6aMQ/RYuBcBMTWqdMEBt/GLA5Qc8U1CKslE4wT38ikruzF2aK/gTOoGUVO23n4UZPyS60CGZWzD1iMb9cc5z9sqW/KjIVWrVkPYoyM5M3lqd4mKJwb/Uudix2epSQCygnrE9dk1cbBu1Q3lRSvygvh5029FjniSzggQ2pbrkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bfSP3Fs/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B672C4CECD;
+	Tue, 29 Oct 2024 09:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730195764;
+	bh=UfI0Ixag2dwAPeNNXqkWkliOPPIn35EDbuIlsihqvfc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bfSP3Fs/igj4q2BI7Wbmal7TBlbwhe5gOC7XZ6mVYWnAR7LfpKDT96KSZf5elhmSo
+	 uiIT07lOXtJzmhazpCgzcpa9gVQyzuOsBst41OdB2anow6zKQqVsCVDqjBaaYUnoBt
+	 chfVCJRaUc10NUnLj+SrZ1XevkAtMfVZgYnx85FluppP0Jjy+eSiuHZb+Bvc9u2LJJ
+	 sy1oB3i1iUDjAOFlSdkYteAaweK5BqEuIYHIoEsaXOMf7UfOzXRqWrzmZDigSxyu+L
+	 pW/9UDuy77nlYcNwyn5+ghYHhmF/TkUEXq6drRJKiy+ZRffs31TAVLvc8pTkBMNorq
+	 yoVxqRXHeaznw==
+Date: Tue, 29 Oct 2024 10:55:56 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Dirk Behme <dirk.behme@de.bosch.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <ZyCxLLE0Wzem0mzi@pollux>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-16-dakr@kernel.org>
+ <42a5af26-8b86-45ce-8432-d7980a185bde@de.bosch.com>
+ <Zx9lFG1XKnC_WaG0@pollux>
+ <fd9f5a0e-b2d4-4b72-9f34-9d8fcc74c00c@de.bosch.com>
+ <ZyCh4_hcr6qJJ8jw@pollux>
+ <8d72e37e-9e27-4857-b0eb-0b1e98cc5610@de.bosch.com>
+ <ZyCvyrb5jsY1O4uX@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3nxoCsSBn8+3dEA--.3291S12
-X-Coremail-Antispam: 1Uf129KBjvJXoWxGFWxtw4kKr17ZF18AF18Xwb_yoWrZrWDpa
-	13ta90yr4xWrsFgry8AF4jyFWYyan2kay7Crs8Jw1a934Sgr93ur4rKFn8AF1ruFnrWFya
-	kFW3K39YgF4q9r7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jF-eOUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hKHXmcgp1S+egAAsp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyCvyrb5jsY1O4uX@pollux>
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Tue, Oct 29, 2024 at 10:50:11AM +0100, Danilo Krummrich wrote:
+> On Tue, Oct 29, 2024 at 10:19:08AM +0100, Dirk Behme wrote:
+> > On 29.10.2024 09:50, Danilo Krummrich wrote:
+> > > On Tue, Oct 29, 2024 at 08:20:55AM +0100, Dirk Behme wrote:
+> > > > On 28.10.2024 11:19, Danilo Krummrich wrote:
+> > > > > On Thu, Oct 24, 2024 at 11:11:50AM +0200, Dirk Behme wrote:
+> > > > > > > +/// IdTable type for platform drivers.
+> > > > > > > +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<of::DeviceId, T>;
+> > > > > > > +
+> > > > > > > +/// The platform driver trait.
+> > > > > > > +///
+> > > > > > > +/// # Example
+> > > > > > > +///
+> > > > > > > +///```
+> > > > > > > +/// # use kernel::{bindings, c_str, of, platform};
+> > > > > > > +///
+> > > > > > > +/// struct MyDriver;
+> > > > > > > +///
+> > > > > > > +/// kernel::of_device_table!(
+> > > > > > > +///     OF_TABLE,
+> > > > > > > +///     MODULE_OF_TABLE,
+> > > > > > 
+> > > > > > It looks to me that OF_TABLE and MODULE_OF_TABLE are quite generic names
+> > > > > > used here. Shouldn't they be somehow driver specific, e.g. OF_TABLE_MYDRIVER
+> > > > > > and MODULE_OF_TABLE_MYDRIVER or whatever? Same for the other
+> > > > > > examples/samples in this patch series. Found that while using the *same*
+> > > > > > somewhere else ;)
+> > > > > 
+> > > > > I think the names by themselves are fine. They're local to the module. However,
+> > > > > we stringify `OF_TABLE` in `module_device_table` to build the export name, i.e.
+> > > > > "__mod_of__OF_TABLE_device_table". Hence the potential duplicate symbols.
+> > > > > 
+> > > > > I think we somehow need to build the module name into the symbol name as well.
+> > > > 
+> > > > Something like this?
+> > > 
+> > > No, I think we should just encode the Rust module name / path, which should make
+> > > this a unique symbol name.
+> > > 
+> > > diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
+> > > index 5b1329fba528..63e81ec2d6fd 100644
+> > > --- a/rust/kernel/device_id.rs
+> > > +++ b/rust/kernel/device_id.rs
+> > > @@ -154,7 +154,7 @@ macro_rules! module_device_table {
+> > >       ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
+> > >           #[rustfmt::skip]
+> > >           #[export_name =
+> > > -            concat!("__mod_", $table_type, "__", stringify!($table_name), "_device_table")
+> > > +            concat!("__mod_", $table_type, "__", module_path!(), "_", stringify!($table_name), "_device_table")
+> > >           ]
+> > >           static $module_table_name: [core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
+> > >               unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
+> > > 
+> > > For the doctests for instance this
+> > > 
+> > >    "__mod_of__OF_TABLE_device_table"
+> > > 
+> > > becomes
+> > > 
+> > >    "__mod_of__doctests_kernel_generated_OF_TABLE_device_table".
+> > 
+> > 
+> > What implies *one* OF/PCI_TABLE per path (file)?
+> 
+> No, you can still have as many as you want for the same file, you just have to
+> give them different identifier names -- you can't have two statics with the same
+> name in one file anyways.
+> 
+> Well, I guess you somehow can (just like the doctests do), but it does make
+> sense to declare drivers in such a way.
+> 
+> I think as long as we take care that separate Rust modules can't interfere with
+> each other it's good enough.
+> 
+> > 
+> > For example adding a second FooDriver example to platform.rs won't be
+> > possible?
+> 
+> Not unless you change the identifier name unfortunately. But that might be
+> fixable by putting doctests in separate `mod $(DOCTEST) {}` blocks.
 
-In the upcoming VOP of rk3576, a Window cannot attach to all Video Ports,
-so make sure all VP find it's suitable primary plane, then register the
-remain windows as overlay plane will make code easier.
+Another option would be to not only encode the module path, but also the line
+number:
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
+index 5b1329fba528..7956edbbad52 100644
+--- a/rust/kernel/device_id.rs
++++ b/rust/kernel/device_id.rs
+@@ -154,7 +154,7 @@ macro_rules! module_device_table {
+     ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
+         #[rustfmt::skip]
+         #[export_name =
+-            concat!("__mod_", $table_type, "__", stringify!($table_name), "_device_table")
++            concat!("__mod_", $table_type, "__", module_path!(), "_", line!(), "_", stringify!($table_name), "_device_table")
+         ]
+         static $module_table_name: [core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
+             unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
 
----
+This way you'll get
 
-(no changes since v3)
+  "__mod_of__doctests_kernel_generated_3875_OF_TABLE_device_table"
+  "__mod_of__doctests_kernel_generated_3946_OF_TABLE_device_table"
 
-Changes in v3:
-- Add comments for why we should treat rk3566 with special care.
+if you put identical doctests.
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 100 +++++++++++--------
- 1 file changed, 61 insertions(+), 39 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index b4964c70149f9..e293310b30420 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -2024,22 +2024,29 @@ static int vop2_plane_init(struct vop2 *vop2, struct vop2_win *win,
- 	return 0;
- }
- 
--static struct vop2_video_port *find_vp_without_primary(struct vop2 *vop2)
-+/*
-+ * On RK3566 these windows don't have an independent
-+ * framebuffer. They can only share/mirror the framebuffer
-+ * with smart0, esmart0 and cluster0 respectively.
-+ * And RK3566 share the same vop version with Rk3568, so we
-+ * need to use soc_id for identification here.
-+ */
-+static bool vop2_is_mirror_win(struct vop2_win *win)
- {
--	int i;
--
--	for (i = 0; i < vop2->data->nr_vps; i++) {
--		struct vop2_video_port *vp = &vop2->vps[i];
--
--		if (!vp->crtc.port)
--			continue;
--		if (vp->primary_plane)
--			continue;
-+	struct vop2 *vop2 = win->vop2;
- 
--		return vp;
-+	if (vop2->data->soc_id == 3566) {
-+		switch (win->data->phys_id) {
-+		case ROCKCHIP_VOP2_SMART1:
-+		case ROCKCHIP_VOP2_ESMART1:
-+		case ROCKCHIP_VOP2_CLUSTER1:
-+			return true;
-+		default:
-+			return false;
-+		}
-+	} else {
-+		return false;
- 	}
--
--	return NULL;
- }
- 
- static int vop2_create_crtcs(struct vop2 *vop2)
-@@ -2050,7 +2057,9 @@ static int vop2_create_crtcs(struct vop2 *vop2)
- 	struct drm_plane *plane;
- 	struct device_node *port;
- 	struct vop2_video_port *vp;
--	int i, nvp, nvps = 0;
-+	struct vop2_win *win;
-+	u32 possible_crtcs;
-+	int i, j, nvp, nvps = 0;
- 	int ret;
- 
- 	for (i = 0; i < vop2_data->nr_vps; i++) {
-@@ -2089,42 +2098,55 @@ static int vop2_create_crtcs(struct vop2 *vop2)
- 	}
- 
- 	nvp = 0;
--	for (i = 0; i < vop2->registered_num_wins; i++) {
--		struct vop2_win *win = &vop2->win[i];
--		u32 possible_crtcs = 0;
--
--		if (vop2->data->soc_id == 3566) {
--			/*
--			 * On RK3566 these windows don't have an independent
--			 * framebuffer. They share the framebuffer with smart0,
--			 * esmart0 and cluster0 respectively.
--			 */
--			switch (win->data->phys_id) {
--			case ROCKCHIP_VOP2_SMART1:
--			case ROCKCHIP_VOP2_ESMART1:
--			case ROCKCHIP_VOP2_CLUSTER1:
-+	/* Register a primary plane for every crtc */
-+	for (i = 0; i < vop2_data->nr_vps; i++) {
-+		vp = &vop2->vps[i];
-+
-+		if (!vp->crtc.port)
-+			continue;
-+
-+		for (j = 0; j < vop2->registered_num_wins; j++) {
-+			win = &vop2->win[j];
-+
-+			/* Aready registered as primary plane */
-+			if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
-+				continue;
-+
-+			if (vop2_is_mirror_win(win))
- 				continue;
--			}
--		}
- 
--		if (win->type == DRM_PLANE_TYPE_PRIMARY) {
--			vp = find_vp_without_primary(vop2);
--			if (vp) {
-+			if (win->type == DRM_PLANE_TYPE_PRIMARY) {
- 				possible_crtcs = BIT(nvp);
- 				vp->primary_plane = win;
-+				ret = vop2_plane_init(vop2, win, possible_crtcs);
-+				if (ret) {
-+					drm_err(vop2->drm, "failed to init primary plane %s: %d\n",
-+						win->data->name, ret);
-+					return ret;
-+				}
- 				nvp++;
--			} else {
--				/* change the unused primary window to overlay window */
--				win->type = DRM_PLANE_TYPE_OVERLAY;
-+				break;
- 			}
- 		}
-+	}
-+
-+	/* Register all unused window as overlay plane */
-+	for (i = 0; i < vop2->registered_num_wins; i++) {
-+		win = &vop2->win[i];
-+
-+		/* Aready registered as primary plane */
-+		if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
-+			continue;
-+
-+		if (vop2_is_mirror_win(win))
-+			continue;
- 
--		if (win->type == DRM_PLANE_TYPE_OVERLAY)
--			possible_crtcs = (1 << nvps) - 1;
-+		win->type = DRM_PLANE_TYPE_OVERLAY;
- 
-+		possible_crtcs = (1 << nvps) - 1;
- 		ret = vop2_plane_init(vop2, win, possible_crtcs);
- 		if (ret) {
--			drm_err(vop2->drm, "failed to init plane %s: %d\n",
-+			drm_err(vop2->drm, "failed to init overlay plane %s: %d\n",
- 				win->data->name, ret);
- 			return ret;
- 		}
--- 
-2.34.1
-
+> 
+> > 
+> > +/// struct FooDriver;
+> > +///
+> > +/// kernel::of_device_table!(
+> > +///     OF_TABLE,
+> > +///     MODULE_OF_TABLE,
+> > +///     <FooDriver as platform::Driver>::IdInfo,
+> > +///     [
+> > +///         (of::DeviceId::new(c_str!("test,rust-device2")), ())
+> > +///     ]
+> > +/// );
+> > 
+> > Best regards
+> > 
+> > Dirk
+> > 
+> > 
+> > 
+> > 
 
