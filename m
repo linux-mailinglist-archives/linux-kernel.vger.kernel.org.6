@@ -1,314 +1,255 @@
-Return-Path: <linux-kernel+bounces-386178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9EDE9B4015
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:04:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4B719B401F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:06:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4711C21192
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:04:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 685911F2336B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA1BC126BE6;
-	Tue, 29 Oct 2024 02:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BEF813CFA6;
+	Tue, 29 Oct 2024 02:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ju1K9N7R"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="FKw8OPhw"
+Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazon11021125.outbound.protection.outlook.com [40.93.194.125])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C881863F;
-	Tue, 29 Oct 2024 02:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730167446; cv=none; b=el/GMBkgscd81hAn2mnX+PAUUdtIxcmdzCEXFT4KRuiuqAXzQ9EZmuuKER4jmEIYGWLVLjbZmfThfXVUufWENFX4J/TjAfldZgz290qg0lJqH5Bt07vVlPwjL7ghMzq6OymX4Yrf/fm7pvU4tha1GvlA8V3c//kfLdSviDtQrOU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730167446; c=relaxed/simple;
-	bh=ZsO1ZU2TXg/NGu3J2x38UomRJPb4lMdm98glWHaQhxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QArAaXSL/2dG0Saq0T0wHv8kONHQLGFdD1ijvx/oEczmAWreYNukN6yA0er0R36LjEFK38KEHGqjZAHJ7QZDyyN8ugeANB/j8GhbQ7anV+luLFoRW1K+xwalBqbu1WjRb7XkXZJcsOhgDRXHGVS77MNtQxwQgiamxCALosxfcus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ju1K9N7R; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730167440; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=cJLV2I3mm++zjsZzUs9QwwWBlESHcgMWR+goQ5ld/5c=;
-	b=ju1K9N7RJJJ+w3jgF1CRis4GaECwQBLcCvEEZEyEdeLb+FMpR26wfmnAM6/ngHMjjLa+v21tY/rY2RFqFBo5Y4pG4c/f6VQrDO21uVWzezSn//iWNbbUHm0WdiZ/A37hl+uhg2MvR89Q2sLwLrEq6Uwt8h4MmvGXkCQLJ/BDEbE=
-Received: from 30.74.144.128(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WI8M9ZI_1730167438 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 29 Oct 2024 10:03:59 +0800
-Message-ID: <6044e56a-7747-45d4-82c9-7a070950ddd2@linux.alibaba.com>
-Date: Tue, 29 Oct 2024 10:03:58 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAFF1863F;
+	Tue, 29 Oct 2024 02:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.194.125
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730167602; cv=fail; b=D5hic5xM3cE4SXj7i9sv2ehcHNXx7E5rmHZmK0+RSfjQvY7M94MgV0x3IRgnM++eJpriATME/6EuDV0Abgm2a38joBtRuxiUom/7xHKa3oWX66pbf0f3lTHcYCuAd5q9Nsar77Kywcg2bZr7/P1tdQVUMyDvGo8g1WO15UBezrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730167602; c=relaxed/simple;
+	bh=nZGwlRkkuEgEWafXnkb2A/rHt9iJpVPRxM3yGvryXfE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 Content-Type:MIME-Version; b=EaxXMU5GrvrBct01+vn8SFOcUKFQpaURhWvefwHJo+C6WnwOqhL+rhS3qp6RNdElnyKE4UGp4L5AtUsLhcKHgcTqKS/e/R3k+/3ijbAm0MHq2QC5s92Ku6LB5A0shoo6wnihUXIpTzcdIouWUPpN09eTGMl7ECan0axTsqcppkg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=FKw8OPhw; arc=fail smtp.client-ip=40.93.194.125
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=c5QJGpRAR/Zf7kYqawr/x327FC5vLQMNJ7aLXk/jCT38Jph2IAZtnCt8flQuEUZCdV6B9mmgNgKvT8EBh2xc/9c1x3Y07KgmCesUmg3fZaa7CCmfiqaNsePXcE8qbk9YEXaeEngpJZre6e0BE2Kb5q9F4YsBGThWGOi+jpVoSSC3H3wELPa+4fFqBNDvFmVZA3hUpItnv3igzuEetny4UdFrxixzcAQmkAPqJkVGAOXZW8kc0cI8Wcyzu8/dg/PNvUC9XJlasH9sF44FvwPZZRCh3f/k+L6zn30WnebQL4fHZ1eek8UB86ULqOs6LY8ccHpiGDrsn3LhR7qqPFis+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=GohEJTe/VaXsTQ/cdqizfcGlHjb+s8TSaZHmf74By5E=;
+ b=MoFtuWUBPCKIrRFdJOQvh+i7PoTlMSR3QKX8UTH0UESV/7JhqOu8Oea2fbbUcMTVHSAsXkv7IE9fgVnUTLqOyZZHYhtKYi63yMfWUfoMxyLyAHw1inZ28xUl3pyR9KUtrXiOpdHlnBKA+wi/T3vZ35sh72/bbm6nO2svMQwfBbydDXjrUWCBtUKd+sjunTzgHyK1VfsSJH2DAffdGJ0seaxHfMOkoL+icf52VlxHXt1QvVVeZRqHFQwZznabxtcuIvPfDo5FRtdLvXlPGTKnlyZH1VtE8vgs4bHNRM2c8TgRLhhe8lqzGDkLoUv0hE1TAklMhZfwhSLYLAaduEROwA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GohEJTe/VaXsTQ/cdqizfcGlHjb+s8TSaZHmf74By5E=;
+ b=FKw8OPhwC4PsaAbnV4bK6qfKPPILgZxz4bm2dmT2hz7853LzwGoBhFkad3c9hSo4dwNvMtg7FwDjf/Awr7YQlLixFCt/dks2yAwP+j4pfyodiqUhp3JIX8UO7wyY3Fi3hU6H8A9btZ+tnvi8jVik2shNh2tUbkrkH/vyQsv91EI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ CO1PR01MB8841.prod.exchangelabs.com (2603:10b6:303:26d::18) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.12; Tue, 29 Oct 2024 02:06:37 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%7]) with mapi id 15.20.8114.015; Tue, 29 Oct 2024
+ 02:06:37 +0000
+Date: Mon, 28 Oct 2024 19:06:26 -0700 (PDT)
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: James Clark <james.clark@linaro.org>
+cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>, 
+    linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, 
+    Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+    Arnaldo Carvalho de Melo <acme@kernel.org>, 
+    Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+    Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+    Adrian Hunter <adrian.hunter@intel.com>, 
+    "Liang, Kan" <kan.liang@linux.intel.com>, 
+    John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+    Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>
+Subject: Re: [PATCH] perf arm-spe: Add support for SPE Data Source packet on
+ AmpereOne
+In-Reply-To: <963d58e4-c00e-40b5-bb64-97476807ed61@linaro.org>
+Message-ID: <86abfa22-4d2e-2a4-7365-571a69e8a233@os.amperecomputing.com>
+References: <20241024233035.7979-1-ilkka@os.amperecomputing.com> <963d58e4-c00e-40b5-bb64-97476807ed61@linaro.org>
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-ClientProxiedBy: CH2PR15CA0018.namprd15.prod.outlook.com
+ (2603:10b6:610:51::28) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] mm: shmem: control THP support through the kernel
- command line
-To: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
- Hugh Dickins <hughd@google.com>, Barry Song <baohua@kernel.org>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Lance Yang <ioworker0@gmail.com>
-Cc: linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241029002324.1062723-1-mcanal@igalia.com>
- <20241029002324.1062723-3-mcanal@igalia.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <20241029002324.1062723-3-mcanal@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CO1PR01MB8841:EE_
+X-MS-Office365-Filtering-Correlation-Id: c3439dca-8b1f-40d8-0c26-08dcf7be51bf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PrsAlP7h55hbnjWCQhwWCW6cYtsP8Iqmz2ZTqd6McNTS/NhRGeUvniiFwxNE?=
+ =?us-ascii?Q?sm4+kRbY7vTT23pLlO+PYr/fgxOpLZQyZw7VciGniMYDIJKzf9SUCbAjXjBw?=
+ =?us-ascii?Q?0rVtDYg6ND4ED4xOhYowTxxen+PBXMxOZ+mtfNlHsB5hduOh5erXfM/o/UlE?=
+ =?us-ascii?Q?rG8kRaMH30C4J5zWBv+sWm9plWjH26xMM2Eg//ZbcBU4K/axw2eGLmzh+Dyx?=
+ =?us-ascii?Q?FT8JO5IToH+wrhF96gQGEcrHFH9Dhv3o7y+LvQIkUcHNvRS57lLyXN+/EBP5?=
+ =?us-ascii?Q?6bT0U+psp3b/gsSypDlDxf5rkXMHO2dW0x5Mb0QqhSA0bZE+9nAvrcgR0lsx?=
+ =?us-ascii?Q?JEfCmjRLaK/6xvZicndGM3zXXh8Li8YAuGaeJeyjEAay3Qg90kcMKSEexLPX?=
+ =?us-ascii?Q?un90BpN0UIa8bgCV/RObZhzd2RgU5wbDsQXdv6ZSxpwhcSroIYtWU2sddRaa?=
+ =?us-ascii?Q?wA42MzpXoyNueJMoivVDoVgltrPGeDlL+s4QevMVwLZBif2qj8Gd3RprZpQL?=
+ =?us-ascii?Q?c7yelr0f5gU8NJ+vZ94xaaaKDp2PtiGPWJmCsTQtLhaYYO2qmkBQGAGnzQgg?=
+ =?us-ascii?Q?rzXNILISPmDM3N4etzyRlEZgPM463eZeG+dVJX8pThat73KI4QgHrZwllgBK?=
+ =?us-ascii?Q?rdZGV7XqhCLgOws7E7NW0xQ7eT4+PbWQ6tZvo9Dbr+wqLsOw0WACz/gQRifr?=
+ =?us-ascii?Q?Q3oJwPu3VuRpnF0z7tsf/i+8iJQmEA4TEGV/mtoP5mKJB5LKUN7s76YqOWyH?=
+ =?us-ascii?Q?u7tPh6pWiZZKRZNp7pKBzVXWpYbIUGEaIIif/tzqRHfOdhLfM79w+8wDbB08?=
+ =?us-ascii?Q?nUUlL8DbnJTnZV/2/9vwsK0RFcRpOFe7wb/LvFbpkwzSEVgjgii7igLAp6cv?=
+ =?us-ascii?Q?kkHBPlkjs7zOp+A5DreHvx7MnMmhjwiXKraL4aHJw8jOdk72ir+nfB7yaPl8?=
+ =?us-ascii?Q?UA7KdOFUmLCBGO6QJFGCj6rJfmnISJ2EGkbElPcNMGIU5M0R1frwFDRU1Kyo?=
+ =?us-ascii?Q?cDGoN1gXUIb0kBEVbYm6wGJ9gKF53CkXlaTWyzgqXYBal1SBL0HygHDM73ld?=
+ =?us-ascii?Q?L9F5sD8Qgja8lNTlw1+gkteQYqSWHJBp0dxv8YzZowg3rXX8UwfbupehfwGo?=
+ =?us-ascii?Q?y+liV1CFb4U/NvoKV6PwPuPy4pCwsq4bxff9SVho12vXuq84hwwdwk/oY029?=
+ =?us-ascii?Q?m++zbF18/NihNljKGop20lcvMmvSucfZm5v7Nx/rydnldy7T6LXjdABLimnx?=
+ =?us-ascii?Q?d0kSb7hIsJ6SEyQFccg3I4pH/iN4FJZR9r2soUvtQsgjRxNC0w16fnnFnQQ0?=
+ =?us-ascii?Q?mXmZCwJsdpNdz7MumV2WJK2XvoJa3ryRlEcuA0lKy4c0xSdxHaN8XybrtyQA?=
+ =?us-ascii?Q?0oRejSc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1C6oq3UGNScsVPpDRa+bADZfzTFiI7R6oVHmluAqax+szvvIs0Pzn2KpzuOl?=
+ =?us-ascii?Q?M3s7eAjPkZgHQXO2ywzLfcuOui1QV8HwDjC71CUtGkZ4rX8uucykXWgidBjr?=
+ =?us-ascii?Q?d+LCEQXjyg2VsrVGW+AE0+MtUQ7OUfw7tql/Oo4Mf3ivTi5jD7w0YU1lmLPA?=
+ =?us-ascii?Q?WWp1OCf9amljjn4onTDjm07t+QCSf8SFW7G7YlO9yTCRZZ1QG8Qasnldqo/J?=
+ =?us-ascii?Q?XcFTUdSkYbtADGggLviNg5keioudOO42RMmlom79KIu5s4AGTTNa/Ta08aN5?=
+ =?us-ascii?Q?mXN35vbn12g0Vi8C8MxI/+4TDNIKXpYEKMmWkEuVUyiaB50/RoLCDIRgmZLL?=
+ =?us-ascii?Q?MVst/iPNC6dM+eW61bRh7OeEY97MN9GT39xK25cmNpd9tp76kL8gh47BbR0Q?=
+ =?us-ascii?Q?aNyn/mPdyBlYOAZ3fbSsKra2r3SeMO8jEX9fxbhpFwtvLf7/llWtuwdGDdxv?=
+ =?us-ascii?Q?jMSg5l2XM+LdQReEeq/kh5/tfz/5dFuI7H6GOAWV2f+F0KJqcXus/1gnD/UJ?=
+ =?us-ascii?Q?ZIy9y2QRndDUDk28sSPaEoREugHHb090soZMNk5BFGQd6bXeFXtYE4K8+nr6?=
+ =?us-ascii?Q?NYSD4Apobt1SKOiUOEWeTYCPIAdCr2vTiwHTjoEM0/HPf5aBEvfYDvR3v7gz?=
+ =?us-ascii?Q?q2kmGh84FyG40eAgBP0ekxF1EZKHO3L3nOz2cWh4lfjROaQOZaKL6Xmos7l8?=
+ =?us-ascii?Q?0gwFqtrk9rQBVrss6iq3MF8aNWJjcGvoLBvtev8pJrAnjnjGOYZ5s4WfBI4I?=
+ =?us-ascii?Q?tEXM8cAlsg9xKyxE6THN/RuYIhNW/kouOyhX37qqrJNjnLmpmDr/RP5NDrHx?=
+ =?us-ascii?Q?rEx8kUu3H8YLbefNbaRBVPemWRlJ6fXkanEQnKDBN/u1K8LeqmsYBbeO3AzD?=
+ =?us-ascii?Q?c8pmhAX4ATyFRrQvf7FtR9QK9uSVhDdnYMfK3St8dSKSJdSlcBKbkgtZquFk?=
+ =?us-ascii?Q?8I+QnaPnA6okP0QtsU3FHhoz6HEfRFYLxjrV+YKCudNDID4cehXFPwQ2iW5N?=
+ =?us-ascii?Q?Zs2QVucQBs4x/C7L4ICYUo+6++/3GeW05GEygc4RwcLT45e2Lckc2z9cZmAb?=
+ =?us-ascii?Q?DP7UKRE+pOnbWB19Na9wgsiXcdMl6hAnGILjdRGq5hLxDWV8+qrxsm/97qI8?=
+ =?us-ascii?Q?Tjd4tF7fw7p+r30BKz1ttiQq/FC0czfJEiG2uvUWAi5iHMRYPtyWoXjZWLV3?=
+ =?us-ascii?Q?MRkAQzhf8VWuO9ihJZMpklbPrpowQDB+UUjjVINMfhAN0puvLEdi9UTjZRLy?=
+ =?us-ascii?Q?seLlRfs+kw0aK2QmI78YNXSjEGaB6yCvNsAOLICHRzCqXHvIOrkzF9iob2Gn?=
+ =?us-ascii?Q?3rZu3CXUi3tApjM2ALafQqasd0C/VC4k03lAvubzqTnyjPTjJnyB7psE4nhP?=
+ =?us-ascii?Q?th0iiqfONZAdxac5L2aZGYBvELI4wGHO4fS1DjtalKS/fOhdWP6sLFAFBh+6?=
+ =?us-ascii?Q?f0EyHNTE4MSaAtaprfdapYeVzR6OKTfpjLsYW8X9QOauBisYiKnbQhbUf/Q0?=
+ =?us-ascii?Q?pafW3DMGy+tqdwtJKeE3QmqxaIXT8UlfAIv72n99n3fOunx/AnmDjO1Faufm?=
+ =?us-ascii?Q?eRJbjOAEp6IJr0Tbvg1wUT8iKByl+5wk0MKYZQYXId5BJCPCWhlRnRpdFYh2?=
+ =?us-ascii?Q?Jx+g7UDJXPfTJlXiiuJzw/A=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c3439dca-8b1f-40d8-0c26-08dcf7be51bf
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 02:06:37.1304
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 8PNO2RnW7EtKuxmHMunYB9Ja1wDQMLuA5oKVwX7km6KyHkqeEXdLDadNeZGRJiXaxsLD3Z2mLyEWJln50G9T0uQjXGpggNYKGZz50ohCWk7lA0ZzjJrwhIBxONNfPHvF
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR01MB8841
 
 
 
-On 2024/10/29 08:13, Maíra Canal wrote:
-> Add a new kernel command line to control the hugepage allocation policy
-> for the internal shmem mount, ``transparent_hugepage_shmem``. The
-> parameter is similar to ``transparent_hugepage`` and has the following
-> format:
-> 
-> transparent_hugepage_shmem=<policy>
-> 
-> where ``<policy>`` is one of the seven valid policies available for
-> shmem.
-> 
-> By configuring the default hugepage allocation policy for the internal
-> shmem mount, applications that use shmem, such as the DRM GEM objects,
-> can take advantage of mTHP before it's been configured through sysfs.
+Hi James,
 
-Just out of curiosity, do you have any performance benefit data when 
-using mTHP for DRM GEM objects?
+On Fri, 25 Oct 2024, James Clark wrote:
+> On 25/10/2024 12:30 am, Ilkka Koskinen wrote:
+>> Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
+>> 
+>> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+>> ---
+>>   .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
+>>   tools/perf/util/arm-spe.c                     | 61 +++++++++++++++++++
+>>   2 files changed, 70 insertions(+)
+>> 
+>> diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h 
+>> b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>> index 1443c28545a9..e4115b1e92b2 100644
+>> --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>> +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+>> @@ -67,6 +67,15 @@ enum arm_spe_neoverse_data_source {
+>>   	ARM_SPE_NV_DRAM		 = 0xe,
+>>   };
+>>   +enum arm_spe_ampereone_data_source {
+>> +	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE	= 0x0,
+>> +	ARM_SPE_AMPEREONE_SLC				= 0x3,
+>> +	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE		= 0x5,
+>> +	ARM_SPE_AMPEREONE_DDR				= 0x7,
+>> +	ARM_SPE_AMPEREONE_L1D				= 0x8,
+>> +	ARM_SPE_AMPEREONE_L2D				= 0x9,
+>> +};
+>> +
+>>   struct arm_spe_record {
+>>   	enum arm_spe_sample_type type;
+>>   	int err;
+>> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+>> index 138ffc71b32d..04bd21ad7ea8 100644
+>> --- a/tools/perf/util/arm-spe.c
+>> +++ b/tools/perf/util/arm-spe.c
+>> @@ -515,10 +515,69 @@ static void arm_spe__synth_data_source_generic(const 
+>> struct arm_spe_record *reco
+>>   		data_src->mem_lvl |= PERF_MEM_LVL_REM_CCE1;
+>>   }
+>>   +static const struct midr_range ampereone_source_spe[] = {
+>> +	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
+>> +	{},
+>> +};
+>> +
+>> +static void arm_spe__synth_data_source_ampereone(const struct 
+>> arm_spe_record *record,
+>> +						 union perf_mem_data_src 
+>> *data_src,
+>> +						 u64 midr)
+>> +{
+>> +	if (!is_midr_in_range_list(midr, ampereone_source_spe)) {
+>> +		arm_spe__synth_data_source_generic(record, data_src);
+>> +		return;
+>> +	}
+> [...]
+>>   static u64 arm_spe__synth_data_source(const struct arm_spe_record 
+>> *record, u64 midr)
+>>   {
+>>   	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
+>>   	bool is_neoverse = is_midr_in_range_list(midr, neoverse_spe);
+>> +	bool is_ampereone = (read_cpuid_implementor() == ARM_CPU_IMP_AMPERE);
+>> 
+>
+> Hi Ilkka,
+>
+> I think this read_cpuid_implementor() is for the device that's running 
+> report, rather than record. You need to use the midr that's saved into the 
+> file.
 
-> Signed-off-by: Maíra Canal <mcanal@igalia.com>
-> ---
->   .../admin-guide/kernel-parameters.txt         |  7 +++
->   Documentation/admin-guide/mm/transhuge.rst    |  6 +++
->   mm/shmem.c                                    | 53 +++++++++++++++----
->   3 files changed, 57 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1666576acc0e..acabb04d0dd4 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -6926,6 +6926,13 @@
->   			See Documentation/admin-guide/mm/transhuge.rst
->   			for more details.
->   
-> +	transparent_hugepage_shmem= [KNL]
-> +			Format: [always|within_size|advise|never|deny|force]
-> +			Can be used to control the hugepage allocation policy for
-> +			the internal shmem mount.
-> +			See Documentation/admin-guide/mm/transhuge.rst
-> +			for more details.
-> +
->   	trusted.source=	[KEYS]
->   			Format: <string>
->   			This parameter identifies the trust source as a backend
-> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
-> index 745055c3dc09..9b5b02c4d1ab 100644
-> --- a/Documentation/admin-guide/mm/transhuge.rst
-> +++ b/Documentation/admin-guide/mm/transhuge.rst
-> @@ -326,6 +326,12 @@ PMD_ORDER THP policy will be overridden. If the policy for PMD_ORDER
->   is not defined within a valid ``thp_anon``, its policy will default to
->   ``never``.
->   
-> +Similarly to ``transparent_hugepage``, you can control the hugepage
-> +allocation policy for the internal shmem mount by using the kernel parameter
-> +``transparent_hugepage_shmem=<policy>``, where ``<policy>`` is one of the
-> +seven valid policies for shmem (``always``, ``within_size``, ``advise``,
-> +``never``, ``deny``, and ``force``).
-> +
->   Hugepages in tmpfs/shmem
->   ========================
->   
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 44282a296c33..26c1eb1b4b1d 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -582,7 +582,6 @@ static bool shmem_huge_global_enabled(struct inode *inode, pgoff_t index,
->   	}
->   }
->   
-> -#if defined(CONFIG_SYSFS)
->   static int shmem_parse_huge(const char *str)
->   {
->   	if (!strcmp(str, "never"))
-> @@ -599,7 +598,6 @@ static int shmem_parse_huge(const char *str)
->   		return SHMEM_HUGE_FORCE;
->   	return -EINVAL;
->   }
-> -#endif
->   
->   #if defined(CONFIG_SYSFS) || defined(CONFIG_TMPFS)
->   static const char *shmem_format_huge(int huge)
-> @@ -624,6 +622,20 @@ static const char *shmem_format_huge(int huge)
->   }
->   #endif
->   
-> +static int shmem_valid_huge(int huge)
-> +{
-> +	if (!has_transparent_hugepage() &&
-> +			huge != SHMEM_HUGE_NEVER && huge != SHMEM_HUGE_DENY)
-> +		return -EINVAL;
-> +
-> +	/* Do not override huge allocation policy with non-PMD sized mTHP */
-> +	if (huge == SHMEM_HUGE_FORCE &&
-> +	    huge_shmem_orders_inherit != BIT(HPAGE_PMD_ORDER))
-> +		return -EINVAL;
-> +
-> +	return 0;
-> +}
-> +
->   static unsigned long shmem_unused_huge_shrink(struct shmem_sb_info *sbinfo,
->   		struct shrink_control *sc, unsigned long nr_to_free)
->   {
-> @@ -5070,14 +5082,10 @@ static ssize_t shmem_enabled_store(struct kobject *kobj,
->   	huge = shmem_parse_huge(tmp);
->   	if (huge == -EINVAL)
->   		return -EINVAL;
-> -	if (!has_transparent_hugepage() &&
-> -			huge != SHMEM_HUGE_NEVER && huge != SHMEM_HUGE_DENY)
-> -		return -EINVAL;
->   
-> -	/* Do not override huge allocation policy with non-PMD sized mTHP */
-> -	if (huge == SHMEM_HUGE_FORCE &&
-> -	    huge_shmem_orders_inherit != BIT(HPAGE_PMD_ORDER))
-> -		return -EINVAL;
-> +	err = shmem_valid_huge(huge);
-> +	if (err)
-> +		return err;
->   
->   	shmem_huge = huge;
->   	if (shmem_huge > SHMEM_HUGE_DENY)
-> @@ -5174,6 +5182,33 @@ struct kobj_attribute thpsize_shmem_enabled_attr =
->   	__ATTR(shmem_enabled, 0644, thpsize_shmem_enabled_show, thpsize_shmem_enabled_store);
->   #endif /* CONFIG_TRANSPARENT_HUGEPAGE && CONFIG_SYSFS */
->   
-> +#if defined(CONFIG_TRANSPARENT_HUGEPAGE)
-> +
-> +static int __init setup_transparent_hugepage_shmem(char *str)
-> +{
-> +	int huge, ret = 0;
-> +
-> +	if (!str)
-> +		goto out;
-> +
-> +	huge = shmem_parse_huge(str);
-> +	if (huge == -EINVAL)
-> +		goto out;
+Uh, that didn't come to my mind at all.
 
-Looks better. But shmem_parse_huge() is also a common part, and what I 
-am thinking is below:
+> But it looks like you've done that for is_midr_in_range_list(midr, 
+> ampereone_source_spe) above. Is it possible to just do that and not 
+> read_cpuid_implementor() and then it's done the same way as neoverse and also 
+> works off target?
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index f8b8b1ad2631..646d8943950a 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -629,24 +629,39 @@ static unsigned int 
-shmem_huge_global_enabled(struct inode *inode, pgoff_t index
-         }
-  }
+You're right, it's wrong and there's no even need for separate implementor 
+id check. I fix it.
 
--#if defined(CONFIG_SYSFS)
-  static int shmem_parse_huge(const char *str)
-  {
-+       int huge;
-+
-+       if (!str)
-+               return -EINVAL;
-+
-         if (!strcmp(str, "never"))
--               return SHMEM_HUGE_NEVER;
--       if (!strcmp(str, "always"))
--               return SHMEM_HUGE_ALWAYS;
--       if (!strcmp(str, "within_size"))
--               return SHMEM_HUGE_WITHIN_SIZE;
--       if (!strcmp(str, "advise"))
--               return SHMEM_HUGE_ADVISE;
--       if (!strcmp(str, "deny"))
--               return SHMEM_HUGE_DENY;
--       if (!strcmp(str, "force"))
--               return SHMEM_HUGE_FORCE;
--       return -EINVAL;
-+               huge = SHMEM_HUGE_NEVER;
-+       else if (!strcmp(str, "always"))
-+               huge = SHMEM_HUGE_ALWAYS;
-+       else if (!strcmp(str, "within_size"))
-+               huge = SHMEM_HUGE_WITHIN_SIZE;
-+       else if (!strcmp(str, "advise"))
-+               huge = SHMEM_HUGE_ADVISE;
-+       else if (!strcmp(str, "deny"))
-+               huge = SHMEM_HUGE_DENY;
-+       else if (!strcmp(str, "force"))
-+               huge = SHMEM_HUGE_FORCE;
-+       else
-+               return -EINVAL;
-+
-+       if (!has_transparent_hugepage() &&
-+           huge != SHMEM_HUGE_NEVER && huge != SHMEM_HUGE_DENY)
-+               return -EINVAL;
-+
-+       /* Do not override huge allocation policy with non-PMD sized mTHP */
-+       if (huge == SHMEM_HUGE_FORCE &&
-+           huge_shmem_orders_inherit != BIT(HPAGE_PMD_ORDER))
-+               return -EINVAL;
-+
-+       return huge;
-  }
--#endif
+Cheers, Ilkka
 
-  #if defined(CONFIG_SYSFS) || defined(CONFIG_TMPFS)
-  static const char *shmem_format_huge(int huge)
-@@ -5104,16 +5119,8 @@ static ssize_t shmem_enabled_store(struct kobject 
-*kobj,
-                 tmp[count - 1] = '\0';
-
-         huge = shmem_parse_huge(tmp);
--       if (huge == -EINVAL)
--               return -EINVAL;
--       if (!has_transparent_hugepage() &&
--                       huge != SHMEM_HUGE_NEVER && huge != SHMEM_HUGE_DENY)
--               return -EINVAL;
--
--       /* Do not override huge allocation policy with non-PMD sized mTHP */
--       if (huge == SHMEM_HUGE_FORCE &&
--           huge_shmem_orders_inherit != BIT(HPAGE_PMD_ORDER))
--               return -EINVAL;
-+       if (huge < 0)
-+               return huge;
-
-         shmem_huge = huge;
-         if (shmem_huge > SHMEM_HUGE_DENY)
-@@ -5210,6 +5217,25 @@ struct kobj_attribute thpsize_shmem_enabled_attr =
-         __ATTR(shmem_enabled, 0644, thpsize_shmem_enabled_show, 
-thpsize_shmem_enabled_store);
-  #endif /* CONFIG_TRANSPARENT_HUGEPAGE && CONFIG_SYSFS */
-
-+#if defined(CONFIG_TRANSPARENT_HUGEPAGE)
-+
-+static int __init setup_transparent_hugepage_shmem(char *str)
-+{
-+       int huge;
-+
-+       huge = shmem_parse_huge(str);
-+       if (huge < 0) {
-+               pr_warn("transparent_hugepage_shmem= cannot parse, 
-ignored\n");
-+               return 0;
-+       }
-+
-+       shmem_huge = huge;
-+       return 1;
-+}
-+__setup("transparent_hugepage_shmem=", setup_transparent_hugepage_shmem);
-+
-+#endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-+
-  #else /* !CONFIG_SHMEM */
-
-  /*
+>
+> Thanks
+>
+> James
+>
+>
 
