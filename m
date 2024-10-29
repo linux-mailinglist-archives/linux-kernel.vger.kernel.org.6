@@ -1,121 +1,149 @@
-Return-Path: <linux-kernel+bounces-387176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 806629B4D17
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:10:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E999B4D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C0051F2352B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544051C2264D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:10:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC0019258A;
-	Tue, 29 Oct 2024 15:10:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F258C192D75;
+	Tue, 29 Oct 2024 15:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AOlJ4yrv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="utgnz4zF"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2ED31885BD;
-	Tue, 29 Oct 2024 15:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466911885BD
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730214606; cv=none; b=LjSbySQP4A2K03q/IIk0eUCfyxXOGQM1kfibDHAXQVZeOZyR5smvgPP872YMB4G4vVGVBMKd+qhwxi+Sx+ZC1x4irk0Rtw0sumCoNUD2EY8w1o/LTztah6jlGBgiZWOu++w/iPNkf82Vzb1C20QLqNU4illeRJe17oHsafJaSFI=
+	t=1730214648; cv=none; b=nG0Yn6zCoxh2WUDzuIwSt5zUPEaIdeUEoPCWQ4Rm7Z0vFL4pD2VlYdhA9FJjEtKB5RC7TGDGjVr+NCg6iLBScK1knZ95vYULyY3QMK2Uh20MFZgfE5oG32w2NnuKCW7/CN9jHy/GlR3vqI6h3XDi1y3SFnWX/GIwSdBrmxnPvJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730214606; c=relaxed/simple;
-	bh=zppHwKkF/7U28D07l6cGlNPFzKBueSR56H4LqPBf0Nc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kujxwtzzvp3sndZb/CeDBgmDWr5VF4d/iNHkwOMkoRhoPK/vk5RUCN2dvvZOlOqcK93fuWxvf4qmclRRwMa0bdNAK2HRl7MbAsKZ7EFI4zRaxs+WwTs2z/Oxog/WDHtrv/xRf90Tn7vitePrD6Bk0NwXKkCl3Ae1wQqO3lyFHqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AOlJ4yrv; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730214605; x=1761750605;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=zppHwKkF/7U28D07l6cGlNPFzKBueSR56H4LqPBf0Nc=;
-  b=AOlJ4yrvcC1zKH7ypuTo9nZ4XM1dvV5cz26jvpescRNsgnq2oEWIYnyp
-   TtrTlXvtByP5vCiv96ibdxPaPHNi6gUtITaVFlm/tWa2phrwcInWTztKW
-   rf2A3aoENCwzBfGttdorl26IXVvVvYkKMEVj84ntvv4Z3TyU8lzKlb2iu
-   GohnpfXx58WL4VqppBV6BsSKkd+bxL1ZiNQ00yxzQr6NUSBFwh3W7Kjgu
-   jYCpu7VKbMD6G4bAxv0I5vuqCeXvpV4FQ/EWQ7YhfHLhkfipNB2lWrqJv
-   2ljrHMqcHw9wXB6BXqbjRM6CW/IZ4VwZ8ZqvPcWL2+GJh5MOtTJShEnB0
-   g==;
-X-CSE-ConnectionGUID: r2ss6uRCSBK+dss11/Zo3g==
-X-CSE-MsgGUID: aRy8A01FSxW7NIQgwtKDIQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40958759"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40958759"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:10:04 -0700
-X-CSE-ConnectionGUID: KFOHjn+WTaKQ3zRyNQdZbA==
-X-CSE-MsgGUID: hjkhL2pgR8qWEirbuh/+DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="86548084"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 29 Oct 2024 08:10:00 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 0743826B; Tue, 29 Oct 2024 17:09:58 +0200 (EET)
-Date: Tue, 29 Oct 2024 17:09:58 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Baoquan He <bhe@redhat.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Sean Christopherson <seanjc@google.com>, 
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCHv4, REBASED 0/4] x86: Reduce code duplication on page
- table initialization
-Message-ID: <jtibkddkdwyx2fljoztmxpirzdilm7go2maem4z3osbiqk7seb@5pfzpdsukbxf>
-References: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+	s=arc-20240116; t=1730214648; c=relaxed/simple;
+	bh=pClzO/h/JROTqlyb6Hk2ZQp5fgFIM9FnfxbvzImRHqc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=ryt5g++I8VcMGWA4BmQPWJkAw8C4AdqFp42p0i9bBADcE36PP7nl02El1H/ppV+VsP7j8Qae5HAD7fcQaW8czYC8EptRNnzRjCoWJC9Z/JnTR3noPoO9UtubngrYlyZbJNAM6uTFIjtbRQBaYxLRk3YLOPQqhs/dzcdzP6wmiQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=utgnz4zF; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4eac48d8so506905f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:10:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1730214645; x=1730819445; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pClzO/h/JROTqlyb6Hk2ZQp5fgFIM9FnfxbvzImRHqc=;
+        b=utgnz4zFdhOy+7YMXbpmLXje74h8m4lx6u2cnRXuc5S/at09whA4C9h2KfYMSv1JD9
+         juWl5Pjp680KnOnpL68XpitftNI24T3uHHls3B6h8LS6+4jOYJhRQG6LghZqE5vofUcx
+         QYKmbFMV273ySUzS8eRqM6w0RGwzVk0pirsZamw+23DTNK7+xYE4rIfP3kWowGS5ZNxA
+         RkN5LeevWUDzCbTB12hmkt6Cr1vKvfRSpWIeVx02CP9WxlkfjJKZLlT4lEemTONphmFn
+         EguMZ5QUpGQtQcHsLIxOvIzRgJg1/76kVc08+ckJ/jnnM+ZZIrXcXqLf0cihOaQMlqmb
+         bRQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730214645; x=1730819445;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pClzO/h/JROTqlyb6Hk2ZQp5fgFIM9FnfxbvzImRHqc=;
+        b=pg74+MGUUDXLgw/5yEo19GLfv85XFd9AqaMagMrJYQWB3VZxO5ARBn8VpWjl5bz92T
+         UUDD0HpPaYBBZm3NU8VtZIqaIAjMU/uNlOjASlUgtC8LFOblTLI6S4/rCAswXf/vLNJ/
+         b6eo8rru9P2RY7gbgrB3IVR1yUhcJkntBvgsaEQ6dCrntg3ZrNl0MLMzet+gnHKVfkta
+         eQMBl/p3t34Dvj5vJ2/rtgZYuQh8PMs5SwgW3Lmko4dCDHuWECpKlaiZYzGX+BOm7QzS
+         l4GPrc6aoZ0UBloVC5pONpm3dZOiwil89OuSAsTkyWCXDkh/L51OuAJBmC/8JcdrZYIt
+         TTow==
+X-Forwarded-Encrypted: i=1; AJvYcCVR4u7QxTX91TDEayKJOUAeuqWS1CPS1J8sYVrakZacDLRufxQAFD0isazi4i2rg0C//saiXhdCmYSF/rI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZuEkM7ON7mndsitQ8ZOpyBm6UPByS+4Vsl1PfHAbWPxfWKwWl
+	lBXRuSTM1dLkt5233P62ZpV+kl9PNfY5gAuNcUNf7y+cj6pNMbXlcFPV+kxUBZs=
+X-Google-Smtp-Source: AGHT+IHpB0gsXiLgIYq0IllOpj0RLaS+RFkgWPXNM/xk1DTGgHY978z6z+pWhDKYuiUIrS2oulAcag==
+X-Received: by 2002:a5d:6d86:0:b0:374:cd01:8b72 with SMTP id ffacd0b85a97d-380611fe6dcmr4253149f8f.9.1730214644521;
+        Tue, 29 Oct 2024 08:10:44 -0700 (PDT)
+Received: from smtpclient.apple ([2001:a61:a4f:301:c1bf:2b25:a6db:6ae3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b713fbsm12813482f8f.88.2024.10.29.08.10.43
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 29 Oct 2024 08:10:44 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016111458.846228-1-kirill.shutemov@linux.intel.com>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH 1/1] Compiler Attributes: disable __counted_by for clang <
+ 19.1.3
+From: Thorsten Blum <thorsten.blum@toblux.com>
+In-Reply-To: <20241029140036.577804-2-kernel@jfarr.cc>
+Date: Tue, 29 Oct 2024 16:10:32 +0100
+Cc: kees@kernel.org,
+ nathan@kernel.org,
+ ojeda@kernel.org,
+ ndesaulniers@google.com,
+ morbo@google.com,
+ justinstitt@google.com,
+ ardb@kernel.org,
+ oliver.sang@intel.com,
+ gustavoars@kernel.org,
+ kent.overstreet@linux.dev,
+ arnd@arndb.de,
+ gregkh@linuxfoundation.org,
+ akpm@linux-foundation.org,
+ tavianator@tavianator.com,
+ linux-hardening@vger.kernel.org,
+ llvm@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <3ADD56B1-9BBF-48CD-81C7-53E10675F566@toblux.com>
+References: <20241029140036.577804-1-kernel@jfarr.cc>
+ <20241029140036.577804-2-kernel@jfarr.cc>
+To: Jan Hendrik Farr <kernel@jfarr.cc>
+X-Mailer: Apple Mail (2.3776.700.51.11.1)
 
-On Wed, Oct 16, 2024 at 02:14:54PM +0300, Kirill A. Shutemov wrote:
-> Use kernel_ident_mapping_init() to initialize kernel page tables where
-> possible, replacing manual initialization, reducing code duplication.
-> 
-> v4:
->  - Reviewed-bys from Kai;
->  - Fix comment in acpi_mp_setup_reset() (Rafael);
-> v3:
->  - Reviewed-bys from Tom;
->  - Improve commit messages;
-> v2:
->  - A separate patch to change what PA is mapped at relocate_kernel() VA.
->  - Improve commit messages;
->  - Add Reveiwed-by from Kai;
-> 
-> Kirill A. Shutemov (4):
->   x86/mm/ident_map: Fix virtual address wrap to zero
->   x86/acpi: Replace manual page table initialization with
->     kernel_ident_mapping_init()
->   x86/64/kexec: Map original relocate_kernel() in
->     init_transition_pgtable()
->   x86/64/kexec: Rewrite init_transition_pgtable() with
->     kernel_ident_mapping_init()
-> 
->  arch/x86/include/asm/kexec.h       |  5 +-
->  arch/x86/kernel/acpi/madt_wakeup.c | 73 +++++-------------------
->  arch/x86/kernel/machine_kexec_64.c | 89 +++++++++++-------------------
->  arch/x86/mm/ident_map.c            | 14 +----
->  4 files changed, 50 insertions(+), 131 deletions(-)
+On 29. Oct 2024, at 15:00, Jan Hendrik Farr wrote:
+>=20
+> This patch disables __counted_by for clang versions < 19.1.3 because
+> of the two issues listed below. It does this by introducing
+> CONFIG_CC_HAS_COUNTED_BY.
+>=20
+> 1. clang < 19.1.2 has a bug that can lead to __bdos returning 0:
+> https://github.com/llvm/llvm-project/pull/110497
+>=20
+> 2. clang < 19.1.3 has a bug that can lead to __bdos being off by 4:
+> https://github.com/llvm/llvm-project/pull/112636
+>=20
+> Fixes: c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and =
+identifier expansion")
+> Cc: stable@vger.kernel.org # 6.6.x: 16c31dd7fdf6: Compiler Attributes: =
+counted_by: bump min gcc version
+> Cc: stable@vger.kernel.org # 6.6.x: 2993eb7a8d34: Compiler Attributes: =
+counted_by: fixup clang URL
+> Cc: stable@vger.kernel.org # 6.6.x: 231dc3f0c936: lkdtm/bugs: Improve =
+warning message for compilers without counted_by support
+> Cc: stable@vger.kernel.org # 6.6.x
+> Reported-by: Nathan Chancellor <nathan@kernel.org>
+> Closes: =
+https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
+> Reported-by: kernel test robot <oliver.sang@intel.com>
+> Closes: =
+https://lore.kernel.org/oe-lkp/202409260949.a1254989-oliver.sang@intel.com=
 
-Any feedback on this series?
+> Link: =
+https://lore.kernel.org/all/Zw8iawAF5W2uzGuh@archlinux/T/#m204c09f63c07658=
+6a02d194b87dffc7e81b8de7b
+> Suggested-by: Nathan Chancellor <nathan@kernel.org>
+> Signed-off-by: Jan Hendrik Farr <kernel@jfarr.cc>
+> Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+> Tested-by: Nathan Chancellor <nathan@kernel.org>
+> Reviewed-by: Miguel Ojeda <ojeda@kernel.org>
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Thanks for fixing this and your work on the Clang issues. Feel free to =
+add:
+
+Reviewed-by: Thorsten Blum <thorsten.blum@linux.dev>
+
 
