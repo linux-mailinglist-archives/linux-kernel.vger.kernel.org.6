@@ -1,285 +1,84 @@
-Return-Path: <linux-kernel+bounces-387421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD559B5102
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:37:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567C89B5105
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:37:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC6D285068
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:37:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D3DB1F22D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38BBB20C009;
-	Tue, 29 Oct 2024 17:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NPpSiuJI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F911DD520;
+	Tue, 29 Oct 2024 17:33:01 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AAC20B214;
-	Tue, 29 Oct 2024 17:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4201D2796
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730223116; cv=none; b=YH5ktGWt9fGJ9SGwaOTLseNMenHDrEsstqrWMdDnFC7e4XS2e1ja3m7CO1NNNQktrIchccMohvwSK6+Bi8u/ARCvEbIX9gSIXIScKMh2dbs503zEn+aDfUDjj3R6RQPTE7nMIQid7TyWFmhC5h7WmWFMV/HU57/Gsx7MQFBRuWg=
+	t=1730223181; cv=none; b=Hhat0XT4BQrZepZjBGfpaQskS3MF2lUq0wncKE3Qi8vpw+xQBc98XQbjQNKV7CZMFm7VJOatbp48qteH2haFA4Pdqb/Y1JP5ICaXrro/wX9MUytV6vYrPTwQYmE4pjwBReLNEelmk4ajhcjVPUuJuMeUz/QM9zOPwLd3GXHMru4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730223116; c=relaxed/simple;
-	bh=Fcusc6fplzeYzfxqMjbeHOwKEx+ya8tu6hFlmrRZ9rw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W8VW6/5EInVSHDp6XXIzgFOtXVd9By5fu0TTvQtUL/36pqgIzcfe8MAQbb8Ezi2dgCAhu9+OT67vM3kz3KndqHERbduVAVf9gyldiap7sRsYuBWyUMVef73bOUk21j4eDS2pRUhYTu51FOw0a7fV1oYl/qMjRMLd9wFazF2UJIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NPpSiuJI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TAUtQN017942;
-	Tue, 29 Oct 2024 17:31:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	65yvnD26sz+F+JIFKjIUO91u2nGvJ/8frS1l3kchIwU=; b=NPpSiuJIaa0s8R31
-	WeDTmNKsXxH8vtKQeiXg1Kqjo2fBQCaEYyN8FoVPTdtMkfnNW5M6lPqjt4bYjfR2
-	V+GEakN/Cp0bSYzxKhSg1Nhxz+jm+jlzbD99lHZ23TQbiAnpknYAn6vApW9o9/SD
-	9pNU65HMX3BYjq/55thO/PDt6138PMNMywQX0I368nlCoEI2+JmJIcAFy1vai0TF
-	Pwxoc/BOkCOCCHU0J3XHRBXcsyOEZm3jlRgUM3ld8U4b/ITBsQAiIlNTLSWgTNaj
-	1OjBhrq9p5apT/NcA2q1JINrDKe22zuhVAvfRFq2DHWXFbinLj2IFE/onqaLE+ny
-	wiJJMw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqrgs47g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 17:31:49 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49THVliD023944
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 17:31:47 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 29 Oct 2024 10:31:43 -0700
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-Subject: [RFC PATCH v2 5/5] arm64: dts: qcom: ipq9574: Add WiFi nodes for RDP433
-Date: Tue, 29 Oct 2024 23:00:50 +0530
-Message-ID: <20241029173050.2188150-6-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241029173050.2188150-1-quic_rajkbhag@quicinc.com>
-References: <20241029173050.2188150-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1730223181; c=relaxed/simple;
+	bh=nX2ag5qQfWWNNJQYEWWV/Qn4e5DEGzEtuUzcDUm/J/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l73LRWpmKRj5up6AkrLDskNiEkCSYCVRNnqDpn4cuhFI+rM4QhBpcwuWZFkpWShcfFniLszPR3fCn2T2nxdE0oo0wcbG3SGg+0xf4koZ3gMO1YQuIf5N8ibTH+xqVI4cZbpqFHhuxl4pUJ9EkKX7/ysGBH/ZLTPcTNHCvOzEdPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76539C4CECD;
+	Tue, 29 Oct 2024 17:32:58 +0000 (UTC)
+Date: Tue, 29 Oct 2024 17:32:56 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Mark Brown <broonie@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
+	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
+ error path behaviour
+Message-ID: <ZyEcSCuxYGylmDCa@arm.com>
+References: <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
+ <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
+ <1608957a-d138-4401-98ef-7fbe5fb7c387@suse.cz>
+ <cf1deb9b-c5c4-4e85-891d-62ecf9a04e0f@lucifer.local>
+ <ZyD5iXikMzotl9mU@arm.com>
+ <da15a72b-c1de-427b-a764-0ebbdd3f6a8e@lucifer.local>
+ <ZyEL0s_qiyAYURR2@arm.com>
+ <a050599e-6d43-4759-b08c-d37c0d28ce0e@lucifer.local>
+ <ZyEVHy-767RfFwh_@arm.com>
+ <2759d754-9bd7-4bc0-a4a3-42f733fb2596@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6S_ot7rnr18gQr2EpBfn24eFsvZuwvnN
-X-Proofpoint-GUID: 6S_ot7rnr18gQr2EpBfn24eFsvZuwvnN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
- clxscore=1015 impostorscore=0 suspectscore=0 spamscore=0 mlxscore=0
- adultscore=0 priorityscore=1501 mlxlogscore=733 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290132
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2759d754-9bd7-4bc0-a4a3-42f733fb2596@lucifer.local>
 
-The RDP433 is a Qualcomm Reference Design Platform based on the
-IPQ9574. It has three QCN9274 WiFi devices connected to PCIe1, PCIe2,
-and PCIe3. These devices are also connected among themselves via
-WSI connection. This WSI connection is essential to exchange control
-information among these devices
+On Tue, Oct 29, 2024 at 05:28:49PM +0000, Lorenzo Stoakes wrote:
+> On Tue, Oct 29, 2024 at 05:02:23PM +0000, Catalin Marinas wrote:
+> > That's what I meant (untested, on top of -next as it has a MAP_HUGETLB
+> > check in there). I don't think it's much worse than your proposal,
+> > assuming that it works:
+> 
+> Right sorry misread. Yeah this is better, let me do a quick -v4 then!
 
-The WSI connection in RDP433 is represented below:
+Thanks!
 
-          +-------+        +-------+        +-------+
-          | pcie2 |        | pcie3 |        | pcie1 |
-          |       |        |       |        |       |
-   +----->|  wsi  |------->|  wsi  |------->|  wsi  |-----+
-   |      | grp 0 |        | grp 0 |        | grp 0 |     |
-   |      +-------+        +-------+        +-------+     |
-   +------------------------------------------------------+
+> Cheers, sorry pretty tired at this stage, was looking at this all last
+> night...
 
-Based on the above, the WSI properties for QCN9274 at pcie2 are
-(considering QCN9274 at pcie2 is WSI master):
+No worries. The way we handle MTE is pretty convoluted. Happy to
+simplify it if we find a better way.
 
- qcom,wsi-group-id = 0
- qcom,wsi-master
- ports:
-    tx-port (port@0): endpoint at pcie3 RX port.
-    rx-port (port@1): endpoint at pcie1 TX port.
-
-Hence, add WiFi nodes with WSI properties for all three QCN9274
-devices connected to RDP433.
-
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts | 116 +++++++++++++++++++-
- 1 file changed, 115 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-index 165ebbb59511..d0ecaefe5b41 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts
-@@ -3,7 +3,7 @@
-  * IPQ9574 RDP433 board device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -27,6 +27,44 @@ &pcie1 {
- 	perst-gpios = <&tlmm 26 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 27 GPIO_ACTIVE_LOW>;
- 	status = "okay";
-+
-+	pcie@0 {
-+		device_type = "pci";
-+		reg = <0x0 0x0 0x0 0x0 0x0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		wifi1@0 {
-+			compatible = "pci17cb,1109";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+
-+			wsi {
-+				qcom,wsi-group-id = <0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						wifi1_wsi_tx: endpoint {
-+							remote-endpoint = <&wifi2_wsi_rx>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						wifi1_wsi_rx: endpoint {
-+							remote-endpoint = <&wifi3_wsi_tx>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pcie2_phy {
-@@ -40,6 +78,45 @@ &pcie2 {
- 	perst-gpios = <&tlmm 29 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 30 GPIO_ACTIVE_LOW>;
- 	status = "okay";
-+
-+	pcie@0 {
-+		device_type = "pci";
-+		reg = <0x0 0x0 0x0 0x0 0x0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		wifi2@0 {
-+			compatible = "pci17cb,1109";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+
-+			wsi {
-+				qcom,wsi-group-id = <0>;
-+				qcom,wsi-master;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						wifi2_wsi_tx: endpoint {
-+							remote-endpoint = <&wifi3_wsi_rx>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+
-+						wifi2_wsi_rx: endpoint {
-+							remote-endpoint = <&wifi1_wsi_tx>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &pcie3_phy {
-@@ -53,6 +130,43 @@ &pcie3 {
- 	perst-gpios = <&tlmm 32 GPIO_ACTIVE_LOW>;
- 	wake-gpios = <&tlmm 33 GPIO_ACTIVE_LOW>;
- 	status = "okay";
-+
-+	pcie@0 {
-+		device_type = "pci";
-+		reg = <0x0 0x0 0x0 0x0 0x0>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		wifi3@0 {
-+			compatible = "pci17cb,1109";
-+			reg = <0x0 0x0 0x0 0x0 0x0>;
-+
-+			wsi {
-+				qcom,wsi-group-id = <0>;
-+
-+				ports {
-+					#address-cells = <1>;
-+					#size-cells = <0>;
-+
-+					port@0 {
-+						reg = <0>;
-+
-+						wifi3_wsi_tx: endpoint {
-+							remote-endpoint = <&wifi1_wsi_rx>;
-+						};
-+					};
-+
-+					port@1 {
-+						reg = <1>;
-+						wifi3_wsi_rx: endpoint {
-+							remote-endpoint = <&wifi2_wsi_tx>;
-+						};
-+					};
-+				};
-+			};
-+		};
-+	};
- };
- 
- &sdhc_1 {
 -- 
-2.34.1
-
+Catalin
 
