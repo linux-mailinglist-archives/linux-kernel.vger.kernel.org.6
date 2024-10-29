@@ -1,122 +1,149 @@
-Return-Path: <linux-kernel+bounces-387544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD819B52AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:22:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A5DB9B52AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:29:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468CD1F252B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D478C2839CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EF520720D;
-	Tue, 29 Oct 2024 19:21:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A18D8207214;
+	Tue, 29 Oct 2024 19:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOmX2+dS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DhiUsBgP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B51206979;
-	Tue, 29 Oct 2024 19:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F313E1FF7C2;
+	Tue, 29 Oct 2024 19:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730229719; cv=none; b=vAO68GRRhgtO8XrNn6aJrgzsKDF9MYfPmbUP8r6M5b0uzM2CGAcVIzUbBZ/nc3o3d+8XZYF7IU+GlYhHXopPn6Uiogdn/bR0NRe5IaWNXOMyKuo8uTfEjYG0hsd+LvTPMhIKAhIOOH+A6uMxORMpU4psbd32rBSleql751mr8vQ=
+	t=1730230146; cv=none; b=IwFkLXgsKOyplqtKqvxFkWW7dMNM3e6OL0mvUTBpkMwN/xGrqVcGFueoc9x4uQQEB5vcMzVScLqBbCgrMTvDwnNGBP/D0QCJJxORaWZ6JsSFUxWzkcpF8LWo9so37KJw+kD36hLAk8kUylf9nphGlKRJsOKX5vH1N+2vgd9sK/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730229719; c=relaxed/simple;
-	bh=gQwj26AXbStfJzPa5fSOAVsCpDjxEpQ9CKNHrOAQ6sE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OMz2S6RzpEf3AfTBFxy/cy84OhLf+Fu/TBj7sFk2FlsVoi0j2CmGMp+EtdpVOGGNxwdon30NHwCmpkUYZnX9jFUoC2imbvzbcAgL3t+NgCofYfjv5aqJV06GAZ1Dz3X2QvQRtn7V3kAW//sE1FV/0GWIcRfoYIzZiADbZWO+zi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOmX2+dS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0581C4CECD;
-	Tue, 29 Oct 2024 19:21:57 +0000 (UTC)
+	s=arc-20240116; t=1730230146; c=relaxed/simple;
+	bh=HOB+KSzpRb8gsJms7HlIvIrtCFgY5v/fQLYW50/LoLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TIwKvOr655NEsLuy9+RDkL7SFkEqeUUEgMaZo+HkaMo3RON1f1t7A2kPnoi2qG2lQn+84QTT613Er7C5LaEgMHE8kQ2EKeM+QkT1oul4UIUUOePMONQ+rZ4SIpDjFF0h3lXfrzvae8B0oTTUDZUaGQTUhZQV5WGE+btLOBBaAGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DhiUsBgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 763E4C4CECD;
+	Tue, 29 Oct 2024 19:29:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730229718;
-	bh=gQwj26AXbStfJzPa5fSOAVsCpDjxEpQ9CKNHrOAQ6sE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=LOmX2+dSdZ3QX/j9g7pPQ/ZRO5t7Slg2xj3ERaBbrFwbwS7zZ2VXDLkZIyiezhXFE
-	 dr81JBuTrMAKhj8CxRHWHcoLczebVeh7VAl4NjJTGj6v0RVhKdB3ijGddFbN+zDWXU
-	 r4Xo6Z6ik18XTvbD0WhzKyXdj64AjwvGxQK13/hdsb49fSPZZLNNJT3cPiMzSSqCHA
-	 fy1v7Jr9FcvRMM5Em1UXvYgZ+gn5v8VdiwI1R/lzU9EZHskDfDCk4OlIBjweTNI7Vl
-	 4dGM/YlTGg/uhcjWuGY+ggNBWK+t+Fb/NaMwyaQrc1MYtMRXzxu3BC9qHtXjX9dKGW
-	 Kq3FI0dth1GvA==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 29 Oct 2024 15:21:43 -0400
-Subject: [PATCH] sunrpc: remove newlines from tracepoints
+	s=k20201202; t=1730230145;
+	bh=HOB+KSzpRb8gsJms7HlIvIrtCFgY5v/fQLYW50/LoLM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DhiUsBgPfWmtZwVxlAH0NMNtAb3M6mHIEDR2HAN47UAbtiPGg3TrXXsgL+UcPqOXa
+	 eBK9mQuiNAheXmF4xG0lF4YYgxXE1YPZlS0km18NW9wU/xKy7kMLoDyvykqdD+ASTT
+	 YiNbatrrkShdCu7FGlAOWeZRC1R14P0bRKgOf8EgDS5nteqYdLO2R8ydE5c1JOW+C2
+	 SSwgYOZxExSWPPOGJSemoUvwpghP4Xn4zI5PUVEgyHsYXMFnYGxGVS+hjRcwm1s/6+
+	 vIh5ShYgRvKBaw+8plnQOjyleLbM9peRlElp7QQwzBfVUHc8LYk+5rddZvhLyp2RaH
+	 U/oW2YXj11IYg==
+Date: Tue, 29 Oct 2024 16:29:02 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Gabriele Monaco <gmonaco@redhat.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH 1/1 perf-tools-next] perf ftrace latency: Fix unit on
+ histogram first entry when using --use-nsec
+Message-ID: <ZyE3frB-hMXHCnMO@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-tpfix-v1-1-19f69fcf915a@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAMY1IWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDAyNL3ZKCtMwKXSNTo1TDNAtTo8RUEyWg2oKiVKAw2Jzo2NpaALqvNg9
- XAAAA
-X-Change-ID: 20241029-tpfix-252e1f852ae4
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>, Steven Rostedt <rostedt@goodmis.org>, 
- Masami Hiramatsu <mhiramat@kernel.org>, 
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=gQwj26AXbStfJzPa5fSOAVsCpDjxEpQ9CKNHrOAQ6sE=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnITXPT/LqGoAQrhKGhjRnaJs5U8gY4kh+gfrUy
- h21JL6kRqeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZyE1zwAKCRAADmhBGVaC
- FfghD/9u9kZzjdI8OJBMO79l1i9cgclz6/Z1/OmHbb7i2DfxOu2Jxw2cxeIE5fS+l+NAqvhFxaZ
- tXGPXmSCPknzwGHLGJFdWMyRKkN4hdfQy1vfTTmOaR1j3D4amf98bu9ssmS9jgiqz6fudqZ9J+e
- ep6KetyJwe1v0EVaap8pkdUcNSQau2j49CcxomQsLSGQp8Y9/dOOKVoOZlqIsTTDGsSaT3YeAxT
- cTywba2biOrJOuxX1RA1GV8BwqmLvkQAFAsBOf2uFHRiU3CRZ/zkN/cWE5OiaThpDXzkNj5z02D
- V5acD7eLJ6e+jw9rTti0oTDZRei4jvWLOodyXXo4fetNBg6YEwdsStXP0B9dbuVTl0UP6sQ9JwN
- PA5tXhOPY3wUKiQDsL64z0/dtVXGjhZ1v8WwZK56AsxwxTIuG/D1Dgsfu4zZ/GbkqMlTfhAlW7Q
- RbBFT5Uv5e3PVXK3zS3rlszcbNQ6Fsoxc5QxSmzYoQGj2c1KhgM1/xlVVCi4HLojsTAjAPCetc4
- O92mB3Uo7NDJt0nen/DZ4NEKjf0DEz/kOdt341GnK1R4Nf6lcUuoCr/3DHHZ3veltFKbgo3+eqa
- y2KqTWP124bYsKNhcA/Tf0G1nX/QF2Ic2y8mKzmKtHoSplzvjRXvxT6lbgRwIN0tgVDF8uzsYKR
- yaPd/HZ5HMcFyHg==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Tracepoint strings don't require newlines (and in fact, they are
-undesirable).
+The use_nsec arg wasn't being taken into account when printing the first
+histogram entry, fix it:
 
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
+  root@number:~# perf ftrace latency --use-nsec -T switch_mm_irqs_off -a sleep 2
+  #   DURATION     |      COUNT | GRAPH                                          |
+       0 - 1    us |          0 |                                                |
+       1 - 2    ns |          0 |                                                |
+       2 - 4    ns |          0 |                                                |
+       4 - 8    ns |          0 |                                                |
+       8 - 16   ns |          0 |                                                |
+      16 - 32   ns |          0 |                                                |
+      32 - 64   ns |        125 |                                                |
+      64 - 128  ns |        335 |                                                |
+     128 - 256  ns |       2155 | ####                                           |
+     256 - 512  ns |       9996 | ###################                            |
+     512 - 1024 ns |       4958 | #########                                      |
+       1 - 2    us |       4636 | #########                                      |
+       2 - 4    us |       1053 | ##                                             |
+       4 - 8    us |         15 |                                                |
+       8 - 16   us |          1 |                                                |
+      16 - 32   us |          0 |                                                |
+      32 - 64   us |          0 |                                                |
+      64 - 128  us |          0 |                                                |
+     128 - 256  us |          0 |                                                |
+     256 - 512  us |          0 |                                                |
+     512 - 1024 us |          0 |                                                |
+       1 - ...  ms |          0 |                                                |
+  root@number:~#
+
+After:
+
+  root@number:~# perf ftrace latency --use-nsec -T switch_mm_irqs_off -a sleep 2
+  #   DURATION     |      COUNT | GRAPH                                          |
+       0 - 1    ns |          0 |                                                |
+       1 - 2    ns |          0 |                                                |
+       2 - 4    ns |          0 |                                                |
+       4 - 8    ns |          0 |                                                |
+       8 - 16   ns |          0 |                                                |
+      16 - 32   ns |          0 |                                                |
+      32 - 64   ns |         19 |                                                |
+      64 - 128  ns |         94 |                                                |
+     128 - 256  ns |       2191 | ####                                           |
+     256 - 512  ns |       9719 | ####################                           |
+     512 - 1024 ns |       5330 | ###########                                    |
+       1 - 2    us |       4104 | ########                                       |
+       2 - 4    us |        807 | #                                              |
+       4 - 8    us |          9 |                                                |
+       8 - 16   us |          0 |                                                |
+      16 - 32   us |          0 |                                                |
+      32 - 64   us |          0 |                                                |
+      64 - 128  us |          0 |                                                |
+     128 - 256  us |          0 |                                                |
+     256 - 512  us |          0 |                                                |
+     512 - 1024 us |          0 |                                                |
+       1 - ...  ms |          0 |                                                |
+  root@number:~#
+
+Fixes: 84005bb6148618cc ("perf ftrace latency: Add -n/--use-nsec option")
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Ian Rogers <irogers@google.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Kan Liang <kan.liang@linux.intel.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- include/trace/events/sunrpc.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ tools/perf/builtin-ftrace.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/trace/events/sunrpc.h b/include/trace/events/sunrpc.h
-index 5e8495216689549f1c0bb377911eac4a7bb7b1a8..b13dc275ef4a79940a940dd463b7a3eef5ca428b 100644
---- a/include/trace/events/sunrpc.h
-+++ b/include/trace/events/sunrpc.h
-@@ -719,7 +719,7 @@ TRACE_EVENT(rpc_xdr_overflow,
- 	),
+diff --git a/tools/perf/builtin-ftrace.c b/tools/perf/builtin-ftrace.c
+index abcdc49b7a987f82..272d3c70810e7dc3 100644
+--- a/tools/perf/builtin-ftrace.c
++++ b/tools/perf/builtin-ftrace.c
+@@ -815,7 +815,7 @@ static void display_histogram(int buckets[], bool use_nsec)
  
- 	TP_printk(SUNRPC_TRACE_TASK_SPECIFIER
--		  " %sv%d %s requested=%zu p=%p end=%p xdr=[%p,%zu]/%u/[%p,%zu]/%u\n",
-+		  " %sv%d %s requested=%zu p=%p end=%p xdr=[%p,%zu]/%u/[%p,%zu]/%u",
- 		__entry->task_id, __entry->client_id,
- 		__get_str(progname), __entry->version, __get_str(procedure),
- 		__entry->requested, __entry->p, __entry->end,
-@@ -777,7 +777,7 @@ TRACE_EVENT(rpc_xdr_alignment,
- 	),
+ 	bar_len = buckets[0] * bar_total / total;
+ 	printf("  %4d - %-4d %s | %10d | %.*s%*s |\n",
+-	       0, 1, "us", buckets[0], bar_len, bar, bar_total - bar_len, "");
++	       0, 1, use_nsec ? "ns" : "us", buckets[0], bar_len, bar, bar_total - bar_len, "");
  
- 	TP_printk(SUNRPC_TRACE_TASK_SPECIFIER
--		  " %sv%d %s offset=%zu copied=%u xdr=[%p,%zu]/%u/[%p,%zu]/%u\n",
-+		  " %sv%d %s offset=%zu copied=%u xdr=[%p,%zu]/%u/[%p,%zu]/%u",
- 		__entry->task_id, __entry->client_id,
- 		__get_str(progname), __entry->version, __get_str(procedure),
- 		__entry->offset, __entry->copied,
-
----
-base-commit: 9c9cb4242c49bbadd010e8f0a9e7daf4b392ff6b
-change-id: 20241029-tpfix-252e1f852ae4
-
-Best regards,
+ 	for (i = 1; i < NUM_BUCKET - 1; i++) {
+ 		int start = (1 << (i - 1));
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.47.0
 
 
