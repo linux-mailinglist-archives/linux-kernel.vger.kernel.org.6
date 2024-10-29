@@ -1,148 +1,163 @@
-Return-Path: <linux-kernel+bounces-386822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D33589B4846
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:30:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322349B4859
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:32:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10EAC1C21735
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:30:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0C72833B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C72F205157;
-	Tue, 29 Oct 2024 11:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3073A205AAA;
+	Tue, 29 Oct 2024 11:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgLupant"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdtekhKL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C063204F7B;
-	Tue, 29 Oct 2024 11:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB75204F9E;
+	Tue, 29 Oct 2024 11:31:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201446; cv=none; b=lx0tzwUKc7mjeR9Dqs2Tv4tIi2EpCvP8x2qc09vE5hE7mhVzoyOOAhi7sfblESHzwytuSChppC29tVlJH5P2wxK72InDZOB5ANl4P7fs2C2vA7XdFyEMJtHdcRsnEPSS1Mx2HWFDK3Wup9UYbIroYgyY6yJfpzmMCvHoLzLIvnM=
+	t=1730201485; cv=none; b=oUuYJmg0e4X4aPOlPoltNBjnncGgs4nfsuXEIoq5cjINlQxYZdQqTY2vpBmTIcB5TrhVnmEPwcg6NVBZ/pztLmnj4iK7F6guLeNGQhthNo//VfH16pONjOMB7nMSASSaEpch+AtcrdIOMUq6GK2Tgu13Ju6mB+SoG2QTrrvwX4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201446; c=relaxed/simple;
-	bh=77m1YSmH24wJ5zs07ke8laKYHLNvnG6xHGMz/sdPTeg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZZdszOi8JmJTkUPmfCgT22SbJzLHXhSp8pQE0wa0gFGHNQjmBXY15NaSJhYC01QABvkUisjRXdulPWUBdx9DV/+SOefR1A+VpQ8x8EB5NHke+4s7PXbGk+dSnHNkonFdN5EJs6TIfR/Ti/PMOB9ypjc/XlVrNSFAKU/r0egfTqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UgLupant; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7919C4CEE6;
-	Tue, 29 Oct 2024 11:30:45 +0000 (UTC)
+	s=arc-20240116; t=1730201485; c=relaxed/simple;
+	bh=b3iDHqbap1LmKFhPTuu1Qqk4svOtioflicE0/GgpTbA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o9iJDaiVoDokt7Vb6ErywK8xy9DQ2+JrWWjnuJIKGd7xHgcK6V1I8eKf6UisMW0NyDBoILLdo6PrMVxio5+5xrWWZo3tmiKZG584ixc3JMWAhJsQxc1Q9T8pUWlnsBv8b1cll/jkpiiB/PMjskOMeZbvySL/YomRWX9/M9O9o8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdtekhKL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B37C4CEEA;
+	Tue, 29 Oct 2024 11:31:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730201446;
-	bh=77m1YSmH24wJ5zs07ke8laKYHLNvnG6xHGMz/sdPTeg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UgLupantRxk6YH1hkM5vN76VmCzVflgIqxvJU+D0hyYiqOnhxrjyZqLOGkiQSq2D5
-	 6bcKZ+WbtBYcKwOCB2yVr0pVWefGpM+0V+O1yfdceiHtntIahRCSAU92lZG8+dVi2H
-	 lBWDiExB3ffieTYEN8yAzVb3JTTGCoHs5xGRH45gCSSm5WRN1VUTXi1pr8og+vlAtq
-	 muY4FrcAkUDCzQz6KK617yU0cgVpk13U8F6UAh/V1ybATdJzXTnHtrqBUjwE7+VDjn
-	 26fZO2TerknnvDBPiMEeFWhpZFE/h4IpYFth2h6p6faadA/5Hz/To19w+Clpyroe52
-	 e4waKKHNWdcvw==
-Date: Tue, 29 Oct 2024 07:30:44 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
-	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZyDHZHjxwmK1Ow9e@sashalap>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org>
- <ZyAUO0b3z_f_kVnj@sashalap>
- <d75c9c2f-353f-464c-89d3-8c18dbfb4770@leemhuis.info>
+	s=k20201202; t=1730201484;
+	bh=b3iDHqbap1LmKFhPTuu1Qqk4svOtioflicE0/GgpTbA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FdtekhKLhC3d/47DQcpqir6P9jrHeh/KQ3dbRMElLhUWBbCPiD/wxpAj6swRfKlcv
+	 l9y/mwOJ5uivr4TmsTKzbyOOz2zaC76a2fNCHcxdG0YV0vacvF4rQ4BbN80Ecf+CNc
+	 cAezVQPUku0aL6ZYvrHAksowSYgq2HszMc80q/rxdUdHBA5zHC2gvQy4qc5gvApgV4
+	 v05AE1JGw7pQE7KYADRciW6kB1I+IiFmKim8zeHXAUjPSkAn0QXEFHJjlZPQRMXmhq
+	 gZV8fcIXD3EMTR1ulwX6Gfp2ENkLhpapFwHK+Ug9chxCxWpA5bc2kmvZAJa+sWXMXS
+	 3hkh0rhoZSv3g==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so2571372fac.3;
+        Tue, 29 Oct 2024 04:31:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqBcN3XPan4564gS4yEwelbT4dRG7B5Gyuw+4SliuZGd4pFnm8IBa88uAGv+JdPDgu7bxHsfpSljWfajY=@vger.kernel.org, AJvYcCWlSow1qvEdw+pKp3Fs4++ZOIymCKb8UOrFAtwZuHcNgY8HaPpneE0XP1JZrxZ4pSml4DBCdfOl20s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYKKJWdqov2Md2QBTZ6aZmSPvje16jRjiun7NL5tMMLVrRZTAu
+	mLjCH0g/c6xRH8fQLM5cye5+uq7KzQN2wEqJwOAoxNy8dxSQlWAz7zkCI7s4DSxYl4qVI11SDdm
+	ur/OXsHJ3Vh8kOh5z1abniNqBGbk=
+X-Google-Smtp-Source: AGHT+IEkBtXhRClA2cm6t78kcyGJpyo2fCtEeh/HZcjhxwG2r5DEwf1//i8B3FFywZwUiFp2Jvl4f95iRwVJ4NKyimU=
+X-Received: by 2002:a05:6870:82a5:b0:288:59d3:2a03 with SMTP id
+ 586e51a60fabf-29051dd1728mr9737620fac.39.1730201484141; Tue, 29 Oct 2024
+ 04:31:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d75c9c2f-353f-464c-89d3-8c18dbfb4770@leemhuis.info>
+References: <20240913132944.1880703-1-beata.michalska@arm.com>
+ <20240913132944.1880703-2-beata.michalska@arm.com> <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
+In-Reply-To: <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 29 Oct 2024 12:31:11 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com>
+Message-ID: <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com>
+Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
+ sysfs entry
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Beata Michalska <beata.michalska@arm.com>, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
+	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org, 
+	catalin.marinas@arm.com, rafael@kernel.org, sumitg@nvidia.com, 
+	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com, 
+	lihuisong@huawei.com, zhanjie9@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 09:10:25AM +0100, Thorsten Leemhuis wrote:
->On 28.10.24 23:46, Sasha Levin wrote:
->> On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
->>> On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
->>>> For example, for a given PR, the bot can report:
->>>>
->>>> - Were the patches CCed to a mailing list?
->>>> - A histogram of how long the patches were in next (to show bake times)
->>>> - Are any patches associated with test failures? (0day and many other
->>>> CIs are already running tests against -next; parse those reports)
->>>>
->>>> We could have a real pre-submit checker! :)
->>>
->>> That would be very useful.  Items 1 and 2 should be trivial, 3 would
->>> require a bit of work but would still be very useful.
->>
->> If you've been following so far, there is a bot that is capable of doing
->> most of the above
->> (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-
->> analysis.git/).
->>
->> Here's a histogram that describes v6.12-rc4..v6.12-rc5 as far as how
->> long commits spent in -next:
+On Tue, Oct 29, 2024 at 8:04=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
+rg> wrote:
 >
->I took a quick look at that tree and histo.sh that lead to a few
->questions here the code had no obvious answers to (or I missed them due
->to the "quick" aspect):
+> Apologies for the delay from my side. September was mostly holidays
+> for me and then I was stuck with other stuff plus email backlog and
+> this series was always a painful point to return to :(
 >
->* How does histo.sh handle changes where the commit-id changed between
->the first time in -next and their merge into Linus' tree (while the
->patch itself did not change)? For example due to a rebase or workflows
->where the commit-id changes regularly, such as those used by the
->bluetooth tree (for -fixes, as it queues them in their -next branch
->first) or the -mm tree (for most of it iirc -- this made things hard in
->a script of mine that looks up the arrival in -next)?
-
-The "database" the scripts use stores 3 things:
-
-  - commit ID
-  - git patch-id
-  - subject line
-
-We try to match by either of the three. It means that maintainers can
-rebase, change the subject, or even change the patch slightly, but as
-long as one of the above stays the same we treat the commit the same.
-
->* Do those lore scripts detect if a committer adjusted the subject of a
->patch that has been on lore?
-
-Yes, they also look up by patch-id, so if only the subject was adjusted
-then we will still find the commit.
-
->* How do the scripts handle patches that changed a lot while they were
->in -next? I know of one subsystem that regularly drops whole patch-sets
->from their trees included in -next to replace them with newer versions
->of said patch-sets -- and then the timer maybe should restart.
-
-The timer should just restart, right? If we uploaded patches that look
-different from older ones, then their timer starts from 0 again.
-
->> This is where I think the value of linus-next comes during the -rc
->> cycles: the (89 + 21) commits that haven't gone through the -next
->> workflow before being pulled.
->>
->> I'm not looking to delay the process and
->> add latency, I'm looking to plug a hole where code would flow directly
->> to Linus's tree bypassing -next.
+> On 13-09-24, 14:29, Beata Michalska wrote:
+> > Currently the CPUFreq core exposes two sysfs attributes that can be use=
+d
+> > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
+> > and scaling_cur_freq. Both provide slightly different view on the
+> > subject and they do come with their own drawbacks.
+> >
+> > cpuinfo_cur_freq provides higher precision though at a cost of being
+> > rather expensive. Moreover, the information retrieved via this attribut=
+e
+> > is somewhat short lived as frequency can change at any point of time
+> > making it difficult to reason from.
+> >
+> > scaling_cur_freq, on the other hand, tends to be less accurate but then
+> > the actual level of precision (and source of information) varies betwee=
+n
+> > architectures making it a bit ambiguous.
+> >
+> > The new attribute, cpuinfo_avg_freq, is intended to provide more stable=
+,
+> > distinct interface, exposing an average frequency of a given CPU(s), as
+> > reported by the hardware, over a time frame spanning no more than a few
+> > milliseconds. As it requires appropriate hardware support, this
+> > interface is optional.
 >
->Overall after all the discussions in this thread I still fail to see why
->we need a new tree for that. Why not make pending-fixes a bit more
->prominent while motivating maintainers to have proper -fixes branches
->included there?
+> From what I recall, the plan is to:
+> - keep cpuinfo_cur_freq as it is, not expose for x86 and call ->get()
+>   for ARM.
 
-Because that will add latency: my understanding that we don't want to
-necessarily add another day or two between when fixes are ready and the
-time it would take to get them through linux-next.
+Yes.
 
--- 
-Thanks,
-Sasha
+> - introduce cpuinfo_avg_freq() and make it return frequency from hw
+>   counters for both ARM and Intel and others who provide the API.
+
+Yes.
+
+> - update scaling_cur_freq() to only return the requested frequency or
+>   error in case of X86
+
+Yes.
+
+Preferably, -ENOTSUPP for "setpolicy" drivers without the .get() callback.
+
+>   and update documentation to reflect the same.
+>   Right now or after some time ? How much time ?
+
+After some time, I think at least two cycles, so people have the time
+to switch over, but much more may be necessary if someone is stuck
+with RHEL or similar user space.
+
+Anyway, x86 will be the only one affected and there may be a Kconfig
+option even to allow it to be changed at the kernel build time.
+
+The documentation for cpuinfo_avg_freq() needs to be added along with it.
+
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index 04fc786dd2c0..3493e5a9500d 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -752,6 +752,16 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
+> >       return 0;
+> >  }
+> >
+> > +__weak int arch_freq_avg_get_on_cpu(int cpu)
+> > +{
+> > +     return -EOPNOTSUPP;
+> > +}
+> > +
+> > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *p=
+olicy)
+> > +{
+> > +     return arch_freq_avg_get_on_cpu(policy->cpu) >=3D 0;
+> > +}
+>
+> And why aren't we simply reusing arch_freq_get_on_cpu() here ?
+>
+> --
+> viresh
 
