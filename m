@@ -1,156 +1,115 @@
-Return-Path: <linux-kernel+bounces-386923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5509B49C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:34:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3621A9B49C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:35:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4C1E28370D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:34:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A171F23649
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:35:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DA47C13D;
-	Tue, 29 Oct 2024 12:34:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4802BB66E;
+	Tue, 29 Oct 2024 12:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G1Jtlj2+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZe3t6QT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65BE0539A;
-	Tue, 29 Oct 2024 12:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B49C2C6
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730205293; cv=none; b=BgcaZ/8POGY2+s4AWDkw7KILD0kLuZ9uwYmUNpKCKtrVKlxnduiZZmaUbAaKReayGyxDA61+Ke6n8BrqOQgy9bB+PjFOMHvjCXKjedMQ4k39yf2JV3PQD3Ghq177uqedgVOQ8huKYB99fo7krcs+Ppfkgeh7EaiONDKL8Z73yxc=
+	t=1730205323; cv=none; b=X0HyCj1oHjFTAA3C9COADQ0P2Tj/hOaWYatY96BHl3ALbZC/f4x+p1NKQ6W4wXeVUPVYi606v74PFesi2rsrU4NeQmaEqjN5y2MGXUm3y0d2kW+xImDQqZhZm6emEBYQr0iRpolFnCYkwMO48wTybv0SWyCbYPEW9/6UFdffae0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730205293; c=relaxed/simple;
-	bh=NKB+ZlfQbziBfBlBBE+pn9QCIwaJEp2jfmcr+pSmHHU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=s0TBJ0RiaIWl5Bg+5ppG3TGSepl0GE78IGMvmhj8gDZ2mwcxhcoki1WqH5hkk7hUnEQWMIw2qkWxY7fC9et0Nz2K7fVSOKbp9wtYtdWaBbFPDJ+yUtYszbxmted8x8GvSV4Lhq7TmDVbrDw5GuRPA3XFxXPfbQpvTOk7AFgbngQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G1Jtlj2+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E1B4C4CEE5;
-	Tue, 29 Oct 2024 12:34:51 +0000 (UTC)
+	s=arc-20240116; t=1730205323; c=relaxed/simple;
+	bh=VYEVVYxya7tsBuiNON2JCJUXnez95Gkwg+EOPKTtkLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nd1wvVsL/Kw3QUjks16msGrVKgPqGqp7vEV3f49fthAdL2p8u8NXIX+z3ypb6FcRyXiRgerQZ1fpy7ttW6b1QJwtek7IQqG1GNk43i18ePi+ApQ8QieyxDfTEhdAOn1qfZ1UDq5K7y1zKA1HkcgPc421wbxjajDxezMhEoqEUYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZe3t6QT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7E02C4CEE3;
+	Tue, 29 Oct 2024 12:35:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730205293;
-	bh=NKB+ZlfQbziBfBlBBE+pn9QCIwaJEp2jfmcr+pSmHHU=;
-	h=From:Date:Subject:To:Cc:From;
-	b=G1Jtlj2+iEWXgFhBGPfX/lZkjwFEOgefkDVxSasALFxpq0w7oqt+hds0bC9j9jcsx
-	 giOZnmlQyG4OU1rOIPLvvgvviBBdlj1oiw7Bkg3uA4Fu4LyuxWkFyhginYCKA0Xa8V
-	 KEW3ppILHI58LyZWFdQhgk+UPbUjcG+COD+g0zDofP5el3N2bOEYbbAHob8z/r61Jk
-	 U8rTmedmJVuDOElbKN2epYacYIf41FGejXJQwGyq3DSgIOx4EVELqx4blotDW/ptIi
-	 eSoxfudlFsxmek9wr7NDv9TDIOKRM7EHEM7xn2O/iDnZ7Ts7E8cTrvgvTLJ0B0AeyA
-	 mKC1Hpm+F1TJQ==
-From: Mark Brown <broonie@kernel.org>
-Date: Tue, 29 Oct 2024 12:34:21 +0000
-Subject: [PATCH] kselftest/arm64: Use ksft_perror() to log MTE failures
+	s=k20201202; t=1730205323;
+	bh=VYEVVYxya7tsBuiNON2JCJUXnez95Gkwg+EOPKTtkLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UZe3t6QTWz+JAqnlpd8jmd8zDtGX0S7amn0IaWFq4YBXYEM5Lt+ZH9Bv5idlSYQHt
+	 pCx7oMtoIcWMaiXa06hlz4xeXlHLZCt95f2uYgOxSQHjeCPEjXfWeuULAMfhcrU+3G
+	 Ge15tafb+7sWydGnqlCMAWv3OHVWFWgFE2DoCFdKh0kjZYDrBuquKPbGGMocaZ8+oy
+	 ghlkhAk2mQa2Ar4eUYZOSQtpx6HDmvLh1g6ChOCuw9IVs4vpHJP9NroSdvP0bRRbjU
+	 UHnLqlm4jbFjVHhvMofHRFDwV7gPpdhhEzHwvx4e0BEBju9jBkpq7i+XFqxSFLqPQX
+	 M6ZkJnDs1IC7Q==
+Date: Tue, 29 Oct 2024 13:35:19 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: Re: [PATCH 00/10] clockevents: Rearrange cpuhotplug operations
+Message-ID: <ZyDWhyHzyujyo2Qw@localhost.localdomain>
+References: <20241017165041.6954-1-frederic@kernel.org>
+ <87wmhx6grp.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-arm64-mte-test-logging-v1-1-a128e732e36e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAEzWIGcC/x3MQQqAIBBA0avErBtQC42uEi3MJhsoC5UIorsnL
- d/i/wcSRaYEffVApIsTH6FA1hW41QZPyHMxKKFaKVSHNu66xT0TZkoZt8N7Dh6102QaM0mnFZT
- 4jLTw/Y+H8X0/O5kx4GgAAAA=
-X-Change-ID: 20241028-arm64-mte-test-logging-6c6e737b1c62
-To: Catalin Marinas <catalin.marinas@arm.com>, 
- Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-X-Mailer: b4 0.15-dev-9b746
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3172; i=broonie@kernel.org;
- h=from:subject:message-id; bh=NKB+ZlfQbziBfBlBBE+pn9QCIwaJEp2jfmcr+pSmHHU=;
- b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnINZqe5cVqcCpYPiyBK8ItAMmvUBl5Iw5X8JLachm
- pABLYb2JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZyDWagAKCRAk1otyXVSH0D4hB/
- 9SchFIzWN+pwAmX2R7lHgOrGmnmXGeAShMsi+Hr1lqx75nOab+CMZByKfL3iOU9k40/YeQrLUekB+k
- 3KincABA0I/WKqTDckghBVrRVPJgC++SE48S8Ian8d5Ke0lbtokDyV6m4xYCVYw0HZis84r6fp4D4R
- G/qoOk7BLHTGW6S6b3wCXsgFbiPFuTt/K7FIDjRzP0evqhMO/aNe63vAX/g5MSNkwE1gpj6muJfY28
- lm14hCSaW+RNx8YKJR63IyV85MuQvL9vcCxB7aV2twKi6OMS7srzpAEjCsQaTrhKYlh2EXUkbgAYkM
- 6iMCZVlbdQ0WDPeg+DQHDmYUy2tolX
-X-Developer-Key: i=broonie@kernel.org; a=openpgp;
- fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87wmhx6grp.ffs@tglx>
 
-The logging in the allocation helpers variously uses ksft_print_msg() with
-very intermittent logging of errno and perror() (which won't produce KTAP
-conformant output) when logging the result of API calls that set errno.
-Standardise on using the ksft_perror() helper in these cases so that more
-information is available should the tests fail.
+Le Thu, Oct 24, 2024 at 10:34:34AM +0200, Thomas Gleixner a écrit :
+> On Thu, Oct 17 2024 at 18:50, Frederic Weisbecker wrote:
+> > Some recent RCU issues triggered with offline ticks uncovered
+> > hotplug behaviour differences between oneshot and periodic ticks.
+> > The former is disabled on the dying CPU but not the latter. Also
+> > the clockevents hotplug code is quite chaotic. This is a proposal to
+> > fix the situation.
+> 
+> I like it very much!
+> 
+> > Frederic Weisbecker (10):
+> >   clockevents: Improve clockevents_notify_released() comment
+> >   clockevents: Shutdown and unregister current clockevents at
+> >     CPUHP_AP_TICK_DYING
+> 
+> This has a build fail.
 
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- tools/testing/selftests/arm64/mte/mte_common_util.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+Right.
 
-diff --git a/tools/testing/selftests/arm64/mte/mte_common_util.c b/tools/testing/selftests/arm64/mte/mte_common_util.c
-index 00ffd34c66d301ee7d5c99e6b8d9d5d944520b7f..46958b58801e90ceb79be76f57c7f72b50d43b3c 100644
---- a/tools/testing/selftests/arm64/mte/mte_common_util.c
-+++ b/tools/testing/selftests/arm64/mte/mte_common_util.c
-@@ -150,13 +150,13 @@ static void *__mte_allocate_memory_range(size_t size, int mem_type, int mapping,
- 		map_flag |= MAP_PRIVATE;
- 	ptr = mmap(NULL, entire_size, prot_flag, map_flag, fd, 0);
- 	if (ptr == MAP_FAILED) {
--		ksft_print_msg("FAIL: mmap allocation\n");
-+		ksft_perror("mmap()");
- 		return NULL;
- 	}
- 	if (mem_type == USE_MPROTECT) {
- 		if (mprotect(ptr, entire_size, prot_flag | PROT_MTE)) {
-+			ksft_perror("mprotect(PROT_MTE)");
- 			munmap(ptr, size);
--			ksft_print_msg("FAIL: mprotect PROT_MTE property\n");
- 			return NULL;
- 		}
- 	}
-@@ -190,13 +190,13 @@ void *mte_allocate_file_memory(size_t size, int mem_type, int mapping, bool tags
- 	lseek(fd, 0, SEEK_SET);
- 	for (index = INIT_BUFFER_SIZE; index < size; index += INIT_BUFFER_SIZE) {
- 		if (write(fd, buffer, INIT_BUFFER_SIZE) != INIT_BUFFER_SIZE) {
--			perror("initialising buffer");
-+			ksft_perror("initialising buffer");
- 			return NULL;
- 		}
- 	}
- 	index -= INIT_BUFFER_SIZE;
- 	if (write(fd, buffer, size - index) != size - index) {
--		perror("initialising buffer");
-+		ksft_perror("initialising buffer");
- 		return NULL;
- 	}
- 	return __mte_allocate_memory_range(size, mem_type, mapping, 0, 0, tags, fd);
-@@ -217,12 +217,12 @@ void *mte_allocate_file_memory_tag_range(size_t size, int mem_type, int mapping,
- 	lseek(fd, 0, SEEK_SET);
- 	for (index = INIT_BUFFER_SIZE; index < map_size; index += INIT_BUFFER_SIZE)
- 		if (write(fd, buffer, INIT_BUFFER_SIZE) != INIT_BUFFER_SIZE) {
--			perror("initialising buffer");
-+			ksft_perror("initialising buffer");
- 			return NULL;
- 		}
- 	index -= INIT_BUFFER_SIZE;
- 	if (write(fd, buffer, map_size - index) != map_size - index) {
--		perror("initialising buffer");
-+		ksft_perror("initialising buffer");
- 		return NULL;
- 	}
- 	return __mte_allocate_memory_range(size, mem_type, mapping, range_before,
-@@ -359,7 +359,7 @@ int create_temp_file(void)
- 	/* Create a file in the tmpfs filesystem */
- 	fd = mkstemp(&filename[0]);
- 	if (fd == -1) {
--		perror(filename);
-+		ksft_perror(filename);
- 		ksft_print_msg("FAIL: Unable to open temporary file\n");
- 		return 0;
- 	}
+> 
+> >   tick: Remove now unneeded low-res tick stop on CPUHP_AP_TICK_DYING
+> >   arm/twd: Remove clockevents shutdown call on offlining
+> 
+> The ARM prefix preference is:
+> 
+>     ARM: smp_twd:
+> 
+> >   clocksource/drivers/arm_arch_timer: Remove clockevents shutdown call
+> >     on offlining
+> >   clocksource/driver/arm_global_timer: Remove clockevents shutdown call
+> >     on offlining
+> >   drivers/clocksource/exynos_mct: Remove clockevents shutdown call on
+> >     offlining
+> >   clocksource/drivers/armada-370-xp: Remove clockevents shutdown call on
+> >     offlining
+> >   clocksource/drivers/qcom: Remove clockevents shutdown call on
+> >     offlining
+> >   drivers/clocksource/timer-tegra: Remove clockevents shutdown call on
+> >     offlining
+> 
+> Can you please make the subsystem prefixes for the clocksource drivers
+> consistent 'clocksource/drivers/foo:' ?
 
----
-base-commit: 8e929cb546ee42c9a61d24fae60605e9e3192354
-change-id: 20241028-arm64-mte-test-logging-6c6e737b1c62
+Sure, fixing that.
 
-Best regards,
--- 
-Mark Brown <broonie@kernel.org>
+Thanks!
 
+> 
+> Thanks,
+> 
+>         tglx
 
