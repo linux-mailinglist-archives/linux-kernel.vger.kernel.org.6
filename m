@@ -1,433 +1,246 @@
-Return-Path: <linux-kernel+bounces-386265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0919B4122
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:41:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53D7C9B413B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:47:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C00E51F202CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806F41C21557
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:47:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4732D1FF5F0;
-	Tue, 29 Oct 2024 03:41:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E267A1FF603;
+	Tue, 29 Oct 2024 03:47:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYzTvQC6"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="E/JaLWrE"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05711E0DA7;
-	Tue, 29 Oct 2024 03:41:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1777BB0A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:47:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730173264; cv=none; b=mfj2kDGVJaAfeh53/FRxGQ5DmVru7MMIENcM4ElGwG5ubRFmDhHp2KUcT43HDd4O7AeVlCgzNU6HDo0SXksDlRcZu0XK2xy0KaCdnh99cDx7EGCq4oZfQZ+mUqZLTwIclraUIBffdJk6otB8LJF0AazL73BKtTV+A74T0GNfQb0=
+	t=1730173646; cv=none; b=hGr5QfR4zVvqen3dyEKGOlsx/8i7+hjcLguip3AMObaGBThvMOH5kuzq2K+gEn2DFwa969ZwTjA3Z/yHg0LYsRV1/Sfi1EsgjDC241kIQofvq6zNB0q0ApLq3Vhys0AJGKOJEbHLM8SX4J8vaK1OFtVM64axcLjZOVpIwQ0XE9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730173264; c=relaxed/simple;
-	bh=GteqVZL3dPwnqNAXUavHeWUt26A1IzFbqSit4vyxlq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TnMrZo5Tx6PCoEz5NUQDM5oVdP3Ap/WhZ7I4dlOFaRg8lj7qbpUqeZTrf+ovLG1IA0iwfUYWoP/YEzx49ZODuIj9qAxAtmIs1aQ3DetAMDBXbSLRKgiBhnqLlU/POb7WpTGmQlzNpxnQ/n1IiclU4HVlH8Dw10T4Mlr+kGD+Xh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYzTvQC6; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c8c50fdd9so38486155ad.0;
-        Mon, 28 Oct 2024 20:41:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730173261; x=1730778061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ekVevv1jyAJ3xBsgkLYdCxq419R6VVRG35CwPktsuZg=;
-        b=SYzTvQC6fJPhBvVyjpEv0QS+7w4BkKOhLxkHY7Y/k2ikWNYSjygBfo6FBvp0bTBIfb
-         IgB8QFdS6OCH+sgPE7qW7a8MfvidZgXUTV7fMmj38TcgUzz2FP9VDl6IdcgR2xn+Hy2c
-         kLltb1v9DS4HwE60GpqyPnQoJ0pU7xGQnNJjs6sAGhHMF8DtLVWZTnCHkvdvZAR4m8ge
-         PMcPZaMj9Xk1llqos8cZc15gzHvWce2pD4+ByCZ8QjbFoIi4MCOjEgTU4eMbkkxK0JMR
-         TZtB0kZjqjIokUUraSNA+Go7knrrOKYpQffJWbCrxYMSY/IZZK5khq3jNDvZAIZ4lxLk
-         A4VQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730173261; x=1730778061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ekVevv1jyAJ3xBsgkLYdCxq419R6VVRG35CwPktsuZg=;
-        b=GsbNUIgMMRUVo3ZWva5IWOo4JXZWt7JpeNJkrzc5H364npTGncKuFlXdxY2KcFL8wu
-         CIQoBGcZPC9PmaBhBwiqihGsbEMUNu+hNIWs+q2Q4k0p/137n8+Mw18T9kio5NrlTCbl
-         nI0s6a+Di5eYeWyIaMPGcBvlNGFLHTJIQnaQnY/ByBeWvAw4tIf6mQvb17Bp9SEK/kTj
-         lubfo31TMV8MgcmdQsKl/VZv1vB0HIpAFlnFsac7P1y6I2wpm+TkRh8DdO2Nuie7rGmN
-         AZLX4hUraNlo6Z3wl5eCIeODzQUu5xzjuFjMZYbfrr0oAQ+iqM76nvKtTq5sx2IBEND5
-         dLuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9aZBJbCZ6BXCEscrE1mRGtbTbLAwOMi0Oevt+lIdoAUClp/COauyk1w3mkUzGdXuOEfe2NCUvyLfNyDm8@vger.kernel.org, AJvYcCUhzo2pEmOK7LjpY6NGK7e+OqtCR4vri1BpqLUi+HQ5tqBVgtdEczBBtk4546+swmqTQxbYpMNS3tn6rQ==@vger.kernel.org, AJvYcCWfTbuPX+FtJpAFQdFJTGjyKossMacbETy1s5VfspFOMbnlLsUSGIvr3Qrypp1G5GtkrUQR3ncE8QFK@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy603fHCK0p7nDSOHePHDeT4mEqazRotg1Awi5AVtrJOHGScVnK
-	OTKVk3hX2e5O+/q4q75AN2vATPMs4RS8zBrMiAuzO8b61NWBQMrP
-X-Google-Smtp-Source: AGHT+IGg4uZmqt1m6Va6p3rbQ+Tyl0RvwHVTp7tz0Q8ZTyse2Y3ElJe5nqTaCg155QKgEWvRtOgbQw==
-X-Received: by 2002:a17:903:2289:b0:20c:f39e:4c04 with SMTP id d9443c01a7336-210eccfcd24mr13441505ad.2.1730173260995;
-        Mon, 28 Oct 2024 20:41:00 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf46fc5sm57866805ad.45.2024.10.28.20.41.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 20:41:00 -0700 (PDT)
-Date: Tue, 29 Oct 2024 11:40:35 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Yixun Lan <dlan@gentoo.org>, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 1/3] dt-bindings: pinctrl: Add pinctrl for Sophgo SG2042
- series SoC
-Message-ID: <5x3iitxyebtllze3omjkelez7a7vqat6akbchcosjdmse7bpbv@jyirswzfzinr>
-References: <20241024064356.865055-1-inochiama@gmail.com>
- <20241024064356.865055-2-inochiama@gmail.com>
- <MA0P287MB2822C6EF567040AAEB9F82A5FE4B2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+	s=arc-20240116; t=1730173646; c=relaxed/simple;
+	bh=2zhtoWxv/vKGf1aYno22Freq5lwsRi0n2wH7n1xvSEI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pz5ePoS6jh/xf05vvu0vhoFa0fS8ZCP0XRyNOmS4aoPtMaKhAdF/8LkCg0bOYO9vrHd8wNiWwW7P7jqaMbqrAtOHun0MPLU7xyYrgY4hZtN3JJYtHccNPJ1zTkmXfe0BN+Y+LJxCdSwyrZe4Gw4XGY+Zfk7i09Svpq0Kk/4gSI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=E/JaLWrE; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1730173495;
+	bh=DQIhbLNlt9DvsLjiQNN/rundzjZSVfwFY+R/5zDuZFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=E/JaLWrE2FMNsJysY3dGuSP1vMB5Yj9g8BStOel2dIQtMdj0t/Axk8+RYxy4qOuSr
+	 ZNjM9gKY7WiHlawkpTmdX0kcCNXDloigyn2xbtMo+qz7gEKWCX9pgahBL9AzBRcjfn
+	 aVI907zvNfnjfyRWY4d4doopKMfeZntFV+OkXWY0=
+X-QQ-mid: bizesmtpsz14t1730173478tp4j2l
+X-QQ-Originating-IP: O3UGPyux8Ewa1dPqE/PX0ukXv8GpTX8LK01ws1TILBg=
+Received: from [10.12.18.83] ( [123.124.208.226])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 29 Oct 2024 11:44:36 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 18159466664826028980
+Message-ID: <42343B920E2D57E3+7852570a-367a-491c-a4bd-56cbabf747f8@uniontech.com>
+Date: Tue, 29 Oct 2024 11:44:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <MA0P287MB2822C6EF567040AAEB9F82A5FE4B2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/arm-smmu: Add judgment on the size and granule
+ parameters passed in
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: dmitry.baryshkov@linaro.org, gouhao@uniontech.com, iommu@lists.linux.dev,
+ jgg@ziepe.ca, joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, robdclark@chromium.org, will@kernel.org
+References: <20241024100224.62942-1-goutongchen@uniontech.com>
+ <20241028034823.22838-1-goutongchen@uniontech.com>
+ <3d2041e7-95eb-4d60-92ab-d67e2f46531e@arm.com>
+From: =?UTF-8?B?57yR5ZCM55Cb?= <goutongchen@uniontech.com>
+In-Reply-To: <3d2041e7-95eb-4d60-92ab-d67e2f46531e@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-0
+X-QQ-XMAILINFO: MJt5Q2Gt+7dfr8Y4UnBzCtCT5dNMEoRv1KUzPXKBo2WTU2q2dnJ8xa+Q
+	tIL9R3f+G0Z6/w4QS9retf+0dpk+r/Eih7M9gRrIe0g10ey6vS6g//lZdIPqj7GjV6RKZaf
+	j4ObZea0mmMNfj5Y8KjxutfkQrV7Fw/lru8rHl6UZ4/sG35glIt+V99V6m4yn0eGyYZitA9
+	c425aPeCpCiPSzBshScACwlUFBq4US5ytAV5h2Z9iKXxRnrrXWbTFITgWX5NJQrWoEpuX0A
+	eVHGo5Ny7At6AFqc7rBXHmJxbiP3CUwmgIOggAH8dEzXxdVOdhIRM1lXZdsKhYbKB3/rfi+
+	Lup+P4XSeVUEbQUwOLW2Y2ZJw78oguxF+1MiPtxV6wgG7eXNQ+IL2+nS0fMzMl0z1LdMeFw
+	tjRRjsVZ7pOa0XfPHSNF0oUUglNWHbAKoZJbd/KCbsueK3c/RN/FAJVgBpZPTUyOzXdiMGV
+	s8L6tpj72FwYVWVO1h42JNKWV/UOy/R68wWgHmhFI07njUymjsEcsd+Zkrqh/tFxG1fFUWB
+	fBTNMJdvrgCTTH1N8oLZhftFXOvOJdt9ej3tO46ACAjJ0aYfMBybkLJeedwq9uuvl2frZBX
+	VbDjWNPS1QZfu2x6fzd2fZPC7RXSY47fyQ56OQLqTAAyQoDadKoKgQEt15EliQNDSFuaP3Z
+	NwbHDBVFl/ZPU4k2/Vte0KaIXok7lVfDduiyCa1K/oEstfodyo34HxA4u/pud+od4C6ZoMK
+	fxhbV/6TfyaE+3kSqnbi/r4bfSMoViWRf8Hvt1xzNCaaLY/uL14hk6OMfE8RpXS56YuHwxa
+	AkXxI6SXwKiQGcmKCYPxzOrbWHfJrqBbeFBbknh/G1Wd9YPSr7MIUoRiO4qCbVdydyaSm1d
+	78Brdq3JUakWJpTW/bq4eVspLNVdGtqKswavyXA81iGiVdOH7joVc3BZxI7jzx4JnC8egXg
+	obCkDFBiMdVJuRQVVyfq5BvyhxAkFxC/5aTA=
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-RECHKSPAM: 0
 
-On Tue, Oct 29, 2024 at 09:59:33AM +0800, Chen Wang wrote:
-> Hello ~
-> 
-> On 2024/10/24 14:43, Inochi Amaoto wrote:
-> > SG2042 introduces a simple pinctrl device for all configurable pins.
-> > The pinconf and pinmux are mixed in a 16 bits register for each pin.
-> Can we change this sentence to "For the SG2042 pinctl register file, each
-> register (32 bits) is responsible for two pins, each occupying the upper 16
-> bits and lower 16 bits of the register."
 
-Yeah, it look like more clear. I will take it, thanks.
+在 2024/10/28 19:41, Robin Murphy 写道:
+> On 2024-10-28 3:48 am, goutongchen@uniontech.com wrote:
+>> From: goutongchen <goutongchen@uniontech.com>
+>>
+>> In the arm_smmu_tlb_inv_range_s1 and arm_smmu_tlb_inv_range_s2
+>> functions, the size and granule passed in must be judged.
+>> It must be ensured that the passed in parameter is not 0 and
+>> the size is an integer multiple of the granule, otherwise it
+>> will cause an infinite while loop.
+>>
+>> This was encountered during testing, and was initially triggered
+>> by passing in a size value of 0, causing the kernel to crash.
+>
+> Still NAK. If there is a bug in the upstream io-pgtable-arm code which 
+> can actually cause this, please send a patch to fix *that* bug. 
+> Otherwise, if you've made a broken downstream change then it is not 
+> upstream's responsibility to maintain unnecessary code in a 
+> questionable attempt to paper over (some small subset of) such 
+> brokenness.
+>
+> If you pass any sufficiently large size value which *does* happen to 
+> be a multiple of the granule, you're still going to see the same RCU 
+> stalls and failure to progress within reasonable time. If you pass 
+> something inappropriate for the "cookie" pointer, you're likely to 
+> corrupt memory or really crash. If you pass arguments which all look 
+> plausible but still don't match what actually needs invalidating, the 
+> consequences of under-invalidation can be even more subtle, nasty and 
+> hard to debug.
+>
+> The iommu_flush_ops are not a public interface intended to be called 
+> arbitrarily from anywhere in the kernel with unchecked input, they are 
+> a low-level private interface between IOMMU drivers and their 
+> respective io-pgtable implementations, and as such they are designed 
+> for their callers to call them correctly by construction. Calling them 
+> incorrectly indicates a serious bug in the caller, since getting 
+> mapping and/or TLB invalidation wrong often leads to memory corruption 
+> or other issues down the line. Hence I'm not convinced this change is 
+> actually even desirable as a downstream debugging aid - if you're 
+> lucky enough to get stuck on an obviously-wrong call here, that's 
+> surely the clearest possible indication of the source of the bug in 
+> its calling context, far better than trying to ignore it and then 
+> having it drowned out by more distant things blowing up later due to 
+> 2nd- and 3rd-order effects.
+>
+> Thanks,
+> Robin.
+>
 
-> > It supports setting pull up/down, drive strength and input schmitt
-> > trigger.
-> > 
-> > Add support for SG2042 pinctrl device.
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> >   .../pinctrl/sophgo,sg2042-pinctrl.yaml        |  96 +++++++++
-> >   include/dt-bindings/pinctrl/pinctrl-sg2042.h  | 196 ++++++++++++++++++
-> >   2 files changed, 292 insertions(+)
-> >   create mode 100644 Documentation/devicetree/bindings/pinctrl/sophgo,sg2042-pinctrl.yaml
-> >   create mode 100644 include/dt-bindings/pinctrl/pinctrl-sg2042.h
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pinctrl/sophgo,sg2042-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/sophgo,sg2042-pinctrl.yaml
-> > new file mode 100644
-> > index 000000000000..5060deacd580
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/pinctrl/sophgo,sg2042-pinctrl.yaml
-> > @@ -0,0 +1,96 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/pinctrl/sophgo,sg2042-pinctrl.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Sophgo SG2042 Pin Controller
-> > +
-> > +maintainers:
-> > +  - Inochi Amaoto <inochiama@outlook.com>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - sophgo,sg2042-pinctrl
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +patternProperties:
-> > +  '-cfg$':
-> > +    type: object
-> > +    description:
-> > +      A pinctrl node should contain at least one subnode representing the
-> > +      pinctrl groups available on the machine.
-> > +
-> > +    additionalProperties: false
-> > +
-> > +    patternProperties:
-> > +      '-pins$':
-> > +        type: object
-> > +        description: |
-> > +          Each subnode will list the pins it needs, and how they should
-> > +          be configured, with regard to muxer configuration, bias input
-> > +          enable/disable, input schmitt trigger enable, drive strength
-> > +          output enable/disable state. For configuration detail,
-> > +          refer to https://github.com/sophgo/sophgo-doc/.
-> More accurate: https://github.com/sophgo/sophgo-doc/tree/main/SG2042/TRM
-> > +
-> > +        allOf:
-> > +          - $ref: pincfg-node.yaml#
-> > +          - $ref: pinmux-node.yaml#
-> > +
-> > +        properties:
-> > +          pinmux:
-> > +            description: |
-> > +              The list of GPIOs and their mux settings that properties in the
-> > +              node apply to. This should be set using the GPIOMUX
-> Not GPIOMUX, should be PINMUX.
+OK! Thanks, very much!
 
-I will fix it.
+Goutongchen.
 
-> > +              macro.
-> > +
-> > +          bias-disable: true
-> > +
-> > +          bias-pull-up:
-> > +            type: boolean
-> > +
-> > +          bias-pull-down:
-> > +            type: boolean
-> > +
-> > +          drive-strength-microamp:
-> > +            description: typical current when output high level.
-> > +            enum: [ 4300, 6400, 8500, 10600, 12800, 14900, 17000, 19100,
-> > +                    21200, 23300, 25500, 27600, 29700, 31800, 33900, 36000]
-> Where can I find these enum values in TRM? I just see the field "Driving
-> Selector" occupies 4 bits for each pin.
 
-This is based on the electrical characteristics of the SG2042. However, this
-document is not opened, you may ask sophgo to open it.
-
-> > +          input-schmitt-enable: true
-> > +
-> > +          input-schmitt-disable: true
-> > +
-> > +        required:
-> > +          - pinmux
-> > +
-> > +        additionalProperties: false
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/pinctrl/pinctrl-sg2042.h>
-> > +
-> > +    pinctrl@30011000 {
-> > +        compatible = "sophgo,sg2042-pinctrl";
-> > +        reg = <30011000 0x1000>;
-> > +
-> > +        uart0_cfg: uart0-cfg {
-> > +            uart0-pins {
-> > +                pinmux = <PINMUX(PIN_UART0_TX, 0)>,
-> > +                         <PINMUX(PIN_UART0_RX, 0)>;
-> > +                bias-pull-up;
-> > +                drive-strength-microamp = <10600>;
-> > +            };
-> > +        };
-> > +    };
-> > +
-> > +...
-> > diff --git a/include/dt-bindings/pinctrl/pinctrl-sg2042.h b/include/dt-bindings/pinctrl/pinctrl-sg2042.h
-> > new file mode 100644
-> > index 000000000000..79d5bb8e04f8
-> > --- /dev/null
-> > +++ b/include/dt-bindings/pinctrl/pinctrl-sg2042.h
-> > @@ -0,0 +1,196 @@
-> > +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
-> > +/*
-> > + * Copyright (C) 2024 Inochi Amaoto <inochiama@outlook.com>
-> > + *
-> > + */
-> > +
-> > +#ifndef _DT_BINDINGS_PINCTRL_SG2042_H
-> > +#define _DT_BINDINGS_PINCTRL_SG2042_H
-> > +
-> > +#define PINMUX(pin, mux) \
-> > +	(((pin) & 0xffff) | (((mux) & 0xff) << 16))
-> > +
-> > +#define PIN_LPC_LCLK			0
-> > +#define PIN_LPC_LFRAME			1
-> > +#define PIN_LPC_LAD0			2
-> > +#define PIN_LPC_LAD1			3
-> > +#define PIN_LPC_LAD2			4
-> > +#define PIN_LPC_LAD3			5
-> > +#define PIN_LPC_LDRQ0			6
-> > +#define PIN_LPC_LDRQ1			7
-> > +#define PIN_LPC_SERIRQ			8
-> > +#define PIN_LPC_CLKRUN			9
-> > +#define PIN_LPC_LPME			10
-> > +#define PIN_LPC_LPCPD			11
-> > +#define PIN_LPC_LSMI			12
-> > +#define PIN_PCIE0_L0_RESET		13
-> > +#define PIN_PCIE0_L1_RESET		14
-> > +#define PIN_PCIE0_L0_WAKEUP		15
-> > +#define PIN_PCIE0_L1_WAKEUP		16
-> > +#define PIN_PCIE0_L0_CLKREQ_IN		17
-> > +#define PIN_PCIE0_L1_CLKREQ_IN		18
-> > +#define PIN_PCIE1_L0_RESET		19
-> > +#define PIN_PCIE1_L1_RESET		20
-> > +#define PIN_PCIE1_L0_WAKEUP		21
-> > +#define PIN_PCIE1_L1_WAKEUP		22
-> > +#define PIN_PCIE1_L0_CLKREQ_IN		23
-> > +#define PIN_PCIE1_L1_CLKREQ_IN		24
-> > +#define PIN_SPIF0_CLK_SEL1		25
-> > +#define PIN_SPIF0_CLK_SEL0		26
-> > +#define PIN_SPIF0_WP			27
-> > +#define PIN_SPIF0_HOLD			28
-> > +#define PIN_SPIF0_SDI			29
-> > +#define PIN_SPIF0_CS			30
-> > +#define PIN_SPIF0_SCK			31
-> > +#define PIN_SPIF0_SDO			32
-> > +#define PIN_SPIF1_CLK_SEL1		33
-> > +#define PIN_SPIF1_CLK_SEL0		34
-> > +#define PIN_SPIF1_WP			35
-> > +#define PIN_SPIF1_HOLD			36
-> > +#define PIN_SPIF1_SDI			37
-> > +#define PIN_SPIF1_CS			38
-> > +#define PIN_SPIF1_SCK			39
-> > +#define PIN_SPIF1_SDO			40
-> > +#define PIN_EMMC_WP			41
-> > +#define PIN_EMMC_CD			42
-> > +#define PIN_EMMC_RST			43
-> > +#define PIN_EMMC_PWR_EN			44
-> > +#define PIN_SDIO_CD			45
-> > +#define PIN_SDIO_WP			46
-> > +#define PIN_SDIO_RST			47
-> > +#define PIN_SDIO_PWR_EN			48
-> > +#define PIN_RGMII0_TXD0			49
-> > +#define PIN_RGMII0_TXD1			50
-> > +#define PIN_RGMII0_TXD2			51
-> > +#define PIN_RGMII0_TXD3			52
-> > +#define PIN_RGMII0_TXCTRL		53
-> > +#define PIN_RGMII0_RXD0			54
-> > +#define PIN_RGMII0_RXD1			55
-> > +#define PIN_RGMII0_RXD2			56
-> > +#define PIN_RGMII0_RXD3			57
-> > +#define PIN_RGMII0_RXCTRL		58
-> > +#define PIN_RGMII0_TXC			59
-> > +#define PIN_RGMII0_RXC			60
-> > +#define PIN_RGMII0_REFCLKO		61
-> > +#define PIN_RGMII0_IRQ			62
-> > +#define PIN_RGMII0_MDC			63
-> > +#define PIN_RGMII0_MDIO			64
-> > +#define PIN_PWM0			65
-> > +#define PIN_PWM1			66
-> > +#define PIN_PWM2			67
-> > +#define PIN_PWM3			68
-> > +#define PIN_FAN0			69
-> > +#define PIN_FAN1			70
-> > +#define PIN_FAN2			71
-> > +#define PIN_FAN3			72
-> > +#define PIN_IIC0_SDA			73
-> > +#define PIN_IIC0_SCL			74
-> > +#define PIN_IIC1_SDA			75
-> > +#define PIN_IIC1_SCL			76
-> > +#define PIN_IIC2_SDA			77
-> > +#define PIN_IIC2_SCL			78
-> > +#define PIN_IIC3_SDA			79
-> > +#define PIN_IIC3_SCL			80
-> > +#define PIN_UART0_TX			81
-> > +#define PIN_UART0_RX			82
-> > +#define PIN_UART0_RTS			83
-> > +#define PIN_UART0_CTS			84
-> > +#define PIN_UART1_TX			85
-> > +#define PIN_UART1_RX			86
-> > +#define PIN_UART1_RTS			87
-> > +#define PIN_UART1_CTS			88
-> > +#define PIN_UART2_TX			89
-> > +#define PIN_UART2_RX			90
-> > +#define PIN_UART2_RTS			91
-> > +#define PIN_UART2_CTS			92
-> > +#define PIN_UART3_TX			93
-> > +#define PIN_UART3_RX			94
-> > +#define PIN_UART3_RTS			95
-> > +#define PIN_UART3_CTS			96
-> > +#define PIN_SPI0_CS0			97
-> > +#define PIN_SPI0_CS1			98
-> > +#define PIN_SPI0_SDI			99
-> > +#define PIN_SPI0_SDO			100
-> > +#define PIN_SPI0_SCK			101
-> > +#define PIN_SPI1_CS0			102
-> > +#define PIN_SPI1_CS1			103
-> > +#define PIN_SPI1_SDI			104
-> > +#define PIN_SPI1_SDO			105
-> > +#define PIN_SPI1_SCK			106
-> > +#define PIN_JTAG0_TDO			107
-> > +#define PIN_JTAG0_TCK			108
-> > +#define PIN_JTAG0_TDI			109
-> > +#define PIN_JTAG0_TMS			110
-> > +#define PIN_JTAG0_TRST			111
-> > +#define PIN_JTAG0_SRST			112
-> > +#define PIN_JTAG1_TDO			113
-> > +#define PIN_JTAG1_TCK			114
-> > +#define PIN_JTAG1_TDI			115
-> > +#define PIN_JTAG1_TMS			116
-> > +#define PIN_JTAG1_TRST			117
-> > +#define PIN_JTAG1_SRST			118
-> > +#define PIN_JTAG2_TDO			119
-> > +#define PIN_JTAG2_TCK			120
-> > +#define PIN_JTAG2_TDI			121
-> > +#define PIN_JTAG2_TMS			122
-> > +#define PIN_JTAG2_TRST			123
-> > +#define PIN_JTAG2_SRST			124
-> > +#define PIN_GPIO0			125
-> > +#define PIN_GPIO1			126
-> > +#define PIN_GPIO2			127
-> > +#define PIN_GPIO3			128
-> > +#define PIN_GPIO4			129
-> > +#define PIN_GPIO5			130
-> > +#define PIN_GPIO6			131
-> > +#define PIN_GPIO7			132
-> > +#define PIN_GPIO8			133
-> > +#define PIN_GPIO9			134
-> > +#define PIN_GPIO10			135
-> > +#define PIN_GPIO11			136
-> > +#define PIN_GPIO12			137
-> > +#define PIN_GPIO13			138
-> > +#define PIN_GPIO14			139
-> > +#define PIN_GPIO15			140
-> > +#define PIN_GPIO16			141
-> > +#define PIN_GPIO17			142
-> > +#define PIN_GPIO18			143
-> > +#define PIN_GPIO19			144
-> > +#define PIN_GPIO20			145
-> > +#define PIN_GPIO21			146
-> > +#define PIN_GPIO22			147
-> > +#define PIN_GPIO23			148
-> > +#define PIN_GPIO24			149
-> > +#define PIN_GPIO25			150
-> > +#define PIN_GPIO26			151
-> > +#define PIN_GPIO27			152
-> > +#define PIN_GPIO28			153
-> > +#define PIN_GPIO29			154
-> > +#define PIN_GPIO30			155
-> > +#define PIN_GPIO31			156
-> > +#define PIN_MODE_SEL0			157
-> > +#define PIN_MODE_SEL1			158
-> > +#define PIN_MODE_SEL2			159
-> > +#define PIN_BOOT_SEL0			160
-> > +#define PIN_BOOT_SEL1			161
-> > +#define PIN_BOOT_SEL2			162
-> > +#define PIN_BOOT_SEL3			163
-> > +#define PIN_BOOT_SEL4			164
-> > +#define PIN_BOOT_SEL5			165
-> > +#define PIN_BOOT_SEL6			166
-> > +#define PIN_BOOT_SEL7			167
-> > +#define PIN_MULTI_SCKT			168
-> > +#define PIN_SCKT_ID0			169
-> > +#define PIN_SCKT_ID1			170
-> > +#define PIN_PLL_CLK_IN_MAIN		171
-> > +#define PIN_PLL_CLK_IN_DDR_L		172
-> > +#define PIN_PLL_CLK_IN_DDR_R		173
-> > +#define PIN_XTAL_32K			174
-> > +#define PIN_SYS_RST			175
-> > +#define PIN_PWR_BUTTON			176
-> > +#define PIN_TEST_EN			177
-> > +#define PIN_TEST_MODE_MBIST		178
-> > +#define PIN_TEST_MODE_SCAN		179
-> > +#define PIN_TEST_MODE_BSD		180
-> > +#define PIN_BISR_BYP			181
-> > +
-> > +#endif /* _DT_BINDINGS_PINCTRL_SG2042_H */
+>> [    8.214378][  T675] xhci_hcd 0000:0b:00.0: new USB bus registered, 
+>> assigned bus number 1
+>> [   68.246185][    C0] rcu: INFO: rcu_sched self-detected stall on CPU
+>> [   68.246866][    C0] rcu:     0-....: (5999 ticks this GP) 
+>> idle=796c/1/0x4000000000000000 softirq=161/161 fqs=2999
+>> [   68.247924][    C0] rcu:     (t=6000 jiffies g=-699 q=1 ncpus=128)
+>> [   68.248452][    C0] CPU: 0 PID: 675 Comm: kworker/0:2 Not tainted 
+>> 6.6.0-25.02.2500.002.uos25.aarch64 #1
+>> [   68.249237][    C0] Hardware name: Inspur     CS5260F 
+>> /CS5260F          , BIOS 4.0.16 05/31/22 16:53:51
+>> [   68.250029][    C0] Workqueue: events work_for_cpu_fn
+>> [   68.250497][    C0] pstate: a0000005 (NzCv daif -PAN -UAO -TCO 
+>> -DIT -SSBS BTYPE=--)
+>> [   68.251188][    C0] pc : arm_smmu_tlb_inv_range_s1+0xf0/0x158
+>> [   68.251704][    C0] lr : arm_smmu_tlb_inv_walk_s1+0x44/0x68
+>> [   68.252189][    C0] sp : ffff80008044b780
+>> [   68.252530][    C0] x29: ffff80008044b780 x28: 0000000000000000 
+>> x27: 0000000000001000
+>> [   68.253212][    C0] x26: 0000000000000600 x25: 0000000000000001 
+>> x24: 0000000000000600
+>> [   68.253857][    C0] x23: 0000000000000000 x22: 0000000000001000 
+>> x21: fffffc64e2e59000
+>> [   68.254544][    C0] x20: 0000000039c1d1a6 x19: ffff3fe944c40280 
+>> x18: 0000000000000000
+>> [   68.255240][    C0] x17: 626d756e20737562 x16: ffffb0e7e08c1008 
+>> x15: 0000000000000000
+>> [   68.255930][    C0] x14: ffff3ef8c1ea15cd x13: ffff3ef8c1ea15cb 
+>> x12: fffffcfba30e3880
+>> [   68.256538][    C0] x11: 00000000ffff7fff x10: ffff80008044b6b0 x9 
+>> : ffffb0e7decd1b5c
+>> [   68.257126][    C0] x8 : 0000000000000dc0 x7 : ffff3ee8c4148000 x6 
+>> : ffff3ee8c4148000
+>> [   68.257822][    C0] x5 : 0000000000000008 x4 : 0000000000000000 x3 
+>> : ffff3fe944c40800
+>> [   68.258497][    C0] x2 : 0000000000000010 x1 : 0000000000000020 x0 
+>> : ffffb0e7dfd6c3d0
+>> [   68.259185][    C0] Call trace:
+>> [   68.259451][    C0]  arm_smmu_tlb_inv_range_s1+0xf0/0x158
+>> [   68.259933][    C0]  arm_smmu_tlb_inv_walk_s1+0x44/0x68
+>> [   68.260384][    C0]  __arm_lpae_map+0x1f0/0x2c0
+>> [   68.260796][    C0]  arm_lpae_map_pages+0xec/0x150
+>> [   68.261215][    C0]  arm_smmu_map_pages+0x48/0x130
+>> [   68.261654][    C0]  __iommu_map+0x134/0x2a8
+>> [   68.262098][    C0]  iommu_map_sg+0xb8/0x1c8
+>> [   68.262500][    C0] 
+>> __iommu_dma_alloc_noncontiguous.constprop.0+0x180/0x270
+>> [   68.263145][    C0]  iommu_dma_alloc+0x178/0x238
+>> [   68.263557][    C0]  dma_alloc_attrs+0xf8/0x108
+>> [   68.263962][    C0]  xhci_mem_init+0x1e8/0x6d0
+>> [   68.264372][    C0]  xhci_init+0x88/0x1d0
+>> [   68.264736][    C0]  xhci_gen_setup+0x284/0x468
+>> [   68.265121][    C0]  xhci_pci_setup+0x60/0x1f8
+>> [   68.265506][    C0]  usb_add_hcd+0x278/0x650
+>> [   68.265860][    C0]  usb_hcd_pci_probe+0x218/0x458
+>> [   68.266256][    C0]  xhci_pci_probe+0x7c/0x270
+>> [   68.266660][    C0]  local_pci_probe+0x48/0xb8
+>> [   68.267074][    C0]  work_for_cpu_fn+0x24/0x40
+>> [   68.267548][    C0]  process_one_work+0x170/0x3c0
+>> [   68.267999][    C0]  worker_thread+0x234/0x3b8
+>> [   68.268383][    C0]  kthread+0xf0/0x108
+>> [   68.268704][    C0]  ret_from_fork+0x10/0x20
+>>
+>> Signed-off-by: goutongchen <goutongchen@uniontech.com>
+>> ---
+>>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 14 ++++++++++++++
+>>   1 file changed, 14 insertions(+)
+>>
+>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c 
+>> b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+>> index 8321962b3714..fdd7d7e9ce06 100644
+>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+>> @@ -282,6 +282,13 @@ static void arm_smmu_tlb_inv_range_s1(unsigned 
+>> long iova, size_t size,
+>>       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>>       int idx = cfg->cbndx;
+>>   +    if (size == 0 || granule == 0 || (size % granule) != 0) {
+>> +        dev_err(smmu->dev,
+>> +                 "The size or granule passed in is err. size=%zu, 
+>> granule=%zu\n",
+>> +                 size, granule);
+>> +        return;
+>> +    }
+>> +
+>>       if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>>           wmb();
+>>   @@ -309,6 +316,13 @@ static void arm_smmu_tlb_inv_range_s2(unsigned 
+>> long iova, size_t size,
+>>       struct arm_smmu_device *smmu = smmu_domain->smmu;
+>>       int idx = smmu_domain->cfg.cbndx;
+>>   +    if (size == 0 || granule == 0 || (size % granule) != 0) {
+>> +        dev_err(smmu->dev,
+>> +                 "The size or granule passed in is err. size=%zu, 
+>> granule=%zu\n",
+>> +                 size, granule);
+>> +        return;
+>> +    }
+>> +
+>>       if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>>           wmb();
+>
+>
 
