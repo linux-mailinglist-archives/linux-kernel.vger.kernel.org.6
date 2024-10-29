@@ -1,64 +1,78 @@
-Return-Path: <linux-kernel+bounces-387428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCC1D9B5116
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:39:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A919B5118
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 526921F23F6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:39:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314F81F2372B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6F0E2076B7;
-	Tue, 29 Oct 2024 17:37:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77CED1DCB31;
+	Tue, 29 Oct 2024 17:38:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JnoZoP9R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hUjxJgKv"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0736D1DACB4;
-	Tue, 29 Oct 2024 17:37:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9F92107
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:38:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730223439; cv=none; b=RQylJkssLQeI2KI+Zd7JPmMyrIm3fXnnvrqFNdFnw9kSdBUuIdJzK57jlVR1zGAeXYIbu8eAMwg5oBPkyYvqgzLbl7V7FpchsyRMQ48NevmVmi0vQbmiF/mvDgQnb5JOUDNMHwZbMXP3EmEufPSOCTQATiS2CR1Gm9/KN8ZO4BE=
+	t=1730223523; cv=none; b=oQ/iYtGPaG8ykksuqkPyFVGQZaQSEvS78egR2dcLJRsvldgF+MyAX96rMQSME8LZid+RI60hwRszdZ6xfrF9Ws9un8l4dFtoXwbzCX4v1JP5/SpUMhTL5PftQqS0n8f0iYz95X/4n4LSzkr1o8/CpblzvlycO6wNOwoE51tO5S4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730223439; c=relaxed/simple;
-	bh=11sghmVqAck0hLQpJ32ZcRyZ2dfw2CD170aRaVdXWy8=;
+	s=arc-20240116; t=1730223523; c=relaxed/simple;
+	bh=4hBwtnFU0qAi8YGRKbcNCKRHUnrB/+rP1zHxyIDHDIY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KbLeYtbJep12y/pFYGJ193lGi0tU0jlDGwt7ifC6YPA48T+hWpD5rk7XCEloYL90/gqc4Pb751e2Cs8UA4TnR0WFPT+ukIGnNeQCXkbHOj0CDGFfOxXHEwriTNm/t7E/28Kc8L5GWGjcoeL4uOugU5PKBEUjxefRMUp/fKTpxjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JnoZoP9R; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730223437; x=1761759437;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=11sghmVqAck0hLQpJ32ZcRyZ2dfw2CD170aRaVdXWy8=;
-  b=JnoZoP9ROUFI3c8Ql1duJusfERqyNH0iyAqiRaycbD4yh13fG1kRBul0
-   nSo3XIrokrCQ92HhxW1F7+dPKGz5hbrHufcs2K71a4fMZjb1FqGUc2Tb+
-   P7paeWEaVwRsaRjzYDERWx/W+QZE04qmqG4/iOfeERYl6qrueGgyDWbIR
-   yKF2t3RIV2R+eNqXcZfPxXIgpiwQiYdHndE4mkpN5yJvfueu5OdsL9Fxz
-   Ovrmzsb8hh8LhxvDokKSWKlWL90LYCW4v8lyhbshBfOiBdTleJzrH0JHD
-   MMtEo2gefPv7BVeiY+MkLHhbYMvrkQW9wfhXtq4ftzokl6D/6TGKZaTkF
-   w==;
-X-CSE-ConnectionGUID: ACXhvqwuQo63dCoFvIO9KA==
-X-CSE-MsgGUID: yS16kNM0RxWQYYb8tYEmhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="33678589"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="33678589"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 10:37:10 -0700
-X-CSE-ConnectionGUID: mxavBGIvRr+lbi6krs4oaA==
-X-CSE-MsgGUID: +oHChIklSteyHFt1spYqnA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82141735"
-Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.223.38]) ([10.124.223.38])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 10:37:09 -0700
-Message-ID: <4d39b188-0642-495c-8638-67ae08c070b7@intel.com>
-Date: Tue, 29 Oct 2024 10:37:07 -0700
+	 In-Reply-To:Content-Type; b=Ot+5Vm9nCMhIa6S6pgRRzEdLaGSyZgC/PZM9IZkzZueo5wPRuoL98SPxBZ0KJyRSvZvUQa2KvlndZ6akNWjq2wGn1GRBUjojhYrcA+0tkbJBux04KJ4JttGTSxPRJSgaxke9QttOf+4+yljdT6hKyLJ7oAISgmanMMN3Tho2Ntk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hUjxJgKv; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4608dddaa35so29241cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:38:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730223521; x=1730828321; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4NzyGHFNG2VmMmlShndRLXedmken+2X5Xff0mPyjqlA=;
+        b=hUjxJgKvHxAOY5hISm4fq/HeoWH2gj4mCsB0pkCG5Z7KJ1VTYeEmDkP0zGN2swHyLA
+         7mGJnvUloXhk+Rk8ZLBl4j44+mzOjwQCzCZfY5Sli9sVthBuX/PC771c1Uz/r9Zp5pdW
+         JIITbUX54UK+WpZbNgN4NGs4oXwhq5AknU39ekoVXGvNq9jERaWj/hukhNschvs4KPSc
+         hyaBkLFul987AhIbGiN5J0ZFxr1oV9TlVufDCIEquAQdwdoRNezmz7/uq+azeQsdv74o
+         sDMUiaiN52avjw2RNVRPL3aLuk5ABUN0i9v8csEinYvtPXHDWUx95hGGw0d+EJofR2aK
+         fTvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730223521; x=1730828321;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4NzyGHFNG2VmMmlShndRLXedmken+2X5Xff0mPyjqlA=;
+        b=ZOqAS+/4GciPrHQbIh3000F6jImP05yQa1tEa8Qozk+QJ1s+V9ywvqjw8Vg2JhSHWO
+         giSVNShnov6CMpiLLDYK94WMFs9vH5Nv64YaGGfWbykG8iBIlnzJHArmPVDefpbPUkSB
+         y/2+hfgrsEg3mlso+TUYKTZj77NCtcXgBSYYBiQSvgKrnf/zyQTXRuZNhjUhcHNoch48
+         ZbUZMxPLL9IVVsuoy6+PDWd7Vdga9ND5APpwDIXTG1I03xDZ8PC3wEcf90Gp6Qn5WUIS
+         v4xjLLwDzLM2G2Qusu8jaD6BWXinIoO/t8VaDa7rdSs2xrPSSri63dx7hzXW8gfmPUbq
+         eheA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZiXsrz7r0NQUs/fS+K35mIAhrKcaBCs+JZWDlr2OtjF1crFZzhAZGd3bieUkLkHGE1nW68eDkhooAqpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt/BACfcObXcFNVbSIsis7AD0km4pWOMrh25I2lJC9RYikI/3Q
+	mdtHUGFifGRcNBLKqaSP/NHBd+IXFqZl8zNaOCxBsP/C+EpUippQ8M7oyDTdxA==
+X-Gm-Gg: ASbGnctIYzhc2nShKuUxg3rBhYIprpaqqD4sbg2zq+zwxSC7E71yqxiqsLjC3Q8ULi4
+	6LMPSvWIcDu+L1rXDEQAxwn2E0mucmV84UvGiXDVRk4THXdkLWbKtQ+7bEuSBAXHt8eH7+YsZLj
+	vPAl2rHFyYvZjb1CQXt7gv/fFXexRLo+Dt04Q8W6epfQoWHEHqvOa1xceRgC55+k5ol2lA+2HPB
+	OmvspUveEdxvb/yX0vQZk3VyXhw02HMilIfhRuEok4Z9P5KMLNYBC9FzNdgWoiz1VMkiLjEOwb5
+	jXj1ZojZpxKbYo56/UiF
+X-Google-Smtp-Source: AGHT+IH+aatp5vvOT3MLmDgG/8NEz2ktnGYsU3OGGl2E+dYdZKM2fvH7N/zzBC7qLEmuQMllIaaB+w==
+X-Received: by 2002:a05:622a:1a9d:b0:460:f093:f259 with SMTP id d75a77b69052e-46164fcec8fmr4325821cf.22.1730223520365;
+        Tue, 29 Oct 2024 10:38:40 -0700 (PDT)
+Received: from ?IPV6:2600:1700:38d4:55d0:4aae:c9af:39c8:58b? ([2600:1700:38d4:55d0:4aae:c9af:39c8:58b])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec187389a0sm2417435eaf.42.2024.10.29.10.38.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 10:38:38 -0700 (PDT)
+Message-ID: <ab8ef5ef-f51c-4940-9094-28fbaa926d37@google.com>
+Date: Tue, 29 Oct 2024 10:38:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,90 +80,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/mtrr: Rename mtrr_overwrite_state() to
- guest_force_mtrr_state()
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org
-Cc: "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Paolo Bonzini <pbonzini@redhat.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- Juergen Gross <jgross@suse.com>, Boris Ostrovsky
- <boris.ostrovsky@oracle.com>, Gaosheng Cui <cuigaosheng1@huawei.com>,
- Michael Roth <michael.roth@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>,
- Ashish Kalra <ashish.kalra@amd.com>, Kai Huang <kai.huang@intel.com>,
- Andi Kleen <ak@linux.intel.com>, Sean Christopherson <seanjc@google.com>,
- Xiaoyao Li <xiaoyao.li@intel.com>, linux-hyperv@vger.kernel.org,
- linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
- xen-devel@lists.xenproject.org
-References: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
- <20241016105048.757081-1-kirill.shutemov@linux.intel.com>
- <l7l6ufyjbrfr4ms6quil5myf5bzmvu33sq3phfvpbwldhzn6m2@rzfdrvbe2glf>
-From: Dave Hansen <dave.hansen@intel.com>
+Subject: Re: [PATCH 01/26] mm: asi: Make some utility functions noinstr
+ compatible
+To: Brendan Jackman <jackmanb@google.com>, Borislav Petkov <bp@alien8.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Alexandre Chartre <alexandre.chartre@oracle.com>,
+ Liran Alon <liran.alon@oracle.com>,
+ Jan Setje-Eilers <jan.setjeeilers@oracle.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
+ Lorenzo Stoakes <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>,
+ Khalid Aziz <khalid.aziz@oracle.com>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Valentin Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>,
+ Reiji Watanabe <reijiw@google.com>, Ofir Weisse <oweisse@google.com>,
+ Yosry Ahmed <yosryahmed@google.com>, Patrick Bellasi <derkling@google.com>,
+ KP Singh <kpsingh@google.com>, Alexandra Sandulescu <aesa@google.com>,
+ Matteo Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ kvm@vger.kernel.org
+References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
+ <20240712-asi-rfc-24-v1-1-144b319a40d8@google.com>
+ <20241025113455.GMZxuCX2Tzu8ulwN3o@fat_crate.local>
+ <CA+i-1C3SZ4FEPJyvbrDfE-0nQtB_8L_H_i67dQb5yQ2t8KJF9Q@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <l7l6ufyjbrfr4ms6quil5myf5bzmvu33sq3phfvpbwldhzn6m2@rzfdrvbe2glf>
-Content-Type: text/plain; charset=UTF-8
+From: Junaid Shahid <junaids@google.com>
+In-Reply-To: <CA+i-1C3SZ4FEPJyvbrDfE-0nQtB_8L_H_i67dQb5yQ2t8KJF9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/29/24 08:13, Kirill A. Shutemov wrote:
-> On Wed, Oct 16, 2024 at 01:50:48PM +0300, Kirill A. Shutemov wrote:
->> Rename the helper to better reflect its function.
+On 10/25/24 6:21 AM, Brendan Jackman wrote:
+> Hey Boris,
+> 
+> On Fri, 25 Oct 2024 at 13:41, Borislav Petkov <bp@alien8.de> wrote:
 >>
->> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
->> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+>> On Fri, Jul 12, 2024 at 05:00:19PM +0000, Brendan Jackman wrote:
+>>> +/*
+>>> + * Can be used for functions which themselves are not strictly noinstr, but
+>>> + * may be called from noinstr code.
+>>> + */
+>>> +#define inline_or_noinstr                                            \
+>>
+>> Hmm, this is confusing. So is it noinstr or is it getting inlined?
 > 
-> KVM patch is Linus' tree.
+> We don't care if it's getting inlined, which is kinda the point. This
+> annotation means "you may call this function from noinstr code". My
+> current understanding is that the normal noinstr annotation means
+> "this function fundamentally mustn't be instrumented".
 > 
-> Dave, can you take this one?
+> So with inline_or_noinstr you get:
+> 
+> 1. "Documentation" that the function itself doesn't have any problem
+> with getting traced etc.
+> 2. Freedom for the compiler to inline or not.
+> 
+>> I'd expect you either always inline the small functions - as you do for some
+>> aleady - or mark the others noinstr. But not something in between.
+>>
+>> Why this?
+> 
+> Overall it's pretty likely I'm wrong about the subtlety of noinstr's
+> meaning. And the benefits I listed above are pretty minor. I should
+> have looked into this as it would have been an opportunity to reduce
+> the patch count of this RFC!
+> 
+> Maybe I'm also forgetting something more important, perhaps Junaid
+> will weigh in...
 
-Not easily without a merge of Paolo's KVM bits.  The confusion that
-might cause isn't quite worth it for a rename.  I can either stash this
-somewhere or I'm also fine if Paolo takes it on top of your other patch:
+Yes, IIRC the idea was that there is no need to prohibit inlining for this class 
+of functions.
 
-Acked-by: Dave Hansen <dave.hansen@intel.com>
 
