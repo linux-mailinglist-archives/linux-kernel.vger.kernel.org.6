@@ -1,469 +1,151 @@
-Return-Path: <linux-kernel+bounces-387823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D19B39B5699
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:14:30 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83199B569B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:14:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91F5D281ED2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:14:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 846C0B22B64
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:14:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3792520C491;
-	Tue, 29 Oct 2024 23:13:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F9C20C006;
+	Tue, 29 Oct 2024 23:13:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5nMYoz+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="Wq9IYcxG"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3380320BB41;
-	Tue, 29 Oct 2024 23:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F067720A5FA;
+	Tue, 29 Oct 2024 23:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730243616; cv=none; b=Xq9LBhTxLoyiWRUXPLE9HGlBILi2dGWtYiR9FuDFGnMP2Cqma8iLZsXg0ryJif6DhKjAMTKj7KY/twBe7QfUvxi1B1u4u0SD0Z3gb3hfzvDAlS6LBromLYVM1BlBzsGCkfoYcVE6LMA0U+U6U+f/wieEO+4TpwCX8/MST7Tr/TE=
+	t=1730243636; cv=none; b=LVmacbjUZNfX7lNEWMdDGtiiIyFvHlmh1j2fmWJfMj2U/65uOMZKT7vGZMz1Gii0oJqu95aPBJOs1fJz0KHs33XD2jrEJvncRhfZLZMLzWQCyQFeyPNuBpp4lg++6JdFFvc3OEMHUiSUV1MjmprBvdAnnM21s0ie1FMe2fGsw1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730243616; c=relaxed/simple;
-	bh=Dm2s2fcTkM92SSMD+7Lh75bKhbJpwc+561tVJlj3PmQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=utJsND+Ebi6+WC04rVmCl4rh04qqe+kC0hycoNJVuWu+EDOBIfp5n7f2uUfkZKwFzbQJGB55vY5FVuiUzn1sQ7bgPK0Kp8eGJmvPIk+fb4715xdg1uj3NMOzzcCN12eGhcbkH869rKWHpVhbxSTGukbBww8oB+YNFgX4SxfPRMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5nMYoz+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CA87C4CEE3;
-	Tue, 29 Oct 2024 23:13:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730243615;
-	bh=Dm2s2fcTkM92SSMD+7Lh75bKhbJpwc+561tVJlj3PmQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y5nMYoz+gETFkkdLvPuISJZxuGfbwh/bmg2t6I1tUY/mSFb5h2uJHJ6Z2hJ1RTL9E
-	 pwXlSy6BiydxduzLn0wBCLeRNZuhaSnhuFhnWqwFScluV3f6OCf3oBMh0LsZWQrcUD
-	 +Ot3XM/HCeiKJW1E7i+qJkWTCV9BnJ4pmNgRIkkbhZx1KZGUysy6KVlxrG6NO1ZP3c
-	 TaXqv1j4UHMTiHpehTTiHUqr+4kiZl93Zp0myyZNDWJJGBeTkDvRykF0rZvMaAkI7S
-	 c4mN6oeOIX19qpbgKYv0k6SHI8LP1L8zuo//kPbnmgl11ZrhcsD9iHOjBpi+BpmqaW
-	 QCT9M3QUSgl0w==
-From: Song Liu <song@kernel.org>
-To: bpf@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: kernel-team@meta.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	kpsingh@kernel.org,
-	mattbobrowski@google.com,
-	amir73il@gmail.com,
-	repnop@google.com,
-	jlayton@kernel.org,
-	josef@toxicpanda.com,
-	Song Liu <song@kernel.org>
-Subject: [RFC bpf-next fanotify 5/5] selftests/bpf: Add test for BPF based fanotify fastpath handler
-Date: Tue, 29 Oct 2024 16:12:44 -0700
-Message-ID: <20241029231244.2834368-6-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241029231244.2834368-1-song@kernel.org>
-References: <20241029231244.2834368-1-song@kernel.org>
+	s=arc-20240116; t=1730243636; c=relaxed/simple;
+	bh=8T+9eeV93Jaxcm1UHEFzjo4Mi/b/S9AURmwuVLlUq/k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aXprEEQ6KW2ypCbXv7LzUTLc7DBrEmGN/JSuJ+PRreNJbTS0v5hhI6STVy7Xj/ridLH1k+y0k1SZ7SjSqZ4/obMBWqyWfppG+lkY74goT3dqOsc94u34IehRTatfZpK/DZWES0xn2rV/VEjtC4tNPBZXW+BplaSy0ABlhW5YUWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=Wq9IYcxG; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730243626; x=1730848426; i=w_armin@gmx.de;
+	bh=EboE/IOcl5FaWspwrb3hM38s6OEY7a7SKXuh7NwXnuc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=Wq9IYcxGo+TAJRSZgHZrKhjvYspDlwXcuYBf9skOAX8vGlBxF4CbqPLm8gtc7rLH
+	 9oHIw37HVhkCVuuGk+5N70wpnz52ffnQXnz1PbnMnamr7qHy4zRKzoGOkzzXNsdDv
+	 oYoI306F1pij/9VQC9Eto/4HCDLuB4ccrlPTJAJ/S+RZRyH3TiHzVqyhP8K1PKnH5
+	 jFdKTnwJSp/1gOpAA5DO4qYta8MuBqftWAulO3fVMyjeP0NOEJPfxDYhPn98zUaTJ
+	 VjMsNmNYETsjdX0xL1mX4LTHTPqFmC8NAS6R0BjVfC639jY7nttPVuUx5C0i1iv3p
+	 nA35xmQHKgte7+P2mw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M8hV5-1tA4HD0Ka9-003qGU; Wed, 30
+ Oct 2024 00:13:46 +0100
+Message-ID: <677c9b97-8eef-4001-a276-e9bc68538b81@gmx.de>
+Date: Wed, 30 Oct 2024 00:13:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 4/5] alienware-wmi: added force module parameters
+To: Kurt Borja <kuurtb@gmail.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
+ linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20241029135107.5582-2-kuurtb@gmail.com>
+ <20241029135354.5937-2-kuurtb@gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <20241029135354.5937-2-kuurtb@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lG/McRLvV1Bzip+wRaCShemt6YPGUBkV9XWc9nG3fH72wD/fdTU
+ gHKbryiO0CKgmeQt6HikA7SvlAbLl1UhkFNA6OuyH8lXrVi78GruVamq9/udY3K++SKlXBt
+ WAY3i4oQPeNzajBoXR7XYrlVRLGoJL5hbmyDlT31Zw75+TIQ5GE0YZ7C7pbuS0uMW5Znmv7
+ 4yqVon3QjN0i7UlWGeMfg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gPhcztdRtb4=;z8dT6MEMGoWH0W5cEOlvxPngjEF
+ FBhcTncr/z/NiM5LaziBD0uM8iOul2Uf2uSzy0BR0CTbVbv+7j/f/wAV4zVtX7ycqHsCPaKni
+ ePwJMV++e8/TAvu8KjjHSrFAvU5dAy7UfkNfMcWvgbDuhoadPUrkkxEn0zBvbBNUIB4LBxGcw
+ 81oV2WPvIXls0N5E5Y7fYp7QkOn5sxqMAqK6+32OUCEZEfcdZ0LzbFw60Qj0UZdsJXkD345c2
+ rQXM6Y3j2KFyN+FHzDvoYiet7ahkxUWLpXgLwqJ67EdI9wA63Sy8SyQMiKdMJEHJDbXJLveBm
+ fnxFSxRW1eClQMaU33Kj7J17ikFdOIJ9XhqjsoHLddDCyRzJXL8tkRy8KoviJXio1VyJE0Sye
+ aclrEZrLOBIeskDYARyI/U7cxOPEpApSWCtchdl9sHJRIAGjxfV9uFuTvQheWDe+o7oeUmR81
+ xm8VkLdeG6Q8S3TDzFvYJcIa/YMfQLCqunmge/DD1hcPt01Z6ZBE/+M6MztsD7xjQWYTqqLON
+ /5HMIBunqgrT/FwXqrVkn0HGNaVzPc8ojVjWQcTroRrfesT9gBJnylvZ2dOkutKGLcF7rcMY5
+ 6jodqk6a9XjFEl4KEiLYygvZxm0ZRXgPQWM8VQBALQ/atV+GYi2d0MqQMuHVKIvU5ytjr9esb
+ tnMKHp7bF4koqEKGIgBAA5s2SVhYwoNuer00V6mqEed7Ohb8qmIv5x56+Fajjq/NtTwApspkJ
+ y7je4QdkTX8Byq0jimIjYrdEXfEYP5ANq9fhkpMCeHNd+5CAzD3lWJdHRQo7NGgJtx6YinpuN
+ pyH8M+VCv4asbXqrjs+R8NjQ==
 
-This test shows a simplified logic that monitors a subtree. This is
-simplified as it doesn't handle all the scenarios, such as:
+Am 29.10.24 um 14:53 schrieb Kurt Borja:
 
-  1) moving a subsubtree into/outof the being monitoring subtree;
-  2) mount point inside the being monitored subtree
+> Added force_platform_profile and force_gmode unsafe module parameters,
+> allowing users to force `thermal` and `gmode` quirks respectively.
+>
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> ---
+> v10:
+>   - Introduced
+> ---
+>   drivers/platform/x86/dell/alienware-wmi.c | 18 ++++++++++++++++++
+>   1 file changed, 18 insertions(+)
+>
+> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platfor=
+m/x86/dell/alienware-wmi.c
+> index 1d62c2ce7..91f0e09d0 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> @@ -42,6 +42,14 @@ MODULE_LICENSE("GPL");
+>   MODULE_ALIAS("wmi:" LEGACY_CONTROL_GUID);
+>   MODULE_ALIAS("wmi:" WMAX_CONTROL_GUID);
+>
+> +static bool force_platform_profile;
+> +module_param_unsafe(force_platform_profile, bool, 0);
+> +MODULE_PARM_DESC(force_platform_profile, "Forces auto-detecting thermal=
+ profiles without checking if WMI thermal backend is available");
+> +
+> +static bool force_gmode;
+> +module_param_unsafe(force_gmode, bool, 0);
+> +MODULE_PARM_DESC(force_gmode, "Forces G-Mode when performance profile i=
+s selected");
+> +
+>   enum INTERFACE_FLAGS {
+>   	LEGACY,
+>   	WMAX,
+> @@ -1075,6 +1083,16 @@ static int __init alienware_wmi_init(void)
+>   	if (quirks =3D=3D NULL)
+>   		quirks =3D &quirk_unknown;
+>
+> +	if (force_platform_profile)
+> +		quirks->thermal =3D true;
+> +
+> +	if (force_gmode) {
+> +		if (quirks->thermal)
+> +			quirks->gmode =3D true;
+> +		else
+> +			pr_warn("alienware-wmi: force_gmode requieres platform profile suppo=
+rt");
 
-Therefore, this is not to show a way to reliably monitor a subtree.
-Instead, this is to test the functionalities of bpf based fastpath.
-To really monitor a subtree reliably, we will need more complex logic.
+Please drop the "alienware-wmi:" prefix, it should get added automatically=
+.
 
-Overview of the logic:
-  1. fanotify is created for the whole file system (/tmp);
-  2. A bpf map (inode_storage_map) is used to tag directories to
-     monitor (starting from /tmp/fanotify_test);
-  3. On fsnotify_mkdir, thee tag is propagated to newly created sub
-     directories (/tmp/fanotify_test/subdir);
-  4. The bpf fastpath checks whether the fanotify event happens in a
-     directory with the tag. If yes, the event is sent to user space;
-     otherwise, the event is dropped.
+With that being fixed:
 
-Signed-off-by: Song Liu <song@kernel.org>
----
- tools/testing/selftests/bpf/bpf_kfuncs.h      |   4 +
- tools/testing/selftests/bpf/config            |   1 +
- .../testing/selftests/bpf/prog_tests/fan_fp.c | 245 ++++++++++++++++++
- tools/testing/selftests/bpf/progs/fan_fp.c    |  77 ++++++
- 4 files changed, 327 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/fan_fp.c
- create mode 100644 tools/testing/selftests/bpf/progs/fan_fp.c
+Reviewed-by: Armin Wolf <W_Armin@gmx.de>
 
-diff --git a/tools/testing/selftests/bpf/bpf_kfuncs.h b/tools/testing/selftests/bpf/bpf_kfuncs.h
-index 2eb3483f2fb0..44dcf4991244 100644
---- a/tools/testing/selftests/bpf/bpf_kfuncs.h
-+++ b/tools/testing/selftests/bpf/bpf_kfuncs.h
-@@ -87,4 +87,8 @@ struct dentry;
-  */
- extern int bpf_get_dentry_xattr(struct dentry *dentry, const char *name,
- 			      struct bpf_dynptr *value_ptr) __ksym __weak;
-+
-+struct fanotify_fastpath_event;
-+extern struct inode *bpf_fanotify_data_inode(struct fanotify_fastpath_event *event) __ksym __weak;
-+extern void bpf_iput(struct inode *inode) __ksym __weak;
- #endif
-diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-index 4ca84c8d9116..392cbcad8a8b 100644
---- a/tools/testing/selftests/bpf/config
-+++ b/tools/testing/selftests/bpf/config
-@@ -24,6 +24,7 @@ CONFIG_DEBUG_INFO_BTF=y
- CONFIG_DEBUG_INFO_DWARF4=y
- CONFIG_DUMMY=y
- CONFIG_DYNAMIC_FTRACE=y
-+CONFIG_FANOTIFY=y
- CONFIG_FPROBE=y
- CONFIG_FTRACE_SYSCALLS=y
- CONFIG_FUNCTION_ERROR_INJECTION=y
-diff --git a/tools/testing/selftests/bpf/prog_tests/fan_fp.c b/tools/testing/selftests/bpf/prog_tests/fan_fp.c
-new file mode 100644
-index 000000000000..ea57ed366647
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/fan_fp.c
-@@ -0,0 +1,245 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Meta Platforms, Inc. and affiliates. */
-+
-+#define _GNU_SOURCE
-+#include <err.h>
-+#include <fcntl.h>
-+#include <stdio.h>
-+#include <string.h>
-+#include <sys/fanotify.h>
-+#include <unistd.h>
-+#include <sys/ioctl.h>
-+#include <sys/stat.h>
-+
-+#include <test_progs.h>
-+
-+#include "fan_fp.skel.h"
-+
-+#define TEST_FS "/tmp/"
-+#define TEST_DIR "/tmp/fanotify_test/"
-+
-+static int create_test_subtree(void)
-+{
-+	int err;
-+
-+	err = mkdir(TEST_DIR, 0777);
-+	if (err && errno != EEXIST)
-+		return err;
-+
-+	return open(TEST_DIR, O_RDONLY);
-+}
-+
-+static int create_fanotify_fd(void)
-+{
-+	int fanotify_fd, err;
-+
-+	fanotify_fd = fanotify_init(FAN_CLASS_NOTIF | FAN_REPORT_NAME | FAN_REPORT_DIR_FID,
-+				    O_RDONLY);
-+
-+	if (!ASSERT_OK_FD(fanotify_fd, "fanotify_init"))
-+		return -1;
-+
-+	err = fanotify_mark(fanotify_fd, FAN_MARK_ADD | FAN_MARK_FILESYSTEM,
-+			    FAN_CREATE | FAN_OPEN | FAN_ONDIR | FAN_EVENT_ON_CHILD,
-+			    AT_FDCWD, TEST_FS);
-+	if (!ASSERT_OK(err, "fanotify_mark")) {
-+		close(fanotify_fd);
-+		return -1;
-+	}
-+
-+	return fanotify_fd;
-+}
-+
-+static int attach_global_fastpath(int fanotify_fd)
-+{
-+	struct fanotify_fastpath_args args = {
-+		.name = "_tmp_test_sub_tree",
-+		.version = 1,
-+		.flags = 0,
-+	};
-+
-+	if (ioctl(fanotify_fd, FAN_IOC_ADD_FP, &args))
-+		return -1;
-+
-+	return 0;
-+}
-+
-+#define EVENT_BUFFER_SIZE 4096
-+struct file_access_result {
-+	char name_prefix[16];
-+	bool accessed;
-+} access_results[3] = {
-+	{"aa", false},
-+	{"bb", false},
-+	{"cc", false},
-+};
-+
-+static void update_access_results(char *name)
-+{
-+	int i;
-+
-+	for (i = 0; i < 3; i++) {
-+		if (strstr(name, access_results[i].name_prefix))
-+			access_results[i].accessed = true;
-+	}
-+}
-+
-+static void parse_event(char *buffer, int len)
-+{
-+	struct fanotify_event_metadata *event =
-+		(struct fanotify_event_metadata *) buffer;
-+	struct fanotify_event_info_header *info;
-+	struct fanotify_event_info_fid *fid;
-+	struct file_handle *handle;
-+	char *name;
-+	int off;
-+
-+	for (; FAN_EVENT_OK(event, len); event = FAN_EVENT_NEXT(event, len)) {
-+		for (off = sizeof(*event) ; off < event->event_len;
-+		     off += info->len) {
-+			info = (struct fanotify_event_info_header *)
-+				((char *) event + off);
-+			switch (info->info_type) {
-+			case FAN_EVENT_INFO_TYPE_DFID_NAME:
-+				fid = (struct fanotify_event_info_fid *) info;
-+				handle = (struct file_handle *)&fid->handle;
-+				name = (char *)handle + sizeof(*handle) + handle->handle_bytes;
-+				update_access_results(name);
-+				break;
-+			default:
-+				break;
-+			}
-+		}
-+	}
-+}
-+
-+static void touch_file(const char *path)
-+{
-+	int fd;
-+
-+	fd = open(path, O_WRONLY|O_CREAT|O_NOCTTY|O_NONBLOCK, 0666);
-+	if (!ASSERT_OK_FD(fd, "open"))
-+		goto cleanup;
-+	close(fd);
-+cleanup:
-+	unlink(path);
-+}
-+
-+static void generate_and_test_event(int fanotify_fd)
-+{
-+	char buffer[EVENT_BUFFER_SIZE];
-+	int len, err;
-+
-+	/* access /tmp/fanotify_test/aa, this will generate event */
-+	touch_file(TEST_DIR "aa");
-+
-+	/* create /tmp/fanotify_test/subdir, this will get tag from the
-+	 * parent directory (added in the bpf program on fsnotify_mkdir)
-+	 */
-+	err = mkdir(TEST_DIR "subdir", 0777);
-+	ASSERT_OK(err, "mkdir");
-+
-+	/* access /tmp/fanotify_test/subdir/bb, this will generate event */
-+	touch_file(TEST_DIR "subdir/bb");
-+
-+	/* access /tmp/cc, this will NOT generate event, as the BPF
-+	 * fastpath filtered this event out. (Because /tmp doesn't have
-+	 * the tag.)
-+	 */
-+	touch_file(TEST_FS "cc");
-+
-+	/* read and parse the events */
-+	len = read(fanotify_fd, buffer, EVENT_BUFFER_SIZE);
-+	if (!ASSERT_GE(len, 0, "read event"))
-+		goto cleanup;
-+	parse_event(buffer, len);
-+
-+	/* verify we generated events for aa and bb, but filtered out the
-+	 * event for cc.
-+	 */
-+	ASSERT_TRUE(access_results[0].accessed, "access aa");
-+	ASSERT_TRUE(access_results[1].accessed, "access bb");
-+	ASSERT_FALSE(access_results[2].accessed, "access cc");
-+
-+cleanup:
-+	rmdir(TEST_DIR "subdir");
-+	rmdir(TEST_DIR);
-+}
-+
-+/* This test shows a simplified logic that monitors a subtree. This is
-+ * simplified as it doesn't handle all the scenarios, such as:
-+ *
-+ *  1) moving a subsubtree into/outof the being monitoring subtree;
-+ *  2) mount point inside the being monitored subtree
-+ *
-+ * Therefore, this is not to show a way to reliably monitor a subtree.
-+ * Instead, this is to test the functionalities of bpf based fastpath.
-+ *
-+ * Overview of the logic:
-+ * 1. fanotify is created for the whole file system (/tmp);
-+ * 2. A bpf map (inode_storage_map) is used to tag directories to
-+ *    monitor (starting from /tmp/fanotify_test);
-+ * 3. On fsnotify_mkdir, thee tag is propagated to newly created sub
-+ *    directories (/tmp/fanotify_test/subdir);
-+ * 4. The bpf fastpath checks whether the event happens in a directory
-+ *    with the tag. If yes, the event is sent to user space; otherwise,
-+ *    the event is dropped.
-+ */
-+static void test_monitor_subtree(void)
-+{
-+	struct bpf_link *link;
-+	struct fan_fp *skel;
-+	int test_root_fd;
-+	__u32 one = 1;
-+	int err, fanotify_fd;
-+
-+	test_root_fd = create_test_subtree();
-+
-+	if (!ASSERT_OK_FD(test_root_fd, "create_test_subtree"))
-+		return;
-+
-+	skel = fan_fp__open_and_load();
-+
-+	if (!ASSERT_OK_PTR(skel, "fan_fp__open_and_load"))
-+		goto close_test_root_fd;
-+
-+	/* Add tag to /tmp/fanotify_test/ */
-+	err = bpf_map_update_elem(bpf_map__fd(skel->maps.inode_storage_map),
-+				  &test_root_fd, &one, BPF_ANY);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem"))
-+		goto destroy_skel;
-+	link = bpf_map__attach_struct_ops(skel->maps.bpf_fanotify_fastpath_ops);
-+	if (!ASSERT_OK_PTR(link, "bpf_map__attach_struct_ops"))
-+		goto destroy_skel;
-+
-+
-+	fanotify_fd = create_fanotify_fd();
-+	if (!ASSERT_OK_FD(fanotify_fd, "create_fanotify_fd"))
-+		goto destroy_link;
-+
-+	err = attach_global_fastpath(fanotify_fd);
-+	if (!ASSERT_OK(err, "attach_global_fastpath"))
-+		goto close_fanotify_fd;
-+
-+	generate_and_test_event(fanotify_fd);
-+
-+	ASSERT_EQ(skel->bss->added_inode_storage, 1, "added_inode_storage");
-+
-+close_fanotify_fd:
-+	close(fanotify_fd);
-+
-+destroy_link:
-+	bpf_link__destroy(link);
-+destroy_skel:
-+	fan_fp__destroy(skel);
-+
-+close_test_root_fd:
-+	close(test_root_fd);
-+	rmdir(TEST_DIR);
-+}
-+
-+void test_bpf_fanotify_fastpath(void)
-+{
-+	if (test__start_subtest("subtree"))
-+		test_monitor_subtree();
-+}
-diff --git a/tools/testing/selftests/bpf/progs/fan_fp.c b/tools/testing/selftests/bpf/progs/fan_fp.c
-new file mode 100644
-index 000000000000..ee86dc189e38
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/fan_fp.c
-@@ -0,0 +1,77 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/* Copyright (c) 2024 Facebook */
-+
-+#include "vmlinux.h"
-+#include <bpf/bpf_tracing.h>
-+#include <bpf/bpf_core_read.h>
-+
-+#define FS_CREATE		0x00000100	/* Subfile was created */
-+#define FS_ISDIR		0x40000000	/* event occurred against dir */
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_INODE_STORAGE);
-+	__uint(map_flags, BPF_F_NO_PREALLOC);
-+	__type(key, int);
-+	__type(value, __u32);
-+} inode_storage_map SEC(".maps");
-+
-+int added_inode_storage;
-+
-+SEC("struct_ops")
-+int BPF_PROG(bpf_fp_handler,
-+	     struct fsnotify_group *group,
-+	     struct fanotify_fastpath_hook *fp_hook,
-+	     struct fanotify_fastpath_event *fp_event)
-+{
-+	struct inode *dir;
-+	__u32 *value;
-+
-+	dir = fp_event->dir;
-+
-+	value = bpf_inode_storage_get(&inode_storage_map, dir, 0, 0);
-+
-+	/* if dir doesn't have the tag, skip the event */
-+	if (!value)
-+		return FAN_FP_RET_SKIP_EVENT;
-+
-+	/* propagate tag to subdir on fsnotify_mkdir */
-+	if (fp_event->mask == (FS_CREATE | FS_ISDIR) &&
-+	    fp_event->data_type == FSNOTIFY_EVENT_DENTRY) {
-+		struct inode *new_inode;
-+
-+		new_inode = bpf_fanotify_data_inode(fp_event);
-+		if (!new_inode)
-+			goto out;
-+
-+		value = bpf_inode_storage_get(&inode_storage_map, new_inode, 0,
-+					      BPF_LOCAL_STORAGE_GET_F_CREATE);
-+		if (value) {
-+			*value = 1;
-+			added_inode_storage++;
-+		}
-+		bpf_iput(new_inode);
-+	}
-+out:
-+	return FAN_FP_RET_SEND_TO_USERSPACE;
-+}
-+
-+SEC("struct_ops")
-+int BPF_PROG(bpf_fp_init, struct fanotify_fastpath_hook *hook, const char *args)
-+{
-+	return 0;
-+}
-+
-+SEC("struct_ops")
-+void BPF_PROG(bpf_fp_free, struct fanotify_fastpath_hook *hook)
-+{
-+}
-+
-+SEC(".struct_ops.link")
-+struct fanotify_fastpath_ops bpf_fanotify_fastpath_ops = {
-+	.fp_handler = (void *)bpf_fp_handler,
-+	.fp_init = (void *)bpf_fp_init,
-+	.fp_free = (void *)bpf_fp_free,
-+	.name = "_tmp_test_sub_tree",
-+};
-+
-+char _license[] SEC("license") = "GPL";
--- 
-2.43.5
-
+> +	}
+> +
+>   	ret =3D platform_driver_register(&platform_driver);
+>   	if (ret)
+>   		goto fail_platform_driver;
 
