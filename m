@@ -1,162 +1,108 @@
-Return-Path: <linux-kernel+bounces-386946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98A89B4A07
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:46:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3C1D9B4A08
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:46:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B072842BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:46:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F01611C223EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DBA206047;
-	Tue, 29 Oct 2024 12:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA61120606A;
+	Tue, 29 Oct 2024 12:46:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ucSnCxdD"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PHaQFc45"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4343F1E2301;
-	Tue, 29 Oct 2024 12:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3234320494C;
+	Tue, 29 Oct 2024 12:46:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730205980; cv=none; b=pv7RVXHFu5rIjNoDSVpS5mYtisQz0CfsrWacb3u1fWF+iSNicPnAKLiQXUIFDPTKrXxbI3SKnw8r3zEubX3hENOyPblRvkOP5o7MM3d7VsKwHfa/Cl+ZM7oeFuq887iSFw3MHRhvJ6yibQJF44jcXAiiwkHFXWjBSPqM/cEv9y8=
+	t=1730205982; cv=none; b=nejcujJ4Ac3BEdq6ZkFiffgNScQ43iPl6Kq5ziYt3AWXICwX4+Ke9tp85myhK1YCfeyUsF9K5yZ+l1Tk2TwhYhyak4ZZ/rvZ2ASDsb0GRJ17d1nILZPAaEMMM8QV2xJdQqmEScr7NolAI+rgUAxo7h0wNTJVxioMorrXnyq5VRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730205980; c=relaxed/simple;
-	bh=OLil04WAdDwUQiUnyBgo68CgowQVLkwEN+Pc80r2GOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MEwJsIm0SyahJPzRKrAvghnilgkKshOGSLHS+fK87iFwlObXwfHWeRhI8Pyz1be4AP04GpfV4NDEoUIOVneKXq2//hcqW93c4otx3jCrJUZwh2BwfqlKjIsxpatUVoRiuQTQvDdpDAIEGsWvvbI9WMp7m3pnC+woT+38kiQB7FU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ucSnCxdD; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56CAE4D4;
-	Tue, 29 Oct 2024 13:46:13 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730205973;
-	bh=OLil04WAdDwUQiUnyBgo68CgowQVLkwEN+Pc80r2GOo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ucSnCxdDdpntMwXNJ28N3XAxZ/O5S44Eheqyt0429yfbjXnt22/Vw/J70MUfahUFs
-	 hfqB0pC/Rnpl5UwEtPYILpB21BN0+8n0FI1AgZLnqlMzRNfSvvcwPpuu01TNyOcxh+
-	 O9TjDRkyZ2f3k1FodWSvjsaLDMFi6Mi+81MatNK4=
-Date: Tue, 29 Oct 2024 14:46:09 +0200
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
-	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
-	laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com,
-	hdegoede@redhat.com, dave.stevenson@raspberrypi.com,
-	mike.rudenko@gmail.com, alain.volmat@foss.st.com,
-	julien.vuillaumier@nxp.com, alice.yuan@nxp.com,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
- sensor driver
-Message-ID: <20241029124609.GP22600@pendragon.ideasonboard.com>
-References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
- <20241028190628.257249-2-mirela.rabulea@nxp.com>
- <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
- <20241029121039.GM22600@pendragon.ideasonboard.com>
- <eeaa92c0-fed6-408b-8471-47acf0ca394d@kernel.org>
- <20241029122150.GN22600@pendragon.ideasonboard.com>
- <3ff55dc3-c6a9-40a8-8e21-2e3e43cfd614@kernel.org>
+	s=arc-20240116; t=1730205982; c=relaxed/simple;
+	bh=uAj+8t0xewdfbCSl3OHFX3wOboNaulolhytV/WDj0mY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=idmSKrtxktipmToCZoIi8rylBvNKg5YDQjRtRDzz8W+LAmLdbu70Hnb5yhZ7kdVAUbX3Q8/cGDi4XXIVxzEKJROQYP+uADpOxFlq4uFZKyVDj3yVLmmmzkArjb0HOwW/Ad7lflL9RUPLnjgAxQmyU0JybSaB/8iXNnOPnl/jqDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PHaQFc45; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CDB0C4CECD;
+	Tue, 29 Oct 2024 12:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730205982;
+	bh=uAj+8t0xewdfbCSl3OHFX3wOboNaulolhytV/WDj0mY=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=PHaQFc45OGT5Ec5I7CSrcxGZC9E3sGVaLjO98aOISj48Bres9uVLnop/zcqOAJTd+
+	 bz1zMTepxxB5TEGc3cTRIUSW3bGdEQNFrppJbrzTg6cGPK+ikNkt367hSqqU00og+Z
+	 MpeRDXZpd6x85oQlw8rKKVrth0weQJgu0eTR5ctHEl7vlsT3qSYfGRAi4CPHymgVGR
+	 250eE7VP1mvj1Q8RH/zSWpaougW2S6Ke8Ctcscga0vDKIpqPguSBQd2OLoTUZsLlB/
+	 gm7S2vFX6T6jvtAywSTc320AUpCqkgHcapB6YiCIivhyslvU0X5ho/BVvlLQB2/fDl
+	 Mce1wEsJ1EFMw==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Kees Cook <kees@kernel.org>, 
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+ Aleksei Vetrov <vvvvvv@google.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-hardening@vger.kernel.org
+In-Reply-To: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
+References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
+Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in
+ dapm_widget_list_create
+Message-Id: <173020598004.42950.8042237651169849553.b4-ty@kernel.org>
+Date: Tue, 29 Oct 2024 12:46:20 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <3ff55dc3-c6a9-40a8-8e21-2e3e43cfd614@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-9b746
 
-(CC'ing the devicetree mailing list)
-
-On Tue, Oct 29, 2024 at 01:28:51PM +0100, Krzysztof Kozlowski wrote:
-> On 29/10/2024 13:21, Laurent Pinchart wrote:
-> > On Tue, Oct 29, 2024 at 01:15:46PM +0100, Krzysztof Kozlowski wrote:
-> >> On 29/10/2024 13:10, Laurent Pinchart wrote:
-> >>> On Tue, Oct 29, 2024 at 07:14:28AM +0100, Krzysztof Kozlowski wrote:
-> >>>> On 28/10/2024 20:06, Mirela Rabulea wrote:
-> >>>>> Add bindings for OX05B1S sensor driver
-> >>>>>
-> >>>>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
-> >>>>
-> >>>> <form letter>
-> >>>> Please use scripts/get_maintainers.pl to get a list of necessary people
-> >>>> and lists to CC. It might happen, that command when run on an older
-> >>>> kernel, gives you outdated entries. Therefore please be sure you base
-> >>>> your patches on recent Linux kernel.
-> >>>>
-> >>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-> >>>> people, so fix your workflow. Tools might also fail if you work on some
-> >>>> ancient tree (don't, instead use mainline) or work on fork of kernel
-> >>>> (don't, instead use mainline). Just use b4 and everything should be
-> >>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
-> >>>> patches to the patchset.
-> >>>>
-> >>>> You missed at least devicetree list (maybe more), so this won't be
-> >>>> tested by automated tooling. Performing review on untested code might be
-> >>>> a waste of time.
-> >>>>
-> >>>> Please kindly resend and include all necessary To/Cc entries.
-> >>>> </form letter>
-> >>>>
-> >>>> Binding also looks very different than all other devices, so re-write it
-> >>>> starting from EXISTING GOOD bindings. Not some downstream stuff.
-> >>>
-> >>> Krzysztof, please point to a good example when making this kind of
-> >>> comment.
-> >>
-> >> Anything recently added. Git log tells which files were recently added.
-> > 
-> > If the review comment is a copy&paste (given that you review lots of
-> > bindings and constantly have to repeat the same things, that would make
-> > sense), expanding it with that information for future reviews could help
-> > patch authors. Thanks for considering it, it would be much appreciated.
+On Mon, 28 Oct 2024 22:50:30 +0000, Aleksei Vetrov wrote:
+> The widgets array in the snd_soc_dapm_widget_list has a __counted_by
+> attribute attached to it, which points to the num_widgets variable. This
+> attribute is used in bounds checking, and if it is not set before the
+> array is filled, then the bounds sanitizer will issue a warning or a
+> kernel panic if CONFIG_UBSAN_TRAP is set.
 > 
-> Sorry, but that's not the point. You do not take 10 yo, unmaintained
-> driver and use it as template for your new one. Instead you rather take
-> something recent or something which you know is correct. Same with bindings.
-
-I wouldn't know for sure which driver or binding was used as a starting
-point. My point was unrelated to this particular patch series. I think
-that including clear information in ready-made answers will help
-everybody. It will tell the submitters what they need to know, it will
-avoid this kind of conversation being repeated, and it could even in the
-end increase the quality of submissions. Even better, it won't cost
-anything to add it to answer templates.
-
-> NXP is not a small company which does not know how to use Linux or how
-> to upstream stuff. This is not individual's contribution, where one does
-> not have colleagues or 3 billions USD of revenue behind, to be able to
-> get some internal help prior sending something downstream.
+> This patch sets the size of the widgets list calculated with
+> list_for_each as the initial value for num_widgets as it is used for
+> allocating memory for the array. It is updated with the actual number of
+> added elements after the array is filled.
 > 
-> They can spend something out of these 3 billions of revenue or 700
-> millions of net income to hire you guys or any other open-source
-> company, if basics of upstreaming are unknown.
->
-> That's the comment I was giving about NXP since a year. Some things
-> around SoC improved, some things from this unit of NXP here did not
-> change at all.
+> [...]
 
-If I were on the receiving end of this, as an individual developer, I
-would consider it very patronizing and insulting. Treating the authors
-of contributions you don't consider as good enough in such a harsh way
-will not improve the situation, and will drive people away. You may be
-frustrated by some companies, but this kind of comment will not help.
-Please soften your tone towards individual developers, they're not
-punching balls on which to dump frustration and anger. Firm and polite
-will work better than lashing out.
+Applied to
 
-> So again, it's not about me giving them more things. They will keep
-> ignoring it over and over, because that's how big companies sometimes
-> behave. You know, community people work for free, right?
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-Regards,
+Thanks!
 
-Laurent Pinchart
+[1/1] ASoC: dapm: fix bounds checker error in dapm_widget_list_create
+      commit: 2ef9439f7a19fd3d43b288d38b1c6e55b668a4fe
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
