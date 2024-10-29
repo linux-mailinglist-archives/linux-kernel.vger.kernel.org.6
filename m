@@ -1,156 +1,152 @@
-Return-Path: <linux-kernel+bounces-387281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 852CC9B4EFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:11:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E999B9B4EFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:12:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C3921F23D49
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 706FE1F23C59
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9164197A67;
-	Tue, 29 Oct 2024 16:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81E59197A9E;
+	Tue, 29 Oct 2024 16:12:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="V3PYjkVL"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="CDfsBoEK";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kJbvswg/"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60C63234;
-	Tue, 29 Oct 2024 16:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871C8195B18;
+	Tue, 29 Oct 2024 16:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730218297; cv=none; b=VEFT83zHFKWOtOck+NbLrxcZCSuQ7ilWlD7N1sZ+D1tfNmgk3gFQ2MBqo92pAAKFeqC/ZwCmwLVIcmQFO6G1qu5hyiRBfIdSx6EDTb6vTjjQi6tsZ0QvF+TacdY+nNoLgRCkLHjDOOlSdydUNvO3TFliC4Rk2zsogdc69fyHXKg=
+	t=1730218332; cv=none; b=Vt1DYh2SiQhNwCI7gtqhRoEjqCwvqtGIgc8cWRlQI1FVH4nwGexVMSC8hizQjbE55o9OyaJ3nr16qYQSZ/FSG7IG7TgsFv0EqMivVKOxXAz+6tyrnE3qcf9Hs45/YPFz7j5yJc2R+pLZYpD5jgejJEfKrrLf/fZ+7sAzVmgkAhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730218297; c=relaxed/simple;
-	bh=HIzrdGWI3IONHky7NnivXt0fzPZAZxo29SfCs8w6Hyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jHLENYRIGW2mnCvcgKUNIufCjL7mSXXhYOomB2j4+ytwA+J9CyaeQAfjaFHr3hNwYR/M1Z8r9gwT+ytmq7zl1y256kpMqeKE01l+oHyv2NNz4oA8YevZW4FmwQzzEyVd+Bc8ECOCuyhkCH8GTnzoJj4kuPqcA+ikonhxB4RTobQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=V3PYjkVL; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TCDCcJ003448;
-	Tue, 29 Oct 2024 17:11:06 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	MkDktSYrjXNPZMAtxoSkcXW+d4aBH8F1X5a432npQX8=; b=V3PYjkVLwMqzXB4l
-	CS/mON3AaOAapVnS8zQmnPVjM8PM41HaPZhQEr/F7k/lLm57SdoOUf2BS4lN3PRc
-	Iu/owBTh0qL7ljgwinFl3hWtRdX7v/3ezMfe3HA9n008mD6Z1NkWHAvxSs0OiZ5a
-	aWW/usqEB9fVMehHEZ9UUY+NFXzjAuGjN5io+tTzFBH9nqkCGw/oVoPTTOM2jqzw
-	ZfPxcJ0VEEMY77vT3ONE7V7yQdszow1ZvxpaF0pxfZwWBw5Nj/amT/PTuUko4xWT
-	kDJbaftv2kJFX24ob+StWReNIA3aMx4wkBPSjQhnri8o4MklCG0eczaO/K1zOsS/
-	O8MLyg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42ha00w283-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 17:11:06 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B122B40049;
-	Tue, 29 Oct 2024 17:10:06 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 061332649E7;
-	Tue, 29 Oct 2024 17:09:26 +0100 (CET)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 29 Oct
- 2024 17:09:25 +0100
-Message-ID: <f091f532-f6b0-429c-9fde-c952c9c26382@foss.st.com>
-Date: Tue, 29 Oct 2024 17:09:24 +0100
+	s=arc-20240116; t=1730218332; c=relaxed/simple;
+	bh=TpJp6p7V3SNnKwBuLypm4oC1yStqNcTqr9TaOaspTLo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=R3DQR1ObpN8HLcLj/9UJepbJAExNQAuIFPBQtWHiNU4bEb5rM+oMYw95GC9AMH5IQCiEnhU2J/L2bd4I4mrHddjdj3F2vHeuSb2IZmubk/FIG4Y6LiM4Kd8oRkdGjW13poze9WzBXPc3oSDUFE8Bg740R4Rbz5x9Hni8wFQ7usQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=CDfsBoEK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kJbvswg/; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfout.phl.internal (Postfix) with ESMTP id 7D0F41380456;
+	Tue, 29 Oct 2024 12:12:09 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Tue, 29 Oct 2024 12:12:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1730218329;
+	 x=1730304729; bh=TpJp6p7V3SNnKwBuLypm4oC1yStqNcTqr9TaOaspTLo=; b=
+	CDfsBoEK8nkuKoEHcgtArT8WMkS33qVYIUmUdUbL/T3e3o+5ytXmmdke0G86Nkyb
+	XfZdNLDwGfCDB7sRiKsjj25nKRiEW3Bgc15VYp2K+FXc9f5Jw7pM63uQxw1eBjED
+	Rg/KQoDAVB9aOEOCk8MbNlJ4t0/3GVShqJmFSmQYHa5nvE/Ggz1XJCGa/FHNiId0
+	hdi80dnlk7duRR3WNotlvLMf5eIB7VtWApJpZKui2chkY+nmYzmN9UOzAdLfKOY1
+	U9PS8izWvYi7xzAcp5U8EtTjWfwAwahZVpvScDR4hUWZ0u0r0I+jBPz6JubeW82X
+	0HGiprSGENPRwG3hlnTDUA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730218329; x=
+	1730304729; bh=TpJp6p7V3SNnKwBuLypm4oC1yStqNcTqr9TaOaspTLo=; b=k
+	Jbvswg/piM/vErB87Ot7hdCZvZhadBYeE28QxBP5SZpnpzveKu7ljAvZ55xpjeXV
+	QV3IzLxqibuXOMDdsNVyOsIcv5WyBrQGmzJ5Fuy42y2fUMOvpa9gM5jDlTVN0bhQ
+	3FvHm+0BoCEJiJdGXdzcW4YTmO5UBHVufYdzfm7FjjgWm6WdZ2Omn0M7oU4byEFN
+	BLHtb0sAkn2BUt7ketAunHHCUfE6PtzOKEVZmSHsPrK4YzGcPwNblojbjKqiIPJx
+	ADztp42nN+R3fVMUMwvlu9lGOWyF1TsKLrelJI5WapAius9pLNaY1zmPpaE5e1N5
+	BmdKFKvnNuQLNIU/8n91Q==
+X-ME-Sender: <xms:VwkhZ7PKbKHcKF1d1-nkIZrxrVDPu_NVtuxO9b2o-Usl5oIg4XM28g>
+    <xme:VwkhZ188adgnhyHmTkN5Rd4w70hxQLUS93smtGp8gGQW_2GFe6v9YtOmVFqYxfMIW
+    i_o84-oDR_1eLqf0YM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgkeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohepvdehpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehtshgsohhgvghnugesrghlphhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthht
+    oheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthhopehgrhgvghhorhihrdgtlhgvmh
+    gvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthhhvghordhlvggsrhhunhes
+    sghoohhtlhhinhdrtghomhdprhgtphhtthhopegrrhhikhgrlhhosehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtghomhdprhgt
+    phhtthhopehilhihrgdrlhhiphhnihhtshhkihihsehgmhgrihhlrdgtohhmpdhrtghpth
+    htohephhgruhhkvgeshhgruhhkvgdqmhdruggvpdhrtghpthhtohepughjohhrughjvgdr
+    thhoughorhhovhhitgeshhhtvggtghhrohhuphdrtghomh
+X-ME-Proxy: <xmx:VwkhZ6RmALLj5oeFhWf4mQVJnfbwcaApljN0Uy4Vmo8VR_6LPoKIfA>
+    <xmx:VwkhZ_t3dkJ_xV8QJ-7tKzBB-V0K2tXHiRPrLhjQ8I8xWrJjqvuM8w>
+    <xmx:VwkhZzdc5D1u2s8dRfYU9apdXURBCWvSm9vrpVSDH0e51L0u6pymZw>
+    <xmx:VwkhZ71Jr7rTxi5TE6A8NBqKbC-XFTxfMNq_SZmEh5PKraB8TfNMPA>
+    <xmx:WQkhZ8tq829LAHj7w0wBBte-M359hxF8FTwj0F-Vjy1uc_ZZSf-37-qR>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 707BD1C20067; Tue, 29 Oct 2024 12:12:07 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/9] STM32 DMA3 updates for STM32MP25
-To: Amelie Delaunay <amelie.delaunay@foss.st.com>,
-        Vinod Koul
-	<vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>
-CC: <dmaengine@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241016-dma3-mp25-updates-v3-0-8311fe6f228d@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20241016-dma3-mp25-updates-v3-0-8311fe6f228d@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Date: Tue, 29 Oct 2024 16:11:47 +0000
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Aleksandar Rikalo" <arikalo@gmail.com>,
+ "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Vladimir Kondratiev" <vladimir.kondratiev@mobileye.com>,
+ "Gregory CLEMENT" <gregory.clement@bootlin.com>,
+ "Theo Lebrun" <theo.lebrun@bootlin.com>, "Arnd Bergmann" <arnd@arndb.de>,
+ devicetree@vger.kernel.org,
+ "Djordje Todorovic" <djordje.todorovic@htecgroup.com>,
+ "Chao-ying Fu" <cfu@wavecomp.com>,
+ "Daniel Lezcano" <daniel.lezcano@linaro.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Greg Ungerer" <gerg@kernel.org>, "Hauke Mehrtens" <hauke@hauke-m.de>,
+ "Ilya Lipnitskiy" <ilya.lipnitskiy@gmail.com>,
+ linux-kernel@vger.kernel.org,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Marc Zyngier" <maz@kernel.org>,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Serge Semin" <fancer.lancer@gmail.com>,
+ "Tiezhu Yang" <yangtiezhu@loongson.cn>
+Message-Id: <29d7688e-5fac-4821-8764-bdc760112370@app.fastmail.com>
+In-Reply-To: 
+ <CAGQJe6p6QgSQKByVQ8G+HpWbdEHnfNb8vRureOrS2VZa6Lk74A@mail.gmail.com>
+References: <20241028175935.51250-1-arikalo@gmail.com>
+ <20241028175935.51250-11-arikalo@gmail.com>
+ <avz4crm2yrk3fg7r4qxkgkt3ka5hmk54v2wtcms453tsnewu5w@jzjxmyd4b7yg>
+ <CAGQJe6p6QgSQKByVQ8G+HpWbdEHnfNb8vRureOrS2VZa6Lk74A@mail.gmail.com>
+Subject: Re: [PATCH v8 10/13] dt-bindings: mips: cpu: Add property for broken HCI
+ information
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi
 
-On 10/16/24 14:39, Amelie Delaunay wrote:
-> The HW version of STM32 DMA3 inside STM32MP25 requires some tunings to
-> meet the needs of the interconnect. This series adds the linked list
-> refactoring feature to have optimal performance when addressing the
-> memory, and it adds the use of two new bits in the third cell specifying
-> the DMA transfer requirements:
-> - bit[16] to prevent packing/unpacking mode to avoid bytes loss in case
-> of interrupting an ongoing transfer (e.g. UART RX),
-> - bit[17] to prevent linked-list refactoring because some peripherals
-> (e.g. FMC ECC) require a one-shot transfer, they trigger the DMA only
-> once.
-> It also adds platform data to clamp the burst length on AXI port,
-> especially when it is interconnected to AXI3 bus, such as on STM32MP25.
-> Finally this series also contains STM32MP25 device tree updates, to add
-> DMA support on SPI, I2C, UART and apply the tunings introduced.
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> ---
-> Changes in v3:
-> - Refine commit description of patch 4 about preventing
->    additionnal transfers, as per Rob's suggestion.
-> - Link to v2: https://lore.kernel.org/r/20241015-dma3-mp25-updates-v2-0-b63e21556ec8@foss.st.com
-> 
-> Changes in v2:
-> - Reword commit title/message/content of patch 4 about preventing
->    additionnal transfers, as per Rob's suggestion
-> - Rework AXI maximum burst length management using SoC specific
->    compatible, as pointed out by Rob
-> - Drop former patches 6 and 8, which are no longer relevant
-> - Link to v1: https://lore.kernel.org/r/20241010-dma3-mp25-updates-v1-0-adf0633981ea@foss.st.com
-> 
-> ---
-> Amelie Delaunay (9):
->        dt-bindings: dma: stm32-dma3: prevent packing/unpacking mode
->        dmaengine: stm32-dma3: prevent pack/unpack thanks to DT configuration
->        dmaengine: stm32-dma3: refactor HW linked-list to optimize memory accesses
->        dt-bindings: dma: stm32-dma3: prevent additional transfers
->        dmaengine: stm32-dma3: prevent LL refactoring thanks to DT configuration
->        dmaengine: stm32-dma3: clamp AXI burst using match data
->        arm64: dts: st: add DMA support on U(S)ART instances of stm32mp25
->        arm64: dts: st: add DMA support on I2C instances of stm32mp25
->        arm64: dts: st: add DMA support on SPI instances of stm32mp25
-> 
 
-Patches [7], [8], and [9] applied on stm32-next.
+=E5=9C=A82024=E5=B9=B410=E6=9C=8829=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
+=E5=8D=8812:21=EF=BC=8CAleksandar Rikalo=E5=86=99=E9=81=93=EF=BC=9A
+[...]
+>
+>> Is this property applicable for all MIPS vendors? There is no vendor
+>> prefix here, so this is generic for this architecture, right?
+
+I'd say the best vendor prefix is mti in this case.
+
+CM3 IP block is supplied by MIPS Technology, it is not a part of MIPS
+architecture spec.
 
 Thanks
-Alex
-
-
-
->   .../bindings/dma/stm32/st,stm32-dma3.yaml          |   6 ++
->   arch/arm64/boot/dts/st/stm32mp251.dtsi             |  75 +++++++++++++
->   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts         |   2 +
->   drivers/dma/stm32/stm32-dma3.c                     | 119 +++++++++++++++++----
->   4 files changed, 182 insertions(+), 20 deletions(-)
-> ---
-> base-commit: 76355c25e4f71ee4667ebaadd9faf8ec29d18f23
-> change-id: 20241015-dma3-mp25-updates-d7f26753b0dd
-> 
-> Best regards,
+--=20
+- Jiaxun
 
