@@ -1,226 +1,216 @@
-Return-Path: <linux-kernel+bounces-386224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EC2B9B40AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:59:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B19B59B40B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:00:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C07E52833F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:59:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A5A1C21F36
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:00:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D211F472C;
-	Tue, 29 Oct 2024 02:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C4771F80D6;
+	Tue, 29 Oct 2024 03:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="O9CBycMW"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2017.outbound.protection.outlook.com [40.92.103.17])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KGstSvOE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE474400;
-	Tue, 29 Oct 2024 02:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.17
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730170763; cv=fail; b=b9DihDOVKQJJ/BosKFgzAzbJqauU0H2LhpSfqzUDbTuoTa5R9NMMaOCp01xve6CFFk1dIg71olAqngIAkjqRCEVo9ib/K9k4XiQKyiW97xAm7YFWeyJlPzR7Ms1qhej9ExbRmt/XTF7gkl5OeCg/Y61LbjScVDGgEC9LJ5h+ebk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730170763; c=relaxed/simple;
-	bh=dZtjuTJJwo99kRqkCKTnVJ5+uwnyJOx+FY26B3Xc6dg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BbW7YgPR2s4p3s0/4jxgwWq+hvfR7+jTR7vlRBQXGrDtKBAVsOKHcZyaP73EGjKUBOfE9EP9hmqiB6UB3YAaU7AQ4bq0ZeS6T8GaO4iYDS6wwW5sCO8zmLZCN+AOHQIMdXWsgHw2SFvXqkkDO+gPdM3IQMPBrtUkNwQ5dNh7mwM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=O9CBycMW; arc=fail smtp.client-ip=40.92.103.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yzhjJ6H6+mXz1tH0UZKmp9iMz6Rm2DyzikTCSwEFyUgp77kn9l7l7mUwaPwHlVEPYlOG568ALS0kyMiEaBR8HkKz1Qp0sm/zf/eF0/Jbj0UEt/lb1TzMuN3QyJLlFZzmyePbvuhYmzqu+KPo+PmLfJxGg7u+NGtggGWMtpIKtcHjv+G2xBXEIC1Qej8IZ13tcYySXfZieq4J/4hUg/6zBoXJZggSxZ+z9NAhr0gXvP60BvoPDakwcAh7dGwb+YT1+m2upKBZM4bEnjE1Wl+NUdUcWoofi9YFPZ0irCJ4penfTT+TNI3nB0xTBwACikpY3569NUBV59Ioaj1pwMfQtg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=an1J5DiTF7T9b7qZ6T5zKT5e2CRSd7gk73Iij3C284Y=;
- b=gtC66MJ/uA55J+1EpWrS8QYs+SWRbU2oFPYomSXYFaVrUU/KNcb2+OJv3ruq+Caha5HTf39EYXMWTQKQwh3JKtNj6+fi8Vi3YigCLLIkn4lVQ45Tdns8xPgkyx+y3bJriRVJRjh9HKDAWZTHy8anHxgvlZ7hNAKQllpAtYZRZ5tijTkMC/mDD7l3MnXJCC6OZHkGZ3oSTRuWrbjPVYBJEhwf3oiXcL3UeDGuy1+OWyJeCzo8OpmX5jx/Xsz32TwVVzA/imq+MMY/QwXDVcl2OmYZ1bw6fF3SJo6EVn+4Z2/nOY1DfoVEGhswz70xOxoanFbOiqcKdQKAqGFclo5leA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=an1J5DiTF7T9b7qZ6T5zKT5e2CRSd7gk73Iij3C284Y=;
- b=O9CBycMW5Smyrej4I8rwRjRsOUyhLPM1Z5D8rF/+Ldgvv3Xkq5RyP+iFUDtAybzKSANGXFqhWqkxLtccv+TqKLHPOLOqdiMPpOV9IMJAnN5/Ii8e1Q6quaPzFPAvsM+PkGGIcr/jRpYZnyVEmAyw0hGnHFC0/3ARt6SrZ6/5fhCBAM6Y1QtQZAjgxarUfwFUp3GE1XXBItZqa4utai3GCqP0Edth5JfEdaA+arAUmWTX2tZXyclcfAdZw8XrNXb1QyKIwKOhU9GcvyQwZ0u49cmz4rrgfQRTM9LcOtuFIM7a+2xWqOICLjTrT2TQUtTMaRbFYVRf9TcHEsuAKRt4ww==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN0P287MB1378.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:189::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
- 2024 02:59:13 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
- 02:59:13 +0000
-Message-ID:
- <MA0P287MB28228810469B6A46D26CAF51FE4B2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Tue, 29 Oct 2024 10:59:04 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] pinctrl: sophgo: add support for SG2042 SoC
-To: Inochi Amaoto <inochiama@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Inochi Amaoto <inochiama@outlook.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Guo Ren <guoren@kernel.org>, Arnd Bergmann <arnd@arndb.de>
-Cc: Yixun Lan <dlan@gentoo.org>, linux-gpio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org
-References: <20241024064356.865055-1-inochiama@gmail.com>
- <20241024064356.865055-3-inochiama@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20241024064356.865055-3-inochiama@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYCP301CA0069.JPNP301.PROD.OUTLOOK.COM
- (2603:1096:405:7d::9) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <5157ee00-52ef-438f-a50f-22a746c04e45@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17B6D1DFE24
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:00:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730170808; cv=none; b=LTswphyf44XFdrqUG1GvTiD2XozDlVXWhGBx+JJ+L3s3kvRSVRorkGmfD7nJSx/vnasFsQBGT7PRRf791RkFyMuibu5rE+zLdm2uhZtk+W3GdJrMvT7moJZAnm/IOsRbbzCSa0/GN/imw5x5g6VBOxbln96cwzISRdkdrjYWgyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730170808; c=relaxed/simple;
+	bh=VyTJt0xPH4N8n02lC7V7N8uV5NqqDi7U2Mnpgj43mds=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7KZ7aCRQdx23ES08rWQHghPuG624OTGd+5aaWQQUzHlZd3XuFdimMpLjs7VY1CAF5aSPm+w3wNe++Fo5KoG0PwZTSqO1NGV5ZJ30RpwfZr6UsoP5yi8PfMn1MbhPw4pFq6yhdVyhGqqSOWerN1b8ejFwXYKPiSNjgxXMHVxZ+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KGstSvOE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730170805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=XM3NDn8/RrcDaH2dNFMKJrRw9os6K2fG5KwyMJ9szmk=;
+	b=KGstSvOE4S7anOjRi8OPeMmy/FWXQrqmz1oEiEvds7XX5n/nhusME+6Mm4ii4vakgcD709
+	jLtzUf8oRJUW/x52NDbnLhPymprKU1l3jwVuIVx3NDGEJXLLB0CP9nVN55lITF1vNz6/U5
+	Wq4r1Rh7KVWHAyUZtvv8f8/f0KW7rYw=
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
+ [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-638-w1GIWEnsPc6U3zzqE7svuw-1; Mon, 28 Oct 2024 23:00:03 -0400
+X-MC-Unique: w1GIWEnsPc6U3zzqE7svuw-1
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4daf7174eso46483145ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 20:00:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730170803; x=1730775603;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XM3NDn8/RrcDaH2dNFMKJrRw9os6K2fG5KwyMJ9szmk=;
+        b=XyFqFXVCMOZdBz7Rc0czNLa2jrRBSmpVl+nV9s0wa/4Q6APtHt4hFlsYoW437D0Yll
+         /dHtOFdtAg8GPgB8hcLJgvIJeUYFsTAsMMuFYUHYq9NqkWvLxdBCN4C0MRIOqaWrOFYq
+         imQhC7OEN+mttGIWp3W2vsrZzdvMX/z/AJszaqwi8UBmUyoDFdsRnqYjP2IVtbyy6moq
+         NOfhjCTF7ahVLVihp8x0g02hDhrAGCFCAuAUHh8lGQdSPJl0Nx20bYJryVWGvbt8IXp7
+         j/kB5GwH6eKRBJt58UI4d5yXbGBStzIDFC0txuckjYc4bMC9w082JQmTyZJbOdGoskv8
+         hrgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtz2rKuJwcLAm79GkWR2WsZIaZmDJmP6vGMEQWwofh2E2bqCQ0oGYU4ZbvlS+F8Xul9leBE5n1eRPXDIs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBPHH6gY/x/W+xTguoVMG6/+NVI8KLeH1PHtVtnMlpXziv3ugL
+	3hLRgralFuL98cezWfk4CWupXcqtaTufXcUIfSmppAKvxcPgUvV6GQQbtR9dSmnh9sZgFVYj6WX
+	eW6TyOueEX+qfPN5ULxKIsimp1V9V2brn/CgcuGl+T83D6cpUGU+kOIG5Rzr0CA==
+X-Received: by 2002:a05:6e02:1c0d:b0:3a4:e8cc:2a89 with SMTP id e9e14a558f8ab-3a4ed2a9d71mr95089675ab.10.1730170802630;
+        Mon, 28 Oct 2024 20:00:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHHJe1SOujsJgAA42pQ3L9xxLdE1LSrArTcwDuo+h5DT5bavlNuHR/AF4+9mUBERX5gv6wGYQ==
+X-Received: by 2002:a05:6e02:1c0d:b0:3a4:e8cc:2a89 with SMTP id e9e14a558f8ab-3a4ed2a9d71mr95089355ab.10.1730170802234;
+        Mon, 28 Oct 2024 20:00:02 -0700 (PDT)
+Received: from [10.0.0.71] ([65.128.110.20])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a4e6df5919sm19338285ab.41.2024.10.28.20.00.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 20:00:01 -0700 (PDT)
+Message-ID: <bbbbaa42-444f-4973-b749-7c56b937ae5f@redhat.com>
+Date: Mon, 28 Oct 2024 22:00:00 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB1378:EE_
-X-MS-Office365-Filtering-Correlation-Id: e539112b-0638-4e93-3bc9-08dcf7c5ab22
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|5072599009|19110799003|15080799006|7092599003|6090799003|8060799006|461199028|3412199025|440099028;
-X-Microsoft-Antispam-Message-Info:
-	kJQHdZcSPnwYWWG33iJ5mXt8Vp+sluj7gcIkxq0eSKlHe2ordQCUN/ro/fSUbrV/9176xs0xRPY8owe6K6ayLLvdIKolXLuulBLordrthploN0PgZTMFYg4FjdD7pFHDyMvfwpNSuDUE7LoevFWu6u+xAwXweWYUEFe1/aVWrCAPOlJk20X+XgUa8dI40q5dBNTPA5FtAHB2+bpMPyWNiqOGyZ9NzTdk44E1BmhZdj4zIMcEAg5oQpgmrui34A+7pGaBwLW/vTkUSGcevNHkEAaoNOOhWjg3bxboxsEXVMILaYng4XZTyXlALS/cBcjl/SqVAp+obHH05QGV3XQN8sVqZxjiux/5vOgvp7QvWqQ+B81mmuKUNLxvgqCMTc9zKBVAuNN6U7A9YpMG/LutFmqOWfuQmcfxqmklWspuVoTGk1Je2hXRIgqd8vnfPcc684rPpbLLAXQiY5g3pTf01CzA/Dkt8hHmZreG3or1KOy4oY9pJYxkO+hwb+NxHWmE06c91/KtLP5rjzqK+hHpj/EBALNYUrh2gZZXjmW5WUxn4nrfWTtLlfxFDKX8K0oo3K/VHNg+3RUj05hhlWuuKoe/RWSTjRFPes3lQAGtA7aLdiKHXhPPhEi2iuORMBmxzDDgsfwInpeJnt1pEZoqck9ZVlz2NZ+6535w7sFp19uUUWd6x7YPZoFw3EBOIPrRAvpk3r9yTcl/wjJbmgOaANHSYYaisP9P5Unms2BZ/HnmA5KZyNgAm/Y2sC2bJ+p7k+79ium7+5fw9ATBO1Stlg==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M2VXUXVyaVpHb2NnckNsblBaNlFoYTZ2UmJBSDB6ckhKbnJVemo5U1lHSFN2?=
- =?utf-8?B?T3czUmtvNmJnUEJBYUdqZ3lrVWlPZjcvUjlkWnE1MmY0Sld6UFlMYThNVzdE?=
- =?utf-8?B?S2pEZ2lnWjAvZHJrYnNvOUdnNWdUbjBpaW5wKytETkJLZnl3RFVlUklQZEVn?=
- =?utf-8?B?Sm9tNXRzTEpvelJESkJzZStMNUY5eWl5UDI3RFR5VlhheWx5OENsRDhYVHVo?=
- =?utf-8?B?WVlLbytLWEkvS3ZYcFF1UGYvVXA5MFR5TDJpS012aUhnYmx0Z0NYRVg0S3k3?=
- =?utf-8?B?aEZnazBGR3JmQzlMTW40czg5QU5TZzk4VVFWdE5aQm9BOUZqZkVESjVUSDFr?=
- =?utf-8?B?aW11cUJmVEkxeWo1WlRIOWt2OWRIaGFYUzY0K3lGQmxsZWs4Tmt4ZEp3WGxR?=
- =?utf-8?B?Q001dERaT0crZnRURUlaWXI3RHdMdlpmd0xtNEwrZFpMV21NZmdITHVNRThP?=
- =?utf-8?B?U1VLSUNxaWtTVTl3TWVGdzNVMW1KZ2hIY3RYOFRHTkRESnVDaEw0aWU1T21M?=
- =?utf-8?B?R3k0WFRtNVRxVGEwMTNjODhwYU40bkRLQXFLK3NyOVl5SGYvV0tyZjNTam9T?=
- =?utf-8?B?ZjNaaXdzdGtqS3NpemphejRLUVE1YTQ1NGhNYVJMV29XK0lGcWxHb1VMWmxH?=
- =?utf-8?B?eVRqeUZFTFNDWWRmdGdWekFaQlVGMisvbGh4YlV4QWhKMGk0UjkyZDV3dmdm?=
- =?utf-8?B?c2FRamxPQW9ZbTBhRUQzdDJRWnBOWEZZc2VrQ21LbUZLcmJBZXZ4NFlBdzZW?=
- =?utf-8?B?RE1LaE5XOUR5KzdnZWMrWlNNbTFaSE9VVGUrRlplcUpKRitUTzUvMVdTWmYr?=
- =?utf-8?B?ZTI0RTVCUzdwTmYxMGhSU1F3OEZvRFFjOGNJV1FHMUZtcWlvZmwwSVQyY2xz?=
- =?utf-8?B?RHdHL01xRnVrcTZxVi9tU0FZazVYZDFmV3FaVHNzcDVCby9ndlVZd0JMQlB5?=
- =?utf-8?B?N0NlT01LZzFzWGFXL04zMnVYWTJoQWpxMWdYRHpQdzgxeEQ4bWx1aUV6OVpF?=
- =?utf-8?B?NmhjMzJwbmJLdHR6Z1ByMmN4NS83MXRZeVRJVGRNOEJhQmhhVE9mZVVubkQy?=
- =?utf-8?B?MDd5eTY0dGl4KzhuU21qbHFmN3VXNW1pNVZCMTY1bU9tSUlRL1R4dUVvTjl1?=
- =?utf-8?B?QThsaGE2VTVNaEtZRnFLSWNEaEdjM040dmZRQ3hMUDBRb2lXaHVwQVlFZmpl?=
- =?utf-8?B?aGtvNm5DMDF5aVNPejlkcGFYcUVOQno5ZitFckxTNE51WUR6TFdYb0o4aVZV?=
- =?utf-8?B?RncrYmhMaDZMTzA0Tm1hZ0ZkK3lXazh3dDZrUjFJbmNwRXdxOG01N1g5dElp?=
- =?utf-8?B?SDlKZkxRcUF5TFBaTXU1RG4zODhyUFlxTWs1MjdsOVBuRmdNVnZSZ1pwVm45?=
- =?utf-8?B?RTY5R1IvM3hBN044N09VNW1icmp5ZG9wMTZMaC8vNXlxZkR2bFA2NFBqUG9j?=
- =?utf-8?B?bXdBb3Jralh5NkpuV1c4cTFRTFkyaER2ZDAzZlNnaUc3Nk1WRHVCQmVZRCtB?=
- =?utf-8?B?MGh4TmxteDg1UHdRWW1leHBwR01URGpsRytPMW9yVDhrREhHKzQyTnhtYy9p?=
- =?utf-8?B?a2h5L21uNDBrM0tScCttM1VWUk9zZndnRDVTMlh3UlN2TGFoMkhMbTFSbnpY?=
- =?utf-8?B?MmZOaXFYWW5VeDVDTXgwa1RvSDhkWlYxZUQ4WHdpbmZHRG8xUmJwQk5EWCtV?=
- =?utf-8?Q?qqZYWiyKoTktzbK01WvM?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e539112b-0638-4e93-3bc9-08dcf7c5ab22
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 02:59:13.4140
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB1378
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] tracing: Fix tracefs gid mount option
+To: Kalesh Singh <kaleshsingh@google.com>, dhowells@redhat.com,
+ rostedt@goodmis.org, mhiramat@kernel.org
+Cc: surenb@google.com, jyescas@google.com, kernel-team@android.com,
+ android-mm@google.com, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Shuah Khan <shuah@kernel.org>, Ali Zahraee <ahzahraee@gmail.com>,
+ Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+References: <20241028214550.2099923-1-kaleshsingh@google.com>
+ <20241028214550.2099923-4-kaleshsingh@google.com>
+Content-Language: en-US
+From: Eric Sandeen <sandeen@redhat.com>
+In-Reply-To: <20241028214550.2099923-4-kaleshsingh@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/28/24 4:43 PM, Kalesh Singh wrote:
+> Commit 78ff64081949 ("vfs: Convert tracefs to use the new mount API")
+> tracefs to use the new mount APIs caused mounting with the gid=<gid>
+> option to not take effect.
 
-On 2024/10/24 14:43, Inochi Amaoto wrote:
-[......]
-> diff --git a/drivers/pinctrl/sophgo/pinctrl-sg2042-ops.c b/drivers/pinctrl/sophgo/pinctrl-sg2042-ops.c
-> new file mode 100644
-> index 000000000000..f1c33b166d01
-> --- /dev/null
-> +++ b/drivers/pinctrl/sophgo/pinctrl-sg2042-ops.c
-> @@ -0,0 +1,583 @@
-[......]
-> +int sg2042_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct sg2042_pinctrl *pctrl;
-> +	const struct sg2042_pinctrl_data *pctrl_data;
-> +	int ret;
-> +
-> +	pctrl_data = device_get_match_data(dev);
-> +	if (!pctrl_data)
-> +		return -ENODEV;
-> +
-> +	if (pctrl_data->npins == 0)
-> +		return dev_err_probe(dev, -EINVAL, "invalid pin data\n");
-> +
-> +	pctrl = devm_kzalloc(dev, sizeof(*pctrl), GFP_KERNEL);
-> +	if (!pctrl)
-> +		return -ENOMEM;
-> +
-> +	pctrl->regs = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(pctrl->regs))
-> +		return PTR_ERR(pctrl->regs);
-> +
-> +	pctrl->pdesc.name = dev_name(dev);
-> +	pctrl->pdesc.pins = pctrl_data->pins;
-> +	pctrl->pdesc.npins = pctrl_data->npins;
-> +	pctrl->pdesc.pctlops = &sg2042_pctrl_ops;
-> +	pctrl->pdesc.pmxops = &sg2042_pmx_ops;
-> +	pctrl->pdesc.confops = &sg2042_pconf_ops;
-> +	pctrl->pdesc.owner = THIS_MODULE;
-> +
-> +	pctrl->data = pctrl_data;
-> +	pctrl->dev = dev;
-> +	raw_spin_lock_init(&pctrl->lock);
-> +	mutex_init(&pctrl->mutex);
-> +
-> +	platform_set_drvdata(pdev, pctrl);
-> +
-> +	ret = devm_pinctrl_register_and_init(dev, &pctrl->pdesc,
-> +					     pctrl, &pctrl->pctl_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret,
-> +				     "fail to register pinctrl driver\n");
-> +
-> +	return pinctrl_enable(pctrl->pctl_dev);
-> +}
-> +EXPORT_SYMBOL_GPL(sg2042_pinctrl_probe);
-Why EXPORT_SYMBOL_GPL? sg2042_pinctrl_probe looks like just a global 
-function should be enough.
-> +
-> +MODULE_DESCRIPTION("Pinctrl OPs for the SG2042 SoC");
-> +MODULE_LICENSE("GPL");
+Or any other mount options. I'm sure this isn't unique to gid, right?
+So, might want to fix the commit title.
 
-pinctrl-sg2042-ops.c is just a common file built together with 
-pinctrl-sg2042.c, right? Why you declare it as a module?
+> The tracefs superblock can be updated from multiple paths:
+>     - on fs_initcall() to init_trace_printk_function_export()
+>     - form a work queue to initialize eventfs
+>       tracer_init_tracefs_work_func()
+>     - fsconfig() syscall to mount of remount sysfs
+> 
+> The tracefs super block root inode gets created early on in
+> init_trace_printk_function_export().
+> 
+> With the new mount API tracefs effectively uses get_tree_single() instead
+> of the old API mount_single().
+> 
+> Previously, mount_single() ensured that the options are alway applied to
+> the superblock root inode:
+>     (1) If the root inode didn't exist, called fill_super() to create it
+>         and apply the options.
+>     (2) If the root inode exists, called reconfigure_single() which
+>         effectively called tracefs_apply_options() to parse and apply
+>         options to the subperblock's fs_info and inode and remount
+>         eventfs (if necessary)
+> 
+> On the other hand, get_tree_single() effectively calls vfs_get_super()
+> which:
+>     (3) If the root inode doesn't exists calls fill_super() to create it
+>         and apply the options.
+>     (4) If the root inode already exists, updates the fs_context root
+>         with the superblock's root inode.
 
-> diff --git a/drivers/pinctrl/sophgo/pinctrl-sg2042.c b/drivers/pinctrl/sophgo/pinctrl-sg2042.c
-> new file mode 100644
-> index 000000000000..81411670f855
-> --- /dev/null
-> +++ b/drivers/pinctrl/sophgo/pinctrl-sg2042.c
-> @@ -0,0 +1,642 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Sophgo SG2042 SoC pinctrl driver.
-> + *
-> + * Copyright (C) 2024 Inochi Amaoto <inochiama@outlook.com>
-> + */
+I'm honestly a little lost here, but given the differences between mount_single()
+and get_tree_single() - are other get_tree_single() users similarly broken?
+
+Should get_tree_single() just be calling reconfigure_single() internally like
+mount_single() did? The comment in reconfigure_single() confuses me.
+
+> (4) above is always the case for tracefs mounts, since the super block's
+> root inode will already be created by init_trace_printk_function_export().
+
+this reminds me a little of 
+
+commit a6097180d884ddab769fb25588ea8598589c218c
+Author: NeilBrown <neilb@suse.de>
+Date:   Mon Jan 17 09:07:26 2022 +1100
+
+    devtmpfs regression fix: reconfigure on each mount
+
+> This means that the gid mount option gets ignored:
+>     - Since it isn't applied to the super block's root inode, it doesn't
+>       get inherited by the children.
+>     - Since eventfs is initialized from form a separate work queue and
+>       before call to mount with the options, and it doesn't get remounted
+>       for mount.
+> 
+> Ensure that the mount options are applied to the super block and eventfs
+> is remounted to respect the new mount options.
+> 
+> [1] https://lore.kernel.org/r/536e99d3-345c-448b-adee-a21389d7ab4b@redhat.com/
+> 
+> Fixes: 78ff64081949 ("vfs: Convert tracefs to use the new mount API")
+> Cc: David Howells <dhowells@redhat.com>
+> Cc: Steven Rostedt <rostedt@goodmis.org>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
+> ---
+>  fs/tracefs/inode.c | 12 +++++++++---
+>  1 file changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/tracefs/inode.c b/fs/tracefs/inode.c
+> index 1748dff58c3b..cfc614c638da 100644
+> --- a/fs/tracefs/inode.c
+> +++ b/fs/tracefs/inode.c
+> @@ -392,6 +392,9 @@ static int tracefs_reconfigure(struct fs_context *fc)
+>  	struct tracefs_fs_info *sb_opts = sb->s_fs_info;
+>  	struct tracefs_fs_info *new_opts = fc->s_fs_info;
+>  
+> +	if (!new_opts)
+> +		return 0;
+
+Can this really happen?
+
 > +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/of.h>
+>  	sync_filesystem(sb);
+>  	/* structure copy of new mount options to sb */
+>  	*sb_opts = *new_opts;
 
-Sort in alphabetic.
+FWIW doing this as a structure copy was probably a terrible choice on my part. :(
 
-[......]
-
+> @@ -478,14 +481,17 @@ static int tracefs_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	sb->s_op = &tracefs_super_operations;
+>  	sb->s_d_op = &tracefs_dentry_operations;
+>  
+> -	tracefs_apply_options(sb, false);
+> -
+>  	return 0;
+>  }
+>  
+>  static int tracefs_get_tree(struct fs_context *fc)
+>  {
+> -	return get_tree_single(fc, tracefs_fill_super);
+> +	int err = get_tree_single(fc, tracefs_fill_super);
+> +
+> +	if (err)
+> +		return err;
+> +
+> +	return tracefs_reconfigure(fc);
+>  }
+>  
+>  static void tracefs_free_fc(struct fs_context *fc)
 
 
