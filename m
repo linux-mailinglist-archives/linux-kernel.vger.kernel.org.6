@@ -1,92 +1,145 @@
-Return-Path: <linux-kernel+bounces-386700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A5F9B471C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:41:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13EFF9B471F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:42:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842AC1C22738
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:41:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39DE1F23B42
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D00205157;
-	Tue, 29 Oct 2024 10:40:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806E21E102D;
+	Tue, 29 Oct 2024 10:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nsdt7OcO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g6Deb+Ph"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A33205144;
-	Tue, 29 Oct 2024 10:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF205204934;
+	Tue, 29 Oct 2024 10:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198428; cv=none; b=RPHtuWBAzWMfe8/1uCuOv6OJPEw2BMQl0ZxhFfWWGJbc606PLTI9zeJZrxIxLO6Buyz+MGDsMKTlt1XaySg4X9Y6vulFG8mhttOiXQ4G6+GZzymuHLe4kKnvHB+MAmjmzrY/T6s5JeJxI7lPRC81eRoYb8ccc0STlm5Y6Dks1b0=
+	t=1730198495; cv=none; b=aX5bbFOoQO9yJZ/HVbnCm90jq5hUB3S3ptD8NE2MhiMbFLFph4ySCjsr7+w8VZcAJxbJxTJcdrqeBWdVPw2okqvxq/XOMACY94DMz/DgXllhkYL2CZYcoYv09j+ijY/3jAA9fA+NzX4j/jRU/OqTnDD3nBA5x2hxWJTEqT4JXJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198428; c=relaxed/simple;
-	bh=1JvLk+JmMjL4BEVxEEBMpEnuqvbzUhXpMLNDkXAnUWI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=hUjO3K8JNr+8pcSmLlTDpO7dAgHP1mZylLnqFPSkWcnxr6kZtEbsXZPWC5skp97DuGuOFGCPxF9h0FBcuSylHf0/PO+XYcXLwe4Lj7ehq70h+wbQrU3yNDGR0+NwfBYxtA1jvd5F7YGk5LC/jFYkyCRcrapXt7zVydF+GZrSzkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nsdt7OcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73A07C4CECD;
-	Tue, 29 Oct 2024 10:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730198425;
-	bh=1JvLk+JmMjL4BEVxEEBMpEnuqvbzUhXpMLNDkXAnUWI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=nsdt7OcOL6peUHPQPHbspMs8n4Unx5gCXhSkbnR2iPBFaDXoubqURHdyLMZRXVIJm
-	 ZFcv81eTk6YctjvxfhTgLMw2qGzeVJ78hvu6bUmPpO1WsQV/iBsOL6rSeOMcNijDmF
-	 TQr1NqasHcZ1jfnZUwI2iz963K1TOcuUu0V+lhSd8RzfuAT4BLzZv3WQwBvc8ywXI/
-	 5JfcC7Y4WInO69Arbld8UFAQye92B1zYAw/bns7SyDGBCIaT8FVkPqDQDem4v+A921
-	 CKejzKtOHNGlDtCIAEWJj+9yli7InumZNWnuQ7GyxnlmqJ98L0GW1J/0fuF1UbCufM
-	 FPuwWYEjOQKkQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33E8C380AC00;
-	Tue, 29 Oct 2024 10:40:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730198495; c=relaxed/simple;
+	bh=CDxDPheZuIShbTxvGcnHynCpCSV2PBe5TGcpJ6O4hxw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LtvZnoi3PRg3QAjfbIiHYIrgfx/K+Gd2A9fQaRqhBFsJCPy+kCxYidhR9psm/7xTCUHQv2SpCxqmtVDlBfMrAZ37MGLU9fftSTbblbGBzo7F0AmbU5uC7yntkhsNiLnMNPDAfUcOKQgUJ/KOjGla7ZXx/0ol/nkNwmW3XEtybtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g6Deb+Ph; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T9QgvS004569;
+	Tue, 29 Oct 2024 10:41:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Hw0jxCeBaOwpy4JuP/bVGCjHkrcw66Z/6+sqZuhTue4=; b=g6Deb+Phxt14ZxHr
+	RrA2Tx7gOxMtj4Iv8v83XBsATdCwgVUJ+Z8VLL/4l91kIHNAb8n1ZMQz+yItDQ5x
+	bpRTkOdU+DB6r2P6AlPFhKHGiIPE8AGlTDzjIy38eLZTQryEtkLwSy2/zyK0hJAO
+	1KdXqfwzdbNZy8Jkx8J7wFr2EFTbZ24MaWtQYAc+zzcyMD9Z6MUs89t9dh64Uynw
+	QlGEyDrHWKc7AZscTKFKttz1YmiovGSU1BeyaSxZzfTPu5OFMER3v2ILhamdKzJl
+	ySJg80R2cc5U9hnDa4di3tuy5F4yU5wPTvjtGiILFoSBF/Y01MerSPiGLn3fjaNu
+	1eop/w==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gs6e81nt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 10:41:30 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TAfUFf027210
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 10:41:30 GMT
+Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 03:41:25 -0700
+Message-ID: <4d5d3c4d-098f-48ca-ba3a-289f5447e63a@quicinc.com>
+Date: Tue, 29 Oct 2024 18:41:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net v3] net: stmmac: dwmac4: Fix high address display by
- updating reg_space[] from register values
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173019843274.651132.6305065686659319919.git-patchwork-notify@kernel.org>
-Date: Tue, 29 Oct 2024 10:40:32 +0000
-References: <20241021054625.1791965-1-leyfoon.tan@starfivetech.com>
-In-Reply-To: <20241021054625.1791965-1-leyfoon.tan@starfivetech.com>
-To: Ley Foon Tan <leyfoon.tan@starfivetech.com>
-Cc: alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org, lftan.linux@gmai.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615: Add LLCC support for QCS615
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241011-add_llcc_dts_node_for_qcs615-v1-1-e7aa45244c36@quicinc.com>
+ <c81b26dc-1c52-42b6-ba68-95906b9c524c@oss.qualcomm.com>
+Content-Language: en-US
+From: Song Xue <quic_songxue@quicinc.com>
+In-Reply-To: <c81b26dc-1c52-42b6-ba68-95906b9c524c@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6kdHWveVhken_w6xJ8NvfNRpP8SuBgJ-
+X-Proofpoint-GUID: 6kdHWveVhken_w6xJ8NvfNRpP8SuBgJ-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 phishscore=0
+ malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 suspectscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290083
 
-Hello:
 
-This patch was applied to netdev/net.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
 
-On Mon, 21 Oct 2024 13:46:25 +0800 you wrote:
-> The high address will display as 0 if the driver does not set the
-> reg_space[]. To fix this, read the high address registers and
-> update the reg_space[] accordingly.
+On 10/26/2024 1:46 AM, Konrad Dybcio wrote:
+> On 11.10.2024 12:41 PM, Song Xue wrote:
+>> The QCS615 platform has LLCC(Last Level Cache Controller) as the system
+>> cache controller. It includes 1 LLCC instance and 1 LLCC broadcast
+>> interface.
+>>
+>> Add LLCC node support for the QCS615 platform.
+>>
+>> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
+>> ---
+>> This patch series depends on below patch series:
+>> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
+>> https://lore.kernel.org/linux-arm-msm/20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com/
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 8 ++++++++
+>>   1 file changed, 8 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> index ac4c4c751da1fbb28865877555ba317677bc6bd2..b718a4d2270d64ed43c2eca078bfe52b78ff680c 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+>> @@ -495,6 +495,14 @@ dc_noc: interconnect@9160000 {
+>>   			qcom,bcm-voters = <&apps_bcm_voter>;
+>>   		};
+>>   
+>> +		llcc: system-cache-controller@9200000 {
+>> +			compatible = "qcom,qcs615-llcc";
+>> +			reg = <0x0 0x9200000 0x0 0x50000>,
+>> +			      <0x0 0x9600000 0x0 0x50000>;
 > 
-> Fixes: fbf68229ffe7 ("net: stmmac: unify registers dumps methods")
-> Signed-off-by: Ley Foon Tan <leyfoon.tan@starfivetech.com>
+> Please pad both addresses to 8 hex digits (e.g. 0x09200000)
 > 
-> [...]
+> With that:
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> 
+> Konrad
+> 
+let me fix it.
 
-Here is the summary with links:
-  - [net,v3] net: stmmac: dwmac4: Fix high address display by updating reg_space[] from register values
-    https://git.kernel.org/netdev/net/c/f84ef58e5532
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+Thanks,
+Song
 
 
