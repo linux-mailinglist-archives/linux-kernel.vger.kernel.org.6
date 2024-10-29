@@ -1,113 +1,235 @@
-Return-Path: <linux-kernel+bounces-386374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C219B4299
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:53:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4579B429C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:54:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B9CD283969
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E2E01C21F10
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C031201278;
-	Tue, 29 Oct 2024 06:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TsCVp205"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48D38201279;
+	Tue, 29 Oct 2024 06:54:25 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC2E28E7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535DF28E7;
+	Tue, 29 Oct 2024 06:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730184804; cv=none; b=fvbXb61e46WtixAUKbNlW+Ovh5GFJXt3jVjAbjx7HmxX2zEa00Y2yCwdijhex7BKffgZK11x3Y8eClZSDnCxcZEkR2J6o47IR+IHmgviS+zoNCTfvNluqR4RictgtPCzE08Gj1KE0mgmmQkuSKeX7AguhDmFs/FtxwC2SvHO8ig=
+	t=1730184864; cv=none; b=rBYjmd1TON7BfJDqNk05POkT2KqEzpl0dkI7xfztunNbcs+NTo5EMbLmQzUgHNPdzpDT9iMAlQGuB3fmlXomF1ZJ8HEwTdF92c86hW36VJUjnP5b9SWOChyPXZoPoNmXfZqaCpc51YOgUSpv7pnR9k/Xb8dTKGqaTG5KVN7g6i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730184804; c=relaxed/simple;
-	bh=VI5gBCWScORZmQ5M5JKICCGe/z8Tu5nvu1z/DGuqTYk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BMYW8ZH1QJvUAzW7uDobIo0e6DXisIHnulxwq+E4EV9qOwK+IGbO6lu4AfIAo0KUj9gNMysmMU9cpDJ/m9t878UXJbpS09e3etejdkdGW1D+FddK9Ks/PSH0gfGeaBLlVY4/RAQfvuBpN/aYMiBa6HXgfWJ0TDQHmC1420FrIsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TsCVp205; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso4103857a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730184802; x=1730789602; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gxdqxmWJXdXU8AUeRm4skNzTB6cELoVffMjUmz4VZV4=;
-        b=TsCVp205Z2Rx58O5LNpZUuxsBJqxEYmRVNvrPr05GsIT1URTAfMgYQMYAEKnbzqUGR
-         yajxuID98PopypqyNE4CEFYQD8hTAUi2jV4fay16BNghfISNCYSMVfblB8bDOnrcAKI+
-         nGQ59tbKZbptMj2c6gimilCedT+Cj+tkMpFKZPwwx9+OFdj5IhX1iqyULBaaP09tm0+n
-         MwlMYNWfuGxHxouJHNjdluosOiPy9L8SbbFjV1FnC/bLROYaSZwew/NL3kr6S/7Z8+Qw
-         9xji6NMUiCEcBHTRJaDix1z6b6Oui5lgzyuSZlz0mWLToRDAkCOazRLMb6yl0XIdwN0S
-         R4hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730184802; x=1730789602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gxdqxmWJXdXU8AUeRm4skNzTB6cELoVffMjUmz4VZV4=;
-        b=XMpPRVSBuIkEo4ugeyQOUKgsgjipbvmk3DJM++IIlUJWg4Hx/iwErWuTiy3PzvT3+v
-         eC+uCV6/xt5Egd0Od5Z+fe75pe5K79SRFG47BNhL7JMlMttaPSw5XfOgdZHSVFkRVc62
-         cpVdIcvDtfEx8qahuRmCdgCvvvBqaR3LK+vBTdggk6e3ZCXWaPntuUETPKqvHC85IDrR
-         VI30HD+tJr6447cCy8qv5n7kc7bQzolf8d5ZbJwugFsNTIly7YAa+9heBlBVhorM296V
-         dnozpG9fIDnFjjYSxzco80spX8f4HevLv1wRqmGJC6ID9gKsgkcv7fnr9rfcCOc0PlMk
-         Hyhg==
-X-Forwarded-Encrypted: i=1; AJvYcCUnhBDa03B43i8c/zdCVHXOQP+DytcjY46sTGfVTjlQd2+dYHRhOKLNlAI2E+VkRGtbjb/ac3KmIbisvdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW1ugh/IJQeHL0WhSqMQw0ejDEZhzLacyyeARXHZPz1+ybnu4i
-	bEWD2lqMbfemWOatt724+WiRIVJjn0KACBt3EpsyD03mEEyOQWl564gsM9I7elU=
-X-Google-Smtp-Source: AGHT+IFmnh6BfWm9u00lcdmwhUncv3sqpOQIn0HAENF9MSk8JtP1yLm3zPeUH5AL8E7LPGeuXgJA4A==
-X-Received: by 2002:a05:6a21:3a4a:b0:1d9:1d2d:b656 with SMTP id adf61e73a8af0-1d9a83d9f36mr13743238637.15.1730184801978;
-        Mon, 28 Oct 2024 23:53:21 -0700 (PDT)
-Received: from localhost ([122.172.85.97])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057921daasm6909172b3a.37.2024.10.28.23.53.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 23:53:21 -0700 (PDT)
-Date: Tue, 29 Oct 2024 12:23:19 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Vanshidhar Konda <vanshikonda@os.amperecomputing.com>,
-	Sumit Gupta <sumitg@nvidia.com>, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org,
-	catalin.marinas@arm.com, rafael@kernel.org,
-	yang@os.amperecomputing.com, lihuisong@huawei.com,
-	zhanjie9@hisilicon.com, linux-tegra <linux-tegra@vger.kernel.org>,
-	Bibek Basu <bbasu@nvidia.com>
-Subject: Re: [PATCH v7 3/4] arm64: Provide an AMU-based version of
- arch_freq_avg_get_on_cpu
-Message-ID: <20241029065319.zto3wlvceec3fjym@vireshk-i7>
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-4-beata.michalska@arm.com>
- <aa254516-968e-4665-bb5b-981c296ffc35@nvidia.com>
- <ZvU4mR_FZa7jXUgk@arm.com>
- <ylcfqw4swz6xjxxfoyljyifs4ibbueywogqxusxfz3a3fgh3du@cfaajchbwgvn>
- <Zv8PKlr_PJgxazro@arm.com>
- <5y3yz2ct2o42c53dc6rwpse3andstjx74lowt2b3hohj4ogbct@nu2szdnxvxid>
- <Zwe1p0La_AFknglf@arm.com>
+	s=arc-20240116; t=1730184864; c=relaxed/simple;
+	bh=ac7i+WSWlNHFVbuWBcf7pw+gZj8RycgBGSILsV7Dq2s=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U9DPJAdE517y+LB86AJjPqq1T8ZKQPDWXZFX8jaP43Y7KBwYTpzcn6OeakHRJI0GSJs5wUal0kKjA5q5TBNtHTM9t7AkmvmKMEBRgHQ5wrJJRrvIZFr3ShY+7lMCC7oK82iofcwO4aLDDF3tq8ZmLj+SXsDwFm9KgROoku8y4Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Xd18b18yVz1HLll;
+	Tue, 29 Oct 2024 14:49:51 +0800 (CST)
+Received: from kwepemf200001.china.huawei.com (unknown [7.202.181.227])
+	by mail.maildlp.com (Postfix) with ESMTPS id 683B714037D;
+	Tue, 29 Oct 2024 14:54:18 +0800 (CST)
+Received: from huawei.com (10.110.54.32) by kwepemf200001.china.huawei.com
+ (7.202.181.227) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Oct
+ 2024 14:54:17 +0800
+From: liqiang <liqiang64@huawei.com>
+To: <wenjia@linux.ibm.com>, <jaka@linux.ibm.com>, <alibuda@linux.alibaba.com>,
+	<tonylu@linux.alibaba.com>, <guwen@linux.alibaba.com>
+CC: <linux-s390@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <luanjianhai@huawei.com>,
+	<zhangxuzhou4@huawei.com>, <dengguangxing@huawei.com>, <gaochao24@huawei.com>
+Subject: [PATCH] net/smc: Optimize the search method of reused buf_desc
+Date: Tue, 29 Oct 2024 14:54:15 +0800
+Message-ID: <20241029065415.1070-1-liqiang64@huawei.com>
+X-Mailer: git-send-email 2.23.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zwe1p0La_AFknglf@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemf200001.china.huawei.com (7.202.181.227)
 
-On 10-10-24, 13:08, Beata Michalska wrote:
-> That is a fair point but I am not entirely convinced using '0' instead makes
-> things any more clearer as this is in no way a valid CPU frequency.
-> As long as we document the expected behaviour keeping the interface well
-> defined,  both options should be fine I guess.
-> 
-> @Viresh: what is your opinion on that one ?
+We create a lock-less link list for the currently 
+idle reusable smc_buf_desc.
 
-Failing to get frequency for the CPU shouldn't be represented by 0,
-even if it is confusing for the user.
+When the 'used' filed mark to 0, it is added to 
+the lock-less linked list. 
 
+When a new connection is established, a suitable 
+element is obtained directly, which eliminates the 
+need for traversal and search, and does not require 
+locking resource.
+
+A lock-free linked list is a linked list that uses 
+atomic operations to optimize the producer-consumer model.
+
+Signed-off-by: liqiang <liqiang64@huawei.com>
+---
+ net/smc/smc_core.c | 46 ++++++++++++++++++++++++++++------------------
+ net/smc/smc_core.h |  4 ++++
+ 2 files changed, 32 insertions(+), 18 deletions(-)
+
+diff --git a/net/smc/smc_core.c b/net/smc/smc_core.c
+index 3b95828d9976..ac120f62313b 100644
+--- a/net/smc/smc_core.c
++++ b/net/smc/smc_core.c
+@@ -16,6 +16,7 @@
+ #include <linux/wait.h>
+ #include <linux/reboot.h>
+ #include <linux/mutex.h>
++#include <linux/llist.h>
+ #include <linux/list.h>
+ #include <linux/smc.h>
+ #include <net/tcp.h>
+@@ -872,6 +873,8 @@ static int smc_lgr_create(struct smc_sock *smc, struct smc_init_info *ini)
+ 	for (i = 0; i < SMC_RMBE_SIZES; i++) {
+ 		INIT_LIST_HEAD(&lgr->sndbufs[i]);
+ 		INIT_LIST_HEAD(&lgr->rmbs[i]);
++		init_llist_head(&lgr->rmbs_free[i]);
++		init_llist_head(&lgr->sndbufs_free[i]);
+ 	}
+ 	lgr->next_link_id = 0;
+ 	smc_lgr_list.num += SMC_LGR_NUM_INCR;
+@@ -1146,6 +1149,10 @@ static void smcr_buf_unuse(struct smc_buf_desc *buf_desc, bool is_rmb,
+ 		/* memzero_explicit provides potential memory barrier semantics */
+ 		memzero_explicit(buf_desc->cpu_addr, buf_desc->len);
+ 		WRITE_ONCE(buf_desc->used, 0);
++		if (is_rmb)
++			llist_add(&buf_desc->llist, &lgr->rmbs_free[buf_desc->bufsiz_comp]);
++		else
++			llist_add(&buf_desc->llist, &lgr->sndbufs_free[buf_desc->bufsiz_comp]);
+ 	}
+ }
+ 
+@@ -1172,6 +1179,8 @@ static void smc_buf_unuse(struct smc_connection *conn,
+ 		} else {
+ 			memzero_explicit(conn->sndbuf_desc->cpu_addr, conn->sndbuf_desc->len);
+ 			WRITE_ONCE(conn->sndbuf_desc->used, 0);
++			llist_add(&conn->sndbuf_desc->llist,
++				  &lgr->sndbufs_free[conn->sndbuf_desc->bufsiz_comp]);
+ 		}
+ 	}
+ 	if (conn->rmb_desc) {
+@@ -1181,6 +1190,8 @@ static void smc_buf_unuse(struct smc_connection *conn,
+ 			memzero_explicit(conn->rmb_desc->cpu_addr,
+ 					 conn->rmb_desc->len + sizeof(struct smcd_cdc_msg));
+ 			WRITE_ONCE(conn->rmb_desc->used, 0);
++			llist_add(&conn->rmb_desc->llist,
++				  &lgr->rmbs_free[conn->rmb_desc->bufsiz_comp]);
+ 		}
+ 	}
+ }
+@@ -2042,24 +2053,19 @@ int smc_uncompress_bufsize(u8 compressed)
+ 	return (int)size;
+ }
+ 
+-/* try to reuse a sndbuf or rmb description slot for a certain
+- * buffer size; if not available, return NULL
+- */
+-static struct smc_buf_desc *smc_buf_get_slot(int compressed_bufsize,
+-					     struct rw_semaphore *lock,
+-					     struct list_head *buf_list)
++/* use lock less list to save and find reuse buf desc */
++static struct smc_buf_desc *smc_buf_get_slot_free(struct llist_head *buf_llist)
+ {
+-	struct smc_buf_desc *buf_slot;
++	struct smc_buf_desc *buf_free;
++	struct llist_node *llnode;
+ 
+-	down_read(lock);
+-	list_for_each_entry(buf_slot, buf_list, list) {
+-		if (cmpxchg(&buf_slot->used, 0, 1) == 0) {
+-			up_read(lock);
+-			return buf_slot;
+-		}
+-	}
+-	up_read(lock);
+-	return NULL;
++	if (llist_empty(buf_llist))
++		return NULL;
++	// lock-less link list don't need an lock
++	llnode = llist_del_first(buf_llist);
++	buf_free = llist_entry(llnode, struct smc_buf_desc, llist);
++	WRITE_ONCE(buf_free->used, 1);
++	return buf_free;
+ }
+ 
+ /* one of the conditions for announcing a receiver's current window size is
+@@ -2364,6 +2370,7 @@ static int __smc_buf_create(struct smc_sock *smc, bool is_smcd, bool is_rmb)
+ 	struct smc_connection *conn = &smc->conn;
+ 	struct smc_link_group *lgr = conn->lgr;
+ 	struct list_head *buf_list;
++	struct llist_head *buf_llist;
+ 	int bufsize, bufsize_comp;
+ 	struct rw_semaphore *lock;	/* lock buffer list */
+ 	bool is_dgraded = false;
+@@ -2379,15 +2386,17 @@ static int __smc_buf_create(struct smc_sock *smc, bool is_smcd, bool is_rmb)
+ 	     bufsize_comp >= 0; bufsize_comp--) {
+ 		if (is_rmb) {
+ 			lock = &lgr->rmbs_lock;
++			buf_llist = &lgr->rmbs_free[bufsize_comp];
+ 			buf_list = &lgr->rmbs[bufsize_comp];
+ 		} else {
+ 			lock = &lgr->sndbufs_lock;
++			buf_llist = &lgr->sndbufs_free[bufsize_comp];
+ 			buf_list = &lgr->sndbufs[bufsize_comp];
+ 		}
+ 		bufsize = smc_uncompress_bufsize(bufsize_comp);
+ 
+ 		/* check for reusable slot in the link group */
+-		buf_desc = smc_buf_get_slot(bufsize_comp, lock, buf_list);
++		buf_desc = smc_buf_get_slot_free(buf_llist);
+ 		if (buf_desc) {
+ 			buf_desc->is_dma_need_sync = 0;
+ 			SMC_STAT_RMB_SIZE(smc, is_smcd, is_rmb, bufsize);
+@@ -2412,7 +2421,8 @@ static int __smc_buf_create(struct smc_sock *smc, bool is_smcd, bool is_rmb)
+ 
+ 		SMC_STAT_RMB_ALLOC(smc, is_smcd, is_rmb);
+ 		SMC_STAT_RMB_SIZE(smc, is_smcd, is_rmb, bufsize);
+-		buf_desc->used = 1;
++		WRITE_ONCE(buf_desc->used, 1);
++		WRITE_ONCE(buf_desc->bufsiz_comp, bufsize_comp);
+ 		down_write(lock);
+ 		list_add(&buf_desc->list, buf_list);
+ 		up_write(lock);
+diff --git a/net/smc/smc_core.h b/net/smc/smc_core.h
+index d93cf51dbd7c..32ff6a5f076c 100644
+--- a/net/smc/smc_core.h
++++ b/net/smc/smc_core.h
+@@ -188,10 +188,12 @@ struct smc_link {
+ /* tx/rx buffer list element for sndbufs list and rmbs list of a lgr */
+ struct smc_buf_desc {
+ 	struct list_head	list;
++	struct llist_node	llist;
+ 	void			*cpu_addr;	/* virtual address of buffer */
+ 	struct page		*pages;
+ 	int			len;		/* length of buffer */
+ 	u32			used;		/* currently used / unused */
++	int			bufsiz_comp;
+ 	union {
+ 		struct { /* SMC-R */
+ 			struct sg_table	sgt[SMC_LINKS_PER_LGR_MAX];
+@@ -278,8 +280,10 @@ struct smc_link_group {
+ 	unsigned short		vlan_id;	/* vlan id of link group */
+ 
+ 	struct list_head	sndbufs[SMC_RMBE_SIZES];/* tx buffers */
++	struct llist_head	sndbufs_free[SMC_RMBE_SIZES]; /* tx buffer free list */
+ 	struct rw_semaphore	sndbufs_lock;	/* protects tx buffers */
+ 	struct list_head	rmbs[SMC_RMBE_SIZES];	/* rx buffers */
++	struct llist_head	rmbs_free[SMC_RMBE_SIZES]; /* rx buffer free list */
+ 	struct rw_semaphore	rmbs_lock;	/* protects rx buffers */
+ 
+ 	u8			id[SMC_LGR_ID_SIZE];	/* unique lgr id */
 -- 
-viresh
+2.43.0
+
 
