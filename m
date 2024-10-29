@@ -1,188 +1,111 @@
-Return-Path: <linux-kernel+bounces-386558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FB5F9B4512
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:57:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4543C9B451B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:58:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE90B2273A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08E8C283C5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCA420400D;
-	Tue, 29 Oct 2024 08:57:18 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8B4204020;
+	Tue, 29 Oct 2024 08:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Y9OY8AFL"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D528E202F65
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:57:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1929C204008;
+	Tue, 29 Oct 2024 08:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730192238; cv=none; b=flVoH6O8Oh3Ge4g+jiiHYvAOtzJ6r/XPrNdl+3n/rgpvjDoZbx64Jv4AZK7XBeXsEo/6xo+E3td1myl4FnEPxMkQd585gObmpnOUFX51RH80+paqmZpo6azTIWTxVuNkGIirr+TF8yfA7Xkj2GGJ74VkElMR0H90zT1ib0cxMNY=
+	t=1730192312; cv=none; b=Rsv7vvLMlxTSF2ZIGX5Drm0Y9GIqEy05XG7UuU/kkd2mMDgatbwB7E9j/UbDLgfIIhEV8aaKEtsuOSbLoUhqO0NYHZaKoxYoWwTZ0a+0JNv5tQc1sVxiFCwwcBaUbZHreqaPvQnjmETC0kfIpKmeeeHDsIbUyas+qDu6mmh7m2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730192238; c=relaxed/simple;
-	bh=4Pz5cTRPw11z909m2kjm8d52XeDCnWJJZk62a3PC1cI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+e0smzEdTqKoFfyXXbe3I121ICn4CrZW/vrNCvH75SYkY8s9WPkNoH5CeZq4OmF5QHuXLEq9yi4NdY1SbV9Iko+JAbpZEzXXLK4sKirc8GOf41ZIwvnBEnAKT9c24ndEzRJs/RBwpV6N9bnUx1q/H3f3z/xpsmIBqR+Tmrcnvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5i2L-0002Tc-Cv; Tue, 29 Oct 2024 09:57:13 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5i2K-000zna-2n;
-	Tue, 29 Oct 2024 09:57:12 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 8C7793613D6;
-	Tue, 29 Oct 2024 08:57:12 +0000 (UTC)
-Date: Tue, 29 Oct 2024 09:57:12 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org
-Subject: Re: [RFC PATCH v2 3/6] can: dev: add helpers to setup an error frame
-Message-ID: <20241029-ancient-sepia-tamarin-26e5af-mkl@pengutronix.de>
-References: <20241029084525.2858224-1-dario.binacchi@amarulasolutions.com>
- <20241029084525.2858224-4-dario.binacchi@amarulasolutions.com>
+	s=arc-20240116; t=1730192312; c=relaxed/simple;
+	bh=Mtv6xcHR3vrKEBzplF/KSCB8awc7C2NPPkFWCNXXGJg=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=VDbcfArs55xWCbOujbL1DY4/QBVPKBuCuqlLQtGuYHdBNNDW/qSwSazlBOjT++I4DOZjHaxNxpid/BZg23s4Qa8VHpFv3Sz1v4ezmq42srms9X/66SIuNUapdHwpK31C9gsaK9Zh3vOHBrzH53PXxEj+RuqIGIy7KViX0HpKRXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Y9OY8AFL; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:9301:2bb5:b494:2d46:ba69])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 304504D4;
+	Tue, 29 Oct 2024 09:58:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730192306;
+	bh=Mtv6xcHR3vrKEBzplF/KSCB8awc7C2NPPkFWCNXXGJg=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Y9OY8AFLhethQJ/MDgLlrIGlZr7xy9FCivGRwSgJW7Kjm4Bo6ZlpMJVJ5xOwQoxK0
+	 sxA+u1AXCX1cx4JWZJYljNBusqNQ8AFHujrcKUi7JGzK6d5sCJQXVTiO2Dey9GLl4Q
+	 HLS2rVWwOR7BQRgLTfwNqUTn/OpY5Dz0UmFqbRac=
+From: Jai Luthra <jai.luthra@ideasonboard.com>
+Subject: [PATCH 0/3] media: i2c: imx219: Fixes for blanking and pixel rate
+Date: Tue, 29 Oct 2024 14:27:34 +0530
+Message-Id: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2ukyjm6xwt5qzlrb"
-Content-Disposition: inline
-In-Reply-To: <20241029084525.2858224-4-dario.binacchi@amarulasolutions.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH6jIGcC/x3LQQqAIBBA0avErBN0sMCuEhFmY80iC4UQxLsnL
+ R+fXyBRZEowdQUivZz4Dg2q78CdNhwkeG8GlKiVRCP4yqjM6jlTEpu31mk7jCgltOWJ9Id2zEu
+ tH9chiU9eAAAA
+X-Change-ID: 20241029-imx219_fixes-bfaac4a56200
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jai Luthra <jai.luthra@ideasonboard.com>, 
+ David Plowman <david.plowman@raspberrypi.com>, 
+ Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=843;
+ i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
+ bh=Mtv6xcHR3vrKEBzplF/KSCB8awc7C2NPPkFWCNXXGJg=;
+ b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnIKOuf5f5e1CZhfw5ZWMzS5OrsADmVPq6WGhcM
+ fAt92darJGJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZyCjrgAKCRBD3pH5JJpx
+ RcgTEADL1GjKq3WxJzx8aHxH8/UnOTJUP37uvSNxjFKMc4TZw0ucH19Isr8WQOzNhLWp+l2MC0p
+ fuMcnOraZ+k6vbeuzaFms8GoZmi3eS4qSjNh4iYUbLYGHKs/eIQuC0ICTXZ0BbxbmkZvxkF4KCn
+ 1u7K7XFbNva031BSOb56f7BF6f+gPxXBAvPRpy0iNjJUQ+PTUzt50/yEIG1H0B/akDDmCNPFEsV
+ Nl5rFqRHEtZYiTMQBE/XShvIqmLYZvF6z2nIJY43bIA2LlPCLt4vXW3LK9Dfq6oyhS+zU0tZfB2
+ Iv/xd4ytNaUCMlRnkDnQAPnc61HTnZa3mhg3iSMqLzdpn3cTXV1Vt5aUhSy4Vk0kgvoayeyMMRS
+ Df/ZKoc+v67SnGH2mZlUvF9KMbUIX3I9JS+eWqqbgM/NPEbt/uz4fbNmyn8C0q/2rooiKbAMWch
+ PCdDuobssNYswB5AwIijM++JoK2R5Nqu3zbxa6vlj8obNA7ufjdxVX5crZRRonsSw5inVfMzRME
+ c71RNgpI6eGlKT0QBJISXpq4Vpvgx9Vjn58SimkuUoU8cPpRhiQ2VSPpRBJxtv92zaFEHvWgt2V
+ i2saUF1Okybb2RUySAvEw4QB9yHlicNMje1FT27PcG7BtkOnhRwbehLyAexN8nRK+w0SPHaHHb5
+ eBN4ZsHAjeyOCew==
+X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
+ fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
 
+This series has a few fixes for improving h/v blanking and pixel rate
+reporting for the IMX219 sensor.
 
---2ukyjm6xwt5qzlrb
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v2 3/6] can: dev: add helpers to setup an error frame
-MIME-Version: 1.0
+These patches are picked and modified (and squashed where applicable)
+from the rpi-6.6.y vendor tree.
 
-On 29.10.2024 09:44:47, Dario Binacchi wrote:
-> These helpers can prevent errors and code duplication when setting up a
-> CAN error frame.
->=20
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
+---
+Dave Stevenson (1):
+      media: i2c: imx219: make HBLANK r/w to allow longer exposures
 
-AFAICS in the flexcan driver we don't need the "if (cf)" checks, do we?
-Having repeated NULL pointer checks don't feel right.
+David Plowman (1):
+      media: i2c: imx219: Correct the minimum vblanking value
 
-Marc
+Jai Luthra (1):
+      media: i2c: imx219: Scale the pixel rate for analog binning
 
->=20
-> ---
->=20
-> Changes in v2:
-> - Replace macros with static inline functions
-> - Update the commit message
->=20
->  include/linux/can/dev.h | 46 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
->=20
-> diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
-> index 0977656b366d..1b09d30dae32 100644
-> --- a/include/linux/can/dev.h
-> +++ b/include/linux/can/dev.h
-> @@ -168,6 +168,52 @@ static inline bool can_dev_dropped_skb(struct net_de=
-vice *dev, struct sk_buff *s
->  	return can_dropped_invalid_skb(dev, skb);
->  }
-> =20
-> +static inline void can_frame_error_init(struct can_frame *cf)
-> +{
-> +	if (cf)
-> +		cf->can_id |=3D CAN_ERR_PROT | CAN_ERR_BUSERROR;
-> +}
-> +
-> +static inline void can_frame_set_err_bit0(struct can_frame *cf)
-> +{
-> +	if (cf)
-> +		cf->data[2] |=3D CAN_ERR_PROT_BIT0;
-> +}
-> +
-> +static inline void can_frame_set_err_bit1(struct can_frame *cf)
-> +{
-> +	if (cf)
-> +		cf->data[2] |=3D CAN_ERR_PROT_BIT1;
-> +}
-> +
-> +static inline void can_frame_set_err_ack(struct can_frame *cf)
-> +{
-> +	if (cf) {
-> +		cf->can_id |=3D CAN_ERR_ACK;
-> +		cf->data[3] =3D CAN_ERR_PROT_LOC_ACK;
-> +	}
-> +}
-> +
-> +static inline void can_frame_set_err_crc(struct can_frame *cf)
-> +{
-> +	if (cf) {
-> +		cf->data[2] |=3D CAN_ERR_PROT_BIT;
-> +		cf->data[3] =3D CAN_ERR_PROT_LOC_CRC_SEQ;
-> +	}
-> +}
-> +
-> +static inline void can_frame_set_err_form(struct can_frame *cf)
-> +{
-> +	if (cf)
-> +		cf->data[2] |=3D CAN_ERR_PROT_FORM;
-> +}
-> +
-> +static inline void can_frame_set_err_stuff(struct can_frame *cf)
-> +{
-> +	if (cf)
-> +		cf->data[2] |=3D CAN_ERR_PROT_STUFF;
-> +}
-> +
->  void can_setup(struct net_device *dev);
-> =20
->  struct net_device *alloc_candev_mqs(int sizeof_priv, unsigned int echo_s=
-kb_max,
-> --=20
-> 2.43.0
->=20
->=20
+ drivers/media/i2c/imx219.c | 186 +++++++++++++++++++++++++++++++--------------
+ 1 file changed, 130 insertions(+), 56 deletions(-)
+---
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+change-id: 20241029-imx219_fixes-bfaac4a56200
 
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+Best regards,
+-- 
+Jai Luthra <jai.luthra@ideasonboard.com>
 
---2ukyjm6xwt5qzlrb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcgo2UACgkQKDiiPnot
-vG/cPwf+NgF87abqp/jRHSmzOHRF7D/nsE46qfdm16FjPfy7w2Vbstddg1KFFSxk
-OyXLkA0HckvPhrU3ox8gXlgjBNc89Brjr+n0KtNCltDGucjrOf+sD5Zzxd4yD/L9
-Otn8hurW5rVW57yWIp0wZ1zYqL83uLPkUs07uHugVQYOFauHN0wK1BabHeBzA9n2
-W9FBc//hrmHdPg58xE2PcPyA6mEjcQ66wuWtX/RCaZn/Ew//1sYluNonfvOlUdXg
-ytpe9IQJLrohvOKRgYoWg3i5m1izzxztM4cSlUzrLEhTfLhwo9XlzSwDyMUAEWuz
-r6i3GlBpTS5O37LJlY7Ec0RLeLWYjQ==
-=/nIP
------END PGP SIGNATURE-----
-
---2ukyjm6xwt5qzlrb--
 
