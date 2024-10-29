@@ -1,252 +1,194 @@
-Return-Path: <linux-kernel+bounces-387578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D8579B5328
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:14:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7489B5331
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:16:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07C8281C41
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:14:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C9241C2295E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:16:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53472076B8;
-	Tue, 29 Oct 2024 20:14:25 +0000 (UTC)
-Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F051E2076CE;
+	Tue, 29 Oct 2024 20:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="f231kfJm"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255091DEFD0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:14:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DABD1DB943;
+	Tue, 29 Oct 2024 20:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730232865; cv=none; b=e8H7+nIdI1UCyTbgXTphy2hAaH2ghySj1m5WkzTG+5DHopE7o46/5IapN25QzXq7qbJ6HKDBQ2hHimizhb9JEy7MYZCGXx0/JX77bMTqSba9IFwFCa/mjW/tiinPe4LirddRqbXwrRPyGy/OzB83sBZYszUdmGzXIqpwFV5PA48=
+	t=1730232985; cv=none; b=Y7BVo0QVWDUdvv2J4vexD670o+Q0opex3BW+L6BfkZcmhmJpEB/q+9MW5NIGWQun9aijrAAN0A4WG47zy8KAkwHKj0+rhXIb5TtMerrTqsaVHAj4lwYHDKbFd9HuYpm9A5/F3pb126tI1jMepBTl01y0nt9MWOkRaBbmM5rdC5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730232865; c=relaxed/simple;
-	bh=/WXO8zC1tMtIE11ww7hVOXlZN/bNRSd8hZhLxkXpuO4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mI6e2ASQe1TYl+ftBMn82wECzjMTo+2AYFB4rn4mJwV89pF+6v8DTxWWcLe/7FZ7w+PIlkAlvWx/kTqSTP92p0slm/OYc8OmY3HU/HZq4vWuvxS3ZeL5W4YVEyL1iaVva7D7nfbX0wh5Qfw+qWkln0TMuNP+VBp3Gxap2ctX5yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
-	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
-	id 5852ce3b-9632-11ef-9a70-005056bd6ce9;
-	Tue, 29 Oct 2024 22:14:04 +0200 (EET)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 29 Oct 2024 22:14:04 +0200
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] iio: adc: ad7380: add alert support
-Message-ID: <ZyFCDHsA4hoVnNy2@surfacebook.localdomain>
-References: <20241029-ad7380-add-alert-support-v1-1-d0359401b788@baylibre.com>
+	s=arc-20240116; t=1730232985; c=relaxed/simple;
+	bh=al/xwvq27s8QRhRPjGPRbgcotyOPaFKIbubTWs0tcNA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qMVv4Vug/AkSlpHs0mdzUk0uwo91AQTG+OkQSWpWSQgCdwUh98zec79SwGie1JDqppxPkBEYYgAF4OxHXg/OdLa9x/1CXDfgaumGvNcp7kMzrogmrgQE7Eaq1by1GCJ98QMTKQuRe2JlvIXLZg6qNx6EzHUXv+Ta8Xjuv7oWhFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=f231kfJm; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 1EACB40E0191;
+	Tue, 29 Oct 2024 20:16:20 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zmX8fzjVO5aN; Tue, 29 Oct 2024 20:16:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730232975; bh=C8woab/HVpTEdWSqbGbWHPK4TMUsahu9vIQAcQ2mkdo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f231kfJmRUCtl4M1EDV4aVpEFrpi3fTbRG64EBB2rl90j3llW/hr7CAEEQwFXuAnA
+	 nnVVhAJaQAA+NSiELcyoSUvRqbgYm+pU30Bn2MM4UDSVXJJojgWIuvs5654vAh3kin
+	 qFCvq4Exs2nABJZ1+cFoFnbda+PqsTjWD7XVQ0toH2kaw9Fku9B/DxfslROIF5ryLd
+	 jRTom6SwQgqLHELeKrpdjLGwYX4S0drdddoKpug2PvciAnsv1sZt32PEaW4eTrXfFf
+	 clIfxIrf8h+XhE5OMendMIVelFpWRdJisbb9JlIzTPai2w4XaAmAYpud4HysbqlyuN
+	 ahd/xqiCj7tfdG5p13ydXbB60XONM/EETz0/ErTTBKweHoC9pCRl61xpGU0+kzxqur
+	 T4bcZk5zMivRCG+Nn73IG1+F1qVwpBDXrs7okbbotcX6UUd4xlktl6VhMyZ97eTX32
+	 QnTzATB+Fm43ThOavpQCBII9tJ/M1A2c2od/Y+VeIcZIzkccyJiklPCgQ7mk2meGFH
+	 ne1BPzkwR26r28i/ioYitcRMlWtxToSAvCCi+rXmaxK9aUvM/2dysp+dXMH5CrRsF8
+	 YCj6y0JJB42uh1HbLDyvDdHJqydLPJ0twuRm5E1egJCzVNIsEppWJscUdOw/nqavWA
+	 88BOcUSzKiMVWtRt/aaBiqsk=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7244040E0028;
+	Tue, 29 Oct 2024 20:15:28 +0000 (UTC)
+Date: Tue, 29 Oct 2024 21:15:27 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: shiju.jose@huawei.com
+Cc: linux-edac@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, gregkh@linuxfoundation.org,
+	sudeep.holla@arm.com, jassisinghbrar@gmail.com,
+	dave.jiang@intel.com, alison.schofield@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+	Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
+	rientjes@google.com, jiaqiyan@google.com, Jon.Grimm@amd.com,
+	dave.hansen@linux.intel.com, naoya.horiguchi@nec.com,
+	james.morse@arm.com, jthoughton@google.com, somasundaram.a@hpe.com,
+	erdemaktas@google.com, pgonda@google.com, duenwen@google.com,
+	gthelen@google.com, wschwartz@amperecomputing.com,
+	dferguson@amperecomputing.com, wbs@os.amperecomputing.com,
+	nifan.cxl@gmail.com, tanxiaofei@huawei.com,
+	prime.zeng@hisilicon.com, roberto.sassu@huawei.com,
+	kangkang.shen@futurewei.com, wanghuiqiang@huawei.com,
+	linuxarm@huawei.com
+Subject: Re: [PATCH v14 07/14] cxl/memfeature: Add CXL memory device patrol
+ scrub control feature
+Message-ID: <20241029201527.GTZyFCX_foMR_GouGN@fat_crate.local>
+References: <20241025171356.1377-1-shiju.jose@huawei.com>
+ <20241025171356.1377-8-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241029-ad7380-add-alert-support-v1-1-d0359401b788@baylibre.com>
+In-Reply-To: <20241025171356.1377-8-shiju.jose@huawei.com>
 
-Tue, Oct 29, 2024 at 04:02:46PM +0100, Julien Stephan kirjoitti:
-> The alert functionality is an out of range indicator and can be used as an
-> early indicator of an out of bounds conversion result.
-> 
-> ALERT_LOW_THRESHOLD and ALERT_HIGH_THRESHOLD registers are common to all
-> channels.
-> 
-> When using 1 SDO line (only mode supported by the driver right now), i.e
-> data outputs only on SDOA, SDOB (or SDOD for 4 channels variants) is
-> used as an alert pin. The alert pin is updated at the end of the
-> conversion (set to low if an alert occurs) and is cleared on a falling
-> edge of CS.
-> 
-> The ALERT register contains information about the exact alert status:
-> channel and direction. Unfortunately we can't read this register because
-> in buffered read we cannot claim for direct mode.
-> 
-> User can set high/low thresholds and enable event detection using the
-> regular iio events:
-> 
->   events/in_thresh_falling_value
->   events/in_thresh_rising_value
->   events/thresh_either_en
-> 
-> Because we cannot read ALERT register, we can't determine the exact
-> channel that triggers the alert, neither the direction (hight/low
-> threshold violation), so we send and IIO_EV_DIR_EITHER event for all
-> channels. This is ok, because the primary use case for this chip is to
-> hardwire the alert line to shutdown the device.
-> 
-> When reading a channel raw data, we have to trigger 2 spi transactions: a
-> first transaction that will trigger a conversion and a second
-> transaction to read the conversion. By design a new conversion is
-> initiated on each falling edge of CS. This will trigger a second
-> interrupt. To avoid that we disable irq in the hard irq handler and
-> re-enable them in thread handler.
-
-...
-
->  #include <linux/iio/buffer.h>
->  #include <linux/iio/iio.h>
-> +#include <linux/iio/events.h>
-
-Perhaps keep it ordered?
-
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
-
-...
-
-> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> +		struct ad7380_state *st = iio_priv(indio_dev);
-> +		int ret;
+On Fri, Oct 25, 2024 at 06:13:48PM +0100, shiju.jose@huawei.com wrote:
+> diff --git a/Documentation/edac/edac-scrub.rst b/Documentation/edac/edac-scrub.rst
+> new file mode 100644
+> index 000000000000..4aad4974b208
+> --- /dev/null
+> +++ b/Documentation/edac/edac-scrub.rst
+> @@ -0,0 +1,74 @@
+> +.. SPDX-License-Identifier: GPL-2.0
 > +
-> +		if (state == st->alert_en)
-> +			return 0;
+> +===================
+> +EDAC Scrub control
+> +===================
 > +
-> +		/*
-> +		 * According to the datasheet, high threshold must always be
-> +		 * greater than low threshold
-
-Missed period at the end.
-
-> +		 */
-> +		if (state && st->high_th < st->low_th)
-> +			return -EINVAL;
+> +Copyright (c) 2024 HiSilicon Limited.
 > +
-> +		ret = regmap_update_bits(st->regmap,
-> +					 AD7380_REG_ADDR_CONFIG1,
-> +					 AD7380_CONFIG1_ALERTEN,
-> +					 FIELD_PREP(AD7380_CONFIG1_ALERTEN, state));
+> +:Author:   Shiju Jose <shiju.jose@huawei.com>
+> +:License:  The GNU Free Documentation License, Version 1.2
+> +          (dual licensed under the GPL v2)
+> +:Original Reviewers:
 > +
-> +		if (ret)
-> +			return ret;
+> +- Written for: 6.13
+> +- Updated for:
 > +
-> +		st->alert_en = state;
+> +Introduction
+> +------------
+> +The EDAC enhancement for RAS featurues exposes interfaces for controlling
+> +the memory scrubbers in the system. The scrub device drivers in the
+> +system register with the EDAC scrub. The driver exposes the
+> +scrub controls to user in the sysfs.
 > +
-> +		return 0;
-> +	}
-> +	unreachable();
-> +}
-
-...
-
-> +static int ad7380_write_event_value(struct iio_dev *indio_dev,
-> +				    const struct iio_chan_spec *chan,
-> +				    enum iio_event_type type,
-> +				    enum iio_event_direction dir,
-> +				    enum iio_event_info info,
-> +				    int val, int val2)
-> +{
-> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
-> +		struct ad7380_state *st = iio_priv(indio_dev);
-> +		int ret;
+> +The File System
+> +---------------
 > +
-> +		/*
-> +		 * According to the datasheet,
-> +		 * AD7380_REG_ADDR_ALERT_HIGH_TH[11:0] are the MSB of the 16-bit
-> +		 * internal alert high register. LSB are set to 0x0.
-> +		 * AD7380_REG_ADDR_ALERT_LOW_TH[11:0] are the MSB of the 16 bit
-> +		 * internal alert low register. LSB are set to 0xf.
-> +		 *
-> +		 * When alert is enabled the conversion from the adc is compared
-> +		 * immediately to the alert high/low thresholds, before any
-> +		 * oversampling. This means that the thresholds are the same for
-> +		 * normal mode and oversampling mode.
-> +		 * For 12 and 14 bits, the thresholds are still on 16 bits.
-> +		 */
-> +		if (val < 0 || val > 2047)
-
-What about having val >= BIT(11) here?
-
-> +			return -EINVAL;
+> +The control attributes of the registered scrubber instance could be
+> +accessed in the /sys/bus/edac/devices/<dev-name>/scrub*/
 > +
-> +		switch (dir) {
-> +		case IIO_EV_DIR_RISING:
-> +			ret = regmap_write(st->regmap,
-> +					   AD7380_REG_ADDR_ALERT_HIGH_TH,
-> +					   val);
-> +			if (!ret)
-> +				st->high_th = val << 4 | 0xf;
-
-GENMASK() ? Predefined constant?
-
-> +			return ret;
-
-
-			if (ret)
-				return ret;
-			...
-			return 0;
-
-(yes, more verbose, but better for reading and maintenance)
-
-> +		case IIO_EV_DIR_FALLING:
-> +			ret = regmap_write(st->regmap,
-> +					   AD7380_REG_ADDR_ALERT_LOW_TH,
-> +					   val);
-> +			if (!ret)
-> +				st->low_th = val << 4;
-> +			return ret;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	unreachable();
-> +}
-
-...
-
-> +	st->high_th = 0x7ff;
-> +	st->low_th = 0x800;
-
-I would go with BIT(11) - 1 and BIT(11) as it seems related to the amount of
-bits in the hardware.
-
-...
-
-> +static irqreturn_t ad7380_event_handler(int irq, void *private)
-> +{
-> +	struct iio_dev *indio_dev = private;
-> +	s64 timestamp = iio_get_time_ns(indio_dev);
-> +	struct ad7380_state *st = iio_priv(indio_dev);
-> +	const struct iio_chan_spec *chan = &indio_dev->channels[0];
-> +	int i = 0, j = 0;
-
-Why signed? And for 'i' the assignment is redundant.
-
+> +sysfs
+> +-----
 > +
-> +	for (i = 0; i < st->chip_info->num_channels - 1; i++) {
-> +		iio_push_event(indio_dev,
-> +			       chan->differential ?
-> +			       IIO_DIFF_EVENT_CODE(IIO_VOLTAGE,
-> +						   j,
-> +						   j + 1,
-> +						   IIO_EV_TYPE_THRESH,
-> +						   IIO_EV_DIR_EITHER) :
-> +			       IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE,
-> +						    i,
-> +						    IIO_EV_TYPE_THRESH,
-> +						    IIO_EV_DIR_EITHER),
-> +			       timestamp);
-> +		j += 2;
-> +	}
+> +Sysfs files are documented in
+> +`Documentation/ABI/testing/sysfs-edac-scrub-control`.
 > +
-> +	enable_irq(irq);
+> +Example
+> +-------
 > +
-> +	return IRQ_HANDLED;
-> +}
+> +The usage takes the form shown in this example::
+> +
+> +1. CXL memory device patrol scrubber
+> +1.1 device based
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/min_cycle_duration
+> +3600
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/max_cycle_duration
+> +918000
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/current_cycle_duration
+> +43200
+> +root@localhost:~# echo 54000 > /sys/bus/edac/devices/cxl_mem0/scrub0/current_cycle_duration
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/current_cycle_duration
+> +54000
+> +root@localhost:~# echo 1 > /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
+> +1
+> +root@localhost:~# echo 0 > /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_mem0/scrub0/enable_background
+> +0
+> +
+> +1.2. region based
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/min_cycle_duration
+> +3600
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/max_cycle_duration
+> +918000
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/current_cycle_duration
+> +43200
+> +root@localhost:~# echo 54000 > /sys/bus/edac/devices/cxl_region0/scrub0/current_cycle_duration
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/current_cycle_duration
+> +54000
+> +root@localhost:~# echo 1 > /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
+> +1
+> +root@localhost:~# echo 0 > /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
+> +root@localhost:~# cat /sys/bus/edac/devices/cxl_region0/scrub0/enable_background
+> +0
+
+This file's addition belongs to some EDAC patch in the series, not here.
+
+It could be a separate, last patch in the series too, once everything is
+settled.
+
+Thx.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Regards/Gruss,
+    Boris.
 
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
