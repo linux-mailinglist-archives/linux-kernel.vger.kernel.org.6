@@ -1,95 +1,302 @@
-Return-Path: <linux-kernel+bounces-387690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B4779B54B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:07:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24C339B54BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:12:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B94512841B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:07:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E4028413B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:12:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E6F20721D;
-	Tue, 29 Oct 2024 21:07:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483502076DA;
+	Tue, 29 Oct 2024 21:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VX2JqPLk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S6jF3v8Y"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B31D3207
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CFF204011
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:12:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730236068; cv=none; b=DyQtsuDEui0J/pbkQ8oV5Eqnf6dbWNQOy/RlEemtxpy21kQcOHhHDSa6OAPT5BxvG3fTnCm7nKisI1bqzFZQBxaApGNJH8h4DarhPovc6ozIMvXNepp2IdjpJRVkSFiQmX084vvb1Z/e4NpUswlZSG3tGeUtF/Y5euMGYwJHq3k=
+	t=1730236342; cv=none; b=o810jmMF5P1NRR7vV0M7CSy6Q9m41KQzdaI5b4yEJh7KpKC+1IA+91tiq9P6SSALzx/tmeSxNfa4AaGuPdfx1pF+NthNDZE/GAEGzhi9WZJ+rOUZmOQxXZwSXdKdjAhi5GotkuetC+eUcxWwazejK0ORyugOVlmHHAgUpkS7skI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730236068; c=relaxed/simple;
-	bh=e6THEqLuryUAEjOAmZVpeKc69TqrxSmB9069AO6oeds=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ecnKqpvKBMQM5aoH3Cy3yWRg5/xO2TDE6fHDqqtUixDJzPlf5BkYX5gjC3UG7uBBKTLEEXCvq48OCxcPXAr4Wgfg5naBh18ZydhWRw6bopnMf7q1/JySoLNPsdjiyNKr/YG0skvCuhJvnPtoxMC99RHtyJLxW6zSTXFMNfufhJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VX2JqPLk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7184BC4CECD;
-	Tue, 29 Oct 2024 21:07:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730236067;
-	bh=e6THEqLuryUAEjOAmZVpeKc69TqrxSmB9069AO6oeds=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=VX2JqPLkki4vYc7S6Q88G3DwLAvXyPyt8cW2UkDZt7VJLRjUw41HUiXGYYBjx9hoh
-	 IG4zcVg5yiNOAUHIxouQAeyaNLaBbS4GLNU4DlKwT+Fbgd2rxO9O/mAoLCnCohgs9n
-	 uhntfkx8xt9aLS5KRSsJHU7F5mGU+S99R18tYwTmm9yQ/OiFv6fft+Vc3iFymfNCLk
-	 iQJlwiA4H50eCeZkcU4PyVEjyMLQxNO+6FxShvvKE2wBCz3xri4CDgMcUt8DgZR4HL
-	 sC5vXHi0D/BK4+9x/wAwfUvREW/gy8jCH7fffeIQ9g7PyA7bW77JGv8HqFYJDIpaf4
-	 kQYb2/PVZPzMQ==
-From: Mark Brown <broonie@kernel.org>
-To: Cheng-Cheng Lo <locc@google.com>
-Cc: linux-kernel@vger.kernel.org
-In-Reply-To: <20241029081941.3264566-1-locc@google.com>
-References: <20241029081941.3264566-1-locc@google.com>
-Subject: Re: [PATCH] regmap: kunit: Fix repeated test param
-Message-Id: <173023606719.179218.11325012064814139935.b4-ty@kernel.org>
-Date: Tue, 29 Oct 2024 21:07:47 +0000
+	s=arc-20240116; t=1730236342; c=relaxed/simple;
+	bh=jsJdW77K/F27zI3fAtOfpDr+t87mADEpuKcLTwvGZKs=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FOkMES3VRgV4gPgP7Cpk8CVyqZy3xbGmwZWMxrgaCf8LTVQA1PWX9N4Agx8AxpzvosGLmIW3zwHL9USMDVjwGTFh58Lt8iEvc6Kb0+F3QVsVVjH84eceCVupk6NBWjrM6+wScq3YgTQHKTYiiD//Xw5dHdrYUjewt9LusaFJLg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S6jF3v8Y; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e315a5b199so108371047b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730236339; x=1730841139; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FPhiy+s+yCTJqEn5/E+L2J/2UCA8LWK4fta0QlMSnic=;
+        b=S6jF3v8YEcMZ5gXCcxeRW8unqI66219XGIvYrhVMnddT8TrTIZNRhYkU09G9v/fX7n
+         NxrSnAa3fImv4MY6OiVogfmigUYTZlq31iliH/D7+9PBIHaUgdUwJiKreMuB6ODvTEZX
+         AB36KpMdmRH2RAzr7cSGmin0Vwj7VknHw7Q+RckzwiyO59+Bw5WNS9g2rF0cd0MP1YUl
+         O5IZ1dzQT5RI/IeRfX4jKoG6GdTlScq6W80xjzDY/9+oxa4aEBlPf97VsJukdU6PfCuv
+         C/jbAATQBbckT1oHh+aGefO7/cajRRUjVkPUrAnG9NznFUxPu00V8NnCnPITHRq+UtMh
+         2BZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730236339; x=1730841139;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FPhiy+s+yCTJqEn5/E+L2J/2UCA8LWK4fta0QlMSnic=;
+        b=mrsJk+zMjQ+tNIFxv5X81OmuNhjc9DohjeKsMMZwRopCXw3bjs9nKDpHJHtkKZHL0Y
+         kneIp79ZgTkTy/uUH6P1KfSQOXnVaf65iyBAbDplSL6WcnM9RTQHkcZuOrV25VfVVJoe
+         ckNXQNSi2VcLIB1QWUwOMRQfOEqnZXFmVZxo0ZyPX3hFKjn65w74Ipbho99V+CBECU5U
+         Luh06RcZR3NjszhNI7PVbKAtnaS752UtxrSbutyNj/Pm8OZkpM9fD+572+tEhJhguYj8
+         i7zSOreM4Nv3Xg5rjMbOaubwRhgCOfmRYzyTJVu+oVsoU2fwTv8kE6jTiBwiqnzGK46A
+         EO+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUJGfIfyYn+xPcrzyVe9ba1fQKSoOODDnwKwrM9WJCzcFOH9MwDYZ133miITCnCes0DgKyfXtM2PgsswEs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5vn3uWU0oXu1FWYKdLxfldu0asOqG6rvgGt/8yAiP5neV4mDA
+	uvRzCh1+yTtGUmJ3Y//IXZnBxDKOCyXez30S4ir+aqmQppdTpsu0ttnd8OgHSsC3qNOTbhr3VHi
+	xY6OEAw==
+X-Google-Smtp-Source: AGHT+IF/0bGeYrUGkOHkdN/vXLCX587JqgdQHIHT6TdmwV/CsfY5GUUMX2vNyykt2EABfkhMtirshhyO8pXT
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a81:a8c4:0:b0:6e3:2693:ca6b with SMTP id
+ 00721157ae682-6e9d897c43cmr3222487b3.2.1730236339381; Tue, 29 Oct 2024
+ 14:12:19 -0700 (PDT)
+Date: Tue, 29 Oct 2024 21:12:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIALBPIWcC/x3MOwqAMBCE4avI1gY0vtCriIXGURfUhI0EQby7w
+ Wr4ivkf8hCGpy55SBDYsz0j8jQhs43nCsVzNOlMl3mmWyU4bIDC7axcUf+4XTVFXZnajMUEUHw 7wcL3X+6H9/0AfvrzB2kAAAA=
+X-Change-Id: 20241029-remove-export-report-pl-7365c6ca3bee
+X-Mailer: b4 0.15-dev
+Message-ID: <20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com>
+Subject: [PATCH] scripts: Remove export_report.pl
+From: Matthew Maurer <mmaurer@google.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org, 
+	Sami Tolvanen <samitolvanen@google.com>, Matthew Maurer <mmaurer@google.com>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
 
-On Tue, 29 Oct 2024 16:19:41 +0800, Cheng-Cheng Lo wrote:
-> There're duplicated elements in the test param real_cache_types_list. The
-> second one shoulde have cache type REGCACHE_MAPLE.
-> 
-> 
+This script has been broken for 5 years with no user complaints.
 
-Applied to
+It first had its .mod.c parser broken in commit a3d0cb04f7df ("modpost:
+use __section in the output to *.mod.c"). Later, it had its object file
+enumeration broken in commit f65a486821cf ("kbuild: change module.order
+to list *.o instead of *.ko"). Both of these changes sat for years with
+no reports.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
+Rather than reviving this script as we make further changes to `.mod.c`,
+this patch gets rid of it because it is clearly unused.
 
-Thanks!
+Signed-off-by: Matthew Maurer <mmaurer@google.com>
+---
+ scripts/export_report.pl | 186 -----------------------------------------------
+ 1 file changed, 186 deletions(-)
 
-[1/1] regmap: kunit: Fix repeated test param
-      commit: 96a54082424dc9d430076563031d9b576176674e
+diff --git a/scripts/export_report.pl b/scripts/export_report.pl
+deleted file mode 100755
+index feb3d5542a62d90b7af4f041d98a3c4b5ac386c0..0000000000000000000000000000000000000000
+--- a/scripts/export_report.pl
++++ /dev/null
+@@ -1,186 +0,0 @@
+-#!/usr/bin/env perl
+-# SPDX-License-Identifier: GPL-2.0-only
+-#
+-# (C) Copyright IBM Corporation 2006.
+-#	Author : Ram Pai (linuxram@us.ibm.com)
+-#
+-# Usage: export_report.pl -k Module.symvers [-o report_file ] -f *.mod.c
+-#
+-
+-use warnings;
+-use Getopt::Std;
+-use strict;
+-
+-sub numerically {
+-	my $no1 = (split /\s+/, $a)[1];
+-	my $no2 = (split /\s+/, $b)[1];
+-	return $no1 <=> $no2;
+-}
+-
+-sub alphabetically {
+-	my ($module1, $value1) = @{$a};
+-	my ($module2, $value2) = @{$b};
+-	return $value1 <=> $value2 || $module2 cmp $module1;
+-}
+-
+-sub print_depends_on {
+-	my ($href) = @_;
+-	print "\n";
+-	for my $mod (sort keys %$href) {
+-		my $list = $href->{$mod};
+-		print "\t$mod:\n";
+-		foreach my $sym (sort numerically @{$list}) {
+-			my ($symbol, $no) = split /\s+/, $sym;
+-			printf("\t\t%-25s\n", $symbol);
+-		}
+-		print "\n";
+-	}
+-	print "\n";
+-	print "~"x80 , "\n";
+-}
+-
+-sub usage {
+-        print "Usage: @_ -h -k Module.symvers  [ -o outputfile ] \n",
+-	      "\t-f: treat all the non-option argument as .mod.c files. ",
+-	      "Recommend using this as the last option\n",
+-	      "\t-h: print detailed help\n",
+-	      "\t-k: the path to Module.symvers file. By default uses ",
+-	      "the file from the current directory\n",
+-	      "\t-o outputfile: output the report to outputfile\n";
+-	exit 0;
+-}
+-
+-sub collectcfiles {
+-    my @file;
+-    open my $fh, '< modules.order' or die "cannot open modules.order: $!\n";
+-    while (<$fh>) {
+-	s/\.ko$/.mod.c/;
+-	push (@file, $_)
+-    }
+-    close($fh);
+-    chomp @file;
+-    return @file;
+-}
+-
+-my (%SYMBOL, %MODULE, %opt, @allcfiles);
+-
+-if (not getopts('hk:o:f',\%opt) or defined $opt{'h'}) {
+-        usage($0);
+-}
+-
+-if (defined $opt{'f'}) {
+-	@allcfiles = @ARGV;
+-} else {
+-	@allcfiles = collectcfiles();
+-}
+-
+-if (not defined $opt{'k'}) {
+-	$opt{'k'} = "Module.symvers";
+-}
+-
+-open (my $module_symvers, '<', $opt{'k'})
+-    or die "Sorry, cannot open $opt{'k'}: $!\n";
+-
+-if (defined $opt{'o'}) {
+-    open (my $out, '>', $opt{'o'})
+-	or die "Sorry, cannot open $opt{'o'} $!\n";
+-
+-    select $out;
+-}
+-
+-#
+-# collect all the symbols and their attributes from the
+-# Module.symvers file
+-#
+-while ( <$module_symvers> ) {
+-	chomp;
+-	my (undef, $symbol, $module, $gpl, $namespace) = split('\t');
+-	$SYMBOL { $symbol } =  [ $module , "0" , $symbol, $gpl];
+-}
+-close($module_symvers);
+-
+-#
+-# collect the usage count of each symbol.
+-#
+-my $modversion_warnings = 0;
+-
+-foreach my $thismod (@allcfiles) {
+-	my $module;
+-
+-	unless (open ($module, '<', $thismod)) {
+-		warn "Sorry, cannot open $thismod: $!\n";
+-		next;
+-	}
+-
+-	my $state=0;
+-	while ( <$module> ) {
+-		chomp;
+-		if ($state == 0) {
+-			$state = 1 if ($_ =~ /static const struct modversion_info/);
+-			next;
+-		}
+-		if ($state == 1) {
+-			$state = 2 if ($_ =~ /__attribute__\(\(section\("__versions"\)\)\)/);
+-			next;
+-		}
+-		if ($state == 2) {
+-			if ( $_ !~ /0x[0-9a-f]+,/ ) {
+-				next;
+-			}
+-			my $sym = (split /([,"])/,)[4];
+-			my ($module, $value, $symbol, $gpl) = @{$SYMBOL{$sym}};
+-			$SYMBOL{ $sym } =  [ $module, $value+1, $symbol, $gpl];
+-			push(@{$MODULE{$thismod}} , $sym);
+-		}
+-	}
+-	if ($state != 2) {
+-		warn "WARNING:$thismod is not built with CONFIG_MODVERSIONS enabled\n";
+-		$modversion_warnings++;
+-	}
+-	close($module);
+-}
+-
+-print "\tThis file reports the exported symbols usage patterns by in-tree\n",
+-	"\t\t\t\tmodules\n";
+-printf("%s\n\n\n","x"x80);
+-printf("\t\t\t\tINDEX\n\n\n");
+-printf("SECTION 1: Usage counts of all exported symbols\n");
+-printf("SECTION 2: List of modules and the exported symbols they use\n");
+-printf("%s\n\n\n","x"x80);
+-printf("SECTION 1:\tThe exported symbols and their usage count\n\n");
+-printf("%-25s\t%-25s\t%-5s\t%-25s\n", "Symbol", "Module", "Usage count",
+-	"export type");
+-
+-#
+-# print the list of unused exported symbols
+-#
+-foreach my $list (sort alphabetically values(%SYMBOL)) {
+-	my ($module, $value, $symbol, $gpl) = @{$list};
+-	printf("%-25s\t%-25s\t%-10s\t", $symbol, $module, $value);
+-	if (defined $gpl) {
+-		printf("%-25s\n",$gpl);
+-	} else {
+-		printf("\n");
+-	}
+-}
+-printf("%s\n\n\n","x"x80);
+-
+-printf("SECTION 2:\n\tThis section reports export-symbol-usage of in-kernel
+-modules. Each module lists the modules, and the symbols from that module that
+-it uses.  Each listed symbol reports the number of modules using it\n");
+-
+-print "\nNOTE: Got $modversion_warnings CONFIG_MODVERSIONS warnings\n\n"
+-    if $modversion_warnings;
+-
+-print "~"x80 , "\n";
+-for my $thismod (sort keys %MODULE) {
+-	my $list = $MODULE{$thismod};
+-	my %depends;
+-	$thismod =~ s/\.mod\.c/.ko/;
+-	print "\t\t\t$thismod\n";
+-	foreach my $symbol (@{$list}) {
+-		my ($module, $value, undef, $gpl) = @{$SYMBOL{$symbol}};
+-		push (@{$depends{"$module"}}, "$symbol $value");
+-	}
+-	print_depends_on(\%depends);
+-}
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+---
+base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+change-id: 20241029-remove-export-report-pl-7365c6ca3bee
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+Best regards,
+-- 
+Matthew Maurer <mmaurer@google.com>
 
 
