@@ -1,109 +1,95 @@
-Return-Path: <linux-kernel+bounces-386074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC6E9B3ED0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:05:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC77B9B3ED3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:06:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4386282D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918E3283A92
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999A92107;
-	Tue, 29 Oct 2024 00:05:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F27802;
+	Tue, 29 Oct 2024 00:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YNzJBRB/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qP7Oelne"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9C4C63D;
-	Tue, 29 Oct 2024 00:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB04621;
+	Tue, 29 Oct 2024 00:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730160328; cv=none; b=WDl4ZtdjXTbHwDaR/E/zOu6BqyH+O6Q7rn/7ebfMb+Sw6QDBC3KaqTdzz6h2ZZNMrxt4Y0iHbBexygXGbTDX+vpneOY4mbVb3pKq9jdYAYCTr6WnfvldeOrXWm1A4z7m9p/VcaFMY3vLNWAD2Bs3ZrzREVEUdPHif/fLRZXfVzs=
+	t=1730160368; cv=none; b=nszE/HvEK27dbSXkG2PbAW/RMHHsnJyL5NO//Z2trR/+bxCOYnTVvjOB3mXaPNHXEkVUntXKQX4/PQ2BNTF6sfWgn3w8rKAHy6xgr1ENfT8L139zdTezw/YFJ5jn12YRbiNUOcozuUQ5ERB1izpxtBo/PjI2AzGy63d7h8vO1q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730160328; c=relaxed/simple;
-	bh=FxJLl4mrx/QrLDiJMwCFHrjtuieQ9Q9i2RWkURi65iI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gDFDX3Ph2NWohPNoZwgPhXoxSlEmPPKvySexgkzcu1g5ROkcHU/ZTPTPBgRz3U60UXZwouTC2GGPLDDSaJ84OnuQhXcsPAVTxgJGkxmfi9v9EXcOIjQ6gxBAJUaj8UxM9fBIuGiKEjhclx6k+J2xSJm6b7roltUBzs+t+4GylIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YNzJBRB/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22E28C4CEC3;
-	Tue, 29 Oct 2024 00:05:28 +0000 (UTC)
+	s=arc-20240116; t=1730160368; c=relaxed/simple;
+	bh=5ErTGv0+DuZd39+uN4cny7CaDy/hZ8zMZpANSPaGf5U=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=TDhXjix14LKPCDe8WHzqadgEq6CZU5vBmCQgNxLusM26+d62akr2oZ8j/argRmuM7xtFKYSLyFxVpO0qjkMxifs2uSFjgWQYZ2p1RvTSjXFOO9YCiNgChijDOTpnYU3tkjGo4y6HcPfCzs9eQzCagatjsp816gtRr8njFck2ft8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qP7Oelne; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED9CC4CEC3;
+	Tue, 29 Oct 2024 00:06:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730160328;
-	bh=FxJLl4mrx/QrLDiJMwCFHrjtuieQ9Q9i2RWkURi65iI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YNzJBRB/qkeDMzEqa0btA36O0TNo75Q84HsjMejGyTC+5s5kN7ErzH8zdQLQvwu35
-	 q7jAqAV5euWWZA9ZRH+d1EJUHUwVLJi3iJ62TdeFTpVAMvoxhIDsRNvqinJs1gQBh5
-	 Aqf5oYxzltR35L7kvde5bsgrtGm2TX3XF7+gFB8LLd/wV1dTfSsBRGWCKTQ2wZP/pf
-	 i2urBsoZkjJBGsxYnWPdADBWBfrzKMetNAdqZAyQTBxLwkTUSdCKIrdJ4UdIFWRHf3
-	 rHAEHtw7FfMyKmBJxYxb1Y6uB5933G4ImCphQdzT6+0hJ1EX7BrYQ38BlTb9vCGaZ3
-	 yzc7fdIVCHtqw==
-Date: Mon, 28 Oct 2024 17:05:25 -0700
-From: Kees Cook <kees@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Maksim Panchenko <max4bolt@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Yabin Cui <yabinc@google.com>,
-	Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	Stephane Eranian <eranian@google.com>, x86@kernel.org,
-	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v6 4/7] Add markers for text_unlikely and text_hot
- sections
-Message-ID: <202410281705.F093FC01@keescook>
-References: <20241026051410.2819338-1-xur@google.com>
- <20241026051410.2819338-5-xur@google.com>
+	s=k20201202; t=1730160367;
+	bh=5ErTGv0+DuZd39+uN4cny7CaDy/hZ8zMZpANSPaGf5U=;
+	h=Date:Cc:Subject:From:To:From;
+	b=qP7OelneO+aAm36IOjRSIi47O2t2Ma8ADai9ppd+5KSUey0DcWzYCI6H+iatbwIQ3
+	 aSttWVbiKaXpTVvwN9lmRgYv+v3RZ904KsERtzrrrzx13Dvi47qbAt8rm2CQe62F+R
+	 Bgow/yXs5nXWZukP8ti7JH0ZRBmwVyRM7jrB1SRdxtbr6u6y6v2hToJD55AjhaGKXR
+	 rB7LlrvwWXaC2pYgFCc4KjUEqRAqN2EzGgF2gI2IsgxT0M4mmpDKkgPQOQhaL5pS+i
+	 f60XWqUD+LaK23n7IkeF37m90rmG7oALyJ8aZpKfqIMJxT+i79G7xtXovtZ8XLSJoM
+	 UHb8xdwTsrQbg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241026051410.2819338-5-xur@google.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 29 Oct 2024 02:06:02 +0200
+Message-Id: <D57UNU1ZUXJS.E2RDQDB8XFKI@kernel.org>
+Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
+ "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
+ <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.12-rc6
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Linus Torvalds" <torvalds@linux-foundation.org>
+X-Mailer: aerc 0.18.2
 
-On Fri, Oct 25, 2024 at 10:14:06PM -0700, Rong Xu wrote:
-> Add markers like __hot_text_start, __hot_text_end, __unlikely_text_start,
-> and __unlikely_text_end which will be included in System.map. These markers
-> indicate how the compiler groups functions, providing valuable information
-> to developers about the layout and optimization of the code.
-> 
-> Co-developed-by: Han Shen <shenhan@google.com>
-> Signed-off-by: Han Shen <shenhan@google.com>
+The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e=
+:
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
 
--- 
-Kees Cook
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
+/tpmdd-next-6.12-rc6
+
+for you to fetch changes up to df745e25098dcb2f706399c0d06dd8d1bab6b6ec:
+
+  tpm: Lazily flush the auth session (2024-10-29 00:46:20 +0200)
+
+----------------------------------------------------------------
+Hi
+
+Addresses a significant boot-time delay issue:
+
+https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+
+BR, Jarkko
+
+----------------------------------------------------------------
+Jarkko Sakkinen (3):
+      tpm: Return tpm2_sessions_init() when null key creation fails
+      tpm: Rollback tpm2_load_null()
+      tpm: Lazily flush the auth session
+
+ drivers/char/tpm/tpm-chip.c       |  10 ++++
+ drivers/char/tpm/tpm-dev-common.c |   3 ++
+ drivers/char/tpm/tpm-interface.c  |   6 ++-
+ drivers/char/tpm/tpm2-sessions.c  | 100 +++++++++++++++++++++++-----------=
+----
+ 4 files changed, 77 insertions(+), 42 deletions(-)
 
