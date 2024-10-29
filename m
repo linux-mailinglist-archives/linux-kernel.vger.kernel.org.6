@@ -1,129 +1,115 @@
-Return-Path: <linux-kernel+bounces-386799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA179B4804
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:12:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7529B480B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:12:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0150F1F246A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:12:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA23BB213CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ADE9204F66;
-	Tue, 29 Oct 2024 11:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10BA9205AD5;
+	Tue, 29 Oct 2024 11:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R3THlD14"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="fqHzAleV"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3E0D201023
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C1A205ABB;
+	Tue, 29 Oct 2024 11:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730200233; cv=none; b=KjYcjnKIUqIVSO2jl6yqb1TjPSK5nZ/WeTcf5U1hLqxQ5hc5cwCUf9XTfrSs0d1+hnKQqhAOXl0EpBiQcZfQqD5p9HnQxw5qCCcxhQoWYsRGNdpTw0w1AjeVCvo1rafK8z1vsZdnZjymyNCXRknli8hdtWXXAKkHF6xysyghSs8=
+	t=1730200288; cv=none; b=GD5iSH1Q24T+al7PUKjVaCmQOQxeScUNdsFN4pTlYwFa+ufr/Tvzu/ES/u7B7wad0Ibjdc139+zdz80p+svucqUIMlpcLX2bPjjZbU0qLdNsbQTYJOABTXC59AkFy/NB5EGIDDbg7q7SzdSLSOQoI8LDDwPCvvBj/NJOV8di04s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730200233; c=relaxed/simple;
-	bh=cW3cF31DSQZmpfW6AGwgiwXzySfF2qpJucN5r4ZKASM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjiROOcvfG/FqQRfZrMPHI8wjpecqMzMEIkb/vE4gWO1uGW/4wvQX+8iiXUy74yGB1XP0nRWI6iH2DR3S9nwiER2dgu6e/bDFSSlyhT51a8l54PDo7e9jUZjOCX3DjtuPNTDY1ibCFqktzYehTQdmGwKM3InAelWcjeFlv8GAfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R3THlD14; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730200230;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wGlswA1mnxJGy0bLz9eduAoc2nahIh38GZG92VTxHgQ=;
-	b=R3THlD14PfBgVqfcRR+c0BCVmmSQt98iey2Aai1AM+XgWMD/h56wQfNSCTvsE+aEfbIXXW
-	IatrPMcHNPUcZjOSw9bI6Q/+aFU2MQaMd8PB6GEQe2Ic8bzcdhiZUXr6U4l22ppPywNSof
-	P/jIeOOmXafV/ymtd0EZ2Iu7xw4ZF8Q=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-484-vRUwXgITM1KqBpD_Il__YA-1; Tue, 29 Oct 2024 07:10:29 -0400
-X-MC-Unique: vRUwXgITM1KqBpD_Il__YA-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43151a9ea95so33547105e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:10:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730200228; x=1730805028;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wGlswA1mnxJGy0bLz9eduAoc2nahIh38GZG92VTxHgQ=;
-        b=bTszCRyow78rM2sMfLhjtLNT8+0FZ6ycVYDuctpYlPK6kyqsVNVPcWAlGR06y04B3t
-         sKOCHfQqTY0/28wBXyuqWf8VVv/tpfWB4xi7APdMcefSfjwZTLnUhk89Tyr2xuKMtx8v
-         RKt9flC2rFb1jLeAYTCbmNV0jxA01UevllqyEel1guLeFk+HSzl+sZre+3c89ptwMIBz
-         Ai6qmeo1Tg181/HreYvyWTsXBM9gIBlDOOeX+DGaDrrmYcKSYRRJhdzQv6Ya7kzlfxyt
-         m4QEeH960PacY9GaYUJeO3B+1U6gJb1PIUtVFvZ94ngPl5PPqTeYxLnwKztSbyLEka2D
-         totg==
-X-Gm-Message-State: AOJu0YxG3y97oAlWJIZWONuV2OgjH3VVppUOXQUBERMqgfaqblLCxaMe
-	9zqZdrxSr7kQP1nrd/2YNdQZxQirqxQM8uJHdJQ2ogqS6brskHWGMbaVs38m8Q9OMkCZYOymYNI
-	U3hFoVbX2FvlDk70MhRf6FO+PsnD2ezGLP5Ou1chuEPfFR2Is5im9MnG3ZmWr+w==
-X-Received: by 2002:a05:6000:10c8:b0:37e:f451:a05a with SMTP id ffacd0b85a97d-3817d64ac1cmr1443981f8f.27.1730200228254;
-        Tue, 29 Oct 2024 04:10:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGA3uREimbB8aYLS9HAQqXZI6GkDstTOdI5gijm50ulXeWivC36KgHPv9fkN3SqCNZdjCy4mw==
-X-Received: by 2002:a05:6000:10c8:b0:37e:f451:a05a with SMTP id ffacd0b85a97d-3817d64ac1cmr1443947f8f.27.1730200227897;
-        Tue, 29 Oct 2024 04:10:27 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.142.6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3c7b9sm12180426f8f.32.2024.10.29.04.10.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 04:10:27 -0700 (PDT)
-Date: Tue, 29 Oct 2024 12:10:25 +0100
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org,
-	=?iso-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>,
-	Darren Hart <dvhart@infradead.org>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [RFC v2 PATCH 0/4] futex: Add support task local hash maps.
-Message-ID: <ZyDCoduIh3yryRVB@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241028121921.1264150-1-bigeasy@linutronix.de>
+	s=arc-20240116; t=1730200288; c=relaxed/simple;
+	bh=urUDoiCfGTanskrpk/nVfLsAwra9Azo71xlx8jBbmLQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SmSu4D5XNx5wgQ60W9RP10ZntP5Lul78lHw0SI3qmg521VF9H56wwfemW9uj6zI5I62vVAjGnJYAzTNUTG1NqK1oLxPn4h+h1eKJ0TxmcqfkV1LhK4NkiYsHVtKlyQ7Il8i5Zn+HRXoZxFEmlJOlaj+9S2WlBETfRd15/chXDNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=fqHzAleV; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=2mw6wIsgNp3nO1sAu93Wf091/AE6UwJyrSXnTj9zaeU=; b=fqHzAleV/stfMIIbiD3N63c1sf
+	yzq7GY9AxvXpEb+o4IGxW2t5oQupYfLZ5xLw4xscqp42iPsKu6ag+YZbpjQhVoBLh+SLlZvNW93mv
+	GAZd32b6xvCMV2U4YojyKb2MUY/oivKBAOleHqbv7KDTNqt9dE1wpPbzox/005QufZoUhjuynQI2U
+	amNK1E08EEttq+BIuZ52SMa6MvkapWkwE8vCojubAVq5HNF0khtQWEwwJ++BeBLEB91r/l0tTpjXj
+	6qkOy2PrZHsjqgutKsSD5X02/Gn4wHrgHkf5d3/KetD65+fG1McwA4QX7lnLnyrFF0ihg9lRa4+kV
+	nqkNrETQ==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	mazziesaccount@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andreas Kemnade <andreas@kemnade.info>,
+	sre@kernel.org
+Subject: [PATCH] dt-bindings: mfd: bd71828: Use charger resistor in mOhm instead of MOhm
+Date: Tue, 29 Oct 2024 12:11:12 +0100
+Message-Id: <20241029111112.33386-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028121921.1264150-1-bigeasy@linutronix.de>
+Content-Transfer-Encoding: 8bit
 
-Hi Sebastian,
+Apparently there was some confusion regarding milliohm vs. megaohm.
+(m/M). Use microohms to be able to properly specify the charger
+resistor like other drivers do. This is not used yet by mainline code
+yet. Specify a current sense resistor in milliohms range rathes then
+megaohms range in the examples.
 
-On 28/10/24 13:13, Sebastian Andrzej Siewior wrote:
-> Hi,
-> 
-> this is a follow up on
-> 	https://lore.kernel.org/ZwVOMgBMxrw7BU9A@jlelli-thinkpadt14gen4.remote.csb
+CC: sre@kernel.org
+Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
+Closes: https://lore.kernel.org/imx/6dcd724a-a55c-4cba-a45b-21e76b1973b0@gmail.com/T/#mf590875a9f4d3955cd1041d7196ff0c65c0a7e9d
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+ .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml  | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-Thank you so much for working on this!
-
-> and adds support for task local futex_hash_bucket. It can be created via
-> prctl(). Last patch in the series enables it one the first thread is
-> created.
-> 
-> I've been how this auto-create behaves and so far dpkg creates threads
-> and uses the local-hashmap. systemd-journal on the hand forks a thread
-> from time to time and I haven't seen it using the hashmap. Need to do
-> more testing.
-
-I ported it to one of our kernels with the intent of asking perf folks
-to have a go at it (after some manual smoke testing maybe). It will
-take a couple of weeks or so to get numbers back.
-
-Do you need specific additional info to possibly be collected while
-running? I saw your reply about usage. If you want to agree on what to
-collect feel free to send out the debug patch I guess you used for that.
-
-Going of course to also play with it myself and holler if I find any
-issue.
-
-Best,
-Juri
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+index fa17686a64f7..09e7d68e92bf 100644
+--- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+@@ -55,14 +55,15 @@ properties:
+     minimum: 0
+     maximum: 1
+ 
+-  rohm,charger-sense-resistor-ohms:
+-    minimum: 10000000
+-    maximum: 50000000
++  rohm,charger-sense-resistor-micro-ohms:
++    minimum: 10000
++    maximum: 50000
++    default: 30000
+     description: |
+       BD71827 and BD71828 have SAR ADC for measuring charging currents.
+       External sense resistor (RSENSE in data sheet) should be used. If some
+-      other but 30MOhm resistor is used the resistance value should be given
+-      here in Ohms.
++      other but 30mOhm resistor is used the resistance value should be given
++      here in microohms.
+ 
+   regulators:
+     $ref: /schemas/regulator/rohm,bd71828-regulator.yaml
+@@ -114,7 +115,7 @@ examples:
+             #gpio-cells = <2>;
+             gpio-reserved-ranges = <0 1>, <2 1>;
+ 
+-            rohm,charger-sense-resistor-ohms = <10000000>;
++            rohm,charger-sense-resistor-micro-ohms = <10000>;
+ 
+             regulators {
+                 buck1: BUCK1 {
+-- 
+2.39.5
 
 
