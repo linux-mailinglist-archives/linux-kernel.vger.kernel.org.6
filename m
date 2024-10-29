@@ -1,116 +1,140 @@
-Return-Path: <linux-kernel+bounces-387342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B01C9B4FB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:45:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FAA9B4FB5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:46:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6FE1C22846
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:45:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE711F227BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962161D8E0D;
-	Tue, 29 Oct 2024 16:45:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BC619ABD4;
+	Tue, 29 Oct 2024 16:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxnX1Q1S"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mu7wff6t"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8976194AD1;
-	Tue, 29 Oct 2024 16:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC97DA81;
+	Tue, 29 Oct 2024 16:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220304; cv=none; b=Eb+H46F9liP0nGWKL7BhbY0tr3r/90Nlzp9sTOfwU+gVQyRFLHfKbvGq/5Ew5nFk2natRBiruA0lCZUfipK+abYZX5QCf1Y+WctK2JcMSyCCkpT/yOXcFFfgR9raE+rV9LXl5wwRblviTvw78MRUeTztd0rGPAqA/ljr0t0VFMk=
+	t=1730220390; cv=none; b=YVJemCCs5simi06J6CoS/KgeSSbVs7zD2nCOoFzrQpY0hwedx1K6KesCbSycr0/O3dhyDFZHq6CABgua3VrN80lOYsVoh9blJmbXwPnHujUzOwhmu7EI0LYCbtyZhDiAPcV71lZbnZfTthZKw/s3sSMifAoQDaM4BHtt7osvF54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220304; c=relaxed/simple;
-	bh=FGhg9/5lJ7zrWIgk9nIXWwVFehhFDTKeJb/zyhiCTVk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f4tdhzuCUJWYrNgrJKu8RoLc+PXCHJYU1ZnCEfxcUOpfGB9/vgUJFhyGNqU2TCUlLI0GDt9ULK0hKO6QGtOiA2G4ytkFKzwnHPJcx2CWlXcHiLFXuhhcKnBlhRve6Oonza/I8y1FF02oPiVghcKgBWFWe1uOcf4SLt8DGDNoq0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxnX1Q1S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7488BC4CEE4;
-	Tue, 29 Oct 2024 16:45:03 +0000 (UTC)
+	s=arc-20240116; t=1730220390; c=relaxed/simple;
+	bh=b41XytSw7jgGrP05qeCfH6JsjRkxNuESZWFunT0/lFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nMHZhzUqdY9qmNfEjJkahtd/hQ2tytxZ5c/lCU6vsPB94M4aWOkUfWmUb26dQdfMjlfmlyrHPsd8g/+VWoTKUiqrFc+IJerZek1XMv+vyxfElauG0Wm4ryh7e1Qi0rqjWrIamkbhOUYzbpXRvhm7Gf/DZbgvXKdgwGz17tGR5EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mu7wff6t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 063AEC4CEE4;
+	Tue, 29 Oct 2024 16:46:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730220303;
-	bh=FGhg9/5lJ7zrWIgk9nIXWwVFehhFDTKeJb/zyhiCTVk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FxnX1Q1Sq8u60xmVKPiDvb1bR5ObMLLtpjtql2eFaCWyF2cYDRHJ/fSJY3lSdUaFy
-	 MEnH+pphFFUa1oJDWPSkqa7dEVvCnGGhztH4EQL7tTysnAXVOHJC3g+s28XRU8V68/
-	 qXXH+b4/dUVoCZt6ffCR16sEIB3HVCdh1PEadSn5ccHDexto4Jp2WkY21Wu5/V0WUC
-	 D0l6T7pnR7kG2u0leEQcU2jLfE90yZKPewLrNWbr8E8RePImhm72dwljy4DKqq/bTB
-	 lU3Bmp66fUpjd7HsETGgCYItiQvulIBqFU3B21ppsQY1fXUvyFj/EGZE/53rCWwAmh
-	 Dtg1rtkXdIlNA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5pL3-007zVM-8J;
-	Tue, 29 Oct 2024 16:45:01 +0000
-Date: Tue, 29 Oct 2024 16:45:00 +0000
-Message-ID: <867c9q3lkj.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mark Brown <broonie@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Shuah Khan <shuah@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 8/9] KVM: arm64: Allow control of dpISA extensions in ID_AA64ISAR3_EL1
-In-Reply-To: <20241028-arm64-2024-dpisa-v1-8-a38d08b008a8@kernel.org>
-References: <20241028-arm64-2024-dpisa-v1-0-a38d08b008a8@kernel.org>
-	<20241028-arm64-2024-dpisa-v1-8-a38d08b008a8@kernel.org>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1730220389;
+	bh=b41XytSw7jgGrP05qeCfH6JsjRkxNuESZWFunT0/lFs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Mu7wff6tkrBubJkvbkZi9m8nYxswKX4Wkq6cSid1VKave7nmQJPWky/782gh8+nMr
+	 9ArYWJwK3VbjOgCbiQUwZL2UXmzJ45F+G+/BE6ENOgvR6CVKVd7JPwVMnqdrnVjR4h
+	 1S5TkQWkB6+1KWUYE+HlODMZM3bx0DKYgrf7qInsby80Ht49A7xhd5I6XpV+KKB3ek
+	 EU+ZNg1nE33MAxSfJ2ZQu3y6pxjWkNNbCIuRhHaRUbgTKLR1L+PPP5eX0uMDvz0uCQ
+	 Z1uEVf/5C8ti9KPRxEv/3uyDb3nCBUEc05LdEIK1wgL3PkRvaS25mOgv0SY298QUEF
+	 lu+40Z9RRkt3g==
+Message-ID: <817ea954-0705-44f1-b2a5-a11d089f7bcd@kernel.org>
+Date: Tue, 29 Oct 2024 17:46:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXT] Re: [PATCH 4/5] dt-bindings: media: i2c: Update bindings
+ for OX05B1S with OS08A20
+To: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+ sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+ laurent.pinchart+renesas@ideasonboard.com, laurentiu.palcu@nxp.com,
+ robert.chiras@nxp.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
+ dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
+ alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-5-mirela.rabulea@nxp.com>
+ <f4155f41-7267-423f-ad23-e7f0b24c650f@kernel.org>
+ <5239f68d-ace8-4262-936a-8bf9b17680cf@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <5239f68d-ace8-4262-936a-8bf9b17680cf@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 28 Oct 2024 20:24:17 +0000,
-Mark Brown <broonie@kernel.org> wrote:
+On 29/10/2024 15:02, Mirela Rabulea wrote:
 > 
-> ID_AA64ISAR3_EL1 is currently marked as unallocated in KVM but does have a
-> number of bitfields defined in it. Expose FPRCVT and FAMINMAX, two simple
-> instruction only extensions to guests.
+> On 29.10.2024 08:17, Krzysztof Kozlowski wrote:
+>> On 28/10/2024 20:06, Mirela Rabulea wrote:
+>>> Add another compatible for OS08A20 sensor.
+>>>
+>>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/media/i2c/ovti,ox05b1s.yaml | 1 +
+>> This is part of the original binding. Submit complete binding in one patch.
 > 
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  arch/arm64/kvm/sys_regs.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Hi Krzysztof,
 > 
-> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-> index dad88e31f9537fe02e28b117d6a740f15572e0ba..ab348c314d7963437e1876d441169f3ef4eff095 100644
-> --- a/arch/arm64/kvm/sys_regs.c
-> +++ b/arch/arm64/kvm/sys_regs.c
-> @@ -2409,7 +2409,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
->  	ID_WRITABLE(ID_AA64ISAR2_EL1, ~(ID_AA64ISAR2_EL1_RES0 |
->  					ID_AA64ISAR2_EL1_APA3 |
->  					ID_AA64ISAR2_EL1_GPA3)),
-> -	ID_UNALLOCATED(6,3),
-> +	ID_WRITABLE(ID_AA64ISAR3_EL1, (ID_AA64ISAR3_EL1_FPRCVT |
-> +				       ID_AA64ISAR3_EL1_FAMINMAX)),
+> Should I squash this patch into #1?
 
-Please add the required sanitisation of the register so that we do not
-get any surprise exposure of unhandled features when someone changes
-ftr_id_aa64isar3[].
+Yes, please. Splitting initial binding into such small chunks is not
+necessary.
 
-	M.
+> 
+> I sent the patch #1, #2 and #3 for the OX05B1S sensor, and patches #4 
+> and #5 as additions for another sensor, OS08A20.
 
--- 
-Without deviation from the norm, progress is not possible.
+Best regards,
+Krzysztof
+
 
