@@ -1,54 +1,87 @@
-Return-Path: <linux-kernel+bounces-386076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E3709B3ED8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:07:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322079B3EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:08:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35689B224ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:07:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC09C1F225E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D3F10F9;
-	Tue, 29 Oct 2024 00:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C954400;
+	Tue, 29 Oct 2024 00:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6Z4hoJv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mde/PyOW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE981361;
-	Tue, 29 Oct 2024 00:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE682F56;
+	Tue, 29 Oct 2024 00:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730160458; cv=none; b=gjFDuDII6nLoLuIw0MRc2j9dLtyWN25z6R2XwRqQHG27KFekKGE7ZJBV3T03N2lJCtUsYAXMCy6Iwq3I9yFtp0fgQHbUaD4bKk5ut5NERpF1U8Rojgj2Zih2KFBUQ1PaX18KK0uWZ4ESxkQg6RdcpONKjzt4xTTbL2O3kCz9ayY=
+	t=1730160527; cv=none; b=TtQ5RSpcF0fnpP0JIel/yUmXiP2uSWVijqldpUJnddfJzSP3QRK3W/PoBWOO6QCOYOpEDYdJyjme7Lx9nVKQOuzu36yMwWpHqbxwwtd+uKA3p/+SoKAtmnU0DiZjiVqYvWknvRxBaoVmD7Tw+Rhbbc2RrJ28sVYhYU1ga4qcH70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730160458; c=relaxed/simple;
-	bh=KptdeRRbU7AnepZinMT4SpFDd5VqMpOu7a8/xVk6MK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Md38/4u/pkoYHguG84e4Uq5lfSJwLI6oAcWGajEkgeA6rv3S9Yy0EXYeKuI1QBfzy8zvy/sOXGcr6x1wvDDTPwyj/m1Q/s4RtwBQFKZMMm/ra3ccbYUHy1SnfHwMpR3FaTHVcDVR0mF4wJu375nREKV0O+c0YEMrQ9vlyyQovbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6Z4hoJv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BF1C4CEC3;
-	Tue, 29 Oct 2024 00:07:37 +0000 (UTC)
+	s=arc-20240116; t=1730160527; c=relaxed/simple;
+	bh=Z9kYOx9QnUfURSK1MXGxCRMihyc/NCGFbBjvOnQS5Ak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UZ2hEIvLWa7raFHkWSgLQcyqoVqUr6JKiyKRjeKfx/roog0eT8bZ5EZz/Ft4dcDVmMPcFH7yhsMwBzVOjpQrLIXdb4LsuFFtLfKOeY2UPccgiyC5yJQtk7l/qawK4e0a0O0DW0nCvDUF9K5iVypZtPiax9U2xZlP1LdG8Dz8EyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mde/PyOW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F74DC4CEC3;
+	Tue, 29 Oct 2024 00:08:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730160457;
-	bh=KptdeRRbU7AnepZinMT4SpFDd5VqMpOu7a8/xVk6MK4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=D6Z4hoJvuhwdU6BN12XsAPkOdT8qQOy2s/6Mz48u0SWvK/ahHhi4JTD7lbdNvbhqG
-	 Xm7gGykod2Uc7jTvvQm5kfE9kFRrbpRV5kZHoXnCCyGKMgCJ137HAtTs6QFMQ8mS5c
-	 kyfuw4mE+NooBFilKTDILkam9WXAODVCr8SnCf21eEjMOuIa80MoXcIZSysYBghwhr
-	 3T9arPC/Xjf1XwyF1p8ddk4cflUPHIDrSX5Ck5UZt80lPWbKb19vRJsZraiUbfErN9
-	 zLQUD2IyT78WTsjG72CVpZ37NHjdfJiCTX9o6N3CXSFziA2rbYc8t8bIF6iBirOH7i
-	 WLyCX2RLcNPVQ==
-Date: Mon, 28 Oct 2024 14:07:36 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Paolo Bonzini <pbonzini@redhat.com>, Luca Boccassi <bluca@debian.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>
-Cc: kvm@vger.kernel.org, cgroups@vger.kernel.org,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	linux-kernel@vger.kernel.org
-Subject: cgroup2 freezer and kvm_vm_worker_thread()
-Message-ID: <ZyAnSAw34jwWicJl@slm.duckdns.org>
+	s=k20201202; t=1730160527;
+	bh=Z9kYOx9QnUfURSK1MXGxCRMihyc/NCGFbBjvOnQS5Ak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mde/PyOWw84L/lIa5qt7MfY0O//i8GHeEiFKdrAWz9TwI+crY9yjuOc+3nAYEOX0Y
+	 5kgPSzFPey3nnMmE2fj6l0VfR4kuwXv3kxArQ25tg2hJr5gaaeN57tUuuWD6gcuWeM
+	 Hc6zSw8QI4qIdsFv2FeTRTDXHPNI+Jx5/JP5gTwXSFzx2RBoDVffwiWDAO3hX7v+6K
+	 oLoaTi/uHQDDJ5NXNyAyrY00ayAzKBUeC9N6z01oOhBnRBgf08jeemx/wfnGqLPpGy
+	 sbivf++RkfHeURmNx/EvWYm2pGHhXkBUgtMeJQ8xdBQhaTkPJYrgOtLhw6GVjnTwN6
+	 uy/HtlQljqEtQ==
+Date: Mon, 28 Oct 2024 17:08:44 -0700
+From: Kees Cook <kees@kernel.org>
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
+	Brian Gerst <brgerst@gmail.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Juergen Gross <jgross@suse.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Maksim Panchenko <max4bolt@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Yabin Cui <yabinc@google.com>,
+	Krzysztof Pszeniczny <kpszeniczny@google.com>,
+	Sriraman Tallam <tmsriram@google.com>,
+	Stephane Eranian <eranian@google.com>, x86@kernel.org,
+	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v6 1/7] Add AutoFDO support for Clang build
+Message-ID: <202410281708.83F316FF@keescook>
+References: <20241026051410.2819338-1-xur@google.com>
+ <20241026051410.2819338-2-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,85 +90,81 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241026051410.2819338-2-xur@google.com>
 
-Hello,
+On Fri, Oct 25, 2024 at 10:14:03PM -0700, Rong Xu wrote:
+> Add the build support for using Clang's AutoFDO. Building the kernel
+> with AutoFDO does not reduce the optimization level from the
+> compiler. AutoFDO uses hardware sampling to gather information about
+> the frequency of execution of different code paths within a binary.
+> This information is then used to guide the compiler's optimization
+> decisions, resulting in a more efficient binary. Experiments
+> showed that the kernel can improve up to 10% in latency.
+> 
+> The support requires a Clang compiler after LLVM 17. This submission
+> is limited to x86 platforms that support PMU features like LBR on
+> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+>  and BRBE on ARM 1 is part of planned future work.
+> 
+> Here is an example workflow for AutoFDO kernel:
+> 
+> 1) Build the kernel on the host machine with LLVM enabled, for example,
+>        $ make menuconfig LLVM=1
+>     Turn on AutoFDO build config:
+>       CONFIG_AUTOFDO_CLANG=y
+>     With a configuration that has LLVM enabled, use the following
+>     command:
+>        scripts/config -e AUTOFDO_CLANG
+>     After getting the config, build with
+>       $ make LLVM=1
+> 
+> 2) Install the kernel on the test machine.
+> 
+> 3) Run the load tests. The '-c' option in perf specifies the sample
+>    event period. We suggest     using a suitable prime number,
+>    like 500009, for this purpose.
+>    For Intel platforms:
+>       $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> \
+>         -o <perf_file> -- <loadtest>
+>    For AMD platforms:
+>       The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
+>      For Zen3:
+>       $ cat proc/cpuinfo | grep " brs"
+>       For Zen4:
+>       $ cat proc/cpuinfo | grep amd_lbr_v2
+>       $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a \
+>         -N -b -c <count> -o <perf_file> -- <loadtest>
+> 
+> 4) (Optional) Download the raw perf file to the host machine.
+> 
+> 5) To generate an AutoFDO profile, two offline tools are available:
+>    create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
+>    of the AutoFDO project and can be found on GitHub
+>    (https://github.com/google/autofdo), version v0.30.1 or later. The
+>    llvm_profgen tool is included in the LLVM compiler itself. It's
+>    important to note that the version of llvm_profgen doesn't need to
+>    match the version of Clang. It needs to be the LLVM 19 release or
+>    later, or from the LLVM trunk.
+>       $ llvm-profgen --kernel --binary=<vmlinux> --perfdata=<perf_file> \
+>         -o <profile_file>
+>    or
+>       $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> \
+>         --format=extbinary --out=<profile_file>
+> 
+>    Note that multiple AutoFDO profile files can be merged into one via:
+>       $ llvm-profdata merge -o <profile_file>  <profile_1> ... <profile_n>
+> 
+> 6) Rebuild the kernel using the AutoFDO profile file with the same config
+>    as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+>       $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file>
+> 
+> Co-developed-by: Han Shen <shenhan@google.com>
+> Signed-off-by: Han Shen <shenhan@google.com>
 
-Luca is reporting that cgroups which have kvm instances inside never
-complete freezing. This can be trivially reproduced:
+This looks good. Fairly well isolated.
 
-  root@test ~# mkdir /sys/fs/cgroup/test
-  root@test ~# echo $fish_pid > /sys/fs/cgroup/test/cgroup.procs
-  root@test ~# qemu-system-x86_64 --nographic -enable-kvm
-
-and in another terminal:
-
-  root@test ~# echo 1 > /sys/fs/cgroup/test/cgroup.freeze
-  root@test ~# cat /sys/fs/cgroup/test/cgroup.events
-  populated 1
-  frozen 0
-  root@test ~# for i in (cat /sys/fs/cgroup/test/cgroup.threads); echo $i; cat /proc/$i/stack; end 
-  2070
-  [<0>] do_freezer_trap+0x42/0x70
-  [<0>] get_signal+0x4da/0x870
-  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
-  [<0>] syscall_exit_to_user_mode+0x73/0x120
-  [<0>] do_syscall_64+0x87/0x140
-  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  2159
-  [<0>] do_freezer_trap+0x42/0x70
-  [<0>] get_signal+0x4da/0x870
-  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
-  [<0>] syscall_exit_to_user_mode+0x73/0x120
-  [<0>] do_syscall_64+0x87/0x140
-  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  2160
-  [<0>] do_freezer_trap+0x42/0x70
-  [<0>] get_signal+0x4da/0x870
-  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
-  [<0>] syscall_exit_to_user_mode+0x73/0x120
-  [<0>] do_syscall_64+0x87/0x140
-  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-  2161
-  [<0>] kvm_nx_huge_page_recovery_worker+0xea/0x680
-  [<0>] kvm_vm_worker_thread+0x8f/0x2b0
-  [<0>] kthread+0xe8/0x110
-  [<0>] ret_from_fork+0x33/0x40
-  [<0>] ret_from_fork_asm+0x1a/0x30
-  2164
-  [<0>] do_freezer_trap+0x42/0x70
-  [<0>] get_signal+0x4da/0x870
-  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
-  [<0>] syscall_exit_to_user_mode+0x73/0x120
-  [<0>] do_syscall_64+0x87/0x140
-  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
-The cgroup freezing happens in the signal delivery path but
-kvm_vm_worker_thread() thread never call into the signal delivery path while
-joining non-root cgroups, so they never get frozen. Because the cgroup
-freezer determines whether a given cgroup is frozen by comparing the number
-of frozen threads to the total number of threads in the cgroup, the cgroup
-never becomes frozen and users waiting for the state transition may hang
-indefinitely.
-
-There are two paths that we can take:
-
-1. Make kvm_vm_worker_thread() call into signal delivery path.
-   io_wq_worker() is in a similar boat and handles signal delivery and can
-   be frozen and trapped like regular threads.
-
-2. Keep the count of threads which can't be frozen per cgroup so that cgroup
-   freezer can ignore these threads.
-
-#1 is better in that the cgroup will actually be frozen when reported
-frozen. However, the rather ambiguous criterion we've been using for cgroup
-freezer is whether the cgroup can be safely snapshotted whil frozen and as
-long as the workers not being frozen doesn't break that, we can go for #2
-too.
-
-What do you guys think?
-
-Thanks.
+Reviewed-by: Kees Cook <kees@kernel.org>
 
 -- 
-tejun
+Kees Cook
 
