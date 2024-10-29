@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-386764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 108DB9B47B1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:03:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 671AE9B47B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 330F21C2145A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 239AD283DAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC4E20E334;
-	Tue, 29 Oct 2024 10:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B5120E33E;
+	Tue, 29 Oct 2024 10:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nlf3+Klt"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rDzmJj8q"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9733420E30F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD5A20E034
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199213; cv=none; b=ipN1eGIuFMAsen8Ap9yzuVCRDTFPMx121+xJR5d3Dnjj9OsVhLpD+J7/ZIZwDqQvxMaul3ynX5MYg5XW8RyymDfkIglimBXJP3LgXssZP1MC5NHWoXLUkTNKaZGZeDUHnG/Q0X4hjNkbR+stLW3b6xT2wXr/7Elusv01h0f1T2k=
+	t=1730199217; cv=none; b=sa0vdOPd19Rh9/qi7g+odOOcMi8t1/d9a+Jmn5z8J0J1aU3UKHyxS7DGlCyVIRybAg3GbP7IpE2VYS9j81ZVQnzNpftI5X/kSojO7vEIO32yfa2z/ZASb4v6NrfI2MQAh0MOIm9VTN7fIXzZk5Wy7eIHcbn8ojm8BfOYWuU6pe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199213; c=relaxed/simple;
-	bh=pM9plyuaboA4oYUAVGKr/KBZR4661Ija+Nu2nTY/g5A=;
+	s=arc-20240116; t=1730199217; c=relaxed/simple;
+	bh=1+xGn+I5zGJWUmASKFRl6SMQB/wIv78GqsCAwMsFqAA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ms5f5TNNBG3eDdv/4hOWxXR1+GK0xA56TXFAAH/wAAA5j8IkRYfgulZ1VHq6a2x2JguYQxFteOhF3uxG2AxJFAuuHTBvTtwxwGmgU+7uvGoozY5z1TUQ0Y8mrD0j3DWHwuYiOTbIWW4SFNNPjmvRUyGRJMvJChV4sFR3mBovf2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nlf3+Klt; arc=none smtp.client-ip=209.85.167.51
+	 In-Reply-To:To:Cc; b=Xh0zY+GoBlRTNu+I02qupVuFxZoX5igNqOl+e3uWY4b79hUDuNVI8b2N1PZ449wa89PLbtLfaFfEXgy20PIqByiSwKLpf+kwaIgarG3uHpMAZBoIYtlaDtthrstEpWUjDfpVE0ZjXQdZH9yJxp2Z6bqcQZj6AscOtxBlk1HTU5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rDzmJj8q; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e3f35268so6247856e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:53:31 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so5633413e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730199210; x=1730804010; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730199214; x=1730804014; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y1Hv1gsrpr1we4HbxlxxqJW/y8rgdVZEtXO9KHxWDAg=;
-        b=nlf3+KltBZBGbKJr8f80nly8GrmSdrEGnKa4+uMRFp4zU2F2A00zzBTbqCcsBjvTx3
-         lc0AKYSFQGE+fegefqpFkWR33zv3C53EdCxvwdmmeo9DsctZ6brIsWQtMX5W+VjT2opX
-         L5I0v0cqGlPIQYFyaw0hYcwd25M9KGZCxezXvKBe9JNIxHZmofKcwjcFZ0r8w0PNVF7T
-         8ze/EUmiGxIak2FPlOEvm3RqoVqFVpCx2UVp4fjlGCu8d/GVXPAZm7FH+PVvdGqcQCw+
-         l8meUvZUEnGRVWGa+jQYPZnSw9roJPVgpubb4PY+P7lKiEcGT0yzSBOepYJELlaTCf2l
-         KtPg==
+        bh=e/3IXPLtEzkdPxakYsKtSl6x7P98QonT1kDDJ6tUink=;
+        b=rDzmJj8qs6GBlIeQ4AEb/W5rR3G6Usf1zycSEqnNmDafPcXaPXtCrO9dI6OBzAnw9E
+         kXdgQNuKwZxos+uA+qVG2uLfoKhZF19CUif/Uv5WshpSelS5bXnvg3yC3Cn43HXC0DSM
+         gKWsivB2ggeGKhhvEBnOGCpuVaBFafT0eerAmjjr05PyxXBIOS1L1ntAdOK6UDpbRooX
+         KDEFieZRWbU7SavjQkhaKA5BG1vfWwY2JJHMl3uV1mfBWM3MSlUK4jwMGr+c5UK5mRqI
+         qT0T2X3xn6Gy9uCiQTTNRXY6UL1veVvw7ZAgm23j1vS05m+vlcHas3xwrLCOdAxJ/+4c
+         G4gg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730199210; x=1730804010;
+        d=1e100.net; s=20230601; t=1730199214; x=1730804014;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y1Hv1gsrpr1we4HbxlxxqJW/y8rgdVZEtXO9KHxWDAg=;
-        b=aUb66hU+b9lTDXjSdOWrzbyt8I0nRHMWUK71pfTuvaU9py1lXK9ktm5wh8PTPNSixs
-         A3HPULq9LQPmmpWYdDuqw7EUpgzveUkG8PsgebkPs3+Zw5f7xVFS8NtjpqPw/UNksjwR
-         E8XABIMXRCu/EEn4bFxYTaBqGNxWK9/GWG7mcs7Z/13JhGVwk/5v/ftu+3jWhaEd2thL
-         Rcxpl99olk7er/GFTF4vFswhB7YDDErtJagwlCKqPnQdYa4ZGYDZPx8hLwpKH1Cs7iO7
-         PS8OdywRFAkkiZ6d9igkaHOFiLPNySYS0fD4JPQR/Jh53fB0MgTKRKu8jZuX8ev5YzS1
-         p/rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXoGLQUPnC/BIaAudDqwKtYfr/SCixBip0PyAa/FlBHV8crDaF9+N5nAQKzJL3MXWhREsgwqmIcPkBZwdI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWQslrgvG3Co9m0feFV/aSkiweqe3ATYTZ4Gyr8zISEUprd9kI
-	aZOXWr4LM53xWmUeNNT+Gy1Bv5npUdU6LvK57euGxJfBwg4BctL+urvNuUhCbLA=
-X-Google-Smtp-Source: AGHT+IESV034VK8PKLncc0cgi0pz3sqYxwxxzlGeXGgL9emDXp4QopwrVEL+WsUUoIebBL3YXi7/Ow==
-X-Received: by 2002:a05:6512:1252:b0:53b:1fc6:3cef with SMTP id 2adb3069b0e04-53b3491ccfamr4773281e87.37.1730199209505;
-        Tue, 29 Oct 2024 03:53:29 -0700 (PDT)
+        bh=e/3IXPLtEzkdPxakYsKtSl6x7P98QonT1kDDJ6tUink=;
+        b=sKXwQ0f+tq3vojb2hIZvuuPNI2XKjQJslyy4qd924/7XtlU66wfem5aweUDmtRp0dE
+         nuQjn6oSM6kjrzRdfWUFN5nm+3P54/SbBbxiMfvHUWSb4mEgAFvX47KUvsC9eRKG/WRq
+         hzG+5rT/RBDxWUdNToCC4bq1+NMwPhHULhcdyYKtgWlSNIVHKKj1gSaSb1OsDbMypvSz
+         1ilMT4Wjy29Z7bMDylfV+QkmP6PJRm4mkEn1sTloUgrsKTOQLON1osQp613X2g1zphaV
+         sz5SZ4QYI39aKGzJLK6ArDTg+3ZzD7tdh50Akd5QybOt+20xxSmlr72plQ2i8u7jpLL1
+         OaOg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/+CUS6qU5cWvre1/2KEc86wvaDn6250tHYIY2W8d3QQkHWrQq3hPKU5lDZ0M//AA9x3B6jrCiNrRN0Mk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9oB9fkERgfDlfAplajYMlKY+vmOdL1smpnqFdZS873oSL5eOx
+	P9ypKH85Gvaf82/NSGJGd+8GcM6za3tlkgtdEtpz8w4v95vFNbfBNyE2HW0GxWkbw9AZZmZi+Y4
+	K
+X-Google-Smtp-Source: AGHT+IEv5OXz88Rah8wOjpkuPKbULq5MyD1fSlWtEkl9G05R3LmA9cdfp5t7ybciPjtapRrrDr8Jpw==
+X-Received: by 2002:a05:6512:3084:b0:539:fed8:321 with SMTP id 2adb3069b0e04-53b34a31cdbmr4939966e87.51.1730199213675;
+        Tue, 29 Oct 2024 03:53:33 -0700 (PDT)
 Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e12452fsm1351307e87.73.2024.10.29.03.53.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e12452fsm1351307e87.73.2024.10.29.03.53.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 03:53:28 -0700 (PDT)
+        Tue, 29 Oct 2024 03:53:32 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 29 Oct 2024 11:53:04 +0100
-Subject: [PATCH RFC v2 24/28] ARM: entry: Complete syscall and IRQ
- transition to C
+Date: Tue, 29 Oct 2024 11:53:05 +0100
+Subject: [PATCH RFC v2 25/28] ARM: entry: Create irqentry calls from kernel
+ mode
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-arm-generic-entry-v2-24-573519abef38@linaro.org>
+Message-Id: <20241029-arm-generic-entry-v2-25-573519abef38@linaro.org>
 References: <20241029-arm-generic-entry-v2-0-573519abef38@linaro.org>
 In-Reply-To: <20241029-arm-generic-entry-v2-0-573519abef38@linaro.org>
 To: Oleg Nesterov <oleg@redhat.com>, Russell King <linux@armlinux.org.uk>, 
@@ -91,113 +92,82 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.0
 
-This moves over the last few lines of assembly to C. The
-subtle change is that in return to userspace from syscall
-(SWI) or interrupt, we need to call do_work_pending()
-as soon as the thread flags are != 0, just checking for
-work with _TIF_SYSCALL_WORK is not enough (the machine will
-freeze if we do that).
-
-This is because do_work_pending() does not just handle
-work: it handles _TIF_NEED_RESCHED, _TIF_SIGPENDING,
-_TIF_NOTIFY_SIGNAL and _TIF_UPROBE as well.
+This adds a few calls to C when exceptions enter/exit from
+the kernel itself, so these can be used for generic entry.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/kernel/entry-common.S | 13 +------------
- arch/arm/kernel/entry.c        | 19 +++++++++++++------
- arch/arm/kernel/signal.c       |  3 +--
- 3 files changed, 15 insertions(+), 20 deletions(-)
+ arch/arm/include/asm/entry.h   | 2 ++
+ arch/arm/kernel/entry-armv.S   | 3 +++
+ arch/arm/kernel/entry-header.S | 5 +++++
+ arch/arm/kernel/entry.c        | 8 ++++++++
+ 4 files changed, 18 insertions(+)
 
-diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index e2ac6d3216b6..6b0f86786a7d 100644
---- a/arch/arm/kernel/entry-common.S
-+++ b/arch/arm/kernel/entry-common.S
-@@ -61,12 +61,7 @@ ENTRY(ret_to_user)
- 	enable_irq_notrace			@ enable interrupts
- 	mov	r0, sp				@ 'regs'
- 	bl	syscall_exit_to_user_mode
--	ldr	r1, [tsk, #TI_FLAGS]
--	movs	r1, r1, lsl #16
--	beq	1f
--	mov	r0, sp				@ 'regs'
--	bl	do_work_pending
--1:
+diff --git a/arch/arm/include/asm/entry.h b/arch/arm/include/asm/entry.h
+index 8b8cc9a1eefb..a78bc5054b09 100644
+--- a/arch/arm/include/asm/entry.h
++++ b/arch/arm/include/asm/entry.h
+@@ -12,5 +12,7 @@ long syscall_enter_from_user_mode(struct pt_regs *regs, long);
+ void syscall_exit_to_user_mode(struct pt_regs *regs);
+ void irqentry_enter_from_user_mode(struct pt_regs *regs);
+ void irqentry_exit_to_user_mode(struct pt_regs *regs);
++void irqentry_enter_from_kernel_mode(struct pt_regs *regs);
++void irqentry_exit_to_kernel_mode(struct pt_regs *regs);
+ 
+ #endif /* __ASM_ENTRY_H__ */
+diff --git a/arch/arm/kernel/entry-armv.S b/arch/arm/kernel/entry-armv.S
+index bd468d58dc02..21b11fe199cb 100644
+--- a/arch/arm/kernel/entry-armv.S
++++ b/arch/arm/kernel/entry-armv.S
+@@ -204,6 +204,9 @@ ENDPROC(__und_invalid)
+ 	get_thread_info tsk
+ 	uaccess_entry tsk, r0, r1, r2, \uaccess
+ 
++	mov	r0, sp				@ 'regs'
++	bl	irqentry_enter_from_kernel_mode
 +
- #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
- 	bl	stackleak_erase_on_task_stack
+ 	.if \trace
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	bl	trace_hardirqs_off
+diff --git a/arch/arm/kernel/entry-header.S b/arch/arm/kernel/entry-header.S
+index 51c7f93c1ded..49a9c5cf6fd5 100644
+--- a/arch/arm/kernel/entry-header.S
++++ b/arch/arm/kernel/entry-header.S
+@@ -210,6 +210,7 @@
+ 	.else
+ 	@ IRQs off again before pulling preserved data off the stack
+ 	disable_irq_notrace
++
+ #ifdef CONFIG_TRACE_IRQFLAGS
+ 	tst	\rpsr, #PSR_I_BIT
+ 	bleq	trace_hardirqs_on
+@@ -217,6 +218,10 @@
+ 	blne	trace_hardirqs_off
  #endif
-@@ -74,12 +69,6 @@ ENTRY(ret_to_user)
- ENDPROC(ret_to_user)
+ 	.endif
++
++	mov	r0, sp				@ 'regs'
++	bl	irqentry_exit_to_kernel_mode
++
+ 	uaccess_exit tsk, r0, r1
  
- ENTRY(ret_to_user_from_irq)
--	ldr	r1, [tsk, #TI_FLAGS]
--	movs	r1, r1, lsl #16
--	beq	no_work_pending
--	mov	r0, sp				@ 'regs'
--	bl	do_work_pending
--no_work_pending:
- 	asm_irqentry_exit_to_user_mode
- 
- #ifdef CONFIG_GCC_PLUGIN_STACKLEAK
+ #ifndef CONFIG_THUMB2_KERNEL
 diff --git a/arch/arm/kernel/entry.c b/arch/arm/kernel/entry.c
-index 88a7a699306a..d7fdb9df3331 100644
+index d7fdb9df3331..674b5adcec00 100644
 --- a/arch/arm/kernel/entry.c
 +++ b/arch/arm/kernel/entry.c
-@@ -6,11 +6,6 @@
- #include <linux/irqflags.h>
- #include <linux/rseq.h>
- 
--static inline bool has_syscall_work(unsigned long flags)
--{
--	return unlikely(flags & _TIF_SYSCALL_WORK);
--}
--
- long syscall_enter_from_user_mode(struct pt_regs *regs, long syscall)
- {
- 	trace_hardirqs_on();
-@@ -28,7 +23,11 @@ void syscall_exit_to_user_mode(struct pt_regs *regs)
- 
- 	rseq_syscall(regs);
- 	local_irq_disable();
--	if (has_syscall_work(flags))
-+	/*
-+	 * It really matters that we check for flags != 0 and not
-+	 * just for pending work here!
-+	 */
-+	if (flags)
- 		do_work_pending(regs, flags);
- 
- 	trace_hardirqs_on();
-@@ -45,6 +44,14 @@ noinstr void irqentry_enter_from_user_mode(struct pt_regs *regs)
- 
- noinstr void irqentry_exit_to_user_mode(struct pt_regs *regs)
- {
-+	unsigned long flags = read_thread_flags();
-+
-+	/*
-+	 * It really matters that we check for flags != 0 and not
-+	 * just for pending work here!
-+	 */
-+	if (flags)
-+		do_work_pending(regs, flags);
- 	trace_hardirqs_on();
+@@ -56,3 +56,11 @@ noinstr void irqentry_exit_to_user_mode(struct pt_regs *regs)
  	/* This context tracking call has inverse naming */
  	user_enter_callable();
-diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
-index 03b20637a2e1..a39ee14ec5b7 100644
---- a/arch/arm/kernel/signal.c
-+++ b/arch/arm/kernel/signal.c
-@@ -598,8 +598,7 @@ static void arch_do_signal_or_restart(struct pt_regs *regs)
- 	return;
  }
- 
--asmlinkage void
--do_work_pending(struct pt_regs *regs, unsigned int thread_flags)
-+void do_work_pending(struct pt_regs *regs, unsigned int thread_flags)
- {
- 	/*
- 	 * The assembly code enters us with IRQs off, but it hasn't
++
++noinstr void irqentry_enter_from_kernel_mode(struct pt_regs *regs)
++{
++}
++
++noinstr void irqentry_exit_to_kernel_mode(struct pt_regs *regs)
++{
++}
 
 -- 
 2.46.2
