@@ -1,227 +1,133 @@
-Return-Path: <linux-kernel+bounces-387062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 326C19B4B56
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:52:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 442C99B4B57
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:52:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF0FB2245E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:52:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3991F242C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:52:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6759206514;
-	Tue, 29 Oct 2024 13:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5003E206514;
+	Tue, 29 Oct 2024 13:52:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hV2eZnlH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MV9DO5xb";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lwGjSqAh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16708EAF1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63705EAF1;
+	Tue, 29 Oct 2024 13:52:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209946; cv=none; b=c9lOOAsvUWHpqvQ8BzY8JrTNujHSnT9NpDIUrtHAvjE7yC1qnQiFKhELgjdYqcP6yv0DhvJpR2G9weksaMSw9lbAm9bqbM0Kk3ThhNj1k7fZpWz55QcYjMaPItKQCwiKCFm41u/kfI5HqJotPmfLRHW9XCbJUf53wBquZxMIygI=
+	t=1730209957; cv=none; b=X4xp9eAp8AH2xyBxaequGd/udlyBjZarfqEHdaj2pNzyXHtoTmK5b+Wcpwg6QJhNfypHrJ8+8dtl+N9eWqqge6sREwKuuCLNt2a044+2aSAFnvYQD7kzeGekwoMNQpxLRw5DEApjh+LHNedvtEn4iL4hJr5q4VDNS28Yyf5l/QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209946; c=relaxed/simple;
-	bh=yaQuadiplp+QXlYKSTu+NnrknNEtIozDSTeYD22OwH0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jv/7zJx/ZIClbPu4mWgbRnGyqQ+2e3hdr/IZsfrEPI4PdqZRgqRrZ7yvf062GsOrNch+tzE3TIGw5BEs0y3L+ws97pDd2YHXzPdoFheh48tKyw2gUuh8orxmKtKpVHu8dcBLsxLtsNW3Q2XjOuj7jTAybMRimauvAenGMAW8a7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hV2eZnlH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730209943;
+	s=arc-20240116; t=1730209957; c=relaxed/simple;
+	bh=1JCk9rdpuj6PKz8WH+fzlMLoV82bnuU2ZMBDormG6RE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+408Dck6frIGEI4VbDV0nU68m1NKqMsT9xWpCPx/EQwOSp5nQ9aFCY/vFUINEjL9yaMom7HxK2A4Oy+nng7s4nPHjDq+JOpknkEJy1QuXawwz3zt5GskG7qt0eJvTlj9hALYkkSpv36gW82d72o7QFwuIiHpvfCYDB55hs09mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MV9DO5xb; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lwGjSqAh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 29 Oct 2024 14:52:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730209952;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dO1pxU+v7pGR+W1PTZavNEqgtX2j3MUJ4Ng6bCnd0XQ=;
-	b=hV2eZnlHj+JM8DHVf6Qj9qvbAXThmETNnL4yGGReLWZGhpe87PzjB5rc+saDDbPVwjJhTl
-	Qi82EyCI5hrn25mHrcsGJ4R4uZ0CZ7DrCmDFrHei+eMEV0wl5W6BQnYSHI30zsVSmD/jDR
-	PqjaZYLq9w1rSey1z7cP+Rbp6U6he4o=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-471-MKVERQcMO_iEfZqnnUOkVg-1; Tue, 29 Oct 2024 09:52:21 -0400
-X-MC-Unique: MKVERQcMO_iEfZqnnUOkVg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d504759d0so3601010f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:52:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730209940; x=1730814740;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dO1pxU+v7pGR+W1PTZavNEqgtX2j3MUJ4Ng6bCnd0XQ=;
-        b=eaJAjWW25+Hk3n8HdyeCuRXONwGTs+sROqpymvw32x75mHeMpymVB7Y2/UmyQqON63
-         uuvXMyLp8EehDF7VwA9Y3E8eJ2hiWknRM8fE+7gJcwlw5Bw4LQZE6/3W+SMrsQxWuj9G
-         UJG7Uz7zRMRNgGgGnVc+b3muVa6GvG4f/NRkiz1hTGTU1Y+QOHA53b7vUzUkg06DFOdt
-         SoH2tmRvmaCx1ZZsp+PKbN8jDCBq4O3iJ/+a9yo7GITiDtPVNL7EQwGICMV/XNSdfrWi
-         jDzggkiNEs9yqSg8yPblRXAe3W3rCZ9Y0D3mXs6JEtwMoWYtE3Dm+hL9Xr33JyWNhqXa
-         yvtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdSozauokHMtrlECjPo6172j08QroY3x7wbsrRlRaF47tE7/jzjsg3k6dA01TTOBO0sues60mLtkuTckU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlDzGd52Gp/qvREpv1pdb9XhJBYHcku0bTHV4EZnGFBAxZkclr
-	zsZv+GWGEenuAUQoB1htjcAVxMhU860cxPGJode4MMdAzbLcgCNIlBAMuSY+cr0cCH3qrq+Yj2r
-	zgmJpd+upD33K87ODpmdsLJR1OsZcdLhOM0Ak3TH2ciwgwBi1s7iIdcJKqjiusA==
-X-Received: by 2002:adf:ff86:0:b0:37c:d2e3:1298 with SMTP id ffacd0b85a97d-380612475d5mr10456955f8f.55.1730209940114;
-        Tue, 29 Oct 2024 06:52:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGl2pn0wJexO6SVQ72x+wYokfye5e2x6PTmKxO03mdaWNEJN9SdmRhPNmLkSfHsHTO5S7ejvg==
-X-Received: by 2002:adf:ff86:0:b0:37c:d2e3:1298 with SMTP id ffacd0b85a97d-380612475d5mr10456918f8f.55.1730209939719;
-        Tue, 29 Oct 2024 06:52:19 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c72d:8500:d87a:ed8e:1e80:5a7e? (p200300cbc72d8500d87aed8e1e805a7e.dip0.t-ipconnect.de. [2003:cb:c72d:8500:d87a:ed8e:1e80:5a7e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f7213sm144934185e9.32.2024.10.29.06.52.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 06:52:19 -0700 (PDT)
-Message-ID: <c0decc3e-8b3a-40e1-a997-f4b6f500f546@redhat.com>
-Date: Tue, 29 Oct 2024 14:52:17 +0100
+	 in-reply-to:in-reply-to:references:references;
+	bh=84hP6MRbQhJSQQYBUvvRwctKSrXoY74rO7nolo+OhAY=;
+	b=MV9DO5xbD3g7dZt85B0NBg2dNWx1MpPA2qcdVZ0TGreYeLWUMra8KgckPPGb/wove5PsaE
+	hV/NsEPdhDjZpamm89cofGPHn1zmLVszTXca6CwGL2fGFIleUPwzKrBGmCSr6fKILh2pE1
+	0ObKqleQZ9jso3jmRge10yJAOYmjKJO6CwWzuhuEK090khVWL6mS0lhilHc3bzF6IBh2Y1
+	FI4V1/wEyTK5u4yTgrQibGGivaAUJM3PQ5BrNZsK6uPLmHpNL9pKNkEE8etn7MHAMlC38Q
+	8RivuuPnz40xSSqgBmg0EHzI82AtS2qK+jEVoSmRiRYdmWXUPMajeG3Khq8upA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730209952;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=84hP6MRbQhJSQQYBUvvRwctKSrXoY74rO7nolo+OhAY=;
+	b=lwGjSqAhViHJxaf1n0x9QzQNNVZJhxFvMMTK8pynncCPAx6KcHEuR6YU0yxZrrBJsKn/oW
+	4HArUe3IqDceQqDg==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v2 3/3] softirq: Use a dedicated thread for timer wakeups
+ on PREEMPT_RT.
+Message-ID: <20241029135231.ScfxKhz1@linutronix.de>
+References: <20241024150413.518862-1-bigeasy@linutronix.de>
+ <20241024150413.518862-4-bigeasy@linutronix.de>
+ <Zx-ZUyMLWWsxR8nL@localhost.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] x86: probe memory block size advisement value
- during mm init
-To: Gregory Price <gourry@gourry.net>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-mm@kvack.org, linux-cxl@kvack.org, Jonathan.Cameron@huawei.com,
- dan.j.williams@intel.com, rrichter@amd.com, Terry.Bowman@amd.com,
- dave.jiang@intel.com, ira.weiny@intel.com, alison.schofield@intel.com,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- rafael@kernel.org, lenb@kernel.org, osalvador@suse.de,
- gregkh@linuxfoundation.org, akpm@linux-foundation.org, rppt@kernel.org
-References: <20241022213450.15041-1-gourry@gourry.net>
- <20241022213450.15041-3-gourry@gourry.net>
- <07102ea5-ee43-4c11-ab3c-a35cfce9003b@redhat.com>
- <ZyDnmUlXym7gDkCh@PC2K9PVX.TheFacebook.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZyDnmUlXym7gDkCh@PC2K9PVX.TheFacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Zx-ZUyMLWWsxR8nL@localhost.localdomain>
 
-On 29.10.24 14:48, Gregory Price wrote:
-> On Tue, Oct 29, 2024 at 01:40:38PM +0100, David Hildenbrand wrote:
->> On 22.10.24 23:34, Gregory Price wrote:
->>> Systems with hotplug may provide an advisement value on what the
->>> memblock size should be.  Probe this value when the rest of the
->>> configuration values are considered.
->>>
->>> The new heuristic is as follows
->>>
->>> 1) set_memory_block_size_order value if already set (cmdline param)
->>> 2) minimum block size if memory is less than large block limit
->>> 3) if no hotplug advice: Max block size if system is bare-metal,
->>>      otherwise use end of memory alignment.
->>> 4) if hotplug advice: lesser of advice and end of memory alignment.
->>>
->>> Suggested-by: David Hildenbrand <david@redhat.com>
->>> Signed-off-by: Gregory Price <gourry@gourry.net>
->>> ---
->>>    arch/x86/mm/init_64.c | 14 +++++++++-----
->>>    1 file changed, 9 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
->>> index ff253648706f..93d669f467f7 100644
->>> --- a/arch/x86/mm/init_64.c
->>> +++ b/arch/x86/mm/init_64.c
->>> @@ -1452,13 +1452,17 @@ static unsigned long probe_memory_block_size(void)
->>>    	}
->>>    	/*
->>> -	 * Use max block size to minimize overhead on bare metal, where
->>> -	 * alignment for memory hotplug isn't a concern.
->>> +	 * When hotplug alignment is not a concern, maximize blocksize
->>> +	 * to minimize overhead. Otherwise, align to the lesser of advice
->>> +	 * alignment and end of memory alignment.
->>>    	 */
->>> -	if (!boot_cpu_has(X86_FEATURE_HYPERVISOR)) {
->>> +	bz = memory_block_probe_max_size();
->>> +	if (!bz) {
->>>    		bz = MAX_BLOCK_SIZE;
->>> -		goto done;
->>> -	}
->>> +		if (!boot_cpu_has(X86_FEATURE_HYPERVISOR))
->>> +			goto done;
->>> +	} else
->>> +		bz = max(min(bz, MAX_BLOCK_SIZE), MIN_MEMORY_BLOCK_SIZE);
->>>    	/* Find the largest allowed block size that aligns to memory end */
->>>    	for (bz = MAX_BLOCK_SIZE; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
->          ^^^^^^^^^^^^^^^^^^^^^^^^
->>
->>
->> Acked-by: David Hildenbrand <david@redhat.com>
-> 
-> Will pick this up but wanted to point out the silly bug above.
-> This version completely ignores the advise lol.
-> 
-> Changing to below
-> 
-> diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-> index 93d669f467f7..01876629f21f 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -1465,7 +1465,7 @@ static unsigned long probe_memory_block_size(void)
->                  bz = max(min(bz, MAX_BLOCK_SIZE), MIN_MEMORY_BLOCK_SIZE);
-> 
->          /* Find the largest allowed block size that aligns to memory end */
-> -       for (bz = MAX_BLOCK_SIZE; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
-> +       for (; bz > MIN_MEMORY_BLOCK_SIZE; bz >>= 1) {
->                  if (IS_ALIGNED(boot_mem_end, bz))
->                          break;
+On 2024-10-28 15:01:55 [+0100], Frederic Weisbecker wrote:
+> > diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
+> > index 457151f9f263d..9637af78087f3 100644
+> > --- a/include/linux/interrupt.h
+> > +++ b/include/linux/interrupt.h
+> > @@ -616,6 +616,50 @@ extern void __raise_softirq_irqoff(unsigned int nr=
+);
+> >  extern void raise_softirq_irqoff(unsigned int nr);
+> >  extern void raise_softirq(unsigned int nr);
+> > =20
+> > +/*
+> > + * Handle timers in a dedicated thread at a low SCHED_FIFO priority in=
+stead in
+> > + * ksoftirqd as to be prefred over SCHED_NORMAL tasks.
+> > + */
+>=20
+> This doesn't parse. How about, inspired by your changelog:
+=E2=80=A6
 
-Heh, yes, I think I suggested that in my quick draft.
+What about this essay instead:
 
--- 
-Cheers,
+| With forced-threaded interrupts enabled a raised softirq is deferred to
+| ksoftirqd unless it can be handled within the threaded interrupt. This
+| affects timer_list timers and hrtimers which are explicitly marked with
+| HRTIMER_MODE_SOFT.
+| With PREEMPT_RT enabled more hrtimers are moved to softirq for processing
+| which includes all timers which are not explicitly marked HRTIMER_MODE_HA=
+RD.
+| Userspace controlled timers (like the clock_nanosleep() interface) is div=
+ided
+| into two categories: Tasks with elevated scheduling policy including
+| SCHED_{FIFO|RR|DL} and the remaining scheduling policy. The tasks with the
+| elevated scheduling policy are woken up directly from the HARDIRQ while a=
+ll
+| other wake ups are delayed to so softirq and so to ksoftirqd.
+|
+| The ksoftirqd runs at SCHED_OTHER policy at which it should remain since =
+it
+| handles the softirq in an overloaded situation (not handled everything
+| within its last run).
+| If the timers are handled at SCHED_OTHER priority then they competes with=
+ all
+| other SCHED_OTHER tasks for CPU resources are possibly delayed.
+| Moving timers softirqs to a low priority SCHED_FIFO thread instead ensures
+| that timer are performed before scheduling any SCHED_OTHER thread.
 
-David / dhildenb
+And with this piece of text I convinced myself to also enable this in
+the forced-threaded case.
 
+> Thanks.
+
+Sebastian
 
