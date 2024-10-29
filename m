@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-387258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2309B4EB3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:58:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E19469B4EAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C74F1C2091F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:58:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CDED1C21125
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:57:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A781196C9C;
-	Tue, 29 Oct 2024 15:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58009196446;
+	Tue, 29 Oct 2024 15:57:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h8WAM8ke"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="greHbctA"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFB91917F9;
-	Tue, 29 Oct 2024 15:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BD7194AD5
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730217488; cv=none; b=Z+viNLmM16TCDZO9I+i5cc9IVanHZIPDOQ1QwdlauCm2mcDIn3IPrTzB2UZ9OenaZqMiXciiNBsljnt8H8hRxySQVT9aZvtcFLfybYSUIXKcG2jZ1wdrX/vsO3Mj6Y8m8O+YynNhWFptklvYKcfBIieb/tRyCu53yXeGi2Qxtog=
+	t=1730217444; cv=none; b=mMKq/A0VTtx+aL6pPhqeqfUD6y9mtGU822M+2MWYW7feI2dbJPBqex5m4kT63/92ZD84ZNqkVDCMFjrtjMa4473WPvG8BfcMV1vAFBx716HATPO16fjxeUfFzCpLzPms8va1vKQTpbzEPlnNtJBwReMfOLlWmSfOC3UoibbM86k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730217488; c=relaxed/simple;
-	bh=XR9+om4ScVOdEArtXJ+HMBDzmeQKqanXDaij5mePADg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/tGl3UB2D4+s/ZOBmXcrwwr4N11rOl6UUEBJJ5gHqJ87AvRpxoxJthomoj7WiTjiGTqFc3KDhiNvidEsNn66UTOM1fzj57xDTGevhaMDm/39thVgx2bOvSuDHCTn9dYC6bJ2xx0dWi2Z8L/mHdadQmKVrQvkJ0ts+IxsqNJGWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h8WAM8ke; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F60640E0192;
-	Tue, 29 Oct 2024 15:58:03 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ldU0KY-akd8y; Tue, 29 Oct 2024 15:57:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730217477; bh=E1Eu7/CBiDK5On1k+8E/px28Z45wOChcdzeICfvDRzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h8WAM8keOTA41hoTZsaqP2W9fPo3U+SuC88JgXDHD3V1sXgn9xTakKxxcl95U7juT
-	 fXpmYMCp4qvHwHQgCki9OXTKURBxFfCCZzS+DQF7f5A26OAfowweresr6iIBq2BOj+
-	 RaJ3qaUP2BFK5SyUZl2p7niObXa2A+4xwPuvxwnsPF+66E+eEIJSZU0pfQBeDqLABO
-	 7EgvNMCm1/V+fxdd+Kc2Numu4Iob3LJzOAT6OyQJn0EemUZ9nnBokXvmon2kBhLep0
-	 z2tnPetKyt+hEwMXdL9Ne54gvtjDvL1MzdX40UKGSs/w281XTCq7tm6cmhkDA1Rdhb
-	 8yiDJ/a8w6HuW1JreIveP+yIN81AxxaRqNNDKgpky714vMQ0nDGynOu5dJx0xprUO7
-	 uwZl7kUGcfpNPG5BEOfwfQ2iKb6ZhFNbejGnLmEMcA5aOgH6BaO4AfM2vzwFuNnEVl
-	 47eY+qsIFikmdI70RUGzTwFSoCjmdd/WuJtLTXTZBMoquY/D3pd5sFuuVTK9WOBwU1
-	 eA+tOHx0G8e0Dw0SpEjaTM/9/O6tjeZ+7yOAQ+WzebZ1mEFQBcthMoSgF0rbZEUX+1
-	 G5LUj3M/ynVzJ1P5QAbv/YUgReYGviCHiuLnuExD9o6x89E8O+jwZNZj+5wXpLrkQt
-	 qa35yR9r7HmqoKXOKtfq28OU=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0078F40E0198;
-	Tue, 29 Oct 2024 15:57:44 +0000 (UTC)
-Date: Tue, 29 Oct 2024 16:57:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Xiaoyao Li <xiaoyao.li@intel.com>
-Cc: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	thomas.lendacky@amd.com, x86@kernel.org, kvm@vger.kernel.org,
-	mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
-	pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
-Message-ID: <20241029155739.GNZyEF88OV1m-tU94h@fat_crate.local>
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-4-nikunj@amd.com>
- <3ea9cbf7-aea2-4d30-971e-d2ca5c00fb66@intel.com>
- <56ce5e7b-48c1-73b0-ae4b-05b80f10ccf7@amd.com>
- <3782c833-94a0-4e41-9f40-8505a2681393@intel.com>
- <20241029142757.GHZyDw7TVsXGwlvv5P@fat_crate.local>
- <ef4f1d7a-cd5c-44db-9da0-1309b6aeaf6c@intel.com>
- <20241029150327.GKZyD5P1_tetoNaU_y@fat_crate.local>
- <59084476-e210-4392-b73b-1038a2956e31@intel.com>
+	s=arc-20240116; t=1730217444; c=relaxed/simple;
+	bh=CcpdYNV8akfb0no5SPpIyP6TGiAEbcbT8dcmXVqprmU=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=qCILprBH4BvtaaFcmtn+/Mhk6I36R+80uVCm8jYtJ+YozFI+hW4NSTna0/9FFq329Mz2HtyBumqnlh1ClyaZEfpvRACOivl5/l29DAw7kVDP5SBCam0T7DPHY8SotfKqe3GFZcFVYb390TCMpGVlLkcSlxpVxBvtmoUFjXKW5YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=greHbctA; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso788718366b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:57:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1730217441; x=1730822241; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CcpdYNV8akfb0no5SPpIyP6TGiAEbcbT8dcmXVqprmU=;
+        b=greHbctAmFfLFUNEOqbF80HwlbsAGYc3d9wpo+ik+bGJ6myUL5soTvCoCF5N5mwKa3
+         +Kq+eTwuPTY0CwRg7ytl7lab+9hPmZsflye9T6YTt+KCejeAQgCPOTdDOFvCELa07hBK
+         oPhUnXrN4knMnoBlLtJqA3LG/CSX1sNc8/n23TtLSZYJXWVWfo2y5Jj+KhQC6Fr+I5PI
+         IwSPEHp0bG2yQZ3ibNHInTT1YsVr2Os7erUGjuz6fnlFx2kWFM7jSOYMxtI9d87Vfgx5
+         82sJivxBbFZcn3a2XT199/p/m9Vsu97rScqS0yaVTg3qiaB9Zlhiu/DiyzSipLKwtA/R
+         +M0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730217441; x=1730822241;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=CcpdYNV8akfb0no5SPpIyP6TGiAEbcbT8dcmXVqprmU=;
+        b=Aq7lefZYDH1mrTHe4Jz5FyUKhzDzDxL12TQiubFaWP/tMNWxB1jD1E2YwIpjkSUKGW
+         NqinDWJfbou6ihugKk9jHxvHJ5qgZLEx0J++wU4/jOrnEbXk08UOZkzy1BX17BrUr+hW
+         7GIJowFCuu/huCZp88q44+ZspwLNQu8c2skyLquoAeZwQMdPRTy0qy5dudCLvikKpSg/
+         /LMQR6iIUL4C93ySc+6zlhX8M4uMaEDrD5y2g1D48Da2eQwAEwJxC3kls4ejM/jTlqcK
+         IEpSKTk9+EWuIjzXiI3T/EFelc9X9xHirZncCvcn1sk1215wNJJxYdKqq/JjkWOu6hvF
+         HOtg==
+X-Gm-Message-State: AOJu0YwFS9pOwkCIYLiskD7HmZuwccccVjc71F23oRlGpk4dwItlxsEm
+	vK3BhhhkAlAKkQSUmioze1UAw1ZAz99YZCkoLpjfRObteZ3huiGvNd/lWoXy
+X-Google-Smtp-Source: AGHT+IE7punfeesHQhPv03rzgDHxpzFFfbJ0CF/EkUYALB5LdfIXmCWOm2XY54HVwJiXxXpgtzdLvA==
+X-Received: by 2002:a17:907:3f1d:b0:a9a:5b78:d7d8 with SMTP id a640c23a62f3a-a9de5cea085mr1116546866b.17.1730217440851;
+        Tue, 29 Oct 2024 08:57:20 -0700 (PDT)
+Received: from [192.168.1.178] (dynamic-095-114-051-066.95.114.pool.telefonica.de. [95.114.51.66])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9e214152adsm103928266b.92.2024.10.29.08.57.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 08:57:20 -0700 (PDT)
+Message-ID: <f631fb4c-2ea9-4a76-a6c8-3a7d49e728e6@googlemail.com>
+Date: Tue, 29 Oct 2024 16:57:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <59084476-e210-4392-b73b-1038a2956e31@intel.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: tl
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ phoronix@phoronix.com, devuan-dev@lists.dyne.org,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: metux <metuxitservice@googlemail.com>
+Subject: Are critics being silenced on LKML ?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 11:14:29PM +0800, Xiaoyao Li wrote:
-> However, how secure TSC related to memory encryption?
+Hello folks,
 
-Are you kidding me?
 
-Secure TSC is a SNP feature.
+I'm receiving lots of error bounces from the mail server hosting LKML:
+it's declaring replies on the currently heated top (you know which one)
+as "spam".
 
-I don't think you're getting it so lemme elaborate:
+I sincerly hope that's just a temporary technical error, which will get
+fixed soon. Otherwise I'm seeing a huge streisand wave coming on the
+horizon.
 
-mem_encrypt.c is only *trying* to be somewhat generic but there is stuff like:
 
-        if (cc_platform_has(CC_ATTR_HOST_SEV_SNP))
-                snp_fixup_e820_tables();
+--mtx
 
-for example.
-
-Both TDX and SEV/SNP need to call *something* at different times during boot
-for various reasons.
-
-We could aim for generalizing things by doing per-vendor early init functions,
-which is ok, but hasn't been the main goal so far. So far the goal is to do
-the proper init/setup calls at the right time during boot and not allow the
-code to grow into an unmaintainable mess while doing so.
-
-But both vendors need to do different things at different times during the
-lifetime of the kernel depending on what they need/want to support.
-
-IOW, the memory encryption code is still shaping up...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
