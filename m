@@ -1,218 +1,205 @@
-Return-Path: <linux-kernel+bounces-387431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21359B5140
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:44:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01E4C9B5147
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83E61C2241A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:44:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2E40281DA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:47:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C01721D5CD6;
-	Tue, 29 Oct 2024 17:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CD9A1D7989;
+	Tue, 29 Oct 2024 17:47:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="FZwPXa1a"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JxFNeMdQ"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FCA19258A;
-	Tue, 29 Oct 2024 17:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169B192589
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:47:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730223865; cv=none; b=LPiS2vhro7Ma6CSl80vPYjkkD2puyY9wXO/a+NasGgdRpsfOQszp5zrKOXf0XHEqBq+3z3hbUWeRdRV03LybdcFaYa7LBt3hlZAe8fOwa3zeGy2kSG3RiL5eF+G8ZVva/L8xEjKTRT2sIa0NN2rFdopXU5Y5v78uRkCt95YTicM=
+	t=1730224026; cv=none; b=aim1K2UUxFgpoJ7qw/u1SZ/1PuL1tAMmyF64+vDrpew5OLBT01U3gViuJd5mzxy1KU29Ze15XCzt7aiWdlw2/XvbR4qK+Dexx7iLF5EYOM+9gdz1vOMEPdwA6hJZE0lGzr2Qk/mZozesNS506AmfsrQ6r5ynIyxfz/PoI+baa6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730223865; c=relaxed/simple;
-	bh=J365I8voCVVs7+QqfpUdraeQTQar+BYCR5lc+7HjVw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i5P8Qo0kCl9nld4jdm4l5NiNev/79IIo4FJ+PSQYX7Vlaz8QWPqd+YRMwsclNh906NETRxXzLtH/FG8w4lPCNnzZuI6oIVsqd+kJpF4Pm6qm5EnlEoWRYaa80HETBuYS/h5pcMi5sKFCNXcWxV121RKQlz8uXZNGYa75vtzVgwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=FZwPXa1a; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8AF5240E01A5;
-	Tue, 29 Oct 2024 17:44:19 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id T6BQsndEFnLR; Tue, 29 Oct 2024 17:44:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730223854; bh=HR0f1lTZwMqBrosIlrc89Nf1wvTIZfC3xRSgXCnUop4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FZwPXa1a39vgGs2cA6eGp6LoC3ion5mxCurIvBCkGss97+yjpzZR2mmOvywkCjyhD
-	 n21aXL3PcQeThpY7js900k8P951/xRbPaUsmyS2ep3F1S/ZYyZg4FkCfccK1ASdJua
-	 95hT13X6sS8zQsrJ52nFexi8gIwtqjepehTC2UhbIcQECphoqDKJIyefkX6p57gGTQ
-	 ccmyyMmT9pgNgn0PlL5WyMPe6mIBMeNY/HmM28LmDEoeFUlWf5oymX7yXa9tnOm/dh
-	 RCpUQq5AtoRSZqTWxPF6e4MJX3PDHr1H7esnLAtzhGSC3bJM90hhBsjL8IwsWLVWXl
-	 5C8IRhDAD4Epf76OwMHlSaGtqkd3HxFFwBdlUkaSs0kewkx1IO2EkgjxUKE5W+EkJI
-	 vEd5FREV2al0J/kXgiLUO85Tnsa9Ap1rUai7VUnXiNdH3bYacE3Fi1zo7cumz5wiah
-	 CQL9rZblE6EbnskJGZjmhWTyxnNqEfESZd23bSs59sYL1+iV+0fQBnWq+2dFMAeh88
-	 H4yz6DrrSS0UYsjc0BaGM2SvsExat9A71lMRubN+7EsNfhIEQfNgyM9EFJcRcpUCMz
-	 vwIg5WwMOVBTrSoWbG1XDylcBKHZhmH8WeMhUnJMZszj9Uo39vnrbtBQndyTJJboAe
-	 sUCMhl28PfbzJbHXrzvas5l4=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AA2F240E0198;
-	Tue, 29 Oct 2024 17:44:03 +0000 (UTC)
-Date: Tue, 29 Oct 2024 18:43:57 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v14 01/13] x86/sev: Carve out and export SNP guest
- messaging init routines
-Message-ID: <20241029174357.GWZyEe3VwJr3xYHXoT@fat_crate.local>
-References: <20241028053431.3439593-1-nikunj@amd.com>
- <20241028053431.3439593-2-nikunj@amd.com>
+	s=arc-20240116; t=1730224026; c=relaxed/simple;
+	bh=o6xVfP4AWDImns9Pcjik5dLlk13C9VGqWiL7EWtae8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DHC+81P6ks9TQMZecXvaj3xsRoJ+NsD4rxOO1eVM82c5U6v1bJ2zGU8BQMvMUz03Pzw7PYRSZ89a+SL7DKfkeAff89hJ2IiWFjxq0/58pcdWQKwcRi0EdNzJaKWoW/Edn7SpKxvgkmzbTeY37bOhuxh9WTb8FiHS5NYg3d76J7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JxFNeMdQ; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e60966297fso3227590b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:47:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730224023; x=1730828823; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o6xVfP4AWDImns9Pcjik5dLlk13C9VGqWiL7EWtae8s=;
+        b=JxFNeMdQ7qexPSKJ9Jmt2T7bK1/ErhfWKWGUqG5E6IYZ40tGkvg4/tM5PpPtITc/Fh
+         pvx9mm1v8Rt2I2OkRxWiXbhg3N4+gTzJvHXJ2SViCgfu9DRuOX6LKktClwLFQLckys6s
+         6JjyGOUBpDwHfy3XiTZJElZ0e3COyGA6faafiV3t8Z7oVrMzrckJ3xgqv7Ojqa4AIMJj
+         E5h+JEZ7rthDLHQFSdv903DKwHAPZoDlTfaWI6s35a1Ci8ijfg+H+9Yl5l4Q7Tbr4eWp
+         15i3G9UGl762Yak2e6WXykRG1H61SJC0SMZ/YaVZMuXryT5cv42RbqyhULbIJraeWA6F
+         0xxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730224023; x=1730828823;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o6xVfP4AWDImns9Pcjik5dLlk13C9VGqWiL7EWtae8s=;
+        b=AlbjjTOEmVO6yitxrQMOEbDUZTyZd6fMKVGubDRLiNiTXtcC+YtTO3MP79wqWHbKyB
+         Mg1OmgXQYRO6nkyOhWuLin8jXEK/4GxurGjXjmFxoasirWx4HZiOI/l5LQ0DwUliHtzS
+         oO5sYuI+DufQHUr2GgFEbJVorssRiapP59sLfCzFA3UrRlTjsxmMmVNyr5UW5WsomL1b
+         BBqfnE4RFCTyp6q6YPrhItMgoywupJ3NIzF+1fcAycAWoSOaO7XQLnyc5O5hrJ7gbqhy
+         7jzrvtXBUHEpPveTt2Q1XnUD6Rz9ys1kpK73uNRQuDeI1sncA+UPa7FjctTd93k5CDVu
+         La4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWBGAekJ/82OzB0l80v/3IspwdjpFbP4zTeSIdnvD7mNibKj3REbppsMEwIb+368xf0Vs66a6s1XoA5dNM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrmplgcxf4uOIt9Idy+JqV7TBXahPiOQuQH5nfBl9w5gatCkoi
+	04rXvldFQp4Y5zJ4O5EM21dboljoATj6WF7+UT0b6n8OiRiERBDg9//dWY8wtuzdBYiewsK1gpd
+	ZZCYSQxCEp1Qn9kZChEbB4CILig8=
+X-Google-Smtp-Source: AGHT+IE7dKkM6rEd7MQhQz1c94b/1mS1byd5I5IB/6mA1cKHdaYvEfKyEnTsz6bkK3hCok8h0iedHGE2bJDKvYarFuU=
+X-Received: by 2002:a05:6808:3c95:b0:3e6:1291:7629 with SMTP id
+ 5614622812f47-3e63823d82cmr13768963b6e.3.1730224023549; Tue, 29 Oct 2024
+ 10:47:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028053431.3439593-2-nikunj@amd.com>
+References: <20241027011959.9226-1-21cnbao@gmail.com> <CAKEwX=NFtcoiqiLa2ov-AR1coYnJE-gXVf32DihJcTYTOJcQdQ@mail.gmail.com>
+ <CAGsJ_4yfcfFWpy3hYan6ggntVJmR0i-hH-0TUK_1-7sL9zBgDQ@mail.gmail.com>
+ <678a1e30-4962-48de-b5cb-03a1b4b9db1b@gmail.com> <CAKEwX=P2EKkbAgoUJ_RTRwv0DS18HfnEG2gRFmCYyb2R+LsrvA@mail.gmail.com>
+ <6303e3c9-85d5-40f5-b265-70ecdb02d5ba@gmail.com> <CAJD7tkZpO1nEvdh7qPWt4Pg=FU1KZfEd3vA9ucEpqdc-7kF0Jg@mail.gmail.com>
+ <64f12abd-dde3-41a4-b694-cc42784217fb@gmail.com> <CAGsJ_4zQmaGxG2Ega61Jm5UMgHH-jtYC4ZCxsRX6+QS9ta25kQ@mail.gmail.com>
+ <882008b6-13e0-41d8-91fa-f26c585120d8@gmail.com> <CAGsJ_4yBkry-rw75AciT8OiYWrw+=D0okcxiyXzzNrz=QJxiBA@mail.gmail.com>
+ <cba36cb0-66c7-45c1-97c3-a96ea48a6cf0@gmail.com> <CAGsJ_4wXO2Hjs0HZBGsGegBAeE8YxJbCF6ZXQQ6ZnVxgR82AuQ@mail.gmail.com>
+ <228c428d-d116-4be1-9d0d-0591667b7ccb@gmail.com> <CAGsJ_4zLNA-1+3j4snNLiujT3NLcmKEVFA4+eD1Sk1bOkqAGYw@mail.gmail.com>
+ <03d4c776-4b2e-4f3d-94f0-9b716bfd74d2@gmail.com> <CAGsJ_4zRZFpJ0rWQ3XzspfSXN6xXN4eftCdL3xHPTqqYLUhQcA@mail.gmail.com>
+ <CAJD7tkYPB=2c23LMi1+=qrPO+rcr5zJB4+2TPrcjAZHhsm=Vsw@mail.gmail.com>
+ <CAGsJ_4yxoBVEY-Zpp3YNbiCCwbKO+v3-9R984uGVRHAtMSLDLQ@mail.gmail.com>
+ <CAJD7tkYmBgp5WK9pD=ap=WuqWiiHvEhG0N0J_TiYdGRNaxwLVA@mail.gmail.com> <CAGsJ_4yvWjkYNXu7+FkovEA3RGHu31g1DRAYtNdoQYKhnWcYwQ@mail.gmail.com>
+In-Reply-To: <CAGsJ_4yvWjkYNXu7+FkovEA3RGHu31g1DRAYtNdoQYKhnWcYwQ@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 29 Oct 2024 10:46:51 -0700
+Message-ID: <CAKEwX=Mxh+G=6Yq_gSuSoB3XjpGepYEGPg-eYh1RU_690tGedA@mail.gmail.com>
+Subject: Re: [PATCH RFC] mm: count zeromap read and set for swapout and swapin
+To: Barry Song <21cnbao@gmail.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>, Usama Arif <usamaarif642@gmail.com>, 
+	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Barry Song <v-songbaohua@oppo.com>, Chengming Zhou <chengming.zhou@linux.dev>, 
+	Johannes Weiner <hannes@cmpxchg.org>, David Hildenbrand <david@redhat.com>, Hugh Dickins <hughd@google.com>, 
+	Matthew Wilcox <willy@infradead.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
+	Andi Kleen <ak@linux.intel.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, 
+	Chris Li <chrisl@kernel.org>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Ryan Roberts <ryan.roberts@arm.com>, joshua.hahnjy@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28, 2024 at 11:04:19AM +0530, Nikunj A Dadhania wrote:
-> Currently, the SEV guest driver is the only user of SNP guest messaging.
-> All routines for initializing SNP guest messaging are implemented within
-> the SEV guest driver. To add Secure TSC guest support, these initialization
-> routines need to be available during early boot.
-> 
-> Carve out common SNP guest messaging buffer allocations and message
-> initialization routines to core/sev.c and export them. These newly added
-> APIs set up the SNP message context (snp_msg_desc), which contains all the
-> necessary details for sending SNP guest messages.
-> 
-> At present, the SEV guest platform data structure is used to pass the
-> secrets page physical address to SEV guest driver. Since the secrets page
-> address is locally available to the initialization routine, use the cached
-> address. Remove the unused SEV guest platform data structure.
+On Mon, Oct 28, 2024 at 4:03=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Tue, Oct 29, 2024 at 6:54=E2=80=AFAM Yosry Ahmed <yosryahmed@google.co=
+m> wrote:
+> >
+> > On Mon, Oct 28, 2024 at 3:52=E2=80=AFPM Barry Song <21cnbao@gmail.com> =
+wrote:
+> > >
+> > > On Tue, Oct 29, 2024 at 6:33=E2=80=AFAM Yosry Ahmed <yosryahmed@googl=
+e.com> wrote:
+> > > >
+> > > > [..]
+> > > > > > > By the way, I recently had an idea: if we can conduct the zer=
+omap check
+> > > > > > > earlier - for example - before allocating swap slots and page=
+out(), could
+> > > > > > > we completely eliminate swap slot occupation and allocation/r=
+elease
+> > > > > > > for zeromap data? For example, we could use a special swap
+> > > > > > > entry value in the PTE to indicate zero content and directly =
+fill it with
+> > > > > > > zeros when swapping back. We've observed that swap slot alloc=
+ation and
+> > > > > > > freeing can consume a lot of CPU and slow down functions like
+> > > > > > > zap_pte_range and swap-in. If we can entirely skip these step=
+s, it
+> > > > > > > could improve performance. However, I'm uncertain about the b=
+enefits we
+> > > > > > > would gain if we only have 1-2% zeromap data.
+> > > > > >
+> > > > > > If I remember correctly this was one of the ideas floated aroun=
+d in the
+> > > > > > initial version of the zeromap series, but it was evaluated as =
+a lot more
+> > > > > > complicated to do than what the current zeromap code looks like=
+. But I
+> > > > > > think its definitely worth looking into!
+> > > >
+> > > > Yup, I did suggest this on the first version:
+> > > > https://lore.kernel.org/linux-mm/CAJD7tkYcTV_GOZV3qR6uxgFEvYXw1rP-h=
+7WQjDnsdwM=3Dg9cpAw@mail.gmail.com/
+> > > >
+> > > > , and Usama took a stab at implementing it in the second version:
+> > > > https://lore.kernel.org/linux-mm/20240604105950.1134192-1-usamaarif=
+642@gmail.com/
+> > > >
+> > > > David and Shakeel pointed out a few problems. I think they are
+> > > > fixable, but the complexity/benefit tradeoff was getting unclear at
+> > > > that point.
+> > > >
+> > > > If we can make it work without too much complexity, that would be
+> > > > great of course.
+> > > >
+> > > > >
+> > > > > Sorry for the noise. I didn't review the initial discussion. But =
+my feeling
+> > > > > is that it might be valuable considering the report from Zhiguo:
+> > > > >
+> > > > > https://lore.kernel.org/linux-mm/20240805153639.1057-1-justinjian=
+g@vivo.com/
+> > > > >
+> > > > > In fact, our recent benchmark also indicates that swap free could=
+ account
+> > > > > for a significant portion in do_swap_page().
+> > > >
+> > > > As Shakeel mentioned in a reply to Usama's patch mentioned above, w=
+e
+> > > > would need to check the contents of the page after it's unmapped. S=
+o
+> > > > likely we need to allocate a swap slot, walk the rmap and unmap, ch=
+eck
+> > > > contents, walk the rmap again and update the PTEs, free the swap sl=
+ot.
+> > > >
+> > >
+> > > So the issue is that we can't check the content before allocating slo=
+ts and
+> > > unmapping during reclamation? If we find the content is zero, can we =
+skip
+> > > all slot operations and go directly to rmap/unmap by using a special =
+PTE?
+> >
+> > We need to unmap first before checking the content, otherwise the
+> > content can change right after we check it.
+>
+> Well, do we have a way to terminate the unmap if we find pte_dirty and en=
+sure
+> the folio is still mapped after try_to_unmap_one()? Then we could
+> activate it again
+> after try_to_unmap.
+>
+> It might just be noise. Let me take some more time to think about it. :-)
 
-Do not talk about *what* the patch is doing in the commit message - that
-should be obvious from the diff itself. Rather, concentrate on the *why*
-it needs to be done.
+FWIW, the swap abstraction layer Yosry proposed last year (and I'm
+working on right now) will allow you to store these zeromapped swap
+entries without requiring any swap slots allocated on the swapfile.
+It's basically the same thing as swap/zswap decoupling.
 
-Imagine one fine day you're doing git archeology, you find the place in
-the code about which you want to find out why it was changed the way it 
-is now.
-
-You do git annotate <filename> ... find the line, see the commit id and
-you do:
-
-git show <commit id>
-
-You read the commit message and there's just gibberish and nothing's
-explaining *why* that change was done. And you start scratching your
-head, trying to figure out why.
-
-See what I mean?
-
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  arch/x86/include/asm/sev.h              |  71 ++++++++-
->  arch/x86/coco/sev/core.c                | 133 +++++++++++++++-
->  drivers/virt/coco/sev-guest/sev-guest.c | 195 +++---------------------
->  3 files changed, 215 insertions(+), 184 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
-> index 2e49c4a9e7fe..63c30f4d44d7 100644
-> --- a/arch/x86/include/asm/sev.h
-> +++ b/arch/x86/include/asm/sev.h
-> @@ -14,6 +14,7 @@
->  #include <asm/insn.h>
->  #include <asm/sev-common.h>
->  #include <asm/coco.h>
-> +#include <asm/set_memory.h>
->  
->  #define GHCB_PROTOCOL_MIN	1ULL
->  #define GHCB_PROTOCOL_MAX	2ULL
-> @@ -170,10 +171,6 @@ struct snp_guest_msg {
->  	u8 payload[PAGE_SIZE - sizeof(struct snp_guest_msg_hdr)];
->  } __packed;
->  
-> -struct sev_guest_platform_data {
-> -	u64 secrets_gpa;
-> -};
-> -
->  struct snp_guest_req {
->  	void *req_buf;
->  	size_t req_sz;
-> @@ -253,6 +250,7 @@ struct snp_msg_desc {
->  
->  	u32 *os_area_msg_seqno;
->  	u8 *vmpck;
-> +	int vmpck_id;
->  };
->  
->  /*
-> @@ -438,6 +436,63 @@ u64 sev_get_status(void);
->  void sev_show_status(void);
->  void snp_update_svsm_ca(void);
->  
-> +static inline void free_shared_pages(void *buf, size_t sz)
-
-A function with a generic name exported in a header?!
-
-First of all, why is it in a header?
-
-Then, why isn't it called something "sev_" or so...?
-
-Same holds true for all the below.
-
-> +	unsigned int npages = PAGE_ALIGN(sz) >> PAGE_SHIFT;
-> +	int ret;
-> +
-> +	if (!buf)
-> +		return;
-> +
-> +	ret = set_memory_encrypted((unsigned long)buf, npages);
-> +	if (ret) {
-> +		WARN_ONCE(ret, "failed to restore encryption mask (leak it)\n");
-> +		return;
-> +	}
-> +
-> +	__free_pages(virt_to_page(buf), get_order(sz));
-> +}
-
-...
-
-> +static struct aesgcm_ctx *snp_init_crypto(u8 *key, size_t keylen)
-> +{
-> +	struct aesgcm_ctx *ctx;
-> +
-> +	ctx = kzalloc(sizeof(*ctx), GFP_KERNEL_ACCOUNT);
-> +	if (!ctx)
-> +		return NULL;
-> +
-> +	if (aesgcm_expandkey(ctx, key, keylen, AUTHTAG_LEN)) {
-
-ld: vmlinux.o: in function `snp_init_crypto':
-/home/boris/kernel/2nd/linux/arch/x86/coco/sev/core.c:2700:(.text+0x1fa3): undefined reference to `aesgcm_expandkey'
-make[2]: *** [scripts/Makefile.vmlinux:34: vmlinux] Error 1
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1166: vmlinux] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:224: __sub-make] Error 2
-
-I'll stop here until you fix those.
-
-Btw, tip patches are done against tip/master - not against the branch they get
-queued in.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Not stopping you guys from optimizing it, since all I have right now
+is a (most certainly buggy) prototype + there might be benefits if we
+can get around the swap subsystem altogether for these zero mapped
+entries. Just letting you know there's a backup plan :)
 
