@@ -1,146 +1,137 @@
-Return-Path: <linux-kernel+bounces-386462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E859B43C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:07:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86E59B43C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:07:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08A728389B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7C251C2148F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299CA2036FA;
-	Tue, 29 Oct 2024 08:07:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855BC20370A;
+	Tue, 29 Oct 2024 08:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wc2iEe+P"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="o31f09ah"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF39202642
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:07:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8BDC202F97
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189235; cv=none; b=m/7cjO59bBHtbx5+nGbpSWyAxvbHkoroA73ZqcnbmifR0Uta+2o5oBvbtEUUJrlYx6qYaNlwDU2cePyb2iKq5DNdtwg7mBGtFXFIk0gQi+VIQEhFB8kbJtc/CWGBYKJgkMkx1DgwkxTJrst3I2IsBW0vLnw7ZuR6hGydJ/xUf0o=
+	t=1730189267; cv=none; b=GBq9XxjS10xwaqcGUWVYSOWdAJAMdDnVljMClA/rjqBhNUJqVbNnDpVvf21RQI1GFQNs0DG2c5m6Nn40ayXXNmgJK6FZQFQI5d6jrA/KGTzDFRfJf7/0jS4/wQOsoQ+C+5n++VK3N1X5qreOb2fVEUDEYyRkFFlftr9cmn0f//M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189235; c=relaxed/simple;
-	bh=tXuUWJqSpVglQII4ixnCWmF/nh5P59YMWadDSqaw5mc=;
+	s=arc-20240116; t=1730189267; c=relaxed/simple;
+	bh=fz7RRww98aR7+TFIOi8xsXZBrEV8mkiqw5q+W3z+x50=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WdJnD1YBThqZQBDqf1sL5JT3uH1YMFfZIUXogvIG/nJQewppEB6Xq6/A2PMEi+ypgZoAm8lt5+e4y2PiYKUdljZQXpe93it9RVfNkNlZ9vD1pfrYSbOrcU9ST1qrg3AeW/bGLI2X/u56mpZILeeRXraSBmP9UQMmGqrE2jxRTeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wc2iEe+P; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9709c9b0cso7254208a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:07:13 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=CwPo9sOiz481xgoslTH/XHt3oymyogCR+rustZGJhZE3BGR7e9IFPINbGdIDwkMeWyjhRGT4zw4I+dqwqh12rgzmV4ZBP9iKpL4S9rhxwYw1ypyY1TyQVy7k7GadxhdU1r3jUqMXXoP37cXTmNgnzSXCi5BTqjMxJqRnUDvQCBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=o31f09ah; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431481433bdso51069625e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:07:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730189232; x=1730794032; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730189264; x=1730794064; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+T+utu6wQonBd+x7P2V+J6y0wVjSr8LnD1mI33sJ9Uw=;
-        b=wc2iEe+PeJ8x6zzMCGpfJRrK5FlYRoJFqKKyzPvSsjsdGv5hl6qOVQW+mL9NNJceqn
-         b2OLvLm1smQ+lQWM9G+KHsE/Q0o75KugKJXkpx04iVaa4jMjGRJtg/GNuR+MDjgkiezS
-         Iu0H0IDdJIBoLk5LQoQ+ebZEvKWUwABmw8ralMSBZeampt47ZPI5+kw6Tedb2R4D48T/
-         V8bvkexs4vnl2xB9rJjtgk/ZRc+x1+EeDv6dpGirdNEUa2WulU41M7AVuuEHygaRNxT1
-         qxTCZy9zAV02MrOiO+zZ0XjKkHfMppQKLzJ94PhPkPyEfA3Ghp+ZJwNsadcAiIHHq229
-         eWYA==
+        bh=fz7RRww98aR7+TFIOi8xsXZBrEV8mkiqw5q+W3z+x50=;
+        b=o31f09ahPL7oxI9IqfM4TUH9Cfr7UOYTJD08MuVtiLA3JXRfEzDh5hy3FHJLbBpA60
+         vf86cbt7KG9RVBfqrqoZRQzZ4QR9YzP6n8fAVRlA96ZIKOowsZr2GEfWR4pA0t97K72Z
+         fFelNXsiXURzAp4+56pvnvSETaAGKhc2xaQED3YoAHpBJINQ6eDnXf0O/nvuTbH/0u+T
+         Je7J8WPgLDLm/CEf1z3LFT4PK19UNojxCU7RMv0+qgMpCs09xK4f8tti6jueHvgXfcKT
+         1M9N6gElthnzx7eVBF6/zo9wL02tFjI5JzWohS2xh+oCi0M/qLRp03AVvQiJa/WcvFa2
+         23MQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730189232; x=1730794032;
+        d=1e100.net; s=20230601; t=1730189264; x=1730794064;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+T+utu6wQonBd+x7P2V+J6y0wVjSr8LnD1mI33sJ9Uw=;
-        b=lxgqLt9WrpaRjUCn//wb2mKr7orgHFBnRAEqFzlTWw3buxAi0XgHvRU//Z/VbfqVfL
-         xZJqaNRq9EFOqqgA+hi9tMleU/VHrNUogy3msYQ6RL6/eY6dRrV4r3Z5nozP9IkCi6u5
-         4nR243B9iQGw3XUiyBGnK7UDRYFC4888gcDRitCyT9wwx7rFSAcTZxX0IE547JKoblA0
-         szM4IC752y9uXCjJEMlLVXrViPC31sp4Y6uLAb5REWqv21xv0v/D30PVyp6puiXNBVfO
-         RpQvzBYvVAoq3yC5Vmp/kZTHXINu58eQwpn/1q0PqnjBNgzRunxaDT/AP6+qOw6q0X64
-         lQGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqSoCUP1kgia4cbkFhFJCtdXMytEXyBkqli+gTFGvoFVYvHovdTxv7Oc6JAf85k0ejbz13FQUg38aDcU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUET2diRDlzx4PbRs2Fv1vMu3FXphsF5bhJUsU66NJqjDECPXr
-	Eo9ylqhnodIY73rhXwGYID5sxcnbsbqpGJnjTw0kdkP39GQ93iv9veW3NHgS6sz2HwQbathGcRc
-	+
-X-Google-Smtp-Source: AGHT+IFlS/2bOJzmSSwcAfE5aV0lP34QNs4GrtfDDXnqpV/04HeTDMnTLLbECdisvIqSJHMH/jyIpg==
-X-Received: by 2002:a05:6402:249d:b0:5cb:6718:7326 with SMTP id 4fb4d7f45d1cf-5cbbf8caef6mr8643251a12.21.1730189231684;
-        Tue, 29 Oct 2024 01:07:11 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629c4c0sm3726166a12.24.2024.10.29.01.07.10
+        bh=fz7RRww98aR7+TFIOi8xsXZBrEV8mkiqw5q+W3z+x50=;
+        b=cwbn41E8cATWTarL3UOaN+an2W86B48UVlk8sgz5Om6DtA/oA/z2ttrJOSwDSVAS38
+         lEdBvpixXavNDAGZaHrm3+G0rX0s782c53VRU825mY9IugSHf3cYD/B2VANtemLE+aFn
+         cyYSv4cXgG4H9biVRCzLwcSZ6QSK0aZMonCP+E4e7acfg8AZJj54WAng2OSiCfTbMGEt
+         QbmS5fR0UIjHFfWisy3m9K2kOTz9mVuiJZQEpVir7v53Aie0swuoKVYI1BwHI/y1tsuN
+         3EeOiQfUsgbzwq9uBtYDMNNG2rfC/8WIWA7XYVVLevx3EvyntsJguI5/3n/4OQzTPH1B
+         TH+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVu2UgsdsqoPtqdZ0qqbSAV/I6L4iE7cqqlO1s39o4P/HbQ1o6qMhzlhEaa+Bj0xtJKBlLYh7Pvq9YA6hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMefq32k4n3QFPZ6pQNlr2PinvVGasLH8G7a9BkKJZAXn+mxK+
+	WGgTad63UGcKBq3A51Vd5W7nPuOVoY9ISQuQ5ZsN7gZI0A0kOhw6WJElSF3mZsE=
+X-Google-Smtp-Source: AGHT+IHdtLAytGreUBiJVRVj0CzK2hX+LtTYIjY1HGXyXgeH85JAHHDcJqmfe2WqX6/D5uWSIjYTxg==
+X-Received: by 2002:a05:600c:4f51:b0:42c:a574:6360 with SMTP id 5b1f17b1804b1-4319ad2d6aamr98759075e9.29.1730189264124;
+        Tue, 29 Oct 2024 01:07:44 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b9294dsm11699741f8f.105.2024.10.29.01.07.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:07:10 -0700 (PDT)
-Date: Tue, 29 Oct 2024 11:07:07 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Philip Li <philip.li@intel.com>
-Cc: Matthew Sakai <msakai@redhat.com>, oe-kbuild@lists.linux.dev,
-	Mike Snitzer <snitzer@kernel.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: drivers/md/dm-vdo/data-vio.c:976 vdo_launch_bio() warn:
- inconsistent returns '&pool->lock'.
-Message-ID: <13937d22-46ac-480a-8956-f89a0fd295ac@stanley.mountain>
-References: <717e8949-55c4-4461-8951-3e582e9b77ef@stanley.mountain>
- <f074f848-5a26-473b-ae98-1932e9a8cbd1@redhat.com>
- <ZyBQa45RTWXiXJke@rli9-mobl>
- <ZyCLo51ZyjxX7eQK@rli9-mobl>
+        Tue, 29 Oct 2024 01:07:43 -0700 (PDT)
+Date: Tue, 29 Oct 2024 09:07:42 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Marek Vasut <marex@denx.de>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, pratikmanvar09@gmail.com, francesco@dolcini.it
+Subject: Re: [PATCH v3 2/3] pwm: imx27: Use clk_bulk_*() API to simplify
+ clock handling
+Message-ID: <zbtjpemahkpoabonf2td2i62qrlbb2xv7wlw3te752h6hgnsjm@ba7sdyqgbvms>
+References: <20240910-pwm-v3-0-fbb047896618@nxp.com>
+ <20240910-pwm-v3-2-fbb047896618@nxp.com>
+ <7kplk52i7e2nha5ym4loza5oc3lwghifjfk3aut24w3hjagfk3@zusb2naeaevw>
+ <ZxfMZobFdBA7ffhU@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="bgnhgnnffifnsrec"
 Content-Disposition: inline
-In-Reply-To: <ZyCLo51ZyjxX7eQK@rli9-mobl>
+In-Reply-To: <ZxfMZobFdBA7ffhU@lizhi-Precision-Tower-5810>
 
-On Tue, Oct 29, 2024 at 03:15:47PM +0800, Philip Li wrote:
-> On Tue, Oct 29, 2024 at 11:03:07AM +0800, Philip Li wrote:
-> > On Mon, Oct 28, 2024 at 07:00:40PM -0400, Matthew Sakai wrote:
-> > > This should be addressed upstream by commit
-> > > 872564c501b72ae0c84af51084753e8652e4a84b ("dm vdo data-vio: silence sparse
-> > > warnings about locking context imbalances")
-> > > 
-> > > That commit is from February. Would it be possible for these checks to use a
-> > > more up-to-date version of the code before warning us about things that have
-> > > already been addressed?
-> > 
-> > Sorry about this Matt, the bot side will check why this happens and fix
-> > the issue asap to avoid meaningless report.
-> 
-> Hi Matt and Dan, would you mind do a further check of this, per the re-test,
-> smatch warns as below on v6.12-rc3
-> 
-> 	drivers/md/dm-vdo/data-vio.c:982 vdo_launch_bio() warn: inconsistent returns '&pool->lock'.
-> 	  Locked on  : 972,977
-> 	  Unlocked on: 982
-> 
-> The corresponding code of drivers/md/dm-vdo/data-vio.c is below
-> 
 
-Ah.  Right.
+--bgnhgnnffifnsrec
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/3] pwm: imx27: Use clk_bulk_*() API to simplify
+ clock handling
+MIME-Version: 1.0
 
-The cross function DB doesn't scale well enough for the zero day bot to use so
-it didn't detect the fix.  If we had the cross function DB then that silences
-the warning.
+Hello,
 
-1) I re-wrote the locking check so it detected this bug where before it didn't.
-2) The kbuild bot was using the new check on old code because Matthew Sakai
-   did a branch based on 8 month old code.
-3) The kbuild bot detected the bug, but unfortunately the cross function DB
-   doesn't scale well enough for the kbuild bot to use so it didn't detect the
-   fix.
-4) I reviewed the code based on the information in the email and determined that
-   it was buggy.
+On Tue, Oct 22, 2024 at 12:01:42PM -0400, Frank Li wrote:
+> On Tue, Oct 22, 2024 at 08:53:40AM +0200, Uwe Kleine-K=F6nig wrote:
+> > I applied just this patch to
+> > https://git.kernel.org/pub/scm/linux/kernel/git/ukleinek/linux.git pwm/=
+for-next
+> > . The others are still under discussion, right?
+>=20
+> Yes, thanks. I think 32k is not necessary and need more research.
 
-All those steps had to happen for the warning  to be sent out.  In a normal
-situation, I would have sent the warning out at the time when the code was
-written and you wouldn't be getting warning emails eight months later.  The
-kbuild-bot generally avoids sending duplicate warnings.
+OK, thanks for confirming, I discard these from patchwork.
 
-Sometimes the kbuild bot does send duplicate warnings, but I normally delete
-those.  Perhaps some people might argue that if you do a branch from 8 month old
-code, maybe you would want the warnings, but I think you should look at the
-Fixes tags instead.  Not everyone gets the Fixes tags right, of course...  But
-I trust kernel developers to Fix their bugs and generally they do so duplicates
-are normally false positives which have been deliberately ignored.
+Best regards
+Uwe
 
-regards,
-dan carpenter
+--bgnhgnnffifnsrec
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcgl8wACgkQj4D7WH0S
+/k6ehwf/fyJogWx9JiTzSrjVr39U4buCC6TCylJbTGIiYDJGRW71DmfsuQ1S8OP7
+nsN41Lb2xbF4Gn0s1IgZph5+a47bIwqzDINtl7YJ6Zj4HuHMC3dDE6GNjCi7uHr7
+JvWfImw8m0R9jvEPL25ukoSgqFNeBYJHYVssLk86hZWC4ffVePMXpTzGQNVgMxey
+LsUqNa65gIVzdxzBETe7bE0qZeidDFssFVBBBT0AduDDbB3NGpD9lb0Qa7Du3V0T
+4ci550yhekpPrtartCbPKvFb6cfcOvT/mOdNqhAM12F3g3WOnx8au/XT1TMgu6o8
+A880c+BSCnfEAgpF9xctUfVlLQL8Ow==
+=EBhu
+-----END PGP SIGNATURE-----
+
+--bgnhgnnffifnsrec--
 
