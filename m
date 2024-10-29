@@ -1,183 +1,145 @@
-Return-Path: <linux-kernel+bounces-386918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 779A09B49AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:29:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 432409B49B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37A5A283CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:29:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02EA2283D6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD8920604E;
-	Tue, 29 Oct 2024 12:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C181F206045;
+	Tue, 29 Oct 2024 12:29:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="icNBz2B8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UyaDviFZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CcpV7VJY";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="UyaDviFZ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="CcpV7VJY"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F3D17996;
-	Tue, 29 Oct 2024 12:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2681617996
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730204940; cv=none; b=dZbowug03uATj0eMIPGqEbuIynKJKjWWzR5M2CMvIkGtkcKMC9Rbbr6Qs0DI2LCSEBKFGzPZuAB8jn0TPJDCKiPAKr1SaThf+Ecv0Qq5MbXFWdAu4XY6058+Jx7Ud4so0R7iZUumu8DfN9j7XOSNJn8UItjHys8vAPVcxI0M1es=
+	t=1730204950; cv=none; b=Wzpn+lG2gW0xbr/PHkLDYN/MHhIJZITXqUbx/1JCpj9CIPpmx77L8GKycftp/PLciuO//rlMO9lr52vM+gnrG1xlb3li2VYeL0XF7ZpSZBdXzS/RZwWWEWkree+nPe1z/XeLI05EXCkXRuGF4GYyxLlrQi1nqVv19otM7FjXj9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730204940; c=relaxed/simple;
-	bh=04meLo+wcoUiD3GkzL/77ppX+11YNySAVZTAFjwFCqU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RH4Y/IKcJC+n462LmUjwUJ13eFwVHe0Y91+DHcd27GNQq5kzzMLy0igP7frZYUn5DSCTKzrnefy6uESn3kmDiDMF8Ktx4Wyut87XCKf9TbQYaz+dF2HoYu8NiAPMbsC98Gyl1KF6Q0UskmgGSxSDt1myh0K/xW46BvMA9JCRrNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=icNBz2B8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D492FC4CEE5;
-	Tue, 29 Oct 2024 12:28:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730204940;
-	bh=04meLo+wcoUiD3GkzL/77ppX+11YNySAVZTAFjwFCqU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=icNBz2B8tPiyU0J92l2r6aYkXmlUyG9ErTbhk5iS/yoeKwf/EKsWtlM9+czRrdhEq
-	 +m8tTIvuK8QOZX9iUcbYe99T53gsAIaFbJNAMiuSTG9HgXJfTo0FBCd1DNVgTh7Csk
-	 PqE726eqo/MQS3qlOXHzT1IgXas7xT6xnb3XfcEV7dbzBdCphuAEwtVpJ/VM1qDHkd
-	 ZZzhDBp4HaTtXdGutdZrmw09O310i4wlTZ7YC7Qkq+XuZQ3r8tLH2UWEvuDhDTYAzf
-	 367tQPPWke3rDmVuoZHdRjnuxcui/Ma7pa8PqLdLqXgTBTElfv3vr4/G4XNn0cfScd
-	 xV/t4RVeIBLCg==
-Message-ID: <3ff55dc3-c6a9-40a8-8e21-2e3e43cfd614@kernel.org>
-Date: Tue, 29 Oct 2024 13:28:51 +0100
+	s=arc-20240116; t=1730204950; c=relaxed/simple;
+	bh=IJK7+iOSJGGwTfNs/fO+7r1zUQ66G8izAjg5AV2few0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=obAE/U/5B/BqXue1kc7zEzQ+hR4yDA3F4ZQxptDzczsf0BNQqKv2IffXvxWPeYevDvFUovVNTkgA4sqFtKkY3ZozwOjcOetG/WHbYg/u4EGCpty/KiH4taLEAWsASCMDOmV6kUZgvd+G8n5ZubSoI5yXCRsOVsXKAEkoUdk3/wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UyaDviFZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CcpV7VJY; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=UyaDviFZ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=CcpV7VJY; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from hawking.nue2.suse.org (unknown [IPv6:2a07:de40:a101:3:92b1:1cff:fe69:ddc])
+	by smtp-out2.suse.de (Postfix) with ESMTP id 441331FED4;
+	Tue, 29 Oct 2024 12:29:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730204946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j3Vz+dacbqRiljRz+LKhFaDlNU98ZdwgStJ4Tw81PDY=;
+	b=UyaDviFZmWlD5ke2+kO5Qc2q1wm2rIpoDGTi5AQEehdzvGdc+y0FbuaXx1IhHKK76T3jqf
+	VWVRGNhAFYsbr5Lv00tOpCzo4cznGUC2+m/2u20MyJecozaR5uIvfgx9o4skvlAV2LWPLE
+	yA/F2r9PN57U4Z9czXLY9LUN+GD0DYY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730204946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j3Vz+dacbqRiljRz+LKhFaDlNU98ZdwgStJ4Tw81PDY=;
+	b=CcpV7VJYMq5ImLuDSQD7No38skz4DvHQeUm19+Apq+ggs7JDMSC2ket1zak742Yy7LkUeC
+	NqBNYR4xtoLPEDDg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=UyaDviFZ;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=CcpV7VJY
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730204946; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j3Vz+dacbqRiljRz+LKhFaDlNU98ZdwgStJ4Tw81PDY=;
+	b=UyaDviFZmWlD5ke2+kO5Qc2q1wm2rIpoDGTi5AQEehdzvGdc+y0FbuaXx1IhHKK76T3jqf
+	VWVRGNhAFYsbr5Lv00tOpCzo4cznGUC2+m/2u20MyJecozaR5uIvfgx9o4skvlAV2LWPLE
+	yA/F2r9PN57U4Z9czXLY9LUN+GD0DYY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730204946;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j3Vz+dacbqRiljRz+LKhFaDlNU98ZdwgStJ4Tw81PDY=;
+	b=CcpV7VJYMq5ImLuDSQD7No38skz4DvHQeUm19+Apq+ggs7JDMSC2ket1zak742Yy7LkUeC
+	NqBNYR4xtoLPEDDg==
+Received: by hawking.nue2.suse.org (Postfix, from userid 17005)
+	id 2C5634A056E; Tue, 29 Oct 2024 13:29:06 +0100 (CET)
+From: Andreas Schwab <schwab@suse.de>
+To: Palmer Dabbelt <palmer@dabbelt.com>
+Cc: linux-riscv@lists.infradead.org,  Charlie Jenkins
+ <charlie@rivosinc.com>,  Paul Walmsley <paul.walmsley@sifive.com>,
+  aou@eecs.berkeley.edu,  parri.andrea@gmail.com,
+  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tools: add forwarding header for
+ arch/riscv/include/asm/fence.h
+In-Reply-To: <mhng-adb76a44-07c8-442c-8bcf-6f29d061c031@palmer-ri-x1c9>
+	(Palmer Dabbelt's message of "Wed, 09 Oct 2024 10:18:40 -0700 (PDT)")
+References: <mvm5xq44bqh.fsf@suse.de>
+	<mhng-adb76a44-07c8-442c-8bcf-6f29d061c031@palmer-ri-x1c9>
+X-Yow: LOOK!!!  I'm WALKING in my SLEEP again!!
+Date: Tue, 29 Oct 2024 13:29:06 +0100
+Message-ID: <mvmy12714a5.fsf@suse.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
- sensor driver
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
- sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
- laurentiu.palcu@nxp.com, robert.chiras@nxp.com, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
- kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
- dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
- alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com
-References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
- <20241028190628.257249-2-mirela.rabulea@nxp.com>
- <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
- <20241029121039.GM22600@pendragon.ideasonboard.com>
- <eeaa92c0-fed6-408b-8471-47acf0ca394d@kernel.org>
- <20241029122150.GN22600@pendragon.ideasonboard.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241029122150.GN22600@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Spamd-Result: default: False [4.09 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	HFILTER_HOSTNAME_UNKNOWN(2.50)[];
+	RDNS_NONE(2.00)[];
+	SUSPICIOUS_RECIPS(1.50)[];
+	ONCE_RECEIVED(1.20)[];
+	HFILTER_HELO_IP_A(1.00)[hawking.nue2.suse.org];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HFILTER_HELO_NORES_A_OR_MX(0.30)[hawking.nue2.suse.org];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_NO_TLS_LAST(0.10)[];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DIRECT_TO_MX(0.00)[Gnus/5.13 (Gnus v5.13)];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_TRACE(0.00)[suse.de:+];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[lists.infradead.org,rivosinc.com,sifive.com,eecs.berkeley.edu,gmail.com,vger.kernel.org];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TAGGED_RCPT(0.00)[];
+	RCVD_COUNT_ONE(0.00)[1];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,suse.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: 4.09
+X-Rspamd-Queue-Id: 441331FED4
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spamd-Bar: ++++
+X-Spam-Level: ****
 
-On 29/10/2024 13:21, Laurent Pinchart wrote:
-> On Tue, Oct 29, 2024 at 01:15:46PM +0100, Krzysztof Kozlowski wrote:
->> On 29/10/2024 13:10, Laurent Pinchart wrote:
->>> On Tue, Oct 29, 2024 at 07:14:28AM +0100, Krzysztof Kozlowski wrote:
->>>> On 28/10/2024 20:06, Mirela Rabulea wrote:
->>>>> Add bindings for OX05B1S sensor driver
->>>>>
->>>>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
->>>>
->>>> <form letter>
->>>> Please use scripts/get_maintainers.pl to get a list of necessary people
->>>> and lists to CC. It might happen, that command when run on an older
->>>> kernel, gives you outdated entries. Therefore please be sure you base
->>>> your patches on recent Linux kernel.
->>>>
->>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
->>>> people, so fix your workflow. Tools might also fail if you work on some
->>>> ancient tree (don't, instead use mainline) or work on fork of kernel
->>>> (don't, instead use mainline). Just use b4 and everything should be
->>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
->>>> patches to the patchset.
->>>>
->>>> You missed at least devicetree list (maybe more), so this won't be
->>>> tested by automated tooling. Performing review on untested code might be
->>>> a waste of time.
->>>>
->>>> Please kindly resend and include all necessary To/Cc entries.
->>>> </form letter>
->>>>
->>>> Binding also looks very different than all other devices, so re-write it
->>>> starting from EXISTING GOOD bindings. Not some downstream stuff.
->>>
->>> Krzysztof, please point to a good example when making this kind of
->>> comment.
->>
->> Anything recently added. Git log tells which files were recently added.
-> 
-> If the review comment is a copy&paste (given that you review lots of
-> bindings and constantly have to repeat the same things, that would make
-> sense), expanding it with that information for future reviews could help
-> patch authors. Thanks for considering it, it would be much appreciated.
+Ping!  It's already rc5 and this is still not fixed.
 
-Sorry, but that's not the point. You do not take 10 yo, unmaintained
-driver and use it as template for your new one. Instead you rather take
-something recent or something which you know is correct. Same with bindings.
-
-NXP is not a small company which does not know how to use Linux or how
-to upstream stuff. This is not individual's contribution, where one does
-not have colleagues or 3 billions USD of revenue behind, to be able to
-get some internal help prior sending something downstream.
-
-They can spend something out of these 3 billions of revenue or 700
-millions of net income to hire you guys or any other open-source
-company, if basics of upstreaming are unknown.
-
-That's the comment I was giving about NXP since a year. Some things
-around SoC improved, some things from this unit of NXP here did not
-change at all.
-
-So again, it's not about me giving them more things. They will keep
-ignoring it over and over, because that's how big companies sometimes
-behave. You know, community people work for free, right?
-
-Best regards,
-Krzysztof
-
+-- 
+Andreas Schwab, SUSE Labs, schwab@suse.de
+GPG Key fingerprint = 0196 BAD8 1CE9 1970 F4BE  1748 E4D4 88E3 0EEA B9D7
+"And now for something completely different."
 
