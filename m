@@ -1,133 +1,120 @@
-Return-Path: <linux-kernel+bounces-386789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C4939B47EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:10:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA289B47F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:10:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D821F24533
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:10:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0657B2366D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A8C205121;
-	Tue, 29 Oct 2024 11:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08834205E24;
+	Tue, 29 Oct 2024 11:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E2ltJocP"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EaRolYrv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70615204F7E;
-	Tue, 29 Oct 2024 11:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822F0205ACD;
+	Tue, 29 Oct 2024 11:09:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730200123; cv=none; b=LC9W4fBmwcd2WANOOYA8CLFc0qKJzaqJPhUzBr+wCgtnAljzrCzZvS+pBX+u6uY1SJ3RLkFMevVfzJvV+YUg7UT3UtzNEUH94IHWndWocYwk76rhJPOeIuauSzfz65F6xD/XMHdRXYhr5qZ6POrSJMY/qVcif2S/C+C7tSxg4l0=
+	t=1730200152; cv=none; b=N764wX37mC47AuAVduReDOhXKmHTFodtevUzNbAt2KhtTwTXkY3b6f9htRH0UbyMepthkdxar1icAHrlep0Z6J7W5m8eouPIqstTrsQmio/XSF+4J1BcGHCGOPEUFYKKdSNdlljo1NIyc5dIOYwT1k0Cs5Tc5HneKY6ZE+HQPTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730200123; c=relaxed/simple;
-	bh=iHJpLZ6ueeaD5ZZzjPgrWxvvvCIFbjhVKvYaVmU2LY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YuQpmChgC3QQ/mQ6j49WJ0/xi4HIaBeBzgmZn+QYMEpKvTtJg9UykJrzwHDNHX4NpH74MdNvqEUX+lWputFcqd7LCoI0Pd2QnWWr+Al7PlrGVaMb7xs5UxL6UTB1c9wEipCzPmkWUc8oK1wMQ6K/+ikY9i1LOlml1dq2NqLFAyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=E2ltJocP; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=uQVAhZ+wFsT9DsLSM0pt2JZ5L7D4X3gucHuXu9bLqcg=; b=E2ltJocPkAyUVhYRi4tl8xOD7r
-	qXJlZpXbZPqmDaWks3qFumnRCBBdCnsCykwiloR1hBe6UHajhcmm2/aJ1hMu5WU83BodyOcvS5Ae1
-	EnmE3uvkaV6E12N+OGr1HHu8GoxsXX+paWB+/ns2/4MkEoOGv5sVNMuiKCGQEHCDb0X5vL4AaoDvR
-	9j4yMuhJX/isKRhl328TuTn3gxjPeGmNB36ZGhYaPKENzjvL2oc1ao+W+ki8OYR9xTS3IbiOt/0MS
-	WG5MR+yWnP+9iuPzELHQDT7tMOWQdi1+OyOHxzJ1wHR/5fy7Jk2JnAmTc/peRjMhjUePus00v2y8A
-	yp9c0pSg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5k5P-00000009sjH-00aB;
-	Tue, 29 Oct 2024 11:08:31 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 14F25300399; Tue, 29 Oct 2024 12:08:30 +0100 (CET)
-Date: Tue, 29 Oct 2024 12:08:30 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Stephen Rothwell <sfr@rothwell.id.au>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Stephen Rothwell <sfr@canb.auug.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the tip tree
-Message-ID: <20241029110830.GR14555@noisy.programming.kicks-ass.net>
-References: <20241029133407.3580be1a@canb.auug.org.au>
- <20241028213040.e5d72b2f56971ceb5c80395b@linux-foundation.org>
- <20241029170533.5592ab42@oak>
+	s=arc-20240116; t=1730200152; c=relaxed/simple;
+	bh=s0K5hE7SxRAb9GHUk5pDK14tF2iideIiRhKh53BBI0w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CEorFyPbDn91UqHcLi7OjgSjCJxOZkd3QY0Edk9A+eKtnjikxE52XaRv+PU78OuD43wZ/+i3Uc13C1pFH0VClZi7MwmdbFPcWpI1pnMNqdHvNfdhYNrss/EMedkZkYavAe0OkgfcjU3eIwtxr54oL5f2Bk2CPPocJcxVAdxfU8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EaRolYrv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T9k880007398;
+	Tue, 29 Oct 2024 11:08:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	iJ3KTqYgpRAxzefUb7QTMrXyaz7ouGNSfEfdE26w/cg=; b=EaRolYrvS8yFS9gn
+	cejKA3LWW41UDZOtcfsInz+My3OrnmBHQD2JI0l7Y0cxd71Y/ZdIbdu1U0TgsNG0
+	I2haaRMDaWH08uZo4d6WYvCIhLAlfT+Nv6BtkTYJhWtWUGWhr+wJsfcYQ+sug09c
+	kg1OlJrWidQp3cA3kR7Xz4KfL8G5khjN1XeLW1OkJVLedHKDavTDdCejodpRDhxI
+	K/jaOaN+pWXbbqFjwiT/5oygPHZcv2owSQ1Jj/eAwm1Ne9KyT9Rk7LajrVSm4i6H
+	huCcHsdsNsxmFziMvOJ8N+OrbAnfjksXREs67o/0ZASLLmwZQEbB+1SN9wdG00xq
+	WsuIQA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gnsmrd6b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 11:08:48 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TB8loL032097
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 11:08:47 GMT
+Received: from [10.216.3.156] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 04:08:40 -0700
+Message-ID: <e57c93de-aa24-4b9a-a7fa-794ad8467915@quicinc.com>
+Date: Tue, 29 Oct 2024 16:38:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="7WqrdzUGEUr8imR8"
-Content-Disposition: inline
-In-Reply-To: <20241029170533.5592ab42@oak>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 1/3] dt-bindings: ufs: qcom: Document ice configuration
+ table
+To: Eric Biggers <ebiggers@kernel.org>
+CC: <manivannan.sadhasivam@linaro.org>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <James.Bottomley@hansenpartnership.com>,
+        <martin.petersen@oracle.com>, <agross@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_narepall@quicinc.com>, <quic_nitirawa@quicinc.com>
+References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
+ <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
+ <20241005191555.GA10813@sol.localdomain>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <20241005191555.GA10813@sol.localdomain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: SAMTR7UipQB9hsUWj1hyBMEol0-nrwfl
+X-Proofpoint-GUID: SAMTR7UipQB9hsUWj1hyBMEol0-nrwfl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ malwarescore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011
+ adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290086
 
 
---7WqrdzUGEUr8imR8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 05:05:33PM +1100, Stephen Rothwell wrote:
-> Hi Andrew,
->=20
-> On Mon, 28 Oct 2024 21:30:40 -0700 Andrew Morton <akpm@linux-foundation.o=
-rg> wrote:
-> >
-> > On Tue, 29 Oct 2024 13:34:07 +1100 Stephen Rothwell <sfr@canb.auug.org.=
-au> wrote:
-> >=20
-> > > The following commit is also in the mm-hotfixes tree as a different c=
-ommit
-> > > (but the same patch):
-> > >=20
-> > >   9c70b2a33cd2 ("sched/numa: Fix the potential null pointer dereferen=
-ce in task_numa_work()")
-> > >=20
-> > > This is commit
-> > >=20
-> > >   82c4d6b6dace ("sched/numa: fix the potential null pointer dereferen=
-ce in task_numa_work()")
-> > >=20
-> > > in the mm-hotfixes-unstable branch of the mm-hotfixes tree. =20
-> >=20
-> > Thanks, but...  What tip branch is it in?  Matters because: is that
-> > branch destined for 6.12.x?
->=20
-> Its in the sched/urgent branch, so probably destined for Linus fairly
-> soon.  But the tip guys would know better than I.
+On 06-Oct-24 12:45 AM, Eric Biggers wrote:
+> On Sat, Oct 05, 2024 at 12:13:05PM +0530, Ram Kumar Dwivedi wrote:
+>> There are three algorithms supported for inline crypto engine:
+>> Floor based, Static and Instantaneous algorithm.
+> 
+> No.  The algorithms supported by ICE are AES-XTS, AES-ECB, AES-CBC, etc.  So I'm
+> afraid this terminology is already taken.
+> 
+> This new thing seems to be about how work is distributed among different
+> hardware cores, so calling these "ICE schedulers" or something might make sense.
+> 
+> - Eric
 
-Yeah, tip/sched/urgent, which is supposed to go to Linus on Sunday
-before he cuts the next -rc or so.
-
---7WqrdzUGEUr8imR8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmcgwigACgkQdkfhpEvA
-5Lol9w//d8Ovs/YN9LWs3pTg2eqTNb3fvfHAhOfKzUWbHpbcppYg7U2pQZSLJAhh
-o9dPQtH/d60UOxec7E9AZzoh0lEiRJ/HXhkx+29f588HQHnndFB2MButNjpMy0zy
-QTnr7ciELXg+JxUogiyYTcyyIh2U7SGNwbotMt++195P5QEpaN2zCCSVd8E3Hyrs
-zeYi1BlADXa2IsteT1RCk0lAjdGnnKGbVbbYmsvoQV/dOaDUWZzMUlAFnsiLSPKL
-QatgINoF7bDf24cTC4jP10BQA+IIBBPSguEoPeCc6Qo++pSTqUDZLUA7TO0TUJol
-N6RK0bgsoYYUHcviR+3CfMvZH68/CVcfHYvmDkZ0CNLvM5dsFko5UAmwNReGIrut
-GqcZbI3L71ZgjYGNd4dWBbMYv2jvJngCYm3H1+WAy7cyKUzuIRkd2yZ9ghUKPZD7
-OlcjRp9+sJSzoeT6G89yNXzW8oTzONd+WPy100VItwEuqaQR9d/EG9pXkKrXAEvG
-nWpk8p/DSRemQZa0scwyvCOwhfeAUnZ9Q9gwCUQqXdDMkH50FHRvjr4EhisVON85
-GK+QodM//+KHNaHF3O3nKy5zQwetTtC5acYtabttaPiNlhNbE902Ouz0IpGViaqA
-NCHbO8Kq9lapwAkU2Dpts25g7a4LnPhHA1tPg6AUGKudWc4IvDw=
-=rYS0
------END PGP SIGNATURE-----
-
---7WqrdzUGEUr8imR8--
+Hi Eric,
+	I have rephrased patch commit description. Used terminology as ICE allocator instead of ICE algorithm.
+Thanks,
+Ram.
 
