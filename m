@@ -1,138 +1,124 @@
-Return-Path: <linux-kernel+bounces-387256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 253109B4EAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:57:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2309B4EB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B539DB2367B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:57:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C74F1C2091F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:58:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD56E195FEF;
-	Tue, 29 Oct 2024 15:57:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A781196C9C;
+	Tue, 29 Oct 2024 15:58:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDWASUFG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="h8WAM8ke"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F90802
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFB91917F9;
+	Tue, 29 Oct 2024 15:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730217420; cv=none; b=GcMzUhbZV9zwaZh9y+2aQul3XtUqvICQj+gISNNHGnMLAfxmmF/YGsKaRurA9Gr1Lt7iApp3nHv2oTGj1IioT4t8eTFKA9C5MLhSFOV9dtkRGW/INIfufMcURVFLXqFQCYvQBcYtAsqFDWHYreo5y9T8EhcEGIS9X2U7cir8U1w=
+	t=1730217488; cv=none; b=Z+viNLmM16TCDZO9I+i5cc9IVanHZIPDOQ1QwdlauCm2mcDIn3IPrTzB2UZ9OenaZqMiXciiNBsljnt8H8hRxySQVT9aZvtcFLfybYSUIXKcG2jZ1wdrX/vsO3Mj6Y8m8O+YynNhWFptklvYKcfBIieb/tRyCu53yXeGi2Qxtog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730217420; c=relaxed/simple;
-	bh=vhgaz2PAVUi0alzDjQhgGOXKUiIvQYk78MYDRCr0Xqo=;
+	s=arc-20240116; t=1730217488; c=relaxed/simple;
+	bh=XR9+om4ScVOdEArtXJ+HMBDzmeQKqanXDaij5mePADg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A1I3gfl9ks//+JlmyoKJX1F5aQ9vyMNmKRQx51mYvI8SWeDIyUVq0kXyjZ7wKBIhjyhxqgzEmfO4fOJ5VqoLwii8B6hf9vOEbCX3xH5ewQzP+sZ2+tLpgm4oJGfsZQbS0LGDKOXHwZ4XhRyS90nsImJcen36kPeRcz4VnewDKVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDWASUFG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 992E6C4CECD;
-	Tue, 29 Oct 2024 15:56:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730217419;
-	bh=vhgaz2PAVUi0alzDjQhgGOXKUiIvQYk78MYDRCr0Xqo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/tGl3UB2D4+s/ZOBmXcrwwr4N11rOl6UUEBJJ5gHqJ87AvRpxoxJthomoj7WiTjiGTqFc3KDhiNvidEsNn66UTOM1fzj57xDTGevhaMDm/39thVgx2bOvSuDHCTn9dYC6bJ2xx0dWi2Z8L/mHdadQmKVrQvkJ0ts+IxsqNJGWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=h8WAM8ke; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3F60640E0192;
+	Tue, 29 Oct 2024 15:58:03 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id ldU0KY-akd8y; Tue, 29 Oct 2024 15:57:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730217477; bh=E1Eu7/CBiDK5On1k+8E/px28Z45wOChcdzeICfvDRzE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oDWASUFG+W9sqL+0NW77EGHgdpm7xq+XoLHr1aPGqoBc+LEL3tTZn85JSBkQuNHeK
-	 D4eKKiOhPEGvQ42fJvSsjzHSvQnG6iHVerCthP4txjgEtc8KWzydOA3z9oZDuavdg2
-	 zwSM0lZFmquA1dX7i3vxqQM1D58gGzYRxqZumeHo6RSrHYRQwCKanpvONCWhFN4CHt
-	 d8ZssLCJ/2YudeMCxOcpdw/i0tBDyLPBDbY5EgSShSNLqzHnFrvsnqTeV8s04w7MQE
-	 pGv0M9IvxZvmWQ4Hj9zVbkhjEO63bsqnru36EyRHMjf9RCeKFySGYm39W9FDIAny6U
-	 k3MZ5xJVcDH6A==
-Date: Tue, 29 Oct 2024 16:56:57 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 16/26] signal: Replace resched_timer logic
-Message-ID: <ZyEFyV28jcz85V1q@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.220867629@linutronix.de>
+	b=h8WAM8keOTA41hoTZsaqP2W9fPo3U+SuC88JgXDHD3V1sXgn9xTakKxxcl95U7juT
+	 fXpmYMCp4qvHwHQgCki9OXTKURBxFfCCZzS+DQF7f5A26OAfowweresr6iIBq2BOj+
+	 RaJ3qaUP2BFK5SyUZl2p7niObXa2A+4xwPuvxwnsPF+66E+eEIJSZU0pfQBeDqLABO
+	 7EgvNMCm1/V+fxdd+Kc2Numu4Iob3LJzOAT6OyQJn0EemUZ9nnBokXvmon2kBhLep0
+	 z2tnPetKyt+hEwMXdL9Ne54gvtjDvL1MzdX40UKGSs/w281XTCq7tm6cmhkDA1Rdhb
+	 8yiDJ/a8w6HuW1JreIveP+yIN81AxxaRqNNDKgpky714vMQ0nDGynOu5dJx0xprUO7
+	 uwZl7kUGcfpNPG5BEOfwfQ2iKb6ZhFNbejGnLmEMcA5aOgH6BaO4AfM2vzwFuNnEVl
+	 47eY+qsIFikmdI70RUGzTwFSoCjmdd/WuJtLTXTZBMoquY/D3pd5sFuuVTK9WOBwU1
+	 eA+tOHx0G8e0Dw0SpEjaTM/9/O6tjeZ+7yOAQ+WzebZ1mEFQBcthMoSgF0rbZEUX+1
+	 G5LUj3M/ynVzJ1P5QAbv/YUgReYGviCHiuLnuExD9o6x89E8O+jwZNZj+5wXpLrkQt
+	 qa35yR9r7HmqoKXOKtfq28OU=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0078F40E0198;
+	Tue, 29 Oct 2024 15:57:44 +0000 (UTC)
+Date: Tue, 29 Oct 2024 16:57:39 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	thomas.lendacky@amd.com, x86@kernel.org, kvm@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+Message-ID: <20241029155739.GNZyEF88OV1m-tU94h@fat_crate.local>
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
+ <3ea9cbf7-aea2-4d30-971e-d2ca5c00fb66@intel.com>
+ <56ce5e7b-48c1-73b0-ae4b-05b80f10ccf7@amd.com>
+ <3782c833-94a0-4e41-9f40-8505a2681393@intel.com>
+ <20241029142757.GHZyDw7TVsXGwlvv5P@fat_crate.local>
+ <ef4f1d7a-cd5c-44db-9da0-1309b6aeaf6c@intel.com>
+ <20241029150327.GKZyD5P1_tetoNaU_y@fat_crate.local>
+ <59084476-e210-4392-b73b-1038a2956e31@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.220867629@linutronix.de>
+In-Reply-To: <59084476-e210-4392-b73b-1038a2956e31@intel.com>
 
-Le Tue, Oct 01, 2024 at 10:42:21AM +0200, Thomas Gleixner a écrit :
-> In preparation for handling ignored posix timer signals correctly and
-> embedding the sigqueue struct into struct k_itimer, hand down a pointer to
-> the sigqueue struct into posix_timer_deliver_signal() instead of just
-> having a boolean flag.
-> 
-> No functional change.
-> 
-> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+On Tue, Oct 29, 2024 at 11:14:29PM +0800, Xiaoyao Li wrote:
+> However, how secure TSC related to memory encryption?
 
-On second thoughts, a little concern:
+Are you kidding me?
 
-> ---
-> V5: New patch
-> ---
->  include/linux/posix-timers.h |    5 +++--
->  kernel/signal.c              |   24 ++++++++++++------------
->  kernel/time/posix-timers.c   |    2 +-
->  3 files changed, 16 insertions(+), 15 deletions(-)
-> 
-> --- a/include/linux/posix-timers.h
-> +++ b/include/linux/posix-timers.h
-> @@ -110,7 +110,7 @@ static inline void posix_cputimers_rt_wa
->  void posixtimer_rearm_itimer(struct task_struct *p);
->  bool posixtimer_init_sigqueue(struct sigqueue *q);
->  int posixtimer_send_sigqueue(struct k_itimer *tmr);
-> -bool posixtimer_deliver_signal(struct kernel_siginfo *info);
-> +bool posixtimer_deliver_signal(struct kernel_siginfo *info, struct sigqueue *timer_sigq);
->  void posixtimer_free_timer(struct k_itimer *timer);
->  
->  /* Init task static initializer */
-> @@ -135,7 +135,8 @@ static inline void posix_cputimers_init(
->  static inline void posix_cputimers_group_init(struct posix_cputimers *pct,
->  					      u64 cpu_limit) { }
->  static inline void posixtimer_rearm_itimer(struct task_struct *p) { }
-> -static inline bool posixtimer_deliver_signal(struct kernel_siginfo *info) { return false; }
-> +static inline bool posixtimer_deliver_signal(struct kernel_siginfo *info,
-> +					     struct sigqueue *timer_sigq) { return false; }
->  static inline void posixtimer_free_timer(struct k_itimer *timer) { }
->  #endif
->  
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -545,7 +545,7 @@ bool unhandled_signal(struct task_struct
->  }
->  
->  static void collect_signal(int sig, struct sigpending *list, kernel_siginfo_t *info,
-> -			   bool *resched_timer)
-> +			   struct sigqueue **timer_sigq)
->  {
->  	struct sigqueue *q, *first = NULL;
->  
-> @@ -568,10 +568,10 @@ static void collect_signal(int sig, stru
->  		list_del_init(&first->list);
->  		copy_siginfo(info, &first->info);
->  
-> -		*resched_timer = (first->flags & SIGQUEUE_PREALLOC) &&
-> -				 (info->si_code == SI_TIMER);
-> -
-> -		__sigqueue_free(first);
-> +		if (unlikely((first->flags & SIGQUEUE_PREALLOC) && (info->si_code == SI_TIMER)))
-> +			*timer_sigq = first;
-> +		else
-> +			__sigqueue_free(first);
+Secure TSC is a SNP feature.
 
-So this isn't calling __sigqueue_free() unconditionally anymore. What if
-the timer has been freed already, what is going to free the sigqueue?
+I don't think you're getting it so lemme elaborate:
 
-Thanks.
+mem_encrypt.c is only *trying* to be somewhat generic but there is stuff like:
+
+        if (cc_platform_has(CC_ATTR_HOST_SEV_SNP))
+                snp_fixup_e820_tables();
+
+for example.
+
+Both TDX and SEV/SNP need to call *something* at different times during boot
+for various reasons.
+
+We could aim for generalizing things by doing per-vendor early init functions,
+which is ok, but hasn't been the main goal so far. So far the goal is to do
+the proper init/setup calls at the right time during boot and not allow the
+code to grow into an unmaintainable mess while doing so.
+
+But both vendors need to do different things at different times during the
+lifetime of the kernel depending on what they need/want to support.
+
+IOW, the memory encryption code is still shaping up...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
