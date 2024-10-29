@@ -1,218 +1,92 @@
-Return-Path: <linux-kernel+bounces-386163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A1F79B3FEA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:39:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E133A9B3FED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FA31F230D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:39:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E9D71C21EB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:41:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D104190049;
-	Tue, 29 Oct 2024 01:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C57680C02;
+	Tue, 29 Oct 2024 01:41:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="ZUXO2TKl"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6316213C3F6;
-	Tue, 29 Oct 2024 01:38:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="HEdXs86z"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0449A38385
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730165911; cv=none; b=prLV+oFeBbh8XMEJD5FtkPKV3O7aMGoMvplm5A61EaXviseEf3/xpezyae93JZo5Qs0cIqRt/pUFpzgYuCq87i7O+m7wOKAIh6gdSPvzIBkMgC9J3PhK68qpzaJNXJyriEcwXFCoPbl7Cd15o4NpFbTD0k3nLOmtZpaHxUhgPJ8=
+	t=1730166102; cv=none; b=Y//KNIRpCQ3aSzJi1KwV0R6e/NOHVMmGmrc/hWnh5oVe4doO5XXQRzOOhC0ZWf7kk053u0rxNhxcnHStvEto7LIENKk8IncSbdoARRR69mS0Ar5Ad+Drn+efkBKECz/5wsN4lFQQ/MyYEsMPR8pic7SUl1hldFoWDPk4MRGkHG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730165911; c=relaxed/simple;
-	bh=FK7FJ1NakIuFl1DY4Wq7E0A24NQ2ar4oPQk7kkTCPcQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sm3rwak1vQMuoGnS5wcW+LQtGFqHpWDUZmGarcIW1IlcTfUgDIGveZJARX3ZNhlz07JeP9wpoLU8F7titCnFl4BpgAvsa8zNnS3vY/kuXTsGoU3Wsp8B+PVErsU4lRj7IdlVlQor2anS+QSDCRMjzs3rnvClzT4IFfxjbW+9UJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=ZUXO2TKl; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SMk9Lf027636;
-	Mon, 28 Oct 2024 21:38:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=FWkrk
-	QdfhdZu4b9/Od2xDQrjn4cLmKxHKOYM9xC/GVg=; b=ZUXO2TKlQjchgwTLmd7qt
-	wkHpwycv0X458HFuYjbILmpuFszO3UJ/5gwjW7tZacc1dzWXFB2xaLFU/WPonpFj
-	DESmwEgozLICKjK/G7157/YoCPze3mryc4n3InwVXjvKDxugM28GpZWq94hT4/1i
-	jM36mTN8rtZEgkCukToMSYWcDHAdcVPdKj9tjpiXCSUS89CG+aHMlriM4yLtsseo
-	KEMONmOE0wxohhoJS5oTfta9BTAzPwbVWyV7N7rfukTUlEFo5ZtaCTBf1AZhJTYX
-	fs+3bzbbMvWOwhNaG76Yy5Q6oUKbAAXxzOreBHtn/FXkc8vHrFw40Px1txuzIr3x
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42gt92ukjp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 28 Oct 2024 21:38:11 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49T1cA8X018910
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 28 Oct 2024 21:38:10 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 28 Oct 2024 21:38:09 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 28 Oct 2024 21:38:09 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 28 Oct 2024 21:38:09 -0400
-Received: from MTINACO-L03.ad.analog.com (MTINACO-L03.ad.analog.com [10.117.223.14])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49T1bgJR031384;
-	Mon, 28 Oct 2024 21:38:03 -0400
-From: Mariel Tinaco <Mariel.Tinaco@analog.com>
-To: <linux-kernel@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, Guenter Roeck <linux@roeck-us.net>,
-        Jean Delvare
-	<jdelvare@suse.com>,
-        Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Frank Li <Frank.Li@nxp.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>
-Subject: [PATCH 3/3] hwmon: (pmbus/ltc2978) add support for ltc7841
-Date: Tue, 29 Oct 2024 09:37:34 +0800
-Message-ID: <20241029013734.293024-4-Mariel.Tinaco@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241029013734.293024-1-Mariel.Tinaco@analog.com>
-References: <20241029013734.293024-1-Mariel.Tinaco@analog.com>
+	s=arc-20240116; t=1730166102; c=relaxed/simple;
+	bh=iwv3lrNEiBfplVrUYpxy6EF1KmIplolyImTr8ZDkzZk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=iqmiaRle8lvEKDMVMtbUcEA+DFQr1F2xzF4C1PAaL+Z2iMhYH+bwyzDY1/Wh7cRdWM0BI/pLVMhfbod1yckbC0VlZjjxEFOtw//fiopdh241cyrXCoFi/7vj3Zw2/U0OGEAnHf7HEl1NF5FSvpSguwKkK3i0tpKCChIeoc6Z/M0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=HEdXs86z reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=2Vz+MeuTf+UwEcWPoU/k4NxqWMXkbetMObceN4ZkTMo=; b=H
+	EdXs86zizvlWzeNr80qP94i4Zx27fwSuBCzqqU01CMJXLEpEhty3zw9opZdog1Ql
+	iUw72btB2KCtE6PFVrC1WZl/q0Pwgylaqou/AUop8UBS1S7ByH/bt7KLuTDaCJg2
+	O/PcR/9kDEPaSum24SyNHQU7ToOCs50Wr8EzJM3X9E=
+Received: from huanglei814$163.com ( [111.48.58.10] ) by
+ ajax-webmail-wmsvr-40-136 (Coremail) ; Tue, 29 Oct 2024 09:41:08 +0800
+ (CST)
+Date: Tue, 29 Oct 2024 09:41:08 +0800 (CST)
+From: huanglei  <huanglei814@163.com>
+To: "Will Deacon" <will@kernel.org>
+Cc: catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, huanglei <huanglei@kylinos.cn>
+Subject: Re:Re: [PATCH] arm64/Kconfig: introduce GENERIC_ISA_DMA
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20241028150544.GA2445@willie-the-truck>
+References: <20241025011641.4858-1-huanglei814@163.com>
+ <20241028150544.GA2445@willie-the-truck>
+X-NTES-SC: AL_Qu2YAv2duUgt7iGRZekfm0cTguY+X8W4uv0h2IVSPJ5+jCnr6A8xUXBMM3bR2dCOEA2RrheYWxxjz/ZzRpRxWJIZvffIL7e7tfTH7+SGJGUMNQ==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: mYpGhXks3Cff0-9Btl0zeXOKFeTiXbdy
-X-Proofpoint-ORIG-GUID: mYpGhXks3Cff0-9Btl0zeXOKFeTiXbdy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015 adultscore=0
- bulkscore=0 impostorscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410290011
+Message-ID: <26ed8fbb.1809.192d5ef13e5.Coremail.huanglei814@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:iCgvCgDnD740PSBnPJwZAA--.61000W
+X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbiLBSG9mcfmUrE3QAEs+
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Add support for LTC7841. The LTC7841 is a high performance
-PolyPhase® single output synchronous boost converter controller.
-Multiphase operation reduces input and output capacitor
-requirements and allows the use of smaller inductors than the
-single-phase equivalent.
-
-The relevant registers in the LTC7841 are similar to the
-LTC7880, only reduced by some amount. So it's just a matter of adding
-the chip id. The device also doesn't support polling, on top of the
-reduced register set, so a separate case for setting the chip info is
-added.
-
-Signed-off-by: Mariel Tinaco <Mariel.Tinaco@analog.com>
----
- drivers/hwmon/pmbus/Kconfig   |  6 +++---
- drivers/hwmon/pmbus/ltc2978.c | 20 ++++++++++++++++++--
- 2 files changed, 21 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index a4f02cad92fd..f6d352841953 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -224,9 +224,9 @@ config SENSORS_LTC2978_REGULATOR
- 	depends on SENSORS_LTC2978 && REGULATOR
- 	help
- 	  If you say yes here you get regulator support for Linear Technology
--	  LTC3880, LTC3883, LTC3884, LTC3886, LTC3887, LTC3889, LTC7880,
--	  LTM4644, LTM4675, LTM4676, LTM4677, LTM4678, LTM4680, LTM4686,
--	  and LTM4700.
-+	  LTC3880, LTC3883, LTC3884, LTC3886, LTC3887, LTC3889, LTC7841,
-+	  LTC7880, LTM4644, LTM4675, LTM4676, LTM4677, LTM4678, LTM4680,
-+	  LTM4686, and LTM4700.
- 
- config SENSORS_LTC3815
- 	tristate "Linear Technologies LTC3815"
-diff --git a/drivers/hwmon/pmbus/ltc2978.c b/drivers/hwmon/pmbus/ltc2978.c
-index 73a86f4d6472..a6eb4d4b5487 100644
---- a/drivers/hwmon/pmbus/ltc2978.c
-+++ b/drivers/hwmon/pmbus/ltc2978.c
-@@ -23,7 +23,8 @@ enum chips {
- 	/* Managers */
- 	ltc2972, ltc2974, ltc2975, ltc2977, ltc2978, ltc2979, ltc2980,
- 	/* Controllers */
--	ltc3880, ltc3882, ltc3883, ltc3884, ltc3886, ltc3887, ltc3889, ltc7132, ltc7880,
-+	ltc3880, ltc3882, ltc3883, ltc3884, ltc3886, ltc3887, ltc3889, ltc7132,
-+	ltc7841, ltc7880,
- 	/* Modules */
- 	ltm2987, ltm4664, ltm4675, ltm4676, ltm4677, ltm4678, ltm4680, ltm4686,
- 	ltm4700,
-@@ -50,7 +51,7 @@ enum chips {
- #define LTC3880_MFR_CLEAR_PEAKS		0xe3
- #define LTC3880_MFR_TEMPERATURE2_PEAK	0xf4
- 
--/* LTC3883, LTC3884, LTC3886, LTC3889, LTC7132, LTC7880 */
-+/* LTC3883, LTC3884, LTC3886, LTC3889, LTC7132, LTC7841 and LTC7880 only */
- #define LTC3883_MFR_IIN_PEAK		0xe1
- 
- /* LTC2975 only */
-@@ -80,6 +81,7 @@ enum chips {
- #define LTC3887_ID			0x4700
- #define LTC3889_ID			0x4900
- #define LTC7132_ID			0x4CE0
-+#define LTC7841_ID			0x40D0
- #define LTC7880_ID			0x49E0
- #define LTM2987_ID_A			0x8010	/* A/B for two die IDs */
- #define LTM2987_ID_B			0x8020
-@@ -548,6 +550,7 @@ static const struct i2c_device_id ltc2978_id[] = {
- 	{"ltc3887", ltc3887},
- 	{"ltc3889", ltc3889},
- 	{"ltc7132", ltc7132},
-+	{"ltc7841", ltc7841},
- 	{"ltc7880", ltc7880},
- 	{"ltm2987", ltm2987},
- 	{"ltm4664", ltm4664},
-@@ -654,6 +657,8 @@ static int ltc2978_get_id(struct i2c_client *client)
- 		return ltc3889;
- 	else if (chip_id == LTC7132_ID)
- 		return ltc7132;
-+	else if (chip_id == LTC7841_ID)
-+		return ltc7841;
- 	else if (chip_id == LTC7880_ID)
- 		return ltc7880;
- 	else if (chip_id == LTM2987_ID_A || chip_id == LTM2987_ID_B)
-@@ -854,6 +859,16 @@ static int ltc2978_probe(struct i2c_client *client)
- 		  | PMBUS_HAVE_POUT
- 		  | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP;
- 		break;
-+	case ltc7841:
-+		data->features |= FEAT_CLEAR_PEAKS;
-+		info->read_word_data = ltc3883_read_word_data;
-+		info->pages = LTC3883_NUM_PAGES;
-+		info->func[0] = PMBUS_HAVE_VIN | PMBUS_HAVE_IIN
-+		  | PMBUS_HAVE_STATUS_INPUT
-+		  | PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT
-+		  | PMBUS_HAVE_IOUT
-+		  | PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP;
-+		break;
- 	default:
- 		return -ENODEV;
- 	}
-@@ -907,6 +922,7 @@ static const struct of_device_id ltc2978_of_match[] = {
- 	{ .compatible = "lltc,ltc3887" },
- 	{ .compatible = "lltc,ltc3889" },
- 	{ .compatible = "lltc,ltc7132" },
-+	{ .compatible = "lltc,ltc7841" },
- 	{ .compatible = "lltc,ltc7880" },
- 	{ .compatible = "lltc,ltm2987" },
- 	{ .compatible = "lltc,ltm4664" },
--- 
-2.34.1
-
+CiAgICBFdmVuIGlmIE1BWF9TTUFfQ0FOTkVMUyBpcyBub3QgZGVmaW5lZCwgYXMgbG9uZyBhcyBH
+RU5FVElDLVNJQV9ETUEgaXMgZW5hYmxlZKOsIHJlcXVlc3Rfcm1hL2ZyZWVfcm1hICBmdW5jdGlv
+biB3aWxsIGFsc28gYmUgZXhwb3J0ZWQsIGFuZCBvdGhlciBtb2R1bGVzIHVzaW5nIHRoZXNlIHR3
+byBpbnRlcmZhY2VzIHdpbGwgbm90IGVuY291bnRlciBsaW5rIGVycm9ycy4KCiAgICBJIGRvbid0
+IGtub3cgd2h5IG90aGVycyBoYXZlbid0IG5vdGljZWQsIGJ1dCBJIGRpc2NvdmVyZWQgaXQgd2hl
+biBkZWJ1Z2dpbmcgcGNpZSBwYXJhbGxlbCBwb3J0IGRyaXZlcnMuICBBbmQgdGhlIGFybS9LY29u
+ZmlnICBoYXMgYmVlbiBhcm91bmQgZm9yIGEgbG9uZyB0aW1lLgoKCkJlc3QgcmVnYXJkcyEKCkF0
+IDIwMjQtMTAtMjggMjI6MDU6NDUsICJXaWxsIERlYWNvbiIgPHdpbGxAa2VybmVsLm9yZz4gd3Jv
+dGU6Cj5PbiBGcmksIE9jdCAyNSwgMjAyNCBhdCAwOToxNjo0MUFNICswODAwLCBodWFuZ2xlaTgx
+NCB3cm90ZToKPj4gRnJvbTogaHVhbmdsZWkgPGh1YW5nbGVpQGt5bGlub3MuY24+Cj4+IAo+PiBF
+bmFibGUgR0VORVJJQ19JU0FfRE1BIGZlYXR1cmUgb24gYXJtNjQgcGxhdGZvcm0sCj4+IHRodXMs
+IHJlcXVlc3RfZG1hIGFuZCBmcmVlX2RtYSBpbnRlcmZhY2UgY2FuIGJlIGV4cG9ydC4KPj4gYW5k
+IGRyaXZlciBtb2R1bGVzIGNhbiB1c2UgdGhlIHRoaXMgaW50ZXJmYWNlcyBvbiBhcm02NAo+PiBw
+bGF0Zm9ybS4KPj4gCj4+IEN1cnJlbnRseSwgbWFueSBwY2llIHBhcmFsbGVsIHBvcnQgZHJpdmVy
+cyBzdGlsbCB1c2UgdGhlc2UKPj4gaW50ZXJmYWNlcyB3aGVuIHBvcnRlZCB0byBhcm02NCBwbGF0
+Zm9ybS4KPgo+V2h5IGhhcyBpdCB0YWtlbiBzbyBsb25nIGZvciBhbnlib2R5IHRvIG5vdGljZT8K
+Pgo+PiBTaWduZWQtb2ZmLWJ5OiBodWFuZ2xlaSA8aHVhbmdsZWlAa3lsaW5vcy5jbj4KPj4gLS0t
+Cj4+ICBhcmNoL2FybTY0L0tjb25maWcgfCAzICsrKwo+PiAgMSBmaWxlIGNoYW5nZWQsIDMgaW5z
+ZXJ0aW9ucygrKQo+PiAKPj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtNjQvS2NvbmZpZyBiL2FyY2gv
+YXJtNjQvS2NvbmZpZwo+PiBpbmRleCBmZDlkZjZkY2M1OTMuLjk4NmViMjUxZjY4ZiAxMDA2NDQK
+Pj4gLS0tIGEvYXJjaC9hcm02NC9LY29uZmlnCj4+ICsrKyBiL2FyY2gvYXJtNjQvS2NvbmZpZwo+
+PiBAQCAtMzY3LDYgKzM2Nyw5IEBAIGNvbmZpZyBHRU5FUklDX0NTVU0KPj4gIGNvbmZpZyBHRU5F
+UklDX0NBTElCUkFURV9ERUxBWQo+PiAgCWRlZl9ib29sIHkKPj4gIAo+PiArY29uZmlnIEdFTkVS
+SUNfSVNBX0RNQQo+PiArCWRlZl9ib29sIHkKPj4gKwo+Cj5Eb2VzIHRoaXMgYWN0dWFsbHkgZG8g
+YW55dGhpbmcgd2l0aG91dCBNQVhfRE1BX0NIQU5ORUxTIGRlZmluZWQ/Cj4KPldpbGwK
 
