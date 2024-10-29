@@ -1,212 +1,646 @@
-Return-Path: <linux-kernel+bounces-386935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E89E9B49E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:41:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED569B49E6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:41:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A170B23249
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:41:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E03F1C225D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEE91DE3B7;
-	Tue, 29 Oct 2024 12:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ERmAKZqO";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="gJb1867Z"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4373F204013;
+	Tue, 29 Oct 2024 12:41:53 +0000 (UTC)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193F51DFCB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730205692; cv=fail; b=WTBTHxSf73KY/PGIp7G9Xy/1TuZlfOtnp9FvvqTE2m7pQUk2bw6TTVq6i36X+ZFYfRcz6yvspat5Xm/wFQIrmi/aXAijhLP5+ohK/xDis9YiwbWdCwlObmKMf2tEs5/OkQa1oE/Nqix6R5dFQzSrDo04/SmnbeNOyDG793IQ6WU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730205692; c=relaxed/simple;
-	bh=plnL+5mTrSEq/jBVKEG24oZwK+2AAA/YOzZWkT7Pq8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=XpRi+AVbQZaDdHFoHiRan6XnSxhjskYpHuWmFm3Wf6X9mv1pZKrPc3Rwfb/QROlfr7qUFtzlWmXjdtwfKnjIX0Q+nV92Dw2WFFEyUeVSk1ef1uncj7SFxXbQVw8Fzu+79oSImkuLAf5Fd5N4L7LcJfqmpooUUi5hy2y7UGypkeU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ERmAKZqO; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=gJb1867Z; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TCbo3A007758;
-	Tue, 29 Oct 2024 12:41:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=plnL+5mTrSEq/jBVKE
-	G24oZwK+2AAA/YOzZWkT7Pq8Y=; b=ERmAKZqOmc1Zk/6ENAL36JnFHCiVHF3tvp
-	hBW4c7sE/6wtDoqMVFDhg9H+HbgJsbjU7FglvDgpWAwCPRvYwMvBHWKNrXSVROiL
-	M02oZMge0u5hoGSDP4SCZbMCeNlMjgcSLGPLSeIQ0EpcFQ8eoF/leMeZ9GQoe6XU
-	fkiVROqEwQ58EVtNxiRCr+KemTm1JHlQJaApfapmGhZUOrpV8p6CrweMGlN5awOe
-	BgDNy0518Ogt6iXy3rq9wYxI1KNzlzHcVUHZ6dza56G8WXqpwsvkDp6yr7uYpRl8
-	pHk/fJ6FDl4j9TE6+dMwFkMpHt6lsbqaSUmjMhWneMM2MRN1FRuw==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grdqd8jg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 12:41:09 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49TAu1Ge011811;
-	Tue, 29 Oct 2024 12:41:09 GMT
-Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2172.outbound.protection.outlook.com [104.47.55.172])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hnaceub4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 12:41:09 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dQHzTIVn4vaoVW3ia8G/9/lPOI0BnCf59xoSBCDGnuZM06VSh8l0oQneHxMhXa8iLi8chFZEZ3SDQM7064avMEQgqwIbAbBgA28izwzRnqTJvbmlte99YjQYjWZoZavzx5u3xLqb+UKfuLibhXOl2SUWmqii5wY7cF7szJdUaEykGGnHnC8u0MKcv5ufrZeK+JFlZFOG3OynepEh786Cmi3b5LriccfN2+PS5WnIELdvKE1TQcwJUUgT+e0yPtPUvB5rDYNpHC7y3iW868Wv57KozIWJfPxm/q/RvU0iFiNYaNgaSBUpgsMqCzxbrhxRxPJFsKrE2a4QbVMfcFqeSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=plnL+5mTrSEq/jBVKEG24oZwK+2AAA/YOzZWkT7Pq8Y=;
- b=kyIgJzQesPSNmdipUO2wKQVilNf4aY6yP07PE7ib9vYldrxvryLGZdfyt7iNQuN4mlH6ph4EXg9pP5G3ypbh0/quihV07NMpqCHUoJV7qIQqO/NdItd5c9X9B5nju6t5fPQtClAsFJGGxvMK22Dlr/kWqeLAxSyFtemLx2ekBkd69iYo76jDALCyM/yzNOjmD/8ipeBWB21vEHfSQI4TKOdUHK3L6YOIUBGnszIM8ndHDclWaPk/VwXdqUj0y7LleG5i7WeNJXM5gqgcK/Bkc0NxmgrT/B7TAGYRkLJSCkM1ngf1fU8arioNMcs1Kr6ojh1lN876QdvOP2qyE74f2A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=plnL+5mTrSEq/jBVKEG24oZwK+2AAA/YOzZWkT7Pq8Y=;
- b=gJb1867Z4kkOpIvsSiJLGlE9iCA8pd6MeQKV9lIliihrSpTJ1TzwIGwtpHIA/2nQnXJf5rjQHAH30iA3EIQh4qOau1ptLKDkJcfVYj8q5V6jXYraySl9G3unCBp3YkJ2V3G4FH/eaapGRU+74pSpErwhRTcZpj45uOJQ8duDg7k=
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
- by BLAPR10MB4881.namprd10.prod.outlook.com (2603:10b6:208:327::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.20; Tue, 29 Oct
- 2024 12:41:06 +0000
-Received: from BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
- ([fe80::baf2:dff1:d471:1c9%6]) with mapi id 15.20.8093.027; Tue, 29 Oct 2024
- 12:41:06 +0000
-Date: Tue, 29 Oct 2024 12:41:04 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>, Aishwarya TCV <Aishwarya.TCV@arm.com>
-Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
- error path behaviour
-Message-ID: <83938e00-ab62-466f-b08f-99eab36117f5@lucifer.local>
-References: <cf1deb9b-c5c4-4e85-891d-62ecf9a04e0f@lucifer.local>
- <0d3237d7-cb70-4979-b262-29ffe7d7a608@sirena.org.uk>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0d3237d7-cb70-4979-b262-29ffe7d7a608@sirena.org.uk>
-X-ClientProxiedBy: LO2P265CA0093.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:8::33) To BYAPR10MB3366.namprd10.prod.outlook.com
- (2603:10b6:a03:14f::25)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726D11C6B8;
+	Tue, 29 Oct 2024 12:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730205712; cv=none; b=b2XUtElad6aVy6zoO3CEN/k2aHD0uWuwJv9AcsCNq3p12c6Qw7b8BSnANtj0VQkhAcG4KOufm5Vs3U/GJbVROVCRPdAd+FQ89uxKIlpLZsLCrGQ6Z5cuEP45ou/cw0MMfbsHjJpSyoiz+3vp5Wqco2TSrYnlzYdbmO8eBm00zBc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730205712; c=relaxed/simple;
+	bh=DxVbZikYFsVxrxoR4lwaM57VFjm9Vq/zALKymSnJEnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qu571snarWca8QY9CP8Buie05l5ZPNTJpuFP5ro5wij0YMdQCh/M39O8dup1AATVuAGZdxsGICEHQepzgznctzx42jr7gBV34wqyuc3RMhIMqQWeLQWlwWMwkD7HlRFynzr/ryI/deVknwq48Twzs5+0L/K6rE/ekKKrelK5cpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ea15a72087so16646287b3.1;
+        Tue, 29 Oct 2024 05:41:48 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730205706; x=1730810506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y7X+46iPcsaPYGDUxBCtw9mhN3kPX96GVjBjY89Yr8s=;
+        b=EQVV9AVuErSDQQ7VGPi0kGXiQyage98VuDEmtVc3VhN9dyXDb4tyvQgc+jdanp7QTs
+         Ve19itJy7Ph/DoTNIA+DjkO1hz40aDXo07YDm+rO1LZQBoRqIBrT3g3YxWzoDAlKeFTd
+         LuPJKZ6wHGD7wT2/KqbjOo5KG+IgPWpOdezeGXSXC2xk3BwSojx+vULLs754+KR6wMeG
+         fKrGnnnVJ43YDk4rNkCYt/v6xJD+RQoA2rIKLVGkRptbUS4qomSgw4yjT9h7UfWaIT9Q
+         vus9JungV0I3ky1jpQAZ0QijS7+aEI4wo14RSq8jOyESkACxK9e0y0aX9/koB8z1+p8g
+         9HrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ6SFgo6Nla8g+TUxkY5RlT2I+UZZmxmZtohjwHMZxay77Dh1tAM2u4nPoSi9NS7cMmRfVd3IQ3eG+@vger.kernel.org, AJvYcCUSLXrnjAKa0K+r9xdaSrkG18wZxQ8yWwa0IlAck0DYDKSTNPt0kJBHVFteHfJVnte7xZrgp/fkzY0qKkw+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6NC9wfTkGmRC7bMUNdj6xxIuGI3Sd+WGaxv7xez0ELufP8nmc
+	t6mxvbPHfZmgb3/iLKrRghT6oLtRT1LzTjqk1CerSv9FdJOrKPuyNeSF6G44
+X-Google-Smtp-Source: AGHT+IGXko+R6RC+bya3Z9AB2CukWmIs0BPKd1ZwfSe3JhZdmUx7JlhZGPNHtkgPi9M+p6mo4VOR3w==
+X-Received: by 2002:a05:690c:9b12:b0:6e3:34b9:960a with SMTP id 00721157ae682-6e9d8939ddemr119289907b3.17.1730205706061;
+        Tue, 29 Oct 2024 05:41:46 -0700 (PDT)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com. [209.85.128.176])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c97970sm19342597b3.127.2024.10.29.05.41.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 05:41:45 -0700 (PDT)
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ea339a41f1so3044247b3.2;
+        Tue, 29 Oct 2024 05:41:44 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVzvX9oAy3BpcW070ci2XfbsxQurjxqxFed2o6rqtrkCa2dDlxU4rjCP3Y7kqiYwtA2DIskCrHdxsKD@vger.kernel.org, AJvYcCWKptp/IIbrYpy/swF4sSQSLg/iUMGwH2ZLjBwmgDa50UcI9AASqLCgaE66nxKUXqvRx2prWalph1+szFF1@vger.kernel.org
+X-Received: by 2002:a05:690c:f02:b0:6e2:1090:af31 with SMTP id
+ 00721157ae682-6e9d88d0883mr109387087b3.3.1730205704243; Tue, 29 Oct 2024
+ 05:41:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|BLAPR10MB4881:EE_
-X-MS-Office365-Filtering-Correlation-Id: eee226e9-8454-4bcb-8141-08dcf816f53c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QVB96Zn5rAlpmIcYKU6WJm96gIe+T08ZEeDsEd9MLLwKU8V5E983jUcq6lmx?=
- =?us-ascii?Q?/nm6K1N50Vp/n+vL1e8hc3XXnnF2aXigzsW7BKZHTZloYeDgL3aNrRfC/d4a?=
- =?us-ascii?Q?AKrreT/SdUjoKuYScAE82g+vmpXOXmI4lccQjsivAu58YW+FE2ulgagen/Kv?=
- =?us-ascii?Q?hTil/lVZwnNPUT0pecAgj2K1LzUDlj5F+H3E+kj8U7bNy6KHXjWiqpvMMfSI?=
- =?us-ascii?Q?pHChQ0XQT11j91rXl9j4gjYafNzbrOR9wSWJil4OWf1sTPQshLImsvqLdlZS?=
- =?us-ascii?Q?YITJ4QM06sZcfOMU1lisvrv5QLXKU/MZ/XPL4ke/ihlaP9GUFQwIWhTXYO92?=
- =?us-ascii?Q?73WgA4HsAP2YJ6D41yEgcOtHMddjHWAgIMGT3klNQe3uCubefY5HCVjAscmi?=
- =?us-ascii?Q?xHGlx77gaSyR092L8DVvV59K+DZd0ol51/N/u/iaVmMe4XpEyjJApWB5UhRn?=
- =?us-ascii?Q?AyJhRqOQm1jSlvgK1cHtOPfUQGrjbNT2p1818MBMWZ4Kaq1W6csjba4t8Cgy?=
- =?us-ascii?Q?Cq8VDTNhWIU8QOj7s9VtYcMIMT+wWyR7G0w5BZjlu+o2liPvFiluAoIYRf8P?=
- =?us-ascii?Q?Wqqg3rIEC+9xlpPR5rspdOVL7jt/wUxLrLtonvGYXi0AF+g3D/M+VBo2cREr?=
- =?us-ascii?Q?HyxNDfoQRFeSevtnwwXFzpEN8p6QkWKHMcKVHb05IHhsgLebSLXy0AHj+hVU?=
- =?us-ascii?Q?hgmbohplq6+XMbBqVM4aypwZ/It6yQ1hl3ttL62qcOFf773z82l+NHSNZk9B?=
- =?us-ascii?Q?2GY2t4bxzvmsrFnAf9emk+Vcp/ceSNZo/u6JJokkds7ZBEixpFBjAmkDBxKp?=
- =?us-ascii?Q?j4J8nIUuBQ67eSk2qAyDmTWN/JExxwEHs57J5oXp2tOQb9TavJdFyUlFMyBl?=
- =?us-ascii?Q?azpeN4jGe022gH5H7G/LAtO56Esk19m5Ndbpqcr5kHFSxwt5NvyQBjR7g9fG?=
- =?us-ascii?Q?2wa7RCZZCl7ysrjl8FHUYYEkP5Ca8duKFx300//amFe70kqf2neZqNbsw8X5?=
- =?us-ascii?Q?8nmGNxxBSCRebHiHnRA7DSfCx3JlOQXU5SvQmwqUzDGJ2FFmWcOiLXU2ZCnz?=
- =?us-ascii?Q?AYAX5COBi1H/AcHHc8n4BD3lBOPiaD8ObLPxofJD7Tbqrv/nYYOPdLIsgD3A?=
- =?us-ascii?Q?V7FW2Yjlp/BqGOQfJ7hcIigV3DgwmtvWxev1lllEZLJ5O2kJ9Xz8RV0ZDs6q?=
- =?us-ascii?Q?G3695Ewt516YatbrqiUlznAq3aXpmdPaxD1atewpi/assdGW14zHw/c+tw7q?=
- =?us-ascii?Q?lTcoZ5gZfB63NQlCA6T9yQHPWtclx4pkCgRXvR5nAIw1sYfR8w2ArvJYyrVA?=
- =?us-ascii?Q?EKI=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UzKY9fSBZPGUFuPWRYFQXiEEbZZS8uG/qHgB6C+sMcCcMw3yEhhd9HfctPoX?=
- =?us-ascii?Q?63B2OhgQfDhzh/V4Nuy7xdc1JQL1EcNib9pSPY7EBdLfFL8olIKTbtIAK4sx?=
- =?us-ascii?Q?7NwwQU8Dm2FKdXBv+F6VGpKC252DpgQqSCgBfrymX396xRxPEEviyEgCxJAT?=
- =?us-ascii?Q?QFSfdyAGmSfnQ+e4lmhltxfyYjHusa3bAmZPLNkPqoRLA8sbBHwO3Cybx+92?=
- =?us-ascii?Q?cbQ5dtxkrkm2dZuMkTDDbFUHw6sLSnQLH81k2sNn1s3Y1s1o8r9igrYzKg9f?=
- =?us-ascii?Q?Dda8Qshf1fKWaYrMChotlJtmiMVbE0/ajxeqZ+Eo58qBBOI4/3N2R+L0p7dH?=
- =?us-ascii?Q?j240pRY3RG08UFfFpuTJVfqnzWAUIhpvJlELHlD0zS7v9Iuwh5uf0gyRkF2/?=
- =?us-ascii?Q?Kgx7tAfrDZ3l3atxrB/WtjMWIw75hTiVmME096gC88m9467tSiZrTDjg0BB0?=
- =?us-ascii?Q?OrawZwB8HJl174B451eeAbjZ2VI5DE7B9AwY55KMU148i1Nk5OJLrLzr1ayq?=
- =?us-ascii?Q?yXhKgjSILpLo0+niUzgApS97BNr8W/e2zlCMWI8DwFzbK/O8Vj6JroQCF4yp?=
- =?us-ascii?Q?MelsRlScxC/ps5WI48rrPRclYbe7wZImXMCW7k+ti6ROsG7FYGPIYbeA5uSh?=
- =?us-ascii?Q?rsnoAOSidyCVqkBMxIZDcBYC+sji+RNWiX1djh1jyF88vSTTyIcKyZyRAyVw?=
- =?us-ascii?Q?UC4ugEzUJZ9GO9Z714azRpETNe9sazM0aNu3BgghQjCJV5aMWjF5GCWqbmKw?=
- =?us-ascii?Q?8dQTS65didSBeNYeCoOuqwhQ43gw1nIyOnu87CTbYXaTDliYZm3yz1o8yPLa?=
- =?us-ascii?Q?/8EUIR1vVwsLCBFT78k2ZFnqUHvELmCYHKasd39FufYFYyv6VE4yem83ZfEK?=
- =?us-ascii?Q?pEnNEc3/A693/an2+UHIiTgd5Ki9f0VZZF4Yvx3V1lBMuEq6zvq2C5Bu3Ecq?=
- =?us-ascii?Q?GfAJGMeMHSgjufzv5+teQvNZ5yTtrsUgCGYTXpEEE2jTmBXFxrXzyKdmmT9n?=
- =?us-ascii?Q?/Foe19tYgSXUDwHvBhfFMb/2wEGK2kGwtrm2tCm3guPc491DcjgZ7CELQbsy?=
- =?us-ascii?Q?61k1Iiw+hj1L7HWJcRcagk0jtQKYAvhNInRc2pcOC1seiXZ1iqyI2jTYSBin?=
- =?us-ascii?Q?EiAvXAuNgTjlGcnDFdf9S2cTCUVDJQGOAtawdbNaXVo7XFdfhnX2WHFaFUUh?=
- =?us-ascii?Q?bufUdpm0a9D5z3CqjPQuE9lnRdKEa7w3Zo3Lt1FGoqIuGkI/PfJX8/7eHbX1?=
- =?us-ascii?Q?6nLMLfm3pVuUafb3sBLzeK20vGvopqPZ+XyRH2CkQsPZVcHCqo2TyxAmhcF7?=
- =?us-ascii?Q?JMuCsFOwULzvj5eHGPiBDbQt1IIf8OR0lYiEKnab+LmxQaqwx/+bhaqnoRny?=
- =?us-ascii?Q?IS+mnB4kyXsAfnlU0itOhvfjsQU5BhanSMhmlNERHpuR+331UXLymGL2fDA8?=
- =?us-ascii?Q?M6lcPfNcAsGYhLSvThHsA7v1vcXyzWVqDHYr05Oz7LmkB4Wj8FFEfhOE9I6R?=
- =?us-ascii?Q?3faMuR8v5H5vkDbkGPf36qrF3c70dqZSVdhPL8mPp9jmFNZxRb+5uxMqogy3?=
- =?us-ascii?Q?4k9fwPOQnriGjMJNvm1TvwemXSrGxZ+TCy56ULHYO7YUdFsMLNl53V1OicUj?=
- =?us-ascii?Q?OA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qA8zUc9C3cMx4QAeYgBXmbEFfUX1nbzNaQZko+Y1giMYE5jY/IG5zjrigbkED8c7PT6T0ks6FRsswtKh3WPa+4lF/BKKkV2s0GEJrXvGAL0703ORGpFDwVPnW80NxSdGO26KRV7hr8ISBtTcWDLjYmYG1Hs46uYaNvfB/w1qAiuo3heg8kThnxrdlf1vZb3cWj5W9YxRK0Rj2nJWp02FRLgplTdyTKNI+qh2LgeJYP27k+ZN9AEBgYvn9Po6wAhQBUOME8DMQBU9YKiTNhsRChAmUM51/yDdISNsYEF7QXwc65SQnDHCaSdy1zGWtslj9FX7f8hM32kpHN2gmpYNb5OyMLRz3wSPaPc9cTO3IliBmksujU4UwyJP0dqo6FC0EZFxwq0LpeW9jaq2KsWdZ3DrLkQqiRto6Gev9YMKJc8OYuc8A+zCx/d84gWdo3lTHvIsBfsWU/AmVxA16nneFht50CwAnRLzRKY0HGp0kYNL3gynSf1bvBR/7vx6UNUr2PVDI0w2bIijGF+PoNzG7c/Rs94Cj8EINODGgTSD31YYAY2ZcZ3i1UeH7uEdhkAwx3Gzxn8GxzqrdkqR8OfxF52v5kMNSUtzux9kiygHOsw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: eee226e9-8454-4bcb-8141-08dcf816f53c
-X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 12:41:06.7974
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: AUO7S8lo5fPlFZmwTTfaz+XKWwfmZ0TxWfJaXdXALpaqNFoIcH55pI71JlKlsWnAxh8Jjc7jIztDGZ5EyCylP61ZmhpGY55/Z4JxOAx7Vn8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLAPR10MB4881
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-29_08,2024-10-29_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=631 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410290097
-X-Proofpoint-GUID: EVSSSQWhtTH19V-3e3V3_hKrZ1w_dz85
-X-Proofpoint-ORIG-GUID: EVSSSQWhtTH19V-3e3V3_hKrZ1w_dz85
+References: <20241008220624.551309-1-quic_obabatun@quicinc.com> <20241008220624.551309-2-quic_obabatun@quicinc.com>
+In-Reply-To: <20241008220624.551309-2-quic_obabatun@quicinc.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Oct 2024 13:41:31 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUXj4QiSKdhf61xdDeu94=Hv0BXuCxykDpQwdY81_h2vw@mail.gmail.com>
+Message-ID: <CAMuHMdUXj4QiSKdhf61xdDeu94=Hv0BXuCxykDpQwdY81_h2vw@mail.gmail.com>
+Subject: Re: [PATCH v10 1/2] of: reserved_mem: Restruture how the reserved
+ memory regions are processed
+To: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+Cc: robh@kernel.org, aisheng.dong@nxp.com, andy@black.fi.intel.com, 
+	catalin.marinas@arm.com, devicetree@vger.kernel.org, hch@lst.de, 
+	iommu@lists.linux.dev, kernel@quicinc.com, klarasmodin@gmail.com, 
+	linux-kernel@vger.kernel.org, m.szyprowski@samsung.com, 
+	quic_ninanaik@quicinc.com, robin.murphy@arm.com, saravanak@google.com, 
+	will@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 12:33:13PM +0000, Mark Brown wrote:
-> On Mon, Oct 28, 2024 at 10:14:50PM +0000, Lorenzo Stoakes wrote:
->
-> > It doesn't make sense to have shmem explicitly check this one arch-specific
-> > case, it is arch-specific, so the arch should handle it. We know shmem is a
-> > case in which we want to permit MTE, so simply check for this directly.
-> >
-> > This also fixes the issue with checking arch_validate_flags() early, which
-> > would otherwise break mmap_region().
->
-> The relevant tests all pass with this on today's pending-fixes.
+Hi Oreoluwa,
 
-Thanks, am respinning series now, will add your tag!
-
+On Wed, Oct 9, 2024 at 12:08=E2=80=AFAM Oreoluwa Babatunde
+<quic_obabatun@quicinc.com> wrote:
+> Reserved memory regions defined in the devicetree can be broken up into
+> two groups:
+> i) Statically-placed reserved memory regions
+> i.e. regions defined with a static start address and size using the
+>      "reg" property.
+> ii) Dynamically-placed reserved memory regions.
+> i.e. regions defined by specifying an address range where they can be
+>      placed in memory using the "alloc_ranges" and "size" properties.
 >
-> Tested-by: Mark Brown <broonie@kernel.org>
+> These regions are processed and set aside at boot time.
+> This is done in two stages as seen below:
+>
+> Stage 1:
+> At this stage, fdt_scan_reserved_mem() scans through the child nodes of
+> the reserved_memory node using the flattened devicetree and does the
+> following:
+>
+> 1) If the node represents a statically-placed reserved memory region,
+>    i.e. if it is defined using the "reg" property:
+>    - Call memblock_reserve() or memblock_mark_nomap() as needed.
+>    - Add the information for that region into the reserved_mem array
+>      using fdt_reserved_mem_save_node().
+>      i.e. fdt_reserved_mem_save_node(node, name, base, size).
+>
+> 2) If the node represents a dynamically-placed reserved memory region,
+>    i.e. if it is defined using "alloc-ranges" and "size" properties:
+>    - Add the information for that region to the reserved_mem array with
+>      the starting address and size set to 0.
+>      i.e. fdt_reserved_mem_save_node(node, name, 0, 0).
+>    Note: This region is saved to the array with a starting address of 0
+>    because a starting address is not yet allocated for it.
+>
+> Stage 2:
+> After iterating through all the reserved memory nodes and storing their
+> relevant information in the reserved_mem array,fdt_init_reserved_mem() is
+> called and does the following:
+>
+> 1) For statically-placed reserved memory regions:
+>    - Call the region specific init function using
+>      __reserved_mem_init_node().
+> 2) For dynamically-placed reserved memory regions:
+>    - Call __reserved_mem_alloc_size() which is used to allocate memory
+>      for each of these regions, and mark them as nomap if they have the
+>      nomap property specified in the DT.
+>    - Call the region specific init function.
+>
+> The current size of the resvered_mem array is 64 as is defined by
+> MAX_RESERVED_REGIONS. This means that there is a limitation of 64 for
+> how many reserved memory regions can be specified on a system.
+> As systems continue to grow more and more complex, the number of
+> reserved memory regions needed are also growing and are starting to hit
+> this 64 count limit, hence the need to make the reserved_mem array
+> dynamically sized (i.e. dynamically allocating memory for the
+> reserved_mem array using membock_alloc_*).
+>
+> On architectures such as arm64, memory allocated using memblock is
+> writable only after the page tables have been setup. This means that if
+> the reserved_mem array is going to be dynamically allocated, it needs to
+> happen after the page tables have been setup, not before.
+>
+> Since the reserved memory regions are currently being processed and
+> added to the array before the page tables are setup, there is a need to
+> change the order in which some of the processing is done to allow for
+> the reserved_mem array to be dynamically sized.
+>
+> It is possible to process the statically-placed reserved memory regions
+> without needing to store them in the reserved_mem array until after the
+> page tables have been setup because all the information stored in the
+> array is readily available in the devicetree and can be referenced at
+> any time.
+> Dynamically-placed reserved memory regions on the other hand get
+> assigned a start address only at runtime, and hence need a place to be
+> stored once they are allocated since there is no other referrence to the
+> start address for these regions.
+>
+> Hence this patch changes the processing order of the reserved memory
+> regions in the following ways:
+>
+> Step 1:
+> fdt_scan_reserved_mem() scans through the child nodes of
+> the reserved_memory node using the flattened devicetree and does the
+> following:
+>
+> 1) If the node represents a statically-placed reserved memory region,
+>    i.e. if it is defined using the "reg" property:
+>    - Call memblock_reserve() or memblock_mark_nomap() as needed.
+>
+> 2) If the node represents a dynamically-placed reserved memory region,
+>    i.e. if it is defined using "alloc-ranges" and "size" properties:
+>    - Call __reserved_mem_alloc_size() which will:
+>      i) Allocate memory for the reserved region and call
+>      memblock_mark_nomap() as needed.
+>      ii) Call the region specific initialization function using
+>      fdt_init_reserved_mem_node().
+>      iii) Save the region information in the reserved_mem array using
+>      fdt_reserved_mem_save_node().
+>
+> Step 2:
+> 1) This stage of the reserved memory processing is now only used to add
+>    the statically-placed reserved memory regions into the reserved_mem
+>    array using fdt_scan_reserved_mem_reg_nodes(), as well as call their
+>    region specific initialization functions.
+>
+> 2) This step has also been moved to be after the page tables are
+>    setup. Moving this will allow us to replace the reserved_mem
+>    array with a dynamically sized array before storing the rest of
+>    these regions.
+>
+> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
+
+Thanks for your patch, which is now commit 8a6e02d0c00e7b62
+("of: reserved_mem: Restructure how the reserved memory regions
+are processed") in dt-rh/for-next.
+
+I have bisected a boot issue on RZ/Five to this commit.
+With "earlycon keep_bootcon" (else there is no output):
+
+    Oops - store (or AMO) access fault [#1]
+    CPU: 0 UID: 0 PID: 1 Comm: swapper Not tainted
+6.12.0-rc1-00015-g8a6e02d0c00e #201
+    Hardware name: Renesas SMARC EVK based on r9a07g043f01 (DT)
+    epc : __memset+0x60/0x100
+     ra : __dma_alloc_from_coherent+0x150/0x17a
+    epc : ffffffff8062d2bc ra : ffffffff80053a94 sp : ffffffc60000ba20
+     gp : ffffffff812e9938 tp : ffffffd601920000 t0 : ffffffc6000d0000
+     t1 : 0000000000000000 t2 : ffffffffe9600000 s0 : ffffffc60000baa0
+     s1 : ffffffc6000d0000 a0 : ffffffc6000d0000 a1 : 0000000000000000
+     a2 : 0000000000001000 a3 : ffffffc6000d1000 a4 : 0000000000000000
+     a5 : 0000000000000000 a6 : ffffffd601adacc0 a7 : ffffffd601a841a8
+     s2 : ffffffd6018573c0 s3 : 0000000000001000 s4 : ffffffd6019541e0
+     s5 : 0000000200000022 s6 : ffffffd6018f8410 s7 : ffffffd6018573e8
+     s8 : 0000000000000001 s9 : 0000000000000001 s10: 0000000000000010
+     s11: 0000000000000000 t3 : 0000000000000000 t4 : ffffffffdefe62d1
+     t5 : 000000001cd6a3a9 t6 : ffffffd601b2aad6
+    status: 0000000200000120 badaddr: ffffffc6000d0000 cause: 0000000000000=
+007
+    [<ffffffff8062d2bc>] __memset+0x60/0x100
+    [<ffffffff80053e1a>] dma_alloc_from_global_coherent+0x1c/0x28
+    [<ffffffff80053056>] dma_direct_alloc+0x98/0x112
+    [<ffffffff8005238c>] dma_alloc_attrs+0x78/0x86
+    [<ffffffff8035fdb4>] rz_dmac_probe+0x3f6/0x50a
+    [<ffffffff803a0694>] platform_probe+0x4c/0x8a
+    [<ffffffff8039ea16>] really_probe+0xe4/0x1c8
+    [<ffffffff8039ebc4>] __driver_probe_device+0xca/0xce
+    [<ffffffff8039ec48>] driver_probe_device+0x34/0x92
+    [<ffffffff8039ede8>] __driver_attach+0xb4/0xbe
+    [<ffffffff8039ce58>] bus_for_each_dev+0x60/0xa0
+    [<ffffffff8039e26a>] driver_attach+0x1a/0x22
+    [<ffffffff8039dc20>] bus_add_driver+0xa4/0x184
+    [<ffffffff8039f65c>] driver_register+0x8a/0xb4
+    [<ffffffff803a051c>] __platform_driver_register+0x1c/0x24
+    [<ffffffff808202f6>] rz_dmac_driver_init+0x1a/0x22
+    [<ffffffff80800ef6>] do_one_initcall+0x64/0x134
+    [<ffffffff8080122e>] kernel_init_freeable+0x200/0x202
+    [<ffffffff80638126>] kernel_init+0x1e/0x10a
+    [<ffffffff8063d58e>] ret_from_fork+0xe/0x18
+    Code: 1007 82b3 40e2 0797 0000 8793 00e7 8305 97ba 8782 (b023) 00b2
+    ---[ end trace 0000000000000000 ]---
+    Kernel panic - not syncing: Fatal exception in interrupt
+    ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+
+Nothing really stands out in the kernel log, except for a delayed
+initialization of the reserved mem nodes (they are the same
+before/after):
+
+ printk: debug: ignoring loglevel setting.
+-OF: reserved mem: 0x0000000000030000..0x000000000003ffff (64 KiB)
+nomap non-reusable mmode_resv0@30000
+-OF: reserved mem: 0x0000000000040000..0x000000000004ffff (64 KiB)
+nomap non-reusable mmode_resv1@40000
+-OF: reserved mem: 0x0000000044000000..0x000000004403ffff (256 KiB)
+nomap non-reusable mmode_resv3@44000000
+-OF: reserved mem: 0x0000000044040000..0x000000004405ffff (128 KiB)
+nomap non-reusable mmode_resv2@44040000
++earlycon: scif0 at MMIO 0x000000001004b800 (options '115200n8')
++printk: legacy bootconsole [scif0] enabled
++printk: debug: skip boot console de-registration.
+ Reserved memory: created DMA memory pool at 0x0000000058000000, size 128 M=
+iB
+ OF: reserved mem: initialized node pma_resv0@58000000, compatible id
+shared-dma-pool
+ OF: reserved mem: 0x0000000058000000..0x000000005fffffff (131072 KiB)
+nomap non-reusable pma_resv0@58000000
++OF: reserved mem: 0x0000000000030000..0x000000000003ffff (64 KiB)
+nomap non-reusable mmode_resv0@30000
++OF: reserved mem: 0x0000000000040000..0x000000000004ffff (64 KiB)
+nomap non-reusable mmode_resv1@40000
++OF: reserved mem: 0x0000000044040000..0x000000004405ffff (128 KiB)
+nomap non-reusable mmode_resv2@44040000
++OF: reserved mem: 0x0000000044000000..0x000000004403ffff (256 KiB)
+nomap non-reusable mmode_resv3@44000000
+ Zone ranges:
+   DMA32    [mem 0x0000000048000000-0x000000007fffffff]
+   Normal   empty
+
+Reverting commits 00c9a452a235c61f ("of: reserved_mem: Add code to
+dynamically allocate reserved_mem array") and 8a6e02d0c00e7b62 fixes
+the issue.
+
+root@smarc-rzfive:/sys/firmware/devicetree/base/reserved-memory# ls -l
+total 0
+-r--r--r-- 1 root root  4 Oct 29 12:37 #address-cells
+-r--r--r-- 1 root root  4 Oct 29 12:37 #size-cells
+drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv0@30000
+drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv1@40000
+drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv2@44040000
+drwxr-xr-x 2 root root  0 Oct 29 12:37 mmode_resv3@44000000
+-r--r--r-- 1 root root 16 Oct 29 12:37 name
+drwxr-xr-x 2 root root  0 Oct 29 12:37 pma_resv0@58000000
+-r--r--r-- 1 root root  0 Oct 29 12:37 ranges
+
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index 4d528c10df3a..d0dbc8183ac4 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -511,8 +511,6 @@ void __init early_init_fdt_scan_reserved_mem(void)
+>                         break;
+>                 memblock_reserve(base, size);
+>         }
+> -
+> -       fdt_init_reserved_mem();
+>  }
+>
+>  /**
+> @@ -1212,6 +1210,9 @@ void __init unflatten_device_tree(void)
+>  {
+>         void *fdt =3D initial_boot_params;
+>
+> +       /* Save the statically-placed regions in the reserved_mem array *=
+/
+> +       fdt_scan_reserved_mem_reg_nodes();
+> +
+>         /* Don't use the bootloader provided DTB if ACPI is enabled */
+>         if (!acpi_disabled)
+>                 fdt =3D NULL;
+> diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
+> index 04aa2a91f851..29525c0b9939 100644
+> --- a/drivers/of/of_private.h
+> +++ b/drivers/of/of_private.h
+> @@ -9,6 +9,7 @@
+>   */
+>
+>  #define FDT_ALIGN_SIZE 8
+> +#define MAX_RESERVED_REGIONS    64
+>
+>  /**
+>   * struct alias_prop - Alias property in 'aliases' node
+> @@ -180,7 +181,7 @@ static inline struct device_node *__of_get_dma_parent=
+(const struct device_node *
+>  #endif
+>
+>  int fdt_scan_reserved_mem(void);
+> -void fdt_init_reserved_mem(void);
+> +void __init fdt_scan_reserved_mem_reg_nodes(void);
+>
+>  bool of_fdt_device_is_available(const void *blob, unsigned long node);
+>
+> diff --git a/drivers/of/of_reserved_mem.c b/drivers/of/of_reserved_mem.c
+> index 46e1c3fbc769..2011174211f9 100644
+> --- a/drivers/of/of_reserved_mem.c
+> +++ b/drivers/of/of_reserved_mem.c
+> @@ -27,7 +27,6 @@
+>
+>  #include "of_private.h"
+>
+> -#define MAX_RESERVED_REGIONS   64
+>  static struct reserved_mem reserved_mem[MAX_RESERVED_REGIONS];
+>  static int reserved_mem_count;
+>
+> @@ -56,6 +55,7 @@ static int __init early_init_dt_alloc_reserved_memory_a=
+rch(phys_addr_t size,
+>         return err;
+>  }
+>
+> +static void __init fdt_init_reserved_mem_node(struct reserved_mem *rmem)=
+;
+>  /*
+>   * fdt_reserved_mem_save_node() - save fdt node for second pass initiali=
+zation
+>   */
+> @@ -74,6 +74,9 @@ static void __init fdt_reserved_mem_save_node(unsigned =
+long node, const char *un
+>         rmem->base =3D base;
+>         rmem->size =3D size;
+>
+> +       /* Call the region specific initialization function */
+> +       fdt_init_reserved_mem_node(rmem);
+> +
+>         reserved_mem_count++;
+>         return;
+>  }
+> @@ -106,7 +109,6 @@ static int __init __reserved_mem_reserve_reg(unsigned=
+ long node,
+>         phys_addr_t base, size;
+>         int len;
+>         const __be32 *prop;
+> -       int first =3D 1;
+>         bool nomap;
+>
+>         prop =3D of_get_flat_dt_prop(node, "reg", &len);
+> @@ -134,10 +136,6 @@ static int __init __reserved_mem_reserve_reg(unsigne=
+d long node,
+>                                uname, &base, (unsigned long)(size / SZ_1M=
+));
+>
+>                 len -=3D t_len;
+> -               if (first) {
+> -                       fdt_reserved_mem_save_node(node, uname, base, siz=
+e);
+> -                       first =3D 0;
+> -               }
+>         }
+>         return 0;
+>  }
+> @@ -165,12 +163,77 @@ static int __init __reserved_mem_check_root(unsigne=
+d long node)
+>         return 0;
+>  }
+>
+> +static void __init __rmem_check_for_overlap(void);
+> +
+> +/**
+> + * fdt_scan_reserved_mem_reg_nodes() - Store info for the "reg" defined
+> + * reserved memory regions.
+> + *
+> + * This function is used to scan through the DT and store the
+> + * information for the reserved memory regions that are defined using
+> + * the "reg" property. The region node number, name, base address, and
+> + * size are all stored in the reserved_mem array by calling the
+> + * fdt_reserved_mem_save_node() function.
+> + */
+> +void __init fdt_scan_reserved_mem_reg_nodes(void)
+> +{
+> +       int t_len =3D (dt_root_addr_cells + dt_root_size_cells) * sizeof(=
+__be32);
+> +       const void *fdt =3D initial_boot_params;
+> +       phys_addr_t base, size;
+> +       const __be32 *prop;
+> +       int node, child;
+> +       int len;
+> +
+> +       if (!fdt)
+> +               return;
+> +
+> +       node =3D fdt_path_offset(fdt, "/reserved-memory");
+> +       if (node < 0) {
+> +               pr_info("Reserved memory: No reserved-memory node in the =
+DT\n");
+> +               return;
+> +       }
+> +
+> +       if (__reserved_mem_check_root(node)) {
+> +               pr_err("Reserved memory: unsupported node format, ignorin=
+g\n");
+> +               return;
+> +       }
+> +
+> +       fdt_for_each_subnode(child, fdt, node) {
+> +               const char *uname;
+> +
+> +               prop =3D of_get_flat_dt_prop(child, "reg", &len);
+> +               if (!prop)
+> +                       continue;
+> +               if (!of_fdt_device_is_available(fdt, child))
+> +                       continue;
+> +
+> +               uname =3D fdt_get_name(fdt, child, NULL);
+> +               if (len && len % t_len !=3D 0) {
+> +                       pr_err("Reserved memory: invalid reg property in =
+'%s', skipping node.\n",
+> +                              uname);
+> +                       continue;
+> +               }
+> +               base =3D dt_mem_next_cell(dt_root_addr_cells, &prop);
+> +               size =3D dt_mem_next_cell(dt_root_size_cells, &prop);
+> +
+> +               if (size)
+> +                       fdt_reserved_mem_save_node(child, uname, base, si=
+ze);
+> +       }
+> +
+> +       /* check for overlapping reserved regions */
+> +       __rmem_check_for_overlap();
+> +}
+> +
+> +static int __init __reserved_mem_alloc_size(unsigned long node, const ch=
+ar *uname);
+> +
+>  /*
+>   * fdt_scan_reserved_mem() - scan a single FDT node for reserved memory
+>   */
+>  int __init fdt_scan_reserved_mem(void)
+>  {
+>         int node, child;
+> +       int dynamic_nodes_cnt =3D 0;
+> +       int dynamic_nodes[MAX_RESERVED_REGIONS];
+>         const void *fdt =3D initial_boot_params;
+>
+>         node =3D fdt_path_offset(fdt, "/reserved-memory");
+> @@ -192,8 +255,24 @@ int __init fdt_scan_reserved_mem(void)
+>                 uname =3D fdt_get_name(fdt, child, NULL);
+>
+>                 err =3D __reserved_mem_reserve_reg(child, uname);
+> -               if (err =3D=3D -ENOENT && of_get_flat_dt_prop(child, "siz=
+e", NULL))
+> -                       fdt_reserved_mem_save_node(child, uname, 0, 0);
+> +               /*
+> +                * Save the nodes for the dynamically-placed regions
+> +                * into an array which will be used for allocation right
+> +                * after all the statically-placed regions are reserved
+> +                * or marked as no-map. This is done to avoid dynamically
+> +                * allocating from one of the statically-placed regions.
+> +                */
+> +               if (err =3D=3D -ENOENT && of_get_flat_dt_prop(child, "siz=
+e", NULL)) {
+> +                       dynamic_nodes[dynamic_nodes_cnt] =3D child;
+> +                       dynamic_nodes_cnt++;
+> +               }
+> +       }
+> +       for (int i =3D 0; i < dynamic_nodes_cnt; i++) {
+> +               const char *uname;
+> +
+> +               child =3D dynamic_nodes[i];
+> +               uname =3D fdt_get_name(fdt, child, NULL);
+> +               __reserved_mem_alloc_size(child, uname);
+>         }
+>         return 0;
+>  }
+> @@ -253,8 +332,7 @@ static int __init __reserved_mem_alloc_in_range(phys_=
+addr_t size,
+>   * __reserved_mem_alloc_size() - allocate reserved memory described by
+>   *     'size', 'alignment'  and 'alloc-ranges' properties.
+>   */
+> -static int __init __reserved_mem_alloc_size(unsigned long node,
+> -       const char *uname, phys_addr_t *res_base, phys_addr_t *res_size)
+> +static int __init __reserved_mem_alloc_size(unsigned long node, const ch=
+ar *uname)
+>  {
+>         int t_len =3D (dt_root_addr_cells + dt_root_size_cells) * sizeof(=
+__be32);
+>         phys_addr_t start =3D 0, end =3D 0;
+> @@ -334,9 +412,8 @@ static int __init __reserved_mem_alloc_size(unsigned =
+long node,
+>                 return -ENOMEM;
+>         }
+>
+> -       *res_base =3D base;
+> -       *res_size =3D size;
+> -
+> +       /* Save region in the reserved_mem array */
+> +       fdt_reserved_mem_save_node(node, uname, base, size);
+>         return 0;
+>  }
+>
+> @@ -425,48 +502,37 @@ static void __init __rmem_check_for_overlap(void)
+>  }
+>
+>  /**
+> - * fdt_init_reserved_mem() - allocate and init all saved reserved memory=
+ regions
+> + * fdt_init_reserved_mem_node() - Initialize a reserved memory region
+> + * @rmem: reserved_mem struct of the memory region to be initialized.
+> + *
+> + * This function is used to call the region specific initialization
+> + * function for a reserved memory region.
+>   */
+> -void __init fdt_init_reserved_mem(void)
+> +static void __init fdt_init_reserved_mem_node(struct reserved_mem *rmem)
+>  {
+> -       int i;
+> -
+> -       /* check for overlapping reserved regions */
+> -       __rmem_check_for_overlap();
+> -
+> -       for (i =3D 0; i < reserved_mem_count; i++) {
+> -               struct reserved_mem *rmem =3D &reserved_mem[i];
+> -               unsigned long node =3D rmem->fdt_node;
+> -               int err =3D 0;
+> -               bool nomap;
+> +       unsigned long node =3D rmem->fdt_node;
+> +       int err =3D 0;
+> +       bool nomap;
+>
+> -               nomap =3D of_get_flat_dt_prop(node, "no-map", NULL) !=3D =
+NULL;
+> +       nomap =3D of_get_flat_dt_prop(node, "no-map", NULL) !=3D NULL;
+>
+> -               if (rmem->size =3D=3D 0)
+> -                       err =3D __reserved_mem_alloc_size(node, rmem->nam=
+e,
+> -                                                &rmem->base, &rmem->size=
+);
+> -               if (err =3D=3D 0) {
+> -                       err =3D __reserved_mem_init_node(rmem);
+> -                       if (err !=3D 0 && err !=3D -ENOENT) {
+> -                               pr_info("node %s compatible matching fail=
+\n",
+> -                                       rmem->name);
+> -                               if (nomap)
+> -                                       memblock_clear_nomap(rmem->base, =
+rmem->size);
+> -                               else
+> -                                       memblock_phys_free(rmem->base,
+> -                                                          rmem->size);
+> -                       } else {
+> -                               phys_addr_t end =3D rmem->base + rmem->si=
+ze - 1;
+> -                               bool reusable =3D
+> -                                       (of_get_flat_dt_prop(node, "reusa=
+ble", NULL)) !=3D NULL;
+> -
+> -                               pr_info("%pa..%pa (%lu KiB) %s %s %s\n",
+> -                                       &rmem->base, &end, (unsigned long=
+)(rmem->size / SZ_1K),
+> -                                       nomap ? "nomap" : "map",
+> -                                       reusable ? "reusable" : "non-reus=
+able",
+> -                                       rmem->name ? rmem->name : "unknow=
+n");
+> -                       }
+> -               }
+> +       err =3D __reserved_mem_init_node(rmem);
+> +       if (err !=3D 0 && err !=3D -ENOENT) {
+> +               pr_info("node %s compatible matching fail\n", rmem->name)=
+;
+> +               if (nomap)
+> +                       memblock_clear_nomap(rmem->base, rmem->size);
+> +               else
+> +                       memblock_phys_free(rmem->base, rmem->size);
+> +       } else {
+> +               phys_addr_t end =3D rmem->base + rmem->size - 1;
+> +               bool reusable =3D
+> +                       (of_get_flat_dt_prop(node, "reusable", NULL)) !=
+=3D NULL;
+> +
+> +               pr_info("%pa..%pa (%lu KiB) %s %s %s\n",
+> +                       &rmem->base, &end, (unsigned long)(rmem->size / S=
+Z_1K),
+> +                       nomap ? "nomap" : "map",
+> +                       reusable ? "reusable" : "non-reusable",
+> +                       rmem->name ? rmem->name : "unknown");
+>         }
+>  }
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
