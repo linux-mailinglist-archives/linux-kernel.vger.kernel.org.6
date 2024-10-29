@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-386331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A3829B4201
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:58:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1AC49B4204
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4885A1C215FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66FA328363C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9078201027;
-	Tue, 29 Oct 2024 05:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0BA20103B;
+	Tue, 29 Oct 2024 06:00:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NbrwfI7a"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=overdrivepizza-com.20230601.gappssmtp.com header.i=@overdrivepizza-com.20230601.gappssmtp.com header.b="VNQVjc+R"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618877464;
-	Tue, 29 Oct 2024 05:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E4D1DEFCD
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:00:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730181478; cv=none; b=Y/Adj+OoIpx4irMSS7D0/NEMdlG+P0AtyUHbLn7Hg5zsYYYDZkSBnkD697NEK3tgOkj7cFBiduF9wu/deGu6sCFobUxAO4f4HF+Ts4pY2SqdyUVg9Ah4YLg52n+AhIRJUbUTNB5aWZ1gbXj4yh3yDSB7TY5gxrIzfivX3XxOI7I=
+	t=1730181611; cv=none; b=RuG8SCEXk+oeG0uCgA4SU9P8xFypKGANLXTlX0r4WVjRPlyDhrRgPtyC8tHY0lHWnFG3+878aZXrjDcv0LGt6kSMVedqgw6kLZ6zVmtABB6IwV9gOfPbkI3uKW8zgptElRtn+pgHx9xzljAigm0D8ZqrSHgs/1ugyEN0AMjvK2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730181478; c=relaxed/simple;
-	bh=ZdmxadM0qitMz8h++TS+i+JMGgqwYOA9lEVe+RyuLTA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nVyQ+TqIxs5kAm66vk9aJA7y79L3YLC1PPToH7OYFdegaVE7b4li/jw26dErl3MJMZFkY9CmRs8uefA6XwCE00acKzweVzSsyu+xaRlXucY85XnUJK216NXwz02U0yW8d2ot3IH3gjjOVQoL+h+YFUcaelbCZ4s/SmH51ShGkYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NbrwfI7a; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=y5hIEno3hSw6Bs0nElkBzz+S0GGKfeU4NL68Zcym0TA=; b=NbrwfI7aCxqhCar/MFfBqte2mf
-	VGpnwyAfOfOh9lRUXfqFcG42dV5YmDVFqRY8J6BHuxzjYZktxw94kcQstkaCDifpGDCKhfJ28j9ME
-	1hEM7NxgPSOWMhvNMbTOv0+my+QF6FOLbzvtDnVxyMDLLxm0lsrObclwmLDpcT0g8koFLu+EzSFqc
-	oizBkhahfbGiY7y16s/95CbXy/nKXo2yYrEG0sAxBGhJ8YJXNKecY13vxY1KcN65YDl3/4Bo4cDz4
-	D9RnOzStcM0gxOrICT6d92LrRXZejeZB7efsDRjKfZonPNUp1mub0wTCuTODyBTntFmIHNc7SCA0n
-	vledpmHA==;
-Received: from [185.156.123.69] (helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t5fEb-0005Ts-O7; Tue, 29 Oct 2024 06:57:41 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Dmitry Yashin <dmt.yashin@gmail.com>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Dmitry Yashin <dmt.yashin@gmail.com>
-Subject:
- Re: [PATCH 2/3] dt-bindings: arm: rockchip: add Banana Pi BPI-P2 Pro board
-Date: Tue, 29 Oct 2024 06:57:39 +0100
-Message-ID: <5957455.DvuYhMxLoT@phil>
-In-Reply-To: <20241028213314.476776-3-dmt.yashin@gmail.com>
-References:
- <20241028213314.476776-1-dmt.yashin@gmail.com>
- <20241028213314.476776-3-dmt.yashin@gmail.com>
+	s=arc-20240116; t=1730181611; c=relaxed/simple;
+	bh=STuoyumVNVtMRJOYEUq3GMikzDjbwQE1dapw67NiRSc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YqzGPlKHZNSUaNCAnRJgigdy8ZRqzNaQLIrfImkWXWDpU18IToAhYUV26EZ6cPfjHmK+rTjEE85lqndVnZjritt/LougD4EJvrivXcw2wvmeugwV/IYHI2HIUTXWi74KbTzBfReVtSAvRowyXKC0D5Vxzzb0aAbXPbmoz4QruFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=overdrivepizza.com; spf=fail smtp.mailfrom=overdrivepizza.com; dkim=pass (2048-bit key) header.d=overdrivepizza-com.20230601.gappssmtp.com header.i=@overdrivepizza-com.20230601.gappssmtp.com header.b=VNQVjc+R; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=overdrivepizza.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=overdrivepizza.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f8490856so4663380e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:00:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=overdrivepizza-com.20230601.gappssmtp.com; s=20230601; t=1730181608; x=1730786408; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=STuoyumVNVtMRJOYEUq3GMikzDjbwQE1dapw67NiRSc=;
+        b=VNQVjc+RFUssDIS2tad9h6RyAbi7fBLkeCuOzYNqfizVSzS3Q4E9C8vCbDct7At9r9
+         bsOwUVo6nD5OjK+hQfCf1uWY6zjDNnCT50MwlbR8FFdXBjUlCr3KxYreFS3SxY4c5nz5
+         TVzj5GBvJ45wLJSIR1iTf0eTu7Xpy7feDZi+5hxDQOhLenh2H9do+VGAo4lln93M36Kn
+         wY+JmaQDOLzP4UWoGFzgpr9BelwdTkah5zJguGTV2J0QaC6dL4bAsDhea6J3jmPjXvi8
+         gRI3Xz/xYbNwg5dXrkQtVXiHs0Sz5sLbTUNRFQyhdcRCDQp7MvVxo7z7Y4pdEvp6Wkzt
+         0OzQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730181608; x=1730786408;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=STuoyumVNVtMRJOYEUq3GMikzDjbwQE1dapw67NiRSc=;
+        b=F22jjSTPjgOMRxTCZ3jMDOd94oKo73gxXRTM8kzKbVDips1giJZFUn1wrmwqYmcCSH
+         qjMbyKdoUWBOoTLbcNXv8dWO8dLTpipf869XDZeNF5857vv62eH4sVrJBvJvRNMYKuYO
+         alxZGYM4E5jYaeFcv8rMrXuMefrZK3RhQZuuXQTRw9voNbez1pP79CyPgdOqGWKQbxtR
+         Aewzeg6k4lHIHin2hZiae9YAUVRd+ItfJn/6ZuH8DpRhKx9iixWBl2pkPn7m+yhjbYf5
+         9csx05e3+CGUQh8mSSMsY5ojl+HRrtIuNBG+gcjiNCwvyVAN/h9KHFPf9gr8R8bxVSfQ
+         Sm9w==
+X-Forwarded-Encrypted: i=1; AJvYcCUxdr4Jsw3pbmlGeY0x63x9dF8AYww7xn7ud3q3F6bAIjb/7C+Uj753jv9fA7/NlLSE+pHlGZ4umq8uoyA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0VUhJ/u+P8Rs/2nB5ouJe22MPpxaJMtmSJPE0XPFyxoAMZy7v
+	4t9Z9ly07d8qTj/2foWN9KJ6Z7oTWCQc+pkwhwFR5169AP/3dmmfZdZwGOfIa6YWbdg4YGLOMhi
+	t48hFXDPYBrc8jlb1zsSKeTH7E6d6TcIr+qnmyQ==
+X-Google-Smtp-Source: AGHT+IFvEeXda2y1QRn0JVB+b7XAepT3lSggnQri1gJiW8NnWfF8vZyD+ZBW/ytfUAux41gdXNrlNs4PHAlaWmoOP+g=
+X-Received: by 2002:a05:6512:b84:b0:539:e0e6:cf44 with SMTP id
+ 2adb3069b0e04-53b347c0d70mr5280906e87.4.1730181607621; Mon, 28 Oct 2024
+ 23:00:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20240927194856.096003183@infradead.org> <20240927194925.707462984@infradead.org>
+ <20240930213030.ixbsyzziy6frh62f@treble> <54d392d3-32b3-4832-89e1-d2ada1af22a8@citrix.com>
+ <20240930223848.ulipiky3uw52ej56@treble> <20241001110310.GM5594@noisy.programming.kicks-ass.net>
+ <a7912ce1-131e-4b30-bed4-2576441c6212@citrix.com> <20241003121739.GB17263@noisy.programming.kicks-ass.net>
+ <630467e0-6cd4-441d-a2cd-070a002c6f95@citrix.com> <PH7PR11MB757220761F23360280DF4A0DBB442@PH7PR11MB7572.namprd11.prod.outlook.com>
+ <7e621780-3b19-4b60-b8a5-c0727c1eb5fd@citrix.com> <PH7PR11MB7572107D7831693B9191B998BB432@PH7PR11MB7572.namprd11.prod.outlook.com>
+In-Reply-To: <PH7PR11MB7572107D7831693B9191B998BB432@PH7PR11MB7572.namprd11.prod.outlook.com>
+From: Joao Moreira <joao@overdrivepizza.com>
+Date: Mon, 28 Oct 2024 22:59:56 -0700
+Message-ID: <CAKUFkX03dmRL9Kk0=OLjyB0+FAx6rGXAHke4Y-NVD0au01qkNg@mail.gmail.com>
+Subject: Re: [PATCH 13/14] x86: BHI stubs
+To: "Constable, Scott D" <scott.d.constable@intel.com>
+Cc: "andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Milburn, Alyssa" <alyssa.milburn@intel.com>, 
+	"jose.marchesi@oracle.com" <jose.marchesi@oracle.com>, "hjl.tools@gmail.com" <hjl.tools@gmail.com>, 
+	"ndesaulniers@google.com" <ndesaulniers@google.com>, 
+	"samitolvanen@google.com" <samitolvanen@google.com>, "nathan@kernel.org" <nathan@kernel.org>, 
+	"ojeda@kernel.org" <ojeda@kernel.org>, "kees@kernel.org" <kees@kernel.org>, 
+	"alexei.starovoitov@gmail.com" <alexei.starovoitov@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Montag, 28. Oktober 2024, 22:33:13 CET schrieb Dmitry Yashin:
-> Banana Pi BPI-P2 Pro is the SBC made by Shenzhen SINOVOIP based on
-> Rockchip RK3308.
-> 
-> Banana Pi BPI-P2 Pro features:
-> - Rockchip RK3308B-S
-> - DDR3 512 MB
-> - eMMC 8 GB
-> - 100M lan + onboard PoE
-> - 40 pin and 12 pin headers
-> - AP6256 BT + WIFI
-> - TF card slot
-> - 2x USB 2.0 (Type-C OTG and Type-A)
-> - Headphone jack
-> 
-> Add devicetree binding for Banana Pi BPI-P2 Pro.
-> 
-> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
-> ---
->  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> index 1e3eceb266b7..0c85c15d5c04 100644
-> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-> @@ -1104,6 +1104,11 @@ properties:
->            - const: rockchip,rk3568-evb1-v10
->            - const: rockchip,rk3568
->  
-> +      - description: Sinovoip RK3308 Banana Pi BPI-P2 Pro
+On Mon, Oct 21, 2024 at 8:06=E2=80=AFAM Constable, Scott D
+<scott.d.constable@intel.com> wrote:
+>
+> Hello Andrew,
+>
+> My understanding of the FineIBT approach is that the hash values are not =
+intended to be secret, and therefore leaking these hash values would not ex=
+pose a new risk. Joao is also on this thread and knows a lot more about Fin=
+eIBT than I do, so he can chime in if my reasoning is unsound.
 
-isn't BPI the short form of Banana Pi?
-So the naming is sort of double and I'd expect it to be
-    Sinovoip RK3308 BanaPi P2 Pro
-similar to how the R2 below does is?
+Technically the hashes are not a secret indeed. With that said, I
+think it was Kees who submitted a patch that randomizes the hash
+values at boot time, as a security in depth / probabilistic measure
+against an attacker being able to generate executable valid targets.
 
-
-Heiko
-
-> +        items:
-> +          - const: sinovoip,rk3308-bpi-p2pro
-> +          - const: rockchip,rk3308
-> +
->        - description: Sinovoip RK3568 Banana Pi R2 Pro
->          items:
->            - const: sinovoip,rk3568-bpi-r2pro
-> 
-
-
-
-
+Tks,
+Joao
 
