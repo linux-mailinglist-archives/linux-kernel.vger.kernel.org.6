@@ -1,73 +1,53 @@
-Return-Path: <linux-kernel+bounces-386175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D38B9B400F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:00:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 009C29B4011
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:01:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CA95282B69
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:00:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACA9F1F23387
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:01:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7812126C01;
-	Tue, 29 Oct 2024 02:00:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B3E882876;
+	Tue, 29 Oct 2024 02:00:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="coWb278Q"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="BglMeqjO"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CA861863F;
-	Tue, 29 Oct 2024 02:00:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED88C1863F;
+	Tue, 29 Oct 2024 02:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730167246; cv=none; b=as7rJNFuOXflaLCtkUUEpazCrNN1wGDRhXa99/XB/pY/TDqg24M1iRW+ALIxTgDyhZv5mrZ+MFd4h8mZxybFQqKj5XTiQzkWDgdxpnKbTDbSGbXADSH8iFNJsDifuaWZkOpJy3FEj01epIlf/vZCHWCn16Cb+V5O3yxdVti4rf8=
+	t=1730167253; cv=none; b=oQqHLZRHpGdWtsHyLmZHBtaf8TmK+YXmYYXRNSJfJmvs4MBk35NrhR1iRNL4iv+i0bvhISQ4cNm0JdXqvRZnbnORcE/KY4384CQPAw0SrwLN2ErPL0ndoBCo1bc8oUtwp35p+NL9kMyFpGKkkAlWdgZeojYpTIEKKFwfUOTDp/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730167246; c=relaxed/simple;
-	bh=y6c9W2BhZ8uXbQJzzvRDeeD9cGjwKQCrw1acBOtFIB4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VRnuZ7vg55joTXUm+dBH2z6hk0iiePkCK5RccuBQg2I8+xr6JlJYBdgD+AJDgW7svto90Fu7OBONrtGb66ne9OqYnZowvedcVCcO8C1Xz21slNtJex+QAHgyGyYQ1zx5iuPoFomon0xyFeIuV4a0vVLfjsptQ3zz+neyoksZTIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=coWb278Q; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cdb889222so46457475ad.3;
-        Mon, 28 Oct 2024 19:00:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730167243; x=1730772043; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=H8hQc1q0c7ydkzj5XJQv8spb+cOnEwBuYMtKquh67M4=;
-        b=coWb278QfxWIAeOUkQjlPugYp1EurhHD58uLAeta98pPBvAMTowVzs8uY7n13/FTQy
-         x2XJdHBgC9P+UvQuTaui/GFJ6POXDUu83ea5Xq1hdvjg/A38jHAvsm65IBrR2SfJ3trr
-         yqn4sdpvM5VP0vt1rx7FRJfQpziVic0e6gd3+NIu4BSA2rdZA6rK+1TAfZE6/Cw7A1kC
-         6ys1g0fpl1RSRmySJ0b/RCV81Nvm4iC1ag3IA417hRwmsQbEsIEluX+A5CQZipRIwRcB
-         7NAJBVGkpGKUtoKR353eUsmLZsGfj9k1YYB7aVhVUMbmYiBK9IzzWBGeveg1KT+KL9j/
-         4kPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730167243; x=1730772043;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=H8hQc1q0c7ydkzj5XJQv8spb+cOnEwBuYMtKquh67M4=;
-        b=sdMWf5GgjNQzZ3GnfyYiAHA0/4wDQJk3GIIusk/l17mIMGy0FPUiZcuTBaVh69CSBC
-         wVjrsSwotviwdD9W9dah/t3k7P2tyG8YIYcIMXpkM+/8dsQ68lW5Q37pMEmdTy97F7IF
-         G8MrJ+PSCevkgymfaavQS5gxYcQcCBITAPYD0LI0A0ek044kmJy2gzi5Mc245MjVenKx
-         HmrPvV/KldjHp6BlVFasGFA7Bv/Gnu3e5vTDRG2jEQjxkl0kfKHMMJ0ndvS/D7QbHDNJ
-         xossHh7arRCKkguKm1huzt3YuqWy33T/m5Sxg4K/n9vVMukTof1SOKG6fV5Wkp8PqYgm
-         LfzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHFhszdI9gZtxHXwafXUJRlekgWcHFH6a2cRWNbOKbthVPRwteAfyLjSiqswuAStk/SkNk7eQnWZ5n@vger.kernel.org, AJvYcCWkDZX344Lf6jeMfJO11JeTqsXzwBf79vUwxDw5UE/DflhbICqZ9Ok/yTzlbL0hWi79nNlHc75EqZNsnv4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypvJK//tf7w9fgJ0048psajoSWLE9mhe0/WsdAovK9ffm9MAMJ
-	BgEL2CWthyqHVqBIPpy6kXNMu90VnyRMhMEcJqSR2bXtCw4rQ5mT
-X-Google-Smtp-Source: AGHT+IHMp3p4tpfyLl4RBnJLnYbIe3AX6KVzvQAl8IiivMOzrOseT29gVE2QoPoZ7v8iAA8jRIZnvA==
-X-Received: by 2002:a17:903:2343:b0:20c:675d:923d with SMTP id d9443c01a7336-210c6c6f732mr150637715ad.39.1730167243375;
-        Mon, 28 Oct 2024 19:00:43 -0700 (PDT)
-Received: from [172.19.1.43] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc044a4csm56476155ad.248.2024.10.28.19.00.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 19:00:42 -0700 (PDT)
-Message-ID: <5d9e89aa-db10-4367-8417-9fcc1a3bb37a@gmail.com>
-Date: Tue, 29 Oct 2024 10:00:39 +0800
+	s=arc-20240116; t=1730167253; c=relaxed/simple;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=t+R3NxfyVbOX7bW0d2CNL9ZfgbV8e7Xo5K8dBAP1LjtWUN7VuXqtfuW6nNmlRkw4KSQfTsmd8a/LV0NbJjhKjqeANdyQeeu8bt1hUANQKl2yQLTT3mkOpseJ/ulsLRn2IxDRma1AgI7AJeLwyHKq1dq/n7UNNPpgLU186kaEYtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=BglMeqjO; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1730167248; x=1730772048; i=rwarsow@gmx.de;
+	bh=HtuFhXI63urBA3dRKYyXQ6GHreCYVeNttV6YM+zDLlM=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:To:Cc:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=BglMeqjOPZcxsAADA/VSoRqak3gzVsmMkXme5iGKRtxZ+/LhV6zv3cFA9Jd3BuYp
+	 qu7NKvaqVBlUh2SQ/pq3rPAk0tlYD8STieJVPJfIQdE4QN+RXcSiPdUt1GJAmL3sa
+	 nfzGnEJLE3sWXeszzjd7T78UhmmLvAJId+LZKkvEkAHixtFVzGd7yadFZlwdLin98
+	 yyUB4hneeYTr3GsrO/WAL3l62zv8hgKTv3iHMzY9fwGBzLKYIpazw/YVtsJzELp3L
+	 tXxe6L2oUFhaxsE3T5HS6owce/gfpAfiBXBKTUTKL5CFWSVm0NZTFE6H3h7REcijK
+	 LeOFKtmjugwctKN4Aw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.100.20] ([46.142.33.5]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MS3ir-1tHP6R299f-00WrOp; Tue, 29
+ Oct 2024 03:00:48 +0100
+Message-ID: <e5057671-2c98-48a8-816e-c644e17e9184@gmx.de>
+Date: Tue, 29 Oct 2024 03:00:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,132 +55,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- mjchen@nuvoton.com, peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de,
- conor+dt@kernel.org, krzk+dt@kernel.org, robh@kernel.org,
- dmitry.torokhov@gmail.com
-References: <20241022063158.5910-1-mjchen0829@gmail.com>
- <20241022063158.5910-2-mjchen0829@gmail.com>
- <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
- <871e9a4c-7a3c-4a24-8829-a079983033da@gmail.com>
- <ef407e89-950f-4874-9dca-474d107f6a52@kernel.org>
- <984781ba-9f4c-4179-84d5-4ab8bbe4c3c6@gmail.com>
- <9b0a508e-d9ae-45ab-882f-5bc1f03e13db@kernel.org>
-Content-Language: en-US
-From: Ming-Jen Chen <mjchen0829@gmail.com>
-In-Reply-To: <9b0a508e-d9ae-45ab-882f-5bc1f03e13db@kernel.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Content-Language: de-DE, en-US
+Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:ejoD0ztnRC322ZK5esjv8BQ4y79/n7trpz7bvb9sjInUmzuYocF
+ D+ojzdccl6um0W/kC4S3bnEAEXWfGjPMHi97kIVX9jN1V9sPrP8K+nrD3k241wWEEdG7lzW
+ VfZN9FHmJSfYjw+vLfKQnqIce62rmEz8iCTHqlb1h8KsauB7HN9t2VtiFfmxKNiK07H3I1G
+ 3H6tn57tNoqT6QAMACTrA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:+wZuekbK5kI=;0IlG4dAfaW5DCP3cNj67vB2gQwk
+ 1KXe+08HAaCqHcBlWAzywXEpj//uGFlKTtK6lvUZ/pgAahht1JLnR4bgAoWXeoT3UFESoTZ7Y
+ YtkV0LafgJsnnaMK4zj96lODtfMjBzGILqO7Iv/tVPVT3rKZ6YkyVH2aDEJHSV2O32Zc5Keve
+ D61XZuzrcCkhUMx8GmlZoRyamVW5ql+E5N/CyZuh1JPbglMX1JGDRnu9l6FzTRn5pVlpkj16e
+ 0EK34AyHAXiqnhlkbYt8Z3NrInPI8WEvnB1sKxC/BQ3bLT7hV8fifz2KhZshUy0nhPoXgqwf1
+ 90tx7fiawmN1y1JTmjrR0BpqTAo4qoJ2xmOPSJGLAjJBybc/exlNetNg64dVXBYR6R+o4c5Kg
+ 7ZMEX0+09wjvZmQTp4hOQrZp/NYTKEfXQ3cL6tPrM+kTq/A0E2hE3V6DTryRaadwgEUMG8qku
+ m5GuLE1DAzR/xmCayea20wjp0RdJCpi4HKuBTaHzf+dCXD5aiYBrAf7icGDteMUAP4GNpU02H
+ Y7jAf0bEu8y/xwpwAe9dUixKdWSuT46t0zLTxZ5N+RNccvU7KybMfKIuwjt3qxITEXnOcW1sb
+ LCk7P1YUnR1tEYj7ntWgSoOLEgNcu7HBH95pl5Kba32UDj9OYPj5aSQB4GHdoQN91085xppP5
+ Tuj8TP6KjVyEjUjc3ueu+wkyLW5sMlRqr0DyjGVJ8D3WjkG3aZAadzXEdEmGgbCFO4w/KohqE
+ oyQP6VposCPbf6n9jpoDIBg6Z0kwfTDozH9+uNgRyucEQIDc+h5MxgWHGUKdEQsXq8D+3jptM
+ fQArsjUBxOfOHBFKAT8WO9vQ==
 
-On 2024/10/28 下午 03:04, Krzysztof Kozlowski wrote:
+Hi Greg
 
-> On 28/10/2024 02:15, Ming-Jen Chen wrote:
->> On 2024/10/25 下午 07:42, Krzysztof Kozlowski wrote:
->>> On 25/10/2024 07:36, Ming-Jen Chen wrote:
->>>>>> +      0  = 0 clock
->>>>>> +      1  = 0 clock
->>>>>> +      2  = 0 clock
->>>>> Heh? So this is just 0
->>>>>
->>>>>> +      3  = 8 clocks
->>>>> This is 8
->>>>>
->>>>>> +      4  = 16 clocks
->>>>> 16, not 4
->>>>>
->>>>>> +      5  = 32 clocks
->>>>>> +      6  = 64 clocks
->>>>>> +      7  = 128 clocks
->>>>>> +      8  = 256 clocks
->>>>>> +      9  = 512 clocks
->>>>>> +      10 = 1024 clocks
->>>>>> +      11 = 2048 clocks
->>>>>> +      12 = 4096 clocks
->>>>>> +      13 = 8192 clocks
->>>>> Use proper enum
->>>> I will update the definition to specify the debounce period in terms of
->>>> keypad IP clock cycles, as follow:
->>>>
->>>> nuvoton,debounce-period:
->>>>        type: integer
->>>>        enum: [0, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
->>>>        description: |
->>>>            Key debounce period select, specified in terms of keypad IP
->>>> clock cycles.
->>>>            This value corresponds to the register setting for the keypad
->>>> interface.
->>>>            The following values indicate the debounce time:
->>>>            - 0 = 0 clock cycles (no debounce)
->>>>            - 3 = 8 clock cycles
->>>>            - 4 = 16 clock cycles
->>>>            - 5 = 32 clock cycles
->>>>            - 6 = 64 clock cycles
->>>>            - 7 = 128 clock cycles
->>>>            - 8 = 256 clock cycles
->>>>            - 9 = 512 clock cycles
->>>>            - 10 = 1024 clock cycles
->>>>            - 11 = 2048 clock cycles
->>>>            - 12 = 4096 clock cycles
->>>>            - 13 = 8192 clock cycles
->>> No. 0, 8, 16, 32 , 64 etc.
->> I will change it to the following content:
->>
->> nuvoton,debounce-period:
->>     type:  integer
->>     enum:  [0,8,16,32,64,128,256,512,1024,2048,4096,8192]
->>     description:  | Key debounce period select, specified in terms of keypad IP clock
->> cycles. Valid values include 0 (no debounce) and specific clock cycle
->> values: 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, and 8192.
->>
->>>>>> +
->>>>>> +  per-scale:
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
->>>>> Missing constraints
->>>>>
->>>>>> +
->>>>>> +  per-scalediv:
->>>>>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>>>>> +    description: Per-scale divider (1 to 256).
->>>>> Missing constraints
->>>>>
->>>>> Both properties are unexpected... aren't you duplicating existing
->>>>> properties?
->>>> pre-scale:
->>>> This value configures the IC register for the row scan cycle
->>>> pre-scaling, with valid values ranging from 1 to 256
->>>> per-scalediv:(I will change pre-scalediv to pre-scale-div)
->>> Please look for matching existing properties first.
->> I will change it to the following content:
->>
->> nuvoton,scan-time:
-> Why? What about my request?
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-I utilized|grep|  to search for relevant properties in the|input/|  folder using keywords such as|scan|,|time|,|period|,|freq|, and|interval|.
-While I found some similar properties, I did not locate any that completely meet my requirements.
+Thanks
 
-For example, I found|"scanning_period"|, which is described as "Time between scans. Each step is 1024 us. Valid 1-256."
-I would like to confirm if you are suggesting that I use|scanning_period|  and explain my specific use case in the description,
-for example:
-
-nuvoton,scanning-period:
-     type:  uint32
-     description:  | Set the scan time for each key, specified in terms of keypad IP clock 
-cycles. The valid range is from 1 to 256.      minimum:  1
-     maximum:  256 Could you please confirm if this approach aligns with your suggestion,
-  or if you have any other recommended existing properties?
-
-Thank you for your assistance!
-
->
->
-> Best regards,
-> Krzysztof
-
-Best regards,
-Ming-Jen Chen
-
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
 
