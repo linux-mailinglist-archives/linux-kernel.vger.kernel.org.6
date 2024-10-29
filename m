@@ -1,89 +1,123 @@
-Return-Path: <linux-kernel+bounces-387007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 944329B4AAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:15:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 444F19B4AB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:16:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42AE71F2388D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:15:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D420DB230A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:16:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E425A206067;
-	Tue, 29 Oct 2024 13:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC5120606C;
+	Tue, 29 Oct 2024 13:16:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Nrk5SqpO"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ogG0of+B"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910821DF728;
-	Tue, 29 Oct 2024 13:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F7520262A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:16:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730207706; cv=none; b=tYLUicHRus3gFhWMmh7aSWVwqsiVLG4LHVNLgZGU0LhxpulrRsCIOqCFpe3VWHPbDvsSCNx7KxWvuMYQBaj+ZM7F9IX0LFG4CUzC/K8NgD7+p93O3RYK2F/px4R7Z3wUqTWXu9yC+myQeYBAujnEVNPkMOV96mu3zVa2KVLtQ3I=
+	t=1730207792; cv=none; b=PhpY6vWmn88vFmoo0urwRumLI2/f608a7AE0ZcpGtbsCN81dlZsZubH1v9IiWgHlYUPuGHFmG8fzpl7kf4/VRERoo0wtZzNxoN9hxxK8mj5jHOt/yyDvtJDqHnBUyZcxd8f8NB1WWGPnEUmyfGF5M7AGUcS1zOUwvyBY5ZD4AQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730207706; c=relaxed/simple;
-	bh=kuJ3Fjcda1RNw1fiCyB9tDv/hfqeoLtXDMQNwY+yTSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QgRBVo04Qcv4K9Pavrymm6AzICZa/jEjeAxj47uAPM18L23gWQZrJqw3eIe8DKFg6BoAyBYi6GdUZeULeRKfSzyPOAxrH/T+VKLOD+eB5F5MjgWLJoVsByA+XypdjqFL2HE+bp+7EBbf7F9WyhNnG0VcqrPbG/8xvz+apulDtZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Nrk5SqpO; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=DT7jeS7FiqKOMIwmZQjpdQKO9v8dB1eyq3lRzQ6nn5g=; b=Nrk5SqpO+K+YuQlAKs09zJvY3v
-	ddtLQRMCv1ErYoMP+r908jjSceZTgNwGjGm5xiuvt4Vn070bPTuChIpPhBEQqbu8LYRIRURbD/EP1
-	PJHPyTg15uqrRb2UvKeargvSsuILGrveAwgd+ASxMIFk/dkrRlbVcYq7iFWNMetkNR6sTYMM6A2+J
-	PaSyDU57J3wktZg3EuQUGkuej2m1ust4GEkMm48i3Tz/g6PH7YbJkP894RJsS+0Zwyy5RLAvaPOOR
-	vwoVlpMhl/NVo/EKp9sFMtXHeVj+37StCf0l4KfnalUU20d8qOBpdoew3uweAph3eNNJr6CNfg3kY
-	nujb0hRA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5m3Z-00000009jHJ-2ujf;
-	Tue, 29 Oct 2024 13:14:46 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id E59AF30073F; Tue, 29 Oct 2024 14:14:45 +0100 (CET)
-Date: Tue, 29 Oct 2024 14:14:45 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 10/19] unwind/x86: Enable
- CONFIG_HAVE_UNWIND_USER_SFRAME
-Message-ID: <20241029131445.GX14555@noisy.programming.kicks-ass.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <b7edac5073e55a11e051a86857b2a0fe159047ca.1730150953.git.jpoimboe@kernel.org>
+	s=arc-20240116; t=1730207792; c=relaxed/simple;
+	bh=ORScFiiSj6DBWVhn8Ip6edyJLDCC004uaKK2dEp4X1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IiNkTbAP89Gt2Xv2L0eJ5B+jVGSxa185ojs+p77LHMCTCI9hkP8VnGQ1qHUmMKmDNtYZh4POmckDAJRY9hJxPcDzX4YiNZtc0yEQM8c8Dt2aAmkeGqY0tVkSUOsMuda/MCPAcfWf1f54AHwenBGzjpG41OKmQSYIyDdzWA2ro14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ogG0of+B; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c8b557f91so50018265ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:16:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730207789; x=1730812589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G4FgCQ6GkthTlMOY7Hwmvw1LED0yrWV2Of7OG03sNbg=;
+        b=ogG0of+Bgo8R4elC2gdsau+roG160QzUNvRJF+l8FYhN6C+6f/yCSqPvHuI3DYybXf
+         e9zun2XeDN2QAb3xiauDaqFLlxGC0luC30X47Q9s9vz0UJrqkBCDUQxlMAkYG6pcyvaD
+         bsDfLyKaJ5mKdDfL4aTXohFz+ywzYuE4EFVKf+sy3QU6NCQM+KfePC9ECtECRskG7lP7
+         wDSr2h6Yfy4WOUnRhizfobsqLx/p4bIOv9GeJUABS0RIZDJpsK4vh2XzZ4ASe4KYWXvz
+         Iw7AY8bbZ3YPl06EaIYRlI+ZqDk2/Bxw4r1J/yriK6i96vLcYLhr7yh7liNiM/7tolUK
+         PHEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730207789; x=1730812589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G4FgCQ6GkthTlMOY7Hwmvw1LED0yrWV2Of7OG03sNbg=;
+        b=jxtACfokohOSCn0/r+DkT3G/T6wmFgVnAtmP4YupdQpHt1lGdBdyNDcgNPm/fsNFdy
+         aZVuQOKZ2OkQSYbKzOAUQT3q9KTrCufibI12WeavwpWi/iZIWsq03TpDliqRuGxSBfFu
+         E6Ja+zoTeR4kQ0+p21khl48dpUjPHZOqzUcRMer/pw7H0mFaCui8mg5/202vS+dHaTWc
+         uSe3sZFKQYa4cWAXgPciiCnMRaJR5pE0gn/myTCG/gRLX2etg6SjWwfhWjE2Epqa/PPT
+         oINCBjIDKAlrlkZztPaQa7RsDN2KQPKl74UTxvwf2tUMpaSyeVW4jpnshshcsaGHLcDV
+         3dUg==
+X-Forwarded-Encrypted: i=1; AJvYcCXpolkj4JueB9ldFc0n0hA2daQU9VLcJU9xRNN841ehJsuvo/sx68gITWnelepS6tMjXWcO9M/9X8M6CbQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXzazTe6IKM4FVQ/HUAnhAlDQx0dN8jW/lFKcfcc+VNxXB2jv7
+	I+Ke43r1VrQyqKfUxxVsRCt2ikW9KiuGeo7q59BZbNCYRdu3+9sQMzKjXixmWhJJaiR0LqvMneZ
+	0YJSrU3Uu1LjyFO2BVxPhwxUzk0vejmpyerjc
+X-Google-Smtp-Source: AGHT+IG7aPEWXrKU2oQ6UttFO6K5zHHkqze1cQRhd6cCywBZr/BAJUMAwKfw3MVUjRift3AdGsm8Yxujz0XZfRoELXY=
+X-Received: by 2002:a17:902:d4c3:b0:20b:b0ab:4fc3 with SMTP id
+ d9443c01a7336-210c6c934c1mr173443635ad.49.1730207789184; Tue, 29 Oct 2024
+ 06:16:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b7edac5073e55a11e051a86857b2a0fe159047ca.1730150953.git.jpoimboe@kernel.org>
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-16-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-16-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 29 Oct 2024 14:16:14 +0100
+Message-ID: <CAH5fLgiab5vssuQ2CO4kuKHhhWma=17858w8wbtmYUOXA-Cd1Q@mail.gmail.com>
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28, 2024 at 02:47:37PM -0700, Josh Poimboeuf wrote:
-> Binutils 2.41 supports generating sframe v2 for x86_64.  It works well
-> in testing so enable it.
+On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+> +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`] matching t=
+he given [`Device`], if any.
+> +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceId> {
+> +        let table =3D Self::ID_TABLE;
+> +
+> +        // SAFETY:
+> +        // - `table` has static lifetime, hence it's valid for read,
+> +        // - `dev` is guaranteed to be valid while it's alive, and so is
+> +        //   `pdev.as_dev().as_raw()`.
+> +        let raw_id =3D unsafe { bindings::of_match_device(table.as_ptr()=
+, pdev.as_dev().as_raw()) };
+> +
+> +        if raw_id.is_null() {
+> +            None
+> +        } else {
+> +            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of =
+`struct of_device_id` and
+> +            // does not add additional invariants, so it's safe to trans=
+mute.
+> +            Some(unsafe { &*raw_id.cast::<of::DeviceId>() })
+> +        }
+> +    }
 
-There is no sframe for 32bit?
+Sorry if this has already been mentioned, but this method should
+probably be marked #[cfg(CONFIG_OF)] so that you can use these
+abstractions even if OF is disabled.
+
+Alice
 
