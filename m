@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-387773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C429B55F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:45:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2D09B55F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:45:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645B2283237
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:45:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538B21F23A31
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:45:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6D9F20C01F;
-	Tue, 29 Oct 2024 22:44:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA03C20B21E;
+	Tue, 29 Oct 2024 22:44:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="kPBhBlF0"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HGft9Nfd"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 669D020B21E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:44:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0055620C025
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730241886; cv=none; b=Dc72AdzhlywWCTzAp1t189fuKuQarN049FWERAYNTt4cr28y/jXCR/yV9u2RqWAVgRv590iMatXW/rgU+toEQFfipPbUHw5DXbXYTRC4c3n6+FGS2gIngAD4KPopFXFX/OzUB6t7Bro5wsyreVjTmo8xiU3dxVkFzvDCnrbHceE=
+	t=1730241889; cv=none; b=ZMV2dIb/TQcDQ/6m2SGclUz/kTaSowW7urTeJnwJFaryxOYbGoFL2wbAlMrWEpwVVStJRWkJOLXqyLGb03y+9LVdb1Yw/1VfEmbp5nGq5rSj05WjdNScMfhPuiKF1WbDu8BuVVCaZVzX6ssDEgAWzbOviGxjJNcguwjPMQ0E0dQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730241886; c=relaxed/simple;
-	bh=GYxmpcXArXMONJWsRe5WPl7DZqsyI1iL6F7x/lVFYsI=;
+	s=arc-20240116; t=1730241889; c=relaxed/simple;
+	bh=bgAMnten7yUv77lry4kHbLHEtlNNVxnv2bZhCLDu2bk=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=AWXSsfMMY7wTnyOcJay6SyumnijLTRHdzB2spo1xnKvoZMkJGE8TGBOnzADJfUZzXb4No3EMtjqsHRIeBWZHoqITAmaerPElgF55oL4xndHxktAABx03587dpUOidZcpZddCKGkhLLXmYZbQLdvBlBhFJP9qywPNJStmUIPADtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=kPBhBlF0; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=RAFONoEEi0M5h8YdBrPomvdDoqy36BO9m6CripchI0wqQTN6aEY5rTdJOEUf/rZJUkCxqABqgnx7aHFDxEkWujLMKA3GKg1G1kBaEdx/QWuLZs4iZDJm+kAspQRNX5Qb5xDmUJW/BlnUVdLlJPAVcJz9aDIktOp32VnHbjboMQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HGft9Nfd; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e31d9c8efcso116497037b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:44:44 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e291ac8dcf3so10425387276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:44:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730241883; x=1730846683; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1730241886; x=1730846686; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=HNJdU7+o4d1QH5mPoNKTab3DA0/sS4GdEQIezl8TuMU=;
-        b=kPBhBlF0DgUiCLowoYKdoq6OJJWUSE5CI2Nt+RoWQReK5+Rk7HVusHPJ/QJBU3M1i3
-         3y+2wtK60zr7UB/vIqtkPTev1eLYr1mXIdpYWZfrBNFEeHeJ8F67ES6h81S1rzAOTsbY
-         rQ3gHzygOkVZWCZ/b0GWaKAUnkMQvMw94akup0GZiUBav4NX/8gk6OLxmOPQBry10moN
-         dTXGfe7S27HT+aTpmgYLW7dVyV8fSg95ICdIzckz7JjsmR1z0xWhHRPJmSY1hUiOkMhx
-         yTKUiyDPU4nGTn3Qzcm7YCk8s6svROwrf3N8xwqRV+7u+MDbvitscwErlZbk+Y4rF1hB
-         DKmg==
+        bh=Dn03tO6yjk+hHI/uxx4ev1BNOlrfTOa71VTpKPW70Iw=;
+        b=HGft9Nfd98oTkw4ke7KdjOGf1sLw+WmzDf5miRr4m87aOHnpLqh/4u7td+cC+CvbmZ
+         rT33+nMOMu85KXB/8N594wZnhSnWIuaVpP9GoWRjTeHYVFa6I9RXa1DBQLZNzIqdmfhd
+         mKZdethPBF/flhPSFJB533G/ZPaLlxKZfsG22vKOll4TQOihStPl1ewa9waTALUXfps8
+         OhsIA7IZTM0CjbWfdKTqkB9alC1nIoWaMvQpsCaPWsMOqrQ6WZVELIMjXqMCAKfuDsbW
+         rXTboAtoXzYQxxoWuDbB5jkmO8WW4apCi1SSX980la/PCSsxMFnq2TWJCsBD49K2l6Ki
+         mNRw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730241883; x=1730846683;
+        d=1e100.net; s=20230601; t=1730241886; x=1730846686;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HNJdU7+o4d1QH5mPoNKTab3DA0/sS4GdEQIezl8TuMU=;
-        b=b0FJtqSkcjyhQyerVPTwzQrexicEWUzZs0q1FYopVlXHpKlSSRnRKGDu5z7jZ+gj9b
-         wW9/YypUeisZ9QjEl2q1C48SRT/I3Namf7cl3YWE+acQeR5IESV25dexuZ3Quq744GYg
-         PlHan1S9/JO+KuaZLFJ57m+0faDoRmjCEoCjKB1GJ1gsMA5V4kDFvOFH5LTFV6pO7hka
-         mzTKtyTNkO/PDanMrd32D9o27O1Xd8X+vjh1r4mXGM7IbV2Mb4euGF70T4p6RVKRf9AI
-         jAAF8T+fx9evp+VZjSSRRxweeEBVpnMcRgyaZfHNBIqF0cmO98Pb+ndHlJLhv0GjSq+s
-         2R4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVvDldciasuwvL5PBBkSDHfNux58WEplKk1dSlBxrhm/YDIFZ0xtWXYuumxlwT3C9PRRaduqW3cP7oWJ5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHlYW71WFidj/HpqochjGWmHYd/CK1kwN9W2RIXis0Ib5XvzFL
-	Xl1kqtO12s/wtJlMXoEKr/8aCr/vAS3TZl/DB18pYtZP1pWrEq0aPUN64H7lIKxqxqvMC2gDMdg
-	y98MJQw==
-X-Google-Smtp-Source: AGHT+IHlAm3tLezbzVt8GbVuqDvnkCdiAAUbGwwokxk31Ep1SZRLobw2hi3jMVj1TyxSH6r16iitdVAfC4fJ
+        bh=Dn03tO6yjk+hHI/uxx4ev1BNOlrfTOa71VTpKPW70Iw=;
+        b=NF3sagp0QfPYCc1qqTQDkGXOt3wqU5F8R+UYun/JdSYG0llH4KxMfsLGkIxZCqgAsR
+         Il6chdZM9HQrjwtV/VxLKyhAOpIWOSGpm56zDs9dtiK5nseBx2K4ukK9vT4GbXxJ8e3x
+         1KdH2n26rASC/V2Q8BaToIzkFTg/OC7EBaUAxWksLRjMNF04sWb07uWmEN61ql+M0oqk
+         6noWpRcxkFvbmhjm6pRjiDzw4naurI6qUoCGqFYWAmw6m4GFhI12xt5gmuK/+nurQV7Y
+         7W2wLaKttYOcrwhH2x/PakZbGr4VLoRoqLdwArEWGSWxPItsI/Qq8P3gXtjm2Ku8v+W0
+         u0pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTmqcCP4QshHCC4rJsHqC2QlbABJHfZk4icFgmJvdPWu8dZCXjjh9H5KRpyD8wcmC32MovZoMZIId5OSU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEV6dkbfKlArnSu+DuY/9BYAkMdHIM/D9BclQNrxetng1cvtLv
+	NcKvM6mDUqXl4mKECMnQqEmqAXZdgkPEq9zwFcyoQp0JIy4RM2lAJar+VbcrEbe8hVgVwgVmnyW
+	gAKB3mw==
+X-Google-Smtp-Source: AGHT+IExA3JFVO57o5s1aC/oywbSW2IzrWYHiZ5NZUiXTsoJ3RexOTnxGKyv3IbKPCltwR6LNnBfyO+G729l
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8991:d3fd:38a7:c282])
- (user=irogers job=sendgmr) by 2002:a05:690c:4c09:b0:6e7:e493:2db6 with SMTP
- id 00721157ae682-6ea3b951361mr508657b3.3.1730241883136; Tue, 29 Oct 2024
- 15:44:43 -0700 (PDT)
-Date: Tue, 29 Oct 2024 15:44:15 -0700
+ (user=irogers job=sendgmr) by 2002:a25:d80e:0:b0:e2e:3328:7a00 with SMTP id
+ 3f1490d57ef6-e3087a548eemr49327276.3.1730241885935; Tue, 29 Oct 2024 15:44:45
+ -0700 (PDT)
+Date: Tue, 29 Oct 2024 15:44:16 -0700
 In-Reply-To: <20241029224431.167623-1-irogers@google.com>
-Message-Id: <20241029224431.167623-4-irogers@google.com>
+Message-Id: <20241029224431.167623-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241029224431.167623-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v4 03/19] perf python: Remove unused #include
+Subject: [PATCH v4 04/19] perf script: Move scripting_max_stack out of builtin
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,25 +90,60 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Remove unused #include of bpf-filter.h.
+scripting_max_stack is used in util code which is linked into the
+python module. Move the variable declaration to
+util/trace-event-scripting.c to avoid conditional compilation.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/util/python.c | 1 -
- 1 file changed, 1 deletion(-)
+ tools/perf/builtin-script.c             | 2 --
+ tools/perf/util/python.c                | 2 --
+ tools/perf/util/trace-event-scripting.c | 3 +++
+ 3 files changed, 3 insertions(+), 4 deletions(-)
 
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index 8c5d5cecfba4..ff30fe466189 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -92,8 +92,6 @@ static struct dlfilter		*dlfilter;
+ static int			dlargc;
+ static char			**dlargv;
+ 
+-unsigned int scripting_max_stack = PERF_MAX_STACK_DEPTH;
+-
+ enum perf_output_field {
+ 	PERF_OUTPUT_COMM            = 1ULL << 0,
+ 	PERF_OUTPUT_TID             = 1ULL << 1,
 diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 13dad27169a0..974578a04099 100644
+index 974578a04099..298f43981fc5 100644
 --- a/tools/perf/util/python.c
 +++ b/tools/perf/util/python.c
-@@ -16,7 +16,6 @@
- #include "thread_map.h"
+@@ -1306,8 +1306,6 @@ PyMODINIT_FUNC PyInit_perf(void)
+ /* The following are stubs to avoid dragging in builtin-* objects. */
+ /* TODO: move the code out of the builtin-* file into util. */
+ 
+-unsigned int scripting_max_stack = PERF_MAX_STACK_DEPTH;
+-
+ bool kvm_entry_event(struct evsel *evsel __maybe_unused)
+ {
+ 	return false;
+diff --git a/tools/perf/util/trace-event-scripting.c b/tools/perf/util/trace-event-scripting.c
+index bd0000300c77..8abb7a7b6888 100644
+--- a/tools/perf/util/trace-event-scripting.c
++++ b/tools/perf/util/trace-event-scripting.c
+@@ -16,9 +16,12 @@
+ #include "debug.h"
  #include "trace-event.h"
- #include "mmap.h"
--#include "util/bpf-filter.h"
- #include "util/env.h"
- #include "util/kvm-stat.h"
- #include "util/kwork.h"
+ #include "evsel.h"
++#include <linux/perf_event.h>
+ #include <linux/zalloc.h>
+ #include "util/sample.h"
+ 
++unsigned int scripting_max_stack = PERF_MAX_STACK_DEPTH;
++
+ struct scripting_context *scripting_context;
+ 
+ void scripting_context__update(struct scripting_context *c,
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
