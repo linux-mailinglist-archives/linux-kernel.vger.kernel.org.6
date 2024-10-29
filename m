@@ -1,323 +1,242 @@
-Return-Path: <linux-kernel+bounces-387152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFD9F9B4CA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:54:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A2F99B4CAA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:54:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2BF81C20B31
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:54:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 494C9283D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0940A191473;
-	Tue, 29 Oct 2024 14:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 139F5190486;
+	Tue, 29 Oct 2024 14:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lTLowiE3"
-Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qg2MOYBx"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2065.outbound.protection.outlook.com [40.107.237.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C171FC0A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730213672; cv=none; b=ko8W27Y6nqeY21OJAuSK3VQ5U3fmXZqS6EpeGjOeNKXQf7A1BLmRDz6mLhK5R1ggtyENEB3s6+KiyqIdGXXzXyp1uSvqtfHf97K0owpxm0dbK/ke8nrzRISJJcvMvMT4U/g5UHc+5OFLs9A5rRbHC/P0T2KlG1Mo565n2rT3iqo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730213672; c=relaxed/simple;
-	bh=NxPk/t3GtcDItEt6sJvgxtR8tjy5IatKemHQHd5+06M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=soETZ3ggzg69rjaxlUuHPNf21iyCjm//ep0gA2PqhpH68uQnuA86mu//vtdpEApFLkJeDKmykTjIThKDUjfT+53i8pxgjQmZ6zMDeVUbk6PfQzPy6/7RBOmxEvE4VWAnVcwOgmcpoE4DgIE9CFLcmEc+ClGdo9Xcv9qNidJfJcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=lTLowiE3; arc=none smtp.client-ip=209.85.221.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-50d487a93a5so1667407e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730213668; x=1730818468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mlbNRwRg0sLZdZxIUN5KxX0zSY8cjoST2m/ckhWngBg=;
-        b=lTLowiE3qjglUuZIL1Nm84O/B7ZKAW1Q38gd3NVMqeVZZ79fToaMgQlr2L4rjKHtf0
-         a0DQ0dCZYIhe7LC0DU/HN5LGX2G7QUR5EcyF/00RH7lRfXNAUAn+ygIZqaUMWNweK/LD
-         BlGiGZBuBCm/C69Ao0nfIemd5ZhaUC0di+9U4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730213668; x=1730818468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mlbNRwRg0sLZdZxIUN5KxX0zSY8cjoST2m/ckhWngBg=;
-        b=Iqt1Jjvx6XALrRtkOOjs5tWnAUsDSUDZ0RacJOhapQ94kBY80m/ar7Ad3IVylbpoiG
-         ULYemO7AwFNoL3vdIMtdnB5Wb09pdFUM+aYSVv2yLKC4MS+uM9q0H7wF5SQNZwpF5pqd
-         123+3O/j/d8Rrt5i+FSFFRNv99ruoCvIqjmN5jEry/VoyCe8+2bMxeBiCimARAx/gpQl
-         arS/f3GbZhhmJ2Jp2b0vr+KF4oFTfh8UTROFKHn8/vnBtbgT8OtQyJc0Sjw+MQLyiVko
-         2guUPyFbRSC31yPDQBpgWWtuKv33GZo5QBEyukmUjVU5e/rbT+DSmFjsMGTbz95q+FGL
-         1nVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXWcV8XkGycCvPumDDOyoBH3jSWuooYQZTGVHdfMG/bSIQLHzIEP0zS2jcinITaCR8dBSrS9U3Y+GrIwks=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHkMeaWyJKR4z8dkkwChPMieTvgsJ1OFbjI+E61gYFxEGKjT1u
-	SwDk3cSvekjEcKZYFnDgZFDxKG/VbVdxnDDu7cZW3WV8kFKqGBNosvtWnDWG1DwExWslLG2Qkig
-	=
-X-Google-Smtp-Source: AGHT+IH7HN7SGaVD9RDnLFFMMPGCX129Ko6CD6nEJ7S+0b7BVrG1NV/RJ6+74qVhG6ygNcFAekBvUg==
-X-Received: by 2002:a05:6122:200d:b0:507:90d1:e91e with SMTP id 71dfb90a1353d-510150e465dmr8956592e0c.10.1730213668312;
-        Tue, 29 Oct 2024 07:54:28 -0700 (PDT)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com. [209.85.222.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-510047a356bsm1128876e0c.48.2024.10.29.07.54.27
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 07:54:27 -0700 (PDT)
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-84fd2310413so1542232241.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:54:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW4RV+3gpeKpzjGfTKEcMhEFy1K6K9Mcg14DkIx9lhIbr7R0bJc9bDs5aWQdyW74/0LjZqzVVJZhVJQeFI=@vger.kernel.org
-X-Received: by 2002:a05:6122:3d01:b0:50d:35d9:ad5f with SMTP id
- 71dfb90a1353d-51015050c82mr8224746e0c.7.1730213667064; Tue, 29 Oct 2024
- 07:54:27 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F711191473;
+	Tue, 29 Oct 2024 14:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730213687; cv=fail; b=qZ6md6i1A1qqaYlZXdtJOcm5kdQJ0H9Ao57aYqFq7tJIaCf4UqL9158RRyWdDixqUsQL9khZqDenPTYx6jU74XymQqko9CHP73JIOIdVG1FLevLm8O74PAD5se0XBUEreAz2mQLoQ0i9P2RxzMZmT97G7F9pJfhZRytOjRzgljU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730213687; c=relaxed/simple;
+	bh=cAG/nh6KEhF/3aT2kAe39osBGrANuB6WHFzZv/NUUD8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lbXGohjBJfWtXXAK889zZCyO0VjJhwo9MjOHQYWpcUR18NJEETs+mAIt9DrVrCiO/6oC9IoTAT2OFMqsThexwjXI8u+hDWQ7TsavH/5cxJXQAosSJRq+wySF60Pd+w//5FJLs2SWRe6HmvWVqh2BhA0dDVOJK3z3zsBwbOO50kU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qg2MOYBx; arc=fail smtp.client-ip=40.107.237.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=StlmFd6YRL4UkiYAgUxEf4FTCDYLcRzJtHWOW/PeVJX5yO8eFuVbLYBJ+d3eBrIajJcUXi2VFj8LwZZu4tiBpZBl4wq6a7Lm1++jI6eGfAziQ7vrgks00pgMDJpBxezBWdB4PNvDwYF4dJwXZx0+57pLUrKObAl3fJ2DqZPf7zlWDDeLpQSQ8Gt88WkbVqOiUYoZI5geRnZSxa2ANs9n3esVCl85vjdh8+CTZpozmhV4h0sD3GdVqnkhA+FB3RykL+8aJ1wIP9pWvb+7IiB+q7sKpMEbIGc/UgsoTGk+2d/c7JrqNKa/5juYDRQ8CFLBQvb3yy8P3zasv1VM1BizfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=954MQIFYfA2JQMytxuXtZxiZV9LQUF91cAYq0LSm0XY=;
+ b=yGvoRRg3lttDhWcXH7sULnlkiXU3mW6m1DLPzXR+jGTMDvilKmPDd0RRa7eBnxm9ZNk9MNYTgGRRVAhVRDmuQ2LCUoKXJOq3wDaMGvu4wW4IwwgoD/dT0R126Y5v7dOv69txoVcfT7XGzbB8t63U4+dyNpPzzjo2s8YQB6fWLHuFQChUbNPLw5bE8MhQOXwuLrgMCGH0oEDyPIUljF5Gyh7qUtPaMz+JWmBVfRuU1+D28TJZhV8YhtEZoWLHPKwP13DUkeD9aVUZaZS8jnncU4W9AKW972t67K6GfHCBrUX5iPUq1UY6d7xuGwsfu4T/SDiB+QohS2IEWhVkm3HUeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=954MQIFYfA2JQMytxuXtZxiZV9LQUF91cAYq0LSm0XY=;
+ b=qg2MOYBxUJnUlpGgQOcAniTnDRtbBRLpYbMaW3AvGizv9loveifz678/emlNX+cJFcTZTuEjO1MpZWd/lv7sX17GvBJ9MeSrFvH5IT0Jdf1FqZRoqNaB17IYMQrG9q7gGa04wv2BKx9H4MO/+ioDoDEsdBDiVw7iiBE0q7OUZn8nlnNRQhvcIrQIsMJ3bpCC9OXPIt6fOcHSC4gj4AgIljT4D78CPGuYY1mzjKf1jENoxVTLUY7O/nlobWAwXjHTOqmctvdQ8P9Rt3MOThP7XQxLfDv9xHNhrOVeV4l71azpGgvaL5NkC+tX83droYqi/mME/s5n3AhDEGRsxsn77g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by LV3PR12MB9355.namprd12.prod.outlook.com (2603:10b6:408:216::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
+ 2024 14:54:37 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Tue, 29 Oct 2024
+ 14:54:37 +0000
+Date: Tue, 29 Oct 2024 11:54:36 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v5 04/13] iommufd/viommu: Add IOMMU_VIOMMU_ALLOC ioctl
+Message-ID: <20241029145436.GC209124@nvidia.com>
+References: <cover.1729897352.git.nicolinc@nvidia.com>
+ <f24628d774181da6df6e62bfa3376fbcacef8906.1729897352.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f24628d774181da6df6e62bfa3376fbcacef8906.1729897352.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: MN2PR15CA0032.namprd15.prod.outlook.com
+ (2603:10b6:208:1b4::45) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009052402.411978-1-fshao@chromium.org> <20241024-stalwart-bandicoot-of-music-bc6b29@houat>
-In-Reply-To: <20241024-stalwart-bandicoot-of-music-bc6b29@houat>
-From: Fei Shao <fshao@chromium.org>
-Date: Tue, 29 Oct 2024 22:53:49 +0800
-X-Gmail-Original-Message-ID: <CAC=S1niZuiJkWBvci+bmrU-BvahhXyWWAYAMOB200a3Ppu=rTg@mail.gmail.com>
-Message-ID: <CAC=S1niZuiJkWBvci+bmrU-BvahhXyWWAYAMOB200a3Ppu=rTg@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm/bridge: panel: Use devm_drm_bridge_add()
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Chen-Yu Tsai <wenst@chromium.org>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, David Airlie <airlied@gmail.com>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Simona Vetter <simona@ffwll.ch>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|LV3PR12MB9355:EE_
+X-MS-Office365-Filtering-Correlation-Id: da78e835-ade5-4bf8-abf4-08dcf8299c06
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7/cSDGCcyAHDWEXD8bsH38bQzXnrTfkR150CJry+B5Rjvxd1Yq1QVcORU/xV?=
+ =?us-ascii?Q?s76Iksk1lGPU9SgSIOkeZ/UGD0HPwmOwREGyVfGCzN1N+hLpDVItnA9YLiLD?=
+ =?us-ascii?Q?97hrFWuxt2qq7zj7YmbT9O0ptTKDKvVyxLL8LiF86toXxLWFGlli1nCIq9Fd?=
+ =?us-ascii?Q?jI6Any3t6fJEpysH9M9X7oTzA0xc0Y9FZDeTACsMk3PLKEnjOkcQG8dBADF/?=
+ =?us-ascii?Q?0njzjLsc0y7ba3NYTh0gCAtVcW3GOJ+ILzcEkA8CCbelsePHw0ObNplMwSV6?=
+ =?us-ascii?Q?HUNWNkLfxdRs48nRKlukLRcrgqzaEDaDIWAmgCxYN/GlbYms3nrHrb4QN5yc?=
+ =?us-ascii?Q?PgxJynJHf1mPXb2Vt6UDJB53iN+xN2XeU5m0KMSJnp17BamEEl1VfNzZfulO?=
+ =?us-ascii?Q?yZl8xc4H4mE/C/tPZLIbSIKN4qp0JLp+ypsCflgVhROruHwyTUZBZcTrcZyL?=
+ =?us-ascii?Q?foobcqX5TdpHWfFqTE8ioJgj+Fap8VG47wwU25IIFYp5f/ADMroaEhmH4QkP?=
+ =?us-ascii?Q?2spvLy5F2taG5wlWx1UTUL+67BN6R6oUCScvMcHSZM94jj7r/oxN8aIw4im7?=
+ =?us-ascii?Q?6sw0xLGLMDDxgQy/txE2VvUrByc8ZSiuokCpPybe6Wa+ekzgNKwg0sig2t6E?=
+ =?us-ascii?Q?0BHQjjzg63E6MEkv/vbbhiX4Qa09j0ofqc8+wRyaLnAiL4TDyld/4C5n6zIq?=
+ =?us-ascii?Q?RRO7qXimJA54LAN4fv+3ITBYaVCtNjTyEBeQe8hB44ir+shhOiTFOCP/XXfZ?=
+ =?us-ascii?Q?saBUxNnnY1/469j70xWjCSfNwuf3hzCEiVZ+fRmDPi9FGfSTT9iaXHEibreZ?=
+ =?us-ascii?Q?oofZ/wVofHwq/EDLNYAkFuC86MBYHCPx+eQz41U2Wm2AJ2F4iMMo7uFp8Sr6?=
+ =?us-ascii?Q?2nnE8eMsYkzaRc9dkzpApKHRZmwg+Jz37Uj7161j3IoBerOI3Y3ydpTqdE60?=
+ =?us-ascii?Q?5LY6ZxK2LzoS2b5FXaEBCgv/LCqjvEuQbv50rjV7DT/xW376mVYDv6NIxwJP?=
+ =?us-ascii?Q?ZUdRNtPP2D5un2f1nU2Z3tLDRVIx3mf0q/F8QUanZCe7Wh1x606KVO/DN6Rg?=
+ =?us-ascii?Q?sw9S5womtGAVL8DVC7imN+FeyO5vHhRJoyUr3IEFGxgDIbhc6hSh0w+hdEDC?=
+ =?us-ascii?Q?ch4VMN28huUA8rHYRvyYJXFvn5C9IP23mvYOASP35rVRlicB46HPT2IHkoS0?=
+ =?us-ascii?Q?Q06C4iWTPnD3OPornCXQK36tDpGak2rWU4+0cCwEAHdMfcd9VlzMzrwenX6R?=
+ =?us-ascii?Q?aTpPgve3K3U7akFuNSkXUZa/SWlS55LhASAtv2OnbVvzonEqIz5YM/5gEHmt?=
+ =?us-ascii?Q?LHnrMrFNuV1yAciyN+QAV26f?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4tFHHWwe0VyZEilNWYZBlxMegQN13YxNk/wBdDyl1ThcQ8qiS4wd25DXb429?=
+ =?us-ascii?Q?yWmJiySoIhQySoVcQysSFpT1xR9RPQNH1XUiUR3rV+i1qM3EYGLhSRjTejg7?=
+ =?us-ascii?Q?w+D0WLe4otbceV/t6pJ7QYD8Cvg9v1C7TjrBrwdxuRCa5CVq44IH+D0veoKD?=
+ =?us-ascii?Q?G1lajZ1V9hIAwsJUkPcJ0xj2kbPCG3NAN+ynN+dhSNR3IB2q7M67pbms0uxf?=
+ =?us-ascii?Q?2qUAyGrWrawB4cCEVZxuA241AiVxXasOjZYPOR6WU2ZsJ4ZTJFgcFQkHoVXK?=
+ =?us-ascii?Q?9JGPnC1h/5mksxBv/1cScupGzXZot1cXAQSR4wV4KEbkIgNLKqqVMGRWdpbV?=
+ =?us-ascii?Q?KLvea7US4NWLOkyu4PXN+VVXtQE9QYqdgnKIHI9nfRSGjTS+SEr1wBMkn1KU?=
+ =?us-ascii?Q?N7WEbWyLlvIIAPVlWuaJp4/Ahnmd0NgkMMJhOKK0QRemY/+pYDfTM/ih5QJD?=
+ =?us-ascii?Q?bD6aGOhg8RF6ps66K3CPyxhE43IQRdwkQFbtozyOXOXAbLnhBbglxH0x+y9L?=
+ =?us-ascii?Q?eSG2cgd8lvd05IEHLyuP6X/Jhn5mfZPd4RKIpdcwANBhXB8PE4vqY6q/31Oi?=
+ =?us-ascii?Q?KaYCcI/Mce/viGKd1sz7NiEVkTq+ZVIP6DqKShHOlvxTfQmUoKAEUvv3vEVi?=
+ =?us-ascii?Q?wq3zt5hifhsfzuiAUowqA3ndCR+g3MsB2UBTuepvMVsWfF5O0vDUlZpT+y4F?=
+ =?us-ascii?Q?iuO0WnUQKSzPEJPhJ8LAvkgwitl5eXuU5ha55q3ZApnuTfjD/9wJELUw22B+?=
+ =?us-ascii?Q?kZo9O45e+88Yq4exYCAcWUdWDdGrwa3dkVuFUJMEOvQiP3IgopBoxBlVLaR6?=
+ =?us-ascii?Q?tG5kE/p1wce9T8mdmyf1npgoH8qTk3MY/0TNRESNEHndbkUnniOO1vwP33g5?=
+ =?us-ascii?Q?WaL7moWBUf6Y4JuHxsGyvGUVN0npQm/0BouOMdHRbw2yrh0c78EUeOfYwBNK?=
+ =?us-ascii?Q?jrGsaZJZv0ew+qRyZo8Qh7mrSHzXqtJRIrVaLTHniLgVxsJ6SfjQVELB8Hs2?=
+ =?us-ascii?Q?pKxKvVcdf91X46A0lYH84mD51N1Cv/Lmecv/BegPX5H9/8tNa8B3+uWAwQ5z?=
+ =?us-ascii?Q?LGOEScbmSB8ZhwwyzQVJ9I92AxTId3iGHX+h+3AZK2y4sCvdFF0awHkxv+EX?=
+ =?us-ascii?Q?TfDPFppuskrR1lC47ohGBMGalnNgCXTHpVJ2T5LEFgteDFweHV+G1n8sorrK?=
+ =?us-ascii?Q?cjkjwB48TAL/0RLXYL3YEWwAH1AIwAyEXQGXA7GHvPvvx1Cu1pGMwQLSDcsP?=
+ =?us-ascii?Q?vuoVBTS/VfHavvDPQI8tKXtXKgOFJrI7DpxaZuAkRpZCfi5BS5R1rtErJnd3?=
+ =?us-ascii?Q?nkMKCal/qRmBmLqRqmpT8LIGvv5e1D728ozwv0vSYWGGqKp1Tbaf/1r3iLV5?=
+ =?us-ascii?Q?GXU8eIgEd6EO1GJt9RqNZGmdTV5jdOrSVOMAe9Xa3wcPKHtgPesjeMxUYIO4?=
+ =?us-ascii?Q?OE0RbbUzkg0yq2iepKGdfAP0HjvnRPVxH0J5PkoZd4jC3w4PVB9W4CRNQXbR?=
+ =?us-ascii?Q?YzcKOjn5PvXIk5Fzl5JcNORdK+IttSJK1ul3m/Lg6DTrlvpVski02lH0LVy/?=
+ =?us-ascii?Q?HCJ3EzBjhgqLgZFZa1Q=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: da78e835-ade5-4bf8-abf4-08dcf8299c06
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 14:54:37.6981
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: +/e+2+8c6FQTEPnvPqFW90GvX4MZZ8Jh8X0ZNANGAsvq4dO++QYWwsekKn9PnwTO
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9355
 
-On Thu, Oct 24, 2024 at 8:36=E2=80=AFPM Maxime Ripard <mripard@kernel.org> =
-wrote:
->
-> On Wed, Oct 09, 2024 at 01:23:31PM +0800, Fei Shao wrote:
-> > In the mtk_dsi driver, its DSI host attach callback calls
-> > devm_drm_of_get_bridge() to get the next bridge. If that next bridge is
-> > a panel bridge, a panel_bridge object is allocated and managed by the
-> > panel device.
-> >
-> > Later, if the attach callback fails with -EPROBE_DEFER from subsequent
-> > component_add(), the panel device invoking the callback at probe time
-> > also fails, and all device-managed resources are freed accordingly.
-> >
-> > This exposes a drm_bridge bridge_list corruption due to the unbalanced
-> > lifecycle between the DSI host and the panel devices: the panel_bridge
-> > object managed by panel device is freed, while drm_bridge_remove() is
-> > bound to DSI host device and never gets called.
-> > The next drm_bridge_add() will trigger UAF against the freed bridge lis=
-t
-> > object and result in kernel panic.
-> >
-> > This bug is observed on a MediaTek MT8188-based Chromebook with MIPI DS=
-I
-> > outputting to a DSI panel (DT is WIP for upstream).
-> >
-> > As a fix, using devm_drm_bridge_add() with the panel device in the pane=
-l
-> > path seems reasonable. This also implies a chain of potential cleanup
-> > actions:
-> >
-> > 1. Removing drm_bridge_remove() means devm_drm_panel_bridge_release()
-> >    becomes hollow and can be removed.
-> >
-> > 2. devm_drm_panel_bridge_add_typed() is almost emptied except for the
-> >    `bridge->pre_enable_prev_first` line. Itself can be also removed if
-> >    we move the line into drm_panel_bridge_add_typed(). (maybe?)
-> >
-> > 3. drm_panel_bridge_add_typed() now calls all the needed devm_* calls,
-> >    so it's essentially the new devm_drm_panel_bridge_add_typed().
-> >
-> > 4. drmm_panel_bridge_add() needs to be updated accordingly since it
-> >    calls drm_panel_bridge_add_typed(). But now there's only one bridge
-> >    object to be freed, and it's already being managed by panel device.
-> >    I wonder if we still need both drmm_ and devm_ version in this case.
-> >    (maybe yes from DRM PoV, I don't know much about the context)
-> >
-> > This is a RFC patch since I'm not sure if my understanding is correct
-> > (for both the fix and the cleanup). It fixes the issue I encountered,
-> > but I don't expect it to be picked up directly due to the redundant
-> > commit message and the dangling devm_drm_panel_bridge_release().
-> > I plan to resend the official patch(es) once I know what I supposed to
-> > do next.
-> >
-> > For reference, here's the KASAN report from the device:
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >  BUG: KASAN: slab-use-after-free in drm_bridge_add+0x98/0x230
-> >  Read of size 8 at addr ffffff80c4e9e100 by task kworker/u32:1/69
-> >
-> >  CPU: 1 UID: 0 PID: 69 Comm: kworker/u32:1 Not tainted 6.12.0-rc1-next-=
-20241004-kasan-00030-g062135fa4046 #1
-> >  Hardware name: Google Ciri sku0/unprovisioned board (DT)
-> >  Workqueue: events_unbound deferred_probe_work_func
-> >  Call trace:
-> >   dump_backtrace+0xfc/0x140
-> >   show_stack+0x24/0x38
-> >   dump_stack_lvl+0x40/0xc8
-> >   print_report+0x140/0x700
-> >   kasan_report+0xcc/0x130
-> >   __asan_report_load8_noabort+0x20/0x30
-> >   drm_bridge_add+0x98/0x230
-> >   devm_drm_panel_bridge_add_typed+0x174/0x298
-> >   devm_drm_of_get_bridge+0xe8/0x190
-> >   mtk_dsi_host_attach+0x130/0x2b0
-> >   mipi_dsi_attach+0x8c/0xe8
-> >   hx83102_probe+0x1a8/0x368
-> >   mipi_dsi_drv_probe+0x6c/0x88
-> >   really_probe+0x1c4/0x698
-> >   __driver_probe_device+0x160/0x298
-> >   driver_probe_device+0x7c/0x2a8
-> >   __device_attach_driver+0x2a0/0x398
-> >   bus_for_each_drv+0x198/0x200
-> >   __device_attach+0x1c0/0x308
-> >   device_initial_probe+0x20/0x38
-> >   bus_probe_device+0x11c/0x1f8
-> >   deferred_probe_work_func+0x80/0x250
-> >   worker_thread+0x9b4/0x2780
-> >   kthread+0x274/0x350
-> >   ret_from_fork+0x10/0x20
-> >
-> >  Allocated by task 69:
-> >   kasan_save_track+0x40/0x78
-> >   kasan_save_alloc_info+0x44/0x58
-> >   __kasan_kmalloc+0x84/0xa0
-> >   __kmalloc_node_track_caller_noprof+0x228/0x450
-> >   devm_kmalloc+0x6c/0x288
-> >   devm_drm_panel_bridge_add_typed+0xa0/0x298
-> >   devm_drm_of_get_bridge+0xe8/0x190
-> >   mtk_dsi_host_attach+0x130/0x2b0
-> >   mipi_dsi_attach+0x8c/0xe8
-> >   hx83102_probe+0x1a8/0x368
-> >   mipi_dsi_drv_probe+0x6c/0x88
-> >   really_probe+0x1c4/0x698
-> >   __driver_probe_device+0x160/0x298
-> >   driver_probe_device+0x7c/0x2a8
-> >   __device_attach_driver+0x2a0/0x398
-> >   bus_for_each_drv+0x198/0x200
-> >   __device_attach+0x1c0/0x308
-> >   device_initial_probe+0x20/0x38
-> >   bus_probe_device+0x11c/0x1f8
-> >   deferred_probe_work_func+0x80/0x250
-> >   worker_thread+0x9b4/0x2780
-> >   kthread+0x274/0x350
-> >   ret_from_fork+0x10/0x20
-> >
-> >  Freed by task 69:
-> >   kasan_save_track+0x40/0x78
-> >   kasan_save_free_info+0x58/0x78
-> >   __kasan_slab_free+0x48/0x68
-> >   kfree+0xd4/0x750
-> >   devres_release_all+0x144/0x1e8
-> >   really_probe+0x48c/0x698
-> >   __driver_probe_device+0x160/0x298
-> >   driver_probe_device+0x7c/0x2a8
-> >   __device_attach_driver+0x2a0/0x398
-> >   bus_for_each_drv+0x198/0x200
-> >   __device_attach+0x1c0/0x308
-> >   device_initial_probe+0x20/0x38
-> >   bus_probe_device+0x11c/0x1f8
-> >   deferred_probe_work_func+0x80/0x250
-> >   worker_thread+0x9b4/0x2780
-> >   kthread+0x274/0x350
-> >   ret_from_fork+0x10/0x20
-> >
-> >  The buggy address belongs to the object at ffffff80c4e9e000
-> >   which belongs to the cache kmalloc-4k of size 4096
-> >  The buggy address is located 256 bytes inside of
-> >   freed 4096-byte region [ffffff80c4e9e000, ffffff80c4e9f000)
-> >
-> >  The buggy address belongs to the physical page:
-> >  head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:=
-0
-> >  flags: 0x8000000000000040(head|zone=3D2)
-> >  page_type: f5(slab)
-> >  page: refcount:1 mapcount:0 mapping:0000000000000000
-> >  index:0x0 pfn:0x104e98
-> >  raw: 8000000000000040 ffffff80c0003040 dead000000000122 00000000000000=
-00
-> >  raw: 0000000000000000 0000000000040004 00000001f5000000 00000000000000=
-00
-> >  head: 8000000000000040 ffffff80c0003040 dead000000000122 0000000000000=
-000
-> >  head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000=
-000
-> >  head: 8000000000000003 fffffffec313a601 ffffffffffffffff 0000000000000=
-000
-> >  head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000=
-000
-> >  page dumped because: kasan: bad access detected
-> >
-> >  Memory state around the buggy address:
-> >   ffffff80c4e9e000: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >   ffffff80c4e9e080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >  >ffffff80c4e9e100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >                     ^
-> >   ffffff80c4e9e180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> >   ffffff80c4e9e200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >
-> > Signed-off-by: Fei Shao <fshao@chromium.org>
->
-> I was looking at the driver to try to follow your (awesome btw, thanks)
-> commit log, and it does have a quite different structure compared to
-> what we recommend.
->
-> Would following
-> https://docs.kernel.org/gpu/drm-kms-helpers.html#special-care-with-mipi-d=
-si-bridges
-> help?
+On Fri, Oct 25, 2024 at 04:49:44PM -0700, Nicolin Chen wrote:
+> +void iommufd_viommu_destroy(struct iommufd_object *obj)
+> +{
+> +	struct iommufd_viommu *viommu =
+> +		container_of(obj, struct iommufd_viommu, obj);
+> +
+> +	if (viommu->ops && viommu->ops->free)
+> +		viommu->ops->free(viommu);
 
-Hi Maxime,
+Ops can't be null and free can't be null, that would mean there is a
+memory leak.
 
-Thank you for the pointer.
-I read the suggested pattern in the doc and compared it with the
-drivers. If I understand correctly, both the MIPI-DSI host and panel
-drivers follow the instructions:
+> +	refcount_dec(&viommu->hwpt->common.obj.users);
 
-1. The MIPI-DSI host driver must run mipi_dsi_host_register() in its probe =
-hook.
-   >> drm/mediatek/mtk_dsi.c runs mipi_dsi_host_register() in the probe hoo=
-k.
-2. In its probe hook, the bridge driver must try to find its MIPI-DSI
-host, register as a MIPI-DSI device and attach the MIPI-DSI device to
-its host.
-   >> drm/panel/panel-himax-hx83102.c follows and runs
-mipi_dsi_attach() at the end of probe hook.
-3. In its struct mipi_dsi_host_ops.attach hook, the MIPI-DSI host can
-now add its component.
-   >> drm/mediatek/mtk_dsi.c calls component_add() in the attach callback.
+Don't touch viommu after freeing it
 
-Could you elaborate on the "different structures" you mentioned?
+Did you run selftests with kasn?
 
-To clarify my point: the issue is that component_add() may return
--EPROBE_DEFER if the component (e.g. DSI encoder) is not ready,
-causing the panel bridge to be removed. However, drm_bridge_remove()
-is bound to MIPI-DSI host instead of panel bridge, which owns the
-actual list_head object.
+> +int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
+> +{
+> +	struct iommu_viommu_alloc *cmd = ucmd->cmd;
+> +	struct iommufd_hwpt_paging *hwpt_paging;
+> +	struct iommufd_viommu *viommu;
+> +	struct iommufd_device *idev;
+> +	const struct iommu_ops *ops;
+> +	int rc;
+> +
+> +	if (cmd->flags || cmd->type == IOMMU_VIOMMU_TYPE_DEFAULT)
+> +		return -EOPNOTSUPP;
+> +
+> +	idev = iommufd_get_device(ucmd, cmd->dev_id);
+> +	if (IS_ERR(idev))
+> +		return PTR_ERR(idev);
+> +
+> +	ops = dev_iommu_ops(idev->dev);
+> +	if (!ops->viommu_alloc) {
+> +		rc = -EOPNOTSUPP;
+> +		goto out_put_idev;
+> +	}
+> +
+> +	hwpt_paging = iommufd_get_hwpt_paging(ucmd, cmd->hwpt_id);
+> +	if (IS_ERR(hwpt_paging)) {
+> +		rc = PTR_ERR(hwpt_paging);
+> +		goto out_put_idev;
+> +	}
+> +
+> +	if (!hwpt_paging->nest_parent) {
+> +		rc = -EINVAL;
+> +		goto out_put_hwpt;
+> +	}
+> +
+> +	viommu = ops->viommu_alloc(idev->dev, hwpt_paging->common.domain,
+> +				   ucmd->ictx, cmd->type);
+> +	if (IS_ERR(viommu)) {
+> +		rc = PTR_ERR(viommu);
+> +		goto out_put_hwpt;
+> +	}
 
-This might be reproducible with other MIPI-DSI host + panel
-combinations by forcibly returning -EPROBE_DEFER in the host attach
-hook (verification with another device is needed), so the fix may be
-required in drm/bridge/panel.c.
+Check that ops and ops->free are valid here with a WARN_ON
 
-And to Chen-Yu: Thanks for the suggestion. I'll incorporate that into
-v2 pending confirmation that it is the correct fix.
+> +	rc = iommufd_verify_unfinalized_object(ucmd->ictx, &viommu->obj);
+> +	if (rc) {
+> +		kfree(viommu);
+> +		goto out_put_hwpt;
+> +	}
+> +
+> +	viommu->type = cmd->type;
+> +	viommu->ictx = ucmd->ictx;
+> +	viommu->hwpt = hwpt_paging;
+> +	/*
+> +	 * It is the most likely case that a physical IOMMU is unpluggable. A
+> +	 * pluggable IOMMU instance (if exists) is responsible for refcounting
+> +	 * on its own.
+> +	 */
+> +	viommu->iommu_dev = __iommu_get_iommu_dev(idev->dev);
+> +
+> +	refcount_inc(&viommu->hwpt->common.obj.users);
 
-Regards,
-Fei
+Put this line right after the one storing to viommu_>hwpt
 
->
-> Maxime
+Jason
 
