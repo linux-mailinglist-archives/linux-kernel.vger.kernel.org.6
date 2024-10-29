@@ -1,98 +1,101 @@
-Return-Path: <linux-kernel+bounces-386394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA8439B42E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:13:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B81439B42FA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:19:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A010F28370F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:13:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62DF41F2361D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC092022E8;
-	Tue, 29 Oct 2024 07:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFF12022E8;
+	Tue, 29 Oct 2024 07:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TL+Et39/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V4CUGois"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39751FCF77;
-	Tue, 29 Oct 2024 07:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A5F1FCF49;
+	Tue, 29 Oct 2024 07:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730186024; cv=none; b=MjUV87IFiEXoDDULzJdNk/sNJ/dYSF53oEAisGkN2ZRc4y2qW4gsHWnaGDhLZYLj7mUcjjvoeD1j8y8u2FGV07NzbRedcMa29NUU+KhFxKF2XWcA7rHQmktpSMEAm/GHKrieWCzvLRC15JodjqK+R/RgaMU536VS4tN9G1HwrD4=
+	t=1730186374; cv=none; b=ReSN4HID1KWulObDJ6eDWVnBckkQ75uS6nh2/v2pQIbI4Kbuz2K9gWyIjdbTRtTRF7/fPYh7lLWlNIvSM0KMDFP6OHHuvwoF4/NntBNHc3U3zc+9M/Dw1zh8yaombc/mC9BSSUjnTc4y9XZgcmE3aVpQTb+hNooqpf5FlbWow2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730186024; c=relaxed/simple;
-	bh=yZacnLzwlmMaPMgCQVc6Cs2tFUW+rgsYqgTbJRGZhDA=;
+	s=arc-20240116; t=1730186374; c=relaxed/simple;
+	bh=eGYztQ6Tgz9tth0fOgGOIMFz3sdierF3me6BWMituiY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzCkrsecMcdZAw8ZeQooPVR3nU2h5jGpVCH3AitKjd/mX8+8emTLAW9iJwoS1yONPyg0nyE8MJFj8x7qwVYy2xt9qN2e4/vjlhv8W0QXg2iYE0GMhFlTgjvXRZn20025P2BhcAC9H4gzbyGGRA8fl3c2Zufw/PIKwU7aecdqOyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TL+Et39/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADFBFC4CECD;
-	Tue, 29 Oct 2024 07:13:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kV3pcxNQ1NuSR7yXnHW6iKLOzP3eVtInbWM8NQ3O5E4fWtqEEY6ZWl5+XlQAFhTiCL2ecNKGaCaEKZAMsWyhSA2meMOCy/v5r6Fh1bZYYaxi3LqYMlFP3AvZTNlO8lWVxciCeQnr6/Pn5Z7txbLc84AvoABzYczpSORfamnlk/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V4CUGois; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A4AC4CECD;
+	Tue, 29 Oct 2024 07:19:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730186024;
-	bh=yZacnLzwlmMaPMgCQVc6Cs2tFUW+rgsYqgTbJRGZhDA=;
+	s=k20201202; t=1730186374;
+	bh=eGYztQ6Tgz9tth0fOgGOIMFz3sdierF3me6BWMituiY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TL+Et39/oJkVZmxXRlBodyw+QeDCk90Ru9GXqsC/xpE7MVBpuY+PMpG9PzSBo1Hd4
-	 EOX0DUAVQLaPlWzjdih9SCrNDmIdPIEEzPdHTHgop5Y/Ph7fMv5YJnAbDiRTtcL8WC
-	 7rUEO2X/zMYuDueryjDhWYjFclRxCx+QUUlyjHyGcIo+ViuHQZZORr8b7ZMKysZ65/
-	 aEeBErGoi/NhPwpJPTD0a7ZVPezKt4R4eilcO+qbNAzblgQDi9tKHPI/Y2pM6UpiTl
-	 0mcIG6XlpW/yyFMOGTJyMZV+r1mbN7tVEMn/P6wMjlyPnRxdeA8ZzICum+/SlfGDWz
-	 XcKZfURViRwsQ==
-Date: Tue, 29 Oct 2024 08:13:40 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Vinod Koul <vkoul@kernel.org>, 
-	Richard Cochran <richardcochran@gmail.com>, Andrew Lunn <andrew@lunn.ch>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Minda Chen <minda.chen@starfivetech.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>, Keyur Chudgar <keyur@os.amperecomputing.com>, 
-	Quan Nguyen <quan@os.amperecomputing.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org, 
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v4 14/16] net: stmmac: dwmac-s32: add basic NXP S32G/S32R
- glue driver
-Message-ID: <xanb4j56u2rjwpkyj5gwh6y6t36gpvawph62jw72ksh7jximhr@cjwlp7wsxgp6>
-References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
- <20241028-upstream_s32cc_gmac-v4-14-03618f10e3e2@oss.nxp.com>
+	b=V4CUGois7PI+fjDZH4BP9mk3zpME0F1rSNT15riHPY1U5eOrI7FraVTKp2koqhq+a
+	 pBo1PJDh1yQeEmmegdYmSHL6KoeZjucV4LPL70fqVPOzz4tQ5Obn1PMlFCzl/emDhC
+	 33l9U8EWl9P0EucRCGsVe+rnYiOyHcI9JybNqcwmlHcdcQiK8mo4Z5FdanyHmlCj+w
+	 bWZlCBQoQC5i9KgEgQrQlyQhEii5Mj+lz2QNIB/LbvORlki7cqCHNxUOqojQD+l/1q
+	 9GTDjD7xFfAP7QSAAAxacldYMDXi/8C7Qx2276CIb3nzigy8xLC1wizuvyBR18Z5+q
+	 QxUm/dGOBXEZw==
+Date: Tue, 29 Oct 2024 09:15:40 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Su Hua <suhua.tanke@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: boot failure after merge of the memblock tree
+Message-ID: <ZyCLnJ01aYBlSWPA@kernel.org>
+References: <20241022173921.6fdbdd38@canb.auug.org.au>
+ <ZxtAWopjlF9unBno@kernel.org>
+ <CALe3CaAehCC6WOpCAGtMX3qsTqMc8jh3kn1Fz_m7_7_M6SMgfQ@mail.gmail.com>
+ <CALe3CaDW9vWcrukmWP+tj-ToSUh8p6==goL+B3aiGvxBDg79Ww@mail.gmail.com>
+ <ZxtZ5q5HH-gu0zeQ@kernel.org>
+ <CALe3CaA9cc8fagJwA5ux6-U8mKTK=DEGU1Mb3LeCeKPrUGS5ig@mail.gmail.com>
+ <20241029072039.39d850dc@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028-upstream_s32cc_gmac-v4-14-03618f10e3e2@oss.nxp.com>
+In-Reply-To: <20241029072039.39d850dc@canb.auug.org.au>
 
-On Mon, Oct 28, 2024 at 09:24:56PM +0100, Jan Petrous (OSS) wrote:
-> +	plat->init = s32_gmac_init;
-> +	plat->exit = s32_gmac_exit;
-> +	plat->fix_mac_speed = s32_fix_mac_speed;
-> +
-> +	plat->bsp_priv = gmac;
-> +
-> +	return stmmac_pltfr_probe(pdev, plat, &res);
-> +}
-> +
-> +static const struct of_device_id s32_dwmac_match[] = {
-> +	{ .compatible = "nxp,s32g2-dwmac" },
-> +	{ .compatible = "nxp,s32g3-dwmac" },
-> +	{ .compatible = "nxp,s32r-dwmac" },
+On Tue, Oct 29, 2024 at 07:20:39AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> On Sat, 26 Oct 2024 07:36:13 +0800 Su Hua <suhua.tanke@gmail.com> wrote:
+> >
+> > > > diff --git a/mm/mm_init.c b/mm/mm_init.c
+> > > > index 4ba5607aaf19..5a8114fb02ae 100644
+> > > > --- a/mm/mm_init.c
+> > > > +++ b/mm/mm_init.c
+> > > > @@ -723,6 +723,9 @@ static void __meminit init_reserved_page(unsigned
+> > > > long pfn, int nid)
+> > > >                         break;
+> > > >         }
+> > > >         __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
+> > > > +
+> > > > +       if (pageblock_aligned(pfn))
+> > > > +               set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVABLE);
+> > > >  }
+> > > >  #else
+> 
+> This has returned, so I applied by hand the above discussed fix.
 
-Why do you need three same entries?
+Sorry, I forgot to push :/
+ 
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Best regards,
-Krzysztof
 
+
+-- 
+Sincerely yours,
+Mike.
 
