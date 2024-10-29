@@ -1,103 +1,159 @@
-Return-Path: <linux-kernel+bounces-386770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D85939B47B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:04:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D33499B47BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:04:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8656628194B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E5251F235B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:04:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF14209674;
-	Tue, 29 Oct 2024 10:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635C2209F53;
+	Tue, 29 Oct 2024 10:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="IECSQ7VW"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NpSWsmM2"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5EA205AAA;
-	Tue, 29 Oct 2024 10:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB86205AA8;
+	Tue, 29 Oct 2024 10:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199296; cv=none; b=boXqBvJYorsUoxWwxa8nez3GPnOz1H/BmTMqCp0tZZHDRHpSXoHdx93XYaKTEn9Q8KREINmhUQvvyLq6uiQASaMBKJ2UlEhjQkNAhgB3b0SzDMEGwXXsUnETer1MmxvtHJEpaPdQgB4wf/bNaz4jQeJjlDeVO6yO/3IY0sADOJY=
+	t=1730199419; cv=none; b=Zuot9JLA/P9kNi2yNAfMIY2c5syUPv3iMBx39MWbKSBir//xSz+ym9hK28jwHxbK6h8APgUohE82kGeN0pP1aVN0hrdfNWXub0mfEgIaq59jKT8A+gIEmcw3n3X+kdRR3pErRE3DCYdxFW+28BeoBP2KvcG31np7r/UkECjXJ1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199296; c=relaxed/simple;
-	bh=gC+H7QLm15C/agBjYj1dg+mSd1RCF3UqqE+HwpGQ5uE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gs1EaC8rQV+LCZusaAzFRYbsoSXE1KK6qoN/nsArcejcBTeJk/Vu+lpO0AeNkmvZ0fdIB6hzF+JwpfHHTUMHQMKCV7Cwz+hFonmH+HigrlrQiLIWlxRivarBemInpwkBO6J/1ajaKV+VY+D46NXFAKbl9YTfVBJ1K9NXZXXS/8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=IECSQ7VW; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id B790940E01A5;
-	Tue, 29 Oct 2024 10:54:51 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id cM-l5HXxrpYq; Tue, 29 Oct 2024 10:54:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730199287; bh=byUhKSSIy0fCTI2TJ1gZ89qaz0/uVMw9sRcXB4nUZTw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IECSQ7VW+mO3nzDiIktCZC4N0NlxQ4yfP4jWsCjapb/H8AjKSVsYqqWDN6wrwGr3n
-	 KimryU5vhe7WNvvN7RfEgrYfxQtq2zyrNLJZMrSOznZyPEG0JMwsthtIPyKLuv7ek9
-	 9q9oAhlpe9bBpNUGTOHMYnYRy32vE9JMTXXOLgSiQP6vszpJBZHGWQl5gtL2kK/YBK
-	 /9iFqMGYqcHPMqz1T6nU/pzT6mp62sG48g2sSd00QgjVlTGNN/w+3QES2whagBW4Bl
-	 Jndqv7q3N7AnUwYfyuA1bojGnYQspzX1UZGgPwiaCiImbQ6hXTIK5rw5auqVdQhL/J
-	 6cDDBHJNW2l7I4hlphd9CCDT4y+XDmDUOCB6cSlFHh2uVskXNPKNYApLWF94AjQMWP
-	 gTKbfOjdhl9NhIiwz0/SdVUlnDNNxQDRjkn8Yp16WjAv580hfWOQnU4fHWLD3hhrAy
-	 zIxVu5jYEWjHYxDovetxWVP1BQxRoW0pP1hRNGum9pSy6fH2LRaaJDJ0v29MS90H0E
-	 nECohKYrSZfjZbQp9lvmFIaPseAL2KbmfGXwHewiFLhqwkTg1JwifzlYe14UhZv3T1
-	 fqIt3ZEKUqxMcf7Yn1b/7HzfX8Ojh9hXo/xeCzD+S8T9m9Iz9VKKwtBIpreSbUy5BJ
-	 EnuP6TpeiLvMyzLwb5+EKJkw=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3F54C40E0191;
-	Tue, 29 Oct 2024 10:54:29 +0000 (UTC)
-Date: Tue, 29 Oct 2024 11:54:24 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: "Kirill A. Shutemov" <kirill@shutemov.name>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
-	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
-	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
-	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
-	pbonzini@redhat.com, kvm@vger.kernel.org
-Subject: Re: [RFC 00/14] AMD: Add Secure AVIC Guest Support
-Message-ID: <20241029105424.GCZyC-4MMd52Hup1jK@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <vo2oavwp2p4gbenistkq2demqtorisv24zjq2jgotuw6i5i7oy@uq5k2wcg3j5z>
- <378fb9dd-dfb9-48aa-9304-18367a60af58@amd.com>
- <ramttkbttoyswpl7fkz25jwsxs4iuoqdogfllp57ltigmgb3vd@txz4azom56ej>
- <20241029094711.GAZyCvH-ZMHskXAwuv@fat_crate.local>
- <708594f6-78d3-4877-9a1e-b37c55ad0d39@amd.com>
+	s=arc-20240116; t=1730199419; c=relaxed/simple;
+	bh=nKFYf84lmyIPBMOZwLdUuDhuIcAFFSl+9WXqV5vPl9w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V2LKtuzd2D2N6k/rs8uJTx3aeZBdSi+gOiVTe8YLXygitySTRlhePfLcvFduLtVOysx/5GUMZF8VzfN+HRQhoMaiMBChmprZKKDIRJYiOriJnxec2c5k5vyZ91tZERM7N9v5hfzO7zJqD1PpzilkQbWj32aFRCNqu3SeydK8duU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NpSWsmM2; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TA0AdQ000705;
+	Tue, 29 Oct 2024 10:56:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jwU84DHKVHfvPRx7+IWqSw4kdTZmHxrUc0yGpnugKO8=; b=NpSWsmM2DIEneY8+
+	QDMtVuIyK52lyrPFfwyEUKVHJQsUpbnpFFU+ZB5rRDtbJwSFCwTv6CrIE6DnTJ2W
+	eHV+lvfUAT274xvPmNjB12+Wnv3eRZorfMWqU3/KU1SJfHX1L7SiRZyhUtX7sZpo
+	9tavQ1mW9IFbFtxeH6TaaAH/M33tq92vLx+M2g8/3INaD+NS2hWv13zIyDc6kaCQ
+	YitrLmuU6615UP6S8BrCXL4AKv0wR7bOIyq55Up+aIM6L6WwLwr+Agm7bcBwR5RQ
+	QWHUOytaDj4+8vAB/hkQDo7J7tp2dfKt0dccMfNNbKKu1XY1e/7AUqJ24V0sG9l3
+	/OrJAQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grt7032p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 10:56:33 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TAuWkd014076
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 10:56:32 GMT
+Received: from [10.216.3.156] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 03:56:26 -0700
+Message-ID: <a22a8de1-6f5a-4d43-9b5f-9c3af6bc55b6@quicinc.com>
+Date: Tue, 29 Oct 2024 16:25:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <708594f6-78d3-4877-9a1e-b37c55ad0d39@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1 1/3] dt-bindings: ufs: qcom: Document ice configuration
+ table
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: <martin.petersen@oracle.com>, <avri.altman@wdc.com>, <krzk+dt@kernel.org>,
+        <andersson@kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_nitirawa@quicinc.com>, <quic_narepall@quicinc.com>,
+        <James.Bottomley@HansenPartnership.com>, <bvanassche@acm.org>,
+        <linux-kernel@vger.kernel.org>, <agross@kernel.org>,
+        <konrad.dybcio@linaro.org>, <alim.akhtar@samsung.com>,
+        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>,
+        <linux-scsi@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
+ <20241005064307.18972-2-quic_rdwivedi@quicinc.com>
+ <172813824187.140695.2656302375333082019.robh@kernel.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <172813824187.140695.2656302375333082019.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: OwnLJmx1IGGFKiwHgByDSd43TVPYC8jW
+X-Proofpoint-GUID: OwnLJmx1IGGFKiwHgByDSd43TVPYC8jW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 bulkscore=0
+ adultscore=0 clxscore=1011 impostorscore=0 malwarescore=0
+ priorityscore=1501 phishscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290085
 
-On Tue, Oct 29, 2024 at 03:54:24PM +0530, Neeraj Upadhyay wrote:
-> Thanks! I plan to do something like below patch for the next version.
-> Verified Secure AVIC guest kexec with this.
 
-Sure, if you're adding a ->setup anyway, then it better have a counterpart.
 
-:-)
+On 05-Oct-24 7:54 PM, Rob Herring (Arm) wrote:
+> 
+> On Sat, 05 Oct 2024 12:13:05 +0530, Ram Kumar Dwivedi wrote:
+>> There are three algorithms supported for inline crypto engine:
+>> Floor based, Static and Instantaneous algorithm.
+>>
+>> Document the compatible used for the algorithm configurations
+>> for inline crypto engine found.
+>>
+>> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+>> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+>> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>> ---
+>>  .../devicetree/bindings/ufs/qcom,ufs.yaml     | 24 +++++++++++++++++++
+>>  1 file changed, 24 insertions(+)
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/ufs/qcom,ufs.example.dtb: alg3: status: 'oneOf' conditional failed, one must be fixed:
+> 	['ok'] is not of type 'object'
+> 	'ok' is not one of ['okay', 'disabled', 'reserved', 'fail', 'fail-needs-probe']
+> 	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+> 
 
--- 
-Regards/Gruss,
-    Boris.
+Hi Rob,
+	I have addressed the comment in the latest patch set. Now the dt binding is successfully compiling.
+Thanks,
+Ram.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241005064307.18972-2-quic_rdwivedi@quicinc.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> 
+
+
+
+
 
