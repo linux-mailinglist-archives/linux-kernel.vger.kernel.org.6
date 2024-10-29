@@ -1,187 +1,105 @@
-Return-Path: <linux-kernel+bounces-387858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 651C49B56F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:29:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20E8B9B56F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:29:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA86D1F23ED0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:29:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8721F20EFB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97EA820B208;
-	Tue, 29 Oct 2024 23:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 092E220B21B;
+	Tue, 29 Oct 2024 23:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VawJEmc3"
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="ernYnpst"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BE420C033;
-	Tue, 29 Oct 2024 23:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BAB20B21A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244527; cv=none; b=JYDnnS8HKSu0noIyQcJ3JRTm5okrFFRyPr/dF9zmN6EDUPAXbehz81uxJFAlGQtToofaLuIe7vROItdHPiZS0ibnOopD/s0PzQMOvCKdyP4br4/89/iZTtAMRadOgRfGdnStF5fJSIs92syI98JxgsYPR0OPwyqM8lnGffnB2O0=
+	t=1730244567; cv=none; b=nAcHiMbNPABm5C/nhvK2UcWdnft6srTXPYtoM/6jeicFKRknC+cLwCwvLTavqFV4vEXaC1CEJDREFvSob0Ido5C1kTgVszO80jXArlFL0bFpkcLQklrzYMt3Q2LAX9TDimvV3Q1rhrBKc/Gp+OvL5Vl+5WNekRHyO6FmRWiJDbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244527; c=relaxed/simple;
-	bh=x1A0MuzRBLFkY9yx6etsSuoRRwyr/Apv3rHPG6eihpA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QylwcB7AYBhD4WFBbTQFKX9quxdf8prZ4YuZ7D+vkQaDn7ktb7IDdMath0C0qRDHiGVsZuLuU7/nkg/gj1uCNLJa4T/ylzVRLUgiycS9Lpo7cu7/BtQ+sXbXX78oXEAxcePHBIAFeu8gkyi414gZJLPmqIgVxTHknds9pq7Om8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VawJEmc3; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e390d9ad1dso50259297b3.3;
-        Tue, 29 Oct 2024 16:28:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730244523; x=1730849323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ssX6VRfuzRAJJQn6zP8pzX55LiD8vmSBzLf25XH3KYE=;
-        b=VawJEmc3bs6exiEANIma66x68xGbJmIq3NhAJyrGM8xZC8feYOPeT8IxHLL1C7xv0D
-         1U2VwWQiU4/VH8olrxa9sdVaVMdtFIfc+nVsWo0XGuZBGOECiixvl4PYdvReT/uRGEPw
-         odiwszRdK4iJKbmiXcyXMv+Zd1YAmm9VVhSU9MtIVyaQZvYbHsqPe5ibyf/SwIkDdSv/
-         6y5cjH4j8kZJbuHZ++yjkz0X7N/FkLnxhwv08wI0vAOa7ACH9GuBbBwZYFBnRXXJDNPC
-         AzyS1cFamtAcD89h+8uRL+iV6+y6B03Q4CvNvUBmWQ7sI3D9FT+qL2HSax2gS2htpRIn
-         uGBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730244523; x=1730849323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ssX6VRfuzRAJJQn6zP8pzX55LiD8vmSBzLf25XH3KYE=;
-        b=eTbL0HGiY0qkkF6g/ilTW/12tzK7Op/+ujTaKO3ngqSwIwNHb28ww7HckIJZBVsBLI
-         aXLpgyJgfz05NFKSA+h9XUIyII/V7ZRS8u4u0YpYfKkVJDdsobPFVu6CXZ6N6hMZMaYD
-         BR6UmMoERF24+UQ0MsJ+qxZhV9IbmwxWxwnN0En693tjeOKbdlyuVogzarQbWnO2a3eL
-         mvf9ee882KTlwCTP4zGJYQqUZLP/zsTOnYr0EEdJt0XAtos4PSv+WkmrO7p+rgD70R8H
-         Iepwdx3aUxlq7DwvOQvI3uaw0PuY+HiaE5kpY72NK6fCz7p3svnFte4d9swCA1ai6PVx
-         oCzA==
-X-Forwarded-Encrypted: i=1; AJvYcCXGUbKpk+EdbgzfmdiwyAg5O1v5zozuYIdLEsjaqWd461kCK+ySDzi1BdFvySol7O5KeH4V3wBx/nmG084=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFOSwczqBvxq5MIOINhFMLFLIM28XMVPV7lZtYo9EAMvJndQMM
-	/w638ffb0BrwnlQc/HPSqCeqegFbbV+vmy3Xpit0A7waNOfxm83yesCQBlwer9HKlv+FhooOgn/
-	ryM27cNBoYlwp0u+3RZVLfdNmRMGAzQ==
-X-Google-Smtp-Source: AGHT+IFPVmycCJb8FCsCJlZrg3PT+/Ew6Qgj3SYxDOP0nwcLYBBKE3yjCRFbY98zAQZNglFAoLpP+GyheiAxw9QeFvw=
-X-Received: by 2002:a05:690c:6410:b0:6e5:bf26:578 with SMTP id
- 00721157ae682-6e9d89620a9mr147408327b3.17.1730244522983; Tue, 29 Oct 2024
- 16:28:42 -0700 (PDT)
+	s=arc-20240116; t=1730244567; c=relaxed/simple;
+	bh=l+CHx6Zt5Gtjhle42s10fH2cZjd4sQSWMIXNVifI/E4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=aPrcR6EqNyGx4U9nXa3sjtW1PNGToLMl/Ss/LDW+myFGqZTtf/2VMGBo6W4Wz/QOiqlD3tU6vLP8QV9pxcWYGvofSEy9s+skvp09TYOMpr2KnIYBs7WzGJfS2UON4izEeIytQUz618imnwaLKhNjnkM7PsfphBx9Cuw6rrG3JH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=ernYnpst; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1730244554;
+	bh=KNeYgmMAGPIyHDJl3QbZDwIGpEYDsMZZ+DjYHgkmPyo=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ernYnpstgOY9FLJSuqniQzAK5V9UK8eyHKkWmNM4PA0t1dXeQPGjlTfwrDZyFezT6
+	 iWLk7Uzn33TOfEKmxjdQLqISv24MCjpXIGy2CpU1pth39D9hnEAzGOR1gAdsl6rP/K
+	 zfVpxz5QZOskQls+r7skNA9V5l4p2Gv5wBp0mvqWANGsMluS/LAP5XojKbgbXF4aOb
+	 Q3amzWjyJMHnLbjz0bxLDWaNzBwtFXJifVzYyo8thrdKZoeWAumsu4z0RGhHObz615
+	 M+KLPFUVKK99SbzPqtWEQ96785m4MMf33J465wGEiVwzPkpht0lGYnXXrop/PAJYlC
+	 BlDqr1AK0lwvQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdRKc4hCzz4wbR;
+	Wed, 30 Oct 2024 10:29:08 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: "Nysal Jan K.A." <nysal@linux.ibm.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>
+Cc: Segher Boessenkool <segher@kernel.crashing.org>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, Peter Zijlstra <peterz@infradead.org>,
+ linuxppc-dev@lists.ozlabs.org, "Nysal Jan K.A." <nysal@linux.ibm.com>,
+ Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
+ <justinstitt@google.com>, Vlastimil Babka <vbabka@suse.cz>, "Liam R.
+ Howlett" <Liam.Howlett@Oracle.com>, Mark Brown <broonie@kernel.org>,
+ Michal Hocko <mhocko@suse.com>, Kent Overstreet
+ <kent.overstreet@linux.dev>, Rick Edgecombe <rick.p.edgecombe@intel.com>,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] sched/membarrier: Fix redundant load of
+ membarrier_state
+In-Reply-To: <20241029055133.121418-1-nysal@linux.ibm.com>
+References: <20241007053936.833392-1-nysal@linux.ibm.com>
+ <20241029055133.121418-1-nysal@linux.ibm.com>
+Date: Wed, 30 Oct 2024 10:29:09 +1100
+Message-ID: <87ed3yebei.fsf@mpe.ellerman.id.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029232721.8442-1-rosenp@gmail.com>
-In-Reply-To: <20241029232721.8442-1-rosenp@gmail.com>
-From: Rosen Penev <rosenp@gmail.com>
-Date: Tue, 29 Oct 2024 16:28:31 -0700
-Message-ID: <CAKxU2N_-mck2uwh32Dsy7jKPJ2W5hWJCdNqF1CfFX86kT87KGw@mail.gmail.com>
-Subject: Re: [PATCH] net: fjes: use ethtool string helpers
-To: netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Oct 29, 2024 at 4:27=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wrot=
-e:
+"Nysal Jan K.A." <nysal@linux.ibm.com> writes:
+> On architectures where ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+> is not selected, sync_core_before_usermode() is a no-op.
+> In membarrier_mm_sync_core_before_usermode() the compiler does not
+> eliminate redundant branches and load of mm->membarrier_state
+> for this case as the atomic_read() cannot be optimized away.
 >
-> The latter is the preferred way to copy ethtool strings.
+> Here's a snippet of the code generated for finish_task_switch() on powerpc
+> prior to this change:
 >
-> Avoids manually incrementing the pointer.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Simon Horman <horms@kernel.org>
-> ---
->  v2: remove p variable and reduce indentation
-agh, forgot to put net-next and v2.
->  drivers/net/fjes/fjes_ethtool.c | 64 ++++++++++++---------------------
->  1 file changed, 23 insertions(+), 41 deletions(-)
->
-> diff --git a/drivers/net/fjes/fjes_ethtool.c b/drivers/net/fjes/fjes_etht=
-ool.c
-> index 19c99529566b..70c53f33d857 100644
-> --- a/drivers/net/fjes/fjes_ethtool.c
-> +++ b/drivers/net/fjes/fjes_ethtool.c
-> @@ -87,49 +87,31 @@ static void fjes_get_strings(struct net_device *netde=
-v,
->  {
->         struct fjes_adapter *adapter =3D netdev_priv(netdev);
->         struct fjes_hw *hw =3D &adapter->hw;
-> -       u8 *p =3D data;
->         int i;
->
-> -       switch (stringset) {
-> -       case ETH_SS_STATS:
-> -               for (i =3D 0; i < ARRAY_SIZE(fjes_gstrings_stats); i++) {
-> -                       memcpy(p, fjes_gstrings_stats[i].stat_string,
-> -                              ETH_GSTRING_LEN);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -               }
-> -               for (i =3D 0; i < hw->max_epid; i++) {
-> -                       if (i =3D=3D hw->my_epid)
-> -                               continue;
-> -                       sprintf(p, "ep%u_com_regist_buf_exec", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_com_unregist_buf_exec", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_send_intr_rx", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_send_intr_unshare", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_send_intr_zoneupdate", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_recv_intr_rx", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_recv_intr_unshare", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_recv_intr_stop", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_recv_intr_zoneupdate", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_tx_buffer_full", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_tx_dropped_not_shared", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_tx_dropped_ver_mismatch", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_tx_dropped_buf_size_mismatch", i=
-);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -                       sprintf(p, "ep%u_tx_dropped_vlanid_mismatch", i);
-> -                       p +=3D ETH_GSTRING_LEN;
-> -               }
-> -               break;
-> +       if (stringset !=3D ETH_SS_STATS)
-> +               return;
-> +
-> +       for (i =3D 0; i < ARRAY_SIZE(fjes_gstrings_stats); i++)
-> +               ethtool_puts(&data, fjes_gstrings_stats[i].stat_string);
-> +
-> +       for (i =3D 0; i < hw->max_epid; i++) {
-> +               if (i =3D=3D hw->my_epid)
-> +                       continue;
-> +               ethtool_sprintf(&data, "ep%u_com_regist_buf_exec", i);
-> +               ethtool_sprintf(&data, "ep%u_com_unregist_buf_exec", i);
-> +               ethtool_sprintf(&data, "ep%u_send_intr_rx", i);
-> +               ethtool_sprintf(&data, "ep%u_send_intr_unshare", i);
-> +               ethtool_sprintf(&data, "ep%u_send_intr_zoneupdate", i);
-> +               ethtool_sprintf(&data, "ep%u_recv_intr_rx", i);
-> +               ethtool_sprintf(&data, "ep%u_recv_intr_unshare", i);
-> +               ethtool_sprintf(&data, "ep%u_recv_intr_stop", i);
-> +               ethtool_sprintf(&data, "ep%u_recv_intr_zoneupdate", i);
-> +               ethtool_sprintf(&data, "ep%u_tx_buffer_full", i);
-> +               ethtool_sprintf(&data, "ep%u_tx_dropped_not_shared", i);
-> +               ethtool_sprintf(&data, "ep%u_tx_dropped_ver_mismatch", i)=
-;
-> +               ethtool_sprintf(&data, "ep%u_tx_dropped_buf_size_mismatch=
-", i);
-> +               ethtool_sprintf(&data, "ep%u_tx_dropped_vlanid_mismatch",=
- i);
->         }
->  }
->
-> --
-> 2.47.0
->
+> 1b786c:   ld      r26,2624(r30)   # mm = rq->prev_mm;
+> .......
+> 1b78c8:   cmpdi   cr7,r26,0
+> 1b78cc:   beq     cr7,1b78e4 <finish_task_switch+0xd0>
+> 1b78d0:   ld      r9,2312(r13)    # current
+> 1b78d4:   ld      r9,1888(r9)     # current->mm
+> 1b78d8:   cmpd    cr7,r26,r9
+> 1b78dc:   beq     cr7,1b7a70 <finish_task_switch+0x25c>
+> 1b78e0:   hwsync
+> 1b78e4:   cmplwi  cr7,r27,128
+> .......
+> 1b7a70:   lwz     r9,176(r26)     # atomic_read(&mm->membarrier_state)
+> 1b7a74:   b       1b78e0 <finish_task_switch+0xcc>
+
+Reviewed-by: Michael Ellerman <mpe@ellerman.id.au>
+
+cheers
 
