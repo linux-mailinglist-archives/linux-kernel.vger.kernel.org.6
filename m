@@ -1,401 +1,256 @@
-Return-Path: <linux-kernel+bounces-386564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E0619B4522
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:59:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25BD9B4519
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:58:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90368B21612
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:59:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F988283BB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C78B204922;
-	Tue, 29 Oct 2024 08:58:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60F01204030;
+	Tue, 29 Oct 2024 08:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="uIfGsr1x"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="WXMK1/Nr";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="yaYHn+Wi"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C1822040B4;
-	Tue, 29 Oct 2024 08:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730192332; cv=none; b=jFmfE2hAtj6/lNHsQs1EXRJvT52YnneDe5+VdbgmuZ3OXQ3umV35PPxLtZp6SrhBhROrmy0rVlSjvYjHNVNq6afp6wDabpG8nobM8l04zIbvdUv/imL/hjM17qYyX5hv9pTNg1f+xefXMPemm/5ag+EosOs+BIjJ6mlXsxscyIE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730192332; c=relaxed/simple;
-	bh=Fx+ZSitJDsRhbmKyNtCyWgmJ9SSe+CJOJv/iwxjeeLs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=snFzHg2NWt7uOcaDyCDWKzTWhvbauzeLZrLGTJkQoKqSrCo+PnQN/7uPb2nxoCVgSL9VQkOYqTLE7u2xmjR2a3w5EWyVRTcKUIV8+wvR+CSRW3D/y2nMgxZ5tEPWtTExHPpAydiSkHeuPR7fYIUzqyvCvNJjpAD4l2EqE5LzghA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=uIfGsr1x; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from mail.ideasonboard.com (unknown [IPv6:2401:4900:883a:9301:2bb5:b494:2d46:ba69])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 581D94D4;
-	Tue, 29 Oct 2024 09:58:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1730192326;
-	bh=Fx+ZSitJDsRhbmKyNtCyWgmJ9SSe+CJOJv/iwxjeeLs=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=uIfGsr1xBV5EPygzaYWPkejHx0MzaZdbvqsUKTnHdz/9SfIy7HhG9TAO8zxErGn3n
-	 Nz2znrYg+40uCcg20A/A4lXFJqBXKW4x+Uy4jeWh2A2/5L/PA0k+9Fw2+SZiFLUU0M
-	 UvX3KGB+KsqAG9O9fPcWRJrsKrdOmRsCpwGH5q8k=
-From: Jai Luthra <jai.luthra@ideasonboard.com>
-Date: Tue, 29 Oct 2024 14:27:37 +0530
-Subject: [PATCH 3/3] media: i2c: imx219: Scale the pixel rate for analog
- binning
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC3C204009;
+	Tue, 29 Oct 2024 08:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730192290; cv=fail; b=t8OwQPePaKMFousUeBXqkNlWFk6nvqCLCnI+FBPXMXewhRbr4+mjq6wHyVylzRirLTcKDM7TNG30KsqnzwkPCCChVvV4ewsfyVSb4VUoH4lDm9ubAjBqIpf9oyIAkpk1ejNWk0h0EhB4SNDyM4Gu+VhzUk8ETp150VB9rqihtzI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730192290; c=relaxed/simple;
+	bh=fF9J3kCG8NKimywXZ+gu8ItsCXEfpySNgyBHa9REEw0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UFQVnxHWMGuzBQRz7JgNdvdE9ut39Gbs1G6zcAjND04BxsHxgHjuyrch4QOdZl6nBnZKt4ZVBh2qPTnx1bpmNj8uJ2L8ciNzhLrdDplagf85NLPbEsi9MxB3BCk+TPMQ2XyOw5IHfgb9NZ43JOzbqZEPIMJigNN1rJyG4jJ+snk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=WXMK1/Nr; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=yaYHn+Wi; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T7tZkq029741;
+	Tue, 29 Oct 2024 08:57:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=DkZ+9hayh6unJKqDpL7vcm5EcC2wiBh+axQcVbNaCfo=; b=
+	WXMK1/Nr1Af5YlyVpgk4OF8PQw/6nDkoy7itCdTt9peoEIDQ6mtHKEbBzWN5uwIg
+	CKoCg9NzSqLS15a+lqumAIY52tHdp4d309VvXg9kBjzv13usWGODOccGDb9hvJYu
+	mSXqRJ7fErRkKXZkBgeEkkVKLgbjnw92FWUS1lQFbRNBCoCQJ/+4jkpFld57u/ID
+	tH/x+jGwx0t0SsEvB3hyJsDytMY6hPKCUfAgkABtPsNq2Ltohh7H5vQuqcqnFNEC
+	0sd9AfHsNOMAKMCIQe5vH/Ie45e1vjMux8EWTDFR+LkSqI+4ylDOcgXvgj746yCA
+	9qn7Jig9kbfU04/XnaK0dw==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grgmcvrg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 08:57:57 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49T8bFje008666;
+	Tue, 29 Oct 2024 08:57:56 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hne9bwnm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 08:57:56 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lyr7+Ab4AW2K4La5KXkXStsKMbURfveFdURCqg1jpleueoY6d7JBOIDPChPv8OCuRi4oSt4jXEBA0CfAL1OHoe/JWewLx2xe84HdTMcXOXtExOT9fA0GosEVSFoDVFHyw7ouU8Pw7ha5Prf/3SiuwDGsFxgW6oqOSncwJ0yuBzHsjDCiBaxoBvl/70sIggtJiWZOwaSFl1PLn59uctH5rlvPsNXFs6VH3KwE/pMkauCn642lH1yEpX2W3tPiCbeYbDpkUs8EquElNDjOnuyFHtTqyc9LX0WR9FNdbx0dWI/dx/fhGb4r3aSfIVwLfTDDi/z2CUahpv3EIA4Oyv+ahA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=DkZ+9hayh6unJKqDpL7vcm5EcC2wiBh+axQcVbNaCfo=;
+ b=V1u3MunybLwkfJbSDgFWmiiLfl34epaCOQ6iZtG5aXTpG0Hv/IldT5s13XyJCYlcheB+WUlNbXEjKrdIT33pLGf/S250ChKJm4Qc6LZaMhrBOcV3nUEgdnk5NP1SheGdMBukDvVH7EmeTQhfL1YWwknN9LRhITcWL00fbeu0MPh+wG/lMXt3K2P8l4lTcobsV2swqFM/EBv/fdFz5cK2oXDVE1Yw9h++TdHVMLen2vav2Yq8Y0FpbWiZNwhrg2uAhL9VAfjGy2IcCBRc5TssXAb7zz4k6ycOH9FjBtz/zJ/UurzABPY+LiBefiN31DknnamXcF9UzNEdu2j1QO6YYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DkZ+9hayh6unJKqDpL7vcm5EcC2wiBh+axQcVbNaCfo=;
+ b=yaYHn+WiYGT+iwtowoJqLLYMJgsTdzCrLVOsiiFOmrRXDNvRfbcP7ddESXTkPlbGulLfsxG2Sky7e0VDnGMW/MPkB9StXHFXb6aKuyw8Lt6WZbYlx6JwqLn3q7JV7WVAKaXRXnnMU8UYKrPKX2hNvuROv3EtNW9kU+PLZvkcoeY=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DM4PR10MB5918.namprd10.prod.outlook.com (2603:10b6:8:ab::6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8093.25; Tue, 29 Oct 2024 08:57:53 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
+ 08:57:53 +0000
+Message-ID: <fff46380-1e01-473d-860e-19d5a02a7d1c@oracle.com>
+Date: Tue, 29 Oct 2024 08:57:50 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] ext4: Do not fallback to buffered-io for DIO
+ atomic write
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-ext4@vger.kernel.org
+Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Christoph Hellwig
+ <hch@infradead.org>,
+        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
+        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <cover.1729944406.git.ritesh.list@gmail.com>
+ <80da397c359adaf54b87999eff6a63b331cfbcfc.1729944406.git.ritesh.list@gmail.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <80da397c359adaf54b87999eff6a63b331cfbcfc.1729944406.git.ritesh.list@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0604.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:314::13) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-imx219_fixes-v1-3-b45dc3658b4e@ideasonboard.com>
-References: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
-In-Reply-To: <20241029-imx219_fixes-v1-0-b45dc3658b4e@ideasonboard.com>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jai Luthra <jai.luthra@ideasonboard.com>, 
- Naushir Patuck <naush@raspberrypi.com>, Vinay Varma <varmavinaym@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9544;
- i=jai.luthra@ideasonboard.com; h=from:subject:message-id;
- bh=Fx+ZSitJDsRhbmKyNtCyWgmJ9SSe+CJOJv/iwxjeeLs=;
- b=owEBbQKS/ZANAwAIAUPekfkkmnFFAcsmYgBnIKOvxiDSE+4uk6EMl1/Qu8IrRbIUZlQ5gdoUK
- FdJnji8XouJAjMEAAEIAB0WIQRN4NgY5dV16NRar8VD3pH5JJpxRQUCZyCjrwAKCRBD3pH5JJpx
- Rc4gEAC0Pth/HTrLWl3GddonDUmNiN5V6xm4gEZxU5fMIw+jYtCeJfK/JypLwml8hJqOjN/Dxcd
- un6X+Z6VhMIGPHr9mihw7dHGP49wbh+q0GqlUjU4lMuHzE2rv1UUaUMGMXwGGQiEvirxFJUS7/B
- AZAudxbNF8NodhVsGsa+XcsFFMvAC4RYJp4B7u/9FXvYEpHy0Hz14p28LH7q7mQYicx4Eai9bwK
- Pc68rt3TLGGCuM0QxFMcQSr2bSiMWeXGzviR19WlMmeI9iaYh75a82j0sOI+1mCyWM+iiAGceva
- /MDmfK24a+OkVeAQjVZWw4tbpenPNnGBqgoaziGuyDasymF0SJzruf1RAPmp+sSOBqa8llTORGX
- XATRYDaa4HhIXFXtGhqFnp6AW8CnhJu/oenHtrS+DeJI7SToVWbBpQj9SH2MKCbMEtS1k75ccVc
- sgLJ824e4JCBL8tzdgzudI1SsZXahd6eVXbtYgPuWgOSJgUFM6EBy62fr9P8hoWHElQ+7pwlsIC
- bzeU7n3SCr50y9ooRN9nEaNEaMY1USCs9hKdaSjFwQVUo36a/gJTOF6kTWMYmYs8HZT+00q5TSg
- JjO2/XN3uNJa2ek3s3kjmrwJEibwSZkb49Nva2Bj2FM91syYiTroVwAl41hj6pl2Euld8d19+Dk
- yg4hc45lPH47dCA==
-X-Developer-Key: i=jai.luthra@ideasonboard.com; a=openpgp;
- fpr=4DE0D818E5D575E8D45AAFC543DE91F9249A7145
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DM4PR10MB5918:EE_
+X-MS-Office365-Filtering-Correlation-Id: acd7a4f4-0baa-4b01-1707-08dcf7f7c657
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MUxQSWM2ZG1XRVR5bnZuNlVVdEIxZDUwVFloK1dWUEpjQ0ttMmZVbUhSSUxE?=
+ =?utf-8?B?Yi9aVk5WaEtONWhxRThoa2pLdnA5Snk4dXNiVENsbzA4MXcwckVzQ0JmMnFx?=
+ =?utf-8?B?UVo2Mk81VlFHVmI2Nncwc0ZOQmczWU1HMnVTbS81ZkRhMVQ3dnhCVG9yeGNa?=
+ =?utf-8?B?KzdkU0lLUzJqV0k4SGxoWDhYRWh4Njh4ckNFeGRjNGx6TkpMc2lTTFErMFhY?=
+ =?utf-8?B?R05naThCZmJWeEFNYkJBNU1tL2dZekxIelBTbTN4NnFySWxReXFBWXA2VUxp?=
+ =?utf-8?B?OVNjVVpvSmxPSzZKWHgwM1AxQ3lDSE5rTktHQ2F3SDJZQlJjcVBHSWdQNlB4?=
+ =?utf-8?B?cVpCOVpReFU1cVBNWkg4RnhPZDViZzRQelJJTDhRblM3b2trOEsvS1lWL1dN?=
+ =?utf-8?B?U01JTk1OekFtNzJvbFRpb3NYOVBjNlNoOTZwVlpYZ0dweURrcE5FYk5oT1dK?=
+ =?utf-8?B?WGNCaHA3Vms1Y0RzNDhTQVFHTEtWRkwxUlp2WXdPVytDSU40Y0l0elQxLzdu?=
+ =?utf-8?B?Q0Z2WC8vZ2EybitMdzBIelJORmJCais1VDQ2OG8vMVVBQkdoZ3B2bGZDKzdv?=
+ =?utf-8?B?WThqT09CT2xOWXpPZ0hhZU9oM3BhUE5zSlY3S24xbG5BRWY5WGJveUtkSERM?=
+ =?utf-8?B?Z1dTRWlwVGJ6NXVuMXByOTJZTS85dUczcytqYjNqUTFoS2l0VGdzYWJuTTAz?=
+ =?utf-8?B?V01pQ0JGUnZXQlRXeTliWnlZa0JadzYyN2RzZGdMQW5pZHVweXFMM1loamdt?=
+ =?utf-8?B?bFRTUHY1bmRLWDR6RGdEQ211QWRvZC9RSHljTTIyamhzb0ZMMHlMSnVyMTFz?=
+ =?utf-8?B?LzlaeDNZYTg5c1lYSWhvODc2Y00vNG5teFp4dEgxNno2WWNzaUJDOGJ3dldt?=
+ =?utf-8?B?MVdwNUtGcHI1aC94ZmU4V2FFUWRnRmk2V2psUE9UNFFTdS82RDg2WWY5eitN?=
+ =?utf-8?B?TXZhUi9iaHRYTnNYaVNaT1M2RnpDeldWZWNVTkp5MnhHZWdjalV1bjd3Uml4?=
+ =?utf-8?B?Qm01akVuZkZIVEY1bmFiQ3IyQXh5TEYwRHhOQldoMFFUT2h5cHdZZUduaEF3?=
+ =?utf-8?B?cWZvRTIxQlF1ck93ay9sNFlmSUdWWkVDeU90alcwMTJHZm9LMkNKSTlHc0Zl?=
+ =?utf-8?B?N1hRbkRQMzd2RTJITjBhTHlJanJUL3lVM1NrN09NTHdGOVU1ZlRGbTBVRVFv?=
+ =?utf-8?B?cVJwbktDazFKdUpZUXl1NTdicmt1UjlEM2pvQlhETDBFbnI4ZHk5a28xZDRH?=
+ =?utf-8?B?empjM2NiM0RZTFAxd0lmMHpqVGZNQTFwQzZ0WDNlK0JOZ1hGNXM1L21MNnFa?=
+ =?utf-8?B?YWQ1UE41bFNQQ3pTVC82azZPMERnTm85TnA5ejNHYmVlM1dQYVkveHZ2U1lZ?=
+ =?utf-8?B?QTA0Mnlkd05tRWdRWjZoNFIwUXQvbDBNSmpIMjdpTlQxd2xnRlpVSlJQRTF0?=
+ =?utf-8?B?QnprZkxqeEhaS3pDVDRxc2REbm1PTk9LeWE3bEZrV0c1KzVwNkdOR2c3NFdD?=
+ =?utf-8?B?YXpNei82YzVEbnFHdFk1a3BwVkpqTHV2TTN5cWIxQitBQ1lZeGFyLzA1ZHZo?=
+ =?utf-8?B?RkRVSi9teDNoK2NxOXhmZzFzSmtxdzNHbDJpS3dvUWsrY3N0anpGM3pkTEJp?=
+ =?utf-8?B?eVpSUmwyMlNRb0FzbittTll2Um84OXBPWnJ6TmtmV05QR2ZidUFZdVFWajhL?=
+ =?utf-8?B?aDYxSXMzZzhGVDIwOHV2SVVtcGFZeWZ2bGh5Tys5eWdOeFJrMXBUQzdKeE5w?=
+ =?utf-8?Q?zE1UpZ49YV8Jj27jiM9n9IqTWw9Owa9GJBHVUwS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Q3JmNWI2Q3Z3aE9LZVpnRjNzOGcwQk5IVCtNSVlXLzc0YlBTaWxyMThwMkc0?=
+ =?utf-8?B?ZFNxdS9LUVpIRlQ5ZkRyUm96VUE2R2M2bFk0ZnRTVkoweWRDRkV2UU50WDgr?=
+ =?utf-8?B?eUhrTWJCK2dmaitCWWJWZ0o1RVZJaHM2MENYeVJkOGdiVDZRZkxBUUNxTDdG?=
+ =?utf-8?B?ZVJ4NWswVldxZDhDNDBZbnhuUTJZaDhRb0dUajFmaGV6TUhmRTJpRkJRV3Nj?=
+ =?utf-8?B?eDlIRnA0ZmFOVnoyU0RldUZ0NC92a0ZMZUtNZksxcUcwbjFNYksvR1UyUW1W?=
+ =?utf-8?B?Mm5hTkFNT1B0SlcvRzZseU05STg3S2l2T2JaRnVYN0hnWnQyZWxIektFUmtB?=
+ =?utf-8?B?a3NkODMzQkZPaC9rK0s2QjhmUGtkbUEvemdjTTExT0lNWUppMmN5SXZPanFx?=
+ =?utf-8?B?MHdnWS9kcXhsTVV6dXoxcmJLOGp6Y2ZCc3E4Vm44eGZRS0Nwa0Q2Z3hSOW53?=
+ =?utf-8?B?ZURvVmlLY3VWMlliVHp2V3BzZDFQTzN4T3cyb0kxUVRBV3hzb3IrWFFLZmp3?=
+ =?utf-8?B?TW9kSWZDWENJSEVTRHBiUzMwTlJPeGU4d1hVbjM4c1ovNE1rcVM1RWpTcTd5?=
+ =?utf-8?B?bk5kd3k1akpOTm9BeHkvMFpuK1NRcE9xa2dxSnNxaFg2UTZjOUtYVkJ4Nmdt?=
+ =?utf-8?B?ZFg2dGVYVlduc1pkN2ZLaU1vVEk1ZVVIYzFhSngvMTJ2azVrUUhNVnJ1M3hn?=
+ =?utf-8?B?Z3lLUmhKNFdiR1FMVHNtMnNvWUszcC96RXNKdXR0c2tOVWdZQ0lvT3ExKzdX?=
+ =?utf-8?B?QTNsNWRROVlGSWVEN1lRakxraGRSeVV1aEcvNCtMeEE2aElxQWY3MENvQUpY?=
+ =?utf-8?B?czJYWHNzaU5waVBGazg1K3cyWE9Gc2xNSFpZTDZmTUVVRVdXSFBhcG43QUlk?=
+ =?utf-8?B?N1JMUkRBTWgraUVNRFhJZUJVbjVnZ0I1ai9iZFpZenRWMnNBU0lMeTNJOUJh?=
+ =?utf-8?B?TEdYZ3dBV0hZWnEzcjZlY01vcDdtN1FUbW5ac3NoenJhK0ZsaVRYR1R3clZW?=
+ =?utf-8?B?eFZlOFBNbmdiV0xBV2c1bjlYVHpPWVFPaC83TC9jWGlHbjNhL1ZxNjJDTUJF?=
+ =?utf-8?B?ajZyeWJzUjJIdksyS3NxeUlhUGNZVnFKTm81RU1hZWJvUUxYN1FSemo2Q0pP?=
+ =?utf-8?B?anlnaGIyb2dkRUNSL3lnT2J2STRtekFERHNvMzliNGtlcVpRbTFJL2ZrR3Bq?=
+ =?utf-8?B?V0Z1SngzSDBxcWY2Z1BLSzEzamhKQ2RiMitBc05BVXl5ajNpWnZzdjV5OEJK?=
+ =?utf-8?B?WEZ6TWZOK2NWaTVLeHZkL2pnWGxGMU8zVDFyclVlVDZ6MUhtTmpwZFFiVGF5?=
+ =?utf-8?B?VWR6TzNuR2ZWU1lIN3lCaXRpRTdaT0FkY3BIU0FxeWRucnA1allibHp4bW5S?=
+ =?utf-8?B?S1lYYU00MFBGbDZTQjRzNWMyeUNXWks5TllhN0lCdloxZ2dweTJRclFUVkdm?=
+ =?utf-8?B?Smh5U2xBWTZINlpjSlVVTTNwem9iVEoxbnltSWpBYTQ4THFZNDM3K1hIOU5G?=
+ =?utf-8?B?WTR5T0UzcWdJYlROQWhYSkVIRXBnNzJNaVVGMldReUpuZkpBQTc5L1cyRzdR?=
+ =?utf-8?B?SUw3dnl0dkswbUdMelFiYkN1MGZHMjNxZDdyWTk5TkFjYnJmZkZBR1JHZ3Zu?=
+ =?utf-8?B?ZzFaUFlRRFF2OFRtVUhvSUJyb2FOd2MyUE9rWmdXMFhneVhOa0ZDL25iekEv?=
+ =?utf-8?B?SWxjcU5NUTlqRTNESDFFWmxVRTV0MDQrWnMvSVhJTlkvODNjUXE1QWtXOEE4?=
+ =?utf-8?B?alk5YW5jOStwaW9vRnluVHVtYWUzcnV0blhtSklaSzV5T1dFOGNadDBqaDgr?=
+ =?utf-8?B?WDlNNDdPTWJlcFFzby9PRGVITDh5TDRrL2F4SGp2Uy9NdW13TUVJWnRmUXh3?=
+ =?utf-8?B?RWFoUkVZOVVjL1pIY3hsTGI1NWJFMUxUZHV1NkJuS2tFMzFtVERKTFNsMFcw?=
+ =?utf-8?B?ZmJIZWxkRHVCQm5sMW1hRnUrQm9YUE1FejliRE13Y0UyZlp1RFNPL2VlakI0?=
+ =?utf-8?B?T2NXQ013YWFxSUVVdUJDeDdKRmRGQ1pWcUtMcjJySjRDTjVPOHAvcmIwQllS?=
+ =?utf-8?B?K1lMMlBpNGtwSTZ3S0FLSHV5SVlXRkNEc1U3L0pjemZlZUl0bmo4VjFGbDQ4?=
+ =?utf-8?B?Szl5eGpPc2RSRFg0Njd4amdXUlhIb2JBcUxkdXZyV0tWZ0FkZUFzME9jdktB?=
+ =?utf-8?B?VUE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	X7ubNrFGpmTvdYLGDVjt1gn8zLUM4N6+5roVWH8m/Oj+aJe4YWKJYy3tQKLCo2ak9rPAvoxBfzy86wmHCsCiNYi98uMAzAhsP0Ctm0oZBmqDisD+0adSQHjTrHJSgZ5Q6iKsLnxR8FbQw4biK5Gd02g46PUcm7CNJhU31WGJpRnhkSFsmfo/41Z6AdXCm3ygOG91spjdHOvHvAv4Kefn3PUnNiiMYnfqG8u2TbwBAF/Z8dZH1UvU3rezoSfX6dZWMl+MAtx5UBoCoaKmuFZOhuvLH3La11UeegKDxOPkh1IEHFKh40qCJ+i+Z0ALCXpF4OADiiCDqyl0RhiFgHzc9GePt3x1nkqz1zEGP/03fF12ttWhx0nFz3axQbUQtVZy0QQnBeMDLE8bm3y8xiwB9Z6Ft9LP9VhW3FvShODyQ+Jlw5CPceIM+ruX1rbEc2aqGBz+jBRZ6kTZbolu27IFI5x5p1o1hWgrpp3U48oWutK+2RkLmp+oChEwbZJe/g5cYpGseufaVgnIXry57QuqLOiJcLc2EVd2c0RZp3SdUQ2xSDLMz/erYY9amLZbZqmCops7gXpQ4Aj0g7xzO+gZadqA3iXnGMQ9BihbxQ/3o+Q=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acd7a4f4-0baa-4b01-1707-08dcf7f7c657
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 08:57:53.8606
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: l3lX52RHiJREI/CZ1S0ZaqxVRcSQmyrVSQHbx1eyZXaNs3wy2McZDuxPVAgTfmnAroonDXxHFo8B61bT2tWPHw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB5918
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-29_04,2024-10-28_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410290069
+X-Proofpoint-GUID: WaRG4CCmcw7B3FXrurqQ_qIVONygEmXX
+X-Proofpoint-ORIG-GUID: WaRG4CCmcw7B3FXrurqQ_qIVONygEmXX
 
-When the analog binning mode is used for high framerate operation,
-the pixel rate is effectively doubled. Account for this when setting up
-the pixel clock rate, and applying the vblank and exposure controls.
+On 27/10/2024 18:17, Ritesh Harjani (IBM) wrote:
+> iomap can return -ENOTBLK if pagecache invalidation fails.
+> Let's make sure if -ENOTBLK is ever returned for atomic
+> writes than we fail the write request (-EIO) instead of
+> fallback to buffered-io.
+> 
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 
-The previous logic only used analog binning for 8-bit modes, but normal
-binning limits the framerate on 10-bit 480p [1]. So with this patch we
-switch to using special binning (with 2x pixel rate) for all formats of
-480p mode and 8-bit 1232p.
+I am not sure if you plan on dropping this patch...
 
-To do this cleanly, re-introduce the book-keeping for which binning mode
-is used with which resolution/format.
-
-[1]: https://github.com/raspberrypi/linux/issues/5493
-
-Co-developed-by: Naushir Patuck <naush@raspberrypi.com>
-Signed-off-by: Naushir Patuck <naush@raspberrypi.com>
-Co-developed-by: Vinay Varma <varmavinaym@gmail.com>
-Signed-off-by: Vinay Varma <varmavinaym@gmail.com>
-Signed-off-by: Jai Luthra <jai.luthra@ideasonboard.com>
----
- drivers/media/i2c/imx219.c | 149 ++++++++++++++++++++++++++++++++-------------
- 1 file changed, 106 insertions(+), 43 deletions(-)
-
-diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-index de9230d4ad81f085640be254db9391ae7ad20773..140d958f80eb57dfb4ecf1796fcdf77081a662d7 100644
---- a/drivers/media/i2c/imx219.c
-+++ b/drivers/media/i2c/imx219.c
-@@ -149,6 +149,18 @@
- #define IMX219_PIXEL_ARRAY_WIDTH	3280U
- #define IMX219_PIXEL_ARRAY_HEIGHT	2464U
- 
-+enum binning_mode {
-+	BINNING_NONE,
-+	BINNING_X2,
-+	BINNING_ANALOG_X2,
-+};
-+
-+enum binning_bit_depths {
-+	BINNING_IDX_8_BIT,
-+	BINNING_IDX_10_BIT,
-+	BINNING_IDX_MAX
-+};
-+
- /* Mode : resolution and related config&values */
- struct imx219_mode {
- 	/* Frame width */
-@@ -158,6 +170,9 @@ struct imx219_mode {
- 
- 	/* V-timing */
- 	unsigned int vts_def;
-+
-+	/* binning mode based on format code */
-+	enum binning_mode binning[BINNING_IDX_MAX];
- };
- 
- static const struct cci_reg_sequence imx219_common_regs[] = {
-@@ -293,24 +308,40 @@ static const struct imx219_mode supported_modes[] = {
- 		.width = 3280,
- 		.height = 2464,
- 		.vts_def = 3526,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_NONE,
-+			[BINNING_IDX_10_BIT] = BINNING_NONE,
-+		},
- 	},
- 	{
- 		/* 1080P 30fps cropped */
- 		.width = 1920,
- 		.height = 1080,
- 		.vts_def = 1763,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_NONE,
-+			[BINNING_IDX_10_BIT] = BINNING_NONE,
-+		},
- 	},
- 	{
- 		/* 2x2 binned 30fps mode */
- 		.width = 1640,
- 		.height = 1232,
- 		.vts_def = 1763,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_ANALOG_X2,
-+			[BINNING_IDX_10_BIT] = BINNING_X2,
-+		},
- 	},
- 	{
- 		/* 640x480 30fps mode */
- 		.width = 640,
- 		.height = 480,
- 		.vts_def = 1763,
-+		.binning = {
-+			[BINNING_IDX_8_BIT] = BINNING_ANALOG_X2,
-+			[BINNING_IDX_10_BIT] = BINNING_ANALOG_X2,
-+		},
- 	},
- };
- 
-@@ -337,6 +368,9 @@ struct imx219 {
- 
- 	/* Two or Four lanes */
- 	u8 lanes;
-+
-+	/* Binning mode */
-+	enum binning_mode binning;
- };
- 
- static inline struct imx219 *to_imx219(struct v4l2_subdev *_sd)
-@@ -362,6 +396,36 @@ static u32 imx219_get_format_code(struct imx219 *imx219, u32 code)
- 	return imx219_mbus_formats[i];
- }
- 
-+static u32 imx219_get_format_bpp(const struct v4l2_mbus_framefmt *format)
-+{
-+	switch (format->code) {
-+	case MEDIA_BUS_FMT_SRGGB8_1X8:
-+	case MEDIA_BUS_FMT_SGRBG8_1X8:
-+	case MEDIA_BUS_FMT_SGBRG8_1X8:
-+	case MEDIA_BUS_FMT_SBGGR8_1X8:
-+		return 8;
-+
-+	case MEDIA_BUS_FMT_SRGGB10_1X10:
-+	case MEDIA_BUS_FMT_SGRBG10_1X10:
-+	case MEDIA_BUS_FMT_SGBRG10_1X10:
-+	case MEDIA_BUS_FMT_SBGGR10_1X10:
-+	default:
-+		return 10;
-+	}
-+}
-+
-+static int imx219_get_rate_factor(struct imx219 *imx219)
-+{
-+	switch (imx219->binning) {
-+	case BINNING_NONE:
-+	case BINNING_X2:
-+		return 1;
-+	case BINNING_ANALOG_X2:
-+		return 2;
-+	}
-+	return -EINVAL;
-+}
-+
- /* -----------------------------------------------------------------------------
-  * Controls
-  */
-@@ -373,10 +437,12 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
- 	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
- 	const struct v4l2_mbus_framefmt *format;
- 	struct v4l2_subdev_state *state;
-+	int rate_factor;
- 	int ret = 0;
- 
- 	state = v4l2_subdev_get_locked_active_state(&imx219->sd);
- 	format = v4l2_subdev_state_get_format(state, 0);
-+	rate_factor = imx219_get_rate_factor(imx219);
- 
- 	if (ctrl->id == V4L2_CID_VBLANK) {
- 		int exposure_max, exposure_def;
-@@ -405,7 +471,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_EXPOSURE:
- 		cci_write(imx219->regmap, IMX219_REG_EXPOSURE,
--			  ctrl->val, &ret);
-+			  ctrl->val / rate_factor, &ret);
- 		break;
- 	case V4L2_CID_DIGITAL_GAIN:
- 		cci_write(imx219->regmap, IMX219_REG_DIGITAL_GAIN,
-@@ -422,7 +488,7 @@ static int imx219_set_ctrl(struct v4l2_ctrl *ctrl)
- 		break;
- 	case V4L2_CID_VBLANK:
- 		cci_write(imx219->regmap, IMX219_REG_VTS,
--			  format->height + ctrl->val, &ret);
-+			  (format->height + ctrl->val) / rate_factor, &ret);
- 		break;
- 	case V4L2_CID_HBLANK:
- 		cci_write(imx219->regmap, IMX219_REG_HTS,
-@@ -463,7 +529,8 @@ static const struct v4l2_ctrl_ops imx219_ctrl_ops = {
- 
- static unsigned long imx219_get_pixel_rate(struct imx219 *imx219)
- {
--	return (imx219->lanes == 2) ? IMX219_PIXEL_RATE : IMX219_PIXEL_RATE_4LANE;
-+	return ((imx219->lanes == 2) ? IMX219_PIXEL_RATE :
-+		IMX219_PIXEL_RATE_4LANE) * imx219_get_rate_factor(imx219);
- }
- 
- /* Initialize control handlers */
-@@ -473,7 +540,7 @@ static int imx219_init_controls(struct imx219 *imx219)
- 	const struct imx219_mode *mode = &supported_modes[0];
- 	struct v4l2_ctrl_handler *ctrl_hdlr;
- 	struct v4l2_fwnode_device_properties props;
--	int exposure_max, exposure_def, hblank;
-+	int exposure_max, exposure_def, hblank, pixel_rate;
- 	int i, ret;
- 
- 	ctrl_hdlr = &imx219->ctrl_handler;
-@@ -482,11 +549,11 @@ static int imx219_init_controls(struct imx219 *imx219)
- 		return ret;
- 
- 	/* By default, PIXEL_RATE is read only */
-+	pixel_rate = imx219_get_pixel_rate(imx219);
- 	imx219->pixel_rate = v4l2_ctrl_new_std(ctrl_hdlr, &imx219_ctrl_ops,
- 					       V4L2_CID_PIXEL_RATE,
--					       imx219_get_pixel_rate(imx219),
--					       imx219_get_pixel_rate(imx219), 1,
--					       imx219_get_pixel_rate(imx219));
-+					       pixel_rate, pixel_rate, 1,
-+					       pixel_rate);
- 
- 	imx219->link_freq =
- 		v4l2_ctrl_new_int_menu(ctrl_hdlr, &imx219_ctrl_ops,
-@@ -593,29 +660,13 @@ static int imx219_set_framefmt(struct imx219 *imx219,
- {
- 	const struct v4l2_mbus_framefmt *format;
- 	const struct v4l2_rect *crop;
--	unsigned int bpp;
--	u64 bin_h, bin_v;
-+	u64 binning;
-+	u32 bpp;
- 	int ret = 0;
- 
- 	format = v4l2_subdev_state_get_format(state, 0);
- 	crop = v4l2_subdev_state_get_crop(state, 0);
--
--	switch (format->code) {
--	case MEDIA_BUS_FMT_SRGGB8_1X8:
--	case MEDIA_BUS_FMT_SGRBG8_1X8:
--	case MEDIA_BUS_FMT_SGBRG8_1X8:
--	case MEDIA_BUS_FMT_SBGGR8_1X8:
--		bpp = 8;
--		break;
--
--	case MEDIA_BUS_FMT_SRGGB10_1X10:
--	case MEDIA_BUS_FMT_SGRBG10_1X10:
--	case MEDIA_BUS_FMT_SGBRG10_1X10:
--	case MEDIA_BUS_FMT_SBGGR10_1X10:
--	default:
--		bpp = 10;
--		break;
--	}
-+	bpp = imx219_get_format_bpp(format);
- 
- 	cci_write(imx219->regmap, IMX219_REG_X_ADD_STA_A,
- 		  crop->left - IMX219_PIXEL_ARRAY_LEFT, &ret);
-@@ -626,28 +677,20 @@ static int imx219_set_framefmt(struct imx219 *imx219,
- 	cci_write(imx219->regmap, IMX219_REG_Y_ADD_END_A,
- 		  crop->top - IMX219_PIXEL_ARRAY_TOP + crop->height - 1, &ret);
- 
--	switch (crop->width / format->width) {
--	case 1:
--	default:
--		bin_h = IMX219_BINNING_NONE;
-+	switch (imx219->binning) {
-+	case BINNING_NONE:
-+		binning = IMX219_BINNING_NONE;
- 		break;
--	case 2:
--		bin_h = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
--		break;
--	}
--
--	switch (crop->height / format->height) {
--	case 1:
--	default:
--		bin_v = IMX219_BINNING_NONE;
-+	case BINNING_X2:
-+		binning = IMX219_BINNING_X2;
- 		break;
--	case 2:
--		bin_v = bpp == 8 ? IMX219_BINNING_X2_ANALOG : IMX219_BINNING_X2;
-+	case BINNING_ANALOG_X2:
-+		binning = IMX219_BINNING_X2_ANALOG;
- 		break;
- 	}
- 
--	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, bin_h, &ret);
--	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, bin_v, &ret);
-+	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_H, binning, &ret);
-+	cci_write(imx219->regmap, IMX219_REG_BINNING_MODE_V, binning, &ret);
- 
- 	cci_write(imx219->regmap, IMX219_REG_X_OUTPUT_SIZE,
- 		  format->width, &ret);
-@@ -851,6 +894,21 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 		int exposure_max;
- 		int exposure_def;
- 		int hblank;
-+		int pixel_rate;
-+
-+		/* Update binning mode based on format */
-+		switch (imx219_get_format_bpp(format)) {
-+		case 8:
-+			imx219->binning = mode->binning[BINNING_IDX_8_BIT];
-+			break;
-+
-+		case 10:
-+			imx219->binning = mode->binning[BINNING_IDX_10_BIT];
-+			break;
-+
-+		default:
-+			imx219->binning = BINNING_NONE;
-+		}
- 
- 		/* Update limits and set FPS to default */
- 		__v4l2_ctrl_modify_range(imx219->vblank, IMX219_VBLANK_MIN,
-@@ -879,6 +937,11 @@ static int imx219_set_pad_format(struct v4l2_subdev *sd,
- 					 IMX219_PPL_MAX - mode->width,
- 					 1, IMX219_PPL_MIN - mode->width);
- 		__v4l2_ctrl_s_ctrl(imx219->hblank, hblank);
-+
-+		/* Scale the pixel rate based on the mode specific factor */
-+		pixel_rate = imx219_get_pixel_rate(imx219);
-+		__v4l2_ctrl_modify_range(imx219->pixel_rate, pixel_rate,
-+					 pixel_rate, 1, pixel_rate);
- 	}
- 
- 	return 0;
-
--- 
-2.47.0
+> ---
+>   fs/ext4/file.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/ext4/file.c b/fs/ext4/file.c
+> index 8116bd78910b..22d31b4fdff3 100644
+> --- a/fs/ext4/file.c
+> +++ b/fs/ext4/file.c
+> @@ -576,8 +576,18 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
+>   		iomap_ops = &ext4_iomap_overwrite_ops;
+>   	ret = iomap_dio_rw(iocb, from, iomap_ops, &ext4_dio_write_ops,
+>   			   dio_flags, NULL, 0);
+> -	if (ret == -ENOTBLK)
+> +	if (ret == -ENOTBLK) {
+>   		ret = 0;
+> +		/*
+> +		 * iomap can return -ENOTBLK if pagecache invalidation fails.
+> +		 * Let's make sure if -ENOTBLK is ever returned for atomic
+> +		 * writes than we fail the write request instead of fallback
+> +		 * to buffered-io.
+> +		 */
+> +		if (iocb->ki_flags & IOCB_ATOMIC)
+> +			ret = -EIO;
+> +	}
+> +
+>   	if (extend) {
+>   		/*
+>   		 * We always perform extending DIO write synchronously so by
+> --
+> 2.46.0
+> 
 
 
