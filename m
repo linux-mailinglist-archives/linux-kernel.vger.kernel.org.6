@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-386515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04B369B446E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:42:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C63A9B446F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:42:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7257BB22425
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:42:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE12C1C221C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2207B2040A3;
-	Tue, 29 Oct 2024 08:42:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A7F204096;
+	Tue, 29 Oct 2024 08:42:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dFVqDMun"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="an1tt5p9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94A720408E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766C72040AB
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730191323; cv=none; b=fic3DwMgK/ccBMLIwL4r+0tN3vmcFVpOGTSoL7c+niM41XSuACaIM802cPD++T02FhHNv+nn2XpsjR1Jh/ius5dJcATaT1jtDtiaTwqmSly3Sx+mN0/G3lycb1CWAPcz25xgb1JJqUth3KVWoUlX6emDVeBW5Kz+YQ+YFZi2xpI=
+	t=1730191327; cv=none; b=NbptzN0IgYgw/imgjOhLsyERJbSy+56UK4sesIcH5LAIDR/fmgucGp1DLV9XyO8Dz8eNqyEhWH0whTyDIVXQ1mAa9xwItca4tpW5ktdS3Pr/GWLxMxgdbKRCc3nlDD2U8+jWvWxrv14ZnBCBKGskZ6oAXKDR51ZVmQao9uyeRd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730191323; c=relaxed/simple;
-	bh=47IWp9EzSE658+HrLYx2QXrAM+CMMTgbOmNCWhNPk3w=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=QFArHFXnOtLFoPBWYX4PRH8/dp1pf2eMqs9OU4Rle6lSBAOR6FhZRmKN2wuG0lMtYq6knv32IKoLF6TO5T6QL4KqxsNcir6oKozjrjKbX9IemDIk6U3Goch3c3xBSMap62mrupqMtThnOGmNh/5lnCy1pYl/UFpU+zT0FPO/HBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dFVqDMun; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1730191327; c=relaxed/simple;
+	bh=/t4l07x03lIbf7FJLOKkYI0MijTHEWNTEtlRIaIxrJY=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=eK9waxMwTEFCINEIZxVhk5GROOE93ydHurEoFWKlztLlngsfzjnBrZ/ye/39R7o+Yb/da5v6kk55tt/zlNIA32LzZYPtxVDEivlU/jCVA3+SwGxAdE8T98zE5pgUN+KUdRhm2c+UYiqoq0i2tyb3RYMOI+jhCeiqKqIOZoS6gvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=an1tt5p9; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730191319;
+	s=mimecast20190719; t=1730191324;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=s2JcuH1RCp5Qo753XXGQQPEK6YW7WZITvV9BapLEJS0=;
-	b=dFVqDMun++vUWZ/jVStncVJfw10ope0XvtlMm2IeM4na/Fh+LREZuuj88sY6sE8zAzh4Sm
-	+iV0TxshEhVkbS9xPtzaESkae3/CpKZycqtydp5uoAq8vH7RT8LRtsZU+RWTK2kQb+UPRH
-	s5NSY8qJLcKv+G4FBOsk05mjj6q9ttg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ROLgbTnxd9doekduw+GD4CkJQNhqibX/usOA/Zu9ioQ=;
+	b=an1tt5p9LW+/2xFmv5Brxu/pc2rNC17EDatQmcMhr+IINZjtflU32lVx2459F/XQVrLBFA
+	dEiXMj90YRw/WbUBQkN02aWOv08kRp7K6ro4UcC79DAi/BE0KSfkyJ8ca8OqBK7rNnBIFf
+	KRPRMe6O+kk8wvmAv3Y4M9bjcVn1QGg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-449-CUyk2RkUMmqYDmflGRdEWQ-1; Tue,
- 29 Oct 2024 04:41:58 -0400
-X-MC-Unique: CUyk2RkUMmqYDmflGRdEWQ-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-166-QkaB_ZlxNd-21EI4xNCg9Q-1; Tue,
+ 29 Oct 2024 04:42:03 -0400
+X-MC-Unique: QkaB_ZlxNd-21EI4xNCg9Q-1
 Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F371C1955D61;
-	Tue, 29 Oct 2024 08:41:56 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 02F7D1955D80;
+	Tue, 29 Oct 2024 08:42:02 +0000 (UTC)
 Received: from server.redhat.com (unknown [10.72.112.39])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 691C119560A2;
-	Tue, 29 Oct 2024 08:41:51 +0000 (UTC)
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C53C319560A2;
+	Tue, 29 Oct 2024 08:41:57 +0000 (UTC)
 From: Cindy Lu <lulu@redhat.com>
 To: lulu@redhat.com,
 	dtatulea@nvidia.com,
@@ -62,9 +64,11 @@ To: lulu@redhat.com,
 	dsahern@gmail.com,
 	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/1] vdpa: Add support for setting the MAC address in vDPA tool
-Date: Tue, 29 Oct 2024 16:40:06 +0800
-Message-ID: <20241029084144.561035-1-lulu@redhat.com>
+Subject: [PATCH v4 1/1] vdpa: Add support for setting the MAC address in vDPA tool.
+Date: Tue, 29 Oct 2024 16:40:07 +0800
+Message-ID: <20241029084144.561035-2-lulu@redhat.com>
+In-Reply-To: <20241029084144.561035-1-lulu@redhat.com>
+References: <20241029084144.561035-1-lulu@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,22 +78,127 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-This patch is add support for set MAC address in vdpa tool
+Add a new function in vDPA tool to support set MAC address.
+Currently, the kernel only supports setting the MAC address.
 
-changset in v4
-1. Sync with the latest upstream code.
-2. Address the comments in v2 and remove the MTU-related code,
-   as this part was missed in the previous version.
-   
-Tested in Mellanox ConnectX-6 Dx card
+Update the man page to include usage for setting the MAC address.
 
-Cindy Lu (1):
-  vdpa: Add support for setting the MAC address in vDPA tool.
+The usage is: vdpa dev set name vdpa_name mac **:**:**:**:**
 
+here is example:
+root@L1# vdpa -jp dev config show vdpa0
+{
+    "config": {
+        "vdpa0": {
+            "mac": "82:4d:e9:5d:d7:e6",
+            "link ": "up",
+            "link_announce ": false,
+            "mtu": 1500
+        }
+    }
+}
+
+root@L1# vdpa dev set name vdpa0 mac 00:11:22:33:44:55
+
+root@L1# vdpa -jp dev config show vdpa0
+{
+    "config": {
+        "vdpa0": {
+            "mac": "00:11:22:33:44:55",
+            "link ": "up",
+            "link_announce ": false,
+            "mtu": 1500
+        }
+    }
+}
+
+Signed-off-by: Cindy Lu <lulu@redhat.com>
+---
  man/man8/vdpa-dev.8 | 20 ++++++++++++++++++++
  vdpa/vdpa.c         | 18 ++++++++++++++++++
  2 files changed, 38 insertions(+)
 
+diff --git a/man/man8/vdpa-dev.8 b/man/man8/vdpa-dev.8
+index 43e5bf48..718f40b2 100644
+--- a/man/man8/vdpa-dev.8
++++ b/man/man8/vdpa-dev.8
+@@ -50,6 +50,12 @@ vdpa-dev \- vdpa device configuration
+ .B qidx
+ .I QUEUE_INDEX
+ 
++.ti -8
++.B vdpa dev set
++.B name
++.I NAME
++.B mac
++.RI "[ " MACADDR " ]"
+ 
+ .SH "DESCRIPTION"
+ .SS vdpa dev show - display vdpa device attributes
+@@ -120,6 +126,15 @@ VDPA_DEVICE_NAME
+ .BI qidx " QUEUE_INDEX"
+ - specifies the virtqueue index to query
+ 
++.SS vdpa dev set - set the configuration to the vdpa device.
++
++.BI name " NAME"
++-Name of the vdpa device to configure.
++
++.BI mac " MACADDR"
++- specifies the mac address for the vdpa device.
++This is applicable only for the network type of vdpa device.
++
+ .SH "EXAMPLES"
+ .PP
+ vdpa dev show
+@@ -171,6 +186,11 @@ vdpa dev vstats show vdpa0 qidx 1
+ .RS 4
+ Shows vendor specific statistics information for vdpa device vdpa0 and virtqueue index 1
+ .RE
++.PP
++vdpa dev set name vdpa0 mac 00:11:22:33:44:55
++.RS 4
++Set a specific MAC address to vdpa device vdpa0
++.RE
+ 
+ .SH SEE ALSO
+ .BR vdpa (8),
+diff --git a/vdpa/vdpa.c b/vdpa/vdpa.c
+index 43f87824..e2b0a5b1 100644
+--- a/vdpa/vdpa.c
++++ b/vdpa/vdpa.c
+@@ -759,6 +759,22 @@ static int cmd_dev_del(struct vdpa *vdpa,  int argc, char **argv)
+ 	return mnlu_gen_socket_sndrcv(&vdpa->nlg, nlh, NULL, NULL);
+ }
+ 
++static int cmd_dev_set(struct vdpa *vdpa, int argc, char **argv)
++{
++	struct nlmsghdr *nlh;
++	int err;
++
++	nlh = mnlu_gen_socket_cmd_prepare(&vdpa->nlg, VDPA_CMD_DEV_ATTR_SET,
++					  NLM_F_REQUEST | NLM_F_ACK);
++	err = vdpa_argv_parse_put(nlh, vdpa, argc, argv,
++				  VDPA_OPT_VDEV_NAME,
++				  VDPA_OPT_VDEV_MAC);
++	if (err)
++		return err;
++
++	return mnlu_gen_socket_sndrcv(&vdpa->nlg, nlh, NULL, NULL);
++}
++
+ static void pr_out_dev_net_config(struct vdpa *vdpa, struct nlattr **tb)
+ {
+ 	SPRINT_BUF(macaddr);
+@@ -1028,6 +1044,8 @@ static int cmd_dev(struct vdpa *vdpa, int argc, char **argv)
+ 		return cmd_dev_config(vdpa, argc - 1, argv + 1);
+ 	} else if (!strcmp(*argv, "vstats")) {
+ 		return cmd_dev_vstats(vdpa, argc - 1, argv + 1);
++	} else if (!strcmp(*argv, "set")) {
++		return cmd_dev_set(vdpa, argc - 1, argv + 1);
+ 	}
+ 	fprintf(stderr, "Command \"%s\" not found\n", *argv);
+ 	return -ENOENT;
 -- 
 2.45.0
 
