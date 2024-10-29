@@ -1,185 +1,280 @@
-Return-Path: <linux-kernel+bounces-386976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2AE9B4A58
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:58:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C889B4A66
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:00:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A94F1F24038
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:58:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57DDC28432B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670D6205126;
-	Tue, 29 Oct 2024 12:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA7216426;
+	Tue, 29 Oct 2024 13:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="FLiCmXCU";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="A+M6/08A"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="FnSjRBho"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AE58BEA
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DDD20606A;
+	Tue, 29 Oct 2024 13:00:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206695; cv=none; b=EgDBrm9jaY34LgU9uAhdPdV/8vdvA1zFYPUiICxFeKwEi1Q5xj2ySztl50J/raTYJUHro0Gw+CkZMhPtvEtvu1l5g4Dv4CHOPQyiJ/yBwDi9dpZ7Uk0LMGpkDp7wTNQENIghV3FMQ/GbBwj0dhXQJ4QjnFzbXhOqUPPUeTLpy6g=
+	t=1730206819; cv=none; b=BujRCHemSQ8HRpPjnrgkQOxfqY50VGTiTh2A1WqR7loP4iOPqX6K/PlWd+IHfh/PkYJN36QWO6yAvTslRpcFy3ol+UNJNP0KLXAK0cF3Ir79+U8Ue8mKsbb3LLDZYBQfUrmTftN+PNonTVByehKE8ISZYr9qfcqcn+ipNxqUmjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206695; c=relaxed/simple;
-	bh=JP4+nbkRKwxRmpRchnmX7SYExr13wEFiR5EzsC/l70E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfFykSmhC1bZGAzXba/mldrSouBbS+T2zSSdW0RjxFisvzyxSwRDYZcMavMG8CuuoRP2KkX2wESlC8ztAOhe6T23s8khX3xxSi6zvjZn2weed8L9CoqqVjLabJb4l+dH+N1vA4V3dYCA4z/XgqnJWPwHR0fTB4dqb+716a6o6DM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=FLiCmXCU; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=A+M6/08A; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 22CC2138042B;
-	Tue, 29 Oct 2024 08:58:11 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Tue, 29 Oct 2024 08:58:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730206691; x=
-	1730293091; bh=MkwNu/f8kONwvdOyDcH7H6PdkajNfgH9UgOlaZjZQLE=; b=F
-	LiCmXCU7CfgRhxZUCBIPTHRliIW0eJsJefDfqs/KNArugyMt9VnRb8E2Ci37n7iD
-	1yTLlM1KIwSemd8VrtnSiIwvAQ6h/eKWQ9NL42VjAl/Wa7f8RserOYFPV4EO0gvh
-	H/3G53wrpLMkJM9UCl09CzM2EMBQB8AD9/JQN0qnRXmR3xcrrwbvYOV7HLekcTmG
-	k6NCc/cSBadOs0+n5GKT0ij92wPZfxqxFHCGMF3etUJnGQX5N/gtVTin4+mZOyjv
-	MGJvYBB1DNPt+SlwCrmYcfGVka1J4RkOhJpMIlxRziAdFAaWZK6bmIMqlgz2uKhw
-	zuPqIUEIh1pSbG45YiI/A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730206691; x=1730293091; bh=MkwNu/f8kONwvdOyDcH7H6PdkajNfgH9UgO
-	laZjZQLE=; b=A+M6/08An0PUXiByp9tmxKCQGHTlN1/QTf03pfbg0pj/yxUgjzK
-	l4UtXFOPQq3XrpUhhFTUbVwE/tW6nTTvyfQq4NDVMLeFGcnilJ6C3xZTUbm94KNt
-	5QmbZRoZKcIg/dH81OWXY38YKCwFLPLK1G2obpR81T3SsAIivkmql7+SYOBTETBZ
-	kkxwOvBhxTNaJpf088YZtr+AnNenfpfYt7oZm/mio5P21G8O+/aoIeCQEpzLJ2TW
-	cC5BB3grsxngrveSZlls+6McCf0l4Q/lXN6j1NvAhk2JeCegZePqpIa/ObxOU7LD
-	r13WCCdPMSgXUi3UWBnV9Upm7HP3xfUncFQ==
-X-ME-Sender: <xms:4tsgZ-cBSSAPRznTO8zzYLqMbdOq89LF3FScsnnkhHusysdaIrTljA>
-    <xme:4tsgZ4N1tbHYQabm3oupRD9_e3I5RhhRZzBZOFVZd3uTRarhpQXKxlxrgM2jAU_9x
-    eoccasU_x9vjLd4yWY>
-X-ME-Received: <xmr:4tsgZ_gS-5dYdxRDhLdv_9xHhhETqWfBdPrgkLZMduUn9eM7p7n0eVY4A-BdXpKVCyeTtA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddggedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegoufhushhpvggtthffohhmrghinhculdegledmnecujfgurhep
-    fffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepfdfmihhrihhllhcute
-    drucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeen
-    ucggtffrrghtthgvrhhnpedvffdugeetuedvtdffveetudduvdeutddthfevffdtveevhf
-    dujeeuvdegfefhkeenucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdr
-    tghomhdpghhoohhglhgvrghpihhsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
-    pdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehloh
-    hrvghniihordhsthhorghkvghssehorhgrtghlvgdrtghomhdprhgtphhtthhopehlihgr
-    mhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrse
-    hsuhhsvgdrtgiipdhrtghpthhtohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghp
-    thhtohepshihiigsohhtodegsgehtgejtdegtdduvdekledvtgegugdvvdhfugesshihii
-    hkrghllhgvrhdrrghpphhsphhothhmrghilhdrtghomhdprhgtphhtthhopegrkhhpmhes
-    lhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkh
-    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    mhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohepshihiihkrghllhgvrhdqsghughhsse
-    hgohhoghhlvghgrhhouhhpshdrtghomh
-X-ME-Proxy: <xmx:4tsgZ79PdRpkCtRB1ua77Bzh_evP3BBtSVOo8vg3jtXYgDingVQ2kw>
-    <xmx:4tsgZ6tS8AsgiOL7eqMR5BrJR04awtdbJdcHuLl_lZHjPGAXSBhmAg>
-    <xmx:4tsgZyFxIwBvFRergvhYlm6O6NkYlTt4VFMRY1hMf0_pi1zMuh70Rg>
-    <xmx:4tsgZ5NixEHDo2-P8VxEE1rNENaGuZMKxnuQpbVzYzG6NUvULsn8jw>
-    <xmx:49sgZ0LeCYKFadvC_1tSoYUnhUuu4XK7CzKJsGBs4LcHzuQBayCmHbRu>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Oct 2024 08:58:06 -0400 (EDT)
-Date: Tue, 29 Oct 2024 14:58:02 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	syzbot <syzbot+4b5c704012892c4d22fd@syzkaller.appspotmail.com>, akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] kernel BUG in zap_huge_pmd
-Message-ID: <lifszx2644jx4dzc537w645wtk3qo7q5xxeam7ad7lihagvt7z@dooml2xm73dx>
-References: <67205708.050a0220.11b624.04bc.GAE@google.com>
- <ri2667onovzkphvyxqnxe724ymxqs52pkzpdesina35v55ccnr@4kghwz6eevom>
- <3b06d23d-de9e-471f-ab99-54c96cb077bd@lucifer.local>
+	s=arc-20240116; t=1730206819; c=relaxed/simple;
+	bh=qo248CgBS1tnumaycZ4qKStoReKnTQht5963gMX/YBI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e8D61O0JFMNhUO7bYclInrOX9TSM5n0CYiDM9eLQAa3IGkUbvL9XALxaE+f7j8inlT8v7XxetpQZnH940RscTTeHJZQsk2+mev09Zq1TjFc+vH/20qNhQn5ixwaw2D2LmF8nWmGerOn+hc+yMgUfGVuUu0PpqhQzXqPMN7ZyZ2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=FnSjRBho; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 0ADC2A09F1;
+	Tue, 29 Oct 2024 14:00:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=WgY432aLhx2lOqFgoq9u
+	CcBSfszhH81w0TpnR0b3JZE=; b=FnSjRBhoWEfczvd6I8RFtVpzB6Md9cMObODc
+	ZRRg6d1CAwAcauUtPqRxEWPbo2aMa/e+4DVzzsRYzVZIdM/sZORoj7Tp09BH+xOK
+	vJgrKeeDpjowO02V6tBzY18fGPlxx5dfKZtnADkyRxJVbYdgAaZ4FOnlXwrRJaTl
+	7JYy02XA2bKct4aUeAbezam4Bo6TxF/Gi/YlwgEFL6kUtKZhpr5TfgAoBMeWlbwj
+	mD5Bh9uBTItxi66vybZRRQ4BMEkKSWPLI4K26cyQHaEh6b93auQqBfm/7DS393WL
+	fj4fYF5JVoeXz3/WYpcYPOGf0MnVtE5kVod0yYaNM5ISf6OokHSKD2a44nept+uX
+	ANH7vX9arnvNIBDKitTXenUktlFuGk2ocddFM/90lJoBrt2d5Sif7PLMRX8QuhF6
+	8LtmbHhN6ULZ3XLHZJC2cqIX6G7JH8lzuEG0Gawh1BcQyy0OOsAwmb45utuqf2fg
+	o4BtKSGNY54cbS7isYzoBdfqRxeiveDo0kyAl5bxZrL6tGY4Ttnuv7fn7OCZ6kro
+	J8ESDF4XICojneHS8Rik6JdQ10ST8aMHgPq/Iah/TXfb94MPu3/I03WdxaTjrBik
+	9UUx5vkQpYAgqNZt8LFm5NZaZaZMUeyf3Q4jonvF9/y6pBG+1hvDJTOxiMr6tutW
+	fQzXP1o=
+From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
+To: <linux-spi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Tudor
+ Ambarus" <tudor.ambarus@linaro.org>, Varshini Rajendran
+	<varshini.rajendran@microchip.com>, Mark Brown <broonie@kernel.org>, "Nicolas
+ Ferre" <nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Subject: [PATCH] spi: atmel-quadspi: Create `atmel_qspi_ops` to support newer SoC families
+Date: Tue, 29 Oct 2024 13:58:44 +0100
+Message-ID: <20241029125843.2384307-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ece81819-3a00-4eef-b241-1adc82629ed4@linaro.org>
+References:
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3b06d23d-de9e-471f-ab99-54c96cb077bd@lucifer.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1730206804;VERSION=7978;MC=582406864;ID=190610;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94855667463
 
-On Tue, Oct 29, 2024 at 12:07:00PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Oct 29, 2024 at 01:44:47PM +0200, Kirill A. Shutemov wrote:
-> > On Mon, Oct 28, 2024 at 08:31:20PM -0700, syzbot wrote:
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    4e46774408d9 Merge tag 'for-6.12-rc4-tag' of git://git.ker..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=10fb2ebb980000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=4b5c704012892c4d22fd
-> > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f730e7980000
-> > > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177eae40580000
-> > >
-> > > Downloadable assets:
-> > > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4e467744.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/058a92aaf61a/vmlinux-4e467744.xz
-> > > kernel image: https://storage.googleapis.com/syzbot-assets/0b79757fbe5e/bzImage-4e467744.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+4b5c704012892c4d22fd@syzkaller.appspotmail.com
-> > >
-> > > R10: 000000000401d031 R11: 0000000000000246 R12: 0000000000000004
-> > > R13: 00007f33ed7673fc R14: 00007f33ed737334 R15: 00007f33ed7673e4
-> > >  </TASK>
-> > > ------------[ cut here ]------------
-> > > kernel BUG at mm/huge_memory.c:2085!
-> > > Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> > > CPU: 0 UID: 0 PID: 5095 Comm: syz-executor380 Not tainted 6.12.0-rc4-syzkaller-00085-g4e46774408d9 #0
-> > > Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> > > RIP: 0010:zap_huge_pmd+0x953/0xc40 mm/huge_memory.c:2085
-> >
-> > I believe it is bug in mmap_region() around handling
-> > vms_gather_munmap_vmas() and vms_complete_munmap_vmas().
-> >
-> > What reproduces does is:
-> >
-> > 1. Creating hugetlb mapping
-> > 2. Setting up UFFD on it
-> > 3. Creating a new that partially overlaps with mapping created on step 1
-> >
-> > On step 3 an error is injected which makes vma_iter_prealloc() fail and
-> > unmap_region() is called in error path.
-> >
-> > The unmap_region() is called with the newly created as an argument, but
-> > page tables still contain entries from hugetlb mapping that was never
-> > fully unmapped because vms_complete_munmap_vmas() has not called yet.
-> >
-> > Since the new VMA is not hugetlb, unmapping code takes THP codepath and
-> > calls zap_huge_pmd(). zap_huge_pmd() sees PTE marker swap entry installed
-> > by hugetlb_mfill_atomic_pte() and gets confused.
-> >
-> > I don't understand vms_gather/complete_munmap_vmas() code well enough.
-> > I am not sure what the right fix would be.
-> > Maybe call vms_complete_munmap_vmas() earlier?
-> 
-> We just changed around how this stuff aborts in a hotfix series that should
-> avoid this, actually.
-> 
-> Unfortunately I don't have the netlink setup syzbot has locally so not sure
-> how reliably i can repro.
+Refactor the code to introduce an ops struct, to prepare for merging
+support for later SoCs, such as SAMA7G5. This code was based on the
+vendor's kernel (linux4microchip). Cc'ing original contributors.
 
-Build the config in the report and run it under KVM (virtme?).
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Varshini Rajendran <varshini.rajendran@microchip.com>
 
+Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+---
+ drivers/spi/atmel-quadspi.c | 111 +++++++++++++++++++++++++-----------
+ 1 file changed, 77 insertions(+), 34 deletions(-)
 
+diff --git a/drivers/spi/atmel-quadspi.c b/drivers/spi/atmel-quadspi.c
+index 95cdfc28361e..20c4bb9d1dbe 100644
+--- a/drivers/spi/atmel-quadspi.c
++++ b/drivers/spi/atmel-quadspi.c
+@@ -138,11 +138,15 @@
+ #define QSPI_WPSR_WPVSRC_MASK           GENMASK(15, 8)
+ #define QSPI_WPSR_WPVSRC(src)           (((src) << 8) & QSPI_WPSR_WPVSRC)
+ 
++#define ATMEL_QSPI_TIMEOUT		1000	/* ms */
++
+ struct atmel_qspi_caps {
+ 	bool has_qspick;
+ 	bool has_ricr;
+ };
+ 
++struct atmel_qspi_ops;
++
+ struct atmel_qspi {
+ 	void __iomem		*regs;
+ 	void __iomem		*mem;
+@@ -150,13 +154,22 @@ struct atmel_qspi {
+ 	struct clk		*qspick;
+ 	struct platform_device	*pdev;
+ 	const struct atmel_qspi_caps *caps;
++	const struct atmel_qspi_ops *ops;
+ 	resource_size_t		mmap_size;
+ 	u32			pending;
++	u32			irq_mask;
+ 	u32			mr;
+ 	u32			scr;
+ 	struct completion	cmd_completion;
+ };
+ 
++struct atmel_qspi_ops {
++	int (*set_cfg)(struct atmel_qspi *aq, const struct spi_mem_op *op,
++		       u32 *offset);
++	int (*transfer)(struct spi_mem *mem, const struct spi_mem_op *op,
++			u32 offset);
++};
++
+ struct atmel_qspi_mode {
+ 	u8 cmd_buswidth;
+ 	u8 addr_buswidth;
+@@ -404,10 +417,60 @@ static int atmel_qspi_set_cfg(struct atmel_qspi *aq,
+ 	return 0;
+ }
+ 
++static int atmel_qspi_wait_for_completion(struct atmel_qspi *aq, u32 irq_mask)
++{
++	int err = 0;
++	u32 sr;
++
++	/* Poll INSTRuction End status */
++	sr = atmel_qspi_read(aq, QSPI_SR);
++	if ((sr & irq_mask) == irq_mask)
++		return 0;
++
++	/* Wait for INSTRuction End interrupt */
++	reinit_completion(&aq->cmd_completion);
++	aq->pending = sr & irq_mask;
++	aq->irq_mask = irq_mask;
++	atmel_qspi_write(irq_mask, aq, QSPI_IER);
++	if (!wait_for_completion_timeout(&aq->cmd_completion,
++					 msecs_to_jiffies(ATMEL_QSPI_TIMEOUT)))
++		err = -ETIMEDOUT;
++	atmel_qspi_write(irq_mask, aq, QSPI_IDR);
++
++	return err;
++}
++
++static int atmel_qspi_transfer(struct spi_mem *mem,
++			       const struct spi_mem_op *op, u32 offset)
++{
++	struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->master);
++
++	/* Skip to the final steps if there is no data */
++	if (!op->data.nbytes)
++		return atmel_qspi_wait_for_completion(aq,
++						      QSPI_SR_CMD_COMPLETED);
++
++	/* Dummy read of QSPI_IFR to synchronize APB and AHB accesses */
++	(void)atmel_qspi_read(aq, QSPI_IFR);
++
++	/* Send/Receive data */
++	if (op->data.dir == SPI_MEM_DATA_IN)
++		memcpy_fromio(op->data.buf.in, aq->mem + offset,
++			      op->data.nbytes);
++	else
++		memcpy_toio(aq->mem + offset, op->data.buf.out,
++			    op->data.nbytes);
++
++	/* Release the chip-select */
++	atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
++
++	return atmel_qspi_wait_for_completion(aq, QSPI_SR_CMD_COMPLETED);
++}
++
+ static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ {
+ 	struct atmel_qspi *aq = spi_controller_get_devdata(mem->spi->controller);
+-	u32 sr, offset;
++	u32 offset;
+ 	int err;
+ 
+ 	/*
+@@ -416,46 +479,20 @@ static int atmel_qspi_exec_op(struct spi_mem *mem, const struct spi_mem_op *op)
+ 	 * when the flash memories overrun the controller's memory space.
+ 	 */
+ 	if (op->addr.val + op->data.nbytes > aq->mmap_size)
+-		return -ENOTSUPP;
++		return -EOPNOTSUPP;
++
++	if (op->addr.nbytes > 4)
++		return -EOPNOTSUPP;
+ 
+ 	err = pm_runtime_resume_and_get(&aq->pdev->dev);
+ 	if (err < 0)
+ 		return err;
+ 
+-	err = atmel_qspi_set_cfg(aq, op, &offset);
++	err = aq->ops->set_cfg(aq, op, &offset);
+ 	if (err)
+ 		goto pm_runtime_put;
+ 
+-	/* Skip to the final steps if there is no data */
+-	if (op->data.nbytes) {
+-		/* Dummy read of QSPI_IFR to synchronize APB and AHB accesses */
+-		(void)atmel_qspi_read(aq, QSPI_IFR);
+-
+-		/* Send/Receive data */
+-		if (op->data.dir == SPI_MEM_DATA_IN)
+-			memcpy_fromio(op->data.buf.in, aq->mem + offset,
+-				      op->data.nbytes);
+-		else
+-			memcpy_toio(aq->mem + offset, op->data.buf.out,
+-				    op->data.nbytes);
+-
+-		/* Release the chip-select */
+-		atmel_qspi_write(QSPI_CR_LASTXFER, aq, QSPI_CR);
+-	}
+-
+-	/* Poll INSTRuction End status */
+-	sr = atmel_qspi_read(aq, QSPI_SR);
+-	if ((sr & QSPI_SR_CMD_COMPLETED) == QSPI_SR_CMD_COMPLETED)
+-		goto pm_runtime_put;
+-
+-	/* Wait for INSTRuction End interrupt */
+-	reinit_completion(&aq->cmd_completion);
+-	aq->pending = sr & QSPI_SR_CMD_COMPLETED;
+-	atmel_qspi_write(QSPI_SR_CMD_COMPLETED, aq, QSPI_IER);
+-	if (!wait_for_completion_timeout(&aq->cmd_completion,
+-					 msecs_to_jiffies(1000)))
+-		err = -ETIMEDOUT;
+-	atmel_qspi_write(QSPI_SR_CMD_COMPLETED, aq, QSPI_IDR);
++	err = aq->ops->transfer(mem, op, offset);
+ 
+ pm_runtime_put:
+ 	pm_runtime_mark_last_busy(&aq->pdev->dev);
+@@ -571,12 +608,17 @@ static irqreturn_t atmel_qspi_interrupt(int irq, void *dev_id)
+ 		return IRQ_NONE;
+ 
+ 	aq->pending |= pending;
+-	if ((aq->pending & QSPI_SR_CMD_COMPLETED) == QSPI_SR_CMD_COMPLETED)
++	if ((aq->pending & aq->irq_mask) == aq->irq_mask)
+ 		complete(&aq->cmd_completion);
+ 
+ 	return IRQ_HANDLED;
+ }
+ 
++static const struct atmel_qspi_ops atmel_qspi_ops = {
++	.set_cfg = atmel_qspi_set_cfg,
++	.transfer = atmel_qspi_transfer,
++};
++
+ static int atmel_qspi_probe(struct platform_device *pdev)
+ {
+ 	struct spi_controller *ctrl;
+@@ -601,6 +643,7 @@ static int atmel_qspi_probe(struct platform_device *pdev)
+ 
+ 	init_completion(&aq->cmd_completion);
+ 	aq->pdev = pdev;
++	aq->ops = &atmel_qspi_ops;
+ 
+ 	/* Map the registers */
+ 	aq->regs = devm_platform_ioremap_resource_byname(pdev, "qspi_base");
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.34.1
+
+
 
