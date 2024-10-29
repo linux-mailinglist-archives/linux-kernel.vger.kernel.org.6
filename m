@@ -1,159 +1,107 @@
-Return-Path: <linux-kernel+bounces-387381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B15AF9B5030
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:15:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D2A9B5033
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:18:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CEC0B284157
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:15:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C8151C227CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:18:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9503F1DB943;
-	Tue, 29 Oct 2024 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 618901D9665;
+	Tue, 29 Oct 2024 17:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qtaDdZ5z"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M9432L5p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05D317D355;
-	Tue, 29 Oct 2024 17:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2C17191473;
+	Tue, 29 Oct 2024 17:17:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730222103; cv=none; b=awjg/v+DniR5yjSa/QjimRqEWlIjE0U4huiKWt5lJE4mISyY4NbcaABKpc64eUKF6H1Zk4RGsBIFguNGkhopVRwO7BjAwarOBYivCRFGtjOjtosKtAmuggRybozI9VmFf31fdA6BGvUkuRwvkpysMY7sQvQYebXYaTN9o1qcms8=
+	t=1730222275; cv=none; b=Jp1F1lQSR3fJFpqnr0K/uamjFRS31y90UCLZFoAt5UX6tkRHclA1VG3EMeBNgwnj2cEWiHHi+FY6mnhUtssS5ciMDYfnW/eGHtl69rDgD3Diw2JMx8mreiS2Q6cAZnNTRjZD+DbJD//8/BcY/eMq94D7F0JGAkFRyX8HjKZtn5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730222103; c=relaxed/simple;
-	bh=LqBQA0ivqqH8ZyZKx0n8JFFG1U13mopJfiR3HfDtNN8=;
+	s=arc-20240116; t=1730222275; c=relaxed/simple;
+	bh=3mkF/cT8YHRxMcJ7fQXvYLyYHDmqKFcg+RBRoPDt8dk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p1+uIZ/xCowFLb8aloz5DEynaEnnvxKfHXNxxVNFrTBz/p5+AS3wBiqvumLyIpwseT523SpVYwc+DuIp5xFQT1bdXQ8VNukgUP15Wgx4Rvo+g1CSOQcIXoApcWUc5G8wmi/q93u3Up3rgCTAhOrgZaR/hVPo34D2ze9euE1XLNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=qtaDdZ5z; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xq2/wRVUsy2jaJ29qDqN+mT7DMusIDqIZXNyENoMByg=; b=qtaDdZ5zpgOd3Fw3eXc6aoAx08
-	7t8FDzzNCE0NIsKqBHdowmPclK+I/eJDA6qgV0AheD0UMouI0NmMmSWmTb5921yCpVk2vjYVoGv2/
-	bpRTRLxm0o8Vh7eUQG78LVeUYniTIz7yHeGs5gdP8MIOxVkZdlF9Y2B6TZ4t+wcL8yrKJkOHPwShV
-	scBms6uZyZ84HMIbFXBaiwD3uEAhFRzDhr1GQgdiJkAD4a66u7wwPFCvn1K4VR43CZHaYbn1j7SnH
-	pK+WudxVw9mP218BIiDoYZUIgSIGRBdhsl+aXUvBXIkuMQSWQnh2kHC8V2BJkkCHqWqq7AAVNMM49
-	/fjt8Eow==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5pnG-0000000A2WL-0jJ5;
-	Tue, 29 Oct 2024 17:14:10 +0000
-Date: Tue, 29 Oct 2024 17:14:09 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v5 00/16] Enable Linear Address Space Separation support
-Message-ID: <ZyEX4cp-iiwiF_yX@casper.infradead.org>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jtyqyWBxtJOr7gKzZKN/EkZvS6YJs5kQkRaHmOHBLabSUNOjUBtXJm1RmB7hplIXBs/VzHYIB5luo/ONJI2FWNge/puxkX89ZtzifG6vOLlv1AFkGAvWrlybTKYiyzw9z/OZQUeBgmxc6EupAc/uPpwhxuBT5cOzpIaty4tNXMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M9432L5p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F41C4CECD;
+	Tue, 29 Oct 2024 17:17:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730222275;
+	bh=3mkF/cT8YHRxMcJ7fQXvYLyYHDmqKFcg+RBRoPDt8dk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=M9432L5p4K+AXTdBXo/dZ91no4Y1hI/j6ZXI0QnAiiLN+KHoReHz2C14WvEjB3X2d
+	 lpD5o4BpR4iEahu3C6+0ROG7eP1khkEMFAE/JTH9cRVbYg4MKpjsxgxnmOco3mo5pP
+	 yarDIuJgd2JUvgZ4pCISqnU8uUXgIo1VYsEoSN6pNGECqHh+pQWAMrnCOFcGWidwjP
+	 ms6k2FQh2a/hIn3JFDFYHn02JLxcRdnHvTxr4Lj+nRuE5G1hL/T3BnOQVF1t1cYsGK
+	 rwgizihJGWhItNmfFxFt0NM36aj5+aJJ06+b6a/ASZQ52EkONDEQn9eyZVbLeXVnFl
+	 JBr6Mhw//1Jyg==
+Date: Tue, 29 Oct 2024 10:17:52 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <20241029135617.GB14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
+In-Reply-To: <20241029135617.GB14555@noisy.programming.kicks-ass.net>
 
-On Mon, Oct 28, 2024 at 06:07:48PM +0200, Alexander Shishkin wrote:
-> Linear Address Space Separation (LASS) is a security feature that intends to
-> prevent malicious virtual address space accesses across user/kernel mode.
+On Tue, Oct 29, 2024 at 02:56:17PM +0100, Peter Zijlstra wrote:
+> On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
 > 
-> Such mode based access protection already exists today with paging and features
-> such as SMEP and SMAP. However, to enforce these protections, the processor
-> must traverse the paging structures in memory.  Malicious software can use
-> timing information resulting from this traversal to determine details about the
-> paging structures, and these details may also be used to determine the layout
-> of the kernel memory.
+> > + * The only exception is when the task has migrated to another CPU, *and* this
+> > + * is called while the task work is running (or has already run).  Then a new
+> > + * cookie will be generated and the callback will be called again for the new
+> > + * cookie.
 > 
-> The LASS mechanism provides the same mode-based protections as paging but
-> without traversing the paging structures. Because the protections enforced by
-> LASS are applied before paging, software will not be able to derive
-> paging-based timing information from the various caching structures such as the
-> TLBs, mid-level caches, page walker, data caches, etc. LASS can avoid probing
-> using double page faults, TLB flush and reload, and SW prefetch instructions.
-> See [2], [3] and [4] for some research on the related attack vectors.
+> So that's a bit crap. The user stack won't change for having been
+> migrated.
 > 
-> In addition, LASS prevents an attack vector described in a Spectre LAM (SLAM)
-> whitepaper [7].
+> So perf can readily use the full u64 cookie value as a sequence number,
+> since the whole perf record will already have the TID of the task in.
+> Mixing in this CPU number for no good reason and causing trouble like
+> this just doesn't make sense to me.
 > 
-> LASS enforcement relies on the typical kernel implemetation to divide the
-> 64-bit virtual address space into two halves:
->   Addr[63]=0 -> User address space
->   Addr[63]=1 -> Kernel address space
-> Any data access or code execution across address spaces typically results in a
-> #GP fault.
+> If ftrace needs brain damage like this, can't we push this to the user?
 > 
-> Kernel accesses usually only happen to the kernel address space. However, there
-> are valid reasons for kernel to access memory in the user half. For these cases
-> (such as text poking and EFI runtime accesses), the kernel can temporarily
-> suspend the enforcement of LASS by toggling SMAP (Supervisor Mode Access
-> Prevention) using the stac()/clac() instructions and in one instance a downright
-> disabling LASS for an EFI runtime call.
-> 
-> User space cannot access any kernel address while LASS is enabled.
-> Unfortunately, legacy vsyscall functions are located in the address range
-> 0xffffffffff600000 - 0xffffffffff601000 and emulated in kernel.  To avoid
-> breaking user applications when LASS is enabled, extend the vsyscall emulation
-> in execute (XONLY) mode to the #GP fault handler.
-> 
-> In contrast, the vsyscall EMULATE mode is deprecated and not expected to be
-> used by anyone.  Supporting EMULATE mode with LASS would need complex
-> intruction decoding in the #GP fault handler and is probably not worth the
-> hassle. Disable LASS in this rare case when someone absolutely needs and
-> enables vsyscall=emulate via the command line.
+> That is, do away with the per-cpu sequence crap, and add a per-task
+> counter that is incremented for every return-to-userspace.
 
-I lack the wit to read & understand these patches to answer this
-question, so I'll just ask it:
+That would definitely make things easier for me, though IIRC Steven and
+Mathieu had some concerns about TID wrapping over days/months/years.
 
-What happens when the kernel does a NULL pointer dereference (due to a
-bug)?  It's not an attempt to access userspace, but it should result in
-a good bug report.  Normally this would be outside a STAC/CLAC region,
-but I suppose technically it could be within one.
+With that mindset I suppose the per-CPU counter could also wrap, though
+that could be mitigated by making the cookie a struct with more bits.
 
+-- 
+Josh
 
