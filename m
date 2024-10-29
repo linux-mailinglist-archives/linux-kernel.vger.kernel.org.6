@@ -1,121 +1,193 @@
-Return-Path: <linux-kernel+bounces-387253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853BB9B4E90
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:53:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D86879B4EA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151C31F23AD0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:53:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF0151C215BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A384195FEA;
-	Tue, 29 Oct 2024 15:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01600196D8F;
+	Tue, 29 Oct 2024 15:55:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dhTJN25g"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDX+L1jo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2499195B18
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:53:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE0C802;
+	Tue, 29 Oct 2024 15:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730217194; cv=none; b=KPMZoPU/GoRIdTuN30CHB42+przF0sbxzdghjRuECtBKlpsReOU3IidZy3I7g/Rc3hx4CmPoktedMS0lXYU02FCnOC0PZtrSSyNMb5J2sZEwBHnBAoKJ9U4paGHhbinumWba8fIhg47tt8bMAooFzyh6OJvtRo1qt+lppmV/0GI=
+	t=1730217340; cv=none; b=S9Tv3acl21DFGD8q85NsrW5Y5NxJfiR385ExzDQ9kyQ2zp7Lfvkx3UZU4T0KKoZLdElIBs9XlKoT9LObXxrt1yXfnRdTfUakNsnfiywybf0BUwOQkeWg7PJmLqMPZ01+vOMrHYzRb/F/GDsiqfJ7p/eY6mhbtpka4emHjuEKGL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730217194; c=relaxed/simple;
-	bh=Q82MjAAJzY011abIoj9mr3/lCIvynpDz1KuaP8yYE3w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kx7gsIhv/Gz8w50YPBNn5YQXLpzlxF+bQ09kM5xJFZwBKupBFFGWJn8A4ItRxZXiMXL9g1vuYFUTFXw7KIGTPVOkWBJ1vLBjgV9rkHkmq6PrCLr5h6+ixZi46Rwxe9I325wJb+sneXDa2sf+LLGExhhQQpdd0lC8id3eC/SY3IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dhTJN25g; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f2b95775so6509586e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:53:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730217191; x=1730821991; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ll51C0PllLi1/aohJqQbI6RPBpDmFIRC+GA4ELQxeFw=;
-        b=dhTJN25gmGQnWVvbZHc8HZzVc5aEPMmtMNvZJLvBmiFgavwUXcHdgbezBKjI/4x9DT
-         1cBxNiLlrLyiJg8N2xdN4TU0WddqxEUkXcw/IHQQCdmuBiL9OzAR2f8lz7kSpN+G9HV6
-         FalKknhrBFfMv2+BNq2IuzeXoQPmZ+HjPFu6c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730217191; x=1730821991;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ll51C0PllLi1/aohJqQbI6RPBpDmFIRC+GA4ELQxeFw=;
-        b=b6JhHdVEZtyuKkQK/ptOUxEVF7jgb/lHuAU6BN6w3sFaebhjzUH5HUIVjCKueLTxKm
-         rlCa9xzG73zVtJer331gqElT9qajPKRGEc4oz7uoXNOW/dzRy8lwSfnBwv8Jyt4ATIoy
-         WpbCvQ4k4FYd7TGJqbIfMh9gJE7GCDm20uXQU7TDjyU6tBXay9OGUvrxXycpobdE/kSP
-         JGsd3bk9//8IAYFzfJGLeb9NZsAae8AEIU2Wi4Sdn/w/g0O0h0EUNMxdQte1d5DHJb1y
-         WdnjI80lqsxT59VF5/DbysUd5Rpihyf+VijrOBlquGwmeKbOwQJuvpNqm+6X9AFo7XPu
-         g/0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXmMoE77vHsB4YTbHLqgI/HzhH+qI9easgBFinaqr0kGKjXQRqGsBkDgYQeMuYNjFAfG9bQ+tiX3Ccg+9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy7FeLCAOhDtHt9XHzVcsKnFVBehD9k7+XpRBbh4p2YkBqKoV+
-	fqdtz2tp0ioPV/Ezk7rqyYDw6jqRKvdt8IhoznTL7oRR5dLkKSdAGxQ7TQ1RchmUtindixUfRVP
-	uHZ2Tt6PlEOR5oKRpyR5GCRDa2+HRKQYUNU4b
-X-Google-Smtp-Source: AGHT+IFq8kVq37MNUAjH9Q6myVE42MB00LVqimrYgoawu+grZEG8upkwKXnNYybcruxqIxH3d1HozSkgBqx+9rgCuS8=
-X-Received: by 2002:a05:6512:1256:b0:535:6a34:b8c3 with SMTP id
- 2adb3069b0e04-53b348b9fecmr8822368e87.5.1730217190707; Tue, 29 Oct 2024
- 08:53:10 -0700 (PDT)
+	s=arc-20240116; t=1730217340; c=relaxed/simple;
+	bh=CJ9H12zIXj9xBzwi/AKR94i3YhNSTynRSfnQm/cP2d0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LeKEnfaZgUh7CxdMCvOky/XFcO/M1ZMg64FHTapEvu0xNjaCHw+v+n/GpnDD12sv25SZNCd/f05tpgCNjaWRx/M0XUZfjzxfYsP0EV0vHKtLvHXTW/n9NV2XFAcbaZ6Rac6mdVW4T4/+EntShFTDvYYnXTDVKAAIAm6BfYogCWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDX+L1jo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996F4C4CECD;
+	Tue, 29 Oct 2024 15:55:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730217339;
+	bh=CJ9H12zIXj9xBzwi/AKR94i3YhNSTynRSfnQm/cP2d0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=aDX+L1jo4ybiUcWcNRwc9C5InagXSA9kAjMFdO390oCLxwFSeg0my+YAxcrMp/P1W
+	 8CY2k4HQjgEidQrCfoubYkEk8pRlB9Ut8IYG5OBmMe/rWqibi3Rn+0VwpD58GOxLYQ
+	 OFXE1T3pI1RNrds7m9QOgpr5e4MBNKLAnoDBXCDA36zZlecdkuN7afVz3Urlmhty05
+	 xir5/S6SyEYknw/hkqK93q+V722kd9scRm0dP0n8ExtfakWyo0hqLGRKeUeeyjoAnO
+	 yPaOF/25En6B7m+1HZlTg2azoUOSaF6QhEzdTM+uQ9chK7CffggkL+zYfZ+t6I069f
+	 a8UDXwMztnYsw==
+Date: Tue, 29 Oct 2024 10:55:38 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, Rob Herring <robh@kernel.org>,
+	linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Veerabhadrarao Badiganti <quic_vbadigan@quicinc.com>,
+	Mayank Rana <quic_mrana@quicinc.com>
+Subject: Re: [PATCH 1/1] RFC: dt bindings: Add property "brcm,gen3-eq-presets"
+Message-ID: <20241029155538.GA1157681@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028101952.775731-1-dualli@chromium.org> <20241028101952.775731-2-dualli@chromium.org>
- <20241029071437.2381adea@kernel.org>
-In-Reply-To: <20241029071437.2381adea@kernel.org>
-From: Li Li <dualli@chromium.org>
-Date: Tue, 29 Oct 2024 08:52:59 -0700
-Message-ID: <CANBPYPiYAVDMeBUNRm8_wJojropMSL00UkGGV1ar+E3Y1STYfA@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 1/1] binder: report txn errors via generic netlink
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com, 
-	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com, 
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org, 
-	cmllamas@google.com, surenb@google.com, arnd@arndb.de, masahiroy@kernel.org, 
-	bagasdotme@gmail.com, horms@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org, hridya@google.com, 
-	smoreland@google.com, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241029154030.GA1157452@bhelgaas>
 
-On Tue, Oct 29, 2024 at 7:14=E2=80=AFAM Jakub Kicinski <kuba@kernel.org> wr=
-ote:
->
-> On Mon, 28 Oct 2024 03:19:51 -0700 Li Li wrote:
-> > +                     report.err =3D BR_ONEWAY_SPAM_SUSPECT;
-> > +                     report.from_pid =3D proc->pid;
-> > +                     report.from_tid =3D thread->pid;
-> > +                     report.to_pid =3D target_proc ? target_proc->pid =
-: 0;
-> > +                     report.to_tid =3D target_thread ? target_thread->=
-pid : 0;
-> > +                     report.reply =3D reply;
-> > +                     report.flags =3D tr->flags;
-> > +                     report.code =3D tr->code;
-> > +                     report.data_size =3D tr->data_size;
-> > +                     binder_genl_send_report(context, &report, sizeof(=
-report));
->
-> Could you break this struct apart into individual attributes?
-> Carrying binary structs in netlink has been done historically
-> but we moved away from it. It undermines the ability to extend
-> the output and do automatic error checking.
+On Tue, Oct 29, 2024 at 10:40:32AM -0500, Bjorn Helgaas wrote:
+> On Tue, Oct 29, 2024 at 08:52:15PM +0530, Krishna Chaitanya Chundru wrote:
+> > On 10/29/2024 8:18 PM, Bjorn Helgaas wrote:
+> > > On Tue, Oct 29, 2024 at 10:22:36AM -0400, Jim Quinlan wrote:
+> > > > On Tue, Oct 29, 2024 at 1:17 AM Krishna Chaitanya Chundru
+> > > > <quic_krichai@quicinc.com> wrote:
+> > > > > On 10/29/2024 12:21 AM, James Quinlan wrote:
+> > > > > > On 10/24/24 21:08, Krishna Chaitanya Chundru wrote:
+> > > > > > > On 10/22/2024 12:33 AM, Rob Herring wrote:
+> > > > > > > > On Fri, Oct 18, 2024 at 02:22:45PM -0400, Jim Quinlan wrote:
+> > > > > > > > > Support configuration of the GEN3 preset equalization settings, aka the
+> > > > > > > > > Lane Equalization Control Register(s) of the Secondary PCI Express
+> > > > > > > > > Extended Capability.  These registers are of type HwInit/RsvdP and
+> > > > > > > > > typically set by FW.  In our case they are set by our RC host bridge
+> > > > > > > > > driver using internal registers.
+> > > > > > > > > 
+> > > > > > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > > > > > > > ---
+> > > > > > > > >    .../devicetree/bindings/pci/brcm,stb-pcie.yaml       | 12
+> > > > > > > > > ++++++++++++
+> > > > > > > > >    1 file changed, 12 insertions(+)
+> > > > > > > > > 
+> > > > > > > > > diff --git
+> > > > > > > > > a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > index 0925c520195a..f965ad57f32f 100644
+> > > > > > > > > --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > @@ -104,6 +104,18 @@ properties:
+> > > > > > > > >        minItems: 1
+> > > > > > > > >        maxItems: 3
+> > > > > > > > >    +  brcm,gen3-eq-presets:
+> > > > > > > > > +    description: |
+> > > > > > > > > +      A u16 array giving the GEN3 equilization presets, one for
+> > > > > > > > > each lane.
+> > > > > > > > > +      These values are destined for the 16bit registers known as the
+> > > > > > > > > +      Lane Equalization Control Register(s) of the Secondary PCI
+> > > > > > > > > Express
+> > > > > > > > > +      Extended Capability.  In the array, lane 0 is first term,
+> > > > > > > > > lane 1 next,
+> > > > > > > > > +      etc. The contents of the entries reflect what is necessary for
+> > > > > > > > > +      the current board and SoC, and the details of each preset are
+> > > > > > > > > +      described in Section 7.27.4 of the PCI base spec, Revision 3.0.
+> > > > > > > > 
+> > > > > > > > If these are defined by the PCIe spec, then why is it Broadcom specific
+> > > > > > > > property?
+> > > > > > Yes, I will remove the "brcm," prefix.
+> > > > > > > > 
+> > > > > > > Hi Rob,
+> > > > > > > 
+> > > > > > > qcom pcie driver also needs to program these presets as you suggested
+> > > > > > > this can go to common pci bridge binding.
+> > > > > > > 
+> > > > > > > from PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4.2 for data rates
+> > > > > > > of  8.0 GT/s, 16.0 GT/s, and 32.0 GT/s uses one class of preset (P0
+> > > > > > > through P10) and where as data rates of 64.0 GT/s use different class of
+> > > > > > > presets (Q0 through Q10) (Table 4-23). And data rates of 8.0 GT/s also
+> > > > > > > have optional preset hints (Table 4-24).
+> > > > > > > 
+> > > > > > > And there is possibility that for each data rate we may require
+> > > > > > > different preset configuration.
+> > > > > > > 
+> > > > > > > Can we have a dt binding for each data rate of 16 byte array.
+> > > > > > > like gen3-eq-preset array, gen4-eq-preset array etc.
+> > > > > > 
+> > > > > > Yes, that was the idea when using "genX-eq-preset", for X in {3,4...}.
+> > > > > > 
+> > > > > > Keep in mind that this is an RFC; I have a backlog of commit submissions
+> > > > > > before I can submit the code that uses this DT property.  If you
+> > > > > > (Krishna) want to submit something now I'd be quite happy to go with
+> > > > > > that.  I don't believe it is acceptable to submit a bindings commit w/o
+> > > > > > code that uses it (if I'm incorrect I'll be glad to do a V2).
+> > > > > > 
+> > > > > I submitted a pull request for this. if you have any other suggestions
+> > > > > or if we need to have any other details we can update this pull request.
+> > > > > https://github.com/devicetree-org/dt-schema/pull/146
+> > > > 
+> > > > Thanks for doing this.   However, why a u8 array?  The registers are
+> > > > defined as u16 so it would be more natural to use a u16 array, each
+> > > > entry giving
+> > > > all of the data for a single lane.  In our implementation we read a
+> > > > u16 and we write it to the register -- what advantage is there by
+> > > > using a u8 array?
+> > > > 
+> > > > Also if there are 16 lanes, you will need 32 maxItems, correct?
+> > > 
+> > > I added these questions to the github PR.
+> > > 
+> > > Also, why does it define gen3-eq-presets, gen4-eq-presets,
+> > > gen5-eq-presets, and gen6-eq-presets?  I think there's only a single
+> > > place to write these values (the Lane Equalization Control registers,
+> > > PCIe r6.0, sec 7.7.3.4), isn't here?  How would software choose the
+> > > correct values to use?
+> ...
 
-Sure!
+Oh, one more thing: I guess "gen3", "gen4", etc. are well-entrenched
+terms in the industry, and they're probably fine in marketing
+materials.
 
->
-> BTW if you would like to keep using the uapi/linux/android directory
-> feel free to add this as the first patch of the series:
-> https://github.com/kuba-moo/linux/commit/73fde49060cd89714029ccee5d37dcc3=
-7b8291f6
+But I really don't like them in device trees or drivers because the
+spec doesn't use those terms.  In fact, the spec specifically advises
+*avoiding* them (PCIe r6.0, sec 1.2 footnote):
 
-Awesome. Thank you for the patch!
+  Terms like “PCIe Gen3” are ambiguous and should be avoided. For
+  example, “gen3” could mean (1) compliant with Base 3.0, (2)
+  compliant with Base 3.1 (last revision of 3.x), (3) compliant with
+  Base 3.0 and supporting 8.0 GT/s, (4) compliant with Base 3.0 or
+  later and supporting 8.0 GT/s, ....
+
+As a practical matter, those terms make it hard to use the spec: where
+do I go to learn how to use "gen4-eq-presets"?  There's no instance of
+"gen4" in the PCIe spec.  AFAICT, all I can do is look up the PCIe
+r4.0 spec and try to figure out what was added in that revision, which
+is a real hassle.
+
+Bjorn
 
