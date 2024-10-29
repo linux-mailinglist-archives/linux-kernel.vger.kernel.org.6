@@ -1,98 +1,89 @@
-Return-Path: <linux-kernel+bounces-387086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611BA9B4BBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:08:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C9329B4BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:09:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180D71F24113
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:08:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C796D1F243DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:09:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332E0206E8A;
-	Tue, 29 Oct 2024 14:08:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC26206E8B;
+	Tue, 29 Oct 2024 14:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyLq3F6C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="OCYW8KPZ"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856E542A92;
-	Tue, 29 Oct 2024 14:08:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B0C942A92;
+	Tue, 29 Oct 2024 14:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210917; cv=none; b=e5VwT3fFFETqP+RLzrUOgRGQsKcsBKYoFhWhin1YrNMqQU8sURlYYDQOcePSSccvYy774Anx7wUH09Mamwm3rLNGqkXg0i4iXwhK35u+GJJBjn57Kag4akmdcQuGujCDdVFHa1kqg6acySR3ykt0aWBIetx6M/bMc6UuwKSqip4=
+	t=1730210947; cv=none; b=DchMHJIBtoFILR5pJDiBpEA7303xIeBTZcs298HHXsZ6PJaQuD/J35oWhvQGceFBGxSgO3nzN2aNjHZ8ILz9ET1nVqZBdwj60UGEiYp9FJctjvOksjg+Eei1pxXWxen3JrQqlB7oR4A0jazexKTSWopW8rZ9MyDl/geCfmn8QOI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210917; c=relaxed/simple;
-	bh=ObDzOhYCuptnWikVtFmXWeBb94o2pZmdsPmc1Vb4m4I=;
+	s=arc-20240116; t=1730210947; c=relaxed/simple;
+	bh=B3PTd18W5zTwlgnmB7cmpWuhKcY1jJrsoYEOari3Uk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRlp5PCYZPTbiwgkJLDq4IFoIF4AHxUSM0afz7tmnmN5z0zMOqBgJr15oWkP6f6Kns3YofqgldhA8Sq5Jmo1IbNuadXf8UlVk5c+tHplC3+IGqIWg+pqdsGBGeT++2wi2wNiEjlr/OvE46hK89/GI0L0txMDWU4QAabHlGiFQoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyLq3F6C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5ECC4CECD;
-	Tue, 29 Oct 2024 14:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730210917;
-	bh=ObDzOhYCuptnWikVtFmXWeBb94o2pZmdsPmc1Vb4m4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CyLq3F6C4Jb3uE3m9U9UXOrYlYTQilpLv2CHJmEOSnK7XypTSrePEMX0XasfLcydi
-	 cOh23QeYStyUJih2j/+ED2eegBEhW98+aakvfIPBISE48FqbsBLmLiG+kRmbcCUkLq
-	 1OX/S4YG+dJwcpFiElWDl2YrLPBc/ohXhX29N3IVOODd2jXGI9BjScSk0iMGFaW1wZ
-	 0Gq3FGWWXXJYbTlEoJQcA4UgpWuoZCHtAYd0mw/J/cGD1BkpsHzY/adpVcA3VRpmBd
-	 JaguFeCPVNK/fAgLWigDFWYoO/xz9uYeZBKKHO2LFYyBVMcm3PIboxGuvkm/f7m/Z8
-	 imQ51x9DOJKVQ==
-Date: Tue, 29 Oct 2024 14:08:32 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Aleksei Vetrov <vvvvvv@google.com>
-Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in
- dapm_widget_list_create
-Message-ID: <da230ccf-37b6-4e43-be12-9035c594e535@sirena.org.uk>
-References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
- <28ade5d1-d13a-4388-bd0b-f03211937abd@embeddedor.com>
- <ZyDlAd-Z26wnhZK5@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CEmOTJjY3Tm9wvw9Ulr/MjPn1nIwcc5OZrX05ariLRrnPk0ezWzjKfH75vsaVfZbKkfS/nh5rDHYCw+D5AZVYdGiC6KiCgg3e4st2aNRwIVk+ygbf7HStWqqcghPNewJvFJsdjKpFxQ4eOTQbyRZLur87fuct3ezBon/SgOk27A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=OCYW8KPZ; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=sHZQoAi2r+bPyI24sxrgAj4c8J8PloQlVCP6audZCho=; b=OCYW8KPZFzeygXXo3yCj7FHYWO
+	MBdrf9Q4ohOLgBJZinQLA8b+ZRvsVAPUenxhTjkm5MT0xadANHPQc+zfmcEAUJSL0XvEypNM1HEui
+	HOG/+jSHnbktO3JMvlrpHXXmIzsD7EX8T/SWSvUbAFyKdCjTHLrTZKF/WlcjLfiOFRnq1c0FPJMHd
+	16I7QJf5GWd7T+57QTcmVxyp8TwgfWqCnl/xIlt3GdVLO0jgYPYloVSWAnGxT5vJDRTPeibCQ+Ugq
+	aXtSKNiRD3QzZLeTrMFV5TwM2NXTFyTZnVUAqN78jggV4rKwIRcrw1aeOM8PGZ6LV04rAtx5PLceH
+	P6xhM/sw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5mty-00000009uZG-2jT6;
+	Tue, 29 Oct 2024 14:08:54 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 07BDD300399; Tue, 29 Oct 2024 15:08:54 +0100 (CET)
+Date: Tue, 29 Oct 2024 15:08:53 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 00/19] unwind, perf: sframe user space unwinding
+Message-ID: <20241029140853.GD14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Smf6UI3x8BM1at2s"
-Content-Disposition: inline
-In-Reply-To: <ZyDlAd-Z26wnhZK5@google.com>
-X-Cookie: May be too intense for some viewers.
-
-
---Smf6UI3x8BM1at2s
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <cover.1730150953.git.jpoimboe@kernel.org>
 
-On Tue, Oct 29, 2024 at 01:37:05PM +0000, Aleksei Vetrov wrote:
+On Mon, Oct 28, 2024 at 02:47:27PM -0700, Josh Poimboeuf wrote:
 
-> Sent v2.
+>   - Is the perf_event lifetime managed correctly or do we need to do
+>     something to ensure it exists in unwind_user_task_work()?
 
-That doesn't seem to have shown up here?
-
---Smf6UI3x8BM1at2s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcg7F8ACgkQJNaLcl1U
-h9B/rAf/cLEITqILQmYrE0RumhbYtZyY4dnDDKVlSj2QfLqRDxLP4bfdZt/xfMn9
-W0KcIXOwy4PuMJe/vKNvOg0GfWX3wDyGBwxiGbaZpZpRlZJgHNInpqPqCKVAPJw9
-Kf3DgtiAL7CdUB+5JKcFK4lPZZ6R4aqWV5V3moU6+J54a5wVCyHL5V+4KCB3XNgC
-J3BH8XSVx4+CrA6YdxNzJL8YYii88a96PZf5V5beBbMQhz8gWV9bRjwWatnLBtsF
-yvUyl9J4R/A7a7wKnQ+X3aUbQFpS5t7hmSIZU/dJqhqLZ///JiNCiOaDe57eWYc5
-Aauaqaq0v1NgxKFldJkgN80cVYOoDQ==
-=8qa+
------END PGP SIGNATURE-----
-
---Smf6UI3x8BM1at2s--
+You probably want a sync/cancel somewhere near the start of
+_free_event().
 
