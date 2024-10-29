@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-386362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FD089B426F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:35:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3291F9B4271
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:36:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 575A11C21C0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:35:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CAEC1C21347
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED9EE2010E4;
-	Tue, 29 Oct 2024 06:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6275201253;
+	Tue, 29 Oct 2024 06:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cgeaEC5n"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qXVnYPEf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C7B201037
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97A91E0B93;
+	Tue, 29 Oct 2024 06:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730183716; cv=none; b=CQ+lt6GilZo/BCIrCJqP4SG9O52OfK2v6YnhG8tIpMVzFJPQBStckXivhVBH+rdqSaTK75ch8Asozy/0ltK1QiBLtgR3sSODuRqWlSo6p013BMEt64huiKMVVOF793BPXnjwveFzgEWhRnAIchtNF6/kX2wx7gRU4Ij3v1npsFg=
+	t=1730183757; cv=none; b=SEBoAaSavwn99zKbAfmxteuDAr1R/G/d8tspJawjn5jiBhHMExqSidFkAH9m4fkmmPt0aX+r8gxWfdcxDdgRRQeKnDA/t9OLxHuU2DJkrAC+XIwWjJ/ZU59CYvhUGPKjYKDTp7gQhHETRzoG6HktJ+8BEGHEs1MIVVYoDLBmTlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730183716; c=relaxed/simple;
-	bh=xZ0ywlKYQnGSvGl6ocRP58hWH7a+wAhBTGsX9huPv4g=;
+	s=arc-20240116; t=1730183757; c=relaxed/simple;
+	bh=uA9DtpHsaaw4aJ5j/ZBnH/JfArY2z5mmvy4OnUx8YrU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ajhWo7ex0PviaVPu0ts60MsMBE4lTuT7XXp00hR/x/1CZLwOJauNgA7ETjNv610lqPTR779rMO4HPACWRVaGtMz06vUH+petYgMd9rj76vbtQlH5GalUH02VMV/6Sx7deRUHrb7KnQ6lUfphqkoNaIavx3KHRj5bCLzf5p3q9oc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cgeaEC5n; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43169902057so49153545e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:35:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730183712; x=1730788512; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oGmWguF7wto3ubSTB9eGE9Fa2Zb2k0XycKxxaDv+zCk=;
-        b=cgeaEC5nOlgXB1C19SPqtuDYUZ5vo4idK7bYTNsKwP5Wl5Uu3T4a40NIdN2c+jL1u2
-         qrfPFx8R3QzhVi5/I04fD20SVhuOCk1XlEEfTGtRqZlSYgV0CvmY2rqr7oDKoiX59K+Q
-         QTRBKldks23k/H7sYhFVaHCL6fja7qBacjb5ES0J4a+5692YdPT3ykxVlokAWJHKc4Lw
-         kYmunwZOnU3qDuTxoRCFmz72OrXEJdl0Yo23GFq89l0BhK/lEkfYWn7lttMpEqZ/JaFY
-         xbm81ySx/qvTWWFERN7lTMyfGyrk7n23Ni5xEWK186T61iz0J0n8Hh5f+22iOJ6InhPS
-         FB7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730183712; x=1730788512;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGmWguF7wto3ubSTB9eGE9Fa2Zb2k0XycKxxaDv+zCk=;
-        b=HldHzNRBlPpcVua4meGUHkff1q3pkOEOrmFRNRfYsVgoxiuLj5T0HC3Ej423jBtiap
-         3UdQg9QcO8Hp2EdY/TcWkfDflfkR8KoKOI+frkolciljRXeMJiDSzZJLySyKNbv7t088
-         P6TQVxJr5nBb6MMVxT38y1QFi/0jcoZNCRFE7i2s7RPPtLqU7tupnXK24rG/XlPouTcc
-         rwoewpwFjZsKEomXGV82wxgtMCc9uTiQ6vf/77qkjvMhoCMNzE1kWgxFbnyobi80b+OR
-         RwSndXYxrcxfrVYH/RMpTMIe/BUzXAezTjV88gpJMIcsppgiq6UUuZn5ZMoJJua83JO/
-         Qyvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXs6zxVp/MblWYEn2/TBFEWcYF/zOCJx+O1XWgJ/4BFeo97dShGc5YaH0Lzd54/kTEg+nTzrNy34S8zA+s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxm61NWMrv7mBnocoW5AtJCdbMB6dRyv+B2t7PJehy5Kue2PFm2
-	75kJw9l7WEe1C70dr3YCVRON0dx1aaRj2dV7xNTVcVhVecM6Lj5AVJGc5bfdFBw=
-X-Google-Smtp-Source: AGHT+IGxj96uvuoQOa/k6xLtZvRpxvyjCrAdeB52b2mJkIZWiWOsgfuAxw3Jj1MvCjKhES6LQdaIEQ==
-X-Received: by 2002:a05:6000:a90:b0:37d:3eec:6214 with SMTP id ffacd0b85a97d-380611f579dmr7898417f8f.50.1730183712539;
-        Mon, 28 Oct 2024 23:35:12 -0700 (PDT)
-Received: from [192.168.0.157] ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b4e56csm11540408f8f.65.2024.10.28.23.35.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 23:35:12 -0700 (PDT)
-Message-ID: <bbb8f8c0-3676-4846-b4d3-70e1c533b66d@linaro.org>
-Date: Tue, 29 Oct 2024 06:35:10 +0000
+	 In-Reply-To:Content-Type; b=R6mZRdSbcHEPEw7iFLc4vm670pK65tLXCVBSc1RkhJwqSSLUOfhO/YQrSO7B4kR1sRfIl8q/kG9WdQZMHnQD4RS7uuxZFV2BC84+LY/G7qeRem7WF9pR/1wzkiKZhL0gWA7phsz363H3jPsV2VGbzBQEuqB1BD+pgQB+pZldKbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qXVnYPEf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB41BC4CEE3;
+	Tue, 29 Oct 2024 06:35:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730183757;
+	bh=uA9DtpHsaaw4aJ5j/ZBnH/JfArY2z5mmvy4OnUx8YrU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qXVnYPEfpnMU1LeBFN7iKmIRiOVK+FH/Sb92vdU6OI2nacWdbvVwfCQGlsUCPhVzw
+	 SSY47GC6oC2J6HPda3Hi6sUNw3D8pQWAZ+QHvz7+8iVwRAmzpYrOr9137uxD2gVRK2
+	 rDPLJaYsc/TL0Az/VnFVxyl+niU+KmqYqsBG+LaRdZC6M6wmsX4e2UXsc+KZQLvOdQ
+	 39gOScq0A0KSj/81t7zHxeGk8bSCixiuwLfs6DgsY3nNdMVRV7xTsU6b9L0oA2NGUT
+	 +AnhniCdgPfbHqokStGkD4H65f3RvAjKdwmZQC6RgUISJCMvAIE1iO/GucFF0i1gE/
+	 e59DMDDnULgOQ==
+Message-ID: <05ee7331-c582-49ff-9f4e-2eee13f3a429@kernel.org>
+Date: Tue, 29 Oct 2024 07:35:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,44 +49,330 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mtd: spi-nor: atmel: provide .size to the at25ff321a
- entry
-To: Marcus Folkesson <marcus.folkesson@gmail.com>,
- Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241018-at25ff321a-v1-1-c8380f80c289@gmail.com>
+Subject: Re: [PATCH 4/4] reset: mediatek: Add reset control driver for SMI
+To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240821082845.11792-1-friday.yang@mediatek.com>
+ <20240821082845.11792-5-friday.yang@mediatek.com>
+ <ce9a7ea1-67bc-42b8-836d-11932dcf3790@kernel.org>
+ <2ef870eb2f654667723f7f2d38e7532a7d3cfc84.camel@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <20241018-at25ff321a-v1-1-c8380f80c289@gmail.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <2ef870eb2f654667723f7f2d38e7532a7d3cfc84.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-
-
-On 10/18/24 10:57 AM, Marcus Folkesson wrote:
-> Set size of the flash for the at25ff321a entry.
+On 24/10/2024 03:29, Friday Yang (杨阳) wrote:
+> On Wed, 2024-08-21 at 10:58 +0200, Krzysztof Kozlowski wrote:
+>>  	 
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>  On 21/08/2024 10:26, friday.yang wrote:
+>>> Add a reset-controller driver for performing reset management of
+>>> SMI LARBs on MediaTek platform. This driver uses the regmap
+>>> frameworks to actually implement the various reset functions
+>>> needed when SMI LARBs apply clamp operations.
+>>
+>> How does this depend on memory controller patches? Why is this
+>> grouped
+>> in one patchset?
+>>
 > 
-> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
-> ---
->  drivers/mtd/spi-nor/atmel.c | 1 +
->  1 file changed, 1 insertion(+)
+> How about changing it like this,
+> patchset1:
+> (1)SMI reset control driver
+> (2)SMI reset bindings
+> patchset2
+> (1)SMI driver
+> (2)SMI bindings
 > 
-> diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
-> index 45d1153a04a07b7c61f46b117311b24ab695038f..cc7217e96d0139a06d46f10e35c545f604464b3c 100644
-> --- a/drivers/mtd/spi-nor/atmel.c
-> +++ b/drivers/mtd/spi-nor/atmel.c
-> @@ -214,6 +214,7 @@ static const struct flash_info atmel_nor_parts[] = {
->  	}, {
->  		.id = SNOR_ID(0x1f, 0x47, 0x08),
->  		.name = "at25ff321a",
-> +		.size = SZ_4M,
+>>>
+>>> Signed-off-by: friday.yang <friday.yang@mediatek.com>
+>>> ---
+>>>  drivers/reset/Kconfig              |   9 ++
+>>>  drivers/reset/Makefile             |   1 +
+>>>  drivers/reset/reset-mediatek-smi.c | 152
+>> +++++++++++++++++++++++++++++
+>>>  3 files changed, 162 insertions(+)
+>>>  create mode 100644 drivers/reset/reset-mediatek-smi.c
+>>>
+>>> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+>>> index 67bce340a87e..e984a5a332f1 100644
+>>> --- a/drivers/reset/Kconfig
+>>> +++ b/drivers/reset/Kconfig
+>>> @@ -154,6 +154,15 @@ config RESET_MESON_AUDIO_ARB
+>>>    This enables the reset driver for Audio Memory Arbiter of
+>>>    Amlogic's A113 based SoCs
+>>>  
+>>> +config RESET_MTK_SMI
+>>> +bool "MediaTek SMI Reset Driver"
+>>> +depends on MTK_SMI
+>>
+>> compile test
+> 
+> Thanks, I will fix it to 'depends on MTK_SMI || COMPILE_TEST'
+> 
+>>
+>>> +help
+>>> +  This option enables the reset controller driver for MediaTek
+>> SMI.
+>>> +  This reset driver is responsible for managing the reset signals
+>>> +  for SMI larbs. Say Y if you want to control reset signals for
+>>> +  MediaTek SMI larbs. Otherwise, say N.
+>>> +
+>>>  config RESET_NPCM
+>>>  bool "NPCM BMC Reset Driver" if COMPILE_TEST
+>>>  default ARCH_NPCM
+>>> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+>>> index 27b0bbdfcc04..241777485b40 100644
+>>> --- a/drivers/reset/Makefile
+>>> +++ b/drivers/reset/Makefile
+>>> @@ -22,6 +22,7 @@ obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
+>>>  obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
+>>>  obj-$(CONFIG_RESET_MESON) += reset-meson.o
+>>>  obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
+>>> +obj-$(CONFIG_RESET_MTK_SMI) += reset-mediatek-smi.o
+>>>  obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
+>>>  obj-$(CONFIG_RESET_NUVOTON_MA35D1) += reset-ma35d1.o
+>>>  obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
+>>> diff --git a/drivers/reset/reset-mediatek-smi.c
+>> b/drivers/reset/reset-mediatek-smi.c
+>>> new file mode 100644
+>>> index 000000000000..ead747e80ad5
+>>> --- /dev/null
+>>> +++ b/drivers/reset/reset-mediatek-smi.c
+>>> @@ -0,0 +1,152 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * Reset driver for MediaTek SMI module
+>>> + *
+>>> + * Copyright (C) 2024 MediaTek Inc.
+>>> + */
+>>> +
+>>> +#include <linux/mfd/syscon.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of.h>
+>>> +#include <linux/platform_device.h>
+>>> +#include <linux/regmap.h>
+>>> +#include <linux/reset-controller.h>
+>>> +
+>>> +#include <dt-bindings/reset/mt8188-resets.h>
+>>> +
+>>> +#define to_mtk_smi_reset_data(_rcdev)\
+>>> +container_of(_rcdev, struct mtk_smi_reset_data, rcdev)
+>>> +
+>>> +struct mtk_smi_larb_reset {
+>>> +unsigned int offset;
+>>> +unsigned int value;
+>>> +};
+>>> +
+>>> +static const struct mtk_smi_larb_reset rst_signal_mt8188[] = {
+>>> +[MT8188_SMI_RST_LARB10]= { 0xC, BIT(0) }, /* larb10 */
+>>> +[MT8188_SMI_RST_LARB11A]= { 0xC, BIT(0) }, /* larb11a */
+>>> +[MT8188_SMI_RST_LARB11C]= { 0xC, BIT(0) }, /* larb11c */
+>>> +[MT8188_SMI_RST_LARB12]= { 0xC, BIT(8) }, /* larb12 */
+>>> +[MT8188_SMI_RST_LARB11B]= { 0xC, BIT(0) }, /* larb11b */
+>>> +[MT8188_SMI_RST_LARB15]= { 0xC, BIT(0) }, /* larb15 */
+>>> +[MT8188_SMI_RST_LARB16B]= { 0xA0, BIT(4) }, /* larb16b */
+>>> +[MT8188_SMI_RST_LARB17B]= { 0xA0, BIT(4) }, /* larb17b */
+>>> +[MT8188_SMI_RST_LARB16A]= { 0xA0, BIT(4) }, /* larb16a */
+>>> +[MT8188_SMI_RST_LARB17A]= { 0xA0, BIT(4) }, /* larb17a */
+>>> +};
+>>> +
+>>> +struct mtk_smi_larb_plat {
+>>> +const struct mtk_smi_larb_reset*reset_signal;
+>>> +const unsigned intlarb_reset_nr;
+>>> +};
+>>> +
+>>> +struct mtk_smi_reset_data {
+>>> +const struct mtk_smi_larb_plat *larb_plat;
+>>> +struct reset_controller_dev rcdev;
+>>> +struct regmap *regmap;
+>>> +};
+>>> +
+>>> +static const struct mtk_smi_larb_plat mtk_smi_larb_mt8188 = {
+>>> +.reset_signal = rst_signal_mt8188,
+>>> +.larb_reset_nr = ARRAY_SIZE(rst_signal_mt8188),
+>>> +};
+>>> +
+>>> +static int mtk_smi_larb_reset(struct reset_controller_dev *rcdev,
+>> unsigned long id)
+>>> +{
+>>> +struct mtk_smi_reset_data *data = to_mtk_smi_reset_data(rcdev);
+>>> +const struct mtk_smi_larb_plat *larb_plat = data->larb_plat;
+>>> +const struct mtk_smi_larb_reset *larb_rst = larb_plat-
+>>> reset_signal + id;
+>>> +int ret;
+>>> +
+>>> +ret = regmap_set_bits(data->regmap, larb_rst->offset, larb_rst-
+>>> value);
+>>> +if (ret)
+>>> +return ret;
+>>> +ret = regmap_clear_bits(data->regmap, larb_rst->offset, larb_rst-
+>>> value);
+>>> +
+>>> +return ret;
+>>> +}
+>>> +
+>>> +static int mtk_smi_larb_reset_assert(struct reset_controller_dev
+>> *rcdev, unsigned long id)
+>>> +{
+>>> +struct mtk_smi_reset_data *data = to_mtk_smi_reset_data(rcdev);
+>>> +const struct mtk_smi_larb_plat *larb_plat = data->larb_plat;
+>>> +const struct mtk_smi_larb_reset *larb_rst = larb_plat-
+>>> reset_signal + id;
+>>> +int ret;
+>>> +
+>>> +ret = regmap_set_bits(data->regmap, larb_rst->offset, larb_rst-
+>>> value);
+>>> +if (ret)
+>>> +dev_err(rcdev->dev, "[%s] Failed to shutdown larb %d\n", __func__,
+>> ret);
+>>> +
+>>> +return ret;
+>>> +}
+>>> +
+>>> +static int mtk_smi_larb_reset_deassert(struct reset_controller_dev
+>> *rcdev, unsigned long id)
+>>> +{
+>>> +struct mtk_smi_reset_data *data = to_mtk_smi_reset_data(rcdev);
+>>> +const struct mtk_smi_larb_plat *larb_plat = data->larb_plat;
+>>> +const struct mtk_smi_larb_reset *larb_rst = larb_plat-
+>>> reset_signal + id;
+>>> +int ret;
+>>> +
+>>> +ret = regmap_clear_bits(data->regmap, larb_rst->offset, larb_rst-
+>>> value);
+>>> +if (ret)
+>>> +dev_err(rcdev->dev, "[%s] Failed to reopen larb %d\n", __func__,
+>> ret);
+>>> +
+>>> +return ret;
+>>> +}
+>>> +
+>>> +static const struct reset_control_ops mtk_smi_reset_ops = {
+>>> +.reset= mtk_smi_larb_reset,
+>>> +.assert= mtk_smi_larb_reset_assert,
+>>> +.deassert= mtk_smi_larb_reset_deassert,
+>>> +};
+>>> +
+>>> +static int mtk_smi_reset_probe(struct platform_device *pdev)
+>>> +{
+>>> +struct device *dev = &pdev->dev;
+>>> +const struct mtk_smi_larb_plat *larb_plat =
+>> of_device_get_match_data(dev);
+>>> +struct device_node *np = dev->of_node, *reset_node;
+>>> +struct mtk_smi_reset_data *data;
+>>> +struct regmap *regmap;
+>>> +
+>>> +data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>>> +if (!data)
+>>> +return -ENOMEM;
+>>> +
+>>> +reset_node = of_parse_phandle(np, "mediatek,larb-rst-syscon", 0);
+>>> +if (!reset_node)
+>>
+>> This looks just wrong. This looks like a child of whatever phandle
+>> points here.
+>>
+>> Why do you create MMIO-using node as not MMIO?
+>>
+> 
+> This is the definition for imgsys1_dip_top and imgsys1_dip_top_rst.
+> SMI reset controller driver parse the 'mediatek,larb-rst-syscon'
+> to get the 'imgsys1_dip_top' device node and regmap.
+> Then SMI driver could read and write the register by the regmap
+> to apply reset operations here.
+> 
+> 	imgsys1_dip_top: clock-controller@15110000 {
+> 		compatible = "mediatek,mt8188-imgsys1-dip-top";
+> 		reg = <0 0x15110000 0 0x1000>;
+> 		#clock-cells = <1>;
+> 	};
+> 
+> 	imgsys1_dip_top_rst: reset-controller0 {
+> 		compatible = "mediatek,smi-reset-mt8188";
+> 		#reset-cells = <1>;
+> 		mediatek,larb-rst-syscon = <&imgsys1_dip_top>;
 
-The flash size is retrieved from SFDP. BTW size of zero triggers SFDP
-parsing, see spi_nor_needs_sfdp().
+This is obviously incorrect DTS code. Run standard checks on your DTS
+code first.
+
+
+> 	};
+> 	
+> 	larb10: smi@15120000{
+> 		resets = <&imgsys1_dip_top_rst MT8188_SMI_RST_LARB10>;
+> 		reset-names = "larb_rst";
+> 	};
+> 
+> I am not so sure the meaning "MMIO-using" here. 
+
+You pretend that something is MMIO but you do not use it as MMIO.
+
+Anyway, this was 2 months ago, I lost all the context, all the emails
+and I am not going back.
+
+Respond to feedback in reasonable time, if you want to keep discussion
+going.
+
+All this is so far: NAK
+
+Best regards,
+Krzysztof
+
 
