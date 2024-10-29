@@ -1,459 +1,212 @@
-Return-Path: <linux-kernel+bounces-387077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5848C9B4B9A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:00:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC379B4B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FE4C1C22856
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A961F242B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:00:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21A2920696B;
-	Tue, 29 Oct 2024 14:00:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7B3206E67;
+	Tue, 29 Oct 2024 14:00:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hHxffMUg"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpwdL1ZH"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FBC020694B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:00:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66512114;
+	Tue, 29 Oct 2024 14:00:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210413; cv=none; b=PulIBGoGFZ48yrbuhZ/E6kcfDcF5sQc5/jRXEJPU7wRVWGttEGaq7aIUt84tglJQhw3aKyYL52CocrLab6VY+PEIpTlEsKb+dg+PftKV5RciQAeP3wY/ARyAGaeNvOZHoTWyCnsb4JM8SyJtE/Vj8CVZUy+u0CbkOEu5DV58078=
+	t=1730210449; cv=none; b=kk9qaR4XBEiLr5WafAzWaOs5NnuhVcGKoxxXBcj7RoY6fLGmtbTeiAlTddlb1bj0dkBfIKCwvvDtM94i9ir0rlK4rrAgQPHwHzpoW58glOC7TpxPWu/Qwwf9KaBXBqfCmruKUMZjUk0q3rtqtW/BrTAldRZspq5PvSFoFBVhBuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210413; c=relaxed/simple;
-	bh=nnR11+f9keATOzkEQC1nKkxPmkVJ/WMAbUXmr1fERDk=;
+	s=arc-20240116; t=1730210449; c=relaxed/simple;
+	bh=lHwjzQwwi2GIbhYJDSVVMLbyCXgotdotxz1qHcAHyCE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pa+pdVmcdN6elzr2l/NNR67ypHmpjlQ8pGRI3Zp264+cglGLMT86I+O/9pEsXa/QNCQTBvLXt5fZVePUuwUw9xhIAyLsj/l55qjMCpV+jmWA9Y1zqigPDJa3YJq7IdFZXYcWYBN3HZ/GeB4azrlqSYH3xrhQein5Woz+YBtlXFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hHxffMUg; arc=none smtp.client-ip=209.85.210.169
+	 To:Cc:Content-Type; b=RADgbwZ/Qu6G73WjBbfetiHt2xtOXC4CyaYZxrvUyk479/yvne+3WtKpBr9rZ/gtG+Q3llKZeHvykQpmORJJRaAWVjFuAlxfs80uvGw7N4ld+TTP3a3EpN3dIY0HVp9mAjxhy0pxJnXTSQm17rs6Jm/6HVZy7uNuswcFR8RcdJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpwdL1ZH; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-72088a79f57so151925b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:00:09 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5743074bso44777711fa.1;
+        Tue, 29 Oct 2024 07:00:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730210409; x=1730815209; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1730210445; x=1730815245; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eRzQWzkzVI0fNiNgdZexP1F+fhwsUnCCzVqowPLugVQ=;
-        b=hHxffMUg+2W9+zGbTNXcFu06TS7C9Nq2qVITSqR32JoEEGYvkzF/HYjf97kikYrFgY
-         t7ZphS5YpbguVgEuWmY5E1CwKqo/ZJyuWA+0mAEKFRzfoS0KkUdzL06YloOWT3XkTh0D
-         VkLHa2VQZmO2wUb9l1/Zkkyzupwc+u3ylhH7Rr9ZWJ39G9qJY0Y4HUiqy7Jn2c2YKmE3
-         Vp5oBWuF++7N9oVAjTK8ZDj5aDJqjq4bdbLfSqLe0XqopL63kkUP+YMV/fI7WEzWhgVK
-         z/5Fx2YtcY9/c1UvpDgF7wz5ZcUHBLp4myLacLqyaEcNS/MmnGfvFy2jMsn5EXPY70tx
-         p04A==
+        bh=ojZC2nOVUDIw/kk3Ky4Vr0ESQa/hg/6z1X5oOfns3vs=;
+        b=EpwdL1ZHNQHx4PhBcgfB1Iy/Lme1z1YZI9HZfG7KPO+YoS3nEjtSUIVgDfEIQefpOm
+         eiQNU0GBdqj1rI7N0l90EqC3Ob8EDFAPf7zjET2Sp8DeeXQK5LcBrhP8dGm7QuXKic1z
+         14pdm0PkenOwmciXxJyTzEcBl4J7m28+lnso/vo0Qo/ViCYQj5IeI7uICnasYVEEp1tw
+         sqD2QDDx1MVhZgV53HQ0XiIxUXlRUFZWZmjF3OonnRSlQGzTY+kMyKGyMRQfO3ukGVhk
+         v/GMecScCdWUVEiMRMMwD44/BuB+mdKADd5851DeFKPvM7n0e4ywDWi70xL1cLEYeogl
+         DF6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730210409; x=1730815209;
+        d=1e100.net; s=20230601; t=1730210445; x=1730815245;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eRzQWzkzVI0fNiNgdZexP1F+fhwsUnCCzVqowPLugVQ=;
-        b=kapNcJDFuQ3fEmoi5dg8Fu1g5jAkooMAK0RHlTelDmCxpshXu5vx/ZTZQk0HXWFAvP
-         PSM/YzxFda50GY3in+P7RiJR6bafT159C9vJUCvYeUZ4VuDcOeHDU8gC62sXHysX4V45
-         FCNbvgn2biSbXZsnznHXnUTy2qOZPQpuG+lNlVywIL39IrGJlMV8nMfkQST0qqplV2b5
-         9uYiMvFAQxl3EAj1rZTwmRFEh8Y6dV/UNLsMQ+nisx20VjKGoQy3MVDKfohnJLWaPLzL
-         3gcfi+ZnQzGdcs65Gef31BuKwydCdYTdadKQXPteJeLUZQ4qAEbz4fiUfEuvM5HiRY4a
-         wG+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVKAyE7/DgvANh1GIab/Jvgx+Wg7/McWTkzbX/9q24LWkLiEJIUrf9fzOXAr9/QFteMLuGu10ElRhcOR1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9XgAhcKUOh/Fv8xscvbtUED6pTCw/QxgeaESsCkn3/u+Vikt+
-	QsHsug0Aan+j1KxGecOo3Mzg/rYmWUpJ+RQp8AaPpmqSgrG1S1dvqFfq0AJZca6kiRULo2kKSyr
-	p3KaVMBfMhz5Lb0sFsEOae928dGk=
-X-Google-Smtp-Source: AGHT+IF8EmYCCix2LYg3DJ33AP+Pal3sY4n0LMPNaS6LipuMpYMeomJ/gVgbaq7VmOk1rqHkC33kd8GQb9HNTWZ+GSk=
-X-Received: by 2002:a05:6a00:4613:b0:71e:5132:da7b with SMTP id
- d2e1a72fcca58-72063004c28mr7327479b3a.3.1730210407492; Tue, 29 Oct 2024
- 07:00:07 -0700 (PDT)
+        bh=ojZC2nOVUDIw/kk3Ky4Vr0ESQa/hg/6z1X5oOfns3vs=;
+        b=vdES1E2WWY3GKnw76zIXaGXbodUgGXehOFMu1Bj4QDrBOfnGGrhjtX2mWDi4IhoUxI
+         i3uIPxQ2OPyYB3BlfLVGy0hYjJtzGReVgJa4ilwZYsRyC7WqQzARe7pNU7WAwxxshbKr
+         cc7S34wrEXL+MQpap059k+Nfab7VVkEYr6B9g0AsbQh17IpRrCLCokByna5nt/kxLxGe
+         evC0SUXkANlevolKgxtskEhyNGivvb+RhekDCxVACP7854njZHxBhO/Bx0S37qRWMgv2
+         9SQBFBzfRPqw/6Y1LaX3KGyxXXb8f2lZxQd2VPOe6APZKgSoT8PplBi6YUulIy8YERfU
+         nPlw==
+X-Forwarded-Encrypted: i=1; AJvYcCWT+W7vaJec15jW3blRt3+01kyFy7hrPWNoCa7hrNbFNljMdAMII3lbSgtYXkuj+TqCvZBuM7DA1zGWR5zP@vger.kernel.org, AJvYcCX45TVC8vbQJkq2jR2yr57Szfd/dD+AEtuDrYUc4xioDt3Ln/yaiPOCcqh56fE6aVPYmLbLx2Dot7sNZXOVAzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvHeq4G1C20L7+nyFUL2HAhWoq+gaW08Y3K5h41cmzgOoS4fhZ
+	Na/XB5zpT+YMT6mNGtQUHZJGAI5X7GZ9l51jsD0Od3+380BNzAfirGSMulptmF7JZn1nzbZ0Y85
+	s718ea8N1He6M/fOlof8sHLq4GHk=
+X-Google-Smtp-Source: AGHT+IGyLicUjMryDek+bmwKdouHVchiYaZzGyv6G1gDH2j/bTbYVOYl/80NFLgKqsCXy4pIKu4L6SRBQzYsw7rj3+c=
+X-Received: by 2002:a2e:a983:0:b0:2fb:5d19:4689 with SMTP id
+ 38308e7fff4ca-2fcdc7604b2mr7487751fa.1.1730210444584; Tue, 29 Oct 2024
+ 07:00:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010205154.278023-1-linux@treblig.org>
-In-Reply-To: <20241010205154.278023-1-linux@treblig.org>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Tue, 29 Oct 2024 09:59:56 -0400
-Message-ID: <CADnq5_PP7zZ3-=4UmOc+eKyywo0oJKZw6BGV5+YbmFPnB0p7Mw@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/display: Remove last parts of timing_trace
-To: linux@treblig.org
-Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
-	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
-	airlied@gmail.com, simona@ffwll.ch, amd-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240706225124.1247944-1-iam@sung-woo.kim> <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
+In-Reply-To: <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Tue, 29 Oct 2024 10:00:31 -0400
+Message-ID: <CABBYNZJp102JWcUt-qke0QYB1Tfta6C+hYAStCcopDckgT_EUw@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
+To: Sungwoo Kim <iam@sung-woo.kim>
+Cc: daveti@purdue.edu, benquike@gmail.com, 
+	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Applied.  Thanks!
+Hi Sungwoo,
 
-Alex
+On Mon, Oct 28, 2024 at 10:41=E2=80=AFPM Sungwoo Kim <iam@sung-woo.kim> wro=
+te:
+>
+> Dear Luiz, could you review this? This bug and fix are still valid but
+> have been forgotten for some reason.
 
-On Thu, Oct 10, 2024 at 4:52=E2=80=AFPM <linux@treblig.org> wrote:
->
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->
-> Commit c2c2ce1e9623 ("drm/amd/display: Optimize passive update planes.")
-> removed the last caller of context_timing_trace.
-> Remove it.
->
-> With that gone, no one is now looking at the 'timing_trace' flag, remove
-> it and all the places that set it.
->
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> ---
->  .../gpu/drm/amd/display/dc/core/dc_debug.c    | 42 -------------------
->  drivers/gpu/drm/amd/display/dc/dc.h           |  1 -
->  .../dc/resource/dcn10/dcn10_resource.c        |  2 -
->  .../dc/resource/dcn20/dcn20_resource.c        |  1 -
->  .../dc/resource/dcn201/dcn201_resource.c      |  1 -
->  .../dc/resource/dcn21/dcn21_resource.c        |  1 -
->  .../dc/resource/dcn30/dcn30_resource.c        |  1 -
->  .../dc/resource/dcn301/dcn301_resource.c      |  1 -
->  .../dc/resource/dcn302/dcn302_resource.c      |  1 -
->  .../dc/resource/dcn303/dcn303_resource.c      |  1 -
->  .../dc/resource/dcn31/dcn31_resource.c        |  1 -
->  .../dc/resource/dcn314/dcn314_resource.c      |  1 -
->  .../dc/resource/dcn315/dcn315_resource.c      |  1 -
->  .../dc/resource/dcn316/dcn316_resource.c      |  1 -
->  .../dc/resource/dcn32/dcn32_resource.c        |  1 -
->  .../dc/resource/dcn321/dcn321_resource.c      |  1 -
->  .../dc/resource/dcn35/dcn35_resource.c        |  1 -
->  .../dc/resource/dcn351/dcn351_resource.c      |  1 -
->  .../dc/resource/dcn401/dcn401_resource.c      |  1 -
->  .../amd/display/include/logger_interface.h    |  4 --
->  20 files changed, 65 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_debug.c b/drivers/gpu=
-/drm/amd/display/dc/core/dc_debug.c
-> index 801cdbc8117d..0bb25c537243 100644
-> --- a/drivers/gpu/drm/amd/display/dc/core/dc_debug.c
-> +++ b/drivers/gpu/drm/amd/display/dc/core/dc_debug.c
-> @@ -46,11 +46,6 @@
->                         DC_LOG_IF_TRACE(__VA_ARGS__); \
->  } while (0)
->
-> -#define TIMING_TRACE(...) do {\
-> -       if (dc->debug.timing_trace) \
-> -               DC_LOG_SYNC(__VA_ARGS__); \
-> -} while (0)
-> -
->  #define CLOCK_TRACE(...) do {\
->         if (dc->debug.clock_trace) \
->                 DC_LOG_BANDWIDTH_CALCS(__VA_ARGS__); \
-> @@ -306,43 +301,6 @@ void post_surface_trace(struct dc *dc)
->
->  }
->
-> -void context_timing_trace(
-> -               struct dc *dc,
-> -               struct resource_context *res_ctx)
-> -{
-> -       int i;
-> -       int h_pos[MAX_PIPES] =3D {0}, v_pos[MAX_PIPES] =3D {0};
-> -       struct crtc_position position;
-> -       unsigned int underlay_idx =3D dc->res_pool->underlay_pipe_index;
-> -       DC_LOGGER_INIT(dc->ctx->logger);
-> -
-> -
-> -       for (i =3D 0; i < dc->res_pool->pipe_count; i++) {
-> -               struct pipe_ctx *pipe_ctx =3D &res_ctx->pipe_ctx[i];
-> -               /* get_position() returns CRTC vertical/horizontal counte=
-r
-> -                * hence not applicable for underlay pipe
-> -                */
-> -               if (pipe_ctx->stream =3D=3D NULL || pipe_ctx->pipe_idx =
-=3D=3D underlay_idx)
-> -                       continue;
-> -
-> -               pipe_ctx->stream_res.tg->funcs->get_position(pipe_ctx->st=
-ream_res.tg, &position);
-> -               h_pos[i] =3D position.horizontal_count;
-> -               v_pos[i] =3D position.vertical_count;
-> -       }
-> -       for (i =3D 0; i < dc->res_pool->pipe_count; i++) {
-> -               struct pipe_ctx *pipe_ctx =3D &res_ctx->pipe_ctx[i];
-> -
-> -               if (pipe_ctx->stream =3D=3D NULL || pipe_ctx->pipe_idx =
-=3D=3D underlay_idx)
-> -                       continue;
-> -
-> -               TIMING_TRACE("OTG_%d   H_tot:%d  V_tot:%d   H_pos:%d  V_p=
-os:%d\n",
-> -                               pipe_ctx->stream_res.tg->inst,
-> -                               pipe_ctx->stream->timing.h_total,
-> -                               pipe_ctx->stream->timing.v_total,
-> -                               h_pos[i], v_pos[i]);
-> -       }
-> -}
-> -
->  void context_clock_trace(
->                 struct dc *dc,
->                 struct dc_state *context)
-> diff --git a/drivers/gpu/drm/amd/display/dc/dc.h b/drivers/gpu/drm/amd/di=
-splay/dc/dc.h
-> index 3992ad73165b..eb00ee73a8f2 100644
-> --- a/drivers/gpu/drm/amd/display/dc/dc.h
-> +++ b/drivers/gpu/drm/amd/display/dc/dc.h
-> @@ -862,7 +862,6 @@ struct dc_debug_options {
->         bool sanity_checks;
->         bool max_disp_clk;
->         bool surface_trace;
-> -       bool timing_trace;
->         bool clock_trace;
->         bool validation_trace;
->         bool bandwidth_calcs_trace;
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c
-> index 563c5eec83ff..0098b3e72e85 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn10/dcn10_resource.c
-> @@ -533,7 +533,6 @@ static const struct dc_debug_options debug_defaults_d=
-rv =3D {
->                 .sanity_checks =3D true,
->                 .disable_dmcu =3D false,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D false,
->                 .clock_trace =3D true,
->
->                 /* raven smu dones't allow 0 disp clk,
-> @@ -563,7 +562,6 @@ static const struct dc_debug_options debug_defaults_d=
-rv =3D {
->  static const struct dc_debug_options debug_defaults_diags =3D {
->                 .disable_dmcu =3D false,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D true,
->                 .clock_trace =3D true,
->                 .disable_stutter =3D true,
->                 .disable_pplib_clock_request =3D true,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c
-> index eea2b3b307cd..46c38fd9288d 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn20/dcn20_resource.c
-> @@ -706,7 +706,6 @@ static const struct resource_caps res_cap_nv14 =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->                 .disable_dmcu =3D false,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D false,
->                 .clock_trace =3D true,
->                 .disable_pplib_clock_request =3D true,
->                 .pipe_split_policy =3D MPC_SPLIT_AVOID_MULT_DISP,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c
-> index fc54483b9104..5b87dfea62e4 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn201/dcn201_resource.c
-> @@ -600,7 +600,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->                 .disable_dmcu =3D true,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D false,
->                 .clock_trace =3D true,
->                 .disable_pplib_clock_request =3D true,
->                 .pipe_split_policy =3D MPC_SPLIT_DYNAMIC,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c
-> index 347e6aaea582..135671d12c45 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn21/dcn21_resource.c
-> @@ -610,7 +610,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->                 .disable_dmcu =3D false,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D false,
->                 .clock_trace =3D true,
->                 .disable_pplib_clock_request =3D true,
->                 .min_disp_clk_khz =3D 100000,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
-> index 5040a4c6ed18..28c4ad289e54 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn30/dcn30_resource.c
-> @@ -711,7 +711,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true, //No DMCU on DCN30
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D true,
->         .pipe_split_policy =3D MPC_SPLIT_DYNAMIC,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c
-> index 7d04739c3ba1..b82a0559531a 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn301/dcn301_resource.c
-> @@ -682,7 +682,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_dpp_power_gate =3D false,
->         .disable_hubp_power_gate =3D false,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
-> index 5791b5cc2875..f272665aa6a8 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn302/dcn302_resource.c
-> @@ -81,7 +81,6 @@
->  static const struct dc_debug_options debug_defaults_drv =3D {
->                 .disable_dmcu =3D true,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D false,
->                 .clock_trace =3D true,
->                 .disable_pplib_clock_request =3D true,
->                 .pipe_split_policy =3D MPC_SPLIT_DYNAMIC,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
-> index 63f0f882c861..ee9bc725a30e 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn303/dcn303_resource.c
-> @@ -82,7 +82,6 @@
->  static const struct dc_debug_options debug_defaults_drv =3D {
->                 .disable_dmcu =3D true,
->                 .force_abm_enable =3D false,
-> -               .timing_trace =3D false,
->                 .clock_trace =3D true,
->                 .disable_pplib_clock_request =3D true,
->                 .pipe_split_policy =3D MPC_SPLIT_AVOID,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
-> index ac8cb20e2e3b..95213c7160c6 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn31/dcn31_resource.c
-> @@ -858,7 +858,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_DYNAMIC,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
-> index 169924d0a839..44c52fcfc87d 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn314/dcn314_resource.c
-> @@ -876,7 +876,6 @@ static const struct dc_debug_options debug_defaults_d=
-rv =3D {
->         .replay_skip_crtc_disabled =3D true,
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_dpp_power_gate =3D false,
->         .disable_hubp_power_gate =3D false,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
-> index 3f4b9dba4112..432af4fabdb2 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn315/dcn315_resource.c
-> @@ -858,7 +858,6 @@ static const struct dc_debug_options debug_defaults_d=
-rv =3D {
->         .disable_z10 =3D true, /*hw not support it*/
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_DYNAMIC,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
-> index 5fd52c5fcee4..295065b1f206 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn316/dcn316_resource.c
-> @@ -853,7 +853,6 @@ static const struct dc_debug_options debug_defaults_d=
-rv =3D {
->         .disable_z10 =3D true, /*hw not support it*/
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_DYNAMIC,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
-> index a124ad9bd108..01cc6b76cd0e 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn32/dcn32_resource.c
-> @@ -689,7 +689,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_AVOID, // Due to CRB, no need to=
- MPC split anymore
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
-> index 827a94f84f10..9da8e4579f91 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn321/dcn321_resource.c
-> @@ -686,7 +686,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_AVOID,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource=
-.c b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
-> index 893a9d9ee870..5a275883c144 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn35/dcn35_resource.c
-> @@ -712,7 +712,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_AVOID,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
-> index 70abd32ce2ad..51070b09a831 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn351/dcn351_resource.c
-> @@ -692,7 +692,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_AVOID,
-> diff --git a/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resour=
-ce.c b/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
-> index 9d56fbdcd06a..cfc1b77f5460 100644
-> --- a/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
-> +++ b/drivers/gpu/drm/amd/display/dc/resource/dcn401/dcn401_resource.c
-> @@ -685,7 +685,6 @@ static const struct dc_plane_cap plane_cap =3D {
->  static const struct dc_debug_options debug_defaults_drv =3D {
->         .disable_dmcu =3D true,
->         .force_abm_enable =3D false,
-> -       .timing_trace =3D false,
->         .clock_trace =3D true,
->         .disable_pplib_clock_request =3D false,
->         .pipe_split_policy =3D MPC_SPLIT_AVOID,
-> diff --git a/drivers/gpu/drm/amd/display/include/logger_interface.h b/dri=
-vers/gpu/drm/amd/display/include/logger_interface.h
-> index 02c23b04d34b..058f882d5bdd 100644
-> --- a/drivers/gpu/drm/amd/display/include/logger_interface.h
-> +++ b/drivers/gpu/drm/amd/display/include/logger_interface.h
-> @@ -52,10 +52,6 @@ void update_surface_trace(
->
->  void post_surface_trace(struct dc *dc);
->
-> -void context_timing_trace(
-> -               struct dc *dc,
-> -               struct resource_context *res_ctx);
-> -
->  void context_clock_trace(
->                 struct dc *dc,
->                 struct dc_state *context);
-> --
-> 2.47.0
->
+Please resend.
+
+> On Sat, Jul 6, 2024 at 6:53=E2=80=AFPM Sungwoo Kim <iam@sung-woo.kim> wro=
+te:
+> >
+> > __hci_cmd_sync_sk() returns NULL if a command returns a status event
+> > as there are no parameters.
+> > Fix __hci_cmd_sync_sk() to not return NULL.
+> >
+> > KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
+> > CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dir=
+ty #10
+> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
+/01/2014
+> > Workqueue: hci7 hci_power_on
+> > RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.=
+c:138
+> > Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48=
+ ba 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 =
+84 c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
+> > RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
+> > RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
+> > RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
+> > RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
+> > R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
+> > R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
+> > FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:00000000000=
+00000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
+> > PKRU: 55555554
+> > Call Trace:
+> >  <TASK>
+> >  hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
+> >  hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
+> >  hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
+> >  hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
+> >  hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
+> >  hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
+> >  hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
+> >  hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
+> >  process_one_work kernel/workqueue.c:3267 [inline]
+> >  process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
+> >  worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
+> >  kthread+0x2cb/0x360 kernel/kthread.c:388
+> >  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> >
+> > Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOV=
+ERY")
+> >
+> > Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
+> > ---
+> > v1 -> v2: make __hci_cmd_sync_sk() not return NULL
+> >
+> >  net/bluetooth/hci_sync.c | 18 +++++++++++-------
+> >  1 file changed, 11 insertions(+), 7 deletions(-)
+> >
+> > diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> > index 76b283b8e..c4e4abc6e 100644
+> > --- a/net/bluetooth/hci_sync.c
+> > +++ b/net/bluetooth/hci_sync.c
+> > @@ -201,6 +201,12 @@ struct sk_buff *__hci_cmd_sync_sk(struct hci_dev *=
+hdev, u16 opcode, u32 plen,
+> >                 return ERR_PTR(err);
+> >         }
+> >
+> > +       /* If command return a status event skb will be set to NULL as =
+there are
+> > +        * no parameters.
+> > +        */
+> > +       if (!skb)
+> > +               return ERR_PTR(-ENODATA);
+> > +
+> >         return skb;
+> >  }
+> >  EXPORT_SYMBOL(__hci_cmd_sync_sk);
+> > @@ -250,6 +256,11 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev,=
+ u16 opcode, u32 plen,
+> >         u8 status;
+> >
+> >         skb =3D __hci_cmd_sync_sk(hdev, opcode, plen, param, event, tim=
+eout, sk);
+> > +
+> > +       /* If command return a status event, skb will be set to -ENODAT=
+A */
+> > +       if (skb =3D=3D ERR_PTR(-ENODATA))
+> > +               return 0;
+> > +
+> >         if (IS_ERR(skb)) {
+> >                 if (!event)
+> >                         bt_dev_err(hdev, "Opcode 0x%4.4x failed: %ld", =
+opcode,
+> > @@ -257,13 +268,6 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev,=
+ u16 opcode, u32 plen,
+> >                 return PTR_ERR(skb);
+> >         }
+> >
+> > -       /* If command return a status event skb will be set to NULL as =
+there are
+> > -        * no parameters, in case of failure IS_ERR(skb) would have be =
+set to
+> > -        * the actual error would be found with PTR_ERR(skb).
+> > -        */
+> > -       if (!skb)
+> > -               return 0;
+> > -
+> >         status =3D skb->data[0];
+> >
+> >         kfree_skb(skb);
+> > --
+> > 2.34.1
+> >
+
+
+
+--=20
+Luiz Augusto von Dentz
 
