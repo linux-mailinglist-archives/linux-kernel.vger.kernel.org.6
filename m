@@ -1,174 +1,206 @@
-Return-Path: <linux-kernel+bounces-386951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EBD79B4A16
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F5029B4A1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CC61C20E95
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 914CA1F230B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898D620607D;
-	Tue, 29 Oct 2024 12:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68A44205155;
+	Tue, 29 Oct 2024 12:48:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="grEqHqb3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8DsItLB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D31B018F2DA;
-	Tue, 29 Oct 2024 12:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 939F21EB9E6;
+	Tue, 29 Oct 2024 12:48:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206035; cv=none; b=DY5xLzW7O+AnBc9rdyCpkfbomXHtButn9ZiUmVIa4J97qXxvEcrEyRAM2gv6DVgPMVyJib/HKbEJoUTBZAmXxWeZW7BbUUeu79CE7e4b+oXDxadXsynSFTJRmsetwiz6SxeWiPi1cKVB8jJ/Xe2TjCM3j70v47eilVgw2HnTchw=
+	t=1730206083; cv=none; b=tbSBQrUD/2cPtCqOcNiG4iRK5nJVs6j4ftB1OHDsMiclmVgYYYGSyh8L9VMue5mRXhAu6VPpCKpb5wVbb/K45BBZQGkIZ6FVldiELDS0IsVm8a7nzQExli6aJWKQV7b9dWwdoGXF6G+gNlDUDJJxDXR2ROgyOkTm14e9JKqdNK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206035; c=relaxed/simple;
-	bh=SwsunBtjrZbri3hAylUzPOIUDYgtF7CP6xBOZrUXuA0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qbrE2E+5z9QH/mhPuwow2zj0ZpFzVXSnBfHDjtMIwRAIg3cctDq7XCdVFLLsYv+9ckxaEEQ9J3MPoU7w+8LuYmK4Fl719H38YsIR53g/xIEWWj0yeuh4OMOY05igSDJceAFtlPiOCtfbzEFtj/u0pqW9epXo6Y8cM/TQW1RIqJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=grEqHqb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC86DC4CEE5;
-	Tue, 29 Oct 2024 12:47:12 +0000 (UTC)
+	s=arc-20240116; t=1730206083; c=relaxed/simple;
+	bh=RgLXtZkC+gnC4tFi0a+6Tv1jCPhYqyFidZma+mPONkA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CfGKq8PBFVUwH9iWolkWBWqloYGpXsqXuTSZ5tqyHmDqWI9LLH/WP5MH8mj9eFy8r1HdVwBUwYCr+VYiE6oHq/9+YOZ+2VMnEwJ8cKbzbSfRTUUmntKPppiHReUVEC5dx6ST9rJlv3cm9QhvlSZGZ3NzSA07xus90XhFUQk4FtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8DsItLB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 414DDC4CECD;
+	Tue, 29 Oct 2024 12:47:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730206035;
-	bh=SwsunBtjrZbri3hAylUzPOIUDYgtF7CP6xBOZrUXuA0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=grEqHqb34q2Br+OfciWA6dQOLn03eOIEyrqrkwNaem055ApMOoTtD3oEfjhz8GPIw
-	 JlBFHab7zcEdSCkua0Cz+indSxmbyH1DQ6ErPjUJxQd3jcX24T2c2rT5og0tmJtxfo
-	 uBGQQml1WAQnDFDT2JOIOjxs5XVTBfq1a9P6B8tquYmT9XeI8akUgoKSNYsA8mLvrO
-	 iNtBo1vOtZ6GdfN5Zj1/xSwrxnJjWdH+6DJ6dG8yD7M33v0pFfwgT30D2B+uqRsGSI
-	 lodysMmO+TqFRUmbbr2AsK1azC0au5/w/pwaVuDCjeXCmUeNeJnDz09GEL5wlO4lJC
-	 q6YFrovw5n7HA==
-Date: Tue, 29 Oct 2024 12:47:09 +0000
-From: Will Deacon <will@kernel.org>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: robdclark@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
-	dmitry.baryshkov@linaro.org, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: re-enable context caching in
- smmu reset operation
-Message-ID: <20241029124708.GA4241@willie-the-truck>
-References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
- <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
- <20241024125241.GD30704@willie-the-truck>
- <092db44e-f254-4abd-abea-e9a64e70df12@quicinc.com>
+	s=k20201202; t=1730206083;
+	bh=RgLXtZkC+gnC4tFi0a+6Tv1jCPhYqyFidZma+mPONkA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a8DsItLBitGkFjVSoTFR+TDGcDr6F4U/h8/8idD0Vo6FIH6ZjS6+OWFwxEU9cSIUU
+	 /dTayQUAXVm9OFOfGBQyjni/B3NqK/U7LG+taBzVEO8/VG6YWidT2CYOP6U659fGMH
+	 YrbCjWjKAmllTJxydJpTespA9eW0N4P73sTiA7ciwsalGGkbgloXMD/IX71uOirJfC
+	 TyAbKq3Fehb35HXZg5gfMhBa2YjCpCa+budpdDfRF3MeX7XsaRtAW/Ehml8b6w9nRT
+	 fTz3M5Z0wqX8Y6jL80DZFGG6Qfk//pb5nePVvhQFguaPV7/4gbmt/R4dLT4XI+COec
+	 HjCz2WCldQU/w==
+Message-ID: <021eb0c9-2e0c-4a35-b33e-d80cc5660f19@kernel.org>
+Date: Tue, 29 Oct 2024 13:47:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <092db44e-f254-4abd-abea-e9a64e70df12@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
+ sensor driver
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+ sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+ laurentiu.palcu@nxp.com, robert.chiras@nxp.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, LnxRevLi@nxp.com,
+ kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
+ dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
+ alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com,
+ devicetree@vger.kernel.org
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-2-mirela.rabulea@nxp.com>
+ <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
+ <20241029121039.GM22600@pendragon.ideasonboard.com>
+ <eeaa92c0-fed6-408b-8471-47acf0ca394d@kernel.org>
+ <20241029122150.GN22600@pendragon.ideasonboard.com>
+ <3ff55dc3-c6a9-40a8-8e21-2e3e43cfd614@kernel.org>
+ <20241029124609.GP22600@pendragon.ideasonboard.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241029124609.GP22600@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 07:51:22PM +0530, Bibek Kumar Patro wrote:
+On 29/10/2024 13:46, Laurent Pinchart wrote:
+> (CC'ing the devicetree mailing list)
 > 
+> On Tue, Oct 29, 2024 at 01:28:51PM +0100, Krzysztof Kozlowski wrote:
+>> On 29/10/2024 13:21, Laurent Pinchart wrote:
+>>> On Tue, Oct 29, 2024 at 01:15:46PM +0100, Krzysztof Kozlowski wrote:
+>>>> On 29/10/2024 13:10, Laurent Pinchart wrote:
+>>>>> On Tue, Oct 29, 2024 at 07:14:28AM +0100, Krzysztof Kozlowski wrote:
+>>>>>> On 28/10/2024 20:06, Mirela Rabulea wrote:
+>>>>>>> Add bindings for OX05B1S sensor driver
+>>>>>>>
+>>>>>>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+>>>>>>
+>>>>>> <form letter>
+>>>>>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>>>>>> and lists to CC. It might happen, that command when run on an older
+>>>>>> kernel, gives you outdated entries. Therefore please be sure you base
+>>>>>> your patches on recent Linux kernel.
+>>>>>>
+>>>>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>>>>>> people, so fix your workflow. Tools might also fail if you work on some
+>>>>>> ancient tree (don't, instead use mainline) or work on fork of kernel
+>>>>>> (don't, instead use mainline). Just use b4 and everything should be
+>>>>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
+>>>>>> patches to the patchset.
+>>>>>>
+>>>>>> You missed at least devicetree list (maybe more), so this won't be
+>>>>>> tested by automated tooling. Performing review on untested code might be
+>>>>>> a waste of time.
+>>>>>>
+>>>>>> Please kindly resend and include all necessary To/Cc entries.
+>>>>>> </form letter>
+>>>>>>
+>>>>>> Binding also looks very different than all other devices, so re-write it
+>>>>>> starting from EXISTING GOOD bindings. Not some downstream stuff.
+>>>>>
+>>>>> Krzysztof, please point to a good example when making this kind of
+>>>>> comment.
+>>>>
+>>>> Anything recently added. Git log tells which files were recently added.
+>>>
+>>> If the review comment is a copy&paste (given that you review lots of
+>>> bindings and constantly have to repeat the same things, that would make
+>>> sense), expanding it with that information for future reviews could help
+>>> patch authors. Thanks for considering it, it would be much appreciated.
+>>
+>> Sorry, but that's not the point. You do not take 10 yo, unmaintained
+>> driver and use it as template for your new one. Instead you rather take
+>> something recent or something which you know is correct. Same with bindings.
 > 
-> On 10/24/2024 6:22 PM, Will Deacon wrote:
-> > On Tue, Oct 08, 2024 at 06:24:06PM +0530, Bibek Kumar Patro wrote:
-> > > Default MMU-500 reset operation disables context caching in
-> > > prefetch buffer. It is however expected for context banks using
-> > > the ACTLR register to retain their prefetch value during reset
-> > > and runtime suspend.
-> > > 
-> > > Replace default MMU-500 reset operation with Qualcomm specific reset
-> > > operation which envelope the default reset operation and re-enables
-> > > context caching in prefetch buffer for Qualcomm SoCs.
-> > > 
-> > > Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> > > Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> > > ---
-> > >   drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 45 ++++++++++++++++++++--
-> > >   1 file changed, 42 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > > index 087fb4f6f4d3..0cb10b354802 100644
-> > > --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > > +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> > > @@ -16,6 +16,16 @@
-> > > 
-> > >   #define QCOM_DUMMY_VAL	-1
-> > > 
-> > > +/*
-> > > + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
-> > > + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
-> > > + * buffer). The remaining bits are implementation defined and vary across
-> > > + * SoCs.
-> > > + */
-> > > +
-> > > +#define CPRE			(1 << 1)
-> > > +#define CMTLB			(1 << 0)
-> > > +
-> > >   static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
-> > >   {
-> > >   	return container_of(smmu, struct qcom_smmu, smmu);
-> > > @@ -396,11 +406,40 @@ static int qcom_smmu_def_domain_type(struct device *dev)
-> > >   	return match ? IOMMU_DOMAIN_IDENTITY : 0;
-> > >   }
-> > > 
-> > > +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
-> > > +{
-> > > +	int ret;
-> > > +	u32 val;
-> > > +	int i;
-> > > +
-> > > +	ret = arm_mmu500_reset(smmu);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/*
-> > > +	 * arm_mmu500_reset() disables CPRE which is re-enabled here.
-> > > +	 * The errata for MMU-500 before the r2p2 revision requires CPRE to be
-> > > +	 * disabled. The arm_mmu500_reset function disables CPRE to accommodate all
-> > > +	 * RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
-> > > +	 * the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
-> > > +	 * the CPRE bit for the next-page prefetcher to retain the prefetch value
-> > > +	 * during reset and runtime suspend operations.
-> > > +	 */
-> > > +
-> > > +	for (i = 0; i < smmu->num_context_banks; ++i) {
-> > > +		val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
-> > > +		val |= CPRE;
-> > > +		arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
-> > > +	}
-> > 
-> > If CPRE only needs to be disabled prior to r2p2, then please teach the
-> > MMU-500 code about that instead of adding qualcomm-specific logic here.
-> > 
+> I wouldn't know for sure which driver or binding was used as a starting
+> point. My point was unrelated to this particular patch series. I think
+> that including clear information in ready-made answers will help
+> everybody. It will tell the submitters what they need to know, it will
+> avoid this kind of conversation being repeated, and it could even in the
+> end increase the quality of submissions. Even better, it won't cost
+> anything to add it to answer templates.
 > 
-> Doing this on MMU-500 code would make it generic and reflect for SoC of all
-> the vendors on this platform.
-> We can make sure that it won't cause any problems in Qualcomm SoCs as we
-> have been enabling this since for some years now and could not
-> observe/reproduce any issues around these errata.
+>> NXP is not a small company which does not know how to use Linux or how
+>> to upstream stuff. This is not individual's contribution, where one does
+>> not have colleagues or 3 billions USD of revenue behind, to be able to
+>> get some internal help prior sending something downstream.
+>>
+>> They can spend something out of these 3 billions of revenue or 700
+>> millions of net income to hire you guys or any other open-source
+>> company, if basics of upstreaming are unknown.
+>>
+>> That's the comment I was giving about NXP since a year. Some things
+>> around SoC improved, some things from this unit of NXP here did not
+>> change at all.
+> 
+> If I were on the receiving end of this, as an individual developer, I
+> would consider it very patronizing and insulting. Treating the authors
+> of contributions you don't consider as good enough in such a harsh way
+> will not improve the situation, and will drive people away. You may be
+> frustrated by some companies, but this kind of comment will not help.
+> Please soften your tone towards individual developers, they're not
+> punching balls on which to dump frustration and anger. Firm and polite
+> will work better than lashing out.
 
-Unless you can explain definitively hy that's the case, I still don't
-think we should be second-guessing the core SMMU driver code in the
-Qualcomm backend.
+I would be very happy to tell it to the managers, decision makers and
+CEOs, but they avoid me. :/
 
-> But we won't be able to guarantee the same behavior in SoC for other vendors
-> where these errata might still be applicable as per [1] and [2].
-> So as per my understanding it's safe to include in Qualcomm specific
-> implementation and not changing the default behavior in all other vendors'
-> SoC even if they are not prior to r2p2 revision [3].
+Best regards,
+Krzysztof
 
-If you want to gate the errata workarounds on policy, then please follow
-what we do for the CPU: add a Kconfig option (e.g.
-ARM_SMMU_WORKAROUND_BROKEN_CPRE) which defaults to "on" (assuming that
-the relevant errata aren't all "rare") and update silicon-errata.rst
-accordingly.
-
-Then you can choose to disable them in your .config if you're happy to
-pick up the pieces.
-
-As an aside, I'm happy with the rest of the series now.
-
-Will
 
