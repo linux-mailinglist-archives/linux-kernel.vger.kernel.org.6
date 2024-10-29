@@ -1,151 +1,149 @@
-Return-Path: <linux-kernel+bounces-387350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D58959B4FC8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:50:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774849B4FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:50:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99EB6284AEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A20461C2219F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:50:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042D01DB54B;
-	Tue, 29 Oct 2024 16:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8FA19DF95;
+	Tue, 29 Oct 2024 16:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vxLr9e8h"
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com [209.85.217.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="akR45IMG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385427DA81
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 514CD7DA81;
+	Tue, 29 Oct 2024 16:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220621; cv=none; b=eXCIof0AQNJoT1c3fkD+RkfHFQqBOdGr+eNx3JAw13r6XKb2/T581Sr639YFVuKk8U+jvUBuea6USK8J5+paWlqPG1zzOwjC/IyYQ3yM3nEBBZcqG9FPGajbjxOT0juvMzjROo9OTPYOr3jil7tIrOVMwjxrC8DcCHW/UzltP6M=
+	t=1730220615; cv=none; b=fOqF6HPjqNrTxS8TSf9qNqIyrMzyZ5mRLssS4xxWAVVdJn0iM5yp0AAA4il/+8VIwq1QGantwnu1g/uScDbj4CkWgINfyChX5FfXNt9zjyZm4KVnOOpwptIq57pbdEjit8Uvu+eppoAKWbftHwZCG6LkUyPg1JJwga2BOuhFlrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220621; c=relaxed/simple;
-	bh=yLC0KAEIkh+wSFqceBJBTeo6+eUjo/Vil2ys+kWIoWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H0gaN0ifrpi4gR8aOlJg8uypbyUa1YKYWJXwLIvKq9Rrwa58hOwPjzEyLrWWha+Cc8No4ieyoGIfpKkQ6GEllQc8HCcf+29HGnnNjDsrFW4+JHZgaYKn87yu48iB1AhDBFP7XdyEkmq+tSVvFhakyJJtrKSZqbURyIfThBWFRVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vxLr9e8h; arc=none smtp.client-ip=209.85.217.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4a742ea907fso1532104137.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:50:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730220618; x=1730825418; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rkjcRVrYm5OJUoP2IRHwoD9m2+Md70Qn8IIA4I5kKkU=;
-        b=vxLr9e8hp5F/kZHF21Etu/kwJkCZUdmmUJw+eligTIpGje9QiFbZR5LnS6pD1Ag0fr
-         wdEZ0uvpE4ADa4tpdetbaGOhvDCEGfS6uROG/s/4TrAgn9S3XnMdyc9tu17IiT9Cq6WX
-         0FzeSQFRUU6TxYZLBvLWOtQiBT+KmNXSWV1eGqwRh/a5/gyvBh11Cq/9AWTfDMadpslR
-         EnxmUWluOGUO125U19K+yjs7/ueWtytt8MDifnUazrYj1P/yT3zV6xSkcqFTzExCNEzB
-         VUoCCZvNL+h6O4bHIUFIiAR1GnWqAKACejWN/BKaQtQRbTBX/ALbguK0f8kvmJGM7m5v
-         RQ0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730220618; x=1730825418;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rkjcRVrYm5OJUoP2IRHwoD9m2+Md70Qn8IIA4I5kKkU=;
-        b=XXzutBegjgyTU63gM5ju03Wn3i2DYgXnf0jjbpgYc9zUydU/35/zz/42OF1QU7s1xC
-         PZHkTZeU4kQ3oBw7qhWSkZ7CaLH0Rb242npUTRCmQifqxDjjkAWcfblaxwq5zesWr1qO
-         f7JIl6WNO5lR13S4p6AtUg2TxzU8MD0dWP8d/VpiygOaI06qmZUbZB/sFPEtJs02eqMb
-         clOhRuPPle1RFgXe36crNsU+RWAD2y9dwDD2P5MW7/Pp1c/Slfo7x8kfm94CqH903CbF
-         DUazJAsA8r9FEqa3O13+M4Sj7kIndgTmoNcVrZG4hhQpIAbsRwNee8SnKY22gIwQsr0A
-         MFwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDIsQ2r26IOqwOsrZb9cewgQeq2CREZs/7MY8qXdo3VG2kPQZSt8FzNKvLvB4hbJuud54/GlnyluqlGzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8tfCAjS18XWLc985hHRkyArlM8iow7gh2eL3atsrjyddAaJqM
-	G8NLYehGTSOzjBmivUR2ZhNxE+MiQReKNb+WIjQQ0l7Th1lDl1DL7/0MgX5uWOTjtW7pkhCRI1t
-	Vb2uoOovV3A85dvEB4v2Cx3ckAQKIsPlaK6z/
-X-Google-Smtp-Source: AGHT+IHebFD55o0zkd/1hrEPtCqWpuTMh+G9F5NshG7sI3vNtGfIBXr1uEs8WQ6Aw79WN69N5TPAsmq4eH5vaI/YqDQ=
-X-Received: by 2002:a05:6102:160a:b0:4a4:8756:d899 with SMTP id
- ada2fe7eead31-4a8cfd723demr10154610137.29.1730220617796; Tue, 29 Oct 2024
- 09:50:17 -0700 (PDT)
+	s=arc-20240116; t=1730220615; c=relaxed/simple;
+	bh=k6cUcZpUt6ToVhnKWvYenHvyQmKi0BhNKUXcYsKzO6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p/xew831ZISRUZ0/+x0sVElxeM8OGoM/ZR0uBaRV2cD2LnFmGF0ju9Xbk7pRENiqidgpOAuC5ONwZVQs2Gu2eps5rrXzcePVo4ZOM2dY6XZhKeYx1vCBbveoEmoZ0FqvayJrLH+fKhSOSESlfHMwiV+xqVmA7kpUHTB3t1bf/dQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=akR45IMG; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730220614; x=1761756614;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=k6cUcZpUt6ToVhnKWvYenHvyQmKi0BhNKUXcYsKzO6A=;
+  b=akR45IMGtocEKUGBBS4yWh+txvAGK8F6CRBOSDu/1sWODDq+OhqGIDrs
+   495x/JFquDebrf3TprZje92HRY9r00ayybo/8ZjArkVqrmyJlQbOHE4Ei
+   e2wgvkrAH8UmM1isSi40w94sFjSO05MyzGkFE6iHFfa/i7UmX78F7Uk07
+   G33LJvflTQtFcoJQIoE2FryfnGggvIBFlLc/mzCNpvt7I4DT+7EGo/JOz
+   tdxBs0O8cLw6wo9DBJHgcRKwzTy0LbVka4he5/cx1T6/FXw4Dzw2r+MRV
+   BG7gARNyAAk29gmTba3sCJxLDUojiCxOgjW3Gi2+RT+0EyU1Or4wVQuNe
+   w==;
+X-CSE-ConnectionGUID: Uweodr7iR5SjR/MRcpGLsw==
+X-CSE-MsgGUID: vNg+M9ONRW+8Xv196Kro4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30014691"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30014691"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 09:50:13 -0700
+X-CSE-ConnectionGUID: Ga5bH4q9Qd2z/rv4IY+qow==
+X-CSE-MsgGUID: PUT9jY7AQsuuEEYTZ7KBDQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="82088694"
+Received: from ccbilbre-mobl3.amr.corp.intel.com (HELO [10.124.223.38]) ([10.124.223.38])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 09:50:12 -0700
+Message-ID: <caef0899-0e8a-435d-9583-c52bb81d7e8d@intel.com>
+Date: Tue, 29 Oct 2024 09:50:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028182653.3420139-1-yuzhao@google.com> <20241029164637.GA5108@cmpxchg.org>
-In-Reply-To: <20241029164637.GA5108@cmpxchg.org>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 29 Oct 2024 10:49:40 -0600
-Message-ID: <CAOUHufa=H4WF9=xk9GXK5G4uHVghxikV1zqwO4BMQR=f_3_itA@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v3] mm/page_alloc: keep track of free highatomic
-To: Johannes Weiner <hannes@cmpxchg.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Link Lin <linkl@google.com>, David Rientjes <rientjes@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+To: Xiaoyao Li <xiaoyao.li@intel.com>, Borislav Petkov <bp@alien8.de>
+Cc: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ thomas.lendacky@amd.com, x86@kernel.org, kvm@vger.kernel.org,
+ mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
+ <3ea9cbf7-aea2-4d30-971e-d2ca5c00fb66@intel.com>
+ <56ce5e7b-48c1-73b0-ae4b-05b80f10ccf7@amd.com>
+ <3782c833-94a0-4e41-9f40-8505a2681393@intel.com>
+ <20241029142757.GHZyDw7TVsXGwlvv5P@fat_crate.local>
+ <ef4f1d7a-cd5c-44db-9da0-1309b6aeaf6c@intel.com>
+ <20241029150327.GKZyD5P1_tetoNaU_y@fat_crate.local>
+ <59084476-e210-4392-b73b-1038a2956e31@intel.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <59084476-e210-4392-b73b-1038a2956e31@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 10:46=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.or=
-g> wrote:
->
-> On Mon, Oct 28, 2024 at 12:26:53PM -0600, Yu Zhao wrote:
-> > OOM kills due to vastly overestimated free highatomic reserves were
-> > observed:
-> >
-> >   ... invoked oom-killer: gfp_mask=3D0x100cca(GFP_HIGHUSER_MOVABLE), or=
-der=3D0 ...
-> >   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB high=
-:1068392kB reserved_highatomic:1073152KB ...
-> >   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB (ME)=
- 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (M) 0*=
-2048kB 0*4096kB =3D 1477408kB
-> >
-> > The second line above shows that the OOM kill was due to the following
-> > condition:
-> >
-> >   free (1482936kB) - reserved_highatomic (1073152kB) =3D 409784KB < min=
- (410416kB)
-> >
-> > And the third line shows there were no free pages in any
-> > MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as type
-> > 'H'. Therefore __zone_watermark_unusable_free() underestimated the
-> > usable free memory by over 1GB, which resulted in the unnecessary OOM
-> > kill above.
-> >
-> > The comments in __zone_watermark_unusable_free() warns about the
-> > potential risk, i.e.,
-> >
-> >   If the caller does not have rights to reserves below the min
-> >   watermark then subtract the high-atomic reserves. This will
-> >   over-estimate the size of the atomic reserve but it avoids a search.
-> >
-> > However, it is possible to keep track of free pages in reserved
-> > highatomic pageblocks with a new per-zone counter nr_free_highatomic
-> > protected by the zone lock, to avoid a search when calculating the
-> > usable free memory. And the cost would be minimal, i.e., simple
-> > arithmetics in the highatomic alloc/free/move paths.
-> >
-> > Note that since nr_free_highatomic can be relatively small, using a
-> > per-cpu counter might cause too much drift and defeat its purpose,
-> > in addition to the extra memory overhead.
-> >
-> > Reported-by: Link Lin <linkl@google.com>
-> > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > Acked-by: David Rientjes <rientjes@google.com>
->
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
->
-> > @@ -642,6 +644,9 @@ static inline void account_freepages(struct zone *z=
-one, int nr_pages,
-> >
-> >       if (is_migrate_cma(migratetype))
-> >               __mod_zone_page_state(zone, NR_FREE_CMA_PAGES, nr_pages);
-> > +
-> > +     if (is_migrate_highatomic(migratetype))
-> > +             WRITE_ONCE(zone->nr_free_highatomic, zone->nr_free_highat=
-omic + nr_pages);
->
-> Minor nit, the page can only be of one migratetype, so `else if' would
-> be better.
+On 10/29/24 08:14, Xiaoyao Li wrote:
+> On 10/29/2024 11:03 PM, Borislav Petkov wrote:
+>> On Tue, Oct 29, 2024 at 10:50:18PM +0800, Xiaoyao Li wrote:
+>>> I meant the starter to add SNP guest specific feature initialization
+>>> code in
+>>> somewhat in proper place.
+>>
+>> https://lore.kernel.org/r/20241029144948.GIZyD2DBjyg6FBLdo4@fat_crate.local
+>>
+>> IOW, I don't think we really have a "proper" place yet. 
+> 
+> Then why can't we create one for it?
 
-Right (copied and pasted without thinking).
-
-Andrew, could you please fix this up in place? Thank you!
+The code looks fine to me as-is.  If anyone sees a better way to
+refactor it and stash it elsewhere to make it cleaner and simpler, I'd
+love to see the patch.
 
