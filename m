@@ -1,45 +1,75 @@
-Return-Path: <linux-kernel+bounces-387096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBD4F9B4BDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04AC99B4BE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:15:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA122856CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B752D285AD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7E92071EF;
-	Tue, 29 Oct 2024 14:15:06 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A6A206964;
+	Tue, 29 Oct 2024 14:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AzBmX/Fb"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA2621345
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7731E507;
+	Tue, 29 Oct 2024 14:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730211305; cv=none; b=kSRi1ZDvN/0LLGHugkLVXpXlka1/i90C+mVJn+RqZ7cu9uE0jhRCSd8nafr9seuwLkomauKNnXgb6eboKrTKSpiL0JO0NOU2hTHDZUi5pw2xFZ3sUUFnyZyHZCcmvpy7Wa+1g9YrgfRFYrXHArFfa2soGHcy7390e2JpQGkMowQ=
+	t=1730211317; cv=none; b=lyb/2ZKY7032St2OuDzxRgthxalBID4I3oSJfiG5CxUaq4v8PrehW5+7YfApj0D1IPytMoW7W4o90lt2hHqKs2kDsk/7J5bIgiqlwTKeRqdBKclNjxYHCayCwIfpgAzRi5zBo7liC6CNu5O6o3FGPAktZ30EehrikpMZSurKG9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730211305; c=relaxed/simple;
-	bh=4fjxxpOhSzoGHXSWR0CcCaoeBYq+/QLABfGvcRPcvMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NkkeDi87Hse9HJHwc+MzjTY5N0NKxZVMKZ9hCejSSONBm3U6gRD1xxf6dWCKiUGDsIPP8oOUuwW+NdXdgZmR3KoyJwGLVABIycQZ3z7RMo7BAS0PlQ3X4xalCcPLwVM1QIU42AdZS6JDXOtLm9gSjlnEbE+lo2PqMGlT8VMAXmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XdC141tfSz20r4G;
-	Tue, 29 Oct 2024 22:14:00 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id A5FF8140133;
-	Tue, 29 Oct 2024 22:14:58 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 29 Oct 2024 22:14:57 +0800
-Message-ID: <c418e93a-7305-4ca6-85c1-42bd458f4e7b@huawei.com>
-Date: Tue, 29 Oct 2024 22:14:56 +0800
+	s=arc-20240116; t=1730211317; c=relaxed/simple;
+	bh=fkeqd7qH5btrz26K3wAZytSwT9RyjyEn6M6D0sk1In0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eUBmSoiLkTQ+3pnqvobyYPSmW7BW8lzAbk2rSoGXxfvcwgmQDLI8WFCi7le8Fs8xxjo9cEBUO2u9JDmcHUZbUNuXsz7+BIvI1y/Ix+zvvs0C3xvVn+aYq/j0GDqH+gdRkVIy1GGKN8OO+AmkB0I4tB5vSGytfP32JMcdb5EoVD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AzBmX/Fb; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso4005690b3a.3;
+        Tue, 29 Oct 2024 07:15:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730211314; x=1730816114; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0sZd7PGlqJXS8FByyi1P8j06DF+rR8hldenn8JBP8w=;
+        b=AzBmX/FbVLWGrLcUoM14aOZiEzPdYlE2Eb0Hh+6cjUWgSFp+SkhE1Io86nehOma7h0
+         MkdMYU0/AuYlBrSnabeJrQgljp55otGeDrRU/OA9pT2dlzFkm8Vru8Wt4PlFMIBkMbDo
+         +AtbiZli85Zg2IXVcnvZCgWH8LHzCLbAzDCH8KeUxXI3oRyFe/5OzTLNdfmUgisOFPNA
+         bS3hWDGoykYwT0XqHyQ31tfIJapSA8Kv3FgkQZOtNK9MRbWXHHqD8J7OqcJfbFoh4LHG
+         NS7doKceA4GjWcWY8H6pwZiXElcMRd7Q/Rh/VAGANczX3b0P9XjmUR0YD+ewPvSrLoiM
+         lkQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730211314; x=1730816114;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y0sZd7PGlqJXS8FByyi1P8j06DF+rR8hldenn8JBP8w=;
+        b=kB9OirVfgdus4bMqF9T3xgY+23F2kw46ZbhPwJ6SCefh1LqU3YiAe1Cc3fL0zPJ0ce
+         WrEkpA+qRt8/Crif+riKVYFUfsM3EO3J2mQqwa4I8jePHf6Uks8WMa7/YLoWgc/sS+qE
+         RJu6ris4I2AaMveSPuhgj90i1kMhvsSresWD9cd2SH4MkLgcBpiDmblwn3a/zSE6LEOo
+         7CYRNx5CIjk7CrALWeqaGBs3CNBQ51u5sB6A4iV9C/rDOF4VtWJu/iJLjbamOE2kV7fs
+         O2+PiKEaFaU9KOQGAXWfOcUeDO9G8z0apTMFzsw2XZOsyHzWvGRY/E5/fRijp+OItA1W
+         jqpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVHuNDfWHTATGXtOao7LVVo+V337NquKlQxbVOCik8V2WHQiN1x1ohmY9LoRqoiuBJ3DH8chnY0gGdc@vger.kernel.org, AJvYcCWTENqPqJja0KpnOKlYVXsT3IWAb6Ztcbv3IfZOQyGVSzaJNkw2cmn0uS5rXmeKpxQwymQ/vnkwtgnz@vger.kernel.org, AJvYcCWTaBbIDCew2MRk2DB+MTJlmYZL+EUcxa/NGV6jF/KbSfbhN77e7W6aPdhb/HqE7ij/1MvYQwKRWCLy@vger.kernel.org, AJvYcCWgHdsUwtIEM35Rkldyz7ZoCg1RixRpKAWZPQiLfJ0urCEbs9/iLwPvlEWVsSjk00ir1SC5kmVWX/o5ks4=@vger.kernel.org, AJvYcCWh3U2pNwZl7V74TpW260XFsuXm/dAQnH/sD82N2QTUq/6xEH8h6H2zmD4NraJstwjAwUELlEssKjlqvPvM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxb5uQ8KgfvYo3BTUEIi22866pRcycIR/AHFMOyupd0dBydmUos
+	0fMBE4c5IkpsS/YKDNU0pTIqA41A49vv1DP0C0fI3/OlEHnda1+w
+X-Google-Smtp-Source: AGHT+IHG/3iB06S92mFXMiBK35+WwOj7rfTxpzyV6piA1djjeAQ9U4OVAI701QasEgbN1z6Ar4vjPA==
+X-Received: by 2002:a05:6a21:e89:b0:1d9:130e:fee4 with SMTP id adf61e73a8af0-1d9a841b5e4mr15075897637.30.1730211313827;
+        Tue, 29 Oct 2024 07:15:13 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057950457sm7804844b3a.95.2024.10.29.07.15.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 07:15:13 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <cab86814-4ab9-4c52-86b5-c35c4f5ed590@roeck-us.net>
+Date: Tue, 29 Oct 2024 07:15:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,457 +77,361 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20241022124148.1952761-1-shiyongbang@huawei.com>
- <20241022124148.1952761-2-shiyongbang@huawei.com>
- <wu2kwdqce7jovidzxhublmpgdhzq4uby65quo7ks44tfjhtgd2@qtfogva3exyg>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <wu2kwdqce7jovidzxhublmpgdhzq4uby65quo7ks44tfjhtgd2@qtfogva3exyg>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Subject: Re: [PATCH 2/2] hwmon: pmbus: add driver for ltp8800-1a, ltp8800-4a,
+ and ltp8800-2
+To: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-hwmon@vger.kernel.org
+Cc: Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Yin <peteryin.openbmc@gmail.com>,
+ Noah Wang <noahwang.wang@outlook.com>, Marek Vasut <marex@denx.de>,
+ Lukas Wunner <lukas@wunner.de>
+References: <20241029130137.31284-1-cedricjustine.encarnacion@analog.com>
+ <20241029130137.31284-3-cedricjustine.encarnacion@analog.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241029130137.31284-3-cedricjustine.encarnacion@analog.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> On Tue, Oct 22, 2024 at 08:41:45PM +0800, Yongbang Shi wrote:
->> From: baihan li <libaihan@huawei.com>
->>
->> Add dp aux read/write functions. They are basic functions
->> and will be used later.
->>
->> Signed-off-by: baihan li <libaihan@huawei.com>
->> ---
->> ChangeLog:
->> v1 -> v2:
->>    - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
->>    - using drm dp header files' dp macros instead, suggested by Andy Yan.
->>    v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 162 +++++++++++++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h  |  31 ++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  74 +++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  76 +++++++++
->>   5 files changed, 345 insertions(+), 1 deletion(-)
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> index d25c75e60d3d..8770ec6dfffd 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
->> @@ -1,4 +1,5 @@
->>   # SPDX-License-Identifier: GPL-2.0-only
->> -hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
->> +hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
->> +	       dp/dp_aux.o
->>   
->>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> new file mode 100644
->> index 000000000000..0078cafdf86d
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
->> @@ -0,0 +1,162 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
->> +// Copyright (c) 2024 Hisilicon Limited.
->> +
->> +#include <linux/io.h>
->> +#include <linux/iopoll.h>
->> +#include <linux/minmax.h>
->> +#include <drm/drm_device.h>
->> +#include <drm/drm_print.h>
->> +#include "dp_comm.h"
->> +#include "dp_reg.h"
->> +#include "dp_aux.h"
->> +
->> +#define DP_MIN_PULSE_NUM 0x9
->> +
->> +static void dp_aux_reset(const struct dp_dev *dp)
->> +{
->> +	dp_write_bits(dp->base + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x0);
->> +	usleep_range(10, 15);
->> +	dp_write_bits(dp->base + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x1);
->> +}
->> +
->> +static void dp_aux_read_data(struct dp_dev *dp, u8 *buf, u8 size)
->> +{
->> +	u32 reg_num;
->> +	u32 value;
->> +	u32 num;
->> +	u8 i, j;
->> +
->> +	reg_num = round_up(size, AUX_4_BYTE) / AUX_4_BYTE;
->> +	for (i = 0; i < reg_num; i++) {
->> +		/* number of bytes read from a single register */
->> +		num = min(size - i * AUX_4_BYTE, AUX_4_BYTE);
->> +		value = readl(dp->base + DP_AUX_RD_DATA0 + i * AUX_4_BYTE);
->> +		/* convert the 32-bit value of the register to the buffer. */
->> +		for (j = 0; j < num; j++)
->> +			buf[i * AUX_4_BYTE + j] = value >> (j * AUX_8_BIT);
->> +	}
->> +}
->> +
->> +static void dp_aux_write_data(struct dp_dev *dp, u8 *buf, u8 size)
->> +{
->> +	u32 reg_num;
->> +	u32 value;
->> +	u8 i, j;
->> +	u32 num;
->> +
->> +	reg_num = round_up(size, AUX_4_BYTE) / AUX_4_BYTE;
->> +	for (i = 0; i < reg_num; i++) {
->> +		/* number of bytes written to a single register */
->> +		num = min_t(u8, size - i * AUX_4_BYTE, AUX_4_BYTE);
->> +		value = 0;
->> +		/* obtain the 32-bit value written to a single register. */
->> +		for (j = 0; j < num; j++)
->> +			value |= buf[i * AUX_4_BYTE + j] << (j * AUX_8_BIT);
->> +		/* writing data to a single register */
->> +		writel(value, dp->base + DP_AUX_WR_DATA0 + i * AUX_4_BYTE);
->> +	}
->> +}
->> +
->> +static u32 dp_aux_build_cmd(const struct drm_dp_aux_msg *msg)
->> +{
->> +	u32 aux_cmd = msg->request;
->> +
->> +	if (msg->size)
->> +		aux_cmd |= (msg->size - 1) << AUX_CMD_REQ_LEN_S;
->> +	else
->> +		aux_cmd |= 1 << AUX_CMD_I2C_ADDR_ONLY_S;
->> +
->> +	aux_cmd |= msg->address << AUX_CMD_ADDR_S;
->> +
->> +	return aux_cmd;
->> +}
->> +
->> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
->> +static int dp_aux_parse_xfer(struct dp_dev *dp, struct drm_dp_aux_msg *msg)
->> +{
->> +	u32 buf_data_cnt;
->> +	u32 aux_status;
->> +	int ret = 0;
->> +
->> +	aux_status = readl(dp->base + DP_AUX_STATUS);
->> +	msg->reply = FIELD_GET(DP_CFG_AUX_STATUS, aux_status);
->> +
->> +	if (aux_status & DP_CFG_AUX_TIMEOUT)
->> +		return -ETIMEDOUT;
->> +
->> +	/* only address */
->> +	if (!msg->size)
->> +		return 0;
->> +
->> +	if (msg->reply != DP_AUX_NATIVE_REPLY_ACK)
->> +		return 0;
->> +
->> +	buf_data_cnt = FIELD_GET(DP_CFG_AUX_READY_DATA_BYTE, aux_status);
->> +
->> +	switch (msg->request) {
->> +	case DP_AUX_NATIVE_WRITE:
->> +		ret = msg->size;
->> +		break;
->> +	case DP_AUX_I2C_WRITE | DP_AUX_I2C_MOT:
->> +		if (buf_data_cnt == AUX_I2C_WRITE_SUCCESS)
->> +			ret = msg->size;
->> +		else if (buf_data_cnt == AUX_I2C_WRITE_PARTIAL_SUCCESS)
->> +			ret = FIELD_GET(DP_CFG_AUX, aux_status);
->> +		break;
->> +	case DP_AUX_NATIVE_READ:
->> +	case DP_AUX_I2C_READ | DP_AUX_I2C_MOT:
->> +		buf_data_cnt--;
->> +		/* only the successful part of data is read */
->> +		if (buf_data_cnt != msg->size) {
->> +			ret = -EBUSY;
->> +		} else { /* all data is successfully read */
->> +			dp_aux_read_data(dp, msg->buffer, msg->size);
->> +			ret = msg->size;
->> +		}
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	return ret;
->> +}
->> +
->> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
->> +static ssize_t dp_aux_xfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
->> +{
->> +	struct dp_dev *dp = container_of(aux, struct dp_dev, aux);
->> +	u32 aux_cmd;
->> +	int ret;
->> +	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
->> +
->> +	writel(0, dp->base + DP_AUX_WR_DATA0);
->> +	writel(0, dp->base + DP_AUX_WR_DATA1);
->> +	writel(0, dp->base + DP_AUX_WR_DATA2);
->> +	writel(0, dp->base + DP_AUX_WR_DATA3);
->> +
->> +	dp_aux_write_data(dp, msg->buffer, msg->size);
->> +
->> +	aux_cmd = dp_aux_build_cmd(msg);
->> +	writel(aux_cmd, dp->base + DP_AUX_CMD_ADDR);
->> +
->> +	/* enable aux transfer */
->> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_REQ, 0x1);
->> +	ret = readl_poll_timeout(dp->base + DP_AUX_REQ, val, !(val & DP_CFG_AUX_REQ), 50, 5000);
->> +	if (ret) {
->> +		dp_aux_reset(dp);
->> +		return ret;
->> +	}
->> +
->> +	return dp_aux_parse_xfer(dp, msg);
->> +}
->> +
->> +void dp_aux_init(struct dp_dev *dp)
->> +{
->> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
->> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
->> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_MIN_PULSE_NUM, DP_MIN_PULSE_NUM);
->> +
->> +	dp->aux.transfer = dp_aux_xfer;
->> +	dp->aux.is_remote = 0;
->> +	drm_dp_aux_init(&dp->aux);
->> +}
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
->> new file mode 100644
->> index 000000000000..6f95a3750d60
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
->> @@ -0,0 +1,31 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_AUX_H
->> +#define DP_AUX_H
->> +
->> +#include <linux/bitops.h>
->> +#include "dp_comm.h"
->> +
->> +#define AUX_I2C_WRITE_SUCCESS		0x1
->> +#define AUX_I2C_WRITE_PARTIAL_SUCCESS	0x2
->> +
->> +#define EQ_MAX_RETRY			5
-> unused
->
->> +
->> +#define DP_CFG_AUX_S			17
->> +#define DP_CFG_AUX_STATUS_S		4
-> Both are unused
->
->> +
->> +#define AUX_4_BYTE			4
->> +#define AUX_4_BIT			4
->> +#define AUX_8_BIT			8
-> AUX_4_BIT is unused. For other defines I think it's better to provide
-> sensible names. BITS_IN_U32, BYTES_IN_U32
->
->> +
->> +#define AUX_READY_DATA_BYTE_S		12
-> unused
->
->> +
->> +/* aux_cmd_addr register shift */
->> +#define AUX_CMD_REQ_LEN_S		4
->> +#define AUX_CMD_ADDR_S			8
->> +#define AUX_CMD_I2C_ADDR_ONLY_S		28
-> Please use FIELD_PREP instead of definig shifts (and shift is usally
-> _SHIFT, not _S)
->
->> +
->> +void dp_aux_init(struct dp_dev *dp);
->> +
->> +#endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> new file mode 100644
->> index 000000000000..26d97929dc06
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> @@ -0,0 +1,74 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_COMM_H
->> +#define DP_COMM_H
->> +
->> +#include <linux/types.h>
->> +#include <linux/bitops.h>
->> +#include <linux/errno.h>
->> +#include <linux/mutex.h>
->> +#include <linux/kernel.h>
->> +#include <linux/bitfield.h>
->> +#include <linux/io.h>
->> +
->> +#include <drm/display/drm_dp_helper.h>
->> +
->> +#define REG_LENGTH 32
->> +
->> +static inline u32 dp_read_bits(void __iomem *addr, u32 bit_mask)
->> +{
->> +	u32 reg_val;
->> +
->> +	reg_val = readl(addr);
->> +
->> +	return (reg_val & bit_mask) >> __ffs(bit_mask);
-> FIELD_GET
->
->> +}
->> +
->> +static inline void dp_write_bits(void __iomem *addr, u32 bit_mask, u32 val)
->> +{
->> +	u32 reg_val;
->> +
->> +	reg_val = readl(addr);
->> +	reg_val &= ~bit_mask;
->> +	reg_val |= (val << __ffs(bit_mask)) & bit_mask;
-> FIELD_PREP
->
->> +	writel(reg_val, addr);
-> How is this protected from concurrent RMW cycles?
->
->> +}
->> +
->> +enum dpcd_revision {
->> +	DPCD_REVISION_10 = 0x10,
->> +	DPCD_REVISION_11,
->> +	DPCD_REVISION_12,
->> +	DPCD_REVISION_13,
->> +	DPCD_REVISION_14,
-> Any reason for ignoring defines in drm_dp.h?
+On 10/29/24 06:01, Cedric Encarnacion wrote:
+> LTP8800-1A 54V, 150A DC/DC µModule Regulator with PMBus Interface
+> LTP8800-4A 54V, 200A DC/DC µModule Regulator with PMBus Interface
+> LTP8800-2 54V, 135A DC/DC μModule Regulator with PMBus Interface
+> 
 
-Hi Dmitry,
-I tried it but still can't find it, if you know, can you tell me which macro I can use?
-Thanks,
-Baihan
+Please provide a short description.
 
+> Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> ---
+>   Documentation/hwmon/index.rst   |   1 +
+>   Documentation/hwmon/ltp8800.rst | 103 ++++++++++++++++++++++++++++++++
+>   MAINTAINERS                     |   2 +
+>   drivers/hwmon/pmbus/Kconfig     |  18 ++++++
+>   drivers/hwmon/pmbus/Makefile    |   1 +
+>   drivers/hwmon/pmbus/ltp8800.c   |  74 +++++++++++++++++++++++
+>   6 files changed, 199 insertions(+)
+>   create mode 100644 Documentation/hwmon/ltp8800.rst
+>   create mode 100644 drivers/hwmon/pmbus/ltp8800.c
+> 
+> diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
+> index 4d15664bc41e..d51960f58e43 100644
+> --- a/Documentation/hwmon/index.rst
+> +++ b/Documentation/hwmon/index.rst
+> @@ -136,6 +136,7 @@ Hardware Monitoring Kernel Drivers
+>      ltc4261
+>      ltc4282
+>      ltc4286
+> +   ltp8800
+>      max127
+>      max15301
+>      max16064
+> diff --git a/Documentation/hwmon/ltp8800.rst b/Documentation/hwmon/ltp8800.rst
+> new file mode 100644
+> index 000000000000..dea73f60c3d7
+> --- /dev/null
+> +++ b/Documentation/hwmon/ltp8800.rst
+> @@ -0,0 +1,103 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +Kernel driver ltp8800
+> +=====================
+> +
+> +Supported chips:
+> +
+> +	* Analog Devices LTP8800-1A
+> +
+> +		Prefix: 'ltp8800-1a'
+> +
+> +		Addresses scanned: I2C 0x40 - 0x4F
+> +
 
->
->> +};
->> +
->> +struct link_status {
->> +	bool clock_recovered;
->> +	bool channel_equalized;
->> +	u8 cr_done_lanes;
->> +};
->> +
->> +struct link_cap {
->> +	enum dpcd_revision rx_dpcd_revision;
->> +	u8 link_rate;
->> +	u8 lanes;
->> +	bool is_tps3;
->> +	bool is_tps4;
->> +};
->> +
->> +struct hibmc_dp_link {
->> +	struct link_status status;
->> +	u8 *train_set;
->> +	struct link_cap cap;
->> +};
->> +
->> +struct dp_dev {
->> +	struct hibmc_dp_link link;
->> +	struct drm_dp_aux aux;
->> +	struct drm_device *dev;
->> +	void __iomem *base;
->> +	u8 dpcd[DP_RECEIVER_CAP_SIZE];
->> +};
->> +
->> +#endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> new file mode 100644
->> index 000000000000..3dcb847057a4
->> --- /dev/null
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
->> @@ -0,0 +1,76 @@
->> +/* SPDX-License-Identifier: GPL-2.0-or-later */
->> +/* Copyright (c) 2024 Hisilicon Limited. */
->> +
->> +#ifndef DP_REG_H
->> +#define DP_REG_H
->> +
->> +#define DP_AUX_CMD_ADDR			0x50
->> +#define DP_AUX_WR_DATA0			0x54
->> +#define DP_AUX_WR_DATA1			0x58
->> +#define DP_AUX_WR_DATA2			0x5c
->> +#define DP_AUX_WR_DATA3			0x60
->> +#define DP_AUX_RD_DATA0			0x64
->> +#define DP_AUX_REQ			0x74
->> +#define DP_AUX_STATUS			0x78
->> +#define DP_PHYIF_CTRL0			0xa0
->> +#define DP_VIDEO_CTRL			0x100
->> +#define DP_VIDEO_CONFIG0		0x104
->> +#define DP_VIDEO_CONFIG1		0x108
->> +#define DP_VIDEO_CONFIG2		0x10c
->> +#define DP_VIDEO_CONFIG3		0x110
->> +#define DP_VIDEO_PACKET			0x114
->> +#define DP_VIDEO_MSA0			0x118
->> +#define DP_VIDEO_MSA1			0x11c
->> +#define DP_VIDEO_MSA2			0x120
->> +#define DP_VIDEO_HORIZONTAL_SIZE	0X124
->> +#define DP_TIMING_GEN_CONFIG0		0x26c
->> +#define DP_TIMING_GEN_CONFIG2		0x274
->> +#define DP_TIMING_GEN_CONFIG3		0x278
->> +#define DP_HDCP_CFG			0x600
->> +#define DP_INTR_ENABLE			0x720
->> +#define DP_INTR_ORIGINAL_STATUS		0x728
->> +#define DP_DPTX_RST_CTRL		0x700
->> +#define DP_DPTX_CLK_CTRL		0x704
->> +#define DP_DPTX_GCTL0			0x708
->> +#define DP_TIMING_MODEL_CTRL		0x884
->> +#define DP_TIMING_SYNC_CTRL		0xFF0
->> +
->> +#define DP_CFG_AUX_SYNC_LEN_SEL			BIT(1)
->> +#define DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
->> +#define DP_CFG_STREAM_FRAME_MODE		BIT(6)
->> +#define DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
->> +#define DP_CFG_LANE_DATA_EN			GENMASK(11, 8)
->> +#define DP_CFG_PHY_LANE_NUM			GENMASK(2, 1)
->> +#define DP_CFG_AUX_REQ				BIT(0)
->> +#define DP_CFG_AUX_RST_N			BIT(4)
->> +#define DP_CFG_AUX_TIMEOUT			BIT(0)
->> +#define DP_CFG_AUX_READY_DATA_BYTE		GENMASK(16, 12)
->> +#define DP_CFG_AUX				GENMASK(24, 17)
->> +#define DP_CFG_AUX_STATUS			GENMASK(11, 4)
->> +#define DP_CFG_SCRAMBLE_EN			BIT(0)
->> +#define DP_CFG_PAT_SEL				GENMASK(7, 4)
->> +#define DP_CFG_TIMING_GEN0_HACTIVE		GENMASK(31, 16)
->> +#define DP_CFG_TIMING_GEN0_HBLANK		GENMASK(15, 0)
->> +#define DP_CFG_TIMING_GEN0_VACTIVE		GENMASK(31, 16)
->> +#define DP_CFG_TIMING_GEN0_VBLANK		GENMASK(15, 0)
->> +#define DP_CFG_TIMING_GEN0_VFRONT_PORCH		GENMASK(31, 16)
->> +#define DP_CFG_STREAM_HACTIVE			GENMASK(31, 16)
->> +#define DP_CFG_STREAM_HBLANK			GENMASK(15, 0)
->> +#define DP_CFG_STREAM_HSYNC_WIDTH		GENMASK(15, 0)
->> +#define DP_CFG_STREAM_VACTIVE			GENMASK(31, 16)
->> +#define DP_CFG_STREAM_VBLANK			GENMASK(15, 0)
->> +#define DP_CFG_STREAM_VFRONT_PORCH		GENMASK(31, 16)
->> +#define DP_CFG_STREAM_VSYNC_WIDTH		GENMASK(15, 0)
->> +#define DP_CFG_STREAM_VSTART			GENMASK(31, 16)
->> +#define DP_CFG_STREAM_HSTART			GENMASK(15, 0)
->> +#define DP_CFG_STREAM_VSYNC_POLARITY		BIT(8)
->> +#define DP_CFG_STREAM_HSYNC_POLARITY		BIT(7)
->> +#define DP_CFG_STREAM_RGB_ENABLE		BIT(1)
->> +#define DP_CFG_STREAM_VIDEO_MAPPING		GENMASK(5, 2)
->> +#define DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1	GENMASK(31, 16)
->> +#define DP_CFG_STREAM_TU_SYMBOL_SIZE		GENMASK(5, 0)
->> +#define DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE	GENMASK(9, 6)
->> +#define DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
->> +#define DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
->> +
->> +#endif
->> -- 
->> 2.33.0
->>
+No, the chips are not scanned.
+
+> +		Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-1a.pdf
+> +
+> +	* Analog Devices LTP8800-4A
+> +
+> +		Prefix: 'ltp8800-4a'
+> +
+> +		Addresses scanned: I2C 0x40 - 0x4F
+> +
+> +		Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-4a.pdf
+> +
+> +	* Analog Devices LTP8800-2
+> +
+> +		Prefix: 'ltp8800-2'
+> +
+> +		Addresses scanned: I2C 0x40 - 0x4F
+> +
+> +		Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-2.pdf
+> +
+> +Authors:
+> +		- Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+> +
+> +
+> +Description
+> +-----------
+> +
+> +The LTP8800 is a family of step-down μModule regulators that provides
+> +microprocessor core voltage from 54V power distribution architecture. LTP8800
+> +features telemetry monitoring of input/output voltage, input current, output
+> +power, and temperature over PMBus.
+> +
+> +The driver is a client driver to the core PMBus driver. Please see
+> +Documentation/hwmon/pmbus.rst for details on PMBus client drivers.
+> +
+> +Usage Notes
+> +-----------
+> +
+> +This driver does not auto-detect devices. You will have to instantiate the
+> +devices explicitly. Please see Documentation/i2c/instantiating-devices.rst for
+> +details.
+> +
+> +Platform data support
+> +---------------------
+> +
+> +The driver supports standard PMBus driver platform data. Please see
+> +Documentation/hwmon/pmbus.rst for details.
+> +
+> +Sysfs Attributes
+> +----------------
+> +
+> +======================= ===========================
+> +curr1_label		"iin"
+> +curr1_input		Measured input current
+> +curr1_crit		Critical maximum current
+> +curr1_crit_alarm	Current critical high alarm
+> +
+> +curr2_label		"iout1"
+> +curr2_input		Measured output current
+> +curr2_lcrit		Critical minimum current
+> +curr2_crit		Critical maximum current
+> +curr2_max		Maximum output current
+> +curr2_alarm		Current alarm
+> +
+> +in1_label		"vin"
+> +in1_input		Measured input voltage
+> +in1_lcrit		Critical minimum input voltage
+> +in1_lcrit_alarm		Input voltage critical low alarm
+> +in1_crit		Critical maximum input voltage
+> +in1_crit_alarm		Input voltage critical high alarm
+> +
+> +in2_label		"vout1"
+> +in2_input		Measured output voltage
+> +in2_lcrit		Critical minimum output voltage
+> +in2_lcrit_alarm		Output voltage critical low alarm
+> +in2_crit		Critical maximum output voltage
+> +in2_crit_alarm		Output voltage critical high alarm
+> +in2_max			Maximum output voltage
+> +in2_max_alarm		Output voltage high alarm
+> +in2_min			Minimum output voltage
+> +in2_min_alarm		Output voltage low alarm
+> +
+> +power1_label		"pout1"
+> +power1_input		Measured output power
+> +power1_crit		Critical maximum output power
+> +
+> +temp1_input		Measured temperature
+> +temp1_lcrit		Critical low temperature
+> +temp1_lcrit_alarm		Chip temperature critical low alarm
+> +temp1_crit		Critical high temperature
+> +temp1_crit_alarm		Chip temperature critical high alarm
+> +======================= ===========================
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a6abf7243b94..5e7df53eb4a0 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13559,6 +13559,8 @@ LTP8800 HARDWARE MONITOR DRIVER
+>   M:	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+>   L:	linux-hwmon@vger.kernel.org
+>   S:	Supported
+> +F:	Documentation/hwmon/ltp8800.rst
+> +F:	drivers/hwmon/pmbus/ltp8800.c
+>   
+>   LYNX 28G SERDES PHY DRIVER
+>   M:	Ioana Ciornei <ioana.ciornei@nxp.com>
+> diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
+> index a4f02cad92fd..33e6da249ac8 100644
+> --- a/drivers/hwmon/pmbus/Kconfig
+> +++ b/drivers/hwmon/pmbus/Kconfig
+> @@ -247,6 +247,24 @@ config SENSORS_LTC4286
+>   	  If you say yes here you get hardware monitoring support for Analog
+>   	  Devices LTC4286.
+>   
+> +config SENSORS_LTP8800
+> +	tristate "Analog Devices LTP8800 and compatibles"
+> +	help
+> +	  If you say yes here you get hardware monitoring support for Analog
+> +	  Devices LTP8800-1A, LTP8800-4A, and LTP8800-2.
+> +
+> +	  This driver can also be built as a module. If so, the module will
+> +	  be called ltp8800.
+> +
+> +config SENSORS_LTP8800_REGULATOR
+> +	bool "Regulator support for LTP8800 and compatibles"
+> +	depends on SENSORS_LTP8800 && REGULATOR
+> +	help
+> +	  If you say yes here you get regulator support for Analog Devices
+> +	  LTP8800-1A, LTP8800-4A, and LTP8800-2. LTP8800 is a family of DC/DC
+> +	  µModule regulators that can provide microprocessor power from 54V
+> +	  power distribution architecture.
+> +
+>   config SENSORS_MAX15301
+>   	tristate "Maxim MAX15301"
+>   	help
+> diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
+> index d00bcc758b97..aa5bbdb4a806 100644
+> --- a/drivers/hwmon/pmbus/Makefile
+> +++ b/drivers/hwmon/pmbus/Makefile
+> @@ -26,6 +26,7 @@ obj-$(CONFIG_SENSORS_LT7182S)	+= lt7182s.o
+>   obj-$(CONFIG_SENSORS_LTC2978)	+= ltc2978.o
+>   obj-$(CONFIG_SENSORS_LTC3815)	+= ltc3815.o
+>   obj-$(CONFIG_SENSORS_LTC4286)	+= ltc4286.o
+> +obj-$(CONFIG_SENSORS_LTP8800)	+= ltp8800.o
+>   obj-$(CONFIG_SENSORS_MAX15301)	+= max15301.o
+>   obj-$(CONFIG_SENSORS_MAX16064)	+= max16064.o
+>   obj-$(CONFIG_SENSORS_MAX16601)	+= max16601.o
+> diff --git a/drivers/hwmon/pmbus/ltp8800.c b/drivers/hwmon/pmbus/ltp8800.c
+> new file mode 100644
+> index 000000000000..a377f2e2b001
+> --- /dev/null
+> +++ b/drivers/hwmon/pmbus/ltp8800.c
+> @@ -0,0 +1,74 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Hardware monitoring driver for Analog Devices LTP8800
+> + *
+> + * Copyright (C) 2024 Analog Devices, Inc.
+> + */
+> +#include <linux/bits.h>
+
+Is this used anywhere ? I don''t immediately see it.
+
+> +#include <linux/i2c.h>
+> +#include <linux/module.h>
+> +#include <linux/mod_devicetable.h>
+> +#include "pmbus.h"
+> +
+> +static const struct regulator_desc ltp8800_reg_desc[] = {
+> +	PMBUS_REGULATOR("vout", 0),
+> +};
+> +
+> +static struct pmbus_driver_info ltp8800_info = {
+> +	.pages = 1,
+> +	.format[PSC_VOLTAGE_IN] = linear,
+> +	.format[PSC_VOLTAGE_OUT] = linear,
+> +	.format[PSC_CURRENT_IN] = linear,
+> +	.format[PSC_TEMPERATURE] = linear,
+> +	.func[0] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
+> +		   PMBUS_HAVE_VIN | PMBUS_HAVE_STATUS_INPUT |
+> +		   PMBUS_HAVE_IIN | PMBUS_HAVE_IOUT |
+> +		   PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
+> +		   PMBUS_HAVE_POUT,
+> +};
+> +
+> +static int ltp8800_probe(struct i2c_client *client)
+> +{
+> +	if (!i2c_check_functionality(client->adapter,
+> +				     I2C_FUNC_SMBUS_READ_BYTE_DATA |
+> +				     I2C_FUNC_SMBUS_READ_WORD_DATA))
+> +		return -ENODEV;
+> +
+
+This is also checked in pmbus_do_probe().
+
+> +	if (IS_ENABLED(CONFIG_SENSORS_LTP8800_REGULATOR)) {
+> +		ltp8800_info.num_regulators = 1;
+> +		ltp8800_info.reg_desc = ltp8800_reg_desc;
+> +	}
+
+This can be set directly in ltp8800_info.
+
+> +
+> +	return pmbus_do_probe(client, &ltp8800_info);
+> +}
+> +
+> +static const struct i2c_device_id ltp8800_id[] = {
+> +	{"ltp8800-1a", 0},
+> +	{"ltp8800-2", 0},
+> +	{"ltp8800-4a", 0},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(i2c, ltp8800_id);
+> +
+> +static const struct of_device_id ltp8800_of_match[] = {
+> +	{ .compatible = "adi,ltp8800-1a"},
+> +	{ .compatible = "adi,ltp8800-2"},
+> +	{ .compatible = "adi,ltp8800-4a"},
+
+As mentioned in the other patch, I don't see the point of having three
+compatible entries and three device IDs.
+
+Guenter
+
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, ltp8800_of_match);
+> +
+> +static struct i2c_driver ltp8800_driver = {
+> +	.driver = {
+> +		.name = "ltp8800",
+> +		.of_match_table = ltp8800_of_match,
+> +	},
+> +	.probe = ltp8800_probe,
+> +	.id_table = ltp8800_id,
+> +};
+> +module_i2c_driver(ltp8800_driver);
+> +
+> +MODULE_AUTHOR("Cedric Encarnacion <cedricjustine.encarnacion@analog.com>");
+> +MODULE_DESCRIPTION("Analog Devices LTP8800 HWMON PMBus Driver");
+> +MODULE_LICENSE("GPL");
+> +MODULE_IMPORT_NS(PMBUS);
+
 
