@@ -1,163 +1,283 @@
-Return-Path: <linux-kernel+bounces-387506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBF29B5212
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:49:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA5C29B5217
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F981F24300
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:49:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CB901F241DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4A7201020;
-	Tue, 29 Oct 2024 18:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4579D205AC8;
+	Tue, 29 Oct 2024 18:49:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="PcyBCZlJ"
-Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YmaWnHFA"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00E7206066
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3161E200CB9;
+	Tue, 29 Oct 2024 18:49:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730227719; cv=none; b=bDxqL9SlFngqly/3mI/xpYmN2jh4j17jxXrJqMf4xvm1kF9wHa9dYGN2/LAchCrxvpvcTG3p9pceo5S1pF6AOYqVaNqem/siknBK0lG2cAa2qlhEtpm1MrwPW6F1IKxQzdDVgF5RM4relb1mvfWnmakVDrKJzM9t6YV8R5uI3NE=
+	t=1730227752; cv=none; b=r82rmanAoDEGYlpU9h8F3V9Gn/c5N/dINK3Z6dwI1mNnPtf2Te7AF4++9RG0mnrZmK0KGk/wGRvtMbVvEGwr6fTt34TJR/bh3zD8dj8Y9ZMBurlydTZwU29QugK0BD0/IkeZ/IvfYx6vV0NCZ6y9o0ODitCeF1a6qfEIfm77OfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730227719; c=relaxed/simple;
-	bh=6HV0S8hXPLg9laP+k0p8fwpJV8/KlnJaTdjInZpFGME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQCQOZegd4fI7lrW6WdglJWugQvd0X10fsviyG+l/cca99q5LxxaHyDPw3pD/hlDuAFhPNISt2+FaY4xMxOl95vYYWMp6U+0kiN0vB8N0aSrduAZ2vKIwo9gTsQD8VMP6rsIrhkfI2K4m39Iddf6iltS9Ce9hGcU0VVbinjTEy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=PcyBCZlJ; arc=none smtp.client-ip=44.202.169.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
-	by cmsmtp with ESMTPS
-	id 5dydtcZU7g2lz5rGetVSYU; Tue, 29 Oct 2024 18:48:36 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 5rGdtYboqSAO35rGetQKvS; Tue, 29 Oct 2024 18:48:36 +0000
-X-Authority-Analysis: v=2.4 cv=L7obQfT8 c=1 sm=1 tr=0 ts=67212e04
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
- a=r4sGFtdbsuTx4_WqIAAA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+	s=arc-20240116; t=1730227752; c=relaxed/simple;
+	bh=PkvA5fzNrzR2TUSikcBbgOCuOSwlBMxBi+Saje4BysY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q9aufN4DJ8mdM8alv5ECZ/6q1BlLuciZ+odZ0CUiGWuaiPwPNkWLGi+iwbbW0MdzNYAgJS77NuwHzTnuyq8aNqp3IRok2BCrHhvAohT0DvlE0XJKrlAeYkd3P6/hxM1WeMc5uLZtzD078BLavDkMG7tQOF8yMJUcPZzwUogRsH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YmaWnHFA; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Pbp5kCtKVkek8o0gSz48K3TsDNPAJncgnHaBDwQPGhc=; b=PcyBCZlJekUjqm7r04dR7Io+e2
-	et2Ry57xnDlfTZUYCv1ZqARidCMFqIP1GjnahQTjCXVX6mMehc2Nk0mW1T1lfQVYo3bGTdQARNUnk
-	+85sinNBCpbi2TvOtv0ig1DP1SEeg4LD+N+X6IshVSJhymzD2HF1YPfqjbTNHHP5L3ugwTd1cauub
-	sALIAJGAs+2U1HB5wyCggbIf70lhgSlOthpzdInHHdvTjJx7RQLIBd6Re8q0wVwZPt9iMkV3BiFZS
-	zPf41tVxaGm82qpsh9FecLCmI/qmMomgZiYZAtTa1splHNyLAUUYpvYTgLIc+kx19260Dkd4xNZo2
-	UQBWJ6AQ==;
-Received: from [201.172.173.7] (port=56256 helo=[192.168.15.6])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1t5rGc-000hnF-0T;
-	Tue, 29 Oct 2024 13:48:34 -0500
-Message-ID: <26d37815-c652-418c-99b0-9d3e6ab78893@embeddedor.com>
-Date: Tue, 29 Oct 2024 12:48:32 -0600
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UErh4zeCMgQHZMV/kkgBSrhYI6M3+izHPip1uO4S+YM=; b=YmaWnHFAvsRuluoaVtOFhr47ML
+	nLkaDpaP+4LI68o5DmnleoD3H2tCZBlO58XrTTGew3nmpEeLVjn1xZ6/h/Krb9vZiGpMh3cYDnepa
+	bV4iZZHPFZITeSjIAWj+pkYFLWOV1w0VY45INENu5We76mCL2tneDy2D7D7/R4L2uCn+A+/KqxIRy
+	sEMU9JfPk41okFpwi2EQS3sLQ58bwOporjRK0T8ncE3xDnMIeGa1rBSMINAiUKJ/DUWV+a0Fr01lQ
+	I/lIu2r7f8dVI+4R/7Kd+YYZ6T6yLZTixLyrS+haOrVIDOPAaxrqcHXKtsHc99oS/gb2yilkOmH5C
+	6BfIsjNg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5rGi-0000000AI9Q-1rOk;
+	Tue, 29 Oct 2024 18:48:41 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 82BA330073F; Tue, 29 Oct 2024 19:48:40 +0100 (CET)
+Date: Tue, 29 Oct 2024 19:48:40 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v5 03/16] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <20241029184840.GJ14555@noisy.programming.kicks-ass.net>
+References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
+ <20241028160917.1380714-4-alexander.shishkin@linux.intel.com>
+ <7897bc3e-2d68-4aef-8668-f6eb9f8efd7f@intel.com>
+ <20241029113611.GS14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Michael Chan <michael.chan@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <cover.1729536776.git.gustavoars@kernel.org>
- <f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
- <20241029065824.670f14fc@kernel.org>
- <f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
- <20241029110845.0f9bb1cc@kernel.org>
- <7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
- <20241029113955.145d2a2f@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20241029113955.145d2a2f@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.7
-X-Source-L: No
-X-Exim-ID: 1t5rGc-000hnF-0T
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:56256
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 16
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfF3l3A7qyhNj5nKrQ9qQ493Pee9AFRz0Qw2+aFXBJjnswMt3d2Q3AlR/Fu3dKGzmW5XZx+UEXKnSQIZOOqCl8tml2ErPatEgA6/Lme2RaIMsLc4v7Opr
- g3JEd/afV+ST554VUMnKqYJe9q2/1Snmn3vIdBpmBYe5NcKyFpss/kxfyX6WaRvPxNPFem5jZhvMVIM6uHUAdOm+zhiqmPL2qG0zx9BEQRZN5sKPbdgZrPH/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029113611.GS14555@noisy.programming.kicks-ass.net>
 
+On Tue, Oct 29, 2024 at 12:36:11PM +0100, Peter Zijlstra wrote:
 
+> Anyway, looking at this, I see we grew rep_{movs,stos}_alternative, as
+> used in copy_user_generic() and __clear_user(). Which are all somewhat
+> similar.
 
-On 29/10/24 12:39, Jakub Kicinski wrote:
-> On Tue, 29 Oct 2024 12:18:56 -0600 Gustavo A. R. Silva wrote:
->>>> I don't think you want to change this. `lsettings` is based on `ksettings`. So,
->>>> `ksettings` should go first. The same scenario for the one below.
->>>
->>> In which case you need to move the init out of line.
->>
->> So, the same applies to the case below?
->>
->> 	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
->> 	struct bnxt *bp = netdev_priv(dev);
->> 	struct bnxt_link_info *link_info = &bp->link_info;
-> 
-> Do you mean the bp and bp->link_info lines?
-> You're not touching them, so leave them be.
-> 
->> Is this going to be a priority for any other netdev patches in the future?
-> 
-> It's been the preferred formatting for a decade or more.
-> Which is why the net/ethtool/ code you're touching follows
-> this convention. We're less strict about driver code.
+That is, we could consider something like the completely untested and
+probably broken, will light your granny on fire and maul pets like
+below..
 
-I mean, the thing about moving the initialization out of line to accommodate
-for the convention.
-
-What I'm understanding is that now you're asking me to change the following
-
-      const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
-      const struct ethtool_link_ksettings *ksettings = &data->ksettings;
--    const struct ethtool_link_settings *lsettings = &ksettings->base;
-+    const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
-
-to this:
-
-      const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
-      const struct ethtool_link_settings_hdr *lsettings;
-      const struct ethtool_link_ksettings *ksettings;
-
-      ksettings = &data->ksettings;
-      lsettings = &ksettings->base;
-
-I just want to have clear if this is going to be a priority and in which scenarios
-should I/others modify the code to accommodate for the convention?
-
---
-Gustavo
-
+---
+diff --git a/arch/x86/include/asm/string.h b/arch/x86/include/asm/string.h
+index 9cb5aae7fba9..e25a988360a1 100644
+--- a/arch/x86/include/asm/string.h
++++ b/arch/x86/include/asm/string.h
+@@ -2,31 +2,50 @@
+ #ifndef _ASM_X86_STRING_H
+ #define _ASM_X86_STRING_H
+ 
++#include <asm/asm.h>
++#include <asm/alternative.h>
++
+ #ifdef CONFIG_X86_32
+ # include <asm/string_32.h>
+ #else
+ # include <asm/string_64.h>
+ #endif
+ 
++#ifdef CONFIG_X86_64
++#define ALT_64(orig, alt, feat) ALTERNATIVE(orig, alt, feat)
++#else
++#define ALT_64(orig, alt, feat) orig
++#endif
++
+ static __always_inline void *__inline_memcpy(void *to, const void *from, size_t len)
+ {
+ 	void *ret = to;
+ 
+-	asm volatile("rep movsb"
+-		     : "+D" (to), "+S" (from), "+c" (len)
+-		     : : "memory");
+-	return ret;
++	asm volatile("1:\n\t"
++		     ALT_64("rep movsb",
++			    "call rep_movs_alternative", ALT_NOT(X86_FEATURE_FSRM))
++		     "2:\n\t"
++		     _ASM_EXTABLE_UA(1b, 2b)
++		     : "+D" (to), "+S" (from), "+c" (len), ASM_CALL_CONSTRAINT
++		     : : "memory", _ASM_AX);
++
++	return ret + len;
+ }
+ 
+ static __always_inline void *__inline_memset(void *s, int v, size_t n)
+ {
+ 	void *ret = s;
+ 
+-	asm volatile("rep stosb"
+-		     : "+D" (s), "+c" (n)
++	asm volatile("1:\n\t"
++		     ALT_64("rep stosb",
++			    "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRM))
++		     "2:\n\t"
++		     _ASM_EXTABLE_UA(1b, 2b)
++		     : "+D" (s), "+c" (n), ASM_CALL_CONSTRAINT
+ 		     : "a" ((uint8_t)v)
+-		     : "memory");
+-	return ret;
++		     : "memory", _ASM_SI);
++
++	return ret + len;
+ }
+ 
+ #endif /* _ASM_X86_STRING_H */
+diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
+index b0a887209400..9f2d2c2ca731 100644
+--- a/arch/x86/include/asm/uaccess_64.h
++++ b/arch/x86/include/asm/uaccess_64.h
+@@ -13,6 +13,7 @@
+ #include <asm/page.h>
+ #include <asm/percpu.h>
+ #include <asm/runtime-const.h>
++#include <asm/string.h>
+ 
+ /*
+  * Virtual variable: there's no actual backing store for this,
+@@ -118,21 +119,12 @@ rep_movs_alternative(void *to, const void *from, unsigned len);
+ static __always_inline __must_check unsigned long
+ copy_user_generic(void *to, const void *from, unsigned long len)
+ {
++	void *ret;
++
+ 	stac();
+-	/*
+-	 * If CPU has FSRM feature, use 'rep movs'.
+-	 * Otherwise, use rep_movs_alternative.
+-	 */
+-	asm volatile(
+-		"1:\n\t"
+-		ALTERNATIVE("rep movsb",
+-			    "call rep_movs_alternative", ALT_NOT(X86_FEATURE_FSRM))
+-		"2:\n"
+-		_ASM_EXTABLE_UA(1b, 2b)
+-		:"+c" (len), "+D" (to), "+S" (from), ASM_CALL_CONSTRAINT
+-		: : "memory", "rax");
++	ret = __inline_memcpy(to, from, len);
+ 	clac();
+-	return len;
++	return ret - to;
+ }
+ 
+ static __always_inline __must_check unsigned long
+@@ -178,25 +170,15 @@ rep_stos_alternative(void __user *addr, unsigned long len);
+ 
+ static __always_inline __must_check unsigned long __clear_user(void __user *addr, unsigned long size)
+ {
+-	might_fault();
+-	stac();
++	void *ret;
+ 
+-	/*
+-	 * No memory constraint because it doesn't change any memory gcc
+-	 * knows about.
+-	 */
+-	asm volatile(
+-		"1:\n\t"
+-		ALTERNATIVE("rep stosb",
+-			    "call rep_stos_alternative", ALT_NOT(X86_FEATURE_FSRS))
+-		"2:\n"
+-	       _ASM_EXTABLE_UA(1b, 2b)
+-	       : "+c" (size), "+D" (addr), ASM_CALL_CONSTRAINT
+-	       : "a" (0));
++	might_fault();
+ 
++	stac();
++	ret = __inline_memset(addr, 0, size);
+ 	clac();
+ 
+-	return size;
++	return ret - addr;
+ }
+ 
+ static __always_inline unsigned long clear_user(void __user *to, unsigned long n)
+diff --git a/arch/x86/lib/clear_page_64.S b/arch/x86/lib/clear_page_64.S
+index 2760a15fbc00..17d4bf6f50e5 100644
+--- a/arch/x86/lib/clear_page_64.S
++++ b/arch/x86/lib/clear_page_64.S
+@@ -53,16 +53,22 @@ SYM_FUNC_END(clear_page_erms)
+ EXPORT_SYMBOL_GPL(clear_page_erms)
+ 
+ /*
+- * Default clear user-space.
++ * Default memset
+  * Input:
+  * rdi destination
++ * rsi scratch
+  * rcx count
+- * rax is zero
++ * al is value
+  *
+  * Output:
+- * rcx: uncleared bytes or 0 if successful.
++ * rcx: unset bytes or 0 if successful.
+  */
+ SYM_FUNC_START(rep_stos_alternative)
++
++	movzbl %al, %rsi
++	movabs $0x0101010101010101, %rax
++	mulq %rsi
++
+ 	cmpq $64,%rcx
+ 	jae .Lunrolled
+ 
 
