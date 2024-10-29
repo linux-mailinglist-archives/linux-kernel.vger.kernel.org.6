@@ -1,120 +1,136 @@
-Return-Path: <linux-kernel+bounces-386243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9839B40EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:15:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE349B40EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:15:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2BC21F23143
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:15:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15CB21F23272
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:15:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57806200CA5;
-	Tue, 29 Oct 2024 03:13:53 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD851FBF7B;
+	Tue, 29 Oct 2024 03:13:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="HI/GrWlr"
+Received: from esa4.hc1455-7.c3s2.iphmx.com (esa4.hc1455-7.c3s2.iphmx.com [68.232.139.117])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CC031FB8A0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED22E200CA4;
+	Tue, 29 Oct 2024 03:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.139.117
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730171633; cv=none; b=ncYimOWDLYr3PD5GWozrN1D6y8Is19SZcNdx33a/ppn/Azmkt4cS9gKyx/Y8HXS6h1uGBYD5Pjj/muph2fNW7XM6XyRI+exxo7cjZOro8KhTCk31koL8BKyGACij4iZPPXoMvyTnjD63icJIDh779FmTsaT22pFDX1RR4lxOpns=
+	t=1730171638; cv=none; b=FkydgT1v+DK703pXbPgS6Gpua/dCvVE0j0oQxQ/nIzVNHb7mQnpFr5CcUZVNRoRynrREARw2EZTyZcMXGMFroDdZYCZV3A1Jl/EpgqANJR5o7Okv35Ju8hTlDt063ybW1UN7ULNztUbUbK/ooX0e7G5MDP5FeUXRc8tUvrCWkXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730171633; c=relaxed/simple;
-	bh=nNX3f8FaL7rNhwZ8UpoLxE7n6RkYN+iUEaoMoDOuWDI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=X45pDC28PNUEMfpQaG7EF1FChoKjpLJyaMyxIelehs4QiKq4JfsmvELXk4Ew1GvdKARvnLYcuMz0tuA4NRGx+UOR1++PChiu63R5afm4Jy1qsqxBCllnsg4Bwq5vKnTFqe3GH8WCbSMcrNWQ3VGvl0ju/IxkNzdkuqs0iDbWPtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 49T3D0ov018719;
-	Tue, 29 Oct 2024 11:13:00 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XcwKj1G53z2K25NV;
-	Tue, 29 Oct 2024 11:12:25 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Tue, 29 Oct 2024 11:12:57 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>
-Subject: [PATCH V3] f2fs: fix to avoid use GC_AT when setting gc_mode as GC_URGENT_LOW or GC_URGENT_MID
-Date: Tue, 29 Oct 2024 11:12:49 +0800
-Message-ID: <1730171569-10757-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1730171638; c=relaxed/simple;
+	bh=awpN9ZV9QAewO1+Une17fqRPfocj076T306xTYqnGyo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TEqRGYrY5LrM7s7Aa/3Jy72DARWQs3CQYVWpzd/eoCJ0IpOJ0SHUrSd+1oTbcpzUof3UYrMXmjIlsz1R/QetxTD7CQsLqGa4DpfLtaW1NQAWAfPv56UXDLn2zbsODYBamAQFymJvaBfizwpKlBGbwdLKVTlRa6xQQTpoKAV/fr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=HI/GrWlr; arc=none smtp.client-ip=68.232.139.117
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
+  t=1730171636; x=1761707636;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=awpN9ZV9QAewO1+Une17fqRPfocj076T306xTYqnGyo=;
+  b=HI/GrWlrMggdi9crIIcKWfznqGXJD59+mDn5/+uHhn0BECrlLUUGuo3B
+   nvkQm2Ak9Ubvs5knCogAOxGK62bCHoYFNANFaM4qWdUdjSZgYSQxCZDGv
+   txBjPvMcFchjkXSeeX53KxsdQ3ctygczOlmosdDuGOwwhTC2BJJgvaYg9
+   3acOT2D+7y1pQqIu0IPT/wSfaotJE8hA6ClWQFgyqNh/65V1R+cRvZYlb
+   /pe048xUjSmwfPLQgE2rC5zwgGIngjcxhqJfumRuEipIJwiPUQN4jIbPD
+   BgRf09A33dYePyk6SwcXCF3EU6zC/tVKImileKUQ5ZY8+aNFmFmftQDI0
+   w==;
+X-CSE-ConnectionGUID: PQekpmrxSwOCY3FKBbgvsw==
+X-CSE-MsgGUID: kA/cG6MARru3ZUcWVwsZug==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="178536189"
+X-IronPort-AV: E=Sophos;i="6.11,240,1725289200"; 
+   d="scan'208";a="178536189"
+Received: from unknown (HELO yto-r2.gw.nic.fujitsu.com) ([218.44.52.218])
+  by esa4.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 12:12:43 +0900
+Received: from yto-m1.gw.nic.fujitsu.com (yto-nat-yto-m1.gw.nic.fujitsu.com [192.168.83.64])
+	by yto-r2.gw.nic.fujitsu.com (Postfix) with ESMTP id 5EF03C68E1;
+	Tue, 29 Oct 2024 12:12:41 +0900 (JST)
+Received: from kws-ab4.gw.nic.fujitsu.com (kws-ab4.gw.nic.fujitsu.com [192.51.206.22])
+	by yto-m1.gw.nic.fujitsu.com (Postfix) with ESMTP id 8F232CFB68;
+	Tue, 29 Oct 2024 12:12:40 +0900 (JST)
+Received: from edo.cn.fujitsu.com (edo.cn.fujitsu.com [10.167.33.5])
+	by kws-ab4.gw.nic.fujitsu.com (Postfix) with ESMTP id 2245F6BE5B;
+	Tue, 29 Oct 2024 12:12:40 +0900 (JST)
+Received: from iaas-rdma.. (unknown [10.167.135.44])
+	by edo.cn.fujitsu.com (Postfix) with ESMTP id 69D261A000B;
+	Tue, 29 Oct 2024 11:12:39 +0800 (CST)
+From: Li Zhijian <lizhijian@fujitsu.com>
+To: shuah@kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Li Zhijian <lizhijian@fujitsu.com>
+Subject: [PATCH] selftests/watchdog-test: Fix system accidentally reset after watchdog-test
+Date: Tue, 29 Oct 2024 11:13:24 +0800
+Message-ID: <20241029031324.482800-1-lizhijian@fujitsu.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 49T3D0ov018719
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-TM-AS-Product-Ver: IMSS-9.1.0.1417-9.0.0.1002-28760.004
+X-TM-AS-User-Approved-Sender: Yes
+X-TMASE-Version: IMSS-9.1.0.1417-9.0.1002-28760.004
+X-TMASE-Result: 10--1.201400-10.000000
+X-TMASE-MatchedRID: R1u6Jncx2x3ySUS2aTJPt6qHmm/V4M/PgbNN0R684zOMJxigKCCiS5Pt
+	b9/hXhKLQYv578GocN2kulA7P59GulZ4zYLYihwUhqdH8K9g7xdMkOX0UoduucC5DTEMxpeQsqh
+	SzMv5Wab/5j56PnN5eoAy6p60ZV62yA7duzCw6dLdB/CxWTRRu+rAZ8KTspSzzIxwTX5XbPrh3f
+	DELC/NH/TBE6iYwCJ6mBu1N2mMu/rdZyiuw899e527JgrsY427YmGiX+0Co1/+khSV9pCKGpPIt
+	N3u2pQfIcmnZRhVxyrE4HwnSlEuHInEpJmLAFfpC1FNc6oqYVV+3BndfXUhXQ==
+X-TMASE-SNAP-Result: 1.821001.0001-0-1-22:0,33:0,34:0-0
 
-If gc_mode is set to GC_URGENT_LOW or GC_URGENT_MID, cost benefit GC
-approach should be used, but if ATGC is enabled at the same time,
-Age-threshold approach will be selected, which can only do amount of
-GC and it is much less than the numbers of CB approach.
+When running watchdog-test with 'make run_tests', the watchdog-test will
+be terminated by a timeout signal(SIGTERM) due to the test timemout.
 
-some traces:
-  f2fs_gc-254:48-396     [007] ..... 2311600.684028: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1053, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
-  f2fs_gc-254:48-396     [007] ..... 2311600.684527: f2fs_get_victim: dev = (254,48), type = No TYPE, policy = (Background GC, LFS-mode, Age-threshold), victim = 10, cost = 4294364975, ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 44898
-  f2fs_gc-254:48-396     [007] ..... 2311600.714835: f2fs_gc_end: dev = (254,48), ret = 0, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
-  f2fs_gc-254:48-396     [007] ..... 2311600.714843: f2fs_background_gc: dev = (254,48), wait_ms = 50, prefree = 0, free = 44898
-  f2fs_gc-254:48-396     [007] ..... 2311600.771785: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:
-  f2fs_gc-254:48-396     [007] ..... 2311600.772275: f2fs_gc_end: dev = (254,48), ret = -61, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
+And then, a system reboot would happen due to watchdog not stop. see
+the dmesg as below:
+```
+[ 1367.185172] watchdog: watchdog0: watchdog did not stop!
+```
 
-Fixes: 0e5e81114de1 ("f2fs: add GC_URGENT_LOW mode in gc_urgent")
-Fixes: d98af5f45520 ("f2fs: introduce gc_urgent_mid mode")
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Fix it by registering more signals(including SIGTERM) in watchdog-test,
+where its signal handler will stop the watchdog.
+
+After that
+ # timeout 1 ./watchdog-test
+ Watchdog Ticking Away!
+ .
+ Stopping watchdog ticks...
+
+Signed-off-by: Li Zhijian <lizhijian@fujitsu.com>
 ---
-v3: add more descriptions in sys-fs-f2fs for gc_urgent(2) and gc_urgent(3)
-v2: make GC_URGENT_LOW also use CB approach
----
- Documentation/ABI/testing/sysfs-fs-f2fs | 7 +++++--
- fs/f2fs/gc.c                            | 2 ++
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ tools/testing/selftests/watchdog/watchdog-test.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
-index fdedf1e..513296b 100644
---- a/Documentation/ABI/testing/sysfs-fs-f2fs
-+++ b/Documentation/ABI/testing/sysfs-fs-f2fs
-@@ -311,10 +311,13 @@ Description:	Do background GC aggressively when set. Set to 0 by default.
- 		GC approach and turns SSR mode on.
- 		gc urgent low(2): lowers the bar of checking I/O idling in
- 		order to process outstanding discard commands and GC a
--		little bit aggressively. uses cost benefit GC approach.
-+		little bit aggressively. always uses cost benefit GC approach,
-+		and will override age-threshold GC approach if ATGC is enabled
-+		at the same time.
- 		gc urgent mid(3): does GC forcibly in a period of given
- 		gc_urgent_sleep_time and executes a mid level of I/O idling check.
--		uses cost benefit GC approach.
-+		always uses cost benefit GC approach, and will override
-+		age-threshold GC approach if ATGC is enabled at the same time.
+diff --git a/tools/testing/selftests/watchdog/watchdog-test.c b/tools/testing/selftests/watchdog/watchdog-test.c
+index bc71cbca0dde..a1f506ba5578 100644
+--- a/tools/testing/selftests/watchdog/watchdog-test.c
++++ b/tools/testing/selftests/watchdog/watchdog-test.c
+@@ -334,7 +334,13 @@ int main(int argc, char *argv[])
  
- What:		/sys/fs/f2fs/<disk>/gc_urgent_sleep_time
- Date:		August 2017
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e40bdd1..3e1b6d2 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -257,6 +257,8 @@ static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
+ 	printf("Watchdog Ticking Away!\n");
  
- 	switch (sbi->gc_mode) {
- 	case GC_IDLE_CB:
-+	case GC_URGENT_LOW:
-+	case GC_URGENT_MID:
- 		gc_mode = GC_CB;
- 		break;
- 	case GC_IDLE_GREEDY:
++	/*
++	 * Register the signals
++	 */
+ 	signal(SIGINT, term);
++	signal(SIGTERM, term);
++	signal(SIGKILL, term);
++	signal(SIGQUIT, term);
+ 
+ 	while (1) {
+ 		keep_alive();
 -- 
-1.9.1
+2.44.0
 
 
