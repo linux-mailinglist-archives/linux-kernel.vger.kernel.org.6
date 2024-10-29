@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-386669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 974429B46AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:23:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AED29B46A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:22:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA5F1C21D24
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:23:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E4C1F23F2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:22:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A602040AF;
-	Tue, 29 Oct 2024 10:22:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C7C204947;
+	Tue, 29 Oct 2024 10:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb+Ydevr"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pB0Z9nMp"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6286C204953
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:22:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA9A4204082
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197369; cv=none; b=czJQZ0SPZ0zRx3Say7jUVIVfengsG92Cu3uprnnrLdfq6loYWk1Q25Xqmfsznn99V02xF4k5Bn925eAONT9J3CaDyp6EHcaCbf1JHfTPpYARsWxuO4CJwxDo4nxKDBX/I1huENsyOaN3Egb4u1aMgSh9dsYf5+npkiJKDUyMukg=
+	t=1730197365; cv=none; b=DEEpUMAh/YUwbuWeB4sNKfV2U1c/lQ9hNQqWeVXfT6Lb2nYKgt1cnN3ABYEBsEgnumNrsqHFfo4o4/uTiOLp/3u9DGe10OR3ilSq3GsyRSak/BgPEFzbBRXHa/Vz90FySapHsB0RyhpuyAcRBYTDhtaAMcgX97GPa7oVJLhmejs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197369; c=relaxed/simple;
-	bh=zKzvozsHvMVGmliPLR7v7+fCyZLXuX2AiBoKviUE3N8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LSKxEbotR/dwM6hrJ6Ixk/QETGRh7Ipb8QfsbIzZbB6+8V2gtW2Tb8W9IVfanP54oDoGtYeHvVUGj2mqVW4kO4MiVmuNYw9ROWiYfIZxzFQl/9fRt/87x2Y3gWPC6o9KfPpW9DIbOCqjRlqtwjYvzBzxHhWAZ1epVEkMAvIUjwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eb+Ydevr; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cbca51687so48176595ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:22:47 -0700 (PDT)
+	s=arc-20240116; t=1730197365; c=relaxed/simple;
+	bh=u/UBRbNPk2JvFCs/uUQ6y7UKEf8R+AmrzDHohRXqamI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dxd0Rizy9fmMPrkqp6y/MIfIb0aNrvwpvsUYRSz+h6bn0OpirNDildFOIvQYGp6aqNJcDjKjMMtUOUbTDOeCZozzpuIb3wN8S15hauSL67F80m7WUsvTS/SniQdybMJeZHVKe5WiRNq+sg677TsWmq7zz1XKHUC5ZW9HDqtOigs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pB0Z9nMp; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37f52925fc8so3732956f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:22:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730197367; x=1730802167; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1730197362; x=1730802162; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=01Umf8iUVZfC58kdjKuuiE82OEKV9wbOQ6pjiqKLUv8=;
-        b=eb+YdevrRPwtNqbz7x/P0eFC0F8t/QuT50lnzzeAdZW3xGk9DsrWnD3Q/K1ukpojjc
-         JfrrnjpDo3PDgGJSTk7udSUElEMf92sr5VM1r1UU1XAk/V4MdGQkXRuMqWqEDD9/uODC
-         /ILMZagXD62Q8R4OxBKN9ZbFcceVKJ6l67J+b/yh5JFZeOjpB0+bd5pzvr689B2VWFgE
-         0hR7hvhuQnJ/puMg2+gbo2QG/85EB2SzuQhDf7eLPK38cEF94LtEKGMggkalP3qR6yVC
-         NuvSjffvrZjLXfHelyKRi2mMyJZH7z/Va8fp6L6lkv0pGUizHCeMIL8eGHckpATYCMs7
-         I9ow==
+        bh=iku2aazVoaifn2qwZ8do62mCbu6cZo7YQepKnixIbc4=;
+        b=pB0Z9nMpfEtVcIbc5pLbsuFoUbHSLTGULx45KanDNxzjL/4sxNUlveC2XQ7ildqw08
+         4rcwNqqE1TvY/2xFu0zlq1XWgsT0Yg3CF4MH/9dR/PI8+MZnesmUpHsSEey3do0maskX
+         GH9BjNjwEFj5EG8cCcJTBYPGZzQmb8/qMjbWapfqvDdXD9n11LzHyhXbvsTjvRrWatBC
+         t6jS81ebeA5cHayk3jZ1Z0azM6aLo3bYkGYrwJVgXGrwYGB1lSDtZvdn4+z1HjcxWRYx
+         D78UwKdlhkZGuwUVq3cs7DoRIdC0f4FQ0LCJ7pJj3nZUZPCNSkoln7uXXsgeSaDqELKG
+         UYIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730197367; x=1730802167;
+        d=1e100.net; s=20230601; t=1730197362; x=1730802162;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=01Umf8iUVZfC58kdjKuuiE82OEKV9wbOQ6pjiqKLUv8=;
-        b=KiAzV1PoJrd3Vwy35KaqhBSt5BaBf+1AZYhXemArgePLBlKbJd8pJ/RvUywzkdJD8H
-         qIUT6Rw0zm2vI4gQyUOxCsA4z96Wn5ngdk9YERGiD8EuMKnA9WThkmpndSvdftrkF6k+
-         A96eswJYxasrwOcd5KKPMeQgaaKqnRWGbcBpmwb994nuMqac1lPIgOQpi7iz1YGfFyhB
-         yHmHCcibbWUdbZlVDSr/iP5yEIzH+G5PUn7wuSAN/YTefRGSLat9NB4GTPIWkhDTqnIQ
-         i2h7di+awPFnKluY+L3hwybNdRAB8qCPkqxsOzWO+v4+QAAWVZp3cWYNq8KjHCJBL68f
-         aaAA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIFkEm5kjWihiVghnDs+doG5gPQC0HerCrxRJt5yi2kY2h4/fClQl9GkjCmsp48eu4zNXwo2jnwiv0Q7g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx02AmQcH1up3cqw7cl6J5KcdtbS+tgKz1b8LeKJeTAwz+nCJ6I
-	hkWdr18B50ssIZlgm2phXLX8E36S1XVy4dbA/Je6T2iVDw9/tFHS
-X-Google-Smtp-Source: AGHT+IElqNym4BeJPNCJTlbSlHkx0TRDzfK6WFA45y6XkQcbHMPJugv4gb8Tn9WYSnPeio2CIZlTCg==
-X-Received: by 2002:a17:903:228a:b0:20c:83e7:ca4f with SMTP id d9443c01a7336-210c6bfd3afmr147760185ad.26.1730197366561;
-        Tue, 29 Oct 2024 03:22:46 -0700 (PDT)
-Received: from gye-ThinkPad-T590.. ([39.120.225.141])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6dd62sm63475445ad.95.2024.10.29.03.22.44
+        bh=iku2aazVoaifn2qwZ8do62mCbu6cZo7YQepKnixIbc4=;
+        b=P0Wz21LaoPPyMh6GSjyKdlSWn5L7l9ZFheG6KDdbvUy9RA2lzoqb9CDMMh5gePmUGJ
+         SPM64ucnlyT99J5cKrCyZPQeCusaoEijqFggJ4Rm44N1YBOxHzeY9u2le2M5b1R4aIN5
+         /du3+faEGKD+LVmzglnyrhfnoDeHN59SjinpEM3xP/ZlApjIIgpFzHW9MqQuak0u0vq5
+         sfo67TO8JTrytsRdLFslzfopslgK8bW7BAnmcTNmO3m0QFJ0h3cWDGMPCE13SsYB7M6E
+         4BgGRszcvPN37IOiaDJN0ZXb1DsazcnYkRHetegxC8qOCG0XmOg/f6Kd3Xf42svrPvYl
+         +yoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBuWgNB1B2FKj5q5WLW8nBCBFTHJ2exQ7Ykr/anMHqBK2NARVlDP/Bvq9kctV5gqTi/vy3R48mhaV/UrY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRmg2683FGN8O/k8mq+eA7hOXKcLdTptwXr1eib3BH0PGRzmQt
+	SF/FxfJWOzQ5+GeK2F3ioweBzllr8xZ8567gD4axAuTXei2+xK/I6Cryp4O4Spk=
+X-Google-Smtp-Source: AGHT+IFJA0rf9yL1/4hL0/WSC0JKP3mxHD/OdeY53wfOUkq+NYJEyeFtfI5Od5uPy5TfvM1U2qN/+g==
+X-Received: by 2002:adf:e38c:0:b0:37d:47e2:5e30 with SMTP id ffacd0b85a97d-380611e715dmr8476087f8f.42.1730197362162;
+        Tue, 29 Oct 2024 03:22:42 -0700 (PDT)
+Received: from tudordana.roam.corp.google.com ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47a86sm12084498f8f.53.2024.10.29.03.22.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 03:22:46 -0700 (PDT)
-From: Gyeyoung Baek <gye976@gmail.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: Gyeyoung Baek <gye976@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Fix unused variable warning in 'drm_print.h'
-Date: Tue, 29 Oct 2024 19:22:34 +0900
-Message-Id: <20241029102234.187480-1-gye976@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        Tue, 29 Oct 2024 03:22:41 -0700 (PDT)
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+To: peng.fan@oss.nxp.com,
+	m.felsch@pengutronix.de
+Cc: pratyush@kernel.org,
+	mwalle@kernel.org,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Peng Fan <peng.fan@nxp.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>
+Subject: [RESEND PATCH v4 1/2] dt-bindings: mtd: jedec,spi-nor: add optional vcc-supply
+Date: Tue, 29 Oct 2024 10:22:37 +0000
+Message-ID: <20241029102238.44673-1-tudor.ambarus@linaro.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-previous code can make unused variable warning,
+From: Peng Fan <peng.fan@nxp.com>
 
-e.g. when CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
-this outputs the following build error.
+Introduce optional vcc-supply property, SPI NOR flashes needs power supply
+to work properly. The power supply maybe software controlable per board
+design.
 
-drivers/gpu/drm/drm_print.c: In function ‘__drm_printfn_dbg’:
-drivers/gpu/drm/drm_print.c:218:33: error: unused variable ‘category’ [-Werror=unused-variable]
-  218 |         enum drm_debug_category category = p->category;
-
-
-
-so i simply add '(void)(category);' to remove unused variable warning,
-by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html".
-
-Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
 ---
- include/drm/drm_print.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+v4: no changes
 
-diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
-index d2676831d765..6a5dc1f73ff2 100644
---- a/include/drm/drm_print.h
-+++ b/include/drm/drm_print.h
-@@ -157,7 +157,7 @@ static inline bool drm_debug_enabled_raw(enum drm_debug_category category)
-  * a descriptor, and only enabled callsites are reachable.  They use
-  * the private macro to avoid re-testing the enable-bit.
-  */
--#define __drm_debug_enabled(category)	true
-+#define __drm_debug_enabled(category)	({ (void)(category); true; })
- #define drm_debug_enabled(category)	drm_debug_enabled_instrumented(category)
- #else
- #define __drm_debug_enabled(category)	drm_debug_enabled_raw(category)
+ Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+index 6e3afb42926e..335f8204aa1e 100644
+--- a/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
++++ b/Documentation/devicetree/bindings/mtd/jedec,spi-nor.yaml
+@@ -96,6 +96,10 @@ properties:
+       If "broken-flash-reset" is present then having this property does not
+       make any difference.
+ 
++  vcc-supply:
++    description:
++      Supply for the SPI NOR power.
++
+   spi-cpol: true
+   spi-cpha: true
+ 
 -- 
-2.34.1
+2.47.0.163.g1226f6d8fa-goog
 
 
