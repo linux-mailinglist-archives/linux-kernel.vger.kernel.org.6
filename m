@@ -1,162 +1,195 @@
-Return-Path: <linux-kernel+bounces-386608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF579B45C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:33:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99A809B45CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DE1B21922
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:33:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB8B41C21EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EDA202F64;
-	Tue, 29 Oct 2024 09:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F632038B6;
+	Tue, 29 Oct 2024 09:35:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mnx6aqSq"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NwqthI3F"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C751DE3C5;
-	Tue, 29 Oct 2024 09:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403201E0DE8
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:35:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730194421; cv=none; b=JQPVDArKIn7JXmk33QTKMtxvBvorNqbdzOyLzGLuo6VoItZbXGRf8X9McSe08ZL1qOvmG0+OP50eN24lzA7BQwaRsC/2aC2ewC51sjPtucDxWLtsl8I2kAUBk2VL9A3x8DZGSI1hbjz03AF/Ip/chE4MdR4kuix2BgONG3rGeJo=
+	t=1730194536; cv=none; b=CgCz6FOfCuLqS/lNXDP1OEyg0CkKVR6GpY0xXdVKGJmOJKJSExZ9y6W9FnXMm92SkPz5URTuTnXcSOe6+Kxy8I8CGU14xruGey3aWlu++hLvDKx/EBpO6Ca1RRWYu5DiJ79I8viT2PLV3545c+0lNTj5OvENJ0aFvrmQcsjnhLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730194421; c=relaxed/simple;
-	bh=J5FlmGhCRH+fScs54Zwc1Osih+gd3Sv5SzRckw/V7a8=;
+	s=arc-20240116; t=1730194536; c=relaxed/simple;
+	bh=YJrh7hUGQiUNMQcjnWqaa6JmnL6AChiyOk0uwMAr2T0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sivnCfZjv4tF0yu8RSANsllv1b9VyN0inm/My0szLeEKSt+9RBVQTWwZPTlq0siWsrggiLRqcADMpThr1bwvrzy2mw0fCsD1atcDNhCtYihi6BtPOhqfMD82FF0CXOQZQYGgXNn6e0IJFM4X+dqX34vowu/vy6WhkU/6SbnAGww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mnx6aqSq; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T25YHT023515;
-	Tue, 29 Oct 2024 09:33:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=2ehWVg
-	qd24gfF2tENCWTuD1mTfOOoeMzSdEuvOZ1ojk=; b=mnx6aqSqLaqXN+NDK93ac1
-	jr7I4oU4/w6QeR6/FpCsR2h9yDlPDBjanUEKn638L3CEnj6DOeJWxseJ7oq0WED4
-	3Tn5O4DiYGbU5TuS7YijyxapCcqIHUd880QuWiV3g3DDQMA3z81Ln+dQ+fIaHiAg
-	/hrFBlL4fo0HNwUlQPfYglIoojBGr40NvGP+n1Fo8mRqFu+dI1fGTakDzOK2YZO6
-	OeviXhJC9mUH8lDCTc0W/qIikxNHUQAv1ISeyYyBvjgBfSpW21L97wcAXOiw7fV9
-	2f8Hmh2+WXXiIZpvERTCIhgoWe0OV3+BZsh5j/a2DHz/5L5Olw43mCE6gqzyqQLQ
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j43fyp29-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 09:33:37 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49T98Qde028193;
-	Tue, 29 Oct 2024 09:33:36 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4xth0f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 09:33:36 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49T9XWl852691206
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 09:33:33 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CC73F201AC;
-	Tue, 29 Oct 2024 09:33:32 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 67C37201AB;
-	Tue, 29 Oct 2024 09:33:32 +0000 (GMT)
-Received: from [9.171.42.25] (unknown [9.171.42.25])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue, 29 Oct 2024 09:33:32 +0000 (GMT)
-Message-ID: <e2d475e4-d710-4387-8917-c126455facd7@linux.ibm.com>
-Date: Tue, 29 Oct 2024 10:33:32 +0100
+	 In-Reply-To:Content-Type; b=rSs8T/ylM9dBVTDx6rA8K1CV+qiZHJHMQ3YhWHm2YnNRe+5nJXyyNptZs0LWyoS7QM2ywQA9cfxcaBdHxb3oG+jlHt0VKzdxkL/c712Z14UFQclyVPhCnQYjUnlaImGOpj//IMQhuaGLduloqnEUc8uUUzzoMZVSNvK8ti+ZZok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NwqthI3F; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b134e3e5-91fd-43fe-b0a5-1a63b59302af@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730194530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3OcZCmIP2+C2Bbha8O8u8jVsFI4EZuvwasHnrHMnF8Y=;
+	b=NwqthI3FiGVTNZj3aEZbZQM0AvXkQKKP2gmj5vRtxQghgRbiRo6HqxulqN9ZhP3mJ9h1Ko
+	jY2KmPE1of1f1JlN9Kq4S4KL06rXP8NE/1Oq6ehWO0OL3LafYVZH5qvpKR1qoEqmoCgePv
+	zzo1VUMN+UH+0EF4QdhtUu/4VJS0nx8=
+Date: Tue, 29 Oct 2024 17:35:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/6] s390/uv: Retrieve Secrets Ultravisor Call support
-To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <20241024062638.1465970-1-seiden@linux.ibm.com>
-Content-Language: en-US
-From: Janosch Frank <frankja@linux.ibm.com>
-Autocrypt: addr=frankja@linux.ibm.com; keydata=
- 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
-In-Reply-To: <20241024062638.1465970-1-seiden@linux.ibm.com>
+Subject: Re: [PATCH v2 2/2] block: refactor rq_qos_wait()
+To: Muchun Song <songmuchun@bytedance.com>, axboe@kernel.dk, tj@kernel.org,
+ yukuai1@huaweicloud.com
+Cc: muchun.song@linux.dev, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yu Kuai <yukuai3@huawei.com>
+References: <20241029085559.98390-1-songmuchun@bytedance.com>
+ <20241029085559.98390-2-songmuchun@bytedance.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Chengming Zhou <chengming.zhou@linux.dev>
+In-Reply-To: <20241029085559.98390-2-songmuchun@bytedance.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: DSA_MnTlJDAC7ZFakTfyhaj-u3ABuyP8
-X-Proofpoint-ORIG-GUID: DSA_MnTlJDAC7ZFakTfyhaj-u3ABuyP8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=419 clxscore=1011
- adultscore=0 mlxscore=0 priorityscore=1501 spamscore=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410290070
+X-Migadu-Flow: FLOW_OUT
 
-On 10/24/24 8:26 AM, Steffen Eiden wrote:
-> A new secret type (group) allows SE-guests to retrieve the secret value
-> from the UV secret store. All retrieved secrets (but plaintext) are
-> retrieved as a PCMKO-wrapped key so that they will never appear in
-> plaintext in the secure guest. Supported key/secret types are:
-> AES, AES-XTS, HMAC, and EC. Add support for an in-kernel API and an UAPI
-> to retrieve a previously added secret. If the hardware supports it,
-> adding secrets works with the same infrastructure that is used by
-> associate secrets introduced with AP-pass-through support.
+On 2024/10/29 16:55, Muchun Song wrote:
+> When rq_qos_wait() is first introduced, it is easy to understand. But
+> with some bug fixes applied, it is not easy for newcomers to understand
+> the whole logic under those fixes. In this patch, rq_qos_wait() is
+> refactored and more comments are added for better understanding. There
+> are 3 points for the improvement:
 > 
+> 1) Use waitqueue_active() instead of wq_has_sleeper() to eliminate
+>     unnecessary memory barrier in wq_has_sleeper() which is supposed
+>     to be used in waker side. In this case, we do need the barrier.
+>     So use the cheaper one to locklessly test for waiters on the queue.
+> 
+> 2) Remove acquire_inflight_cb() logic for the first waiter out of the
+>     while loop to make the code clear.
+> 
+> 3) Add more comments to explain how to sync with different waiters and
+>     the waker.
+> 
+> Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+> Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-I've picked up everything but patch #5 a couple of days ago.
+Looks good to me!
 
-Also these patches will go through the s390 tree and not through KVM 390 
-as the crypto team has a series that's based on this one.
+Reviewed-by: Chengming Zhou <chengming.zhou@linux.dev>
 
+Thanks.
+
+> ---
+> v2:
+>   - Introduce init_wait_func() in a seprate patch (Yu Kuai).
+> 
+>   block/blk-rq-qos.c | 68 ++++++++++++++++++++++++++++++++--------------
+>   1 file changed, 47 insertions(+), 21 deletions(-)
+> 
+> diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+> index 858ce69c04ece..5d995d389eaf5 100644
+> --- a/block/blk-rq-qos.c
+> +++ b/block/blk-rq-qos.c
+> @@ -223,6 +223,14 @@ static int rq_qos_wake_function(struct wait_queue_entry *curr,
+>   	 * Remove explicitly and use default_wake_function().
+>   	 */
+>   	default_wake_function(curr, mode, wake_flags, key);
+> +	/*
+> +	 * Note that the order of operations is important as finish_wait()
+> +	 * tests whether @curr is removed without grabbing the lock. This
+> +	 * should be the last thing to do to make sure we will not have a
+> +	 * UAF access to @data. And the semantics of memory barrier in it
+> +	 * also make sure the waiter will see the latest @data->got_token
+> +	 * once list_empty_careful() in finish_wait() returns true.
+> +	 */
+>   	list_del_init_careful(&curr->entry);
+>   	return 1;
+>   }
+> @@ -248,37 +256,55 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
+>   		 cleanup_cb_t *cleanup_cb)
+>   {
+>   	struct rq_qos_wait_data data = {
+> -		.rqw = rqw,
+> -		.cb = acquire_inflight_cb,
+> -		.private_data = private_data,
+> +		.rqw		= rqw,
+> +		.cb		= acquire_inflight_cb,
+> +		.private_data	= private_data,
+> +		.got_token	= false,
+>   	};
+> -	bool has_sleeper;
+> +	bool first_waiter;
+>   
+> -	has_sleeper = wq_has_sleeper(&rqw->wait);
+> -	if (!has_sleeper && acquire_inflight_cb(rqw, private_data))
+> +	/*
+> +	 * If there are no waiters in the waiting queue, try to increase the
+> +	 * inflight counter if we can. Otherwise, prepare for adding ourselves
+> +	 * to the waiting queue.
+> +	 */
+> +	if (!waitqueue_active(&rqw->wait) && acquire_inflight_cb(rqw, private_data))
+>   		return;
+>   
+>   	init_wait_func(&data.wq, rq_qos_wake_function);
+> -	has_sleeper = !prepare_to_wait_exclusive(&rqw->wait, &data.wq,
+> +	first_waiter = prepare_to_wait_exclusive(&rqw->wait, &data.wq,
+>   						 TASK_UNINTERRUPTIBLE);
+> +	/*
+> +	 * Make sure there is at least one inflight process; otherwise, waiters
+> +	 * will never be woken up. Since there may be no inflight process before
+> +	 * adding ourselves to the waiting queue above, we need to try to
+> +	 * increase the inflight counter for ourselves. And it is sufficient to
+> +	 * guarantee that at least the first waiter to enter the waiting queue
+> +	 * will re-check the waiting condition before going to sleep, thus
+> +	 * ensuring forward progress.
+> +	 */
+> +	if (!data.got_token && first_waiter && acquire_inflight_cb(rqw, private_data)) {
+> +		finish_wait(&rqw->wait, &data.wq);
+> +		/*
+> +		 * We raced with rq_qos_wake_function() getting a token,
+> +		 * which means we now have two. Put our local token
+> +		 * and wake anyone else potentially waiting for one.
+> +		 *
+> +		 * Enough memory barrier in list_empty_careful() in
+> +		 * finish_wait() is paired with list_del_init_careful()
+> +		 * in rq_qos_wake_function() to make sure we will see
+> +		 * the latest @data->got_token.
+> +		 */
+> +		if (data.got_token)
+> +			cleanup_cb(rqw, private_data);
+> +		return;
+> +	}
+> +
+> +	/* we are now relying on the waker to increase our inflight counter. */
+>   	do {
+> -		/* The memory barrier in set_task_state saves us here. */
+>   		if (data.got_token)
+>   			break;
+> -		if (!has_sleeper && acquire_inflight_cb(rqw, private_data)) {
+> -			finish_wait(&rqw->wait, &data.wq);
+> -
+> -			/*
+> -			 * We raced with rq_qos_wake_function() getting a token,
+> -			 * which means we now have two. Put our local token
+> -			 * and wake anyone else potentially waiting for one.
+> -			 */
+> -			if (data.got_token)
+> -				cleanup_cb(rqw, private_data);
+> -			return;
+> -		}
+>   		io_schedule();
+> -		has_sleeper = true;
+>   		set_current_state(TASK_UNINTERRUPTIBLE);
+>   	} while (1);
+>   	finish_wait(&rqw->wait, &data.wq);
 
