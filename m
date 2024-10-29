@@ -1,221 +1,192 @@
-Return-Path: <linux-kernel+bounces-386553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBEB29B4504
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:56:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FC29B450A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:57:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B5571C22242
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:56:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD5061F22167
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E210204038;
-	Tue, 29 Oct 2024 08:56:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8EA202F65;
+	Tue, 29 Oct 2024 08:56:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Sr2H5eHV";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="jd80iYQA"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="YltMDVYF"
+Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D317F2022DE;
-	Tue, 29 Oct 2024 08:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730192169; cv=fail; b=SB8D8235wvexHMk06LR4xbQISo9gNqhfDzD5OOTjyaxcFh8zUtmldYxCGeOnsCztMf7l3ntakUbCp7Pk7atIf0El4V3O5HZQFPgZRREduF8BOyQ3jzZk0BnPQHDr4QZd4HjVvHSrkN+7lga8hzlfc7Qh741CDTCbk+U/xXuVa3U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730192169; c=relaxed/simple;
-	bh=D/QEOh+zss4XtGKCYblY/FeSNJfShi8P37+hYRJfR3Y=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=cg8P73nEi7N3ADowCW8y3s7se+qYJnd7RS+OY1uqQS5fGZTWKXf7s7DdxviiS9jx33PvbXPWxsiitigiGpGvKyy7ebocoqnpPyR6qs4sbOZbCqNa4EWhRcK//QU85WF6porLIxUQDAnofiv7vTejroDRv6lbN1gjSicclGARMeo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Sr2H5eHV; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=jd80iYQA; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T7tc7i021025;
-	Tue, 29 Oct 2024 08:55:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=c3Vu9Wb73SQoCOtHs6uIz1KhvPrT9sqX1Bqd14GCNXo=; b=
-	Sr2H5eHVqVmVk2CXBzBYu0HWbi0KOcavnqzo7G7td7ijgFDol0UnAwPyxLchPM+G
-	HGo4+tGSaxyV/v2055tgk9N1jkueBYqbTqamQ/fy1694IYEV82ABnaNIZSktqXk3
-	HUGI+3S+DDBsFMmnqffYw5qcONUvFHzvefCv2mpwXTKv5Vrh8Pn0Z7Y5Dgq+1ZY6
-	PGnpP5wDuP4ltFUGVU94ouLSuoZU65fpKKAzV+Jw+edDs1e2oToJ3y2pabXCazyc
-	LH9tmX6dUk1XvwQhMVU+b08Jr/Lfeh3FsAi3k4XratGOWMA4sTwjBkH7DZ1Du0z5
-	QrhYhJ7pbXSp+46BjkultQ==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grys4v7b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 08:55:50 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49T6tmuP011746;
-	Tue, 29 Oct 2024 08:55:49 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2043.outbound.protection.outlook.com [104.47.70.43])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hnac7emy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 08:55:49 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=H2UyWShAkc+YbvdSPk4aE9FKzYTVcsEFIX6VW4bzDelW/HCmXHfs6Wg3koB8N6F4pYAUIfdA4u3oTlTIffj2kukOEgEeWB0b9Nk2dwh5XkjMSLtaPEpgf/rhM0QnlqtevSDBT9pN/UZ75Vub1ayvNGvXsB67i12A/XhC5H6ewY+jBVA8g/4kVZ9mfnTq0BAmwGA56eX4iZBBM2Gs/juswS7eX1OmJf/OvM3wBZ93mhnPx3+wu8XRvxA++zOQxDkv99JdaERprabDIRQvRrgyaTvoe04yJexgiKbhHt4xHNg853ZC0oNE4r03LZcvk0472mQ0V9MTbHB2j7wGrrR0GQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c3Vu9Wb73SQoCOtHs6uIz1KhvPrT9sqX1Bqd14GCNXo=;
- b=mPHc3JIWVHlL+jPP/qDqSeVYFyalRxxZM6ONRN9W5LJorjfrgmYJdbgny9DGY8catSIW5KW1qksUHM56ZUvHckXhWc/+3N/ATVdgs+Et0QIrLorV1jYWSjKucTxo3xiL7ZZYB9jfrQ1K1b14boZrWzmqSAuW0zkWqek8KvVGS/Oxs2/sXQR5ocOwxXJvFa7/8j30fzlzwUEse6Xb63l7Cd9/TbAbx6n/gSo24oSGd4XZErpVhkZv8uc4VReNIZMWdAilg2MJ/dRyg7fN1jXp3UvjPsHz0rrLoN9gi/bbBC+TyuYNLJnhMJk0w2tID5sJErvelntDQQ14ofjjWC/D/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E04B12040A1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:56:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730192183; cv=none; b=XjQlTvioY8t5NMMmpKISR/kzBcHsrfVJYj8iGC1/2TjNBNwXFvZr8x1SdA+s9wmTTrC0k9PPuGs4QLPCtqoIRblarUFyZuu7RZrdWCb6FI2zojyvhPhTMyzUpW+SHWW7lBjW4G3ReAduGfD8ONeEDGPnZhQSse2YxAW6iqnerHk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730192183; c=relaxed/simple;
+	bh=vFg36jmsJgodQ8IFAiNKwf0z86RwvMywEjZxbRMV2u4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DK0QpeHfMKsRRuI63iHbxRUO1tXzouGAPuMA6Gd5yuKKe1+/vwdNVNgOJw6v8XTRBOkJxMj78yQ+/eDXEvc09IlRZDZX0i7yMMduRzjdSYuA7/y4gr+fgLP6LM+vIOHauq/NGjbyKKEpXQrxX/lEw8sWSB7weCenNweD89yEeiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=YltMDVYF; arc=none smtp.client-ip=209.85.160.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-2884a6b897cso2663405fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:56:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c3Vu9Wb73SQoCOtHs6uIz1KhvPrT9sqX1Bqd14GCNXo=;
- b=jd80iYQAJkMNPT3pxlmlScBaVKOxbid1Gn1z0lUfSM9qBwIT/HRxTkHzYwA8qpNNCVALdpE985EEYKYn47Vl3iT61Qeoio9kDW8zTJu170Nzz8613z0660eD74YKHsDYPAw2Eup/7PtUkkyxxviBB0XGERqqXDxvWckpbzJqQDQ=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DM4PR10MB5918.namprd10.prod.outlook.com (2603:10b6:8:ab::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.25; Tue, 29 Oct 2024 08:55:47 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
- 08:55:47 +0000
-Message-ID: <6b840fc6-50d4-4e8f-abc6-370ae23639b6@oracle.com>
-Date: Tue, 29 Oct 2024 08:55:42 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] ext4: Check for atomic writes support in write
- iter
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Christoph Hellwig
- <hch@infradead.org>,
-        Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-        Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <cover.1729944406.git.ritesh.list@gmail.com>
- <78ce051e4a7e9a453a46720da76771c21691b162.1729944406.git.ritesh.list@gmail.com>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <78ce051e4a7e9a453a46720da76771c21691b162.1729944406.git.ritesh.list@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM8P189CA0001.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:218::6) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=bytedance.com; s=google; t=1730192180; x=1730796980; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5JSW/59ZXSTTYZTVlWt6K85VyfdapHkDrjU/vQqeQUk=;
+        b=YltMDVYFXuTOXWLmyJEGhcXE0Iz2XbDeP5c/QTkK8gn+9gAPaWkLLnqCw46oVx7HZe
+         UuL2mhWsH2xchG9/VONwreUzG81Rm0t0YX3I3VHBnfiBKG8gSa/PmzL83Mi/c7+AWVmE
+         mUxNznDs9ifsYaxYJiNtEnmsBE2GnNmZru9pT0O82fWkkYyM21bPPHmfa5Qkbk4dbnzj
+         EkXnA9qDzhk3JFWv34op/rCY4MCusyhuM9hvDxvIprU79IBMZ27/HR4o72iYlx/gEWdM
+         wxQ3y6TKKq1Z2crYn9pTyM4F2RAxy87iChwMO4/6nEDP8VNuIDhBfGum6RGGHLbbkhvd
+         rxEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730192180; x=1730796980;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5JSW/59ZXSTTYZTVlWt6K85VyfdapHkDrjU/vQqeQUk=;
+        b=SllkbRRy8R+HTYn7AEURiHtkNkJ0MeIIM73ETr6YmuSDrvAinTNQzGuYMIx66D7DVE
+         fFqTCdzd0fevemOAGrMiWS2pOxY9z6mA7yEfVlz/cj/jKVUWDgvQqYn3nyetRGlU0qBm
+         Bh1I6PLoJhag7jQy7LWxGupfKVRIr7xCVO8QI+OMmtbBWUhamYymMBhq2wYTZDfcEo8T
+         Z+qOjSidP1GyKABXQxpUwxymZhLUWkHHJ1bIBa9LAk6sSEJr0Ux8mmRg5OfoCZ67AA9o
+         4yOqx+M2ou69CT2jQfm2b1uqt+lYaUDpYnvtdqeO/e1cP8M1rHLBimClHY98+z3yWVHq
+         VtdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3MJ/EtfRVCBkdu2+2SLjmJDb7jIXuok4IxL0kM+q+gXAx1jr3mnfJS8uT10woO54yaYNyQ3oW7hk8pb0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmwJSX0QelVIA0mwP89DU/4iogxpLpWg/ztV96dGOIXhGLvRt9
+	kasi5qERWNfOV4N0hRt+qt+f5Lj+CLHxh11CEHvNdjtj7q2J1b68JYeCLBJkKfY=
+X-Google-Smtp-Source: AGHT+IEWsq0oYmYsjl2A5VxU8r6bb9OneAr3wf56xcJ8n/+RxFtRKq36+xMxJcbJU9b5B7r/QkaXFw==
+X-Received: by 2002:a05:6870:d60b:b0:261:17e7:59b3 with SMTP id 586e51a60fabf-29051af0f85mr9556559fac.3.1730192179702;
+        Tue, 29 Oct 2024 01:56:19 -0700 (PDT)
+Received: from PXLDJ45XCM.bytedance.net ([61.213.176.9])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8696a86sm7156832a12.47.2024.10.29.01.56.14
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 29 Oct 2024 01:56:18 -0700 (PDT)
+From: Muchun Song <songmuchun@bytedance.com>
+To: axboe@kernel.dk,
+	tj@kernel.org,
+	yukuai1@huaweicloud.com
+Cc: chengming.zhou@linux.dev,
+	muchun.song@linux.dev,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Muchun Song <songmuchun@bytedance.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: [PATCH v2 1/2] block: introduce init_wait_func()
+Date: Tue, 29 Oct 2024 16:55:58 +0800
+Message-Id: <20241029085559.98390-1-songmuchun@bytedance.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DM4PR10MB5918:EE_
-X-MS-Office365-Filtering-Correlation-Id: d08e8ddb-7a5c-4327-bc68-08dcf7f77af5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3lDV1JBa0h0TzZ3OTRUbmhicElHcjgwRHhZemkya1ZJbWJ6YWRydWplRU9F?=
- =?utf-8?B?aFFJeG5lWVJETGMzSklQWE03WkxQTWlqdmtBc3QyN2h0WHUvMHA2bEpOeXAz?=
- =?utf-8?B?SGEvZk83b3V1YnZSaThONE9URTdMbVhqYXFWVDRheTRUTzJpdlk2VUhmVFY5?=
- =?utf-8?B?V2hxYkg3VkhoOHdVcURMUStEYklZZXpjSmZPSENWMkgzWkN2Wk1pQlh4S05S?=
- =?utf-8?B?cnNIOU9ISFBrVDNRSEJlM3hpSkI1eHI0YWphWUdaTDdwZ3NiaDlkNnNZdDFi?=
- =?utf-8?B?OTFjQW5XZVhjZkVBWFh5OWtQU3J4aUVFMitpYTcvSkV1WUg4VHNlR1A4N2dF?=
- =?utf-8?B?TnFhRWFvcDZmRCs1eW1semVIdlE4S1ZtcFFmRzZpVnRvZzVZcEVKK1cwaGI0?=
- =?utf-8?B?ZHBRZzBFdXFLN2c2aDdJSjB2V1Z3R21JaG9UcVpiQjVjTVZGQzNFalZmT0Uv?=
- =?utf-8?B?czNlSm1paHFuUVhWRzZBejU3NENmZXdJL25va2tDVlBGb2I5OVJZc1dkVDls?=
- =?utf-8?B?UWt5eHhQNHo3RnVFVGZVV2ZlakMwRkZVMTNWSEhtdlpoR3dUUktuL0k1OVBI?=
- =?utf-8?B?Y242V0ovQ1NrdXdkV1FaWk5LcGdybW5rKzJJOEtNWjR0NDlTZXVNOHlsOFRk?=
- =?utf-8?B?S3ByZmZFRG12anpZQUJyemZJT2lLb0VGRDVSckdLSUdaY0Jxd3I5aEE2TlRW?=
- =?utf-8?B?Q1ZBK1VnUlA5dEVyTXlYNWpWMVhvd3hNc25mbGlESnlDWS9kdWloNWJpVk9Z?=
- =?utf-8?B?VXpjZXQyaUZ6ajdzRk16ZWl4OSszWkVOdlg5aUZ3djlHYUR4a0szelNxMW9p?=
- =?utf-8?B?S3g3WjAwWG5nL05sRnBKZUM1dkVnd0pLaFBzbElmUVpKU0hmMis5c1pDUElB?=
- =?utf-8?B?RU5KK2Jvdlk5Rld3ckRmZWQvMTBaRG5BYXQ0djZsZ00zaHl1VFExTkdKeGpw?=
- =?utf-8?B?Y3dwYkpydkl3SjNtWUE5U0JkNGpqTlFXcEhQMW15VS9DNE01N3dVYUllNHUz?=
- =?utf-8?B?TUtoRit5cDg4ZlhaRFZzQThNV1Z6Vk1KMlpnbW5wZkI2djh1UWlMUEh3bVVW?=
- =?utf-8?B?ZUgvRjI1TkxNaExQOWNEd09LUjhHeXgwVDljRkxoVUkwaGMyK01BbENkYmFH?=
- =?utf-8?B?Y2dMRitabGtIT290MUxSc1BiTHozeUgrdGJWTnc0dG04amlKSENseURrS0g5?=
- =?utf-8?B?TGVMcDVSL0UvcmtTY3ZnTks5c3hkL2NZQUlXZStxTmh5dFN3ZS84UGdGT2J3?=
- =?utf-8?B?dVpLclA4bTRHLzlTb1FVVnJNNHl4dHk0QWVJZDVTNVpBRkxOS1I5OG5DUWJ1?=
- =?utf-8?B?Tm5YMHcwcFl3VHhZMUhuVUJob1JGTEszQTZYaHNPRDJNVVBtaWxvUzFON2Zx?=
- =?utf-8?B?aWM5YU1qSDNmaUJENmk1dEw5VTFXZDBndW5HUGtUWU5nVU8vOEVHRDBVajRZ?=
- =?utf-8?B?ZmxJLzJ1Q21rUlM1TWdxcXRVNW9CL3hRU3N4WTk4R1VWakxqUGVZNkxFWjlk?=
- =?utf-8?B?VGc0bGtRNzF6aFVTcWRnWW85UWI2bVZnWDRVRE1NdS9pT1hTT0ZjSnYwMXJw?=
- =?utf-8?B?Y05LS05IT1FhUTRUM0UrZEtjdG9oc200THJJR3dEYU5vRFZReVVsTG9QeG5H?=
- =?utf-8?B?VGFxRVV1MkQvcisxNEpURm9IQ3ZlTHd5YUlReXViUjBGTUVxZGwxdWlVOWE5?=
- =?utf-8?B?ZjdvdmhNN2JoUnJEcVhxa21OZGJ3VUR6RE0zdGdvTi9qNE1Cc0t3ZGdRMFZ5?=
- =?utf-8?Q?nTPdQt260v0xsFpFcOciUmbkufhuL8xT7COSd9w?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?L2wydkhiQWJWdi9xdGVQQ0g0TG9KaGFtQVc1S2h1ZmZLTExLdHh6aVVlYkl0?=
- =?utf-8?B?VmhGcTVsUWhTWVg1TFpJZG9SVWJZWnpyMTZzMGsvY2NnTDJoWW9ZWkdOdm5m?=
- =?utf-8?B?Z1p6VG05MGhQZ0gwd2V4d1Frc3FNek8ydzFSOXBYUUdySzF2S3VSNEFPWVpS?=
- =?utf-8?B?empOenoxZWcrNEZ1ZGNZWWVPVmF4WXJOTjd1c2xITXB2YUpJMEtOVGJZR3ho?=
- =?utf-8?B?UUhCNGtFMHpUc2FsV2JLR0ovQmk5OGRFMmlRdklmNW94Zmd5cWVvN1FTU21P?=
- =?utf-8?B?T3Y3WUJURGZZdi9PbjBsOGZ1Y05hYlgwSlh3T29oK2FCMXZudklRUWoxNkl6?=
- =?utf-8?B?ZDRtVU8vVEc4UFFaQzV3M3FNUmN4M1hRVHNUZnZyb3VQam9USXpscHNyRXFO?=
- =?utf-8?B?Q0MxU2c2R0JMOUxiNVErSUJtY2dibGgwSWxPMnozS0JpSGl1ZUVZR24vU2pW?=
- =?utf-8?B?TDVkV0J6N3EwU2Z1SXF4ZFlYTjl2TUgxNW83YkhQZFk4ZGVBWmJhazRkRTEr?=
- =?utf-8?B?RFVaRjZsU2JwMkRtenAzTUdzek1CMzVnMmlLYnpMbHZNK1d6RHJ1NjErdCtX?=
- =?utf-8?B?azFBcnNrVmtKeWhvYW14MlpycmRZSHVCMGJlVld1VGVCOFk4UzNMbGJrd1F6?=
- =?utf-8?B?dk56N28wMCtrc1c0anQrZlJtdUJzUFJocXVjWGI2OGtLTUh0aHIwT25rcTRj?=
- =?utf-8?B?cFI3Z1lHelpxWSs4b2dXV2ZiZUdQM1R6RmkzWUN6aWpGMUV2a1Vaak1yQlE2?=
- =?utf-8?B?QUJROE9lT1hDcXFURUtTdUNQTUc3dWtOTHNFT254T0prUngwNFBtVTh0aFJz?=
- =?utf-8?B?RkY4TFBSVFp3S1VUeWptV01aZnlBbC80TGIrWmJ2dVhlRWtxNDBaeXNwVGZG?=
- =?utf-8?B?aW5kZ1kxTnI2dE8yY2gxaUNZeS9mNUpLQ2ZyTHFPL2xpS1lnSUdRRWhwTWl1?=
- =?utf-8?B?QlVydkdKbUxNYXZsYmxjUnVNTzFMYnhnOVQ1Z2FZT0dINjdFMW5BY3ZqUDgr?=
- =?utf-8?B?RnloSXVMZUpVcEV0bzVUeFdnNmVZVHprcURsNS9QY2VkQUl1Q3dLWGZEL00v?=
- =?utf-8?B?bCs1V3lLSytUaTJpRDhWNnJmODdUNTVjSU0wMUdyM05jUlIwWmpVN3BCSWFI?=
- =?utf-8?B?NDNZNjdLOVViRGJCQkZodTNVMkFUMERIY1NZS3IrSGZLQXlUZDNEbWFqNmpJ?=
- =?utf-8?B?dmhUN0piN2M0NXdhSWZZQXR3N1BkOEtFbGlndld4bGxNTmVGTmJMbmZ1eFhv?=
- =?utf-8?B?VFAyVzFMdWhML2k0aHRTNTAwUzJzS05XSzAwVGR3NEx6WGhidGRlcWtFZ0px?=
- =?utf-8?B?bEdLc2c4RDlGZFBqK0dMMEYzY0hmK0swY0MzQXJzUVpoZUthaG53UVhTTXo4?=
- =?utf-8?B?Mk41R3BBZ3FzRERxMDV2MkpYdXhrU3NpRWtta09DaE84ZVlPNHFtNjc1YVVa?=
- =?utf-8?B?azVOR3Z4ZHRMS3J6NkNkY1JoNXJMOUpaa0JHMlJsSzNKdUttYXdlNG9RZEFt?=
- =?utf-8?B?WnE2TUh1T2VEUmM3TDA4R2lVUGtUcEQ3SzVvZHFzc2RkbFlIemFXZk91TWtX?=
- =?utf-8?B?RUh3NHdiL2JIcG05TW1NM0h3YWQvZFRSMVVLeG5PU1E5cU1XMExQY0FJdkd4?=
- =?utf-8?B?T1B2NVlxVTJNT295K0lnL08yRDg4MzREY0M3Mnk5L1JiNFoxc0crbE9KblFE?=
- =?utf-8?B?K2UwMHpqQ2o5ajkzaVpWM1Jldy82YzI3QVNSRWwzZlRzTDNOMmRaM3lUdDJR?=
- =?utf-8?B?QW9iZVJERVovcXpsdFFLdy9nSytLbWNwcS9mbjludzR5bU1NYnpIYXRDQ2hQ?=
- =?utf-8?B?UzBjb2trTU4yVnoyVzdENVlteFhvMnR5bmMxSzVuQmhUTmpxT1VQM3QxRG5P?=
- =?utf-8?B?ay8xRXdrcmxqak56dm1uNjNpNSsvUi9OSVdTUzVnR1loTVUzdzBTTWNZTzJm?=
- =?utf-8?B?TlhaS3dBamZsakJPaHdKeWM5dkpRS0J2bHBkRnhHNjhLbC8rdHFJaEJEMnZ5?=
- =?utf-8?B?STBoOGRYdlZqQVBqZHppY0l6UUtyUEZsT2pML1RxQlpWYWMva2E3dmtJKytO?=
- =?utf-8?B?ZHJncktFQW15ZGlYZUFVRVhHWUZUdzR5bk1zeVIzNUJvZElkVUI2Z3ZFODRQ?=
- =?utf-8?B?MUo0WldNRFFnMGtpL3ErOWFXb1pIZUFmMHVTeHkvc0p0blZxc2tSR3NHWnhr?=
- =?utf-8?B?Q2c9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	V+XIq6QDdx6twCjSaznxZ9o7YP1uQ4fn9I2ryeziYng0xQq6cqsJR7lKfJNk5teRc5rR4juQPraL4kE7+k3y2Zjbnk9k9BhEpddz9TWwbTHG30crp9Li7S2yUUYyKWmwQN0EDqTzvve8BcXo5XHLnq5tB7t/74IyC5IylqZCsIsz/nZQ07eir0E9aSTeZLUMP2t/KvuAyy9DxurQyFCVX+nBaJ3POM6NWhS0h/t/wFSYh5kUuUOoemBPKnTFUubdUVjnU3OacF2b557Q8kWcNmsRoC+3iA4GaUxDxZupNCZrCvrg/AqzYZ0Gad1DUEAGwV9NAXleRRKBFpyoKChhOW3j831iI/6WhFp4hbBaSZDQlfq/cEly6bscANYakw5+lZocGC3ZUgTACSy2dBEEWXaeoiLVXi6cnihHPZqJFa9hKKc8e0xaHGIjusEOL0Zp6X+u6amsiF0eusqhzS7vBgPg33uCPZw3AQVFmFn/IgynhIApSppconDAeCBTYAbfYnbcECNe3esmnhN9HTxg8eNPSGd1SDB58GSUx0OIKmErehq7j/kYRdOw20mxU24F2nHG9ul6q6H+AfPlGvJNZglWgCeRjSKi7FUQ0AMn4Ac=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d08e8ddb-7a5c-4327-bc68-08dcf7f77af5
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 08:55:47.3855
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TmXZLwAVhXTb+A/MW/8Vcp12tRLF9t2CXmgFW9mypgfmxrQmpjbDSSrdB47m4+di3lbYj6MgqkTvB0ZBUM1chw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR10MB5918
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-29_04,2024-10-28_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410290069
-X-Proofpoint-ORIG-GUID: _wWT6hVsg8l9nlKPocjQxSwHmd06_i6A
-X-Proofpoint-GUID: _wWT6hVsg8l9nlKPocjQxSwHmd06_i6A
+Content-Transfer-Encoding: 8bit
 
-On 27/10/2024 18:17, Ritesh Harjani (IBM) wrote:
-> Let's validate the given constraints for atomic write request.
-> Otherwise it will fail with -EINVAL. Currently atomic write is only
-> supported on DIO, so for buffered-io it will return -EOPNOTSUPP.
-> 
-> Signed-off-by: Ritesh Harjani (IBM)<ritesh.list@gmail.com>
+There is already a macro DEFINE_WAIT_FUNC() to declare a wait_queue_entry
+with a specified waking function. But there is not a counterpart for
+initializing one wait_queue_entry with a specified waking function. So
+introducing init_wait_func() for this, which also could be used in iocost
+and rq-qos. Using default_wake_function() in rq_qos_wait() to wake up
+waiters, which could remove ->task field from rq_qos_wait_data.
 
-Reviewed-by: John Garry <john.g.garry@oracle.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Muchun Song <songmuchun@bytedance.com>
+---
+ block/blk-iocost.c   |  3 +--
+ block/blk-rq-qos.c   | 14 +++++++-------
+ include/linux/wait.h |  6 ++++--
+ 3 files changed, 12 insertions(+), 11 deletions(-)
+
+diff --git a/block/blk-iocost.c b/block/blk-iocost.c
+index 690ca99dfaca6..630895b4471c3 100644
+--- a/block/blk-iocost.c
++++ b/block/blk-iocost.c
+@@ -2709,8 +2709,7 @@ static void ioc_rqos_throttle(struct rq_qos *rqos, struct bio *bio)
+ 	 * All waiters are on iocg->waitq and the wait states are
+ 	 * synchronized using waitq.lock.
+ 	 */
+-	init_waitqueue_func_entry(&wait.wait, iocg_wake_fn);
+-	wait.wait.private = current;
++	init_wait_func(&wait.wait, iocg_wake_fn);
+ 	wait.bio = bio;
+ 	wait.abs_cost = abs_cost;
+ 	wait.committed = false;	/* will be set true by waker */
+diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
+index 9b0aa7dd6779f..858ce69c04ece 100644
+--- a/block/blk-rq-qos.c
++++ b/block/blk-rq-qos.c
+@@ -196,7 +196,6 @@ bool rq_depth_scale_down(struct rq_depth *rqd, bool hard_throttle)
+ 
+ struct rq_qos_wait_data {
+ 	struct wait_queue_entry wq;
+-	struct task_struct *task;
+ 	struct rq_wait *rqw;
+ 	acquire_inflight_cb_t *cb;
+ 	void *private_data;
+@@ -218,7 +217,12 @@ static int rq_qos_wake_function(struct wait_queue_entry *curr,
+ 		return -1;
+ 
+ 	data->got_token = true;
+-	wake_up_process(data->task);
++	/*
++	 * autoremove_wake_function() removes the wait entry only when it
++	 * actually changed the task state. We want the wait always removed.
++	 * Remove explicitly and use default_wake_function().
++	 */
++	default_wake_function(curr, mode, wake_flags, key);
+ 	list_del_init_careful(&curr->entry);
+ 	return 1;
+ }
+@@ -244,11 +248,6 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
+ 		 cleanup_cb_t *cleanup_cb)
+ {
+ 	struct rq_qos_wait_data data = {
+-		.wq = {
+-			.func	= rq_qos_wake_function,
+-			.entry	= LIST_HEAD_INIT(data.wq.entry),
+-		},
+-		.task = current,
+ 		.rqw = rqw,
+ 		.cb = acquire_inflight_cb,
+ 		.private_data = private_data,
+@@ -259,6 +258,7 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
+ 	if (!has_sleeper && acquire_inflight_cb(rqw, private_data))
+ 		return;
+ 
++	init_wait_func(&data.wq, rq_qos_wake_function);
+ 	has_sleeper = !prepare_to_wait_exclusive(&rqw->wait, &data.wq,
+ 						 TASK_UNINTERRUPTIBLE);
+ 	do {
+diff --git a/include/linux/wait.h b/include/linux/wait.h
+index 8aa3372f21a08..b008ca42b5903 100644
+--- a/include/linux/wait.h
++++ b/include/linux/wait.h
+@@ -1206,14 +1206,16 @@ int autoremove_wake_function(struct wait_queue_entry *wq_entry, unsigned mode, i
+ 
+ #define DEFINE_WAIT(name) DEFINE_WAIT_FUNC(name, autoremove_wake_function)
+ 
+-#define init_wait(wait)								\
++#define init_wait_func(wait, function)						\
+ 	do {									\
+ 		(wait)->private = current;					\
+-		(wait)->func = autoremove_wake_function;			\
++		(wait)->func = function;					\
+ 		INIT_LIST_HEAD(&(wait)->entry);					\
+ 		(wait)->flags = 0;						\
+ 	} while (0)
+ 
++#define init_wait(wait)	init_wait_func(wait, autoremove_wake_function)
++
+ typedef int (*task_call_f)(struct task_struct *p, void *arg);
+ extern int task_call_func(struct task_struct *p, task_call_f func, void *arg);
+ 
+-- 
+2.20.1
+
 
