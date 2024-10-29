@@ -1,180 +1,193 @@
-Return-Path: <linux-kernel+bounces-387855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1339B56E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:28:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A29FB9B56EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:29:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A7B628460D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:28:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BB128341D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:29:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073C120BB41;
-	Tue, 29 Oct 2024 23:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64D9220C031;
+	Tue, 29 Oct 2024 23:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bmV761Yr"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZ7Rsd6b"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA3C205141;
-	Tue, 29 Oct 2024 23:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2F920ADDC;
+	Tue, 29 Oct 2024 23:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244446; cv=none; b=t6EC02x4vVT3QIEEdts2u6RsIvo8sqbpd7qrvXwy4xHBgde2aXcF18XBlxnNR5EGPMSBQ3jLnR4K3JHV6w9Pe6Vbl10q9hxr3VdHnNeyUu+FePFXphlOv6aN0iZj5tlL2ChZK6nGyPHzNsYS4UpeVEYO5OzzgGsp1gOdddF/Ep4=
+	t=1730244489; cv=none; b=jCNnV2m26FI6x5NJUaDcXFkCfVZi09OVBLlaGIKWG6qLNmDOTrMF/NG6bdnEp0WLKzPG+KYG6pk1JW6eaAO1DDa3GBu67RiBxvn68aCz1EJ1xxaC6t1TjRg9Nch6V50iVlugAZ8w9TqVpiP2ba8uQyRgNpJOLVYe7HC7pWoRDcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244446; c=relaxed/simple;
-	bh=5bVa21ay7dYtmyCAx6BnQvkA4jvtQuZfFBVVe8Dy76I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dfdIZILheSqHZAEqriANoyz0xusH7SmOfIaVlsVQfB7ltPWxddarsDuRVsYaB2Vhe+neWu072qh10af24ZfDEkD9obGM1WLwqaXz1flX1qlmZnj6THZTO1P4b2PJBmFt8oRiRVydSZ8aIf9XTsz7XoTMi2ZJXNPLq3ODkmX2HUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bmV761Yr; arc=none smtp.client-ip=209.85.214.174
+	s=arc-20240116; t=1730244489; c=relaxed/simple;
+	bh=dJ360g6wR0oB3al1wCLc2vvKC50BXvkFxNqeLxsxMOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U1NyXWJJL2NiU0sX3oErBeZAWo/THCDdn7fYaGmrtBhrG/ZHDhuJCkDrzPqtvmEKidn+Idf7viSVn0F3CMgxBR6/UFSZWEn15ooJ6K6i2gqsZyiwNcT3c9nbyA/8yVt46/4elNTofOVSl328to1go5ameet7JCxj7toLYCeCAoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZ7Rsd6b; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20cceb8d8b4so2161155ad.1;
-        Tue, 29 Oct 2024 16:27:24 -0700 (PDT)
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so941078166b.0;
+        Tue, 29 Oct 2024 16:28:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730244443; x=1730849243; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kZRwrfcZPy1AyU5csKSGQr20lxdhyft9OjyIMBEkCw=;
-        b=bmV761Yr5F3lYXyThkv5hpRlSp+cFk9By7z/azzbGCxJyMxGGq6a3tcZlOMabkqyiM
-         UJ9oAdrn4MeLqjoe/bbC4g1o3CKggcflvPDMz5x93/SzR1YNQM12l+M1pi7dPBG7u1Yh
-         Uvbz65VKVWYzonPH3ZdormD1Bi6/fQfkbjLojuEJa/J5sZFK2MU5RdEeflc86A9IkAr0
-         fIyFg0qX94v/OQKPjEiR+/H0WYRQac6uTQJD5vN0zkbDdJRomHKLh4/BCfb9PkKnzrM5
-         JcKgukbZ/0X9WG3cgl0ytEniaj8Zl6w5PwckRYICzdyw08+Muy96XCaA9NFJp/uICJZC
-         hpPw==
+        d=gmail.com; s=20230601; t=1730244486; x=1730849286; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qzIxLUOYaE3vMGtIdY0G5UqFA4HTz9FjS4uuJtpOC/0=;
+        b=RZ7Rsd6bWQWwjoE2D2MUPtt6Rsx9uK0uS12zjpvMQ3jexbsObB5ZYN54HzWM7A8xOr
+         f1zyUuB4TislhLq91ASrqCnCpAzHbuz1hLZ8CBNCoFgOPAgnq/hXQtZhD20qDKqFMdrI
+         wxQ1oY2qJ/2iWcYRizZffeR0mHoLs+lHH/7/m0TTuM3RO8TI5qQaoQ7LWGCiYRu0/c5O
+         fBS8LwobKz9DRSH+iPUGLh78C6z9ugw5hAAmNIv4XS8CUlDVYKVU3xeTxVs99FNnRDgO
+         PEdbPDzqZKbeH4c/3PtBlDO5wnyJYwIpCkKv2vXTGKjefxEI8MPe8NpuCcqhJ7kvk1v3
+         5oDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730244443; x=1730849243;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2kZRwrfcZPy1AyU5csKSGQr20lxdhyft9OjyIMBEkCw=;
-        b=h1uvSppYfXs75ewNCcUmsBQyFNBMrdInk+o60pptj5bzTrvS4iC7Kh65jqMdeUUq0+
-         Wk8T7xKXu/F2/HWuVI0mZ3t5f3BPSS1KgIzR3bx7D6o8z0+uWCTXzHnrG0xubw56PfD3
-         aChFhRLCxCaY+Jrbe4kkDhQUw4SkH22bQ1p1TFUe2ickF1s70NlZNQ3nkp4R9kQ6djlV
-         Q1P0sjB40LP73zPx8PmaPxsOLYzguts78VhVDOwft+htN4GlQshaIaNwTxbmNM+MzsMk
-         kveUfVy1YmQjdHNVOtNFo5V6L7z3S5ZEwqlTrxc5d2i4rmco3OP6eBztNSI9voNs5P+t
-         GSOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYDpRFeYimX3QJw5WJsw3/Z9orzlqqapqroVgB2y7Ay4yK4bqeH5G/NwsWYwlm2O3pUX+coZdO96bH4LI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+6TgqahJNzXFR9EcJbp1ReGRsPaR2w+X7Hvw6+ulJw1nqF9I
-	cRlsikCwqWthCJDpwDIbmjFZzE/HbFGFbmKwvHhHWp7dwtGKOP6MIcDvTg==
-X-Google-Smtp-Source: AGHT+IEQUaL6YXXl4H24UPvk3iWYagwV6dS4wyVThAwlR4vaFg1k/jAXHeg5RBghElMlhKnRBLcJVw==
-X-Received: by 2002:a17:902:f647:b0:20c:7e99:3df2 with SMTP id d9443c01a7336-210ed4495b3mr54994935ad.23.1730244443462;
-        Tue, 29 Oct 2024 16:27:23 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc012f19sm71678275ad.158.2024.10.29.16.27.22
+        d=1e100.net; s=20230601; t=1730244486; x=1730849286;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qzIxLUOYaE3vMGtIdY0G5UqFA4HTz9FjS4uuJtpOC/0=;
+        b=TjxodcvW7Bpj6pgkxNsHkdPcWRnKJv3Epoo8HDTlPOb322cAC8v9bLhHFzVnP0Dp0M
+         1Ef3L9kenN0Dh13h/R2vcyagTuYBrXKAEq9cx78SWJeOCpLBs8o/RNYO017tdX/Rwy/7
+         M6EVYijdkNaw/XhI+KouKzYImHeg/M6FoHq4E7UirELp6IldWq8TTypEch5rdgGezqLD
+         QXboN6oMLN8+Jkm8BMJcnTRjTf7UMwKcS9pEP2g+rEVJktHjSzituke7USKgdoA0nOS/
+         NQcmAihRd0xCKiVkFWv6E+SujCBJHL2GAMNJiokJCHHnm3NYMXJN5Z+zWHx3MV5j5V0U
+         5uow==
+X-Forwarded-Encrypted: i=1; AJvYcCUBoTzL8oT+A8WwFKAxkw6dbmWVpaQdYPC5ohrJ60gT8z5CVW0evLRGNgr20JRl6Dcy+/TR9OvquynK@vger.kernel.org, AJvYcCV7f9vEdOrxa+bPwPwAPHJ6jms/vVEJCujrywgCbsUmLBYmPtuwvtbg+a92lAs+Nvs52mtI//IKe54UaH6f@vger.kernel.org, AJvYcCWAk2SocXC8bMuf++r37QocolmG5cRMwF6Mi27tkyMwLGjvUcT0rrdGtv7ieiRxB24CbdwRPwfDgeUe@vger.kernel.org
+X-Gm-Message-State: AOJu0YzY7R+NBZpv0UvptWdXKIWLeyjtr9XlA/Q0G0wP6ir7xse+OFe8
+	BPeqjl9AKfLnJJkXrryCwVCC4fBKpYZR3l67hzxiWCmjTawfa9Wp
+X-Google-Smtp-Source: AGHT+IENOuf55S7BPSy+6UBBkR0PUVAFo5/qztlIUA5f3Xh/wyAfuDl0DXdRgwTzNReTidfTZkKNSA==
+X-Received: by 2002:a17:907:7289:b0:a99:fa4e:ba97 with SMTP id a640c23a62f3a-a9de5ff9192mr1243038566b.39.1730244485596;
+        Tue, 29 Oct 2024 16:28:05 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:89e7:cc9d:3a72:92f3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f2982e1sm517969166b.99.2024.10.29.16.28.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 16:27:23 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rosen Penev <rosenp@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] net: fjes: use ethtool string helpers
-Date: Tue, 29 Oct 2024 16:27:21 -0700
-Message-ID: <20241029232721.8442-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        Tue, 29 Oct 2024 16:28:05 -0700 (PDT)
+Date: Wed, 30 Oct 2024 00:28:03 +0100
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+	anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 04/13] iio: chemical: bme680: refactorize set_mode()
+ mode
+Message-ID: <ZyFvg5JyA2IJp4v0@vamoirid-laptop>
+References: <20241021195316.58911-1-vassilisamir@gmail.com>
+ <20241021195316.58911-5-vassilisamir@gmail.com>
+ <20241027095939.5ad376ad@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241027095939.5ad376ad@jic23-huawei>
 
-The latter is the preferred way to copy ethtool strings.
+On Sun, Oct 27, 2024 at 09:59:39AM +0000, Jonathan Cameron wrote:
+> On Mon, 21 Oct 2024 21:53:07 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Refactorize the set_mode() function to use an external enum that
+> > describes the possible modes of the BME680 device instead of using
+> > true/false variables for selecting SLEEPING/FORCED mode.
+> > 
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> I changed my mind on this one...
+> 
+> > ---
+> >  drivers/iio/chemical/bme680_core.c | 30 +++++++++++++-----------------
+> >  1 file changed, 13 insertions(+), 17 deletions(-)
+> > 
+> > diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
+> > index d228f90b4dc6..9002519d2c33 100644
+> > --- a/drivers/iio/chemical/bme680_core.c
+> > +++ b/drivers/iio/chemical/bme680_core.c
+> > @@ -95,6 +95,11 @@ struct bme680_calib {
+> >  	s8  range_sw_err;
+> >  };
+> >  
+> > +enum bme680_op_mode {
+> > +	BME680_SLEEP,
+> > +	BME680_FORCED,
+> Use this enum to replace the existing BME680_MODE_SLEEP etc definitions
+> rather than adding another one.
+> Also assign explicit values as you are going to write this into a register
+> so they matter.
+> 
+> 
 
-Avoids manually incrementing the pointer.
+Hi Jonathan,
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
-Reviewed-by: Simon Horman <horms@kernel.org>
----
- v2: remove p variable and reduce indentation
- drivers/net/fjes/fjes_ethtool.c | 64 ++++++++++++---------------------
- 1 file changed, 23 insertions(+), 41 deletions(-)
+Thank you very much once again for the review! I totally understand what
+you mean and I will fix it for next version.
 
-diff --git a/drivers/net/fjes/fjes_ethtool.c b/drivers/net/fjes/fjes_ethtool.c
-index 19c99529566b..70c53f33d857 100644
---- a/drivers/net/fjes/fjes_ethtool.c
-+++ b/drivers/net/fjes/fjes_ethtool.c
-@@ -87,49 +87,31 @@ static void fjes_get_strings(struct net_device *netdev,
- {
- 	struct fjes_adapter *adapter = netdev_priv(netdev);
- 	struct fjes_hw *hw = &adapter->hw;
--	u8 *p = data;
- 	int i;
- 
--	switch (stringset) {
--	case ETH_SS_STATS:
--		for (i = 0; i < ARRAY_SIZE(fjes_gstrings_stats); i++) {
--			memcpy(p, fjes_gstrings_stats[i].stat_string,
--			       ETH_GSTRING_LEN);
--			p += ETH_GSTRING_LEN;
--		}
--		for (i = 0; i < hw->max_epid; i++) {
--			if (i == hw->my_epid)
--				continue;
--			sprintf(p, "ep%u_com_regist_buf_exec", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_com_unregist_buf_exec", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_send_intr_rx", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_send_intr_unshare", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_send_intr_zoneupdate", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_recv_intr_rx", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_recv_intr_unshare", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_recv_intr_stop", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_recv_intr_zoneupdate", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_tx_buffer_full", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_tx_dropped_not_shared", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_tx_dropped_ver_mismatch", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_tx_dropped_buf_size_mismatch", i);
--			p += ETH_GSTRING_LEN;
--			sprintf(p, "ep%u_tx_dropped_vlanid_mismatch", i);
--			p += ETH_GSTRING_LEN;
--		}
--		break;
-+	if (stringset != ETH_SS_STATS)
-+		return;
-+
-+	for (i = 0; i < ARRAY_SIZE(fjes_gstrings_stats); i++)
-+		ethtool_puts(&data, fjes_gstrings_stats[i].stat_string);
-+
-+	for (i = 0; i < hw->max_epid; i++) {
-+		if (i == hw->my_epid)
-+			continue;
-+		ethtool_sprintf(&data, "ep%u_com_regist_buf_exec", i);
-+		ethtool_sprintf(&data, "ep%u_com_unregist_buf_exec", i);
-+		ethtool_sprintf(&data, "ep%u_send_intr_rx", i);
-+		ethtool_sprintf(&data, "ep%u_send_intr_unshare", i);
-+		ethtool_sprintf(&data, "ep%u_send_intr_zoneupdate", i);
-+		ethtool_sprintf(&data, "ep%u_recv_intr_rx", i);
-+		ethtool_sprintf(&data, "ep%u_recv_intr_unshare", i);
-+		ethtool_sprintf(&data, "ep%u_recv_intr_stop", i);
-+		ethtool_sprintf(&data, "ep%u_recv_intr_zoneupdate", i);
-+		ethtool_sprintf(&data, "ep%u_tx_buffer_full", i);
-+		ethtool_sprintf(&data, "ep%u_tx_dropped_not_shared", i);
-+		ethtool_sprintf(&data, "ep%u_tx_dropped_ver_mismatch", i);
-+		ethtool_sprintf(&data, "ep%u_tx_dropped_buf_size_mismatch", i);
-+		ethtool_sprintf(&data, "ep%u_tx_dropped_vlanid_mismatch", i);
- 	}
- }
- 
--- 
-2.47.0
+Cheers,
+Vasilis
 
+> > +};
+> > +
+> >  struct bme680_data {
+> >  	struct regmap *regmap;
+> >  	struct bme680_calib bme680;
+> > @@ -502,23 +507,16 @@ static u8 bme680_calc_heater_dur(u16 dur)
+> >  	return durval;
+> >  }
+> >  
+> > -static int bme680_set_mode(struct bme680_data *data, bool mode)
+> > +static int bme680_set_mode(struct bme680_data *data, enum bme680_op_mode mode)
+> >  {
+> >  	struct device *dev = regmap_get_device(data->regmap);
+> >  	int ret;
+> >  
+> > -	if (mode) {
+> > -		ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> > -					BME680_MODE_MASK, BME680_MODE_FORCED);
+> > -		if (ret < 0)
+> > -			dev_err(dev, "failed to set forced mode\n");
+> > -
+> > -	} else {
+> > -		ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> > -					BME680_MODE_MASK, BME680_MODE_SLEEP);
+> > -		if (ret < 0)
+> > -			dev_err(dev, "failed to set sleep mode\n");
+> > -
+> > +	ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> > +				BME680_MODE_MASK, mode);
+> This is the problematic code.  No obvious reason the enum should match the original
+> values. It does, but that should be made true by only having an enum, not definitions
+> and an enum.
+> 
+> > +	if (ret < 0) {
+> > +		dev_err(dev, "failed to set ctrl_meas register\n");
+> > +		return ret;
+> >  	}
+> >  
+> >  	return ret;
+> > @@ -615,8 +613,7 @@ static int bme680_gas_config(struct bme680_data *data)
+> >  	int ret;
+> >  	u8 heatr_res, heatr_dur;
+> >  
+> > -	/* Go to sleep */
+> > -	ret = bme680_set_mode(data, false);
+> > +	ret = bme680_set_mode(data, BME680_SLEEP);
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> > @@ -756,8 +753,7 @@ static int bme680_read_raw(struct iio_dev *indio_dev,
+> >  
+> >  	guard(mutex)(&data->lock);
+> >  
+> > -	/* set forced mode to trigger measurement */
+> > -	ret = bme680_set_mode(data, true);
+> > +	ret = bme680_set_mode(data, BME680_FORCED);
+> >  	if (ret < 0)
+> >  		return ret;
+> >  
+> 
 
