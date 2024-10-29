@@ -1,150 +1,106 @@
-Return-Path: <linux-kernel+bounces-386973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AB99B4A4D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:57:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B313A9B4A54
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:57:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C9C99B23F37
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:57:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CED8B220EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2092076D9;
-	Tue, 29 Oct 2024 12:55:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45F3B20650E;
+	Tue, 29 Oct 2024 12:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CecyypnX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="liL4lnLl"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FDD82076A7;
-	Tue, 29 Oct 2024 12:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 679AC206070
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206517; cv=none; b=jvmWzFxZOBZMSiHothNmXtrLnWeJ20fD+MSimCswNnMM7uuI1iCXYZIZlMWFwirdOK6gKFeNkvddxdsFjutbNGBMIH7d6XhTpfa8HwVhpa5BEYjzRKYHQ+V8h18FnRBqaRpyrY5trLv90IXEZbAu0/EwzRzycSdIr2JxrsGzVXw=
+	t=1730206541; cv=none; b=BBb6SAmE9D05tVE3OdZ3ilclsAMy7dzcIJ+TV6AhP3DtCk8QJNDF6D2Odgga6Ar423EdmKmH0NpPxb1YYMmNYIYDrSAQkwltN95I45V94cKjqUFOdzG/ajB3bleHgJcVmQb/Df+td59sn3FTf5fR1S7jvo9TuRgZ2RFFzxoACKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206517; c=relaxed/simple;
-	bh=Lsn6cUl6/piUTCl/52Vf/xwrmNX/PrQdY6jSaVzS8is=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DpnaS+6bVAl7EjIaUvxy/d8mgj0la8yvJvQvWWiWdh28a16Fr7/M0c68sEQgdWRpmyX7xINIh27tdkXFkuA3u/7YyBhemG6x/Y8ET4/LXarQZt1lEp3JkwhVnQLScKbTSz1aAL8fkq1q0/qlBDaYF9DmEpvghSh+5CeEZHd45FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CecyypnX; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730206515; x=1761742515;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Lsn6cUl6/piUTCl/52Vf/xwrmNX/PrQdY6jSaVzS8is=;
-  b=CecyypnXsPMXfB4bwtUBvkKY9JGXyRDC0jP8NvFtSkUZSycjLmnlyqE6
-   rEW5rNnQxqLk+YKg8tynkBQ53naFoICu02Rey+AxaWPmJXNSFy5PiO3wc
-   Gm6a8YqDrlgcVKZAA7j+1TRb8ySZkOqEBn9IyUybfK+MN4f7q37m0FXBa
-   V0R5AAvUMO62rHoyUU/JbKL7u7ILFeomk2GeWbz0W+Zl9peMm6danScjL
-   eVEEmhQwDCsyCVpDGrMW8NHy2J1th+9zJ56OO6oekFVBy9a9jHLq1LP9g
-   aYfxSetRrnRHyUMYd9fpM4cQc4Nl0SrGHzj5pjbV3dH3yKXU/SKxowHDI
-   Q==;
-X-CSE-ConnectionGUID: jH8aE7H5QbGqjHrZLMFrVg==
-X-CSE-MsgGUID: MHUpA5ygRcOE9ZHDTP5dJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="55248232"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="55248232"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 05:55:14 -0700
-X-CSE-ConnectionGUID: 08CZRuXaQ929XhqN0Ac3kA==
-X-CSE-MsgGUID: ioqTcKZCSN+lTuzSYMz2hg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82097361"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 05:55:09 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 29 Oct 2024 14:55:05 +0200 (EET)
-To: Arnd Bergmann <arnd@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-    Suma Hegde <suma.hegde@amd.com>
-cc: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>, 
-    Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-    Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
-    x86@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
-    Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, 
-    "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, 
-    Bjorn Helgaas <bhelgaas@google.com>, platform-driver-x86@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] platform/x86/amd/hsmp: mark hsmp_msg_desc_table[] as
- maybe_unused
-In-Reply-To: <20241028163553.2452486-1-arnd@kernel.org>
-Message-ID: <8aa437c2-43be-4ecf-88c4-f733b1e7f243@linux.intel.com>
-References: <20241028163553.2452486-1-arnd@kernel.org>
+	s=arc-20240116; t=1730206541; c=relaxed/simple;
+	bh=Xo5tjCzvkjU2q79mZUINpDF0j63nMfsTwMbRISK5XWg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sG+/R7OCTqTf+nKVaUYHVz2aesfYLcWOxxOQxnDVl5QrnLxtT946apfR/UEHXFaBy/jgyyXqEG3+F6BiXS7eYxO+IgYDU6Vpg8uWCroHUdk/ZH2oHO5TiJ80QrBkrXQPlixMPpyvPZ+67IYKDF5imROcxhEXnOR4I55UJ8rP8ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=liL4lnLl; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d5689eea8so3623737f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:55:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730206538; x=1730811338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Xo5tjCzvkjU2q79mZUINpDF0j63nMfsTwMbRISK5XWg=;
+        b=liL4lnLlX9DxaHaOdkOXmubQk0roBoobR0dl3s5ESM3KJPlEOx/ifqlO2X7OfrQJU8
+         eiRSzCIy+epyt7LECq9Ze/hM1lC+5CQf2TwdbJg502ZGiF7YlZ7N5zijJLeqbNVOrHL5
+         4m4ahiFR71RchLT0gU01T9YhMeuCNv3fk/Asoei2oOtq66nxpUQ2zVZHaLbrGCZzKoqB
+         pPgS1DSs0lPPzFgZG1y/5tDOgmHS+JFDTeaHIAX1imRtansy6XqtdhDVMWN/XCrxuyVg
+         zcUMciUnKSiUVY2Atg+4+FLMCXgNiIeIWAHU/TiFJI7Gs1YqQw+FJSF0rJ/guC9rdJL1
+         BmMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730206538; x=1730811338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Xo5tjCzvkjU2q79mZUINpDF0j63nMfsTwMbRISK5XWg=;
+        b=T2/lTzgEURoT7Qlg6S2sxokFMIKzDEDZBjm0XFKkh3noCYgyRKYmohP/JfhyZfBNw/
+         722Y3+ZvB9QS0uOk+b/yQObtoVU7Z4fmQpJLngggMZfIb9s5oNHScfUajRk7z3lWpZhK
+         10zp85Xhry0m3JfOvVel5jNX8Y7ek9zTU6Ny3WlqSqcs3ECh/4rebecvK/8nq6lq3pwg
+         SMsxiSbTSUl1HFM1tY0R0fl+/JlqcSqBWfWiGdrz1ea+0ZDFIXvXfdkQljnN06noLAqk
+         8zYflw340/zlXJ3dT3ZxQfbUuAlQbjQXRRJc/Fbx8aK2a/09Lg1KWDsTnZS9tDEUGApP
+         yi2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW9Ig706azzGD2n96CeuUE/aLnTuQtSkWyB03ix72cSj7R6zSCQNvHICYLVIub39iL8A1go6IZ47ygrd+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYlF5m4utYobaSNsb005IQOWqtqF74+ipaQYdI69aPDRXUbpcN
+	XQrVpjiA+CWb7eNrkVc05KOhXXlkfmgUNX6/ulB56aNAfC5/J41pQwlJDXuT2pJp44x0cC+wz+i
+	lrJIdt3lYD8zFTz+kf03Khszx1XTkKVfi7Jpi
+X-Google-Smtp-Source: AGHT+IETmQQTDrL4vzmRoJuOfPmcPv8jJvaCBtX/7GajtM20569P5Q3g1pr1IEWMYE0imQiiY7vndpIG9NNADzh62fw=
+X-Received: by 2002:adf:cd83:0:b0:37e:d715:3f39 with SMTP id
+ ffacd0b85a97d-380610f7bcemr8407978f8f.10.1730206537735; Tue, 29 Oct 2024
+ 05:55:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-4-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-4-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 29 Oct 2024 13:55:25 +0100
+Message-ID: <CAH5fLggCouwZa7894SAdkVtCHVO-y7iV2G0-b0pjec9gbt6V6g@mail.gmail.com>
+Subject: Re: [PATCH v3 03/16] rust: pass module name to `Module::init`
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 28 Oct 2024, Arnd Bergmann wrote:
-
-+ Hans
-
-> From: Arnd Bergmann <arnd@arndb.de>
+On Tue, Oct 22, 2024 at 11:32=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
-> After the file got split, there are now W=1 warnings for users that
-> include it without referencing hsmp_msg_desc_table:
-> 
-> In file included from arch/x86/include/asm/amd_hsmp.h:6,
->                  from drivers/platform/x86/amd/hsmp/plat.c:12:
-> arch/x86/include/uapi/asm/amd_hsmp.h:91:35: error: 'hsmp_msg_desc_table' defined but not used [-Werror=unused-const-variable=]
->    91 | static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
->       |                                   ^~~~~~~~~~~~~~~~~~~
-> 
-> Mark it as __attribute__((maybe_unused)) to shut up the warning but
-> keep it in the file in case it is used from userland. The __maybe_unused
-> shorthand unfurtunately isn't available in userspace, so this has to
+> In a subsequent patch we introduce the `Registration` abstraction used
+> to register driver structures. Some subsystems require the module name on
+> driver registration (e.g. PCI in __pci_register_driver()), hence pass
+> the module name to `Module::init`.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-unfortunately
+The C-side just uses KBUILD_MODNAME for this. Could we do something similar=
+?
 
-> be the long form.
-> 
-> Fixes: e47c018a0ee6 ("platform/x86/amd/hsmp: Move platform device specific code to plat.c")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
-> Ideally this array wouldn't be part of the UAPI at all, since it is
-> not really a interface, but it's hard to know what part  of the header
-> is actually used outside of the kernel.
-
-Sadly this slipped through during review even if it was brought up by 
-somebody back then. The (rather weak) reasoning for having it as a part of 
-UAPI was seemingly accepted uncontested :-(.
-
-> ---
->  arch/x86/include/uapi/asm/amd_hsmp.h | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/uapi/asm/amd_hsmp.h b/arch/x86/include/uapi/asm/amd_hsmp.h
-> index e5d182c7373c..4a7cace06204 100644
-> --- a/arch/x86/include/uapi/asm/amd_hsmp.h
-> +++ b/arch/x86/include/uapi/asm/amd_hsmp.h
-> @@ -88,7 +88,8 @@ struct hsmp_msg_desc {
->   *
->   * Not supported messages would return -ENOMSG.
->   */
-> -static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
-> +static const struct hsmp_msg_desc hsmp_msg_desc_table[]
-> +				__attribute__((unused)) = {
-
-It seems that the main goal why it was put into UAPI was "to give the user 
-some reference about proper num_args and response_size for each message":
-
-https://lore.kernel.org/all/CAPhsuW5V0BJT+YSwv1U=hRG0k9zBWXeRd=E1n4U5hvcnwEV3mQ@mail.gmail.com/
-
-Are we actually expecting userspace to benefit from this in C form?
-Suma? Hans?
-
->  	/* RESERVED */
->  	{0, 0, HSMP_RSVD},
-
-
--- 
- i.
-
+Alice
 
