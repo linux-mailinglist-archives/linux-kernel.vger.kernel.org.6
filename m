@@ -1,81 +1,95 @@
-Return-Path: <linux-kernel+bounces-386291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74B009B419A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:38:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5864B9B419B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:39:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A64621C21A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A2261C21EEB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F143200B96;
-	Tue, 29 Oct 2024 04:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EA75200B8A;
+	Tue, 29 Oct 2024 04:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="vkanm3kd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zew1ghOV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B7B1DD543;
-	Tue, 29 Oct 2024 04:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17D71DD543
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730176695; cv=none; b=qS2TaOcin4J3iDOT6LTxijAYZJ+G/CfgyPoORy5HRE3FhiXIKa7teNzqLplBmcj56G3hRDuLQoG+it9qEKQE5dm9dau1wIq3czceW0LaivoJQNrUcnwqhFaBhhyPo5UGQStKr+C615cyrRoHnVOQ9w1pjH292RPPZuKNEzh7Frg=
+	t=1730176778; cv=none; b=jO4+eMCI80YH50yJg//o4zuxkcGlJHt94v+9IZbbF18xg6h6tCj2Kb6L1uBNUAC3FEdUjJIQMDlfxxU7IsGK5pPwJAPOvCRdx/bCVJQNbHfIN0mttylXFKUPArJVGzhhHiSKEl++xjn8lSzqKBEGrDgHkamJad9c/xbc+r7EG/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730176695; c=relaxed/simple;
-	bh=+IRtR0eRYdMflE+S4aK+4d21w0hTDB7iwJgSdIEgVdw=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=UHzOlWFArmw3vjLC3wJ/rga70N8/KopcAKoCCsWSOTGDJaMcTlxxrWwdnKIuRb9z1Z0gI/GS2qJGrBuw6kz32nUG2H9hN/U6e8d7dpgBRBtrmap+xFSmhIw5acpAlIkFSOyD4JPEtQMlqQk+0k/TdcQP8yUaIfRzVxSIixIl8A8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=vkanm3kd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 047A2C4CECD;
-	Tue, 29 Oct 2024 04:38:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730176695;
-	bh=+IRtR0eRYdMflE+S4aK+4d21w0hTDB7iwJgSdIEgVdw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=vkanm3kdRQ7eOddJC71hdSA0RMWSUBNXFu9IYsad9+czvIpTMYY9zCXVgw6qpBsF7
-	 83qXJADI+8yT+4OK8YduafSgxunp8HrRguZm+F9NvHUteN89M54kvsvcyy8DBd6a/U
-	 LrEDURm35Zz0BIU6zbeC5qEEs5Aw1p6XsF98byKs=
-Date: Mon, 28 Oct 2024 21:38:14 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
- <mm-commits@vger.kernel.org>, <linux-mm@kvack.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [GIT PULL] hotfixes for 6.12-rc6
-Message-Id: <20241028213814.131e0e9a0421a1fbf6b713db@linux-foundation.org>
-In-Reply-To: <6434b6fc-d3c7-4f1c-baa4-25215a185eec@nvidia.com>
-References: <20241028203743.3fe4d95463aaafe23a239b51@linux-foundation.org>
-	<6434b6fc-d3c7-4f1c-baa4-25215a185eec@nvidia.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730176778; c=relaxed/simple;
+	bh=NxJ/XDTSw1UpyMDjO/sd+aNnVw1J3Cv6inQUL3gi6sI=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=foz7MDu7yxmBeaBXoqN2+ylQXOpdhqdyO8pqWND1QTpKWyjhZdKxmAiou6FBDlq+y4lSYk0KFjgp+jxpY8hreLuWf9qBVQ2P59jbM1bBHhBD1hyn8DdnJslbvAavvVtS12bWq7KFkPLlkCEa2qOZVPbxB+Q8iNNNCo7s/QBl3Vo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zew1ghOV; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730176775; x=1761712775;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NxJ/XDTSw1UpyMDjO/sd+aNnVw1J3Cv6inQUL3gi6sI=;
+  b=Zew1ghOVeVxZYt7z9T04Xl0E1p5+ZCAUwMlco1mQIhdzAL4aguGt2Vnw
+   /GN3N9u75Pj3MECz7u3czjoGKUmoJcv9sjIDNgZhTKslh+N5DVw68Lg3A
+   X905ystZUt5lgnHufdP+P4jM/9RnACh4Yf7WA3ZtEMbO34jnXr5LyTtJd
+   C8Ph3V4KWd7QQAQJdgjcnFG+zV9+DFq+eMwNLRmc7qjoTuPSgg1O7dQgr
+   wVfcshY33q/fJPrA99ARhAshFcz7VYE3OxfkHsAzYbMUikh7P+DWD17M1
+   cahPE93DvY4/GQohfsJiQZ3cUKdCfQgvBJfuBaG0byOJSdUS9cSPsUZSS
+   w==;
+X-CSE-ConnectionGUID: dniax882SZWkjw9VDJ3Oyg==
+X-CSE-MsgGUID: 11Wk2dg6QdOsITT6GHm9pg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="41193691"
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="41193691"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 21:39:35 -0700
+X-CSE-ConnectionGUID: h0UWWNqhTsyf+BXJLK8XFg==
+X-CSE-MsgGUID: 0S5bMY+eRMyYqQ45/Kg+cA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="86606782"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.238.0.51]) ([10.238.0.51])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 21:39:31 -0700
+Message-ID: <1ed9997b-e71c-4173-b89a-942018c09691@linux.intel.com>
+Date: Tue, 29 Oct 2024 12:39:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com
+Subject: Re: [PATCH -next] iommu/vt-d: Use PCI_DEVID() macro
+To: Jinjie Ruan <ruanjinjie@huawei.com>, dwmw2@infradead.org,
+ joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240829021011.4135618-1-ruanjinjie@huawei.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20240829021011.4135618-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 28 Oct 2024 20:45:56 -0700 John Hubbard <jhubbard@nvidia.com> wrote:
+On 2024/8/29 10:10, Jinjie Ruan wrote:
+> The macro PCI_DEVID() can be used instead of compose it manually.
+> 
+> Signed-off-by: Jinjie Ruan<ruanjinjie@huawei.com>
+> ---
+>   drivers/iommu/intel/iommu.c         | 4 ++--
+>   drivers/iommu/intel/irq_remapping.c | 4 ++--
+>   drivers/iommu/intel/pasid.c         | 2 +-
+>   3 files changed, 5 insertions(+), 5 deletions(-)
 
-> On 10/28/24 8:37 PM, Andrew Morton wrote:
-> > 
-> > Linus, please merge this batch of hotfixes, thanks.
-> > 
-> ...
-> > John Hubbard (2):
-> >        mm/gup: stop leaking pinned pages in low memory conditions
-> >        mm/gup: memfd: stop leaking pinned pages in low memory conditions
-> > 
-> 
-> That's the v2 series, but after some more review, we settled on a single-patch solution,
-> which is v3.
-> 
-> v2: https://lore.kernel.org/linux-mm/fc42d9bf-3460-4d85-a09d-39b5634363d4@nvidia.com/T/
-> 
-> v3: https://lore.kernel.org/all/20241018223411.310331-1-jhubbard@nvidia.com/
+Queued for v6.13. Thank you!
 
-OK, thanks, I'll fix up and rebase.
+--
+baolu
 
