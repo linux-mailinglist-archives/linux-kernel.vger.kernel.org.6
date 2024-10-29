@@ -1,156 +1,208 @@
-Return-Path: <linux-kernel+bounces-386313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2EB9B41D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:37:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 44BD39B41D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:40:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 695791C219EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 682FB1C219FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:40:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14A94200CB2;
-	Tue, 29 Oct 2024 05:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8957201000;
+	Tue, 29 Oct 2024 05:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="1cp70fGU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cv6c5KXb"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA7528E7;
-	Tue, 29 Oct 2024 05:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35D8200B88
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730180259; cv=none; b=jclbOZuX80Uyl7jRWguJXpkEFJzvb90JKBJQ9y+pIMHV/e6hrElLkk7tb9WCOoQYZhYWxv13y/R2riMJDe/LG9FluFCTHZN4R7Z6kAKFpKbPEGRMVRUEoeeWE+Q++RO7lIOB1EyU5SrB9F90jNEvJGIwR4WI9tHgk8jk2U4Ir0s=
+	t=1730180426; cv=none; b=I8xe4mjoJHURn/EFalQiuF+ZMVF2pK8yqyGT4Dtj+V/hcSBLpLwAKRmzDXAgjSObg9JpeZPA/cSkqP0Bu4oB4Wz8W9vr3rSmHW/HO21+KhdjfsN6nP0h4T0tQ2M2YQcRZkDKZUoiBKItNzA2Uers7kYn+d1ggLhHxWQ4+d95XyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730180259; c=relaxed/simple;
-	bh=9olqVLoMvTGZUqCXXqNqiQq4o9I68NSlUNbLAjZFeiI=;
-	h=Date:From:To:Cc:Subject:Message-Id:Mime-Version:Content-Type; b=WKZnp1rvqWGVrBqA7c9et/JBPLLks1uG9oneLW8rf+GoszjJPgzoRzlgq0zfvITNiZxguGM+NmQl65ldZxq4XbXyyzh1SP8VU3XCdM6OHjXHgRLBnzZzAoqBCd0jL2hkeaxVskBTvYaJsdoWLOkjugETn7In0fbdgz/mN0sD1HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=1cp70fGU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB5C1C4CECD;
-	Tue, 29 Oct 2024 05:37:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730180258;
-	bh=9olqVLoMvTGZUqCXXqNqiQq4o9I68NSlUNbLAjZFeiI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=1cp70fGUVDTp42ha/Kg3lV86GDHc+82sK19N0SCeBYmd3/OaxelhpoF9AEb9qjg5Q
-	 F0olHnxOMqtoahWLwzQrp540EV2cHcQsfWIvOqsVce2PypCdSl+tRtRt+A3bD1ialP
-	 HbWDwBeBLr7SB48Jbr5R5K6h5ka/b+YiJi9IDCKI=
-Date: Mon, 28 Oct 2024 22:37:38 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-mm@kvack.org, mm-commits@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [GIT PULL V2] hotfixes for 6.12-rc6
-Message-Id: <20241028223738.bb14a8723e947d40f3711007@linux-foundation.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730180426; c=relaxed/simple;
+	bh=6opOell0VLCBLplO2yMYu7ENH0+QZXujGwTaWjytOUM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=E3yG7Wg6/Yb3q83RCl99UNgPnQFbD2AXfer1ZfiVGPxpjL0hjtkdyCe5LON4tsEXobOmYOgCIqHuTB/kJ4AUZ2Dd/gZqJbhH3r63mTXprQPuBrOfx/NqkL9veEmXqEaWFb+4Mlltw+SrXffJ9eCWRqDIzPKvc8vj7sMry//p0QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cv6c5KXb; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730180424; x=1761716424;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6opOell0VLCBLplO2yMYu7ENH0+QZXujGwTaWjytOUM=;
+  b=Cv6c5KXbRZgPty7qdkicyLtlvBRXvTUcbF5rhgh0uhS9Dkp3DegRMUO1
+   LocGVo6KG5KAUDE/dxTLiDXOuqZAxR+MjsCB9cLoTnFHL876Z5sjqV0X1
+   ZwsCRRv8p3ictZ5wxQCSA4i6n4H7WhvVEt2stokeICoroRaOW8gkoTVZz
+   46zDI4sDvPWuA/BmjimT6wqBSepKYjUcACCl4GoAkXnCzE5Gg8RQLZafG
+   jeOKx2aAf6qAh1D4J2ony5fB2MdKlXCAzKmDSwAGW020PKH3djVJhop+j
+   7JDYBQi3XYiAYqPEu4kYDlBsHlVgzHRi+khTsSF6BWz5U6JW+LZ2Mufcj
+   g==;
+X-CSE-ConnectionGUID: M99HFloyTxqH0YlZSe6W5A==
+X-CSE-MsgGUID: 2hAuyt+nTACwaA+qHNkFZw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="47282297"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="47282297"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 22:39:55 -0700
+X-CSE-ConnectionGUID: MfAJNVNwTJ6XekqyWyyVPQ==
+X-CSE-MsgGUID: puepQ6G0S3OJwDhRn3SGsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="82172599"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 22:39:52 -0700
+Message-ID: <acd5c4a6-040c-48ff-9e6b-1a33e5ff118d@linux.intel.com>
+Date: Tue, 29 Oct 2024 13:39:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, David Woodhouse <dwmw2@infradead.org>,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
+ prq_event_thread
+To: Yi Liu <yi.l.liu@intel.com>, Joel Granados <joel.granados@kernel.org>
+References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
+ <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
+ <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
+ <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
+ <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
+ <91d59b7d-58b0-4da2-af59-18a980273bb4@intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <91d59b7d-58b0-4da2-af59-18a980273bb4@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 2024/10/29 13:13, Yi Liu wrote:
+> On 2024/10/29 11:12, Baolu Lu wrote:
+>> On 2024/10/28 18:24, Joel Granados wrote:
+>>> On Mon, Oct 28, 2024 at 03:50:46PM +0800, Yi Liu wrote:
+>>>> On 2024/10/16 05:08, Joel Granados wrote:
+>>>>> From: Klaus Jensen<k.jensen@samsung.com>
+>>>>>
+>>>>> PASID is not strictly needed when handling a PRQ event; remove the 
+>>>>> check
+>>>>> for the pasid present bit in the request. This change was not included
+>>>>> in the creation of prq.c to emphasize the change in capability checks
+>>>>> when handing PRQ events.
+>>>>>
+>>>>> Signed-off-by: Klaus Jensen<k.jensen@samsung.com>
+>>>>> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
+>>>>> Signed-off-by: Joel Granados<joel.granados@kernel.org>
+>>>> looks like the PRQ draining is missed for the PRI usage. When a pasid
+>>>> entry is destroyed, it might need to add helper similar to the
+>>>> intel_drain_pasid_prq() to drain PRQ for the non-pasid usage.
+>>> These types of user space PRIs (non-pasid, non-svm) are created by
+>>> making use of iommufd_hwpt_replace_device. Which adds an entry to the
+>>> pasid_array indexed on IOMMU_NO_PASID (0U) via the following path:
+>>>
+>>> iommufd_hwpt_replace_device
+>>>    -> iommufd_fault_domain_repalce_dev
+>>>      -> __fault_domain_replace_dev
+>>>        -> iommu_replace_group_handle
+>>             -> __iommu_group_set_domain
+>>               -> intel_iommu_attach_device
+>>                  -> device_block_translation
+>>                    -> intel_pasid_tear_down_entry(IOMMU_NO_PASID)
+>>
+>> Here a domain is removed from the pasid entry, hence we need to flush
+>> all page requests that are pending in the IOMMU page request queue or
+>> the PCI fabric.
+>>
+>>>          -> xa_reserve(&group->pasid_array, IOMMU_NO_PASID, GFP_KERNEL);
+>>>
+>>> It is my understanding that this will provide the needed relation
+>>> between the device and the prq in such a way that when  remove_dev_pasid
+>>> is called, intel_iommu_drain_pasid_prq will be called with the
+>>> appropriate pasid value set to IOMMU_NO_PASID. Please correct me if I'm
+>>> mistaken.
+>>
+>> Removing a domain from a RID and a PASID are different paths.
+>> Previously, this IOMMU driver only supported page requests on PASID
+>> (non-IOMMU_NO_PASID). It is acceptable that it does not flush the PRQ in
+>> the domain-removing RID path.
+>>
+>> With the changes made in this series, the driver now supports page
+>> requests for RID. It should also flush the PRQ when removing a domain
+>> from a PASID entry for IOMMU_NO_PASID.
+>>
+>>>
+>>> Does this answer your question? Do you have a specific path that you are
+>>> looking at where a specific non-pasid drain is needed?
+>>
+>> Perhaps we can simply add below change.
+>>
+>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>> index e860bc9439a2..a24a42649621 100644
+>> --- a/drivers/iommu/intel/iommu.c
+>> +++ b/drivers/iommu/intel/iommu.c
+>> @@ -4283,7 +4283,6 @@ static void intel_iommu_remove_dev_pasid(struct 
+>> device *dev, ioasid_t pasid,
+>>          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>>          kfree(dev_pasid);
+>>          intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+>> -       intel_drain_pasid_prq(dev, pasid);
+>>   }
+>>
+>>   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+>> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+>> index 2e5fa0a23299..8639f3eb4264 100644
+>> --- a/drivers/iommu/intel/pasid.c
+>> +++ b/drivers/iommu/intel/pasid.c
+>> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct 
+>> intel_iommu *iommu, struct device *dev,
+>>                  iommu->flush.flush_iotlb(iommu, did, 0, 0, 
+>> DMA_TLB_DSI_FLUSH);
+>>
+>>          devtlb_invalidation_with_pasid(iommu, dev, pasid);
+>> +       intel_drain_pasid_prq(dev, pasid);
+>>   }
+>>
+>>   /*
+>> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+>> index 078d1e32a24e..ff88f31053d1 100644
+>> --- a/drivers/iommu/intel/svm.c
+>> +++ b/drivers/iommu/intel/svm.c
+>> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, u32 
+>> pasid)
+>>          int qdep;
+>>
+>>          info = dev_iommu_priv_get(dev);
+>> -       if (WARN_ON(!info || !dev_is_pci(dev)))
+>> -               return;
+>> -
+>>          if (!info->pri_enabled)
+>>                  return;
+>>
+>> Generally, intel_drain_pasid_prq() should be called if
+>>
+>> - a translation is removed from a pasid entry; and
+>> - PRI on this device is enabled.
+> 
+> If the @pasid==IOMMU_NO_PASID, PRQ drain should use the iotlb invalidation
+> and dev-tlb invalidation descriptors. So extra code change is needed in
+> intel_drain_pasid_prq(). Or perhaps it's better to have a separate helper
+> for draining prq for non-pasid case.
 
-Linus, please merge this batch of hotfixes, thanks.
+According to VT-d spec, section 7.10, "Software Steps to Drain Page
+Requests & Responses", we can simply replace p_iotlb_inv_dsc and
+p_dev_tlb_inv_dsc with iotlb_inv_dsc and dev_tlb_inv_dsc. Any
+significant negative performance impact?
 
-
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e:
-
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm tags/mm-hotfixes-stable-2024-10-28-21-50
-
-for you to fetch changes up to 01626a18230246efdcea322aa8f067e60ffe5ccd:
-
-  mm: avoid unconditional one-tick sleep when swapcache_prepare fails (2024-10-28 21:40:41 -0700)
-
-----------------------------------------------------------------
-21 hotfixes.  13 are cc:stable.  13 are MM and 8 are non-MM.
-
-No particular theme here - mainly singletons, a couple of doubletons.
-Please see the changelogs.
-
-----------------------------------------------------------------
-Barry Song (1):
-      mm: avoid unconditional one-tick sleep when swapcache_prepare fails
-
-David Hildenbrand (1):
-      mm/pagewalk: fix usage of pmd_leaf()/pud_leaf() without present check
-
-Edward Adam Davis (1):
-      ocfs2: pass u64 to ocfs2_truncate_inline maybe overflow
-
-Edward Liaw (3):
-      Revert "selftests/mm: fix deadlock for fork after pthread_create on ARM"
-      Revert "selftests/mm: replace atomic_bool with pthread_barrier_t"
-      selftests/mm: fix deadlock for fork after pthread_create with atomic_bool
-
-Gregory Price (1):
-      resource,kexec: walk_system_ram_res_rev must retain resource flags
-
-Huang Ying (1):
-      resource: remove dependency on SPARSEMEM from GET_FREE_REGION
-
-Jann Horn (1):
-      mm: mark mas allocation in vms_abort_munmap_vmas as __GFP_NOFAIL
-
-Jeff Xu (1):
-      mseal: update mseal.rst
-
-Jeongjun Park (1):
-      mm: shmem: fix data-race in shmem_getattr()
-
-Kirill A. Shutemov (1):
-      mm: split critical region in remap_file_pages() and invoke LSMs in between
-
-Liam R. Howlett (1):
-      mm/mmap: fix race in mmap_region() with ftruncate()
-
-Lorenzo Stoakes (4):
-      fork: do not invoke uffd on fork if error occurs
-      fork: only invoke khugepaged, ksm hooks if no error
-      mm/vma: add expand-only VMA merge mode and optimise do_brk_flags()
-      tools: testing: add expand-only mode VMA test
-
-Matt Fleming (1):
-      mm/page_alloc: let GFP_ATOMIC order-0 allocs access highatomic reserves
-
-Nobuhiro Iwamatsu (1):
-      mm: numa_clear_kernel_node_hotplug: Add NUMA_NO_NODE check for node id
-
-Ryusuke Konishi (1):
-      nilfs2: fix kernel bug due to missing clearing of checked flag
-
-Sabyrzhan Tasbolatov (1):
-      x86/traps: move kmsan check after instrumentation_begin
-
- Documentation/userspace-api/mseal.rst        | 307 +++++++++++++--------------
- arch/x86/kernel/traps.c                      |  12 +-
- fs/nilfs2/page.c                             |   1 +
- fs/ocfs2/file.c                              |   8 +
- fs/userfaultfd.c                             |  28 +++
- include/linux/ksm.h                          |  10 +-
- include/linux/userfaultfd_k.h                |   5 +
- kernel/fork.c                                |  12 +-
- kernel/resource.c                            |   4 +-
- mm/Kconfig                                   |   1 -
- mm/memory.c                                  |  15 +-
- mm/mmap.c                                    |  84 ++++++--
- mm/numa_memblks.c                            |   2 +-
- mm/page_alloc.c                              |  10 +-
- mm/pagewalk.c                                |  16 +-
- mm/shmem.c                                   |   2 +
- mm/vma.c                                     |  23 +-
- mm/vma.h                                     |  26 ++-
- tools/testing/selftests/mm/uffd-common.c     |   5 +-
- tools/testing/selftests/mm/uffd-common.h     |   3 +-
- tools/testing/selftests/mm/uffd-unit-tests.c |  24 +--
- tools/testing/vma/vma.c                      |  40 ++++
- 22 files changed, 386 insertions(+), 252 deletions(-)
-
+--
+baolu
 
