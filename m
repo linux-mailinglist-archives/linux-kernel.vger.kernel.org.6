@@ -1,141 +1,165 @@
-Return-Path: <linux-kernel+bounces-387227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE1C39B4E3B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:39:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7329B4E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:42:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3CE6282908
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:39:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DDE921F21BD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42679194A63;
-	Tue, 29 Oct 2024 15:39:45 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E73194C8D;
+	Tue, 29 Oct 2024 15:42:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="BieAHnzs"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2AA2BAF9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37C0194AD5;
+	Tue, 29 Oct 2024 15:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730216384; cv=none; b=b07imjAjTkD2/jJT7CviMmGnRGw9qmZ6H4XWpfGk9/Gnd0HsWAVhSr5r0/N7fdTT0p/HQpUoi9rlRejImYTCDDOU8MyP111eEI4vYzR81Lh3pRq5g5lL3kfF0dbpPWqA6lgbbvQwoRa3fPsPZSQ5PQvAaufEn0pYX9t5uhfJ5os=
+	t=1730216536; cv=none; b=Dc66sMhfjfFMDaXxyWVhd64C4aH4ILQO1LWrIrSM6FoZ3I+lZluGW9fW4F87lTDHtA1+/M4WoejHxBcZCo6Qibl5b1y7s9DQeS6eDwt5cFe7IJA2DsLOt5qa7dmPh5ARm+LJrkP0iEXMxObrtXk91riEoAth3V5nywX1+aLrF2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730216384; c=relaxed/simple;
-	bh=qjhe3wVVZfsbSrhZcWJPZ5Cy722qDtJMC74PgpZq/SE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SYwaHx+MclYDOEejCInj1V7njb8lkkTQKNvSK96OdSWp5fWY/mqHY7qcJcLk1vRuDtOOo/GJLqJaNbILk4MKVI08hRUuhcwQSRRSPYZQrv+jFxNXCl01kOpYAuOZN1w3jdV4IIANCrwxK+DApP7j6Ib/1PEfFkaRQbiQQFGZm10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdDtR2nVrz6D8YT;
-	Tue, 29 Oct 2024 23:38:23 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 078B7140393;
-	Tue, 29 Oct 2024 23:39:39 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Oct
- 2024 16:39:38 +0100
-Date: Tue, 29 Oct 2024 15:39:36 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Will Deacon <will@kernel.org>
-CC: Ilkka Koskinen <ilkka@os.amperecomputing.com>, Shuai Xue
-	<xueshuai@linux.alibaba.com>, Jing Zhang <renyu.zj@linux.alibaba.com>, "Mark
- Rutland" <mark.rutland@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] perf/dwc_pcie: Load DesignWare PCIe PMU driver
- automatically on Ampere SoCs
-Message-ID: <20241029153936.00004d59@Huawei.com>
-In-Reply-To: <20241029130014.GC4241@willie-the-truck>
-References: <20241008231824.5102-1-ilkka@os.amperecomputing.com>
-	<20241008231824.5102-3-ilkka@os.amperecomputing.com>
-	<20241024113201.GA30270@willie-the-truck>
-	<617bffb7-9dee-6139-53d5-524ba03197f6@os.amperecomputing.com>
-	<20241028173132.GC2871@willie-the-truck>
-	<722266ba-1572-2c2b-87d6-dc4f8ec9a274@os.amperecomputing.com>
-	<20241029130014.GC4241@willie-the-truck>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730216536; c=relaxed/simple;
+	bh=LiEnAEh8Q2vIVB3nkCApVpm/bi7tMMFFKBoNENn+sIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OxGlpxApiOgM/d+rhlydDQ0MWXJpb66bkqbVJVqoYi87yqRbIaOz8wcoRyqO3WoSIs5F/Z+CPq+bCEd0tGvsrd7mhPVG+AvBhzq2JGm8X/PNK/N9gXojGKKmS7OkfNipCSLDr/4OyM5f/BQQsiaHIuI4QcgA5es71aoBoDv9hxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=BieAHnzs; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TC3TTF003918;
+	Tue, 29 Oct 2024 16:41:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	zHF2No7iOZp8TUj0QQhR03fdH9pB3iJrECaVT7vr+7s=; b=BieAHnzsKphMUEH6
+	a/0gYtOzBijwl1r2EFJO4ams2ZnNA4CAEzqbhrWFm6jCw1ZBzgl20tRmeQ7myjpW
+	4mP8Fzov9Pr9Lfop1NyLAc26rVw73mX/8kpiOeJP0K1u6sn2pe+PoCOSofMjhZTa
+	Gi5GbIn4K8iYYP3aytoKhk2yKdVOcEa3CiNmjdxtg3pFdPP6VN/BVPvI5NESlG47
+	Q9UtwuOcglETPhBOhqTv+gvhY8X8U+dOkONbAAQB9wxiAZBNxNun8tVCN4Njiz4N
+	S5IYgugpVrh/PCNM4BUiCeLTaw8u13vJXzK8pv2uEoThDn8gjIwmzEIx3YdAZzpS
+	TByXEw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 42gqacqdhh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 16:41:50 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id AEDA040044;
+	Tue, 29 Oct 2024 16:40:31 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id CA74426B638;
+	Tue, 29 Oct 2024 16:39:41 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Tue, 29 Oct
+ 2024 16:39:41 +0100
+Message-ID: <a483fb50-f978-4e48-b38e-6d79632540f1@foss.st.com>
+Date: Tue, 29 Oct 2024 16:39:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm: dts: st: stm32mp151a-prtt1l: Fix QSPI
+ configuration
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        Oleksij Rempel
+	<o.rempel@pengutronix.de>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Rob
+ Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <devicetree@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel@pengutronix.de>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20240806120517.406714-1-o.rempel@pengutronix.de>
+ <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20dc2cd4-7684-4894-9db3-23c3f4abd661@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, 29 Oct 2024 13:00:15 +0000
-Will Deacon <will@kernel.org> wrote:
+Hi Ahmad
 
-> On Mon, Oct 28, 2024 at 08:27:27PM -0700, Ilkka Koskinen wrote:
-> > 
-> > On Mon, 28 Oct 2024, Will Deacon wrote:  
-> > > On Thu, Oct 24, 2024 at 03:19:17PM -0700, Ilkka Koskinen wrote:  
-> > > > 
-> > > > Hi Will,
-> > > > 
-> > > > On Thu, 24 Oct 2024, Will Deacon wrote:  
-> > > > > On Tue, Oct 08, 2024 at 11:18:23PM +0000, Ilkka Koskinen wrote:  
-> > > > > > Load DesignWare PCIe PMU driver automatically if the system has a PCI
-> > > > > > bridge by Ampere.
-> > > > > > 
-> > > > > > Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
-> > > > > > ---
-> > > > > >  drivers/perf/dwc_pcie_pmu.c | 10 ++++++++++
-> > > > > >  1 file changed, 10 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
-> > > > > > index 3581d916d851..d752168733cf 100644
-> > > > > > --- a/drivers/perf/dwc_pcie_pmu.c
-> > > > > > +++ b/drivers/perf/dwc_pcie_pmu.c
-> > > > > > @@ -782,6 +782,16 @@ static void __exit dwc_pcie_pmu_exit(void)
-> > > > > >  module_init(dwc_pcie_pmu_init);
-> > > > > >  module_exit(dwc_pcie_pmu_exit);
-> > > > > > 
-> > > > > > +static const struct pci_device_id dwc_pcie_pmu_table[] = {
-> > > > > > +	{
-> > > > > > +		PCI_DEVICE(PCI_VENDOR_ID_AMPERE, PCI_ANY_ID),
-> > > > > > +		.class		= PCI_CLASS_BRIDGE_PCI_NORMAL,
-> > > > > > +		.class_mask	= ~0,
-> > > > > > +	},
-> > > > > > +	{ }
-> > > > > > +};
-> > > > > > +MODULE_DEVICE_TABLE(pci, dwc_pcie_pmu_table);  
-> > > > > 
-> > > > > Hmm, won't this only work if the driver is modular? Should we be calling
-> > > > > pci_register_driver() for the builtin case?  
-> > > > 
-> > > > That would be the normal case indeed. However, this driver is quite
-> > > > different: dwc_pcie_pmu_init() goes through all the pci devices looking for
-> > > > root ports with the pmu capabilities. Moreover, the probe function isn't
-> > > > bound to any specific vendor/class/device IDs. This patch simply makes sure
-> > > > the driver is loaded and the init function gets called, if the driver was
-> > > > built as module and ran on Ampere system.  
-> > > 
-> > > Ok, but that seems like the wrong approach, no? We end up with a weird
-> > > list of vendors who want the thing to probe on their SoCs and, by
-> > > omission, everybody not on the list doesn't want that behaviour.  
-> > 
-> > Ideally, dwc pmu driver would claim the supported root ports but I think the
-> > PCIe driver is doing that. How about if we simply drop the auto loading
-> > patch and let users to manually load the driver as they have been doing so
-> > far?  
+On 8/7/24 11:38, Ahmad Fatoum wrote:
+> Hello Oleksij,
+> 
+> On 06.08.24 14:05, Oleksij Rempel wrote:
+>> Rename 'pins1' to 'pins' in the qspi_bk1_pins_a node to correct the
+>> subnode name. The previous name caused the configuration to be
+>> applied to the wrong subnode, resulting in QSPI not working properly.
+>>
+>> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+>> ---
+>>   arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi b/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
+>> index 3938d357e198f..4db684478c320 100644
+>> --- a/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
+>> +++ b/arch/arm/boot/dts/st/stm32mp151a-prtt1l.dtsi
+>> @@ -123,7 +123,7 @@ flash@0 {
+>>   };
+>>   
+>>   &qspi_bk1_pins_a {
+>> -	pins1 {
+>> +	pins {
+> 
+> As you have seen such device tree overriding is error prone and would
+> be entirely avoidable if specifying full board-specific pinctrl groups
+> was allowed for the stm32 platforms instead of override-and-pray.
+> 
+> Anyways, there's better syntax for such overriding now:
+> 
+>    &{qspi_blk1_pins_a/pins}
+> 
+> which would cause a compilation error if pins was renamed again.
+> 
+>>   		bias-pull-up;
+> 
+> There's bias-disable in stm32mp15-pinctrl.dtsi. You may want to add
+> a /delete-property/ for that to make sure, it's not up to the driver
+> which one has priority.
+> 
+>>   		drive-push-pull;
+>>   		slew-rate = <1>;
+> 
+> These are already in qspi_bk1_pins_a. If repeating those is ok, why
+> not go a step further and just duplicate the pinmux property and stay
+> clear of this issue altogether, provided Alex is amenable to changing
+> his mind regarding pinctrl groups in board device trees.
 
-Yup. The PCIe portdrv binds to the port.  Lots of work needed to clean that
-up and make it extensible. Maybe we can then kick this PMU driver off from
-there once it's done.
+I still prefer to have pin configuration defined in pinctrl dtsi file 
+and I'll continue like this for ST board. The reason is that we try to 
+reuse as much as possible pins when we create a new board and so it is 
+easier to maintain if we declare them only one time.
 
-Jonathan
+But, I'm not blocked for "other" boards based on STM32 SoC. I mean, if 
+it is simpler for you and above all if it avoid issues/complexities 
+then, you can declare some pin groups in your board dts file. In this 
+case we need to take care of the IO groups label name.
+
+regards
+alex
 
 > 
-> Sure, I'll pick the other two up. Thanks!
 > 
-> Will
+> Cheers,
+> Ahmad
 > 
-
 
