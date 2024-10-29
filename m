@@ -1,212 +1,180 @@
-Return-Path: <linux-kernel+bounces-387078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC379B4B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:01:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B7F319B4BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3A961F242B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4398D1F2421F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7B3206E67;
-	Tue, 29 Oct 2024 14:00:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2583D206E7D;
+	Tue, 29 Oct 2024 14:01:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EpwdL1ZH"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="l1igGmFB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NGoSjQLb"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66512114;
-	Tue, 29 Oct 2024 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73C1F42A92;
+	Tue, 29 Oct 2024 14:01:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210449; cv=none; b=kk9qaR4XBEiLr5WafAzWaOs5NnuhVcGKoxxXBcj7RoY6fLGmtbTeiAlTddlb1bj0dkBfIKCwvvDtM94i9ir0rlK4rrAgQPHwHzpoW58glOC7TpxPWu/Qwwf9KaBXBqfCmruKUMZjUk0q3rtqtW/BrTAldRZspq5PvSFoFBVhBuU=
+	t=1730210502; cv=none; b=DsPWf//vdKIHMTNKB+ejnwv+2RiJxPSQ+lSUDtXO3oDnuT+E85O1jq7peyTZH1uN1W44GqRNnJ9+xBNNSjkJJt2XLLuErhCFg8OxQXI+DeOLJ/2AU/MHPN3muJqhiSC5iIw3n4L5Tks375Hf+weqi27M3aG1kTEVjn2W7ndS9Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210449; c=relaxed/simple;
-	bh=lHwjzQwwi2GIbhYJDSVVMLbyCXgotdotxz1qHcAHyCE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RADgbwZ/Qu6G73WjBbfetiHt2xtOXC4CyaYZxrvUyk479/yvne+3WtKpBr9rZ/gtG+Q3llKZeHvykQpmORJJRaAWVjFuAlxfs80uvGw7N4ld+TTP3a3EpN3dIY0HVp9mAjxhy0pxJnXTSQm17rs6Jm/6HVZy7uNuswcFR8RcdJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EpwdL1ZH; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5743074bso44777711fa.1;
-        Tue, 29 Oct 2024 07:00:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730210445; x=1730815245; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ojZC2nOVUDIw/kk3Ky4Vr0ESQa/hg/6z1X5oOfns3vs=;
-        b=EpwdL1ZHNQHx4PhBcgfB1Iy/Lme1z1YZI9HZfG7KPO+YoS3nEjtSUIVgDfEIQefpOm
-         eiQNU0GBdqj1rI7N0l90EqC3Ob8EDFAPf7zjET2Sp8DeeXQK5LcBrhP8dGm7QuXKic1z
-         14pdm0PkenOwmciXxJyTzEcBl4J7m28+lnso/vo0Qo/ViCYQj5IeI7uICnasYVEEp1tw
-         sqD2QDDx1MVhZgV53HQ0XiIxUXlRUFZWZmjF3OonnRSlQGzTY+kMyKGyMRQfO3ukGVhk
-         v/GMecScCdWUVEiMRMMwD44/BuB+mdKADd5851DeFKPvM7n0e4ywDWi70xL1cLEYeogl
-         DF6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730210445; x=1730815245;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ojZC2nOVUDIw/kk3Ky4Vr0ESQa/hg/6z1X5oOfns3vs=;
-        b=vdES1E2WWY3GKnw76zIXaGXbodUgGXehOFMu1Bj4QDrBOfnGGrhjtX2mWDi4IhoUxI
-         i3uIPxQ2OPyYB3BlfLVGy0hYjJtzGReVgJa4ilwZYsRyC7WqQzARe7pNU7WAwxxshbKr
-         cc7S34wrEXL+MQpap059k+Nfab7VVkEYr6B9g0AsbQh17IpRrCLCokByna5nt/kxLxGe
-         evC0SUXkANlevolKgxtskEhyNGivvb+RhekDCxVACP7854njZHxBhO/Bx0S37qRWMgv2
-         9SQBFBzfRPqw/6Y1LaX3KGyxXXb8f2lZxQd2VPOe6APZKgSoT8PplBi6YUulIy8YERfU
-         nPlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWT+W7vaJec15jW3blRt3+01kyFy7hrPWNoCa7hrNbFNljMdAMII3lbSgtYXkuj+TqCvZBuM7DA1zGWR5zP@vger.kernel.org, AJvYcCX45TVC8vbQJkq2jR2yr57Szfd/dD+AEtuDrYUc4xioDt3Ln/yaiPOCcqh56fE6aVPYmLbLx2Dot7sNZXOVAzE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvHeq4G1C20L7+nyFUL2HAhWoq+gaW08Y3K5h41cmzgOoS4fhZ
-	Na/XB5zpT+YMT6mNGtQUHZJGAI5X7GZ9l51jsD0Od3+380BNzAfirGSMulptmF7JZn1nzbZ0Y85
-	s718ea8N1He6M/fOlof8sHLq4GHk=
-X-Google-Smtp-Source: AGHT+IGyLicUjMryDek+bmwKdouHVchiYaZzGyv6G1gDH2j/bTbYVOYl/80NFLgKqsCXy4pIKu4L6SRBQzYsw7rj3+c=
-X-Received: by 2002:a2e:a983:0:b0:2fb:5d19:4689 with SMTP id
- 38308e7fff4ca-2fcdc7604b2mr7487751fa.1.1730210444584; Tue, 29 Oct 2024
- 07:00:44 -0700 (PDT)
+	s=arc-20240116; t=1730210502; c=relaxed/simple;
+	bh=lrEcALA54EnYbsUNXZKeqw58RzvlXHhpQO01rUMxDn8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CfqZpWWKTGz8mXLbRYVuzBiTXxDn2MlwKdLoKje+OjlZJt9sGsQWp9O2KMJXeT7gY0tfCAZO7JSTqPmoEpI01ljcx0NSabWvTihhR4h9FhabrH7TnTbiXBV0YHU8CliY/yLiABJRsHQ3CQXp7CazWarQhuMbJpt5/9L4mG56aX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=l1igGmFB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NGoSjQLb; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id A096C11400FE;
+	Tue, 29 Oct 2024 10:01:38 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Tue, 29 Oct 2024 10:01:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1730210498; x=1730296898; bh=p4jsg3LM+d9z1ul1hzPOU
+	tHu1EHhd/xb0I4yaFVNKtI=; b=l1igGmFBYfP+rqdbAOk/oAjd+FpPgcJp7aYtx
+	FkhN7w/ste9oPDLfVkhLmW3MetFKSfSOCLI8o5CQw6Vt7U/OYk2YbMJm/VH7WoKU
+	LS74TjW7zSUcKsfzW0vfH9KWQ/ene7eIA9ijobdr0EyeU1tzFVK/SAV3YgjLRQ59
+	/PLftZ0HEebWv/7/aRpaJr7iA6LGUyQFRPemIIod+kv/p3xvNn9+UV4W4GI27JwO
+	d6zJ6SA2rINMlHMp3CiNphb7xvtnOI4ih5dqyGE+KoR7AraxYpguw6GODtZ6iddf
+	08M+eKJAVGpiNbXURf9kcb8aFPwyIv5kHTsrklpa+P8imr5Qg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1730210498; x=1730296898; bh=p4jsg3LM+d9z1ul1hzPOUtHu1EHhd/xb0I4
+	yaFVNKtI=; b=NGoSjQLbkYEqNFzwq/YrHsW1c2tdnR7KSbG1YCn/fSr8eEK+FcH
+	zTT3icvAUzVt5k3HfYfRovDpFEukd+qwbel9VIBPaROHhciq1RH6nnXxBMoF5RAV
+	gzD4lXGkZc9wNJNyNx2ZS5kCUrxwm+Twx4Cufy1L0G3db8as5Ro7fmzlOD1iyApc
+	d4fpr54l5CtOif8s6EJ++h+NHcCg2YMIA8etSvRATKQ5gdRBpsTxIS1s3XZd90lE
+	uGAgVQnzL2KIOBjM9P6u+7jH0WDiRMF0mO1swICpUXXukBcJASaX1veqhvb8a6UX
+	V1pUMpsSHTvjGSUwOQ3oKrKjRdCI13JeSkQ==
+X-ME-Sender: <xms:weogZ7E8p7NBxuD3kPFzIkAmIRS7BZNMCKkP8wzRN0yMnPyvie9eVw>
+    <xme:weogZ4X53XcWE1kA4vrKEMt_zCeneApyfQMv5zPXmdA9kkho5EvQMc3qnUUmG85HV
+    qKbrm1HJh1qZMF8xNo>
+X-ME-Received: <xmr:weogZ9ITrctCXhR1ptzuL_6VkKEnFMmYCHSIVAzlPXVo_voY39DUqP8jz1TkH69zw-MvHWqDS8_YsoW-d7TaBmgIM51KIGM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgheehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucgfrhhlucfvnfffucdlud
+    dtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeflrghn
+    ucfjvghnughrihhkucfhrghrrhcuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtf
+    frrghtthgvrhhnpeeluddtuedtieeguefhleefkefhieefkeetheehvdetieevhfethfet
+    uedtffegffenucffohhmrghinhepghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghr
+    nhgvlhesjhhfrghrrhdrtggtpdhnsggprhgtphhtthhopedvtddpmhhouggvpehsmhhtph
+    houhhtpdhrtghpthhtohepkhgvvghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehn
+    rghthhgrnheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepohhjvggurgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepnhguvghsrghulhhnihgvrhhssehgohhoghhlvgdrtgho
+    mhdprhgtphhtthhopehmohhrsghosehgohhoghhlvgdrtghomhdprhgtphhtthhopehjuh
+    hsthhinhhsthhithhtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehthhhorhhsthgv
+    nhdrsghluhhmsehtohgslhhugidrtghomhdprhgtphhtthhopegrrhgusgeskhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtohepohhlihhvvghrrdhsrghnghesihhnthgvlhdrtghomh
+X-ME-Proxy: <xmx:wuogZ5GI-95yAf4Kgun4ov5k7PqiQKHJOZXxuP90MF_8fhGIGjokVg>
+    <xmx:wuogZxUwu83Z9xKXf77HwVEG_-PC8JoBkeshapa23xitA8D8Fz3etA>
+    <xmx:wuogZ0PzKNBzklIe40wkwWlknpN6Ollo31QoEg6kEhIBiqLHhlwuRg>
+    <xmx:wuogZw1XXzoqbqnn_BatEnlyma0jZ2rGx10Cxw7Hm7dqKBFzp-Zgtw>
+    <xmx:wuogZ-2Rf-8fLb3RpDYIFujIuX9-fpK5utLlCzg7uN___qX4ifPObDTM>
+Feedback-ID: i01d149f8:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 29 Oct 2024 10:01:35 -0400 (EDT)
+From: Jan Hendrik Farr <kernel@jfarr.cc>
+To: kees@kernel.org
+Cc: nathan@kernel.org,
+	ojeda@kernel.org,
+	ndesaulniers@google.com,
+	morbo@google.com,
+	justinstitt@google.com,
+	thorsten.blum@toblux.com,
+	ardb@kernel.org,
+	oliver.sang@intel.com,
+	gustavoars@kernel.org,
+	kent.overstreet@linux.dev,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	akpm@linux-foundation.org,
+	tavianator@tavianator.com,
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	kernel@jfarr.cc
+Subject: [PATCH 0/1] disable __counted_by for clang < 19.1.3
+Date: Tue, 29 Oct 2024 15:00:35 +0100
+Message-ID: <20241029140036.577804-1-kernel@jfarr.cc>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706225124.1247944-1-iam@sung-woo.kim> <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
-In-Reply-To: <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Tue, 29 Oct 2024 10:00:31 -0400
-Message-ID: <CABBYNZJp102JWcUt-qke0QYB1Tfta6C+hYAStCcopDckgT_EUw@mail.gmail.com>
-Subject: Re: [PATCH v2] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
-To: Sungwoo Kim <iam@sung-woo.kim>
-Cc: daveti@purdue.edu, benquike@gmail.com, 
-	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Sungwoo,
+Hi Kees,
 
-On Mon, Oct 28, 2024 at 10:41=E2=80=AFPM Sungwoo Kim <iam@sung-woo.kim> wro=
-te:
->
-> Dear Luiz, could you review this? This bug and fix are still valid but
-> have been forgotten for some reason.
+Bill's PR to disable __counted_by for "whole struct" __bdos cases has now
+been merged into 19.1.3 [1], so here's the patch to disable __counted_by
+for clang versions < 19.1.3 in the kernel.
 
-Please resend.
+Hopefully in the near future __counted_by for whole struct __bdos can be
+enabled once again in coordination between the kernel, gcc, and clang.
+There has been recent progress on this in [2] thanks to Tavian.
 
-> On Sat, Jul 6, 2024 at 6:53=E2=80=AFPM Sungwoo Kim <iam@sung-woo.kim> wro=
-te:
-> >
-> > __hci_cmd_sync_sk() returns NULL if a command returns a status event
-> > as there are no parameters.
-> > Fix __hci_cmd_sync_sk() to not return NULL.
-> >
-> > KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-> > CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dir=
-ty #10
-> > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04=
-/01/2014
-> > Workqueue: hci7 hci_power_on
-> > RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.=
-c:138
-> > Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48=
- ba 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 =
-84 c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
-> > RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
-> > RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
-> > RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
-> > RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
-> > R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
-> > R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
-> > FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:00000000000=
-00000
-> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
-> > PKRU: 55555554
-> > Call Trace:
-> >  <TASK>
-> >  hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
-> >  hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
-> >  hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
-> >  hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
-> >  hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
-> >  hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
-> >  hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
-> >  hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
-> >  process_one_work kernel/workqueue.c:3267 [inline]
-> >  process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
-> >  worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
-> >  kthread+0x2cb/0x360 kernel/kthread.c:388
-> >  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
-> >  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> >
-> > Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOV=
-ERY")
-> >
-> > Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
-> > ---
-> > v1 -> v2: make __hci_cmd_sync_sk() not return NULL
-> >
-> >  net/bluetooth/hci_sync.c | 18 +++++++++++-------
-> >  1 file changed, 11 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-> > index 76b283b8e..c4e4abc6e 100644
-> > --- a/net/bluetooth/hci_sync.c
-> > +++ b/net/bluetooth/hci_sync.c
-> > @@ -201,6 +201,12 @@ struct sk_buff *__hci_cmd_sync_sk(struct hci_dev *=
-hdev, u16 opcode, u32 plen,
-> >                 return ERR_PTR(err);
-> >         }
-> >
-> > +       /* If command return a status event skb will be set to NULL as =
-there are
-> > +        * no parameters.
-> > +        */
-> > +       if (!skb)
-> > +               return ERR_PTR(-ENODATA);
-> > +
-> >         return skb;
-> >  }
-> >  EXPORT_SYMBOL(__hci_cmd_sync_sk);
-> > @@ -250,6 +256,11 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev,=
- u16 opcode, u32 plen,
-> >         u8 status;
-> >
-> >         skb =3D __hci_cmd_sync_sk(hdev, opcode, plen, param, event, tim=
-eout, sk);
-> > +
-> > +       /* If command return a status event, skb will be set to -ENODAT=
-A */
-> > +       if (skb =3D=3D ERR_PTR(-ENODATA))
-> > +               return 0;
-> > +
-> >         if (IS_ERR(skb)) {
-> >                 if (!event)
-> >                         bt_dev_err(hdev, "Opcode 0x%4.4x failed: %ld", =
-opcode,
-> > @@ -257,13 +268,6 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev,=
- u16 opcode, u32 plen,
-> >                 return PTR_ERR(skb);
-> >         }
-> >
-> > -       /* If command return a status event skb will be set to NULL as =
-there are
-> > -        * no parameters, in case of failure IS_ERR(skb) would have be =
-set to
-> > -        * the actual error would be found with PTR_ERR(skb).
-> > -        */
-> > -       if (!skb)
-> > -               return 0;
-> > -
-> >         status =3D skb->data[0];
-> >
-> >         kfree_skb(skb);
-> > --
-> > 2.34.1
-> >
+Also see previous discussion on the mailing list [3]
+
+Thanks to everyone for moving this issue along. In particular, Bill for
+his PR to clang/llvm, Kees and Thorsten for reproducers of the two issues,
+Nathan for Kconfig-ifying this patch, and Miguel for reviewing.
 
 
+Info for the stable team:
 
---=20
-Luiz Augusto von Dentz
+This patch should be backported to kernels >= 6.6 to make sure that those
+build correctly with the effected clang versions. This patch cherry-picks
+cleanly onto linux-6.11.y. For linux-6.6.y three prerequiste commits are
+neded:
+
+16c31dd7fdf6: Compiler Attributes: counted_by: bump min gcc version
+2993eb7a8d34: Compiler Attributes: counted_by: fixup clang URL
+231dc3f0c936: lkdtm/bugs: Improve warning message for compilers without counted_by support
+
+There are still two merge conflicts even with those prerequistes.
+Here's the correct resolution:
+
+1. include/linux/compiler_types.h:
+	use the incoming change until before (but not including) the
+        "Apply __counted_by() when the Endianness matches to increase test coverage."
+        comment
+
+2. lib/overflow_kunit.c: 
+	HEAD is correct
+
+[1] https://github.com/llvm/llvm-project/pull/112786
+[2] https://github.com/llvm/llvm-project/pull/112636
+[3] https://lore.kernel.org/lkml/3E304FB2-799D-478F-889A-CDFC1A52DCD8@toblux.com/T/#m204c09f63c076586a02d194b87dffc7e81b8de7b
+
+Best Regards
+Jan
+
+Jan Hendrik Farr (1):
+  Compiler Attributes: disable __counted_by for clang < 19.1.3
+
+ drivers/misc/lkdtm/bugs.c           |  2 +-
+ include/linux/compiler_attributes.h | 13 -------------
+ include/linux/compiler_types.h      | 19 +++++++++++++++++++
+ init/Kconfig                        |  9 +++++++++
+ lib/overflow_kunit.c                |  2 +-
+ 5 files changed, 30 insertions(+), 15 deletions(-)
+
+-- 
+2.47.0
+
 
