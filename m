@@ -1,599 +1,332 @@
-Return-Path: <linux-kernel+bounces-386585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574919B4575
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:18:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F879B4578
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:18:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90B8B20394
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:18:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDFDB21FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A6C1E0B7D;
-	Tue, 29 Oct 2024 09:17:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25D71E7C02;
+	Tue, 29 Oct 2024 09:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="b1DQxCDm"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2086.outbound.protection.outlook.com [40.107.92.86])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="BISrnGG1"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011045.outbound.protection.outlook.com [52.101.125.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2EE1E1021;
-	Tue, 29 Oct 2024 09:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B921E0DF8;
+	Tue, 29 Oct 2024 09:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730193478; cv=fail; b=eTg9iQKFiog0MRouMkGz5KmeCggYks8cWKnlv2Nm5B/20KbLBBeG770xc77/y7biY46iZWpiAUHZ/c/g1xn4iuxCBL7lfvHtJhA0UE0UBU9qwaZweqdy6nLOIJ/VPLVBRTGjJmeZNxD6S+kieZj+qGEgZ1M8T9DR7mw5uUU5Qmo=
+	t=1730193495; cv=fail; b=hpqa8SfdOU3Z3jEMKa8+jtMK5el9tMj+xz1gm7+2x2ILr2acrdUuYiU/3AbedxwNsKmftPDGD0/5Ykmc1+medOW7fV8AzOrU7s9C7movIByvfp5Qd8czcAFh3QUY7KISfjxQ5dc2t1XgV8ZgGmQHhlGKfY4D+MQUoLnoHGd7cnk=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730193478; c=relaxed/simple;
-	bh=NPhmvtIUi5TiiR+jTFDTn+KF9FEVqGYs3RxST3knlrQ=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qUT8+HNMC7qU/0vBqnwiOzpKXIvpPVQP0RLVPJou7H/JaNlWTngaCF8zFFLq8k3A3QQnT4hUCJbxVloZblEd5zgf+Uh85JNBqKEF65xJSjm7BnuDMFww3RcYDN4uzEw09XzEyEc/WF4N/hQjEqI9Cg5YIPlGhAbr9cl6XUIQrdQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=b1DQxCDm; arc=fail smtp.client-ip=40.107.92.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1730193495; c=relaxed/simple;
+	bh=S5q8AzwcgpbQa7Btzjt/sS9yM17dCtrs1JbMINmdOJ4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=E2LBR9VmIihT7ruCvnSZW5dKuQhBYvKHGPG7b7zin0QtCZZx1gDZg9YNTKNDhjl1NtbZR5wf3xcZ73V+qSf8uTAZW15a1vflSlGNpGu1QEZdlBPSo15+yP9Dp0w+Llp0S+Z3O2/mRnXLPj8KQo1SGvX8UnyiQQE4B0MMhLR8lbA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=BISrnGG1; arc=fail smtp.client-ip=52.101.125.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BoXd13OCIBROb+G1b4ibq1yXGnSHsgv9N1ffS3SZ2560cL09Re5hoeFIUmZQPpX5sA5FBIvpq07tUzauAlt4BTli5r6j5GKjn9Ry/6L8svkNyN9j4btV9pbSZas0jx0nQx2N0vXP6UoHIOU7GxB5FWjVNYJtdUALCySwA76TE3zRvk+QUH7yAJT5HMPZ0ZbV8+rTF9F+4t6unLcQlk71yRQ3fs8Fbwt1UOqdS03ZhETdFOaxMSpzGTPbe6QvXFKsygyTSBV+sqWtQKg3/TyXPU8aTWzoHrkcRw+ExxTF+/McEF9PZnxZnABpfkmLK3faa9Z62fGaCge4r94Dz1K9qQ==
+ b=BFGAKlWStno8t/CZhpOo6D6rGrvIcdNf3eDJH9Xjiiz86AvifzGjuNo/fCcuYEBF94c17J2sIhYj+19hwoZt9RtyjXF4MXuCA7vj/u3MpO339d29aYkOBaVkDaCPF5dfJK57CRHxmSTkhq71B647RfAKX38rszpdk8GyFFxtdW3J6xtjplE1keLwqrgvcuvQlOi/F0+V7oQOI72pguae4ncUNZw4DSwuB4ubMQJtCPytdcDSq8aNsGUsYuRQ3TtyC2Kwux1AzFtNLBdwqEP05QxuGDU2hrW4RU68cXC7vpDxY6CI30dmmFciE/jNItwtRhTHAsSFBwCssVQPdsajbg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ej+6LAiWgZL7cMf5TXgzQLP7gLBuTW0442nDFnKNiQ4=;
- b=fYq/MMnifxd1PyAgQ3JDm2zGLqfogKw77akpaC091eJ4n5b7P5KFJnnZ3Xk4tXVlqvFsvqQTzos//+KXwVz3QULt+fHIzwLRn0nxk45MDNA9zPtqVYGHpic7ke2Zudhr8rwWYZ8ruC2cyRqWtqVAXzM0v4Lpj/B/l4m048h9CL1pKKEd6mc5FrU4H5tq1i61+Tg3MMQzJqWIYcGS0Hc+4UUGcXCdqvKp+wzmfK7SwWzCo6iISv1uhliCirxAx0sqgmf/+pLK1+O7WaKP6X4ZovNJag2vEzXyJgdt8TxG1sPcxpxg3lnIXIoRGKyAI9rdqk36tnutPGyp3HFBRrJxWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=S5q8AzwcgpbQa7Btzjt/sS9yM17dCtrs1JbMINmdOJ4=;
+ b=rKtEOk4W3q7bTWo8UHxjoMvTqkIhCOIWARMzZCbRSxFC4ElnJ09QM5e9cJKsYn2flQqzG37jhVa4xnARmPgNeAFGFC1RAjA1yAZb2sUWjGjdfxAPHJGIiGJ4I0Ain7qSDwT54ICTz50MSs2HrKYCZjXZKFhHswn7QuBlMG4kqUpC91HyjpGSCLOIv28thRpdOGx23SudH1Z968UABwFxpGsJThfTZpQpLytMzNqOXGU95TeiXJNFSOd6EVj97D0wJZky45ZpPVXnXHbFRURFPSTTc0cAjLFHkmouqNcsPaS/Qcw/3w91WsxjlZQnSgd0ibLKhxcHHE7K5ghGHlSlHg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ej+6LAiWgZL7cMf5TXgzQLP7gLBuTW0442nDFnKNiQ4=;
- b=b1DQxCDm+mQRE9PsvdvUrbDyR0p9TcQFk5/xZMdH4wOzwnhuKeOOQAlaGbKSILhrat0E18NQI+4GNfCkS1Qj44TD3+R3YMTAt1EY6O0s+WM1oFOFYjG3cCBKTdYbj6+wiqHcnHnyhnvF7k3ib1UBj09Pj17YTk/pYjE6nP4rd2A=
-Received: from SA9PR03CA0010.namprd03.prod.outlook.com (2603:10b6:806:20::15)
- by MW3PR12MB4442.namprd12.prod.outlook.com (2603:10b6:303:55::14) with
+ bh=S5q8AzwcgpbQa7Btzjt/sS9yM17dCtrs1JbMINmdOJ4=;
+ b=BISrnGG10Z8vNUOx1A3JoWFl9R2in6fFkdw82aNGHakX30i/fC7oaHFfra8/48JapjHThqsRqEoqrvKwc+kisCEvXoiGO/uG54rjkB+rR9qJhZIKpv1ZLoQGoQBNGW+/21Acyf6kZdSQlsKBj+kuZ2TkBVDhlVKOaRh3M7yrIOg=
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com (2603:1096:400:3c0::7)
+ by TYCPR01MB6733.jpnprd01.prod.outlook.com (2603:1096:400:9e::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
- 2024 09:17:49 +0000
-Received: from SN1PEPF0002BA4F.namprd03.prod.outlook.com
- (2603:10b6:806:20:cafe::36) by SA9PR03CA0010.outlook.office365.com
- (2603:10b6:806:20::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.26 via Frontend
- Transport; Tue, 29 Oct 2024 09:17:48 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SN1PEPF0002BA4F.mail.protection.outlook.com (10.167.242.72) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 09:17:48 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Oct
- 2024 04:17:40 -0500
-From: Nava kishore Manne <nava.kishore.manne@amd.com>
-To: <git@amd.com>, <mdf@kernel.org>, <hao.wu@intel.com>, <yilun.xu@intel.com>,
-	<trix@redhat.com>, <robh@kernel.org>, <saravanak@google.com>,
-	<nava.kishore.manne@amd.com>, <linux-kernel@vger.kernel.org>,
-	<linux-fpga@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [RFC v2 1/1] fpga-region: Add generic IOCTL interface for runtime FPGA programming
-Date: Tue, 29 Oct 2024 14:47:34 +0530
-Message-ID: <20241029091734.3288005-2-nava.kishore.manne@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
-References: <20241029091734.3288005-1-nava.kishore.manne@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Tue, 29 Oct
+ 2024 09:18:08 +0000
+Received: from TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479]) by TYCPR01MB11332.jpnprd01.prod.outlook.com
+ ([fe80::7497:30af:3081:1479%7]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
+ 09:18:08 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Liu Ying <victor.liu@nxp.com>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+CC: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org"
+	<rfoss@kernel.org>, laurent.pinchart <laurent.pinchart@ideasonboard.com>,
+	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com"
+	<jernej.skrabec@gmail.com>, "maarten.lankhorst@linux.intel.com"
+	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
+	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>, "mchehab@kernel.org"
+	<mchehab@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de"
+	<kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
+	<will@kernel.org>, "sakari.ailus@linux.intel.com"
+	<sakari.ailus@linux.intel.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
+	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>, "arnd@arndb.de"
+	<arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>,
+	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>, "sam@ravnborg.org"
+	<sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>
+Subject: RE: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
+ display common properties
+Thread-Topic: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
+ display common properties
+Thread-Index: AQHbKOKZPN4b66+xp0G7h8Y65TjgzbKdVYDggAAKTwCAAA0QUIAABUEAgAACR6A=
+Date: Tue, 29 Oct 2024 09:18:08 +0000
+Message-ID:
+ <TYCPR01MB11332D71A26AB9FFBDF593281864B2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+References: <20241028023740.19732-1-victor.liu@nxp.com>
+ <20241028023740.19732-9-victor.liu@nxp.com>
+ <TY3PR01MB11346FDF74840ADF7273A218D864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <69cfeb75-696e-43c4-ad27-aaf9ad3c6c78@nxp.com>
+ <TYCPR01MB11332FF433F4E10E4D0B7FE2B864B2@TYCPR01MB11332.jpnprd01.prod.outlook.com>
+ <17b6858e-1afc-4fec-9044-2d17395ec6a5@nxp.com>
+In-Reply-To: <17b6858e-1afc-4fec-9044-2d17395ec6a5@nxp.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYCPR01MB11332:EE_|TYCPR01MB6733:EE_
+x-ms-office365-filtering-correlation-id: 38216755-f3c6-4f07-7ef1-08dcf7fa9a67
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?U1lKU0JMRG9kay85TTBGSHhXWG02QXpSMWJROTFtTFM5WlNORmx2aSs3N0kw?=
+ =?utf-8?B?SGd2UUpra2tDNkxGbThwcUoxc3ZkUEtxT3FCZGkvcGI0THhHVG95L0RFN0My?=
+ =?utf-8?B?cTJrVkFMNk5LeE1MTGpmRUVJS0F3Z2lZd3AwL0crTlNIM09jOVlTNVdtMytQ?=
+ =?utf-8?B?ZEc2YmJ6RWlNUTJJYXJyYlJZTUZRRDlnMjI0Y1E5a1lxOUQ3ekx4VUltR3Fi?=
+ =?utf-8?B?L3JHdW9kd25ZdlZkNHRNUTZKQm50eXJsTE5vVndYbzB0anRKMzk0bFlQT0M5?=
+ =?utf-8?B?RDV0aUpsTkRhbjR6Q0ZOK1duUm1wLzNISWNkNEtQbE9WNWVBaU9vdUVxOTh1?=
+ =?utf-8?B?MUt3U1YxWUZoNlVWdVp6T1h4MzhRaUUvZ3hZaUpENTRmSkJaM0pkRlFsemYw?=
+ =?utf-8?B?WGdtZEp2OTNicEoxMVpRT0VHNWx0elN0WCtmc3JPdVJaY1FGcXdQVDJsbjZO?=
+ =?utf-8?B?ZDFjS0tRSFJXV2dlaEVtWSswZ3gyVitWdlo3cHJDSkxLOW9xeFlUdUlXOXV1?=
+ =?utf-8?B?MmJpaG5qM242eVdnWW8yM2NoT1NCeEdhd1Y3YkpZV1JPd01LODBVMGU3YmZL?=
+ =?utf-8?B?d29kSnMxc1lIblErVHdzcmxzczNkU3JmZFgvUFREQlcxbnZIbGxFbUwzYTRi?=
+ =?utf-8?B?eWtYWTRtWFZmSGxib1p4bTNpRFVYU1gzLzVrSEF3QzZ6TlhoT1ZyM3R3WnB4?=
+ =?utf-8?B?TEpzQ016bCtEajFtcDNaVkVudkFHYkJzWmc2WXRDZlA3a3l5U0ZrS0JGMkRM?=
+ =?utf-8?B?UHUrTXdtd0dDdE1uWTVjUFFVRms3UmRvNS96NnFiNVMva1pRTW1ENklLVEdZ?=
+ =?utf-8?B?MFlmWUI2OFAzTjlIbU1JOVVMZjc4MjQ1dGJTb3Z5S0NGZEovcnJnWFQrdjU3?=
+ =?utf-8?B?ZHdXMGVYeFJGakdvUlJBMTF0K0ZRY0VkQ1JhcytnSUd5OVJrTXE4UTJCZFVO?=
+ =?utf-8?B?eGVyazJsMWkvN3JFU2RrekkvVnJYSDI0RnlKbThTeWxlWHVrY3puV0k1ZmxB?=
+ =?utf-8?B?YnJLWlZwb2VvZVlrR01HZXgyRDBDRlhWVDNkUU1OVVVRSzcxaUJVNXZRcDRr?=
+ =?utf-8?B?VFJIWjlSckw4QndpWGhLSHlOSEhpVzlvYXN0aEFtWVRaTkJ2Mlc5UVpaOEdl?=
+ =?utf-8?B?Z0t4VnpkK3dnRWVpRENTdzJHYUJoT2dmUWFnWTlwelFiaEpXQTBBdUZybXE4?=
+ =?utf-8?B?azdJaWpydlEwYmZhVGhYYitEdmo5bEtwbXJZc1JOS0dGSkpZbDFKTzBmNlhD?=
+ =?utf-8?B?Nk9EbngwdTlqWUgvcVB2cWRNeXdlaEdUOE5PdlVONjdNaVNXWlh3eElVVXFh?=
+ =?utf-8?B?MVhYSU16Q01CZ2Q0azhvZ2ZZYXA2M2h5N28wT2NmT3prSFZiVnZuOXMwS0FV?=
+ =?utf-8?B?SExpa2NFZWpkVWlVTGNXbUdwM3NPb3llU2Z5T2N2Q01EUjRjQUZ6YU5pK0RY?=
+ =?utf-8?B?NmFUTEpUd29ZY1dFMlNpdHBKTFVXa0ZzeFEwYmRLK25MWXJRb1UrWVJ5Tnk3?=
+ =?utf-8?B?RXBEeDZWY21KYzhueVVvUjBCRy9aTmg3N2dHeGRPaGtqL05DMkpHMVlDRW5N?=
+ =?utf-8?B?amlwVVZvUG1rNkZhaDB5R1l1SlNhZ3RZNGlFSldpS3pNRkIwUG1iOXF5RzZV?=
+ =?utf-8?B?MTZ6MmlGK2ZLTks0S3QwdEVhL1UrOFFFY29VZFFqdE1UTWRhWUh5Z2ZzZ2pE?=
+ =?utf-8?B?aFRTRHRpZUxZbXlGSUpMN0ZrQWorUXFGOHQza1laWGl3aURNZENuRThOWHBu?=
+ =?utf-8?Q?6zC6KJ0wcEr3On4G/j9Yq5zVQS09We7mv4KFbIY?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB11332.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?aW5kZGVyUUgvZWRvb3VlUGdCNkxWQis4ci82MmxDLzFCTjRXWmV2YkhrMjZu?=
+ =?utf-8?B?bEFXMkZ6VU5TTHRvd2FCUk9VZkhWYlUybWhLVFVLMG11aXgwcmhwOWQ4T0g0?=
+ =?utf-8?B?TXJTSmoweVZkYURjQ0VEb1BOVytWbWVuTTM2OEFrUDZBenF3MmloZUQ3L3c0?=
+ =?utf-8?B?TitiNWVTK1V4S1M1Qko5T3N4bTF4U0YwUzJtYWNHK1RKQXFGdUJxaXZIbFhV?=
+ =?utf-8?B?M3pTOGo1VFduZWVtNy9kdm93MlIrOU1jOEFjS0dzL3JRVlcwbEFDWFJpbXBV?=
+ =?utf-8?B?L05tYk9uZXd2UURGRTU4N00yZWpJOGphWFVIb0g4R1NSYkhpV1I0enRaZzc2?=
+ =?utf-8?B?R0FTWmtVSHNBZ2NsV1NSMlNaanVlTGg2YVgwenp5QjFSWlc1U0FHbkZSb0lM?=
+ =?utf-8?B?SWR5Q2ZqZmErREp1aS8rTkdCalcreWc3WlprVWQ4VXExOTV1QytnV3FvSGNt?=
+ =?utf-8?B?UktMaGFZS05pUHd3citGakkyZFY1QlRHMWMyOFdPUkErK1VGS09qOHR0N3Ex?=
+ =?utf-8?B?OFNRWWdXbittOExSK0REd3FieW9oSHVlZHhhWHZLeExkTlpscVVsN2l0OW1i?=
+ =?utf-8?B?Z1VMQzgvM1kyOFhrTWQwTy9pajYyVllOUTAvK1Y5VlV5M1JCQzhoQ3BWM2d0?=
+ =?utf-8?B?OVAvS0kyTkdCcG9oVWJaa1pTaGppQkVVWitSS1c4SVdvdWUxL1crejBKSnZ1?=
+ =?utf-8?B?cW1BTUtvNmF3Wm1pdE8wZllzSm8xTEVsWGhBbTc1KzdTVWJUQ1hKei9PSm1U?=
+ =?utf-8?B?a3ZoN1RaN21rUW5jeG5YU1drWmxySVJOMDNGUnF4Vk12WHZHay9QNGxCeG9U?=
+ =?utf-8?B?Slk5QjhEYk1kaUU0V0x4SFQ4M1RTYUQxQUZhbkovd09Zc0dlZWYwTzlBdVIr?=
+ =?utf-8?B?dVl3U2JiZjRubGo2eFoybmJsZWVHVmNodklMMXZzQkwvRDY3SlJlcmNGeHZP?=
+ =?utf-8?B?NXVSV05EZUlBSUNNaVRGTFY3K3FsRG1yVjZSMUltNHRZMENoY0JzWlhvdEU3?=
+ =?utf-8?B?bHNmb0xpdEtGcUJFcU9obHZRZ3F2bVRrWDQvNkdyb0RTQWI2eUM3TUdOV0VL?=
+ =?utf-8?B?cVYwVHV6eWJ4Z0NjN0g2VlpUMzNSRGlwRnl1RmMwcVJmUkdzZFA1TFpCUHB6?=
+ =?utf-8?B?bFhMdlZwcnF0SHJGUk0wem02ZUlCc1k4b2ZkWlA0eW9iQ1JWTFZmbHFWOTk0?=
+ =?utf-8?B?ZkRRTzNDbTJBV3hTc2NaZHhhVm1nbDg1S1dQYkdwNkt2NFoyRUE0R0ZnbE41?=
+ =?utf-8?B?cHhxOEtzSGlLRlRGdmNDWUg3VmVlRUF5OUdVWVYvdzJtZzV2OFhiRkNLNDJ4?=
+ =?utf-8?B?YXVmV2kwQWZrWFZJY1VseHFaQlM3dUs1T25EZmhoZTR0TFZ0T0VEMVVFNWRx?=
+ =?utf-8?B?N0IrUkJZUzJMVWdzeGhLY0dlNmxzb1VNdytkVWsxTEozek1rU3UyUmUyNlVz?=
+ =?utf-8?B?WFdXUVkwTTZDVzJCZDArRTRjNzg2ZnJ5YXNCdEd3RDlwaFczelVydXNkTXlF?=
+ =?utf-8?B?RVFoUUNnOHhVNjlkbndxUk5YTnFtYWtBWlptT1U0OHhhUkNoQXpBMmUxdCti?=
+ =?utf-8?B?U1B2eUg1VmpYSUQ1czhpTDlpMzBuQjZ1bGhFRjVNakhRRXMzc3FJTFVZUEdH?=
+ =?utf-8?B?SkNlRml2YkVjWDRnS1AwMDdJOUhNN0RRRlVRTWRNejNRSnZyeVRhU3B1Z2dJ?=
+ =?utf-8?B?cU1lYThkK0lsUVVUQ0ZORjVxaGNzZjVKZHVsalgvMmFTekVnWElSd3JzOVJ4?=
+ =?utf-8?B?Uk5ZMGhDQ3pJK29hZno3UUJOZDdRaFJ6RzMvZGR3TW1mb2ZHQ1ZaN2xMK0w2?=
+ =?utf-8?B?WlVFa0ZRMEtLakFmWXJUTlZCaTJPODFGSS9ZUHRpQlBUQXJiQnIvWThEdUlO?=
+ =?utf-8?B?SFNLZDI1V1VxOFhpdFVRczF5TnIvOUZlWU1PclVjYjRBMkkrbW56ck9makZy?=
+ =?utf-8?B?VmdvZGkrNHNOVkJ5d2tzVEwxUkZaMW8vWE5TdTZ1WTU2aEk0dTRYMHlyNENu?=
+ =?utf-8?B?OGcybVpPRVNoSGd3aDRnSy9QN1MyZHpyUTJpMnlYTFVtRDVYN3hTYk9HSFYw?=
+ =?utf-8?B?dGxncDcvbENJSytlL1Nlc2crUEMrWDFpQWtNL3BuNDNSRm16c01WdnVwNlAw?=
+ =?utf-8?B?aWwwZHV0aEx5ZVFzLzZxYlhQSFR2aGhPY0Vqb1BJWTNoUFdFTmoxQVEyOTZp?=
+ =?utf-8?B?d2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN1PEPF0002BA4F:EE_|MW3PR12MB4442:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47d6d5c4-7952-4db7-bcb7-08dcf7fa8ec3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|1800799024|82310400026|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?WybMvs18Q16+wFktlGGBfJrZnnWwBM33EeLUes1WcWWYIy7CiI+Gy9z6DgmW?=
- =?us-ascii?Q?BalUlXlQtM7zu0fNfCp6nVeDZ/iNK1R42UezPFLnGcWlQg+1HGOwPxA5Esuj?=
- =?us-ascii?Q?F7aRuRkYS2/DQowEJ92BMeBBH/viyfdCqJFvTlQS1fq+q7XvFmnjmFZXVDUV?=
- =?us-ascii?Q?CWK62R/U/lb7afpy7ouaWVfEP7a5LosccmwQBv5L0j0HADvArmplkhsvnzcu?=
- =?us-ascii?Q?Qxx02QJ5+zhUd1Xw/37mm/RuaZ6hM8D1PA/pP0pYHriIehyKE3HQDGNxtqCJ?=
- =?us-ascii?Q?URxvv0lDjQcGEo6YKV9vpx+JGhUKZL9bNOGA4xt7J6vhI+pzaOlhrn1a5oEs?=
- =?us-ascii?Q?qb2mw34UKcE90VFRg2Wm6m37BKvVHoU4HrJCWBQtv7UmjQ2Cohy6DodvoSb7?=
- =?us-ascii?Q?UMIy8nFWQCjVTBLlJ3bxFq0Jy7f3iQynvj3zEGnys72pzalgzLr3k84NT+xs?=
- =?us-ascii?Q?QRWLMFcqdmtXthitWEKQ/f6wBHkYbRWtlV1M9fhKocKgICrRjXKgrRpM20I/?=
- =?us-ascii?Q?cNcPvAjurQzKfSm3u9JjqzBTalEslp0P6iSBRGsKBCxtxy5wB4aPoDEyhU4p?=
- =?us-ascii?Q?55FeNp8vJaQtTw6uj97Z2yqZjD3HCmfem9qZVgpcKhLnMI2s8MqTbD9roI9T?=
- =?us-ascii?Q?z+0bz5JwZaKDz/jKNY4fyRHgXXQuQFlZPWvIyqlBn+34AUT3IOb+QLBzbzCR?=
- =?us-ascii?Q?xcGtw/6WCPX/5LoRXbvawJT7mYm65nN7ZZ8Uvxjyc4731//6DuBOONzV0U08?=
- =?us-ascii?Q?z6fWQZ3/tCnULynejtFW6LWVhzkILyJReU44TDcfOzAsh3xjDP0J2PONZ7zh?=
- =?us-ascii?Q?l6rbSOweIeRlhCIpJBcnS7kuYcVfxXtOHgBa+igd+zdVH3DnfsNtOccZXr5M?=
- =?us-ascii?Q?AGrjBU7FtTrI5jwtHr6aJNzTf4RC76BZUBqTyCOGKdrdy8svWmKdgMk++zNA?=
- =?us-ascii?Q?pYa8RpiJMM1OpGxSEkuUIrA36Js4iHt29NzC1bCvTvhSDmuRlACDb3XYNI1J?=
- =?us-ascii?Q?KU/4kTDozPYe1QBqnnz/gMgr6SH0YOUJbD/Dy8ClM0Kz485bexNzhtLkuP1b?=
- =?us-ascii?Q?Uyl6MSQqz7AISSxC5YEdmbcgKXBZlkELe4v4LV/mhqnA9wEwq8PaO8A461z2?=
- =?us-ascii?Q?pbV4nea95wApK3M0RfkQgE9bYPKZcrsJt229czfMQq0hBwSgDFnIGbO821aR?=
- =?us-ascii?Q?aPiGp/ePWqn5EbgVFdPtpEQvapJy0gXxkNh4+skpxi2QwF3E/zxe4Twa7T6h?=
- =?us-ascii?Q?n/6aILE2HYR2XrY1mitOjMjKqBNZ8qdiNv5FzE3dlWxsyw7s0971w+ziPGRX?=
- =?us-ascii?Q?7FGvoQdQZHKBT+IeKWEcbZ27E4NbAAZ3TvbKY8Chc5V1DLVi7YG+78E7P5/z?=
- =?us-ascii?Q?YoILnjwba77HHebIEWOPYSTGwLKsqsqrrIsE1wiHGp1Yt5jrFqf8CZUg0B5v?=
- =?us-ascii?Q?4d3RUKELbP8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(1800799024)(82310400026)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 09:17:48.8063
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB11332.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38216755-f3c6-4f07-7ef1-08dcf7fa9a67
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2024 09:18:08.3703
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47d6d5c4-7952-4db7-bcb7-08dcf7fa8ec3
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SN1PEPF0002BA4F.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4442
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SXHg2t9DjvodXq9kfkAdGulpuUOFvBcMlLhevmGepIFt3iEa5FhYXqJOvcHANlwewzjABCRfnSfWTKAb5/EATYQg5qPgrcD/pHNMVi3h/Wg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6733
 
-Introduces an IOCTL interface within the fpga-region subsystem,
-providing a generic and standardized mechanism for configuring (or)
-reprogramming FPGAs during runtime. The newly added interface supports
-both OF (Open Firmware) and non-OF devices, leveraging vendor-specific
-callbacks (e.g., configuration + enumeration, removal, and status) to
-accommodate a wide range of device specific configurations.
-
-The IOCTL interface ensures compatibility with both OF and non-OF
-devices, allowing for seamless FPGA reprogramming across diverse
-platforms.
-
-Vendor-specific callbacks are integrated into the interface, enabling
-custom FPGA configuration + enumeration, removal, and status reporting
-mechanisms, ensuring flexibility for vendor implementations.
-
-This solution enhances FPGA runtime management, supporting various device
-types and vendors, while ensuring compatibility with the current FPGA
-configuration flow.
-
-Signed-off-by: Nava kishore Manne <nava.kishore.manne@amd.com>
----
-Changes for v2:
- - As discussed with Yilun, the implementation has been modified to utilize a
- callback approach, enabling seamless handling of both OF and non-OF devices.
-
- - As suggested by Yilun in the POC code, we have moved away from using  void *args
- as a parameter for ICOTL inputs to obtain the required user inputs. Instead, we are
- utilizing the fpga_region_config_info structure to gather user inputs. Currently,
- this structure is implemented to support only OF devices, but we intend to extend
- it by incorporating new members to accommodate non-OF devices in the future.
-
- drivers/fpga/fpga-region.c       | 110 +++++++++++++++++++++++++++++++
- drivers/fpga/of-fpga-region.c    |  91 ++++++++++++++++++++++++-
- include/linux/fpga/fpga-region.h |  32 +++++++++
- include/uapi/linux/fpga-region.h |  51 ++++++++++++++
- 4 files changed, 283 insertions(+), 1 deletion(-)
- create mode 100644 include/uapi/linux/fpga-region.h
-
-diff --git a/drivers/fpga/fpga-region.c b/drivers/fpga/fpga-region.c
-index 753cd142503e..c6bea3c99a69 100644
---- a/drivers/fpga/fpga-region.c
-+++ b/drivers/fpga/fpga-region.c
-@@ -8,6 +8,7 @@
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-region.h>
-+#include <linux/fpga-region.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
-@@ -180,6 +181,67 @@ static struct attribute *fpga_region_attrs[] = {
- };
- ATTRIBUTE_GROUPS(fpga_region);
- 
-+static int fpga_region_device_open(struct inode *inode, struct file *file)
-+{
-+	struct miscdevice *miscdev = file->private_data;
-+	struct fpga_region *region = container_of(miscdev, struct fpga_region, miscdev);
-+
-+	file->private_data = region;
-+
-+	return 0;
-+}
-+
-+static int fpga_region_device_release(struct inode *inode, struct file *file)
-+{
-+	return 0;
-+}
-+
-+static long fpga_region_device_ioctl(struct file *file, unsigned int cmd,
-+				     unsigned long arg)
-+{
-+	int err;
-+	void __user *argp = (void __user *)arg;
-+	struct fpga_region_config_info config_info;
-+	struct fpga_region *region =  (struct fpga_region *)(file->private_data);
-+
-+	switch (cmd) {
-+	case FPGA_REGION_IOCTL_LOAD:
-+		if (copy_from_user(&config_info, argp, sizeof(struct fpga_region_config_info)))
-+			return -EFAULT;
-+
-+		err = region->region_ops->region_config_enumeration(region, &config_info);
-+
-+		break;
-+	case FPGA_REGION_IOCTL_REMOVE:
-+		if (copy_from_user(&config_info, argp, sizeof(struct fpga_region_config_info)))
-+			return -EFAULT;
-+
-+		err = region->region_ops->region_remove(region, &config_info);
-+
-+		break;
-+	case FPGA_REGION_IOCTL_STATUS:
-+		unsigned int status;
-+
-+		status = region->region_ops->region_status(region);
-+
-+		if (copy_to_user((void __user *)arg, &status, sizeof(status)))
-+			err = -EFAULT;
-+		break;
-+	default:
-+		err = -ENOTTY;
-+	}
-+
-+	return err;
-+}
-+
-+static const struct file_operations fpga_region_fops = {
-+	.owner		= THIS_MODULE,
-+	.open		= fpga_region_device_open,
-+	.release	= fpga_region_device_release,
-+	.unlocked_ioctl	= fpga_region_device_ioctl,
-+	.compat_ioctl	= fpga_region_device_ioctl,
-+};
-+
- /**
-  * __fpga_region_register_full - create and register an FPGA Region device
-  * @parent: device parent
-@@ -229,8 +291,21 @@ __fpga_region_register_full(struct device *parent, const struct fpga_region_info
- 	if (ret)
- 		goto err_remove;
- 
-+	if (info->region_ops) {
-+		region->region_ops = info->region_ops;
-+		region->miscdev.minor = MISC_DYNAMIC_MINOR;
-+		region->miscdev.name = kobject_name(&region->dev.kobj);
-+		region->miscdev.fops = &fpga_region_fops;
-+		ret = misc_register(&region->miscdev);
-+		if (ret) {
-+			pr_err("fpga-region: failed to register misc device.\n");
-+			goto err_remove;
-+		}
-+	}
-+
- 	ret = device_register(&region->dev);
- 	if (ret) {
-+		misc_deregister(&region->miscdev);
- 		put_device(&region->dev);
- 		return ERR_PTR(ret);
- 	}
-@@ -272,6 +347,40 @@ __fpga_region_register(struct device *parent, struct fpga_manager *mgr,
- }
- EXPORT_SYMBOL_GPL(__fpga_region_register);
- 
-+/**
-+ * __fpga_region_register_with_ops - create and register an FPGA Region device
-+ * with user interface call-backs.
-+ * @parent: device parent
-+ * @mgr: manager that programs this region
-+ * @region_ops: ops for low level FPGA region for device enumeration/removal
-+ * @priv: of-fpga-region private data
-+ * @get_bridges: optional function to get bridges to a list
-+ * @owner: module containing the get_bridges function
-+ *
-+ * This simple version of the register function should be sufficient for most users.
-+ * The fpga_region_register_full() function is available for users that need to
-+ * pass additional, optional parameters.
-+ *
-+ * Return: struct fpga_region or ERR_PTR()
-+ */
-+struct fpga_region *
-+__fpga_region_register_with_ops(struct device *parent, struct fpga_manager *mgr,
-+				const struct fpga_region_ops *region_ops,
-+				void *priv,
-+				int (*get_bridges)(struct fpga_region *),
-+				struct module *owner)
-+{
-+	struct fpga_region_info info = { 0 };
-+
-+	info.mgr = mgr;
-+	info.priv = priv;
-+	info.get_bridges = get_bridges;
-+	info.region_ops = region_ops;
-+
-+	return __fpga_region_register_full(parent, &info, owner);
-+}
-+EXPORT_SYMBOL_GPL(__fpga_region_register_with_ops);
-+
- /**
-  * fpga_region_unregister - unregister an FPGA region
-  * @region: FPGA region
-@@ -280,6 +389,7 @@ EXPORT_SYMBOL_GPL(__fpga_region_register);
-  */
- void fpga_region_unregister(struct fpga_region *region)
- {
-+	misc_deregister(&region->miscdev);
- 	device_unregister(&region->dev);
- }
- EXPORT_SYMBOL_GPL(fpga_region_unregister);
-diff --git a/drivers/fpga/of-fpga-region.c b/drivers/fpga/of-fpga-region.c
-index 8526a5a86f0c..63fe56e0466f 100644
---- a/drivers/fpga/of-fpga-region.c
-+++ b/drivers/fpga/of-fpga-region.c
-@@ -8,6 +8,8 @@
- #include <linux/fpga/fpga-bridge.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-region.h>
-+#include <linux/firmware.h>
-+#include <linux/fpga-region.h>
- #include <linux/idr.h>
- #include <linux/kernel.h>
- #include <linux/list.h>
-@@ -18,6 +20,20 @@
- #include <linux/slab.h>
- #include <linux/spinlock.h>
- 
-+/**
-+ * struct of_fpga_region_priv - Private data structure
-+ * image.
-+ * @dev:	Device data structure
-+ * @fw:		firmware of coeff table.
-+ * @path:	path of FPGA overlay image firmware file.
-+ * @ovcs_id:	overlay changeset id.
-+ */
-+struct of_fpga_region_priv {
-+	struct device *dev;
-+	const struct firmware *fw;
-+	int ovcs_id;
-+};
-+
- static const struct of_device_id fpga_region_of_match[] = {
- 	{ .compatible = "fpga-region", },
- 	{},
-@@ -394,20 +410,93 @@ static struct notifier_block fpga_region_of_nb = {
- 	.notifier_call = of_fpga_region_notify,
- };
- 
-+static int of_fpga_region_status(struct fpga_region *region)
-+{
-+	struct of_fpga_region_priv *ovcs = region->priv;
-+
-+	if (ovcs->ovcs_id)
-+		return FPGA_REGION_HAS_PL;
-+
-+	return FPGA_REGION_EMPTY;
-+}
-+
-+static int of_fpga_region_config_enumeration(struct fpga_region *region,
-+					     struct fpga_region_config_info *config_info)
-+{
-+	struct of_fpga_region_priv *ovcs = region->priv;
-+	int err;
-+
-+	/* if it's set do not allow changes */
-+	if (ovcs->ovcs_id)
-+		return -EPERM;
-+
-+	err = request_firmware(&ovcs->fw, config_info->firmware_name, NULL);
-+	if (err != 0)
-+		goto out_err;
-+
-+	err = of_overlay_fdt_apply((void *)ovcs->fw->data, ovcs->fw->size,
-+				   &ovcs->ovcs_id, NULL);
-+	if (err < 0) {
-+		pr_err("%s: Failed to create overlay (err=%d)\n",
-+		       __func__, err);
-+		release_firmware(ovcs->fw);
-+		goto out_err;
-+	}
-+
-+	return 0;
-+
-+out_err:
-+	ovcs->ovcs_id = 0;
-+	ovcs->fw = NULL;
-+
-+	return err;
-+}
-+
-+static int of_fpga_region_config_remove(struct fpga_region *region,
-+					struct fpga_region_config_info *config_info)
-+{
-+	struct of_fpga_region_priv *ovcs = region->priv;
-+
-+	if (!ovcs->ovcs_id)
-+		return -EPERM;
-+
-+	of_overlay_remove(&ovcs->ovcs_id);
-+	release_firmware(ovcs->fw);
-+
-+	ovcs->ovcs_id = 0;
-+	ovcs->fw = NULL;
-+
-+	return 0;
-+}
-+
-+static const struct fpga_region_ops region_ops = {
-+	.region_status = of_fpga_region_status,
-+	.region_config_enumeration = of_fpga_region_config_enumeration,
-+	.region_remove = of_fpga_region_config_remove,
-+};
-+
- static int of_fpga_region_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
-+	struct of_fpga_region_priv *priv;
- 	struct fpga_region *region;
- 	struct fpga_manager *mgr;
- 	int ret;
- 
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+
- 	/* Find the FPGA mgr specified by region or parent region. */
- 	mgr = of_fpga_region_get_mgr(np);
- 	if (IS_ERR(mgr))
- 		return -EPROBE_DEFER;
- 
--	region = fpga_region_register(dev, mgr, of_fpga_region_get_bridges);
-+	region = fpga_region_register_with_ops(dev, mgr, &region_ops, priv,
-+					       of_fpga_region_get_bridges);
- 	if (IS_ERR(region)) {
- 		ret = PTR_ERR(region);
- 		goto eprobe_mgr_put;
-diff --git a/include/linux/fpga/fpga-region.h b/include/linux/fpga/fpga-region.h
-index 5fbc05fe70a6..3a3ba6dbb5e1 100644
---- a/include/linux/fpga/fpga-region.h
-+++ b/include/linux/fpga/fpga-region.h
-@@ -6,15 +6,35 @@
- #include <linux/device.h>
- #include <linux/fpga/fpga-mgr.h>
- #include <linux/fpga/fpga-bridge.h>
-+#include <linux/fpga-region.h>
-+#include <linux/miscdevice.h>
- 
- struct fpga_region;
- 
-+/**
-+ * struct fpga_region_ops - ops for low level FPGA region ops for device
-+ * enumeration/removal
-+ * @region_status: returns the FPGA region status
-+ * @region_config_enumeration: Configure and enumerate the FPGA region.
-+ * @region_remove: Remove all devices within the FPGA region
-+ * (which are added as part of the enumeration).
-+ */
-+struct fpga_region_ops {
-+	int (*region_status)(struct fpga_region *region);
-+	int (*region_config_enumeration)(struct fpga_region *region,
-+					 struct fpga_region_config_info *config_info);
-+	int (*region_remove)(struct fpga_region *region,
-+			     struct fpga_region_config_info *config_info);
-+};
-+
- /**
-  * struct fpga_region_info - collection of parameters an FPGA Region
-  * @mgr: fpga region manager
-  * @compat_id: FPGA region id for compatibility check.
-  * @priv: fpga region private data
-  * @get_bridges: optional function to get bridges to a list
-+ * @fpga_region_ops: ops for low level FPGA region ops for device
-+ * enumeration/removal
-  *
-  * fpga_region_info contains parameters for the register_full function.
-  * These are separated into an info structure because they some are optional
-@@ -26,6 +46,7 @@ struct fpga_region_info {
- 	struct fpga_compat_id *compat_id;
- 	void *priv;
- 	int (*get_bridges)(struct fpga_region *region);
-+	const struct fpga_region_ops *region_ops;
- };
- 
- /**
-@@ -39,6 +60,8 @@ struct fpga_region_info {
-  * @ops_owner: module containing the get_bridges function
-  * @priv: private data
-  * @get_bridges: optional function to get bridges to a list
-+ * @fpga_region_ops: ops for low level FPGA region ops for device
-+ * enumeration/removal
-  */
- struct fpga_region {
- 	struct device dev;
-@@ -50,6 +73,8 @@ struct fpga_region {
- 	struct module *ops_owner;
- 	void *priv;
- 	int (*get_bridges)(struct fpga_region *region);
-+	const struct fpga_region_ops *region_ops;
-+	struct miscdevice miscdev;
- };
- 
- #define to_fpga_region(d) container_of(d, struct fpga_region, dev)
-@@ -71,6 +96,13 @@ __fpga_region_register_full(struct device *parent, const struct fpga_region_info
- struct fpga_region *
- __fpga_region_register(struct device *parent, struct fpga_manager *mgr,
- 		       int (*get_bridges)(struct fpga_region *), struct module *owner);
-+#define fpga_region_register_with_ops(parent, mgr, region_ops, priv, get_bridges) \
-+	__fpga_region_register_with_ops(parent, mgr, region_ops, priv, get_bridges, THIS_MODULE)
-+struct fpga_region *
-+__fpga_region_register_with_ops(struct device *parent, struct fpga_manager *mgr,
-+				const struct fpga_region_ops *region_ops, void *priv,
-+				int (*get_bridges)(struct fpga_region *),
-+				struct module *owner);
- void fpga_region_unregister(struct fpga_region *region);
- 
- #endif /* _FPGA_REGION_H */
-diff --git a/include/uapi/linux/fpga-region.h b/include/uapi/linux/fpga-region.h
-new file mode 100644
-index 000000000000..88ade83daf61
---- /dev/null
-+++ b/include/uapi/linux/fpga-region.h
-@@ -0,0 +1,51 @@
-+/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-+/*
-+ * Header File for FPGA Region User API
-+ *
-+ * Copyright (C) 2024 Advanced Micro Devices, Inc.
-+ *
-+ * Author: Manne, Nava kishore <nava.kishore.manne@amd.com>
-+ */
-+
-+#ifndef _UAPI_LINUX_FPGA_REGION_H
-+#define _UAPI_LINUX_FPGA_REGION_H
-+
-+#include <linux/ioctl.h>
-+#include <linux/limits.h>
-+#include <linux/types.h>
-+
-+/* IOCTLs for fpga region file descriptor */
-+#define FPGA_REGION_MAGIC_NUMBER	'f'
-+#define FPGA_REGION_BASE		0
-+
-+/**
-+ * FPGA_REGION_IOCTL_LOAD - _IOW(FPGA_REGION_MAGIC, 0,
-+ *                               struct fpga_region_config_info)
-+ *
-+ * FPGA_REGION_IOCTL_REMOVE - _IOW(FPGA_REGION_MAGIC, 1,
-+ *                                 struct fpga_region_config_info)
-+ *
-+ * Driver does Configuration/Reconfiguration based on Region ID and
-+ * Buffer (Image) provided by caller.
-+ * Return: 0 on success, -errno on failure.
-+ */
-+struct fpga_region_config_info {	/* Input */
-+	char firmware_name[NAME_MAX];   /* Firmware file name */
-+};
-+
-+/*
-+ * FPGA Region Control IOCTLs.
-+ */
-+#define FPGA_REGION_MAGIC	'f'
-+#define FPGA_IOW(num, dtype)	_IOW(FPGA_REGION_MAGIC, num, dtype)
-+#define FPGA_IOR(num, dtype)	_IOR(FPGA_REGION_MAGIC, num, dtype)
-+
-+#define FPGA_REGION_IOCTL_LOAD		FPGA_IOW(0, __u32)
-+#define FPGA_REGION_IOCTL_REMOVE        FPGA_IOW(1, __u32)
-+#define FPGA_REGION_IOCTL_STATUS        FPGA_IOR(2, __u32)
-+
-+/* Region status possibilities returned by FPGA_REGION_IOCTL_STATUS ioctl */
-+#define FPGA_REGION_HAS_PL	0	/* if the region has PL logic */
-+#define FPGA_REGION_EMPTY	1	/* If the region is empty */
-+
-+#endif /* _UAPI_LINUX_FPGA_REGION_H */
--- 
-2.34.1
-
+SGkgTGl1IFlpbmcsDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogZHJp
+LWRldmVsIDxkcmktZGV2ZWwtYm91bmNlc0BsaXN0cy5mcmVlZGVza3RvcC5vcmc+IE9uIEJlaGFs
+ZiBPZiBMaXUgWWluZw0KPiBTZW50OiAyOSBPY3RvYmVyIDIwMjQgMDk6MDcNCj4gU3ViamVjdDog
+UmU6IFtQQVRDSCB2NCAwOC8xM10gZHQtYmluZGluZ3M6IGRpc3BsYXk6IERvY3VtZW50IGR1YWwt
+bGluayBMVkRTIGRpc3BsYXkgY29tbW9uIHByb3BlcnRpZXMNCj4gDQo+IE9uIDEwLzI5LzIwMjQs
+IEJpanUgRGFzIHdyb3RlOg0KPiA+IEhpIExpdSBZaW5nLA0KPiANCj4gSGkgQmlqdSwNCj4gDQo+
+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTogZHJpLWRldmVs
+IDxkcmktZGV2ZWwtYm91bmNlc0BsaXN0cy5mcmVlZGVza3RvcC5vcmc+IE9uIEJlaGFsZg0KPiA+
+PiBPZiBMaXUgWWluZw0KPiA+PiBTZW50OiAyOSBPY3RvYmVyIDIwMjQgMDg6MDINCj4gPj4gU3Vi
+amVjdDogUmU6IFtQQVRDSCB2NCAwOC8xM10gZHQtYmluZGluZ3M6IGRpc3BsYXk6IERvY3VtZW50
+DQo+ID4+IGR1YWwtbGluayBMVkRTIGRpc3BsYXkgY29tbW9uIHByb3BlcnRpZXMNCj4gPj4NCj4g
+Pj4gT24gMTAvMjkvMjAyNCwgQmlqdSBEYXMgd3JvdGU6DQo+ID4+PiBIaSBMaXUgWWluZywNCj4g
+Pj4NCj4gPj4gSGkgQmlqdSwNCj4gPj4NCj4gPj4+DQo+ID4+Pj4gLS0tLS1PcmlnaW5hbCBNZXNz
+YWdlLS0tLS0NCj4gPj4+PiBGcm9tOiBMaXUgWWluZyA8dmljdG9yLmxpdUBueHAuY29tPg0KPiA+
+Pj4+IFNlbnQ6IDI4IE9jdG9iZXIgMjAyNCAwMjozOA0KPiA+Pj4+IFN1YmplY3Q6IFtQQVRDSCB2
+NCAwOC8xM10gZHQtYmluZGluZ3M6IGRpc3BsYXk6IERvY3VtZW50IGR1YWwtbGluaw0KPiA+Pj4+
+IExWRFMgZGlzcGxheSBjb21tb24gcHJvcGVydGllcw0KPiA+Pj4+DQo+ID4+Pj4gRHVhbC1saW5r
+IExWRFMgZGlzcGxheXMgcmVjZWl2ZSBvZGQgcGl4ZWxzIGFuZCBldmVuIHBpeGVscw0KPiA+Pj4+
+IHNlcGFyYXRlbHkgZnJvbSBkdWFsIExWRFMgbGlua3MuICBPbmUgbGluayByZWNlaXZlcyBvZGQg
+cGl4ZWxzIGFuZA0KPiA+Pj4+IHRoZSBvdGhlciByZWNlaXZlcyBldmVuIHBpeGVscy4gIFNvbWUg
+b2YgdGhvc2UgZGlzcGxheXMgbWF5IGFsc28NCj4gPj4+PiB1c2Ugb25seSBvbmUgTFZEUyBsaW5r
+IHRvIHJlY2VpdmUgYWxsIHBpeGVscywgYmVpbmcgb2RkIGFuZCBldmVuDQo+ID4+Pj4gYWdub3N0
+aWMuICBEb2N1bWVudCBjb21tb24gcHJvcGVydGllcyBmb3IgdGhvc2UNCj4gPj4gZGlzcGxheXMg
+YnkgZXh0ZW5kaW5nIExWRFMgZGlzcGxheSBjb21tb24gcHJvcGVydGllcyBkZWZpbmVkIGluIGx2
+ZHMueWFtbC4NCj4gPj4+Pg0KPiA+Pj4+IFN1Z2dlc3RlZC1ieTogRG1pdHJ5IEJhcnlzaGtvdiA8
+ZG1pdHJ5LmJhcnlzaGtvdkBsaW5hcm8ub3JnPg0KPiA+Pj4+IFNpZ25lZC1vZmYtYnk6IExpdSBZ
+aW5nIDx2aWN0b3IubGl1QG54cC5jb20+DQo+ID4+Pj4gLS0tDQo+ID4+Pj4gdjQ6DQo+ID4+Pj4g
+KiBTcXVhc2ggY2hhbmdlIGZvciBhZHZhbnRlY2gsaWRrLTIxMjF3ci55YW1sIGFuZA0KPiA+Pj4+
+ICAgcGFuZWwtc2ltcGxlLWx2ZHMtZHVhbC1wb3J0cy55YW1sIHdpdGggbHZkcy1kdWFsLXBvcnRz
+LnlhbWwuDQo+ID4+Pj4gKFJvYikNCj4gPj4+PiAqIEltcHJvdmUgZGVzY3JpcHRpb24gaW4gbHZk
+cy1kdWFsLXBvcnRzLnlhbWwuICAoS3J6eXN6dG9mKQ0KPiA+Pj4+DQo+ID4+Pj4gdjM6DQo+ID4+
+Pj4gKiBOZXcgcGF0Y2guICAoRG1pdHJ5KQ0KPiA+Pj4+DQo+ID4+Pj4gIC4uLi9iaW5kaW5ncy9k
+aXNwbGF5L2x2ZHMtZHVhbC1wb3J0cy55YW1sICAgICB8IDc2ICsrKysrKysrKysrKysrKysrKysN
+Cj4gPj4+PiAgLi4uL2Rpc3BsYXkvcGFuZWwvYWR2YW50ZWNoLGlkay0yMTIxd3IueWFtbCAgIHwg
+MTQgKy0tLQ0KPiA+Pj4+ICAuLi4vcGFuZWwvcGFuZWwtc2ltcGxlLWx2ZHMtZHVhbC1wb3J0cy55
+YW1sICAgfCAyMCArLS0tLQ0KPiA+Pj4+ICAzIGZpbGVzIGNoYW5nZWQsIDc4IGluc2VydGlvbnMo
+KyksIDMyIGRlbGV0aW9ucygtKSAgY3JlYXRlIG1vZGUNCj4gPj4+PiAxMDA2NDQNCj4gPj4+PiBE
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9sdmRzLWR1YWwtcG9ydHMu
+eWFtbA0KPiA+Pj4+DQo+ID4+Pj4gZGlmZiAtLWdpdA0KPiA+Pj4+IGEvRG9jdW1lbnRhdGlvbi9k
+ZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbHZkcy1kdWFsLXBvcnRzLnlhbWwNCj4gPj4+PiBi
+L0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L2x2ZHMtZHVhbC1wb3J0
+cy55YW1sDQo+ID4+Pj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPj4+PiBpbmRleCAwMDAwMDAw
+MDAwMDAuLjVmN2EzMDY0MDQwNA0KPiA+Pj4+IC0tLSAvZGV2L251bGwNCj4gPj4+PiArKysgYi9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS9sdmRzLWR1YWwtcG9ydHMu
+eWFtDQo+ID4+Pj4gKysrIGwNCj4gPj4+PiBAQCAtMCwwICsxLDc2IEBADQo+ID4+Pj4gKyMgU1BE
+WC1MaWNlbnNlLUlkZW50aWZpZXI6IChHUEwtMi4wLW9ubHkgT1IgQlNELTItQ2xhdXNlKSAlWUFN
+TA0KPiA+Pj4+ICsxLjINCj4gPj4+PiArLS0tDQo+ID4+Pj4gKyRpZDogaHR0cDovL2RldmljZXRy
+ZWUub3JnL3NjaGVtYXMvZGlzcGxheS9sdmRzLWR1YWwtcG9ydHMueWFtbCMNCj4gPj4+PiArJHNj
+aGVtYTogaHR0cDovL2RldmljZXRyZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjDQo+ID4+
+Pj4gKw0KPiA+Pj4+ICt0aXRsZTogRHVhbC1saW5rIExWRFMgRGlzcGxheSBDb21tb24gUHJvcGVy
+dGllcw0KPiA+Pj4+ICsNCj4gPj4+PiArbWFpbnRhaW5lcnM6DQo+ID4+Pj4gKyAgLSBMaXUgWWlu
+ZyA8dmljdG9yLmxpdUBueHAuY29tPg0KPiA+Pj4+ICsNCj4gPj4+PiArZGVzY3JpcHRpb246IHwN
+Cj4gPj4+PiArICBDb21tb24gcHJvcGVydGllcyBmb3IgTFZEUyBkaXNwbGF5cyB3aXRoIGR1YWwg
+TFZEUyBsaW5rcy4gRXh0ZW5kDQo+ID4+Pj4gK0xWRFMgZGlzcGxheQ0KPiA+Pj4+ICsgIGNvbW1v
+biBwcm9wZXJ0aWVzIGRlZmluZWQgaW4gbHZkcy55YW1sLg0KPiA+Pj4+ICsNCj4gPj4+PiArICBE
+dWFsLWxpbmsgTFZEUyBkaXNwbGF5cyByZWNlaXZlIG9kZCBwaXhlbHMgYW5kIGV2ZW4gcGl4ZWxz
+DQo+ID4+Pj4gKyBzZXBhcmF0ZWx5IGZyb20gIHRoZSBkdWFsIExWRFMgbGlua3MuIE9uZSBsaW5r
+IHJlY2VpdmVzIG9kZA0KPiA+Pj4+ICsgcGl4ZWxzIGFuZCB0aGUgb3RoZXIgcmVjZWl2ZXMgIGV2
+ZW4gcGl4ZWxzLiBTb21lIG9mIHRob3NlDQo+ID4+Pj4gKyBkaXNwbGF5cyBtYXkgYWxzbyB1c2Ug
+b25seSBvbmUgTFZEUyBsaW5rIHRvICByZWNlaXZlIGFsbCBwaXhlbHMsIGJlaW5nIG9kZCBhbmQg
+ZXZlbiBhZ25vc3RpYy4NCj4gPj4+PiArDQo+ID4+Pj4gK2FsbE9mOg0KPiA+Pj4+ICsgIC0gJHJl
+ZjogbHZkcy55YW1sIw0KPiA+Pj4+ICsNCj4gPj4+PiArcHJvcGVydGllczoNCj4gPj4+PiArICBw
+b3J0czoNCj4gPj4+PiArICAgICRyZWY6IC9zY2hlbWFzL2dyYXBoLnlhbWwjL3Byb3BlcnRpZXMv
+cG9ydHMNCj4gPj4+PiArDQo+ID4+Pj4gKyAgICBwcm9wZXJ0aWVzOg0KPiA+Pj4+ICsgICAgICBw
+b3J0QDA6DQo+ID4+Pj4gKyAgICAgICAgJHJlZjogL3NjaGVtYXMvZ3JhcGgueWFtbCMvJGRlZnMv
+cG9ydC1iYXNlDQo+ID4+Pj4gKyAgICAgICAgdW5ldmFsdWF0ZWRQcm9wZXJ0aWVzOiBmYWxzZQ0K
+PiA+Pj4+ICsgICAgICAgIGRlc2NyaXB0aW9uOiB0aGUgZmlyc3QgTFZEUyBpbnB1dCBsaW5rDQo+
+ID4+Pj4gKw0KPiA+Pj4+ICsgICAgICAgIHByb3BlcnRpZXM6DQo+ID4+Pj4gKyAgICAgICAgICBk
+dWFsLWx2ZHMtb2RkLXBpeGVsczoNCj4gPj4+PiArICAgICAgICAgICAgdHlwZTogYm9vbGVhbg0K
+PiA+Pj4+ICsgICAgICAgICAgICBkZXNjcmlwdGlvbjogdGhlIGZpcnN0IExWRFMgaW5wdXQgbGlu
+ayBmb3Igb2RkIHBpeGVscw0KPiA+Pj4+ICsNCj4gPj4+PiArICAgICAgICAgIGR1YWwtbHZkcy1l
+dmVuLXBpeGVsczoNCj4gPj4+PiArICAgICAgICAgICAgdHlwZTogYm9vbGVhbg0KPiA+Pj4+ICsg
+ICAgICAgICAgICBkZXNjcmlwdGlvbjogdGhlIGZpcnN0IExWRFMgaW5wdXQgbGluayBmb3IgZXZl
+biBwaXhlbHMNCj4gPj4+DQo+ID4+Pg0KPiA+Pj4gcG9ydEAwIHdlIGtub3cgaXQgaXMgZmlyc3Qg
+bGluaw0KPiA+Pj4gcG9ydEAxIHdlIGtub3cgaXQgaXMgc2Vjb25kIGxpbmsuDQo+ID4+PiBkdWFs
+LWx2ZHMtb2RkLXBpeGVsczogV2Uga25vdyBpdCBpcyBmb3Igb2RkIHBpeGVscy4NCj4gPj4+IGR1
+YWwtbHZkcy1ldmVuLXBpeGVsczogV2Uga25vdyBpdCBpcyBmb3Igb2RkIHBpeGVscy4NCj4gPj4+
+DQo+ID4+PiBOb3Qgc3VyZSwgd2hldGhlciB3ZSBjYW4gZ2l2ZSBjb21tb24gZGVzY3JpcHRpb24g
+YW5kIGF2b2lkIHRoZQ0KPiA+Pj4gZHVwbGljYXRlIGZyb20gcG9ydEAxID8/DQo+ID4+DQo+ID4+
+IFllcywgaXQnZCBiZXR0ZXIgdG8gdXNlIHBhdHRlcm5Qcm9wZXJ0aWVzLiBUaGFua3MuDQo+ID4+
+DQo+ID4+IC0tODwtLQ0KPiA+PiAgICAgcGF0dGVyblByb3BlcnRpZXM6DQo+ID4+ICAgICAgICde
+cG9ydEBbMDFdJCc6DQo+ID4+ICAgICAgICAgJHJlZjogL3NjaGVtYXMvZ3JhcGgueWFtbCMvJGRl
+ZnMvcG9ydC1iYXNlDQo+ID4+ICAgICAgICAgdW5ldmFsdWF0ZWRQcm9wZXJ0aWVzOiBmYWxzZQ0K
+PiA+PiAgICAgICAgIGRlc2NyaXB0aW9uOiB8DQo+ID4+ICAgICAgICAgICBwb3J0QDAgaXMgZm9y
+IHRoZSBmaXJzdCBMVkRTIGlucHV0IGxpbmsuDQo+ID4+ICAgICAgICAgICBwb3J0QDEgaXMgZm9y
+IHRoZSBzZWNvbmQgTFZEUyBpbnB1dCBsaW5rLg0KPiA+Pg0KPiA+PiAgICAgICAgIHByb3BlcnRp
+ZXM6DQo+ID4+ICAgICAgICAgICBkdWFsLWx2ZHMtb2RkLXBpeGVsczoNCj4gPj4gICAgICAgICAg
+ICAgdHlwZTogYm9vbGVhbg0KPiA+PiAgICAgICAgICAgICBkZXNjcmlwdGlvbjogTFZEUyBpbnB1
+dCBsaW5rIGZvciBvZGQgcGl4ZWxzDQo+ID4+DQo+ID4+ICAgICAgICAgICBkdWFsLWx2ZHMtZXZl
+bi1waXhlbHM6DQo+ID4+ICAgICAgICAgICAgIHR5cGU6IGJvb2xlYW4NCj4gPj4gICAgICAgICAg
+ICAgZGVzY3JpcHRpb246IExWRFMgaW5wdXQgbGluayBmb3IgZXZlbiBwaXhlbHMNCj4gPj4NCj4g
+Pj4gICAgICAgICBvbmVPZjoNCj4gPj4gICAgICAgICAgIC0gcmVxdWlyZWQ6IFtkdWFsLWx2ZHMt
+b2RkLXBpeGVsc10NCj4gPj4gICAgICAgICAgIC0gcmVxdWlyZWQ6IFtkdWFsLWx2ZHMtZXZlbi1w
+aXhlbHNdDQo+ID4+ICAgICAgICAgICAtIHByb3BlcnRpZXM6DQo+ID4+ICAgICAgICAgICAgICAg
+ZHVhbC1sdmRzLW9kZC1waXhlbHM6IGZhbHNlDQo+ID4+ICAgICAgICAgICAgICAgZHVhbC1sdmRz
+LWV2ZW4tcGl4ZWxzOiBmYWxzZQ0KPiA+Pg0KPiA+PiAgICAgYW55T2Y6DQo+ID4+ICAgICAgIC0g
+cmVxdWlyZWQ6DQo+ID4+ICAgICAgICAgICAtIHBvcnRAMA0KPiA+PiAgICAgICAtIHJlcXVpcmVk
+Og0KPiA+PiAgICAgICAgICAgLSBwb3J0QDENCj4gPj4gLS04PC0tDQo+ID4+DQo+ID4+Pg0KPiA+
+Pj4NCj4gPj4+PiArDQo+ID4+Pj4gKyAgICAgICAgb25lT2Y6DQo+ID4+Pj4gKyAgICAgICAgICAt
+IHJlcXVpcmVkOiBbZHVhbC1sdmRzLW9kZC1waXhlbHNdDQo+ID4+Pj4gKyAgICAgICAgICAtIHJl
+cXVpcmVkOiBbZHVhbC1sdmRzLWV2ZW4tcGl4ZWxzXQ0KPiA+Pj4+ICsgICAgICAgICAgLSBwcm9w
+ZXJ0aWVzOg0KPiA+Pj4+ICsgICAgICAgICAgICAgIGR1YWwtbHZkcy1vZGQtcGl4ZWxzOiBmYWxz
+ZQ0KPiA+Pj4+ICsgICAgICAgICAgICAgIGR1YWwtbHZkcy1ldmVuLXBpeGVsczogZmFsc2UNCj4g
+Pj4+DQo+ID4+PiBXaHkgdGhpcyBpcyBmYWxzZSBoZXJlPyBvbmVPZiBpcyBub3Qgc3VmZmljaWVu
+dD8NCj4gPj4NCj4gPj4gVGhlICdmYWxzZScgaXMgdXNlZCB3aGVuIHRoaXMgTFZEUyBsaW5rIHdv
+cmtzIGFsb25lIGFzIGEgc2luZ2xlIExWRFMNCj4gPj4gbGluaywgYmVpbmcgb2RkIGFuZCBldmVu
+IGFnbm9zdGljLg0KPiA+Pg0KPiA+PiBUaGUgJ29uZU9mJyBhbGxvd3MgYSBMVkRTIGxpbmsgdG8g
+YmUgZGVmaW5lZCBhcyBhIHNpbmdsZSBMVkRTIGxpbmsgb3Igb25lIGxpbmsgb2YgZHVhbCBMVkRT
+IGxpbmtzLg0KPiA+DQo+ID4gT2ssIGl0IG1ha2VzIHNlbnNlIGZvciBzaW5nbGUgTFZEUyBsaW5r
+LiBNYXliZSByZW5hbWUgdGhlIGZpbGUgdG8NCj4gPiBsdmRzLWR1YWwtcG9ydHMueWFtbC0+bHZk
+cy1wb3J0cy55YW1sDQo+ID4gdG8gbWFrZSBpdCBjbGVhciwgaXQgaXMgZm9yIGFsbCBMVkRTIHBv
+cnRzLCBpZiBpdCBpcyBnb2luZyB0byBhZGRyZXNzIHNpbmdsZSBsaW5rIGNhc2UgYXN3ZWxsPz8N
+Cj4gDQo+IFNpbmdsZS1saW5rIExWRFMgZGlzcGxheXMgYXJlIHN1cHBvc2VkIHRvIGJlIGRvY3Vt
+ZW50ZWQgd2l0aG91dCByZWZlcmVuY2luZyB0aGlzIHNjaGVtYSwgaS5lLiwgdGhleQ0KPiBtYXkg
+cmVmZXJlbmNlIGx2ZHMueWFtbCBhbmQgZGVmaW5lIHRoZSBzaW5nbGUgTFZEUyBzaW5rIGxpbmsg
+d2l0aCBwb3J0IHByb3BlcnR5KGZvciBwYW5lbHMpIG9yIHBvcnRAMA0KPiBwcm9wZXJ0eShmb3Ig
+YnJpZGdlcykuDQo+IHBvcnRAMSB3b3VsZCBiZSBkZWZpbmVkIGFzIG91dHB1dCBwb3J0IGZvciBi
+cmlkZ2VzLCBub3QgaW5wdXQgcG9ydC4gIE1heWJlLCB3ZSdsbCBoYXZlIHNvbWV0aGluZyBsaWtl
+DQo+IGx2ZHMtc2luZ2xlLXBvcnQueWFtbCBpbiB0aGUgZnV0dXJlLg0KDQpPSywgdGhlbiB0aGlz
+IGJpbmRpbmcgaXMgc3VmZmllbnQgSSBndWVzcy4NCg0KQXMgZGVzY3JpcHRpb24gc2F5cywgbWFq
+b3JpdHkgZGV2aWNlcyBzdXBwb3J0cyBkdWFsIGxpbmtzLg0KU29tZSBkdWFsIGxpbmsgZGlzcGxh
+eSBzdXBwb3J0cyBzaW5nbGUgbGluayBhcyB3ZWxsLg0KDQpDaGVlcnMsDQpCaWp1DQo=
 
