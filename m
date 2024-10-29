@@ -1,72 +1,55 @@
-Return-Path: <linux-kernel+bounces-387362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9299B4FE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:56:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E79CA9B4FE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:57:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61AF71C22721
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:56:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F822B22774
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866241D8E0D;
-	Tue, 29 Oct 2024 16:55:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504821D7985;
+	Tue, 29 Oct 2024 16:56:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="blc+bjdu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T+Lfc19P"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJhSGp6O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF7D19992C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:55:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4065C96;
+	Tue, 29 Oct 2024 16:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220944; cv=none; b=kwvJ6+eaLqWHcd0V5R2CBBaQjaxQ9tedPNm5RxvV0/mJ/b9t5uSzxrRhvlX0Po9xrrOJoLDh4dMKpy+VH2zothvqKL//f84D8c/JeyeT/q/WER1ijwxFEkNuKqPRwjNKtXLEQLXKMuPhTPOHqs37KAONTt9s0Jl/a+GGFUGgI3M=
+	t=1730221014; cv=none; b=lAJ9mUyzGyTpkUYDy5PMSqmdVnkjlUHkcZUaK7xTaH+afCFKZtwvkTffK+l6YHMokwJlVI40rmMOZKE0H0/QMWcz5zKgckEm3cTvW4dbuAGRWS+O0+ftDkXFuU6BZQ7z0l4VvPcqnsfO720wtDBCGuobzfxt8eGn/vXeSoIJcwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220944; c=relaxed/simple;
-	bh=R5eCvl7du1Y0ll208Q1e9al+4xGrXnELKPOKT/IPt2U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lYwnhus5aw4r1NwHKgc5HGge1Lct5/eVENQ6tdS7UNtdGfVuI46D9YtvZ33xCJ49YIGsVWSqCtaYnrrjSsN0Utc6YfAjX0NnG1YLnTFw8pB4FQ0UIBBSzY1Mxuz7C0tq19d3CfJd7HzxGGzUrFbvw09vx7jixfUK+84sUU7ndfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=blc+bjdu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T+Lfc19P; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730220939;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GPXhAj4plb/VaugiiQVa5PHiH+TY7cG/EDvtnrbR5IA=;
-	b=blc+bjduxvSpAIyWJ4aIxuHkYqDJparOyX/wwNGCcquKSFwE0Jt98oOS52j+GuW5ZBGH7g
-	627pfy5eOnq/+ql99nnHpT3Hi7qXPaemOisvaTrhIf9q837OB4DLItAna+kc7xINGiPmQ6
-	jTFIu8itpJrvtc+klKIRp3xVzjJElO+f9SrlB6hMLUbTQoyjpGSC/0HL+2GWDPjPpWWgMx
-	bSNDmzFOuKw1I8OCvg2Pu05O0AbS0JU4x5xy5/o5d1UB/du2BUQOtBQJ6+uVlWVxXNrRbn
-	80RjLN7+87+xx8LkUCaYxs1vHsfwp0joHdzFuiA7zQfrUsNRVZSKl7o+ARiWyw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730220939;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GPXhAj4plb/VaugiiQVa5PHiH+TY7cG/EDvtnrbR5IA=;
-	b=T+Lfc19PFdNBEL9s1PeaKJSJtSJxJMgVB6ffw9nWv2z1K//PiuT7h08FtBaKgmEqY5xEn4
-	I1swC5b9JDuMJYDQ==
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
- Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
- Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
- Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 16/26] signal: Replace resched_timer logic
-In-Reply-To: <ZyEOeqkSYWR2XTp_@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.220867629@linutronix.de>
- <ZyEFyV28jcz85V1q@localhost.localdomain> <87ttcu281y.ffs@tglx>
- <ZyEOeqkSYWR2XTp_@localhost.localdomain>
-Date: Tue, 29 Oct 2024 17:55:38 +0100
-Message-ID: <87jzdq26id.ffs@tglx>
+	s=arc-20240116; t=1730221014; c=relaxed/simple;
+	bh=etdtSKZzHyNHp2dO9HMm30+8IeYkXPUjGAvw/wRkyuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qu9QEaSjxnbtJ6BQXjAlO8NFzZ7pY5H2GrNUPkBb7uJ9RXsgHJBTAudPyCc4zQjVWKRC7hvpChl34mHF+lNT7sVyKu0bGPpAJhtGhZ/G5UD4RPW5mj7RUT52kpMqTs+AB5jDKJzoVY+qyrl7J2Rf2RdIR0QWPpO8DuOA8+yBjG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJhSGp6O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB4AFC4CECD;
+	Tue, 29 Oct 2024 16:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730221014;
+	bh=etdtSKZzHyNHp2dO9HMm30+8IeYkXPUjGAvw/wRkyuE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJhSGp6O7NdIB8kC89Q1E4JBrRfJq2l5i11zAz7HzFJt95y81sCoQxNguD0andvq3
+	 FPGZROrSwW9kvDTNl7wx2yQKmxcuZAeBDj6lRq1b9zY3xDSuKkp/f9Al+biAFm69Zs
+	 gD48Y8C96esL7dg+H5GLS6ah7YW8SkZWumYep4mWFM2lMuLA1pLpzCs/YkZjBe139b
+	 IKAJ3iu1r4ZwqQ1PPa463dKHE2bj0b15TVrU8n9fnEoq2jZ9b9jQbVzUbpAMZ5iRGQ
+	 1y7qmjLa8FXwTcUwj5iCLGDVKQfxhrA8LmkthYML35Y1rp8dRyp5wqeYxp3rzOOam6
+	 HZ90KUy3CG3nQ==
+Received: by pali.im (Postfix)
+	id 83DB8820; Tue, 29 Oct 2024 17:56:46 +0100 (CET)
+Date: Tue, 29 Oct 2024 17:56:46 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Jerry Lv <Jerry.Lv@axis.com>
+Cc: Sebastian Reichel <sre@kernel.org>, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel@axis.com
+Subject: Re: [PATCH] power: supply: bq27xxx_battery: Retrieve again when busy
+Message-ID: <20241029165646.x5wqy5bo5cjv2q4e@pali>
+References: <20241029-foo-fix-v1-1-1dbfed72d023@axis.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,52 +57,95 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241029-foo-fix-v1-1-1dbfed72d023@axis.com>
+User-Agent: NeoMutt/20180716
 
-On Tue, Oct 29 2024 at 17:34, Frederic Weisbecker wrote:
+On Tuesday 29 October 2024 11:35:00 Jerry Lv wrote:
+> Multiple applications may access the battery gauge at the same time, so
+> the gauge may be busy and EBUSY will be returned. The driver will set a
+> flag to record the EBUSY state, and this flag will be kept until the next
+> periodic update. When this flag is set, bq27xxx_battery_get_property()
+> will just return ENODEV until the flag is updated.
+> 
+> Even if the gauge was busy during the last accessing attempt, returning
+> ENODEV is not ideal, and can cause confusion in the applications layer.
+> 
+> Instead, retry accessing the gauge to update the flag is as expected, for
+> the gauge typically recovers from busy state within a few milliseconds.
+> If still failed to access the gauge, the real error code would be returned
+> instead of ENODEV (as suggested by Pali Rohár).
+> 
+> Signed-off-by: Jerry Lv <Jerry.Lv@axis.com>
+> ---
+> When the battery gauge is busy, retry to access 10 miliseconds later,
+> retry up to 3 times. When failed to access the gauge, return the real
+> error code.
+> 
+> Differences related to previous versions:
+> v2 (as suggested by Pali Rohár):
+> - retry up to 3 times when gauge is busy.
+> - return the real error code when fail to access the device.
+> 
+> v1:
+> - initial version for review.
+> ---
+>  drivers/power/supply/bq27xxx_battery.c | 12 ++++++++++--
+>  1 file changed, 10 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/power/supply/bq27xxx_battery.c b/drivers/power/supply/bq27xxx_battery.c
+> index 750fda543308..9c40bbc292c1 100644
+> --- a/drivers/power/supply/bq27xxx_battery.c
+> +++ b/drivers/power/supply/bq27xxx_battery.c
+> @@ -1871,11 +1871,19 @@ static int bq27xxx_battery_current_and_status(
+>  
+>  static void bq27xxx_battery_update_unlocked(struct bq27xxx_device_info *di)
+>  {
+> +#define MAX_RETRY 3
+> +	int retry = 0, sleep = 10;
+>  	union power_supply_propval status = di->last_status;
+>  	struct bq27xxx_reg_cache cache = {0, };
+>  	bool has_singe_flag = di->opts & BQ27XXX_O_ZERO;
+>  
+> -	cache.flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
+> +	do {
+> +		cache.flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
+> +		if (cache.flags == -EBUSY && retry < MAX_RETRY) {
+> +			retry++;
+> +			BQ27XXX_MSLEEP(sleep);		/* sleep 10 miliseconds when busy */
+> +		}
+> +	} while (cache.flags == -EBUSY && retry < MAX_RETRY);
 
-> Le Tue, Oct 29, 2024 at 05:22:17PM +0100, Thomas Gleixner a =C3=A9crit :
->> On Tue, Oct 29 2024 at 16:56, Frederic Weisbecker wrote:
->> >> @@ -568,10 +568,10 @@ static void collect_signal(int sig, stru
->> >>  		list_del_init(&first->list);
->> >>  		copy_siginfo(info, &first->info);
->> >>=20=20
->> >> -		*resched_timer =3D (first->flags & SIGQUEUE_PREALLOC) &&
->> >> -				 (info->si_code =3D=3D SI_TIMER);
->> >> -
->> >> -		__sigqueue_free(first);
->> >> +		if (unlikely((first->flags & SIGQUEUE_PREALLOC) && (info->si_code =
-=3D=3D SI_TIMER)))
->> >> +			*timer_sigq =3D first;
->> >> +		else
->> >> +			__sigqueue_free(first);
->> >
->> > So this isn't calling __sigqueue_free() unconditionally anymore. What =
-if
->> > the timer has been freed already, what is going to free the sigqueue?
->>=20
->> __sigqueue_free() does not free timers marked with SIGQUEUE_PREALLOC.
->>=20
->> sigqueue_free() takes care of that, which is invoked from
->> posixtimer_free_timer(). It clears SIGQUEUE_PREALLOC and if it is queued
->> it lets it pending and delivery will free it.
->
-> But the delivery freeing used to be done with the __sigqueue_free()
-> above, which doesn't happen anymore, right?
+Hello, this is for sure nice improvement.
 
-It still happens because SIGQUEUE_PREALLOC is cleared in sigqueue_free()
+Anyway, I think that I mentioned it in previous email, this problem
+which you describe does not affect only bq27xxx_battery_update_unlocked()
+but also any other function which calls bq27xxx_read().
 
-__sigqueue_free() has
-       if (q->flags & PREALLOC)
-       	     return;
+What about rather moving this -EBUSY retry logic into the bq27xxx_read()
+function itself? Or even better, directly inside bq27xxx_battery_i2c_read()
+function? This would fix this problem on all places.
 
-So the old code called __sigqueue_free() unconditionally which just
-returned. But now we have a condition to that effect already, so why
-call into __sigqueue_free() for nothing?
-
-Let me add a comment.
-
-Thanks,
-
-        tglx
+>  	if ((cache.flags & 0xff) == 0xff)
+>  		cache.flags = -1; /* read error */
+>  	if (cache.flags >= 0) {
+> @@ -2030,7 +2038,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
+>  	mutex_unlock(&di->lock);
+>  
+>  	if (psp != POWER_SUPPLY_PROP_PRESENT && di->cache.flags < 0)
+> -		return -ENODEV;
+> +		return di->cache.flags;
+>  
+>  	switch (psp) {
+>  	case POWER_SUPPLY_PROP_STATUS:
+> 
+> ---
+> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+> change-id: 20241008-foo-fix-b2244cbe6dce
+> 
+> Best regards,
+> -- 
+> Jerry Lv <Jerry.Lv@axis.com>
+> 
 
