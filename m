@@ -1,108 +1,203 @@
-Return-Path: <linux-kernel+bounces-387519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E3839B523F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:58:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8A099B5246
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:58:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C421F24791
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:58:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2021F2474B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E23A206040;
-	Tue, 29 Oct 2024 18:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95843206E8C;
+	Tue, 29 Oct 2024 18:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HgoHfePH"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GM6laftD"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E276201022;
-	Tue, 29 Oct 2024 18:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32CC205159;
+	Tue, 29 Oct 2024 18:58:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730228277; cv=none; b=CeYHQ5b9DyAObjlauiUQ6gkPUCZvTkkEmCXO5Btk6RuW84eSUKTv+uptYhGc5fue61Y33ZsvRs46LTasNzIKU9IOQuD2wzA11a8dhZD8g8Oy5CCvg294/ZdlrvpX8jIJKYVqVrZOba9EWB5juHyOGcPHVewgu570d1KR/ckeXZU=
+	t=1730228317; cv=none; b=fP5f6nM263CHXhgPI35zzcIzaBNQeuvO2kQmmNwQLh0yL6SbhVlN51Uf5X+DxCl2v3emvQtfr8IzDDsvpfQEjiQNBcNPtSx7hzSODI0NJg2vyypa48gKPxV2acVuh3T7jPgrMuOVsHxTe6eeXgRDu2lLr+IJ85d80sTx8uzzYDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730228277; c=relaxed/simple;
-	bh=ySTL85gCZZkHnt5AGdEgcTbyspiCYGBvcQFbbg7bkrY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QJzwWMgVSwTd29VDWzQx5cWh2wsGFVNwkWu7b+ve01fLUzyx2ucmNxg/eTrB8KshD06P38QLUB5RmbLA613Bj5/6XAI6OWdFe82rE28on6c83Jthm5d3cXTF1pMIEAyAn+QXNpp+bMgl20GLA7A8Cg4nzKyRaTtXYQ7b2G4l9xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HgoHfePH; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e56750bb13so720681a91.2;
-        Tue, 29 Oct 2024 11:57:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730228275; x=1730833075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ySTL85gCZZkHnt5AGdEgcTbyspiCYGBvcQFbbg7bkrY=;
-        b=HgoHfePHVUtHzy3U6r4MMKcGZeAkQjRZ0TJlDEt3C01DarxjuTpuBbRVt+gPCDZZ7a
-         CZw2OmRd5S8VJpC1TS8Enz+gBu0spuse0EQuCv9P614cEm50w8NkjxJdu0pSshrZ5Tmp
-         GmbzO2P3cN30Twh2N5tJHs4xLrKCXwayEJ9t6ePiTwuFyvilb+AHTsCIDa3MDUXXqraU
-         iUXC+HQbE1oYYsWIrCbt6aoW2n09eRRF1zKccQvS9oyz1kFBuzejeVJBeTiSZ+OBCZoW
-         NE418KDrVvaV1FPwdikbmS9Iopg7w4h67ntz8/wlKQsls/YL14kHNwfjsDSMGtk24BdA
-         q7vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730228275; x=1730833075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ySTL85gCZZkHnt5AGdEgcTbyspiCYGBvcQFbbg7bkrY=;
-        b=ikbNMr7f3ehDCcKC2bA+aHHQPs9KKZ5vqxhd1k+TkST0W3gIKyDPdKIDgXDZ/CJWAM
-         QC0b8bcVVjG8qa4gY1Lq3ZkusWq0PMmKW2bCRWPQfK7fncC6U5e+mj15tbK20vMOjlJw
-         /QgzZ72Vnxu++RbBhDp+HyndkpcEhQEkV7OjmEqopKkh9YFocn+czSJeEBQKz7G6jafK
-         T9XZsNsop1ZXGTcpH/3nIAPeAIH+HqE0EHP9y4UTl7P7Fssj7exmd8nS6CYANJ1rro+o
-         awID6T4lJop19+tCdj2zq4sxbELDyuL4BljoSB+tPxNfTjd4YiQy3ayNSA+St5LvgakJ
-         Zcew==
-X-Forwarded-Encrypted: i=1; AJvYcCUsFMTnjW4S47GOfExqv3B2EHOnPxSmQVoQHXgDUJkDmKXh0beNPwOEeo+2pSwCbVmMSPpf6zOdogQqQnP1@vger.kernel.org, AJvYcCVbh6GVT+yiMBvJW8o8ho6sCE+C0Vpbfc/yxh2KIfmonM9uI+QAMoSWcZ28jmpjU5IRmTElj9kobkj/iHBHQDU=@vger.kernel.org, AJvYcCVjESkWYkzREJmXvm7zyXOSpMn9dixi/Z9IzYzRreyDEexJCq7stNdGvpeSsI6vcVXRVqh498syqfRi@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHJtOGOau3sNttlSU9D0coFOHS2FcGA+8uetYhEaNSF2eo+kFF
-	rvet27lsTsz8mn8y1VKKhmeWgUtfaA/l6XqXkjwTmg5PG8+4z7mp3b82MpIjs6bpCTlxRXbPOOn
-	g+OXeek6t5322LO//N9NnzAZp3s0=
-X-Google-Smtp-Source: AGHT+IFk68O2VV8WqrVcbpew9zPtZW7HMmQ6dfJHfx5Kat+3TMbDp6RwBvgP+T7BGyPw79tq12gGL2xZCcPIQK+hp1w=
-X-Received: by 2002:a17:90a:734a:b0:2e2:a667:1a11 with SMTP id
- 98e67ed59e1d1-2e8f104f989mr6323964a91.1.1730228275431; Tue, 29 Oct 2024
- 11:57:55 -0700 (PDT)
+	s=arc-20240116; t=1730228317; c=relaxed/simple;
+	bh=4W0HlC2Kj2crp2BfxjlLbRWtQ2TtBDLWnNobKyX3lLw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=F7BBQ93qm50d6KS6JDoEGnx9b8yLlg33gK3n58yH480fvQWpxs41RHD2eWU9vpW4K+ep7dR0SLDyGsHnPNrj+bRdgbOYgpdpkVWQtLg46nQzm588OCWEztdtAUuUnPrzOYsDY899x7q9+FBlo4+vfG5yu3dzzB27CxGdPUkaiS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GM6laftD; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T8kLjZ028808;
+	Tue, 29 Oct 2024 18:58:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mMCcaLZmre/30OJO8WljAYdE/vnQtOlJelWRG+D9fQ4=; b=GM6laftDmoACMeta
+	BGKsZRxJqJKeXyKxqGjSiNchu2K5PA15B3h46GOvrHwp6Wtv6zSVqGsQv5URM09L
+	UlyvGyeJusABpXzGrTci4IJP8MoqqwvAtZdAobJwEw8MDbXHTnXpAvFLbShPFZMN
+	cGM2oWendTaWZDn3aue/EDMztyOZVzBtvmLaPFHg87vugWVzvKkZZedct0jN1jjL
+	LsSWcbxL+0pRjInhfRZ9avM2w2QQ0PUu61MNeYTrUsrh0r1znk3aCbLZffibCSBi
+	5bw1eOVXJEXBoh0PUO4MMhnYrQuRS5QjcepsdWgBnrL9JhxhtilF3KdZyXkA/uib
+	J7zDCw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8heue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 18:58:04 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TIw3DJ014208
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 18:58:03 GMT
+Received: from [10.71.115.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 11:58:03 -0700
+Message-ID: <52ea0b32-79c7-42e8-8e2c-192d08f41e64@quicinc.com>
+Date: Tue, 29 Oct 2024 11:58:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
- <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
- <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com> <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com>
-In-Reply-To: <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 29 Oct 2024 19:57:42 +0100
-Message-ID: <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v29 04/33] xhci: sideband: add initial api to register a
+ sideband entity
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
+CC: "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
+        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
+        "perex@perex.cz"
+	<perex@perex.cz>,
+        "conor+dt@kernel.org" <conor+dt@kernel.org>,
+        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "corbet@lwn.net"
+	<corbet@lwn.net>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "tiwai@suse.com" <tiwai@suse.com>,
+        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+        "pierre-louis.bossart@linux.intel.com"
+	<pierre-louis.bossart@linux.intel.com>,
+        "broonie@kernel.org"
+	<broonie@kernel.org>,
+        "bgoswami@quicinc.com" <bgoswami@quicinc.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "gregkh@linuxfoundation.org"
+	<gregkh@linuxfoundation.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>,
+        "linux-sound@vger.kernel.org"
+	<linux-sound@vger.kernel.org>,
+        "linux-input@vger.kernel.org"
+	<linux-input@vger.kernel.org>,
+        "linux-usb@vger.kernel.org"
+	<linux-usb@vger.kernel.org>,
+        "linux-arm-msm@vger.kernel.org"
+	<linux-arm-msm@vger.kernel.org>,
+        "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>,
+        "alsa-devel@alsa-project.org"
+	<alsa-devel@alsa-project.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>
+References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
+ <20241015212915.1206789-5-quic_wcheng@quicinc.com>
+ <20241025232252.wsk4lviqzyzqjzuh@synopsys.com>
+Content-Language: en-US
+From: Wesley Cheng <quic_wcheng@quicinc.com>
+In-Reply-To: <20241025232252.wsk4lviqzyzqjzuh@synopsys.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 47BSqjjk7MLktpZ_JdwbGROYbtTP0iEy
+X-Proofpoint-ORIG-GUID: 47BSqjjk7MLktpZ_JdwbGROYbtTP0iEy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=893 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410290142
 
-On Tue, Oct 29, 2024 at 7:48=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
+Hi Thinh,
+
+On 10/25/2024 4:22 PM, Thinh Nguyen wrote:
+> Hi,
 >
-> One option is to define a trait for integers:
+> On Tue, Oct 15, 2024, Wesley Cheng wrote:
+>> From: Mathias Nyman <mathias.nyman@linux.intel.com>
+>>
+>> Introduce XHCI sideband, which manages the USB endpoints being requested by
+>> a client driver.  This is used for when client drivers are attempting to
+>> offload USB endpoints to another entity for handling USB transfers.  XHCI
+>> sideband will allow for drivers to fetch the required information about the
+>> transfer ring, so the user can submit transfers independently.  Expose the
+>> required APIs for drivers to register and request for a USB endpoint and to
+>> manage XHCI secondary interrupters.
+>>
+>> Multiple ring segment page linking, proper endpoint clean up, and allowing
+>> module compilation added by Wesley Cheng to complete original concept code
+>> by Mathias Nyman.
+>>
+>> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+>> Co-developed-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+>> ---
+>>  drivers/usb/host/Kconfig          |   9 +
+>>  drivers/usb/host/Makefile         |   2 +
+>>  drivers/usb/host/xhci-sideband.c  | 424 ++++++++++++++++++++++++++++++
+>>  drivers/usb/host/xhci.h           |   4 +
+>>  include/linux/usb/xhci-sideband.h |  70 +++++
+>>  5 files changed, 509 insertions(+)
+>>  create mode 100644 drivers/usb/host/xhci-sideband.c
+>>  create mode 100644 include/linux/usb/xhci-sideband.h
+>>
+>> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+>> index 4448d0ab06f0..96659efa4be5 100644
+>> --- a/drivers/usb/host/Kconfig
+>> +++ b/drivers/usb/host/Kconfig
+>> @@ -104,6 +104,15 @@ config USB_XHCI_RZV2M
+>>  	  Say 'Y' to enable the support for the xHCI host controller
+>>  	  found in Renesas RZ/V2M SoC.
+>>  
+>> +config USB_XHCI_SIDEBAND
+>> +	tristate "xHCI support for sideband"
+>> +	help
+>> +	  Say 'Y' to enable the support for the xHCI sideband capability.
+>> +	  Provide a mechanism for a sideband datapath for payload associated
+> Please correct me if I'm wrong, but this doesn't look like the actual
+> xHCI Audio Sideband capability described in the xHCI spec section 7.9
+> but rather a specific implementation for Qcom right? For the xHCI Audio
+> Sideband xHCI capability, the driver should detect this capability
+> through the xHCI get extended capability. If this is not xHCI Audio
+> Sideband capability, we should properly clarify this in the
+> documentation and the naming of things to avoid any confusion.
 
-+1, one more thing to consider is whether it makes sense to define a
-DT-only trait that holds all the types that can be a device property
-(like `bool` too, not just the `Integer`s).
+Sure, that's a good point.  It does still currently rely on utilizing the system memory for USB IO transfers.  I can add some comments and update some of the documentation to reflect that this is different. 
 
-Then we can avoid e.g. `property_read_bool` and simply do it in `property_r=
-ead`.
+Thanks
 
-Cheers,
-Miguel
+Wesley Cheng
+
+> I believe your implementation still needs to provide the data to the
+> host controller through the system memory right? The xHCI Audio Sideband
+> capability may pass the data to the xHC other than the main memory.
+>
+> BR,
+> Thinh
+>
+>> +	  with audio class endpoints. This allows for an audio DSP to use
+>> +	  xHCI USB endpoints directly, allowing CPU to sleep while playing
+>> +	  audio.
+>> +
+>>  config USB_XHCI_TEGRA
+>>  	tristate "xHCI support for NVIDIA Tegra SoCs"
+>>  	depends on PHY_TEGRA_XUSB
 
