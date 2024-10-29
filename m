@@ -1,142 +1,180 @@
-Return-Path: <linux-kernel+bounces-387022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053929B4AD9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:22:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158EA9B4ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:25:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13471F23AD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:22:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62448B22316
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A39B20262A;
-	Tue, 29 Oct 2024 13:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yEsamKzE"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5DB205132
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8709206944;
+	Tue, 29 Oct 2024 13:25:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D12206078;
+	Tue, 29 Oct 2024 13:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730208149; cv=none; b=aeWy0u7g4+J5i4PrMoXZzqVwjUwvMWPKVI9EyHMSOnLAi0WbK5iuiHmhOPhLGBDqHYvAfTAtLhMhdhi8ieBK+bqJnZ0WhUZ1QN+frYqT4xtn8WqOuTsy5hakhMHHoa4xRAxb5pjeagxdjmXfGtOojAaA5bzTxylDQNh2cNeA4Y4=
+	t=1730208333; cv=none; b=ZfVRNQBou2LntztaDqkp8MG9aMv7UJBZyg+8+lHQV1OfeyUjgN8B5rT49EJqbx3M4cjT5IUPfhVTgIOShAAfRtwTjbhAxUx49RakBqzFrptarRTpQ3gY4cGfHgkdgqYYplwh65bx2aa8Q2sB7VR6daZByUyMmKNIhGUUt/j8+1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730208149; c=relaxed/simple;
-	bh=ChSlnsIaEJyE5TQiMvP4Xs35+QG7nfcXjtPvtlTkbVk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DDl+WFF3Rk97Zqjilr1UGH0YEsr69m25E9I63DyfxKIgSqUyoXzBd4chYO8svS4/mvoHEfXgmib5cXRAzCiL1s5jGCWrrnp/Gm/dTOjlr79u9e6YI6sPR2E0a3gQ9YZzSO1Yf+mmREBu1a34HbBrW4nBSXANPIAVemZH9CqQ3eI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yEsamKzE; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d4ba20075so3730137f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730208146; x=1730812946; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TmivirZP7oi5XcfMsLlW/n+BvvctncTBddPvnaQEmE8=;
-        b=yEsamKzEo/YD9AMmpZ00ZVkOmRdiIb1hx08l4mx3ZBXaN5gGQ+R90Kbv7cqE86fTs7
-         SH2w7cgspOWsNEOxir7whZIzFZNrTphRokCpPxQ3AO+0iCnnqDu6TJx5KldBNPNyqLHp
-         5cyRhBNV2Eh4JNx95dL/MeW81uiKdpLfjXJPmqvdlKYbgDgsbKxfzX2f/ziFkEbTjxXA
-         a7lWk8aUEWqjFWh7g5yWpM0Y5ejQ2WWvAUJENBSKXQaPLODljCATwJ0p2tmlvrPOG+Xs
-         AfQ2ctzDIkH2z2ji2giXr4fWgmMHShoUdDNmlPN1p8ojj5Crk6gEiG2kNa18VHF4Qc3k
-         KRZg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730208146; x=1730812946;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TmivirZP7oi5XcfMsLlW/n+BvvctncTBddPvnaQEmE8=;
-        b=USpIlPLVMb08RSLEG6oH9hL1Wr2uusVSXRdO0FsiTuj4audjlDenwZdNhBEqW/XtkK
-         2BSnPCAy7Nh0A922mA0it+A38FJF3J95oRGMTGWJpRIKujnnPsZhJc+4MltEXFFv404Z
-         wxTF+lFiLq4RFEOmw13h+sgyRAxTaq2b66iUx/Nbfx7ymOodsFEAuAWi0aWN7jhItKHm
-         y8rrqCHpTzGvCKtyNDrW72wDTxXR9AuTdf64cs5P1y2Gj9p9HbI0pugXdEjbaoMP5Sfe
-         vePWvXqEuNi32hEKhPmQBexjbOlyh6NA1gNzFEyi7OZYthpw0l/Nd+DCnSjIWyzWWGBd
-         cncA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWbXARbIPmvi+XnrryLD+xXIeJ5oxnruICO72Vjg//oj5eZU4YiWnQSM2s+nZD2rdimROx5cFDslf8qg0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1MtEtvHu2fC4ESJOX3ocbGD6Wbt3QNzmy0MeoVXNNxbCVhfa7
-	ikaHkCaMUZcF0blfTikeweAagdxv9IxVTHBXG3CHHoB1idggIKMSJbpvR7hTWw==
-X-Google-Smtp-Source: AGHT+IFNju1UNn9Y+9Asqmg8PGyztzLGMJa4AE6L7cP0Oa7tzLJFgRDefug/KVTmU2scx5IEYk1I7A==
-X-Received: by 2002:adf:fb48:0:b0:37c:d276:f04 with SMTP id ffacd0b85a97d-3806120086cmr8303886f8f.45.1730208145659;
-        Tue, 29 Oct 2024 06:22:25 -0700 (PDT)
-Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b49d20sm12407112f8f.62.2024.10.29.06.22.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 06:22:25 -0700 (PDT)
-From: Aleksei Vetrov <vvvvvv@google.com>
-Date: Tue, 29 Oct 2024 13:22:11 +0000
-Subject: [PATCH v2] wifi: nl80211: fix bounds checker error in
- nl80211_parse_sched_scan
+	s=arc-20240116; t=1730208333; c=relaxed/simple;
+	bh=pspKFGNpCiKI9E9FTOSk/kFZTLdatmjvJ0xgyFev+m0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NSHZdIhQZ0112KwTyQwEUT/BRZITcRcrGpzAjnCKyaoXeizuGmdaYkxZwC3M8LGiPDynVeAZXAwP1dQ51FDWsy3VZWcL+bHElxraHbyZVoqpbK9I6Cisa9Db2VQBbMn2HhJhHj1WnbJ4vyNr1wu8sCPevV1OMj52eT9IaqfS6aM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B296C13D5;
+	Tue, 29 Oct 2024 06:25:59 -0700 (PDT)
+Received: from [10.57.89.81] (unknown [10.57.89.81])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 715433F528;
+	Tue, 29 Oct 2024 06:25:27 -0700 (PDT)
+Message-ID: <f9a4ead4-b109-4c70-a08d-2e86cfb3fe11@arm.com>
+Date: Tue, 29 Oct 2024 13:25:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: re-enable context caching in smmu
+ reset operation
+To: Will Deacon <will@kernel.org>,
+ Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+Cc: robdclark@gmail.com, joro@8bytes.org, jgg@ziepe.ca, jsnitsel@redhat.com,
+ robh@kernel.org, krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
+ dmitry.baryshkov@linaro.org, iommu@lists.linux.dev,
+ linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
+ <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
+ <20241024125241.GD30704@willie-the-truck>
+ <092db44e-f254-4abd-abea-e9a64e70df12@quicinc.com>
+ <20241029124708.GA4241@willie-the-truck>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241029124708.GA4241@willie-the-truck>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-nl80211_parse_sched_scan-bounds-checker-fix-v2-1-c804b787341f@google.com>
-X-B4-Tracking: v=1; b=H4sIAILhIGcC/52NQQ6CMBBFr0Jm7Zi2VmxccQ9DCC0DNGJLOko0h
- LtbOYKbn7y3+G8FpuSJ4VqskGjx7GPIoA4FuLENA6HvMoMSSkuhDIbJCCVlM7eJqWE3Upe3DWj
- jK3SMWbg7Jez9G93ZaNVraU15gvw4J8p6r93qzKPnZ0yfPb7In/2vs0iUaG2phSVB1l6qIcZho
- qOLD6i3bfsCJRP5IOcAAAA=
-X-Change-ID: 20241028-nl80211_parse_sched_scan-bounds-checker-fix-c5842f41b863
-To: Johannes Berg <johannes@sipsolutions.net>, Kees Cook <kees@kernel.org>, 
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
- Dmitry Antipov <dmantipov@yandex.ru>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-hardening@vger.kernel.org, stable@vger.kernel.org, 
- Aleksei Vetrov <vvvvvv@google.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730208141; l=1602;
- i=vvvvvv@google.com; s=20241028; h=from:subject:message-id;
- bh=ChSlnsIaEJyE5TQiMvP4Xs35+QG7nfcXjtPvtlTkbVk=;
- b=Og5XeuaTfjSAXJ6W0QqYgXHvcHPaCDcuHiTceteHDnvKLY+bGPJ5jfBwN4DTbliVwXWzJBkkq
- W1Kr/9C8eyBDHA7V8zd4wg2QCycwQogpxb0L1dZtqCxkvYe13MLqh2t
-X-Developer-Key: i=vvvvvv@google.com; a=ed25519;
- pk=b4c4Uc4EKDS3ie6P4xhkyobon88ZGFLMHyo8kw1IuM4=
 
-The channels array in the cfg80211_scan_request has a __counted_by
-attribute attached to it, which points to the n_channels variable. This
-attribute is used in bounds checking, and if it is not set before the
-array is filled, then the bounds sanitizer will issue a warning or a
-kernel panic if CONFIG_UBSAN_TRAP is set.
+On 2024-10-29 12:47 pm, Will Deacon wrote:
+> On Fri, Oct 25, 2024 at 07:51:22PM +0530, Bibek Kumar Patro wrote:
+>>
+>>
+>> On 10/24/2024 6:22 PM, Will Deacon wrote:
+>>> On Tue, Oct 08, 2024 at 06:24:06PM +0530, Bibek Kumar Patro wrote:
+>>>> Default MMU-500 reset operation disables context caching in
+>>>> prefetch buffer. It is however expected for context banks using
+>>>> the ACTLR register to retain their prefetch value during reset
+>>>> and runtime suspend.
+>>>>
+>>>> Replace default MMU-500 reset operation with Qualcomm specific reset
+>>>> operation which envelope the default reset operation and re-enables
+>>>> context caching in prefetch buffer for Qualcomm SoCs.
+>>>>
+>>>> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>>>> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
+>>>> ---
+>>>>    drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 45 ++++++++++++++++++++--
+>>>>    1 file changed, 42 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> index 087fb4f6f4d3..0cb10b354802 100644
+>>>> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
+>>>> @@ -16,6 +16,16 @@
+>>>>
+>>>>    #define QCOM_DUMMY_VAL	-1
+>>>>
+>>>> +/*
+>>>> + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
+>>>> + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
+>>>> + * buffer). The remaining bits are implementation defined and vary across
+>>>> + * SoCs.
+>>>> + */
+>>>> +
+>>>> +#define CPRE			(1 << 1)
+>>>> +#define CMTLB			(1 << 0)
+>>>> +
+>>>>    static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
+>>>>    {
+>>>>    	return container_of(smmu, struct qcom_smmu, smmu);
+>>>> @@ -396,11 +406,40 @@ static int qcom_smmu_def_domain_type(struct device *dev)
+>>>>    	return match ? IOMMU_DOMAIN_IDENTITY : 0;
+>>>>    }
+>>>>
+>>>> +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
+>>>> +{
+>>>> +	int ret;
+>>>> +	u32 val;
+>>>> +	int i;
+>>>> +
+>>>> +	ret = arm_mmu500_reset(smmu);
+>>>> +	if (ret)
+>>>> +		return ret;
+>>>> +
+>>>> +	/*
+>>>> +	 * arm_mmu500_reset() disables CPRE which is re-enabled here.
+>>>> +	 * The errata for MMU-500 before the r2p2 revision requires CPRE to be
+>>>> +	 * disabled. The arm_mmu500_reset function disables CPRE to accommodate all
+>>>> +	 * RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
+>>>> +	 * the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
+>>>> +	 * the CPRE bit for the next-page prefetcher to retain the prefetch value
+>>>> +	 * during reset and runtime suspend operations.
+>>>> +	 */
+>>>> +
+>>>> +	for (i = 0; i < smmu->num_context_banks; ++i) {
+>>>> +		val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
+>>>> +		val |= CPRE;
+>>>> +		arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
+>>>> +	}
+>>>
+>>> If CPRE only needs to be disabled prior to r2p2, then please teach the
+>>> MMU-500 code about that instead of adding qualcomm-specific logic here.
+>>>
+>>
+>> Doing this on MMU-500 code would make it generic and reflect for SoC of all
+>> the vendors on this platform.
+>> We can make sure that it won't cause any problems in Qualcomm SoCs as we
+>> have been enabling this since for some years now and could not
+>> observe/reproduce any issues around these errata.
+> 
+> Unless you can explain definitively hy that's the case, I still don't
+> think we should be second-guessing the core SMMU driver code in the
+> Qualcomm backend.
 
-This patch sets the size of allocated memory as the initial value for
-n_channels. It is updated with the actual number of added elements after
-the array is filled.
+Of the still-open errata, #562869 could be safely mitigated by nobbling 
+ARM_SMMU_FEAT_FMT_AARCH32_S, but #1047329 is the one which worries me, 
+since even if we don't support nesting within Linux, I'm wary of the 
+firmware hypervisor sticking its own S2 under any S1 context we set up. 
+I guess we could try the alternate SMMU_ACR.IPA2PA_CEN workaround for 
+that, however it's not obvious that the performance impact in that case 
+wouldn't be worse than whatever benefit may be gained from keeping CPRE.
 
-Fixes: aa4ec06c455d ("wifi: cfg80211: use __counted_by where appropriate")
-Cc: stable@vger.kernel.org
-Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
----
-Changes in v2:
-- Added Fixes tag and added stable to CC
-- Link to v1: https://lore.kernel.org/r/20241028-nl80211_parse_sched_scan-bounds-checker-fix-v1-1-bb640be0ebb7@google.com
----
- net/wireless/nl80211.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
+Robin.
 
-diff --git a/net/wireless/nl80211.c b/net/wireless/nl80211.c
-index d7d099f7118ab5d5c745905abdea85d246c2b7b2..9b1b9dc5a7eb2a864da7b0212bc6a156b7757a9d 100644
---- a/net/wireless/nl80211.c
-+++ b/net/wireless/nl80211.c
-@@ -9776,6 +9776,7 @@ nl80211_parse_sched_scan(struct wiphy *wiphy, struct wireless_dev *wdev,
- 	request = kzalloc(size, GFP_KERNEL);
- 	if (!request)
- 		return ERR_PTR(-ENOMEM);
-+	request->n_channels = n_channels;
- 
- 	if (n_ssids)
- 		request->ssids = (void *)request +
-
----
-base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
-change-id: 20241028-nl80211_parse_sched_scan-bounds-checker-fix-c5842f41b863
-
-Best regards,
--- 
-Aleksei Vetrov <vvvvvv@google.com>
+>> But we won't be able to guarantee the same behavior in SoC for other vendors
+>> where these errata might still be applicable as per [1] and [2].
+>> So as per my understanding it's safe to include in Qualcomm specific
+>> implementation and not changing the default behavior in all other vendors'
+>> SoC even if they are not prior to r2p2 revision [3].
+> 
+> If you want to gate the errata workarounds on policy, then please follow
+> what we do for the CPU: add a Kconfig option (e.g.
+> ARM_SMMU_WORKAROUND_BROKEN_CPRE) which defaults to "on" (assuming that
+> the relevant errata aren't all "rare") and update silicon-errata.rst
+> accordingly.
+> 
+> Then you can choose to disable them in your .config if you're happy to
+> pick up the pieces.
+> 
+> As an aside, I'm happy with the rest of the series now.
+> 
+> Will
 
 
