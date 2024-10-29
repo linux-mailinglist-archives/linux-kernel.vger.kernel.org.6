@@ -1,126 +1,85 @@
-Return-Path: <linux-kernel+bounces-387193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D8C9B4D74
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:19:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE2EB9B4D72
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA924284153
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:19:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60F031F26476
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:19:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96435192D91;
-	Tue, 29 Oct 2024 15:19:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tOx9+8QS"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEAC192D9E;
+	Tue, 29 Oct 2024 15:19:29 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA3618C936
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C650A18C936;
+	Tue, 29 Oct 2024 15:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730215177; cv=none; b=jQ9U7Swep8/lbLzoQqvA7Q4FT3IrHDUIoTXAuO+HcJb8/dXHxyBn1uOGWdLeJ0hjNuSZlDfpIUt45Hi2H0NDmjtlKC37I4qSPQZwkHr3ZP/irh4kHhnQQjLHWqxzPJMwU3tpx/uKUb8Qxjm+aiKJsAgh6IT+voDDB0R0LXdSPcY=
+	t=1730215168; cv=none; b=uCHnfAYenjg0oh6TA8UIK3+0cmLARO1sFENW+ppzL3c+5m+mDJd1B8+ru2X5Z1LOD0jNL6/TJ1W3k7ki90wFjGZblxYj4zUYGbGSLW8wMlfXX/3LSKypZ+qXMCneOneRJKVqf5/Trq0eMqgtEk3PeKJFw8I78htrKFCR97+4YmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730215177; c=relaxed/simple;
-	bh=QIOEFvu4FMncIty+EQ4CDd4qN6V5DqirfrcW+1k0Jgc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JXoxn7m/j+7cqmycLCieYri0ZANDQ4tbaLKkbhI2v/BD0CE/JZdQLwVDz2KROThg+Fb4Jy76kYqTUPUzMgd2G6KhBbplvhG16h/5bS5U4AaFri5G5AVdWBsyriOOlAqKGQK7ag8wll9EpOuGDsJ1hGXoVauyah6AEkkt+GXvx+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tOx9+8QS; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so238605e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:19:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730215173; x=1730819973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QIOEFvu4FMncIty+EQ4CDd4qN6V5DqirfrcW+1k0Jgc=;
-        b=tOx9+8QS3MTPbe+56ekmI1IZtJaCYvUWhQ21UBTYf9d+lyDHcAXyOt79P+Sy587CU0
-         XxmvSyVRO+9FtWHD7deMiD/0PPJmyzVqLJuBxVUsQzAGCL2r4qaDcY+oobvPkIZqhl5O
-         ZVn2FckfW/VQtU+ONdlHVQpPP8UBl2o7wexWQOwxODimXN82KA23MF6Wosac0xhcKL28
-         0dAZhpgGfbnkZtHhJukWsXoKDDIRs13RKF3EX9Oab2bL7AiyBZeOoc4r2sgLsVNuUE8k
-         1DKi0UufE3Njl8J3FrVMgL9686Rc1MPO8Xx7JCqKrkNHCujS4bNfMPcSLkdZsaKm1lz2
-         JmcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730215173; x=1730819973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QIOEFvu4FMncIty+EQ4CDd4qN6V5DqirfrcW+1k0Jgc=;
-        b=Kl2jdF53zIage9r5R8kIuLGOr9Q0TQAsuOshItNnMEy3Frgm7+OwLHGhrej3GBaCbt
-         A/hatiho1CFi1QoAkORQ3TnTDgBPHyPF7hiG8fJFcauxmcLtEBqE28fn7ywZQ6bbEqUj
-         uvGVam2nFuo6JpgdjwoaFn+AxKBLAc4U3zKtZ8f377bUCnbOrpT5Wq+OtQili2qAmvx7
-         zQfKU+8+Obg8prVLaQHjp9W8pHo8n7acLDec7BkvOgE5E7Lks4WsEPCDnx1CYoMoyhPi
-         tcPzUy4k0CceGnFv9ch1O8Bhz0/5FXP7c7F002t1VCR1/5vc1izdIDsI8Mhf30VdxzER
-         Zcrg==
-X-Forwarded-Encrypted: i=1; AJvYcCVidtj1ebb/Omj1U3b3QKXEOKjV0tFgnB6QGuAK8YnA2UndYmR2JbUqP9CVzw7TggZYm3oh8kmQzLwyvsQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt+RpmUdvw27UZV0uyW78qWkknN2dAj/XK3g8ufd1mbgslQemj
-	eudc4s0vcCJybK+PaLRvvLaIymFkEhqX+Df7UCU/6fVK76DM6p9JNGirRqiU4doM9NdC4nnD9zj
-	nXN5Y2tSwilGxILZl9435PHy/pBF0gvde2RFB
-X-Gm-Gg: ASbGncujHpZlgSk8dxkic33jCrNgJMzYt0f4YQnY91Cup5bpsl2DxzNyYpT273oepaV
-	8amK++6kGQH8ToIjoZqAGB3c0Jh0y
-X-Google-Smtp-Source: AGHT+IHu1NlcguibIZqU5bOGPh7SLbPXvlIkXx5brhOqK848UqAFYgPPZ6g4zp4aNdE3qqvrj7UMkAPrUNhisNoxLXo=
-X-Received: by 2002:a05:600c:34d1:b0:426:7018:2e2f with SMTP id
- 5b1f17b1804b1-431b4a39c00mr4083995e9.5.1730215173087; Tue, 29 Oct 2024
- 08:19:33 -0700 (PDT)
+	s=arc-20240116; t=1730215168; c=relaxed/simple;
+	bh=ejoq5ptnUOsVen2Bm6iWVtG3NTwdMNtnCBuPDvnoomw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MNoaQsQ/Yhzvy0tshTbmQXUm/Obwf0eDFdmtCoOOnuiUfrUHX54l6a7RZxwT0MLU1D6lWaAU4AxXcmrGPnkx2ahGkMX31dK//grv/VK1yDYIB1H62cN45dOAduKBbMJIpatlio7eXpBmnBrbvwCsG7jsXYjcGWvsoax3Tj+iPPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdDR40YJ4z6D8YT;
+	Tue, 29 Oct 2024 23:18:08 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A4301140B30;
+	Tue, 29 Oct 2024 23:19:23 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Oct
+ 2024 16:19:17 +0100
+Date: Tue, 29 Oct 2024 15:19:16 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Andrew Morton <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>,
+	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+	<andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+	<linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Jonathan Corbet <corbet@lwn.net>, Davidlohr Bueso <dave@stgolabs.net>, "Dave
+ Jiang" <dave.jiang@intel.com>, Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>, "Dan Williams"
+	<dan.j.williams@intel.com>, Fan Ni <fan.ni@samsung.com>, "Bagas Sanjaya"
+	<bagasdotme@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-cxl@vger.kernel.org>
+Subject: Re: [PATCH v2 2/4] Documentation/printf: struct resource add start
+ == end special case
+Message-ID: <20241029151916.000051f5@Huawei.com>
+In-Reply-To: <20241025-cxl-pra-v2-2-123a825daba2@intel.com>
+References: <20241025-cxl-pra-v2-0-123a825daba2@intel.com>
+	<20241025-cxl-pra-v2-2-123a825daba2@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202410281414.c351044e-oliver.sang@intel.com> <CAH5fLggdtev=scJ1C9EefZf-fVrMvgMbfD+b_T5vFfHqNTn8Kw@mail.gmail.com>
- <CABCJKudR2UwvR8x4MwKYPmHETMz+aoiXEXz135BoufTF9Pt2Gg@mail.gmail.com>
- <CAH5fLghwEGCAxCR+OifGYh3jKK4jJqa-AX3gMUdN0HETBNBkYg@mail.gmail.com>
- <CABCJKufypN0c6EwiexQufjxMss-Y_fYdp+2XdpXU=4mmf2ZYgg@mail.gmail.com> <CAH5fLggiMkB5g7=hxN-a+9M3vMxWdoB1QCyX9D3+-_oJ7duQ5Q@mail.gmail.com>
-In-Reply-To: <CAH5fLggiMkB5g7=hxN-a+9M3vMxWdoB1QCyX9D3+-_oJ7duQ5Q@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 29 Oct 2024 08:18:54 -0700
-Message-ID: <CABCJKucqMyJa+GNZd909GLvrUPfKS4hN8-ac=2GMH6y3fT=q9g@mail.gmail.com>
-Subject: Re: [linus:master] [cfi] 8b8ca9c25f: CFI_failure_at_do_basic_setup
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, linux-kernel@vger.kernel.org, 
-	kernel test robot <oliver.sang@intel.com>, Miguel Ojeda <ojeda@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Oct 29, 2024 at 2:09=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Mon, Oct 28, 2024 at 6:23=E2=80=AFPM Sami Tolvanen <samitolvanen@googl=
-e.com> wrote:
-> >
-> > On Mon, Oct 28, 2024 at 8:18=E2=80=AFAM Alice Ryhl <aliceryhl@google.co=
-m> wrote:
-> > >
-> > > On Mon, Oct 28, 2024 at 4:15=E2=80=AFPM Sami Tolvanen <samitolvanen@g=
-oogle.com> wrote:
-> > > >
-> > > > On Mon, Oct 28, 2024 at 1:34=E2=80=AFAM Alice Ryhl <aliceryhl@googl=
-e.com> wrote:
-> > > > >
-> > > > > Hmm. This config has:
-> > > > >
-> > > > > CONFIG_CLANG_VERSION=3D190102
-> > > > >
-> > > > > Sami, is the fix not available as of llvm 19?
-> > > >
-> > > > Looks like llvmorg-19.1.2 doesn't have the fix, which means it won'=
-t
-> > > > be available until LLVM 20. :/
-> > >
-> > > It's not going to land in a patch release of llvm 19?
-> >
-> > It won't land to 19.x automatically, but I requested a backport:
-> > https://github.com/llvm/llvm-project/pull/113938
->
-> Thanks! Looks like it already landed. Which patch version will it land in=
-?
+On Fri, 25 Oct 2024 19:46:54 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
 
-It should be in 19.1.3.
-
-Sami
+> The code when printing a struct resource will check for start == end and
+> only print the start value.
+> 
+> Document this special case.
+> 
+> Suggested-by: Petr Mladek <pmladek@suse.com>
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+FWIW LGTM
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
