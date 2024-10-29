@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-387141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACD1B9B4C89
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:50:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DC99B4C7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E46711C225D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C4131F23B11
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 590881922F8;
-	Tue, 29 Oct 2024 14:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FDA61917D9;
+	Tue, 29 Oct 2024 14:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IKv+FT8H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dICxjCjw"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DC2A13AA3F;
-	Tue, 29 Oct 2024 14:49:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF3A18FC8F;
+	Tue, 29 Oct 2024 14:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730213395; cv=none; b=G4WelEg2+5dk4/vNPyCA5MA4/KtfDeenNcqwSPVC5bnUipD6XxIMga51F99lTeg9xNRgxyyoMiZmBivnXjvEf065tXe80x3oA52MFUxsSs9kKE/SHw4YnA6bsIsxAez9xhGaUy2O9ualqlOZ87PtrVkSowXrOe5UjqsHtsRXsu0=
+	t=1730213370; cv=none; b=AENWDQFx0LogISrVfVcRfGwitvQ5uZ9C40P7WBqL0+7nZmw+4ixttEcXypgJu0WwgwUYd9Xe4roiTgWByi5kTeP8h/3+/CSwIGcE6shW8ZejdPgCe68bHJmTXY6N96I3NiuoaCdRSoFjH0JYltNpdqlkq2Gtsp6aif+aFSfCqO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730213395; c=relaxed/simple;
-	bh=BlzYljgtvc2MTIkLFj7ZU1rt1YFd3eqaeSD+vg+1nfw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=TDTxJl749S2PtdtODM662t4C7qw5FvZmd1fXMerTi53qURl3G9eXEe+YiGEN+VMq+Q3CECcu4rnFdF2gGG+4JmAwrgJuvlk4sfa0DT4BZWG0p/CBLgxVlYVks3JecEBJV3zKhiWJ/KUyaswy0uLOx8d+Mt72LUCIW3dODnR9eSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IKv+FT8H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 530DCC4CEE7;
-	Tue, 29 Oct 2024 14:49:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730213395;
-	bh=BlzYljgtvc2MTIkLFj7ZU1rt1YFd3eqaeSD+vg+1nfw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IKv+FT8Hd5+iBUKXN49pcWen80JNLhSG1r69vthGvit7CTWE8PJ2gu/StNc4ViVnJ
-	 zBmFkKiE9k7HlUD2nn8acuqYVBXKqg/SXDt6ASR6ehDi6kuQFIpEjmJwpYCJDR5sVy
-	 SmGmHNXLT8bSTVuTq9Q4SInncT2pOiYDf5qfuy0B8FliWln26csgXPigh/s1v5WRbv
-	 wJz8IzHPLsRILvfMA61V6gMezbC+Jb+qEV1Lonx8adE88Ysl/xF4RcEYqGjfO1P03o
-	 iOB6DClvRQxJRUudeIyk11ho0l2Llp1wuzYITTbzqlv9eWivvQEd36iWg2wOf5wYBb
-	 Rb6KAZyKYkbJw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40E83D3A661;
-	Tue, 29 Oct 2024 14:49:55 +0000 (UTC)
-From: Koakuma via B4 Relay <devnull+koachan.protonmail.com@kernel.org>
-Date: Tue, 29 Oct 2024 21:49:08 +0700
-Subject: [PATCH v3 2/2] sparc/build: Add SPARC target flags for compiling
- with clang
+	s=arc-20240116; t=1730213370; c=relaxed/simple;
+	bh=Fe+BNDAVp+hxy0uO2RSCAT7tz1AIgIN1gmz3UfF7bLg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Cbc/2dUZ5yaAxGA5uHRoSEh82eneMMtlTgtH8bpj1TjSsFxcgM9EbCWZega+CDhGeoYhj7VzXFOHlgcAqs5n8aQ+L41fNpsZvT3DMxEL4AtW36fExsQ2e6VBEZmvRa5oxhnSo4HlxbFGDuZN7yhb32W8UyUA9QyVWtUNIefZEig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dICxjCjw; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 8653460007;
+	Tue, 29 Oct 2024 14:49:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730213359;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+FlNVllC/D5JV5n+6Shvus7HZtUjXDU01fqL2ePQhSc=;
+	b=dICxjCjwm+um0i4q+atY1uQqjl32KNZ8qxO8kWbplQejYNtXxu2Wud+VHsz7+grDnoXcCJ
+	7jxD5wu28OEX6xHBVr+1da9zPR31VEYekHdCecOEpTbIROIeIv1aIjRg37KQ1KoOgYql5X
+	lAN0DUVLyiEO419475dlwSIsco1mpDnYWwgGMQ1ipBJq9Ov+TUD1i7u7OhOfCdGk9sU4sb
+	HoHlxgjZjsMKBjMvTTGJFeyaxogSzQyp4kcU75nCU3IQY3C0oKPOle0lGghCZYUVZeRpA1
+	fLSxDmPUhtlJ8Selj9r9QVHwoS8//S2pV+1tUEwtVpIdvyljnvDYwJGFs19m9w==
+Date: Tue, 29 Oct 2024 15:49:16 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Alexis =?UTF-8?B?TG90aG9yw6k=?= <alexis.lothore@bootlin.com>
+Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu
+ <joabreu@synopsys.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ davem@davemloft.net, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Richard Cochran <richardcochran@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/7] Support external snapshots on dwmac1000
+Message-ID: <20241029154916.50b5f188@fedora.home>
+In-Reply-To: <a905c45d-344b-49e9-a0c9-fb7b6445edad@bootlin.com>
+References: <20241029115419.1160201-1-maxime.chevallier@bootlin.com>
+	<a905c45d-344b-49e9-a0c9-fb7b6445edad@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-sparc-cflags-v3-2-b28745a6bd71@protonmail.com>
-References: <20241029-sparc-cflags-v3-0-b28745a6bd71@protonmail.com>
-In-Reply-To: <20241029-sparc-cflags-v3-0-b28745a6bd71@protonmail.com>
-To: "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Nick Desaulniers <ndesaulniers@google.com>, 
- Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
- glaubitz@physik.fu-berlin.de, Masahiro Yamada <masahiroy@kernel.org>, 
- Nicolas Schier <nicolas@fjasle.eu>, Jonathan Corbet <corbet@lwn.net>
-Cc: sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- llvm@lists.linux.dev, linux-kbuild@vger.kernel.org, 
- linux-doc@vger.kernel.org, Koakuma <koachan@protonmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1730213393; l=1720;
- i=koachan@protonmail.com; s=20240620; h=from:subject:message-id;
- bh=qC+xpLMUpGByab1qovPWQQ3aHiMZ1dz7yem8GqVZgaw=;
- b=j3CG9BnJ7FWIRbyhXXEAVLB8dkBqluDHfp9prkX2enPrqN3tWd26RoXX/dgFs1O0iNkgciARn
- sw7SoBukKcCDoNEFREPzB0cpBbb11mSllQ7KnMz+fTX23bhUK2DgdHV
-X-Developer-Key: i=koachan@protonmail.com; a=ed25519;
- pk=UA59FS3yiAA1cnAAUZ1rehTmr6skh95PgkNRBLcoKCg=
-X-Endpoint-Received: by B4 Relay for koachan@protonmail.com/20240620 with
- auth_id=174
-X-Original-From: Koakuma <koachan@protonmail.com>
-Reply-To: koachan@protonmail.com
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-From: Koakuma <koachan@protonmail.com>
+Hi Alexis,
 
-clang only supports building 64-bit kernel, so we use the
-sparc64-linux-gnu target.
+On Tue, 29 Oct 2024 15:45:07 +0100
+Alexis Lothor=C3=A9 <alexis.lothore@bootlin.com> wrote:
 
-See also: https://lore.kernel.org/lkml/e26PTXUXEz8OYXmaeKn4Mpuejr4IOlFfFwdB5vpsluXlYiqDdlyQTYcDtdAny_o4gO4SfPeQCCN2qpyT6e0nog5EaP3xk2SeUPTrF54p1gM=@protonmail.com/T/#m068e010dcf8b99d3510a90d7532bcdb70e2e2c6b
+> Hello Maxime,
+>=20
+> On 10/29/24 12:54, Maxime Chevallier wrote:
+> > Hi,
+> >=20
+> > This series is another take on the pervious work [1] done by
+> > Alexis Lothor=C3=A9, that fixes the support for external snapshots
+> > timestamping in GMAC3-based devices.
+> >  =20
+>=20
+> [...]
+>=20
+> > [1]: https://lore.kernel.org/netdev/20230616100409.164583-1-alexis.loth=
+ore@bootlin.com/
+> >=20
+> > Thanks Alexis for laying the groundwork for this,
+> >=20
+> > Best regards,
+> >=20
+> > Maxime =20
+>=20
+> Thanks for making this topic move forward. I suspect the series to be mis=
+sing
+> some bits: in the initial series you mention in [1], I also reworked
+> stmmac_hwtstamp_set in stmmac_main.c, which is also currently assuming a =
+GMAC4
+> layout ([2]). I suspect that in your series current state, any new call to
+> stmmac_hwtstamp_set will overwrite any previously configured hardware tim=
+estamping.
 
-Signed-off-by: Koakuma <koachan@protonmail.com>
----
- Documentation/kbuild/llvm.rst | 3 +++
- scripts/Makefile.clang        | 1 +
- 2 files changed, 4 insertions(+)
+You are correct indeed, I missed this bit in the series. I'll update
+that for v2.=20
 
-diff --git a/Documentation/kbuild/llvm.rst b/Documentation/kbuild/llvm.rst
-index 6dc66b4f31a7bb62ba5bb6174730dc0a69ee0bba..bc8a283bc44bbfa9948ad3c9fe8031269ce10be4 100644
---- a/Documentation/kbuild/llvm.rst
-+++ b/Documentation/kbuild/llvm.rst
-@@ -179,6 +179,9 @@ yet. Bug reports are always welcome at the issue tracker below!
-    * - s390
-      - Maintained
-      - ``LLVM=1`` (LLVM >= 18.1.0), ``CC=clang`` (LLVM < 18.1.0)
-+   * - sparc (sparc64 only)
-+     - Maintained
-+     - ``CC=clang LLVM_IAS=0`` (LLVM >= 20)
-    * - um (User Mode)
-      - Maintained
-      - ``LLVM=1``
-diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
-index 6c23c6af797fb016232914589c948208345417ad..2435efae67f53a26d55a1c0f1bf254a49d9fc731 100644
---- a/scripts/Makefile.clang
-+++ b/scripts/Makefile.clang
-@@ -10,6 +10,7 @@ CLANG_TARGET_FLAGS_mips		:= mipsel-linux-gnu
- CLANG_TARGET_FLAGS_powerpc	:= powerpc64le-linux-gnu
- CLANG_TARGET_FLAGS_riscv	:= riscv64-linux-gnu
- CLANG_TARGET_FLAGS_s390		:= s390x-linux-gnu
-+CLANG_TARGET_FLAGS_sparc	:= sparc64-linux-gnu
- CLANG_TARGET_FLAGS_x86		:= x86_64-linux-gnu
- CLANG_TARGET_FLAGS_um		:= $(CLANG_TARGET_FLAGS_$(SUBARCH))
- CLANG_TARGET_FLAGS		:= $(CLANG_TARGET_FLAGS_$(SRCARCH))
+Thanks,
 
--- 
-2.47.0
-
-
+Maxime
 
