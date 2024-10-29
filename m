@@ -1,105 +1,165 @@
-Return-Path: <linux-kernel+bounces-386593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 508749B4590
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:21:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 815129B4593
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15EF1283A09
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:20:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 413BB283651
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E101E883A;
-	Tue, 29 Oct 2024 09:20:31 +0000 (UTC)
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1DAB1E3DE3;
+	Tue, 29 Oct 2024 09:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hAATjhVM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81BC1E0E12;
-	Tue, 29 Oct 2024 09:20:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E94EE1DED7D;
+	Tue, 29 Oct 2024 09:21:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730193631; cv=none; b=RedJfG0l7tF6yavgXeo1be0Hg8JRJo04GQukT27nTn00wSD3khokwfbNbk+UagiVlQ6giDR9HpnulgkSxeIJF7g8562WrrJ/oPy0LiXXMGClvj0k+tYHtLYtB1UBTOUdVsK8voTi4iLxfnJyimvvnlpyPBH6L2FYL7WEOQzUjWE=
+	t=1730193662; cv=none; b=AfH+LToUPPLwWk7SG8El2ug+5Fe6L4fBDrG+wgBcm9IC+23RRLUlfi1459hnj7Z2fcBRqvk6Czu5JYxg4adAy8pUSNoqrD+CUg/vzKw19Q80+VjWcylRSFH9pAuiPdxh20lpc95j6sKjtZPrSX2QomlLR1O2oWTvbEvl6Jb9DXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730193631; c=relaxed/simple;
-	bh=Af2mIKhIRGotDgzpL7eCFa9njSonwVtG3f8IUMpVdj8=;
+	s=arc-20240116; t=1730193662; c=relaxed/simple;
+	bh=GjTReHWGV6rszkOE6k4zHrl1t2L3x/04FxHrfnEJ1+A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cy04MGMKfjp6IsTj7N+HL6GBz7vatdcgYgGjVObrK7ZX2qeeDKgV2en11Xk5KKWtIsKabEsXXO7sqv3sGqtU4uLjwvnQpNDzO+K+5v6tIbR40tvFzsTlaMn7grXhNNVV4VKAPxVKDaSo9wtz23OhyIBs4Mw5VsLJA0Z2F8woAVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a4031f69fso700024566b.0;
-        Tue, 29 Oct 2024 02:20:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730193627; x=1730798427;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3xN4lpIsKPo3Kxdwucu2GDItju6TFFKBOYt/Wm/ZX2o=;
-        b=VV4aFlJS5hGH9AjWXwOTWFPwavFM7FktdFPp0XUs06h0AVS1yL78yMHbUv88YKsuX6
-         1XeJiZSK+AMVfPNMjhvHws4qT8E6oCrxlcu15oiEVCU27lFkq9xZp7mDv1AFH7fpA//M
-         jJLOuwA8t+XSdpnTIghajOfymH6bUPfKvNVDfN2hpmU4cl9GsZOOHYmwiF8VteCJZ5i4
-         Jm5qx5MwS/65DrmBtuJHuGDI9yTInGBLkDggJ+VJXqehzIKss/aYuzvebczF52KInR+s
-         zmKEqcFUvgqQi6cIsvgpksI2QrOmDvQ6qwlFw9s8fvujFvBXo/mgW7J5+bkB3FB1TiZ1
-         uzeA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjppIN+72yvo6HxfHUfhKvVd5g/KvF5/fpcZyM+SzsoOu3014COYKzD6Zb/Ph8UEUQ/j/FKYvv@vger.kernel.org, AJvYcCUuimU9tzuhAt8zZKvkgUhuThbYT5jilhYOT3HsXC0Sbcuk8uWD6XH+mvex+HGAG1OBapZUkO0NegsQEGjWQgUX@vger.kernel.org, AJvYcCXEOY0ILret+njK2NuivwE9Rb0wv4p4F3153llT3Pudkr2ByLovXOGYx4XBfGEeSx+31Fy0uzt7XrMGq/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhGXeAs4/ivsrtF9wQiL+Tu3MKD19Xk5aUgV7p52djcJFkmiDb
-	zLJuUcZfhbRSPSXhD+xTnsgaEru2kQC4KzXNBmzbye05ZH0RA5rL
-X-Google-Smtp-Source: AGHT+IHNus2VsBptL6kuQAA1I6xC1NQoVbZXmlvaVhgUzZphD2XK7I9H2ul2K5D+khMmq1pcl75Lsw==
-X-Received: by 2002:a17:906:6a0e:b0:a9a:7f37:2b62 with SMTP id a640c23a62f3a-a9de6167b7emr1237070666b.49.1730193626857;
-        Tue, 29 Oct 2024 02:20:26 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-009.fbsv.net. [2a03:2880:30ff:9::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a083dcdsm447968666b.200.2024.10.29.02.20.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 02:20:26 -0700 (PDT)
-Date: Tue, 29 Oct 2024 02:20:23 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: kuba@kernel.org, horms@kernel.org, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>, Shuah Khan <shuah@kernel.org>,
-	thepacketgeek@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, davej@codemonkey.org.uk,
-	vlad.wing@gmail.com, max@kutsevol.com, kernel-team@meta.com,
-	aehkn@xenhub.one, Petr Machata <petrm@nvidia.com>,
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCH net-next 1/2] net: netconsole: selftests: Change the IP
- subnet
-Message-ID: <20241029-lyrical-witty-pillbug-adb892@leitao>
-References: <20241028154805.1394611-1-leitao@debian.org>
- <ce2892c4-f759-40ca-a188-11a83b0164b3@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pZAJBJNwJ1emwfhaL49+rCJkO+FnovNTtoANtiKyyVE/RcHUfivGMwEuwXQq56ZNgtLGj913mxT/BQb46j0IJaVxVaoP1dVlHupLrtB08a7NyPwhcBSzIU+rb+7DKKno1ZT8qqZOLbP6YNg7zDBUcBb9d/jyxqh0k7Bhec6UrDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hAATjhVM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8968EC4CECD;
+	Tue, 29 Oct 2024 09:20:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730193661;
+	bh=GjTReHWGV6rszkOE6k4zHrl1t2L3x/04FxHrfnEJ1+A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hAATjhVMq2PNlF1OCTlGtQottODNS6M3rP23Iy6ciGtr2Bz2ETtdQxgImTc9jdPCu
+	 ISa+2j3bZEJYKyp69lDGZAbirqNUeiIrpDj9w4tJHd/blUzHnlUUFy1VemezzHE/sW
+	 3dDJRztIyL8Bvb3BHyvHfyBVewf0/N3NV8qwZ+5rdTFMjBPXRiaHF+r1M9mq+0GKvK
+	 EMpJIbmYvXcor0C7rynZnVJja3Az7cYA/UCWhxmcFh3zJ7fFga6XLHSrcU9Jx8Js+b
+	 iNTVv4r1aQIbns2EU9F3XJMMcnu1rGuUhCqzdagSO9jh1MZfd9ETvpnzCyTekkvvBl
+	 S5PrVa2K48M8Q==
+Date: Tue, 29 Oct 2024 10:20:53 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 09/16] rust: add `io::Io` base type
+Message-ID: <ZyCo9SRP4aFZ6KsZ@pollux>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-10-dakr@kernel.org>
+ <CAH5fLggFD7pq0WCfMPYTZcFkvrXajPbxTBtkvSeh-N2isT1Ryw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ce2892c4-f759-40ca-a188-11a83b0164b3@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLggFD7pq0WCfMPYTZcFkvrXajPbxTBtkvSeh-N2isT1Ryw@mail.gmail.com>
 
-Hello Matthieu,
-
-On Mon, Oct 28, 2024 at 06:57:29PM +0100, Matthieu Baerts wrote:
-> Hi Breno,
+On Mon, Oct 28, 2024 at 04:43:02PM +0100, Alice Ryhl wrote:
+> On Tue, Oct 22, 2024 at 11:33 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > I/O memory is typically either mapped through direct calls to ioremap()
+> > or subsystem / bus specific ones such as pci_iomap().
+> >
+> > Even though subsystem / bus specific functions to map I/O memory are
+> > based on ioremap() / iounmap() it is not desirable to re-implement them
+> > in Rust.
+> >
+> > Instead, implement a base type for I/O mapped memory, which generically
+> > provides the corresponding accessors, such as `Io::readb` or
+> > `Io:try_readb`.
+> >
+> > `Io` supports an optional const generic, such that a driver can indicate
+> > the minimal expected and required size of the mapping at compile time.
+> > Correspondingly, calls to the 'non-try' accessors, support compile time
+> > checks of the I/O memory offset to read / write, while the 'try'
+> > accessors, provide boundary checks on runtime.
 > 
-> On 28/10/2024 16:48, Breno Leitao wrote:
-> > Use a less populated IP range to run the tests, as suggested by Petr in
-> > Link: https://lore.kernel.org/netdev/87ikvukv3s.fsf@nvidia.com/.
+> And using zero works because the user then statically knows that zero
+> bytes are available ... ?
+
+Zero would mean that the (minimum) resource size is unknown at compile time.
+Correspondingly, any call to `read` and `write` would not compile, since the
+compile time check requires that `offset + type_size <= SIZE`.
+
+(Hope this answers the questions, I'm not sure I got it correctly.)
+
 > 
-> It looks like this is the same version as the one you sent on Friday,
-> without the modification suggested by Petr:
+> > `Io` is meant to be embedded into a structure (e.g. pci::Bar or
+> > io::IoMem) which creates the actual I/O memory mapping and initializes
+> > `Io` accordingly.
+> >
+> > To ensure that I/O mapped memory can't out-live the device it may be
+> > bound to, subsystems should embedd the corresponding I/O memory type
+> > (e.g. pci::Bar) into a `Devres` container, such that it gets revoked
+> > once the device is unbound.
 > 
->   https://lore.kernel.org/20241025161415.238215-1-leitao@debian.org
+> I wonder if `Io` should be a reference type instead. That is:
 > 
-> I supposed these new patches have been sent by accident, right?
+> struct Io<'a, const SIZE: usize> {
+>     addr: usize,
+>     maxsize: usize,
+>     _lifetime: PhantomData<&'a ()>,
+> }
+> 
+> and then the constructor requires "addr must be valid I/O mapped
+> memory for maxsize bytes for the duration of 'a". And instead of
+> embedding it in another struct, the other struct creates an `Io` on
+> each access?
 
-Right. I've resent the v1 instead of the v2. :-|
+So, we'd create the `Io` instance in `deref` of the parent structure, right?
+What would be the advantage?
 
-I've just sent v2 now.
+> 
+> > Co-developed-by: Philipp Stanner <pstanner@redhat.com>
+> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> 
+> [...]
+> 
+> > diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+> > new file mode 100644
+> > index 000000000000..750af938f83e
+> > --- /dev/null
+> > +++ b/rust/kernel/io.rs
+> > @@ -0,0 +1,234 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Memory-mapped IO.
+> > +//!
+> > +//! C header: [`include/asm-generic/io.h`](srctree/include/asm-generic/io.h)
+> > +
+> > +use crate::error::{code::EINVAL, Result};
+> > +use crate::{bindings, build_assert};
+> > +
+> > +/// IO-mapped memory, starting at the base address @addr and spanning @maxlen bytes.
+> > +///
+> > +/// The creator (usually a subsystem / bus such as PCI) is responsible for creating the
+> > +/// mapping, performing an additional region request etc.
+> > +///
+> > +/// # Invariant
+> > +///
+> > +/// `addr` is the start and `maxsize` the length of valid I/O mapped memory region of size
+> > +/// `maxsize`.
+> 
+> Do you not also need an invariant that `SIZE <= maxsize`?
 
-https://lore.kernel.org/all/20241029090030.1793551-1-leitao@debian.org/
+I guess so, yes. It's enforced by `Io::new`, which fails if `SIZE > maxsize`.
 
-Thanks for the heads-up,
---breno
+> 
+> Alice
+> 
 
