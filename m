@@ -1,85 +1,98 @@
-Return-Path: <linux-kernel+bounces-387085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD1089B4BB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:06:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611BA9B4BBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:08:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45AF8B22EE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:06:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 180D71F24113
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6DC2071E8;
-	Tue, 29 Oct 2024 14:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332E0206E8A;
+	Tue, 29 Oct 2024 14:08:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipBy9Xs2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CyLq3F6C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F732071E3
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856E542A92;
+	Tue, 29 Oct 2024 14:08:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210792; cv=none; b=mwrJDryznXZxS1fKVqZEd2YOlPYpJU4Nz1pnqnCe8wep9CnxWEqght0/qXXCO0+HyirmJA5Klz4BGUkN0IzwYkDorQQ00dwU29x5+KFkehMIIYb1L7++TrlroYUWQY9TulpownVrndAm6IDwfgIlW+ZDaZr+9wGvCEoSMnyiH6Q=
+	t=1730210917; cv=none; b=e5VwT3fFFETqP+RLzrUOgRGQsKcsBKYoFhWhin1YrNMqQU8sURlYYDQOcePSSccvYy774Anx7wUH09Mamwm3rLNGqkXg0i4iXwhK35u+GJJBjn57Kag4akmdcQuGujCDdVFHa1kqg6acySR3ykt0aWBIetx6M/bMc6UuwKSqip4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210792; c=relaxed/simple;
-	bh=QEcEUddjgKW2OCmwiHFR8WQFPqf4hkYksxXMXYFUi/8=;
+	s=arc-20240116; t=1730210917; c=relaxed/simple;
+	bh=ObDzOhYCuptnWikVtFmXWeBb94o2pZmdsPmc1Vb4m4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZkwTo+nVXSzX47+68EbmtKJlhfzAXR3f4ogIq68qWbeC062OOExfMtYyVbmj8J8plNwamkKJC9ED9FpUcwGDMUezW2kUAwYBGAqjuarfctCRUoka+DAIuLMHYxN8ZXgvJ+LYyFeGlhF6OkTqTaJflArJEeH/qinEbYvmxPazyow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipBy9Xs2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3122C4CECD;
-	Tue, 29 Oct 2024 14:06:30 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRlp5PCYZPTbiwgkJLDq4IFoIF4AHxUSM0afz7tmnmN5z0zMOqBgJr15oWkP6f6Kns3YofqgldhA8Sq5Jmo1IbNuadXf8UlVk5c+tHplC3+IGqIWg+pqdsGBGeT++2wi2wNiEjlr/OvE46hK89/GI0L0txMDWU4QAabHlGiFQoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CyLq3F6C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF5ECC4CECD;
+	Tue, 29 Oct 2024 14:08:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730210791;
-	bh=QEcEUddjgKW2OCmwiHFR8WQFPqf4hkYksxXMXYFUi/8=;
+	s=k20201202; t=1730210917;
+	bh=ObDzOhYCuptnWikVtFmXWeBb94o2pZmdsPmc1Vb4m4I=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ipBy9Xs2SHYIUaS9h0WT2CNmIQ2scChi0oqVdTCHp8wCsdvD0nNQO3SeOubao8KlP
-	 +JK/1mUyICiZMRpVYkEpuS7ebC/NZuZg983TZOtNEfBXIYM/ZdHJXmyO18JaCXGMr4
-	 4h/TwoZ19KkTRGHmlYCREFZayjxLXY8AXlnb8xkHTs2sWdhEP19leX15LB897DkK9L
-	 C28+TuncT3d+1M4wl8YdQBc3rPTeel0PAb2u97WhU3bpHMRhjF5DkxPEFq93EAhrQs
-	 U34vnyZGvCiPjqWvLe+aabYJlspgF8/wQOBg9lDnpvdK4xrOHPau/XxZWkNRi5ekry
-	 bXLhZU4k75vOw==
-Date: Tue, 29 Oct 2024 15:06:28 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 15/26] signal: Refactor send_sigqueue()
-Message-ID: <ZyDr5Bky3Sp9hP1-@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.160940133@linutronix.de>
+	b=CyLq3F6C4Jb3uE3m9U9UXOrYlYTQilpLv2CHJmEOSnK7XypTSrePEMX0XasfLcydi
+	 cOh23QeYStyUJih2j/+ED2eegBEhW98+aakvfIPBISE48FqbsBLmLiG+kRmbcCUkLq
+	 1OX/S4YG+dJwcpFiElWDl2YrLPBc/ohXhX29N3IVOODd2jXGI9BjScSk0iMGFaW1wZ
+	 0Gq3FGWWXXJYbTlEoJQcA4UgpWuoZCHtAYd0mw/J/cGD1BkpsHzY/adpVcA3VRpmBd
+	 JaguFeCPVNK/fAgLWigDFWYoO/xz9uYeZBKKHO2LFYyBVMcm3PIboxGuvkm/f7m/Z8
+	 imQ51x9DOJKVQ==
+Date: Tue, 29 Oct 2024 14:08:32 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Aleksei Vetrov <vvvvvv@google.com>
+Cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in
+ dapm_widget_list_create
+Message-ID: <da230ccf-37b6-4e43-be12-9035c594e535@sirena.org.uk>
+References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
+ <28ade5d1-d13a-4388-bd0b-f03211937abd@embeddedor.com>
+ <ZyDlAd-Z26wnhZK5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Smf6UI3x8BM1at2s"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.160940133@linutronix.de>
+In-Reply-To: <ZyDlAd-Z26wnhZK5@google.com>
+X-Cookie: May be too intense for some viewers.
 
-Le Tue, Oct 01, 2024 at 10:42:20AM +0200, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> To handle posix timers which have their signal ignored via SIG_IGN properly
-> it is required to requeue a ignored signal for delivery when SIG_IGN is
-> lifted so the timer gets rearmed.
-> 
-> Split the required code out of send_sigqueue() so it can be reused in
-> context of sigaction().
-> 
-> While at it rename send_sigqueue() to posixtimer_send_sigqueue() so its
-> clear what this is about.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+--Smf6UI3x8BM1at2s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Oct 29, 2024 at 01:37:05PM +0000, Aleksei Vetrov wrote:
+
+> Sent v2.
+
+That doesn't seem to have shown up here?
+
+--Smf6UI3x8BM1at2s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcg7F8ACgkQJNaLcl1U
+h9B/rAf/cLEITqILQmYrE0RumhbYtZyY4dnDDKVlSj2QfLqRDxLP4bfdZt/xfMn9
+W0KcIXOwy4PuMJe/vKNvOg0GfWX3wDyGBwxiGbaZpZpRlZJgHNInpqPqCKVAPJw9
+Kf3DgtiAL7CdUB+5JKcFK4lPZZ6R4aqWV5V3moU6+J54a5wVCyHL5V+4KCB3XNgC
+J3BH8XSVx4+CrA6YdxNzJL8YYii88a96PZf5V5beBbMQhz8gWV9bRjwWatnLBtsF
+yvUyl9J4R/A7a7wKnQ+X3aUbQFpS5t7hmSIZU/dJqhqLZ///JiNCiOaDe57eWYc5
+Aauaqaq0v1NgxKFldJkgN80cVYOoDQ==
+=8qa+
+-----END PGP SIGNATURE-----
+
+--Smf6UI3x8BM1at2s--
 
