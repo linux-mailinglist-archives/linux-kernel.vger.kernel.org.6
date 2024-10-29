@@ -1,111 +1,164 @@
-Return-Path: <linux-kernel+bounces-387072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87C889B4B8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:57:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECF19B4B2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:46:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04976B22597
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:57:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A9B31F23985
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838020697B;
-	Tue, 29 Oct 2024 13:57:37 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082E5205E1A;
+	Tue, 29 Oct 2024 13:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N0q/XtCe"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AF7205132;
-	Tue, 29 Oct 2024 13:57:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF722EAF1
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210257; cv=none; b=YeCoKGeanagFVgkKjZR5BoGv6wG4qhCJsXkmBwlx5i0OyDQcyunTWJK9FlDXPldhms1a9jA42NaKxMwN2pYMv9RdEygPF7mpfsmZTpMESpLDgoa4slN+h0Y9qK78KQHWLqP9oPkUGuaZ0hSiKbw9myA/h+c3xhlK0j9znc8in7g=
+	t=1730209608; cv=none; b=mI0hyhmajzFw9cpf/aokdaK+s4Uaodv9W9OWScWXC5h0YO+giS+s3eoO8BgtQ0NhwGsGWJ4cenKVhiEVMiJA8LiZdemT9882faoGYRWYCrQILla+SY25abqBLvudpMB2HCqGi1E0PFIsXAOm7fFKDMYk3GqRkE286j1Z8HlxBTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210257; c=relaxed/simple;
-	bh=QMT6f9Ox5H3aspFcQj99XAbFA7KbFQQoBtLwimMN2VA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Drp3adqDBs0gGpWBlSNqSW35rZgz7gyASdjMYrboij4BT0nbCqJ4wHkK9dnnmnB8DGVjrBOwUsHK8IRk2uuJITp0dcoL4K3PrtwfS+4vck142SWWAwSBHyosa6dWL7JURcwhEaFIu+T17UmidaviOvSx90PKrj2xbiRnHQymhlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdBcG1NYHz1jw2q;
-	Tue, 29 Oct 2024 21:55:58 +0800 (CST)
-Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
-	by mail.maildlp.com (Postfix) with ESMTPS id 075CF1A0188;
-	Tue, 29 Oct 2024 21:57:29 +0800 (CST)
-Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
- (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 29 Oct
- 2024 21:57:28 +0800
-From: Zicheng Qu <quzicheng@huawei.com>
-To: <jic23@kernel.org>, <noname.nuno@gmail.com>, <nuno.sa@analog.com>,
-	<lars@metafoo.de>, <Michael.Hennerich@analog.com>, <djunho@gmail.com>,
-	<alexandru.ardelean@analog.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
-	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
-Subject: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and ring_xfer
-Date: Tue, 29 Oct 2024 13:46:37 +0000
-Message-ID: <20241029134637.2261336-1-quzicheng@huawei.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241028142357.1032380-1-quzicheng@huawei.com>
-References: <20241028142357.1032380-1-quzicheng@huawei.com>
+	s=arc-20240116; t=1730209608; c=relaxed/simple;
+	bh=HcGjzj4qJ2ffwJc62k4bla6sh80QDI5qmkr6CzeH7g4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ak3YZ1ff8+fYGyal8c9J2YiyFN2Hk2CcoITtnHOHKFRIH45PEmzykk2cCl0f964ZUjjDaSF6F4ezFCvx7MG1FjsbDYPcdYsLJ2qXcs7JYLxBtb95wIwxvNQJO7SxS3EK8IO1cgNNTipDU3CUYz3IuacB+N3ie9CYMbu1oJ5Pqw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N0q/XtCe; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=z8SicmJPe91V7nwH+BPJtaqFkv7A2APH/euLs/x+oZI=; b=N0q/XtCeDkGehuNO47KTiTC3AT
+	vkkLLByfy7txiUw/RL/wQdtHM7XZmT+g2sJFm4rKkS+P6ZcTZlaawdsQxhCqZKX/bSC8P219FFPTy
+	AQZrV1GQKT0OJbb9ejHf82tW8wEOqmxLGqyg5L2KshU4JdDwVEAwLEr9ePNHaXAE7uEYyxc8rZGxn
+	T8QzFj1p4NXuwUDc2P+ah4MAmjKe36mwfjw0k5UmXjsCRL/U50AoJ0KcCmu2Rmy3AsneX07jcB+cM
+	TcPytq123vd6drDfj4uaQ2/HEBSy4mdniquNwprFi4rztP6xMtiRHEsVwwW6c/PdzqWwBGiJfX3II
+	xSSJAW5g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5mYU-00000009uRU-1Tym;
+	Tue, 29 Oct 2024 13:46:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 01DB830073F; Tue, 29 Oct 2024 14:46:42 +0100 (CET)
+Date: Tue, 29 Oct 2024 14:46:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH] kcsan, seqlock: Support seqcount_latch_t
+Message-ID: <20241029134641.GR9767@noisy.programming.kicks-ass.net>
+References: <20241029083658.1096492-1-elver@google.com>
+ <20241029114937.GT14555@noisy.programming.kicks-ass.net>
+ <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200012.china.huawei.com (7.221.188.145)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
 
-The AD7923 was updated to support devices with 8 channels, but the size
-of tx_buf and ring_xfer was not increased accordingly, leading to a
-potential buffer overflow in ad7923_update_scan_mode().
+On Tue, Oct 29, 2024 at 02:05:38PM +0100, Marco Elver wrote:
+> On Tue, 29 Oct 2024 at 12:49, Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Tue, Oct 29, 2024 at 09:36:29AM +0100, Marco Elver wrote:
+> > > Reviewing current raw_write_seqcount_latch() callers, the most common
+> > > patterns involve only few memory accesses, either a single plain C
+> > > assignment, or memcpy;
+> >
+> > Then I assume you've encountered latch_tree_{insert,erase}() in your
+> > travels, right?
+> 
+> Oops. That once certainly exceeds the "8 memory accesses".
+> 
+> > Also, I note that update_clock_read_data() seems to do things
+> > 'backwards' and will completely elide your proposed annotation.
+> 
+> Hmm, for the first access, yes. This particular oddity could be
+> "fixed" by surrounding the accesses by
+> kcsan_nestable_atomic_begin/end(). I don't know if it warrants adding
+> a raw_write_seqcount_latch_begin().
+> 
+> Preferences?
 
-Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad7918/ad7928")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Nuno Sá <noname.nuno@gmail.com>
-Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
----
-v2:
-- Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to 
-insufficient tx_buf and ring_xfer size for 8-channel devices.
-- Issue: Original patch attempted to fix the overflow by limiting the 
-length, but did not address the root cause of buffer size mismatch.
-- Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to 
-support all 8 channels, ensuring adequate buffer capacity.
-- Previous patch link: 
-https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@huawei.com/T/#u
- drivers/iio/adc/ad7923.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I *think* it is doable to flip it around to the 'normal' order, but
+given I've been near cross-eyed with a head-ache these past two days,
+I'm not going to attempt a patch for you, since I'm bound to get it
+wrong :/
 
-diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
-index 09680015a7ab..acc44cb34f82 100644
---- a/drivers/iio/adc/ad7923.c
-+++ b/drivers/iio/adc/ad7923.c
-@@ -48,7 +48,7 @@
- 
- struct ad7923_state {
- 	struct spi_device		*spi;
--	struct spi_transfer		ring_xfer[5];
-+	struct spi_transfer		ring_xfer[9];
- 	struct spi_transfer		scan_single_xfer[2];
- 	struct spi_message		ring_msg;
- 	struct spi_message		scan_single_msg;
-@@ -64,7 +64,7 @@ struct ad7923_state {
- 	 * Length = 8 channels + 4 extra for 8 byte timestamp
- 	 */
- 	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
--	__be16				tx_buf[4];
-+	__be16				tx_buf[8];
- };
- 
- struct ad7923_chip_info {
--- 
-2.34.1
-
+> > > therefore, the value of 8 memory accesses after
+> > > raw_write_seqcount_latch() is chosen to (a) avoid most false positives,
+> > > and (b) avoid excessive number of false negatives (due to inadvertently
+> > > declaring most accesses in the proximity of update_fast_timekeeper() as
+> > > "atomic").
+> >
+> > The above latch'ed RB-trees can certainly exceed this magical number 8.
+> >
+> > > Reported-by: Alexander Potapenko <glider@google.com>
+> > > Tested-by: Alexander Potapenko <glider@google.com>
+> > > Fixes: 88ecd153be95 ("seqlock, kcsan: Add annotations for KCSAN")
+> > > Signed-off-by: Marco Elver <elver@google.com>
+> > > ---
+> > >  include/linux/seqlock.h | 9 +++++++++
+> > >  1 file changed, 9 insertions(+)
+> > >
+> > > diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+> > > index fffeb754880f..e24cf144276e 100644
+> > > --- a/include/linux/seqlock.h
+> > > +++ b/include/linux/seqlock.h
+> > > @@ -614,6 +614,7 @@ typedef struct {
+> > >   */
+> > >  static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *s)
+> > >  {
+> > > +     kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
+> > >       /*
+> > >        * Pairs with the first smp_wmb() in raw_write_seqcount_latch().
+> > >        * Due to the dependent load, a full smp_rmb() is not needed.
+> > > @@ -631,6 +632,7 @@ static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *
+> > >  static __always_inline int
+> > >  raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
+> > >  {
+> > > +     kcsan_atomic_next(0);
+> > >       smp_rmb();
+> > >       return unlikely(READ_ONCE(s->seqcount.sequence) != start);
+> > >  }
+> > > @@ -721,6 +723,13 @@ static inline void raw_write_seqcount_latch(seqcount_latch_t *s)
+> > >       smp_wmb();      /* prior stores before incrementing "sequence" */
+> > >       s->seqcount.sequence++;
+> > >       smp_wmb();      /* increment "sequence" before following stores */
+> > > +
+> > > +     /*
+> > > +      * Latch writers do not have a well-defined critical section, but to
+> > > +      * avoid most false positives, at the cost of false negatives, assume
+> > > +      * the next few memory accesses belong to the latch writer.
+> > > +      */
+> > > +     kcsan_atomic_next(8);
+> > >  }
+> >
+> > Given there are so very few latch users, would it make sense to
+> > introduce a raw_write_seqcount_latch_end() callback that does
+> > kcsan_atomic_next(0) ? -- or something along those lines? Then you won't
+> > have to assume such a small number.
+> 
+> That's something I considered, but thought I'd try the unintrusive
+> version first. But since you proposed it here, I'd much prefer that,
+> too. ;-)
+> Let me try that.
+> 
+> Thanks,
+> -- Marco
 
