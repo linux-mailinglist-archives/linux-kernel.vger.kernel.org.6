@@ -1,161 +1,137 @@
-Return-Path: <linux-kernel+bounces-386773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B4ED9B47C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B6819B47C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10FDA1F2410C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4A31F24114
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA15F20A5D6;
-	Tue, 29 Oct 2024 10:57:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7308205126;
+	Tue, 29 Oct 2024 10:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LVWfOZc4"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6883C205AB9;
-	Tue, 29 Oct 2024 10:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D632038A0
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199439; cv=none; b=WD/fSi7PSr3004Fn/Ao+Wyo8uAbGfc9xOmP0bi7IPZklMe1kKezafSmfvSJW1Qkj6MEI4vFT1G46TkURY0rJHOY7UmNQaKOdXH6Ji96mAtZPsKlQzNaxk6oSHn/53NoiPIuz9SAH/lNjwO9a3MOSi0pIJSoRpLog9fhflJicmEg=
+	t=1730199531; cv=none; b=LAkknu7g1pNq1hWNBZJDhYciPvaaN+fXkMPcmplh2OQx4U7HG3D223ZiDOoxJVEIYsKoVhA8G4+DpnR+69nrNJ+OHVVv6B2VdoghLYRt76UHVe4dSEn1pwDC8AFV7rxSYv75kPIfwjZ9650eLUH+lOAmbl8J2vZ3sCCEogxhwjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199439; c=relaxed/simple;
-	bh=7zqc7zZdhGKgzF6Co/xOQryInAWUuQZefGgGI7QiWXA=;
+	s=arc-20240116; t=1730199531; c=relaxed/simple;
+	bh=jE775orIHl/zy2s+k5hOgL2vYd8qb4FFjQtfxIEvjnQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ais+TXnPAjknAqSzsctY3PnBEFxHdURtBsKkcIG118DiZF5URm4xQYGPWtYT9HL8EeyAWRlTk0IIo57mylwNLIYf9Tii3Klo8/CafajVsQiO5l4MTdP0t4U9kuqZC1x25MZkcZ4G6hCrEFgbAS/Sq0hdLYGX+n4TEWhinAgPDao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 863A6C4CECD;
-	Tue, 29 Oct 2024 10:57:17 +0000 (UTC)
-Message-ID: <b580805b-8f00-40d1-bc1c-3ac19a19ac45@xs4all.nl>
-Date: Tue, 29 Oct 2024 11:57:16 +0100
+	 In-Reply-To:Content-Type; b=SkvQHOG29R082UttI9+46Hy8m5wm0mgX5nYpndDide61baMFK7ntKfvNHdONk+8D2CDyiM92tp63ll3Zv3y/rYCqUh+dmksIYeS9ZkTLZsmkXEfesugcaE/3XnQLLsrEpMN5TZctR2b14DZ7Bk76zlMiBerWAs0G5ZgD9Ky15eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LVWfOZc4; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <f4668e71-796d-4fcf-994a-db032c6c43b6@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730199526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ub5FWCH7w+9in2TZ/Sldo0RcMQcoiIkY60kZ41MTpU0=;
+	b=LVWfOZc49els2x+SgiBbh6tp0JJjRzY4ow7ACbe79uGPAY2QBo1i31+KXH42R1vb8Fdic+
+	AkH9FWi+QSZSMAke80T+Be8nnDHLyrJVw4zFLoWMA2P1giO0OA1u2GOyDrjwlZxPt5R1HB
+	7mKwjnfTO7ANo4gZ7SYhjK9WV3Ujzt0=
+Date: Tue, 29 Oct 2024 10:58:42 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] media: cx18: Remove unused cx18_reset_ir_gpio
+Subject: Re: [PATCH net-next v3 1/3] net: ipv6: ioam6_iptunnel: mitigate
+ 2-realloc issue
+To: Justin Iurman <justin.iurman@uliege.be>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
+ kuba@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ horms@kernel.org, linux-kernel@vger.kernel.org
+References: <20241028223611.26599-1-justin.iurman@uliege.be>
+ <20241028223611.26599-2-justin.iurman@uliege.be>
 Content-Language: en-US
-To: Sean Young <sean@mess.org>, linux@treblig.org
-Cc: awalls@md.metrocast.net, mchehab@kernel.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241012233932.255211-1-linux@treblig.org>
- <Zx_s76gUaQwAxzip@gofer.mess.org>
-From: Hans Verkuil <hverkuil@xs4all.nl>
-In-Reply-To: <Zx_s76gUaQwAxzip@gofer.mess.org>
-Content-Type: text/plain; charset=UTF-8
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241028223611.26599-2-justin.iurman@uliege.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 10/28/24 20:58, Sean Young wrote:
-> On Sun, Oct 13, 2024 at 12:39:32AM +0100, linux@treblig.org wrote:
->> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->>
->> cx18_reset_ir_gpio() has been unused in tree since 2009
->> commit eefe1010a465 ("V4L/DVB (10759): cx18: Convert GPIO connected
->> functions to act as v4l2_subdevices")
->>
->> It has a comment saying it's exported for use by 'lirc_pvr150' but I don't
->> see any sign of it in the lirc git, and I see it removed support
->> for lirc_i2c.c 'Flavors of the Hauppage PVR-150...' in 2014.
->>
->> Remove it.
+On 28/10/2024 22:36, Justin Iurman wrote:
+> This patch mitigates the two-reallocations issue with ioam6_iptunnel by
+> providing the dst_entry (in the cache) to the first call to
+> skb_cow_head(). As a result, the very first iteration would still
+> trigger two reallocations (i.e., empty cache), while next iterations
+> would only trigger a single reallocation.
 > 
-> Interesting, I can't find any call site either. The ir-i2c-kbd driver could
-> potentially use this, but it would to know the correct v4l2_dev for the
-> device; also there are devices other than the cx18 which use the same IR
-> module, so they would not have a way to force a reset or need a different
-> mechanism (e.g. ivtv driver).
+> Performance tests before/after applying this patch, which clearly shows
+> the improvement:
+> - inline mode:
+>    - before: https://ibb.co/LhQ8V63
+>    - after: https://ibb.co/x5YT2bS
+> - encap mode:
+>    - before: https://ibb.co/3Cjm5m0
+>    - after: https://ibb.co/TwpsxTC
+> - encap mode with tunsrc:
+>    - before: https://ibb.co/Gpy9QPg
+>    - after: https://ibb.co/PW1bZFT
 > 
-> So I don't understand how this could be wired up or how it was ever wired
-> up.
+> This patch also fixes an incorrect behavior: after the insertion, the
+> second call to skb_cow_head() makes sure that the dev has enough
+> headroom in the skb for layer 2 and stuff. In that case, the "old"
+> dst_entry was used, which is now fixed. After discussing with Paolo, it
+> appears that both patches can be merged into a single one -this one-
+> (for the sake of readability) and target net-next.
 > 
-> This could be great because if done correctly, we could remove the
-> VIDIOC_INT_RESET ioctl completely. Then again, I don't know how often the
-> device hangs. With the current driver the IR module I don't know of any
-> hangs -- maybe the ioctl could just go anyway.
+> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
+> ---
+>   net/ipv6/ioam6_iptunnel.c | 90 +++++++++++++++++++++------------------
+>   1 file changed, 49 insertions(+), 41 deletions(-)
 > 
-> 
-> Sean
-> 
->>
->> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
->> ---
->>  drivers/media/pci/cx18/cx18-gpio.c | 15 ---------------
->>  drivers/media/pci/cx18/cx18-gpio.h |  1 -
->>  2 files changed, 16 deletions(-)
->>
->> diff --git a/drivers/media/pci/cx18/cx18-gpio.c b/drivers/media/pci/cx18/cx18-gpio.c
->> index c85eb8d25837..485a6cbeb15a 100644
->> --- a/drivers/media/pci/cx18/cx18-gpio.c
->> +++ b/drivers/media/pci/cx18/cx18-gpio.c
->> @@ -305,21 +305,6 @@ int cx18_gpio_register(struct cx18 *cx, u32 hw)
->>  	return v4l2_device_register_subdev(&cx->v4l2_dev, sd);
->>  }
->>  
->> -void cx18_reset_ir_gpio(void *data)
->> -{
->> -	struct cx18 *cx = to_cx18(data);
->> -
->> -	if (cx->card->gpio_i2c_slave_reset.ir_reset_mask == 0)
->> -		return;
->> -
->> -	CX18_DEBUG_INFO("Resetting IR microcontroller\n");
->> -
->> -	v4l2_subdev_call(&cx->sd_resetctrl,
->> -			 core, reset, CX18_GPIO_RESET_Z8F0811);
+> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
+> index beb6b4cfc551..07bfd557e08a 100644
+> --- a/net/ipv6/ioam6_iptunnel.c
+> +++ b/net/ipv6/ioam6_iptunnel.c
+> @@ -254,15 +254,24 @@ static int ioam6_do_fill(struct net *net, struct sk_buff *skb)
+>   	return 0;
+>   }
+>   
+> +static inline int dev_overhead(struct dst_entry *dst, struct sk_buff *skb)
+> +{
+> +	if (likely(dst))
+> +		return LL_RESERVED_SPACE(dst->dev);
+> +
+> +	return skb->mac_len;
+> +}
 
-Ah, this calls core.reset. But VIDIOC_INT_RESET in cx18_default() does the
-same (actually, it calls this for all subdevs). So dropping this code should
-be fine since you can still do the same thing with cx18-ctl --reset.
+static inline functions in .c files are not welcome.
+consider to move this helper to some header, probably dev.h or dst.h
+and reuse it in other tunnels.
 
-This function was probably used a long time ago by lirc_pvr150, but I can't
-even find the source for that anymore. I assume it has a modern replacement.
+And please honor 24h rule before the next submission.
 
-This is the original commit adding this function:
 
-commit 02fa272fcb6edda9059d6dbaab20dfe919f4f4d2
-Author: Andy Walls <awalls@radix.net>
-Date:   Sun Jul 13 19:30:15 2008 -0300
-
-    V4L/DVB (8332): cx18: Suport external reset of the Z8F0811 IR controller on HVR-1600 for lirc
-
-    cx18: added in cx18_ir_reset_gpio function for lirc_pvr150 like module.  Also
-    added the ability to reset the IR chip via ioctl like ivtv.  This needs the
-    mutex to protect gpio_dir and gpio_val in struct cx18 as gpio changes can
-    come from a few different asynchronous sources now.
-
-    Signed-off-by: Andy Walls <awalls@radix.net>
-    Signed-off-by: Mauro Carvalho Chehab <mchehab@infradead.org>
-
-Perhaps Andy remembers how frequent the lock ups were.
-
-Regards,
-
-	Hans
-
->> -}
->> -EXPORT_SYMBOL(cx18_reset_ir_gpio);
->> -/* This symbol is exported for use by lirc_pvr150 for the IR-blaster */
->> -
->>  /* Xceive tuner reset function */
->>  int cx18_reset_tuner_gpio(void *dev, int component, int cmd, int value)
->>  {
->> diff --git a/drivers/media/pci/cx18/cx18-gpio.h b/drivers/media/pci/cx18/cx18-gpio.h
->> index 0fa4c7ad2286..8d5797dea7f5 100644
->> --- a/drivers/media/pci/cx18/cx18-gpio.h
->> +++ b/drivers/media/pci/cx18/cx18-gpio.h
->> @@ -17,5 +17,4 @@ enum cx18_gpio_reset_type {
->>  	CX18_GPIO_RESET_XC2028  = 2,
->>  };
->>  
->> -void cx18_reset_ir_gpio(void *data);
->>  int cx18_reset_tuner_gpio(void *dev, int component, int cmd, int value);
->> -- 
->> 2.47.0
->>
-> 
-
+>   static int ioam6_do_inline(struct net *net, struct sk_buff *skb,
+> -			   struct ioam6_lwt_encap *tuninfo)
+> +			   struct ioam6_lwt_encap *tuninfo,
+> +			   struct dst_entry *dst)
+>   {
+>   	struct ipv6hdr *oldhdr, *hdr;
+>   	int hdrlen, err;
+>   
+>   	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
+>   
+> -	err = skb_cow_head(skb, hdrlen + skb->mac_len);
+> +	err = skb_cow_head(skb, hdrlen + dev_overhead(dst, skb));
+>   	if (unlikely(err))
+>   		return err;
+>   
+[.. snip ..]
 
