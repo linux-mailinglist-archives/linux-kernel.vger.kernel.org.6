@@ -1,259 +1,151 @@
-Return-Path: <linux-kernel+bounces-386985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D52E9B4A75
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:01:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3FF9B4A78
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4B9F1F23FB1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:01:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 297D5B23B06
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:02:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C672071ED;
-	Tue, 29 Oct 2024 13:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C6D206955;
+	Tue, 29 Oct 2024 13:00:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F2W0luUt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBYHkHa5"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6078C2064FD;
-	Tue, 29 Oct 2024 13:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB31206047;
+	Tue, 29 Oct 2024 13:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206844; cv=none; b=FOoUWhfuGymB7oEP45kZA4dRDvRPPgy6V96xxsHKxehC/Mz6MIK86ueD8rxynPenPDxCd1uxoA7LRb4yYAuJo+eymQJ9MJE37dmrvLMN6uP9UGAVMkHc08p8F+RZeIoE2SSueSpwZPM5XAoIim9OnQ1cNZhqO8Pzb8mxURcjOIU=
+	t=1730206855; cv=none; b=ARhsBYBjTl/BJwv7Vol1Uj8s1nqnZGXA4xitsk0tkB1Vy3/CwLIW5XQ06YWCQvSU+ug897xf7lbQmr9MDJgNNeoPUB3qKMNZOyXvAFGlmJRNWS5v8p+1eME2alY6IR5snFN72npx6jPa/1X/FKd/RSgXgwXSsG1leY3T+ndcWsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206844; c=relaxed/simple;
-	bh=NlGCxJtvSDZcc48LjMfcWH/FamyvO+HfkSx5n+s2kdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rer6/cLIO6kqUJfb4BfXLDp5FO38ED4eOwJOgOZV/eUV6kg6zoG4YzjTSBBRQMutXE43wtkGdcC25yYSDtxCJ+tEvTHGv9rSs0+tdCpud/tRuW81d+9gk3MtQSUuTsZ+tnDQkkGwGvQAl8RN8tQC7Eovx2Sd5zR4cbHbUDBpP+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F2W0luUt; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730206842; x=1761742842;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=NlGCxJtvSDZcc48LjMfcWH/FamyvO+HfkSx5n+s2kdU=;
-  b=F2W0luUty4KmqxGZDEXYlpk6U2AhwvV4po4nKMWZFlD2Am4mqzC7cJV9
-   4ZzFM9WQfiRQiQxp6GLdgOwqgUToelvkcKXR/8jrK2o5t8a+MMlfh7ldY
-   WKa5W2eRGk0O9lUADf5nUoga1uRbH3PIJdz1ozVUfxPw+YZiOOBQUkwOo
-   aPLICJANa124xgnvdoFiaQ8epJ0L6jpKfWdqdEWWEEmJu9tnMCB02+5ZO
-   zXlA1YFP585fMxwQR4jl00u+K0sl2LgwapnhiBIcDzE2+ZWYd3yiONzFn
-   SSN8tQff1XYnb+pleBuhko5CU3/Vn1aoj+EGGnE9vgJ/pKVkjLKQbH8nq
-   w==;
-X-CSE-ConnectionGUID: sr/955+dSge1mj5SNmNEIQ==
-X-CSE-MsgGUID: 9jamUg4vSp2F0pqMwuvxVg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="29952539"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="29952539"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 06:00:42 -0700
-X-CSE-ConnectionGUID: 6FcZ6JbZQwSsHJ8aGw+Ttg==
-X-CSE-MsgGUID: +4YvNJWcTcedKOOGoxlxJg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="81584713"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.38])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 06:00:39 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: fenghua.yu@intel.com,
-	reinette.chatre@intel.com,
-	shuah@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com
-Subject: [PATCH v5 2/2] selftests/resctrl: Adjust SNC support messages
-Date: Tue, 29 Oct 2024 14:00:29 +0100
-Message-ID: <adeb1b7d2998bba69d1a57e38300f83e646ee849.1730206468.git.maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <cover.1730206468.git.maciej.wieczor-retman@intel.com>
-References: <cover.1730206468.git.maciej.wieczor-retman@intel.com>
+	s=arc-20240116; t=1730206855; c=relaxed/simple;
+	bh=uacRA8mJm8LnZbCxmbCmUnjDqrxLthDjclqOjyzXNCI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TL7AJv6P/pY3MkV98fvOrHoqDh8deqB+uWWaUmjBYv8T9AmCnBuCejTm5AZo1eZ6Gt5fxByCmsSoikkn6MQtKdBnE+7L2+Cq0mielnllRvhueFk6oJoYHKelpdNcLiSyo1PjodyqmDIiL6ryVYSMNt8e1YF5fKI+JSNP7N6Ip4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBYHkHa5; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so8410981e87.2;
+        Tue, 29 Oct 2024 06:00:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730206851; x=1730811651; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OAVsU5g3+MlTQcp010PACKQBUJqBPdIp3WU6iL95VOg=;
+        b=MBYHkHa5FyY0VAEBuYFQC7lnI4G3jQmyYyLs+9G09/lbJr7JweWAfnrKY67hfMOxAB
+         Ll7QRb0ThL+BYyZ7lfcOaW/OsqY8Jm/T24goaX4i5fPAxxiP+vXVt1ujJrPEWbvAJuCL
+         9onhHPGt6uaBORG1M9UDdYT/ilxbTjMJb0W5gWCWsPz2t84pkWdOu+WnccU8OdBtQqCJ
+         rqoW9rF7EjS9qcpP7x2YZCRjED13b4DNd1Hk1ansOQKjIxgi89JYK0BYWpI6xFLx1057
+         Zo7qwCjjRPDj49wxPO6yHKDqaB2G7Id2CetELhDPQbtSdM1sPKBeI3/SEtINAkK1VjSa
+         e+iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730206851; x=1730811651;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OAVsU5g3+MlTQcp010PACKQBUJqBPdIp3WU6iL95VOg=;
+        b=Qb8+FvT5k8dbi0XliiD77ZsrzqBWGYFkiKoRou65hkhDYPHukuLx5w/bNGS7KiDtNm
+         puu0nlbJMHvaNszKtnUpCfzpWXU+1ElyvBd6MJEUxRVrJ4P7LSrsDMJNqWoLzM6EITm+
+         PCjsIxkWHdPv9o4iAM2NX8fX/N3hBOYe4P2Iv0zguajRUIbLqmZIDWTWJYa5iCzf6gAV
+         5vCxJJYDYJLfjjtMwDp3qqwB/IDy4cC0yGnIQpc9j8x1XrzupdyjOoRF8SYyhCGktSUh
+         O+ClslU5uHo93Oe7lHwOGJF+MSYBnGuM8Vi5HhvQGlKP3dsII1lEOZ4DEIFRSVOmKfRm
+         BRGg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIRwesk1XYVxQ3wa0WrtPhGoE9iTjXVs1Q8BK93dR5QO4gsPKwOfzJjiETSKsU69gXhWd2nNafLS2wobi1@vger.kernel.org, AJvYcCWgW6vCSngYyJkHJyQGMFUby/nfqT+lcMqwzQDtaD3JvDNPh6PRgWCUhpUJ67Oo58Hid38wFPLD53ef@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkP/BEf8u6EQG+0gibgfS2GgcyFEwD1hA3wrJGlBddI6RqDfE7
+	snM7Hm9vxy69hG71Xuc/47KBwy0Yh9iwbUNN6BgewuWJ+bG8pGPD
+X-Google-Smtp-Source: AGHT+IEGnEGBW87aSj5ywZD3JRXQJHCQ+JhLShuDMPdcEC0VIPqm8uq3fnwqVRM+A00VgfQ0ujV5Cw==
+X-Received: by 2002:a05:6512:2311:b0:538:9e1e:b06f with SMTP id 2adb3069b0e04-53b348dacd3mr8706950e87.27.1730206848339;
+        Tue, 29 Oct 2024 06:00:48 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e124474sm1368629e87.81.2024.10.29.06.00.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 06:00:47 -0700 (PDT)
+Message-ID: <65fbbdec-3746-4f8c-b3a4-46ab29938339@gmail.com>
+Date: Tue, 29 Oct 2024 15:00:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: mfd: bd71828: Use charger resistor in mOhm
+ instead of MOhm
+To: Andreas Kemnade <andreas@kemnade.info>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: sre@kernel.org
+References: <20241029111112.33386-1-andreas@kemnade.info>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <20241029111112.33386-1-andreas@kemnade.info>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Resctrl selftest prints a message on test failure that Sub-Numa
-Clustering (SNC) could be enabled and points the user to check their BIOS
-settings. No actual check is performed before printing that message so
-it is not very accurate in pinpointing a problem.
+On 29/10/2024 13:11, Andreas Kemnade wrote:
+> Apparently there was some confusion regarding milliohm vs. megaohm.
+> (m/M). Use microohms to be able to properly specify the charger
+> resistor like other drivers do. This is not used yet by mainline code
+> yet. Specify a current sense resistor in milliohms range rathes then
+> megaohms range in the examples.
+> 
+> CC: sre@kernel.org
+> Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
+> Closes: https://lore.kernel.org/imx/6dcd724a-a55c-4cba-a45b-21e76b1973b0@gmail.com/T/#mf590875a9f4d3955cd1041d7196ff0c65c0a7e9d
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 
-Figuring out if SNC is enabled is only one part of the problem, the
-others being whether the detected SNC mode is reliable and whether the
-kernel supports SNC in resctrl.
+Thanks a ton Andreas :) Maybe a
+Fixes: 1af5332fcf7c ("dt-bindings: mfd: Document ROHM BD71828 bindings")
+as well?
 
-When there is SNC support for kernel's resctrl subsystem and SNC is
-enabled then sub node files are created for each node in the resctrlfs.
-The sub node files exist in each regular node's L3 monitoring directory.
-The reliable path to check for existence of sub node files is
-/sys/fs/resctrl/mon_data/mon_L3_00/mon_sub_L3_00.
+[I just pushed something like this (but untested) in my repo - but I 
+missed updating the example!]
 
-To check if SNC detection is reliable one can check the
-/sys/devices/system/cpu/offline file. If it's empty, it means all cores
-are operational and the ratio should be calculated correctly. If it has
-any contents, it means the detected SNC mode can't be trusted and should
-be disabled.
+Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-Add helpers for all operations mentioned above.
-
-Detect SNC mode once and let other tests inherit that information.
-
-Add messages to alert the user when SNC detection could return incorrect
-results. Correct old messages to account for kernel support of SNC in
-resctrl.
-
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
-Changelog v5:
-- Move all resctrlfs.c code from this patch to 1/2. (Reinette)
-- Remove kernel support check and error message from CAT since it can't
-  be happen.
-- Remove snc checks in CAT since snc doesn't affect it here.
-- Skip MBM, MBA and CMT tests if snc is unreliable.
-
-Changelog v4:
-- Change messages at the end of tests and at the start of
-  run_single_test. (Reinette)
-- Add messages at the end of CAT since it can also fail due to enabled
-  SNC + lack of kernel support.
-- Remove snc_mode global variable. (Reinette)
-- Fix wrong description of snc_kernel_support(). (Reinette)
-- Move call to cpus_offline_empty() into snc_nodes_per_l3_cache() so the
-  whole detection flow is in one place as discussed. (Reinette)
-
-Changelog v3:
-- Change snc_ways() to snc_nodes_per_l3_cache(). (Reinette)
-- Add printing the discovered SNC mode. (Reinette)
-- Change method of kernel support discovery from cache sizes to
-  existance of sub node files.
-- Check if SNC detection is unreliable.
-- Move SNC detection to only the first run_single_test() instead on
-  error at the end of test runs.
-- Add global value to remind user at the end of relevant tests if SNC
-  detection was found to be unreliable.
-- Redo the patch message after the changes.
-
-Changelog v2:
-- Move snc_ways() checks from individual tests into
-  snc_kernel_support().
-- Write better comment for snc_kernel_support().
-
- tools/testing/selftests/resctrl/cmt_test.c |  8 ++++++--
- tools/testing/selftests/resctrl/mba_test.c |  8 +++++++-
- tools/testing/selftests/resctrl/mbm_test.c | 10 +++++++---
- tools/testing/selftests/resctrl/resctrl.h  |  3 +++
- 4 files changed, 23 insertions(+), 6 deletions(-)
-
-diff --git a/tools/testing/selftests/resctrl/cmt_test.c b/tools/testing/selftests/resctrl/cmt_test.c
-index 0c045080d808..1470bd64d158 100644
---- a/tools/testing/selftests/resctrl/cmt_test.c
-+++ b/tools/testing/selftests/resctrl/cmt_test.c
-@@ -133,6 +133,10 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 	ret = get_cache_size(uparams->cpu, "L3", &cache_total_size);
- 	if (ret)
- 		return ret;
-+
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable)
-+		ksft_exit_skip("Sub-NUMA Clustering could not be detected properly. Skipping...\n");
-+
- 	ksft_print_msg("Cache size :%lu\n", cache_total_size);
- 
- 	count_of_bits = count_bits(long_mask);
-@@ -175,8 +179,8 @@ static int cmt_run_test(const struct resctrl_test *test, const struct user_param
- 		goto out;
- 
- 	ret = check_results(&param, span, n);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel CMT may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_kernel_support())
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
- 
- out:
- 	free(span_str);
-diff --git a/tools/testing/selftests/resctrl/mba_test.c b/tools/testing/selftests/resctrl/mba_test.c
-index ab8496a4925b..8f4e198da047 100644
---- a/tools/testing/selftests/resctrl/mba_test.c
-+++ b/tools/testing/selftests/resctrl/mba_test.c
-@@ -170,15 +170,21 @@ static int mba_run_test(const struct resctrl_test *test, const struct user_param
- 		.setup		= mba_setup,
- 		.measure	= mba_measure,
- 	};
--	int ret;
-+	int ret, snc_support;
- 
- 	remove(RESULT_FILE_NAME);
- 
-+	snc_support = snc_kernel_support();
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable)
-+		ksft_exit_skip("Sub-NUMA Clustering could not be detected properly. Skipping...\n");
-+
- 	ret = resctrl_val(test, uparams, uparams->benchmark_cmd, &param);
- 	if (ret)
- 		return ret;
- 
- 	ret = check_results();
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_support)
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/mbm_test.c b/tools/testing/selftests/resctrl/mbm_test.c
-index 6b5a3b52d861..a68f70589b91 100644
---- a/tools/testing/selftests/resctrl/mbm_test.c
-+++ b/tools/testing/selftests/resctrl/mbm_test.c
-@@ -138,17 +138,21 @@ static int mbm_run_test(const struct resctrl_test *test, const struct user_param
- 		.setup		= mbm_setup,
- 		.measure	= mbm_measure,
- 	};
--	int ret;
-+	int ret, snc_support;
- 
- 	remove(RESULT_FILE_NAME);
- 
-+	snc_support = snc_kernel_support();
-+	if ((get_vendor() == ARCH_INTEL) && snc_unreliable)
-+		ksft_exit_skip("Sub-NUMA Clustering could not be detected properly. Skipping...\n");
-+
- 	ret = resctrl_val(test, uparams, uparams->benchmark_cmd, &param);
- 	if (ret)
- 		return ret;
- 
- 	ret = check_results(DEFAULT_SPAN);
--	if (ret && (get_vendor() == ARCH_INTEL))
--		ksft_print_msg("Intel MBM may be inaccurate when Sub-NUMA Clustering is enabled. Check BIOS configuration.\n");
-+	if (ret && (get_vendor() == ARCH_INTEL) && !snc_support)
-+		ksft_print_msg("Kernel doesn't support Sub-NUMA Clustering but it is enabled on the system.\n");
- 
- 	return ret;
- }
-diff --git a/tools/testing/selftests/resctrl/resctrl.h b/tools/testing/selftests/resctrl/resctrl.h
-index 851b37c9c38a..488bdca01e4f 100644
---- a/tools/testing/selftests/resctrl/resctrl.h
-+++ b/tools/testing/selftests/resctrl/resctrl.h
-@@ -121,6 +121,8 @@ struct perf_event_read {
-  */
- extern volatile int *value_sink;
- 
-+extern int snc_unreliable;
-+
- extern char llc_occup_path[1024];
- 
- int snc_nodes_per_l3_cache(void);
-@@ -167,6 +169,7 @@ void ctrlc_handler(int signum, siginfo_t *info, void *ptr);
- int signal_handler_register(const struct resctrl_test *test);
- void signal_handler_unregister(void);
- unsigned int count_bits(unsigned long n);
-+int snc_kernel_support(void);
- 
- void perf_event_attr_initialize(struct perf_event_attr *pea, __u64 config);
- void perf_event_initialize_read_format(struct perf_event_read *pe_read);
--- 
-2.46.2
+> ---
+>   .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml  | 13 +++++++------
+>   1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> index fa17686a64f7..09e7d68e92bf 100644
+> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+> @@ -55,14 +55,15 @@ properties:
+>       minimum: 0
+>       maximum: 1
+>   
+> -  rohm,charger-sense-resistor-ohms:
+> -    minimum: 10000000
+> -    maximum: 50000000
+> +  rohm,charger-sense-resistor-micro-ohms:
+> +    minimum: 10000
+> +    maximum: 50000
+> +    default: 30000
+>       description: |
+>         BD71827 and BD71828 have SAR ADC for measuring charging currents.
+>         External sense resistor (RSENSE in data sheet) should be used. If some
+> -      other but 30MOhm resistor is used the resistance value should be given
+> -      here in Ohms.
+> +      other but 30mOhm resistor is used the resistance value should be given
+> +      here in microohms.
+>   
+>     regulators:
+>       $ref: /schemas/regulator/rohm,bd71828-regulator.yaml
+> @@ -114,7 +115,7 @@ examples:
+>               #gpio-cells = <2>;
+>               gpio-reserved-ranges = <0 1>, <2 1>;
+>   
+> -            rohm,charger-sense-resistor-ohms = <10000000>;
+> +            rohm,charger-sense-resistor-micro-ohms = <10000>;
+>   
+>               regulators {
+>                   buck1: BUCK1 {
 
 
