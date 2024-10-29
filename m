@@ -1,215 +1,103 @@
-Return-Path: <linux-kernel+bounces-387110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3BF9B4C0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:27:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C829B4C0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9D0D2848C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:27:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4A51C22C67
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:28:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18DE0206E9A;
-	Tue, 29 Oct 2024 14:27:00 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 499072071E7;
+	Tue, 29 Oct 2024 14:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="AOPK1UCw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B9C820696B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628C620696B;
+	Tue, 29 Oct 2024 14:28:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730212019; cv=none; b=Mr310/qfNH18k9+/+JnfoxwpR44pF2AcUWZTWZS/dYWidqm2xIBC3eCDyWLmnWPIuIYGtQq1KRcGjvDWbDVeoPORwVI27DuvyDTcMBqEN+m/J1zzhvP/p3048G0TkO6T7+WyjQKZapocvgKTmwTks/5AzvQRXvibUhQvqXe3P2I=
+	t=1730212103; cv=none; b=sPSSdpVzM1txkvvy7ertX/JY8aLSmHXTB8biB8DsF9tccNTZW4o+xPxGLkD0Do3DkXDuOqgKAotX4A95kt9oi/yr1Z/+pCIC7lLjCS6oh2MZWXuaXx9WAiQVvqCL0LuGKH6X78/gjdOr5mDvDiSkqkvx+m2/0bj8RYetDMtUcVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730212019; c=relaxed/simple;
-	bh=DOXptG8Kow14Aw246/i3uFt5Vrh09/WvRarRGwQLMoM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CsMMtzx3rv6wTIYtLAu5dR3zRyEdeHQYfbmThe+XchQWKtSC9MCFAfSwm7vH9Gk41GlHWJw9Y6njlwI9XiTkyPFL1dmEB4gLNqfB3unWZsTKuxlOtDPc0yIlLPQQ8kWy3AVHfAywIF2211zwnZvdGOYCfQlW3uLsTOTrCRxa6oI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2e2ef2e906so5652408276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:26:56 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730212015; x=1730816815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z3XT0mztU90dTLyu/zMIy6CbR4DNtOCuotLUVWn9+uk=;
-        b=B1Gs9DR0mBaSsFjVb6lyXL+yJYH6+BUGAQ6KG2H6f3xhoHsTjq9Y+g8Vjh1yHrpjI7
-         vU3tlikXQOM6ozbYjc14R7KYYnQaLDvicjtkScBLKlTjtQ5WqnAahOqku9CHFEowUgvj
-         rVqVSpR3I9lehhPECdfL8q+1jU6gImxpYIVw0zxKW/C/1zy+mvRInsIl/6Kx2krsLRjp
-         Wq/FGN9TYioYoa7tjbCVj1vEp1oxUPG6tsEHCVxOSGjaiaeljlRMf/HAkeQEBlAPJ52H
-         otMJV1AzSAfYH1WY1zlKQQlAWZjRrnMzHsyS41xdvLOm+M3gyIBs2LucB+4JrfqZUsml
-         fEKA==
-X-Gm-Message-State: AOJu0YwvOcjYIcoGKXmebKfV9EL2S1L5yAsQySnIDmV9PNWk7JMIUeU5
-	NtSmoPbSTDziiK9gT01D8KI3NFNYdJfN5e4o0avnBk5jBmu4cBQ2cR2OILJ3
-X-Google-Smtp-Source: AGHT+IFSULdZTK/zPD0JZ87M95ygB3nr6Y2QjAFgOY4Wf6xQFXBNsMDRcg4Ria5ijqaRYv48908Kgg==
-X-Received: by 2002:a05:690c:3203:b0:6e2:83d:dfb4 with SMTP id 00721157ae682-6e9d8b1d84dmr90715797b3.34.1730212015308;
-        Tue, 29 Oct 2024 07:26:55 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6bb009esm19508937b3.22.2024.10.29.07.26.54
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 07:26:54 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e9ba45d67fso47525037b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:26:54 -0700 (PDT)
-X-Received: by 2002:a05:690c:62c5:b0:6e5:cb46:4641 with SMTP id
- 00721157ae682-6e9d89f2d6bmr134010557b3.13.1730212014504; Tue, 29 Oct 2024
- 07:26:54 -0700 (PDT)
+	s=arc-20240116; t=1730212103; c=relaxed/simple;
+	bh=zQSTQuHfIXDeySIqsjpMXxQJKi9tTYPZ4/OJS6CLMo8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LZHmJEenVZdUVnzyC0+X+/AA45X3Y0WTDSJLoyqbL+w2MEYPjGiwXxbykhTjQRn+z0XhRnPetloR/2pDn07ychaIw/BvavrsAyezWahTceELCrF+oMKCip7BB/RtMfz4ZjrIyeYx848ZONcr9Nm1xxmOZbrj9/+oEv1I3wdJ1Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=AOPK1UCw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2D86B40E0219;
+	Tue, 29 Oct 2024 14:28:19 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id LrVDKlyK2IwV; Tue, 29 Oct 2024 14:28:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730212095; bh=yizANEBOVFjBZEYttknFswJfr+e4kzXqziGfAwRn6SM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AOPK1UCwnkFenxQpt44QmxIH1vtwwF6zF8mdVeBFh4qtka21vsyKrM+lPq37mSgDX
+	 3M92Lfp2I0a5/AYpKpu5KcysLz6U8E/Ir4Nn2Bpve6qAp2ezX0N5bHuDfWil0+03rt
+	 fahYiNYLz3uyxR6/DqQ6DhFLdWv4/L/JQ4qWvuA0j8kBDIPYu1Ddll00vznfobucDB
+	 YDAj4Jq1qzpT81QWcfdso285LvBYM6ntwGGjDjP0vTBvZhT2xNVCQ8qOSRSsnqVbMJ
+	 YsPNF1dAaM3WmTR0v3G0YZhwUMLtGVzu47QaUXYjyW9oOd13vRriUR3aiCZgrcr2u4
+	 numfSVDjonRPvQcl7fry+SFKwdfar4rwsTbZ4kEoTadMwfUwA1OAO5/R1AK/OXsysA
+	 h/NMOCltcbBO9/lsq4gGxr3hlMdH+wAU3DqIUsYDICnhcDVA35yQCgrDY0Jtoxj73a
+	 Pw2THF6DO84c/RRga1SCLcrbUerlmoHwCE6fVEq1paYJiiHM87EskF+9GDhlWSMK+J
+	 aSLr++g29zRojnmAprJ51OWFr4ZRyOGqOXdG6g/n7EC580s0mGFxYVS+aKKNs+mgep
+	 cxfhG2smpYdzYklTnabb8h1tBKWyPkFb37uB1tMe5WrEwMi4LXB6aTjQJGCO0EbGeE
+	 IYZOg2+NJ37NiXYrnjOXlMjc=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB72040E01A5;
+	Tue, 29 Oct 2024 14:28:02 +0000 (UTC)
+Date: Tue, 29 Oct 2024 15:27:57 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xiaoyao Li <xiaoyao.li@intel.com>
+Cc: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	thomas.lendacky@amd.com, x86@kernel.org, kvm@vger.kernel.org,
+	mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+	pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+Message-ID: <20241029142757.GHZyDw7TVsXGwlvv5P@fat_crate.local>
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
+ <3ea9cbf7-aea2-4d30-971e-d2ca5c00fb66@intel.com>
+ <56ce5e7b-48c1-73b0-ae4b-05b80f10ccf7@amd.com>
+ <3782c833-94a0-4e41-9f40-8505a2681393@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240926-regmap-maple-idiomatic-v1-1-685258a00a05@kernel.org>
-In-Reply-To: <20240926-regmap-maple-idiomatic-v1-1-685258a00a05@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Oct 2024 15:26:41 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW6KvV+HQPY28ASeGJo_xejqRFFatmFD_2ST9R+Gt-d0Q@mail.gmail.com>
-Message-ID: <CAMuHMdW6KvV+HQPY28ASeGJo_xejqRFFatmFD_2ST9R+Gt-d0Q@mail.gmail.com>
-Subject: Re: [PATCH] regcache: Store values more directly in maple trees
-To: Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Liam Howlett <liam.howlett@oracle.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3782c833-94a0-4e41-9f40-8505a2681393@intel.com>
 
-Hi Mark,
+On Tue, Oct 29, 2024 at 05:19:29PM +0800, Xiaoyao Li wrote:
+> IMHO, it's a bad starter.
 
-On Thu, Sep 26, 2024 at 12:20=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
-ote:
-> Currently the regmap usage of the maple tree is a bit non-idomatic, rathe=
-r
-> than storing register values directly we allocate arrays of contiguous
-> register values and store pointers to those arrays. This is all quite
-> fiddly, especially around adding values (where we may need to combine a n=
-ew
-> allocation with adjacent ones) or dropping values (where we may have to
-> keep parts of a contiguous block). One reason for doing this is that the
-> maple tree wants to store pointers rather than integers, and in particula=
-r
-> has some problems when we want to store 0 as a value.
->
-> For 64 bit systems we can take advantage of the fact that regmap only
-> supports 32 bit values and store values with an extra high bit set in the
-> maple tree, avoiding the special cases with 0 and allowing us to save a
-> layer of indirection. This approach was suggested by Liam Howlett.
->
-> That doesn't help 32 bit systems though since we don't have any non-value=
- bits there. For those we
-> can keep the same code structure by switching to do a separate allocation
-> for each value. The resulting data structure is not a thing of beauty but
-> the code is much less complicated, and should be able to make better use =
-of
-> the slab allocator in cases where contiguous blocks of registers are not
-> powers of 2.
->
-> Let's implement these two approaches, using CONFIG_64BIT to choose betwee=
-n
-> direct storage and allocating per-register storage. The end result is muc=
-h
-> simpler, making more direct usage of the maple tree API and the detailed
-> optimisation work that goes into it's implementation. One indication of
-> the simplifications is that even with having the two different allocation
-> strategies we still have an overall negative diffstat.
->
-> Signed-off-by: Mark Brown <broonie@kernel.org>
+What does a "bad starter" mean exactly?
 
-Thanks for your patch, which is now commit 49a85851b14cf663 ("regcache:
-Store values more directly in maple trees") in regmap/for-next.
+> As more and more SNP features will be enabled in the future, a SNP init
+> function like tdx_early_init() would be a good place for all SNP guest
+> stuff.
 
-I started seeing intermittent memory corruption reports during s2idle
-on Salvator-XS:
+There is already a call to sme_early_init() around that area. It could be
+repurposed for SEV/SNP stuff too...
 
-    BUG: KFENCE: memory corruption in
-regcache_maple_sync_block.constprop.0+0xcc/0x1c8
+-- 
+Regards/Gruss,
+    Boris.
 
-    Corrupted memory at 0x00000000ba391541 [ ! . . . ] (in kfence-#12):
-     regcache_maple_sync_block.constprop.0+0xcc/0x1c8
-     regcache_maple_sync+0x140/0x1b0
-     regcache_sync+0xc8/0x208
-     vc5_resume+0x28/0x54
-     dpm_run_callback+0x5c/0xc8
-     device_resume+0xf8/0x1d4
-     async_resume+0x20/0x34
-     async_run_entry_fn+0x34/0xec
-     process_scheduled_works+0x2e8/0x4a8
-     worker_thread+0x150/0x1dc
-     kthread+0xe4/0xf4
-     ret_from_fork+0x10/0x20
-
-    kfence-#12: 0x000000003219df44-0x0000000074811d38, size=3D4, cache=3Dkm=
-alloc-8
-
-    allocated by task 1058 on cpu 6 at 694.672934s (0.104605s ago):
-     regcache_maple_sync_block.constprop.0+0x70/0x1c8
-     regcache_maple_sync+0x140/0x1b0
-     regcache_sync+0xc8/0x208
-     vc5_resume+0x28/0x54
-     dpm_run_callback+0x5c/0xc8
-     device_resume+0xf8/0x1d4
-     async_resume+0x20/0x34
-     async_run_entry_fn+0x34/0xec
-     process_scheduled_works+0x2e8/0x4a8
-     worker_thread+0x150/0x1dc
-     kthread+0xe4/0xf4
-     ret_from_fork+0x10/0x20
-
-    freed by task 1058 on cpu 6 at 694.673657s (0.164678s ago):
-     regcache_maple_sync_block.constprop.0+0xcc/0x1c8
-     regcache_maple_sync+0x140/0x1b0
-     regcache_sync+0xc8/0x208
-     vc5_resume+0x28/0x54
-     dpm_run_callback+0x5c/0xc8
-     device_resume+0xf8/0x1d4
-     async_resume+0x20/0x34
-     async_run_entry_fn+0x34/0xec
-     process_scheduled_works+0x2e8/0x4a8
-     worker_thread+0x150/0x1dc
-     kthread+0xe4/0xf4
-     ret_from_fork+0x10/0x20
-
-    CPU: 6 UID: 0 PID: 1058 Comm: kworker/u33:9 Tainted: G        W
-      6.12.0-rc5-rcar3-05681-g29cac4e36a79 #148
-    Tainted: [W]=3DWARN
-    Hardware name: Renesas Salvator-X 2nd version board based on r8a77951 (=
-DT)
-    Workqueue: async async_run_entry_fn
-
-While I did not bisect the issue, this change looks suspicious to me...
-
-> --- a/drivers/base/regmap/regcache-maple.c
-> +++ b/drivers/base/regmap/regcache-maple.c
-> @@ -13,26 +13,53 @@
->
->  #include "internal.h"
->
-> -static int regcache_maple_read(struct regmap *map,
-> -                              unsigned int reg, unsigned int *value)
-> +#if IS_ENABLED(CONFIG_64BIT)
-> +/*
-> + * On 64 bit systems uintptr_t will be 64 bit but unsigned long 32 bit
-> + * so we can store the register values directly in the maple tree.  We
-
-... as this assumption is not true: "unsigned long" is 64-bit on
-64-bit platforms (and 32-bit on 32-bit platforms).
-
-> + * need to always set an out of bounds bit due to maple tree's
-> + * handling of NULL.
-> + */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+https://people.kernel.org/tglx/notes-about-netiquette
 
