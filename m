@@ -1,134 +1,104 @@
-Return-Path: <linux-kernel+bounces-386897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8BE09B4938
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:11:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F6129B494B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:12:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263511C220AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:11:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D42B9B23FD0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC64205ACF;
-	Tue, 29 Oct 2024 12:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AB6205ADF;
+	Tue, 29 Oct 2024 12:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JrMQmL5V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJRMkc+h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A64D1DF960;
-	Tue, 29 Oct 2024 12:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE8E71DF960;
+	Tue, 29 Oct 2024 12:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730203907; cv=none; b=uq0vM1be5kWphQ4bAbaR/JfWzhiifckalwvdcEzDKH5wTG8WZTFpAOAFt5kOUOYtWdIde0AnNCk+zEDuwod0l6C8xwQA2IgnnCPR3dGkocZWWovUKgGOwsVsdq0e3rTKJ/H1n6YlIJz0/0OYsiODxVUamiQcjr9HkAvS69OdThM=
+	t=1730203918; cv=none; b=pTAthhL7Yyq/ywuWfCUSa6oneNnVflUxLBYHhCYnL4K+VKQJ88PHdoj8SpKwVk/WEXQ4cwcMfYED8Ck2pmLCZyW12LAbQzSStRJn8IG0/pKEkWsxG/c7omB4gneP+ETyq29SoevGmWM4PYYd1hZ6rPg8Rc/tn4Sf4zJMnSF/hOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730203907; c=relaxed/simple;
-	bh=iNNeGmZ/whg7z0Qy2x4NxLL1jI+rJGiNCT1foxcoXcA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b4ifXbr/AQW8NsL0QXB3X40Bew+cU6So/oO2yBCkyVJikRgHGlrAiHha6LpgWrDDl2ydqqLVBF3tpaGrvZojOJnUpWh+IWZoDGPU0I9Wo+v3YY9lrhoZq4zIUQTWfrp51jWTQ6xxRyxd4ubzKfn3Mb463ETctuyxc2dEMCqGkPQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JrMQmL5V; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730203905; x=1761739905;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=iNNeGmZ/whg7z0Qy2x4NxLL1jI+rJGiNCT1foxcoXcA=;
-  b=JrMQmL5VyOu5nuA/H10+cdtI6tjWbn5OPfNkICLRMrjZspXVOJ2BZWwu
-   PZ1RnXT0DVeXO4egb8EeypCartkyTCAF9bFunFAIxZp3MwSVOEyl6Y+YV
-   /W7jYVqHNRdej0CcuMj1DcEM7MTycia15H5D4DiAWEzoWckrkY/BpMeTD
-   XVa4q0LPiDWSrfFw0a8NZYMKh20GN0NnTWEvu0vqt76oLb7DEc3/2KC1M
-   vsD9pGNaT36n4Sxf6JH/6XLFDLK676PfgpF6uO+c+Xl8ACp08NonHtbWl
-   lOUIHrup2sKkHjyDRB+WRnHoxYRCpcBXRuWsy/Ghxfn9qj4026YuAsFmc
-   g==;
-X-CSE-ConnectionGUID: z7IkeBHZRf65lTp1s+ZEfQ==
-X-CSE-MsgGUID: 8IAwk8UOT2S1PRSa4/7IGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29959256"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="29959256"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 05:11:43 -0700
-X-CSE-ConnectionGUID: UfnwoUnyRAaqyMAaoBzDqw==
-X-CSE-MsgGUID: wI4q/vKuSnOtVMPyCM83xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="86553696"
-Received: from aslawinx-mobl.ger.corp.intel.com (HELO [10.94.8.107]) ([10.94.8.107])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 05:11:35 -0700
-Message-ID: <c9002b28-77a9-4be0-94a6-bf700e0abaab@linux.intel.com>
-Date: Tue, 29 Oct 2024 13:11:32 +0100
+	s=arc-20240116; t=1730203918; c=relaxed/simple;
+	bh=DvOA428vZdpj4FY6SOQjmd/eWCaW9YAhTenfjs/0W+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vna8Jdgil0pa2Li8AETqAsT6uO/ntgdqdzFn1zZHHBByn4YtfjFecNd+W7k3e6AO1IbFtgJ8M+KWp+I9Gy8mA+oseM3lZLuohgW1ke0Dfr7+3jtd1MDhmu5pS984FwIoZJDI8JRpQuuK0y39oix0py9q8hD1oY1qjHz0GXohBxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJRMkc+h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39EBBC4CEE6;
+	Tue, 29 Oct 2024 12:11:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730203918;
+	bh=DvOA428vZdpj4FY6SOQjmd/eWCaW9YAhTenfjs/0W+U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NJRMkc+heMepmtDI/F6bUP1EfECyQ6mwg6/UR1N2Msy1FZ/fLS/dFeoohHbkkDc8d
+	 EiNeyJUGhQx+zfj5bZUnlsvwLROnSt9zhK21sHtjrCP7GiQBKlN7U3ktsqWLdeasef
+	 0lYs2cNmKmZH/BN308f+yWVmZGavtavo0LNDrVuNqIdi069ZDBVie2A6Oj82oYNwpw
+	 4EpdNGT5fQDKQG0z2i1yafONGQxLeZVvFgmJF8ULQUgBWaidsqyCWQmEnZa7vcUyRV
+	 7KyVRmTPVXHS7mboG2a2bU5yCE11lNtTLtB/NJrdHU/DKtFaPkkAl8XWFNtcXOOuFR
+	 6Y0lzy4g3Mc8g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t5l57-000000002zu-29c3;
+	Tue, 29 Oct 2024 13:12:17 +0100
+Date: Tue, 29 Oct 2024 13:12:17 +0100
+From: Johan Hovold <johan@kernel.org>
+To: wojackbb@gmail.com
+Cc: gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] USB: serial: option: add MediaTek T7XX compositions
+Message-ID: <ZyDRIW0DIGn_FIsD@hovoldconsulting.com>
+References: <20241028080415.697793-1-wojackbb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in
- dapm_widget_list_create
-To: Takashi Iwai <tiwai@suse.de>
-Cc: Aleksei Vetrov <vvvvvv@google.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
- <987b8806-2ec7-41f7-bdeb-8f843c34a993@linux.intel.com>
- <87plnj19ry.wl-tiwai@suse.de>
-Content-Language: en-US
-From: =?UTF-8?Q?Amadeusz_S=C5=82awi=C5=84ski?=
- <amadeuszx.slawinski@linux.intel.com>
-In-Reply-To: <87plnj19ry.wl-tiwai@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028080415.697793-1-wojackbb@gmail.com>
 
-On 10/29/2024 11:30 AM, Takashi Iwai wrote:
-> On Tue, 29 Oct 2024 10:50:21 +0100,
-> Amadeusz Sławiński wrote:
->>
->> On 10/28/2024 11:50 PM, Aleksei Vetrov wrote:
->>> The widgets array in the snd_soc_dapm_widget_list has a __counted_by
->>> attribute attached to it, which points to the num_widgets variable. This
->>> attribute is used in bounds checking, and if it is not set before the
->>> array is filled, then the bounds sanitizer will issue a warning or a
->>> kernel panic if CONFIG_UBSAN_TRAP is set.
->>>
->>> This patch sets the size of the widgets list calculated with
->>> list_for_each as the initial value for num_widgets as it is used for
->>> allocating memory for the array. It is updated with the actual number of
->>> added elements after the array is filled.
->>>
->>> Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
->>> ---
->>>    sound/soc/soc-dapm.c | 2 ++
->>>    1 file changed, 2 insertions(+)
->>>
->>> diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
->>> index c34934c31ffec3970b34b24dcaa0826dfb7d8e86..99521c784a9b16a232a558029a2f3e88bd8ebfb1 100644
->>> --- a/sound/soc/soc-dapm.c
->>> +++ b/sound/soc/soc-dapm.c
->>> @@ -1147,6 +1147,8 @@ static int dapm_widget_list_create(struct snd_soc_dapm_widget_list **list,
->>>    	if (*list == NULL)
->>>    		return -ENOMEM;
->>>    +	(*list)->num_widgets = size;
->>> +
->>>    	list_for_each_entry(w, widgets, work_list)
->>>    		(*list)->widgets[i++] = w;
->>>    
->>
->> and after that there is (*list)->num_widgets = i;
->>
->> Can this be somehow simplified to remove 'i', if it set before assignment?
+On Mon, Oct 28, 2024 at 04:04:15PM +0800, wojackbb@gmail.com wrote:
+> From: Jack Wu <wojackbb@gmail.com>
 > 
-> That line can be removed after this change, I suppose.
-> The size is calculated from the list at the beginning, and it must be
-> the exact size.
+> Add the MediaTek T7XX compositions:
+
+Can you say something about what the various interfaces are used for
+here?
+
+> T:  Bus=03 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#= 74 Spd=480  MxCh= 0
+> D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+> P:  Vendor=0e8d ProdID=7129 Rev= 0.01
+> S:  Manufacturer=MediaTek Inc.
+> S:  Product=USB DATA CARD
+> S:  SerialNumber=004402459035402
+> C:* #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
+
+> Signed-off-by: Jack Wu <wojackbb@gmail.com>
+> ---
+>  drivers/usb/serial/option.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
+> diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+> index 4f18f189f309..b6118f545386 100644
+> --- a/drivers/usb/serial/option.c
+> +++ b/drivers/usb/serial/option.c
+> @@ -2244,6 +2244,7 @@ static const struct usb_device_id option_ids[] = {
+>  	  .driver_info = NCTRL(2) },
+>  	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff, 0x00, 0x00),
+>  	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
+> +	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7129, 0xff, 0x00, 0x00) },	/* MediaTek T7XX */
 
-Actually looking at this again, first iteration iterates through all 
-widgets, while second one, only through work_list, which looks to me 
-like it allocates more memory than needed in most cases.
+Should you mark some of the interfaces are not accepting modem control
+requests similar to 0x7126 and 0x7127?
 
+>  	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
+>  	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
+>  	  .driver_info = RSVD(1) | RSVD(4) },
+
+Johan
 
