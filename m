@@ -1,106 +1,222 @@
-Return-Path: <linux-kernel+bounces-386663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1DD99B4696
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:19:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822E99B4693
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:19:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873F6282A63
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:19:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A48401C2270E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96E204F78;
-	Tue, 29 Oct 2024 10:19:18 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B824720494D;
+	Tue, 29 Oct 2024 10:19:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BF+0jS9R"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B16204098
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F7204032
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197158; cv=none; b=JlBC8tlnZ+kAIYigAJqmL1G/YnBwizJsNJ1AYl8o5IRNw5HEXvAvOXkJM94IWUQB2SUs2E+8iZB9F44UTPv/gjdXA8rErCh4dUrQyXtgjoKqbK4/1/ATbAUspSY51T+ndvyAA3gW0q79yKYUq0BKnfIl06r080u17F/4O1mdABc=
+	t=1730197155; cv=none; b=AwCR52Djkpv2+zefVb6g70xRSZtOaOOjci4hkvECysyTD1tKTkn8v1fVG6axGXlDp8oj8G730mafKV/FdWBanhI34CmBBEJAXO0bai2eXRBmWUiTKgq78gbn5b8BZN6iOqMHAK/m9KsebBO3Nyjr/l8/NAcZ4HsZUuF3/zDzK3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197158; c=relaxed/simple;
-	bh=LVKDUrcQcElxjQbX8op354Jgek9F9zCXPV5kpWMUO7E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MJMiPAvJNo00t0d71VLH3CDZjyYzUMiFqBgf3x+Pgm5pi5GkP6trIVSScG28zJkEP7Gb6ZK59g+fHdt4IYF7CvKCa+KZm8Py/EQqTJIdbhO+rN7499VP25qkZ32lF3tKG9aCuHr0eo3jFAyepcy63ge6UnvVlzj/YFVYrizpOJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 3a9341c695df11efa216b1d71e6e1362-20241029
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR, DN_TRUSTED
-	SRC_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED, SN_UNFAMILIAR
-	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-UNFAMILIAR: 1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:6b8f3b12-faf5-4a8d-a269-1b9dc56d5702,IP:20,
-	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:18,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:38
-X-CID-INFO: VERSION:1.1.38,REQID:6b8f3b12-faf5-4a8d-a269-1b9dc56d5702,IP:20,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:18,FILE:0,BULK:0,RULE:Release_HamU,ACTION
-	:release,TS:38
-X-CID-META: VersionHash:82c5f88,CLOUDID:197810b0e41b391e0c9a1f3cd400b1fd,BulkI
-	D:2410291819064NGZ8PPP,BulkQuantity:0,Recheck:0,SF:19|43|74|66|841|38|23|1
-	6|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_SNR,TF_CID_SPAM_USA
-X-UUID: 3a9341c695df11efa216b1d71e6e1362-20241029
-X-User: zhangguopeng@kylinos.cn
-Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
-	(envelope-from <zhangguopeng@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 875702192; Tue, 29 Oct 2024 18:19:06 +0800
-From: zhangguopeng <zhangguopeng@kylinos.cn>
-To: linmiaohe@huawei.com,
-	linux-mm@kvack.org
-Cc: nao.horiguchi@gmail.com,
-	akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org,
-	zhangguopeng <zhangguopeng@kylinos.cn>
-Subject: [PATCH] mm/memory-failure: Replace sprintf() with sysfs_emit()
-Date: Tue, 29 Oct 2024 18:18:53 +0800
-Message-Id: <20241029101853.37890-1-zhangguopeng@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730197155; c=relaxed/simple;
+	bh=d/cGJuC2Q58iecrEavLqBOu3zMwjpF2kwMvGbzASwQk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sUKA37Xur3pA2Yr3VKl/VEk0fMm4qFIHG2lXPHjryXIG0HHCOzOLP5123ABND5dYA/GX8f5MH7VsKHpxHebVSs7zJ6DwS6l6c8ktgknBuerbHps1YeWGq40Y/htqQOZrMEsJt8W1jtnyQkO88N/R9iHwADtexU/VWUr0lhmvqGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BF+0jS9R; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d50fad249so3922877f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:19:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730197151; x=1730801951; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/XgocmKm8OWehUfxM76kTsWdkf8OVwFn2L9ImJ7aTqE=;
+        b=BF+0jS9RM4KcptjnjGB0HM8NC6NnSeH6X8/t7tI0DYBUmABsoTbko6PWXSCFNxAyvj
+         /qM8FjFh5IEhIJ5FBu7KC7o/Bs8PG5TCI9dzfJ1ux6t59/JdEfzz5xKFDurVwXSXkIa8
+         pqEnFSjCTwMMV9LQ3dHKyEa9Dd3mCZrYKkT/EKs8NcJ1KGFaLntmj0PQAGGs9MOBeil2
+         ebjatT3F1MJpTFfhYhx+gZjw42f6l9hDdOTBwbaCP04qFHIkV5L5WVvcqIb7xtOBm8Nh
+         5Jsc47L43U5e3adAR4ACELmzuxHU+vSz8THF4nbK+Ij2uft7wgW9HzviNxPQcNzWdTw5
+         vw0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730197151; x=1730801951;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/XgocmKm8OWehUfxM76kTsWdkf8OVwFn2L9ImJ7aTqE=;
+        b=ii9hRPDGT0YVOci8VpUBYd7Tvq0GXAuMhPZWsWH8PfX36dU3NXmFjRpefofpdyX4Tj
+         5mY46jDKP3CzNZ4dzH5radLm/lHtm6sqdM50cOYR/jBK1rZ2xOJSuB149aDcRvMB2LA8
+         vMCjGDqRp4YgzFNZpCivgYGdStle9n61QqzCxJ2q1uJNFFh7kP2s2iTnn16s6S5+R1XX
+         5wfD569TkNJTHHyLKySHcnE47Nra941uWKpZMKOq95ZgAxpWVsKcovXuHoO+eypf+Wtf
+         mRNx3C0/Htrq8h7TcrppCSpk1H+SdRQqlQ4Tp24iKuNth1M2/qm5+3QqQ/b56cvKh1oS
+         g6tg==
+X-Forwarded-Encrypted: i=1; AJvYcCX7G3CbuoxCG2nF7OamblqskYkWeVGCpoTcBjIAgKk6RtpLEopz8HBoMMrXCJj6Yb9AZT5x0kRm/5I15lI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNlVSXCk39rXgyGX9Lq9BiSaAs3uZTvjDxajOsK9PUFv9/oOhy
+	UIsEJorREfuQfGSZ6KdXqv6F+LruvxX0sZvY/pn80WdSsJXJnWv8kR2kBwznCw2ExkiEFh4KNnb
+	ekDG9DBrOtLyZODISVLpaCs80W5QlG2AH9BJx
+X-Google-Smtp-Source: AGHT+IGWFO5YJYn8lgkZOi+IiNwCBAshqneyF0cW5trQzglUC0zODMaLZVGut3thtbV5H7YknoyRIa7QhRfPXIFaKyw=
+X-Received: by 2002:adf:fbd2:0:b0:37d:5299:c406 with SMTP id
+ ffacd0b85a97d-380611e4b44mr7845170f8f.38.1730197151035; Tue, 29 Oct 2024
+ 03:19:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-10-dakr@kernel.org>
+ <CAH5fLggFD7pq0WCfMPYTZcFkvrXajPbxTBtkvSeh-N2isT1Ryw@mail.gmail.com> <ZyCo9SRP4aFZ6KsZ@pollux>
+In-Reply-To: <ZyCo9SRP4aFZ6KsZ@pollux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 29 Oct 2024 11:18:58 +0100
+Message-ID: <CAH5fLgjC5Rcq5VJbEFSVP_rE0xjj8CGdqxZexhPVsGcTZ+85HA@mail.gmail.com>
+Subject: Re: [PATCH v3 09/16] rust: add `io::Io` base type
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As Documentation/filesystems/sysfs.rst suggested, show() should only
-use sysfs_emit() or sysfs_emit_at() when formatting the value to be
-returned to user space.
+On Tue, Oct 29, 2024 at 10:21=E2=80=AFAM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
+>
+> On Mon, Oct 28, 2024 at 04:43:02PM +0100, Alice Ryhl wrote:
+> > On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.=
+org> wrote:
+> > >
+> > > I/O memory is typically either mapped through direct calls to ioremap=
+()
+> > > or subsystem / bus specific ones such as pci_iomap().
+> > >
+> > > Even though subsystem / bus specific functions to map I/O memory are
+> > > based on ioremap() / iounmap() it is not desirable to re-implement th=
+em
+> > > in Rust.
+> > >
+> > > Instead, implement a base type for I/O mapped memory, which generical=
+ly
+> > > provides the corresponding accessors, such as `Io::readb` or
+> > > `Io:try_readb`.
+> > >
+> > > `Io` supports an optional const generic, such that a driver can indic=
+ate
+> > > the minimal expected and required size of the mapping at compile time=
+.
+> > > Correspondingly, calls to the 'non-try' accessors, support compile ti=
+me
+> > > checks of the I/O memory offset to read / write, while the 'try'
+> > > accessors, provide boundary checks on runtime.
+> >
+> > And using zero works because the user then statically knows that zero
+> > bytes are available ... ?
+>
+> Zero would mean that the (minimum) resource size is unknown at compile ti=
+me.
+> Correspondingly, any call to `read` and `write` would not compile, since =
+the
+> compile time check requires that `offset + type_size <=3D SIZE`.
+>
+> (Hope this answers the questions, I'm not sure I got it correctly.)
 
-Signed-off-by: zhangguopeng <zhangguopeng@kylinos.cn>
----
- mm/memory-failure.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yeah, thanks! I got it now.
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 7194d6639720..fff849daceba 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -100,7 +100,7 @@ static ssize_t _name##_show(struct device *dev,			\
- {								\
- 	struct memory_failure_stats *mf_stats =			\
- 		&NODE_DATA(dev->id)->mf_stats;			\
--	return sprintf(buf, "%lu\n", mf_stats->_name);		\
-+	return sysfs_emit(buf, "%lu\n", mf_stats->_name);	\
- }								\
- static DEVICE_ATTR_RO(_name)
- 
--- 
-2.25.1
+> > > `Io` is meant to be embedded into a structure (e.g. pci::Bar or
+> > > io::IoMem) which creates the actual I/O memory mapping and initialize=
+s
+> > > `Io` accordingly.
+> > >
+> > > To ensure that I/O mapped memory can't out-live the device it may be
+> > > bound to, subsystems should embedd the corresponding I/O memory type
+> > > (e.g. pci::Bar) into a `Devres` container, such that it gets revoked
+> > > once the device is unbound.
+> >
+> > I wonder if `Io` should be a reference type instead. That is:
+> >
+> > struct Io<'a, const SIZE: usize> {
+> >     addr: usize,
+> >     maxsize: usize,
+> >     _lifetime: PhantomData<&'a ()>,
+> > }
+> >
+> > and then the constructor requires "addr must be valid I/O mapped
+> > memory for maxsize bytes for the duration of 'a". And instead of
+> > embedding it in another struct, the other struct creates an `Io` on
+> > each access?
+>
+> So, we'd create the `Io` instance in `deref` of the parent structure, rig=
+ht?
+> What would be the advantage?
 
+What you're doing now is a bit awkward to use. You have to make sure
+that it never escapes the struct it's created for, so e.g. you can't
+give out a mutable reference as the user could otherwise `mem::swap`
+it with another Io. Similarly, the Io can never be in a public field.
+Your safety comment on Io::new really needs to say something like
+"while this struct exists, the `addr` must be a valid I/O region",
+since I assume such regions are not valid forever? Similarly if we
+look at [1], the I/O region actually gets unmapped *before* the Io is
+destroyed since IoMem::drop runs before the fields of IoMem are
+destroyed, so you really need something like "until the last use of
+this Io" and not "until this Io is destroyed" in the safety comment.
+
+If you compare similar cases in Rust, then they also do what I
+suggested. For example, Vec<T> holds a raw pointer, and it uses unsafe
+to assert that it's valid on each use of the raw pointer - it does not
+create e.g. an `&'static mut [T]` to hold in a field of the Vec<T>.
+Having an IoRaw<S> and an Io<'a, S> corresponds to what Vec<T> does
+with IoRaw being like NonNull<T> and Io<'a, S> being like &'a T.
+
+[1]: https://lore.kernel.org/all/20241024-topic-panthor-rs-platform_io_supp=
+ort-v1-1-3d1addd96e30@collabora.com/
+
+> > > diff --git a/rust/kernel/io.rs b/rust/kernel/io.rs
+> > > new file mode 100644
+> > > index 000000000000..750af938f83e
+> > > --- /dev/null
+> > > +++ b/rust/kernel/io.rs
+> > > @@ -0,0 +1,234 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Memory-mapped IO.
+> > > +//!
+> > > +//! C header: [`include/asm-generic/io.h`](srctree/include/asm-gener=
+ic/io.h)
+> > > +
+> > > +use crate::error::{code::EINVAL, Result};
+> > > +use crate::{bindings, build_assert};
+> > > +
+> > > +/// IO-mapped memory, starting at the base address @addr and spannin=
+g @maxlen bytes.
+> > > +///
+> > > +/// The creator (usually a subsystem / bus such as PCI) is responsib=
+le for creating the
+> > > +/// mapping, performing an additional region request etc.
+> > > +///
+> > > +/// # Invariant
+> > > +///
+> > > +/// `addr` is the start and `maxsize` the length of valid I/O mapped=
+ memory region of size
+> > > +/// `maxsize`.
+> >
+> > Do you not also need an invariant that `SIZE <=3D maxsize`?
+>
+> I guess so, yes. It's enforced by `Io::new`, which fails if `SIZE > maxsi=
+ze`.
+
+Sure. It's still an invariant.
+
+Alice
 
