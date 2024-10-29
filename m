@@ -1,232 +1,250 @@
-Return-Path: <linux-kernel+bounces-387559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3EB9B52E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:45:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BB549B52ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:46:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 233AF1C221CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4311C224D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A3E8202F7A;
-	Tue, 29 Oct 2024 19:45:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D57A92071ED;
+	Tue, 29 Oct 2024 19:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G5SH8D/R"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2076.outbound.protection.outlook.com [40.107.236.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OIiBF6KI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FC1199947;
-	Tue, 29 Oct 2024 19:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730231124; cv=fail; b=PQpjKNjHrJWdOyfPzkRdkZqlyv4B5AQXkR52Dgfwt2Bx6isMkSsN5HZurLU8KDfSHm6QX5llJsBz2bCFM6DEUmoPMh3/z8lM5gTb4L0JLFyJioBOkMTDNWSbKES3k3twS/XSMK2e7r/D/tmccHOOkJzgmcGIagsSwTDWB5JiALk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730231124; c=relaxed/simple;
-	bh=uh8pGbMM9rwjwe03xWhhpzpqOYs+UmZ635Lnl7I7ffc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G/lur8aEHsoQ1TV+XTHyidhVrWHNy00MjKPuXOtdVH2l3l5aXPGkqwMKn+5Zmrq/6mOHpgKHIOuyasbG+dFvjas/mfgrVgLEa77Ar/w2RpMGwYyaTZUHfh3yN5pddtwEtwIc3XwhAmG2YQ/82QwgSyNSO5M2zTfHcE6AE9anYZM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G5SH8D/R; arc=fail smtp.client-ip=40.107.236.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SbnNNbjHP8q/8xqIj9YN/QPmdFKJxj93hu0yxb1EdRI+18J5SAzwYD0TBh9Vk7jWRTSUM54KrSyogZQerADqYgJOS579VLfb2MwyDeFFAjUWoG7L4IRVFX6G0lu509Wscic5M9ha/H7yd3XOy5JKGke2niEBS808FkaYMkGUSnk4ZEODiucccCU6R1Cvk43n6MpwC92uoEygHQfzavR21C//pf7LCol95BKefSJb/I++SwpmArr4TdCZItjkdM+uGv+m0GkjjF9vsi097DnUfWsmpW5TFxFlNUroZWLQPYDoUFu1j5KJjzDh9vYp9mpJlYhErzR8l6BkSOsqgHQsGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HTNfiLPPcdrO+70VKB6ARFDh1FK4P0rcLaNpBMXz0rI=;
- b=SqaGZOptr1f+lLxndWMItwuj0IoBz6Nrsl2RlCvfiDVpSOMajeoK8wHN1XhV3/+8yazaHtsENBm4ZRwvc1LHdpxJQoB7s1MGDmvkHfsYHii6rtKapJYpgjxcs3PyH1P6CSOqE5oMuViVme9lp/RNZqTk2uwrryMsx5jqzJmyigCsqxrQkH6nJqWJLhpiR5ddOBxYb0ahVwLAtgtKVbeuqlzdPBiwgWZpngmdQSxCcfu0wY5k0py0Mht51jl/6AaVHgBJK99TMQ45g3kS9PDtYiD83hcFHSEpbuUm2YIGv3BXHSXRDCHQO3rMSKF7aMIntgJ7Jf9dBPsV9i8jAMtyxg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=amd.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HTNfiLPPcdrO+70VKB6ARFDh1FK4P0rcLaNpBMXz0rI=;
- b=G5SH8D/RQfig/reyK1CealhAK6Xm917yA6xmSWYaeo7WwAeG1Vp+yUraFbPiFkzRUHFy6taaP/3I78t9cxrwFmGdWvxjseojUDXjny1o7w118pAgm751jFZpe4UpxVj5waT0jQ+EMIt1b5CAnbK9AoAenI8QgUmVyfXzRZD+GEgt+fh8oQonePxymxTKTy+WFe1iExE3vhVdIrTAlrMG3fKQ4TE8RTomx2IZQ3TerWJPKVDMDV0ZbipKpCyuPLTYtuEd9+JGuXE/Yy9GVas3y3jsjXjWS3E+VUhk0JzJS/mBnY9k7PnbCr7Vdexsh6HLdSi1i4iVplToXTMkzNv1lw==
-Received: from CH5P223CA0022.NAMP223.PROD.OUTLOOK.COM (2603:10b6:610:1f3::12)
- by PH7PR12MB6443.namprd12.prod.outlook.com (2603:10b6:510:1f9::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.22; Tue, 29 Oct
- 2024 19:45:17 +0000
-Received: from CH3PEPF00000009.namprd04.prod.outlook.com
- (2603:10b6:610:1f3:cafe::4d) by CH5P223CA0022.outlook.office365.com
- (2603:10b6:610:1f3::12) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.17 via Frontend
- Transport; Tue, 29 Oct 2024 19:45:17 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH3PEPF00000009.mail.protection.outlook.com (10.167.244.36) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 19:45:16 +0000
-Received: from drhqmail201.nvidia.com (10.126.190.180) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 29 Oct
- 2024 12:45:04 -0700
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail201.nvidia.com (10.126.190.180) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 29 Oct 2024 12:45:03 -0700
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Tue, 29 Oct 2024 12:45:02 -0700
-Date: Tue, 29 Oct 2024 12:45:01 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Jason Gunthorpe <jgg@nvidia.com>
-CC: <kevin.tian@intel.com>, <will@kernel.org>, <joro@8bytes.org>,
-	<suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
-	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<smostafa@google.com>, <yi.l.liu@intel.com>, <aik@amd.com>,
-	<zhangfei.gao@linaro.org>, <patches@lists.linux.dev>
-Subject: Re: [PATCH v5 05/13] iommufd: Allow hwpt_id to carry viommu_id for
- IOMMU_HWPT_INVALIDATE
-Message-ID: <ZyE7PUFGfnMOfMVe@Asurada-Nvidia>
-References: <cover.1729897278.git.nicolinc@nvidia.com>
- <6b8bb8f2319bf26ead928321f609105e4e5eecf4.1729897278.git.nicolinc@nvidia.com>
- <20241029190941.GN209124@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF8CE2022FC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730231191; cv=none; b=X0IgXl5FKKKOXkQRmY3bQazVit2WTmHJp5TR63ZOJrnYFR4kN64B14J6xWDxj68pWB1RjJdroGdqJDp6ZSnb5ehtEH6KUFpqBSsLv6McFk/qPq2w4PORYDxKGmlcQxiqAOruL3soUKN+bBVGG9EXQgqNixNIaKjzX0fLj8NOw/o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730231191; c=relaxed/simple;
+	bh=Z7QlXf2YU3N/KNxyJHoQ6XPPBlvNC7WVHOGloOqRUaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RlpUgn7wXPsMR2SI7U9WCC0d3OiGNLA/mdf+dQJaVNZk4PlSIlvQgDQo+bnvd13+a5I+l96XXXbdSur6PclZJpQzVJEgpik6RxEJq7Fvm7hQRBGu92GV/wri1on3YzV37J0huhjXvLX9CilRN8xRjdBa6Ue8bB9oJl0eGnE8XBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OIiBF6KI; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730231189; x=1761767189;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=Z7QlXf2YU3N/KNxyJHoQ6XPPBlvNC7WVHOGloOqRUaA=;
+  b=OIiBF6KIZRBdbmjrCNmAVGBrjbaXV5e+l2mgtYt8YQtJDDR6jgyJ1GMC
+   mCUzVFbm0iI7SA6t8LqkCje/t+RTRA9Dy5KtdaDihvxQrnDLJzDGjEuKY
+   Cn0ief37C4i7gt7G3oDDe6Hpq54sodLO9lzI05zlMvuYPbuy1mPx7PXeX
+   gwI6z0nChI57gXD4+o9/DB1VoNkNP34bZLDrW55cernucDwVImuuYpIAL
+   5PD95dz8yeruOJsomeKG5SUsQOl2krpNJTJMnnQG/QsvW3M7dmh1Js4aF
+   7NekGfhl/mI8HYMvraUI61OOf2l4oolkCICRv0ohOqMEKhPBKY67eFK9m
+   Q==;
+X-CSE-ConnectionGUID: pUPMmctBSm6erNAah9fIPw==
+X-CSE-MsgGUID: Dln7pBxRQZmYJGNZy00MoA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="33697676"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="33697676"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 12:46:29 -0700
+X-CSE-ConnectionGUID: CZSNQkzOR7qRKNbF0VjDDQ==
+X-CSE-MsgGUID: 3edRBEEIQ4m5jSHDhcTF3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="86630022"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 29 Oct 2024 12:46:26 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5sAa-000e4k-1O;
+	Tue, 29 Oct 2024 19:46:24 +0000
+Date: Wed, 30 Oct 2024 03:45:33 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	x86@kernel.org, Frederic Weisbecker <frederic@kernel.org>
+Subject: [tip:timers/core 69/76] kernel/signal.c:1889:37: sparse: sparse:
+ incorrect type in argument 1 (different address spaces)
+Message-ID: <202410300348.DgXPJOtf-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241029190941.GN209124@nvidia.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000009:EE_|PH7PR12MB6443:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4ab79341-3fb3-462f-0da4-08dcf85236df
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?xY8BZvy7+sy6MD0J1Rut+tUkY92+ovjS5HMbIcEkgjp37AxKGnN1phPKn7Pg?=
- =?us-ascii?Q?ErpEF2KK/wn1vC1g9t5WFadWntTWQhqzwdpWZCS/CoGT+ZZFj2NnMs9A84fS?=
- =?us-ascii?Q?STKsXyjOFEG6iYLwIo5cXUGe2F2OQYcbi4u3HO11hxKfqLdx/lqroByrmbSV?=
- =?us-ascii?Q?xiRXbR5MHUQpVLQRW2dbBDwIrF7Bn0F/EuvtrmUmRSmsPZ11AwhR9lrKXrYP?=
- =?us-ascii?Q?5UlQxxstiQXXOH0hyCsyooP1tkAjw80oNj9P42kvyGBPm53np/ZtLOe3/gu4?=
- =?us-ascii?Q?7+9jP1lG49GLLjr7IrTIVu4EHycYH77KXSCEv/VU1OHOlVrN4Mcj9Yb5m1JG?=
- =?us-ascii?Q?Foys4wVWpV1dSgHQ6AlkrV98Y/ke9wH99vS6aRp5VredmIpTLBoIigrsjKz2?=
- =?us-ascii?Q?zxh/rNGMpqif8rG6HtupufYgVtLqgEdU0drnEsTsKKlPeq3ThhZg8dNov1uw?=
- =?us-ascii?Q?G5k3djL2r6piPw5h42Gphzemey8tavNQaN5B0o7URSCiwH84Yol8dVgjZQFW?=
- =?us-ascii?Q?mV4wjZYAfoh3X72hkSpifPDjEADW3an+/1ONQRWzD9zvatEMPJzlKNAk8/cq?=
- =?us-ascii?Q?XMvXyHLONv66UxeHACfy8nHV15IY2ZFa/rUjiAiEZWcSrYyk9z0GS2BZ0F4h?=
- =?us-ascii?Q?TXcH8WDYX4Iy1Xpt4Qx0LUf6dvr8aKSbtCPIAaSaW+hBAK6/FRxc40qpvWan?=
- =?us-ascii?Q?LtnECzBQtxLCAl69Wh6diEWd5Xf1muK4NHcT/su7MY3mu1mFGkyXgWFJTHFd?=
- =?us-ascii?Q?aoJYtqsQ6ZWEiA34I572co8HNQDsBfJlrN/uF9hnWnro81Nqrmwbzqa+venR?=
- =?us-ascii?Q?TG3YUU7p0KbyXHQRFgmss1JyiIf4QfQDZH0QXmqaS0aideYwhBPMtAL5+sX8?=
- =?us-ascii?Q?MXumUF5ppXYagf08/PX558F2TjwUvhjN4yNYTs1wWrSfYvAPbtr4A8A9dDGq?=
- =?us-ascii?Q?PRzBW7tMtlj2dLMXKhqFLtuiYaNanpCXkp64qNLg+VWdw2dhHx05uv3PY/hi?=
- =?us-ascii?Q?MBSPNuRfHvgcuNsPvey+WyDFvmNY+kMSSzGpHwvQ9jwMhsUp/5PL2n8L71y/?=
- =?us-ascii?Q?4USYkT598zTiiTjIp8rSOEf3cSVmKgNNAhwo2hcxDuuWVUazdeevg7/hX/bP?=
- =?us-ascii?Q?woIrmZGwWaruxo3vBhuZYpkdb7LcsJENnBXdDpL+qrq6zo2GA5dGSRzHjHVc?=
- =?us-ascii?Q?AEoXSoLYeE9B0LN/yUNSaTSIdv9LrbFeRM237eyZ0OLubiPxr5QjIyCU1Tk5?=
- =?us-ascii?Q?UPN61NvRLTAjSi+6w/bcoR45wfYcjcbPOxY2geokyK0WuXkuh1tXf+T9G2q0?=
- =?us-ascii?Q?P6EVtfrx35FgAnx2EQ5EFEjGnR9W73eHhuLGlihsNtA+iePcRBh0kGEhUfWD?=
- =?us-ascii?Q?q3dg+ktImeW5cmx3UR7dGKrUQXzpBbhLwmYqjZBbFpBA47CRrQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014)(7416014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 19:45:16.9955
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4ab79341-3fb3-462f-0da4-08dcf85236df
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000009.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6443
 
-On Tue, Oct 29, 2024 at 04:09:41PM -0300, Jason Gunthorpe wrote:
-> On Fri, Oct 25, 2024 at 04:50:34PM -0700, Nicolin Chen wrote:
-> > @@ -497,17 +497,35 @@ int iommufd_hwpt_invalidate(struct iommufd_ucmd *ucmd)
-> >  		goto out;
-> >  	}
-> >  
-> > -	hwpt = iommufd_get_hwpt_nested(ucmd, cmd->hwpt_id);
-> > -	if (IS_ERR(hwpt)) {
-> > -		rc = PTR_ERR(hwpt);
-> > +	pt_obj = iommufd_get_object(ucmd->ictx, cmd->hwpt_id, IOMMUFD_OBJ_ANY);
-> > +	if (IS_ERR(pt_obj)) {
-> > +		rc = PTR_ERR(pt_obj);
-> >  		goto out;
-> >  	}
-> > +	if (pt_obj->type == IOMMUFD_OBJ_HWPT_NESTED) {
-> > +		struct iommufd_hw_pagetable *hwpt =
-> > +			container_of(pt_obj, struct iommufd_hw_pagetable, obj);
-> > +
-> > +		rc = hwpt->domain->ops->cache_invalidate_user(hwpt->domain,
-> > +							      &data_array);
-> > +	} else if (pt_obj->type == IOMMUFD_OBJ_VIOMMU) {
-> > +		struct iommufd_viommu *viommu =
-> > +			container_of(pt_obj, struct iommufd_viommu, obj);
-> > +
-> > +		if (!viommu->ops || !viommu->ops->cache_invalidate) {
-> > +			rc = -EOPNOTSUPP;
-> > +			goto out_put_pt;
-> > +		}
-> > +		rc = viommu->ops->cache_invalidate(viommu, &data_array);
-> > +	} else {
-> > +		rc = -EINVAL;
-> > +		goto out_put_pt;
-> > +	}
-> 
-> Given the test in iommufd_viommu_alloc_hwpt_nested() is:
-> 
-> 	if (WARN_ON_ONCE(hwpt->domain->type != IOMMU_DOMAIN_NESTED ||
-> 			 (!viommu->ops->cache_invalidate &&
-> 			  !hwpt->domain->ops->cache_invalidate_user)))
-> 			  {
-> 
-> We will crash if the user passes a viommu allocated domain as
-> IOMMUFD_OBJ_HWPT_NESTED since the above doesn't check it.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers/core
+head:   1550dde8a537b35dbf066c7f9cfe5f9b360bce0d
+commit: 2625b7efcee09ab43c108dfca6ea0b918897a1e8 [69/76] signal: Confine POSIX_TIMERS properly
+config: x86_64-randconfig-121-20241029 (https://download.01.org/0day-ci/archive/20241030/202410300348.DgXPJOtf-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300348.DgXPJOtf-lkp@intel.com/reproduce)
 
-Ah, that was missed.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410300348.DgXPJOtf-lkp@intel.com/
 
-> I suggest we put the required if (ops..) -EOPNOTSUPP above and remove
-> the ops->cache_invalidate checks from both WARN_ONs.
+sparse warnings: (new ones prefixed by >>)
+   kernel/signal.c: note: in included file (through arch/x86/include/uapi/asm/signal.h, arch/x86/include/asm/signal.h, include/uapi/linux/signal.h, ...):
+   include/uapi/asm-generic/signal-defs.h:83:29: sparse: sparse: multiple address spaces given
+   kernel/signal.c:188:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:188:31: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:188:31: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:191:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:191:33: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:191:33: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:473:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:473:9: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:473:9: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:477:34: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:477:34: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:477:34: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:499:53: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct k_sigaction *ka @@     got struct k_sigaction [noderef] __rcu * @@
+   kernel/signal.c:499:53: sparse:     expected struct k_sigaction *ka
+   kernel/signal.c:499:53: sparse:     got struct k_sigaction [noderef] __rcu *
+   include/uapi/asm-generic/signal-defs.h:83:29: sparse: sparse: multiple address spaces given
+   kernel/signal.c:595:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct lockdep_map const *lock @@     got struct lockdep_map [noderef] __rcu * @@
+   kernel/signal.c:595:9: sparse:     expected struct lockdep_map const *lock
+   kernel/signal.c:595:9: sparse:     got struct lockdep_map [noderef] __rcu *
+   kernel/signal.c:692:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct lockdep_map const *lock @@     got struct lockdep_map [noderef] __rcu * @@
+   kernel/signal.c:692:9: sparse:     expected struct lockdep_map const *lock
+   kernel/signal.c:692:9: sparse:     got struct lockdep_map [noderef] __rcu *
+   kernel/signal.c:817:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct lockdep_map const *lock @@     got struct lockdep_map [noderef] __rcu * @@
+   kernel/signal.c:817:9: sparse:     expected struct lockdep_map const *lock
+   kernel/signal.c:817:9: sparse:     got struct lockdep_map [noderef] __rcu *
+   kernel/signal.c:1012:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct lockdep_map const *lock @@     got struct lockdep_map [noderef] __rcu * @@
+   kernel/signal.c:1012:9: sparse:     expected struct lockdep_map const *lock
+   kernel/signal.c:1012:9: sparse:     got struct lockdep_map [noderef] __rcu *
+   kernel/signal.c:1264:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:1264:9: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:1264:9: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:1265:16: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct k_sigaction *action @@     got struct k_sigaction [noderef] __rcu * @@
+   kernel/signal.c:1265:16: sparse:     expected struct k_sigaction *action
+   kernel/signal.c:1265:16: sparse:     got struct k_sigaction [noderef] __rcu *
+   kernel/signal.c:1286:34: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:1286:34: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:1286:34: sparse:     got struct spinlock [noderef] __rcu *
+>> kernel/signal.c:1889:37: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *l @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:1889:37: sparse:     expected struct spinlock [usertype] *l
+   kernel/signal.c:1889:37: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:1901:36: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:1901:36: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:1901:36: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2036:44: sparse: sparse: cast removes address space '__rcu' of expression
+   kernel/signal.c:2055:65: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *tsk @@     got struct task_struct [noderef] __rcu *parent @@
+   kernel/signal.c:2055:65: sparse:     expected struct task_struct *tsk
+   kernel/signal.c:2055:65: sparse:     got struct task_struct [noderef] __rcu *parent
+   kernel/signal.c:2056:40: sparse: sparse: cast removes address space '__rcu' of expression
+   kernel/signal.c:2074:14: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct sighand_struct *psig @@     got struct sighand_struct [noderef] __rcu *[noderef] __rcu sighand @@
+   kernel/signal.c:2074:14: sparse:     expected struct sighand_struct *psig
+   kernel/signal.c:2074:14: sparse:     got struct sighand_struct [noderef] __rcu *[noderef] __rcu sighand
+   kernel/signal.c:2103:53: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected struct task_struct *t @@     got struct task_struct [noderef] __rcu *parent @@
+   kernel/signal.c:2103:53: sparse:     expected struct task_struct *t
+   kernel/signal.c:2103:53: sparse:     got struct task_struct [noderef] __rcu *parent
+   kernel/signal.c:2104:34: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected struct task_struct *parent @@     got struct task_struct [noderef] __rcu *parent @@
+   kernel/signal.c:2104:34: sparse:     expected struct task_struct *parent
+   kernel/signal.c:2104:34: sparse:     got struct task_struct [noderef] __rcu *parent
+   kernel/signal.c:2133:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct *parent @@     got struct task_struct [noderef] __rcu *parent @@
+   kernel/signal.c:2133:24: sparse:     expected struct task_struct *parent
+   kernel/signal.c:2133:24: sparse:     got struct task_struct [noderef] __rcu *parent
+   kernel/signal.c:2136:24: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct task_struct *parent @@     got struct task_struct [noderef] __rcu *real_parent @@
+   kernel/signal.c:2136:24: sparse:     expected struct task_struct *parent
+   kernel/signal.c:2136:24: sparse:     got struct task_struct [noderef] __rcu *real_parent
+   kernel/signal.c:2169:17: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct sighand_struct *sighand @@     got struct sighand_struct [noderef] __rcu *sighand @@
+   kernel/signal.c:2169:17: sparse:     expected struct sighand_struct *sighand
+   kernel/signal.c:2169:17: sparse:     got struct sighand_struct [noderef] __rcu *sighand
+   kernel/signal.c:2209:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2209:41: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2209:41: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2211:39: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2211:39: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2211:39: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2268:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2268:33: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2268:33: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2326:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2326:31: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2326:31: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2366:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2366:31: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2366:31: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2368:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2368:33: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2368:33: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2466:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2466:41: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2466:41: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2550:41: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2550:41: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2550:41: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2562:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2562:33: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2562:33: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2605:52: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct task_struct *tsk @@     got struct task_struct [noderef] __rcu *parent @@
+   kernel/signal.c:2605:52: sparse:     expected struct task_struct *tsk
+   kernel/signal.c:2605:52: sparse:     got struct task_struct [noderef] __rcu *parent
+   kernel/signal.c:2607:49: sparse: sparse: cast removes address space '__rcu' of expression
+   kernel/signal.c:2645:49: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected struct sighand_struct *sighand @@     got struct sighand_struct [noderef] __rcu *sighand @@
+   kernel/signal.c:2645:49: sparse:     expected struct sighand_struct *sighand
+   kernel/signal.c:2645:49: sparse:     got struct sighand_struct [noderef] __rcu *sighand
+   kernel/signal.c:2978:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2978:27: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2978:27: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:2999:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:2999:29: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:2999:29: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3066:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3066:27: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3066:27: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3068:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3068:29: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3068:29: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3219:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3219:31: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3219:31: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3222:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3222:33: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3222:33: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3611:27: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3611:27: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3611:27: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3623:37: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3623:37: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3623:37: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3628:35: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3628:35: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3628:35: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:3633:29: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:3633:29: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:3633:29: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:4109:31: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:4109:31: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:4109:31: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:4121:33: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct spinlock [usertype] *lock @@     got struct spinlock [noderef] __rcu * @@
+   kernel/signal.c:4121:33: sparse:     expected struct spinlock [usertype] *lock
+   kernel/signal.c:4121:33: sparse:     got struct spinlock [noderef] __rcu *
+   kernel/signal.c:4139:11: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected struct k_sigaction *k @@     got struct k_sigaction [noderef] __rcu * @@
+   kernel/signal.c:4139:11: sparse:     expected struct k_sigaction *k
 
-Ack. I will add hwpt->domain->ops check:
----------------------------------------------------------------------
-	if (pt_obj->type == IOMMUFD_OBJ_HWPT_NESTED) {
-		struct iommufd_hw_pagetable *hwpt =
-			container_of(pt_obj, struct iommufd_hw_pagetable, obj);
-	
-		if (!hwpt->domain->ops ||
-		    !hwpt->domain->ops->cache_invalidate_user) {
-			rc = -EOPNOTSUPP;
-			goto out_put_pt;
-		}
-		rc = hwpt->domain->ops->cache_invalidate_user(hwpt->domain,
-							      &data_array);
-	} else if (pt_obj->type == IOMMUFD_OBJ_VIOMMU) {
-		struct iommufd_viommu *viommu =
-			container_of(pt_obj, struct iommufd_viommu, obj);
-	
-		if (!viommu->ops || !viommu->ops->cache_invalidate) {
-			rc = -EOPNOTSUPP;
-			goto out_put_pt;
-		}
-		rc = viommu->ops->cache_invalidate(viommu, &data_array);
-	} else {
----------------------------------------------------------------------
+vim +1889 kernel/signal.c
 
-Thanks
-Nicolin
+  1884	
+  1885	void flush_itimer_signals(void)
+  1886	{
+  1887		struct task_struct *tsk = current;
+  1888	
+> 1889		guard(spinlock_irqsave)(&tsk->sighand->siglock);
+  1890		__flush_itimer_signals(&tsk->pending);
+  1891		__flush_itimer_signals(&tsk->signal->shared_pending);
+  1892	}
+  1893	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
