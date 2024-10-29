@@ -1,219 +1,136 @@
-Return-Path: <linux-kernel+bounces-386126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D69239B3F65
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:58:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30CB9B3F62
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A007B2834E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:58:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B00328356F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80409168B1;
-	Tue, 29 Oct 2024 00:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7E4179BC;
+	Tue, 29 Oct 2024 00:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mmFRN83k"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dRpuvfgu"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F17175AB;
-	Tue, 29 Oct 2024 00:58:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD1914A85;
+	Tue, 29 Oct 2024 00:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730163501; cv=none; b=Tx+ClrpaGyEkLElisbNztsM7G4m6c4z1sfsYi3K8nZWbzeHQrxPBacInvum9LKhOylXz9+Shoi3/sX0dTuPjRcq2MOYWk+yXJtcc0+zt2XXQD1CyHIbemXSNVl3ajNaZAe1V0jaD5KD5wuLitnzlhddgnu1XVcMjSBswtkoU8VQ=
+	t=1730163478; cv=none; b=vACngdcfaz4UcojM0jyx41IHsepbdpgs8gfHmWMQjgGLvyHrPupktLynPUcDzWKl1SxyP+ly1el6u2V1u/gNJr7m6JTo3cisNl1URiGvGS1oe6r6CYLpfT1THL/ZY9KWXNrV6S3p0FqI73NW6olsGjK7c0ruLNkjq55k+GuQ5lE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730163501; c=relaxed/simple;
-	bh=1kyf7Fk9chzenw5yQ1YXLu23G0X0466vF2K0pmQaCrY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QYkxiiT/zGW/pWoi3KOJ31uhIRjsAsLu8JpJmejsiNtCJBwNOLAG822QnMpRNnfEiyip4a7SJhqJQLqgwgN7u1zs6O+fVeZzmO2vDfA3AER+/jm+i1VdToqD6xhBrxg5wsqVnNDLnSrIzP4LQlZmWi52AHmR78yOdDvpD2EwVOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mmFRN83k; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1730163478; c=relaxed/simple;
+	bh=E5eZ8GLRzUOqWvDS4SrIOdlwia2y8ODJSH2JKNjpFvU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NV64cJo7NX8LVzkJ1zo33Car/p/7a8R1gdNtcsUARLM/ka8KLeRgPBi3ONts3Kuk4q/vpUJLryADUXl36f7o/GXYBLZvI6xPL1eTGCp2MI8eD1VzhPDskTNpH51RQdqSnU5cF4I/VR9OJcvDj8T2kg/mIbwHR3EoLEBVCJ1mxN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dRpuvfgu; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20caccadbeeso53197345ad.2;
-        Mon, 28 Oct 2024 17:58:19 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-431ac30d379so12706285e9.1;
+        Mon, 28 Oct 2024 17:57:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730163499; x=1730768299; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eQH5NybP0JM5m01znf6CZiXSil2XuOMHch3kZGTw3pY=;
-        b=mmFRN83kT4UltOHIu4aEoYn+eGXRVtpnit6HhArEwn4EgUPn9CGlNnZofrQw4qHQ0J
-         V4xynIkl3LsC0YpCDELXcJkwxwrQ6o8URta9NSk9vB7pOB7jQ0tAEJ79QeH/xVOzPfmP
-         aDdScWXxC4utdqotv7kJ3gKI7thyzoEUucS3m5WUqA/wf0ikMM0UHcv1bgoqTLnQseJ1
-         qQTK8Ek8EtQhTw2I2B8WV4l6/5ukWOr3uFstxwyuS17gPDufBEbavlz+SRfIUBPiMeLq
-         fcGKHygSbrRr0a7BEkSRDXqowKklBv/oddl8IAs0tepqQou5WHRpc7JpG5uAvdJ9jfbQ
-         Earw==
+        d=gmail.com; s=20230601; t=1730163473; x=1730768273; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=18M5G6gmC2uJZssfsnK5gMVxO3whYHwKOs0IPtJ1EAc=;
+        b=dRpuvfguvVyZwqnjOAQuBHCLFxexYBghB6bjv+UXy3atQM42lEo2Jjf1dF+tsH99Ra
+         9+66dDGhhgq6YURnDrc0HijoOa+ipjCNfWUgR7XnbmmgeO7HPeS+JiQsW+Ky0KPS4xU6
+         pNMZt3MqUalZGPEKNLh9l5ptO9m12CljETnZfnJGLuu13+29k56y+ERvXszsdSq4B5YM
+         1VYZn/f4rZBwzoR2zSx4vC1ZK0R0q4Ks/j92xsa672TiinkQAfqFkUYPfkbBr3vdD/w4
+         CstYpPbWu4US7LVz779EL9QaEB0zthkK5DazZcq2HpJiN1rExoJ4XWXux7gieUmevZbF
+         /kMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730163499; x=1730768299;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eQH5NybP0JM5m01znf6CZiXSil2XuOMHch3kZGTw3pY=;
-        b=sYhD4fZO7XcHozSGG8A4j9NNhXjsza/vizlWGcMoCigTiDY9I5rjncMHqy3qnouoJf
-         fF31J26WpZLUbJxX58qNW2dYv2Er/QXnDG63aU7yAM2vhCsz+m9gjLdDmKwmOnSKyW/n
-         LarWVfUw3kIYOqIjAeiklMyiIvu9a/XdkE6ZOPaLyo7SvDOEtOSITnitgZg9wuo6GHIh
-         WHXVnfOMvHyvq/zhGwj5ttzuVd+JSR35LMJ4AoUC7zUvpHLVpGQF0wabxdLfrkesm9ar
-         M1LxpBynV+ek/LIC4P4XDk14lAASZIOqUkoueAZbBxDbNimWyMWF+C3J8lh5Oraeo+Wz
-         3GVw==
-X-Forwarded-Encrypted: i=1; AJvYcCVhshje++Mgd75Hn//C6x4vHLKkmu3vHBD86aqCx8PyvTZSrtbeANgqGuu2cE/sAHe443EffbTnk9Iqnw==@vger.kernel.org, AJvYcCXGYdsEdbLUV8AOg/a8tOBlffXmZ8XQN+ZXN/gxctJwSzlAtfu855eE5FRjL1jhgxNlccK7KThzVp5cnfud@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyrq6QqWX4VQL8MPMTpwGeknsTV3iRgjFGSMPyZwLhdiTboMQuZ
-	CG5ZKJV6y642sD/6wvh1722kPwLfPUzVbKsrjJxMstT7vMuwV9lC
-X-Google-Smtp-Source: AGHT+IHgPKhnUY9L1D/NAirFt2IqxS/2mDkQcu5b2mshk4XeMetiUFxhxCuBjseSiazIxfP2rMpxAA==
-X-Received: by 2002:a17:902:f546:b0:20b:9547:9b36 with SMTP id d9443c01a7336-210c6ceaca9mr129309245ad.46.1730163498881;
-        Mon, 28 Oct 2024 17:58:18 -0700 (PDT)
-Received: from xavtug (2603-9008-1600-2265-a236-bcff-feba-a919.inf6.spectrum.com. [2603:9008:1600:2265:a236:bcff:feba:a919])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf84597sm55907715ad.111.2024.10.28.17.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2024 17:58:18 -0700 (PDT)
-Date: Mon, 28 Oct 2024 17:58:09 -0700
-From: "Ned T. Crigler" <crigler@gmail.com>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Peter Seiderer <ps.report@gmx.net>,
-	Christian Heusel <christian@heusel.eu>, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	Jeff LaBundy <jeff@labundy.com>,
-	Benjamin Tissoires <bentiss@kernel.org>
-Subject: Re: [REGRESSION] disabling and re-enabling magic sysrq fails after
- kernel 6.11
-Message-ID: <ZyAzIddVgmyBa2ub@xavtug>
-References: <Zx2iQp6csn42PJA7@xavtug>
- <69b6119c-3c3a-406f-9375-3e55fba9b732@heusel.eu>
- <20241027163744.2d396c61@gmx.net>
- <Zx5yIEZwT5SxzCTx@xavtug>
- <Zx8hfE2_3zXSTi05@google.com>
+        d=1e100.net; s=20230601; t=1730163473; x=1730768273;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=18M5G6gmC2uJZssfsnK5gMVxO3whYHwKOs0IPtJ1EAc=;
+        b=ItO/NimdfMPTFwLJ4hnO3ciuNgnKFgmUr2kCM8ePK4BiNLBFCNKg1ksMo+fTKFRWdo
+         OCnlGrpzJLHCsT/4/DUu2rr1L079zeO+K1Immop2MeD9K1aC5eAENX7xxJ7sfmfWJ6M+
+         NM68IOl+DzJD0DyMVoT9xgT6IenrMtzvATQKIbIXgRYpgYbh2ztBF5VDqbsDVBQl9L+i
+         FS/InVLOgFwfdBVW6ciosUci7UycYTBjt8wklN90in+znUorM+SPO/IvRdLB9P8f0x8c
+         8iQOvWc67JnSrNYVP5xUFuJgTIlSEs9exAZYCnk5ih+Mm80j4Uq06L5o3X2x+QLJ+/r0
+         bNHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVATlLMpEOTnkDUqgzwKME57rrgaCxsEwoT8/nTc4rXMWZQapgJp5GMKUM3unUEvQ4XCC8sPAXPO6k=@vger.kernel.org, AJvYcCXZpAEVAqkcXkSrLjjD/8cmaG1VofgITWTp0jxPPig1lZbhlZABPUI/F55R7o7nVSrA/mGjP+OO@vger.kernel.org
+X-Gm-Message-State: AOJu0YygPQ2JqmIU7Ji6J3Rx2lvL8HzqZUczybtveDr/Jok3640QkKZo
+	fIIVf5O8Xl7JKsETNlDArKdx+EXD30rLMPSang6IsUAZ0w26iQ4a
+X-Google-Smtp-Source: AGHT+IEDznCPCf6wq2CmGJYXSoKXPyBjdKEg5qpjuhcayRcrcniC1z1J2mBHun/cnOqlR0goHC+pPw==
+X-Received: by 2002:a5d:5cce:0:b0:37d:446a:9e60 with SMTP id ffacd0b85a97d-38060ffe8cbmr7494789f8f.0.1730163473057;
+        Mon, 28 Oct 2024 17:57:53 -0700 (PDT)
+Received: from [192.168.0.2] ([69.6.8.124])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70d50sm10974443f8f.76.2024.10.28.17.57.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 17:57:51 -0700 (PDT)
+Message-ID: <11e25027-6987-4c88-ac06-c1ba60c0d113@gmail.com>
+Date: Tue, 29 Oct 2024 02:58:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zx8hfE2_3zXSTi05@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [net-next v2] net: wwan: t7xx: reset device if suspend fails
+To: Jinjian Song <jinjian.song@fibocom.com>,
+ chandrashekar.devegowda@intel.com, chiranjeevi.rapolu@linux.intel.com,
+ haijun.liu@mediatek.com, m.chetan.kumar@linux.intel.com,
+ ricardo.martinez@linux.intel.com, loic.poulain@linaro.org,
+ johannes@sipsolutions.net, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-doc@vger.kernel.org, angelogioacchino.delregno@collabora.com,
+ linux-arm-kernel@lists.infradead.org, matthias.bgg@gmail.com,
+ corbet@lwn.net, linux-mediatek@lists.infradead.org, helgaas@kernel.org,
+ danielwinkler@google.com, korneld@google.com
+References: <20241022084348.4571-1-jinjian.song@fibocom.com>
+Content-Language: en-US
+From: Sergey Ryazanov <ryazanov.s.a@gmail.com>
+In-Reply-To: <20241022084348.4571-1-jinjian.song@fibocom.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Dmitry,
+Hello Jinjian,
 
-On Sun, Oct 27, 2024 at 10:30:36PM -0700, Dmitry Torokhov wrote:
-> Hi everyone,
+On 22.10.2024 11:43, Jinjian Song wrote:
+> If driver fails to set the device to suspend, it means that the
+> device is abnormal. In this case, reset the device to recover
+> when PCIe device is offline.
+
+Is it a reproducible or a speculative issue? Does the fix recover modem 
+from a problematic state?
+
+Anyway we need someone more familiar with this hardware (Intel or 
+MediaTek engineer) to Ack the change to make sure we are not going to 
+put a system in a more complicated state.
+
+> Signed-off-by: Jinjian Song <jinjian.song@fibocom.com>
+> ---
+> V2:
+>   * Add judgment, reset when device is offline
+> ---
+>   drivers/net/wwan/t7xx/t7xx_pci.c | 4 ++++
+>   1 file changed, 4 insertions(+)
 > 
-> On Sun, Oct 27, 2024 at 10:02:24AM -0700, Ned T. Crigler wrote:
-> > Hi Peter, Christian,
-> > 
-> > On Sun, Oct 27, 2024 at 04:37:44PM +0100, Peter Seiderer wrote:
-> > > Hello Ned, Christian, *,
-> > > 
-> > > On Sun, 27 Oct 2024 15:06:09 +0100, Christian Heusel <christian@heusel.eu> wrote:
-> > > 
-> > > > On 24/10/26 07:15PM, Ned T. Crigler wrote:
-> > > > > Hi,
-> > > >
-> > > > Hey Ned,
-> > > >
-> > > > > It looks like starting with kernel 6.11, disabling and re-enabling
-> > > > > magic
-> > > > > sysrq fails with these errors in dmesg:
-> > > > >
-> > > > > kernel: input: input_handler_check_methods: only one event processing
-> > > > > method can be defined (sysrq)
-> > > > > kernel: sysrq: Failed to register input handler, error -22
-> > > > >
-> > > > > after doing:
-> > > > >
-> > > > > # echo 0 > /proc/sys/kernel/sysrq
-> > > > > # echo 438 > /proc/sys/kernel/sysrq
-> > > > > # echo 0 > /proc/sys/kernel/sysrq
-> > > > > # echo 438 > /proc/sys/kernel/sysrq
-> > > > > # echo 0 > /proc/sys/kernel/sysrq
-> > > > > # echo 438 > /proc/sys/kernel/sysrq
-> > > >
-> > > > I have found that this issue is also present in the latest mainline
-> > > > release and bisected it to the following commit:
-> > > >
-> > > >     d469647bafd9 ("Input: simplify event handling logic")
-> > > >
-> > > 
-> > > After the mentioned commit a call sysrq_register_handler() -->
-> > > input_register_handler(&sysrq_handler) with sysrq_handler.filter set
-> > > will result in sysrq_handler.events set to input_handler_events_filter,
-> > > see drivers/input/input.c (line 2607 to 2608):
-> > > 
-> > > 2596 int input_register_handler(struct input_handler *handler)
-> > > 2597 {
-> > > 2598         struct input_dev *dev;
-> > > 2599         int error;
-> > > 2600
-> > > 2601         error = input_handler_check_methods(handler);
-> > > 2602         if (error)
-> > > 2603                 return error;
-> > > 2604
-> > > 2605         INIT_LIST_HEAD(&handler->h_list);
-> > > 2606
-> > > 2607         if (handler->filter)
-> > > 2608                 handler->events = input_handler_events_filter;
-> > > 2609         else if (handler->event)
-> > > 2610                 handler->events = input_handler_events_default;
-> > > 2611         else if (!handler->events)
-> > > 2612                 handler->events = input_handler_events_null;
-> > > 
-> > > So the second call will fail at the check 'input_handler_check_methods(handler)'
-> > > which only allows one method to be set, see drivers/input/input.c:
-> > > 
-> > > 2517 static int input_handler_check_methods(const struct input_handler *handler)
-> > > 2518 {
-> > > 2519         int count = 0;
-> > > 2520
-> > > 2521         if (handler->filter)
-> > > 2522                 count++;
-> > > 2523         if (handler->events)
-> > > 2524                 count++;
-> > > 2525         if (handler->event)
-> > > 2526                 count++;
-> > > 2527
-> > > 2528         if (count > 1) {
-> > > 2529                 pr_err("%s: only one event processing method can be defined      (%s)\n",
-> > > 2530                        __func__, handler->name);
-> > > 2531                 return -EINVAL;
-> > > 2532         }
-> > > 2533
-> > > 2534         return 0;
-> > > 2535 }
-> 
-> Yes, I did not consider that we might want to re-register the same input
-> handler, thank you for alerting me about the regression.
-> 
-> > > 
-> > > 
-> > > A quick fix/hack for the sysrq case:
-> > > 
-> > > --- a/drivers/tty/sysrq.c
-> > > +++ b/drivers/tty/sysrq.c
-> > > @@ -1045,7 +1045,7 @@ static inline void sysrq_register_handler(void)
-> > >         int error;
-> > > 
-> > >         sysrq_of_get_keyreset_config();
-> > > -
-> > > +       sysrq_handler.events = NULL;
-> > >         error = input_register_handler(&sysrq_handler);
-> > >         if (error)
-> > >                 pr_err("Failed to register input handler, error %d", error);
-> > > lines 1-13/13 (END)
-> > > 
-> > > Regards,
-> > > Peter
-> > > 
-> > 
-> > Thanks for tracking this down. It seems messy that the mentioned commit
-> > changes input_register_handler to overwrite ->events for an internal purpose,
-> > and callers may expect it to be unchanged, as sysrq does here by reusing
-> > sysrq_handler.
-> 
-> Yes, indeed. I wonder if we can solve this by moving the derived event
-> handler method into input_handle structure, like the patch below. 
+> diff --git a/drivers/net/wwan/t7xx/t7xx_pci.c b/drivers/net/wwan/t7xx/t7xx_pci.c
+> index e556e5bd49ab..4f89a353588b 100644
+> --- a/drivers/net/wwan/t7xx/t7xx_pci.c
+> +++ b/drivers/net/wwan/t7xx/t7xx_pci.c
+> @@ -427,6 +427,10 @@ static int __t7xx_pci_pm_suspend(struct pci_dev *pdev)
+>   	iowrite32(T7XX_L1_BIT(0), IREG_BASE(t7xx_dev) + ENABLE_ASPM_LOWPWR);
+>   	atomic_set(&t7xx_dev->md_pm_state, MTK_PM_RESUMED);
+>   	t7xx_pcie_mac_set_int(t7xx_dev, SAP_RGU_INT);
+> +	if (pci_channel_offline(pdev)) {
+> +		dev_err(&pdev->dev, "Device offline, reset to recover\n");
+> +		t7xx_reset_device(t7xx_dev, PLDR);
+> +	}
+>   	return ret;
+>   }
 
-Your patch fixes the sysrq regression, thanks for the fix!
-
-Tested-by: Ned T. Crigler <crigler@gmail.com>
-
--- 
-Ned T. Crigler
+--
+Sergey
 
