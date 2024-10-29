@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-387522-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387523-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF0149B524E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:00:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05FB39B5254
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:01:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812D0B21BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:00:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE542286C00
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:01:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F3B206E69;
-	Tue, 29 Oct 2024 19:00:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C171206E61;
+	Tue, 29 Oct 2024 19:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DF8/aj4A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4vSj3Oo"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED7DDDBE;
-	Tue, 29 Oct 2024 19:00:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE5F2107;
+	Tue, 29 Oct 2024 19:01:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730228427; cv=none; b=TiJbJfFRk4PVQlyujAwhoQIbheqP5knRa6auMLuLWpOY+b15Xnx9ZCm39MHxELS+ZlJxj5RKspY3qf+jG6LWmrt5ZlyZ699U/X+3D0b9Lasi1kBSaCHEnsUAcPndHbpu1iOwzh2hTNMre3AiJqyPwLtZTLWt2YA3+er+3mAnCyU=
+	t=1730228498; cv=none; b=Qf3VRP0DvKbNeDA/4aKvV+Uhm5ZsMGJrTsHThEnuBtP3+2nifhpnf+lU9tKXiwb3PJ7WlE3LNnUvZBDcfs7Fjsjh6z0A4XSgrnbebRTrQ1tOH9JXjP+WdhA6WU5RNNYNW7isEnM8fwb7AWDnvLo8M+1L2OKoysfVVgK0r//tDaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730228427; c=relaxed/simple;
-	bh=y4blAUiLkKNBuzymZwHaU201Y8f7DqejWNtvVRzItxU=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ADtZyyFe3n204uuc/Y2DXb1UPRJXk0wMhz/UBYIXT2C23YImmLF5ecSPPRpkbp6kBOduArUFGMdjx4HilM8n0e/6lR2qTNBCdQyKMWfBNYMzKl8KmKB/VyY7O0TobxPQUP+TP0t/ccBP9GpkOQ8OT04h96Cw5fH/0wzwIrzqbWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DF8/aj4A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C560C4CECD;
-	Tue, 29 Oct 2024 19:00:27 +0000 (UTC)
+	s=arc-20240116; t=1730228498; c=relaxed/simple;
+	bh=Vh6G+8uwL9uUOhvODAwVdWDZL/F4D+Frm1lZVOFHCHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oEkLwFV8MUXFe2OasVIDuu/X1mo/blpP5zPI1xmGTtthEOIlNOMj70eptXORrc+5WADxA7ppu0pn5U0EK50/vV2qT8E3bMy/bWdPwjVYlNMZ4ANFdpmtnRy2AUXVzV58PDWB+9shM5UxvFyWMYPeffSjOu7pK/COEgoZje0r67c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4vSj3Oo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEBD4C4CEE4;
+	Tue, 29 Oct 2024 19:01:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730228427;
-	bh=y4blAUiLkKNBuzymZwHaU201Y8f7DqejWNtvVRzItxU=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=DF8/aj4AVYFgFEB4m+1kTZCFWcoXSeUGt6Ve7viDSuDosfW8WKqj3x+vyZKHkAnNw
-	 EuUcjcRbsplovPSjrJhVskS0OBZT62oDJYB9Gtc0y2TK1vTJqARy1yJeiETs/RUb4a
-	 sHKtv7mm8caPUxfQk74P2HBPa0zYaluttv37FsoOpTJyJDklMDweouo8Ulu+gK/Sdj
-	 Oc7kqBBcT0OoS0LY5oi0cE07l3CXW8rfln4tz2qDZY06uUOnaChyeQIIzpLDfZZLH1
-	 i6yWmWjAIR018FpRCikRAbK2lqvVi2riXGOhy9CRcilsN/CPMTO0d9ijsL1hREjbu6
-	 NizeVJxluPTRg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC7F7380AC08;
-	Tue, 29 Oct 2024 19:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1730228498;
+	bh=Vh6G+8uwL9uUOhvODAwVdWDZL/F4D+Frm1lZVOFHCHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p4vSj3Oov1VK0ycqbj88Tprzv8GWpeSYgx4q3BPI73sQDVdT0D4NCWH4rS0FlShxU
+	 OnwHuLhX95JSvX7+SbZmrPQBcGynkzjdOpIej32blGefWmR0IXdg3SiVKvCRaM8I2U
+	 ZVC3ZKe/ukljcJWgtVyK5b1r3odbMv1nvyGGsubFSyl51D0CVbzv7h3V/tpG8BjPh/
+	 +U7yuGclZV8lHd7IMKpfhEXv0CawSsmMkMCGXpNoT0+itAsW9N9qEcFDPsxUpOs1uN
+	 mmhDMKKj7HjeAUcy3biVkq9yZopZGuGrDbtJI2dP8HgTx2xadQZf3HamPiDp3R/5ZP
+	 8yYvihQKxgYTg==
+Date: Tue, 29 Oct 2024 19:01:33 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 8/9] KVM: arm64: Allow control of dpISA extensions in
+ ID_AA64ISAR3_EL1
+Message-ID: <bc0998d2-fc06-41e5-87aa-25a963947800@sirena.org.uk>
+References: <20241028-arm64-2024-dpisa-v1-0-a38d08b008a8@kernel.org>
+ <20241028-arm64-2024-dpisa-v1-8-a38d08b008a8@kernel.org>
+ <867c9q3lkj.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] net: usb: qmi_wwan: add Quectel RG650V
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173022843477.790671.16218877187194108195.git-patchwork-notify@kernel.org>
-Date: Tue, 29 Oct 2024 19:00:34 +0000
-References: <20241024151113.53203-1-benoit.monin@gmx.fr>
-In-Reply-To: <20241024151113.53203-1-benoit.monin@gmx.fr>
-To: =?utf-8?b?QmVub8OudCBNb25pbiA8YmVub2l0Lm1vbmluQGdteC5mcj4=?=@codeaurora.org
-Cc: bjorn@mork.no, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-
-Hello:
-
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 24 Oct 2024 17:11:13 +0200 you wrote:
-> Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
-> The composition is DIAG / NMEA / AT / AT / QMI.
-> 
-> T:  Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
-> D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
-> P:  Vendor=2c7c ProdID=0122 Rev=05.15
-> S:  Manufacturer=Quectel
-> S:  Product=RG650V-EU
-> S:  SerialNumber=xxxxxxx
-> C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
-> I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
-> E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-> I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
-> E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
-> I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
-> E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
-> E:  Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
-> Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
-> 
-> [...]
-
-Here is the summary with links:
-  - net: usb: qmi_wwan: add Quectel RG650V
-    https://git.kernel.org/netdev/net/c/6b3f18a76be6
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4Vm6UmZvhyOSk+XV"
+Content-Disposition: inline
+In-Reply-To: <867c9q3lkj.wl-maz@kernel.org>
+X-Cookie: May be too intense for some viewers.
 
 
+--4Vm6UmZvhyOSk+XV
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Tue, Oct 29, 2024 at 04:45:00PM +0000, Marc Zyngier wrote:
+> Mark Brown <broonie@kernel.org> wrote:
+
+> > +	ID_WRITABLE(ID_AA64ISAR3_EL1, (ID_AA64ISAR3_EL1_FPRCVT |
+> > +				       ID_AA64ISAR3_EL1_FAMINMAX)),
+
+> Please add the required sanitisation of the register so that we do not
+> get any surprise exposure of unhandled features when someone changes
+> ftr_id_aa64isar3[].
+
+Hrm, right - sorry I missed that.  The other registers I was looking at
+don't do any filtering.  This feels like something the helpers should do
+but that's simply not how things are structured right now.
+
+--4Vm6UmZvhyOSk+XV
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmchMQwACgkQJNaLcl1U
+h9BBIQf/fJ4ZRG5K2io8YpnuhLePrlnfVtSz0vdMqL26hdM384DyHOtHBnj7tobz
+wcMxqJtvV/+nwxaKpTfaJwtriyBqlYLexywJpttHwplCdDoS6DKLAssSkoE5Dlge
+RqqtygC4CbFgdwJ54vFke5Ku97EJLhKvEWCMGPKgM7KWXR56f5FyipMzhJDDGkRd
+ZP5cCMs0b0vocUbd9URiNhDL28tVUIWLOFarxRwFnlbIDiuedEvyrtaBKh30Mw6o
+nb5KPJ8r5N8V8ylHTrFlGmIWrpMTFVLqhYrdc1SBr2wL/fZ8xAO3UkAL8AraIbMC
+i9whjaoox3OTBniFy9I7+95eM3Z/lg==
+=y7Ds
+-----END PGP SIGNATURE-----
+
+--4Vm6UmZvhyOSk+XV--
 
