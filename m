@@ -1,201 +1,117 @@
-Return-Path: <linux-kernel+bounces-386910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1413C9B498B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:21:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF26B9B4992
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:22:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F53CB23351
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:21:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D1951F23611
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AD6B206041;
-	Tue, 29 Oct 2024 12:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4393206059;
+	Tue, 29 Oct 2024 12:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SXqv0Lfd";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="pF1MQb9O";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="V4Irx20k";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K1H8dXrc"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="n8A2mdfo"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E098BEA;
-	Tue, 29 Oct 2024 12:20:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C349205E17;
+	Tue, 29 Oct 2024 12:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730204458; cv=none; b=mwFOuy3cF2Q9IP9a7pkchAIf5pq1bdfT4KS3YpejLOYPQYeSL2hkv7OBXGmboTyBdSjvoTwEb2dRQmg1YEjDClGliWc0SFSJzshQoZb6DoGxe5lLIJxqO8XcivV9CVWy5jEVzd2iLn0OepQLkqTzO5v8MuoYqwHfPIu1cNN4oXs=
+	t=1730204521; cv=none; b=Yc77FyP83OWb8FiJ04qADoQc/jPAYV8yWnN5HJVQWEEanjexoID7S9IyRuLHc1pSQykOTb+F72hqLO0xJACzWmPkgLbrAP+nV3k6h7P3wtwIQRyzUhucMzWCcPspQlhTdd8PE9aPl4ZGRbw8O0WYRXvj3pNubhGzEdt5T+J8YEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730204458; c=relaxed/simple;
-	bh=XzRuZ2uerAbiK0qOnJNMd09rewLjEyvoVVHdzfcH5pM=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BK1BwgkAk3FlKe76Fls3PTzDJz6Cj0uDyHSFH1ipHuE8D6UWwH38XR0AQbJELmDnOpy0m7dKXN/BD2fEJLIGwq0kzKTIcvfE4xrz3zvoSz9XiwY5UxzT8orv8L2zCa5u0VaDaJ4D+rH94+ue73+YsswwQtrTfVNcqp6z2kYPzcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SXqv0Lfd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=pF1MQb9O; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=V4Irx20k; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K1H8dXrc; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 74A031FE6C;
-	Tue, 29 Oct 2024 12:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730204452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0zS0G0SfdkDSLnWBot6CN8J06azX78iYIDCYB7tZp0=;
-	b=SXqv0Lfd7abbyyzOo+uJzncTDWk43cw0vqX76djqwxZ2iQNNhtD0QcUZfXxJHb8+PjwCkZ
-	vyIREXjTbAwFeo0HeB4TXAW5iLIHyNcvI3SpKztAUq0m3ikqhXaHIjJvXH692fX0/KHtWj
-	CvMyBRZAMIeIfpDZJHZcXKXd7wBkoQY=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730204452;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0zS0G0SfdkDSLnWBot6CN8J06azX78iYIDCYB7tZp0=;
-	b=pF1MQb9ONSqNS2AOKlCP4d9OYr2vEjR3XeTwr2SuNYLAfs49l/EsFnSoNghrslSu/lIUWd
-	dfY/R1X1ZoRD/zDA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1730204451; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0zS0G0SfdkDSLnWBot6CN8J06azX78iYIDCYB7tZp0=;
-	b=V4Irx20kzNkuKs+0WmtlhHVymQ7zZ7QZyjdpC1XpqYs2ZBSY1REKfShx3XM7z1rSczhP+Q
-	SBydev4EHEFX/I7xS7/iGFEn9jGZXUwKi4dKHCPyzAKtPefZdf8Gtnz0ESFw4uOj3ej9yK
-	B59BiIgHpatJnQJ4faBJyaY5NLNp9pc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1730204451;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=M0zS0G0SfdkDSLnWBot6CN8J06azX78iYIDCYB7tZp0=;
-	b=K1H8dXrctX0rcEUM0XawGYwbFSY1IliC6U5P082XzqumIIz2KXe923j/E+XODLOLnu33xQ
-	pgX0Zc0tBygv7sDQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5193A136A5;
-	Tue, 29 Oct 2024 12:20:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yX5nEyPTIGcdVgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 29 Oct 2024 12:20:51 +0000
-Date: Tue, 29 Oct 2024 13:21:39 +0100
-Message-ID: <87h68v14mk.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Amadeusz =?ISO-8859-2?Q?S=B3awi=F1ski?=
- <amadeuszx.slawinski@linux.intel.com>
-Cc: Takashi Iwai <tiwai@suse.de>,
-	Aleksei Vetrov <vvvvvv@google.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in dapm_widget_list_create
-In-Reply-To: <c9002b28-77a9-4be0-94a6-bf700e0abaab@linux.intel.com>
-References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
-	<987b8806-2ec7-41f7-bdeb-8f843c34a993@linux.intel.com>
-	<87plnj19ry.wl-tiwai@suse.de>
-	<c9002b28-77a9-4be0-94a6-bf700e0abaab@linux.intel.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1730204521; c=relaxed/simple;
+	bh=FiUmju4lALTrTZOpFrL6tdqXdS4qvOKK4I43ufdvACM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHGUSv9i8LOyTearzSrfuC7Dw2vb7ezwh5gTDVnh1A8K27xdaOnXRSX0U66qU+k1Zomw+i2IC3BJok3NW1TZSxmSKOo4kiwfgWQRly/VobUXUSKucuZR5roGnMN7gsxuUaNAZnvyrL4vyorSY7MxQ8LuZW7NJEEDUclWs8H3xgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=n8A2mdfo; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id A693F4D4;
+	Tue, 29 Oct 2024 13:21:53 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730204513;
+	bh=FiUmju4lALTrTZOpFrL6tdqXdS4qvOKK4I43ufdvACM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n8A2mdfoLDxNI99Zgm40Cqyn/kiSJ74m7WV9PqxIfCXv+iqKRHsfVwiHKX4CUSfm6
+	 hh6oxQ/ZeqOWwAyOi3Un0cLHNpPEaeZYHO40SBMLSezIxYRQsf+wi3Bv/0vsZnYSOs
+	 M7F7pnpdB6mAW3zrYfF61VgKGr/AE0BcEjAJ94wA=
+Date: Tue, 29 Oct 2024 14:21:50 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+	laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com,
+	hdegoede@redhat.com, dave.stevenson@raspberrypi.com,
+	mike.rudenko@gmail.com, alain.volmat@foss.st.com,
+	julien.vuillaumier@nxp.com, alice.yuan@nxp.com
+Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
+ sensor driver
+Message-ID: <20241029122150.GN22600@pendragon.ideasonboard.com>
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-2-mirela.rabulea@nxp.com>
+ <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
+ <20241029121039.GM22600@pendragon.ideasonboard.com>
+ <eeaa92c0-fed6-408b-8471-47acf0ca394d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-2
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[suse.de,google.com,gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <eeaa92c0-fed6-408b-8471-47acf0ca394d@kernel.org>
 
-On Tue, 29 Oct 2024 13:11:32 +0100,
-Amadeusz S³awiñski wrote:
-> 
-> On 10/29/2024 11:30 AM, Takashi Iwai wrote:
-> > On Tue, 29 Oct 2024 10:50:21 +0100,
-> > Amadeusz S³awiñski wrote:
-> >> 
-> >> On 10/28/2024 11:50 PM, Aleksei Vetrov wrote:
-> >>> The widgets array in the snd_soc_dapm_widget_list has a __counted_by
-> >>> attribute attached to it, which points to the num_widgets variable. This
-> >>> attribute is used in bounds checking, and if it is not set before the
-> >>> array is filled, then the bounds sanitizer will issue a warning or a
-> >>> kernel panic if CONFIG_UBSAN_TRAP is set.
-> >>> 
-> >>> This patch sets the size of the widgets list calculated with
-> >>> list_for_each as the initial value for num_widgets as it is used for
-> >>> allocating memory for the array. It is updated with the actual number of
-> >>> added elements after the array is filled.
-> >>> 
-> >>> Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
-> >>> ---
-> >>>    sound/soc/soc-dapm.c | 2 ++
-> >>>    1 file changed, 2 insertions(+)
-> >>> 
-> >>> diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
-> >>> index c34934c31ffec3970b34b24dcaa0826dfb7d8e86..99521c784a9b16a232a558029a2f3e88bd8ebfb1 100644
-> >>> --- a/sound/soc/soc-dapm.c
-> >>> +++ b/sound/soc/soc-dapm.c
-> >>> @@ -1147,6 +1147,8 @@ static int dapm_widget_list_create(struct snd_soc_dapm_widget_list **list,
-> >>>    	if (*list == NULL)
-> >>>    		return -ENOMEM;
-> >>>    +	(*list)->num_widgets = size;
-> >>> +
-> >>>    	list_for_each_entry(w, widgets, work_list)
-> >>>    		(*list)->widgets[i++] = w;
-> >>>    
-> >> 
-> >> and after that there is (*list)->num_widgets = i;
-> >> 
-> >> Can this be somehow simplified to remove 'i', if it set before assignment?
+On Tue, Oct 29, 2024 at 01:15:46PM +0100, Krzysztof Kozlowski wrote:
+> On 29/10/2024 13:10, Laurent Pinchart wrote:
+> > On Tue, Oct 29, 2024 at 07:14:28AM +0100, Krzysztof Kozlowski wrote:
+> >> On 28/10/2024 20:06, Mirela Rabulea wrote:
+> >>> Add bindings for OX05B1S sensor driver
+> >>>
+> >>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+> >>
+> >> <form letter>
+> >> Please use scripts/get_maintainers.pl to get a list of necessary people
+> >> and lists to CC. It might happen, that command when run on an older
+> >> kernel, gives you outdated entries. Therefore please be sure you base
+> >> your patches on recent Linux kernel.
+> >>
+> >> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> >> people, so fix your workflow. Tools might also fail if you work on some
+> >> ancient tree (don't, instead use mainline) or work on fork of kernel
+> >> (don't, instead use mainline). Just use b4 and everything should be
+> >> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> >> patches to the patchset.
+> >>
+> >> You missed at least devicetree list (maybe more), so this won't be
+> >> tested by automated tooling. Performing review on untested code might be
+> >> a waste of time.
+> >>
+> >> Please kindly resend and include all necessary To/Cc entries.
+> >> </form letter>
+> >>
+> >> Binding also looks very different than all other devices, so re-write it
+> >> starting from EXISTING GOOD bindings. Not some downstream stuff.
 > > 
-> > That line can be removed after this change, I suppose.
-> > The size is calculated from the list at the beginning, and it must be
-> > the exact size.
-> > 
+> > Krzysztof, please point to a good example when making this kind of
+> > comment.
 > 
-> Actually looking at this again, first iteration iterates through all
-> widgets, while second one, only through work_list, which looks to me
-> like it allocates more memory than needed in most cases.
+> Anything recently added. Git log tells which files were recently added.
 
-Oh, you're right.  I don't know why two different loops are used,
-though...
+If the review comment is a copy&paste (given that you review lots of
+bindings and constantly have to repeat the same things, that would make
+sense), expanding it with that information for future reviews could help
+patch authors. Thanks for considering it, it would be much appreciated.
 
+-- 
+Regards,
 
-Takashi
+Laurent Pinchart
 
