@@ -1,104 +1,123 @@
-Return-Path: <linux-kernel+bounces-386410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EA3A9B431B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:28:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4529B4320
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8D2283874
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:28:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82C92B21EC2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E970E202630;
-	Tue, 29 Oct 2024 07:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21D1C20263B;
+	Tue, 29 Oct 2024 07:28:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="mMdmV75C"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7/pDNwm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A03E1D7994;
-	Tue, 29 Oct 2024 07:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674A31D7994;
+	Tue, 29 Oct 2024 07:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730186891; cv=none; b=VcHg5j+vGPK8atE1qHVHsDuz5Gtq/NNJpcdptS/XrEn0JHNjlVlwwx/GKC4jHhl7uRF9N2nIW/kpxc9z9FpaH5KdtLwPF365Tl40XSmDaNFSekp6TrcLYIEcPjbkH+eezNcXFf+UoSu4GSiDa9cJ2sAOQ2hBfsDCxnbYYIHbYtQ=
+	t=1730186929; cv=none; b=fpsD+tz17e12FpHVFBzhiSXK0Z7/VjyWlG6ZrBeGGYhTjtEYxOMlqDKu7AL/5dl3x98ir8ZoODeAqIKwlZhEiXRoY1/+rv5Xep+AYMF+dbuuZ0RmKGg4s4BqBS03oye5XMoaujRYQyszrzKkYXdhU/tKQS5kRcYSYJa8ijMT2Cc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730186891; c=relaxed/simple;
-	bh=Yzxop2L77+KWklUFpNEehjWzOsFs0+Hmq86r7axLw+I=;
+	s=arc-20240116; t=1730186929; c=relaxed/simple;
+	bh=4OezFKJ8MU5/YXoAOGFAMmcNkpVGOILX+5gHrcEYsAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V2YYVd3mgDbHaM+TwxeJiLXeDeW2K2RmOxCGwp68q8i6wKmOHcLYwU8alT1+LD77ZACEy8NhEB+NgGN/9opiBasz8nimuJaiwBcuqq7aKobF31VAS5GO+aSYkpMHfI+W0UxgNIHcWOUYjILKVrh9hlevEDENyzs6iM6zwSdGuOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=mMdmV75C; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from gaggiata.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 103DF1F994;
-	Tue, 29 Oct 2024 08:28:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1730186887;
-	bh=mA5XxeKvU7TmfDLIa3NriSYNjVYlBgpHYfJmSINY+qI=;
-	h=Received:From:To:Subject;
-	b=mMdmV75C8XCAC+MpB5S34JYy2/oky1g5p9DE0svE3FKLHq32iqQR+qGgD8+5SQPCh
-	 LWFmryUxxx1C95sfIzEMu8EKosPvhuJCiEMKwrT1Dz6yGN5sI6M2TI3EieyEPHUJbf
-	 DXWKRINsGcjJuVWrDoBQHk/GELYqFkimUVAb6/S3Pgx+mLVwe8YMke96esC0VplxGB
-	 kw9TjhcZwCC0MmIbf7rYu2rqyFU69seEhzgCxGpVB6FjuXXt8t4XP5HfGFRY1sJWAv
-	 L8QbhqJG2c9sLxLyOl6RtIDifWgYq1GMp30ejkLd4g3zrXwxXSMg9vfgrerzUoUgeK
-	 maUGQo3PXWwmA==
-Received: by gaggiata.pivistrello.it (Postfix, from userid 1000)
-	id 697597F95F; Tue, 29 Oct 2024 08:28:06 +0100 (CET)
-Date: Tue, 29 Oct 2024 08:28:06 +0100
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 1/2] dt-bindings: usb: add TUSB73x0 PCIe
-Message-ID: <ZyCOhkM4PXTLiFRm@gaggiata.pivistrello.it>
-References: <20241028105413.146510-1-francesco@dolcini.it>
- <20241028105413.146510-2-francesco@dolcini.it>
- <j3a76pyolo66bcqemeo4o3gwzfnftcfjc6grg3v33u7ipztwiq@donxxbveypjk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lb7ataV1D6+YHqlyCBR/IgnnkzEwot0CWsnhoJWqewTuViR30QUb46yJ5JuIS555vlRUN3wNibrvi1NuMu7fCx82G+Y4mh3VbqkA7gBJAdtdTftYxgGFY9/jl0HuE3VLX3a/AkcaTauoIpfgIVIfEQ6bFj4UivibdgqKoGo/PkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7/pDNwm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5953C4CEE3;
+	Tue, 29 Oct 2024 07:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730186929;
+	bh=4OezFKJ8MU5/YXoAOGFAMmcNkpVGOILX+5gHrcEYsAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7/pDNwmoBcuZ8ZUxAatEvL+iCSnS31nAHnZdra4shS2g+rY6tNpIPTxMpjwlrkQn
+	 Hmr5F7fHufGJnn0xpuYts4DvVN9iwtfodTPg6ghbovmkMGm2SJWBe5fCU8ZwNwV532
+	 Ge8b6DSbcOpsxoaY5a1Pjf8eiZcR/YMZJWypSUqbnrSwVSOaPEu+jM6SoZq2ov32vB
+	 iQbT+gj+uJlRjtKA3SjQk/8HV/vTCM12bAbC4I6gIlI3cN/muOER+6HxW4zaDuIgMo
+	 QfQ4yxFxrfwYDppaPjpMd1rA8QxbbjYDBMCwX+3O4FQdJpSDyNQnVGm7gN8spKY087
+	 nG57VuL6Ra4Ew==
+Date: Tue, 29 Oct 2024 08:28:45 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof Wilczynski <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>, 
+	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
+	Stefan Wahren <wahrenst@gmx.net>, Herve Codina <herve.codina@bootlin.com>, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 03/12] dt-bindings: pci: Add common schema for devices
+ accessible through PCI BARs
+Message-ID: <fwqcbnub36fk4abmhbtuwsoxdlf64mx4v65mxahsxmiv2sz6er@bfjddapvb75v>
+References: <cover.1730123575.git.andrea.porta@suse.com>
+ <2948fdf8ccf8d83f59814d0b2a85ce8dac938764.1730123575.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <j3a76pyolo66bcqemeo4o3gwzfnftcfjc6grg3v33u7ipztwiq@donxxbveypjk>
+In-Reply-To: <2948fdf8ccf8d83f59814d0b2a85ce8dac938764.1730123575.git.andrea.porta@suse.com>
 
-Hello Krzysztof,
-
-On Tue, Oct 29, 2024 at 08:08:09AM +0100, Krzysztof Kozlowski wrote:
-> On Mon, Oct 28, 2024 at 11:54:12AM +0100, Francesco Dolcini wrote:
-> > From: Parth Pancholi <parth.pancholi@toradex.com>
-> > 
-> > Add device tree bindings for TI's TUSB73x0 PCIe-to-USB 3.0 xHCI
-> > host controller. The controller supports software configuration
-> > through PCIe registers, such as controlling the PWRONx polarity
-> > via the USB control register (E0h).
-> > 
-> > Datasheet: https://www.ti.com/lit/ds/symlink/tusb7320.pdf
-> > Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-> > Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-
-...
-
-> > +  ti,tusb7320-pwron-active-high:
+On Mon, Oct 28, 2024 at 03:07:20PM +0100, Andrea della Porta wrote:
+> Common YAML schema for devices that exports internal peripherals through
+> PCI BARs. The BARs are exposed as simple-buses through which the
+> peripherals can be accessed.
 > 
-> Drop tusb7320. There is never device name in property name, because it
-> is redundant and makes it completely not-reusable.
+> This is not intended to be used as a standalone binding, but should be
+> included by device specific bindings.
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  .../devicetree/bindings/pci/pci-ep-bus.yaml   | 58 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> new file mode 100644
+> index 000000000000..e532621f226b
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pci/pci-ep-bus.yaml
+> @@ -0,0 +1,58 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pci/pci-ep-bus.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Common Properties for PCI MFD Endpoints with Peripherals Addressable from BARs
+> +
+> +maintainers:
+> +  - Andrea della Porta  <andrea.porta@suse.com>
+> +
+> +description:
+> +  Define a generic node representing a PCI endpoint which contains several sub-
+> +  peripherals. The peripherals can be accessed through one or more BARs.
+> +  This common schema is intended to be referenced from device tree bindings, and
 
-Whoops :/
+Please wrap code according to coding style (checkpatch is not a coding
+style description but only a tool).
 
-Rob already wrote this in the previous version and I forgot about it.
+Above applies to all places here and other bindings.
 
-Thanks!
+Best regards,
+Krzysztof
 
 
