@@ -1,163 +1,176 @@
-Return-Path: <linux-kernel+bounces-386827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322349B4859
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:32:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70A09B485C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:32:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC0C72833B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:32:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E93D71C227EC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3073A205AAA;
-	Tue, 29 Oct 2024 11:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FdtekhKL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D7B205158;
+	Tue, 29 Oct 2024 11:32:15 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB75204F9E;
-	Tue, 29 Oct 2024 11:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E04020492E;
+	Tue, 29 Oct 2024 11:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201485; cv=none; b=oUuYJmg0e4X4aPOlPoltNBjnncGgs4nfsuXEIoq5cjINlQxYZdQqTY2vpBmTIcB5TrhVnmEPwcg6NVBZ/pztLmnj4iK7F6guLeNGQhthNo//VfH16pONjOMB7nMSASSaEpch+AtcrdIOMUq6GK2Tgu13Ju6mB+SoG2QTrrvwX4c=
+	t=1730201534; cv=none; b=VZbPoaKBUQsM0pJk9NIncE2u+nBgbt5ui2L2rJysk0yDjX3D8Q+A1Dnc5d2a/4GmWc1M0S1qbGdxRKe1C95C6a2K5D5Wr/0Eq8SkxFoxL7zA2et5btoDM2nKZ7Og38CEIf9PjO+LYEweyMgAlkLzCAdQKQ4MzEAxJXDDBV5Gc+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201485; c=relaxed/simple;
-	bh=b3iDHqbap1LmKFhPTuu1Qqk4svOtioflicE0/GgpTbA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o9iJDaiVoDokt7Vb6ErywK8xy9DQ2+JrWWjnuJIKGd7xHgcK6V1I8eKf6UisMW0NyDBoILLdo6PrMVxio5+5xrWWZo3tmiKZG584ixc3JMWAhJsQxc1Q9T8pUWlnsBv8b1cll/jkpiiB/PMjskOMeZbvySL/YomRWX9/M9O9o8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FdtekhKL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B37C4CEEA;
-	Tue, 29 Oct 2024 11:31:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730201484;
-	bh=b3iDHqbap1LmKFhPTuu1Qqk4svOtioflicE0/GgpTbA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FdtekhKLhC3d/47DQcpqir6P9jrHeh/KQ3dbRMElLhUWBbCPiD/wxpAj6swRfKlcv
-	 l9y/mwOJ5uivr4TmsTKzbyOOz2zaC76a2fNCHcxdG0YV0vacvF4rQ4BbN80Ecf+CNc
-	 cAezVQPUku0aL6ZYvrHAksowSYgq2HszMc80q/rxdUdHBA5zHC2gvQy4qc5gvApgV4
-	 v05AE1JGw7pQE7KYADRciW6kB1I+IiFmKim8zeHXAUjPSkAn0QXEFHJjlZPQRMXmhq
-	 gZV8fcIXD3EMTR1ulwX6Gfp2ENkLhpapFwHK+Ug9chxCxWpA5bc2kmvZAJa+sWXMXS
-	 3hkh0rhoZSv3g==
-Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288fa5ce8f0so2571372fac.3;
-        Tue, 29 Oct 2024 04:31:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqBcN3XPan4564gS4yEwelbT4dRG7B5Gyuw+4SliuZGd4pFnm8IBa88uAGv+JdPDgu7bxHsfpSljWfajY=@vger.kernel.org, AJvYcCWlSow1qvEdw+pKp3Fs4++ZOIymCKb8UOrFAtwZuHcNgY8HaPpneE0XP1JZrxZ4pSml4DBCdfOl20s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYKKJWdqov2Md2QBTZ6aZmSPvje16jRjiun7NL5tMMLVrRZTAu
-	mLjCH0g/c6xRH8fQLM5cye5+uq7KzQN2wEqJwOAoxNy8dxSQlWAz7zkCI7s4DSxYl4qVI11SDdm
-	ur/OXsHJ3Vh8kOh5z1abniNqBGbk=
-X-Google-Smtp-Source: AGHT+IEkBtXhRClA2cm6t78kcyGJpyo2fCtEeh/HZcjhxwG2r5DEwf1//i8B3FFywZwUiFp2Jvl4f95iRwVJ4NKyimU=
-X-Received: by 2002:a05:6870:82a5:b0:288:59d3:2a03 with SMTP id
- 586e51a60fabf-29051dd1728mr9737620fac.39.1730201484141; Tue, 29 Oct 2024
- 04:31:24 -0700 (PDT)
+	s=arc-20240116; t=1730201534; c=relaxed/simple;
+	bh=5ubi4b+Bb/c8hULjxbVvtYxp4/q80MU4+gIbqPjvgfc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=i8hsYgFMEMQSoez/ouyV/R3H0vitDKOP/Mkp2YYUAMchVqUr1KjPl1rj0NNEwATNQtbhiIbcyeG4pVXlreee21tzFEVlcHE4PSuOTLZDCps01urdymuesyy/9JS67Q+NYKMY+21e+F5Pjdkcb6oqChdXIz1t9Qr+0yjX6esY2MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xd7Px60DNz4f3jsD;
+	Tue, 29 Oct 2024 19:31:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 78F211A0194;
+	Tue, 29 Oct 2024 19:32:07 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCXc4e2xyBnSIwYAQ--.54105S3;
+	Tue, 29 Oct 2024 19:32:07 +0800 (CST)
+Subject: Re: [PATCH v2 6/7] md/raid1: Handle bio_split() errors
+To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
+ hch@lst.de
+Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
+ Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241028152730.3377030-1-john.g.garry@oracle.com>
+ <20241028152730.3377030-7-john.g.garry@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <ee3b5a6f-4c0c-9460-0260-f529a65adfc4@huaweicloud.com>
+Date: Tue, 29 Oct 2024 19:32:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240913132944.1880703-1-beata.michalska@arm.com>
- <20240913132944.1880703-2-beata.michalska@arm.com> <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
-In-Reply-To: <20241029070429.m7q5dkumitoyqxq2@vireshk-i7>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 29 Oct 2024 12:31:11 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com>
-Message-ID: <CAJZ5v0i2KUPXfeAKhkimetOMpx+5opgt26URJF8cstnZsaeZwA@mail.gmail.com>
-Subject: Re: [PATCH v7 1/4] cpufreq: Introduce an optional cpuinfo_avg_freq
- sysfs entry
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Beata Michalska <beata.michalska@arm.com>, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, 
-	ionela.voinescu@arm.com, sudeep.holla@arm.com, will@kernel.org, 
-	catalin.marinas@arm.com, rafael@kernel.org, sumitg@nvidia.com, 
-	yang@os.amperecomputing.com, vanshikonda@os.amperecomputing.com, 
-	lihuisong@huawei.com, zhanjie9@hisilicon.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241028152730.3377030-7-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=gbk; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXc4e2xyBnSIwYAQ--.54105S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxCF4UtrWxtF4xtw13Zw18Zrb_yoW5Aw1fpw
+	4jga1S9rW3JFWa9wsxta9F9a4ruF4vqFW2krWxJw1xJFnIqFyDKF1UWFWYgry5uFy5ury7
+	Aw1kCr4DurW2gFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
+	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
+	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
+	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
+	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
+	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
+	BIdaVFxhVjvjDU0xZFpf9x07UQ6p9UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Oct 29, 2024 at 8:04=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> Apologies for the delay from my side. September was mostly holidays
-> for me and then I was stuck with other stuff plus email backlog and
-> this series was always a painful point to return to :(
->
-> On 13-09-24, 14:29, Beata Michalska wrote:
-> > Currently the CPUFreq core exposes two sysfs attributes that can be use=
-d
-> > to query current frequency of a given CPU(s): namely cpuinfo_cur_freq
-> > and scaling_cur_freq. Both provide slightly different view on the
-> > subject and they do come with their own drawbacks.
-> >
-> > cpuinfo_cur_freq provides higher precision though at a cost of being
-> > rather expensive. Moreover, the information retrieved via this attribut=
-e
-> > is somewhat short lived as frequency can change at any point of time
-> > making it difficult to reason from.
-> >
-> > scaling_cur_freq, on the other hand, tends to be less accurate but then
-> > the actual level of precision (and source of information) varies betwee=
-n
-> > architectures making it a bit ambiguous.
-> >
-> > The new attribute, cpuinfo_avg_freq, is intended to provide more stable=
-,
-> > distinct interface, exposing an average frequency of a given CPU(s), as
-> > reported by the hardware, over a time frame spanning no more than a few
-> > milliseconds. As it requires appropriate hardware support, this
-> > interface is optional.
->
-> From what I recall, the plan is to:
-> - keep cpuinfo_cur_freq as it is, not expose for x86 and call ->get()
->   for ARM.
+ÔÚ 2024/10/28 23:27, John Garry Ð´µÀ:
+> Add proper bio_split() error handling. For any error, call
+> raid_end_bio_io() and return.
+> 
+> For the case of an in the write path, we need to undo the increment in
+> the rdev panding count and NULLify the r1_bio->bios[] pointers.
+> 
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-Yes.
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   drivers/md/raid1.c | 32 ++++++++++++++++++++++++++++++--
+>   1 file changed, 30 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+> index 6c9d24203f39..a10018282629 100644
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1322,7 +1322,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
+>   	const enum req_op op = bio_op(bio);
+>   	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
+>   	int max_sectors;
+> -	int rdisk;
+> +	int rdisk, error;
+>   	bool r1bio_existed = !!r1_bio;
+>   
+>   	/*
+> @@ -1383,6 +1383,11 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
+>   	if (max_sectors < bio_sectors(bio)) {
+>   		struct bio *split = bio_split(bio, max_sectors,
+>   					      gfp, &conf->bio_split);
+> +
+> +		if (IS_ERR(split)) {
+> +			error = PTR_ERR(split);
+> +			goto err_handle;
+> +		}
+>   		bio_chain(split, bio);
+>   		submit_bio_noacct(bio);
+>   		bio = split;
+> @@ -1410,6 +1415,12 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
+>   	read_bio->bi_private = r1_bio;
+>   	mddev_trace_remap(mddev, read_bio, r1_bio->sector);
+>   	submit_bio_noacct(read_bio);
+> +	return;
+> +
+> +err_handle:
+> +	bio->bi_status = errno_to_blk_status(error);
+> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
+> +	raid_end_bio_io(r1_bio);
+>   }
+>   
+>   static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+> @@ -1417,7 +1428,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>   {
+>   	struct r1conf *conf = mddev->private;
+>   	struct r1bio *r1_bio;
+> -	int i, disks;
+> +	int i, disks, k, error;
+>   	unsigned long flags;
+>   	struct md_rdev *blocked_rdev;
+>   	int first_clone;
+> @@ -1576,6 +1587,11 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>   	if (max_sectors < bio_sectors(bio)) {
+>   		struct bio *split = bio_split(bio, max_sectors,
+>   					      GFP_NOIO, &conf->bio_split);
+> +
+> +		if (IS_ERR(split)) {
+> +			error = PTR_ERR(split);
+> +			goto err_handle;
+> +		}
+>   		bio_chain(split, bio);
+>   		submit_bio_noacct(bio);
+>   		bio = split;
+> @@ -1660,6 +1676,18 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>   
+>   	/* In case raid1d snuck in to freeze_array */
+>   	wake_up_barrier(conf);
+> +	return;
+> +err_handle:
+> +	for (k = 0; k < i; k++) {
+> +		if (r1_bio->bios[k]) {
+> +			rdev_dec_pending(conf->mirrors[k].rdev, mddev);
+> +			r1_bio->bios[k] = NULL;
+> +		}
+> +	}
+> +
+> +	bio->bi_status = errno_to_blk_status(error);
+> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
+> +	raid_end_bio_io(r1_bio);
+>   }
+>   
+>   static bool raid1_make_request(struct mddev *mddev, struct bio *bio)
+> 
 
-> - introduce cpuinfo_avg_freq() and make it return frequency from hw
->   counters for both ARM and Intel and others who provide the API.
-
-Yes.
-
-> - update scaling_cur_freq() to only return the requested frequency or
->   error in case of X86
-
-Yes.
-
-Preferably, -ENOTSUPP for "setpolicy" drivers without the .get() callback.
-
->   and update documentation to reflect the same.
->   Right now or after some time ? How much time ?
-
-After some time, I think at least two cycles, so people have the time
-to switch over, but much more may be necessary if someone is stuck
-with RHEL or similar user space.
-
-Anyway, x86 will be the only one affected and there may be a Kconfig
-option even to allow it to be changed at the kernel build time.
-
-The documentation for cpuinfo_avg_freq() needs to be added along with it.
-
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index 04fc786dd2c0..3493e5a9500d 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -752,6 +752,16 @@ __weak unsigned int arch_freq_get_on_cpu(int cpu)
-> >       return 0;
-> >  }
-> >
-> > +__weak int arch_freq_avg_get_on_cpu(int cpu)
-> > +{
-> > +     return -EOPNOTSUPP;
-> > +}
-> > +
-> > +static inline bool cpufreq_avg_freq_supported(struct cpufreq_policy *p=
-olicy)
-> > +{
-> > +     return arch_freq_avg_get_on_cpu(policy->cpu) >=3D 0;
-> > +}
->
-> And why aren't we simply reusing arch_freq_get_on_cpu() here ?
->
-> --
-> viresh
 
