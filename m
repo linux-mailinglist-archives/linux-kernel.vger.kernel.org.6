@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-387869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8FA9B5708
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:35:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2C139B570A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:35:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FB41C20F58
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:35:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D45F01C20D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2934320B211;
-	Tue, 29 Oct 2024 23:35:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E190E20ADEE;
+	Tue, 29 Oct 2024 23:35:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="zlEOiyBI"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="NxsiRMqJ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E0D205125
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8213B20BB5B;
+	Tue, 29 Oct 2024 23:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244925; cv=none; b=lWUYECpuI9m+StXpeBT55NZKjw11Kd/E9wZwcN4YXsvFNhoPg9/vCC6pqdUv7F5KK+jvYrZvK/XUhgMWI8VKe2gGkk9WUP6VOwKS8QUsILljINEFGb5UPI6mtqeCjXVhEITk+zueZ1iW+VxkqSBcULtwky6s7qMoSYE7hiPnE7A=
+	t=1730244931; cv=none; b=A1IOESGvNNpjJBdIhV3bC4AN6y+J31wKkqcdwYcHNU9EEJybpc0EBsjiFX/ekFB09+jNwtg/JjvtEMzUDA/SnPZEjJDzGu+nSBcVifm9HvbGYcUzLWb60vUrfovOdBueBQT6xp2fk67LyED/BkLjtRtrJsf2A5/GUq5iKe5ioA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244925; c=relaxed/simple;
-	bh=dkInJiy2PBliCY0aq+a3ScB8fzx4PnLNym9BwLfQynU=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=r5Ix7Sa+ltPGAGmZ+LUtTfUSK42dY6TqtmeC7QG1PWmjzd+PO40Dw7yK2BBnFlVBs1k4Vrx0chnezZf4RQ9YWe4jfji9jd4I5HySAmpy3eP1bhMCzWELYGBLPNGtRZAkqS6QEySpe2hrKNJcgxtXdFTeQQMfwtg7OMMlQ2wiYo0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=zlEOiyBI; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7203c74e696so4399896b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730244923; x=1730849723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LuC93Wp/k34096m4FNfcl7QdGtm3HPvDqEomN2Uuvys=;
-        b=zlEOiyBIqGy+jBBFRfxGxGfH60kKaYNxTZ/munm8X8ZieVf0+7jbtjUUgrW7x4i6hb
-         ZOyXUPrOtZtdTf+vYIILLI4qmDZ06z5SjZsiXSZ7RSnJWbfcnsrEBZp5/0rAqpHPcbpE
-         7lTvfJ7HdY/r+OE29H6drliEnf2yFjYWnxNsC5QoESzknTdJ7539cWs5oqnz95QeNIEf
-         oPBA6KWiGUjoqme2iwrQYhU1ULcPW0NyeQyTFu2r19XhDy6748mLw8kb+7OjkI/+2ARb
-         5ppXmZUNgTTXVMIQCYxuW5/7PxKHdRNv3hc9MBatjT9fpL2awsomBhNXs7EGEq+oAM/+
-         BKwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730244923; x=1730849723;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LuC93Wp/k34096m4FNfcl7QdGtm3HPvDqEomN2Uuvys=;
-        b=XYPHgHsHZVT34imPvPGJMlwtQBiTgni4CP1isoKDaNlnkc7BhLVVFBhLJB8GK1uFCq
-         pN6ouT3mfoioQ+6ahMSBXjJbUxl4x1UVfvU145L/aSCx3PjT97vEbJ+KfBMrgAFFt37i
-         gcSPllUQnImnegpFB8O5zNgF6N0hkPLCpb54xWbW3xaYotPnPxZ01tAdVtuFEEYF7TLq
-         5G5AeRgYn1sR5E/fluIbbxe+thvSYj4zIQlOhNyqVpUqxZ4bsMGk4UUwHAzynOzjTnBg
-         YUQnDAM8NutEp2s46552O7i+WJbDNT/kgm+yd2VB1JWU9I9FY82VnH0cAeZ7WLbUNzPw
-         amtQ==
-X-Gm-Message-State: AOJu0YzAskqHJswOoy54r/tbPiJu47tssF+Oj+6uQ3MKX3oQcWQ4PMu+
-	fhi/ZUR13GfUIDLIa3sTA3zM5UKgF7zzLfdxeRCp5c/Wby5sPW3fXHVpOT8n8Qg=
-X-Google-Smtp-Source: AGHT+IEg8cGYug/egvhXAj5QGE9Z0f2pGnwuXP0ECo+RYa5HgVgF8z+rufzIs9vVD0U8Lqbxtb8L5w==
-X-Received: by 2002:a05:6a20:d74d:b0:1d9:cc2:2c00 with SMTP id adf61e73a8af0-1d9a83c9ff4mr18135785637.14.1730244922844;
-        Tue, 29 Oct 2024 16:35:22 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc869c596sm8096291a12.54.2024.10.29.16.35.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 16:35:22 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, 
- rogerq@kernel.org, linux-omap@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, tony@atomide.com, 
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
- aaro.koskinen@iki.fi, Andreas Kemnade <andreas@kemnade.info>
-In-Reply-To: <20241010122957.85164-1-andreas@kemnade.info>
-References: <20241010122957.85164-1-andreas@kemnade.info>
-Subject: Re: [PATCH v2 0/4] ARM: dts: omap: omap4-epson-embt2ws: misc gpio
- definitions
-Message-Id: <173024492215.1248872.10940829053391150955.b4-ty@baylibre.com>
-Date: Tue, 29 Oct 2024 16:35:22 -0700
+	s=arc-20240116; t=1730244931; c=relaxed/simple;
+	bh=X9B8R1mXyOFlf0m+4IqucVvdQ8WsGhkhGSYthXWa4Gk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=GYah1Xtod5huCe1shXy0hsN7M5VZ8++wjcH9I2HpW/J+Ivk+QxO3surGriRVazYFg42b3sUYvQUCCgHNrOKtecyekKf0RfAgKJlfvTerUwMOA/H2bVhdnZD5jZiw7OZj2027NNgAXv0S5S95sV3sacjNLtEW+TL+QCpTyMg5gUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=NxsiRMqJ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730244923;
+	bh=3U4dsjqpfzkOxzDseIGNtUiy4KPO19XxKzMYLmMoI88=;
+	h=Date:From:To:Cc:Subject:From;
+	b=NxsiRMqJt1Q2gp4PmxJcHmkpnImDHvRDJX4neoXkbPjLY5IPC6HMWj1hvHp1O2XiE
+	 OH88J2C6w2dO+m1JdW1A5uAChXBOK0UOkuTD4v9y95HNtN/qhiWrf4HucY2Ho+eOud
+	 d2fx+Ggh1tJ7gZUGdciS7SukhQtHkYwVyuGz3TXfl61YMf7P+m0dRbQozDCW1/ec0+
+	 qvwGGjqBv37KORlY9aoRKU+613iPs7iEikCKIVCW3xw4zxlxlfovzFVpx4LdmaKJa0
+	 dJSCtDLaWmjNpZxdOYRpVapCQAoq79jVrWMIppMLfLPE2fQpMDEN+S8nmxvlIcAEjM
+	 TObOCctIdvAHg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XdRSq2lWDz4xFb;
+	Wed, 30 Oct 2024 10:35:22 +1100 (AEDT)
+Date: Wed, 30 Oct 2024 10:35:23 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Mark Brown <broonie@kernel.org>
+Subject: linux-next: manual merge of the arm64 tree with the arm64-fixes
+ tree
+Message-ID: <20241030103523.37fde558@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cb14d
+Content-Type: multipart/signed; boundary="Sig_/Z4deXSSR9P8MDDolWUhtyMM";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/Z4deXSSR9P8MDDolWUhtyMM
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 10 Oct 2024 14:29:53 +0200, Andreas Kemnade wrote:
-> Bring the system into a more defined state and do not rely
-> on things being initialized by bootloader.
-> 
-> Changes in V2:
-> - better comment strange GPIOs
-> - proper names for regulator nodes
-> 
-> [...]
+Hi all,
 
-Applied, thanks!
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-[1/4] ARM: dts: omap: omap4-epson-embt2ws: define GPIO regulators
-      commit: c14655b6dffd9ca93276f630d2c9a5973711d33b
-[2/4] ARM: dts: omap: omap4-epson-embt2ws: wire up regulators
-      commit: e84bc0f34f708f3c58e5268cb53f451af97fe1d3
-[3/4] ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio outputs
-      commit: b5a041ea0bfb2eb8ab5e19f61e2772faa8110a2d
-[4/4] ARM: dts: omap: omap4-epson-embt2ws: add GPIO expander
-      commit: 0b96b3f1d01486e836d01d18c2f8e3f01b046cb5
+  arch/arm64/kernel/signal.c
 
-Best regards,
--- 
-Kevin Hilman <khilman@baylibre.com>
+between commit:
 
+  2e8a1acea859 ("arm64: signal: Improve POR_EL0 handling to avoid uaccess f=
+ailures")
+
+from the arm64-fixes tree and commit:
+
+  eaf62ce1563b ("arm64/signal: Set up and restore the GCS context for signa=
+l handlers")
+
+from the arm64 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/kernel/signal.c
+index c7d311d8b92a,2eb2e97a934f..000000000000
+--- a/arch/arm64/kernel/signal.c
++++ b/arch/arm64/kernel/signal.c
+@@@ -982,9 -1075,12 +1133,12 @@@ SYSCALL_DEFINE0(rt_sigreturn
+  	if (!access_ok(frame, sizeof (*frame)))
+  		goto badframe;
+ =20
+ -	if (restore_sigframe(regs, frame))
+ +	if (restore_sigframe(regs, frame, &ua_state))
+  		goto badframe;
+ =20
++ 	if (gcs_restore_signal())
++ 		goto badframe;
++=20
+  	if (restore_altstack(&frame->uc.uc_stack))
+  		goto badframe;
+ =20
+@@@ -1297,8 -1447,11 +1507,8 @@@ static int setup_return(struct pt_regs=20
+  		sme_smstop();
+  	}
+ =20
+- 	if (ka->sa.sa_flags & SA_RESTORER)
+- 		sigtramp =3D ka->sa.sa_restorer;
+ -	if (system_supports_poe())
+ -		write_sysreg_s(POR_EL0_INIT, SYS_POR_EL0);
+ -
++ 	if (ksig->ka.sa.sa_flags & SA_RESTORER)
++ 		sigtramp =3D ksig->ka.sa.sa_restorer;
+  	else
+  		sigtramp =3D VDSO_SYMBOL(current->mm->context.vdso, sigtramp);
+ =20
+@@@ -1325,9 -1478,9 +1537,9 @@@ static int setup_rt_frame(int usig, str
+  	__put_user_error(NULL, &frame->uc.uc_link, err);
+ =20
+  	err |=3D __save_altstack(&frame->uc.uc_stack, regs->sp);
+ -	err |=3D setup_sigframe(&user, regs, set);
+ +	err |=3D setup_sigframe(&user, regs, set, &ua_state);
+  	if (err =3D=3D 0) {
+- 		setup_return(regs, &ksig->ka, &user, usig);
++ 		err =3D setup_return(regs, ksig, &user, usig);
+  		if (ksig->ka.sa.sa_flags & SA_SIGINFO) {
+  			err |=3D copy_siginfo_to_user(&frame->info, &ksig->info);
+  			regs->regs[1] =3D (unsigned long)&frame->info;
+
+--Sig_/Z4deXSSR9P8MDDolWUhtyMM
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmchcTsACgkQAVBC80lX
+0GzdgAf+Nj6KMz2bWxczAIrBNynqcMFLFo+iVSGRHzuq8dVmamjHApg3U8rxz/Kz
+o5n2+pp7HLtyyq1TxwOkDtjk1/Yp536l8/TyhuxyGy6sfun8snHJPhcR27YI/xc9
+yTnNQ1Wz3/XRR6NlTHE+IQzYg3YFlIilddBbw5bcISnSImqy5Qmwg2asGJP2tAM1
+UOGjKYhENokP3ew2LRfIkEdHY6NzuzsQvWzvCw44FeC6+5ZqKsttK92SDiK49G8j
+IhjtLpp7aeU6dOP+PM78J3kpcietByRTgZvQRTzhVRngArIy0AStbrsLoPCU0LBf
+4E+ElE6xwQBY3F79q34KPz17ntseMg==
+=ISUU
+-----END PGP SIGNATURE-----
+
+--Sig_/Z4deXSSR9P8MDDolWUhtyMM--
 
