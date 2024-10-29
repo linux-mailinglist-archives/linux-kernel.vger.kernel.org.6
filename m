@@ -1,151 +1,96 @@
-Return-Path: <linux-kernel+bounces-386441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BC49B438B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:52:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F296D9B438D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 967CB2811CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:52:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B8541F236E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5F61CCB33;
-	Tue, 29 Oct 2024 07:52:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5680F202F7C;
+	Tue, 29 Oct 2024 07:52:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="i/1LFc2m"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mua9Pibe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fhfjNxfI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005A92010F4
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:52:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1572010F4;
+	Tue, 29 Oct 2024 07:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188364; cv=none; b=d2nPfdJwslUTyejlGzoyaUJ/mtIYj03R0pMwHMV7CXrQ+Fl2M97bFal/103IbNWbTZL6P1oSDhesfvI91O4/wZcCJq5V5FMOE5YvRe4vFBRo3vb/JzcmGlKEm5AVschv0ck/gO0fgH2FajwASpSCRYeAl0wRhoaRN2vI0K6MyLs=
+	t=1730188377; cv=none; b=od9NBaNvBwIacTS4kMDpPXm7ra/j6OPZxUEL1KIvCti6Q1h35T5jYFJODmM9C4NIDukL4WMiAf/Lo2CGiFcut3XE3U7nriCRg8dYGgnpRTiez42MY0+3A1ZBiOkpuAvtZD2waQysC9Ud4A52juO0rqWpyHOdeT7zVXJFnwZkVvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188364; c=relaxed/simple;
-	bh=PjkBvTTYwOiWazejEqU9482wFOSVZFs6iPyNkUYLrSA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s7pbRjwDFZnN4e3lob4MTibqe4m+7qE4NSzewmQ51vpXb6gAtGPwnQ0u9SbBnxfEwcRYmnoFhG+4nQqBeDuq8BElyBsO1z1lGauSDu5bUWadnpI9buJJA12hONyXk/e6XF/cl9VsS3gMDI3OfStKHqbMv5nENGvCCsYlw+d80eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=i/1LFc2m; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-28c7f207806so2310389fac.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 00:52:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1730188361; x=1730793161; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3rbp3tWipnS9n1DED0E9JncApTpU6NEKrzZwh6VcEEY=;
-        b=i/1LFc2msEtxXgPB3Trp9GnXTmgxFP7JOr4XYxHWO4yuOaOkwkddkAqs1CNjjgxnCh
-         NRSXncSUMARypugVO6QJko/YFRCOiAigXDHDmEaOWLB+zVmSkyVQJegcG/ULttWNiufw
-         bDKqGyo358cmXktusfUETCMDe2O8OEjEhojUawFgxI2rziOcIWFFjN2KgLSrpCYz+oC2
-         Wju7m/+NFmg+bjHy0komNFimuHpsmbKgPafdcCL2sOPs5djfArhychICMPYzQwt00xCj
-         kx2ZwxYzZ+wNCjMm8ji/NU05SqyMRukjB4+VbvQy2+SomSYwvUayONTEPBdvnfuzSjvO
-         BQ7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730188361; x=1730793161;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3rbp3tWipnS9n1DED0E9JncApTpU6NEKrzZwh6VcEEY=;
-        b=jqlsE6+DtAxSnld6BUoFnmmWDuYOf3FYBBDp1NaadHyjCO1mYRHAHDkI9zafhZToY2
-         MfOt+CCbUdTYih8MsnWuXt40ZVx2WzEde8HTfJfYYsbsrLP5mlNmCVLyeLuqj0Bs3Saw
-         gs2Su6IhNj1bttBn5Jtvu1IUEjB0EV5+w7TT7pp6CydpDaWu3KUqMx7m9ZJV5Je1mm4a
-         IOZqYiGbaRKAl+YCIlzZGCi8ObJJ4p42nEQetZAsSg8p7ZsQ0Gwex4E3MGYTh6hLK/2a
-         eI9xqCOWlYgme8r/tc0VPHToAggfwMTlP7Wy0vG5G8RdCkOEv+JdeLVpkX1txtqdXj1V
-         HJ9w==
-X-Forwarded-Encrypted: i=1; AJvYcCWwvAYSuhSQHjsUSg0jLbxKzVFXBFKy0mmDMS2CAFTt5irMTWlJvB590AsfLFJBJwlATSdolaOyiDd+CwQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+bf+Xv1+Nuett4Njjw2ulDakX3mtL6Xmbe/ixHrdAQy0kK44X
-	ZYoaxJFhnN42JTL5O7IxJ7GEhAziRE3TF3LHarB7t3FUyudmPZpTpo2F+hTrUWr90jJHfNR3AA/
-	kiz3mw+Zf3Lm7coQCooj0hOXbhVVYALWO7/m2wA==
-X-Google-Smtp-Source: AGHT+IHcE0Z//RMNpx9Ji2VGSBbKrOfXkqpktFDkWF0oOow3SiBDbyLJpaYAaQNfcMF3HWuiO8z58Zejjdv6FocygCo=
-X-Received: by 2002:a05:6870:82a1:b0:277:cc56:2300 with SMTP id
- 586e51a60fabf-29051b4d708mr9099951fac.12.1730188360819; Tue, 29 Oct 2024
- 00:52:40 -0700 (PDT)
+	s=arc-20240116; t=1730188377; c=relaxed/simple;
+	bh=5yYH7qIfGmrE0LNQZXlaCsK1rMXfHyv4X0roVe5QXZ0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ViqWKLFvnuQgV8laUfWUYkqB3FeBQuBKkauIv9oWtty3HBuJZXm//oft9ZI+4BeeCfzeuMg30pLWddzgOgNSBp2uNbJMtC1aKbr9avadCXsaMjPWm+AW3v0TtESHS0Mofr4UoRGS0HjDhKDSma+rCQ0aed4XauuDgnAKz4P/C+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mua9Pibe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fhfjNxfI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730188373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u3a3YBlZ7wl5Xbj5OvTfmZmfrm3sVYf28cB+dMZoIGM=;
+	b=Mua9PibeCluDmxKsvFB+ax+TnCQ24HP4wLVLJsx2e4mhVdNL9V39wrwqbQ1uO+BMmpKDMv
+	rW98f9w9Bts37wwUCS8Dtgh4s4wbsquM2jU5YL4yHOSyqNaUNo7wCvVBTBaygpzat8SQUo
+	Nnm9bSIYRtTt+FzMt4Ra2mirbLTjR7ws13tkqcJMInakdDIVtDAYu4V4IOs1L10cN8pHWt
+	ucP6yEfs0PNHCDjLsugHK4ihCLss2rXbRBEeT/h1TqtkPteecMLm+8ndOu97pLulTyQVJr
+	kOlmkFw+u8ZuK5FRx3D+B1AWaZPQD83yHPvTkSrBWxoCOCJwj4k+Rzib/Pi8TA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730188373;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u3a3YBlZ7wl5Xbj5OvTfmZmfrm3sVYf28cB+dMZoIGM=;
+	b=fhfjNxfI5m/FcuZV4YBROU7nMz9mfld+IAmET8tHlipFgsYELKK/CDgnauE81m7CoXGgXc
+	sPjag4h0fQjwUiDg==
+To: Stephen Rothwell <sfr@rothwell.id.au>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Linux Kernel
+ Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the tip tree
+In-Reply-To: <20241029170533.5592ab42@oak>
+References: <20241029133407.3580be1a@canb.auug.org.au>
+ <20241028213040.e5d72b2f56971ceb5c80395b@linux-foundation.org>
+ <20241029170533.5592ab42@oak>
+Date: Tue, 29 Oct 2024 08:52:53 +0100
+Message-ID: <87h68v2vmy.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028033928.223218-1-nick.hu@sifive.com> <20241028033928.223218-3-nick.hu@sifive.com>
- <5f7179ec-e4ce-4644-8a60-ce407a4d2f11@linaro.org>
-In-Reply-To: <5f7179ec-e4ce-4644-8a60-ce407a4d2f11@linaro.org>
-From: Nick Hu <nick.hu@sifive.com>
-Date: Tue, 29 Oct 2024 15:52:30 +0800
-Message-ID: <CAKddAkBRhtUhue7meUFy2ZDyERpcG4ua=Wyb0q-ZaBzmHZCD0A@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] clocksource/drivers/timer-riscv: Stop stimecmp
- when cpu hotplug
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: greentime.hu@sifive.com, zong.li@sifive.com, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Thomas Gleixner <tglx@linutronix.de>, 
-	Andrew Jones <ajones@ventanamicro.com>, Conor Dooley <conor.dooley@microchip.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	linux-pm@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Anup Patel <anup@brainfault.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Daniel,
+On Tue, Oct 29 2024 at 17:05, Stephen Rothwell wrote:
+> On Mon, 28 Oct 2024 21:30:40 -0700 Andrew Morton <akpm@linux-foundation.org> wrote:
+>> > This is commit
+>> > 
+>> >   82c4d6b6dace ("sched/numa: fix the potential null pointer dereference in task_numa_work()")
+>> > 
+>> > in the mm-hotfixes-unstable branch of the mm-hotfixes tree.  
+>> 
+>> Thanks, but...  What tip branch is it in?  Matters because: is that
+>> branch destined for 6.12.x?
+>
+> Its in the sched/urgent branch, so probably destined for Linus fairly
+> soon.  But the tip guys would know better than I.
 
-On Mon, Oct 28, 2024 at 5:44=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 28/10/2024 04:39, Nick Hu wrote:
-> > Stop the timer when the cpu is going to be offline otherwise the
-> > timer interrupt may be pending while performing power-down.
-> >
-> > Suggested-by: Anup Patel <anup@brainfault.org>
-> > Link: https://lore.kernel.org/lkml/20240829033904.477200-3-nick.hu@sifi=
-ve.com/T/#u
-> > Signed-off-by: Nick Hu <nick.hu@sifive.com>
-> > Reviewed-by: Anup Patel <anup@brainfault.org>
-> > ---
-> >   drivers/clocksource/timer-riscv.c | 6 ++++++
-> >   1 file changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/clocksource/timer-riscv.c b/drivers/clocksource/ti=
-mer-riscv.c
-> > index 48ce50c5f5e6..166dee14e46b 100644
-> > --- a/drivers/clocksource/timer-riscv.c
-> > +++ b/drivers/clocksource/timer-riscv.c
-> > @@ -127,6 +127,12 @@ static int riscv_timer_starting_cpu(unsigned int c=
-pu)
-> >   static int riscv_timer_dying_cpu(unsigned int cpu)
-> >   {
-> >       disable_percpu_irq(riscv_clock_event_irq);
-> > +     /*
-> > +      * Stop the timer when the cpu is going to be offline otherwise
-> > +      * the timer interrupt may be pending while performing power-down=
-.
-> > +      */
-> > +     riscv_clock_event_stop();
-> > +
-> >       return 0;
-> >   }
->
-> Should it not be the opposite?
->
-> First stop the clock which clears the interrupt and then disable the irq?
->
-SIE.STIE =3D 0 ->
-Mtimer interrupt comes -> trap to m-mode -> raise STIP ->
-stop the clock
-Is the above case you are concerned about?
+Yes, .../urgent are fixes for the current -rc cycle. That should go end
+of the week to Linus.
 
->
->
->
->
-> --
-> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
-M SoCs
->
-> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-> <http://twitter.com/#!/linaroorg> Twitter |
-> <http://www.linaro.org/linaro-blog/> Blog
+Thanks,
+
+        tglx
 
