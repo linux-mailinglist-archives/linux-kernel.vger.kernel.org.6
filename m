@@ -1,117 +1,159 @@
-Return-Path: <linux-kernel+bounces-387531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17D569B5271
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:10:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 246BC9B5275
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:11:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A361F24037
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:10:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AA491F24193
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:11:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197E92071F6;
-	Tue, 29 Oct 2024 19:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848CF2071EF;
+	Tue, 29 Oct 2024 19:11:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGsqxFfw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b="jeeXrg47";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="j7smLFMK"
+Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD961FBF50;
-	Tue, 29 Oct 2024 19:10:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076B91FBF50;
+	Tue, 29 Oct 2024 19:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730229030; cv=none; b=qE9uHnHQjuk5charl+JRw0zYVXkfWmxbwA5bvOBaWNMrFn3PrvWsZie0dSZynh6Ny7qmAK2hpHCyHziqDI+1UIAicT/s2yHjrau7N4LZlLb/o0/oUD3tcmdlJHjl1+w0gFD+GHr4DyinEAPyLFsFnH+mzZ7P02Gw1TzMA71NDH0=
+	t=1730229069; cv=none; b=h7+/ZeSHyIbzjjmLQN57Jt6oB7S6+tyE2UXhyzV4W38CnaYZNuUjfEtRp+QgehyOhOTlbWx/TVTb23IPX3axf7za9gzMru6C5vCkzMkrqDOCMzv4FnmXJmImTosYIjP/gSmHO7phcmmFt3emOmaht6uKgxQ729FjJw25/k3+bUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730229030; c=relaxed/simple;
-	bh=HFiLuGlngAfz+xf8i/WvPUJKfDvtzPbIjebkk6c4+Hc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uD/qVI0FQN9PaXKULVbVV2+89tqj1xTZG9VrbWlkIC/Q8uPuTdveG16pgoS/pcXDqD7YQE8DQsFEGTRnP229TN7yrg1sgzteYLi5oXZk5MX+F2OB/598Emdtb3R1RrfUceYprDB+O7zvFfnmaDgfFk+4EtXAOZeBfZg4YGSrIEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGsqxFfw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA14C4CECD;
-	Tue, 29 Oct 2024 19:10:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730229030;
-	bh=HFiLuGlngAfz+xf8i/WvPUJKfDvtzPbIjebkk6c4+Hc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gGsqxFfwL1x5C8hV42EFGSrG9tP9C4I0MnqdKQhhPe5RE1ZK25Y+voaXvECNt3Orf
-	 aKx/EBosNl6MBzcg3kMCbQM0IdxKEZmL2I/PdH68D+ICAPWuoGpw2ns06v/Rmdf/rR
-	 O0Q5UBu2KwZLvDNIGF/okDZsZlwMz7FnQC8+dASVOeQL7WzKKQ11ATerUxYh1VTdC/
-	 vecdWVTHukOX50AMJtLpmDOPAPz6Fp+dqIy/Arv044NGvNsvqDl1vyP4EBuaEyx2aW
-	 OIJ05gT3u33J7mu8DoVbwYozhZkTm16l4xOhQ1oofv81OLaD2CrlBEEaymLlLokLu0
-	 9PG1ueZgrETSg==
-Date: Tue, 29 Oct 2024 12:10:28 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Stefan Wahren <wahrenst@gmx.net>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Dan Carpenter <dan.carpenter@linaro.org>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH net] net: vertexcom: mse102x: Fix possible double free
- of TX skb
-Message-ID: <20241029121028.127f89b3@kernel.org>
-In-Reply-To: <20241022155242.33729-1-wahrenst@gmx.net>
-References: <20241022155242.33729-1-wahrenst@gmx.net>
+	s=arc-20240116; t=1730229069; c=relaxed/simple;
+	bh=n9ca/wig78LRP2Bp6VofPAhsp3VTMSA7jWv2d7WpOTk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H4lJOeLu1VtntMuJZpfQw7PUssUV2UcELpFVoqP3WgRVONtzfZhDLktFVfbfurQShUm70xUQqT5y57jgu1uvcM3ZFIztvxhBP3XA+/gP82o3D9aGf5oH+3hlf8ArkTUtKInJoImk4lah7GuY7p9z4aq1wC8HjZ3c9a9oIGqexE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca; spf=pass smtp.mailfrom=lyndeno.ca; dkim=pass (2048-bit key) header.d=lyndeno.ca header.i=@lyndeno.ca header.b=jeeXrg47; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=j7smLFMK; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lyndeno.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lyndeno.ca
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfout.phl.internal (Postfix) with ESMTP id E1E3D138026E;
+	Tue, 29 Oct 2024 15:11:05 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-10.internal (MEProxy); Tue, 29 Oct 2024 15:11:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lyndeno.ca; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1730229065;
+	 x=1730315465; bh=2/QxyYSwgEenSj5UTUbmSdnftP3pA8phAAui6JoA8Fc=; b=
+	jeeXrg47bqY3NVayEp6ZiQBpH9gK4vjUqifMdTEb/r84tW5WV46Qs8YJLV6hauHb
+	V63ix0dLzSDmyNqZK89/lzI1PmI2rbLH1zX3YNm6JGltSopd1+nuKa/J+Y7XUpnV
+	BuGqcCtY+wCOEhjLfUGjng0hNe4zqVdPMHosEtUMtdL3g42RoSVn/9CfXijqJTD3
+	GIS7Ww+DDOOsqH1eqBqpKq9XzdToLrmZU8QWHFD1Zy5tn4Fi9A4PJIl/Q45cLJcA
+	rJ8m8FKg6A3BTHrz6oPhe7jVAQt0/XWCMT2zPcxF/5QPMPDuTNLpp1at9O+YHHty
+	48yZPJ2p88Vh6kBbfwvXbQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1730229065; x=
+	1730315465; bh=2/QxyYSwgEenSj5UTUbmSdnftP3pA8phAAui6JoA8Fc=; b=j
+	7smLFMKW1EKL5FybpJesytNP4oYH/UQ1E6C9oOIshioIaEJrq/eJB41Pz7A+RfVD
+	piULPk3t4imaxqhSWQ4fHZXKSWGlt0ZrmZjSde4R76ke7CHVG247/Czy+VFhpZfg
+	HZ75qjZjerZJwoMoQmTIlzo7XG2K3Q+VGNbM1dD6LDPkGGGru2rdl1x2s7brF5zd
+	wAtLbgI1LJMoDSj01FQu9sURHqra0h5HitpwVDiD1kDXcnO8tP9lyoJRu1I1mAYe
+	rGWIKMIZY9H5ulUVlbaeDWL6Ov3Qw898Q7NwCMOAIyvvGZNitmsMtjrptd083rRI
+	g3fpUX7j/zucv2kobYLwg==
+X-ME-Sender: <xms:SDMhZ63lvoaU3i_vizkqUVT8XLNglvg_LZhykXPiIFKd1hjP4vo6Mg>
+    <xme:SDMhZ9FUE-sq0vqgOxj8AAI4Khkr5jREWgKDbo8icRuJzDA1P1m9vLjXRh1L-Vobi
+    nJMpG3g_ZrNGNxPUCs>
+X-ME-Received: <xmr:SDMhZy47e9s_LMS4i7w6No7LzIbBblkeFtRADbqK6oIl6enw1EoVnVLryc1Ah-96H8kTUyFCop2EKl9-BETCojBUeWmFRcFV-OeRUkA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgudduiecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthejredttddv
+    jeenucfhrhhomhepnfihnhguohhnucfurghntghhvgcuoehlshgrnhgthhgvsehlhihnug
+    gvnhhordgtrgeqnecuggftrfgrthhtvghrnhepleegkefhuddtudejjeefgfeigeekfeel
+    ueekvdfgvdelffdvfeefhfeftdegieegnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomheplhhsrghntghhvgeslhihnhguvghnohdrtggrpdhnsggp
+    rhgtphhtthhopedvvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhioh
+    drlhhimhhonhgtihgvlhhlohesrghmugdrtghomhdprhgtphhtthhopehhuggvghhovggu
+    vgesrhgvughhrghtrdgtohhmpdhrtghpthhtohepihhlphhordhjrghrvhhinhgvnheslh
+    hinhhugidrihhnthgvlhdrtghomhdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhgvnhgssehkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hluhiimhgrgihimhhilhhirghnsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhlvggv
+    sehsuhhsvgdrtghomhdprhgtphhtthhopehshhihrghmqdhsuhhnuggrrhdrshdqkhesrg
+    hmugdrtghomhdprhgtphhtthhopegtohhrvghnthhinhdrtghhrghrhiesghhmrghilhdr
+    tghomh
+X-ME-Proxy: <xmx:SDMhZ73y7uHKOUDgeKHx2dBKR0Ib8epk0xLLzOW-0C9Hhe9bplAoKQ>
+    <xmx:SDMhZ9HsUsliQEVkPbOmN-KpmN4ihGWVjXx7jLZtYNawLe2_UlcgDg>
+    <xmx:SDMhZ083pUgmJmXdovwQRXCrJi3VKr4MsFU7AkaO0oivpC0SWiYHrg>
+    <xmx:SDMhZykYe09rSo2quQQJzjM0kzNoHnQwKJpOdW7FS9EIbSnTNDD3bg>
+    <xmx:STMhZ21aQX8ke23RvJZb18h51t6trSb42D5EEpUfd_LRlnbsTJva07Z8>
+Feedback-ID: i1719461a:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 29 Oct 2024 15:11:01 -0400 (EDT)
+Message-ID: <75d6d50e-795c-4368-856e-ba530e1fbee3@lyndeno.ca>
+Date: Tue, 29 Oct 2024 13:10:57 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] ACPI: platform-profile: Add a name member to handlers
+To: Mario Limonciello <mario.limonciello@amd.com>,
+ Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>,
+ Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+ Corentin Chary <corentin.chary@gmail.com>, "Luke D . Jones"
+ <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>,
+ Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
+ Alexis Belmonte <alexbelm48@gmail.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>,
+ open list <linux-kernel@vger.kernel.org>,
+ "open list:ACPI" <linux-acpi@vger.kernel.org>,
+ "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER"
+ <platform-driver-x86@vger.kernel.org>,
+ "open list:THINKPAD ACPI EXTRAS DRIVER"
+ <ibm-acpi-devel@lists.sourceforge.net>,
+ Mark Pearson <mpearson-lenovo@squebb.ca>,
+ Matthew Schwartz <matthew.schwartz@linux.dev>
+References: <20241025193055.2235-1-mario.limonciello@amd.com>
+ <20241025193055.2235-2-mario.limonciello@amd.com>
+Content-Language: en-US
+Followup-To: 20241025193055.2235-1-mario.limonciello@amd.com
+From: Lyndon Sanche <lsanche@lyndeno.ca>
+In-Reply-To: <20241025193055.2235-2-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 22 Oct 2024 17:52:42 +0200 Stefan Wahren wrote:
-> -static int mse102x_tx_frame_spi(struct mse102x_net *mse, struct sk_buff *txp,
-> +static int mse102x_tx_frame_spi(struct mse102x_net *mse, struct sk_buff **txp,
->  				unsigned int pad)
->  {
->  	struct mse102x_net_spi *mses = to_mse102x_spi(mse);
-> @@ -226,29 +226,29 @@ static int mse102x_tx_frame_spi(struct mse102x_net *mse, struct sk_buff *txp,
->  	int ret;
+On 2024-10-25 1:30 p.m., Mario Limonciello wrote:
+> In order to prepare for allowing multiple handlers, introduce
+> a name field that can be used to distinguish between different
+> handlers.
 > 
->  	netif_dbg(mse, tx_queued, mse->ndev, "%s: skb %p, %d@%p\n",
-> -		  __func__, txp, txp->len, txp->data);
-> +		  __func__, *txp, (*txp)->len, (*txp)->data);
-> 
-> -	if ((skb_headroom(txp) < DET_SOF_LEN) ||
-> -	    (skb_tailroom(txp) < DET_DFT_LEN + pad)) {
-> -		tskb = skb_copy_expand(txp, DET_SOF_LEN, DET_DFT_LEN + pad,
-> +	if ((skb_headroom(*txp) < DET_SOF_LEN) ||
-> +	    (skb_tailroom(*txp) < DET_DFT_LEN + pad)) {
-> +		tskb = skb_copy_expand(*txp, DET_SOF_LEN, DET_DFT_LEN + pad,
->  				       GFP_KERNEL);
->  		if (!tskb)
->  			return -ENOMEM;
-> 
-> -		dev_kfree_skb(txp);
-> -		txp = tskb;
-> +		dev_kfree_skb(*txp);
-> +		*txp = tskb;
->  	}
-> 
-> -	mse102x_push_header(txp);
-> +	mse102x_push_header(*txp);
-> 
->  	if (pad)
-> -		skb_put_zero(txp, pad);
-> +		skb_put_zero(*txp, pad);
-> 
-> -	mse102x_put_footer(txp);
-> +	mse102x_put_footer(*txp);
-> 
-> -	xfer->tx_buf = txp->data;
-> +	xfer->tx_buf = (*txp)->data;
->  	xfer->rx_buf = NULL;
-> -	xfer->len = txp->len;
-> +	xfer->len = (*txp)->len;
-> 
->  	ret = spi_sync(mses->spidev, msg);
->  	if (ret < 0) {
-> @@ -368,7 +368,7 @@ static void mse102x_rx_pkt_spi(struct mse102x_net *mse)
->  	mse->ndev->stats.rx_bytes += rxlen;
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>   drivers/platform/surface/surface_platform_profile.c | 1 +
+>   drivers/platform/x86/acer-wmi.c                     | 1 +
+>   drivers/platform/x86/amd/pmf/sps.c                  | 1 +
+>   drivers/platform/x86/asus-wmi.c                     | 1 +
+>   drivers/platform/x86/dell/dell-pc.c                 | 1 +
+>   drivers/platform/x86/hp/hp-wmi.c                    | 1 +
+>   drivers/platform/x86/ideapad-laptop.c               | 1 +
+>   drivers/platform/x86/inspur_platform_profile.c      | 1 +
+>   drivers/platform/x86/thinkpad_acpi.c                | 1 +
+>   include/linux/platform_profile.h                    | 1 +
+>   10 files changed, 10 insertions(+)
 
-Isn't it easier to change this function to free the copy rather than
-the original? That way the original will remain valid for the callers.
+This scope of the patch looks good to me.
+
+Reviewed-by: Lyndon Sanche <lsanche@lyndeno.ca>
+
+Thanks,
+
+Lyndon
+
 
