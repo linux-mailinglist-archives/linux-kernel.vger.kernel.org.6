@@ -1,206 +1,316 @@
-Return-Path: <linux-kernel+bounces-386909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6726E9B4988
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E04649B498C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EEA1F2373D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AE9C1F23651
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8252C206040;
-	Tue, 29 Oct 2024 12:20:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C38205E24;
+	Tue, 29 Oct 2024 12:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KzilBobj"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CovoGUxj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C20AC1DF960
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA5088BEA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730204423; cv=none; b=fa065Jo0uDp2Zp8y0s+MocWN7t8cFK/TVHfHZca0RLiPZeQIqTCZSe44qzBIfIwJrCtoTZnY0Og6N420XH3GMVpJyUg47xq3zKkXoeEb24r5lPtfW41GzkrM9Dlbq27tyrCOlFq+YEA8MOAhtbhI/fGcSvg4/kKOS5mtyrP3l+E=
+	t=1730204466; cv=none; b=oDd5V+QZRniSMqr0EWrEbw1pbrWSWBvJq6PbvL/gxvOf8qmTl/6KYSeqgew83zVr8+WDarUuX78DHU0Rw0H8ChX3QZJg1s1cK9SmmWbImBaqtVoiszv8RFkYokzvAVlxjmY9GUT058KobUfTmW/5q+XOQAfQBRZ8TpOjjVC+Wc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730204423; c=relaxed/simple;
-	bh=ALNpfuYu8YjEgDCmT13LYtKo+Ht8dICxX9CtbVBeHaM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDqjJ/MiA8k6OBe4EnkRAdpZv2s3MdIkZhRc9OV+rbAvfTVErr008Of/G75LNv7qZuYMesGRkPKoOyGpLhjOhiD8OpjQ0AlMMPmOaONxeJvPOT5s23xSdBuyLBK85tMRCQX1tOKx+PiL/pv9f/eQap0kmqYv+0sg6Cry1bTvhRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KzilBobj; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20cbcd71012so56787795ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:20:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1730204421; x=1730809221; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=62g7Pp/7Y21i31lD0JuePq5yK0xXKJofoigz9znaSi0=;
-        b=KzilBobjORw9IRidHox7GcfvTg17MZQvBxy/sANEMpVh9chw8OKSPRnVhuajxBHp2C
-         SLZl/uOSIOaNc9cnfcwner0kFMtPsgGxA1XZBDXYqQAnD0V2tKggwTp7C1b8djlWlq8H
-         dgjxJLgzTrhfPbr/+wAHgyIMFiVyD1dN4rLd8=
+	s=arc-20240116; t=1730204466; c=relaxed/simple;
+	bh=4phbkHWXMdsk5mbRLkM1PILpFb76hqilv3pu2vFatSY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RCsHArvs8UIvz1fpX9XF40h1QhZb+Pg/zhSqmM8WdI0Lk6vOGMmr9q/4UJhXZd7GLdbQ+oM05Z6l7T74+yay63+eLB5nG0YC4aoFcyH/QGqYus6S5zoFCgY/cDaF/o5quI6mmevbBgjE61UjbLq3LeTyVaX1ZnjeammHiTYrVoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CovoGUxj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730204462;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=gPPs0+CUPj5G4mr0G9qtS6gLC/HhMtUnQLQJptozAAA=;
+	b=CovoGUxjaKqaIluGQMAgYoiRu3ofcMXmq9Tojo96oa0055q6haVOhKAhzuHeytj1EyO2cQ
+	G194yGMO7pefaprp3Y1S2TOMenNAriRWHvSJdKx0MKzYMtru0LxlktkzXISnPvOemyHko0
+	QB5PFCqS++UKVSL3eRyBy1Dz1UuK/zI=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-563-F-Dvs9SSOzSVCxqFvXS7rA-1; Tue, 29 Oct 2024 08:21:00 -0400
+X-MC-Unique: F-Dvs9SSOzSVCxqFvXS7rA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d563a1af4so2621795f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:21:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730204421; x=1730809221;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=62g7Pp/7Y21i31lD0JuePq5yK0xXKJofoigz9znaSi0=;
-        b=EmTUL8VZHTlcO3+e3N/mWoaINIR4gLB8KrJQX17Yr57p7mS4oIJz6pLSjccyrefCmQ
-         zriK8hVX1ijjDkdeIM5fP+yunAT0zT/HqkLE41LWcNP1EAGB/9kiOgbo2h9Izt7u8Rn7
-         erseCRC0JZdzIFm1Tnz2q+T+BlmH9arO02bqArxOKkz1garziRJ0rS4R8dHoxwDWobsf
-         wND/NT64w4w0QGo474cC8vbGGREGE7fVKaIu2usn2iPU9f+xyALL6oAMajGxub6wiw3g
-         R/grH+vplWlVUqFWJih9jI3/524SaKzL4ufHLLFkIy/6i/zBD74pq0BzSlUhGkqtbPtL
-         Ws4w==
-X-Forwarded-Encrypted: i=1; AJvYcCUdvEmGzYGjZbdF3bSPfg6N02B3o3KZiahfaEye7VzUMdQOq1htkHUA29pR0Hu4i5dTgoyl0b8bi4KhJ0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxB+vZQ+UlHl3vW98hOkeSn1AoTQRgCSG1hJX8vl91IBGHlG0bu
-	1emEL/7Yw4xS2myBMNpSu2fbz2XnedEQzHt8fEGHgOYXdfSqGbvY+dUTXF147e1hl5vcuKZ9A4A
-	=
-X-Google-Smtp-Source: AGHT+IEeXVbCPDSV2nstnQWJlnJdqx47lexg9iIC0Oh/HjBbQL4RuIb05vpMUL6dG3tzeO5lUeaZGQ==
-X-Received: by 2002:a17:902:ce03:b0:20c:81f2:3481 with SMTP id d9443c01a7336-210c69e5f99mr157076815ad.22.1730204420833;
-        Tue, 29 Oct 2024 05:20:20 -0700 (PDT)
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com. [209.85.210.178])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf44183sm64807845ad.11.2024.10.29.05.20.19
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1730204458; x=1730809258;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gPPs0+CUPj5G4mr0G9qtS6gLC/HhMtUnQLQJptozAAA=;
+        b=QW0bSs/KfzQT1NiAfSlPKfKsjzM1r8hISgnzFske4SAPpavyFi0JaGGbWALzpJPoqH
+         gChTocy/BgGxmJAq6+dYyyV1nSyiJ0SecnC9RJMcZ/NRDBYfwlHbICcS8WyAO77+gqa4
+         GmTy6ImXByUHITBUs2pMhv9YVnW8b6cyL3sC18crWC9s+cnYK+BvRgN96XZ7O0X0jL56
+         +JNuiRLLVEIET7UiOTLFJQoExGKDuCGVPB78peMVI3/NDaF4A0pwZR93DUiLjEKE06VA
+         lBUvHr/6fQKuV9QTeG/AGzTSIBeU7qJqfZyV8SkpLV4TgPDHW+GxNzg3uz7W5o0KkQPo
+         B2yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXq12oWlW6iU9Ix1JoDnl9OB1AmObDtOR7+mNiX+OxK8DeEQh0asoBCaVStJ7GKJ5CJ9k0EuFX2FXhFYgc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6LM8/iqmFnUI8jZHqndUZUUtC4bICXpXe3O7NI7U9/YZ8tT4D
+	dd90GjWETE0I0LiminA9//XjgvPV+pP4mwArJ2XlGmTGTjk+JziIcmn3i6YGCOgoWM/dkzZB90V
+	UNzrCtELYBIFIPMX2rpmpWUchVCRrZFlE5vOUdOzY5IjpuearkDie4V/VaccfijinAeX8tA==
+X-Received: by 2002:adf:e58f:0:b0:37c:babe:2c49 with SMTP id ffacd0b85a97d-38061128ef1mr7604530f8f.19.1730204457934;
+        Tue, 29 Oct 2024 05:20:57 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFJbMMeDjIu1DI5jNTZEhmaFaxxbUnwOb2nMscklDaVJq5aebRKgtU65pH7ernvrB290cCtgg==
+X-Received: by 2002:adf:e58f:0:b0:37c:babe:2c49 with SMTP id ffacd0b85a97d-38061128ef1mr7604507f8f.19.1730204457422;
+        Tue, 29 Oct 2024 05:20:57 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c72d:8500:d87a:ed8e:1e80:5a7e? (p200300cbc72d8500d87aed8e1e805a7e.dip0.t-ipconnect.de. [2003:cb:c72d:8500:d87a:ed8e:1e80:5a7e])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47f6fsm12331687f8f.50.2024.10.29.05.20.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 05:20:19 -0700 (PDT)
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7206304f93aso2665710b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:20:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW3YV07mX/9WYl4kiga6CDzTCQuwo93DrWFFcHwAkzecTeLOkGVWjHUjI6mdj/Xp0ePx8rXpZyGtzOSqwc=@vger.kernel.org
-X-Received: by 2002:a05:6a20:4b11:b0:1d9:c6c8:b354 with SMTP id
- adf61e73a8af0-1d9c6c8bb78mr6513354637.15.1730204418853; Tue, 29 Oct 2024
- 05:20:18 -0700 (PDT)
+        Tue, 29 Oct 2024 05:20:56 -0700 (PDT)
+Message-ID: <f4d0f763-f679-4885-994d-def2831d2448@redhat.com>
+Date: Tue, 29 Oct 2024 13:20:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028-hpd-v2-0-18f6e79154d7@chromium.org> <20241028-hpd-v2-3-18f6e79154d7@chromium.org>
- <20241028203437.3eb5268d@jic23-huawei>
-In-Reply-To: <20241028203437.3eb5268d@jic23-huawei>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Tue, 29 Oct 2024 13:20:06 +0100
-X-Gmail-Original-Message-ID: <CANiDSCu7G8gDKaY5jJR+JGyqGDobkDPRG+9NOfpXvVviqkQizA@mail.gmail.com>
-Message-ID: <CANiDSCu7G8gDKaY5jJR+JGyqGDobkDPRG+9NOfpXvVviqkQizA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] iio: Add channel type for attention
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Harvey Yang <chenghaoyang@google.com>, linux-input@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+To: Daniel Gomez <d@kruces.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Daniel Gomez <da.gomez@samsung.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
+ hughd@google.com, wangkefeng.wang@huawei.com, 21cnbao@gmail.com,
+ ryan.roberts@arm.com, ioworker0@gmail.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org,
+ "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <Zw_IT136rxW_KuhU@casper.infradead.org>
+ <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
+ <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
+ <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
+ <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com>
+ <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
+ <D51IU4N746MI.FDS6C7GYO4RP@samsung.com>
+ <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com>
+ <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com>
+ <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com>
+ <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com>
+ <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
+ <cbadd5fe-69d5-4c21-8eb8-3344ed36c721@redhat.com>
+ <D57RWGA2IIFD.2EWIDM7HVYF5U@kruces.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <D57RWGA2IIFD.2EWIDM7HVYF5U@kruces.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jonathan
+On 28.10.24 22:56, Daniel Gomez wrote:
+> On Fri Oct 25, 2024 at 10:21 PM CEST, David Hildenbrand wrote:
+>> Sorry for the late reply!
+>>
+>>>>>>> IMHO, as I discussed with Kirill, we still need maintain compatibility
+>>>>>>> with the 'huge=' mount option. This means that if 'huge=never' is set
+>>>>>>> for tmpfs, huge page allocation will still be prohibited (which can
+>>>>>>> address Hugh's request?). However, if 'huge=' is not set, we can
+>>>>>>> allocate large folios based on the write size.
+>>>
+>>> So, in order to make tmpfs behave like other filesystems, we need to
+>>> allocate large folios by default. Not setting 'huge=' is the same as
+>>> setting it to 'huge=never' as per documentation. But 'huge=' is meant to
+>>> control THP, not large folios, so it should not have a conflict here, or
+>>> else, what case are you thinking?
+>>
+>> I think we really have to move away from "huge/thp == PMD", that's a
+>> historical artifact. Everything else will simply be inconsistent and
+>> confusing in the future -- and I don't see any real need for that. For
+>> anonymous memory and anon shmem we managed the transition. (there is a
+>> longer writeup from me about this topic, so I won't go into detail).
+>>
+>>
+>> I think I raised this in the past, but tmpfs/shmem is just like any
+>> other file system .. except it sometimes really isn't and behaves much
+>> more like (swappable) anonymous memory. (or mlocked files)
+>>
+>> There are many systems out there that run without swap enabled, or with
+>> extremely minimal swap (IIRC until recently kubernetes was completely
+>> incompatible with swapping). Swap can even be disabled today for shmem
+>> using a mount option.
+>>
+>> That's a big difference to all other file systems where you are
+>> guaranteed to have backend storage where you can simply evict under
+>> memory pressure (might temporarily fail, of course).
+>>
+>> I *think* that's the reason why we have the "huge=" parameter that also
+>> controls the THP allocations during page faults (IOW possible memory
+>> over-allocation). Maybe also because it was a new feature, and we only
+>> had a single THP size.
+>>
+>> There is, of course also the "fallocate() might not free up memory if
+>> there is an unexpected reference on the page because splitting it will
+>> fail" problem, that even exists when not over-allocating memory in the
+>> first place ...
+>>
+>>
+>> So ...I don't think tmpfs behaves like other file system in some cases.
+>> And I don't think ignoring these points is a good idea.
+> 
+> Assuming a system without swap, what's the difference you are concern
+> about between using the current tmpfs allocation method vs large folios
+> implementation?
 
-On Mon, 28 Oct 2024 at 21:34, Jonathan Cameron <jic23@kernel.org> wrote:
->
-> On Mon, 28 Oct 2024 10:12:23 +0000
-> Ricardo Ribalda <ribalda@chromium.org> wrote:
->
-> > Add a new channel type representing if the user's attention state to the
-> > the system. This usually means if the user is looking at the screen or
-> > not.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  Documentation/ABI/testing/sysfs-bus-iio | 7 +++++++
-> >  drivers/iio/industrialio-core.c         | 1 +
-> >  include/uapi/linux/iio/types.h          | 1 +
-> >  tools/iio/iio_event_monitor.c           | 2 ++
-> >  4 files changed, 11 insertions(+)
-> >
-> > diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
-> > index 89943c2d54e8..d5a2f93bd051 100644
-> > --- a/Documentation/ABI/testing/sysfs-bus-iio
-> > +++ b/Documentation/ABI/testing/sysfs-bus-iio
-> > @@ -2339,3 +2339,10 @@ KernelVersion: 6.10
-> >  Contact:     linux-iio@vger.kernel.org
-> >  Description:
-> >               The value of current sense resistor in Ohms.
-> > +
-> > +What:                /sys/.../iio:deviceX/in_attention_raw
-> > +KernelVersion:       6.13
-> > +Contact:     linux-iio@vger.kernel.org
-> > +Description:
-> > +             Boolean value representing the user's attention to the system.
-> > +             This usually means if the user is looking at the screen or not.
->
-> Hmm. I should have thought of this when I replied to suggest a new channel type.
-> The question is 'units' for a decision.
->
-> Last time we hit something like this where processing is used to make a decision
-> we decided to at least allow for the concept of 'certainty'.
->
-> The idea being that smarter sensors would tell us something about how sure they
-> are that the attention is on the device.
-> The analogy being with activity detection. See in_activity_walking_input
-> in Documentation/ABI/testing/sysfs-bus-iio
->
-> Do you think that would be appropriate here as well?  For this device
-> it would take the values 0 and 100 rather than 0 and 1.
+As raised above, there is the interesting interaction between 
+fallocate(FALLOC_FL_PUNCH_HOLE) and raised refcounts, where we can fail 
+to reclaim memory.
 
-For the particular device that I want to support, they are giving me a
-value of 1 and 0, and the example from usb.org seems to work the same
-way (Logical Maximum of 1)
-https://www.usb.org/sites/default/files/hutrr107-humanpresenceattention_1.pdf
+shmem_fallocate()->shmem_truncate_range()->truncate_inode_pages_range()->truncate_inode_partial_folio().
 
-I have no problem multiplying my value by 100 if you think there will
-be a use case for that. It will not have a major performance impact on
-the driver.
+It's better than it was in the past -- in the past we didn't even try 
+splitting, but today splitting can still fail and we'll never try 
+reclaiming that memory again later. This is very different to anonymous 
+memory where we have the deferred split queue+remember which pages where 
+zapped implicitly using the page tables (instead of zeroing them out and 
+not freeing up the memory).
 
-You decide ;)
+It's one of the issues people ran into when using THP+shmem for backing 
+guest VMs along with memory ballooning. For that reason, the 
+recommendation still is to disable THP when using shmem for backing 
+guest VMs and relying on memory overcommit optimizations such as memory 
+balloon inflation.
 
->
->
-> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> > index 6a6568d4a2cb..bdfb51275b68 100644
-> > --- a/drivers/iio/industrialio-core.c
-> > +++ b/drivers/iio/industrialio-core.c
-> > @@ -95,6 +95,7 @@ static const char * const iio_chan_type_name_spec[] = {
-> >       [IIO_DELTA_VELOCITY] = "deltavelocity",
-> >       [IIO_COLORTEMP] = "colortemp",
-> >       [IIO_CHROMATICITY] = "chromaticity",
-> > +     [IIO_ATTENTION] = "attention",
-> >  };
-> >
-> >  static const char * const iio_modifier_names[] = {
-> > diff --git a/include/uapi/linux/iio/types.h b/include/uapi/linux/iio/types.h
-> > index f2e0b2d50e6b..12886d4465e4 100644
-> > --- a/include/uapi/linux/iio/types.h
-> > +++ b/include/uapi/linux/iio/types.h
-> > @@ -51,6 +51,7 @@ enum iio_chan_type {
-> >       IIO_DELTA_VELOCITY,
-> >       IIO_COLORTEMP,
-> >       IIO_CHROMATICITY,
-> > +     IIO_ATTENTION,
-> >  };
-> >
-> >  enum iio_modifier {
-> > diff --git a/tools/iio/iio_event_monitor.c b/tools/iio/iio_event_monitor.c
-> > index 8073c9e4fe46..ed9a677f1028 100644
-> > --- a/tools/iio/iio_event_monitor.c
-> > +++ b/tools/iio/iio_event_monitor.c
-> > @@ -63,6 +63,7 @@ static const char * const iio_chan_type_name_spec[] = {
-> >       [IIO_DELTA_VELOCITY] = "deltavelocity",
-> >       [IIO_COLORTEMP] = "colortemp",
-> >       [IIO_CHROMATICITY] = "chromaticity",
-> > +     [IIO_ATTENTION] = "attention",
-> >  };
-> >
-> >  static const char * const iio_ev_type_text[] = {
-> > @@ -183,6 +184,7 @@ static bool event_is_known(struct iio_event_data *event)
-> >       case IIO_DELTA_VELOCITY:
-> >       case IIO_COLORTEMP:
-> >       case IIO_CHROMATICITY:
-> > +     case IIO_ATTENTION:
-> >               break;
-> >       default:
-> >               return false;
-> >
->
+> 
+>>
+>> Fortunately I don't maintain that code :)
+>>
+>>
+>> If we don't want to go with the shmem_enabled toggles, we should
+>> probably still extend the documentation to cover "all THP sizes", like
+>> we did elsewhere.
+>>
+>> huge=never: no THPs of any size
+>> huge=always: THPs of any size (fault/write/etc)
+>> huge=fadvise: like "always" but only with fadvise/madvise
+>> huge=within_size: like "fadvise" but respect i_size
+>>
+>> We could think about adding a "nowaste" extension and try make it the
+>> default.
+>>
+>> For example
+>>
+>> "huge=always:nowaste: THPs of any size as long as we don't over-allocate
+>> memory (write)"
+> 
+> This is the default behaviour in other fs too. I don't think is
+> necessary to make it explicit.
 
+Please keep in mind that allocating THPs of different size during *page 
+faults* will have to fit into the whole picture we are creating here.
+
+That's also what "huge=always" controls for shmem today IIRC.
+
+>>>
+>>>>>>
+>>>>>> I consider allocating large folios in shmem/tmpfs on the write path less
+>>>>>> controversial than allocating them on the page fault path -- especially
+>>>>>> as long as we stay within the size to-be-written.
+>>>>>>
+>>>>>> I think in RHEL THP on shmem/tmpfs are disabled as default (e.g.,
+>>>>>> shmem_enabled=never). Maybe because of some rather undesired
+>>>>>> side-effects (maybe some are historical?): I recall issues with VMs with
+>>>>>> THP+ memory ballooning, as we cannot reclaim pages of folios if
+>>>>>> splitting fails). I assume most of these problematic use cases don't use
+>>>>>> tmpfs as an ordinary file system (write()/read()), but mmap() the whole
+>>>>>> thing.
+>>>>>>
+>>>>>> Sadly, I don't find any information about shmem/tmpfs + THP in the RHEL
+>>>>>> documentation; most documentation is only concerned about anon THP.
+>>>>>> Which makes me conclude that they are not suggested as of now.
+>>>>>>
+>>>>>> I see more issues with allocating them on the page fault path and not
+>>>>>> having a way to disable it -- compared to allocating them on the write()
+>>>>>> path.
+>>>>>
+>>>>> I may not understand your issues. IIUC, you can disable allocating huge
+>>>>> pages on the page fault path by using the 'huge=never' mount option or
+>>>>> setting shmem_enabled=deny. No?
+>>>>
+>>>> That's what I am saying: if there is some way to disable it that will
+>>>> keep working, great.
+>>>
+>>> I agree. That aligns with what I recall Hugh requested. However, I
+>>> believe if that is the way to go, we shouldn't limit it to tmpfs.
+>>> Otherwise, why should tmpfs be prevented from allocating large folios if
+>>> other filesystems in the system are allowed to allocate them?
+>>
+>> See above. On systems without/little swap you might not want them for
+>> shmem/tmpfs, but would happily use them elsewhere.
+>>
+>> The "write() won't waste memory" case is really interesting, the
+>> "fallocate cannot free the memory" still exists. A shrinker might help.
+> 
+> The previous implementation with large folios allocation was wrong
+> and was actually wasting memory by rounding up while trying to find
+> the order. Matthew already pointed it out [1]. So, with that fixed, we
+> should not end up wasting memory.
+
+Again, we should have a clear path forward how we deal with page faults 
+and how this fits into the picture.
 
 -- 
-Ricardo Ribalda
+Cheers,
+
+David / dhildenb
+
 
