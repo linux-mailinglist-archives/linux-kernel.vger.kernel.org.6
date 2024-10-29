@@ -1,96 +1,141 @@
-Return-Path: <linux-kernel+bounces-386091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033859B3F0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:22:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 759BD9B3F0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:22:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEADF1F234C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:22:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05CBA1F23214
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:22:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7BEEACE;
-	Tue, 29 Oct 2024 00:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36FEAB661;
+	Tue, 29 Oct 2024 00:22:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="oYuCQ8ah"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IV2FWtKc"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37034A2D;
-	Tue, 29 Oct 2024 00:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD69979F6;
+	Tue, 29 Oct 2024 00:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730161309; cv=none; b=dvv/Rl/Xdrkin99crjIAVrwUKbcqSys9dyfI13YQN8JeIVZWMLJEh5w99EUDbSM5FJFQv4VxDHCwKH4ktC7KfFdbHF717EyEcWm0TB7cklXpswsn2CyxIlAIJ0IhZGaU/jBi2fyhsVrqtaT53On0OQ4uTTY+xbBBDL9sgDV9+Zo=
+	t=1730161341; cv=none; b=rFm4mv52T9HWUgE0iI5dnUmQMzdZbe8L7wMG1Kww/WulAN9nBWlph4Xt/OMtHBeKJ/hIXkYpB7FYPbLR3D36NLpy7Qp8iQsmpF9gxHuJQ3w90yO99yWINJ6JWVfezfy0KFAwPnjJ+KfXA1aoKR2htoXFpMGgr+ZnROrEnRGpnyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730161309; c=relaxed/simple;
-	bh=w4C9vOwVGFZiRT0Fz27ZKL0MWwvq5h9ls4orop1dnWU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e2AUgSZzBc/k1oAqV8i4npEiklPYbpOpiJs/LFfEOwVtH+SlukqwmqfFpTdkFFF0nphsK8vZw8eGSEngRON5UCNawJxAhRq0M1BJWroGAHrSndfHm2Lkj6oNlVeOm5ghvPPaPoDQzfzWImUCTH7ob28JmfAE1c6uozDMw6Fc6Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=oYuCQ8ah; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 310FBC4CEE7;
-	Tue, 29 Oct 2024 00:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730161308;
-	bh=w4C9vOwVGFZiRT0Fz27ZKL0MWwvq5h9ls4orop1dnWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oYuCQ8ahiRHO/MMQjk6KI/A/arhBtKFk6AzEiHSfxPla6U8mp2MpbWovFMbXU7rVK
-	 raC9tk1/HvewF1iPPIiTyckVLyFIrLkzU/hT6hPUnKyzIrFc5Q9bLVAX1SDc0JsPfe
-	 mvYnIacnZa+f2DDvbVzYoIEgzsil8KV+O1apEq9E=
-Date: Tue, 29 Oct 2024 01:21:35 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
-	rafael.j.wysocki@intel.com, tj@kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v2] driver core: Fix userspace expectations of
- uevent_show() as a probe barrier
-Message-ID: <2024102915-swiftly-almanac-9534@gregkh>
-References: <172790598832.1168608.4519484276671503678.stgit@dwillia2-xfh.jf.intel.com>
- <67047c516045d_964fe294b1@dwillia2-xfh.jf.intel.com.notmuch>
- <42dfef93-eb8a-458b-b76b-b7de9077d0af@leemhuis.info>
- <672016f35ed5d_bc69d2946a@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1730161341; c=relaxed/simple;
+	bh=3WEEoFWaxGq+sKCybK00zkmLQC0BVNy62Aqv424bblk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bwf5Hm+x0M/flUdHSIasYVXrMGU4HNTCUXnTJFRr/RO9UM+kGsChPG5kc7X/vpXId4QMSOFynJ7lKta7eH66sGJtFEOJ2iMX7ZcQu53g4EQSNxKvCHpqi1OL2utbN3yyhPnbEZ7MAEJORjdeus4ZoNoWoDBRn7HgEkubFZSr9OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IV2FWtKc; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2dcf4b153so3565168a91.1;
+        Mon, 28 Oct 2024 17:22:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730161339; x=1730766139; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bq5SxekQBwmDZwwnedhNJed3DRc+7578EvOxXxIqLD0=;
+        b=IV2FWtKcjBA5OiDfxRAhD+FIydgIXVF6H0Z0652OSLCFXx1aiIx4gPvBXWheZ0951J
+         WFfY5V3QDbeXNZI3HfylBVz5x2VEPfV6MG0WoaOgNQ/zbqS0ojYqKi6oZTlDXEM2+27S
+         ZeRCz8qGKSewQ2kzEgyhv4saMXzpSlTH9rkWj/fsPgxfWJxwEbBcK3Lsc6jRPhyR5DQ3
+         dYuHoGitMoNIbCfaQe6MlGUMH2BVtwfewusRGHB2zCdniIG6HlZvNzbfQ8k92WIeJ/+e
+         4wHgjKBUFhyfeQvRY/gJydgxcYQuoyR4VUsew4wsDXtL11utMIcQit3TskrheZMzvKjZ
+         +8cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730161339; x=1730766139;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bq5SxekQBwmDZwwnedhNJed3DRc+7578EvOxXxIqLD0=;
+        b=qmfKs5zpDXfg6DyLasWRiVe7dJKsCeSsFvUw7KTeNTSTzFhE/dmM5ReolsAOewPAzY
+         O/5qNkRd/n3zlb5PiqVYzyQJsuM45juong/aW4Szacb6AZSezsl4r0Raf67k+QMIFe7s
+         q3FKwyAehWpElYW0Fnjrj9gP6ySDvqYzCThoBUcQy1G2iyquJn//mHear7gqKLwxLmfw
+         SYTrL+adnJNfTIeC+zkMzUT1iRQaIUoG6zhp5nOSnQX9xo9zMRnaV9fKDUG/JKQ8DGLv
+         dg4xV9aNrltgUvidcDQvKIAZ6dGoKu/22yVJ1mJ8XC1rLHUa5JjZxdutoGbkFiObRlFK
+         A5+w==
+X-Forwarded-Encrypted: i=1; AJvYcCUk+tydq92Cw7Z0sJ8Ghp8JA/+m5LcILQftP08aRQcZl28ODUJdotrs4rD2GhDhh/mKaerdAcIb1I3a9uLhDiMUr3LY@vger.kernel.org, AJvYcCWdOKcDs/bRBH0DZCPEgon6Xj2CLAgltim+/CQBS4y2TkO5MYjYqU79r0mGycSe52uUDLo=@vger.kernel.org, AJvYcCWfw8ZEKBDDxsyd6Rz12cfBKxpjhe5jK+nNOHv3/b4zZT7sllKraEuNAFpaLxsKJndDYr2gPB2Gbm/23hz8@vger.kernel.org, AJvYcCWlHV04vnGizr5lRPojJAz6subIYeBV2EXbHguVflJJASnWFEXsJ7HbhdQ3TtOBh/+fB6eRYO3HSfe1/pgSrnXZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkV8hqc9DeHq6OjEZS6DecQfdsjs3UxOHYWy10pppWvxeygiGj
+	y57tE0gy6BIpl9rs2GGc1La1KN8qijAM5nAfGCHBFGwkAsFyO/g0
+X-Google-Smtp-Source: AGHT+IEo2kdFUNLvFdAKcRWwfQDnStts3x0mY//DC4mxa5rXin+viUft2X2txeZ/w/B99WyA41VBZQ==
+X-Received: by 2002:a17:90a:710:b0:2d1:bf48:e767 with SMTP id 98e67ed59e1d1-2e8f11a8885mr11178010a91.29.1730161338938;
+        Mon, 28 Oct 2024 17:22:18 -0700 (PDT)
+Received: from pengdl-ub.localdomain ([106.37.77.202])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48e4a2sm10175507a91.2.2024.10.28.17.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 17:22:17 -0700 (PDT)
+From: Donglin Peng <dolinux.peng@gmail.com>
+To: andrii@kernel.org,
+	eddyz87@gmail.com
+Cc: ast@kernel.org,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Donglin Peng <dolinux.peng@gmail.com>
+Subject: [PATCH v4 0/3] bpf: Using binary search to improve the performance of btf_find_by_name_kind
+Date: Tue, 29 Oct 2024 08:22:05 +0800
+Message-Id: <20241029002208.1947947-1-dolinux.peng@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <672016f35ed5d_bc69d2946a@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 03:57:55PM -0700, Dan Williams wrote:
-> Thorsten Leemhuis wrote:
-> > On 08.10.24 02:26, Dan Williams wrote:
-> > > Dan Williams wrote:
-> > >> Changes since v1 [1]:
-> > >> - Move the new "locked" infrastructure to private header files to make
-> > >>   it clear it is not approved for general usage (Greg)
-> > > 
-> > > Greg, per the 0day report and further testing I am missing something
-> > > subtle in using kernfs open files to pin device objects. So hold off on
-> > > this for now until I can get that root caused. If someone else can spot
-> > > what I missed feel free to chime in, but otherwise I will circle back.
-> > > 
-> > > If I don't get back to this before -rc6 I think the theoretical deadlock
-> > > that would be re-introduced by a revert of 15fffc6a5624 would be
-> > > preferable to this reported regression. I am not aware of any reports of
-> > > that deadlock triggering in practice.
-> > Was there any progress? If not: given that Linus prefers to have things
-> > fixed by -rc6 I wonder if now would be a good time to get the revert on
-> > track for a merge later this week.
-> 
-> Revert 15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach
-> race"), which reintroduces a theoretical lockdep splat, is my preference
-> at this point.
-> 
-> Even if I had a new version of this replacement patch in hand today I
-> would still want it to be v6.13 material, not v6.12-rc. It deserves a
-> full kernel cycle soak time to shake out issues before release.
+Currently, we are only using the linear search method to find the type
+id by the name, which has a time complexity of O(n). This change involves
+sorting the names of btf types in ascending order and using binary search,
+which has a time complexity of O(log(n)). This idea was inspired by the
+following patch:
 
-Ok, I'll do the revert in my tree and push it for the next -rc release
-thanks.
+60443c88f3a8 ("kallsyms: Improve the performance of kallsyms_lookup_name()").
 
-greg k-h
+At present, this improvement is only for searching in vmlinux's and module's BTFs.
+
+Another change is the search direction, where we search the BTF first and
+then its base, the type id of the first matched btf_type will be returned.
+
+Here is a time-consuming result that finding 87590 type ids by their names in
+vmlinux's BTF.
+
+Before: 158426 ms
+After:     114 ms
+
+The average lookup performance has improved more than 1000x in the above scenario.
+
+v4:
+ - Divide the patch into two parts: kernel and libbpf
+ - Use Eduard's code to sort btf_types in the btf__dedup function
+ - Correct some btf testcases due to modifications of the order of btf_types.
+
+v3:
+ - Link: https://lore.kernel.org/all/20240608140835.965949-1-dolinux.peng@gmail.com/
+ - Sort btf_types during build process other than during boot, to reduce the
+   overhead of memory and boot time.
+
+v2:
+ - Link: https://lore.kernel.org/all/20230909091646.420163-1-pengdonglin@sangfor.com.cn
+
+Donglin Peng (3):
+  libbpf: Sort btf_types in ascending order by name
+  bpf: Using binary search to improve the performance of
+    btf_find_by_name_kind
+  libbpf: Using binary search to improve the performance of
+    btf__find_by_name_kind
+
+ include/linux/btf.h                           |   1 +
+ kernel/bpf/btf.c                              | 157 +++++++++-
+ tools/lib/bpf/btf.c                           | 274 +++++++++++++---
+ tools/testing/selftests/bpf/prog_tests/btf.c  | 296 +++++++++---------
+ .../bpf/prog_tests/btf_dedup_split.c          |  64 ++--
+ 5 files changed, 555 insertions(+), 237 deletions(-)
+
+-- 
+2.34.1
+
 
