@@ -1,76 +1,116 @@
-Return-Path: <linux-kernel+bounces-387341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4416B9B4FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:44:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B01C9B4FB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:45:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF80A2847C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6FE1C22846
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5431D6194;
-	Tue, 29 Oct 2024 16:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962161D8E0D;
+	Tue, 29 Oct 2024 16:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PDGJaPw3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxnX1Q1S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B0A199FBB;
-	Tue, 29 Oct 2024 16:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8976194AD1;
+	Tue, 29 Oct 2024 16:45:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220284; cv=none; b=o3kJw3nC8lNmDMy0VjYZ9jog699mKmW+8ywpwf8bsGkQb4TstY1Nd9XqREL5s2+FK/R37/BLeNlbnSP9U5F3IU8Yjtwxv9SzIKagr9YoOgGR/zvrsQ3L7pQREDoJqMYmJhTowQSJRY8oKZQxJmRWgdeoSlFMwc3jtHz9mHee9g0=
+	t=1730220304; cv=none; b=Eb+H46F9liP0nGWKL7BhbY0tr3r/90Nlzp9sTOfwU+gVQyRFLHfKbvGq/5Ew5nFk2natRBiruA0lCZUfipK+abYZX5QCf1Y+WctK2JcMSyCCkpT/yOXcFFfgR9raE+rV9LXl5wwRblviTvw78MRUeTztd0rGPAqA/ljr0t0VFMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220284; c=relaxed/simple;
-	bh=eh4zIpr9hXJbjU+gPJNU8c1R5EohPpknuK6IFTBhWR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ajbhQACu1RQUX4MYpiaybXmDdQ/xWb9HqCd77m6muQyUbnDoo0pZ8eeHiHiOxTwxuZsMjLmBmrewBb7I3UnzZ4DkOsz8l3PlXhwmMIH7Le7YQDxiZ6+x0P0bPf7+DKiu8n1b5psNXXPLaeAAWR4mkJOgMHbVy9plB0BKnD6jk94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PDGJaPw3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53367C4CECD;
-	Tue, 29 Oct 2024 16:44:43 +0000 (UTC)
+	s=arc-20240116; t=1730220304; c=relaxed/simple;
+	bh=FGhg9/5lJ7zrWIgk9nIXWwVFehhFDTKeJb/zyhiCTVk=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f4tdhzuCUJWYrNgrJKu8RoLc+PXCHJYU1ZnCEfxcUOpfGB9/vgUJFhyGNqU2TCUlLI0GDt9ULK0hKO6QGtOiA2G4ytkFKzwnHPJcx2CWlXcHiLFXuhhcKnBlhRve6Oonza/I8y1FF02oPiVghcKgBWFWe1uOcf4SLt8DGDNoq0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FxnX1Q1S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7488BC4CEE4;
+	Tue, 29 Oct 2024 16:45:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730220283;
-	bh=eh4zIpr9hXJbjU+gPJNU8c1R5EohPpknuK6IFTBhWR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PDGJaPw3A+Y/OHdeRC4Ynmz69V/IaGtviPGM9N+xNxPGo+4af3POoFVTIvmHABwxP
-	 I+aG92/HJ12//WLeJXVFk8PCesH02oC9JameuLiYazty5/u1TZL7TnSerM/vUt71rA
-	 ecg5MJ7Vg3C60bpk0cJQF21ABb+rYT1SJAPbo6xMs6F3q87IJ00EL2rNEwQdJW8YI4
-	 pXyM+bEGz0J+46RpAV0xYgNQL/SqY+S5HfWfy+7cwdqdDX6uoXp62JXhszcYvbs7Wu
-	 HoTbi+bRyNPeOKh7GvdPtGpeyxIzZ6EtTt0OjShOyO3LO9u+oypLK++DdUEbajcoUi
-	 9KuuhSoN4Zx0g==
-Date: Tue, 29 Oct 2024 12:44:42 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Alasdair Kergon <agk@redhat.com>, Mikulas Patocka <mpatocka@redhat.com>,
-	dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] dm ioctl: rate limit a couple of ioctl based error
- messages
-Message-ID: <ZyEQ-mT-ojb6R0a7@kernel.org>
-References: <20241024110431.1906858-1-colin.i.king@gmail.com>
+	s=k20201202; t=1730220303;
+	bh=FGhg9/5lJ7zrWIgk9nIXWwVFehhFDTKeJb/zyhiCTVk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FxnX1Q1Sq8u60xmVKPiDvb1bR5ObMLLtpjtql2eFaCWyF2cYDRHJ/fSJY3lSdUaFy
+	 MEnH+pphFFUa1oJDWPSkqa7dEVvCnGGhztH4EQL7tTysnAXVOHJC3g+s28XRU8V68/
+	 qXXH+b4/dUVoCZt6ffCR16sEIB3HVCdh1PEadSn5ccHDexto4Jp2WkY21Wu5/V0WUC
+	 D0l6T7pnR7kG2u0leEQcU2jLfE90yZKPewLrNWbr8E8RePImhm72dwljy4DKqq/bTB
+	 lU3Bmp66fUpjd7HsETGgCYItiQvulIBqFU3B21ppsQY1fXUvyFj/EGZE/53rCWwAmh
+	 Dtg1rtkXdIlNA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t5pL3-007zVM-8J;
+	Tue, 29 Oct 2024 16:45:01 +0000
+Date: Tue, 29 Oct 2024 16:45:00 +0000
+Message-ID: <867c9q3lkj.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mark Brown <broonie@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 8/9] KVM: arm64: Allow control of dpISA extensions in ID_AA64ISAR3_EL1
+In-Reply-To: <20241028-arm64-2024-dpisa-v1-8-a38d08b008a8@kernel.org>
+References: <20241028-arm64-2024-dpisa-v1-0-a38d08b008a8@kernel.org>
+	<20241028-arm64-2024-dpisa-v1-8-a38d08b008a8@kernel.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024110431.1906858-1-colin.i.king@gmail.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: broonie@kernel.org, catalin.marinas@arm.com, will@kernel.org, corbet@lwn.net, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, shuah@kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, kvmarm@lists.linux.dev, linux-kselftest@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, Oct 24, 2024 at 12:04:31PM +0100, Colin Ian King wrote:
-> It is possible to spam the kernel log with a misbehaving user process that
-> is passing incorrect dm ioctls to /dev/mapper/control. Use a rate limit
-> on these error messages to reduce the noise.
+On Mon, 28 Oct 2024 20:24:17 +0000,
+Mark Brown <broonie@kernel.org> wrote:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ID_AA64ISAR3_EL1 is currently marked as unallocated in KVM but does have a
+> number of bitfields defined in it. Expose FPRCVT and FAMINMAX, two simple
+> instruction only extensions to guests.
+> 
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  arch/arm64/kvm/sys_regs.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
+> index dad88e31f9537fe02e28b117d6a740f15572e0ba..ab348c314d7963437e1876d441169f3ef4eff095 100644
+> --- a/arch/arm64/kvm/sys_regs.c
+> +++ b/arch/arm64/kvm/sys_regs.c
+> @@ -2409,7 +2409,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
+>  	ID_WRITABLE(ID_AA64ISAR2_EL1, ~(ID_AA64ISAR2_EL1_RES0 |
+>  					ID_AA64ISAR2_EL1_APA3 |
+>  					ID_AA64ISAR2_EL1_GPA3)),
+> -	ID_UNALLOCATED(6,3),
+> +	ID_WRITABLE(ID_AA64ISAR3_EL1, (ID_AA64ISAR3_EL1_FPRCVT |
+> +				       ID_AA64ISAR3_EL1_FAMINMAX)),
 
-Mikulas, please update the header to include the context that
-stress-ng is what Colin was using when he experienced excessive
-warnings.
+Please add the required sanitisation of the register so that we do not
+get any surprise exposure of unhandled features when someone changes
+ftr_id_aa64isar3[].
 
-Thanks.
+	M.
 
-Acked-by: Mike Snitzer <snitzer@kernel.org>
+-- 
+Without deviation from the norm, progress is not possible.
 
