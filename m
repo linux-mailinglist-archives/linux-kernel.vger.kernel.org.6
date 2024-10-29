@@ -1,108 +1,124 @@
-Return-Path: <linux-kernel+bounces-386670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8FD9B46AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:23:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 974429B46AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:23:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B10831F23F4B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAA5F1C21D24
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771AD20494D;
-	Tue, 29 Oct 2024 10:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A602040AF;
+	Tue, 29 Oct 2024 10:22:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jXezlqQM"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eb+Ydevr"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5487204940
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:22:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6286C204953
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197373; cv=none; b=C3g1tl1l52ssfrDptig1vHjJf8QMs0JkWhH3YjNhVu2Xj4By2P+5+lzdyt8IVRdzRTdrDunx+tcuX+qIcH4P013+CrtlkE054e6qfbeeo4X44/I1vIyCWiOjhi8Ep7dWSlmKcckSCrkA5ulcoZW0JOPmziBK4pcM3TMaPUwxWbU=
+	t=1730197369; cv=none; b=czJQZ0SPZ0zRx3Say7jUVIVfengsG92Cu3uprnnrLdfq6loYWk1Q25Xqmfsznn99V02xF4k5Bn925eAONT9J3CaDyp6EHcaCbf1JHfTPpYARsWxuO4CJwxDo4nxKDBX/I1huENsyOaN3Egb4u1aMgSh9dsYf5+npkiJKDUyMukg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197373; c=relaxed/simple;
-	bh=NClCEWAbIaB97jE5fBeq2TT2+qZkg9zuHJmvLo/j5xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KqgpTCvS51LBNxoLbPZ4AljsSsi9rBM+m21JwLZ4DGgNcTpRELVj5wAkVbSEPQdTLquKN0wePXzm74sd7wH2sQ6yM+DjgD1VpFm26EI4XQ3TEGAv4CFyMXDqrSDOuo1ZqbgfKkAkrOLQF+Lq+EwMRUDs8WzKnD2rr0bV/CYEHQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jXezlqQM; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a16b310f5so818587566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:22:51 -0700 (PDT)
+	s=arc-20240116; t=1730197369; c=relaxed/simple;
+	bh=zKzvozsHvMVGmliPLR7v7+fCyZLXuX2AiBoKviUE3N8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=LSKxEbotR/dwM6hrJ6Ixk/QETGRh7Ipb8QfsbIzZbB6+8V2gtW2Tb8W9IVfanP54oDoGtYeHvVUGj2mqVW4kO4MiVmuNYw9ROWiYfIZxzFQl/9fRt/87x2Y3gWPC6o9KfPpW9DIbOCqjRlqtwjYvzBzxHhWAZ1epVEkMAvIUjwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eb+Ydevr; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cbca51687so48176595ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:22:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730197370; x=1730802170; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OpoGu220G+I2JHmMdH/oGpp5x5wmIi+eCNknBPJ0niQ=;
-        b=jXezlqQMugzj9YeuOaH4bpm7t31Z9rqgZhZgsT0oN5acSCZf0tAu/no7pshUPYt8CY
-         fqgh2ecn7nIpLUiZewavywcz5K4AtH0BvzZz+X1/qogy6bpfq0EV646OwVw4f0Ip1rvj
-         NHFt2qYJuoE8RB0AIUSBrbl6WYQf5qSy6SAeoYCiAUPHJBjvt/DChdLhduKFtZRC5Bzm
-         OYPIGCbT3/uQze/Z6+5ZkzhPs2/Qil/6kQkyKw/tNFs8Mg1p/LI+2emYdptz2MCXyPTp
-         wem3E0ECWTvFea6rIkOOSHcl/2PLCHrV45IKZnO7ajK/UK1IuqiM7BmkunOA4+e54xv2
-         sHQw==
+        d=gmail.com; s=20230601; t=1730197367; x=1730802167; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=01Umf8iUVZfC58kdjKuuiE82OEKV9wbOQ6pjiqKLUv8=;
+        b=eb+YdevrRPwtNqbz7x/P0eFC0F8t/QuT50lnzzeAdZW3xGk9DsrWnD3Q/K1ukpojjc
+         JfrrnjpDo3PDgGJSTk7udSUElEMf92sr5VM1r1UU1XAk/V4MdGQkXRuMqWqEDD9/uODC
+         /ILMZagXD62Q8R4OxBKN9ZbFcceVKJ6l67J+b/yh5JFZeOjpB0+bd5pzvr689B2VWFgE
+         0hR7hvhuQnJ/puMg2+gbo2QG/85EB2SzuQhDf7eLPK38cEF94LtEKGMggkalP3qR6yVC
+         NuvSjffvrZjLXfHelyKRi2mMyJZH7z/Va8fp6L6lkv0pGUizHCeMIL8eGHckpATYCMs7
+         I9ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730197370; x=1730802170;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1730197367; x=1730802167;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OpoGu220G+I2JHmMdH/oGpp5x5wmIi+eCNknBPJ0niQ=;
-        b=textO/jjCTx/q15IjkXVDkKfuSZK9s/vWqC+IkV76m+v67Oo17wHAVk1lO/ZDL+ydI
-         9wfEn5VjxBzpAOFh6BIcDwPF8mMbOJqjGNFZc5lacuFSHBF1+LvRnWs5srrkqk0aULPI
-         XTWQYNO3jipLAYdmB+pp/E4+mm45565HgI4BFUOsJdbq6FpW0m5kt5CDH8p3E8sSfMAl
-         CfgmQPd2VKaozo8T2TCVcbMzvx/aR/L6DDG1jPSzQmngpkDJcz+3ypmapl/VjW5/1vH8
-         QhA6Na50Nm9wBbf9S6+L0LN8uK2aNmCuPXq/EYBFML5b+v01tZ/To5Xo7vAer8K1fdz7
-         mW1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXm/SB0ZTtM3MlHTyaklDEfZTy2uwwl9KmWRnxdrD0BL5B7VoVI4+aPsiW7Nbi4HjCDcUTGmbb3Iqr7BR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylfaxUjaRe9dwPDBynEN2tpCTVjhLqXrn4Dx9iMKmLLsk+f0+T
-	vCFlg2htRqF0U0FWYcevVmIfz+ZzAEMxHw7RC++oqJlItT52WuT4OGWdF53KYieds32SSfrHyTG
-	yubxy/62IswLxTzjrYAKJNBg0ngJ2IQ4IxpGLzw==
-X-Google-Smtp-Source: AGHT+IFwYSWi04yLig8BPjAEmb/KEwa+yXShIueQnJ+VdE3pSaqui1FH3sSzNX1eqK6Zn5jcZyfPrVapC20OfiZLOpI=
-X-Received: by 2002:a17:907:980e:b0:a9a:7f34:351b with SMTP id
- a640c23a62f3a-a9de5cfd5d1mr1021253466b.3.1730197369900; Tue, 29 Oct 2024
- 03:22:49 -0700 (PDT)
+        bh=01Umf8iUVZfC58kdjKuuiE82OEKV9wbOQ6pjiqKLUv8=;
+        b=KiAzV1PoJrd3Vwy35KaqhBSt5BaBf+1AZYhXemArgePLBlKbJd8pJ/RvUywzkdJD8H
+         qIUT6Rw0zm2vI4gQyUOxCsA4z96Wn5ngdk9YERGiD8EuMKnA9WThkmpndSvdftrkF6k+
+         A96eswJYxasrwOcd5KKPMeQgaaKqnRWGbcBpmwb994nuMqac1lPIgOQpi7iz1YGfFyhB
+         yHmHCcibbWUdbZlVDSr/iP5yEIzH+G5PUn7wuSAN/YTefRGSLat9NB4GTPIWkhDTqnIQ
+         i2h7di+awPFnKluY+L3hwybNdRAB8qCPkqxsOzWO+v4+QAAWVZp3cWYNq8KjHCJBL68f
+         aaAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXIFkEm5kjWihiVghnDs+doG5gPQC0HerCrxRJt5yi2kY2h4/fClQl9GkjCmsp48eu4zNXwo2jnwiv0Q7g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx02AmQcH1up3cqw7cl6J5KcdtbS+tgKz1b8LeKJeTAwz+nCJ6I
+	hkWdr18B50ssIZlgm2phXLX8E36S1XVy4dbA/Je6T2iVDw9/tFHS
+X-Google-Smtp-Source: AGHT+IElqNym4BeJPNCJTlbSlHkx0TRDzfK6WFA45y6XkQcbHMPJugv4gb8Tn9WYSnPeio2CIZlTCg==
+X-Received: by 2002:a17:903:228a:b0:20c:83e7:ca4f with SMTP id d9443c01a7336-210c6bfd3afmr147760185ad.26.1730197366561;
+        Tue, 29 Oct 2024 03:22:46 -0700 (PDT)
+Received: from gye-ThinkPad-T590.. ([39.120.225.141])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf6dd62sm63475445ad.95.2024.10.29.03.22.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 03:22:46 -0700 (PDT)
+From: Gyeyoung Baek <gye976@gmail.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>
+Cc: Gyeyoung Baek <gye976@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix unused variable warning in 'drm_print.h'
+Date: Tue, 29 Oct 2024 19:22:34 +0900
+Message-Id: <20241029102234.187480-1-gye976@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029073857.753782-1-ahaslam@baylibre.com> <20241029073857.753782-2-ahaslam@baylibre.com>
- <6ec5ea74-8d2b-442e-9bde-c2ce6802dc8a@linaro.org>
-In-Reply-To: <6ec5ea74-8d2b-442e-9bde-c2ce6802dc8a@linaro.org>
-From: Axel Haslam <ahaslam@baylibre.com>
-Date: Tue, 29 Oct 2024 11:22:13 +0100
-Message-ID: <CAKXjFTOMpGpxCcFCL5GjeAgJVJpK7Y56dcsfMkRvFPQnrTbTnQ@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: iio: dac: ad5791: Add optional reset,
- clr and ldac gpios
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, nuno.sa@analog.com, 
-	dlechner@baylibre.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 29 Oct 2024 at 10:21, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 29/10/2024 08:38, ahaslam@baylibre.com wrote:
-> > From: Axel Haslam <ahaslam@baylibre.com>
-> >
-> > Depending on board layout, the ad57xx may need control of reset, clear,
-> > and ldac pins by the host driver. Add optional bindings for these gpios.
-> >
-> > Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->
-> I don't get how v1 could get my review. I never give reviews out of
-> mailing lists.
+previous code can make unused variable warning,
 
-I  forgot to mark this as v2 with the subject prefix. :(
-this should be v2, same for the other patches. ill resend.
+e.g. when CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
+this outputs the following build error.
 
->
-> Best regards,
-> Krzysztof
->
+drivers/gpu/drm/drm_print.c: In function ‘__drm_printfn_dbg’:
+drivers/gpu/drm/drm_print.c:218:33: error: unused variable ‘category’ [-Werror=unused-variable]
+  218 |         enum drm_debug_category category = p->category;
+
+
+
+so i simply add '(void)(category);' to remove unused variable warning,
+by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html".
+
+Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+---
+ include/drm/drm_print.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/drm/drm_print.h b/include/drm/drm_print.h
+index d2676831d765..6a5dc1f73ff2 100644
+--- a/include/drm/drm_print.h
++++ b/include/drm/drm_print.h
+@@ -157,7 +157,7 @@ static inline bool drm_debug_enabled_raw(enum drm_debug_category category)
+  * a descriptor, and only enabled callsites are reachable.  They use
+  * the private macro to avoid re-testing the enable-bit.
+  */
+-#define __drm_debug_enabled(category)	true
++#define __drm_debug_enabled(category)	({ (void)(category); true; })
+ #define drm_debug_enabled(category)	drm_debug_enabled_instrumented(category)
+ #else
+ #define __drm_debug_enabled(category)	drm_debug_enabled_raw(category)
+-- 
+2.34.1
+
 
