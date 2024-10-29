@@ -1,160 +1,195 @@
-Return-Path: <linux-kernel+bounces-387308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 432A49B4F49
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:27:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E379B4F4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:29:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6739B1C219AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:27:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 626981F26B07
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33993199949;
-	Tue, 29 Oct 2024 16:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E137D199234;
+	Tue, 29 Oct 2024 16:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urbEN6hN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/mtpTFN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798BA2107;
-	Tue, 29 Oct 2024 16:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 374E22107;
+	Tue, 29 Oct 2024 16:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730219254; cv=none; b=U+tIofre2W1tNIXuKNsC2KRSDY6KlpLwl0sPHfEAKu09UjQbSZzTRf2RawY6zvVT9DI1/uzlWy3nQGqUoeRk0OM9Q2ijr91oxGMjdPYwqLupVQaxYaxj9NCxfsAyxlHKzt8JOsmlpS9tcQpNQhqu+RYT50lbNQGv4F2b5OF4B+0=
+	t=1730219354; cv=none; b=PZ1EMKuJrpEvlSqxiq74tTj9LJCEbkxAjjETHrcDaEuX56S3162De/nu4KSqQCoMsWkTTVvdLd2jBoi2NN2QNryvaZNw1F5DL3dlqzEZw3sHt794lWhtOkjgUh+9nlqum6klSdHqduYnLxSt6NYLNDS8O6MhUPsffqbOVpzvPXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730219254; c=relaxed/simple;
-	bh=Z3N4p1dwXhBN00KOleOrbra5ELWKA6izVcLKfEwUA6c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EKjWmTXe04/57oc7MPhHZexABGuMichi6i9tdoXuGlJrZQ+GqEUV4lvd2vD/uz1/Whv89HgB5CG+ubl7yHhIz7LVdwVWEnK/wfHoOYMgUZMUyJjc5kIO77BQ+IeEt7mDmiL6zr/T0dFMUzoBgv0QbJQKlNTnW25XPrriWsF3RDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urbEN6hN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF11EC4CEE4;
-	Tue, 29 Oct 2024 16:27:33 +0000 (UTC)
+	s=arc-20240116; t=1730219354; c=relaxed/simple;
+	bh=XEi6ujTZMgV90pVEuH+kg3iRvzVKiuquwcJsySkcQag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LwNgwG+uzI//qSlhEe7YpqFxAygOV6PrkguuWMkDhVbtZTdIU6l4GKAhr1DasLRhLE6J81zkgoBp8m6u6BOOS39lVjVFGvMjdsXr4fKyDdmZH0IpFEDqz4R4IP2A5tGqTtYrCom4JAZCVehy0j2tOELGrIEzq2nUWFXcaMIinrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/mtpTFN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A062BC4CECD;
+	Tue, 29 Oct 2024 16:29:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730219253;
-	bh=Z3N4p1dwXhBN00KOleOrbra5ELWKA6izVcLKfEwUA6c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=urbEN6hNzPqi50TUyCRNw61epjyTQT3YPQmW5yrOe5jO+DwS/+lgpRI2cqFKO9aG6
-	 Tpj1T/xg6ZozpcDEl7bBQMK2X7sOdaEBneyvCIyXryQOP++9U80LeA7l42oOj+pkT8
-	 6cE/IqUz/1R4Ag4cqlzcMruzENyFyNbd7MfJscoCVnAKwYUVB84oKPPa7Ql16tXKUK
-	 z9Y+Bri390dmftkG15PvWU+h0y9tA1SDDv09NpRhzJigMSUi0Lmz8GfSzztArAJAa3
-	 1DhC4k7vUUVWQEbnEA5YIMAoS1pM04G/7l5OlC8meIxRBb4YcnT/VAZUnRNMueaHZ+
-	 GKfjubpSsnUfw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5p47-007z9Y-LO;
-	Tue, 29 Oct 2024 16:27:31 +0000
-Date: Tue, 29 Oct 2024 16:27:31 +0000
-Message-ID: <868qu63mdo.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Raghavendra Rao Ananta <rananta@google.com>
-Cc: Oliver Upton <oliver.upton@linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org,
-	stable@vger.kernel.org,
-	syzbot <syzkaller@googlegroups.com>
-Subject: Re: [PATCH v2] KVM: arm64: Get rid of userspace_irqchip_in_use
-In-Reply-To: <20241028234533.942542-1-rananta@google.com>
-References: <20241028234533.942542-1-rananta@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1730219353;
+	bh=XEi6ujTZMgV90pVEuH+kg3iRvzVKiuquwcJsySkcQag=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=A/mtpTFNOIDEmG7Ze1WALWqQZJPU54ohHyi1YdzQY98lRuaKWr08MGA2P9YIV8IZU
+	 Euwxu/Gurl6J4Rf6Dc6bZClCxbStiMumHxbsOUUh9tyl4neOR0mbbqKwH3LiLIfBYu
+	 4VKx1WadPJxPX2yS6IaP4FJNbWF34wPGYKlvV92DcTApZeM1gbUh+feZFqWsbDrYpx
+	 s+uNFr1UEI7NuEci+Cmt8JckTBxJ5yMsHFEGCXC6HIplfzMqIiV8mEMatAQuCDwfIk
+	 k6RHpyjyVX2HZQavevNhiNYwAzv4gL7dicodSWVbfBTyeE2bMV/BaducVWX+TlccY2
+	 MWv07DaPPNoiA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 477EFCE0A48; Tue, 29 Oct 2024 09:29:13 -0700 (PDT)
+Date: Tue, 29 Oct 2024 09:29:13 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Cheng-Jui Wang =?utf-8?B?KOeOi+ato+edvyk=?= <Cheng-Jui.Wang@mediatek.com>
+Cc: "frederic@kernel.org" <frederic@kernel.org>,
+	"rcu@vger.kernel.org" <rcu@vger.kernel.org>,
+	wsd_upstream <wsd_upstream@mediatek.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"kernel-team@meta.com" <kernel-team@meta.com>,
+	Bobule Chang =?utf-8?B?KOW8teW8mOe+qSk=?= <bobule.chang@mediatek.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"joel@joelfernandes.org" <joel@joelfernandes.org>
+Subject: Re: [PATCH v3 rcu 3/3] rcu: Finer-grained grace-period-end checks in
+ rcu_dump_cpu_stacks()
+Message-ID: <adb044e2-8f62-4367-9a22-30515f5647b1@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <92193018-8624-495e-a685-320119f78db1@paulmck-laptop>
+ <20241016161931.478592-3-paulmck@kernel.org>
+ <c3218fbe-7bb1-4fd6-8b00-beee244ffeae@paulmck-laptop>
+ <b2b0bceacbd080e13b3aa7ad05569a787df4646d.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rananta@google.com, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, stable@vger.kernel.org, syzkaller@googlegroups.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b2b0bceacbd080e13b3aa7ad05569a787df4646d.camel@mediatek.com>
 
-On Mon, 28 Oct 2024 23:45:33 +0000,
-Raghavendra Rao Ananta <rananta@google.com> wrote:
+On Tue, Oct 29, 2024 at 02:20:51AM +0000, Cheng-Jui Wang (王正睿) wrote:
+> On Mon, 2024-10-28 at 17:22 -0700, Paul E. McKenney wrote:
+> > The result is that the current leaf rcu_node structure's ->lock is
+> > acquired only if a stack backtrace might be needed from the current CPU,
+> > and is held across only that CPU's backtrace. As a result, if there are
 > 
-> Improper use of userspace_irqchip_in_use led to syzbot hitting the
-> following WARN_ON() in kvm_timer_update_irq():
+> After upgrading our device to kernel-6.11, we encountered a lockup
+> scenario under stall warning. 
+> I had prepared a patch to submit, but I noticed that this series has
+> already addressed some issues, though it hasn't been merged into the
+> mainline yet. So, I decided to reply to this series for discussion on
+> how to fix it before pushing. Here is the lockup scenario We
+> encountered:
 > 
-> WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
-> kvm_timer_update_irq+0x21c/0x394
-> Call trace:
->   kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
->   kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
->   kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
->   kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
->   kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
->   kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
->   kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
->   vfs_ioctl fs/ioctl.c:51 [inline]
->   __do_sys_ioctl fs/ioctl.c:907 [inline]
->   __se_sys_ioctl fs/ioctl.c:893 [inline]
->   __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
->   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
->   invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
->   el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
->   do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
->   el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
->   el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
->   el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+> Devices: arm64 with only 8 cores
+> One CPU holds rnp->lock in rcu_dump_cpu_stack() while trying to dump
+> other CPUs, but it waits for the corresponding CPU to dump backtrace,
+> with a 10-second timeout.
 > 
-> The following sequence led to the scenario:
->  - Userspace creates a VM and a vCPU.
->  - The vCPU is initialized with KVM_ARM_VCPU_PMU_V3 during
->    KVM_ARM_VCPU_INIT.
->  - Without any other setup, such as vGIC or vPMU, userspace issues
->    KVM_RUN on the vCPU. Since the vPMU is requested, but not setup,
->    kvm_arm_pmu_v3_enable() fails in kvm_arch_vcpu_run_pid_change().
->    As a result, KVM_RUN returns after enabling the timer, but before
->    incrementing 'userspace_irqchip_in_use':
->    kvm_arch_vcpu_run_pid_change()
->        ret = kvm_arm_pmu_v3_enable()
->            if (!vcpu->arch.pmu.created)
->                return -EINVAL;
->        if (ret)
->            return ret;
->        [...]
->        if (!irqchip_in_kernel(kvm))
->            static_branch_inc(&userspace_irqchip_in_use);
->  - Userspace ignores the error and issues KVM_ARM_VCPU_INIT again.
->    Since the timer is already enabled, control moves through the
->    following flow, ultimately hitting the WARN_ON():
->    kvm_timer_vcpu_reset()
->        if (timer->enabled)
->           kvm_timer_update_irq()
->               if (!userspace_irqchip())
->                   ret = kvm_vgic_inject_irq()
->                       ret = vgic_lazy_init()
->                           if (unlikely(!vgic_initialized(kvm)))
->                               if (kvm->arch.vgic.vgic_model !=
->                                   KVM_DEV_TYPE_ARM_VGIC_V2)
->                                       return -EBUSY;
->                   WARN_ON(ret);
+>    __delay()
+>    __const_udelay()
+>    nmi_trigger_cpumask_backtrace()
+>    arch_trigger_cpumask_backtrace()
+>    trigger_single_cpu_backtrace()
+>    dump_cpu_task()
+>    rcu_dump_cpu_stacks()  <- holding rnp->lock
+>    print_other_cpu_stall()
+>    check_cpu_stall()
+>    rcu_pending()
+>    rcu_sched_clock_irq()
+>    update_process_times()
 > 
-> Theoretically, since userspace_irqchip_in_use's functionality can be
+> However, the other 7 CPUs are waiting for rnp->lock on the path to
+> report qs.
+> 
+>    queued_spin_lock_slowpath()
+>    queued_spin_lock()
+>    do_raw_spin_lock()
+>    __raw_spin_lock_irqsave()
+>    _raw_spin_lock_irqsave()
+>    rcu_report_qs_rdp()
+>    rcu_check_quiescent_state()
+>    rcu_core()
+>    rcu_core_si()
+>    handle_softirqs()
+>    __do_softirq()
+>    ____do_softirq()
+>    call_on_irq_stack()
+> 
+> Since the arm64 architecture uses IPI instead of true NMI to implement
+> arch_trigger_cpumask_backtrace(), spin_lock_irqsave disables
+> interrupts, which is enough to block this IPI request.
+> Therefore, if other CPUs start waiting for the lock before receiving
+> the IPI, a semi-deadlock scenario like the following occurs:
+> 
+> CPU0                    CPU1                    CPU2
+> -----                   -----                   -----
+> lock_irqsave(rnp->lock)
+>                         lock_irqsave(rnp->lock)
+>                         <can't receive IPI>
+> <send ipi to CPU 1>
+> <wait CPU 1 for 10s>
+>                                                 lock_irqsave(rnp->lock)
+>                                                 <can't receive IPI>
+> <send ipi to CPU 2>
+> <wait CPU 2 for 10s>
+> ...
+> 
+> 
+> In our scenario, with 7 CPUs to dump, the lockup takes nearly 70
+> seconds, causing subsequent useful logs to be unable to print, leading
+> to a watchdog timeout and system reboot.
+> 
+> This series of changes re-acquires the lock after each dump,
+> significantly reducing lock-holding time. However, since it still holds
+> the lock while dumping CPU backtrace, there's still a chance for two
+> CPUs to wait for each other for 10 seconds, which is still too long.
+> So, I would like to ask if it's necessary to dump backtrace within the
+> spinlock section?
+> If not, especially now that lockless checks are possible, maybe it can
+> be changed as follows?
+> 
+> -			if (!(data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)))
+> -				continue;
+> -			raw_spin_lock_irqsave_rcu_node(rnp, flags);
+> -			if (rnp->qsmask & leaf_node_cpu_bit(rnp, cpu)) {
+> +			if (data_race(rnp->qsmask) & leaf_node_cpu_bit(rnp, cpu)) {
+> 				if (cpu_is_offline(cpu))
+> 					pr_err("Offline CPU %d blocking current GP.\n", cpu);
+> 				else
+> 					dump_cpu_task(cpu);
+> 				}
+> 			}
+> -			raw_spin_unlock_irqrestore_rcu_node(rnp,
+> flags);
+> 
+> Or should this be considered an arm64 issue, and they should switch to
+> true NMI, otherwise, they shouldn't use
+> nmi_trigger_cpumask_backtrace()?
 
-nit: this isn't theoretical at all.
+Thank you for looking into this!
 
-> simply replaced by '!irqchip_in_kernel()', get rid of the static key
-> to avoid the mismanagement, which also helps with the syzbot issue.
+We do assume that nmi_trigger_cpumask_backtrace() uses true NMIs, so,
+yes, nmi_trigger_cpumask_backtrace() should use true NMIs, just like
+the name says.  ;-)
 
-Did you have a chance to check whether this had any negative impact on
-actual workloads? Since the entry/exit code is a bit of a hot spot,
-I'd like to make sure we're not penalising the common case (I only
-wrote this patch while waiting in an airport, and didn't test it at
-all).
+Alternatively, arm64 could continue using nmi_trigger_cpumask_backtrace()
+with normal interrupts (for example, on SoCs not implementing true NMIs),
+but have a short timeout (maybe a few jiffies?) after which its returns
+false (and presumably also cancels the backtrace request so that when
+the non-NMI interrupt eventually does happen, its handler simply returns
+without backtracing).  This should be implemented using atomics to avoid
+deadlock issues.  This alternative approach would provide accurate arm64
+backtraces in the common case where interrupts are enabled, but allow
+a graceful fallback to remote tracing otherwise.
 
-Any such data about it would be very welcome in the commit message.
+Would you be interested in working this issue, whatever solution the
+arm64 maintainers end up preferring?
 
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+							Thanx, Paul
 
