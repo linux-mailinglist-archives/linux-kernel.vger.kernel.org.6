@@ -1,174 +1,178 @@
-Return-Path: <linux-kernel+bounces-387305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4189B4F3D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:24:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46D7E9B4F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6981F265BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:24:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A783284200
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716501990CD;
-	Tue, 29 Oct 2024 16:24:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF26F1993AE;
+	Tue, 29 Oct 2024 16:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XO3DgkGm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M4GoxcDi"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968E8198A35
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ADB198A35
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730219066; cv=none; b=KucUFKImYEM8Wa8B4LEX2H3hq7+Og0qySVhXVW9sjj/22mDxrBkriC1em5KvOSE0645zLpt1gTxwlvk+PxQwCWvTv2YzHjrUTYgiPfiOR2+duJojFxfQx6/CfxfdQcWubZc1Pgt+Eu8ThwwrAjopx29PNwjXh1Han5x7XpwQo1g=
+	t=1730219113; cv=none; b=Q/IzC2L0hcfIySmcK5g68/P81K8zieXLMmVFFjnwIRZNC0JBcvrE6zOU3QS2gYFtTB9m0l8SQiRfHuIecSej1ANORnuRBEUnkpxIr5MyRJ55myWPRMSoQGXcx7+UJWv/L3caKLv9jBwYUpxQ721OMvT3J3uGVjMMg+uxPK53Hks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730219066; c=relaxed/simple;
-	bh=C65qfDDDxCTRTP97/W4uzaYzCBQIJJ/LO3jBSxMCD/U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCJ3i4Cj0lfUHzc6MS27vheMXOQQ4OkGMlp9TDRypG7xcVKX24n/0b536qxp+WlJfchMYXa5wxLUruBA3RPihUya9pH9gnklad4JBbRMABoYbgbf9HD4WZV7lGFIXdERh3ob0tzxGu+R01363Nq3Cor7GYwMq8uCxSQRMlHSYuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XO3DgkGm; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730219063;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sBEBhcwFRWdEyrYlXSEyJ0AeIl4d7kyeomTAvUDYmHc=;
-	b=XO3DgkGmdQRS1i0jwsdJEwaOcpLqhs0uW2aVov4NFvE3+x3BrOw7pn2vinz/T6tQtiWopn
-	LHq0SBDFWAPtR7P16NCmtd96UxfIOxInoNcdKahvnD00E1YBX+3vFIyIS7VFK29p7xzXeo
-	My46RDXCDkGMJHfKxsxu1sDMfoSnsn4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-rx-gZuZfNt6DqaA-qm1PGg-1; Tue,
- 29 Oct 2024 12:24:19 -0400
-X-MC-Unique: rx-gZuZfNt6DqaA-qm1PGg-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 440761955D4C;
-	Tue, 29 Oct 2024 16:24:17 +0000 (UTC)
-Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.170])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0CAFE19560AA;
-	Tue, 29 Oct 2024 16:24:10 +0000 (UTC)
-Date: Tue, 29 Oct 2024 13:24:09 -0300
-From: Wander Lairson Costa <wander@redhat.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: John Ogness <john.ogness@linutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Rengarajan S <rengarajan.s@microchip.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
-	Serge Semin <fancer.lancer@gmail.com>, Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
- FIFO mode
-Message-ID: <gdgngas4qc4mv4efghwzi5z7zbg7imvupjcyiskbyedivclwoi@vus4vxbsnqgu>
-References: <20241025105728.602310-1-john.ogness@linutronix.de>
- <20241025105728.602310-2-john.ogness@linutronix.de>
- <Zxug3qF9KUOn4VaM@smile.fi.intel.com>
+	s=arc-20240116; t=1730219113; c=relaxed/simple;
+	bh=wst9NCOhP9yui/XiYSq/wkqGCzcqSKCzU9QNQl/jnTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m2Y2YP1rgrVvE1HCFLhmPN9lEpR+mP5gBbStjMNibPwsiLlS8JV9sTypyhJbo0U/5WRZFrvo1L1LR2T7/n+D2cQ/QX2RBLi4v8/4p8W6PNo5oCTuDSGAkG15tCN3NGlegg2vtJsO0hhnIh/mnDrf2u+73L6a1BAW+slMdxvkKXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M4GoxcDi; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315ee633dcso259255e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:25:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730219109; x=1730823909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QEv9d8+SgpybU6wrl4Us2xApnW3bmNdYFOKHVQ/35tc=;
+        b=M4GoxcDinujoX4nd36dyYF3czj1ZQ8OkflT+nhh5Hy4N/+4M5Szkp6OAFmc8BpLAkM
+         AU6sgUL+PxT2j50asV/yK6svz6E/2xCjIW6XlNIETQA9zJaYaaarJuonTDOiIw6dTP4T
+         iAq6BZBh72nzhHxX+o9aveTdwr2cc99SVpXmti/xd6G1qEa4DDkwnr5RSsfRck1ZKb4E
+         oXfd0aZdECaV+Xz//WhBTAtVZN+c2BrmOvv4LF1PNNGS8BC558cUgXV/AYVBHLKQLxD4
+         W7szRbIKsUM+FO/HVR92GdqoTgY1a+ZRKCDAkgvDvo1VnS6tDNE6/1kIa6ej8srNqadK
+         lGew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730219109; x=1730823909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QEv9d8+SgpybU6wrl4Us2xApnW3bmNdYFOKHVQ/35tc=;
+        b=Wjw/RPNE91dBNh51cdJs08rM4thlwVPUtTAVoVearUIvGSj53XSUM0tswV/eTCoX6s
+         XoNvn+F0zCMkbeICu+qponZNN4QhYOsoq1Yq8MF9QBgqHdDXRxNFfdwi6mYO8b9gqywS
+         UrbuWcmDu3DtPUucAoaFbdkxzu7+MPrYp8Wygg2nqaq5iyvt7rDtYaUp+q6l9RygUo/U
+         Rg4fijkjvKqys/M9lmGhUIYpm9EfsJX5wqQGMJ4en3Isq/U13wC2Kv6+CUzyQJaWSSiR
+         U9gv2PKy+7QUohzjZfpB3hdAMupqMQpnaSKBzUUTZejcekwBpv0UrMEHdQtKSQU0/+XC
+         mVOA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0AaOVTddpTZzhhOFzNXnVsclQVP2yIubbNasYyGERpXGgM/9cHcqdu2v9jFuzNpcWsprIXvQHoiPC1Hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxlo7mvKUAetRubTOgjdk2huRKPR3iVYRDlY2FJ/unB6DuW7YNu
+	bHBzHcUpSl2WSioHXXE9ufO/OPAEEbCpe3w1ZdJpZOZ9TQyzi/FTJ2flybRIncWqAetOqB6ssES
+	tzgaHps+VWdoF02yZa2Ej660AYPZ9sqguJywW
+X-Gm-Gg: ASbGnctJH92HWxS57XAMWcR4J+KmzAQJdO3qgLe9Hffr1luSAiaRjre/d2qjifGcC0y
+	uUdIu2C91vQbckQ1MOgwR1JJLSrGh
+X-Google-Smtp-Source: AGHT+IEjg7tLGOf0RNWlIWCZEtoXA0fa4xP6dF+qxAfjCQh/ZG2TzSsk23bIMPrkhk0s/xBZY9zuys5zrZqmK4JnQ68=
+X-Received: by 2002:a05:600c:b85:b0:42c:b0b0:513a with SMTP id
+ 5b1f17b1804b1-431b3c9a40dmr5630055e9.2.1730219108707; Tue, 29 Oct 2024
+ 09:25:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxug3qF9KUOn4VaM@smile.fi.intel.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <20241021193310.2014131-1-mcgrof@kernel.org>
+In-Reply-To: <20241021193310.2014131-1-mcgrof@kernel.org>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Tue, 29 Oct 2024 09:24:30 -0700
+Message-ID: <CABCJKudob+8GH2U_QLEngjqjOVmDfm8ZkEfn-Ya9ZG5OEOrRtQ@mail.gmail.com>
+Subject: Re: [PATCH v3] selftests: add new kallsyms selftests
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	petr.pavlu@suse.com, da.gomez@samsung.com, masahiroy@kernel.org, 
+	deller@gmx.de, linux-arch@vger.kernel.org, live-patching@vger.kernel.org, 
+	kris.van.hees@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 04:45:02PM +0300, Andy Shevchenko wrote:
-> On Fri, Oct 25, 2024 at 01:03:23PM +0206, John Ogness wrote:
-> > After a console has fed a line into TX, it uses wait_for_xmitr()
-> > to wait until the data has been sent out before returning to the
-> > printk code. However, wait_for_xmitr() will timeout after 10ms,
-> 
-> printk here is a function reference or module?
-> For the latter I would use the filename to be sure it's clear,
-> like printk.c. For the former (and it seems you know that)
-> we may use printk().
-> 
-> > regardless if the data has been transmitted or not.
-> > 
-> > For single bytes, this timeout is sufficient even at very slow
-> > baud rates, such as 1200bps. However, when FIFO mode is used,
-> > there may be 64 bytes pushed into the FIFO at once. At a baud
-> > rate of 115200bps, the 10ms timeout is still sufficient.
-> > However, when using lower baud rates (such as 57600bps), the
-> > timeout is _not_ sufficient. This causes longer lines to be cut
-> > off, resulting in lost and horribly misformatted output on the
-> > console.
-> > 
-> > When using FIFO mode, take the number of bytes into account to
-> > determine an appropriate max timeout. Increasing the timeout
-> 
-> maximum
-> (in order not to mix with max() function)
-> 
-> > does not affect performance since ideally the timeout never
-> > occurs.
-> 
-> ...
-> 
-> >  /*
-> >   *	Wait for transmitter & holding register to empty
-> > + *	with timeout
-> 
-> Can you fix the style while at it?
-> 
-> >   */
-> 
->  /* Wait for transmitter & holding register to empty with timeout */
-> 
-> ...
-> 
-> >  static void serial8250_console_fifo_write(struct uart_8250_port *up,
-> >  					  const char *s, unsigned int count)
-> >  {
-> > -	int i;
-> >  	const char *end = s + count;
-> >  	unsigned int fifosize = up->tx_loadsz;
-> > +	unsigned int tx_count = 0;
-> >  	bool cr_sent = false;
-> > +	unsigned int i;
-> >  
-> >  	while (s != end) {
-> > -		wait_for_lsr(up, UART_LSR_THRE);
-> > +		/* Allow timeout for each byte of a possibly full FIFO. */
-> 
-> Does the one-line comment style in this file use periods? If not, drop,
-> otherwise apply it to the above proposal.
-> 
-> > +		for (i = 0; i < fifosize; i++) {
-> > +			if (wait_for_lsr(up, UART_LSR_THRE))
-> > +				break;
-> > +		}
-> 
-> > +	}
-> > +
-> > +	/* Allow timeout for each byte written. */
-> > +	for (i = 0; i < tx_count; i++) {
-> > +		if (wait_for_lsr(up, UART_LSR_THRE))
-> > +			break;
-> 
-> This effectively repeats the above. Even for the fix case I would still add
-> a new helper to deduplicate.
+Hi Luis,
 
-+1
+On Mon, Oct 21, 2024 at 12:33=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.or=
+g> wrote:
+>
+> diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen=
+_test_kallsyms.sh
+> new file mode 100755
+> index 000000000000..e85f10dc11bd
+> --- /dev/null
+> +++ b/lib/tests/module/gen_test_kallsyms.sh
+> @@ -0,0 +1,128 @@
+[..]
+> +gen_template_module_data_b()
+> +{
+> +       printf "\nextern int auto_test_a_%010d;\n\n" 28
+> +       echo "static int auto_runtime_test(void)"
+> +       echo "{"
+> +       printf "\nreturn auto_test_a_%010d;\n" 28
+> +       echo "}"
+> +}
 
-With this fixed, Reviewed-by: Wander Lairson Costa <wander@redhat.com>
-> 
-> >  	}
-> >  }
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+FYI, I get a warning when loading test_kallsyms_b because the init
+function return value is >0:
 
+# modprobe test_kallsyms_b
+[   11.154496] do_init_module: 'test_kallsyms_b'->init suspiciously
+returned 255, it should follow 0/-E convention
+[   11.154496] do_init_module: loading module anyway...
+[   11.156156] CPU: 3 UID: 0 PID: 116 Comm: modprobe Not tainted
+6.12.0-rc5-00020-g897cb2ff413d #1
+[   11.156832] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
+[   11.157762] Call Trace:
+[   11.158914]  <TASK>
+[   11.159253]  dump_stack_lvl+0x3f/0xb0
+[   11.160279]  do_init_module+0x1f4/0x200
+[   11.160586]  __se_sys_finit_module+0x30c/0x400
+[   11.160948]  do_syscall_64+0xd0/0x1a0
+[   11.161255]  ? arch_exit_to_user_mode_prepare+0x11/0x60
+[   11.161659]  ? irqentry_exit_to_user_mode+0x8e/0xb0
+[   11.162052]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+[   11.162598] RIP: 0033:0x7f5843968cf6
+[   11.163076] Code: 48 89 57 30 48 8b 04 24 48 89 47 38 e9 1e 9a 02
+00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
+08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3a fd ff ff c3 48 c7 c6 01 00 00 00
+e9 a1
+[   11.164465] RSP: 002b:00007ffefcc92d68 EFLAGS: 00000246 ORIG_RAX:
+0000000000000139
+[   11.165046] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f58439=
+68cf6
+[   11.165656] RDX: 0000000000000000 RSI: 00000000320429e0 RDI: 00000000000=
+00003
+[   11.166220] RBP: 00000000320429e0 R08: 0000000000000074 R09: 00000000000=
+00000
+[   11.166804] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000320=
+42b50
+[   11.167378] R13: 0000000000000001 R14: 0000000032042c10 R15: 00000000000=
+00000
+[   11.168007]  </TASK>
+
+> diff --git a/tools/testing/selftests/module/find_symbol.sh b/tools/testin=
+g/selftests/module/find_symbol.sh
+> new file mode 100755
+> index 000000000000..140364d3c49f
+> --- /dev/null
+> +++ b/tools/testing/selftests/module/find_symbol.sh
+> @@ -0,0 +1,81 @@
+[..]
+> +test_reqs()
+> +{
+> +       if ! which modprobe 2> /dev/null > /dev/null; then
+> +               echo "$0: You need modprobe installed" >&2
+> +               exit $ksft_skip
+> +       fi
+> +
+> +       if ! which kmod 2> /dev/null > /dev/null; then
+> +               echo "$0: You need kmod installed" >&2
+> +               exit $ksft_skip
+> +       fi
+
+Is there a reason to test for kmod? I don't see it called directly in
+this script.
+
+Also, shouldn't you add the module directory to TARGETS in
+tools/testing/selftests/Makefile? Otherwise the script won't be
+installed with the rest of kselftests.
+
+Sami
 
