@@ -1,140 +1,119 @@
-Return-Path: <linux-kernel+bounces-387088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC1649B4BC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:11:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 144619B4BC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:12:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297761C2241F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:11:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCEAD283F54
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928D0206E8B;
-	Tue, 29 Oct 2024 14:11:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ED91BA2D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36729206E8B;
+	Tue, 29 Oct 2024 14:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RYFkNE3l"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A44F5BA2D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:12:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730211085; cv=none; b=BT0vo3oD9FHSCk+5sj2fUhXQTbCInC1bu4t3OEtAe14Cq4HEKTWf5BvQh6sbcurCm3YiIP0ggSOi4Diepfiduwj20FfxUcMPrJy5jdW3i7l4gVC+iGyE0qwXh6tmQfhIHIB4+oWRh4ZLwuEVvGkCcYp7j8TB6c1yFJitM3pvaQY=
+	t=1730211147; cv=none; b=jkAPyKuUnGcvHbitnCApHkLQ6zDizfr+u64LOh9zYD4TAAWvWgYYqgmpquYEE62/dh+E527AijRAechuGybXloj2xEgCs17F4XsNXIBN8kE2z0h/qk/VfJcJlGcyoYJ3Wb+8W3rY1TdEL/nCo7ebqqAfzKjWrpIE0W24+QfbRfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730211085; c=relaxed/simple;
-	bh=sbRiA5AupD7lPPBP+1DTbZV36D3k1wM9CyHAfE5urzc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UYZiP3GFzwUNnKcGw9bOqYBboa9ctwOgSe0LrS2yO3QtsTHuBvAYD8uc0Ra5jJImR+CSbuxhe/CxlEVhNyzseSpilsV4l8RwU6D45KYKgsct65bnZYxwpbkKtOv73GGV2I3R3p3nJrmpYRLUgK9SNG7Udd9CwHWrA0g2Ugz4d+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 30A48113E;
-	Tue, 29 Oct 2024 07:11:52 -0700 (PDT)
-Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3BF393F528;
-	Tue, 29 Oct 2024 07:11:22 -0700 (PDT)
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: steven.price@arm.com,
-	suzuki.poulose@arm.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	gshan@redhat.com,
-	sami.mujawar@arm.com,
-	linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH] arm64: rsi: Add automatic arm-cca-guest module loading
-Date: Tue, 29 Oct 2024 09:11:14 -0500
-Message-ID: <20241029141114.7207-1-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730211147; c=relaxed/simple;
+	bh=5GFN0m/CHVclXyrFeNFMUrp+yxUPvcjGX4zRdiM8ypY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HkCUXYV0JYbsLtRF/lMBkWRb+wFm4oKeeJuSYnSFiQILm/gaGrjwHRNHm1phAZWO0fpvxTwaB0ZlmWKUGmuJTy3uFL20gt3XjSrQ6TxX9MI9vNGNu2N6m42jCGR9rWmTxqUvYEINgMkfWstrI9NQsri75b1VcN7VcBjlfpH8XFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RYFkNE3l reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 3679540E01A5;
+	Tue, 29 Oct 2024 14:12:22 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
+	reason="fail (body has been altered)" header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id cNrWIC1oofEQ; Tue, 29 Oct 2024 14:12:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730211137; bh=hin8KyxsG5AxepDRuRW9Jbnwhkm/VWMhNCNv08LWdOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RYFkNE3lh9Z7T+pe8UUhGOfkqU1tzOg20M1GE3SHeK1Z8NsHa1nolpyX7cTIHJlW1
+	 9VPFIRveJZlT5PjflHbDwDx76bHn3tdcOLHv9QoKExxexhiWNuALwUkyrtVkTsGb+O
+	 5yxaKmR2Vef9rgTuWt1b8HvfnbQOBHtHpX2/cr+SsIMXXqr10Yzy/0vVhHAO+F3fSE
+	 BOpg7mw2CNlBQcz34hVOZ4R1C87ahLEFpsugWZS5O22esSdU4DVT3XveJbB7wPzn9n
+	 rt9hCWWRNIte6wg0wi1BTBdJsqwtLAsYmVyecGuosLg0jXa+5fpFODw0bNnkxK+TbI
+	 8KeIkpcrKeGYIjwgOvPT8wOJLuVjF5jHKQg5dotzf02GbOHpWTu/YqwREkgefJj9Qn
+	 96LGERlSZp2hUVdRxTA5LXz92RSLEZLmoZN2ofbPX2F08aLk+E7PAyA5Yol1tw0j+D
+	 t6/k7tUToi7vwWIyvabiRUnI1fqTuJ+6x7yob2BRCAJ45OSU5Esp4nWZcQhJfLDVJN
+	 ZIsrdtb5UO4oPKTJPvNPQB0ttKvYZOGkg02xtURScwKNxNl/aY0TTJlxHfkCPbco8W
+	 7UdjcPTnQaofnSvXs2Ft7TYSc/Da58l/YD16OHKxphZsOcIDe01xN5PymYM8cJ3GYk
+	 qB3/V2YzA1Z4JnpF9KN482to=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 40AB140E0191;
+	Tue, 29 Oct 2024 14:12:03 +0000 (UTC)
+Date: Tue, 29 Oct 2024 15:11:57 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Suma Hegde <suma.hegde@amd.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86/amd/hsmp: fix compile-testing without
+ CONFiG_AMD_NB
+Message-ID: <20241029141157.GGZyDtLf8vdjuOORGI@fat_crate.local>
+References: <20241029092329.3857004-1-arnd@kernel.org>
+ <20241029103316.GBZyC57KGSxyPie3Qu@fat_crate.local>
+ <3a5360a4-e5c7-4c97-ab15-778d73f5b5a6@app.fastmail.com>
+ <20241029110641.GFZyDBwa2o1a13Bt-T@fat_crate.local>
+ <df0cb5c7-71ef-03ab-b0f5-7c95a4065ed4@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <df0cb5c7-71ef-03ab-b0f5-7c95a4065ed4@linux.intel.com>
+Content-Transfer-Encoding: quoted-printable
 
-The TSM module provides both guest identification as well as
-attestation when a guest is run in CCA mode. Lets assure by creating a
-dummy platform device that the module is automatically loaded during
-boot. Once it is in place it can be used earlier in the boot process
-to say decrypt a LUKS rootfs.
+Hi,
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
----
- arch/arm64/include/asm/rsi.h                    |  2 ++
- arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
- drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  7 +++++++
- 3 files changed, 24 insertions(+)
+On Tue, Oct 29, 2024 at 02:40:00PM +0200, Ilpo J=C3=A4rvinen wrote:
+> I'm unfortunately left a bit unsure what exactly is your suggestion her=
+e,=20
+> so could you please elaborate?
 
-diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-index 188cbb9b23f5..1b14a4c4257a 100644
---- a/arch/arm64/include/asm/rsi.h
-+++ b/arch/arm64/include/asm/rsi.h
-@@ -10,6 +10,8 @@
- #include <linux/jump_label.h>
- #include <asm/rsi_cmds.h>
- 
-+#define ARMV9_RSI_PDEV_NAME "arm-cca-dev"
-+
- DECLARE_STATIC_KEY_FALSE(rsi_present);
- 
- void __init arm64_rsi_init(void);
-diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-index 3031f25c32ef..ad963eb12921 100644
---- a/arch/arm64/kernel/rsi.c
-+++ b/arch/arm64/kernel/rsi.c
-@@ -8,6 +8,7 @@
- #include <linux/psci.h>
- #include <linux/swiotlb.h>
- #include <linux/cc_platform.h>
-+#include <linux/platform_device.h>
- 
- #include <asm/io.h>
- #include <asm/mem_encrypt.h>
-@@ -140,3 +141,17 @@ void __init arm64_rsi_init(void)
- 	static_branch_enable(&rsi_present);
- }
- 
-+static struct platform_device rsi_dev = {
-+	.name = ARMV9_RSI_PDEV_NAME,
-+	.id = -1
-+};
-+
-+static int __init rsi_init(void)
-+{
-+	if (is_realm_world())
-+		if (platform_device_register(&rsi_dev))
-+			pr_err("failed to register rsi platform device");
-+	return 0;
-+}
-+
-+arch_initcall(rsi_init)
-diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-index 488153879ec9..e7ef3b83d5d9 100644
---- a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-+++ b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-@@ -6,6 +6,7 @@
- #include <linux/arm-smccc.h>
- #include <linux/cc_platform.h>
- #include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/smp.h>
- #include <linux/tsm.h>
-@@ -219,6 +220,12 @@ static void __exit arm_cca_guest_exit(void)
- }
- module_exit(arm_cca_guest_exit);
- 
-+static const struct platform_device_id arm_cca_match[] = {
-+	{ ARMV9_RSI_PDEV_NAME, 0},
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(platform, arm_cca_match);
- MODULE_AUTHOR("Sami Mujawar <sami.mujawar@arm.com>");
- MODULE_DESCRIPTION("Arm CCA Guest TSM Driver");
- MODULE_LICENSE("GPL");
--- 
-2.46.0
+My suggestion is, I send it to Linus now so it appears in 6.12-rc6 and th=
+us
+the build error is gone in every other tree.
 
+> (I'm assuming the big amd_nb series will go through the x86 tree.)
+
+Yeah, eventually. Not now but see above: if the fix appears in mainline n=
+ow,
+no problems.
+
+Right?
+
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
