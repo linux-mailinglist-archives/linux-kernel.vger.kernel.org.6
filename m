@@ -1,82 +1,102 @@
-Return-Path: <linux-kernel+bounces-387069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88F89B4B6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:56:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD8D39B4B6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:56:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50299B23457
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:56:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E462F1C2285C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:56:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A53E1206967;
-	Tue, 29 Oct 2024 13:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D58206E6D;
+	Tue, 29 Oct 2024 13:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0f9vfjY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jZg1Bkey"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05AC2206066;
-	Tue, 29 Oct 2024 13:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D379E206E8C;
+	Tue, 29 Oct 2024 13:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210176; cv=none; b=MZ2H9RIATpdly52lvrXZmq7Ic4z7FQ+OFUTE69asMwP2IpqWBzpNu9IsQjYTrE0MYBr1x5QGAW9LR9NWC7Sf9ph/JAHnLmcqScKDSlOoOnYrTf29q86MFoWa5zOq4eYhhMdH1uDIrSEweq+DzwIO1SH5RJG8OQ9OWMnkEuNN2gE=
+	t=1730210190; cv=none; b=ZBmmkEXc8VnwuIs8XVNDofQ1x3IOQJvhhQcCZ7gPxwIqT9oyhf1B2rsTOfTsdk98HoVg82/e4rKD71CBAnpiE+EcyibPKmCR3dFLfB8guHEOiUs6dFe/tNxh6MWh08u0DvR8AiFPlfWev1+9W52h72hpKEKWBq+cr02IYimpn5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210176; c=relaxed/simple;
-	bh=Omhk+6bzE563DEqVrxai9r68DZuEFQ0N24D4UaTyCso=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j6Ccsw2TeyGjgLfwd1Lw6ihbIhTz5nJaUs4NvDCELDz8eC8GGFZWk54PBBI6TFB82L4zglK7gSQpx/tZGxJP9Ucc0Bj7RlgjVU+8czc4Dl0vKo/C/0d9T4t0HTrn2a/O/+UoWftLHd0d36k5Lfs0b+32d9mOvgmLjG9xmT5fm6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0f9vfjY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2698C4CECD;
-	Tue, 29 Oct 2024 13:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730210175;
-	bh=Omhk+6bzE563DEqVrxai9r68DZuEFQ0N24D4UaTyCso=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D0f9vfjYGZzHbNOVqFFa8Xtgy3daCLGh1XnyJH7rQbwBFV/lJO7IJwwcltcO+boxM
-	 Ap3GMPsIhzq3QWVLum1Q3zmtW7NTLNWj0rlCM+6jlt/muN+FUDmnp4w5WCjenYkxGr
-	 S2ACCQgyVX3Ls9BRWz3FWS2LGd8A5e0Sosn4E3TE6R4Mj+3ebvDeqSWleAc0IuoXbi
-	 /aiohecPvbNE2opvRcIRlGh/zjTkhQZtWWgF9zPn78XvnAcbkAORBFzh6usu6ciEe5
-	 wSh8lm2HT4TF8bNcXk+JKzN4cXXcEZWDxCEBpOOGpNIhU2D2oquAEkkheqz/lI8nzF
-	 +z2Ag3kbdaglg==
-Date: Tue, 29 Oct 2024 06:56:13 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
- <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20241029065613.043fa9d6@kernel.org>
-In-Reply-To: <0bc27725-cd55-493b-8844-ee2c5baca5f0@embeddedor.com>
-References: <cover.1729536776.git.gustavoars@kernel.org>
-	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
-	<20241028162131.39e280bd@kernel.org>
-	<158eb222-d875-4f96-b027-83854e5f4275@embeddedor.com>
-	<20241028173248.582080ae@kernel.org>
-	<0bc27725-cd55-493b-8844-ee2c5baca5f0@embeddedor.com>
+	s=arc-20240116; t=1730210190; c=relaxed/simple;
+	bh=jynsvAvrGbtnR9bvdxcKgx9zssZ8yKm36m3n0txm+MA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kp2pT1jBbGxY3rSSi60ihlmJ7tHJEcODn34+KRnjqgBoGghG/2ogrMUNPcdMQAUW91F9UNWC0pEazv/kmAaSBtIrPjQikOF2TGOCk2ZAUPjYDgeq/LFoC3Aog2bjOy+RoewKNIdhAR9+Wf9CR019aABUbisfeltcs535u6YcLig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=jZg1Bkey; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=REL+CDla42GHqCu6Ej1ygD7q7qNI9MNoCRQcBNqG/XA=; b=jZg1BkeyyPokWmL/sLYRA5zT0K
+	VnrrpONpfrBhzjG6/n7Dbd5zKeMtiqTV4gVRio58s5sWVjybu23OvGkIJ5DIc5trVSsW2BSPti9ix
+	dENSrocOp2ymm3U1eL0MmvHvAczSgfGpWFH/1UL72uRxk8l1Jorc/n8ULW/W5GhGyrUGP086u8LDf
+	Cg9xi0S2lWUh3lBu/FOlPWGRshrDlhndq5SjphsnvverhwRSWs+PjoI3heI/fxpRFGz5q0wKIiQsI
+	9ZKduMTAotXWsHiPxkRCabbl6CtI1EgqJTyO6HZRF0kwJ3Zu42VOBZt5QPJnSsG4DsyMLO81f2ovO
+	1OLktgJw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5mhm-00000009uVh-0q4w;
+	Tue, 29 Oct 2024 13:56:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 990FF30073F; Tue, 29 Oct 2024 14:56:17 +0100 (CET)
+Date: Tue, 29 Oct 2024 14:56:17 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029135617.GB14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
 
-On Mon, 28 Oct 2024 20:37:13 -0600 Gustavo A. R. Silva wrote:
-> The rest will essentially remain the same as the change in
-> include/linux/ethtool.h triggers a cascade of changes across
-> the rest of the files in this patch.
-> 
-> So, you tell me if you still want me to split this patch. In any case
-> I'll update the changelog text.
+On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
 
-Unpleasantness. Okay. Update the commit message and I'll give you a few
-more nit picks related to variable ordering.
+> + * The only exception is when the task has migrated to another CPU, *and* this
+> + * is called while the task work is running (or has already run).  Then a new
+> + * cookie will be generated and the callback will be called again for the new
+> + * cookie.
+
+So that's a bit crap. The user stack won't change for having been
+migrated.
+
+So perf can readily use the full u64 cookie value as a sequence number,
+since the whole perf record will already have the TID of the task in.
+Mixing in this CPU number for no good reason and causing trouble like
+this just doesn't make sense to me.
+
+If ftrace needs brain damage like this, can't we push this to the user?
+
+That is, do away with the per-cpu sequence crap, and add a per-task
+counter that is incremented for every return-to-userspace.
 
