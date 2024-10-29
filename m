@@ -1,160 +1,148 @@
-Return-Path: <linux-kernel+bounces-387472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23D9A9B51B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:19:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3389B51B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:20:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BE371C228E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:19:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B8ED1F239C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C996A1EE02A;
-	Tue, 29 Oct 2024 18:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797F11FF5F3;
+	Tue, 29 Oct 2024 18:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="IanhAO3t"
-Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hbwc2291"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0793143C69
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8DD4AEE0;
+	Tue, 29 Oct 2024 18:20:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730225945; cv=none; b=FlZ8AtWmyNi9RGyR2qmuQ8CXWZqJee2bo5lv0EnG8VD4sLGHlWZItL2Rcdo7QkQsbe5bIMcNxlOioB96PyELP/lrLwEEWcZN+M+6/RCKlBNUim2SnYCrL4jfnWJzPK9pLOufnkzNhqreiMv2crTeKF/cZTRL5pBPzLj9e3GiyIE=
+	t=1730226048; cv=none; b=tZotqXLz72mFIuDh8/Xy6Pa/vSk7kXURDNPs00XdzgPwndTBi7T2odL0+JUKvcRIYv3xiGLruHh9Azxp+ATShH0UfLaofbT+9+NnH8uszu5l2LZFu2iXvfuCR5YX46M1xpDXJ4uqNeLlqKeJeOQNjFd8fbfCTGSfudsXbQacT+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730225945; c=relaxed/simple;
-	bh=M8nO+24c9/sZhugffBVh2gB7Qf7X5ZyZC5VgqDZszkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o6VJ8/0mJplQ17lCaZptbgc6clw9n6N+43jcGIbvAYrLEU05XornV/vQ1E44xn19WaMDpIASiP0Yw9cGFHVeeJUNvHiTO5joF3GsJcESxvYCAlwsg0yYhikmVskIzL2kccVgP8LvspXm8AdEfXp+2pKOKOT8OIhRYTWlORJHn2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=IanhAO3t; arc=none smtp.client-ip=35.89.44.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5001a.ext.cloudfilter.net ([10.0.29.139])
-	by cmsmtp with ESMTPS
-	id 5eEst1TbwVpzp5qo2tka6i; Tue, 29 Oct 2024 18:19:02 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id 5qo1tmU6XmNYj5qo1txxYy; Tue, 29 Oct 2024 18:19:01 +0000
-X-Authority-Analysis: v=2.4 cv=fb9myFQF c=1 sm=1 tr=0 ts=67212715
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
- a=wqSJOHIl3oKZLvA0N8AA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+	s=arc-20240116; t=1730226048; c=relaxed/simple;
+	bh=9QlywTxz18eV83YAElNzhD2u1lNwHMuOi09lu9IMPdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IY0ZW2VI88VWLEqYsXybFa2rGzYrAYmK0JaDL8zRi8NnMGizU4di5jh/XdwW3BURlflH5uM5T/wqalzoFFfuXh6KArzwSuivGLERTwEzUU1dOD8c0nMdTvSrihOzc5eLvfvNg7uM/xPl4tdMBs0hAXqaa73FUw4XqjHuWN0Dg60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hbwc2291; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Jkh7Hynmmo6OPSDIRiGWaJAeeoUHiaxp4T+/5j2nWx4=; b=IanhAO3tP6edf9QOzhxnJ+FDd8
-	ybDz6AXbLyojyNdGWTeRCH0gnA8ZwV2PBJ9FlIEMpV4ICU4Qy6FjSkaYVCKdBX4Z4NRxB9t8Qmtjk
-	0IJsWTj/xzVIXLdEG7c6EDF/Nb6PldmC4aBopgW4e2cdYCxSf1kTUk1rt0b2xRtRsFZasqUKVFlzp
-	Zltj2I8aqSS9wuaGV/OXTIWlFqQMnXzQJq+NWV4E/7vp+X/FUzkG5Rr5BoyEKv7jPHvRgXMo+z+rM
-	jAypxKT7um8X3FjYwj7H+LDs9bIe21NFLlRJagmIvsbQqMntFVXcj9wFKtnI3r6ZeuiRUS7XMm1Ry
-	EOfPsGyA==;
-Received: from [201.172.173.7] (port=59846 helo=[192.168.15.6])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1t5qnz-000DaP-1W;
-	Tue, 29 Oct 2024 13:18:59 -0500
-Message-ID: <7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
-Date: Tue, 29 Oct 2024 12:18:56 -0600
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=UKpn77lFR+sPspRB6+Qubz/7GXsOHdMVp4S3gWsBZ+E=; b=hbwc2291faCHeiGyZybQY9DVqZ
+	SA9u9havyq1BZVT9fU+HfJx068/6pwZUvqm5LcQwNH4Fhz84vRN6IBXsy1Za8+uSxZ6uGAuBG4Ych
+	L6zCjh0hwjCFFxJBjYBMlFCCX/ZjFPz9PrskQ3J2L+YhbuEbpCTZvQWHUC4tPpt+qwRXugZrk5Bvb
+	OP2xMBRVLXY2YCqsfcyY7XhE31aLX09bThQJIi68vsPi9CJUPS73FswQVG5kP/PEi6T2pN6Ilski+
+	VwhDF13DRy095GrANBkxuz7gmRdo/RR7iR5JugljiMpGyA7we++HIFIf9O7fWrwye+EB5Eexza7Uu
+	soLh77Bg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5qpV-00000009ylU-06rL;
+	Tue, 29 Oct 2024 18:20:33 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 40B0E30073F; Tue, 29 Oct 2024 19:20:32 +0100 (CET)
+Date: Tue, 29 Oct 2024 19:20:32 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029182032.GI14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <20241029135617.GB14555@noisy.programming.kicks-ass.net>
+ <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
+ <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Michael Chan <michael.chan@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <cover.1729536776.git.gustavoars@kernel.org>
- <f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
- <20241029065824.670f14fc@kernel.org>
- <f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
- <20241029110845.0f9bb1cc@kernel.org>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <20241029110845.0f9bb1cc@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 201.172.173.7
-X-Source-L: No
-X-Exim-ID: 1t5qnz-000DaP-1W
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:59846
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfFMCeqbnv4cCbHBmP6vHhxYNBL+GIJ++JNghrtCDLoEhWSKewrXhcSXSp80GyqU+IR4RdYM++25KOB4DBmEOAKAZ2UsyDQ6smVjmAj8EkhtVc+WSIZRY
- LFtdfedQtddICM6CWFnp4tB+6fwsqIlKGvdsYMd8wpknG9Uu9GdwaOtwHRSYAT6EDmiaf8jaCv+ssGYdoOMb11vWzrIjBxvvhnAU4ZUVXpGNm2QqUSEuIsdp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
 
-
-
-On 29/10/24 12:08, Jakub Kicinski wrote:
-> On Tue, 29 Oct 2024 10:55:14 -0600 Gustavo A. R. Silva wrote:
->> On 29/10/24 07:58, Jakub Kicinski wrote:
->>> On Mon, 21 Oct 2024 13:02:27 -0600 Gustavo A. R. Silva wrote:
->>>> @@ -3025,7 +3025,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
->>>>    {
->>>>    	struct bnxt *bp = netdev_priv(dev);
->>>>    	struct bnxt_link_info *link_info = &bp->link_info;
->>>> -	const struct ethtool_link_settings *base = &lk_ksettings->base;
->>>> +	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
->>>
->>> Please improve the variable ordering while at it. Longest list first,
->>> so move the @base definition first.
->>
->> OK. This would end up looking like:
->>
->> 	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
->> 	struct bnxt *bp = netdev_priv(dev);
->> 	struct bnxt_link_info *link_info = &bp->link_info;
+On Tue, Oct 29, 2024 at 01:47:59PM -0400, Mathieu Desnoyers wrote:
+> On 2024-10-29 13:17, Josh Poimboeuf wrote:
+> > On Tue, Oct 29, 2024 at 02:56:17PM +0100, Peter Zijlstra wrote:
+> > > On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
+> > > 
+> > > > + * The only exception is when the task has migrated to another CPU, *and* this
+> > > > + * is called while the task work is running (or has already run).  Then a new
+> > > > + * cookie will be generated and the callback will be called again for the new
+> > > > + * cookie.
+> > > 
+> > > So that's a bit crap. The user stack won't change for having been
+> > > migrated.
+> > > 
+> > > So perf can readily use the full u64 cookie value as a sequence number,
+> > > since the whole perf record will already have the TID of the task in.
+> > > Mixing in this CPU number for no good reason and causing trouble like
+> > > this just doesn't make sense to me.
+> > > 
+> > > If ftrace needs brain damage like this, can't we push this to the user?
+> > > 
+> > > That is, do away with the per-cpu sequence crap, and add a per-task
+> > > counter that is incremented for every return-to-userspace.
+> > 
+> > That would definitely make things easier for me, though IIRC Steven and
+> > Mathieu had some concerns about TID wrapping over days/months/years.
+> > 
+> > With that mindset I suppose the per-CPU counter could also wrap, though
+> > that could be mitigated by making the cookie a struct with more bits.
+> > 
 > 
-> Correct, one step at a time.
+> AFAIR, the scheme we discussed in Prague was different than the
+> implementation here.
 > 
->>>> @@ -62,7 +62,7 @@ static int linkmodes_reply_size(const struct ethnl_req_info *req_base,
->>>>    {
->>>>    	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
->>>>    	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
->>>> -	const struct ethtool_link_settings *lsettings = &ksettings->base;
->>>> +	const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
->>>
->>> here it was correct and now its not
->>
->> I don't think you want to change this. `lsettings` is based on `ksettings`. So,
->> `ksettings` should go first. The same scenario for the one below.
+> We discussed having a free-running counter per-cpu, and combining it
+> with the cpu number as top (or low) bits, to effectively make a 64-bit
+> value that is unique across the entire system, but without requiring a
+> global counter with its associated cache line bouncing.
 > 
-> In which case you need to move the init out of line.
+> Here is part where the implementation here differs from our discussion:
+> I recall we discussed keeping a snapshot of the counter value within
+> the task struct of the thread. So we only snapshot the per-cpu value
+> on first use after entering the kernel, and after that we use the same
+> per-cpu value snapshot (from task struct) up until return to userspace.
+> We clear the task struct cookie snapshot on return to userspace.
+> 
+> This way, even if the thread is migrated during the system call, the
+> cookie value does not change: it simply depends on the point where it
+> was first snapshotted (either before or after migration). From that
+> point until return to userspace, we just use the per-thread snapshot
+> value.
+> 
+> This should allow us to keep a global cookie semantic (no need to
+> tie this to tracer-specific knowledge about current TID), without the
+> migration corner cases discussed in the comment above.
 
-So, the same applies to the case below?
+The 48:16 bit split gives you uniqueness for around 78 hours at 1GHz.
 
-	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
-	struct bnxt *bp = netdev_priv(dev);
-	struct bnxt_link_info *link_info = &bp->link_info;
+But seriously, perf doesn't need this. It really only needs a sequence
+number if you care to stitch over a LOST packet (and I can't say I care
+about that case much) -- and doing that right doesn't really take much
+at all.
 
-Is this going to be a priority for any other netdev patches in the future?
-
---
-Gustavo
 
