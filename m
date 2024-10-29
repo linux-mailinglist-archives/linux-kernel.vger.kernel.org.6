@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-386481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6E09B4404
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:19:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F689B4408
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:20:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96C88282B20
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:19:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 103CA1F23194
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC1F2038A0;
-	Tue, 29 Oct 2024 08:19:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABC7E2036E0;
+	Tue, 29 Oct 2024 08:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pm93qVU4"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IUEeVpVJ"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165FB20371F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34539202F64
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:19:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189973; cv=none; b=BGH//JbZ9pCRjv4hWWtOp+hwUcITgeiIFfPoxHNWozpCeEXy/bERQDi870qdDXUIAVQGSdbtPiCAlTOHYd4B15KLwFhcV4t0NYz1Ci4c3OGhVAD/W4ZqBseZzslmAnL0WdpA0gJCGQ59i96cK0/NW34jI8etSoOhJOXT3ycZKZ4=
+	t=1730190002; cv=none; b=H9TVuavUx03BBShsATL/mkLvyLPlx24oO3EBL+7OlEfZ8oBu+hrGmMJvIuORDkaSz6loBrech0+yYj3ZHfTky5br2TlGFjipZqM8/yaAaClROc6KRqNQUCpfZFAefyk2OgzcNxZdCyo3vC5pjHnprgKcD26OJRo7LJIQUPEHf7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189973; c=relaxed/simple;
-	bh=tJx/bThf7RRPQy522W46SjHhmJvOpGhuopQdRLvGDtA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Elcc864eP8vvqa6tTaPv8KC730f7pfVR8IL3deKj42H498EG8v9yoD9lRwXTxbd/3TFlbD9o1E+hps+vzQuUFr1ciBBGFXiWile0k+7JeT0d968Qna+Xlr1fD9jH0BE9v9W0KEir8VvOxqaQ/IxacPo2zkhrHGXh9eranzpa464=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pm93qVU4; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f58c68c5so8534383e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:19:30 -0700 (PDT)
+	s=arc-20240116; t=1730190002; c=relaxed/simple;
+	bh=ZpyPq8nnPbgYC0We4+6ik9wif9GBkXt+1UhF018rgHU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=n2g5RqFqmKxLsMk9wNtbcOwjX/GHbMWvK+CIKTkSNFhVGGXoyGvFu4yy7Cachq1yteGLAKjluXug7ezmQzu0JNUw38xroEvd6gbAIpZb8ZaCAfJJxg6PI/BG6iy+ht7j8RkoEUV7llYNIvUur1DqTRZ7w7H7RzYLsFe6hAE72y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--locc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IUEeVpVJ; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--locc.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e290b8b69f8so8537474276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:19:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730189969; x=1730794769; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VVOexIS3SgllZm/pW9Ena+nrB8MLfcVMF764exL0AQM=;
-        b=pm93qVU4qXczc760kD8bNgTQvVT79BgVXhtSOWSUMFf6dY45RM1xKjFPBJcEcpHCjR
-         iIkd54WmHlG8GllAQ9ovf/iuYh1qaLMkhUt61dIkvAjMEDHPxiyo3VrO0pHgNfK2wPrd
-         SG3g9AUCqaNhQgi+MwcHZa7Ipz4al/wRdgiP375RJRXIYtJlbcWoVszEGk5FtwXSjJBe
-         nkThsIKPtp1kCp9046NnuFR0GpcQVP8sEBvaPkAlouxK59SXeHeMatX6icCo1lBOs4kT
-         YkQ4rqjW7d5RCRhT0+FsxdUUzwr76prBj2163Kfksdxk6cgx2BEXhxdVqLRBrolXUr2l
-         Ji5g==
+        d=google.com; s=20230601; t=1730189999; x=1730794799; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OKZ8uksHUkYhd/wNFB35K9oWSKS5HIyaB23ZVfHBsJQ=;
+        b=IUEeVpVJtPPqlDroNAXykh+D+qV/aFZABkCkNSZMbX66EoGnbQEbFGiYMKaiEXBmrc
+         ogeFtRRR8Npo0l+eh7P5slpDq7luspkMdW2CHVwB0ZOlM0uAPTeyvmV1W1brTiePNJQV
+         W6rsXGfT4Qo8Vsy3yAas09gkgBQqjmkEU+MKW+KonAyDRpgcFL1mwVe7WxkdS14NCe4l
+         3SBSaE5DJzF4z9/BG5EJJZcdhgUJ77EBTu+siYlUc3ecEOTDpbljH4jUsWVWOT6CVd8h
+         rVBU+a3yJdnLnUMU8e2f3Frc4QerNS946geLUVDdLo15xTXxSUnboRLLMbi1jUJ9+EEj
+         O1lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730189969; x=1730794769;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VVOexIS3SgllZm/pW9Ena+nrB8MLfcVMF764exL0AQM=;
-        b=doIAG7qP7ByF/hZSU5lcvDadYiEKEnq3sN51BSblXBgzJDCBKSn8xoaGQ8d8nAdPWL
-         xOtLR+0uTref9wib4pg6YsWuzXvCzBv5QxQir46oMLCUgjC4lbKWahHZd/VLRhpNRGwr
-         HUBZN3+K4VBNe+DFatbRiIlXhFeRr+Uv8Vtz9BAX1UWmT7ErnTFhX88YAR1bgHYJY9Zh
-         I6l7Cr0lEi+tQXJlGQFI3L1Hzrs95Os/g2UTbZ9UM9cM4aCWpuPotcL3ARe0fq+YGPSP
-         AQujZefRvtV7PfSzXUUFEn+yBoXPA3ncxE3W8GPb0c4yovUjqvtOTt8IVQRAdzQoF31w
-         LXCg==
-X-Forwarded-Encrypted: i=1; AJvYcCVro9ga/iQ72+Y8lIicPuFpocypwCJcReyEYKqLOvWu0YPwizDVnpp5bpmmzaCi8ze/7zbIAQn48KsIYLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmvgfpR6uNjJUJDlFrlkq7f1CAfPfNr+4nLkRRKrvVvH3dhyXo
-	3IEJ2bsUzobZXQoodnOm2u/duXZCohCaEqWHCwSqhY3VEeIW5M10mDZzdlOPrsY=
-X-Google-Smtp-Source: AGHT+IF3Rxjs9R/r0CPhhUw5+OUfR7VXHsix8wHKnE253K7lQLZZUQcp0acowwY53IIl/tZieH5Tmg==
-X-Received: by 2002:a05:6512:b8f:b0:539:8f3c:4586 with SMTP id 2adb3069b0e04-53b34a34602mr8913570e87.55.1730189969117;
-        Tue, 29 Oct 2024 01:19:29 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f297204sm445856166b.116.2024.10.29.01.19.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:19:28 -0700 (PDT)
-Date: Tue, 29 Oct 2024 11:19:24 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Philip Li <philip.li@intel.com>
-Cc: Matthew Sakai <msakai@redhat.com>, oe-kbuild@lists.linux.dev,
-	Mike Snitzer <snitzer@kernel.org>, lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: drivers/md/dm-vdo/data-vio.c:976 vdo_launch_bio() warn:
- inconsistent returns '&pool->lock'.
-Message-ID: <68866f17-f327-4df8-ae17-dfcc50362d4a@stanley.mountain>
-References: <717e8949-55c4-4461-8951-3e582e9b77ef@stanley.mountain>
- <f074f848-5a26-473b-ae98-1932e9a8cbd1@redhat.com>
- <ZyBQa45RTWXiXJke@rli9-mobl>
- <ZyCLo51ZyjxX7eQK@rli9-mobl>
- <13937d22-46ac-480a-8956-f89a0fd295ac@stanley.mountain>
+        d=1e100.net; s=20230601; t=1730189999; x=1730794799;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OKZ8uksHUkYhd/wNFB35K9oWSKS5HIyaB23ZVfHBsJQ=;
+        b=Npjlm3Joqa4iATBAzJzDJPnhchpBFMRS1t1I3C5IDgs36viz00j5FyVL+F7GWMhTZe
+         02LTPlt9JSQsNpbBGl7pN6JtcJ6i9P7rrugDgGVqOdpsS7vYvPd36a2CDk9sh5p8AsX3
+         /dD3Si2kldrTqMaR7t17dG8l3d8qwLRkIqggix15TzsTyCKVJznUsTlsIJ48OQziW4gj
+         ezSBUunK90En67EYzYtFLhIpPbedbgESNZes1H5MAkd695vuHPNf4gxSGwAJd0pklfyD
+         7y0MP7TiNADfXEZWewm/EyPBpVNQq/6QTgZPxf4yOCnUH7jWuZ2Ku8F0HWyL2kzE99ZJ
+         MSEQ==
+X-Gm-Message-State: AOJu0YwHH9h5zuvf4DlOdVqxLLMjJ0odzIoplL1Anisn4di706/cWE1u
+	PfpcwPETXjkqg5MgXBOE7c81fF0WS6f2SdZPmwWChL6EyZ9h6BhwFCFDNQ5NRiDLlnTWJw==
+X-Google-Smtp-Source: AGHT+IFbJhZX1w6rKtpH2+UtJ38dc/8iceQX1U8Cx2t6n6NlYYtd3t4yo4IE0B9qoy4cwbRQ07XFVcQT
+X-Received: from locc-p620.tpe.corp.google.com ([2401:fa00:1:15:c262:55f7:42f9:dc22])
+ (user=locc job=sendgmr) by 2002:a05:6902:529:b0:e30:c741:ab06 with SMTP id
+ 3f1490d57ef6-e30c741b11bmr435276.5.1730189998980; Tue, 29 Oct 2024 01:19:58
+ -0700 (PDT)
+Date: Tue, 29 Oct 2024 16:19:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <13937d22-46ac-480a-8956-f89a0fd295ac@stanley.mountain>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241029081941.3264566-1-locc@google.com>
+Subject: [PATCH] regmap: kunit: Fix repeated test param
+From: Cheng-Cheng Lo <locc@google.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Cheng-Cheng Lo <locc@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 29, 2024 at 11:07:07AM +0300, Dan Carpenter wrote:
-> 3) The kbuild bot detected the bug, but unfortunately the cross function DB
->    doesn't scale well enough for the kbuild bot to use so it didn't detect the
->    fix.
+There're duplicated elements in the test param real_cache_types_list. The
+second one shoulde have cache type REGCACHE_MAPLE.
 
-Aw crud.  It does still print a warning on linux-next actually.
-Smatch says that we lock "&pool->lock" and unlocked
-"&pool->discard_limiter->pool->lock".
+Signed-off-by: Cheng-Cheng Lo <locc@google.com>
+---
+ drivers/base/regmap/regmap-kunit.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Anyway.  Points 1 and 4 that we were running new checks on old code and that
-the code in the email did have a bug are correct.
-
-regards,
-dan carpenter
+diff --git a/drivers/base/regmap/regmap-kunit.c b/drivers/base/regmap/regmap-kunit.c
+index 4bf3f1e59ed7..3add2aa6d6d8 100644
+--- a/drivers/base/regmap/regmap-kunit.c
++++ b/drivers/base/regmap/regmap-kunit.c
+@@ -126,7 +126,7 @@ static const struct regmap_test_param real_cache_types_list[] = {
+ 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2003 },
+ 	{ .cache = REGCACHE_RBTREE, .from_reg = 0x2004 },
+ 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0 },
+-	{ .cache = REGCACHE_RBTREE, .from_reg = 0, .fast_io = true },
++	{ .cache = REGCACHE_MAPLE,  .from_reg = 0, .fast_io = true },
+ 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2001 },
+ 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2002 },
+ 	{ .cache = REGCACHE_MAPLE,  .from_reg = 0x2003 },
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
 
