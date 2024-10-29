@@ -1,99 +1,91 @@
-Return-Path: <linux-kernel+bounces-386351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F18699B4251
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:18:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 567E19B4255
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD721F231E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:18:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B668282DA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442BD201005;
-	Tue, 29 Oct 2024 06:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3172320102B;
+	Tue, 29 Oct 2024 06:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ILLlqmgM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="iIPABrPO"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E1B1FF603
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:18:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CB21FF603
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730182722; cv=none; b=JYrBi4GRK6eUQRKUqKezZMaAyxQGw3MlVPAuQFevqmYQSB8U6NPIbnY5YRveMW39hwxXkOvmNvGsFbiEmYeQKIvUk2mW4sQ08D1WQA7DvDgFAWXcXnq+sMCk99MZd1j9NdOo5PbcsOWIXqsONd4T0QF3B1Kwwn0iNpVNkDnbalo=
+	t=1730182769; cv=none; b=b807B2K+dDcLiz37a3sR3/z9SSG5vVAjoFTandbrRmGIlpUsSQGR5k7WeKKFiGJqncYPpxNyAHfbvt+8DBlPn5WYN4mvSaqZgDSVifr5oHMxq0AA0A6OHfPsp6PO5JuSZkeUjzqkEHM6vHz2YIZZxoZd0Hyz0R9b12Uw6gdfH7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730182722; c=relaxed/simple;
-	bh=ppf6eFjKl85knUWcnFMSFXU9CjJVKMIJWfoC6pkShBg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dw4FGsK2pW3XSQcOfTANDrAYbnWmgX3tRoDWid9n4LkL/tBddK0tQNdDuaXtYD4xP38/nIe6r0Z5YerqeD8D7pRYebjKNWt3Z6s5UrqkhHo+Fx6FfJ0e86DWOu9EVNRZ4sBzNiOrahfx96R7/n2YE52CrdYdO1SUPe/XRAFMcvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ILLlqmgM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2089BC4CECD;
-	Tue, 29 Oct 2024 06:18:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730182722;
-	bh=ppf6eFjKl85knUWcnFMSFXU9CjJVKMIJWfoC6pkShBg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ILLlqmgMA5WZBz+PlJWxEKws/hP3dRQu3EqDp2PqfXA0/fCLm87NvlNgw/e/UnBLv
-	 j/dMV0rrK23K67vZoqqyBtXA5196A2U5NumgJWk0aQ+cM9sV/21VdkGtF2aM8ZJCpH
-	 aTKdYym3TzYpHR+yKfPIS1N28edgtAC5s8RK2b+TZSgdp0bjXWu7Kmex8mtD1WA5kV
-	 nr2sb1YMdhCI4L9lQnos89CWKw2jZFphgZjTPFAyRYKN6VzabVezeLaTmdH2B+jXA2
-	 HxnBi//ulXAS07+PEHVWhJKdDFhXP7UC13pCe4fLmIfv0DMAALAysrhzshzzHfczjA
-	 1kvXwJ/qn6MMw==
-Date: Mon, 28 Oct 2024 20:18:41 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Tianchen Ding <dtcccc@linux.alibaba.com>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [RFC PATCH 2/2] sched/eevdf: Introduce a cgroup interface for
- slice
-Message-ID: <ZyB-QdXryezwSswB@slm.duckdns.org>
-References: <20241028063313.8039-1-dtcccc@linux.alibaba.com>
- <20241028063313.8039-3-dtcccc@linux.alibaba.com>
- <Zx_LwYshJV5LERm9@slm.duckdns.org>
- <ddfca6ac-f7a6-4b51-80e8-2e422de7d597@linux.alibaba.com>
+	s=arc-20240116; t=1730182769; c=relaxed/simple;
+	bh=ks8tvZ0ZvY26sNQwxDerxvDeQ1sfaqOfyRfWrP33GvU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XLspGl4OVPspm9HbqKTiuXtcKyZ4cLq0ut4atxzRDDCmL+3xjag8fL1sa1Wc6PO3TjLiaw4UgF/Cc9uaH52nzqSyJmvv7dP7Ux58sZKridCizHtLlwqf9qCQSuCmEFoIEddD8J8TbBvUIKsCBnMfGRaJ0lOgQ4dNKeQDLQo2Ye4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=iIPABrPO; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <b5aed7cd-3a1b-4d0a-a9fe-e8a2a7778cdd@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730182765;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9WMyaBrz6Rc0EJzD5VFAXnB0tURCwG65EccTTtVhZE=;
+	b=iIPABrPOj+oSHPAq2eq2zMhUCV9lYAgYd9qoza9iTFvtQc+6DG+hQDv0WOY6h1UNY/1JN5
+	b1PWRYfrK/fVvz0nxuuA/G3Tx7dOPh54LVYdMdR3i1q+EkcZDcu8H81pXnI+u5fJcjELia
+	dvusQZZSj1xto12O3X0R8mRO0Dszcio=
+Date: Mon, 28 Oct 2024 23:19:17 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ddfca6ac-f7a6-4b51-80e8-2e422de7d597@linux.alibaba.com>
+Subject: Re: [PATCH bpf v2 2/2] selftests/bpf: Add test cases for various
+ pointer specifiers
+Content-Language: en-GB
+To: Ilya Shchipletsov <rabbelkin@mail.ru>, bpf@vger.kernel.org
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, Florent Revest <revest@chromium.org>,
+ Nikita Marushkin <hfggklm@gmail.com>, lvc-project@linuxtesting.org,
+ linux-kernel@vger.kernel.org
+References: <20241028195343.2104-1-rabbelkin@mail.ru>
+ <20241028195343.2104-3-rabbelkin@mail.ru>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20241028195343.2104-3-rabbelkin@mail.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hello,
 
-On Tue, Oct 29, 2024 at 10:07:36AM +0800, Tianchen Ding wrote:
-....
-> For eevdf, per-task interface has been introduced in commit 857b158dc5e8
-> ("sched/eevdf: Use sched_attr::sched_runtime to set request/slice
-> suggestion")
+On 10/28/24 12:53 PM, Ilya Shchipletsov wrote:
+> Extend snprintf negative tests to cover pointer specifiers to prevent possible
+> invalid handling of %p% from happening again.
+>
+>   ./test_progs -t snprintf
+>   #302/1   snprintf/snprintf_positive:OK
+>   #302/2   snprintf/snprintf_negative:OK
+>   #302     snprintf:OK
+>   #303     snprintf_btf:OK
+>   Summary: 2/2 PASSED, 0 SKIPPED, 0 FAILED
+>
+> Co-developed-by: Nikita Marushkin <hfggklm@gmail.com>
+> Signed-off-by: Nikita Marushkin <hfggklm@gmail.com>
+> Signed-off-by: Ilya Shchipletsov <rabbelkin@mail.ru>
 
-I see.
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
 
-> So This patch is trying to introduce a cgroup level interface.
-
-If I'm reading the code correctly, the property can be set per task and is
-inherited when forking unless RESET_ON_FORK is set. I'm not sure the cgroup
-interface adds all that much:
-
-- There's no inherent hierarchical or grouping behavior. I don't think it
-  makes sense for cgroup config to override per-thread configs.
-
-- For cgroup-wide config, setting it in the seed process of the cgroup would
-  suffice in most cases. Changing it afterwards is more awkward but not
-  hugely so. If racing against forks is a concern, you can either use the
-  freezer or iterate until no new tasks are seen.
-
-Thanks.
-
--- 
-tejun
 
