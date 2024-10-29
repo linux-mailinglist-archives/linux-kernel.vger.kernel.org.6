@@ -1,159 +1,203 @@
-Return-Path: <linux-kernel+bounces-386111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A559B3F3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:33:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CF3E9B3F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:38:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C5FB21B08
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:33:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02E62835C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C29DF59;
-	Tue, 29 Oct 2024 00:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C5512E5B;
+	Tue, 29 Oct 2024 00:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1fWOv+Xz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DtMRgpFW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBD24A28;
-	Tue, 29 Oct 2024 00:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28261FC0A;
+	Tue, 29 Oct 2024 00:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730161980; cv=none; b=alxGSK1M36U0UWEXlpbIcGj0syzWyb1pdQc0IzE8hMsKB+h4Tfc9KTUm/hB64Xqo+397sr6NUl1tOaGASbQ0l9BXgC1JKGPZyPhqCbkeBG1jjr3jKkaKjVCuHjRUZ3FtX+LVWvhTzb8rPvk27fHEsYdsOEkEqi4b9zWRq3Me+nc=
+	t=1730162292; cv=none; b=rz6++b65ruRrEWE2VF3u5sYP5GLhuAks2QxT/YcbqrtBF6FyPvcxDTeUjiFG93FlvPSp+q0kxaCmTmh8h542u0Js/DeZ4meF+s2oCK4hNvtwrEPDG5KqnCf45gK2m734mVxT0dH+LD0DKj2Qtilkz92Ys200vOp8l7GSjNjj9SM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730161980; c=relaxed/simple;
-	bh=h6uTVq+hv9WhN1djveiVDbjzfvV7PyEB+OO+feAAn98=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeNLh9I3t89pukiwjNJcvVAL2lUpSzCQXk/rSaf+A4r+hF7idxPvKH6nqOjKYAdb78jhQlWRxlZoGvFXyo0FU+FK5L4G8QLNfJ6MDdRVQP3kO7dHhjIG1Y5ZohOoLDNL/TiZl9Z19yLaIRGpa0O49fjKiGMFNVRilDLy2XGTyQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1fWOv+Xz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FD9C4CEC3;
-	Tue, 29 Oct 2024 00:33:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1730161980;
-	bh=h6uTVq+hv9WhN1djveiVDbjzfvV7PyEB+OO+feAAn98=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=1fWOv+Xz4YoVnyfxnShxDcmk+XGg2cxeGv/lJbGGmZOc9bq79BG9xUrfeHzwcoLFZ
-	 Rv5MyOoqKTRjEE47xrnZDVU5/Iqkuyel1uikjJooEeWSjZ7dLpwoDnpOJtTA1MD5yS
-	 vy8b8S696klE0nThRykPJYyXlZUiSbepqDCCk4tk=
-Date: Tue, 29 Oct 2024 01:32:48 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Pierre Gondois <pierre.gondois@arm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Jeremy Linton <jeremy.linton@arm.com>,
-	Yunhui Cui <cuiyunhui@bytedance.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Steffen Persvold <spersvold@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	"Borislav Petkov (AMD)" <bp@alien8.de>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Tony Luck <tony.luck@intel.com>, Yury Norov <yury.norov@gmail.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH] ACPI: CPPC: Make rmw_lock a raw_spin_lock
-Message-ID: <2024102934-bankroll-strongbox-8074@gregkh>
-References: <20241028105200.1205509-1-pierre.gondois@arm.com>
+	s=arc-20240116; t=1730162292; c=relaxed/simple;
+	bh=3K2dglKZn7wUtYTDSsva58MuIimxAP4MGOPDH/JDycU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qgd1wfvKzLd0EMO/G6mAfQ6evE2dQ2l3BhUujG76/Idt1yTngOLv28hr99NPxVH20My3qNJQOWPVRAI06Q0/Ene1oml1+b6dv5p5B7TCoTvRiy0IjPCbrp4fc9UNM/4RiquLMnMh6D6RuHVNTu0vBSmTsDSEGgc+doeOwDDLTBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DtMRgpFW; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730162290; x=1761698290;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=3K2dglKZn7wUtYTDSsva58MuIimxAP4MGOPDH/JDycU=;
+  b=DtMRgpFWYP3yNxEnCfkIJzEGEYAvYhbgv9bMsCT8wgbUj1oJVesTuCGa
+   GPw+vYGQfHuiC7qP+Fn+kmzX/9DKvVA0ctGMik1ZEt42hwErH59uciPEi
+   J1cC8Odc4ru8VjXE0lnhu8l/yjFEi0+6sYdINuitovzVyy8smU0yW5TpV
+   jMbXJj6xqAFBbrhEW4I0GJ8C/3z1zWojVVZIb031UhEZ1fG5kJOMr6SUh
+   cjDTy+LeC5rLSO2wlUN9w7h+Ma6Ocw4yf8bZdm+Nmts4r9ya4F3HEZOs6
+   WZPEHf2tiXSeAZT1T5n2U/ObZIOy6KlM40WxFOWhIW3osOP9nuhVhg+Hl
+   A==;
+X-CSE-ConnectionGUID: j/jWGMgxQ0mWTE5oZiurcw==
+X-CSE-MsgGUID: 8kbRqs6yRqyPI19KDcRQ1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="33574624"
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="33574624"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 17:38:10 -0700
+X-CSE-ConnectionGUID: k0aWpVU7SbWu9VZPyjYQEw==
+X-CSE-MsgGUID: ZKMTSNDQRAmSlMypoWqD1w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="82602018"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 17:38:08 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Gregory Price <gourry@gourry.net>
+Cc: Yang Shi <shy828301@gmail.com>,  linux-kernel@vger.kernel.org,
+  linux-mm@kvack.org,  kernel-team@meta.com,  akpm@linux-foundation.org,
+  weixugc@google.com,  dave.hansen@linux.intel.com,  osalvador@suse.de,
+  stable@vger.kernel.org
+Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
+ demoting pages
+In-Reply-To: <ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com> (Gregory Price's
+	message of "Mon, 28 Oct 2024 17:25:15 -0400")
+References: <20241025141724.17927-1-gourry@gourry.net>
+	<CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
+	<ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com>
+Date: Tue, 29 Oct 2024 08:34:34 +0800
+Message-ID: <87msinwxut.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028105200.1205509-1-pierre.gondois@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28, 2024 at 11:51:49AM +0100, Pierre Gondois wrote:
-> The following BUG was triggered. sugov_update_shared() locks a
-> raw_spinlock while cpc_write() locks a spinlock. To have a correct
-> wait-type order, update rmw_lock to a raw_spinlock.
-> 
-> Also save irq state.
-> 
-> =============================
-> [ BUG: Invalid wait context ]
-> 6.12.0-rc2-XXX #406 Not tainted
-> -----------------------------
-> kworker/1:1/62 is trying to lock:
-> ffffff8801593030 (&cpc_ptr->rmw_lock){+.+.}-{3:3}, at: cpc_write+0xcc/0x370
-> other info that might help us debug this:
-> context-{5:5}
-> 2 locks held by kworker/1:1/62:
->   #0: ffffff897ef5ec98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2c/0x50
->   #1: ffffff880154e238 (&sg_policy->update_lock){....}-{2:2}, at: sugov_update_shared+0x3c/0x280
-> stack backtrace:
-> CPU: 1 UID: 0 PID: 62 Comm: kworker/1:1 Not tainted 6.12.0-rc2-g9654bd3e8806 #406
-> Workqueue:  0x0 (events)
-> Call trace:
->   dump_backtrace+0xa4/0x130
->   show_stack+0x20/0x38
->   dump_stack_lvl+0x90/0xd0
->   dump_stack+0x18/0x28
->   __lock_acquire+0x480/0x1ad8
->   lock_acquire+0x114/0x310
->   _raw_spin_lock+0x50/0x70
->   cpc_write+0xcc/0x370
->   cppc_set_perf+0xa0/0x3a8
->   cppc_cpufreq_fast_switch+0x40/0xc0
->   cpufreq_driver_fast_switch+0x4c/0x218
->   sugov_update_shared+0x234/0x280
->   update_load_avg+0x6ec/0x7b8
->   dequeue_entities+0x108/0x830
->   dequeue_task_fair+0x58/0x408
->   __schedule+0x4f0/0x1070
->   schedule+0x54/0x130
->   worker_thread+0xc0/0x2e8
->   kthread+0x130/0x148
->   ret_from_fork+0x10/0x20
-> 
-> Fixes: 60949b7b8054 ("ACPI: CPPC: Fix MASK_VAL() usage")
-> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
-> ---
->  drivers/acpi/cppc_acpi.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+Gregory Price <gourry@gourry.net> writes:
 
-Hi,
+> On Mon, Oct 28, 2024 at 01:45:48PM -0700, Yang Shi wrote:
+>> On Fri, Oct 25, 2024 at 7:17=E2=80=AFAM Gregory Price <gourry@gourry.net=
+> wrote:
+>> >
+>> > When numa balancing is enabled with demotion, vmscan will call
+>> > migrate_pages when shrinking LRUs.  Successful demotions will
+>> > cause node vmstat numbers to double-decrement, leading to an
+>> > imbalanced page count.  The result is dmesg output like such:
+>> >
+>> > $ cat /proc/sys/vm/stat_refresh
+>> >
+>> > [77383.088417] vmstat_refresh: nr_isolated_anon -103212
+>> > [77383.088417] vmstat_refresh: nr_isolated_file -899642
+>> >
+>> > This negative value may impact compaction and reclaim throttling.
+>> >
+>> > The double-decrement occurs in the migrate_pages path:
+>> >
+>> > caller to shrink_folio_list decrements the count
+>> >   shrink_folio_list
+>> >     demote_folio_list
+>> >       migrate_pages
+>> >         migrate_pages_batch
+>> >           migrate_folio_move
+>> >             migrate_folio_done
+>> >               mod_node_page_state(-ve) <- second decrement
+>> >
+>> > This path happens for SUCCESSFUL migrations, not failures. Typically
+>> > callers to migrate_pages are required to handle putback/accounting for
+>> > failures, but this is already handled in the shrink code.
+>>=20
+>> AFAIK, MGLRU doesn't dec/inc this counter, so it is not
+>> double-decrement for MGLRU. Maybe "imbalance update" is better?
+>> Anyway, it is just a nit. I'd suggest capturing the MGLRU case in the
+>> commit log too.
+>>
+>
+> Gotcha, so yeah saying it's an imbalance fix is more accurate.
+>
+> So more accurate changelog is:
+>
+>
+> [PATCH] vmscan,migrate: fix page count imbalance on node stats when demot=
+ing pages
+>
+> When numa balancing is enabled with demotion, vmscan will call
+> migrate_pages when shrinking LRUs.  migrate_pages will decrement the
+> the node's isolated page count, leading to an imbalanced count when
+> invoked from (MG)LRU code.
+>
+> The result is dmesg output like such:
+>
+> $ cat /proc/sys/vm/stat_refresh
+>
+> [77383.088417] vmstat_refresh: nr_isolated_anon -103212
+> [77383.088417] vmstat_refresh: nr_isolated_file -899642
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
+> This negative value may impact compaction and reclaim throttling.
+>
+> The following path produces the decrement:
+>
+> shrink_folio_list
+>   demote_folio_list
+>     migrate_pages
+>       migrate_pages_batch
+>         migrate_folio_move
+>           migrate_folio_done
+>             mod_node_page_state(-ve) <- decrement
 
-You are receiving this message because of the following common error(s)
-as indicated below:
+I think that it may be better to mention the different behavior of LRU
+and MGLRU.  But that's not a big deal, change it again only if you think
+it's necessary.
 
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
+--
+Best Regards,
+Huang, Ying
 
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
+> This path happens for SUCCESSFUL migrations, not failures. Typically
+> callers to migrate_pages are required to handle putback/accounting for
+> failures, but this is already handled in the shrink code.
+>
+> When accounting for migrations, instead do not decrement the count
+> when the migration reason is MR_DEMOTION. As of v6.11, this demotion
+> logic is the only source of MR_DEMOTION.
+>
+>
+>> >
+>> > Signed-off-by: Gregory Price <gourry@gourry.net>
+>> > Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
+>> > Cc: stable@vger.kernel.org
+>>=20
+>> Thanks for catching this. Reviewed-by: Yang Shi <shy828301@gmail.com>
+>>=20
+>> > ---
+>> >  mm/migrate.c | 2 +-
+>> >  1 file changed, 1 insertion(+), 1 deletion(-)
+>> >
+>> > diff --git a/mm/migrate.c b/mm/migrate.c
+>> > index 923ea80ba744..e3aac274cf16 100644
+>> > --- a/mm/migrate.c
+>> > +++ b/mm/migrate.c
+>> > @@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
+>> >          * not accounted to NR_ISOLATED_*. They can be recognized
+>> >          * as __folio_test_movable
+>> >          */
+>> > -       if (likely(!__folio_test_movable(src)))
+>> > +       if (likely(!__folio_test_movable(src)) && reason !=3D MR_DEMOT=
+ION)
+>> >                 mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON=
+ +
+>> >                                     folio_is_file_lru(src), -folio_nr_=
+pages(src));
+>> >
+>> > --
+>> > 2.43.0
+>> >
 
