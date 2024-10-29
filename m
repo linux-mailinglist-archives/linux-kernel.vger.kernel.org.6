@@ -1,116 +1,120 @@
-Return-Path: <linux-kernel+bounces-387158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 760D09B4CC6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:00:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7019B4CC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BA60B23063
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:00:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C29CBB227CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476841885BD;
-	Tue, 29 Oct 2024 15:00:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F0BEEC5;
+	Tue, 29 Oct 2024 15:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AjZFxSVp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="g15wgTdD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7267E10F7;
-	Tue, 29 Oct 2024 15:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78E9BA50;
+	Tue, 29 Oct 2024 15:01:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730214047; cv=none; b=QIbIYBOY4L3FRij6SnY2jtp8B6aPd8eDrseZqmwoTrzLSh5z7xmRyZh4FQzMG8Tk8NScivh7ffG3PX5XTYoFOu6PqRbf6PluhriMyNh+e1cpCr26yG6kSopOUAqO9YUwsGzM2mH609jUku0H/Yiqv0h520B+eqoZjVOmi95law4=
+	t=1730214075; cv=none; b=WGMGH1Bb1IkkEj9R64XYzhohi4fsyQDFvZFqwKv94Mr38HcsLEvDe5OC0b1nxKRaZ9rjp8m87h33F39gwg8vSFdhOdegJde9mX1pQsktM9D1foUFftW1JshfLoJy4gIMpbNs9G6h5Yy9Xkw0bxvCN2d+1NwHv2SVHO18s45xDg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730214047; c=relaxed/simple;
-	bh=D9Rp+5yWfZatHCUq+TZPqqV9m9KZmsZKTmZvcVZ20TE=;
+	s=arc-20240116; t=1730214075; c=relaxed/simple;
+	bh=5V7TnhjLSxuQ4wNJlJDE3n0MdEfDCaLHH/wxrUBQ7Jo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DstKFy6Q4Z2KBLe+IuHxcuhw3NDS6F9ECdjVB/pjwRNHDlJ8+pve4eQ3mh0BnyA1ADzbBbZh3boDwGIohhNLZhw8kxIY0GKJBPV8ap1H2Rap0N4kt456WmEUlFvtbgir7Ky/kdP2iOy+Ogf+EPB65aNFk0wRwWETsced4vxK61g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AjZFxSVp; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730214046; x=1761750046;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=D9Rp+5yWfZatHCUq+TZPqqV9m9KZmsZKTmZvcVZ20TE=;
-  b=AjZFxSVpKZOw1wMz8iwQRcG8zuq2WFHqDBmHwjOQrTvjcOF21CrJ1pbp
-   dg83m4mM7TqqXlA/GxH9EcRFGwh5dqj/pi3q+cjk3n8VkRuNmf5AJ1gYX
-   kLApCyp/2ISFqN0tp5EVcnsIvAutAid2bDrCfz44L+DmD1qJduzY4ffuH
-   GZBC/nZMjMLPhnoVZ3bzxSZR4TXP8TvviZrKIH/GJ+9Z7A473Z20YYVQj
-   hdYMMLetVrxFFcx8ouGZvTuyXs354z+oqt2C3RdDoCGA520jvkIvdwWOY
-   3L2mIlxUq7RdHnd/lmjhqbeQ4wM41uPyFk+/g4kKQLWorCehwV3ve52U8
-   g==;
-X-CSE-ConnectionGUID: 4dlUXqHMRXiHSsGJNJLhoQ==
-X-CSE-MsgGUID: YLOJv365Qv6W0ZB+XcmK2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29997215"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29997215"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:00:45 -0700
-X-CSE-ConnectionGUID: Nxyay8XyRLOVqnvvVwffuA==
-X-CSE-MsgGUID: ZL6gQGYLQJee/O82nos84A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="81919191"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 29 Oct 2024 08:00:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 9D49B26B; Tue, 29 Oct 2024 17:00:32 +0200 (EET)
-Date: Tue, 29 Oct 2024 17:00:32 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
-	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
-	Alexey Kardashevskiy <aik@amd.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
-	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
-	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
-	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
-Subject: Re: [PATCH v5 06/16] efi: Disable LASS around
- set_virtual_address_map call
-Message-ID: <vp6kerur3lw7kkw4on5n4vflkdetwrj55dhndkmqn7eljrziyj@v6nhq4bz5ort>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
- <20241028160917.1380714-7-alexander.shishkin@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GKSqEUQ0N2CZAIQ/7L1CAFIDZgi6CNQf72X+rZvBaJrwMxMN56Bebfx/mgmNzbU013Z88jCnlWmTnGs8qEMD5x5Nvblz0qDv7VZm0IjLRykYlb32rqPY6Dbn99XX3f23AEVK5ZOLcD4B7qZp8fKSBcfFXari/dorD8VTtwGlH3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=g15wgTdD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9EA0E40E0198;
+	Tue, 29 Oct 2024 15:01:11 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id QlJVClWK1fkm; Tue, 29 Oct 2024 15:01:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730214056; bh=KOpQcw9nRB9EeS0gpi3ZtVgUYbOH/D9pZeyW+FzZPBE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g15wgTdDZFYgcBpLRk56xoJhOtQsQMZuYz6uwo+OYrIWpod6c92RsQQs1ezsoQfaZ
+	 9Q66CSZcIy3uixamWVSoF3QyXgESBy5v2IKvNGPjtTMpiD1ChQRlrI9S2aP7owP3p+
+	 0QD0/2psOtaoAtlDTC7CsRIpPHrdsO51N0eTh2Vo6uEn0LtKAlLjrncTKzg0Od+BL9
+	 2Hir7MMPd/2InRnQ9momIaPq6u6RawLDjvvLOIO9aTIdDPiESPC9CoXK4U6G/lkKMV
+	 w7qo5g1tvHP9OTzjMRZetxLO5qSq0ztRCR3pOM17sMaKO6FLswpojrym00Rn9637NH
+	 rbouFtGHpsx6u5fWlKC0/udE+jCnNUU6VLoJ9fUDVzfvPqxF7gNU/hYPERq2aIs2my
+	 dUrvecH9bDY2g5G+ttJTMzFfBIpE+4HNfTPhNdBNM+Z5eTcVl0coVL0X7WFKgLAVFJ
+	 82fm7kNVDJe5SOaShvXGhZJCd4EpShwep1VjYgC8e+VV+7CxPp0hBKamIYXuYpBedj
+	 5/brviA5TLCsV33V0XoeHxYdxega511D7MVsg5YC7dl3GAbiq7mmxIttVnXeiq/pyT
+	 biG0D54sEEXuQoU2bzb/N60POjVZT6U03mlINOYmA6Ne3j4WkRTmpNCzE8IFx6Ugml
+	 Rl40Ot9W5qzs3SaMd2atA9Yc=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A076940E0284;
+	Tue, 29 Oct 2024 15:00:43 +0000 (UTC)
+Date: Tue, 29 Oct 2024 16:00:38 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	David Kaplan <David.Kaplan@amd.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	hpa@zytor.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH 2/2] x86/bugs: Clean-up verw mitigations
+Message-ID: <20241029150022.GJZyD4ht9wYcVetdDS@fat_crate.local>
+References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+ <20992658d2c79f27de91a474a7b122782be5f04b.1730158506.git.daniel.sneddon@linux.intel.com>
+ <20241029113702.GUZyDI3u_6IxiCWOBJ@fat_crate.local>
+ <c5fa82d7-e5e9-4612-a238-3c58152c40d0@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241028160917.1380714-7-alexander.shishkin@linux.intel.com>
+In-Reply-To: <c5fa82d7-e5e9-4612-a238-3c58152c40d0@linux.intel.com>
 
-On Mon, Oct 28, 2024 at 06:07:54PM +0200, Alexander Shishkin wrote:
-> Of all the EFI runtime services, set_virtual_address_map is the only one
+On Tue, Oct 29, 2024 at 07:40:28AM -0700, Daniel Sneddon wrote:
+> Sure, I'll split this up as much as possible.
 
-set_virtual_address_map()
+Actually, thinking about this more and looking at David's rework:
 
-> that is called at its lower mapping, which LASS prohibits regardless of
-> EFLAGS.AC setting. The only way to allow this to happen is to disable
-> LASS in the CR4 register.
+https://lore.kernel.org/r/20240912190857.235849-1-david.kaplan@amd.com
 
-How does it interact with cr_pinning? IIUC, this can happen well after
-boot? Like on efivar fs mount.
+his basically is achieving what you're doing - a post-everything routine which
+selects the final mitigation strategy once all the mitigation options have
+been parsed and evaluated.
+
+So I'm wondering if we should simply take his directly...
+
+He removes that md_clear* function:
+
+https://lore.kernel.org/r/20240912190857.235849-8-david.kaplan@amd.com
+
+in favor of doing the final selection in the ->apply* functions and keeping
+each mitigation functions simple.
+
+Yours does this in a single function.
+
+Practically speaking, the end result is the same.
+
+Hmm...
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
