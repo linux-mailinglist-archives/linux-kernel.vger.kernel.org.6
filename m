@@ -1,78 +1,132 @@
-Return-Path: <linux-kernel+bounces-386289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0739B4193
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:30:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D03F29B4199
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:38:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF9161F22CB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:30:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83B751F2332D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666841F4FA8;
-	Tue, 29 Oct 2024 04:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C7B200B89;
+	Tue, 29 Oct 2024 04:38:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Bh3u1hYa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cd2j+xEC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A268E219E0;
-	Tue, 29 Oct 2024 04:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E7EA1DE2D7
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:38:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730176241; cv=none; b=RFxUXxF+4yg+fmb/zXkpPH+10MRS0DZF+6N3ijf5PweZKmo0EGsmu8GbsDqj0wliFp2fvAS+Kbdg2E3qnGVhlWbRqsM5z59s6Z5VNT0hCeQXUCpCOOuCS+eA2v1bLZhy6prLwW/+gZGbVi+0vWKNvxj8MxGbJfjQNVJsBjwuRvI=
+	t=1730176687; cv=none; b=MiS/lY3bKtlrcVb+WCfgDg3XKYvJn+++TJVBv48McfbnMyOxlqRG/z2I6F1KsXl4+AiesNYHGAtJ+WAU9m5Y42VDGhZ6K0fR7liEihZ/Hau5Mal//AgS2fHZkfDEs2SgSb36Er0VHoZhqfiLplTWB+zFQzYcA/KrDoniNE+nOUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730176241; c=relaxed/simple;
-	bh=5JjnfXDvsoE3BbgJnH6j5cpAjWhcDN4wZmcU3KPcmks=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=boFZs+jG/lJ6NgBHflFqvJcjf2GmCIDeWsdXB2rgbGJgPj/rw07QIptBSZnoJHJKuymVKXm7ssN/jRqwsseS4uS7d8VuUT8yj6mVC2ReMNsfdRfR+pXuYK5HopAzcAOuqRc93vFFFUrSZcEp4aTIysrvkhy+igOGVSo9zBJED6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Bh3u1hYa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D681DC4CECD;
-	Tue, 29 Oct 2024 04:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1730176241;
-	bh=5JjnfXDvsoE3BbgJnH6j5cpAjWhcDN4wZmcU3KPcmks=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Bh3u1hYa6fh+rAH1X9TOc5LT+BRl3Tsmya5WSMn81vMx/MhnPG9wYswE6UfbtltxH
-	 +jkmsZHqLYZPOUXF8edQ4V5pq/vM44hnbNAXDi0fYIjiaBP8DyzSpSNpAJBrFUuWeK
-	 lLnxvtBssT7Nb1GcDpIO/SidOR2p69j2uS+FtrnY=
-Date: Mon, 28 Oct 2024 21:30:40 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the tip tree
-Message-Id: <20241028213040.e5d72b2f56971ceb5c80395b@linux-foundation.org>
-In-Reply-To: <20241029133407.3580be1a@canb.auug.org.au>
-References: <20241029133407.3580be1a@canb.auug.org.au>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730176687; c=relaxed/simple;
+	bh=+BY6UlmGCPb3TEH+JRlaT3AKx6sgOOr8Q9OYPKYvmuc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Hq6b5yjGjK6zshx+uP5Tn7aqkAtQrLkAUL10XjhRCCVrMl2sqA5Aqp5fTvuIsoVpv/t4q4BImjOLUFKIrfoO/OsXwwBZ4utiH4XRIg0RIx3A5CmIXE0+vGh+xijL3Ci7bKCKWfHrY6nhkEP7/JCZuf+iGl7qcuRtKcpFuCuwsoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cd2j+xEC; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730176686; x=1761712686;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=+BY6UlmGCPb3TEH+JRlaT3AKx6sgOOr8Q9OYPKYvmuc=;
+  b=Cd2j+xECSM+PvhmLxkoKmpAJMddb7Awukq9WXWTFgzi7/Bc3gSGrbQJy
+   cPC2iFCo1H3u/ij6+LAQ+pz9jfnEVzC5oJKDXM0di8++4IqL2/joOcXjr
+   sykxtlqt61YKjoH7uRAXjHTQUCBc1ZZenGLSxh/E3BsJ1bsucrrPBAH0m
+   wnQ9TmDHO1L0InrVfTxOP2CyzlZfLd9uRQZiQbKeav6+1K6HvZtPQL2gH
+   aU3rU15cxLxUzmhs5lmPinPjTkHJ4vrc/GXZJXFenalacIpImkfwBESpO
+   NodIH0B/mCqvBKMLDleH7O+98+diKrCJ8Axro9wTOtLWMaTi8Ngr1KvMH
+   g==;
+X-CSE-ConnectionGUID: Ep8ni0BuQa6WjsNpKTiCjg==
+X-CSE-MsgGUID: iaMXR3aLSmC1v65eKbUq5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="41193588"
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="41193588"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 21:38:05 -0700
+X-CSE-ConnectionGUID: IC4T4soxTnOYpVoS6XiDjw==
+X-CSE-MsgGUID: QnVaFd02SZawUa1iWBQo1Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
+   d="scan'208";a="82160544"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 21:38:03 -0700
+Message-ID: <ba234a15-2feb-4c52-83e1-e427010fc1fc@linux.intel.com>
+Date: Tue, 29 Oct 2024 12:38:00 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>,
+ Yi Liu <yi.l.liu@intel.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] iommu/vt-d: Add domain_alloc_paging support
+To: iommu@lists.linux.dev
+References: <20241021085125.192333-1-baolu.lu@linux.intel.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241021085125.192333-1-baolu.lu@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 29 Oct 2024 13:34:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+On 2024/10/21 16:51, Lu Baolu wrote:
+> The Intel iommu driver will now use the domain_alloc_paging callback and
+> remove the legacy domain_alloc callback. This ensures that a valid
+> device pointer is provided whenever a paging domain is allocated, and
+> all dmar_domain attributes can be set up at the time of allocation.
+> 
+> Both first-stage and second-stage page tables can be used for a paging
+> domain. Unless IOMMU_HWPT_ALLOC_NEST_PARENT or
+> IOMMU_HWPT_ALLOC_DIRTY_TRACKING is specified during paging domain
+> allocation, this driver will try to use first-stage page tables if the
+> hardware is capable. This is assuming that the first-stage page table is
+> compatible with both the host and guest kernels.
+> 
+> The whole series is also available on GitHub:
+> https://github.com/LuBaolu/intel-iommu/commits/vtd-domain_alloc_paging-v2
+> 
+> Please help review and comment.
+> 
+> Change log:
+> 
+> v2:
+>   - Make prepare_domain_attach_device() a specific helper to check
+>     whether a paging domain is compatible with the iommu hardware
+>     capability.
+>   - Rename prepare_domain_attach_device() to paging_domain_compatible()
+>     to make it more meaningful.
+> 
+> v1:https://lore.kernel.org/linux-iommu/20241011042722.73930-1- 
+> baolu.lu@linux.intel.com/
+> 
+> Lu Baolu (7):
+>    iommu/vt-d: Add domain_alloc_paging support
+>    iommu/vt-d: Remove unused domain_alloc callback
+>    iommu/vt-d: Enhance compatibility check for paging domain attach
+>    iommu/vt-d: Remove domain_update_iommu_cap()
+>    iommu/vt-d: Remove domain_update_iommu_superpage()
+>    iommu/vt-d: Refactor first_level_by_default()
+>    iommu/vt-d: Refine intel_iommu_domain_alloc_user()
+> 
+>   drivers/iommu/intel/iommu.h  |   4 +-
+>   drivers/iommu/intel/iommu.c  | 328 +++++++----------------------------
+>   drivers/iommu/intel/nested.c |   2 +-
+>   drivers/iommu/intel/pasid.c  |  28 +--
+>   4 files changed, 64 insertions(+), 298 deletions(-)
 
-> Hi all,
-> 
-> The following commit is also in the mm-hotfixes tree as a different commit
-> (but the same patch):
-> 
->   9c70b2a33cd2 ("sched/numa: Fix the potential null pointer dereference in task_numa_work()")
-> 
-> This is commit
-> 
->   82c4d6b6dace ("sched/numa: fix the potential null pointer dereference in task_numa_work()")
-> 
-> in the mm-hotfixes-unstable branch of the mm-hotfixes tree.
+Queued for v6.13.
 
-Thanks, but...  What tip branch is it in?  Matters because: is that
-branch destined for 6.12.x?
+--
+baolu
 
