@@ -1,128 +1,197 @@
-Return-Path: <linux-kernel+bounces-387662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28E2B9B5447
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:45:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF789B544A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B328DB23773
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:45:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DAD081F242FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9E920A5DA;
-	Tue, 29 Oct 2024 20:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C23D20C016;
+	Tue, 29 Oct 2024 20:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="UURkd/Ca"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PbbCfCuT"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D90B20A5FD;
-	Tue, 29 Oct 2024 20:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F69D20966C;
+	Tue, 29 Oct 2024 20:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730234529; cv=none; b=hY/sJGGMjR6hH/ISmUFU97pSE/eWQEWGoYhj7UlUmHm7gr0PS5rx7LX2tEAjaBi6xVZmz1t9teMfkwqypweMFSwu1KAK5LNjQfxoLxV+MzoWYslYZPh0AzNyh+e+o8+d+Z6NysKIOF/VvlhBEdRsTI876B/Z5OR9fV03sh1AA1o=
+	t=1730234544; cv=none; b=K+Knq2UgwgHCZB1h4zy0lXRfdZ0OrPRNZslK5cjki1NuvtDXTY7RpghEDxIfDJhkjWWcksJOggyCobvwSawsCIiNCGxwFkUAMa7jjERAqOkfbagdOhot9xDK3AFYsE+FTbrHZjk+bBk7OVTlLrXd66twq1+FpRbUzguhZNUs/7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730234529; c=relaxed/simple;
-	bh=vnvjVIYZ5Jk96fuS8ZrfsZP/5C/OXW8jIVfasEfcWb8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ApWsivu+Mp+0EHGzSE4x8v+ovqMPCIGsVWhtI0FMalXNJTArXoeNwk23d5MdkjS29kTJgSqGZK0jnYAvGAi5XFUHF3Snhtr7Fb/rwwC8Grth+3WwUgt69Zo/2C4iSSx48TUmDR1UlVqUSc5ChU4nFiVtr+E73ePBdp8Hehbdl+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=UURkd/Ca; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from fpc.intra.ispras.ru (unknown [10.10.165.10])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 160CE40F1DF3;
-	Tue, 29 Oct 2024 20:42:04 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 160CE40F1DF3
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1730234524;
-	bh=36OTyILlgVD62XFWhCMCt1bV5vEU6WF/FyC9megsOw8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UURkd/CaEAAUwNXE+WpO1+xCjvNZPnUwlqQ967qyjGtDyiLKS0w/cKnbWIZIfvxeb
-	 SKFVjBA53STm+TTGps46j3vPIYMIlvn/0+yW2J1yE5wRpn8xHGQvzivd1YMqcu0oiq
-	 pEZ5C0mAIQCVNs67w8clTjoI18ugscqYzbGqcCXA=
-From: Fedor Pchelkin <pchelkin@ispras.ru>
-To: Sasha Levin <sashal@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	stable@vger.kernel.org
-Cc: Fedor Pchelkin <pchelkin@ispras.ru>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Kalscheuer <stefan@stklcode.de>,
-	lvc-project@linuxtesting.org
-Subject: [PATCH 5.10/5.15/6.1 2/2] leds: spi-byte: Use devm_led_classdev_register_ext()
-Date: Tue, 29 Oct 2024 23:41:28 +0300
-Message-Id: <20241029204128.527033-3-pchelkin@ispras.ru>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241029204128.527033-1-pchelkin@ispras.ru>
-References: <20241029204128.527033-1-pchelkin@ispras.ru>
+	s=arc-20240116; t=1730234544; c=relaxed/simple;
+	bh=aTawZXewGPTkmIjT76pi9VgTW3Cgj973HXq7pZBU2x4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=SgWrwHjqiO0k3iXDIf+uXZUJ9KfXwwZSwgsyonwf/h406es5uUlCz53/IbxBsTKgytF2a236b+xjwy2oa5hYya1idg490W3e7N2Mbe3d9AoVMu+tApvwkv9uXvBNqhRBWJ5tg4vELaWtrRi3XuxPvvlmqyZa5kQvQcattR98A54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PbbCfCuT; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKRBk1012700;
+	Tue, 29 Oct 2024 20:42:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oO2c0S6h3Wlg9m7DoVs4IYzyXoU2r6zhEy+H2tcDFlM=; b=PbbCfCuTxRQa01Zr
+	9tRzAuf/r2whr8VwQ3VsNKAxR6vai5tnq8KYhNhwu/0oI2IvpjAgRw0TFRaHoAag
+	eG57ygFWaaUBjAcbqohwwwwMtTdeWQiOKhmV3cZ1DlqxUqtF0bIPJ/i2d7LXijqV
+	u409vp5mA1RgccXTZUK9O2YV3rSth9+lcpItz08X70U6tdzB33XkAlPXiQ8oonaR
+	jx2LzJD9fg1UrZ03EFAJlos4063d3uXQWooeFqinknbo9/c2HGY1704cY26zB2mf
+	of0WXfjSz/DLwr7fXE3M1mJYCej/XWATqOmvpc7Aljic0z36mR6XPpXKcprXlk07
+	DSMTmw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k6rpg15q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 20:42:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TKgEBZ025105
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 20:42:14 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 13:42:12 -0700
+Message-ID: <30f4a216-acbf-41e6-beb0-03ef692dc692@quicinc.com>
+Date: Tue, 29 Oct 2024 13:42:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/9] drm/msm/dpu: move pstate->pipe initialization to
+ dpu_plane_atomic_check
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn
+ Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241025-dpu-virtual-wide-v6-0-0310fd519765@linaro.org>
+ <20241025-dpu-virtual-wide-v6-2-0310fd519765@linaro.org>
+ <1dcf786e-463f-4e51-af71-66ee6077b5f1@quicinc.com>
+ <jk4tfzg3zw4g23pg7rpre2pn32h6h46u2rc5ydnzuwo7mk3mam@ybw64lkaidyb>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <jk4tfzg3zw4g23pg7rpre2pn32h6h46u2rc5ydnzuwo7mk3mam@ybw64lkaidyb>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: -K5laccATL1S7-qME9359vAM7Efj-jgE
+X-Proofpoint-GUID: -K5laccATL1S7-qME9359vAM7Efj-jgE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=999 priorityscore=1501 spamscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410290156
 
-From: Stefan Kalscheuer <stefan@stklcode.de>
 
-commit ccc35ff2fd2911986b716a87fe65e03fac2312c9 upstream.
 
-Use extended classdev registration to generate generic device names from
-color and function enums instead of reading only the label from the
-device tree.
+On 10/28/2024 3:46 AM, Dmitry Baryshkov wrote:
+> On Fri, Oct 25, 2024 at 12:00:20PM -0700, Abhinav Kumar wrote:
+>>
+>>
+>> On 10/24/2024 5:20 PM, Dmitry Baryshkov wrote:
+>>> In preparation for virtualized planes support, move pstate->pipe
+>>> initialization from dpu_plane_reset() to dpu_plane_atomic_check(). In
+>>> case of virtual planes the plane's pipe will not be known up to the
+>>> point of atomic_check() callback.
+>>>
+>>
+>> I had R-bed this in v5. Did anything change in v6?
+> 
+> No, nothing. I'm sorry for forgetting to run `b4 trailers -u`.
+> 
+>> But one comment below.
+>>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 25 +++++++++++--------------
+>>>    1 file changed, 11 insertions(+), 14 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>> index 37faf5b238b0..725c9a5826fd 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+>>> @@ -797,13 +797,22 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+>>>    	uint32_t max_linewidth;
+>>>    	unsigned int rotation;
+>>>    	uint32_t supported_rotations;
+>>> -	const struct dpu_sspp_cfg *pipe_hw_caps = pstate->pipe.sspp->cap;
+>>> -	const struct dpu_sspp_sub_blks *sblk = pstate->pipe.sspp->cap->sblk;
+>>> +	const struct dpu_sspp_cfg *pipe_hw_caps;
+>>> +	const struct dpu_sspp_sub_blks *sblk;
+>>>    	if (new_plane_state->crtc)
+>>>    		crtc_state = drm_atomic_get_new_crtc_state(state,
+>>>    							   new_plane_state->crtc);
+>>> +	pipe->sspp = dpu_rm_get_sspp(&kms->rm, pdpu->pipe);
+>>> +	r_pipe->sspp = NULL;
+>>> +
+>>> +	if (!pipe->sspp)
+>>> +		return -EINVAL;
+>>> +
+>>> +	pipe_hw_caps = pipe->sspp->cap;
+>>> +	sblk = pipe->sspp->cap->sblk;
+>>> +
+>>>    	min_scale = FRAC_16_16(1, sblk->maxupscale);
+>>>    	ret = drm_atomic_helper_check_plane_state(new_plane_state, crtc_state,
+>>>    						  min_scale,
+>>
+>> Do you think it will be better to move the get_sspp() call after the
+>> drm_atomic_helper_check_plane_state()?
+> 
+> I'd say, it makes no difference. I'll check your suggestion if I have to
+> send another iteration.
+> 
 
-Signed-off-by: Stefan Kalscheuer <stefan@stklcode.de>
-Link: https://lore.kernel.org/r/20240204150726.29783-1-stefan@stklcode.de
-Signed-off-by: Lee Jones <lee@kernel.org>
-Signed-off-by: Fedor Pchelkin <pchelkin@ispras.ru>
----
- drivers/leds/leds-spi-byte.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Ok, its a minor comment, I am fine with this change otherwise,
 
-diff --git a/drivers/leds/leds-spi-byte.c b/drivers/leds/leds-spi-byte.c
-index 6883d3ba382f..eb6481df5997 100644
---- a/drivers/leds/leds-spi-byte.c
-+++ b/drivers/leds/leds-spi-byte.c
-@@ -83,7 +83,7 @@ static int spi_byte_probe(struct spi_device *spi)
- 	struct device_node *child;
- 	struct device *dev = &spi->dev;
- 	struct spi_byte_led *led;
--	const char *name = "leds-spi-byte::";
-+	struct led_init_data init_data = {};
- 	const char *state;
- 	int ret;
- 
-@@ -96,12 +96,9 @@ static int spi_byte_probe(struct spi_device *spi)
- 	if (!led)
- 		return -ENOMEM;
- 
--	of_property_read_string(child, "label", &name);
--	strlcpy(led->name, name, sizeof(led->name));
- 	led->spi = spi;
- 	mutex_init(&led->mutex);
- 	led->cdef = device_get_match_data(dev);
--	led->ldev.name = led->name;
- 	led->ldev.brightness = LED_OFF;
- 	led->ldev.max_brightness = led->cdef->max_value - led->cdef->off_value;
- 	led->ldev.brightness_set_blocking = spi_byte_brightness_set_blocking;
-@@ -121,7 +118,11 @@ static int spi_byte_probe(struct spi_device *spi)
- 	spi_byte_brightness_set_blocking(&led->ldev,
- 					 led->ldev.brightness);
- 
--	ret = devm_led_classdev_register(&spi->dev, &led->ldev);
-+	init_data.fwnode = of_fwnode_handle(child);
-+	init_data.devicename = "leds-spi-byte";
-+	init_data.default_label = ":";
-+
-+	ret = devm_led_classdev_register_ext(&spi->dev, &led->ldev, &init_data);
- 	if (ret) {
- 		of_node_put(child);
- 		mutex_destroy(&led->mutex);
--- 
-2.39.5
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
+If you do need to push another version, you can explore that.
+
+>>
+>>> @@ -820,7 +829,6 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
+>>>    	pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+>>>    	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
+>>>    	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+>>> -	r_pipe->sspp = NULL;
+>>>    	pstate->stage = DPU_STAGE_0 + pstate->base.normalized_zpos;
+>>>    	if (pstate->stage >= pdpu->catalog->caps->max_mixer_blendstages) {
+>>> @@ -1286,7 +1294,6 @@ static void dpu_plane_reset(struct drm_plane *plane)
+>>>    {
+>>>    	struct dpu_plane *pdpu;
+>>>    	struct dpu_plane_state *pstate;
+>>> -	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
+>>>    	if (!plane) {
+>>>    		DPU_ERROR("invalid plane\n");
+>>> @@ -1308,16 +1315,6 @@ static void dpu_plane_reset(struct drm_plane *plane)
+>>>    		return;
+>>>    	}
+>>> -	/*
+>>> -	 * Set the SSPP here until we have proper virtualized DPU planes.
+>>> -	 * This is the place where the state is allocated, so fill it fully.
+>>> -	 */
+>>> -	pstate->pipe.sspp = dpu_rm_get_sspp(&dpu_kms->rm, pdpu->pipe);
+>>> -	pstate->pipe.multirect_index = DPU_SSPP_RECT_SOLO;
+>>> -	pstate->pipe.multirect_mode = DPU_SSPP_MULTIRECT_NONE;
+>>> -
+>>> -	pstate->r_pipe.sspp = NULL;
+>>> -
+>>>    	__drm_atomic_helper_plane_reset(plane, &pstate->base);
+>>>    }
+>>>
+> 
 
