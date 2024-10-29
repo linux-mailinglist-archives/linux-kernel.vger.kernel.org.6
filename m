@@ -1,172 +1,156 @@
-Return-Path: <linux-kernel+bounces-386841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD7CE9B4883
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:45:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE199B4889
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7D32B227C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:45:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 318CF283AA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73D5C205155;
-	Tue, 29 Oct 2024 11:45:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4318205159;
+	Tue, 29 Oct 2024 11:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="Zwsn8yEj";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="aM0WKcLg"
-Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="gJy2LEX1"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74CBE2040B8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC59204F66
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730202299; cv=none; b=isWLA0hypxYBHTAaYKBl4Jgg8x8K05XLhHD2dZBjMAOW+8HxRJhaT6VEntiru7JCFw0w1qbsHtG8x/9BNioV/aYkW71mg1e0EB0psV5ukq9l9y3shjxcCNJ35ILI1zmE2v+OyVi8E9M+Xu1u7W45jaGHr1T83gazZnhmrnDhtss=
+	t=1730202391; cv=none; b=e46acIJUtt6pluxICX12idPRjhLKLSFBj+lVrTBw5jayi795BWI61pkImXtV3bANY7ubwMZDlhvRSOKtqRRS45ONNDt11n4Gfp7aQXHvprEci6robdX4gZIgyLdWHtmGy7GqF2ngKZ35kkT05H6zlrn3alwG3N9JEWSPwJmhW90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730202299; c=relaxed/simple;
-	bh=cGwghqZtH3FdxZgTxx8DicSQ+LBxrNTUaOlul740FdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rfWZ8g29Jjlf+yC729PVYP4mQCWBUF/FVN7utp067vU9YZplPBZJAhSuxgB5pdiyX9+0wIZblpbRNCFU8l+K+tTPTgPHmloLhu3kieHAGH6VQ7XCPtw5Y5qLccOLU0bzWgfiNInMSBmR/C5kB9O/RRED+J38WqI33OIo2PtM3ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=Zwsn8yEj; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=aM0WKcLg; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 76D8513801B6;
-	Tue, 29 Oct 2024 07:44:55 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 29 Oct 2024 07:44:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1730202295; x=
-	1730288695; bh=2yhhCgEHp5rC8pZ/9rE4AScoEjDNa/UwiC/T7RhrIdY=; b=Z
-	wsn8yEjjtdzjavd5ocNP+hcLG+HfNeFZ0Fd9Snt5DscpWZOJz1CfAfhM/KCZKMCY
-	yGFPd2sbVwks020nkRzKjFM9T/vgEjPYj5I2/0ReNIvgFuQg5TheBEO3AtWu8gVv
-	ZkMg5m7AL5zkcPdUh7kbq/tDg3ccbFXsg8d9EpoNA6q9mauHeYu+c+2ah2zx2c/m
-	L7kLh/RNBmI27mPlWF7wkKLcH2OXKPpahIh6V7Y1AYFD4Gj1qeCXhn4FU9SIC+Mz
-	d8sy7jgksIopAt/acCGj/XmnZ6muUAOEhYLVWhP7kLOdSR/gSMMCCvO7RD+ZWANN
-	D9YRg8OrLjwVwenrPC5YA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730202295; x=1730288695; bh=2yhhCgEHp5rC8pZ/9rE4AScoEjDNa/UwiC/
-	T7RhrIdY=; b=aM0WKcLg2sBIyUZBXeJdy9Zdoy6sUNI0dlbY+QM10NVIjGTIc7S
-	JRuiIwc3RkHaLAgdpKJDu7S0X39cCMT2oTd7MvxK0AB46Vxq1baSTLEwuWWZxJUK
-	8PSdPGy8GjiMHxB3O/V+hp1I1n1TTGWg6OF8FzVd7QvRBuE8bElR30QUwKRCFMCk
-	Vw3XdRtXY9gSKbdnvnlCezEoUzOyraxnpYcNGlbVgaCwAg5XKcgcmkZc3XDJo+Va
-	BaZNjsdTOZNgw0fhHKGjpB7I5j3DkNMZO3vc3Lar8wJFXE+h4gyd4o5Z7uuccQ9w
-	Ms4wRpiW2b7v2vPIsUMhHRXQ8p6z8aeSyMA==
-X-ME-Sender: <xms:tsogZwmwGvH8hWt_-Z9qIo7slcJLDn_KdyRm_VRvNADgi33eBQbWcQ>
-    <xme:tsogZ_0lxwBd7WzjlREVKSpNBY0_cNDGknqO64TWvdoIMiibRc8-Xg4zIuMqarhUh
-    DnYA_xRKOGmD5XBHRQ>
-X-ME-Received: <xmr:tsogZ-rSiKNce5dg_w17PzywjeNqChVT8E6tieLgH3MGnGZhdDUSEXrAYuIQ8EmJQVubTg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgvdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegoufhushhpvggtthffohhmrghinhculdegledmnecujfgurhep
-    fffhvfevuffkfhggtggujgesthdtsfdttddtvdenucfhrhhomhepfdfmihhrihhllhcute
-    drucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgvqeen
-    ucggtffrrghtthgvrhhnpedvffdugeetuedvtdffveetudduvdeutddthfevffdtveevhf
-    dujeeuvdegfefhkeenucffohhmrghinhepshihiihkrghllhgvrhdrrghpphhsphhothdr
-    tghomhdpghhoohhglhgvrghpihhsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
-    pdhnsggprhgtphhtthhopeelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehlih
-    grmhdrhhhofihlvghtthesohhrrggtlhgvrdgtohhmpdhrtghpthhtoheplhhorhgvnhii
-    ohdrshhtohgrkhgvshesohhrrggtlhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrse
-    hsuhhsvgdrtgiipdhrtghpthhtohepjhgrnhhnhhesghhoohhglhgvrdgtohhmpdhrtghp
-    thhtohepshihiigsohhtodegsgehtgejtdegtdduvdekledvtgegugdvvdhfugesshihii
-    hkrghllhgvrhdrrghpphhsphhothhmrghilhdrtghomhdprhgtphhtthhopegrkhhpmhes
-    lhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqkh
-    gvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidq
-    mhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohepshihiihkrghllhgvrhdqsghughhsse
-    hgohhoghhlvghgrhhouhhpshdrtghomh
-X-ME-Proxy: <xmx:tsogZ8l1Wy8LUEcY-zyRZ00zHLsrB4nzyUJVvMT8qJTKDRjCdxh6ag>
-    <xmx:tsogZ-2AU3Xr187wG13HCaL0dWHIkUpZjFh6SuwO8DKWVofqBlwMFQ>
-    <xmx:tsogZztvxdvtP426Ox8UXkwVkL3gW26b5ECms8OCEFTYzYWt8cayMg>
-    <xmx:tsogZ6XvABx2I0_2liSFV30j25mUBvZcJeiY05OtUFqDQiVpO3iXfA>
-    <xmx:t8ogZ8yaTZnD-zYBCbOmDKboB6DInfX0KuEp0YqYUFXuMQP3XV8_rtJ->
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Oct 2024 07:44:51 -0400 (EDT)
-Date: Tue, 29 Oct 2024 13:44:47 +0200
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>
-Cc: syzbot <syzbot+4b5c704012892c4d22fd@syzkaller.appspotmail.com>, 
-	akpm@linux-foundation.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [mm?] kernel BUG in zap_huge_pmd
-Message-ID: <ri2667onovzkphvyxqnxe724ymxqs52pkzpdesina35v55ccnr@4kghwz6eevom>
-References: <67205708.050a0220.11b624.04bc.GAE@google.com>
+	s=arc-20240116; t=1730202391; c=relaxed/simple;
+	bh=05amL8SvxVx1O2sLPStVWErHa1NKdoFQ/D3/Oe7ZQH8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cmpQqlzBHp/FGMCyzzh87sOC8KGYRFbobu5yd+qNbimvq1XGKC5M1vxpl9FDAuBkGgGokNfRKmIOGen2SfUNzJ3ltHCPiBJ1153yO7fesNkv6WqmV1HG+TdtckJkO+NmzXxtMWNGNj4Q1bfK3B0/aEixoFNPCbpZA82LDTs8J5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=gJy2LEX1; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c9c28c1e63so6327648a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:46:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1730202387; x=1730807187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IxDkWg/vsTbegwMYodB782ex0h2qobbSL22Fla0Iv1A=;
+        b=gJy2LEX1ismWYH1uWMLZjfQ1TYs7heZQ4dK2BCpnDtj86+L+JCXYF0Uu4DGUuDTmDx
+         DKyWqaTBZ7zwJgpYTNUTIes0JFtaYa9YblDEX6DJmK8kzGfgWU3gWYXBVNl58zNgrxfC
+         rsajVgg9lytpsPO0VoK+QUcbpHLjzMR5gkp3A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730202387; x=1730807187;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IxDkWg/vsTbegwMYodB782ex0h2qobbSL22Fla0Iv1A=;
+        b=ll84JZ+SF19svRbuUQSwmw2QfHh1u5XwWdPW9LcpmKuOd32H31WlBIJOcflg7r7ak0
+         jKfmQDk9MBBiI3jZaHHalzT0e9jMW7UFVONS3QhltB+QL2OlTHGF8me2OxbnEoKrK7x3
+         9Y/4pVQjSLWl3gFrhTcSAgWFw+DlWms2hQiIcbDBpJj8OWvCoZp7EQ6+qai5UTCL0l0I
+         Xe12nvEZ+V39IiSDpujgAGkiwHeHQBliM7V7VEdTvfC58Bp7rijHIDDXpQuimEBg7kTC
+         DiACXdCa8Ygawo0r77O8mvyWokUXWzKmMgEoPlVdt/AZd+xSIHF1aRM9fdq6mKm9X8rF
+         oPkw==
+X-Gm-Message-State: AOJu0Yy0qKj9Ozvqz+9T/M6lnQGOJyL0jKLazcCZKXvOkERwFH4dTyOE
+	lZmgGmpW0a7yW+Mwk3mYxicszp+FTYKMpOLPgxVs/441kGvIbd0XL+X6inSAmFyqMiSSL+40M4U
+	C8ws=
+X-Google-Smtp-Source: AGHT+IGs0NMmrdpvJR6bB5NncULQydlcvVJYr5FXrebgpvaHSMtDo/1P0dhuvOmM0yOgg+PhHaYuwg==
+X-Received: by 2002:a05:6402:268f:b0:5c9:b6dd:dace with SMTP id 4fb4d7f45d1cf-5cbbf891a41mr8436361a12.3.1730202386878;
+        Tue, 29 Oct 2024 04:46:26 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.. ([2.196.41.207])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb6297a09sm3869301a12.21.2024.10.29.04.46.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 04:46:25 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Han Xu <han.xu@nxp.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+	Rob Herring <robh@kernel.org>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [RFC PATCH v3 0/6] Add helpers for stats and error frames
+Date: Tue, 29 Oct 2024 12:45:24 +0100
+Message-ID: <20241029114622.2989827-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67205708.050a0220.11b624.04bc.GAE@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 28, 2024 at 08:31:20PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    4e46774408d9 Merge tag 'for-6.12-rc4-tag' of git://git.ker..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10fb2ebb980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-> dashboard link: https://syzkaller.appspot.com/bug?extid=4b5c704012892c4d22fd
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11f730e7980000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=177eae40580000
-> 
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-4e467744.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/058a92aaf61a/vmlinux-4e467744.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/0b79757fbe5e/bzImage-4e467744.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+4b5c704012892c4d22fd@syzkaller.appspotmail.com
-> 
-> R10: 000000000401d031 R11: 0000000000000246 R12: 0000000000000004
-> R13: 00007f33ed7673fc R14: 00007f33ed737334 R15: 00007f33ed7673e4
->  </TASK>
-> ------------[ cut here ]------------
-> kernel BUG at mm/huge_memory.c:2085!
-> Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 5095 Comm: syz-executor380 Not tainted 6.12.0-rc4-syzkaller-00085-g4e46774408d9 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:zap_huge_pmd+0x953/0xc40 mm/huge_memory.c:2085
+This series originates from some tests I ran on a CAN communication for
+one of my clients that reports sporadic errors. After enabling BERR
+reporting, I was surprised that the command:
 
-I believe it is bug in mmap_region() around handling
-vms_gather_munmap_vmas() and vms_complete_munmap_vmas().
+ip -details -statistics link show can0
 
-What reproduces does is:
+did not display the occurrence of different types of errors, but only the
+generic ones for reception and transmission. In trying to export this
+information, I felt that the code related to managing statistics and handling
+CAN errors (CRC, STUF, BIT, ACK, and FORM) was quite duplicated in the
+implementation of various drivers, and there wasn't a generic function like
+in the case of state changes (i. e. can_change_state). This led to the idea
+of adding can_update_bus_error_stats() and the helpers for setting up the
+CAN error frame.
 
-1. Creating hugetlb mapping
-2. Setting up UFFD on it
-3. Creating a new that partially overlaps with mapping created on step 1
+Regarding patch 5/6 ("can: netlink: extend stats to the error types (ack,
+CRC, form, ..."), I ran
 
-On step 3 an error is injected which makes vma_iter_prealloc() fail and
-unmap_region() is called in error path.
+./scripts/check-uapi.sh
 
-The unmap_region() is called with the newly created as an argument, but
-page tables still contain entries from hugetlb mapping that was never
-fully unmapped because vms_complete_munmap_vmas() has not called yet.
+which found
 
-Since the new VMA is not hugetlb, unmapping code takes THP codepath and
-calls zap_huge_pmd(). zap_huge_pmd() sees PTE marker swap entry installed
-by hugetlb_mfill_atomic_pte() and gets confused.
+"error - 1/934 UAPI headers compatible with x86 appear _not_ to be backwards
+compatible."
 
-I don't understand vms_gather/complete_munmap_vmas() code well enough.
-I am not sure what the right fix would be.
-Maybe call vms_complete_munmap_vmas() earlier?
+I included it in the series because I am currently interested in understanding
+whether the idea behind each of the submitted patches makes sense, and I can
+adjust them later if the response is positive, following your suggestions.
+
+Changes in v3:
+- Drop double assignement of "priv" variable.
+- Check "dev" parameter is not NULL.
+- Drop the check of "cf" parameter not NULL
+
+Changes in v2:
+- Replace macros with static inline functions
+- Update the commit message
+- Replace the macros with static inline funcions calls.
+- Update the commit message
+
+Dario Binacchi (6):
+  can: dev: add generic function can_update_bus_error_stats()
+  can: flexcan: use can_update_bus_error_stats()
+  can: dev: add helpers to setup an error frame
+  can: flexcan: use helpers to setup the error frame
+  can: netlink: extend stats to the error types (ack, CRC, form, ...)
+  can: dev: update the error types stats (ack, CRC, form, ...)
+
+ drivers/net/can/dev/dev.c              | 45 ++++++++++++++++++++++++++
+ drivers/net/can/flexcan/flexcan-core.c | 29 +++++------------
+ include/linux/can/dev.h                | 38 ++++++++++++++++++++++
+ include/uapi/linux/can/netlink.h       |  6 ++++
+ 4 files changed, 97 insertions(+), 21 deletions(-)
 
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.43.0
+
 
