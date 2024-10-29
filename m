@@ -1,120 +1,103 @@
-Return-Path: <linux-kernel+bounces-387681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A5A9B5487
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2609B5489
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 385251C22420
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21F382838AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:56:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E978D208989;
-	Tue, 29 Oct 2024 20:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EDC3207A1B;
+	Tue, 29 Oct 2024 20:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g3CCQu6V"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="rsJ4RBVm"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72310209664
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:55:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD40B202F8D;
+	Tue, 29 Oct 2024 20:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730235334; cv=none; b=X08EDsoO8XiBvco8Pxank3LsSh4jbWCxXLhvsNALbUSwV/dQ+aVd81oMQgtK1gnR0lH9e6oc082F3ibTnxkjdaFR3qhVb5sqlL61DC/nyOtaU8qMLF/HjchecgKo8045bmIjPDjIaqgA7FmX9Ac5+qHXPP73tWhIq+LlQZdYXhc=
+	t=1730235392; cv=none; b=O0O7QmgkiohEXx2D3Sp7y+nTXoZXO2FQP6QkWmDjhdWMXUV6GEUQH4FNCKjhri1NSFT9UpbZDnwQeH80D+zRt4NxN+hfbErDd8xCVHoIzXhCz3vthDlplEjiQGseDthUn2nRgfahVCNBJcOWXpSRrpfbJDVDW21FwVand9ou7oQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730235334; c=relaxed/simple;
-	bh=NpiPjVlAleIs97JWrTTn4QJPsC0BpJIKw9WCJk+Z79w=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qDD+eVer122x9bJeKBq9fcy802hGH3LmLiuHBqkpxVKEMMtkeD3GDrufaTEy0uFwblczH4QVWhxtTSJ/gtCoffJxhjGi1eB9DG/fGaAbF8I/1iMVg2nWdPfLHsXhuoBYYuLmCwUlSIecpR/72+t/MjLsLkEOU53HL4+ayLpDyAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g3CCQu6V; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e292dbfd834so9612578276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:55:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730235331; x=1730840131; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DtLM3BZMi5MIdFZN9lcNyhV6lseOB34DRhYH9xsg+Ww=;
-        b=g3CCQu6VO4Ch+qwjkBGjxW2sSO1t5E9ViI4Q4t9LbNK9mBzd9gedI0pQh9SZ+qLcdS
-         vXwLzlOR7Y2/RcC+qDMXcUrksdvnVJJzkt19/yfDnERR8JcXLouEgmgK8ShEvAxNARZl
-         aHtQToG2wTNa90TG1J8JmJTPHgA7Y+QIXmqTXMBQmD32x818gu8PTzlfKO5qIhAEw6Bv
-         KXhtH8kcNEWcjNfS5iel+R1v0krw5ya9EQ0FOpNuSpopoFv0qjAd6xOAo81PQFKD2KeU
-         pWMu35EtbV3A0B5HNKdmGXcEmmVy0UVSISYTNqMv4PTe/Kk+vVNmDsMpnTTQ1RnqWDoW
-         iqtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730235331; x=1730840131;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DtLM3BZMi5MIdFZN9lcNyhV6lseOB34DRhYH9xsg+Ww=;
-        b=vDT8djVpXZ0GwUetdji86IDkpFZxUwyTPtVwdegOQxlAL4uVdm8llN1W+CcVE7LuBw
-         UWwzaUBwdwuNbGLs8+Tb0sR17e0Zi/Xf/lDsfvyloE2qSr3bphoUgxx6Yme87QGZC/Bf
-         IS6zU9ligG7DOgilmjfczzB7us/ttAO6hwmR5EqiN9ZROEshWz+0zy1kuF+7cfLY83fi
-         rgeY3yPXkhchkseI4tPqRyeAsfJWqeM0aTiTyrOuz0H2jmnlsoM+0ttv0PXV6QymQTn0
-         x0aO1lJNlxHC6o5k6hiz5OuQ5ESQ/ZknvOvg4DMbEU/91tjR+ZbNZFR74HLL+P7rTab2
-         wo7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWHIr7lICSj4Li/R5K0gEOsTLiGJNnei6ara01z2knMhLIklAFJWzZ4ttcIhFx8DR2wKrmJTzE8xMt2UQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVuPmjFc9vSL7Jf9Zoem8qW247VxJoI8wYKL6B2xyjL0370RlJ
-	GeaRkPv9oOrL+L6jBgVgN6LnpY/I5+uQRN2ncW6/FjnP9gszHfJAhmNSMNKnyH8/5+qEFPeEyZb
-	6GiXdPYScXPa5rb1poYU/TQ==
-X-Google-Smtp-Source: AGHT+IFn71lHuPHiTD9RgndIXcKae2ZOCG2qnAN6B+/dPZ7/I2Uz1eJaAxX4qOtQrBvdw/LPXzQJ1QqhI/OPErXQEQ==
-X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a25:c78a:0:b0:e17:8e4f:981a with SMTP
- id 3f1490d57ef6-e3087c2d8b1mr69575276.11.1730235331689; Tue, 29 Oct 2024
- 13:55:31 -0700 (PDT)
-Date: Tue, 29 Oct 2024 20:55:22 +0000
-In-Reply-To: <20241029205524.1306364-1-almasrymina@google.com>
+	s=arc-20240116; t=1730235392; c=relaxed/simple;
+	bh=ayaV4ilIACLvRXzpiR8J1sKRcOBqTSFSb769GGqR5ac=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=hOR8JDyxFO+jcc21tVHJ8rmMps4CTz8Pc4Qe5oHnmjw782D/OF1dYkoNvRcm7sIMAYI5dLGhYu8eAuv6CrkeGw9ozoxShKKmhIwyq//MaYzf7MtwTkxzy1j2i7QeoaXO7bnRlN87rOX4/9YJObHAPn332i/i1tYCyRhIbn9gBao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=rsJ4RBVm; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1730235358; x=1730840158; i=markus.elfring@web.de;
+	bh=w0/VxD8WqbWQChbPpgvUhvmdajmlQh8F81mL8BR2I1M=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=rsJ4RBVm6mGykJ0A2AmbX0irdxV3MdHFLEJFmffFzA3l3IiQrgJnKcgKuh0VxEoN
+	 uOteWkViVU1Z2HN0bUegkUd52YNNhVA/Sd3IK8ruGS2tB03F+Egd2EXaR2Hb1UbIe
+	 XKgkuEaZgF0DnGM36XmcwMmy+Ymy7qboUXTNLIjwvJndnVveOBJR0cZBm2H26wryt
+	 IrW7xJNGQea4n23dDJY1SuFxhZPuvZQoeWt7bxKeHODPAhqOQgU9n6WDeFQqHCGkn
+	 QwlWgFk48AZP0vb0vCRHcMrDKS87Y2FZQzVlSNLJQo80tN+h7hgGvLvP8QuM4SZSD
+	 8YD8ayi+iewpoVdIog==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1McIga-1tiWKA0fSW-00oTku; Tue, 29
+ Oct 2024 21:55:58 +0100
+Message-ID: <7d4ee76d-ec47-484d-bcd2-2984d1d136f0@web.de>
+Date: Tue, 29 Oct 2024 21:55:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241029205524.1306364-1-almasrymina@google.com>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241029205524.1306364-3-almasrymina@google.com>
-Subject: [PATCH net-next v1 7/7] ncdevmem: add test for too many token_count
-From: Mina Almasry <almasrymina@google.com>
-To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+To: Pei Xiao <xiaopei01@kylinos.cn>, linux-iio@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-kernel@vger.kernel.org, xiaopeitux@foxmail.com, xiongxin@kylinos.cn
+References: <cceb503f429ae829069709ac476acef77a0e8612.1730191256.git.xiaopei01@kylinos.cn>
+Subject: Re: [PATCH] iio: test: rescale: check null return of kunit_kmalloc
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <cceb503f429ae829069709ac476acef77a0e8612.1730191256.git.xiaopei01@kylinos.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AtbuhhH6WQFqSJFkV8wHbW2xx+Q+n0Pz6p2w8OAC5iK6xD8zo1t
+ ij9cboyW+p74lIIKDoF3seXLbiKC5rLhSPCh3bTYTlbL65GnwGQytjvP/VrCLlOb/FFfr4N
+ fXN1bVitQI60j4cyXuehc0dh5N7EO0AgNx9x/KyfGE2jPCi0xIZEveuF0Gclizah1q9AkeO
+ 1IVptqU/7KBFE8XQDkDxg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:i1fK6m3jiJI=;fUNSJaILtTivKMJ/Qaixz74OwyZ
+ AapbN3Ck+3fZBL/YaL0jon+IwznBRtx9+Y3f8SmHQt5BcYSF43paVO5gNxlaXA1zQH8PQaKtt
+ NTkHt8KlNSc1wypXqAzCLJl3l5g678EG6OSZPl/LthaIEcnSKoP4Q9ikAZH1YGYT8bwxhWIbl
+ u6lDZwVaz2Sg39Kp7c5CeSfubQLTjc85LAOCi9fS0xEl4yNrLc0DGvY6nwP59KYln3/PCeA+9
+ oAesnkw6X9bvbzLcYPJMBFKbwc/qvgpyCOFFQp31f8a8pksjMaqqbDnWEZIJDWvBusQIAjCUj
+ jVFx0h+vtlq855Ny8Q0yZVy5erBEtXnqIohKYUHnm2SMmXD1g/fQ5a4BzbFQm8tBHEId5q3Ey
+ v/zgye8WWZNm2zXXanqzZtrI1CCVOCqM8D0V2bXZ4e15b5PKSyE/NEZorEnUf9o25zSfHhr/a
+ g6G1d1DKVd2QphYEE6eIidh+inKbC+pzpR4iHgTXqovF6GFPO+vUMkjE10EuuUMtPBPFVMAgZ
+ 5/iG+dMpjUxHl1XAsBKSA/Wffr9siRjIqrHa6JYhD3bICLZ8h0ZCjxPErmQonukM4zCDe20zG
+ eyPA4MCuWIkd5yYapIyoCfU6vwaSwU6UmjeetbW9hGRNUMtbfGtSdthGxO99YXXb0oMiBzUKk
+ jNq0UJyjj2uZlMwt7xolyXLcz/h7f3LgejC/0lzCz81pTy703h5iTpW0M4ypgJ1TRUhRAlnZq
+ CeMsLToG895GFmzvicBwTwITrhBYAC2ihGBD0m0n/H9yDrCKqqpX/3+etVN6KsP5KvlHZjp7m
+ +tt2FTxeT4tKcHUs1bR52BgA==
 
-Add test for fixed issue: user passing a token with a very large
-token_count. Expect an error in this case.
+> kunit_kmalloc may fail, return might be NULL and will cause
+> NULL pointer dereference later.
 
-Signed-off-by: Mina Almasry <almasrymina@google.com>
----
- tools/testing/selftests/net/ncdevmem.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+* Please choose an imperative wording for an improved change description.
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n94
 
-diff --git a/tools/testing/selftests/net/ncdevmem.c b/tools/testing/selftests/net/ncdevmem.c
-index 64d6805381c5..3fd2aee461f3 100644
---- a/tools/testing/selftests/net/ncdevmem.c
-+++ b/tools/testing/selftests/net/ncdevmem.c
-@@ -391,6 +391,17 @@ int do_server(void)
- 				continue;
- 			}
- 
-+			token.token_start = dmabuf_cmsg->frag_token;
-+			token.token_count = 8192;
-+
-+			ret = setsockopt(client_fd, SOL_SOCKET,
-+					 SO_DEVMEM_DONTNEED, &token,
-+					 sizeof(token));
-+			if (ret >= 0)
-+				error(1, 0,
-+				      "DONTNEED of too many frags should have failed. ret=%ld\n",
-+				      ret);
-+
- 			token.token_start = dmabuf_cmsg->frag_token;
- 			token.token_count = 1;
- 
--- 
-2.47.0.163.g1226f6d8fa-goog
+* How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and=
+ =E2=80=9CCc=E2=80=9D) accordingly?
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
+Documentation/process/submitting-patches.rst?h=3Dv6.12-rc5#n145
 
+
+Regards,
+Markus
 
