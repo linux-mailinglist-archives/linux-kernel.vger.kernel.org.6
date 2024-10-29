@@ -1,105 +1,141 @@
-Return-Path: <linux-kernel+bounces-386504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160729B4444
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:30:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 797039B444F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C41FF283B53
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F2C1283B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784EC202F9E;
-	Tue, 29 Oct 2024 08:30:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F402038D6;
+	Tue, 29 Oct 2024 08:34:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvnieTJX"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EOE6uoRA"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EDE31DE4D7;
-	Tue, 29 Oct 2024 08:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CFF2038B2;
+	Tue, 29 Oct 2024 08:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730190650; cv=none; b=GNN9DLF8NqMkUsLzMyQ5iu+Kh/bsUGxwyNVHFHLcY0POGz9CP9/AJJz114roV3ch1qygLxR5/3yk8Ghi6nzVG490cqPN4V0PMrPuimAc3XfxrPuFDQ4fAdJAjC3/TngqQ61CbwpzxPMuLzcptMvTz4JVm1SN2hN2ifQtOQeQv4U=
+	t=1730190840; cv=none; b=g0L09BiK8Dj5l06l8jqLhxUcig+K8zoQEUKvA0sQd3S5IWxJeAsj2ePetybPvDFUpLS6XkRsRQCRGBse6irEazYLUab3KsJd9R8N1viI7VF2rufYXOFlaIEHuNszvTdGpGeOJj52iWf1r5Y5jEY9T/SRD0FTiWKnZt9AUfyAse8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730190650; c=relaxed/simple;
-	bh=eNkNxLj45Ty1QNj+Lcl1YKeTRoDCdMcs3/LdHZTZhpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RzoUYQSMgDrkjcv4joBAVnwuN1GAhhjlqUare5nRRtdtVMPtUYuasowVeVzoVLpFln7lsMeOir+Du3lB4oqsVnscAwrgoEzBG1sZkXN/adl9oI7uoYWALZ+ZnrNRJcrAVqC8vmK3RdcB3W4fuVL5uHBB+Tvm57/lf1oo/DApV+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvnieTJX; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-6cc2ea27a50so54979216d6.0;
-        Tue, 29 Oct 2024 01:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730190648; x=1730795448; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eNkNxLj45Ty1QNj+Lcl1YKeTRoDCdMcs3/LdHZTZhpI=;
-        b=DvnieTJXwC4TIokqhvclh/FGlE7w7LwlMAOrNf9jgum0xc/1UfV4ixOvEuXadFYOHs
-         kXd6p4EXT1GcSDQz7Y8MxiTdb4t91JoXRkvDuolOTM5j9kt98B/+jE0IjtZPQ5IxCt9L
-         9+Lcv1LBp7WU6xJSNN4tk/8yojPm28Fz4/B2IGZqobj9G/GHOlzAGBicSd400yby5rml
-         BT5AsHLGgvE30itjLqn1+QgoEhAH6KPSYuROoeodeSOpcKhRgtFJRY7bhWlrZRhOH0ru
-         rbeFtlsAa8RmcTUYL042edGaA2hei+JZjCBfggiONls+zxlu+aRjNnhavqqz949fQnPx
-         BXAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730190648; x=1730795448;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eNkNxLj45Ty1QNj+Lcl1YKeTRoDCdMcs3/LdHZTZhpI=;
-        b=EbHmx7f5x0Y0W7BwXokUi9eKcASnQflexA2jVWvSzTDW2c47FwSAyKPdZDLQB3IBp6
-         xRsi1+M6iKy3kqcHDHNBUGEhy3xu4z1PTiqfuudLop73Y5Cel61HpsiQc2slnPKzOOat
-         WbP4POAUucw/bUg7A7LTjMxo8cUegjk1cgRFXRHVH+QLllY9VebPF9QGe9/IXOTtCDsD
-         il6dEVur1aRD1VDQ/sSvtseoIsQsJewCPQF67DhqeYf2VhHgDTrR0vzBKr5/LkEw2Ou+
-         p/+qiGdW5mNZWV/Dj5VmnZL3qN64yufz4VQmAfIkI1sPRiIfl+45jtoFmWrhG2/38keU
-         c87w==
-X-Forwarded-Encrypted: i=1; AJvYcCUJnGSbr8FhyffgCvG36TDS340TmdHdS8CwobSXfvTSxdzEAdwU/zTuO7wMDnGFrXOPRTwsTzd/QMIEnbw=@vger.kernel.org, AJvYcCVJKDoI5Z9IWy4XWEE17fhqEHsBv3kPyZ80/oXXkz7nzjrKY+XWTZiRGqxdvBQ42+apXxRLSdPu@vger.kernel.org
-X-Gm-Message-State: AOJu0YxF5+YTjdnwqrOKXF8ahZwk9U7ssKDNDrd1DalNUWTekC3gh0Tt
-	AEsmeygtVarCv0UOMJCmo6FAzzpiQ9KpQ+8P+BIb9503QoAA18sMtVcs0AB8KjHfcJw2NUhxNbh
-	22zMQ/TxwDE6HUhwIyM6Oz1dlnp0=
-X-Google-Smtp-Source: AGHT+IE32jkSS1akYBGmZ0r/AYo+xFrV5TO6SVyM+kX+A3WFY01+I4oINmI7KZYjA2M5qwugyNCIIFvO8gwSMH9xiuM=
-X-Received: by 2002:a05:6214:5d0d:b0:6cb:3ac4:a2f0 with SMTP id
- 6a1803df08f44-6d2e72503c4mr23487166d6.18.1730190647944; Tue, 29 Oct 2024
- 01:30:47 -0700 (PDT)
+	s=arc-20240116; t=1730190840; c=relaxed/simple;
+	bh=zB2Jl6hczHCHC1wpS1Pn1Atha4MhL20ltR4tkQnVqrM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PBeCLvDx8PMhDZ5YA2zHVOMWCghv17qJKpz+SiDuDaLg8w+z1X/5t+J0NvG+WQj9iL0MJQPHpuF0FZEOHbUU6z1us9nJFmzBsTeTDWEUJjX9bF5aagAK97+8WTpt8uDLVa3CQb8cmAD+MiOrmqXco5e/IVhMklUohpMZI6hSrQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EOE6uoRA; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SKcU5b005279;
+	Tue, 29 Oct 2024 08:33:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6t2w3Ox8lV5vmpE+PsDatVx+nTRRO2j8dexru7oBdio=; b=EOE6uoRAP9mCs3+n
+	H8UI9woLykZGV6tACvEGnhARTvLjD3tnkfoDKEy2OnFn/O90k8eXc0IoilFNBuaI
+	eap31huYr7dGeQiMrSOI6OvjnC9Y8jhmHhD+Yca6HjehnXR0LeelZvQ8ZJQ9rQVg
+	9wm+LQmlQXwPrv6NX5oriyO00cGHPv/PvRJqBrE9PrOSEciOLgejUJUidRZwhv0D
+	uMwYF3vJnlVSfdNjAiHPNP/m9FG0JLxj5GBRMjI6+5ckr4Ni/6V1cniN6ZzUdU2T
+	1iK/AOlhqHQS2npgEHQU8fO7Kn0a/+QbUANUnBstBsy9mckFIL+HM3+apZoSfVMx
+	AB7I6Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gp4dyxy0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 08:33:45 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T8XiQA011654
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 08:33:44 GMT
+Received: from [10.217.217.81] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 01:33:40 -0700
+Message-ID: <79d94176-c6ca-49ad-83a7-f98cb2e9e688@quicinc.com>
+Date: Tue, 29 Oct 2024 14:03:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241026192651.22169-3-yyyynoom@gmail.com> <2502f12c-54ad-4c47-b9ef-6e5985903c1e@lunn.ch>
-In-Reply-To: <2502f12c-54ad-4c47-b9ef-6e5985903c1e@lunn.ch>
-From: Moon Yeounsu <yyyynoom@gmail.com>
-Date: Tue, 29 Oct 2024 17:30:37 +0900
-Message-ID: <CAAjsZQxAqj=r4tJkWnZKxY9MC2a5d7_7HsVTcmJk5kjehT8uGg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: dlink: add get_ethtool_stats in ethtool
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 11/11] clk: qcom: add SAR2130P GPU Clock Controller
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Konrad
+ Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>
+References: <20241021-sar2130p-clocks-v2-0-383e5eb123a2@linaro.org>
+ <20241021-sar2130p-clocks-v2-11-383e5eb123a2@linaro.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20241021-sar2130p-clocks-v2-11-383e5eb123a2@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hGRYku6-0R_dzn0_Pp7PPCfQUUk3DVRx
+X-Proofpoint-GUID: hGRYku6-0R_dzn0_Pp7PPCfQUUk3DVRx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=999 clxscore=1011 spamscore=0
+ lowpriorityscore=0 malwarescore=0 bulkscore=0 adultscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290067
 
-Hi Andrew,
 
-Thank you for your feedback.
 
-I'll post the next patch with an exact explanation of what is
-happening here, especially concerning the deletions and additions. As
-you pointed out, there is a considerable amount of code being removed
-even as new functionality is added. Additionally, I discovered some
-duplicate logic that still remains, which will need to be removed in a
-future patch. Apologies for not catching this earlier.
+On 10/21/2024 4:00 PM, Dmitry Baryshkov wrote:
+> +static int gpu_cc_sar2130p_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = qcom_cc_map(pdev, &gpu_cc_sar2130p_desc);
+> +	if (IS_ERR(regmap))
+> +		return dev_err_probe(dev, PTR_ERR(regmap), "Couldn't map GPU_CC\n");
+> +
+> +	clk_lucid_ole_pll_configure(&gpu_cc_pll0, regmap, &gpu_cc_pll0_config);
+> +	clk_lucid_ole_pll_configure(&gpu_cc_pll1, regmap, &gpu_cc_pll1_config);
+> +
+> +	/* Keep some clocks always-on */
+> +	qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
+> +
+> +	ret = qcom_cc_really_probe(dev, &gpu_cc_sar2130p_desc, regmap);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to register GPU_CC\n");
+> +
+nit-pick:
+return qcom_cc_really_probe(dev, &gpu_cc_sar2130p_desc, regmap);
 
-Regarding the RMON statistics, I understand that you are advising me
-to use the structured ethtool_rmon_stats for RMON statistics and to
-reserve unstructured ethtool -S (without groups) for non-standard
-statistics. The documentation[1] specifies grouping RMON statistics,
-but there are other statistics in my patch that are not part of the
-RMON. Would it be appropriate to group these additional statistics as
-well?
+> +	return ret;
+> +}
 
-Thank you, Yeounsu Moon
-
-[1]: https://www.kernel.org/doc/Documentation/networking/statistics.rst
+-- 
+Thanks & Regards,
+Taniya Das.
 
