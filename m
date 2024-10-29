@@ -1,138 +1,188 @@
-Return-Path: <linux-kernel+bounces-386559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EFBC9B4514
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:58:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FB5F9B4512
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:57:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C091A1C20CCD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:57:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE90B2273A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7603C1DFE11;
-	Tue, 29 Oct 2024 08:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="bqPbX2WV"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CCA420400D;
+	Tue, 29 Oct 2024 08:57:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE8B20400D;
-	Tue, 29 Oct 2024 08:57:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730192273; cv=pass; b=C3IF3hzFCLfFOSQfZkotXnO1VvYt9Pw2+nsI6eJCWkaVNK7uA/z/QLKits0nm7PCf0EkvEjQk99JBTY81XmQyt9g2vy4vnOFtsXLIRe1HhrbKsS7b1lSg5pHPcm2FV4536UMoj38ANKtNe7Cunj17W+gafAYWAhrgq8/F4ozYq8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730192273; c=relaxed/simple;
-	bh=TGzGyc7wuss4IjaAV7A09QofoUxmcaatq/kxmxw++p0=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=gXCZvfHrFRlmg3eFv3/Rljbmx1eja+NvNYex0bZphUkMxN0fzDroj0smM5JLPIbxCHJab86j8uyrSBJPQ8MJ9oiDRfkBCQRmqHNM4ipcr8ii780yVEsfpo3sH14c8GSXKYBRP2KJnE3ACCptImTsACg34xQSXW7zjWD+/4CkMQc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=bqPbX2WV; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730192238; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=TlcSX0GaJV2En//r2bsvmOaKmbjQnrSsRc9/fkFLtLhFfyykLj+j91QPFMV6JLW/caOeg+8h+ZIM4wwThVQhHAe+kwviLG6OGDhcA32v+NbHJgRIHGIwH/5k3LWuDeuucL96CEJ8c01OueselSE9qrWo1pGPmGWxZqRQbyl4xpw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730192238; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xKmGpAx2FimZ5UjrjCZxGHkEp76bSM/aSSUIPKGDye4=; 
-	b=HG6HzL+3m3u7Kdf2plHxi2uOt7TmlAq0sX2jUTKnyvnvG+bsUSHjMIlZB0eYVRjZn+A9/OvVYtevjHOdUZwaoamcXPUO16jQ22sfWwvu+jAR6dp7mE75m7psDxXwtTmVI46Ns9tj53onEO1gX5XQXnTGj1LJjVnIisT0xq+KxfE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730192238;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=xKmGpAx2FimZ5UjrjCZxGHkEp76bSM/aSSUIPKGDye4=;
-	b=bqPbX2WVQKXAFYqv34SLfdIOzeP31MIKLC073HoJwhPqLI/1fOb9FVt7Iz/sbmKW
-	gKeTvHcR28H/RlqnzfT1dz0sCcASLpyh5HUFaD/j5Nbz5xAnQl9mn2w4otHRCGNPwWE
-	UaeCpkH0lQ1u7kCXnmAjLhteTpIlKBoi1ehlTSWE=
-Received: by mx.zohomail.com with SMTPS id 1730192236971732.3164999476212;
-	Tue, 29 Oct 2024 01:57:16 -0700 (PDT)
-Message-ID: <4086facb-67a7-4a9b-826e-aaedd99110c2@collabora.com>
-Date: Tue, 29 Oct 2024 13:57:05 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D528E202F65
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730192238; cv=none; b=flVoH6O8Oh3Ge4g+jiiHYvAOtzJ6r/XPrNdl+3n/rgpvjDoZbx64Jv4AZK7XBeXsEo/6xo+E3td1myl4FnEPxMkQd585gObmpnOUFX51RH80+paqmZpo6azTIWTxVuNkGIirr+TF8yfA7Xkj2GGJ74VkElMR0H90zT1ib0cxMNY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730192238; c=relaxed/simple;
+	bh=4Pz5cTRPw11z909m2kjm8d52XeDCnWJJZk62a3PC1cI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B+e0smzEdTqKoFfyXXbe3I121ICn4CrZW/vrNCvH75SYkY8s9WPkNoH5CeZq4OmF5QHuXLEq9yi4NdY1SbV9Iko+JAbpZEzXXLK4sKirc8GOf41ZIwvnBEnAKT9c24ndEzRJs/RBwpV6N9bnUx1q/H3f3z/xpsmIBqR+Tmrcnvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5i2L-0002Tc-Cv; Tue, 29 Oct 2024 09:57:13 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5i2K-000zna-2n;
+	Tue, 29 Oct 2024 09:57:12 +0100
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 8C7793613D6;
+	Tue, 29 Oct 2024 08:57:12 +0000 (UTC)
+Date: Tue, 29 Oct 2024 09:57:12 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org
+Subject: Re: [RFC PATCH v2 3/6] can: dev: add helpers to setup an error frame
+Message-ID: <20241029-ancient-sepia-tamarin-26e5af-mkl@pengutronix.de>
+References: <20241029084525.2858224-1-dario.binacchi@amarulasolutions.com>
+ <20241029084525.2858224-4-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241028062312.001273460@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
-
-On 10/28/24 11:22 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-
-Hi,
-
-Please find the KernelCI report below :-
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2ukyjm6xwt5qzlrb"
+Content-Disposition: inline
+In-Reply-To: <20241029084525.2858224-4-dario.binacchi@amarulasolutions.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
-OVERVIEW
+--2ukyjm6xwt5qzlrb
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v2 3/6] can: dev: add helpers to setup an error frame
+MIME-Version: 1.0
 
-    Builds: 24 passed, 0 failed
+On 29.10.2024 09:44:47, Dario Binacchi wrote:
+> These helpers can prevent errors and code duplication when setting up a
+> CAN error frame.
+>=20
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
 
-    Boot tests: 48 passed, 0 failed
+AFAICS in the flexcan driver we don't need the "if (cf)" checks, do we?
+Having repeated NULL pointer checks don't feel right.
 
-    CI systems: maestro
+Marc
 
-REVISION
+>=20
+> ---
+>=20
+> Changes in v2:
+> - Replace macros with static inline functions
+> - Update the commit message
+>=20
+>  include/linux/can/dev.h | 46 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 46 insertions(+)
+>=20
+> diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
+> index 0977656b366d..1b09d30dae32 100644
+> --- a/include/linux/can/dev.h
+> +++ b/include/linux/can/dev.h
+> @@ -168,6 +168,52 @@ static inline bool can_dev_dropped_skb(struct net_de=
+vice *dev, struct sk_buff *s
+>  	return can_dropped_invalid_skb(dev, skb);
+>  }
+> =20
+> +static inline void can_frame_error_init(struct can_frame *cf)
+> +{
+> +	if (cf)
+> +		cf->can_id |=3D CAN_ERR_PROT | CAN_ERR_BUSERROR;
+> +}
+> +
+> +static inline void can_frame_set_err_bit0(struct can_frame *cf)
+> +{
+> +	if (cf)
+> +		cf->data[2] |=3D CAN_ERR_PROT_BIT0;
+> +}
+> +
+> +static inline void can_frame_set_err_bit1(struct can_frame *cf)
+> +{
+> +	if (cf)
+> +		cf->data[2] |=3D CAN_ERR_PROT_BIT1;
+> +}
+> +
+> +static inline void can_frame_set_err_ack(struct can_frame *cf)
+> +{
+> +	if (cf) {
+> +		cf->can_id |=3D CAN_ERR_ACK;
+> +		cf->data[3] =3D CAN_ERR_PROT_LOC_ACK;
+> +	}
+> +}
+> +
+> +static inline void can_frame_set_err_crc(struct can_frame *cf)
+> +{
+> +	if (cf) {
+> +		cf->data[2] |=3D CAN_ERR_PROT_BIT;
+> +		cf->data[3] =3D CAN_ERR_PROT_LOC_CRC_SEQ;
+> +	}
+> +}
+> +
+> +static inline void can_frame_set_err_form(struct can_frame *cf)
+> +{
+> +	if (cf)
+> +		cf->data[2] |=3D CAN_ERR_PROT_FORM;
+> +}
+> +
+> +static inline void can_frame_set_err_stuff(struct can_frame *cf)
+> +{
+> +	if (cf)
+> +		cf->data[2] |=3D CAN_ERR_PROT_STUFF;
+> +}
+> +
+>  void can_setup(struct net_device *dev);
+> =20
+>  struct net_device *alloc_candev_mqs(int sizeof_priv, unsigned int echo_s=
+kb_max,
+> --=20
+> 2.43.0
+>=20
+>=20
 
-    Commit
-        name: 
-        hash: e9c8d9f95b232eef9e9293ddda9af144dc511270
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
+--2ukyjm6xwt5qzlrb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-BUILDS
+-----BEGIN PGP SIGNATURE-----
 
-    No new build failures found
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcgo2UACgkQKDiiPnot
+vG/cPwf+NgF87abqp/jRHSmzOHRF7D/nsE46qfdm16FjPfy7w2Vbstddg1KFFSxk
+OyXLkA0HckvPhrU3ox8gXlgjBNc89Brjr+n0KtNCltDGucjrOf+sD5Zzxd4yD/L9
+Otn8hurW5rVW57yWIp0wZ1zYqL83uLPkUs07uHugVQYOFauHN0wK1BabHeBzA9n2
+W9FBc//hrmHdPg58xE2PcPyA6mEjcQ66wuWtX/RCaZn/Ew//1sYluNonfvOlUdXg
+ytpe9IQJLrohvOKRgYoWg3i5m1izzxztM4cSlUzrLEhTfLhwo9XlzSwDyMUAEWuz
+r6i3GlBpTS5O37LJlY7Ec0RLeLWYjQ==
+=/nIP
+-----END PGP SIGNATURE-----
 
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=e9c8d9f95b232eef9e9293ddda9af144dc511270&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
-
+--2ukyjm6xwt5qzlrb--
 
