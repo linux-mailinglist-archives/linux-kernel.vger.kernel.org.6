@@ -1,386 +1,268 @@
-Return-Path: <linux-kernel+bounces-386990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE4859B4A89
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:03:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 085199B4A7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:02:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D77D1F22598
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:03:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE091C22828
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:02:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090A120695D;
-	Tue, 29 Oct 2024 13:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11162205132;
+	Tue, 29 Oct 2024 13:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="HIunJIS5"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="vIvlCYmm"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2066.outbound.protection.outlook.com [40.107.223.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8928FE567;
-	Tue, 29 Oct 2024 13:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206968; cv=none; b=G/S4b4TlwJcUv/ExCvbYPhGh0QV/SL62O/s9CfhlFlGz7qqBFaJo6FgXHPGc3mTIKZei+jwpyDx9yN0vlXGvwBYACG6skc4x1CwfI2Ehv3vXDRE9nfJRyMlCruu2Q4yOLOjN9VDj+b0D/oGUJNKbssSbxwqJ+kLYK7hhpxvYGNo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206968; c=relaxed/simple;
-	bh=N1gJA/dpHr4t/PH3Y2x4CvPcqruek0d8/FGA2eBb3gg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YvdnZltbDXS2rVsYXu6KiXZtN/NzwpmsU6nf/X/1ZJYBHvcClckbG53oM5x70erhS54ZDgd9GpiSd1y5rXTkZOsbCxiGzcTvHGT9RmN1tt8ICgqrxuOq59IrEACqOcjd4MSwZ20Xn7fyOS0IDZkdhDbPA10E98TqgaDP9y6CcTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=HIunJIS5; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167088.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T8FScA008270;
-	Tue, 29 Oct 2024 09:02:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=Zfupk
-	bLZLubG9XhWIi41UGU+dVBGzGjBp3p4nbAM28s=; b=HIunJIS5lVZ9/bm28omc2
-	Z3Nkl0yQhuAMtKowuKfVTTmG/Yi7lVqmtObfApOgSCR5yI+7BcxcBIB9rBscCzxM
-	IaLwIU03ADrmvMahAZeR6j/Za96rFKymv8s+z7PnXN3d+YKO/Tl+8eE/43Ad8ZXl
-	xrGGESls1up6KqPxT0czcJoTEMdYHwDX1X3uvb3z7Lm4xGI3Urdaur0XYocx+UL9
-	nb0crx925BERGrJlRmRgatnmJgBsOrlX+rrqxkuOss1eXNxbGWmFUdYnDQ+hOClR
-	z6AehkHXzNB+tXNiQylJRd+iECz05ctrXGHCkQVEf0DkNrKJUX5xTtGxoj3zNec0
-	A==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42jv1p96ma-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 09:02:16 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49TD2Fr3016581
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Oct 2024 09:02:15 -0400
-Received: from ASHBCASHYB5.ad.analog.com (10.64.17.133) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 29 Oct 2024 09:02:15 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
- ASHBCASHYB5.ad.analog.com (10.64.17.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Tue, 29 Oct 2024 09:02:15 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 29 Oct 2024 09:02:14 -0400
-Received: from CENCARNA-L02.ad.analog.com (CENCARNA-L02.ad.analog.com [10.117.116.108])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49TD1hWZ019740;
-	Tue, 29 Oct 2024 09:02:06 -0400
-From: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-hwmon@vger.kernel.org>
-CC: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Delphine CC Chiu
-	<Delphine_CC_Chiu@Wiwynn.com>,
-        Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Peter
- Yin <peteryin.openbmc@gmail.com>,
-        Noah Wang <noahwang.wang@outlook.com>, "Marek Vasut" <marex@denx.de>,
-        Lukas Wunner <lukas@wunner.de>,
-        Cedric
- Encarnacion <cedricjustine.encarnacion@analog.com>
-Subject: [PATCH 2/2] hwmon: pmbus: add driver for ltp8800-1a, ltp8800-4a, and ltp8800-2
-Date: Tue, 29 Oct 2024 21:01:37 +0800
-Message-ID: <20241029130137.31284-3-cedricjustine.encarnacion@analog.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241029130137.31284-1-cedricjustine.encarnacion@analog.com>
-References: <20241029130137.31284-1-cedricjustine.encarnacion@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E104716426;
+	Tue, 29 Oct 2024 13:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730206925; cv=fail; b=gqEm1FMsEGUe7aqBc4Pc3SyfYJe27GpAqEqM5ccAm+mXZBoPZbABERKzQfiCdp8NreOVky10ucq9ObXckIv47gEk0LLpmQLJuLYy8S/pM4Kba5ongxVBltVJXnswV/lqg2zEKyTFYL71yzIh6rPjKfMlqT7qUPp1PfHaAnq0+bE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730206925; c=relaxed/simple;
+	bh=tBDDs6SSvr5vnbyC8pd4diNvcbgB72NrOj55Uiv18B4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IwpM1bK72fSIKYgj/cXbgGPw6srHz9kRA+vH1tsCLcnD9veCP2xdU9/JRT6bGIdkde2lbb6VBXMRS+rvDP0xJAIpuAryhlRa8S0kP5lJJCIRydX1lsobauS2w4kgmhu8Xk6jynpukOcIkVbRY4nWNdRhQDaHH6K50nl0/rxJGnk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=vIvlCYmm; arc=fail smtp.client-ip=40.107.223.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nSR55yCMK5IRzLzeiYLW6zLKSV3che3ztgLBM8qYvpWroc0EYJtMf33d38pop/RNtTO8/YZHiPIgSsH3lT9/RdWliDxfr6fP6dKsQbwejVXlJ80iR8WHfGkwqz3uLGmjS+Ei4MwgZuW4yBN2z3pW/LgGYz0ndgjl8oAIHmpFcOeaScay30Kaq6yZ2IHjQ+7Z/7sjSBa7pnshwW0sSuMyLcDibPNQ/JQFwuWYtQ9UsMKKqrzR4lJfOFjJ7vurFCe1K19RveSO8tdMIfDsU7d2flAYT4stMHB0KiB3AiIfI8e8hb7IeUGPyyANEQvitMpMyVEJEcNErvD1bXE8GwuZSQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=o3DJaqGFLqQ5GIjs7ZUhXWCXV4SU9mb2JmcCs7irzck=;
+ b=IKeqN/uSCW8WKmfz15P3Z/+puNe3W1pmCwuaGXrg7KM6FEbaOzZilB6CEDfpVgYzjG6GUFhqDoKIHGXCbLXRsohpujWlU/cItfYimvIFUvRWywLf6PdGiYkrDwHm0a4zKMuez+mG6n2DsusjHkjtnBzj322jE+DJTkHhOKsxRuPIAnl8xFE4NxlTJF80VorRDy1T9I227SLi6sA/QcJGUWYdOakmbAzq2DhF5pWBR0v9hNI65EBw1FQM1zIZ+0vv1XQ6CIoOVO3ykw8KoxdHrDoEQwdgGe7YrAvEYyBsK7xbUX83Ee/x4uJvSJ1TcerRkJs49/5AAYx68pA90Dtbog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=o3DJaqGFLqQ5GIjs7ZUhXWCXV4SU9mb2JmcCs7irzck=;
+ b=vIvlCYmmtqJdwI2Dk6U+7IEEhN44lpd0KoP/pe2mrZAFxkp/MNTarRlfQH+jnFFEJbTxBNTaYGrVER0KnWQe6x7QCDJyUacHvNU/Aoleki+HQwkIz6tCdqjiAVHDcUmXSIIFlCGUgbsQj4qrLLc7DCuIiWKip3oXSyZ76+OuR64=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
+ by DM6PR12MB4235.namprd12.prod.outlook.com (2603:10b6:5:220::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Tue, 29 Oct
+ 2024 13:02:00 +0000
+Received: from PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
+ ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8093.021; Tue, 29 Oct 2024
+ 13:01:59 +0000
+Message-ID: <7413545c-62e3-4d27-8522-ea6f579c8195@amd.com>
+Date: Tue, 29 Oct 2024 14:01:52 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/7] PCI/IOV: Restore VF resizable BAR state after
+ reset
+To: =?UTF-8?Q?Micha=C5=82_Winiarski?= <michal.winiarski@intel.com>,
+ linux-pci@vger.kernel.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ Bjorn Helgaas <bhelgaas@google.com>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
+ <kw@linux.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>
+Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Michal Wajdeczko <michal.wajdeczko@intel.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Matt Roper <matthew.d.roper@intel.com>
+References: <20241025215038.3125626-1-michal.winiarski@intel.com>
+ <20241025215038.3125626-2-michal.winiarski@intel.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
+In-Reply-To: <20241025215038.3125626-2-michal.winiarski@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: FR0P281CA0216.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ac::20) To PH7PR12MB5685.namprd12.prod.outlook.com
+ (2603:10b6:510:13c::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: kp-sNMqLvtnLaqzw3sIb8mUe5Dgxo0-q
-X-Proofpoint-ORIG-GUID: kp-sNMqLvtnLaqzw3sIb8mUe5Dgxo0-q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
- spamscore=0 mlxscore=0 clxscore=1015 adultscore=0 malwarescore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290099
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DM6PR12MB4235:EE_
+X-MS-Office365-Filtering-Correlation-Id: dc893da4-115e-4027-3fc9-08dcf819dff6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WmZwNXhLVGhzV3k2amRVOStkZ1ZaRzYvenY5SzRXWjJyM3JZS0ZzUzcwVWlV?=
+ =?utf-8?B?MGkydFl1RGhjanpoNll0MTE0QjZ5cGx0S09LTUcvbkhjNHg3T1QvZEp5Wk10?=
+ =?utf-8?B?L2ErckJpSWM0eWJuRXc3c3BNQUs3dmpOVXV4QytPTDNreDNDYkFoa1B6Q2JP?=
+ =?utf-8?B?TGFjM1ZUVkNkRTZyMUdIRGExQzlsbGx3aUprSlFRS0NlaXVrdE12emhjUVha?=
+ =?utf-8?B?ZHo3QVpCQW1xK3NXUk1ham4wbkl0dzBETFRQcmNJdEdoemRZcTBxYklUTjFX?=
+ =?utf-8?B?RHdmUkt5SEpwMllTVjFUSDNEYTUxUXlNcUticU5NQzExb050blAyeDcwR1JD?=
+ =?utf-8?B?VmhLdkVuUTRYdXhwNFhqRkxmeG5hVVhrVjF2d2FraDJFVmJBbW1SQXdLNGRU?=
+ =?utf-8?B?QXNpZWxtRDVFZ2dvWnFkazZhMGFGc1MrZXVXNUFENFN4dDQwQWdHSm9HVFQ5?=
+ =?utf-8?B?cGFrUEhNcnRKQy91VDA1Z29iYzVTUVltbUErME8zK0lYb0VZaVRaYmRPc2Nq?=
+ =?utf-8?B?M2JqM3VGKzFuUlhuTzIvWnljM0Y4S2NyWEdiak9xclp4aVptWVdIZDYyS0k1?=
+ =?utf-8?B?RXhvamhDdlk3dEJzWXlFTkRpSU9mTThTMk9zdUxGQXArc1NZK2JsQ2pOUWdW?=
+ =?utf-8?B?aXovUEJoTFgwSTZFWXQrd3RMVVRMYjhCRWdpeXV0b2EwUGZVYmJtL29KNFNx?=
+ =?utf-8?B?b2RLUHdrdjN4UHlUU2JmZ0hoS2pCc0FIS3hoR2JpcW9RenRNWUF5K1RhbzF3?=
+ =?utf-8?B?VDdaK1psY3JsdHBia0F1WEZkaVJ0TjNTVmg5azRxeUZJaGNGWUdOaWNIR3FT?=
+ =?utf-8?B?Q0NBVVl6Y0JLNkJOcDAzWHB5c1FSVEJlOGh2WW1zVUxoWWJaS0hITktmK3pY?=
+ =?utf-8?B?cjZkVjd4T2xBd1RhWmRMY2trYlVrT2ZtZ2g4TktKU3UxemJiTUpldS9yRjNv?=
+ =?utf-8?B?TVFadFBjUjRITDk2WTQ5dEdHYXpzWDU0Y0QzOUhvZjdNKzhsZEQvaldJbktw?=
+ =?utf-8?B?VndzT3BDdEV1SUppZk9hVWxwZUFFSUxzMmtmRUQ3TExoVEJpU0YzSmVidUxX?=
+ =?utf-8?B?OE5kdzhBYk9UKzFjUkM3dkluLzZaM2lwdDdWTXgzZmdpenlJQXhXd0cvQlAw?=
+ =?utf-8?B?YldoL1BkczYyVTkrNlZmRzF2d2UzUjMrNCtGMHd2eWh6aGlCMExqbllxNFgw?=
+ =?utf-8?B?Z3BmamhNUFpRdDJyV2U4czNTcGpRNSs5YU1mSU5GNHNISmMyak9JejBkSmVw?=
+ =?utf-8?B?bGxFVUk1eUppQmRnaHZDcVlUMUIrRWpsUTc4cXowa2hiMXdRSVFTVEg0TGNJ?=
+ =?utf-8?B?ZnpiVFZuM1RnRHFkcHZ0UGgxUVprbllwOXF3Q2hmUk9DcVd0YlRUTmd4LzlR?=
+ =?utf-8?B?OGRUVDlqQU80UVVrajdESURiTVo1ZGFOUkpIMHo4UTRxdWRrKzRLNkVYOHFY?=
+ =?utf-8?B?R0Y2SHFOSmUzUEw3dGFkMVZGTktubkJwZEg0b3h3V05xME9mRDNUYml4aUtP?=
+ =?utf-8?B?Wlg4V1QyMTU0VC82V1QzRmdWRFNyYlNIdThHVCtFemFYNU5hZGc4SXhXcTBY?=
+ =?utf-8?B?STd5Q3NVUXFZMnA0d3pxUWV0R2NMVGxhN2tPOEVwSHdObkFIODJpeDlBNHpi?=
+ =?utf-8?B?WmJ1YUFTSmJnNE44cmMzUmhkSVZiM2MzMlZJZi8wWW9Oc1BLcXcrSm5McHpN?=
+ =?utf-8?B?anVTSXJMc3lWazdZd2RHK09KOCswTzEvNUV6RmwwOVNpS1FSN3ZEL0h5NUwv?=
+ =?utf-8?Q?Iwys+y/ZoGmoNtdk4M3GBjAi4oGtUhshe5WGIdg?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UjNUQml6N1UrZzBlZDR3eWdDckxBeTl1SGloN1Naajh2VmdHbFByN2YwQXo3?=
+ =?utf-8?B?ZTI5bkVZQUsvREkvWXFOS1NvSHFnR0dmSkdwZWhRUmlKTUdDN1NBTUNVZnpF?=
+ =?utf-8?B?Vk41SWdyc0MwM3JEZkwyN2pBZ21IamJFMHBHRXdDa2owb2NmTVVvWUJERm41?=
+ =?utf-8?B?V0k5SzBHb1dVN0xIY2J4dzR5STd2SnBhV20yMDU5WVN2YThCU2QzTWt4Yzdo?=
+ =?utf-8?B?RkVYWHFlRzYvaDZ2aE42dGI4TVBubWZlN0xndGFIVFcrNUVTZEpJUHhmTW0w?=
+ =?utf-8?B?TUs1Q0FqY2V4eUxNcE1WN3dwNC9yUGdwQjZxbXM2YkxVandCRU1lR1ZKV1Rp?=
+ =?utf-8?B?RmhrcUM2TzRKN0EyWUUvUWtacmpzaGlhQnJHbk10WEpMUHZHcGtWUVM3c0VE?=
+ =?utf-8?B?OEwrdGFjSENiTHplcGw1dm83MGtsb01ZMnRqaWVqZzlVaTBpbUpyRmc2WUlZ?=
+ =?utf-8?B?dEVCVFgvckplUjUzTXpTSnhCN2EzcFd2RWowOERyNjBYUGNFem5yNnZUMEsy?=
+ =?utf-8?B?NWhJWU1LMytoR1lFUGFib2xEcEVWY3FBUEpnZjZXN3ZVN21aV2xXbjV3MmxB?=
+ =?utf-8?B?dXdpMXkzUUtZV2JTVVJIeERzd1o1bzFQMDZvZCtUekc2QlBxZkR6M1YwZ21J?=
+ =?utf-8?B?Y3VRRkxwdDZCNk5WUkU2Zi9sNmUxYUw4NEgxaVk2Sk1OSVpvSTlmVVVvRVV5?=
+ =?utf-8?B?eG03enRkWFJ0QnUwY2R3RUpSek1NclBDVmR2VEtOQncvK1R1QlJRUXM3UWp1?=
+ =?utf-8?B?SGY4SDZtTUlSSVRFZnA2TDNTcCtVODRnRytlQ3h6MkRERW5kamRBL1NDcE11?=
+ =?utf-8?B?c1ArY2w1MW10TG9QVk9Ka2dHNVpoN2Z3Q29XN1h0cm5ITDJuaUluRU1FSStI?=
+ =?utf-8?B?eTAybjZmTVVWOGdzdE5Sa21NTXBQTDM3VE1LaERZUWhkR0hhbnJwS3drREpJ?=
+ =?utf-8?B?VC8wbTRLeldIR2pkbWdjSTZsV3lMbjdESnd6dnVSWkRibEwwb2NWdzI0TnZo?=
+ =?utf-8?B?UXZidXpoRHBmMGIzZmtCMTd0WTd6ZXltL0J5QU1SUkMrdUZaMUt4RmhsYmZM?=
+ =?utf-8?B?QlNadkRyMDJRSWE0R1BXTTBDMSs2NTRTTStDSDFERmMzRGVTRU9FQXVUeXY2?=
+ =?utf-8?B?NzN4VTBmWDJiRytHYzgzWlpwaGpwcHkzUDF5QkREOVh5M3lFMDJHNWNRcmVF?=
+ =?utf-8?B?cmV4cndMM2VIdEgwa1NRUlByU21yekVRN1FtaUNON0d5YkFhdTIzcDNzRGdv?=
+ =?utf-8?B?Yk02ak5ab2c5QWJtTTcxWWQ0dzRSclFtMVF0K2ovY3FFQmQzbXJuc0xKdGtj?=
+ =?utf-8?B?bWl3OURUbnZqOHVQOU9NalhBa2k3ZjY2UGRDc2VFVFBRZHVqSkxpS2I2MjFZ?=
+ =?utf-8?B?bWZWMXZENXlGSmJtVWRMdU5tY200Rnh3NzZCWmJHdWdBZVBIekVSb1RFZTVJ?=
+ =?utf-8?B?NEJNaWpMYTQyU0VtMXZsSnUrNGtHbGkxaEluMDFxV2xxYjNMN2tUek9CS25X?=
+ =?utf-8?B?bXFvcFJiUG5iMElPbXZzN3FnV2VmUnFsQTlxMUtCMTFlRitWRHZqZUJHYUZY?=
+ =?utf-8?B?VVRDVXdPR2NCMkJxK2o5bHB4STVMOVBkVWdXTVE4TkhvSU9LRXJjWThJVjIw?=
+ =?utf-8?B?ajVOdVdRZlh1endJVnlEL1hReDR0V3R6RmY5RDR2b2h2d204encvellsY21R?=
+ =?utf-8?B?NnpyVDBXOHRRdVNxTnY2N0tJRnNlTzZoOXJCSWRpNjRPRm5sYlpnSTJqNVh5?=
+ =?utf-8?B?VjN6Z2VoUkQ1MnBuYXBzaHp6S1NuSnhrcjJRekw3STAzd2x6VXJIdFBOUzhC?=
+ =?utf-8?B?N3dVQm9SYXFJNS9ROUR6ZUg2Vms0K2NyRnVuS0RZekNaQ0V1YTVlRTdDODk5?=
+ =?utf-8?B?bVpSbFF6a2N3bVMzU0NsVHpFQ2ZuMUdQTm41ejQyUHRlNTBoTWdTQS9vYzYy?=
+ =?utf-8?B?TzM1TmI5K0Zzb2ZTbWhTNmFBN1VRcllvbDJ4dDM3dTl1dXM1WTNLeUhmR2Nj?=
+ =?utf-8?B?enk3TlRtb2lGMmhnd3llNWx6MExCbWVCaitUWEtYb3JhVVNzR2lMbTZ0bis4?=
+ =?utf-8?B?emRyNDFQWllwM3MwQndqS2Jwc1BoNFh4Q0RjaVZEenNxNTR2QmM4MWR0d3U5?=
+ =?utf-8?Q?ZfaO55MeJMUmZ+4X3uWbgiwSZ?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc893da4-115e-4027-3fc9-08dcf819dff6
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 13:01:59.7537
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EoE33xo8w5v99CrCBZzXKn2oiDNnWnJ22pUEq38Mb5krdhh/rDsnUWOCOSm7KTv4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4235
 
-LTP8800-1A 54V, 150A DC/DC µModule Regulator with PMBus Interface
-LTP8800-4A 54V, 200A DC/DC µModule Regulator with PMBus Interface
-LTP8800-2 54V, 135A DC/DC μModule Regulator with PMBus Interface
+Am 25.10.24 um 23:50 schrieb Michał Winiarski:
+> Similar to regular resizable BAR, VF BAR can also be resized, e.g. by
+> the system firmware or the PCI subsystem itself.
+>
+> Add the capability ID and restore it as a part of IOV state.
+>
+> See PCIe r4.0, sec 9.3.7.4.
+>
+> Signed-off-by: Michał Winiarski <michal.winiarski@intel.com>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 
-Signed-off-by: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
----
- Documentation/hwmon/index.rst   |   1 +
- Documentation/hwmon/ltp8800.rst | 103 ++++++++++++++++++++++++++++++++
- MAINTAINERS                     |   2 +
- drivers/hwmon/pmbus/Kconfig     |  18 ++++++
- drivers/hwmon/pmbus/Makefile    |   1 +
- drivers/hwmon/pmbus/ltp8800.c   |  74 +++++++++++++++++++++++
- 6 files changed, 199 insertions(+)
- create mode 100644 Documentation/hwmon/ltp8800.rst
- create mode 100644 drivers/hwmon/pmbus/ltp8800.c
+Reviewed-by: Christian König <christian.koenig@amd.com>
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index 4d15664bc41e..d51960f58e43 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -136,6 +136,7 @@ Hardware Monitoring Kernel Drivers
-    ltc4261
-    ltc4282
-    ltc4286
-+   ltp8800
-    max127
-    max15301
-    max16064
-diff --git a/Documentation/hwmon/ltp8800.rst b/Documentation/hwmon/ltp8800.rst
-new file mode 100644
-index 000000000000..dea73f60c3d7
---- /dev/null
-+++ b/Documentation/hwmon/ltp8800.rst
-@@ -0,0 +1,103 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver ltp8800
-+=====================
-+
-+Supported chips:
-+
-+	* Analog Devices LTP8800-1A
-+
-+		Prefix: 'ltp8800-1a'
-+
-+		Addresses scanned: I2C 0x40 - 0x4F
-+
-+		Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-1a.pdf
-+
-+	* Analog Devices LTP8800-4A
-+
-+		Prefix: 'ltp8800-4a'
-+
-+		Addresses scanned: I2C 0x40 - 0x4F
-+
-+		Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-4a.pdf
-+
-+	* Analog Devices LTP8800-2
-+
-+		Prefix: 'ltp8800-2'
-+
-+		Addresses scanned: I2C 0x40 - 0x4F
-+
-+		Datasheet: https://www.analog.com/media/en/technical-documentation/data-sheets/ltp8800-2.pdf
-+
-+Authors:
-+		- Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
-+
-+
-+Description
-+-----------
-+
-+The LTP8800 is a family of step-down μModule regulators that provides
-+microprocessor core voltage from 54V power distribution architecture. LTP8800
-+features telemetry monitoring of input/output voltage, input current, output
-+power, and temperature over PMBus.
-+
-+The driver is a client driver to the core PMBus driver. Please see
-+Documentation/hwmon/pmbus.rst for details on PMBus client drivers.
-+
-+Usage Notes
-+-----------
-+
-+This driver does not auto-detect devices. You will have to instantiate the
-+devices explicitly. Please see Documentation/i2c/instantiating-devices.rst for
-+details.
-+
-+Platform data support
-+---------------------
-+
-+The driver supports standard PMBus driver platform data. Please see
-+Documentation/hwmon/pmbus.rst for details.
-+
-+Sysfs Attributes
-+----------------
-+
-+======================= ===========================
-+curr1_label		"iin"
-+curr1_input		Measured input current
-+curr1_crit		Critical maximum current
-+curr1_crit_alarm	Current critical high alarm
-+
-+curr2_label		"iout1"
-+curr2_input		Measured output current
-+curr2_lcrit		Critical minimum current
-+curr2_crit		Critical maximum current
-+curr2_max		Maximum output current
-+curr2_alarm		Current alarm
-+
-+in1_label		"vin"
-+in1_input		Measured input voltage
-+in1_lcrit		Critical minimum input voltage
-+in1_lcrit_alarm		Input voltage critical low alarm
-+in1_crit		Critical maximum input voltage
-+in1_crit_alarm		Input voltage critical high alarm
-+
-+in2_label		"vout1"
-+in2_input		Measured output voltage
-+in2_lcrit		Critical minimum output voltage
-+in2_lcrit_alarm		Output voltage critical low alarm
-+in2_crit		Critical maximum output voltage
-+in2_crit_alarm		Output voltage critical high alarm
-+in2_max			Maximum output voltage
-+in2_max_alarm		Output voltage high alarm
-+in2_min			Minimum output voltage
-+in2_min_alarm		Output voltage low alarm
-+
-+power1_label		"pout1"
-+power1_input		Measured output power
-+power1_crit		Critical maximum output power
-+
-+temp1_input		Measured temperature
-+temp1_lcrit		Critical low temperature
-+temp1_lcrit_alarm		Chip temperature critical low alarm
-+temp1_crit		Critical high temperature
-+temp1_crit_alarm		Chip temperature critical high alarm
-+======================= ===========================
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a6abf7243b94..5e7df53eb4a0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13559,6 +13559,8 @@ LTP8800 HARDWARE MONITOR DRIVER
- M:	Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
- L:	linux-hwmon@vger.kernel.org
- S:	Supported
-+F:	Documentation/hwmon/ltp8800.rst
-+F:	drivers/hwmon/pmbus/ltp8800.c
- 
- LYNX 28G SERDES PHY DRIVER
- M:	Ioana Ciornei <ioana.ciornei@nxp.com>
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index a4f02cad92fd..33e6da249ac8 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -247,6 +247,24 @@ config SENSORS_LTC4286
- 	  If you say yes here you get hardware monitoring support for Analog
- 	  Devices LTC4286.
- 
-+config SENSORS_LTP8800
-+	tristate "Analog Devices LTP8800 and compatibles"
-+	help
-+	  If you say yes here you get hardware monitoring support for Analog
-+	  Devices LTP8800-1A, LTP8800-4A, and LTP8800-2.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called ltp8800.
-+
-+config SENSORS_LTP8800_REGULATOR
-+	bool "Regulator support for LTP8800 and compatibles"
-+	depends on SENSORS_LTP8800 && REGULATOR
-+	help
-+	  If you say yes here you get regulator support for Analog Devices
-+	  LTP8800-1A, LTP8800-4A, and LTP8800-2. LTP8800 is a family of DC/DC
-+	  µModule regulators that can provide microprocessor power from 54V
-+	  power distribution architecture.
-+
- config SENSORS_MAX15301
- 	tristate "Maxim MAX15301"
- 	help
-diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-index d00bcc758b97..aa5bbdb4a806 100644
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -26,6 +26,7 @@ obj-$(CONFIG_SENSORS_LT7182S)	+= lt7182s.o
- obj-$(CONFIG_SENSORS_LTC2978)	+= ltc2978.o
- obj-$(CONFIG_SENSORS_LTC3815)	+= ltc3815.o
- obj-$(CONFIG_SENSORS_LTC4286)	+= ltc4286.o
-+obj-$(CONFIG_SENSORS_LTP8800)	+= ltp8800.o
- obj-$(CONFIG_SENSORS_MAX15301)	+= max15301.o
- obj-$(CONFIG_SENSORS_MAX16064)	+= max16064.o
- obj-$(CONFIG_SENSORS_MAX16601)	+= max16601.o
-diff --git a/drivers/hwmon/pmbus/ltp8800.c b/drivers/hwmon/pmbus/ltp8800.c
-new file mode 100644
-index 000000000000..a377f2e2b001
---- /dev/null
-+++ b/drivers/hwmon/pmbus/ltp8800.c
-@@ -0,0 +1,74 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Hardware monitoring driver for Analog Devices LTP8800
-+ *
-+ * Copyright (C) 2024 Analog Devices, Inc.
-+ */
-+#include <linux/bits.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include "pmbus.h"
-+
-+static const struct regulator_desc ltp8800_reg_desc[] = {
-+	PMBUS_REGULATOR("vout", 0),
-+};
-+
-+static struct pmbus_driver_info ltp8800_info = {
-+	.pages = 1,
-+	.format[PSC_VOLTAGE_IN] = linear,
-+	.format[PSC_VOLTAGE_OUT] = linear,
-+	.format[PSC_CURRENT_IN] = linear,
-+	.format[PSC_TEMPERATURE] = linear,
-+	.func[0] = PMBUS_HAVE_VOUT | PMBUS_HAVE_STATUS_VOUT |
-+		   PMBUS_HAVE_VIN | PMBUS_HAVE_STATUS_INPUT |
-+		   PMBUS_HAVE_IIN | PMBUS_HAVE_IOUT |
-+		   PMBUS_HAVE_TEMP | PMBUS_HAVE_STATUS_TEMP |
-+		   PMBUS_HAVE_POUT,
-+};
-+
-+static int ltp8800_probe(struct i2c_client *client)
-+{
-+	if (!i2c_check_functionality(client->adapter,
-+				     I2C_FUNC_SMBUS_READ_BYTE_DATA |
-+				     I2C_FUNC_SMBUS_READ_WORD_DATA))
-+		return -ENODEV;
-+
-+	if (IS_ENABLED(CONFIG_SENSORS_LTP8800_REGULATOR)) {
-+		ltp8800_info.num_regulators = 1;
-+		ltp8800_info.reg_desc = ltp8800_reg_desc;
-+	}
-+
-+	return pmbus_do_probe(client, &ltp8800_info);
-+}
-+
-+static const struct i2c_device_id ltp8800_id[] = {
-+	{"ltp8800-1a", 0},
-+	{"ltp8800-2", 0},
-+	{"ltp8800-4a", 0},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, ltp8800_id);
-+
-+static const struct of_device_id ltp8800_of_match[] = {
-+	{ .compatible = "adi,ltp8800-1a"},
-+	{ .compatible = "adi,ltp8800-2"},
-+	{ .compatible = "adi,ltp8800-4a"},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, ltp8800_of_match);
-+
-+static struct i2c_driver ltp8800_driver = {
-+	.driver = {
-+		.name = "ltp8800",
-+		.of_match_table = ltp8800_of_match,
-+	},
-+	.probe = ltp8800_probe,
-+	.id_table = ltp8800_id,
-+};
-+module_i2c_driver(ltp8800_driver);
-+
-+MODULE_AUTHOR("Cedric Encarnacion <cedricjustine.encarnacion@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices LTP8800 HWMON PMBus Driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(PMBUS);
--- 
-2.39.2
+> ---
+>   drivers/pci/iov.c             | 29 ++++++++++++++++++++++++++++-
+>   include/uapi/linux/pci_regs.h |  1 +
+>   2 files changed, 29 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pci/iov.c b/drivers/pci/iov.c
+> index aaa33e8dc4c97..6bdc9950b9787 100644
+> --- a/drivers/pci/iov.c
+> +++ b/drivers/pci/iov.c
+> @@ -7,6 +7,7 @@
+>    * Copyright (C) 2009 Intel Corporation, Yu Zhao <yu.zhao@intel.com>
+>    */
+>   
+> +#include <linux/bitfield.h>
+>   #include <linux/pci.h>
+>   #include <linux/slab.h>
+>   #include <linux/export.h>
+> @@ -862,6 +863,30 @@ static void sriov_release(struct pci_dev *dev)
+>   	dev->sriov = NULL;
+>   }
+>   
+> +static void sriov_restore_vf_rebar_state(struct pci_dev *dev)
+> +{
+> +	unsigned int pos, nbars, i;
+> +	u32 ctrl;
+> +
+> +	pos = pci_find_ext_capability(dev, PCI_EXT_CAP_ID_VF_REBAR);
+> +	if (!pos)
+> +		return;
+> +
+> +	pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> +	nbars = FIELD_GET(PCI_REBAR_CTRL_NBAR_MASK, ctrl);
+> +
+> +	for (i = 0; i < nbars; i++, pos += 8) {
+> +		int bar_idx, size;
+> +
+> +		pci_read_config_dword(dev, pos + PCI_REBAR_CTRL, &ctrl);
+> +		bar_idx = FIELD_GET(PCI_REBAR_CTRL_BAR_IDX, ctrl);
+> +		size = pci_rebar_bytes_to_size(dev->sriov->barsz[bar_idx]);
+> +		ctrl &= ~PCI_REBAR_CTRL_BAR_SIZE;
+> +		ctrl |= FIELD_PREP(PCI_REBAR_CTRL_BAR_SIZE, size);
+> +		pci_write_config_dword(dev, pos + PCI_REBAR_CTRL, ctrl);
+> +	}
+> +}
+> +
+>   static void sriov_restore_state(struct pci_dev *dev)
+>   {
+>   	int i;
+> @@ -1021,8 +1046,10 @@ resource_size_t pci_sriov_resource_alignment(struct pci_dev *dev, int resno)
+>    */
+>   void pci_restore_iov_state(struct pci_dev *dev)
+>   {
+> -	if (dev->is_physfn)
+> +	if (dev->is_physfn) {
+> +		sriov_restore_vf_rebar_state(dev);
+>   		sriov_restore_state(dev);
+> +	}
+>   }
+>   
+>   /**
+> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
+> index 12323b3334a9c..a0cf701c4c3af 100644
+> --- a/include/uapi/linux/pci_regs.h
+> +++ b/include/uapi/linux/pci_regs.h
+> @@ -740,6 +740,7 @@
+>   #define PCI_EXT_CAP_ID_L1SS	0x1E	/* L1 PM Substates */
+>   #define PCI_EXT_CAP_ID_PTM	0x1F	/* Precision Time Measurement */
+>   #define PCI_EXT_CAP_ID_DVSEC	0x23	/* Designated Vendor-Specific */
+> +#define PCI_EXT_CAP_ID_VF_REBAR 0x24	/* VF Resizable BAR */
+>   #define PCI_EXT_CAP_ID_DLF	0x25	/* Data Link Feature */
+>   #define PCI_EXT_CAP_ID_PL_16GT	0x26	/* Physical Layer 16.0 GT/s */
+>   #define PCI_EXT_CAP_ID_NPEM	0x29	/* Native PCIe Enclosure Management */
 
 
