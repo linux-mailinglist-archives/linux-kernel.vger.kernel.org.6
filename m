@@ -1,140 +1,81 @@
-Return-Path: <linux-kernel+bounces-387343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FAA9B4FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:46:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7FE9B4FB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:46:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DE711F227BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:46:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366051F233B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2BC619ABD4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06301DA0E0;
+	Tue, 29 Oct 2024 16:46:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3461A0700;
 	Tue, 29 Oct 2024 16:46:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mu7wff6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42DC97DA81;
-	Tue, 29 Oct 2024 16:46:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220390; cv=none; b=YVJemCCs5simi06J6CoS/KgeSSbVs7zD2nCOoFzrQpY0hwedx1K6KesCbSycr0/O3dhyDFZHq6CABgua3VrN80lOYsVoh9blJmbXwPnHujUzOwhmu7EI0LYCbtyZhDiAPcV71lZbnZfTthZKw/s3sSMifAoQDaM4BHtt7osvF54=
+	t=1730220393; cv=none; b=M33lwPv0juaOZxaWQIhyWkcqIYg8tNJu4UpKgMtQoaBk43ODm+UDWAMzErNqf7OK8P5f10DKwixbjc0qabfnc+5QQegNXgFQEDw9Jb7Usl8QqR0aNfeIT8C7w8/51a52eeqKayHUeqt2pF75+1z+pNz0YEkyib65kj/LLrOqtHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220390; c=relaxed/simple;
-	bh=b41XytSw7jgGrP05qeCfH6JsjRkxNuESZWFunT0/lFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nMHZhzUqdY9qmNfEjJkahtd/hQ2tytxZ5c/lCU6vsPB94M4aWOkUfWmUb26dQdfMjlfmlyrHPsd8g/+VWoTKUiqrFc+IJerZek1XMv+vyxfElauG0Wm4ryh7e1Qi0rqjWrIamkbhOUYzbpXRvhm7Gf/DZbgvXKdgwGz17tGR5EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mu7wff6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 063AEC4CEE4;
-	Tue, 29 Oct 2024 16:46:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730220389;
-	bh=b41XytSw7jgGrP05qeCfH6JsjRkxNuESZWFunT0/lFs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Mu7wff6tkrBubJkvbkZi9m8nYxswKX4Wkq6cSid1VKave7nmQJPWky/782gh8+nMr
-	 9ArYWJwK3VbjOgCbiQUwZL2UXmzJ45F+G+/BE6ENOgvR6CVKVd7JPwVMnqdrnVjR4h
-	 1S5TkQWkB6+1KWUYE+HlODMZM3bx0DKYgrf7qInsby80Ht49A7xhd5I6XpV+KKB3ek
-	 EU+ZNg1nE33MAxSfJ2ZQu3y6pxjWkNNbCIuRhHaRUbgTKLR1L+PPP5eX0uMDvz0uCQ
-	 Z1uEVf/5C8ti9KPRxEv/3uyDb3nCBUEc05LdEIK1wgL3PkRvaS25mOgv0SY298QUEF
-	 lu+40Z9RRkt3g==
-Message-ID: <817ea954-0705-44f1-b2a5-a11d089f7bcd@kernel.org>
-Date: Tue, 29 Oct 2024 17:46:21 +0100
+	s=arc-20240116; t=1730220393; c=relaxed/simple;
+	bh=osCuWk6N1y7z+6KekyraUdRcI+68ml+YRH1Wrfbxkto=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DCd1RUXGH2hqZPh69BVPtmtdxaIUDZXJHp8tetsRNOS+GxButJC+9GB/3q13tURrNjHQL2EfrSmRWXxtxf/sDh06GgA0ZepZn99OnnHMytmKK+8KPsOTcePz251VXzlsS+TAV3coA2tVDg58VwXPyOQ5Os4+VASDG7oTexusSA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DDC61113E;
+	Tue, 29 Oct 2024 09:46:59 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B7FE53F73B;
+	Tue, 29 Oct 2024 09:46:29 -0700 (PDT)
+Date: Tue, 29 Oct 2024 16:46:28 +0000
+From: Leo Yan <leo.yan@arm.com>
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, Ryan.Roberts@arm.com,
+	Kiel.Friedt@arm.com, Julio.Suarez@arm.com,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Besar Wicaksono <bwicaksono@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf arm-spe: Use old behavior when opening old SPE files
+Message-ID: <20241029164628.GA24446@e132581.arm.com>
+References: <20241029143734.291638-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXT] Re: [PATCH 4/5] dt-bindings: media: i2c: Update bindings
- for OX05B1S with OS08A20
-To: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
- sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, laurentiu.palcu@nxp.com,
- robert.chiras@nxp.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
- dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
- alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com
-References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
- <20241028190628.257249-5-mirela.rabulea@nxp.com>
- <f4155f41-7267-423f-ad23-e7f0b24c650f@kernel.org>
- <5239f68d-ace8-4262-936a-8bf9b17680cf@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <5239f68d-ace8-4262-936a-8bf9b17680cf@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029143734.291638-1-james.clark@linaro.org>
 
-On 29/10/2024 15:02, Mirela Rabulea wrote:
+On Tue, Oct 29, 2024 at 02:37:33PM +0000, James Clark wrote:
 > 
-> On 29.10.2024 08:17, Krzysztof Kozlowski wrote:
->> On 28/10/2024 20:06, Mirela Rabulea wrote:
->>> Add another compatible for OS08A20 sensor.
->>>
->>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
->>> ---
->>>   Documentation/devicetree/bindings/media/i2c/ovti,ox05b1s.yaml | 1 +
->> This is part of the original binding. Submit complete binding in one patch.
+> Since the linked commit, we stopped interpreting data source if the
+> perf.data file doesn't have the new metadata version. This means that
+> perf c2c will show no samples in this case.
 > 
-> Hi Krzysztof,
+> Keep the old behavior so old files can be opened, but also still show
+> the new warning that updating might improve the decoding.
 > 
-> Should I squash this patch into #1?
-
-Yes, please. Splitting initial binding into such small chunks is not
-necessary.
-
+> Also re-write the warning to be more concise and specific to a user.
 > 
-> I sent the patch #1, #2 and #3 for the OX05B1S sensor, and patches #4 
-> and #5 as additions for another sensor, OS08A20.
+> Fixes: ba5e7169e548 ("perf arm-spe: Use metadata to decide the data source feature")
+> Signed-off-by: James Clark <james.clark@linaro.org>
 
-Best regards,
-Krzysztof
-
+Reviewed-by: Leo Yan <leo.yan@arm.com>
 
