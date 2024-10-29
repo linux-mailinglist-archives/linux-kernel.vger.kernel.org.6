@@ -1,284 +1,162 @@
-Return-Path: <linux-kernel+bounces-386607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 371359B45C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:31:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AF579B45C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E591C2226E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:31:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38DE1B21922
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3013F204031;
-	Tue, 29 Oct 2024 09:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EDA202F64;
+	Tue, 29 Oct 2024 09:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dMayI4jz"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mnx6aqSq"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2826D1DE3C5;
-	Tue, 29 Oct 2024 09:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C751DE3C5;
+	Tue, 29 Oct 2024 09:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730194264; cv=none; b=VT7KuoADIqEqRhpXLVy77SCiLCGv7y1bX7ps9Ir795WODlFlxnt3iWvcxJTyKKY9TF1FD4BN9Gt1hbBXwvvTYl72PfYg88pTRtICRpxMeacMSHRS3nhx6KPffCGez1/D0+IO9+PcolbZT0dc9d9GLNzSHhh0Mi6UM+3ffH9qQFk=
+	t=1730194421; cv=none; b=JQPVDArKIn7JXmk33QTKMtxvBvorNqbdzOyLzGLuo6VoItZbXGRf8X9McSe08ZL1qOvmG0+OP50eN24lzA7BQwaRsC/2aC2ewC51sjPtucDxWLtsl8I2kAUBk2VL9A3x8DZGSI1hbjz03AF/Ip/chE4MdR4kuix2BgONG3rGeJo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730194264; c=relaxed/simple;
-	bh=MUyr+kdRA95hTolh/oZzUAOWV6i5BrB5YLmyGimABIU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uCuJWAIlaA8y/JAbFfHVuWglF8glZboic9X9Ga8dAnz/bmAFneT0qt1sAINja9dGm9VRPkb3KapWEJiN83s6Yqwm8ZtyBqN4h3i6EpzPUqczWH9jVG6sPLgt694PGjq6ehc3Tau+DYqh2nsn4HNsBCVI5Kbx3zAMlRm3psztRRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dMayI4jz; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 36E5A1BF210;
-	Tue, 29 Oct 2024 09:30:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1730194258;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=O0B+YscGyOsA4A0Loe+3Rid8xyJkwuPJwKK1f6ZjIz0=;
-	b=dMayI4jzCcsUVSgLMsF8MHakNKIA6t5G5T3wAD0IzSzf64yoUHBeL09qGKJ9xkExAnsyON
-	vNxB6H6mgbRJ7kL53+1D4KAfyEQqg01aaAeIfBYeNkGuabIt/kjKj3nKXfNP8mqNTnbYx4
-	jyf/+wZMOFnPAF9EC89VIG8oGSCj+DYG3rJnnS/4EmlR5SHwdksrRXQWyGWTrlDRNEKkUR
-	SGetL/NsRmW2LGltbpt7tqrQMBxM9QV3Gp18Hn+c0AudSQr/Eif88xNlzMX7FbZ4Pq/kie
-	FaoMcReMNntBRhI7kGpowbEpNfToPE5tm1qaWsx4L2gsLoqCY/kVuY97N7oy0Q==
-From: Romain Gantois <romain.gantois@bootlin.com>
-Date: Tue, 29 Oct 2024 10:30:30 +0100
-Subject: [PATCH net] net: phy: dp83869: fix status reporting for 1000base-x
- autonegotiation
+	s=arc-20240116; t=1730194421; c=relaxed/simple;
+	bh=J5FlmGhCRH+fScs54Zwc1Osih+gd3Sv5SzRckw/V7a8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sivnCfZjv4tF0yu8RSANsllv1b9VyN0inm/My0szLeEKSt+9RBVQTWwZPTlq0siWsrggiLRqcADMpThr1bwvrzy2mw0fCsD1atcDNhCtYihi6BtPOhqfMD82FF0CXOQZQYGgXNn6e0IJFM4X+dqX34vowu/vy6WhkU/6SbnAGww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mnx6aqSq; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T25YHT023515;
+	Tue, 29 Oct 2024 09:33:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2ehWVg
+	qd24gfF2tENCWTuD1mTfOOoeMzSdEuvOZ1ojk=; b=mnx6aqSqLaqXN+NDK93ac1
+	jr7I4oU4/w6QeR6/FpCsR2h9yDlPDBjanUEKn638L3CEnj6DOeJWxseJ7oq0WED4
+	3Tn5O4DiYGbU5TuS7YijyxapCcqIHUd880QuWiV3g3DDQMA3z81Ln+dQ+fIaHiAg
+	/hrFBlL4fo0HNwUlQPfYglIoojBGr40NvGP+n1Fo8mRqFu+dI1fGTakDzOK2YZO6
+	OeviXhJC9mUH8lDCTc0W/qIikxNHUQAv1ISeyYyBvjgBfSpW21L97wcAXOiw7fV9
+	2f8Hmh2+WXXiIZpvERTCIhgoWe0OV3+BZsh5j/a2DHz/5L5Olw43mCE6gqzyqQLQ
+	==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42j43fyp29-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:33:37 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49T98Qde028193;
+	Tue, 29 Oct 2024 09:33:36 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hb4xth0f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:33:36 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49T9XWl852691206
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 09:33:33 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CC73F201AC;
+	Tue, 29 Oct 2024 09:33:32 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 67C37201AB;
+	Tue, 29 Oct 2024 09:33:32 +0000 (GMT)
+Received: from [9.171.42.25] (unknown [9.171.42.25])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 29 Oct 2024 09:33:32 +0000 (GMT)
+Message-ID: <e2d475e4-d710-4387-8917-c126455facd7@linux.ibm.com>
+Date: Tue, 29 Oct 2024 10:33:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/6] s390/uv: Retrieve Secrets Ultravisor Call support
+To: Steffen Eiden <seiden@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
+        Harald Freudenberger <freude@linux.ibm.com>,
+        Christoph Schlameuss <schlameuss@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>
+References: <20241024062638.1465970-1-seiden@linux.ibm.com>
+Content-Language: en-US
+From: Janosch Frank <frankja@linux.ibm.com>
+Autocrypt: addr=frankja@linux.ibm.com; keydata=
+ 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
+In-Reply-To: <20241024062638.1465970-1-seiden@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-dp83869-1000base-x-v1-1-fcafe360bd98@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIADarIGcC/x3MQQ5AMBBA0avIrE0yLaVcRSxKB7MpaUUk4u4ay
- 7f4/4HEUThBXzwQ+ZIke8hQZQHz5sLKKD4bNOlakTboD1vZpkNFRJNLjDfSQq5RrTatrSGHR+R
- F7n86QOATxvf9AL66GFJpAAAA
-X-Change-ID: 20241025-dp83869-1000base-x-0f0a61725784
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Dan Murphy <dmurphy@ti.com>, Florian Fainelli <f.fainelli@gmail.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
- Romain Gantois <romain.gantois@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: romain.gantois@bootlin.com
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: DSA_MnTlJDAC7ZFakTfyhaj-u3ABuyP8
+X-Proofpoint-ORIG-GUID: DSA_MnTlJDAC7ZFakTfyhaj-u3ABuyP8
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=419 clxscore=1011
+ adultscore=0 mlxscore=0 priorityscore=1501 spamscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410290070
 
-The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
-In this operation mode, autonegotiation can be performed, as described in
-IEEE802.3.
+On 10/24/24 8:26 AM, Steffen Eiden wrote:
+> A new secret type (group) allows SE-guests to retrieve the secret value
+> from the UV secret store. All retrieved secrets (but plaintext) are
+> retrieved as a PCMKO-wrapped key so that they will never appear in
+> plaintext in the secure guest. Supported key/secret types are:
+> AES, AES-XTS, HMAC, and EC. Add support for an in-kernel API and an UAPI
+> to retrieve a previously added secret. If the hardware supports it,
+> adding secrets works with the same infrastructure that is used by
+> associate secrets introduced with AP-pass-through support.
+> 
 
-The DP83869 has a set of fiber-specific registers located at offset 0xc00.
-When the transceiver is configured in RGMII-to-1000base-x mode, these
-registers are mapped onto offset 0, which should, in theory, make reading
-the autonegotiation status transparent.
+I've picked up everything but patch #5 a couple of days ago.
 
-However, the fiber registers at offset 0xc04 and 0xc05 do not follow the
-bit layout of their standard counterparts. Thus, genphy_read_status()
-doesn't properly read the capabilities advertised by the link partner,
-resulting in incorrect link parameters.
-
-Similarly, genphy_config_aneg() doesn't properly write advertised
-capabilities.
-
-Fix the 1000base-x autonegotiation procedure by replacing
-genphy_read_status() and genphy_config_aneg() with driver-specific
-functions which take into account the nonstandard bit layout of the DP83869
-registers in 1000base-x mode.
-
-Fixes: a29de52ba2a1 ("net: dp83869: Add ability to advertise Fiber connection")
-Cc: stable@vger.kernel.org
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
----
- drivers/net/phy/dp83869.c | 130 ++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 127 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
-index 5f056d7db83eed23f1cab42365fdc566a0d8e47f..7f89a4f963cab50d6954e8b8996d7bbe2c72a9ca 100644
---- a/drivers/net/phy/dp83869.c
-+++ b/drivers/net/phy/dp83869.c
-@@ -41,6 +41,8 @@
- #define DP83869_IO_MUX_CFG	0x0170
- #define DP83869_OP_MODE		0x01df
- #define DP83869_FX_CTRL		0x0c00
-+#define DP83869_FX_ANADV        0x0c04
-+#define DP83869_FX_LPABL        0x0c05
- 
- #define DP83869_SW_RESET	BIT(15)
- #define DP83869_SW_RESTART	BIT(14)
-@@ -135,6 +137,17 @@
- #define DP83869_DOWNSHIFT_4_COUNT	4
- #define DP83869_DOWNSHIFT_8_COUNT	8
- 
-+/* FX_ANADV bits */
-+#define DP83869_BP_FULL_DUPLEX       BIT(5)
-+#define DP83869_BP_PAUSE             BIT(7)
-+#define DP83869_BP_ASYMMETRIC_PAUSE  BIT(8)
-+
-+/* FX_LPABL bits */
-+#define DP83869_LPA_1000FULL   BIT(5)
-+#define DP83869_LPA_PAUSE_CAP  BIT(7)
-+#define DP83869_LPA_PAUSE_ASYM BIT(8)
-+#define DP83869_LPA_LPACK      BIT(14)
-+
- enum {
- 	DP83869_PORT_MIRRORING_KEEP,
- 	DP83869_PORT_MIRRORING_EN,
-@@ -153,19 +166,129 @@ struct dp83869_private {
- 	int mode;
- };
- 
-+static int dp83869_config_aneg(struct phy_device *phydev)
-+{
-+	struct dp83869_private *dp83869 = phydev->priv;
-+	unsigned long *advertising;
-+	int err, changed = false;
-+	u32 adv;
-+
-+	if (dp83869->mode != DP83869_RGMII_1000_BASE)
-+		return genphy_config_aneg(phydev);
-+
-+	/* Forcing speed or duplex isn't supported in 1000base-x mode */
-+	if (phydev->autoneg != AUTONEG_ENABLE)
-+		return 0;
-+
-+	/* In fiber modes, register locations 0xc0... get mapped to offset 0.
-+	 * Unfortunately, the fiber-specific autonegotiation advertisement
-+	 * register at address 0xc04 does not have the same bit layout as the
-+	 * corresponding standard MII_ADVERTISE register. Thus, functions such
-+	 * as genphy_config_advert() will write the advertisement register
-+	 * incorrectly.
-+	 */
-+	advertising = phydev->advertising;
-+
-+	/* Only allow advertising what this PHY supports */
-+	linkmode_and(advertising, advertising,
-+		     phydev->supported);
-+
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT, advertising))
-+		adv |= DP83869_BP_FULL_DUPLEX;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising))
-+		adv |= DP83869_BP_PAUSE;
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising))
-+		adv |= DP83869_BP_ASYMMETRIC_PAUSE;
-+
-+	err = phy_modify_changed(phydev, DP83869_FX_ANADV,
-+				 DP83869_BP_FULL_DUPLEX | DP83869_BP_PAUSE |
-+				 DP83869_BP_ASYMMETRIC_PAUSE,
-+				 adv);
-+
-+	if (err < 0)
-+		return err;
-+	else if (err)
-+		changed = true;
-+
-+	return genphy_check_and_restart_aneg(phydev, changed);
-+}
-+
-+static int dp83869_read_status_fiber(struct phy_device *phydev)
-+{
-+	int err, lpa, old_link = phydev->link;
-+	unsigned long *lp_advertising;
-+
-+	err = genphy_update_link(phydev);
-+	if (err)
-+		return err;
-+
-+	if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
-+		return 0;
-+
-+	phydev->speed = SPEED_UNKNOWN;
-+	phydev->duplex = DUPLEX_UNKNOWN;
-+	phydev->pause = 0;
-+	phydev->asym_pause = 0;
-+
-+	lp_advertising = phydev->lp_advertising;
-+
-+	if (phydev->autoneg != AUTONEG_ENABLE) {
-+		linkmode_zero(lp_advertising);
-+
-+		phydev->duplex = DUPLEX_FULL;
-+		phydev->speed = SPEED_1000;
-+
-+		return 0;
-+	}
-+
-+	if (!phydev->autoneg_complete) {
-+		linkmode_zero(lp_advertising);
-+		return 0;
-+	}
-+
-+	/* In fiber modes, register locations 0xc0... get mapped to offset 0.
-+	 * Unfortunately, the fiber-specific link partner capabilities register
-+	 * at address 0xc05 does not have the same bit layout as the
-+	 * corresponding standard MII_LPA register. Thus, functions such as
-+	 * genphy_read_lpa() will read autonegotiation results incorrectly.
-+	 */
-+
-+	lpa = phy_read(phydev, DP83869_FX_LPABL);
-+	if (lpa < 0)
-+		return lpa;
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
-+			 lp_advertising, lpa & DP83869_LPA_1000FULL);
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT, lp_advertising,
-+			 lpa & DP83869_LPA_PAUSE_CAP);
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, lp_advertising,
-+			 lpa & DP83869_LPA_PAUSE_ASYM);
-+
-+	linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
-+			 lp_advertising, lpa & DP83869_LPA_LPACK);
-+
-+	phy_resolve_aneg_linkmode(phydev);
-+
-+	return 0;
-+}
-+
- static int dp83869_read_status(struct phy_device *phydev)
- {
- 	struct dp83869_private *dp83869 = phydev->priv;
- 	int ret;
- 
-+	if (dp83869->mode == DP83869_RGMII_1000_BASE)
-+		return dp83869_read_status_fiber(phydev);
-+
- 	ret = genphy_read_status(phydev);
- 	if (ret)
- 		return ret;
- 
--	if (linkmode_test_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported)) {
-+	if (dp83869->mode == DP83869_RGMII_100_BASE) {
- 		if (phydev->link) {
--			if (dp83869->mode == DP83869_RGMII_100_BASE)
--				phydev->speed = SPEED_100;
-+			phydev->speed = SPEED_100;
- 		} else {
- 			phydev->speed = SPEED_UNKNOWN;
- 			phydev->duplex = DUPLEX_UNKNOWN;
-@@ -898,6 +1021,7 @@ static int dp83869_phy_reset(struct phy_device *phydev)
- 	.soft_reset	= dp83869_phy_reset,			\
- 	.config_intr	= dp83869_config_intr,			\
- 	.handle_interrupt = dp83869_handle_interrupt,		\
-+	.config_aneg    = dp83869_config_aneg,                  \
- 	.read_status	= dp83869_read_status,			\
- 	.get_tunable	= dp83869_get_tunable,			\
- 	.set_tunable	= dp83869_set_tunable,			\
-
----
-base-commit: 94c11e852955b2eef5c4f0b36cfeae7dcf11a759
-change-id: 20241025-dp83869-1000base-x-0f0a61725784
-
-Best regards,
--- 
-Romain Gantois <romain.gantois@bootlin.com>
+Also these patches will go through the s390 tree and not through KVM 390 
+as the crypto team has a series that's based on this one.
 
 
