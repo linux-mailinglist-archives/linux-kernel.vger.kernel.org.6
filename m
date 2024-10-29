@@ -1,163 +1,102 @@
-Return-Path: <linux-kernel+bounces-387372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CC439B5011
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:05:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08119B500F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C05241C22A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DFC01C225E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CB71D79BB;
-	Tue, 29 Oct 2024 17:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD73E1D8E0D;
+	Tue, 29 Oct 2024 17:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJSncrlj"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="shMB0R2I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F10417D355
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ACE717D355;
+	Tue, 29 Oct 2024 17:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730221537; cv=none; b=esamotnghZSxRJCKJ2vhoSaeKypGq3j4y4KQtin11bycjbO6b1WybohSzwgdX7zWztBTyT/tXrjZoLqIIIRLA+SnUzpZrZfT94oUHseayeAq60qQICVpW6nGM6A8n3IxDEwWXPwSj1sbmXKDXEbC6sDeRRGr3M/zwJScJ7HtOok=
+	t=1730221529; cv=none; b=VWkieU3uekYW7GqRNUXYNY5pJREEnxI+LD7vaMxJB6J8vGKCsN4GIgT+4wX39Hi60+sRgIkTsfFwCW/ZIYRloj+hAlgQlEO0c+rkf5ZGt7WlMevyPsdxi0rvTABiatxJ+6h8Kl0qvl/Fx2tJdIxk0GcfdZKDq8esabrNm3Isiv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730221537; c=relaxed/simple;
-	bh=iPmAFEvO+sDcEGLA6dukBMLTp9fkP6QG8tH3ixPztVc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cBu0RhkJxrPCEWD9MijqV7zNWGdu1UTeK/sL6Xi6PUiTDVXQSRVpSLPw5cqORu/di2sUroAE9saNzgd8qA36bL8SguL6uVkwAGoiNjxhIPP7Lp06InT6TkJZICAViSHxwXY0zGJ8Z2RYNbDSUDFQUkxv/hfcrJqwILIYzaVg06E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJSncrlj; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20b533c6865so5237325ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:05:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730221535; x=1730826335; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ri7MEvCu1YimVlmWq4RcIi4fsfAsB9YQsSyk/h/+zFk=;
-        b=JJSncrljYj+DYHRkqS0Ct4/mn5bseFLa/JRskbf1hEcNFCBCxLWVeOpnjsDR8EVt+l
-         X+JbBnIzjIe72xh2/Rgzu2bbN+B68q5cVf4XzHfxGmwo4D0Mq9z6PSyyzeQNsxDD5luv
-         Kc3SS6W6z91ddIqDqX+q9F8KpD0XO72+RoMiRYQF9YGIb05BD8qgFW2Tz4PzFcQ65KEa
-         bqNrtMsVoMtPGepjoCGMzpn4oNOohzLA+YuoUM5BB25P3DpBZ7dqqKlNh7wTX16gccti
-         jPYOsp/AdH0L9JwnlpP4iZyEvnc7pgnHz/M/Mlfk+GYe86cLVGLfg6F1RqpqSiyr2Whs
-         qoRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730221535; x=1730826335;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ri7MEvCu1YimVlmWq4RcIi4fsfAsB9YQsSyk/h/+zFk=;
-        b=i8z2fAf6z/H/SwNZU1/jWy8OUA75W8o86maKHew6biWLaDLa/GUsAzl82G2r8gojz4
-         VR+LxuFkrqwzMupndZHMQ3vSG9+0PRCHlsS6WaAlb7qeW+KWICMhRPA0u23sYdy1UHL6
-         2hGpxGMjjjzhbGhSfJNRE4GW0sI+B4C1vCOw8z3Gy/G73lWL1BmfoBtem6MYd3tFdy7c
-         YkYUEUv45n72wlCzOhwEumM088F2Km55f8sMv8hVuoh5n/guSjni9ZibM3V3Ht0/XJps
-         kQwQ6UNJQ+sphat5q1wHAqbVD2lEhaacokUgo/QBheJ/OT8/YpaYSTVQTk4FhYSgp2ro
-         f4cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIMvVk6PkJRbwEyGVQGp2JiIUyBk0oaernq8Xp3Sszeuy4uFTD00N7NK/p0elqH2QrXM6Haqbh+FR1Vmg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF7t/73kRVbGZ4AJCHegbRzXGzm6InweeiTt6nZtwTEUUIF3qu
-	gnPAZYCDw0QSiWVBCOhJ6pVv7nus9aeDmL0fSmvzeeFXY1tWmUzs
-X-Google-Smtp-Source: AGHT+IHT5/roU/4mSk/m+oKx+/csSBDyCP+jJiFd98PSY13Rg95wM5KFEENyo902h9hqdsGmjTpOqQ==
-X-Received: by 2002:a17:902:e5ce:b0:20c:da9a:d59e with SMTP id d9443c01a7336-210c6c6f398mr70539565ad.9.1730221534582;
-        Tue, 29 Oct 2024 10:05:34 -0700 (PDT)
-Received: from ?IPV6:2402:e280:214c:86:e12b:a9a3:6d06:6d0a? ([2402:e280:214c:86:e12b:a9a3:6d06:6d0a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210f6a461b2sm1908925ad.169.2024.10.29.10.05.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 10:05:34 -0700 (PDT)
-Message-ID: <3d38112f-9235-4643-ae2c-ffb9fae7a5d2@gmail.com>
-Date: Tue, 29 Oct 2024 22:35:25 +0530
+	s=arc-20240116; t=1730221529; c=relaxed/simple;
+	bh=aMTC2oKgWzWSk/UJ4SA8OyecYycQ3lwvSz+25traKM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MTB2PeECLmOLAt0BMW3F1tOhpZP0SO1pHMQb5rSEb//GYez+QNqP/2vlMuluJb/2jUSTC1Q7fysf8gUTrytx7xNbFL3ZNu2G9O/yc8kKeAQkEo879rizMIUTL4HlJ7SQQQX66JT9vgYWs7LoEAZx8aL69lf7XiAwrh/eWI1aBJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=shMB0R2I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01FEC4CECD;
+	Tue, 29 Oct 2024 17:05:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730221528;
+	bh=aMTC2oKgWzWSk/UJ4SA8OyecYycQ3lwvSz+25traKM8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=shMB0R2I9iWsENoAPHjm4eUKcUGjn5moay4P2XvsScneSI4JN8rJdqnbPRvQwmMmj
+	 3u/Zt3pixnq1FDgcgYN0W0HwamPJyewBgmOPQ2xEexpRFrYmv4hLIZG19S/LQ/Rew5
+	 kEgt43lUhw7vYIYpxky+Au9t5k4eWpwOpCEx/R8hPSpCTuZjQ/GuBcKiCmVvLAFiaP
+	 V5oFdtpMvo/bqBYT8B+wdmdNt7ey1JNo3XCz9qc93OLGLDh12bLf5rthKNES/MHxnp
+	 gZHtzjxm5DLQK9HZnuXgNSO7k9TuY3XeQCiiS87hUsPF7CQIWPiYlbuA8olXLeX4MK
+	 CLrltoSGLUjdA==
+Date: Tue, 29 Oct 2024 10:05:26 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029170526.5gdnqdlnoqsd7pxh@treble.attlocal.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <20241029134918.GA14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH linux-next] drm/amdgpu: use string choice helpers
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com,
- airlied@gmail.com, simona@ffwll.ch, tao.zhou1@amd.com,
- kevinyang.wang@amd.com, Hawking.Zhang@amd.com,
- amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, luben.tuikov@amd.com,
- kernel test robot <lkp@intel.com>, Julia Lawall <julia.lawall@inria.fr>
-References: <20241027140537.503264-1-prosunofficial@gmail.com>
- <CADnq5_M4QwRfROybHrQfNuiXNhHH7VFAUVZMWkriwZs7K4KLUQ@mail.gmail.com>
-Content-Language: en-US
-From: R Sundar <prosunofficial@gmail.com>
-In-Reply-To: <CADnq5_M4QwRfROybHrQfNuiXNhHH7VFAUVZMWkriwZs7K4KLUQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241029134918.GA14555@noisy.programming.kicks-ass.net>
 
-On 29/10/24 19:11, Alex Deucher wrote:
-> On Sun, Oct 27, 2024 at 10:18 AM R Sundar <prosunofficial@gmail.com> wrote:
->>
->> Use string choice helpers for better readability.
+On Tue, Oct 29, 2024 at 02:49:18PM +0100, Peter Zijlstra wrote:
+> On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
 > 
-> I personally find this less readable, but if this is the preferred
-> method going forward, I'm fine to take the patch.
+> > +static void unwind_user_task_work(struct callback_head *head)
+> > +{
+> ...
+> > +	guard(rwsem_read)(&callbacks_rwsem);
+> > +
+> > +	for_each_set_bit(i, &pending, UNWIND_MAX_CALLBACKS) {
+> > +		if (callbacks[i])
+> > +			callbacks[i]->func(&trace, cookie, privs[i]);
+> > +	}
 > 
-> Alex
-> 
+> I'm fairly sure people will come with pitchforks for that read-lock
+> there. They scale like shit on big systems. Please use SRCU or somesuch.
 
-Hi,
+I'd expect that unwind_user_{register,unregister}() would only be called
+once per tracing component during boot so there wouldn't be any
+contention.
 
-Thanks for the comments.
+But I think I can make SRCU work here.
 
-I came across this comments in string_choices.h files, where 
-str_read_write() helpers are present.
-
-Using these helpers offers the following benefits: 
-
-  1) Reducing the hardcoding of strings, which makes the code more 
-elegant through these simple literal-meaning helpers. 
-
-  2) Unifying the output, which prevents the same string from being 
-printed in various forms, such as enable/disable, enabled/disabled, 
-en/dis.
-  3) Deduping by the linker, which results in a smaller binary file.
-
-Kindly, I'm leaving the decision to maintainers.
-
-Thanks,
-Sundar
-
->>
->> Reported-by: kernel test robot <lkp@intel.com>
->> Reported-by: Julia Lawall <julia.lawall@inria.fr>
->> Closes: https://lore.kernel.org/r/202410161814.I6p2Nnux-lkp@intel.com/
->> Signed-off-by: R Sundar <prosunofficial@gmail.com>
->> ---
->>
->> reported in linux repository.
->>
->> tree:  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->>
->> cocci warnings: (new ones prefixed by >>)
->>>> drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c:145:8-12: opportunity for str_read_write(read)
->>
->> vim +145 drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c
->>
->>   drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c
->> index 35fee3e8cde2..8cd69836dd99 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_eeprom.c
->> @@ -200,7 +200,7 @@ static int amdgpu_eeprom_xfer(struct i2c_adapter *i2c_adap, u32 eeprom_addr,
->>                  dev_err_ratelimited(&i2c_adap->dev,
->>                                      "maddr:0x%04X size:0x%02X:quirk max_%s_len must be > %d",
->>                                      eeprom_addr, buf_size,
->> -                                   read ? "read" : "write", EEPROM_OFFSET_SIZE);
->> +                                   str_read_write(read), EEPROM_OFFSET_SIZE);
->>                  return -EINVAL;
->>          }
->>
->> --
->> 2.34.1
->>
-
+-- 
+Josh
 
