@@ -1,134 +1,115 @@
-Return-Path: <linux-kernel+bounces-387657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 390FE9B5436
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:43:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193A79B5439
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4A921F2463E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:43:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B44B7B22C3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1A3209F28;
-	Tue, 29 Oct 2024 20:38:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59298208967;
+	Tue, 29 Oct 2024 20:39:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="TftYdxWE"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZxPgDyXP"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1849209F23
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDD1208968;
+	Tue, 29 Oct 2024 20:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730234332; cv=none; b=ZMIVLn6ClgFEqbOehYsQf0wTN30SY8p6xK/sSwYfNvFQzPCIn9i9MKvDhJ8DuXQ++jS8nWixXZVlIBn8BmCDBFMJ6ZOabTIYsjh6FwpFf67Ys+MmJZW8D2h5eZLzQzMvt8FCKZICr3D+IQZcMdz/ovors3H5srnEgCR9qwweN3o=
+	t=1730234385; cv=none; b=HFjX8018Gb2VLDVC7UG2DG042LS1L7/KmqOA1GcQNae/s3WRlwP5KXQ5XfBI4xYLzUY678XmpB9uf/EHOlh4QKnn3QldCBGBR+Ez9BYy4wOTTMFspVmeVk8+Zv/qYQyWQwQ4i1QINtcu9dbgUQ51ZVqfGCHxgZjDx+nTyndDC1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730234332; c=relaxed/simple;
-	bh=rxX4tl6h4/IVnKLPvQdszEOE7LTI8m5gBDI4nKRji6M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UpYYkztWxcz25dEh7fZikjh5HVvW2M25Zz7V/9w22Y0onPyzUfdzrNOGrlA+roE3Oio266sPvEJCQSFqn/vT7PFx8U/CmKw/tcfQSZGcvIhrAZD+vrhKWhYSgm6r0xUMR3z+XFaWReeWRmFhDA+eBbnY07j6gJKzzdO/fvMVcTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=TftYdxWE; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ea535890e0so716251a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:38:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=purestorage.com; s=google2022; t=1730234329; x=1730839129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rxX4tl6h4/IVnKLPvQdszEOE7LTI8m5gBDI4nKRji6M=;
-        b=TftYdxWEXrBh1Y+WDvRjT/BzGMGEQPImSYvHbctXruuVA6E8JFE1DyBWRlVcRWZtUL
-         kXeqs4q9Sd3IWx4ueJqgEJgPAfncZa8HnJTRwNYE1RH6hjCzZGUNm4H/dhP4bPsFdfRI
-         4FhlrUAgFW4kzzcXdGqOQGNXcRnVxq7cc0QTk7BBneqoCeN5zC7WPx/AuIW88rMDxvq7
-         vKjlcfYcAJrpMa1UsV58DdOG0IdAh9rB7L7oZCyFJN1yxL8+ODQB18c/z0ClNazdkJRF
-         nVIgPpK54bLK7jBAfNce11BpP5up6iaKCs9e88O8pSIyd2Yd9XlO8ja3K63ei9YaTtTP
-         WUBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730234329; x=1730839129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rxX4tl6h4/IVnKLPvQdszEOE7LTI8m5gBDI4nKRji6M=;
-        b=wrfz4RUxsNVyqa0SZJUdk8RqSR4yeIfmFgTCqBA6sxG6hehXTg+5q2b2BZvNajYVZC
-         u7b+iiHVrJ3qJzwtM/n1AImIy79pq1OKe6Sv18/jeHAl6NTZ0H2V0EIw8kW74unx8rzR
-         inspRM8/D5pT+chg1i62HfQZAU32/fUxqwvqtbokbUZ7iKfI/m9xnOaAhH30BLVRPmi3
-         DGR1viEhvnsuoOnZmIZToyARRr14b73qlVTKw/mn3HWldPq3KHcUB2xkv9in6TGVlQcB
-         P3IzHr1Tc+g4rLfLldc4STvz+LZfQ7/UjMXNo576vdjDzc3xxf753f1s1y3ecLAJWF95
-         IjKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwk7WHEGzxpFVHp/EKOZmgi1mUptg5erYCuXjlVrIUK9NCreijRHG2gpUsAtU3JfNLggB4HvQgU1e6RBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB7ku6rxLv+j2YoO56wQRvmz3YAkzazGg7QfGYdFix3Sm3Nz4h
-	G5VE+szYhct8xP2Wr404+jpUWFn/lvjYTEqJbKQt/sHi+8xwlpG21r6DYyVQIdXdI3uV2rXNzQZ
-	D0+J7iaq/DB3Oh1XZ4lLee2cONYQRIT8m/d/V+g==
-X-Google-Smtp-Source: AGHT+IET98qsSjNOjsfBxs4fNBfxl9mkBrcuSKEy0ssdSSQ0hphNvrIm7EngLn9PbwFPzWUn3YzOuODt/EHr1kPOdGQ=
-X-Received: by 2002:a05:6a20:2444:b0:1d9:ddf:b087 with SMTP id
- adf61e73a8af0-1d9a84d970amr8215310637.8.1730234329089; Tue, 29 Oct 2024
- 13:38:49 -0700 (PDT)
+	s=arc-20240116; t=1730234385; c=relaxed/simple;
+	bh=P2r7FVu9gmkCkbpkLPVLnxXL+ot5pQ4WfUYR4i9wFAE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=COPm1RTERz/kAHu5VJTMMzQdaw5k2aGz1A60Uim41pWE4WkQ+++bF8puGSfEyvOMmXd3HVt8YW1xYIHimYVdSYTYj9JUcKYA/9ayFhLd0qWdoKhPva5BVBRe6m13XEYEqc9II0qbibd99BCjWe2RFYRYFrOLbA86tsYGuaF6lC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZxPgDyXP; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKRPXm012841;
+	Tue, 29 Oct 2024 20:39:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Trw1wRvZ9jDquLyXUweN4WS1PG1v/WqPfv/Q/6OQiIo=; b=ZxPgDyXPvQ50xR7K
+	EEqkB8+51A70EIK/vEenmMSm8hfTPTu8R55cLghudEEeMN0zSDwvuFo92u+hL6S7
+	IVMs1xTl8Layk7kFsBDRdgmDAkclxCEuWSgUDg8pB6iwCRua73NqsVdizGilvPrX
+	78morgdO2IlP7DCS+1KVYy+vfhrlSb1a1WqbsdMdHqOV4OoocQe5ubEYyfLpYNiY
+	e4ROv/7ldzOyiJrX+au1PriQ4iJ2T2BAqtf4ehnFyFunicr0RLjRTXeBxo5Sv0vq
+	UA+4w/DN1mkdBGQw2IXBpFpplHCo72dij1ulEuT5HGqZQLFEMY+xZpBgB4hYhrAa
+	Z2gs2w==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42k6rpg0xv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 20:39:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TKdVTn021525
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 20:39:31 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 13:39:30 -0700
+Message-ID: <db7bcfce-e649-4c87-9723-b5af5696bc3e@quicinc.com>
+Date: Tue, 29 Oct 2024 13:39:29 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029182703.2698171-1-csander@purestorage.com> <CANn89iLx-4dTB9fFgfrsXQ8oA0Z+TpBWNk4b91PPS1o=oypuBQ@mail.gmail.com>
-In-Reply-To: <CANn89iLx-4dTB9fFgfrsXQ8oA0Z+TpBWNk4b91PPS1o=oypuBQ@mail.gmail.com>
-From: Caleb Sander <csander@purestorage.com>
-Date: Tue, 29 Oct 2024 13:38:37 -0700
-Message-ID: <CADUfDZrSUNu7nym9dC1_yFUqhC8tUPYjv-ZKHofU9Q8Uv4Jvhw@mail.gmail.com>
-Subject: Re: [PATCH] net: skip RPS if packet is already on target CPU
-To: Eric Dumazet <edumazet@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/3] drm/msm/dp: rename edp_ bridge functions and
+ struct
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241029-msm-dp-rename-v2-0-13c5c03fad44@linaro.org>
+ <20241029-msm-dp-rename-v2-2-13c5c03fad44@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20241029-msm-dp-rename-v2-2-13c5c03fad44@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: SjLrSfNWOhEkp_Fw_AkPkXnct6C5LIjV
+X-Proofpoint-GUID: SjLrSfNWOhEkp_Fw_AkPkXnct6C5LIjV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ clxscore=1015 mlxlogscore=814 priorityscore=1501 spamscore=0
+ malwarescore=0 impostorscore=0 mlxscore=0 lowpriorityscore=0
+ suspectscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410290156
 
-On Tue, Oct 29, 2024 at 12:02=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
- wrote:
->
-> On Tue, Oct 29, 2024 at 7:27=E2=80=AFPM Caleb Sander Mateos
-> <csander@purestorage.com> wrote:
-> >
-> > If RPS is enabled, all packets with a CPU flow hint are enqueued to the
-> > target CPU's input_pkt_queue and process_backlog() is scheduled on that
-> > CPU to dequeue and process the packets. If ARFS has already steered the
-> > packets to the correct CPU, this additional queuing is unnecessary and
-> > the spinlocks involved incur significant CPU overhead.
-> >
-> > In netif_receive_skb_internal() and netif_receive_skb_list_internal(),
-> > check if the CPU flow hint get_rps_cpu() returns is the current CPU. If
-> > so, bypass input_pkt_queue and immediately process the packet(s) on the
-> > current CPU.
-> >
-> > Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
->
-> Current implementation was a conscious choice. This has been discussed
-> several times.
->
-> By processing packets inline, you are actually increasing latencies of
-> packets queued to other cpus.
 
-Sorry, I wasn't aware of these prior discussions. I take it you are
-referring to threads like
-https://lore.kernel.org/netdev/20230322072142.32751-1-xu.xin16@zte.com.cn/T=
-/
-? I see what you mean about the latency penalty for packets that do
-require cross-CPU steering.
 
-Do you have an alternate suggestion for how to avoid the overhead of
-acquiring a spinlock for every packet? The atomic instruction in
-rps_lock_irq_disable() called from process_backlog() is consuming 5%
-of our CPU time. For our use case, we don't really want software RPS;
-we are expecting ARFS to steer all high-bandwidth traffic to the
-desired CPUs. We would happily turn off software RPS entirely if we
-could, which seems like it would avoid the concerns about higher
-latency for packets that need to be steering to a different CPU. But
-my understanding is that using ARFS requires RPS to be enabled
-(rps_sock_flow_entries set globally and rps_flow_cnt set on each
-queue), which enables these rps_needed static branches. Is that
-correct? If so, would you be open to adding a sysctl that disables
-software RPS and relies upon ARFS to do the packet steering?
+On 10/29/2024 1:28 PM, Dmitry Baryshkov wrote:
+> Follow the estalished prefix and rename eDP bridge symbols to use
+> msm_edp_ prefix, moving the edp to the end of the symbol name.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>   drivers/gpu/drm/msm/dp/dp_drm.c | 36 ++++++++++++++++++------------------
+>   1 file changed, 18 insertions(+), 18 deletions(-)
+> 
 
 Thanks,
-Caleb
+
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
