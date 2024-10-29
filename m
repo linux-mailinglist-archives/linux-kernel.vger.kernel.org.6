@@ -1,115 +1,85 @@
-Return-Path: <linux-kernel+bounces-387084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1DBD9B4BB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:06:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD1089B4BB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588FB1F241AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:06:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 45AF8B22EE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D282206E83;
-	Tue, 29 Oct 2024 14:06:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6DC2071E8;
+	Tue, 29 Oct 2024 14:06:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ETO4Nxy/"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipBy9Xs2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E5D42A92;
-	Tue, 29 Oct 2024 14:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F732071E3
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210789; cv=none; b=id+/R2lSJR2qMSTXxqhY7zBUN6ehTD+iR7oE9IGcW7O7fkdoVMosgTEUDrFtmZf5HsTEEFd1pZ2eQjqYlQxDUMy5MJw6kr4UFMsoMrLwpHvhY3atUqo+MCkslLXMvYXOZDlq2TP9DTYKQpZcnuezXtl0FFjDSVs0fWSRnYV2L2M=
+	t=1730210792; cv=none; b=mwrJDryznXZxS1fKVqZEd2YOlPYpJU4Nz1pnqnCe8wep9CnxWEqght0/qXXCO0+HyirmJA5Klz4BGUkN0IzwYkDorQQ00dwU29x5+KFkehMIIYb1L7++TrlroYUWQY9TulpownVrndAm6IDwfgIlW+ZDaZr+9wGvCEoSMnyiH6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210789; c=relaxed/simple;
-	bh=6OmLtYtMbO/UAmjSZCJrMvRmBHe8grtlNIafRgTok4c=;
+	s=arc-20240116; t=1730210792; c=relaxed/simple;
+	bh=QEcEUddjgKW2OCmwiHFR8WQFPqf4hkYksxXMXYFUi/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=De1zW7dzyAOl4ivRflTsjxFJkcRM9lZlPC4/itXrVFvi/AacMkNoY9TOtRhSpBoGhel8OoQB5CfyZlw9KgYc4z54Zrv+mJW5hIETZr91wjA0TyccsS9dHYMu/5KI8SRDTSRwWoPyyxM+kz+5eC/g7nJgJHIW1zCD3DItXcgZ8VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ETO4Nxy/; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=xCAzr09NBRREJWcZsiv1oU6aqMJJWV6GYFAOG3D1i8I=; b=ETO4Nxy/kWVd4jlLjNL3+s+nH5
-	9eNM9Of0JQXfY+73dFA9/rVAXGDl30emuWp+5n6vrY/6AO+a4N2vyhfO1Yrh3kjb11PPeaQ3XCcT0
-	KYcTZkUb3ETzKxq03L+xNiaZmg9A0ZF8oJasXjP6zOORmyRySMhxab3bZQp98plwLJMgppekgasd/
-	MICtLWwkYyz5Sb1xx0S5wCDfHkUg8Up9eE81iKDToiuinpGhCMcQPI0ODaz60xPI8AG84sbfJvMGF
-	+OKMLsCTRoTIJGglLb8+l00jaww6Slh9iMirUX5WQdDoEoko/o0EgXE4kOd3zrHIKTWw2EHXOvxXQ
-	OPdC1eyw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5mrO-00000009m1a-0kBF;
-	Tue, 29 Oct 2024 14:06:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 30D4630073F; Tue, 29 Oct 2024 15:06:14 +0100 (CET)
-Date: Tue, 29 Oct 2024 15:06:14 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 15/19] perf: Add deferred user callchains
-Message-ID: <20241029140614.GC14555@noisy.programming.kicks-ass.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <1ce857387c781afa66efaa61eb88ff596b352500.1730150953.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkwTo+nVXSzX47+68EbmtKJlhfzAXR3f4ogIq68qWbeC062OOExfMtYyVbmj8J8plNwamkKJC9ED9FpUcwGDMUezW2kUAwYBGAqjuarfctCRUoka+DAIuLMHYxN8ZXgvJ+LYyFeGlhF6OkTqTaJflArJEeH/qinEbYvmxPazyow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipBy9Xs2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3122C4CECD;
+	Tue, 29 Oct 2024 14:06:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730210791;
+	bh=QEcEUddjgKW2OCmwiHFR8WQFPqf4hkYksxXMXYFUi/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ipBy9Xs2SHYIUaS9h0WT2CNmIQ2scChi0oqVdTCHp8wCsdvD0nNQO3SeOubao8KlP
+	 +JK/1mUyICiZMRpVYkEpuS7ebC/NZuZg983TZOtNEfBXIYM/ZdHJXmyO18JaCXGMr4
+	 4h/TwoZ19KkTRGHmlYCREFZayjxLXY8AXlnb8xkHTs2sWdhEP19leX15LB897DkK9L
+	 C28+TuncT3d+1M4wl8YdQBc3rPTeel0PAb2u97WhU3bpHMRhjF5DkxPEFq93EAhrQs
+	 U34vnyZGvCiPjqWvLe+aabYJlspgF8/wQOBg9lDnpvdK4xrOHPau/XxZWkNRi5ekry
+	 bXLhZU4k75vOw==
+Date: Tue, 29 Oct 2024 15:06:28 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 15/26] signal: Refactor send_sigqueue()
+Message-ID: <ZyDr5Bky3Sp9hP1-@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083836.160940133@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1ce857387c781afa66efaa61eb88ff596b352500.1730150953.git.jpoimboe@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001083836.160940133@linutronix.de>
 
-On Mon, Oct 28, 2024 at 02:47:42PM -0700, Josh Poimboeuf wrote:
-> diff --git a/kernel/events/callchain.c b/kernel/events/callchain.c
-> index 2278402b7ac9..eeb15ba0137f 100644
-> --- a/kernel/events/callchain.c
-> +++ b/kernel/events/callchain.c
-> @@ -217,7 +217,7 @@ static void fixup_uretprobe_trampoline_entries(struct perf_callchain_entry *entr
->  
->  struct perf_callchain_entry *
->  get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
-> -		   u32 max_stack, bool add_mark)
-> +		   u32 max_stack, bool add_mark, bool defer_user)
->  {
->  	struct perf_callchain_entry *entry;
->  	struct perf_callchain_entry_ctx ctx;
-> @@ -246,6 +246,15 @@ get_perf_callchain(struct pt_regs *regs, bool kernel, bool user,
->  			regs = task_pt_regs(current);
->  		}
->  
-> +		if (defer_user) {
-> +			/*
-> +			 * Foretell the coming of PERF_RECORD_CALLCHAIN_DEFERRED
-> +			 * which can be stitched to this one.
-> +			 */
-> +			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER_DEFERRED);
-> +			goto exit_put;
-> +		}
-> +
->  		if (add_mark)
->  			perf_callchain_store_context(&ctx, PERF_CONTEXT_USER);
+Le Tue, Oct 01, 2024 at 10:42:20AM +0200, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> To handle posix timers which have their signal ignored via SIG_IGN properly
+> it is required to requeue a ignored signal for delivery when SIG_IGN is
+> lifted so the timer gets rearmed.
+> 
+> Split the required code out of send_sigqueue() so it can be reused in
+> context of sigaction().
+> 
+> While at it rename send_sigqueue() to posixtimer_send_sigqueue() so its
+> clear what this is about.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Given that the whole deferred thing doesn't handle COMPAT, this will
-break thing, no?
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
