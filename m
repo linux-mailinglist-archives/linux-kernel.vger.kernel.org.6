@@ -1,53 +1,62 @@
-Return-Path: <linux-kernel+bounces-386779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7909D9B47D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:06:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 058889B47D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:07:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E549AB2453E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3712B1C24883
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D7020607A;
-	Tue, 29 Oct 2024 11:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038DD204F7F;
+	Tue, 29 Oct 2024 11:07:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SMyY1FX5"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FbtjQ9MF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCE120606B;
-	Tue, 29 Oct 2024 11:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BECB1DF753;
+	Tue, 29 Oct 2024 11:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199826; cv=none; b=CLnrCjYQxzg5G9/ey3YrScHYAbI2cfsXObjyTzbXW1+YA8sLg1W6MaC8EnPhovXzUx5ULfRmYU59ekugWn5A89LAfCQTeJMjRjE35K1u/vq5YS5v6zKLX3lHD8IGrFDPYZqRC3FcaUUswtqXG/uR1CUWb0GpHvR6OV5v4N1VdnI=
+	t=1730200029; cv=none; b=ZPumVlpLdEtxksspyqfn6hsTerakRTdlliQ+574nXZZBhnkv4UsM4VjVRNP3vafeR+gtQYFBqPgevvVvqd7plLo/bEZl+Th0+PD4oCcrWUzn+u8D13qsV/r6k1V4M6N3hsgoADxYVr0q6GlqWEjqlaU/kMR5CCWBiq1yDpenhAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199826; c=relaxed/simple;
-	bh=WoBnGVVt6CyKgZYpepDo803Mqerb5sbRInXKA/I3q6s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qm/+eDTi+jP+P34vBiQ17DD14GYWGmeuHqMlClMX0iOYl5mZ1ZS6OO+wZANvW4RoYubc/1IdJJQ2lgAtRtY2nuq8ywauG93Tk7m2WpjLMxiF7ODGN8HidmSSAqJH/oggk/FIPGYzNCwWkqDWyHF7ZKirjdb+nh36w/JtDurHKQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SMyY1FX5; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=psSewTcXqOY4Qf7bkmixNMW1kHT74PJEKuMsClxav4Q=; b=SMyY1FX57TshQVK9zxUZmMtaGt
-	g1FpOidJFXvAYTMjmm4+lCGKOo77IfqNsvGO4Gmqvj8S5D6welpeo73FV/h+TOyqa9vIz09GbVJwx
-	Aoqipwl2uY0+O99K3DK27ayoaCZX+EGhxrau8TZx2XBzs5NvcoOnSKqSaSlC61ZOQLDThwexnCYuO
-	JzVfUJhOF7lGcYPqINDw3X5QjKop4duGnST7NU5Gj+7Lw9TbRH8YEbvE4CJgBOEoTs14askFNt5Eq
-	7ZpFerswy5ijdOFCOdb9Y4T2FKbPtPK2Ya+6EmWkkXp8OU5xE5QN8GY1A8ejrzrbrRK3Q3/0MJsUY
-	Vn1DrHsA==;
-Received: from [187.36.213.55] (helo=[192.168.1.103])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t5k0R-00GaoS-Ov; Tue, 29 Oct 2024 12:03:24 +0100
-Message-ID: <1f4f02ce-f61c-4346-a6b8-e9cb65cd9733@igalia.com>
-Date: Tue, 29 Oct 2024 08:03:17 -0300
+	s=arc-20240116; t=1730200029; c=relaxed/simple;
+	bh=JVHgsgLpf4vjbEvcbEAaNHu5W6OoFfO3Y2fLYfnFZ7k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h2RW49FS3XBZ2rwtycOKnkDb3jld/qnXFGDYd5TDLJANRf9Tx6Z2TVpuzA37lpUVEA4e13JMsHv0+VktAXSJ4fvgpzRgB2CuQ+fPYO3N9UrTEAs8HC+UXpvDTrg4nteBLtvcnbopM4Ns3tJWZPuBoM2hFG2PoEwQQLB3BkLlhTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FbtjQ9MF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T9Lcjk004586;
+	Tue, 29 Oct 2024 11:06:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1LuXf9jYuiVYJdyPLwQTVsJnJJdP0P/j5ARC3WFPmX8=; b=FbtjQ9MFSG0V7P9N
+	H7cI1x6Ox99l5qPjvjni6QNr+x3MSSbJjtRzTkuF7Z315wzS1AwNMvCJzWrH+93i
+	NGrg3sJEnPAU8YanUK12XCsi9M0YCV/cz9vDvuseDY58h0hnFKnZ+NnSWJin+tzH
+	ZFBD/uxzlKvT8/PuM7AOHrIgbG/5vQEB+MJfWU9mVHSW+MdBBDtbpJLdWWpkd/O0
+	aZccgUR77DPQzKLvUX+Mqg5tUxtZkQVuVx36w38UEa4CTgbqtsp6y20Q8Pqh+erW
+	65/8Ta84pmWK9BAGNeR8kxYCt76vMxYbujw9wrrsARa57M/0lu/e0ve8QzKbQjw3
+	n0E1bQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gr0x859s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 11:06:43 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TB6gs3029772
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 11:06:42 GMT
+Received: from [10.216.3.156] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 04:06:35 -0700
+Message-ID: <75589588-ed41-42f6-b7fa-c6f0359ba4cd@quicinc.com>
+Date: Tue, 29 Oct 2024 16:36:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,92 +64,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] mm: fix docs for the kernel parameter
- ``thp_anon=``
-To: Barry Song <baohua@kernel.org>
-Cc: Jonathan Corbet <corbet@lwn.net>,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
- <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com
-References: <20241029002324.1062723-1-mcanal@igalia.com>
- <20241029002324.1062723-2-mcanal@igalia.com>
- <CAGsJ_4xEpk1dQFBWfkqGqiSV+Z5Qzyp1Rju1zEhErDRgBWeXtg@mail.gmail.com>
+Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Add ICE algorithm
+ entries
+To: Krzysztof Kozlowski <krzk@kernel.org>, <manivannan.sadhasivam@linaro.org>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
+        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+        <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_narepall@quicinc.com>, <quic_nitirawa@quicinc.com>
+References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
+ <20241005064307.18972-3-quic_rdwivedi@quicinc.com>
+ <070bd760-9095-496b-8f46-1825c592754c@kernel.org>
 Content-Language: en-US
-From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
-In-Reply-To: <CAGsJ_4xEpk1dQFBWfkqGqiSV+Z5Qzyp1Rju1zEhErDRgBWeXtg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <070bd760-9095-496b-8f46-1825c592754c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KaS_AwvqOTb_1vuyQ--Sn0N5liSx3Ehv
+X-Proofpoint-GUID: KaS_AwvqOTb_1vuyQ--Sn0N5liSx3Ehv
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ clxscore=1011 bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0
+ malwarescore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290086
 
-Hi Barry,
 
-On 28/10/24 22:03, Barry Song wrote:
-> On Tue, Oct 29, 2024 at 8:24 AM Maíra Canal <mcanal@igalia.com> wrote:
->>
->> If we add ``thp_anon=32,64K:always`` to the kernel command line, we
->> will see the following error:
->>
->> [    0.000000] huge_memory: thp_anon=32,64K:always: error parsing string, ignoring setting
->>
->> This happens because the correct format isn't ``thp_anon=<size>,<size>[KMG]:<state>```,
->> as [KMG] must follow each number to especify its unit. So, the correct
->> format is ``thp_anon=<size>[KMG],<size>[KMG]:<state>```.
->>
->> Therefore, adjust the documentation to reflect the correct format of the
->> parameter ``thp_anon=``.
->>
->> Fixes: dd4d30d1cdbe ("mm: override mTHP "enabled" defaults at kernel cmdline")
->> Signed-off-by: Maíra Canal <mcanal@igalia.com>
->> Acked-by: Barry Song <baohua@kernel.org>
->> Acked-by: David Hildenbrand <david@redhat.com>
-> 
-> Can we separate this and apply it to v6.12-rc? If Andrew doesn't require a new
-> version for the separation, can we extract it from this series and
-> apply it to mm?
 
-That's fine on my side.
-
-Best Regards,
-- Maíra
-
-> 
+On 06-Oct-24 2:02 PM, Krzysztof Kozlowski wrote:
+> On 05/10/2024 08:43, Ram Kumar Dwivedi wrote:
+>> There are three algorithms supported for inline crypto engine:
+>> Floor based, Static and Instantaneous algorithm.
+>>
+>> Add ice algorithm entries and enable instantaneous algorithm
+>> by default.
+>>
+>> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+>> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+>> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
 >> ---
->>   Documentation/admin-guide/kernel-parameters.txt | 2 +-
->>   Documentation/admin-guide/mm/transhuge.rst      | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
+>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 19 +++++++++++++++++++
+>>  1 file changed, 19 insertions(+)
 >>
->> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
->> index 1518343bbe22..1666576acc0e 100644
->> --- a/Documentation/admin-guide/kernel-parameters.txt
->> +++ b/Documentation/admin-guide/kernel-parameters.txt
->> @@ -6688,7 +6688,7 @@
->>                          0: no polling (default)
->>
->>          thp_anon=       [KNL]
->> -                       Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
->> +                       Format: <size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>
->>                          state is one of "always", "madvise", "never" or "inherit".
->>                          Control the default behavior of the system with respect
->>                          to anonymous transparent hugepages.
->> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
->> index 203ba7aaf5fc..745055c3dc09 100644
->> --- a/Documentation/admin-guide/mm/transhuge.rst
->> +++ b/Documentation/admin-guide/mm/transhuge.rst
->> @@ -303,7 +303,7 @@ control by passing the parameter ``transparent_hugepage=always`` or
->>   kernel command line.
->>
->>   Alternatively, each supported anonymous THP size can be controlled by
->> -passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
->> +passing ``thp_anon=<size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>``,
->>   where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
->>   supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvise``,
->>   ``never`` or ``inherit``.
->> --
->> 2.46.2
->>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index 9d9bbb9aca64..56a7ca6a3af4 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -2590,6 +2590,25 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
+>>  			#reset-cells = <1>;
+>>  
+>>  			status = "disabled";
+>> +
+>> +			ice_cfg: ice-config {
+>> +				alg1 {
+>> +					alg-name = "alg1";
+>> +					rx-alloc-percent = <60>;
+>> +					status = "disabled";
+>> +				};
+>> +
+>> +				alg2 {
+>> +					alg-name = "alg2";
+>> +					status = "disabled";
+>> +				};
+>> +
+>> +				alg3 {
+>> +					alg-name = "alg3";
+>> +					num-core = <28 28 15 13>;
+>> +					status = "ok";
 > 
-> Thanks
-> Barry
+> NAK. This has so many issues... First, describes OS policy. Second,
+> there is no "ok".
+> 
+Hi Krzysztof,
+	I have updated the status to "okay" in latest patchset and updated the alg-name with actual allocator name.
+	I have already mentioned default allocator as instantaneous. Sorry, I did not understand OS policy comment, could you please explain?
+Thanks,
+Ram.
+
+> Best regards,
+> Krzysztof
+> 
 
 
