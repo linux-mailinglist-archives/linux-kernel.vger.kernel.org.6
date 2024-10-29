@@ -1,241 +1,284 @@
-Return-Path: <linux-kernel+bounces-386641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF6C9B4641
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:58:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 371359B45C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:31:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C17711F2345A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:58:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52E591C2226E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E00720694A;
-	Tue, 29 Oct 2024 09:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3013F204031;
+	Tue, 29 Oct 2024 09:31:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVZyy4lp"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="dMayI4jz"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1956F206060;
-	Tue, 29 Oct 2024 09:56:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2826D1DE3C5;
+	Tue, 29 Oct 2024 09:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730195768; cv=none; b=dilsaDtvBTJjujqlYvZ6npH1YDU//sAKe5B4unqfGuPKBJJumuh96NJSi0CIBaB6sB/+1/4mqpCbWMiWdJWxxDmVnzsxi7tiilmjxoVjxKk7Joe3VCc25iPuteMjRtqnsIIMY2RpRaOO6cxYepWz0Mz5rUG07BbSB2+1ASxBS94=
+	t=1730194264; cv=none; b=VT7KuoADIqEqRhpXLVy77SCiLCGv7y1bX7ps9Ir795WODlFlxnt3iWvcxJTyKKY9TF1FD4BN9Gt1hbBXwvvTYl72PfYg88pTRtICRpxMeacMSHRS3nhx6KPffCGez1/D0+IO9+PcolbZT0dc9d9GLNzSHhh0Mi6UM+3ffH9qQFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730195768; c=relaxed/simple;
-	bh=0qDi2xdK9Bl+aoU7bwhI+pp2VgVckudI2/bhOQR1Sac=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=Ds3nL4B+6AD8cwVCzLxQjuTzDW/0LxC3v8ZaVmGu7gkBiAPDZWK9P87dHyr+oA5EyhceDYbwC44ig2TqLiGsgrZnDYnPNbFHOSeX277GtwXnDTMIZRxmf4bRvuCAAiJhWXjrMfmE5jy/oi3rFY/QIQUSVzaz26BCbBmt1gHe1P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVZyy4lp; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso3690573a12.3;
-        Tue, 29 Oct 2024 02:56:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730195764; x=1730800564; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=DiWvjOpVYfndALHTKNu3Vi9x1DoeaRp1k+8XzRgyG6s=;
-        b=IVZyy4lpVpUX7bCSiaVHuwm/n19xRvPjUeAyzkOvjbGRHS6LetNQq8dd80KNMN7BS3
-         Qj4aCVDdgi+mdGZkxhv5UhTSbMjDtmm+VgJcNIjNWw2C8cEMSiE/ndgeN8U2taMMr6Mv
-         p+B11w0hdFNmsKWnH0tiQ1rHWOl4ns7qHR0roQdHcs24+ipxGPEABnjocU/qKLBSx5Lt
-         3c46sIjQG/Bd9QVPCy2BxHE7696GOy7cf1M9ZM7aa4XzXv3PG/U3SyZ3eHgda/72MzMh
-         bVRCnS6JRvcwJq+hMcn9RiQvJDhTA58j8Tar0HjMBOBAAnwijvV0iMN0EAywa0t+WWEz
-         kqQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730195764; x=1730800564;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DiWvjOpVYfndALHTKNu3Vi9x1DoeaRp1k+8XzRgyG6s=;
-        b=YcnSLGSaj74vQolUCbkB80GLw9wz2p+ERpFIwQp1j6cfuHr51vUWh69xPyt2YliJul
-         173IsVbVXshRoMDPkubKTg6anOhmqGb0P9zy8uq+OXIzrNizzDU6O4zNoDlYuGCr0Os8
-         GdPTMKtsGbSt8p359XX3PY1p3IbxuaLKTFfziH/VseXHJzmWgNQP4B3gCLUGYD2b7Spu
-         dZpHiI1m05lT1/W0nwZ5526p1l0b9/e40wuoM05z7rgtP4zNrOWfU9gBzktEIBihRzi5
-         gKvlqrYknWp8nie21uR0XsVTvCRn7RaxDfHmNiXBQgVFGjqUTnI7YDCl2t08wqf9jPeE
-         NxZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUT3Ndkdz1Wb6jCzfs2xzbfljG0o3ciMchLYFnCh/6/nUWT6okyEBaslNCSBPUArduqbnOYmWYy4kwk@vger.kernel.org, AJvYcCUZRz6rTGgPSHEu7vImpdC/NPkLDjhxsV9eqLg6vCnC6t0Ztq/SiXQi/JibMYTCchewpxe3qCA3dn/QmRrF@vger.kernel.org, AJvYcCVsZSsT5vNxB+W6zAqnRGeUdEEJmF/ap/vwbuVH43Bc8oBFHaD15GzdHsJ9IiUJ4kGArU6KdUBEwyTuNP1ikw==@vger.kernel.org, AJvYcCXqdBE/xVWLEwFz99NYjxCCDW6P/6bIxIUGfHotp/P7XfGlpFIQLDVRA/zeY4c0TSPCnG9YF0+EaFkH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZgIGthbgxZFrbxtfJUzit1pO8OOXwNu27KUCgEpO8eVuLrjvp
-	J3p6Kve2Hr6IixQEIAKuoQyGACiX3RvnPSX8WlV5LSM+ReKcX4LNulHrvA==
-X-Google-Smtp-Source: AGHT+IF8wKjEF16g/Z6wnKqiitoXbAGxywqBQXr4GKxI/5sWH6101yQQQlpr1QM+yR5VjSo4hSAKDw==
-X-Received: by 2002:a17:90b:378c:b0:2e3:b168:70f5 with SMTP id 98e67ed59e1d1-2e8f1080170mr11955324a91.21.1730195764237;
-        Tue, 29 Oct 2024 02:56:04 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48e4a2sm11155474a91.2.2024.10.29.02.55.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 02:56:03 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: John Garry <john.g.garry@oracle.com>, linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>, "Darrick J . Wong" <djwong@kernel.org>, Christoph Hellwig <hch@infradead.org>, Ojaswin Mujoo <ojaswin@linux.ibm.com>, Dave Chinner <david@fromorbit.com>, linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] ext4: Add statx support for atomic writes
-In-Reply-To: <39b6d2b2-77fd-4087-a495-c36d33b8c9d0@oracle.com>
-Date: Tue, 29 Oct 2024 14:59:58 +0530
-Message-ID: <874j4vmf3d.fsf@gmail.com>
-References: <cover.1729944406.git.ritesh.list@gmail.com> <b61c4a50b4e3b97c4261eb45ea3a24057f54d61a.1729944406.git.ritesh.list@gmail.com> <39b6d2b2-77fd-4087-a495-c36d33b8c9d0@oracle.com>
+	s=arc-20240116; t=1730194264; c=relaxed/simple;
+	bh=MUyr+kdRA95hTolh/oZzUAOWV6i5BrB5YLmyGimABIU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uCuJWAIlaA8y/JAbFfHVuWglF8glZboic9X9Ga8dAnz/bmAFneT0qt1sAINja9dGm9VRPkb3KapWEJiN83s6Yqwm8ZtyBqN4h3i6EpzPUqczWH9jVG6sPLgt694PGjq6ehc3Tau+DYqh2nsn4HNsBCVI5Kbx3zAMlRm3psztRRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=dMayI4jz; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 36E5A1BF210;
+	Tue, 29 Oct 2024 09:30:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730194258;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=O0B+YscGyOsA4A0Loe+3Rid8xyJkwuPJwKK1f6ZjIz0=;
+	b=dMayI4jzCcsUVSgLMsF8MHakNKIA6t5G5T3wAD0IzSzf64yoUHBeL09qGKJ9xkExAnsyON
+	vNxB6H6mgbRJ7kL53+1D4KAfyEQqg01aaAeIfBYeNkGuabIt/kjKj3nKXfNP8mqNTnbYx4
+	jyf/+wZMOFnPAF9EC89VIG8oGSCj+DYG3rJnnS/4EmlR5SHwdksrRXQWyGWTrlDRNEKkUR
+	SGetL/NsRmW2LGltbpt7tqrQMBxM9QV3Gp18Hn+c0AudSQr/Eif88xNlzMX7FbZ4Pq/kie
+	FaoMcReMNntBRhI7kGpowbEpNfToPE5tm1qaWsx4L2gsLoqCY/kVuY97N7oy0Q==
+From: Romain Gantois <romain.gantois@bootlin.com>
+Date: Tue, 29 Oct 2024 10:30:30 +0100
+Subject: [PATCH net] net: phy: dp83869: fix status reporting for 1000base-x
+ autonegotiation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241029-dp83869-1000base-x-v1-1-fcafe360bd98@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIADarIGcC/x3MQQ5AMBBA0avIrE0yLaVcRSxKB7MpaUUk4u4ay
+ 7f4/4HEUThBXzwQ+ZIke8hQZQHz5sLKKD4bNOlakTboD1vZpkNFRJNLjDfSQq5RrTatrSGHR+R
+ F7n86QOATxvf9AL66GFJpAAAA
+X-Change-ID: 20241025-dp83869-1000base-x-0f0a61725784
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Dan Murphy <dmurphy@ti.com>, Florian Fainelli <f.fainelli@gmail.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Romain Gantois <romain.gantois@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: romain.gantois@bootlin.com
 
+The DP83869 PHY transceiver supports converting from RGMII to 1000base-x.
+In this operation mode, autonegotiation can be performed, as described in
+IEEE802.3.
 
-Hi John,
+The DP83869 has a set of fiber-specific registers located at offset 0xc00.
+When the transceiver is configured in RGMII-to-1000base-x mode, these
+registers are mapped onto offset 0, which should, in theory, make reading
+the autonegotiation status transparent.
 
-John Garry <john.g.garry@oracle.com> writes:
+However, the fiber registers at offset 0xc04 and 0xc05 do not follow the
+bit layout of their standard counterparts. Thus, genphy_read_status()
+doesn't properly read the capabilities advertised by the link partner,
+resulting in incorrect link parameters.
 
-> On 27/10/2024 18:17, Ritesh Harjani (IBM) wrote:
->> This patch adds base support for atomic writes via statx getattr.
->> On bs < ps systems, we can create FS with say bs of 16k. That means
->> both atomic write min and max unit can be set to 16k for supporting
->> atomic writes.
->> 
->> Co-developed-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
->> ---
->>   fs/ext4/ext4.h  |  9 +++++++++
->>   fs/ext4/inode.c | 14 ++++++++++++++
->>   fs/ext4/super.c | 31 +++++++++++++++++++++++++++++++
->>   3 files changed, 54 insertions(+)
->> 
->> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->> index 44b0d418143c..6ee49aaacd2b 100644
->> --- a/fs/ext4/ext4.h
->> +++ b/fs/ext4/ext4.h
->> @@ -1729,6 +1729,10 @@ struct ext4_sb_info {
->>   	 */
->>   	struct work_struct s_sb_upd_work;
->>   
->> +	/* Atomic write unit values in bytes */
->> +	unsigned int s_awu_min;
->> +	unsigned int s_awu_max;
->> +
->>   	/* Ext4 fast commit sub transaction ID */
->>   	atomic_t s_fc_subtid;
->>   
->> @@ -3855,6 +3859,11 @@ static inline int ext4_buffer_uptodate(struct buffer_head *bh)
->>   	return buffer_uptodate(bh);
->>   }
->>   
->> +static inline bool ext4_can_atomic_write(struct super_block *sb)
->> +{
->> +	return EXT4_SB(sb)->s_awu_min > 0;
->> +}
->> +
->>   extern int ext4_block_write_begin(handle_t *handle, struct folio *folio,
->>   				  loff_t pos, unsigned len,
->>   				  get_block_t *get_block);
->> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
->> index 54bdd4884fe6..fcdee27b9aa2 100644
->> --- a/fs/ext4/inode.c
->> +++ b/fs/ext4/inode.c
->> @@ -5578,6 +5578,20 @@ int ext4_getattr(struct mnt_idmap *idmap, const struct path *path,
->>   		}
->>   	}
->>   
->> +	if (S_ISREG(inode->i_mode) && (request_mask & STATX_WRITE_ATOMIC)) {
->> +		struct ext4_sb_info *sbi = EXT4_SB(inode->i_sb);
->> +		unsigned int awu_min, awu_max;
->> +
->> +		if (ext4_can_atomic_write(inode->i_sb)) {
->> +			awu_min = sbi->s_awu_min;
->> +			awu_max = sbi->s_awu_max;
->> +		} else {
->> +			awu_min = awu_max = 0;
->> +		}
->> +
->> +		generic_fill_statx_atomic_writes(stat, awu_min, awu_max);
->> +	}
->> +
->>   	flags = ei->i_flags & EXT4_FL_USER_VISIBLE;
->>   	if (flags & EXT4_APPEND_FL)
->>   		stat->attributes |= STATX_ATTR_APPEND;
->> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->> index 16a4ce704460..d6e3201a48be 100644
->> --- a/fs/ext4/super.c
->> +++ b/fs/ext4/super.c
->> @@ -4425,6 +4425,36 @@ static int ext4_handle_clustersize(struct super_block *sb)
->>   	return 0;
->>   }
->>   
->> +/*
->> + * ext4_atomic_write_init: Initializes filesystem min & max atomic write units.
->> + * @sb: super block
->> + * TODO: Later add support for bigalloc
->> + */
->> +static void ext4_atomic_write_init(struct super_block *sb)
->> +{
->> +	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> +	struct block_device *bdev = sb->s_bdev;
->> +
->> +	if (!bdev_can_atomic_write(bdev))
->
-> this check is duplicated, since bdev_atomic_write_unit_{min, 
-> max}_bytes() has this check
->
+Similarly, genphy_config_aneg() doesn't properly write advertised
+capabilities.
 
-Right, yes. I can mention a comment and remove this check perhaps. 
-Looks like XFS also got it duplicated then.
+Fix the 1000base-x autonegotiation procedure by replacing
+genphy_read_status() and genphy_config_aneg() with driver-specific
+functions which take into account the nonstandard bit layout of the DP83869
+registers in 1000base-x mode.
 
+Fixes: a29de52ba2a1 ("net: dp83869: Add ability to advertise Fiber connection")
+Cc: stable@vger.kernel.org
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+---
+ drivers/net/phy/dp83869.c | 130 ++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 127 insertions(+), 3 deletions(-)
 
->> +		return;
->> +
->> +	if (!ext4_has_feature_extents(sb))
->> +		return;
->> +
->> +	sbi->s_awu_min = max(sb->s_blocksize,
->> +			      bdev_atomic_write_unit_min_bytes(bdev));
->> +	sbi->s_awu_max = min(sb->s_blocksize,
->> +			      bdev_atomic_write_unit_max_bytes(bdev));
->> +	if (sbi->s_awu_min && sbi->s_awu_max &&
->> +	    sbi->s_awu_min <= sbi->s_awu_max) {
->
-> This looks a bit complicated. I would just follow the XFS example and 
-> ensure bdev_atomic_write_unit_min_bytes() <=  sb->s_blocksize <= 
-> bdev_atomic_write_unit_max_bytes() [which you are doing, but in a 
-> complicated way]
->
+diff --git a/drivers/net/phy/dp83869.c b/drivers/net/phy/dp83869.c
+index 5f056d7db83eed23f1cab42365fdc566a0d8e47f..7f89a4f963cab50d6954e8b8996d7bbe2c72a9ca 100644
+--- a/drivers/net/phy/dp83869.c
++++ b/drivers/net/phy/dp83869.c
+@@ -41,6 +41,8 @@
+ #define DP83869_IO_MUX_CFG	0x0170
+ #define DP83869_OP_MODE		0x01df
+ #define DP83869_FX_CTRL		0x0c00
++#define DP83869_FX_ANADV        0x0c04
++#define DP83869_FX_LPABL        0x0c05
+ 
+ #define DP83869_SW_RESET	BIT(15)
+ #define DP83869_SW_RESTART	BIT(14)
+@@ -135,6 +137,17 @@
+ #define DP83869_DOWNSHIFT_4_COUNT	4
+ #define DP83869_DOWNSHIFT_8_COUNT	8
+ 
++/* FX_ANADV bits */
++#define DP83869_BP_FULL_DUPLEX       BIT(5)
++#define DP83869_BP_PAUSE             BIT(7)
++#define DP83869_BP_ASYMMETRIC_PAUSE  BIT(8)
++
++/* FX_LPABL bits */
++#define DP83869_LPA_1000FULL   BIT(5)
++#define DP83869_LPA_PAUSE_CAP  BIT(7)
++#define DP83869_LPA_PAUSE_ASYM BIT(8)
++#define DP83869_LPA_LPACK      BIT(14)
++
+ enum {
+ 	DP83869_PORT_MIRRORING_KEEP,
+ 	DP83869_PORT_MIRRORING_EN,
+@@ -153,19 +166,129 @@ struct dp83869_private {
+ 	int mode;
+ };
+ 
++static int dp83869_config_aneg(struct phy_device *phydev)
++{
++	struct dp83869_private *dp83869 = phydev->priv;
++	unsigned long *advertising;
++	int err, changed = false;
++	u32 adv;
++
++	if (dp83869->mode != DP83869_RGMII_1000_BASE)
++		return genphy_config_aneg(phydev);
++
++	/* Forcing speed or duplex isn't supported in 1000base-x mode */
++	if (phydev->autoneg != AUTONEG_ENABLE)
++		return 0;
++
++	/* In fiber modes, register locations 0xc0... get mapped to offset 0.
++	 * Unfortunately, the fiber-specific autonegotiation advertisement
++	 * register at address 0xc04 does not have the same bit layout as the
++	 * corresponding standard MII_ADVERTISE register. Thus, functions such
++	 * as genphy_config_advert() will write the advertisement register
++	 * incorrectly.
++	 */
++	advertising = phydev->advertising;
++
++	/* Only allow advertising what this PHY supports */
++	linkmode_and(advertising, advertising,
++		     phydev->supported);
++
++	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT, advertising))
++		adv |= DP83869_BP_FULL_DUPLEX;
++	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising))
++		adv |= DP83869_BP_PAUSE;
++	if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising))
++		adv |= DP83869_BP_ASYMMETRIC_PAUSE;
++
++	err = phy_modify_changed(phydev, DP83869_FX_ANADV,
++				 DP83869_BP_FULL_DUPLEX | DP83869_BP_PAUSE |
++				 DP83869_BP_ASYMMETRIC_PAUSE,
++				 adv);
++
++	if (err < 0)
++		return err;
++	else if (err)
++		changed = true;
++
++	return genphy_check_and_restart_aneg(phydev, changed);
++}
++
++static int dp83869_read_status_fiber(struct phy_device *phydev)
++{
++	int err, lpa, old_link = phydev->link;
++	unsigned long *lp_advertising;
++
++	err = genphy_update_link(phydev);
++	if (err)
++		return err;
++
++	if (phydev->autoneg == AUTONEG_ENABLE && old_link && phydev->link)
++		return 0;
++
++	phydev->speed = SPEED_UNKNOWN;
++	phydev->duplex = DUPLEX_UNKNOWN;
++	phydev->pause = 0;
++	phydev->asym_pause = 0;
++
++	lp_advertising = phydev->lp_advertising;
++
++	if (phydev->autoneg != AUTONEG_ENABLE) {
++		linkmode_zero(lp_advertising);
++
++		phydev->duplex = DUPLEX_FULL;
++		phydev->speed = SPEED_1000;
++
++		return 0;
++	}
++
++	if (!phydev->autoneg_complete) {
++		linkmode_zero(lp_advertising);
++		return 0;
++	}
++
++	/* In fiber modes, register locations 0xc0... get mapped to offset 0.
++	 * Unfortunately, the fiber-specific link partner capabilities register
++	 * at address 0xc05 does not have the same bit layout as the
++	 * corresponding standard MII_LPA register. Thus, functions such as
++	 * genphy_read_lpa() will read autonegotiation results incorrectly.
++	 */
++
++	lpa = phy_read(phydev, DP83869_FX_LPABL);
++	if (lpa < 0)
++		return lpa;
++
++	linkmode_mod_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT,
++			 lp_advertising, lpa & DP83869_LPA_1000FULL);
++
++	linkmode_mod_bit(ETHTOOL_LINK_MODE_Pause_BIT, lp_advertising,
++			 lpa & DP83869_LPA_PAUSE_CAP);
++
++	linkmode_mod_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, lp_advertising,
++			 lpa & DP83869_LPA_PAUSE_ASYM);
++
++	linkmode_mod_bit(ETHTOOL_LINK_MODE_Autoneg_BIT,
++			 lp_advertising, lpa & DP83869_LPA_LPACK);
++
++	phy_resolve_aneg_linkmode(phydev);
++
++	return 0;
++}
++
+ static int dp83869_read_status(struct phy_device *phydev)
+ {
+ 	struct dp83869_private *dp83869 = phydev->priv;
+ 	int ret;
+ 
++	if (dp83869->mode == DP83869_RGMII_1000_BASE)
++		return dp83869_read_status_fiber(phydev);
++
+ 	ret = genphy_read_status(phydev);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (linkmode_test_bit(ETHTOOL_LINK_MODE_FIBRE_BIT, phydev->supported)) {
++	if (dp83869->mode == DP83869_RGMII_100_BASE) {
+ 		if (phydev->link) {
+-			if (dp83869->mode == DP83869_RGMII_100_BASE)
+-				phydev->speed = SPEED_100;
++			phydev->speed = SPEED_100;
+ 		} else {
+ 			phydev->speed = SPEED_UNKNOWN;
+ 			phydev->duplex = DUPLEX_UNKNOWN;
+@@ -898,6 +1021,7 @@ static int dp83869_phy_reset(struct phy_device *phydev)
+ 	.soft_reset	= dp83869_phy_reset,			\
+ 	.config_intr	= dp83869_config_intr,			\
+ 	.handle_interrupt = dp83869_handle_interrupt,		\
++	.config_aneg    = dp83869_config_aneg,                  \
+ 	.read_status	= dp83869_read_status,			\
+ 	.get_tunable	= dp83869_get_tunable,			\
+ 	.set_tunable	= dp83869_set_tunable,			\
 
-In here we are checking for min and max supported units against fs
-blocksize at one place during mount time itself and then caching the
-supported atomic write unit. The supported atomic write unit can change
-when bigalloc gets introduced. 
+---
+base-commit: 94c11e852955b2eef5c4f0b36cfeae7dcf11a759
+change-id: 20241025-dp83869-1000base-x-0f0a61725784
 
-XFS caches the blockdevice min, max units and then defers these checks
-against fs blocksize during file open time using xfs_inode_can_atomicwrite(). 
+Best regards,
+-- 
+Romain Gantois <romain.gantois@bootlin.com>
 
-I just preferrd the 1st aproach in case of EXT4 here because it will be simpler
-this way for when bigalloc also gets introduced.
-
-BTW none of these are ondisk changes, so whenever extsize gets
-introduced, we might still have to add something like
-ext4_inode_can_atomic_write() (similar to XFS) based on inode extsize
-value. But for now it was not needed in EXT4. 
-
-I hope the reasoning is clear and make sense.
-
-
->> +		ext4_msg(sb, KERN_NOTICE, "Supports atomic writes awu_min: %u, awu_max: %u",
->> +			 sbi->s_awu_min, sbi->s_awu_max);
-
-BTW - I was wondering if we should add "experimental" in above msg.
-
--ritesh
-
->> +	} else {
->> +		sbi->s_awu_min = 0;
->> +		sbi->s_awu_max = 0;
->> +	}
->> +}
->> +
->>   static void ext4_fast_commit_init(struct super_block *sb)
->>   {
->>   	struct ext4_sb_info *sbi = EXT4_SB(sb);
->> @@ -5336,6 +5366,7 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->>   
->>   	spin_lock_init(&sbi->s_bdev_wb_lock);
->>   
->> +	ext4_atomic_write_init(sb);
->>   	ext4_fast_commit_init(sb);
->>   
->>   	sb->s_root = NULL;
 
