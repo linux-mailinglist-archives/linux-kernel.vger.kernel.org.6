@@ -1,180 +1,185 @@
-Return-Path: <linux-kernel+bounces-386187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ED559B402B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:10:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76AA69B4046
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:15:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF791C22433
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:10:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 957D01C234AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:15:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9513A130A7D;
-	Tue, 29 Oct 2024 02:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4130166F00;
+	Tue, 29 Oct 2024 02:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QEaj7Kyd"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LEHYTCJZ"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E63B1863F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930691863F;
+	Tue, 29 Oct 2024 02:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730167844; cv=none; b=rKmMCnq0a9z90tnH+8hkdJJ2FyVf2mMjC0il7V9O7x6KUnaihYXVCnrWL/tbmTvROlcDSXqI4vEZAwoqSfLfXckiLt03U/X2IfFCsTkAn7UFykmdiYR9fPYtEe+fWCDSXupk8FQVnjZfBSmECTgCCiFkGeYk5XoJU98CHodWvso=
+	t=1730168104; cv=none; b=JfK7fIacx/+nKH8pydeep5mOSDVhbt+Ho7rD4krJNITEzLyrQ2lfrlNYtBiZy4OHY6mk34HYayyM9qoNxYCrJLrb/sXFmQk5uSl9Cfx9V4ZB8lsHPF3JUjL+j8le/6l3ZOqMtHwhwsWuMOsQFCiyC3ZqqkR1EPpJOAqmTH0xxD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730167844; c=relaxed/simple;
-	bh=wW55nxX4enWaaTudNJgiNp6sn8oEZdiWDe5jGNPBVZo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BVABDSAlVEUn6WcbTAAaKXEZnW0FGIwhZR0A4oEURsZxdwmzaSBhTAuGnHcsbZPyrWzjbQIZmu+pRQFXyebsOWLN90eIKpOtAPFme9NsYU/K4xN+i7HRX1L788vnCLTVOcKBbBwWoaY9opjE/sw2Ll67jkegKUb57n3TvpbPDMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QEaj7Kyd; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: f867b6fe959a11efbd192953cf12861f-20241029
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=9zxNMXwPCBjYW69Zb32ChS7Lih5KnlHYyLjDjWcKxkQ=;
-	b=QEaj7KydGUhLAKlkeeb1fbsfSA3lBfm6BfmCH/sp8PpzkR+FR3vR8Et9DqlIBq18YzI7vdiybWL1fMi6FtfaSHhxsR7kJu1fMZ44XC/YZXhPHhrmeXgGd/nYhYTucPlaqAWaL7g04ahVMne3Tj6iumjCX4L+GOhXqTJY9TOIgew=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:5356925a-d4ee-438b-9362-cbd31065dccf,IP:0,U
-	RL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-20
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:a97933e7-cb6b-4a59-bfa3-98f245b4912e,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
-	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
-X-UUID: f867b6fe959a11efbd192953cf12861f-20241029
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <defa.li@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 568546268; Tue, 29 Oct 2024 10:10:29 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 28 Oct 2024 19:10:28 -0700
-Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 29 Oct 2024 10:10:27 +0800
-From: mtk25126 <defa.li@mediatek.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<wsd_upstream@mediatek.com>, <mingchang.jia@mediatek.com>,
-	<yuhan.wei@mediatek.com>, <hao.lin@mediatek.com>, mtk25126
-	<defa.li@mediatek.com>
-Subject: [PATCH] i3c: Remove redundant lock in i3c_device_uevent
-Date: Tue, 29 Oct 2024 10:09:40 +0800
-Message-ID: <20241029020950.31053-1-defa.li@mediatek.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1730168104; c=relaxed/simple;
+	bh=AeXjM+KrtUS2sBUX9RGnVY1PaBn/obbXi2dQOFIuKBA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FYhL1WrwwhYuFoguTfK3Ox/25mCba5nEzgsDTm3qxx+LovVCeluS+P0WN8vFiu02P+nF87ObAP40ThIfsACwolj7yVf9HFNi9kEqoGINk+x3LuCMe1cDUWI7EKQgOIn10nZkL4l+HM7nfbcBXkEBxWWEF8dp/FywBJeujAfJThI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LEHYTCJZ; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c9428152c0so5697513a12.1;
+        Mon, 28 Oct 2024 19:15:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730168100; x=1730772900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kIiU2u88CNLnMtknaXCkV4tr9hDbgVBg90xo4uhBPuY=;
+        b=LEHYTCJZjzPMbo8bJfLLkxfLngu+mgSmevyTPglCxhn759oUOGobqKtwbS+YvqeJfh
+         DUEqZ3C4+0OmI/xxALn1pWPIPBAnxdycVG5l9LL+/qxrcLfafZAFtUXf9EFFmV1N2AMW
+         FgVDG1cbxVemRXEHS/dUl6FYav2c+3uQ1jgYmb/NovZkBhUJR7dpwz7syGufD4luHJlD
+         rLoMZ/ocApdmMuyJgQ3Lu/Apx3swHeV1a73ypzrC3/knSJ37E9mGBnHcqgmMq2vNu3TP
+         PySewY/6WCFAaSc7Z9d7KRRGI8umjm5nMerjKaTt7dlQkfQCMkXNMBRyvG7azKDSIU0u
+         30qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730168100; x=1730772900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kIiU2u88CNLnMtknaXCkV4tr9hDbgVBg90xo4uhBPuY=;
+        b=sWeQs/OghHD3juNAikCfF7tXx+j8+qOLG7oUBAQumfbQ/I1zik+TwedG9fchqdO9um
+         i0xUC3DLSnt4O3pY4QpaS+VJYzBgjP9bRzurRDFRm/A97CaUJ1oJDZ1v2gUyKfPPdleG
+         HS8FcX0g8XFa6x6wqWtGmVwt/osNYPj6yGzqg0+5YIJ/ckUelEpO2Sg1RVQc1N+/9a61
+         BLASyj9R49dos1BUp89veqZKt0q8WzRgXqQAgomMSd/raqcu4L6awypKHD6v4kv24KpG
+         1heXU2tjwXEbZcGtDkss3w9Kpqvn82DWUE5wEJtU3QYYa4grruE+qKkypMK/k+sYOp8p
+         ecYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUexo94jJz3X9/vG/P7+pKUhRf/rfcGCx88yo+e/wdd7BLRtqwU3j0wYDfwKNu2OawaepKOQvaDNLEx@vger.kernel.org, AJvYcCVKIYLEmAKqdcnCyMEEUNGs+RdyjEWAgC8N7NzXUAJVjmzEAW5kjgvHJF6SMro3A136X1XRt8/IjGZhBGs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWOjLn16lu2GFrrWSn6x3S9ZkNQSiTr5JYYTVoZvpmCO7dBh3r
+	iJgkEpVtDeCoJanvnp4KGeM7wE1OS0b0KBQKVsBU4iF1/vn3LqRESUDsmE71G8rsYFkR+uQuFC1
+	74d+PEb7WGjlDzIJR2nnFtqgLbF0=
+X-Google-Smtp-Source: AGHT+IFbBQvmK+EqMm3U3Vb9kazuFRR5cf6WIpDO2fxv3BVBeloP2e+f8Tuw/Olo8uB7+cWasCGQr5+O8J7uKtK16zI=
+X-Received: by 2002:a05:6402:1d55:b0:5ca:ea4:874a with SMTP id
+ 4fb4d7f45d1cf-5cbbf8c2d7emr8761748a12.14.1730168099608; Mon, 28 Oct 2024
+ 19:14:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+References: <20241025060017.1663697-1-benchuanggli@gmail.com>
+ <CAPDyKFpb5ZePhXziLH3VbuKKywJZbo8UBF1NM1_dyOWq9oLDng@mail.gmail.com>
+ <4dd25dca-f217-4abd-88e8-0a6b03760dd7@tuxedocomputers.com> <CAPDyKFpx=FwMH0PgaQqd+hFVa3ncuUjnikC3vfDHwN9V65H9mA@mail.gmail.com>
+In-Reply-To: <CAPDyKFpx=FwMH0PgaQqd+hFVa3ncuUjnikC3vfDHwN9V65H9mA@mail.gmail.com>
+From: Ben Chuang <benchuanggli@gmail.com>
+Date: Tue, 29 Oct 2024 10:14:25 +0800
+Message-ID: <CACT4zj-YT21rFFg=VYk1OF-HEefVYR=d=JXYbUz-kGrj_RD85g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mmc: sdhci-pci-gli: GL9767: Fix low power mode on the
+ set clock function
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Georg Gottleuber <ggo@tuxedocomputers.com>, adrian.hunter@intel.com, 
+	victor.shih@genesyslogic.com.tw, greg.tu@genesyslogic.com.tw, 
+	ben.chuang@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
+	Lucas.Lai@genesyslogic.com.tw, victorshihgli@gmail.com, 
+	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Werner Sembach <wse@tuxedocomputers.com>, cs@tuxedo.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-We encountered the following lockdep warning.
-The i3c_master_register function recursively acquires &i3cbus->lock twice,
-which may cause a deadlock. 
+On Mon, Oct 28, 2024 at 7:44=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
+> wrote:
+>
+> On Fri, 25 Oct 2024 at 17:40, Georg Gottleuber <ggo@tuxedocomputers.com> =
+wrote:
+> >
+> > Hello Ben, hello Uffe,
+> >
+> > thank you for this fix.
+> >
+> > Am 25.10.24 um 15:22 schrieb Ulf Hansson:
+> > > + Georg
+> > >
+> > > On Fri, 25 Oct 2024 at 08:01, Ben Chuang <benchuanggli@gmail.com> wro=
+te:
+> > >>
+> > >> From: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > >>
+> > >> On sdhci_gl9767_set_clock(), the vendor header space(VHS) is read-on=
+ly
+> > >> after calling gl9767_disable_ssc_pll() and gl9767_set_ssc_pll_205mhz=
+().
+> > >> So the low power negotiation mode cannot be enabled again.
+> > >> Introduce gl9767_set_low_power_negotiation() function to fix it.
+> > >>
+> > >> The explanation process is as below.
+> > >>
+> > >> static void sdhci_gl9767_set_clock()
+> > >> {
+> > >>         ...
+> > >>         gl9767_vhs_write();
+> > >>         ...
+> > >>         value |=3D PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> > >>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <---=
+ (a)
+> > >>
+> > >>         gl9767_disable_ssc_pll(); <--- (b)
+> > >>         sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
+> > >>
+> > >>         if (clock =3D=3D 0)
+> > >>                 return;  <-- (I)
+> > >>
+> > >>         ...
+> > >>         if (clock =3D=3D 200000000 && ios->timing =3D=3D MMC_TIMING_=
+UHS_SDR104) {
+> > >>                 ...
+> > >>                 gl9767_set_ssc_pll_205mhz(); <--- (c)
+> > >>         }
+> > >>         ...
+> > >>         value &=3D ~PCIE_GLI_9767_CFG_LOW_PWR_OFF;
+> > >>         pci_write_config_dword(pdev, PCIE_GLI_9767_CFG, value); <-- =
+(II)
+> > >>         gl9767_vhs_read();
+> > >> }
+> > >>
+> > >> (a) disable low power negotiation mode. When return on (I), the low =
+power
+> > >> mode is disabled.  After (b) and (c), VHS is read-only, the low powe=
+r mode
+> > >> cannot be enabled on (II).
+> > >>
+> > >> Fixes: d2754355512e ("mmc: sdhci-pci-gli: Set SDR104's clock to 205M=
+Hz and enable SSC for GL9767")
+> > >
+> > > Is this the same problem as being reported in
+> > > https://lore.kernel.org/all/41c1c88a-b2c9-4c05-863a-467785027f49@tuxe=
+docomputers.com/
+> > >
+> > > ?
+> >
+> > Yes, this patch fixes
+> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219284
+> >
+> > This makes my patch obsolete.
+>
+> Thanks to both of you for helping out and fixing the problem!
+>
+> I added Georg's reported/tested-by tag when applying and queued this
+> up as a fix with a stable tag.
+>
+> Kind regards
+> Uffe
 
-Remove the logic of obtaining i3cbus->lock when using the i3c_device_uevent
-function to obtain the i3c_device_info structure.
+Hi Georg and Uffe,
 
-============================================
-WARNING: possible recursive locking detected
-6.11.0-mainline
---------------------------------------------
-init/1 is trying to acquire lock:
-f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_bus_normaluse_lock
+The original test reported on bugzilla that only Intel laptops had issues.
+AMD laptops without this patch seem to have no impact.
 
-but task is already holding lock:
-f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_master_register
+I'm not sure if this patch is related to the originally reported issue.
+Thanks for the help.
 
-other info that might help us debug this:
- Possible unsafe locking scenario:
-
-       CPU0
-       ----
-  lock(&i3cbus->lock);
-  lock(&i3cbus->lock);
-
- *** DEADLOCK ***
-
- May be due to missing lock nesting notation
-
-2 locks held by init/1:
- #0: fcffff809b6798f8 (&dev->mutex){....}-{3:3}, at: __driver_attach
- #1: f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_master_register
-
-stack backtrace:
-CPU: 6 UID: 0 PID: 1 Comm: init
-Call trace:
- dump_backtrace+0xfc/0x17c
- show_stack+0x18/0x28
- dump_stack_lvl+0x40/0xc0
- dump_stack+0x18/0x24
- print_deadlock_bug+0x388/0x390
- __lock_acquire+0x18bc/0x32ec
- lock_acquire+0x134/0x2b0
- down_read+0x50/0x19c
- i3c_bus_normaluse_lock+0x14/0x24
- i3c_device_get_info+0x24/0x58
- i3c_device_uevent+0x34/0xa4
- dev_uevent+0x310/0x384
- kobject_uevent_env+0x244/0x414
- kobject_uevent+0x14/0x20
- device_add+0x278/0x460
- device_register+0x20/0x34
- i3c_master_register_new_i3c_devs+0x78/0x154
- i3c_master_register+0x6a0/0x6d4
- mtk_i3c_master_probe+0x3b8/0x4d8
- platform_probe+0xa0/0xe0
- really_probe+0x114/0x454
- __driver_probe_device+0xa0/0x15c
- driver_probe_device+0x3c/0x1ac
- __driver_attach+0xc4/0x1f0
- bus_for_each_dev+0x104/0x160
- driver_attach+0x24/0x34
- bus_add_driver+0x14c/0x294
- driver_register+0x68/0x104
- __platform_driver_register+0x20/0x30
- init_module+0x20/0xfe4
- do_one_initcall+0x184/0x464
- do_init_module+0x58/0x1ec
- load_module+0xefc/0x10c8
- __arm64_sys_finit_module+0x238/0x33c
- invoke_syscall+0x58/0x10c
- el0_svc_common+0xa8/0xdc
- do_el0_svc+0x1c/0x28
- el0_svc+0x50/0xac
- el0t_64_sync_handler+0x70/0xbc
- el0t_64_sync+0x1a8/0x1ac
-
-Signed-off-by: mtk25126 <defa.li@mediatek.com>
----
- drivers/i3c/master.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-index 6f3eb710a75d..bb8a8bf0c4c7 100644
---- a/drivers/i3c/master.c
-+++ b/drivers/i3c/master.c
-@@ -282,7 +282,8 @@ static int i3c_device_uevent(const struct device *dev, struct kobj_uevent_env *e
- 	struct i3c_device_info devinfo;
- 	u16 manuf, part, ext;
- 
--	i3c_device_get_info(i3cdev, &devinfo);
-+	if (i3cdev->desc)
-+		devinfo = i3cdev->desc->info;
- 	manuf = I3C_PID_MANUF_ID(devinfo.pid);
- 	part = I3C_PID_PART_ID(devinfo.pid);
- 	ext = I3C_PID_EXTRA_INFO(devinfo.pid);
--- 
-2.46.0
-
+Best regards,
+Ben Chuang
 
