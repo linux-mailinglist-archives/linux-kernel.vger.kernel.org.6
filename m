@@ -1,194 +1,76 @@
-Return-Path: <linux-kernel+bounces-386544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4D5B9B44D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:50:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEBD9B44D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93072283293
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:50:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 512031C20C28
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC95120409B;
-	Tue, 29 Oct 2024 08:49:44 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C907204032
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBA4204018;
+	Tue, 29 Oct 2024 08:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="aUQ6xfw4"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3B2E203700
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730191784; cv=none; b=eL27tHlOQ4SIl0bZkq1nRJ9ys1o1YW0imxeWAvCyDBVQOA2spcNqdkJYSxQatXZGsGgtPKnhSBAUlekHg8urtztwxeS8QIooE9/d2Kkd5U+wtKTe9MVE3H18z3qMl8/bNkalDSRS6IhItltF8Strhhe0IME6I2WHykDnTgiLXLc=
+	t=1730191781; cv=none; b=U7iJ+JOLtcZawkGvtQeUrUhCANLJu+J1v81+PLhBQp003zRMihKkxOvrGSwqbPvJRvG7+0x4mTMyTem3Tz02MV6IxQsUlfknTU08o299XpoNr83/qkS3K++K/Zj4JAWm8YBR3x+DSpckCQkvCdmrAwb9qD4yBoOi5ZVq07o4MwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730191784; c=relaxed/simple;
-	bh=V0gJK34+R44Nxz5p4bEW0/efUib90BQ+rA/46N/6EnY=;
+	s=arc-20240116; t=1730191781; c=relaxed/simple;
+	bh=t4F6EkQzc+Tx2dGrpH/0oshPhSFvIj0HR4NfuwzqRJ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KQkUo8LC4XuvcOrw/pB8cmD9pykp0dFmM+NAo2dYWjegszZtTh2/7PfzMyzJq4BB/exMOjAz/7oDL1gRHMIATqOWQcjgay9Fx5ZKTzAcgBO15zwSocDEPU1RJSk62efDMfQf2P8fMk2rFRnIZ8D90Gx1VM0NjD1jKSvyorg2zFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5hun-0001By-5t; Tue, 29 Oct 2024 09:49:25 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5hul-000zmf-1H;
-	Tue, 29 Oct 2024 09:49:23 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIj+a7QOb1hJOVteDbk70APoTGNvUFrhBwd5ewon+aKVRrxYqO9igKP+rjFi14iu9x72NfbcaGWLyecSaR//Fm5OVFwo4DmuvQuRQx7dfZsit+bUAr1ly05jNh3R4vOEuxpdBiD0L5bAt1qJLFReYzjHFGgUd1tVUL6HjLcAs0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=aUQ6xfw4; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 06D593613B3;
-	Tue, 29 Oct 2024 08:49:23 +0000 (UTC)
-Date: Tue, 29 Oct 2024 09:49:22 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Gal Pressman <gal@nvidia.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Kory Maincent <kory.maincent@bootlin.com>, Paolo Abeni <pabeni@redhat.com>, 
-	Sabrina Dubroca <sd@queasysnail.net>, Shannon Nelson <shannon.nelson@amd.com>, 
-	Simon Horman <horms@kernel.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [RFC PATCH v2 1/6] can: dev: add generic function
- can_update_bus_error_stats()
-Message-ID: <20241029-poised-augmented-binturong-1fde9f-mkl@pengutronix.de>
-References: <20241029084525.2858224-1-dario.binacchi@amarulasolutions.com>
- <20241029084525.2858224-2-dario.binacchi@amarulasolutions.com>
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id D77FF2A8D41;
+	Tue, 29 Oct 2024 09:49:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1730191778;
+	bh=t4F6EkQzc+Tx2dGrpH/0oshPhSFvIj0HR4NfuwzqRJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aUQ6xfw4G2fAmph3fMFdnFmV5d7IVswiGPxXeaXX/I9SmikyU2MAAf+y4Isth8Y5K
+	 p21a5tZ9rsQN0CxRZso6IVwby5zEOcH2BVQpWpR9rDow9TEbXHCS92Z+0aheRh471F
+	 xHWeF+1O85Qp+VWsrNNEHC2kW6wmlznAOKjfdfyX494GntCf2fDENFo2kxeRU2udOd
+	 zTifyhsLLwcopsEVsl7OaOng1N2eL6IcVYq8qymV4U36kJb5amFqmOiZ4p0BD607Hm
+	 qoqV9iL1vxQfocKm3vi1TXeIE060idIsNLCclyrLXHabpebwZBZ1UagunS4H0Aie/g
+	 uuXtwG4E1t3hw==
+Date: Tue, 29 Oct 2024 09:49:36 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Konrad Adamczyk <konrada@google.com>
+Cc: Yong Wu <yong.wu@mediatek.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	iommu@lists.linux.dev, linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Wojciech Macek <wmacek@google.com>
+Subject: Re: [PATCH] iommu/mediatek: Add PGTABLE_PA_35_EN to mt8186 platform
+ data
+Message-ID: <ZyChoFmaID6aGQT1@8bytes.org>
+References: <20241017112036.368772-1-konrada@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="nb27cg7aycdxcprh"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241029084525.2858224-2-dario.binacchi@amarulasolutions.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20241017112036.368772-1-konrada@google.com>
 
+On Thu, Oct 17, 2024 at 11:20:36AM +0000, Konrad Adamczyk wrote:
+>  drivers/iommu/mtk_iommu.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
---nb27cg7aycdxcprh
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH v2 1/6] can: dev: add generic function
- can_update_bus_error_stats()
-MIME-Version: 1.0
-
-Hello Dario,
-
-On 29.10.2024 09:44:45, Dario Binacchi wrote:
-> The function aims to generalize the statistics update by centralizing
-> the related code, thus avoiding code duplication.
->=20
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> ---
-
-no proper review, just found that double assignment.
-
-Marc
-
->=20
-> (no changes since v1)
->=20
->  drivers/net/can/dev/dev.c | 30 ++++++++++++++++++++++++++++++
->  include/linux/can/dev.h   |  1 +
->  2 files changed, 31 insertions(+)
->=20
-> diff --git a/drivers/net/can/dev/dev.c b/drivers/net/can/dev/dev.c
-> index 6792c14fd7eb..0a3b1aad405b 100644
-> --- a/drivers/net/can/dev/dev.c
-> +++ b/drivers/net/can/dev/dev.c
-> @@ -16,6 +16,36 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/of.h>
-> =20
-> +void can_update_bus_error_stats(struct net_device *dev, struct can_frame=
- *cf)
-> +{
-> +	struct can_priv *priv =3D netdev_priv(dev);
-                                ^^^^^^^^^^^^^^^^
-> +	bool rx_errors =3D false, tx_errors =3D false;
-> +
-> +	if (!cf || !(cf->can_id & (CAN_ERR_PROT | CAN_ERR_BUSERROR)))
-> +		return;
-> +
-> +	priv =3D netdev_priv(dev);
-               ^^^^^^^^^^^^^^^^
-> +	priv->can_stats.bus_error++;
-> +
-> +	if ((cf->can_id & CAN_ERR_ACK) && cf->data[3] =3D=3D CAN_ERR_PROT_LOC_A=
-CK)
-> +		tx_errors =3D true;
-> +	else if (cf->data[2] & (CAN_ERR_PROT_BIT1 | CAN_ERR_PROT_BIT0))
-> +		tx_errors =3D true;
-> +
-> +	if (cf->data[2] & (CAN_ERR_PROT_FORM | CAN_ERR_PROT_STUFF))
-> +		rx_errors =3D true;
-> +	else if ((cf->data[2] & CAN_ERR_PROT_BIT) &&
-> +		 (cf->data[3] =3D=3D CAN_ERR_PROT_LOC_CRC_SEQ))
-> +		rx_errors =3D true;
-> +
-> +	if (rx_errors)
-> +		dev->stats.rx_errors++;
-> +
-> +	if (tx_errors)
-> +		dev->stats.tx_errors++;
-> +}
-> +EXPORT_SYMBOL_GPL(can_update_bus_error_stats);
-> +
->  static void can_update_state_error_stats(struct net_device *dev,
->  					 enum can_state new_state)
->  {
-> diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
-> index 23492213ea35..0977656b366d 100644
-> --- a/include/linux/can/dev.h
-> +++ b/include/linux/can/dev.h
-> @@ -201,6 +201,7 @@ void can_state_get_by_berr_counter(const struct net_d=
-evice *dev,
->  				   enum can_state *rx_state);
->  void can_change_state(struct net_device *dev, struct can_frame *cf,
->  		      enum can_state tx_state, enum can_state rx_state);
-> +void can_update_bus_error_stats(struct net_device *dev, struct can_frame=
- *cf);
-> =20
->  #ifdef CONFIG_OF
->  void of_can_transceiver(struct net_device *dev);
-> --=20
-> 2.43.0
->=20
->=20
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---nb27cg7aycdxcprh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcgoZAACgkQKDiiPnot
-vG9DJAf+IjRLKjCVJmbmPHaFHXnHTKmBia/tOnLejXkcSE3gM0yImO4wx/e0/fR9
-xlq+iP4nhtpxNRjSwxsxo+hID2VY/upEB3myC/2X3tqd415vVcjTtGlhUcqE8SZD
-fItDimabq/cKdfOy4nXn3K+zXUNDp47253zMpaS00I/wiKG0hmhFQcYFN0oF1gP+
-semFdCcB6pt4ju4PiSsc4hdszCKa+BCEOH3hlbJlVuc9+Ll0E0Cfc9RE+wk8kW9Y
-qgZHo6kndqMeasM5iKn0k7GfOSObhcK1ti/imvhiu8//EMJd2Tdxa/RHySNiIYT4
-8WtAyaSoQiyhXtHxgeHIql4EDU89Lg==
-=AU70
------END PGP SIGNATURE-----
-
---nb27cg7aycdxcprh--
+Applied, thanks.
 
