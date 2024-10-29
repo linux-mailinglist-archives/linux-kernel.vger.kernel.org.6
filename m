@@ -1,83 +1,113 @@
-Return-Path: <linux-kernel+bounces-387813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE049B567D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:08:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FB8A9B5685
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5CA61C20E2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:08:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFF011C22575
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 847D520B21F;
-	Tue, 29 Oct 2024 23:06:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C55B20B1EF;
+	Tue, 29 Oct 2024 23:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1EEFZ3O"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W0udmcPM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB8B020A5FA;
-	Tue, 29 Oct 2024 23:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F342F205AB4;
+	Tue, 29 Oct 2024 23:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730243219; cv=none; b=KEwoPvc9sqlXZSfIFwClpT7weReF+DIqM+ph9EGw6N2VUkBgBh1DQ9dhZgVsDYgrBqBzaJlKR0kNaWjb/aAVqiKRS2RlTkFFCfi337eicyY28QcvOnM3qOe6rvke/TrSL2WDPZLxsx3zuKwge/Xh+JEkOVCN+SMCe4Mq+t/Mo78=
+	t=1730243389; cv=none; b=KPyp4KiMnJ8kAQ7VAq6mT29VKglaAg+GQXzSqnEzLgtH6BLHXOGODR2WHrrFRbdX8oIHicYlVpDb4cyoX+LgUGrSg7sYl21rR73GNqG1D4JHS4nqkZdB74UVV+llozMLP1KGJ6Bb4fV6OpGArIqGTtg4xDG1pDsbPSTzfa4CQ4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730243219; c=relaxed/simple;
-	bh=GNALf1PTTHAUpeZX/17m1kSxP1m3t/rIPFZU42PzlXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Yr+tSQpYqt/njwVlEEbZVDvO88lFObWHrPdgKj1IqbieMUEYrR9/ItKwa1P7TVD+lUxtUPN2BgDHTp4PjKUv83E/dEaJsEhF5fDPgTK2zlWvAaPbw9O6S80GEaYJoStwvJfYq1at9P3JzjT6m2PYaCj39HeKTKFLba7JEQw5vyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1EEFZ3O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFFEC4CECD;
-	Tue, 29 Oct 2024 23:06:58 +0000 (UTC)
+	s=arc-20240116; t=1730243389; c=relaxed/simple;
+	bh=zye+wNRL8G23aZqii/unX0c97dPTkeNuEax9eXdHRRM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3uDd+EpEzAfugq+rX8AMAZ+Mv8LbuQNODxrcybzqRYb7E0fkleRaZReXECluL7NeONcVTKwNqXJJ8g6szphi3n47IF8LrJK24inVNjYH2XG5xasuY/BvALOH0jzGf0NgqwL2OUjQ/8ByqWJECqWAeDKA+A5S9GqTyreXfd/K5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W0udmcPM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05CEEC4CEE3;
+	Tue, 29 Oct 2024 23:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730243218;
-	bh=GNALf1PTTHAUpeZX/17m1kSxP1m3t/rIPFZU42PzlXA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=e1EEFZ3O78RO4W0UqLNJ1fsE5Xx/wN/fQsoP8T9A5UuMGoWmwi1E4zGVE93nfbFQs
-	 MCazQRKLWrJznjhs+gCuH/TvaId/SGRPfG9poxK2FaqMe6Sv/eWQ0iEqkzs7oRSHHf
-	 qmxHiN5J1jOyzvHJKPYzGpuMXBw9U2wCU2kOsRhgJzxk1UvgXXC5GI2variImqcchD
-	 do+yGbBpiag5EbdmPD8bPjgO2cO/velWmhEpvYHF3y0lEWAk6YunItHzlILk58K12S
-	 2aFTUXrDgEQHyi99u38kuBVGMgnw0z91enzhv/6HRDbPjvwFzkUF/Cv3TriFJPgFJ8
-	 q3BV7lUKfYvQQ==
-Date: Tue, 29 Oct 2024 16:06:57 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sai Krishna <saikrishnag@marvell.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <sgoutham@marvell.com>, <gakula@marvell.com>, <lcherian@marvell.com>,
- <jerinj@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>,
- <kalesh-anakkur.purayil@broadcom.com>
-Subject: Re: [net-next PATCH v2 4/6] octeontx2-pf: CN20K mbox REQ/ACK
- implementation for NIC PF
-Message-ID: <20241029160657.2a0a2c91@kernel.org>
-In-Reply-To: <20241022185410.4036100-5-saikrishnag@marvell.com>
-References: <20241022185410.4036100-1-saikrishnag@marvell.com>
-	<20241022185410.4036100-5-saikrishnag@marvell.com>
+	s=k20201202; t=1730243388;
+	bh=zye+wNRL8G23aZqii/unX0c97dPTkeNuEax9eXdHRRM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W0udmcPM0lt/uRUN2hO5OXCF8Jqu411MxWWC3X7r1XUA6LfxlfzVFSzNvdZLV8N/1
+	 wUhYdMJz9JIGQ1dqfBANpSp75LnewD2GmrWH4PKmj7d6HbP0G6dt9+s/z8viCGDTP+
+	 6aYMleLjU51Oqx/rQRoaRpq8s77wCpxwOo38sPc1xQfvmCGbZV9R5Oc8EG8snOBJ2U
+	 ZlTtbtUYql4DUl3XQq6SHH6MbBh0KSapV9uTSsR5e1JvW+1D5Pq2u3iFDuLGC4PBuv
+	 HU1lSV0BEo5pDzA+sCV8w8HWTXZIg++UlbFhoz65QhRoSqy6DHRLDF8NRT2vFX8Ys0
+	 qdMxwJ20oXUgg==
+Date: Tue, 29 Oct 2024 16:09:46 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Graham Woodward <graham.woodward@arm.com>, acme@kernel.org,
+	mark.rutland@arm.com, jolsa@kernel.org, irogers@google.com,
+	james.clark@linaro.org, mike.leach@linaro.org, leo.yan@linux.dev,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, nd@arm.com
+Subject: Re: [PATCH v1 0/4] perf arm-spe: Allow synthesizing of branch
+Message-ID: <ZyFrOo7K1qmjtaV5@google.com>
+References: <20241025143009.25419-1-graham.woodward@arm.com>
+ <Zx--dTqaZPjeWA2I@google.com>
+ <20241029170346.GB24446@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241029170346.GB24446@e132581.arm.com>
 
-On Wed, 23 Oct 2024 00:24:08 +0530 Sai Krishna wrote:
-> +/**
-> + * CN20k RVU PF MBOX Interrupt Vector Enumeration
-> + *
-> + * Vectors 0 - 3 are compatible with pre cn20k and hence
-> + * existing macros are being reused.
-> + */
+Hi Leo,
 
-Please don't use /** unless the comment is in kernel-doc format.
-It causes warnings for documentation extractors:
+On Tue, Oct 29, 2024 at 05:03:46PM +0000, Leo Yan wrote:
+> Hi Namhyung,
+> 
+> On Mon, Oct 28, 2024 at 09:40:21AM -0700, Namhyung Kim wrote:
+> > 
+> > Hello,
+> > 
+> > On Fri, Oct 25, 2024 at 03:30:05PM +0100, Graham Woodward wrote:
+> > > Currently the --itrace=b will only show branch-misses but this change
+> > > allows perf to synthesize branches as well.
+> > >
+> > > The change also incorporates the ability to display the target
+> > > addresses when specifying the addr field if the instruction is a branch.
+> > >
+> > > Graham Woodward (4):
+> > >   perf arm-spe: Set sample.addr to target address for instruction sample
+> > >   perf arm-spe: Use ARM_SPE_OP_BRANCH_ERET when synthesizing branches
+> > >   perf arm-spe: Correctly set sample flags
+> > >   perf arm-spe: Update --itrace help text
+> > 
+> > It doesn't apply to perf-tools-next cleanly.  Can you please rebase?
+> 
+> I confirmed this series can apply cleanly on the branch [1] with the
+> latest commit 150dab31d560 ("perf disasm: Fix not cleaning up
+> disasm_line in symbol__disassemble_raw()"):
+> 
+>   [1] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git
+>       branch: perf-tools-next
+> 
+> If you are suggesting for the branch:
+> 
+>   [2] https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git
+>       branch: perf-tools
+> 
+> You can see it misses some Arm SPE patches which have been picked up
+> in the repo [1].
+> 
+> Please kindly suggest what is right thing to do.
 
- drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h:12: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
-  * CN20k RVU PF MBOX Interrupt Vector Enumeration
- drivers/net/ethernet/marvell/octeontx2/af/cn20k/struct.h:12: warning: missing initial short description on line:
-  * CN20k RVU PF MBOX Interrupt Vector Enumeration
--- 
-pw-bot: cr
+Sorry, my bad.  It works ok.  I'll add it to tmp.perf-tools-next branch
+and run some tests.
+
+Thanks,
+Namhyung
+
 
