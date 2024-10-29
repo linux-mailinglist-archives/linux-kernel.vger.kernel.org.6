@@ -1,182 +1,98 @@
-Return-Path: <linux-kernel+bounces-387352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB00B9B4FCC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:51:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28D79B4FCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56D751F23264
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:51:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96BAC28327B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E324E1D86E6;
-	Tue, 29 Oct 2024 16:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A93B1CC885;
+	Tue, 29 Oct 2024 16:51:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y0iCu+bq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dpSiyN9R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAD219A2A3;
-	Tue, 29 Oct 2024 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D71198A31;
+	Tue, 29 Oct 2024 16:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220652; cv=none; b=ge81LmMumX552yrFrBsaEJfbWMWdwtt0Hs/DWivEIgQcM2j7GzXwvkTLSeajXjY89gXGLBJwjz/FOSzqzJLYa/ZD2e9IljfiVdaH1t8VbIiYx5NwS4SA0zJsKHAcXh5gE9tw8406SVHvmsqPdLtHGaC1HoqfHBi0SvgaCentoYg=
+	t=1730220697; cv=none; b=AJmAw3YfmCWu0cwsaYPH+O8F8daIf35Yk1e6xgneo/7Jp/LIkg3mzDdhq739418G0jUNVRE+5HHCbuLtKnVTNeA57ZbYDH/HcgxoY5uZbRFTKmaQYaD+PCEwZRMnvRGJSuscoTDogtAjcHW2ONBg/x55XD+XoWDhMgawhkK1DQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220652; c=relaxed/simple;
-	bh=/JLFGbEBdIsMO3f/VULfeC0oqd2lpISi2IVf10Hub/U=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=trPUeB+jBSuNKbb2DETH9ohKLcH3FGqWrJa6BlHZuQKdh8EB6zelyzFplCaBkKJNy4AnTIAu/B3zpWjTC2MCFZ9NeXFpo3IHnEPg+L5MAfIV8zI7KUIMtKElwlwou11n6FuOcgeTKydX9sIgW8LsKZbeDFTS/1via9qgN9qMVdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y0iCu+bq; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730220650; x=1761756650;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=/JLFGbEBdIsMO3f/VULfeC0oqd2lpISi2IVf10Hub/U=;
-  b=Y0iCu+bqZgEQj0hM8Mx2ddNgGOfjskMBKVvh32wTwiO3PyM/nTywwHeP
-   XnmRp3fHXOgQhwOTaIamsupSat+v7RRia4xAsn5UqmRtJcEhGKXVn7akt
-   stTpC0I1Qi+5jzYaZTe45Ifusrj9e8Hp8mD2jhqTa92rYsk2F1nGZZ8w/
-   rjutb6QToa6is46HlSLgI84KnF3nU7m/b66kGefhMR14OeF/575YZjBfS
-   PtwhEnAeYMmqRBfGhByY/5sBMmjv/KeJdkq0rZ/3riIOb47tOizOp6mJu
-   LUsO8N9MF2QKZzi7Sn0/WjUvkOdiWCc6Pe/tFclt0slTWR4Pi++DSM1BX
-   Q==;
-X-CSE-ConnectionGUID: H5eFNjSuSuyaRlzz7tJcGA==
-X-CSE-MsgGUID: Am2CF7oKQe21yEthXMTxFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47338098"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47338098"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 09:50:49 -0700
-X-CSE-ConnectionGUID: 1Y+iafVoQuSJ1cbsokGDbg==
-X-CSE-MsgGUID: Xtj+9gXxThe9cc+oA4pPJw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82350133"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 09:50:44 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 29 Oct 2024 18:50:40 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: Re: [PATCH v2 11/15] ACPI: platform_profile: Set profile for all
- registered handlers
-In-Reply-To: <3fc47497-de43-4d77-8352-d6c0886e2db0@amd.com>
-Message-ID: <f65998f4-6396-9cff-09a1-6ee2a49dc254@linux.intel.com>
-References: <20241028020131.8031-1-mario.limonciello@amd.com> <20241028020131.8031-12-mario.limonciello@amd.com> <46e19bc3-2624-f4b9-a946-050c92c0591d@linux.intel.com> <3fc47497-de43-4d77-8352-d6c0886e2db0@amd.com>
+	s=arc-20240116; t=1730220697; c=relaxed/simple;
+	bh=xqKBn79DKbImua+c6iNNetJOik2hCOzIl/y9TYioMZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f94yP03TIeuCT5scwRCMZb07/Kjpa/wmG/ZSV8FWK3IOG6bfhRAXsHPMbQ/+nK8AppYKLOowF2SRRMqUNPXf4uhgV7p5RGjyoMICrdWxzE31SgX5PrsBotK555t62laGItloBJYA4RlLgvBd87xogfb4BfrCzThlm4CNjAsfoyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dpSiyN9R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8C8DC4CECD;
+	Tue, 29 Oct 2024 16:51:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730220697;
+	bh=xqKBn79DKbImua+c6iNNetJOik2hCOzIl/y9TYioMZs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dpSiyN9R5IdN2MfTsa47gXTTmTKJfH0QmVwGzi4bPkiYQptXZ2lg4VCjtEgVqKAiC
+	 AetIfEC9ygf1WzZwwjsdiiZv4itUumdgZsmyJU7WLAMtAYMaq+mAgQBKDgBCVxME1k
+	 MSg7Ab4FuSHjs9SpbdPRQDEmHGaXAPIBrEQqQjJunqv9vEjJEl44ubBrsXNPtUEymv
+	 y3k9QoaCX4eD+RZImnAs7LleuxLG64+Xq3s/TvkLIrJuBZN/m3dEwYT8TDzF+84hLO
+	 O0kvMXBFRPHyD6QF3XwH5jS7zPer6bq2QG4tBUHQMt0odgs/XYm2BJL88dJ7d9zqgW
+	 UXzz6VFZagg7A==
+Date: Tue, 29 Oct 2024 09:51:34 -0700
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029165134.zoeh5vg6b4lmac2d@treble.attlocal.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <20241029134807.GZ14555@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-271467047-1730220242=:951"
-Content-ID: <b21a3af0-f730-498f-24ac-25c0ab2e6119@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241029134807.GZ14555@noisy.programming.kicks-ass.net>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Tue, Oct 29, 2024 at 02:48:07PM +0100, Peter Zijlstra wrote:
+> On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
+> 
+> > +/*
+> > + * The "context cookie" is a unique identifier which allows post-processing to
+> > + * correlate kernel trace(s) with user unwinds.  It has the CPU id the highest
+> > + * 16 bits and a per-CPU entry counter in the lower 48 bits.
+> > + */
+> > +static u64 ctx_to_cookie(u64 cpu, u64 ctx)
+> > +{
+> > +	BUILD_BUG_ON(NR_CPUS > 65535);
+> > +	return (ctx & ((1UL << 48) - 1)) | cpu;
+> > +}
+> 
+> Did you mean to: (cpu << 48) ?
 
---8323328-271467047-1730220242=:951
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <1105b7d3-591d-a080-82c3-384db45f4a66@linux.intel.com>
+Indeed... that was the victim of a late refactoring.
 
-On Tue, 29 Oct 2024, Mario Limonciello wrote:
-
-> On 10/29/2024 05:22, Ilpo J=E4rvinen wrote:
-> > On Sun, 27 Oct 2024, Mario Limonciello wrote:
-> >=20
-> > > If multiple platform profile handlers have been registered then when
-> > > setting a profile verify that all profile handlers support the reques=
-ted
-> > > profile and set it to each handler.
-> > >=20
-> > > If this fails for any given handler, revert all profile handlers back=
- to
-> > > balanced and log an error into the kernel ring buffer.
-> > >=20
-> > > Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > >   drivers/acpi/platform_profile.c | 47 ++++++++++++++++++------------=
----
-> > >   1 file changed, 26 insertions(+), 21 deletions(-)
-> > >=20
-> > > diff --git a/drivers/acpi/platform_profile.c
-> > > b/drivers/acpi/platform_profile.c
-> > > index a83842f05022b..db2ebd0393cf7 100644
-> > > --- a/drivers/acpi/platform_profile.c
-> > > +++ b/drivers/acpi/platform_profile.c
-> > > @@ -105,37 +105,42 @@ static ssize_t platform_profile_store(struct de=
-vice
-> > > *dev,
-> > >   =09=09=09    struct device_attribute *attr,
-> > >   =09=09=09    const char *buf, size_t count)
-> > >   {
-> > > +=09struct platform_profile_handler *handler;
-> > > +=09unsigned long choices;
-> > >   =09int err, i;
-> > >   -=09err =3D mutex_lock_interruptible(&profile_lock);
-> > > -=09if (err)
-> > > -=09=09return err;
-> > > -
-> > > -=09if (!cur_profile) {
-> > > -=09=09mutex_unlock(&profile_lock);
-> > > -=09=09return -ENODEV;
-> > > -=09}
-> > > -
-> > >   =09/* Scan for a matching profile */
-> > >   =09i =3D sysfs_match_string(profile_names, buf);
-> > >   =09if (i < 0) {
-> > > -=09=09mutex_unlock(&profile_lock);
-> > >   =09=09return -EINVAL;
-> > >   =09}
-> > >   -=09/* Check that platform supports this profile choice */
-> > > -=09if (!test_bit(i, cur_profile->choices)) {
-> > > -=09=09mutex_unlock(&profile_lock);
-> > > -=09=09return -EOPNOTSUPP;
-> > > -=09}
-> > > +=09scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock)=
- {
-> >=20
-> > You made guard() conversions in the earlier patch but for some reason
-> > left scoped_cond_guard() ones mixed into other changes still. Is there
-> > a very good reason for that?
-> >=20
->=20
-> Using scoped_cond_guard() requires changing the indentation which meant a=
- bit
-> of back and forth with code coming and going.  If you think it makes more
-> sense to split up even considering the indentation changes I'll do anothe=
-r set
-> of patches for the scoped_cond_guard changes only.
-
-There are ways to combat indentation changes while reviewing. However,=20
-it's a strange argument to bring up because now there are indentation=20
-changes in these patches exactly because you chose to make the=20
-scoped_cond_guard() change "while at it" rather than in a separate patch.
-
-I believe the patches will become cleaner and easier to review if you do=20
-scoped_cond_guard() change separate from any other logic changes.
-
---=20
- i.
---8323328-271467047-1730220242=:951--
+-- 
+Josh
 
