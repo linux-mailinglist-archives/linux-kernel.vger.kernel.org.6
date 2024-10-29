@@ -1,231 +1,90 @@
-Return-Path: <linux-kernel+bounces-387098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61B89B4BE9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:15:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6EE99B4BDB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A5B71F238B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:15:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50C20B23847
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:14:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23962206E9C;
-	Tue, 29 Oct 2024 14:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57D89206E9C;
+	Tue, 29 Oct 2024 14:14:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bUTXdvw1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fHwHMPit"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C9A1E507;
-	Tue, 29 Oct 2024 14:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5ED2206E8B;
+	Tue, 29 Oct 2024 14:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730211334; cv=none; b=XKXxmwIECeSUkTdpq8LBbso7DnilIsOjwdFjboN6xqttmIxfK2go1QQpqo++jQRPBrUV63gqjGyzPykUk7hA6n2uktB/BJ9J/IqxWBDQKw2Cv32G0yFgDur49T1qak3xxLyrtW/I2PMQ2bopJm4XINxuHhDWz7CJKKiAiJyla8s=
+	t=1730211279; cv=none; b=tFU9ik5XK43jU27WZLKeVee6GsWIIO6CiknS8+9zxyo4Wtjyxjd0Zc1omebWa2UDNs2Ed8C1p2LzzVP82wlbXSNS2S2wPFnCCU4aTnqIVn5fqx89lz6MZk7+yjyB9QRae8z/pUVFIcHkEd3MeEEeulle5Y2l0p4OJorGZSc0guE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730211334; c=relaxed/simple;
-	bh=vn3Jy7U8Kr606XKwuMr/9U1lMzlyFHE13781XmAPJTM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMheoS1CEjuQwb4BZdQcMv2E5BKoIXKThXR/pw74BXnd142AX2geB9EiUgpiftMHqYFL/rOp1hU11YuKOoBeiEUvfQoipTfVUjkfacqqT2tlI6gVeEoiqk+3ilTOVt8prtFdDTqjmQ5kfRHtgPjpHkfcR71QBvneWr+beZgiHD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bUTXdvw1; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730211332; x=1761747332;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=vn3Jy7U8Kr606XKwuMr/9U1lMzlyFHE13781XmAPJTM=;
-  b=bUTXdvw1PhEdd+YdxuHIEEBjyfUz2AIm1zgerzap23HWmS+39JCTFZs1
-   HIe/gJN8mwvQoIm/1VzRmmHISzxIoUGErQ6jF87+Kl8YWQBJ4WymnqPrw
-   L9lMknro6gLMZAbx/t+ZHv2/nScpq4bubT25QmNg5KXPDWOwhODeLcZmn
-   H7Zo7nqNw2Ew58ZAeO/i19Xy1qj5VDj5z8wDmki7XpNMbbpG8LmgxYnM5
-   pzWgFIxSWXtNZJXXjvYJBsPUso9OIQN/FcefacmSWWwt7cxtJLIsb5Mfb
-   XdM5UnYFHaCnLhTj8BiS+TtK96PAanQyI51uvbka92Dy70nuEIjznOGWj
-   A==;
-X-CSE-ConnectionGUID: GaY6ZA/ZQ3uNpwhnFGrSFg==
-X-CSE-MsgGUID: bn7s7oz+Sg+V+9tbQoaDSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="41252608"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="41252608"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 07:15:31 -0700
-X-CSE-ConnectionGUID: OXhBVyCyTZSe0g6WtEzk3g==
-X-CSE-MsgGUID: aoxULuKgQCuIUshc/F96iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82042910"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.38])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 07:15:28 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Shuah Khan <shuah@kernel.org>
-Cc: kirill@shutemov.name,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org
-Subject: [PATCH] selftests/lam: Test get_user() LAM pointer handling
-Date: Tue, 29 Oct 2024 15:14:20 +0100
-Message-ID: <20241029141421.715686-1-maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730211279; c=relaxed/simple;
+	bh=C9rPKReirZqEE6tK4eWfd9om5uA5nAukJuBcx5n2FLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QZFgz89JFnzrtd/YvnYu/FKoVgImqPtmSkuc+WWZpq3C4Gs54GgG4pu64tqoQKqDNUKReDm6Tp+beAkyXW35cXQevq1N+m/mydheup6KpetZtH/Wd9X45EUDvijI461a/YCTk51yTypmQvbEtt1i346CUlsexR6xhr3D1rZzIuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fHwHMPit; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0253FC4CECD;
+	Tue, 29 Oct 2024 14:14:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730211279;
+	bh=C9rPKReirZqEE6tK4eWfd9om5uA5nAukJuBcx5n2FLY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fHwHMPit1hXLDMidzDlppOTPxn+FAPqf7cxdv3Tsx/Bv8ovLXgNFf/ga7MSHCzNP2
+	 5gUBZ9Tkq9tTUgIyhgW70/TA1tMqendHQpTJB6E0FJ9Ue1G2QgtRL7d2GFJzckplwQ
+	 qP6tZw8cmmEdgax4DRRWZGl6ix7EtMEd6A4OsWtdC9kR6BjO6JfGHzPWvO6/DHKYsh
+	 pY5FDEkQGTAJ3c7EzO7KgqCgMThyPYOS7qbKsWYzQUvqquvUaVuWiSRgmOU16jcpbn
+	 hOyJb99oBM8ZG6stA/6HO7Duqtu5naAkeOLzntZ6Hr8qtkm0dbRnBBiNNQre+ZI1xV
+	 Fy67Sj1qi/iow==
+Date: Tue, 29 Oct 2024 07:14:37 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, davem@davemloft.net,
+ edumazet@google.com, pabeni@redhat.com, donald.hunter@gmail.com,
+ gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+ maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+ cmllamas@google.com, surenb@google.com, arnd@arndb.de,
+ masahiroy@kernel.org, bagasdotme@gmail.com, horms@kernel.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
+ kernel-team@android.com
+Subject: Re: [PATCH net-next v6 1/1] binder: report txn errors via generic
+ netlink
+Message-ID: <20241029071437.2381adea@kernel.org>
+In-Reply-To: <20241028101952.775731-2-dualli@chromium.org>
+References: <20241028101952.775731-1-dualli@chromium.org>
+	<20241028101952.775731-2-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Recent change in how get_user() handles pointers [1] has a specific case
-for LAM. It assigns a different bitmask that's later used to check
-whether a pointer comes from userland in get_user().
+On Mon, 28 Oct 2024 03:19:51 -0700 Li Li wrote:
+> +			report.err = BR_ONEWAY_SPAM_SUSPECT;
+> +			report.from_pid = proc->pid;
+> +			report.from_tid = thread->pid;
+> +			report.to_pid = target_proc ? target_proc->pid : 0;
+> +			report.to_tid = target_thread ? target_thread->pid : 0;
+> +			report.reply = reply;
+> +			report.flags = tr->flags;
+> +			report.code = tr->code;
+> +			report.data_size = tr->data_size;
+> +			binder_genl_send_report(context, &report, sizeof(report));
 
-While currently commented out (until LASS [2] is merged into the kernel)
-it's worth making changes to the LAM selftest ahead of time.
+Could you break this struct apart into individual attributes?
+Carrying binary structs in netlink has been done historically 
+but we moved away from it. It undermines the ability to extend
+the output and do automatic error checking.
 
-Add test case to LAM that utilizes a ioctl (FIOASYNC) syscall which uses
-get_user() in its implementation. Execute the syscall with differently
-tagged pointers to verify that valid user pointers are passing through
-and invalid kernel/non-canonical pointers are not.
-
-Code was tested on a Sierra Forest Xeon machine that's LAM capable. The
-test was ran without issues with both the LAM lines from [1] untouched
-and commented out. The test was also ran without issues with LAM_SUP
-both enabled and disabled.
-
-[1] https://lore.kernel.org/all/20241024013214.129639-1-torvalds@linux-foundation.org/
-[2] https://lore.kernel.org/all/20240710160655.3402786-1-alexander.shishkin@linux.intel.com/
-
-Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
----
- tools/testing/selftests/x86/lam.c | 85 +++++++++++++++++++++++++++++++
- 1 file changed, 85 insertions(+)
-
-diff --git a/tools/testing/selftests/x86/lam.c b/tools/testing/selftests/x86/lam.c
-index 0ea4f6813930..3c53d4b7aa61 100644
---- a/tools/testing/selftests/x86/lam.c
-+++ b/tools/testing/selftests/x86/lam.c
-@@ -4,6 +4,7 @@
- #include <stdlib.h>
- #include <string.h>
- #include <sys/syscall.h>
-+#include <sys/ioctl.h>
- #include <time.h>
- #include <signal.h>
- #include <setjmp.h>
-@@ -43,10 +44,19 @@
- #define FUNC_INHERITE           0x20
- #define FUNC_PASID              0x40
- 
-+/* get_user() pointer test cases */
-+#define GET_USER_USER           0
-+#define GET_USER_KERNEL_TOP     1
-+#define GET_USER_KERNEL_BOT     2
-+#define GET_USER_KERNEL         3
-+
- #define TEST_MASK               0x7f
-+#define L5_SIGN_EXT_MASK        (0xFFUL << 56)
-+#define L4_SIGN_EXT_MASK        (0x1FFFFUL << 47)
- 
- #define LOW_ADDR                (0x1UL << 30)
- #define HIGH_ADDR               (0x3UL << 48)
-+#define L5_ADDR                 (0x1UL << 48)
- 
- #define MALLOC_LEN              32
- 
-@@ -370,6 +380,54 @@ static int handle_syscall(struct testcases *test)
- 	return ret;
- }
- 
-+static int get_user_syscall(struct testcases *test)
-+{
-+	int ret = 0;
-+	int ptr_value = 0;
-+	void *ptr = &ptr_value;
-+	int fd;
-+
-+	uint64_t bitmask = ((uint64_t)ptr & L5_ADDR) ? L5_SIGN_EXT_MASK :
-+						       L4_SIGN_EXT_MASK;
-+
-+	if (test->lam != 0)
-+		if (set_lam(test->lam) != 0)
-+			return 2;
-+
-+	fd = memfd_create("lam_ioctl", 0);
-+	if (fd == -1)
-+		exit(EXIT_FAILURE);
-+
-+	switch (test->later) {
-+	case GET_USER_USER:
-+		/* Control group - properly tagger user pointer */
-+		ptr = (void *)set_metadata((uint64_t)ptr, test->lam);
-+		break;
-+	case GET_USER_KERNEL_TOP:
-+		/* Kernel address with top bit cleared */
-+		bitmask &= (bitmask >> 1);
-+		ptr = (void *)((uint64_t)ptr | bitmask);
-+		break;
-+	case GET_USER_KERNEL_BOT:
-+		/* Kernel address with bottom sign-extension bit cleared */
-+		bitmask &= (bitmask << 1);
-+		ptr = (void *)((uint64_t)ptr | bitmask);
-+		break;
-+	case GET_USER_KERNEL:
-+		/* Try to pass a kernel address */
-+		ptr = (void *)((uint64_t)ptr | bitmask);
-+		break;
-+	default:
-+		printf("Invalid test case value passed!\n");
-+		break;
-+	}
-+
-+	if (ioctl(fd, FIOASYNC, ptr) != 0)
-+		ret = 1;
-+
-+	return ret;
-+}
-+
- int sys_uring_setup(unsigned int entries, struct io_uring_params *p)
- {
- 	return (int)syscall(__NR_io_uring_setup, entries, p);
-@@ -883,6 +941,33 @@ static struct testcases syscall_cases[] = {
- 		.test_func = handle_syscall,
- 		.msg = "SYSCALL:[Negative] Disable LAM. Dereferencing pointer with metadata.\n",
- 	},
-+	{
-+		.later = GET_USER_USER,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER: get_user() and pass a properly tagged user pointer.\n",
-+	},
-+	{
-+		.later = GET_USER_KERNEL_TOP,
-+		.expected = 1,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER:[Negative] get_user() with a kernel pointer and the top bit cleared.\n",
-+	},
-+	{
-+		.later = GET_USER_KERNEL_BOT,
-+		.expected = 1,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER:[Negative] get_user() with a kernel pointer and the bottom sign-extension bit cleared.\n",
-+	},
-+	{
-+		.later = GET_USER_KERNEL,
-+		.expected = 1,
-+		.lam = LAM_U57_BITS,
-+		.test_func = get_user_syscall,
-+		.msg = "GET_USER:[Negative] get_user() and pass a kernel pointer.\n",
-+	},
- };
- 
- static struct testcases mmap_cases[] = {
--- 
-2.46.2
-
+BTW if you would like to keep using the uapi/linux/android directory
+feel free to add this as the first patch of the series:
+https://github.com/kuba-moo/linux/commit/73fde49060cd89714029ccee5d37dcc37b8291f6
 
