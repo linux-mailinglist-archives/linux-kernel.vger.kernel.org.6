@@ -1,203 +1,115 @@
-Return-Path: <linux-kernel+bounces-387520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A099B5246
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:58:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0149B524E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:00:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2021F2474B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:58:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 812D0B21BE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:00:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95843206E8C;
-	Tue, 29 Oct 2024 18:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F3B206E69;
+	Tue, 29 Oct 2024 19:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GM6laftD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DF8/aj4A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32CC205159;
-	Tue, 29 Oct 2024 18:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED7DDDBE;
+	Tue, 29 Oct 2024 19:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730228317; cv=none; b=fP5f6nM263CHXhgPI35zzcIzaBNQeuvO2kQmmNwQLh0yL6SbhVlN51Uf5X+DxCl2v3emvQtfr8IzDDsvpfQEjiQNBcNPtSx7hzSODI0NJg2vyypa48gKPxV2acVuh3T7jPgrMuOVsHxTe6eeXgRDu2lLr+IJ85d80sTx8uzzYDY=
+	t=1730228427; cv=none; b=TiJbJfFRk4PVQlyujAwhoQIbheqP5knRa6auMLuLWpOY+b15Xnx9ZCm39MHxELS+ZlJxj5RKspY3qf+jG6LWmrt5ZlyZ699U/X+3D0b9Lasi1kBSaCHEnsUAcPndHbpu1iOwzh2hTNMre3AiJqyPwLtZTLWt2YA3+er+3mAnCyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730228317; c=relaxed/simple;
-	bh=4W0HlC2Kj2crp2BfxjlLbRWtQ2TtBDLWnNobKyX3lLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=F7BBQ93qm50d6KS6JDoEGnx9b8yLlg33gK3n58yH480fvQWpxs41RHD2eWU9vpW4K+ep7dR0SLDyGsHnPNrj+bRdgbOYgpdpkVWQtLg46nQzm588OCWEztdtAUuUnPrzOYsDY899x7q9+FBlo4+vfG5yu3dzzB27CxGdPUkaiS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GM6laftD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T8kLjZ028808;
-	Tue, 29 Oct 2024 18:58:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mMCcaLZmre/30OJO8WljAYdE/vnQtOlJelWRG+D9fQ4=; b=GM6laftDmoACMeta
-	BGKsZRxJqJKeXyKxqGjSiNchu2K5PA15B3h46GOvrHwp6Wtv6zSVqGsQv5URM09L
-	UlyvGyeJusABpXzGrTci4IJP8MoqqwvAtZdAobJwEw8MDbXHTnXpAvFLbShPFZMN
-	cGM2oWendTaWZDn3aue/EDMztyOZVzBtvmLaPFHg87vugWVzvKkZZedct0jN1jjL
-	LsSWcbxL+0pRjInhfRZ9avM2w2QQ0PUu61MNeYTrUsrh0r1znk3aCbLZffibCSBi
-	5bw1eOVXJEXBoh0PUO4MMhnYrQuRS5QjcepsdWgBnrL9JhxhtilF3KdZyXkA/uib
-	J7zDCw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8heue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 18:58:04 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TIw3DJ014208
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 18:58:03 GMT
-Received: from [10.71.115.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
- 2024 11:58:03 -0700
-Message-ID: <52ea0b32-79c7-42e8-8e2c-192d08f41e64@quicinc.com>
-Date: Tue, 29 Oct 2024 11:58:03 -0700
+	s=arc-20240116; t=1730228427; c=relaxed/simple;
+	bh=y4blAUiLkKNBuzymZwHaU201Y8f7DqejWNtvVRzItxU=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ADtZyyFe3n204uuc/Y2DXb1UPRJXk0wMhz/UBYIXT2C23YImmLF5ecSPPRpkbp6kBOduArUFGMdjx4HilM8n0e/6lR2qTNBCdQyKMWfBNYMzKl8KmKB/VyY7O0TobxPQUP+TP0t/ccBP9GpkOQ8OT04h96Cw5fH/0wzwIrzqbWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DF8/aj4A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C560C4CECD;
+	Tue, 29 Oct 2024 19:00:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730228427;
+	bh=y4blAUiLkKNBuzymZwHaU201Y8f7DqejWNtvVRzItxU=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DF8/aj4AVYFgFEB4m+1kTZCFWcoXSeUGt6Ve7viDSuDosfW8WKqj3x+vyZKHkAnNw
+	 EuUcjcRbsplovPSjrJhVskS0OBZT62oDJYB9Gtc0y2TK1vTJqARy1yJeiETs/RUb4a
+	 sHKtv7mm8caPUxfQk74P2HBPa0zYaluttv37FsoOpTJyJDklMDweouo8Ulu+gK/Sdj
+	 Oc7kqBBcT0OoS0LY5oi0cE07l3CXW8rfln4tz2qDZY06uUOnaChyeQIIzpLDfZZLH1
+	 i6yWmWjAIR018FpRCikRAbK2lqvVi2riXGOhy9CRcilsN/CPMTO0d9ijsL1hREjbu6
+	 NizeVJxluPTRg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EC7F7380AC08;
+	Tue, 29 Oct 2024 19:00:35 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v29 04/33] xhci: sideband: add initial api to register a
- sideband entity
-To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-CC: "srinivas.kandagatla@linaro.org" <srinivas.kandagatla@linaro.org>,
-        "mathias.nyman@intel.com" <mathias.nyman@intel.com>,
-        "perex@perex.cz"
-	<perex@perex.cz>,
-        "conor+dt@kernel.org" <conor+dt@kernel.org>,
-        "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "corbet@lwn.net"
-	<corbet@lwn.net>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "tiwai@suse.com" <tiwai@suse.com>,
-        "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-        "pierre-louis.bossart@linux.intel.com"
-	<pierre-louis.bossart@linux.intel.com>,
-        "broonie@kernel.org"
-	<broonie@kernel.org>,
-        "bgoswami@quicinc.com" <bgoswami@quicinc.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "linux-sound@vger.kernel.org"
-	<linux-sound@vger.kernel.org>,
-        "linux-input@vger.kernel.org"
-	<linux-input@vger.kernel.org>,
-        "linux-usb@vger.kernel.org"
-	<linux-usb@vger.kernel.org>,
-        "linux-arm-msm@vger.kernel.org"
-	<linux-arm-msm@vger.kernel.org>,
-        "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>,
-        "alsa-devel@alsa-project.org"
-	<alsa-devel@alsa-project.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>
-References: <20241015212915.1206789-1-quic_wcheng@quicinc.com>
- <20241015212915.1206789-5-quic_wcheng@quicinc.com>
- <20241025232252.wsk4lviqzyzqjzuh@synopsys.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <20241025232252.wsk4lviqzyzqjzuh@synopsys.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 47BSqjjk7MLktpZ_JdwbGROYbtTP0iEy
-X-Proofpoint-ORIG-GUID: 47BSqjjk7MLktpZ_JdwbGROYbtTP0iEy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=893 impostorscore=0
- lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410290142
+Subject: Re: [PATCH] net: usb: qmi_wwan: add Quectel RG650V
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173022843477.790671.16218877187194108195.git-patchwork-notify@kernel.org>
+Date: Tue, 29 Oct 2024 19:00:34 +0000
+References: <20241024151113.53203-1-benoit.monin@gmx.fr>
+In-Reply-To: <20241024151113.53203-1-benoit.monin@gmx.fr>
+To: =?utf-8?b?QmVub8OudCBNb25pbiA8YmVub2l0Lm1vbmluQGdteC5mcj4=?=@codeaurora.org
+Cc: bjorn@mork.no, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ netdev@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-Hi Thinh,
+Hello:
 
-On 10/25/2024 4:22 PM, Thinh Nguyen wrote:
-> Hi,
->
-> On Tue, Oct 15, 2024, Wesley Cheng wrote:
->> From: Mathias Nyman <mathias.nyman@linux.intel.com>
->>
->> Introduce XHCI sideband, which manages the USB endpoints being requested by
->> a client driver.  This is used for when client drivers are attempting to
->> offload USB endpoints to another entity for handling USB transfers.  XHCI
->> sideband will allow for drivers to fetch the required information about the
->> transfer ring, so the user can submit transfers independently.  Expose the
->> required APIs for drivers to register and request for a USB endpoint and to
->> manage XHCI secondary interrupters.
->>
->> Multiple ring segment page linking, proper endpoint clean up, and allowing
->> module compilation added by Wesley Cheng to complete original concept code
->> by Mathias Nyman.
->>
->> Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
->> Co-developed-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
->> ---
->>  drivers/usb/host/Kconfig          |   9 +
->>  drivers/usb/host/Makefile         |   2 +
->>  drivers/usb/host/xhci-sideband.c  | 424 ++++++++++++++++++++++++++++++
->>  drivers/usb/host/xhci.h           |   4 +
->>  include/linux/usb/xhci-sideband.h |  70 +++++
->>  5 files changed, 509 insertions(+)
->>  create mode 100644 drivers/usb/host/xhci-sideband.c
->>  create mode 100644 include/linux/usb/xhci-sideband.h
->>
->> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
->> index 4448d0ab06f0..96659efa4be5 100644
->> --- a/drivers/usb/host/Kconfig
->> +++ b/drivers/usb/host/Kconfig
->> @@ -104,6 +104,15 @@ config USB_XHCI_RZV2M
->>  	  Say 'Y' to enable the support for the xHCI host controller
->>  	  found in Renesas RZ/V2M SoC.
->>  
->> +config USB_XHCI_SIDEBAND
->> +	tristate "xHCI support for sideband"
->> +	help
->> +	  Say 'Y' to enable the support for the xHCI sideband capability.
->> +	  Provide a mechanism for a sideband datapath for payload associated
-> Please correct me if I'm wrong, but this doesn't look like the actual
-> xHCI Audio Sideband capability described in the xHCI spec section 7.9
-> but rather a specific implementation for Qcom right? For the xHCI Audio
-> Sideband xHCI capability, the driver should detect this capability
-> through the xHCI get extended capability. If this is not xHCI Audio
-> Sideband capability, we should properly clarify this in the
-> documentation and the naming of things to avoid any confusion.
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Sure, that's a good point.  It does still currently rely on utilizing the system memory for USB IO transfers.  I can add some comments and update some of the documentation to reflect that this is different. 
+On Thu, 24 Oct 2024 17:11:13 +0200 you wrote:
+> Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
+> The composition is DIAG / NMEA / AT / AT / QMI.
+> 
+> T:  Bus=02 Lev=01 Prnt=01 Port=03 Cnt=01 Dev#=  4 Spd=5000 MxCh= 0
+> D:  Ver= 3.20 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 9 #Cfgs=  1
+> P:  Vendor=2c7c ProdID=0122 Rev=05.15
+> S:  Manufacturer=Quectel
+> S:  Product=RG650V-EU
+> S:  SerialNumber=xxxxxxx
+> C:  #Ifs= 5 Cfg#= 1 Atr=a0 MxPwr=896mA
+> I:  If#= 0 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=ff Prot=30 Driver=option
+> E:  Ad=01(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=81(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> I:  If#= 1 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+> E:  Ad=02(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=82(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> I:  If#= 2 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+> E:  Ad=03(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=83(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=84(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
+> I:  If#= 3 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+> E:  Ad=04(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=85(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=86(I) Atr=03(Int.) MxPS=  10 Ivl=9ms
+> I:  If#= 4 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=qmi_wwan
+> E:  Ad=05(O) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=87(I) Atr=02(Bulk) MxPS=1024 Ivl=0ms
+> E:  Ad=88(I) Atr=03(Int.) MxPS=   8 Ivl=9ms
+> Signed-off-by: Benoît Monin <benoit.monin@gmx.fr>
+> 
+> [...]
 
-Thanks
+Here is the summary with links:
+  - net: usb: qmi_wwan: add Quectel RG650V
+    https://git.kernel.org/netdev/net/c/6b3f18a76be6
 
-Wesley Cheng
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
 
-> I believe your implementation still needs to provide the data to the
-> host controller through the system memory right? The xHCI Audio Sideband
-> capability may pass the data to the xHC other than the main memory.
->
-> BR,
-> Thinh
->
->> +	  with audio class endpoints. This allows for an audio DSP to use
->> +	  xHCI USB endpoints directly, allowing CPU to sleep while playing
->> +	  audio.
->> +
->>  config USB_XHCI_TEGRA
->>  	tristate "xHCI support for NVIDIA Tegra SoCs"
->>  	depends on PHY_TEGRA_XUSB
+
 
