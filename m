@@ -1,144 +1,124 @@
-Return-Path: <linux-kernel+bounces-387435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 361CB9B514D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:49:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312A59B514B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:49:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF62228197C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:49:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC6941F24341
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4229C2F56;
-	Tue, 29 Oct 2024 17:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CB31DA305;
+	Tue, 29 Oct 2024 17:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="DHTO3wKp"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wk5CMGaw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C4A0196D9D;
-	Tue, 29 Oct 2024 17:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714192F56;
+	Tue, 29 Oct 2024 17:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730224188; cv=none; b=Gz8Ip4OMTC6Flx5HAJGC3AxLycqvIeCoRX2wF49ufDrSKQ1+kNODeNv1X1B9tGzTzXzG4zwGr5GH0lz30Ovyi+kXa7CQFmVrts6dYQ/s8K3bVICNpCPkWmRDXCkKpN1H23xoiFcJpmaz0NwmS3tiChGTiwxdPMuIRrguVGcC94k=
+	t=1730224156; cv=none; b=kscItqx1BN7g/Aatek3eVsLVz+AVFNIVuIaXmJOf8YTInjDdQCVD1HK92W36VKWt0tZBxR1MAnRB1zN+qzyxOmyAgF8hu58d/wF87rqHtM52JeKs63fS4h01fE51wg18N19HM9yYq60BlqZiP+i0q839OnbGz2OqrlND/xrw7IQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730224188; c=relaxed/simple;
-	bh=pCP6F22tvxZvOWh5+5TuquBz9CFZUn5EBro1iIOV/jM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JKORUOvNykhgGPzVHDGKkx0CNcUJABilMiutVaPM4b3H1OIv8IOyLcSrDdVtVDRMcFZLv8AAvzNyvL0mTaz4TPSVRqmKS8dhSt6b4jO0qQwnTeyFB6Olo/RhijA4mSkpNH6r4INuYNDZAix4xpP9fX/ndDi7NIvhezCaymuqf8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=DHTO3wKp; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1730224178;
-	bh=pCP6F22tvxZvOWh5+5TuquBz9CFZUn5EBro1iIOV/jM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DHTO3wKpMyFkzyj1slQsywEGxFO7vENCZNeRQvxQAGbwqAXjSjYBQ0YUgZDKGYuLv
-	 oQBp3+xr3FPLtI7I6sLrUuYi/S908UnwNuLw6YOtz1yNhWS2zIRfrlr3dvKhDiNbm3
-	 AvOnqkLP8s8tqFJXMx2jH5RMMqdgt59w/CEufKlvf1odZD909gpeZMFx+q/mjCBJG8
-	 oHZ5wmbBaCc5Tlm7R7s2W2/HVX6ZW07M+PSKwODVpBcxbC0KkVVRHD1pIDg88Ux/bK
-	 uACboB6x2FU4z3kraJDMEqu48/mzNeU0xGa4LenQCJ4AJQ0rPkMs+2TLOw5L5Y+YRq
-	 R0f9jtVhjbBAw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XdHns74T4z166T;
-	Tue, 29 Oct 2024 13:49:37 -0400 (EDT)
-Message-ID: <bcd11a07-45fb-442b-a25b-5cadc6aac0e6@efficios.com>
-Date: Tue, 29 Oct 2024 13:47:59 -0400
+	s=arc-20240116; t=1730224156; c=relaxed/simple;
+	bh=oc8pgGQcFdQ8ybpsBOFVVrU/0ICTotD0WDj4WYDh3AE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KK5jisJ8NK+c9icaQbAxrZ/jkHzycLxKiQqqB15F7XuzttgJvPsS+qh0MxxK63zS5f+BEgtLrtiWbcf5aueoHc/gn9PHcg5k4y/EAcpZpLYbUB80mJYAM0ig+Bnarr8ZUAuhKc8FzVr/FH9CgTG/lkKp1K4ZdF9haN5znyVC5DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wk5CMGaw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39229C4CEE5;
+	Tue, 29 Oct 2024 17:49:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730224156;
+	bh=oc8pgGQcFdQ8ybpsBOFVVrU/0ICTotD0WDj4WYDh3AE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Wk5CMGawl4iSjxgRYfbq4GTu+DBD8Jj0YQD73M5X460ajsO4bI1uBN+q8N+yoXi7+
+	 sPKpvZpda+ObyawlFhnGEHk2aYIbf7LfjOuBqY8wlxBSwNWrJGry20f4SK1cdvIu4c
+	 Ca83rGxF5bcDl7Hxu+D9K5qMfCBhtATBgHWsMTUmV7TBCZ1Cba7tHi4eWKWTVSXitC
+	 tiieJui9rx1JdQzSZ9GV387egr+kumG8YKJ7g244C87tGyqqitY3vBiRgYX9Qfm1Ho
+	 eT3vc6iKHLkjQhUaEJVHY/sK9OH+Nm1EPrWNeRGR/+nxcJlfkOUngn/KnmBioBiFCo
+	 AzqS7Un1BNNZg==
+From: Mario Limonciello <superm1@kernel.org>
+To: "Rafael J . Wysocki" <rafael@kernel.org>
+Cc: Len Brown <lenb@kernel.org>,
+	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Ivan Shapovalov <intelfx@intelfx.name>,
+	Oleksandr Natalenko <oleksandr@natalenko.name>
+Subject: [PATCH] ACPI: processor: Move arch_init_invariance_cppc() call later
+Date: Tue, 29 Oct 2024 12:49:10 -0500
+Message-ID: <20241029174910.600482-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-To: Josh Poimboeuf <jpoimboe@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Ingo Molnar <mingo@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
- linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
- Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
- Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Jens Remus <jremus@linux.ibm.com>, Florian Weimer <fweimer@redhat.com>,
- Andy Lutomirski <luto@kernel.org>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
- <20241029135617.GB14555@noisy.programming.kicks-ass.net>
- <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241029171752.4y67p3ob24riogpi@treble.attlocal.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024-10-29 13:17, Josh Poimboeuf wrote:
-> On Tue, Oct 29, 2024 at 02:56:17PM +0100, Peter Zijlstra wrote:
->> On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
->>
->>> + * The only exception is when the task has migrated to another CPU, *and* this
->>> + * is called while the task work is running (or has already run).  Then a new
->>> + * cookie will be generated and the callback will be called again for the new
->>> + * cookie.
->>
->> So that's a bit crap. The user stack won't change for having been
->> migrated.
->>
->> So perf can readily use the full u64 cookie value as a sequence number,
->> since the whole perf record will already have the TID of the task in.
->> Mixing in this CPU number for no good reason and causing trouble like
->> this just doesn't make sense to me.
->>
->> If ftrace needs brain damage like this, can't we push this to the user?
->>
->> That is, do away with the per-cpu sequence crap, and add a per-task
->> counter that is incremented for every return-to-userspace.
-> 
-> That would definitely make things easier for me, though IIRC Steven and
-> Mathieu had some concerns about TID wrapping over days/months/years.
-> 
-> With that mindset I suppose the per-CPU counter could also wrap, though
-> that could be mitigated by making the cookie a struct with more bits.
-> 
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-AFAIR, the scheme we discussed in Prague was different than the
-implementation here.
+arch_init_invariance_cppc() is called at the end of
+acpi_cppc_processor_probe() in order to configure frequency invariance
+based upon the values from _CPC.
 
-We discussed having a free-running counter per-cpu, and combining it
-with the cpu number as top (or low) bits, to effectively make a 64-bit
-value that is unique across the entire system, but without requiring a
-global counter with its associated cache line bouncing.
+This however doesn't work on AMD CPPC shared memory designs that have
+AMD preferred cores enabled because _CPC needs to be analyzed from all
+cores to judge if preferred cores are enabled.
 
-Here is part where the implementation here differs from our discussion:
-I recall we discussed keeping a snapshot of the counter value within
-the task struct of the thread. So we only snapshot the per-cpu value
-on first use after entering the kernel, and after that we use the same
-per-cpu value snapshot (from task struct) up until return to userspace.
-We clear the task struct cookie snapshot on return to userspace.
+This issue manifests to users as a warning since commit 21fb59ab4b97
+("ACPI: CPPC: Adjust debug messages in amd_set_max_freq_ratio() to warn"):
+```
+Could not retrieve highest performance (-19)
+```
 
-This way, even if the thread is migrated during the system call, the
-cookie value does not change: it simply depends on the point where it
-was first snapshotted (either before or after migration). From that
-point until return to userspace, we just use the per-thread snapshot
-value.
+However the warning isn't the cause of this, it was actually
+commit 279f838a61f9 ("x86/amd: Detect preferred cores in
+amd_get_boost_ratio_numerator()") which exposed the issue.
 
-This should allow us to keep a global cookie semantic (no need to
-tie this to tracer-specific knowledge about current TID), without the
-migration corner cases discussed in the comment above.
+To fix this problem, push the call to the arch_init_invariance_cppc()
+macro to the end of acpi_processor_driver_init().
 
-Thanks,
+Fixes: 279f838a61f9 ("x86/amd: Detect preferred cores in amd_get_boost_ratio_numerator()")
+Reported-by: Ivan Shapovalov <intelfx@intelfx.name>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219431
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/acpi/cppc_acpi.c        | 2 --
+ drivers/acpi/processor_driver.c | 1 +
+ 2 files changed, 1 insertion(+), 2 deletions(-)
 
-Mathieu
-
+diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+index c3fc2c05d8687..f8614771bf32b 100644
+--- a/drivers/acpi/cppc_acpi.c
++++ b/drivers/acpi/cppc_acpi.c
+@@ -905,8 +905,6 @@ int acpi_cppc_processor_probe(struct acpi_processor *pr)
+ 		goto out_free;
+ 	}
+ 
+-	arch_init_invariance_cppc();
+-
+ 	kfree(output.pointer);
+ 	return 0;
+ 
+diff --git a/drivers/acpi/processor_driver.c b/drivers/acpi/processor_driver.c
+index cb52dd000b958..59620e7bc6647 100644
+--- a/drivers/acpi/processor_driver.c
++++ b/drivers/acpi/processor_driver.c
+@@ -270,6 +270,7 @@ static int __init acpi_processor_driver_init(void)
+ 				  NULL, acpi_soft_cpu_dead);
+ 
+ 	acpi_processor_throttling_init();
++	arch_init_invariance_cppc();
+ 	return 0;
+ err:
+ 	driver_unregister(&acpi_processor_driver);
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+2.43.0
 
 
