@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-386428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE6BE9B4357
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:41:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE189B435C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:42:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73501283A1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:41:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB5DBB211CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A69202F68;
-	Tue, 29 Oct 2024 07:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A70B202F70;
+	Tue, 29 Oct 2024 07:42:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="njc8eg0u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfrhLZTP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67349201265;
-	Tue, 29 Oct 2024 07:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7F61201111;
+	Tue, 29 Oct 2024 07:42:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730187699; cv=none; b=WAjeQ5wsFNzg1PpnpQybUAgx24Zx/+/vdqqJJi3xxsA105zx5uJSpJqeeqgp6RDGncA657gSzn1/1nGByn8VoEzvvKY/ogwCq6ZwNYwv8EGBNq3zTwz2z53UubLJcXPWBWRnjJ9g4r47XYT4GDDJ8Ko9hPPBH5v89+DxR9fxJGM=
+	t=1730187752; cv=none; b=bh5UKnVbMVVWRXumC7q3pHwt0xz9A8dbthZdfkvfm1gxlRvjYag3YY47IfcATyVzmK11pbk24xRJbNLPIZyi+GWINrQNatXFWJd/WNkT8/9t31cPngR1NzI3v26HiXxyptFS3GCtncOO2WfOZ97rCHjSKe320+D3NG9Es4oYT8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730187699; c=relaxed/simple;
-	bh=IQEh5EussygJgUUzWfJeQ/FXr/FcOcbs/szaZmJBHo0=;
+	s=arc-20240116; t=1730187752; c=relaxed/simple;
+	bh=liBtFeMwtP64ocYIQSXe0Z2jastcoh23QSMUm8LtdDU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XmP4r5xzh7svJvNJteDp6n1jCmx3RXilHdYghjRtrsDmBcUKjy5WyOzB77sNHh64CrhsJqHfIGs8EezfvMG5E3wZqsD4ZY0IcoIaxHz2HzXpT5PPiUGF1n+Mq9B78vxtJPemoQF8BQM1gR4fe0dK9dAPE4uaYzzv3LubuDLumEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=njc8eg0u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1029AC4CECD;
-	Tue, 29 Oct 2024 07:41:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=eoNcCH04SnUM5gpwSLNoY5Ufbon3sZ3pD6+PjjkWHm4AI5wLlBXtAClH/MPlk/8xsAoM3BekQl/wBgqV+PcjYAx/dqE+MKRNSTUUca0jMBdJHMjwUoVdAUAuxfWIRsbDzssIU/z9TykAMPn1UoCMXThcav/5Ijsw6d5NW56caNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PfrhLZTP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FEECC4CECD;
+	Tue, 29 Oct 2024 07:42:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730187699;
-	bh=IQEh5EussygJgUUzWfJeQ/FXr/FcOcbs/szaZmJBHo0=;
+	s=k20201202; t=1730187752;
+	bh=liBtFeMwtP64ocYIQSXe0Z2jastcoh23QSMUm8LtdDU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=njc8eg0uqZRauuWTgMREq2+3I7fvICMvCytUBaD/jwew7xxd5bgg8a7910TU+wX2n
-	 kiyTZNV3+e8S/pcF/U01MPhOPstYT3tEZop20jisA5cwaOLHAXAvwHY/UgCLgiOjTu
-	 cxMfs6vllDscfNutuo6b+CsZkyzrjxVAW3U7p1kW5j/iKK4SFHkdFGGP2mqMYgJpLv
-	 W3DVWga7+Zkz1Xa0Y1TAojKBasRXBwQkA5jEEf7ZqKiuXk25JE9rQudaRzrtKqUCNV
-	 vL1zc3zVA54QF8GKsfuBaUEx1sR1zc9sFrHdQrRbN23ruSqFqFfnrSfrdCiTfb/sGu
-	 VaQhZ03dg1EZA==
-Date: Tue, 29 Oct 2024 08:41:34 +0100
+	b=PfrhLZTP58+0iqvDVfNlo2LDZc60cbMYaZnn4aUpXvXVZtpwAxLqw2bMAnINyQEP8
+	 knmStMgbPQpbCQarKCzzCvmvNFVTAdGzanhA/ib5HXxPk1gSZOdvy0jJeEqmuhpwZI
+	 JOL0hjRrPK/WxeYeUCzLOWFqvBWsPoYVKghVk+hrC8J2+5p1da/fOYKM25wYdYXxPm
+	 PO8vh6xe2g3qH8ZOEabKTB0sES5g8/eOMZ2XgU6TwQTeTu08tw8wgz6vDi5OH5pjuU
+	 CZ5d1bMJbZ/UCUbBWRsQI/orvFDlZxn0F/MDPaJUBorpjnn6EpEXY/QzZTI4nEpeYO
+	 UB7PtmBImRpMw==
+Date: Tue, 29 Oct 2024 08:42:28 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH asahi-soc/dt 02/10] dt-bindings: arm: apple:
- apple,pmgr-pwrstate: Add A7-A11 compatibles
-Message-ID: <hz56qyjzjb5ah6hpp3wlpiewmo575gej6nljomgy5hdtacfuk6@7azefzbmokcl>
-References: <20241029010526.42052-1-towinchenmi@gmail.com>
- <20241029010526.42052-3-towinchenmi@gmail.com>
+To: Xin Liu <quic_liuxin@quicinc.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, 
+	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com, 
+	quic_jiegan@quicinc.com, quic_aiquny@quicinc.com, quic_tingweiz@quicinc.com
+Subject: Re: [PATCH v1 1/3] dt-bindings: watchdog: Document Qualcomm QCS8300
+Message-ID: <lda7722a6nock6qs7femz63eiiwq4ww3p7p3k5plvqsgihvutv@viktvfs66mzx>
+References: <20241029031222.1653123-1-quic_liuxin@quicinc.com>
+ <20241029031222.1653123-2-quic_liuxin@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,16 +61,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241029010526.42052-3-towinchenmi@gmail.com>
+In-Reply-To: <20241029031222.1653123-2-quic_liuxin@quicinc.com>
 
-On Tue, Oct 29, 2024 at 09:04:00AM +0800, Nick Chan wrote:
-> The blocks found on Apple A7-A11 SoCs are compatible with the existing
-> driver so add their per-SoC compatible.
+On Tue, Oct 29, 2024 at 11:12:20AM +0800, Xin Liu wrote:
+> Add devicetree binding for watchdog present on Qualcomm
+> QCS8300 SoC.
 > 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
 > ---
->  .../devicetree/bindings/power/apple,pmgr-pwrstate.yaml       | 5 +++++
->  1 file changed, 5 insertions(+)
+>  Documentation/devicetree/bindings/watchdog/qcom-wdt.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 
 Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
