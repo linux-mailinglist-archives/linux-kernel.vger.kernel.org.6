@@ -1,212 +1,162 @@
-Return-Path: <linux-kernel+bounces-386310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FF19B41C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:17:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5079B41CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:25:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7E4828318F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:17:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EDD41C21B80
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C6A2200CA4;
-	Tue, 29 Oct 2024 05:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OJqtFvdA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03143200CA4;
+	Tue, 29 Oct 2024 05:25:24 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C8D218858E;
-	Tue, 29 Oct 2024 05:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5741618858E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:25:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730179051; cv=none; b=pG63tzXq/ylaSvX9zeIsA9lkFPk0o9e3QkqcqDoTuSw/8GukrccFDcoht6+0lVGobGcsxupZkSdgWHKOW+g3CEG+V20tFcuS5u5WoDxksMtxxQyRZYkcIqoPSRXjQl0Hg2nhrZlqkL9XlH/q4NxKp/Et5Sg4NaEkciTC1U+HL5U=
+	t=1730179523; cv=none; b=fwB7UL6YJ2UJqZpGJZ3lvZ3JtaKIU686S9VNbhV3Y1OkaLrmI9vHXcGrEcSgklGjHd4epuWrSvAx9577CuvYPGIpYyils363pjwM4kiHeP7p9b2TlZk5sjWp84mXHDBxXEQ1j1VS5Wxpy/aAwHuaP59npYwpJuA2ZaSR0yI7pb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730179051; c=relaxed/simple;
-	bh=wYzqGG4Q4km+Ns90Q8Gc0gCM5Ljv8dlXhbxvfw/BdJY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s6fswdRnR0JeqjshW2BYqL6rJeyr8T9R91hp7v2OwRNqxOgF8eqN25UiCPkh6M7AfMRZg7wNsMDZofNCwmAP9m/zQcBD1Y/K1s9P+FqXC8IhZQ5jbvNAUTwcFEjYmvUluMf3kZNdqWE2FZ8MoR4kQitqU82P4obkNMVnXR8qqAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OJqtFvdA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SKlFmP004097;
-	Tue, 29 Oct 2024 05:17:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0MyGFX8jJVi9uGPNcl3ITQ2goh4f1GsXNKt44nFiyqg=; b=OJqtFvdALEKElghO
-	Kb3d2JIGsu3a+a2FzoYefeLqMLiOwpnjbdRkBStR7xXMRyMvTirV7fgBEIgN7MEa
-	a+A1tnMcRaI9Qpai/0cZzcj3iZapGShhvvDbYfPAKmfbQ2PulaCi/y+yDqFk3euY
-	94Who8OOCxyE4bs8v9kNc2mYiZzTzFOZDC4AzgmG9nEmV6TMklE5lmR596axoMq/
-	xW/hVuWu1tdFu9FU7x7nlnEZV73e53HF4GOGfzFQBV2+0RSrS5qR/nEG1v2vfs/5
-	rf5ZVMa2f7G/Zk+iesPnmYgPT9AzMmp5CpjFrUZ9hgJ17O+Y5S3Qgh/HzUpkBf5I
-	aKodrA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gnsmqf9j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 05:17:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T5H80D012175
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 05:17:08 GMT
-Received: from [10.216.61.9] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 22:17:03 -0700
-Message-ID: <36ec01f4-c0fb-188e-06e9-10c7360a8ef0@quicinc.com>
-Date: Tue, 29 Oct 2024 10:47:00 +0530
+	s=arc-20240116; t=1730179523; c=relaxed/simple;
+	bh=ouaRojEgmeFmyMh3Zx7lTlSsvvjtG/+KEMGk818F4Mc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=RqYkpiqd8AvhikOyFM8mmWdLM8/inBdoHGpQAGxIGTMW89rR29bUeSvXfsRdPD2iQyeU4i5GqiTpQ+VrUdrT3f1bqMCzrl+FnKDXLZW0QH/QlEMwNxQ6mTGM6kd9ZIT/LapcdXf+/5wQRBvp0PqDSlUC7MgWugcRnWKJXh+oT7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso47421485ab.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 22:25:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730179520; x=1730784320;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UtLW7kt2lpVHCZBstYleod/T5Fypm0cx/Eb+Hfave2Q=;
+        b=Ma0XUZvp6JUCJ0sSIQCsdYI4cUmtENy+QuDRLM4bh4nabyjwgzuWIrQiHMJRmurRb4
+         b16EUMpD/Uo8oKY2xHbo7DUK46qf84F7OgAOA5qV/XUkipM+wNurI6MOrRdJGyEcUdOC
+         GJYKOYib5ek6j0nLjRZOI1ycPT6lO6r8y7Fm5pbJcnxksD7Sh60cavQ7szitKmfumZ6U
+         QayjhCjEsm0sSYolU/xHegGQDS8orucymiN61NiXqYMHoYStQjsE8ftuezIimXcBQn2T
+         Xzwu6M44pgVyeSGukRzTJXp80XM1HentG3cPw7e3IQu83fwGtVKp4v3DxRrTKTzo/XGp
+         qBXw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgVfbl4bNBzVy/r9A2P4EC8fcSSKt+ClvMvH3dqHMUBo8/1jGBSAKvuJdczyqN+qSZO4BHaJkizvZ2MRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2jcAnYhZsc01ovxl4LBqJw8CtWSSqoVnR4Grv+hMdKcHiAM7G
+	nyDyARa1ztsJvE4hpCQ/h5M4twuaW/KD5AXW5e6Pr2kXXe7gZT2WUK6uDatRhyLaX+piLiT4bDO
+	pzoboArk8Y56AteWyH6xHoqOSGRNI5YjNeMkbOe0nVtD/xkb1UITPTrg=
+X-Google-Smtp-Source: AGHT+IFe3uyW25N53YtvRDYKHHo1+Ozqb90PdGhTd/1aG/Clhiy6nI8K2C/S13CG9yigzDdYzaEZ2NIeIIayh+fZNmy47K/114Zy
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/1] RFC: dt bindings: Add property "brcm,gen3-eq-presets"
-Content-Language: en-US
-To: James Quinlan <james.quinlan@broadcom.com>, Rob Herring <robh@kernel.org>
-CC: <linux-pci@vger.kernel.org>, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <jim2101024@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "moderated list:BROADCOM BCM7XXX ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-        "moderated
- list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
-	<linux-rpi-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND
- FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <20241018182247.41130-1-james.quinlan@broadcom.com>
- <20241018182247.41130-2-james.quinlan@broadcom.com>
- <20241021190334.GA953710-robh@kernel.org>
- <77d3a1a9-c22d-0fd3-5942-91b9a3d74a43@quicinc.com>
- <954d6c11-ab4e-485f-8152-94bf38625f9c@broadcom.com>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <954d6c11-ab4e-485f-8152-94bf38625f9c@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jcJScyLt2nHXQq_s-udtJhOC43-wGizG
-X-Proofpoint-GUID: jcJScyLt2nHXQq_s-udtJhOC43-wGizG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- malwarescore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
- adultscore=0 priorityscore=1501 bulkscore=0 phishscore=0 spamscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290040
+X-Received: by 2002:a05:6e02:1d06:b0:3a4:ecdb:d615 with SMTP id
+ e9e14a558f8ab-3a4ed28e34emr97439485ab.8.1730179520514; Mon, 28 Oct 2024
+ 22:25:20 -0700 (PDT)
+Date: Mon, 28 Oct 2024 22:25:20 -0700
+In-Reply-To: <00000000000042f2c5062143e9fd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672071c0.050a0220.11b624.04bd.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2] kernel BUG in jbd2_journal_dirty_metadata
+From: syzbot <syzbot+c28d8da3e83b3cc68dc6@syzkaller.appspotmail.com>
+To: jack@suse.com, jack@suse.cz, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    e42b1a9a2557 Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14efef57980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4aec7739e14231a7
+dashboard link: https://syzkaller.appspot.com/bug?extid=c28d8da3e83b3cc68dc6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10d2064b980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12efef57980000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e42b1a9a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3e2253169da8/vmlinux-e42b1a9a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b9d2f5008f24/bzImage-e42b1a9a.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/5f7c8b60a2d3/mount_0.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/0a01b18a6599/mount_9.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+c28d8da3e83b3cc68dc6@syzkaller.appspotmail.com
+
+(syz-executor419,5307,0):ocfs2_xa_prepare_entry:2152 ERROR: status = -30
+(syz-executor419,5307,0):ocfs2_xa_set:2255 ERROR: status = -30
+JBD2: assertion failure: h_type=0 h_line_no=0 block_no=19105 jlist=0
+------------[ cut here ]------------
+kernel BUG at fs/jbd2/transaction.c:1529!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5307 Comm: syz-executor419 Not tainted 6.12.0-rc5-syzkaller-00005-ge42b1a9a2557 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:jbd2_journal_dirty_metadata+0xbed/0xc00 fs/jbd2/transaction.c:1528
+Code: 89 ff e9 88 fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c af fd ff ff 48 89 df e8 fe 1d 89 ff e9 a2 fd ff ff e8 64 61 1f ff 90 <0f> 0b e8 5c 61 1f ff 90 0f 0b 66 0f 1f 84 00 00 00 00 00 90 90 90
+RSP: 0018:ffffc9000cf66a38 EFLAGS: 00010293
+RAX: ffffffff8275772c RBX: 0000000000000000 RCX: ffff888000938000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 1ffff1100350b135 R08: ffffffff82756f44 R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffff88801a8589ac
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88801a858968
+FS:  00005555742c7380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000032b9e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_journal_dirty+0x156/0x7c0 fs/ocfs2/journal.c:812
+ ocfs2_xa_journal_dirty fs/ocfs2/xattr.c:1453 [inline]
+ ocfs2_xa_set+0x225b/0x2b40 fs/ocfs2/xattr.c:2264
+ ocfs2_xattr_block_set+0x46e/0x3390 fs/ocfs2/xattr.c:2986
+ __ocfs2_xattr_set_handle+0x67a/0x10a0 fs/ocfs2/xattr.c:3388
+ ocfs2_xattr_set+0x128c/0x1930 fs/ocfs2/xattr.c:3651
+ __vfs_setxattr+0x468/0x4a0 fs/xattr.c:200
+ __vfs_setxattr_noperm+0x12e/0x660 fs/xattr.c:234
+ vfs_setxattr+0x221/0x430 fs/xattr.c:321
+ do_setxattr fs/xattr.c:629 [inline]
+ path_setxattr+0x37e/0x4d0 fs/xattr.c:658
+ __do_sys_lsetxattr fs/xattr.c:683 [inline]
+ __se_sys_lsetxattr fs/xattr.c:679 [inline]
+ __x64_sys_lsetxattr+0xb8/0xd0 fs/xattr.c:679
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f84c9e37bb9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 61 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffced766518 EFLAGS: 00000246 ORIG_RAX: 00000000000000bd
+RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007f84c9e37bb9
+RDX: 0000000000000000 RSI: 0000000020000240 RDI: 00000000200000c0
+RBP: 00007f84c9eb4610 R08: 0000000000000000 R09: 00007ffced7666e8
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00007ffced7666d8 R14: 0000000000000001 R15: 0000000000000001
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:jbd2_journal_dirty_metadata+0xbed/0xc00 fs/jbd2/transaction.c:1528
+Code: 89 ff e9 88 fd ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c af fd ff ff 48 89 df e8 fe 1d 89 ff e9 a2 fd ff ff e8 64 61 1f ff 90 <0f> 0b e8 5c 61 1f ff 90 0f 0b 66 0f 1f 84 00 00 00 00 00 90 90 90
+RSP: 0018:ffffc9000cf66a38 EFLAGS: 00010293
+RAX: ffffffff8275772c RBX: 0000000000000000 RCX: ffff888000938000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000001
+RBP: 1ffff1100350b135 R08: ffffffff82756f44 R09: 1ffff11003f8519a
+R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffff88801a8589ac
+R13: dffffc0000000000 R14: 0000000000000000 R15: ffff88801a858968
+FS:  00005555742c7380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000000000000000 CR3: 0000000032b9e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
-
-On 10/29/2024 12:21 AM, James Quinlan wrote:
-> On 10/24/24 21:08, Krishna Chaitanya Chundru wrote:
->>
->>
->> On 10/22/2024 12:33 AM, Rob Herring wrote:
->>> On Fri, Oct 18, 2024 at 02:22:45PM -0400, Jim Quinlan wrote:
->>>> Support configuration of the GEN3 preset equalization settings, aka the
->>>> Lane Equalization Control Register(s) of the Secondary PCI Express
->>>> Extended Capability.  These registers are of type HwInit/RsvdP and
->>>> typically set by FW.  In our case they are set by our RC host bridge
->>>> driver using internal registers.
->>>>
->>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>>> ---
->>>>   .../devicetree/bindings/pci/brcm,stb-pcie.yaml       | 12 
->>>> ++++++++++++
->>>>   1 file changed, 12 insertions(+)
->>>>
->>>> diff --git 
->>>> a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml 
->>>> b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>> index 0925c520195a..f965ad57f32f 100644
->>>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>> @@ -104,6 +104,18 @@ properties:
->>>>       minItems: 1
->>>>       maxItems: 3
->>>>   +  brcm,gen3-eq-presets:
->>>> +    description: |
->>>> +      A u16 array giving the GEN3 equilization presets, one for 
->>>> each lane.
->>>> +      These values are destined for the 16bit registers known as the
->>>> +      Lane Equalization Control Register(s) of the Secondary PCI 
->>>> Express
->>>> +      Extended Capability.  In the array, lane 0 is first term, 
->>>> lane 1 next,
->>>> +      etc. The contents of the entries reflect what is necessary for
->>>> +      the current board and SoC, and the details of each preset are
->>>> +      described in Section 7.27.4 of the PCI base spec, Revision 3.0.
->>>
->>> If these are defined by the PCIe spec, then why is it Broadcom specific
->>> property?
-> Yes, I will remove the "brcm," prefix.
->>>
->> Hi Rob,
->>
->> qcom pcie driver also needs to program these presets as you suggested
->> this can go to common pci bridge binding.
->>
->> from PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4.2 for data rates
->> of  8.0 GT/s, 16.0 GT/s, and 32.0 GT/s uses one class of preset (P0
->> through P10) and where as data rates of 64.0 GT/s use different class of
->> presets (Q0 through Q10) (Table 4-23). And data rates of 8.0 GT/s also
->> have optional preset hints (Table 4-24).
->>
->> And there is possibility that for each data rate we may require
->> different preset configuration.
->>
->> Can we have a dt binding for each data rate of 16 byte array.
->> like gen3-eq-preset array, gen4-eq-preset array etc.
-> 
-> Yes, that was the idea when using "genX-eq-preset", for X in {3,4...}.
-> 
-> Keep in mind that this is an RFC; I have a backlog of commit submissions 
-> before I can submit the code that uses this DT property.  If you 
-> (Krishna) want to submit something now I'd be quite happy to go with 
-> that.  I don't believe it is acceptable to submit a bindings commit w/o 
-> code that uses it (if I'm incorrect I'll be glad to do a V2).
-> 
-Hi Jim,
-
-I submitted a pull request for this. if you have any other suggestions
-or if we need to have any other details we can update this pull request.
-https://github.com/devicetree-org/dt-schema/pull/146
-
-- Krishna Chaitanya.
-> Regards,
-> 
-> Jim Quinlan
-> Broadcom STB/CM
-> 
->>
->> - Krishna Chaitanya
->>>> +
->>>> +    $ref: /schemas/types.yaml#/definitions/uint16-array
->>>
->>> minItems: 1
->>> maxItems: 16
->>>
->>> Last I saw, you can only have up to 16 lanes.
->>>
->>> Rob
->>>
-> 
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
