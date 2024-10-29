@@ -1,259 +1,108 @@
-Return-Path: <linux-kernel+bounces-387876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BA619B5716
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:42:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384979B571A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC421C20A74
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:42:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE03284823
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0A320BB5B;
-	Tue, 29 Oct 2024 23:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F4920C31C;
+	Tue, 29 Oct 2024 23:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fWqyES66"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jCNRPrJG"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6035B20B211;
-	Tue, 29 Oct 2024 23:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28920C019
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730245321; cv=none; b=IcMOjmtwUeajSEnzDUgS4dj0kbha0x7zZQVDmx3WT03WfOybXmemoF2EDgd6+2xR85gYVN9bJI0oUTrOgNsBKpfiXvnKHS2VjYRQ/mke5F9V5OV6L98WLnfQrkhSxQlhwoUeDQJeMvJJo5726iTdlx5Ecd2j5ircFqfjKIkA/qY=
+	t=1730245325; cv=none; b=Rog3yy96z9Th0cWaVau74nhm+ZbLZvKgLYhVEmj71s0drtCfkcPE68nTxrjxtzhLm2GL5Aah6kcKeAB2bpd16Bs5MT2EyE3e77ARwIqV0MM2bfFYbvNQD6qK2etSVc4hdSCCDvFEJb1iBfYzMh2gUd4oSL7xXJDBWqjoyCsAlhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730245321; c=relaxed/simple;
-	bh=CvmkETPxv0MWjCrCLZUXOtbYzwBXnMlUmhyB5wBQeJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GGzMlZV8QuRID4UJ6MglHjy8IjJEjWWNEIwd6Fx2SZtN/SR5afOMb7U0zMxEMnhOZVvNrc9P1Dwg+CedNkqjm/DpjGvJ5/Q0XtsmkxGYw+Kh0zX+0PGf56M597+b+/b+ErC9LT8pRbYPL8hax1pxUCN3vVKj9i1wWG/lCpaDdCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fWqyES66; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDD2C4AF0D;
-	Tue, 29 Oct 2024 23:42:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730245320;
-	bh=CvmkETPxv0MWjCrCLZUXOtbYzwBXnMlUmhyB5wBQeJE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=fWqyES66Ens8uIw92DAzIbIzvZKt/+C8rYongoqbYaSRzAcUMgPWBjl8PikmzMLIw
-	 H4YZcHhGBdCNfmet/suAE+0fMX0D1oiT+4w1q+wNgKA3NhfxhzzamMN8eCbvXpydcq
-	 5/aOp4DI8mfmRIKmJoqY90flZa+7TwiXW63bdfhxOYmKj6/cA83T75SIRA1WfNDlPx
-	 rpX850tyigvKG1sM2FEklC9jErLCdCq+mnijP25FFOyG23QlFkyKimZTdXBjS+pb/I
-	 7dMtPWkEca6zneYILUNHHcFCeHh/e0n/63wl/kZUBM+a0YjEeyBBxYNroSFJDSOdP9
-	 U1uEI2RhAA+Mw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 8CFD4CE0B68; Tue, 29 Oct 2024 16:42:00 -0700 (PDT)
-Date: Tue, 29 Oct 2024 16:42:00 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>,
-	stern@rowland.harvard.edu, parri.andrea@gmail.com, will@kernel.org,
-	peterz@infradead.org, npiggin@gmail.com, dhowells@redhat.com,
-	j.alglave@ucl.ac.uk, luc.maranget@inria.fr, akiyks@gmail.com,
-	dlustig@nvidia.com, joel@joelfernandes.org, urezki@gmail.com,
-	quic_neeraju@quicinc.com, frederic@kernel.org,
-	linux-kernel@vger.kernel.org, lkmm@lists.linux.dev,
-	hernan.poncedeleon@huaweicloud.com
-Subject: Re: [PATCH v4 4/5] tools/memory-model: Switch to softcoded herd7 tags
-Message-ID: <b5df91f5-4b48-440b-9445-b8de0bd3260f@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240930105710.383284-1-jonas.oberhauser@huaweicloud.com>
- <20240930105710.383284-5-jonas.oberhauser@huaweicloud.com>
- <ZyAmlh5GDBsqY0sZ@Boquns-Mac-mini.local>
+	s=arc-20240116; t=1730245325; c=relaxed/simple;
+	bh=YmhqWH2LH5RJV2vXD5XPSPpN/3LgfwH6oaRL8feNlPg=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=LXZS73CU+dbJwvyp+sQJiI8SNhbo5Uj9Vh0ikRhBdJW6+SZbAeQ0He2rGu7csqwK24furWSQT6aVWTOoOs7eXX9BDR+9h8gmuypMWwaaSHEBXwPxJ9rzmrGt/wI+SkZh0ZnUnLlSBIFMUCOeZCw0IkECJN8dTSiKlySvNl+gOtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jCNRPrJG; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso4878383a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:42:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730245322; x=1730850122; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bUFxc4/8h5YCr04CklGoLvH8jXBQzwVxphyqaqs8LpM=;
+        b=jCNRPrJGzQFKQ9/wpS36qwuNEd5KVli6PXTJ7nTtLvSGSnhpbMPzSAbPcQPXyixwBX
+         uPPQeWXQPWIUhZQcluD5bHgWzQx2YvyArabW9U2tZOl7nr4tv51UjXpFlwIK822j4Lcw
+         T12TT+jFnveZ6x+LLcuKesd7ZkIT0dTpOIsHqCX1qDzWzbXLrBEsOHygz8MA+hEN4PdV
+         iwHzo06Iz1DJIZYcvUNjRAnc/hhgFNhllctY3restUqE3/5rPk3z4DAK3X7S7cQktT6l
+         8EUKWlcKf3qZQf16+GmkKY5HMFFrGXohPz6di+wfOgJKdlORuw8Ny2mZKSySIVKBtG98
+         P58g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730245322; x=1730850122;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bUFxc4/8h5YCr04CklGoLvH8jXBQzwVxphyqaqs8LpM=;
+        b=JMXkOujUEizpR0hm23R0IgrQzwt35ydvKcLpjXRHlSC83Jg/DhJewAQ52DNuHls9ss
+         tcGQ4MltS70yxjRWcQzmDuRsDIh7Ov2OdrLRZye4rXlEUUyzA/DRUPMdtjxaNiGJXlwn
+         HyI6lC2E6nOSjQVfGZpckZH4kGfsiSaOqyoTPaU4aNTFmBwYaibh2NflrPjDnHCATt82
+         OH+c4nOnJQF2dl0l8NdCf8ssfPUr2qk0SzFXH/81IqsfBw3LNa1erIvM4HI+bfa3DD7B
+         PLoo6drZ6/wIhbh9N5hhRFi+6jplSbMFGnEp4NiFiYPpCf4qdMIWA3LWnQ54xc0V+Rh9
+         xc3g==
+X-Gm-Message-State: AOJu0YzmaUjyBtfTyRVSnqtlVS9ayq09Ptp4zDp/2dqcGSsM3vwzfFKu
+	ctCkv1kGYifPPpE+82AUAdZ41CYLEC7cMBRgmnlUJgULg4Idp+heIDcDdAto8u6Ap1bEROzjQvU
+	Fiq4=
+X-Google-Smtp-Source: AGHT+IHuMqUoPA9vvykcD+aVuMrEA6iREjFB8z97qFtvohJ/0EG10EF/ose2EVS5RIqKv4wMlh7WTw==
+X-Received: by 2002:a17:90a:9292:b0:2e2:cf5c:8ee8 with SMTP id 98e67ed59e1d1-2e8f105e601mr14080879a91.12.1730245322552;
+        Tue, 29 Oct 2024 16:42:02 -0700 (PDT)
+Received: from localhost ([97.126.177.194])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa0ea9bsm259788a91.10.2024.10.29.16.42.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 16:42:02 -0700 (PDT)
+From: Kevin Hilman <khilman@baylibre.com>
+To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
+ devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, tony@atomide.com, 
+ linux-omap@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
+In-Reply-To: <20241016080314.222674-4-andreas@kemnade.info>
+References: <20241016080314.222674-1-andreas@kemnade.info>
+ <20241016080314.222674-4-andreas@kemnade.info>
+Subject: Re: [PATCH v5 3/3] ARM: dts: ti/omap: use standard node name for
+ twl4030 charger
+Message-Id: <173024532183.1250381.10578209015263837020.b4-ty@baylibre.com>
+Date: Tue, 29 Oct 2024 16:42:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyAmlh5GDBsqY0sZ@Boquns-Mac-mini.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-cb14d
 
-On Mon, Oct 28, 2024 at 05:04:38PM -0700, Boqun Feng wrote:
-> On Mon, Sep 30, 2024 at 12:57:09PM +0200, Jonas Oberhauser wrote:
-> > A new version of herd7 provides a -lkmmv2 switch which overrides the old herd7
-> > behavior of simply ignoring any softcoded tags in the .def and .bell files. We
-> > port LKMM to this version of herd7 by providing the switch in linux-kernel.cfg
-> > and reporting an error if the LKMM is used without this switch.
-> > 
-> > To preserve the semantics of LKMM, we also softcode the Noreturn tag on atomic
-> > RMW which do not return a value and define atomic_add_unless with an Mb tag in
-> > linux-kernel.def.
-> > 
-> > We update the herd-representation.txt accordingly and clarify some of the
-> > resulting combinations.
-> > 
-> > (To be) Signed-off-by: Hernan Ponce de Leon <hernan.poncedeleon@huaweicloud.com>
-> > Signed-off-by: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>
-> 
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> 
-> One bit below:
 
-Jonas, if you agree, please feel free to send this as an updated patch
-5/5 or as a separate patch.  Either way, just let me know!
+On Wed, 16 Oct 2024 10:03:14 +0200, Andreas Kemnade wrote:
+> Use the established node name for the charger.
+> 
+> 
 
-							Thanx, Paul
+Applied, thanks!
 
-> > ---
-> >  .../Documentation/herd-representation.txt     | 27 ++++++++++---------
-> >  tools/memory-model/README                     |  2 +-
-> >  tools/memory-model/linux-kernel.bell          |  3 +++
-> >  tools/memory-model/linux-kernel.cfg           |  1 +
-> >  tools/memory-model/linux-kernel.def           | 18 +++++++------
-> >  5 files changed, 30 insertions(+), 21 deletions(-)
-> > 
-> > diff --git a/tools/memory-model/Documentation/herd-representation.txt b/tools/memory-model/Documentation/herd-representation.txt
-> > index ed988906f2b7..7ae1ff3d3769 100644
-> > --- a/tools/memory-model/Documentation/herd-representation.txt
-> > +++ b/tools/memory-model/Documentation/herd-representation.txt
-> > @@ -18,6 +18,11 @@
-> >  #
-> >  # By convention, a blank line in a cell means "same as the preceding line".
-> >  #
-> > +# Note that the syntactic representation does not always match the sets and
-> > +# relations in linux-kernel.cat, due to redefinitions in linux-kernel.bell and
-> > +# lock.cat. For example, the po link between LKR and LKW is upgraded to an rmw
-> > +# link, and W[acquire] are not included in the Acquire set.
-> > +#
-> >  # Disclaimer.  The table includes representations of "add" and "and" operations;
-> >  # corresponding/identical representations of "sub", "inc", "dec" and "or", "xor",
-> >  # "andnot" operations are omitted.
-> > @@ -60,14 +65,13 @@
-> >      ------------------------------------------------------------------------------
-> >      |       RMW ops w/o return value |                                           |
-> >      ------------------------------------------------------------------------------
-> > -    |                     atomic_add | R*[noreturn] ->rmw W*[once]               |
-> > +    |                     atomic_add | R*[noreturn] ->rmw W*[noreturn]           |
-> 
-> Not in this patch, but don't you need to update this again to all cap
-> to match your changes in patch #5? ;-)
-> 
-> Regards,
-> Boqun
-> 
-> >      |                     atomic_and |                                           |
-> >      |                      spin_lock | LKR ->po LKW                              |
-> >      ------------------------------------------------------------------------------
-> >      |        RMW ops w/ return value |                                           |
-> >      ------------------------------------------------------------------------------
-> > -    |              atomic_add_return | F[mb] ->po R*[once]                       |
-> > -    |                                |     ->rmw W*[once] ->po F[mb]             |
-> > +    |              atomic_add_return | R*[mb] ->rmw W*[mb]                       |
-> >      |               atomic_fetch_add |                                           |
-> >      |               atomic_fetch_and |                                           |
-> >      |                    atomic_xchg |                                           |
-> > @@ -79,13 +83,13 @@
-> >      |            atomic_xchg_relaxed |                                           |
-> >      |                   xchg_relaxed |                                           |
-> >      |    atomic_add_negative_relaxed |                                           |
-> > -    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[once]                |
-> > +    |      atomic_add_return_acquire | R*[acquire] ->rmw W*[acquire]             |
-> >      |       atomic_fetch_add_acquire |                                           |
-> >      |       atomic_fetch_and_acquire |                                           |
-> >      |            atomic_xchg_acquire |                                           |
-> >      |                   xchg_acquire |                                           |
-> >      |    atomic_add_negative_acquire |                                           |
-> > -    |      atomic_add_return_release | R*[once] ->rmw W*[release]                |
-> > +    |      atomic_add_return_release | R*[release] ->rmw W*[release]             |
-> >      |       atomic_fetch_add_release |                                           |
-> >      |       atomic_fetch_and_release |                                           |
-> >      |            atomic_xchg_release |                                           |
-> > @@ -94,17 +98,16 @@
-> >      ------------------------------------------------------------------------------
-> >      |            Conditional RMW ops |                                           |
-> >      ------------------------------------------------------------------------------
-> > -    |                 atomic_cmpxchg | On success: F[mb] ->po R*[once]           |
-> > -    |                                |                 ->rmw W*[once] ->po F[mb] |
-> > -    |                                | On failure: R*[once]                      |
-> > +    |                 atomic_cmpxchg | On success: R*[mb] ->rmw W*[mb]           |
-> > +    |                                | On failure: R*[mb]                        |
-> >      |                        cmpxchg |                                           |
-> >      |              atomic_add_unless |                                           |
-> >      |         atomic_cmpxchg_relaxed | On success: R*[once] ->rmw W*[once]       |
-> >      |                                | On failure: R*[once]                      |
-> > -    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[once]    |
-> > -    |                                | On failure: R*[once]                      |
-> > -    |         atomic_cmpxchg_release | On success: R*[once] ->rmw W*[release]    |
-> > -    |                                | On failure: R*[once]                      |
-> > +    |         atomic_cmpxchg_acquire | On success: R*[acquire] ->rmw W*[acquire] |
-> > +    |                                | On failure: R*[acquire]                   |
-> > +    |         atomic_cmpxchg_release | On success: R*[release] ->rmw W*[release] |
-> > +    |                                | On failure: R*[release]                   |
-> >      |                   spin_trylock | On success: LKR ->po LKW                  |
-> >      |                                | On failure: LF                            |
-> >      ------------------------------------------------------------------------------
-> > diff --git a/tools/memory-model/README b/tools/memory-model/README
-> > index dab38904206a..59bc15edeb8a 100644
-> > --- a/tools/memory-model/README
-> > +++ b/tools/memory-model/README
-> > @@ -20,7 +20,7 @@ that litmus test to be exercised within the Linux kernel.
-> >  REQUIREMENTS
-> >  ============
-> >  
-> > -Version 7.52 or higher of the "herd7" and "klitmus7" tools must be
-> > +Version 7.58 or higher of the "herd7" and "klitmus7" tools must be
-> >  downloaded separately:
-> >  
-> >    https://github.com/herd/herdtools7
-> > diff --git a/tools/memory-model/linux-kernel.bell b/tools/memory-model/linux-kernel.bell
-> > index 7c9ae48b9437..8ae47545df97 100644
-> > --- a/tools/memory-model/linux-kernel.bell
-> > +++ b/tools/memory-model/linux-kernel.bell
-> > @@ -94,3 +94,6 @@ let carry-dep = (data ; [~ Srcu-unlock] ; rfi)*
-> >  let addr = carry-dep ; addr
-> >  let ctrl = carry-dep ; ctrl
-> >  let data = carry-dep ; data
-> > +
-> > +flag ~empty (if "lkmmv2" then 0 else _)
-> > +  as this-model-requires-variant-higher-than-lkmmv1
-> > diff --git a/tools/memory-model/linux-kernel.cfg b/tools/memory-model/linux-kernel.cfg
-> > index 3c8098e99f41..69b04f3aad73 100644
-> > --- a/tools/memory-model/linux-kernel.cfg
-> > +++ b/tools/memory-model/linux-kernel.cfg
-> > @@ -1,6 +1,7 @@
-> >  macros linux-kernel.def
-> >  bell linux-kernel.bell
-> >  model linux-kernel.cat
-> > +variant lkmmv2
-> >  graph columns
-> >  squished true
-> >  showevents noregs
-> > diff --git a/tools/memory-model/linux-kernel.def b/tools/memory-model/linux-kernel.def
-> > index a12b96c547b7..d7279a357cba 100644
-> > --- a/tools/memory-model/linux-kernel.def
-> > +++ b/tools/memory-model/linux-kernel.def
-> > @@ -63,14 +63,14 @@ atomic_set(X,V) { WRITE_ONCE(*X,V); }
-> >  atomic_read_acquire(X) smp_load_acquire(X)
-> >  atomic_set_release(X,V) { smp_store_release(X,V); }
-> >  
-> > -atomic_add(V,X) { __atomic_op(X,+,V); }
-> > -atomic_sub(V,X) { __atomic_op(X,-,V); }
-> > -atomic_and(V,X) { __atomic_op(X,&,V); }
-> > -atomic_or(V,X)  { __atomic_op(X,|,V); }
-> > -atomic_xor(V,X) { __atomic_op(X,^,V); }
-> > -atomic_inc(X)   { __atomic_op(X,+,1); }
-> > -atomic_dec(X)   { __atomic_op(X,-,1); }
-> > -atomic_andnot(V,X) { __atomic_op(X,&~,V); }
-> > +atomic_add(V,X) { __atomic_op{noreturn}(X,+,V); }
-> > +atomic_sub(V,X) { __atomic_op{noreturn}(X,-,V); }
-> > +atomic_and(V,X) { __atomic_op{noreturn}(X,&,V); }
-> > +atomic_or(V,X)  { __atomic_op{noreturn}(X,|,V); }
-> > +atomic_xor(V,X) { __atomic_op{noreturn}(X,^,V); }
-> > +atomic_inc(X)   { __atomic_op{noreturn}(X,+,1); }
-> > +atomic_dec(X)   { __atomic_op{noreturn}(X,-,1); }
-> > +atomic_andnot(V,X) { __atomic_op{noreturn}(X,&~,V); }
-> >  
-> >  atomic_add_return(V,X) __atomic_op_return{mb}(X,+,V)
-> >  atomic_add_return_relaxed(V,X) __atomic_op_return{once}(X,+,V)
-> > @@ -144,3 +144,5 @@ atomic_fetch_andnot(V,X) __atomic_fetch_op{mb}(X,&~,V)
-> >  atomic_fetch_andnot_acquire(V,X) __atomic_fetch_op{acquire}(X,&~,V)
-> >  atomic_fetch_andnot_release(V,X) __atomic_fetch_op{release}(X,&~,V)
-> >  atomic_fetch_andnot_relaxed(V,X) __atomic_fetch_op{once}(X,&~,V)
-> > +
-> > +atomic_add_unless(X,V,W) __atomic_add_unless{mb}(X,V,W)
-> > -- 
-> > 2.34.1
-> > 
-> > 
+[3/3] ARM: dts: ti/omap: use standard node name for twl4030 charger
+      commit: 55f96ea329ee8248215a08ae0b88330084304748
+
+Best regards,
+-- 
+Kevin Hilman <khilman@baylibre.com>
+
 
