@@ -1,154 +1,133 @@
-Return-Path: <linux-kernel+bounces-387059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A00F9B4B3F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AB699B4B3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:49:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C171F23A28
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:50:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C736C1F241C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B61E206056;
-	Tue, 29 Oct 2024 13:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531E320606C;
+	Tue, 29 Oct 2024 13:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="LATJN8O+"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lhBawctP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EE4920110B;
-	Tue, 29 Oct 2024 13:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209798; cv=pass; b=nzm0Dzq6juj4ghvwoj/0iNQZ5al0pcrRzmdLTyz3+cMJ6xroL4wTepqCr6WnL0BKUTseamis5r/mNVi4rYdRFeAmY1iSqXIvaHGFBORJiQUhTX4mNY/+ozYRmzPzsn7ytTu6J6HKNMtCEPxXjCF6zMi2wds/KwE61FxSLwGuEzg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209798; c=relaxed/simple;
-	bh=F39Zxt52/uYIVPs0noJon70t9/prHhMkYYK70Fp7PpI=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=T/2I1APCaof/QeIlmfuEIgiBZQcX2yN7J+zHhIT6NNKYnXcO/X7pdrM/pQ0vgiBN1+rlDNyjiP+lUlN0V18ahRl3pXWQVUrNm1A813lu/lpS9LLoTciojiCK4pPRdfX9q/yF97WNNOHig1qEAQLy4Vrq2TnFmWCDTk0Tcp1Vf0s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=LATJN8O+; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730209759; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=IKjbnpKnedHPwU63t/TG3uQIMr5Bvhy4WlULsaFWsr7uuyT4kHXZP1QMzV7nxOaEVqSB/5EpS5VRiCKwBSOti67lytFmMa7odfFyPCzfEdpY+6Ul41sxgjVIgRCqTrXxsyMT8Vg0FthdOpU58uoPD+MM2uG/ZgpPv5j1BSNCIsE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730209759; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=W2t9ORfbeHQkxlu0Wwgx514p3UZMGd3XrzkyhczjnCE=; 
-	b=hhffQynpiHgSE5F1idt8pIVTrHqaHHTHQAiwuWqQMexVAWbLV1G35XB8N2DqTQ1LanrS/FKv6hxc61lSUMDZ8fNxNUx3TqNgUNWsDgAuibrjY8t7KtTBQyLaqD0njWJdPNEbOQ6X8pvtngFAioxPToftrdX8WakLt1F+ZzCYMHc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730209759;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=W2t9ORfbeHQkxlu0Wwgx514p3UZMGd3XrzkyhczjnCE=;
-	b=LATJN8O+AnfQuNFax+W1MMvkIoJ0YWKWOkB98TTCf+ix0JA3RjKNvSBGIZh7BizV
-	HMm4ec1vZrGmjfMR6HeIhx/3dT6UZ+R6MMQjgIgc6wCU2zbyyH+IizterJ9hEJdLYVQ
-	2RvNt8NIe6jkU0Yz8LnWg/zNjva1mA41HDzptCoM=
-Received: by mx.zohomail.com with SMTPS id 1730209758314303.6390804850106;
-	Tue, 29 Oct 2024 06:49:18 -0700 (PDT)
-Message-ID: <5ab6b534-81e7-455f-8494-58e1fccb84c0@collabora.com>
-Date: Tue, 29 Oct 2024 18:49:07 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B2920110B;
+	Tue, 29 Oct 2024 13:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730209772; cv=none; b=saG/ExIinBLWIe0alDoj6GnZqPXZhrhPJZ7irOUpa7kAQTTsnH6HvtxDDBK5iQtvczcVrX2h5XapAA1FpMC+PJGuhLyyf5CUbMzXP6ucIH2zQZ6VCDq2jzKPiId2A8WlXFJsaDtYrJYZwrmMPL1do5H//VqGPwa63RU2DJQNk4w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730209772; c=relaxed/simple;
+	bh=C/ScIlfAb593FeK9w8ZSP3kiikc6hHoA8f0RrZWiq2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D20k3tohfYoe9dhEC90PasorSC3W3YeVBvVdp3W2LPQPRz4PHFOwiyVmnE19m8vYwmAAuBxr2IcIt/P7fA0MpRpyGU9dp+KCAvePy0zwLbtDXTG1/0u4mk6xdtVBNsb7xV3UxUzNiWaMAMEQLmwkco8PfPBp3FahYvi5GivePnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lhBawctP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=2So21KyGv/lGhqEP+pOczTZjGr3niJl2qAKbXe3sW10=; b=lhBawctPuBRihfvYcTJTAxAQBP
+	QlAaIinlH4dap5F73nMnOds/W07vkC15/Z9GxhHBRElR4sOOkig6TZ2mf9iT2CpVFa1pVoZDFb7tZ
+	Ujag/Kw/WBjK3bm09OjJHZdB558VoiYtLRcqOYkE3uNGoEf1VYEyoPE0WoYUcp6i92/8oVVm4H2VC
+	ZKKamGxIxE8egjn+Qy9ZOj6AiCJMf+lcu9hBAfD/RnU6hX27/mdHp6EyBx2Uq+oAgpjBtk3XBl5qy
+	+g2IK5PYdpnlKVoQHX3ru1Cwtf4ZkPRkUb0IO2ER+bolnUJzSOH3oU7kowrpTGTN2Jo27JNjD10qs
+	yvBTOW8g==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5mb0-00000009uSM-2SON;
+	Tue, 29 Oct 2024 13:49:18 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4174F30073F; Tue, 29 Oct 2024 14:49:18 +0100 (CET)
+Date: Tue, 29 Oct 2024 14:49:18 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029134918.GA14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.15 00/80] 5.15.170-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241028062252.611837461@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241028062252.611837461@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
 
-On 10/28/24 11:24 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.15.170 release.
-> There are 80 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.15.170-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-Hi,
+On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
 
-Please find the KernelCI report below :-
+> +static void unwind_user_task_work(struct callback_head *head)
+> +{
+...
+> +	guard(rwsem_read)(&callbacks_rwsem);
+> +
+> +	for_each_set_bit(i, &pending, UNWIND_MAX_CALLBACKS) {
+> +		if (callbacks[i])
+> +			callbacks[i]->func(&trace, cookie, privs[i]);
+> +	}
 
+I'm fairly sure people will come with pitchforks for that read-lock
+there. They scale like shit on big systems. Please use SRCU or somesuch.
 
-OVERVIEW
-
-    Builds: 23 passed, 0 failed
-
-    Boot tests: 39 passed, 6 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 5.15.170-rc1
-        hash: a203ce258bb66ceea0d88b41de9b16cd41a6895f
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.15.y
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    Failures
-      - i386 (defconfig)
-      Error detail: BUG: kernel NULL pointer dereference, address: 000002fc
-      Error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:67203122aaccbda536603534&orgId=1
-      - i386 (defconfig)
-      Error detail: BUG: kernel NULL pointer dereference, address: 000002fc
-      Error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:67203125aaccbda536603557&orgId=1
-      - x86_64 (x86_64_defconfig)
-      Error detail: BUG: kernel NULL pointer dereference, address: 000002fc
-      Error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:672030c9aaccbda536603435&orgId=1
-      - x86_64 (x86_64_defconfig)
-      Error detail: BUG: kernel NULL pointer dereference, address: 000002fc
-      Error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:672030cbaaccbda53660343a&orgId=1
-      - x86_64 (x86_64_defconfig)
-      Error detail: BUG: kernel NULL pointer dereference, address: 000002fc
-      Error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:672030cdaaccbda53660343e&orgId=1
-      - x86_64 (x86_64_defconfig)
-      Error detail: BUG: kernel NULL pointer dereference, address: 000002fc
-      Error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:672030cdaaccbda536603440&orgId=1
+> +}
+> +
+> +int unwind_user_register(struct unwind_callback *callback, unwind_callback_t func)
+> +{
+> +	scoped_guard(rwsem_write, &callbacks_rwsem) {
+> +		for (int i = 0; i < UNWIND_MAX_CALLBACKS; i++) {
+> +			if (!callbacks[i]) {
+> +				callback->func = func;
+> +				callback->idx = i;
+> +				callbacks[i] = callback;
+> +				return 0;
+> +			}
+> +		}
+> +	}
+> +
+> +	callback->func = NULL;
+> +	callback->idx = -1;
+> +	return -ENOSPC;
+> +}
+> +
+> +int unwind_user_unregister(struct unwind_callback *callback)
+> +{
+> +	if (callback->idx < 0)
+> +		return -EINVAL;
+> +
+> +	scoped_guard(rwsem_write, &callbacks_rwsem)
+> +		callbacks[callback->idx] = NULL;
+> +
+> +	callback->func = NULL;
+> +	callback->idx = -1;
+> +
+> +	return 0;
+> +}
 
 
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=a203ce258bb66ceea0d88b41de9b16cd41a6895f&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
