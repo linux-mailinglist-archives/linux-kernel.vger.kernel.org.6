@@ -1,92 +1,111 @@
-Return-Path: <linux-kernel+bounces-387495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 900CF9B51F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:40:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7CD9B51F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9028A1C22BCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30B9B1F21879
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8705205AD5;
-	Tue, 29 Oct 2024 18:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDF9204F66;
+	Tue, 29 Oct 2024 18:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQT5BhnN"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cCgPtw0f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A5B41DA305;
-	Tue, 29 Oct 2024 18:39:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 861EE200CA5
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730227198; cv=none; b=QDyPRfA6ZhdpZuFNtqXWXPQlpSLyWmIVbw6LigLH5sW/l3oRyBOgoJWKrhaQy2OqH7eXNcpm4XleyRURYi4OX+mQrusUrJ2Y7EhzdamXiEKsXsZjev23SWhhT3gAV/kcJRnWoQACWerZzttf2VXgVoSrX4q7iX7eMwDJuv4TRzY=
+	t=1730227215; cv=none; b=hH4Idp0YqbbnIST4xmMhicC5DFhG9T4nGrcgIslTJ3/3V4vGzoMCIEDZZXwRCAHmDzhLCRSvZSzj5e32Bo3bYPomJHPvt8y+/MUwP+rn7SjhnC3xYzPtdyQIASUYTCcZ6XSlCN3b8FHVNQulLZkSMIFm599QMSXzEfMQAZTTvbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730227198; c=relaxed/simple;
-	bh=RgfT3pIpqebkN83jwo/3I6MPLEG4c72/urpViXRIzUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=m1HYNhYQStWrWCpOuqeOEokhSLEYPw4WKcIEXMeAhiNSJ/em8pZCqCpPZvlfikStx37LFjHmVL9BgQs90zSeJO4t5bNGI9ni8es2PEyBhoe1wvK3ROiwNeB9Uhzvdjb4vIFpGdMRJuNP99SU3myCGllwo35J46TMKmBxqGKPXT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQT5BhnN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD4EC4CECD;
-	Tue, 29 Oct 2024 18:39:56 +0000 (UTC)
+	s=arc-20240116; t=1730227215; c=relaxed/simple;
+	bh=i+Vf8LQzRaMP1d0Nly2QkjcRobxa8yt1nSL0ap/n09o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=qMbYADIro2PXFeKDp8RmjDgpZFcEX0kS0/NTYzb1Ib+WGyy+4WrNndVyZ/fce1/98aiozd9qHMifltD9MnrKYUZiG16gPaGNNcLISoD504y4EjL+YNLgpUYlXdcJ4Ua4hHASIT/ZQGohqLeMgQmGeYrYXl/58XgD+kfco5Opw3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cCgPtw0f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D36C4CEE4;
+	Tue, 29 Oct 2024 18:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730227197;
-	bh=RgfT3pIpqebkN83jwo/3I6MPLEG4c72/urpViXRIzUs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VQT5BhnNblfYueiFYe754q42gLqBJXsSGvkq2WJ8MZyeyJt8xQDOods+rgBK+5dEX
-	 dr6Zt3SUXxijuO3O2KE+LFQrQ33+fcC3XZrhWPcOMC73Vf0xpjG464M6YICkxmvZEK
-	 wIJtH3OJxZSe6HB1uTB5MJxPXLXJiHtHwHXZLdQpcdpBiIjwAAa3BaBkjJkUevzDZB
-	 cgilj7ZqQZ960J2fEkC/fhNw+kD2gKZudxvic/49Iz48qJhEwkSVM0ruNMV7gu8F5r
-	 QTqMBplCrgRd/8WhohGQRXvCFbK+DnPa8RmJz2SSVIcUsDELWgZOlCbwsoOL+AtDkv
-	 XHYE4NQKti7ow==
-Date: Tue, 29 Oct 2024 11:39:55 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
- <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20241029113955.145d2a2f@kernel.org>
-In-Reply-To: <7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
-References: <cover.1729536776.git.gustavoars@kernel.org>
-	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
-	<20241029065824.670f14fc@kernel.org>
-	<f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
-	<20241029110845.0f9bb1cc@kernel.org>
-	<7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
+	s=k20201202; t=1730227215;
+	bh=i+Vf8LQzRaMP1d0Nly2QkjcRobxa8yt1nSL0ap/n09o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=cCgPtw0fhXbw70rFFzwS1LZUAGPeFPSOsXel1esNwwf8tHuZcSATpk1FhcbAD7rq5
+	 BXvVIEoQ/lLNYF9Rk9O+qzYvCeewnJDJ7LFugdNOpMvnC2M8/HbBxN1t3nrg1efbFE
+	 wYStwGssNUahi05GTH98ihXKNE94G2dx5Ag9Mjszm5yHfsX9JCmFHtAF9U9WLpcV3T
+	 fXgLhXU9795sphGA6mW+XrD/HhMXPCUsCery/XAvY3wUO9zv9d+6v0i/0RuEpgNHm6
+	 Itm9avEhlXZAW63ZgLcJuLkljMCSI4tL9C4ybRNchNlxHwSGdSry83WKbLa+j+VeF9
+	 yU3qOv1s5qfGQ==
+From: Daniel Wagner <wagi@kernel.org>
+Subject: [PATCH v2 0/2] nvme-fc: fix race with connectivity loss and
+ nvme_fc_create_association
+Date: Tue, 29 Oct 2024 19:40:10 +0100
+Message-Id: <20241029-nvme-fc-handle-com-lost-v2-0-5b0d137e2a0a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAAosIWcC/z2MQQ6CMBBFr0Jm7ZBOxUpdeQ/jorYDNIFiWkQTw
+ t2duHD58t9/GxTOkQtcqg0yr7HEOQnoQwV+cKlnjEEYtNINKW0xrRNj51HGMDL6ecJxLgvahwj
+ 2aFplHcj7mbmLn1/5dhfuspjLkNn9e8oQkVWmOddE7ckgYXi7PnG+llfhOjDs+xfzQzp5ogAAA
+ A==
+X-Change-ID: 20241029-nvme-fc-handle-com-lost-9b241936809a
+To: James Smart <james.smart@broadcom.com>, Keith Busch <kbusch@kernel.org>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>, 
+ Hannes Reinecke <hare@suse.de>, Paul Ely <paul.ely@broadcom.com>
+Cc: linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Daniel Wagner <wagi@kernel.org>
+X-Mailer: b4 0.14.2
 
-On Tue, 29 Oct 2024 12:18:56 -0600 Gustavo A. R. Silva wrote:
-> >> I don't think you want to change this. `lsettings` is based on `ksettings`. So,
-> >> `ksettings` should go first. The same scenario for the one below.  
-> > 
-> > In which case you need to move the init out of line.  
-> 
-> So, the same applies to the case below?
-> 
-> 	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
-> 	struct bnxt *bp = netdev_priv(dev);
-> 	struct bnxt_link_info *link_info = &bp->link_info;
+We got a bug report that a controller was stuck in the connected state
+after an association dropped.
 
-Do you mean the bp and bp->link_info lines?
-You're not touching them, so leave them be.
+It turns out that nvme_fc_create_association can succeed even though some
+operation do fail. This is on purpose to handle the degraded controller
+case, where the admin queue is up and running but not the io queues. In
+this case the controller will still reach the LIVE state.
 
-> Is this going to be a priority for any other netdev patches in the future?
+Unfortunatly, this will also ignore full connectivity loss for fabric
+controllers. Let's address this by not filtering out all errors in
+nvme_set_queue_count.
 
-It's been the preferred formatting for a decade or more.
-Which is why the net/ethtool/ code you're touching follows
-this convention. We're less strict about driver code.
+I haven't tested this version yet, as it needs a bit of tinker in my
+setup. So the question is this a better approach? I think it would also
+be great to hear from Paul if this works.
+
+In theory the nvme_set_queue_count call still could pass and later
+connectivity loss could happen, just before entering the LIVE state. In
+this case the only thing to observe the connectivity loss is the keep
+alive handler which currently does nothing. I think we should also
+trigger a reset in this case. What do you think?
+
+---
+Changes in v2:
+  - handle connection lost in nvme_set_queue_count directly
+  - collected reviewed tags
+  - Link to v1: https://lore.kernel.org/r/20240611190647.11856-1-dwagner@suse.de
+
+---
+Daniel Wagner (2):
+      nvme-fc: go straight to connecting state when initializing
+      nvme: handle connectivity loss in nvme_set_queue_count
+
+ drivers/nvme/host/core.c | 7 ++++++-
+ drivers/nvme/host/fc.c   | 3 +--
+ 2 files changed, 7 insertions(+), 3 deletions(-)
+---
+base-commit: 5e52f71f858eaff252a47530a5ad5e79309bd415
+change-id: 20241029-nvme-fc-handle-com-lost-9b241936809a
+
+Best regards,
+-- 
+Daniel Wagner <wagi@kernel.org>
+
 
