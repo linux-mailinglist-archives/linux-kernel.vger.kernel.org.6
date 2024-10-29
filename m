@@ -1,78 +1,72 @@
-Return-Path: <linux-kernel+bounces-387045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64E259B4B21
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:45:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823909B4B20
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:45:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96C341C225A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:45:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A3531F23913
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:45:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB8320607F;
-	Tue, 29 Oct 2024 13:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C612720697B;
+	Tue, 29 Oct 2024 13:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hLP7+qMF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B7tB+boD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C018205AA5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A046206964;
+	Tue, 29 Oct 2024 13:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209530; cv=none; b=l+BICP69nUB+WN20lKhkiJb7pBz8439t5DjFgXryEbiXhD7z1rDOiyxR/Cy3Tu5nc8zaXmCYdkvsROsC3WJMkYI25iCILXge3irYc2a+4l+6ye4x+EVxClG0x7r0Kh86exWU/IlmopsuDlpMz9BKnckhTchmbHwqOXSsciNSVuc=
+	t=1730209497; cv=none; b=gqOZSSb214p8VGBA+/iOQqNLv11VxgIw+dlFQRb6x7pYVEweOB35xkYqYHILMYCJXuhcrdgnVHg1hnukxRtH1kCQDZAzn1dO6lVV/xuzu/p0BR9RALvKvYyp+P6PJ4J54T5eLXtlsjGIn8GlMvdZGho6SO1mw2WeZcI4jkfluxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209530; c=relaxed/simple;
-	bh=rs0GY66OkD5KdorTMLFQxyHUnobGBq77b2NXknl0J4U=;
+	s=arc-20240116; t=1730209497; c=relaxed/simple;
+	bh=pQHEsCEbFi1AN2z1gIf0oXg2/Tu/i0UAAIzrBe5f5TY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MILmkkGUTtEJp/Dpj74GxDYM5HsxS3YLOEN19Zl0I2q5HJHWbclTtSnUPX3ZDLzg7F+KHteZX05MlNWsg7rUgxJXwx+TS8s42UZe7WqwdgFOpz9bs52H9c6KhmhSegMHdBwsekpDWTdDtzXuk/z2maQIn1jM4zOQfSqJhIa5S6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hLP7+qMF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730209526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mtkDk4obOcGU3ViQFPgP0Y9MdKhVxxTkytXXF2dG21g=;
-	b=hLP7+qMF5zwQdjIILM2w9e0VEnAMtRLXblzx0wzN9ScSeCFsFeEsXDqWczG0J1do9nH3uW
-	BuQF3KTeKVZK82NqmioAglMg4w2+944212A5v4Z3e+qQ2C16f+zwlCJK4BRGkGuX4K24PQ
-	oTa4uAXX3nj5UQ75oPetJcNHwlJsoE0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-571-H-3KNJE6M9GS_qyNuAZn9A-1; Tue,
- 29 Oct 2024 09:45:20 -0400
-X-MC-Unique: H-3KNJE6M9GS_qyNuAZn9A-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EBE661954B1F;
-	Tue, 29 Oct 2024 13:45:18 +0000 (UTC)
-Received: from tpad.localdomain (unknown [10.96.133.7])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8BE9F19560A3;
-	Tue, 29 Oct 2024 13:45:18 +0000 (UTC)
-Received: by tpad.localdomain (Postfix, from userid 1000)
-	id 9A8F0400DF400; Tue, 29 Oct 2024 10:44:59 -0300 (-03)
-Date: Tue, 29 Oct 2024 10:44:59 -0300
-From: Marcelo Tosatti <mtosatti@redhat.com>
-To: "Nikunj A. Dadhania" <nikunj@amd.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>,
-	Isaku Yamahata <isaku.yamahata@intel.com>, kvm@vger.kernel.org,
-	pbonzini@redhat.com, Sean Christopherson <seanjc@google.com>,
-	chao.gao@intel.com, rick.p.edgecombe@intel.com,
-	yan.y.zhao@intel.com, linux-kernel@vger.kernel.org,
-	isaku.yamahata@gmail.com, Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
-Message-ID: <ZyDm25/oSBfuUpqj@tpad>
-References: <cover.1728719037.git.isaku.yamahata@intel.com>
- <c4df36dc-9924-e166-ec8b-ee48e4f6833e@amd.com>
- <ZxvGPZDQmqmoT0Sj@tpad>
- <81e6604b-fa84-4b74-b9e6-2a37e8076fd7@intel.com>
- <Zx+/Dl0F73GUrzI2@tpad>
- <714ab7a2-69fa-b08d-deae-6eb91ecba95b@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtrTj4oqAjKHyRnedfVXe1VMOM7ipViQeOPm58codXdZksF1AkEstn38Mi5Geo/TVCyO0ncmqpEVTbh2hTBWNUahCXlDOfzj/FgnVL2bc9Ofnza5BqUmxfGti7PeANJ5iULSyyNaa0H7M79jM0bcF/J4AdSHrEs77SWSfYRJPJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B7tB+boD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93DABC4CEE6;
+	Tue, 29 Oct 2024 13:44:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730209496;
+	bh=pQHEsCEbFi1AN2z1gIf0oXg2/Tu/i0UAAIzrBe5f5TY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=B7tB+boDnrw9L2Q977u1NOCl3LMbfGWMiT4lAcGj8LXUHSJ4ji2FBayaUzrwc9e1t
+	 Tg9eef2JjVN+IuAOwIicmBh3lWYtt8iCuohllyQ6a8t1rfia5mUSZKAtedgvAJOUc2
+	 mklFwQ/BeN36/aYXEYUfGe8NICAvW9mXIwVWvRPSpAwAAiw/lyn8QhGuMmqajs8NiC
+	 rnYxHmHsTIGNFlfpkUjnY8akJ/Se0RcaIcOwa1mZTuAGKVv05A06WEM4We/kDFyPf6
+	 qPnjJf1RGSudjJ3v/RVTHOeZzvlNorO+xseZsKn9NBe0dC0gR6yiabNq0odPbF7lYw
+	 ie790g6yPPYTA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t5mX6-0000000031G-0m5y;
+	Tue, 29 Oct 2024 14:45:16 +0100
+Date: Tue, 29 Oct 2024 14:45:16 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Felipe Balbi <balbi@ti.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Lee Jones <lee@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	stable@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2 3/6] phy: core: Fix that API devm_phy_destroy() fails
+ to destroy the phy
+Message-ID: <ZyDm7IMUBYkiHPyp@hovoldconsulting.com>
+References: <20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com>
+ <20241024-phy_core_fix-v2-3-fc0c63dbfcf3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,53 +75,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <714ab7a2-69fa-b08d-deae-6eb91ecba95b@amd.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+In-Reply-To: <20241024-phy_core_fix-v2-3-fc0c63dbfcf3@quicinc.com>
 
-On Tue, Oct 29, 2024 at 09:34:58AM +0530, Nikunj A. Dadhania wrote:
-> Hello Marcelo
+On Thu, Oct 24, 2024 at 10:39:28PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> On 10/28/2024 10:12 PM, Marcelo Tosatti wrote:
-> > On Sun, Oct 27, 2024 at 10:06:17PM +0800, Xiaoyao Li wrote:
-> >> On 10/26/2024 12:24 AM, Marcelo Tosatti wrote:
-> >>> On Mon, Oct 14, 2024 at 08:17:19PM +0530, Nikunj A. Dadhania wrote:
-> >>>> Hi Isaku,
-> >>>>
-> >>>> On 10/12/2024 1:25 PM, Isaku Yamahata wrote:
-> >>>>> Choose the first one.  With this patch series, SEV-SNP secure TSC can be
-> >>>>> supported.
-> >>>>
-> >>>> I am not sure how will this help SNP Secure TSC, as the GUEST_TSC_OFFSET and
-> >>>> GUEST_TSC_SCALE are only available to the guest.
-> >>>
-> >>> Nikunj,
-> >>>
-> >>> FYI:
-> >>>
-> >>> SEV-SNP processors (at least the one below) do not seem affected by this problem.
-> >>
-> >> Did you apply Secure TSC patches of (guest kernel, KVM and QEMU) manualy?
-> >> because none of them are merged. 
-> > 
-> > Yes. cyclictest latency, on a system configured with tuned
-> > realtime-virtual-host/realtime-virtual-guest tuned profiles,
-> > goes from 30us to 50us.
-> 
-> Would you be ok if I include your Tested-by in the next version of my Secure TSC patches?
-> 
-> https://lore.kernel.org/lkml/20241028053431.3439593-1-nikunj@amd.com/
+> For devm_phy_destroy(), its comment says it needs to invoke phy_destroy()
+> to destroy the phy, but it does not invoke the function actually since
+> devres_destroy() will not call devm_phy_consume() at all which will call
+> the function, and the missing phy_destroy() call will case that the phy
+> fails to be destroyed.
 
-Please don't, haven't tested specifically the patches above.
+Here too, split in at least two sentences.
+ 
+> Fixed by using devres_release() instead of devres_destroy() within the API.
 
-> >> Otherwise, I think SNP guest is still using
-> >> KVM emulated TSC.
-> > 
-> > Not in the case the test was made.
-> > 
-> 
-> Regards,
-> Nikunj
-> 
-> 
+And add a comment about there not being any in-tree users of the
+interface.
 
+And consider dropping it.
+
+> Fixes: ff764963479a ("drivers: phy: add generic PHY framework")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+
+Johan
 
