@@ -1,102 +1,100 @@
-Return-Path: <linux-kernel+bounces-387620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5715C9B53B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:32:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA0E9B53BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 027781F243B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:32:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA191F24344
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4642020A5F0;
-	Tue, 29 Oct 2024 20:29:16 +0000 (UTC)
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A327720ADD4;
+	Tue, 29 Oct 2024 20:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Et+rln8p"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904C9207A05;
-	Tue, 29 Oct 2024 20:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6323A2076C6;
+	Tue, 29 Oct 2024 20:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730233755; cv=none; b=Lp4azBqYGoXSsC4EXvML0uKkd7ltpnC8yeH9pYc0j7hurUCZYc+s42TDPR8/xHOfQuFeN3MrFa6Jt1ATfdSqJb7/9Bw2LebJamejMRHonJBtII5cFJPmtdLxNt+FS5o4xSn5b964jJ1u8DaVRPzBniyJPoLelFr5/h2JXoBaevs=
+	t=1730233825; cv=none; b=anYoktfJEEjeL1RsaruCH/LLmAUKpEEmIq9DYQhWcsQLe3GKgL2tbfrvE2bi7CB1NibMXIkGUTK1JuWIcmjpLyz9dJM1PzPO8UzZsF1cN5mAgbo6Vmp9NQ+nAXA3tGzpFLivghXBEfowaSzT+lNMVvSyvoROCNmHbfWaFeWoGYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730233755; c=relaxed/simple;
-	bh=X9amSME64Aubj6meV8ZaWlOmLqO5bfIO8YgAkHvGW/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cvJ4dKi8xfZdY1QcWPkZA/WDZEhP+ZHkxXKkm8/bcQDXC59Tt9oKQq+P2Wzqh6F1Rf6wCAx6IA+yQaWhx0VWdFVAPZNnFCHFB0aCWIkjEcWl0tCZwny3xBAl1FobqhkHBFUsMqqW52pIz8CKGWYK/7TVfLBLHXwNvZUQR6iElmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de; spf=fail smtp.mailfrom=denx.de; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=denx.de
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id 0BBAA1C00CF; Tue, 29 Oct 2024 21:29:12 +0100 (CET)
-Date: Tue, 29 Oct 2024 21:29:11 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-Message-ID: <ZyFFl/TQeQHfprd5@duo.ucw.cz>
-References: <20241028062312.001273460@linuxfoundation.org>
+	s=arc-20240116; t=1730233825; c=relaxed/simple;
+	bh=LCPuPHxmcheRjCZu/CCyo9lhHWSqEy8+gxzMZANtv8I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=X+yajf73bE4tBPV1vpnIG338B6L1ivBO8vjaCSbK0K8+Ytrk3FLY0auinrcYfXx7a2kNbeQX3IfOJWVNx7X+BcQirrG82FqwC1KEerNRoB1TG0dsBPEUvTROoDRXqQ3peEQUMkt/qWbrKZxTiVSN2ANtk59yLc/k1/IG9QFdKP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Et+rln8p; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20bb39d97d1so49577815ad.2;
+        Tue, 29 Oct 2024 13:30:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730233822; x=1730838622; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LCPuPHxmcheRjCZu/CCyo9lhHWSqEy8+gxzMZANtv8I=;
+        b=Et+rln8p0CydBo2vWmqYnosQY2ldjHldXuPrChtomqjvi1cPgeUIi02aB+6DaGut8y
+         28g5TA90LuFteiYeNT4+cIbILtXGHGhie0RmqLugxMwSJpJFcTZGq/LKscAhpla5+OnM
+         gCIJ4lhNX6ZyBE2OfzfoXk9Iwzoe6SqDjeUu8e1T+nIfLaIQOguOPrjBYKo60qWo23ko
+         xH5WEJKNbPzUncHiticfY/Ng9oKT89/WFpz2xs7CoziDMa3Z275gf5jIZN/3bQJqHrga
+         Bwb3IvqhYjfHSnTzzOR8buldll+KjIJkvjL6DRxuq+JZIdYuCqe6kzTsIpOi7LrgyS+A
+         99zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730233822; x=1730838622;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LCPuPHxmcheRjCZu/CCyo9lhHWSqEy8+gxzMZANtv8I=;
+        b=ZYXmNFT5spDpgy5LmR5nWd9hU4qS/ijAGaDi/HEqHzNFaP78c8heYuMdhkSOBn7dmm
+         vcEM+d4irDeBufA3g2ERIqsBAeaLHWb0s3Ntv2pWyVZKSmWJXPtlF+8jy26JrAbGau+M
+         ZzP6W9//2WB+48Vzv2SYW2mNNiGoNloXforyYruavAeMkWowFQ4ysJ5Y5dfuTTMAv35b
+         184lksCR0pSaG91htOXymZLLG1OeijbJY2Ch/B6DkzgqAdRWaxFnV+mBpIWGTbKvLp1S
+         f2UizqZaL8QCdnTLmm+S77SGHdW7RDN/sgel9dJvD7X81WuYaFue6wDoEZX+pSc0A78X
+         ST7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWQzbLQUukn1u0nJ6niQBupNd4jM0crHWymaJSTNdpRA1/jb2Px7Kzl/lcG+P2zP1Yc6EsENhEDg+pOIA==@vger.kernel.org, AJvYcCWedKaE21uDMbtb4OLoXZ3J2F6WkpLJm3E5uQBZok7SoZFdBTjQ6b4WumRQm7dQtL08TJfG5aujyrlKWRVG@vger.kernel.org, AJvYcCWyj8EYFvJtKRqehq0nkaAD05koUZCuduAZpUN19rKV7+0EPt84zCcKmzj+YtqYykEpF6nfsh9+d9/G@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpJjEfGrbjPMqV0/QoZBEdgnpoYxH8572Q/RWunwLEpJ+Pbcrx
+	ZkMS8lJ2iG7T62Y2qiKQXq+NNnuh4pF/irh4z3aJd7kt1pn2EqKr
+X-Google-Smtp-Source: AGHT+IFroEW9to+PrSxVxxL7EaDXV3zy0R6mpiRww0wu/Ae6aYY9Rv/dMYht+3SI/+mmV80Zf6dDdw==
+X-Received: by 2002:a17:902:cf02:b0:20c:f648:e39e with SMTP id d9443c01a7336-210f770091amr9100505ad.58.1730233821672;
+        Tue, 29 Oct 2024 13:30:21 -0700 (PDT)
+Received: from mighty.kangaroo-insen.ts.net ([45.64.12.145])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf46373sm70351915ad.54.2024.10.29.13.30.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 13:30:21 -0700 (PDT)
+From: MightyM17 <bavishimithil@gmail.com>
+To: bavishimithil@gmail.com
+Cc: andreas@kemnade.info,
+	bcousson@baylibre.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org,
+	robh@kernel.org,
+	tony@atomide.com
+Subject: Re: [PATCH v2] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+Date: Tue, 29 Oct 2024 20:30:14 +0000
+Message-ID: <20241029203014.399-1-bavishimithil@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240626095056.12607-1-bavishimithil@gmail.com>
+References: <20240626095056.12607-1-bavishimithil@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="7XXbQHsdIGhFzM7t"
-Content-Disposition: inline
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
+Content-Transfer-Encoding: 8bit
 
+> Well, no, the file is not used at the moment, I do not think it makes sense to have it in without an actual in-tree user.
 
---7XXbQHsdIGhFzM7t
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+So, I am planning to merge espresso dts (https://gitlab.postmarketos.org/postmarketOS/pmaports/-/blob/master/device/community/linux-postmarketos-omap/0002-arm-dts-Add-common-dtsi-for-espresso.patch?ref_type=heads) once this gets merged, plus it can be later used on epson-embt2ws as well.
 
-Hi!
-
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.11.y
-
-6.6, 5.15 pass our testing, too:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.6.y
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-5.15.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
-
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---7XXbQHsdIGhFzM7t
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZyFFlwAKCRAw5/Bqldv6
-8lE9AJ9b34rY8AOwfe6diU/jgrSb6MgRZQCZAQLpy8S/o+aHHyfhbvZIBE7+CWY=
-=wRYo
------END PGP SIGNATURE-----
-
---7XXbQHsdIGhFzM7t--
+Best Regards,
+Mithil
 
