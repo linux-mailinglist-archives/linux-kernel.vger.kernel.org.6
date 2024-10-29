@@ -1,149 +1,276 @@
-Return-Path: <linux-kernel+bounces-387479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C98D39B51C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:28:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5652C9B51CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:29:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D73D1F243F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:28:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B1BB22702
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B781F1FF7B9;
-	Tue, 29 Oct 2024 18:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E321FF7CC;
+	Tue, 29 Oct 2024 18:29:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GSt9ar8U"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V11dBlZG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAD1042A80;
-	Tue, 29 Oct 2024 18:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C729017DE36;
+	Tue, 29 Oct 2024 18:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730226515; cv=none; b=HfJV22Fy2XshIoJtOQmFXoV75EDvqWyaXG0QbF1+Jt+gj3f0awN8RbdkvbH3/dCDL3iwoyYPhqSEPfSVH0vp7ss0+jZCJDquRNKEfdrqlCB2kYbSWQRwk2xV9sSs+Vb/EHS44wvRQU0c6lRH9+9OJyIPsAfyiExeXLjoQkFQ8MU=
+	t=1730226583; cv=none; b=BQjXEAd5lc3/7C6R69DT+BJHQ5EQO+vGz9gp8yl1vUx8OkZs/RQsKnKfvSFZh2AiO0t1agq+ZDU6vmQaiJi6z+pY6QDkN41kaYxtswUVBg+m+8N/sB+BQed2z9IbhMi4Tj7lZIyqBi2zo4BqoaNXXzhYpNRFgyYZvEoPIXc41hg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730226515; c=relaxed/simple;
-	bh=GlXuBhAWQJ0Y9uwUyXNrx0vBVJymCZRecaCWBOqP9XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLMhNOTLsWuc9Rml5UwsINBdY8TcNZ5eAim6FZBlSDZ9MqmZLBVKzXx/m6A0Pec+ecgvaBWnChspyDwSaW/HLUSQ4HmN5Kmc2iUKMPnbX8WJw0D6RLy7/tWUstW0wSKliHB68dBFCb3rHSe9J+Cj31kj83uGGVYRJWY6KETaJng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GSt9ar8U; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d570728ebso720215f8f.2;
-        Tue, 29 Oct 2024 11:28:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730226511; x=1730831311; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p38Nw/wn8P1HtvutoMsQSBm8NKDoK6ubRUVWzA0Btis=;
-        b=GSt9ar8UEO+2fMf01fjrxv8UYN9nBi5IbqJdDZcNGQb4BwhRha+W5UxPgAqSknpMuy
-         oZAErrGaq3ubuITvETNOKdsh14ZNT20jVLLtdRs9EnTR1R0tQ5zfgUtgv73OucthTY3Q
-         SjA6rC0NvVJqudihpa9+ewpi2rvL1QYXXiu36/gPZByDnJL7+V1IEtN+j+pq/tH/RFIb
-         tiGPDErDy6N9zOZeVoiBBU4XB43pM2ge0+FD1XbS/k9UfE9rYbA0a4e53pmoufkrNZeD
-         FB+N5/XNkEzBFZRmP7I5NUa3OSlBbOrvvJvKGQ9H4e0yOBLlKKp7dSrsFpkbWt/dK9iU
-         +dBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730226511; x=1730831311;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p38Nw/wn8P1HtvutoMsQSBm8NKDoK6ubRUVWzA0Btis=;
-        b=I6KT2Pc4jhI2/VRN9AfBArZShG8Jj1aQfrI+Tj2BlFYzIuG0aVXLMLtY6myvslDxA1
-         M3H0G5YtyEYNzuYHA0dJxzEAd0NS9E28dDBM5eMbctczoTmQ++KZvVqD+R8WmsmFrQjC
-         5FGitzfxNfQybEcrZcJEPfjACMZ8lwCKR6Dli/+pFUWYiuJdZr3EL99PgFKGU50xn163
-         EnEEKlfQZOozhZNgaVX9AVUcHGIR3dvFcdUrlnalcdN3Hv8cOEgE6FPeB9bOKxHwQvEi
-         DtHFPwaO8/+dGqW+KsliwcbIc2Uh4hmfUHwrCzZ+5SUECt+xuxRM5I/WHkIBENPzVTss
-         gUsw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8Wv3e9b3Vgs/ThK1UDfIWoHjDO3HCn9Q9cRJyEQynvevJ3dE3bOPFpFJZ49A7VT5hV1k2Rdj7@vger.kernel.org, AJvYcCVKKnvww2ccWoAYeog1E7V/0Pcoiz4Bue5ecBfBuWAWsa1buQVU2Mo2cUSRxic1GYXmHP+LmhHFeWn+yMs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5RJ1MJMpDyr2erglydYkcZxNKHMXYhpoyJMTq5KNMQo9mNQhF
-	wUxdxHgL/LW6Bm9rkzY45/X8O/LUnjqAGDd+w9cDvOg7LOsor+65
-X-Google-Smtp-Source: AGHT+IGxEyO2SZEGXuddS7oneYG/VfTQFgXCrabkVo4IppTaYF9yjLKtIZ4oYyZTm16h/8jag8IM5A==
-X-Received: by 2002:a5d:47c2:0:b0:374:ca43:ac00 with SMTP id ffacd0b85a97d-38061126ae4mr3808713f8f.4.1730226510979;
-        Tue, 29 Oct 2024 11:28:30 -0700 (PDT)
-Received: from skbuf ([188.25.134.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b91f43sm13353284f8f.92.2024.10.29.11.28.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 11:28:30 -0700 (PDT)
-Date: Tue, 29 Oct 2024 20:28:27 +0200
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH net-next v2 0/9] lib: packing: introduce and use
- (un)pack_fields
-Message-ID: <20241029182827.u4az53onywedeot6@skbuf>
-References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
+	s=arc-20240116; t=1730226583; c=relaxed/simple;
+	bh=D8zGes9wsVozeVbV7+Smh+u7DzqpwqL3DIZ6uBBtNwE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LnY2674B+0JsJriD3if6JmuhRcbgA0JbzFjICO1u1yUMPEmIZG0D+GtXCFZILddaE/5RVb5FcRhVpLcVdAY06BZlBvkznPGIXIyJKR2LXTuYXTIjr+opObDEeVuw6l2CUjXqEjchu6QvbLB+S1loXwCQCN9Kho+M86ZpyAFawwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V11dBlZG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D3EC4CEE4;
+	Tue, 29 Oct 2024 18:29:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730226583;
+	bh=D8zGes9wsVozeVbV7+Smh+u7DzqpwqL3DIZ6uBBtNwE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V11dBlZGmRMv+YTXBU0NmxiabjnjyWqShBF3WG6kUCwR++tbaC8+mUUM1xlYUAfP2
+	 +m6l6k9UGN6U3dsvvyxzKBIIoJIC2HPq8poNFqni1khbibTMcBTokCod46/Sm6jJFi
+	 dRSzqNWdkhrzATiTSh8+qtYQY3qwnOUYSJdbCBXkXUPI/i6pj32pwH9ec9bi8MI9d6
+	 PJmnQoxWeDGybKOfwyPHXnEgofwk1oJnJq29gj3dTDGlFLwiVv+kjA/sgZjKiy4UUV
+	 H2Bfs5olNuD31txXCb1PVltd0RjjQLhxoN8mmfXRNcKdhJbnmEiN7HDdet7ZkoQjY8
+	 d1aVfDb7DfnQw==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-27d0e994ae3so2533579fac.3;
+        Tue, 29 Oct 2024 11:29:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUjym61i00xJ5BHF3OWQCpZzHveSoLg5qHIzOvp3WUDAIMFAFzg2yJnFMHjOioLwrxHtOhW1damdA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHXpSrep0VDzsxfxw81yIpwoli3wPY9dDKROchBmFL6pz4/3Mm
+	q9aJz6NjdqZ7lGTit5aXPM33yiRed78n2FwuEd3peeIzBoXE9SS0Kzy0gBeHNQsXIrbUD7SK0Ik
+	nlwSoIEhKnTsGgaZwuLJZwfM1CoQ=
+X-Google-Smtp-Source: AGHT+IH9tadkQr/ESOI4GuXv2RDI/r2CgLzlI346wL/gRg/H6cTv9b3gSXpTrv9gAW4DFm3Mnd+hRP+bkAxszfyN/jc=
+X-Received: by 2002:a05:6870:b01f:b0:270:4219:68fe with SMTP id
+ 586e51a60fabf-29051b02ea3mr11763099fac.1.1730226582847; Tue, 29 Oct 2024
+ 11:29:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
+References: <20241029094452.495439-1-lukasz.luba@arm.com> <20241029094452.495439-2-lukasz.luba@arm.com>
+In-Reply-To: <20241029094452.495439-2-lukasz.luba@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 29 Oct 2024 19:29:31 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
+Message-ID: <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] PM: EM: Add min/max available performance state limits
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	dietmar.eggemann@arm.com, rafael@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 25, 2024 at 05:04:52PM -0700, Jacob Keller wrote:
-> This series improves the packing library with a new API for packing or
-> unpacking a large number of fields at once with minimal code footprint. The
-> API is then used to replace bespoke packing logic in the ice driver,
-> preparing it to handle unpacking in the future. Finally, the ice driver has
-> a few other cleanups related to the packing logic.
-> 
-> The pack_fields and unpack_fields functions have the following improvements
-> over the existing pack() and unpack() API:
-> 
->  1. Packing or unpacking a large number of fields takes significantly less
->     code. This significantly reduces the .text size for an increase in the
->     .data size which is much smaller.
-> 
->  2. The unpacked data can be stored in sizes smaller than u64 variables.
->     This reduces the storage requirement both for runtime data structures,
->     and for the rodata defining the fields. This scales with the number of
->     fields used.
-> 
->  3. Most of the error checking is done at compile time, rather than
->     runtime via CHECK_PACKED_FIELD_* macros. This saves wasted computation
->     time, *and* catches errors in the field definitions immediately instead
->     of only after the offending code executes.
-> 
-> The actual packing and unpacking code still uses the u64 size
-> variables. However, these are converted to the appropriate field sizes when
-> storing or reading the data from the buffer.
-> 
-> One complexity is that the CHECK_PACKED_FIELD_* macros need to be defined
-> one per size of the packed_fields array. This is because we don't have a
-> good way to handle the ordering checks otherwise. The C pre-processor is
-> unable to generate and run variable length loops at compile time.
-> 
-> This is a significant amount of macro code, ~22,000 lines of code. To
-> ensure it is correct and to avoid needing to store this directly in the
-> kernel history, this file is generated as <generated/packing-checks.h> via
-> a small C program, gen_packing_checks. To generate this, we need to update
-> the top level Kbuild process to include the compilation of
-> gen_packing_checks and execution to generate the packing-checks.h file.
-> 
-> Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+On Tue, Oct 29, 2024 at 10:43=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
+wrote:
+>
+> On some devices there are HW dependencies for shared frequency and voltag=
+e
+> between devices. It will impact Energy Aware Scheduler (EAS) decision,
+> where CPUs share the voltage & frequency domain with other CPUs or device=
+s
+> e.g.
+> - Mid CPUs + Big CPU
+> - Little CPU + L3 cache in DSU
+> - some other device + Little CPUs
+>
+> Detailed explanation of one example:
+> When the L3 cache frequency is increased, the affected Little CPUs might
+> run at higher voltage and frequency. That higher voltage causes higher CP=
+U
+> power and thus more energy is used for running the tasks. This is
+> important for background running tasks, which try to run on energy
+> efficient CPUs.
+>
+> Therefore, add performance state limits which are applied for the device
+> (in this case CPU). This is important on SoCs with HW dependencies
+> mentioned above so that the Energy Aware Scheduler (EAS) does not use
+> performance states outside the valid min-max range for energy calculation=
+.
+>
+> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
 > ---
-> Changes in v2:
-> - Add my missing sign-off to the first patch
-> - Update the descriptions for a few patches
-> - Only generate CHECK_PACKED_FIELDS_N when another module selects it
-> - Add a new patch introducing wrapper structures for the packed Tx and Rx
->   queue context, suggested by Vladimir.
-> - Drop the now unnecessary macros in ice, thanks to the new types
-> - Link to v1: https://lore.kernel.org/r/20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com
+>  include/linux/energy_model.h | 24 ++++++++++++++---
+>  kernel/power/energy_model.c  | 52 ++++++++++++++++++++++++++++++++++++
+>  2 files changed, 72 insertions(+), 4 deletions(-)
+>
+> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
+> index 1ff52020cf757..e83bf230e18d1 100644
+> --- a/include/linux/energy_model.h
+> +++ b/include/linux/energy_model.h
+> @@ -55,6 +55,8 @@ struct em_perf_table {
+>   * struct em_perf_domain - Performance domain
+>   * @em_table:          Pointer to the runtime modifiable em_perf_table
+>   * @nr_perf_states:    Number of performance states
+> + * @min_ps:            Minimum allowed Performance State index
+> + * @max_ps:            Maximum allowed Performance State index
+>   * @flags:             See "em_perf_domain flags"
+>   * @cpus:              Cpumask covering the CPUs of the domain. It's her=
+e
+>   *                     for performance reasons to avoid potential cache
+> @@ -70,6 +72,8 @@ struct em_perf_table {
+>  struct em_perf_domain {
+>         struct em_perf_table __rcu *em_table;
+>         int nr_perf_states;
+> +       int min_ps;
+> +       int max_ps;
+>         unsigned long flags;
+>         unsigned long cpus[];
+>  };
+> @@ -173,6 +177,8 @@ void em_table_free(struct em_perf_table __rcu *table)=
+;
+>  int em_dev_compute_costs(struct device *dev, struct em_perf_state *table=
+,
+>                          int nr_states);
+>  int em_dev_update_chip_binning(struct device *dev);
+> +int em_update_performance_limits(struct em_perf_domain *pd,
+> +               unsigned long freq_min_khz, unsigned long freq_max_khz);
+>
+>  /**
+>   * em_pd_get_efficient_state() - Get an efficient performance state from=
+ the EM
+> @@ -180,6 +186,8 @@ int em_dev_update_chip_binning(struct device *dev);
+>   * @nr_perf_states:    Number of performance states
+>   * @max_util:          Max utilization to map with the EM
+>   * @pd_flags:          Performance Domain flags
+> + * @min_ps:            Minimum allowed Performance State index
+> + * @max_ps:            Maximum allowed Performance State index
+>   *
+>   * It is called from the scheduler code quite frequently and as a conseq=
+uence
+>   * doesn't implement any check.
+> @@ -189,12 +197,13 @@ int em_dev_update_chip_binning(struct device *dev);
+>   */
+>  static inline int
+>  em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_state=
+s,
+> -                         unsigned long max_util, unsigned long pd_flags)
+> +                         unsigned long max_util, unsigned long pd_flags,
+> +                         int min_ps, int max_ps)
+>  {
+>         struct em_perf_state *ps;
+>         int i;
+>
+> -       for (i =3D 0; i < nr_perf_states; i++) {
+> +       for (i =3D min_ps; i <=3D max_ps; i++) {
+>                 ps =3D &table[i];
+>                 if (ps->performance >=3D max_util) {
+>                         if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES=
+ &&
+> @@ -204,7 +213,7 @@ em_pd_get_efficient_state(struct em_perf_state *table=
+, int nr_perf_states,
+>                 }
+>         }
+>
+> -       return nr_perf_states - 1;
+> +       return max_ps;
+>  }
+>
+>  /**
+> @@ -254,7 +263,8 @@ static inline unsigned long em_cpu_energy(struct em_p=
+erf_domain *pd,
+>          */
+>         em_table =3D rcu_dereference(pd->em_table);
+>         i =3D em_pd_get_efficient_state(em_table->state, pd->nr_perf_stat=
+es,
+> -                                     max_util, pd->flags);
+> +                                     max_util, pd->flags, pd->min_ps,
+> +                                     pd->max_ps);
+>         ps =3D &em_table->state[i];
+>
+>         /*
+> @@ -391,6 +401,12 @@ static inline int em_dev_update_chip_binning(struct =
+device *dev)
+>  {
+>         return -EINVAL;
+>  }
+> +static inline
+> +int em_update_performance_limits(struct em_perf_domain *pd,
+> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
+> +{
+> +       return -EINVAL;
+> +}
+>  #endif
+>
+>  #endif
+> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
+> index 927cc55ba0b3d..436c2b8fdf9eb 100644
+> --- a/kernel/power/energy_model.c
+> +++ b/kernel/power/energy_model.c
+> @@ -628,6 +628,8 @@ int em_dev_register_perf_domain(struct device *dev, u=
+nsigned int nr_states,
+>                 goto unlock;
+>
+>         dev->em_pd->flags |=3D flags;
+> +       dev->em_pd->min_ps =3D 0;
+> +       dev->em_pd->max_ps =3D nr_states - 1;
+>
+>         em_cpufreq_update_efficiencies(dev, dev->em_pd->em_table->state);
+>
+> @@ -856,3 +858,53 @@ int em_dev_update_chip_binning(struct device *dev)
+>         return em_recalc_and_update(dev, pd, em_table);
+>  }
+>  EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
+> +
+> +
+> +/**
+> + * em_update_performance_limits() - Update Energy Model with performance
+> + *                             limits information.
+> + * @pd                 : Performance Domain with EM that has to be updat=
+ed.
+> + * @freq_min_khz       : New minimum allowed frequency for this device.
+> + * @freq_max_khz       : New maximum allowed frequency for this device.
+> + *
+> + * This function allows to update the EM with information about availabl=
+e
+> + * performance levels. It takes the minimum and maximum frequency in kHz
+> + * and does internal translation to performance levels.
+> + * Returns 0 on success or -EINVAL when failed.
+> + */
+> +int em_update_performance_limits(struct em_perf_domain *pd,
+> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
+> +{
+> +       struct em_perf_state *table;
+> +       int min_ps =3D -1;
+> +       int max_ps =3D -1;
+> +       int i;
+> +
+> +       if (!pd)
+> +               return -EINVAL;
+> +
+> +       rcu_read_lock();
+> +       table =3D em_perf_state_from_pd(pd);
+> +
+> +       for (i =3D 0; i < pd->nr_perf_states; i++) {
+> +               if (freq_min_khz =3D=3D table[i].frequency)
+> +                       min_ps =3D i;
+> +               if (freq_max_khz =3D=3D table[i].frequency)
+> +                       max_ps =3D i;
+> +       }
+> +       rcu_read_unlock();
+> +
+> +       /* Only update when both are found and sane */
+> +       if (min_ps < 0 || max_ps < 0 || max_ps < min_ps)
+> +               return -EINVAL;
+> +
+> +
+> +       /* Guard simultaneous updates and make them atomic */
+> +       mutex_lock(&em_pd_mutex);
+> +       pd->min_ps =3D min_ps;
+> +       pd->max_ps =3D max_ps;
+> +       mutex_unlock(&em_pd_mutex);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
 
-For the set:
-
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
-
-Thanks for working on this!
+It would be good to have at least one caller of this function in the tree.
 
