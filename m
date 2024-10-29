@@ -1,145 +1,260 @@
-Return-Path: <linux-kernel+bounces-386643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DF2A9B4646
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:59:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603F19B464A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:00:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 851EE1F238B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:59:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CD1F1C2097B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4397620495C;
-	Tue, 29 Oct 2024 09:57:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73357205136;
+	Tue, 29 Oct 2024 09:57:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="UDsgeD8e"
-Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2059.outbound.protection.outlook.com [40.92.62.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4EA191F8E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:57:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730195824; cv=fail; b=BChz4q95AzNL3FgsFxaf0crGMvDh+hYHvLi6kULx9b18yxgDA30aOkcEji7bujZI8KpdmMAqhaYGkOVNFRh4OMHKMI04iVUi0R0t5z9CrR0644HYm/fiZMYkljQ6TNR3GvUSa6Oo0ttd4Kq7ai7MX1TGkpOs/tMMTZ5K9zPgOOQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730195824; c=relaxed/simple;
-	bh=yn2TUqcRiNHldWO430PgjD6yz+1CPoLYO3rCS94aHm4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=g7pLJ24FFgmgr4JsObNcglmC77jzOMZk7gnrBMbuCs4fOaqU+SgIhnpP4Hn7J+gNYp0aOmLiKE/44SpBMZuqJJkoRECiu/P1dIF3jkfaEZZtHv0gEOVifQvahTZao3SjSmxAgkvVOp8GoIn0MWpTCBG5A04ezFpYJo96YUWmlbc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=UDsgeD8e; arc=fail smtp.client-ip=40.92.62.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ohp45MLsZyffKpbwF+Ov0Df1juj6GEU38KwbCDWRzvG98lW3oA4oXueLgK+GKUZWVYPWxk80hlJ3gnseC2be9Qf/iURnVsJ6ppBw9p4LG7WgHhPnQ4MD0PC8Lz3Y3Z32eGrUJbtwshBUrC9AwcuBMr8nojiosDd/Q1ZtwOeNnoJaEcQQTtdZsXxRCCHvUn2f5cD15Z3ojKdgGI916MON230RsAFaFX2YH82fg/SW4Gobvgfog7JihyL0FD3mZVTwP6/L7vQEmL9E8mRLXIonfB+qhk1IP5OogZGD67PyGRPAKbGrfyXYxoViGgB4HTLtBR+Avsd1lm+8wv/UpR9LLw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yn2TUqcRiNHldWO430PgjD6yz+1CPoLYO3rCS94aHm4=;
- b=iOUbkJziHvcagusLCHMFcXKH6/14aqjNb/noydFbq5mpR1fx6bDFuxojGYsVR30cGkT1WZDFyiLPWfSHluzM8hMgfcBUqlLsBjVSyR9tUx24qKHc+faXkhafI7nnRj/ivC00y5O0N/YFtuQeQMo/2/QNBEzgRyiyWQqyiuE0RI02QWC+B9IBCE05sGYOaIG8VWsO3lUjf7MO51MK5dlzMMrO463L9ShOa236Hp5b9jkKVkoMk1y2fbgQ0bK1qC9pYz9eBZ/QGu98S5Nr3fWUPkEsjMufx1+oLjk4OHKuTTZ81Sy3gM4OSnkfR9J8D7Dokac5ZgqgXRIu39YEeteM8w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yn2TUqcRiNHldWO430PgjD6yz+1CPoLYO3rCS94aHm4=;
- b=UDsgeD8ehxOWIlcVnmmDDsRLJ9aLg/a8ybD//XkNVPxVqrsHyP9HkktdL8bZUfDlzmnNp5Hpd1EXLwkoQBbHynY/AnpweNx9EsdgAAk7PJvszN7EOrxPBusr33U7KDdd0Ayc70EkY4XMvT6ht6WilI92b8xbr6c+ubzsievSy2CJEOxmu3h1p1GQVRXL2JSMy03Of9n5coVEzn0aXcatPzL1fs1TYhCsjBLFslQAANVyvu6ZOi6zQDReo2ag4mrBAkbhA0+4sUi8rL6ISjCOnRaAHUf39YWdr9Rgy7/Q3KOIQoSbUssXjwgrVBJhbaMQ0Ufxe1TelwYjmI5MhE64eQ==
-Received: from MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM (2603:10c6:220:159::11)
- by SY7P282MB3946.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1ea::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.13; Tue, 29 Oct
- 2024 09:56:58 +0000
-Received: from MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
- ([fe80::f65e:52a:9bfb:525f]) by MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
- ([fe80::f65e:52a:9bfb:525f%4]) with mapi id 15.20.8114.015; Tue, 29 Oct 2024
- 09:56:58 +0000
-From: Ryder Wang <rydercoding@hotmail.com>
-To: Zhihao Cheng <chengzhihao1@huawei.com>, Waqar Hameed
-	<waqar.hameed@axis.com>, Richard Weinberger <richard@nod.at>, Sascha Hauer
-	<s.hauer@pengutronix.de>
-CC: "kernel@axis.com" <kernel@axis.com>, "linux-mtd@lists.infradead.org"
-	<linux-mtd@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
-Thread-Topic: [PATCH RFC] ubifs: Fix use-after-free in ubifs_tnc_end_commit
-Thread-Index: AQHbGydq3UGpSRV3ek+T5tpnLt8T+rKdeqgFgAASuACAAArg6A==
-Date: Tue, 29 Oct 2024 09:56:58 +0000
-Message-ID:
- <MEYP282MB316491A32BE6F870B093540FBF4B2@MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM>
-References:
- <1225b9b5bbf5278e5ae512177712915f1bc0aebf.1728570925.git.waqar.hameed@axis.com>
- <MEYP282MB316412B08A32373E5ED9B896BF4B2@MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM>
- <fc567699-59c7-265a-b7c8-7b658cc6fc05@huawei.com>
-In-Reply-To: <fc567699-59c7-265a-b7c8-7b658cc6fc05@huawei.com>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: MEYP282MB3164:EE_|SY7P282MB3946:EE_
-x-ms-office365-filtering-correlation-id: 32a19f6d-3c69-47ff-7060-08dcf8000721
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15030799003|8062599003|461199028|8060799006|19110799003|7092599003|15080799006|3412199025|440099028|102099032;
-x-microsoft-antispam-message-info:
- X2ZDpihVUloWj8Fkp+v898e7I+XtHeatDeK2oRlPEPC9j79FGs3RhRKfUJTIKhuEdXhqr4s6JSpEq0rzZVF5iPhitge5u0m8+snKAvf35ZG62x4k60nCbeKc8HK9kSlT+O7Gcf/bBjt1De/hjmotwvwbU9jXBwPDmfl72A5qozNm34riPUAn19ECBQ5o4GGHJD10hXlSu1IG4Nb/ikx2k30H2WPWO5mBiErWu0ETznbozsNtO8K4YdaOaK2B6SJUKwc5N0YvFluNPgOdqxIU6ckdppdmOPSn8/GHNlrBMauJ7OZPGzhKGMNQMJhd4oaDJs6zVCNY7t9IgTRgDn79iRzWuW5mN55Azgk7qhOiyN4ekl5TCURE9rkq+SQnFFOU/yP8ox+ZdOyYTkElhgE+GZIoRCQf5HmpTeL9AuDytd7gK+8XRCnEV4GdeMzs9fQdSRVw6cel2O8y4wJAWWuzsp4mVazgayTKI8bpcV7g5i9krqxAyliJsSXfeGru1NVmp2zNmI140e3VWQd+QBYNQA0LbPRPV8ZRo8UTb5IxGo6BG9365G3ApxdDpa0jMS4/Y8cbD8FQprz27ZIJsyL/1ytzMy1dTqXbRKyt2moiw4afx+7EZI5dWriXCdYsshO7fJEj6ccsPwQoxaRMeiBWVlx/zqlIYohc+FGp+vahppVw8/YGKSX1nD8MaK9WKbYU/0COGvlrlD/zQg4VIMit/3Dxs0nzYGppl0lpUpZWKEO7fLWYBCZMk4pjLor26qkhxZG0rSme47ACfie9yJz4Cw==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?87mk1g3eF8ErUTfiLz3iDpGZkzKUqjZfhYhF8ZR6vNVsev77yVu2zVJH6c?=
- =?iso-8859-1?Q?x+n9KvmOMDFrCYqjywG5qGlei0dmVK4fGz8i66OCraLtfdJJUdJJFcYEA4?=
- =?iso-8859-1?Q?Ankt4zNlNtfdpyCen6yUH1jif4Hre9ZDT3oeif3U7oiDgmLDQfEpJctokG?=
- =?iso-8859-1?Q?sLcpc9/bhetoUFBbbvbV23UsfLPDYYORRIMnhMN+GtFx+7TsHkazJ3BiIs?=
- =?iso-8859-1?Q?ktoA6I0YybspV0V5igCx2I++cvk9egKE1HhMdPrerDcrsqUT7r6ynDjpR8?=
- =?iso-8859-1?Q?5MBGTSccpk51sKQxw7rpaO5vZY+QL0hUQLMCFiLgvSgiFXyHsRw7MywmkT?=
- =?iso-8859-1?Q?MwzI/D1ShP+qiRprfAlEKKo8QOdfrh12kJPaAa5HRJK9N67qvv4nZkW35P?=
- =?iso-8859-1?Q?9EtA5XJRFn/exIGsCnUxQIj1qZwNHjBO9ZJV8PfOaXtkXIsg2wHb496PHt?=
- =?iso-8859-1?Q?IWgdbfjkS0KPv1+5VWoFrBKPj6cNN6PCE2mHotmI2aS1mD0w6bgxplkcSu?=
- =?iso-8859-1?Q?ZI86Fn0vDwLpdUpe9jNuvb+5/cPXog9bSM8OlQnf29fUWXUH9cuXmLKfly?=
- =?iso-8859-1?Q?Jny9NNu9m7K4HgpKUkbC7/nI9JHhDrCVc3PWgmsh133kD4BKpBgikbjRvp?=
- =?iso-8859-1?Q?cMCBT/dvyt4QOOq1d/UGQBB2uPg7A87hT0msbWkarJyAosVy90xuDcI+Xe?=
- =?iso-8859-1?Q?nv4u7bNbj9s63Rk1g3J6zwLklK7PO3uY/75emuVtRGatDZtimDO/fyF2nc?=
- =?iso-8859-1?Q?eJY6mCUJKL5W2uLtTln5h2Io3SOalSYWndHwhnTEUzigik/AAUdDRIBWnc?=
- =?iso-8859-1?Q?0MlNN6aheeCB4uIeP9+rmOcguKPgURedAtLcgJvdM8Cu8dg0VqGO9ixvw8?=
- =?iso-8859-1?Q?S4FRdlw/mpX3amvU3iCX5p34c43fwDieiUtGrNLE61Jfs5W5P21S9YZyFM?=
- =?iso-8859-1?Q?fUm0oq+pPza99vmsqbiLvu+td2ZBVuOVwGY1xvQbP/3s3n+KFCHRAYeiD/?=
- =?iso-8859-1?Q?YSA4p10MOViHbTIRjWOf9jEtxmoehSUCyxeRHgZCf1Ilg3vQsFwJkIfgst?=
- =?iso-8859-1?Q?3kTLPwwuCk4gCAwjEkG/zydl3yMtIdx4ObAAlxF5Wmn7wcs3NtAJP5JROE?=
- =?iso-8859-1?Q?/KBndIpKush34kV3EkM3Ud0cbS6P9Ra+CrBS5meikoHQjjmtyojWyH5xLR?=
- =?iso-8859-1?Q?AI03UScVRpruyHAdp7yMKwcoHHgwzEMLzORrEzJ4JN3/dQL/P2NfsLnjaA?=
- =?iso-8859-1?Q?gwCGaOFMeGWUD71pq/Q1wwgNgqqgnmfXpitAoaxEw=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kSvkhaH6"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E32C205129;
+	Tue, 29 Oct 2024 09:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730195871; cv=none; b=DWNopfAEyxcG1DHNoZfnihd2EmWdx/k6z+AIUMYdEuiCmHb/2N4tWWXT6YvvgEBDTMQYaHoYE40nXWt1tm+xg5NGBzcYaBvHjC2NNRdCN857kr16ZhIUurCTs7SewN5pl2IvxYH2hk/IaqqF0XcTll9DtYJnlZPhWtcBNKy55jU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730195871; c=relaxed/simple;
+	bh=ckD69aUKtgXgW+HeIvGzWxs81YrbT3ZyujqVHP4qI5M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OeP+4a8VTvwZcxch/djyY7ScWeEfm9GY0e6ee4ss3yXyX8r+EgEN04PPZ9yDWKWCfBYfosB1mvUET2BJ1+lOyskVY3ZphI3dHeL2QW7/0oJhqZQcrs4Wa1J1Xrtxdd1b/Jsq8YUc8s4RhsVpd05tW1Oxs5J9O7kwfFOgVzmTQik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kSvkhaH6; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hko8H
+	LeJVCtg5vYzlfNWu7c2UKqmiEp/cfawOZQluVs=; b=kSvkhaH60zFLxR2cWEyRI
+	jG4XganOtaxtHOj0PMulD2Tik9IhIR0Z1m75szHoAvMlZ+ra3dJq0ca8VfIXR4xA
+	nnMjzTpx+htPPQvYfyxIZwrHR9v7Pa/AuuHyZhgpmFGLR1EIHWelcC3hGxj2jbx0
+	/7DEsOeEs+VHp01kdm6eRM=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3_1WBsSBnLXlDCA--.941S2;
+	Tue, 29 Oct 2024 17:57:25 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	minhuadotchen@gmail.com,
+	detlev.casanova@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>
+Subject: [PATCH v4 11/14] drm/rockchip: vop2: Set plane possible crtcs by possible vp mask
+Date: Tue, 29 Oct 2024 17:57:16 +0800
+Message-ID: <20241029095720.391076-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241029095513.391006-1-andyshrk@163.com>
+References: <20241029095513.391006-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-722bc.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: MEYP282MB3164.AUSP282.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32a19f6d-3c69-47ff-7060-08dcf8000721
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2024 09:56:58.2768
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY7P282MB3946
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3_1WBsSBnLXlDCA--.941S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtrW8JFWkXF43Zr17tw45GFg_yoWxKrW3pa
+	yxZFnxWF43Cr4agry7Ja98ZFyak3sxAw4a93ZrKFsxKr13Kry7Wr1UK3Z8CF1DWFy8Zr1j
+	vw43tryDur17tFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jnhL8UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwSHXmcgqJms1QAAsh
 
-> Thanks for reporting that :-). I noticed it a period time ago too, and I=
-=0A=
-> found 'c->znext', 'c->cnext' and 'znode->cnext' won't be accessed (in=0A=
-> write mode) by other tasks, because there is only one function=0A=
-> do_commit() modifying them and do_commit() can be executed by at most=0A=
-> one task in any time.=0A=
-=0A=
-It looks the race condition can really happen in this case from the issue r=
-eporter.=0A=
-1. do_commit (ubifs_bg_thread): it can finally touch unprotected znode whil=
-e calling the function write_index().=0A=
-2. ubifs_evict_inode (other kernel thread than ubifs_bg_thread): it can fin=
-ally touch the znode in the function tnc_delete(). Even there is mutex prot=
-ection for tnc_delete(), but it has no meaning because of do_commit (at the=
- point 1) doesn't have such mutex protection while calling write_index().=
+From: Andy Yan <andy.yan@rock-chips.com>
+
+In the upcoming VOP of rk3576, a window cannot attach to all Video
+Ports, we introduce a possible_vp_mask for every window to indicate
+which Video Ports this window can attach to.
+
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
+Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+---
+
+(no changes since v1)
+
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 18 +++++++++++++++++-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |  1 +
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 14 ++++++++++++++
+ 3 files changed, 32 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index e293310b30420..9603bd8491bc3 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -2112,6 +2112,10 @@ static int vop2_create_crtcs(struct vop2 *vop2)
+ 			if (win->base.type == DRM_PLANE_TYPE_PRIMARY)
+ 				continue;
+ 
++			/* If this win can not attached to this VP */
++			if (!(win->data->possible_vp_mask & BIT(vp->id)))
++				continue;
++
+ 			if (vop2_is_mirror_win(win))
+ 				continue;
+ 
+@@ -2143,7 +2147,19 @@ static int vop2_create_crtcs(struct vop2 *vop2)
+ 
+ 		win->type = DRM_PLANE_TYPE_OVERLAY;
+ 
+-		possible_crtcs = (1 << nvps) - 1;
++		possible_crtcs = 0;
++		nvp = 0;
++		for (j = 0; j < vop2_data->nr_vps; j++) {
++			vp = &vop2->vps[j];
++
++			if (!vp->crtc.port)
++				continue;
++
++			if (win->data->possible_vp_mask & BIT(vp->id))
++				possible_crtcs |= BIT(nvp);
++			nvp++;
++		}
++
+ 		ret = vop2_plane_init(vop2, win, possible_crtcs);
+ 		if (ret) {
+ 			drm_err(vop2->drm, "failed to init overlay plane %s: %d\n",
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+index 871d9bcd1d80e..064167afebf49 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+@@ -164,6 +164,7 @@ struct vop2_win_data {
+ 	unsigned int phys_id;
+ 
+ 	u32 base;
++	u32 possible_vp_mask;
+ 	enum drm_plane_type type;
+ 
+ 	u32 nformats;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+index efd704464fabf..95e31ee84f4f2 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+@@ -339,6 +339,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.name = "Smart0-win0",
+ 		.phys_id = ROCKCHIP_VOP2_SMART0,
+ 		.base = 0x1c00,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2),
+ 		.formats = formats_smart,
+ 		.nformats = ARRAY_SIZE(formats_smart),
+ 		.format_modifiers = format_modifiers,
+@@ -352,6 +353,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 	}, {
+ 		.name = "Smart1-win0",
+ 		.phys_id = ROCKCHIP_VOP2_SMART1,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2),
+ 		.formats = formats_smart,
+ 		.nformats = ARRAY_SIZE(formats_smart),
+ 		.format_modifiers = format_modifiers,
+@@ -365,6 +367,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 	}, {
+ 		.name = "Esmart1-win0",
+ 		.phys_id = ROCKCHIP_VOP2_ESMART1,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2),
+ 		.formats = formats_rk356x_esmart,
+ 		.nformats = ARRAY_SIZE(formats_rk356x_esmart),
+ 		.format_modifiers = format_modifiers,
+@@ -378,6 +381,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 	}, {
+ 		.name = "Esmart0-win0",
+ 		.phys_id = ROCKCHIP_VOP2_ESMART0,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2),
+ 		.formats = formats_rk356x_esmart,
+ 		.nformats = ARRAY_SIZE(formats_rk356x_esmart),
+ 		.format_modifiers = format_modifiers,
+@@ -392,6 +396,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.name = "Cluster0-win0",
+ 		.phys_id = ROCKCHIP_VOP2_CLUSTER0,
+ 		.base = 0x1000,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2),
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+@@ -407,6 +412,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.name = "Cluster1-win0",
+ 		.phys_id = ROCKCHIP_VOP2_CLUSTER1,
+ 		.base = 0x1200,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2),
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+@@ -572,6 +578,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.name = "Cluster0-win0",
+ 		.phys_id = ROCKCHIP_VOP2_CLUSTER0,
+ 		.base = 0x1000,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+@@ -587,6 +594,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.name = "Cluster1-win0",
+ 		.phys_id = ROCKCHIP_VOP2_CLUSTER1,
+ 		.base = 0x1200,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+@@ -602,6 +610,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.name = "Cluster2-win0",
+ 		.phys_id = ROCKCHIP_VOP2_CLUSTER2,
+ 		.base = 0x1400,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+@@ -617,6 +626,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.name = "Cluster3-win0",
+ 		.phys_id = ROCKCHIP_VOP2_CLUSTER3,
+ 		.base = 0x1600,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+@@ -631,6 +641,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 	}, {
+ 		.name = "Esmart0-win0",
+ 		.phys_id = ROCKCHIP_VOP2_ESMART0,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_esmart,
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+@@ -644,6 +655,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 	}, {
+ 		.name = "Esmart1-win0",
+ 		.phys_id = ROCKCHIP_VOP2_ESMART1,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_esmart,
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+@@ -658,6 +670,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.name = "Esmart2-win0",
+ 		.phys_id = ROCKCHIP_VOP2_ESMART2,
+ 		.base = 0x1c00,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_esmart,
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+@@ -670,6 +683,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 	}, {
+ 		.name = "Esmart3-win0",
+ 		.phys_id = ROCKCHIP_VOP2_ESMART3,
++		.possible_vp_mask = BIT(0) | BIT(1) | BIT(2) | BIT(3),
+ 		.formats = formats_esmart,
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+-- 
+2.34.1
+
 
