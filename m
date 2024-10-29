@@ -1,355 +1,275 @@
-Return-Path: <linux-kernel+bounces-386675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9599B46BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:25:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA109B46BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F00C31C227F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:25:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E11C22806
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFDB20494D;
-	Tue, 29 Oct 2024 10:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB66120494B;
+	Tue, 29 Oct 2024 10:24:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K9qv/qiw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lvIMVgsj"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FDFD2040AF
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197501; cv=none; b=eP6fFvnW+uKAT3oQCuiA78NoUf/WjmySy3g/giiL4wxvu2aMMnuj56XH+xJzBSirvApiYmy2ltwjTx7gDtW6Hg/+nGNCCN/OXHWz2HNiNc88Y04As8VX86nSz1d7eLk8Tj/IrnLQL5BLkB5V6LmXdGTiIeZbe84lHjgTKwgRdAQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197501; c=relaxed/simple;
-	bh=PjMN8UliST8cUxWYnYu6tMkq0bZKB9E+YnKhp/cEPNQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSH8XtubVAOiIzdfc39/05gGJXCXE4Fky8z5TkYx0/FL9CcQJZvHpCJOXr5We192gVist/80s4RBDwIxPB0IPyqhf7sXDu+JVu+GPC84Xm2sxX8M6npAecaTRboxE5NSeNzEKbXSk8GSadSU/NzZkWJo/3eaZ+9xAin579KGYB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K9qv/qiw; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730197498; x=1761733498;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PjMN8UliST8cUxWYnYu6tMkq0bZKB9E+YnKhp/cEPNQ=;
-  b=K9qv/qiwGT9PgeXzziQODBDMpZmh0Yg76mQOsjNJz0NikEGqwEuyKnQ0
-   2XCduEetDjGopN8xubNytRXUxaPDOrjYOojuTjoqmoqNYLGF88Tg+oAFP
-   Jm7B9ZbHwQbLFrRAlgEa7Rw9qzgNxYtz5kSuum6Cf8LR2Stxk0otAkQzi
-   f8QXm5+9TtKkeVZcH5rfpFIvDfMSxezVn5SAId0+CwL5SUatqTtyvPBvg
-   u8dwo2IIYCMoUE66pzvcwvtc0LRlS7mVP1Pq0RW0zUoeT32Ue9bzHerPs
-   aCiFXj+iLViJHqF22B/tFPXVXlvqNLEb4bqCE2XiF3qWxDaEJ1vNHu/PI
-   w==;
-X-CSE-ConnectionGUID: vkAXKSijQAWgD9jZonhjRQ==
-X-CSE-MsgGUID: s0/55fP4SsOAvqaKOOghGw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="55235006"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="55235006"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:24:57 -0700
-X-CSE-ConnectionGUID: zOvFqdxtQWyzgAfG6eKYtw==
-X-CSE-MsgGUID: rmaqRUAPT4GR2XKBqvEiNg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82243549"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa010.fm.intel.com with ESMTP; 29 Oct 2024 03:24:53 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5jP9-000dX2-0C;
-	Tue, 29 Oct 2024 10:24:51 +0000
-Date: Tue, 29 Oct 2024 18:24:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Yang Shi <yang@os.amperecomputing.com>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Yu Zhao <yuzhao@google.com>, John Hubbard <jhubbard@nvidia.com>,
-	linux-kernel@vger.kernel.org, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 1/3] mm/huge_memory: buddy allocator like folio_split()
-Message-ID: <202410291853.lBOeTPTK-lkp@intel.com>
-References: <20241028180932.1319265-2-ziy@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6507204034;
+	Tue, 29 Oct 2024 10:24:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730197482; cv=fail; b=K19Gr4pUaBFiHhRX5OeNC3ZP3uiDf68mqv05OHexcGqzHF/wniQrLqPw7jPmQs0l8qYWbUcpyQ+2njvadJmMF/9IzicCJRLLbKPYghdKFNy3HnAurdAvWGIcAoIcD/LdTd8Alps/l1I1NexNywvxN50syJehq5MdmNcIPkhb2i8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730197482; c=relaxed/simple;
+	bh=fdID30wx+yIHPZiI9eQ8K/hD/xeTArWulX918mNBYsM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nLlD73dnSL2fiXr1EeDJBKUribJzEnyIabS2PwmQ60tzwYF+63Z3QJo6eiYLZAm8CeTXoSevVqEVGW6IXa4q+uN9ZRyrM+3ljTCUWJop1Mfgr0+p6yGMHDQVtI6S+IBDmQBzh5AV165g1/csD0kD9fryTEKzvUVJWlWCCnxc4YE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lvIMVgsj; arc=fail smtp.client-ip=40.107.220.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kyVsuyWv7bTwgxM96313/YT988BmJCtzTf9t7MXkzjHXiMbr8+rD2nmI1h42c1t0vODfRbnRUepvr7hfAdmEBGNbn/QN6Q9cczRqzcK2pwmTCa4auv6pVKoOJGjm3Tv/PsqiBQQ/pVH4JXUcXNVV5DAnlkt7De9aWr5KPi7IFt4Yan3+GfyWc4MeqzThQBGce3BjZVRa0srqb0Ir6xQWrC2xtYmoiV9dtHJixrQhyI/CfIPh6YPceQxi0HZZFqd5FlNpIoYpWT5fJSy2c1EgjSavg4+MB03ueszxurxqPS/BLEDF5hkp+mZiXSanFQYS3bwqMj7PVjhx9nJ3lEDq1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ohUAzQJsrV2V8GALZhUldx/8R23r1KB0teHYeXlMHrY=;
+ b=M6w3CkvS7FG+1ne7WyveR/F2WcTpUmaKMF/LQAEELikluBMSiMAWwUTQ70xUNg95Ttl6/IqjiFnNLqtv7NZKamp/vprhmuvmJp3tnrrxqNZpmmfEypYpWcSFVyKY6W/zyBPsssCqQcq0IWTaeCS5JxjlWAQndSkMK3EfU8psB+iAIUlcrWEhMD7PmAIgmU3KB2k9Ej+93ayt1Ndl0azAgN3osKc9O05OX/0+2KZ8mBnPEUDQN0fIyYhUZwNXBmY2waMJyIkLZHAF5JTpEDtIGaoUVOebvORbBcvYbidg+3DTWdYE7t3elRDaO1/XXXwECLxueMWX9SCxpMFkI0KnVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ohUAzQJsrV2V8GALZhUldx/8R23r1KB0teHYeXlMHrY=;
+ b=lvIMVgsj7zle4bSLBGCfdElgLGbo6HshVASnr/VqXUUgj7BxJvj6HaBREclTlm9MJNjcG29VqR9t5WFJiLyIlyNpchKdJI7+iBw6GyD9Y4mpyWRMsspXe/p2T7GzvSgwyzCZ56oDbmdu7xwx6ZTkmWKgx+D/R++oHjsGQOtMhtA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ SA0PR12MB7076.namprd12.prod.outlook.com (2603:10b6:806:2d5::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
+ 2024 10:24:36 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%3]) with mapi id 15.20.8093.018; Tue, 29 Oct 2024
+ 10:24:36 +0000
+Message-ID: <708594f6-78d3-4877-9a1e-b37c55ad0d39@amd.com>
+Date: Tue, 29 Oct 2024 15:54:24 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 00/14] AMD: Add Secure AVIC Guest Support
+To: Borislav Petkov <bp@alien8.de>, "Kirill A. Shutemov"
+ <kirill@shutemov.name>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+ dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com, nikunj@amd.com,
+ Santosh.Shukla@amd.com, Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+ David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com, peterz@infradead.org,
+ seanjc@google.com, pbonzini@redhat.com, kvm@vger.kernel.org
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <vo2oavwp2p4gbenistkq2demqtorisv24zjq2jgotuw6i5i7oy@uq5k2wcg3j5z>
+ <378fb9dd-dfb9-48aa-9304-18367a60af58@amd.com>
+ <ramttkbttoyswpl7fkz25jwsxs4iuoqdogfllp57ltigmgb3vd@txz4azom56ej>
+ <20241029094711.GAZyCvH-ZMHskXAwuv@fat_crate.local>
+Content-Language: en-US
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20241029094711.GAZyCvH-ZMHskXAwuv@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0223.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:ea::16) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028180932.1319265-2-ziy@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|SA0PR12MB7076:EE_
+X-MS-Office365-Filtering-Correlation-Id: 33142e62-f117-4a1e-860f-08dcf803e373
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?d0NnLzZzaCtOVnJzV2poKzE4amxMV0pxNHdZdUEyNFc0QmRpK3JWUmovYldo?=
+ =?utf-8?B?VEZLdk5aMFlSdW9sRHlTUzJYL0RpMzUrWDE5Ym1OQzZjZWQvcTk4UlFteGJJ?=
+ =?utf-8?B?a3V3SGU2NnpoYlJuVTh2aEVQSFUzVWhoRmtHaGdPSENvZmovUDBYdnljaENU?=
+ =?utf-8?B?VFB1YnZLRVVaTzNDbGM3RGp1V25ZT3RaZXdYRGlpSHplZ0VpYmFUbHhqb3Ay?=
+ =?utf-8?B?dDBtMTd6Tnp3RFAwR3M5dzRWcUhMMnEwcTVqRk5vNWR1Zk1zdEFwL0JLUUdK?=
+ =?utf-8?B?b09ld2lVa2xGSE82OFMyYU5BdzhnaG5mcy9abS9rc0hVUW9qZHplT3VOVlh4?=
+ =?utf-8?B?aTcvZ3B2K1ovV0hSYS9nV0E1cEllSTcxaFRndStyYkVJL0JLMGUxbXQ0djFJ?=
+ =?utf-8?B?RkREaDlWaWE3ZDQ0cEo1L2NEL2VwWUtWRHRjSjc1YVYvNmZmZFBKdVc2NTlK?=
+ =?utf-8?B?WUdMeUgwMDE1WVVKdS9iQzhSYk5IcGY2dXJPQzFib0JOZVlsMFVWRlI5SlFE?=
+ =?utf-8?B?RUlqbzUvWGhzUmkzNkt1VnE5VEtqUVJxcWIyaDZIVUVBMFUzSVhnTXp2SzY5?=
+ =?utf-8?B?NnYrVjIwMTB3YUVCSksxc0NiTW9nM1loUWtUVEFNREdzUkx0aTl4YWF2M2Vw?=
+ =?utf-8?B?VlV4Q09NYWFkT0R0SkNIRG9tTUY3VkRDV2xUZTQ4aThyMDF1dVdXVmYzOGt1?=
+ =?utf-8?B?M1RRQWlsWUVxd1dZZVpXaThKZWNlT3J1R0pPYWRJSGpaZUZnL2ZHZE9yZ3Bl?=
+ =?utf-8?B?b0RRZnNuSDBNcytKZzJSV2ttaVBCSDhmdHh3Y1RCK0Q4bGRyalNMSnhpSVBn?=
+ =?utf-8?B?YWdjR2t1aW1BdlZ3MlhMSU1PTXhWSzlEUzBFS3R3Smxxc2Yzd0M0RVd1d1VE?=
+ =?utf-8?B?R28wanVpcjFvb3RkV1hObFF2dHZ5YWhYUVNXTnRXZEoxeHVaR25ZK1k0cy8v?=
+ =?utf-8?B?dnF0bG0vd3k3UDQwazlyOWpJVnNzTXNKWG9pZmY4by9jeDhNazRNZWoxdy9K?=
+ =?utf-8?B?czhMemY0YmpEaDZuUmpod1JrbEVDUlpxTDZZaWVCRytLV0pFZnhheGxZMmt5?=
+ =?utf-8?B?YlJvd1RsZm9IeG5LZTBJNnJyUWp6TWJkd2xkNnpSaG40NjFkSnIxemNmQU9o?=
+ =?utf-8?B?RXRHY21pVDNTT2ppYjQ3SytKNTFZb2M2OEhjdlN2WlVna1NzejNXbnhrUmtK?=
+ =?utf-8?B?OFBBT2xUZXdTVFR2NGg5b2ZZQ3E1c092QzVtSzhHaXgyS080bWk1M2RWQ3Zh?=
+ =?utf-8?B?NmdZWG1PSnc3dzdnQTU1T1d2cnR2enUyYVdmYVZBdEg1aEpGRFJIMThwMWFO?=
+ =?utf-8?B?RmhBdGREUy94MS9GLzVYcmt2MEJoYjRQNkpqY0lSTnRZeFNCRmI2dmJRdVlQ?=
+ =?utf-8?B?d00vQVBudEtNYnB5ZmRMakJKZTNaMS9CejBJOWlVUCt5cDBUZmNwMWVZbDlI?=
+ =?utf-8?B?MExvU3F3dDhxK1BYaTdGSUtFTHRTMkQ5aHo0Qkd2dnZGdWt0akpKSmV0Nlo2?=
+ =?utf-8?B?WVdGemlOTGZxazZ2TE85Zkc3MFhaeWttcnFZVGFKTGg2VnlENW5SNTZvVGJl?=
+ =?utf-8?B?YlY4ZytkalcrOUQ5K2ZUbG9VWUZtaTVFOUdVbzRIUGMzTDB0R0J0U1ZRcVFW?=
+ =?utf-8?B?d2d1RUREUUd1NVFFMHZRRGNLTTA0R2lKMGc5L1JaUFAzZURBbllxcVp3dDZs?=
+ =?utf-8?B?T2Zpb2dZaVJZVzJET1duRXg2TjVuQ0ovU3NqTkdXZ0QyMjBTUU1LM2pwR2l2?=
+ =?utf-8?Q?RdgdrLy7Q7yUT339kjnA14SankJZJYqBw6Dc1TX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Z2VOamV6bjA0eDJiZnlzTE5yVS9sUXl1NXB5NjJRSnZsbk5XT1Jsek1Ydnpt?=
+ =?utf-8?B?QWFqL3RmUUdTL2RjcW55M0N4MlcwNklMb3pWRldMQnNVYXJVOUZaRHU3VkNV?=
+ =?utf-8?B?clR4dzFpMVZPbWliblhKa3ZiK1M0UDBXemFIZkx4dWtOdG5rc0hPcGlrS0tX?=
+ =?utf-8?B?ZmRwVitldm5vRU1VTWJBM0ZEdy9oM0xuQ0x0ckhWVmF0d2NQYllTNWZrMnpK?=
+ =?utf-8?B?WUxIY04zbWExSmEwUGNYUHkxMnArbW93aWIyUko2T3RaZG9SN01SM1lubjRu?=
+ =?utf-8?B?T2h0ampGUXE4aVJkTTJxSmMwTFlUcWJDampTK3Z2RnhQeCtPcCt2VXVwak00?=
+ =?utf-8?B?ZHRBc2YyL1prejkrMzM4YTh5em5DUTFxL3RaZkg5emE3NDh5SUYwb2c1RFFD?=
+ =?utf-8?B?N0NadVIwZE9RRkZDSzJ0WC9iNFNCdVl4N1E3VFdvRG80Wld6TjRHbDB1d1RG?=
+ =?utf-8?B?dE95TzFpNTJyd0cxaWtXL3FQd21aaHhnM29qVFBoSHJaNTdKdUdwQUtCU1dR?=
+ =?utf-8?B?WHkzMVVNQ1VCaWNsVm5Fa2tUMkhlemFRb1ZaMy9CSjA1Y1d3cnUxOGE2R1U4?=
+ =?utf-8?B?VlFjMytPcy92QmY2YjgyZVpoeE43a1FKd1FveW84cEVES0UyRy8zN1BvVjZ4?=
+ =?utf-8?B?cTV1aXI2TjZsbEdqYW5CT05qOFNsdlNXZ1hRb0NyRGZmZ3gwKzlHM3VtRnda?=
+ =?utf-8?B?bHJ3bnV6STliQkUxbmZ2eXNDaEorTDVLYUtzb3Bmb3QvZnhIQnJDN3NVTytk?=
+ =?utf-8?B?Wjk3UlBLMjk1UW5Yam94MFdvUitXZVVkT3FFM1l3V3g1RktXOUFJcmt1R0xC?=
+ =?utf-8?B?Uzd3NnBOWUVWSlVscnRZazNMRnVuajNnODh1MVhjeHNHTkpxdlpiUXJ3STNj?=
+ =?utf-8?B?cE00SFVNOEwyc1U0a3ovaks1SWJlcXpra1RrSW0rVmRLNmd3aTV4d0RGc0JW?=
+ =?utf-8?B?TjdmOEJVOHpRVm1aMHZrN3QrM0JLTDJ4T3ZpYVI5N3l5WTE3eUpoZjVLUXgr?=
+ =?utf-8?B?RXVxdzFiYysybzY3ckQ1dGxpckowbmYrSnI4eTdyUVdBcHRYNmlCWWtsTVdP?=
+ =?utf-8?B?QkI4dDdXZkk3ZEQ1WmpYUHpEdXN1a2oxdVBBSGxJWi9Uc0k3M2pHRXFvV1p0?=
+ =?utf-8?B?YXl5Y3R4MDdXZm9KelMvZndCQWxDa0FIWFVXdE80TTFNNmNsbVlwa3lCVmQw?=
+ =?utf-8?B?SW9uRXpwSll3NDg5WXRpMS9aVEpJbTNSUkVuVk9EN0NmMU9taUJPU1FEOW5Q?=
+ =?utf-8?B?YUxxTDY0MjNKQXAwY2lHQjVleE4wQU5Oc3A4UDVuZkhUaFp1eHVpMTNOUEJi?=
+ =?utf-8?B?QnYrUGlFYVpiYk9BSGlWVU45OXlNekxwOElMdnpyek1zaTdpOTZMbUYrK0tN?=
+ =?utf-8?B?Yi8rTW1MTUZObUVYV2dpV003L2JiUGd2S2JQV3VLWGdRcnpsNkZPeE5CcUgv?=
+ =?utf-8?B?blZmT1VZdXYwOTVzbWN4NXpmS2k0aVkvNDVDQVphV1UzV0VlczZ6OVRwY2pQ?=
+ =?utf-8?B?U0tMNCtFc3Q2NUZZWkdwOWtjME5mLzJjanNpeG5WTnF2dytZbkxsS3JpNVpq?=
+ =?utf-8?B?Nkk4UDVGZ0FOeVdzOUJWWGJjRTZqWlJic2tlUzNadXVkcEJPMXgzb1pENWw4?=
+ =?utf-8?B?b2hSS0ZqT3RGazRRVnhKUU9JS2tiWlkrU2N0RGtvWCtqWjgwM0xVZVRYaVhO?=
+ =?utf-8?B?dVVFRkEwNm9CS0doWUU1OFQzMmkrWTU5VGpBZzRRYzdYOTl5UThHLzJyZitt?=
+ =?utf-8?B?SEQvdmJXbkJEbTN2eWtLN3F0cjJucjk4M1AzMHV5RmZQdnpRWjVTMm0yK2th?=
+ =?utf-8?B?L0phc1lub0p5STdiMGNwZlFud2lLcG9wd1h6RGZLVmRvQktSUW9ndHBHZXJz?=
+ =?utf-8?B?SmR6eXVaQnN6WU5CdVZtOU0xZTMxUFhrOEtXSDZDTzBrNEVBc3ZxWjhXaVE1?=
+ =?utf-8?B?WGJQcHliMkFXUk93L0U3RG9SK050dWFEOUVVc1BkM3pRZStxYjFXNXFHWTdT?=
+ =?utf-8?B?Y0c5WTRmZEVRN3JXSUFwNEJZQ2dyZGZEdFBhK3R0OURQQTh3MmNwbXBrRmpB?=
+ =?utf-8?B?U2Z6NXE4cU51eGZVK1MxN2htQTRKbVBVYlljNWJPR21HaUU0VDlrMDhTeFNo?=
+ =?utf-8?Q?hB7ywIHjEnCUraVZv1eaqtL2B?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33142e62-f117-4a1e-860f-08dcf803e373
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 10:24:36.7633
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jnYNgF+RXmZSJ5YUVIE+Pds1bAqKemWLuSYfjY2UMNx2R55HgSoyl7nEuOMvRBVx4hXGvNlY17vG74gC4Cuhdw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB7076
 
-Hi Zi,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on akpm-mm/mm-everything]
-[also build test WARNING on next-20241029]
-[cannot apply to linus/master v6.12-rc5]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Zi-Yan/mm-huge_memory-buddy-allocator-like-folio_split/20241029-021200
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20241028180932.1319265-2-ziy%40nvidia.com
-patch subject: [PATCH v1 1/3] mm/huge_memory: buddy allocator like folio_split()
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241029/202410291853.lBOeTPTK-lkp@intel.com/config)
-compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241029/202410291853.lBOeTPTK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410291853.lBOeTPTK-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from mm/huge_memory.c:8:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     505 |                            item];
-         |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     512 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-     525 |                            NR_VM_NUMA_EVENT_ITEMS +
-         |                            ~~~~~~~~~~~~~~~~~~~~~~
-   In file included from mm/huge_memory.c:18:
-   include/linux/mm_inline.h:47:41: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      47 |         __mod_lruvec_state(lruvec, NR_LRU_BASE + lru, nr_pages);
-         |                                    ~~~~~~~~~~~ ^ ~~~
-   include/linux/mm_inline.h:49:22: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-      49 |                                 NR_ZONE_LRU_BASE + lru, nr_pages);
-         |                                 ~~~~~~~~~~~~~~~~ ^ ~~~
->> mm/huge_memory.c:3342:6: warning: variable 'nr_dropped' set but not used [-Wunused-but-set-variable]
-    3342 |         int nr_dropped = 0;
-         |             ^
-   mm/huge_memory.c:3806:12: warning: unused function 'folio_split' [-Wunused-function]
-    3806 | static int folio_split(struct folio *folio, unsigned int new_order,
-         |            ^~~~~~~~~~~
-   8 warnings generated.
 
 
-vim +/nr_dropped +3342 mm/huge_memory.c
+On 10/29/2024 3:17 PM, Borislav Petkov wrote:
+> On Fri, Oct 18, 2024 at 10:54:21AM +0300, Kirill A. Shutemov wrote:
+>> I think it has to be addressed before it got merged. Or we will get a
+>> regression.
+> 
+> ... or temporarily disable kexec when SAVIC is present.
+> 
 
-  3292	
-  3293	#define for_each_folio_until_end_safe(iter, iter2, start, end)	\
-  3294		for (iter = start, iter2 = folio_next(start);		\
-  3295		     iter != end;					\
-  3296		     iter = iter2, iter2 = folio_next(iter2))
-  3297	
-  3298	/*
-  3299	 * It splits a @folio (without mapping) to lower order smaller folios in two
-  3300	 * ways.
-  3301	 * 1. uniform split: the given @folio into multiple @new_order small folios,
-  3302	 *    where all small folios have the same order. This is done when
-  3303	 *    uniform_split is true.
-  3304	 * 2. buddy allocator like split: the given @folio is split into half and one
-  3305	 *    of the half (containing the given page) is split into half until the
-  3306	 *    given @page's order becomes @new_order. This is done when uniform_split is
-  3307	 *    false.
-  3308	 *
-  3309	 * The high level flow for these two methods are:
-  3310	 * 1. uniform split: a single __split_folio_to_order() is called to split the
-  3311	 *    @folio into @new_order, then we traverse all the resulting folios one by
-  3312	 *    one in PFN ascending order and perform stats, unfreeze, adding to list,
-  3313	 *    and file mapping index operations.
-  3314	 * 2. buddy allocator like split: in general, folio_order - @new_order calls to
-  3315	 *    __split_folio_to_order() are called in the for loop to split the @folio
-  3316	 *    to one lower order at a time. The resulting small folios are processed
-  3317	 *    like what is done during the traversal in 1, except the one containing
-  3318	 *    @page, which is split in next for loop.
-  3319	 *
-  3320	 * After splitting, the caller's folio reference will be transferred to the
-  3321	 * folio containing @page. The other folios may be freed if they are not mapped.
-  3322	 *
-  3323	 * In terms of locking, after splitting,
-  3324	 * 1. uniform split leaves @page (or the folio contains it) locked;
-  3325	 * 2. buddy allocator like split leaves @folio locked.
-  3326	 *
-  3327	 * If @list is null, tail pages will be added to LRU list, otherwise, to @list.
-  3328	 */
-  3329	static int __folio_split_without_mapping(struct folio *folio, int new_order,
-  3330			struct page *page, struct list_head *list, pgoff_t end,
-  3331			struct xa_state *xas, struct address_space *mapping,
-  3332			bool uniform_split)
-  3333	{
-  3334		struct lruvec *lruvec;
-  3335		struct address_space *swap_cache = NULL;
-  3336		struct folio *origin_folio = folio;
-  3337		struct folio *next_folio = folio_next(folio);
-  3338		struct folio *new_folio;
-  3339		struct folio *next;
-  3340		int order = folio_order(folio);
-  3341		int split_order = order - 1;
-> 3342		int nr_dropped = 0;
-  3343	
-  3344		if (folio_test_anon(folio) && folio_test_swapcache(folio)) {
-  3345			if (!uniform_split)
-  3346				return -EINVAL;
-  3347	
-  3348			swap_cache = swap_address_space(folio->swap);
-  3349			xa_lock(&swap_cache->i_pages);
-  3350		}
-  3351	
-  3352		if (folio_test_anon(folio))
-  3353			mod_mthp_stat(order, MTHP_STAT_NR_ANON, -1);
-  3354	
-  3355		/* lock lru list/PageCompound, ref frozen by page_ref_freeze */
-  3356		lruvec = folio_lruvec_lock(folio);
-  3357	
-  3358		/*
-  3359		 * split to new_order one order at a time. For uniform split,
-  3360		 * intermediate orders are skipped
-  3361		 */
-  3362		for (split_order = order - 1; split_order >= new_order; split_order--) {
-  3363			int old_order = folio_order(folio);
-  3364			struct folio *release;
-  3365			struct folio *end_folio = folio_next(folio);
-  3366			int status;
-  3367	
-  3368			if (folio_test_anon(folio) && split_order == 1)
-  3369				continue;
-  3370			if (uniform_split && split_order != new_order)
-  3371				continue;
-  3372	
-  3373			if (mapping) {
-  3374				/*
-  3375				 * uniform split has xas_split_alloc() called before
-  3376				 * irq is disabled, since xas_nomem() might not be
-  3377				 * able to allocate enough memory.
-  3378				 */
-  3379				if (uniform_split)
-  3380					xas_split(xas, folio, old_order);
-  3381				else {
-  3382					xas_set_order(xas, folio->index, split_order);
-  3383					xas_set_err(xas, -ENOMEM);
-  3384					if (xas_nomem(xas, 0))
-  3385						xas_split(xas, folio, old_order);
-  3386					else
-  3387						return -ENOMEM;
-  3388				}
-  3389			}
-  3390	
-  3391			split_page_memcg(&folio->page, old_order, split_order);
-  3392			split_page_owner(&folio->page, old_order, split_order);
-  3393			pgalloc_tag_split(folio, old_order, split_order);
-  3394	
-  3395			status = __split_folio_to_order(folio, split_order);
-  3396	
-  3397			if (status < 0)
-  3398				return status;
-  3399	
-  3400			/*
-  3401			 * Iterate through after-split folios and perform related
-  3402			 * operations. But in buddy allocator like split, the folio
-  3403			 * containing the specified page is skipped until its order
-  3404			 * is new_order, since the folio will be worked on in next
-  3405			 * iteration.
-  3406			 */
-  3407			for_each_folio_until_end_safe(release, next, folio, end_folio) {
-  3408				if (page_in_folio_offset(page, release) >= 0) {
-  3409					folio = release;
-  3410					if (split_order != new_order)
-  3411						continue;
-  3412				}
-  3413				if (folio_test_anon(release))
-  3414					mod_mthp_stat(folio_order(release),
-  3415							MTHP_STAT_NR_ANON, 1);
-  3416	
-  3417				/*
-  3418				 * Unfreeze refcount first. Additional reference from
-  3419				 * page cache.
-  3420				 */
-  3421				folio_ref_unfreeze(release,
-  3422					1 + ((!folio_test_anon(origin_folio) ||
-  3423					     folio_test_swapcache(origin_folio)) ?
-  3424						     folio_nr_pages(release) : 0));
-  3425	
-  3426				if (release != origin_folio)
-  3427					lru_add_page_tail(origin_folio, &release->page,
-  3428							lruvec, list);
-  3429	
-  3430				/* Some pages can be beyond EOF: drop them from page cache */
-  3431				if (release->index >= end) {
-  3432					if (shmem_mapping(origin_folio->mapping))
-  3433						nr_dropped++;
-  3434					else if (folio_test_clear_dirty(release))
-  3435						folio_account_cleaned(release,
-  3436							inode_to_wb(origin_folio->mapping->host));
-  3437					__filemap_remove_folio(release, NULL);
-  3438					folio_put(release);
-  3439				} else if (!folio_test_anon(release)) {
-  3440					__xa_store(&origin_folio->mapping->i_pages,
-  3441							release->index, &release->page, 0);
-  3442				} else if (swap_cache) {
-  3443					__xa_store(&swap_cache->i_pages,
-  3444							swap_cache_index(release->swap),
-  3445							&release->page, 0);
-  3446				}
-  3447			}
-  3448		}
-  3449	
-  3450		unlock_page_lruvec(lruvec);
-  3451	
-  3452		if (folio_test_anon(origin_folio)) {
-  3453			if (folio_test_swapcache(origin_folio))
-  3454				xa_unlock(&swap_cache->i_pages);
-  3455		} else
-  3456			xa_unlock(&mapping->i_pages);
-  3457	
-  3458		/* Caller disabled irqs, so they are still disabled here */
-  3459		local_irq_enable();
-  3460	
-  3461		remap_page(origin_folio, 1 << order,
-  3462				folio_test_anon(origin_folio) ?
-  3463					RMP_USE_SHARED_ZEROPAGE : 0);
-  3464	
-  3465		/*
-  3466		 * At this point, folio should contain the specified page, so that it
-  3467		 * will be left to the caller to unlock it.
-  3468		 */
-  3469		for_each_folio_until_end_safe(new_folio, next, origin_folio, next_folio) {
-  3470			if (uniform_split && new_folio == folio)
-  3471				continue;
-  3472			if (!uniform_split && new_folio == origin_folio)
-  3473				continue;
-  3474	
-  3475			folio_unlock(new_folio);
-  3476			/*
-  3477			 * Subpages may be freed if there wasn't any mapping
-  3478			 * like if add_to_swap() is running on a lru page that
-  3479			 * had its mapping zapped. And freeing these pages
-  3480			 * requires taking the lru_lock so we do the put_page
-  3481			 * of the tail pages after the split is complete.
-  3482			 */
-  3483			free_page_and_swap_cache(&new_folio->page);
-  3484		}
-  3485		return 0;
-  3486	}
-  3487	
+Thanks! I plan to do something like below patch for the next version.
+Verified Secure AVIC guest kexec with this.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+
+
+- Neeraj
+
+-----------------------------------------------------------------------
+
+From 80a4901644fa8a9ed2c6f690fbba4b8a6176b215 Mon Sep 17 00:00:00 2001
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Date: Tue, 29 Oct 2024 15:38:21 +0530
+Subject: [RFC 15/14] x86/apic: Add kexec support for Secure AVIC
+
+Add a ->teardown callback to disable Secure AVIC before
+rebooting into the new kernel. This ensures that the new
+kernel does not access the old APIC backing page which was
+allocated by the previous kernel. This can happen if there
+are any APIC accesses done during guest boot before Secure
+AVIC driver probe is done by the new kernel (as Secure AVIC
+remained enabled in control msr).
+
+Signed-off-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+---
+
+This is dependent on SNP guest supports patches [1]
+
+
+[1] https://lore.kernel.org/lkml/cover.1722520012.git.ashish.kalra@amd.com/
+
+ arch/x86/include/asm/apic.h         | 1 +
+ arch/x86/kernel/apic/apic.c         | 3 +++
+ arch/x86/kernel/apic/x2apic_savic.c | 7 +++++++
+ 3 files changed, 11 insertions(+)
+
+diff --git a/arch/x86/include/asm/apic.h b/arch/x86/include/asm/apic.h
+index 2d5400372470..ec332afd0277 100644
+--- a/arch/x86/include/asm/apic.h
++++ b/arch/x86/include/asm/apic.h
+@@ -303,6 +303,7 @@ struct apic {
+        /* Probe, setup and smpboot functions */
+        int     (*probe)(void);
+        void    (*setup)(void);
++       void    (*teardown)(void);
+        int     (*acpi_madt_oem_check)(char *oem_id, char *oem_table_id);
+
+        void    (*init_apic_ldr)(void);
+diff --git a/arch/x86/kernel/apic/apic.c b/arch/x86/kernel/apic/apic.c
+index aeda74bf15e6..08156ac4ec6c 100644
+--- a/arch/x86/kernel/apic/apic.c
++++ b/arch/x86/kernel/apic/apic.c
+@@ -1163,6 +1163,9 @@ void disable_local_APIC(void)
+        if (!apic_accessible())
+                return;
+
++       if (apic->teardown)
++               apic->teardown();
++
+        apic_soft_disable();
+
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/kernel/apic/x2apic_savic.c b/arch/x86/kernel/apic/x2apic_savic.c
+index a3f0ddc6b5b6..bb7a28f9646a 100644
+--- a/arch/x86/kernel/apic/x2apic_savic.c
++++ b/arch/x86/kernel/apic/x2apic_savic.c
+@@ -391,6 +391,12 @@ static void init_backing_page(void *backing_page)
+        set_reg(backing_page, APIC_ID, apic_id);
+ }
+
++static void x2apic_savic_teardown(void)
++{
++       /* Disable Secure AVIC */
++       native_wrmsr(MSR_AMD64_SECURE_AVIC_CONTROL, 0, 0);
++}
++
+ static void x2apic_savic_setup(void)
+ {
+        void *backing_page;
+@@ -447,6 +453,7 @@ static struct apic apic_x2apic_savic __ro_after_init = {
+        .probe                          = x2apic_savic_probe,
+        .acpi_madt_oem_check            = x2apic_savic_acpi_madt_oem_check,
+        .setup                          = x2apic_savic_setup,
++       .teardown                       = x2apic_savic_teardown,
+
+        .dest_mode_logical              = false,
+
+--
+
 
