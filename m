@@ -1,155 +1,146 @@
-Return-Path: <linux-kernel+bounces-386461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785AD9B43BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:06:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16E859B43C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:07:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AADCB1C21F34
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:06:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08A728389B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:07:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E6D2036F2;
-	Tue, 29 Oct 2024 08:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 299CA2036FA;
+	Tue, 29 Oct 2024 08:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWGjIyIB"
-Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wc2iEe+P"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7A01854;
-	Tue, 29 Oct 2024 08:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EF39202642
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189196; cv=none; b=m8uuge8rBfJTesV8bicqYmjmm0EFSyAG023ZVTAng/LN7KwE9M2pc9AV1jNAG6qgSGmIPXnZeJLHGyvvubuguQFYFawtciZxAmXWa6+hQFdygDyv+G2S8z7Zm9mteqVed69aireCPX2LFsr8dBzAigzHJtvhd3Q77a2+SrD3eHo=
+	t=1730189235; cv=none; b=m/7cjO59bBHtbx5+nGbpSWyAxvbHkoroA73ZqcnbmifR0Uta+2o5oBvbtEUUJrlYx6qYaNlwDU2cePyb2iKq5DNdtwg7mBGtFXFIk0gQi+VIQEhFB8kbJtc/CWGBYKJgkMkx1DgwkxTJrst3I2IsBW0vLnw7ZuR6hGydJ/xUf0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189196; c=relaxed/simple;
-	bh=b6ORu50y88S7RMLQz6KA5JfYQ3oIvh0lix92w+9Q6jw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KSVE2ydSa0Gz5aKYdsNw3N7GUbY57+qB2alxGLkkCTWDbJpWW6b89r4ln6jk/DXrdtYKhSYd5W/riMVMwK+aaOHHLNGMD7p31uM71Mcxsr9XJEU1o402Q/WK5oNuYY0VyGwOkzecKVPKUs4+wI0d1Y+b5IZU5rfRgdUFkhJmeFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWGjIyIB; arc=none smtp.client-ip=209.85.210.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7180bd5b79dso2023667a34.2;
-        Tue, 29 Oct 2024 01:06:33 -0700 (PDT)
+	s=arc-20240116; t=1730189235; c=relaxed/simple;
+	bh=tXuUWJqSpVglQII4ixnCWmF/nh5P59YMWadDSqaw5mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WdJnD1YBThqZQBDqf1sL5JT3uH1YMFfZIUXogvIG/nJQewppEB6Xq6/A2PMEi+ypgZoAm8lt5+e4y2PiYKUdljZQXpe93it9RVfNkNlZ9vD1pfrYSbOrcU9ST1qrg3AeW/bGLI2X/u56mpZILeeRXraSBmP9UQMmGqrE2jxRTeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wc2iEe+P; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9709c9b0cso7254208a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:07:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730189193; x=1730793993; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=erYrvbuM+zOt800Pswb5/FeIgISJC9qqJWCYratTQZU=;
-        b=eWGjIyIByFs4qG2sjNx/YnsJ4WoyVaFajWEmkS3r386ctJ5awv+lmME2z7X9uucefW
-         dmo+5D8xlPBQPnWJSrjukF9t1gTVA4wK1fA1/Bp40VdkahjzO1S0vGCm6vMdtd780+yx
-         fdgV8XEuAJ9R8I/2OBC47LMDiBO5GSKaY6anzAEG2hDuuDrnlEiNf4ROLE4Ve4IHJUDr
-         lsuI1/PJ4VA3JDlPj5N72pcX1BTSlU5oIYIl16AwMxukI8yHder0qQz2k2r3pZkt9VCb
-         tUlBaP9sn4Vxy2I+B2D4/yqBM6qOWmz8/7U9VIN3UZ+mFB9CFJyno3lvpuUkWLbxcumn
-         7tQw==
+        d=linaro.org; s=google; t=1730189232; x=1730794032; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+T+utu6wQonBd+x7P2V+J6y0wVjSr8LnD1mI33sJ9Uw=;
+        b=wc2iEe+PeJ8x6zzMCGpfJRrK5FlYRoJFqKKyzPvSsjsdGv5hl6qOVQW+mL9NNJceqn
+         b2OLvLm1smQ+lQWM9G+KHsE/Q0o75KugKJXkpx04iVaa4jMjGRJtg/GNuR+MDjgkiezS
+         Iu0H0IDdJIBoLk5LQoQ+ebZEvKWUwABmw8ralMSBZeampt47ZPI5+kw6Tedb2R4D48T/
+         V8bvkexs4vnl2xB9rJjtgk/ZRc+x1+EeDv6dpGirdNEUa2WulU41M7AVuuEHygaRNxT1
+         qxTCZy9zAV02MrOiO+zZ0XjKkHfMppQKLzJ94PhPkPyEfA3Ghp+ZJwNsadcAiIHHq229
+         eWYA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730189193; x=1730793993;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=erYrvbuM+zOt800Pswb5/FeIgISJC9qqJWCYratTQZU=;
-        b=buUV9GTXFzA/EJJaqq4OeN5zf9tNurPWYdGhZZK2U/MXj/Gn7fOZCWWoil0ZuE8UZy
-         7VA4/8v+fcsgG4tM871pvzfEYJa5NKYYV97z9tlc6Z4/qcqMlPUgOtwNdNyerMt0KWcA
-         SAOeBoTYwsdU9z9ysZzMzFH0fX4AIJWchSOL8LDuPcVpQyROaiUj5St0E/PQZIcCC7Yi
-         JXRZ1y6PhtMmk0YW2oBs+wcLTPQAbkdSMWfZL8KlHsskd16dJg6uXgPmBJ3QavZZ9Ew9
-         zS0b078bdlHNeXf4r0TZaJX9KGogZfLUseXhlwfd5FFnbLrTfYcshQz/uKePZw98FJUi
-         /z9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWwe3PdXuJ02eajS35l3D+9HvxkUteXaco4bwWyUJvX9MrFGTiX2ky3Ohev/YkCHRgXd7+LrtfnQ8EQisE=@vger.kernel.org, AJvYcCXh7mee5Z3fHJQmlBmkNtCdydeTXucqdsiQGq9SSLZ0UYAkaZtLFBaA3LemC4h/F5mFFxFogrzxKvD4FxQiYcKU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4WmI6lgi5XQZ8abx4rImus6RShrFLBguboMqUYNXjLyEkA3uZ
-	OKexMgbPAMtLZqSSXNcRfvOhbbWUDZwaNVVguUGFTeqCUl19pJrum7wnUGM3mSiKnVwLPin1Vs5
-	KfT4v7UhqIkZ6MzQLjRjJT07M/9Y=
-X-Google-Smtp-Source: AGHT+IFDFWL4mUjTprma/osZp1KJIoCHwGw0y8thgiAfWKZzlyBnrv8BrxgAMiSJRJIJRIEpMo2FiY9XYcdbCsPmb4I=
-X-Received: by 2002:a05:6830:4189:b0:718:678:56e3 with SMTP id
- 46e09a7af769-71867f1012cmr11989419a34.5.1730189192952; Tue, 29 Oct 2024
- 01:06:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730189232; x=1730794032;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+T+utu6wQonBd+x7P2V+J6y0wVjSr8LnD1mI33sJ9Uw=;
+        b=lxgqLt9WrpaRjUCn//wb2mKr7orgHFBnRAEqFzlTWw3buxAi0XgHvRU//Z/VbfqVfL
+         xZJqaNRq9EFOqqgA+hi9tMleU/VHrNUogy3msYQ6RL6/eY6dRrV4r3Z5nozP9IkCi6u5
+         4nR243B9iQGw3XUiyBGnK7UDRYFC4888gcDRitCyT9wwx7rFSAcTZxX0IE547JKoblA0
+         szM4IC752y9uXCjJEMlLVXrViPC31sp4Y6uLAb5REWqv21xv0v/D30PVyp6puiXNBVfO
+         RpQvzBYvVAoq3yC5Vmp/kZTHXINu58eQwpn/1q0PqnjBNgzRunxaDT/AP6+qOw6q0X64
+         lQGw==
+X-Forwarded-Encrypted: i=1; AJvYcCUqSoCUP1kgia4cbkFhFJCtdXMytEXyBkqli+gTFGvoFVYvHovdTxv7Oc6JAf85k0ejbz13FQUg38aDcU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUET2diRDlzx4PbRs2Fv1vMu3FXphsF5bhJUsU66NJqjDECPXr
+	Eo9ylqhnodIY73rhXwGYID5sxcnbsbqpGJnjTw0kdkP39GQ93iv9veW3NHgS6sz2HwQbathGcRc
+	+
+X-Google-Smtp-Source: AGHT+IFlS/2bOJzmSSwcAfE5aV0lP34QNs4GrtfDDXnqpV/04HeTDMnTLLbECdisvIqSJHMH/jyIpg==
+X-Received: by 2002:a05:6402:249d:b0:5cb:6718:7326 with SMTP id 4fb4d7f45d1cf-5cbbf8caef6mr8643251a12.21.1730189231684;
+        Tue, 29 Oct 2024 01:07:11 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cbb629c4c0sm3726166a12.24.2024.10.29.01.07.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 01:07:10 -0700 (PDT)
+Date: Tue, 29 Oct 2024 11:07:07 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Philip Li <philip.li@intel.com>
+Cc: Matthew Sakai <msakai@redhat.com>, oe-kbuild@lists.linux.dev,
+	Mike Snitzer <snitzer@kernel.org>, lkp@intel.com,
+	oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: drivers/md/dm-vdo/data-vio.c:976 vdo_launch_bio() warn:
+ inconsistent returns '&pool->lock'.
+Message-ID: <13937d22-46ac-480a-8956-f89a0fd295ac@stanley.mountain>
+References: <717e8949-55c4-4461-8951-3e582e9b77ef@stanley.mountain>
+ <f074f848-5a26-473b-ae98-1932e9a8cbd1@redhat.com>
+ <ZyBQa45RTWXiXJke@rli9-mobl>
+ <ZyCLo51ZyjxX7eQK@rli9-mobl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008094141.549248-5-zhangchunyan@iscas.ac.cn> <mhng-d7045132-a4e1-409a-9646-d8ecd3d6a48f@palmer-ri-x1c9a>
-In-Reply-To: <mhng-d7045132-a4e1-409a-9646-d8ecd3d6a48f@palmer-ri-x1c9a>
-From: Chunyan Zhang <zhang.lyra@gmail.com>
-Date: Tue, 29 Oct 2024 16:05:56 +0800
-Message-ID: <CAAfSe-t7iAomibbCJQJv6d6cig8eESgHCfWCuZkRUr9Jz+aY5Q@mail.gmail.com>
-Subject: Re: [PATCH V2 4/4] selftests/mm: skip virtual_address_range tests on riscv
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: zhangchunyan@iscas.ac.cn, shuah@kernel.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, alex@ghiti.fr, 
-	Charlie Jenkins <charlie@rivosinc.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Palmer Dabbelt <palmer@dabbelt.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyCLo51ZyjxX7eQK@rli9-mobl>
 
-Hi Andrew=EF=BC=8C
+On Tue, Oct 29, 2024 at 03:15:47PM +0800, Philip Li wrote:
+> On Tue, Oct 29, 2024 at 11:03:07AM +0800, Philip Li wrote:
+> > On Mon, Oct 28, 2024 at 07:00:40PM -0400, Matthew Sakai wrote:
+> > > This should be addressed upstream by commit
+> > > 872564c501b72ae0c84af51084753e8652e4a84b ("dm vdo data-vio: silence sparse
+> > > warnings about locking context imbalances")
+> > > 
+> > > That commit is from February. Would it be possible for these checks to use a
+> > > more up-to-date version of the code before warning us about things that have
+> > > already been addressed?
+> > 
+> > Sorry about this Matt, the bot side will check why this happens and fix
+> > the issue asap to avoid meaningless report.
+> 
+> Hi Matt and Dan, would you mind do a further check of this, per the re-test,
+> smatch warns as below on v6.12-rc3
+> 
+> 	drivers/md/dm-vdo/data-vio.c:982 vdo_launch_bio() warn: inconsistent returns '&pool->lock'.
+> 	  Locked on  : 972,977
+> 	  Unlocked on: 982
+> 
+> The corresponding code of drivers/md/dm-vdo/data-vio.c is below
+> 
 
-On Fri, 25 Oct 2024 at 02:00, Palmer Dabbelt <palmer@dabbelt.com> wrote:
->
-> On Tue, 08 Oct 2024 02:41:41 PDT (-0700), zhangchunyan@iscas.ac.cn wrote:
-> > RISC-V doesn't currently have the behavior of restricting the virtual
-> > address space which virtual_address_range tests check, this will
-> > cause the tests fail. So lets disable the whole test suite for riscv64
-> > for now, not build it and run_vmtests.sh will skip it if it is not pres=
-ent.
-> >
-> > Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
-> > ---
-> > V1: https://lore.kernel.org/linux-mm/ZuOuedBpS7i3T%2Fo0@ghost/T/
-> > ---
-> >  tools/testing/selftests/mm/Makefile       |  2 ++
-> >  tools/testing/selftests/mm/run_vmtests.sh | 10 ++++++----
-> >  2 files changed, 8 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selfte=
-sts/mm/Makefile
-> > index 02e1204971b0..76a378c5c141 100644
-> > --- a/tools/testing/selftests/mm/Makefile
-> > +++ b/tools/testing/selftests/mm/Makefile
-> > @@ -115,7 +115,9 @@ endif
-> >
-> >  ifneq (,$(filter $(ARCH),arm64 mips64 parisc64 powerpc riscv64 s390x s=
-parc64 x86_64 s390))
-> >  TEST_GEN_FILES +=3D va_high_addr_switch
-> > +ifneq ($(ARCH),riscv64)
-> >  TEST_GEN_FILES +=3D virtual_address_range
-> > +endif
-> >  TEST_GEN_FILES +=3D write_to_hugetlbfs
-> >  endif
-> >
-> > diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/=
-selftests/mm/run_vmtests.sh
-> > index c5797ad1d37b..4493bfd1911c 100755
-> > --- a/tools/testing/selftests/mm/run_vmtests.sh
-> > +++ b/tools/testing/selftests/mm/run_vmtests.sh
-> > @@ -347,10 +347,12 @@ if [ $VADDR64 -ne 0 ]; then
-> >       # allows high virtual address allocation requests independent
-> >       # of platform's physical memory.
-> >
-> > -     prev_policy=3D$(cat /proc/sys/vm/overcommit_memory)
-> > -     echo 1 > /proc/sys/vm/overcommit_memory
-> > -     CATEGORY=3D"hugevm" run_test ./virtual_address_range
-> > -     echo $prev_policy > /proc/sys/vm/overcommit_memory
-> > +     if [ -x ./virtual_address_range ]; then
-> > +             prev_policy=3D$(cat /proc/sys/vm/overcommit_memory)
-> > +             echo 1 > /proc/sys/vm/overcommit_memory
-> > +             CATEGORY=3D"hugevm" run_test ./virtual_address_range
-> > +             echo $prev_policy > /proc/sys/vm/overcommit_memory
-> > +     fi
-> >
-> >       # va high address boundary switch test
-> >       ARCH_ARM64=3D"arm64"
->
-> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
->
-> (I'm taking the first two as they're RISC-V bits)
+Ah.  Right.
 
-Could you please pick up the last two through your tree?
+The cross function DB doesn't scale well enough for the zero day bot to use so
+it didn't detect the fix.  If we had the cross function DB then that silences
+the warning.
 
-Thanks,
-Chunyan
+1) I re-wrote the locking check so it detected this bug where before it didn't.
+2) The kbuild bot was using the new check on old code because Matthew Sakai
+   did a branch based on 8 month old code.
+3) The kbuild bot detected the bug, but unfortunately the cross function DB
+   doesn't scale well enough for the kbuild bot to use so it didn't detect the
+   fix.
+4) I reviewed the code based on the information in the email and determined that
+   it was buggy.
+
+All those steps had to happen for the warning  to be sent out.  In a normal
+situation, I would have sent the warning out at the time when the code was
+written and you wouldn't be getting warning emails eight months later.  The
+kbuild-bot generally avoids sending duplicate warnings.
+
+Sometimes the kbuild bot does send duplicate warnings, but I normally delete
+those.  Perhaps some people might argue that if you do a branch from 8 month old
+code, maybe you would want the warnings, but I think you should look at the
+Fixes tags instead.  Not everyone gets the Fixes tags right, of course...  But
+I trust kernel developers to Fix their bugs and generally they do so duplicates
+are normally false positives which have been deliberately ignored.
+
+regards,
+dan carpenter
+
 
