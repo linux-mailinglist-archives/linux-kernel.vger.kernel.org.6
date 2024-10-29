@@ -1,195 +1,305 @@
-Return-Path: <linux-kernel+bounces-386216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6639B408E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:41:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C01119B408C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:41:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D481C21D36
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:41:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9CB282FBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E761E1326;
-	Tue, 29 Oct 2024 02:41:43 +0000 (UTC)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85ED1E1A2F;
+	Tue, 29 Oct 2024 02:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="E9SSj9cl"
+Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011068.outbound.protection.outlook.com [52.101.65.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019B61DDC3B;
-	Tue, 29 Oct 2024 02:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730169702; cv=none; b=Cr60J4E1gsXxjY4slkwtEWHnmlZbVcs1S0WPOgLiituumrKPsKDzb+Ii/dYAdtjm+UoJeI8p7eoP0GQ3Tu4GjHXcDgN4Ohs/MIoLLEDbZygMRirCNbqQ7LVZ/2uz0Hh1NvJsZAkmogBYxBhfyPPw75QNUkIlqNHXKcdfNAtQwio=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730169702; c=relaxed/simple;
-	bh=QdRL8aQT/fsoGRqQ/aRmgF0WrC4Eq31ywdR0gAQ2Sto=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dpp6+XFsgccBG5ARMESoSPTYpKJex94E1v0iDaQNjabe0oP967SN2d5WQ64pp0Z8OPXUsE1rLHdyLc/5NPC3RVpB7l8rgPxA541YcJFkyvVQ6ZbJSddo5+4+L+02GP7FYZIt0WWuE0vKWHVMQm6f4KLhayM4Jwy0WqMTSt0oahI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539983beb19so5904393e87.3;
-        Mon, 28 Oct 2024 19:41:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730169698; x=1730774498;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aqfq1qXdhdY1azJDVm4y9eX03VQ14BLURIuXYXjfQJg=;
-        b=kmQD96ZZRKmXH3HLZ9IAnGUzSZ7jbfzfd7L92O03mIc41EvEIKZbfBHAmQHO2QdBlz
-         R0frJ1QC3kgs+ig1A1qRlkK8pYrKcuKK9orXKPgt9WdU41zLXGffsOlcACZQUwEror/6
-         2fk+JX+YvsOqS9/7p1o/YXyaRSWeotGsmpQDXpVlETRPhZ+A2qcVGVHzePqS90m5rsuo
-         VFQsBBp1RmtHD/yAcsSGlctmsj69KsV+6VnbxdlICqIWle9Vh6mXIyIw9q+1XkHlTS1C
-         Dt6WrkzJ5dnOqsk+o+xJShUymfUP++jhg0V57SIrDU5rJJdrZnPiTGgyUY4Fu4NXVsqw
-         b6uA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMFfm8+3Tt/jVF3+HMF4RpzvlwhVDrlpyzuz0U8qyIJHpusgKoxUZjhiB7heOoWyKTcdQi02GAxBwbxhZno0U=@vger.kernel.org, AJvYcCWYtcRNR10Fl95nEB3NRTmW9yiBw2G++cG8nTuuf5Fwn6FgVA2Q9g6IbJFUa3DQOGSgbRNG1Yo6GpF/X1n0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU6/sj0jRDLOy5TEak9HOf2dIdLsYTDS2gPA+goFw3oe6NnYjL
-	FvyE9BXZxp0QBsvUDG2qaK2KmgjIGmJj2CV8Uo1A77HpIfCLTun1bnj8c6o+pdk=
-X-Google-Smtp-Source: AGHT+IE5nVrOosDIQB5j4D/yRA2gkmssI9BMv9qHk24BUL2t06oIu3kjiZo74jpTqLi0T9vc+wc/GQ==
-X-Received: by 2002:a05:6512:23a3:b0:539:8b49:8939 with SMTP id 2adb3069b0e04-53b3490efcdmr4345220e87.41.1730169697406;
-        Mon, 28 Oct 2024 19:41:37 -0700 (PDT)
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1eab9asm1266876e87.273.2024.10.28.19.41.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 19:41:37 -0700 (PDT)
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539983beb19so5904386e87.3;
-        Mon, 28 Oct 2024 19:41:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWtlk9vqXeUE/bcOz1l8dxhNSKCqpTKVEStDDEHdw4O8q7XT7HfeYV8STHBcGwRfbf2erkC44YAYDeTqriO9ug=@vger.kernel.org, AJvYcCWz3f59qoEv5ZlyHjy3CdkE1RIBP2LeGwSvvpvmNNylsnTzWs3ooJnez9/hjPN/pTB0KnHCYY3liWrPr9X9@vger.kernel.org
-X-Received: by 2002:a05:6512:ea2:b0:539:9f52:9e4 with SMTP id
- 2adb3069b0e04-53b34a195e4mr4476070e87.48.1730169697024; Mon, 28 Oct 2024
- 19:41:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4796B12FF70;
+	Tue, 29 Oct 2024 02:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730169687; cv=fail; b=r8M7IECcmRnMraM5NAT3y8uKHsmVOExrqnHy0ZqX6Owyf5ULnzR6zGaUYu0zo+iyFtQCa8Gtuz3aYLB9tYdPouVjVA6DlC9Xm3jTGvl6UUUqVUrwluxSUjgdnBn1AbtyQL24HSBc/uwWn0ZlZbA/igHXhyeVf1gzsAvqg+YwtG0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730169687; c=relaxed/simple;
+	bh=+qfThjBP3uGanRN8PBSTlkRUTSe9bZd1MtJpOfM3OJw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=quEJn+6pcNzJ12ZR4Modhdp0Pe8CZsiSqKGcqaMDh/NzW1aHT1mW1bU7iN7S0sjF/CxLKMlNR+Oq78E9mNyhWpcNuv3WVYotaUcL1SiNkhZbmXTQNobRfgyqhqnc3rh24xYKr9iPHzNzpeS+MkPLoO38xOX/nNFy4z67I93xUdA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=E9SSj9cl; arc=fail smtp.client-ip=52.101.65.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JOix60elxsAajZ22QtNUVUzKzbpnSbSyfZpoQ6Qb9USk3gB+IVLRk2bHjhTfmXmGcm7EgLp/kht3wDEtsynlF+CW1e+aKDvsESqvtuaWR6e/c5XtReu2M3MgZesokKH1EwY9vneiUHeKqQFDJGe/XULjXSDtL6dwvWLeUIx/Vmg1+LrIi/6kRyDygsjvsUMsGot9RmGkFn5Hi415EclAEMMsRUxkznJlQRJIsKW+wXDogfHOK4Nu56eEVfLpkW52DT29GjOv+jbtVa336JTJ+4DDM50/kfQZ5WbCrCNhZCRnUgMDtsxGEt69zepjo1Y58RI6he+CLmJS+mUdpAklKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tOdocT1R2XfgY9DZnwaYMBkbJ9xg8OX1UxqIbZBAYrM=;
+ b=MV62alGjKnIWmiRGkADKq6WVsgSr2EyC8UtCiu6qeD4a5VSJ0wq0hOr8WoXq6DoBnjAUU6vl3/Y9TDkgVKO9cgFI54xI8k+qWtZHBLvcpwKkWVgnpwuX4+3+6vB8ByDvL/+uUcNF2j2asDeK1Sjy5KdCdFW4FgZApo1u6Xb2abDKygbPNT5ruJUDoiMx32rAG9RcicphA2a1N+BbJnBzWnOLWAyZ01B/hhdJXy4U7vmZDqUfV0B3c+7gQb4w/rXzv5OQCGx3zINLvsqmIxoIFqaZN2SAOh4iDyArnQtTw3ofNDvqgUptUFEinHDFbs05GrNpsdzSyTu98E67jlRvlg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tOdocT1R2XfgY9DZnwaYMBkbJ9xg8OX1UxqIbZBAYrM=;
+ b=E9SSj9clFYZiRSc8A6nMjdTOm3/VQEJvh7JQVqA6nYBZU18pz8o7hgmxRhF57zcoT84P6PkpWdpBUtRH3lAUaVzkvMa7f5SX0XobXp04i8kYwrlrXMIdkoyC9PpLAjk4+tmcmvVXsIz5+GDMNv4cp4bwBqY+DHh1jKFQe0zidBf49owdhkyJWBhuWANfzy1MJ9kIPKVKIWMUYBFJh3ae4MeLqO6/i+Bk444Bynt7FpYe465/KPEZwLmHZbQ0u8u1/+HgSx7WDftjlBKeHiNsm/jBTIjKuqhcOrMmKzh8KJeFKh544QMqDrpKxI55TSUiBYWIgB6tfv6bxCNObfhY0Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU2PR04MB8855.eurprd04.prod.outlook.com (2603:10a6:10:2e2::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
+ 2024 02:41:22 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8093.023; Tue, 29 Oct 2024
+ 02:41:21 +0000
+Message-ID: <1e8526e5-d9b7-42ac-9db3-13b42ccc4fbe@nxp.com>
+Date: Tue, 29 Oct 2024 10:41:43 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI converter support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ "rfoss@kernel.org" <rfoss@kernel.org>,
+ "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>,
+ "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "tzimmermann@suse.de" <tzimmermann@suse.de>,
+ "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
+ <simona@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>,
+ "mchehab@kernel.org" <mchehab@kernel.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>,
+ "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
+ "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
+ "tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
+ "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "nfraprado@collabora.com" <nfraprado@collabora.com>,
+ "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "sam@ravnborg.org" <sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>
+References: <20241028023740.19732-1-victor.liu@nxp.com>
+ <CAA8EJprFBbC_=kBHi86j-nE_K68QeG+c2OBzJCbUyNWs5zQK0Q@mail.gmail.com>
+ <TY3PR01MB11346F956733032EC10E997AF864A2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5ycxltnw3vhik3iype6ncuh4nelwwtom745o5dlf32qyiqh5bv@yjj5l6kb2psm>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <5ycxltnw3vhik3iype6ncuh4nelwwtom745o5dlf32qyiqh5bv@yjj5l6kb2psm>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI2PR02CA0006.apcprd02.prod.outlook.com
+ (2603:1096:4:194::8) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706225124.1247944-1-iam@sung-woo.kim>
-In-Reply-To: <20240706225124.1247944-1-iam@sung-woo.kim>
-From: Sungwoo Kim <iam@sung-woo.kim>
-Date: Mon, 28 Oct 2024 22:41:20 -0400
-X-Gmail-Original-Message-ID: <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
-Message-ID: <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
-Subject: Re: [PATCH v2] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: daveti@purdue.edu, benquike@gmail.com, 
-	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU2PR04MB8855:EE_
+X-MS-Office365-Filtering-Correlation-Id: 66ebeb32-305e-47a1-5cc9-08dcf7c32c80
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?QkMrbWFZdmZFYmRUZU0xVGZyY1NGR3ZrY09sa0ZRYjFTYlhVRy81eEhPRVB1?=
+ =?utf-8?B?WXp0eGplVU5Kek5tS09QTEU4RHYrQjExb2xKeUtKczBTaVBrY01SSVNrVXA3?=
+ =?utf-8?B?UWNTcjQvR3JGdlU3c2NpTlRyZjdQSUkvZk9OdmhyY01PVU0yeXNTaWp1MXhM?=
+ =?utf-8?B?ekRJNlJSWk5MMDdrMzBVU3J3S1hLMFJzWmFLYThxbHVYRHcyZU9sT0FXczA2?=
+ =?utf-8?B?VXRyaklMQVpRTHZFT3hFektJQmZTZWh5WTRXVExEb1V5YjJhUmtScE5TY2U0?=
+ =?utf-8?B?NXlaZTZqa040Ym1zOWJrdUNTS0FLRmEycjIxNy9ndTVXbm9kS3hHTFR0NmYr?=
+ =?utf-8?B?L2FUeWRMdjNkOE02T3JzRjNQVVJiQ2s4L1pBQTlHbGE4UkUvR28vcy9qemVp?=
+ =?utf-8?B?OVM0OFpJeHA3U3RURDNrUmlrQ1ZlbW5kUDNEc1FOdjh0eU1GMUVqaFBwYnc5?=
+ =?utf-8?B?aTVhbmhDMkp0WUthYStkWGtmYlU2d1QwQmlSbHJLTnZYV2xuTTJBU3orUTdJ?=
+ =?utf-8?B?Y2haNTE1dC9NQ0RVNFh0V2lsbGIvR1kwaTRxa2lMZm8yekZ2dkY2NktnaDJK?=
+ =?utf-8?B?enliSWF0Ui9YYU81U0JDK0lXQ0dwZDlYQy95RlN6SFB1bWRZOEk2QXdrVXZo?=
+ =?utf-8?B?Y0Rnb243OHB5aGVON0FtaWY2ZCtMWVlIcExIZ0pSOUNyYjZHNkg1Y0sybVNs?=
+ =?utf-8?B?SWlKRnNybVp4OUowTUdXeDRwNC9MZkJicllFanhZbWNCTzZRbk92ZGlTQWc5?=
+ =?utf-8?B?Q1IxaFZjcWtqR2F0TjZTODhrdXVIMFlUTGpmWExPSTZwOHd3S1hDNkF6ZHhE?=
+ =?utf-8?B?MStkaXRNL2ljcUw5dE1IeVRQTGpUYXhTRXZXYVNUYmNKTGovWHpyR1dUV1J3?=
+ =?utf-8?B?Ui9FRTkrZ3dJcWhDNC9oejZ0a00xVERxRWJqS3oyRk5ZUXJURS80QmEvUDhq?=
+ =?utf-8?B?bnVKeXhUK3JPVHFKZmVsVWwxYVRFM3RHU2JTNDJkbkUxbUJ0NGJDSGg3bWZo?=
+ =?utf-8?B?MzRxaTgzdHZHalVzNDEzclNzUXIySytHWDFnYys1K2d6OW5aYTVzK3NHYThq?=
+ =?utf-8?B?bVFyYXE0OGcvcXZoUU5SVWUxc2FDR3RWS0dhdnN1MzNWVlNxeGtNZVZBWHd5?=
+ =?utf-8?B?eC9pZGZvTGJFcGdqS242dkhVcDUzM1FUbmpsVTFtMEtCaVRYbDJlbTlOMWNW?=
+ =?utf-8?B?UEdka0RRT1NiZE1FK001MG95cjRnMG1XdlJWOEtFb1EzNkFBVW14M09NOFlC?=
+ =?utf-8?B?ZitUMWlOSW5RQmVLZjdHdWRpZStFZ21Kd0F1eWVBZkU3UTRJNzdSZitXMWxX?=
+ =?utf-8?B?Z0RjQlFMNHZDeWZNdXNjSjhGRzllTTVLVVI5WlhTdnZoVHdFWFEzSEhxcmty?=
+ =?utf-8?B?U3IvTjlCYXZNWTJrVHIxa3pCSnJzdGtoVUZPaWxVelJQYWJjYWpFOW84eHpM?=
+ =?utf-8?B?REVYeDBHK2NGTnRYUVQ1aGhXWE1NWWVXbmYzbEVHa21OVllVc0NhdFRYRTZX?=
+ =?utf-8?B?TFRrUmJFVURQcFEzZ2N5emF3WlpYbTFnck1XNEgrMzR3RFUzQnVNZGE2elZY?=
+ =?utf-8?B?SmxINGRRSklWcE1ISFpRcEZhRXl4UUFlUExGcVdVc3ZiZGx0RmVPWUpaK1B2?=
+ =?utf-8?B?a2FyTUtwWm55WlpDTmNMY05RMWdQOXdhY2xTWkhjdHJjOXBvUWFXOG05andx?=
+ =?utf-8?B?dEFxd29CVFQvanhPWGNYSmkyMzQrRFV0enpmY1hYN1BuTm5jSlJLdC9ld3M4?=
+ =?utf-8?Q?kyKeP1DYawZsLVu8g6oZp8rL3X9BZquvV4u1yjv?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?UlFhaTUxY0d1eTNsVi9waVdFQkZWMitkQytLMWZuQ3lZUTBXTmVZcWozeHpH?=
+ =?utf-8?B?RWwwa3dtWm9VZmVRNWNDSHBFRmUxaVVxTTN4bjFSSGV4UXpCRm9yQVlLTGR0?=
+ =?utf-8?B?WWsyMUlYZlBxZnEvSG9DVk5jeVlMd1Ntd2F5VURGYVFuV1loUkNSb01EZVRJ?=
+ =?utf-8?B?anY3T0xqaklaMlJPVG0rWG8yTEN2Vk9wSWFySG5hVzVBVGN3Rko5RXF6eDVy?=
+ =?utf-8?B?RlgvUktvWWMzTUpvcU5tdHY3d1VHeEtTcWVQcVZFYmNsL2V2WmIzMm1heEk5?=
+ =?utf-8?B?d09PVXQ1R3pVOUh5Q29ON1VXOGxXMmNpRlVJZnZYZjlSZnNqcklyYnZ2SDF3?=
+ =?utf-8?B?WUtYTTBvdkVlZG9LWEllT2piK1BqcXNneldORDZIazNQR1pkNFIwcHRSVWhl?=
+ =?utf-8?B?VXpNaUZOZU53V282cHA1UldVMU1MRXBTWlRrWmFKUWxzT3NwMFJ5Um55OWlp?=
+ =?utf-8?B?UEU4Y3N0SndIdldrVnNpeWlDbGhHSVVua2IwdGJER1lZK2thbXU2eWRNVUps?=
+ =?utf-8?B?Yzd5TkwxTmdwOU1DUVJrUTNGVmxFOG5DMmpMYTNzd0ZSbEREUG9LK2puaTFo?=
+ =?utf-8?B?RWx2eTY1L2Y1RWllaGJTN084RVBUemVKQTRZMjd2eHVKWDhoUlA1RnROWTl2?=
+ =?utf-8?B?WFBjaGF2dk1KZUFRV3J0NXV6QkNGZ2hHSG5lZENoR2JDaG5md1ZCaWlsSVJ1?=
+ =?utf-8?B?dDF3NE9QSmZ4ZWY2UEZXWTVSM0dxaXFJQ0cwOUI1WjB4MGo0WlU2TWE4UmVn?=
+ =?utf-8?B?UG9uczJjWC9VTW14NjZMK096STJJdkZoc1BybTIxUXhQaXBtdlZKcVo1Z2VN?=
+ =?utf-8?B?cXE5UFlKQnZETWRqSEgrRVBZZk5sYkEwZXdYc3NSM3c2Zkt1TjJvd3N0Y3Ix?=
+ =?utf-8?B?MjR0SmxaNWZVSFk1S2w2ZUF6aEFnYUx3STdCMUh2THdqenZaaHlkTWdRM0d5?=
+ =?utf-8?B?ZHdhTm11L2VUU1ZXQWoyVzNpTndjTGxJK09FOUJ6LzFUQm9OaUk2WEkvSXhX?=
+ =?utf-8?B?K2t5aDZseXFueHhCeWVycDVlc1BRR2piUjR3blR4WUJLL28xdkhUT0U3SUc2?=
+ =?utf-8?B?K3RNRkdJUmIySlc2OHp5RDRxdElZNUwvT3d3SzBaNXJ4WTQyY01QcVNzWFBR?=
+ =?utf-8?B?TUJCM1FZT0ViSHVOVUpnRjhGRk8rK280T1Nnbno3WW9GUFRrR0Jpc1hrdmNh?=
+ =?utf-8?B?RkNTeWFVYjg0ZVJMRXZNWndjOUs3RlBUL0RRRFNwWklGQ1M5akV3RUNHL2Ur?=
+ =?utf-8?B?UURXNEM0dXZ2M2lXVWo0bFZaZnMvMFJoWmgrZE44ZU51UWdhU1Z1OHBxWklL?=
+ =?utf-8?B?djdZdVNaN1hlN3RvaUU0cGpOYm1VejRFYjk4MElHR3hmNGErejZOZ2w1K3Zn?=
+ =?utf-8?B?aUNMOXVFRisxclhIdk1xUU9lN2JaVjh1UlRUTEVwc0tSaVgrZHJQNVI5Z1BX?=
+ =?utf-8?B?cXo5SWVwb1puV1p5Uk9nWlhtQkc4cC9VUDNuSWFlaGttQmU0T0NEN0UvSzlz?=
+ =?utf-8?B?US9DRVpqaUxnOWQ1VklRb3VPdlRoMTBPcjcvc3dtK1JOYXdZTTVaQzhBRUd1?=
+ =?utf-8?B?SXFsQkErNW1QNElWa2RqVDhubDVPQ2hCQW5TeTFPaS9RYW8xZDFIUFVubExr?=
+ =?utf-8?B?czNkTHJCZEUxYWlHMFpRNm90TjhQWU1hYzNHdEpDellPNzhNRkE4Z3pDczQ1?=
+ =?utf-8?B?R0tGclA5MU52VzBQL016VUg5aS85VEJQdlk4ME9HNVdBZEo1cHgvVGlYbnJy?=
+ =?utf-8?B?ZnhnV21HdUpsSTBqQ3YyMWpyL1ZaY1pUdWVrSXI1MW56SlRNSERFQmt6YUtp?=
+ =?utf-8?B?blEyZktoTFIvNks3bGRQRFppaHIvd2ZVdVkrTlU5MmRTYmE2SXRrUDJ4Ri8v?=
+ =?utf-8?B?TWVHVmVsREFDcVdXZkQ4ZVY4WHJ4alJFQ080MkpCTDBSc1owRU9USmFoQnc4?=
+ =?utf-8?B?K0NRc0FOVStLNllCbTJncjZicG5qRDJjSkRKbmxUdWV4Y0dtSkhDclAxL3c5?=
+ =?utf-8?B?bzg5di9MVmxnTzE5Z25jVWRUQVBvKzhZQjUvWHVGRWZJQm5RZFFpdTFmNlY0?=
+ =?utf-8?B?Y0NJRXFYZkNRaTk3ZTMvRWdpQXM5azRKZkZNSW5LNWYzeFp2NTQ1SVhVTHJo?=
+ =?utf-8?Q?+39wGgLQJDtjs6MrsW4+kaedl?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 66ebeb32-305e-47a1-5cc9-08dcf7c32c80
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 02:41:21.8568
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1CctNe64JDTZBmFhJOYQ+dxmNPRJWP4f+vmy2IcMPDPU107dhK7RyPCOt2/t9xtW+SuyUjn4+lF/2Aisjn9JFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB8855
 
-Dear Luiz, could you review this? This bug and fix are still valid but
-have been forgotten for some reason.
+On 10/28/2024, Dmitry Baryshkov wrote:
+> On Mon, Oct 28, 2024 at 11:12:00AM +0000, Biju Das wrote:
+>> Hi Dmitry, Liu,
+>>
+>>> -----Original Message-----
+>>> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> Sent: 28 October 2024 10:20
+>>> Subject: Re: [PATCH v4 00/13] Add ITE IT6263 LVDS to HDMI converter support
+>>>
+>>> Hi,
+>>>
+>>> On Mon, 28 Oct 2024 at 04:37, Liu Ying <victor.liu@nxp.com> wrote:
+>>>>
+>>>> Hi,
+>>>>
+>>>> This patch series aims to add ITE IT6263 LVDS to HDMI converter on
+>>>> i.MX8MP EVK.  Combined with LVDS receiver and HDMI 1.4a transmitter,
+>>>> the IT6263 supports LVDS input and HDMI 1.4 output by conversion
+>>>> function.  IT6263 product link can be found at [1].
+>>>>
+>>>> Patch 1 is a preparation patch to allow display mode of an existing
+>>>> panel to pass the added mode validation logic in patch 3.
+>>>>
+>>>> Patch 2 allows i.MX8MP LVDS Display Bridge(LDB) bridge driver to find
+>>>> the next non-panel bridge, that is the IT6263 in this case.
+>>>>
+>>>> Patch 3 adds mode validation logic to i.MX8MP LDB bridge driver
+>>>> against "ldb" clock so that it can filter out unsupported display
+>>>> modes read from EDID.
+>>>>
+>>>> Patch 4 adds MEDIA_BUS_FMT_RGB101010_1X7X5_{SPWG,JEIDA} support, as
+>>>> they are supported by IT6263(with LVDS data bit reversed order).
+>>>>
+>>>> Patch 5 makes drm_of.c use MEDIA_BUS_FMT_RGB101010_1X7X5_{JEIDA,SPWG}.
+>>>>
+>>>> Patch 6 supports getting dual-link LVDS pixel order for the sink side
+>>>> as needed by IT6263 driver.
+>>>>
+>>>> Patch 7 documents jeida-30 and vesa-30 data mappings in
+>>>> lvds-data-mapping.yaml, as needed by IT6263 DT binding.
+>>>>
+>>>> Patch 8 extracts common dual-link LVDS display properties into new
+>>>> lvds-dual-ports.yaml so that IT6263 DT binding can reference it.
+>>>>
+>>>> Patch 9 adds DT binding for IT6263.
+>>>>
+>>>> Patch 10 adds IT6263 bridge driver.  Only video output is supported.
+>>>>
+>>>> Patch 11 adds DT overlays to support NXP adapter cards[2][3] with
+>>>> IT6263 populated.
+>>>>
+>>>> Patch 12 enables the IT6263 bridge driver in defconfig.
+>>>>
+>>>> Patch 13 updates MAINTAINERS to add maintainer for IT6263 driver.
+>>>
+>>> This has pretty complicated structure from the merging point of view.
+>>>
+>>> I propose we take patches 6, 8, 9 (without 30-bit formats, they can be dropped while applying), 11, 12
+>>> (?) and 13 through drm-misc in one batch (once DT maintainers review the binding parts). This looks
+>>> like a minimal set, having no extra dependencies.
+>>
+>>>
+>>> The second set might be 4, 5 + new patch, re-adding 30-bit formats to
+>>> IT6263 binding (no driver changes are necessary). This can go in separately, after an Ack from media
+>>> maintainers.
+>>>
+>>> Of course both sets can go together if linux-media maintainers reacts quickly and ack merging media-
+>>> formats patch through drm-misc tree.
 
-On Sat, Jul 6, 2024 at 6:53=E2=80=AFPM Sungwoo Kim <iam@sung-woo.kim> wrote=
-:
->
-> __hci_cmd_sync_sk() returns NULL if a command returns a status event
-> as there are no parameters.
-> Fix __hci_cmd_sync_sk() to not return NULL.
->
-> KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-> CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dirty=
- #10
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
-1/2014
-> Workqueue: hci7 hci_power_on
-> RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.c:=
-138
-> Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48 b=
-a 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 84=
- c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
-> RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
-> RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
-> RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
-> RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
-> R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
-> R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
-> FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
-> PKRU: 55555554
-> Call Trace:
->  <TASK>
->  hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
->  hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
->  hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
->  hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
->  hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
->  hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
->  hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
->  hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
->  process_one_work kernel/workqueue.c:3267 [inline]
->  process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
->  worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
->  kthread+0x2cb/0x360 kernel/kthread.c:388
->  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->
-> Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOVER=
-Y")
->
-> Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
-> ---
-> v1 -> v2: make __hci_cmd_sync_sk() not return NULL
->
->  net/bluetooth/hci_sync.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
->
-> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
-> index 76b283b8e..c4e4abc6e 100644
-> --- a/net/bluetooth/hci_sync.c
-> +++ b/net/bluetooth/hci_sync.c
-> @@ -201,6 +201,12 @@ struct sk_buff *__hci_cmd_sync_sk(struct hci_dev *hd=
-ev, u16 opcode, u32 plen,
->                 return ERR_PTR(err);
->         }
->
-> +       /* If command return a status event skb will be set to NULL as th=
-ere are
-> +        * no parameters.
-> +        */
-> +       if (!skb)
-> +               return ERR_PTR(-ENODATA);
-> +
->         return skb;
->  }
->  EXPORT_SYMBOL(__hci_cmd_sync_sk);
-> @@ -250,6 +256,11 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev, u=
-16 opcode, u32 plen,
->         u8 status;
->
->         skb =3D __hci_cmd_sync_sk(hdev, opcode, plen, param, event, timeo=
-ut, sk);
-> +
-> +       /* If command return a status event, skb will be set to -ENODATA =
-*/
-> +       if (skb =3D=3D ERR_PTR(-ENODATA))
-> +               return 0;
-> +
->         if (IS_ERR(skb)) {
->                 if (!event)
->                         bt_dev_err(hdev, "Opcode 0x%4.4x failed: %ld", op=
-code,
-> @@ -257,13 +268,6 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev, u=
-16 opcode, u32 plen,
->                 return PTR_ERR(skb);
->         }
->
-> -       /* If command return a status event skb will be set to NULL as th=
-ere are
-> -        * no parameters, in case of failure IS_ERR(skb) would have be se=
-t to
-> -        * the actual error would be found with PTR_ERR(skb).
-> -        */
-> -       if (!skb)
-> -               return 0;
-> -
->         status =3D skb->data[0];
->
->         kfree_skb(skb);
-> --
-> 2.34.1
->
+I'm fine with merging the two sets through drm-misc tree as long
+as linux-media and dri-devel maintainers accept this.  Up to them.
+
+>>>
+>>> The rest of the patches don't have such strong dependencies and go in once ready / reviewed.
+>>>
+>>> WDYT?
+>>
+>> I guess, 6,8,9(without 30-bit formats), 10, 12 and 13.
+>>
+>> 11 may have dependency on 1, 2 and 3 as it is SoC specific.
+> 
+> Yes, of course, 10, not 11.
+> 
+>> Then 4, 5 + new patch, re-adding 30-bit formats to IT6263 binding.
+
+I think it would be good to directly support 30-bit formats in
+IT6263 DT binding, not re-add them to it.  This way, we'll have one
+version of the binding, not two.  So, a better first set would
+contain patch 6, 7(one existing A-b from Krzysztof), 8, 9, 10, 12
+and 13. 
+
+-- 
+Regards,
+Liu Ying
+
 
