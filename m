@@ -1,77 +1,111 @@
-Return-Path: <linux-kernel+bounces-387047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E96D9B4B28
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:46:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C889B4B8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:57:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503D01C22503
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:46:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04976B22597
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C9EF205E3F;
-	Tue, 29 Oct 2024 13:46:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkx9P7bZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838020697B;
+	Tue, 29 Oct 2024 13:57:37 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059BE20110B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86AF7205132;
+	Tue, 29 Oct 2024 13:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209581; cv=none; b=IfOvghVFAxbdW/8ca00x7DE6WLzQfFPmo+Nk2h7u83ozO/lbNcD6ts7b1cRRAFHQbhw2EhiuRu3jQhSlC6qx3hnGO5bMmj38cj8ucwJvjl42G2z1VtB8Y3mvqxGeEQ2fHApqnqbamysbUcHdjwCSf7QVU+46cw4pSfVGxnktpU0=
+	t=1730210257; cv=none; b=YeCoKGeanagFVgkKjZR5BoGv6wG4qhCJsXkmBwlx5i0OyDQcyunTWJK9FlDXPldhms1a9jA42NaKxMwN2pYMv9RdEygPF7mpfsmZTpMESpLDgoa4slN+h0Y9qK78KQHWLqP9oPkUGuaZ0hSiKbw9myA/h+c3xhlK0j9znc8in7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209581; c=relaxed/simple;
-	bh=qT2oNxyK6MWD5NUw79HHClW4BtAND8ckQ+wU2Eqy8rw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8JwgSiCuAzNggbOjoBrmYj9gbUct5iN3zG/EX/ERvTuDeOFz4QfKf2xMtH5w0r31gi403WLuinGZbf8/0s9eO8VX/eOGMRTIYmwFIqQPjYsHSRZ2OzwvSDFSbfzpvhtjqZyUiLHO+C14oJibdz+T7k3/7trmNgicdI1RquEKg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkx9P7bZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4869BC4CECD;
-	Tue, 29 Oct 2024 13:46:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730209580;
-	bh=qT2oNxyK6MWD5NUw79HHClW4BtAND8ckQ+wU2Eqy8rw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tkx9P7bZJ4lxzHNAnQDV068yXEYcqBUCZHbDtZFCQk6Ncv0DDs2AziImkmopifVKa
-	 MlP9sAyqPpqab+sRsC4707gIwWRel4jM1HOakgAwJighyaty2/g6YP5fRPCslNcd2p
-	 NurlPaw7PSnHF4yprAQVQcRUgW5rrb3ZZ5blJPM3nc0zs/NGVCLUFzUUpWkgHFZbpN
-	 AZFMp0EFMJCYf2z/NsRCvQE64daB/QaqPZeJOrmuQj7HJJOtYplP1apIIgTijDVcfe
-	 9zLoywDSM165EjB5zQ/WXIvwMtfedypv491xnt6xSpnXdzEjoKwOYSARUbR+fSypoT
-	 af+NC7oAwlClg==
-Date: Tue, 29 Oct 2024 14:46:17 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 14/26] posix-timers: Store PID type in the timer
-Message-ID: <ZyDnKY38s9LPhuHH@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.102492808@linutronix.de>
+	s=arc-20240116; t=1730210257; c=relaxed/simple;
+	bh=QMT6f9Ox5H3aspFcQj99XAbFA7KbFQQoBtLwimMN2VA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Drp3adqDBs0gGpWBlSNqSW35rZgz7gyASdjMYrboij4BT0nbCqJ4wHkK9dnnmnB8DGVjrBOwUsHK8IRk2uuJITp0dcoL4K3PrtwfS+4vck142SWWAwSBHyosa6dWL7JURcwhEaFIu+T17UmidaviOvSx90PKrj2xbiRnHQymhlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XdBcG1NYHz1jw2q;
+	Tue, 29 Oct 2024 21:55:58 +0800 (CST)
+Received: from kwepemd200012.china.huawei.com (unknown [7.221.188.145])
+	by mail.maildlp.com (Postfix) with ESMTPS id 075CF1A0188;
+	Tue, 29 Oct 2024 21:57:29 +0800 (CST)
+Received: from huawei.com (10.67.175.84) by kwepemd200012.china.huawei.com
+ (7.221.188.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 29 Oct
+ 2024 21:57:28 +0800
+From: Zicheng Qu <quzicheng@huawei.com>
+To: <jic23@kernel.org>, <noname.nuno@gmail.com>, <nuno.sa@analog.com>,
+	<lars@metafoo.de>, <Michael.Hennerich@analog.com>, <djunho@gmail.com>,
+	<alexandru.ardelean@analog.com>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <tanghui20@huawei.com>, <zhangqiao22@huawei.com>,
+	<judy.chenhui@huawei.com>, <quzicheng@huawei.com>
+Subject: [PATCH v2] iio: adc: ad7923: Fix buffer overflow for tx_buf and ring_xfer
+Date: Tue, 29 Oct 2024 13:46:37 +0000
+Message-ID: <20241029134637.2261336-1-quzicheng@huawei.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241028142357.1032380-1-quzicheng@huawei.com>
+References: <20241028142357.1032380-1-quzicheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.102492808@linutronix.de>
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200012.china.huawei.com (7.221.188.145)
 
-Le Tue, Oct 01, 2024 at 10:42:19AM +0200, Thomas Gleixner a écrit :
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> instead of re-evaluating the signal delivery mode everywhere.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+The AD7923 was updated to support devices with 8 channels, but the size
+of tx_buf and ring_xfer was not increased accordingly, leading to a
+potential buffer overflow in ad7923_update_scan_mode().
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+Fixes: 851644a60d20 ("iio: adc: ad7923: Add support for the ad7908/ad7918/ad7928")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Nuno SÃ¡ <noname.nuno@gmail.com>
+Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+---
+v2:
+- Fixed: Addressed buffer overflow in ad7923_update_scan_mode() due to 
+insufficient tx_buf and ring_xfer size for 8-channel devices.
+- Issue: Original patch attempted to fix the overflow by limiting the 
+length, but did not address the root cause of buffer size mismatch.
+- Solution: Increased tx_buf and ring_xfer sizes recommended by Nuno to 
+support all 8 channels, ensuring adequate buffer capacity.
+- Previous patch link: 
+https://lore.kernel.org/linux-iio/20241028142357.1032380-1-quzicheng@huawei.com/T/#u
+ drivers/iio/adc/ad7923.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
+index 09680015a7ab..acc44cb34f82 100644
+--- a/drivers/iio/adc/ad7923.c
++++ b/drivers/iio/adc/ad7923.c
+@@ -48,7 +48,7 @@
+ 
+ struct ad7923_state {
+ 	struct spi_device		*spi;
+-	struct spi_transfer		ring_xfer[5];
++	struct spi_transfer		ring_xfer[9];
+ 	struct spi_transfer		scan_single_xfer[2];
+ 	struct spi_message		ring_msg;
+ 	struct spi_message		scan_single_msg;
+@@ -64,7 +64,7 @@ struct ad7923_state {
+ 	 * Length = 8 channels + 4 extra for 8 byte timestamp
+ 	 */
+ 	__be16				rx_buf[12] __aligned(IIO_DMA_MINALIGN);
+-	__be16				tx_buf[4];
++	__be16				tx_buf[8];
+ };
+ 
+ struct ad7923_chip_info {
+-- 
+2.34.1
+
 
