@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-386692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D289B4709
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:40:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E497F9B4737
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:48:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0059B1C21080
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:40:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62656B22CB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AACD1204F7D;
-	Tue, 29 Oct 2024 10:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F02205121;
+	Tue, 29 Oct 2024 10:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="T4tW4Pjh"
-Received: from mxout3.routing.net (mxout3.routing.net [134.0.28.8])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="O7new4Pb"
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3461E102D;
-	Tue, 29 Oct 2024 10:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F1320492B;
+	Tue, 29 Oct 2024 10:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198395; cv=none; b=ay0xjo8bdlOa+/Wlh1ArIm7hn+HWD+5YAJb9vb6MbT/DFizF6BcZM5grWle9e0JAnc0rVEykR1LmXmRBWldiOQC9e+JF1WUqyofPc8Q+qFDuTTz4Dat0VmYpQWP3hAaewQyJDauS24NPunB1eg632c9xwIutJMYUK4+LBZKAXgM=
+	t=1730198870; cv=none; b=crt+/VItRyYEdhV37YK+Pbr97/zQALi81LpesujpvqBrlCgTGkJ9HdK+VSCgRiN40JvSt1PgAMxry9JlTTI+mLIbDMeNfuPtiZeWHx/vSY7CFnt+UwHREhGGoEHhDrrFj42zc63/nSnx8xW2VADr/3PhTImF7QQS9ZvLwS7XA9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198395; c=relaxed/simple;
-	bh=70qrFTnQRWApjaxgLtEzaxwn9O9H03R/UTqJ/+cdtuw=;
+	s=arc-20240116; t=1730198870; c=relaxed/simple;
+	bh=NytuKTmqmF83y3YuXKAusWIAnYghAPvCvkxkS3y6MRk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S7POYkEIHB4FEFGs/KqvXybUFczIPTlcbD672hw2oRjrK/8kL5VwDOUUwRYSVQRUlPKMlgQE29NTRviXMZg61n8s/4O5hGAvDBpaQkceqNX3O5YUk8fME8mwV95pq1TsEw2FOiOTDmr3m8CjnkEv+4Hlcn1IYNhnOvm1EpUN+Xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=T4tW4Pjh; arc=none smtp.client-ip=134.0.28.8
+	 MIME-Version; b=hlSPd/fl5nBk6NtUWcIKf9gl4rZqTi2ilxd5NuhCvgGEfvdNM2IpV3RQtorFY4h1ri952Z0QV0v63TF6O/fiXnw/6Spa05gqnbH6j0e4Nzz9Y2q/snVGNaRhhzDdcGShyIYkvoIV0Uu+Ga/MEOBJWEy4EPAi8w88b1q3ELiy1g0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=O7new4Pb; arc=none smtp.client-ip=134.0.28.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout3.routing.net (Postfix) with ESMTP id 23B966164E;
+	by mxout2.routing.net (Postfix) with ESMTP id BC3EE60644;
 	Tue, 29 Oct 2024 10:39:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
 	s=20200217; t=1730198388;
@@ -39,13 +39,13 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=7Zqi6Sl+Kx4Ji1QwakjgbRzaeDN7PqxTEdUVl3GZZf8=;
-	b=T4tW4Pjh43l3XljyaRqU9KlcGnR0fhiX2E9UWADtycYVAGuymEwDQK9AL5m4dyWr+zAOR2
-	jNpJMwSUvdbLtsp56XJyzF9xDuTJIOOqyI1Z+6xv8zmXV/X2Sw6fjO1MqPaHOv1FcyDPRq
-	alwwm7A4KHF+3xfeMhtOiarqJjEjEfE=
+	bh=JG70TegBMj/ibFZUxIkrxShKc87NYQy7WkHukok4xoE=;
+	b=O7new4Pb2Nq6S/vobN0VL74FAHFkpDjBzr9klQ48cO3crw0XnNIn0QXbRTpIJYLfOwmVvw
+	YFUFVqyTMXHc0lm3SMYaHGAggtgH0gMjgu4HW0aLZ+u/0JGQDBzPkgJKsAmS6fh4kC/DmF
+	KiIbm7wfOG71mCl7nfo12HGPcF77GN4=
 Received: from frank-u24.. (fttx-pool-80.245.73.173.bambit.de [80.245.73.173])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 892EE36037C;
-	Tue, 29 Oct 2024 10:39:47 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 24BBF3600D8;
+	Tue, 29 Oct 2024 10:39:48 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [RFC v1 08/14] arm64: dts: mediatek: mt7988: add fixed regulators for 1v8 and 3v3
-Date: Tue, 29 Oct 2024 11:39:27 +0100
-Message-ID: <20241029103937.45852-9-linux@fw-web.de>
+Subject: [RFC v1 09/14] arm64: dts: mediatek: mt7988: extend efuse node
+Date: Tue, 29 Oct 2024 11:39:28 +0100
+Message-ID: <20241029103937.45852-10-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241029103937.45852-1-linux@fw-web.de>
 References: <20241029103937.45852-1-linux@fw-web.de>
@@ -70,46 +70,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 351e04a4-f535-41b6-80ef-f6eadcd15412
+X-Mail-ID: 8e66c03e-5b0a-4db8-be5a-f6e0180b4bd9
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
-Add regulator nodes used for mmc.
+Add subnodes for efuse containing calibration data for lvts and phys.
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index 639c307b9984..7371cd80a4ff 100644
+index 7371cd80a4ff..ed8ce1e6f68b 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -62,6 +62,24 @@ psci {
- 		method = "smc";
- 	};
+@@ -330,6 +330,25 @@ efuse: efuse@11f50000 {
+ 			reg = <0 0x11f50000 0 0x1000>;
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
++
++			cpufreq_calibration: calib@278 {
++				reg = <0x278 0x1>;
++			};
++			lvts_calibration: calib@918 {
++				reg = <0x918 0x28>;
++			};
++			phy_calibration_p0: calib@940 {
++				reg = <0x940 0x10>;
++			};
++			phy_calibration_p1: calib@954 {
++				reg = <0x954 0x10>;
++			};
++			phy_calibration_p2: calib@968 {
++				reg = <0x968 0x10>;
++			};
++			phy_calibration_p3: calib@97c {
++				reg = <0x97c 0x10>;
++			};
+ 		};
  
-+	reg_1p8v: regulator-1p8v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.8V";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	reg_3p3v: regulator-3p3v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-3.3V";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	soc {
- 		compatible = "simple-bus";
- 		ranges;
+ 		clock-controller@15000000 {
 -- 
 2.43.0
 
