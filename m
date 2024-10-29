@@ -1,156 +1,167 @@
-Return-Path: <linux-kernel+bounces-386829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 343BA9B4863
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:34:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93E7E9B486A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:37:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658181C22AA7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:34:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55131C22E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A9D20514F;
-	Tue, 29 Oct 2024 11:34:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259CB205148;
+	Tue, 29 Oct 2024 11:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="ap/W9MXz"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dr2Wko62"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395ED204031
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:34:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1002F20492E;
+	Tue, 29 Oct 2024 11:36:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201665; cv=none; b=JnhxzeTCLHiqlP5qIOXGWqrlBptLal7GgndQPuIBHJLEv23IVP3LIoLJjWmXtMS+VeMbRW96CfYhF9Hr5p7LJaYZK7NNEtNpgUkD+YD3jl6n6RlG/PaGskQHP9BwPs98pV5QKU80S/HH3ohW3jXvpGqCnpwma0MGoOK+ydzZegU=
+	t=1730201813; cv=none; b=Xd6axhvahhrC7wTXILeh+IDwqTc7cbd2KYrpDAQaRhIP+OI0bkyl8Bx7wpkgAxmZAQbvDYUxJeILt56QCTzInvhcoS0J3H3FWDptlI7oQAlt7W284mGu06L5m5YaohHpB0I8ghVKUepSMMGlsIBps1a4IsOQ4ShnixBfeAUT/fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201665; c=relaxed/simple;
-	bh=cPKEJ4jerXa/h6ueOtoFqHZZD6u7n4AElLCBfDVkuAw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KXL8ltkXScO8SVRzTWxQXNj4SWq6K04k4s/JUr2JAbyYriyO4fiayYSmebJiIqSzKxSCT+NgwZrbXlRIWS0tG17ZOdbqK5+MAyFaB2CdXvQWDuF7sGIoAsBZX7EbM9rIB7pb9928VX19oelpAsSjnzL1XUsvSxrlHz5NH5uP1QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=ap/W9MXz; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d5aedd177so3572752f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:34:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1730201660; x=1730806460; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xUO11C/JRTs4GKxfufQ6dUqgB6gKo2LmLUMdUeU8K1k=;
-        b=ap/W9MXzkQRzXylxlEwl9vrjtn4+mVxv5Dln5/HFOmSJtI2c1uJDvPw+iTmPDB6+NM
-         ogtZzXTUR0mOpR4sKySkHlXlwfGp2SVUCRPOWNM934bn42MyKO/j0AW86OTPImOeKcq7
-         ehYDhB6SbvxWHr9PZ28OxYEKvyioWUz4eLZ/5aury1TZa0G8wEIFXfyBVnFG3G3b49Fc
-         yvQor9LnoJhhJm1sQuR5nd2A4XENxUIpsZmMuH9+JWbDWzpK+sdTL7FO501zS3pi1YGL
-         IyEyu9Xgun/pPgBSnura1G3Q6dHNJA6h6E0XPPz8roSsapXM/Ya/tjj9PPS0qtJsY3y3
-         hjAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730201660; x=1730806460;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xUO11C/JRTs4GKxfufQ6dUqgB6gKo2LmLUMdUeU8K1k=;
-        b=h9C8mP9CQ/HAjDoH9F41OFt75ijjgtzxEJ6aDeqriitKVOm3ahiJ18Krnh81j8EA3w
-         1so50NP3rQU075AqRGYZJeVn0qvZcbSzrUvYb9uo2rLDhds32JHr4LmC9/tXOvHofdn8
-         MY4UVvDbhOW/Ip0OsBvwrUanc+mxXOjv1+kN56H717wVfbLFlSuRaxzcEW2KpWvwfK9e
-         UBBx7J/Ixhw2Rf90dmf1glZ3I+W0x7ofTemJ2r+dTyikyZgGSj27uGgut/5R/YFuwSg/
-         3pfMIgZlfGW5xRtHsypScLvaQ0PYHJilLa8Mn+Pr0YsHQkig+nrJXgAwpadNrO2dZVaQ
-         EQcw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6BtU67qVPIhBqqfoc6wQw6sU0blYh9rMXTeMbWYogmoJmOK3GFG2zu/UFbJPkN5s2oyqYrtI13HRk7+k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxaejc2J6Vd0Y/R7hdk5wbb+VNHTg3Y4FbkTYwW+hUlrAgyKyov
-	PY6f4bDSvXc30R3NMaXO1uUivCRpkgK965mxFsryTl2izNHPBAJVj/cYzj85VbY=
-X-Google-Smtp-Source: AGHT+IFJoyZ6NxzI4ys9GDFWfJixnTkKlsJEMZbZjWGrqOc2/MIuNQIrRuJSwDRXg2rPjjIDI76/9g==
-X-Received: by 2002:adf:fdc9:0:b0:37d:43e5:a013 with SMTP id ffacd0b85a97d-380610f49e4mr7243573f8f.8.1730201660311;
-        Tue, 29 Oct 2024 04:34:20 -0700 (PDT)
-Received: from localhost ([82.150.214.1])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38058b47952sm12152755f8f.48.2024.10.29.04.34.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 04:34:20 -0700 (PDT)
-From: David Gstir <david@sigma-star.at>
-To: parthiban@linumiz.com,
-	James Bottomley <James.Bottomley@HansenPartnership.com>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	David Howells <dhowells@redhat.com>,
-	Paul Moore <paul@paul-moore.com>,
-	James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>
-Cc: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
-	linux-integrity@vger.kernel.org,
-	keyrings@vger.kernel.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	David Gstir <david@sigma-star.at>,
-	stable@vger.kernel.org
-Subject: [PATCH] KEYS: trusted: dcp: fix NULL dereference in AEAD crypto operation
-Date: Tue, 29 Oct 2024 12:34:01 +0100
-Message-ID: <20241029113401.90539-1-david@sigma-star.at>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
-References: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
+	s=arc-20240116; t=1730201813; c=relaxed/simple;
+	bh=e5S/YKnH9NHvSS0aTqimfEThPXu31EgHVlB//jnSb+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAEechlrZZ1Wde5vL2l4O7QH/HTps2sbD8XEtdJmFxi/XnTAo8sRstOv2eCq0NVUr/T6Iw25KLe7nhNtGaA2eQqMjJMBBVLaSD0iZb9zAEA2hSQ7eGbHpZR1XawO7uek4zDRRHDwr0K5rQUx6rrAEUd97an1Gx2wRzUwhT73Jvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dr2Wko62; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=mRSboDDzGxAiy3/RWSIRW202wiGtlrHhBve+K+RhU38=; b=dr2Wko62gJxMTrK00ekmXTouum
+	fRryKzE23eZi7WLE5eGQk6PCAaQrrcRHJX9k1jouVRU0cHMV1MvhLFb98RCc9g9TNqUmYNKecxYBQ
+	uFIXCzATCX7D6+8YtDPtNJn8dHac5jrImCWIHVY3ECwJbPSx3CgB6kX3QNRc3nmHn+0l9xdb7Np8/
+	So0Nd2tjsSxVGVngTeSH1eZDkTiJVB5mgaQyoPUgWotA/0/MicKUle+uM5uxXXbyhguTWVxoB8jnq
+	aJNWDyAKr70EhEqdHM8BKT+/w+EoP0XF8/mH1cbPn5HFNO3OZclS8Y3guTbtx53/BanZR4/gGhGgO
+	FfRhsjhg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5kWC-00000009t4y-0VcF;
+	Tue, 29 Oct 2024 11:36:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BD8B630073F; Tue, 29 Oct 2024 12:36:11 +0100 (CET)
+Date: Tue, 29 Oct 2024 12:36:11 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Tony Luck <tony.luck@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Alexey Kardashevskiy <aik@amd.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Kai Huang <kai.huang@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Breno Leitao <leitao@debian.org>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
+	Juergen Gross <jgross@suse.com>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
+	Huang Shijie <shijie@os.amperecomputing.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-efi@vger.kernel.org
+Subject: Re: [PATCH v5 03/16] x86/alternatives: Disable LASS when patching
+ kernel alternatives
+Message-ID: <20241029113611.GS14555@noisy.programming.kicks-ass.net>
+References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
+ <20241028160917.1380714-4-alexander.shishkin@linux.intel.com>
+ <7897bc3e-2d68-4aef-8668-f6eb9f8efd7f@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7897bc3e-2d68-4aef-8668-f6eb9f8efd7f@intel.com>
 
-When sealing or unsealing a key blob we currently do not wait for
-the AEAD cipher operation to finish and simply return after submitting
-the request. If there is some load on the system we can exit before
-the cipher operation is done and the buffer we read from/write to
-is already removed from the stack. This will e.g. result in NULL
-pointer dereference errors in the DCP driver during blob creation.
+On Mon, Oct 28, 2024 at 10:49:07AM -0700, Dave Hansen wrote:
+> On 10/28/24 09:07, Alexander Shishkin wrote:
+> >  static void text_poke_memcpy(void *dst, const void *src, size_t len)
+> >  {
+> > -	memcpy(dst, src, len);
+> > +	lass_stac();
+> > +	__inline_memcpy(dst, src, len);
+> > +	lass_clac();
+> >  }
+> >  
+> >  static void text_poke_memset(void *dst, const void *src, size_t len)
+> >  {
+> >  	int c = *(const int *)src;
+> >  
+> > -	memset(dst, c, len);
+> > +	lass_stac();
+> > +	__inline_memset(dst, c, len);
+> > +	lass_clac();
+> >  }
+> 
+> These are the _only_ users of lass_stac/clac() or the new inlines.
 
-Fix this by waiting for the AEAD cipher operation to finish before
-resuming the seal and unseal calls.
+For now; I have vague memories of running into trouble with compilers
+doing random things with memcpy before, and having these inline versions
+gives us more control.
 
-Cc: stable@vger.kernel.org # v6.10+
-Fixes: 0e28bf61a5f9 ("KEYS: trusted: dcp: fix leak of blob encryption key")
-Reported-by: Parthiban N <parthiban@linumiz.com>
-Closes: https://lore.kernel.org/keyrings/254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com/
-Signed-off-by: David Gstir <david@sigma-star.at>
----
- security/keys/trusted-keys/trusted_dcp.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+One of the cases I remember running into was KASAN, where a compiler is
+SUPPOSED to issue __asan_memcpy calls instead of the regular memcpy
+calls, except they weren't all doing that, with the end result that our
+regular memcpy implementation grew instrumentation to deal with that.
 
-diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
-index 4edc5bbbcda3..e908c53a803c 100644
---- a/security/keys/trusted-keys/trusted_dcp.c
-+++ b/security/keys/trusted-keys/trusted_dcp.c
-@@ -133,6 +133,7 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
- 	struct scatterlist src_sg, dst_sg;
- 	struct crypto_aead *aead;
- 	int ret;
-+	DECLARE_CRYPTO_WAIT(wait);
- 
- 	aead = crypto_alloc_aead("gcm(aes)", 0, CRYPTO_ALG_ASYNC);
- 	if (IS_ERR(aead)) {
-@@ -163,8 +164,8 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
- 	}
- 
- 	aead_request_set_crypt(aead_req, &src_sg, &dst_sg, len, nonce);
--	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL,
--				  NULL);
-+	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP,
-+				  crypto_req_done, &wait);
- 	aead_request_set_ad(aead_req, 0);
- 
- 	if (crypto_aead_setkey(aead, key, AES_KEYSIZE_128)) {
-@@ -174,9 +175,9 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
- 	}
- 
- 	if (do_encrypt)
--		ret = crypto_aead_encrypt(aead_req);
-+		ret = crypto_wait_req(crypto_aead_encrypt(aead_req), &wait);
- 	else
--		ret = crypto_aead_decrypt(aead_req);
-+		ret = crypto_wait_req(crypto_aead_decrypt(aead_req), &wait);
- 
- free_req:
- 	aead_request_free(aead_req);
--- 
-2.47.0
+That got sorted -- by deprecating / breaking all those non-conformant
+compilers. But still, I think it would be good to have the option to
+force a simple inline memcpy when needed.
 
+> First of all, I totally agree that the _existing_ strict objtool
+> behavior around STAC/CLAC is a good idea.
+> 
+> But text poking really is special and the context is highly unlikely to
+> result in bugs or exploits.  My first instinct here would have been to
+> tell objtool that the text poking code is OK and to relax objtool's
+> STAC/CLAC paranoia here.
+> 
+> Looking at objtool, I can see how important it is to keep the STAC/CLAC
+> code as dirt simple and foolproof as possible.  I don't see an obvious
+> way to except the text poking code without adding at least some complexity.
+> 
+> Basically what I'm asking for is if the goal is to keep objtool simple,
+> please *SAY* that.  Because on the surface this doesn't look like a good
+> idea.
+
+There is, you can add it to uaccess_safe_builtin[], but I'm not sure we
+want to blanked accept memcpy() -- or perhaps that is what you're
+saying.
+
+Anyway, looking at this, I see we grew rep_{movs,stos}_alternative, as
+used in copy_user_generic() and __clear_user(). Which are all somewhat
+similar.
 
