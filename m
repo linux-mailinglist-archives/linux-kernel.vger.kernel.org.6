@@ -1,337 +1,89 @@
-Return-Path: <linux-kernel+bounces-387555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AF89B52D2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:36:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4A59B52D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470801C229C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41F9F282DAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD96207218;
-	Tue, 29 Oct 2024 19:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EF120720A;
+	Tue, 29 Oct 2024 19:37:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGsT8o8e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4CQ75R8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6625B201278
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:36:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C581DDA2D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730230578; cv=none; b=sM4wqeeJfJcBWrSg6aj+kITI7BugC305zhhbh+TR0tuSbQ4IiTobYDF3QHEaupqPKyql46TvJqe7ma4T1yU/9yrzK/i6+DE3HvY/K4ffewQR9Az2kTkMBjJoNRMPsDBSsBAIgZhxTOzaACjq23O/q0qP84Yf0ueN7YZv/ssu2oo=
+	t=1730230620; cv=none; b=crnFZAld/SyRuRaHj0i/7N19pab4phPuEF6PkDiQSaobv5NhGaJKeH+RCBiwCkS7CyIOXrJkuBnBiy6g9L8kH9pkMFJYx4Lbm35DpRdfneIKWHIiLnM5J0EXBuTDy+GN7tqhVQn23g2RwRJ2ik3pnaE0hFNgdkM5YBS1pEokwd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730230578; c=relaxed/simple;
-	bh=3uwQfVKC86zJomr8pFUiO9oxtyj0KvgRZsMsu10Gehw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fv5MaY8AKx2x3solRyCuDVG5yjoleNcibeqZhRfXdMuVontayksvGDef7I70LG6OjhMrhr3xenq2yhPk5Xi4lXwGtVonQ5hFtFrhfNzLHBfLlRGAmUC+Fva5kzv7on0FJrKgn6XLuLxTULAMTDGFZ9dd+ZNkrO/+xWMteS3W4AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGsT8o8e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE91BC4CECD;
-	Tue, 29 Oct 2024 19:36:17 +0000 (UTC)
+	s=arc-20240116; t=1730230620; c=relaxed/simple;
+	bh=2G2w2Tlv1jSuI27J+1fmhh8XWzDm8+MT6bwJ2SuaDf0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7LHZ28lBgKLwivYnCs8nOf72v4YonCIXssCK0tAJOGwYPgEqheGcl8qiI60t1FbI7HAuoln2s0Fse2kr3FqK+JvRx5IpCk9lUAFCYdmKUQYyLNR2n+mAy8/jByKRyNrWd89EuB/B+Ohv7nzDJqiZrYZEvxQ0G88Ash0J0MKG3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4CQ75R8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B718FC4CECD;
+	Tue, 29 Oct 2024 19:36:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730230578;
-	bh=3uwQfVKC86zJomr8pFUiO9oxtyj0KvgRZsMsu10Gehw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IGsT8o8eqRIdZE1aUDWQPOT9yVTu5HoYduq0zrnkDYFUyzuMoAp+yjOqC1KnOrl7T
-	 2BEoI74bOJfH1isOh6IwBOarF7c+g5K1AeuQKSAvzzk9rjMKayZfzV+z4TrqbMqbBl
-	 yspmOHcLDEdY7OYIHnvYtWDi1jd3/JZJVFXWTq24EooNJAHKhFvaNqtsTAB6XeSxAr
-	 isHTsUT0QpEU9GmVzQGfVkHwUlxTP7YcD/cI2goJTYGgHfa+G/60jqeDgBqLoSi2eW
-	 px4GD+dJcq5d/S2PXiWz07SzpeJk/ovGHfUUgaZMsqUAOzWVI8loe7lbB+/ggjL/tY
-	 hW1E/YIoMbf3g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5s0l-0082UH-FW;
-	Tue, 29 Oct 2024 19:36:15 +0000
-Date: Tue, 29 Oct 2024 19:36:15 +0000
-Message-ID: <8634ke3dn4.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nanyong Sun <sunnanyong@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v1 4/6] arm64: broadcast IPIs to pause remote CPUs
-In-Reply-To: <CAOUHufabSWTZ+cBjXEDTRh61GeALL5b6uh0M76=2ninZP3KAzQ@mail.gmail.com>
-References: <20241021042218.746659-1-yuzhao@google.com>
-	<20241021042218.746659-5-yuzhao@google.com>
-	<868qug3yig.wl-maz@kernel.org>
-	<CAOUHufabSWTZ+cBjXEDTRh61GeALL5b6uh0M76=2ninZP3KAzQ@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1730230619;
+	bh=2G2w2Tlv1jSuI27J+1fmhh8XWzDm8+MT6bwJ2SuaDf0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K4CQ75R8RmQwLuo6ChAX0R4w5x6nmnAd0uKoGJ7ePHi/LwylX7IVJSDAI9YgWvyqx
+	 xYZz1pZhdYI6c/l91Ya6QQv6y/qP0UhzuQYVLkz7YtJ5hml6usxd2bUi58jopEjob5
+	 13Nk6Bzt9FcsXaz3jOgTj85lzDqYtHrtpjPSF0m3wEMrWrduj/ej86wlxIjZSI9yYu
+	 5kPL07s80XG9R5edM225KXEt/X48eYQNi0+bLAEvwXJrLHjI8pyoOyFg7naXN0yiUu
+	 dB/4QuyDqtmQ4ryiqZE7NYeX7JW6uGt+7b5zxs4lfOogW5fcZ6hbf/5EnMoBPXCk2Z
+	 tVIsTQIfAa7EQ==
+Date: Tue, 29 Oct 2024 09:36:58 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] sched_ext: Introduce NUMA awareness to the default
+ idle selection policy
+Message-ID: <ZyE5Wql986JDxppv@slm.duckdns.org>
+References: <20241029101618.318812-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029101618.318812-1-arighi@nvidia.com>
 
-On Mon, 28 Oct 2024 22:11:52 +0000,
-Yu Zhao <yuzhao@google.com> wrote:
->=20
-> On Tue, Oct 22, 2024 at 10:15=E2=80=AFAM Marc Zyngier <maz@kernel.org> wr=
-ote:
-> >
-> > On Mon, 21 Oct 2024 05:22:16 +0100,
-> > Yu Zhao <yuzhao@google.com> wrote:
-> > >
-> > > Broadcast pseudo-NMI IPIs to pause remote CPUs for a short period of
-> > > time, and then reliably resume them when the local CPU exits critical
-> > > sections that preclude the execution of remote CPUs.
-> > >
-> > > A typical example of such critical sections is BBM on kernel PTEs.
-> > > HugeTLB Vmemmap Optimization (HVO) on arm64 was disabled by
-> > > commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
-> > > HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the folllowing reason:
-> > >
-> > >   This is deemed UNPREDICTABLE by the Arm architecture without a
-> > >   break-before-make sequence (make the PTE invalid, TLBI, write the
-> > >   new valid PTE). However, such sequence is not possible since the
-> > >   vmemmap may be concurrently accessed by the kernel.
-> > >
-> > > Supporting BBM on kernel PTEs is one of the approaches that can make
-> > > HVO theoretically safe on arm64.
-> >
-> > Is the safety only theoretical? I would have expected that we'd use an
-> > approach that is absolutely rock-solid.
->=20
-> We've been trying to construct a repro against the original HVO
-> (missing BBM), but so far no success. Hopefully a repro does exist,
-> and then we'd be able to demonstrate the effectiveness of this series,
-> which is only theoretical at the moment.
+On Tue, Oct 29, 2024 at 11:16:18AM +0100, Andrea Righi wrote:
+> Similarly to commit dfa4ed29b18c ("sched_ext: Introduce LLC awareness to
+> the default idle selection policy"), extend the built-in idle CPU
+> selection policy to also prioritize CPUs within the same NUMA node.
+> 
+> With this change applied, the built-in CPU idle selection policy follows
+> this logic:
+>  - always prioritize CPUs from fully idle SMT cores,
+>  - select the same CPU if possible,
+>  - select a CPU within the same LLC domain,
+>  - select a CPU within the same NUMA node.
+> 
+> Both NUMA and LLC awareness features are enabled only when the system
+> has multiple NUMA nodes or multiple LLC domains.
+> 
+> In the future, we may want to improve the NUMA node selection to account
+> the node distance from prev_cpu. Currently, the logic only tries to keep
+> tasks running on the same NUMA node. If all CPUs within a node are busy,
+> the next NUMA node is chosen randomly.
+> 
+> Signed-off-by: Andrea Righi <arighi@nvidia.com>
 
-That wasn't my question.
+Applied to sched_ext/for-6.13.
 
-Just because your HW doesn't show you a failure mode doesn't mean the
-issue doesn't exist. Or that someone will eventually make use of the
-relaxed aspects of the architecture and turn the behaviour you are
-relying on into the perfect memory corruption  You absolutely cannot
-rely on an implementation-defined behaviour for this stuff.
+Thanks.
 
-Hence my question: is your current approach actually safe? In a
-non-theoretical manner?
-
->=20
-> > > Note that it is still possible for the paused CPUs to perform
-> > > speculative translations. Such translations would cause spurious
-> > > kernel PFs, which should be properly handled by
-> > > is_spurious_el1_translation_fault().
-> >
-> > Speculative translation faults are never reported, that'd be a CPU
-> > bug.
->=20
-> Right, I meant to say "speculative accesses that cause translations".
->=20
-> > *Spurious* translation faults can be reported if the CPU doesn't
-> > implement FEAT_ETS2, for example, and that has to do with the ordering
-> > of memory access wrt page-table walking for the purpose of translations.
->=20
-> Just want to make sure I fully understand: after the local CPU sends
-> TLBI (followed by DSB & ISB), FEAT_ETS2 would act like DSB & ISB on
-> remote CPUs when they perform the invalidation, and therefore
-> speculative accesses are ordered as well on remote CPUs.
-
-ETS2 has nothing to do with TLBI. It has to do with non-cacheable
-(translation, access and address size) faults, and whether an older
-update to a translation is visible to a younger memory access without
-extra synchronisation. It definitely has nothing to do with remote
-CPUs (and the idea of a remote ISB, while cute, doesn't exist).
-
-> Also I'm assuming IPIs on remote CPUs don't act like a full barrier,
-> and whatever they interrupt still can be speculatively executed even
-> though the IPI hander itself doesn't access the vmemmap area
-> undergoing BBM. Is this correct?
-
-Full barrier *for what*? An interrupt is a CSE, which has the effects
-described in the ARM ARM, but that's about it.
-
->=20
-> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
-> > > ---
-> > >  arch/arm64/include/asm/smp.h |  3 ++
-> > >  arch/arm64/kernel/smp.c      | 92 +++++++++++++++++++++++++++++++++-=
---
-> > >  2 files changed, 88 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/sm=
-p.h
-> > > index 2510eec026f7..cffb0cfed961 100644
-> > > --- a/arch/arm64/include/asm/smp.h
-> > > +++ b/arch/arm64/include/asm/smp.h
-> > > @@ -133,6 +133,9 @@ bool cpus_are_stuck_in_kernel(void);
-> > >  extern void crash_smp_send_stop(void);
-> > >  extern bool smp_crash_stop_failed(void);
-> > >
-> > > +void pause_remote_cpus(void);
-> > > +void resume_remote_cpus(void);
-> > > +
-> > >  #endif /* ifndef __ASSEMBLY__ */
-> > >
-> > >  #endif /* ifndef __ASM_SMP_H */
-> > > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
-> > > index 3b3f6b56e733..68829c6de1b1 100644
-> > > --- a/arch/arm64/kernel/smp.c
-> > > +++ b/arch/arm64/kernel/smp.c
-> > > @@ -85,7 +85,12 @@ static int ipi_irq_base __ro_after_init;
-> > >  static int nr_ipi __ro_after_init =3D NR_IPI;
-> > >  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
-> > >
-> > > -static bool crash_stop;
-> > > +enum {
-> > > +     SEND_STOP =3D BIT(0),
-> > > +     CRASH_STOP =3D BIT(1),
-> > > +};
-> > > +
-> > > +static unsigned long stop_in_progress;
-> > >
-> > >  static void ipi_setup(int cpu);
-> > >
-> > > @@ -917,6 +922,79 @@ static void __noreturn ipi_cpu_crash_stop(unsign=
-ed int cpu, struct pt_regs *regs
-> > >  #endif
-> > >  }
-> > >
-> > > +static DEFINE_SPINLOCK(cpu_pause_lock);
-> >
-> > PREEMPT_RT will turn this into a sleeping lock. Is it safe to sleep as
-> > you are dealing with kernel mappings?
->=20
-> Right, it should be a raw spinlock -- the caller disabled preemption,
-> which as you said is required when dealing with the kernel mappings.
->=20
-> > > +static cpumask_t paused_cpus;
-> > > +static cpumask_t resumed_cpus;
-> > > +
-> > > +static void pause_local_cpu(void)
-> > > +{
-> > > +     int cpu =3D smp_processor_id();
-> > > +
-> > > +     cpumask_clear_cpu(cpu, &resumed_cpus);
-> > > +     /*
-> > > +      * Paired with pause_remote_cpus() to confirm that this CPU not=
- only
-> > > +      * will be paused but also can be reliably resumed.
-> > > +      */
-> > > +     smp_wmb();
-> > > +     cpumask_set_cpu(cpu, &paused_cpus);
-> > > +     /* paused_cpus must be set before waiting on resumed_cpus. */
-> > > +     barrier();
-> >
-> > I'm not sure what this is trying to enforce. Yes, the compiler won't
-> > reorder the set and the test.
->=20
-> Sorry I don't follow: does cpumask_set_cpu(), i.e., set_bit(), already
-> contain a compiler barrier?
->=20
-> My understanding is that the compiler is free to reorder the set and
-> test on those two independent variables, and make it like this:
->=20
->   while (!cpumask_test_cpu(cpu, &resumed_cpus))
->       cpu_relax();
->   cpumask_set_cpu(cpu, &paused_cpus);
->=20
-> So the CPU sent the IPI would keep waiting on paused_cpus being set,
-> and this CPU would keep waiting on resumed_cpus being set, which would
-> end up with a deadlock.
->=20
-> > But your comment seems to indicate that
-> > also need to make sure the CPU preserves that ordering
-> > and short of a
-> > DMB, the test below could be reordered.
->=20
-> If this CPU reorders the set and test like above, it wouldn't be a
-> problem because the set would eventually appear on the other CPU that
-> sent the IPI.
-
-I don't get it. You are requiring that the compiler doesn't reorder
-things, but you're happy that the CPU reorders the same things. Surely
-this leads to the same outcome...
-
->=20
-> > > +     while (!cpumask_test_cpu(cpu, &resumed_cpus))
-> > > +             cpu_relax();
-> > > +     /* A typical example for sleep and wake-up functions. */
-> >
-> > I'm not sure this is "typical",...
->=20
-> Sorry, this full barrier isn't needed. Apparently I didn't properly
-> fix this from the previous attempt to use wfe()/sev() to make this
-> function the sleeper for resume_remote_cpus() to wake up.
->
-> > > +     smp_mb();
-> > > +     cpumask_clear_cpu(cpu, &paused_cpus);
-> > > +}
-> > > +
-> > > +void pause_remote_cpus(void)
-> > > +{
-> > > +     cpumask_t cpus_to_pause;
-> > > +
-> > > +     lockdep_assert_cpus_held();
-> > > +     lockdep_assert_preemption_disabled();
-> > > +
-> > > +     cpumask_copy(&cpus_to_pause, cpu_online_mask);
-> > > +     cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
-> >
-> > This bitmap is manipulated outside of your cpu_pause_lock. What
-> > guarantees you can't have two CPUs stepping on each other here?
->=20
-> Do you mean cpus_to_pause? If so, that's a local bitmap.
-
-Ah yes, sorry.
-
->=20
-> > > +
-> > > +     spin_lock(&cpu_pause_lock);
-> > > +
-> > > +     WARN_ON_ONCE(!cpumask_empty(&paused_cpus));
-> > > +
-> > > +     smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
-> > > +
-> > > +     while (!cpumask_equal(&cpus_to_pause, &paused_cpus))
-> > > +             cpu_relax();
-> >
-> > This can be a lot of things to compare, specially that you are
-> > explicitly mentioning large systems. Why can't this be implemented as
-> > a counter instead?
->=20
-> Agreed - that'd be sufficient and simpler.
->=20
-> > Overall, this looks like stop_machine() in disguise. Why can't this
-> > use the existing infrastructure?
->=20
-> This came up during the previous discussion [1]. There are
-> similarities. The main concern with reusing stop_machine() (or part of
-> its current implementation) is that it may not meet the performance
-> requirements. Refactoring might be possible, however, it seems to me
-> (after checking the code again) that such a refactoring unlikely ends
-> up cleaner or simpler codebase, especially after I got rid of CPU
-> masks, as you suggested.
-
-I would have expected to see an implementation handling faults during
-the break window. IPIs are slow, virtualised extremely badly, and
-pNMIs are rarely enabled, due to the long history of issues with it.
-At this stage, I'm not sure what you have here is any better than
-stop_machine(). On the other hand, faults should be the rarest thing,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+-- 
+tejun
 
