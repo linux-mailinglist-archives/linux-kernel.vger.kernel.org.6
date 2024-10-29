@@ -1,218 +1,120 @@
-Return-Path: <linux-kernel+bounces-387245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED69B4E73
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:48:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CED379B4E79
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:49:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39EAF1C2191B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:48:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9918B287194
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4700E197A77;
-	Tue, 29 Oct 2024 15:48:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B988A196D9A;
+	Tue, 29 Oct 2024 15:48:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gh4vP0AI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yIiw3GBc"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F10F195F04;
-	Tue, 29 Oct 2024 15:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06FAE198A36;
+	Tue, 29 Oct 2024 15:48:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730216879; cv=none; b=Xfcmz/2xtm5FQSl12UoM+gOvEY0sesdeW9QMAQaIIiFVe73WxE0K4SnqHh+Ybi+HcCG1DbAQyGbqMm2yuUEUdvOzJBaXkzuilbiuc5B8oIohLKa2GWEJn+vOPwmq9t7YPJr2eEkvKMGsSQfldLroV7QIc4xLTnbPvsia+VJQHLM=
+	t=1730216914; cv=none; b=FSJGqK5LaF4iGwOg0EWR3HXrkxCv98RDkKdmLsMOGwBf6kOinklAkZ9HIvrFJXOsNrAyJcyZQYGhA4G4OTkjk8U2aqMAv8eIX3JF+tfF+AzqgUBnOYv/3tEdtns9rmKYgz1rkdo6vuatr+23pbHdDy5KFULFNgzyLiIrXcHjhQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730216879; c=relaxed/simple;
-	bh=1r7A7ww7pBafTuQhRqV8UGyD9vtwIwKAIJ+slSK3Huo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e7X0ErKpSLsn2zZR+gyzAmj3hog/TZGzuNo64SYKvmqUsOjBDGjhPgm7cuAT3fLMxd+x5Mltcc+OHkJpmDQ3OTWKqNHw7O42NbtGAMPFf8JQ7SfTZCn0syrhKVL2N2gJvxS0Tn2tN9FW616Zsf2n/anB/exPoeJu+1PHR2QywaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gh4vP0AI; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730216877; x=1761752877;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=1r7A7ww7pBafTuQhRqV8UGyD9vtwIwKAIJ+slSK3Huo=;
-  b=Gh4vP0AI5Sra2qpiFAKJtsQZs8QaPxQtmCx0IcHt0CMRsoeCehZiKuum
-   kSQQOrhGCYA+jsVTXMLKLCbGjatRTLZWo3ZHOBMum/nIk5r25JqTbhGH8
-   MP9pGPki2I5ZmEY27qOsQyGcdhVVbxT/gBudRAy6TgWR3c4Y8ZmkTSHdL
-   vVAZGFZMDXZ5UvIkvDTF9GYgx3Ccz7RR+BhjeIqzYUi1SyGRuiIdkCtnb
-   bllf0/ng39/dZyv+VrNzzzsTIp2qPI4ag7yOoFfM4uww9Fy3DECLrIFY+
-   PamjqvDpzzvKeN25s+xfXu8a+EQafm7mgouyokg9uQMrclHS8QCAneZ1Q
-   g==;
-X-CSE-ConnectionGUID: 0zhCKl19QeKFP5amqKNYcg==
-X-CSE-MsgGUID: MvcSMe6YQbuOvXxcs9g9qA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="55271699"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="55271699"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:47:56 -0700
-X-CSE-ConnectionGUID: V5pPOSHlTGSDjrkfWJdvXQ==
-X-CSE-MsgGUID: A3P6Yq5GSUSlKa7JmZm7uQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="112817297"
-Received: from rfrazer-mobl3.amr.corp.intel.com (HELO [10.125.108.71]) ([10.125.108.71])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:47:53 -0700
-Message-ID: <c0081406-b320-4495-9a32-f4cc3e881920@intel.com>
-Date: Tue, 29 Oct 2024 08:47:51 -0700
+	s=arc-20240116; t=1730216914; c=relaxed/simple;
+	bh=nEFIVuMRxxzSa9o6m5KWkulUr9erVh2P3TySVgEBdxs=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O1G6eFPehKbuf/zX7yGi85sA1vP8KtdlNzosT12g0LdWzLJrpkL/Cp7SChBjys15hS+6yROaD8KVTpfYt/0j9YNrk24K8ycdrNLLZFwl2aWC6/8miYGmiQ21SoWzLkVDwAxFbCdOj+Y8JkYSviOYV5jP+ajGN+S1KsK/T/DZXxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yIiw3GBc; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49TFm1uc114777;
+	Tue, 29 Oct 2024 10:48:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730216881;
+	bh=5jZp44ao9GgsPKwOd2u5mw6DAfNNVFmUXvM3+52JYbo=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=yIiw3GBcBipLu9dYvdDsnTgk9lHqdymFbM4a19NZb0iJKlpBCL1+AjAZlu72W50GF
+	 /JQQa1L1EBviTIYZfN4dK26sVYc/ikvWJjxZuI8mDmz81pwxY6Y9Ef9LxduIqdRN4u
+	 vd5Xyc1v+m1hhX8YF84VDgHW33NOsQgWjdUfKAOA=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49TFm1W0029172
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 29 Oct 2024 10:48:01 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
+ Oct 2024 10:48:00 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 29 Oct 2024 10:48:00 -0500
+Received: from uda0132425.dhcp.ti.com (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49TFlunr083726;
+	Tue, 29 Oct 2024 10:47:57 -0500
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <d.schultz@phytec.de>, <w.egorov@phytec.de>,
+        John Ma
+	<jma@phytec.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am64-phycore-som: Fix bus-width property in MMC nodes
+Date: Tue, 29 Oct 2024 21:17:54 +0530
+Message-ID: <173021674668.3859929.796823456061016223.b4-ty@ti.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20240926184918.3342719-1-jma@phytec.com>
+References: <20240926184918.3342719-1-jma@phytec.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 05/14] cxl/mbox: Add GET_FEATURE mailbox command
-To: shiju.jose@huawei.com, linux-edac@vger.kernel.org,
- linux-cxl@vger.kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-Cc: bp@alien8.de, tony.luck@intel.com, rafael@kernel.org, lenb@kernel.org,
- mchehab@kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
- jonathan.cameron@huawei.com, gregkh@linuxfoundation.org,
- sudeep.holla@arm.com, jassisinghbrar@gmail.com, alison.schofield@intel.com,
- vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
- Vilas.Sridharan@amd.com, leo.duran@amd.com, Yazen.Ghannam@amd.com,
- rientjes@google.com, jiaqiyan@google.com, Jon.Grimm@amd.com,
- dave.hansen@linux.intel.com, naoya.horiguchi@nec.com, james.morse@arm.com,
- jthoughton@google.com, somasundaram.a@hpe.com, erdemaktas@google.com,
- pgonda@google.com, duenwen@google.com, gthelen@google.com,
- wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
- wbs@os.amperecomputing.com, nifan.cxl@gmail.com, tanxiaofei@huawei.com,
- prime.zeng@hisilicon.com, roberto.sassu@huawei.com,
- kangkang.shen@futurewei.com, wanghuiqiang@huawei.com, linuxarm@huawei.com
-References: <20241025171356.1377-1-shiju.jose@huawei.com>
- <20241025171356.1377-6-shiju.jose@huawei.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20241025171356.1377-6-shiju.jose@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+Hi John Ma,
 
+On Thu, 26 Sep 2024 11:49:17 -0700, John Ma wrote:
+> The bus-width property was moved to k3-am64-main.dtsi.
+> 
+> See commit 0ae3113a46a6 ("arm64: dts: ti: k3-am6*: Fix bus-width property
+> in MMC nodes")
+> 
+> 
 
-On 10/25/24 10:13 AM, shiju.jose@huawei.com wrote:
-> From: Shiju Jose <shiju.jose@huawei.com>
-> 
-> Add support for GET_FEATURE mailbox command.
-> 
-> CXL spec 3.1 section 8.2.9.6 describes optional device specific features.
-> The settings of a feature can be retrieved using Get Feature command.
-> CXL spec 3.1 section 8.2.9.6.2 describes Get Feature command.
-> 
-> Reviewed-by: Fan Ni <fan.ni@samsung.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/cxl/core/mbox.c | 41 +++++++++++++++++++++++++++++++++++++++++
->  drivers/cxl/cxlmem.h    | 26 ++++++++++++++++++++++++++
->  2 files changed, 67 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/mbox.c b/drivers/cxl/core/mbox.c
-> index 5045960e3bfe..3cd4bce2872d 100644
-> --- a/drivers/cxl/core/mbox.c
-> +++ b/drivers/cxl/core/mbox.c
-> @@ -970,6 +970,47 @@ int cxl_get_supported_feature_entry(struct cxl_memdev_state *mds, const uuid_t *
->  }
->  EXPORT_SYMBOL_NS_GPL(cxl_get_supported_feature_entry, CXL);
->  
-> +size_t cxl_get_feature(struct cxl_memdev_state *mds, const uuid_t feat_uuid,
-> +		       enum cxl_get_feat_selection selection,
-> +		       void *feat_out, size_t feat_out_size)
-> +{
-> +	struct cxl_mailbox *cxl_mbox = &mds->cxlds.cxl_mbox;
-> +	size_t data_to_rd_size, size_out;
-> +	struct cxl_mbox_get_feat_in pi;
-> +	struct cxl_mbox_cmd mbox_cmd;
-> +	size_t data_rcvd_size = 0;
-> +	int rc;
-> +
-> +	if (!feat_out || !feat_out_size)
-> +		return 0;
-> +
-> +	size_out = min(feat_out_size, cxl_mbox->payload_size);
-> +	pi.uuid = feat_uuid;
-> +	pi.selection = selection;
-> +	do {
-> +		data_to_rd_size = min(feat_out_size - data_rcvd_size,
-> +				      cxl_mbox->payload_size);
-> +		pi.offset = cpu_to_le16(data_rcvd_size);
-> +		pi.count = cpu_to_le16(data_to_rd_size);
-> +
-> +		mbox_cmd = (struct cxl_mbox_cmd) {
-> +			.opcode = CXL_MBOX_OP_GET_FEATURE,
-> +			.size_in = sizeof(pi),
-> +			.payload_in = &pi,
-> +			.size_out = size_out,
-> +			.payload_out = feat_out + data_rcvd_size,
-> +			.min_out = data_to_rd_size,
-> +		};
-> +		rc = cxl_internal_send_cmd(cxl_mbox, &mbox_cmd);
-> +		if (rc < 0 || !mbox_cmd.size_out)
-> +			return 0;
-> +		data_rcvd_size += mbox_cmd.size_out;
-> +	} while (data_rcvd_size < feat_out_size);
-> +
-> +	return data_rcvd_size;
-> +}
-> +EXPORT_SYMBOL_NS_GPL(cxl_get_feature, CXL);
-> +
->  /**
->   * cxl_enumerate_cmds() - Enumerate commands for a device.
->   * @mds: The driver data for the operation
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index f88b10188632..0c152719669a 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -531,6 +531,7 @@ enum cxl_opcode {
->  	CXL_MBOX_OP_CLEAR_LOG           = 0x0403,
->  	CXL_MBOX_OP_GET_SUP_LOG_SUBLIST = 0x0405,
->  	CXL_MBOX_OP_GET_SUPPORTED_FEATURES	= 0x0500,
-> +	CXL_MBOX_OP_GET_FEATURE		= 0x0501,
->  	CXL_MBOX_OP_IDENTIFY		= 0x4000,
->  	CXL_MBOX_OP_GET_PARTITION_INFO	= 0x4100,
->  	CXL_MBOX_OP_SET_PARTITION_INFO	= 0x4101,
-> @@ -856,6 +857,28 @@ struct cxl_mbox_get_sup_feats_out {
->  	struct cxl_feat_entry ents[] __counted_by_le(supported_feats);
->  } __packed;
->  
-> +/*
-> + * Get Feature CXL 3.1 Spec 8.2.9.6.2
-> + */
-> +
-> +/*
-> + * Get Feature input payload
-> + * CXL rev 3.1 section 8.2.9.6.2 Table 8-99
-> + */
-> +enum cxl_get_feat_selection {
-> +	CXL_GET_FEAT_SEL_CURRENT_VALUE,
-> +	CXL_GET_FEAT_SEL_DEFAULT_VALUE,
-> +	CXL_GET_FEAT_SEL_SAVED_VALUE,
-> +	CXL_GET_FEAT_SEL_MAX
-> +};
-> +
-> +struct cxl_mbox_get_feat_in {
-> +	uuid_t uuid;
-> +	__le16 offset;
-> +	__le16 count;
-> +	u8 selection;
-> +}  __packed;
-> +
->  int cxl_internal_send_cmd(struct cxl_mailbox *cxl_mbox,
->  			  struct cxl_mbox_cmd *cmd);
->  int cxl_dev_state_identify(struct cxl_memdev_state *mds);
-> @@ -919,4 +942,7 @@ void cxl_dpa_debug(struct seq_file *file, struct cxl_dev_state *cxlds);
->  int cxl_get_supported_features(struct cxl_memdev_state *mds);
->  int cxl_get_supported_feature_entry(struct cxl_memdev_state *mds, const uuid_t *feat_uuid,
->  				    struct cxl_feat_entry *feat_entry_out);
-> +size_t cxl_get_feature(struct cxl_memdev_state *mds, const uuid_t feat_uuid,
-> +		       enum cxl_get_feat_selection selection,
-> +		       void *feat_out, size_t feat_out_size);
->  #endif /* __CXL_MEM_H__ */
+[1/2] arm64: dts: ti: k3-am64-phycore-som: Fix bus-width property in MMC nodes
+      commit: 018465cd811a11d00ac4160e5c97c4549336ede4
+[2/2] arm64: dts: ti: k3-am642-phyboard-electra-rdk: Fix bus-width property in MMC nodes
+      commit: dc2660a603214c98994068af378a4ac124c44c57
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
