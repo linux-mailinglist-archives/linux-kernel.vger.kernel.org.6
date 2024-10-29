@@ -1,120 +1,193 @@
-Return-Path: <linux-kernel+bounces-387679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8B0B9B5481
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:55:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85E0E9B5484
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:56:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7E31F22F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:55:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9A11B22957
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D8D020898D;
-	Tue, 29 Oct 2024 20:55:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B9A20967F;
+	Tue, 29 Oct 2024 20:55:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zWGMu7nG"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n0gZIR53"
 Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1167620823E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D0020897B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:55:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730235330; cv=none; b=V04O4hBh7RN0E9E8YdigPlYYHfCEaMOvvFw+2SfjTalVniQ7RDBxIPlSBQ3t/rOlEidKKQf9ljx7xf3WBW5X3i9OGArjQySvznHeEuzCMUyuLlpkregVnb26gRcIFInz8AzrN+kMHkQFpvqWp4Np13PI5FDQUzcqWw0bXp5g1fI=
+	t=1730235333; cv=none; b=lgpCwr01LwqJGtYwRpZv67oj3rsiZ0LyLcqIHb/qyQbkZ//HguoiDOUJUQfxsBUSMrCIjWhkFbgBVrpRqQ0p93QNNM/8qF3nacsqBnqGMrsvGO194SxUSEf6FcsWat+6jnb2rOie3NK+/nVWYhSDYdsOwALqWzdDz+Ylqr1p+Tc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730235330; c=relaxed/simple;
-	bh=UnbV6MuNFExLfF8+2aKHw1foBqeANBQ10VftomuflNY=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=IOKVYCMso0ANCSpYQJ/BgqidiJKXOGPau7DdEh4acNcQFLIHripSGcZodKhctppCur6dYj5K7peW3kAlcf1nsfDEXfnYqBc2wV7XHTIfin8fY5tjVlfnKXhoaB9zikZS3AgZdp9eb2rkrBwiCqWK5kTC4AC2DoQp8DO9XMuffeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zWGMu7nG; arc=none smtp.client-ip=209.85.219.201
+	s=arc-20240116; t=1730235333; c=relaxed/simple;
+	bh=mQ6IINwbv+WqN8eNzea0/anvNw/9DICQ4rWqPuw7YWQ=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=fmvz6alG97GxMmnnk6uUFjDcPddV2U/haGfDxNYuKI4ImwPhEUOIGMXA85/SPOu50dSVamnC4vO4LZQJ8MjciIPSe6DJqnea34LlLdBsmXEgqBqFE69G7q9ocDqbPvlPze3yY39ZZMTWH3OD8M0jP6v/V2NGvad4+va/Ycwk1p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n0gZIR53; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2954ada861so10056208276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:55:28 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e0b8fa94718so10600799276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:55:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730235328; x=1730840128; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=JQEUQwPobw3Oiu4hV9Gh16GwH7ZLjOLSQQhkjXKL0tQ=;
-        b=zWGMu7nGrUOogZZ/lb4mNSun6MEFISABT+LPCGwJnh3VmIXEDPSUcPBCpudhYfef7T
-         w9+cWd4cfeYqsuEcqbcSnqkukHMSL7o2CPnHdWA+Fd+eGxG+NftB+nCyAc+05NUX6bTN
-         vZhMcBuGdH7q8EYaTMhX5tKyAequroK+ID58w4gBi0fndiNdmZYMZEIKniw5JOHDdY75
-         6oQXSQ5Agdg363fqC0fdjziaHsHP5siYzw+UHsezcJioZOeajugph5aQZo7r1jhDnHKW
-         2qvhZMp7t6LMiiKmE/ubIvhyLLtkD4+Q/EUeb6Nd79m69k3rI2I1ijyxytzTas7bs9BW
-         iBXg==
+        d=google.com; s=20230601; t=1730235330; x=1730840130; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKpRCsSetJLLXlDYxzCijv6xVtSe3eCBCnbKb8kuBnA=;
+        b=n0gZIR53ZEh5948T2NT5Vtz5gI9lNdqRir/X+O1P5EcN01YFb3GiY7XgkHwoKewjbe
+         WcSu7P8lYVj/VRxsTfqRXQFURPG7Idvp2DpC09XNloM93JG79HvaJks+qGzWLANH4Es4
+         uO8G2lEdJ1Kpt9IIJ0f3WlR1s1YZcDNW3wnnguGIi72ukVDe5bXlICtMdyw585bmhUuw
+         +GrMyjHnvZzQBIfSNyo3ZE1E0XvkAlywhO8bptDKAQ4WwthvNVTDwB6qJGvuYbnnWTOJ
+         8tveQFDLx3e4GEtsPMHZlKpfs8goTs60YMqXxr2jLT1O2wA2tZTs9LE6j6b75NqBEjE8
+         zgPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730235328; x=1730840128;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JQEUQwPobw3Oiu4hV9Gh16GwH7ZLjOLSQQhkjXKL0tQ=;
-        b=UASRCJBO6fuHzv78LRx1Jm/E8gCyOyvpjXIEXjdg+ZsZlCrLpK9my18nEObBO0RTnU
-         wlcXFeju2ragV5/lhBNtT4rXPDFWmKf0i/6+OkmlSQeQ/YxEl/xLjQ3GlVnbI8TJ6P/r
-         xq7zUDOLgkbIEsfXriMp6vfB7qIwXOFAByOLKm8URg7oB/9rhqGVM2rZipJxdklyr8AD
-         P6E6s4CJ3IdPGGZ05qTUiSdlm910UP5flytUpXtAu/YcbH2UNMbfBdGw64SvG+y0dcyN
-         1zcDMrplbUlp/vh/ErB2b8piAJS0CDwUc/saaJ3thuRXqg6DaQElthhN4DI/8uAGDeO0
-         cPPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWhKu5FF11Jd34zT7U3PPCYY5oeeeT2Ob4UGpIKhGWG6y3JwN+Oc4lXfVETqsy+1BqGBWg7pn4FjzvP5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/dMHJ0DBJA+OmEvnBdjHqynVkp9uho/9O1a72D8SYgqh4dS93
-	weTEXLzhDUIyinNKqkmRKIvxqEs9Nc7F7m+avk5IIkQWNcLZSlL+qeNjEJiR6p0rSImMvzT9/cF
-	9sCg8lD4hVVYFkkqLsgzsjQ==
-X-Google-Smtp-Source: AGHT+IGMfp/9F/7aUtKW5hZyYZvd/DuF+kw8AKC0A40gzCalNS+sh1n16Gs4wTxRQv6s5eZbUKL1UJCRgHCh/HWnXg==
+        d=1e100.net; s=20230601; t=1730235330; x=1730840130;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bKpRCsSetJLLXlDYxzCijv6xVtSe3eCBCnbKb8kuBnA=;
+        b=BBuG0wh3YPCGaJIUb4xWKr/bQbTmD+XIYOabymd7q1dSSsnSn3vzvq9//jOSL8QfsT
+         c2H+frL/N+Ktc/mATyCxtemEHkwJlHYc+BqoHi0TcFau13TxUu5BlVyC7ODzT6tNiRho
+         pIpC3osIBL1PMR8jzrvCED8I3gceYA3MAjhlpQVuXLij3aLj8Kvbak2t59Y2q3j6RJ3o
+         wVM0J9V46/tOxF+eJ4PZSWfAPPQ5ZI9cdDjF4Q9pr4HEMXOE93EbeLquTv7aNeKbWhpt
+         7H/OCh9RnMmvRJGs/7qxj+Q8Cxm28iWPepelGv0Dtzr+2a5G2H8dVPQ078pnURRJzu93
+         rw+A==
+X-Forwarded-Encrypted: i=1; AJvYcCW12KtRjzpuqDmriZ8ju+sysd0OtY+gzJJ2AFdKgZufQoLSWCwx/UpWqkCwXfOUiJ0tEJ+RjWjC2sewbXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywa+dfvxYWu/knhGXpJUJicP7p4SOEk5fkvhgp/+lc9Ysvjgvnt
+	fUJ1746ToiLLwTYNIxTuKG5oFUBa5RY5wLgAi6XyfMok4fq6x6P9LDnpIQ5XSjTxut1tpspG42F
+	iwhac89pokhWkmKPJM/ub6w==
+X-Google-Smtp-Source: AGHT+IEE7dLJq88/f4VVbxU0VfsyGl1ZHgwa5wCblziyZGTjJhsrP38TX70qH8bVr1KXcQFHnEzpeHyoZA5aeIAonQ==
 X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
- (user=almasrymina job=sendgmr) by 2002:a25:ea48:0:b0:e30:d37d:2792 with SMTP
- id 3f1490d57ef6-e30d37d2919mr5935276.0.1730235327817; Tue, 29 Oct 2024
- 13:55:27 -0700 (PDT)
-Date: Tue, 29 Oct 2024 20:55:20 +0000
+ (user=almasrymina job=sendgmr) by 2002:a25:c78a:0:b0:e17:8e4f:981a with SMTP
+ id 3f1490d57ef6-e3087c2d8b1mr69573276.11.1730235329787; Tue, 29 Oct 2024
+ 13:55:29 -0700 (PDT)
+Date: Tue, 29 Oct 2024 20:55:21 +0000
+In-Reply-To: <20241029205524.1306364-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241029205524.1306364-1-almasrymina@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Message-ID: <20241029205524.1306364-1-almasrymina@google.com>
-Subject: [PATCH net-next v1 0/7] devmem TCP fixes
+Message-ID: <20241029205524.1306364-2-almasrymina@google.com>
+Subject: [PATCH net-next v1 6/7] net: fix SO_DEVMEM_DONTNEED looping too long
 From: Mina Almasry <almasrymina@google.com>
 To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	linux-kselftest@vger.kernel.org
 Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
 	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
 	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>, 
+	Yi Lai <yi1.lai@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-A few unrelated devmem TCP fixes bundled in a series for some
-convenience (if that's ok).
+Check we're going to free a reasonable number of frags in token_count
+before starting the loop, to prevent looping too long.
 
-Patch 1-2: fix naming and provide page_pool_alloc_netmem for fragged
-netmem.
+Also minor code cleanups:
+- Flip checks to reduce indentation.
+- Use sizeof(*tokens) everywhere for consistentcy.
 
-Patch 3-4: fix issues with dma-buf dma addresses being potentially
-passed to dma_sync_for_* helpers.
+Cc: Yi Lai <yi1.lai@linux.intel.com>
 
-Patch 5-6: fix syzbot SO_DEVMEM_DONTNEED issue and add test for this
-case.
+Signed-off-by: Mina Almasry <almasrymina@google.com>
 
+---
+ net/core/sock.c | 46 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 28 insertions(+), 18 deletions(-)
 
-Mina Almasry (6):
-  net: page_pool: rename page_pool_alloc_netmem to *_netmems
-  net: page_pool: create page_pool_alloc_netmem
-  page_pool: disable sync for cpu for dmabuf memory provider
-  netmem: add netmem_prefetch
-  net: fix SO_DEVMEM_DONTNEED looping too long
-  ncdevmem: add test for too many token_count
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 7f398bd07fb7..8603b8d87f2e 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -1047,11 +1047,12 @@ static int sock_reserve_memory(struct sock *sk, int bytes)
 
-Samiullah Khawaja (1):
-  page_pool: Set `dma_sync` to false for devmem memory provider
+ #ifdef CONFIG_PAGE_POOL
 
- include/net/netmem.h                   |  7 ++++
- include/net/page_pool/helpers.h        | 50 ++++++++++++++++++--------
- include/net/page_pool/types.h          |  2 +-
- net/core/devmem.c                      |  9 +++--
- net/core/page_pool.c                   | 11 +++---
- net/core/sock.c                        | 46 ++++++++++++++----------
- tools/testing/selftests/net/ncdevmem.c | 11 ++++++
- 7 files changed, 93 insertions(+), 43 deletions(-)
+-/* This is the number of tokens that the user can SO_DEVMEM_DONTNEED in
++/* This is the number of frags that the user can SO_DEVMEM_DONTNEED in
+  * 1 syscall. The limit exists to limit the amount of memory the kernel
+- * allocates to copy these tokens.
++ * allocates to copy these tokens, and to prevent looping over the frags for
++ * too long.
+  */
+-#define MAX_DONTNEED_TOKENS 128
++#define MAX_DONTNEED_FRAGS 1024
 
--- 
+ static noinline_for_stack int
+ sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
+@@ -1059,43 +1060,52 @@ sock_devmem_dontneed(struct sock *sk, sockptr_t optval, unsigned int optlen)
+ 	unsigned int num_tokens, i, j, k, netmem_num = 0;
+ 	struct dmabuf_token *tokens;
+ 	netmem_ref netmems[16];
++	u64 num_frags = 0;
+ 	int ret = 0;
+
+ 	if (!sk_is_tcp(sk))
+ 		return -EBADF;
+
+-	if (optlen % sizeof(struct dmabuf_token) ||
+-	    optlen > sizeof(*tokens) * MAX_DONTNEED_TOKENS)
++	if (optlen % sizeof(*tokens) ||
++	    optlen > sizeof(*tokens) * MAX_DONTNEED_FRAGS)
+ 		return -EINVAL;
+
+-	tokens = kvmalloc_array(optlen, sizeof(*tokens), GFP_KERNEL);
++	num_tokens = optlen / sizeof(*tokens);
++	tokens = kvmalloc_array(num_tokens, sizeof(*tokens), GFP_KERNEL);
+ 	if (!tokens)
+ 		return -ENOMEM;
+
+-	num_tokens = optlen / sizeof(struct dmabuf_token);
+ 	if (copy_from_sockptr(tokens, optval, optlen)) {
+ 		kvfree(tokens);
+ 		return -EFAULT;
+ 	}
+
++	for (i = 0; i < num_tokens; i++) {
++		num_frags += tokens[i].token_count;
++		if (num_frags > MAX_DONTNEED_FRAGS) {
++			kvfree(tokens);
++			return -E2BIG;
++		}
++	}
++
+ 	xa_lock_bh(&sk->sk_user_frags);
+ 	for (i = 0; i < num_tokens; i++) {
+ 		for (j = 0; j < tokens[i].token_count; j++) {
+ 			netmem_ref netmem = (__force netmem_ref)__xa_erase(
+ 				&sk->sk_user_frags, tokens[i].token_start + j);
+
+-			if (netmem &&
+-			    !WARN_ON_ONCE(!netmem_is_net_iov(netmem))) {
+-				netmems[netmem_num++] = netmem;
+-				if (netmem_num == ARRAY_SIZE(netmems)) {
+-					xa_unlock_bh(&sk->sk_user_frags);
+-					for (k = 0; k < netmem_num; k++)
+-						WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
+-					netmem_num = 0;
+-					xa_lock_bh(&sk->sk_user_frags);
+-				}
+-				ret++;
++			if (!netmem || WARN_ON_ONCE(!netmem_is_net_iov(netmem)))
++				continue;
++
++			netmems[netmem_num++] = netmem;
++			if (netmem_num == ARRAY_SIZE(netmems)) {
++				xa_unlock_bh(&sk->sk_user_frags);
++				for (k = 0; k < netmem_num; k++)
++					WARN_ON_ONCE(!napi_pp_put_page(netmems[k]));
++				netmem_num = 0;
++				xa_lock_bh(&sk->sk_user_frags);
+ 			}
++			ret++;
+ 		}
+ 	}
+
+--
 2.47.0.163.g1226f6d8fa-goog
-
 
