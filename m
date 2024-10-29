@@ -1,155 +1,194 @@
-Return-Path: <linux-kernel+bounces-386542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6208F9B44D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:50:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D5B9B44D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 849E31C221AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:50:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93072283293
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C19A204009;
-	Tue, 29 Oct 2024 08:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePAKAKiT"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC95120409B;
+	Tue, 29 Oct 2024 08:49:44 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8769A2038C7
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C907204032
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730191762; cv=none; b=Ff8wqTN+6Uue7mZBJ5t9HthTUSNlZNu1rnuH/UDfTylEEYUVVG5iYZI62Nkhsl9cw7AjT5+gmWRzebWhaIBCfqL8NuxXZ3aCOiGkVhDFex8mb4c6SzurIaC7ddHykW5dtXNg+K/9Po6yGycv4AVlMNoks/NHsRaKnizGOV4ornk=
+	t=1730191784; cv=none; b=eL27tHlOQ4SIl0bZkq1nRJ9ys1o1YW0imxeWAvCyDBVQOA2spcNqdkJYSxQatXZGsGgtPKnhSBAUlekHg8urtztwxeS8QIooE9/d2Kkd5U+wtKTe9MVE3H18z3qMl8/bNkalDSRS6IhItltF8Strhhe0IME6I2WHykDnTgiLXLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730191762; c=relaxed/simple;
-	bh=zb6s5QSNab5uGv6gxOiZNnPBCrUwpJdx8jSdIyfQ8PQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=amRUVMZR+ULvYtXN7SDt7FWtMkV9tm2UvZOma5GiFLxr8N5O+FnPf+ZAvQr9z06RBrXx6fsdMD5eHaSeINgP2LcemWcxvbjWWgg5SQvyW/TlBlGlg5tLc1osSa5evdS3nJ98Kpfnuta6Ntsa2a4eciG8B5L0KJx/bV/jtvfCL5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ePAKAKiT; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e5130832aso3634194b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:49:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730191759; x=1730796559; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LoOFfYpo1uCoXTqMLL9mhUUj3EdIXvRo1zOQLi0+PSM=;
-        b=ePAKAKiTlEge8/6QAiJkgeXg1eHzCb7HdyDua59nLJ06pcKr0j8eU84bnoVYVVkxFu
-         ToZYppZb08a4xaNbR2PGVpfYJfL3mRa+nAwvNeqA9pmmst9JdF955BvccGuDWpumxtDJ
-         igV4nNsL1BVKC8W5jFBl8dg9wcXlAl36KChxk2LyoC10nENP4KTWmnAOhBodJS+G3+WH
-         dAY9W/OO8HAmdB7W+4l8z8NTi+bVXuDp/MKK8bst0frmZ2NXeVqJ8AlOFkUAxQkvUjOi
-         V2YN9d8xv+8VRysXomCx0ABEfYJXjCkVoJ2meY95cCRszMwTNldDqWja/jFxR7Qn5uk3
-         2wHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730191759; x=1730796559;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LoOFfYpo1uCoXTqMLL9mhUUj3EdIXvRo1zOQLi0+PSM=;
-        b=CLw3LEx1nanHawfKqlhAP+BZvcGpbXP56eN2uVOygZ6HJcjfoYUltqISpQrMsm4FYd
-         lDztHAvdAoTxos+GXJFBAIGZBJJD0T7Q6VH+jUfOTXmpLBJI6XuK48+WvwarOx8w5IB7
-         u/+9Fx4mYML5/XFHvIrBtCF9qekgKbfsblJscFMprYL3mhrtjnsYzDa/dpqY5hjE3lc5
-         CYdHbZO+LIFiY1KHQjldqni4AUGimaYvtqpUexzx3cY1HVmPNidgKDCG6Rgm43mDN7GH
-         vdfJx6sHS8MuVEf5KlqwiFSUsbHzXR3lVQcqAptCpJkuwldpmjRTgqvRnSbjyAsf1rPB
-         k+WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNwrryRhdo5Ro+F1XjQY5RdRbNoTgZopUshWAq/A2O6PSrQg/X25QrFW/ijwh0IcLbUnTxbOD+S3TrpDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBgD8FSFSV3zIHiuMb5RxKp+SC9/DzBStxjfnGr/iYPXNcSF3w
-	Aan1kCmzzeZ3XsmtiuYsQLDLEe3TQDVEt4deHaCpBfZv+h8S3YY4
-X-Google-Smtp-Source: AGHT+IF6/PgyjqWquahL8uc5W3n0vli3ePD2PTK642Axmywaf6SYTUzPfIFPcaYdUjyCxGVsyREoDg==
-X-Received: by 2002:a05:6a00:2e06:b0:71e:3b51:e856 with SMTP id d2e1a72fcca58-72062f4bdfbmr15623858b3a.1.1730191758317;
-        Tue, 29 Oct 2024 01:49:18 -0700 (PDT)
-Received: from gye-ThinkPad-T590.. ([39.120.225.141])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a1fe53sm7122491b3a.162.2024.10.29.01.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:49:18 -0700 (PDT)
-From: Gyeyoung Baek <gye976@gmail.com>
-To: Lucas De Marchi <lucas.demarchi@intel.com>,
-	Oded Gabbay <ogabbay@kernel.org>,
-	=?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Gyeyoung Baek <gye976@gmail.com>,
-	intel-xe@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/xe: Fix build error for XE_IOCTL_DBG macro
-Date: Tue, 29 Oct 2024 17:48:58 +0900
-Message-Id: <20241029084859.135172-1-gye976@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730191784; c=relaxed/simple;
+	bh=V0gJK34+R44Nxz5p4bEW0/efUib90BQ+rA/46N/6EnY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KQkUo8LC4XuvcOrw/pB8cmD9pykp0dFmM+NAo2dYWjegszZtTh2/7PfzMyzJq4BB/exMOjAz/7oDL1gRHMIATqOWQcjgay9Fx5ZKTzAcgBO15zwSocDEPU1RJSk62efDMfQf2P8fMk2rFRnIZ8D90Gx1VM0NjD1jKSvyorg2zFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5hun-0001By-5t; Tue, 29 Oct 2024 09:49:25 +0100
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t5hul-000zmf-1H;
+	Tue, 29 Oct 2024 09:49:23 +0100
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 06D593613B3;
+	Tue, 29 Oct 2024 08:49:23 +0000 (UTC)
+Date: Tue, 29 Oct 2024 09:49:22 +0100
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Gal Pressman <gal@nvidia.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Kory Maincent <kory.maincent@bootlin.com>, Paolo Abeni <pabeni@redhat.com>, 
+	Sabrina Dubroca <sd@queasysnail.net>, Shannon Nelson <shannon.nelson@amd.com>, 
+	Simon Horman <horms@kernel.org>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/6] can: dev: add generic function
+ can_update_bus_error_stats()
+Message-ID: <20241029-poised-augmented-binturong-1fde9f-mkl@pengutronix.de>
+References: <20241029084525.2858224-1-dario.binacchi@amarulasolutions.com>
+ <20241029084525.2858224-2-dario.binacchi@amarulasolutions.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="nb27cg7aycdxcprh"
+Content-Disposition: inline
+In-Reply-To: <20241029084525.2858224-2-dario.binacchi@amarulasolutions.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-if CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
-'drm_dbg' function is replaced with '__dynamic_func_call_cls',
-which is replaced with a do while statement.
-so in the previous code, there are the following build errors.
 
-include/linux/dynamic_debug.h:221:58: error: expected expression before ‘do’
-  221 | #define __dynamic_func_call_cls(id, cls, fmt, func, ...) do {   \
-      |                                                          ^~
-include/linux/dynamic_debug.h:248:9: note: in expansion of macro ‘__dynamic_func_call_cls’
-  248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-      |         ^~~~~~~~~~~~~~~~~~~~~~~
-include/drm/drm_print.h:425:9: note: in expansion of macro ‘_dynamic_func_call_cls’
-  425 |         _dynamic_func_call_cls(cat, fmt, __drm_dev_dbg,         \
-      |         ^~~~~~~~~~~~~~~~~~~~~~
-include/drm/drm_print.h:504:9: note: in expansion of macro ‘drm_dev_dbg’
-  504 |         drm_dev_dbg((drm) ? (drm)->dev : NULL, DRM_UT_DRIVER, fmt, ##__VA_ARGS__)
-      |         ^~~~~~~~~~~
-include/drm/drm_print.h:522:33: note: in expansion of macro ‘drm_dbg_driver’
-  522 | #define drm_dbg(drm, fmt, ...)  drm_dbg_driver(drm, fmt, ##__VA_ARGS__)
-      |                                 ^~~~~~~~~~~~~~
-drivers/gpu/drm/xe/xe_macros.h:14:21: note: in expansion of macro ‘drm_dbg’
-   14 |         ((cond) && (drm_dbg(&(xe)->drm, \
-      |                     ^~~~~~~
-drivers/gpu/drm/xe/xe_bo.c:2029:13: note: in expansion of macro ‘XE_IOCTL_DBG’
- 2029 |         if (XE_IOCTL_DBG(xe, !gem_obj))
+--nb27cg7aycdxcprh
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RFC PATCH v2 1/6] can: dev: add generic function
+ can_update_bus_error_stats()
+MIME-Version: 1.0
 
-the problem is that,
-XE_IOCTL_DBG uses this function for conditional expr.
+Hello Dario,
 
-so I fix the expr to be compatible with the do while statement,
-by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html".
+On 29.10.2024 09:44:45, Dario Binacchi wrote:
+> The function aims to generalize the statistics update by centralizing
+> the related code, thus avoiding code duplication.
+>=20
+> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> ---
 
-v2: I modified this to print when only cond is true.
+no proper review, just found that double assignment.
 
-Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
----
- drivers/gpu/drm/xe/xe_macros.h | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+Marc
 
-diff --git a/drivers/gpu/drm/xe/xe_macros.h b/drivers/gpu/drm/xe/xe_macros.h
-index daf56c846d03..ac2bd103bb22 100644
---- a/drivers/gpu/drm/xe/xe_macros.h
-+++ b/drivers/gpu/drm/xe/xe_macros.h
-@@ -11,8 +11,12 @@
- #define XE_WARN_ON WARN_ON
- 
- #define XE_IOCTL_DBG(xe, cond) \
--	((cond) && (drm_dbg(&(xe)->drm, \
--			    "Ioctl argument check failed at %s:%d: %s", \
--			    __FILE__, __LINE__, #cond), 1))
-+({ \
-+	if ((cond)) \
-+		drm_dbg(&(xe)->drm, \
-+			"Ioctl argument check failed at %s:%d: %s", \
-+			__FILE__, __LINE__, #cond); \
-+	(cond); \
-+})
- 
- #endif
--- 
-2.34.1
+>=20
+> (no changes since v1)
+>=20
+>  drivers/net/can/dev/dev.c | 30 ++++++++++++++++++++++++++++++
+>  include/linux/can/dev.h   |  1 +
+>  2 files changed, 31 insertions(+)
+>=20
+> diff --git a/drivers/net/can/dev/dev.c b/drivers/net/can/dev/dev.c
+> index 6792c14fd7eb..0a3b1aad405b 100644
+> --- a/drivers/net/can/dev/dev.c
+> +++ b/drivers/net/can/dev/dev.c
+> @@ -16,6 +16,36 @@
+>  #include <linux/gpio/consumer.h>
+>  #include <linux/of.h>
+> =20
+> +void can_update_bus_error_stats(struct net_device *dev, struct can_frame=
+ *cf)
+> +{
+> +	struct can_priv *priv =3D netdev_priv(dev);
+                                ^^^^^^^^^^^^^^^^
+> +	bool rx_errors =3D false, tx_errors =3D false;
+> +
+> +	if (!cf || !(cf->can_id & (CAN_ERR_PROT | CAN_ERR_BUSERROR)))
+> +		return;
+> +
+> +	priv =3D netdev_priv(dev);
+               ^^^^^^^^^^^^^^^^
+> +	priv->can_stats.bus_error++;
+> +
+> +	if ((cf->can_id & CAN_ERR_ACK) && cf->data[3] =3D=3D CAN_ERR_PROT_LOC_A=
+CK)
+> +		tx_errors =3D true;
+> +	else if (cf->data[2] & (CAN_ERR_PROT_BIT1 | CAN_ERR_PROT_BIT0))
+> +		tx_errors =3D true;
+> +
+> +	if (cf->data[2] & (CAN_ERR_PROT_FORM | CAN_ERR_PROT_STUFF))
+> +		rx_errors =3D true;
+> +	else if ((cf->data[2] & CAN_ERR_PROT_BIT) &&
+> +		 (cf->data[3] =3D=3D CAN_ERR_PROT_LOC_CRC_SEQ))
+> +		rx_errors =3D true;
+> +
+> +	if (rx_errors)
+> +		dev->stats.rx_errors++;
+> +
+> +	if (tx_errors)
+> +		dev->stats.tx_errors++;
+> +}
+> +EXPORT_SYMBOL_GPL(can_update_bus_error_stats);
+> +
+>  static void can_update_state_error_stats(struct net_device *dev,
+>  					 enum can_state new_state)
+>  {
+> diff --git a/include/linux/can/dev.h b/include/linux/can/dev.h
+> index 23492213ea35..0977656b366d 100644
+> --- a/include/linux/can/dev.h
+> +++ b/include/linux/can/dev.h
+> @@ -201,6 +201,7 @@ void can_state_get_by_berr_counter(const struct net_d=
+evice *dev,
+>  				   enum can_state *rx_state);
+>  void can_change_state(struct net_device *dev, struct can_frame *cf,
+>  		      enum can_state tx_state, enum can_state rx_state);
+> +void can_update_bus_error_stats(struct net_device *dev, struct can_frame=
+ *cf);
+> =20
+>  #ifdef CONFIG_OF
+>  void of_can_transceiver(struct net_device *dev);
+> --=20
+> 2.43.0
+>=20
+>=20
 
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--nb27cg7aycdxcprh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcgoZAACgkQKDiiPnot
+vG9DJAf+IjRLKjCVJmbmPHaFHXnHTKmBia/tOnLejXkcSE3gM0yImO4wx/e0/fR9
+xlq+iP4nhtpxNRjSwxsxo+hID2VY/upEB3myC/2X3tqd415vVcjTtGlhUcqE8SZD
+fItDimabq/cKdfOy4nXn3K+zXUNDp47253zMpaS00I/wiKG0hmhFQcYFN0oF1gP+
+semFdCcB6pt4ju4PiSsc4hdszCKa+BCEOH3hlbJlVuc9+Ll0E0Cfc9RE+wk8kW9Y
+qgZHo6kndqMeasM5iKn0k7GfOSObhcK1ti/imvhiu8//EMJd2Tdxa/RHySNiIYT4
+8WtAyaSoQiyhXtHxgeHIql4EDU89Lg==
+=AU70
+-----END PGP SIGNATURE-----
+
+--nb27cg7aycdxcprh--
 
