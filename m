@@ -1,143 +1,199 @@
-Return-Path: <linux-kernel+bounces-387285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2AAF9B4F05
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:13:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A383C9B4F0B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B734B2113D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:13:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6376C28360C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B48D197556;
-	Tue, 29 Oct 2024 16:13:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FA86198A35;
+	Tue, 29 Oct 2024 16:15:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CeeLN7hJ"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ll9Oqseg"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79E1194AD1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0065156C6A;
+	Tue, 29 Oct 2024 16:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730218425; cv=none; b=ra5VhhUmpc7sLPBiCwP4f+InVT3v3Wr/Kh+u03XpdMVPN7jLoYTB56eRjBconcxxsg/sNw8vVBAjWkKVZK2qLsXZYStJ3209Oh60nLvf+ofIxeoEWEfXK03zVAO7iO3EmdpeV7/sTRV3z9+SLaJUJbWduxCJHsLTQY/VN2jj42E=
+	t=1730218512; cv=none; b=cL1qpCQst3xDRq1AnEExThV6+3pp50ihH/g4dTcqrE77HtfVDKkSQ9rC8zwgCiYqZ0hE0KR+m4i3HJMq+UBsUmmHjYRfRfG2P+44feQE4dpzKC57U/6tqQ3tkGevckTughOPwq5vS8+VqY+JHJqo5ISkkK7/QHPUtLgpPfeg+xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730218425; c=relaxed/simple;
-	bh=iLIilpBbdjZuHy4yM23fRAZN8JGrVIK5E1rXk4xgmgE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pGYgqxykNNq6waX3ABKXQnwcuEDVZiLxg/YqoNxKwVO7Dt5QB0RrYxFrwN4UcW0Ly7GRF3lOnL6LyJMXO803NE9Yuh8FbH/vDrurrn1ogcMuMhMA+RSIVkoG9FBxStPVX87iG3j/Pcx2wm4mg/vUQ6BUCoTaBQGdf9AC9hJHW44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CeeLN7hJ; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b1467af9dbso449480085a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:13:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730218422; x=1730823222; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/+rVpMU3LGFLQSvsBt+1W5qp/kMGu20FPFZx0ofHIA=;
-        b=CeeLN7hJxMlyKOHspMNHx4rfsnByfGCDtq3az/WUOcZlbeezgR8f1hFcBw6e72lGjg
-         JjaZC577T06qq2aEGkxgkloWSTSDDYyt11/CZg5vLhg49reClIHR6JPHtbqLhd2CK6c8
-         WDLP2xWJIky7XhaqRyfGS4yeUS7gE4wkG/7lNvYzM+moHsnfr/J0lkRqBle45AcTf/VQ
-         PcaNh/YgR6HZE9PYyIpDWh+mRcmJ5tQYYDHDPID5jwcxHT6xXNO+KWy59YQVrWkk4Ghd
-         0hDvXFYJhNLn+7HqOJV6VtGaCf+3VlXE0X8tGd573bx7WpPyhnEUQnXv/k1gPfc7qUlz
-         GJ+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730218422; x=1730823222;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=i/+rVpMU3LGFLQSvsBt+1W5qp/kMGu20FPFZx0ofHIA=;
-        b=c+qy9V/0BnRm+wBZdh5fXP2EkDMcutRZTAJCU8yWnQMBvWyCWs3LXwdQkwGPPZtn9S
-         IIs9sWaCGSDa0lq83JbY16iEy4WZ6+cwSZsh+m/CA7Uyo6xL0YlSBMS2ESi6f1JQB3+n
-         zFwXk3rCT7KlDS/AJDF3fDLDfLDDZXyQj7hYrweIqlK1k36fdXmdnm1e4hrhPpwJL0Eb
-         +WsS2BbIKzoIwwdEQZsqtzEJhC/X7ekfJW++XxbeODhgYeknVnnQkeciPAVXCRHj5TvS
-         6iXaR8YllXh4ngC003tVpbX6NVY7erBdLsolpXuKdMx8fwULo4dCByZHLqyToC7GdYCj
-         MHdg==
-X-Forwarded-Encrypted: i=1; AJvYcCV/a/IrgQFMC+5llOxwZJUR0EwKs03ix7w5dD3FJHpweJp3UIn7U20itBLr596QLkhDOa1UqBf1LaD1MOg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQo6O5dimM59DRsFUND2vOWFw2u4qZ0wmaEAUNv0TQMVNml0RK
-	d40+6oiajD7rHyWG4gyUsv9+JcEFI3Gm5+Wy3FJhbY2BoBFUjkiSuy7Fb/Vd
-X-Google-Smtp-Source: AGHT+IGrgqBvYt59b34IHtFVMfSaUoubxtwBkyNT463/rxysr1T9JgF2E31yqnXXOWqx3YO32LK43w==
-X-Received: by 2002:a05:620a:170c:b0:7b1:880c:57fa with SMTP id af79cd13be357-7b1aee4b8a3mr17150285a.52.1730218422576;
-        Tue, 29 Oct 2024 09:13:42 -0700 (PDT)
-Received: from hemlock.fiveisland.rocks (dhcp-213-15-2-159.pbband.net. [159.2.15.213])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d359411sm424685185a.130.2024.10.29.09.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 09:13:42 -0700 (PDT)
-From: Marc Dionne <marc.c.dionne@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: Marc Dionne <marc.dionne@auristor.com>
-Subject: [PATCH v2] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
-Date: Tue, 29 Oct 2024 13:13:41 -0300
-Message-ID: <20241029161341.14063-1-marc.c.dionne@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730218512; c=relaxed/simple;
+	bh=ko6gR0ckGiSy5Rv42UiUqIPbYkcVTd8F+RnziAQ+JWs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZU62HzGvD7SOWEWnrwA9N9zgrB66dnGW+D1GashMl06ocDC+Haeaxi9PTMyFnJ8MAyxVoGZ2ALNUH4ChwqG5skzhbz9GyuxWVOsiyZWUYCefSQgPW32MeH+ofKEwm5QFl8x4cWTJpT7LZp6vpgG0li9bU7GBGomuH/BJDyzGTjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ll9Oqseg; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TCEGms019630;
+	Tue, 29 Oct 2024 16:15:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Nc2gvX
+	SzfPsYVcxSilPgkvHxK3JKsWTCor0tPluKDGk=; b=ll9OqsegKG5UDEc0rB/IZt
+	92a8rUTADzReaJAhZ5m6+7kL3/Fswc21flkNvChFlR1zzFsNYFm3efIOYVrLpOvd
+	hoFl1Xnh3YrI6lttOKgKCrQVRtKufonoMjDb7ypERQ6gtWM8gUJkINYJKkzhdOY7
+	4dIu068CAUMEMzQPFCcsDSDe0jXmdJ6aGVWSLAsLpXTsUqh1fXyjpJXnw8xr5HPl
+	xwDos/C4A/cyWKzwpb8wGbhED7igqNDkfEqPWNEbn2qzHL1OdnQqeQ+O67buutAw
+	hxPO7QlSdj5c8+ZGkE1d3gz1tQMu5ASiGMLJGLmKI6pl0elFxsO1mM4JBicVG59g
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jyhbh4jr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 16:15:01 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49TGBHve015836;
+	Tue, 29 Oct 2024 16:15:00 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42hdf1bf17-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 16:15:00 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49TGExQg38732108
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 16:14:59 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 959F358056;
+	Tue, 29 Oct 2024 16:14:59 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2AE265803F;
+	Tue, 29 Oct 2024 16:14:58 +0000 (GMT)
+Received: from [9.152.212.119] (unknown [9.152.212.119])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 29 Oct 2024 16:14:57 +0000 (GMT)
+Message-ID: <e5e4b697118ac7fdff408665756a0adca36efda1.camel@linux.ibm.com>
+Subject: Re: [PATCH] tty: serial: export serial_8250_warn_need_ioport
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+To: Arnd Bergmann <arnd@kernel.org>,
+        Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        "Maciej W.
+ Rozycki" <macro@orcam.me.uk>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jeff Johnson <quic_jjohnson@quicinc.com>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Date: Tue, 29 Oct 2024 17:14:57 +0100
+In-Reply-To: <20241029152804.3318094-1-arnd@kernel.org>
+References: <20241029152804.3318094-1-arnd@kernel.org>
+Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: aEqNqL5y7IxfYkV8GT5I4yRvfYOdzgpE
+X-Proofpoint-ORIG-GUID: aEqNqL5y7IxfYkV8GT5I4yRvfYOdzgpE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=999 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290122
 
-From: Marc Dionne <marc.dionne@auristor.com>
+On Tue, 2024-10-29 at 15:27 +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+>=20
+> The newly added function is used from a loadable module, so it has
+> to be exported the same way as the other function in this file:
+>=20
+> ERROR: modpost: "serial_8250_warn_need_ioport" [drivers/tty/serial/8250/8=
+250_pci.ko] undefined!
+>=20
+> Fixes: 7c7e6c8924e7 ("tty: serial: handle HAS_IOPORT dependencies")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+> The build regression is currently part of my asm-generic tree, so I've
+> applied this fixup on top.
+>=20
+>  drivers/tty/serial/8250/8250_pcilib.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/tty/serial/8250/8250_pcilib.c b/drivers/tty/serial/8=
+250/8250_pcilib.c
+> index ec4d04177802..3bdccf76f71d 100644
+> --- a/drivers/tty/serial/8250/8250_pcilib.c
+> +++ b/drivers/tty/serial/8250/8250_pcilib.c
+> @@ -19,6 +19,7 @@ int serial_8250_warn_need_ioport(struct pci_dev *dev)
+> =20
+>  	return -ENXIO;
+>  }
+> +EXPORT_SYMBOL_NS_GPL(serial_8250_warn_need_ioport, SERIAL_8250_PCI);
+> =20
+>  int serial8250_pci_setup_port(struct pci_dev *dev, struct uart_8250_port=
+ *port,
+>  		   u8 bar, unsigned int offset, int regshift)
 
-The number of slabs can easily exceed the hard coded MAX_SLABS in the
-slabinfo tool, causing it to overwrite memory and crash.
+Looks like I forgot to try the last version plus the temporarily
+removed !S390 with allmodconfig instead of allyesconfig.=C2=A0
 
-Increase the value of MAX_SLABS, and check if that has been exceeded for
-each new slab, instead of at the end when it's already too late.  Also
-move the check for MAX_ALIASES into the loop body.
+Thanks for the fix!
 
-Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
----
- tools/mm/slabinfo.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
-index cfaeaea71042..2e0a1890dbbe 100644
---- a/tools/mm/slabinfo.c
-+++ b/tools/mm/slabinfo.c
-@@ -21,7 +21,7 @@
- #include <regex.h>
- #include <errno.h>
- 
--#define MAX_SLABS 500
-+#define MAX_SLABS 1000
- #define MAX_ALIASES 500
- #define MAX_NODES 1024
- 
-@@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
- 				p--;
- 			alias->ref = strdup(p);
- 			alias++;
-+			if (alias - aliasinfo > MAX_ALIASES)
-+				fatal("Too many aliases\n");
- 			break;
- 		   case DT_DIR:
- 			if (chdir(de->d_name))
-@@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
- 			if (slab->name[0] == ':')
- 				alias_targets++;
- 			slab++;
-+			if (slab - slabinfo > MAX_SLABS)
-+				fatal("Too many slabs\n");
- 			break;
- 		   default :
- 			fatal("Unknown file type %lx\n", de->d_type);
-@@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
- 	slabs = slab - slabinfo;
- 	actual_slabs = slabs;
- 	aliases = alias - aliasinfo;
--	if (slabs > MAX_SLABS)
--		fatal("Too many slabs\n");
--	if (aliases > MAX_ALIASES)
--		fatal("Too many aliases\n");
- }
- 
- static void output_slabs(void)
--- 
-2.47.0
-
+Reviewed-by: Niklas Schnelle <schnelle@linux.ibm.com>
 
