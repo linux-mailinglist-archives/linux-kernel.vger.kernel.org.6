@@ -1,190 +1,667 @@
-Return-Path: <linux-kernel+bounces-387262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF909B4EBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:59:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDB09B4EC0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:00:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FEE0288DAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:59:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8B63289412
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:00:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7676C196DB1;
-	Tue, 29 Oct 2024 15:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6B30197A82;
+	Tue, 29 Oct 2024 16:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="f4vGh3Vz"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WL6EmigK"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB52F19309C;
-	Tue, 29 Oct 2024 15:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730217583; cv=fail; b=IUHdvnFosU7Xxasi/PkK2Ox5Ic413uMryCtRGyCUf9gFDS7wj/hxzSdbpY5ilzj6/Hg3WrvwdiGpCuWawxRpfYhmO7gV2X+Fy4Yk/c1MIxmuPfWG+bFRazLMrngAUvASDSgkGq7wQjiHGvNG8UXSXuYXhWgJ3GGNiBB4RP9QTdA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730217583; c=relaxed/simple;
-	bh=CwXhb8BxrXUKazcNNyneQuAFkju4gtYnWbBRjovVjNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bh/orLYHVhzYrsnxqRD/OCfo2IuF1+7DRpWVf8kAOjvfRevR2T/hvezQzDelf03isBamv41KPh6DWRStnzu0PVpYesOnUXSIA3d/xLzDwhgX7B360EzzuqYCTDdqYocvXnehzqFkCPYINVioSHr95YNWxNoRZh9eTuxH0On0/7k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=f4vGh3Vz; arc=fail smtp.client-ip=40.107.236.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Lhsre/VTgfIzkLJjV3mIAohoYIkZ/PEh+4QKlGzMJ0D3wmnlYKGnaaSj8ioxUUUAlGSnN/ydOZ6kfpaayIhqQOAznyPbqaTYr/v97LWZ1bEuJ93D3C6Zx3gtFUkR8McidlsiS5uE63rzoW+iYPcrrtV9uUZHTBX0JBkD3nTyTWeH7JIWbpgWW6Al4gMmbD2ITMbmOJ8QZdZiUhwNnWiiFj4X4iY/nDOWnnuW6r63Sqb47GRByOBSg6ljVQEHkVQBgWjissrSlRfcYVhr9VA/QEs0n78VRgDmOh5J63Wywd+HVjfWAd7KyNkJJEoHRGVnNaFB6gCle2wnewc0Ub/lUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3H4TaC3drlJ6gsOjvZlTEDA8fwuAFvu7OdrEfZtpHZU=;
- b=H0thNBCHs/R1x1PJRtW/mtKlvlLoPxLzaBphtxIHKasxjwdLxLg//ZEejIDxPjF2mS200shzFhMXDCPzsy6BUepyYmBwBcDzIYs/5L+3q8N2GH7PxqL8mE4paVvA0QvNG8SUdhv556oFYUEUeDPo0w7WVn8q0gDirLZ/4ipKGxpQ9naip+FFMsOGJEoaSQT+c1Z9ATzYZ8iVFoGxcXgR70mxCDHA6SyUuOKjLkxUzzgAWPvalpmvErCRmQMOxFP3G2f6AOntOPAJMzHUiApGyo0Anal4S+CM247ywAEKaYP26HCN8hpYKUi+wE4Dpc1UwuwlgMuh+ssgCjSTSa2SkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3H4TaC3drlJ6gsOjvZlTEDA8fwuAFvu7OdrEfZtpHZU=;
- b=f4vGh3VzbjKuCAW8Xwq+ewYEEkPBcOU/J+dgcriwiWhfbP7CiR8ZRNBUYYBrm3pvsqDk5uVX9widwd/XDYiJv6STWt8jwzCWITjBugb6JUs25hj8uib/wf8d2AOD6iPT3ZzLcHqNHDHsLYdyNciiQNEa+FvCzRqU0rQ4Kgt2XvNzaf2WY+uSsiPlYUIhLnB9napFIBkbIyQoYcs+SWNFM9sq2ANjkgGZ+r2iK9eQFbpdZ5En4zNjL+F7J3STnOkmun6peA7EPovHioD71rYkGwnHbxnA7355Hl1+euV0QM+S7lz1ieEbRU7/6eJDfDxRvC2ICw1WpnrqwkLtLpTuww==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by PH7PR12MB8055.namprd12.prod.outlook.com (2603:10b6:510:268::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Tue, 29 Oct
- 2024 15:59:36 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Tue, 29 Oct 2024
- 15:59:36 +0000
-Date: Tue, 29 Oct 2024 12:59:35 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v5 04/13] iommufd/viommu: Add IOMMU_VIOMMU_ALLOC ioctl
-Message-ID: <20241029155935.GV6956@nvidia.com>
-References: <cover.1729897352.git.nicolinc@nvidia.com>
- <f24628d774181da6df6e62bfa3376fbcacef8906.1729897352.git.nicolinc@nvidia.com>
- <20241029145436.GC209124@nvidia.com>
- <20241029153624.GA210796@nvidia.com>
- <ZyEDYFxHZ3XkwTfh@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyEDYFxHZ3XkwTfh@Asurada-Nvidia>
-X-ClientProxiedBy: BL1P222CA0015.NAMP222.PROD.OUTLOOK.COM
- (2603:10b6:208:2c7::20) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF80194ACF;
+	Tue, 29 Oct 2024 15:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730217600; cv=none; b=QqVzk9r+vDul3tXGS+RZSH3Ri+R9NRIWrgVxF4d/ouoC/Po8GKLL9QWEkKYNGQIUOjqmKbGyyvu8CxGXKb+ejHG8kCDxHFAi2OllSAro+Yi8FPU2ETrMgSUSxiWMISOiqrvjz5W0bNk7DLzYtpudrK05vkSFztwv2Rz9I5pEwjs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730217600; c=relaxed/simple;
+	bh=PWMMEFOdFLvG0u48axNp1JT7rL85+fCWrloyDCqk7Bk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MxgnOQ6OQkY9lkLKjgboXX0V+Latuzas3yH/DSf8TaIvVqOY7zcV4KFUzWCgHWyg0ljgc++hJBE4aSKPE4Se06sM8QofG1qP5Quhbo1Oxi90siBcIW9LUuUL8pJQRB2HoV4u1J0LIMVwf8TCulrKUaV5No8EEnpgZIHdCnr06Ac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WL6EmigK; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ede6803585so1945387a12.0;
+        Tue, 29 Oct 2024 08:59:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730217597; x=1730822397; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cjbo3VnOpgbpekLcM4O4XsuloRiyX9JlL6lneXNnHTA=;
+        b=WL6EmigKv19xlmoZOfv1Tdei5QjzHbU/mDsY4vL/Tgmx6w5QZXl5Tgin8WR1/oWDgU
+         nVEBNqrDx70dJDOyn9s/0BGZPjqaLd4FPgO0XDdAnxpvh4lGW3RsTzbR5uDTDhN7pk2p
+         evUw4RREc1gR/r9SLrZyL1TvPI9H6TPx0NDnp59ZtgBGF7JEM2s2p3aiNqIiTWLqPydv
+         VFhqIW4jhYOmViOWZd1ehaGTIVdX/REd+Qg8YQxSiGjtIewnyJPywOP6UYQUdKXaFAXA
+         aGTZg3CS/jPFy7adLm+BE8gfYREGfJ3UxkpaQkgiyncoeg4oJX3g9prtueFtolApwlEL
+         fvLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730217597; x=1730822397;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cjbo3VnOpgbpekLcM4O4XsuloRiyX9JlL6lneXNnHTA=;
+        b=B/1T9GjnlqHGNuYqbaTG2TBDueXU1LrXmqS7zgBcd7jqj5v5rejzbocoPUB3n8r3Ta
+         uzueGzl4Oirzr3NCbbyUxrcb/ptUvGbvuxULMYTAKetfdFBF2qaa54u4MmooVuMCA6AI
+         tBU35sQlbXiwtCVXyB7m/k+2h5grF/MTesLJyNSv1z1gr3GZAsCk/v1FXfpY9wiaNMEZ
+         UF+EtlpazQfTeZlaKBTNN8DqH3ccTN03QbjZa5JNBG5p3KX8Dt4X1ByVxMjHHoh3ZzUd
+         kYK3YSwZvT86J7wbKBl/x9uApHBnrHjKG2cHub9JS7iktvh2/xYhNBKlFBMqvSOSUP4G
+         uSlw==
+X-Forwarded-Encrypted: i=1; AJvYcCVpmCDAolQHzyY3sxXITgQPXTOPRrc6BP3CbBGRMpk/akoVY7wHbFHJVSAUmRAeCUjvsCkr8Di7aB8ecBnlVGrGVj2BoQ==@vger.kernel.org, AJvYcCX5GvYF7OLzrp/gJHqlr4njEoHnnhccJT8y0DWgLTH10EjsY+Aqx24m3dqB6PTUjaySPccfT5365/Ut20I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWjLfo/XtgDyVLBfOXq6rN+dYjCovVty2DCzg7uEbTbDTj7pno
+	BIBkVnHliL8Ya4OFTU2N1OJZBaNNARINhYuazGvVwxb/UmCfvX1s
+X-Google-Smtp-Source: AGHT+IHIU+fIfUa2Jwt0kEJ/xuisuggUeo7BIa12sGgPv7MOcrhaISWynswVwD3R5Iu793KBZBhgFg==
+X-Received: by 2002:a17:90b:4c4e:b0:2da:88b3:cff8 with SMTP id 98e67ed59e1d1-2e92236554emr3998994a91.6.1730217596379;
+        Tue, 29 Oct 2024 08:59:56 -0700 (PDT)
+Received: from alphacentauri (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e8e3748a56sm9620637a91.40.2024.10.29.08.59.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 08:59:56 -0700 (PDT)
+Date: Tue, 29 Oct 2024 12:59:52 -0300
+From: Kurt Borja <kuurtb@gmail.com>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: W_Armin@gmx.de, Hans de Goede <hdegoede@redhat.com>, 
+	LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH v10 3/5] alienware-wmi: added platform profile support
+Message-ID: <pvsp76cvdqp7irpa52mr3canryyzilgvyijhtqvxzhix3diavj@bcfuduinqlcb>
+References: <20241029135107.5582-2-kuurtb@gmail.com>
+ <20241029135341.5906-1-kuurtb@gmail.com>
+ <9caaa4f1-9605-da2a-9afd-8f40ed33719f@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB8055:EE_
-X-MS-Office365-Filtering-Correlation-Id: 13e769cd-ce67-409e-5c89-08dcf832afaf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?p3VfaomtTWDvlcN+7xPUZjNjYQ5VRE3UMLbRzhmUxb1fv1tt+T6gt/ZLSR9b?=
- =?us-ascii?Q?A9WIEYa+hj5PoGaQIEjrAR6OwiZPA2asswawaD0GEDuX1/rpGUR0+QkYMBly?=
- =?us-ascii?Q?e3ANHtKhgopUbbZgdouegnFIpRwRV/nwePeqhVr5O6spa2WwtXifnPOUDfuN?=
- =?us-ascii?Q?oqQP7LIT6pO7KntF/HjxgyQyvJZLV8/aTnB7bkZt2EJ3xx5vM2HgGsPlxQiK?=
- =?us-ascii?Q?M13652kEnTaKktfW8kpkgLcbiveHLOYnJU71nfsTxgYbjIwODP+NuqmXR22X?=
- =?us-ascii?Q?cfmTrFviZZXDUtfwJZNjX3WNvoUGjfHHY0MGzRwoAy1TqCDBPHUrij7aA3KX?=
- =?us-ascii?Q?72/rx9k8lKAthAWgA7m6Rcgw8CLWSaxyU5GlqBqgZNJ9doqPNjwfzP9jkR1k?=
- =?us-ascii?Q?H4YhCPgIdMRChi0e0EOO0YOSkyLyrf40PaYqmjoQo4CavPYZIgZqsg4mZTWa?=
- =?us-ascii?Q?OypPgyrk/PxGqc5+102wZXq0nQm381CFS8pinj8b+Kjz1PN6poDNQjE8f10f?=
- =?us-ascii?Q?mEO8rjAE7sGvc/d4NsjzBcpNeLAt0tBwr3LaxY1UOzsOnyZzYmcQwkeGcQPq?=
- =?us-ascii?Q?Nj3DDbx8DhiUr2LmrmljQlYyymTH3GpEMGxBlBRI+tQSmdxIgL+AnPiYd0En?=
- =?us-ascii?Q?pTubCHYYselRIHYSiy8ac7L/430LbezoVmbdlFMBfYGp5IDYPqoCJjzzeM5x?=
- =?us-ascii?Q?SF/JsG5fhxCab9yQiNvfK0ERkEEeTmO5etcYtgV3hUUViO50qajQHagYHGp0?=
- =?us-ascii?Q?LH+C+rScH/klaEfl/axgG+UAro89auOvKKmmsvHfX3Xj5u3s5b0Vf7zzHNqK?=
- =?us-ascii?Q?1zGuue1bo/EohtcTkWIgALYVdtjYZBWCLeaDJN8/HA1ELTdVA10N8ENzFDSs?=
- =?us-ascii?Q?ABJOzvFBeEPJ5j3hI4MrZPgfHgVVwqJEPVuTuL5ZEgW0PSDzusmc+ffR4sB/?=
- =?us-ascii?Q?ydtvsTMd7JhMG9UIXH0wNCBUl7wcWWqWaFn3SSCAOmJmxXPHE2y1dCyoUg4+?=
- =?us-ascii?Q?fpPB0a2CvnWhnlIHSIFT7sxnlrHb+sg+OazdHZloLf4v8pTO5nDBSKH8/P1l?=
- =?us-ascii?Q?zoMGZKXnJMZed33r2AtkrtQ2XHuozn3cA4w0cDmHRmN0xeUMiik1pkcQLPwT?=
- =?us-ascii?Q?D6gmpOolFiR59gywdAUktVD6KCiDAQwGcBcdJ0zBxxIv6KjkJePxoptcSX/l?=
- =?us-ascii?Q?L27+IGpCFP/3yzr2PctUhnWY38H8xzHw/bl7JHKkt/o95ZyAgp1pH0MW8yxy?=
- =?us-ascii?Q?vhfNprh3/o3XCgKq0MpBUKyYqNciuzBeyAnivhCCRR9WpPTV4sNxpCWhfekL?=
- =?us-ascii?Q?gKyskZdt30N/kX2Znl9KeRpe?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?seb7rhvGY61KlI59wfYKxZGpywXSIZuRhp5H5LppFOCXpKUNezUEzHlfoDgS?=
- =?us-ascii?Q?ffIziy87SsX1j9Kr9qYtk9opyfKTFW8rzYnZOW9mmp+/PihZpXU0BPAJutzF?=
- =?us-ascii?Q?I38geTEHoqJMMCiKFgp2bT5x5fhCQdYQ+dXt1KtJCRGWbTKGMRND2Aqco+18?=
- =?us-ascii?Q?YtAxIWcpjcRJuuYIus/QqDXUU0f+BKYD1AUDS+5IyOfjnXwFLAoGtbCYwqei?=
- =?us-ascii?Q?ZpzrhB0SeIhchDq8VgqduwvWhiEdPIfI0ACm7KtmjK1nLkC9slSPCPmXh1/L?=
- =?us-ascii?Q?f9DJQFkO/vmpIMJiXL8bSa/Dbf1FRBWalH/OXJune4MBvxHvWhw7T58HbvVg?=
- =?us-ascii?Q?fN+GiQvhGBpt76+9LaXir9kdR9QVZECpKDsB+4kp+/q2OtmVfNn0iVrzlcOe?=
- =?us-ascii?Q?O1Mth8ckJsYdtTtb2NGGPkYKSW+ijLkLiiyJKGyEsPVGog6Z44fAGtJFzTl0?=
- =?us-ascii?Q?tTTX72QiKFMnLU60zYCqKxXD+uNZOcLISuYOXB9oPhMTe+q7knnOeNmVs0aM?=
- =?us-ascii?Q?v4B5n4zefFo6hl9RoKUPS7LYGAnH4T+4sviUfRSBhfOY145DVK35w+h+BjL4?=
- =?us-ascii?Q?6+k3plwTtUv+Rgo7Yfti/Y0NQ07iXc2mxBr50HAkJlxw5rgnSsMYJIkJESx8?=
- =?us-ascii?Q?NeZ53+qqYFHLjmfkFHgVKmq7ygVzAelmK7f15CcH0PO0uKSVtR/XaOXSlOEJ?=
- =?us-ascii?Q?rZiohkgxY1uss7972L74ZDILNioi4Rz12jZfEhAdwmxXinJXUUkK8m6DD0wd?=
- =?us-ascii?Q?madRUeU8xhUZiXxen6MrAPmSVsbbRB/C13n6xzMqPJkj2wFx9l9u1tTOo2sA?=
- =?us-ascii?Q?whGhyVIGJ4esayFrmUesLUWXl1x2J850pG11yxXeaYbA+wGioagR7nvI+2QA?=
- =?us-ascii?Q?s9IYUnksd1AM/GR4NeaREQvMne1adM5RzU6+WLJDbLBBxp8PIIajduc/04jx?=
- =?us-ascii?Q?Y4gO3KY7t4VA0RkefCYZo1CieEaK64P7Ga7kfVGyvmuy6iUahXzGz3RbM4eG?=
- =?us-ascii?Q?N6Mkzsj9mQxt/413NfRcwBg/hBOWO9jZgvg7eTK8in+ZxqvkdGSlWXp28Tza?=
- =?us-ascii?Q?jfziDj1Axw53VdYk2bjW8Eex+TR8jbulESBVUor+NzpwaD72rqE0nj/DuZot?=
- =?us-ascii?Q?y5L9zcCjxP71ocATrNn/cgSl+MTtGg+71sMxPVFikaTEcfpjWeUhh7b1WHBL?=
- =?us-ascii?Q?VUvCNr3+Ot4d2BD6sfu/i0NwCOabVvk+PlPv+NLg9LysGxv+kstFLKxbcDLP?=
- =?us-ascii?Q?+8Rzy7mz82Oe6swXxy38ED16GuYkXHT1PZWmjGg9lEs7Oj6CxuVEglpuquGD?=
- =?us-ascii?Q?+6T5Rzwg7RkiNzNRIK4eIHdOCI1uTwr39ND/h2Ud1PGzqUglOBmSU40Klu4d?=
- =?us-ascii?Q?7H8GQ1hqhnT+Rc6hAMgKQSH0duzXYtUHx9oU/3QFY4VhNW+tQ0+aq6K9cBaK?=
- =?us-ascii?Q?Fvyl82kuNI3D4qZj0CS33VuIMXwq7ECKLzXc8jnFaMIq4Sp5E4ya2Vffghlf?=
- =?us-ascii?Q?EcUwEqUREHumbhgthY+D23yuVyFrH/jH+6U2kwdcWL92AnDGJFybycSyZMs5?=
- =?us-ascii?Q?XyUOGPumuSNMqex4uWo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 13e769cd-ce67-409e-5c89-08dcf832afaf
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 15:59:36.1244
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LpJwexs58kSm152v0VWwH+7Shdnf8iIp4Ze8mzDnz3s78hY5f5Tox+3oJlu8lrPu
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8055
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9caaa4f1-9605-da2a-9afd-8f40ed33719f@linux.intel.com>
 
-On Tue, Oct 29, 2024 at 08:46:40AM -0700, Nicolin Chen wrote:
-> On Tue, Oct 29, 2024 at 12:36:24PM -0300, Jason Gunthorpe wrote:
-> > On Tue, Oct 29, 2024 at 11:54:36AM -0300, Jason Gunthorpe wrote:
-> > > On Fri, Oct 25, 2024 at 04:49:44PM -0700, Nicolin Chen wrote:
-> > > > +void iommufd_viommu_destroy(struct iommufd_object *obj)
-> > > > +{
-> > > > +	struct iommufd_viommu *viommu =
-> > > > +		container_of(obj, struct iommufd_viommu, obj);
-> > > > +
-> > > > +	if (viommu->ops && viommu->ops->free)
-> > > > +		viommu->ops->free(viommu);
-> > > 
-> > > Ops can't be null and free can't be null, that would mean there is a
-> > > memory leak.
-> > 
-> > Actually, it is just named wrong, it should be called destroy like
-> > this op, it doesn't free any memory..
+On Tue, Oct 29, 2024 at 05:44:05PM +0200, Ilpo Järvinen wrote:
+> On Tue, 29 Oct 2024, Kurt Borja wrote:
 > 
-> Well, it frees if driver allocated something in its top structure.
-> Yet, "destroy" does sound less confusing. Let's rename it, assuming
-> it can still remain to be optional as we have here.
+> > Implements platform profile support for Dell laptops with new WMAX thermal
+> > interface, present on some Alienware X-Series, Alienware M-Series and
+> > Dell's G-Series laptops. This interface is suspected to be used by
+> > Alienware Command Center (AWCC), which is not available for linux
+> > systems, to manage thermal profiles.
+> > 
+> > This implementation makes use of three WMI methods, namely
+> > THERMAL_CONTROL, THERMAL_INFORMATION and GAME_SHIFT_STATUS, which take
+> > u32 as input and output arguments. Each method has a set of supported
+> > operations specified in their respective enums.
+> > 
+> > Not all models with WMAX WMI interface support these methods. Because of
+> > this, models have to manually declare support through new quirks
+> > `thermal` for THERMAL_CONTROL and THERMAL_INFORMATION and `gmode` for
+> > GAME_SHIFT_STATUS.
+> > 
+> > Wrappers written for these methods support multiple operations.
+> > 
+> > THERMAL_CONTROL switches thermal modes through operation
+> > ACTIVATE_PROFILE. Available thermal codes are auto-detected at runtime
+> > and matched against a list of known thermal codes:
+> > 
+> > Thermal Table "User Selectable Thermal Tables" (USTT):
+> > 	BALANCED			0xA0
+> > 	BALANCED_PERFORMANCE		0xA1
+> > 	COOL				0xA2
+> > 	QUIET				0xA3
+> > 	PERFORMANCE			0xA4
+> > 	LOW_POWER			0xA5
+> > 
+> > Thermal Table Basic:
+> > 	QUIET				0x96
+> > 	BALANCED			0x97
+> > 	BALANCED_PERFORMANCE		0x98
+> > 	PERFORMANCE			0x99
+> > 
+> > Devices are known to implement only one of these tables without mixing
+> > their thermal codes.
+> > 
+> > The fact that the least significant digit of every thermal code is
+> > consecutive of one another is exploited to efficiently match codes
+> > through arrays.
+> > 
+> > Autodetection of available codes is done through operation LIST_IDS of
+> > method THERMAL_INFORMATION. This operation lists fan IDs, CPU sensor ID,
+> > GPU sensor ID and available thermal profile codes, *in that order*. As
+> > number of fans and thermal codes is very model dependent, almost every
+> > ID is scanned and matched based on conditions found on
+> > is_wmax_thermal_code(). The known upper bound for the number of IDs is
+> > 13, corresponding to a device that have 4 fans, 2 sensors and 7 thermal
+> > codes.
+> > 
+> > Additionally G-Series laptops have a key called G-key, which (with AWCC
+> > proprietary driver) switches the thermal mode to an special mode named
+> > GMODE with code 0xAB and changes Game Shift Status to 1. Game Shift is a
+> > mode the manufacturer claims, increases gaming performance.
+> > 
+> > GAME_SHIFT_STATUS method is used to mimic this behavior when selecting
+> > PLATFORM_PROFILE_PERFORMANCE option.
+> > 
+> > All of these profiles are known to only change fan speed profiles,
+> > although there are untested claims that some of them also change power
+> > profiles.
+> > 
+> > Activating a thermal mode with method THERMAL_CONTROL may cause short
+> > hangs. This is a known problem present on every platform.
+> > 
+> > Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> > Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> > ---
+> > v10:
+> >  - Corrected THERMAL_MODE_BASIC_BALANCED -> THERMAL_MODE_BASIC_QUIET in
+> >    is_wmax_thermal_code() logic
+> >  - `thermal` and `gmode` quirks now have to be manually selected,
+> >    because not all Dell devices posses the new WMI thermal methods.
+> >  - Because of the above reason, errors in create_thermal_profile are now
+> >    propagated
+> > v9:
+> >  - Bool comparisons are now coherent with their type
+> > v8:
+> >  - Fixed alignment in wmax_mode_to_platform_profile[]
+> >  - Quirk thermal and gmode changed from u8 -> bool
+> >  - Autodetected quirk entries are not initialized
+> >  - is_wmax_thermal_code refactored to increase readibility
+> >  - is_wmax_thermal_code now covers all possibilities
+> >  - Better commit message
+> > v7:
+> >  - Method operations are now clearly listed as separate enums
+> >  - wmax_thermal_modes are now listed without codes in order to support
+> >    autodetection, as well as getting and setting thermal profiles
+> >    cleanly through arrays
+> >  - Added wmax_mode_to_platform_profile[]
+> >  - Added struct wmax_u32_args to replace bit mask approach of
+> >    constructing arguments for wmax methods
+> >  - create_thermal_profile now autodetects available thermal codes
+> >    through operation 0x03 of THERMAL_INFORMATION method. These are
+> >    codes are stored in supported_thermal_profiles[]
+> >  - thermal_profile_get now uses wmax_mode_to_platform_profile[] instead of
+> >    switch-case approach
+> >  - thermal_profile_set now uses supported_thermal_profiles[] instead of
+> >    switch-case approach
+> >  - When gmode is autodetected, thermal_profile_set also sets Game Shift
+> >    status accordingly
+> > v6:
+> >  - Fixed alignment on some function definitions
+> >  - Fixed braces on if statment
+> >  - Removed quirk thermal_ustt
+> >  - Now quirk thermal can take values defined in enum WMAX_THERMAL_TABLE.
+> >  - Proper removal of thermal_profile
+> > ---
+> >  drivers/platform/x86/dell/Kconfig         |   1 +
+> >  drivers/platform/x86/dell/alienware-wmi.c | 306 ++++++++++++++++++++++
+> >  2 files changed, 307 insertions(+)
+> > 
+> > diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
+> > index 68a49788a..b06d634cd 100644
+> > --- a/drivers/platform/x86/dell/Kconfig
+> > +++ b/drivers/platform/x86/dell/Kconfig
+> > @@ -21,6 +21,7 @@ config ALIENWARE_WMI
+> >  	depends on LEDS_CLASS
+> >  	depends on NEW_LEDS
+> >  	depends on ACPI_WMI
+> > +	select ACPI_PLATFORM_PROFILE
+> >  	help
+> >  	 This is a driver for controlling Alienware BIOS driven
+> >  	 features.  It exposes an interface for controlling the AlienFX
+> > diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+> > index b27f3b64c..1d62c2ce7 100644
+> > --- a/drivers/platform/x86/dell/alienware-wmi.c
+> > +++ b/drivers/platform/x86/dell/alienware-wmi.c
+> > @@ -8,8 +8,11 @@
+> >  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> >  
+> >  #include <linux/acpi.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bits.h>
+> >  #include <linux/module.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/platform_profile.h>
+> >  #include <linux/dmi.h>
+> >  #include <linux/leds.h>
+> >  
+> > @@ -25,6 +28,13 @@
+> >  #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
+> >  #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
+> >  #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
+> > +#define WMAX_METHOD_THERMAL_INFORMATION	0x14
+> > +#define WMAX_METHOD_THERMAL_CONTROL	0x15
+> > +#define WMAX_METHOD_GAME_SHIFT_STATUS	0x25
+> > +
+> > +#define WMAX_THERMAL_MODE_GMODE		0xAB
+> > +
+> > +#define WMAX_FAILURE_CODE		0xFFFFFFFF
+> >  
+> >  MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
+> >  MODULE_DESCRIPTION("Alienware special feature control");
+> > @@ -49,11 +59,59 @@ enum WMAX_CONTROL_STATES {
+> >  	WMAX_SUSPEND = 3,
+> >  };
+> >  
+> > +enum WMAX_THERMAL_INFORMATION_OPERATIONS {
+> > +	WMAX_OPERATION_LIST_IDS			= 0x03,
+> > +	WMAX_OPERATION_CURRENT_PROFILE		= 0x0B,
+> > +};
+> > +
+> > +enum WMAX_THERMAL_CONTROL_OPERATIONS {
+> > +	WMAX_OPERATION_ACTIVATE_PROFILE		= 0x01,
+> > +};
+> > +
+> > +enum WMAX_GAME_SHIFT_STATUS_OPERATIONS {
+> > +	WMAX_OPERATION_TOGGLE_GAME_SHIFT	= 0x01,
+> > +	WMAX_OPERATION_GET_GAME_SHIFT_STATUS	= 0x02,
+> > +};
+> > +
+> > +enum WMAX_THERMAL_TABLES {
+> > +	WMAX_THERMAL_TABLE_BASIC		= 0x90,
+> > +	WMAX_THERMAL_TABLE_USTT			= 0xA0,
+> > +};
+> > +
+> > +enum wmax_thermal_mode {
+> > +	THERMAL_MODE_USTT_BALANCED,
+> > +	THERMAL_MODE_USTT_BALANCED_PERFORMANCE,
+> > +	THERMAL_MODE_USTT_COOL,
+> > +	THERMAL_MODE_USTT_QUIET,
+> > +	THERMAL_MODE_USTT_PERFORMANCE,
+> > +	THERMAL_MODE_USTT_LOW_POWER,
+> > +	THERMAL_MODE_BASIC_QUIET,
+> > +	THERMAL_MODE_BASIC_BALANCED,
+> > +	THERMAL_MODE_BASIC_BALANCED_PERFORMANCE,
+> > +	THERMAL_MODE_BASIC_PERFORMANCE,
+> > +	THERMAL_MODE_LAST,
+> > +};
+> > +
+> > +static const enum platform_profile_option wmax_mode_to_platform_profile[THERMAL_MODE_LAST] = {
+> > +	[THERMAL_MODE_USTT_BALANCED]			= PLATFORM_PROFILE_BALANCED,
+> > +	[THERMAL_MODE_USTT_BALANCED_PERFORMANCE]	= PLATFORM_PROFILE_BALANCED_PERFORMANCE,
+> > +	[THERMAL_MODE_USTT_COOL]			= PLATFORM_PROFILE_COOL,
+> > +	[THERMAL_MODE_USTT_QUIET]			= PLATFORM_PROFILE_QUIET,
+> > +	[THERMAL_MODE_USTT_PERFORMANCE]			= PLATFORM_PROFILE_PERFORMANCE,
+> > +	[THERMAL_MODE_USTT_LOW_POWER]			= PLATFORM_PROFILE_LOW_POWER,
+> > +	[THERMAL_MODE_BASIC_QUIET]			= PLATFORM_PROFILE_QUIET,
+> > +	[THERMAL_MODE_BASIC_BALANCED]			= PLATFORM_PROFILE_BALANCED,
+> > +	[THERMAL_MODE_BASIC_BALANCED_PERFORMANCE]	= PLATFORM_PROFILE_BALANCED_PERFORMANCE,
+> > +	[THERMAL_MODE_BASIC_PERFORMANCE]		= PLATFORM_PROFILE_PERFORMANCE,
+> > +};
+> > +
+> >  struct quirk_entry {
+> >  	u8 num_zones;
+> >  	u8 hdmi_mux;
+> >  	u8 amplifier;
+> >  	u8 deepslp;
+> > +	bool thermal;
+> > +	bool gmode;
+> >  };
+> >  
+> >  static struct quirk_entry *quirks;
+> > @@ -64,6 +122,8 @@ static struct quirk_entry quirk_inspiron5675 = {
+> >  	.hdmi_mux = 0,
+> >  	.amplifier = 0,
+> >  	.deepslp = 0,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> >  };
+> >  
+> >  static struct quirk_entry quirk_unknown = {
+> > @@ -71,6 +131,8 @@ static struct quirk_entry quirk_unknown = {
+> >  	.hdmi_mux = 0,
+> >  	.amplifier = 0,
+> >  	.deepslp = 0,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> >  };
+> >  
+> >  static struct quirk_entry quirk_x51_r1_r2 = {
+> > @@ -78,6 +140,8 @@ static struct quirk_entry quirk_x51_r1_r2 = {
+> >  	.hdmi_mux = 0,
+> >  	.amplifier = 0,
+> >  	.deepslp = 0,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> >  };
+> >  
+> >  static struct quirk_entry quirk_x51_r3 = {
+> > @@ -85,6 +149,8 @@ static struct quirk_entry quirk_x51_r3 = {
+> >  	.hdmi_mux = 0,
+> >  	.amplifier = 1,
+> >  	.deepslp = 0,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> >  };
+> >  
+> >  static struct quirk_entry quirk_asm100 = {
+> > @@ -92,6 +158,8 @@ static struct quirk_entry quirk_asm100 = {
+> >  	.hdmi_mux = 1,
+> >  	.amplifier = 0,
+> >  	.deepslp = 0,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> >  };
+> >  
+> >  static struct quirk_entry quirk_asm200 = {
+> > @@ -99,6 +167,8 @@ static struct quirk_entry quirk_asm200 = {
+> >  	.hdmi_mux = 1,
+> >  	.amplifier = 0,
+> >  	.deepslp = 1,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> >  };
+> >  
+> >  static struct quirk_entry quirk_asm201 = {
+> > @@ -106,6 +176,17 @@ static struct quirk_entry quirk_asm201 = {
+> >  	.hdmi_mux = 1,
+> >  	.amplifier = 1,
+> >  	.deepslp = 1,
+> > +	.thermal = false,
+> > +	.gmode = false,
+> > +};
+> > +
+> > +static struct quirk_entry quirk_x_series = {
+> > +	.num_zones = 2,
+> > +	.hdmi_mux = 0,
+> > +	.amplifier = 0,
+> > +	.deepslp = 0,
+> > +	.thermal = true,
+> > +	.gmode = false,
+> >  };
+> 
+> So now gmode is always false unless the module parameter from patch 4 is 
+> given?
 
-Yes, optional is right, I was confused by the name. The core code uses
-destroy so I'd stick with that.
+G-Series laptops can also register a quirk_entry with gmode set in the
+future. I can do it ahead of time, but I don't have a G-Series laptop to
+test it.
 
-Jason
+Kurt
+
+> 
+> --
+>  i.
+> 
+> >  static int __init dmi_matched(const struct dmi_system_id *dmi)
+> > @@ -178,6 +259,15 @@ static const struct dmi_system_id alienware_quirks[] __initconst = {
+> >  		},
+> >  		.driver_data = &quirk_inspiron5675,
+> >  	},
+> > +	{
+> > +		.callback = dmi_matched,
+> > +		.ident = "Alienware x15 R1",
+> > +		.matches = {
+> > +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
+> > +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware x15 R1"),
+> > +		},
+> > +		.driver_data = &quirk_x_series,
+> > +	},
+> >  	{}
+> >  };
+> >  
+> > @@ -214,10 +304,19 @@ struct wmax_led_args {
+> >  	u8 state;
+> >  } __packed;
+> >  
+> > +struct wmax_u32_args {
+> > +	u8 operation;
+> > +	u8 arg1;
+> > +	u8 arg2;
+> > +	u8 arg3;
+> > +};
+> > +
+> >  static struct platform_device *platform_device;
+> >  static struct device_attribute *zone_dev_attrs;
+> >  static struct attribute **zone_attrs;
+> >  static struct platform_zone *zone_data;
+> > +static struct platform_profile_handler pp_handler;
+> > +static enum wmax_thermal_mode supported_thermal_profiles[PLATFORM_PROFILE_LAST];
+> >  
+> >  static struct platform_driver platform_driver = {
+> >  	.driver = {
+> > @@ -761,6 +860,204 @@ static int create_deepsleep(struct platform_device *dev)
+> >  	return ret;
+> >  }
+> >  
+> > +/*
+> > + * Thermal Profile control
+> > + *  - Provides thermal profile control through the Platform Profile API
+> > + */
+> > +#define WMAX_THERMAL_TABLE_MASK		GENMASK(7, 4)
+> > +#define WMAX_THERMAL_MODE_MASK		GENMASK(3, 0)
+> > +#define WMAX_SENSOR_ID_MASK		BIT(8)
+> > +
+> > +static bool is_wmax_thermal_code(u32 code)
+> > +{
+> > +	if (code & WMAX_SENSOR_ID_MASK)
+> > +		return false;
+> > +
+> > +	if ((code & WMAX_THERMAL_MODE_MASK) >= THERMAL_MODE_LAST)
+> > +		return false;
+> > +
+> > +	if ((code & WMAX_THERMAL_TABLE_MASK) == WMAX_THERMAL_TABLE_BASIC &&
+> > +	    (code & WMAX_THERMAL_MODE_MASK) >= THERMAL_MODE_BASIC_QUIET)
+> > +		return true;
+> > +
+> > +	if ((code & WMAX_THERMAL_TABLE_MASK) == WMAX_THERMAL_TABLE_USTT &&
+> > +	    (code & WMAX_THERMAL_MODE_MASK) <= THERMAL_MODE_USTT_LOW_POWER)
+> > +		return true;
+> > +
+> > +	return false;
+> > +}
+> > +
+> > +static int wmax_thermal_information(u8 operation, u8 arg, u32 *out_data)
+> > +{
+> > +	acpi_status status;
+> > +	struct wmax_u32_args in_args = {
+> > +		.operation = operation,
+> > +		.arg1 = arg,
+> > +		.arg2 = 0,
+> > +		.arg3 = 0,
+> > +	};
+> > +
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_THERMAL_INFORMATION,
+> > +					out_data);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return -EIO;
+> > +
+> > +	if (*out_data == WMAX_FAILURE_CODE)
+> > +		return -EBADRQC;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int wmax_thermal_control(u8 profile)
+> > +{
+> > +	acpi_status status;
+> > +	struct wmax_u32_args in_args = {
+> > +		.operation = WMAX_OPERATION_ACTIVATE_PROFILE,
+> > +		.arg1 = profile,
+> > +		.arg2 = 0,
+> > +		.arg3 = 0,
+> > +	};
+> > +	u32 out_data;
+> > +
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_THERMAL_CONTROL,
+> > +					&out_data);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return -EIO;
+> > +
+> > +	if (out_data == WMAX_FAILURE_CODE)
+> > +		return -EBADRQC;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int wmax_game_shift_status(u8 operation, u32 *out_data)
+> > +{
+> > +	acpi_status status;
+> > +	struct wmax_u32_args in_args = {
+> > +		.operation = operation,
+> > +		.arg1 = 0,
+> > +		.arg2 = 0,
+> > +		.arg3 = 0,
+> > +	};
+> > +
+> > +	status = alienware_wmax_command(&in_args, sizeof(in_args),
+> > +					WMAX_METHOD_GAME_SHIFT_STATUS,
+> > +					out_data);
+> > +
+> > +	if (ACPI_FAILURE(status))
+> > +		return -EIO;
+> > +
+> > +	if (*out_data == WMAX_FAILURE_CODE)
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thermal_profile_get(struct platform_profile_handler *pprof,
+> > +			       enum platform_profile_option *profile)
+> > +{
+> > +	u32 out_data;
+> > +	int ret;
+> > +
+> > +	ret = wmax_thermal_information(WMAX_OPERATION_CURRENT_PROFILE,
+> > +				       0, &out_data);
+> > +
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	if (out_data == WMAX_THERMAL_MODE_GMODE) {
+> > +		*profile = PLATFORM_PROFILE_PERFORMANCE;
+> > +		return 0;
+> > +	}
+> > +
+> > +	if (!is_wmax_thermal_code(out_data))
+> > +		return -ENODATA;
+> > +
+> > +	out_data &= WMAX_THERMAL_MODE_MASK;
+> > +	*profile = wmax_mode_to_platform_profile[out_data];
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int thermal_profile_set(struct platform_profile_handler *pprof,
+> > +			       enum platform_profile_option profile)
+> > +{
+> > +	if (quirks->gmode) {
+> > +		u32 gmode_status;
+> > +		int ret;
+> > +
+> > +		ret = wmax_game_shift_status(WMAX_OPERATION_GET_GAME_SHIFT_STATUS,
+> > +					     &gmode_status);
+> > +
+> > +		if (ret < 0)
+> > +			return ret;
+> > +
+> > +		if ((profile == PLATFORM_PROFILE_PERFORMANCE && !gmode_status) ||
+> > +		    (profile != PLATFORM_PROFILE_PERFORMANCE && gmode_status)) {
+> > +			ret = wmax_game_shift_status(WMAX_OPERATION_TOGGLE_GAME_SHIFT,
+> > +						     &gmode_status);
+> > +
+> > +			if (ret < 0)
+> > +				return ret;
+> > +		}
+> > +	}
+> > +
+> > +	return wmax_thermal_control(supported_thermal_profiles[profile]);
+> > +}
+> > +
+> > +static int create_thermal_profile(void)
+> > +{
+> > +	u32 out_data;
+> > +	enum wmax_thermal_mode mode;
+> > +	enum platform_profile_option profile;
+> > +	int ret;
+> > +
+> > +	for (u8 i = 0x2; i <= 0xD; i++) {
+> > +		ret = wmax_thermal_information(WMAX_OPERATION_LIST_IDS,
+> > +					       i, &out_data);
+> > +
+> > +		if (ret == -EIO)
+> > +			return ret;
+> > +
+> > +		if (ret == -EBADRQC)
+> > +			break;
+> > +
+> > +		if (!is_wmax_thermal_code(out_data))
+> > +			continue;
+> > +
+> > +		mode = out_data & WMAX_THERMAL_MODE_MASK;
+> > +		profile = wmax_mode_to_platform_profile[mode];
+> > +		supported_thermal_profiles[profile] = out_data;
+> > +
+> > +		set_bit(profile, pp_handler.choices);
+> > +	}
+> > +
+> > +	if (bitmap_empty(pp_handler.choices, PLATFORM_PROFILE_LAST))
+> > +		return -ENODEV;
+> > +
+> > +	if (quirks->gmode) {
+> > +		supported_thermal_profiles[PLATFORM_PROFILE_PERFORMANCE] =
+> > +			WMAX_THERMAL_MODE_GMODE;
+> > +
+> > +		set_bit(PLATFORM_PROFILE_PERFORMANCE, pp_handler.choices);
+> > +	}
+> > +
+> > +	pp_handler.profile_get = thermal_profile_get;
+> > +	pp_handler.profile_set = thermal_profile_set;
+> > +
+> > +	return platform_profile_register(&pp_handler);
+> > +}
+> > +
+> > +static void remove_thermal_profile(void)
+> > +{
+> > +	if (quirks->thermal)
+> > +		platform_profile_remove();
+> > +}
+> > +
+> >  static int __init alienware_wmi_init(void)
+> >  {
+> >  	int ret;
+> > @@ -808,6 +1105,12 @@ static int __init alienware_wmi_init(void)
+> >  			goto fail_prep_deepsleep;
+> >  	}
+> >  
+> > +	if (quirks->thermal) {
+> > +		ret = create_thermal_profile();
+> > +		if (ret)
+> > +			goto fail_prep_thermal_profile;
+> > +	}
+> > +
+> >  	ret = alienware_zone_init(platform_device);
+> >  	if (ret)
+> >  		goto fail_prep_zones;
+> > @@ -816,6 +1119,8 @@ static int __init alienware_wmi_init(void)
+> >  
+> >  fail_prep_zones:
+> >  	alienware_zone_exit(platform_device);
+> > +	remove_thermal_profile();
+> > +fail_prep_thermal_profile:
+> >  fail_prep_deepsleep:
+> >  fail_prep_amplifier:
+> >  fail_prep_hdmi:
+> > @@ -835,6 +1140,7 @@ static void __exit alienware_wmi_exit(void)
+> >  	if (platform_device) {
+> >  		alienware_zone_exit(platform_device);
+> >  		remove_hdmi(platform_device);
+> > +		remove_thermal_profile();
+> >  		platform_device_unregister(platform_device);
+> >  		platform_driver_unregister(&platform_driver);
+> >  	}
+> > 
+
 
