@@ -1,215 +1,183 @@
-Return-Path: <linux-kernel+bounces-387675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B43459B5473
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:49:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17FD09B5474
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:49:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392091F242C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:49:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F5A91C2095F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:49:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41EF5207A0D;
-	Tue, 29 Oct 2024 20:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72992076AA;
+	Tue, 29 Oct 2024 20:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="L5T5RK8J"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2081.outbound.protection.outlook.com [40.107.94.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UZglEin4"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60916205ACD;
-	Tue, 29 Oct 2024 20:49:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730234945; cv=fail; b=t8gams5ong06snerzbdtibEWDM7PfJAV566Z4tv4IGamChWm5YCZNTMWGdhXSQoaiHjpkARcV8TCliHYv81CldN03Hdhi881t2dYWnsWP+uy9BTlTfF91ycZX0tAqhjplbA4xSTkVbOSyH4cV8jyGgUjF5dK66QZNDJBDttvKMY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730234945; c=relaxed/simple;
-	bh=f88aDcCeJt5QxDGktbHr9+vkg622hlXjHn9tq4QWs2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=mfZmOWmtUNP0uJEwcUORfh3cnWwKLj40gthW58owVobPvQo+90poUF7uBtYgJiRsyjW9/O42n8HZwRlhL3R7zC1LmMIpKiQkZAkjm2eDyOMhH2umS2db1dgVCxUdx0A63CVte78w5C+mR4pqrKui2/tr7ppgdCkdOZRmHCOFghk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=L5T5RK8J; arc=fail smtp.client-ip=40.107.94.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=weZU3hbIMFwvMcRf974+nFkse+pI7KZnWDkmgV4zQWVa7usewfpwynzVdZ0agG6j96VfKe7yRhsbzyTmR+6ioiGuAkqBlWnrmiczCWISbSv4My5IdMtTaNYlF00Ig84f6V14XPpP8F6FGqfQzQCA2CqSlOV0wIxdZS7VaItGPhuuy+yM/cQ8zgEciOsqv1RSg0g9/OqCBPT6r/+oE8bhhNF5MjGJ26ezEyr41jLhBBglkqIKM6AA9e0k9os1CCJj7i05f2hERV9LSYJZYvFyl0PGhbMG9n6yAykuSv+ZK+t92wK962PH3S0O4wig8IG03GcgDSlZuFS2oi+S4n1jyg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0qInHwAAqNtYzaKKSVw+fUPol3Luq5fQ0ijhq60N/7Y=;
- b=RK8lBGpsw1cId/Lnbg8UXhGO0rzOPhNyF1ICDEKsQQ+HwVsCsx05PJq4NAGhVYRYYuZjEwLmDsBzbIKJ2rA+1NfGeme4+q1WgCScLl5JVM+BJSnENm52135gKDdsQ9G6a+mz+BoOtLk6gQR44pZHyZy3dhXbtop5CIJfBiRFLQmumZ1k1HC3t5E2gM3TS6tGYA04dtZ8joxM0ecm0PI2VRykNh2V+Ak9ooTvWA09teV7gONpI0bgrLSAErX3nr3vUTuRuiRHNx63Io/7g5wOSOQd8/6euMdPlN6+7sfFLjRJsLoR7ACxNDUyChIdj6r2v4v7dtkBu7pt7vsgu91QFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0qInHwAAqNtYzaKKSVw+fUPol3Luq5fQ0ijhq60N/7Y=;
- b=L5T5RK8JUQ9k816sH2aD5Snlwh43KCH0HGXpsAJo8eRP+BnTKeOFD0gJxEvrQRdvmcdXdt+hVGtfVHFfGNbxEcY8SF5cngLQX9q+coPlvnqerZk0uCmrxhN0/vGQGmNS3mCwmLJRJd7zOxTRHeLp6wPVqIQsYUy50j1siUSrhNo=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com (2603:10b6:8:a4::7) by
- DS0PR12MB6413.namprd12.prod.outlook.com (2603:10b6:8:ce::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.27; Tue, 29 Oct 2024 20:49:00 +0000
-Received: from DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f]) by DM4PR12MB6373.namprd12.prod.outlook.com
- ([fe80::12f7:eff:380b:589f%5]) with mapi id 15.20.8093.023; Tue, 29 Oct 2024
- 20:48:59 +0000
-Date: Tue, 29 Oct 2024 16:48:48 -0400
-From: Yazen Ghannam <yazen.ghannam@amd.com>
-To: Shuai Xue <xueshuai@linux.alibaba.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, mingo@redhat.com,
-	robin.murphy@arm.com, Jonathan.Cameron@huawei.com, bp@alien8.de,
-	rafael@kernel.org, wangkefeng.wang@huawei.com,
-	tanxiaofei@huawei.com, mawupeng1@huawei.com, tony.luck@intel.com,
-	linmiaohe@huawei.com, naoya.horiguchi@nec.com, james.morse@arm.com,
-	tongtiangen@huawei.com, gregkh@linuxfoundation.org, will@kernel.org,
-	jarkko@kernel.org, linux-acpi@vger.kernel.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-	linux-edac@vger.kernel.org, x86@kernel.org, justin.he@arm.com,
-	ardb@kernel.org, ying.huang@intel.com, ashish.kalra@amd.com,
-	baolin.wang@linux.alibaba.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, lenb@kernel.org, hpa@zytor.com,
-	robert.moore@intel.com, lvying6@huawei.com, xiexiuqi@huawei.com,
-	zhuo.song@linux.alibaba.com
-Subject: Re: [PATCH v15 1/3] ACPI: APEI: send SIGBUS to current task if
- synchronous memory error not recovered
-Message-ID: <20241029204848.GA1229628@yaz-khff2.amd.com>
-References: <20221027042445.60108-1-xueshuai@linux.alibaba.com>
- <20241028081142.66028-2-xueshuai@linux.alibaba.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028081142.66028-2-xueshuai@linux.alibaba.com>
-X-ClientProxiedBy: BN9PR03CA0048.namprd03.prod.outlook.com
- (2603:10b6:408:fb::23) To DM4PR12MB6373.namprd12.prod.outlook.com
- (2603:10b6:8:a4::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED212201279
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730234974; cv=none; b=nr0BaPzcIanwe29OMaxYL/tLCZ+nZCJHkuR77h7UmyR3DT2y4ridxb57UuwJI4elxTy7oTzpqTndZYcJNMUwwog/gTpy7Ze+PTBx2yHQOjPY3DfvU2DYG7/5moG7Mufa1ctHv/mrO/8y2HCJyta/P4wct+Mj/QzeovtUBPEVDjY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730234974; c=relaxed/simple;
+	bh=ywvhNwjFOyXe9VTFe+2IOrlDHxmNE3sYhPOwqz4SHf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kdYk5ralPwohFNec4dq18IKGw8jNb9EHpbIJzQmeS74UNbFD19lAJq/xkmY/yTK/zFnVCWdPXZqn0zcQ3JlxsVeSgngd2ui3NhC5tIAkkMRrgMZISrDelt24KVzcEXLQd/GVjXAn4ybEm1rhiMrPrlwDZPXY7LIpJcF8bsiO6Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UZglEin4; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-431616c23b5so1703015e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:49:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730234970; x=1730839770; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sAvGabJbVQ0MLApUMZF9EFIEnk5suR68XuTbaLM5KAs=;
+        b=UZglEin4Kw52eirtY9/NFSfnQlzvBsqfzOy0sEFF6TnaLAwGrWrhJlHCJ1kmbbGGC/
+         zOfXnViC5z2ldQA4K7kva2tCVOBU6dtq5QSw0cb/rnkP1cENu6oKJDTad8fWikzFP6eL
+         4kK4bslDfo+eqSv/ftakiYNtnkO9g2pvZcWyvrFzh7BPbd0zwZVeA0leObNiDNKCu3jI
+         LnpYxU9T8Y8AtA2KXARGIdLEz8mTvKlQ+6aKZ6wvxfNX7X9OwmjdNcYa236lj6Z29uni
+         binlBQDB+Yg65dDh3s5MrhGjYCoZduy24SoK0ZpOfenchXAe1mrKm9TTMzGGCQ0z+0H5
+         BTLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730234970; x=1730839770;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sAvGabJbVQ0MLApUMZF9EFIEnk5suR68XuTbaLM5KAs=;
+        b=ANqEH2vmm/fs2b5E6ol5KHmcLtYj7GGzvXvTS2N2Qwr3r8iAMvOqjzueMsQ1lneaQM
+         NjX0YMOyCeRJZMmlkDj4pAfeOJdcymCr9Nf9kKZQRFe5vofQzxwPHPR2zqu+zmApTPgU
+         nvuOH26JC5g/7H1yavGTEqv5EGuAcflnZO4UFD9faysHNUhL22/uaMLOGaZYPx4pBsGU
+         Hr/BxkKb6cQGTQSO6nedbdaGdzn6BNLImX3XyFvbovE+2wXhaLU89Mave4SvzogpI1aa
+         zdwnvyzbdgZLrOj9WoCkKEEFidPMFB7LImHhk8E9ad+RjO6cORBKSavER+6vHx9i+Wgw
+         o1oQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWxggxQfa8F0wuXDBSIf5XuQ9zNFbr4luM77h+4x1cH+EouMAexKUaUzr1KuT+x8N2/m30zj5kfG5Ac+kg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1qsdlk60KfUNqhL8INrHsxfoyWhePBzzCaOLVDVSxImetgJVZ
+	bt1B5TdVhFG8Y9lfRUcxwm6SS0bKfLYKOob7FTR8/RIaDAVZYKPhe0hBosn6lw==
+X-Google-Smtp-Source: AGHT+IG+jfqUfnV3NYLX10iVdIS1AD9jWUchFd2nFUkxAgCNXoHEPd80MyvsCr2XX4KFrBAIqWpJ2g==
+X-Received: by 2002:a05:600c:3594:b0:431:9340:77e0 with SMTP id 5b1f17b1804b1-431b5727b99mr32087645e9.9.1730234970120;
+        Tue, 29 Oct 2024 13:49:30 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:9c:201:7cc7:9e06:a6d2:add7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd98e7e4sm305295e9.39.2024.10.29.13.49.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 13:49:28 -0700 (PDT)
+Date: Tue, 29 Oct 2024 21:49:21 +0100
+From: Marco Elver <elver@google.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	Alexander Potapenko <glider@google.com>
+Subject: Re: [PATCH] kcsan, seqlock: Support seqcount_latch_t
+Message-ID: <ZyFKUU1LpFfLrVXb@elver.google.com>
+References: <20241029083658.1096492-1-elver@google.com>
+ <20241029114937.GT14555@noisy.programming.kicks-ass.net>
+ <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
+ <20241029134641.GR9767@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6373:EE_|DS0PR12MB6413:EE_
-X-MS-Office365-Filtering-Correlation-Id: a97ee17f-ed17-420c-2bb0-08dcf85b1d3c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?wPfj8igFWmV/3cSv7hrFb8Et6DsPYQMVfRXIkBaWe/hbbF0ZfbHs8MuHsevr?=
- =?us-ascii?Q?KuWxCASCRSz5JLisJVANh35cQPapjMnziI60z3ZSJCtgJ7RnetNsJ7U84cNi?=
- =?us-ascii?Q?oQul4w4EHrQwYlK3ZgOAS5kFNiDkkAVPelNCQuR6zzRhFEo+pv9RPM51Ttan?=
- =?us-ascii?Q?iefYo2oMw4mMGO23283wNm2ZNT4vANW3vx0S/lfYL2Qv0K8Q9fqUfixv3fs/?=
- =?us-ascii?Q?ErY2T7sZj88X7ceAwfnHqL1YFRFp6yO+n5nodzKuNXRgao4alI/83wZC6Sng?=
- =?us-ascii?Q?1GVru4dAASqvsbAw2E3ngSsNTUjecS8hSGM2Z1cEOYjyP4VRs9xaPImuHBgO?=
- =?us-ascii?Q?Xw4zko6ZdDcKO3l1+RrH+gtlXx/v9absHLThbDk7fbIx/yY8WDbM2gsGZox3?=
- =?us-ascii?Q?DVh6sQKLNOttd+2YrRHSbQoTqnThFFdQu0+vpPXRXdpIbIoTYUlnhvWQ245v?=
- =?us-ascii?Q?v7gw7auxLObirPbqKJ5UNGhb42qlsvBfa38TSN9S677tFQuIFIfT15sIhRXA?=
- =?us-ascii?Q?39md/cMKf1oNZ5JJmato+h18KeOWQTTpGppX3jEU56pJFt66BRsbGTydjNHA?=
- =?us-ascii?Q?ho8WnhElZp+O6Of+U88anm3DnliqSYvUYJf418OadQNDyW78DAMfuSJDVYTN?=
- =?us-ascii?Q?8yCjJpAVX/HOr1TnogywtJLk3CRsDqXdBtN2choTGORVjaS6fhwYU3NKw+1h?=
- =?us-ascii?Q?gwIBxo5fw0eaOlAXJUUR57KIuPevHmKywLELAkd36RehlBwY1kFYg7JI6PNG?=
- =?us-ascii?Q?P+g4TVuPYgS2Js+ZtrMgT1KjDitzcCqOQK1ZUKk9RAox5Lko33YFvUYtgY1R?=
- =?us-ascii?Q?huGTD4B+xtpJxtDlEyiyGC/zfneABluSu8meSzx1RtlxijTODfS/LXQmfyjr?=
- =?us-ascii?Q?1FB6xLJgQmxZfW6gZLYUeljTrF0qeZ/40pfyO+Fr/Ospk34V2Jkb3l4Q3JUP?=
- =?us-ascii?Q?XoEwbk4TPdopriTWUQG16xg47cTlkTYsvfsllycfyf9N6WdbnktZDE+AgzRH?=
- =?us-ascii?Q?vBMBRqFUOTIQ1Sfmr/8GXQhOaZilvPd+whhbJ4qZUaY4eies9zCFa82twsC6?=
- =?us-ascii?Q?oDi5olkc6k+UcKYKjH4zp3sDVoBwVIKmdyzPeLpLVDaPq3KsliXSi1Kf8ebZ?=
- =?us-ascii?Q?gnDNqqdkV8lMkYpQWRrIAbzpFkCBajgnh/eCvoMvUo9yfkldCECLcOmMOwS1?=
- =?us-ascii?Q?NlCRRHJEKOBMR9Q3vqHaRvMdb4sCFvpULNu46JwEp4J5ZDxbyoG7+qnaJPQM?=
- =?us-ascii?Q?3vWHDP9gAnhslSFomwI4HHaQjw8GN4IDHg6mJY6BhmMkHpIMfQrmiGIVwv+4?=
- =?us-ascii?Q?pFOWGQDTLQtttM03PuVUxqBm?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6373.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?eSKdKHQqTkcUZ3GIbopJsgD35DOLbtlc91VAukMbZ+fyyEfmoIynctR3FMhx?=
- =?us-ascii?Q?OsZWrd7G+9K4M1YZMVNKkD2xUzAPlr+aU3RDB0f0oRTb5ReY6+OG46ypV732?=
- =?us-ascii?Q?/anxiTIxgQ2D2C5TB5NM/6CViQmV8nGOV8wSBSUk8Iiq4yg0aRR8eVFZaCCb?=
- =?us-ascii?Q?xWXRDcyYjs7dSERs7YUULB+jo9n74Oi4Ok2W357wSQ+PG/hnH5DTcZDg4UFT?=
- =?us-ascii?Q?gBqMc63OzhQWfip4gtl5N5dl0e+rRrZqECAO0wSSdPnNY3oCiCqU8z9uJ1jS?=
- =?us-ascii?Q?VPVVwxO7ytj5xTdXBD+kuxs1r5jUoJkxfxyhUl6HajLa8Vb73O3d09YXm7Nc?=
- =?us-ascii?Q?zvkdrWTYYvRBOE/SYaYnW8N61wLjJpw6ELwhnUrrqAz7TAwsdtbcCyViPfM/?=
- =?us-ascii?Q?w1G/fAvMVpcaQpMUreAE+1izmiOLxAvv9rieXnBjqN3eCRijAaPHM8KZH7N9?=
- =?us-ascii?Q?DJcpbtl8BoYoZd3bLj/KHhDfJgiMwQzJiC/CX6+tcj0+p8uGEx28Oo5rqYvj?=
- =?us-ascii?Q?Dx9xlKnXhrXtP87LjXNiKn9n4Z9F1VNqIy0O9j/UxsT8E5/r+LM3Oemav3kv?=
- =?us-ascii?Q?S2Y/sUeu7vjWaG/zKsa/+pgIXr3ZSq1psHstuYnOo2qwQk/vBql7nXkpJ6+y?=
- =?us-ascii?Q?rQVloeFNtqkWbI5FkGH8imjN8Esym2ONx1Lw0JZ1RPvqz6+uFmSVYWv3AlkK?=
- =?us-ascii?Q?XiR06lg0xXFlpVVSOWqp4H1DLxWVrXklTmp1ITGVl1qyTr5ZZ5B/ZIlB6vZO?=
- =?us-ascii?Q?gK6lRccMMNJxNgl9qhMOZh8vERydzcuKLxTei8DIl6KJo3QN3D6dRXyqtv0T?=
- =?us-ascii?Q?kICbYANWFePYQQsrWsLA9PBn1Hssz+io6ypvv5l5WSfsUCvrIHf8/Lvse3ZV?=
- =?us-ascii?Q?+d96xrwAmvio7bs/ABjpVWQZSZHg27mS3UJCMRv+/Wkzs8AN9AOd+gVuFkGK?=
- =?us-ascii?Q?iIxHWjLBNxNb+OZsDYZTqmEnRVKV4sle60IkOFahHq1dgNQCRefXq/Bd51AX?=
- =?us-ascii?Q?c979nYyvAR73KVvPUt93i2cDCyYRcjSdujOQvZSzaOTY+cJvoZXxi/o4/2aY?=
- =?us-ascii?Q?vkJT8MuI47dVbGVx99B7aNerXkHZedbzP8yYOYStmzPe7x6EkfiSgfkKh1YS?=
- =?us-ascii?Q?wSFC5xIcOTsz3p3HzLxYyGSUg7QA3cTCvbYp+rpyYyLJC3GNVzDwGzu36vra?=
- =?us-ascii?Q?WadfPHweftEuUGWDIk9wHAss8YEhmJNH/kIVOUespgS8dlNZ/YEKV/O6q3yZ?=
- =?us-ascii?Q?Lhmbtkt2VQLBdLH0o/rjb6kqS7iPLI4v0LPlJcH+D6lu9LR/tVheDK/qqD21?=
- =?us-ascii?Q?plMoa3mW8r7Bsc0W356YM/DpJM0Xt96ToilIXt0H2Y2nKrf60/VCElMSUO6I?=
- =?us-ascii?Q?Oyyi2jdQ8tfTYwGaYREuYuHcSDKX4vh87VvoFP40WIwQbUp0wr5gNj1NRUFe?=
- =?us-ascii?Q?0l00cM8+qQEVhHwL7V5Qa2gwqUKipB5M/hMuaRT8pjvVXNu4YfsIuQd2is8a?=
- =?us-ascii?Q?Ya2xuCxo4tlhLtyCoEi7z+OSN/yfTS05Pyn46310I2V9/o85jFYUpopFL8Bd?=
- =?us-ascii?Q?HOz6NstzTcMqk3b+oBii8Nt5KSvftvBmkEvzGRGg?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a97ee17f-ed17-420c-2bb0-08dcf85b1d3c
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6373.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 20:48:59.8664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /kwfxoBY35BUfea4+AsdhUM6taUwoGf3j2XnIQfeg1v2eoTYQZCCpmklTnQKxrC/1W1PdJyRjzdOq/t4O/3m/Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB6413
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029134641.GR9767@noisy.programming.kicks-ass.net>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Mon, Oct 28, 2024 at 04:11:40PM +0800, Shuai Xue wrote:
-> Synchronous error was detected as a result of user-space process accessing
-> a 2-bit uncorrected error. The CPU will take a synchronous error exception
-> such as Synchronous External Abort (SEA) on Arm64. The kernel will queue a
-> memory_failure() work which poisons the related page, unmaps the page, and
-> then sends a SIGBUS to the process, so that a system wide panic can be
-> avoided.
+On Tue, Oct 29, 2024 at 02:46PM +0100, Peter Zijlstra wrote:
+> On Tue, Oct 29, 2024 at 02:05:38PM +0100, Marco Elver wrote:
+> > On Tue, 29 Oct 2024 at 12:49, Peter Zijlstra <peterz@infradead.org> wrote:
+> > >
+> > > On Tue, Oct 29, 2024 at 09:36:29AM +0100, Marco Elver wrote:
+> > > > Reviewing current raw_write_seqcount_latch() callers, the most common
+> > > > patterns involve only few memory accesses, either a single plain C
+> > > > assignment, or memcpy;
+> > >
+> > > Then I assume you've encountered latch_tree_{insert,erase}() in your
+> > > travels, right?
+> > 
+> > Oops. That once certainly exceeds the "8 memory accesses".
+> > 
+> > > Also, I note that update_clock_read_data() seems to do things
+> > > 'backwards' and will completely elide your proposed annotation.
+> > 
+> > Hmm, for the first access, yes. This particular oddity could be
+> > "fixed" by surrounding the accesses by
+> > kcsan_nestable_atomic_begin/end(). I don't know if it warrants adding
+> > a raw_write_seqcount_latch_begin().
+> > 
+> > Preferences?
 > 
-> However, no memory_failure() work will be queued when abnormal synchronous
-> errors occur. These errors can include situations such as invalid PA,
-> unexpected severity, no memory failure config support, invalid GUID
-> section, etc. In such case, the user-space process will trigger SEA again.
-> This loop can potentially exceed the platform firmware threshold or even
-> trigger a kernel hard lockup, leading to a system reboot.
-> 
-> Fix it by performing a force kill if no memory_failure() work is queued
-> for synchronous errors.
-> 
-> Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> ---
->  drivers/acpi/apei/ghes.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index ada93cfde9ba..f2ee28c44d7a 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -801,6 +801,16 @@ static bool ghes_do_proc(struct ghes *ghes,
->  		}
->  	}
->  
-> +	/*
-> +	 * If no memory failure work is queued for abnormal synchronous
-> +	 * errors, do a force kill.
-> +	 */
-> +	if (sync && !queued) {
-> +		pr_err("%s:%d: hardware memory corruption (SIGBUS)\n",
-> +			current->comm, task_pid_nr(current));
+> I *think* it is doable to flip it around to the 'normal' order, but
+> given I've been near cross-eyed with a head-ache these past two days,
+> I'm not going to attempt a patch for you, since I'm bound to get it
+> wrong :/
 
-I think it would help to include the GHES_PFX to indicate where this
-message is coming from. The pr_fmt() macro could also be introduced
-instead.
+Something like this?
 
-Also, you may want to include the HW_ERR prefix. Not all kernel messages
-related to hardware errors have this prefix today. But maybe that should
-be changed so there is more consistent messaging.
+------ >8 ------
 
-Thanks,
-Yazen
+Author: Marco Elver <elver@google.com>
+Date:   Tue Oct 29 21:16:21 2024 +0100
+
+    time/sched_clock: Swap update_clock_read_data() latch writes
+    
+    Swap the writes to the odd and even copies to make the writer critical
+    section look like all other seqcount_latch writers.
+    
+    With that, we can also add the raw_write_seqcount_latch_end() to clearly
+    denote the end of the writer section.
+    
+    Signed-off-by: Marco Elver <elver@google.com>
+
+diff --git a/kernel/time/sched_clock.c b/kernel/time/sched_clock.c
+index 68d6c1190ac7..311c90a0e86e 100644
+--- a/kernel/time/sched_clock.c
++++ b/kernel/time/sched_clock.c
+@@ -119,9 +119,6 @@ unsigned long long notrace sched_clock(void)
+  */
+ static void update_clock_read_data(struct clock_read_data *rd)
+ {
+-	/* update the backup (odd) copy with the new data */
+-	cd.read_data[1] = *rd;
+-
+ 	/* steer readers towards the odd copy */
+ 	raw_write_seqcount_latch(&cd.seq);
+ 
+@@ -130,6 +127,11 @@ static void update_clock_read_data(struct clock_read_data *rd)
+ 
+ 	/* switch readers back to the even copy */
+ 	raw_write_seqcount_latch(&cd.seq);
++
++	/* update the backup (odd) copy with the new data */
++	cd.read_data[1] = *rd;
++
++	raw_write_seqcount_latch_end(&cd.seq);
+ }
+ 
+ /*
+
+------ >8 ------
+
+I also noticed your d16317de9b41 ("seqlock/latch: Provide
+raw_read_seqcount_latch_retry()") to get rid of explicit instrumentation
+in noinstr.
+
+Not sure how to resolve that. We have that objtool support to erase
+calls in noinstr code (is_profiling_func), but that's x86 only.
+
+I could also make kcsan_atomic_next(0) noinstr compatible by checking if
+the ret IP is in noinstr, and immediately return if it is.
+
+Preferences?
 
