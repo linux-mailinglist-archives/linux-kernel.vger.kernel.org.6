@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-386986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3FF9B4A78
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:02:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FE59B4A7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:02:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 297D5B23B06
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:02:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 811101F22DC8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:02:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1C6D206955;
-	Tue, 29 Oct 2024 13:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3364206049;
+	Tue, 29 Oct 2024 13:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBYHkHa5"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="xq2XKue2"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB31206047;
-	Tue, 29 Oct 2024 13:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67701C2ED;
+	Tue, 29 Oct 2024 13:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206855; cv=none; b=ARhsBYBjTl/BJwv7Vol1Uj8s1nqnZGXA4xitsk0tkB1Vy3/CwLIW5XQ06YWCQvSU+ug897xf7lbQmr9MDJgNNeoPUB3qKMNZOyXvAFGlmJRNWS5v8p+1eME2alY6IR5snFN72npx6jPa/1X/FKd/RSgXgwXSsG1leY3T+ndcWsU=
+	t=1730206966; cv=none; b=H/CpLTD5YthhISyoT/EDxh7RzBcr0Eqm6Xg0s7/8CEwAhwgoeSbVOM8smc6h45gIaFYxolh+qAsv5lnJV0dh+BprbvpG2exttFvucBbHuLNX3hpCcTb8XfgE66JyLPgocQ//is13y+iu4gvtQGSkWtz6xtXKPwVFJUDZvlQ4GpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206855; c=relaxed/simple;
-	bh=uacRA8mJm8LnZbCxmbCmUnjDqrxLthDjclqOjyzXNCI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TL7AJv6P/pY3MkV98fvOrHoqDh8deqB+uWWaUmjBYv8T9AmCnBuCejTm5AZo1eZ6Gt5fxByCmsSoikkn6MQtKdBnE+7L2+Cq0mielnllRvhueFk6oJoYHKelpdNcLiSyo1PjodyqmDIiL6ryVYSMNt8e1YF5fKI+JSNP7N6Ip4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBYHkHa5; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so8410981e87.2;
-        Tue, 29 Oct 2024 06:00:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730206851; x=1730811651; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OAVsU5g3+MlTQcp010PACKQBUJqBPdIp3WU6iL95VOg=;
-        b=MBYHkHa5FyY0VAEBuYFQC7lnI4G3jQmyYyLs+9G09/lbJr7JweWAfnrKY67hfMOxAB
-         Ll7QRb0ThL+BYyZ7lfcOaW/OsqY8Jm/T24goaX4i5fPAxxiP+vXVt1ujJrPEWbvAJuCL
-         9onhHPGt6uaBORG1M9UDdYT/ilxbTjMJb0W5gWCWsPz2t84pkWdOu+WnccU8OdBtQqCJ
-         rqoW9rF7EjS9qcpP7x2YZCRjED13b4DNd1Hk1ansOQKjIxgi89JYK0BYWpI6xFLx1057
-         Zo7qwCjjRPDj49wxPO6yHKDqaB2G7Id2CetELhDPQbtSdM1sPKBeI3/SEtINAkK1VjSa
-         e+iA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730206851; x=1730811651;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OAVsU5g3+MlTQcp010PACKQBUJqBPdIp3WU6iL95VOg=;
-        b=Qb8+FvT5k8dbi0XliiD77ZsrzqBWGYFkiKoRou65hkhDYPHukuLx5w/bNGS7KiDtNm
-         puu0nlbJMHvaNszKtnUpCfzpWXU+1ElyvBd6MJEUxRVrJ4P7LSrsDMJNqWoLzM6EITm+
-         PCjsIxkWHdPv9o4iAM2NX8fX/N3hBOYe4P2Iv0zguajRUIbLqmZIDWTWJYa5iCzf6gAV
-         5vCxJJYDYJLfjjtMwDp3qqwB/IDy4cC0yGnIQpc9j8x1XrzupdyjOoRF8SYyhCGktSUh
-         O+ClslU5uHo93Oe7lHwOGJF+MSYBnGuM8Vi5HhvQGlKP3dsII1lEOZ4DEIFRSVOmKfRm
-         BRGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIRwesk1XYVxQ3wa0WrtPhGoE9iTjXVs1Q8BK93dR5QO4gsPKwOfzJjiETSKsU69gXhWd2nNafLS2wobi1@vger.kernel.org, AJvYcCWgW6vCSngYyJkHJyQGMFUby/nfqT+lcMqwzQDtaD3JvDNPh6PRgWCUhpUJ67Oo58Hid38wFPLD53ef@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkP/BEf8u6EQG+0gibgfS2GgcyFEwD1hA3wrJGlBddI6RqDfE7
-	snM7Hm9vxy69hG71Xuc/47KBwy0Yh9iwbUNN6BgewuWJ+bG8pGPD
-X-Google-Smtp-Source: AGHT+IEGnEGBW87aSj5ywZD3JRXQJHCQ+JhLShuDMPdcEC0VIPqm8uq3fnwqVRM+A00VgfQ0ujV5Cw==
-X-Received: by 2002:a05:6512:2311:b0:538:9e1e:b06f with SMTP id 2adb3069b0e04-53b348dacd3mr8706950e87.27.1730206848339;
-        Tue, 29 Oct 2024 06:00:48 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e124474sm1368629e87.81.2024.10.29.06.00.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 06:00:47 -0700 (PDT)
-Message-ID: <65fbbdec-3746-4f8c-b3a4-46ab29938339@gmail.com>
-Date: Tue, 29 Oct 2024 15:00:45 +0200
+	s=arc-20240116; t=1730206966; c=relaxed/simple;
+	bh=6zlYd9Sh85VMhYNMWlJ/18aBsnWAUD7V/elpV+0eEzU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LmxAxGevDAP6y6IT3se1jQYzyP7I6kmDVqAjeKrz9aWarZPi5eeytBmM29Bh1SYtxqCqlmdlKqnveNcrefEQ2slmj+wV1oyyw/gNCF+Gc+oZb1PqCz7d569/cfErJH4qYWAL4WLsj6ep0YyIzCeAU3VsQEkDyTNaJvuV6zarjCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=xq2XKue2; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T9B2Bi026333;
+	Tue, 29 Oct 2024 09:02:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=bx79OakHKqtLIjSc4XDf4/sUlI+
+	y0vKG14CYdzRXTng=; b=xq2XKue2LQPSiQXgNR2x7nHKoFOwwGMPeyPhNMiar9V
+	YcV9HHj1qQZR2kxxkeEiR1U7I63VGECziPNd7IN4IRNTj5j4q1ZPAK8jKoP2Ooh2
+	u7AZM9pn4dARjtGRJccLwRVxVwV7T4QK7GJqo5t145DIOxcR+07Y6073mx7uAccA
+	vZsgZ2t5NpaOcmzVTFQU9StnuHBuo7aOP6e9sFhoa4y/w33kAQYN7tWNKOfhLe9V
+	829156AGKnLARZSXviP3EcGXuF/GgZDaGno/KEG8Za1VaQEYMt/VhH7G3Muhx62s
+	N/F9YvYsMRU7ff4UsxmA6cMtb0EYl9fgIi5nhur55cQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 42gwb2numn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:02:07 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49TD25Ti016534
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 29 Oct 2024 09:02:05 -0400
+Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
+ ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 29 Oct 2024 09:02:05 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by
+ ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.986.14; Tue, 29 Oct 2024 09:02:05 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Tue, 29 Oct 2024 09:02:05 -0400
+Received: from CENCARNA-L02.ad.analog.com (CENCARNA-L02.ad.analog.com [10.117.116.108])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49TD1hWX019740;
+	Tue, 29 Oct 2024 09:01:46 -0400
+From: Cedric Encarnacion <cedricjustine.encarnacion@analog.com>
+To: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-hwmon@vger.kernel.org>
+CC: Guenter Roeck <linux@roeck-us.net>, Jean Delvare <jdelvare@suse.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Delphine CC Chiu
+	<Delphine_CC_Chiu@Wiwynn.com>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Peter
+ Yin <peteryin.openbmc@gmail.com>,
+        Noah Wang <noahwang.wang@outlook.com>, "Marek Vasut" <marex@denx.de>,
+        Lukas Wunner <lukas@wunner.de>,
+        Cedric
+ Encarnacion <cedricjustine.encarnacion@analog.com>
+Subject: [PATCH 0/2] Add driver for LTP8800-1A, LTP8800-2 and LTP8800-4A
+Date: Tue, 29 Oct 2024 21:01:35 +0800
+Message-ID: <20241029130137.31284-1-cedricjustine.encarnacion@analog.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: bd71828: Use charger resistor in mOhm
- instead of MOhm
-To: Andreas Kemnade <andreas@kemnade.info>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: sre@kernel.org
-References: <20241029111112.33386-1-andreas@kemnade.info>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20241029111112.33386-1-andreas@kemnade.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: 4E73l1UoolAgn6w22Qz-IpePKHS3Uxo2
+X-Proofpoint-GUID: 4E73l1UoolAgn6w22Qz-IpePKHS3Uxo2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ priorityscore=1501 mlxlogscore=972 adultscore=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 bulkscore=0 clxscore=1011 malwarescore=0 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410290099
 
-On 29/10/2024 13:11, Andreas Kemnade wrote:
-> Apparently there was some confusion regarding milliohm vs. megaohm.
-> (m/M). Use microohms to be able to properly specify the charger
-> resistor like other drivers do. This is not used yet by mainline code
-> yet. Specify a current sense resistor in milliohms range rathes then
-> megaohms range in the examples.
-> 
-> CC: sre@kernel.org
-> Reported-by: Matti Vaittinen <mazziesaccount@gmail.com>
-> Closes: https://lore.kernel.org/imx/6dcd724a-a55c-4cba-a45b-21e76b1973b0@gmail.com/T/#mf590875a9f4d3955cd1041d7196ff0c65c0a7e9d
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+The LTP8800-1A/-2/-4A is a 150A/135A/200A step-down μModule regulator that
+provides microprocessor core voltage from 54V power distribution
+architecture. It features remote configurability and telemetry monitoring
+of power management parameters over PMBus. This patch series adds driver
+and bindings for these devices.
 
-Thanks a ton Andreas :) Maybe a
-Fixes: 1af5332fcf7c ("dt-bindings: mfd: Document ROHM BD71828 bindings")
-as well?
+Cedric Encarnacion (2):
+  dt-bindings: trivial-devices: add ltp8800
+  hwmon: pmbus: add driver for ltp8800-1a, ltp8800-4a, and ltp8800-2
 
-[I just pushed something like this (but untested) in my repo - but I 
-missed updating the example!]
+ .../devicetree/bindings/trivial-devices.yaml  |   6 +
+ Documentation/hwmon/index.rst                 |   1 +
+ Documentation/hwmon/ltp8800.rst               | 103 ++++++++++++++++++
+ MAINTAINERS                                   |   7 ++
+ drivers/hwmon/pmbus/Kconfig                   |  18 +++
+ drivers/hwmon/pmbus/Makefile                  |   1 +
+ drivers/hwmon/pmbus/ltp8800.c                 |  74 +++++++++++++
+ 7 files changed, 210 insertions(+)
+ create mode 100644 Documentation/hwmon/ltp8800.rst
+ create mode 100644 drivers/hwmon/pmbus/ltp8800.c
 
-Reviewed-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
-> ---
->   .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml  | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> index fa17686a64f7..09e7d68e92bf 100644
-> --- a/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> @@ -55,14 +55,15 @@ properties:
->       minimum: 0
->       maximum: 1
->   
-> -  rohm,charger-sense-resistor-ohms:
-> -    minimum: 10000000
-> -    maximum: 50000000
-> +  rohm,charger-sense-resistor-micro-ohms:
-> +    minimum: 10000
-> +    maximum: 50000
-> +    default: 30000
->       description: |
->         BD71827 and BD71828 have SAR ADC for measuring charging currents.
->         External sense resistor (RSENSE in data sheet) should be used. If some
-> -      other but 30MOhm resistor is used the resistance value should be given
-> -      here in Ohms.
-> +      other but 30mOhm resistor is used the resistance value should be given
-> +      here in microohms.
->   
->     regulators:
->       $ref: /schemas/regulator/rohm,bd71828-regulator.yaml
-> @@ -114,7 +115,7 @@ examples:
->               #gpio-cells = <2>;
->               gpio-reserved-ranges = <0 1>, <2 1>;
->   
-> -            rohm,charger-sense-resistor-ohms = <10000000>;
-> +            rohm,charger-sense-resistor-micro-ohms = <10000>;
->   
->               regulators {
->                   buck1: BUCK1 {
+base-commit: 893acae4cdaf34fdde0e7285d5922af70775e5f7
+-- 
+2.39.2
 
 
