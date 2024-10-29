@@ -1,137 +1,95 @@
-Return-Path: <linux-kernel+bounces-386774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B6819B47C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9589B47C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD4A31F24114
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBD1B22690
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7308205126;
-	Tue, 29 Oct 2024 10:58:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D8B205ACC;
+	Tue, 29 Oct 2024 10:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LVWfOZc4"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7D632038A0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="BFEf7Ury"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CB22038A0
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199531; cv=none; b=LAkknu7g1pNq1hWNBZJDhYciPvaaN+fXkMPcmplh2OQx4U7HG3D223ZiDOoxJVEIYsKoVhA8G4+DpnR+69nrNJ+OHVVv6B2VdoghLYRt76UHVe4dSEn1pwDC8AFV7rxSYv75kPIfwjZ9650eLUH+lOAmbl8J2vZ3sCCEogxhwjg=
+	t=1730199542; cv=none; b=GaqNCrXPbGSp8FBXuETM65IpQnwlJaNdESxF0Jho93iKzQsoAHfms+CWXmSWSbN47qPg0vYdwgjHlMaxy6ESKGh5/7g2TNcBk1bsj1biQmWZmWCCU8xi4MOt4dSpiLAMz154N4c0lqK6igCRVpFFGJmELTLXX8aGhWVbU4ipJWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199531; c=relaxed/simple;
-	bh=jE775orIHl/zy2s+k5hOgL2vYd8qb4FFjQtfxIEvjnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SkvQHOG29R082UttI9+46Hy8m5wm0mgX5nYpndDide61baMFK7ntKfvNHdONk+8D2CDyiM92tp63ll3Zv3y/rYCqUh+dmksIYeS9ZkTLZsmkXEfesugcaE/3XnQLLsrEpMN5TZctR2b14DZ7Bk76zlMiBerWAs0G5ZgD9Ky15eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LVWfOZc4; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <f4668e71-796d-4fcf-994a-db032c6c43b6@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730199526;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ub5FWCH7w+9in2TZ/Sldo0RcMQcoiIkY60kZ41MTpU0=;
-	b=LVWfOZc49els2x+SgiBbh6tp0JJjRzY4ow7ACbe79uGPAY2QBo1i31+KXH42R1vb8Fdic+
-	AkH9FWi+QSZSMAke80T+Be8nnDHLyrJVw4zFLoWMA2P1giO0OA1u2GOyDrjwlZxPt5R1HB
-	7mKwjnfTO7ANo4gZ7SYhjK9WV3Ujzt0=
-Date: Tue, 29 Oct 2024 10:58:42 +0000
+	s=arc-20240116; t=1730199542; c=relaxed/simple;
+	bh=Bu+UtIAhe3Ye/jGsrewOK+Es0DYIe7uQyiPkNdcvCT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pn4Vgc6tbyZBlX42FU03pvOsq0lHsY1k985geA1qQ7rBe7firqfAum4m71GSrD+IDwDUXnN/OioTgFX6h6r2VkLdWaLPtZCBiTW/hOUWUJRv4S1/QZgy+PXldpARrpLllgC/p/9HDx8+AC71SKJUUMEzEJ0H7Vsbu9Hvc3mXZIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=BFEf7Ury; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from lemmy.home.8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id CDE462A8D41;
+	Tue, 29 Oct 2024 11:58:58 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1730199538;
+	bh=Bu+UtIAhe3Ye/jGsrewOK+Es0DYIe7uQyiPkNdcvCT8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=BFEf7Uryr9P69Jlfc9CpMDv5OgRW2CwT1ibNBTV0i8gUvTb9t9a6WZYG+45lt8DLH
+	 nW1KWSl0xAynVQN3bvUGYQfYQns6k/RhNFWaAcqu84ypjqxZ2jUHIMU+HZLmfR8t6i
+	 DK82jGJmYuKlbm1hEkw1mJi+YUFJ97WzhOGawUx75OKH4vUNyzOt9RaPwo5/eGnt7k
+	 a8IFdKdfiR8JcIkCd8YpPXcitg1E78yblKnN39FRdpmba5iqw+SOpdRpPAmNB8Oy7d
+	 SU48VAiaqYaOatl7aRtqWEfzW5ALY+oF3DvRBrDfPD8g5QtW0uXGJ2YNHEng64mq70
+	 jAL/shsFeRqpw==
+From: Joerg Roedel <joro@8bytes.org>
+To: iommu@lists.linux.dev
+Cc: Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Joerg Roedel <jroedel@suse.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Vasant Hegde <vasant.hegde@amd.com>
+Subject: [PATCH] iommu: Fix prototype of iommu_paging_domain_alloc_flags()
+Date: Tue, 29 Oct 2024 11:58:49 +0100
+Message-ID: <20241029105849.52069-1-joro@8bytes.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v3 1/3] net: ipv6: ioam6_iptunnel: mitigate
- 2-realloc issue
-To: Justin Iurman <justin.iurman@uliege.be>
-Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com,
- kuba@kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
- horms@kernel.org, linux-kernel@vger.kernel.org
-References: <20241028223611.26599-1-justin.iurman@uliege.be>
- <20241028223611.26599-2-justin.iurman@uliege.be>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241028223611.26599-2-justin.iurman@uliege.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 28/10/2024 22:36, Justin Iurman wrote:
-> This patch mitigates the two-reallocations issue with ioam6_iptunnel by
-> providing the dst_entry (in the cache) to the first call to
-> skb_cow_head(). As a result, the very first iteration would still
-> trigger two reallocations (i.e., empty cache), while next iterations
-> would only trigger a single reallocation.
-> 
-> Performance tests before/after applying this patch, which clearly shows
-> the improvement:
-> - inline mode:
->    - before: https://ibb.co/LhQ8V63
->    - after: https://ibb.co/x5YT2bS
-> - encap mode:
->    - before: https://ibb.co/3Cjm5m0
->    - after: https://ibb.co/TwpsxTC
-> - encap mode with tunsrc:
->    - before: https://ibb.co/Gpy9QPg
->    - after: https://ibb.co/PW1bZFT
-> 
-> This patch also fixes an incorrect behavior: after the insertion, the
-> second call to skb_cow_head() makes sure that the dev has enough
-> headroom in the skb for layer 2 and stuff. In that case, the "old"
-> dst_entry was used, which is now fixed. After discussing with Paolo, it
-> appears that both patches can be merged into a single one -this one-
-> (for the sake of readability) and target net-next.
-> 
-> Signed-off-by: Justin Iurman <justin.iurman@uliege.be>
-> ---
->   net/ipv6/ioam6_iptunnel.c | 90 +++++++++++++++++++++------------------
->   1 file changed, 49 insertions(+), 41 deletions(-)
-> 
-> diff --git a/net/ipv6/ioam6_iptunnel.c b/net/ipv6/ioam6_iptunnel.c
-> index beb6b4cfc551..07bfd557e08a 100644
-> --- a/net/ipv6/ioam6_iptunnel.c
-> +++ b/net/ipv6/ioam6_iptunnel.c
-> @@ -254,15 +254,24 @@ static int ioam6_do_fill(struct net *net, struct sk_buff *skb)
->   	return 0;
->   }
->   
-> +static inline int dev_overhead(struct dst_entry *dst, struct sk_buff *skb)
-> +{
-> +	if (likely(dst))
-> +		return LL_RESERVED_SPACE(dst->dev);
-> +
-> +	return skb->mac_len;
-> +}
+From: Joerg Roedel <jroedel@suse.de>
 
-static inline functions in .c files are not welcome.
-consider to move this helper to some header, probably dev.h or dst.h
-and reuse it in other tunnels.
+The iommu_paging_domain_alloc_flags() prototype for
+non-iommu kernel configurations lacks the 'static inline'
+prefixes.
 
-And please honor 24h rule before the next submission.
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Vasant Hegde <vasant.hegde@amd.com>
+Fixes: 20858d4ebb42 ("iommu: Introduce iommu_paging_domain_alloc_flags()")
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+---
+ include/linux/iommu.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index aa78d911fdda..522efdc7d815 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -1080,7 +1080,7 @@ static inline bool device_iommu_capable(struct device *dev, enum iommu_cap cap)
+ 	return false;
+ }
+ 
+-struct iommu_domain *iommu_paging_domain_alloc_flags(struct device *dev,
++static inline struct iommu_domain *iommu_paging_domain_alloc_flags(struct device *dev,
+ 						     unsigned int flags)
+ {
+ 	return ERR_PTR(-ENODEV);
+-- 
+2.47.0
 
->   static int ioam6_do_inline(struct net *net, struct sk_buff *skb,
-> -			   struct ioam6_lwt_encap *tuninfo)
-> +			   struct ioam6_lwt_encap *tuninfo,
-> +			   struct dst_entry *dst)
->   {
->   	struct ipv6hdr *oldhdr, *hdr;
->   	int hdrlen, err;
->   
->   	hdrlen = (tuninfo->eh.hdrlen + 1) << 3;
->   
-> -	err = skb_cow_head(skb, hdrlen + skb->mac_len);
-> +	err = skb_cow_head(skb, hdrlen + dev_overhead(dst, skb));
->   	if (unlikely(err))
->   		return err;
->   
-[.. snip ..]
 
