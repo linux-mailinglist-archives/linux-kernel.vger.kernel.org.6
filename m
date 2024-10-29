@@ -1,149 +1,187 @@
-Return-Path: <linux-kernel+bounces-386443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97F159B438E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:53:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BAD59B4393
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:54:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C94F51C21FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:53:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D3B44B21654
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB79202F6E;
-	Tue, 29 Oct 2024 07:53:05 +0000 (UTC)
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 053A7203703;
+	Tue, 29 Oct 2024 07:53:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4KhMT1X"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ED622036EF
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 586A92010F4;
+	Tue, 29 Oct 2024 07:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188384; cv=none; b=BSgtues/S/jV7DjOKsySdjiD8qHtNS8M49uxDbQ9NFTtT+ISlSpgsPLtf7Q/3FJcnHEzYntO4UmLWjbBvFtNc4VkRVX4bLfxM8kZxjyaWQolq2OnN65mGXSdeKyoAENMFL/h+6XjbC9X1hsX7TNO07XbYYhMS8Z/h30U319TLSA=
+	t=1730188430; cv=none; b=OBOAq9HWTofAEtkwuJJT2Si7tZzeUjetOA5qDew7MNiYXEFFp3wzC44DJG9OIk1Vi9x1LcNtfIx7RmkwB8ASXKDRocdriraXW7sf6BPyeW5AoDOj/cwJbmeghPr1MAPyVt5SVfiu+LHUfJHW8uuiKlxoLinCHoSBTEIg41iveg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188384; c=relaxed/simple;
-	bh=BzF6Xg9hzfUjcrlQnCe8ytWzR0FDsoAuMbU5HXDvLUk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=j3uj03y/VrCddYOJcOz4+VPWp2p8czu/eD95BDcWcVhKnOW41+568NlVQLYG3CL2B5r5jzArI72bReOd1Itk0AP9cOsyn5a0irasg9a60LXGW9TMr3AS3Z8OjPfrDOhQh8K+foJdKobCTg4kpyt1tmDIXN0MUz9wCM8un4rdv5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A3F041C0006;
-	Tue, 29 Oct 2024 07:52:57 +0000 (UTC)
-Message-ID: <9aa8c627-ad69-43e9-9331-40a5df53de7f@ghiti.fr>
-Date: Tue, 29 Oct 2024 08:52:57 +0100
+	s=arc-20240116; t=1730188430; c=relaxed/simple;
+	bh=rYKLJG/cGy6PWVHFLv8OcSjLD+SMiwoShTSmF2XtG7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Nvx0KzWpjNxWZCey5Ini7b0HsEM289SwX+tlBCh/wNMdzsxGr9luplpCiOfLauVqgKx2/pvAnVCmdVsiBrefOHjFOGq+jhGDHJjLWDZs2eK/++mxBSoHGI6y1tFTx57TCY56+7PyBI4t3zdB5uPxWL1YH5W0SiabqV7szvsulV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4KhMT1X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B6AC4CECD;
+	Tue, 29 Oct 2024 07:53:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730188429;
+	bh=rYKLJG/cGy6PWVHFLv8OcSjLD+SMiwoShTSmF2XtG7I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=e4KhMT1XFmyQP9rLTR1paaw4xQ/HGRLlixTAL5qcbS1HymUrTToiIEc0IfZepgFL2
+	 eIjTVRQkQw6yVHDyEz6maRNsySlc6gI1DSiSNbY/ZTgYRYM5WpFxcmXiJplOEXVN8V
+	 kFKDF2B2L5nLXxe/fwt37QYZA/tkP2VvEaU4tkgX9zPx1MnXb5C9b6Flwbp3fby2b9
+	 fxEFe6f0+cC3KEZsdWpzq9c4VNGK2nMsttlsXPfAWpT8cGbWY2KiScdYTJNZD0Vv19
+	 +NoL02863UEjLl7mzvXevR5pfQxYMA3w85v3Rz+RKM3XcJIM5Z6OyXM3B7btcK4w4K
+	 qP0iqhA5LQ4hg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1t5h3I-0000000058U-25Z4;
+	Tue, 29 Oct 2024 08:54:08 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2] arm64: dts: x1e80100-crd: describe HID supplies
+Date: Tue, 29 Oct 2024 08:52:58 +0100
+Message-ID: <20241029075258.19642-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] irqchip/riscv-intc: Fix no-SMP boot with ACPI
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-To: Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Thomas Gleixner <tglx@linutronix.de>
-References: <20241014065739.656959-1-sunilvl@ventanamicro.com>
- <cbe0831e-706c-465f-b412-fccf26163e9b@ghiti.fr>
-In-Reply-To: <cbe0831e-706c-465f-b412-fccf26163e9b@ghiti.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
 
-On 29/10/2024 08:46, Alexandre Ghiti wrote:
-> Hi Thomas,
->
-> On 14/10/2024 08:57, Sunil V L wrote:
->> When CONFIG_SMP is disabled, the static array rintc_acpi_data with size
->> NR_CPUS will not be sufficient to hold all RINTC structures passed from
->> the firmware. All RINTC structures are required to configure
->> IMSIC/APLIC/PLIC properly irrespective of SMP in the OS. So, allocate
->> dynamic memory based on the number of RINTC structures in MADT to fix
->> this issue.
->>
->> Fixes: f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
->> Reported-by: Björn Töpel <bjorn@kernel.org>
->> Closes: 
->> https://github.com/linux-riscv/linux-riscv/actions/runs/11280997511/job/31375229012
->> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
->> ---
->>   drivers/irqchip/irq-riscv-intc.c | 19 ++++++++++++++++++-
->>   1 file changed, 18 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/irqchip/irq-riscv-intc.c 
->> b/drivers/irqchip/irq-riscv-intc.c
->> index 8c5411386220..f653c13de62b 100644
->> --- a/drivers/irqchip/irq-riscv-intc.c
->> +++ b/drivers/irqchip/irq-riscv-intc.c
->> @@ -265,7 +265,7 @@ struct rintc_data {
->>   };
->>     static u32 nr_rintc;
->> -static struct rintc_data *rintc_acpi_data[NR_CPUS];
->> +static struct rintc_data **rintc_acpi_data;
->>     #define for_each_matching_plic(_plic_id)                \
->>       unsigned int _plic;                        \
->> @@ -329,13 +329,30 @@ int acpi_rintc_get_imsic_mmio_info(u32 index, 
->> struct resource *res)
->>       return 0;
->>   }
->>   +static int __init riscv_intc_acpi_match(union 
->> acpi_subtable_headers *header,
->> +                    const unsigned long end)
->> +{
->> +    return 0;
->> +}
->> +
->>   static int __init riscv_intc_acpi_init(union acpi_subtable_headers 
->> *header,
->>                          const unsigned long end)
->>   {
->>       struct acpi_madt_rintc *rintc;
->>       struct fwnode_handle *fn;
->> +    int count;
->>       int rc;
->>   +    if (!rintc_acpi_data) {
->> +        count = acpi_table_parse_madt(ACPI_MADT_TYPE_RINTC, 
->> riscv_intc_acpi_match, 0);
->> +        if (count <= 0)
->> +            return -EINVAL;
->> +
->> +        rintc_acpi_data = kcalloc(count, sizeof(*rintc_acpi_data), 
->> GFP_KERNEL);
->> +        if (!rintc_acpi_data)
->> +            return -ENOMEM;
->> +    }
->> +
->>       rintc = (struct acpi_madt_rintc *)header;
->>       rintc_acpi_data[nr_rintc] = 
->> kzalloc(sizeof(*rintc_acpi_data[0]), GFP_KERNEL);
->>       if (!rintc_acpi_data[nr_rintc])
->
->
-> Do you think you can merge this patch for rc6? We still need it to fix 
-> our nosmp builds.
+Add the missing HID supplies to avoid relying on other consumers to keep
+them on.
+
+This also avoids the following warnings on boot:
+
+	i2c_hid_of 0-0010: supply vdd not found, using dummy regulator
+	i2c_hid_of 0-0010: supply vddl not found, using dummy regulator
+	i2c_hid_of 1-0015: supply vdd not found, using dummy regulator
+	i2c_hid_of 1-0015: supply vddl not found, using dummy regulator
+	i2c_hid_of 1-003a: supply vdd not found, using dummy regulator
+	i2c_hid_of 1-003a: supply vddl not found, using dummy regulator
+
+Note that VREG_MISC_3P3 is also used for things like the fingerprint
+reader which are not yet fully described so mark the regulator as always
+on for now.
+
+Fixes: d7e03cce0400 ("arm64: dts: qcom: x1e80100-crd: Enable more support")
+Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+
+Changes in v2:
+ - amend the pin config in order not to rely on the boot firmware
 
 
-Please ignore this message, I found it with a different title.
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 40 +++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-Thanks,
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+index b50accb220e5..c5478fd08e51 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+@@ -8,6 +8,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/gpio-keys.h>
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
+ #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+ 
+ #include "x1e80100.dtsi"
+@@ -277,6 +278,23 @@ vreg_edp_3p3: regulator-edp-3p3 {
+ 		regulator-boot-on;
+ 	};
+ 
++	vreg_misc_3p3: regulator-misc-3p3 {
++		compatible = "regulator-fixed";
++
++		regulator-name = "VREG_MISC_3P3";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++
++		gpio = <&pm8550ve_8_gpios 6 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&misc_3p3_reg_en>;
++
++		regulator-boot-on;
++		regulator-always-on;
++	};
++
+ 	vreg_nvme: regulator-nvme {
+ 		compatible = "regulator-fixed";
+ 
+@@ -691,6 +709,9 @@ touchpad@15 {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 3 IRQ_TYPE_LEVEL_LOW>;
+ 
++		vdd-supply = <&vreg_misc_3p3>;
++		vddl-supply = <&vreg_l12b_1p2>;
++
+ 		pinctrl-0 = <&tpad_default>;
+ 		pinctrl-names = "default";
+ 
+@@ -704,6 +725,9 @@ keyboard@3a {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 67 IRQ_TYPE_LEVEL_LOW>;
+ 
++		vdd-supply = <&vreg_misc_3p3>;
++		vddl-supply = <&vreg_l12b_1p2>;
++
+ 		pinctrl-0 = <&kybd_default>;
+ 		pinctrl-names = "default";
+ 
+@@ -723,6 +747,9 @@ touchscreen@10 {
+ 		hid-descr-addr = <0x1>;
+ 		interrupts-extended = <&tlmm 51 IRQ_TYPE_LEVEL_LOW>;
+ 
++		vdd-supply = <&vreg_misc_3p3>;
++		vddl-supply = <&vreg_l15b_1p8>;
++
+ 		pinctrl-0 = <&ts0_default>;
+ 		pinctrl-names = "default";
+ 	};
+@@ -856,6 +883,19 @@ &pcie6a_phy {
+ 	status = "okay";
+ };
+ 
++&pm8550ve_8_gpios {
++	misc_3p3_reg_en: misc-3p3-reg-en-state {
++		pins = "gpio6";
++		function = "normal";
++		bias-disable;
++		input-disable;
++		output-enable;
++		drive-push-pull;
++		power-source = <1>; /* 1.8 V */
++		qcom,drive-strength = <PMIC_GPIO_STRENGTH_LOW>;
++	};
++};
++
+ &pmc8380_3_gpios {
+ 	edp_bl_en: edp-bl-en-state {
+ 		pins = "gpio4";
+-- 
+2.45.2
 
-Alex
-
-
->
-> Thanks,
->
-> Alex
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
