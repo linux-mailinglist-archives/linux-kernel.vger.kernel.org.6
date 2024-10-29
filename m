@@ -1,106 +1,180 @@
-Return-Path: <linux-kernel+bounces-386186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A978C9B4029
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:09:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ED559B402B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:10:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C25E280D78
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2CF791C22433
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:10:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E939715D5D9;
-	Tue, 29 Oct 2024 02:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9513A130A7D;
+	Tue, 29 Oct 2024 02:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="uLK5GKVf"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="QEaj7Kyd"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B8E68BE8;
-	Tue, 29 Oct 2024 02:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E63B1863F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730167789; cv=none; b=P7tE8aR39zdDMPYUv9u+GH9TcO/IpR0y2g3sUOybENOPNM7a3JLrM8Fdi5gdiNlwySqqcHEXfjogjZcOvOhCKTelaxtC5bssjHOUpLv53/5B/OBQX7WNcCQ8Hk9Ho6yxyVpq6+5q1HLJKc20fgRsS5up6Q2B85jaXmJa1XSCA8M=
+	t=1730167844; cv=none; b=rKmMCnq0a9z90tnH+8hkdJJ2FyVf2mMjC0il7V9O7x6KUnaihYXVCnrWL/tbmTvROlcDSXqI4vEZAwoqSfLfXckiLt03U/X2IfFCsTkAn7UFykmdiYR9fPYtEe+fWCDSXupk8FQVnjZfBSmECTgCCiFkGeYk5XoJU98CHodWvso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730167789; c=relaxed/simple;
-	bh=XHhfaqqMiTpKWA1JbdNg5fGXzoeVnAuiHLtBpbjUa/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=HvhmX/OJbQPLE11zMudK8fLjGq4ax+r+6FqNyaklFKIBTDoXNtHufK95fNgP2d9y8P/7rjzUq14J1/Qzyu0neegtL/D0qKmks+0JmUltuss+2eekWg26+Nu0DhIpY8LcxT4pFnbBtWAdUpI0g0QSyzeQ1MQfJZre6a4KBQ8vBWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=uLK5GKVf; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730167778; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
-	bh=UZQ4vTEAFGdHKT4zvnIqMlcj0U5DV0sNZfjPCj5XolQ=;
-	b=uLK5GKVfLVhHe65nGU6i0FRdHZOuv2FSyIC3NUA1r+w59Fc6Wa/96UZM0qXhM3J/VoVeDDZoSfcb39y6RDYWst4gJ94lknLJmpGreIBNCl9DA2oYKE4zNUhpxXl4hLrd0qVDDlQVgL/Jo/EdobUhGjmZHAO95HXw9yMF+suszZs=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WI8QfWi_1730167772 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 29 Oct 2024 10:09:38 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: loic.poulain@linaro.org
-Cc: rfoss@kernel.org,
-	andi.shyti@kernel.org,
-	linux-i2c@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH v2 -next] i2c: qcom-cci: Remove the unused variable cci_clk_rate
-Date: Tue, 29 Oct 2024 10:09:31 +0800
-Message-Id: <20241029020931.42311-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1730167844; c=relaxed/simple;
+	bh=wW55nxX4enWaaTudNJgiNp6sn8oEZdiWDe5jGNPBVZo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BVABDSAlVEUn6WcbTAAaKXEZnW0FGIwhZR0A4oEURsZxdwmzaSBhTAuGnHcsbZPyrWzjbQIZmu+pRQFXyebsOWLN90eIKpOtAPFme9NsYU/K4xN+i7HRX1L788vnCLTVOcKBbBwWoaY9opjE/sw2Ll67jkegKUb57n3TvpbPDMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=QEaj7Kyd; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: f867b6fe959a11efbd192953cf12861f-20241029
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=9zxNMXwPCBjYW69Zb32ChS7Lih5KnlHYyLjDjWcKxkQ=;
+	b=QEaj7KydGUhLAKlkeeb1fbsfSA3lBfm6BfmCH/sp8PpzkR+FR3vR8Et9DqlIBq18YzI7vdiybWL1fMi6FtfaSHhxsR7kJu1fMZ44XC/YZXhPHhrmeXgGd/nYhYTucPlaqAWaL7g04ahVMne3Tj6iumjCX4L+GOhXqTJY9TOIgew=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:5356925a-d4ee-438b-9362-cbd31065dccf,IP:0,U
+	RL:0,TC:0,Content:-20,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-20
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:a97933e7-cb6b-4a59-bfa3-98f245b4912e,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:1,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: f867b6fe959a11efbd192953cf12861f-20241029
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <defa.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 568546268; Tue, 29 Oct 2024 10:10:29 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N2.mediatek.inc (172.21.101.94) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 28 Oct 2024 19:10:28 -0700
+Received: from mbjsdccf07.gcn.mediatek.inc (10.15.20.246) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 29 Oct 2024 10:10:27 +0800
+From: mtk25126 <defa.li@mediatek.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<wsd_upstream@mediatek.com>, <mingchang.jia@mediatek.com>,
+	<yuhan.wei@mediatek.com>, <hao.lin@mediatek.com>, mtk25126
+	<defa.li@mediatek.com>
+Subject: [PATCH] i3c: Remove redundant lock in i3c_device_uevent
+Date: Tue, 29 Oct 2024 10:09:40 +0800
+Message-ID: <20241029020950.31053-1-defa.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Variable ret is not effectively used, so delete it.
+We encountered the following lockdep warning.
+The i3c_master_register function recursively acquires &i3cbus->lock twice,
+which may cause a deadlock. 
 
-drivers/i2c/busses/i2c-qcom-cci.c:526:16: warning: variable ‘cci_clk_rate’ set but not used.
+Remove the logic of obtaining i3cbus->lock when using the i3c_device_uevent
+function to obtain the i3c_device_info structure.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=11532
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+============================================
+WARNING: possible recursive locking detected
+6.11.0-mainline
+--------------------------------------------
+init/1 is trying to acquire lock:
+f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_bus_normaluse_lock
+
+but task is already holding lock:
+f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_master_register
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&i3cbus->lock);
+  lock(&i3cbus->lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+2 locks held by init/1:
+ #0: fcffff809b6798f8 (&dev->mutex){....}-{3:3}, at: __driver_attach
+ #1: f1ffff80a6a40dc0 (&i3cbus->lock){++++}-{3:3}, at: i3c_master_register
+
+stack backtrace:
+CPU: 6 UID: 0 PID: 1 Comm: init
+Call trace:
+ dump_backtrace+0xfc/0x17c
+ show_stack+0x18/0x28
+ dump_stack_lvl+0x40/0xc0
+ dump_stack+0x18/0x24
+ print_deadlock_bug+0x388/0x390
+ __lock_acquire+0x18bc/0x32ec
+ lock_acquire+0x134/0x2b0
+ down_read+0x50/0x19c
+ i3c_bus_normaluse_lock+0x14/0x24
+ i3c_device_get_info+0x24/0x58
+ i3c_device_uevent+0x34/0xa4
+ dev_uevent+0x310/0x384
+ kobject_uevent_env+0x244/0x414
+ kobject_uevent+0x14/0x20
+ device_add+0x278/0x460
+ device_register+0x20/0x34
+ i3c_master_register_new_i3c_devs+0x78/0x154
+ i3c_master_register+0x6a0/0x6d4
+ mtk_i3c_master_probe+0x3b8/0x4d8
+ platform_probe+0xa0/0xe0
+ really_probe+0x114/0x454
+ __driver_probe_device+0xa0/0x15c
+ driver_probe_device+0x3c/0x1ac
+ __driver_attach+0xc4/0x1f0
+ bus_for_each_dev+0x104/0x160
+ driver_attach+0x24/0x34
+ bus_add_driver+0x14c/0x294
+ driver_register+0x68/0x104
+ __platform_driver_register+0x20/0x30
+ init_module+0x20/0xfe4
+ do_one_initcall+0x184/0x464
+ do_init_module+0x58/0x1ec
+ load_module+0xefc/0x10c8
+ __arm64_sys_finit_module+0x238/0x33c
+ invoke_syscall+0x58/0x10c
+ el0_svc_common+0xa8/0xdc
+ do_el0_svc+0x1c/0x28
+ el0_svc+0x50/0xac
+ el0t_64_sync_handler+0x70/0xbc
+ el0t_64_sync+0x1a8/0x1ac
+
+Signed-off-by: mtk25126 <defa.li@mediatek.com>
 ---
-Changes in v2:
-  -Remove redundant code.
+ drivers/i3c/master.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
- drivers/i2c/busses/i2c-qcom-cci.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-qcom-cci.c b/drivers/i2c/busses/i2c-qcom-cci.c
-index 5cc791b3b57d..a0ef43e99751 100644
---- a/drivers/i2c/busses/i2c-qcom-cci.c
-+++ b/drivers/i2c/busses/i2c-qcom-cci.c
-@@ -523,7 +523,6 @@ static const struct dev_pm_ops qcom_cci_pm = {
- static int cci_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
--	unsigned long cci_clk_rate = 0;
- 	struct device_node *child;
- 	struct resource *r;
- 	struct cci *cci;
-@@ -594,14 +593,6 @@ static int cci_probe(struct platform_device *pdev)
- 		return dev_err_probe(dev, -EINVAL, "not enough clocks in DT\n");
- 	cci->nclocks = ret;
+diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
+index 6f3eb710a75d..bb8a8bf0c4c7 100644
+--- a/drivers/i3c/master.c
++++ b/drivers/i3c/master.c
+@@ -282,7 +282,8 @@ static int i3c_device_uevent(const struct device *dev, struct kobj_uevent_env *e
+ 	struct i3c_device_info devinfo;
+ 	u16 manuf, part, ext;
  
--	/* Retrieve CCI clock rate */
--	for (i = 0; i < cci->nclocks; i++) {
--		if (!strcmp(cci->clocks[i].id, "cci")) {
--			cci_clk_rate = clk_get_rate(cci->clocks[i].clk);
--			break;
--		}
--	}
--
- 	ret = cci_enable_clocks(cci);
- 	if (ret < 0)
- 		return ret;
+-	i3c_device_get_info(i3cdev, &devinfo);
++	if (i3cdev->desc)
++		devinfo = i3cdev->desc->info;
+ 	manuf = I3C_PID_MANUF_ID(devinfo.pid);
+ 	part = I3C_PID_PART_ID(devinfo.pid);
+ 	ext = I3C_PID_EXTRA_INFO(devinfo.pid);
 -- 
-2.32.0.3.g01195cf9f
+2.46.0
 
 
