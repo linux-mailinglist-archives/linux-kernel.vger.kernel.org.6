@@ -1,83 +1,56 @@
-Return-Path: <linux-kernel+bounces-386873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5880A9B48EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:03:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 949459B48D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DA2028273F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:03:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F621B21C06
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7282205E0A;
-	Tue, 29 Oct 2024 12:03:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A70E205AA4;
+	Tue, 29 Oct 2024 12:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="1oJV8saT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCWZRPwM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DFE205AB6;
-	Tue, 29 Oct 2024 12:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F342010E0
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730203403; cv=none; b=OmeiCEneJAsj3OTDyXyDHatf/D5Upy660H1LjT5gHhHuGnx/n9FHQNrarGjGdJA1hBYpoauuuExRXx4i93nitpJFIVdHaLwS/C0npKiM+KPjSJIzjtxgGTct6IjQXnQ42cPVtRYk+TYWw7STj5f3USvrTFoP2HfkClQMTjgIHsg=
+	t=1730203364; cv=none; b=jXkgMvPHBOVkyxMjYnh9DAWPMG8eTRvsErxvMdr00qUadUt9V4bPrxzgadMDmW1Chwu1BwNLDj8EuXqWSVNQkKFli3pY8RY+NX78iq02mD6olM7rQhbpi3Db3RvVJ0Dt+nCmoBUZnMxImTyxm2+6Bk3zhE9f7+jlUt14/I0c/to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730203403; c=relaxed/simple;
-	bh=Lf5hWvaIbDJuMOM5f4CIt8+nTmCx6ktFO/jL4SbVPwo=;
+	s=arc-20240116; t=1730203364; c=relaxed/simple;
+	bh=dG1cg1dJkX2e5KP3A53ABfFuvOvbm+UCDsTxRwGIVMM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fi7MP0+DY3D0aIjEZFQyX2QxPNkBD6mfbBaVGrsnZGzirIDxeMhh9Xwnoa2lwO1Wcj0racYUfXCk1w+EnhL1fHD1ZUnl32oVdeuLvluM50P75qF8FcJFoKvvEkeBgkoHL9eWnG/j5sLf+RDck6tYIzzkkCQk0afkoxRRGpq2k9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=1oJV8saT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=28P+nO6+7LRY7tiN18rzw6ddnXEFrM5ez8f38EAhSdo=; b=1oJV8saTVv87A+m+V5gWXuiUpH
-	Dwzrq09LUqTJAkRfeOW3SogL96ZdPvEFFksgX/EPw1EUa7wTndoU+zYQUvsri3FTLP9soXhVkoQ1z
-	eC/YxqcpbHmWw45Re5APhTb+QRpavTtIbb/6515gY919BH1odXF/dczA1l4+uVIvVJH8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t5kw8-00BZBh-JF; Tue, 29 Oct 2024 13:03:00 +0100
-Date: Tue, 29 Oct 2024 13:03:00 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v4 06/16] net: dwmac-imx: Use helper rgmii_clock
-Message-ID: <af44d346-d2dc-465e-b6cb-6c40802b77b7@lunn.ch>
-References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
- <20241028-upstream_s32cc_gmac-v4-6-03618f10e3e2@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gd5H1UbxfxYBNCYA4eGMkuRNIlXriSpsjwkaDSAv1oG1/MqEeAUrY64ZTkQ2TKkitq4Ik0jY2vtSQO97vKh0pDyv/YCgJ1K8w02clAJjEROKgUNVY2J2tkyJZcvy3pSJRmqqx3OcE1kyz8hFnlrCZu1j+5LtrltAB0T2PM1Iw3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RCWZRPwM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 320C5C4CEE3;
+	Tue, 29 Oct 2024 12:02:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730203363;
+	bh=dG1cg1dJkX2e5KP3A53ABfFuvOvbm+UCDsTxRwGIVMM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RCWZRPwM1sVJhlsj4jYJrJgo6Hs0puvkp/39PpZCyHCOGSgM7NEz7Anx/cs+3ZWDW
+	 6K91PfenzguJkTBuF93jYc2PNcyA6gLVVDX2lmpFrhnRHdqb6iMn4MqFnCeuIG7xiH
+	 IWIoRT9PCPgGOknplB0GI+gONj/Qu9gyujkMMXpT+XhwDvC2I93jNpaYR6j2ynTjQ9
+	 /q4dlIeG+qBOhqs20hbCTXMvirwktPKmIQaHwf4tizFm3c4QLo8d2vboQ0JhWznFsJ
+	 waKsHkmxnK0dvH3y1AauIyy9FKEenUdw7eQRxQlwaTt+67ZdU9VDDPAUd1ajI973DO
+	 5zZPHx68qOJ1A==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t5kwA-000000002ja-3KOs;
+	Tue, 29 Oct 2024 13:03:02 +0100
+Date: Tue, 29 Oct 2024 13:03:02 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Daniel Danzberger <dd@embedd.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gnss/usb: Add U-blox 8/M8 device id
+Message-ID: <ZyDO9lTmJmnQ1nJO@hovoldconsulting.com>
+References: <20241026075857.3651161-1-dd@embedd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,16 +59,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028-upstream_s32cc_gmac-v4-6-03618f10e3e2@oss.nxp.com>
+In-Reply-To: <20241026075857.3651161-1-dd@embedd.com>
 
-On Mon, Oct 28, 2024 at 09:24:48PM +0100, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> Utilize a new helper function rgmii_clock().
-> 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+On Sat, Oct 26, 2024 at 09:58:57AM +0200, Daniel Danzberger wrote:
+> Adds support for U-Blox 8 GNSS devices
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Please post the output of lsusb -v (or usb-devices) for this device.
 
-    Andrew
+IIRC this is a USB CDC device, which is already managed by the cdc-acm
+driver.
+
+Johan
 
