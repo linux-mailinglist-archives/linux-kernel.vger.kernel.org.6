@@ -1,148 +1,125 @@
-Return-Path: <linux-kernel+bounces-387361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B8D9B4FE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:55:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A9299B4FE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:56:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1260E1F2119E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61AF71C22721
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105831DC74E;
-	Tue, 29 Oct 2024 16:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866241D8E0D;
+	Tue, 29 Oct 2024 16:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrxHdU8f"
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="blc+bjdu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T+Lfc19P"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD351DA109;
-	Tue, 29 Oct 2024 16:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF7D19992C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220933; cv=none; b=XBQp7dVFO5UCJLeggkVeW+khUXsyRxQ4GdJbBO6eWxOH90mgJo+FTNvA83hzh4ox0xjm8fs0m6yT/Wr25V1woLNp27WFoml5+RPbo7OECFyrLfx59bRIFwHFsXuPnh4IeEB7T/ojuMjNBm+TfY23QVyDosj6//GhVXYR7GPH62Y=
+	t=1730220944; cv=none; b=kwvJ6+eaLqWHcd0V5R2CBBaQjaxQ9tedPNm5RxvV0/mJ/b9t5uSzxrRhvlX0Po9xrrOJoLDh4dMKpy+VH2zothvqKL//f84D8c/JeyeT/q/WER1ijwxFEkNuKqPRwjNKtXLEQLXKMuPhTPOHqs37KAONTt9s0Jl/a+GGFUGgI3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220933; c=relaxed/simple;
-	bh=ImzQCH+ElIZyec1q+jTsxb3591cOsayG2TTvgKePiuY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a3YOsVcSxKZBwUd/wQekzXPal64ic05lLHRtxxcUeWElPnnHo4ct8PlMLJQl6aoxgc9j/F0u6O41NAA5KkCo4uw6n2Gz+WCvIQj16Y6od3dpjka0wKI/tNqyQ4G/rAWExvlxFXrGWBNxKG2tnorK5x+0ebGGVelsWSwYhms+zpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KrxHdU8f; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-460ab1bc2aeso34978841cf.3;
-        Tue, 29 Oct 2024 09:55:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730220930; x=1730825730; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NV7+11P6IP6fL3dudKkoFNDPPkiYDy8aACWR+asLUpc=;
-        b=KrxHdU8fAuJOzN7SX8kHC9HCY4I74nhPSCkiUSV8M4zGpG5AV2jT2MWx3RenpCBV02
-         Z01SjmboFiBc8mcziKw/qK9Vfv9ul8rAtjn4KnE2QzGpVRMJ18TYseWFYVRZSOXnnbhj
-         7RAuWLrZGOnePAyg+DHqsTD+OqoH5DeWg3kBBIZBowxFCb/2SHU41p3aM30TrHmZhPyA
-         QOvb3yMeJUuCHHDVV9ZXAEVSOEyCnRqnVdG17or9HY3k1FzbYX/z+a2OetFSh3SOWSA9
-         z0KnSDAu9IDK/zOueST5m9C51I6ltnAk0BfsnWvT1KDskNka31259xXUB24/r0zW+5dx
-         weIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730220930; x=1730825730;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NV7+11P6IP6fL3dudKkoFNDPPkiYDy8aACWR+asLUpc=;
-        b=c5M9xnndhqfw87MH+4y96RUU3Y8tLYK6pnGy//CUfkEU1MF/3pGIjp6A4iTGU6uLW+
-         IXe848bOxoomcK+kSpVpKw/eM9orTuTZU3sKPDUA4gXqxmHNM+yoT1gw2SBrElm/vZfD
-         PCAiDmFWXVyJ6cg9PhEkKfAcfC735MUW6y4bnTC7DUEDokSZrYnfg8oKlUUbwji22l2S
-         uuho2DKPqeYZ7N+EWjvU3ozoQ+k/w+zFGYKtAcBLb+++3hriapY+XC4CsMiiYXdhenFW
-         /ufNi967KssjBwhKubRe0ZpwQKMPXe3Q/Msic/3FbGr2OjV1CPOun+sCi8n2SkP8gT9/
-         ykjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkHsEJA76NfpPcQ6pO8i4jl0Z2xpDT8N48soo46JIwoHyaWVGseMJeLRw9DU+HcnBLwWk1xJVL4ZwEORk=@vger.kernel.org, AJvYcCVvKpsuZ+ohDys+zkhYBjhdV/o/Auv4bx2yBIwHJaF4cUmSThryRMxd7rowmnUPyewRp3QKIKy4@vger.kernel.org
-X-Gm-Message-State: AOJu0YztJzokRweKsBNt1pKUa3XVbSjw/svEBqTUM7AJgxI5K43jk3wj
-	CLpuERkDy4sErSZjCO4xmskHQ/ozPhP1N3ix6ndNTRUmuMlZQ7rm
-X-Google-Smtp-Source: AGHT+IGJo/n2GXzas1QOCnqNw7j7TGroghd68OmFRCuyK91aOyz9vd/UBY8qT4kEwxXSaeCunMHvWQ==
-X-Received: by 2002:a05:622a:1a8a:b0:460:9946:56af with SMTP id d75a77b69052e-4613c198696mr221933341cf.44.1730220930267;
-        Tue, 29 Oct 2024 09:55:30 -0700 (PDT)
-Received: from [192.168.1.50] ([79.113.150.231])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-461323a1fbesm46202051cf.82.2024.10.29.09.55.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 09:55:29 -0700 (PDT)
-Message-ID: <baf6d88e-e753-4aaf-a340-991373d77fa8@gmail.com>
-Date: Tue, 29 Oct 2024 18:55:25 +0200
+	s=arc-20240116; t=1730220944; c=relaxed/simple;
+	bh=R5eCvl7du1Y0ll208Q1e9al+4xGrXnELKPOKT/IPt2U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lYwnhus5aw4r1NwHKgc5HGge1Lct5/eVENQ6tdS7UNtdGfVuI46D9YtvZ33xCJ49YIGsVWSqCtaYnrrjSsN0Utc6YfAjX0NnG1YLnTFw8pB4FQ0UIBBSzY1Mxuz7C0tq19d3CfJd7HzxGGzUrFbvw09vx7jixfUK+84sUU7ndfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=blc+bjdu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T+Lfc19P; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730220939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GPXhAj4plb/VaugiiQVa5PHiH+TY7cG/EDvtnrbR5IA=;
+	b=blc+bjduxvSpAIyWJ4aIxuHkYqDJparOyX/wwNGCcquKSFwE0Jt98oOS52j+GuW5ZBGH7g
+	627pfy5eOnq/+ql99nnHpT3Hi7qXPaemOisvaTrhIf9q837OB4DLItAna+kc7xINGiPmQ6
+	jTFIu8itpJrvtc+klKIRp3xVzjJElO+f9SrlB6hMLUbTQoyjpGSC/0HL+2GWDPjPpWWgMx
+	bSNDmzFOuKw1I8OCvg2Pu05O0AbS0JU4x5xy5/o5d1UB/du2BUQOtBQJ6+uVlWVxXNrRbn
+	80RjLN7+87+xx8LkUCaYxs1vHsfwp0joHdzFuiA7zQfrUsNRVZSKl7o+ARiWyw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730220939;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=GPXhAj4plb/VaugiiQVa5PHiH+TY7cG/EDvtnrbR5IA=;
+	b=T+Lfc19PFdNBEL9s1PeaKJSJtSJxJMgVB6ffw9nWv2z1K//PiuT7h08FtBaKgmEqY5xEn4
+	I1swC5b9JDuMJYDQ==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
+ Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
+ Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 16/26] signal: Replace resched_timer logic
+In-Reply-To: <ZyEOeqkSYWR2XTp_@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083836.220867629@linutronix.de>
+ <ZyEFyV28jcz85V1q@localhost.localdomain> <87ttcu281y.ffs@tglx>
+ <ZyEOeqkSYWR2XTp_@localhost.localdomain>
+Date: Tue, 29 Oct 2024 17:55:38 +0100
+Message-ID: <87jzdq26id.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: rtlwifi: Drastically reduce the attempts to read
- efuse bytes in case of failures
-To: "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
- Ping-Ke Shih <pkshih@realtek.com>
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
- "kvalo@kernel.org" <kvalo@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "kernel@gpiccoli.net" <kernel@gpiccoli.net>,
- "kernel-dev@igalia.com" <kernel-dev@igalia.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com"
- <syzbot+edd9fe0d3a65b14588d5@syzkaller.appspotmail.com>
-References: <20241025150226.896613-1-gpiccoli@igalia.com>
- <ed8114c231d1423893d3c90c458f35f3@realtek.com>
- <61aae4ff-8f80-252e-447a-cd8a51a325a1@igalia.com>
- <c93c8e9c109b444b91489ac0e88b987c@realtek.com>
- <14c3164c-0e1e-4d9d-89d9-28d3240861c6@gmail.com>
- <d6e01e56-51e7-cbb2-024a-c7db86dc70fb@igalia.com>
-Content-Language: en-US
-From: Bitterblue Smith <rtl8821cerfe2@gmail.com>
-In-Reply-To: <d6e01e56-51e7-cbb2-024a-c7db86dc70fb@igalia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 29/10/2024 15:31, Guilherme G. Piccoli wrote:
-> On 29/10/2024 10:20, Bitterblue Smith wrote:
->> On 29/10/2024 02:50, Ping-Ke Shih wrote:
->>>>
->>>> But can you help me on finding a USB adapter that runs this path? If you
->>>> know a commodity model that uses this specific driver, could you point
->>>> me so I can buy one for testing?
->>>>
->>>
->>> I don't know that. Maybe, Bitterblue Smith (Cc'd) can share how/where he got
->>> USB adapters. 
->>>
->>>
->>
->> I got them from Aliexpress. Both listings are gone now, but I still
->> see others:
->>
->> https://www.aliexpress.com/item/1005007655660231.html
->> https://www.aliexpress.com/item/1005007688991958.html
->>
->> Mine was only 6 USD in March 2023. I don't know why this obsolete
->> product got so expensive.
->>
->> For RTL8192DU only modules are available:
->>
->> https://www.aliexpress.com/item/4000191417711.html
->> https://www.aliexpress.com/item/1005007343563100.html
->>
->> Someone gave me this link (I didn't buy):
->> https://www.amazon.com/Netis-Wireless-Raspberry-Windows-RTL8188CUS/dp/B008O2AL0K
->>
->> Note that the Netis WF2120 can have newer chips inside which will
->> not use this driver.
->>
-> 
-> Thanks a bunch for the info and links, much appreciated! I can try to
-> grab one for testing, but let me ask also: would you be willing to test
-> that for me, Bitterblue? If so, I can resubmit today with the PCI check.
-> 
-> If not possible, no worries, I can buy one.
-> Cheers,
-> 
-> 
-> Guilherme
+On Tue, Oct 29 2024 at 17:34, Frederic Weisbecker wrote:
 
-I tested your patch. Both my devices can still read the efuse.
+> Le Tue, Oct 29, 2024 at 05:22:17PM +0100, Thomas Gleixner a =C3=A9crit :
+>> On Tue, Oct 29 2024 at 16:56, Frederic Weisbecker wrote:
+>> >> @@ -568,10 +568,10 @@ static void collect_signal(int sig, stru
+>> >>  		list_del_init(&first->list);
+>> >>  		copy_siginfo(info, &first->info);
+>> >>=20=20
+>> >> -		*resched_timer =3D (first->flags & SIGQUEUE_PREALLOC) &&
+>> >> -				 (info->si_code =3D=3D SI_TIMER);
+>> >> -
+>> >> -		__sigqueue_free(first);
+>> >> +		if (unlikely((first->flags & SIGQUEUE_PREALLOC) && (info->si_code =
+=3D=3D SI_TIMER)))
+>> >> +			*timer_sigq =3D first;
+>> >> +		else
+>> >> +			__sigqueue_free(first);
+>> >
+>> > So this isn't calling __sigqueue_free() unconditionally anymore. What =
+if
+>> > the timer has been freed already, what is going to free the sigqueue?
+>>=20
+>> __sigqueue_free() does not free timers marked with SIGQUEUE_PREALLOC.
+>>=20
+>> sigqueue_free() takes care of that, which is invoked from
+>> posixtimer_free_timer(). It clears SIGQUEUE_PREALLOC and if it is queued
+>> it lets it pending and delivery will free it.
+>
+> But the delivery freeing used to be done with the __sigqueue_free()
+> above, which doesn't happen anymore, right?
+
+It still happens because SIGQUEUE_PREALLOC is cleared in sigqueue_free()
+
+__sigqueue_free() has
+       if (q->flags & PREALLOC)
+       	     return;
+
+So the old code called __sigqueue_free() unconditionally which just
+returned. But now we have a condition to that effect already, so why
+call into __sigqueue_free() for nothing?
+
+Let me add a comment.
+
+Thanks,
+
+        tglx
 
