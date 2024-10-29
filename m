@@ -1,141 +1,111 @@
-Return-Path: <linux-kernel+bounces-387513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76ABE9B5231
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:54:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C709B5234
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:54:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 340A5280A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA6831C22D8B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:54:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DB4B20697B;
-	Tue, 29 Oct 2024 18:54:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020DD20606E;
+	Tue, 29 Oct 2024 18:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ffX1zRQu";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pEc+vx35"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mTrGfkap"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76AAB1DB37A;
-	Tue, 29 Oct 2024 18:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5968D126C1E;
+	Tue, 29 Oct 2024 18:54:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730228056; cv=none; b=P3L4UFXXAhmhDeycP8VDlAWQ4WNiE6HYVN5FBaD+SuYWMWOy3D+hyhVhSOV5uySgNDOawYeZCr2J6HJb6eYi/uLSTrPtxQzZlKlriaTIwsQZ/jbKuify6INUHEnm3mld5lxQkVqgXcq6EyBi3T3x4Na1uUR7987b4rdavia1h0Q=
+	t=1730228068; cv=none; b=VZOL/XRMhp4OT3ommSze72uPPh70WAp9iNIO8dInqwabrPfDGuKTPnSU9pEzE5NaZwUduucCZudDRs6JaoqFEnI67Kbhfvnjw83cZPCTx8cQkWPN8FA5X8+GxH2s8owvznjohIyW2UXV+wrEMaltyzQMRyGJCUFhjITwcPna+QM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730228056; c=relaxed/simple;
-	bh=zn7PZW4n3kySNBlFmDmbgJXfh8wj3gXDPwYY1lCMGls=;
-	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kqRxkqcSwRm0lHWdyBbSbhm6+RZEF2zKUjccQr0pBMphD0fFFy9GBRtQ9rQmjnrikTT4iJvOMsdomfcGs2bo5b52oCiQIJHkkCkjfCySHO1eUN3rG2HHK+UHUXI9WkfC5deVSG6B0W/H3bPXfGdp3jyIEAz+zfFQ5VQ8lFJgR6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ffX1zRQu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pEc+vx35; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730228052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wjko7eOTjNCaKUVt6NyN0ek4f+g4AUdfFDp2yMrN8f8=;
-	b=ffX1zRQuijJ5YCDe1nRAHciPrVxKrvIW8FlPReAqTRMooIUpLLcWr2aavwDZjmbBF0rEQz
-	wOkKAmNPLBtFlsQln7ygVI2iUlwnEzOt9x856Hgu0aZgGk/mRO7KO1IqYpzYuJgN2VDwDn
-	ZMPEi7tWkwKcSKdzV6XrFNFelTHtetUF8CUk6ZYf3FglSKkgDFS39WCWGwhxNAmfgqSGdy
-	+D4r++rD+ibus8fLCLkMMOK1v1WQfaw7TVs0NixaiEpHcryZzNpAzdku6o6c6YvGFVXlRK
-	VsKA087ePF8nfW5XB4/qFJ2UEd0DFXIfO0FxQj0qucMWa/S4AGTdxHxxMP4S9A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730228052;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wjko7eOTjNCaKUVt6NyN0ek4f+g4AUdfFDp2yMrN8f8=;
-	b=pEc+vx35vTZoOd3ja48aHiKYvUZD6d4ocpbJOcEpZeSF+7O1yel6cfIuUGCdOT7dzvJHnn
-	9BlMxkLTtkFVtwDA==
-To: Costa Shulyupin <costa.shul@redhat.com>, longman@redhat.com,
- ming.lei@redhat.com, pauld@redhat.com, juri.lelli@redhat.com,
- vschneid@redhat.com, Jens Axboe <axboe@kernel.dk>, Peter Zijlstra
- <peterz@infradead.org>, Zefan Li <lizefan.x@bytedance.com>, Tejun Heo
- <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?K?=
- =?utf-8?Q?outn=C3=BD?=
- <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Costa Shulyupin <costa.shul@redhat.com>,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Subject: Re: [RFC PATCH v3 3/3] genirq/cpuhotplug: Adjust managed irqs
- according to change of housekeeping CPU
-In-Reply-To: <20241029120534.3983734-4-costa.shul@redhat.com>
-References: <20241029120534.3983734-1-costa.shul@redhat.com>
- <20241029120534.3983734-4-costa.shul@redhat.com>
-Date: Tue, 29 Oct 2024 19:54:12 +0100
-Message-ID: <87bjz2210r.ffs@tglx>
+	s=arc-20240116; t=1730228068; c=relaxed/simple;
+	bh=wEEjOPEr3h7B9o1LpRfDYM55t3DpHZCmU0hPu24HW+Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PlO0p8XLSZzoHZjDDYiBPwHRWmggR6+RDeU1dZ0QLQjOX8csalu3XrbZgVe3BHCxBDlqQoFTpFjW9n8P2dUfZVY4zXGunGDocXwjbzU/cxTmD4g6R9V4w8D4VqG1vwg2L/nO2IFBnTrpxCFH1an3GP6+lcnS51ZdrQji15oTZzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mTrGfkap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160B5C4CECD;
+	Tue, 29 Oct 2024 18:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730228067;
+	bh=wEEjOPEr3h7B9o1LpRfDYM55t3DpHZCmU0hPu24HW+Y=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mTrGfkapY6L9v4bmqiFFk35IJxnUyw75R/jWD46g2NJ/67HXsofO8OO6GWReTTHPr
+	 L4N9zpdbdEqK6oOtlc+WdXsMNd/wVaf+b21i6G10ZFxaFGiFQ4xRjUCc2Ma5QGR3BG
+	 aCgM/TjIYepLidaSbT5x4DBckfYkLMCQUemPy6JEIx8BZ8v8AYBqXR3x7SU8m4hRsN
+	 5UNBkdrfGZqr3unYxvaNm8qBffjaDBq+rzrjRU6VSoxVe4DI/+jbkk4NscMY+bKMzv
+	 L8U1/nWO+Mn8cPFYS9CaYVRZR5jn2yboTvexatEPD9viIkt8TlPlql2Ah4G0lpSW8b
+	 3BSXGp5KQt4hw==
+Date: Tue, 29 Oct 2024 11:54:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
+ <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
+ Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <20241029115426.3b0fcaff@kernel.org>
+In-Reply-To: <26d37815-c652-418c-99b0-9d3e6ab78893@embeddedor.com>
+References: <cover.1729536776.git.gustavoars@kernel.org>
+	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
+	<20241029065824.670f14fc@kernel.org>
+	<f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
+	<20241029110845.0f9bb1cc@kernel.org>
+	<7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
+	<20241029113955.145d2a2f@kernel.org>
+	<26d37815-c652-418c-99b0-9d3e6ab78893@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29 2024 at 14:05, Costa Shulyupin wrote:
-> index afc920116d42..44c7da0e1b8d 100644
-> --- a/kernel/cpu.c
-> +++ b/kernel/cpu.c
-> @@ -171,7 +171,7 @@ static bool cpuhp_step_empty(bool bringup, struct cpuhp_step *step)
->   *
->   * Return: %0 on success or a negative errno code
->   */
-> -static int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
-> +int cpuhp_invoke_callback(unsigned int cpu, enum cpuhp_state state,
->  				 bool bringup, struct hlist_node *node,
->  				 struct hlist_node **lastp)
+On Tue, 29 Oct 2024 12:48:32 -0600 Gustavo A. R. Silva wrote:
+> >> Is this going to be a priority for any other netdev patches in the future?  
+> > 
+> > It's been the preferred formatting for a decade or more.
+> > Which is why the net/ethtool/ code you're touching follows
+> > this convention. We're less strict about driver code.  
+> 
+> I mean, the thing about moving the initialization out of line to accommodate
+> for the convention.
+> 
+> What I'm understanding is that now you're asking me to change the following
+> 
+>       const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+>       const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+> -    const struct ethtool_link_settings *lsettings = &ksettings->base;
+> +    const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
+> 
+> to this:
+> 
+>       const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+>       const struct ethtool_link_settings_hdr *lsettings;
+>       const struct ethtool_link_ksettings *ksettings;
+> 
+>       ksettings = &data->ksettings;
 
-This is deep internal functionality of cpu hotplug and only valid when
-the hotplug lock is write held or if it is read held _and_ the state
-mutex is held.
+You don't have to move this one out of line but either way is fine.
 
-Otherwise it is completely unprotected against a concurrent state or
-instance insertion/removal and concurrent invocations of this function.
+>       lsettings = &ksettings->base;
+> 
+> I just want to have clear if this is going to be a priority and in which scenarios
+> should I/others modify the code to accommodate for the convention?
 
-And no, we are not going to expose the state mutex just because. CPU
-hotplug is complex enough already and we really don't need more side
-channels into it.
-
-There is another issue with this approach in general:
-
-   1) The 3 block states are just the tip of the iceberg. You are going
-      to play a whack a mole game to add other subsystems/drivers as
-      well.
-
-   2) The whole logic has ordering constraints. The states have strict
-      ordering for a reason. So what guarantees that e.g. BLK_MQ_ONLINE
-      has no dependencies on non BLK related states to be invoked before
-      that. I'm failing to see the analysis of correctness here.
-
-      Just because it did not explode right away does not make it
-      correct. We've had enough subtle problems with ordering and
-      dependencies in the past. No need to introduce new ones.
-
-CPU hotplug solves this problem without any hackery. Take a CPU offline,
-change the mask of that CPU and bring it online again. Repeat until all
-CPU changes are done.
-
-If some user space component cannot deal with that, then fix that
-instead of inflicting fragile and unmaintainable complexity on the
-kernel. That kubernetes problem is known since 2018 and nobody has
-actually sat down and solved it. Now we waste another 6 years to make it
-"work" in the kernel magically.
-
-This needs userspace awareness anyway. If you isolate a CPU then tasks
-or containers which are assigned to that CPU need to move away and the
-container has to exclude that CPU. If you remove the isolation then what
-is opening the CPU for existing containers magically?
-
-I'm not buying any of this "will" just work and nobody notices
-handwaving.
-
-Thanks,
-
-        tglx
+I don't understand what you mean by priority. If you see code under
+net/ or drivers/net which follows the reverse xmas tree variable
+sorting you should not be breaking this convention. And yes, if
+there are dependencies between variables you should move the init
+out of line.
 
