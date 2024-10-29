@@ -1,89 +1,73 @@
-Return-Path: <linux-kernel+bounces-386981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D48B9B4A6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:00:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FCC59B4A72
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB06D1F2242A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:00:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B221C228A6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0035B206961;
-	Tue, 29 Oct 2024 13:00:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A0C206E9E;
+	Tue, 29 Oct 2024 13:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TasldsgS"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SwuZzV7o"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3755D205AD2;
-	Tue, 29 Oct 2024 13:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B161206E8C;
+	Tue, 29 Oct 2024 13:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206823; cv=none; b=entEQSIpJLbfq7nzMRxXRAybkWZ5ub9nW/UXn/afge3ay9U34YoBQfoEh/5iMQ77ydEb2moNGDgXKt7YCH2oGtjkKg7AqwZFsP1RktSLSMxEBSvuW1BSfgzMMC9wqckENsW8TjjG64lmeM4G0/Hs0q9vukFfttDOudru4G2d8I4=
+	t=1730206838; cv=none; b=or6tiFwYudcDa5MG7R8hukFYcDki+AYu8Hl/Ly001ndd29ktDwz4b7k24offRjTrOXl5ZzojAdvG0V0bUpTKc+2PNNM00NhlADLHxjb6pnfpEoRR7gN3/39Jm3T0D5rAbrUar47RKiVJz0CMvZOee37AD+9aB0zEpjUjbIic3no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206823; c=relaxed/simple;
-	bh=/HODKqyTbX8debkHRaD8QH09a9ZSaa3+QoR2gUV6EhI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=CIdsxnEMOCt0528V6u1cMqcPgpaAfsd1rd/egM5vEMfovXOT5CFAQSSpfDpZLEenAg4Fy2Rp0Ph0JmiFzyHcUiKiiedDVBBXIg157P0oTaV9/mmMv/g15c+3mz2D/m6uOgq0iHUVmT+uorm2iRbHfZDuGNewEp2Wzenwy2CbmmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TasldsgS; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e7e73740so4534321e87.3;
-        Tue, 29 Oct 2024 06:00:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730206816; x=1730811616; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6r8k08nfNU0BjonzWGfRlb9unupSG36bdp5/08Z5bcw=;
-        b=TasldsgSY4rdkBSvWoXlNEmd6ZTl/CYLkeMvWM2WpNsbRRMbX5yGK92L5NZT0rFXHv
-         2Si39OqQkiDHqhJpOKUw0sALe3snMF9r6FZXFoPLMZI3pXcnt0DPX8IWHGRFz9QAwFXI
-         RrZ5ZrfoSSh+zHnmaM0LZlIeV5awjLPShmWRDrrihI164KyOBDx6xqEU566XW34mGAUJ
-         kaJA8QPMHAk1yVjyyv5lyudfLUUpgb4TrpaujTiGQQaqy/3ayqPN93PShDgcbNEM3JqP
-         rTrEG3LLEz+RFxZsQ6+k9TycjeTy48B5FIEU5B/P+Ab8Pbg+Ob2VYzzy11qmrU/C+4F/
-         YmRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730206816; x=1730811616;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6r8k08nfNU0BjonzWGfRlb9unupSG36bdp5/08Z5bcw=;
-        b=LrpSGOKH9STICioTHRyx//bQnO7HZiO6xQm4lLc//0MDKaPsevE5WNy3LgdsZSRmXN
-         VauCXVWwGphjcbYv7f44iWiOLi60yz4oJf7Q1Lo7xa55TEj/anvHpbNwTOF/sb1h+nQL
-         bCtiSxyglcXyjnm8gra5040c1v7VXcVQBlw/DgJSWAhUP8R9wavil27FS32UryvquLrK
-         Kum5KPqULv76HnwmsgOda8jWqLgxUJaEqgekT43XYhRJIguvyC7pdtD0U4z6EX5wCk0v
-         mKOK7ONwmUMFw647X1ZowJ3vHma4fN8M/nKJOOSZvb5CC5SQlXGjHasJqhwYXHnIZD5L
-         XNaw==
-X-Forwarded-Encrypted: i=1; AJvYcCUuCKcCNHYHoQfO2+u8cpqV/4Q4qHnrxJDHtgbU0kbleDlk8CEy5ALELHb3bGUBcoIR6osfaZ8ZHwcQvj0=@vger.kernel.org, AJvYcCWndtyjFIaP46mOnyau070jAdcD2SBkjZeiI78bAbi5T2fwcyTOh27zi6nbwsVf6K7LnJRo6+TKXaIFqFp/RCM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8WwnFm3iR5hpQ9tQNQJ9tDABAmtRlXtWwjzEOKg/tuKOKQ+Vi
-	lwGs1FTAFIimmJGKWiFkXN/eReOy0lxXkJFwnLPl3kxbxFTaTQYq/GKbeNys6PY=
-X-Google-Smtp-Source: AGHT+IH7BxiE2+elBEtNece5JanndPqtr2bn5pcJZE8uhcoVy7E9tVpE/96YpKV0V8tgZQkx03HkDQ==
-X-Received: by 2002:a05:6512:3510:b0:53b:4899:9be9 with SMTP id 2adb3069b0e04-53b48999ec1mr969614e87.59.1730206815637;
-        Tue, 29 Oct 2024 06:00:15 -0700 (PDT)
-Received: from localhost.localdomain ([178.219.169.18])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b48999d30sm214911e87.115.2024.10.29.06.00.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 06:00:14 -0700 (PDT)
-From: Dmitry Kandybka <d.kandybka@gmail.com>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Dmitry Kandybka <d.kandybka@gmail.com>,
-	Kalle Valo <kvalo@kernel.org>,
-	Jeff Johnson <jjohnson@kernel.org>,
-	ath10k@lists.infradead.org,
-	linux-wireless@vger.kernel.org,
+	s=arc-20240116; t=1730206838; c=relaxed/simple;
+	bh=RUMe2xQABUL7QJVzkwZ4Ta3TTqJblnli7IkzrqTsDqw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sqg/5MEycpsQBzio3dSefagU3swisvPC90NDWA4Onr9UhN6BwfIJqe7yp7FeSyS+mZMQYKi0QOSAIvLlsufwwaHCPHDdR4vuSSjuZFfiVrIwsmEhNoAlA++F97nZzAA212V220lbjX8NjsH82VNz29dGJ7FU6BBSnkEcVYccwI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SwuZzV7o; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730206837; x=1761742837;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RUMe2xQABUL7QJVzkwZ4Ta3TTqJblnli7IkzrqTsDqw=;
+  b=SwuZzV7oPHOLyloJXnAl+j+r6cZOGGk5bu9WOHHdGT0G/qxLRRCZLWN4
+   cW2HSg1DHoRK6Py2CSbl5ctfFDukg78udh+nIE23m7m9sEkej6202rwMr
+   uyZdNFNUsQAysxr50H7eSNSTnjC6ltPlyacYPVlwi5QBFSAsvk14YzzNe
+   RRCcYZFRA1J70DP9sbHNRcsFX0EoGFWP4bEIKXSHdGmVjg8oJh9PtiUUo
+   BreIhfuV0rOphzKeTbgB55vt0gGlnfYAV0VRTyoqdzs+UWkStHaVHBUVe
+   EZBu5CTTGp1lq6+woBh+PT/9OSVntmlguPGS6X0lftsBFDjMNZdedCRt2
+   Q==;
+X-CSE-ConnectionGUID: uyuT8/J0RiOtdmHdnv0+Xw==
+X-CSE-MsgGUID: P+ukmyBOQk6x9IlEX6qJ5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="40428580"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="40428580"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 06:00:35 -0700
+X-CSE-ConnectionGUID: F13pfMQ0Sl+6v0uThLRDDA==
+X-CSE-MsgGUID: Q0kxC1l1QlSNV4hjI2nI5A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="112764395"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.38])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 06:00:15 -0700
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: fenghua.yu@intel.com,
+	reinette.chatre@intel.com,
+	shuah@kernel.org
+Cc: linux-kselftest@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	Peter Kosyh <pkosyh@yandex.ru>,
-	Kalle Valo <quic_kvalo@quicinc.com>
-Subject: [PATCH 5.10/5.15/6.1 1/1] wifi: ath10k: Check return value of ath10k_get_arvif() in ath10k_wmi_event_tdls_peer()
-Date: Tue, 29 Oct 2024 15:59:25 +0300
-Message-ID: <20241029125929.288059-2-d.kandybka@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241029125929.288059-1-d.kandybka@gmail.com>
-References: <20241029125929.288059-1-d.kandybka@gmail.com>
+	ilpo.jarvinen@linux.intel.com,
+	tony.luck@intel.com
+Subject: [PATCH v5 0/2] selftests/resctrl: SNC kernel support discovery
+Date: Tue, 29 Oct 2024 14:00:04 +0100
+Message-ID: <cover.1730206468.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,46 +76,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Peter Kosyh <pkosyh@yandex.ru>
+Changes v5:
+- Tests are skipped if snc_unreliable was set.
+- Moved resctrlfs.c changes from patch 2/2 to 1/2.
+- Removed CAT changes since it's not impacted by SNC in the selftest.
+- Updated various comments.
+- Fixed a bunch of minor issues pointed out in the review.
 
-commit 473118917cc33b98510880458c724bd833653db6 upstream.
+Changes v4:
+- Printing SNC warnings at the start of every test.
+- Printing SNC warnings at the end of every relevant test.
+- Remove global snc_mode variable, consolidate snc detection functions
+  into one.
+- Correct minor mistakes.
 
-Return value of a function ath10k_get_arvif() is dereferenced without
-checking for null in ath10k_wmi_event_tdls_peer(), but it is usually checked
-for this function.
+Changes v3:
+- Reworked patch 2.
+- Changed minor things in patch 1 like function name and made
+  corrections to the patch message.
 
-Make ath10k_wmi_event_tdls_peer() do check retval of ath10k_get_arvif().
+Changes v2:
+- Removed patches 2 and 3 since now this part will be supported by the
+  kernel.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
+into multiple NUMA nodes. When enabled, NUMA-aware applications can
+achieve better performance on bigger server platforms.
 
-Signed-off-by: Peter Kosyh <pkosyh@yandex.ru>
-Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
-Link: https://lore.kernel.org/r/20221003091217.322598-1-pkosyh@yandex.ru
-Signed-off-by: Dmitry Kandybka <d.kandybka@gmail.com>
----
- drivers/net/wireless/ath/ath10k/wmi-tlv.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+SNC support in the kernel was merged into x86/cache [1]. With SNC enabled
+and kernel support in place all the tests will function normally (aside
+from effective cache size). There might be a problem when SNC is enabled
+but the system is still using an older kernel version without SNC
+support. Currently the only message displayed in that situation is a
+guess that SNC might be enabled and is causing issues. That message also
+is displayed whenever the test fails on an Intel platform.
 
-diff --git a/drivers/net/wireless/ath/ath10k/wmi-tlv.c b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-index 0eeb74245372..72da02fc68ea 100644
---- a/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-+++ b/drivers/net/wireless/ath/ath10k/wmi-tlv.c
-@@ -584,7 +584,14 @@ static void ath10k_wmi_event_tdls_peer(struct ath10k *ar, struct sk_buff *skb)
- 			ath10k_warn(ar, "did not find station from tdls peer event");
- 			goto exit;
- 		}
-+
- 		arvif = ath10k_get_arvif(ar, __le32_to_cpu(ev->vdev_id));
-+		if (!arvif) {
-+			ath10k_warn(ar, "no vif for vdev_id %d found",
-+				    __le32_to_cpu(ev->vdev_id));
-+			goto exit;
-+		}
-+
- 		ieee80211_tdls_oper_request(
- 					arvif->vif, station->addr,
- 					NL80211_TDLS_TEARDOWN,
+Add a mechanism to discover kernel support for SNC which will add more
+meaning and certainty to the error message.
+
+Add runtime SNC mode detection and verify how reliable that information
+is.
+
+Series was tested on Ice Lake server platforms with SNC disabled, SNC-2
+and SNC-4. The tests were also ran with and without kernel support for
+SNC.
+
+Series applies cleanly on kselftest/next.
+
+[1] https://lore.kernel.org/all/20240628215619.76401-1-tony.luck@intel.com/
+
+Previous versions of this series:
+[v1] https://lore.kernel.org/all/cover.1709721159.git.maciej.wieczor-retman@intel.com/
+[v2] https://lore.kernel.org/all/cover.1715769576.git.maciej.wieczor-retman@intel.com/
+[v3] https://lore.kernel.org/all/cover.1719842207.git.maciej.wieczor-retman@intel.com/
+[v4] https://lore.kernel.org/all/cover.1720774981.git.maciej.wieczor-retman@intel.com/
+
+Maciej Wieczor-Retman (2):
+  selftests/resctrl: Adjust effective L3 cache size with SNC enabled
+  selftests/resctrl: Adjust SNC support messages
+
+ tools/testing/selftests/resctrl/cmt_test.c    |   8 +-
+ tools/testing/selftests/resctrl/mba_test.c    |   8 +-
+ tools/testing/selftests/resctrl/mbm_test.c    |  10 +-
+ tools/testing/selftests/resctrl/resctrl.h     |   7 +
+ .../testing/selftests/resctrl/resctrl_tests.c |   8 +-
+ tools/testing/selftests/resctrl/resctrlfs.c   | 132 ++++++++++++++++++
+ 6 files changed, 166 insertions(+), 7 deletions(-)
+
 -- 
-2.43.5
+2.46.2
 
 
