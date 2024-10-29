@@ -1,143 +1,178 @@
-Return-Path: <linux-kernel+bounces-386196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67F1E9B404B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:17:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C99E99B4050
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:18:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 136731F23465
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:17:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6671F23386
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8110715D5D9;
-	Tue, 29 Oct 2024 02:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD139183CCA;
+	Tue, 29 Oct 2024 02:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AdYbSrOD"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LhSpLYFN"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36D2B661;
-	Tue, 29 Oct 2024 02:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E353740855
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730168252; cv=none; b=elvSs0Qk28FtXDvnuCsdvjb2D+i8kCtLFjL1fyoLi0+cb/tKctnk1qQcSdITOPTYUHsGM2ClW++0GS52vrLz3/ereFNSa3DxIc3ZdB6CZ9do8g1vuwLddqpYTlHhZb7PhQ417Pp7IM44QojvgKZVcDQlgNvtglpFxHAHKZavYug=
+	t=1730168295; cv=none; b=N8YqGaB1QY9YOmQJFlGvkwiaKg+JXkM8htn1wa9IfbaTSZ5KQ3UsSLN++TMTc1+r0w0hxdAr9TCl4T7TJHCadWBaFtSw3RcijqwquTSA0KJbeZRCL/6sVaz5QZJ4YqPAMu4iCur6xx/vUEJeLYAzsxvux1VuGOqRL0xZgE7Fa9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730168252; c=relaxed/simple;
-	bh=WOnSUIQBuKzoLwrYxUnZ9DsMMoO3e7npDC5vAp/163o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qtU50EY4X2t4JaTyWz7cstlcxQg2p3vWuUM4mt2lGgsWpQPzHCIhfXUZGe4rE+yvx4x9fKV6foF2hshPOLskGPK4xI7FMxjyXYObOL6ELOvXLsmaGfNDByV1XNSM9WYejbmiepzRfYlE80EhzIJHXaLOMdVwh8JB7w639a2+CCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AdYbSrOD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SIfaK7022936;
-	Tue, 29 Oct 2024 02:17:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DlKmic9dACLOMQPRMfL+5WmhlfgUgYve9EN1vzHwzxQ=; b=AdYbSrODo7mPPIJm
-	j7M7oC9uEVphz2GLWjswi1TD9qIkRkKCQMrs478DHo9nga8I1nO1eWQxiqQYu8uM
-	RzN+P/pANTorjmk0NSH/S8of2+UZ9sdFwiMx6ECHO3GqoYT5liB5P2vgrFP94DQl
-	XOoY+Bt7HzV3p1vamlAlsWAxHHFfItbitW8vYPWUYT2VR3z2XEl7KlIQWJxYFNr7
-	eaO0QlkPhkZfxaYBmoKGBCZ0KtW/TweHuZWiqLl6NRE4zFMezeihVIJajfNUf9lQ
-	H2OmsJvMB8XK907ApDFOCFKTEugVvbDiLfAQN52iLBUsaFK0alP7cfmFnqPL1myi
-	v7a8+Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn4xxh3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 02:17:18 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T2HId1021983
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 02:17:18 GMT
-Received: from [10.253.11.110] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
- 2024 19:17:12 -0700
-Message-ID: <3d717bdc-4b8a-4e85-9bcf-e25b75d9fecf@quicinc.com>
-Date: Tue, 29 Oct 2024 10:17:09 +0800
+	s=arc-20240116; t=1730168295; c=relaxed/simple;
+	bh=JAY/5kWZM5hlslVrg1drUBGomgTDs0sWGyoq374dypM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rez+OPLckCD/LvOs+JxgKHBNISK3ibjoPArRetQ94kaQlOMJId0Xa5I0nD4qipthSO2j3j9b7pOGco4jTSkXzM+YDPtfBtF4aEV02GMWlqhUp+9ce5SrZ/ICyXhilS4ZO0KPd5Ge+nSISboBH+EnS/VkpndC9lRG5pZcSvplW4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LhSpLYFN; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SJLqG4030537
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:18:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=7P4yIdSiMHAms4Ghd8h7jsv2
+	1QwNBxYxHu6SKvt40RM=; b=LhSpLYFNp0z1mT5WvrI4o/qvdBgGHpIWJhSIPS2z
+	eDW4z0kiDIibFwfysgeKg2id0RnsJquNV4B47cJu9dz1SjAx9gG/M/NHRJcuZCBl
+	pIheTtQ3sOFfQnS6m8ZourEY8FfwjhAyXCmpORZ9TFL98jd0z4aSZFa77LK+HDpQ
+	bqhHAsw0EiLOljLsonev/OjgwJ1+QmfTAX3rdRYUs5LfkTBPYilqaLcJhwgS4Uht
+	avvK5S37Po7pxG80NyD+NJfZmDWdHsIsceo6y7SO6zmz4e4gO7/H//Rc1UyeI+LX
+	U+xLKIs6LtRDWlxwOlXHnNeTUOPSCsQSzP9szO2ZGK56Sg==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8evru-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:18:11 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2e33e5fc515so4929620a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:18:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730168290; x=1730773090;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7P4yIdSiMHAms4Ghd8h7jsv21QwNBxYxHu6SKvt40RM=;
+        b=hQe8A1sjjEkIEtzwHd8YK/kuR+nCbv0awz9rRs54nqsidtqZgdhvlM6lNvffBgvQfJ
+         A34f+mbmwXFgeml2u16lWe7EPchr1G6KjgPz78E6idmGz4hY4ym9WD8SO3gXlQvWtMB6
+         bVDfgNWqZ1shB4QrSMxLrozJ7Ux7/QiSOZg7uLvhF4jFlMFHo/ffUTj6vQl+BuRPPToG
+         6qc0ORToIk/T9RxnCHeSoIPHJB7Qr5RPXITUPeQ0aMeJA8w6zZ2fUu2O/m0ClD1E7hcP
+         AJVp2X9qoHcAWbcwy905mVm9Ityj8ojkcURVSNe9Qw8Mrd3My9eD8LQ+m+mmacTzNsOw
+         djHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdp2ANFa9p2zQ8YKpcLfegBdJchNoQr5jzaDKxfWFsAcDL/f7qDy12lajxnbCpNn6ZQbkOQQKQgNf0Mcw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy0pYIpS5H4WyWZ+jxv+BbWVJaBTZKDkETmaeadz5jJ/80GWF9O
+	lKDOwJ6Pmr1WPmUY6F2qvmrb+1/7A/kb8up6KfxUB6F+qs8DLz4EhsSVNvnuHLktySwNpjUbOxe
+	OqULrPBWm2Qy9sRaMDzqI1Q7S5j5u2gSZpYd/iOnNsyg7lfd/amsF9r5A/vOmjS0=
+X-Received: by 2002:a17:903:985:b0:20c:cf39:fe2d with SMTP id d9443c01a7336-210c686c65emr145190115ad.5.1730168290244;
+        Mon, 28 Oct 2024 19:18:10 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+xgITwhTl7ivR0wQRvRjnzxHy333WUwa/y/57CQtVf7YIFk/gBOrEM8OHHRFO3Q1SyLl73w==
+X-Received: by 2002:a17:903:985:b0:20c:cf39:fe2d with SMTP id d9443c01a7336-210c686c65emr145189915ad.5.1730168289875;
+        Mon, 28 Oct 2024 19:18:09 -0700 (PDT)
+Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf44199sm56834155ad.2.2024.10.28.19.18.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 19:18:09 -0700 (PDT)
+Date: Mon, 28 Oct 2024 19:18:07 -0700
+From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, quic_fenglinw@quicinc.com,
+        quic_tingweiz@quicinc.com, kernel@quicinc.com,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: qcs615-ride: Enable PMIC
+ peripherals
+Message-ID: <ZyBF3ygQnIdr/k/N@hu-bjorande-lv.qualcomm.com>
+References: <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-0-f0778572ee41@quicinc.com>
+ <20241028-adds-spmi-pmic-peripherals-for-qcs615-v3-2-f0778572ee41@quicinc.com>
+ <j4ggfrynyoriseef5r5x6uwgo6cespll2np7uitc64yagoa6pz@r3ro2cpqrrry>
+ <38cceae8-5203-4057-bd8b-f20fe3656474@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/3] Add ethernet dts schema for qcs615/qcs8300
-To: Krzysztof Kozlowski <krzk@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <netdev@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <quic_tingweiz@quicinc.com>,
-        <quic_aiquny@quicinc.com>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>
-References: <20241017-schema-v2-0-2320f68dc126@quicinc.com>
- <132a8e29-3be7-422a-bc83-d6be00fac3e8@kernel.org>
-Content-Language: en-US
-From: Yijie Yang <quic_yijiyang@quicinc.com>
-In-Reply-To: <132a8e29-3be7-422a-bc83-d6be00fac3e8@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: cXPft-qHqazelOYVa8i5wIudbMRB9Q1I
-X-Proofpoint-ORIG-GUID: cXPft-qHqazelOYVa8i5wIudbMRB9Q1I
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <38cceae8-5203-4057-bd8b-f20fe3656474@quicinc.com>
+X-Proofpoint-GUID: rjHqMfHEy2lCmpXjczk2Mcf2C6RaHWUl
+X-Proofpoint-ORIG-GUID: rjHqMfHEy2lCmpXjczk2Mcf2C6RaHWUl
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290016
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=963 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410290016
 
-
-
-On 2024-10-28 19:04, Krzysztof Kozlowski wrote:
-> On 17/10/2024 11:52, Yijie Yang wrote:
->> Document the ethernet and SerDes compatible for qcs8300. This platform
->> shares the same EMAC and SerDes as sa8775p, so the compatible fallback to
->> it.
->> Document the ethernet compatible for qcs615. This platform shares the
->> same EMAC as sm8150, so the compatible fallback to it.
->> Document the compatible for revision 2 of the qcs8300-ride board.
->>
->> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
->> ---
->> This patch series depends on below patch series:
->> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
->> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
+On Mon, Oct 28, 2024 at 04:40:36PM +0800, Tingguo Cheng wrote:
 > 
-> So it cannot be merged...
 > 
-> Instead please decouple your works. I don't get why do you claim there
-> is dependency in the first place, but anyway. Fix up your patchsets to
-> fix that (if there is something to fix).
+> On 10/28/2024 4:23 PM, Dmitry Baryshkov wrote:
+> > On Mon, Oct 28, 2024 at 04:03:25PM +0800, Tingguo Cheng wrote:
+> > > Enable PMIC and PMIC peripherals for qcs615-ride board.
+> > > 
+> > > Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+> > > ---
+> > >   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 15 +++++++++++++++
+> > >   1 file changed, 15 insertions(+)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > index ee6cab3924a6d71f29934a8debba3a832882abdd..37358f080827bbe4484c14c5f159e813810c2119 100644
+> > > --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> > > @@ -6,6 +6,7 @@
+> > >   #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> > >   #include "qcs615.dtsi"
+> > > +#include "pm8150.dtsi"
+> > >   / {
+> > >   	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+> > >   	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+> > > @@ -210,6 +211,20 @@ &rpmhcc {
+> > >   	clocks = <&xo_board_clk>;
+> > >   };
+> > > +&pon {
+> > > +	/delete-property/ mode-bootloader;
+> > > +	/delete-property/ mode-recovery;
+> > 
+> > Why?
+> Because boot modes will be supported on PSCI module from another patch,
+> reboot-modes are required to remove from PMIC side.
+
+That implies that the reboot mode implementation is device-specific, if
+so we should probably not define them in the shared file.
+
+Regards,
+Bjorn
+
+> > 
+> > > +};
+> > > +
+> > > +&pon_pwrkey {
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > > +&pon_resin {
+> > > +	linux,code = <KEY_VOLUMEDOWN>;
+> > > +	status = "okay";
+> > > +};
+> > > +
+> > >   &uart0 {
+> > >   	status = "okay";
+> > >   };
+> > > 
+> > > -- 
+> > > 2.34.1
+> > > 
+> > 
 > 
-
-Actually, the dependency is unnecessary here. I will remove it together 
-with the merged patch in the upcoming version.
-
-> Best regards,
-> Krzysztof
+> -- 
+> Thank you & BRs
+> Tingguo
 > 
-
--- 
-Best Regards,
-Yijie
-
 
