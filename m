@@ -1,129 +1,83 @@
-Return-Path: <linux-kernel+bounces-386433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF4939B436C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:46:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9255C9B4374
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 759E4283966
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:46:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC0E1F23335
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D5F20125B;
-	Tue, 29 Oct 2024 07:46:14 +0000 (UTC)
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1906F2036F4;
+	Tue, 29 Oct 2024 07:46:40 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C0F1DE3C5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9625B1DE3C5;
+	Tue, 29 Oct 2024 07:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730187973; cv=none; b=I9EOAx3u6OnoCfNmro34nwSa9iY25//w52d8tMjfziac/0QG9X7EoN6vxOcnkunAEDXGmmDkcw7VL3/5Vc1FeY+5ABMNwp8CHpifsibhLuY3IElEd3xzRd/eA1uNpSvYpZZPO21HCukDUL3Pa6m7XfovOerQovQux65LbmNV7RI=
+	t=1730187999; cv=none; b=OGnJl3u1h0EqrhlZb3yW+xNWx/3dRKcdiP9MEH/UfTWrL/QSNRgXsYXxXVvJDtFRi6Y0jbsjJ9ISxDxqaN09ps2qjes12jKJ1XkACEKvbqRUjpdBCDRamiLEeoY5S8AIi+qm5w6VbbwH9bpilnxPog3p2MLAx/8EbeonQlJ5bTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730187973; c=relaxed/simple;
-	bh=5IaN32Dd+S05zfzSJUz0ZFGcZpfQkf//oi84lT8aoBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4qir+Nu5Gl5NWyAQyfcZmHCKGHq/urTq3K/DalV5EqgGVcMowMhSiwuRwUfvGlfO7lkVhoRxUGcW4ot2OZLMYHxmuJQOuP6pbB8r/mlaZhMJx2LOAhg/eKQxj5HkixOyi4p/VW1QXokIa/O892utTus+CS6UsOYvGoOEzzGIqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0370AE0003;
-	Tue, 29 Oct 2024 07:46:06 +0000 (UTC)
-Message-ID: <cbe0831e-706c-465f-b412-fccf26163e9b@ghiti.fr>
-Date: Tue, 29 Oct 2024 08:46:06 +0100
+	s=arc-20240116; t=1730187999; c=relaxed/simple;
+	bh=ey/h1UWH4PsNFprB/VIDBkwWQ4/GYp79V4On9mrOAm4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XOykepanynGTbRTeCcIvfAuXWq3x/eThjVkc8cGGaDXpQ+BkEp+Bxh93LioKhR8D2q9AtF2yWD/9OUgytTxVwVeN/jOAC4IaKbYUYrFSwRqFoC8FSWEDeK2l/nlVzzOw71gC+7dm54yJSltCNXcJ18gDC/wI2VaSzv8lTbBpzM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id E1051227A88; Tue, 29 Oct 2024 08:46:31 +0100 (CET)
+Date: Tue, 29 Oct 2024 08:46:31 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: Baolu Lu <baolu.lu@linux.intel.com>, Jens Axboe <axboe@kernel.dk>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Keith Busch <kbusch@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Yishai Hadas <yishaih@nvidia.com>,
+	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+	linux-rdma@vger.kernel.org, iommu@lists.linux.dev,
+	linux-nvme@lists.infradead.org, linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 05/18] dma: Provide an interface to allow allocate IOVA
+Message-ID: <20241029074631.GD22316@lst.de>
+References: <cover.1730037276.git.leon@kernel.org> <844f3dcf9c341b8178bfbc90909ef13d11dd2193.1730037276.git.leon@kernel.org> <25c32551-32e2-4a44-b0ae-30ad08e06799@linux.intel.com> <20241028063740.GD1615717@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] irqchip/riscv-intc: Fix no-SMP boot with ACPI
-Content-Language: en-US
-To: Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>,
- "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
- =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>,
- Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Thomas Gleixner <tglx@linutronix.de>
-References: <20241014065739.656959-1-sunilvl@ventanamicro.com>
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20241014065739.656959-1-sunilvl@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: alex@ghiti.fr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028063740.GD1615717@unreal>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-Hi Thomas,
+On Mon, Oct 28, 2024 at 08:37:40AM +0200, Leon Romanovsky wrote:
+> In this specific case, the physical address is used to calculate
+> IOVA offset, see "size_t iova_off = iova_offset(iovad, phys);" line,
+> which is needed for NVMe PCI/block layer, as they can have first
+> address to be unaligned and IOVA allocation will need an offset to
+> properly calculate size.
 
-On 14/10/2024 08:57, Sunil V L wrote:
-> When CONFIG_SMP is disabled, the static array rintc_acpi_data with size
-> NR_CPUS will not be sufficient to hold all RINTC structures passed from
-> the firmware. All RINTC structures are required to configure
-> IMSIC/APLIC/PLIC properly irrespective of SMP in the OS. So, allocate
-> dynamic memory based on the number of RINTC structures in MADT to fix
-> this issue.
->
-> Fixes: f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
-> Reported-by: Björn Töpel <bjorn@kernel.org>
-> Closes: https://github.com/linux-riscv/linux-riscv/actions/runs/11280997511/job/31375229012
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->   drivers/irqchip/irq-riscv-intc.c | 19 ++++++++++++++++++-
->   1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv-intc.c
-> index 8c5411386220..f653c13de62b 100644
-> --- a/drivers/irqchip/irq-riscv-intc.c
-> +++ b/drivers/irqchip/irq-riscv-intc.c
-> @@ -265,7 +265,7 @@ struct rintc_data {
->   };
->   
->   static u32 nr_rintc;
-> -static struct rintc_data *rintc_acpi_data[NR_CPUS];
-> +static struct rintc_data **rintc_acpi_data;
->   
->   #define for_each_matching_plic(_plic_id)				\
->   	unsigned int _plic;						\
-> @@ -329,13 +329,30 @@ int acpi_rintc_get_imsic_mmio_info(u32 index, struct resource *res)
->   	return 0;
->   }
->   
-> +static int __init riscv_intc_acpi_match(union acpi_subtable_headers *header,
-> +					const unsigned long end)
-> +{
-> +	return 0;
-> +}
-> +
->   static int __init riscv_intc_acpi_init(union acpi_subtable_headers *header,
->   				       const unsigned long end)
->   {
->   	struct acpi_madt_rintc *rintc;
->   	struct fwnode_handle *fn;
-> +	int count;
->   	int rc;
->   
-> +	if (!rintc_acpi_data) {
-> +		count = acpi_table_parse_madt(ACPI_MADT_TYPE_RINTC, riscv_intc_acpi_match, 0);
-> +		if (count <= 0)
-> +			return -EINVAL;
-> +
-> +		rintc_acpi_data = kcalloc(count, sizeof(*rintc_acpi_data), GFP_KERNEL);
-> +		if (!rintc_acpi_data)
-> +			return -ENOMEM;
-> +	}
-> +
->   	rintc = (struct acpi_madt_rintc *)header;
->   	rintc_acpi_data[nr_rintc] = kzalloc(sizeof(*rintc_acpi_data[0]), GFP_KERNEL);
->   	if (!rintc_acpi_data[nr_rintc])
+And that is also very explicitly spelled out in the kerneldoc comments,
+including the note that the physical address is optional if the
+transfer is granule aligned (actually it says PAGE_SIZE which should
+be fixed).
 
-
-Do you think you can merge this patch for rc6? We still need it to fix 
-our nosmp builds.
-
-Thanks,
-
-Alex
+Any suggestions to further improve it are welcome of course.
 
 
