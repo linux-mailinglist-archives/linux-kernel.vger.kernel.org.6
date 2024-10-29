@@ -1,120 +1,163 @@
-Return-Path: <linux-kernel+bounces-387505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F7729B5210
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:48:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBF29B5212
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:49:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50E921F24341
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:48:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41F981F24300
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:49:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A844020606D;
-	Tue, 29 Oct 2024 18:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4A7201020;
+	Tue, 29 Oct 2024 18:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RCPib8Aw"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="PcyBCZlJ"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5571A205ADF;
-	Tue, 29 Oct 2024 18:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00E7206066
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730227717; cv=none; b=ZykpqiGIuAKcIn5OHgf/gpm/duAynXZS6o9sloWsJFlmdAam0f6CJK8kDa6pHvGnuZVEO8h+TWfCOmEa0IzeYP1vDJNfp+OWUFYyWYP8kvHfvNl34eZMYMmgDVUIcMhIWftarb/Nf4RO1MGu0E3oGctGGRezfX0bA/a4UdJklEk=
+	t=1730227719; cv=none; b=bDxqL9SlFngqly/3mI/xpYmN2jh4j17jxXrJqMf4xvm1kF9wHa9dYGN2/LAchCrxvpvcTG3p9pceo5S1pF6AOYqVaNqem/siknBK0lG2cAa2qlhEtpm1MrwPW6F1IKxQzdDVgF5RM4relb1mvfWnmakVDrKJzM9t6YV8R5uI3NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730227717; c=relaxed/simple;
-	bh=5WnX6mec9o85P35lihHwoMy/zr9nqgBrCUWkxtOD2No=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fwF8i9sfwYUMZfOpnd4/og/EoW5xDabAZ8KSxbbCPkbCcyOIBJupXq+2NrycTYwoMrwnuqxgaUF6RYZtnZMTbiukMQhJHwNZ5V7prgEGUjgQ7Km7H75Nb3ujUEYElKGYFn2P4j39BwMuLKVWNiOegfVPsm/pOpjXORKSznOJUnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RCPib8Aw; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2b71fd16fso867793a91.3;
-        Tue, 29 Oct 2024 11:48:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730227714; x=1730832514; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TCRE+6EZ/yw1XNuf7LsU8HLd7SdSlt1GHV/fpsit1T8=;
-        b=RCPib8AwO45rMYqI59wXGx+qZ76q5laqOITbRlApyNEeGAUoLogjCgGmfN9V4aIg96
-         wbN2aWMS/YLpjVfZLoKGRMTXCq+dMJF1Nwron0YavprKW+vHedToDZd2UYv6sBw0XpOw
-         9QLD2bikNXetnGCrK3oMFp8LsbQs+NgzAF9PpITxf/iDpgUmiAbwXicPEdhAwgpI+Cu7
-         2qMuaaH+Mw7g7DjbCfPmcxL7zOWOHRtDWQc7ifEu0cTvDTpzUC4yM2xf1JLbBPhQrcF5
-         4XSXyFryYfDsdhkVy5CH159YtEVYpzh3ciRAP1mW+mT3lK9ZQqRvtnoPlTTz4+yWwpQs
-         fCKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730227714; x=1730832514;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TCRE+6EZ/yw1XNuf7LsU8HLd7SdSlt1GHV/fpsit1T8=;
-        b=XJ5RV2cAPlN23Wkk1tLa5zw+/DkQi7Kr1fd+1Omt59N5h8P4K0+H77myibnR8vKmzd
-         lCgZ5ip0T1X0Skn54RFUXy3pvjqvastFqbCHMC4NZbSkFoWV4eLvXmWlI219AnnQYKhD
-         6RSMdnJvYISo4WAhzPmT3D/1Ekj1Qmlo9TWWrdrEWB/+vmvJmXNQagj2YYlddYP0oRx5
-         6Tth40FJEr4bHnSYbGx0orhiRb/mxnHl420bcyty4Nc8kQ0t9FUe6md3+pLZKeBrinwc
-         rUHMOR3FcGM88T62MlyuSrDc0J9gQiCUPUb2GjUEGdHDCrm8ETXOY/4rihaZ4LJVAGsY
-         IjHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUr0AYMZiaTLFAKonc0uGFpTjaarwCvdC79ipU/XIPFubKibYJTHpFYKJyAYgw/GH6Hndq4qIu9UKW80mw=@vger.kernel.org, AJvYcCWz+fGDxcUHDKPITtdNRf0UooCLhJa7LB+ysq3XV3pCEs7bv9Z/ysy5cfg05BKotSn4WnwPFWgbWuu5Vnny1ag=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy8YzHPU1Nl/nKh/5Gc5tiLdqupo8waSNdyggS4pBlx0KoV0v8
-	mUySFrSR1e1HefKEZjbGBPGvVcE09v85XiqgKX2CSMhR3BtTdY/UZYkEe9/oJBHugGWKPqjAweQ
-	u+/IWkKbdfaNSxuKyINhVA1lJKCM=
-X-Google-Smtp-Source: AGHT+IG2CQMkHrmxNtRfFEVPwh41ZlDTCRnQWP3Ar3wgBdllVXYr99MB7lqUQ2gQYyQcruioOgvW5dVlUkp/p8WXb/I=
-X-Received: by 2002:a17:90b:ec9:b0:2e2:e860:f69d with SMTP id
- 98e67ed59e1d1-2e8f11c0f0fmr6059857a91.7.1730227714615; Tue, 29 Oct 2024
- 11:48:34 -0700 (PDT)
+	s=arc-20240116; t=1730227719; c=relaxed/simple;
+	bh=6HV0S8hXPLg9laP+k0p8fwpJV8/KlnJaTdjInZpFGME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DQCQOZegd4fI7lrW6WdglJWugQvd0X10fsviyG+l/cca99q5LxxaHyDPw3pD/hlDuAFhPNISt2+FaY4xMxOl95vYYWMp6U+0kiN0vB8N0aSrduAZ2vKIwo9gTsQD8VMP6rsIrhkfI2K4m39Iddf6iltS9Ce9hGcU0VVbinjTEy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=PcyBCZlJ; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6006a.ext.cloudfilter.net ([10.0.30.182])
+	by cmsmtp with ESMTPS
+	id 5dydtcZU7g2lz5rGetVSYU; Tue, 29 Oct 2024 18:48:36 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 5rGdtYboqSAO35rGetQKvS; Tue, 29 Oct 2024 18:48:36 +0000
+X-Authority-Analysis: v=2.4 cv=L7obQfT8 c=1 sm=1 tr=0 ts=67212e04
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
+ a=r4sGFtdbsuTx4_WqIAAA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Pbp5kCtKVkek8o0gSz48K3TsDNPAJncgnHaBDwQPGhc=; b=PcyBCZlJekUjqm7r04dR7Io+e2
+	et2Ry57xnDlfTZUYCv1ZqARidCMFqIP1GjnahQTjCXVX6mMehc2Nk0mW1T1lfQVYo3bGTdQARNUnk
+	+85sinNBCpbi2TvOtv0ig1DP1SEeg4LD+N+X6IshVSJhymzD2HF1YPfqjbTNHHP5L3ugwTd1cauub
+	sALIAJGAs+2U1HB5wyCggbIf70lhgSlOthpzdInHHdvTjJx7RQLIBd6Re8q0wVwZPt9iMkV3BiFZS
+	zPf41tVxaGm82qpsh9FecLCmI/qmMomgZiYZAtTa1splHNyLAUUYpvYTgLIc+kx19260Dkd4xNZo2
+	UQBWJ6AQ==;
+Received: from [201.172.173.7] (port=56256 helo=[192.168.15.6])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1t5rGc-000hnF-0T;
+	Tue, 29 Oct 2024 13:48:34 -0500
+Message-ID: <26d37815-c652-418c-99b0-9d3e6ab78893@embeddedor.com>
+Date: Tue, 29 Oct 2024 12:48:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com> <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local>
-In-Reply-To: <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 29 Oct 2024 19:48:21 +0100
-Message-ID: <CANiq72mb9X0LiDtDe9ptbqm3Ls527Xp+szX7px+Zw6OP8-aefQ@mail.gmail.com>
-Subject: Re: [PATCH v6] rust: add global lock support
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
+ -Wflex-array-member-not-at-end warnings
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ Michael Chan <michael.chan@broadcom.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>,
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
+ Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <cover.1729536776.git.gustavoars@kernel.org>
+ <f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
+ <20241029065824.670f14fc@kernel.org>
+ <f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
+ <20241029110845.0f9bb1cc@kernel.org>
+ <7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
+ <20241029113955.145d2a2f@kernel.org>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20241029113955.145d2a2f@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.7
+X-Source-L: No
+X-Exim-ID: 1t5rGc-000hnF-0T
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:56256
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 16
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfF3l3A7qyhNj5nKrQ9qQ493Pee9AFRz0Qw2+aFXBJjnswMt3d2Q3AlR/Fu3dKGzmW5XZx+UEXKnSQIZOOqCl8tml2ErPatEgA6/Lme2RaIMsLc4v7Opr
+ g3JEd/afV+ST554VUMnKqYJe9q2/1Snmn3vIdBpmBYe5NcKyFpss/kxfyX6WaRvPxNPFem5jZhvMVIM6uHUAdOm+zhiqmPL2qG0zx9BEQRZN5sKPbdgZrPH/
 
-On Mon, Oct 28, 2024 at 6:49=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
->
-> In addition, I've also queued it in my lockdep-for-tip branch:
->
->         https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/l=
-og/?h=3Dlockdep-for-tip
->
-> as I want to help route Rust lock-related patches into tip, so this is
-> a practice round for me ;-)
->
-> Miguel, feel free to take it via rust-next with my Reviewed-by, I will
-> drop it from my branch once if I see it shows up in v6.13-rc1.
 
-No, no, it is great if you can take them :)
 
-By "if I see it shows up in v6.13-rc1", do you mean your branch is not
-meant for v6.13?
+On 29/10/24 12:39, Jakub Kicinski wrote:
+> On Tue, 29 Oct 2024 12:18:56 -0600 Gustavo A. R. Silva wrote:
+>>>> I don't think you want to change this. `lsettings` is based on `ksettings`. So,
+>>>> `ksettings` should go first. The same scenario for the one below.
+>>>
+>>> In which case you need to move the init out of line.
+>>
+>> So, the same applies to the case below?
+>>
+>> 	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
+>> 	struct bnxt *bp = netdev_priv(dev);
+>> 	struct bnxt_link_info *link_info = &bp->link_info;
+> 
+> Do you mean the bp and bp->link_info lines?
+> You're not touching them, so leave them be.
+> 
+>> Is this going to be a priority for any other netdev patches in the future?
+> 
+> It's been the preferred formatting for a decade or more.
+> Which is why the net/ethtool/ code you're touching follows
+> this convention. We're less strict about driver code.
 
-Couple of things I noticed that I would normally double-check/fix in
-place: the "// SAFETY: called exactly once" comment could be
-formatted, and I think the "Link:" tag should be before your SoB
-(well, at least b4 does that, which makes sense since you added it,
-but I have seen commits done differently too).
+I mean, the thing about moving the initialization out of line to accommodate
+for the convention.
 
-Thanks!
+What I'm understanding is that now you're asking me to change the following
 
-Cheers,
-Miguel
+      const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+      const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+-    const struct ethtool_link_settings *lsettings = &ksettings->base;
++    const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
+
+to this:
+
+      const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+      const struct ethtool_link_settings_hdr *lsettings;
+      const struct ethtool_link_ksettings *ksettings;
+
+      ksettings = &data->ksettings;
+      lsettings = &ksettings->base;
+
+I just want to have clear if this is going to be a priority and in which scenarios
+should I/others modify the code to accommodate for the convention?
+
+--
+Gustavo
+
 
