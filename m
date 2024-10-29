@@ -1,125 +1,145 @@
-Return-Path: <linux-kernel+bounces-387282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AB09B4EFC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:12:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DF99B4F04
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:13:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31166282674
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:12:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E16E1F23DB6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4265C197A7E;
-	Tue, 29 Oct 2024 16:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dybgzy/R"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44896198A05;
+	Tue, 29 Oct 2024 16:13:17 +0000 (UTC)
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A69D195B18;
-	Tue, 29 Oct 2024 16:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A79F195B18
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:13:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730218320; cv=none; b=RaqL9i6wDeVMs0zB3RTePDRnM3aezUhWtp19GZwBkhcgD/VL0RC4UqDdaPxZgtQ2GFz4P7f6Ee0IBMIr9Ma2v9wD9Akspfh/42R95WJMtngf7Wcu9T4fYq6gpKQeKSdyjMVwnGlim2uPcP3oMUmJ1pppf17lyKabssJKG7LFYCs=
+	t=1730218396; cv=none; b=sNZRUcsOlFZ4C1nW785CiCWoXeHb2ZBeQKSOlVTP3rG2l0RwS+GxyQ/TLPQzOrMpjetSOuyFos1AWQ5CJO9/BJGyIGAzeI4ytQwHepDM3/38B1JkeSRf/9ZtKrBBYRXrYOh2QTdBB1N08Uh6TVQN1G38tfN5LrMtOHRvFQ+B59Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730218320; c=relaxed/simple;
-	bh=gsgmjLEXJ6bu6q7DD1pAjajrD7nZ89er/aPYjIIBnuE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bRStNJEpxTmLtxqYwJwAvfX7Mb5y8mIBd0V5H1qgXYyRdOSiJsgoBQER1cUUdYxaWcyefqfkAmkEfDP5dQdkOODRhYIbGTRE5Bas4ov1bggJuFqhlQSI7Tnh54DXkV2rhe1kd4SAGRfWYHHe4Twy/y7O5EmbFQv3D97cc52Ta34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dybgzy/R; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1730218396; c=relaxed/simple;
+	bh=Zhs0LPU0E3TP4rasQL+oeS5o3Raigf8SyupbdR1yQA4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=MsDfaq7M5HDNuM7sS/Y1WowpvXOjq2jE5vAmYqAXcxrjkgIzKC6wIvMWHVfVn48vqFPn9mv13NagKPTHjtPwUlMgyd9VNVLeK1ODP0v4YGx6js3wePjrzsBpIq6jklwi5Lpi1ElAL+5RRs/0Oozl4CZ7X3LhRTRyUTCqxrfQoUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=auristor.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=auristor.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43163667f0eso53652925e9.0;
-        Tue, 29 Oct 2024 09:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730218317; x=1730823117; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pqoX7WULKFt/bfeT2IWdP3wKqQiwnx8qpOnus2RNe7k=;
-        b=Dybgzy/RRlpre9tavmSmcG/pEfSAOTzR7ChiD7shgXDEXS9lc1kaWs7uAhD8+IWOHm
-         rzrUvZQ1hYz1dJyUWqLniAdGB06m4nfXgjuyw/EXao2jWYd+Fydzj79sPcw9EjXtyZqc
-         DoJCtHuW59UppM44xZ0PxEK5ybRdLNzlXs7N7iCrXYluBBeDKSmn/kZ66MOynA9Ec6Sv
-         8WYw48/P9qIb+1r7FrkcL8DCqlg62hiLCqAsF1MB7MlUxjDT6Br8ZO16nl4pYR/YmdnJ
-         YQyJC8Zkjpsrrynk7xhsBuVH48rBqiBvmWHhxi5pMFbNKpreHQXfZZF2HNFI7fNeVHhK
-         44FQ==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so7011233e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:13:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730218317; x=1730823117;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pqoX7WULKFt/bfeT2IWdP3wKqQiwnx8qpOnus2RNe7k=;
-        b=F6P44okzBFvM7EIjTCuMj6OTUlP4LR9vhTI8myjbcFOXitGvuumcqmjvbdP88+b2/O
-         p0ycs1lK8Mql6FD87b2LFZaLfyXSESqx398U7djSP0+G+hXxTObLw9+kZuxo0t76oJx8
-         zUJ/9QKWIEJ/pi/y+zGJlpUtXpw2e6amtb2UPkuZmIz+rVrOK1ag1v4K8aq/lLoIEOPk
-         0NKgAeldLLB8xDfRD7Fh+E/O6sU+tUsW6LDBEeFI7pH8wIW4L3TFodNbaXROOxQ2SWJ/
-         Y/KmvQj8m23Rw/qnk721i+fvjb7mIaKLuJsZlPf4txbPqGLIfFKKY5QFIat8Ayf6i9Rt
-         tsTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsuSTetQgG+LESkNWa/vmnQn/SWIYUgqGyhXDmjbBEUul0rdcZXB9zImEqW751FWMDp8X298R0q//LZyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypUn2FywWA46xnM/qBLPRJRwnw5nCMkM2J9+5beTfCjYl9hGFI
-	5DeN1gyqoZ+fsY9YO+ZB8sYYVPPRA3dghGzRlaJuBVh5YuVqBTJJr4OnxgjF
-X-Google-Smtp-Source: AGHT+IFUF7lfCCfkKUOBUcSlJGyctZ9PbyWmCZzP6RQkRXhKHmDTyIBjw9RToKSubYCqgpXUxYo4Hw==
-X-Received: by 2002:adf:f4cf:0:b0:371:9360:c4a8 with SMTP id ffacd0b85a97d-380610f81e7mr9368425f8f.6.1730218316664;
-        Tue, 29 Oct 2024 09:11:56 -0700 (PDT)
-Received: from localhost (host-82-56-18-47.retail.telecomitalia.it. [82.56.18.47])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b0ea58sm13002569f8f.15.2024.10.29.09.11.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 09:11:56 -0700 (PDT)
-From: Matteo Martelli <matteomartelli3@gmail.com>
-Date: Tue, 29 Oct 2024 17:11:54 +0100
-Subject: [PATCH] iio: core: add docs for read_avail_release_resource
- callback
+        d=1e100.net; s=20230601; t=1730218392; x=1730823192;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4jfDxjt0O59fHl7HGYkysWqybNou5R8ZLnQr94UhTkU=;
+        b=NN2OnK5AwPiD2r9GCBVE8bm3/xg+XAM0WNJCP13FVxJTMUxva5sCwbXOGX5ufeKhtf
+         ewhgM7uTzTb40Yu7ZkOyI1GDT1lUIavb9+nAcksX3umuGZ2+FF1dKg/bWhNypNWP+D2Q
+         xTbIm55356mcqGH1LgiKMSMwB0MTsbw6yhrNDafyiKQjt7iwwteRsJxk1Z/nCmlil8Yz
+         HUPXsF7FHXCjEzz8QQXCmoTPWBF9gwpSZ02lRp2U+DhKOLvwoRcavd2bAUgTKfQD9pz0
+         OEzG+jHLZRKYate6oCe9nXpZ7FwLkN6JlZV8iVvYMTytMIn2b1v3y+87nj61AlhtgqLL
+         INbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcuaD/ezs2n/PqwAOz53swjc6X25mcLFVrNyUH+7DcPIxGt3wUhv2Q4sJn0Gkwa1fh+Otrb4871fpfrhI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAH/K9DfLT11nJ/LqTMjQVS/NBdVbK5FZ6v0mfBM1mTdrKUuoS
+	kc64c3Mqttyp2lfIeQ3CZlTk/SSYTpVxZDnLSJiepQS5uOFSyFZ34e8HljZv
+X-Google-Smtp-Source: AGHT+IGyLvA/M/eDfvljz1Khv18PSE94rORTfee5YeONmALb1+/6RcYou5Drnqobfahx+stsN964bQ==
+X-Received: by 2002:a05:6512:e98:b0:539:e67e:7dbf with SMTP id 2adb3069b0e04-53b8903fb19mr106619e87.61.1730218391974;
+        Tue, 29 Oct 2024 09:13:11 -0700 (PDT)
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com. [209.85.218.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f028f36sm482611866b.63.2024.10.29.09.13.11
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 09:13:11 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso841572866b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:13:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWPKYpVDD7HmEJc3Pt8sh18ambJU3BDtXIntA+0Z5LeVBO/kcBbwN0hJKOGALqqePsxkWlhL4kJ095XfIY=@vger.kernel.org
+X-Received: by 2002:a17:906:dc91:b0:a9a:4f78:c3 with SMTP id
+ a640c23a62f3a-a9e3a5a0da3mr31773966b.21.1730218391620; Tue, 29 Oct 2024
+ 09:13:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-iio-read-avail-release-docs-v1-1-36919fbd1869@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAEkJIWcC/x3MQQqEMAxG4atI1hOwRax6FZlFtL8aECsNyIB49
- ynu3rd5Nxmywmiobsq41DQdBe5T0bzJsYI1FpOvfeNq37Nq4gyJLJfoXnKHGDim2Vj81HYOIYS
- +oXI4Mxb9vffx+zx/0QzSc20AAAA=
-X-Change-ID: 20241029-iio-read-avail-release-docs-a2b681e77794
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Matteo Martelli <matteomartelli3@gmail.com>
-X-Mailer: b4 0.14.2
+References: <20241029160609.13725-1-marc.c.dionne@gmail.com>
+In-Reply-To: <20241029160609.13725-1-marc.c.dionne@gmail.com>
+From: Marc Dionne <marc.dionne@auristor.com>
+Date: Tue, 29 Oct 2024 13:12:59 -0300
+X-Gmail-Original-Message-ID: <CAB9dFduUf_3N-9=t3O6ePxanjwPiqdQmgKR6O8VoF5BmPG_b4Q@mail.gmail.com>
+Message-ID: <CAB9dFduUf_3N-9=t3O6ePxanjwPiqdQmgKR6O8VoF5BmPG_b4Q@mail.gmail.com>
+Subject: Re: [PATCH] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
+To: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The read_avail_release_resource function was introduced in
-commit 8a63e3033e72 ("iio: core: add read_avail_release_resource
-callback to fix race") without its description. Add it now.
+On Tue, Oct 29, 2024 at 1:06=E2=80=AFPM Marc Dionne <marc.c.dionne@gmail.co=
+m> wrote:
+>
+> From: Marc Dionne <marc.dionne@auristor.com>
+>
+> The number of slabs can easily exceed the hard coded MAX_SLABS in the
+> slabinfo tool, causing it to overwrite memory and crash.
+>
+> Increase the value of MAX_SLABS, and check if that has been exceeded for
+> each new slab, instead of at the end when it's already too late.  Also
+> move the check for MAX_ALIASES into the loop body.
+>
+> Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+> ---
+>  tools/mm/slabinfo.c | 10 +++++-----
+>  1 file changed, 5 insertions(+), 5 deletions(-)
+>
+> diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
+> index cfaeaea71042..2c9c86d677ed 100644
+> --- a/tools/mm/slabinfo.c
+> +++ b/tools/mm/slabinfo.c
+> @@ -21,7 +21,7 @@
+>  #include <regex.h>
+>  #include <errno.h>
+>
+> -#define MAX_SLABS 500
+> +#define MAX_SLABS 1000
+>  #define MAX_ALIASES 500
+>  #define MAX_NODES 1024
+>
+> @@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
+>                                 p--;
+>                         alias->ref =3D strdup(p);
+>                         alias++;
+> +                       if (aliases > MAX_ALIASES)
 
-Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
----
-Link: https://lore.kernel.org/lkml/20241029155022.5f777572@canb.auug.org.au/
----
- include/linux/iio/iio.h | 4 ++++
- 1 file changed, 4 insertions(+)
+This is not quite right, needs to be alias - aliasinfo.  Will send a V2.
 
-diff --git a/include/linux/iio/iio.h b/include/linux/iio/iio.h
-index 747e89975d369f3c76aa49a96a7dc09f185e2557..3e5c1c3d8f7165f3185ae7893d922e42e930853f 100644
---- a/include/linux/iio/iio.h
-+++ b/include/linux/iio/iio.h
-@@ -434,6 +434,10 @@ struct iio_trigger; /* forward declaration */
-  *			type and the number of vals is returned in length. For
-  *			ranges, there are always three vals returned; min, step
-  *			and max. For lists, all possible values are enumerated.
-+ * @read_avail_release_resource: function to release the available values
-+ *			potentially allocated during a read_avail() call. Input
-+ *			arguments should match those provided in the
-+ *			corresponding read_avail() call.
-  * @write_raw:		function to write a value to the device.
-  *			Parameters are the same as for read_raw.
-  * @read_label:		function to request label name for a specified label,
-
----
-base-commit: 9b4071ab8cbe28bd1bc4c533ab944771731fe5f8
-change-id: 20241029-iio-read-avail-release-docs-a2b681e77794
-
-Best regards,
--- 
-Matteo Martelli <matteomartelli3@gmail.com>
-
+> +                               fatal("Too many aliases\n");
+>                         break;
+>                    case DT_DIR:
+>                         if (chdir(de->d_name))
+> @@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
+>                         if (slab->name[0] =3D=3D ':')
+>                                 alias_targets++;
+>                         slab++;
+> +                       if (slab - slabinfo > MAX_SLABS)
+> +                               fatal("Too many slabs\n");
+>                         break;
+>                    default :
+>                         fatal("Unknown file type %lx\n", de->d_type);
+> @@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
+>         slabs =3D slab - slabinfo;
+>         actual_slabs =3D slabs;
+>         aliases =3D alias - aliasinfo;
+> -       if (slabs > MAX_SLABS)
+> -               fatal("Too many slabs\n");
+> -       if (aliases > MAX_ALIASES)
+> -               fatal("Too many aliases\n");
+>  }
+>
+>  static void output_slabs(void)
+> --
+> 2.47.0
+>
 
