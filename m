@@ -1,125 +1,120 @@
-Return-Path: <linux-kernel+bounces-387550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3D459B52C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:30:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5067F9B52C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:33:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42EB8B22FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 752611C22561
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930712076A8;
-	Tue, 29 Oct 2024 19:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC5F20720A;
+	Tue, 29 Oct 2024 19:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="RnIs3Kpn"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S5gVQ+ra"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39C8820720C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3273BD53F;
+	Tue, 29 Oct 2024 19:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730230227; cv=none; b=Znu27KCVPMKVrdpcOCnDXa9W3KQ0IPnhC106WHBavovcfQaIwPh81lD0aYRoCf0bM8CoJdD1p/fTjujM88c2osgg5qI6Uc1PaQuaI6FEqT1gh0CWi5Gfn+Bkyt4DVTyN4FsakF+Z7RFNZoMNeOC1DbiyUFx9exC9anXvQKPCMvk=
+	t=1730230384; cv=none; b=C+mTFiUmKq6VgvDRlTmz1PKhZgaLifjTzk7hhBp78sdnNu10SeTktYlPkVOTcoICeVdiXsN2u7MTQDTiWChz3Vk1UVf46fiK3DaY4HsYDcqdhCguUpUc4Hz67P6M8/wxzRBqMn0DMj/UyY51gRnPNsSd4/nXb8Rpbq4mY9GCncY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730230227; c=relaxed/simple;
-	bh=UZqxfxGhhDijKNFqX9Nf1gDfRDmnMbrN717VYuDwDKg=;
+	s=arc-20240116; t=1730230384; c=relaxed/simple;
+	bh=rKuHVvH42ui6GSwdR20x9vXuuUKOs7LyPxbi1NASNnI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nnGLAn7jnOhVJDV8n28BrOh0UyJECY9kCk6TDRo4xz+PdeYDd0tatJcNzmDiAqFk4Zv9XIMgP9IMC6M2deNPwoTNKdQqArFkwy1p0Rwxjd9H6oJ/kPu6KeYbfJyr7eOVWVWBUMTQ7pKqzojfBQT9d6sPBFe3ZVDBT1LhIvZ2GTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=RnIs3Kpn; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20cbcd71012so62856125ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:30:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1730230224; x=1730835024; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eZYty5iLNq618ev8kgFv2jOkN8cQs9inuPb0s+iDRZs=;
-        b=RnIs3KpnhAhdaw72QWOHsnDArY1U4ueQHuO698SmE7CIddokHXSanrLxlUPwA7K3b5
-         hhGVnXa5InCXF+yUktBVby5G2IZI4tw+9kPOPBZstkm4pHn4aUqlL1/+shG2gY7jQRpx
-         PIG3SukBmxhJySX8zXHWC/s7pEumpfHSuFiPaUGDVXCzgprtdBJSIYZvv9pKRS/gqoSh
-         YndAjPvvwNeqPCeiSFy7FdDZPAeBuSTC70jlka1+Ja6pOPSXz+LDRauK1Nqxxa0JC0RR
-         1N96xOHO42loWAiwTAeLiQtyOucJI3uFwN32FpDmOnoYNFk5BRUEMxXwXPdYErPkoDVQ
-         JUbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730230224; x=1730835024;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eZYty5iLNq618ev8kgFv2jOkN8cQs9inuPb0s+iDRZs=;
-        b=e2rW/GIMdA0VMc4dXE1V7ORjOIboxoqPweIe6yBBZYHW6/v9vZRyXWNFP+knr4o3hZ
-         qJfi4S6piTL8I7NcunseC3sL8D4uO1q9jOamdVPHaq1n5SDwnIQKwBl4cEeBAxD9VkrS
-         KFh/9m9pIHb8syBNwcUfkVb7t/gUF/MHWdPt3YJKagqo8jhVSJ7szvV8qBiF+cBt2iDL
-         aDBhgC025l+NEokgA62cWnpMRYYz8sNgcNdWZtUhWmKKOzuZask02yOcLFCy4Ly7m4Yn
-         TjYvHH96KVXupN8bdg7Xn7/fjQ2ZpQMyheKypteNcltjiqhvclV/rqmloK8HuyEAyr3M
-         RYOg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7t5kxxU4uVgfBExfp3ajOrQ8KKQRTm8l58HM3oWy0x9oEywNFihR+qpKtK6XD916TB+yU1s8lYclb63w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7+eC5jWBNk9WGzA7hFREUMhKHY7e9Byfxsn3tgdinhnAIMLlz
-	cTSVtO8A6Uhd1gCw+7zrgn+rMAw38H7PGieHHXkjblYdwT3H36jcC21mxBk3yII=
-X-Google-Smtp-Source: AGHT+IFCGTXJ0m+b8aQG2NJq1Sf6l4nGmP7i3RBj87u6UaZGMbHBTkMdEXBC+/iHz1GLrMqpotUaBw==
-X-Received: by 2002:a17:902:f70f:b0:20e:57c8:6abd with SMTP id d9443c01a7336-210c6c95ac5mr165995575ad.52.1730230224422;
-        Tue, 29 Oct 2024 12:30:24 -0700 (PDT)
-Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf88490sm69587645ad.114.2024.10.29.12.30.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 12:30:24 -0700 (PDT)
-Date: Tue, 29 Oct 2024 12:30:21 -0700
-From: Deepak Gupta <debug@rivosinc.com>
-To: Max Hsu <max.hsu@sifive.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@atishpatra.org>,
-	Palmer Dabbelt <palmer@sifive.com>, linux-riscv@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org, kvm-riscv@lists.infradead.org,
-	Samuel Holland <samuel.holland@sifive.com>
-Subject: Re: [PATCH RFC 1/3] dt-bindings: riscv: Add Svukte entry
-Message-ID: <ZyE3zSNnc9qxUPly@debug.ba.rivosinc.com>
-References: <20240920-dev-maxh-svukte-rebase-v1-0-7864a88a62bd@sifive.com>
- <20240920-dev-maxh-svukte-rebase-v1-1-7864a88a62bd@sifive.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BUPdnYaOwvHTTRAV6OU3wECwb32e/tbYBdn5jHotMhGjbA8RP8r49krgmAM2REC7UmUL3d4Mr3qFkEKUyXvIDJOEQEnhiwjh/ChXgNlMWSz1Sb8ftMVwyf8wvJ1kTT3rIkClGnrrF4aS8zNvau3kvXD1t6Mz/r088+5u8mE0S8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S5gVQ+ra; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730230382; x=1761766382;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=rKuHVvH42ui6GSwdR20x9vXuuUKOs7LyPxbi1NASNnI=;
+  b=S5gVQ+rafRQIrmUoPgWZurMSmOnMG3Vw4l604B5jiAY62C07Nz/e2kb3
+   s9RcYBQjZgsJYHxDeJO6bxR8QaSCl3jwtGFAWMupVQc1/wRAAFpb5PG4B
+   I48sWXv3y3VM73S5BhkRhlAQXUWdy+abb/jDPRqWyMqK9rNnUaWJXSoXt
+   1bU3zJw7m9kSKzRJqfwdfLA4VzVLn+v/AWh8yILVgaZsPv6Ke1OjUx4Ph
+   vJbwW8MBWcneDARwvJWkfxbciLDtNG4YXtuJrZ1JQzRmL95k1x8kHeeS8
+   l9xCFjVaeV2SIoH+XXc0e/8o7lzxxUAHGlq2VfVxigYcdYxIb7zlHejqB
+   Q==;
+X-CSE-ConnectionGUID: VjLDeNyHSFajvAMYQ/JyUw==
+X-CSE-MsgGUID: yX10SUxIRlCB0tf9UhYWJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="47378529"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="47378529"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 12:33:01 -0700
+X-CSE-ConnectionGUID: +eIVlvmHQ3K/+bFW1SyJVw==
+X-CSE-MsgGUID: OaEP30QHQQi0PlK6I9o+OA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="82399102"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 29 Oct 2024 12:32:55 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 02E3426B; Tue, 29 Oct 2024 21:32:53 +0200 (EET)
+Date: Tue, 29 Oct 2024 21:32:53 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vitaly Kuznetsov <vkuznets@redhat.com>, Juergen Gross <jgross@suse.com>, 
+	Boris Ostrovsky <boris.ostrovsky@oracle.com>, Gaosheng Cui <cuigaosheng1@huawei.com>, 
+	Michael Roth <michael.roth@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
+	Ashish Kalra <ashish.kalra@amd.com>, Kai Huang <kai.huang@intel.com>, Andi Kleen <ak@linux.intel.com>, 
+	Sean Christopherson <seanjc@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>, linux-hyperv@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH] x86/mtrr: Rename mtrr_overwrite_state() to
+ guest_force_mtrr_state()
+Message-ID: <elods3c5ocia6645vhce7khtzdvzwf7m3wicxmwzvw27hyyvxv@mdixnwonfzgh>
+References: <20241015095818.357915-1-kirill.shutemov@linux.intel.com>
+ <20241016105048.757081-1-kirill.shutemov@linux.intel.com>
+ <l7l6ufyjbrfr4ms6quil5myf5bzmvu33sq3phfvpbwldhzn6m2@rzfdrvbe2glf>
+ <4d39b188-0642-495c-8638-67ae08c070b7@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240920-dev-maxh-svukte-rebase-v1-1-7864a88a62bd@sifive.com>
+In-Reply-To: <4d39b188-0642-495c-8638-67ae08c070b7@intel.com>
 
-On Fri, Sep 20, 2024 at 03:39:03PM +0800, Max Hsu wrote:
->Add an entry for the Svukte extension to the riscv,isa-extensions
->property.
->
->Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
->Signed-off-by: Max Hsu <max.hsu@sifive.com>
->---
-> Documentation/devicetree/bindings/riscv/extensions.yaml | 7 +++++++
-> 1 file changed, 7 insertions(+)
->
->diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Documentation/devicetree/bindings/riscv/extensions.yaml
->index a06dbc6b4928958704855c8993291b036e3d1a63..df96aea5e53a70b0cb8905332464a42a264e56e6 100644
->--- a/Documentation/devicetree/bindings/riscv/extensions.yaml
->+++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
->@@ -171,6 +171,13 @@ properties:
->             memory types as ratified in the 20191213 version of the privileged
->             ISA specification.
->
->+        - const: svukte
->+          description:
->+            The standard Svukte supervisor-level extensions for making user-mode
->+            accesses to supervisor memory raise page faults in constant time,
->+            mitigating attacks that attempt to discover the supervisor
->+            software's address-space layout, as PR#1564 of riscv-isa-manual.
->+
+On Tue, Oct 29, 2024 at 10:37:07AM -0700, Dave Hansen wrote:
+> On 10/29/24 08:13, Kirill A. Shutemov wrote:
+> > On Wed, Oct 16, 2024 at 01:50:48PM +0300, Kirill A. Shutemov wrote:
+> >> Rename the helper to better reflect its function.
+> >>
+> >> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> >> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> > 
+> > KVM patch is Linus' tree.
+> > 
+> > Dave, can you take this one?
+> 
+> Not easily without a merge of Paolo's KVM bits.  The confusion that
+> might cause isn't quite worth it for a rename.  I can either stash this
+> somewhere or I'm also fine if Paolo takes it on top of your other patch:
+> 
+> Acked-by: Dave Hansen <dave.hansen@intel.com>
 
+I don't follow what is the problem.
 
-Reviewed-by: Deepak Gupta <debug@rivosinc.com>
->
->
+As I said KVM patch is already in Linus' tree -- v6.12-rc5 -- and tip tree
+already uses the tag as basis for x86/urgent.
+
+Hm?
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
