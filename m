@@ -1,131 +1,107 @@
-Return-Path: <linux-kernel+bounces-387185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E4849B4D47
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:14:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E58C9B4D4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:14:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A130DB24365
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:14:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF6B1F25353
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49F519258A;
-	Tue, 29 Oct 2024 15:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D97D19341F;
+	Tue, 29 Oct 2024 15:14:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="ZwPdPdb+"
-Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ImL+57Xp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B62B4AEE0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:14:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA01192D87;
+	Tue, 29 Oct 2024 15:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730214843; cv=none; b=feBkozwUxLnyXlXK3M9h/RFWgKvEl2FDhJeiRUqjywQjMPYcXjc+gvy5tw17Wo+yfvvCFXroCXCBmjt6NCT+Elh9TCsks9bMjqWiIjH1GK2ApYs3aKKGWf+jaKqdyt8q53rfHpujcayaZvabHDWW9nerwObDVVmljJ4FBpz1SHU=
+	t=1730214881; cv=none; b=crDJ8SKJCQ7C05wOPPIm2Rmov0cMtsJffHFHOD61RQziobU/OLz+AI3DygUj2mfAzmwLoG/JxHx8kAo3z7WQzyMuGhT4BrusouiKyqOt++MDtrVAQjy3/EvIriR9L/Y67hs9+InaMRcfFyvhW7lC6dmEc97v3InZ2l9eQvIVbvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730214843; c=relaxed/simple;
-	bh=36nprHPkH6oU4PmId9qb+SWEjSQYJw7oxeUHfCaKhCg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A8nsN9SkFfK2PJRsagCj7DIi+dDCyUSr+sI50l3mDsIqPDh484bNnl9qijx+j6srIDq9sKrv3l+xOLDw5ZtI30A0ig2d6cmgyVuS2ERFGzsVYOno6/2tDDAai0CCrWQQw0Rco2Wv1M/GIQhbwRLu6HfgqxBipX/cMQop4Spaxmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=ZwPdPdb+; arc=none smtp.client-ip=17.58.6.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1730214840;
-	bh=m0RPAITzRHsXZ5OofhylNXltQHUN+yHYntp1o/XyG/M=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=ZwPdPdb+lL8xoHbcZxk7RKv9WXJXTl3gMLYqI5pPQ/o+upMs9Sh91F16y69ETq7Nh
-	 +CSujS9Cqu05y0OBMPUwGQgh18FVigj0Y/TAuSTGHAWVO4woyqmZhZ8J02yzO74zgH
-	 51hNbYbV7P5cc63gqIPqZI5UBr0hTV7ZoH3FVhClmsn/aW8jb4jRhMCzdxrCksEodw
-	 0KJ7R9SJm5od5EHCEVbbLIXIPWO2RAxpeh3C0CeFs6sqbgNdA8kKeH+UpxCmX5IVYJ
-	 tuWswcdudWsSblO4XTyslg93asjskfxSQ7TXP5L+wDkwADU/INdy+Nit2DF4tUQkT5
-	 HjJkjqFi8U4ZA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id B28925003C7;
-	Tue, 29 Oct 2024 15:13:54 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Tue, 29 Oct 2024 23:13:38 +0800
-Subject: [PATCH] usb: musb: sunxi: Fix accessing an released usb phy
+	s=arc-20240116; t=1730214881; c=relaxed/simple;
+	bh=VxfkBUVqN7pKQ3j0D5LM4Ff75dFoq9324/ciN2UvlR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sR1tVYQ0ig9hYRnLX7SP9iVnuxVUcGWc+5IfzIOR11Oz8V3/JWxi2dh8xJcedsoXwxPeZBHiJGszy/2c0ktp/6lN6++UdYD/iyR5YegKyL8OaA3jaJZ78fEf7+x7kkHvfDUyNIz9kQOR3jElpBTBaGs0D2PdVSxpcSqt2DPKAJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ImL+57Xp; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730214878; x=1761750878;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=VxfkBUVqN7pKQ3j0D5LM4Ff75dFoq9324/ciN2UvlR0=;
+  b=ImL+57XpiBXYq0UTIWmZhYD6FN6oHCNKcfYwwRMdxUEY0T9Z0wE3wQaQ
+   birNEKOs1P8zRvJW1y4uDUkusVYgW83WHOUkDntulNFBzCtvqT+oM3xUP
+   D5Sque4ZOI6LIA6DGOuxOimUCc+PmfyHsdZQHSvzHcF+yOAe7P5w4fByH
+   SMFL+qdxgv12BTAiUm1yi0eTpKkpm0BuByufZqyNJuwhgZkl+c2SMZ1lT
+   BO8+6gDj4JRjt4G4JcQgd+XiZvCzgy69xBeSlXxyLk11IK7iRrRSmOwY6
+   MWTneenWUpksDRSeCvgG6jkfumlq7/pWJr+WbwB0miGK6sxvlrDxjrflV
+   A==;
+X-CSE-ConnectionGUID: JQskI5qiS+uSEgXku+EyJQ==
+X-CSE-MsgGUID: AkR/m6dYQEKRmO0vSqJrrQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30001108"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="30001108"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:14:36 -0700
+X-CSE-ConnectionGUID: +OwAoqocSxeGSVfZuetzQg==
+X-CSE-MsgGUID: HhUJTg4KTUeTGuJ+MbgFpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="82060423"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:14:32 -0700
+Message-ID: <59084476-e210-4392-b73b-1038a2956e31@intel.com>
+Date: Tue, 29 Oct 2024 23:14:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 03/13] x86/sev: Add Secure TSC support for SNP guests
+To: Borislav Petkov <bp@alien8.de>
+Cc: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ thomas.lendacky@amd.com, x86@kernel.org, kvm@vger.kernel.org,
+ mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+References: <20241028053431.3439593-1-nikunj@amd.com>
+ <20241028053431.3439593-4-nikunj@amd.com>
+ <3ea9cbf7-aea2-4d30-971e-d2ca5c00fb66@intel.com>
+ <56ce5e7b-48c1-73b0-ae4b-05b80f10ccf7@amd.com>
+ <3782c833-94a0-4e41-9f40-8505a2681393@intel.com>
+ <20241029142757.GHZyDw7TVsXGwlvv5P@fat_crate.local>
+ <ef4f1d7a-cd5c-44db-9da0-1309b6aeaf6c@intel.com>
+ <20241029150327.GKZyD5P1_tetoNaU_y@fat_crate.local>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20241029150327.GKZyD5P1_tetoNaU_y@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-sunxi_fix-v1-1-9431ed2ab826@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAKH7IGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDAyNL3eLSvIrM+LTMCl0D87RUQwsjIwtzY2MloPqColSgMNis6NjaWgD
- YrKlkWwAAAA==
-To: Bin Liu <b-liu@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Jonathan Liu <net147@gmail.com>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-usb@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14.1
-X-Proofpoint-GUID: A52_arbNQN9AMkzMRMQ8e3GA-Vxpu0ol
-X-Proofpoint-ORIG-GUID: A52_arbNQN9AMkzMRMQ8e3GA-Vxpu0ol
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-29_10,2024-10-29_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1011 malwarescore=0
- bulkscore=0 mlxscore=0 mlxlogscore=658 suspectscore=0 phishscore=0
- adultscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410290116
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+On 10/29/2024 11:03 PM, Borislav Petkov wrote:
+> On Tue, Oct 29, 2024 at 10:50:18PM +0800, Xiaoyao Li wrote:
+>> I meant the starter to add SNP guest specific feature initialization code in
+>> somewhat in proper place.
+> 
+> https://lore.kernel.org/r/20241029144948.GIZyD2DBjyg6FBLdo4@fat_crate.local
+> 
+> IOW, I don't think we really have a "proper" place yet. 
 
-Commit 6ed05c68cbca ("usb: musb: sunxi: Explicitly release USB PHY on
-exit") will cause that usb phy @glue->xceiv is accessed after released.
+Then why can't we create one for it?
 
-1) register platform driver @sunxi_musb_driver
-// get the usb phy @glue->xceiv
-sunxi_musb_probe() -> devm_usb_get_phy().
+> There are vendor
+> checks all over the memory encryption code for different reasons.
 
-2) register and unregister platform driver @musb_driver
-musb_probe() -> sunxi_musb_init()
-use the phy here
-//the phy is released here
-musb_remove() -> sunxi_musb_exit() -> devm_usb_put_phy()
+But they are at least related to memory encryption, I think.
 
-3) register @musb_driver again
-musb_probe() -> sunxi_musb_init()
-use the phy here but the phy has been released at 2).
-...
-
-Fixed by reverting the commit, namely, removing devm_usb_put_phy()
-from sunxi_musb_exit().
-
-Fixes: 6ed05c68cbca ("usb: musb: sunxi: Explicitly release USB PHY on exit")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/usb/musb/sunxi.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/usb/musb/sunxi.c b/drivers/usb/musb/sunxi.c
-index d54283fd026b..05b6e7e52e02 100644
---- a/drivers/usb/musb/sunxi.c
-+++ b/drivers/usb/musb/sunxi.c
-@@ -293,8 +293,6 @@ static int sunxi_musb_exit(struct musb *musb)
- 	if (test_bit(SUNXI_MUSB_FL_HAS_SRAM, &glue->flags))
- 		sunxi_sram_release(musb->controller->parent);
- 
--	devm_usb_put_phy(glue->dev, glue->xceiv);
--
- 	return 0;
- }
- 
-
----
-base-commit: afb92ad8733ef0a2843cc229e4d96aead80bc429
-change-id: 20241029-sunxi_fix-07fe18228733
-
-Best regards,
--- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+However, how secure TSC related to memory encryption?
 
 
