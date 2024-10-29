@@ -1,114 +1,109 @@
-Return-Path: <linux-kernel+bounces-386996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D669B4A93
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:05:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C73F9B49BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D934A1C2292E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:05:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB686B217CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC4A620607F;
-	Tue, 29 Oct 2024 13:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29519450;
+	Tue, 29 Oct 2024 12:33:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="C9UoaC1T"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R0XX2WtU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF20B20606C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:04:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E438539A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730207081; cv=none; b=JJAzTGY9/yzE2BLcSTkC6smdBbhK3+T8GZVShU66lvEDX9korJTaYLaQx9xMSZQISnovNs9XQfpWD3QcxBOW/bF/0fnXXu2Uc/pFwIWUHz05zkPNSAOnB0Hyomsd0hgaUJwmbdMD25NtSrLBD6gr06A86Y37RVyqQD5yNvGR/Mg=
+	t=1730205200; cv=none; b=e+F2ClsMtDsnETONi60W4FfsmEOKkA9hpp6PaG7qtpCI5fwh190//N3WGUnGFOMQLZFbhu1lfrKUExAUOzWoe8mAGStXr9YOgII4DAoelPxTZRzi2xXlZb2rHYBaVCkJtyNp4QST7qzEN5yGTpo62hnB2S0/Wn3KKxRv5HjX1dM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730207081; c=relaxed/simple;
-	bh=XZPeYZ6csh+iLgIU6dPxvjDU9u3yhGlNS/BwYc9pr+g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WEi8KwWKnPAjmkJZRz6gnFofhloKiNe1OWYaGK55YmKoi/qfvMqy2nTf6QC7NaB1yRAQ/AzyLX0addxef6qO7hMPU68WzApcaSwhwroudk07AnVi+3ahQWDUPCLtBC57n/JvMhbXPmp3JEimwWIGYEJCS9FNrMOFJnA235rL4ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=C9UoaC1T; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from localhost.localdomain ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 5lOGt6UZmWAQ95lOGthGvC; Tue, 29 Oct 2024 13:32:05 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730205125;
-	bh=+mSbqJzHTb7UuKKE81wy4HqptEKJd9/7vkwwu/YmtSQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=C9UoaC1TVYmJLT+xkrE/mPPJXmjdVt33PX/USrYk+bzmxx4FPXGaBvzEf2oArG9YE
-	 4RmB7G5sZzkZah1NeuhImFNiz5IhGrb1FFDkNe4Wgx0636meQNOIcB0AJlFhe4m+NZ
-	 yr7TVXxX+U09+rA4L3dEC04Di7/C8bH5aSSgW3h8IlQ3PW7LMR815W62d5zu3KYMb1
-	 E9FiOjuB8GymFcnw0uNMghNiUWekqhNtAc3PWR/jCWcKspSMMnwMFUigrY1iesJReC
-	 UcoWxeAgWXHswE68YaFYUfG/8zaQ5fb/hdO21A2UinUIkhfbygHS/+9R2XyMFoxLLR
-	 EzRD476nsEXdA==
-X-ME-Helo: localhost.localdomain
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Tue, 29 Oct 2024 13:32:05 +0100
-X-ME-IP: 90.11.132.44
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Thomas Richard <thomas.richard@bootlin.com>,
-	Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH v2] mfd: cgbc-core: Fix error handling paths in cgbc_init_device()
-Date: Tue, 29 Oct 2024 13:31:49 +0100
-Message-ID: <83194335554146efc52c331993f083bd765db6f9.1730205085.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1730205200; c=relaxed/simple;
+	bh=3oz5OCzkZXQC+rHxhytPMECDTe+7K0m2PqLGlcDUmM4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uQWTaERw5l+ZFc3vlM0H5/YU5ToCCmqBaq/8Dk2ISCIQ7lWPcSKDKA6ZjUY93f5ILCDB61ZyxswTUFkoQ59T0AUtfvLkwkSkFVQyRTSuj2RKWXYe9ZzFmZsBAAFzlqFgTThIJudbnpCABOejBKmrXUu4sfV45a3MHiec5spWVGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R0XX2WtU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DFC6C4CECD;
+	Tue, 29 Oct 2024 12:33:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730205199;
+	bh=3oz5OCzkZXQC+rHxhytPMECDTe+7K0m2PqLGlcDUmM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R0XX2WtU/ewSgT3aG9pTCgLn1bK2naVRGOXUb693RM18Kb7jctHhyUlvBnyB2nnHt
+	 CTt3ZJq25U3qXw1GaLP6EDei2p75AXW2w8yVNkhfKLOewbUXPHcO3R7CGVH6OJgeO8
+	 /2RC4LYcJHjIE3IA8RC6lvrwsorrQZFIAYJ561d8iavr9YpagDZvZRHVu1fGKbW7+c
+	 K61XRF9dakPBbBM4zKIdK6J+JO/sRjupd5/S2KBsBi2iN12ZhBm8Utxr5v9E03e38B
+	 BV4ZXyX872RuAkn907OrS5jfHek8XkOMf867Nfo75U/m+j0gCBDgy5f7E/SDg/Ch8h
+	 ghk3yU46ByPlQ==
+Date: Tue, 29 Oct 2024 12:33:13 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
+	linux-arm-kernel@lists.infradead.org,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Aishwarya TCV <Aishwarya.TCV@arm.com>
+Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
+ error path behaviour
+Message-ID: <0d3237d7-cb70-4979-b262-29ffe7d7a608@sirena.org.uk>
+References: <cf1deb9b-c5c4-4e85-891d-62ecf9a04e0f@lucifer.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="+c7bJTQfcONVyaEN"
+Content-Disposition: inline
+In-Reply-To: <cf1deb9b-c5c4-4e85-891d-62ecf9a04e0f@lucifer.local>
+X-Cookie: May be too intense for some viewers.
 
-If an error occurs after a cgbc_session_request() call, it should be
-balanced by a corresponding cgbc_session_release(), as already done in the
-remove function.
 
-Fixes: 6f1067cfbee7 ("mfd: Add Congatec Board Controller driver")
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Thomas Richard <thomas.richard@bootlin.com>
----
-Compile tested only
+--+c7bJTQfcONVyaEN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Changes in v2:
-  - remove an empty line   [Thomas Richard]
-  - Add R-b tag
+On Mon, Oct 28, 2024 at 10:14:50PM +0000, Lorenzo Stoakes wrote:
 
-v1: https://lore.kernel.org/all/24ec1348b99e76a853435ab081ae9a8f0e51fd52.1729938747.git.christophe.jaillet@wanadoo.fr/
----
- drivers/mfd/cgbc-core.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+> It doesn't make sense to have shmem explicitly check this one arch-specif=
+ic
+> case, it is arch-specific, so the arch should handle it. We know shmem is=
+ a
+> case in which we want to permit MTE, so simply check for this directly.
+>=20
+> This also fixes the issue with checking arch_validate_flags() early, which
+> would otherwise break mmap_region().
 
-diff --git a/drivers/mfd/cgbc-core.c b/drivers/mfd/cgbc-core.c
-index 93004a6b29c1..7c0ee6d53091 100644
---- a/drivers/mfd/cgbc-core.c
-+++ b/drivers/mfd/cgbc-core.c
-@@ -321,9 +321,18 @@ static int cgbc_init_device(struct cgbc_device_data *cgbc)
- 
- 	ret = cgbc_get_version(cgbc);
- 	if (ret)
--		return ret;
-+		goto release_session;
-+
-+	ret = mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs),
-+			      NULL, 0, NULL);
-+	if (ret)
-+		goto release_session;
- 
--	return mfd_add_devices(cgbc->dev, -1, cgbc_devs, ARRAY_SIZE(cgbc_devs), NULL, 0, NULL);
-+	return 0;
-+
-+release_session:
-+	cgbc_session_release(cgbc);
-+	return ret;
- }
- 
- static int cgbc_probe(struct platform_device *pdev)
--- 
-2.47.0
+The relevant tests all pass with this on today's pending-fixes.
 
+Tested-by: Mark Brown <broonie@kernel.org>
+
+--+c7bJTQfcONVyaEN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcg1ggACgkQJNaLcl1U
+h9DLswf+MdDUA6uK1U8jVbIG476TdL1quD1o3LXC15bDaBLUC8cZL7UsJWh1t203
+yMbqza4KA6GjA5Rbbcvy/07Y5fvtHMmkHkQ7gHt7zgAmY8jBFYeQUueJzMpy23Jx
+MRYiKblk+Ezh6SRMBHJy09dB2yCorGmPJ/uXfUo4tZ5lvffqPd7CkULu4DWZGbcT
+YHrLZQmXKOZbSTOxSQHxehCoOOFevRgW3qQgTjUiFXb7+Oi0ztZO1Z9Aptcrnfnb
+0/kCRUZ0eRLwCkZao+cMo7rW5fTv8a4EcU0H4SzO84KD8ode1ZLnZkbpEbEt6eAe
+9hLCdN4QURUV//NVaY6j/dvu2GzYyQ==
+=OcfD
+-----END PGP SIGNATURE-----
+
+--+c7bJTQfcONVyaEN--
 
