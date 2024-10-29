@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-387120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEFE89B4C33
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:36:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BF999B4C38
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595831F23EC9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:36:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB944B231FF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CF90206E79;
-	Tue, 29 Oct 2024 14:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D09120720D;
+	Tue, 29 Oct 2024 14:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="brlEQOHR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="imBdGrxh"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A811361;
-	Tue, 29 Oct 2024 14:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA41361;
+	Tue, 29 Oct 2024 14:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730212547; cv=none; b=l2b/pkaD/tVLHG1U1S7QH/lCOvP8fXzgMbkF6WpJPiQW/ZFqpPnmu+FEFzlfKKXNLbzsemE57RwdgqnkbVD3NyYUT6YHFqrP+Kf1Wz1MtgmoeQKfcx+KDQ2U7lLTqbQpOdA65CTEvmxcsTZU27pDyaaludMvXJarCPp+xz1mlGE=
+	t=1730212633; cv=none; b=qMPqEFgxWTljBCFOnmdFQ5nCtRAHzJrGqqnYueZRuUxGCbzDtVC0PJrVlSW2GSIY81s+xaTSIpnVXLzzogfWVRDDvRK5UPCJHAunV7OWnBBojuRvMAhlctFJV02gEHFpqkpylGlVsYROtOdtHMsX+8M3oMbooSF0d+Dwsl0fxQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730212547; c=relaxed/simple;
-	bh=XQYPCdG//h9n1D5bA82LeVGGe26ya7GVj2pU71BtCuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fthKvggVVJ5doYuw5UzZav/UZgYVy/rQSH9Ug2tLBolte1O8bWYZQc2BZUZZ0UtC3Ynb/VCVuvYk4wJmiAxdziwKfKbZH3W04P2YsfVKl/Bl6Dmxi+VmR6+7eN8x817Ue43X46Ts0oR7gJkwJsWYnG9bMYXoSL9+yQTL38eYNDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=brlEQOHR; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1730212633; c=relaxed/simple;
+	bh=jhIeagrsfmCzyreNXSZ+IBZYXKz78nr3SRrw/kS9vUY=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pY3AKRxXDjZ6cbrixOuUCRn1rhzLgdUxVpUydpnpUzfis6/EXQb44qJlgoTyPMABmaD1qP+y7rF5wt8OJX9q1rUDc5+7jnHbrcf8dWYdJjdKHppbPywF/MiUDHjw178ZuB1JRFSYQENCc3X08aZoV0m3UnAGMe0bZrhAHh2tXzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=imBdGrxh; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730212546; x=1761748546;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=XQYPCdG//h9n1D5bA82LeVGGe26ya7GVj2pU71BtCuI=;
-  b=brlEQOHRpsY4Zr6BJODsOih+AAxIpv5cUP5E8QjsRMENXmpMk0AIW2Ws
-   4nDgLxqbyZgLPLD4ot0FJSowq2zR5C+kXfluf8N+Bm52mDm7M1CgxifRX
-   AG4AQV2V2PF5VJOLxr8S2iYWT3rmB8diNozDhFdaYuaLqvvVkczzlQa1u
-   gCKOgMAasSzk90qWQP2gvcdjCmJjeZuUUbB9T44UFpLs6hrjAHrsxXotU
-   VC04yx+216zaZ+DCsh8XCGQChrF3ODAQVk3AmlfFyfBIe5R27UMkx7BAS
-   LqLjcuiiOFNKlrdt6OodwoNQQbaERgWMcbEZwyP88zyhabvM7pryEnHDy
-   Q==;
-X-CSE-ConnectionGUID: r/Na/m2hRt+alUMZQNDhwA==
-X-CSE-MsgGUID: KZwt67MCT3KL/OtH/fNpRA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29993232"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29993232"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 07:35:44 -0700
-X-CSE-ConnectionGUID: Uv7NIGJHSs2k4uq1dXl0UA==
-X-CSE-MsgGUID: 8NwKKm5WRASyKfHensucGQ==
-X-ExtLoop1: 1
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1730212631; x=1761748631;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jhIeagrsfmCzyreNXSZ+IBZYXKz78nr3SRrw/kS9vUY=;
+  b=imBdGrxhxMDLlqzEUIWlbESC3Gm+Um2mceDlrS/v8MhdqUhi04IyRo7P
+   mIzoiwUdlZZfkWkl09uu9BKFUpZR7zqxvr4kEa5KlGgbNnYoPVJgaurFp
+   Dd125esLBUZsQpO+EXR8pvtC/E2WpOcgOG2UUPhy8IT8jde83YyiUg+W2
+   0KkHrbWtqReEa+8DF10ZuSgsitXfZJw/RzpdEqe/5kE2ls/Q8euFHNSqg
+   YehGLkAJvYOy2XSJVKuHIcaO4TT6D7zxhR+X9v5hZSkWAjanOsmMir3ty
+   xvfFIguB6UPsu0g/mlgNpqQBCQdzdEo8TVqv0AfD22+FVWjAL0iTuSJQU
+   g==;
+X-CSE-ConnectionGUID: m0FcBtX7TyywOC2brL55WA==
+X-CSE-MsgGUID: 8x5Jh5cDRySu1FF7jeIiAg==
 X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="86593202"
-Received: from jerrycli-mobl2.amr.corp.intel.com (HELO [10.125.224.112]) ([10.125.224.112])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 07:35:43 -0700
-Message-ID: <9ef41b96-8b96-441e-b053-4d7c7d9aa74a@linux.intel.com>
-Date: Tue, 29 Oct 2024 07:35:41 -0700
+   d="scan'208";a="201048816"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Oct 2024 07:37:05 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 29 Oct 2024 07:36:50 -0700
+Received: from DEN-DL-M70577 (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 29 Oct 2024 07:36:47 -0700
+Date: Tue, 29 Oct 2024 14:36:47 +0000
+From: Daniel Machon <daniel.machon@microchip.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+CC: Vladimir Oltean <olteanv@gmail.com>, Andrew Morton
+	<akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Tony Nguyen
+	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Masahiro Yamada <masahiroy@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v2 4/9] ice: remove int_q_state from ice_tlan_ctx
+Message-ID: <20241029143647.zmrjcfeblpwzvqrm@DEN-DL-M70577>
+References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
+ <20241025-packing-pack-fields-and-ice-implementation-v2-4-734776c88e40@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/bugs: Check VERW mitigations for consistency
-To: Borislav Petkov <bp@alien8.de>
-Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, hpa@zytor.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, pawan.kumar.gupta@linux.intel.com
-References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
- <3ed45a10e2f7fbecce31d9964b1da1372e8cb838.1730158506.git.daniel.sneddon@linux.intel.com>
- <20241029113911.GVZyDJX3rg8kh_4kYb@fat_crate.local>
-Content-Language: en-US
-From: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-In-Reply-To: <20241029113911.GVZyDJX3rg8kh_4kYb@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241025-packing-pack-fields-and-ice-implementation-v2-4-734776c88e40@intel.com>
 
-On 10/29/24 04:39, Borislav Petkov wrote:
-> On Mon, Oct 28, 2024 at 04:50:34PM -0700, Daniel Sneddon wrote:
->> There are currently 4 mitigations that use VERW: MDS, TAA,
->> MMIO Stale Data, and Register File Data Sampling. Because
->> all 4 use the same mitigation path, if any one of them is
->> enabled, they're all enabled. Normally, this is what is
->> wanted. However, if a user wants to disable the mitigation,
->> this can cause problems. If the user misses disabling even
->> one of these mitigations, then none of them will be
->> disabled. This can cause confusion as the user expects to
->> regain the performance lost to the mitigation but isn't
->> seeing any improvement. Since there are already 4 knobs for
->> controlling it, adding a 5th knob that controls all 4
->> mitigations together would just overcomplicate things.
->> Instead, let the user know their mitigations are out of sync
->> when at least one of these mitigations is disabled but not
->> all 4.
-> 
-> Please split this commit message into smaller chunks for better readability.
-> For example:
-> 
->     There are currently 4 mitigations that use VERW: MDS, TAA, MMIO Stale Data,
->     and Register File Data Sampling. Because all 4 use the same mitigation path,
->     if any one of them is enabled, they're all enabled.
->     
->     Normally, this is what is wanted. However, if a user wants to disable the
->     mitigation, this can cause problems. If the user misses disabling even one of
->     these mitigations, then none of them will be disabled.
->     
->     This can cause confusion as the user expects to regain the performance lost to
->     the mitigation but isn't seeing any improvement. Since there are already
->     4 knobs for controlling it, adding a 5th knob that controls all 4 mitigations
->     together would just overcomplicate things.
->     
->     Instead, let the user know their mitigations are out of sync when at least one
->     of these mitigations is disabled but not all 4.
-> 
-> Thx.
+> The int_q_state field of the ice_tlan_ctx structure represents the internal
+> queue state. However, we never actually need to assign this or read this
+> during normal operation. In fact, trying to unpack it would not be possible
+> as it is larger than a u64. Remove this field from the ice_tlan_ctx
+> structure, and remove its packing field from the ice_tlan_ctx_info array.
 > 
 
-Will do.
+Reviewed-by: Daniel Machon <daniel.machon@microchip.com>
 
