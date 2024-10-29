@@ -1,373 +1,236 @@
-Return-Path: <linux-kernel+bounces-387025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5C59B4AE1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:27:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BAC9B4AE5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CA88B22AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:27:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1F140B23041
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5514720606A;
-	Tue, 29 Oct 2024 13:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7AF206071;
+	Tue, 29 Oct 2024 13:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T+uupmNB"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G4jQZu0Q"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C53A20262A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887D6205E1C;
+	Tue, 29 Oct 2024 13:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730208432; cv=none; b=mGREt42lVIe6c3fsYk5WEy0EgBn2MP6X0p0JlT6OutJ8Xc+C3Y5wVyKYfmTZNK0mLvfbj9WkI0Jr8xXjDcjflofxxw2/v0f9VNibu49CbtSQZFDOVmQzo6Xdmj3b/faRj5RjFFwxkmhQymbJ2nDj2xzkOBrvhtOJCaMyGMBfMzs=
+	t=1730208444; cv=none; b=Ra44FUJDWcI5IE4+1lYDoXvEdBjyems6486MF1+nhW23ys6BLVPOuIhYUq+dG0fUwNmgSI0e7EBQ5E15M0YxCx1WhbofxdS0RdLfc4sLZgLboza1csR/4bDZw/Yxtl0dKTmBpm9YxkYIFejgUKBRUbsftG2eDhSwj/mtnQ33Aco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730208432; c=relaxed/simple;
-	bh=0l0pGwPPXUKryR0mqg/2ZJbi/yLW7k9MKNg+xvqxwtM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kX69GVBgziNd8ze2imSI2fZqZ+e364dvMXop8kfaeunxloHpIexXxL9YOQH6lD2ZJn3offWQ+8LpgxQ3O6wo3fbiETPEYKcO5tDV4wtf83S6Fap5UxOljbEWVfUctsGTfXQIVda8emXftLBIriB7jDjLgYqfD8Pz7Fqyvn2noWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T+uupmNB; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-208cf673b8dso50937215ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:27:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730208429; x=1730813229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bPmbbkDdlgj5tS54qzNXga3fylyvP9KnhhI/PLfNTwk=;
-        b=T+uupmNBwuy7DtS9taEVtLVI0AaS6djVyFZpHnp8393T7J6qiOekGT+JsXSam1rWd8
-         H1tYiM77b9Dil/vAvZ78BGje04zfDaLWypOK0PjOUAnIub58sse3F7oSd3UnLD2D2zQp
-         QIeOewYELo9NDcBGqcEYKfnz5FJKYleG3HJBT/0lv9l/4t+/0+a4+7BCwgtV50AdF+qg
-         HZ2RenjBotNCzPAQTqNEtgGhsyjWZP2TapfEYYRlKLFbkJBUacz3r0B8DM03XjJQQUjm
-         421MRAJEZPLo9remtyPcA0mroR28W6Qgtk2pTLIC4IltDEONgTTb8KVM651nNC73bS6S
-         dC8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730208429; x=1730813229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bPmbbkDdlgj5tS54qzNXga3fylyvP9KnhhI/PLfNTwk=;
-        b=Cs9xCFIGhQB22NxIUqB3/LdfGUtKjV63W0bmE4uH9dGCNmrIzaTvphm4V52ZrhrcAC
-         sBTXsNdrtFN74ChIuD3JZcQej04UpTKzNPsSN/aIRHIRCDC38MzfulKvXBi4UV8Z3TWx
-         v8j8Kgn+nucMDOYPKUjt29pIv0as1lYihXETtV3BCdEI0sZeNgHASAfA91Czq4syPfbE
-         /T/FHBFuNZsCGQQisgvNk5vFKpnlmSs2akIz3cAFxSmsv32mvInxJpTXtDcT8WXosAXZ
-         kDqYk/sFEp1Io4Z1r/YtGJwh7kXtWsIh9cRSVx7BAt0o5UicR+ibves2bEj2f/hMA+vp
-         BKcA==
-X-Forwarded-Encrypted: i=1; AJvYcCV8ye1vaqWXMuETt3o+wfXi7IgfZ4v+dMovcq7cR6l0mn0U1sHy4Wg8X+VjnvYIyD+DC16cXJduFQ1/GoQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHvniEPO1l4te9l+TKA/3Js/oQmdUAtQBdqVikstzzYCIPWt/N
-	s38/PUQKuYaMVhlBzRMQQOEOyCRSMp+Sm/KMtNJZkc8B3thQNqXbgVt0xOIC6NxE4tvye0DNLQ0
-	Q5RH7+lJdgo/x2CbY1aR9TIl0Cwory9V9iwnj
-X-Google-Smtp-Source: AGHT+IEUNZ/udRp7n1cUowspy1x3Bn3BLvEgiqcEq2EHGavw+WCKwCDiifwnii7tkTSakAD08lG9y4jmuYIdK6y3Srw=
-X-Received: by 2002:a17:903:2b08:b0:20c:ceb4:aa7f with SMTP id
- d9443c01a7336-210c68a1acdmr163437405ad.11.1730208428942; Tue, 29 Oct 2024
- 06:27:08 -0700 (PDT)
+	s=arc-20240116; t=1730208444; c=relaxed/simple;
+	bh=6CDclU0L0kldK4wkaesKTrF6A4Gr+4LWe9ewf6wha6Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kVCiyb8TwXMmt498ZzPH5ySdgq3js8x/M783RvwjNXb3X1+LZ9aDPhOJVcmu6KnvZZxylUtsJWOt/Mr5XuXFXbzG5oAkHDmgcQKwwLBYYA1nLoz/+YTWxYsbeS3IXKzuKp0l8cbIrAKnmgvq8XEQPkyJYesc/yah6uFa6oW5N1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G4jQZu0Q; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=w6IQVSueTu4Omi8gbl34oVf+2SG+3VHCX43r2tsjj8k=; b=G4jQZu0QV1UoEL3JWNAZwrG/ak
+	AAS99ez/uPBTgNEmsMJtA9WAzxMcPmqDPFl5vUBQX/fKDjmYWw/uFL6I4ZVbAPxVua+EjYVU5pi00
+	Oi7tt0x2GXYk5jZ2qoHfDn5shbYAA16qIj1+GT2mmrI8U6Wzs7iY9YjLydrR4snaxN6ljr7rqg/d/
+	Irv0nEzLy7LZpJgv/wCxY6r176AnXY42Kys2lQP+M5nFudc7IPLbvBkdu/pG8uNRtSy+6yw9LBph+
+	zEaO5KVbj4a6+bXrVZACbDY27tSn9lD35DiVD5dpITelC0UBKgUAH8MVRx/OP6hqT+CRcBEDck/b6
+	QNnlrgcA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5mFa-00000009uJi-1uF6;
+	Tue, 29 Oct 2024 13:27:10 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id C86EB30073F; Tue, 29 Oct 2024 14:27:09 +0100 (CET)
+Date: Tue, 29 Oct 2024 14:27:09 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241029132709.GY14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-8-dakr@kernel.org>
-In-Reply-To: <20241022213221.2383-8-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 29 Oct 2024 14:26:55 +0100
-Message-ID: <CAH5fLgjcy=DQrCYt-k40D4_NcwgdrykUW9d74srGn5hxxo2Xmw@mail.gmail.com>
-Subject: Re: [PATCH v3 07/16] rust: add `Revocable` type
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
 
-On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
->
-> From: Wedson Almeida Filho <wedsonaf@gmail.com>
->
-> Revocable allows access to objects to be safely revoked at run time.
->
-> This is useful, for example, for resources allocated during device probe;
-> when the device is removed, the driver should stop accessing the device
-> resources even if another state is kept in memory due to existing
-> references (i.e., device context data is ref-counted and has a non-zero
-> refcount after removal of the device).
->
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/lib.rs       |   1 +
->  rust/kernel/revocable.rs | 211 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 212 insertions(+)
->  create mode 100644 rust/kernel/revocable.rs
->
-> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> index 89f6bd2efcc0..b603b67dcd71 100644
-> --- a/rust/kernel/lib.rs
-> +++ b/rust/kernel/lib.rs
-> @@ -54,6 +54,7 @@
->  pub mod prelude;
->  pub mod print;
->  pub mod rbtree;
-> +pub mod revocable;
->  pub mod sizes;
->  mod static_assert;
->  #[doc(hidden)]
-> diff --git a/rust/kernel/revocable.rs b/rust/kernel/revocable.rs
-> new file mode 100644
-> index 000000000000..83455558d795
-> --- /dev/null
-> +++ b/rust/kernel/revocable.rs
-> @@ -0,0 +1,211 @@
-> +// SPDX-License-Identifier: GPL-2.0
+On Mon, Oct 28, 2024 at 02:47:36PM -0700, Josh Poimboeuf wrote:
+
+> +static int __sframe_add_section(unsigned long sframe_addr,
+> +				unsigned long text_start,
+> +				unsigned long text_end)
+> +{
+> +	struct maple_tree *sframe_mt = &current->mm->sframe_mt;
+> +	struct sframe_section *sec;
+> +	struct sframe_header shdr;
+> +	unsigned long header_end;
+> +	int ret;
 > +
-> +//! Revocable objects.
-> +//!
-> +//! The [`Revocable`] type wraps other types and allows access to them t=
-o be revoked. The existence
-> +//! of a [`RevocableGuard`] ensures that objects remain valid.
+> +	if (copy_from_user(&shdr, (void __user *)sframe_addr, sizeof(shdr)))
+> +		return -EFAULT;
 > +
-> +use crate::{
-> +    bindings,
-> +    init::{self},
-> +    prelude::*,
-> +    sync::rcu,
-> +};
-> +use core::{
-> +    cell::UnsafeCell,
-> +    marker::PhantomData,
-> +    mem::MaybeUninit,
-> +    ops::Deref,
-> +    ptr::drop_in_place,
-> +    sync::atomic::{AtomicBool, Ordering},
-> +};
+> +	if (shdr.preamble.magic != SFRAME_MAGIC ||
+> +	    shdr.preamble.version != SFRAME_VERSION_2 ||
+> +	    !(shdr.preamble.flags & SFRAME_F_FDE_SORTED) ||
+> +	    shdr.auxhdr_len || !shdr.num_fdes || !shdr.num_fres ||
+> +	    shdr.fdes_off > shdr.fres_off) {
+> +		return -EINVAL;
+> +	}
 > +
-> +/// An object that can become inaccessible at runtime.
-> +///
-> +/// Once access is revoked and all concurrent users complete (i.e., all =
-existing instances of
-> +/// [`RevocableGuard`] are dropped), the wrapped object is also dropped.
-> +///
-> +/// # Examples
-> +///
-> +/// ```
-> +/// # use kernel::revocable::Revocable;
-> +///
-> +/// struct Example {
-> +///     a: u32,
-> +///     b: u32,
-> +/// }
-> +///
-> +/// fn add_two(v: &Revocable<Example>) -> Option<u32> {
-> +///     let guard =3D v.try_access()?;
-> +///     Some(guard.a + guard.b)
-> +/// }
-> +///
-> +/// let v =3D KBox::pin_init(Revocable::new(Example { a: 10, b: 20 }), G=
-FP_KERNEL).unwrap();
-> +/// assert_eq!(add_two(&v), Some(30));
-> +/// v.revoke();
-> +/// assert_eq!(add_two(&v), None);
-> +/// ```
-> +///
-> +/// Sample example as above, but explicitly using the rcu read side lock=
-.
-> +///
-> +/// ```
-> +/// # use kernel::revocable::Revocable;
-> +/// use kernel::sync::rcu;
-> +///
-> +/// struct Example {
-> +///     a: u32,
-> +///     b: u32,
-> +/// }
-> +///
-> +/// fn add_two(v: &Revocable<Example>) -> Option<u32> {
-> +///     let guard =3D rcu::read_lock();
-> +///     let e =3D v.try_access_with_guard(&guard)?;
-> +///     Some(e.a + e.b)
-> +/// }
-> +///
-> +/// let v =3D KBox::pin_init(Revocable::new(Example { a: 10, b: 20 }), G=
-FP_KERNEL).unwrap();
-> +/// assert_eq!(add_two(&v), Some(30));
-> +/// v.revoke();
-> +/// assert_eq!(add_two(&v), None);
-> +/// ```
-> +#[pin_data(PinnedDrop)]
-> +pub struct Revocable<T> {
-> +    is_available: AtomicBool,
-> +    #[pin]
-> +    data: MaybeUninit<UnsafeCell<T>>,
+> +	sec = kmalloc(sizeof(*sec), GFP_KERNEL);
+> +	if (!sec)
+> +		return -ENOMEM;
+> +
+> +	header_end = sframe_addr + SFRAME_HDR_SIZE(shdr);
+> +
+> +	sec->sframe_addr	= sframe_addr;
+> +	sec->text_addr		= text_start;
+> +	sec->fdes_addr		= header_end + shdr.fdes_off;
+> +	sec->fres_addr		= header_end + shdr.fres_off;
+> +	sec->fdes_nr		= shdr.num_fdes;
+> +	sec->ra_off		= shdr.cfa_fixed_ra_offset;
+> +	sec->fp_off		= shdr.cfa_fixed_fp_offset;
+> +
+> +	ret = mtree_insert_range(sframe_mt, text_start, text_end, sec, GFP_KERNEL);
+> +	if (ret) {
+> +		kfree(sec);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
 > +}
 > +
-> +// SAFETY: `Revocable` is `Send` if the wrapped object is also `Send`. T=
-his is because while the
-> +// functionality exposed by `Revocable` can be accessed from any thread/=
-CPU, it is possible that
-> +// this isn't supported by the wrapped object.
-> +unsafe impl<T: Send> Send for Revocable<T> {}
+> +int sframe_add_section(unsigned long sframe_addr, unsigned long text_start,
+> +		       unsigned long text_end)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	struct vm_area_struct *sframe_vma;
 > +
-> +// SAFETY: `Revocable` is `Sync` if the wrapped object is both `Send` an=
-d `Sync`. We require `Send`
-> +// from the wrapped object as well because  of `Revocable::revoke`, whic=
-h can trigger the `Drop`
-> +// implementation of the wrapped object from an arbitrary thread.
-> +unsafe impl<T: Sync + Send> Sync for Revocable<T> {}
-> +
-> +impl<T> Revocable<T> {
-> +    /// Creates a new revocable instance of the given data.
-> +    pub fn new(data: impl PinInit<T>) -> impl PinInit<Self> {
-> +        pin_init!(Self {
-> +            is_available: AtomicBool::new(true),
-> +            // SAFETY: The closure only returns `Ok(())` if `slot` is fu=
-lly initialized; on error
-> +            // `slot` is not partially initialized and does not need to =
-be dropped.
-> +            data <- unsafe {
-> +                init::pin_init_from_closure(move |slot: *mut MaybeUninit=
-<UnsafeCell<T>>| {
-> +                    init::PinInit::<T, core::convert::Infallible>::__pin=
-ned_init(data,
-> +                                                                        =
-         slot as *mut T)?;
-> +                    Ok::<(), core::convert::Infallible>(())
-> +                })
+> +	mmap_read_lock(mm);
 
-If you change `data` to be `Opaque`, then this can just be
+DEFINE_GUARD(mmap_read_lock, struct mm_struct *,
+	     mmap_read_lock(_T), mmap_read_unlock(_T))
 
-data <- Opaque::ffi_init(data)
-
-(or maybe you need try_ffi_init)
+in include/linux/mmap_lock.h ?
 
 > +
-> +    /// Tries to access the \[revocable\] wrapped object.
-> +    ///
-> +    /// Returns `None` if the object has been revoked and is therefore n=
-o longer accessible.
-> +    ///
-> +    /// Returns a guard that gives access to the object otherwise; the o=
-bject is guaranteed to
-> +    /// remain accessible while the guard is alive. In such cases, calle=
-rs are not allowed to sleep
-> +    /// because another CPU may be waiting to complete the revocation of=
- this object.
-> +    pub fn try_access(&self) -> Option<RevocableGuard<'_, T>> {
-> +        let guard =3D rcu::read_lock();
-> +        if self.is_available.load(Ordering::Relaxed) {
-> +            // SAFETY: Since `self.is_available` is true, data is initia=
-lised and has to remain
-> +            // valid because the RCU read side lock prevents it from bei=
-ng dropped.
-> +            Some(unsafe { RevocableGuard::new(self.data.assume_init_ref(=
-).get(), guard) })
-> +        } else {
-> +            None
-> +        }
-> +    }
+> +	sframe_vma = vma_lookup(mm, sframe_addr);
+> +	if (!sframe_vma)
+> +		goto err_unlock;
 > +
-> +    /// Tries to access the \[revocable\] wrapped object.
-
-These backslashes seem wrong.
-
-> +    /// Returns `None` if the object has been revoked and is therefore n=
-o longer accessible.
-> +    ///
-> +    /// Returns a shared reference to the object otherwise; the object i=
-s guaranteed to
-> +    /// remain accessible while the rcu read side guard is alive. In suc=
-h cases, callers are not
-> +    /// allowed to sleep because another CPU may be waiting to complete =
-the revocation of this
-> +    /// object.
-> +    pub fn try_access_with_guard<'a>(&'a self, _guard: &'a rcu::Guard) -=
-> Option<&'a T> {
-> +        if self.is_available.load(Ordering::Relaxed) {
-> +            // SAFETY: Since `self.is_available` is true, data is initia=
-lised and has to remain
-> +            // valid because the RCU read side lock prevents it from bei=
-ng dropped.
-> +            Some(unsafe { &*self.data.assume_init_ref().get() })
-> +        } else {
-> +            None
-> +        }
-> +    }
+> +	if (text_start && text_end) {
+> +		struct vm_area_struct *text_vma;
 > +
-> +    /// Revokes access to and drops the wrapped object.
-> +    ///
-> +    /// Access to the object is revoked immediately to new callers of [`=
-Revocable::try_access`]. If
-> +    /// there are concurrent users of the object (i.e., ones that called=
- [`Revocable::try_access`]
-> +    /// beforehand and still haven't dropped the returned guard), this f=
-unction waits for the
-> +    /// concurrent access to complete before dropping the wrapped object=
-.
-> +    pub fn revoke(&self) {
-> +        if self
-> +            .is_available
-> +            .compare_exchange(true, false, Ordering::Relaxed, Ordering::=
-Relaxed)
-> +            .is_ok()
-> +        {
-> +            // SAFETY: Just an FFI call, there are no further requiremen=
-ts.
-> +            unsafe { bindings::synchronize_rcu() };
+> +		text_vma = vma_lookup(mm, text_start);
+> +		if (!(text_vma->vm_flags & VM_EXEC))
+> +			goto err_unlock;
 > +
-> +            // SAFETY: We know `self.data` is valid because only one CPU=
- can succeed the
-> +            // `compare_exchange` above that takes `is_available` from `=
-true` to `false`.
-> +            unsafe { drop_in_place(self.data.assume_init_ref().get()) };
-> +        }
-> +    }
-> +}
+> +		if (PAGE_ALIGN(text_end) != text_vma->vm_end)
+> +			goto err_unlock;
+> +	} else {
+> +		struct vm_area_struct *vma, *text_vma = NULL;
+> +		VMA_ITERATOR(vmi, mm, 0);
 > +
-> +#[pinned_drop]
-> +impl<T> PinnedDrop for Revocable<T> {
-> +    fn drop(self: Pin<&mut Self>) {
-> +        // Drop only if the data hasn't been revoked yet (in which case =
-it has already been
-> +        // dropped).
-> +        // SAFETY: We are not moving out of `p`, only dropping in place
-> +        let p =3D unsafe { self.get_unchecked_mut() };
-> +        if *p.is_available.get_mut() {
-> +            // SAFETY: We know `self.data` is valid because no other CPU=
- has changed
-> +            // `is_available` to `false` yet, and no other CPU can do it=
- anymore because this CPU
-> +            // holds the only reference (mutable) to `self` now.
-> +            unsafe { drop_in_place(p.data.assume_init_ref().get()) };
-> +        }
-> +    }
-> +}
+> +		for_each_vma(vmi, vma) {
+> +			if (vma->vm_file != sframe_vma->vm_file ||
+> +			    !(vma->vm_flags & VM_EXEC))
+> +				continue;
 > +
-> +/// A guard that allows access to a revocable object and keeps it alive.
-> +///
-> +/// CPUs may not sleep while holding on to [`RevocableGuard`] because it=
-'s in atomic context
-> +/// holding the RCU read-side lock.
-> +///
-> +/// # Invariants
-> +///
-> +/// The RCU read-side lock is held while the guard is alive.
-> +pub struct RevocableGuard<'a, T> {
-> +    data_ref: *const T,
-> +    _rcu_guard: rcu::Guard,
-> +    _p: PhantomData<&'a ()>,
+> +			if (text_vma) {
+> +				pr_warn_once("%s[%d]: multiple EXEC segments unsupported\n",
+> +					     current->comm, current->pid);
+> +				goto err_unlock;
+> +			}
+> +
+> +			text_vma = vma;
+> +		}
+> +
+> +		if (!text_vma)
+> +			goto err_unlock;
+> +
+> +		text_start = text_vma->vm_start;
+> +		text_end   = text_vma->vm_end;
+> +	}
+> +
+> +	mmap_read_unlock(mm);
+> +
+> +	return __sframe_add_section(sframe_addr, text_start, text_end);
+> +
+> +err_unlock:
+> +	mmap_read_unlock(mm);
+> +	return -EINVAL;
 > +}
 
-Is this needed? Can't all users just use `try_access_with_guard`?
+> +int sframe_remove_section(unsigned long sframe_addr)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	struct sframe_section *sec;
+> +	unsigned long index = 0;
+> +
+> +	mt_for_each(&mm->sframe_mt, sec, index, ULONG_MAX) {
+> +		if (sec->sframe_addr == sframe_addr)
+> +			return __sframe_remove_section(mm, sec);
+> +	}
+> +
+> +	return -EINVAL;
+> +}
 
-Alice
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -64,6 +64,7 @@
+>  #include <linux/rcupdate.h>
+>  #include <linux/uidgid.h>
+>  #include <linux/cred.h>
+> +#include <linux/sframe.h>
+>  
+>  #include <linux/nospec.h>
+>  
+> @@ -2784,6 +2785,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+>  	case PR_RISCV_SET_ICACHE_FLUSH_CTX:
+>  		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
+>  		break;
+> +	case PR_ADD_SFRAME:
+> +		if (arg5)
+> +			return -EINVAL;
+> +		error = sframe_add_section(arg2, arg3, arg4);
+> +		break;
+> +	case PR_REMOVE_SFRAME:
+> +		if (arg3 || arg4 || arg5)
+> +			return -EINVAL;
+> +		error = sframe_remove_section(arg2);
+> +		break;
+>  	default:
+>  		error = -EINVAL;
+>  		break;
+
+So I realize that mtree has an internal lock, but are we sure we don't
+want a lock around those prctl()s?
+
+
 
