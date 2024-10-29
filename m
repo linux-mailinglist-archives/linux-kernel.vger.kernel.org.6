@@ -1,159 +1,135 @@
-Return-Path: <linux-kernel+bounces-387426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08A29B5112
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:38:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87E4D9B5114
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:39:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 953C8283965
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334CD1F23B6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE851DD54C;
-	Tue, 29 Oct 2024 17:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17CB2076B4;
+	Tue, 29 Oct 2024 17:35:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Meu/Qdua"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KhmMCzFy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="coPdOObM"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBDBBE49;
-	Tue, 29 Oct 2024 17:35:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662BE1DB943;
+	Tue, 29 Oct 2024 17:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730223346; cv=none; b=WiGjo9qE/X5u+UzAuh9s7HZxKw6cDJLcsKjnAfA+fbhkjz7olCuiJpDOfzVJhcDKuy6Y0xbfRRT6SBqbb/OrjruIur7HUF1bHkMfHNDumocn5yyVm6FTK2R+CX8FPeoWmBzV/sfDMuzeqR3IzlbVkJf5WKIR0mFIUOcdzksXrjI=
+	t=1730223358; cv=none; b=us82zoYQs1vxFkNQTQKOIVH9zbGCT45aqEfTJY5gfJ4cN0jydPdLMIwwzRUGC56jXInI2R6/50IBWd/+1a5YOXGWvPR4pGdpVZNf9aWL4ECQ0yEr8TaVU6v5IBzggXc4zYea+xti97T2mV1sCxQC429HHJ0g4HBPP7JZ0TKnTRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730223346; c=relaxed/simple;
-	bh=q337UQ+5fn07O8t9Oo/LgWv7EqNRCq7x9dx5kSfuPXM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uNUuClQ5hsIaa9GevIKt3MWvX1b2c2BIzDWFE/OhueTJjzmYCgFCLGhK8vt8pPLggwWgEcgJsy66yKuDUz8fyzq46vBem/4apzREaPyY3BdsIRKjCpsU4We10KPxra/r1oFbmnFzd4vLz6O07gAp9uG+JOVLG7I4xo7DrQhct0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Meu/Qdua; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0cee600aso753373066b.1;
-        Tue, 29 Oct 2024 10:35:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730223342; x=1730828142; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=E4gGnuoXPKV45GDjQremf8Qgi8IsdD9t8fMoHQgmFo0=;
-        b=Meu/Qduazr6IztqdGBSBmaDNFBwLeeI/sYMU+V4yTdxyY5V/qetLipDiviP7GFWgFk
-         wG1h8345kDovH3aeBm1sCVjRS4LVBRwPoLb10PiGljOdwy7KwMe5sQv96ug3kebjd4aA
-         /zAHSdDQL8FehqvSd5Ns5ZwmCqsmknp/8G+56BvpK+17c2M1EnUzhrgdUD6/F0LVTPOO
-         Jr+DMbR5iBY4fgt58hRN47Lhp671iA4R9YUKaHwJFGPfWpUiQP599HZufChHJW5RqaxF
-         eI+wzyKXI3drr9uZ42uvRbZkGk4hm3ppbuNe107kLvisMQGW6xOy7oei4xHAdWYCUrI8
-         EFPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730223342; x=1730828142;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E4gGnuoXPKV45GDjQremf8Qgi8IsdD9t8fMoHQgmFo0=;
-        b=ALoy6bSFnhw/ZdAMKWP7X4SQBOFuL3EYckWHOc0pqvx+MgXlIHYLvT1lYxuv8DSuHo
-         9k0LPrjKp8fwRXldnsqK8qbdq8NujNHgjsBozr8lNzxft43rC7SWrYwvztwkdE8Acy5W
-         ioVQDWiPFue8CMhS+XGXGf4hlgrb24oQ12CdABWRugH+8LnHtlmMY6+QTZCul5lhZtfi
-         lNR2dVsonraZ4XKd5LL4u7Gg3LYbST7c/DqsA62UgHVrq3KENDFnXQOGK0RY1ulPrdv3
-         HM2w/mxmbMr4iof8JVRZ3Pzmeoa/QkRMz3Dnf3HG3hxUtpif0dXiJZkaBOECxOAAYuSu
-         wGOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYYNL2BEPPQvkRe9jH66eC5WSbWmxhZ30mwQv9v3a9amwke+Cs/XkFhTI+Xqbe21zD1xYJ7VpihZH+nucq@vger.kernel.org, AJvYcCUh02dCsA0EJ6O9fJFr6+XqUvK8kQX2PqgIPee/2GqNB5629SB7aKeWqXaYiR1MCI2gIsjBm1UayK1s@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg0zj4uw6MZGONRMaIODU2aghO+Kq+ceh7etAt/2OnSsqxEsxZ
-	vrS20+JsJVwpJewRf/OxJ9sAJcki2e9RIYrnGz0Z71hC4IyIw26ZlS7OaQ==
-X-Google-Smtp-Source: AGHT+IG5sFsRSZNnIAKTRq9xZSDdUw2KLvf7Pw3IEPd1bDzTIyhuwm4Mg0vxkYeeltc5Rc/YWaiSZA==
-X-Received: by 2002:a17:907:980e:b0:a9a:7f34:351b with SMTP id a640c23a62f3a-a9de5cfd5d1mr1146256266b.3.1730223342242;
-        Tue, 29 Oct 2024 10:35:42 -0700 (PDT)
-Received: from [192.168.0.2] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9b1dec802csm500555466b.13.2024.10.29.10.35.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 10:35:41 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Tue, 29 Oct 2024 18:35:25 +0100
-Subject: [PATCH] dt-bindings: arm: qcom: add missing elements to the SoC
- list
+	s=arc-20240116; t=1730223358; c=relaxed/simple;
+	bh=LuVBK53BP7iaQuv2vNNnGPEqgoR+TEkqLXVrY5+1E8E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=m6YXxpONfpQCwzBns9l2yLip0i2Tmt2CpSl033QUzSBVEwiB/egqq1h7t5HLa1YPy5dMtuUjaDRLbrmySN8uFGA7FoNRg1XI3FzyB89u/yYjsQl+QZ5pwjO600Ra8xFTw2W0M3B23ZJQ3OgwHSIRI9UNKG+nTmejNIhWmQ9ssgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KhmMCzFy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=coPdOObM; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 29 Oct 2024 17:35:52 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730223353;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=skBvmer5JZ8LK0xj40epDesXhercBzPabx0m54D7WFU=;
+	b=KhmMCzFy0+fr6TXG9rwPeRWIZh/2A3c6dXcCDeTSjXvM4uM3r5KSnWFdPNXz5M0L5HAqxm
+	g6quB/s4iaCuyl+pZqLxL6+uU8oPjbsHYMBEQymQJJp5qg+TeE4rVqv7loYnqgGo82IX80
+	RePVTUobilGXUnj2njAbAbsRv0fX1jhB6KEKk/F+wxkFtK4cqu7d6YW50P8wLsh4usnpRZ
+	2Vf2cHPycAmLjMiFuvJVq79niG4J7R4HJo37s9veX+5RBasFtDaLCPNatALRB0Qxrg4s5o
+	1LhMFwYrY7vEbc3by8n80vBp/V/4+Y3XUP+mw2XfN5k2fFRmIaxMge+PhK9W4g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730223353;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=skBvmer5JZ8LK0xj40epDesXhercBzPabx0m54D7WFU=;
+	b=coPdOObMoVEGFmO4VhJy5un9Gc9KKC2q4B9XwOEnEUjpoubjssEBerkFn5uBMBayMB3TBw
+	jthiDzH+Q88CZVBg==
+From: "tip-bot2 for Arnd Bergmann" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/urgent] x86/amd_nb: Fix compile-testing without CONFIG_AMD_NB
+Cc: Arnd Bergmann <arnd@arndb.de>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ ilpo.jarvinen@linux.intel.com, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241029092329.3857004-1-arnd@kernel.org>
+References: <20241029092329.3857004-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <173022335245.3137.8617281185913010359.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241029-qcom-missing-socs-v1-1-c5bf587b0afc@gmail.com>
-X-B4-Tracking: v=1; b=H4sIANwcIWcC/x3MTQqAIBBA4avErBtQEfq5SrRIm2oWajkQgXT3p
- OW3eK+AUGYSGJsCmW4WTrFCtw34Y4k7Ia/VYJSxWpkBL58CBhbhuKMkL2hXQ7a3m3PUQe3OTBs
- //3Oa3/cDVOGRomMAAAA=
-X-Change-ID: 20241029-qcom-missing-socs-4d2e484fbbe7
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: quoted-printable
 
-There are multiple compatible strings defined in the json schema
-for SoCs which are not included in the SoC elements list. Extend
-the list with those items for completeness.
+The following commit has been merged into the x86/urgent branch of tip:
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+Commit-ID:     fce9642c765a18abd1db0339a7d832c29b68456a
+Gitweb:        https://git.kernel.org/tip/fce9642c765a18abd1db0339a7d832c29b6=
+8456a
+Author:        Arnd Bergmann <arnd@arndb.de>
+AuthorDate:    Tue, 29 Oct 2024 09:23:20=20
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Tue, 29 Oct 2024 18:16:05 +01:00
+
+x86/amd_nb: Fix compile-testing without CONFIG_AMD_NB
+
+node_to_amd_nb() is defined to NULL in non-AMD configs:
+
+  drivers/platform/x86/amd/hsmp/plat.c: In function 'init_platform_device':
+  drivers/platform/x86/amd/hsmp/plat.c:165:68: error: dereferencing 'void *' =
+pointer [-Werror]
+    165 |                 sock->root                      =3D node_to_amd_nb(=
+i)->root;
+        |                                                                    =
+^~
+  drivers/platform/x86/amd/hsmp/plat.c:165:68: error: request for member 'roo=
+t' in something not a structure or union
+
+Users of the interface who also allow COMPILE_TEST will cause the above build
+error so provide an inline stub to fix that.
+
+  [ bp: Massage commit message. ]
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+Link: https://lore.kernel.org/r/20241029092329.3857004-1-arnd@kernel.org
 ---
- Documentation/devicetree/bindings/arm/qcom.yaml | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/include/asm/amd_nb.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-index 5cb54d69af0b7206e0f6a66023a203b8d7087696..ccca140e16e3151b689bfa66c3bb84cc226b2fde 100644
---- a/Documentation/devicetree/bindings/arm/qcom.yaml
-+++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-@@ -19,27 +19,36 @@ description: |
- 
-         apq8016
-         apq8026
-+        apq8064
-         apq8074
-         apq8084
-+        apq8094
-         apq8096
-         ipq4018
-+        ipq4019
-         ipq5018
-         ipq5332
-         ipq6018
-+        ipq8064
-         ipq8074
-         ipq9574
-         mdm9615
-         msm8226
-+        msm8660
-         msm8916
-+        msm8926
-+        msm8929
-         msm8939
-         msm8953
-         msm8956
-         msm8960
-         msm8974
-+        msm8974pro
-         msm8976
-         msm8992
-         msm8994
-         msm8996
-+        msm8996pro
-         msm8998
-         qcs404
-         qcs8550
-@@ -82,6 +91,7 @@ description: |
-         sm8450
-         sm8550
-         sm8650
-+        x1e78100
-         x1e80100
- 
-   There are many devices in the list below that run the standard ChromeOS
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241029-qcom-missing-socs-4d2e484fbbe7
-
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
-
+diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
+index 6f3b6ae..d0caac2 100644
+--- a/arch/x86/include/asm/amd_nb.h
++++ b/arch/x86/include/asm/amd_nb.h
+@@ -116,7 +116,10 @@ static inline bool amd_gart_present(void)
+=20
+ #define amd_nb_num(x)		0
+ #define amd_nb_has_feature(x)	false
+-#define node_to_amd_nb(x)	NULL
++static inline struct amd_northbridge *node_to_amd_nb(int node)
++{
++	return NULL;
++}
+ #define amd_gart_present(x)	false
+=20
+ #endif
 
