@@ -1,288 +1,137 @@
-Return-Path: <linux-kernel+bounces-387368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D359B5001
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:02:35 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A11C39B500A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:03:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 543861C2297F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 258BFB21153
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:03:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62501D3644;
-	Tue, 29 Oct 2024 17:02:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5CC1D8E0D;
+	Tue, 29 Oct 2024 17:03:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RhCRkzXv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6798782876
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6E819DF95
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730221348; cv=none; b=Vr+rO+Ur99A7FUy5sjpVtY1gwp8gVE/+trPRKLOiaUg79cHhoBavw1Fh3gFZRjh3MOWu9oAXIkf15sCdBVaIcJO2hsEMxsS4A9j3JKLrxBgp2vHWTHxkTInL9BJJCVM0IURH+4svM3kYVaBk8VQr8ddb/mkLqb92FRKF3vBDtj4=
+	t=1730221425; cv=none; b=ris2xlhGwzaJgurbWcnlEwHdHrjlirtuF+Dv0WtXMlWunwvS6vlWQAfITPJSQs4zfUvmxWA1jQSkVowdTi4VfW03wVAMW3kYr31U+N9s0r/OFhon2EYdvMQevmV+o3pSqoQpFuSqwvBy+dCO8jYD0MbG+G+OxARScTCgGCasPg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730221348; c=relaxed/simple;
-	bh=RZpUIIUZcGqeScb5e4AfR0/NMdbXqRlmZUW4n6BlugI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AzKpAkI9YcrjMti+yGlpv+LKrnz1FTtpgptpdVNQ/QsmkhVkHZpfvOtk4TwD5Td+Mr+1WNfbzqWFz8wOwkSDNUnoeNAAAaBWz5/DFiNmyt08VWxghBf5rRg/GGQfSdlww6i06TQeCVzFWin64Yuh6BfTK/7WFhKKCSNM8QtwKwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAAC5C4CECD;
-	Tue, 29 Oct 2024 17:02:25 +0000 (UTC)
-Date: Tue, 29 Oct 2024 17:02:23 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Brown <broonie@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>,
-	Aishwarya TCV <Aishwarya.TCV@arm.com>
-Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
- error path behaviour
-Message-ID: <ZyEVHy-767RfFwh_@arm.com>
-References: <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local>
- <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
- <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
- <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
- <1608957a-d138-4401-98ef-7fbe5fb7c387@suse.cz>
- <cf1deb9b-c5c4-4e85-891d-62ecf9a04e0f@lucifer.local>
- <ZyD5iXikMzotl9mU@arm.com>
- <da15a72b-c1de-427b-a764-0ebbdd3f6a8e@lucifer.local>
- <ZyEL0s_qiyAYURR2@arm.com>
- <a050599e-6d43-4759-b08c-d37c0d28ce0e@lucifer.local>
+	s=arc-20240116; t=1730221425; c=relaxed/simple;
+	bh=cndgThwCRKYDmkJ4IOysDIvGRup4a8wjPzQR9TPE9IM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ugj9oW66ow80Q6iPJWFBiDMNQD914oCT/QkAYq/6w5knYk3Lfo9yCVyyqspt7men2ZMgWRzVK96NI54bgt+T36FAvxhK5Cn9Q9QBeq2nyo1Xihf72Bjhr1Yd8Bjpj+ndjNDUIM2holRxOTnsVtYewd5BWelYL2OqfeXEfJgd4ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RhCRkzXv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730221422;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VgDDqHgwK2vnx9vpFandCAj8GwkYbm2fjxiXRjakfu0=;
+	b=RhCRkzXv+gi+by0bVyhNafGKI2HrecRoWFi+y0dU5J+RdUwmXhina/VJRZ21Vj7uucbNFo
+	nJDGWEz8y5A4TXiifvlwETBNvtM3/rMo4sAFycCUS8dHEPyzF85SyWMNvncjfEQ5fxaCmY
+	9gLYIbco4XgP7iE8FW2ToFtvbOHVG3w=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-537-o03g78OaP_edareGzHKA5A-1; Tue, 29 Oct 2024 13:03:41 -0400
+X-MC-Unique: o03g78OaP_edareGzHKA5A-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6cbebfc1725so94943486d6.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:03:41 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730221421; x=1730826221;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VgDDqHgwK2vnx9vpFandCAj8GwkYbm2fjxiXRjakfu0=;
+        b=a1kdu8Llezbap/weqwOv0wt60yRCuBJQsz4345kk2RagCKQFJI+JHpx7P/qYYbMoWD
+         KCgOP9SrbG2Tdb2pHPo0oGARNb8IF9bfn21GQ8DlCe+8N3gfEQ7LnduXm3hqkBfb9JyY
+         Brz7UQJeCq7X9rulDidkGBPfka6bok9WbwotvzWujph0lUr8KMl0gl+GQ4uSP7nLNrRR
+         /0ahfhizh86cd+KgSoLn1yT1ViIHFD1fC91VElVLUhm/tPMST4jKSqL6SewDrBqiMq5o
+         O5DgN6zCLsV9YQP9xSkq+p/2cN1nowtKSEBLwGVQonyy1BGvywc60I1/dm/it9mcO1mj
+         CU5w==
+X-Forwarded-Encrypted: i=1; AJvYcCX6+HUJJLe4IG23s6tAOfV9hKBB6Y7x9Oc3ay+HdKZubI5Q9v8RNXmRSXBNe8Te8L/oxLEZm8E22CrEX1A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1I5ZAQGaiw8p1Bu8noHlQ27b/SmeJZkNQ2sA30nyLUnk7pHrT
+	5bje1mZpeCirN7IpBqUuAnVZrqGaw3MS5aXgfe22aU1J0sUiP0P1uZEljogufCPCL3pUpWpB5MV
+	GYNsqneabBIEqfUqpcbN34F1WoyDUNTl5Ic8qic4xgQw4dsEybDDtg/NOtvIklw==
+X-Received: by 2002:a05:622a:199c:b0:460:9ec3:1b80 with SMTP id d75a77b69052e-4613c0305a2mr204013661cf.27.1730221419178;
+        Tue, 29 Oct 2024 10:03:39 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGFnEdmHELhucGC4RMoKvtlOdJj1FTZxMhoHHfkOL0T1MnusgnPAKgrKNr4PWgjCRPPI7Jvww==
+X-Received: by 2002:a05:622a:199c:b0:460:9ec3:1b80 with SMTP id d75a77b69052e-4613c0305a2mr204012071cf.27.1730221417287;
+        Tue, 29 Oct 2024 10:03:37 -0700 (PDT)
+Received: from [192.168.1.165] ([70.22.187.239])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4613213a2besm45942891cf.29.2024.10.29.10.03.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 10:03:37 -0700 (PDT)
+Message-ID: <1c0beb9b-6b90-4c92-a4f3-f228dc0aa527@redhat.com>
+Date: Tue, 29 Oct 2024 13:03:35 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a050599e-6d43-4759-b08c-d37c0d28ce0e@lucifer.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: drivers/md/dm-vdo/data-vio.c:976 vdo_launch_bio() warn:
+ inconsistent returns '&pool->lock'.
+Content-Language: en-US
+To: Dan Carpenter <dan.carpenter@linaro.org>, Philip Li <philip.li@intel.com>
+Cc: oe-kbuild@lists.linux.dev, Mike Snitzer <snitzer@kernel.org>,
+ lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <717e8949-55c4-4461-8951-3e582e9b77ef@stanley.mountain>
+ <f074f848-5a26-473b-ae98-1932e9a8cbd1@redhat.com>
+ <ZyBQa45RTWXiXJke@rli9-mobl> <ZyCLo51ZyjxX7eQK@rli9-mobl>
+ <13937d22-46ac-480a-8956-f89a0fd295ac@stanley.mountain>
+ <68866f17-f327-4df8-ae17-dfcc50362d4a@stanley.mountain>
+From: Matthew Sakai <msakai@redhat.com>
+In-Reply-To: <68866f17-f327-4df8-ae17-dfcc50362d4a@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 04:36:32PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Oct 29, 2024 at 04:22:42PM +0000, Catalin Marinas wrote:
-> > On Tue, Oct 29, 2024 at 03:16:00PM +0000, Lorenzo Stoakes wrote:
-> > > On Tue, Oct 29, 2024 at 03:04:41PM +0000, Catalin Marinas wrote:
-> > > > On Mon, Oct 28, 2024 at 10:14:50PM +0000, Lorenzo Stoakes wrote:
-> > > > > So continue to check VM_MTE_ALLOWED which arch_calc_vm_flag_bits() sets if
-> > > > > MAP_ANON.
-> > > > [...]
-> > > > > diff --git a/mm/shmem.c b/mm/shmem.c
-> > > > > index 4ba1d00fabda..e87f5d6799a7 100644
-> > > > > --- a/mm/shmem.c
-> > > > > +++ b/mm/shmem.c
-> > > > > @@ -2733,9 +2733,6 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
-> > > > >  	if (ret)
-> > > > >  		return ret;
-> > > > >
-> > > > > -	/* arm64 - allow memory tagging on RAM-based files */
-> > > > > -	vm_flags_set(vma, VM_MTE_ALLOWED);
-> > > >
-> > > > This breaks arm64 KVM if the VMM uses shared mappings for the memory
-> > > > slots (which is possible). We have kvm_vma_mte_allowed() that checks for
-> > > > the VM_MTE_ALLOWED flag as the VMM may not use PROT_MTE/VM_MTE directly.
-> > >
-> > > Ugh yup missed that thanks.
-> > >
-> > > > I need to read this thread properly but why not pass the file argument
-> > > > to arch_calc_vm_flag_bits() and set VM_MTE_ALLOWED in there?
-> > >
-> > > Can't really do that as it is entangled in a bunch of other stuff,
-> > > e.g. calc_vm_prot_bits() would have to pass file and that's used in a bunch
-> > > of places including arch code and... etc. etc.
-> >
-> > Not calc_vm_prot_bits() but calc_vm_flag_bits().
-> > arch_calc_vm_flag_bits() is only implemented by two architectures -
-> > arm64 and parisc and calc_vm_flag_bits() is only called from do_mmap().
-> >
-> > Basically we want to set VM_MTE_ALLOWED early during the mmap() call
-> > and, at the time, my thinking was to do it in calc_vm_flag_bits(). The
-> > calc_vm_prot_bits() OTOH is also called on the mprotect() path and is
-> > responsible for translating PROT_MTE into a VM_MTE flag without any
-> > checks. arch_validate_flags() would check if VM_MTE comes together with
-> > VM_MTE_ALLOWED. But, as in the KVM case, that's not the only function
-> > checking VM_MTE_ALLOWED.
-> >
-> > Since calc_vm_flag_bits() did not take a file argument, the lazy
-> > approach was to add the flag explicitly for shmem (and hugetlbfs in
-> > -next). But I think it would be easier to just add the file argument to
-> > calc_vm_flag_bits() and do the check in the arch code to return
-> > VM_MTE_ALLOWED. AFAICT, this is called before mmap_region() and
-> > arch_validate_flags() (unless I missed something in the recent
-> > reworking).
+Okay. Just to restate, what I took away from this thread is
+1) The current code provokes a warning.
+2) When bisecting, the bot found a (different) warning from the patch 
+introducing this code, and so the mail points out that warning instead 
+of the warning in newer code.
+3) The warning is showing up now because new checking allows the bot to 
+notice problems it didn't notice before.
+
+The commit I cited fixed warning from sparse, but I don't think we 
+looked at smatch. This particular code does not have a locking problem, 
+but the way it's spelled makes it difficult for static tools to 
+understand that there is not a problem. I'll take a look and see if 
+there's anything further I can do address the actual current warning.
+
+Thanks for your explanation. I think I have a much better understanding 
+of what this bot it doing now, I'll keep it in mind when we get warning 
+in the future.
+
+Matt
+
+On 10/29/24 4:19 AM, Dan Carpenter wrote:
+> On Tue, Oct 29, 2024 at 11:07:07AM +0300, Dan Carpenter wrote:
+>> 3) The kbuild bot detected the bug, but unfortunately the cross function DB
+>>     doesn't scale well enough for the kbuild bot to use so it didn't detect the
+>>     fix.
 > 
-> I mean I totally get why you're suggesting it
-
-Not sure ;)
-
-> - it's the right _place_ but...
-> It would require changes to a ton of code which is no good for a backport
-> and we don't _need_ to do it.
+> Aw crud.  It does still print a warning on linux-next actually.
+> Smatch says that we lock "&pool->lock" and unlocked
+> "&pool->discard_limiter->pool->lock".
 > 
-> I'd rather do the smallest delta at this point, as I am not a huge fan of
-> sticking it in here (I mean your point is wholly valid - it's at a better
-> place to do so and we can change flags here, it's just - it's not where you
-> expect to do this obviously).
+> Anyway.  Points 1 and 4 that we were running new checks on old code and that
+> the code in the email did have a bug are correct.
 > 
-> I mean for instance in arch/x86/kernel/cpu/sgx/encl.c (a file I'd _really_
-> like us not to touch here by the way) we'd have to what pass NULL?
+> regards,
+> dan carpenter
+> 
 
-That's calc_vm_prot_bits(). I suggested calc_vm_flag_bits() (I know,
-confusing names and total lack of inspiration when we added MTE
-support). The latter is only called in one place - do_mmap().
-
-That's what I meant (untested, on top of -next as it has a MAP_HUGETLB
-check in there). I don't think it's much worse than your proposal,
-assuming that it works:
-
-diff --git a/arch/arm64/include/asm/mman.h b/arch/arm64/include/asm/mman.h
-index 1dbfb56cb313..358bbaaafd41 100644
---- a/arch/arm64/include/asm/mman.h
-+++ b/arch/arm64/include/asm/mman.h
-@@ -6,6 +6,8 @@
-
- #ifndef BUILD_VDSO
- #include <linux/compiler.h>
-+#include <linux/fs.h>
-+#include <linux/shmem_fs.h>
- #include <linux/types.h>
-
- static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
-@@ -31,7 +33,7 @@ static inline unsigned long arch_calc_vm_prot_bits(unsigned long prot,
- }
- #define arch_calc_vm_prot_bits(prot, pkey) arch_calc_vm_prot_bits(prot, pkey)
-
--static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
-+static inline unsigned long arch_calc_vm_flag_bits(struct file *file, unsigned long flags)
- {
- 	/*
- 	 * Only allow MTE on anonymous mappings as these are guaranteed to be
-@@ -39,12 +41,12 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
- 	 * filesystem supporting MTE (RAM-based).
- 	 */
- 	if (system_supports_mte() &&
--	    (flags & (MAP_ANONYMOUS | MAP_HUGETLB)))
-+	    (flags & (MAP_ANONYMOUS | MAP_HUGETLB) || shmem_file(file)))
- 		return VM_MTE_ALLOWED;
-
- 	return 0;
- }
--#define arch_calc_vm_flag_bits(flags) arch_calc_vm_flag_bits(flags)
-+#define arch_calc_vm_flag_bits(file, flags) arch_calc_vm_flag_bits(file, flags)
-
- static inline bool arch_validate_prot(unsigned long prot,
- 	unsigned long addr __always_unused)
-diff --git a/arch/parisc/include/asm/mman.h b/arch/parisc/include/asm/mman.h
-index 89b6beeda0b8..663f587dc789 100644
---- a/arch/parisc/include/asm/mman.h
-+++ b/arch/parisc/include/asm/mman.h
-@@ -2,6 +2,7 @@
- #ifndef __ASM_MMAN_H__
- #define __ASM_MMAN_H__
-
-+#include <linux/fs.h>
- #include <uapi/asm/mman.h>
-
- /* PARISC cannot allow mdwe as it needs writable stacks */
-@@ -11,7 +12,7 @@ static inline bool arch_memory_deny_write_exec_supported(void)
- }
- #define arch_memory_deny_write_exec_supported arch_memory_deny_write_exec_supported
-
--static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
-+static inline unsigned long arch_calc_vm_flag_bits(struct file *file, unsigned long flags)
- {
- 	/*
- 	 * The stack on parisc grows upwards, so if userspace requests memory
-@@ -23,6 +24,6 @@ static inline unsigned long arch_calc_vm_flag_bits(unsigned long flags)
-
- 	return 0;
- }
--#define arch_calc_vm_flag_bits(flags) arch_calc_vm_flag_bits(flags)
-+#define arch_calc_vm_flag_bits(file, flags) arch_calc_vm_flag_bits(file, flags)
-
- #endif /* __ASM_MMAN_H__ */
-diff --git a/include/linux/mman.h b/include/linux/mman.h
-index 8ddca62d6460..a842783ffa62 100644
---- a/include/linux/mman.h
-+++ b/include/linux/mman.h
-@@ -2,6 +2,7 @@
- #ifndef _LINUX_MMAN_H
- #define _LINUX_MMAN_H
-
-+#include <linux/fs.h>
- #include <linux/mm.h>
- #include <linux/percpu_counter.h>
-
-@@ -94,7 +95,7 @@ static inline void vm_unacct_memory(long pages)
- #endif
-
- #ifndef arch_calc_vm_flag_bits
--#define arch_calc_vm_flag_bits(flags) 0
-+#define arch_calc_vm_flag_bits(file, flags) 0
- #endif
-
- #ifndef arch_validate_prot
-@@ -151,13 +152,13 @@ calc_vm_prot_bits(unsigned long prot, unsigned long pkey)
-  * Combine the mmap "flags" argument into "vm_flags" used internally.
-  */
- static inline unsigned long
--calc_vm_flag_bits(unsigned long flags)
-+calc_vm_flag_bits(struct file *file, unsigned long flags)
- {
- 	return _calc_vm_trans(flags, MAP_GROWSDOWN,  VM_GROWSDOWN ) |
- 	       _calc_vm_trans(flags, MAP_LOCKED,     VM_LOCKED    ) |
- 	       _calc_vm_trans(flags, MAP_SYNC,	     VM_SYNC      ) |
- 	       _calc_vm_trans(flags, MAP_STACK,	     VM_NOHUGEPAGE) |
--	       arch_calc_vm_flag_bits(flags);
-+	       arch_calc_vm_flag_bits(file, flags);
- }
-
- unsigned long vm_commit_limit(void);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index f102314bb500..f904b3bba962 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -344,7 +344,7 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
- 	 * to. we assume access permissions have been handled by the open
- 	 * of the memory object, so we don't do any here.
- 	 */
--	vm_flags |= calc_vm_prot_bits(prot, pkey) | calc_vm_flag_bits(flags) |
-+	vm_flags |= calc_vm_prot_bits(prot, pkey) | calc_vm_flag_bits(file, flags) |
- 			mm->def_flags | VM_MAYREAD | VM_MAYWRITE | VM_MAYEXEC;
-
- 	/* Obtain the address to map to. we verify (or select) it and ensure
-diff --git a/mm/nommu.c b/mm/nommu.c
-index 635d028d647b..e9b5f527ab5b 100644
---- a/mm/nommu.c
-+++ b/mm/nommu.c
-@@ -842,7 +842,7 @@ static unsigned long determine_vm_flags(struct file *file,
- {
- 	unsigned long vm_flags;
-
--	vm_flags = calc_vm_prot_bits(prot, 0) | calc_vm_flag_bits(flags);
-+	vm_flags = calc_vm_prot_bits(prot, 0) | calc_vm_flag_bits(file, flags);
-
- 	if (!file) {
- 		/*
-diff --git a/mm/shmem.c b/mm/shmem.c
-index f24a0f34723e..ff194341fddb 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2737,9 +2737,6 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (ret)
- 		return ret;
-
--	/* arm64 - allow memory tagging on RAM-based files */
--	vm_flags_set(vma, VM_MTE_ALLOWED);
--
- 	file_accessed(file);
- 	/* This is anonymous shared memory if it is unlinked at the time of mmap */
- 	if (inode->i_nlink)
-
--- 
-Catalin
 
