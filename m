@@ -1,76 +1,74 @@
-Return-Path: <linux-kernel+bounces-386576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4419B4556
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:12:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 161939B455B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:12:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34A3AB213B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:11:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B5DCB21373
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:12:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC7520408E;
-	Tue, 29 Oct 2024 09:11:45 +0000 (UTC)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF3C20408C;
+	Tue, 29 Oct 2024 09:12:20 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF17D200BBC;
-	Tue, 29 Oct 2024 09:11:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1F8204037;
+	Tue, 29 Oct 2024 09:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730193104; cv=none; b=Fv+EYXp48FBnnYdYetNl1ttpY+GhLfti6ygCdY3meeQ3TVrGyYNxD8fGu+sMELeeNIQUkPwrwSPxT5xL7lIV1+QBqMrMB8BCfpnjnjM82qSBdN227hs0aoA5F4rbp2WvojBJj1BvxAOwojI+QIu0u6b54JJ1XqE5MnjrugQ7Aek=
+	t=1730193140; cv=none; b=BkwLsjkYxNoffyf2O0iCdwlpMotGekuBq1VNDwkq8tcIn2iyL0GrtXuwVJ0ILSiymb0TZFPkCzD1zNQaKPBFWNycBkTV/z8diu+d6K08CwblZzVU8WYVtxuga5dghnp3hn7JShrEIjqfZowkNff3QbBgGF3uFU7w0Ohjgl5Vd9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730193104; c=relaxed/simple;
-	bh=SvUjc0ShhUJ8PhVnVn5bxNftQP0fRbqFlsWFRRWwIMc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rUrUvGPaCkAZSaq1y6IX7rgNeNf2JhtdaWUiNBt6We3DvDD0oPhYwqpRWWTkNLWFG7Oc37B1GXNQBsrdt/+mLNNsa24Ys7CPlAhLeWZMeDSY0oUT2kHilbQmeGp7vGW94JMFXr8QjYfVZ+Ch44STZKrt9GTk5RllvMBhOSzN3DI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539eb97f26aso5319918e87.2;
-        Tue, 29 Oct 2024 02:11:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730193101; x=1730797901;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SHFBQa6cjEimlbCXbA9xxyetkthyL4ca8SFHWzeSkLA=;
-        b=P7T9iXh55ZBwpEyZeqwmPcIpj2xA5ABILTnrfWK+52AGWNPfIXiDByblLVsVhL1twX
-         G+1hv/EztDs7Pknnn3o2qmZeQj3Cch4c4Gnbni9L9eUf/YGIVScn3x4+dVrt0DGGOCrx
-         XjnAWQC05byhsM5g9crgK0BJGowNVfFEL94zVDpwUK0flf6TFhHnzUqPskBzOPpPWMDw
-         EElzV4VmDCv4WXuAuLGPqy1Xp+uo3lcjazJ37indzAXyygVdeXIYiKy4AKiIcJITyHaC
-         i8ITkX9uP2dnDRnzS3RqThS/i5Mn3HSONwD5sa+ucnmLATuPBrmA8NlXsAoU2mUnHVw5
-         7TYw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCOqlFwvo+94cWiQr6pn3f6EHAzFhEWFn7wN+NlKqj4yuIHnn+mx/1EzX3qY7raWcTP14V2uVf2DIUtA==@vger.kernel.org, AJvYcCXTCMluGaBRvwnhscXxeYAQGmfQVOnFA4PJs/OGJGp+mmu67pragERiYeqSssq8jorsO6gkAiKrTd2TWg==@vger.kernel.org, AJvYcCXeRGvTK9dtNd7/WO2SZq9yLuNPK1MhVkF7zDquNtgP9cewXHlwcXjnVXtlwViH+bPG+lBKc0olt6Djw8RI@vger.kernel.org
-X-Gm-Message-State: AOJu0YxK0WdsmW83HaT0dP2W5EA0BgH0AtqvDiMCG9pZ6rqh5p0CYYph
-	hgs74ApkkOtO+K4MznQnMQ8TKEsk6a7eByRp1HaWwQGIOb+4rfwZ
-X-Google-Smtp-Source: AGHT+IFJTESo4oJeQB4cKVRo8UjWHZscVtmUPs2gtEXYHYwUup2fKpV699zrxFmWr9bDUda49tBLDQ==
-X-Received: by 2002:a05:6512:3404:b0:53b:27ba:2d11 with SMTP id 2adb3069b0e04-53b348cb2cbmr6032968e87.16.1730193100751;
-        Tue, 29 Oct 2024 02:11:40 -0700 (PDT)
-Received: from nuc.fritz.box (p200300f6f71fdb00fa633ffffe02074c.dip0.t-ipconnect.de. [2003:f6:f71f:db00:fa63:3fff:fe02:74c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b929a8sm12000095f8f.103.2024.10.29.02.11.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 02:11:40 -0700 (PDT)
-From: Johannes Thumshirn <jth@kernel.org>
-To: John Garry <john.g.garry@oracle.com>
-Cc: linux-block@vger.kernel.org,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-raid@vger.kernel.org,
-	axboe@kernel.dk,
-	song@kernel.org,
-	yukuai3@huawei.com,
-	hch@lst.de,
-	martin.petersen@oracle.com,
-	hare@suse.de,
-	Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH] btrfs: handle bio_split() error
-Date: Tue, 29 Oct 2024 10:11:21 +0100
-Message-ID: <20241029091121.16281-1-jth@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241028152730.3377030-1-john.g.garry@oracle.com>
-References: <20241028152730.3377030-1-john.g.garry@oracle.com>
+	s=arc-20240116; t=1730193140; c=relaxed/simple;
+	bh=F/rVR4l5Scy7U0//a0Uhui1AH5VjS0Dg/jmTcL8ws14=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=b+NSfhGKSyhLc5HvoQ9FKbO60q+RWqjDpMFHw5sd/Q/stnJDiYRwTSN3sTSlolYqpp1elKcKccVZ1YCjRGSmtU6EJk4+C7dKihlxMSwkLgWYTHzCjA1YkM4ZsRwPzlbFG4FuRGPwJ6vVLeojiBGqvJep62HUXaHuqYfLLXJMakw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: deb7e8c495d511efa216b1d71e6e1362-20241029
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
+	HR_FROM_NAME, HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER
+	HR_SJ_NOR_SYM, HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
+	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:fea1eefe-9061-43ed-9117-463ccb5cf6bd,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-10
+X-CID-INFO: VERSION:1.1.38,REQID:fea1eefe-9061-43ed-9117-463ccb5cf6bd,IP:0,URL
+	:0,TC:0,Content:-5,EDM:0,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:-10
+X-CID-META: VersionHash:82c5f88,CLOUDID:9defbc8387e5e00f07b5071d8410f52e,BulkI
+	D:241029171208PR0B2CCJ,BulkQuantity:0,Recheck:0,SF:66|841|38|17|19|102,TC:
+	nil,Content:0,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,
+	COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD
+X-UUID: deb7e8c495d511efa216b1d71e6e1362-20241029
+X-User: xiaopei01@kylinos.cn
+Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
+	(envelope-from <xiaopei01@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 1551847879; Tue, 29 Oct 2024 17:12:06 +0800
+From: Pei Xiao <xiaopei01@kylinos.cn>
+To: pkshih@realtek.com,
+	linux-wireless@vger.kernel.org,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: xiaopeitux@foxmail.com,
+	xiongxin@kylinos.cn,
+	Pei Xiao <xiaopei01@kylinos.cn>
+Subject: [PATCH] net: wireless: realtek/rtw89: Add check null return of kmalloc
+Date: Tue, 29 Oct 2024 17:12:01 +0800
+Message-Id: <82dd45fe7faed8f558841643a0593202b2da90c5.1730192926.git.xiaopei01@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,46 +77,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+kmalloc may fail, return might be NULL and will cause
+NULL pointer dereference later.
 
-Now that bio_split() can return errors, add error handling for it in
-btrfs_split_bio() and ultimately btrfs_submit_chunk().
-
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 ---
+ drivers/net/wireless/realtek/rtw89/coex.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-John,
-in case you have to send a v3, can you please include this one in your series?
-
- fs/btrfs/bio.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index 1f216d07eff6..96cacd5c03a5 100644
---- a/fs/btrfs/bio.c
-+++ b/fs/btrfs/bio.c
-@@ -81,6 +81,9 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
- 
- 	bio = bio_split(&orig_bbio->bio, map_length >> SECTOR_SHIFT, GFP_NOFS,
- 			&btrfs_clone_bioset);
-+	if (IS_ERR(bio))
-+		return ERR_CAST(bio);
-+
- 	bbio = btrfs_bio(bio);
- 	btrfs_bio_init(bbio, fs_info, NULL, orig_bbio);
- 	bbio->inode = orig_bbio->inode;
-@@ -687,6 +690,10 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
- 
- 	if (map_length < length) {
- 		bbio = btrfs_split_bio(fs_info, bbio, map_length);
-+		if (IS_ERR(bbio)) {
-+			ret = PTR_ERR(bbio);
-+			goto fail;
-+		}
- 		bio = &bbio->bio;
- 	}
- 
+diff --git a/drivers/net/wireless/realtek/rtw89/coex.c b/drivers/net/wireless/realtek/rtw89/coex.c
+index b60c8bd4537b..092f882147cd 100644
+--- a/drivers/net/wireless/realtek/rtw89/coex.c
++++ b/drivers/net/wireless/realtek/rtw89/coex.c
+@@ -2507,6 +2507,8 @@ static void btc_fw_set_monreg(struct rtw89_dev *rtwdev)
+ 	if (ver->fcxmreg == 7) {
+ 		sz = struct_size(v7, regs, n);
+ 		v7 = kmalloc(sz, GFP_KERNEL);
++		if (!v7)
++			return;
+ 		v7->type = RPT_EN_MREG;
+ 		v7->fver = ver->fcxmreg;
+ 		v7->len = n;
+@@ -2521,6 +2523,8 @@ static void btc_fw_set_monreg(struct rtw89_dev *rtwdev)
+ 	} else {
+ 		sz = struct_size(v1, regs, n);
+ 		v1 = kmalloc(sz, GFP_KERNEL);
++		if (!v1)
++			return;
+ 		v1->fver = ver->fcxmreg;
+ 		v1->reg_num = n;
+ 		memcpy(v1->regs, chip->mon_reg, flex_array_size(v1, regs, n));
 -- 
-2.43.0
+2.34.1
 
 
