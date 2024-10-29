@@ -1,246 +1,176 @@
-Return-Path: <linux-kernel+bounces-386267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BEB89B4130
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:46:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF0D19B4131
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41FE1F22D59
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:45:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 600CD1F2318E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:46:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888F8200B88;
-	Tue, 29 Oct 2024 03:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031631FF61B;
+	Tue, 29 Oct 2024 03:46:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gtowu2h4"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="qL8FWl2n"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2080.outbound.protection.outlook.com [40.107.244.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC34282FB;
-	Tue, 29 Oct 2024 03:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730173545; cv=none; b=cU7VKgyN9Tbvo4XaXV/Z9jcFkjBu/61ZvBF71HWbW2+z2ElSZ3zPizBqzwhtni4HG87khRIMTjkAyUyFtQJdsbMJpfzChO9VgjovyiioqkMgcRxaVn6Fpe/TLMcL0y+77SsK7jwMe2T1saPLDxsa2QKH/CK6Vov0kjv0pQ36C6Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730173545; c=relaxed/simple;
-	bh=XYnM6DX+CYxWd6ljUMrgeFtnN/QrAB98BtTRnD5Ohn8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MiR/hcCUb0gDngSvQhBeGQPD+IZPoTW4Xq9DDjwYwu9NUQ/h/AG4qCdlLjGD+UJyudlbaMZZztjdpOeXGBx1ieFPpGM11lRP5sRV+oQ2/vIgyo+dO1IgY+C0l60yFiqIj+cQuWjvkhEjAGd/PkrNe1JtXRx7Mn2cBi2dhZVHQnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gtowu2h4; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e2974743675so4472896276.1;
-        Mon, 28 Oct 2024 20:45:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730173542; x=1730778342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T/CTs5K1y1Wb1h73no9mebagu5POeGng1N3JgW2OuRU=;
-        b=Gtowu2h4SGC7DktSemUBNe3r4C20PuuQUK1Gu13xI6e/FzBpc6IK+U5Xtv2IntjXSo
-         E/mdfhK58XXJ6Nmo511UJF8+qnTHJ3QvrtDdBQirngGPLaK4iv/qJx9re8QSbQ3XYhtt
-         W4Hm8gNlTjDjX3FZ7MxCSx4KJGQXa/hsQQpTuDwUN89K5E4Hi9QagrHiuifwTOTtI6gA
-         +b1QLEEATwH7r0iBWRsC+hHQyPqtchS6ycs94PG2YO3inqkwSVolknfWdGjfQduQbhZS
-         4qutj6pb2Gpa/EOuXiHiuEH4iPTSaH29O+HQflMy0BvcFUB0bYmsC10NCYE5SGNy3OWo
-         ifbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730173542; x=1730778342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T/CTs5K1y1Wb1h73no9mebagu5POeGng1N3JgW2OuRU=;
-        b=t5i8r6dSCwm8eh0UCn896urLAM+3epkSM9lcBqYB6b3P1aoI4KXVqFRjR1O/cqW2je
-         BMgH5cLTwqJ+cvnGbmwJBrrPWbpL0spBB2RAd5XZmbkyU7RKtpRIPTbQ2U3l9xbFl4KU
-         Gw253pZRTdsSQSMNQHMIR6hValDX6getVKGCKPMYFUz4UYS6I7u+RUe4+9Pl5nJuQTt4
-         ut/fjBngAFYXY4XD5OejU+3fbotvFmv6pJPMP8DXRpRNKcjC1oqiZ44/JW9tdO10l6Qt
-         Y5HVHmiouDUp7qhhJtgmO8cLpWpOinM/H5faPk7oR3yS4BRzk7JntSlAcyFjd2HxFU1A
-         ubdA==
-X-Forwarded-Encrypted: i=1; AJvYcCURcLGxst1+NU9cIT5bXYzfKvq1OhgGIkaKyW7Ri6MdUap5aSYEpgl7z8GnVuiNu0hp96JUC34I@vger.kernel.org, AJvYcCVLpI+LIcNFeJPFqtgZIQ2tsbWzTQ7YWsnaPoLNBB2vBBlnLNjri45qawrDzCh0urB8T24MSogosFlGCg==@vger.kernel.org, AJvYcCVXEz+IAHGrePm4MZiwdutlNHBRGkpnm5G1vcZWgRH68ka4v13M4aCe9iM5LepavSF4ciqqVSpVNG8=@vger.kernel.org, AJvYcCW0hbK0CU9DKLaZRoRV1/cDBjvrfeDOwlaiZZYpiSlQ3nTWMZvFG/nK28Iv3FTuiQxN8Du0nRVq9L3TQJaF@vger.kernel.org, AJvYcCWAPdNVkHsOdMKm82yQiPuJodMGvS9cLfznjib4cu/RpZoHf3DAXM4NfnVy8R9XPN80OWxKjQ5/lyGX/sGDzxU=@vger.kernel.org, AJvYcCWZkA/Ebsvrsm1nzQqmVI2QoA1ZLgpgTRitgXjN8jvi04UxfTJXUSdvJJZBI29dEHCW19EocshcjMsD@vger.kernel.org, AJvYcCWkG26bwOBYdHuWuIx/w2ArSIw3v87kU1Y4rlaRyWYjU2BOAb7kM0cLziyhhTStxp9nn8JjpB2oIZmG@vger.kernel.org, AJvYcCWuMZkQ6fiBJUd6dKzdOqopu9ee/4dLre2VnjOYGotjP8a2gaFhmngHb70e9lgWIL+Kf7t2PCK6twu8@vger.kernel.org, AJvYcCXQ9JdtvqAXoRNx/prs/2BJ1/R5lr+9AN9OJrqABJIqbhtaB8GOL7kBwuXkw12C7k2tW+FfHJPkHZTMyXg=@vger.kernel.org, AJvYcCXWHd0MgKNNBFnsAHuLjCoPlYuEUNEx
- lw2sttxwdG7itDJKcHe38WKblEkalUz8d8Ebu0alXzNU+97Y@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXuBDcQF97Vo9aOSBY2QbzEN1iEoyEskfpXMznDbVuFeJHiGq2
-	JIRFRrYrFA/4rwSxWfoURJb/LvIvvRHnE8HDCUl65E04W88xv3VvrwGjfWotcyiVg7ZrPX+Smna
-	jUxy+V7JjyNEx1npWxMvPC9R4Rek=
-X-Google-Smtp-Source: AGHT+IGfm8i1NTOjdK59ar/oHoMjiqsPSqbc0JD5K9R4kxYreI+daaN7dVKfGowPbsaVFEJzyIlEL4zXfN95OO4rnFY=
-X-Received: by 2002:a05:6902:12cc:b0:e28:faf8:5cd7 with SMTP id
- 3f1490d57ef6-e3087a6c107mr8166564276.15.1730173542428; Mon, 28 Oct 2024
- 20:45:42 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A0CA1FCC46;
+	Tue, 29 Oct 2024 03:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730173579; cv=fail; b=WJqjB0eZFCt7MDyPHO7fhLKdnNqiVcU8LWRCQnApvqvAjAsquydAM17DMdTXnZHDaErHXEOi5cL2r7pn8UxMMYMk5em9Vag/21P1s1TYM/YQqLZXV6w/WpUQAu7CuU3w8X5TEK96b8iEgswIYg8Kc0nE+9mbTC6bVPO849DCSmA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730173579; c=relaxed/simple;
+	bh=mGTYFnEyrQFUs7UVTgpxQE063ifhFPQz1jemMfzC4Z8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=mcXvxLGHmHXE1A/hwgYuDKhr1OmfrIbxlvfKP2br3aqsTcbym8t2SR9sfpeIl5YH2tnwsepS4lva4FvCSduKUggQN7DgW3vaoolTca6G0RrYu5BZJXdmtKulwBBaAt8gQPVgAIc5WLyjeUb9ESV2e8nha+E6D09+zLvV9KPG9wo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=qL8FWl2n; arc=fail smtp.client-ip=40.107.244.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ig2TPjUNGp+rhihiBJL4ND2LFfCvUMw/TO/PdMN7fLGSFKLesGCin3hWuqoVuw66HePi9qxou3Pxh74lXP01MThkmOr/7b4z2Hn8TevTbVxJkifKcSF686Aj686PjnlxCrzEDYw/+jFLpbP9vx6+kysd9Bi7kVpu3uVGX2EGVuZBUEVfEzWIPI7G1zRViMHIaOVyDUY/Q22xIKdvXYHIOr10QcfzJm9xIWdU153eWMI6M8GF0tyX9Cf+nj2h6pVyGrrSgY1fkbN//ndlEjUMR8OkFwU52K1ouMs0vE+Ru5I34MieBUf7eLosi7Rxv0tIWbhgqbbkphSpU3TAqct2GA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OJ9rjKVNY5XYMf1Pstk8I2g5FcE3IstEdylOklMRlSA=;
+ b=e/WVcFpbvX937op01jChM6yrie3BzMx1J1JMJ3YmaSzqOuQCb32up/3TIPEy+lRgaLrH0pJfM48Hj+0MUWO06SnNTiJYE+Aq2Nc10zO28xFnzRLxlDaZgKSwdKq+HXsv+PE8/fxz7iLT4LI5mlnVL7zWPGa252LE7LU0cCU/1Yd1CMVT+SSMeQpqQmJtZaZ2JrFrJvW2eYvxrG4DoasN/urUJ+CcU8CAnsUyTdMAHP40CRWu8b08ZUxMlmlZWYjp498AxBguzSpFVvSPt/rAknuQpEjeH6MT/ysWeOkkEgW2cV/R+m+Acin3Vjid/ozRkdDikmz/FjsdmbLN529aYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=linux-foundation.org
+ smtp.mailfrom=nvidia.com; dmarc=pass (p=reject sp=reject pct=100) action=none
+ header.from=nvidia.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OJ9rjKVNY5XYMf1Pstk8I2g5FcE3IstEdylOklMRlSA=;
+ b=qL8FWl2nzUBZLDiavx/f5k4FYT3GVBHsQp+29X6Fq44TbdnJ0t8/V5CKgPKpWmTPOdepWfgvncqtKCI1ayEfHHasgluojBDeaBbK5ELI7J2XEqqaEQyVsX1vfPfI/gIJeI3L6ufVAK5TkzfB5DZSzXnr17x+cxl6iG+c/3F9X++QXonU25RY+xc9SwykXdKWZqqpUibZj2YW4qekp0ChtmNG2huKcMfUnlzC+HN2pRYfB25RLPNgYF66WDo6zIgkSfGGiHwoYUpYlzrM6Mu9dREmu2zKmqnBKFqn3lBfhoaS3hZgGdRbtMD0kk+mQ+Tc+fVnmWtb6YW5uS1UnDtRyQ==
+Received: from SN4PR0501CA0056.namprd05.prod.outlook.com
+ (2603:10b6:803:41::33) by SN7PR12MB6815.namprd12.prod.outlook.com
+ (2603:10b6:806:265::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Tue, 29 Oct
+ 2024 03:46:13 +0000
+Received: from SA2PEPF00003F64.namprd04.prod.outlook.com
+ (2603:10b6:803:41:cafe::7d) by SN4PR0501CA0056.outlook.office365.com
+ (2603:10b6:803:41::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.13 via Frontend
+ Transport; Tue, 29 Oct 2024 03:46:13 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SA2PEPF00003F64.mail.protection.outlook.com (10.167.248.39) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 03:46:13 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Oct
+ 2024 20:45:57 -0700
+Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 28 Oct
+ 2024 20:45:56 -0700
+Message-ID: <6434b6fc-d3c7-4f1c-baa4-25215a185eec@nvidia.com>
+Date: Mon, 28 Oct 2024 20:45:56 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-2-tmyu0@nuvoton.com>
- <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de>
- <CAOoeyxUhnyYG3p+DQJG-tvU5vc5WYQZLLqCXW=uPcXTjq2gVfw@mail.gmail.com>
- <20241025-truthful-honest-newt-c371c8-mkl@pengutronix.de> <CAOoeyxUEf5vjqL67WjR-DbrhE0==2hqHLEyZ5XEBhEfMfQ5pag@mail.gmail.com>
- <20241025-spirited-nocturnal-antelope-ce93dd-mkl@pengutronix.de>
- <CAOoeyxW5QwPMGAYCWhQDtZwJJLG5xj9HXpL3-cduRSgF+4VHhg@mail.gmail.com>
- <20241028-uptight-modest-puffin-0556e7-mkl@pengutronix.de>
- <CAOoeyxU1r3ayhNWrbE_muDhA0imfZYX3-UHxSen9TqsTrSsxyA@mail.gmail.com> <20241028-observant-gentle-doberman-0a2baa-mkl@pengutronix.de>
-In-Reply-To: <20241028-observant-gentle-doberman-0a2baa-mkl@pengutronix.de>
-From: Ming Yu <a0282524688@gmail.com>
-Date: Tue, 29 Oct 2024 11:45:30 +0800
-Message-ID: <CAOoeyxWh1-=NVQdmNp5HBzf1YPo9tQdh=OzUUVFmvC-F7sCHWg@mail.gmail.com>
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-To: Marc Kleine-Budde <mkl@pengutronix.de>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
-	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] hotfixes for 6.12-rc6
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+CC: <mm-commits@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20241028203743.3fe4d95463aaafe23a239b51@linux-foundation.org>
+Content-Language: en-US
+From: John Hubbard <jhubbard@nvidia.com>
+In-Reply-To: <20241028203743.3fe4d95463aaafe23a239b51@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF00003F64:EE_|SN7PR12MB6815:EE_
+X-MS-Office365-Filtering-Correlation-Id: fe755ec6-093b-40e1-1b06-08dcf7cc3c3e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V3VIdGhiRUZ4Vi91SExuYXBWdXd5YTFyQUlURWF6MEtrL0pkTkgxNVB1WlhO?=
+ =?utf-8?B?RUFjMXliTjhhNDFKdmZIckRqSEtSbHpHbTRONkYzUFJvbkU2VnJpRCttUURG?=
+ =?utf-8?B?YW5CWVo2emRhbXVFVUZmQytWOTgranhTNnhkdCtaSENpWitUQTE5K3d0UUxv?=
+ =?utf-8?B?Z1JSdDkzTnpOR2lYKzJVYXg5S2c4OVpHbnpidWxxTCtVbFZmdXFHQjVFVjlQ?=
+ =?utf-8?B?dklpb2hESDNkK3pnbkNpRGFKQUJRZENudlFyVTNhcTRrc3hkcTRHRDJCMm1Z?=
+ =?utf-8?B?Tm13c1oybnlhYjdjdmhkWDZiYlJOMit3TTdtY2lnUFg4Z3JwNTRVSi9jcTJx?=
+ =?utf-8?B?SU1VSjRFeW1KMXd2TUJlVitEK2REVVYrVDA5OGFsV2FOc1ZQdHBYMGUxOWMy?=
+ =?utf-8?B?WTNjWXhFZzhTYklwZU5McFRzYnhid2p4eEw1NnBOZklFR3VmV29MU2MxemJ1?=
+ =?utf-8?B?QWlqTXYwNkVDUjlKQ0xNSERxd1YyNEJNTGVMN2xHWno0SHNrNE1BaHE3MHFx?=
+ =?utf-8?B?SDI2SkFFUkNLeURacTFXajRBUXlQc2FFSjhKbHRnZURMU0xnVjNUb1RuVnlI?=
+ =?utf-8?B?Q2pVU3VhMXNhR1p3RTRCcGlzNW1HVWgwQi94VklUVklMWVVJSGxSQ2lmZEFK?=
+ =?utf-8?B?RVIxRTJhdzZ6TTRRVDQvejM3MjJXZlRRN3Uyc0ZsalRPUzZKbXhXbHRNSlc5?=
+ =?utf-8?B?Q1pkY28yRVNYTTQrNHgxTWhEOXJUT2FzUHpSN2svUzZYNnIyS3lKVkxFUjh5?=
+ =?utf-8?B?SjZsLy9lMThXZjBPbURUV3hKUVhOTDNPQ3g3VkpUTTJzZkpRbnpxeFJpY1lJ?=
+ =?utf-8?B?YnRRcld3MWVtRnF1NFBwVUs2WW9uYk54ZEV6bno2cC95cUN1R0NwTlBBVWJR?=
+ =?utf-8?B?Z1owT3NaWENuZ0NJeTlhQXZhTVhFd1hScFB3UE1SNjFaTkwwZG9yZm51dVhx?=
+ =?utf-8?B?SWhnUXpRUlFQSmh5VVRpNDIwWU11VU4zSEZpOG81eXpzWlBrdEdYLzVBUngv?=
+ =?utf-8?B?YzkwRzZJL2dsNFVvMTFIWFIwNU1DZ3dhdTQzbFY4NFhqREEzSW5yMy9MT1Nu?=
+ =?utf-8?B?cEZPL1cwUUduc0tHWXA2aXdRMGZWcUlaNGRwb1JMZk1ENUo2TXlpc2dLL2RL?=
+ =?utf-8?B?aTNrc3l3WjdYY1ZRazdyeTVmYkFrVU5WQW1iU1J3Z21YWldMeXBLcVJOUm1z?=
+ =?utf-8?B?Qmp4ZUV6UjdOdUJXTUZLQjZhdU9RT1VoMHBVUm91OFhJQlhxWWtzUjhKYnJo?=
+ =?utf-8?B?ZGQ3YWZ6YUxYYSthdXpGYXhrOVlHeVBta2dUalFLMGJIS2R3Y1RVVE12YnhB?=
+ =?utf-8?B?U2dXUldXdFZZeXZNVGMxdVFxalcvUXh5SldrYTU4RGhuTldJTGo5VEhkVm1p?=
+ =?utf-8?B?OWhobFM4Zk5DTTV6Zy9yZ2JMV1o1WEZDaHI4N240ekRTYnkwT3dtZjNPQldV?=
+ =?utf-8?B?TjA2TjBFOEtRbTJiTmNrbGREc2dvbG9Pc0g0Q2hKSzZCOUtQQWsrczFZaDlQ?=
+ =?utf-8?B?NnZmNVM2dGNndlYxM3lLcERyV2kxTE1Mc3FEL1N3RzdlQ0tXKzVqdHpyVkZG?=
+ =?utf-8?B?RmFZUXRueENqdUthMHZDazBTQ3IxTzgzUVAwaHBpRkJjWWU4V3l4dmJGbjgx?=
+ =?utf-8?B?NmpyN053Lzd6TlhXS1d5clo2WDMzdEZ6L1VaMit1RUhVZ21QeUhhTWtnbGZ2?=
+ =?utf-8?B?YWl4SDYvODBXY1pOenNxblJkMUplVTl6dnRIRnBHMnd1Q2NpM3BqaDVZWGEv?=
+ =?utf-8?B?UUg5ZW9pdllaakxweWJlVnpkelNiaWcvMEdnN2tRaXBzaU9YTHNSNnBFNEpu?=
+ =?utf-8?B?dEdVbllFd3c4eHpZUTErZi9hcnZEQVNHWlhDZWhRbkdkNFVGVm1kclV6Y2Fu?=
+ =?utf-8?B?TU9vdEpucGI5a0ZtMktsM2FCZnMxQ2s2ODdweDJRbkxqYmc9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(376014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 03:46:13.4297
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: fe755ec6-093b-40e1-1b06-08dcf7cc3c3e
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF00003F64.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6815
 
-Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=8828=
-=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8810:06=E5=AF=AB=E9=81=93=EF=
-=BC=9A
->
-> On 28.10.2024 16:31:25, Ming Yu wrote:
-> > > > > > > > > The Linux USB stack can receive bulk messages longer than=
- the max packet size.
-> > > > > > > >
-> > > > > > > > [Ming] Since NCT6694's bulk pipe endpoint size is 128 bytes=
- for this MFD device.
-> > > > > > > > The core will divide packet 256 bytes for high speed USB de=
-vice, but
-> > > > > > > > it is exceeds
-> > > > > > > > the hardware limitation, so I am dividing it manually.
-> > > > > > >
-> > > > > > > You say the endpoint descriptor is correctly reporting it's m=
-ax packet
-> > > > > > > size of 128, but the Linux USB will send packets of 256 bytes=
-?
-> > > > > >
-> > > > > > [Ming] The endpoint descriptor is correctly reporting it's max =
-packet
-> > > > > > size of 256, but the Linux USB may send more than 256 (max is 5=
-12)
-> > > > > > https://elixir.bootlin.com/linux/v6.11.5/source/drivers/usb/hos=
-t/xhci-mem.c#L1446
-> > > > >
-> > > > > AFAIK according to the USB-2.0 spec the maximum packet size for
-> > > > > high-speed bulk transfers is fixed set to 512 bytes. Does this me=
-an that
-> > > > > your device is a non-compliant USB device?
-> > > >
-> > > > We will reduce the endpoint size of other interfaces to ensure that=
- MFD device
-> > > > meets the USB2.0 spec. In other words, I will remove the code for m=
-anual
-> > > > unpacking in the next patch.
-> > >
-> > > I was not talking about the driver, but your USB device. According to
-> > > the USB2.0 spec, the packet size is fixed to 512 for high-speed bulk
-> > > transfers. So your device must be able to handle 512 byte transfers o=
-r
-> > > it's a non-compliant USB device.
-> >
-> > I understand. Therefore, the USB device's firmware will be modified to =
-support
-> > bulk pipe size of 512 bytes to comply with the USB 2.0 spec.
->
-> Then you don't need manual segmentation of bulk transfers anymore!
+On 10/28/24 8:37 PM, Andrew Morton wrote:
+> 
+> Linus, please merge this batch of hotfixes, thanks.
+> 
+...
+> John Hubbard (2):
+>        mm/gup: stop leaking pinned pages in low memory conditions
+>        mm/gup: memfd: stop leaking pinned pages in low memory conditions
+> 
 
-Understood, thank you very much.
+That's the v2 series, but after some more review, we settled on a single-patch solution,
+which is v3.
 
->
-> > > > > > > > > > +     for (i =3D 0, len =3D length; len > 0; i++, len -=
-=3D packet_len) {
-> > > > > > > > > > +             if (len > nct6694->maxp)
-> > > > > > > > > > +                     packet_len =3D nct6694->maxp;
-> > > > > > > > > > +             else
-> > > > > > > > > > +                     packet_len =3D len;
-> > > > > > > > > > +
-> > > > > > > > > > +             ret =3D usb_bulk_msg(udev, usb_rcvbulkpip=
-e(udev, BULK_IN_ENDPOINT),
-> > > > > > > > > > +                                nct6694->rx_buffer + n=
-ct6694->maxp * i,
-> > > > > > > > > > +                                packet_len, &rx_len, n=
-ct6694->timeout);
-> > > > > > > > > > +             if (ret)
-> > > > > > > > > > +                     goto err;
-> > > > > > > > > > +     }
-> > > > > > > > > > +
-> > > > > > > > > > +     for (i =3D 0; i < rd_len; i++)
-> > > > > > > > > > +             buf[i] =3D nct6694->rx_buffer[i + rd_idx]=
-;
-> > > > > > > > >
-> > > > > > > > > memcpy()?
-> > > > > > > > >
-> > > > > > > > > Or why don't you directly receive data into the provided =
-buffer? Copying
-> > > > > > > > > of the data doesn't make it faster.
-> > > > > > > > >
-> > > > > > > > > On the other hand, receiving directly into the target buf=
-fer means the
-> > > > > > > > > target buffer must not live on the stack.
-> > > > > > > >
-> > > > > > > > [Ming] Okay! I'll change it to memcpy().
-> > > > > > >
-> > > > > > > fine!
-> > > > > > >
-> > > > > > > > This is my perspective: the data is uniformly received by t=
-he rx_bffer held
-> > > > > > > > by the MFD device. does it need to be changed?
-> > > > > > >
-> > > > > > > My question is: Why do you first receive into the nct6694->rx=
-_buffer and
-> > > > > > > then memcpy() to the buffer provided by the caller, why don't=
- you
-> > > > > > > directly receive into the memory provided by the caller?
-> > > > > >
-> > > > > > [Ming] Due to the bulk pipe maximum packet size limitation, I t=
-hink consistently
-> > > > > > using the MFD'd dynamically allocated buffer to submit URBs wil=
-l better
-> > > > > > manage USB-related operations
-> > > > >
-> > > > > The non-compliant max packet size limitation is unrelated to the
-> > > > > question which RX or TX buffer to use.
-> > > >
-> > > > I think these two USB functions can be easily called using the buff=
-er
-> > > > dynamically
-> > > > allocated by the MFD. However, if they transfer data directly to th=
-e
-> > > > target buffer,
-> > > > they must ensure that it is not located on the stack.
-> > >
-> > > You have a high coupling between the MFD driver and the individual
-> > > drivers anyways, so why not directly use the dynamically allocated
-> > > buffer provided by the caller and get rid of the memcpy()?
-> >
-> > Okay! I will provide a function to request and free buffer for child de=
-vices,
-> > and update the caller's variables to use these two functions in the nex=
-t patch.
->
-> I don't see a need to provide dedicated function to allocate and free
-> the buffers. The caller can allocate them as part of their private data,
-> or allocate them during probe().
+v2: https://lore.kernel.org/linux-mm/fc42d9bf-3460-4d85-a09d-39b5634363d4@nvidia.com/T/
 
-Okay, so each child device may allocate a buffer like this during probe():
-priv->xmit_buf =3D devm_kcalloc(dev, MAX_PACKET_SZ, sizeof(unsigned char),
-GFP_KERNEL), right?
+v3: https://lore.kernel.org/all/20241018223411.310331-1-jhubbard@nvidia.com/
 
->
-> regards,
-> Marc
->
-> --
-> Pengutronix e.K.                 | Marc Kleine-Budde          |
-> Embedded Linux                   | https://www.pengutronix.de |
-> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
-Thanks,
-Ming
+thanks,
+-- 
+John Hubbard
+
 
