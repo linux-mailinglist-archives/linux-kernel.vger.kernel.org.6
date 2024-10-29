@@ -1,371 +1,356 @@
-Return-Path: <linux-kernel+bounces-386532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDBB79B44AC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:46:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AD7C9B44AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:47:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E19FD1C22559
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B633283B5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 007BB204F78;
-	Tue, 29 Oct 2024 08:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962E620370E;
+	Tue, 29 Oct 2024 08:46:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e0OrBoH3";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="a5pXZ8Jr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cXsEw5QH";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="eFOV1oKd"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED6F20403B;
-	Tue, 29 Oct 2024 08:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730191530; cv=none; b=A3jX+pXbNNj5E/wRpSCNqgWrg8HmXJQNy9c/jTEzzEsLfYsstBpRfQoElzLkfBhRYND4w/FH48yIr/Q2waKTASK/zmFOMkc/bTMxaBqDGoSXD+3cI07Oe90/cETQn4Kg4IIcN+bRmXo5qScLB6chHY1TdS+uRvMCJeDpXKbdyo4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730191530; c=relaxed/simple;
-	bh=eYjCZ/19rTWbstPMveYIyYrA/KCIJ9YwL0QmN1TB0Yc=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=CcmkkOSTotXSA9NMvU36rIp3HR0uHn6CxIFLx7f+mW6ZNaXUVoqhJhRzhJ6kfG7FAI4PW4D2P8TrjyKEOWm0v/0F/9wOLYB19NBOnM+zDU662LIS4AVRd2itcXKivpiVhAZ8K+t274c3FIfEHXugmj5nhosmOZVIANA04bnfbDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e0OrBoH3; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=a5pXZ8Jr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 29 Oct 2024 08:45:24 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730191525;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=LG81H3dLeLXIvz1Z3steTV7j7YAuaXgYwdnSP74A/SA=;
-	b=e0OrBoH3L2m+P+fAQqUaGtAyMUHzhRaatcYKzkaR2H/DXjlyFstewfNLGtZ9RTt5zQRzvA
-	17i3fqfwMZ7NkDeiRdeoRQiuXcLWzbPpEsmZBl5IJGPMW2AR0gMq5aStEjpjIQfKgL/6pf
-	3SyApXD5I02z1WiME2klGazMwcdgDaPTNH/Acc7DQn9aglsoZxCRLBLq6wQwQ4YfSDWGgR
-	duYP2q0VLagi71zcruD4H13UpIbzmaPs+fa4Uv4vL4z6iYMecP9E2/MK8r/UmR/Z1p4+Md
-	A/4LvarkVLYM43c+vfmNMcPgUt7ttcNMPLW23LUdHIL7gMI7TA3gMb1lO2vOAg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730191525;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=LG81H3dLeLXIvz1Z3steTV7j7YAuaXgYwdnSP74A/SA=;
-	b=a5pXZ8JrFs/5CuzGCuXoX7ZfxxK9hcmsj/FqLHr7SQDeTOd0RR34Gz0dQsQ1PrXi0nw/l8
-	tPGzmibfY6lNo4Cw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/core] signal: Confine POSIX_TIMERS properly
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79BE7202F8E;
+	Tue, 29 Oct 2024 08:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730191565; cv=fail; b=bqvndpdvzWvuh9yU+KypKbeM9agYSrXzGjJUiaiVxve2hppNyvfAunRs08KhrjrC6Oa6oyGbD3EljCg3ixdQ57Z+XBDmVoBLVjRQi0VeEzi/pUoDF4XzGjDM7SIiKdQumC8uvFz/VmfhcUe6xVCekfO4jqpNXDcI3cZew1AsBDo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730191565; c=relaxed/simple;
+	bh=QVgWBP5Is9hqpU3Mr+TEdeTH9Mv8CsyKEOcOhENi7Po=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tLrxHTFjEvYSe4UljBzndThEn+9Lud495xqlOl/DWBh/ydeg5cghefRpiiJzh6NjS9oB8q8dMM4lDYF4Gzemp4R+Kf250w/rpNCtH+HhPYQOf8bcAey/do2ckCVgEzHrkzp/4Lqz22Yrtr6MgxMaQQumMRZCbEIderCl1/Rp4ao=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=cXsEw5QH; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=eFOV1oKd; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T7taHW029751;
+	Tue, 29 Oct 2024 08:45:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=Jg6fvlMw0adPxViRnnFp/EmCV0sOQlcbGcJW9mTuXBg=; b=
+	cXsEw5QHSCeHfI6YWwZq9T6dhntsJlSfUO/b7cl3Uu498tTqS2uaknsUgn1bMeqq
+	hi53Y6zbiRwTxxoAWl34yZdpXZC2Ww94J3o46+4tjQcQ5cLancLd4j2OcG4KVZO8
+	smaZDl793B+KOzKzdYp4NzjlAAmYJv/qSjIfhZJDYqJpUI0S2u3Sk5T2jBe11C3u
+	2sdp7Bg2QIV6XbNfR581DAOP52VcHu7GuXVooyX2DYMmobh0TmEGyknZUM8KuRd5
+	b30iTzeDm1qjpvNa99E68nhAOblP5seKrgWMzUuYCMK4dkQqu7U8EPIrgGTFXeZD
+	HZiHrlLFTIIFjFqqQ5ik0w==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grgmcutv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 08:45:38 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49T6kQ10011891;
+	Tue, 29 Oct 2024 08:45:38 GMT
+Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2042.outbound.protection.outlook.com [104.47.66.42])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hnac74x8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 08:45:37 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XjFlHvDSwiUW4p/+7HVSh24jBOeMRtr8ML4uRbNfoVW0IeLxZJYoFLuaU/XEFCbm4KD9IuB4cgIcVQVzOqDNqdWm4ngZJD0QLqEbKH+3iZ1h3sVOGpCGqMRhFA0Pd0aHKvzU2Pca+rlbGVCDCRkfgdJcvr57w3ySuKsK9cdf6OoNBLuEueSxqOrhsEkDkTtVVNBnR0YKvH4kiqmHAHkjFbZuFFjxBh76aMoH8cRKY5TdZVtVRJtoUrrG7R//wmpAdy4kaRsJnihkZU4nT3yQzlMa4RCiw21UvbO4kF1ksFCIwntRXVfFc3Ou9tD5K9hNDsvXDgvZSTFGM5cBJbFZQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jg6fvlMw0adPxViRnnFp/EmCV0sOQlcbGcJW9mTuXBg=;
+ b=rxXCePiTpNCDveBjAH9SwWwR5aXUNc5Oh2qQxd8NQYlZkt/yVqfYYHxDsv4zgnw/wbYiP20Ei5fkSuuZ8LNqml92jhcTaXg9ruDydbfB4lqiX3IAKZzm5jWxgZIsAnLv1eBf40idmptOXqiIvTQvcWhZqRSkBRC+4Vx1Tbv4XOTvpJrhWYgcJh+dUlI1MZJz2nsaeoHTRsInSVJ3ZbJL7XQnyloIOdsDAkDJjhChn3XZOiVlJoKrnLLPfRZ94wUhu/0nFF5bgw4s6PleYTmj86rOfdHHaPVXnie+0rlrbCwVx8u1/xftgAZ10Rsdk0/R/V9mWGd9VH6cX3NpWah90w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jg6fvlMw0adPxViRnnFp/EmCV0sOQlcbGcJW9mTuXBg=;
+ b=eFOV1oKdvRcwe9jMvp4bLH6lgfxurmc6bSqCu5F/UjKn401p8wyDGVm26nfH6XFjzTHTV/l2PATfbhHuguBOuJPL5Bibv/d8kA+YlaYKv+ZaQY/WV/XBzwzqV0MuQwYGAgXm9oJ6YgVbZt51AKXfEyvK1k6DI1ch5tnmp2uIlW0=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by CO1PR10MB4468.namprd10.prod.outlook.com (2603:10b6:303:6c::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Tue, 29 Oct
+ 2024 08:45:35 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
+ 08:45:35 +0000
+Message-ID: <879c8b67-2eb4-4e9d-81bd-8f207adef7e1@oracle.com>
+Date: Tue, 29 Oct 2024 08:45:25 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] md/raid1: Handle bio_split() errors
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, song@kernel.org,
+        hch@lst.de
+Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
+        Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241028152730.3377030-1-john.g.garry@oracle.com>
+ <20241028152730.3377030-7-john.g.garry@oracle.com>
+ <c79e7bb4-6f53-344e-9651-fc146b12d240@huaweicloud.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <c79e7bb4-6f53-344e-9651-fc146b12d240@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: LO4P123CA0308.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:197::7) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173019152460.1442.12635711846537567973.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|CO1PR10MB4468:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84962d39-8560-4a63-edf3-08dcf7f60e0f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bkhWczNzOEZibzIreWdkWjUzTTRob1dBd2l5WWNwazlrR1lWeHJqNkUzbEpU?=
+ =?utf-8?B?YTRFQ3Q2UzJFaUxueGl1ejNEMVY2WUJRWDd3Q0w4VkhDTklaS2hmVkllQVNq?=
+ =?utf-8?B?aDNDQlp6MmFEanErQSsvREZsNHl1eGFFNTlheVN0eWxBNDVDcDArL2I0SmlE?=
+ =?utf-8?B?bjUwK3M2d1pwSXBMMDJWbHg0VVhQUE1rdG9VZTBBSmI4QnBxYTdpazRIOFdz?=
+ =?utf-8?B?ODdiL0U5MS9aRmg3V0ZoMG9PR1lETHZDL25uaGgwbGhobEV4VnZ4dXc2Q3JS?=
+ =?utf-8?B?elFIZ3hzRmluVEtmR0l3SEUzeHFyWjNlaE1vRG83VTl5SUFjM2ZxazQ0Yy9q?=
+ =?utf-8?B?V2xsanU2azcyYVhya1NON0QvdkROaWl3RjFXZ3ZRbnQvTFlKQVhEVzZUdzdk?=
+ =?utf-8?B?dDhxdUsrYWE1c21MVWpGcXNtTXJ3aUtuZjYrSzVtTzBTaFRaSGRuZTF6TmFZ?=
+ =?utf-8?B?YS9MWnAvdy9qN1pVQmVOODIwN1QxTzBNYnZVU216UTZhT28yMWFqbWg3NklK?=
+ =?utf-8?B?THcycmhNYVpIUkxJeTQvaGppeUJLaDRvUXpRZnEvMktFWnFocXdmQ2pmYXVV?=
+ =?utf-8?B?UU0yNHJJTmRWeHZ2K2Jra3RuV3V2QzEvdEkzOWNPR0wzQnc1c0Q0RnltK3FQ?=
+ =?utf-8?B?YzNHbVVpd3gzNnIyVVlJY3FkbkFIYnNLaTJyUlhMalVPNTFuY3loNnFJdzdv?=
+ =?utf-8?B?US82bmVBR3dMbVZETkZmNytMN0xwTVB3bWJPSUlIQ1p0bXhDOWE4Yi8vQWNt?=
+ =?utf-8?B?SkU5ODRQb0N1R1Yva0hEVWlRTTg4ZTZaaWJqakpKN3VSZXRGU0syd1NsM2M5?=
+ =?utf-8?B?MG10M056dHdXaUxWM3BBeFYyWkdYcUNBMC9PQkgwZ1BHOW1pajVTSmxjZjl2?=
+ =?utf-8?B?VFJYSDdUOVA0NGJxSE9TRnJEZzhkdm9qUzJMNkY2RUVmSlYzUXNQZHZSRjR6?=
+ =?utf-8?B?bEtacDE5TktjeW1EdXd3Y1NPWHE3cnZIL3BOK1pGQks4U2FydTlGSCtjbDYz?=
+ =?utf-8?B?QnpqNkxNY3NuUEpoSW5nUk9CZ29ZSFcvSndJbEJmbXM2WUIrdU9XdEtkQ0kv?=
+ =?utf-8?B?RU95R3JqK20wRFNQbFp6L25SRHlvS014WlZiRkZGMDV3dzQzMDVzTnR4V2FW?=
+ =?utf-8?B?MURGaWRFVVZrajZKSWQvU3NyQWE4VCtCS0xXSG1DeTljR1BZRGRSZGVSV3pI?=
+ =?utf-8?B?OXdVT1ljZ0ZociswSERQeUxuald2bDY0azYyRTVqTXZDbTd6bUZjS1dCMWFB?=
+ =?utf-8?B?OG5rbHpNNWR1eElRY21ibFJxSVR4ay83S1VUTjYybHhCVkExNUF0MFNaMWJi?=
+ =?utf-8?B?TGkrTVFrTmhLQzJWYXlQTGVmRWtkS0V0V29QMVlCcEdqWTNNS3FlYWpQZC83?=
+ =?utf-8?B?eFhHbjRkR2FsNkJGemxNai9ZSmw2aGRJVWtSc01CYlVKZk9ZUG8ydGtPNXcw?=
+ =?utf-8?B?dGRteDNvYys5OVJoeUUvNjZzSnBsZHZGYklBemZ6eGhNaVZSRkE1bGxnRElv?=
+ =?utf-8?B?b1A0M0ovL2twWnRteEFma0xNMDdmOFY4THFoSlBJU1pDUCt2aTdTWWpLRHhh?=
+ =?utf-8?B?QkFoQkxweVRiWDFNU1RkQ09XSEJ0eEpzNDlqTHl1UVcrVGNKaFd2ekExYzBo?=
+ =?utf-8?B?Q3lDV2IxYmwrM0t5NHBEQ25MbGxPbGdmNkpmeDRIVGVHd0dNYXFjd1lsV0lK?=
+ =?utf-8?B?NUtJdkJGUEtIblYrNGh0YzZ0SHNlZ1V3UDh4VWRHL0had215WVRYajFpcW5Y?=
+ =?utf-8?Q?OazXw4XSoKkprh1gQoul8miKu7de8I1SZsVwhxv?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?QlRZN0ZoZUxZWXBjNU8rdjNZWmNxTnA5OFQrbU9XNTJYb3kxdm5jM2JCZGlu?=
+ =?utf-8?B?WE51V3JGNjR5V1NWS1hYZFpBdyt5dEdHVjNTSDJsVEFYTmxwVEpzTVNRa3FZ?=
+ =?utf-8?B?N3BEcHpSV3ZtR0toMFdCYzUzbzJtamQzVFJpbE1vY1NCTEdoeG5lNFhGWmY2?=
+ =?utf-8?B?UURYQzc3T3lYaEJHVzliQWdWcWZXSlRRdkhGZ2diNTZxc09DMXl1c0pkZkE2?=
+ =?utf-8?B?RUxSWGRsSjJzWGdCc09wMHFRWi9tc1dHUjZKZVlYT1Y0RTM4UHJ6Y2VYaGZF?=
+ =?utf-8?B?bVRtWHo3RHMrRDNIcTdueU44YVd0YnYxSW8wNkZweGh3K1kxSFdJckhkeGdG?=
+ =?utf-8?B?ODFQR2U5NWl4ZDBuV2R4aFluODdYVnZ4M1ZmOHB0T0xNUG5OZDhvbXBvdDFq?=
+ =?utf-8?B?UEVvM1NmaDMzS3k2eTJXekE4dm5JQkxISkhyKzViSmZqMk1yQ01rdDhxUlRu?=
+ =?utf-8?B?T243eTZXWDJmVkl5dEhoOHJZR2JqMGNId0VLQWVJVUFQbC96MDZ0aDJNbVZi?=
+ =?utf-8?B?MDlZNlhnSW1UVTA1QnRMa3BHL2pnclEycWYrbVRhRlVOZEhLakZ3MjRkc3JM?=
+ =?utf-8?B?MmRuWWhjUUNCdlRidUNPTVg5NWorbmdwTzhwQVFheFdxOFFsdVBLWnlmNmNS?=
+ =?utf-8?B?cG4xTHBQK2tGUGY5TWxLbUZPOXg5VUdNVkVIa1R0T3dsam82ZTNBMUlmcC9E?=
+ =?utf-8?B?SG1KZlFTVzU3YUJ3OEUxQVl4aWIwZWJwYXhhMTJWVmtqdlg4NzZ6TFVzSUNJ?=
+ =?utf-8?B?NHJrbmJZdmhBVWJFdjFkMFFXUkd2ODIwWlZrNG0vY1FBWjFjNEg4aFBvTUEr?=
+ =?utf-8?B?WHp0TDUwRTdVSVNhR20yWC90cS94dmxQT2s3YlNTUnhaaXdYWXU0c01BNFBi?=
+ =?utf-8?B?U3VpQ2dXcDVaVXFuOHU0SW43T3pydExLTzBucm9OZThZTnhpNGNabUU3TENq?=
+ =?utf-8?B?TjBtREVKWmtsRG9FNEZHTDNLT0YrNUhpUkt1SlpOdzlDajZOYUp5UW8xS3ow?=
+ =?utf-8?B?cDd2emtwdythVFloRlJWZWxGblFaU1ZLMHJ2M1FhUStIZFNqNXhaaXJ5OHRU?=
+ =?utf-8?B?TVBucnZpTkJJV1FkR3BwczRvTFZ2TmNleHhBVU9vRGlEZXZuTWVuUlRzQkNK?=
+ =?utf-8?B?N1B2bVl4eVY3NW83SzdzUmVvWDhjTHV2K2kwVzRVdXNpM3NJZndCLzVLamhp?=
+ =?utf-8?B?S1RyRkJzZDU2b2MvMEt4Mk5vRXlnb0N4bWhMbUhwVW5EMnlRQzl0L3Y2Qnha?=
+ =?utf-8?B?VkxzWmo4bjBFR0dXd09UekkzZlFES0FSbXZzTHJWaVd1UUc0OGhUMTNtaDdo?=
+ =?utf-8?B?b3RvMkpWN2g3bEtSVnVLYWZVeVZuWDc4ZmxNZE1GZXY4S29XTktvazVyZ09D?=
+ =?utf-8?B?M0RVS3crWERJeTBNb1o2K1ZTNG1RUEVvSHk2K284dmhiL1lMQWtBc0NlOVhx?=
+ =?utf-8?B?a09rVjZHa2dpc21TSXlqNFlIRTlyK3JvVG5QSUdmajMxcFVpWlFjQWZMZjh4?=
+ =?utf-8?B?YUkzQ2VvM2NGY1dhcCtnSDY5aWJCRUxhbVZVWm5wdXJ3NmRvcThpbDlySy9p?=
+ =?utf-8?B?bkFubjRkTkFFUm1mNWt6d3RkQ3RnOFkwS3MwUjR3TThDRmM3VzZsZzJtaXhL?=
+ =?utf-8?B?TDgyOXRvTVI2NXhiSE1KeTZYeUIvQWlaRmQ3MHo0b2d4UUpqd3pIdG5MUnYx?=
+ =?utf-8?B?bm0ralJTdVdHUjR5aVAwV2JjUlN5dEdyV2w3aXBhaWdCNHhTOHFxRVBpK09D?=
+ =?utf-8?B?NURDR2xma1lLOExuVUNnSGRQZnEvS2t5cU5jK0pYZ2ZIY3ZjOFd3Y2VweXZ6?=
+ =?utf-8?B?ZExqN21QemxvOVVoK20rRWdpQldFYWpvS3l5MXpxSFEzOVgzVW1aWFFHWFNt?=
+ =?utf-8?B?RmRSWkdpK1ZDK0VNK3I2TXZoRTZOT2tsejNheit1ODdsT1VoVEhVYk9EV3dm?=
+ =?utf-8?B?RTVWSHg0UFZVbDJMY2F2YVRRZmhxdThFLzRmNE9SOEtlSDUyQnp2bzJMamRs?=
+ =?utf-8?B?dVY2Nm9hOVBZemphM3pKNHcrZ1krMlFKU09nQTFKREFZQzBuUm9VdXA4Q2tJ?=
+ =?utf-8?B?dXFaZWdOYWFNWmpSd0lZV2s0ZXNxVzRnWHhnQ212eFNBMnJGWEZWa095Z1lx?=
+ =?utf-8?B?VFdzMUl6TFdCc2wvLzROWGJVbEFZZGsyRDR0alMrQXZnZ2tRcVNwZlF2VGVG?=
+ =?utf-8?B?SUE9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	uFWUMFx0tWR6mkHEAlOjU0es9vD+1Lf2JRaGMTolDOtBKoZc+jN8Jb3tVqFSjxeJSRYjp9B0dUXJIAWiWr0Q3VI6punq0ODqK1AY9V5Iczo8qmAYkgFOxqXH4PBaFu171ooYEG2bXJ5bAaJ0OurRTk+827+3d4a7g6cYfuKqkOuTH1/i8x3c8OrdzLOmPw/P1Ze7678xA8RoxKO/9l1SrJWcTXPkRC9GkwqwrqvZM/aIJRrnQBNKLPgX4/xZLa5fcsYjfQ2kxBY7BhuSggegTVd4Kutl75t9XfwuTyfAm5x6xyyUzk7GJfXNsvFCi5Taj+fBxfSLUKB5Gb+WnPiMk20xeewwVpewgX/td8AdOfuMEn2CLbcMANvIf0070lUdPxUNrDrGn3gDIaIwCI1gzgfrQVrtv46hOsS0JVswyQlOB/NhLvDj+sYUjkMFdfftP4i7wRCPxw+mjabUy6fL9LbZalb495G6vgw46aapw7stPg55CRyh1P+heeFsfx1shu9jzdvYeDsurvVxhc9BXPH0vxMU7VErOrnDNSmF7OwxFcroiSzBBxizsGLguhVKZVQxq5HxrfjS7LXlX74VniJe2otJN3oWOnoQYVr97Qc=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84962d39-8560-4a63-edf3-08dcf7f60e0f
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 08:45:35.2032
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gx+wl2LXzWJNXsL9hZJv72F9zoNgkMM8jaYLQ/lLjnnVYWLd3jHGqzDIgeD3iRcRRREEENGMyuc7GXWdqM6QvQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR10MB4468
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-29_04,2024-10-28_02,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ bulkscore=0 mlxscore=0 suspectscore=0 mlxlogscore=999 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410290068
+X-Proofpoint-GUID: O-0YEZ2aQaJOgZoNAS3zN4UQ1dQtKqXl
+X-Proofpoint-ORIG-GUID: O-0YEZ2aQaJOgZoNAS3zN4UQ1dQtKqXl
 
-The following commit has been merged into the timers/core branch of tip:
+On 29/10/2024 03:48, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2024/10/28 23:27, John Garry 写道:
+>> Add proper bio_split() error handling. For any error, call
+>> raid_end_bio_io() and return.
+>>
+>> For the case of an in the write path, we need to undo the increment in
+>> the rdev panding count and NULLify the r1_bio->bios[] pointers.
+>>
+>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>> ---
+>>   drivers/md/raid1.c | 32 ++++++++++++++++++++++++++++++--
+>>   1 file changed, 30 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>> index 6c9d24203f39..a10018282629 100644
+>> --- a/drivers/md/raid1.c
+>> +++ b/drivers/md/raid1.c
+>> @@ -1322,7 +1322,7 @@ static void raid1_read_request(struct mddev 
+>> *mddev, struct bio *bio,
+>>       const enum req_op op = bio_op(bio);
+>>       const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
+>>       int max_sectors;
+>> -    int rdisk;
+>> +    int rdisk, error;
+>>       bool r1bio_existed = !!r1_bio;
+>>       /*
+>> @@ -1383,6 +1383,11 @@ static void raid1_read_request(struct mddev 
+>> *mddev, struct bio *bio,
+>>       if (max_sectors < bio_sectors(bio)) {
+>>           struct bio *split = bio_split(bio, max_sectors,
+>>                             gfp, &conf->bio_split);
+>> +
+>> +        if (IS_ERR(split)) {
+>> +            error = PTR_ERR(split);
+>> +            goto err_handle;
+>> +        }
+>>           bio_chain(split, bio);
+>>           submit_bio_noacct(bio);
+>>           bio = split;
+>> @@ -1410,6 +1415,12 @@ static void raid1_read_request(struct mddev 
+>> *mddev, struct bio *bio,
+>>       read_bio->bi_private = r1_bio;
+>>       mddev_trace_remap(mddev, read_bio, r1_bio->sector);
+>>       submit_bio_noacct(read_bio);
+>> +    return;
+>> +
+>> +err_handle:
+>> +    bio->bi_status = errno_to_blk_status(error);
+>> +    set_bit(R1BIO_Uptodate, &r1_bio->state);
+>> +    raid_end_bio_io(r1_bio);
+>>   }
+>>   static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>> @@ -1417,7 +1428,7 @@ static void raid1_write_request(struct mddev 
+>> *mddev, struct bio *bio,
+>>   {
+>>       struct r1conf *conf = mddev->private;
+>>       struct r1bio *r1_bio;
+>> -    int i, disks;
+>> +    int i, disks, k, error;
+>>       unsigned long flags;
+>>       struct md_rdev *blocked_rdev;
+>>       int first_clone;
+>> @@ -1576,6 +1587,11 @@ static void raid1_write_request(struct mddev 
+>> *mddev, struct bio *bio,
+>>       if (max_sectors < bio_sectors(bio)) {
+>>           struct bio *split = bio_split(bio, max_sectors,
+>>                             GFP_NOIO, &conf->bio_split);
+>> +
+>> +        if (IS_ERR(split)) {
+>> +            error = PTR_ERR(split);
+>> +            goto err_handle;
+>> +        }
+>>           bio_chain(split, bio);
+>>           submit_bio_noacct(bio);
+>>           bio = split;
+>> @@ -1660,6 +1676,18 @@ static void raid1_write_request(struct mddev 
+>> *mddev, struct bio *bio,
+>>       /* In case raid1d snuck in to freeze_array */
+>>       wake_up_barrier(conf);
+>> +    return;
+>> +err_handle:
+>> +    for (k = 0; k < i; k++) {
+>> +        if (r1_bio->bios[k]) {
+>> +            rdev_dec_pending(conf->mirrors[k].rdev, mddev);
+>> +            r1_bio->bios[k] = NULL;
+>> +        }
+>> +    }
+>> +
+>> +    bio->bi_status = errno_to_blk_status(error);
+>> +    set_bit(R1BIO_Uptodate, &r1_bio->state);
+>> +    raid_end_bio_io(r1_bio);
 
-Commit-ID:     2625b7efcee09ab43c108dfca6ea0b918897a1e8
-Gitweb:        https://git.kernel.org/tip/2625b7efcee09ab43c108dfca6ea0b918897a1e8
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 01 Oct 2024 10:42:00 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 29 Oct 2024 09:39:05 +01:00
+Hi Kuai,
 
-signal: Confine POSIX_TIMERS properly
+> 
+> Looks good that error code is passed to orig bio. However,
+> I really think badblocks should be handled somehow, it just doesn't make
+> sense to return IO error to filesystems or user if one underlying disk
+> contain BB, while others are good.
 
-Move the itimer rearming out of the signal code and consolidate all posix
-timer related functions in the signal code under one ifdef.
+Please be aware that this change is not for handling splits in atomic 
+writes. It is for situation when split fails for whatever reason - 
+likely a software bug.
 
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
----
- include/linux/posix-timers.h |   5 +-
- kernel/signal.c              | 125 +++++++++++-----------------------
- kernel/time/itimer.c         |  22 +++++-
- kernel/time/posix-timers.c   |  15 +++-
- 4 files changed, 81 insertions(+), 86 deletions(-)
+For when atomic writes are supported for raid1, my plan is that an 
+atomic write over a region which covers a BB will error, i.e. goto 
+err_handle, like:
 
-diff --git a/include/linux/posix-timers.h b/include/linux/posix-timers.h
-index 4536917..670bf03 100644
---- a/include/linux/posix-timers.h
-+++ b/include/linux/posix-timers.h
-@@ -100,6 +100,8 @@ static inline void posix_cputimers_rt_watchdog(struct posix_cputimers *pct,
- {
- 	pct->bases[CPUCLOCK_SCHED].nextevt = runtime;
- }
-+void posixtimer_rearm_itimer(struct task_struct *p);
-+void posixtimer_rearm(struct kernel_siginfo *info);
- 
- /* Init task static initializer */
- #define INIT_CPU_TIMERBASE(b) {						\
-@@ -122,6 +124,8 @@ struct cpu_timer { };
- static inline void posix_cputimers_init(struct posix_cputimers *pct) { }
- static inline void posix_cputimers_group_init(struct posix_cputimers *pct,
- 					      u64 cpu_limit) { }
-+static inline void posixtimer_rearm_itimer(struct task_struct *p) { }
-+static inline void posixtimer_rearm(struct kernel_siginfo *info) { }
- #endif
- 
- #ifdef CONFIG_POSIX_CPU_TIMERS_TASK_WORK
-@@ -196,5 +200,4 @@ void set_process_cpu_timer(struct task_struct *task, unsigned int clock_idx,
- 
- int update_rlimit_cpu(struct task_struct *task, unsigned long rlim_new);
- 
--void posixtimer_rearm(struct kernel_siginfo *info);
- #endif
-diff --git a/kernel/signal.c b/kernel/signal.c
-index 4344860..b65cc18 100644
---- a/kernel/signal.c
-+++ b/kernel/signal.c
-@@ -478,42 +478,6 @@ void flush_signals(struct task_struct *t)
- }
- EXPORT_SYMBOL(flush_signals);
- 
--#ifdef CONFIG_POSIX_TIMERS
--static void __flush_itimer_signals(struct sigpending *pending)
--{
--	sigset_t signal, retain;
--	struct sigqueue *q, *n;
--
--	signal = pending->signal;
--	sigemptyset(&retain);
--
--	list_for_each_entry_safe(q, n, &pending->list, list) {
--		int sig = q->info.si_signo;
--
--		if (likely(q->info.si_code != SI_TIMER)) {
--			sigaddset(&retain, sig);
--		} else {
--			sigdelset(&signal, sig);
--			list_del_init(&q->list);
--			__sigqueue_free(q);
--		}
--	}
--
--	sigorsets(&pending->signal, &signal, &retain);
--}
--
--void flush_itimer_signals(void)
--{
--	struct task_struct *tsk = current;
--	unsigned long flags;
--
--	spin_lock_irqsave(&tsk->sighand->siglock, flags);
--	__flush_itimer_signals(&tsk->pending);
--	__flush_itimer_signals(&tsk->signal->shared_pending);
--	spin_unlock_irqrestore(&tsk->sighand->siglock, flags);
--}
--#endif
--
- void ignore_signals(struct task_struct *t)
- {
- 	int i;
-@@ -636,31 +600,9 @@ int dequeue_signal(sigset_t *mask, kernel_siginfo_t *info, enum pid_type *type)
- 		*type = PIDTYPE_TGID;
- 		signr = __dequeue_signal(&tsk->signal->shared_pending,
- 					 mask, info, &resched_timer);
--#ifdef CONFIG_POSIX_TIMERS
--		/*
--		 * itimer signal ?
--		 *
--		 * itimers are process shared and we restart periodic
--		 * itimers in the signal delivery path to prevent DoS
--		 * attacks in the high resolution timer case. This is
--		 * compliant with the old way of self-restarting
--		 * itimers, as the SIGALRM is a legacy signal and only
--		 * queued once. Changing the restart behaviour to
--		 * restart the timer in the signal dequeue path is
--		 * reducing the timer noise on heavy loaded !highres
--		 * systems too.
--		 */
--		if (unlikely(signr == SIGALRM)) {
--			struct hrtimer *tmr = &tsk->signal->real_timer;
--
--			if (!hrtimer_is_queued(tmr) &&
--			    tsk->signal->it_real_incr != 0) {
--				hrtimer_forward(tmr, tmr->base->get_time(),
--						tsk->signal->it_real_incr);
--				hrtimer_restart(tmr);
--			}
--		}
--#endif
+--- a/drivers/md/raid1.c
++++ b/drivers/md/raid1.c
+@@ -1514,6 +1514,12 @@ static void raid1_write_request(struct mddev 
+*mddev, struct bio *bio,
+  				break;
+  			}
+
++			if (is_bad && bio->bi_opf & REQ_ATOMIC) {
++				/* We just cannot atomically write this ... */
++				err = -EIO;
++				goto err_handle;
++			}
 +
-+		if (unlikely(signr == SIGALRM))
-+			posixtimer_rearm_itimer(tsk);
- 	}
- 
- 	recalc_sigpending();
-@@ -682,22 +624,12 @@ int dequeue_signal(sigset_t *mask, kernel_siginfo_t *info, enum pid_type *type)
- 		 */
- 		current->jobctl |= JOBCTL_STOP_DEQUEUED;
- 	}
--#ifdef CONFIG_POSIX_TIMERS
--	if (resched_timer) {
--		/*
--		 * Release the siglock to ensure proper locking order
--		 * of timer locks outside of siglocks.  Note, we leave
--		 * irqs disabled here, since the posix-timers code is
--		 * about to disable them again anyway.
--		 */
--		spin_unlock(&tsk->sighand->siglock);
--		posixtimer_rearm(info);
--		spin_lock(&tsk->sighand->siglock);
- 
--		/* Don't expose the si_sys_private value to userspace */
--		info->si_sys_private = 0;
-+	if (IS_ENABLED(CONFIG_POSIX_TIMERS)) {
-+		if (unlikely(resched_timer))
-+			posixtimer_rearm(info);
- 	}
--#endif
-+
- 	return signr;
- }
- EXPORT_SYMBOL_GPL(dequeue_signal);
-@@ -1922,15 +1854,43 @@ int kill_pid(struct pid *pid, int sig, int priv)
- }
- EXPORT_SYMBOL(kill_pid);
- 
-+#ifdef CONFIG_POSIX_TIMERS
- /*
-- * These functions support sending signals using preallocated sigqueue
-- * structures.  This is needed "because realtime applications cannot
-- * afford to lose notifications of asynchronous events, like timer
-- * expirations or I/O completions".  In the case of POSIX Timers
-- * we allocate the sigqueue structure from the timer_create.  If this
-- * allocation fails we are able to report the failure to the application
-- * with an EAGAIN error.
-+ * These functions handle POSIX timer signals. POSIX timers use
-+ * preallocated sigqueue structs for sending signals.
-  */
-+static void __flush_itimer_signals(struct sigpending *pending)
-+{
-+	sigset_t signal, retain;
-+	struct sigqueue *q, *n;
-+
-+	signal = pending->signal;
-+	sigemptyset(&retain);
-+
-+	list_for_each_entry_safe(q, n, &pending->list, list) {
-+		int sig = q->info.si_signo;
-+
-+		if (likely(q->info.si_code != SI_TIMER)) {
-+			sigaddset(&retain, sig);
-+		} else {
-+			sigdelset(&signal, sig);
-+			list_del_init(&q->list);
-+			__sigqueue_free(q);
-+		}
-+	}
-+
-+	sigorsets(&pending->signal, &signal, &retain);
-+}
-+
-+void flush_itimer_signals(void)
-+{
-+	struct task_struct *tsk = current;
-+
-+	guard(spinlock_irqsave)(&tsk->sighand->siglock);
-+	__flush_itimer_signals(&tsk->pending);
-+	__flush_itimer_signals(&tsk->signal->shared_pending);
-+}
-+
- struct sigqueue *sigqueue_alloc(void)
- {
- 	return __sigqueue_alloc(-1, current, GFP_KERNEL, 0, SIGQUEUE_PREALLOC);
-@@ -2027,6 +1987,7 @@ ret:
- 	rcu_read_unlock();
- 	return ret;
- }
-+#endif /* CONFIG_POSIX_TIMERS */
- 
- void do_notify_pidfd(struct task_struct *task)
- {
-diff --git a/kernel/time/itimer.c b/kernel/time/itimer.c
-index 00629e6..876d389 100644
---- a/kernel/time/itimer.c
-+++ b/kernel/time/itimer.c
-@@ -151,7 +151,27 @@ COMPAT_SYSCALL_DEFINE2(getitimer, int, which,
- #endif
- 
- /*
-- * The timer is automagically restarted, when interval != 0
-+ * Invoked from dequeue_signal() when SIG_ALRM is delivered.
-+ *
-+ * Restart the ITIMER_REAL timer if it is armed as periodic timer.  Doing
-+ * this in the signal delivery path instead of self rearming prevents a DoS
-+ * with small increments in the high reolution timer case and reduces timer
-+ * noise in general.
-+ */
-+void posixtimer_rearm_itimer(struct task_struct *tsk)
-+{
-+	struct hrtimer *tmr = &tsk->signal->real_timer;
-+
-+	if (!hrtimer_is_queued(tmr) && tsk->signal->it_real_incr != 0) {
-+		hrtimer_forward(tmr, tmr->base->get_time(),
-+				tsk->signal->it_real_incr);
-+		hrtimer_restart(tmr);
-+	}
-+}
-+
-+/*
-+ * Interval timers are restarted in the signal delivery path.  See
-+ * posixtimer_rearm_itimer().
-  */
- enum hrtimer_restart it_real_fn(struct hrtimer *timer)
- {
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index fc40dac..d461a32 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -251,7 +251,7 @@ static void common_hrtimer_rearm(struct k_itimer *timr)
- 
- /*
-  * This function is called from the signal delivery code if
-- * info->si_sys_private is not zero, which indicates that the timer has to
-+ * info::si_sys_private is not zero, which indicates that the timer has to
-  * be rearmed. Restart the timer and update info::si_overrun.
-  */
- void posixtimer_rearm(struct kernel_siginfo *info)
-@@ -259,9 +259,15 @@ void posixtimer_rearm(struct kernel_siginfo *info)
- 	struct k_itimer *timr;
- 	unsigned long flags;
- 
-+	/*
-+	 * Release siglock to ensure proper locking order versus
-+	 * timr::it_lock. Keep interrupts disabled.
-+	 */
-+	spin_unlock(&current->sighand->siglock);
-+
- 	timr = lock_timer(info->si_tid, &flags);
- 	if (!timr)
--		return;
-+		goto out;
- 
- 	if (timr->it_interval && timr->it_requeue_pending == info->si_sys_private) {
- 		timr->kclock->timer_rearm(timr);
-@@ -275,6 +281,11 @@ void posixtimer_rearm(struct kernel_siginfo *info)
- 	}
- 
- 	unlock_timer(timr, flags);
-+out:
-+	spin_lock(&current->sighand->siglock);
-+
-+	/* Don't expose the si_sys_private value to userspace */
-+	info->si_sys_private = 0;
- }
- 
- int posix_timer_queue_signal(struct k_itimer *timr)
+  			if (is_bad && first_bad <= r1_bio->sector) {
+
+
+I just think that if we try to write a region atomically which contains 
+BBs then we should error. Indeed, as I mentioned previously, I really 
+don't expect BBs on devices which support atomic writes. But we should 
+still handle it.
+
+OTOH, if we did want to handle atomic writes to regions with BBs, we 
+could make a bigger effort and write the disks which don't have BBs 
+atomically (so that we don't split for those good disks). But this is 
+too complicated and does not achieve much.
+
+> 
+> Or is it guaranteed that IO error by atomic write won't hurt anyone,
+> user will handle this error and retry with non atomic write?
+
+Yes, I think that the user could retry non-atomically for the same 
+write. Maybe returning a special error code could be useful for this.
+
+Thanks,
+John
 
