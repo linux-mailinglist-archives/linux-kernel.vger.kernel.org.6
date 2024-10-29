@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-386703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C1F79B4725
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:44:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9236C9B472B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:45:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9016B1F24067
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:44:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C87CE1C224EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E705D204934;
-	Tue, 29 Oct 2024 10:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E886F204934;
+	Tue, 29 Oct 2024 10:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qLKYBybE"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b="SI8rp66E"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB621DF985
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198652; cv=none; b=MJCN+p1RjeHgHly3MRQTL8uuCLPPwhxPJEWO84x+3c0mj1/p7pphz2Q+XznEc+FcQz2kV9lDUCuf9+tO8sjiy1/8ZK3Fz62MUcXqnQ0SWOYlEsWV9DG0dgJsufEwB1rf6SEt3VfCCEiClhk/D8Z4jSTpJT0BpoasGZtWEiqs6fk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198652; c=relaxed/simple;
-	bh=08v98m3masgehHn+A38/furMQeUNpa14MNDKpKMLv4Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BxDeNiGJodvqCfd9uEX3CX+yAEFf6wpaEksduhY4VMT7QWkkR0m+4jr6v32VnwSNLILq5QcW/0hb/qjTBsSSEWxLaidiTdU9Zgrxq8CYDC+00rLvwo1Nv0QTFBLqzadwfn3SFV3TF/R1bBXGmRCBwuJB/8AwLt7cP75ZGn4ZMDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qLKYBybE; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316cce103dso69599505e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730198648; x=1730803448; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uV0lBLqUhbRGXbbqopf6xRDXiTg4koFgUnIUJCqwVao=;
-        b=qLKYBybEjz+kCqpC+vqQJ1hqfebLKQaMkVtY17DbVf2YPL8UaRce6ki54/rdWOwWMz
-         Eld7RwIVK+hOizbH+3W8WPdRfFQ49NSs5Qt570YVDQs+xh6a+vaOwGHLeBrd8N6uBnZT
-         Irood5tpNEwo3PVm8h+E+h4ytJPgIihZeldZM8dkUhsoSu/pTGIBT+Ha5SveVoJupBrj
-         WZoYLD9wAdI22RTnWyro4RqxXEqLanfq1pIctznZoFx7uOxTbdz+EpcyVq0bYNUe3/Mr
-         vUPAvYrIld5Q4aMfAiVFxrbWQEYsCUPo8UJSVgz948vj8rGEQF5iVG+eYIA+5SmgHNNT
-         rgCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730198648; x=1730803448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uV0lBLqUhbRGXbbqopf6xRDXiTg4koFgUnIUJCqwVao=;
-        b=LRp5oG0pbZu5Z49FwFR6bCGERfUOT0BV0p6Fq/AUesznAELsK5CMwBvhIhV5rjZvHq
-         ypA/FcO0DQbT7E8z1U7scCnjIN3SZdbyFsaXGVJqdCmoadqZP9J5jcFvwBt1xGgqV12e
-         T8EW2eSvSYwIl/Hlf0EkbaHh4W56s7DIMm2SyduLniVlGHi8XUKLydGZGf8WJYXmpdxq
-         /+cPzUPfUQ2efpWI0GSP0l9s8IO2bNCZ5xqpwlsLhVHeA0rEMpX+hrzgcarcoAAL3A77
-         m0b/uvSCwgFLrFkPGnnbQ9nNDxIe6pXNkFPqn71Mo0VLdtkaMr+j5bqnG8Az1rQjSdd6
-         MVZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjBkl8iT1D7RP0bS2/TqbTZevSSZosBPsdI05mUwi/uzH9aygLQP+reEMvANrw6qTMDQIhzG79n4eAYfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlSPqnsuE8+0ipvVugDljKV1Lg5sBoLNRIuWLrK4nO4JPmOifR
-	+v1t3mZBg4qOT1mlDFOtSeSYi55ksmI5ixtACdut+126vz881K5/cTIKIJplcXo=
-X-Google-Smtp-Source: AGHT+IFDd9toNEVebdV6GM2H3JKBp+TnL/N5UFyps7M6//NaEXMseAjAq8HwH15HVV5Fc5y5sz8WpQ==
-X-Received: by 2002:a05:600c:3512:b0:42c:b508:750e with SMTP id 5b1f17b1804b1-4319ac9a785mr107122565e9.11.1730198648310;
-        Tue, 29 Oct 2024 03:44:08 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b92f11sm12079610f8f.101.2024.10.29.03.44.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 03:44:07 -0700 (PDT)
-Date: Tue, 29 Oct 2024 11:44:06 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, linux-kernel@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding <thierry.reding@gmail.com>, 
-	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, justin.chen@broadcom.com
-Subject: Re: [PATCH 1/2] dt-bindings: pwm: brcm,bcm7038: Document the
- 'open-drain' property
-Message-ID: <7aok7zs7whxfg3bhv7koxfxq6qhgv34b7kg3mh526z2cf7e23l@ffbsxqdqjis3>
-References: <20241012025603.1644451-1-florian.fainelli@broadcom.com>
- <20241012025603.1644451-2-florian.fainelli@broadcom.com>
- <20241015163200.GA1220909-robh@kernel.org>
- <252b6f39-3b06-43b7-b227-1c29c1c12bd5@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5687D1DF985;
+	Tue, 29 Oct 2024 10:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730198695; cv=pass; b=hyo9RJtcsig+nyl1Qm1WA+u4qEMzzqIe7wNHzsd974OZeSzlN50vkPI3eg6S/GJ6bCGfI33pEyP2EvRDR39xoMfPeyJ6PpVoRaPKSeQKQfogMRR+ehk8Zf7WPaAjhCtj+JqpXj4rCgdmg2vPoCk5OxN4LZzmRiEjQqSpKA6+DOI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730198695; c=relaxed/simple;
+	bh=5nHn8CB0Y3lWK9zBXhqixj8Gu4zWhwv3Pigv9vF0HYk=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=b3gtIPElBaa9GlSQqwIWm8PAdc4nuKJj6Dw2bDsRGKeOlWUoFwLWOdEc5kgRjedFeOkZEEa/iAk5hexqQzZKUjKiqvwd4Gx1on9ky12ddc229IyeZyNzebey9BQpjNsAIdvMD31o6BDU+WgdaN0KrCciQS+R6eM5ZIZjvjZEUbQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=helen.koike@collabora.com header.b=SI8rp66E; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1730198680; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Q18rsKf+PSMXkucCDhTyrDVQqlW4qf23y/LMNBCJpzaX8+chM7tV32YF8bIGpB7ENyK70258cN4fmMjdnwY2DTU+EineFbpoTHEgygo6bq4PLxX+fe8XJPtI8moRhjig9scoHfK32SG0Vu66T+XFI3YPrL+k0kSq6/DQZr0KxNU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1730198680; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9N2zS3pa6quP5FMUvhF1UomFbmmHT/cflj3VVEtps0U=; 
+	b=QzorSkkDoz6DciB9mvwZvPJ+eSp5FnKAx58IuFhLGBjMFBS9XCspIJzZ0zR4voXdMZzRp2U/FDICxkbZPNrE5lygi3zYe+0JFohYo9TzkZVvThU/J62eoA/mJWjLZI9O1C50QGVpO/b6E90CnX06ghcNvx2QOEG98ci+LVHzHhY=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=helen.koike@collabora.com;
+	dmarc=pass header.from=<helen.koike@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730198680;
+	s=zohomail; d=collabora.com; i=helen.koike@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=9N2zS3pa6quP5FMUvhF1UomFbmmHT/cflj3VVEtps0U=;
+	b=SI8rp66EglzB5AZq6rQSuuAzjl7Kvekanr/db0MhBVxZ+u5/zCq6hTZ/FYCIW38r
+	7lcByavhGf2AGIYbKz3LH9QktzsLvn0vL0NVrKtVjP69y+79zpDh1XIg1eZkGs3S04e
+	NwoXyEKs5pdWFIUi8Nd6mVE7i8n+Ut5zVRmeJkz0=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 1730198679207597.7472577126418; Tue, 29 Oct 2024 03:44:39 -0700 (PDT)
+Date: Tue, 29 Oct 2024 07:44:39 -0300
+From: Helen Mae Koike Fornazier <helen.koike@collabora.com>
+To: "Vignesh Raman" <vignesh.raman@collabora.com>
+Cc: "dri-devel" <dri-devel@lists.freedesktop.org>,
+	"daniels" <daniels@collabora.com>, "airlied" <airlied@gmail.com>,
+	"daniel" <daniel@ffwll.ch>, "robdclark" <robdclark@gmail.com>,
+	"guilherme.gallo" <guilherme.gallo@collabora.com>,
+	"sergi.blanch.torne" <sergi.blanch.torne@collabora.com>,
+	"deborah.brouwer" <deborah.brouwer@collabora.com>,
+	"dmitry.baryshkov" <dmitry.baryshkov@linaro.org>,
+	"quic_abhinavk" <quic_abhinavk@quicinc.com>,
+	"linux-arm-msm" <linux-arm-msm@vger.kernel.org>,
+	"intel-gfx" <intel-gfx@lists.freedesktop.org>,
+	"virtualization" <virtualization@lists.linux.dev>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>
+Message-ID: <192d7e0ae4b.b23506ab1050252.6351811084971091951@collabora.com>
+In-Reply-To: <20241022094509.85510-1-vignesh.raman@collabora.com>
+References: <20241022094509.85510-1-vignesh.raman@collabora.com>
+Subject: Re: [PATCH v2 0/2] drm/ci: add new devices for testing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="4cvjuzgzwtcm6jma"
-Content-Disposition: inline
-In-Reply-To: <252b6f39-3b06-43b7-b227-1c29c1c12bd5@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
 
---4cvjuzgzwtcm6jma
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 1/2] dt-bindings: pwm: brcm,bcm7038: Document the
- 'open-drain' property
-MIME-Version: 1.0
 
-Hello,
 
-On Tue, Oct 15, 2024 at 10:07:10AM -0700, Florian Fainelli wrote:
-> On 10/15/24 09:32, Rob Herring wrote:
-> > Another thing to consider is for any PWM controller with more than
-> > 1 output, you might want this to be per output and therefore should be
-> > a flag in the cells.
->=20
-> Yes, that is a good point, this controller has two channels, so it seems
-> like increasing the #pwm-cells might be the way to go.
 
-So the idea is something like:
+---- On Tue, 22 Oct 2024 06:45:03 -0300 Vignesh Raman  wrote ---
 
-diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
-index ab9a077e3c7d..d18b006a7399 100644
---- a/include/dt-bindings/pwm/pwm.h
-+++ b/include/dt-bindings/pwm/pwm.h
-@@ -11,5 +11,6 @@
- #define _DT_BINDINGS_PWM_PWM_H
-=20
- #define PWM_POLARITY_INVERTED			(1 << 0)
-+#define PWM_OUTPUT_OPEN_DRAIN			(1 << 1)
-=20
- #endif
+ > Add jobs that execute the IGT test suite for sm8350-hdk and dedede. 
+ >  
+ > Dropped the refactor software-driver stage jobs patch from this series. 
+ > I will send it as a separate patch. 
+ >  
+ > Successful pipeline link, 
+ > https://gitlab.freedesktop.org/vigneshraman/linux/-/pipelines/1294877 
+ >  
+ > Vignesh Raman (2): 
+ >  drm/ci: add dedede 
+ >  drm/ci: add sm8350-hdk 
+ >  
+ >  drivers/gpu/drm/ci/arm64.config               |   7 +- 
+ >  drivers/gpu/drm/ci/build.sh                   |   1 + 
+ >  drivers/gpu/drm/ci/test.yml                   |  25 +++ 
+ >  drivers/gpu/drm/ci/xfails/i915-jsl-fails.txt  |  51 +++++ 
+ >  drivers/gpu/drm/ci/xfails/i915-jsl-flakes.txt |  13 ++ 
+ >  drivers/gpu/drm/ci/xfails/i915-jsl-skips.txt  |  20 ++ 
+ >  .../drm/ci/xfails/msm-sm8350-hdk-fails.txt    |  15 ++ 
+ >  .../drm/ci/xfails/msm-sm8350-hdk-flakes.txt   |   6 + 
+ >  .../drm/ci/xfails/msm-sm8350-hdk-skips.txt    | 211 ++++++++++++++++++ 
+ >  9 files changed, 348 insertions(+), 1 deletion(-) 
+ >  create mode 100644 drivers/gpu/drm/ci/xfails/i915-jsl-fails.txt 
+ >  create mode 100644 drivers/gpu/drm/ci/xfails/i915-jsl-flakes.txt 
+ >  create mode 100644 drivers/gpu/drm/ci/xfails/i915-jsl-skips.txt 
+ >  create mode 100644 drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-fails.txt 
+ >  create mode 100644 drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-flakes.txt 
+ >  create mode 100644 drivers/gpu/drm/ci/xfails/msm-sm8350-hdk-skips.txt 
+ >  
+ > -- 
+ > 2.43.0 
+ >  
+ > 
 
-and then add support for that to the core and drivers? There is some
-intersection with pinctrl (depending on hardware). I wonder if
-abstracting this somehow using the typical pinctrl properties would be a
-saner option??
+Applied to drm-misc-next
 
-Best regards
-Uwe
-
---4cvjuzgzwtcm6jma
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcgvHQACgkQj4D7WH0S
-/k4+iwgAjc7XEedu+25b7SNYH5vkBjaMm+K01V70SIUTshAMpLovuNsjbzQq6gNo
-SJIwRMnsjcofeOlME5jeQYNZFA+M1nq9cihDvbUntoS2ylkwgNhFggKKQPXQ8goB
-uPGWeRngZsmodqIRBw6nSQgGXlELsQkBchj3pM9XjlOKApNq1SKu9VqgQVY/C/ku
-ObxIaFk4POIAW/W4VUm/sTpP7do75qWVemdrckfEs3orE/1x8w+9JKEYqQmus8vQ
-yeVPDEVIFAnI1rx7qXUOH3ojZRhAsom35euFMSY0oumokNN0VUQdkB0ZVPr7O4fn
-0On/5fTjF4nnOTVxM1IrMrqLNz9fvg==
-=tPDq
------END PGP SIGNATURE-----
-
---4cvjuzgzwtcm6jma--
+Thanks
+Helen
 
