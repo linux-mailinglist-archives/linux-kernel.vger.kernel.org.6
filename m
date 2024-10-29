@@ -1,176 +1,156 @@
-Return-Path: <linux-kernel+bounces-386828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70A09B485C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:32:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 343BA9B4863
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:34:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E93D71C227EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 658181C22AA7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:34:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D7B205158;
-	Tue, 29 Oct 2024 11:32:15 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A9D20514F;
+	Tue, 29 Oct 2024 11:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="ap/W9MXz"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E04020492E;
-	Tue, 29 Oct 2024 11:32:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 395ED204031
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201534; cv=none; b=VZbPoaKBUQsM0pJk9NIncE2u+nBgbt5ui2L2rJysk0yDjX3D8Q+A1Dnc5d2a/4GmWc1M0S1qbGdxRKe1C95C6a2K5D5Wr/0Eq8SkxFoxL7zA2et5btoDM2nKZ7Og38CEIf9PjO+LYEweyMgAlkLzCAdQKQ4MzEAxJXDDBV5Gc+8=
+	t=1730201665; cv=none; b=JnhxzeTCLHiqlP5qIOXGWqrlBptLal7GgndQPuIBHJLEv23IVP3LIoLJjWmXtMS+VeMbRW96CfYhF9Hr5p7LJaYZK7NNEtNpgUkD+YD3jl6n6RlG/PaGskQHP9BwPs98pV5QKU80S/HH3ohW3jXvpGqCnpwma0MGoOK+ydzZegU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201534; c=relaxed/simple;
-	bh=5ubi4b+Bb/c8hULjxbVvtYxp4/q80MU4+gIbqPjvgfc=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=i8hsYgFMEMQSoez/ouyV/R3H0vitDKOP/Mkp2YYUAMchVqUr1KjPl1rj0NNEwATNQtbhiIbcyeG4pVXlreee21tzFEVlcHE4PSuOTLZDCps01urdymuesyy/9JS67Q+NYKMY+21e+F5Pjdkcb6oqChdXIz1t9Qr+0yjX6esY2MQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xd7Px60DNz4f3jsD;
-	Tue, 29 Oct 2024 19:31:49 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 78F211A0194;
-	Tue, 29 Oct 2024 19:32:07 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCXc4e2xyBnSIwYAQ--.54105S3;
-	Tue, 29 Oct 2024 19:32:07 +0800 (CST)
-Subject: Re: [PATCH v2 6/7] md/raid1: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
- Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241028152730.3377030-1-john.g.garry@oracle.com>
- <20241028152730.3377030-7-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ee3b5a6f-4c0c-9460-0260-f529a65adfc4@huaweicloud.com>
-Date: Tue, 29 Oct 2024 19:32:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730201665; c=relaxed/simple;
+	bh=cPKEJ4jerXa/h6ueOtoFqHZZD6u7n4AElLCBfDVkuAw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=KXL8ltkXScO8SVRzTWxQXNj4SWq6K04k4s/JUr2JAbyYriyO4fiayYSmebJiIqSzKxSCT+NgwZrbXlRIWS0tG17ZOdbqK5+MAyFaB2CdXvQWDuF7sGIoAsBZX7EbM9rIB7pb9928VX19oelpAsSjnzL1XUsvSxrlHz5NH5uP1QM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=ap/W9MXz; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d5aedd177so3572752f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:34:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1730201660; x=1730806460; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xUO11C/JRTs4GKxfufQ6dUqgB6gKo2LmLUMdUeU8K1k=;
+        b=ap/W9MXzkQRzXylxlEwl9vrjtn4+mVxv5Dln5/HFOmSJtI2c1uJDvPw+iTmPDB6+NM
+         ogtZzXTUR0mOpR4sKySkHlXlwfGp2SVUCRPOWNM934bn42MyKO/j0AW86OTPImOeKcq7
+         ehYDhB6SbvxWHr9PZ28OxYEKvyioWUz4eLZ/5aury1TZa0G8wEIFXfyBVnFG3G3b49Fc
+         yvQor9LnoJhhJm1sQuR5nd2A4XENxUIpsZmMuH9+JWbDWzpK+sdTL7FO501zS3pi1YGL
+         IyEyu9Xgun/pPgBSnura1G3Q6dHNJA6h6E0XPPz8roSsapXM/Ya/tjj9PPS0qtJsY3y3
+         hjAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730201660; x=1730806460;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xUO11C/JRTs4GKxfufQ6dUqgB6gKo2LmLUMdUeU8K1k=;
+        b=h9C8mP9CQ/HAjDoH9F41OFt75ijjgtzxEJ6aDeqriitKVOm3ahiJ18Krnh81j8EA3w
+         1so50NP3rQU075AqRGYZJeVn0qvZcbSzrUvYb9uo2rLDhds32JHr4LmC9/tXOvHofdn8
+         MY4UVvDbhOW/Ip0OsBvwrUanc+mxXOjv1+kN56H717wVfbLFlSuRaxzcEW2KpWvwfK9e
+         UBBx7J/Ixhw2Rf90dmf1glZ3I+W0x7ofTemJ2r+dTyikyZgGSj27uGgut/5R/YFuwSg/
+         3pfMIgZlfGW5xRtHsypScLvaQ0PYHJilLa8Mn+Pr0YsHQkig+nrJXgAwpadNrO2dZVaQ
+         EQcw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6BtU67qVPIhBqqfoc6wQw6sU0blYh9rMXTeMbWYogmoJmOK3GFG2zu/UFbJPkN5s2oyqYrtI13HRk7+k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxaejc2J6Vd0Y/R7hdk5wbb+VNHTg3Y4FbkTYwW+hUlrAgyKyov
+	PY6f4bDSvXc30R3NMaXO1uUivCRpkgK965mxFsryTl2izNHPBAJVj/cYzj85VbY=
+X-Google-Smtp-Source: AGHT+IFJoyZ6NxzI4ys9GDFWfJixnTkKlsJEMZbZjWGrqOc2/MIuNQIrRuJSwDRXg2rPjjIDI76/9g==
+X-Received: by 2002:adf:fdc9:0:b0:37d:43e5:a013 with SMTP id ffacd0b85a97d-380610f49e4mr7243573f8f.8.1730201660311;
+        Tue, 29 Oct 2024 04:34:20 -0700 (PDT)
+Received: from localhost ([82.150.214.1])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-38058b47952sm12152755f8f.48.2024.10.29.04.34.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 04:34:20 -0700 (PDT)
+From: David Gstir <david@sigma-star.at>
+To: parthiban@linumiz.com,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: sigma star Kernel Team <upstream+dcp@sigma-star.at>,
+	linux-integrity@vger.kernel.org,
+	keyrings@vger.kernel.org,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	David Gstir <david@sigma-star.at>,
+	stable@vger.kernel.org
+Subject: [PATCH] KEYS: trusted: dcp: fix NULL dereference in AEAD crypto operation
+Date: Tue, 29 Oct 2024 12:34:01 +0100
+Message-ID: <20241029113401.90539-1-david@sigma-star.at>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
+References: <254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241028152730.3377030-7-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXc4e2xyBnSIwYAQ--.54105S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF4UtrWxtF4xtw13Zw18Zrb_yoW5Aw1fpw
-	4jga1S9rW3JFWa9wsxta9F9a4ruF4vqFW2krWxJw1xJFnIqFyDKF1UWFWYgry5uFy5ury7
-	Aw1kCr4DurW2gFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU92b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4
-	IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1r
-	MI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJV
-	WUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j
-	6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYx
-	BIdaVFxhVjvjDU0xZFpf9x07UQ6p9UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-ÔÚ 2024/10/28 23:27, John Garry Ð´µÀ:
-> Add proper bio_split() error handling. For any error, call
-> raid_end_bio_io() and return.
-> 
-> For the case of an in the write path, we need to undo the increment in
-> the rdev panding count and NULLify the r1_bio->bios[] pointers.
-> 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+When sealing or unsealing a key blob we currently do not wait for
+the AEAD cipher operation to finish and simply return after submitting
+the request. If there is some load on the system we can exit before
+the cipher operation is done and the buffer we read from/write to
+is already removed from the stack. This will e.g. result in NULL
+pointer dereference errors in the DCP driver during blob creation.
 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/raid1.c | 32 ++++++++++++++++++++++++++++++--
->   1 file changed, 30 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 6c9d24203f39..a10018282629 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1322,7 +1322,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	const enum req_op op = bio_op(bio);
->   	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
->   	int max_sectors;
-> -	int rdisk;
-> +	int rdisk, error;
->   	bool r1bio_existed = !!r1_bio;
->   
->   	/*
-> @@ -1383,6 +1383,11 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      gfp, &conf->bio_split);
-> +
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1410,6 +1415,12 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	read_bio->bi_private = r1_bio;
->   	mddev_trace_remap(mddev, read_bio, r1_bio->sector);
->   	submit_bio_noacct(read_bio);
-> +	return;
-> +
-> +err_handle:
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +	raid_end_bio_io(r1_bio);
->   }
->   
->   static void raid1_write_request(struct mddev *mddev, struct bio *bio,
-> @@ -1417,7 +1428,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   {
->   	struct r1conf *conf = mddev->private;
->   	struct r1bio *r1_bio;
-> -	int i, disks;
-> +	int i, disks, k, error;
->   	unsigned long flags;
->   	struct md_rdev *blocked_rdev;
->   	int first_clone;
-> @@ -1576,6 +1587,11 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      GFP_NOIO, &conf->bio_split);
-> +
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1660,6 +1676,18 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   
->   	/* In case raid1d snuck in to freeze_array */
->   	wake_up_barrier(conf);
-> +	return;
-> +err_handle:
-> +	for (k = 0; k < i; k++) {
-> +		if (r1_bio->bios[k]) {
-> +			rdev_dec_pending(conf->mirrors[k].rdev, mddev);
-> +			r1_bio->bios[k] = NULL;
-> +		}
-> +	}
-> +
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +	raid_end_bio_io(r1_bio);
->   }
->   
->   static bool raid1_make_request(struct mddev *mddev, struct bio *bio)
-> 
+Fix this by waiting for the AEAD cipher operation to finish before
+resuming the seal and unseal calls.
+
+Cc: stable@vger.kernel.org # v6.10+
+Fixes: 0e28bf61a5f9 ("KEYS: trusted: dcp: fix leak of blob encryption key")
+Reported-by: Parthiban N <parthiban@linumiz.com>
+Closes: https://lore.kernel.org/keyrings/254d3bb1-6dbc-48b4-9c08-77df04baee2f@linumiz.com/
+Signed-off-by: David Gstir <david@sigma-star.at>
+---
+ security/keys/trusted-keys/trusted_dcp.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/security/keys/trusted-keys/trusted_dcp.c b/security/keys/trusted-keys/trusted_dcp.c
+index 4edc5bbbcda3..e908c53a803c 100644
+--- a/security/keys/trusted-keys/trusted_dcp.c
++++ b/security/keys/trusted-keys/trusted_dcp.c
+@@ -133,6 +133,7 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
+ 	struct scatterlist src_sg, dst_sg;
+ 	struct crypto_aead *aead;
+ 	int ret;
++	DECLARE_CRYPTO_WAIT(wait);
+ 
+ 	aead = crypto_alloc_aead("gcm(aes)", 0, CRYPTO_ALG_ASYNC);
+ 	if (IS_ERR(aead)) {
+@@ -163,8 +164,8 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
+ 	}
+ 
+ 	aead_request_set_crypt(aead_req, &src_sg, &dst_sg, len, nonce);
+-	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP, NULL,
+-				  NULL);
++	aead_request_set_callback(aead_req, CRYPTO_TFM_REQ_MAY_SLEEP,
++				  crypto_req_done, &wait);
+ 	aead_request_set_ad(aead_req, 0);
+ 
+ 	if (crypto_aead_setkey(aead, key, AES_KEYSIZE_128)) {
+@@ -174,9 +175,9 @@ static int do_aead_crypto(u8 *in, u8 *out, size_t len, u8 *key, u8 *nonce,
+ 	}
+ 
+ 	if (do_encrypt)
+-		ret = crypto_aead_encrypt(aead_req);
++		ret = crypto_wait_req(crypto_aead_encrypt(aead_req), &wait);
+ 	else
+-		ret = crypto_aead_decrypt(aead_req);
++		ret = crypto_wait_req(crypto_aead_decrypt(aead_req), &wait);
+ 
+ free_req:
+ 	aead_request_free(aead_req);
+-- 
+2.47.0
 
 
