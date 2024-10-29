@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-387456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51ADC9B5191
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:08:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FE3F9B5194
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:10:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837911C21722
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:08:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71A601C2262D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:10:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AA61DEFD0;
-	Tue, 29 Oct 2024 18:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655781DD9A8;
+	Tue, 29 Oct 2024 18:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOSSaaia"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IYV4OxWf"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573541DB929;
-	Tue, 29 Oct 2024 18:08:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050F918130D;
+	Tue, 29 Oct 2024 18:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730225327; cv=none; b=Q4r/Xwe0Fp/xNQnx6UC47S2mcEsnWv1KGDmy1h6KxVNdUDUxlvangX8cWPQHit7Ltx31qOYNDHDbob2Az8aZKrjiFFNXnnrnQrh5GjLqjYciYq4+oSqEHUUMEz2uaRJuhLasHafeM6ougm7HexHxm3m3iY2EKFDjyDotUKvFg6I=
+	t=1730225421; cv=none; b=Ime6slyI2IvkVmRnXngEG8ulMRwpYK8XN0Qe4QYgI/BqkDk5enIXKKqhEZN8KFIc6LLjE5fS0YOwjpSn/f7njsao/ixQGQsDAoAxZQMbgb/j4rbJVYOW2srdEaHBwbtCMwAJ3oaTS0HUwtrmpQ8nHWdCjl3dGm9uXzIUaUevfOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730225327; c=relaxed/simple;
-	bh=iJLj11O4g41SPsxiCL9Pj63IUN3VrnEb2c1RDciZciU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LhBnQVD8m2RPQObH4uMXmasbkU/pd8fQZaI0rUznu2RNDI01Pwo2Km8b24k06KgoEVYUW+CIUsYeyzm2iK3Dn2BZM8q7VmV8pw5VX5Xi9/YL+//C2p+Za+GVcfX+zSX505jSk4pWPnTiubWFSIuCwGu0B5zmaArCoT58XUHABdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOSSaaia; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E05C4CECD;
-	Tue, 29 Oct 2024 18:08:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730225326;
-	bh=iJLj11O4g41SPsxiCL9Pj63IUN3VrnEb2c1RDciZciU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tOSSaaiaWNoPAl+nKlkGkrJBdelh/1LB7gZ1HgrEAnpXCM4BLsnAIX1xrhOymWEp9
-	 lddeFvmBx0/JHKOx+ze17PmAYvSBntBmR/0wrwoQ1MOyQZxJTJdMfhBYJjZs3/n8pE
-	 nYnI7kHTFSUrtrUM/QYCuNFngoaHDvF+xwdK2xJF5qznxWC756r7fNUW0h9HLJwkT3
-	 WHleKVF23wqifyHtVmmVDQDM31QVvG5MwfXSDv7gOGX6Oq9Roku1J6TrPRuLpr4Fi9
-	 Bk8DzyvroAlbMLRqsqh5UyU3QRP8pzT3I0GZDivtwZ6YnfG56EnmYe3gOexetahgBx
-	 H+DGsGFQB653w==
-Date: Tue, 29 Oct 2024 11:08:45 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
- <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20241029110845.0f9bb1cc@kernel.org>
-In-Reply-To: <f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
-References: <cover.1729536776.git.gustavoars@kernel.org>
-	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
-	<20241029065824.670f14fc@kernel.org>
-	<f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
+	s=arc-20240116; t=1730225421; c=relaxed/simple;
+	bh=rSEPCwo3+FNPhGsdt6dt/oTNiBavhSDE5Kcuve0mHNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EAXowjSnxIVXJT1u9lIn+KWq/ZdoVdS88jr9Elk/lAw1DrHAVa2B2HOw+6pv6Hom8+0h9ZlRKgIHTG/JuocLgBxg8rNcWrbBUdUeGJSTfFxI7vC9QRLqUyjiK62aLLVkTnTJvlnq1GA+4pofq9RrFe/ZiajZ8N9v+sXmruBO/Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IYV4OxWf; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=4RFd0kI+7YFYqaFoPNrQ859Edbrzs6npcu3fCsS77ac=; b=IYV4OxWfDSGXniyTxmIA+Nqksi
+	hfZn8Oc3qb8GtSkRZU0K7BEIlHRG/TensNiDi2gV892TFHRMPcJD6EYSCENxkvSK1Nbr1VSxvb2rX
+	KkuXw5pESy/mFQO2wPPs6mrUcwUbVvAKdcxUDoYqmuEA9b+UCQ13AF5P1XY1WGQclSRugUjN4qTj1
+	3FebFZCqrrj4s1qNBKRqqD4SZXMB/3+YUcMHy9OqkRn6zvawxuZ1uiyILgTnkQoDq6M7c8ihtqj4b
+	9Tx0+cTJ9Hv6tAUM/RPEVkNhuOI4GeVa+EyKTNn5+4++IURZPYhKQNiIlYmAwhz3WDWYJnWZLU2Ba
+	dCz7KS5A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5qfQ-0000000ABZ4-1mBv;
+	Tue, 29 Oct 2024 18:10:09 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id AA8FF30073F; Tue, 29 Oct 2024 19:10:08 +0100 (CET)
+Date: Tue, 29 Oct 2024 19:10:08 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+Message-ID: <20241029181008.GG14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+ <20241029132709.GY14555@noisy.programming.kicks-ass.net>
+ <20241029165018.r4l5wix24s3f22c6@treble.attlocal.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029165018.r4l5wix24s3f22c6@treble.attlocal.net>
 
-On Tue, 29 Oct 2024 10:55:14 -0600 Gustavo A. R. Silva wrote:
-> On 29/10/24 07:58, Jakub Kicinski wrote:
-> > On Mon, 21 Oct 2024 13:02:27 -0600 Gustavo A. R. Silva wrote:  
-> >> @@ -3025,7 +3025,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
-> >>   {
-> >>   	struct bnxt *bp = netdev_priv(dev);
-> >>   	struct bnxt_link_info *link_info = &bp->link_info;
-> >> -	const struct ethtool_link_settings *base = &lk_ksettings->base;
-> >> +	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;  
+On Tue, Oct 29, 2024 at 09:50:18AM -0700, Josh Poimboeuf wrote:
+> On Tue, Oct 29, 2024 at 02:27:09PM +0100, Peter Zijlstra wrote:
+> > > +int sframe_add_section(unsigned long sframe_addr, unsigned long text_start,
+> > > +		       unsigned long text_end)
+> > > +{
+> > > +	struct mm_struct *mm = current->mm;
+> > > +	struct vm_area_struct *sframe_vma;
+> > > +
+> > > +	mmap_read_lock(mm);
 > > 
-> > Please improve the variable ordering while at it. Longest list first,
-> > so move the @base definition first.  
-> 
-> OK. This would end up looking like:
-> 
-> 	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
-> 	struct bnxt *bp = netdev_priv(dev);
-> 	struct bnxt_link_info *link_info = &bp->link_info;
-
-Correct, one step at a time.
-
-> >> @@ -62,7 +62,7 @@ static int linkmodes_reply_size(const struct ethnl_req_info *req_base,
-> >>   {
-> >>   	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
-> >>   	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
-> >> -	const struct ethtool_link_settings *lsettings = &ksettings->base;
-> >> +	const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;  
+> > DEFINE_GUARD(mmap_read_lock, struct mm_struct *,
+> > 	     mmap_read_lock(_T), mmap_read_unlock(_T))
 > > 
-> > here it was correct and now its not  
+> > in include/linux/mmap_lock.h ?
 > 
-> I don't think you want to change this. `lsettings` is based on `ksettings`. So,
-> `ksettings` should go first. The same scenario for the one below.
+> Will do.
+> 
+> > > @@ -2784,6 +2785,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long, arg2, unsigned long, arg3,
+> > >  	case PR_RISCV_SET_ICACHE_FLUSH_CTX:
+> > >  		error = RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
+> > >  		break;
+> > > +	case PR_ADD_SFRAME:
+> > > +		if (arg5)
+> > > +			return -EINVAL;
+> > > +		error = sframe_add_section(arg2, arg3, arg4);
+> > > +		break;
+> > > +	case PR_REMOVE_SFRAME:
+> > > +		if (arg3 || arg4 || arg5)
+> > > +			return -EINVAL;
+> > > +		error = sframe_remove_section(arg2);
+> > > +		break;
+> > >  	default:
+> > >  		error = -EINVAL;
+> > >  		break;
+> > 
+> > So I realize that mtree has an internal lock, but are we sure we don't
+> > want a lock around those prctl()s?
+> 
+> Not that I can tell?  It relies on the mtree internal locking for
+> atomicity.
+> 
+> For sframe_remove_section() it uses srcu to delay the freeing until all
+> sframe_find()'s have completed.
 
-In which case you need to move the init out of line.
-
-Thanks.
+Yeah it does all that. But I was sorta looking at all that kmalloc and
+copy from user stuff, but I suppose you can race that without problem.
 
