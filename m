@@ -1,112 +1,238 @@
-Return-Path: <linux-kernel+bounces-387928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D70F09B5812
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:58:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6107A9B5815
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:58:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB01281875
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:58:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7E19281D2F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273FF20C019;
-	Tue, 29 Oct 2024 23:53:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFCDB207A12;
+	Tue, 29 Oct 2024 23:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0tDBdDkM"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dEop1uBn"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817D9207A12
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:53:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F2120C007;
+	Tue, 29 Oct 2024 23:54:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730246007; cv=none; b=o9TVWCZfV3sVNu5rHyi4wDJqD2E4NMBgVQWMYCw2AnTAOYVwtqoDAklkx2FqCAy3ztSxIOBB9vU69XLKlKRu7fUNez19EiGuW3+mFx8qzq3MY8seAuRYv9SGoAXqk5G/nIPLiHoWoAZwSQQSrAwHLirrUfAFWrFPtWUVjwVvtHM=
+	t=1730246068; cv=none; b=vBd66lIIxVAiLlZat/7bQEkRWiYidkx7aIfQVJoDPSa1gcf/IG8F30gJtS2eaG5WA4IaBJc9/WPKoDMhpIBS05qIdlRLwed0+Jvbq97HROt+6seetM7Ju0eCBoa6KE1rBJJzomkewELmhuQlzcEarO3lXa/Fipx0T6P+7559QH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730246007; c=relaxed/simple;
-	bh=BiCabWdS2vxLBuw9FlQyB8b+KJNojmOugixJl887czU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H/E/6XhoEgkPsYth5w7AIysXn2aesA6ncsyNGU6RP0BvLLJN15S3DQWp3GKLXSqs3j+Ex+FCXtw/2vXiucr6231aoAJ0Mv6F8wQVp4Ib9sjhBkPnEURtESfBaXU5/jaaRVJjxzZ+rDrWuTcSsl1P53GnhU7l2rTvWKzrdVU05y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0tDBdDkM; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539e66ba398so6134e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:53:25 -0700 (PDT)
+	s=arc-20240116; t=1730246068; c=relaxed/simple;
+	bh=+jk1QMzOTZtBYMP/q2NTsPJzOgFOE9tEIAs05XzVySo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F20cXAuOvi0yo2IBeDaBF5eh+AV9f1YoP1DaliH2iXuUx+h1fQRv5QxR2xGR5MgxCJfUau4QSyzLJs39cw6s+nDdSb24Mn9LmFbp6/6pvMrVl+G/3n5XV0BBZuLcD5zpa50tpKaZxEJJcp9Q2dgoap0BfuhqgVfmVT/HZoxANkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dEop1uBn; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e5fb8a4e53so3193618b6e.1;
+        Tue, 29 Oct 2024 16:54:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730246004; x=1730850804; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BiCabWdS2vxLBuw9FlQyB8b+KJNojmOugixJl887czU=;
-        b=0tDBdDkMnL9EyJr2hKFliDpYWZJxcm369Z+BSmaCCloF0Gv2d7ObHM/tKc2uLSPufR
-         H1jvY849eR/Rr2+3+Uqyu2LXBxTljEUX4UeXUy4rn1/9fyET1I/XnP1fi7F9TKfc6/my
-         0Oaxk/mW88T6GFvzHPRsCQZsN1dTjbhkA1Dh2f1eHyclo9SBTSqA/TOybLlcrRV3QulR
-         wtHv0wATObHlh9aqVL7E7OQhBLtni05tuKLo8AkJwfcMM2l/4peLvo0NxT8SUSMvDrW1
-         5t9DSAQCALZIs1lkEI4C/Flj4gt2e9auL/bH25VF2nJgXsn+78TAx4YBDAlFY49F+O4H
-         MBzw==
+        d=gmail.com; s=20230601; t=1730246065; x=1730850865; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=y70wMBiVAGL9fqgd1kG53Hy+fEJEd58QyxNQyN50KVM=;
+        b=dEop1uBnKypP69t9iovz6hM7VEsJ+ei64etnDxxp2ipl3ybMj0JFUqiwG55Pwsobq8
+         8jlkQ4jrIGHO8rcorQ/0dZ1XaRkZDakRA+S+WTq5dK/0Jjeo3rnXD5jM+ykuO/mP4Pvu
+         irPIEL8tNDHXoL1a8LAudodBemB7t57/ert6h5SkUh8DBkp07TwPUvpliyWWHa1R0jLb
+         v6BfrDKXWYl4mLw7e07nrYPeDzm2A8e2sSU0tYHKR7jBGp/5oJ4OpxK4jSouB69DYebu
+         cMUgZgpSmQY1YAlePGn5finc+EZy2QL9YI0VstUuSQYN72GMC7QYQYrEmZwJz63twTAF
+         tpEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730246004; x=1730850804;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BiCabWdS2vxLBuw9FlQyB8b+KJNojmOugixJl887czU=;
-        b=sEKD3JYO+kKOeZ/zELKDkf0zkZzFaNLE2/+37JFY2PGwoPAd3s2tmmRiTx2oRXmNKW
-         qKF//7gBX72S+7ZqDzVwGkQrnIlcF/omCWrpMR9H9W/w6lDiBoQIxJzjM2Z//H0CdFk7
-         FE+BVrRzlq664C9LgF2b+IkBoM0cBMFYLFUYEQ5GNAy5YeYY6/HODounhI9zj9jTw5hA
-         HVG4cj1p9FPKAXylP3ggW+4fj3lbicJ7UEY7kyLEDU1QkHvtPGPV4BcRxeuydcNL0cEJ
-         S8Qwggwav78qbuQmKRox6WXheCHpASockRFKKYrO0I3Huowde/xNEtWLB5h0zPwdkq+E
-         k3+w==
-X-Forwarded-Encrypted: i=1; AJvYcCWhE+ejr1Q3XtDdrgcHDf+q01qbE37i/EPqjryFm0gH5Gbufh7Jlgc/N0jIx1hkzjFSiYftBqOx9NZocyE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3FI3N6okxnatFu+dPovWJZ0Ak/du9MxKjQ465POUbloS2GGU+
-	OemvtQY2TknxAVLnOSbpEWHT3MuSvtvaQHdSbg2kkwt9ez7mC9C0HwwQv5Jly7EzgL5yMJgB5Bf
-	XF1NKtklCfggHtPQ0FkTyYEvkEoYV9YYEGDai
-X-Gm-Gg: ASbGnctpUQ3GrYx8zoTRv7fZFNjrmZD9m5DFu/4PK/AVbWFSHg8ipkVxKeDX8J6oYnZ
-	93WUkfF2FceV5LyI0fDCTxaWzKgvb
-X-Google-Smtp-Source: AGHT+IHIQGDElLz8/qVf/OV7Pyn52bxrEmCudJB6RD46Ot+/aEOB2whwuA3TpN813KwxwWMUhrWTyKpmffCC9X64vLM=
-X-Received: by 2002:a05:6512:1101:b0:533:49ab:780e with SMTP id
- 2adb3069b0e04-53b4804d6b6mr875842e87.2.1730246003424; Tue, 29 Oct 2024
- 16:53:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730246065; x=1730850865;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=y70wMBiVAGL9fqgd1kG53Hy+fEJEd58QyxNQyN50KVM=;
+        b=KHvArxZSbawTMnxSsehjs7ErHm/gIBwtYObJFn1KnNM1xvI3ACdd9Y7uzzGZpRT0lS
+         MRAWs1+adsMXhOix3osR6Hc1e79p2eNZLVtWerSEf6LRvtkytCL8rw9DQlzNI87/l+0R
+         aj3+NGUr775wydmO78qE8FD7WHWdd1D0MDKCUUlXRyxsub89DDVjeT7BUlTqtIueHGJH
+         hc8YLP7hSGBTCf6td+uQ5kxGWXCmVuooySKU7x6PQotxiSy0qrUbEOeRGuB508UOVnXy
+         7+qYezxRuvQQdY6SLCy6FvX3tIwTFC4YDT8LMcp+9FTtvNldl7Njkj61vHUJS7VQ4rnS
+         +Bvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWhDeJ0oyDbyJ9ExKESOEsMGofwy1WGkBe6EzFpG7XEtipFbQeuLhgg6kyTmmb532tquzlpxiwGmR3zZ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBaF23pKoMyX33b7j2oPhC7RMErrTyw+iw3oL3utLd5BZ3oRHl
+	ADawJVfjHfOOf57dnczGWhsxA6nck6BEbVf5Ik49wofCgPmqOVvCEB946PGD
+X-Google-Smtp-Source: AGHT+IG5jsW1ZIxd5A20Hy9uTS5baiO6/Icymaefvnasz6tRepiv8jsRGrr+Fak9c31k6PLdTCh76Q==
+X-Received: by 2002:a05:6871:720:b0:278:25d:d473 with SMTP id 586e51a60fabf-29051b193f5mr12284231fac.1.1730246064845;
+        Tue, 29 Oct 2024 16:54:24 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8660f82sm8192972a12.2.2024.10.29.16.54.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 16:54:24 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Ido Schimmel <idosch@nvidia.com>,
+	Petr Machata <petrm@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: mellanox: use ethtool string helpers
+Date: Tue, 29 Oct 2024 16:54:22 -0700
+Message-ID: <20241029235422.101202-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com>
-In-Reply-To: <20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 29 Oct 2024 16:52:45 -0700
-Message-ID: <CABCJKudHknUxbgHBX9kXOkyMEKn5VrFsLZ6u95fnqpngp4Wy_w@mail.gmail.com>
-Subject: Re: [PATCH] scripts: Remove export_report.pl
-To: Matthew Maurer <mmaurer@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-modules@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Matt,
+These are the preferred way to copy ethtool strings.
 
-On Tue, Oct 29, 2024 at 2:12=E2=80=AFPM Matthew Maurer <mmaurer@google.com>=
- wrote:
->
-> This script has been broken for 5 years with no user complaints.
->
-> It first had its .mod.c parser broken in commit a3d0cb04f7df ("modpost:
-> use __section in the output to *.mod.c"). Later, it had its object file
-> enumeration broken in commit f65a486821cf ("kbuild: change module.order
-> to list *.o instead of *.ko"). Both of these changes sat for years with
-> no reports.
->
-> Rather than reviving this script as we make further changes to `.mod.c`,
-> this patch gets rid of it because it is clearly unused.
->
-> Signed-off-by: Matthew Maurer <mmaurer@google.com>
+Avoids incrementing pointers all over the place.
 
-Thanks for the patch! Applying this separately without waiting for the
-rest of the extended modversions series to land makes sense to me.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ .../mellanox/mlxsw/spectrum_ethtool.c         | 83 +++++++------------
+ .../ethernet/mellanox/mlxsw/spectrum_ptp.c    |  7 +-
+ 2 files changed, 30 insertions(+), 60 deletions(-)
 
-Reviewed-by: Sami Tolvanen <samitolvanen@google.com>
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ethtool.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ethtool.c
+index 87a51e7d4390..5189af0da1f4 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ethtool.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ethtool.c
+@@ -607,84 +607,57 @@ static void mlxsw_sp_port_get_prio_strings(u8 **p, int prio)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < MLXSW_SP_PORT_HW_PRIO_STATS_LEN; i++) {
+-		snprintf(*p, ETH_GSTRING_LEN, "%.29s_%.1d",
+-			 mlxsw_sp_port_hw_prio_stats[i].str, prio);
+-		*p += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < MLXSW_SP_PORT_HW_PRIO_STATS_LEN; i++)
++		ethtool_sprintf(p, "%.29s_%.1d",
++				mlxsw_sp_port_hw_prio_stats[i].str, prio);
+ }
+ 
+ static void mlxsw_sp_port_get_tc_strings(u8 **p, int tc)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < MLXSW_SP_PORT_HW_TC_STATS_LEN; i++) {
+-		snprintf(*p, ETH_GSTRING_LEN, "%.28s_%d",
+-			 mlxsw_sp_port_hw_tc_stats[i].str, tc);
+-		*p += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < MLXSW_SP_PORT_HW_TC_STATS_LEN; i++)
++		ethtool_sprintf(p, "%.28s_%d", mlxsw_sp_port_hw_tc_stats[i].str,
++				tc);
+ }
+ 
+ static void mlxsw_sp_port_get_strings(struct net_device *dev,
+ 				      u32 stringset, u8 *data)
+ {
+ 	struct mlxsw_sp_port *mlxsw_sp_port = netdev_priv(dev);
+-	u8 *p = data;
+ 	int i;
+ 
+-	switch (stringset) {
+-	case ETH_SS_STATS:
+-		for (i = 0; i < MLXSW_SP_PORT_HW_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_hw_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++	if (stringset != ETH_SS_STATS)
++		return;
+ 
+-		for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2863_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_hw_rfc_2863_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++	for (i = 0; i < MLXSW_SP_PORT_HW_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_hw_stats[i].str);
+ 
+-		for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2819_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_hw_rfc_2819_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++	for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2863_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_hw_rfc_2863_stats[i].str);
+ 
+-		for (i = 0; i < MLXSW_SP_PORT_HW_RFC_3635_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_hw_rfc_3635_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++	for (i = 0; i < MLXSW_SP_PORT_HW_RFC_2819_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_hw_rfc_2819_stats[i].str);
+ 
+-		for (i = 0; i < MLXSW_SP_PORT_HW_EXT_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_hw_ext_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++	for (i = 0; i < MLXSW_SP_PORT_HW_RFC_3635_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_hw_rfc_3635_stats[i].str);
+ 
+-		for (i = 0; i < MLXSW_SP_PORT_HW_DISCARD_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_hw_discard_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
++	for (i = 0; i < MLXSW_SP_PORT_HW_EXT_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_hw_ext_stats[i].str);
+ 
+-		for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++)
+-			mlxsw_sp_port_get_prio_strings(&data, i);
++	for (i = 0; i < MLXSW_SP_PORT_HW_DISCARD_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_hw_discard_stats[i].str);
+ 
+-		for (i = 0; i < TC_MAX_QUEUE; i++)
+-			mlxsw_sp_port_get_tc_strings(&data, i);
++	for (i = 0; i < IEEE_8021QAZ_MAX_TCS; i++)
++		mlxsw_sp_port_get_prio_strings(&data, i);
+ 
+-		mlxsw_sp_port->mlxsw_sp->ptp_ops->get_stats_strings(&data);
++	for (i = 0; i < TC_MAX_QUEUE; i++)
++		mlxsw_sp_port_get_tc_strings(&data, i);
+ 
+-		for (i = 0; i < MLXSW_SP_PORT_HW_TRANSCEIVER_STATS_LEN; i++) {
+-			memcpy(p, mlxsw_sp_port_transceiver_stats[i].str,
+-			       ETH_GSTRING_LEN);
+-			p += ETH_GSTRING_LEN;
+-		}
+-		break;
+-	}
++	mlxsw_sp_port->mlxsw_sp->ptp_ops->get_stats_strings(&data);
++
++	for (i = 0; i < MLXSW_SP_PORT_HW_TRANSCEIVER_STATS_LEN; i++)
++		ethtool_puts(&data, mlxsw_sp_port_transceiver_stats[i].str);
+ }
+ 
+ static int mlxsw_sp_port_set_phys_id(struct net_device *dev,
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
+index 5b174cb95eb8..72e925558061 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_ptp.c
+@@ -1326,11 +1326,8 @@ void mlxsw_sp1_get_stats_strings(u8 **p)
+ {
+ 	int i;
+ 
+-	for (i = 0; i < MLXSW_SP_PTP_PORT_STATS_LEN; i++) {
+-		memcpy(*p, mlxsw_sp_ptp_port_stats[i].str,
+-		       ETH_GSTRING_LEN);
+-		*p += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < MLXSW_SP_PTP_PORT_STATS_LEN; i++)
++		ethtool_puts(p, mlxsw_sp_ptp_port_stats[i].str);
+ }
+ 
+ void mlxsw_sp1_get_stats(struct mlxsw_sp_port *mlxsw_sp_port,
+-- 
+2.47.0
 
-Sami
 
