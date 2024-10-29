@@ -1,168 +1,184 @@
-Return-Path: <linux-kernel+bounces-386668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 489499B46A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:23:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D6A49B46B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:23:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD7BD1F23F36
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CCE6284BBE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7468204F71;
-	Tue, 29 Oct 2024 10:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A29C92040A2;
+	Tue, 29 Oct 2024 10:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lM7UPgnP"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JcV6GVF/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9F68204940
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A4E204940;
+	Tue, 29 Oct 2024 10:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197368; cv=none; b=ttlhs9P9/cHPEFoQrjKwYX+IwlIldZEh3nvkMFL61r+i5Wz67Igo0ujSt3uF16P/40+o+/dWVux6o7zL6oh2SBfohZ2BDILYM3H/w3XsdEfnWG9kU3ofj/0/HJARQm+b7Fg1vWYnUsMLd/8edLKL4BkwGg1kfayqzcx0kwCovLM=
+	t=1730197389; cv=none; b=WUDtP9N1Yp3Gm2z3yzgaZmBUkR3eW0T4SFCWT2+yRjg6C9XlJZ5XBBimx69gcv6PRkoC0UuRKfHkBEkOLLZYg5EOKFm8cNxhKZ+glW8FOXBKmthMw0V2145D+PQ3P24Tuzk4dCsGHsXfdUweH/tciq0pzlaCkthVxrLjSsCnjMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197368; c=relaxed/simple;
-	bh=LZjSpjIkQ/UIhxxD/94ZpTpj5VLNNB8ZWHzr8wWRiEI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EYclt1NEBJ0x7z5OCwbVOrh2uzlHYjhCyiQ/B0u55xBRY848WzpdE0QofSANHlWQckWtJ2Miobme0BKRjsmW++DW/uUfWyN8r1W/6aOYOhWgW5l25aX0NiSal0Z709ZqYMpVlrWStUSl5VNrrMJBQTi1SZvYp2Wh+fgEMYaPLRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lM7UPgnP; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so45143051fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730197364; x=1730802164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gevxWDiw1Joa8obRCekHXlX/q8pa3Bd8D6cgQBHwmVE=;
-        b=lM7UPgnPnJFAyDN07DEjbtKs6tkr0eJkya3uCIIvD1Jv6HcQ8iUdqnlrFOLgVsicn5
-         7EJjs5lZEIbjAuDfzbKgNfJhVktBWH5IInKNMO5OgVnr7JHlDcCps7PP7vU8CSiCyZ6g
-         y4gCWKV20SnVbnMYyljeqc4tf/TN6p3J/0SlL0xaGbXouqC8HIW2m1owDqb6cckFHVaU
-         90NA4ulOtCpkfepn0mYpry2Op/8WSErBF/qzIo3hwXsBVIVpxZTl833yRA+A/hZmu/6W
-         +6QyJnuK2kDvh4xht9+QTavWlmNYjg5Kvv59DvnUlNL3Znon5lM9lVy8zgfMMADUMm66
-         wYUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730197364; x=1730802164;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gevxWDiw1Joa8obRCekHXlX/q8pa3Bd8D6cgQBHwmVE=;
-        b=wrY6tmp9xphAl778/AZqa2xAXfJlKRIzQpQihhSLtRuqY+RnowfA7+/hbYZ1jYYDC6
-         0RV2E9ePui7f2CxyjPt5TyJzZ+gddrlcadK5PjAyHPgziZO7q2Rj0acCZwtpSpb5HqGG
-         ZCNZYN18op87OJ1llHF4Cx5ON4Vc120PSOt04hCawfj+C+omvZYXKrZgl9tnwvvpuDlY
-         4iF1fIwhh7pNAYTNJKdp298LNZ8eDV+L/o3nhDUa3ZMH+qQVSwmzEnvqWC8ZjZHsD5kW
-         r6qRuc4LYOzOxr0nfwIbu8MMfmdgvgXv4LZ9oafxdas+pRWEhVKO94H33z3FmOOBEYMG
-         nNOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXNdOvTFTd9k3/siagmkkDXnEP8Uby0YJxvDTR3RxkWK4lteG0saEBn5BhaeCPrKohvM6MRh9ICWenEJsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUoU3fwv4mj65xo8BylnNq+980oM8UcbQMgNnMKnFm/WNrmiJ3
-	ccGBWitpqSeDvZG7LkecJz5CkJ0428HvxG3oSnWq0zhPbpQo+m7yah24r59joao=
-X-Google-Smtp-Source: AGHT+IFpXeHjBYJ4bh6c/28VpHHP35QvCnNGUuPqWzvC/md0zxhyDDRH72iKNBCLUTiNRx10pm7VKw==
-X-Received: by 2002:a05:651c:551:b0:2fa:e658:27a1 with SMTP id 38308e7fff4ca-2fcbdf68ff0mr50076231fa.5.1730197363921;
-        Tue, 29 Oct 2024 03:22:43 -0700 (PDT)
-Received: from tudordana.roam.corp.google.com ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b47a86sm12084498f8f.53.2024.10.29.03.22.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 03:22:43 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: peng.fan@oss.nxp.com,
-	m.felsch@pengutronix.de
-Cc: pratyush@kernel.org,
-	mwalle@kernel.org,
-	miquel.raynal@bootlin.com,
-	richard@nod.at,
-	vigneshr@ti.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	linux-mtd@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	Peng Fan <peng.fan@nxp.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [RESEND PATCH v4 2/2] mtd: spi-nor: support vcc-supply regulator
-Date: Tue, 29 Oct 2024 10:22:38 +0000
-Message-ID: <20241029102238.44673-2-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-In-Reply-To: <20241029102238.44673-1-tudor.ambarus@linaro.org>
-References: <20241029102238.44673-1-tudor.ambarus@linaro.org>
+	s=arc-20240116; t=1730197389; c=relaxed/simple;
+	bh=jb4N726ZXjdmDPyvA5AaSI5/eBYq/GaU8Q9ml+c2ubo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=PoPueJkRv8pPBI4Q2Kh4yDoyEOqHX8e1AEIW24zWJ3Ea3hIUDgwKQN0EW7cR7Lslo1/MvmRef2BuUQsa6HxwxmJD7CnaoqRFfb4ew2O5mJKk96KrjjXo3UAx2iEG/15TojrZaLeak7sIgRNK3/lMkTMCy2BzWaGs4wcmGaryVOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JcV6GVF/; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730197387; x=1761733387;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=jb4N726ZXjdmDPyvA5AaSI5/eBYq/GaU8Q9ml+c2ubo=;
+  b=JcV6GVF/xEG9nyA3pTEl4iW2bX7m2toJouorFo68QN9m0qu40aDhF2tK
+   Tuh4ms7ziDnMv4w9OxuERQK0NbvlaQS/iil5sz353bLuIrMgjgTZvTKZJ
+   nHA/hAmZYo3mCFHZNiHRM81Az6Z31H4NKou72TSA/qm7+v/YT2l7OTlCS
+   /pCMzhsMCf8v0+Ddv2PY/73HHHGkYm6alDkVetCNG/ZXzhUicHKwiFEAu
+   Ma4U2Y89h7DU45DnYuOsXgKd+rih00YokbMigisUBhpKSU0z1gNCJXRtL
+   TZ/0438bv3M27fr/JinK+peZRzGvLZElNctIhBVNR+KogJXHg+EvKaKi3
+   Q==;
+X-CSE-ConnectionGUID: +up1DUp4QxCCjldP6scJyg==
+X-CSE-MsgGUID: pEl/PaTTRMuTVyxCawW25g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29945969"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="29945969"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:23:06 -0700
+X-CSE-ConnectionGUID: 2DE7Nzw/QHGN3gX1K3kDAA==
+X-CSE-MsgGUID: 9Dlz26aqT3uszb0h6f6E7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="85876891"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:23:00 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 29 Oct 2024 12:22:56 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH v2 11/15] ACPI: platform_profile: Set profile for all
+ registered handlers
+In-Reply-To: <20241028020131.8031-12-mario.limonciello@amd.com>
+Message-ID: <46e19bc3-2624-f4b9-a946-050c92c0591d@linux.intel.com>
+References: <20241028020131.8031-1-mario.limonciello@amd.com> <20241028020131.8031-12-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-From: Peng Fan <peng.fan@nxp.com>
+On Sun, 27 Oct 2024, Mario Limonciello wrote:
 
-SPI NOR flashes needs power supply to work properly. The power supply
-maybe software controllable per board design. So add the support
-for an vcc-supply regulator.
+> If multiple platform profile handlers have been registered then when
+> setting a profile verify that all profile handlers support the requested
+> profile and set it to each handler.
+> 
+> If this fails for any given handler, revert all profile handlers back to
+> balanced and log an error into the kernel ring buffer.
+> 
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c | 47 ++++++++++++++++++---------------
+>  1 file changed, 26 insertions(+), 21 deletions(-)
+> 
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index a83842f05022b..db2ebd0393cf7 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -105,37 +105,42 @@ static ssize_t platform_profile_store(struct device *dev,
+>  			    struct device_attribute *attr,
+>  			    const char *buf, size_t count)
+>  {
+> +	struct platform_profile_handler *handler;
+> +	unsigned long choices;
+>  	int err, i;
+>  
+> -	err = mutex_lock_interruptible(&profile_lock);
+> -	if (err)
+> -		return err;
+> -
+> -	if (!cur_profile) {
+> -		mutex_unlock(&profile_lock);
+> -		return -ENODEV;
+> -	}
+> -
+>  	/* Scan for a matching profile */
+>  	i = sysfs_match_string(profile_names, buf);
+>  	if (i < 0) {
+> -		mutex_unlock(&profile_lock);
+>  		return -EINVAL;
+>  	}
+>  
+> -	/* Check that platform supports this profile choice */
+> -	if (!test_bit(i, cur_profile->choices)) {
+> -		mutex_unlock(&profile_lock);
+> -		return -EOPNOTSUPP;
+> -	}
+> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-[ta: move devm_regulator_get_enable() to spi_nor_probe(). Add local dev
-variable to avoid dereferences.]
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
-v4:
-- move devm_regulator_get_enable() to spi_nor_probe().
-- add local dev variable to avoid dereferences.
+You made guard() conversions in the earlier patch but for some reason 
+left scoped_cond_guard() ones mixed into other changes still. Is there
+a very good reason for that?
 
- drivers/mtd/spi-nor/core.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/core.c b/drivers/mtd/spi-nor/core.c
-index b6f374ded390..29441f2bab5d 100644
---- a/drivers/mtd/spi-nor/core.c
-+++ b/drivers/mtd/spi-nor/core.c
-@@ -17,6 +17,7 @@
- #include <linux/mtd/spi-nor.h>
- #include <linux/mutex.h>
- #include <linux/of_platform.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/sched/task_stack.h>
- #include <linux/sizes.h>
- #include <linux/slab.h>
-@@ -3576,7 +3577,8 @@ static int spi_nor_create_write_dirmap(struct spi_nor *nor)
- static int spi_nor_probe(struct spi_mem *spimem)
- {
- 	struct spi_device *spi = spimem->spi;
--	struct flash_platform_data *data = dev_get_platdata(&spi->dev);
-+	struct device *dev = &spi->dev;
-+	struct flash_platform_data *data = dev_get_platdata(dev);
- 	struct spi_nor *nor;
- 	/*
- 	 * Enable all caps by default. The core will mask them after
-@@ -3586,12 +3588,16 @@ static int spi_nor_probe(struct spi_mem *spimem)
- 	char *flash_name;
- 	int ret;
- 
--	nor = devm_kzalloc(&spi->dev, sizeof(*nor), GFP_KERNEL);
-+	ret = devm_regulator_get_enable(dev, "vcc");
-+	if (ret)
-+		return ret;
-+
-+	nor = devm_kzalloc(dev, sizeof(*nor), GFP_KERNEL);
- 	if (!nor)
- 		return -ENOMEM;
- 
- 	nor->spimem = spimem;
--	nor->dev = &spi->dev;
-+	nor->dev = dev;
- 	spi_nor_set_flash_node(nor, spi->dev.of_node);
- 
- 	spi_mem_set_drvdata(spimem, nor);
 -- 
-2.47.0.163.g1226f6d8fa-goog
+ i.
 
+> +		if (!platform_profile_is_registered())
+> +			return -ENODEV;
+>  
+> -	err = cur_profile->profile_set(cur_profile, i);
+> -	if (!err)
+> -		sysfs_notify(acpi_kobj, NULL, "platform_profile");
+> +		/* Check that all handlers support this profile choice */
+> +		choices = platform_profile_get_choices();
+> +		if (!test_bit(i, &choices))
+> +			return -EOPNOTSUPP;
+> +
+> +		list_for_each_entry(handler, &platform_profile_handler_list, list) {
+> +			err = handler->profile_set(handler, i);
+> +			if (err) {
+> +				pr_err("Failed to set profile for handler %s\n", handler->name);
+> +				break;
+> +			}
+> +		}
+> +		if (err) {
+> +			list_for_each_entry_continue_reverse(handler, &platform_profile_handler_list, list) {
+> +				if (handler->profile_set(handler, PLATFORM_PROFILE_BALANCED))
+> +					pr_err("Failed to revert profile for handler %s\n", handler->name);
+> +			}
+> +			return err;
+> +		}
+> +	}
+>  
+> -	mutex_unlock(&profile_lock);
+> -	if (err)
+> -		return err;
+> +	sysfs_notify(acpi_kobj, NULL, "platform_profile");
+>  	return count;
+>  }
+>  
+> 
 
