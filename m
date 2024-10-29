@@ -1,100 +1,94 @@
-Return-Path: <linux-kernel+bounces-387621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA0E9B53BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:33:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 375DC9B53BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:33:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECA191F24344
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:33:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9C02875A7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A327720ADD4;
-	Tue, 29 Oct 2024 20:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Et+rln8p"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46A62076DD;
+	Tue, 29 Oct 2024 20:32:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6323A2076C6;
-	Tue, 29 Oct 2024 20:30:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CB3192B74
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730233825; cv=none; b=anYoktfJEEjeL1RsaruCH/LLmAUKpEEmIq9DYQhWcsQLe3GKgL2tbfrvE2bi7CB1NibMXIkGUTK1JuWIcmjpLyz9dJM1PzPO8UzZsF1cN5mAgbo6Vmp9NQ+nAXA3tGzpFLivghXBEfowaSzT+lNMVvSyvoROCNmHbfWaFeWoGYg=
+	t=1730233925; cv=none; b=C3o9Q2AFRVXHUkcKq3J/gqwkuLHagUAnCZAnmpPzMNLyB1S/gVafxjZECsQrlR5se9kzHlbkPCKLinWNdo86EDUY4b6a8TlEv4BFjCEVPMA+XRC3+q4Xu98o8FkuE4sDV2GQMjFI+pnfyWb68gIp+g8iA1sfmeqtslvqXFZQzUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730233825; c=relaxed/simple;
-	bh=LCPuPHxmcheRjCZu/CCyo9lhHWSqEy8+gxzMZANtv8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X+yajf73bE4tBPV1vpnIG338B6L1ivBO8vjaCSbK0K8+Ytrk3FLY0auinrcYfXx7a2kNbeQX3IfOJWVNx7X+BcQirrG82FqwC1KEerNRoB1TG0dsBPEUvTROoDRXqQ3peEQUMkt/qWbrKZxTiVSN2ANtk59yLc/k1/IG9QFdKP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Et+rln8p; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20bb39d97d1so49577815ad.2;
-        Tue, 29 Oct 2024 13:30:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730233822; x=1730838622; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LCPuPHxmcheRjCZu/CCyo9lhHWSqEy8+gxzMZANtv8I=;
-        b=Et+rln8p0CydBo2vWmqYnosQY2ldjHldXuPrChtomqjvi1cPgeUIi02aB+6DaGut8y
-         28g5TA90LuFteiYeNT4+cIbILtXGHGhie0RmqLugxMwSJpJFcTZGq/LKscAhpla5+OnM
-         gCIJ4lhNX6ZyBE2OfzfoXk9Iwzoe6SqDjeUu8e1T+nIfLaIQOguOPrjBYKo60qWo23ko
-         xH5WEJKNbPzUncHiticfY/Ng9oKT89/WFpz2xs7CoziDMa3Z275gf5jIZN/3bQJqHrga
-         Bwb3IvqhYjfHSnTzzOR8buldll+KjIJkvjL6DRxuq+JZIdYuCqe6kzTsIpOi7LrgyS+A
-         99zg==
+	s=arc-20240116; t=1730233925; c=relaxed/simple;
+	bh=+ucZND5jXPG6IF+RsGlmnHfSNTQet+yftUa81HCkFzo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PtMiO1fxOuy6XrZ5hQEZiw0rVH2hPK7DgolpTKh05pt9LaNQcmJv+vrA8TnRnBkkFC3dq8RGauhbXTYkR/EJG7slly/SsNz+lxHrC6HDBjBInoTSsgL64G0QadDWwvuD5sDLuDaASFaPJj0DuW7hHyoPBYwRy4uc/OpJkziaEbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b9c5bcd8so48273365ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:32:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730233822; x=1730838622;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LCPuPHxmcheRjCZu/CCyo9lhHWSqEy8+gxzMZANtv8I=;
-        b=ZYXmNFT5spDpgy5LmR5nWd9hU4qS/ijAGaDi/HEqHzNFaP78c8heYuMdhkSOBn7dmm
-         vcEM+d4irDeBufA3g2ERIqsBAeaLHWb0s3Ntv2pWyVZKSmWJXPtlF+8jy26JrAbGau+M
-         ZzP6W9//2WB+48Vzv2SYW2mNNiGoNloXforyYruavAeMkWowFQ4ysJ5Y5dfuTTMAv35b
-         184lksCR0pSaG91htOXymZLLG1OeijbJY2Ch/B6DkzgqAdRWaxFnV+mBpIWGTbKvLp1S
-         f2UizqZaL8QCdnTLmm+S77SGHdW7RDN/sgel9dJvD7X81WuYaFue6wDoEZX+pSc0A78X
-         ST7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWQzbLQUukn1u0nJ6niQBupNd4jM0crHWymaJSTNdpRA1/jb2Px7Kzl/lcG+P2zP1Yc6EsENhEDg+pOIA==@vger.kernel.org, AJvYcCWedKaE21uDMbtb4OLoXZ3J2F6WkpLJm3E5uQBZok7SoZFdBTjQ6b4WumRQm7dQtL08TJfG5aujyrlKWRVG@vger.kernel.org, AJvYcCWyj8EYFvJtKRqehq0nkaAD05koUZCuduAZpUN19rKV7+0EPt84zCcKmzj+YtqYykEpF6nfsh9+d9/G@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpJjEfGrbjPMqV0/QoZBEdgnpoYxH8572Q/RWunwLEpJ+Pbcrx
-	ZkMS8lJ2iG7T62Y2qiKQXq+NNnuh4pF/irh4z3aJd7kt1pn2EqKr
-X-Google-Smtp-Source: AGHT+IFroEW9to+PrSxVxxL7EaDXV3zy0R6mpiRww0wu/Ae6aYY9Rv/dMYht+3SI/+mmV80Zf6dDdw==
-X-Received: by 2002:a17:902:cf02:b0:20c:f648:e39e with SMTP id d9443c01a7336-210f770091amr9100505ad.58.1730233821672;
-        Tue, 29 Oct 2024 13:30:21 -0700 (PDT)
-Received: from mighty.kangaroo-insen.ts.net ([45.64.12.145])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf46373sm70351915ad.54.2024.10.29.13.30.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 13:30:21 -0700 (PDT)
-From: MightyM17 <bavishimithil@gmail.com>
-To: bavishimithil@gmail.com
-Cc: andreas@kemnade.info,
-	bcousson@baylibre.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	krzk+dt@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-omap@vger.kernel.org,
-	robh@kernel.org,
-	tony@atomide.com
-Subject: Re: [PATCH v2] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
-Date: Tue, 29 Oct 2024 20:30:14 +0000
-Message-ID: <20241029203014.399-1-bavishimithil@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240626095056.12607-1-bavishimithil@gmail.com>
-References: <20240626095056.12607-1-bavishimithil@gmail.com>
+        d=1e100.net; s=20230601; t=1730233922; x=1730838722;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cXeyHPxAZWU63IOD8dE86wBYbVBW54NU6tNTx9BtVeU=;
+        b=w6gWHbq7CO1PeKvApUL23GP7PaUJgzKLXdy/wMYuprhmSrZdAe/oQ0fSZUSK4//e2G
+         mq9Y6c5rvpbPPGZQXeB50YS+qDM26llaXHztletqCX8cavKYjvfMWxjW+YoURa1O396O
+         dH3IBn5K0k5up0lP6ISnsdc6N4Q7duKkcpVd02Gr1eyXWKG/PxqC5fjnBtGvxnEQfD9c
+         DBs/+CxM0Pf1XaCzmGl/eSWW/4la0lH4wlevQVb188CdJGywdt3e86ok/OnrKVSsrhRw
+         Y86tyMg56Dvr7zYIHkNq7dTMYAiRh+pwZm2k7gVqFbCN4xBQGzvVtQvIV7VSWz6EC0Zg
+         vvsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXyfuYHHxuMxSByz5TbTlubZYA9tHxdN4tMltcXs3qGXnnvhNl9+Iy4zAiMg6Q1PWeIhG4d/sOPdr8CW0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaICvDIKudpmB8815uY14rOgufun7E/kNR8RKmQ+rE7ooNvqhY
+	/jAyJgLJs2Tpmdmv7oWubGenxWbaDCFz0C74slQgVH+z/zoK5+HOcMj2n4wQFOgIEbaFvt7t/ZX
+	MQwgahSBN6aoJ9ne3Repjq4DO3vOT7H59fLGrf682jxEOwWP2beYQDCQ=
+X-Google-Smtp-Source: AGHT+IFPIChgNx3Wlye5TqtptBZLvqb3bek41OZ1ZZ4YWYBXoDgcq+Btr2G9uFmJzd4mWD9bZMgo2Jg8ozZZKJznffWBB4zGj0WL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1fcc:b0:3a0:49da:8f6d with SMTP id
+ e9e14a558f8ab-3a4ed3057c0mr107085245ab.22.1730233922598; Tue, 29 Oct 2024
+ 13:32:02 -0700 (PDT)
+Date: Tue, 29 Oct 2024 13:32:02 -0700
+In-Reply-To: <671cedcb.050a0220.2b8c0f.01b1.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67214642.050a0220.4735a.0262.GAE@google.com>
+Subject: Re: [syzbot] [wireless?] WARNING in __rate_control_send_low (3)
+From: syzbot <syzbot+34463a129786910405dd@syzkaller.appspotmail.com>
+To: clang-built-linux@googlegroups.com, davem@davemloft.net, 
+	johannes.berg@intel.com, johannes@sipsolutions.net, kuba@kernel.org, 
+	kvalo@codeaurora.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	ramonreisfontes@gmail.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> Well, no, the file is not used at the moment, I do not think it makes sense to have it in without an actual in-tree user.
+syzbot has bisected this issue to:
 
-So, I am planning to merge espresso dts (https://gitlab.postmarketos.org/postmarketOS/pmaports/-/blob/master/device/community/linux-postmarketos-omap/0002-arm-dts-Add-common-dtsi-for-espresso.patch?ref_type=heads) once this gets merged, plus it can be later used on epson-embt2ws as well.
+commit 119aadf816f5373dc82ca4109d6d5b777e00475b
+Author: Ramon Fontes <ramonreisfontes@gmail.com>
+Date:   Fri May 15 16:46:40 2020 +0000
 
-Best Regards,
-Mithil
+    mac80211_hwsim: report the WIPHY_FLAG_SUPPORTS_5_10_MHZ capability
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=170e3687980000
+start commit:   b5abbf612092 Merge branch 'mptcp-sched-fix-some-lock-issues'
+git tree:       net
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=148e3687980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=108e3687980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=309bb816d40abc28
+dashboard link: https://syzkaller.appspot.com/bug?extid=34463a129786910405dd
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a76ebb980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17f0ee40580000
+
+Reported-by: syzbot+34463a129786910405dd@syzkaller.appspotmail.com
+Fixes: 119aadf816f5 ("mac80211_hwsim: report the WIPHY_FLAG_SUPPORTS_5_10_MHZ capability")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
