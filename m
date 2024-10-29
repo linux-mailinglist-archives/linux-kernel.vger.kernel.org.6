@@ -1,92 +1,195 @@
-Return-Path: <linux-kernel+bounces-386214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBF59B4087
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:40:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6639B408E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:41:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A309B216E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:40:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43D481C21D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C051EE02A;
-	Tue, 29 Oct 2024 02:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pDVOuN6P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E761E1326;
+	Tue, 29 Oct 2024 02:41:43 +0000 (UTC)
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB6C1E0DA7;
-	Tue, 29 Oct 2024 02:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019B61DDC3B;
+	Tue, 29 Oct 2024 02:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730169627; cv=none; b=sxajCGKqFQyYCiLK8i9D8rSwc8/pBy4Ma459SyasezmQzZ00tV8wBjWaIp4desdHkzSc8HBuKo4ssgf+IUKws6VcFbfrBMBVppX6Hsc5QA7EaU+HE7nury/dtWQy22fpPGUCvcFE8L95eRkJ1oSIzCFpBPyEUFBhh5BF6MP3M3A=
+	t=1730169702; cv=none; b=Cr60J4E1gsXxjY4slkwtEWHnmlZbVcs1S0WPOgLiituumrKPsKDzb+Ii/dYAdtjm+UoJeI8p7eoP0GQ3Tu4GjHXcDgN4Ohs/MIoLLEDbZygMRirCNbqQ7LVZ/2uz0Hh1NvJsZAkmogBYxBhfyPPw75QNUkIlqNHXKcdfNAtQwio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730169627; c=relaxed/simple;
-	bh=APQuSZSyZY8lsOIbRAOJwqTJ3REHGadcaaLp4lQuAYM=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=fJDff8BdIbaOwbknWHJ5e73Or2NBFJ0CqypMHtwd2hHyKe2xjRWUYYX/ENObTSQnzbcJNRI85jxCqVDTYXejkILSUtOgp+9nlVrHLIWIAhSBVlKCYAK2yk9K3F6Xz/X0Ui6ISRmyvFegDmhVAb9U/mTH1gGXNNwSi2wOi+lJuno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pDVOuN6P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5221BC4CEC3;
-	Tue, 29 Oct 2024 02:40:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730169627;
-	bh=APQuSZSyZY8lsOIbRAOJwqTJ3REHGadcaaLp4lQuAYM=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=pDVOuN6PgKf6jvbCTAOV1P/hkpH83Cst/sls4tLc3nQWNm8R0LjIak08N386D2C57
-	 HreBRQwFaq7+DLe8i0hTnYEEO6pdzewhzGh4mc0wbdBJrdmA+2KqjphgojhnsnYfBi
-	 UTbMe3wvPEcSiHmcJv2QiXxkHsBRusDLNvXhF2Jv4+LUKUqoZiv7Brb+MlPyJRGyFC
-	 pEbe+pq15ZG0xxXM/15C1bpDXfLe0gEWvcn/kqMgHterTFmMoX9PvUvb7N2X9Zy3bD
-	 LhkhfJKpnSYzX6aCic/5QQB74sbLxf+UNrPBLQz7meQFnWBkGf1kbshBJGPRMdJ4/0
-	 4OKtG+UctCdsg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAE34380AC1C;
-	Tue, 29 Oct 2024 02:40:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1730169702; c=relaxed/simple;
+	bh=QdRL8aQT/fsoGRqQ/aRmgF0WrC4Eq31ywdR0gAQ2Sto=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dpp6+XFsgccBG5ARMESoSPTYpKJex94E1v0iDaQNjabe0oP967SN2d5WQ64pp0Z8OPXUsE1rLHdyLc/5NPC3RVpB7l8rgPxA541YcJFkyvVQ6ZbJSddo5+4+L+02GP7FYZIt0WWuE0vKWHVMQm6f4KLhayM4Jwy0WqMTSt0oahI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539983beb19so5904393e87.3;
+        Mon, 28 Oct 2024 19:41:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730169698; x=1730774498;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aqfq1qXdhdY1azJDVm4y9eX03VQ14BLURIuXYXjfQJg=;
+        b=kmQD96ZZRKmXH3HLZ9IAnGUzSZ7jbfzfd7L92O03mIc41EvEIKZbfBHAmQHO2QdBlz
+         R0frJ1QC3kgs+ig1A1qRlkK8pYrKcuKK9orXKPgt9WdU41zLXGffsOlcACZQUwEror/6
+         2fk+JX+YvsOqS9/7p1o/YXyaRSWeotGsmpQDXpVlETRPhZ+A2qcVGVHzePqS90m5rsuo
+         VFQsBBp1RmtHD/yAcsSGlctmsj69KsV+6VnbxdlICqIWle9Vh6mXIyIw9q+1XkHlTS1C
+         Dt6WrkzJ5dnOqsk+o+xJShUymfUP++jhg0V57SIrDU5rJJdrZnPiTGgyUY4Fu4NXVsqw
+         b6uA==
+X-Forwarded-Encrypted: i=1; AJvYcCVMFfm8+3Tt/jVF3+HMF4RpzvlwhVDrlpyzuz0U8qyIJHpusgKoxUZjhiB7heOoWyKTcdQi02GAxBwbxhZno0U=@vger.kernel.org, AJvYcCWYtcRNR10Fl95nEB3NRTmW9yiBw2G++cG8nTuuf5Fwn6FgVA2Q9g6IbJFUa3DQOGSgbRNG1Yo6GpF/X1n0@vger.kernel.org
+X-Gm-Message-State: AOJu0YzU6/sj0jRDLOy5TEak9HOf2dIdLsYTDS2gPA+goFw3oe6NnYjL
+	FvyE9BXZxp0QBsvUDG2qaK2KmgjIGmJj2CV8Uo1A77HpIfCLTun1bnj8c6o+pdk=
+X-Google-Smtp-Source: AGHT+IE5nVrOosDIQB5j4D/yRA2gkmssI9BMv9qHk24BUL2t06oIu3kjiZo74jpTqLi0T9vc+wc/GQ==
+X-Received: by 2002:a05:6512:23a3:b0:539:8b49:8939 with SMTP id 2adb3069b0e04-53b3490efcdmr4345220e87.41.1730169697406;
+        Mon, 28 Oct 2024 19:41:37 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1eab9asm1266876e87.273.2024.10.28.19.41.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 28 Oct 2024 19:41:37 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539983beb19so5904386e87.3;
+        Mon, 28 Oct 2024 19:41:37 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWtlk9vqXeUE/bcOz1l8dxhNSKCqpTKVEStDDEHdw4O8q7XT7HfeYV8STHBcGwRfbf2erkC44YAYDeTqriO9ug=@vger.kernel.org, AJvYcCWz3f59qoEv5ZlyHjy3CdkE1RIBP2LeGwSvvpvmNNylsnTzWs3ooJnez9/hjPN/pTB0KnHCYY3liWrPr9X9@vger.kernel.org
+X-Received: by 2002:a05:6512:ea2:b0:539:9f52:9e4 with SMTP id
+ 2adb3069b0e04-53b34a195e4mr4476070e87.48.1730169697024; Mon, 28 Oct 2024
+ 19:41:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next] netlink: specs: Add missing phy-ntf command to
- ethtool spec
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173016963449.250007.4006668390954946687.git-patchwork-notify@kernel.org>
-Date: Tue, 29 Oct 2024 02:40:34 +0000
-References: <20241022151418.875424-1-kory.maincent@bootlin.com>
-In-Reply-To: <20241022151418.875424-1-kory.maincent@bootlin.com>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- maxime.chevallier@bootlin.com, thomas.petazzoni@bootlin.com,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- donald.hunter@gmail.com
+References: <20240706225124.1247944-1-iam@sung-woo.kim>
+In-Reply-To: <20240706225124.1247944-1-iam@sung-woo.kim>
+From: Sungwoo Kim <iam@sung-woo.kim>
+Date: Mon, 28 Oct 2024 22:41:20 -0400
+X-Gmail-Original-Message-ID: <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
+Message-ID: <CAJNyHp+2eAeau9peWPL7J2Mq3p26FdFzk8mPOCchxCw+26sevA@mail.gmail.com>
+Subject: Re: [PATCH v2] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
+To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: daveti@purdue.edu, benquike@gmail.com, 
+	Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+Dear Luiz, could you review this? This bug and fix are still valid but
+have been forgotten for some reason.
 
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Tue, 22 Oct 2024 17:14:18 +0200 you wrote:
-> ETHTOOL_MSG_PHY_NTF description is missing in the ethtool netlink spec.
-> Add it to the spec.
-> 
-> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+On Sat, Jul 6, 2024 at 6:53=E2=80=AFPM Sungwoo Kim <iam@sung-woo.kim> wrote=
+:
+>
+> __hci_cmd_sync_sk() returns NULL if a command returns a status event
+> as there are no parameters.
+> Fix __hci_cmd_sync_sk() to not return NULL.
+>
+> KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
+> CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dirty=
+ #10
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
+1/2014
+> Workqueue: hci7 hci_power_on
+> RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.c:=
+138
+> Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48 b=
+a 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 84=
+ c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
+> RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
+> RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
+> RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
+> RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
+> R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
+> R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
+> FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:0000000000000=
+000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
+> PKRU: 55555554
+> Call Trace:
+>  <TASK>
+>  hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
+>  hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
+>  hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
+>  hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
+>  hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
+>  hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
+>  hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
+>  hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
+>  process_one_work kernel/workqueue.c:3267 [inline]
+>  process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
+>  worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
+>  kthread+0x2cb/0x360 kernel/kthread.c:388
+>  ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+>
+> Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOVER=
+Y")
+>
+> Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
 > ---
->  Documentation/netlink/specs/ethtool.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
-
-Here is the summary with links:
-  - [net-next] netlink: specs: Add missing phy-ntf command to ethtool spec
-    https://git.kernel.org/netdev/net-next/c/63afe0c217dc
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+> v1 -> v2: make __hci_cmd_sync_sk() not return NULL
+>
+>  net/bluetooth/hci_sync.c | 18 +++++++++++-------
+>  1 file changed, 11 insertions(+), 7 deletions(-)
+>
+> diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+> index 76b283b8e..c4e4abc6e 100644
+> --- a/net/bluetooth/hci_sync.c
+> +++ b/net/bluetooth/hci_sync.c
+> @@ -201,6 +201,12 @@ struct sk_buff *__hci_cmd_sync_sk(struct hci_dev *hd=
+ev, u16 opcode, u32 plen,
+>                 return ERR_PTR(err);
+>         }
+>
+> +       /* If command return a status event skb will be set to NULL as th=
+ere are
+> +        * no parameters.
+> +        */
+> +       if (!skb)
+> +               return ERR_PTR(-ENODATA);
+> +
+>         return skb;
+>  }
+>  EXPORT_SYMBOL(__hci_cmd_sync_sk);
+> @@ -250,6 +256,11 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev, u=
+16 opcode, u32 plen,
+>         u8 status;
+>
+>         skb =3D __hci_cmd_sync_sk(hdev, opcode, plen, param, event, timeo=
+ut, sk);
+> +
+> +       /* If command return a status event, skb will be set to -ENODATA =
+*/
+> +       if (skb =3D=3D ERR_PTR(-ENODATA))
+> +               return 0;
+> +
+>         if (IS_ERR(skb)) {
+>                 if (!event)
+>                         bt_dev_err(hdev, "Opcode 0x%4.4x failed: %ld", op=
+code,
+> @@ -257,13 +268,6 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev, u=
+16 opcode, u32 plen,
+>                 return PTR_ERR(skb);
+>         }
+>
+> -       /* If command return a status event skb will be set to NULL as th=
+ere are
+> -        * no parameters, in case of failure IS_ERR(skb) would have be se=
+t to
+> -        * the actual error would be found with PTR_ERR(skb).
+> -        */
+> -       if (!skb)
+> -               return 0;
+> -
+>         status =3D skb->data[0];
+>
+>         kfree_skb(skb);
+> --
+> 2.34.1
+>
 
