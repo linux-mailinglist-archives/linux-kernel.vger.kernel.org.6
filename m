@@ -1,144 +1,100 @@
-Return-Path: <linux-kernel+bounces-386655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8259B4679
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:12:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD459B467C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2EB39B2270A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:12:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2879283B1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 742D820492E;
-	Tue, 29 Oct 2024 10:12:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F1D204935;
+	Tue, 29 Oct 2024 10:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iLIA1vDv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aCxAohzZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8C31DE3C5;
-	Tue, 29 Oct 2024 10:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C98A1DFD80;
+	Tue, 29 Oct 2024 10:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730196755; cv=none; b=fCUFrm2RNSczgSb/IVbp9HiFULhalc/82qMUM2AA2QX9+fYK61MOvOpjg17qyuZF1vags1jDRBPZQtgyeTzqI+OQwr+IWjJYChST+5PKJJ6YcolTQoCEN3HIe8b7x9TJyBiGL2SzLnrrZVXyZdGw65vnUMtwWIbuHLlxOAxpylE=
+	t=1730196934; cv=none; b=DEfHUB2vq6lIagS/+DLBWnRfIv6QmldTrMbgCtKOoUaovnwGa4Z4DYzSEZgrYDno1UAxWAm1qD2kcwfqBb0USNRjEh9JLj/BpGq/yNJb7V7MIKrxOP24rUAxOEfFfeabRIr+wyW8lv9xXmB0MznfIjDdHQ9jWJ4Ue1phfY8hdOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730196755; c=relaxed/simple;
-	bh=UUL67haHwTZSyVGSKpJ3dDGaIGH82aeC1HUYikM7ht4=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=aSQxP994iWGqtNfsAunQAqGEdDPRol2wUghvWoxropKS43hJmcN+2ewSV6Br2dw4koJxTUNbGobx37QBA0KNJ/ceOW6FEmq8DAQrJPL9hIsmU4KVcwFaImOmyXiZRUKtHXmfmmZQ2E9veCXYj4R9eHhLp1KTokQsBWyF02l1pew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iLIA1vDv; arc=none smtp.client-ip=198.175.65.18
+	s=arc-20240116; t=1730196934; c=relaxed/simple;
+	bh=fsoz2c8n5Yz0qI+Xhi9ZQHb1+SwCTWOwOy1APM1A8T0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MCUrleomFqiE3/LwH7Plh1F1YIinGo+g5zCGveal6nB6ymys/M/u43iumzInq/JFaGc7T+9ZPyV96XS+QWofVph1ZWM0agNpMBpkPnbrREx1+cyNBwSRcv7UPfE19ZMrLaFgclacoCniOc8VhQidryjp9RXVUnqhKgFdI6BbSs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aCxAohzZ; arc=none smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730196755; x=1761732755;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=UUL67haHwTZSyVGSKpJ3dDGaIGH82aeC1HUYikM7ht4=;
-  b=iLIA1vDvAx0SIHZaNv8xFHKBuQCX7n0IZQChUUviREwlvSj6Gy3wKQtK
-   12l0feGsYNI+ArdEfbeLNmnOuneUo2Y8+nB9utfTz6ovYw7keqJv7SdGK
-   iSLWQPredEWXBluiRHdiSRs+zQ/7DWKNxz3zSDlzHj/CPYqgj8cPFHlEj
-   z3r7S7YdPzLqlBwUvDYfRKz5UXMGJx3papcHzVnDW+2cSZqe/aRDW6gkF
-   9HDimuizJzp/OL/tqdybdyB91ldRhVFl7yzj6LZ6OZLWhoOqR7D3qQGwK
-   TuFYD0a2FF3ZqIOABCveIT1ykVAWA1UKG/cSM3DkOgrkjJBBRpQ9btIaK
-   g==;
-X-CSE-ConnectionGUID: C9esSJ37S8yu6sDr7wEWtQ==
-X-CSE-MsgGUID: vjzzluheQnKsv3R1av9eQQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="30016119"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="30016119"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:12:34 -0700
-X-CSE-ConnectionGUID: w2Dq1ufURcu3Uixl6B014g==
-X-CSE-MsgGUID: nqgzNDGLQtOYDmPFkf90yQ==
+  t=1730196933; x=1761732933;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=fsoz2c8n5Yz0qI+Xhi9ZQHb1+SwCTWOwOy1APM1A8T0=;
+  b=aCxAohzZmb2HglDXPIKxvGn8A9xyNoLctgK60c+PKp2e1pw3rhqq5dpp
+   tRg9LvD/IGhjKnLzxNU2SrWvC/o5OYoHx0aSh+ZsB6HtKfUDeP6NKtEe4
+   lEYVHi2/Bvx/kt75Qhe37XnYuF+mur2aSV0JmL6k0TO5ElZKlt4I5Y7Po
+   dUhui2S3KUuZSk741bqnN4yVDnPT2YQKonWh8PWTulp4JTCrIJ4tbr+7j
+   C2qZdw4EFCdWj0fzVCxPAjSK2FNNu14mLqiCuwyNDHYYm5qu+VMJTEVX3
+   UCuduqdYS14KaGnTv/ZF5ysacIVZGH2qLpMJShLgJkiebfxhhQTsEUg1c
+   Q==;
+X-CSE-ConnectionGUID: vHTRcKk+QzydTXCSCmCaxg==
+X-CSE-MsgGUID: II/ChAWrQRS5orTnDjDbKQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="33624072"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="33624072"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:15:33 -0700
+X-CSE-ConnectionGUID: sEHCMEShREKBYpCHbkjGPg==
+X-CSE-MsgGUID: tFTJQ4PpQcOVCWGgKs0STQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="81546469"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:12:26 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 29 Oct 2024 12:12:23 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: Re: [PATCH v2 05/15] ACPI: platform_profile: Move sanity check out
- of the mutex
-In-Reply-To: <20241028020131.8031-6-mario.limonciello@amd.com>
-Message-ID: <911429e0-3807-255a-4ab5-d89c6d6ce0d7@linux.intel.com>
-References: <20241028020131.8031-1-mario.limonciello@amd.com> <20241028020131.8031-6-mario.limonciello@amd.com>
+   d="scan'208";a="119375270"
+Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost.localdomain) ([10.245.244.58])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:15:29 -0700
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	rafael.j.wysocki@intel.com,
+	len.brown@intel.com,
+	artem.bityutskiy@linux.intel.com,
+	dave.hansen@linux.intel.com,
+	patryk.wlazlyn@linux.intel.com
+Subject: [PATCH v2 0/3] SRF: Fix offline CPU preventing pc6 entry
+Date: Tue, 29 Oct 2024 11:15:04 +0100
+Message-ID: <20241029101507.7188-1-patryk.wlazlyn@linux.intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
-On Sun, 27 Oct 2024, Mario Limonciello wrote:
+Sending a tiny change in response to a suggestion I got off-list.
 
-> The sanity check that the platform handler had choices set doesn't
-> need the mutex taken.  Move it to earlier in the registration.
-> 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/acpi/platform_profile.c | 13 ++++++-------
->  1 file changed, 6 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index 0c60fc970b6e8..c20256bb39579 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -180,6 +180,12 @@ int platform_profile_register(struct platform_profile_handler *pprof)
->  {
->  	int err;
->  
-> +	/* Sanity check the profile handler field are set */
-> +	if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
-> +		!pprof->profile_set || !pprof->profile_get) {
+Changes since v1:
+	* Remove explicit assignment to global, play_dead_mwait_hint as
+	  suggested by Dave Hansen off-list, to prevent compiler from
+	  moving it out of the .bss.
 
-While moving the line, please change the misleading indentation too 
-(you'd have probably done it based on my comment on v1 too but since 
-this series has changed things a bit, I'm noting it also against this 
-patch).
+Patryk Wlazlyn (3):
+  x86/smp: Move mwait hint computation out of mwait_play_dead
+  x86/smp: Allow forcing the mwait hint for play dead loop
+  intel_idle: Identify the deepest cstate for SRF
+
+ arch/x86/include/asm/smp.h |  3 +++
+ arch/x86/kernel/smpboot.c  | 54 ++++++++++++++++++++++++++------------
+ drivers/idle/intel_idle.c  | 12 +++++++++
+ 3 files changed, 52 insertions(+), 17 deletions(-)
 
 -- 
- i.
+2.47.0
 
-> +		return -EINVAL;
-> +	}
-> +
->  	mutex_lock(&profile_lock);
->  	/* We can only have one active profile */
->  	if (cur_profile) {
-> @@ -187,13 +193,6 @@ int platform_profile_register(struct platform_profile_handler *pprof)
->  		return -EEXIST;
->  	}
->  
-> -	/* Sanity check the profile handler field are set */
-> -	if (!pprof || bitmap_empty(pprof->choices, PLATFORM_PROFILE_LAST) ||
-> -		!pprof->profile_set || !pprof->profile_get) {
-> -		mutex_unlock(&profile_lock);
-> -		return -EINVAL;
-> -	}
-> -
->  	err = sysfs_create_group(acpi_kobj, &platform_profile_group);
->  	if (err) {
->  		mutex_unlock(&profile_lock);
-> 
 
