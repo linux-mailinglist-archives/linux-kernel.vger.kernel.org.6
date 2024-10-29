@@ -1,203 +1,105 @@
-Return-Path: <linux-kernel+bounces-386114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF3E9B3F41
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:38:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BC2A9B3F3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:37:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D02E62835C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:38:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29AD9B21CCF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C5512E5B;
-	Tue, 29 Oct 2024 00:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CE6DF59;
+	Tue, 29 Oct 2024 00:37:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DtMRgpFW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V4j0z9M3"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28261FC0A;
-	Tue, 29 Oct 2024 00:38:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 379EB4A28;
+	Tue, 29 Oct 2024 00:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730162292; cv=none; b=rz6++b65ruRrEWE2VF3u5sYP5GLhuAks2QxT/YcbqrtBF6FyPvcxDTeUjiFG93FlvPSp+q0kxaCmTmh8h542u0Js/DeZ4meF+s2oCK4hNvtwrEPDG5KqnCf45gK2m734mVxT0dH+LD0DKj2Qtilkz92Ys200vOp8l7GSjNjj9SM=
+	t=1730162228; cv=none; b=ISzSlWrLlh3mXAzywZQU8kWG+z6EUvlta33haigc+/sxs0kSZXami7qqncd/Br/Rmw6pnpN/cbDY4nWjrBrhgovXYUeywLY2GSqSnVYlL2cZmrjNt56LCmRwpKo745iAcDjmyz+ouBgl3vyj2ryLBntIwkL2KdBkH5FwmMnXNi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730162292; c=relaxed/simple;
-	bh=3K2dglKZn7wUtYTDSsva58MuIimxAP4MGOPDH/JDycU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qgd1wfvKzLd0EMO/G6mAfQ6evE2dQ2l3BhUujG76/Idt1yTngOLv28hr99NPxVH20My3qNJQOWPVRAI06Q0/Ene1oml1+b6dv5p5B7TCoTvRiy0IjPCbrp4fc9UNM/4RiquLMnMh6D6RuHVNTu0vBSmTsDSEGgc+doeOwDDLTBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DtMRgpFW; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730162290; x=1761698290;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=3K2dglKZn7wUtYTDSsva58MuIimxAP4MGOPDH/JDycU=;
-  b=DtMRgpFWYP3yNxEnCfkIJzEGEYAvYhbgv9bMsCT8wgbUj1oJVesTuCGa
-   GPw+vYGQfHuiC7qP+Fn+kmzX/9DKvVA0ctGMik1ZEt42hwErH59uciPEi
-   J1cC8Odc4ru8VjXE0lnhu8l/yjFEi0+6sYdINuitovzVyy8smU0yW5TpV
-   jMbXJj6xqAFBbrhEW4I0GJ8C/3z1zWojVVZIb031UhEZ1fG5kJOMr6SUh
-   cjDTy+LeC5rLSO2wlUN9w7h+Ma6Ocw4yf8bZdm+Nmts4r9ya4F3HEZOs6
-   WZPEHf2tiXSeAZT1T5n2U/ObZIOy6KlM40WxFOWhIW3osOP9nuhVhg+Hl
-   A==;
-X-CSE-ConnectionGUID: j/jWGMgxQ0mWTE5oZiurcw==
-X-CSE-MsgGUID: 8kbRqs6yRqyPI19KDcRQ1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="33574624"
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="33574624"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 17:38:10 -0700
-X-CSE-ConnectionGUID: k0aWpVU7SbWu9VZPyjYQEw==
-X-CSE-MsgGUID: ZKMTSNDQRAmSlMypoWqD1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="82602018"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 17:38:08 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Gregory Price <gourry@gourry.net>
-Cc: Yang Shi <shy828301@gmail.com>,  linux-kernel@vger.kernel.org,
-  linux-mm@kvack.org,  kernel-team@meta.com,  akpm@linux-foundation.org,
-  weixugc@google.com,  dave.hansen@linux.intel.com,  osalvador@suse.de,
-  stable@vger.kernel.org
-Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
- demoting pages
-In-Reply-To: <ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com> (Gregory Price's
-	message of "Mon, 28 Oct 2024 17:25:15 -0400")
-References: <20241025141724.17927-1-gourry@gourry.net>
-	<CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
-	<ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com>
-Date: Tue, 29 Oct 2024 08:34:34 +0800
-Message-ID: <87msinwxut.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1730162228; c=relaxed/simple;
+	bh=qeujHuvQyslroSllEXiciUhe/x4TRfcq7sdH3dIWkbM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8Ep8UpAXC4zYy+pOguNFJBxui3/+FJ6LoFUlXoY0aRgaAxiafrZ04r6ygQKEI/oz2Zf/IbjPcdF0tpJctEiT3JpNK5NE1I5KCOTL8cLARVvKvn+4PGfJ1nB6GtSzGaIZCklhBAAML77Q2PdtgAaxOc9VPSMmuMh5EQ4vUWXlmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V4j0z9M3; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c6f492d2dso54492875ad.0;
+        Mon, 28 Oct 2024 17:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730162226; x=1730767026; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ybdc4suSyEnjIbTKBgs8r7kibgpgP4PxS6JnZnAmPf8=;
+        b=V4j0z9M3cuEyGur0txQdaZrgrFeP3b9rLcOUTvFgFt85vHY+xFDuxK7EjDy3nXbV1e
+         MTedSzknXsMGVykoeoy46S7b6SRAjJbBZRJD7bXdfT+ym74lRbaAe+Jkv3a4OYndZ4wu
+         WqFNPCp+nS4jKbRoPnKbGlJqBenQ4D2n5x8CKP41cLtkMJccMhS7WCK/liwXeXtniarh
+         +L+wF8oliK3rkIW91ak4nQwoeNsRPI3HEYdkLbiuYvwqt7jmXSl5/zeHl+XPGj9NAxuG
+         UGG73q3ZSEtt4tq8AX/RsUvkw8DJZieDhoHT+AKNNi5oClOXy9oXReyCH2nEivZY3SlH
+         Xusg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730162226; x=1730767026;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ybdc4suSyEnjIbTKBgs8r7kibgpgP4PxS6JnZnAmPf8=;
+        b=p+3nyrl9j2GpNMj8TVwgldzqOL7pIHvbmC/gvq6rESd6bgiSeTU/XNARK8gVjnDKBX
+         b95LNSEq4U72U46N1Qmh4L6owwlWipsWm50zLadx3o1yNERTteBE8/J8jeRM8upPZ0Qz
+         4uhVh9HW5YVTQhEbmIDNbUYyVmkxHmOmM9D3FlpI0gzdqhCUtKNERMmrFrF8otwdifE6
+         UeHaF85I3Gw5VRXwwXdprPURseR4ou9mGprKZgFowG/Gen5+5FOYqLogntiQwb+cs/O0
+         nY69p/KNpd2a9PB/bWx9uJagj38B90VmCvzJeqb2yELXc3u1oQ8s/GaX72xewMyepnUL
+         xqlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXgjMKXc+KmaHRPWSfc+1P/Ih3l/RdBPXDHhtPaEmWleB7OLv/KqQfTXEDlZxe0DKCROAVdIZ/UcGE9rQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyujyW5I3p8PkeqC7SrUcY0rhadrBJgNXpkG1WVreKnwrKW2jZj
+	uzhXCmx/VQTinEHlkRqarjoTQJXGGUeOkWq8ct6Es0xkdtuWXV1KuqhmWA==
+X-Google-Smtp-Source: AGHT+IEc4R666UugaTCyHjsLs6CKF5I/1zG+wnWlV4bLxQcJkXhqpQWVIf7vlWTjVdSWTQ+THpivSg==
+X-Received: by 2002:a17:902:e80c:b0:20d:1a47:ecd5 with SMTP id d9443c01a7336-210c6ce8aa2mr100548215ad.61.1730162225700;
+        Mon, 28 Oct 2024 17:37:05 -0700 (PDT)
+Received: from eldorado.. (ip68-4-215-93.oc.oc.cox.net. [68.4.215.93])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc044cb1sm55945165ad.249.2024.10.28.17.37.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 17:37:05 -0700 (PDT)
+From: Florian Fainelli <f.fainelli@gmail.com>
+To: netdev@vger.kernel.org
+Cc: andrew@lunn.ch,
+	olteanv@gmail.com,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] MAINTAINERS: Remove self from DSA entry
+Date: Mon, 28 Oct 2024 17:36:58 -0700
+Message-ID: <20241029003659.3853796-1-f.fainelli@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Gregory Price <gourry@gourry.net> writes:
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+---
+ MAINTAINERS | 1 -
+ 1 file changed, 1 deletion(-)
 
-> On Mon, Oct 28, 2024 at 01:45:48PM -0700, Yang Shi wrote:
->> On Fri, Oct 25, 2024 at 7:17=E2=80=AFAM Gregory Price <gourry@gourry.net=
-> wrote:
->> >
->> > When numa balancing is enabled with demotion, vmscan will call
->> > migrate_pages when shrinking LRUs.  Successful demotions will
->> > cause node vmstat numbers to double-decrement, leading to an
->> > imbalanced page count.  The result is dmesg output like such:
->> >
->> > $ cat /proc/sys/vm/stat_refresh
->> >
->> > [77383.088417] vmstat_refresh: nr_isolated_anon -103212
->> > [77383.088417] vmstat_refresh: nr_isolated_file -899642
->> >
->> > This negative value may impact compaction and reclaim throttling.
->> >
->> > The double-decrement occurs in the migrate_pages path:
->> >
->> > caller to shrink_folio_list decrements the count
->> >   shrink_folio_list
->> >     demote_folio_list
->> >       migrate_pages
->> >         migrate_pages_batch
->> >           migrate_folio_move
->> >             migrate_folio_done
->> >               mod_node_page_state(-ve) <- second decrement
->> >
->> > This path happens for SUCCESSFUL migrations, not failures. Typically
->> > callers to migrate_pages are required to handle putback/accounting for
->> > failures, but this is already handled in the shrink code.
->>=20
->> AFAIK, MGLRU doesn't dec/inc this counter, so it is not
->> double-decrement for MGLRU. Maybe "imbalance update" is better?
->> Anyway, it is just a nit. I'd suggest capturing the MGLRU case in the
->> commit log too.
->>
->
-> Gotcha, so yeah saying it's an imbalance fix is more accurate.
->
-> So more accurate changelog is:
->
->
-> [PATCH] vmscan,migrate: fix page count imbalance on node stats when demot=
-ing pages
->
-> When numa balancing is enabled with demotion, vmscan will call
-> migrate_pages when shrinking LRUs.  migrate_pages will decrement the
-> the node's isolated page count, leading to an imbalanced count when
-> invoked from (MG)LRU code.
->
-> The result is dmesg output like such:
->
-> $ cat /proc/sys/vm/stat_refresh
->
-> [77383.088417] vmstat_refresh: nr_isolated_anon -103212
-> [77383.088417] vmstat_refresh: nr_isolated_file -899642
+diff --git a/MAINTAINERS b/MAINTAINERS
+index f39ab140710f..cde4a51fd3a1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16031,7 +16031,6 @@ F:	drivers/net/wireless/
+ 
+ NETWORKING [DSA]
+ M:	Andrew Lunn <andrew@lunn.ch>
+-M:	Florian Fainelli <f.fainelli@gmail.com>
+ M:	Vladimir Oltean <olteanv@gmail.com>
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/net/dsa/
+-- 
+2.43.0
 
-> This negative value may impact compaction and reclaim throttling.
->
-> The following path produces the decrement:
->
-> shrink_folio_list
->   demote_folio_list
->     migrate_pages
->       migrate_pages_batch
->         migrate_folio_move
->           migrate_folio_done
->             mod_node_page_state(-ve) <- decrement
-
-I think that it may be better to mention the different behavior of LRU
-and MGLRU.  But that's not a big deal, change it again only if you think
-it's necessary.
-
---
-Best Regards,
-Huang, Ying
-
-> This path happens for SUCCESSFUL migrations, not failures. Typically
-> callers to migrate_pages are required to handle putback/accounting for
-> failures, but this is already handled in the shrink code.
->
-> When accounting for migrations, instead do not decrement the count
-> when the migration reason is MR_DEMOTION. As of v6.11, this demotion
-> logic is the only source of MR_DEMOTION.
->
->
->> >
->> > Signed-off-by: Gregory Price <gourry@gourry.net>
->> > Fixes: 26aa2d199d6f2 ("mm/migrate: demote pages during reclaim")
->> > Cc: stable@vger.kernel.org
->>=20
->> Thanks for catching this. Reviewed-by: Yang Shi <shy828301@gmail.com>
->>=20
->> > ---
->> >  mm/migrate.c | 2 +-
->> >  1 file changed, 1 insertion(+), 1 deletion(-)
->> >
->> > diff --git a/mm/migrate.c b/mm/migrate.c
->> > index 923ea80ba744..e3aac274cf16 100644
->> > --- a/mm/migrate.c
->> > +++ b/mm/migrate.c
->> > @@ -1099,7 +1099,7 @@ static void migrate_folio_done(struct folio *src,
->> >          * not accounted to NR_ISOLATED_*. They can be recognized
->> >          * as __folio_test_movable
->> >          */
->> > -       if (likely(!__folio_test_movable(src)))
->> > +       if (likely(!__folio_test_movable(src)) && reason !=3D MR_DEMOT=
-ION)
->> >                 mod_node_page_state(folio_pgdat(src), NR_ISOLATED_ANON=
- +
->> >                                     folio_is_file_lru(src), -folio_nr_=
-pages(src));
->> >
->> > --
->> > 2.43.0
->> >
 
