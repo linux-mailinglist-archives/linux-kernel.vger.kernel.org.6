@@ -1,129 +1,123 @@
-Return-Path: <linux-kernel+bounces-387303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8A59B4F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:22:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330179B4F39
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:23:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9391F286755
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:22:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC0F2867C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:23:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2F51990D9;
-	Tue, 29 Oct 2024 16:22:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2FE199E88;
+	Tue, 29 Oct 2024 16:23:06 +0000 (UTC)
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ED6E198E99
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:22:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4552A199E80;
+	Tue, 29 Oct 2024 16:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730218967; cv=none; b=eWumwo31nh9I9HYURbypAKLfqpNTMdu0V2KFRa03qPZVNVy5ZPzLe+wVPMP3s9slwDygSDLid0/RlbSzFI0T0Qq9AUkEtlmjpwkjmNa0rAuSdZbc6TZOTiWTTQG9izmTFUxHmE7vVHxl/MGt4M6lldWrCw4LQgKTrwoDhB92sIk=
+	t=1730218985; cv=none; b=VNgyul50vI3eaEwOx9PSvHbwikMkSHV7qnAzChj3j8mGKaxcPJMfP9jHR3p08eJAAPYMNSLLoKhP6H7dRSqc8p6bQPAgNC0Hq20eXIECiZo7TAHHlOg5aUMEeziyf0uahinDbcVXaT1sedwIHeAuufKHzoG2rTvfMW7aD+08lCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730218967; c=relaxed/simple;
-	bh=FoeBvAoeLePVuxJ0KpC2FxGwDSaN5NhHcgbG5Er4P3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CDgbtshc0EUZUiVodq2KsKObLs77xdBQ4B6bn2BhkV5qRckIumphU4r2eQM4vTknD7Lo5YhBYkRsWSwNg0P1dN8SDJkvPfPKDQ5GFXLuOxMYGiz2okCzgMb1KPJRidNSRskKEYgBc5e/LKb431aZmlWATw7t5R2AYSfhBoim384=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82843C4CECD;
-	Tue, 29 Oct 2024 16:22:44 +0000 (UTC)
-Date: Tue, 29 Oct 2024 16:22:42 +0000
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Brown <broonie@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, Peter Xu <peterx@redhat.com>,
-	linux-arm-kernel@lists.infradead.org, Will Deacon <will@kernel.org>,
-	Aishwarya TCV <Aishwarya.TCV@arm.com>
-Subject: Re: [PATCH hotfix 6.12 v2 4/8] mm: resolve faulty mmap_region()
- error path behaviour
-Message-ID: <ZyEL0s_qiyAYURR2@arm.com>
-References: <57mgmdx7wgfwci3yo3ggkmcnm3ujamgkwcccm77ypvmer5tegn@opiq3ceh2uvy>
- <ykzmur56ms7fm4midi6tbncjvcvf7ue4lp7e4orblrmwnefw3e@oa3enlpdrcrr>
- <bea02efe-a695-49e0-b15c-2270a82cadbf@lucifer.local>
- <CAHk-=whpXVBNvd0NJpw9=FGcuTuThwtfcKeM3Ug=Uk6kpChCPA@mail.gmail.com>
- <0b64edb9-491e-4dcd-8dc1-d3c8a336a49b@suse.cz>
- <CAHk-=wgE8410gu3EabjNEHhOYh1dyYwt23J62S4a9SYcwZUFhw@mail.gmail.com>
- <1608957a-d138-4401-98ef-7fbe5fb7c387@suse.cz>
- <cf1deb9b-c5c4-4e85-891d-62ecf9a04e0f@lucifer.local>
- <ZyD5iXikMzotl9mU@arm.com>
- <da15a72b-c1de-427b-a764-0ebbdd3f6a8e@lucifer.local>
+	s=arc-20240116; t=1730218985; c=relaxed/simple;
+	bh=hnw3a4Xz8giAfeEUrg7HVp4lhnxcTB5sn16ndm/j+k4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lGNZ5jIRbELIuW5txmZ1TS9FSqwfuXdo2zbGjt8nzq+28f9ZKRXorQq76CqB3meqMftT/jFRdVThuzB+A9C+SGpkA+YFYPiBH+PhNgRlpycPCWjRV1Mz6v6S9kJ31h7qyLGhYnRjroeM05eRUndrHhoMtRgUzXMQJNrUZHnmKt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ea051d04caso20386167b3.0;
+        Tue, 29 Oct 2024 09:23:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730218980; x=1730823780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ROSe2v3U/1vSKBR72rtEBk3p8buCmeo4JYHedEhiUX8=;
+        b=VeWUUKRTPd/D66AKb+4KT3nswjq5Dhd6PI065BceAQmMApAtCluXkIzyNjYAx3hkUH
+         2EtvdCqG3wm/25D0nwwQ098FJ9MuCyKbp9ow9/0PRVZWpYWqL0Ug84KDzf34T6lXxxpk
+         xa8Z+P7ZSPo6bDlUJjqVF5vLLw3Imwq2NDuUkODqQGifjqIes+c8wJ0BsSBxi73IlGru
+         rTzy6LLopmLTerF3fCz5BscCI3zFI1xPntQiw1SCBY/M8VmqTmbaVUah8FyvzBAZ8TwJ
+         c79hr2Tlio6xnX9HPJAwLxE+D9ujCuzdImfgNL+x0j3AYMjbp/Ko3KwsKSdYtjyXsiOE
+         nazw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTHplA4DGtCeblf3JpTODtajLRqcFmlNJsZ1MCeHeQyGMsZ8OBfv8MAIwpDDAmmN2jTki3e4EYdMtr/Tgs@vger.kernel.org, AJvYcCWQALwzlZWzdEm77yBFJJ7Xii2490dy/eQe3qvKu6vbcNv1bAza6HB2T/gaOgTyhkj9liKhOs7SNsUNMQUIfhs=@vger.kernel.org, AJvYcCWmLKFNg2UHgarc1Kj6UDXjCFokT9z/IRpws0tP7+z0CXhbrMjrbBtzsWfq1DcuiuSlKIW2MGLE/rQQFSxc@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy71aOv5gKXCV8deOHu9WBy5lcxj4ed2ZYopTaSy5RWgFY5BLN
+	YirntAKmTUgHGCjNPS8WTZtmFd/IstDKF7MNAJGslOiX3yc1dMvEksfcBnXH
+X-Google-Smtp-Source: AGHT+IEiJzMtBL2USODF9wB49pZtOjVi7QAC4ridp46IJDGW+slkjk9Xsih4ve2PBsxn8bpOMq5UdQ==
+X-Received: by 2002:a05:690c:6085:b0:6d5:7b2f:60a0 with SMTP id 00721157ae682-6e9d8afb26dmr131442847b3.34.1730218980363;
+        Tue, 29 Oct 2024 09:23:00 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c193b6sm20001877b3.66.2024.10.29.09.22.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 09:22:59 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ea051d04caso20385607b3.0;
+        Tue, 29 Oct 2024 09:22:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUkIyt1iOsZ8/lmwDQE4HSNwnIxEKdjV9AU5+tJYLFdOd94g2oEqxC1L/CLvZXrOeMB5SUdDWSMbspX2k3O@vger.kernel.org, AJvYcCVtgarZtNV5XeVSPDi8+JDYNYZmLQfy/0Q5LZ2Er66wkK+kHCJJw7b5kjdGrHfLqdlEkpjlJScB+HwgX1cG@vger.kernel.org, AJvYcCWGC1JusvWfaC8ok+B25eeldXRhu7NqTCXAXJeG285DjNnvusAkK7Q2a/so5UkyZDnPg22qeeiaOWtUpwkOLOo=@vger.kernel.org
+X-Received: by 2002:a05:690c:60c1:b0:6e3:36cc:eb74 with SMTP id
+ 00721157ae682-6e9d8afa635mr145747877b3.32.1730218979252; Tue, 29 Oct 2024
+ 09:22:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <da15a72b-c1de-427b-a764-0ebbdd3f6a8e@lucifer.local>
+References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
+ <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com> <87wmhq28o6.ffs@tglx>
+In-Reply-To: <87wmhq28o6.ffs@tglx>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 29 Oct 2024 17:22:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
+Message-ID: <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
+	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Marcel Holtmann <marcel@holtmann.org>, 
+	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Michael Kelley <mhklinux@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 03:16:00PM +0000, Lorenzo Stoakes wrote:
-> On Tue, Oct 29, 2024 at 03:04:41PM +0000, Catalin Marinas wrote:
-> > On Mon, Oct 28, 2024 at 10:14:50PM +0000, Lorenzo Stoakes wrote:
-> > > So continue to check VM_MTE_ALLOWED which arch_calc_vm_flag_bits() sets if
-> > > MAP_ANON.
-> > [...]
-> > > diff --git a/mm/shmem.c b/mm/shmem.c
-> > > index 4ba1d00fabda..e87f5d6799a7 100644
-> > > --- a/mm/shmem.c
-> > > +++ b/mm/shmem.c
-> > > @@ -2733,9 +2733,6 @@ static int shmem_mmap(struct file *file, struct vm_area_struct *vma)
-> > >  	if (ret)
-> > >  		return ret;
-> > >
-> > > -	/* arm64 - allow memory tagging on RAM-based files */
-> > > -	vm_flags_set(vma, VM_MTE_ALLOWED);
+Hi Thomas,
+
+On Tue, Oct 29, 2024 at 5:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
+> wrote:
+> On Mon, Oct 28 2024 at 19:11, Easwar Hariharan wrote:
+> > diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+> > index 1220f0fbe5bf..e5256bb5f851 100644
+> > --- a/include/linux/jiffies.h
+> > +++ b/include/linux/jiffies.h
+> > @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiffi=
+es(const unsigned int m)
+> >       }
+> >  }
 > >
-> > This breaks arm64 KVM if the VMM uses shared mappings for the memory
-> > slots (which is possible). We have kvm_vma_mte_allowed() that checks for
-> > the VM_MTE_ALLOWED flag as the VMM may not use PROT_MTE/VM_MTE directly.
-> 
-> Ugh yup missed that thanks.
-> 
-> > I need to read this thread properly but why not pass the file argument
-> > to arch_calc_vm_flag_bits() and set VM_MTE_ALLOWED in there?
-> 
-> Can't really do that as it is entangled in a bunch of other stuff,
-> e.g. calc_vm_prot_bits() would have to pass file and that's used in a bunch
-> of places including arch code and... etc. etc.
+> > +#define secs_to_jiffies(_secs) ((_secs) * HZ)
+>
+> Can you please make that a static inline, as there is no need for macro
+> magic like in the other conversions, and add a kernel doc comment which
+> documents this?
 
-Not calc_vm_prot_bits() but calc_vm_flag_bits().
-arch_calc_vm_flag_bits() is only implemented by two architectures -
-arm64 and parisc and calc_vm_flag_bits() is only called from do_mmap().
+Note that a static inline means it cannot be used in e.g. struct initialize=
+rs,
+which are substantial users of  "<value> * HZ".
 
-Basically we want to set VM_MTE_ALLOWED early during the mmap() call
-and, at the time, my thinking was to do it in calc_vm_flag_bits(). The
-calc_vm_prot_bits() OTOH is also called on the mprotect() path and is
-responsible for translating PROT_MTE into a VM_MTE flag without any
-checks. arch_validate_flags() would check if VM_MTE comes together with
-VM_MTE_ALLOWED. But, as in the KVM case, that's not the only function
-checking VM_MTE_ALLOWED.
+Gr{oetje,eeting}s,
 
-Since calc_vm_flag_bits() did not take a file argument, the lazy
-approach was to add the flag explicitly for shmem (and hugetlbfs in
--next). But I think it would be easier to just add the file argument to
-calc_vm_flag_bits() and do the check in the arch code to return
-VM_MTE_ALLOWED. AFAICT, this is called before mmap_region() and
-arch_validate_flags() (unless I missed something in the recent
-reworking).
+                        Geert
 
-> I suggest instead we instead don't drop the yucky shmem thing, which will
-> set VM_MTE_ALLOWED for shmem, with arch_calc_vm_flag_bits() still setting
-> it for MAP_ANON, but the other changes will mean the arch_validate_flags()
-> will be fixed too.
-> 
-> So this just means not dropping the mm/shmem.c bit basically and everything
-> should 'just work'?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-If we can't get the calc_vm_flag_bits() approach to work, I'm fine with
-this as a fix and we'll look to do it properly from 6.13.
-
--- 
-Catalin
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
