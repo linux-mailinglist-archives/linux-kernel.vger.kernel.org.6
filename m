@@ -1,116 +1,96 @@
-Return-Path: <linux-kernel+bounces-387102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 574589B4BF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:18:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EEC29B4BF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:18:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032A01F238B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:18:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 173921F23CA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8235B206E90;
-	Tue, 29 Oct 2024 14:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD36D206E99;
+	Tue, 29 Oct 2024 14:18:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TwFCwFZX"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npqMchlO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBCE1E507
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F33E1E507;
+	Tue, 29 Oct 2024 14:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730211472; cv=none; b=t6iVuu9TP6T6gAwegOj/JEa8kDPRbegVIBHRJeXSAtJOMxKsCo2f8gRv/xMb2KyciJhy2Q/wS312fIfzBMtSk4UT7/BmMLL7xgcqC1lfxZ0egljpP0D6Cb6/pM1s8YnJ56UlLFpEyVXn6noppOnKglo4QVp1mWJFKvH2jX77OV4=
+	t=1730211489; cv=none; b=pZrU4JCZ1TgoKsvWmPFVEeWs1k+k8jAs7hTEi5LbvUSsWhZR0BQvQVaElz9evgN3hQpSZFM5/BhgfHzyYv4VWM1G/jg6fiWSZ9S+dBM/2qKR+bSn9pCPojkIUI+trp+2nwxus2QlpwOubenpCCH9E8QrMbJS3zdm5AtOKW7CFg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730211472; c=relaxed/simple;
-	bh=L6njmtDV2cbOykXHmeJ6c8LVfIwB8LafghBRfLJvvy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X6R1nKLL0daiL2loy24W5iLH4gC8qfrL7J0bccRAfHangFBs3QOM1UScEhm062Izb599alws7+TRXFQm3nNuX8zeC80eU5MlWspTJ7BX22aYv5NxJzf/co2NVZIy9xQZt0Kxt56FxQDiRQFc4HNj0jOh6lEA/8fqjVY2HFt5uO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TwFCwFZX; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315839a7c9so56817155e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:17:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730211468; x=1730816268; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L6njmtDV2cbOykXHmeJ6c8LVfIwB8LafghBRfLJvvy8=;
-        b=TwFCwFZXPn+V3TXef0Gr+Fq/AB6ok554ZcAKIpCXw/oXL9C4Nh498UcHG3LexRKDIl
-         wC9Kj3gGgtm7Y175kX4gC4YFeanHtk1/OoKdAqU4nkuFKP23fVir4AvjQzLFcErQj3pM
-         RmwvJAHZPyEXwMKM0qZtm8tsswmawWksau2brE5RNo3XLOh6wIjN+QfETgziIlxY3pLX
-         c0DPvTCG7TC8tBFgapK69xqdn44+bFK4V7MHNh5ieJPqKcLU2VGBrHFqWO7MoIarlUBs
-         7KXPoENevovQ9HQlYFS7IgNJ3RnpmUYKbvGNOkVWl2C2aeIPvHu5BskyPji/8mnYeHSF
-         F1uw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730211468; x=1730816268;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L6njmtDV2cbOykXHmeJ6c8LVfIwB8LafghBRfLJvvy8=;
-        b=cJjPzNC5gbqlmm7PXsB9X7vr84uZunsh+eYedtiMC76pi9ZaGeYz0aABqrvjL5b/gS
-         p9nGwF+zY6l6rzQV84SLqgrnzd2bMEr+u+g1XV/6k6wxag8b42ndqjUqsj+epsRDfekv
-         8bILpzBCNrW1mMXFadiR4E3mMY2RRo1tC1GHAs1mk1fFt7hREzfvzOiJt9As9ku83IwE
-         U1+d6JG3U8r4KTKE14gxvDH/j6DN21vGu6q6l0YfrIeeAWIYuNvUBWLIe5gBqk6OEYae
-         5R4gttGkgJBxqGbkj3xoZaEfocMOQ0nP3MNbOTVD67xRbNF47NanlXPcsT0ha3lUDx0V
-         jTdg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdJB9SKviWusxR0lEUHmrygOZ1yRZ+6YvRoS3BSTD9AYHwuU+AX8xHbag/s9yQJtNLr5IfSyITqQx8mNQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmUPwUu67ND6TPSVnd2QHAEpZUiJOtFC7TVxDlobx8bTXeez7m
-	FbMf6WdQT8c+k8ANw9D++iLMW0CWgvK8xRUxuL8iYgLS26rXA2xuH/aI9fRJQrEkY/8cb55neyN
-	MRPo3tau/LNn7EfxBkzIEK4IjAnwFAOlo/HlU
-X-Google-Smtp-Source: AGHT+IHhbBKGiK7BgU4W978cOb33NcTjzUbMbdW09EsxTh1luCi/3DLowadG0MtS+fdBvmIOkjTTesI9JgwmFdik64o=
-X-Received: by 2002:a05:600c:4f03:b0:42c:ba83:3f0e with SMTP id
- 5b1f17b1804b1-4319ac7078dmr109957335e9.7.1730211468245; Tue, 29 Oct 2024
- 07:17:48 -0700 (PDT)
+	s=arc-20240116; t=1730211489; c=relaxed/simple;
+	bh=McEZtfOP6VjUEou6D0sp3RbKj3XY5E+ZTox3plQDDlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGBMhmMKgmKNpmce4r3Qn0vryJYO3jRVAL4yDhOHFC9pJLFMURCHjErZmtOsQWtnWd6bMcX4UJhSR7L6+5rLZbgCwB6+ikDMzLz4yhbs6HPhBWxbWrhtereRmtidkl4XVTn5DESPc35UidQRwkxaSEgGr+2bgmnpG1EcdtbigfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npqMchlO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39ACFC4CECD;
+	Tue, 29 Oct 2024 14:18:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730211488;
+	bh=McEZtfOP6VjUEou6D0sp3RbKj3XY5E+ZTox3plQDDlw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=npqMchlOZfIXy9KzRwaSUcGb/ms2aTIHWUQ4JfHeUuGZMvAglstLEEUurwzfuei2d
+	 1qSdZTkt34eaSjcHboitlPT3HA4EpYuPb+yZ7oEUUiixJKpSyoIwhnaGEx14iDaKuz
+	 XU0tPuFMVt406sGyhOVypLWhJNs7BE5PvJnd3N65XOWOxmZbbjNiyeoYR3yBj6KNgk
+	 X24A+WyU1Gv6tTCepVkJ4vRlvjJsTjoJFG/pk+Md1+uk308yBlMoUnKjO15tzpqOoT
+	 e+NJBXDJ/gXF5PcovPlHo1iKoLkuoSuBE5NgM0v9//i4APxMRfEC7K8hnGzL47qSR8
+	 WE+eN6fUpNGMQ==
+Date: Tue, 29 Oct 2024 14:18:03 +0000
+From: Will Deacon <will@kernel.org>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Michal Luczaj <mhal@rbox.co>,
+	Alexander Potapenko <glider@google.com>,
+	Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [PATCH 0/6] KVM: Fix bugs in vCPUs xarray usage
+Message-ID: <20241029141802.GA4691@willie-the-truck>
+References: <20241009150455.1057573-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com> <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local>
-In-Reply-To: <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 29 Oct 2024 15:17:36 +0100
-Message-ID: <CAH5fLgg6xO71ud3mHvEaKhU1tYKf7RKTrVcL1brHoORf9nSgoQ@mail.gmail.com>
-Subject: Re: [PATCH v6] rust: add global lock support
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009150455.1057573-1-seanjc@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Oct 28, 2024 at 6:49=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> w=
-rote:
->
-> On Wed, Oct 23, 2024 at 01:23:18PM +0000, Alice Ryhl wrote:
-> > Add support for creating global variables that are wrapped in a mutex o=
-r
-> > spinlock.
-> >
-> > The implementation here is intended to replace the global mutex
-> > workaround found in the Rust Binder RFC [1]. In both cases, the global
-> > lock must be initialized before first use. The macro is unsafe to use
-> > for the same reason.
-> >
-> > The separate initialization step is required because it is tricky to
-> > access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
-> > require changes to the C side. That change will happen as a follow-up t=
-o
-> > this patch.
-> >
-> > Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-=
-08ba9197f637@google.com/#Z31drivers:android:context.rs [1]
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->
-> Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+On Wed, Oct 09, 2024 at 08:04:49AM -0700, Sean Christopherson wrote:
+> This series stems from Will's observation[*] that kvm_vm_ioctl_create_vcpu()'s
+> handling of xa_store() failure when inserting into vcpu_array is technically
+> broken, although in practice it's impossible for xa_store() to fail.
+> 
+> After much back and forth and staring, I realized that commit afb2acb2e3a3
+> ("KVM: Fix vcpu_array[0] races") papered over underlying bugs in
+> kvm_get_vcpu() and kvm_for_each_vcpu().  The core problem is that KVM
+> allowed other tasks to see vCPU0 while online_vcpus==0, and thus trying
+> to gracefully error out of vCPU creation led to use-after-free failures.
+> 
+> So, rather than trying to solve the unsolvable problem for an error path
+> that should be impossible to hit, fix the underlying issue and ensure that
+> vcpu_array[0] is accessed if and only if online_vcpus is non-zero.
+> 
+> Patch 3 fixes a race Michal identified when we were trying to figure out
+> how to handle the xa_store() mess.
+> 
+> Patch 4 reverts afb2acb2e3a3.
+> 
+> Patches 5 and 6 are tangentially related cleanups.
 
-Thanks!
+Thanks, Sean. For the series:
 
-Alice
+Acked-by: Will Deacon <will@kernel.org>
+
+I sympathise a little with Paolo on patch 4, but at the end of the day
+it's a revert and I think that the code is better for it, even if the
+whole scenario is messy.
+
+Will
 
