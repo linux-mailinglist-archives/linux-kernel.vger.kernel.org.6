@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-386147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717689B3FAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:19:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 367609B3FB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09845B215D9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:19:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9276283115
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ED75589B;
-	Tue, 29 Oct 2024 01:19:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AC34204F;
+	Tue, 29 Oct 2024 01:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="RbrvQtuQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gI0i/TCL"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOYVcn1b"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2222EE5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC6B28E7;
+	Tue, 29 Oct 2024 01:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730164773; cv=none; b=d/PAtmpjwhShyOCmXQBsBsIBbjpIir3zp6J4v9llmXc6YvWWVQh0ebVb7Gd2yLky5z0Vqpag7PdhSU1C5b4G0cNPpJHJD1O4ZWs7ufQQqdUpFxu6pW94/lGIKXCMo2711eHgZYucakvErnhTYoyECBl/aX2QQeYrbS300aQPw/I=
+	t=1730165009; cv=none; b=rMlvoXRq4DZwmSAhyH3ncYvQpaEiFAdtMdzpUl1+9EMBvV24QgmThCDYUvSDRvpR9s16JP7HM1yCyrw1LqKXiArGZQhXGhkq1Rm9LVxI6s3xtsqLbQqbl4hvBiXetcV0ydEnXxwWAh+IgiGaopRnHuJAsDtZQzWx7BE3F0Rhi0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730164773; c=relaxed/simple;
-	bh=RgOf++afi0EyvtCuAJWxb+F5DBowWrklNIpvpFOvCJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X7wuEyR6Gf9mnT5/bXNMKEELzZhzym6nd/4vRD+c0RJbKPMfbUqcG4keNQ6JDsJubmmfVTmprmstUxeshzrhElQyVCkwXQAUP6gOPZY2eZeSICIzniCfAf3rm+8OpyVfd6IbS9X4LGcK8exUHCvX+HxrtuKIMH0Ehng8Fb3GAIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=RbrvQtuQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=gI0i/TCL; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id AB231114019A;
-	Mon, 28 Oct 2024 21:19:29 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Mon, 28 Oct 2024 21:19:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1730164769; x=
-	1730251169; bh=DFZvUn3BP1CH8W8twa67vrPGh9GQ/uWPY5MPWnm3GKQ=; b=R
-	brvQtuQNXOyWPf/F2Rm2IBo1L9v2GCuGjn7qxnD1PouF2i5Cjj3hZ80jo8xrc3lj
-	Z0hydBCd1ssb3iZPctSURCN6CJmgyJU3YR0zP2xbyF78uF/4HyJQotrMiAUMIe5n
-	W4LAHBWj4DO12oe+4ALsRri1ujgrmiTwZk0c/BrmUzsLowoJE7aThBdZBXG1lXjT
-	oh0VktUQlMEhmORKBjwPeOWVXn1vFeMS6646yOgTiY3AbZF0jQQY96wXmJkkF3pz
-	IT1aiKmF69n4BSYtAmB5sFin/MG/yNkra1+v9i7UZJ4ynlL7ZzTTU2gzftglwuZs
-	4tGM5l6DGBB73sbDwDgXA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730164769; x=1730251169; bh=DFZvUn3BP1CH8W8twa67vrPGh9GQ/uWPY5M
-	PWnm3GKQ=; b=gI0i/TCLghkUKGeCa9UQJpmeB8r557gUV+GJMXTil9ji3/I5erJ
-	XbWhyBB5ktCHO9fVEU9hLEHuMq1URxGd+Gm8bnY0qbIJomkR7vzegTBqJDbNMRGU
-	lkJu+2xFJUSEmCB+P/RZGruAD0oOQUKz7J3/LZ+9ND+s7wrJVcn7mgpiso7uHAnr
-	qZf4yWySOTCUPorliwbKjzB/8kfZokTpIby4FWzhXim8jPkTE+TxQq++gPFqtIGe
-	K6AtnwsNvre1QzqdBEDHvFjfRelORb49B0V8cd+Sklzb//yjvsgGSvVi4vFnFANU
-	drpypgsq9KBy8K1wkrXr1ykW+/QalI2gkVw==
-X-ME-Sender: <xms:ITggZ7FgsIreILCi1bsrgdbeyOgWTpN4D1eQ7jvypdQ6-G2_npnqhQ>
-    <xme:ITggZ4VNGm24TVHdN4_6-BYSxuYT7tKBLPMKOjwfLFOa1C3UF67kU_ceoRY1ywPSf
-    d_6McQrNV4pzTnMLeo>
-X-ME-Received: <xmr:ITggZ9LX1NlEPs_wQBHmF5tDr_OOdWuXa8XcFJnRiNY7jspZuO8jY_NUEZbkjUXGlQWCR5D0zstgM9ZCapkaFCwbQUZXYsT_Yrc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdektddgfedvucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepvfgrkhgrshhhihcuufgrkhgrmhhothhouceoohdqthgrkhgrshhhihessh
-    grkhgrmhhotggthhhirdhjpheqnecuggftrfgrthhtvghrnhephefhhfettefgkedvieeu
-    ffevveeufedtlefhjeeiieetvdelfedtgfefuedukeeunecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhho
-    tggthhhirdhjphdpnhgspghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtg
-    hpthhtohepphhsthgrnhhnvghrsehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhn
-    uhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpd
-    hrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:ITggZ5H8AVDwHhj5XWaKwjmlz4Ht4VuPmoE5GweB3AtvQBrzjUWwZQ>
-    <xmx:ITggZxWUsqmUFpMqhTLx0jzajltPB21Cv3d7XAnmHbJRmb0bMirVdQ>
-    <xmx:ITggZ0OHVuyp8I4HKusz-foPr-KlAUgOwyEbH0k8jlyG7FCJSrtOIw>
-    <xmx:ITggZw1bv5wasf2IawOpCt5r64xKim9t4kmV3uJXXGPlrPajq2XpqQ>
-    <xmx:ITggZ0RygUTP7uD6NmFgkw7E07dwizLIMSOzEcuf_6DSuX1x3XF5Cduu>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 28 Oct 2024 21:19:28 -0400 (EDT)
-Date: Tue, 29 Oct 2024 10:19:24 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] firewire: ohci: Replace deprecated PCI functions
-Message-ID: <20241029011924.GA260237@workstation.local>
-Mail-Followup-To: Philipp Stanner <pstanner@redhat.com>,
-	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20241028094440.19115-3-pstanner@redhat.com>
+	s=arc-20240116; t=1730165009; c=relaxed/simple;
+	bh=QEfibKuizgvY52dQkaX6PJdG13PMDH4fxQ+Iq/k73KU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P3qxo0mFNiDw2F87VegfH0ufFQNs4un5+wit6GENlL4heim+FvmZJqWtDWsw/oK0u4NZHawJ+AczS6DOEDs2E0Wk0dioRsB1ID7zpNOkxNtJs1hjo5G/4ampYtSaZ6gpRxGRkxsSW8J/dFCMj55FjSVaa3tfXjsd0Ag0YMdpK/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOYVcn1b; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288a90e4394so2417781fac.0;
+        Mon, 28 Oct 2024 18:23:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730165006; x=1730769806; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sk1dZREUQVGIecYh311eheCmxNasMewq/5f/DZTF0Vs=;
+        b=JOYVcn1btBP9Iv28SNEQOikXkvheW6NtQ0UdSC2MeBsDQ5LD3oi5Vma/97ppx7qi1u
+         K9ZH3k5FBoprIwNx5mO2EGT+9dO5imOtvrfFSxlKKpYY/qiQE4RUNaNy1F09O91sDpQM
+         INeG9ourQmGF4JbWubSyKjUe85xaY7EVrPg+Uo1fGIoUvhMC78n7K1Jr58ShjI0Soq8s
+         PaXy5afXZ1DOy5ZSTECDKlNw+R8kX8OzkpgpLa5e14wXZ0+w2LqK01AhzgSdYlmJh9Lo
+         ilBDcp24f2xlIwAys4ihGNS4/lRbuWIGel02aFpE2bSm91Ulq2SYvZH3Rkf6WXLCJOEm
+         I23A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730165006; x=1730769806;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sk1dZREUQVGIecYh311eheCmxNasMewq/5f/DZTF0Vs=;
+        b=GdqldLWbkjM1tOIrN6e8nBxnCXgoPVDblfHaPYRp3F/iMjsYT7mFUqvKfE49w49lI7
+         /xRCTwyOwf2fFtaMqu2+COf+dWPsYR2WCcWjluKImp0VLeWmpGqnLPwRoaeg0U4mB57M
+         bKvFR2Ce8QdmHA6xKVTQDoAuv1VBwLIsel4feEV8XMRg9w/YlKTgBt6rdxKc5hUPPr2r
+         2XRvE2IHjc6c/uS9slL8lfea2L13AZR0GHCBqiFAk+dzCB3nv7xD17PzYcnc6+XCi0sh
+         jf44fRAU1Lw86ATdpl8BYaplHYLaquLpGZ+vMRSrxNW1Su3ed1BQIsTLW4/IdQYZSQnf
+         qy8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUmWNIeEOlD7PUh5PNlrpc1H8Cy0oOlYqN8T1yzrR4FVmhtt4HoqZB+JoLVVznLWBeTakDvGP5jx/+f@vger.kernel.org, AJvYcCUu++3XPbytKPbowy/kPRXxoUc4cCCYuMV1GlwWP7XVZ8x5TXHJ/EXxreLRO2W0/ex9+ZB0X2bhncDx2DVY@vger.kernel.org, AJvYcCXJO0b9NfO8/EX76HzK30TrWrhZzNYAeK8PbpgI4erbqYO1YHEltfpic4Gen84OPOlSHIKbBn8dCfskqQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw9xERumQ9XxxRdgEj1b8ID/h36Uu9iKkjpnVMVsWMryuWklkS
+	uhZvYfAfbB3+RqDiJVeOmhMFYtNomDm+UejE4gTisU3bg9DtFP+bRK/1SOsX
+X-Google-Smtp-Source: AGHT+IHWlqEV6BxbZIE4WDegspeRBJZliX4tFPnZbewy2MWHbK07FHcV9Rw3Pe924sDNMakmCs4aYQ==
+X-Received: by 2002:a05:6870:912a:b0:288:6d23:5f24 with SMTP id 586e51a60fabf-29051d493d3mr9099606fac.31.1730165006551;
+        Mon, 28 Oct 2024 18:23:26 -0700 (PDT)
+Received: from localhost.localdomain ([122.8.183.87])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2903824c853sm2494682fac.51.2024.10.28.18.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 18:23:25 -0700 (PDT)
+From: Chen Wang <unicornxw@gmail.com>
+To: linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	inochiama@outlook.com,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: Chen Wang <unicorn_wang@outlook.com>
+Subject: [PATCH] dt-bindings: pinctrl: correct typo of description for cv1800
+Date: Tue, 29 Oct 2024 09:23:12 +0800
+Message-Id: <20241029012312.3448287-1-unicornxw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028094440.19115-3-pstanner@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-Hi,
+From: Chen Wang <unicorn_wang@outlook.com>
 
-On Mon, Oct 28, 2024 at 10:44:42AM +0100, Philipp Stanner wrote:
-> pcim_iomap_regions() and pcim_iomap_table() have been deprecated in
-> commit e354bb84a4c1 ("PCI: Deprecate pcim_iomap_table(),
-> pcim_iomap_regions_request_all()").
-> 
-> Replace these functions with pcim_iomap_region().
-> 
-> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> ---
->  drivers/firewire/ohci.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+It should be PINMUX/PINMUX2, not GPIOMUX/GPIOMUX2, see
+<dt-bindings/pinctrl/pinctrl-cv1800b.h>.
 
-Oh, the API has been made available outside of PCI subsystem, great.
-Applied to for-next branch.
+Fixes: 64aa494de6fa ("dt-bindings: pinctrl: Add pinctrl for Sophgo CV1800 series SoC.")
+Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+---
+ .../devicetree/bindings/pinctrl/sophgo,cv1800-pinctrl.yaml      | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/pinctrl/sophgo,cv1800-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/sophgo,cv1800-pinctrl.yaml
+index 1e6a55afe26a..feb4785a3fac 100644
+--- a/Documentation/devicetree/bindings/pinctrl/sophgo,cv1800-pinctrl.yaml
++++ b/Documentation/devicetree/bindings/pinctrl/sophgo,cv1800-pinctrl.yaml
+@@ -58,7 +58,7 @@ patternProperties:
+           pinmux:
+             description: |
+               The list of GPIOs and their mux settings that properties in the
+-              node apply to. This should be set using the GPIOMUX or GPIOMUX2
++              node apply to. This should be set using the PINMUX or PINMUX2
+               macro.
+ 
+           bias-pull-up:
 
-Thanks
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+-- 
+2.34.1
 
-Takashi Sakamoto
 
