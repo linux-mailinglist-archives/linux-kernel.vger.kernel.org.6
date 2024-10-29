@@ -1,117 +1,174 @@
-Return-Path: <linux-kernel+bounces-387564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B347F9B52F9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:49:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F759B52F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:47:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7254D284587
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:49:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 745A22841AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541042076D5;
-	Tue, 29 Oct 2024 19:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="aXimRinc"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9669A20721D;
+	Tue, 29 Oct 2024 19:47:36 +0000 (UTC)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2A1A2076A9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CE720606D;
+	Tue, 29 Oct 2024 19:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730231367; cv=none; b=gcaHzVW68+PVkjNRPiIrcio7IJCKpw6tRb3V+PbI0jTBAqZf4bluvbvos/cwYuz/U/QdFg76W2uW5qDLN0uMoCmJky2kkNtYXMZ7kyVIg0hr6niOxL71stRuk8Kq2RMBhlg9H0NmqmZYRTY+ecE+gOqvJ1NHlMcERTi///cMqRI=
+	t=1730231256; cv=none; b=YSck0yQqd5SyiV6sPz3Vu+sooonsbh//qcjVIPtcVT908BUfIzycMJ4uoCo3c36jBibNS94G0n2V2Kn0gLPUDnXnu+AYIV4E0S6o5JoZzxc4+ELdzHx2h5d5XPUYig0QNDu8Zvo9/kN5YncpMLhqDZq+7ozoikdc0Rwo+9zIf1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730231367; c=relaxed/simple;
-	bh=Z8xb9xhDS6y7WP/ezrtNXh14jHanRgt0ZT397g/iMNw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Pu8rpkrcVZPAI9mwCGUyMAvFqIqikY6LJRuj0PEQtnHETqqf+ZOL7nguFyFEhhm6Z7Sfv0295wMGsVqbDbFTLTsOzaiHMt8KpDP7jlc9PN5zEpaFJd/05AZpUIlI94SyNKxASznRbCbAGv8LxXirufhLYgSSazEId9iBhzJPNAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=aXimRinc; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1730231360; x=1730836160; i=markus.elfring@web.de;
-	bh=KVa6sUoEsISVLJqp9YsSnJ2+WbranhY7bY8+FHwY44g=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=aXimRincFyn0PlgowV7FNHByhEhkYIXLOUdGYARKCj90/EwuDo1QfYsfTZK032WL
-	 DD9LHTe57bjutJdEMBWa6ANusXGrxS7hAO0Mujn9HTOt18Dk3fP+VQszNaGHlXh0R
-	 7uIrNhJeuOcui2tL1QRFuNhlfJKIffWP8kF+s1+6ZJrd3qN1w9/6ZcTOe0dDSgSYd
-	 hHRUzbkIdkLrAdqhtUalH9I76QleZj19iMN19fuuiLTtm+kjwkCVpjSQJUiaFVIVA
-	 kx6ZtRKpSz7O2H2PNMtNqUdhM6C/BTldt2RKWKf8fIaMIeAOB67OSJl09btIOZ/Ia
-	 l2lJbYmkR+k+uzh9GQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MNORC-1tUf2q1qyA-00QntE; Tue, 29
- Oct 2024 20:43:42 +0100
-Message-ID: <58a77f5d-74a1-4ea2-942e-a352f30f66bd@web.de>
-Date: Tue, 29 Oct 2024 20:43:28 +0100
+	s=arc-20240116; t=1730231256; c=relaxed/simple;
+	bh=3cZeqCLHBMhECRg9kEM70AUFfXRiDjWGNpFY4l/a1gY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ckUM3R9uPd+AyiyVFLv6jA+1tjd7RlSE/xVMOR658lzQcUDrK90yczzoq0e827LGhG4lq5tgNNXeZtcnUffC5KPjA1mfE7PpVrS4MLssNIoFwXYC7I7S6vOR+cSlQC7uXYUhkAtzj4hvqlIUXsI1IjFSOPxPkQOIu/5V0a6F/TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=sung-woo.kim
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6ea11b32ab4so1981477b3.0;
+        Tue, 29 Oct 2024 12:47:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730231253; x=1730836053;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PSXt0bPWptzeFjc/V3fxmhGgzYcRQVIhaPLOnFaRxT0=;
+        b=po9qOh0WdZmJvgXinsAxtdaJ+yhUQip8pZnxtAj7NojpC3TIgN6emBacyuM424GZi6
+         AN1aSmN4QnvznS0cmr9/xhdHhadUmv8+RBLEtGj3hTR5i4Qd1t/6HESWa7pBzL7DvBP/
+         vtrlEguMLTfdHflfFWWrn7PQT3pORPXGo71m1bl6iEqs36VbEbKMuMd42m19iMwraEY+
+         pGLMTbKdZpC5on/7oxBmdsVD/223lT0w0EN/Y1whfTwIEoQapv5Lt2kYvLgsD8vjk9Wv
+         I3GhNzz9zGkxbdFlYhvW3O/sXqLYJF6GgIwVKesg6UuFmw8Yw3HQclzZDVLUb5fEgnTI
+         yELg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSR7oTVVUiegvhXYy4Kfabtfz9Gf8koBXShVotwJFcCL3+Ogeuoh08c/l6u5eIuOS42Tuz6JJYnvURMMFu7CI=@vger.kernel.org, AJvYcCXe4k96/7pAMOzAJF4yuTwHIFjct8lip/dBCbaBA0TltE1WcFoNtZ3/5u5x7/218uOVgmxCuxqP1cga43qt@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Y1sfZMAfqLUJAZI1WGsscaFb3yLH7IWaMvJAIrdnZLGFqaI3
+	v1Y0bR/FN9EXAs9C4M9sutjaVJ+BvCOgtxVpkG2Z5m0ouKO/VPp5
+X-Google-Smtp-Source: AGHT+IGESn08yCct6swgl0EFfH1Gdg2/NCOl3miUz3hNf2Zg1dK7HiEgZOHy2IiC60OrHIASBCfgnA==
+X-Received: by 2002:a05:690c:f93:b0:6ea:1230:2467 with SMTP id 00721157ae682-6ea2bf552f8mr28322007b3.2.1730231252732;
+        Tue, 29 Oct 2024 12:47:32 -0700 (PDT)
+Received: from tofu.cs.purdue.edu ([128.210.0.165])
+        by smtp.googlemail.com with ESMTPSA id 00721157ae682-6ea1229a15dsm9425967b3.136.2024.10.29.12.47.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 12:47:31 -0700 (PDT)
+From: Sungwoo Kim <iam@sung-woo.kim>
+To: luiz.dentz@gmail.com
+Cc: daveti@purdue.edu,
+	benquike@gmail.com,
+	Sungwoo Kim <iam@sung-woo.kim>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Johan Hedberg <johan.hedberg@gmail.com>,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] Bluetooth: hci: fix null-ptr-deref in hci_read_supported_codecs
+Date: Tue, 29 Oct 2024 19:44:41 +0000
+Message-ID: <20241029194505.2094645-2-iam@sung-woo.kim>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Li Huafei <lihuafei1@huawei.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Christophe Jaillet <christophe.jaillet@wanadoo.fr>,
- David Airlie <airlied@gmail.com>, Lijo Lazar <lijo.lazar@amd.com>,
- Simona Vetter <simona@ffwll.ch>
-Cc: LKML <linux-kernel@vger.kernel.org>, Hawking Zhang
- <Hawking.Zhang@amd.com>, Le Ma <le.ma@amd.com>, Likun Gao
- <Likun.Gao@amd.com>, Ma Jun <Jun.Ma2@amd.com>,
- Pratap Nirujogi <Pratap.Nirujogi@amd.com>, Tim Huang <Tim.Huang@amd.com>,
- Victor Lu <victorchengchi.lu@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- Yifan Zhang <yifan1.zhang@amd.com>
-References: <20241029202758.2764535-1-lihuafei1@huawei.com>
-Subject: Re: [PATCH v3] drm/amdgpu: Fix the memory allocation issue in
- amdgpu_discovery_get_nps_info()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241029202758.2764535-1-lihuafei1@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:1eb1mV/sniekV3cSxKRVEOdxvIGkwE3QOfs5C6TbZLC6LbNAORa
- npSbXL1ta54UfT/tJNlaAU7eceDkl2BOSVQszkTX0QzOpY299Uejg0csBbz9Q9oarjvZILm
- rg/OpEwzNhIyXbR4DJtJcYZ/2Pk+RT06aTl8wbqtFMpq2q+bEN8ic49EbISdHBrrzwB83L0
- 1ftm2HB80Bxp2+nVLxT2g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:VBWmokV05Og=;7saiEzx3dBT5lo9PdehhJBMSDfo
- KkXuROz4Y80mL5YMSFi4lqorDsZ9W0A+NWYkU5GbQYvD7YzhY1YzonLtAi3p5rAbaTIW9PP14
- pSqwiXSCQmE3lWzxkl5bgqSTU8OUGqyZ/MXTyaQJpnTxaQlW5nqEQB6ZZDN++3Nev++od1AyM
- 1FQMD1EAkwETFC71ImMjY7dqYOpP3MQiCLFKttOeXrJX2BUtEwm7h3UFXfKdmUs/Amu5ujOq3
- Q+ETQd8jU9aWwFDl1bFOTQNhw8qF+mU4Sqn0PdmXpctm8M6C/30tyTMcdyTg/4EmPBtwlcbMV
- oRBVpl7ibvf8rSlMYPmNODOXwlYXaTUleDFNlbxLD+mgEm2qCiYWrYFe21uB4hlytHXPBIjLt
- mTipHVnbZNPEeJwMzDcg069378pFWIWADH6D7WanpYHmi1XdRnUg4CyXIAZsxOOya8JW+NyQ8
- D2O/y6iSjWXxG/4tAGCGPLYQdrWgi+jXhhSJWQzCJbEidCf7lsSVYTGDHpNeh/6lf/qgvGJp+
- 9FYmgI/mHAeq9LKSgBqbpEKYCOV1KzddZpoQUReBECTMsTYdgcR96RnmOc1++MM2I7SwPyocM
- WbV9z7scmApGDa7JAqC32bSLmOZGaCLUuIdxrq2uShMIPEuXPp4cToqL4UkS9c7Qd10ccJ1YR
- hoosGl/DVvqTwN9m3MUNjJlDzCVvNZAUrmQ1j0vGMBJBivz0+XItZjXJtUK6UFOHR5banmYA2
- VTgbygXqvNnWS4n2wx+/5nAxcHAfSE7DjfQy6bcsKdbiCuJB9al7OqDvev9oop5dwsFdJFG+V
- 5EPbJ42idniKqT53xTh7ecSw==
+Content-Transfer-Encoding: 8bit
 
-=E2=80=A6
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
-> @@ -1757,11 +1757,13 @@ int amdgpu_discovery_get_nps_info(struct amdgpu_=
-device *adev,
->
->  	switch (le16_to_cpu(nps_info->v1.header.version_major)) {
->  	case 1:
-> +		mem_ranges =3D kvcalloc(nps_info->v1.count,
-> +				      sizeof(struct amdgpu_gmc_memrange),
-> +				      GFP_KERNEL);
-=E2=80=A6
+Fix __hci_cmd_sync_sk() to return not NULL for unknown opcodes.
 
-Can the specification =E2=80=9Csizeof(*mem_ranges)=E2=80=9D be more approp=
-riate here?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.12-rc5#n941
+__hci_cmd_sync_sk() returns NULL if a command returns a status event.
+However, it also returns NULL where an opcode doesn't exist in the
+hci_cc table because hci_cmd_complete_evt() assumes status = skb->data[0]
+for unknown opcodes.
+This leads to null-ptr-deref in cmd_sync for HCI_OP_READ_LOCAL_CODECS as
+there is no hci_cc for HCI_OP_READ_LOCAL_CODECS, which always assumes
+status = skb->data[0].
 
-Regards,
-Markus
+KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
+CPU: 1 PID: 2000 Comm: kworker/u9:5 Not tainted 6.9.0-ga6bcb805883c-dirty #10
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/2014
+Workqueue: hci7 hci_power_on
+RIP: 0010:hci_read_supported_codecs+0xb9/0x870 net/bluetooth/hci_codec.c:138
+Code: 08 48 89 ef e8 b8 c1 8f fd 48 8b 75 00 e9 96 00 00 00 49 89 c6 48 ba 00 00 00 00 00 fc ff df 4c 8d 60 70 4c 89 e3 48 c1 eb 03 <0f> b6 04 13 84 c0 0f 85 82 06 00 00 41 83 3c 24 02 77 0a e8 bf 78
+RSP: 0018:ffff888120bafac8 EFLAGS: 00010212
+RAX: 0000000000000000 RBX: 000000000000000e RCX: ffff8881173f0040
+RDX: dffffc0000000000 RSI: ffffffffa58496c0 RDI: ffff88810b9ad1e4
+RBP: ffff88810b9ac000 R08: ffffffffa77882a7 R09: 1ffffffff4ef1054
+R10: dffffc0000000000 R11: fffffbfff4ef1055 R12: 0000000000000070
+R13: 0000000000000000 R14: 0000000000000000 R15: ffff88810b9ac000
+FS:  0000000000000000(0000) GS:ffff8881f6c00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f6ddaa3439e CR3: 0000000139764003 CR4: 0000000000770ef0
+PKRU: 55555554
+Call Trace:
+ <TASK>
+ hci_read_local_codecs_sync net/bluetooth/hci_sync.c:4546 [inline]
+ hci_init_stage_sync net/bluetooth/hci_sync.c:3441 [inline]
+ hci_init4_sync net/bluetooth/hci_sync.c:4706 [inline]
+ hci_init_sync net/bluetooth/hci_sync.c:4742 [inline]
+ hci_dev_init_sync net/bluetooth/hci_sync.c:4912 [inline]
+ hci_dev_open_sync+0x19a9/0x2d30 net/bluetooth/hci_sync.c:4994
+ hci_dev_do_open net/bluetooth/hci_core.c:483 [inline]
+ hci_power_on+0x11e/0x560 net/bluetooth/hci_core.c:1015
+ process_one_work kernel/workqueue.c:3267 [inline]
+ process_scheduled_works+0x8ef/0x14f0 kernel/workqueue.c:3348
+ worker_thread+0x91f/0xe50 kernel/workqueue.c:3429
+ kthread+0x2cb/0x360 kernel/kthread.c:388
+ ret_from_fork+0x4d/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Fixes: abfeea476c68 ("Bluetooth: hci_sync: Convert MGMT_OP_START_DISCOVERY")
+
+Signed-off-by: Sungwoo Kim <iam@sung-woo.kim>
+---
+v1 -> v2: make __hci_cmd_sync_sk() not return NULL
+v2 -> v3: elaborate reasoning
+
+ net/bluetooth/hci_sync.c | 18 +++++++++++-------
+ 1 file changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/net/bluetooth/hci_sync.c b/net/bluetooth/hci_sync.c
+index 9482bd562..c86f4e42e 100644
+--- a/net/bluetooth/hci_sync.c
++++ b/net/bluetooth/hci_sync.c
+@@ -206,6 +206,12 @@ struct sk_buff *__hci_cmd_sync_sk(struct hci_dev *hdev, u16 opcode, u32 plen,
+ 		return ERR_PTR(err);
+ 	}
+ 
++	/* If command return a status event skb will be set to NULL as there are
++	 * no parameters.
++	 */
++	if (!skb)
++		return ERR_PTR(-ENODATA);
++
+ 	return skb;
+ }
+ EXPORT_SYMBOL(__hci_cmd_sync_sk);
+@@ -255,6 +261,11 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev, u16 opcode, u32 plen,
+ 	u8 status;
+ 
+ 	skb = __hci_cmd_sync_sk(hdev, opcode, plen, param, event, timeout, sk);
++
++	/* If command return a status event, skb will be set to -ENODATA */
++	if (skb == ERR_PTR(-ENODATA))
++		return 0;
++
+ 	if (IS_ERR(skb)) {
+ 		if (!event)
+ 			bt_dev_err(hdev, "Opcode 0x%4.4x failed: %ld", opcode,
+@@ -262,13 +273,6 @@ int __hci_cmd_sync_status_sk(struct hci_dev *hdev, u16 opcode, u32 plen,
+ 		return PTR_ERR(skb);
+ 	}
+ 
+-	/* If command return a status event skb will be set to NULL as there are
+-	 * no parameters, in case of failure IS_ERR(skb) would have be set to
+-	 * the actual error would be found with PTR_ERR(skb).
+-	 */
+-	if (!skb)
+-		return 0;
+-
+ 	status = skb->data[0];
+ 
+ 	kfree_skb(skb);
+-- 
+2.43.0
+
 
