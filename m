@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-386705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49A329B472E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:47:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25389B473B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:48:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26881F240B4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:47:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A88F1F2416E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8BE204F83;
-	Tue, 29 Oct 2024 10:47:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC68205ABE;
+	Tue, 29 Oct 2024 10:47:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="u0XgfU04"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="wxhqG3Qs"
+Received: from mxout4.routing.net (mxout4.routing.net [134.0.28.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 746292038A1;
-	Tue, 29 Oct 2024 10:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B041204938;
+	Tue, 29 Oct 2024 10:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198841; cv=none; b=Sp1nBlLy48FOkjUrcHYXX6n1gccy44LzVjzkU3OWkRnCPQg25y9ytB/sWCxjLe8wATLBJdVs+f+X+jYOCsNdqQg96Jk2kbWNNE2DyQ2tD7AVX5ysJZasMwKpRpDGqmTVAmJcq8BfROt+Uw/i39mwXocmvEzt/CUUYMde6zPVoS0=
+	t=1730198877; cv=none; b=HrfdagGlv+RQ5Cng6G7LiRTxpeqaBfmVqdfnCMXFsJB+OP4POsTXMLdzr0voTVComl1hN1dZT48l+HUGSca/BmoFE/bszNgnpRX2WqJ44UURRver1RFQGpl6qz0zW67lhmMx40c6GbTbZ2oZYrNxAotP3VgXnXG+ID/obm+ZEXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198841; c=relaxed/simple;
-	bh=wcXSyfVhUyTTW2bVatoEFPlNhjRtqGcn6uFsyADHr3Y=;
+	s=arc-20240116; t=1730198877; c=relaxed/simple;
+	bh=t0dCfe1NlZHydGMJfHitBBcy4Sko/G3WOMQon2SgtXI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PUCF1Q86kN3HZNuNXQbq2wZxDM9AEVnY4JsPeUvBo9UNARawG4ban3oNvsWyEVYAgjOi8Djyv/tY6LDQGDN2Y1Q4EyDWfIJUzqPXzIuH73WiHnP7c/nn3lcJL9EvNYzzscZ2qTwMPf0rV79tCa5WBycIX5cMmFnlH8uFKVb4Zfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=u0XgfU04; arc=none smtp.client-ip=134.0.28.11
+	 MIME-Version; b=CFVg9CWNQhOp7buen4DX1xyqshgrrXPt4VD5ip4BtgAAk37UU8IWYjdzi97HSVypE5RsFAhmNA3zqA3zegLIN/qEfOlvswGxOJwb0wLG+m2WFihjdLKQnXgtGTuq4AymlcoI5HfWMcpIYCPfX2T4gAmQ3L8z5htHTy7xhIVbJM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=wxhqG3Qs; arc=none smtp.client-ip=134.0.28.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
-	by mxout1.routing.net (Postfix) with ESMTP id 840354045F;
-	Tue, 29 Oct 2024 10:39:44 +0000 (UTC)
+	by mxout4.routing.net (Postfix) with ESMTP id 1F899100947;
+	Tue, 29 Oct 2024 10:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1730198384;
+	s=20200217; t=1730198385;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=siS4Ij/9KFfzlVXtrs88d9k+J5svJ3v1XrN4lg+fWhM=;
-	b=u0XgfU04tzoXWArG3S64Qjmpqi8GKyM3rJkkQvzk74md7Em82v7uynqJFWeBo1YGdA8GCy
-	/PvY7aKFVl5rDTeB38du3nEDfqBpAOkkfNk5l2AoSBiHEIPm+rLHsp2yoSijzZoc6hiP4Z
-	uoZtw6QMiPXhnKHKx5c95dwn85Ryzt4=
+	bh=9/KolqS0YYWQP0oixitj94Pxcm9KCNLC3CIXSUPwlb4=;
+	b=wxhqG3QsBQclIRalcvgxZPfIZNd/HWojdWrKBZkxleWOwndX59kkgdiGg8ilZKyChTGlwd
+	CUU+65n493IfSzS5XSYBOiYJA5AK18ttW2xIEbx1kzkRNCmKBW+hzPUfYOzw8eipST/Qeh
+	2pYhUx41BJJlkaHfvWhG9aFsUqX03So=
 Received: from frank-u24.. (fttx-pool-80.245.73.173.bambit.de [80.245.73.173])
-	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id E22293603D0;
-	Tue, 29 Oct 2024 10:39:43 +0000 (UTC)
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 7FA053600D8;
+	Tue, 29 Oct 2024 10:39:44 +0000 (UTC)
 From: Frank Wunderlich <linux@fw-web.de>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Frank Wunderlich <frank-w@public-files.de>,
 	linux-kernel@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [RFC v1 02/14] arm64: dts: mediatek: mt7988: add labels for i2c nodes
-Date: Tue, 29 Oct 2024 11:39:21 +0100
-Message-ID: <20241029103937.45852-3-linux@fw-web.de>
+Subject: [RFC v1 03/14] arm64: dts: mediatek: mt7988: add labels for usb nodes
+Date: Tue, 29 Oct 2024 11:39:22 +0100
+Message-ID: <20241029103937.45852-4-linux@fw-web.de>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241029103937.45852-1-linux@fw-web.de>
 References: <20241029103937.45852-1-linux@fw-web.de>
@@ -70,7 +70,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Mail-ID: 4603ef82-d7cf-4f9f-9a19-43186a268245
+X-Mail-ID: e21543fd-2459-4976-ab15-093cffde658a
 
 From: Frank Wunderlich <frank-w@public-files.de>
 
@@ -78,40 +78,31 @@ Add Labels to allow easier referencing in dtsi and board dts.
 
 Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 ---
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index 5b93c2c843e0..0aa789da5592 100644
+index 0aa789da5592..6d2ea317f9b2 100644
 --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
 +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -211,7 +211,7 @@ serial@11000200 {
+@@ -250,7 +250,7 @@ i2c2: i2c@11005000 {
  			status = "disabled";
  		};
  
--		i2c@11003000 {
-+		i2c0: i2c@11003000 {
- 			compatible = "mediatek,mt7981-i2c";
- 			reg = <0 0x11003000 0 0x1000>,
- 			      <0 0x10217080 0 0x80>;
-@@ -224,7 +224,7 @@ i2c@11003000 {
- 			status = "disabled";
+-		usb@11190000 {
++		ssusb0: usb@11190000 {
+ 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+ 			reg = <0 0x11190000 0 0x2e00>,
+ 			      <0 0x11193e00 0 0x0100>;
+@@ -264,7 +264,7 @@ usb@11190000 {
+ 			clock-names = "sys_ck", "ref_ck", "mcu_ck", "dma_ck", "xhci_ck";
  		};
  
--		i2c@11004000 {
-+		i2c1: i2c@11004000 {
- 			compatible = "mediatek,mt7981-i2c";
- 			reg = <0 0x11004000 0 0x1000>,
- 			      <0 0x10217100 0 0x80>;
-@@ -237,7 +237,7 @@ i2c@11004000 {
- 			status = "disabled";
- 		};
- 
--		i2c@11005000 {
-+		i2c2: i2c@11005000 {
- 			compatible = "mediatek,mt7981-i2c";
- 			reg = <0 0x11005000 0 0x1000>,
- 			      <0 0x10217180 0 0x80>;
+-		usb@11200000 {
++		ssusb1: usb@11200000 {
+ 			compatible = "mediatek,mt7988-xhci", "mediatek,mtk-xhci";
+ 			reg = <0 0x11200000 0 0x2e00>,
+ 			      <0 0x11203e00 0 0x0100>;
 -- 
 2.43.0
 
