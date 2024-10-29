@@ -1,95 +1,141 @@
-Return-Path: <linux-kernel+bounces-386075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC77B9B3ED3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:06:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E3709B3ED8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:07:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 918E3283A92
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:06:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35689B224ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:07:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8F27802;
-	Tue, 29 Oct 2024 00:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D3F10F9;
+	Tue, 29 Oct 2024 00:07:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qP7Oelne"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D6Z4hoJv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB04621;
-	Tue, 29 Oct 2024 00:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE981361;
+	Tue, 29 Oct 2024 00:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730160368; cv=none; b=nszE/HvEK27dbSXkG2PbAW/RMHHsnJyL5NO//Z2trR/+bxCOYnTVvjOB3mXaPNHXEkVUntXKQX4/PQ2BNTF6sfWgn3w8rKAHy6xgr1ENfT8L139zdTezw/YFJ5jn12YRbiNUOcozuUQ5ERB1izpxtBo/PjI2AzGy63d7h8vO1q8=
+	t=1730160458; cv=none; b=gjFDuDII6nLoLuIw0MRc2j9dLtyWN25z6R2XwRqQHG27KFekKGE7ZJBV3T03N2lJCtUsYAXMCy6Iwq3I9yFtp0fgQHbUaD4bKk5ut5NERpF1U8Rojgj2Zih2KFBUQ1PaX18KK0uWZ4ESxkQg6RdcpONKjzt4xTTbL2O3kCz9ayY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730160368; c=relaxed/simple;
-	bh=5ErTGv0+DuZd39+uN4cny7CaDy/hZ8zMZpANSPaGf5U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To; b=TDhXjix14LKPCDe8WHzqadgEq6CZU5vBmCQgNxLusM26+d62akr2oZ8j/argRmuM7xtFKYSLyFxVpO0qjkMxifs2uSFjgWQYZ2p1RvTSjXFOO9YCiNgChijDOTpnYU3tkjGo4y6HcPfCzs9eQzCagatjsp816gtRr8njFck2ft8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qP7Oelne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4ED9CC4CEC3;
-	Tue, 29 Oct 2024 00:06:07 +0000 (UTC)
+	s=arc-20240116; t=1730160458; c=relaxed/simple;
+	bh=KptdeRRbU7AnepZinMT4SpFDd5VqMpOu7a8/xVk6MK4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Md38/4u/pkoYHguG84e4Uq5lfSJwLI6oAcWGajEkgeA6rv3S9Yy0EXYeKuI1QBfzy8zvy/sOXGcr6x1wvDDTPwyj/m1Q/s4RtwBQFKZMMm/ra3ccbYUHy1SnfHwMpR3FaTHVcDVR0mF4wJu375nREKV0O+c0YEMrQ9vlyyQovbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D6Z4hoJv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99BF1C4CEC3;
+	Tue, 29 Oct 2024 00:07:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730160367;
-	bh=5ErTGv0+DuZd39+uN4cny7CaDy/hZ8zMZpANSPaGf5U=;
-	h=Date:Cc:Subject:From:To:From;
-	b=qP7OelneO+aAm36IOjRSIi47O2t2Ma8ADai9ppd+5KSUey0DcWzYCI6H+iatbwIQ3
-	 aSttWVbiKaXpTVvwN9lmRgYv+v3RZ904KsERtzrrrzx13Dvi47qbAt8rm2CQe62F+R
-	 Bgow/yXs5nXWZukP8ti7JH0ZRBmwVyRM7jrB1SRdxtbr6u6y6v2hToJD55AjhaGKXR
-	 rB7LlrvwWXaC2pYgFCc4KjUEqRAqN2EzGgF2gI2IsgxT0M4mmpDKkgPQOQhaL5pS+i
-	 f60XWqUD+LaK23n7IkeF37m90rmG7oALyJ8aZpKfqIMJxT+i79G7xtXovtZ8XLSJoM
-	 UHb8xdwTsrQbg==
+	s=k20201202; t=1730160457;
+	bh=KptdeRRbU7AnepZinMT4SpFDd5VqMpOu7a8/xVk6MK4=;
+	h=Date:From:To:Cc:Subject:From;
+	b=D6Z4hoJvuhwdU6BN12XsAPkOdT8qQOy2s/6Mz48u0SWvK/ahHhi4JTD7lbdNvbhqG
+	 Xm7gGykod2Uc7jTvvQm5kfE9kFRrbpRV5kZHoXnCCyGKMgCJ137HAtTs6QFMQ8mS5c
+	 kyfuw4mE+NooBFilKTDILkam9WXAODVCr8SnCf21eEjMOuIa80MoXcIZSysYBghwhr
+	 3T9arPC/Xjf1XwyF1p8ddk4cflUPHIDrSX5Ck5UZt80lPWbKb19vRJsZraiUbfErN9
+	 zLQUD2IyT78WTsjG72CVpZ37NHjdfJiCTX9o6N3CXSFziA2rbYc8t8bIF6iBirOH7i
+	 WLyCX2RLcNPVQ==
+Date: Mon, 28 Oct 2024 14:07:36 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Paolo Bonzini <pbonzini@redhat.com>, Luca Boccassi <bluca@debian.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>
+Cc: kvm@vger.kernel.org, cgroups@vger.kernel.org,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	linux-kernel@vger.kernel.org
+Subject: cgroup2 freezer and kvm_vm_worker_thread()
+Message-ID: <ZyAnSAw34jwWicJl@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 29 Oct 2024 02:06:02 +0200
-Message-Id: <D57UNU1ZUXJS.E2RDQDB8XFKI@kernel.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "David Howells" <dhowells@redhat.com>, <keyrings@vger.kernel.org>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] TPM DEVICE DRIVER: tpmdd-next-6.12-rc6
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Linus Torvalds" <torvalds@linux-foundation.org>
-X-Mailer: aerc 0.18.2
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The following changes since commit 81983758430957d9a5cb3333fe324fd70cf63e7e=
-:
+Hello,
 
-  Linux 6.12-rc5 (2024-10-27 12:52:02 -1000)
+Luca is reporting that cgroups which have kvm instances inside never
+complete freezing. This can be trivially reproduced:
 
-are available in the Git repository at:
+  root@test ~# mkdir /sys/fs/cgroup/test
+  root@test ~# echo $fish_pid > /sys/fs/cgroup/test/cgroup.procs
+  root@test ~# qemu-system-x86_64 --nographic -enable-kvm
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jarkko/linux-tpmdd.git tags=
-/tpmdd-next-6.12-rc6
+and in another terminal:
 
-for you to fetch changes up to df745e25098dcb2f706399c0d06dd8d1bab6b6ec:
+  root@test ~# echo 1 > /sys/fs/cgroup/test/cgroup.freeze
+  root@test ~# cat /sys/fs/cgroup/test/cgroup.events
+  populated 1
+  frozen 0
+  root@test ~# for i in (cat /sys/fs/cgroup/test/cgroup.threads); echo $i; cat /proc/$i/stack; end 
+  2070
+  [<0>] do_freezer_trap+0x42/0x70
+  [<0>] get_signal+0x4da/0x870
+  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
+  [<0>] syscall_exit_to_user_mode+0x73/0x120
+  [<0>] do_syscall_64+0x87/0x140
+  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  2159
+  [<0>] do_freezer_trap+0x42/0x70
+  [<0>] get_signal+0x4da/0x870
+  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
+  [<0>] syscall_exit_to_user_mode+0x73/0x120
+  [<0>] do_syscall_64+0x87/0x140
+  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  2160
+  [<0>] do_freezer_trap+0x42/0x70
+  [<0>] get_signal+0x4da/0x870
+  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
+  [<0>] syscall_exit_to_user_mode+0x73/0x120
+  [<0>] do_syscall_64+0x87/0x140
+  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+  2161
+  [<0>] kvm_nx_huge_page_recovery_worker+0xea/0x680
+  [<0>] kvm_vm_worker_thread+0x8f/0x2b0
+  [<0>] kthread+0xe8/0x110
+  [<0>] ret_from_fork+0x33/0x40
+  [<0>] ret_from_fork_asm+0x1a/0x30
+  2164
+  [<0>] do_freezer_trap+0x42/0x70
+  [<0>] get_signal+0x4da/0x870
+  [<0>] arch_do_signal_or_restart+0x1a/0x1c0
+  [<0>] syscall_exit_to_user_mode+0x73/0x120
+  [<0>] do_syscall_64+0x87/0x140
+  [<0>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-  tpm: Lazily flush the auth session (2024-10-29 00:46:20 +0200)
+The cgroup freezing happens in the signal delivery path but
+kvm_vm_worker_thread() thread never call into the signal delivery path while
+joining non-root cgroups, so they never get frozen. Because the cgroup
+freezer determines whether a given cgroup is frozen by comparing the number
+of frozen threads to the total number of threads in the cgroup, the cgroup
+never becomes frozen and users waiting for the state transition may hang
+indefinitely.
 
-----------------------------------------------------------------
-Hi
+There are two paths that we can take:
 
-Addresses a significant boot-time delay issue:
+1. Make kvm_vm_worker_thread() call into signal delivery path.
+   io_wq_worker() is in a similar boat and handles signal delivery and can
+   be frozen and trapped like regular threads.
 
-https://bugzilla.kernel.org/show_bug.cgi?id=3D219229
+2. Keep the count of threads which can't be frozen per cgroup so that cgroup
+   freezer can ignore these threads.
 
-BR, Jarkko
+#1 is better in that the cgroup will actually be frozen when reported
+frozen. However, the rather ambiguous criterion we've been using for cgroup
+freezer is whether the cgroup can be safely snapshotted whil frozen and as
+long as the workers not being frozen doesn't break that, we can go for #2
+too.
 
-----------------------------------------------------------------
-Jarkko Sakkinen (3):
-      tpm: Return tpm2_sessions_init() when null key creation fails
-      tpm: Rollback tpm2_load_null()
-      tpm: Lazily flush the auth session
+What do you guys think?
 
- drivers/char/tpm/tpm-chip.c       |  10 ++++
- drivers/char/tpm/tpm-dev-common.c |   3 ++
- drivers/char/tpm/tpm-interface.c  |   6 ++-
- drivers/char/tpm/tpm2-sessions.c  | 100 +++++++++++++++++++++++-----------=
-----
- 4 files changed, 77 insertions(+), 42 deletions(-)
+Thanks.
+
+-- 
+tejun
 
