@@ -1,70 +1,45 @@
-Return-Path: <linux-kernel+bounces-386217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660AB9B4092
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:42:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77B679B4095
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6ED41F22D92
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:42:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3710E282F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0BEC1DF73A;
-	Tue, 29 Oct 2024 02:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z2edLyAb"
-Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56B0A1F9406;
+	Tue, 29 Oct 2024 02:42:31 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7CAFBF0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB3D1F429A;
+	Tue, 29 Oct 2024 02:42:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730169744; cv=none; b=Y5ERqBo+YWdnc6MlXLIjNLWVc5mJgjMBv12LKRBgjGbthpNekMTGR2VZ6Q9m1qLOjyECgRZNVvyhpAFCOQtDPgTWxwk/LjOSZGgEVmWSa3I++y0hOLBKJ2Sc8l7QzVMnsB6+JD6B2SC7VnsY4FZkxnDhlt2CS3YuXZ+N4fgDSoM=
+	t=1730169750; cv=none; b=If5oC+ys2sNjMwb17R7YypBsl/unfM52N8Co0tjiIGeNwlHKECogF0xjVeVv7U8Y4qf18m0XwAfXwKEtg4HGt+/xIT3yCnEFul8+tbyq2eGxFHaEp4Ea2JcmzYKdKtKyyA/Kgb/A7C3wdLLVzQxlXladCHEuVV4mKVwOkBPSpgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730169744; c=relaxed/simple;
-	bh=PAjJ9Ou71Uqgdpy0Kz/QpxRFDbhbU7vB9xt2porGJQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jj6xdm6zpVKz1nw1UV4vAX2iDXJ3JCazPgXwGV+4zwuPagNIjECfODIeWJAqT4hi8LDKW0VhLBRuBf9ASeCp+8syHVjf2nBvZZIoc3sxsEjkZQc5emJ8xi5pT1vrboAltbVq/qXEJ/nOclr308qjdTnL1kAYsvuTI4fIS/g66NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z2edLyAb; arc=none smtp.client-ip=209.85.215.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7ea68af2f62so3963023a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:42:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730169741; x=1730774541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NhwueTBuyyDS6MSGHD4L/PRA/gmfkEl47Swjzb9s/GI=;
-        b=Z2edLyAbHhGFMd1vFhIcGOfI/bI+/x5zqS9VoPUi2+jG3tmA6NwW1FyDAsCpxGdkba
-         rRQmkxScsqGx3E8JfBinZPLPG28Y4KPHMkb5a8wF33ZjkkjNdwb1uB1gvEcoXNEntIt2
-         98U2lIyWS5219bOs+yPL5bsxC2bhNQyx4sns4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730169741; x=1730774541;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NhwueTBuyyDS6MSGHD4L/PRA/gmfkEl47Swjzb9s/GI=;
-        b=JSR1/7FTNsc35REwBgPzzTIMrNDYyQYJUPQhRmdE3dEXVBOM05NLq1UtT6+mvlLVKA
-         vjJ17itvydEg1EqvsOfgaNlAzXuO71D61DDECcJMzbaSPVofZkCl8NKxn7YCdf9suxRr
-         tEDxLWO2g6tRGcn4uMdrp4D1AX7Vrjnc3EFiiI0TBtPHk+/jVY7Zit0USqhb0Jf744rY
-         BllbcY492+oXSdeeVhoAT3SwZQ6fx2lKeqiKHie7h4fPpHBsH1TnxOOf0BNJghcZAEee
-         X7kZZHwG/39OCyQyUkPGK5wZP2Pk4sbPpph4dE0I6eaeFUlH6IcraJlFgq55cjCWR9wn
-         OqKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGVpeJixIa1JtRBD2LrnZ3WSGI4SKmtUKmz39MUeGejp+I8/LoqILuTAh/T7gqCn0ySOo/27Vpg8Sqyhc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnAlY3gFxFuA2ulJw1Of5UHldSeHZE0Q8LUUMDhMoVBxj9CzXi
-	CT5ywn7TlLhe3+EsD1koNcm64zPhlDVB0v8BLkbKsioJIdtQtG4rgdQUUNtx+HQ=
-X-Google-Smtp-Source: AGHT+IEEBAFSTLUWRggpy/zSgYYAMfS9zMnB4WTf3rwU/wiDXRiRmmXCC9HC+DDgqHm/wOcSVYkVbg==
-X-Received: by 2002:a05:6a20:d8b:b0:1d9:1071:9175 with SMTP id adf61e73a8af0-1d9a84d70dfmr13069474637.32.1730169741393;
-        Mon, 28 Oct 2024 19:42:21 -0700 (PDT)
-Received: from [10.200.3.216] (p99249-ipoefx.ipoe.ocn.ne.jp. [153.246.134.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7205780e3f5sm6504801b3a.0.2024.10.28.19.42.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 19:42:21 -0700 (PDT)
-Message-ID: <c620491d-7bb9-47f5-bd2f-52d8fc814486@linuxfoundation.org>
-Date: Mon, 28 Oct 2024 20:42:18 -0600
+	s=arc-20240116; t=1730169750; c=relaxed/simple;
+	bh=rxSy+dtRe0whMlBniCqvVJo2o6tvcBMMNm2yAj7jIIE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Eo6dn5h2hHVAhC8HPOF61XZtyqZYH7KUp3qLofyarMXAswnvhU6wHlQD2HEkJjdjs5WunV6EGwmndV3lERelz/hw154p/BUR0m2JWMhDIWcmEZiQjt2mFx3q5fMly2HJpW7Ota4xgwaCWt4/IJuGvLtCkvemToBVPE/eKxZZm14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XcvcZ4Y88z1T8fp;
+	Tue, 29 Oct 2024 10:40:14 +0800 (CST)
+Received: from kwepemd200013.china.huawei.com (unknown [7.221.188.133])
+	by mail.maildlp.com (Postfix) with ESMTPS id AD9201402CC;
+	Tue, 29 Oct 2024 10:42:23 +0800 (CST)
+Received: from [10.67.110.108] (10.67.110.108) by
+ kwepemd200013.china.huawei.com (7.221.188.133) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 29 Oct 2024 10:42:22 +0800
+Message-ID: <908316ff-75b3-498a-86f8-1cdf1419800c@huawei.com>
+Date: Tue, 29 Oct 2024 10:42:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,53 +47,409 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] selftests/mount_setattr: fix idmap_mount_tree_invalid
- failed to run
-To: Christian Brauner <brauner@kernel.org>,
- zhouyuhang <zhouyuhang1010@163.com>
-Cc: sforshee@kernel.org, shuah@kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241028084132.3212598-1-zhouyuhang1010@163.com>
- <20241028-rodung-kotzen-577438c3b82c@brauner>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241028-rodung-kotzen-577438c3b82c@brauner>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] arm64: uprobes: Simulate STP for pushing fp/lr into user
+ stack
+To: Mark Rutland <mark.rutland@arm.com>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <mhiramat@kernel.org>,
+	<oleg@redhat.com>, <peterz@infradead.org>, <ast@kernel.org>,
+	<puranjay@kernel.org>, <andrii@kernel.org>, <andrii.nakryiko@gmail.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-trace-kernel@vger.kernel.org>, <bpf@vger.kernel.org>
+References: <20240910060407.1427716-1-liaochang1@huawei.com>
+ <ZxpUX1rbppLqS0bD@J2N7QTR9R3.cambridge.arm.com>
+From: "Liao, Chang" <liaochang1@huawei.com>
+In-Reply-To: <ZxpUX1rbppLqS0bD@J2N7QTR9R3.cambridge.arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd200013.china.huawei.com (7.221.188.133)
 
-On 10/28/24 06:11, Christian Brauner wrote:
-> On Mon, Oct 28, 2024 at 04:41:32PM +0800, zhouyuhang wrote:
->> From: zhouyuhang <zhouyuhang@kylinos.cn>
+
+
+在 2024/10/24 22:06, Mark Rutland 写道:
+> On Tue, Sep 10, 2024 at 06:04:07AM +0000, Liao Chang wrote:
+>> This patch is the second part of a series to improve the selftest bench
+>> of uprobe/uretprobe [0]. The lack of simulating 'stp fp, lr, [sp, #imm]'
+>> significantly impact uprobe/uretprobe performance at function entry in
+>> most user cases. Profiling results below reveals the STP that executes
+>> in the xol slot and trap back to kernel, reduce redis RPS and increase
+>> the time of string grep obviously.
 >>
->> Test case idmap_mount_tree_invalid failed to run on the newer kernel
->> with the following output:
+>> On Kunpeng916 (Hi1616), 4 NUMA nodes, 64 Arm64 cores@2.4GHz.
 >>
->>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->>   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
->>   # idmap_mount_tree_invalid: Test terminated by assertion
+>> Redis GET (higher is better)
+>> ----------------------------
+>> No uprobe: 49149.71 RPS
+>> Single-stepped STP: 46750.82 RPS
+>> Emulated STP: 48981.19 RPS
 >>
->> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
->> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
->> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
->> returns 0 instead of -EINVAL as expected.
+>> Redis SET (larger is better)
+>> ----------------------------
+>> No uprobe: 49761.14 RPS
+>> Single-stepped STP: 45255.01 RPS
+>> Emulated stp: 48619.21 RPS
 >>
->> Ramfs does not support idmap mounts, so we can use it here to test invalid mounts,
->> which allows the test case to pass with the following output:
->>
->>   # Starting 1 tests from 1 test cases.
->>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->>   #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
->>   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
->>   # PASSED: 1 / 1 tests passed.
->>
->> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
->> ---
+>> Grep (lower is better)
+>> ----------------------
+>> No uprobe: 2.165s
+>> Single-stepped STP: 15.314s
+>> Emualted STP: 2.216s
 > 
-> Reviewed-by: Christian Brauner <brauner@kernel.org>
+> The results for grep are concerning.
+> 
+> In theory, the overhead for stepping should be roughly double the
+> overhead for emulating, assuming the exception-entry and
+> exception-return are the dominant cost. The cost of stepping should be
+> trivial.
+> 
+> Those results show emulating adds 0.051s (for a ~2.4% overhead), while
+> stepping adds 13.149s (for a ~607% overhead), meaning stepping is 250x
+> more expensive.
 
-Thank you. Applied to kselftest fixes branch for next rc.
+To provide more context, I set an uprobe at the grep_file() function from
+the grep source code [1], which is likely on very hot path. I suspect that
+the high frequency of uprobe traps contribute to the signficant overhead.
+I'm not entirely certain about this, and I'll need to investigate further
+to pinpoint the source of 13.149s.
 
-thanks,
--- Shuah
+https://github.com/brgl/busybox/blob/master/findutils/grep.c#L302
+
+> 
+> Was this tested bare-metal, or in a VM?
+
+bare-metal.
+
+> 
+> AFAICT either:
+> 
+> * Single-stepping is unexpectedly expensive.
+>  
+>   Historically we had performance issues with hypervisor trapping of
+>   debug features, and there are things we might be able to improve in
+>   the hypervisor and kernel, which would improve stepping *all*
+>   instructions.
+>   
+>   If stepping is the big problem, we could move uprobes over to a BRK
+>   rather than a single-step. That would require require updating and
+>   fixing the logic to decide which instructions are steppable, but
+>   that's necessary anyway given it has extant soundness issues.
+
+That's a very helpful input. I'll rerun the profiling in a VM.
+
+> 
+> * XOL management is absurdly expensive.
+>  
+>   Does uprobes keep the XOL slot around (like krpobes does), or does it
+>   create the slot afresh for each trap?
+
+As I know, it doesn't create a new slot for each trap. Instead, it grabs
+an slot from a pre-allocated pool. I believe the cost of acquring a slot
+from this pool is relatively low compared to creating a new one.
+
+> 
+>   If that's trying to create a slot afresh for each trap, there are
+>   several opportunities for improvement, e.g. keep the slot around for
+>   as long as the uprobe exists, or pre-allocate shared slots for common
+>   instructions and use those.
+
+I have sent a patch [2] that aimed to improve scalability of uprobe handling.
+While that patch focuses on reduing the cacheline bouncing caused by atomic
+operations when grabbing and releasing slot from a pool, I wouldn't say
+this has a impact on grep, as it typically use a single thread for pattern
+matching on my sytem.
+
+[2] https://lore.kernel.org/all/20240927094549.3382916-1-liaochang1@huawei.com/
+
+> 
+> Mark.
+> 
+>>
+>> Additionally, a profiling of the entry instruction for all leaf and
+>> non-leaf function, the ratio of 'stp fp, lr, [sp, #imm]' is larger than
+>> 50%. So simulting the STP on the function entry is a more viable option
+>> for uprobe.
+>>
+>> In the first version [1], it used a uaccess routine to simulate the STP
+>> that push fp/lr into stack, which use double STTR instructions for
+>> memory store. But as Mark pointed out, this approach can't simulate the
+>> correct single-atomicity and ordering properties of STP, especiallly
+>> when it interacts with MTE, POE, etc. So this patch uses a more complex
+>> and inefficient approach that acquires user stack pages, maps them to
+>> kernel address space, and allows kernel to use STP directly push fp/lr
+>> into the stack pages.
+>>
+>> xol-stp
+>> -------
+>> uprobe-nop      ( 1 cpus):    1.566 ± 0.006M/s  (  1.566M/s/cpu)
+>> uprobe-push     ( 1 cpus):    0.868 ± 0.001M/s  (  0.868M/s/cpu)
+>> uprobe-ret      ( 1 cpus):    1.629 ± 0.001M/s  (  1.629M/s/cpu)
+>> uretprobe-nop   ( 1 cpus):    0.871 ± 0.001M/s  (  0.871M/s/cpu)
+>> uretprobe-push  ( 1 cpus):    0.616 ± 0.001M/s  (  0.616M/s/cpu)
+>> uretprobe-ret   ( 1 cpus):    0.878 ± 0.002M/s  (  0.878M/s/cpu)
+>>
+>> simulated-stp
+>> -------------
+>> uprobe-nop      ( 1 cpus):    1.544 ± 0.001M/s  (  1.544M/s/cpu)
+>> uprobe-push     ( 1 cpus):    1.128 ± 0.002M/s  (  1.128M/s/cpu)
+>> uprobe-ret      ( 1 cpus):    1.550 ± 0.005M/s  (  1.550M/s/cpu)
+>> uretprobe-nop   ( 1 cpus):    0.872 ± 0.004M/s  (  0.872M/s/cpu)
+>> uretprobe-push  ( 1 cpus):    0.714 ± 0.001M/s  (  0.714M/s/cpu)
+>> uretprobe-ret   ( 1 cpus):    0.896 ± 0.001M/s  (  0.896M/s/cpu)
+>>
+>> The profiling results based on the upstream kernel with spinlock
+>> optimization patches [2] reveals the simulation of STP increase the
+>> uprobe-push throughput by 29.3% (from 0.868M/s/cpu to 1.1238M/s/cpu) and
+>> uretprobe-push by 15.9% (from 0.616M/s/cpu to 0.714M/s/cpu).
+>>
+>> [0] https://lore.kernel.org/all/CAEf4BzaO4eG6hr2hzXYpn+7Uer4chS0R99zLn02ezZ5YruVuQw@mail.gmail.com/
+>> [1] https://lore.kernel.org/all/Zr3RN4zxF5XPgjEB@J2N7QTR9R3/
+>> [2] https://lore.kernel.org/all/20240815014629.2685155-1-liaochang1@huawei.com/
+>>
+>> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+>> ---
+>>  arch/arm64/include/asm/insn.h            |  1 +
+>>  arch/arm64/kernel/probes/decode-insn.c   | 16 +++++
+>>  arch/arm64/kernel/probes/decode-insn.h   |  1 +
+>>  arch/arm64/kernel/probes/simulate-insn.c | 89 ++++++++++++++++++++++++
+>>  arch/arm64/kernel/probes/simulate-insn.h |  1 +
+>>  arch/arm64/kernel/probes/uprobes.c       | 21 ++++++
+>>  arch/arm64/lib/insn.c                    |  5 ++
+>>  7 files changed, 134 insertions(+)
+>>
+>> diff --git a/arch/arm64/include/asm/insn.h b/arch/arm64/include/asm/insn.h
+>> index dd530d5c3d67..74e25debfa75 100644
+>> --- a/arch/arm64/include/asm/insn.h
+>> +++ b/arch/arm64/include/asm/insn.h
+>> @@ -561,6 +561,7 @@ u32 aarch64_insn_encode_immediate(enum aarch64_insn_imm_type type,
+>>  				  u32 insn, u64 imm);
+>>  u32 aarch64_insn_decode_register(enum aarch64_insn_register_type type,
+>>  					 u32 insn);
+>> +u32 aarch64_insn_decode_ldst_size(u32 insn);
+>>  u32 aarch64_insn_gen_branch_imm(unsigned long pc, unsigned long addr,
+>>  				enum aarch64_insn_branch_type type);
+>>  u32 aarch64_insn_gen_comp_branch_imm(unsigned long pc, unsigned long addr,
+>> diff --git a/arch/arm64/kernel/probes/decode-insn.c b/arch/arm64/kernel/probes/decode-insn.c
+>> index be54539e309e..847a7a61ff6d 100644
+>> --- a/arch/arm64/kernel/probes/decode-insn.c
+>> +++ b/arch/arm64/kernel/probes/decode-insn.c
+>> @@ -67,6 +67,22 @@ static bool __kprobes aarch64_insn_is_steppable(u32 insn)
+>>  	return true;
+>>  }
+>>  
+>> +bool aarch64_insn_is_stp_fp_lr_sp_64b(probe_opcode_t insn)
+>> +{
+>> +	/*
+>> +	 * The 1st instruction on function entry often follows the
+>> +	 * patten 'stp x29, x30, [sp, #imm]!' that pushing fp and lr
+>> +	 * into stack.
+>> +	 */
+>> +	u32 opc = aarch64_insn_decode_ldst_size(insn);
+>> +	u32 rt2 = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RT2, insn);
+>> +	u32 rn = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RN, insn);
+>> +	u32 rt = aarch64_insn_decode_register(AARCH64_INSN_REGTYPE_RT, insn);
+>> +
+>> +	return aarch64_insn_is_stp_pre(insn) &&
+>> +	       (opc == 2) && (rt2 == 30) && (rn == 31) && (rt == 29);
+>> +}
+>> +
+>>  /* Return:
+>>   *   INSN_REJECTED     If instruction is one not allowed to kprobe,
+>>   *   INSN_GOOD         If instruction is supported and uses instruction slot,
+>> diff --git a/arch/arm64/kernel/probes/decode-insn.h b/arch/arm64/kernel/probes/decode-insn.h
+>> index 8b758c5a2062..033ccab73da6 100644
+>> --- a/arch/arm64/kernel/probes/decode-insn.h
+>> +++ b/arch/arm64/kernel/probes/decode-insn.h
+>> @@ -29,5 +29,6 @@ arm_kprobe_decode_insn(kprobe_opcode_t *addr, struct arch_specific_insn *asi);
+>>  #endif
+>>  enum probe_insn __kprobes
+>>  arm_probe_decode_insn(probe_opcode_t insn, struct arch_probe_insn *asi);
+>> +bool aarch64_insn_is_stp_fp_lr_sp_64b(probe_opcode_t insn);
+>>  
+>>  #endif /* _ARM_KERNEL_KPROBES_ARM64_H */
+>> diff --git a/arch/arm64/kernel/probes/simulate-insn.c b/arch/arm64/kernel/probes/simulate-insn.c
+>> index 5e4f887a074c..3906851c07b2 100644
+>> --- a/arch/arm64/kernel/probes/simulate-insn.c
+>> +++ b/arch/arm64/kernel/probes/simulate-insn.c
+>> @@ -8,6 +8,9 @@
+>>  #include <linux/bitops.h>
+>>  #include <linux/kernel.h>
+>>  #include <linux/kprobes.h>
+>> +#include <linux/highmem.h>
+>> +#include <linux/vmalloc.h>
+>> +#include <linux/mm.h>
+>>  
+>>  #include <asm/ptrace.h>
+>>  #include <asm/traps.h>
+>> @@ -211,3 +214,89 @@ simulate_nop(u32 opcode, long addr, struct pt_regs *regs)
+>>  	 */
+>>  	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+>>  }
+>> +
+>> +static inline
+>> +bool stack_align_check(unsigned long sp)
+>> +{
+>> +	return (IS_ALIGNED(sp, 16) ||
+>> +		!(read_sysreg(sctlr_el1) & SCTLR_EL1_SA0_MASK));
+>> +}
+>> +
+>> +static inline
+>> +void put_user_stack_pages(struct page **pages, int nr_pages)
+>> +{
+>> +	int i;
+>> +
+>> +	for (i = 0; i < nr_pages; i++)
+>> +		put_page(pages[i]);
+>> +}
+>> +
+>> +static inline
+>> +int get_user_stack_pages(long start, long end, struct page **pages)
+>> +{
+>> +	int ret;
+>> +	int nr_pages = (end >> PAGE_SHIFT) - (start >> PAGE_SHIFT) + 1;
+>> +
+>> +	ret = get_user_pages_fast(start, nr_pages,
+>> +				  FOLL_WRITE | FOLL_FORCE, pages);
+>> +	if (unlikely(ret != nr_pages)) {
+>> +		if (ret > 0)
+>> +			put_user_stack_pages(pages, ret);
+>> +		return 0;
+>> +	}
+>> +
+>> +	return nr_pages;
+>> +}
+>> +
+>> +static inline
+>> +void *map_user_stack_pages(struct page **pages, int nr_pages)
+>> +{
+>> +	if (likely(nr_pages == 1))
+>> +		return kmap_local_page(pages[0]);
+>> +	else
+>> +		return vmap(pages, nr_pages, VM_MAP, PAGE_KERNEL);
+>> +}
+>> +
+>> +static inline
+>> +void unmap_user_stack_pages(void *kaddr, int nr_pages)
+>> +{
+>> +	if (likely(nr_pages == 1))
+>> +		kunmap_local(kaddr);
+>> +	else
+>> +		vunmap(kaddr);
+>> +}
+>> +
+>> +void __kprobes
+>> +simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs)
+>> +{
+>> +	long imm7;
+>> +	long new_sp;
+>> +	int nr_pages;
+>> +	void *kaddr, *dst;
+>> +	struct page *pages[2] = { NULL };
+>> +
+>> +	imm7 = aarch64_insn_decode_immediate(AARCH64_INSN_IMM_7, opcode);
+>> +	new_sp = regs->sp + (sign_extend64(imm7, 6) << 3);
+>> +	if (!stack_align_check(new_sp)) {
+>> +		force_sig(SIGSEGV);
+>> +		goto done;
+>> +	}
+>> +
+>> +	nr_pages = get_user_stack_pages(new_sp, regs->sp, pages);
+>> +	if (!nr_pages) {
+>> +		force_sig(SIGSEGV);
+>> +		goto done;
+>> +	}
+>> +
+>> +	kaddr = map_user_stack_pages(pages, nr_pages);
+>> +	dst = kaddr + (new_sp & ~PAGE_MASK);
+>> +	asm volatile("stp %0, %1, [%2]"
+>> +		     : : "r"(regs->regs[29]), "r"(regs->regs[30]), "r"(dst));
+>> +
+>> +	unmap_user_stack_pages(kaddr, nr_pages);
+>> +	put_user_stack_pages(pages, nr_pages);
+>> +
+>> +done:
+>> +	regs->sp = new_sp;
+>> +	arm64_skip_faulting_instruction(regs, AARCH64_INSN_SIZE);
+>> +}
+>> diff --git a/arch/arm64/kernel/probes/simulate-insn.h b/arch/arm64/kernel/probes/simulate-insn.h
+>> index efb2803ec943..733a47ffa2e5 100644
+>> --- a/arch/arm64/kernel/probes/simulate-insn.h
+>> +++ b/arch/arm64/kernel/probes/simulate-insn.h
+>> @@ -17,5 +17,6 @@ void simulate_tbz_tbnz(u32 opcode, long addr, struct pt_regs *regs);
+>>  void simulate_ldr_literal(u32 opcode, long addr, struct pt_regs *regs);
+>>  void simulate_ldrsw_literal(u32 opcode, long addr, struct pt_regs *regs);
+>>  void simulate_nop(u32 opcode, long addr, struct pt_regs *regs);
+>> +void simulate_stp_fp_lr_sp_64b(u32 opcode, long addr, struct pt_regs *regs);
+>>  
+>>  #endif /* _ARM_KERNEL_KPROBES_SIMULATE_INSN_H */
+>> diff --git a/arch/arm64/kernel/probes/uprobes.c b/arch/arm64/kernel/probes/uprobes.c
+>> index d49aef2657cd..c70862314fde 100644
+>> --- a/arch/arm64/kernel/probes/uprobes.c
+>> +++ b/arch/arm64/kernel/probes/uprobes.c
+>> @@ -8,6 +8,7 @@
+>>  #include <asm/cacheflush.h>
+>>  
+>>  #include "decode-insn.h"
+>> +#include "simulate-insn.h"
+>>  
+>>  #define UPROBE_INV_FAULT_CODE	UINT_MAX
+>>  
+>> @@ -31,6 +32,21 @@ unsigned long uprobe_get_swbp_addr(struct pt_regs *regs)
+>>  	return instruction_pointer(regs);
+>>  }
+>>  
+>> +static enum probe_insn
+>> +arm_uprobe_decode_special_insn(probe_opcode_t insn, struct arch_probe_insn *api)
+>> +{
+>> +	/*
+>> +	 * When uprobe interact with VMSA features, such as MTE, POE, etc, it
+>> +	 * give up the simulation of memory access related instructions.
+>> +	 */
+>> +	if (!system_supports_mte() && aarch64_insn_is_stp_fp_lr_sp_64b(insn)) {
+>> +		api->handler = simulate_stp_fp_lr_sp_64b;
+>> +		return INSN_GOOD_NO_SLOT;
+>> +	}
+>> +
+>> +	return INSN_REJECTED;
+>> +}
+>> +
+>>  int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>>  		unsigned long addr)
+>>  {
+>> @@ -44,6 +60,11 @@ int arch_uprobe_analyze_insn(struct arch_uprobe *auprobe, struct mm_struct *mm,
+>>  
+>>  	insn = *(probe_opcode_t *)(&auprobe->insn[0]);
+>>  
+>> +	if (arm_uprobe_decode_special_insn(insn, &auprobe->api)) {
+>> +		auprobe->simulate = true;
+>> +		return 0;
+>> +	}
+>> +
+>>  	switch (arm_probe_decode_insn(insn, &auprobe->api)) {
+>>  	case INSN_REJECTED:
+>>  		return -EINVAL;
+>> diff --git a/arch/arm64/lib/insn.c b/arch/arm64/lib/insn.c
+>> index b008a9b46a7f..0635219d2196 100644
+>> --- a/arch/arm64/lib/insn.c
+>> +++ b/arch/arm64/lib/insn.c
+>> @@ -238,6 +238,11 @@ static u32 aarch64_insn_encode_ldst_size(enum aarch64_insn_size_type type,
+>>  	return insn;
+>>  }
+>>  
+>> +u32 aarch64_insn_decode_ldst_size(u32 insn)
+>> +{
+>> +	return (insn & GENMASK(31, 30)) >> 30;
+>> +}
+>> +
+>>  static inline long label_imm_common(unsigned long pc, unsigned long addr,
+>>  				     long range)
+>>  {
+>> -- 
+>> 2.34.1
+>>
+> 
+
+-- 
+BR
+Liao, Chang
+
 
