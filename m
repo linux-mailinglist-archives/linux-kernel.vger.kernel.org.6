@@ -1,121 +1,122 @@
-Return-Path: <linux-kernel+bounces-386454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41D289B43A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:02:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E38A9B43B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:03:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 744731C21144
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:02:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD3E0B2189E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C446A20370C;
-	Tue, 29 Oct 2024 08:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D582038AD;
+	Tue, 29 Oct 2024 08:03:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="FBrfpFHS"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1FD203703;
-	Tue, 29 Oct 2024 08:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="E9WrE7ko"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C8B1DF99F;
+	Tue, 29 Oct 2024 08:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188925; cv=none; b=NPfqH77WDRNBlo+E15k+yWUGeo0Fa50DPZUHyqDovftSLxvp03gTAUE8Jc9JJ/ZEb4KWIMCHbjYXuHP7AV3NITPETIYqz9ToUFRVtAbzV08EsrClQgSUjVMpCx8mKrKrcyOeSzz4lK2ewfqbZxm6g99TVdYknJdWVUgqRn1rpbU=
+	t=1730188994; cv=none; b=LUpsgsaTYFhopOeuMBNr9Z3HFCT+LIgEqSEkCQ6WfMeyGfZ4kGAGaXHgF8ZVJwDZtqN7AGrNExCta37uyB7u1z2ZHuCCGPb9QEFKuBlagxLnxcoA012ck6k0BHjA4Jo9gamNcefiFiMNG/+cNmejaPZ1f+dnZoXNbRPg8FR+38w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188925; c=relaxed/simple;
-	bh=1rl/lez8CFnzaNZuPtfeemJlstaZ1uN0hD0AIak9kJU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SnOs3Xb5z8RVMaZtfcB0oFPnEr3oeVplchtfoSLPCxIbvT7xyOCGQei0RNFUlL+lOvMaQ4k+VAtxxUo+5fV/FqdX1JWFCBJcd2X0WuiwDbMVhMXQ2+DQRQukw78oLGHHbEel8oppAomBHRFcjDtaO1pnjhgogbN2WQq/WsIVkIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=FBrfpFHS; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from namjain-Virtual-Machine.corp.microsoft.com (unknown [131.107.147.150])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 88D46211F61F;
-	Tue, 29 Oct 2024 01:01:57 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 88D46211F61F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1730188917;
-	bh=iTXxgBCvn0vPQ4tASHjUMzxYi2O0NmCVnCZ0QLDgtm4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=FBrfpFHS5Dy8O3lTMmj9Y+XjOzq9tLDcHhbzwi3OTFILRyRDaOLCNfDzzFg8ZueDM
-	 x2BMD2V9DGJ45pgxQ+2eyoK6KLTnxJfDXB9KtDDc9zz472c8zd2kCDs4i5cLJTaHc1
-	 mdOnRRPsfK4JDYRgopNsp81+y+2wGhm/M4JOgr9A=
-From: Naman Jain <namjain@linux.microsoft.com>
-To: "K . Y . Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>
-Cc: linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Naman Jain <namjain@linux.microsoft.com>,
-	John Starks <jostarks@microsoft.com>,
-	jacob.pan@linux.microsoft.com,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	Michael Kelley <mhklinux@outlook.com>,
-	Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-Subject: [PATCH v2 0/2] Drivers: hv: vmbus: Wait for offers and log missing offers
-Date: Tue, 29 Oct 2024 01:01:45 -0700
-Message-Id: <20241029080147.52749-1-namjain@linux.microsoft.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1730188994; c=relaxed/simple;
+	bh=/xUZ3coZ6gf0W/FIhSNP+3W6dQQSH6hXnIrXeTA8pgs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FZB2fumrZmBax9sQHnCqvLqJ6RiBu6FoXlc6V+19GTYLIi6UNv9Vjti3nxDcuR7eXCT2CFnotX/OgDlsAcOuP0jVpgQONAsgpFyUQMMomDp6KWFqmw8psSIlU7oLa7S7EiE9R2orQLNPNeoDPK+IUav2xHiwtekRcTW0O/5BXSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=E9WrE7ko; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iFdAzUkd+0GcTyGkQ9/oIIo1dvmqpp5hrlTc3EhXZOY=; b=E9WrE7kocNrMH0KBtISYyOsT32
+	PSMSsRWWc5ttyuBz9k08bNtdV2pmnSIxLwf8TSavrfVanzPnFH+vFeWHa8X18XX4W7rs2HhWaEF39
+	lMenGv8tWDu71gfI8++INuZmUySPZj8ECT1w4N5VRO5xYI/DzO+6lz3e6/1j5NgdinKJL8R+6sYWF
+	eWDftBCWLy1wRDPEblOrOj+6ShySW3PiIVJ9DC83Ds6qlsvQRzdWknfrBAB0lg5znZL0QsVoR8zpi
+	LB5SGxCh96C1CN9NxF/9ho2aS0Rb79rGDcq/QHH7rG9oiG32K6IP9wBS4BK0I3BhMQOOMdoFjeky8
+	DpvOJkLg==;
+Received: from [185.156.123.69] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t5hAk-0002ap-A3; Tue, 29 Oct 2024 09:01:50 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+ Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Herve Codina <herve.codina@bootlin.com>, Qiang Zhao <qiang.zhao@nxp.com>,
+ Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+ Huisong Li <lihuisong@huawei.com>, Linus Walleij <linusw@kernel.org>,
+ Imre Kaloz <kaloz@openwrt.org>, Karol Gugala <kgugala@antmicro.com>,
+ Mateusz Holenko <mholenko@antmicro.com>, Gabriel Somlo <gsomlo@gmail.com>,
+ Yinbo Zhu <zhuyinbo@loongson.cn>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Daire McNamara <daire.mcnamara@microchip.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Nishanth Menon <nm@ti.com>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Michal Simek <michal.simek@amd.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Duje =?utf-8?B?TWloYW5vdmnEhw==?= <duje.mihanovic@skole.hr>,
+ Mark Brown <broonie@kernel.org>, David Wu <david.wu@rock-chips.com>,
+ Jianqun Xu <jay.xu@rock-chips.com>,
+ Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
+ Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+ Izhar Ameer Shaikh <izhar.ameer.shaikh@amd.com>,
+ Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>,
+ linux-arm-kernel@lists.infradead.org, soc@lists.linux.dev,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ linux-mediatek@lists.infradead.org, linux-riscv@lists.infradead.org,
+ linux-arm-msm@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-pm@vger.kernel.org
+Subject: Re: [PATCH] soc: Switch back to struct platform_driver::remove()
+Date: Tue, 29 Oct 2024 09:01:46 +0100
+Message-ID: <5089490.31r3eYUQgx@phil>
+In-Reply-To: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+References: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-After VM requests for channel offers during boot or resume from
-hibernation, host offers the configured channels and then sends a
-separate message when all the essential channel offers are delivered.
-Wait for this message to make this offers request and receipt process
-synchronous.
-
-Without this, user mode can race with VMBus initialization and miss
-channel offers. User mode has no way to work around this other than
-sleeping for a while, since there is no way to know when VMBus has
-finished processing offers.
-
-This is in analogy to a PCI bus not returning from probe until it has
-scanned all devices on the bus.
-
-As part of this implementation, some code cleanup is also done for the
-logic which becomes redundant due to this change.
-
-Second patch prints the channels which are not offered when resume
-happens from hibernation to supply more information to the end user.
-
-Changes since v1:
-https://lore.kernel.org/all/20241018115811.5530-1-namjain@linux.microsoft.com/
-* Added Easwar's Reviewed-By tag
-* Addressed Michael's comments:
-  * Added explanation of all offers delivered message in comments
-  * Removed infinite wait for offers logic, and changed it wait once.
-  * Removed sub channel workqueue flush logic
-  * Added comments on why MLX device offer is not expected as part of
-    this essential boot offer list. I refrained from adding too many
-    details on it as it felt like it is beyond the scope of this patch
-    series and may not be relevant to this. However, please let me know if
-    something needs to be added.
-* Addressed Saurabh's comments:
-  * Changed timeout value to 10000 ms instead of 10*1000
-  * Changed commit msg as per suggestions
-  * Added a comment for warning case of wait_for_completion timeout
-  * Added a note for missing channel cleanup in comments and commit msg
+Am Dienstag, 29. Oktober 2024, 08:48:58 CET schrieb Uwe Kleine-K=F6nig:
+> After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+> return void") .remove() is (again) the right callback to implement for
+> platform drivers.
+>=20
+> Convert all platform drivers below drivers/soc to use .remove(), with
+> the eventual goal to drop struct platform_driver::remove_new(). As
+> .remove() and .remove_new() have the same prototypes, conversion is done
+> by just changing the structure member name in the driver initializer.
+>=20
+> On the way do a few whitespace changes to make indention consistent.
+>=20
+> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
 
 
-John Starks (1):
-  Drivers: hv: vmbus: Log on missing offers
+>  drivers/soc/rockchip/io-domain.c            | 8 ++++----
 
-Naman Jain (1):
-  Drivers: hv: vmbus: Wait for offers during boot
+=46or the Rockchip part:
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
- drivers/hv/channel_mgmt.c | 55 ++++++++++++++++++++++++++++-----------
- drivers/hv/connection.c   |  4 +--
- drivers/hv/hyperv_vmbus.h | 14 +++-------
- drivers/hv/vmbus_drv.c    | 31 +++++++++++-----------
- 4 files changed, 61 insertions(+), 43 deletions(-)
-
-base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
--- 
-2.34.1
 
 
