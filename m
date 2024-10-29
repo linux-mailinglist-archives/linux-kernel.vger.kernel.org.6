@@ -1,110 +1,120 @@
-Return-Path: <linux-kernel+bounces-387665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDD229B544F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:46:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79B39B5453
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:46:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95BBC1F21780
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:46:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 04DF01C227F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CBC20C302;
-	Tue, 29 Oct 2024 20:42:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0412A207A25;
+	Tue, 29 Oct 2024 20:45:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GpjY7B7c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oXp6Lyc1"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 754073207;
-	Tue, 29 Oct 2024 20:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829B5207210
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:45:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730234560; cv=none; b=DF9nt9/cR86Un/W78FpEZap3gLitr3sAZois+ZSpBMrxjakzRfipn6sk3W+3vaBUaBkHkXIobifycdJzjzFD1hJrYXukGHrF2ckPDdO9u5ZIzcS3O546MMHI+i8O+8C4L/9DrT5k+N4y5ZV4fnsxv0WXh/5E/qPp3+7b5HUBj+c=
+	t=1730234746; cv=none; b=fl9ELODIH9durR2fXHeLxp3KCKxdLHf/+7bA5YXNmZiKuAbFh1/H/jdxQKqs1G+Kw2FzI50nA0Yp61kMDUjr5VzO5Tn/yOLL2u47VRiy2FA2pFOAyEwJiiQZeQzqWHq5K/Z3CLJWv3NpkpPCOQ0P12QSA2ylAvFm9HuKb3j8fcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730234560; c=relaxed/simple;
-	bh=9fvuPkywl8HW3/QOWTp7Q5krfZOi18PJayiTTRq3EZ8=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=VnDVNMqBxbOsm5GT5los6IbEdMEjeavsZfr/P9OaWmbuCjnNso+zUATfTgtLHxMBYzg+GTK86+c2UYnaK5ZshNKOeuGcTFZRGZ+79tJzjYSMt23EkycJMO5wyy5tVv8K6ILGvEUSuaYNfDsnpcIbCb0cxqQlajsIevuPXSHoa+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GpjY7B7c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C53A0C4CEE4;
-	Tue, 29 Oct 2024 20:42:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730234560;
-	bh=9fvuPkywl8HW3/QOWTp7Q5krfZOi18PJayiTTRq3EZ8=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=GpjY7B7cJLvaKIh32sIg7v4ch9K1WrUS/26SMj9EutuKBkFN4EqbeU2wyK06YHDVh
-	 RQnAlWz65NoKtgYkGNTlRg7Bjz37LsyAeS+LYe6X0wuQnnSxpIGcg2VMP6oh/WWFSs
-	 WdNb02U1hymHiUKyYBhslc/rGgV3IiZskhbf6j0/lFegzBZG6rkHwSA5TwvP7VXwV1
-	 fjSIIvh9bwbLPjyFlfSVOIkKEhFciE8Y8HvgGqY9fCwNuXLq2/qrGFy1fMQ8NFZ+5E
-	 qhmAiIVgPW2O/Lv4nx8JFZ1eVrc2PUhzJX32VAVgnORBRvi19sK/OkveqcW3LDiQy0
-	 vn6VhN2bFFB2A==
-Date: Tue, 29 Oct 2024 15:42:38 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1730234746; c=relaxed/simple;
+	bh=UnbV6MuNFExLfF8+2aKHw1foBqeANBQ10VftomuflNY=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=mQ1XQOTE0ZSReUh7xnPy3mzgr1IO6KzgEX3MnSyyZAnqHYALCpnA9Xu9aVUPcJX89Sal1A9GsWk3SaAyMQ4cFZ/h1ci+sH5lHKufoov47DVnV25MLtI9XBKLt4MJ7OTEdh8FngjcqxHWGL/cFac8cgyZqRhM7h7sikyThSh0O+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oXp6Lyc1; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e1fbe2a6b1so117769887b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:45:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730234743; x=1730839543; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JQEUQwPobw3Oiu4hV9Gh16GwH7ZLjOLSQQhkjXKL0tQ=;
+        b=oXp6Lyc1xtxCOdZXqJoUcVwbACrVZBTTAo0IlhJ3fS9JpILBnTPoaMaULhVNhqH9cc
+         70ZIxLQFAKrUFDL+Z+bMLwmmdK8gkOYTpB9udVgjKevw7+/cIsMGKEkuafR6sQnTEsFA
+         2b1vKo9OailTt+iPtpbGJ95o5a/j3oHaT0Acf99Eg/eW2UJLwQc+BOx4gtDA/enG3TiW
+         fC9cxas7ltiEKDatmzXcIsIVjjjMmV/ZcDYwxV+X0+zixXy2KvEw3GcByK8piPWOLn+X
+         cXbGaDmxQ1wznVKYUxmLidR2mmOQONM3JjZKiGWRG2GqXOVdFB1Lk1QO0EUwu0sKX0Q/
+         CQkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730234743; x=1730839543;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JQEUQwPobw3Oiu4hV9Gh16GwH7ZLjOLSQQhkjXKL0tQ=;
+        b=G/Eqdh32oX6nHAThEkxFTN3mBdWIQLkqSALcovvmAJdYPC8MHM1q71SRuhsS0930Pb
+         H6FVMy7vBmISPPrKglOaecV/qwcW/39HCaNYk/pnckph6gv58Na7pvGVyPMaWw7Bv0QS
+         iDNDbnYtL8I+PSFYlIFODDWyaycOXte5Uf3R9FXGNkXNKS4Jf7n9Ov/n0rDl3Jh1MlUt
+         q9Wlsw5dkcGi7dg5opk4k08ospiQ3x5xtS6lvN0ktq+BtORe6nn9pJIrHGdU9T3PIJmg
+         YMEX8tIN8GQptTCr/2CHL+mMP6teRUwuT9uApgEpo7MU35koQ9qyhnFXIyZ6+zmMhuJG
+         ByMA==
+X-Forwarded-Encrypted: i=1; AJvYcCW11QXgTzx//NvUaR4JWNDp5kuLc2ygCVvHIJlLUJ0gh8P2mxPLYLGTR/SzFVGJKMYzJaTvkGALCaBodvI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+z9goV08lmnpgNb9y/waL3gt/B1OJLrnXAmK0h/410CiO2h05
+	viUqzhUqENtYIkY2Kh0T6upDRe7XN557vpB0I/CJ8Bn4W0x0rOsE2NYFdBAxRnJTSJjyUvU1DXx
+	QCRZ78LmWNVYd4v5Ez7osZQ==
+X-Google-Smtp-Source: AGHT+IGrCicaNsIac7OAa7RKi54mxGcZhpjM7/v5kaVOQvujs4N2Ri/8i1wyq8Q6f5dhrmpQkbFHQ18QLGt8TO/39Q==
+X-Received: from almasrymina.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:4bc5])
+ (user=almasrymina job=sendgmr) by 2002:a05:690c:7449:b0:6db:bd8f:2c59 with
+ SMTP id 00721157ae682-6e9d8b8f13cmr5280167b3.4.1730234743615; Tue, 29 Oct
+ 2024 13:45:43 -0700 (PDT)
+Date: Tue, 29 Oct 2024 20:45:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, dmaengine@vger.kernel.org, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>, 
- devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, 
- Nuno Sa <nuno.sa@analog.com>
-In-Reply-To: <20241029-axi-dma-dt-yaml-v2-2-52a6ec7df251@baylibre.com>
-References: <20241029-axi-dma-dt-yaml-v2-0-52a6ec7df251@baylibre.com>
- <20241029-axi-dma-dt-yaml-v2-2-52a6ec7df251@baylibre.com>
-Message-Id: <173023455618.1620887.12454823992375368491.robh@kernel.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: dma: adi,axi-dmac: deprecate
- adi,channels node
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Message-ID: <20241029204541.1301203-1-almasrymina@google.com>
+Subject: [PATCH net-next v1 0/7] devmem TCP fixes
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, Jesper Dangaard Brouer <hawk@kernel.org>, 
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>, Shuah Khan <shuah@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+
+A few unrelated devmem TCP fixes bundled in a series for some
+convenience (if that's ok).
+
+Patch 1-2: fix naming and provide page_pool_alloc_netmem for fragged
+netmem.
+
+Patch 3-4: fix issues with dma-buf dma addresses being potentially
+passed to dma_sync_for_* helpers.
+
+Patch 5-6: fix syzbot SO_DEVMEM_DONTNEED issue and add test for this
+case.
 
 
-On Tue, 29 Oct 2024 14:29:15 -0500, David Lechner wrote:
-> Deprecate the adi,channels node in the adi,axi-dmac binding. Prior to
-> IP version 4.3.a, this information was required. Since then, there are
-> memory-mapped registers that can be read to get the same information.
-> 
-> Acked-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> For context, the adi,channels node has not been required in the Linux
-> kernel since [1].
-> 
-> [1]: https://lore.kernel.org/all/20200825151950.57605-7-alexandru.ardelean@analog.com/
-> ---
->  .../devicetree/bindings/dma/adi,axi-dmac.yaml         | 19 +++++--------------
->  1 file changed, 5 insertions(+), 14 deletions(-)
-> 
+Mina Almasry (6):
+  net: page_pool: rename page_pool_alloc_netmem to *_netmems
+  net: page_pool: create page_pool_alloc_netmem
+  page_pool: disable sync for cpu for dmabuf memory provider
+  netmem: add netmem_prefetch
+  net: fix SO_DEVMEM_DONTNEED looping too long
+  ncdevmem: add test for too many token_count
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Samiullah Khawaja (1):
+  page_pool: Set `dma_sync` to false for devmem memory provider
 
-yamllint warnings/errors:
+ include/net/netmem.h                   |  7 ++++
+ include/net/page_pool/helpers.h        | 50 ++++++++++++++++++--------
+ include/net/page_pool/types.h          |  2 +-
+ net/core/devmem.c                      |  9 +++--
+ net/core/page_pool.c                   | 11 +++---
+ net/core/sock.c                        | 46 ++++++++++++++----------
+ tools/testing/selftests/net/ncdevmem.c | 11 ++++++
+ 7 files changed, 93 insertions(+), 43 deletions(-)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/dma/adi,axi-dmac.example.dtb: dma-controller@7c420000: 'adi,channels' is a required property
-	from schema $id: http://devicetree.org/schemas/dma/adi,axi-dmac.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241029-axi-dma-dt-yaml-v2-2-52a6ec7df251@baylibre.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
 
