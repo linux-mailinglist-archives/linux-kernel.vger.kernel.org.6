@@ -1,108 +1,173 @@
-Return-Path: <linux-kernel+bounces-387053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02439B4B34
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:48:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630679B4B39
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84540283F23
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862761C228DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7973BA2D;
-	Tue, 29 Oct 2024 13:48:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D1C206514;
+	Tue, 29 Oct 2024 13:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b+1qhOct"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="QS0eT6jd"
+Received: from mail-oa1-f43.google.com (mail-oa1-f43.google.com [209.85.160.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A1EC205E3F;
-	Tue, 29 Oct 2024 13:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0E15205E12
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209684; cv=none; b=sZHAaf7uMY45TCeQxNXbKJge2yKbYTVlMeJpgr1eC3IoLCYLIZO8CeOFr7lXyBlL5VUg4DZF2k1a8p08COUFnOpKxq8UDSVcYSdUxDA3HmulyHPD4LmFzuU/oNhHothbfwqMV4/g8n0jgJweiXIlOlXYkrOfDgCEK9OZvcIvPC0=
+	t=1730209729; cv=none; b=pi1o9cd9xh2Fg/q8Cohp28Pqh8lw5Yt375BLAo2s0SKrPEmsicKPzBGkYTVNkxV5MJ1e06RD9i22F/D4OmYl3CY0Qnn2g3TjxQT67e61Cmpn5gtCpKi2GLCOS0lwOpJdob23sR0rMYYK4PfwqsZzNnhd8UIF4Oc+nImqLLHNx0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209684; c=relaxed/simple;
-	bh=/1IAglxa+62OGTxwPnjJEUICAB7kkHqquFY8NIy20NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sehKRM3icOs4Y/19loeTUhRyMSf+0zlchZhMfXhVJTyfDZyGs2QxALlM5XTXtyuLxnn65mwHFonguulJVnJxPpKsdmDFaEq8DoF3KJAXxT22WrdouO2hSVxUFlAX2Maw5aAWFKLVGY7OJMi5I42AuI/X3rHBp3i90MjrdJw2LXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b+1qhOct; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E4DCC4CECD;
-	Tue, 29 Oct 2024 13:48:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730209683;
-	bh=/1IAglxa+62OGTxwPnjJEUICAB7kkHqquFY8NIy20NE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b+1qhOctluYSPhYTvPktKtBzQzbC6kci6oX+GexD6cBLzFYIT14D20Pqe1nOmGPOe
-	 /BSu78+33G3aZWOz72nror1XVSvskacqM2zmyW+T5dLH6ceCYmrx+P+IMUl9fh8B43
-	 NGAKEjmgDKdlZMnJe+awWj+2K5JwDHj20IdaCVsCqvzRWMfzgsbYzmepi/7Kd0LE4e
-	 yEGnLmhoaHbq5hh7USRsUt3VeESiWqFzvUTykTNiZgA+QdS3mFiY9EPHU/sd0+6rK9
-	 v1zt6ILOiBXPjyAFT4TTo1IXpZREPrqblAip8J1huSzDBi1r2vj70JyGWwcSxpYzPG
-	 yVJz4Ni/CP8vw==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t5ma7-0000000035Z-02Ot;
-	Tue, 29 Oct 2024 14:48:23 +0100
-Date: Tue, 29 Oct 2024 14:48:23 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Felipe Balbi <balbi@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Lee Jones <lee@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	stable@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 5/6] phy: core: Fix an OF node refcount leakage in
- of_phy_provider_lookup()
-Message-ID: <ZyDnp5hAii6rAu7a@hovoldconsulting.com>
-References: <20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com>
- <20241024-phy_core_fix-v2-5-fc0c63dbfcf3@quicinc.com>
+	s=arc-20240116; t=1730209729; c=relaxed/simple;
+	bh=61dsj1PasILu65UaLrfL0HzWdDbD1vyqbhmC3CX3aJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZcEms2zibT5StLVxNjdHVnFIOfdon8psR1IEYPZuZXmvcY/6sIrcdpXVqTqmaS7P45NdGyVBL98Xm6Izw9xktVQz1YRH4L7K0oLk2+RKm1e4bFzcbgA8rgvBcLih1zUMDAY/z6ygYiGCktYHsMe9xrFDJx3lJdUxc9qN5WxQf18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=QS0eT6jd; arc=none smtp.client-ip=209.85.160.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-oa1-f43.google.com with SMTP id 586e51a60fabf-288661760d3so3066073fac.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:48:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1730209726; x=1730814526; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YwPgAMavAEXO6C26tryLIudfVuj8YRS3X4MpACE1QyQ=;
+        b=QS0eT6jdat2wIq/L5NKQH+YMbs8zVtl7e0UYapWT0QF2Dd2fqZVVwB8HA3pbKE401/
+         ia9wZx6w1DvLR0zVHMKiLCCbw1hJ0r3P8EQdFmlsT0uwyHw0Sx/NvkswbIkOBvGKjod+
+         ckIiZa9Ligm41k1Hp28nRn3zP5fLWow28EK7HXFnwmArom1Xq6LTsky2oh4SYjMmsbpE
+         KiPcykQA1/P/R7S3ceL3lmcfIy2XSuYxES8KDod28nYMut3SKamJAlimdHf1mYt/iChI
+         kfh58RVL94JhU8lb1JKU7U4BBUlCxe8iza0430WbBuyb2lmgtvkZGTSlG3wlFkYPk9Q8
+         3E9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730209726; x=1730814526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YwPgAMavAEXO6C26tryLIudfVuj8YRS3X4MpACE1QyQ=;
+        b=OtByqV6OQOg6AB27LpwQ0mwIBz1l0hO+2G3bGvEQzkshaTWir1UCle0uPB68yUqlHn
+         aZmLgXmJb+ppJwp2K83kN/jZypycBAbOZm6stAokrpRCQZFs+LlQYlPKEjU2uGgm8TSp
+         3r7RiaYEbYnp6DumiWZ2aZZjQ/xd9ivxvnKy2EMUCn/R0ryUUO/LK0EJYEN/3DlUg7WK
+         KdfSuTemzQUiLiXRg5w5JpTzuhAVybzQnU/dj+Mc1gx1Ghk0xJT67GHUwC934xaTB2Lr
+         RrJnRJZOJdWCPmY3G27U9uoN6LV3h4+lfoFEKGYn8JY0Y9HYa9VvsSGa/glAbNH066HL
+         I+Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCU2DZNGXsnd8snsJOz5Ta3cHtB54X7Uc035CgaiVSZSRmjcXES343wFi6i82q3o7Te2vx1Bl80IlzYq0vE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvNcl8xFi2BDZwah94hmVtfs0yyUf+nP8pkRg7WlJNclMI0XRG
+	bWpmTX2Wdk3f5MPpCL7gT7CRHQwHOg+nYQWrb2zB+KngzOGLA6UAAbhZH2scrFSiY/3Mj6eoh1p
+	vMPCtuYs8PvoBW4zsbs+VWNtO3QJfTqRpgVvg
+X-Google-Smtp-Source: AGHT+IERVKkHC5wJalI3mqRzZ/A5PH2xSU4Bs1ARGGwATY+YubjlmvmeSh/2Up4XIkOrOQ05tH86OxjHKUp+rjKh6jA=
+X-Received: by 2002:a05:6870:1687:b0:287:29a0:cfe4 with SMTP id
+ 586e51a60fabf-29051d3e1acmr10332986fac.32.1730209725886; Tue, 29 Oct 2024
+ 06:48:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024-phy_core_fix-v2-5-fc0c63dbfcf3@quicinc.com>
+References: <20241023100541.974362-1-vladimir.oltean@nxp.com>
+ <CAM0EoMnV3-o_4L3Vv=TuEqC=iNKhNnW0c4HQiRqrJD5NtjKeOQ@mail.gmail.com> <20241025124023.qp5y67slaac7iqll@skbuf>
+In-Reply-To: <20241025124023.qp5y67slaac7iqll@skbuf>
+From: Jamal Hadi Salim <jhs@mojatatu.com>
+Date: Tue, 29 Oct 2024 09:48:34 -0400
+Message-ID: <CAM0EoMkBZx0qk5MR4jyeFn5T7eRco2n_Y58hryDtLTBjaOzEfg@mail.gmail.com>
+Subject: Re: [PATCH net] net/sched: sch_api: fix xa_insert() error path in tcf_block_get_ext()
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 10:39:30PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
-> 
-> For macro for_each_child_of_node(parent, child), refcount of @child has
-> been increased before entering its loop body, so normally needs to call
-> of_node_put(@child) before returning from the loop body to avoid refcount
-> leakage.
-> 
-> of_phy_provider_lookup() has such usage but does not call of_node_put()
-> before returning, so cause leakage of the OF node refcount.
-> 
-> Fixed by simply calling of_node_put() before returning from the loop body.
-> 
-> The APIs affected by this issue are shown below since they indirectly
-> invoke problematic of_phy_provider_lookup().
-> phy_get()
-> of_phy_get()
-> devm_phy_get()
-> devm_of_phy_get()
-> devm_of_phy_get_by_index()
-> 
-> Fixes: 2a4c37016ca9 ("phy: core: Fix of_phy_provider_lookup to return PHY provider for sub node")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+On Fri, Oct 25, 2024 at 8:40=E2=80=AFAM Vladimir Oltean <vladimir.oltean@nx=
+p.com> wrote:
+>
+> On Thu, Oct 24, 2024 at 11:39:51AM -0400, Jamal Hadi Salim wrote:
+> > On Wed, Oct 23, 2024 at 6:05=C3=A2=E2=82=AC=C2=AFAM Vladimir Oltean <vl=
+adimir.oltean@nxp.com> wrote:
+> > >
+> > > This command:
+> > >
+> > > $ tc qdisc replace dev eth0 ingress_block 1 egress_block 1 clsact
+> > > Error: block dev insert failed: -EBUSY.
+> > >
+> > > fails because user space requests the same block index to be set for
+> > > both ingress and egress.
+> > >
+> > > [ side note, I don't think it even failed prior to commit 913b47d3424=
+e
+> > >   ("net/sched: Introduce tc block netdev tracking infra"), because th=
+is
+> > >   is a command from an old set of notes of mine which used to work, b=
+ut
+> > >   alas, I did not scientifically bisect this ]
+> > >
+> >
+> > What would be the use case for having both share the same index?
+> > Mirror action for example could be used to target a group of ports
+> > grouped by blockid in which case a unique blockid simplifies.
+> >
+> > > The problem is not that it fails
+>
+> As mentioned, I don't have a use case for sharing block indices between
+> ingress and egress. I did have old commands which used to not fail
+> (incorrectly, one might say), but they stopped working without notice,
+> and the kernel was not being very obvious about it. Had the kernel
+> behavior in this case been more clear/consistent, and not failed any
+> subsequent command I would type in, even if valid, it would have taken
+> me less time to find out. Hence this patch, and also another one I have
+> prepared for net-next which improves the error message.
+>
+> > Fix makes  sense.
+> > Acked-by: Jamal Hadi Salim <jhs@mojatatu.com>
+>
+> Thanks.
+>
+> > I am also hoping you did run the tdc tests (despite this not looking
+> > like it breaks any existing feature)
+>
+> To be honest, I had not, because I had doubts that this error path would
+> be exercised in any of the tests (and I still don't think it is).
+>
+> But I did run them now, they seem to pass, except for the last 11 of
+> them which seem to be skipped, and I really do not have the patience
+> right now to debug and see why.
+>
 
-Looks good.
+You did fine, more below...
 
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> ~/selftests/tc-testing# ./tdc.py
+>  -- scapy/SubPlugin.__init__
+>  -- ns/SubPlugin.__init__
+
+[..]
+>
+> ok 1159 4cbd - Try to add filter with duplicate key # skipped - Tests usi=
+ng the DEV2 variable must define the name of a physical NIC with the -d opt=
+ion when running tdc.
+> Test has been skipped.
+>
+> ok 1160 7c65 - Add flower filter and then terse dump it # skipped - Tests=
+ using the DEV2 variable must define the name of a physical NIC with the -d=
+ option when running tdc.
+> Test has been skipped.
+>
+> ok 1161 d45e - Add flower filter and verify that terse dump doesn't outpu=
+t filter key # skipped - Tests using the DEV2 variable must define the name=
+ of a physical NIC with the -d option when
+> running tdc.
+> Test has been skipped.
+
+These were skipped because it would require real hardware (typically
+also for testing offload).
+
+cheers,
+jamal
 
