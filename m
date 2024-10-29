@@ -1,137 +1,78 @@
-Return-Path: <linux-kernel+bounces-386687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3B569B46F2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:33:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F0E09B46F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:33:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3E7A283811
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:33:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54E4A2834CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C59C2038D9;
-	Tue, 29 Oct 2024 10:33:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3340D2040AA;
+	Tue, 29 Oct 2024 10:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="BMiymmGt"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJqK+YQ+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75588839E4
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C17839E4;
+	Tue, 29 Oct 2024 10:33:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198026; cv=none; b=dz9FbIlQifz7QTmD/axFH3PFyyQf0frdiuE/5dh8IPNmTNqiNALPG+dAkZftVIst7K/r1rzUHzrhoTDdm7zUc8ND/lw+0yaxyHslewtep5xm7Zw/z9QOPTb19xwRlaqzE9ZBjA5oy6ACMdoHW1ycgfq3Q4R/LohHwk17ZTKx5Iw=
+	t=1730198016; cv=none; b=QyGtN7yx11qy69bP5AniRGIVlffczmYvy0Y0ZPJ//806ZlxIPJW2khxhuRIaxBBH221Xp7O93u1Kyt4ZWi9FDbaI71yjdMMWB/XXnSWvbil+R7HhzCcvHFhLIf6D5FnEIQDLWv6PgN1cfLDCtALHYFRYRCOk8NxOd6YHPnx6Isc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198026; c=relaxed/simple;
-	bh=it7J2Bob8irKPIjKYAEc7Q2aE/YpuABi+6JVIsAQo5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYv41OT+rykZR8VbDUYM6xy5RsVF91f+6FgmWgrJV3T/o+x4IXWTy0JTeEq9lJqVhv0C88hDY0pVV8V5AlUakOCNwNji/Mq+j1Mbz/wHyNzpjopLQps4qgYtscUsqDXbh3X+m14EYMFaFB3z0l/LqTVaMxDnXxyuT/WmlTIcS74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=BMiymmGt; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2062440E0192;
-	Tue, 29 Oct 2024 10:33:41 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id u74dP7gO3n1K; Tue, 29 Oct 2024 10:33:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730198016; bh=EoakwJJz9aJ0gsbJCEXWk7/6Dol69LY/LJRw1MqJfQ8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BMiymmGtoJfWM9V2wPabtoll/HuIOcM4VPx+gHHAt2SXMrNAQq1REsQC+NRV5DQSS
-	 O9fSMLTPQiy/78sNZ5amNXqHec7bB44taIS2terYMR8ONzZgbUMw1JrGjQYQ+tAFKs
-	 7DFZMG8VGf9eYJkFUgGQjZYWkqttlkaq8yD0C2Mp44ovBdSAY5+SA/YViMGW+q+oMv
-	 DoWKSVf5O6Vj19azz2+gS6H9c73MbS43W8boFC4ifdvvrDQeytVS5he0s4cpv+A7ih
-	 E1mmCCI6LGTw3j1x0A5+3wAeCrjH9Wi/fqkX1alhr8+f3Lokdr1XcbxHMdMGFBQz93
-	 ce8C9ItCGg3TtbmqA+cY8yHJN/zXg+q0m1R8pU7uw+ShA7+WRxq67ZgF3ImsBy7lsK
-	 JPCLwJ3Yi08zhJr3S4uJgwpQ3nPruiHRrKieqYJ4z7UgXjkCZOp0HBPyaLCMic12dz
-	 89PSyX0Z+U/zSuo4mPHcUuAXpjwoUdjjE6MJhllJk/FR8qR8042Jha2JGsIGio8Eip
-	 rIBtUpwgAlq0rFDiS4/RyMUHqST+gsTcRe908biV8anIm4wp9RE1P9xKlRwpICFeOD
-	 Dq340RjZBmlbGGfSiDFM181miE+z5P3WIS1jIk4+M71Kxr8hSvnayxfCQfmvkq0krg
-	 0NgGChB5R5mGA/107WmR0oGM=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C834340E0191;
-	Tue, 29 Oct 2024 10:33:21 +0000 (UTC)
-Date: Tue, 29 Oct 2024 11:33:16 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Arnd Bergmann <arnd@arndb.de>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Suma Hegde <suma.hegde@amd.com>,
-	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] platform/x86/amd/hsmp: fix compile-testing without
- CONFiG_AMD_NB
-Message-ID: <20241029103316.GBZyC57KGSxyPie3Qu@fat_crate.local>
-References: <20241029092329.3857004-1-arnd@kernel.org>
+	s=arc-20240116; t=1730198016; c=relaxed/simple;
+	bh=ggiYV3SOqSdqpsSC+FT+VYF9dOh54HbTZqH3/AFF1h8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=tJiN/OMbBcZ+TuOI+zxgj7xu6W3onZ+8QLc6s/fxpoblFS714pEo2dyir6GY7wzsoNUeibXlOAkOmm8eOBrz2Gcd8Ln4myuZWMvUxwO0kJ7oLYS3iH76r/QkiRl8Sx76WK8P4xqDTdMhJkGS6Me3uEVEy5D9V4dQGYkZYM8rv84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJqK+YQ+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B73C0C4CECD;
+	Tue, 29 Oct 2024 10:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730198016;
+	bh=ggiYV3SOqSdqpsSC+FT+VYF9dOh54HbTZqH3/AFF1h8=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=hJqK+YQ+CxRI667u72Y7zWWuEfxdC22kq3vaHk62zFt1YHCjZ9jSnx4Pe42NR0Tvx
+	 r5+YkKzg/bT7Sx17V97zWykDt2H2DnV3V7vUwOi6cZOxF7fYiyht3g46/WGwk8pnjw
+	 bPCYJL/XcnwtMlf6plsasMnl7r3CuuaWLi2o8LzvkDVGBksD+VTIo5iMX4iyo2saWw
+	 5voC1IFqHnSz6aZ1n/XTRbVoGH48d8SCmomLWhCCnTn/y9Gp/rUMt2gdZM33iMkdW9
+	 uwiuzJrWnHni9cKzo/C2KyZS0pDH2yDKwgwLeyeUGMO9KTkWWnie5HOXVTlAHRKQlm
+	 nERUiX5F4U1WQ==
+From: Kalle Valo <kvalo@kernel.org>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: pkshih@realtek.com,  linux-wireless@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  xiaopeitux@foxmail.com,
+  xiongxin@kylinos.cn
+Subject: Re: [PATCH] net: wireless: realtek/rtw89: Add check null return of
+ kmalloc
+References: <82dd45fe7faed8f558841643a0593202b2da90c5.1730192926.git.xiaopei01@kylinos.cn>
+Date: Tue, 29 Oct 2024 12:33:32 +0200
+In-Reply-To: <82dd45fe7faed8f558841643a0593202b2da90c5.1730192926.git.xiaopei01@kylinos.cn>
+	(Pei Xiao's message of "Tue, 29 Oct 2024 17:12:01 +0800")
+Message-ID: <8734kf2o77.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029092329.3857004-1-arnd@kernel.org>
+Content-Type: text/plain
 
-On Tue, Oct 29, 2024 at 09:23:20AM +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> node_to_amd_nb() is defined to NULL in non-AMD configs:
-> 
-> drivers/platform/x86/amd/hsmp/plat.c: In function 'init_platform_device':
-> drivers/platform/x86/amd/hsmp/plat.c:165:68: error: dereferencing 'void *' pointer [-Werror]
->   165 |                 sock->root                      = node_to_amd_nb(i)->root;
->       |                                                                    ^~
-> drivers/platform/x86/amd/hsmp/plat.c:165:68: error: request for member 'root' in something not a structure or union
-> 
-> Change the definition to something that builds. This does introduce a
-> NULL pointer dereference but the code is never called since the driver
-> won't probe successfully.
-> 
-> Fixes: 7d3135d16356 ("platform/x86/amd/hsmp: Create separate ACPI, plat and common drivers")
-         ^^^^^^^^^^^^
+Pei Xiao <xiaopei01@kylinos.cn> writes:
 
-I'm guessing this is queued for 6.13...
+> kmalloc may fail, return might be NULL and will cause
+> NULL pointer dereference later.
+>
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/x86/include/asm/amd_nb.h | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
-> index 6f3b6aef47ba..d0caac26533f 100644
-> --- a/arch/x86/include/asm/amd_nb.h
-> +++ b/arch/x86/include/asm/amd_nb.h
-> @@ -116,7 +116,10 @@ static inline bool amd_gart_present(void)
->  
->  #define amd_nb_num(x)		0
->  #define amd_nb_has_feature(x)	false
-> -#define node_to_amd_nb(x)	NULL
-> +static inline struct amd_northbridge *node_to_amd_nb(int node)
-> +{
-> +	return NULL;
-> +}
->  #define amd_gart_present(x)	false
-
-... so this fix should go to Linus now so that build testing doesn't break?
+We use 'wifi: rtw89:' in the title, please check the documentation below
+for more.
 
 -- 
-Regards/Gruss,
-    Boris.
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-https://people.kernel.org/tglx/notes-about-netiquette
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
