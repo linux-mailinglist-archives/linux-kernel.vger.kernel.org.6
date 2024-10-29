@@ -1,285 +1,444 @@
-Return-Path: <linux-kernel+bounces-386464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF5DB9B43C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:08:33 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 759709B43D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:09:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B3F828389B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:08:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCE84B21DA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:09:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51CE9203708;
-	Tue, 29 Oct 2024 08:08:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5D420370E;
+	Tue, 29 Oct 2024 08:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="aOCFokzn";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="czia+/GY"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d2HPFWmk"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C696920110A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189306; cv=fail; b=o4DbamqHCZfNpeDPFidFFdOjjiAF8KgCmK7dMOGXnUfCyEZyqeFmZlvjseeKEL65OOsDnJ89a9jgIWDFWsNIaHI/gk4iAdYqDBwetWMfRjFU2h1u++vt5lIqaoBhKGDtGTi29I1/XhdTKW0P8P/i85cvJI0gCmwKDZD131DKZ4w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189306; c=relaxed/simple;
-	bh=t4LpiQSQaE0AcnfbStRh1EGLYE6LXp8pwq5CQWFvcno=;
-	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OfIXeHDXYy+RxLDDUfcg2KdaL+aYEGZ4vF5qCHCn0NDQ27Aj2WvWe869P8qGXceE/h0EzRLaa6CwVQ9T7AzMReqlyDW6FqHW29gVRg3E90zEVxsM/exIPDyCEON7n478a33bOVpIG5UHZ7iuH9iPn4//cOrWb6z3nj3m8y+VweU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=aOCFokzn; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=czia+/GY; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T7tcbn014848;
-	Tue, 29 Oct 2024 08:08:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=3JWaDxxB/99ezk3bD26/LY+0Xyy7s/SHZCZKOVnHPgw=; b=
-	aOCFokznN6mP3BFO4Yb6FtvtcnJt2kCrq5a44yPjEk1aSqElWexVSgGgQZqvy1w5
-	r/s7uag11bP21W+B4SjDhqMQagc01rwQPFbHZK/SMkyGILviq8i6e1VFxW9Y6AN6
-	I0ClQXqh7MoXyDUJyaFRPllwP2ziWA9UaEE4UPCAg6Ci9omWYNT5wQRKvpnEIdOM
-	kPjeh74H5cWcaXNZyhXfxMVqLTGiMOeiz4vHf2Raq0Jn2Zfq+KECxxBzjeCKwr8L
-	g+oV+fzIUHI+UW9VlqbCvmwpHVelheLe+TKc01o+9jO2sjksqiDOCToVfzgbwZPt
-	iNEEOBLuoFmAI8a3qPBg1g==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grdqcpq9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 08:08:02 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49T6al8Z034807;
-	Tue, 29 Oct 2024 08:08:01 GMT
-Received: from nam11-co1-obe.outbound.protection.outlook.com (mail-co1nam11lp2173.outbound.protection.outlook.com [104.47.56.173])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hnd7at7a-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 08:08:01 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SklGcBqIb/B4fR3c7cY1fKSKtQQXXHjfs0K/oh0duYTrpDGyjq9gQzsxVO2fJJnrHS8KstvidI7LgXrqxqzbXjtAZjaQuNPiGrVUa+dycuIuEOP4v9Qp61xhFeqaeHGVVvuHrjLlR/USySfqOnTcvFS6I2TAvU+IqpDnX3WJKYb1vCsA1bFoT/hPfJlPToZlyP7VXqT/lJDp8ydoBT/JHZW1u5pDde9gBDlrTT0jOvGZRYNUi0g9iWzaN74Q9v1PxGhMweYz9AE+nTvWdaSQCMmht/YWfaY5wYI6fOei4iuyWtsUlXMVKKg6wUFTTrFO7/IyutEmbeXJPwwcl+R6Fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3JWaDxxB/99ezk3bD26/LY+0Xyy7s/SHZCZKOVnHPgw=;
- b=dfGHP4knZRAWa2IG3yI248tKQ2qz7svgN+iqtH2mDCiVrZnG3fzv+bAAPNHw5pYYq55whqN7C7cUllvM6FKQ8matHUdJ+TkIalNMu6idpA36S0bnRw1YSQNTwcUB6TQ/R2a1VfFeZzRN38EfBtBYd7MetxL24ewdCP3dTCnEk6KQYCfpBnf/e8jzYQmvCDP1PN9Vd2YVWf8g7PKrnLlHLORUpV5izdohiXfGYey+lprt5UVkVrxqTNwCbcUQpW9tSs9qwunz0OuC9EZVV76wMNTvnt0PUj9a/CrluNyaVBHTWlcpl8QJFK0CfjP/ye7pb57b/gkinXkTduiX4MFHnQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C681A202642
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730189358; cv=none; b=C+1xbwvkQarEwj51B7sGGh70Tfvj3LXjCmsFYLB9Ym4k6NKl0l2Y6aZVPsS2d9dA2iAR+ntOwPfLFoDdT74xX/zLsgKrayM/qGjcaGrAnhO3B721nQrDllUWR0sxtiR4a+HKUMy8VMwNbNgoOa72exCSEWSLWZ6lHCYuZDdH2Qo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730189358; c=relaxed/simple;
+	bh=1yYFZUgzwZJX8c97cDYGNMLz5Det8+K3peNnR8iF278=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=AlsWU4FuACSKedkS6tdMthAvXf+/8As6NmT6zjZVayGzmYb/KPZUQ8lq6/VRML+c+FwE+M1XWAIz0/QccRqKL0cwOT1v2ANmN3ttMbqLoDzhjco3CkQe1e3Fb8WmHjEQFlhTKhN4WRQVFtSHsn2Hqr6gHJz/hql7X4KCpEc34oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d2HPFWmk; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43152b79d25so47565745e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:09:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3JWaDxxB/99ezk3bD26/LY+0Xyy7s/SHZCZKOVnHPgw=;
- b=czia+/GYPenl7CAFp3OOQmMOl4yARA95NfVxxvJ4596rgYd+GZkdrYHKhEkpAYa1ObsdhQlmFu7bsZ8CstM7MFd15OxGeJxox9u+ZvAhOR2yl0dXmrc+5CZVZv7yCHV+39WF73EfhO2K6keRH9gDfE2BYbQFI6/KGWVXBq/9LOU=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DS7PR10MB5184.namprd10.prod.outlook.com (2603:10b6:5:38e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Tue, 29 Oct
- 2024 08:07:59 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
- 08:07:59 +0000
-Message-ID: <72dfc226-1a56-419b-bede-3be23ebffc35@oracle.com>
-Date: Tue, 29 Oct 2024 08:07:55 +0000
-User-Agent: Mozilla Thunderbird
-From: John Garry <john.g.garry@oracle.com>
-Subject: Re: workqueue lockup debug
-To: Dave Chinner <david@fromorbit.com>
-Cc: tj@kernel.org, jiangshanlai@gmail.com, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com, jack@suse.cz,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org
-References: <70cb224f-a468-40a0-82c7-735c590bdb43@oracle.com>
- <ZyBgZr94Y9+xey4b@dread.disaster.area>
-Content-Language: en-US
-Organization: Oracle Corporation
-In-Reply-To: <ZyBgZr94Y9+xey4b@dread.disaster.area>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AS4P190CA0034.EURP190.PROD.OUTLOOK.COM
- (2603:10a6:20b:5d1::10) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+        d=linaro.org; s=google; t=1730189354; x=1730794154; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eZARtYlmzZ5XHKlzg/NydBknT2s1reu45newK8+BNnU=;
+        b=d2HPFWmkTUB5YPPcId9x4ql22n19kFo5RD4KhqawjHNtq1F0B0mojSumHSJl4J/rKD
+         xy+4EgcHIJej93fCMAgSI40qGxF/GM/NMBiJEzFG+DQbMQuPUyW2Hecx7Gw11taOhxVl
+         NoJX957Ygo6U6YCl/xNHB1zCnzdXiv6rZUoI3odvIyr0TbkNM3ahJ3+/fV2yy8oGRlVA
+         cEvjt/DLTR2H9jRJR6gzW9l4pEVU8nfAN9/Pv1jWi2jG7K8rOtzIjogvmoLlVybdjZb5
+         ThJ1cf0KUyulh0sNEipPEHomq+lzdP4hBrIgnRxjDf1PvkJo4GZM3D9EVGHYCyKUmwf6
+         rAZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730189354; x=1730794154;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eZARtYlmzZ5XHKlzg/NydBknT2s1reu45newK8+BNnU=;
+        b=sh5oYQ+RWQJI61FdXyUWJLkmF7ZgAipusT2FXIXuBg4Z62JZC3frHC2D2uxKDweVUT
+         IpnsLQnYUTylLziGt2QovN+aC6s1DVuiA72hADfFCNh7fQvBXqFLuICokNPVYyKGEEwp
+         iz0UmRzRQXFINOuoH6qcpVp0bBY87tmVRyvnArloW6lIOXeYtmwvBPIdF4yIy3h/C9W+
+         CwdLQRQAUhzYLG+j4UuV6GBizlnKI1dkBaox698zqF9f6zI8UpCrArKhz/8TociMsmw1
+         fMs688Oy24lK2mOSAnneLiCbGdm34NzhwreRzY8K6167VanmE5Y77KxMwUsKQDhC+vEF
+         J5dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUeP5D0BR5lgI+ho4wC/pwfwSFqnlfQrOF4V83xYJCAs/ZdYFap9sF8UbnCZuy9/KIMLVGFwZZ0or6YbxU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwcjJrRP6jWQRGLdMBgT5wXpgpsE3NmF5cCG2Iwy06ui/hWbKqv
+	veBZfBFD4DMYndpozsAz3SUNnm9MQj2Fqc+k/zfe5x3tRy1oLASah6lkGXkSetk=
+X-Google-Smtp-Source: AGHT+IGxFQXHuW0OzAuWHrz5fijZ/uyGD0EUznIY4hDu5MFz+6O/zXl2JbKHyMQdxvX3Ic/B6Av8Hw==
+X-Received: by 2002:a05:600c:1c1a:b0:431:55af:a22f with SMTP id 5b1f17b1804b1-4319aca400bmr96009235e9.13.1730189353939;
+        Tue, 29 Oct 2024 01:09:13 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:ca93:e94:9ce5:a5e0? ([2a01:e0a:982:cbb0:ca93:e94:9ce5:a5e0])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431b437d362sm18228645e9.0.2024.10.29.01.09.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 01:09:13 -0700 (PDT)
+Message-ID: <9f8b6789-ca87-425c-9645-c4b97dcb2424@linaro.org>
+Date: Tue, 29 Oct 2024 09:09:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS7PR10MB5184:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2e0f6c02-6e89-4f73-7018-08dcf7f0cd3d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ODVCK00yU3RpUDh6UUMyZ25iWjV3VmpRNVBsYzNWSTRIc1ByVWliQkk4ZU9R?=
- =?utf-8?B?RWxHZThzcjV1WVU3VDkrbWc2dElLNk8xbHdLWEVNQzVRcUdXbi9LR3phVkto?=
- =?utf-8?B?NUxqNGtSTU11ZEZhdGV3UzFnQU0rOGZVWHduVzdSOWNNOG9yNU9OMG81eVUz?=
- =?utf-8?B?Vm91N09PUklUb2c5Y1YwbW9MeVR5WER3ZXV0MVJmd0I1bk1RUFR1WVN3Vng5?=
- =?utf-8?B?M0dGY3VUeitvWGNzTEFmQnZXbGt2c1hBc0I3RnZ5K2VNMVp2Y0RNWXBuNDNM?=
- =?utf-8?B?bTNyMjdRUVN2c0tqNjVHNUQ3V08waTJ2SzY0V1k0eXlRK3R5dUNuTHJiQ2ZQ?=
- =?utf-8?B?dFphQVJjNkNiOHA3M21LY0lBcnJINGg5RjUxanhSK3NPMDZtRVJ6ZElMSVlq?=
- =?utf-8?B?VU9ZYmV4eWxUWmNaVlUreUppZmFJS0UwWnM5YTNVQy91VGxRSHNRYnFjUlY0?=
- =?utf-8?B?dnBVU2Z3ZWZ1SXBic3RXd0t0a2h3L2VnNElPWTB0RFNJRVozZGhhSXpVVkx3?=
- =?utf-8?B?b2h1TURkTTZtMnByOHVIRkt6K0NNMWhUYXVqbExlMWZvVUZKUXA4STFTaUxF?=
- =?utf-8?B?V1ErQU9LRVlrSnpaTnBKbkVmRWZZRWVsMDJEYmlzdFhjenQyNzNvWG45Q2o4?=
- =?utf-8?B?SXlxYlNKMVNQSGgyamRhNTU2MHlrNkVrN2tEL3h1b1c3cVFza1AvMG5xamtZ?=
- =?utf-8?B?SjE2dGpaT1ZRNC9Xa09Yb0tQcHhEYjJoaG00VlVpbjNlbko0UnEzbHRXWkZT?=
- =?utf-8?B?a2c2VXg3Q293T2JiY2FIL0dBSDJJaGtlQWJIOGVaVnNKYXZuMUxwdkJXbzFV?=
- =?utf-8?B?eE9MMFhUbTlvL0dNWWVudENzQzcxWFFxTGp1bi9tKzAwUDVqVWZVdGc2WlFj?=
- =?utf-8?B?MkVvYjJXWlNoTitjelRoRGprUGl1ZUttRkpzNW4xNkIva3pmQ0Z2VFpIeWZu?=
- =?utf-8?B?dE12ZzlWaERxTnladEVWMStYTXVsbFQ5T3JpQktzbFdKZzRBSkx1MnVld0lw?=
- =?utf-8?B?cVpNLzZsVEo2K3ZvRjJ6L3llbGN6ZVM3Q201YmIrK2l1RWVDYzBGRDBlcHVU?=
- =?utf-8?B?WUdOUmVROGs2azg3MGlzanZLa0JvQUQ1OC9taWh6a2RFNFhFb1Q4YTgrNzVl?=
- =?utf-8?B?SnJWZkVDdHFUc3hPTjVadGV6WFU3bnkvcnlUQ0NqYjZERUlKY0VCT3JtN05M?=
- =?utf-8?B?Z2duNnROdkxUZlExZWJrK1RNcmRCTWplR0d6WXhHT0lHaFk5dWdYZU9Pa2xD?=
- =?utf-8?B?RjBVN1kwZzJOd1J1RjR0ckMxSURvSE9ZY2pIY2VWRzV5MXdtbEtmaHJuK3NY?=
- =?utf-8?B?NURuaGFaYjlHOVgycjVFZkc4RzR3bllGMXFWOGFUS2pkQ0prSE44U0dnYWds?=
- =?utf-8?B?V25BVlBtK0JKUGZFZXRNdm0rdDJNanMvclp3ZENlRkMvYkZlTE1zMll2Q3My?=
- =?utf-8?B?bkxHb0Y0eTkwZ3V3OWNsUlEvdnBvSVRrYzlkRlowaUlOczhIejJ3Rks3OGMr?=
- =?utf-8?B?SXJaOTErc1dTUXpmZ3NoWVA3OWgyVVVaR3dKVUxJV0hhK0RXaTFOMlR0ZEpp?=
- =?utf-8?B?ZGk2VU5lWGpCK2g3Q1Y5ZVIraXFkcXNMZktFSFpvMThRMmFYYTRhOHVSci9P?=
- =?utf-8?B?cGx5dm5mL3E5aXNuSHhBbzNBSWo3aTFkUml6Q0hhMXlQSzNJS0RSRjdPTjV2?=
- =?utf-8?B?WDM0ZGRyaFNoUnBVTDdWblhvVmM0bWZtTE9hQXFLVUZpTVkzd01wUEExY3ps?=
- =?utf-8?Q?/oWOdTtDkVz4yR7ImdgayrZlyMcK6/H/AiPqnJJ?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SjZGVHNZaTM1OVYwWTVGRHpzcGhsL2NKN1FrUFJnODd5NWdTVkxHNjhCa3Ru?=
- =?utf-8?B?YVVTWkhRZGorTjNOSUs1TGxxTnR4dUJ0QWVqeVJncnVwTjBKam4vU0pNdFdq?=
- =?utf-8?B?R1Z0KzFxUlFyei8vZUM4K0d4UGw2aExnYVZtQ0dqREpMNndMcWJkNVhzTmhF?=
- =?utf-8?B?bkNpc1ZVaE54L3QrdnJ3MEZqQnc2THdTWGlyRVBoZW0yU0U2RnplRnJQUVZv?=
- =?utf-8?B?VHlDeVdqOHIzVnZuZWNOVStNcy9rSURjTkprSDA5UEE0SXpHQmE5MFlhRW9w?=
- =?utf-8?B?Ti9FaTVkc01wZjZUcGZQcGUrRnlNaGhwcXFFU0UranJ0K2p0SEwxSm1hSnpp?=
- =?utf-8?B?cW9WMG5sd0JCdFpaVmNrTWVOUElzZVJVZVhUZHJrQlNmYUkrUlVXTU5GOU9C?=
- =?utf-8?B?dTRZZjF3Y013Wjl6NTRsdTlCejBKbHdYeDBXRjd4SEdQd0Evd2JWbHl1R05N?=
- =?utf-8?B?Z0dIYUxBYW5ReWEzVy9WZ3BhaC9oN05QdS9pY1I4Z2ZlWlJyMXFpdXA5eUFL?=
- =?utf-8?B?bURMYzAwMXdKeUdCNmo5YkV4SEliQWZJSVF0SjFXaHF6WGlGUnErb0V4bmhC?=
- =?utf-8?B?eStDZU1UVURQejFKNUpFSmxRVk51RnNuV0dwYXo0V0oxSXNVVWZYWGJBVWVK?=
- =?utf-8?B?R3d3ai83eWVaalBRZnprRDhmUmp1cEd5dzFHWVQ2YWdtR3EydkJwdXVucXJr?=
- =?utf-8?B?RXpYMm9CbG92azVOTFFIZnVVWXZkM0s2VWVlWWxhMHNrdWZNblMvbWZhVkJT?=
- =?utf-8?B?MTNMR0NuM1dHaHhlVlBvMytFbFY1VitOSlBzaXlUN1A5OU5SUnkrUU00Q1lv?=
- =?utf-8?B?YStBdEpjbkdOaTAwNEFoVzdTWnZGMmVuQ1d0bUFiUHV3UW4rODE0dzZTSzNP?=
- =?utf-8?B?bjR5c25DZ09GMk5nN3FZNFpLZE9JVDE2QnJ5VUJQWFV6K1B5cDJiNEIzNFZp?=
- =?utf-8?B?SXUrUVhsZkJrRjUyaWtuc2hTMnYrdXNaTFRkaG1mRkJjZVZ5UkdxUlVIVXB0?=
- =?utf-8?B?NHd0WHFvdTJRaFVJY0hJZTJPNU9jVHFTSUxaK09YSktDdFB5bDRkUGV6T3JF?=
- =?utf-8?B?cERNZTBQMGh6MWJ2OFkyM1lOZUY2eUY3cFRyNWJQNUhBMURnL0ZIOEJZbkRT?=
- =?utf-8?B?SGg4OERHYjVyNVlrMFNiZUZsVTI2SDN1eCtYaWpkempDWG9XcUxkUCtKQXpz?=
- =?utf-8?B?aEtHYnFJT205a0kyRllIaXl5TFVEL1J4aFljTTNaN3dld0tYSGJSc1hHWHNy?=
- =?utf-8?B?OEdPOWg1UUxGVlVOM05VdUozcDIwQ1JXYTB6SWNWSEdzeitvYm5FVTIxcXRI?=
- =?utf-8?B?OXYwTGVQY05yVGVZTnM5VjVYWEczaXV0c3N3VWNKZ0htWllGUmMxOUN1TnhS?=
- =?utf-8?B?aDJDaU1xSlRaR2RSM0N5cmI0YXBpYzU2U21kU2F2WHg2dFhpU0oweUNlQUJr?=
- =?utf-8?B?enVINVpWcGVYbklBSjBDUDc5U2JwZGwxRXJGRTlaM01xbk5pbDlSNE1sMlpP?=
- =?utf-8?B?Ymc3N2ZRSjJWS1NLMjRxMHdWWUp3Tmt4cDVsVXV3MWZ0VjFFbkozd2VHNVRl?=
- =?utf-8?B?cEE2TGJTa29IS3lVVnF6bHM0UG9QVW1laXBrMGFGRUdvdTJsK2t1b3ZMQXM5?=
- =?utf-8?B?bGtQa1FTajhWUitIcjZ4c0lFcUM4S05qVUVSamxRT0lXN0ZlR1NjZVk4OUQv?=
- =?utf-8?B?RlJwOWhEa0hoUEp6Si91eG8zN3ZYRzFsZmNrWW5CVzRMbDBoS2JRTEY1cWtZ?=
- =?utf-8?B?L1l2TVBkS2VpVk9xQXljbkk2RlExSVMrK01FZmkyQlRJYUw4bVgvYlUyRzV6?=
- =?utf-8?B?cC9jZ1ZNWDZicFFzbTBUUXBjdDN6VlNMck1KTkFFQ0pNN0xkVC9OTTFGTXdz?=
- =?utf-8?B?UnREazJNY3lRVjJ5QTlzNjZFc0x3TldPd2dFY0RSbUNVV1cyUEJPSE1yMDR1?=
- =?utf-8?B?RDA4WThtU3oyenk0dEplYVdlejBvV3R2b25xWmJuUVh4SFozN1BWMmRhZmtN?=
- =?utf-8?B?OXNjWThHNWpSRmM3TEFhMXZ2czhrV25sVVZMREo5Y1ZhcUR4aVBMR3BDNjBX?=
- =?utf-8?B?S1FIYXM4bWgwOGV1OGxmeFFvMkU1UWpvRnJsbGluRGI3K0xsUTd5am81bXZh?=
- =?utf-8?B?WnBOaW4ySWF3L1pkTjhmb3JMMTI4NTBnaHphRUR4UEltUEM1SGNDRElEakNH?=
- =?utf-8?B?cmc9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	hhbOXYnXLPsC1h1h91eslHKUpzHkbYz206oTWHf01iDdyBvcKy1bXeAnrelYQOvjw/mlzCF+5AC1QFOiDVwxvoYtFUwf8CBesTTnz207a82ZRfhXy+cQBg3yVwsuGwzq4Ki3jWr2iQhTZIkaZza/Ldv/6GcWcAztd5tTY7gQJSDoZT0jRw4ZFgDcm7UkdoSg/TuwfjXlMFEC3uMQy4XdRZZGocyr4MGVNzSINuUwpK8Hi+mkrmZqRhCmH6NvIhXVFLHeYUKl2w6wqgyUAofPwSIei+5vLr+iGtYhLCKO7ge9YTH9z9VCApHmwjs31OPbMpxpyF3YzbsvN+l2ZUBVODSedXFmBjBe3I++QdVQeU7P+sqbDRveEwb+j3TSmgjeEAOakrmsE8mL3354yKCfvG/sV86eWdAlhYnDJIpakCBvRayWrKHldB3eeI1XgVmuoKWH/d7fzhGPtBsz+N+5VY53vwmTcjI9b/UT7oCW+bDoAEz/+jTJFhJtFo223MKgW066LuKJy0Xm7Oux01FzWX66W8Aen1laOD/+xZJbymLDp2R4595pLddyZSdWgmFnWr54SvTjk10yoYBOjkLy97QxyaFc7LI1KN8NVoeMWDc=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2e0f6c02-6e89-4f73-7018-08dcf7f0cd3d
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 08:07:58.9604
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mUVSfQhP/SMLn+EHb8G6YoloBsinlUdMpHOt4Y4IbcwQR3ObP1Shkkpk/nTTlz1a79mfyx5fIJW9F+6Opwzw7A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB5184
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-29_04,2024-10-28_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- phishscore=0 mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410290064
-X-Proofpoint-GUID: ZLBCgUA2OnoFUjbVV10ZJns7l99r2HtZ
-X-Proofpoint-ORIG-GUID: ZLBCgUA2OnoFUjbVV10ZJns7l99r2HtZ
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 3/3] iio: magnetometer: add Allegro MicroSystems
+ ALS31300 3-D Linear Hall Effect driver
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+References: <20241021-topic-input-upstream-als31300-v2-0-36a4278a528e@linaro.org>
+ <20241021-topic-input-upstream-als31300-v2-3-36a4278a528e@linaro.org>
+ <Zx1chYp4FRyG8fKM@surfacebook.localdomain>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <Zx1chYp4FRyG8fKM@surfacebook.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 29/10/2024 04:11, Dave Chinner wrote:
->> Can you advise on a robust method to get some debug from this system?
+Hi,
+
+On 26/10/2024 23:17, Andy Shevchenko wrote:
+> Mon, Oct 21, 2024 at 02:38:55PM +0200, Neil Armstrong kirjoitti:
+>> The Allegro MicroSystems ALS31300 is a 3-D Linear Hall Effect Sensor
+>> mainly used for 3D head-on motion sensing applications.
 >>
->> Maybe this is a scheduler issue, as Dave mentioned in that same thread.
-> I just got a new hit on the scheduler issue on 6.12-rc5:
+>> The device is configured over I2C, and as part of the Sensor data the
+>> temperature core is also provided.
+>>
+>> While the device provides an IRQ gpio, it depends on a configuration
+>> programmed into the internal EEPROM, thus only the default mode is
+>> supported and buffered input via trigger is also supported to allow
+>> streaming values with the same sensing timestamp.
+>>
+>> The device can be configured with different sensitivities in factory,
+>> but the sensitivity value used to calculate value into the Gauss
+>> unit is not available from registers, thus the sensitivity is provided
+>> by the compatible/device-id string which is based on the part number
+>> as described in the datasheet page 2.
 > 
-> [  172.477662] ------------[ cut here ]------------
-> [  172.480660] se->on_rq
-> [  172.480682] WARNING: CPU: 3 PID: 728318 at kernel/sched/fair.c:5629 pick_task_fair+0xb6/0x1b0
-> [  172.487172] Modules linked in:
-> [  172.488911] CPU: 3 UID: 0 PID: 728318 Comm: 291 Not tainted 6.12.0-rc5-dgc+ #273
-> [  172.492022] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [  172.496029] RIP: 0010:pick_task_fair+0xb6/0x1b0
-> [  172.497978] Code: 40 f3 f3 03 01 74 2a 41 80 7f 50 00 74 96 f6 05 31 f3 f3 03 01 75 8d c6 05 28 f3 f3 03 01 48 c7 c7 41 26 e4 82 e8 7a d7 fa ff <0f> 0b e9 73 ff ff ff c6 05 0d f3 f3 03 01 48 c7 c7 2f 26 e4 82 e8
-> [  172.505868] RSP: 0018:ffffc9002ec83d60 EFLAGS: 00010046
-> [  172.508111] RAX: bdcdd05ee831a400 RBX: 0000000000000000 RCX: 0000000000000027
-> [  172.511139] RDX: 0000000000000000 RSI: 00000000ffdfffff RDI: ffff88881fadc9c8
-> [  172.514326] RBP: ffffc9002ec83d88 R08: 00000000001fffff R09: ffff88a018a00000
-> [  172.517804] R10: 00000000005ffffd R11: 0000000000000004 R12: ffff888122b58c00
-> [  172.520788] R13: ffff88881faf0140 R14: ffff88881faf00c0 R15: ffff88819e8cd180
-> [  172.523748] FS:  0000000000000000(0000) GS:ffff88881fac0000(0000) knlGS:0000000000000000
-> [  172.527167] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  172.529571] CR2: 00007f378e8866fc CR3: 000000104daae000 CR4: 0000000000350ef0
-> [  172.532601] Call Trace:
-> [  172.533666]  <TASK>
-> [  172.534557]  ? show_regs+0x5e/0x70
-> [  172.535993]  ? __warn+0xd0/0x1d0
-> [  172.537430]  ? pick_task_fair+0xb6/0x1b0
-> [  172.539062]  ? report_bug+0x145/0x1f0
-> [  172.540619]  ? handle_bug+0x67/0x90
-> [  172.542060]  ? exc_invalid_op+0x1b/0x50
-> [  172.543854]  ? asm_exc_invalid_op+0x1b/0x20
-> [  172.545688]  ? pick_task_fair+0xb6/0x1b0
-> [  172.547353]  pick_next_task_fair+0x27/0x330
-> [  172.549090]  __schedule+0x2ad/0xb10
-> [  172.550460]  do_task_dead+0x43/0x50
-> [  172.551743]  do_exit+0x836/0xab0
-> [  172.552950]  do_group_exit+0x8f/0x90
-> [  172.554274]  __x64_sys_exit_group+0x17/0x20
-> [  172.555808]  x64_sys_call+0x2ed3/0x2ee0
-> [  172.557210]  do_syscall_64+0x68/0x130
-> [  172.558531]  ? exc_page_fault+0x62/0xc0
-> [  172.559907]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-> [  172.561739] RIP: 0033:0x7f378e74b3c5
-> [  172.563036] Code: Unable to access opcode bytes at 0x7f378e74b39b.
-> [  172.565278] RSP: 002b:00007ffd21861488 EFLAGS: 00000206 ORIG_RAX: 00000000000000e7
-> [  172.568001] RAX: ffffffffffffffda RBX: 00007f378e857fa8 RCX: 00007f378e74b3c5
-> [  172.570589] RDX: 00000000000000e7 RSI: ffffffffffffff88 RDI: 0000000000000000
-> [  172.573182] RBP: 0000000000000000 R08: 00007ffd21861428 R09: 00007ffd218613af
-> [  172.575758] R10: 00007ffd21861320 R11: 0000000000000206 R12: 00007f378e856680
-> [  172.578356] R13: 00007f378e8b9f40 R14: 0000000000000001 R15: 00007f378e857fc0
-> [  172.580941]  </TASK>
+> ...
 > 
-> There was nothing particularly obvious that caused it. It's a 64p
-> VM, running a heavy concurrent fstests workload that takes about 20
-> minutes to complete. There are a bit over 8000 tasks reported, most
-> of them kernel threads. The load is consuming about 50 CPUs, 40GB of
-> RAM, sustaining ~3GB/s of IO to/from disk across about 130 block
-> devices and the scheduler is context switching around 800,000 times
-> a second.
+> Some headers are missing...
 > 
-> I have no idea how to reproduce this on demand - it randomly shows
-> up in about 1 in every 10 test runs and all the tests running at
-> that point in time report failure because they all detect this
-> warning in dmesg.
+>> +#include <linux/bitfield.h>
+>> +#include <linux/bits.h>
+>> +#include <linux/delay.h>
+>> +#include <linux/module.h>
+>> +#include <linux/i2c.h>
+>> +#include <linux/regmap.h>
+> 
+> + pm.h
+> 
+>> +#include <linux/pm_runtime.h>
+> 
+>> +#include <linux/regulator/consumer.h>
+> 
+> + types.h
 
-I have not been able to test v6.12-rc5 yet.
+Ack
 
-Can you share your config? And/Or compare to mine at 
-https://pastebin.com/Y7DXnMG2
+> 
+> ...
+> 
+>> +#define ALS31300_DATA_X_GET(b)		\
+>> +		sign_extend32(FIELD_GET(ALS31300_VOL_MSB_X_AXIS, b[0]) << 4 | \
+>> +			      FIELD_GET(ALS31300_VOL_LSB_X_AXIS, b[1]), 11)
+>> +#define ALS31300_DATA_Y_GET(b)		\
+>> +		sign_extend32(FIELD_GET(ALS31300_VOL_MSB_Y_AXIS, b[0]) << 4 | \
+>> +			      FIELD_GET(ALS31300_VOL_LSB_Y_AXIS, b[1]), 11)
+>> +#define ALS31300_DATA_Z_GET(b)		\
+>> +		sign_extend32(FIELD_GET(ALS31300_VOL_MSB_Z_AXIS, b[0]) << 4 | \
+>> +			      FIELD_GET(ALS31300_VOL_LSB_Z_AXIS, b[1]), 11)
+>> +#define ALS31300_TEMPERATURE_GET(b)	\
+>> +		(FIELD_GET(ALS31300_VOL_MSB_TEMPERATURE, b[0]) << 6 | \
+>> +		 FIELD_GET(ALS31300_VOL_LSB_TEMPERATURE, b[1]))
+> 
+> These and in the code seems like you make a home grown endianes conversion.
+> I suppose all of them have to be __beXX with the respective masks that cover
+> all the bits.
 
-Maybe we can see what was merged for the sched in 6.12, and I can try 
-before and after. I don't like the prospect of a full bisect.
+This has nothing do to with endianess conversion, the bits of the 4 channels
+are split on 2 registers, look at the defines.
+
+> 
+>> +static int als31300_get_measure(struct als31300_data *data,
+>> +				u16 *t, s16 *x, s16 *y, s16 *z)
+>> +{
+>> +	unsigned int count = 0;
+>> +	u32 buf[2];
+> 
+> Shouldn't this be __be64 buf?
+
+No this is 2 separate registers with different fields, not a single 64bit big-endian register
+
+> 
+>> +	int ret;
+>> +
+>> +	guard(mutex)(&data->mutex);
+>> +
+>> +	ret = pm_runtime_resume_and_get(data->dev);
+>> +	if (ret)
+>> +		return ret;
+> 
+>> +	/* Max update rate is 2KHz, wait up to 1ms */
+>> +	while (count < 50) {
+>> +		/* Read Data */
+>> +		ret = regmap_bulk_read(data->map, ALS31300_VOL_MSB, buf, 2);
+> 
+> At bare minimum ARRAY_SIZE(), but see above, I think it should use the respective type.
+
+I'll use ARRAY_SIZE
+
+> 
+>> +		if (ret) {
+>> +			dev_err(data->dev, "read data failed, error %d\n", ret);
+>> +			goto out;
+>> +		}
+>> +
+>> +		/* Check if data is valid, happens right after getting out of sleep mode */
+>> +		if (FIELD_GET(ALS31300_VOL_MSB_NEW_DATA, buf[0]))
+>> +			break;
+>> +
+>> +		usleep_range(10, 20);
+>> +		++count;
+>> +	}
+>> +
+>> +	if (count >= 50) {
+>> +		ret = -ETIMEDOUT;
+>> +		goto out;
+>> +	}
+> 
+> This one of the longest variant of implementing
+> 
+> 	do {
+> 		...
+> 	} while (!FIELD_GET(...) && --count)
+> 
+> But you also may consider something from iopoll.h (I don't remember if we have
+> regmap_read_poll_timeout() for bulk transfers.
+
+There's no poll for bulk read, I'll try using an IOPOLL function
+
+> 
+>> +	*t = ALS31300_TEMPERATURE_GET(buf);
+>> +	*x = ALS31300_DATA_X_GET(buf);
+>> +	*y = ALS31300_DATA_Y_GET(buf);
+>> +	*z = ALS31300_DATA_Z_GET(buf);
+>> +
+>> +out:
+>> +	pm_runtime_mark_last_busy(data->dev);
+>> +	pm_runtime_put_autosuspend(data->dev);
+> 
+> Last discussion with Rafael on the topic of the above puts a question mark to
+> all these cases when runtime PM idle callback has not been implemented.
+> 
+> Shouldn't this be simply
+> 
+> 	pm_runtime_put(data->dev);
+> 
+> ?
+
+Probably, I just used the same schema as other similar IIO drivers
+
+> 
+>> +	return ret;
+>> +}
+> 
+> ...
+> 
+>> +	case IIO_CHAN_INFO_SCALE:
+>> +		switch (chan->type) {
+>> +		case IIO_TEMP:
+>> +			/*
+>> +			 * Fractional part of:
+>> +			 *         1000 * 302 * (value - 1708)
+>> +			 * temp = ----------------------------
+>> +			 *             4096
+>> +			 * to convert temperature in millicelcius
+>> +			 */
+>> +			*val = 1000 * 302;
+> 
+> MILLI from units.h ?
+
+Well, sure, but it's still 1000, should I also define ONE to 1 and so on ?
+
+> 
+>> +			*val2 = 4096;
+>> +			return IIO_VAL_FRACTIONAL;
+>> +		case IIO_MAGN:
+>> +			/*
+>> +			 * Devices are configured in factory
+>> +			 * with different sensitivities:
+>> +			 * - 500 GAUSS <-> 4 LSB/Gauss
+>> +			 * - 1000 GAUSS <-> 2 LSB/Gauss
+>> +			 * - 2000 GAUSS <-> 1 LSB/Gauss
+>> +			 * with translates by a division of the returned
+>> +			 * value to get Gauss value.
+>> +			 * The sensisitivity cannot be read at runtime
+>> +			 * so the value depends on the model compatible
+>> +			 * or device id.
+>> +			 */
+>> +			*val = 1;
+>> +			*val2 = data->variant_info->sensitivity;
+>> +			return IIO_VAL_FRACTIONAL;
+>> +		default:
+>> +			return -EINVAL;
+>> +		}
+> 
+> ...
+> 
+>> +	struct {
+>> +		u16 temperature;
+>> +		s16 channels[3];
+>> +		aligned_s64 timestamp;
+>> +	} __packed scan;
+> 
+> Why __packed?
+
+Probably unneeded, will drop
+
+> 
+> ...
+> 
+>> +static int als31300_set_operating_mode(struct als31300_data *data,
+>> +				       unsigned int val)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = regmap_update_bits(data->map, ALS31300_VOL_MODE,
+>> +				 ALS31300_VOL_MODE_SLEEP, val);
+>> +	if (ret) {
+>> +		dev_err(data->dev, "failed to set operating mode (%pe)\n", ERR_PTR(ret));
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* The time it takes to exit sleep mode is equivalent to Power-On Delay Time */
+>> +	if (val == ALS31300_VOL_MODE_ACTIVE_MODE)
+>> +		usleep_range(600, 650);
+>> +
+>> +	return ret;
+> 
+> 	return 0;
+
+It's the same but ok
+
+> 
+>> +}
+> 
+> ...
+> 
+>> +static int als31300_probe(struct i2c_client *i2c)
+>> +{
+>> +	struct device *dev = &i2c->dev;
+>> +	struct als31300_data *data;
+>> +	struct iio_dev *indio_dev;
+>> +	int ret;
+>> +
+>> +	indio_dev = devm_iio_device_alloc(dev, sizeof(*data));
+>> +	if (!indio_dev)
+>> +		return -ENOMEM;
+>> +
+>> +	data = iio_priv(indio_dev);
+>> +	data->dev = dev;
+>> +	i2c_set_clientdata(i2c, indio_dev);
+> 
+>> +	mutex_init(&data->mutex);
+> 
+> Why not devm_mutex_init()? How does this being cleaned up?
+
+Indeed, good catch
+
+> 
+>> +	data->variant_info = i2c_get_match_data(i2c);
+>> +	if (!data->variant_info)
+>> +		return -EINVAL;
+>> +
+>> +	data->map = devm_regmap_init_i2c(i2c, &als31300_regmap_config);
+>> +	if (IS_ERR(data->map))
+>> +		return dev_err_probe(dev, PTR_ERR(data->map),
+>> +				     "failed to allocate register map\n");
+>> +
+>> +	ret = devm_regulator_get_enable(dev, "vcc");
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to enable regulator\n");
+>> +
+>> +	ret = als31300_set_operating_mode(data, ALS31300_VOL_MODE_ACTIVE_MODE);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to power on device\n");
+>> +
+>> +	ret = devm_add_action_or_reset(dev, als31300_power_down, data);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to add powerdown action\n");
+>> +
+>> +	indio_dev->info = &als31300_info;
+>> +	indio_dev->modes = INDIO_DIRECT_MODE;
+>> +	indio_dev->name = i2c->name;
+>> +	indio_dev->channels = als31300_channels;
+>> +	indio_dev->num_channels = ARRAY_SIZE(als31300_channels);
+>> +	indio_dev->available_scan_masks = als31300_scan_masks;
+>> +
+>> +	ret = devm_iio_triggered_buffer_setup(dev, indio_dev,
+>> +					      iio_pollfunc_store_time,
+>> +					      als31300_trigger_handler,
+>> +					      &als31300_setup_ops);
+>> +	if (ret < 0) {
+>> +		dev_err(dev, "iio triggered buffer setup failed\n");
+>> +		return ret;
+> 
+> Why not return dev_err_probe(...);
+
+Sure
+
+> 
+>> +	}
+>> +
+>> +	ret = pm_runtime_set_active(dev);
+>> +	if (ret < 0)
+>> +		return ret;
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	pm_runtime_get_noresume(dev);
+>> +	pm_runtime_set_autosuspend_delay(dev, 200);
+>> +	pm_runtime_use_autosuspend(dev);
+>> +
+>> +	pm_runtime_mark_last_busy(dev);
+>> +	pm_runtime_put_autosuspend(dev);
+>> +
+>> +	ret = devm_iio_device_register(dev, indio_dev);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "device register failed\n");
+>> +
+>> +	return 0;
+>> +}
+> 
 
 Thanks,
-John
+Neil
 
