@@ -1,168 +1,190 @@
-Return-Path: <linux-kernel+bounces-387075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1219B4B92
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:58:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB429B4B96
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AA9EB22529
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:58:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA96283756
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B380206E61;
-	Tue, 29 Oct 2024 13:58:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAAEE206E6D;
+	Tue, 29 Oct 2024 13:59:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8xe9A3w"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s/1PBN+O"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB3820696B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC634204956
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730210321; cv=none; b=EAZ3j8sHB/GflosOvrnse5Ut4hHEugLzKVBouxOgGVv8va9usjEOnLTj4I2rBK4kOY6Pr8IpljTbZsGK7cdCpKAyyoB8NxQZ+z1QnUr6F3eIQWWbaTHcbKFsu6/2ypWg3lTrR0pJWAXl2IaD/t5uWh184dSazamW98TFz27Vadc=
+	t=1730210369; cv=none; b=maQdHjYiS1VHtYv0cyQcct9LCejoWXThiFlt9PdzPhvi/WUaJFLrpt3JJ1rXg16UD75C7Isvxt8HNSiOML4u1L3qPml/zZZXUrIfpJuFRL/DvSP1oMyjX5DcbCzF76q/OLKPPCtFcUCXeD5W6A5xH8hTKAx3w8+9EiKOZZUwHb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730210321; c=relaxed/simple;
-	bh=x2jNO/kTA0H/Vj2uIn8nBbf6CkfW1gy043bvjGQVrwU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Oshjue3xKacdWD+Z9WX4cumDF7MZAMA3W4w4HzL2UAoURVree3DbivqqON6CjnMDWR+UzNiP96C4i0lsvuhjgodQsgWd4mD1sGIgeL/B3bHNkke15wIWWVIdS6iPrqXA3tqc4cqJXxO43FZ01phjeH3OIkANsOLppFWNhg6j3WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8xe9A3w; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730210318;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=G1jV1/Yzm8C7w0dHBYs7ihPXUdLAMbLSEy37RaAfnIE=;
-	b=c8xe9A3wnTrsxsOJ2fD5w9sOX4yzjaUVm0UqgpCeJLK3L60IQ1pKkpAIacECRLye6us3NX
-	K6wB/yEFmh7PuuGWmbjjOSM8rVWI2kgH9PwU28RYu+3Cf/b+Nl4Xo4H9UwqpBBLB0eVhGw
-	oejcl496O6RQD6hmTARvE3RO4R76GEQ=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-609-YAZYwKAoNh6PqP98ZjFmkQ-1; Tue, 29 Oct 2024 09:58:37 -0400
-X-MC-Unique: YAZYwKAoNh6PqP98ZjFmkQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315c1b5befso39055915e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:58:35 -0700 (PDT)
+	s=arc-20240116; t=1730210369; c=relaxed/simple;
+	bh=HWBADJXnoh2NUNrdZ4R8VuuNYl1bmNxvyx9KhUtUxEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NvQXxFF3fGhkXwpd5h7H28MATojfb3n76iIb9v4D31CVEFN4pkLvv5FyqM4anCJ8PIKNpMIAva+t5ddHN7OL3EQpffKBJN8dIs36rifLqqxFgOpjR8hMxJ1E1pe7yg4Tv7ZRGFydVzZVHHKwnpA1iemnte/nWrkghC9TCwqu4UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s/1PBN+O; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3807dd08cfcso1294984f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:59:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730210364; x=1730815164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N0+r5DXauPWMBo80TC003d10oYhw7X04leDKPh0fruY=;
+        b=s/1PBN+O4ssMce33ShcFRDVxgnF0bzyFMTPkXBQD+CHNpuVcPuUuWVIeFbSTQ2RKAX
+         SzyfVCwgP9Gr6Pg6PF4WkcbBPDkpqXzHpLIp+XaOAZKHslD9yMLSO8njq8gWrrtDp20b
+         FJBYhxAFMCe6o1QLNfDMRgaa51ritTL6O1Exth+2EPQ75ob8OOZ39+RqdTFbpYWkXjsv
+         ZSMABo/ZMKJ4IFg+lSI2eA6UqEQQr2UI6VrBgva2iMmHufjp57xL/PCEJz4jkhV1HKFE
+         5F4IVQrn3D0tk7wvtLul1Cti40IuvA1GDUxOTxTDsuBu0cdPxSfHiCAT3PZ6BvJNCBS0
+         I59g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730210315; x=1730815115;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1jV1/Yzm8C7w0dHBYs7ihPXUdLAMbLSEy37RaAfnIE=;
-        b=FqQTzJ1zYRLjb5Xxi6xmTZV/uXCs6oimvgm/RAi0/M/Ksng2i5vcuEtmrTZ3xPpUQj
-         /3J9GWm3tiimv3/kD2ndujKka0gTCFaso/LWWuAYwgL9Ev7/w/nmLIGt92FUjWVMoMmY
-         g4JcpskC2EUIklze8bvxFIRr9mTHTFGYG+xQLwa6l6l9mEhRQZ2K3BzMr/qN1FCu7Zhf
-         lGZmNR1ANGfLawL9cDwjq2vW7udYWMI/i7rSeE73/bxA5o9hhwjv2siLAyU8u6uC7pke
-         Y6TXWZ+xd6WgsuXwLgHGN2HdMeRTZY/+GInSuDASsE/2hpuouZOo2eXeWxa1WB3yW3s1
-         9/Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXWns3jvvRllKW4WZZ0IUtDPCRhYhMPiM8eAEnX82QJz04PvN9Y6sPA86+6Yuay4i4oA8nNpeE2OYWOcmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyeB8ryXFP57B8Rch9rHgfskOZBN3cSXXckKR5ibiRuTd8qHBFK
-	qnpt/fDpZdWk0QhxmQTSOchRpKSyGp8JJ1oYjIpdxIAr0SkZyLevU/pxm/4k/zd8qqtSRW3u7L8
-	3zP3bhaeC8jaFJKmCFueIyecOKIq3rEIthFLFN6SxGU3PoC/4coYY62dvYz+BoQ==
-X-Received: by 2002:a05:600c:4fcb:b0:425:7bbf:fd07 with SMTP id 5b1f17b1804b1-4319ac6fb93mr108811355e9.5.1730210314923;
-        Tue, 29 Oct 2024 06:58:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmjNhzuq00pUPaKiJbsibQab44XUqMBzjhRGWk84vFKvwkmvCnitvIW369yK4nhBxXErWTvQ==
-X-Received: by 2002:a05:600c:4fcb:b0:425:7bbf:fd07 with SMTP id 5b1f17b1804b1-4319ac6fb93mr108811095e9.5.1730210314561;
-        Tue, 29 Oct 2024 06:58:34 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b567e18sm173445365e9.26.2024.10.29.06.58.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 06:58:34 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 1A9D9164B204; Tue, 29 Oct 2024 14:58:33 +0100 (CET)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
-Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
- Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
- <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew Morton
- <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-team
- <kernel-team@cloudflare.com>
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-In-Reply-To: <cf1911c5-622f-484c-9ee5-11e1ac83da24@huawei.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com> <878qudftsn.fsf@toke.dk>
- <d8e0895b-dd37-44bf-ba19-75c93605fc5e@huawei.com> <87r084e8lc.fsf@toke.dk>
- <cf1911c5-622f-484c-9ee5-11e1ac83da24@huawei.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Tue, 29 Oct 2024 14:58:33 +0100
-Message-ID: <878qu7c8om.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1730210364; x=1730815164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=N0+r5DXauPWMBo80TC003d10oYhw7X04leDKPh0fruY=;
+        b=gjpRhHESqqODEnF3DbLPfMBz5QIhDZ3jLFDhjqmRengiFr6fllNaoola0hOkHGeDTi
+         ro8IhG6CZB3pT1wUvMQPhVyj8UndNGG7IgxdnbwA7g9VU3ryHEjlgFAFS5pf390RM2zF
+         Xn//qDic9um+Psy1Tsq8zW9XCasKRv2O6euXKb/mhQUbYhiTJTxAZMawjZaWFBBUs1pO
+         0DaiqHMT7SjyRAG5zI7lpRQIuSfkQ44KhAAZh/WWC4l8wcLIa7GhonawTHP6JeH5OKNM
+         bd3Rcy7P7OKK0wAH+Q0Fb9/gWKnBbK9w+yO02WNpGKDPe4LcIIHCyO9UT6DLij1QqUVb
+         PXlw==
+X-Forwarded-Encrypted: i=1; AJvYcCXeFOWEXBYnR1NfnLp5a/n+I6RcvO5z+oYp26i5/+Gd0O/QfGXbpK0foV2fWbIk7dN/vV/ms2i+cVwydjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwV6ZZ33E+qt0fDotI48PjlJWXr0CQvrIhppEBTdX3D4Qw0S3XQ
+	Q6fZVzc0acYPtkhen41AzUXCaQ709M98X7CLosAwRi1jENsnFnzkrnuLomsjX0U85iYGLr+jjxc
+	zSQ9a+rJN4RAi/D1NWWdL308Ed1OeLL3+RGJu
+X-Google-Smtp-Source: AGHT+IHKguE544j9cYCAx/GnN3x2cBIU4yFs+FD0nSAsUtdOZzL/B0VKKdtS72gv2gH4vafJAmdHPLNGHnEY0QP/rKg=
+X-Received: by 2002:a5d:56d2:0:b0:37e:f4a1:2b58 with SMTP id
+ ffacd0b85a97d-38061172aa9mr11280347f8f.16.1730210364034; Tue, 29 Oct 2024
+ 06:59:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-7-dakr@kernel.org>
+In-Reply-To: <20241022213221.2383-7-dakr@kernel.org>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Tue, 29 Oct 2024 14:59:10 +0100
+Message-ID: <CAH5fLgji5SozS2Y+G16pPS3iiKnee-p94xO+uZZykTd_7EBOpQ@mail.gmail.com>
+Subject: Re: [PATCH v3 06/16] rust: add rcu abstraction
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
+	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
+	daniel.almeida@collabora.com, saravanak@google.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Yunsheng Lin <linyunsheng@huawei.com> writes:
-
->>> I would prefer the waiting too if simple waiting fixed the test cases that
->>> Youglong and Haiqing were reporting and I did not look into the rabbit hole
->>> of possible caching in networking.
->>>
->>> As mentioned in commit log and [1]:
->>> 1. ipv4 packet defragmentation timeout: this seems to cause delay up to 30
->>>    secs, which was reported by Haiqing.
->>> 2. skb_defer_free_flush(): this may cause infinite delay if there is no
->>>    triggering for net_rx_action(), which was reported by Yonglong.
->>>
->>> For case 1, is it really ok to stall the driver unbound up to 30 secs for the
->>> default setting of defragmentation timeout?
->>>
->>> For case 2, it is possible to add timeout for those kind of caching like the
->>> defragmentation timeout too, but as mentioned in [2], it seems to be a normal
->>> thing for this kind of caching in networking:
->> 
->> Both 1 and 2 seem to be cases where the netdev teardown code can just
->> make sure to kick the respective queues and make sure there's nothing
->> outstanding (for (1), walk the defrag cache and clear out anything
->> related to the netdev going away, for (2) make sure to kick
->> net_rx_action() as part of the teardown).
+On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
+ wrote:
 >
-> It would be good to be more specific about the 'kick' here, does it mean
-> taking the lock and doing one of below action for each cache instance?
-> 1. flush all the cache of each cache instance.
-> 2. scan for the page_pool owned page and do the finegrained flushing.
-
-Depends on the context. The page pool is attached to a device, so it
-should be possible to walk the skb frags queue and just remove any skbs
-that refer to that netdevice, or something like that.
-
-As for the lack of net_rx_action(), this is related to the deferred
-freeing of skbs, so it seems like just calling skb_defer_free_flush() on
-teardown could be an option.
-
->>> "Eric pointed out/predicted there's no guarantee that applications will
->>> read / close their sockets so a page pool page may be stuck in a socket
->>> (but not leaked) forever."
->> 
->> As for this one, I would put that in the "well, let's see if this
->> becomes a problem in practice" bucket.
+> From: Wedson Almeida Filho <wedsonaf@gmail.com>
 >
-> As the commit log in [2], it seems it is already happening.
+> Add a simple abstraction to guard critical code sections with an rcu
+> read lock.
 >
-> Those cache are mostly per-cpu and per-socket, and there may be hundreds of
-> CPUs and thousands of sockets in one system, are you really sure we need
-> to take the lock of each cache instance, which may be thousands of them,
-> and do the flushing/scaning of memory used in networking, which may be as
-> large as '24 GiB' mentioned by Jesper?
+> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Well, as above, the two issues you mentioned are per-netns (or possibly
-per-CPU), so those seem to be manageable to do on device teardown if the
-wait is really a problem.
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
-But, well, I'm not sure it is? You seem to be taking it as axiomatic
-that the wait in itself is bad. Why? It's just a bit memory being held
-on to while it is still in use, and so what?
+>  rust/helpers/helpers.c  |  1 +
+>  rust/helpers/rcu.c      | 13 +++++++++++
+>  rust/kernel/sync.rs     |  1 +
+>  rust/kernel/sync/rcu.rs | 52 +++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 67 insertions(+)
+>  create mode 100644 rust/helpers/rcu.c
+>  create mode 100644 rust/kernel/sync/rcu.rs
+>
+> diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> index 20a0c69d5cc7..0720debccdd4 100644
+> --- a/rust/helpers/helpers.c
+> +++ b/rust/helpers/helpers.c
+> @@ -16,6 +16,7 @@
+>  #include "mutex.c"
+>  #include "page.c"
+>  #include "rbtree.c"
+> +#include "rcu.c"
+>  #include "refcount.c"
+>  #include "signal.c"
+>  #include "slab.c"
+> diff --git a/rust/helpers/rcu.c b/rust/helpers/rcu.c
+> new file mode 100644
+> index 000000000000..f1cec6583513
+> --- /dev/null
+> +++ b/rust/helpers/rcu.c
+> @@ -0,0 +1,13 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +#include <linux/rcupdate.h>
+> +
+> +void rust_helper_rcu_read_lock(void)
+> +{
+> +       rcu_read_lock();
+> +}
+> +
+> +void rust_helper_rcu_read_unlock(void)
+> +{
+> +       rcu_read_unlock();
+> +}
+> diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+> index 0ab20975a3b5..1806767359fe 100644
+> --- a/rust/kernel/sync.rs
+> +++ b/rust/kernel/sync.rs
+> @@ -11,6 +11,7 @@
+>  mod condvar;
+>  pub mod lock;
+>  mod locked_by;
+> +pub mod rcu;
+>
+>  pub use arc::{Arc, ArcBorrow, UniqueArc};
+>  pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
+> diff --git a/rust/kernel/sync/rcu.rs b/rust/kernel/sync/rcu.rs
+> new file mode 100644
+> index 000000000000..5a35495f69a4
+> --- /dev/null
+> +++ b/rust/kernel/sync/rcu.rs
+> @@ -0,0 +1,52 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! RCU support.
+> +//!
+> +//! C header: [`include/linux/rcupdate.h`](srctree/include/linux/rcupdat=
+e.h)
+> +
+> +use crate::bindings;
+> +use core::marker::PhantomData;
+> +
+> +/// Evidence that the RCU read side lock is held on the current thread/C=
+PU.
+> +///
+> +/// The type is explicitly not `Send` because this property is per-threa=
+d/CPU.
+> +///
+> +/// # Invariants
+> +///
+> +/// The RCU read side lock is actually held while instances of this guar=
+d exist.
+> +pub struct Guard {
+> +    _not_send: PhantomData<*mut ()>,
 
--Toke
+Once 6.13 is released, you'll want to use NotThreadSafe here instead
+of PhantomData. It's landing upstream through vfs.rust.file.
 
+Alice
 
