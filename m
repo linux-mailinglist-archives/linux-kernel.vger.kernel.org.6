@@ -1,97 +1,152 @@
-Return-Path: <linux-kernel+bounces-386343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307699B422A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:12:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D20F9B4238
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35CF28366A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D24E28377A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3DB82010E4;
-	Tue, 29 Oct 2024 06:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11A342010E2;
+	Tue, 29 Oct 2024 06:14:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLa8QQgp"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MHydNt+d"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5F47464;
-	Tue, 29 Oct 2024 06:12:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 644F87464;
+	Tue, 29 Oct 2024 06:14:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730182338; cv=none; b=XAGHiTQVeNQ902qnB0lPjfZd6wjNs6Q9uhNMy3RVTKVBbh3pvogLTUEX7nyIYO+SeUffuZjRXe6/XMcsMGeX/1LgHCEfjzvPOxdqx7gbQl8nSF4/fAxnWP0b17cU7/+eiG8wpp7LwH3EczL6x8lFr4oa504i4rhoyzMx1+8eNRA=
+	t=1730182478; cv=none; b=lGl3Tx5K5RUxYiPtUUazdAncnVfhEa6PtD1WaWzPFGdae0ZO0kqlIkI7C9/hO68Pt1Bq2gDl2IT2/ajGvONjLGTwuoPy1A9deOFfIjQQ7Fmadq8NzKkQupn+t+5OsQbOu2AmebCMEQdG2b5PJ/wc1qb+vDucfkBT6yK51s+6dEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730182338; c=relaxed/simple;
-	bh=Kzk8mG3w4M0DJo16dim3KWCQXCsAv1NmNVUeuFf3sBA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S9hWV0uZbY/B638T8RJV9LeB4LQQUJbw29CZC09uDg9jwzVFlMGPQX26zJ/Wk8/bPWZnybFAg6MxwuinfQIV5RxFGQkDfJNVAoDCxYNfMGRniZ6LBfGyLwKRzORZ+hj2JNA/up9xIDcjAQ6vub7CjCXXZtAvB6ZXhfdLPhpfxmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLa8QQgp; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c693b68f5so54159355ad.1;
-        Mon, 28 Oct 2024 23:12:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730182335; x=1730787135; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kzk8mG3w4M0DJo16dim3KWCQXCsAv1NmNVUeuFf3sBA=;
-        b=BLa8QQgpc//k2XGf8TbrJ+SQEdLrAeq8HU8JiOTgg92Ug8X5GR7bgHkQx7BRFp8sZ3
-         15OSG5PE45pK2eUzCSa0GS4aSh+GpRLVGIEtUszcYTi3rpIllKQtliuac5ESVCaZmo+R
-         +/4DMzYpSIexBTZ01iUHLDz9rsqjxfYkoc+UszN2xskyB1uSW8njvKkBFnyFYUV9ZsJL
-         Kj0G+WHlEHv9502/ACzGUBEmRAK3xDmzFbh+OpBX4/2ETncCCoMs7m85/YOoz/5rm4DY
-         62cl9XXOWnrD4MdrX3moTkY/69utoCoSP7iZddZ901tw0Zkbf0dW7Ap/gDB/UnoQD2hG
-         AB6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730182335; x=1730787135;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Kzk8mG3w4M0DJo16dim3KWCQXCsAv1NmNVUeuFf3sBA=;
-        b=tSiK9EZ+QfoBW2gGFrfYbeVkJ6TTSguBd+RBmlJe3753T0mYsI6IhHorpuv2v1uMsD
-         Svxf5T6l182aPSFcKl8+bvZFcc2hrxutdiv0QZXhKQ1wX0M05zHfyww62bWhmA3V8hfI
-         Iv5Jv3rVmz+8qgWqAcKKBFEWDB+ethQEdddIKQdVhB183b4WIXbCnb0F8NB4HHwt55YZ
-         G1jBgPmiXZBOCQpzmKzJd8rHjJ0SDrHj/sWwP28qQb8IilDaETz0OJcfm1LEVFGOM5+7
-         v53xP2OT4SReS+Tm8Aa5JtCpE4wKo5OcSa1UgKvxAKKFMUu+rSp89CHKCy5jj298qKoF
-         C46w==
-X-Forwarded-Encrypted: i=1; AJvYcCVsr86EpSy3Tyb0u70plmZnG1SVrcE4+kXWGE5l/xHWLkDK6KkGjKQ8qZSnjIuB6e8sFS2ACdpsKpYpRNU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyH1fsnod8nTSms0A0/JpDzpb7w3o9nIXYOPlPCW0XmNvsj537g
-	pOqJTwWd77QSuMtfB2wCo8PkEQHb9CgmRMj89jhkYjxxlZkkoaOUlWKQuj4cg9+P/7cmnq9FzXw
-	Q8ZYYhqZZjZBmUsHWXn9DseVIoSDa94Rjw1crZw==
-X-Google-Smtp-Source: AGHT+IFDmIyepVPsDIv/cyWTJ48jhP7A08uiBSPpB/uVY2dRCd95mv+BO/Aq7Ks9pni7Zgx9IIgOqPLaqsYkL+GoGv8=
-X-Received: by 2002:a17:903:192:b0:20b:7be8:8eb9 with SMTP id
- d9443c01a7336-210c6ccc963mr138766145ad.54.1730182335142; Mon, 28 Oct 2024
- 23:12:15 -0700 (PDT)
+	s=arc-20240116; t=1730182478; c=relaxed/simple;
+	bh=NuCxxSX+aZt76Gx7lVCK96oioAgUGebzZF4Cp/JUvfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QLCnMY4TME1C2VnD0i6ZPFt7ybKJJEo2etf170r6y830J4Yl0IPsvNe3AsmCYOSoQq+1He3+abtlIUCSwn6EfPD/ym9oA+GvoGfJpAUpmOxW+5jjfelUGBEI1Pa5j0a6qsVKtrJnHAFwxvKdJpNGxp74qSgdsC5Hg8W1NXx2uHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MHydNt+d; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 69235C4CECD;
+	Tue, 29 Oct 2024 06:14:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730182477;
+	bh=NuCxxSX+aZt76Gx7lVCK96oioAgUGebzZF4Cp/JUvfk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MHydNt+dMqds6n49QdSuTUL+umWb6/hPp6Ti3Pxogyn5oIlZ2ceHomwLHFmLz8GyG
+	 iZahaP28B2yVSkwc5jy/phZHILde5Iw1sdtX1XYfrcy87m2y1k4/eYLmoTYYfptdNZ
+	 eR2ztEqK54bOPP3kgpWcmO9nR4YcNT2y+IjCDmgAfhPDoe0rFcWgDiTQoCEmDWGoAr
+	 Ct1US8OB0Vzzb9T/JWTzNMNSYlL0SHifx2MU7ZI/qo+wtnIUm65Um6qSRBJ/Q6BtwC
+	 x0MI5M+q+hlF1U5Zoy4Blvdm/9qv86Veq2Iaq3uhu8Kq97Z8yURdlWZrCgCKf8Emsy
+	 BTnioiUBa4g+g==
+Message-ID: <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
+Date: Tue, 29 Oct 2024 07:14:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1728818976.git.hridesh699@gmail.com> <32382c55dbcb6482d6e686d541c2e15b282908cd.1728818976.git.hridesh699@gmail.com>
-In-Reply-To: <32382c55dbcb6482d6e686d541c2e15b282908cd.1728818976.git.hridesh699@gmail.com>
-From: Hridesh MG <hridesh699@gmail.com>
-Date: Tue, 29 Oct 2024 11:41:37 +0530
-Message-ID: <CALiyAo==Bk1qjVcnQKc+0YUOzgKuYSvJts+eNrMDx+E3XxMsGw@mail.gmail.com>
-Subject: Re: [PATCH v6 4/4] checkpatch: warn on empty rust doc comments
-To: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Andy Whitcroft <apw@canonical.com>, Joe Perches <joe@perches.com>, 
-	Dwaipayan Ray <dwaipayanray1@gmail.com>, Lukas Bulwahn <lukas.bulwahn@gmail.com>, 
-	Jens Axboe <axboe@kernel.dk>, Wedson Almeida Filho <walmeida@microsoft.com>, 
-	Valentin Obst <kernel@valentinobst.de>, Patrick Miller <paddymills@proton.me>, 
-	Alex Mantel <alexmantel93@mailbox.org>, Matt Gilbride <mattgilbride@google.com>, 
-	Aswin Unnikrishnan <aswinunni01@gmail.com>, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	FUJITA Tomonori <fujita.tomonori@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
+ sensor driver
+To: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+ sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+ laurent.pinchart+renesas@ideasonboard.com, laurentiu.palcu@nxp.com,
+ robert.chiras@nxp.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
+ dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
+ alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-2-mirela.rabulea@nxp.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241028190628.257249-2-mirela.rabulea@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Just dropping a gentle ping=E2=80=94please let me know if there=E2=80=99s a=
-nything
-additional I can do to help move this forward.
+On 28/10/2024 20:06, Mirela Rabulea wrote:
+> Add bindings for OX05B1S sensor driver
+> 
+> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+
+<form letter>
+Please use scripts/get_maintainers.pl to get a list of necessary people
+and lists to CC. It might happen, that command when run on an older
+kernel, gives you outdated entries. Therefore please be sure you base
+your patches on recent Linux kernel.
+
+Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+people, so fix your workflow. Tools might also fail if you work on some
+ancient tree (don't, instead use mainline) or work on fork of kernel
+(don't, instead use mainline). Just use b4 and everything should be
+fine, although remember about `b4 prep --auto-to-cc` if you added new
+patches to the patchset.
+
+You missed at least devicetree list (maybe more), so this won't be
+tested by automated tooling. Performing review on untested code might be
+a waste of time.
+
+Please kindly resend and include all necessary To/Cc entries.
+</form letter>
+
+Binding also looks very different than all other devices, so re-write it
+starting from EXISTING GOOD bindings. Not some downstream stuff.
+
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+A nit, subject: drop second/last "driver". Bindings are for hardware,
+not drivers.
+
+Best regards,
+Krzysztof
+
 
