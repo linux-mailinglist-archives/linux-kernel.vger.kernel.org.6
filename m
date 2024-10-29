@@ -1,411 +1,143 @@
-Return-Path: <linux-kernel+bounces-386417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26B219B4332
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:35:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A8B69B4337
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:36:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CAF2838FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:35:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1ED70B215E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0027A20265C;
-	Tue, 29 Oct 2024 07:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FHbl+vgL"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AA5201111;
-	Tue, 29 Oct 2024 07:34:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730187289; cv=fail; b=NCugGEOq9XsHGZrJKyxw5vzA3QkqYd7vs/PIUUX7i40RUc+MQJDnII+L64lPeI9wvSqSmv/nQ0RNCAQX8W8p9VhaIu/diIWijOahysg3kQZjB7+D+pZzZJ+LsVLuysODk9LtG0fRnRm+AgBTu58ArdQfVvNkXhZ4Cd+uNFVnwOs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730187289; c=relaxed/simple;
-	bh=fR4OJoGMLUJPYkcZ6KEHs97dHXIPb6MiL0soJNHLN5M=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jW9QVPqCe6l3fUhjbtYEDUoObKXYwg9BtUULDs46faioq6WE1b93OGJ5imnQ0eAIyhiY9B2sbHdmWIilm+i5OiWKmeYCDBYQdARXVU3gLQxxI13AdOnCLPw/XLq6DNcS99FKY1mcjYw8EijPsqxRIYwS1I989I8TJJbgYTdLglU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FHbl+vgL; arc=fail smtp.client-ip=40.107.21.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KoHetGYCvWVr/+vfbDYBQ4M/gJPsBjdG0tekFURZo+PoWttgFysBsYyfHIVfJL6/yA6rIw3DGj+7j6BDe7kI2vODgvl7i/9HEzX+ceQVnJcwkn+l3yScZwLr9J2D7zqO+Wq/xasEZkYjZ607lzxctvh0WnDldSLPBk//AB7GXB2F8an++Ro0dvpjdf/KTWYxTb3ORs/r3KhmHEt5NHqPdzybPygRkbP9uI++JD8AfqLMrYJNAMEkSRkhBJmv93NyWkBEL4p4l7/rhLSSRlKcLChPxF4FBTKThljbTboSCf//2iOgsut87jUMNvUBJvqOohmy0qAfEDMlyHce4HArmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5MGaKuyK1ZpV7iNozl/4/eQ0GCLP6uRkc/6h3fKJHaQ=;
- b=tVwRCWDOqBBqLHeHi3lembG2dwR7Xejve5LDL0wP0spSgOXgv7jvB0g3k2c7Ot+OCgP22ep6Kz8S7zZR7IrejFpP19uhW5mWEmhfTRzKN2odwRzS4gOTzpK009Jpoq2Qairyt8nGQFOIAVXCq6xFKmA4zmdZt/IpQz34oUjcszt09l3IvAXavnvJg5+hqCDxS3uvk0yc6JnAXSROnKRt+9x7ylQ3YcO6LgcO5eEpeAzAn6X4UgrhllF1/UrjoXHdLTrtHM4/lZzFuSy97daJnwYjR8Rba/PT5qRp9eyuQkZGDIGE3UcB1eKdLipoh65O9IzcSBilkcPHy6IGIj71EQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5MGaKuyK1ZpV7iNozl/4/eQ0GCLP6uRkc/6h3fKJHaQ=;
- b=FHbl+vgLLOTLcBU9jy1tqw3ROsh5rTGQUJlaSBAjxKL+XToE9WJdjexeKx+Pgd+U8jyYRrIPbEX7RqbyNpmgWbmQ3KUEBEacDU+3UvdaekRYNInmGdkeUfIpKoE2+VbqgINi7kPkk17nffDqUZ/w9iwEy3AdbOXUqRiP7D0+jSaIf9sjTGzeaSo2unWZGDKr17ox4820WDMtibMfDWOEqCntdLYNmT+CzkZAb8xXeiQyOZ6j9OJmlHEizFhWLKTAnzUYGXJOZ+nppfjVRptg9g497EWeM3LHl0DEpyMR22xQG+DIVqsVm1GSvuV9P6vo/IQqpLNC4ygB6aKD/Wyzhw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DB8PR04MB7178.eurprd04.prod.outlook.com (2603:10a6:10:12e::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Tue, 29 Oct
- 2024 07:34:43 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8093.023; Tue, 29 Oct 2024
- 07:34:43 +0000
-Message-ID: <a166da61-8cd4-44c9-987b-94d8a62faf82@nxp.com>
-Date: Tue, 29 Oct 2024 15:35:05 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
- display common properties
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
- "rfoss@kernel.org" <rfoss@kernel.org>,
- "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
- "jonas@kwiboo.se" <jonas@kwiboo.se>,
- "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "sakari.ailus@linux.intel.com" <sakari.ailus@linux.intel.com>,
- "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
- "tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
- "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "nfraprado@collabora.com" <nfraprado@collabora.com>,
- "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
- Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- "sam@ravnborg.org" <sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>
-References: <20241028023740.19732-1-victor.liu@nxp.com>
- <20241028023740.19732-9-victor.liu@nxp.com>
- <01c1c4f3-1652-4b08-bd35-08b4e1c04c79@nxp.com>
- <TY3PR01MB11346805C5D524D264669D178864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <750920ae-36b9-47f5-84e9-779332739f86@nxp.com>
- <TY3PR01MB1134610B42A1D3424D97B04CA864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <TY3PR01MB1134610B42A1D3424D97B04CA864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SG2P153CA0036.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::23)
- To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E99B20265C;
+	Tue, 29 Oct 2024 07:36:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AD43201111
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730187407; cv=none; b=GLFeLcGRJeLVoPvRVvfGtWaDo4QqUjP7hMjI84mUZhxtxBHuVsFAy1zg4XAsaMvurJcTgSJega9jeo41KDS7k3R+soMSnVO5NtdOp8aDTaN0T3F5TswbRxtzRe/oub9PBKUJKvGlkHzeJ/1RAV+OK7eXnLN7/kD22SWo9dhyKEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730187407; c=relaxed/simple;
+	bh=yRzoC+KjUUDkGESUErCpOUivqMftMbTVJnBNhXXmmcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q+4ooTB9AFuF2Tb6vY1o/LdayVWV1yU8rhfJxm7T9XmPPKX2ni4HlRGa7yYM/lQHd+d0IVsxlAscnKWUGP8q1u8QfYtblgo/GVRlFEhVcMs9Wna7W/7ztkwPWwdsE1jC/oTv8Q+eNNMZs2+ZVowF8EG7LKuEvzLl0wvTf9TQ7VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 124F813D5;
+	Tue, 29 Oct 2024 00:37:14 -0700 (PDT)
+Received: from [10.163.43.192] (unknown [10.163.43.192])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC0EB3F66E;
+	Tue, 29 Oct 2024 00:36:40 -0700 (PDT)
+Message-ID: <f65af1fe-b500-499e-84dd-954700583475@arm.com>
+Date: Tue, 29 Oct 2024 13:06:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DB8PR04MB7178:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2c5dc48e-4659-4c41-7077-08dcf7ec27cb
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?NHRERlVtSDdCbkJRUkpYak8ySHhRS3QzczBmaHdtNGRiQldublRQWXQwK3ox?=
- =?utf-8?B?MkdNbzdhTy9VbkFyWG9GdWsxS3NNQUxzUWN2SHpvMG5wQ0lwVk1aYzRLb1VO?=
- =?utf-8?B?WHJyVXhiOEcra21kSlMrcUNERDRXSGoxQUd6S2NNdDY5djhvRnVUd0pFcThR?=
- =?utf-8?B?T1NMdXYvZnUyMUhUZVY3amt5SEgwN2VvMERRQS81dXgxN3JEMUlzM3NtS2lL?=
- =?utf-8?B?b1hTM2t2UkZxb1pFQ29YZVJEQ0lxYTBrU3hwQi9PdXg1czA4cXBiMFhkaDE3?=
- =?utf-8?B?bFhTS3ZHTlhYelF3eGlmeWY0SDJHTHM2WW5KdHdoOXNlVHpYbmI5MjJaRkVp?=
- =?utf-8?B?c2VGMVhiaHdIekRremRpR2cwOVE4V0RpVC9qWVNXUzRudHc0S0w4YUNWTksy?=
- =?utf-8?B?d1BoaElDMDA1czVpbmMydVRhQ3B6ZVQrUXJ4YUNQS21EOFRxcFlva05MejVP?=
- =?utf-8?B?N3BYdGQ1V0VKcmcyeVFjdlA4RFVrS3JXN0V1NnNUb29FVXR5eU1kSEF6ZGxM?=
- =?utf-8?B?Y3c2eFY3Q1h5MHpTNVVMR1Q2Z1dhNWYwVTB2cE5sZ2pzQlJMVVJOSFBxQk9z?=
- =?utf-8?B?UVI0TmRXdzNreHY0NmV0MWQxMHNkOUZkWTRzajNNWnRGbWhUWHpNa00xVnF6?=
- =?utf-8?B?cGJXSktKcDZFRW1lcXVveVZmcWZHUEIvNVpzdEhWUUcrK2lXN29aNHg3UEZQ?=
- =?utf-8?B?SC82UGduOHRaUG11c29wYlUzZGphQWdWR2pZK2t0K3RuMlgvUHlJMGtITllv?=
- =?utf-8?B?N2tuNWhydnBFZU1aUk50U3lyKzVEdGp3UVhDQklhdW4vUHRJdkVLeHF3dExN?=
- =?utf-8?B?Y3I2Y09JSzhuOFVRTzNIWC9IUVQ0dkt4UG1CbzVYM2g3bnFZVVdMWkQ1aHdC?=
- =?utf-8?B?eVhvUlBMS1lmRGs2ZTVzUE9jMTVvdzErNUwvU0padlI5cGd1bFNFa0gzdHJD?=
- =?utf-8?B?RnpxKzFVRzIraEhoSWh2bEZnTkZ5U0xNTFRaQVdxTzNFNFdzdkdjOW12WjAw?=
- =?utf-8?B?d1FoU1RPVm5ERjNoV0xoK0xaV1N0Y0NnTGYzdG5KWG9aWGFFOTZMWitENXE3?=
- =?utf-8?B?SEhZU0d0NDFlcTlFbWt0ajhQdTdwT20wWTEzZ3BsaUJzeEgzWkVDbEJmN2gz?=
- =?utf-8?B?aTVtYUp4KzVSK2dEUk9FVVZSYWtsMHpqT3paUEN2dnZ2dXJTVWdqdUt1WnVi?=
- =?utf-8?B?VmpuUmRVVkhIUHZoTk02RjEyUGFOUlh6eU9IRE85MG14dFdYZEpjeVRkdHNn?=
- =?utf-8?B?RVA2Vm9RZlp4ZVNrOUg3S2I0SEdsUjFzbkZZbjBpeXQ5cnRCMUU1d1ZFZTIz?=
- =?utf-8?B?SlJwYlFxY2JwVXg4U01oL0p0TWdMTEVBcnRqSFcrbWcrT25SM01ZS3VDb2Er?=
- =?utf-8?B?b0thcFdTOGRFbElwanhYK2ZEam5SWWJGb3k0Z1FIOWZCZEs4YnBjbUoxd0Nz?=
- =?utf-8?B?dEdmOEJwM1ZrU1VDL1ltSmhybkpRY0N3Z1JKMTZRWFNPM2tUdFd4eUtNV0tU?=
- =?utf-8?B?UlQrU3d3WS8vWjJIM0tBUS9BSDUvRldla04ydk5EaTFhWURCK0UvVEU5WUpn?=
- =?utf-8?B?RnYxL3lOdGw4elZuVTJwRmxaUTJEQlhNRnRIV05PTjhjOEtYWlMyZ1B2VWM5?=
- =?utf-8?B?RW1KamREcE9NYWFhWEUwZVFHVHU5TndraVpFSkJFanVYK2svdkowRnU3NlRE?=
- =?utf-8?Q?7BO4dvYBz8nsUVeseuJD?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?QWVycTlrL1NROVFzbFd3ajVWM2RTSEFHUG9YSUR6ZVd3YUJZRUhMNERaekRt?=
- =?utf-8?B?WlVPN0J6a2M1dHFMWlRLTjdVaUJPL0F3S2Z0RnNNNDZnRkx5SWJNS0M1NUxi?=
- =?utf-8?B?VzFzNGVkclRUZFpxb1VOSnNlUlV5VkZUbTRiSFpodGxpaXl5NWtkMUlZdjln?=
- =?utf-8?B?VDQwcXYySmZwelZoSTMxQ0ZuUWRvVWxMNmJ0MnN4dEduWmZFUGF6ZUc1YmJW?=
- =?utf-8?B?T2psWHpuUENQUUlZcldGT2VtcDNTTVNjcGdPT2tyV1d1L1JXQll4ZSs5Qm5n?=
- =?utf-8?B?VEI5Q0ZnZGxPVGJMaWNRRTZheSt1RFloYjJheHFKT05mdFViN3Bhb21MMWFo?=
- =?utf-8?B?amI2OWJVMkNJMnhBVXRhNXUxVldGbHdXczRFdHg4YmpydjZUaDdRQkkwd0xk?=
- =?utf-8?B?ejNwakJJWVU1L1RwWWpJeGxVV1BXdVA5cUhxbkJEa1dwSTU0WXcvSkUrVzdp?=
- =?utf-8?B?MkJnUnJWazBJT2hyNHhBQ0hzMFc3VjlsaGlxQVVRWm5GWEMxZkFEWlNRV01V?=
- =?utf-8?B?ZUgyT2thcHRqVThYSXowSklJVGVsaHdTdG8xMGM0V0x0b0YwMUJCSW5mSHY1?=
- =?utf-8?B?eUt0TDFpUTg1bDI5cWFxbmRDZ1ppM2JXdnlHU3p3K1hsVy83d2FiUjgyditO?=
- =?utf-8?B?TmgrRnAyQmVrMTlFbzhXQzRTUVkybE1wSERSM1lCZTdQU3BBbUlEZExjUGU4?=
- =?utf-8?B?ZmRqemN6QXZjQUo1ekZiVjM1bDJiRWx3RTFDcGp0dnlqR0F3eGYrQmN0VFpu?=
- =?utf-8?B?NXRBb3RsR2trdXloNTJLcFllNjNRSGN2MlhTWkxnL3VjcUxiZW5DbzlwU0FC?=
- =?utf-8?B?Q0hnVHZhR0x0LzlENXc5cWlBc1pHRktPTlVoMnpEdGNLN0phODRQZytQOFY5?=
- =?utf-8?B?Qm5UK3VlM0g5RDhEenUvdyt1YmZnZ0pVdUJ1U2RzR3Z0L3NGTWJrS1RhTHlM?=
- =?utf-8?B?UUUzakgzc0xzNmpJVEFGbGhSb2ZsbHp5a2VSdXovRjNQbE1LTENCK2xic3JG?=
- =?utf-8?B?V2dVbjhRaFQrcnRhclhEL3pCNitDNnhmMHA4NlQ1S25sRmlzRjVaSHkxVWdF?=
- =?utf-8?B?R2ltL0xpUTlBWUlrV2tCLy9sZzh1UUxoUzVZenJrQ3lZS3N5MGJ4dU9HK0Er?=
- =?utf-8?B?UUhRT0t4OUNWc25LbWdKbmRweFVsMGFsSHgvYmY1VFQvandjdFh2aEJDbXpi?=
- =?utf-8?B?S1YxekcyQ2pwMzJ2d0cvN0tOU2JzT3FGeHlZWGNRNUZlWXF1SkVFTjNuWktK?=
- =?utf-8?B?YTJVY1gvWlcxWlJrL1dxcStSUFhPbHhtNDUrbjlJOHFXemdVdFNFcksrbFR4?=
- =?utf-8?B?T08yQmZkempGU1cxeVc1ZnVmU0pmWkdnZE42MUZKTmt1ZGtmUVF3aVYrWFBT?=
- =?utf-8?B?VCt3QTk5Ymp3MEFEMmp3OWl6WFVXZ3lXNStaOGlsaGp4M3JTdmxNM1FRWkxa?=
- =?utf-8?B?Zkk2ak1rWVRuNG56blpUMGwxc05ST3gzK2dzUUJBM0hxMFVOR1hBSnNwOFhq?=
- =?utf-8?B?UnpxeDFFWk5jbUdMVE11QURWR081SXRyRDlUdmtCZ3VuV3hYRkJ5RnpRZlpY?=
- =?utf-8?B?M0daalpDR1o0SEJkN0d5eW5TcldHN3cxWEtMWjNUZTQwY1VxaXhBUklQQ3FF?=
- =?utf-8?B?a2ZMYWkvclFHdXN5bk93OVViRXJha1BvbzNlYkQ4aG5zalZ2Y1hmbUFOdWpM?=
- =?utf-8?B?QXliYnI5ejlHWk83c0J4S0tEMUlJZ1BXUFVKSzY0T3htaVEwSldWWjlzZHdl?=
- =?utf-8?B?MFpuZU81Y1R6eEFwWWZIcmZtL2ZycXRLZXFTMHJNYVJYc09peWZ3dzRWeWdB?=
- =?utf-8?B?b0RUcGp0MFI3aG05aUIwRFhZQXNXUUd1aGpuRWRiMjhKeVUraTd2VkZER3hB?=
- =?utf-8?B?Ujk4U01CUzBsd3duUkJLd2UyZ2pxN2RObFlwOVlKVHY1ZFFDVTJoaUxaNXRp?=
- =?utf-8?B?NXoxSlRkcFNtK2ZRelB6VkRLNUlQTzBaM2loYmV0VGtCOTMyOHoxd1lWSDVy?=
- =?utf-8?B?QlF5S2RZblIzQm5pdnN4bWRBQjlZUnpqWG90QXR3dFlWZVdWRDJnWjdkRDRF?=
- =?utf-8?B?N09Tanp1elhRUEd1NkdXOENvT2t4OUpkK1VvTEdVU1lYSnFKWit2ZG9JbUYz?=
- =?utf-8?Q?ddK9VjE2FQl6zjDp7GvIR/Bly?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2c5dc48e-4659-4c41-7077-08dcf7ec27cb
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 07:34:43.3135
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HPUg07r1xt5c02LL9ggHvWAk/WFt+Ae10voGrM6Z0SMIWRIiX/C9A/RadFjt6Md+mfsNH0RI2xaQXScoKCz7Yw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7178
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] arm64/hw_breakpoint: Enable FEAT_Debugv8p9
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev
+References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
+ <20241001043602.1116991-4-anshuman.khandual@arm.com>
+ <ZxfGAHAn6I41ZLZV@J2N7QTR9R3> <2310454a-99c6-4ff9-80f7-8707fbfaf5a6@arm.com>
+ <Zx-H8IU2wZmyowGe@J2N7QTR9R3>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <Zx-H8IU2wZmyowGe@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/29/2024, Biju Das wrote:
-> Hi Liu Ying,
 
-Hi Biju,
 
+On 10/28/24 18:17, Mark Rutland wrote:
+> On Wed, Oct 23, 2024 at 01:01:52PM +0530, Anshuman Khandual wrote:
+>>
+>>
+>> On 10/22/24 21:04, Mark Rutland wrote:
+>>> On Tue, Oct 01, 2024 at 10:06:02AM +0530, Anshuman Khandual wrote:
 > 
->> -----Original Message-----
->> From: Liu Ying <victor.liu@nxp.com>
->> Sent: 29 October 2024 07:13
->> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS display common properties
+> [...]
+> 
+>>> Wherever this lives it needs a comment explaining what it is doing and
+>>> why. I assume this is intended to protect the bank in sequences like:
+>>>
+>>> 	MSR	MDSELR, <...>
+>>> 	ISB
+>>> 	MRS	<..._, BANKED_REGISTER
 >>
->> On 10/29/2024, Biju Das wrote:
->>> Hi Liu Ying,
->>
->> Hi Biju,
+>> Correct, it is protecting the above sequence.
 >>
 >>>
->>>> -----Original Message-----
->>>> From: Liu Ying <victor.liu@nxp.com>
->>>> Sent: 29 October 2024 06:17
->>>> Subject: Re: [PATCH v4 08/13] dt-bindings: display: Document
->>>> dual-link LVDS display common properties
->>>>
->>>> On 10/28/2024, Liu Ying wrote:
->>>>> Dual-link LVDS displays receive odd pixels and even pixels
->>>>> separately from dual LVDS links.  One link receives odd pixels and
->>>>> the other receives even pixels.  Some of those displays may also use
->>>>> only one LVDS link to receive all pixels, being odd and even agnostic.
->>>>> Document common properties for those displays by extending LVDS
->>>>> display common properties defined in lvds.yaml.
->>>>>
->>>>> Suggested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
->>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
->>>>> ---
->>>>> v4:
->>>>> * Squash change for advantech,idk-2121wr.yaml and
->>>>>   panel-simple-lvds-dual-ports.yaml with lvds-dual-ports.yaml.
->>>>> (Rob)
->>>>> * Improve description in lvds-dual-ports.yaml.  (Krzysztof)
->>>>>
->>>>> v3:
->>>>> * New patch.  (Dmitry)
->>>>>
->>>>>  .../bindings/display/lvds-dual-ports.yaml     | 76 +++++++++++++++++++
->>>>>  .../display/panel/advantech,idk-2121wr.yaml   | 14 +---
->>>>>  .../panel/panel-simple-lvds-dual-ports.yaml   | 20 +----
->>>>>  3 files changed, 78 insertions(+), 32 deletions(-)  create mode
->>>>> 100644
->>>>> Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->>>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->>>>> b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->>>>> new file mode 100644
->>>>> index 000000000000..5f7a30640404
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/display/lvds-dual-ports.yaml
->>>>> @@ -0,0 +1,76 @@
->>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
->>>>> +---
->>>>> +$id: http://devicetree.org/schemas/display/lvds-dual-ports.yaml#
->>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>> +
->>>>> +title: Dual-link LVDS Display Common Properties
->>>>> +
->>>>> +maintainers:
->>>>> +  - Liu Ying <victor.liu@nxp.com>
->>>>> +
->>>>> +description: |
->>>>> +  Common properties for LVDS displays with dual LVDS links. Extend
->>>>> +LVDS display
->>>>> +  common properties defined in lvds.yaml.
->>>>> +
->>>>> +  Dual-link LVDS displays receive odd pixels and even pixels
->>>>> + separately from  the dual LVDS links. One link receives odd pixels
->>>>> + and the other receives  even pixels. Some of those displays may
->>>>> + also use only one LVDS link to  receive all pixels, being odd and even agnostic.
->>>>> +
->>>>> +allOf:
->>>>> +  - $ref: lvds.yaml#
->>>>> +
->>>>> +properties:
->>>>> +  ports:
->>>>> +    $ref: /schemas/graph.yaml#/properties/ports
->>>>> +
->>>>> +    properties:
->>>>> +      port@0:
->>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
->>>>> +        unevaluatedProperties: false
->>>>> +        description: the first LVDS input link
->>>>> +
->>>>> +        properties:
->>>>> +          dual-lvds-odd-pixels:
->>>>> +            type: boolean
->>>>> +            description: the first LVDS input link for odd pixels
->>>>> +
->>>>> +          dual-lvds-even-pixels:
->>>>> +            type: boolean
->>>>> +            description: the first LVDS input link for even pixels
->>>>> +
->>>>> +        oneOf:
->>>>> +          - required: [dual-lvds-odd-pixels]
->>>>> +          - required: [dual-lvds-even-pixels]
->>>>> +          - properties:
->>>>> +              dual-lvds-odd-pixels: false
->>>>> +              dual-lvds-even-pixels: false
->>>>> +
->>>>> +      port@1:
->>>>> +        $ref: /schemas/graph.yaml#/$defs/port-base
->>>>> +        unevaluatedProperties: false
->>>>> +        description: the second LVDS input link
->>>>> +
->>>>> +        properties:
->>>>> +          dual-lvds-odd-pixels:
->>>>> +            type: boolean
->>>>> +            description: the second LVDS input link for odd pixels
->>>>> +
->>>>> +          dual-lvds-even-pixels:
->>>>> +            type: boolean
->>>>> +            description: the second LVDS input link for even pixels
->>>>> +
->>>>> +        oneOf:
->>>>> +          - required: [dual-lvds-odd-pixels]
->>>>> +          - required: [dual-lvds-even-pixels]
->>>>> +          - properties:
->>>>> +              dual-lvds-odd-pixels: false
->>>>> +              dual-lvds-even-pixels: false
->>>>
->>>> Hmm, I should require port@0 or port@1.
->>>
->>> For dual LVDS, you need 3 ports as common use case
+>>> ... but is theat suffucient for mutual exclusion against
+>>> exception handlers, or does that come from somewhere else?
 >>
->> For LVDS panels, only two ports for LVDS sink are needed.
->> For display bridges with LVDS sink, one additional output port is needed.  However, I'm not sure if
->> this output port should be documented in this binding or not, because it doesn't look common enough
->> considering the LVDS panels.
->>
->>>
->>> 2 input ports and 1 outport and all are required properties.
->>
->> The output port cannot be required for LVDS panels at least.
+>> Looking at all existing use cases for breakpoint/watchpoints, it should
+>> be sufficient to protect against mutual exclusion. But thinking, do you
+>> have a particular exception handler scenario in mind where this might
+>> still be problematic ? Will keep looking into it.
 > 
-> Ack.
-> 
->>
->> We need to require one or two input ports, because IT6263 may use one LVDS link or two.
-> 
-> This patch is for generic dual link common cases and is not applicable for IT6263 single link case.
+> Where does the mutual exclusion come from for the existing sequences?
 
-Based on previous discussion(especially Dmitry's suggestion),
-this binding should cover display bridges that can use one
-LVDS sink port or two LVDS sink ports, like IT6263.  To be
-clear, those bridges may have two modes(supported by one
-chip) - single LVDS sink link mode and dual LVDS sink link
-mode.  Those bridges are considered as common dual-link
-LVDS displays.  That's why I was asked to extract the common
-properties to this schema when adding IT6263 DT binding.   
+Bank selection followed by indexed read/write, inherently requires mutual
+exclusion (ensuring that both these steps executed together) in order to
+prevent read/write into wrong registers. That being said, HW breakpoints
+get used in multiple different places such as perf, ptrace, debug monitor
+based single stepping etc calling platform functions which operate on the
+HW breakpoint registers here.
+
+preempt_disable()/enable() sequence in the very last leaf level helpers
+such as [read|write]_wb_reg(), will ensure required mutual exclusion.
+
+> We should be able to descrive should be able to describe that in the
+> commit message or in a comment somewhere (or better, with some
+> assertions that get tested).
+
+Planning to add a comment - something like this both for read and write
+helpers.
+       /*
+        * Bank selection in MDSELR_EL1, followed by indexed read from
+        * [break|watch]point registers cannot be interrupted, as that
+        * might cause misread from wrong targets. Hence this requires
+        * mutual exclusion via preventing any preemption.
+        */
+
+But regarding adding assertions, could you give some more details and
+it will be great to have some relevant examples as well.
 
 > 
-> 
-> Cheers,
-> Biju
-> 
->>
->>>
->>> Cheers,
->>> Biju
->>>
->>>> Will wait a while for comments and add this in next version.
->>>>
->>>> --8<--
->>>>     anyOf:
->>>>       - required:
->>>>           - port@0
->>>>       - required:
->>>>           - port@1
->>>> --8<--
->>>>
->>>>> +
->>>>> +required:
->>>>> +  - ports
->>>>> +
->>>>> +additionalProperties: true
->>>>> +
->>>>> +...
->>>>
->>>> [...]
->>>>
->>>> --
->>>> Regards,
->>>> Liu Ying
->>>
->>
->> --
->> Regards,
->> Liu Ying
-> 
+> For example, what prevents watchpoint_handler() from firing in the
+> middle of arch_install_hw_breakpoint() or
+> arch_uninstall_hw_breakpoint()?
 
--- 
-Regards,
-Liu Ying
+If perf is the only user, watchpoint_handler() will not get triggered
+without watchpoints being installed via arch_install_hw_breakpoint().
+Similarly once they get uninstalled via arch_uninstall_hw_breakpoint()
+there will not be active watchpoints to trigger the handler. Although
+there are other users (ptrace, debug monitor etc) besides perf which
+could also be active simultaneously and race with each other ? TBH, I
+am not sure.
 
+> 
+> Is the existing code correct?
+
+I have not tested the concurrency aspects of the HW breakpoints enough
+to be able to answer that question. But if there is a particular concern
+here, happy to look into that.
+
+But wondering how does this new bank indexed read/write mechanism (after
+taking care of the mutual exclusion in the leaf level helpers such as
+[read| write]_wb_reg()) still makes the existing concurrency situation
+worse off than earlier ?
 
