@@ -1,118 +1,152 @@
-Return-Path: <linux-kernel+bounces-387615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 676779B53A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:31:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C74369B53AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25C8B28591F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:31:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 865B7285D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7FB207A36;
-	Tue, 29 Oct 2024 20:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9C520720D;
+	Tue, 29 Oct 2024 20:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="JIFVDjz8"
-Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="km5O9+s9"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C342207A1D
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:28:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BFC209668
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:28:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730233709; cv=none; b=B95/KMaXasKwOtbMm1M0Sv1UynENMpIL+Nsm1Cpb70rUPnV6TewjMBHSrhQiEGg4lRC6oq86ZmrRw2Ajja+nBsbB1j6A5bWQpgadXaavbG76BL3ohRuH+h93fJhcwqAQ6WInSjGyqDN8I1yoixRW829nUd4gS0Pd5bX3XWZ/jOY=
+	t=1730233714; cv=none; b=uLh6f4hF3wz/aFIKwMtHRxZrltWE2/6l93FhcV99yVPN/oK9+xRH58Q0zrkoFB3fcRNisbC80k7gcOnQY9yniJmi8G+euPv5qig+rCF6IETysCi40xnsIlKSdUfzDTaDCsQheDJRBlY4q0csvvihPc3cD0w46CAahAiy+OFgtB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730233709; c=relaxed/simple;
-	bh=pt7hEYK2NZ9lH45fSBbcYEZb+c9cXbVGNHdBq6llDUw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O8HTyHtPIXq43T/CEf7pnh1wbLyEVj2Z6D36zK7+Hjz7cgQzphlGdSUG5EGvxgZG6zJZxtk22KXKmhc3ECTP7y4DdM8uCRCJ8AiJBBgty5NSiawlPA5s7seGfGwiIreP+DrOeE1046A7HGrrN93KpxPAhUsXBFiYPNo9ureA/40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=JIFVDjz8; arc=none smtp.client-ip=95.215.58.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 29 Oct 2024 20:28:19 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730233705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/krkHZhH3d22lI+5CXQ8I3yC4kmpYVhP1+xBMxmHYuk=;
-	b=JIFVDjz8fe+/gYuEyC6SnDLSfvTYtWRcZ8/QdEI+SKyapV8MX/WCvOHeIU5r48y33O3LVn
-	ppihBVH/TRprJdoXef8GvlTxLTGcANUNYgD19WtM+ivqQTZrTGCCeQ5EqAzqa8S2dc0cpg
-	+sCH6R+kqvI9b1BUehaGRFzwUuSuyzU=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Joshua Hahn <joshua.hahnjy@gmail.com>
-Cc: hannes@cmpxchg.org, nphamcs@gmail.com, shakeel.butt@linux.dev,
-	mhocko@kernel.org, muchun.song@linux.dev, tj@kernel.org,
-	lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net,
-	lnyng@meta.com, akpm@linux-foundation.org, cgroups@vger.kernel.org,
-	linux-mm@kvack.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
-Message-ID: <ZyFFY65bGILq6GfQ@google.com>
-References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+	s=arc-20240116; t=1730233714; c=relaxed/simple;
+	bh=kvQzJElbe+ynGoXeXpUz2x/KF+CNJfCzGkI/dVHOFY4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CXvb+haVzs5vM1DFKjJtlrhafzi3dZbZdjfaYXyskhWfI54m4LI0BGt17UjGIvP29u1xdMEyV+sY26ekB7ddMUpST8XBL1xqjE6z3A92NAtlv+iH+WdJegH/PaUf8R8eGAHwEue8/ka7ktALTe6wj1YldpDyqhkT2z9L190hMmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=km5O9+s9; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539ebb5a20aso6084761e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:28:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730233710; x=1730838510; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7385hpeo89X9ew/hCv15C/61laTi50vSo+Xw6/hX5JA=;
+        b=km5O9+s9moafPnwm7pX/Rs8GNWe3XNeSMGoWvJWT8aU8HHbfyYjPGgt1dqO5isyv/S
+         WY7a8a+zYl40U/evNlSxCb80dRZUJYxlPMNXHe/uMMgrnryyPfs9Dr04KxrnDJmYD/9m
+         ASzEsoHQYM8JIgVbjWGnRk+KaqmKqgKcc/W94Ds1TKZkiDo4Bd3Blv3WPxIqJqG4rMgp
+         PcWMX5Aq8KRNcq+oBquqtBYBU5KjoE7w2l4MNc36UvGhsHM4jWGVGboHU8VIOFI8OjjQ
+         7KH0eKXqlxYP9rQjbIgT8R6FefgMUr5D1m4aR3KI58hsDUmO5Ag0MI6aTKP0ZiD1ltPN
+         kWmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730233710; x=1730838510;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7385hpeo89X9ew/hCv15C/61laTi50vSo+Xw6/hX5JA=;
+        b=eVg3K9WXepEQSHBDGFPNyX2JVzu856yzNHaK0wK49Nr0w4QXNKvdpIRALPZ1puQxwg
+         2LMtqaq7hXpGpQGyiR9+JF21RfivNlrvKlE+Rs4EvLEqWi4NxCfB7l/YzKW8TCuYEhAO
+         BJUpiB2laSDXECntYlSe+KdPnDP7cefbu08TOXVPNHecc3opSeWoMyA9YWVElm40Lx6S
+         Ed/RBsbdVFhuTG64sqLqlBwyASrEkVtvdIw6g7O/lnS9KDIsFoC8S/fb4h3MFXSgYa/B
+         QkNNgfVBRGtAaP672HJdweT0SWLUAPVmb14YJ3a8mABUTWlfUXNNDbByK1Irquph4GLL
+         M9LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV/ZHxTFKE8NjFE65c7ZC2coSTneqLC+ctzztcylXVuxfkiDWFlwsap4m6F1hv4seXGIb2MeOznasufKP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgPjW3dMFu0eiqBOsu8KJZz0YEUTOPQKwE1cCw9fvnAdbGgxYk
+	Q0v2kQzBG0CPZx2QoPfQCf1zepuLKplTFWnjAjZFHFI9mHFPsejUJhO7sQIc8DFf/414MbnDlPa
+	Y
+X-Google-Smtp-Source: AGHT+IGxYVqLBalsIlLHL75QltlpTg+bmQq1Djk/EOYqWUlWrFeBMWnPNF7n8D+SWoCHl6QRM/cxlw==
+X-Received: by 2002:a05:6512:1087:b0:539:964c:16d4 with SMTP id 2adb3069b0e04-53b348ed318mr7294239e87.36.1730233709699;
+        Tue, 29 Oct 2024 13:28:29 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.90])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53bb81a597fsm46449e87.96.2024.10.29.13.28.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 13:28:29 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v2 0/3] drm/msm/dp: mass-rename symbols
+Date: Tue, 29 Oct 2024 22:28:23 +0200
+Message-Id: <20241029-msm-dp-rename-v2-0-13c5c03fad44@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGhFIWcC/3XMQQrCMBCF4auUWTuSxFSrK+8hXUQzbQdMUiYSl
+ NK7G7t3+T943wKZhCnDpVlAqHDmFGuYXQOPycWRkH1tMMpYrUyHIQf0MwpFFwgHReQ725E5aKi
+ fWWjg9+bd+toT51eSz8YX/Vv/SUWjQmfao6WzbU93dX1ydJL2SUbo13X9At3+F6urAAAA
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2068;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=kvQzJElbe+ynGoXeXpUz2x/KF+CNJfCzGkI/dVHOFY4=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnIUVsgO/76rY0YbT9zf5rWIbo/VYvWm5fza/Sb
+ 6B0BHdk/buJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZyFFbAAKCRCLPIo+Aiko
+ 1cvRB/4iymgjmgBRxqDWAGVuvl/Pq17yID+rUfa/G7K/ki9TI+aZ3byhYzxrMk4/sYdVHpVwxXD
+ bU5oPV/OnRyiw1Z6V1sOeH8XRoMpd/+kolwRYsxk8up6hbuciuxnk4SZ5AwZleYjYo6qbWAEGLh
+ nC2QcPti5/hH5THeDCY3WJREoQ63ACp1mqmoDoK39reIKjE/FWu41SmgYx4KcwK7s1iUpCBIR1I
+ +Hce+hynDL70Xl1Lan/CyPU9/LpHNrXHt/kUOPdBBjOGmCUn8eTOzNF67JDWLHspJIcpzhAjBsi
+ SSI0QmLh53/VEcLDtQVE3fuB9SO7uFXp24BCdhk1DTo+PeZZ
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Mon, Oct 28, 2024 at 02:05:05PM -0700, Joshua Hahn wrote:
-> This patch introduces a new counter to memory.stat that tracks hugeTLB
-> usage, only if hugeTLB accounting is done to memory.current. This
-> feature is enabled the same way hugeTLB accounting is enabled, via
-> the memory_hugetlb_accounting mount flag for cgroupsv2.
-> 
-> 1. Why is this patch necessary?
-> Currently, memcg hugeTLB accounting is an opt-in feature [1] that adds
-> hugeTLB usage to memory.current. However, the metric is not reported in
-> memory.stat. Given that users often interpret memory.stat as a breakdown
-> of the value reported in memory.current, the disparity between the two
-> reports can be confusing. This patch solves this problem by including
-> the metric in memory.stat as well, but only if it is also reported in
-> memory.current (it would also be confusing if the value was reported in
-> memory.stat, but not in memory.current)
-> 
-> Aside from the consistency between the two files, we also see benefits
-> in observability. Userspace might be interested in the hugeTLB footprint
-> of cgroups for many reasons. For instance, system admins might want to
-> verify that hugeTLB usage is distributed as expected across tasks: i.e.
-> memory-intensive tasks are using more hugeTLB pages than tasks that
-> don't consume a lot of memory, or are seen to fault frequently. Note that
-> this is separate from wanting to inspect the distribution for limiting
-> purposes (in which case, hugeTLB controller makes more sense).
-> 
-> 2. We already have a hugeTLB controller. Why not use that?
-> It is true that hugeTLB tracks the exact value that we want. In fact, by
-> enabling the hugeTLB controller, we get all of the observability
-> benefits that I mentioned above, and users can check the total hugeTLB
-> usage, verify if it is distributed as expected, etc.
-> 
-> With this said, there are 2 problems:
-> (a) They are still not reported in memory.stat, which means the
->     disparity between the memcg reports are still there.
-> (b) We cannot reasonably expect users to enable the hugeTLB controller
->     just for the sake of hugeTLB usage reporting, especially since
->     they don't have any use for hugeTLB usage enforcing [2].
-> 
-> [1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com/
-> [2] Of course, we can't make a new patch for every feature that can be
->     duplicated. However, since the existing solution of enabling the
->     hugeTLB controller is an imperfect solution that still leaves a
->     discrepancy between memory.stat and memory.curent, I think that it
->     is reasonable to isolate the feature in this case.
->  
-> Suggested-by: Nhat Pham <nphamcs@gmail.com>
-> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
-> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+The LKP reported [1] a symbol clash between the drm/msm/dp and the HIMBC
+driver being sumbitted, because both of them use a generic dp_ prefix
+for a lot of symbols. It's a hight time we made msm/dp driver use
+something less generic, like msm_dp.
 
-Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+[1] https://lore.kernel.org/oe-kbuild-all/202410250305.UHKDhtxy-lkp@intel.com/
 
-Thanks!
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v2:
+- Switched eDP symbols from msm_dp_foo_edp to msm_edp_foo (Abhinav)
+- Link to v1: https://lore.kernel.org/r/20241028-msm-dp-rename-v1-0-a2564e9457b0@linaro.org
+
+---
+Dmitry Baryshkov (3):
+      drm/msm/dp: prefix all symbols with msm_dp_
+      drm/msm/dp: rename edp_ bridge functions and struct
+      drm/msm/dp: tidy up platform data names
+
+ drivers/gpu/drm/msm/dp/dp_audio.c   | 294 ++++++------
+ drivers/gpu/drm/msm/dp/dp_audio.h   |  38 +-
+ drivers/gpu/drm/msm/dp/dp_aux.c     | 148 +++---
+ drivers/gpu/drm/msm/dp/dp_aux.h     |  18 +-
+ drivers/gpu/drm/msm/dp/dp_catalog.c | 734 ++++++++++++++---------------
+ drivers/gpu/drm/msm/dp/dp_catalog.h | 118 ++---
+ drivers/gpu/drm/msm/dp/dp_ctrl.c    | 482 +++++++++----------
+ drivers/gpu/drm/msm/dp/dp_ctrl.h    |  40 +-
+ drivers/gpu/drm/msm/dp/dp_debug.c   |  68 +--
+ drivers/gpu/drm/msm/dp/dp_debug.h   |  10 +-
+ drivers/gpu/drm/msm/dp/dp_display.c | 904 ++++++++++++++++++------------------
+ drivers/gpu/drm/msm/dp/dp_display.h |  18 +-
+ drivers/gpu/drm/msm/dp/dp_drm.c     | 142 +++---
+ drivers/gpu/drm/msm/dp/dp_drm.h     |  22 +-
+ drivers/gpu/drm/msm/dp/dp_link.c    | 432 ++++++++---------
+ drivers/gpu/drm/msm/dp/dp_link.h    |  44 +-
+ drivers/gpu/drm/msm/dp/dp_panel.c   | 254 +++++-----
+ drivers/gpu/drm/msm/dp/dp_panel.h   |  42 +-
+ drivers/gpu/drm/msm/dp/dp_utils.c   |  20 +-
+ drivers/gpu/drm/msm/dp/dp_utils.h   |   8 +-
+ 20 files changed, 1918 insertions(+), 1918 deletions(-)
+---
+base-commit: dec9255a128e19c5fcc3bdb18175d78094cc624d
+change-id: 20241028-msm-dp-rename-f0eed848e231
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
