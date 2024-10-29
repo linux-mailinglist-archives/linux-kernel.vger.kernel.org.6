@@ -1,108 +1,201 @@
-Return-Path: <linux-kernel+bounces-387877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 384979B571A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:42:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923019B571F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:43:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAE03284823
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:42:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07441B2245A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23F4920C31C;
-	Tue, 29 Oct 2024 23:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F6120B219;
+	Tue, 29 Oct 2024 23:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jCNRPrJG"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TUhMCI75"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C28920C019
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B260E190665;
+	Tue, 29 Oct 2024 23:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730245325; cv=none; b=Rog3yy96z9Th0cWaVau74nhm+ZbLZvKgLYhVEmj71s0drtCfkcPE68nTxrjxtzhLm2GL5Aah6kcKeAB2bpd16Bs5MT2EyE3e77ARwIqV0MM2bfFYbvNQD6qK2etSVc4hdSCCDvFEJb1iBfYzMh2gUd4oSL7xXJDBWqjoyCsAlhg=
+	t=1730245380; cv=none; b=Fn2cuUKc8C/Wf165v+/DOBwoymh4sIKOExv54Ge9optyOh4wrlldfs8vfHtgokSiXdcO++MD2Y4aiXdG8rPgpi5HIwsLTu6Kh6vWLXIbxZ7YXZNm97B+mWCetQluk7Q18GKJAZVgNrdbvPcXWJxwT4UHi2mC4uCDou+goi9aZfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730245325; c=relaxed/simple;
-	bh=YmhqWH2LH5RJV2vXD5XPSPpN/3LgfwH6oaRL8feNlPg=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LXZS73CU+dbJwvyp+sQJiI8SNhbo5Uj9Vh0ikRhBdJW6+SZbAeQ0He2rGu7csqwK24furWSQT6aVWTOoOs7eXX9BDR+9h8gmuypMWwaaSHEBXwPxJ9rzmrGt/wI+SkZh0ZnUnLlSBIFMUCOeZCw0IkECJN8dTSiKlySvNl+gOtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jCNRPrJG; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso4878383a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:42:03 -0700 (PDT)
+	s=arc-20240116; t=1730245380; c=relaxed/simple;
+	bh=P/ZMh9DdOcuMnvAMA2M8KUoPFFGuf1Rk6uM2ShCcXgk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RQQTo3CCdgmzGZ4w11fWtArkS12wHtn8dQ9LRdf4zR7K4o0vPWTGm6uOP+MjrI/UjGhIR6BWIfg2A38E+T2U8TdBy2NF6bC1uiL2giTkg9xmTCgn2rDCwyiEVGhg4VfJChJbLL3c7iLsE2Hnm0tU+T1EXI40aI7YTNQqZiTV5vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TUhMCI75; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso4384164a91.0;
+        Tue, 29 Oct 2024 16:42:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730245322; x=1730850122; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bUFxc4/8h5YCr04CklGoLvH8jXBQzwVxphyqaqs8LpM=;
-        b=jCNRPrJGzQFKQ9/wpS36qwuNEd5KVli6PXTJ7nTtLvSGSnhpbMPzSAbPcQPXyixwBX
-         uPPQeWXQPWIUhZQcluD5bHgWzQx2YvyArabW9U2tZOl7nr4tv51UjXpFlwIK822j4Lcw
-         T12TT+jFnveZ6x+LLcuKesd7ZkIT0dTpOIsHqCX1qDzWzbXLrBEsOHygz8MA+hEN4PdV
-         iwHzo06Iz1DJIZYcvUNjRAnc/hhgFNhllctY3restUqE3/5rPk3z4DAK3X7S7cQktT6l
-         8EUKWlcKf3qZQf16+GmkKY5HMFFrGXohPz6di+wfOgJKdlORuw8Ny2mZKSySIVKBtG98
-         P58g==
+        d=gmail.com; s=20230601; t=1730245378; x=1730850178; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5feXvgGng4UyVwqTtiXO5SPyizWSYDtrgAync19J5IU=;
+        b=TUhMCI75oVl7DmVV/TYKuGXZ6uuaITaDZhi6Vy9JtoknStTahuDSQM+DZVEwNQXxqC
+         r+nJ4fKqa8+BUM1hhhxKw2RwvIjlE9PP5882PGzfimofYIGGTGEYxOT7LPHcskTTl8eZ
+         cTFYpMLONUJSJ3NClIG4W8QmzI4WZnWGRCETzAMxJOu/q+nnwn/IURxJw7R5SUlaXwbn
+         4AF9+JBkWFUdvQyZUZbaIYNQxvtiOkCJ/dGj9e64FbRHb0rh8bofl9hAf+ts9KmWEpQ6
+         a1A6CC5Dx7pPbM/qr1Ooai8NRu+JdFAqCii6uKB+o584f95Co0mlFHOdpKeq0O0mZPCS
+         9Gkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730245322; x=1730850122;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bUFxc4/8h5YCr04CklGoLvH8jXBQzwVxphyqaqs8LpM=;
-        b=JMXkOujUEizpR0hm23R0IgrQzwt35ydvKcLpjXRHlSC83Jg/DhJewAQ52DNuHls9ss
-         tcGQ4MltS70yxjRWcQzmDuRsDIh7Ov2OdrLRZye4rXlEUUyzA/DRUPMdtjxaNiGJXlwn
-         HyI6lC2E6nOSjQVfGZpckZH4kGfsiSaOqyoTPaU4aNTFmBwYaibh2NflrPjDnHCATt82
-         OH+c4nOnJQF2dl0l8NdCf8ssfPUr2qk0SzFXH/81IqsfBw3LNa1erIvM4HI+bfa3DD7B
-         PLoo6drZ6/wIhbh9N5hhRFi+6jplSbMFGnEp4NiFiYPpCf4qdMIWA3LWnQ54xc0V+Rh9
-         xc3g==
-X-Gm-Message-State: AOJu0YzmaUjyBtfTyRVSnqtlVS9ayq09Ptp4zDp/2dqcGSsM3vwzfFKu
-	ctCkv1kGYifPPpE+82AUAdZ41CYLEC7cMBRgmnlUJgULg4Idp+heIDcDdAto8u6Ap1bEROzjQvU
-	Fiq4=
-X-Google-Smtp-Source: AGHT+IHuMqUoPA9vvykcD+aVuMrEA6iREjFB8z97qFtvohJ/0EG10EF/ose2EVS5RIqKv4wMlh7WTw==
-X-Received: by 2002:a17:90a:9292:b0:2e2:cf5c:8ee8 with SMTP id 98e67ed59e1d1-2e8f105e601mr14080879a91.12.1730245322552;
-        Tue, 29 Oct 2024 16:42:02 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa0ea9bsm259788a91.10.2024.10.29.16.42.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 16:42:02 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>, 
- devicetree@vger.kernel.org, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, tony@atomide.com, 
- linux-omap@vger.kernel.org, Andreas Kemnade <andreas@kemnade.info>
-In-Reply-To: <20241016080314.222674-4-andreas@kemnade.info>
-References: <20241016080314.222674-1-andreas@kemnade.info>
- <20241016080314.222674-4-andreas@kemnade.info>
-Subject: Re: [PATCH v5 3/3] ARM: dts: ti/omap: use standard node name for
- twl4030 charger
-Message-Id: <173024532183.1250381.10578209015263837020.b4-ty@baylibre.com>
-Date: Tue, 29 Oct 2024 16:42:01 -0700
+        d=1e100.net; s=20230601; t=1730245378; x=1730850178;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5feXvgGng4UyVwqTtiXO5SPyizWSYDtrgAync19J5IU=;
+        b=glyWPfDMSRwHPnPJOZwHlhPRZnrpJJtZh43LgEbwW4oVQPlfOkHYPWg91EzJ1NubiO
+         ycd+uwLESXlzPX/pBCn9ArtdaQgqykt3HETh7L4PvBG+otBXwNRtWxbvx0n62B8p2NTl
+         xQtgb7QDDKL8t83A0cdT9hJXlxkNF9ahb/N7x0+g1OkEdAPIn3cpggOPSkGJF3P8xgA2
+         2ypqBCvwKsv5SDSnWSUMTFW3qsEgn3hgcZzmBs7cMWqygE6mvuuvSNRAOBW1vwr/0W8c
+         x6nLJNHkIrJK1M2Y62W4MFU17ZEZElVZihhDfPXuVabhMzvIF2YVfg5tE4g6L0R00b4Q
+         qopg==
+X-Forwarded-Encrypted: i=1; AJvYcCXSHT6EppdiVP+jLF2zELBd32ZwTYV0YckwviJJWjq4aPVi4zHQUWUjaIllfe+8mzT7NKyEDxVe06XQAec=@vger.kernel.org, AJvYcCXkCjFy09cLve31Q4HFtlkAa8w5Mq2I2ksH8n3YDDI7bP08sSM7O85Jmmoc5Auqbea0YkjBj5weRE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVSqhJH6O5zBa+tda7lG0041WSs4wMbQeAEGhDqKlBHe9endS5
+	0sVX1jfBau7ceeOaoDPYpoGlSiM6xRnn/CSgwWOKR1cJw001ciUTF6JcrWOAA8Q=
+X-Google-Smtp-Source: AGHT+IGLItW6eG57/BOKSOCl7xb6uVRToNOcNGndd7ZtiRJGOr4L61uJYTDa2Et0MWkJmJuYJA+x9A==
+X-Received: by 2002:a17:90a:a88c:b0:2e2:bb22:eb59 with SMTP id 98e67ed59e1d1-2e8f11dc376mr13808125a91.41.1730245377895;
+        Tue, 29 Oct 2024 16:42:57 -0700 (PDT)
+Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:5ce6:bad0:300c:46ef])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e92fa3dbd2sm265396a91.20.2024.10.29.16.42.56
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 29 Oct 2024 16:42:57 -0700 (PDT)
+From: anish kumar <yesanishhere@gmail.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	corbet@lwn.net
+Cc: linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	anish kumar <yesanishhere@gmail.com>
+Subject: [PATCH] ASoC: doc: update clocking
+Date: Tue, 29 Oct 2024 16:42:31 -0700
+Message-Id: <20241029234231.46313-1-yesanishhere@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-cb14d
+Content-Transfer-Encoding: 8bit
 
+Add ASoC clock api details to this document.
 
-On Wed, 16 Oct 2024 10:03:14 +0200, Andreas Kemnade wrote:
-> Use the established node name for the charger.
-> 
-> 
+Signed-off-by: anish kumar <yesanishhere@gmail.com>
+---
+ Documentation/sound/soc/clocking.rst | 85 +++++++++++++++++++++++++++-
+ 1 file changed, 84 insertions(+), 1 deletion(-)
 
-Applied, thanks!
-
-[3/3] ARM: dts: ti/omap: use standard node name for twl4030 charger
-      commit: 55f96ea329ee8248215a08ae0b88330084304748
-
-Best regards,
+diff --git a/Documentation/sound/soc/clocking.rst b/Documentation/sound/soc/clocking.rst
+index 32122d6877a3..eb0007dde7f7 100644
+--- a/Documentation/sound/soc/clocking.rst
++++ b/Documentation/sound/soc/clocking.rst
+@@ -18,7 +18,6 @@ Some master clocks (e.g. PLLs and CPU based clocks) are configurable in that
+ their speed can be altered by software (depending on the system use and to save
+ power). Other master clocks are fixed at a set frequency (i.e. crystals).
+ 
+-
+ DAI Clocks
+ ----------
+ The Digital Audio Interface is usually driven by a Bit Clock (often referred to
+@@ -42,5 +41,89 @@ rate, number of channels and word size) to save on power.
+ It is also desirable to use the codec (if possible) to drive (or master) the
+ audio clocks as it usually gives more accurate sample rates than the CPU.
+ 
++ASoC provided clock APIs
++------------------------
++
++    ::
++
++        int snd_soc_dai_set_sysclk(struct snd_soc_dai *dai, int clk_id,
++                                   unsigned int freq, int dir)
++
++    This function is generally called in the machine driver to set the sysclk
++    or MCLK. This function in turn calls the codec or platform callbacks to set
++    the sysclk/MCLK. If the call end up in codec driver and MCLK is either
++    provided by the codec in which case the direction should be SND_SOC_CLOCK_IN
++    and if the processor is providing the clock then it should be set to
++    SND_SOC_CLOCK_OUT. If the callback ends up in platform/cpu driver then it can
++    setup any clocks that is required for platform hardware.
++
++   dai:
++       digital audio interface corresponding to the component.
++
++   clk_id:
++       dai specific clock id
++
++   frequency:
++       new clock frequency in Hz
++
++   dir:
++       new clock direction (SND_SOC_CLOCK_IN or SND_SOC_CLOCK_OUT)
++
++    ::
++
++        int snd_soc_dai_set_clkdiv(struct snd_soc_dai *dai,
++                                   int div_id, int div)
++
++    This function is used to set the clock divider for the corresponding dai.
++    In case of codec dai connected through I2S for data transfer, bit clock
++    dividers are set based on this call to either multiple of bitclock
++    frequency required to support requested sample rate or equal to
++    bitclock frequency.
++
++   dai:
++       digital audio interface corresponding to the component.
++
++   div_id:
++       DAI specific clock divider ID
++
++   div:
++       new clock divisor.
++
++
++    ::
++
++        int snd_soc_dai_set_pll(struct snd_soc_dai *dai, int pll_id, int source,
++                                unsigned int freq_in, unsigned int freq_out)
++
++    This interface function unregisters the "thermal-cpufreq-%x" cooling device.
++    This function provides a way for the dai component drivers to configure
++    pll based on the input clock. This pll can be used to generate output
++    clock such as bit clock for the codec.
++
++   dai:
++       digital audio interface corresponding to the component.
++
++   pll_id:
++       DAI specific PLL ID
++
++   source:
++       DAI specific source for the PLL
++
++   freq_in:
++       PLL input clock frequency in Hz
++
++   freq_out:
++       requested PLL output clock frequency in Hz
++
++
++    ::
++
++        int snd_soc_dai_set_bclk_ratio(struct snd_soc_dai *dai, unsigned int ratio)
++
++    This function configures the DAI for a preset BCLK to sample rate ratio.
+ 
++   dai:
++       digital audio interface corresponding to the component.
+ 
++   ratio:
++       ration of BCLK to sample rate
 -- 
-Kevin Hilman <khilman@baylibre.com>
+2.39.3 (Apple Git-146)
 
 
