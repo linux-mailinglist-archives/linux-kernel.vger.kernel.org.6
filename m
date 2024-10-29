@@ -1,95 +1,307 @@
-Return-Path: <linux-kernel+bounces-386775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B9589B47C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C08D9B47C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EDBD1B22690
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5985328321B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D8B205ACC;
-	Tue, 29 Oct 2024 10:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE22A1EE031;
+	Tue, 29 Oct 2024 11:00:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="BFEf7Ury"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CB22038A0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199542; cv=none; b=GaqNCrXPbGSp8FBXuETM65IpQnwlJaNdESxF0Jho93iKzQsoAHfms+CWXmSWSbN47qPg0vYdwgjHlMaxy6ESKGh5/7g2TNcBk1bsj1biQmWZmWCCU8xi4MOt4dSpiLAMz154N4c0lqK6igCRVpFFGJmELTLXX8aGhWVbU4ipJWg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199542; c=relaxed/simple;
-	bh=Bu+UtIAhe3Ye/jGsrewOK+Es0DYIe7uQyiPkNdcvCT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pn4Vgc6tbyZBlX42FU03pvOsq0lHsY1k985geA1qQ7rBe7firqfAum4m71GSrD+IDwDUXnN/OioTgFX6h6r2VkLdWaLPtZCBiTW/hOUWUJRv4S1/QZgy+PXldpARrpLllgC/p/9HDx8+AC71SKJUUMEzEJ0H7Vsbu9Hvc3mXZIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=BFEf7Ury; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from lemmy.home.8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mDqMGimV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eiAubZFL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id CDE462A8D41;
-	Tue, 29 Oct 2024 11:58:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1730199538;
-	bh=Bu+UtIAhe3Ye/jGsrewOK+Es0DYIe7uQyiPkNdcvCT8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=BFEf7Uryr9P69Jlfc9CpMDv5OgRW2CwT1ibNBTV0i8gUvTb9t9a6WZYG+45lt8DLH
-	 nW1KWSl0xAynVQN3bvUGYQfYQns6k/RhNFWaAcqu84ypjqxZ2jUHIMU+HZLmfR8t6i
-	 DK82jGJmYuKlbm1hEkw1mJi+YUFJ97WzhOGawUx75OKH4vUNyzOt9RaPwo5/eGnt7k
-	 a8IFdKdfiR8JcIkCd8YpPXcitg1E78yblKnN39FRdpmba5iqw+SOpdRpPAmNB8Oy7d
-	 SU48VAiaqYaOatl7aRtqWEfzW5ALY+oF3DvRBrDfPD8g5QtW0uXGJ2YNHEng64mq70
-	 jAL/shsFeRqpw==
-From: Joerg Roedel <joro@8bytes.org>
-To: iommu@lists.linux.dev
-Cc: Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Vasant Hegde <vasant.hegde@amd.com>
-Subject: [PATCH] iommu: Fix prototype of iommu_paging_domain_alloc_flags()
-Date: Tue, 29 Oct 2024 11:58:49 +0100
-Message-ID: <20241029105849.52069-1-joro@8bytes.org>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0562A1DED7D;
+	Tue, 29 Oct 2024 11:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730199656; cv=none; b=HFoi2MQpMXHCkH1ra2SvWdxn40m6JX5c1S6DMZMeu6pCeKlQE8clUjctpKph3aBV5oPHbCgK5h13o76UWwtCLLsNSYRTNSMi9eMX4mu0w3W7diVgtbqxh3JMLbjrNGKKSOG61h27PpFgAdRg0z8SZWf+wGnYFOJBLJGiGG08f88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730199656; c=relaxed/simple;
+	bh=t4/pn5+JPxJU14B+Uq9O2FlGpAK9N/+7QK06w+hxL/k=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=uKemV4FMdGLeBO8MZ4FB3gZ9Xv7o5olqZo6RfvpbAS72A8SdWVsb6jGct/rZro+18nUwlX+kTT4ZAL5N2yP6RbIyakugCTYlkOaQuhtzVD5oSW5CpLX5rkq3ceQlD/AU6VoGGL/E/ZwNaF5iwlvQIJ2pFhOX9aHFt6t0qkJHcQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mDqMGimV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eiAubZFL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 29 Oct 2024 11:00:50 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730199651;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6T2Z+mhvp/5hSrU6/4Yq+m8sE0Hl+75fZ6U32ZRoGnI=;
+	b=mDqMGimVfltvG7vbB9tX5E3hIZn93sAsdUcVqrMZAxoV1zpU+IBvGOj8oVJpE+5R/tTmPz
+	QEQTuJYcuv1wonu1zRSYMheJPVn4UMUwAfpQH7bOytz9aOwbCdviBisesHFkFw2Cd5Rl99
+	WDOFJkZLknQ7Ck1INtFha/Q081gBox3PIfQ+zyGd8We2cK2gHMdxBT+0XOFe4qG29LE7ax
+	4Vw0EfsKefPuL8bRp72Z8QeeI9RTqeNPqanwaUN1+u5nZsZiFlCKrZjIkV56zMPS6+Hy7r
+	PEfSr1eEeYDYHlgCW+AGKG2xhD87JlQU6ZI2PTu13lQv0lbZ5tWlwjXpOSkyHQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730199651;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6T2Z+mhvp/5hSrU6/4Yq+m8sE0Hl+75fZ6U32ZRoGnI=;
+	b=eiAubZFLioeNhKcCw4NVey7EawAJ1TN8yuqKl3ULcYEllEuNE3VJEhvuN0P3Ww8f0+P+Qo
+	u+OxpM0577gH3IBg==
+From: "tip-bot2 for Ashish Kalra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/sev] x86/sev: Convert shared memory back to private on kexec
+Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Ashish Kalra <ashish.kalra@amd.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: =?utf-8?q?=3C05a8c15fb665dbb062b04a8cb3d592a63f235937=2E17225?=
+ =?utf-8?q?20012=2Egit=2Eashish=2Ekalra=40amd=2Ecom=3E?=
+References: =?utf-8?q?=3C05a8c15fb665dbb062b04a8cb3d592a63f235937=2E172252?=
+ =?utf-8?q?0012=2Egit=2Eashish=2Ekalra=40amd=2Ecom=3E?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <173019965022.1442.14782678274090419631.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-From: Joerg Roedel <jroedel@suse.de>
+The following commit has been merged into the x86/sev branch of tip:
 
-The iommu_paging_domain_alloc_flags() prototype for
-non-iommu kernel configurations lacks the 'static inline'
-prefixes.
+Commit-ID:     3074152e56c9b0f9b9c67edfbc08b371db050b6d
+Gitweb:        https://git.kernel.org/tip/3074152e56c9b0f9b9c67edfbc08b371db050b6d
+Author:        Ashish Kalra <ashish.kalra@amd.com>
+AuthorDate:    Thu, 01 Aug 2024 19:14:50 
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Mon, 28 Oct 2024 18:06:54 +01:00
 
-Cc: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Vasant Hegde <vasant.hegde@amd.com>
-Fixes: 20858d4ebb42 ("iommu: Introduce iommu_paging_domain_alloc_flags()")
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+x86/sev: Convert shared memory back to private on kexec
+
+SNP guests allocate shared buffers to perform I/O. It is done by
+allocating pages normally from the buddy allocator and converting them
+to shared with set_memory_decrypted().
+
+The second, kexec-ed, kernel has no idea what memory is converted this
+way. It only sees E820_TYPE_RAM.
+
+Accessing shared memory via private mapping will cause unrecoverable RMP
+page-faults.
+
+On kexec, walk direct mapping and convert all shared memory back to
+private. It makes all RAM private again and second kernel may use it
+normally. Additionally, for SNP guests, convert all bss decrypted
+section pages back to private.
+
+The conversion occurs in two steps: stopping new conversions and
+unsharing all memory. In the case of normal kexec, the stopping of
+conversions takes place while scheduling is still functioning. This
+allows for waiting until any ongoing conversions are finished. The
+second step is carried out when all CPUs except one are inactive and
+interrupts are disabled. This prevents any conflicts with code that may
+access shared memory.
+
+Co-developed-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Link: https://lore.kernel.org/r/05a8c15fb665dbb062b04a8cb3d592a63f235937.1722520012.git.ashish.kalra@amd.com
 ---
- include/linux/iommu.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/coco/sev/core.c      | 131 +++++++++++++++++++++++++++++++++-
+ arch/x86/include/asm/sev.h    |   4 +-
+ arch/x86/mm/mem_encrypt_amd.c |   2 +-
+ 3 files changed, 137 insertions(+)
 
-diff --git a/include/linux/iommu.h b/include/linux/iommu.h
-index aa78d911fdda..522efdc7d815 100644
---- a/include/linux/iommu.h
-+++ b/include/linux/iommu.h
-@@ -1080,7 +1080,7 @@ static inline bool device_iommu_capable(struct device *dev, enum iommu_cap cap)
- 	return false;
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index c7b4270..97f445f 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -954,6 +954,137 @@ void snp_accept_memory(phys_addr_t start, phys_addr_t end)
+ 	set_pages_state(vaddr, npages, SNP_PAGE_STATE_PRIVATE);
  }
  
--struct iommu_domain *iommu_paging_domain_alloc_flags(struct device *dev,
-+static inline struct iommu_domain *iommu_paging_domain_alloc_flags(struct device *dev,
- 						     unsigned int flags)
++static void set_pte_enc(pte_t *kpte, int level, void *va)
++{
++	struct pte_enc_desc d = {
++		.kpte	   = kpte,
++		.pte_level = level,
++		.va	   = va,
++		.encrypt   = true
++	};
++
++	prepare_pte_enc(&d);
++	set_pte_enc_mask(kpte, d.pfn, d.new_pgprot);
++}
++
++static void unshare_all_memory(void)
++{
++	unsigned long addr, end, size, ghcb;
++	struct sev_es_runtime_data *data;
++	unsigned int npages, level;
++	bool skipped_addr;
++	pte_t *pte;
++	int cpu;
++
++	/* Unshare the direct mapping. */
++	addr = PAGE_OFFSET;
++	end  = PAGE_OFFSET + get_max_mapped();
++
++	while (addr < end) {
++		pte = lookup_address(addr, &level);
++		size = page_level_size(level);
++		npages = size / PAGE_SIZE;
++		skipped_addr = false;
++
++		if (!pte || !pte_decrypted(*pte) || pte_none(*pte)) {
++			addr += size;
++			continue;
++		}
++
++		/*
++		 * Ensure that all the per-CPU GHCBs are made private at the
++		 * end of the unsharing loop so that the switch to the slower
++		 * MSR protocol happens last.
++		 */
++		for_each_possible_cpu(cpu) {
++			data = per_cpu(runtime_data, cpu);
++			ghcb = (unsigned long)&data->ghcb_page;
++
++			if (addr <= ghcb && ghcb <= addr + size) {
++				skipped_addr = true;
++				break;
++			}
++		}
++
++		if (!skipped_addr) {
++			set_pte_enc(pte, level, (void *)addr);
++			snp_set_memory_private(addr, npages);
++		}
++		addr += size;
++	}
++
++	/* Unshare all bss decrypted memory. */
++	addr = (unsigned long)__start_bss_decrypted;
++	end  = (unsigned long)__start_bss_decrypted_unused;
++	npages = (end - addr) >> PAGE_SHIFT;
++
++	for (; addr < end; addr += PAGE_SIZE) {
++		pte = lookup_address(addr, &level);
++		if (!pte || !pte_decrypted(*pte) || pte_none(*pte))
++			continue;
++
++		set_pte_enc(pte, level, (void *)addr);
++	}
++	addr = (unsigned long)__start_bss_decrypted;
++	snp_set_memory_private(addr, npages);
++
++	__flush_tlb_all();
++}
++
++/* Stop new private<->shared conversions */
++void snp_kexec_begin(void)
++{
++	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
++		return;
++
++	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
++		return;
++
++	/*
++	 * Crash kernel ends up here with interrupts disabled: can't wait for
++	 * conversions to finish.
++	 *
++	 * If race happened, just report and proceed.
++	 */
++	if (!set_memory_enc_stop_conversion())
++		pr_warn("Failed to stop shared<->private conversions\n");
++}
++
++void snp_kexec_finish(void)
++{
++	struct sev_es_runtime_data *data;
++	unsigned int level, cpu;
++	unsigned long size;
++	struct ghcb *ghcb;
++	pte_t *pte;
++
++	if (!cc_platform_has(CC_ATTR_GUEST_SEV_SNP))
++		return;
++
++	if (!IS_ENABLED(CONFIG_KEXEC_CORE))
++		return;
++
++	unshare_all_memory();
++
++	/*
++	 * Switch to using the MSR protocol to change per-CPU GHCBs to
++	 * private. All the per-CPU GHCBs have been switched back to private,
++	 * so can't do any more GHCB calls to the hypervisor beyond this point
++	 * until the kexec'ed kernel starts running.
++	 */
++	boot_ghcb = NULL;
++	sev_cfg.ghcbs_initialized = false;
++
++	for_each_possible_cpu(cpu) {
++		data = per_cpu(runtime_data, cpu);
++		ghcb = &data->ghcb_page;
++		pte = lookup_address((unsigned long)ghcb, &level);
++		size = page_level_size(level);
++		set_pte_enc(pte, level, (void *)ghcb);
++		snp_set_memory_private((unsigned long)ghcb, (size / PAGE_SIZE));
++	}
++}
++
+ static int snp_set_vmsa(void *va, void *caa, int apic_id, bool make_vmsa)
  {
- 	return ERR_PTR(-ENODEV);
--- 
-2.47.0
-
+ 	int ret;
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index 5f59893..91f08af 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -455,6 +455,8 @@ void sev_show_status(void);
+ void snp_update_svsm_ca(void);
+ int prepare_pte_enc(struct pte_enc_desc *d);
+ void set_pte_enc_mask(pte_t *kpte, unsigned long pfn, pgprot_t new_prot);
++void snp_kexec_finish(void);
++void snp_kexec_begin(void);
+ 
+ #else	/* !CONFIG_AMD_MEM_ENCRYPT */
+ 
+@@ -494,6 +496,8 @@ static inline void sev_show_status(void) { }
+ static inline void snp_update_svsm_ca(void) { }
+ static inline int prepare_pte_enc(struct pte_enc_desc *d) { return 0; }
+ static inline void set_pte_enc_mask(pte_t *kpte, unsigned long pfn, pgprot_t new_prot) { }
++static inline void snp_kexec_finish(void) { }
++static inline void snp_kexec_begin(void) { }
+ 
+ #endif	/* CONFIG_AMD_MEM_ENCRYPT */
+ 
+diff --git a/arch/x86/mm/mem_encrypt_amd.c b/arch/x86/mm/mem_encrypt_amd.c
+index f4be81d..774f967 100644
+--- a/arch/x86/mm/mem_encrypt_amd.c
++++ b/arch/x86/mm/mem_encrypt_amd.c
+@@ -490,6 +490,8 @@ void __init sme_early_init(void)
+ 	x86_platform.guest.enc_status_change_finish  = amd_enc_status_change_finish;
+ 	x86_platform.guest.enc_tlb_flush_required    = amd_enc_tlb_flush_required;
+ 	x86_platform.guest.enc_cache_flush_required  = amd_enc_cache_flush_required;
++	x86_platform.guest.enc_kexec_begin	     = snp_kexec_begin;
++	x86_platform.guest.enc_kexec_finish	     = snp_kexec_finish;
+ 
+ 	/*
+ 	 * AMD-SEV-ES intercepts the RDMSR to read the X2APIC ID in the
 
