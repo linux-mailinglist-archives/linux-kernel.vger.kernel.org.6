@@ -1,89 +1,129 @@
-Return-Path: <linux-kernel+bounces-386832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57E19B486C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:37:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 354C59B4876
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:39:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C5F1C2312F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:37:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D12811F237C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A571205148;
-	Tue, 29 Oct 2024 11:37:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F38CD20512A;
+	Tue, 29 Oct 2024 11:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LJSlwFyM"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C727464
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BE67464;
+	Tue, 29 Oct 2024 11:39:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201825; cv=none; b=W6p6X2WtAfL1Cyhd4sv5A1Ipi5Gvn8SY5g+H3Lu0xvhgSFU1Pc75SBRv92s3CriOjEi1FOQYgm/A3Q4rnO8/AyYAh+w2D7RXfFVxJn7s7rV5ud8HVJdwyd72ySkCsPNpOnJ+/Xvo/WkQ43LGgP8AKj637t1ID1/QPnhDbn/b7Wk=
+	t=1730201973; cv=none; b=k3t/Zp3YvCvpiQD9yRnALFcYeAeS7W+Dkm3HEXvbfpG4rQY8bHcwdALgYFIE5Xyq9rmdZB6MXYX6UMLIHCqzazbU/EEoAU0UbIJIVxZvM8/Mo2sc/AiLPqm6oIE1pBzKbSgOOJMWFQY9BAp6Gos5z7v8wb2gb5apGeoT364Ju18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201825; c=relaxed/simple;
-	bh=Ve/T7iRtyGZXu535IGCbAILZSyBmoufUyqUyNP5viMk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oolxaqvKAhhNCAUtzRBv8v7Sw3CcAh7mxWBXEBq8bDdfdYwxu2z39XyWUhB6zlPTS2zq7TljtfxwHH4JTrgUhuBR2ujMUkwt0UiRK8/t1y+Fzpj5FvgN0pm/ih/nT0DrUpUhWTZIaSV7u32tXbl92Bxz6TKWxR1H6yYLinmUmNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a4ee7817b3so26197665ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:37:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730201823; x=1730806623;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dM2lgnHTRXyr4BSRIoO9tHi9P/rFe55ozJ8KLwxJlB0=;
-        b=mzVcBmaU5vWve7THPL3up449v99qNXEYuKRa+v08xPAKovML9UXqH7x8aXAKg2mfkV
-         vi6yv0kBUCMPVlWDmv4r8NtW+kTLQYvALe/PrfD4Vm84FfH4KiQuALs8/4X3/JAie+pZ
-         4d+/0vu80+XspuvlmH4QgiMttBTt7Qna/UhsUDdc5A1T9J2q4NKDrw3LayNANRrZHsbw
-         1t76c8a5BSRjeGZo8uMay839Vzz/uQ8UTMdYBZS+5sE8l8dZGaBmGAfW8suKJbgYqDtY
-         VYIdgvlgrVSAh3nqf7Z8OkSF2o+IVp/KSQaLwD3C/Dcs247SslEwKCvJnA+xNXJixEz0
-         Ou9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUeJ/NQJ6pHBsN/Mp59Ndcwie+MPSlG1TtY0wbJzUDjD/dHO+fjcOb8XIrv2bzrJ7rP8fF9xzcXRttAXJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJJzea+NlQ6WogEkg2Qqmt65wsGAt71oqIRa0p7vbTGswW/E+I
-	ifjfL+WmZS+v4kdsBNNxeyQjd4Ut+mNK1BYOyJbItNObAhf9M40RiWOkHTFuPt9RQgkqc8iCBGf
-	AY9M5ZYvNvy088Jr4VS046KlBWWUJiwpehpBtk8/2nc9Luc4uzkpK7Mo=
-X-Google-Smtp-Source: AGHT+IE0544kb11y88W9ylafTtRX7dqt4hxvzZCcSMXBAw4ptQHJbRmXCvfjVNbx43rB5SZMSFnT0vaVN4c3fPG9y4BpzS/37/l7
+	s=arc-20240116; t=1730201973; c=relaxed/simple;
+	bh=NkNFfbji0OME9gPCeQIakGoXEIkxCxgpbxmctKafQAI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mg5dvMoqYBIUconUjTfTS2/efdEnyeAUVDq2cvLir92Lg7flinal/K/3NkXtprmtgPUvWHZEMYkwIegKUXC/cGVqvHppYz4Ut5QNl3OJDpR3aktKyoDREB7KevWtAvaCo0OqxpdFPgVDJTf8Dld39fBQcT8PYziYG+HZMJEcruw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LJSlwFyM; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D5EE140E0191;
+	Tue, 29 Oct 2024 11:39:28 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id bxg2LzqxNo7C; Tue, 29 Oct 2024 11:39:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730201964; bh=0iZNTIQ41wXmMKTJ9iFXjkQg26CA/6aBHQN6CHwVF1M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LJSlwFyM18+RZszvDzcL2dKyJClz15WhcDZcVJreE+I1hNdOhwGLjKI5nNBgjmdL2
+	 L2UOZFPHzUAm+7g85IV9wljr3rn5o0dTfB1JKujBQQrLMjsp1olGdaxDbGk7l6ArJy
+	 D87II4rFCH8ROQsnevp9OgN0wyoJx5xWIkuluwTrMF37hjZyU1Yvgfg12V08592Jk+
+	 /FQUZTVXdciZ+bAySL0C/PF18QNRt7SaumlNYuoPmM2YZAjYb0iRI7Q/Q7eziaiSMk
+	 Mn9KIPnsjdrdpxbLqkdw/tqpCqhGj57Xvo9WgRtch14kzuSNTLbXgaWZ+yH0RzVOeJ
+	 YpJktNhlvPifhXVomcQ50te2O2KgeJPc+nY2CVjzjZd0tWx5cvizcJxSR4uc/czDCl
+	 2g7hHpwiz25eWVP7TeTWFylYBaOrb3Q7QbPQgHxxtjCEmW9hyL2cyLemJBBwauOkKo
+	 MkjO+CodGzDq2N34aznrZxlXgx6zZ1LYDsl55Y9SQIF+1MyYS+GTTwiJyBY6tdhQu8
+	 Cn6LWlTIpPQLWtmOGvEoswm5j5EG80T+QfP3lG5U8WIcdACPvkLWTy4/W1K7M7ry0q
+	 14u/Z9rG5cR4WMI5W/w0lE4Re7DGK0zgr3RDi1k9qIqLJtGR8AcpkRlBP9UsPSxUnU
+	 JnAFn6CXd5Rhz+0I3C+gNnp8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B3F0640E0192;
+	Tue, 29 Oct 2024 11:39:12 +0000 (UTC)
+Date: Tue, 29 Oct 2024 12:39:11 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	hpa@zytor.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH 1/2] x86/bugs: Check VERW mitigations for consistency
+Message-ID: <20241029113911.GVZyDJX3rg8kh_4kYb@fat_crate.local>
+References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+ <3ed45a10e2f7fbecce31d9964b1da1372e8cb838.1730158506.git.daniel.sneddon@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8f:b0:3a3:f897:198d with SMTP id
- e9e14a558f8ab-3a4ed2b1887mr105526895ab.14.1730201823136; Tue, 29 Oct 2024
- 04:37:03 -0700 (PDT)
-Date: Tue, 29 Oct 2024 04:37:03 -0700
-In-Reply-To: <c120bafe-224b-4ec8-b622-b90998117851@yandex.ru>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6720c8df.050a0220.4735a.025a.GAE@google.com>
-Subject: Re: [syzbot] [ocfs2?] KMSAN: uninit-value in ocfs2_file_read_iter
-From: syzbot <syzbot+a73e253cca4f0230a5a5@syzkaller.appspotmail.com>
-To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3ed45a10e2f7fbecce31d9964b1da1372e8cb838.1730158506.git.daniel.sneddon@linux.intel.com>
 
-Hello,
+On Mon, Oct 28, 2024 at 04:50:34PM -0700, Daniel Sneddon wrote:
+> There are currently 4 mitigations that use VERW: MDS, TAA,
+> MMIO Stale Data, and Register File Data Sampling. Because
+> all 4 use the same mitigation path, if any one of them is
+> enabled, they're all enabled. Normally, this is what is
+> wanted. However, if a user wants to disable the mitigation,
+> this can cause problems. If the user misses disabling even
+> one of these mitigations, then none of them will be
+> disabled. This can cause confusion as the user expects to
+> regain the performance lost to the mitigation but isn't
+> seeing any improvement. Since there are already 4 knobs for
+> controlling it, adding a 5th knob that controls all 4
+> mitigations together would just overcomplicate things.
+> Instead, let the user know their mitigations are out of sync
+> when at least one of these mitigations is disabled but not
+> all 4.
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Please split this commit message into smaller chunks for better readability.
+For example:
 
-failed to apply patch:
-checking file fs/ocfs2/aops.h
-patch: **** malformed patch at line 8: diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+    There are currently 4 mitigations that use VERW: MDS, TAA, MMIO Stale Data,
+    and Register File Data Sampling. Because all 4 use the same mitigation path,
+    if any one of them is enabled, they're all enabled.
+    
+    Normally, this is what is wanted. However, if a user wants to disable the
+    mitigation, this can cause problems. If the user misses disabling even one of
+    these mitigations, then none of them will be disabled.
+    
+    This can cause confusion as the user expects to regain the performance lost to
+    the mitigation but isn't seeing any improvement. Since there are already
+    4 knobs for controlling it, adding a 5th knob that controls all 4 mitigations
+    together would just overcomplicate things.
+    
+    Instead, let the user know their mitigations are out of sync when at least one
+    of these mitigations is disabled but not all 4.
 
+Thx.
 
+-- 
+Regards/Gruss,
+    Boris.
 
-
-Tested on:
-
-commit:         e42b1a9a Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f0a45c444eedcbdb
-dashboard link: https://syzkaller.appspot.com/bug?extid=a73e253cca4f0230a5a5
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15db015f980000
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
