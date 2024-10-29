@@ -1,145 +1,225 @@
-Return-Path: <linux-kernel+bounces-386701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EFF9B471F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:42:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3919B4722
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:43:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B39DE1F23B42
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9102849ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:43:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 806E21E102D;
-	Tue, 29 Oct 2024 10:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC84204953;
+	Tue, 29 Oct 2024 10:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g6Deb+Ph"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edmfA/gn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF205204934;
-	Tue, 29 Oct 2024 10:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8561DF985;
+	Tue, 29 Oct 2024 10:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198495; cv=none; b=aX5bbFOoQO9yJZ/HVbnCm90jq5hUB3S3ptD8NE2MhiMbFLFph4ySCjsr7+w8VZcAJxbJxTJcdrqeBWdVPw2okqvxq/XOMACY94DMz/DgXllhkYL2CZYcoYv09j+ijY/3jAA9fA+NzX4j/jRU/OqTnDD3nBA5x2hxWJTEqT4JXJ0=
+	t=1730198612; cv=none; b=mrSKsv4B6kigbJ7NM7eS7D84CttdZRlavTshJlvMK1FEsWrOcO5eCsyogv1kvsu+8JEUP33VILyHR0aecBxgPZWlAyXlWcIZOUqTuB1RRE2XQBIJzxxAVL6iYgH4lA6zKkbb4qOfh4TnHa+ye+VmwhnMbFK7Xe0fIElXn/OKWxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198495; c=relaxed/simple;
-	bh=CDxDPheZuIShbTxvGcnHynCpCSV2PBe5TGcpJ6O4hxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LtvZnoi3PRg3QAjfbIiHYIrgfx/K+Gd2A9fQaRqhBFsJCPy+kCxYidhR9psm/7xTCUHQv2SpCxqmtVDlBfMrAZ37MGLU9fftSTbblbGBzo7F0AmbU5uC7yntkhsNiLnMNPDAfUcOKQgUJ/KOjGla7ZXx/0ol/nkNwmW3XEtybtQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g6Deb+Ph; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T9QgvS004569;
-	Tue, 29 Oct 2024 10:41:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Hw0jxCeBaOwpy4JuP/bVGCjHkrcw66Z/6+sqZuhTue4=; b=g6Deb+Phxt14ZxHr
-	RrA2Tx7gOxMtj4Iv8v83XBsATdCwgVUJ+Z8VLL/4l91kIHNAb8n1ZMQz+yItDQ5x
-	bpRTkOdU+DB6r2P6AlPFhKHGiIPE8AGlTDzjIy38eLZTQryEtkLwSy2/zyK0hJAO
-	1KdXqfwzdbNZy8Jkx8J7wFr2EFTbZ24MaWtQYAc+zzcyMD9Z6MUs89t9dh64Uynw
-	QlGEyDrHWKc7AZscTKFKttz1YmiovGSU1BeyaSxZzfTPu5OFMER3v2ILhamdKzJl
-	ySJg80R2cc5U9hnDa4di3tuy5F4yU5wPTvjtGiILFoSBF/Y01MerSPiGLn3fjaNu
-	1eop/w==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gs6e81nt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 10:41:30 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TAfUFf027210
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 10:41:30 GMT
-Received: from [10.239.133.118] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
- 2024 03:41:25 -0700
-Message-ID: <4d5d3c4d-098f-48ca-ba3a-289f5447e63a@quicinc.com>
-Date: Tue, 29 Oct 2024 18:41:22 +0800
+	s=arc-20240116; t=1730198612; c=relaxed/simple;
+	bh=fCHg+USXVzv55vvKlBlous6qKMSJtzt3sWEWLEln7lo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Gj/ADwxKFRtjYzZA8KbaAjaMMfNx4YE1RFhI5CWFX2SYHZejWE5SG+KuIWxf+vPQ9L16zVsBfuvpHwlPH05yjfKNz+bS4VFHgh+wLH6/FbcMEC6ebf1TKb76uwEfm5VKGF+WYPkFQjFhcoTw9sJY7CvtqJkMx/NVWAwM134FDh8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edmfA/gn; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730198610; x=1761734610;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=fCHg+USXVzv55vvKlBlous6qKMSJtzt3sWEWLEln7lo=;
+  b=edmfA/gntf2g6KWQEMVxwrR9rOD2oSwTzHrezLiYHcxGYvgFtcKJPij5
+   GohiAS5/0DkIBBzkPt5VVFBfIyO0Pgav8Q3bcXNjFkgIB80QtomMcMSF3
+   8jeN4EqSUmy7hvtGw6MjHG68G6SsY6+P3VQ4+l7nxkzT1AYT/R7mp2SeL
+   SY9N88nlG21qQSzx2iTqyXBCNMDe7BQ7+/M/zyN0PwBAGeqAx/sM9KnQx
+   /MyZ4cKNV+dqIYC7DhnjPUATCOex5BFdtLQy6OPSbrWETTKaDsgw4UUR1
+   0WlEAnGdvIujab+bscN3HYiXKoOxk6Blk+P3tYZ0ehiYi2S9THuzl6OFL
+   A==;
+X-CSE-ConnectionGUID: kQ/OR1LBR3mVwhSErYY0KQ==
+X-CSE-MsgGUID: jeFiTvfKSHqvGYgBqH74Tg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29938249"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="29938249"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:43:29 -0700
+X-CSE-ConnectionGUID: hwa4kfISQk2Yt3IyfJj9SQ==
+X-CSE-MsgGUID: uuHoB4mXT4eVdpxNbr9g8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="105263664"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:43:22 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 29 Oct 2024 12:43:18 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH v2 12/15] ACPI: platform_profile: Make sure all profile
+ handlers agree on profile
+In-Reply-To: <20241028020131.8031-13-mario.limonciello@amd.com>
+Message-ID: <4eaa085a-3cc8-b359-9f70-c4a6b7742389@linux.intel.com>
+References: <20241028020131.8031-1-mario.limonciello@amd.com> <20241028020131.8031-13-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs615: Add LLCC support for QCS615
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241011-add_llcc_dts_node_for_qcs615-v1-1-e7aa45244c36@quicinc.com>
- <c81b26dc-1c52-42b6-ba68-95906b9c524c@oss.qualcomm.com>
-Content-Language: en-US
-From: Song Xue <quic_songxue@quicinc.com>
-In-Reply-To: <c81b26dc-1c52-42b6-ba68-95906b9c524c@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 6kdHWveVhken_w6xJ8NvfNRpP8SuBgJ-
-X-Proofpoint-GUID: 6kdHWveVhken_w6xJ8NvfNRpP8SuBgJ-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- priorityscore=1501 lowpriorityscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 impostorscore=0 adultscore=0 spamscore=0 suspectscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290083
+Content-Type: text/plain; charset=US-ASCII
 
+On Sun, 27 Oct 2024, Mario Limonciello wrote:
 
+> If for any reason multiple profile handlers don't agree on the profile
+> set for the system then the value shown in sysfs can be wrong.
+> 
+> Explicitly check that they match.
+> 
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c | 61 ++++++++++++++++++++++++---------
+>  1 file changed, 45 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index db2ebd0393cf7..d22c4eb5f0c36 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -51,6 +51,45 @@ static unsigned long platform_profile_get_choices(void)
+>  	return seen;
+>  }
+>  
+> +/* expected to be called under mutex */
 
-On 10/26/2024 1:46 AM, Konrad Dybcio wrote:
-> On 11.10.2024 12:41 PM, Song Xue wrote:
->> The QCS615 platform has LLCC(Last Level Cache Controller) as the system
->> cache controller. It includes 1 LLCC instance and 1 LLCC broadcast
->> interface.
->>
->> Add LLCC node support for the QCS615 platform.
->>
->> Signed-off-by: Song Xue <quic_songxue@quicinc.com>
->> ---
->> This patch series depends on below patch series:
->> https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
->> https://lore.kernel.org/linux-arm-msm/20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com/
->> ---
->>   arch/arm64/boot/dts/qcom/qcs615.dtsi | 8 ++++++++
->>   1 file changed, 8 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> index ac4c4c751da1fbb28865877555ba317677bc6bd2..b718a4d2270d64ed43c2eca078bfe52b78ff680c 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
->> @@ -495,6 +495,14 @@ dc_noc: interconnect@9160000 {
->>   			qcom,bcm-voters = <&apps_bcm_voter>;
->>   		};
->>   
->> +		llcc: system-cache-controller@9200000 {
->> +			compatible = "qcom,qcs615-llcc";
->> +			reg = <0x0 0x9200000 0x0 0x50000>,
->> +			      <0x0 0x9600000 0x0 0x50000>;
-> 
-> Please pad both addresses to 8 hex digits (e.g. 0x09200000)
-> 
-> With that:
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Konrad
-> 
-let me fix it.
+Don't add comments like this but enforce it with a lockdep annotation.
 
-Thanks,
-Song
+"mutex" would have been too vague anyway :-).
+
+> +static int platform_profile_get_active(enum platform_profile_option *profile)
+> +{
+> +	struct platform_profile_handler *handler;
+> +	enum platform_profile_option active = PLATFORM_PROFILE_LAST;
+> +	enum platform_profile_option active2 = PLATFORM_PROFILE_LAST;
+> +	int err;
+> +
+> +	list_for_each_entry(handler, &platform_profile_handler_list, list) {
+> +		if (active == PLATFORM_PROFILE_LAST)
+> +			err = handler->profile_get(handler, &active);
+> +		else
+> +			err = handler->profile_get(handler, &active2);
+> +		if (err) {
+> +			pr_err("Failed to get profile for handler %s\n", handler->name);
+> +			return err;
+> +		}
+> +
+> +		if (WARN_ON(active == PLATFORM_PROFILE_LAST))
+> +			return -EINVAL;
+> +		if (active2 == PLATFORM_PROFILE_LAST)
+> +			continue;
+> +
+> +		if (active != active2) {
+> +			pr_warn("Profile handlers don't agree on current profile\n");
+> +			return -EINVAL;
+> +		}
+> +		active = active2;
+
+This looked very confusing (IMO). How about this:
+
+	enum platform_profile_option active = PLATFORM_PROFILE_LAST;
+	enum platform_profile_option val;
+	...
+
+		err = handler->profile_get(handler, &val);
+		if (err) {
+			pr_err(...);
+			return err;
+		}
+
+		if (WARN_ON(val == PLATFORM_PROFILE_LAST))
+			return -EINVAL;
+
+		if (active != val && active != PLATFORM_PROFILE_LAST) {
+			pr_warn("Profile handlers don't agree on current profile\n");
+			return -EINVAL;
+		}
+		active = val;
+
+> +	}
+> +
+> +	/* Check that profile is valid index */
+> +	if (WARN_ON((active < 0) || (active >= ARRAY_SIZE(profile_names))))
+
+What does that < 0 check do? Should it be checked right after reading 
+profile_get()? Or perhaps check both of these right there?
+
+> +		return -EIO;
+> +
+> +	*profile = active;
+> +
+> +	return 0;
+> +}
+> +
+>  static ssize_t platform_profile_choices_show(struct device *dev,
+>  					struct device_attribute *attr,
+>  					char *buf)
+> @@ -80,24 +119,14 @@ static ssize_t platform_profile_show(struct device *dev,
+>  	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
+>  	int err;
+>  
+> -	err = mutex_lock_interruptible(&profile_lock);
+> -	if (err)
+> -		return err;
+> -
+> -	if (!cur_profile) {
+> -		mutex_unlock(&profile_lock);
+> -		return -ENODEV;
+> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
+
+scoped_cond_guard() conversion should be made in the guard patch?
+
+> +		if (!platform_profile_is_registered())
+> +			return -ENODEV;
+> +		err = platform_profile_get_active(&profile);
+> +		if (err)
+> +			return err;
+>  	}
+>  
+> -	err = cur_profile->profile_get(cur_profile, &profile);
+> -	mutex_unlock(&profile_lock);
+> -	if (err)
+> -		return err;
+> -
+> -	/* Check that profile is valid index */
+> -	if (WARN_ON((profile < 0) || (profile >= ARRAY_SIZE(profile_names))))
+> -		return -EIO;
+> -
+>  	return sysfs_emit(buf, "%s\n", profile_names[profile]);
+>  }
+>  
+> 
+
+-- 
+ i.
 
 
