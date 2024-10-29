@@ -1,223 +1,234 @@
-Return-Path: <linux-kernel+bounces-386299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF3D9B41A5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:53:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14C429B41AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494FF1C219D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:53:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38F741C21C4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B95C1DE894;
-	Tue, 29 Oct 2024 04:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08951EE014;
+	Tue, 29 Oct 2024 04:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="krJ/CGDu"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T4UZ7SQK"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A252FB2;
-	Tue, 29 Oct 2024 04:52:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730177577; cv=fail; b=BfXDCFgKlB7I/TD9jG9OyIWDF9exS7N1bgbdmkJSXBSyDLkFdtfn042bYCzII+PS5ODQHTX8DKaice/bVKtfr9LW8IWjKAa0VQus14dTBHqJ25J2WUflUYAa1zOUnhOxHwBcA/IP24FMtGPKAxT5QthyvrHQ5aaYFifvUdS65kw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730177577; c=relaxed/simple;
-	bh=6E145uiBAsJ257EFujOKnqyGx9AjVHwp83ll2nFY5gs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=AofAk2GEQqBcZpuJcgM+JTSCNnwVDrWq0tq+JsUcNBxIuOYEiJLs8KvRHNtTl2UzaLpYJwPCOitLWwcXhGgtw3ZXsGN0rrPgTJU6vakRYw+sOcLoZkJFoqEJu+NmdJB0YjsJ9Nqy6Un9Mx3Wwd9rvzvI8R0VoYsFxIj5OpUFQAQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=krJ/CGDu; arc=fail smtp.client-ip=40.107.220.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SKE6y1kxTMS0SNTId7asLbHsjmkQKsgJR8RCHWvIpKHMozdIakKvNhlgRmlrZ9MX/vzkG5ogt3lgTh0dmAacT6E1KM8VyTNh5fhIB+TOAQ98dUpa+dz/RvsngrfVP/J8S1kkd/2kPH+NlEcmZssdPmt+OPP3+rF08Bxjg2D5C6wI7rRF16Z1Cz7hxjhD68Y5CDCMwKbRC2ECQdtd1/3lQwQnqS338PgghgUQviksIsxeMi2a+6OFp2fz9P/L93QWDuZJjcSjdUMHQGDrAX4hSJdBuGPrWPD13Q9cscUHxQZ0U8V2067jQWYkLQZMqy2dzonGjlPdqAzkcxiJlaqNsw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HM5hCnklPWYQq7M4lC0OqiOslLyQrf5k8242acvYbmI=;
- b=gZmpszPMQLrmPNtFv4Ael8JwmFgacDTlhAsh3eiFNHBuJedsHc/QWmqpy3UX9PKN6+fDzb/GeMMWwyzVVrClFlo3+z77DuPR+Y7A4VErUwL0ekKfKt3JQ1XcmjClmUyB0kUag0sQsQ/HK4f89byH0ZcDmMPUVqx2+RrgiO9IuXceEPyYz0Ha0NjAyyzJbY1o9Kho73HbLCOcVf8HNZWKZnS172reFmZVZKKUcyVYPuL81OAnu4lVLRYi4eiQHV5VrP5N/HiWIeE6UdDX8geQ3C9QduDFbG5tHKO3g64sJ4etDiVZjigI/Z6gasIpVidqVqMyBbTxZWsNsLlSbha1ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HM5hCnklPWYQq7M4lC0OqiOslLyQrf5k8242acvYbmI=;
- b=krJ/CGDubOlMTYZXzD86ntLuhShf6U4qzuqe3qQXBumJzeeDqoH/JfGs5SJKcwFgkRtB7Hde131zr6y11RlzLyFeJtJ4nedx9z2BLzRMLVRLB3fAy5rp1JflSR91OgNhx3hcuM+LcedE2QEcI7v8OhiezXr2Mzz1KNM/0OMY1E4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
- by PH7PR12MB7842.namprd12.prod.outlook.com (2603:10b6:510:27a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Tue, 29 Oct
- 2024 04:52:53 +0000
-Received: from LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
- ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.8048.017; Tue, 29 Oct 2024
- 04:52:52 +0000
-Message-ID: <44f8bf0a-4d1a-4a75-99fd-4ca7473423d4@amd.com>
-Date: Tue, 29 Oct 2024 10:22:42 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] cpufreq/amd-pstate: Push adjust_perf vfunc init
- into cpu_init
-To: Mario Limonciello <superm1@kernel.org>,
- "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
- Perry Yuan <perry.yuan@amd.com>
-Cc: "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)"
- <linux-kernel@vger.kernel.org>,
- "open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Klara Modin <klarasmodin@gmail.com>
-References: <20241028145542.1739160-1-superm1@kernel.org>
-Content-Language: en-US
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-In-Reply-To: <20241028145542.1739160-1-superm1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0003.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::20) To LV8PR12MB9207.namprd12.prod.outlook.com
- (2603:10b6:408:187::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E70C72FB2;
+	Tue, 29 Oct 2024 04:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730177836; cv=none; b=D1r4c2lFaFA2lRIdDJtchxFUbd45IEexOgfc2Iedk0JznDABfLsb8BhTvkE+887pc8JwpmiBvV54fbbLC0h8ZerApLOsIoXWzAJdcXI8GFucVIWWgyZDJgwhL04r8zUmwXUlX54A5RWQ9yrDOlVQJ1dYSjrGi1AyUmp6nA7h1VM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730177836; c=relaxed/simple;
+	bh=w3dNvlar+8hrakFCL0PJdSpSMr2MisQMbNqP8I8bRaE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2TIq5hkfHvi6AHbuBrFhGnw3wqPBf8NE25my7L256vTsPfCOLpjKuuHSyepWoHNx85LHvlQ0NXxY1OQxAn4aWHMx6l/0KQ2S5dC3si4x5H/Z6Wdg4QIscj3siCqPC8MpVaq8HdARwrJJeY5PjYKfwJtGfq8INv1A2aERny54Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T4UZ7SQK; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b1507c42faso460393885a.0;
+        Mon, 28 Oct 2024 21:57:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730177833; x=1730782633; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=miRKsVITHzAukzsj+/ygTCg9k/xHlCLYaDB0d4rUOqE=;
+        b=T4UZ7SQKh0lWAFPCrQ8snW57OQb0dhWhHbGjZqXTjfJPIe9Pjx7Ij516zaN0DHnZQ4
+         Hc+J7VMZA/+kxxM+dzxwEa07JszQoh9CLJ78FArgaDVnOeCGDWfzxbJDtABpRFcyM+e4
+         9Ri/Du20XwqaXbujI90ToFGwkVOFHSjNM+aigBZh4D9hwDpjioAqG/cdFDytqcMVEB/c
+         bO2pQzRxj0MtKvxVfH94C2Etrh3/dJkzaYN7bXHHhJkRsuWKeP1gixXdT03OI7psnbrS
+         1iSBWCFtqReCAXnUfdKbOcjhO6UDvDezFtAg17r2pbVoroRGQBT+yq8YerjBA/FlRpk/
+         3+gw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730177833; x=1730782633;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=miRKsVITHzAukzsj+/ygTCg9k/xHlCLYaDB0d4rUOqE=;
+        b=mRioeFOb3ajJ/LIl+9LIQ0JFfJyLrovHJYWprXAkKG+GgsFkz71C5H4SgJQGLvmrpq
+         X8nC7/JgiUFrP7neuzCQ+Jv0kFaBW8c4/ZMS0IqBd96wvB+Vrrz3xWGw9s1L/4RXvIEe
+         Aj/wk32hK8dpUkS7B11r9nZ0yqLF4AzCeKQUPp2bQBna3YlpvDsUFIzNAZBq/V2Isa8t
+         xmOf5kQNuKa6IwGJrnkuTcPUunujxcj0nLgZVjCU5bQ33N41FgazR2Cqk1wcsV41uepB
+         8orS+KXk098RbIjh7A2OKzF4dB1vI/8vxe19QT06FyyLagcig+NC6m8vi8KAScqAaD9Y
+         nS3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUhpC3RjTxcq9IlZS6rsPpPTq/Zv5UFATvC/6eRZJ2cmObAD21a/tNGnaa2IfbnLTl3yVHe5L4nIA/j@vger.kernel.org, AJvYcCUuuL+JpBN7u+do+Z8w3zw609PnLvjOrROwt2czxa76gI5mqogesE6n2nizk3mnGDRuY9lZhpS5SZ9+552g@vger.kernel.org, AJvYcCW3DsM/QKQHg6SpjxClrDO38nITvZwmx16ph3NKJ6pD2jnngFpf6e1VCKyc5j7jIeDtdGAiRspFK0XVPAwv0OQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ9XKJK4a1Cpp7RcD1PVVRUjOYiM+i/JmU5URYzdqHZVZzKAO4
+	B1VrA5eLImiQD599XH2RW3PCPd2qncAMPGTnz3QM6QM0Y4QyLdIb
+X-Google-Smtp-Source: AGHT+IGW1ooBeldcdGoeMJo+T427girUR5zVV1hzqHzNK8xt/vLyirJwTY09tBGqdQSIjGkKrufbxQ==
+X-Received: by 2002:a05:6214:2f88:b0:6cb:c661:49ce with SMTP id 6a1803df08f44-6d2f62d4b03mr13390146d6.23.1730177832557;
+        Mon, 28 Oct 2024 21:57:12 -0700 (PDT)
+Received: from yoga (ool-1826d901.dyn.optonline.net. [24.38.217.1])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d17972f622sm39003676d6.9.2024.10.28.21.57.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 21:57:11 -0700 (PDT)
+Date: Tue, 29 Oct 2024 00:57:08 -0400
+From: Alex Lanzano <lanzano.alex@gmail.com>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Mehdi Djait <mehdi.djait@bootlin.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>, dri-devel@lists.freedesktop.org, linux-pwm@vger.kernel.org
+Subject: Re: [PATCH] drm/tiny: Fix some error handling paths in
+ sharp_memory_probe()
+Message-ID: <7b4y5djihc4ov7o2h6t27qakvvunkmf4ieozf3earesseny4qd@wdcpk35zt3zg>
+References: <b218165cf9af60907e0912266134f1ef1d3617b9.1729924305.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|PH7PR12MB7842:EE_
-X-MS-Office365-Filtering-Correlation-Id: ae525771-fd3a-464f-0e87-08dcf7d58b9f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N3h2WGVtc292b0NzcnErSERLWHZEN0dvRmJISCtaNU9jYVozdzBkQ1V2YnFo?=
- =?utf-8?B?TTArbXFVUnAxVS9hdWxXd29QQVZhV0FwSlhXbm80WEdxMEtEV0lEYWpXMzcr?=
- =?utf-8?B?RnRXaExWVEZQWVZKaTNrRkJ5THBaV0hub1M1QTBzSzlQNXR1V25pb2lBSE9z?=
- =?utf-8?B?SVdkZU55OW1PMTc2bjg2RWVUTEZnT25NK24razRCanJ3R1pBTC9YcTNSV2tr?=
- =?utf-8?B?SmxJOFM0dGRzWTRJenZXWmZPRmpUbkJMZVVUUlo4RmpDMVRDc3BjanlON0lv?=
- =?utf-8?B?blZUc2tzbldhVDQ0bFdnRzExV25ZQ04yTlEvTG1yN2VmS1BkZ0xhTmNEVElF?=
- =?utf-8?B?TUIvM3VMc3FVVUd1Tk9JTFpFMFAyb1ZpSEN5MU9yMjcveHQzaFpMZDFUaGhq?=
- =?utf-8?B?ajNuZDhmWllnOEV0dnNvUHVEaFpoSE9LbFJYSHZCWFlOamF2TEs3ODlCTmov?=
- =?utf-8?B?b3FDd056Z1JDQ3lqWHoyMm1Ib2VMa09MdHp3WHNBYWlLcHMrZEsrc3hXcTZI?=
- =?utf-8?B?S1VvQVFVTDIwRkFhOUUybUNRTkYrNWxLY2VsNi9KRXVUazcrUUxtdUQrSHh6?=
- =?utf-8?B?b3RYS2lIYmkwaG1OdDgrM20vV1dtVWVEUEhuUkQxTmFsMm5CYW5uTzlXdU96?=
- =?utf-8?B?Um1xM3NKblJVaWZYdC9zMXZwcTE4TGNBQTFBZFBlRUFBRGYvek5Fb25OdFUv?=
- =?utf-8?B?eWM5UG56ZlR2VkZPemxHblVTejBWRTZSV3AxWnVjRGZDZ0N3VDlwekdxMHYx?=
- =?utf-8?B?U0N3dnYyTzRHQU1kZ2lPZGZINEQwSGh0WHE1eE9qZCtCTTVMOGs3UFgxM2VF?=
- =?utf-8?B?ckpzSG0zVnJIZnljRXNQdVV1RFp5NFRHK05pa2VMaVZ6aGJxRXRhWlM1Yjgx?=
- =?utf-8?B?b1lTdzVXWTdPOG96akNSVGw5Mll6dEVXSXFkTTZrWlQwMmpIMjhBQWE2ZGFj?=
- =?utf-8?B?WTd1WVlWaUIrdmhXNk9pVE1yTTVPTWpvMXhjaHUxcE1ZU0FNcGE3Q0dLUERt?=
- =?utf-8?B?SG9VNkJxdmh5bThTTElaaHNGTk9idWVwZUhsSnF0R0J4TzVZbGk1c0ZqVHNV?=
- =?utf-8?B?OFNzRVJnUUVhNE1DZFhNencwMXJNZGpUKzBGbHorZzM2c25zZHpqUVJFTnZJ?=
- =?utf-8?B?MHhYNEVPSCtPSkRwZ3pxRU5YZXkzV3c2TTY3d3NDMno2Q0xpTW5jc2h4RW9s?=
- =?utf-8?B?VHVMSHFVbmFhK2xoM0lTNytEYVgzcXJra0ZpY0crN1hxVTc4SjArWSsxMS9o?=
- =?utf-8?B?U3M1OFVzT29mUkl5ZXlYRGFWSFdzakE3WW5DRWxicXVPQ0d2WVRub2RTeXNh?=
- =?utf-8?B?Ty9SWHFxYTFlc0NyM1piVEJSRWhIMEx0ZXg1aVkxdW1KY3pKeW81bFQrS2Zq?=
- =?utf-8?B?ZXZOMEsvaVJWczZJZFRrM0t0T3ZtMHJTV0ZSUGxvdjRyVjEzRXh2Z1VhUWsz?=
- =?utf-8?B?WjhGN1RXUm9JeGVBTlcvS1A1ZjJSamlmSkJiaTZiL2JoWWJ2cjZHVk5rcjdZ?=
- =?utf-8?B?RVY5dnJudVZtcm9hUDBYWDduN0kwNWRxdGk3MC83N1YyTnVYMTB5cEV1M01W?=
- =?utf-8?B?c0RBOWNubTI5MWR1M2lVNTNjckJIemM1dkRzRmdFZUtOQ2txNWM4U3NEK2ov?=
- =?utf-8?B?S21WUHp1djJVcTQvWXlhOUhHQ2JWdjM4ZG14WnVJeFNSTUVBZHk4bi81eWs1?=
- =?utf-8?B?dWNlZEhaNXpmckJQTCs4VWZLbVB0ekEvc3NPUkJmbDQ2VkpNYUdwUEc1R09i?=
- =?utf-8?Q?d+/YVWUKYekDK5jJmRTvNBShXr3UUAdscy3VQ0P?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OVRKT2ZiYm9qNmxVaFB1cW1SZFByY2U2K3ZKRGdUV05NZFpxZU1yVjVXNDgw?=
- =?utf-8?B?TFlncjdUYjdaR1d5N0p4N0dqQnhYaFBjbTJxVjd5MHAwazVJTEkvaUFUYzZi?=
- =?utf-8?B?Y3NBRFo4OFpETlF4VzY4Z3RsakFBcXJMS2wxYThESnNYZkticSthOTNaSlQ1?=
- =?utf-8?B?SVVacStjRkdNaE9NTytMc0crakNkS2cvUUZnb0VYblFuMjVnMWhqN3NuZ0ly?=
- =?utf-8?B?Vkd0MGV2VWZmdHp4b3Y3L2lYa0k1eC8yL1B6djk5aXNwRThRdk5kTE5jYjl0?=
- =?utf-8?B?Mk51eXdsd3NsYmlnTThGVC9LK0M4dE9FWStZYXVVQ1VyT2VrN21DOHlqeUhQ?=
- =?utf-8?B?VjlLdG1SdWtrYVJYdTJkZkZLVXpMWkxVdkZqL2RpZnZtVFJkMitrdXM0MVUz?=
- =?utf-8?B?N0I4c0FZd2wvMm5PTFJqaVBLRVBGQ1R1Q0RCRUdQc3JSQUl2WU1TREo0RnE0?=
- =?utf-8?B?SkVnTWc1WlNYSGpWMHdCSFdKRmFkam1JYS9XZ2NaUFVZeHJTKzlGTG9xVnhW?=
- =?utf-8?B?SFQ4S1hwdU5zUmMzSXZadGZ6RlJ4SVNBV0hZTWJSQ3VYWnd6VHRNNUYxREpF?=
- =?utf-8?B?NENVa0U4VTVvNjROMGpNT1FSY0FPUmFVWFV1OTlmZTJvUXN2dHlBQ3IvVVNj?=
- =?utf-8?B?MlNtaGw3NUlUWFdudGM4S25UTjBkNVhTQUlDWFAzNm5BLy9ScXVOVmN3U2JP?=
- =?utf-8?B?ckptZDJoTTk4ekJNSTZ3K0U3aE9yYUpjM2VJcFpxempuVmV0YkNVUVQwMlJG?=
- =?utf-8?B?QTFmQWU5cFhVS3I5MWlCZm5WeHdrVEl5aXI2c2gwMTkxRkM2Z0NkelRBeGJv?=
- =?utf-8?B?S0ZtNXl6Mys4N2tDaXdpNEZYNjlxcjMrZHptbk04dEF2OUxqQ0RDZWI2b0Vy?=
- =?utf-8?B?elRXaSt0UFJ6ODNZM1VXQXdwMy9RSlEycTg4U1licnZzMDdLSHhtbnpTZHFm?=
- =?utf-8?B?czZJOHUzeVIwVGlNYWtiNXlXVGVuZ3hQTFVVZFpVZFBGdnR5VUZwWm1FR255?=
- =?utf-8?B?Q252dURIVkVGQVZKSHpxYk1rVkxPcjB4aUV6R1NWalczM0FhRWFUb2NEcnZJ?=
- =?utf-8?B?bnVWdXYvRGN6bU1adnBwQzh2eDgvcW9UZ1orSUZrMnlUS2xKUDk4NFpQdjB4?=
- =?utf-8?B?VkhBM0FCQmwvWUV3cEN5SStJR2lsdThZR21saFo1QlhpZ285UmppWmdmZVlm?=
- =?utf-8?B?bU5HR3J4WllFN0xGWG5meVNkZlpFRkRmRHRyajNydDErak5BZGVrVk9pb0hK?=
- =?utf-8?B?WGZUZUxSVXh0ckFRV0hUOUJZRnZMZHdEakVhREdzejllR2ZrbXJUMnV5N3kw?=
- =?utf-8?B?bkt3endyUHZiaXNHQnFqTDY1MDd2a05Va1ZxUytnK2dwdEhlSVpmZUJWdktn?=
- =?utf-8?B?S09JN1I2ZDdOS3ROVzUwRmtVdTFqRnlhTzVXbkh6YmJIVk5JaCt1eWJFTjlX?=
- =?utf-8?B?Q3RncHBkTDNYVW83dndIMlR0RWhzV25lUnZIQWFxL1VTaThxMUMrOFNmR0pL?=
- =?utf-8?B?amNTUU9VSXVEa25XMEEyZ2pBUkhDa0M5YTdrZCtqNXVERlhMakdTejZ6T2pP?=
- =?utf-8?B?REFGR3J1dmU3U1VHRHREVGVUbjlhNWlOc01Uc0lTMS8rL2RTMHorMWRkd0Vp?=
- =?utf-8?B?aGFyUmFPUDQ4elRaVEE4RzJoZzU0ZFhFY1J3NmM4L1lUZ2tWc3liU3lhN2hO?=
- =?utf-8?B?TjhORlhYaTExQkV2V3RaMGlmL1Y5bDlJVHRoYlFTd1dVZ0pYUWZnRjh4RUlU?=
- =?utf-8?B?YzBaUWp6WDUzSGlWcHNmMDB6U1lzemwvaUk5U3JoOWJhdHFiTE4vVXN4WUdu?=
- =?utf-8?B?eHJvZkhCWHZyUGpLaXp3ZmRrNTU3aysrR2t5eGJFeENuRWlvRHhQWVNOLzBy?=
- =?utf-8?B?RUkzeUY2cURDNFFheGVlV2lJYnpCcmx4VE1peFREMGtKVjd1V25KRWhmMlo0?=
- =?utf-8?B?akMrelF4OU5QQVZyejNHdlBqM0pQbWZtRUh1Z3BaYUh1MlJUOWZtenpBWXJJ?=
- =?utf-8?B?ajdjRmpaVUJOOGt3ZTQ0NG4rOFBPSm4wQkt2eEdJa1ZiclBRaG5Pekp3UGdh?=
- =?utf-8?B?VzNqajJYalZVbmVoL3A5NndvczZpUGdoREMzM3J6QzNicm1LRzFtTWdIQ1Ry?=
- =?utf-8?Q?IEo+8w8B0Auy3qtl/FeBX1Cyz?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ae525771-fd3a-464f-0e87-08dcf7d58b9f
-X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 04:52:52.5525
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: udjnatRbjY2RkgJqG/aubJNavu0P+JGexE18ROpkYIShWny5Zon2rTFyD6EuisWuoSRJePktsccjW9uRKbvNBw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7842
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b218165cf9af60907e0912266134f1ef1d3617b9.1729924305.git.christophe.jaillet@wanadoo.fr>
 
-On 10/28/2024 8:25 PM, Mario Limonciello wrote:
-> From: Mario Limonciello <mario.limonciello@amd.com>
+On Sat, Oct 26, 2024 at 08:32:36AM +0200, Christophe JAILLET wrote:
+> If an error occurs after allocating resources based on which
+> "sharp,vcom-mode" is used, then these resources must be released, as
+> already done in the .remove() function.
 > 
-> As the driver can be changed in and out of different modes it's possible
-> that adjust_perf is assigned when it shouldn't be.
+> Use 2 new devm_add_action_or_reset() for that and simplify code
+> accordingly.
 > 
-> This could happen if an MSR design is started up in passive mode and then
-> switches to active mode.
-> 
-> To solve this explicitly clear `adjust_perf` in amd_pstate_epp_cpu_init().
->
-
-Great, this solves the overlooked issue as well, looks good to me.
-
-You may also add,
-Tested-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-
-Thanks,
-Dhananjay
- 
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> Fixes: b8f9f21716fe ("drm/tiny: Add driver for Sharp Memory LCD")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
-> Cc: Klara Modin <klarasmodin@gmail.com>
->  drivers/cpufreq/amd-pstate.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Compile tested only
+> ---
+>  drivers/gpu/drm/tiny/sharp-memory.c | 66 ++++++++++++++---------------
+>  1 file changed, 32 insertions(+), 34 deletions(-)
 > 
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index 206725219d8c9..e480da818d6f5 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -1504,6 +1504,8 @@ static int amd_pstate_epp_cpu_init(struct cpufreq_policy *policy)
->  		WRITE_ONCE(cpudata->cppc_cap1_cached, value);
->  	}
+> diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/sharp-memory.c
+> index 2d2315bd6aef..01d1ce2462e1 100644
+> --- a/drivers/gpu/drm/tiny/sharp-memory.c
+> +++ b/drivers/gpu/drm/tiny/sharp-memory.c
+> @@ -48,12 +48,6 @@ enum sharp_memory_model {
+>  	LS044Q7DH01,
+>  };
 >  
-> +	current_pstate_driver->adjust_perf = NULL;
+> -enum sharp_memory_vcom_mode {
+> -	SHARP_MEMORY_SOFTWARE_VCOM,
+> -	SHARP_MEMORY_EXTERNAL_VCOM,
+> -	SHARP_MEMORY_PWM_VCOM
+> -};
+> -
+>  struct sharp_memory_device {
+>  	struct drm_device drm;
+>  	struct spi_device *spi;
+> @@ -67,10 +61,6 @@ struct sharp_memory_device {
+>  
+>  	struct gpio_desc *enable_gpio;
+>  
+> -	struct task_struct *sw_vcom_signal;
+> -	struct pwm_device *pwm_vcom_signal;
+> -
+> -	enum sharp_memory_vcom_mode vcom_mode;
+>  	u8 vcom;
+>  
+>  	u32 pitch;
+> @@ -500,25 +490,41 @@ static int sharp_memory_pipe_init(struct drm_device *dev,
+>  	return drm_connector_attach_encoder(connector, encoder);
+>  }
+>  
+> +static void sharp_memory_stop_kthread(void *data)
+> +{
+> +	struct task_struct *task = data;
 > +
->  	return 0;
+> +	kthread_stop(task);
+> +}
+> +
+> +static void sharp_memory_disable_pwm(void *data)
+> +{
+> +	struct pwm_device *pwm = data;
+> +
+> +	pwm_disable(pwm);
+> +}
+> +
+>  static int sharp_memory_init_pwm_vcom_signal(struct sharp_memory_device *smd)
+>  {
+>  	int ret;
+>  	struct device *dev = &smd->spi->dev;
+> +	struct pwm_device *pwm_vcom_signal;
+>  	struct pwm_state pwm_state;
 >  
->  free_cpudata1:
-> @@ -1866,8 +1868,6 @@ static int __init amd_pstate_init(void)
->  	/* capability check */
->  	if (cpu_feature_enabled(X86_FEATURE_CPPC)) {
->  		pr_debug("AMD CPPC MSR based functionality is supported\n");
-> -		if (cppc_state != AMD_PSTATE_ACTIVE)
-> -			current_pstate_driver->adjust_perf = amd_pstate_adjust_perf;
->  	} else {
->  		pr_debug("AMD CPPC shared memory based functionality is supported\n");
->  		static_call_update(amd_pstate_cppc_enable, shmem_cppc_enable);
+> -	smd->pwm_vcom_signal = devm_pwm_get(dev, NULL);
+> -	if (IS_ERR(smd->pwm_vcom_signal))
+> -		return dev_err_probe(dev, PTR_ERR(smd->pwm_vcom_signal),
+> +	pwm_vcom_signal = devm_pwm_get(dev, NULL);
+> +	if (IS_ERR(pwm_vcom_signal))
+> +		return dev_err_probe(dev, PTR_ERR(pwm_vcom_signal),
+>  				     "Could not get pwm device\n");
+>  
+> -	pwm_init_state(smd->pwm_vcom_signal, &pwm_state);
+> +	pwm_init_state(pwm_vcom_signal, &pwm_state);
+>  	pwm_set_relative_duty_cycle(&pwm_state, 1, 10);
+>  	pwm_state.enabled = true;
+> -	ret = pwm_apply_might_sleep(smd->pwm_vcom_signal, &pwm_state);
+> +	ret = pwm_apply_might_sleep(pwm_vcom_signal, &pwm_state);
+>  	if (ret)
+>  		return dev_err_probe(dev, -EINVAL, "Could not apply pwm state\n");
+>  
+> -	return 0;
+> +	return devm_add_action_or_reset(dev, sharp_memory_disable_pwm,
+> +					pwm_vcom_signal);
+>  }
+>  
+>  static int sharp_memory_probe(struct spi_device *spi)
+> @@ -595,15 +601,20 @@ static int sharp_memory_probe(struct spi_device *spi)
+>  				     "Unable to find sharp,vcom-mode node in device tree\n");
+>  
+>  	if (!strcmp("software", vcom_mode_str)) {
+> -		smd->vcom_mode = SHARP_MEMORY_SOFTWARE_VCOM;
+> -		smd->sw_vcom_signal = kthread_run(sharp_memory_sw_vcom_signal_thread,
+> -						  smd, "sw_vcom_signal");
+> +		struct task_struct *sw_vcom_signal;
+> +
+> +		sw_vcom_signal = kthread_run(sharp_memory_sw_vcom_signal_thread,
+> +					     smd, "sw_vcom_signal");
+> +
+> +		ret = devm_add_action_or_reset(dev, sharp_memory_stop_kthread,
+> +					       sw_vcom_signal);
+> +		if (ret)
+> +			return ret;
+>  
+>  	} else if (!strcmp("external", vcom_mode_str)) {
+> -		smd->vcom_mode = SHARP_MEMORY_EXTERNAL_VCOM;
+> +		/* empty */
+>  
+>  	} else if (!strcmp("pwm", vcom_mode_str)) {
+> -		smd->vcom_mode = SHARP_MEMORY_PWM_VCOM;
+>  		ret = sharp_memory_init_pwm_vcom_signal(smd);
+>  		if (ret)
+>  			return ret;
+> @@ -640,19 +651,6 @@ static void sharp_memory_remove(struct spi_device *spi)
+>  
+>  	drm_dev_unplug(&smd->drm);
+>  	drm_atomic_helper_shutdown(&smd->drm);
+> -
+> -	switch (smd->vcom_mode) {
+> -	case SHARP_MEMORY_SOFTWARE_VCOM:
+> -		kthread_stop(smd->sw_vcom_signal);
+> -		break;
+> -
+> -	case SHARP_MEMORY_EXTERNAL_VCOM:
+> -		break;
+> -
+> -	case SHARP_MEMORY_PWM_VCOM:
+> -		pwm_disable(smd->pwm_vcom_signal);
+> -		break;
+> -	}
+>  }
+>  
+>  static struct spi_driver sharp_memory_spi_driver = {
+> -- 
+> 2.47.0
+> 
+Tested-by: Alex Lanzano <lanzano.alex@gmail.com>
+Reviewed-by: Alex Lanzano <lanzano.alex@gmail.com>
 
