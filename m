@@ -1,160 +1,186 @@
-Return-Path: <linux-kernel+bounces-386508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F139B4456
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:36:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A93F9B4467
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9D3E1C22203
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:36:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 389F1B21ADE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B5B2038C1;
-	Tue, 29 Oct 2024 08:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9111D2038D3;
+	Tue, 29 Oct 2024 08:41:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VldVGYdc"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="C8PH7V93"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDF71F7572;
-	Tue, 29 Oct 2024 08:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91ABA1F7565;
+	Tue, 29 Oct 2024 08:41:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730190982; cv=none; b=SrmV/U90C1bglR1voKLRyYKRXhaK0U03o5X5QDY9qsox/zIwzR0N/rZb8jMuUdSmkvVSb1VLd+7yPZCOyvYEciFWeWDRjF7G3ycer6eBFZ0994NJWtchmybWc2I0aprS5n520QjMIoIgS/dU4fjqCSQBtM54+1fTalPt2+aMFu0=
+	t=1730191309; cv=none; b=VD0smTqhTZowXvmZrl5HgNDrzM90ouQuTvaYzjeIKcBKwT9A5p8sGH1WUtOr/6brqnY1BERaOp7p/c5M2qm7LPg8nZRyudNhlMFR0yULsN6AELOuYLv3kOWFgcQICF1G3bl4Qhkv4C86D1rxfQ0Y4ysx6SCjNU0UEyG+OM8Ekl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730190982; c=relaxed/simple;
-	bh=kka1rEqQOTqWmDit77Z03FNqQ8AZE0MELAOwKU8XPZE=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G66Xxf1IoZVohXbsXKigMoNnR9uR7Sv2nac5Mkvcztjq0RaDHWDVS94js8wyD5weL4zLk8/b1z3HG0XXdUuxZ2N4SpjEGG+r4WRcUzvIYlzYXnOnM/GMMLLq/GFyLQEHfUl8NAnUfLsSKzeDgpsPB2yd2c0+3wHab+NUk08rszg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VldVGYdc; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so5482058e87.1;
-        Tue, 29 Oct 2024 01:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730190979; x=1730795779; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ycrZrG1+SEKNM3XzN4QO4HX07q3A9ermu1rSfvkb+aE=;
-        b=VldVGYdcZt+IQ9fq2z22BoppXVPQ1pnowYXBPJ+RQyqwnUnszv3AiDUL1SgjXDI8Sy
-         rHZhFNvxjZN/2vSyItATTShaweftm/nbpIoojTq8zYKjwBKSMqWCs3b2x9qwWY/oXYIb
-         hwfwQwdzNIQYpvKsn73xTXoVSap5bP2DOh/l67jITDebX+vLb1byGn/Q5DNDYqT0f4VJ
-         5iLcuVa9/n9CMQoZ2Bds/JgA87chbTimnFR4otg/bbhU7qEuKZAKkwpancY0euns+ff8
-         eERO4cv8GQV+0mkF7cndNPlj/CzWvThyW4/kVjOIr7ysp9IuKYchPy2iGGrs0sc0FBua
-         d+pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730190979; x=1730795779;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ycrZrG1+SEKNM3XzN4QO4HX07q3A9ermu1rSfvkb+aE=;
-        b=CLzkG7I58SdZuUGDpHl8WFFOdStAgyhgd6BEbp0nGfAxapYY2lRxZvosx0tOb0WLJX
-         m0XaRP0pY9h3H5rUJUrB0DVQjqax18govSv8LoDwM2QE3SrszqLyi/fnGdRu9j0pRXjF
-         9aBkpJIzQkMFDNXnP/hC2ynd6N9zqH3EDAwrYWJ7nr4ebd2iOHsgrM8farpSiNhT2ptP
-         uVhJ/yEINvXwi5+vIsJycvoLahrrnFGcS3+5sqTMA4sHfFBJ8gHEUMva3fD9obuvikPq
-         /kZIxdAdBsBH58I7hsa3VWVvmAFvM40x70VvyCFnqkI9Qq5PeYr+pI59zc/K4B0puExZ
-         YQgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFVRFZ73dyabg5G9qRVZTNot/Z7Dto8bFbP1HmJ1ZIa4wea79YIfkdFdY/wx4ddduUZtTfYyijBWdpy6Pl@vger.kernel.org, AJvYcCW8uIhuiQSTw3Nzyz+nYP89c85XFpkClQZi10n2FTVxEYzLlAP44TPFzrH6UCMrvIwlWnUcXfJiVRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6iqtG2pyhYMIlrI1c0OwWyfJQbtxKTxisvzdCKFuUsXeT1iiz
-	zl58D8Uz8jjbj3BZka2NyveHmTy9aj/tQqtFXZ1cqCTM1XUmXc8EiWmyba6ZWJsS8H1O
-X-Google-Smtp-Source: AGHT+IF0UJTP/Jj1RKxnIvYQFowOLGKLi0bxAJwrPW9v9dlPuAjNm2sN9TSDrxmQx0SDto6AMm5KUA==
-X-Received: by 2002:a05:6512:2397:b0:539:9746:2d77 with SMTP id 2adb3069b0e04-53b34c35fe0mr3988919e87.61.1730190978527;
-        Tue, 29 Oct 2024 01:36:18 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:2c2b:bcc5:835e:c2dd? (p200300f6ef1521002c2bbcc5835ec2dd.dip0.t-ipconnect.de. [2003:f6:ef15:2100:2c2b:bcc5:835e:c2dd])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b579968sm167478515e9.39.2024.10.29.01.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:36:18 -0700 (PDT)
-Message-ID: <a1ebd05590051015e6ceb0d2fb4b239ed9959a67.camel@gmail.com>
-Subject: Re: [PATCH] ad7923: fix array out of bounds in
- ad7923_update_scan_mode()
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, Zicheng Qu <quzicheng@huawei.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, patrick.vasseur@c-s.fr, 
-	christophe.leroy@c-s.fr, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, 	tanghui20@huawei.com,
- zhangqiao22@huawei.com, judy.chenhui@huawei.com, Nuno =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>
-Date: Tue, 29 Oct 2024 09:40:37 +0100
-In-Reply-To: <20241028205004.2298af74@jic23-huawei>
-References: <20241028142357.1032380-1-quzicheng@huawei.com>
-	 <20241028205004.2298af74@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+	s=arc-20240116; t=1730191309; c=relaxed/simple;
+	bh=29GtuOb78Tq1qYNR/nE/cnVHgRQpd26VnE8XbAtvsAY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tF0pMoApkcDqha2aVz01BtkD/VmWTmPWBynFXmLpybp7BSY9LwS+fdf8bFBnkfBmVmLMa9l5UmZSqRRaJw/svtbUDmtSAn2Iocj0N0+tAUYu3As1FKOW8qE0xZiLbhY/h/NOc27/pBNm4WweXv8L00Va/XXhV+24SlJ+IKtUi9U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=C8PH7V93; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=q9tbeX7y+zJgZuAb/cGAaZ6MuCs4CQFq8FQvgssvj5E=; b=C8PH7V936k7jSRlqWNh/9IP9kq
+	2lMBc9oVA6BILyiZI4TvY/qs23GQNfOWpQipGokmPTcvgTR+8AsdYx/mQol5PQ4B9Q3BXKcA5vwL0
+	qaWWQBolR7aLKV1lPlDpe5qo7inNYIGy9fBvYgJYW28sCoV0QHkz/H9sBYaDd6geVj06rE866fs0k
+	9UGEXv8I8JgXoDP8Bf/Zrom5MoisZ/iRJSIfZoFwauhEu2WhjwMcdPpDRhJu/D0pWBQAcH+Kqw8RX
+	8FaYwoKRFjv4uv4cIaJd4NoZ2rZD6+W6BKaJdpB5qf6LUGoYxilHQ2YT+yj+/Ga7ZYy4IJ77fJWEx
+	lRU3k4KQ==;
+Date: Tue, 29 Oct 2024 09:41:41 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
+ devicetree@vger.kernel.org, Pengutronix Kernel Team
+ <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Sascha Hauer
+ <s.hauer@pengutronix.de>, Alexander Stein
+ <alexander.stein@ew.tq-group.com>, imx@lists.linux.dev, sre@kernel.org
+Subject: Re: [PATCH v2 2/3] ARM: dts: imx: Add devicetree for Kobo Clara 2E
+Message-ID: <20241029094141.04540d91@akair>
+In-Reply-To: <f2bb661d-8ef5-43d4-aece-c7fec01ff9fe@gmail.com>
+References: <20241024142206.411336-1-andreas@kemnade.info>
+	<20241024142206.411336-3-andreas@kemnade.info>
+	<f2bb661d-8ef5-43d4-aece-c7fec01ff9fe@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-10-28 at 20:50 +0000, Jonathan Cameron wrote:
-> On Mon, 28 Oct 2024 14:23:57 +0000
-> Zicheng Qu <quzicheng@huawei.com> wrote:
->=20
-> > In the ad7923_update_scan_mode() , the variable len may exceed the leng=
-th
-> > of the st->tx_buf array, leading to an array overflow issue. The final
-> > value of len depends on active_scan_mask (an unsigned long) and
-> > num_channels-1 (an integer), with an upper limit of num_channels-1. In
-> > the ad7923_probe() function, when assigning to indio_dev->num_channels,
-> > its=C2=A0 size is not checked. Therefore, in ad7923_update_scan_mode(),=
- since
-> > active_scan_mask is an unsigned long and num_channels has no set upper
-> > limit, an overflow might occur.
-> >=20
-> > Fixes: 0eac259db28f ("IIO ADC support for AD7923")
-> > Cc: <stable@vger.kernel.org>
-> > Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> Thanks.
-> This looks to be a valid bug but a wrong fix. Fairly sure the number of
-> channels
-> supported has changed at somepoint (probably with addition of more parts)
-> and the size of tx has not increased to match.
->=20
-> Nuno, could you take a look?
+Am Tue, 29 Oct 2024 09:53:33 +0200
+schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
 
-Hi Jonathan,
+> On 24/10/2024 17:22, Andreas Kemnade wrote:
+> > Adds a devicetree for the Kobo Clara 2E Ebook reader. It is based
+> > on boards marked with "37NB-E60K2M+4A2" or "37NB-E60K2M+4B0". It is
+> > equipped with an i.MX6SLL SoC.
+> > 
+> > Expected to work:
+> >    - Buttons
+> >    - Wifi
+> >    - Bluetooth
+> >      (if Wifi is initialized first, driver does not handle
+> > regulators yet)
+> >    - LED
+> >    - uSD
+> >    - USB
+> >    - RTC
+> >    - Touchscreen
+> > 
+> > Add human-readable comments for devices without mainlined driver and
+> > binding. Such comments can e.g. be help to find testers if someone
+> > starts to work on the missing drivers.
+> > 
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
+> 
+> ...
+> 
+> > +
+> > +	pmic@4b {
+> > +		compatible = "rohm,bd71879", "rohm,bd71828";
+> > +		reg = <0x4b>;
+> > +		pinctrl-names = "default";
+> > +		pinctrl-0 = <&pinctrl_bd71828>;
+> > +
+> > +		interrupt-parent = <&gpio4>;
+> > +		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
+> > +		system-power-controller;
+> > +
+> > +		clocks = <&clks 0>;
+> > +		#clock-cells = <0>;
+> > +		clock-output-names = "bd71828-32k-out";
+> > +
+> > +		gpio-controller;
+> > +		#gpio-cells = <2>;
+> > +		gpio-reserved-ranges = <0 1>, <2 1>;
+> > +
+> > +		rohm,charger-sense-resistor-ohms = <30000000>;  
+> 
+> I am afraid that this one is _my_ very much terrible brainfart. Yeah, 
+> pile up the stones and start casting ;)
+>
+... at everyone who had looked at this and did not question it ;-)
+ 
+> I am fairly sure the sense resistor is 30 mOhm (0,030 Ohm), not 30
+> MOhm (30 000 000 Ohm). (And I am the one who misinterpreted the M in
+> some email/data-sheet in the past - and never questioned the sanity).
+> 
+Well, I did question it, but then thought, ok there might be some
+current mirror to scale things down so that the massive rsense might
+make sense. Well, no schematics here.
 
-Yes, the fix seems to be the wrong one (and incomplete). In
+> In short, AFAICS the sense resistor is added "in series" to the
+> system load. Eg:
+> 
+>            --------
+>        ---| Rsense |-----
+>       |    --------      |
+>   ---------           -------
+> | VSupply |         | Rload |
+>   ---------           -------
+>       |                  |
+>        ------------------
+> 
+> Hence, by measuring the voltage drop on the Rsense gives us the
+> current flowing through the system ( good old U = RI ).
+> 
+Yes, that is the way I did know how these things are usually done.
+So I am still on track.
 
-commit 851644a60d20 ("iio: adc: ad7923: Add support for the
-ad7908/ad7918/ad7928")
+> I believe having 30 Mohm (30 000 000 Ohm) resistor there would not
+> make much of sense... With a Fermi estimate that the system works
+> with voltage magnitude of 1V and current magnitude of 1A and then
+> applying good old P = UI and U = RI would give us wonderful results
+> :) Quite a battery on poor Kobo, right? You'd better to not touch the
+> battery termninals ;) Oh, and looking the driver code I've written
+> for handling this property... Sometimes I really don't like mirrors :)
+> 
 
-devices with 8 channels were added but the buffers not updated. Then, you
-actually partially fixed the problem in
+> Well, now that I got this out - I suppose this could be
+> rohm,charger-sense-resistor-milli-ohms = <30>;
+> or
+> rohm,charger-sense-resistor-micro-ohms = <30000>;
+> 
+> I further guess there is no upstreamn binding doc for this property.
 
-commit 01fcf129f61b ("iio: adc: ad7923: Fix undersized rx buffer.") but onl=
-y for
-the rx buffer.
+The binding doc is upstream. So an impressive amount of maintainers
+had a look at it...
 
-So to me this is the right fix (if nothing else missed):
+Well, everyone seem to entrust Rohm Semiconductors to do magic...
+wonderful reputation.
 
-diff --git a/drivers/iio/adc/ad7923.c b/drivers/iio/adc/ad7923.c
-index 09680015a7ab..acc44cb34f82 100644
---- a/drivers/iio/adc/ad7923.c
-+++ b/drivers/iio/adc/ad7923.c
-@@ -48,7 +48,7 @@
+So how to proceed? As this property is not required, I can simply
+remove it and add a comment.
 
- struct ad7923_state {
-        struct spi_device               *spi;
--       struct spi_transfer             ring_xfer[5];
-+       struct spi_transfer             ring_xfer[9];
-        struct spi_transfer             scan_single_xfer[2];
-        struct spi_message              ring_msg;
-        struct spi_message              scan_single_msg;
-@@ -64,7 +64,7 @@ struct ad7923_state {
-         * Length =3D 8 channels + 4 extra for 8 byte timestamp
-         */
-        __be16                          rx_buf[12] __aligned(IIO_DMA_MINALI=
-GN);
--       __be16                          tx_buf[4];
-+       __be16                          tx_buf[8];
-};
+> I think there is also no upstream charger driver for the
+> BD71828/BD71879 - only an early RFC and some downstream mess - but
+> stil it'd be nice to have the property in place as the size of the
+> sense resistor is needed when converting coulomb counter register
+> values to current.
+> 
+What are you upstreaming plans here? For all:
+I rebased the charger stuff to v6.11 on
+https://github.com/akemnade/linux branch kobo/power-6.11
 
-- Nuno S=C3=A1
-
-
+Regards,
+Andreas
 
