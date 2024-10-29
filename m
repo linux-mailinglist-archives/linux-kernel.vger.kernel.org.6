@@ -1,95 +1,232 @@
-Return-Path: <linux-kernel+bounces-386415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719519B432B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:33:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEF69B432E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FC7E1F2345C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:33:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A941B1C21EF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022F920265A;
-	Tue, 29 Oct 2024 07:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F51F202626;
+	Tue, 29 Oct 2024 07:34:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzwHFkFy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vPDBYGyO"
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com [209.85.222.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5531A78C6D;
-	Tue, 29 Oct 2024 07:33:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83577201111
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730187213; cv=none; b=urpvzZ5XEYxfQnwElRLywik6x/pluny5tuZ6vfNsMG81LJU+CWWGxWt/8W3V+PGJNQwjOHN/DdnHNLYrVFCZlvEXzR7En9SL3HXw///sJ9HfA5QBJb/E9AF+9jZNvJIQJwd24s6mi4QFJfWpct3ratYowEoYyskuaXIaHsWv7ys=
+	t=1730187275; cv=none; b=IgH4QXqpEKCbytbF3oFsSQacSvR29if/Ir3Vx//2MRRXRmYGksPSXXMiLK4Dpy6I6W45o/oeopFPnQAOO4YPCU0VKkH8I9V0NazXfkab54BTVKTPtz9pxEddYNFJDEJKHnjcItEI+irC1vqNPwIcHoU8hH7oVefRIRO2l2rjk2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730187213; c=relaxed/simple;
-	bh=t1U+Flur8ky8mDQZz6HKT7GtRSKzTi9DwVdFhIiIMMQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T7emZsV5HZiGNB8eTiRX8yvhY6BiAVkW56a9MOS2Q7P3XbOqKAjZ3od3Cp4MEi82jKljqw1+SzraAQeuDGt8T8vDL0mDhWcs9DtSuW3Gruzr7EuskbvRBR2gDErJvk9uRbohwsSRTOn1d8Wsvy8/RPHtVDEbBQCpy9g3k11ciyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzwHFkFy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0990CC4CECD;
-	Tue, 29 Oct 2024 07:33:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730187212;
-	bh=t1U+Flur8ky8mDQZz6HKT7GtRSKzTi9DwVdFhIiIMMQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fzwHFkFyicNZQKGQWTFuyrJN09Cnjg0AkBhRj+i1ZoS1FfvyW+WTUqYJ0ofj2fVso
-	 FcpB+WGqEKMpHu2Ph/Xqi3+fBsTyv6vUjZOOO+ImHdTtMr7RwOiQXHf0p9JzpO3WZP
-	 97lWtrMc8xZqpPbGujfJkQpFkKc+3pJm0EZnU+iB5ZB5ms7fQIREWEuCEN9K8CSg1f
-	 xnAwLnwtkHD+FmQEXFF34ZkGDA9UpbOPC7uUyf4aTgizCu6DN+tgkmD3pHhy5z0CTj
-	 WRUS3WGr8iXcatgHdBDYd/EUdlqz+Aj8ffVAfzfGy8ZEcE6lwlcx+1DfqBWlZs1EZD
-	 /xD+4/4sVs6Vw==
-Date: Tue, 29 Oct 2024 08:33:29 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] dt-bindings: iio: light: veml6075: document
- rset-ohms
-Message-ID: <kguuixqw73fjzfdnmwapfm4tpq25c33mmdkifbx4h6taoqmzx4@yp3soq2n5d3n>
-References: <20241028-veml6070-integration-time-v3-0-dd7ace62f480@gmail.com>
- <20241028-veml6070-integration-time-v3-1-dd7ace62f480@gmail.com>
+	s=arc-20240116; t=1730187275; c=relaxed/simple;
+	bh=5OfryaVqe/7qDVCKSYnz2mq60YQhL4bY0IP5WlW8nXs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U/49o1P+jZMLr8fexOZPHFphX3Dc1jAoYukMriFmPCW8bwrt+P/zphaH3SfUzGzmqDeDbm8xAyLUA7n4+QkZYxCnULBw1CF5203eLtqL59ENmu3CsECDyOzu6zdbPUJrVN6OrgidmEqR9iETiJiDHAfvDu/Qwwd/54oyAeXwYjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vPDBYGyO; arc=none smtp.client-ip=209.85.222.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-851e191d541so1469245241.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 00:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730187272; x=1730792072; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sS0iMBhICcFdQ7QgGswZXvWgJWVKFrZg1DQxHYILa+E=;
+        b=vPDBYGyOOC/R8KrCKBS7XTD+ciKsBhsgTL7dMpmMk7AhXQZbenEbfBJ+/AoZQ/zHr8
+         8Il5N8KljCFeZFCqdgTYwsWlOtvfwy+2Qm32eNZoNGHKEjuV5rvfpOitRJGpMYqAQeHf
+         LOq7UDIciA15ivrI/GB+i2116/hqE++g+CibocizcwAuxCMYo8LxNxAaUSORqn64NZsy
+         2XKLjkF/MvLIY+3AV9RUF9dBnJFqkxIjRK/ZCmVS8qd3jGZ+DmpORRH9WAy1ZiCT7xnz
+         CUXY/Qo3iYMNEOOEWEqlnF/gocQus2tmluRwYn9osvY1LUv3C2fVX8TwXfTpdpO92xZy
+         MbUA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730187272; x=1730792072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sS0iMBhICcFdQ7QgGswZXvWgJWVKFrZg1DQxHYILa+E=;
+        b=i/myon2RZ2V1D381qyuB4RFoTZ9KRjAZcDyqEdJEVwgoRwvhKsPHzvf+VpEsWrjszs
+         cAz2qgweMDDhPb3mXGVrbh1ONb7nzY3omQ0ZPC0/um0gBPTzQisGDwk/mPg4LwexNQKC
+         kqSTkH9cyhlXZht9LMPHqzeYdqRLnrLsE6Z95jPUWQ8RlQdtQW/EEOO/dH2P8OWAXp6+
+         TjnmWj97jjzQ07QFHYzyigj8KrllMNkbpuDp1xEuwxh+gRB78yJOVkcQNDhn7A/BD6YX
+         Yu6nm+aK8b8Upmig64kQw24QpZFW5sWxzvaZeVwZhdtWAYySElnQJxV9x7WZ/zROIVb7
+         6jkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWw2Q5veY1HQ4XDMJa4ClPUPNsT7IfaTjm9oQZ8YKU8BH4od/rdVZsSsK2uMsGYtfXoEz/a9OWF7/M84Tc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvbN1QYNbHRsXfOXfSVavpjyx21VkoitNSacrwPvjV6L9BnNm4
+	eMMDsFyUCxaijQOnPVJfHj+LYdnO68eVxnbznMBNMtGMfq3+2+WPhIdq8JQ2xRlerMcdPpdmLVJ
+	Fz6FiHm+JrqAuhxNFObBsKcoOV493XfVLFGvS8w==
+X-Google-Smtp-Source: AGHT+IHIPQQyza4Vs8m5RkTZ6ceQM7vTaMw8NB2Mj1CsFFSgoaiLpyCaWgB2VKizchlhCrVaX8asmpmcnXw0uGJ65W0=
+X-Received: by 2002:a05:6102:3e92:b0:493:c3b2:b5ba with SMTP id
+ ada2fe7eead31-4a8cfb2b0c2mr10071510137.6.1730187272352; Tue, 29 Oct 2024
+ 00:34:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241028-veml6070-integration-time-v3-1-dd7ace62f480@gmail.com>
+References: <20241028062252.611837461@linuxfoundation.org>
+In-Reply-To: <20241028062252.611837461@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Tue, 29 Oct 2024 13:04:20 +0530
+Message-ID: <CA+G9fYssH1ZMstdHPMGtD6+VmJnVYTZL8hPPyRWEEf7Vasm2Tg@mail.gmail.com>
+Subject: Re: [PATCH 5.15 00/80] 5.15.170-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28, 2024 at 06:14:01PM +0100, Javier Carrasco wrote:
-> The veml6070 provides a configurable integration time by means of an
-> external resistor (Rset in the datasheet) with values between 75 and
-> 1200 kohms.
-> 
-> Document rset-ohms to select the integration time.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
->  .../devicetree/bindings/iio/light/vishay,veml6075.yaml | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-> index 96c1317541fa..5381a90f7f7e 100644
-> --- a/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-> +++ b/Documentation/devicetree/bindings/iio/light/vishay,veml6075.yaml
-> @@ -22,6 +22,13 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  rset-ohms:
+On Mon, 28 Oct 2024 at 11:58, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 5.15.170 release.
+> There are 80 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-=
+5.15.170-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-5.15.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I missed last time this, sorry:
-This looks specific to this device, so missing vendor prefix. Otherwise
-you should use an existing property or make it a generic, IIO property
-in common schema.
 
-Best regards,
-Krzysztof
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm, x86_64, and i386.
 
+Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build
+* kernel: 5.15.170-rc1
+* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
+rc.git
+* git commit: cebe213d2a87dfac79e970b8902e0c80cfffae9b
+* git describe: v5.15.168-164-gcebe213d2a87
+* test details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-5.15.y/build/v5.15=
+.168-164-gcebe213d2a87
+
+## Test Regressions (compared to v5.15.168-83-g4d74f086d8cf)
+
+## Metric Regressions (compared to v5.15.168-83-g4d74f086d8cf)
+
+## Test Fixes (compared to v5.15.168-83-g4d74f086d8cf)
+
+## Metric Fixes (compared to v5.15.168-83-g4d74f086d8cf)
+
+## Test result summary
+total: 68730, pass: 51797, fail: 1825, skip: 15012, xfail: 96
+
+## Build Summary
+* arc: 5 total, 5 passed, 0 failed
+* arm: 102 total, 102 passed, 0 failed
+* arm64: 29 total, 29 passed, 0 failed
+* i386: 23 total, 23 passed, 0 failed
+* mips: 22 total, 22 passed, 0 failed
+* parisc: 3 total, 3 passed, 0 failed
+* powerpc: 24 total, 24 passed, 0 failed
+* riscv: 8 total, 8 passed, 0 failed
+* s390: 9 total, 9 passed, 0 failed
+* sh: 10 total, 10 passed, 0 failed
+* sparc: 6 total, 6 passed, 0 failed
+* x86_64: 25 total, 25 passed, 0 failed
+
+## Test suites summary
+* boot
+* kselftest-arm64
+* kselftest-breakpoints
+* kselftest-capabilities
+* kselftest-cgroup
+* kselftest-clone3
+* kselftest-core
+* kselftest-cpu-hotplug
+* kselftest-cpufreq
+* kselftest-efivarfs
+* kselftest-exec
+* kselftest-filesystems
+* kselftest-filesystems-binderfs
+* kselftest-filesystems-epoll
+* kselftest-firmware
+* kselftest-fpu
+* kselftest-ftrace
+* kselftest-futex
+* kselftest-gpio
+* kselftest-intel_pstate
+* kselftest-ipc
+* kselftest-kcmp
+* kselftest-livepatch
+* kselftest-membarrier
+* kselftest-memfd
+* kselftest-mincore
+* kselftest-mqueue
+* kselftest-net
+* kselftest-net-mptcp
+* kselftest-openat2
+* kselftest-ptrace
+* kselftest-rseq
+* kselftest-rtc
+* kselftest-seccomp
+* kselftest-sigaltstack
+* kselftest-size
+* kselftest-tc-testing
+* kselftest-timers
+* kselftest-tmpfs
+* kselftest-tpm2
+* kselftest-user_events
+* kselftest-vDSO
+* kselftest-watchdog
+* kselftest-x86
+* kunit
+* kvm-unit-tests
+* libgpiod
+* libhugetlbfs
+* log-parser-boot
+* log-parser-test
+* ltp-commands
+* ltp-containers
+* ltp-controllers
+* ltp-cpuhotplug
+* ltp-crypto
+* ltp-cve
+* ltp-dio
+* ltp-fcntl-locktests
+* ltp-fs
+* ltp-fs_bind
+* ltp-fs_perms_simple
+* ltp-hugetlb
+* ltp-ipc
+* ltp-math
+* ltp-mm
+* ltp-nptl
+* ltp-pty
+* ltp-sched
+* ltp-smoke
+* ltp-syscalls
+* ltp-tracing
+* perf
+* rcutorture
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
