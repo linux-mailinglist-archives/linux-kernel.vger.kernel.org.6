@@ -1,109 +1,142 @@
-Return-Path: <linux-kernel+bounces-386405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507229B4309
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:25:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D26D9B4312
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:26:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 163072836BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 61F4C2838F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F0F20262D;
-	Tue, 29 Oct 2024 07:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBE35202626;
+	Tue, 29 Oct 2024 07:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="PxiYcBfN"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="lceFApI0"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4751D2022DF;
-	Tue, 29 Oct 2024 07:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9834E1D7994;
+	Tue, 29 Oct 2024 07:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730186695; cv=none; b=Yhus12AoHIlPPf55yKvZsRy8lXK8fma2e7uC7lk0QkuUHBXfHKpmLDHa3UHWTWfCQ+1Po4SIOTVJf15rp6spExfEdp+j1AO4+Hwqsj7g573OYnbxSx5O4nKX2U9nejG/0oIu+AEhYQNMgKh0a4lQKpZLI+qWkhXG8lTFzZv/olI=
+	t=1730186808; cv=none; b=DwiEQ+G8DduxKMXNhfj/2HoqfL1sLaiN00MylUOZc1PTT13QOW8MiSTZaKgYzDT6A55F47AP6P/Hm2KsUf/RlpxUWj0J3KbmaZzvzuQbrupv7Vtj9RpVBZ8Nt0DYxgIx9vlwTookSFgz0DdlGZESVdeAy8cVYKoV4GEPig1Bd7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730186695; c=relaxed/simple;
-	bh=bujN33g16oHNeeyO3ZGbViJYxBOYuYTm+DxN3be+hS4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YGmZ7Z36nrLF2CmVpNBaS8QfnXFNTWLrkVfhQRAN4It/iTkZfhDEQLR5s2JGKOt7e8IRHIbSbdXnlBSfGjXDUeMXPoBthazFCNooEcFZBXHKPgiSpHdc9yng+c6wOoxELHeGLKpu6kiliu/tV7dOGmePMZ4btLr080kBIfDin0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=PxiYcBfN; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id EDDC91FA13;
-	Tue, 29 Oct 2024 08:24:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1730186690;
-	bh=y6XwsU0U/5vhJTZLKZbpSfkUbG50QcLapUoV17QlMjw=; h=From:To:Subject;
-	b=PxiYcBfN5S2vXfEE5CaOZ3S/wt/jww6iSYozhth0QP0jxRRQxJFgek6C7my4O14wf
-	 jcn5FgjCe7cik5V4cb7b0SPhsKoY9bz254AzsqndPLwC98EQxdwnTKGMII7v24YTbz
-	 ixPGNpoIUmDWmwhuIqIU6nca1Ss+FgqhjLWYsuM/B+Orz0z6X8SMMsFke5Pt+hlOWR
-	 GuUAMIe+YEhQ2472j3BAejkXMDkrsEbrIurp3ar9Gstk96A+aPY/WKvChjAwCuEFer
-	 I+omolGMhgoDD+i57vYLTaKy2o94hIqKiePsOMoPfhHvQdie4j90c3JmgGuezcR40x
-	 WV4bknbTrVCIw==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Cc: Parth Pancholi <parth.pancholi@toradex.com>,
-	linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] USB: xhci: add support for PWRON active high
-Date: Tue, 29 Oct 2024 08:24:44 +0100
-Message-Id: <20241029072444.8827-3-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241029072444.8827-1-francesco@dolcini.it>
-References: <20241029072444.8827-1-francesco@dolcini.it>
+	s=arc-20240116; t=1730186808; c=relaxed/simple;
+	bh=tlRoJmKwWghyXvArwEPPbAULld9pZxhD1wy+KDEiITg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WysrEZLsHmcPYtKCLo5AwDwoLqA4GFO6IagFHeV0d6pyhxBu7dlmMGJfCEVztbFKatBKOoa9HTUqcJ0cCMb54UQvzGnDSgwP5SfBaxdOcU7EkQ4mjodzxw9moUZHBZGzUm2fTm5uzXq1UebPmLNhR+fKs/LEXKXlr3Joeqr34dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=lceFApI0; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2FA50C0005;
+	Tue, 29 Oct 2024 07:26:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1730186802;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m7so1BTABY1k8Brmth1KMoewt9oM+sY1vHo1xKTYlic=;
+	b=lceFApI0oRoGy1SCgPF2dPZncqAvUGyRn1AwH5Wmnel/79kx4F+WTwyfqvBv4iBBNI9wH0
+	8Zto8bVmT9MpJ3WgkWXbFyge5NGQNwf9NlP9znfAinOSwZPe8yFSFIuI+9qV3OrJj4S6U2
+	O0rmjSbLO3idfN9jxqlB7n5JLjcMvkiXbFn8sfwELHQ67IrUJu2yoe3WbQ1UWkpO3b9+dm
+	eeXJa5WIxiNH8XARYE0zrtt9t8L1GHyKTIsoGJq7DARmGfwZASvVlporrU2HrtsduH7pfT
+	od5ojKwjF6OeVktWbVjWHC5QFt8/5lfWX5ZrDK2DoWHl7p5DlTIyFbPEXVqbRQ==
+Date: Tue, 29 Oct 2024 08:26:40 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Rothwell
+ <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org,
+ linux-next@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Allan Nielsen
+ <allan.nielsen@microchip.com>, Horatiu Vultur
+ <horatiu.vultur@microchip.com>, Steen Hegelund
+ <steen.hegelund@microchip.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 1/2] misc: lan966x_pci: Fix dtc warns 'missing or empty
+ reg/ranges property'
+Message-ID: <20241029082640.7e19e7bb@bootlin.com>
+In-Reply-To: <CAL_Jsq+_VHsMKufVwUj3Q0pv1X6d8Xe0FN6A9svCmWJ3cuuUqQ@mail.gmail.com>
+References: <20241028122405.27090-1-herve.codina@bootlin.com>
+	<20241028122405.27090-2-herve.codina@bootlin.com>
+	<CAL_JsqK7SjfJ7Re4k-A8fQB+tNHyM3r2Rcpct_zUfR2yhEj+iQ@mail.gmail.com>
+	<20241028184343.74ad5a26@bootlin.com>
+	<CAL_Jsq+_VHsMKufVwUj3Q0pv1X6d8Xe0FN6A9svCmWJ3cuuUqQ@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-From: Parth Pancholi <parth.pancholi@toradex.com>
+On Mon, 28 Oct 2024 14:52:09 -0500
+Rob Herring <robh@kernel.org> wrote:
 
-Some PCIe-to-USB controllers such as TI's TUSB73x0 3.0 xHCI host
-controller supports controlling the PWRONx polarity via the USB control
-register (E0h). Add support for device tree property
-ti,pwron-active-high which indicates PWRONx to be active high and
-configure the E0h register accordingly.  This enables the software
-control for the TUSB73x0's PWRONx outputs with an inverted polarity from
-the default configuration which could be used as USB EN signals for the
-other hubs or devices.
+> On Mon, Oct 28, 2024 at 12:43 PM Herve Codina <herve.codina@bootlin.com> wrote:
+> >
+> > Hi Rob,
+> >
+> > On Mon, 28 Oct 2024 08:55:24 -0500
+> > Rob Herring <robh@kernel.org> wrote:
+> >  
+> > > On Mon, Oct 28, 2024 at 7:24 AM Herve Codina <herve.codina@bootlin.com> wrote:  
+> > > >
+> > > > dtc generates the following warnings when building the LAN966x device
+> > > > tree overlay (lan966x_pci.dtso):
+> > > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/cpu_clk: missing or empty reg/ranges property
+> > > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/ddr_clk: missing or empty reg/ranges property
+> > > >   Warning (simple_bus_reg): /fragment@0/__overlay__/pci-ep-bus@0/sys_clk: missing or empty reg/ranges property
+> > > >
+> > > > Indeed, related nodes are under the pci-ep-bus (simple-bus) which is not
+> > > > correct.
+> > > >
+> > > > Put them outside this node.
+> > > >
+> > > > Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > > Closes: https://lore.kernel.org/all/20241025110919.64b1cffb@canb.auug.org.au/
+> > > > Fixes: 185686beb464 ("misc: Add support for LAN966x PCI device")
+> > > > Signed-off-by: Herve Codina <herve.codina@bootlin.com>
+> > > > ---
+> > > > The referenced commit is in the reset tree
+> > > > ---
+> > > >  drivers/misc/lan966x_pci.dtso | 36 +++++++++++++++++------------------
+> > > >  1 file changed, 18 insertions(+), 18 deletions(-)
+> > > >
+> > > > diff --git a/drivers/misc/lan966x_pci.dtso b/drivers/misc/lan966x_pci.dtso
+> > > > index 7282687df25f..5466d013da7d 100644
+> > > > --- a/drivers/misc/lan966x_pci.dtso
+> > > > +++ b/drivers/misc/lan966x_pci.dtso
+> > > > @@ -19,6 +19,24 @@ __overlay__ {
+> > > >                         #address-cells = <3>;
+> > > >                         #size-cells = <2>;
+> > > >
+> > > > +                       cpu_clk: cpu_clk {  
+> > >
+> > > Preferred node name is "clock-<freq-in-hz>"  
+> >
+> > I based the name on the lan966x.dtsi
+> > https://elixir.bootlin.com/linux/v6.12-rc1/source/arch/arm/boot/dts/microchip/lan966x.dtsi#L38  
+> 
+> That should be fixed too.
+> 
+> > Of course, I can rename the cpu_clk, ddr_clk and sys_clk nodes but this will create
+> > a difference against lan966x.dtsi on some points that should be identical.  
+> 
+> Then maybe they should be sharing a .dtsi?
+> 
+> > Let me know with that in mind if I need to rename those nodes in this series.  
+> 
+> Yes, easier now than later.
 
-Signed-off-by: Parth Pancholi <parth.pancholi@toradex.com>
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v5:s/ti,tusb7320-pwron-active-high/ti,pwron-active-high/
-v4: no changes
-v3: no changes
-v2: s/polarity-invert/active-high
----
- drivers/usb/host/xhci-pci.c | 3 +++
- 1 file changed, 3 insertions(+)
+Right, I will rename in v2.
 
-diff --git a/drivers/usb/host/xhci-pci.c b/drivers/usb/host/xhci-pci.c
-index 91dccd25a551..39456ec268f5 100644
---- a/drivers/usb/host/xhci-pci.c
-+++ b/drivers/usb/host/xhci-pci.c
-@@ -641,6 +641,9 @@ int xhci_pci_common_probe(struct pci_dev *dev, const struct pci_device_id *id)
- 
- 	dma_set_max_seg_size(&dev->dev, UINT_MAX);
- 
-+	if (device_property_read_bool(&dev->dev, "ti,pwron-active-high"))
-+		pci_clear_and_set_config_dword(dev, 0xE0, 0, 1 << 22);
-+
- 	return 0;
- 
- put_usb3_hcd:
--- 
-2.39.5
-
+Best regards,
+Hervé
 
