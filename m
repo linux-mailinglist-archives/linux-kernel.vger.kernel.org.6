@@ -1,149 +1,138 @@
-Return-Path: <linux-kernel+bounces-386984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCC59B4A72
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:01:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB689B4A6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0B221C228A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B609728460C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:01:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A0C206E9E;
-	Tue, 29 Oct 2024 13:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD2C7206055;
+	Tue, 29 Oct 2024 13:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SwuZzV7o"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y7KpE/W2"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B161206E8C;
-	Tue, 29 Oct 2024 13:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E4F1205AD2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206838; cv=none; b=or6tiFwYudcDa5MG7R8hukFYcDki+AYu8Hl/Ly001ndd29ktDwz4b7k24offRjTrOXl5ZzojAdvG0V0bUpTKc+2PNNM00NhlADLHxjb6pnfpEoRR7gN3/39Jm3T0D5rAbrUar47RKiVJz0CMvZOee37AD+9aB0zEpjUjbIic3no=
+	t=1730206834; cv=none; b=Ob+fdAi/asyd+QiSoK43hiL8KVWBUrA3zzdF3WXrQF8lulc9nuExPDZS465/5dymENnsCd9C18p8PV04K1d4wOJctQIibJ7Zp2w0Rve+z4gwx/I9arjsEu+cSw8GbX8ZRGEmWCl5Yr3s+E31C7bG02szERNAaT5D1RsWP4PWVtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206838; c=relaxed/simple;
-	bh=RUMe2xQABUL7QJVzkwZ4Ta3TTqJblnli7IkzrqTsDqw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Sqg/5MEycpsQBzio3dSefagU3swisvPC90NDWA4Onr9UhN6BwfIJqe7yp7FeSyS+mZMQYKi0QOSAIvLlsufwwaHCPHDdR4vuSSjuZFfiVrIwsmEhNoAlA++F97nZzAA212V220lbjX8NjsH82VNz29dGJ7FU6BBSnkEcVYccwI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SwuZzV7o; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730206837; x=1761742837;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RUMe2xQABUL7QJVzkwZ4Ta3TTqJblnli7IkzrqTsDqw=;
-  b=SwuZzV7oPHOLyloJXnAl+j+r6cZOGGk5bu9WOHHdGT0G/qxLRRCZLWN4
-   cW2HSg1DHoRK6Py2CSbl5ctfFDukg78udh+nIE23m7m9sEkej6202rwMr
-   uyZdNFNUsQAysxr50H7eSNSTnjC6ltPlyacYPVlwi5QBFSAsvk14YzzNe
-   RRCcYZFRA1J70DP9sbHNRcsFX0EoGFWP4bEIKXSHdGmVjg8oJh9PtiUUo
-   BreIhfuV0rOphzKeTbgB55vt0gGlnfYAV0VRTyoqdzs+UWkStHaVHBUVe
-   EZBu5CTTGp1lq6+woBh+PT/9OSVntmlguPGS6X0lftsBFDjMNZdedCRt2
-   Q==;
-X-CSE-ConnectionGUID: uyuT8/J0RiOtdmHdnv0+Xw==
-X-CSE-MsgGUID: P+ukmyBOQk6x9IlEX6qJ5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="40428580"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="40428580"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 06:00:35 -0700
-X-CSE-ConnectionGUID: F13pfMQ0Sl+6v0uThLRDDA==
-X-CSE-MsgGUID: Q0kxC1l1QlSNV4hjI2nI5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="112764395"
-Received: from oandoniu-mobl3.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.244.38])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 06:00:15 -0700
-From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-To: fenghua.yu@intel.com,
-	reinette.chatre@intel.com,
-	shuah@kernel.org
-Cc: linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	tony.luck@intel.com
-Subject: [PATCH v5 0/2] selftests/resctrl: SNC kernel support discovery
-Date: Tue, 29 Oct 2024 14:00:04 +0100
-Message-ID: <cover.1730206468.git.maciej.wieczor-retman@intel.com>
-X-Mailer: git-send-email 2.46.2
+	s=arc-20240116; t=1730206834; c=relaxed/simple;
+	bh=YmsNP2KTqCdcVBZwhpdMQVUtMGwCTgWv9lgMj09bDmQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CwCFa8dNemtBPDq4TBg1uyL+Zaruq+5nVGLbfMURELJaXbN/PPDzf2ES+QsumROODgGkcrUU4KCD1nwz7eBu+jkiM90zbr8lKLR1i4QGx8mAHcnC1uZSqU9VMvBS0nAGg0pMGpxvtBIaCg698NvMZ+RjnOPCNjKjKRMYnNkZy2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y7KpE/W2; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e5e5c43497so45272147b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:00:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730206831; x=1730811631; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9olNTqPKz+laBr1M4W4FfYgdBmMaq3StAwgPxtx+j7k=;
+        b=y7KpE/W2J/V0XD9GX9GmgPy8CUx/KHXFf2sQ4k06bZ7l9/NriFqUGUvXgYTxJ9Lihx
+         jYIGdVoAKMPJAftYqxPdjYB0LJ3DF+yTcGUsgF0A1u+vPivG1RjnSCtNT8rOMyS1h8Uc
+         Xn/ihMR7nMS5XwK4csTc6fX0xOneZWjbvBplDpujZwR3nj+UmSlkzWRuIkJWpahjieJb
+         XLrVsqRIteaYU2j6XEcMcwQeArsWRwD19hSJ9Ktl5KAmPaKql+B9zE63Ci6caPiLU3eM
+         ig/DNRU8OqdNDgZXfbdgM2yKE9bZxfWZXun2bXubkUZgtHvMvkNB1uNiF4qz4Qanohde
+         +UXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730206831; x=1730811631;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9olNTqPKz+laBr1M4W4FfYgdBmMaq3StAwgPxtx+j7k=;
+        b=uQZhTkgvA1fXM1MUvDM30BadJ5k+nz5tzH50xv/NUWmnHGw7DwFtJo4sYNsUaTvePi
+         1V25iE3lADIJcK8y2yvYtU4IVC+2vQJ1RGjGrilYG4A5ltT7v89teBL9JpepMUnsGqtd
+         7ysmgULwikjgctYSu5Meacm+2arhfDnQ9vQWDWAylYsFhqkdyHG2fVV0mriznh3G3jdD
+         P0PPo7lXZm3bX8qBe9Hw8+cMuS4/V2DFxzgAz4Mh2m5DMt3Rg7ZX+nZhuY5S2QoczI01
+         2d37jRE71duldyzABnJ1CRH8B4jIPkVRfDhpEz29IbekgOQIdAM4F1yx3nsf2e6LaqvG
+         Q21A==
+X-Forwarded-Encrypted: i=1; AJvYcCXyRVLC74nthZBBdh8JpiwpLDi9vIdA8mtOwnM8a+Ns8DL0n47I2NDJXBM+qkcG3MFTMIwnf9ixkxdCunQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXYnGfvmDvjFCOPiibTgAT/M15F0pVgTBbompB9h5uBDmP52TG
+	tGYmyjmX6FxZwmDegRNaMxMTCeJuCGpSwnkRoK+EmkgUNWjdmOe1M6REQabURmOojwH2+mbJbqu
+	SdlYK3fohyDcrJO+um8tkmSdLGKcTVZULB8bW8A==
+X-Google-Smtp-Source: AGHT+IFbKndRQHp+7RzFAeO0rylRtbyrpK9kh0Zw4o5eR2NycLUcgLYSm3N60gfqGUIcaqo/gsLqHGbK1ZMtf/8ZCd0=
+X-Received: by 2002:a05:690c:385:b0:64b:5cc7:bcbc with SMTP id
+ 00721157ae682-6e9d8aa8014mr135400007b3.32.1730206826513; Tue, 29 Oct 2024
+ 06:00:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241008112516.17702-1-quic_mukhopad@quicinc.com>
+ <20241008112516.17702-3-quic_mukhopad@quicinc.com> <zluuezrywecffsh3f7yzrtvd2sa3nyzl52sk6bluvjch5icvuu@noecozosseko>
+ <e7543055-316e-447e-ab0e-15d2fdd19dca@quicinc.com> <CAA8EJpqcnxbZAUJm0fdbQNjZ3Dw189oDMkC+0pMLz1XGO7HhnQ@mail.gmail.com>
+ <fad3508a-bb02-4162-8803-fba5de25e752@quicinc.com>
+In-Reply-To: <fad3508a-bb02-4162-8803-fba5de25e752@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 29 Oct 2024 15:00:11 +0200
+Message-ID: <CAA8EJprTc=kviF=MYQFqnE4g0Xk+jmT96=ihm3D75Me1Yw-WQA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display Port
+To: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	quic_riteshk@quicinc.com, quic_vproddut@quicinc.com, 
+	quic_abhinavk@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-Changes v5:
-- Tests are skipped if snc_unreliable was set.
-- Moved resctrlfs.c changes from patch 2/2 to 1/2.
-- Removed CAT changes since it's not impacted by SNC in the selftest.
-- Updated various comments.
-- Fixed a bunch of minor issues pointed out in the review.
+On Tue, 29 Oct 2024 at 08:08, Soutrik Mukhopadhyay
+<quic_mukhopad@quicinc.com> wrote:
+>
+>
+> On 10/28/2024 3:15 PM, Dmitry Baryshkov wrote:
+> > On Mon, 28 Oct 2024 at 10:49, Soutrik Mukhopadhyay
+> > <quic_mukhopad@quicinc.com> wrote:
+> >>
+> >> On 10/8/2024 5:46 PM, Dmitry Baryshkov wrote:
+> >>> On Tue, Oct 08, 2024 at 04:55:16PM GMT, Soutrik Mukhopadhyay wrote:
+> >>>> Enable DPTX0 and DPTX1 along with their corresponding PHYs for
+> >>>> sa8775p-ride platform.
+> >>> What is connected to those DP lanes? If they are routed directly to the
+> >>> DisplayPort connectors, please add corresponding devices (see
+> >>> dp-connector).
+> >>
+> >> We are defining the functionality of gpio101 and gpio102 as "edp0_hot"
+> >> and "edp1_hot"
+> >>
+> >> respectively. This ensures that the hot plug will be directly routed via
+> >> the display interrupt
+> >>
+> >> line "mdss0" to the display port driver and no external dependencies on
+> >> dp-connector is
+> >>
+> >> necessary.
+> > Please describe the hardware, not the driver necessities.
+> > If the board has a DP connector, please add the node. E.g. it allows
+> > one to specify the label and the type used by the connector.
+> >
+> > Also could you please fix your email client so that you don't have
+> > strange/unnecessary line wraps and empty lines?
+>
+> Addition of DP connector node with the hpd-gpio property does not allow
+> hpd to be detected since the gpio
+>
+> 101/102 have the "edp0_hot" as function. If the hpd-gpio property is
+> removed from the DP connector node,
+>
+> the probe of DP connector will fail.
 
-Changes v4:
-- Printing SNC warnings at the start of every test.
-- Printing SNC warnings at the end of every relevant test.
-- Remove global snc_mode variable, consolidate snc detection functions
-  into one.
-- Correct minor mistakes.
+No, it wont. It uses devm_gpiod_get_optional(). And if it does fail,
+it is a bug which needs to be fixed.
 
-Changes v3:
-- Reworked patch 2.
-- Changed minor things in patch 1 like function name and made
-  corrections to the patch message.
-
-Changes v2:
-- Removed patches 2 and 3 since now this part will be supported by the
-  kernel.
-
-Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
-into multiple NUMA nodes. When enabled, NUMA-aware applications can
-achieve better performance on bigger server platforms.
-
-SNC support in the kernel was merged into x86/cache [1]. With SNC enabled
-and kernel support in place all the tests will function normally (aside
-from effective cache size). There might be a problem when SNC is enabled
-but the system is still using an older kernel version without SNC
-support. Currently the only message displayed in that situation is a
-guess that SNC might be enabled and is causing issues. That message also
-is displayed whenever the test fails on an Intel platform.
-
-Add a mechanism to discover kernel support for SNC which will add more
-meaning and certainty to the error message.
-
-Add runtime SNC mode detection and verify how reliable that information
-is.
-
-Series was tested on Ice Lake server platforms with SNC disabled, SNC-2
-and SNC-4. The tests were also ran with and without kernel support for
-SNC.
-
-Series applies cleanly on kselftest/next.
-
-[1] https://lore.kernel.org/all/20240628215619.76401-1-tony.luck@intel.com/
-
-Previous versions of this series:
-[v1] https://lore.kernel.org/all/cover.1709721159.git.maciej.wieczor-retman@intel.com/
-[v2] https://lore.kernel.org/all/cover.1715769576.git.maciej.wieczor-retman@intel.com/
-[v3] https://lore.kernel.org/all/cover.1719842207.git.maciej.wieczor-retman@intel.com/
-[v4] https://lore.kernel.org/all/cover.1720774981.git.maciej.wieczor-retman@intel.com/
-
-Maciej Wieczor-Retman (2):
-  selftests/resctrl: Adjust effective L3 cache size with SNC enabled
-  selftests/resctrl: Adjust SNC support messages
-
- tools/testing/selftests/resctrl/cmt_test.c    |   8 +-
- tools/testing/selftests/resctrl/mba_test.c    |   8 +-
- tools/testing/selftests/resctrl/mbm_test.c    |  10 +-
- tools/testing/selftests/resctrl/resctrl.h     |   7 +
- .../testing/selftests/resctrl/resctrl_tests.c |   8 +-
- tools/testing/selftests/resctrl/resctrlfs.c   | 132 ++++++++++++++++++
- 6 files changed, 166 insertions(+), 7 deletions(-)
+And please, fix your email client so that it doesn't insert stray empty lines.
 
 -- 
-2.46.2
-
+With best wishes
+Dmitry
 
