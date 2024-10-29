@@ -1,126 +1,126 @@
-Return-Path: <linux-kernel+bounces-387005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF9DB9B4AAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:13:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCD69B4AAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA5B284122
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91580284092
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C9E205E17;
-	Tue, 29 Oct 2024 13:13:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65165205E17;
+	Tue, 29 Oct 2024 13:14:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T60wDNHx"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="PlyFs9qd"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BD41BE49;
-	Tue, 29 Oct 2024 13:13:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0BD1E0DDF
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730207603; cv=none; b=H7dBeS4wgO/xstlIHEmf5xUA7zjrvF0T6kZ6TiJFZMNfBdZ2qzJG3VoNNdmYr8SbzVMfXNlnPlHNEzo31riXLOPw01JbNUiv+347rD0HtUALzpRUpefQuBDMFghwI6pr1B1Bq2vldeQmI9Va/GHI1iCThfzs2qbuuSPBBItZcWU=
+	t=1730207670; cv=none; b=IlLoVyPSKv++zdT0G+Voel8H+6hob6BQnlyIXemzjcI22Ayp5DlrN/PxUjZLc9stKH0gqU+MeIvtBM8pFenprzHS5dVe0I/LaetbOdcT161LMNzP5tPqHDXXRA4ZK6Tj6HE7nk+s8OfN1Zm8LHFcDY2ADjs+QQc8X1GyPNGu2qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730207603; c=relaxed/simple;
-	bh=VAOZl2p8vMNlMi4Pu5eS5ZMUXsJHugRoTSXwRKJbPRI=;
+	s=arc-20240116; t=1730207670; c=relaxed/simple;
+	bh=IIPXxAlohIBQMRgfL/9tiRs4muoLb2OD//ZNGmMakr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AGM9ghluy1B1Dt7nhBAmv3kAlKV6uP+iTszBwlhAIgJtzpOAFW7Vq1GkaaapagbMayR6VM7dIUtoxsoSTw8Tl055Ma9FT/HIXO3ZPZqNGpkFD3vhrU6lUjj7eyqG5DwYXBEJ9qFjhfULvGRkC7cn628aMskW0JcU6Tnme6aEf+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=T60wDNHx; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=QSJoGwZEmbJZFq/ahM82qF8XpggSzckC2poVXBygGts=; b=T60wDNHxmT1RkNP6qiOQpscOVK
-	Vnz1mrZYdiIL0ebv2VjzWPyJZJaQC4KHIboYY5VoVXspqp3wnNQHnbZSAXi1HzJozglJl/XQSLMAy
-	689hCa3pcca9KSX1xFYXXYj3ty/JSgl3rYUPVHNShSYenJOfLUgKlaLhiWnBXy2KGbc8c7V25T+Ap
-	t7alJeoEScKzwA/yTxAwZZ0yuNe5KhIq9USWs4IqEAM23G/5JASgLRgsexN4DRKzzntkZTrLLHEI2
-	4PxVD+AdH3Dqmd1t/l5/1xloEcg9am8vQ28FUJLUsshUB21+6Ym0xOm9cvzfPi5GzHJR8dekWZaNs
-	PhqBXDyg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5m1v-00000009u5R-36Wp;
-	Tue, 29 Oct 2024 13:13:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5F0A630073F; Tue, 29 Oct 2024 14:13:03 +0100 (CET)
-Date: Tue, 29 Oct 2024 14:13:03 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 08/19] unwind/x86: Enable CONFIG_HAVE_UNWIND_USER_FP
-Message-ID: <20241029131303.GW14555@noisy.programming.kicks-ass.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <2354d43022bd336c390e1e77f7cee68126d5f8c8.1730150953.git.jpoimboe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8TjU317LX09f53cWQA860u3FddvbOay6wlQ7hhVOPjVtQEiuEVC7c/lRabZRZz0RCAYzBqchL15gqZ2vUPq+lmxKbAp/erNLVVEoPiDRiRzzVnzAYJnr0lQyFdvY80GCnFtnFDTlWRGuB4dQLt3DVaCu2+LrroR0EhtKFOubkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=PlyFs9qd; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ebc1af8f10so2283904eaf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:14:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1730207667; x=1730812467; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=XgHWZeva7maOXfA4dcpD4/yUTRZxAZ0VWdzeeo/n/OI=;
+        b=PlyFs9qd2uethuGLGYqhzqpQs2a9Ifk5Pek/g/YiEnUpOuFPDKTWLDHrFKkxf+p0CO
+         +ohCHOUAeLA1No/NV1t411sNY0haOFW3rp2V1uzg5lg7JMq27533o5dxURIQKODaVTjP
+         BZRSBkCkmchTgA+wiMzPQzCSHRLzeAqbSPpmUNQmQsFq8WDKoCobi7Wy3YYT7oEqI339
+         pUhwCKBm+mOT95Sqq3uD12r/ld29uo/5M9eGvXrQ/wSdUmG1HqTfnVt9uhxNOYGwQQzc
+         7cCIaLj8valnl+hUEO3kUwBQWVD/4gT/276rEMOuMcE3iTBnmzWq3zML2CW+7+geBxcN
+         XeXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730207667; x=1730812467;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XgHWZeva7maOXfA4dcpD4/yUTRZxAZ0VWdzeeo/n/OI=;
+        b=B5p54PfQH1phHEHwVh1k0cf8k9XHZA1/5pQvJf0V5C4ElzsnksAqpVnZY3CIuWCGnG
+         obHoUaq1JM0bGVF9SGtrnx5ZMCJ71DHZGEBgkua0b7TZvbuypze1gJaBJEAN58Akvn7d
+         DODvN4uu0Ea6L/DCdYuIghYe0PISTTJMLajiLll6IvPvMUxeUz69XmtivX9Md+H3ko+s
+         EgUe4AxKhPoI0AlrXIXHA23X8VTkqK7DEJcORUud64Xfu5uPZ7MZyYrtgtG/LzdXbZUp
+         +Jrh+a6wLGeyLVAgKJGtZNhWW2eUOg5Hlsd5XLuKUDBNAWda3cmcYT0Dp3wvak2D4fT4
+         CLKA==
+X-Forwarded-Encrypted: i=1; AJvYcCXPCdiDl8dUgy5Gt+s4C6uNe/3cr06c2+nt0TfZ4ZSCSz5ekrfMyULVQ3hvEJUK/fPr6RB5FPZfrHePkyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfijxEaTtC98lmnmnylpUM4rPPP353ua2UU3GicWtc2bDlRMpC
+	VSf3KuB8O6YdZ2cVAlY9go4YLJ1iHyrpbPvWiZ0Xwq1k4rPVhkMOtH/qxIRxRrQ=
+X-Google-Smtp-Source: AGHT+IHz+NNrjULPFoAIl+FSuatbeF1xkLR3jMaYOwi1/n+4BRut5A+RUaFtsJaH3CWulwSTLeWrhQ==
+X-Received: by 2002:a05:6359:4129:b0:1c3:83d8:3219 with SMTP id e5c5f4694b2df-1c3f9d4989bmr502993955d.4.1730207666666;
+        Tue, 29 Oct 2024 06:14:26 -0700 (PDT)
+Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d1798b764bsm41775366d6.44.2024.10.29.06.14.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 06:14:25 -0700 (PDT)
+Date: Tue, 29 Oct 2024 09:14:31 -0400
+From: Gregory Price <gourry@gourry.net>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Yang Shi <shy828301@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kernel-team@meta.com, akpm@linux-foundation.org,
+	weixugc@google.com, dave.hansen@linux.intel.com, osalvador@suse.de,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] vmscan,migrate: fix double-decrement on node stats when
+ demoting pages
+Message-ID: <ZyDft_sCKm2vBF1j@PC2K9PVX.TheFacebook.com>
+References: <20241025141724.17927-1-gourry@gourry.net>
+ <CAHbLzkqYoHTQz6ifZHuVkWL449EVt9H1v2ukXhS+ExDC2JZMHA@mail.gmail.com>
+ <ZyABO4wOoXs9vC3F@PC2K9PVX.TheFacebook.com>
+ <87msinwxut.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2354d43022bd336c390e1e77f7cee68126d5f8c8.1730150953.git.jpoimboe@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87msinwxut.fsf@yhuang6-desk2.ccr.corp.intel.com>
 
-On Mon, Oct 28, 2024 at 02:47:35PM -0700, Josh Poimboeuf wrote:
-> Use ARCH_INIT_USER_FP_FRAME to describe how frame pointers are unwound
-> on x86, and enable CONFIG_HAVE_UNWIND_USER_FP accordingly so the
-> unwind_user interfaces can be used.
+On Tue, Oct 29, 2024 at 08:34:34AM +0800, Huang, Ying wrote:
+> Gregory Price <gourry@gourry.net> writes:
 > 
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> ---
->  arch/x86/Kconfig                   |  1 +
->  arch/x86/include/asm/unwind_user.h | 11 +++++++++++
->  2 files changed, 12 insertions(+)
->  create mode 100644 arch/x86/include/asm/unwind_user.h
+> > On Mon, Oct 28, 2024 at 01:45:48PM -0700, Yang Shi wrote:
+> >> On Fri, Oct 25, 2024 at 7:17 AM Gregory Price <gourry@gourry.net> wrote:
+> >> >
+> >> > This path happens for SUCCESSFUL migrations, not failures. Typically
+> >> > callers to migrate_pages are required to handle putback/accounting for
+> >> > failures, but this is already handled in the shrink code.
+> >> 
+> >> AFAIK, MGLRU doesn't dec/inc this counter, so it is not
+> >> double-decrement for MGLRU. Maybe "imbalance update" is better?
+> >> Anyway, it is just a nit. I'd suggest capturing the MGLRU case in the
+> >> commit log too.
+> >>
+> >
+> > Gotcha, so yeah saying it's an imbalance fix is more accurate.
+> >
+> > So more accurate changelog is:
+... 
 > 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 0bdb7a394f59..f91098d6f535 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -289,6 +289,7 @@ config X86
->  	select HAVE_SYSCALL_TRACEPOINTS
->  	select HAVE_UACCESS_VALIDATION		if HAVE_OBJTOOL
->  	select HAVE_UNSTABLE_SCHED_CLOCK
-> +	select HAVE_UNWIND_USER_FP		if X86_64
->  	select HAVE_USER_RETURN_NOTIFIER
->  	select HAVE_GENERIC_VDSO
->  	select VDSO_GETRANDOM			if X86_64
-> diff --git a/arch/x86/include/asm/unwind_user.h b/arch/x86/include/asm/unwind_user.h
-> new file mode 100644
-> index 000000000000..19df26a65132
-> --- /dev/null
-> +++ b/arch/x86/include/asm/unwind_user.h
-> @@ -0,0 +1,11 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_UNWIND_USER_H
-> +#define _ASM_X86_UNWIND_USER_H
-> +
-> +#define ARCH_INIT_USER_FP_FRAME							\
-> +	.ra_off		= (s32)sizeof(long) * -1,				\
-> +	.cfa_off	= (s32)sizeof(long) * 2,				\
-> +	.fp_off		= (s32)sizeof(long) * -2,				\
-> +	.use_fp		= true,
-> +
-> +#endif /* _ASM_X86_UNWIND_USER_H */
+> I think that it may be better to mention the different behavior of LRU
+> and MGLRU.  But that's not a big deal, change it again only if you think
+> it's necessary.
+>
 
-What about compat / 32bit userspace?
+The behavior isn't really different. It's either way migrate_pages decrements
+when it shouldn't going through the shink code - and both LRU and MGLRU go
+through the same code.  That LRU does an inc/dec pair is irrelevant - neither
+should do the decrement in the migrate path.
+
+~Gregory
 
