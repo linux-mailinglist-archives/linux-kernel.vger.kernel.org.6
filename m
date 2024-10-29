@@ -1,453 +1,133 @@
-Return-Path: <linux-kernel+bounces-386788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D1809B47E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:09:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4939B47EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F0D41F240AD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:09:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11D821F24533
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42612064E2;
-	Tue, 29 Oct 2024 11:07:59 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A8C205121;
+	Tue, 29 Oct 2024 11:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E2ltJocP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB95204F90
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70615204F7E;
+	Tue, 29 Oct 2024 11:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730200078; cv=none; b=oowkIs1z3+lLTuU+uvzAB+N4yNjKg0VNdym3G/v79F9QTmaUu4nOj3u4e8M8kGKi9AnmcR/UpxOEkeVkc7ILhIAX2UQDuNVc8aNZnrpdxDdxPl1UASdvfoOt9HUZs6U84haFYETz2g0dGBReKTRffmygk/8+N/FDB1FC5wfzCfs=
+	t=1730200123; cv=none; b=LC9W4fBmwcd2WANOOYA8CLFc0qKJzaqJPhUzBr+wCgtnAljzrCzZvS+pBX+u6uY1SJ3RLkFMevVfzJvV+YUg7UT3UtzNEUH94IHWndWocYwk76rhJPOeIuauSzfz65F6xD/XMHdRXYhr5qZ6POrSJMY/qVcif2S/C+C7tSxg4l0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730200078; c=relaxed/simple;
-	bh=fLVejrweCJ+8b30QNnZyTJO7BJbU+jvXbyAUmR8L38Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hD9rfaMvCePvK7oYOPvemL0YsWBaM/V3i/ZMAI5hFb9d89EOghUZIGiVm+mOsyQ4Yae994vByxTHNUki4T5tdztNKUu2d2SGJXngaO/KLSZ9enuXU9HhDWsDFruwga13b51prAVi8EnBZ2VlG/QEAYk+aXvnaXR02YVgD5B05gU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t5k4V-0008Ew-BW; Tue, 29 Oct 2024 12:07:35 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t5k4T-0010yu-2d;
-	Tue, 29 Oct 2024 12:07:33 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t5k4T-008ILU-2E;
-	Tue, 29 Oct 2024 12:07:33 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org,
-	Marek Vasut <marex@denx.de>
-Subject: [PATCH net-next v2 5/5] net: dsa: microchip: add support for side MDIO interface in LAN937x
-Date: Tue, 29 Oct 2024 12:07:32 +0100
-Message-Id: <20241029110732.1977064-6-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241029110732.1977064-1-o.rempel@pengutronix.de>
-References: <20241029110732.1977064-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1730200123; c=relaxed/simple;
+	bh=iHJpLZ6ueeaD5ZZzjPgrWxvvvCIFbjhVKvYaVmU2LY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YuQpmChgC3QQ/mQ6j49WJ0/xi4HIaBeBzgmZn+QYMEpKvTtJg9UykJrzwHDNHX4NpH74MdNvqEUX+lWputFcqd7LCoI0Pd2QnWWr+Al7PlrGVaMb7xs5UxL6UTB1c9wEipCzPmkWUc8oK1wMQ6K/+ikY9i1LOlml1dq2NqLFAyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=E2ltJocP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uQVAhZ+wFsT9DsLSM0pt2JZ5L7D4X3gucHuXu9bLqcg=; b=E2ltJocPkAyUVhYRi4tl8xOD7r
+	qXJlZpXbZPqmDaWks3qFumnRCBBdCnsCykwiloR1hBe6UHajhcmm2/aJ1hMu5WU83BodyOcvS5Ae1
+	EnmE3uvkaV6E12N+OGr1HHu8GoxsXX+paWB+/ns2/4MkEoOGv5sVNMuiKCGQEHCDb0X5vL4AaoDvR
+	9j4yMuhJX/isKRhl328TuTn3gxjPeGmNB36ZGhYaPKENzjvL2oc1ao+W+ki8OYR9xTS3IbiOt/0MS
+	WG5MR+yWnP+9iuPzELHQDT7tMOWQdi1+OyOHxzJ1wHR/5fy7Jk2JnAmTc/peRjMhjUePus00v2y8A
+	yp9c0pSg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5k5P-00000009sjH-00aB;
+	Tue, 29 Oct 2024 11:08:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 14F25300399; Tue, 29 Oct 2024 12:08:30 +0100 (CET)
+Date: Tue, 29 Oct 2024 12:08:30 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@rothwell.id.au>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the tip tree
+Message-ID: <20241029110830.GR14555@noisy.programming.kicks-ass.net>
+References: <20241029133407.3580be1a@canb.auug.org.au>
+ <20241028213040.e5d72b2f56971ceb5c80395b@linux-foundation.org>
+ <20241029170533.5592ab42@oak>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7WqrdzUGEUr8imR8"
+Content-Disposition: inline
+In-Reply-To: <20241029170533.5592ab42@oak>
 
-Implement side MDIO channel support for LAN937x switches, providing an
-alternative to SPI for PHY management alongside existing SPI-based
-switch configuration. This is needed to reduce SPI load, as SPI can be
-relatively expensive for small packets compared to MDIO support.
 
-Also, implemented static mappings for PHY addresses for various LAN937x
-models to support different internal PHY configurations. Since the PHY
-address mappings are not equal to the port indexes, this patch also
-provides PHY address calculation based on hardware strapping
-configuration.
+--7WqrdzUGEUr8imR8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
-changes v2:
-- add lan9371_phy_addr map
-- add comments
-- add define LAN937X_NO_PHY
----
- drivers/net/dsa/microchip/ksz_common.c   |   7 +
- drivers/net/dsa/microchip/lan937x.h      |   2 +
- drivers/net/dsa/microchip/lan937x_main.c | 226 +++++++++++++++++++++--
- drivers/net/dsa/microchip/lan937x_reg.h  |   4 +
- 4 files changed, 223 insertions(+), 16 deletions(-)
+On Tue, Oct 29, 2024 at 05:05:33PM +1100, Stephen Rothwell wrote:
+> Hi Andrew,
+>=20
+> On Mon, 28 Oct 2024 21:30:40 -0700 Andrew Morton <akpm@linux-foundation.o=
+rg> wrote:
+> >
+> > On Tue, 29 Oct 2024 13:34:07 +1100 Stephen Rothwell <sfr@canb.auug.org.=
+au> wrote:
+> >=20
+> > > The following commit is also in the mm-hotfixes tree as a different c=
+ommit
+> > > (but the same patch):
+> > >=20
+> > >   9c70b2a33cd2 ("sched/numa: Fix the potential null pointer dereferen=
+ce in task_numa_work()")
+> > >=20
+> > > This is commit
+> > >=20
+> > >   82c4d6b6dace ("sched/numa: fix the potential null pointer dereferen=
+ce in task_numa_work()")
+> > >=20
+> > > in the mm-hotfixes-unstable branch of the mm-hotfixes tree. =20
+> >=20
+> > Thanks, but...  What tip branch is it in?  Matters because: is that
+> > branch destined for 6.12.x?
+>=20
+> Its in the sched/urgent branch, so probably destined for Linus fairly
+> soon.  But the tip guys would know better than I.
 
-diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
-index f9e45bba2d293..3909b55857430 100644
---- a/drivers/net/dsa/microchip/ksz_common.c
-+++ b/drivers/net/dsa/microchip/ksz_common.c
-@@ -411,6 +411,8 @@ static const struct ksz_dev_ops lan937x_dev_ops = {
- 	.flush_dyn_mac_table = ksz9477_flush_dyn_mac_table,
- 	.port_setup = lan937x_port_setup,
- 	.set_ageing_time = lan937x_set_ageing_time,
-+	.mdio_bus_preinit = lan937x_mdio_bus_preinit,
-+	.create_phy_addr_map = lan937x_create_phy_addr_map,
- 	.r_phy = lan937x_r_phy,
- 	.w_phy = lan937x_w_phy,
- 	.r_mib_cnt = ksz9477_r_mib_cnt,
-@@ -1762,6 +1764,7 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.num_tx_queues = 8,
- 		.num_ipms = 8,
- 		.tc_cbs_supported = true,
-+		.phy_side_mdio_supported = true,
- 		.ops = &lan937x_dev_ops,
- 		.phylink_mac_ops = &lan937x_phylink_mac_ops,
- 		.mib_names = ksz9477_mib_names,
-@@ -1790,6 +1793,7 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.num_tx_queues = 8,
- 		.num_ipms = 8,
- 		.tc_cbs_supported = true,
-+		.phy_side_mdio_supported = true,
- 		.ops = &lan937x_dev_ops,
- 		.phylink_mac_ops = &lan937x_phylink_mac_ops,
- 		.mib_names = ksz9477_mib_names,
-@@ -1818,6 +1822,7 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.num_tx_queues = 8,
- 		.num_ipms = 8,
- 		.tc_cbs_supported = true,
-+		.phy_side_mdio_supported = true,
- 		.ops = &lan937x_dev_ops,
- 		.phylink_mac_ops = &lan937x_phylink_mac_ops,
- 		.mib_names = ksz9477_mib_names,
-@@ -1850,6 +1855,7 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.num_tx_queues = 8,
- 		.num_ipms = 8,
- 		.tc_cbs_supported = true,
-+		.phy_side_mdio_supported = true,
- 		.ops = &lan937x_dev_ops,
- 		.phylink_mac_ops = &lan937x_phylink_mac_ops,
- 		.mib_names = ksz9477_mib_names,
-@@ -1882,6 +1888,7 @@ const struct ksz_chip_data ksz_switch_chips[] = {
- 		.num_tx_queues = 8,
- 		.num_ipms = 8,
- 		.tc_cbs_supported = true,
-+		.phy_side_mdio_supported = true,
- 		.ops = &lan937x_dev_ops,
- 		.phylink_mac_ops = &lan937x_phylink_mac_ops,
- 		.mib_names = ksz9477_mib_names,
-diff --git a/drivers/net/dsa/microchip/lan937x.h b/drivers/net/dsa/microchip/lan937x.h
-index 3388d91dbc44e..df13ebbd356f9 100644
---- a/drivers/net/dsa/microchip/lan937x.h
-+++ b/drivers/net/dsa/microchip/lan937x.h
-@@ -13,6 +13,8 @@ void lan937x_port_setup(struct ksz_device *dev, int port, bool cpu_port);
- void lan937x_config_cpu_port(struct dsa_switch *ds);
- int lan937x_switch_init(struct ksz_device *dev);
- void lan937x_switch_exit(struct ksz_device *dev);
-+int lan937x_mdio_bus_preinit(struct ksz_device *dev, bool side_mdio);
-+int lan937x_create_phy_addr_map(struct ksz_device *dev, bool side_mdio);
- int lan937x_r_phy(struct ksz_device *dev, u16 addr, u16 reg, u16 *data);
- int lan937x_w_phy(struct ksz_device *dev, u16 addr, u16 reg, u16 val);
- int lan937x_change_mtu(struct ksz_device *dev, int port, int new_mtu);
-diff --git a/drivers/net/dsa/microchip/lan937x_main.c b/drivers/net/dsa/microchip/lan937x_main.c
-index 824d9309a3d35..b7652efd632ea 100644
---- a/drivers/net/dsa/microchip/lan937x_main.c
-+++ b/drivers/net/dsa/microchip/lan937x_main.c
-@@ -18,6 +18,87 @@
- #include "ksz9477.h"
- #include "lan937x.h"
- 
-+/* marker for ports without built-in PHY */
-+#define LAN937X_NO_PHY U8_MAX
-+
-+/*
-+ * lan9370_phy_addr - Mapping of LAN9370 switch ports to PHY addresses.
-+ *
-+ * Each entry corresponds to a specific port on the LAN9370 switch,
-+ * where ports 1-4 are connected to integrated 100BASE-T1 PHYs, and
-+ * Port 5 is connected to an RGMII interface without a PHY. The values
-+ * are based on the documentation (DS00003108E, section 3.3).
-+ */
-+static const u8 lan9370_phy_addr[] = {
-+	[0] = 2, /* Port 1, T1 AFE0 */
-+	[1] = 3, /* Port 2, T1 AFE1 */
-+	[2] = 5, /* Port 3, T1 AFE3 */
-+	[3] = 6, /* Port 4, T1 AFE4 */
-+	[4] = LAN937X_NO_PHY, /* Port 5, RGMII 2 */
-+};
-+
-+/*
-+ * lan9371_phy_addr - Mapping of LAN9371 switch ports to PHY addresses.
-+ *
-+ * The values are based on the documentation (DS00003109E, section 3.3).
-+ */
-+static const u8 lan9371_phy_addr[] = {
-+	[0] = 2, /* Port 1, T1 AFE0 */
-+	[1] = 3, /* Port 2, T1 AFE1 */
-+	[2] = 5, /* Port 3, T1 AFE3 */
-+	[3] = 8, /* Port 4, TX PHY */
-+	[4] = LAN937X_NO_PHY, /* Port 5, RGMII 2 */
-+	[5] = LAN937X_NO_PHY, /* Port 6, RGMII 1 */
-+};
-+
-+/*
-+ * lan9372_phy_addr - Mapping of LAN9372 switch ports to PHY addresses.
-+ *
-+ * The values are based on the documentation (DS00003110F, section 3.3).
-+ */
-+static const u8 lan9372_phy_addr[] = {
-+	[0] = 2, /* Port 1, T1 AFE0 */
-+	[1] = 3, /* Port 2, T1 AFE1 */
-+	[2] = 5, /* Port 3, T1 AFE3 */
-+	[3] = 8, /* Port 4, TX PHY */
-+	[4] = LAN937X_NO_PHY, /* Port 5, RGMII 2 */
-+	[5] = LAN937X_NO_PHY, /* Port 6, RGMII 1 */
-+	[6] = 6, /* Port 7, T1 AFE4 */
-+	[7] = 4, /* Port 8, T1 AFE2 */
-+};
-+
-+/*
-+ * lan9373_phy_addr - Mapping of LAN9373 switch ports to PHY addresses.
-+ *
-+ * The values are based on the documentation (DS00003110F, section 3.3).
-+ */
-+static const u8 lan9373_phy_addr[] = {
-+	[0] = 2, /* Port 1, T1 AFE0 */
-+	[1] = 3, /* Port 2, T1 AFE1 */
-+	[2] = 5, /* Port 3, T1 AFE3 */
-+	[3] = LAN937X_NO_PHY, /* Port 4, SGMII */
-+	[4] = LAN937X_NO_PHY, /* Port 5, RGMII 2 */
-+	[5] = LAN937X_NO_PHY, /* Port 6, RGMII 1 */
-+	[6] = 6, /* Port 7, T1 AFE4 */
-+	[7] = 4, /* Port 8, T1 AFE2 */
-+};
-+
-+/*
-+ * lan9374_phy_addr - Mapping of LAN9374 switch ports to PHY addresses.
-+ *
-+ * The values are based on the documentation (DS00003110F, section 3.3).
-+ */
-+static const u8 lan9374_phy_addr[] = {
-+	[0] = 2, /* Port 1, T1 AFE0 */
-+	[1] = 3, /* Port 2, T1 AFE1 */
-+	[2] = 5, /* Port 3, T1 AFE3 */
-+	[3] = 7, /* Port 4, T1 AFE5 */
-+	[4] = LAN937X_NO_PHY, /* Port 5, RGMII 2 */
-+	[5] = LAN937X_NO_PHY, /* Port 6, RGMII 1 */
-+	[6] = 6, /* Port 7, T1 AFE4 */
-+	[7] = 4, /* Port 8, T1 AFE2 */
-+};
-+
- static int lan937x_cfg(struct ksz_device *dev, u32 addr, u8 bits, bool set)
- {
- 	return regmap_update_bits(ksz_regmap_8(dev), addr, bits, set ? bits : 0);
-@@ -30,24 +111,144 @@ static int lan937x_port_cfg(struct ksz_device *dev, int port, int offset,
- 				  bits, set ? bits : 0);
- }
- 
--static int lan937x_enable_spi_indirect_access(struct ksz_device *dev)
-+/**
-+ * lan937x_create_phy_addr_map - Create port-to-PHY address map for MDIO bus.
-+ * @dev: Pointer to device structure.
-+ * @side_mdio: Boolean indicating if the PHYs are accessed over a side MDIO bus.
-+ *
-+ * This function sets up the PHY address mapping for the LAN937x switches,
-+ * which support two access modes for internal PHYs:
-+ * 1. **SPI Access**: A straightforward one-to-one port-to-PHY address
-+ *    mapping is applied.
-+ * 2. **MDIO Access**: The PHY address mapping varies based on chip variant
-+ *    and strap configuration. An offset is calculated based on strap settings
-+ *    to ensure correct PHY addresses are assigned. The offset calculation logic
-+ *    is based on Microchip's Article Number 000015828, available at:
-+ *    https://microchip.my.site.com/s/article/LAN9374-Virtual-PHY-PHY-Address-Mapping
-+ *
-+ * The function first checks if side MDIO access is disabled, in which case a
-+ * simple direct mapping (port number = PHY address) is applied. If side MDIO
-+ * access is enabled, it reads the strap configuration to determine the correct
-+ * offset for PHY addresses.
-+ *
-+ * The appropriate mapping table is selected based on the chip ID, and the
-+ * `phy_addr_map` is populated with the correct addresses for each port. Any
-+ * port with no PHY is assigned a `LAN937X_NO_PHY` marker.
-+ *
-+ * Return: 0 on success, error code on failure.
-+ */
-+int lan937x_create_phy_addr_map(struct ksz_device *dev, bool side_mdio)
-+{
-+	static const u8 *phy_addr_map;
-+	u32 strap_val;
-+	u8 offset = 0;
-+	size_t size;
-+	int ret, i;
-+
-+	if (!side_mdio) {
-+		/* simple direct mapping */
-+		for (i = 0; i < dev->info->port_cnt; i++)
-+			dev->phy_addr_map[i] = i;
-+
-+		return 0;
-+	}
-+
-+	ret = ksz_read32(dev, REG_SW_CFG_STRAP_VAL, &strap_val);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!(strap_val & SW_CASCADE_ID_CFG) && !(strap_val & SW_VPHY_ADD_CFG))
-+		offset = 0;
-+	else if (!(strap_val & SW_CASCADE_ID_CFG) && (strap_val & SW_VPHY_ADD_CFG))
-+		offset = 7;
-+	else if ((strap_val & SW_CASCADE_ID_CFG) && !(strap_val & SW_VPHY_ADD_CFG))
-+		offset = 15;
-+	else
-+		offset = 22;
-+
-+	switch (dev->info->chip_id) {
-+	case LAN9370_CHIP_ID:
-+		phy_addr_map = lan9370_phy_addr;
-+		size = ARRAY_SIZE(lan9370_phy_addr);
-+		break;
-+	case LAN9371_CHIP_ID:
-+		phy_addr_map = lan9371_phy_addr;
-+		size = ARRAY_SIZE(lan9371_phy_addr);
-+		break;
-+	case LAN9372_CHIP_ID:
-+		phy_addr_map = lan9372_phy_addr;
-+		size = ARRAY_SIZE(lan9372_phy_addr);
-+		break;
-+	case LAN9373_CHIP_ID:
-+		phy_addr_map = lan9373_phy_addr;
-+		size = ARRAY_SIZE(lan9373_phy_addr);
-+		break;
-+	case LAN9374_CHIP_ID:
-+		phy_addr_map = lan9374_phy_addr;
-+		size = ARRAY_SIZE(lan9374_phy_addr);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (size < dev->info->port_cnt)
-+		return -EINVAL;
-+
-+	for (i = 0; i < dev->info->port_cnt; i++) {
-+		if (phy_addr_map[i] == LAN937X_NO_PHY)
-+			dev->phy_addr_map[i] = phy_addr_map[i];
-+		else
-+			dev->phy_addr_map[i] = phy_addr_map[i] + offset;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * lan937x_mdio_bus_preinit - Pre-initialize MDIO bus for accessing PHYs.
-+ * @dev: Pointer to device structure.
-+ * @side_mdio: Boolean indicating if the PHYs are accessed over a side MDIO bus.
-+ *
-+ * This function configures the LAN937x switch for PHY access either through
-+ * SPI or the side MDIO bus, unlocking the necessary registers for each access
-+ * mode.
-+ *
-+ * Operation Modes:
-+ * 1. **SPI Access**: Enables SPI indirect access to address clock domain
-+ *    crossing issues when SPI is used for PHY access.
-+ * 2. **MDIO Access**: Grants access to internal PHYs over the side MDIO bus,
-+ *    required when using the MDIO bus for PHY management.
-+ *
-+ * Return: 0 on success, error code on failure.
-+ */
-+int lan937x_mdio_bus_preinit(struct ksz_device *dev, bool side_mdio)
- {
- 	u16 data16;
- 	int ret;
- 
--	/* Enable Phy access through SPI */
-+	/* Unlock access to the PHYs, needed for SPI and side MDIO access */
- 	ret = lan937x_cfg(dev, REG_GLOBAL_CTRL_0, SW_PHY_REG_BLOCK, false);
- 	if (ret < 0)
--		return ret;
-+		goto print_error;
- 
--	ret = ksz_read16(dev, REG_VPHY_SPECIAL_CTRL__2, &data16);
--	if (ret < 0)
--		return ret;
-+	if (side_mdio)
-+		/* Allow access to internal PHYs over MDIO bus */
-+		data16 = VPHY_MDIO_INTERNAL_ENABLE;
-+	else
-+		/* Enable SPI indirect access to address clock domain crossing
-+		 * issue
-+		 */
-+		data16 = VPHY_SPI_INDIRECT_ENABLE;
- 
--	/* Allow SPI access */
--	data16 |= VPHY_SPI_INDIRECT_ENABLE;
-+	ret = ksz_rmw16(dev, REG_VPHY_SPECIAL_CTRL__2,
-+			VPHY_SPI_INDIRECT_ENABLE | VPHY_MDIO_INTERNAL_ENABLE,
-+			data16);
-+
-+print_error:
-+	if (ret < 0)
-+		dev_err(dev->dev, "failed to preinit the MDIO bus\n");
- 
--	return ksz_write16(dev, REG_VPHY_SPECIAL_CTRL__2, data16);
-+	return ret;
- }
- 
- static int lan937x_vphy_ind_addr_wr(struct ksz_device *dev, int addr, int reg)
-@@ -363,13 +564,6 @@ int lan937x_setup(struct dsa_switch *ds)
- 	struct ksz_device *dev = ds->priv;
- 	int ret;
- 
--	/* enable Indirect Access from SPI to the VPHY registers */
--	ret = lan937x_enable_spi_indirect_access(dev);
--	if (ret < 0) {
--		dev_err(dev->dev, "failed to enable spi indirect access");
--		return ret;
--	}
--
- 	/* The VLAN aware is a global setting. Mixed vlan
- 	 * filterings are not supported.
- 	 */
-diff --git a/drivers/net/dsa/microchip/lan937x_reg.h b/drivers/net/dsa/microchip/lan937x_reg.h
-index 2f22a9d01de36..4ec93e421da45 100644
---- a/drivers/net/dsa/microchip/lan937x_reg.h
-+++ b/drivers/net/dsa/microchip/lan937x_reg.h
-@@ -37,6 +37,10 @@
- #define SW_CLK125_ENB			BIT(1)
- #define SW_CLK25_ENB			BIT(0)
- 
-+#define REG_SW_CFG_STRAP_VAL		0x0200
-+#define SW_CASCADE_ID_CFG		BIT(15)
-+#define SW_VPHY_ADD_CFG			BIT(0)
-+
- /* 2 - PHY Control */
- #define REG_SW_CFG_STRAP_OVR		0x0214
- #define SW_VPHY_DISABLE			BIT(31)
--- 
-2.39.5
+Yeah, tip/sched/urgent, which is supposed to go to Linus on Sunday
+before he cuts the next -rc or so.
 
+--7WqrdzUGEUr8imR8
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmcgwigACgkQdkfhpEvA
+5Lol9w//d8Ovs/YN9LWs3pTg2eqTNb3fvfHAhOfKzUWbHpbcppYg7U2pQZSLJAhh
+o9dPQtH/d60UOxec7E9AZzoh0lEiRJ/HXhkx+29f588HQHnndFB2MButNjpMy0zy
+QTnr7ciELXg+JxUogiyYTcyyIh2U7SGNwbotMt++195P5QEpaN2zCCSVd8E3Hyrs
+zeYi1BlADXa2IsteT1RCk0lAjdGnnKGbVbbYmsvoQV/dOaDUWZzMUlAFnsiLSPKL
+QatgINoF7bDf24cTC4jP10BQA+IIBBPSguEoPeCc6Qo++pSTqUDZLUA7TO0TUJol
+N6RK0bgsoYYUHcviR+3CfMvZH68/CVcfHYvmDkZ0CNLvM5dsFko5UAmwNReGIrut
+GqcZbI3L71ZgjYGNd4dWBbMYv2jvJngCYm3H1+WAy7cyKUzuIRkd2yZ9ghUKPZD7
+OlcjRp9+sJSzoeT6G89yNXzW8oTzONd+WPy100VItwEuqaQR9d/EG9pXkKrXAEvG
+nWpk8p/DSRemQZa0scwyvCOwhfeAUnZ9Q9gwCUQqXdDMkH50FHRvjr4EhisVON85
+GK+QodM//+KHNaHF3O3nKy5zQwetTtC5acYtabttaPiNlhNbE902Ouz0IpGViaqA
+NCHbO8Kq9lapwAkU2Dpts25g7a4LnPhHA1tPg6AUGKudWc4IvDw=
+=rYS0
+-----END PGP SIGNATURE-----
+
+--7WqrdzUGEUr8imR8--
 
