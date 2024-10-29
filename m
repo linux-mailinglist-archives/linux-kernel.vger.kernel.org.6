@@ -1,180 +1,312 @@
-Return-Path: <linux-kernel+bounces-387450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 103A79B5178
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:58:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD3B39B5174
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:58:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C55C1C22EBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:58:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CC8728303B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B84E1E0B6C;
-	Tue, 29 Oct 2024 17:58:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117DE1DD539;
+	Tue, 29 Oct 2024 17:58:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kLJLCihj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahA57cS7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A9A1DC739;
-	Tue, 29 Oct 2024 17:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372FC19A298;
+	Tue, 29 Oct 2024 17:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730224708; cv=none; b=pLJCf6tuMswnRkzb3/ILohzkMmazG21UpQdQ2fL4O4RKwHLltJlNtTGBwMAb0QMEhDE8morsfo/CdFXw4lb4h+4WNKP+hzxZh1ydM6mFzW18H3cIan0tG03RawIEuWJGjx3KMjMlCeKvXP3McGlvQq/94c5RPbszM+R61w3WjsU=
+	t=1730224689; cv=none; b=hXhCBevG/EuqD5JaZJ0FByX8eEiXW0VeqfYn2CPc1SpPVD6X26E/N5OCM49RvzkqKIbqdF16pJvhsGRVUcJ8D0H7MGpIe7lF/bOTNauNI1ya2EbbmEsXakWl4mVKamPYLUJoGjH3S1rB7TOVewTxhlkkhqIGfnzAozFaQQC59As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730224708; c=relaxed/simple;
-	bh=7aaGphVstemt+LrVYO8eRhyN+SIXqmyHmB8xIhK98Ho=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=emjeSrCNtcqqMTV+/Rzf4a+B6FADX5GxFc37wzZmsGSvCN66iiODC/KUjT9NZ1xmLt8qSpkoIC9vE9zoGYa+W3ZxFpLLjaQmMCo5UHcxq37UIRIYYUYJLVAexLerlR+qhnROaQUW/IhUHZ7LBbNao7GWsAt+Lgi9Jd2Fs4RlPWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kLJLCihj; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730224705; x=1761760705;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=7aaGphVstemt+LrVYO8eRhyN+SIXqmyHmB8xIhK98Ho=;
-  b=kLJLCihjHS8ePjj6TSDqc69xWQYDXqH93lqT6+ztdQxAts2vPSGTJhzD
-   0+Fb3bjeXOowlKjmdEhHK3LyTI2+uiDqT4SIP8r1mYsa3ClMRxlAff2pJ
-   kerJfseNYpb1zqJnqwCr1JKceb7JREJLiq2bTWihqME+J51rSogEP01NO
-   dxf8I1IaMWFR2N6lET0/sxbrp8b27XhbWhhSag/wdD8Vvn+J8ZO8RKXbD
-   NHDeu6a6VCZRJBuZSTfZFcVX33G1Y8OQIunMV+TkF/GbXRvkQFT9aWwKj
-   KBzacXMBbxh88guOdlYswQ9yvMUVZFEeb3sXEqFjxdNsgGcywH31stRK3
-   A==;
-X-CSE-ConnectionGUID: tCPrBOloS66kwyRsF85hFw==
-X-CSE-MsgGUID: OWiJ2MrXQzSF22xng3PITQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40985310"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="40985310"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 10:58:25 -0700
-X-CSE-ConnectionGUID: PKc316V0TH6oGzyT5au3Vw==
-X-CSE-MsgGUID: DT6jGl/DQxyIZ+oWVUrmTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82147331"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 29 Oct 2024 10:58:19 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5qTx-000dxg-0l;
-	Tue, 29 Oct 2024 17:58:17 +0000
-Date: Wed, 30 Oct 2024 01:57:29 +0800
-From: kernel test robot <lkp@intel.com>
-To: Romain Gantois <romain.gantois@bootlin.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Dan Murphy <dmurphy@ti.com>,
-	Florian Fainelli <f.fainelli@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	netdev@vger.kernel.org,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net] net: phy: dp83869: fix status reporting for
- 1000base-x autonegotiation
-Message-ID: <202410300125.K125vk3f-lkp@intel.com>
-References: <20241029-dp83869-1000base-x-v1-1-fcafe360bd98@bootlin.com>
+	s=arc-20240116; t=1730224689; c=relaxed/simple;
+	bh=FPDxeLe4JaaLb+HIRdyNzCgnenNG860ENQPe0grj9Rk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BQkLEhAPz9lemQTlBggT1LmvE3qG26H6/rk8X7oLoyGDteX+P4noFGdkgBRK8ILwfMx88BE8ZZ2n6WnzBkX2TH/1Cr/hDzJxSZYf1xcMT6qf9LTfGo027cDVA1XV1x8/38uOThjFmYI5nr78+TMgSfK+dx8bii9gBUuSlSf2urc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahA57cS7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCC45C4CEEB;
+	Tue, 29 Oct 2024 17:58:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730224688;
+	bh=FPDxeLe4JaaLb+HIRdyNzCgnenNG860ENQPe0grj9Rk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ahA57cS7nneGtTneCZbhxQP4ct/T28YRkAkVekmOA6zzwLKhnk6slUk+Ms7ozbfb1
+	 oNpab7jmQjID36i/EFZmSzXwngRINayIvYJOZigkaNPEJxhSD8vNUACVqhzc5ZlK89
+	 9VfglZdYNltLEaIvQEk2SBkeuh1xy+Az27UWzxkgjwfilYJztE6hGklybREekBmb9c
+	 LMyPpMvmqAFzu9f8vmKQW4GYvfhAWMogIl1S3vcPeiwCzEAOtqFzbsEivJo8IbS5uk
+	 NtAg9iHlfPC1EuZWDrpGOII6GeA4kIgJfiTObBjY+/kbVDC300JVLZwgv2DSiGMOUP
+	 Ppth6h+DoYN5A==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so7550369e87.1;
+        Tue, 29 Oct 2024 10:58:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVjQy7GfNbxlN9cDqe8r8RkgGbOhfv5+NliW74kd/bOPCXmVc763gfxzM+JKSdM8Z9spi51asK9LpdsMUYUylo=@vger.kernel.org, AJvYcCWp4wn3pi63l/RReviqtr5iBLpxfbNL+FcWglJAAaLAYXCxOTML8WdkVysmtQHQCAiis2L6nhtRWXLL6P4s@vger.kernel.org, AJvYcCXvmT1rz8tZgRyJ+RfAhAEPDppTctnnSEtGA8feuFKQ55UocGyPHEMYCQWh/XEDHmB95ANMsCCuhF/y@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3sCisG2NXJE2scOVOCPrnw50m/9SD/M1oiNiyttVw+rw4DbU/
+	JHS6rssGZr4h2Bs1Xxb7sNiIlNBcr/mGkFLPxlu6yg119FBT9MqHfMViJp9SrqQjMYWibnrzEqU
+	yB6qMSHexrgF685uPIUA8PcXDGQ==
+X-Google-Smtp-Source: AGHT+IHg25TDFYt6OEynRIkQQ43FelFAD0Wdd033FZRak63+Mubc9FOluOHqGWY4csHjtryvOUM8L9d7dl8lvFhZZ/4=
+X-Received: by 2002:a05:6512:1304:b0:53b:1f77:e95e with SMTP id
+ 2adb3069b0e04-53b34c5f595mr5799901e87.44.1730224686962; Tue, 29 Oct 2024
+ 10:58:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029-dp83869-1000base-x-v1-1-fcafe360bd98@bootlin.com>
+References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
+ <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
+In-Reply-To: <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 29 Oct 2024 12:57:53 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
+Message-ID: <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Saravana Kannan <saravanak@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Romain,
+On Tue, Oct 29, 2024 at 9:16=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Fri, Oct 25, 2024 at 11:06=E2=80=AFPM Rob Herring (Arm) <robh@kernel.o=
+rg> wrote:
+> >
+> > The device property API is a firmware agnostic API for reading
+> > properties from firmware (DT/ACPI) devices nodes and swnodes.
+> >
+> > While the C API takes a pointer to a caller allocated variable/buffer,
+> > the rust API is designed to return a value and can be used in struct
+> > initialization. Rust generics are also utilized to support different
+> > sizes of properties (e.g. u8, u16, u32).
+> >
+> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> > ---
+> > Not sure if we need the KVec variant, but I kept it as that was my firs=
+t
+> > pass attempt. Most callers are filling in some value in a driver data
+> > struct. Sometimes the number of elements is not known, so the caller
+> > calls to get the array size, allocs the correct size buffer, and then
+> > reads the property again to fill in the buffer.
+> >
+> > I have not implemented a wrapper for device_property_read_string(_array=
+)
+> > because that API is problematic for dynamic DT nodes. The API just
+> > returns pointer(s) into the raw DT data. We probably need to return a
+> > copy of the string(s) instead for rust.
+> >
+> > After property accessors, next up is child node accessors/iterators.
+> > ---
+> >  rust/bindings/bindings_helper.h |   1 +
+> >  rust/kernel/device.rs           | 145 ++++++++++++++++++++++++++++++++=
++++++++-
+> >  2 files changed, 145 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_h=
+elper.h
+> > index 217c776615b9..65717cc20a23 100644
+> > --- a/rust/bindings/bindings_helper.h
+> > +++ b/rust/bindings/bindings_helper.h
+> > @@ -19,6 +19,7 @@
+> >  #include <linux/pci.h>
+> >  #include <linux/phy.h>
+> >  #include <linux/platform_device.h>
+> > +#include <linux/property.h>
+> >  #include <linux/refcount.h>
+> >  #include <linux/sched.h>
+> >  #include <linux/slab.h>
+> > diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
+> > index 0c28b1e6b004..bb66a28df890 100644
+> > --- a/rust/kernel/device.rs
+> > +++ b/rust/kernel/device.rs
+> > @@ -5,10 +5,14 @@
+> >  //! C header: [`include/linux/device.h`](srctree/include/linux/device.=
+h)
+> >
+> >  use crate::{
+> > +    alloc::KVec,
+> >      bindings,
+> > +    error::{to_result, Result},
+> > +    prelude::*,
+> > +    str::CStr,
+> >      types::{ARef, Opaque},
+> >  };
+> > -use core::{fmt, ptr};
+> > +use core::{fmt, mem::size_of, ptr};
+> >
+> >  #[cfg(CONFIG_PRINTK)]
+> >  use crate::c_str;
+> > @@ -189,6 +193,145 @@ unsafe fn printk(&self, klevel: &[u8], msg: fmt::=
+Arguments<'_>) {
+> >              )
+> >          };
+> >      }
+> > +
+> > +    /// Returns if a firmware property `name` is true or false
+> > +    pub fn property_read_bool(&self, name: &CStr) -> bool {
+> > +        unsafe { bindings::device_property_present(self.as_raw(), name=
+.as_ptr() as *const i8) }
+> > +    }
+> > +
+> > +    /// Returns if a firmware string property `name` has match for `ma=
+tch_str`
+> > +    pub fn property_match_string(&self, name: &CStr, match_str: &CStr)=
+ -> Result<usize> {
+> > +        let ret =3D unsafe {
+> > +            bindings::device_property_match_string(
+> > +                self.as_raw(),
+> > +                name.as_ptr() as *const i8,
+> > +                match_str.as_ptr() as *const i8,
+> > +            )
+> > +        };
+> > +        to_result(ret)?;
+> > +        Ok(ret as usize)
+> > +    }
+> > +
+> > +    /// Returns firmware property `name` scalar value
+> > +    ///
+> > +    /// Valid types are i8, u8, i16, u16, i32, u32, i64, u64
+> > +    pub fn property_read<T: Copy>(&self, name: &CStr) -> Result<T> {
+> > +        let mut val: [T; 1] =3D unsafe { core::mem::zeroed() };
+> > +
+> > +        Self::_property_read_array(&self, name, &mut val)?;
+> > +        Ok(val[0])
+> > +    }
+> > +
+> > +    /// Returns firmware property `name` array values
+> > +    ///
+> > +    /// Valid types are i8, u8, i16, u16, i32, u32, i64, u64
+> > +    pub fn property_read_array<T, const N: usize>(&self, name: &CStr) =
+-> Result<[T; N]> {
+> > +        let mut val: [T; N] =3D unsafe { core::mem::zeroed() };
+> > +
+> > +        Self::_property_read_array(self, name, &mut val)?;
+> > +        Ok(val)
+> > +    }
+> > +
+> > +    fn _property_read_array<T>(&self, name: &CStr, val: &mut [T]) -> R=
+esult {
+> > +        match size_of::<T>() {
+> > +            1 =3D> to_result(unsafe {
+> > +                bindings::device_property_read_u8_array(
+> > +                    self.as_raw(),
+> > +                    name.as_ptr() as *const i8,
+> > +                    val.as_ptr() as *mut u8,
+> > +                    val.len(),
+> > +                )
+> > +            })?,
+> > +            2 =3D> to_result(unsafe {
+> > +                bindings::device_property_read_u16_array(
+> > +                    self.as_raw(),
+> > +                    name.as_ptr() as *const i8,
+> > +                    val.as_ptr() as *mut u16,
+> > +                    val.len(),
+> > +                )
+> > +            })?,
+> > +            4 =3D> to_result(unsafe {
+> > +                bindings::device_property_read_u32_array(
+> > +                    self.as_raw(),
+> > +                    name.as_ptr() as *const i8,
+> > +                    val.as_ptr() as *mut u32,
+> > +                    val.len(),
+> > +                )
+> > +            })?,
+> > +            8 =3D> to_result(unsafe {
+> > +                bindings::device_property_read_u64_array(
+> > +                    self.as_raw(),
+> > +                    name.as_ptr() as *const i8,
+> > +                    val.as_ptr() as *mut u64,
+> > +                    val.len(),
+> > +                )
+> > +            })?,
+> > +            _ =3D> return Err(EINVAL),
+> > +        }
+> > +        Ok(())
+> > +    }
+> > +
+> > +    pub fn property_read_array_vec<T>(&self, name: &CStr, len: usize) =
+-> Result<KVec<T>> {
+> > +        let mut val: KVec<T> =3D KVec::with_capacity(len, GFP_KERNEL)?=
+;
+> > +
+> > +        // SAFETY: len always matches capacity
+> > +        unsafe { val.set_len(len) }
+> > +        Self::_property_read_array::<T>(&self, name, val.as_mut_slice(=
+))?;
+> > +        Ok(val)
+> > +    }
+> > +
+> > +    /// Returns array length for firmware property `name`
+> > +    ///
+> > +    /// Valid types are i8, u8, i16, u16, i32, u32, i64, u64
+> > +    pub fn property_count_elem<T>(&self, name: &CStr) -> Result<usize>=
+ {
+>
+> This always returns usize? I'm a bit confused ...
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on 94c11e852955b2eef5c4f0b36cfeae7dcf11a759]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Romain-Gantois/net-phy-dp83869-fix-status-reporting-for-1000base-x-autonegotiation/20241029-173146
-base:   94c11e852955b2eef5c4f0b36cfeae7dcf11a759
-patch link:    https://lore.kernel.org/r/20241029-dp83869-1000base-x-v1-1-fcafe360bd98%40bootlin.com
-patch subject: [PATCH net] net: phy: dp83869: fix status reporting for 1000base-x autonegotiation
-config: arm-randconfig-004-20241029 (https://download.01.org/0day-ci/archive/20241030/202410300125.K125vk3f-lkp@intel.com/config)
-compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300125.K125vk3f-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410300125.K125vk3f-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/net/phy/dp83869.c:197:3: warning: variable 'adv' is uninitialized when used here [-Wuninitialized]
-                   adv |= DP83869_BP_FULL_DUPLEX;
-                   ^~~
-   drivers/net/phy/dp83869.c:174:9: note: initialize the variable 'adv' to silence this warning
-           u32 adv;
-                  ^
-                   = 0
-   1 warning generated.
+The C version returned an int so we could return an errno or positive
+count. With Result, we don't need negative values and isn't usize
+generally used for counts of things like size_t in C?
 
 
-vim +/adv +197 drivers/net/phy/dp83869.c
+> > +        match size_of::<T>() {
+> > +            1 =3D> {
+> > +                ret =3D unsafe {
+> > +                    bindings::device_property_read_u8_array(
+> > +                        self.as_raw(),
+> > +                        name.as_ptr() as *const i8,
+> > +                        ptr::null_mut(),
+> > +                        0,
+> > +                    )
+> > +                }
+> > +            }
+> > +            2 =3D> {
+> > +                ret =3D unsafe {
+> > +                    bindings::device_property_read_u16_array(
+> > +                        self.as_raw(),
+> > +                        name.as_ptr() as *const i8,
+> > +                        ptr::null_mut(),
+> > +                        0,
+> > +                    )
+> > +                }
+> > +            }
+> > +            4 =3D> {
+> > +                ret =3D unsafe {
+> > +                    bindings::device_property_read_u32_array(
+> > +                        self.as_raw(),
+> > +                        name.as_ptr() as *const i8,
+> > +                        ptr::null_mut(),
+> > +                        0,
+> > +                    )
+> > +                }
+> > +            }
+> > +            8 =3D> {
+> > +                ret =3D unsafe {
+> > +                    bindings::device_property_read_u64_array(
+> > +                        self.as_raw(),
+> > +                        name.as_ptr() as *const i8,
+> > +                        ptr::null_mut(),
+> > +                        0,
+> > +                    )
+> > +                }
+> > +            }
+> > +            _ =3D> return Err(EINVAL),
+>
+> You can use `kernel::build_error!` here to trigger a build failure if
+> the size is wrong.
 
-   168	
-   169	static int dp83869_config_aneg(struct phy_device *phydev)
-   170	{
-   171		struct dp83869_private *dp83869 = phydev->priv;
-   172		unsigned long *advertising;
-   173		int err, changed = false;
-   174		u32 adv;
-   175	
-   176		if (dp83869->mode != DP83869_RGMII_1000_BASE)
-   177			return genphy_config_aneg(phydev);
-   178	
-   179		/* Forcing speed or duplex isn't supported in 1000base-x mode */
-   180		if (phydev->autoneg != AUTONEG_ENABLE)
-   181			return 0;
-   182	
-   183		/* In fiber modes, register locations 0xc0... get mapped to offset 0.
-   184		 * Unfortunately, the fiber-specific autonegotiation advertisement
-   185		 * register at address 0xc04 does not have the same bit layout as the
-   186		 * corresponding standard MII_ADVERTISE register. Thus, functions such
-   187		 * as genphy_config_advert() will write the advertisement register
-   188		 * incorrectly.
-   189		 */
-   190		advertising = phydev->advertising;
-   191	
-   192		/* Only allow advertising what this PHY supports */
-   193		linkmode_and(advertising, advertising,
-   194			     phydev->supported);
-   195	
-   196		if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseX_Full_BIT, advertising))
- > 197			adv |= DP83869_BP_FULL_DUPLEX;
-   198		if (linkmode_test_bit(ETHTOOL_LINK_MODE_Pause_BIT, advertising))
-   199			adv |= DP83869_BP_PAUSE;
-   200		if (linkmode_test_bit(ETHTOOL_LINK_MODE_Asym_Pause_BIT, advertising))
-   201			adv |= DP83869_BP_ASYMMETRIC_PAUSE;
-   202	
-   203		err = phy_modify_changed(phydev, DP83869_FX_ANADV,
-   204					 DP83869_BP_FULL_DUPLEX | DP83869_BP_PAUSE |
-   205					 DP83869_BP_ASYMMETRIC_PAUSE,
-   206					 adv);
-   207	
-   208		if (err < 0)
-   209			return err;
-   210		else if (err)
-   211			changed = true;
-   212	
-   213		return genphy_check_and_restart_aneg(phydev, changed);
-   214	}
-   215	
+I really want a build error if the type is wrong, then the _ case
+would be unreachable. No way to do that?
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Rob
 
