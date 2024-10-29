@@ -1,123 +1,104 @@
-Return-Path: <linux-kernel+bounces-387008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444F19B4AB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:16:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2538D9B4AB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:16:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D420DB230A6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:16:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3302843E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:16:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC5120606C;
-	Tue, 29 Oct 2024 13:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ogG0of+B"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB5B4206046;
+	Tue, 29 Oct 2024 13:16:40 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F7520262A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:16:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A279320262A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730207792; cv=none; b=PhpY6vWmn88vFmoo0urwRumLI2/f608a7AE0ZcpGtbsCN81dlZsZubH1v9IiWgHlYUPuGHFmG8fzpl7kf4/VRERoo0wtZzNxoN9hxxK8mj5jHOt/yyDvtJDqHnBUyZcxd8f8NB1WWGPnEUmyfGF5M7AGUcS1zOUwvyBY5ZD4AQs=
+	t=1730207800; cv=none; b=Nd+JNeC6NHaomT0j49SvSWByOkLImKcecu8YeNLOFW+O6yga5+3RoACtBecrrvi82GEZXhj3I+K2qC1tkLXgdxjTu4gvo5TjGJQFeFJj/Snjxq2GBdprLcPHIBPMxBMVNtjpycCfAlpD/carhlxEaDDZ5EUfZJFLu8yaP9xqjec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730207792; c=relaxed/simple;
-	bh=ORScFiiSj6DBWVhn8Ip6edyJLDCC004uaKK2dEp4X1g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IiNkTbAP89Gt2Xv2L0eJ5B+jVGSxa185ojs+p77LHMCTCI9hkP8VnGQ1qHUmMKmDNtYZh4POmckDAJRY9hJxPcDzX4YiNZtc0yEQM8c8Dt2aAmkeGqY0tVkSUOsMuda/MCPAcfWf1f54AHwenBGzjpG41OKmQSYIyDdzWA2ro14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ogG0of+B; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c8b557f91so50018265ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:16:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730207789; x=1730812589; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G4FgCQ6GkthTlMOY7Hwmvw1LED0yrWV2Of7OG03sNbg=;
-        b=ogG0of+Bgo8R4elC2gdsau+roG160QzUNvRJF+l8FYhN6C+6f/yCSqPvHuI3DYybXf
-         e9zun2XeDN2QAb3xiauDaqFLlxGC0luC30X47Q9s9vz0UJrqkBCDUQxlMAkYG6pcyvaD
-         bsDfLyKaJ5mKdDfL4aTXohFz+ywzYuE4EFVKf+sy3QU6NCQM+KfePC9ECtECRskG7lP7
-         wDSr2h6Yfy4WOUnRhizfobsqLx/p4bIOv9GeJUABS0RIZDJpsK4vh2XzZ4ASe4KYWXvz
-         Iw7AY8bbZ3YPl06EaIYRlI+ZqDk2/Bxw4r1J/yriK6i96vLcYLhr7yh7liNiM/7tolUK
-         PHEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730207789; x=1730812589;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G4FgCQ6GkthTlMOY7Hwmvw1LED0yrWV2Of7OG03sNbg=;
-        b=jxtACfokohOSCn0/r+DkT3G/T6wmFgVnAtmP4YupdQpHt1lGdBdyNDcgNPm/fsNFdy
-         aZVuQOKZ2OkQSYbKzOAUQT3q9KTrCufibI12WeavwpWi/iZIWsq03TpDliqRuGxSBfFu
-         E6Ja+zoTeR4kQ0+p21khl48dpUjPHZOqzUcRMer/pw7H0mFaCui8mg5/202vS+dHaTWc
-         uSe3sZFKQYa4cWAXgPciiCnMRaJR5pE0gn/myTCG/gRLX2etg6SjWwfhWjE2Epqa/PPT
-         oINCBjIDKAlrlkZztPaQa7RsDN2KQPKl74UTxvwf2tUMpaSyeVW4jpnshshcsaGHLcDV
-         3dUg==
-X-Forwarded-Encrypted: i=1; AJvYcCXpolkj4JueB9ldFc0n0hA2daQU9VLcJU9xRNN841ehJsuvo/sx68gITWnelepS6tMjXWcO9M/9X8M6CbQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXzazTe6IKM4FVQ/HUAnhAlDQx0dN8jW/lFKcfcc+VNxXB2jv7
-	I+Ke43r1VrQyqKfUxxVsRCt2ikW9KiuGeo7q59BZbNCYRdu3+9sQMzKjXixmWhJJaiR0LqvMneZ
-	0YJSrU3Uu1LjyFO2BVxPhwxUzk0vejmpyerjc
-X-Google-Smtp-Source: AGHT+IG7aPEWXrKU2oQ6UttFO6K5zHHkqze1cQRhd6cCywBZr/BAJUMAwKfw3MVUjRift3AdGsm8Yxujz0XZfRoELXY=
-X-Received: by 2002:a17:902:d4c3:b0:20b:b0ab:4fc3 with SMTP id
- d9443c01a7336-210c6c934c1mr173443635ad.49.1730207789184; Tue, 29 Oct 2024
- 06:16:29 -0700 (PDT)
+	s=arc-20240116; t=1730207800; c=relaxed/simple;
+	bh=u0nOwaNOrm76d4nVlVeX8pBWNT44H10KAZQbiT2q5Yw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BWw901DFXQG5OtMH3LX4WViIgaTinKQ99rHXQOOPlofRlnbj1QtcP94GVSwo6zvr7QMTRWItVEvxYGiyzaEjFA14GQ1iKkKyImvk5cSNGJear/IX+ntWjh7S0b6I1/+x/Qj1c73DkiD1mUpKjAT2vDVYs1R4MnjLR9ApZq86QnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Xd9kQ2qs7z4f3jdc
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:16:14 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 14A6A1A0194
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:16:32 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.84.45.119])
+	by APP4 (Coremail) with SMTP id gCh0CgBHIoYs4CBni_QeAQ--.56221S4;
+	Tue, 29 Oct 2024 21:16:31 +0800 (CST)
+From: Yang Yingliang <yangyingliang@huaweicloud.com>
+To: jassisinghbrar@gmail.com,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	yangyingliang@huawei.com,
+	bobo.shaobowang@huawei.com
+Subject: [PATCH] mailbox: mtk-cmdq: fix wrong use of sizeof in cmdq_get_clocks()
+Date: Tue, 29 Oct 2024 21:16:28 +0800
+Message-ID: <20241029131628.1610-1-yangyingliang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022213221.2383-1-dakr@kernel.org> <20241022213221.2383-16-dakr@kernel.org>
-In-Reply-To: <20241022213221.2383-16-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Tue, 29 Oct 2024 14:16:14 +0100
-Message-ID: <CAH5fLgiab5vssuQ2CO4kuKHhhWma=17858w8wbtmYUOXA-Cd1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
- driver abstractions
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHIoYs4CBni_QeAQ--.56221S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrtw43CrykGF4xJFWxury5XFb_yoWftFc_ZF
+	1UAryxWryUAF1fJwnxta13Ja9Fvrn8uFs2kr9a93sxW347Zry5Ar1DWr4Fvw47WrWDKrW3
+	Aa1ktr18Jw1xCjkaLaAFLSUrUUUUbb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbzAYFVCjjxCrM7AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E6xAIw20E
+	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
+	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x02
+	67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
+X-CM-SenderInfo: 51dqw5xlqjzxhdqjqx5xdzvxpfor3voofrz/
 
-On Tue, Oct 22, 2024 at 11:33=E2=80=AFPM Danilo Krummrich <dakr@kernel.org>=
- wrote:
-> +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`] matching t=
-he given [`Device`], if any.
-> +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceId> {
-> +        let table =3D Self::ID_TABLE;
-> +
-> +        // SAFETY:
-> +        // - `table` has static lifetime, hence it's valid for read,
-> +        // - `dev` is guaranteed to be valid while it's alive, and so is
-> +        //   `pdev.as_dev().as_raw()`.
-> +        let raw_id =3D unsafe { bindings::of_match_device(table.as_ptr()=
-, pdev.as_dev().as_raw()) };
-> +
-> +        if raw_id.is_null() {
-> +            None
-> +        } else {
-> +            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of =
-`struct of_device_id` and
-> +            // does not add additional invariants, so it's safe to trans=
-mute.
-> +            Some(unsafe { &*raw_id.cast::<of::DeviceId>() })
-> +        }
-> +    }
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-Sorry if this has already been mentioned, but this method should
-probably be marked #[cfg(CONFIG_OF)] so that you can use these
-abstractions even if OF is disabled.
+It should be size of the struct clk_bulk_data, not data pointer pass to
+devm_kcalloc().
 
-Alice
+Fixes: aa1609f571ca ("mailbox: mtk-cmdq: Dynamically allocate clk_bulk_data structure")
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/mailbox/mtk-cmdq-mailbox.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/mailbox/mtk-cmdq-mailbox.c b/drivers/mailbox/mtk-cmdq-mailbox.c
+index 4bff73532085..9c43ed9bdd37 100644
+--- a/drivers/mailbox/mtk-cmdq-mailbox.c
++++ b/drivers/mailbox/mtk-cmdq-mailbox.c
+@@ -584,7 +584,7 @@ static int cmdq_get_clocks(struct device *dev, struct cmdq *cmdq)
+ 	struct clk_bulk_data *clks;
+ 
+ 	cmdq->clocks = devm_kcalloc(dev, cmdq->pdata->gce_num,
+-				    sizeof(cmdq->clocks), GFP_KERNEL);
++				    sizeof(*cmdq->clocks), GFP_KERNEL);
+ 	if (!cmdq->clocks)
+ 		return -ENOMEM;
+ 
+-- 
+2.33.0
+
 
