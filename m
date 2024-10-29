@@ -1,192 +1,160 @@
-Return-Path: <linux-kernel+bounces-387307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F65E9B4F45
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:26:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 432A49B4F49
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:27:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0BD71C20D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:26:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6739B1C219AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:27:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D161990CD;
-	Tue, 29 Oct 2024 16:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33993199949;
+	Tue, 29 Oct 2024 16:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dMIM15a4"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urbEN6hN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10B02107
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:26:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798BA2107;
+	Tue, 29 Oct 2024 16:27:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730219199; cv=none; b=FrydU9wQ3wQSd/TEXaSXOBBUh3YDb9dYpOJscUybQTXaEE36yVoFiy7d999JWmnTV2PsP20MgKiyi4u/WGxv7xMt6Nl9giosbqLWxu0lHs7b6S+XEnv+wDjZebcacoI09Hn2EU9SSxP2BpvYgkiu23073rOhhEKfW/oYXhAlzMs=
+	t=1730219254; cv=none; b=U+tIofre2W1tNIXuKNsC2KRSDY6KlpLwl0sPHfEAKu09UjQbSZzTRf2RawY6zvVT9DI1/uzlWy3nQGqUoeRk0OM9Q2ijr91oxGMjdPYwqLupVQaxYaxj9NCxfsAyxlHKzt8JOsmlpS9tcQpNQhqu+RYT50lbNQGv4F2b5OF4B+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730219199; c=relaxed/simple;
-	bh=SjbABfLBo4hzIup6rCmtJhqjVs3h1hKpoTPhMIQWOuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P3yTiQdzLWom6D2dNbv6/4JUwuT6vEQihaIDHopzZ1ESaVTsa7SMhZ3zsSgtgdg+OqrqYQqCGd2nBv+EKbO5nv5H3gNZGVI/Ln+fjHLdTHyo8vNkLcsgf0XKaz2rLKaCz7RfVtEKx1qPTQcgbyb4sQTSxtthdPcIZT5GIlOHKtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dMIM15a4; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <4cce154a-1115-4371-a9f2-8bdb4879ea16@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1730219194;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z3SIO11gAxzBORUAwmF5PxUYgrfzJbpOJQSZlkW2Wfg=;
-	b=dMIM15a4oH0M/peynmJ4cMC0vmvM4fsyNmowbgFZpCH+xQokc19h2vEPK/GB6Im5ZZvAH/
-	JC/YMO4FH9AU7xo3EUyZmWaRJMqPuMLFrgEPlhRTtTb6pNamM8UbdyG3Q3NMz1a30XY/OP
-	Pn3NpHRfWeToJdml1Dl8J6og/gmGgNI=
-Date: Wed, 30 Oct 2024 00:26:17 +0800
+	s=arc-20240116; t=1730219254; c=relaxed/simple;
+	bh=Z3N4p1dwXhBN00KOleOrbra5ELWKA6izVcLKfEwUA6c=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EKjWmTXe04/57oc7MPhHZexABGuMichi6i9tdoXuGlJrZQ+GqEUV4lvd2vD/uz1/Whv89HgB5CG+ubl7yHhIz7LVdwVWEnK/wfHoOYMgUZMUyJjc5kIO77BQ+IeEt7mDmiL6zr/T0dFMUzoBgv0QbJQKlNTnW25XPrriWsF3RDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urbEN6hN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF11EC4CEE4;
+	Tue, 29 Oct 2024 16:27:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730219253;
+	bh=Z3N4p1dwXhBN00KOleOrbra5ELWKA6izVcLKfEwUA6c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=urbEN6hNzPqi50TUyCRNw61epjyTQT3YPQmW5yrOe5jO+DwS/+lgpRI2cqFKO9aG6
+	 Tpj1T/xg6ZozpcDEl7bBQMK2X7sOdaEBneyvCIyXryQOP++9U80LeA7l42oOj+pkT8
+	 6cE/IqUz/1R4Ag4cqlzcMruzENyFyNbd7MfJscoCVnAKwYUVB84oKPPa7Ql16tXKUK
+	 z9Y+Bri390dmftkG15PvWU+h0y9tA1SDDv09NpRhzJigMSUi0Lmz8GfSzztArAJAa3
+	 1DhC4k7vUUVWQEbnEA5YIMAoS1pM04G/7l5OlC8meIxRBb4YcnT/VAZUnRNMueaHZ+
+	 GKfjubpSsnUfw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t5p47-007z9Y-LO;
+	Tue, 29 Oct 2024 16:27:31 +0000
+Date: Tue, 29 Oct 2024 16:27:31 +0000
+Message-ID: <868qu63mdo.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Raghavendra Rao Ananta <rananta@google.com>
+Cc: Oliver Upton <oliver.upton@linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org,
+	stable@vger.kernel.org,
+	syzbot <syzkaller@googlegroups.com>
+Subject: Re: [PATCH v2] KVM: arm64: Get rid of userspace_irqchip_in_use
+In-Reply-To: <20241028234533.942542-1-rananta@google.com>
+References: <20241028234533.942542-1-rananta@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Subject: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
-To: Joel Granados <joel.granados@kernel.org>
-Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
- Joel Granados <j.granados@samsung.com>,
- Christian Brauner <brauner@kernel.org>, Dave Young <dyoung@redhat.com>,
- linux-kernel@vger.kernel.org
-References: <20240905134818.4104-1-wen.yang@linux.dev>
- <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Wen Yang <wen.yang@linux.dev>
-In-Reply-To: <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: rananta@google.com, oliver.upton@linux.dev, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, stable@vger.kernel.org, syzkaller@googlegroups.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-
-On 2024/10/23 03:12, Joel Granados wrote:
-> On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
->> The do_proc_dointvec_minmax_conv_param structure provides the minimum and
->> maximum values for doing range checking for the proc_dointvec_minmax()
->> handler, while the do_proc_douintvec_minmax_conv_param structure also
->> provides these min/max values for doing range checking for the
->> proc_douintvec_minmax()/proc_dou8vec_minmax() handlers.
-> Finally got around to reviewing this. Sorry for the wait. Thx for the
-> patch but I don't like how this looks in terms of Integer promotion in
-> 32b architectures.
+On Mon, 28 Oct 2024 23:45:33 +0000,
+Raghavendra Rao Ananta <rananta@google.com> wrote:
 > 
-Yes, thank you for pointing it out.
-We will explain it later.
-
->>
->> To avoid duplicate code, a new proc_minmax_conv_param structure has been
-> I'm not seeing duplicate code here as one is handling the int case and
-> the other is handling the uint case. And it is making sure that all
-> assignments and comparisons are without any Integer Promotion issues.
-> I'm not saying that it cannot be done, but it has to address Integer
-> Promotion issues in 32b architectures.
+> Improper use of userspace_irqchip_in_use led to syzbot hitting the
+> following WARN_ON() in kvm_timer_update_irq():
 > 
->> introduced to replace both do_proc_dointvec_minmax_conv_param and
->> do_proc_douintvec_minmax_conv_param mentioned above.
->>
->> This also prepares for the removal of sysctl_vals and sysctl_long_vals.
-> If I'm not mistaken this is another patchset that you sent separetly. Is
-> it "sysctl: encode the min/max values directly in the table entry"?
+> WARNING: CPU: 0 PID: 3281 at arch/arm64/kvm/arch_timer.c:459
+> kvm_timer_update_irq+0x21c/0x394
+> Call trace:
+>   kvm_timer_update_irq+0x21c/0x394 arch/arm64/kvm/arch_timer.c:459
+>   kvm_timer_vcpu_reset+0x158/0x684 arch/arm64/kvm/arch_timer.c:968
+>   kvm_reset_vcpu+0x3b4/0x560 arch/arm64/kvm/reset.c:264
+>   kvm_vcpu_set_target arch/arm64/kvm/arm.c:1553 [inline]
+>   kvm_arch_vcpu_ioctl_vcpu_init arch/arm64/kvm/arm.c:1573 [inline]
+>   kvm_arch_vcpu_ioctl+0x112c/0x1b3c arch/arm64/kvm/arm.c:1695
+>   kvm_vcpu_ioctl+0x4ec/0xf74 virt/kvm/kvm_main.c:4658
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>   __se_sys_ioctl fs/ioctl.c:893 [inline]
+>   __arm64_sys_ioctl+0x108/0x184 fs/ioctl.c:893
+>   __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+>   invoke_syscall+0x78/0x1b8 arch/arm64/kernel/syscall.c:49
+>   el0_svc_common+0xe8/0x1b0 arch/arm64/kernel/syscall.c:132
+>   do_el0_svc+0x40/0x50 arch/arm64/kernel/syscall.c:151
+>   el0_svc+0x54/0x14c arch/arm64/kernel/entry-common.c:712
+>   el0t_64_sync_handler+0x84/0xfc arch/arm64/kernel/entry-common.c:730
+>   el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
 > 
-
-Yes.
-
-> ...
+> The following sequence led to the scenario:
+>  - Userspace creates a VM and a vCPU.
+>  - The vCPU is initialized with KVM_ARM_VCPU_PMU_V3 during
+>    KVM_ARM_VCPU_INIT.
+>  - Without any other setup, such as vGIC or vPMU, userspace issues
+>    KVM_RUN on the vCPU. Since the vPMU is requested, but not setup,
+>    kvm_arm_pmu_v3_enable() fails in kvm_arch_vcpu_run_pid_change().
+>    As a result, KVM_RUN returns after enabling the timer, but before
+>    incrementing 'userspace_irqchip_in_use':
+>    kvm_arch_vcpu_run_pid_change()
+>        ret = kvm_arm_pmu_v3_enable()
+>            if (!vcpu->arch.pmu.created)
+>                return -EINVAL;
+>        if (ret)
+>            return ret;
+>        [...]
+>        if (!irqchip_in_kernel(kvm))
+>            static_branch_inc(&userspace_irqchip_in_use);
+>  - Userspace ignores the error and issues KVM_ARM_VCPU_INIT again.
+>    Since the timer is already enabled, control moves through the
+>    following flow, ultimately hitting the WARN_ON():
+>    kvm_timer_vcpu_reset()
+>        if (timer->enabled)
+>           kvm_timer_update_irq()
+>               if (!userspace_irqchip())
+>                   ret = kvm_vgic_inject_irq()
+>                       ret = vgic_lazy_init()
+>                           if (unlikely(!vgic_initialized(kvm)))
+>                               if (kvm->arch.vgic.vgic_model !=
+>                                   KVM_DEV_TYPE_ARM_VGIC_V2)
+>                                       return -EBUSY;
+>                   WARN_ON(ret);
 > 
->> @@ -904,8 +890,7 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
->>   		return ret;
->>   
->>   	if (write) {
->> -		if ((param->min && *param->min > tmp) ||
->> -		    (param->max && *param->max < tmp))
->> +		if ((param->min > tmp) || (param->max < tmp))
->>   			return -ERANGE;
->>   
->>   		WRITE_ONCE(*valp, tmp);
->> @@ -936,10 +921,10 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
->>   int proc_douintvec_minmax(const struct ctl_table *table, int write,
->>   			  void *buffer, size_t *lenp, loff_t *ppos)
->>   {
->> -	struct do_proc_douintvec_minmax_conv_param param = {
->> -		.min = (unsigned int *) table->extra1,
->> -		.max = (unsigned int *) table->extra2,
->> -	};
->> +	struct proc_minmax_conv_param param;
->> +
->> +	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
->> +	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : UINT_MAX;
-> This is one of the cases where there is potential issues. Here, if the
->  value of table->extra{1,2}'s value is greater than when
-> the maximum value of a signed long, then the value assigned would be
-> incorrect. Note that the problem does not go away if you remove the
-> "unsigned" qualifier; it remains if table->extra{1,2} are originally
-> unsigned.
-> 
+> Theoretically, since userspace_irqchip_in_use's functionality can be
 
-I set up a CentOS 7.9 32-bit VM on Virtuanbox:
-# uname  -a
-Linux osboxes.org 3.10.0-1160.2.2.el7.centos.plus.i686 #1 SMP Mon Oct 26 
-11:56:29 UTC 2020 i686 i686 i386 GNU/Linux
+nit: this isn't theoretical at all.
 
-And the following test code:
+> simply replaced by '!irqchip_in_kernel()', get rid of the static key
+> to avoid the mismanagement, which also helps with the syzbot issue.
 
-#include <stdio.h>
-#include <stdlib.h>
+Did you have a chance to check whether this had any negative impact on
+actual workloads? Since the entry/exit code is a bit of a hot spot,
+I'd like to make sure we're not penalising the common case (I only
+wrote this patch while waiting in an airport, and didn't test it at
+all).
 
-int main()
-{
-	unsigned int i = 4294967294;
-	long j = i;
+Any such data about it would be very welcome in the commit message.
 
-	printf("original hex(i) = 0x%x\n", i);
-	printf("unsigned int(i) = %lu\n", i);
-	printf("---------------------\n");
-	printf("hex(j) = 0x%x\n", j);
-	printf("long(j) = %ld\n", j);
-	printf("unsigned long(j) = %lu\n", j);
-	printf("int(j) = %d\n", j);
-	printf("unsigned int(j) = %lu\n", j);
-	return 0;
-}
+Thanks,
 
+	M.
 
-./a.out
-
-original hex(i) = 0xfffffffe
-unsigned int(i) = 4294967294
----------------------
-hex(j) = 0xfffffffe
-long(j) = -2
-unsigned long(j) = 4294967294
-int(j) = -2
-unsigned int(j) = 4294967294
-
-
-The original hexadecimal values are the same, using unsigned int, int, 
-unsigned long, or long is just interpreted in different ways.
-
-We also ensure consistency in numerical writing and type conversion in 
-the patch. For example, in proc_rointvec_jiffies, convert to int; And in 
-proc_rouintvec_minmax, it is converted to unsigned int.
-
-
---
-Best wishes,
-Wen
-
-
-> I'm not sure if there are more, but just having one of these things
-> around make me uncomfortable. Please re-work the patch in order to
-> remove this issue in order to continue review.
-> 
-> best
-> 
+-- 
+Without deviation from the norm, progress is not possible.
 
