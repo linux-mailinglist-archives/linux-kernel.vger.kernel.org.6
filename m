@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-386901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD149B495F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:14:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D57C9B4962
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA95D1F241CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:14:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FB881C21455
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C0F205E16;
-	Tue, 29 Oct 2024 12:14:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mbHqvpWa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B9D0206041;
+	Tue, 29 Oct 2024 12:15:10 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C0E20494C;
-	Tue, 29 Oct 2024 12:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D677205E2F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730204078; cv=none; b=aO8eWupB+yKmopBjc4ix1natHdWFyGOHeVef1I/sxqHYZK7FLVc97rVKRHbb3ImdQ+LrctuOEllfbvscnrFR/PxrFFIzCEa9IlpzWjHcbSUXOfsLXZhFsM8NVwl7O07poBHZjIBmeAURWblB/NStAh6ZQZPVYbFwAD/pyTwdJ8c=
+	t=1730204110; cv=none; b=J5oU/PjvzNH+P5eawV+ykuoGbXNN/DbBFOYuQP3/k6tEZzon9AzDcXgQtUGnIur1AiF5UiCxerQ8G/+ptMG27kFDbJpH1aA0RBjNaveWyYdEk89UVktlZauxche3o3tplWsK16cY0jH1HHd1X4xffOaDd3R5HGLAPjyq71JpmGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730204078; c=relaxed/simple;
-	bh=BR6i45E+fltdAgPQmx0HjigX2OYslpqbQUeO9gekmFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9c7tsewY9IKaevgM0gtVvfDTMvR77mjzBx8blch7LuNrKHckoJeHYyHzUIYYpe8+5RbIN9ygBPDvGkm4vJbchHXBdnbQSht14TSUl0fwEyLtDiB80erUsytN4lW7c3gx0pBd3d7UME9hVQlQ9GONDUmSHS28491JzIFlwyO130=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mbHqvpWa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03D13C4CECD;
-	Tue, 29 Oct 2024 12:14:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730204078;
-	bh=BR6i45E+fltdAgPQmx0HjigX2OYslpqbQUeO9gekmFk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mbHqvpWaokzNnIcGyB7eTQi1eTPARCmoS4sQgQ0vmHDg8c8yBYQq9WMsoyZULeimG
-	 rO910Q7ozZrv4gdYk+yS4xPnjqSEWP++HFv4kjSezBZJAv8js8g3Qoksl69Nme/vCZ
-	 fShAOhrfFk1VkCM0rmcuuGe1XaC6+gqojPmvQsPNM6l01w/XfdZygQEXt3thEXUq6f
-	 sZXMn/x0ZWtokWABUg9wzRlAQevLwmgHb0P3XL6EFpLJ8qVJV9aHDl0/PyCNsi56zF
-	 T8LUe00ckPaXiP9NY4LqqCiS9BW2hA9I2Elj6lUENt9HyN71FwwGF/yiQZ1ojIrKD/
-	 /Q0a/2ATdXMwQ==
-Message-ID: <4b87e933-123f-4a98-955c-d92c4bd9e3de@kernel.org>
-Date: Tue, 29 Oct 2024 13:14:31 +0100
+	s=arc-20240116; t=1730204110; c=relaxed/simple;
+	bh=Qo7TfdJLl+ia3sHIR7vXmzlM5ZaJ8oAbTVK7mCVF2eo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=rdVwz5o0a8UoAp1umzvLHbhZYIR09hS3sCIaBjUdArsRAyxseZRxnxR6IVJtZ2AGlb0XeU6bDFC15KByvYSpLYDbHWxKVohRA0HP4odSHFBUKxEsxNS0VEexY86Bfwv95WK6WxseV8d4OMqXElr44WLTl3/WZlSIN9pcQSJmAYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a4eb49864dso33494145ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:15:07 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730204107; x=1730808907;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q0FEm/To/GnDoROuOVyUz33Gm3KH3KARtPCnlf1+kaA=;
+        b=LBQvJm9pQDu1+BP84UG/mKAAcD3jL3qIoV5bbpn0Jpz8Qc4bQxZwo8zzYkBIDSssL9
+         4v9OeQBNMJKzTerZhmA2KN82Gz+8dX9jDFJOU8H7P3HCp/kIW9ZkuGCT6V9EUCDY5AS/
+         GqeTVkxYFYqx4zjBqydLKenpRomaBlZzt3uebdeZm+G/kOA6dnwu+Ys06ACt/X3fLlfH
+         U2CWXomAK/VUZPkm/S7ElawpLFzrI+fwUxVOK5IpEFcvt6mqmavX2VQ9mqre24NWJgH4
+         M45WWa50kOWKmlpVIzeeG5ui9qAir0k/aPVsvnBcHEdf9qcjB5E+7fX5cDz65arlOcuk
+         PGcw==
+X-Gm-Message-State: AOJu0YwsO4ApWX4Uj4Pwakl2E4h9sCgje3a9JlhMlKygGqPLsbY9oUNp
+	6y+uZo4VWYOOg1Zxy+U6nUYcII1iPqrIoVO0PCM81IbOJFBAPERVfujBEqoqBedX49Kq+qJkNQp
+	g+QJ5GL/7d9Mxnx2eRVvOQX0WKbjcdOOyzp8+oZtkD9fCfXUvAKwhEUA=
+X-Google-Smtp-Source: AGHT+IGiZee/wMBHLzyVrDLh+5LUa0Ei4StwwlJqUb4JVr6WuE2ZisHwu46axwsWFRvFgjCA8bxPKQJMsCF9FXv06ET1V8rgRUkw
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/3] arm64: dts: qcom: sm8650: Add ICE allocator
- entries
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
- manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
- avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konrad.dybcio@linaro.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, agross@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_narepall@quicinc.com, quic_nitirawa@quicinc.com
-References: <20241029113003.18820-1-quic_rdwivedi@quicinc.com>
- <20241029113003.18820-3-quic_rdwivedi@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241029113003.18820-3-quic_rdwivedi@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:180e:b0:39f:5e18:239d with SMTP id
+ e9e14a558f8ab-3a4ed2ff79dmr92187545ab.15.1730204107231; Tue, 29 Oct 2024
+ 05:15:07 -0700 (PDT)
+Date: Tue, 29 Oct 2024 05:15:07 -0700
+In-Reply-To: <671f4b6f.050a0220.2b8c0f.0203.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6720d1cb.050a0220.4735a.025c.GAE@google.com>
+Subject: Re: [syzbot] Re: KMSAN: uninit-value in ocfs2_file_read_iter
+From: syzbot <syzbot+a73e253cca4f0230a5a5@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 29/10/2024 12:30, Ram Kumar Dwivedi wrote:
-> +
-> +				instantaneous {
-> +					ice-allocator-name = "instantaneous";
-> +					num-core = <28 28 15 13>;
-> +					status = "okay";
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-NAK, not much improved... and you ignored my response.
+***
 
-Best regards,
-Krzysztof
+Subject: Re: KMSAN: uninit-value in ocfs2_file_read_iter
+Author: dmantipov@yandex.ru
 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git e42b1a9a2557aa94fee47f078633677198386a52
+
+diff --git a/fs/ocfs2/aops.h b/fs/ocfs2/aops.h
+index 45db1781ea73..1d1b4b7edba0 100644
+--- a/fs/ocfs2/aops.h
++++ b/fs/ocfs2/aops.h
+@@ -70,6 +70,8 @@ enum ocfs2_iocb_lock_bits {
+ 	OCFS2_IOCB_NUM_LOCKS
+ };
+ 
++#define ocfs2_iocb_init_rw_locked(iocb) \
++	(iocb->private = NULL)
+ #define ocfs2_iocb_clear_rw_locked(iocb) \
+ 	clear_bit(OCFS2_IOCB_RW_LOCK, (unsigned long *)&iocb->private)
+ #define ocfs2_iocb_rw_locked_level(iocb) \
+diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+index 58887456e3c5..1e37176ac405 100644
+--- a/fs/ocfs2/file.c
++++ b/fs/ocfs2/file.c
+@@ -2390,6 +2390,8 @@ static ssize_t ocfs2_file_write_iter(struct kiocb *iocb,
+ 	} else
+ 		inode_lock(inode);
+ 
++	ocfs2_iocb_init_rw_locked(iocb);
++
+ 	/*
+ 	 * Concurrent O_DIRECT writes are allowed with
+ 	 * mount_option "coherency=buffered".
+@@ -2536,6 +2538,8 @@ static ssize_t ocfs2_file_read_iter(struct kiocb *iocb,
+ 	if (!direct_io && nowait)
+ 		return -EOPNOTSUPP;
+ 
++	ocfs2_iocb_init_rw_locked(iocb);
++
+ 	/*
+ 	 * buffered reads protect themselves in ->read_folio().  O_DIRECT reads
+ 	 * need locks to protect pending reads from racing with truncate.
 
