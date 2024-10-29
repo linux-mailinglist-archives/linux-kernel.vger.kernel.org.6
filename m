@@ -1,197 +1,153 @@
-Return-Path: <linux-kernel+bounces-387003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856689B4AA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:12:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13C5C9B4AA9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A58BAB22B59
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:12:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD8872840C3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1B4206049;
-	Tue, 29 Oct 2024 13:11:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA641F9A99;
+	Tue, 29 Oct 2024 13:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EH4Pvtd9"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13DA65227
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:11:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7625C2ED
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:12:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730207511; cv=none; b=Bk+nGwTSmtLIBKLS3a8a6dITXMQIxb3s/AJzSJ3mDesLCiBSWtqqffgU2r6B2fNHVmfGcV+bpLtpgopl33ReltyMy+dOmgrPHJLVZV+Vx6uaVG/dgM6XwvbkBkd4y5pY8g78ILFTPU9Z4tBdmt8N5j+bRSknpLKoKgJHa/sZEEA=
+	t=1730207538; cv=none; b=QoQ//KdaYrs6onZ8zqvBrIGMJAx7elUg8Eyh5+tHwWCL3Suj2RbD99Prs54i+cHYD3/IqCEjjeLQffUU3WTbCKjyKaTu3/tuFarr3M9QaX5OE0lFwJ25mn7Fp4v6XaiOJFT3yLEjALBe+QOIf+e3ZZ9ANIU/wNfo/7yar7TBduA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730207511; c=relaxed/simple;
-	bh=XzgorTedaw2znQGGv24V6WZlw0DFo07D2KZBoPXv/LQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NFSC3lLmW24jVegfHDtHM4SUJtzrptignQMB2lroTGN+ILsgY9YD2Ct5EfUj6fpsTfPSH9us7g1OCm8EorIvzzxNB3ZXK2yauXLORgM7X/uQVC5sj804nhmysAgHF4moHrIklwqQLtpiu4VLtuYQJldogSAwbFfRfXBd3ASmUpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t5m0M-000489-C2; Tue, 29 Oct 2024 14:11:26 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t5m0K-00120t-1M;
-	Tue, 29 Oct 2024 14:11:24 +0100
-Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1t5m0K-002aPG-0y;
-	Tue, 29 Oct 2024 14:11:24 +0100
-Date: Tue, 29 Oct 2024 14:11:24 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Arun Ramadoss <arun.ramadoss@microchip.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>, Rob Herring <robh@kernel.org>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, UNGLinuxDriver@microchip.com,
-	"Russell King (Oracle)" <linux@armlinux.org.uk>,
-	devicetree@vger.kernel.org, Marek Vasut <marex@denx.de>
-Subject: Re: [PATCH net-next v2 2/5] dt-bindings: net: dsa: ksz: add
- mdio-parent-bus property for internal MDIO
-Message-ID: <ZyDe_ObZ-laVk8c2@pengutronix.de>
-References: <20241029110732.1977064-1-o.rempel@pengutronix.de>
- <20241029110732.1977064-3-o.rempel@pengutronix.de>
- <20241029123107.ssvggsn2b5w3ehoy@skbuf>
+	s=arc-20240116; t=1730207538; c=relaxed/simple;
+	bh=DalTr6KSesO2fNEh/7GLFOsPw4W4aPg7jZFRMiFZBME=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SV0Of/Q7oeZMuGCmvu7tkbjfBREQ0InDcmPSBR1DirJCo8LutKtzm4Zx0RG22vg7tDVJVLaurir7b48Gz8cUeaNTl7vvkL7MouocdScVuCANIXOKwA+vewmd36AYSI9I7yYf+ZFCOHFsy9HRIlosr8RMaKfBGVQiSWoQI1u/Ak0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EH4Pvtd9; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53a097aa3daso4767990e87.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:12:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730207534; x=1730812334; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AsUvFzGFORfkYDgAVvQACC5zCdmfXYvvTdPQxvM3XIE=;
+        b=EH4Pvtd9RruuZb2/XhmkTTbdSsIIXTMQHPr45DQsBHUuVnrlj0SVhCedoKMBTYvzYa
+         cCOEjUEBRAFWvPsFzRuYJx2FcFsIzeyqiXnNBEIhYoBUHgH/7iYMfdk+GTZAaQxGjaY+
+         YoUOupcJOAw5nGeRtIqS1i0lzQGgN4CL+DNtOMLDtF9xrKf9Qp5/fgQHaSu0h4fWZL2Q
+         FE1uvATN0+jHgOBVySHXq21qDlBcvmxJaRILsyDp5oGD200Ko/ls84EPTuu+rYVgiOsQ
+         mraQZ+7w8PpER9XE5h7+u05Drhml7UGQnia/gw8+YO7Iht3RIKZVVoUP7YGIqzBPcD4a
+         +qTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730207534; x=1730812334;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AsUvFzGFORfkYDgAVvQACC5zCdmfXYvvTdPQxvM3XIE=;
+        b=CuuXcRxzDyT5YEe314c7iaxEZS3vFiPD+68pe8P/qai1wDtM6xP1h5SAf5VQRh9gxZ
+         q6zyueypJzcXm8m088olXE5vDICfjifvuyE6mU67ubn3X631EHdP/vjGnfLUkpOGk/V0
+         FKoZyHYpC5raL/W7Y52F3yXcpn2neVkKtDijXyd0y3I9riWAuHn/XYsiLAtI10+/Q1Q7
+         LWnEdTmlshf8enxM0vTObZf74LChwpN6D6r7gxyfii8RyLWzrvArX7bLIcH3eDSBDsbC
+         HiAObCQjXxSo+zsc9/4o0xi/degmlJOxl5EA/bvz6zWk5lHo1YqUT77HwGFM2RezliKc
+         bZVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkTf0ivcWoB3DLCJybjWdFNMycJHMS3iaFlQwzQhWXbR8KXow741q3eVfwCg0jgB4KG0UwBqTZVAXknN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywJwukDZdRfXPOmYZXILb4m8lT5GLsHfQdmrtLirc0dGXeGdg6
+	t0K3BqF5q6AzToF7zVfzZViyisPNNmqqwNOntz6SnlhGJqsMBaOcQmoWKAIEuew=
+X-Google-Smtp-Source: AGHT+IGFp00dxkBL2I0cIJ+CyKncogPa4or3is/rSrNWQLlvdCOjjwDeXdQdY9wXicLggr4Q9p/N4A==
+X-Received: by 2002:a05:6512:4023:b0:539:d428:fbdd with SMTP id 2adb3069b0e04-53b34a31123mr4419550e87.53.1730207533943;
+        Tue, 29 Oct 2024 06:12:13 -0700 (PDT)
+Received: from [192.168.0.140] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b8ffecsm12441925f8f.91.2024.10.29.06.12.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 06:12:13 -0700 (PDT)
+Message-ID: <6f14d8d7-7b9a-49e3-8aa8-5c99571a7104@linaro.org>
+Date: Tue, 29 Oct 2024 15:12:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241029123107.ssvggsn2b5w3ehoy@skbuf>
-X-Sent-From: Pengutronix Hildesheim
-X-URL: http://www.pengutronix.de/
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] soc: qcom: Rework BCM_TCS_CMD macro
+To: Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org
+Cc: andersson@kernel.org, konradybcio@kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, djakov@kernel.org, mturquette@baylibre.com
+References: <20241028163403.522001-1-eugen.hristev@linaro.org>
+ <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org>
+Content-Language: en-US
+From: Eugen Hristev <eugen.hristev@linaro.org>
+In-Reply-To: <bb5d855954d5ff8694a3978a9f87a9d2.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 02:31:07PM +0200, Vladimir Oltean wrote:
-> On Tue, Oct 29, 2024 at 12:07:29PM +0100, Oleksij Rempel wrote:
-> > Introduce `mdio-parent-bus` property in the ksz DSA bindings to
-> > reference the parent MDIO bus when the internal MDIO bus is attached to
-> > it, bypassing the main management interface.
-> > 
-> > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> > ---
-> >  .../devicetree/bindings/net/dsa/microchip,ksz.yaml       | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> > index a4e463819d4d7..121a4bbd147be 100644
-> > --- a/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> > +++ b/Documentation/devicetree/bindings/net/dsa/microchip,ksz.yaml
-> > @@ -84,6 +84,15 @@ properties:
-> >    mdio:
-> >      $ref: /schemas/net/mdio.yaml#
-> >      unevaluatedProperties: false
-> > +    properties:
-> > +      mdio-parent-bus:
-> > +        $ref: /schemas/types.yaml#/definitions/phandle
-> > +        description:
-> > +          Phandle pointing to the MDIO bus controller connected to the
-> > +          secondary MDIO interface. This property should be used when
-> > +          the internal MDIO bus is accessed via a secondary MDIO
-> > +          interface rather than the primary management interface.
-> > +
-> >      patternProperties:
-> >        "^ethernet-phy@[0-9a-f]$":
-> >          type: object
-> > -- 
-> > 2.39.5
-> > 
+
+
+On 10/28/24 19:56, Stephen Boyd wrote:
+> Quoting Eugen Hristev (2024-10-28 09:34:03)
+>> diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+>> index 3acca067c72b..152947a922c0 100644
+>> --- a/include/soc/qcom/tcs.h
+>> +++ b/include/soc/qcom/tcs.h
+>> @@ -60,22 +63,19 @@ struct tcs_request {
+>>          struct tcs_cmd *cmds;
+>>   };
+>>   
+>> -#define BCM_TCS_CMD_COMMIT_SHFT                30
+>> -#define BCM_TCS_CMD_COMMIT_MASK                0x40000000
+>> -#define BCM_TCS_CMD_VALID_SHFT         29
+>> -#define BCM_TCS_CMD_VALID_MASK         0x20000000
+>> -#define BCM_TCS_CMD_VOTE_X_SHFT                14
+>> -#define BCM_TCS_CMD_VOTE_MASK          0x3fff
+>> -#define BCM_TCS_CMD_VOTE_Y_SHFT                0
+>> -#define BCM_TCS_CMD_VOTE_Y_MASK                0xfffc000
+>> +#define BCM_TCS_CMD_COMMIT_MASK                BIT(30)
+>> +#define BCM_TCS_CMD_VALID_MASK         BIT(29)
+>> +#define BCM_TCS_CMD_VOTE_MASK          GENMASK(13, 0)
+>> +#define BCM_TCS_CMD_VOTE_Y_MASK                GENMASK(13, 0)
+>> +#define BCM_TCS_CMD_VOTE_X_MASK                GENMASK(27, 14)
+>>   
+>>   /* Construct a Bus Clock Manager (BCM) specific TCS command */
+>>   #define BCM_TCS_CMD(commit, valid, vote_x, vote_y)             \
+>> -       (((commit) << BCM_TCS_CMD_COMMIT_SHFT) |                \
+>> -       ((valid) << BCM_TCS_CMD_VALID_SHFT) |                   \
+>> -       ((cpu_to_le32(vote_x) &                                 \
+>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |    \
+>> -       ((cpu_to_le32(vote_y) &                                 \
+>> -       BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
+>> +       (le32_encode_bits(commit, BCM_TCS_CMD_COMMIT_MASK) |    \
+>> +       le32_encode_bits(valid, BCM_TCS_CMD_VALID_MASK) |       \
+>> +       le32_encode_bits(vote_x,        \
+>> +                       BCM_TCS_CMD_VOTE_X_MASK) |              \
+>> +       le32_encode_bits(vote_y,        \
+>> +                       BCM_TCS_CMD_VOTE_Y_MASK))
 > 
-> I'm not saying whether this is good or bad, I'm just worried about
-> mixing quantities having different measurement units into the same
-> address space.
+> Why is cpu_to_le32() inside BCM_TCS_CMD at all? Is struct tcs_cmd::data
+> supposed to be marked as __le32?
 > 
-> Just like in the case of an mdio-mux, there is no address space isolation
-> between the parent bus and the child bus. AKA you can't have this,
-> because there would be clashes:
-> 
-> 	host_bus: mdio@abcd {
-> 		ethernet-phy@2 {
-> 			reg = <2>;
-> 		};
-> 	};
-> 
-> 	child_bus: mdio@efgh {
-> 		mdio-parent-bus = <&host_bus>;
-> 
-> 		ethernet-phy@2 {
-> 			reg = <2>;
-> 		};
-> 	};
-> 
-> But there is a big difference. With an mdio-mux, you could statically
-> detect address space clashes by inspecting the PHY addresses on the 2
-> buses. But with the lan937x child MDIO bus, in this design, you can't,
-> because the "reg" values don't represent MDIO addresses, but switch port
-> numbers (this is kind of important, but I don't see it mentioned in the
-> dt-binding).
+> Can the whole u32 be constructed and turned into an __le32 after setting
+> all the bit fields instead of using le32_encode_bits() multiple times?
 
-In current state, the driver still require properly configured addresses
-in the devicetree. So, it will be visible in the DT.
+I believe no. The fields inside the constructed TCS command should be 
+little endian. If we construct the whole u32 and then convert it from 
+cpu endinaness to little endian, this might prove to be incorrect as it 
+would swap the bytes at the u32 level, while originally, the bytes for 
+each field that was longer than 1 byte were swapped before being added 
+to the constructed u32.
+So I would say that the fields inside the constructed item are indeed 
+le32, but the result as a whole is an u32 which would be sent to the 
+hardware using an u32 container , and no byte swapping should be done 
+there, as the masks already place the fields at the required offsets.
+So the tcs_cmd.data is not really a le32, at least my acception of it.
+Does this make sense ?
 
-> These are translated by lan937x_create_phy_addr_map() using
-> the CASCADE_ID/VPHY_ADD pin strapping information read over SPI.
-> I.e. with the same device tree, you may or may not have address space
-> clashes depending on pin strapping. No way to tell.
+Eugen
 
-The PHY address to port mapping in the driver is needed to make the
-internal switch interrupt controller assign interrupts to proper PHYs.
-
-It would be possible to assign interrupts per devicetree, but the driver
-was previously implemented to not need it, so i decided to follow this
-design pattern.
-
-The driver can be extended to validate DT addresses, but I was not sure
-that my current decisions are the way to go.
-
-> Have you considered putting the switch's internal PHYs directly under
-> the host MDIO bus node, with their 'real' MDIO bus computed statically
-> by the DT writer based on the pin straps? Yes, I'm aware that this means
-> different pin straps mean different device trees.
-
-Yes, i tried this. In this case, the host MDIO registration procedure
-will fail to find the PHYs, because they are not accessible before
-switch driver initialization. I had in mind some different variants to
-handle it, like:
-- use compatible property in the PHY nodes in the host MDIO node.
-- trigger MDIO re-scan from the switch
-- mimic the MDIO mux. 
-
-The last variant seems to be more or less better fit for this use case.
-
-> Under certain circumstances I could understand this dt-binding design
-> with an mdio-parent-bus, like for example if the MDIO addresses at which
-> the internal PHYs respond would be configurable over SPI, from the switch
-> registers. But I'm not led to believe that here, this is the case.
-
-ack.
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
