@@ -1,124 +1,197 @@
-Return-Path: <linux-kernel+bounces-387447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC989B5171
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:56:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93BD69B5175
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7C4E282B6A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:56:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E19BCB216D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD074200108;
-	Tue, 29 Oct 2024 17:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1332A1DD534;
+	Tue, 29 Oct 2024 17:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sAkSla6H"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I1SVEy9Z"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0BE2F56
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:56:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BFA19A298
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730224562; cv=none; b=SMPlGP8FxvUPuI5tAsGZ7d92wTonflFOmG7esO+bpNZKgUuD2LqkZdyIsge4gkbZ3Kf1tkRsBd78NkLRS/rZEDSuFLkfOWPXAkJ3BX++2wyTZx2feXX0yWCg8qAnJJBrXOhb9x2Y2+UPFeUfex8gidp7ScO93mAS4JwmDvCi+nw=
+	t=1730224706; cv=none; b=reqNHKDYbR/u8JUUr5uqiVLHnFSZZ30piPyAGVeZwxImgZxRuBQmba7+rnnba9KpRXxCNnAJURwBXuXy77FdOsvdGE5ZJKcCOixMauTiMueQVbZhN8J1rurxLhcKfowbBuIrOTAfAX6RpF79AyMbq9GITl4WiYBCca1oDLCnla8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730224562; c=relaxed/simple;
-	bh=ieIdqgMIiUKJ0zB5p21X+kZG8OPXNs3tca5xfQRaBq0=;
+	s=arc-20240116; t=1730224706; c=relaxed/simple;
+	bh=uVw5VKSy48THoYBNFE7eeeSMqsWNoLuz0zk0O2YvdHA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LJxpT/87v2UgcsxAwO84pKzVsns+mx+Ibs5lfw8voV+WKaFaePPzGRrU+tILN0RKVgvIqYLOvdtlenql6PBsyiFP7grVWmfOg8W6XM9xGQ8tdzKSTCS/KcjR41mJriZst6ogk2ws1r6gpUcKKM0W+Hv69R1Y83xTvpPH4/BRh58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sAkSla6H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5274CC4CECD;
-	Tue, 29 Oct 2024 17:56:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730224561;
-	bh=ieIdqgMIiUKJ0zB5p21X+kZG8OPXNs3tca5xfQRaBq0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sAkSla6HNYCCJesVOIpLb4abqeGSqYSBK+YIqHi92PfJqb60JwTt/jk1UJNFBQFka
-	 iYzkon7wWnwHpKn2dbLWxly9dc3pdTvn24BAIyd5CdSU7umlgxf/+FYxYV2JQ8CTYS
-	 vEx3gh/8sr1wKVb7+XGsnIkX56GOKJZ/iRARBaIi2H0LMbAZyb37CyykwDZxcclfJa
-	 vK04jQKHDs+pLNT2Q6khp2jHAlYxswla+wfMv/qrH+NeWeZ03BLTKSVgsHMJqmZm/E
-	 fO9Q2GmkcVnadDBdzIkeDcLHj93QfQY9+UUdigBrtjy63pn4ojA1YZhwuMd34SoX+P
-	 L/VUREsHvNZQQ==
-Date: Tue, 29 Oct 2024 18:55:58 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 16/26] signal: Replace resched_timer logic
-Message-ID: <ZyEhrrDhDiQ6LwjV@pavilion.home>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.220867629@linutronix.de>
- <ZyEFyV28jcz85V1q@localhost.localdomain>
- <87ttcu281y.ffs@tglx>
- <ZyEOeqkSYWR2XTp_@localhost.localdomain>
- <87jzdq26id.ffs@tglx>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YOb8UUQ2ZMtk1x3X4C0wswG/DBGxlv/pSeBmcN+Sr1W/6jiz2Fwf3JuIVa1qZWo903dNe0VRqtDkSEQHeJOz91IwM2gt6KutMWckjNc+j777BVaFT0yNJdIR9yPZRpbOO/DPAbBN6qZkfTin/x0OvSZx6mrp8G2FPCKwmRGtfLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I1SVEy9Z; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730224703; x=1761760703;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uVw5VKSy48THoYBNFE7eeeSMqsWNoLuz0zk0O2YvdHA=;
+  b=I1SVEy9ZO0Sl2R4Ut7hdyJwCl8e0oiD3UG/v1wu9JpjVqigM5H1MbV9J
+   CFbpLCxqt0JyrhcwMJAE01hU3QOQPpnpQgvz3Jof37iym7Q+HR6ohpsIH
+   N/jpzGif9N9qbXJxzh0RInet6tCB5VwIlgD8lKvixX8m70WeZdQYThaeQ
+   3bxK3spryFiHEwfx7EXLEQEvdydFiJVHSF4pEcVIaOtQGVzWAnR/jDvUv
+   una1bzGZoprupLlHNpeldOZU3Zv1beicH2kPBryXm9e6IgfAgqqjDwBK0
+   JHG2HS4/Nh80F3M3r2Ejac3j0adG/HMBqGyY/+leE971pDHKsl6lWVh3Z
+   g==;
+X-CSE-ConnectionGUID: 0KNtB+E5TK2OnGjkuLz/KQ==
+X-CSE-MsgGUID: GJZP5Tz9RbetGmIqfphLmQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="17520532"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="17520532"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 10:58:23 -0700
+X-CSE-ConnectionGUID: V5K9RZxpTKa1S1OMid/bhQ==
+X-CSE-MsgGUID: H3WnrZOzRsOktKUWL/yrQA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="82466420"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 29 Oct 2024 10:58:19 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5qTx-000dxi-0q;
+	Tue, 29 Oct 2024 17:58:17 +0000
+Date: Wed, 30 Oct 2024 01:57:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: alice.guo@oss.nxp.com, wahrenst@gmx.net, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, "alice.guo" <alice.guo@nxp.com>
+Subject: Re: [PATCH v2] soc: imx: Add SoC device register for i.MX9
+Message-ID: <202410300140.9q3lC7M2-lkp@intel.com>
+References: <20241029083406.3888861-1-alice.guo@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87jzdq26id.ffs@tglx>
+In-Reply-To: <20241029083406.3888861-1-alice.guo@oss.nxp.com>
 
-Le Tue, Oct 29, 2024 at 05:55:38PM +0100, Thomas Gleixner a écrit :
-> On Tue, Oct 29 2024 at 17:34, Frederic Weisbecker wrote:
-> 
-> > Le Tue, Oct 29, 2024 at 05:22:17PM +0100, Thomas Gleixner a écrit :
-> >> On Tue, Oct 29 2024 at 16:56, Frederic Weisbecker wrote:
-> >> >> @@ -568,10 +568,10 @@ static void collect_signal(int sig, stru
-> >> >>  		list_del_init(&first->list);
-> >> >>  		copy_siginfo(info, &first->info);
-> >> >>  
-> >> >> -		*resched_timer = (first->flags & SIGQUEUE_PREALLOC) &&
-> >> >> -				 (info->si_code == SI_TIMER);
-> >> >> -
-> >> >> -		__sigqueue_free(first);
-> >> >> +		if (unlikely((first->flags & SIGQUEUE_PREALLOC) && (info->si_code == SI_TIMER)))
-> >> >> +			*timer_sigq = first;
-> >> >> +		else
-> >> >> +			__sigqueue_free(first);
-> >> >
-> >> > So this isn't calling __sigqueue_free() unconditionally anymore. What if
-> >> > the timer has been freed already, what is going to free the sigqueue?
-> >> 
-> >> __sigqueue_free() does not free timers marked with SIGQUEUE_PREALLOC.
-> >> 
-> >> sigqueue_free() takes care of that, which is invoked from
-> >> posixtimer_free_timer(). It clears SIGQUEUE_PREALLOC and if it is queued
-> >> it lets it pending and delivery will free it.
-> >
-> > But the delivery freeing used to be done with the __sigqueue_free()
-> > above, which doesn't happen anymore, right?
-> 
-> It still happens because SIGQUEUE_PREALLOC is cleared in sigqueue_free()
-> 
-> __sigqueue_free() has
->        if (q->flags & PREALLOC)
->        	     return;
-> 
-> So the old code called __sigqueue_free() unconditionally which just
-> returned. But now we have a condition to that effect already, so why
-> call into __sigqueue_free() for nothing?
+Hi,
 
-1) Signal is queued
-2) Timer is deleted, sigqueue() clears SIGQUEUE_PREALLOC but doesn't go
-   further because the sigqueue is queued
-3) Signal is collected and delivered but it's not calling __sigqueue_free()
-   so the sigqueue is not released.
+kernel test robot noticed the following build warnings:
 
-This is "fixed" on the subsequent patch which uses embedded sigqueue and
-rcuref but this patch alone breaks.
+[auto build test WARNING on shawnguo/for-next]
+[also build test WARNING on linus/master v6.12-rc5 next-20241029]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Or am I missing something that prevents it?
+url:    https://github.com/intel-lab-lkp/linux/commits/alice-guo-oss-nxp-com/soc-imx-Add-SoC-device-register-for-i-MX9/20241029-163718
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241029083406.3888861-1-alice.guo%40oss.nxp.com
+patch subject: [PATCH v2] soc: imx: Add SoC device register for i.MX9
+config: i386-buildonly-randconfig-003-20241029 (https://download.01.org/0day-ci/archive/20241030/202410300140.9q3lC7M2-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300140.9q3lC7M2-lkp@intel.com/reproduce)
 
-Thanks.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410300140.9q3lC7M2-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/soc/imx/soc-imx9.c:48:44: warning: format specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+      48 |                 pr_err("%s: SMC failed: %d\n", __func__, res.a0);
+         |                                         ~~               ^~~~~~
+         |                                         %lu
+   include/linux/printk.h:533:33: note: expanded from macro 'pr_err'
+     533 |         printk(KERN_ERR pr_fmt(fmt), ##__VA_ARGS__)
+         |                                ~~~     ^~~~~~~~~~~
+   include/linux/printk.h:490:60: note: expanded from macro 'printk'
+     490 | #define printk(fmt, ...) printk_index_wrap(_printk, fmt, ##__VA_ARGS__)
+         |                                                     ~~~    ^~~~~~~~~~~
+   include/linux/printk.h:462:19: note: expanded from macro 'printk_index_wrap'
+     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ~~~~    ^~~~~~~~~~~
+   1 warning generated.
+
+
+vim +48 drivers/soc/imx/soc-imx9.c
+
+    17	
+    18	static int imx9_soc_device_register(void)
+    19	{
+    20		struct soc_device_attribute *attr;
+    21		struct arm_smccc_res res;
+    22		struct soc_device *sdev;
+    23		u32 soc_id, rev_major, rev_minor;
+    24		u64 uid127_64, uid63_0;
+    25		int err;
+    26	
+    27		attr = kzalloc(sizeof(*attr), GFP_KERNEL);
+    28		if (!attr)
+    29			return -ENOMEM;
+    30	
+    31		err = of_property_read_string(of_root, "model", &attr->machine);
+    32		if (err) {
+    33			pr_err("%s: missing model property: %d\n", __func__, err);
+    34			goto attr;
+    35		}
+    36	
+    37		attr->family = kasprintf(GFP_KERNEL, "Freescale i.MX");
+    38	
+    39		/*
+    40		 * Retrieve the soc id, rev & uid info:
+    41		 * res.a1[31:16]: soc revision;
+    42		 * res.a1[15:0]: soc id;
+    43		 * res.a2: uid[127:64];
+    44		 * res.a3: uid[63:0];
+    45		 */
+    46		arm_smccc_smc(IMX_SIP_GET_SOC_INFO, 0, 0, 0, 0, 0, 0, 0, &res);
+    47		if (res.a0 != SMCCC_RET_SUCCESS) {
+  > 48			pr_err("%s: SMC failed: %d\n", __func__, res.a0);
+    49			err = res.a0;
+    50			goto family;
+    51		}
+    52	
+    53		soc_id = SOC_ID(res.a1);
+    54		rev_major = SOC_REV_MAJOR(res.a1);
+    55		rev_minor = SOC_REV_MINOR(res.a1);
+    56	
+    57		attr->soc_id = kasprintf(GFP_KERNEL, "i.MX%2x", soc_id);
+    58		attr->revision = kasprintf(GFP_KERNEL, "%d.%d", rev_major, rev_minor);
+    59	
+    60		uid127_64 = res.a2;
+    61		uid63_0 = res.a3;
+    62		attr->serial_number = kasprintf(GFP_KERNEL, "%016llx%016llx", uid127_64, uid63_0);
+    63	
+    64		sdev = soc_device_register(attr);
+    65		if (IS_ERR(sdev)) {
+    66			err = PTR_ERR(sdev);
+    67			goto soc_id;
+    68		}
+    69	
+    70		return 0;
+    71	
+    72	soc_id:
+    73		kfree(attr->soc_id);
+    74		kfree(attr->serial_number);
+    75		kfree(attr->revision);
+    76	family:
+    77		kfree(attr->family);
+    78	attr:
+    79		kfree(attr);
+    80		return err;
+    81	}
+    82	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
