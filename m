@@ -1,246 +1,246 @@
-Return-Path: <linux-kernel+bounces-386269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53D7C9B413B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:47:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEB89B4130
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:46:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806F41C21557
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:47:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B41FE1F22D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E267A1FF603;
-	Tue, 29 Oct 2024 03:47:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888F8200B88;
+	Tue, 29 Oct 2024 03:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="E/JaLWrE"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gtowu2h4"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B1777BB0A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC34282FB;
+	Tue, 29 Oct 2024 03:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730173646; cv=none; b=hGr5QfR4zVvqen3dyEKGOlsx/8i7+hjcLguip3AMObaGBThvMOH5kuzq2K+gEn2DFwa969ZwTjA3Z/yHg0LYsRV1/Sfi1EsgjDC241kIQofvq6zNB0q0ApLq3Vhys0AJGKOJEbHLM8SX4J8vaK1OFtVM64axcLjZOVpIwQ0XE9c=
+	t=1730173545; cv=none; b=cU7VKgyN9Tbvo4XaXV/Z9jcFkjBu/61ZvBF71HWbW2+z2ElSZ3zPizBqzwhtni4HG87khRIMTjkAyUyFtQJdsbMJpfzChO9VgjovyiioqkMgcRxaVn6Fpe/TLMcL0y+77SsK7jwMe2T1saPLDxsa2QKH/CK6Vov0kjv0pQ36C6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730173646; c=relaxed/simple;
-	bh=2zhtoWxv/vKGf1aYno22Freq5lwsRi0n2wH7n1xvSEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pz5ePoS6jh/xf05vvu0vhoFa0fS8ZCP0XRyNOmS4aoPtMaKhAdF/8LkCg0bOYO9vrHd8wNiWwW7P7jqaMbqrAtOHun0MPLU7xyYrgY4hZtN3JJYtHccNPJ1zTkmXfe0BN+Y+LJxCdSwyrZe4Gw4XGY+Zfk7i09Svpq0Kk/4gSI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=E/JaLWrE; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1730173495;
-	bh=DQIhbLNlt9DvsLjiQNN/rundzjZSVfwFY+R/5zDuZFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=E/JaLWrE2FMNsJysY3dGuSP1vMB5Yj9g8BStOel2dIQtMdj0t/Axk8+RYxy4qOuSr
-	 ZNjM9gKY7WiHlawkpTmdX0kcCNXDloigyn2xbtMo+qz7gEKWCX9pgahBL9AzBRcjfn
-	 aVI907zvNfnjfyRWY4d4doopKMfeZntFV+OkXWY0=
-X-QQ-mid: bizesmtpsz14t1730173478tp4j2l
-X-QQ-Originating-IP: O3UGPyux8Ewa1dPqE/PX0ukXv8GpTX8LK01ws1TILBg=
-Received: from [10.12.18.83] ( [123.124.208.226])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 29 Oct 2024 11:44:36 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 18159466664826028980
-Message-ID: <42343B920E2D57E3+7852570a-367a-491c-a4bd-56cbabf747f8@uniontech.com>
-Date: Tue, 29 Oct 2024 11:44:36 +0800
+	s=arc-20240116; t=1730173545; c=relaxed/simple;
+	bh=XYnM6DX+CYxWd6ljUMrgeFtnN/QrAB98BtTRnD5Ohn8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MiR/hcCUb0gDngSvQhBeGQPD+IZPoTW4Xq9DDjwYwu9NUQ/h/AG4qCdlLjGD+UJyudlbaMZZztjdpOeXGBx1ieFPpGM11lRP5sRV+oQ2/vIgyo+dO1IgY+C0l60yFiqIj+cQuWjvkhEjAGd/PkrNe1JtXRx7Mn2cBi2dhZVHQnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gtowu2h4; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e2974743675so4472896276.1;
+        Mon, 28 Oct 2024 20:45:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730173542; x=1730778342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T/CTs5K1y1Wb1h73no9mebagu5POeGng1N3JgW2OuRU=;
+        b=Gtowu2h4SGC7DktSemUBNe3r4C20PuuQUK1Gu13xI6e/FzBpc6IK+U5Xtv2IntjXSo
+         E/mdfhK58XXJ6Nmo511UJF8+qnTHJ3QvrtDdBQirngGPLaK4iv/qJx9re8QSbQ3XYhtt
+         W4Hm8gNlTjDjX3FZ7MxCSx4KJGQXa/hsQQpTuDwUN89K5E4Hi9QagrHiuifwTOTtI6gA
+         +b1QLEEATwH7r0iBWRsC+hHQyPqtchS6ycs94PG2YO3inqkwSVolknfWdGjfQduQbhZS
+         4qutj6pb2Gpa/EOuXiHiuEH4iPTSaH29O+HQflMy0BvcFUB0bYmsC10NCYE5SGNy3OWo
+         ifbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730173542; x=1730778342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T/CTs5K1y1Wb1h73no9mebagu5POeGng1N3JgW2OuRU=;
+        b=t5i8r6dSCwm8eh0UCn896urLAM+3epkSM9lcBqYB6b3P1aoI4KXVqFRjR1O/cqW2je
+         BMgH5cLTwqJ+cvnGbmwJBrrPWbpL0spBB2RAd5XZmbkyU7RKtpRIPTbQ2U3l9xbFl4KU
+         Gw253pZRTdsSQSMNQHMIR6hValDX6getVKGCKPMYFUz4UYS6I7u+RUe4+9Pl5nJuQTt4
+         ut/fjBngAFYXY4XD5OejU+3fbotvFmv6pJPMP8DXRpRNKcjC1oqiZ44/JW9tdO10l6Qt
+         Y5HVHmiouDUp7qhhJtgmO8cLpWpOinM/H5faPk7oR3yS4BRzk7JntSlAcyFjd2HxFU1A
+         ubdA==
+X-Forwarded-Encrypted: i=1; AJvYcCURcLGxst1+NU9cIT5bXYzfKvq1OhgGIkaKyW7Ri6MdUap5aSYEpgl7z8GnVuiNu0hp96JUC34I@vger.kernel.org, AJvYcCVLpI+LIcNFeJPFqtgZIQ2tsbWzTQ7YWsnaPoLNBB2vBBlnLNjri45qawrDzCh0urB8T24MSogosFlGCg==@vger.kernel.org, AJvYcCVXEz+IAHGrePm4MZiwdutlNHBRGkpnm5G1vcZWgRH68ka4v13M4aCe9iM5LepavSF4ciqqVSpVNG8=@vger.kernel.org, AJvYcCW0hbK0CU9DKLaZRoRV1/cDBjvrfeDOwlaiZZYpiSlQ3nTWMZvFG/nK28Iv3FTuiQxN8Du0nRVq9L3TQJaF@vger.kernel.org, AJvYcCWAPdNVkHsOdMKm82yQiPuJodMGvS9cLfznjib4cu/RpZoHf3DAXM4NfnVy8R9XPN80OWxKjQ5/lyGX/sGDzxU=@vger.kernel.org, AJvYcCWZkA/Ebsvrsm1nzQqmVI2QoA1ZLgpgTRitgXjN8jvi04UxfTJXUSdvJJZBI29dEHCW19EocshcjMsD@vger.kernel.org, AJvYcCWkG26bwOBYdHuWuIx/w2ArSIw3v87kU1Y4rlaRyWYjU2BOAb7kM0cLziyhhTStxp9nn8JjpB2oIZmG@vger.kernel.org, AJvYcCWuMZkQ6fiBJUd6dKzdOqopu9ee/4dLre2VnjOYGotjP8a2gaFhmngHb70e9lgWIL+Kf7t2PCK6twu8@vger.kernel.org, AJvYcCXQ9JdtvqAXoRNx/prs/2BJ1/R5lr+9AN9OJrqABJIqbhtaB8GOL7kBwuXkw12C7k2tW+FfHJPkHZTMyXg=@vger.kernel.org, AJvYcCXWHd0MgKNNBFnsAHuLjCoPlYuEUNEx
+ lw2sttxwdG7itDJKcHe38WKblEkalUz8d8Ebu0alXzNU+97Y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXuBDcQF97Vo9aOSBY2QbzEN1iEoyEskfpXMznDbVuFeJHiGq2
+	JIRFRrYrFA/4rwSxWfoURJb/LvIvvRHnE8HDCUl65E04W88xv3VvrwGjfWotcyiVg7ZrPX+Smna
+	jUxy+V7JjyNEx1npWxMvPC9R4Rek=
+X-Google-Smtp-Source: AGHT+IGfm8i1NTOjdK59ar/oHoMjiqsPSqbc0JD5K9R4kxYreI+daaN7dVKfGowPbsaVFEJzyIlEL4zXfN95OO4rnFY=
+X-Received: by 2002:a05:6902:12cc:b0:e28:faf8:5cd7 with SMTP id
+ 3f1490d57ef6-e3087a6c107mr8166564276.15.1730173542428; Mon, 28 Oct 2024
+ 20:45:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iommu/arm-smmu: Add judgment on the size and granule
- parameters passed in
-To: Robin Murphy <robin.murphy@arm.com>
-Cc: dmitry.baryshkov@linaro.org, gouhao@uniontech.com, iommu@lists.linux.dev,
- jgg@ziepe.ca, joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, robdclark@chromium.org, will@kernel.org
-References: <20241024100224.62942-1-goutongchen@uniontech.com>
- <20241028034823.22838-1-goutongchen@uniontech.com>
- <3d2041e7-95eb-4d60-92ab-d67e2f46531e@arm.com>
-From: =?UTF-8?B?57yR5ZCM55Cb?= <goutongchen@uniontech.com>
-In-Reply-To: <3d2041e7-95eb-4d60-92ab-d67e2f46531e@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-0
-X-QQ-XMAILINFO: MJt5Q2Gt+7dfr8Y4UnBzCtCT5dNMEoRv1KUzPXKBo2WTU2q2dnJ8xa+Q
-	tIL9R3f+G0Z6/w4QS9retf+0dpk+r/Eih7M9gRrIe0g10ey6vS6g//lZdIPqj7GjV6RKZaf
-	j4ObZea0mmMNfj5Y8KjxutfkQrV7Fw/lru8rHl6UZ4/sG35glIt+V99V6m4yn0eGyYZitA9
-	c425aPeCpCiPSzBshScACwlUFBq4US5ytAV5h2Z9iKXxRnrrXWbTFITgWX5NJQrWoEpuX0A
-	eVHGo5Ny7At6AFqc7rBXHmJxbiP3CUwmgIOggAH8dEzXxdVOdhIRM1lXZdsKhYbKB3/rfi+
-	Lup+P4XSeVUEbQUwOLW2Y2ZJw78oguxF+1MiPtxV6wgG7eXNQ+IL2+nS0fMzMl0z1LdMeFw
-	tjRRjsVZ7pOa0XfPHSNF0oUUglNWHbAKoZJbd/KCbsueK3c/RN/FAJVgBpZPTUyOzXdiMGV
-	s8L6tpj72FwYVWVO1h42JNKWV/UOy/R68wWgHmhFI07njUymjsEcsd+Zkrqh/tFxG1fFUWB
-	fBTNMJdvrgCTTH1N8oLZhftFXOvOJdt9ej3tO46ACAjJ0aYfMBybkLJeedwq9uuvl2frZBX
-	VbDjWNPS1QZfu2x6fzd2fZPC7RXSY47fyQ56OQLqTAAyQoDadKoKgQEt15EliQNDSFuaP3Z
-	NwbHDBVFl/ZPU4k2/Vte0KaIXok7lVfDduiyCa1K/oEstfodyo34HxA4u/pud+od4C6ZoMK
-	fxhbV/6TfyaE+3kSqnbi/r4bfSMoViWRf8Hvt1xzNCaaLY/uL14hk6OMfE8RpXS56YuHwxa
-	AkXxI6SXwKiQGcmKCYPxzOrbWHfJrqBbeFBbknh/G1Wd9YPSr7MIUoRiO4qCbVdydyaSm1d
-	78Brdq3JUakWJpTW/bq4eVspLNVdGtqKswavyXA81iGiVdOH7joVc3BZxI7jzx4JnC8egXg
-	obCkDFBiMdVJuRQVVyfq5BvyhxAkFxC/5aTA=
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-X-QQ-RECHKSPAM: 0
+References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-2-tmyu0@nuvoton.com>
+ <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de>
+ <CAOoeyxUhnyYG3p+DQJG-tvU5vc5WYQZLLqCXW=uPcXTjq2gVfw@mail.gmail.com>
+ <20241025-truthful-honest-newt-c371c8-mkl@pengutronix.de> <CAOoeyxUEf5vjqL67WjR-DbrhE0==2hqHLEyZ5XEBhEfMfQ5pag@mail.gmail.com>
+ <20241025-spirited-nocturnal-antelope-ce93dd-mkl@pengutronix.de>
+ <CAOoeyxW5QwPMGAYCWhQDtZwJJLG5xj9HXpL3-cduRSgF+4VHhg@mail.gmail.com>
+ <20241028-uptight-modest-puffin-0556e7-mkl@pengutronix.de>
+ <CAOoeyxU1r3ayhNWrbE_muDhA0imfZYX3-UHxSen9TqsTrSsxyA@mail.gmail.com> <20241028-observant-gentle-doberman-0a2baa-mkl@pengutronix.de>
+In-Reply-To: <20241028-observant-gentle-doberman-0a2baa-mkl@pengutronix.de>
+From: Ming Yu <a0282524688@gmail.com>
+Date: Tue, 29 Oct 2024 11:45:30 +0800
+Message-ID: <CAOoeyxWh1-=NVQdmNp5HBzf1YPo9tQdh=OzUUVFmvC-F7sCHWg@mail.gmail.com>
+Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
+To: Marc Kleine-Budde <mkl@pengutronix.de>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl, 
+	andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, andrew+netdev@lunn.ch, 
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	linux-rtc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Marc Kleine-Budde <mkl@pengutronix.de> =E6=96=BC 2024=E5=B9=B410=E6=9C=8828=
+=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8810:06=E5=AF=AB=E9=81=93=EF=
+=BC=9A
+>
+> On 28.10.2024 16:31:25, Ming Yu wrote:
+> > > > > > > > > The Linux USB stack can receive bulk messages longer than=
+ the max packet size.
+> > > > > > > >
+> > > > > > > > [Ming] Since NCT6694's bulk pipe endpoint size is 128 bytes=
+ for this MFD device.
+> > > > > > > > The core will divide packet 256 bytes for high speed USB de=
+vice, but
+> > > > > > > > it is exceeds
+> > > > > > > > the hardware limitation, so I am dividing it manually.
+> > > > > > >
+> > > > > > > You say the endpoint descriptor is correctly reporting it's m=
+ax packet
+> > > > > > > size of 128, but the Linux USB will send packets of 256 bytes=
+?
+> > > > > >
+> > > > > > [Ming] The endpoint descriptor is correctly reporting it's max =
+packet
+> > > > > > size of 256, but the Linux USB may send more than 256 (max is 5=
+12)
+> > > > > > https://elixir.bootlin.com/linux/v6.11.5/source/drivers/usb/hos=
+t/xhci-mem.c#L1446
+> > > > >
+> > > > > AFAIK according to the USB-2.0 spec the maximum packet size for
+> > > > > high-speed bulk transfers is fixed set to 512 bytes. Does this me=
+an that
+> > > > > your device is a non-compliant USB device?
+> > > >
+> > > > We will reduce the endpoint size of other interfaces to ensure that=
+ MFD device
+> > > > meets the USB2.0 spec. In other words, I will remove the code for m=
+anual
+> > > > unpacking in the next patch.
+> > >
+> > > I was not talking about the driver, but your USB device. According to
+> > > the USB2.0 spec, the packet size is fixed to 512 for high-speed bulk
+> > > transfers. So your device must be able to handle 512 byte transfers o=
+r
+> > > it's a non-compliant USB device.
+> >
+> > I understand. Therefore, the USB device's firmware will be modified to =
+support
+> > bulk pipe size of 512 bytes to comply with the USB 2.0 spec.
+>
+> Then you don't need manual segmentation of bulk transfers anymore!
 
-在 2024/10/28 19:41, Robin Murphy 写道:
-> On 2024-10-28 3:48 am, goutongchen@uniontech.com wrote:
->> From: goutongchen <goutongchen@uniontech.com>
->>
->> In the arm_smmu_tlb_inv_range_s1 and arm_smmu_tlb_inv_range_s2
->> functions, the size and granule passed in must be judged.
->> It must be ensured that the passed in parameter is not 0 and
->> the size is an integer multiple of the granule, otherwise it
->> will cause an infinite while loop.
->>
->> This was encountered during testing, and was initially triggered
->> by passing in a size value of 0, causing the kernel to crash.
->
-> Still NAK. If there is a bug in the upstream io-pgtable-arm code which 
-> can actually cause this, please send a patch to fix *that* bug. 
-> Otherwise, if you've made a broken downstream change then it is not 
-> upstream's responsibility to maintain unnecessary code in a 
-> questionable attempt to paper over (some small subset of) such 
-> brokenness.
->
-> If you pass any sufficiently large size value which *does* happen to 
-> be a multiple of the granule, you're still going to see the same RCU 
-> stalls and failure to progress within reasonable time. If you pass 
-> something inappropriate for the "cookie" pointer, you're likely to 
-> corrupt memory or really crash. If you pass arguments which all look 
-> plausible but still don't match what actually needs invalidating, the 
-> consequences of under-invalidation can be even more subtle, nasty and 
-> hard to debug.
->
-> The iommu_flush_ops are not a public interface intended to be called 
-> arbitrarily from anywhere in the kernel with unchecked input, they are 
-> a low-level private interface between IOMMU drivers and their 
-> respective io-pgtable implementations, and as such they are designed 
-> for their callers to call them correctly by construction. Calling them 
-> incorrectly indicates a serious bug in the caller, since getting 
-> mapping and/or TLB invalidation wrong often leads to memory corruption 
-> or other issues down the line. Hence I'm not convinced this change is 
-> actually even desirable as a downstream debugging aid - if you're 
-> lucky enough to get stuck on an obviously-wrong call here, that's 
-> surely the clearest possible indication of the source of the bug in 
-> its calling context, far better than trying to ignore it and then 
-> having it drowned out by more distant things blowing up later due to 
-> 2nd- and 3rd-order effects.
->
-> Thanks,
-> Robin.
->
+Understood, thank you very much.
 
-OK! Thanks, very much!
-
-Goutongchen.
-
-
->> [    8.214378][  T675] xhci_hcd 0000:0b:00.0: new USB bus registered, 
->> assigned bus number 1
->> [   68.246185][    C0] rcu: INFO: rcu_sched self-detected stall on CPU
->> [   68.246866][    C0] rcu:     0-....: (5999 ticks this GP) 
->> idle=796c/1/0x4000000000000000 softirq=161/161 fqs=2999
->> [   68.247924][    C0] rcu:     (t=6000 jiffies g=-699 q=1 ncpus=128)
->> [   68.248452][    C0] CPU: 0 PID: 675 Comm: kworker/0:2 Not tainted 
->> 6.6.0-25.02.2500.002.uos25.aarch64 #1
->> [   68.249237][    C0] Hardware name: Inspur     CS5260F 
->> /CS5260F          , BIOS 4.0.16 05/31/22 16:53:51
->> [   68.250029][    C0] Workqueue: events work_for_cpu_fn
->> [   68.250497][    C0] pstate: a0000005 (NzCv daif -PAN -UAO -TCO 
->> -DIT -SSBS BTYPE=--)
->> [   68.251188][    C0] pc : arm_smmu_tlb_inv_range_s1+0xf0/0x158
->> [   68.251704][    C0] lr : arm_smmu_tlb_inv_walk_s1+0x44/0x68
->> [   68.252189][    C0] sp : ffff80008044b780
->> [   68.252530][    C0] x29: ffff80008044b780 x28: 0000000000000000 
->> x27: 0000000000001000
->> [   68.253212][    C0] x26: 0000000000000600 x25: 0000000000000001 
->> x24: 0000000000000600
->> [   68.253857][    C0] x23: 0000000000000000 x22: 0000000000001000 
->> x21: fffffc64e2e59000
->> [   68.254544][    C0] x20: 0000000039c1d1a6 x19: ffff3fe944c40280 
->> x18: 0000000000000000
->> [   68.255240][    C0] x17: 626d756e20737562 x16: ffffb0e7e08c1008 
->> x15: 0000000000000000
->> [   68.255930][    C0] x14: ffff3ef8c1ea15cd x13: ffff3ef8c1ea15cb 
->> x12: fffffcfba30e3880
->> [   68.256538][    C0] x11: 00000000ffff7fff x10: ffff80008044b6b0 x9 
->> : ffffb0e7decd1b5c
->> [   68.257126][    C0] x8 : 0000000000000dc0 x7 : ffff3ee8c4148000 x6 
->> : ffff3ee8c4148000
->> [   68.257822][    C0] x5 : 0000000000000008 x4 : 0000000000000000 x3 
->> : ffff3fe944c40800
->> [   68.258497][    C0] x2 : 0000000000000010 x1 : 0000000000000020 x0 
->> : ffffb0e7dfd6c3d0
->> [   68.259185][    C0] Call trace:
->> [   68.259451][    C0]  arm_smmu_tlb_inv_range_s1+0xf0/0x158
->> [   68.259933][    C0]  arm_smmu_tlb_inv_walk_s1+0x44/0x68
->> [   68.260384][    C0]  __arm_lpae_map+0x1f0/0x2c0
->> [   68.260796][    C0]  arm_lpae_map_pages+0xec/0x150
->> [   68.261215][    C0]  arm_smmu_map_pages+0x48/0x130
->> [   68.261654][    C0]  __iommu_map+0x134/0x2a8
->> [   68.262098][    C0]  iommu_map_sg+0xb8/0x1c8
->> [   68.262500][    C0] 
->> __iommu_dma_alloc_noncontiguous.constprop.0+0x180/0x270
->> [   68.263145][    C0]  iommu_dma_alloc+0x178/0x238
->> [   68.263557][    C0]  dma_alloc_attrs+0xf8/0x108
->> [   68.263962][    C0]  xhci_mem_init+0x1e8/0x6d0
->> [   68.264372][    C0]  xhci_init+0x88/0x1d0
->> [   68.264736][    C0]  xhci_gen_setup+0x284/0x468
->> [   68.265121][    C0]  xhci_pci_setup+0x60/0x1f8
->> [   68.265506][    C0]  usb_add_hcd+0x278/0x650
->> [   68.265860][    C0]  usb_hcd_pci_probe+0x218/0x458
->> [   68.266256][    C0]  xhci_pci_probe+0x7c/0x270
->> [   68.266660][    C0]  local_pci_probe+0x48/0xb8
->> [   68.267074][    C0]  work_for_cpu_fn+0x24/0x40
->> [   68.267548][    C0]  process_one_work+0x170/0x3c0
->> [   68.267999][    C0]  worker_thread+0x234/0x3b8
->> [   68.268383][    C0]  kthread+0xf0/0x108
->> [   68.268704][    C0]  ret_from_fork+0x10/0x20
->>
->> Signed-off-by: goutongchen <goutongchen@uniontech.com>
->> ---
->>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c 
->> b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> index 8321962b3714..fdd7d7e9ce06 100644
->> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
->> @@ -282,6 +282,13 @@ static void arm_smmu_tlb_inv_range_s1(unsigned 
->> long iova, size_t size,
->>       struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
->>       int idx = cfg->cbndx;
->>   +    if (size == 0 || granule == 0 || (size % granule) != 0) {
->> +        dev_err(smmu->dev,
->> +                 "The size or granule passed in is err. size=%zu, 
->> granule=%zu\n",
->> +                 size, granule);
->> +        return;
->> +    }
->> +
->>       if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
->>           wmb();
->>   @@ -309,6 +316,13 @@ static void arm_smmu_tlb_inv_range_s2(unsigned 
->> long iova, size_t size,
->>       struct arm_smmu_device *smmu = smmu_domain->smmu;
->>       int idx = smmu_domain->cfg.cbndx;
->>   +    if (size == 0 || granule == 0 || (size % granule) != 0) {
->> +        dev_err(smmu->dev,
->> +                 "The size or granule passed in is err. size=%zu, 
->> granule=%zu\n",
->> +                 size, granule);
->> +        return;
->> +    }
->> +
->>       if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
->>           wmb();
 >
+> > > > > > > > > > +     for (i =3D 0, len =3D length; len > 0; i++, len -=
+=3D packet_len) {
+> > > > > > > > > > +             if (len > nct6694->maxp)
+> > > > > > > > > > +                     packet_len =3D nct6694->maxp;
+> > > > > > > > > > +             else
+> > > > > > > > > > +                     packet_len =3D len;
+> > > > > > > > > > +
+> > > > > > > > > > +             ret =3D usb_bulk_msg(udev, usb_rcvbulkpip=
+e(udev, BULK_IN_ENDPOINT),
+> > > > > > > > > > +                                nct6694->rx_buffer + n=
+ct6694->maxp * i,
+> > > > > > > > > > +                                packet_len, &rx_len, n=
+ct6694->timeout);
+> > > > > > > > > > +             if (ret)
+> > > > > > > > > > +                     goto err;
+> > > > > > > > > > +     }
+> > > > > > > > > > +
+> > > > > > > > > > +     for (i =3D 0; i < rd_len; i++)
+> > > > > > > > > > +             buf[i] =3D nct6694->rx_buffer[i + rd_idx]=
+;
+> > > > > > > > >
+> > > > > > > > > memcpy()?
+> > > > > > > > >
+> > > > > > > > > Or why don't you directly receive data into the provided =
+buffer? Copying
+> > > > > > > > > of the data doesn't make it faster.
+> > > > > > > > >
+> > > > > > > > > On the other hand, receiving directly into the target buf=
+fer means the
+> > > > > > > > > target buffer must not live on the stack.
+> > > > > > > >
+> > > > > > > > [Ming] Okay! I'll change it to memcpy().
+> > > > > > >
+> > > > > > > fine!
+> > > > > > >
+> > > > > > > > This is my perspective: the data is uniformly received by t=
+he rx_bffer held
+> > > > > > > > by the MFD device. does it need to be changed?
+> > > > > > >
+> > > > > > > My question is: Why do you first receive into the nct6694->rx=
+_buffer and
+> > > > > > > then memcpy() to the buffer provided by the caller, why don't=
+ you
+> > > > > > > directly receive into the memory provided by the caller?
+> > > > > >
+> > > > > > [Ming] Due to the bulk pipe maximum packet size limitation, I t=
+hink consistently
+> > > > > > using the MFD'd dynamically allocated buffer to submit URBs wil=
+l better
+> > > > > > manage USB-related operations
+> > > > >
+> > > > > The non-compliant max packet size limitation is unrelated to the
+> > > > > question which RX or TX buffer to use.
+> > > >
+> > > > I think these two USB functions can be easily called using the buff=
+er
+> > > > dynamically
+> > > > allocated by the MFD. However, if they transfer data directly to th=
+e
+> > > > target buffer,
+> > > > they must ensure that it is not located on the stack.
+> > >
+> > > You have a high coupling between the MFD driver and the individual
+> > > drivers anyways, so why not directly use the dynamically allocated
+> > > buffer provided by the caller and get rid of the memcpy()?
+> >
+> > Okay! I will provide a function to request and free buffer for child de=
+vices,
+> > and update the caller's variables to use these two functions in the nex=
+t patch.
 >
+> I don't see a need to provide dedicated function to allocate and free
+> the buffers. The caller can allocate them as part of their private data,
+> or allocate them during probe().
+
+Okay, so each child device may allocate a buffer like this during probe():
+priv->xmit_buf =3D devm_kcalloc(dev, MAX_PACKET_SZ, sizeof(unsigned char),
+GFP_KERNEL), right?
+
+>
+> regards,
+> Marc
+>
+> --
+> Pengutronix e.K.                 | Marc Kleine-Budde          |
+> Embedded Linux                   | https://www.pengutronix.de |
+> Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+> Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+Thanks,
+Ming
 
