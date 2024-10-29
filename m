@@ -1,171 +1,107 @@
-Return-Path: <linux-kernel+bounces-387695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350AD9B54C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:13:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF7249B54CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60ECE1C2116E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:13:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B78A285034
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5479C207A05;
-	Tue, 29 Oct 2024 21:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B2B209699;
+	Tue, 29 Oct 2024 21:15:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="2cFtcmxs"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H8bEqOWA"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038743207
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C913202F8D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:15:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730236431; cv=none; b=mbdsVhNzSfMXJJ1t1zbESCQP46Qg346ngYgw3uvnNfEeG4FjeS6YqW3cyZApKrev0N7Sgv7Zop5RpepO4/gJC0f6T6IXN1cNZIVKbE6vSNRInNF4KsGMqUecHJX5RD5wkeUuan/skn+BbrgXYq7AlINYxNYVzAZcYPW4EopIhYE=
+	t=1730236510; cv=none; b=YVWReFAaJlGzKJreI5Cje4zPdeZLIqAE/dvjiUjCNWDbM4YEAVSgeKVI5l1y7EchktWBb89M+d8DYelIAWeF9VNOhwt9XScrOw3V7eAXY+j59CSI2xlAVOP8uUM/iuIJe9WHCOS3E1l9nYeQVKvXfrVmaJS1DMjceAUfa/PgLn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730236431; c=relaxed/simple;
-	bh=uo/toYeCSKCj5aGUF+L/LlnhwQQw9+cmfQ4mmMv8Q1I=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=jkNyaY089FQTlDdRKzxYzZ57QNsouUbitzj55fecZR3sERr50tTcPudDyPFpK+dJ+rCXjSdmBm/RVdwoFbp/Uykl5HnJlij0r52Lem7NxhvVCzDGix4Wjv2zHNDH2jtadyZXT5WhoxNuZTRLrIk2yJJWlLOhf1rioG8LwxPzMHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=2cFtcmxs; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 862932C0117;
-	Wed, 30 Oct 2024 10:13:45 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1730236425;
-	bh=uo/toYeCSKCj5aGUF+L/LlnhwQQw9+cmfQ4mmMv8Q1I=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=2cFtcmxsG32Pmo7RUg3YMhwhCdv57h/SY+1qDwrgj6rFYfopLCKSst3P0Jp/Jxvkl
-	 lqJ44aNYAph/lCy5f6mYmYxxMEIHiDuJOnLcHO2b1OmjS1uLo5/ETcOlUvYRacTJxl
-	 sVLhLKh5XnUtFFIAVjIiGyv7bfxLeA+NyCJFKuqPJl4MbE4Fa9wQH2HumzxsW0kTlf
-	 J5IhrZakAC9UZdl8oxy3sWr9qs1C+SWNJzgvWLThXYSszBkH9ye1wL2qlKuWwI16Kv
-	 B+E8spDI0DJIZsWvVA6Mmi+NnYGHiva4oFaan14E5Ou4X5yYLD4LsCr2F4U/tqLMQV
-	 K0FAEPgVxHHYw==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B672150090000>; Wed, 30 Oct 2024 10:13:45 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 4397013ED6B;
-	Wed, 30 Oct 2024 10:13:45 +1300 (NZDT)
-Message-ID: <94ffb58b-3242-4ab4-b09a-686116ced781@alliedtelesis.co.nz>
-Date: Wed, 30 Oct 2024 10:13:45 +1300
+	s=arc-20240116; t=1730236510; c=relaxed/simple;
+	bh=4TrdDCKfEgvhGXb+ZYfKmMKnSvr3m029ovWzv+E8mVQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rZHYah9c2uBX16uXw34031sT5SKAWTu7LrEHKWRlpYGH3+6UaZjamfDUHWrUGzE1cDTFqN0ZEXsatpIE4e1+7liR+YMia0ZvE0e27F16aSfB5/yotIsCfIqLxSG6hd4mpWFgcYJdB2CTq503xKxaYcChtsktX9sBplRiDi6gWro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H8bEqOWA; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so4625110b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:15:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730236507; x=1730841307; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4TrdDCKfEgvhGXb+ZYfKmMKnSvr3m029ovWzv+E8mVQ=;
+        b=H8bEqOWAXmChLg3WwYJ4hlOmngO03vjKXj0c0cheHCu6kswCHlSjD0oHkidUbpSm6d
+         n4ovV7wvLEDY1yT9HySZbtX8Dm+FfYWfRpigkpr+yA4KiQYqE3U/1oEcxqG8Ghczxfmt
+         eNcqHhSuIcd1Tkh9K8KhwyshPbKQc3vpPcHAnSw1UnbPJ+w2fPRmOjKp7+AAwR2fUr/w
+         h5kGd4YugLjvgJBNa0ACSy66OMCFmcyRub+EPKpu1pBffCitopncBaLTyZwXUOpGbSmo
+         Oc+19fO9bjEZqra5vRXPxpprwUrKHlFTiWk4Jvnq5YzSqwwlSp5/EfS3y+2Heoo6EHe6
+         MdqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730236507; x=1730841307;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4TrdDCKfEgvhGXb+ZYfKmMKnSvr3m029ovWzv+E8mVQ=;
+        b=G+GSxxezKv1vXzygH7uMdu6id6kGIt3fUKorIrVs6w3hdsAhkX9GEj+U2wewjJ1Wv9
+         zvpv0pLobVLVjFzcSBlkiQHKqXiwb2j9SKC5+YlBMloOcCErp507uP9SIJfZbhRZ/RqR
+         Ypph7/Kxwpn56rMxHK/tfmea1jU5Dpef7ZQkuv358Y92l6yZiedKU2OMhGec+Dk2isgL
+         A4t/ezjFOlRgthSIJnSZF1yDpMHi6Dtmdon3u4mA0bUaZLvX6DlYU1zq6pjeyXWzeu0Y
+         +4FZUC6fSK+vBzbl3fhCqs5p/2zbGg5sbUR62E+mG4BPkklw4k4DpjdY2+YDj8SuAURt
+         N1xw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIYTSMdnioGv2+N1aEibyGFTny/Me9NDKKG/AK7Wxwt8tE6oZnWsxQncknU9w5KiEm4U8RWqAaSExOgUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy9+j8oDQFsYCSZADt8Z28bKyIBxvC4p3wczf1Pztr36DFLqb+J
+	b1PtlA3PBlaVZ3DqIFWsTEX3GrEUi7OX5pOdkSSqa8ufF8G1YhYU+HP9DAPkl14GimhbA6s4GGn
+	lkYc9Fy5naN2ferbeY6jjOk4hSMw=
+X-Google-Smtp-Source: AGHT+IF5cH9weBxuQe5arr47haG1olMVF1DqvxpNpN7s8TRJz9srFGTnnSvSHeWnbD9SYp+2vDpw4WE2/z41mvFU4vU=
+X-Received: by 2002:a05:6a00:2d95:b0:720:2eda:dfd1 with SMTP id
+ d2e1a72fcca58-720ab492841mr1189049b3a.18.1730236506666; Tue, 29 Oct 2024
+ 14:15:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: ubifs_recover_master_node: failed to recover master node
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-To: "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
- "broonie@kernel.org" <broonie@kernel.org>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <826c4456-461c-424b-88de-a36e77fd7475@alliedtelesis.co.nz>
-Content-Language: en-US
-In-Reply-To: <826c4456-461c-424b-88de-a36e77fd7475@alliedtelesis.co.nz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+References: <20241024205231.1944747-1-surenb@google.com> <CAEf4BzZvFFXByMS-eyFZzt7055MHexT2h0FfKfSN83x_jYTZEg@mail.gmail.com>
+ <20241028204822.6638f330fad809381eafb49c@linux-foundation.org>
+In-Reply-To: <20241028204822.6638f330fad809381eafb49c@linux-foundation.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 29 Oct 2024 14:14:54 -0700
+Message-ID: <CAEf4BzZODA7AkC6Y7d_fhGnR3MH8MV-0QZC6aKi0FfwJwv++PQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm: convert mm_lock_seq to a proper seqcount
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, peterz@infradead.org, andrii@kernel.org, 
+	jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
+	vbabka@suse.cz, mhocko@kernel.org, shakeel.butt@linux.dev, hannes@cmpxchg.org, 
+	david@redhat.com, willy@infradead.org, brauner@kernel.org, oleg@redhat.com, 
+	arnd@arndb.de, richard.weiyang@gmail.com, zhangpeng.00@bytedance.com, 
+	linmiaohe@huawei.com, viro@zeniv.linux.org.uk, hca@linux.ibm.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=67215009 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=VwQbUJbxAAAA:8 a=NEAV23lmAAAA:8 a=ZsQRNL2YhwNOoF4Hqy8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
 
+On Mon, Oct 28, 2024 at 8:48=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Sun, 27 Oct 2024 17:57:34 -0700 Andrii Nakryiko <andrii.nakryiko@gmail=
+.com> wrote:
+>
+> > I got a notification that this patch set was applied to mm-unstable by
+> > Andrew. But I was wondering if Andrew and Peter would agree to move
+> > the patches into tip's perf/core branch, given this is a dependency of
+> > my pending uprobe series ([0]) and, as far as I'm aware, there is no
+> > urgent need for this API in mm tree(s).
+>
+> OK by me.
 
-On 29/10/24 13:38, Chris Packham wrote:
-> (resend as plaintext)
->
-> Hi,
->
-> I recently added support for the SPI-NAND controller on the RTL9302C=20
-> SoC[1]. I did most of the work against Linux 6.11 and it's working=20
-> fine there. I recently rebased against the tip of Linus's tree=20
-> (6.12-rc5) and found I was getting ubifs errors when mounting:
->
-> [=C2=A0=C2=A0=C2=A0 1.255191] spi-nand spi1.0: Macronix SPI NAND was fo=
-und.
-> [=C2=A0=C2=A0=C2=A0 1.261283] spi-nand spi1.0: 256 MiB, block size: 128=
- KiB, page=20
-> size: 2048, OOB size: 64
-> [=C2=A0=C2=A0=C2=A0 1.271134] 2 fixed-partitions partitions found on MT=
-D device spi1.0
-> [=C2=A0=C2=A0=C2=A0 1.278247] Creating 2 MTD partitions on "spi1.0":
-> [=C2=A0=C2=A0=C2=A0 1.283631] 0x000000000000-0x00000f000000 : "user"
-> [=C2=A0=C2=A0 20.481108] 0x00000f000000-0x000010000000 : "Reserved"
-> [=C2=A0=C2=A0 72.240347] ubi0: scanning is finished
-> [=C2=A0=C2=A0 72.270577] ubi0: attached mtd3 (name "user", size 240 MiB=
-)
-> [=C2=A0=C2=A0 72.276815] ubi0: PEB size: 131072 bytes (128 KiB), LEB si=
-ze:=20
-> 126976 bytes
-> [=C2=A0=C2=A0 72.284537] ubi0: min./max. I/O unit sizes: 2048/2048, sub=
--page=20
-> size 2048
-> [=C2=A0=C2=A0 72.292132] ubi0: VID header offset: 2048 (aligned 2048), =
-data=20
-> offset: 4096
-> [=C2=A0=C2=A0 72.299885] ubi0: good PEBs: 1920, bad PEBs: 0, corrupted =
-PEBs: 0
-> [=C2=A0=C2=A0 72.306689] ubi0: user volume: 1, internal volumes: 1, max=
-. volumes=20
-> count: 128
-> [=C2=A0=C2=A0 72.314747] ubi0: max/mean erase counter: 1/0, WL threshol=
-d: 4096,=20
-> image sequence number: 252642230
-> [=C2=A0=C2=A0 72.324850] ubi0: available PEBs: 0, total reserved PEBs: =
-1920,=20
-> PEBs reserved for bad PEB handling: 40
-> [=C2=A0=C2=A0 72.370123] ubi0: background thread "ubi_bgt0d" started, P=
-ID 141
-> [=C2=A0=C2=A0 72.470740] UBIFS (ubi0:0): Mounting in unauthenticated mo=
-de
-> [=C2=A0=C2=A0 72.490246] UBIFS (ubi0:0): background thread "ubifs_bgt0_=
-0"=20
-> started, PID 144
-> [=C2=A0=C2=A0 72.528272] UBIFS error (ubi0:0 pid 143):=20
-> ubifs_recover_master_node: failed to recover master node
-> [=C2=A0=C2=A0 72.550122] UBIFS (ubi0:0): background thread "ubifs_bgt0_=
-0" stops
-> [=C2=A0=C2=A0 72.710720] UBIFS (ubi0:0): Mounting in unauthenticated mo=
-de
-> [=C2=A0=C2=A0 72.717447] UBIFS (ubi0:0): background thread "ubifs_bgt0_=
-0"=20
-> started, PID 149
-> [=C2=A0=C2=A0 72.777602] UBIFS error (ubi0:0 pid 148):=20
-> ubifs_recover_master_node: failed to recover master node
-> [=C2=A0=C2=A0 72.787792] UBIFS (ubi0:0): background thread "ubifs_bgt0_=
-0" stops
->
-> Full dmesg output is at[2]
->
-> git bisect lead me to commit 11813857864f ("mtd: spi-nand: macronix:=20
-> Continuous read support"). Reverting the blamed commit from 6.12-rc5=20
-> seems to avoid the problem. The flash chip on my board is a=20
-> MX30LF2G28AD-TI. I'm not sure if there is a problem with 11813857864f=20
-> or with my spi-mem driver that is exposed after support for continuous=20
-> read is enabled.
->
-A bit of an update. The ubifs failure is from the is_empty() check in=20
-get_master_node(). It looks like portions of the LEB are 0 instead of=20
-0xff. I've also found if I avoid use the non-DMA path in my driver I=20
-don't have such a problem. I think there is at least one problem in my=20
-driver because I don't handle DMAing more than 0xffff bytes.
-
-
-> Thanks,
-> Chris
->
-> --=20
->
-> [1] -=20
-> https://lore.kernel.org/all/20241015225434.3970360-1-chris.packham@alli=
-edtelesis.co.nz/
-> [2] -=20
-> https://gist.github.com/cpackham-atlnz/66a0843362e8f8eb2c4f5c7ed01c5efe
->
+Great, thank you! Then I'll hope Peter will just apply all 4 patches
+into his tree.
 
