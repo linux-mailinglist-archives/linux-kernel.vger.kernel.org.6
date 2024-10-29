@@ -1,224 +1,192 @@
-Return-Path: <linux-kernel+bounces-387866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21CA79B56FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:33:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 212829B5701
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:34:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7085BB22C81
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:33:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D499D283FE4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:34:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE6420C464;
-	Tue, 29 Oct 2024 23:33:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3HrTm7O"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20EF220C001;
+	Tue, 29 Oct 2024 23:33:32 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F4320C015;
-	Tue, 29 Oct 2024 23:32:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4E120ADDC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244781; cv=none; b=KOIltwgbWGOOewwD5F4csrhH3bwv2GdxXflfLUsYuZirToVD7kAJs4P+UL2cpUGmJyEJ2BPgTRBoR2U/e5OOYFDYrkmvoAzBDT44kl6knjqVUKxMv4L9UVgdYm93DxI2qgy4pQRjjrMk/b+SXj+sMkN/BvAc4OA4xDEr9JJylT8=
+	t=1730244811; cv=none; b=S99GXmwVqPULxlkyscm9kXXG/F9JzZmLf05NMznAzcgjOkS/J1PlzDK1sSmqaYIDll0ahLyVDkpMp5nJWIQby3xI8gzZN7d4xo9MqKLKNw6PPy4D2dEAnmSs2JPHkjwmAr6VBPJqnVr17byNjVksHEF7dvNk3ZmbJ79ze9t9NPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244781; c=relaxed/simple;
-	bh=GyGKur8b8q4WFJWryFjCu/g5l9pGr1nbquMu4t676mc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HLBPZ9WnO51XH9Bp5qg1u4NdI/36L173IxBaUs5GQsURW4RpWdzgLlS3lm8GJwew7WjSPzH0mdacKXLdPlhW+OSX8AoyqlQE56sb9P6MlFukhpZEfNAFRviMXDmezjpyQfk2kqBkEaOSpsx+efzOrQoZMC/WPxKY+2QY7+at+Pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3HrTm7O; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea8c4ce232so5091675a12.0;
-        Tue, 29 Oct 2024 16:32:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730244779; x=1730849579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JgziuG7baBWSEjlfcpuNQK44g3chFIpLTSbQOS6qTBo=;
-        b=b3HrTm7OikoQoeMW++InH17POmyxAQSfEZZykcf94g2GX5N6BowcF9E1EVESHD+9yx
-         c9M8NDCp4pq0dNtmCMNzBi7tFXhbeLn5R+f3LIuZSWc+2iKnEJxpotGrf2CBTP+OabAB
-         930KEqOyhpo1McDPWWi3I+nBqnGf8fiyw4/Ove84j4E1xWW37BgFL3iLuqVHdgI0x/e/
-         J4U+vUrQIq7slYbwuzBDbX2xEtryCxTzNvbKFl8WZ41xqKKBbnQ7sVJnX2CMqUnISwCA
-         zVOkEJd+M80OeZPPE5Eo5AXK6/4sE3OL0gx7ExRluvGaHgUiujQec2kDkV4519R6H2KL
-         oOiw==
+	s=arc-20240116; t=1730244811; c=relaxed/simple;
+	bh=lkGFz66Izmi1TwdOfObxU/3HwWsi+KmWRZv5/Wwjws8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=DHGNRZFe2oj2SsHVbxuxx8xmyJO0NTCa5rwt4CBwWBtoEVUWlThcgeSXkctXyAxU5vOA9pAxol+01Kme7A6/1i2+CjWwfmbnGXQPjK9kZWiftRlzQemsud9YvS5TZQ8sJxtFeyyF+qwrQz6s5G3yih7mRzeYhUnSSaYpulbuYoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso49818465ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:33:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730244779; x=1730849579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JgziuG7baBWSEjlfcpuNQK44g3chFIpLTSbQOS6qTBo=;
-        b=ga7DdrbT9MhnZdAEHUsvRvgeoBEN6OJpr8D9iqVE4T+Ij6kmxc3HHlc7FofI5LLmo6
-         x1R92Z/MNW1W7N4Y1uxfXs+MHUfp0JrdcgUHTHsXZseoOicG5CBkfKnMW3d+GfPQZQcf
-         uw44Psk2Tv6oOYceqmoGujAxVrbeuBg34EdVFG3yytvGdnJDB4pRAmjdkx5M7foV9kzd
-         JuVKm9A5Z9M/CRngTdkNIGjSkARW17NotDeCQgEj8l6cWiUAIoXqd+fvQfQ6Lhhia1xr
-         pUeSJYObQo0cDaIFmT71jPq/+KkO+1PLpWrJQMS0zMY7XdxDgbkwUjFHLYgvRS2UjFQj
-         PvMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQMaLC6SjiOGABD0JspxsMUk6Cp27LwGQyZyQXholtehlvlRKoizhC/hEWKw24yScZHwsCM1poyB1ECZ8=@vger.kernel.org, AJvYcCX/3vdtzc8YvGLlIWNa68Vh87StwciS4G/bEE2MpuZq7ZuIKfW76NhE7r5T7VAobt6i4A0ycKOqkmKQrXVeM1a/oQ==@vger.kernel.org, AJvYcCXl3LJNukpgd7dIAv8NhvYkX2oeILQSMSZ6DQVKlVN9KtC/HtNI3WLl5JxNZ8QfjPFsrXtaX+22zQMYWedQ6CwwqQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkfwTtZUvSrqAMnZkw7b8ZTB5uR5gKB/YznU3jxZd/t3RSqah+
-	WEi/JyszpIcPk1tpqISuNX1VpATaufcuccMsjezzUYWmJZzQIM/L8VduPumsMeKjk1GvvZamg8m
-	5sQVSn4TYB8c4ghUt1bBW6h/NCyI=
-X-Google-Smtp-Source: AGHT+IFIAo8I9zZos8vgSzifW1W6EbHmbURlqCr7tc6ZZ2M35TgYjInsEnhWE9maJ9UWMnG1cJQk0n3agDvpVNNwB1g=
-X-Received: by 2002:a17:90a:4e0f:b0:2cb:5aaf:c12e with SMTP id
- 98e67ed59e1d1-2e8f11bf86fmr15194588a91.37.1730244778788; Tue, 29 Oct 2024
- 16:32:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1730244808; x=1730849608;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0K3qxZIjQsyUM9E4K+xe2W1RC/TsuCHPYquESVj5rOk=;
+        b=QwT1DpJ0lBbQwH2wxIdWqAutp11rBA/HAb+/0WQfe/p1MMElbPfFP7Yamz1OuIJ7z7
+         AIHNOfQlWJEzNWjmrtOVyfvTC9knEPKAl3tzwsoB/A80Tnam7HMfShJaZn/Gt9Zg3/t/
+         l99Ejwv0xFU1EpQXjxF/kh3TKy5+ijmXkxjJ/Q9BXvoy0GmGohVdb2zMY5j1Jib8erdJ
+         CVl7vBKBvx56zTo1/OnepVc/2ytW0NmaoeC91I/zXQMtPhH9hZmI7DBgkjO1FRgfpy0u
+         vdEOUHgpCgVP1MzyX2/Rz3Ajrn5ysHt47djfWr/km5gBHLJn5KeS5FQEF8O6GnOCBUfF
+         olRg==
+X-Forwarded-Encrypted: i=1; AJvYcCXUEVCQG8KXIwL7gkzNnwYFE3rM99VLRN7bp/pplafPzXXX9SWxmw7yGO8WztZrGtafCqEuAnoCtCAqHJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTUvq36zswe2oVYevcBO1BfSjfgnQ5+4XHpx7TdKmgauPVBCGN
+	FSFZ2KfJgK6bsNgHsQwIETwMU7X3KC2Lsr9/z6dt4ZKwU7rFaM508zW6abl9xhWI4yN6J/XA5mN
+	Bn8g9kHoCSiaCAjEIxCdTb94P2OfH3dlUgg66NS/StaMzGAdtYESK4i8=
+X-Google-Smtp-Source: AGHT+IFHXvRvSi/wbqVbYgwQWCe+DpQurNEz08PBFbkRm71LC6vYmdCBqjkwQVgPqlorUxvZTXQmo6a+dQxdcZZNcXcUF954UsGc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1730150953.git.jpoimboe@kernel.org> <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
-In-Reply-To: <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 29 Oct 2024 16:32:46 -0700
-Message-ID: <CAEf4BzY3xJ=W2qPD8i6UbSB=zNqpiA1gSd+SC3wKxQAJWjeHhA@mail.gmail.com>
-Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
-	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
-	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
-	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
-	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
+X-Received: by 2002:a05:6e02:16c9:b0:3a0:4250:165f with SMTP id
+ e9e14a558f8ab-3a4ed1ba55emr135378245ab.0.1730244808264; Tue, 29 Oct 2024
+ 16:33:28 -0700 (PDT)
+Date: Tue, 29 Oct 2024 16:33:28 -0700
+In-Reply-To: <000000000000869803061fb207d1@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <672170c8.050a0220.24951d.007d.GAE@google.com>
+Subject: Re: [syzbot] [usb?] WARNING: ODEBUG bug in get_taint
+From: syzbot <syzbot+ffe5c7db7c30a0fbb165@syzkaller.appspotmail.com>
+To: andrew+netdev@lunn.ch, andrew@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, netdev@vger.kernel.org, oneukum@suse.com, 
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 28, 2024 at 2:48=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
-> wrote:
->
-> Add unwind_user_deferred() which allows callers to schedule task work to
-> unwind the user space stack before returning to user space.  This solves
-> several problems for its callers:
->
->   - Ensure the unwind happens in task context even if the caller may
->     running in interrupt context.
->
->   - Only do the unwind once, even if called multiple times either by the
->     same caller or multiple callers.
->
->   - Create a "context context" cookie which allows trace post-processing
->     to correlate kernel unwinds/traces with the user unwind.
->
-> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> ---
->  include/linux/entry-common.h |   3 +
->  include/linux/sched.h        |   5 +
->  include/linux/unwind_user.h  |  56 ++++++++++
->  kernel/fork.c                |   4 +
->  kernel/unwind/user.c         | 199 +++++++++++++++++++++++++++++++++++
->  5 files changed, 267 insertions(+)
->
-> diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-> index 1e50cdb83ae5..efbe8f964f31 100644
-> --- a/include/linux/entry-common.h
-> +++ b/include/linux/entry-common.h
-> @@ -12,6 +12,7 @@
->  #include <linux/resume_user_mode.h>
->  #include <linux/tick.h>
->  #include <linux/kmsan.h>
-> +#include <linux/unwind_user.h>
->
->  #include <asm/entry-common.h>
->
-> @@ -111,6 +112,8 @@ static __always_inline void enter_from_user_mode(stru=
-ct pt_regs *regs)
->         CT_WARN_ON(__ct_state() !=3D CT_STATE_USER);
->         user_exit_irqoff();
->
-> +       unwind_enter_from_user_mode();
-> +
->         instrumentation_begin();
->         kmsan_unpoison_entry_regs(regs);
->         trace_hardirqs_off_finish();
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 5007a8e2d640..31b6f1d763ef 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -47,6 +47,7 @@
->  #include <linux/livepatch_sched.h>
->  #include <linux/uidgid_types.h>
->  #include <asm/kmap_size.h>
-> +#include <linux/unwind_user.h>
->
->  /* task_struct member predeclarations (sorted alphabetically): */
->  struct audit_context;
-> @@ -1592,6 +1593,10 @@ struct task_struct {
->         struct user_event_mm            *user_event_mm;
->  #endif
->
-> +#ifdef CONFIG_UNWIND_USER
-> +       struct unwind_task_info         unwind_task_info;
+syzbot has found a reproducer for the following issue on:
 
-this is quite a lot of memory to pay on each task, a lot of which a)
-might not have sframe and b) might not need stack unwinding during
-their lifetime.
+HEAD commit:    e42b1a9a2557 Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16fb4540580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=59c645aba1a913f
+dashboard link: https://syzkaller.appspot.com/bug?extid=ffe5c7db7c30a0fbb165
+compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f7ee40580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12953687980000
 
-It can be a pointer and allocated in copy_process(), no? Though
-ideally this should be initialized lazily, if possible.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/8ead8862021c/non_bootable_disk-e42b1a9a.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/58af25eb211f/vmlinux-e42b1a9a.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7c1b9c1d3d1b/zImage-e42b1a9a.xz
 
-> +#endif
-> +
->         /*
->          * New fields for task_struct should be added above here, so that
->          * they are included in the randomized portion of task_struct.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ffe5c7db7c30a0fbb165@syzkaller.appspotmail.com
 
-[...]
+dm9601 1-1:47.0 eth1: unregister 'dm9601' usb-dummy_hcd.0-1, Davicom DM96xx USB 10/100 Ethernet
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 1781 at lib/debugobjects.c:514 debug_print_object+0xc4/0xd8 lib/debugobjects.c:514
+ODEBUG: free active (active state 0) object: 8436afcc object type: work_struct hint: usbnet_deferred_kevent+0x0/0x394 drivers/net/usb/usbnet.c:633
+Modules linked in:
+Kernel panic - not syncing: kernel: panic_on_warn set ...
+CPU: 0 UID: 0 PID: 1781 Comm: kworker/0:3 Not tainted 6.12.0-rc5-syzkaller #0
+Hardware name: ARM-Versatile Express
+Workqueue: usb_hub_wq hub_event
+Call trace: 
+[<8199a4d8>] (dump_backtrace) from [<8199a5d4>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
+ r7:00000000 r6:82622f44 r5:00000000 r4:8203d914
+[<8199a5bc>] (show_stack) from [<819b8a70>] (__dump_stack lib/dump_stack.c:94 [inline])
+[<8199a5bc>] (show_stack) from [<819b8a70>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:120)
+[<819b8a1c>] (dump_stack_lvl) from [<819b8ab0>] (dump_stack+0x18/0x1c lib/dump_stack.c:129)
+ r5:00000000 r4:82870d18
+[<819b8a98>] (dump_stack) from [<8199b100>] (panic+0x120/0x374 kernel/panic.c:354)
+[<8199afe0>] (panic) from [<802420e0>] (check_panic_on_warn kernel/panic.c:243 [inline])
+[<8199afe0>] (panic) from [<802420e0>] (get_taint+0x0/0x1c kernel/panic.c:238)
+ r3:8260c5c4 r2:00000001 r1:82025ce8 r0:8202d750
+ r7:808547a0
+[<8024206c>] (check_panic_on_warn) from [<80242244>] (__warn+0x80/0x188 kernel/panic.c:748)
+[<802421c4>] (__warn) from [<80242534>] (warn_slowpath_fmt+0x1e8/0x1f4 kernel/panic.c:783)
+ r8:00000009 r7:8208ca38 r6:eb0b9a8c r5:8357b000 r4:00000000
+[<80242350>] (warn_slowpath_fmt) from [<808547a0>] (debug_print_object+0xc4/0xd8 lib/debugobjects.c:514)
+ r10:00000005 r9:8436a800 r8:81a01c24 r7:820b7828 r6:828dd084 r5:eb0b9b34
+ r4:8260cda4
+[<808546dc>] (debug_print_object) from [<80856030>] (__debug_check_no_obj_freed lib/debugobjects.c:989 [inline])
+[<808546dc>] (debug_print_object) from [<80856030>] (debug_check_no_obj_freed+0x254/0x2a0 lib/debugobjects.c:1019)
+ r8:8436b000 r7:8436afcc r6:00000100 r5:00000003 r4:00000000
+[<80855ddc>] (debug_check_no_obj_freed) from [<804c91c4>] (slab_free_hook mm/slub.c:2273 [inline])
+[<80855ddc>] (debug_check_no_obj_freed) from [<804c91c4>] (slab_free mm/slub.c:4579 [inline])
+[<80855ddc>] (debug_check_no_obj_freed) from [<804c91c4>] (kfree+0x190/0x394 mm/slub.c:4727)
+ r10:8277dc60 r9:844b0c80 r8:8436a800 r7:8046d198 r6:82c023c0 r5:dde90aa0
+ r4:8436a800
+[<804c9034>] (kfree) from [<8046d198>] (kvfree+0x2c/0x30 mm/util.c:701)
+ r10:8277dc60 r9:844b0c80 r8:8436a800 r7:00000000 r6:845e6200 r5:84745e80
+ r4:8436a800
+[<8046d16c>] (kvfree) from [<814fc658>] (netdev_release+0x2c/0x34 net/core/net-sysfs.c:2034)
+ r5:84745e80 r4:8436a800
+[<814fc62c>] (netdev_release) from [<80aa3b24>] (device_release+0x38/0xa8 drivers/base/core.c:2575)
+ r5:84745e80 r4:8436abc0
+[<80aa3aec>] (device_release) from [<8197432c>] (kobject_cleanup lib/kobject.c:689 [inline])
+[<80aa3aec>] (device_release) from [<8197432c>] (kobject_release lib/kobject.c:720 [inline])
+[<80aa3aec>] (device_release) from [<8197432c>] (kref_put include/linux/kref.h:65 [inline])
+[<80aa3aec>] (device_release) from [<8197432c>] (kobject_put+0xa0/0x1f4 lib/kobject.c:737)
+ r5:81b4c9c4 r4:8436abc0
+[<8197428c>] (kobject_put) from [<80aa3d50>] (put_device+0x18/0x1c drivers/base/core.c:3783)
+ r7:844b3800 r6:00000000 r5:8436a800 r4:00000000
+[<80aa3d38>] (put_device) from [<814b0d24>] (free_netdev+0x134/0x1ac net/core/dev.c:11255)
+[<814b0bf0>] (free_netdev) from [<80d88104>] (usbnet_disconnect+0xb8/0xfc drivers/net/usb/usbnet.c:1652)
+ r6:8436af94 r5:8436ae80 r4:00000000
+[<80d8804c>] (usbnet_disconnect) from [<80df0930>] (usb_unbind_interface+0x84/0x2c4 drivers/usb/core/driver.c:461)
+ r8:00000044 r7:844b3830 r6:8277dc60 r5:00000000 r4:844b3800
+[<80df08ac>] (usb_unbind_interface) from [<80aabc14>] (device_remove drivers/base/dd.c:569 [inline])
+[<80df08ac>] (usb_unbind_interface) from [<80aabc14>] (device_remove+0x64/0x6c drivers/base/dd.c:561)
+ r10:00000000 r9:844b0c80 r8:00000044 r7:844b3874 r6:8277dc60 r5:00000000
+ r4:844b3830
+[<80aabbb0>] (device_remove) from [<80aad100>] (__device_release_driver drivers/base/dd.c:1273 [inline])
+[<80aabbb0>] (device_remove) from [<80aad100>] (device_release_driver_internal+0x18c/0x200 drivers/base/dd.c:1296)
+ r5:00000000 r4:844b3830
+[<80aacf74>] (device_release_driver_internal) from [<80aad18c>] (device_release_driver+0x18/0x1c drivers/base/dd.c:1319)
+ r9:844b0c80 r8:83410140 r7:83410138 r6:8341010c r5:844b3830 r4:83410130
+[<80aad174>] (device_release_driver) from [<80aab270>] (bus_remove_device+0xcc/0x120 drivers/base/bus.c:576)
+[<80aab1a4>] (bus_remove_device) from [<80aa55ac>] (device_del+0x148/0x38c drivers/base/core.c:3864)
+ r9:844b0c80 r8:8357b000 r7:04208060 r6:00000000 r5:844b3830 r4:844b3874
+[<80aa5464>] (device_del) from [<80dee34c>] (usb_disable_device+0xdc/0x1f0 drivers/usb/core/message.c:1418)
+ r10:00000000 r9:00000000 r8:844b3800 r7:844b0c00 r6:842e7a48 r5:00000002
+ r4:00000070
+[<80dee270>] (usb_disable_device) from [<80de31b0>] (usb_disconnect+0xec/0x29c drivers/usb/core/hub.c:2304)
+ r10:00000001 r9:8450a000 r8:844b0cc4 r7:83d3a800 r6:844b0c80 r5:844b0c00
+ r4:60000013
+[<80de30c4>] (usb_disconnect) from [<80de5e60>] (hub_port_connect drivers/usb/core/hub.c:5361 [inline])
+[<80de30c4>] (usb_disconnect) from [<80de5e60>] (hub_port_connect_change drivers/usb/core/hub.c:5661 [inline])
+[<80de30c4>] (usb_disconnect) from [<80de5e60>] (port_event drivers/usb/core/hub.c:5821 [inline])
+[<80de30c4>] (usb_disconnect) from [<80de5e60>] (hub_event+0xe78/0x194c drivers/usb/core/hub.c:5903)
+ r10:00000001 r9:00000100 r8:83c7f100 r7:844b0c00 r6:83d3a000 r5:83d3aa10
+ r4:00000001
+[<80de4fe8>] (hub_event) from [<80266034>] (process_one_work+0x1b4/0x4f4 kernel/workqueue.c:3229)
+ r10:82fd8405 r9:8357b000 r8:00800000 r7:dddd00c0 r6:82fd8400 r5:83c7f100
+ r4:83e18e00
+[<80265e80>] (process_one_work) from [<80266c18>] (process_scheduled_works kernel/workqueue.c:3310 [inline])
+[<80265e80>] (process_one_work) from [<80266c18>] (worker_thread+0x1ec/0x3bc kernel/workqueue.c:3391)
+ r10:8357b000 r9:83e18e2c r8:61c88647 r7:dddd00e0 r6:82604d40 r5:dddd00c0
+ r4:83e18e00
+[<80266a2c>] (worker_thread) from [<8026fc94>] (kthread+0x104/0x134 kernel/kthread.c:389)
+ r10:00000000 r9:df839e78 r8:83e16fc0 r7:83e18e00 r6:80266a2c r5:8357b000
+ r4:83e16f40
+[<8026fb90>] (kthread) from [<80200114>] (ret_from_fork+0x14/0x20 arch/arm/kernel/entry-common.S:137)
+Exception stack(0xeb0b9fb0 to 0xeb0b9ff8)
+9fa0:                                     00000000 00000000 00000000 00000000
+9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
+ r9:00000000 r8:00000000 r7:00000000 r6:00000000 r5:8026fb90 r4:83e16f40
+Rebooting in 86400 seconds..
 
-> +static void unwind_user_task_work(struct callback_head *head)
-> +{
-> +       struct unwind_task_info *info =3D container_of(head, struct unwin=
-d_task_info, work);
-> +       struct task_struct *task =3D container_of(info, struct task_struc=
-t, unwind_task_info);
-> +       void *privs[UNWIND_MAX_CALLBACKS];
-> +       struct unwind_stacktrace trace;
-> +       unsigned long pending;
-> +       u64 cookie =3D 0;
-> +       int i;
-> +
-> +       BUILD_BUG_ON(UNWIND_MAX_CALLBACKS > 32);
-> +
-> +       if (WARN_ON_ONCE(task !=3D current))
-> +               return;
-> +
-> +       if (WARN_ON_ONCE(!info->ctx_cookie || !info->pending_callbacks))
-> +               return;
-> +
-> +       scoped_guard(irqsave) {
-> +               pending =3D info->pending_callbacks;
-> +               cookie =3D info->ctx_cookie;
-> +
-> +               info->pending_callbacks =3D 0;
-> +               info->ctx_cookie =3D 0;
-> +               memcpy(privs, info->privs, sizeof(void *) * UNWIND_MAX_CA=
-LLBACKS);
-> +       }
-> +
-> +       if (!info->entries) {
-> +               info->entries =3D kmalloc(UNWIND_MAX_ENTRIES * sizeof(lon=
-g),
-> +                                       GFP_KERNEL);
-> +               if (!info->entries)
-> +                       return;
 
-uhm... can we notify callbacks that stack capture failed? otherwise
-we'd need some extra timeouts and other complications if we are
-*waiting* for this callback to be called
-
-> +       }
-> +
-> +       trace.entries =3D info->entries;
-> +       trace.nr =3D 0;
-> +       unwind_user(&trace, UNWIND_MAX_ENTRIES);
-> +
-
-[...]
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
