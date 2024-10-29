@@ -1,83 +1,58 @@
-Return-Path: <linux-kernel+bounces-386879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4B7D9B48FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:05:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15CC49B48F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:04:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EBC6284332
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B59001F21AF2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:04:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F64206E88;
-	Tue, 29 Oct 2024 12:04:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AF5205AD2;
+	Tue, 29 Oct 2024 12:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="LPkpE9UT"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B3C205E2F;
-	Tue, 29 Oct 2024 12:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="NKdXUkUk"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 370362064FE
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730203439; cv=none; b=aNSrZurX2cri7xKSTl9+G/e0AbZzYvGhmI82dJrI33B9wCI6Z1uvD5jWwyAaGGiPBqGGBub1l/bW5kHSgtWEMUwdVuqoEoarwVs3AaL3s/MTa2ZybVTdyklOPQNxLGx7beRwxyNrCsN50nFDwFrIYGqJjdhm8BQG1ige19xS44s=
+	t=1730203426; cv=none; b=txyOM/z2xuadwgUO5MajkYt5rfsv6xY6H52G03rUPMHHQOCM3dH+J5zK+Jvr9IigItqaj4fNNJ+KeIXyqZse9iDxQ+NFvZZpghX0HNiVblJLHNPFVjn5qmv7MdFwGoSRTX+DFe54kfrvbrCPz6s5tp2hB3t2JhadVazbQ/lVcRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730203439; c=relaxed/simple;
-	bh=JDYkg13S/c7ai/2MYOiSlsEvW04aAle9yzcB8DLIoQM=;
+	s=arc-20240116; t=1730203426; c=relaxed/simple;
+	bh=0arwWO/z8nwgluKfMG97O4YJP87Fp6inA4j+237I7LY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sf3rREcjaShqqNNxGfzKjCHfNpcXPjI94tT0NVgR3O0bAr8iluZpih5FfdwpfWU6i6bXhqY8NZq8DXkfQ2T1V+QHkyJCEMbUXiTGmxMGouLl2OOmmlzrubbaf2zkAu/VQ5JrrXHE875d7Mo9T14WVzK7DsrRY9c3yt819GU2VF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=LPkpE9UT; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=owzbnVknbJVYVJNxafU0ATgST6EL+Zjh6YcPqEYII+c=; b=LPkpE9UT9q6USF1tKGDcsid2kO
-	ioRKc4K2xEufm8mD9AST0L18lKix8oWzUV+eRxNLwIUwO514+9gpvGbGBieaiT+hY2MN68e4F2bhH
-	VoAorThisHcAKqarCVcSSec+7lthVxzcxqYmX2I+XrzzpkgZYSFvQAgaDLvdHLPoLKHg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t5kwg-00BZE5-Pl; Tue, 29 Oct 2024 13:03:34 +0100
-Date: Tue, 29 Oct 2024 13:03:34 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v4 08/16] net: dwmac-rk: Use helper rgmii_clock
-Message-ID: <9c18bff7-9142-4805-882b-44d00ebd5923@lunn.ch>
-References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
- <20241028-upstream_s32cc_gmac-v4-8-03618f10e3e2@oss.nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jsQkfNoBkb5AmXc//ZxfngvALwr2pYQwtOD7NorI3eSl6dvyvDj/oR1TpJzNUEpHmGT3GTWXgKhtHkceqYPRESA84kXYGMt5jnROS1U3dmb42x/JvhhKQ6w/AmYRkQh5dvbe/E6KX0EN19fKQXb1fMnS02Ld/W/F8RoBIXokh5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=NKdXUkUk; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p549219d2.dip0.t-ipconnect.de [84.146.25.210])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 17B542A8D55;
+	Tue, 29 Oct 2024 13:03:43 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1730203423;
+	bh=0arwWO/z8nwgluKfMG97O4YJP87Fp6inA4j+237I7LY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NKdXUkUkYpKnnLaAjd2+/a1o3SgIwl5sMxarCDnHNI1qAoZOJUzsl2xUmee/xv5qs
+	 DyyZZU8pV2o3RTGInHikp9Isgzd/TXgqXMcAdKzv9JxsFlgOxMTqrLz/wNY9QI/NfD
+	 vIrUG/yIS8pEDPC9PyK7pS3okOq6mPGF84yc4nPCQOsliFMND4eZIGBHOK3FdBd/iJ
+	 Rd+V8qK1nuhLMlWRmy9yq5dWDxt2ucI+l5J+b77hWOYhWbnDVoakzeIL68KTlHAvw4
+	 yLCElK4fqQH+lCwfquoruIeTRbO+gvHeZHhLNSiS+5XCEbJD6vp4j2z7OGxek2Ksbm
+	 xuyZ7MF+3SniQ==
+Date: Tue, 29 Oct 2024 13:03:42 +0100
+From: Joerg Roedel <joro@8bytes.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: iommu@lists.linux.dev, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH] iommu: Restore iommu_flush_iotlb_all()
+Message-ID: <ZyDPHtJkMdlVRj2N@8bytes.org>
+References: <20241029112302.63639-1-joro@8bytes.org>
+ <20241029114201.GH20281@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,16 +61,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241028-upstream_s32cc_gmac-v4-8-03618f10e3e2@oss.nxp.com>
+In-Reply-To: <20241029114201.GH20281@ziepe.ca>
 
-On Mon, Oct 28, 2024 at 09:24:50PM +0100, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> Utilize a new helper function rgmii_clock().
-> 
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+On Tue, Oct 29, 2024 at 08:42:01AM -0300, Jason Gunthorpe wrote:
+> Strange that 0-day didn't flag this in my trees. We really need to get
+> 0-day running on the iommu list too :\
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+In general I agree, but these issues where found with
+allnoconfig/allmodconfig builds. Or in other words, compile tests I
+expect patch submitters to do before sending changes my way.
 
-    Andrew
+Regards,
+
+	Joerg
 
