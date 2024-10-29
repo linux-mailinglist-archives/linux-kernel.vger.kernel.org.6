@@ -1,199 +1,208 @@
-Return-Path: <linux-kernel+bounces-387692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4052D9B54C1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:12:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F659B54C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:13:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DC62841F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:12:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088BB1C22906
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:13:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693ED2076A2;
-	Tue, 29 Oct 2024 21:12:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF04208227;
+	Tue, 29 Oct 2024 21:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpaWBnBg"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUZhBL4E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC2B1991CD;
-	Tue, 29 Oct 2024 21:12:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C5F20721D;
+	Tue, 29 Oct 2024 21:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730236354; cv=none; b=MOmIofLqi7S5LC8FBtPV5pvhuW994EKsb2rNCHpnEBMWiOKTw4WkrJ5VQ+pz+snDe7HgCPjatgJNSs8ReoVm6yHUY1XUG+M0Ww6Ohid9pF6Qxm6IFoUGKurmeCKQ0hqAh2kSo62vHaEhKgWgG3gt2waUBMQghV4ZXC3H1CA/1bA=
+	t=1730236377; cv=none; b=NdT2SIb8pCLuwCUwx3M0uwPdKan3zrFEp3Dx78Vq5KWSWJqUL/IbeJO4UMt8QmTfjKSlx8TdJa4kVy52cOxOKJq01nAxFkzAcAk6Uv7ts7TQTo57t6gthYS+oU30UDYsgLD5tiwBg6uslEMmBr5y1WdyjHrejxTaOhaGMxjfBtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730236354; c=relaxed/simple;
-	bh=204BV9XbDi7xTyMgZCCLdtJzxzTmC9djfzMFwknc3I8=;
+	s=arc-20240116; t=1730236377; c=relaxed/simple;
+	bh=pnnz6YJDVpo+3JTcic1igBBQy1GhxvWeinL48k0cWgs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KTUymukAFrRKzGYJkq9VaJNLha91Ayc7D1jhhWXI8hsWDbJ21BGhPI6F5qKP7YaiZruEp/+k/E0jZ2txLo1YMOxIgQfGX0ck2UwBBsrTz1cqfWqNGLkKwC54t+wa1E+n8ZJtgPa+aSd7FOUkY4IkKJZbN+76kpM2OXMnFdxLcvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpaWBnBg; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460dce6fff9so43257171cf.1;
-        Tue, 29 Oct 2024 14:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730236351; x=1730841151; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ob3s5eW5DFFmF/sJYltP1wSc/GVzO5gvkP17mjeImM8=;
-        b=lpaWBnBgI1+yImECKr9xXorNiU94jbviCc+ppI3sCJo5L+0VtzQ6Z1QvystBKxUd7o
-         nZ8ogqqM5sCDk0OwDZ7H0IEJVZ7rAORPuuxnmtuFNxwjsl1BixdipigLM1Bw9Fp/Vy9W
-         5HEQWDhOBXZV/YqmpOB+oANvQKOW7Z8LQtjvxuTlTjerXmNCWrEiY3EkdVUVaoyjg9Ns
-         Z1ztM0jIg6X3ZZW7VNMH1m6lnrL0T7eTnvyXTCA8Aj/VUsdLXuqDYOUd9wwuHB0w1V/X
-         0G3EtihzPR8GbseJmQkZjZcWFu1do0qiX/kic1W0gbv1etrdAnpj/O0TGhj9yRvBWSMi
-         azTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730236351; x=1730841151;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ob3s5eW5DFFmF/sJYltP1wSc/GVzO5gvkP17mjeImM8=;
-        b=hlxikVGv/EIoY0GW/VN/19fjDLGO/4zYFo4svFamPfHP+isFmJdxH1aTASFq6rexXg
-         ENqNseOX3294EKDXqoTuiTfPJmrvjqLYq+5rW2htaxtIf3SdSB0QBV7g/xEL+8oOpL7y
-         EBuY56V8Jv3WmUlurE7bMULMwcGfajGI5lVmVIg9dEMm02KEaqDCtI+ahm3BT54pRr/X
-         70WQMlXH8tMLVRKeSOCoGZDvsj0n6ABLNCI67lGNvDnFlGOd65XOLGM5T2EFtvGybhvb
-         vQNY2tB9GgB31sxKs6Z99teEjlPhJpBHHztpEsk9pOxlBq6Q4xN6g6Z24K16PU7DmOeS
-         SUag==
-X-Forwarded-Encrypted: i=1; AJvYcCVaMQyrEzcHrEKvhhB7J8H8BlKBqo6cELF2RvJJIePUVW4uw5JIq4Qt2uJm4VK4v1SZdbTrUy+YS5HlER4bMTc=@vger.kernel.org, AJvYcCW0fPy7nBzw9yvocR9x/e1HJhE2KQM8j23eBuFF9Zheu4JqLPqsAR+mEWpntlpeN9ODlDlvO0g3tyNv0oY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYF6zAhL+XWfmLj+S3wppkrgAQJNZyhdx2li5KR7mZmF7P47Jp
-	rvAG5RrBbFxetc2q6RBgPtH4u7QdbCQlHn12NT04OQ7mcoNq/uJ9
-X-Google-Smtp-Source: AGHT+IHSmmyxcd/2Yj9vg57U61l66xXmn8h145jdJFp5JjfJN3yfgTdQuWx93nU2BQH6MzbWClE6+A==
-X-Received: by 2002:a05:622a:110b:b0:45f:873:ff5e with SMTP id d75a77b69052e-4613c1b54b7mr196318231cf.57.1730236351560;
-        Tue, 29 Oct 2024 14:12:31 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46132376491sm48090281cf.66.2024.10.29.14.12.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 14:12:31 -0700 (PDT)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 74589120006C;
-	Tue, 29 Oct 2024 17:12:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 29 Oct 2024 17:12:30 -0400
-X-ME-Sender: <xms:vk8hZ-bojyLvPpXRrD0ZlUkjH6vJ2JAcFXaeGtAv2xT0FmyGb6z_SQ>
-    <xme:vk8hZxbqgnI2jVmBm3A88k2JAnns0lnwfGmk5eZdTVoe0WNjZWlquBg1huDJeI2Uw
-    emsOhU7oZSdpj6CUA>
-X-ME-Received: <xmr:vk8hZ4_HtTeWIujdpoTLjbdQ73JTMKWWLapB2IEV9OkT_xPG8MX-N9iGBfs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgudegudcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
-    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
-    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeefhfehveetieettdevgeeggedujeffjedv
-    ueeludeugedvfeehgeetlefffeeiteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpd
-    dufedqrhgtuddrnhhonecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
-    lhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqie
-    elvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdr
-    tghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmh
-    htphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishes
-    ghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtg
-    homhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    vghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvg
-    guhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepghgrrhihse
-    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
-    mhgrihhlrdgtohhm
-X-ME-Proxy: <xmx:vk8hZwreZ0jZGiONx-u9UM9QEhELvLw0mBM1sfF1LVwWoUjuaCrAAw>
-    <xmx:vk8hZ5pKMr85r_ImOIkM9rVJg8gaN5RAg_yhHlMzsNMGrV5S5ewjcg>
-    <xmx:vk8hZ-S7Tmpt7Ch9yJG0NA1E0gTRPSILQNQ-YgDVhRxew2H2PdVbDw>
-    <xmx:vk8hZ5ppImHpD7AbWl5SoM68KuaWvMmJF3wqSy0n3IqnFqrPZpVG0w>
-    <xmx:vk8hZ24fMDVji3zkhuCL27kPNT7vRm27Qipz6xV-XTn6SLa8Jua2d6mY>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Oct 2024 17:12:29 -0400 (EDT)
-Date: Tue, 29 Oct 2024 14:12:28 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v6] rust: add global lock support
-Message-ID: <ZyFPvO4jNLieAXUe@Boquns-Mac-mini.local>
-References: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com>
- <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local>
- <CANiq72mb9X0LiDtDe9ptbqm3Ls527Xp+szX7px+Zw6OP8-aefQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=qbbTxAuNQhQlO7VHPDTfPGu3eIIQ9F4WJ6FbLKLzN8Tq0zQJzN3n1r9EpADrsVE3ONflFjX8hNYwX665nnsQ0uZwZ6TlYIRKlebiVxsgt2xT5T+fQAPzdOx1PB9kZPhMFNL+bJyhkTKW5dONO/7+xjeFZy02tAY6IcjVOSBp7rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uUZhBL4E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09C15C4CECD;
+	Tue, 29 Oct 2024 21:12:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730236376;
+	bh=pnnz6YJDVpo+3JTcic1igBBQy1GhxvWeinL48k0cWgs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uUZhBL4Eo3t4GUDy8k/WDYtsR5ehOcnR/VJnQfb1OvD4VB0Av8XmoyDPfz3cHXYNz
+	 Fz1hggskdcR7K5jHLtN6N0mC8Wk3uLs7ZUtUGqhcRH4WcMBt0Wpq6XwqB0/2/4A/s/
+	 fy/YYEl3m74LzW5ZWglWkkH0qFkxQJXDLRWUaoTiGk1v0FPf4uxGDFoWiCJ5WHFpsO
+	 8PC7VjP9ivr4WT4ZHOVUWgGd5YohSWix2WqAYYxGbnu11ZvFfbNb1GgdVmGW8MpuZk
+	 lIYyvY0WhtEHh3Izc1t+SqqQWhGo1buejpUmmTQzTfCcwLb0216ZVoQdodEGRlw8kI
+	 qz8guzvURO6lw==
+Date: Tue, 29 Oct 2024 14:12:54 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>
+Cc: naveen@kernel.org, anil.s.keshavamurthy@intel.com, davem@davemloft.net,
+	kees@kernel.org, gustavoars@kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/3] kprobes: Annotate structs with __counted_by()
+Message-ID: <20241029211254.GA4146593@thelio-3990X>
+References: <20240813115334.3922580-1-ruanjinjie@huawei.com>
+ <20240813115334.3922580-2-ruanjinjie@huawei.com>
+ <20241022205557.GA3004519@thelio-3990X>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72mb9X0LiDtDe9ptbqm3Ls527Xp+szX7px+Zw6OP8-aefQ@mail.gmail.com>
+In-Reply-To: <20241022205557.GA3004519@thelio-3990X>
 
-On Tue, Oct 29, 2024 at 07:48:21PM +0100, Miguel Ojeda wrote:
-> On Mon, Oct 28, 2024 at 6:49 PM Boqun Feng <boqun.feng@gmail.com> wrote:
-> >
-> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
-> >
-> > In addition, I've also queued it in my lockdep-for-tip branch:
-> >
-> >         https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?h=lockdep-for-tip
-> >
-> > as I want to help route Rust lock-related patches into tip, so this is
-> > a practice round for me ;-)
-> >
-> > Miguel, feel free to take it via rust-next with my Reviewed-by, I will
-> > drop it from my branch once if I see it shows up in v6.13-rc1.
+On Tue, Oct 22, 2024 at 01:56:01PM -0700, Nathan Chancellor wrote:
+> Hi,
 > 
-> No, no, it is great if you can take them :)
+> On Tue, Aug 13, 2024 at 07:53:32PM +0800, Jinjie Ruan wrote:
+> > Add the __counted_by compiler attribute to the flexible array member
+> > stripes to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> > CONFIG_FORTIFY_SOURCE.
+> > 
+> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+> > ---
+> >  kernel/kprobes.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> > index da59c68df841..e6f7b0d3b29c 100644
+> > --- a/kernel/kprobes.c
+> > +++ b/kernel/kprobes.c
+> > @@ -92,7 +92,7 @@ struct kprobe_insn_page {
+> >  	struct kprobe_insn_cache *cache;
+> >  	int nused;
+> >  	int ngarbage;
+> > -	char slot_used[];
+> > +	char slot_used[] __counted_by(nused);
+> >  };
+> >  
+> >  #define KPROBE_INSN_PAGE_SIZE(slots)			\
+> > -- 
+> > 2.34.1
+> > 
 > 
-
-Thanks!
-
-> By "if I see it shows up in v6.13-rc1", do you mean your branch is not
-> meant for v6.13?
+> This change was not properly tested. In next-20241022, where this
+> changes appears as commit 0888460c9050 ("kprobes: Annotate structs with
+> __counted_by()"), I get a fortify failure because ->nused is initialized
+> after the call to memset(). For example, with Debian's powerpc64le
+> configuration (which is just the first configuration I happened to see
+> this warning in, I don't think it is architecture specific):
 > 
-
-Right, so I'm acting as a sub-subsystem maintainer, and I submit pull
-requests to the tip tree, and then tip will send pull requests to
-Linus. So usually (yeah, I'm calling sometimes I've done only twice as
-"usually"), I submit my PR at rc2 to rc4, and tip will carry that into
-the next merge window. For example, since we are at v6.12-rc5, my next
-PR will be at v6.13-rc{2, 3 or 4}. So if this patch is going via me, it
-has to be in v6.14.
-
-I think this patch has no problem to go into v6.13, so again, feel free
-to do it ;-)
-
-> Couple of things I noticed that I would normally double-check/fix in
-> place: the "// SAFETY: called exactly once" comment could be
-
-Got it. This particular one needs to be "// SAFETY: Called exactly
-once", right?
-
-Note that since lockdep-for-tip is not watched by linux-next, I have
-some flexibilities between queuing a patch and preparing it for the PR
-(I will need to rebase anyway). This could give contributers an early
-notice and we both would have less things to watch (contributers can
-just wait for the patches to show up eventually in Linus' tree instead
-of checking the list for a reply, and I only need to focus on my branch
-for improvement) for normal cases.
-
-> formatted, and I think the "Link:" tag should be before your SoB
-> (well, at least b4 does that, which makes sense since you added it,
-> but I have seen commits done differently too).
+>   $ curl -LSso .config https://github.com/nathanchance/llvm-kernel-testing/raw/096eeab130a9077206d3ddd6f0c6e39187113869/configs/debian/powerpc64le.config
 > 
-
-For this I'm following the precedents in tip tree: always put the patch
-links at the last line. See the "Commit notifications" in
-Documentation/process/maintainer-tip.rst. (And yeah, I have to manually
-modify this after b4 applies the patches if you have to ask ;-))
-
-Regards,
-Boqun
-
-> Thanks!
+>   $ make -skj"$(nproc)" ARCH=powerpc CROSS_COMPILE=powerpc64le-linux-gnu- LLVM=1 olddefconfig zImage.epapr
 > 
-> Cheers,
-> Miguel
+>   $ curl -LSs https://github.com/ClangBuiltLinux/boot-utils/releases/download/20230707-182910/ppc64le-rootfs.cpio.zst | zstd -d >rootfs.cpio
+> 
+>   $ qemu-system-ppc64 \
+>       -display none \
+>       -nodefaults \
+>       -device ipmi-bmc-sim,id=bmc0 \
+>       -device isa-ipmi-bt,bmc=bmc0,irq=10 \
+>       -machine powernv \
+>       -kernel arch/powerpc/boot/zImage.epapr \
+>       -initrd rootfs.cpio \
+>       -m 2G \
+>       -serial mon:stdio
+>   ...
+>   [    0.000000] Linux version 6.12.0-rc4-next-20241022 (nathan@n3-xlarge-x86) (ClangBuiltLinux clang version 19.1.2 (https://github.com/llvm/llvm-project.git 7ba7d8e2f7b6445b60679da826210cdde29eaf8b), ClangBuiltLinux LLD 19.1.2 (https://github.com/llvm/llvm-project.git 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)) #1 SMP Tue Oct 22 20:24:37 UTC 2024
+>   ...
+>   [    0.138628] ------------[ cut here ]------------
+>   [    0.138816] memset: detected buffer overflow: 512 byte write of buffer size 0
+>   [    0.140141] WARNING: CPU: 0 PID: 1 at lib/string_helpers.c:1033 __fortify_report+0x60/0x80
+>   [    0.142208] Modules linked in:
+>   [    0.142722] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc4-next-20241022 #1
+>   [    0.143379] Hardware name: IBM PowerNV (emulated by qemu) POWER10 0x801200 opal:v7.1 PowerNV
+>   [    0.143810] NIP:  c000000000900920 LR: c00000000090091c CTR: 0000000000000000
+>   [    0.144098] REGS: c000000002acf290 TRAP: 0700   Not tainted  (6.12.0-rc4-next-20241022)
+>   [    0.144457] MSR:  9000000002029033 <SF,HV,VEC,EE,ME,IR,DR,RI,LE>  CR: 24800280  XER: 00000000
+>   [    0.145048] CFAR: c00000000014e414 IRQMASK: 0
+>   [    0.145048] GPR00: c00000000090091c c000000002acf530 c0000000017bf0e0 0000000000000041
+>   [    0.145048] GPR04: c0000000025911f8 c0000000ffffefff 0000000000000003 0000000000000001
+>   [    0.145048] GPR08: 0000000000000003 0000000000000004 0000000000000000 9000000002001033
+>   [    0.145048] GPR12: 0000000000800000 c00000000289e000 c000000000010eb8 0000000000000000
+>   [    0.145048] GPR16: 0000000000000000 0000000000000000 0000000000000000 0000000000000000
+>   [    0.145048] GPR20: 0000000000000000 0000000000000000 0000000000000000 c0000000027fba70
+>   [    0.145048] GPR24: 61c8864680b583eb 0000000000000000 0000000000001000 0000000000000000
+>   [    0.145048] GPR28: c000000002a83400 c00000000262de68 c00000000262de30 c000000002acf5b0
+>   [    0.147696] NIP [c000000000900920] __fortify_report+0x60/0x80
+>   [    0.147934] LR [c00000000090091c] __fortify_report+0x5c/0x80
+>   [    0.148277] Call Trace:
+>   [    0.148465] [c000000002acf530] [c00000000090091c] __fortify_report+0x5c/0x80 (unreliable)
+>   [    0.148855] [c000000002acf590] [c000000000900958] __fortify_panic+0x18/0x40
+>   [    0.149133] [c000000002acf5b0] [c0000000002e3508] __get_insn_slot+0x308/0x320
+>   [    0.149413] [c000000002acf620] [c0000000000586c4] arch_prepare_kprobe+0x1e4/0x270
+>   [    0.149699] [c000000002acf6b0] [c0000000002e496c] register_kprobe+0x4cc/0x8e0
+>   [    0.149975] [c000000002acf930] [c0000000020154ac] arch_init_kprobes+0x30/0x54
+>   [    0.150262] [c000000002acf960] [c0000000020411bc] init_kprobes+0x80/0x120
+>   [    0.150524] [c000000002acf9d0] [c000000000010630] do_one_initcall+0x120/0x3e0
+>   [    0.150798] [c000000002acfd50] [c000000002005cb8] do_pre_smp_initcalls+0x70/0x114
+>   [    0.151082] [c000000002acfd90] [c000000002005b70] kernel_init_freeable+0x14c/0x224
+>   [    0.151365] [c000000002acfde0] [c000000000010eec] kernel_init+0x3c/0x250
+>   [    0.151622] [c000000002acfe50] [c00000000000de3c] ret_from_kernel_user_thread+0x14/0x1c
+>   [    0.151935] --- interrupt: 0 at 0x0
+>   [    0.152433] Code: 3cc2fffc 70630001 3c62ffa0 78841f48 38c6f388 38636489 7c86202a 3cc2ff9c 38c62f30 7cc8305e 4b84d9e1 60000000 <0fe00000> 38210060 e8010010 7c0803a6
+>   [    0.153155] ---[ end trace 0000000000000000 ]---
+>   ...
+> 
+> Even if the current ->nused assignment is moved before the call to
+> memset(), the failure still occurs because 1 is clearly wrong for the
+> size of memset(), which is 512 bytes for this configuration. Could this
+> instance of memset() be avoided by using kzalloc() for the kip
+> allocation? Could also take the opportunity to use struct_size(). The
+> following diff fixes this issue for me but I did not do any further
+> testing. If this does not work for some reason and there is no other
+> obvious solution, I think this change should be reverted.
+
+Ping? I still see this on next-20241029. I can also reproduce it with a
+tip of tree GCC.
+
+> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
+> index 98d71a5acb72..6adb0cc4e45c 100644
+> --- a/kernel/kprobes.c
+> +++ b/kernel/kprobes.c
+> @@ -95,10 +95,6 @@ struct kprobe_insn_page {
+>  	char slot_used[] __counted_by(nused);
+>  };
+>  
+> -#define KPROBE_INSN_PAGE_SIZE(slots)			\
+> -	(offsetof(struct kprobe_insn_page, slot_used) +	\
+> -	 (sizeof(char) * (slots)))
+> -
+>  static int slots_per_page(struct kprobe_insn_cache *c)
+>  {
+>  	return PAGE_SIZE/(c->insn_size * sizeof(kprobe_opcode_t));
+> @@ -175,7 +171,7 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+>  		goto retry;
+>  
+>  	/* All out of space.  Need to allocate a new page. */
+> -	kip = kmalloc(KPROBE_INSN_PAGE_SIZE(slots_per_page(c)), GFP_KERNEL);
+> +	kip = kzalloc(struct_size(kip, slot_used, slots_per_page(c)), GFP_KERNEL);
+>  	if (!kip)
+>  		goto out;
+>  
+> @@ -185,10 +181,8 @@ kprobe_opcode_t *__get_insn_slot(struct kprobe_insn_cache *c)
+>  		goto out;
+>  	}
+>  	INIT_LIST_HEAD(&kip->list);
+> -	memset(kip->slot_used, SLOT_CLEAN, slots_per_page(c));
+> -	kip->slot_used[0] = SLOT_USED;
+>  	kip->nused = 1;
+> -	kip->ngarbage = 0;
+> +	kip->slot_used[0] = SLOT_USED;
+>  	kip->cache = c;
+>  	list_add_rcu(&kip->list, &c->pages);
+>  	slot = kip->insns;
 
