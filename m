@@ -1,273 +1,72 @@
-Return-Path: <linux-kernel+bounces-386205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D8859B406C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:29:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81DD9B4071
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:31:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 127D41F22E9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:29:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EE0A1F2317F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9F5198845;
-	Tue, 29 Oct 2024 02:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC8A1DF26E;
+	Tue, 29 Oct 2024 02:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="TFfsktKY"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YWnQ2jN1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0356719884C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6807FEEC5;
+	Tue, 29 Oct 2024 02:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730168969; cv=none; b=TMT+6rVgOb9od145xS6IxGs+gi4Li52io8ZGuGhbytxO6vOXnCrrbWlA0SJJSA1TqJ7tYC0ILG6TUpFTJPLhIOqw0gIO6QatslbaJdw/VHkq//pgWft13RjTrtjl/D+K8mATQxSBY4jYSqzEE7NeD7DUneHGEAyuFo1mqgVRaes=
+	t=1730169051; cv=none; b=DMqNCsPo7FLYkpLzlLR7TNjJncieHCDlKOFs9UCNVjCYJxtTmTBVagHtrH2udUAxwzquNZek4tRxdoB8+cOrou95OpxlK6tqiFiI/LjUNBsL5GQkyvErAmH7d3HY5MANLNLDrgvttsrInkKx6wI3ejiMfQaF2vVlBZEcFPoS15s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730168969; c=relaxed/simple;
-	bh=XXaZT/CChIW7MIYG+hYAOvmT73RMWkSLXOiRMYINrfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uCLmGeecLEV+MU39NzBqoFDUq4SJWPJjoyCcomgY8hWRrOg0Vb/3TnLspxjIvOpJUCFe4Rop/pxrUtyrSbbYBeGn+8wEpdi3xj5oF0MK0o9RkIlIrQB24xTOn+FznN+NUfOCyfSU3yDy6rYrmiNpT3+/zyKZJXLv6/6e99mc2lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=TFfsktKY; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-290ff24354dso178832fac.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 19:29:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1730168966; x=1730773766; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OtRjJzFUnvrxwtpcn9XJc/xdJDx9VYHHtrGlwpyzpKc=;
-        b=TFfsktKYANMpcafgU86o4F+33TArGR3tyoWDvAnc/S5aFom9Yu144A/h4/gEbxoWxM
-         u7TeFcOPtmnpUw1Hd5dTc0CYp+GtBKU3vjF5AaGcsiwnyUO3inT+5hajcqTupBbitZcs
-         OR5yrFNWbtdZEf4+oAYbnhpJohDoFtsMzb8UE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730168966; x=1730773766;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OtRjJzFUnvrxwtpcn9XJc/xdJDx9VYHHtrGlwpyzpKc=;
-        b=rniCSXSCM5miwDAVqU81vijrnRT0ozJVkH9G0RoeIFKM72yRD7IitjtkITBTrV+Ean
-         AtKdOcSOg4GF4H2FBurRo+77WSD38U4vIHPjB2vHoDllLJcTYjep08mG9AjN1izdcwfa
-         NE93TBEr6Dj2wtUwnP3/tjGyRaiioBZdGssBrldmBliiOejS7mVrV6TikDUtdPQVRDFR
-         I4JFqxaQhrbjYzIPq+drG1HzrvIyQswu9LX97xbkzngc5quY9aLu3t0mSEKyb8HKPSOg
-         WmWRppBinnlEdrnEu/b5Gni+7IpeEaXljelJrx3wxLKCo6BcOKBtPbMfUMMYCIe5heUa
-         bryA==
-X-Forwarded-Encrypted: i=1; AJvYcCW4V+Wgoq/uftHHwTO5qle71tSrjQDFmFClYAFq0/KolFTpiEl6fKm8zVGjDSy50WXt103ScntKJeT8p1Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBmHvml/W6JF9NKMm6pbihFjDuHvp2ZfKTdvQ53+uOUUxMubkY
-	ao6QY2UTxWjDizPTy3DX79tjzYY/9J36juUfyZU7Xkq+hQWhdrrc2XuIF2oGiJQ=
-X-Google-Smtp-Source: AGHT+IEhuV07cjeS4LVtoUzAOa1MQj9lnkz7ezBRTnWnZujCXNa+VG8DxmrCFjNULb+Q6rs3HF7TPg==
-X-Received: by 2002:a05:6870:56a7:b0:288:716b:142c with SMTP id 586e51a60fabf-29051b6bb8emr9074339fac.18.1730168965832;
-        Mon, 28 Oct 2024 19:29:25 -0700 (PDT)
-Received: from [10.200.3.216] (p99249-ipoefx.ipoe.ocn.ne.jp. [153.246.134.248])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a1f61bsm6686081b3a.144.2024.10.28.19.29.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Oct 2024 19:29:25 -0700 (PDT)
-Message-ID: <24edee6f-9f77-43f2-8565-566668e5f697@linuxfoundation.org>
-Date: Mon, 28 Oct 2024 20:29:21 -0600
+	s=arc-20240116; t=1730169051; c=relaxed/simple;
+	bh=1kmTNFnha+cuoLiKpSVYFt8MLtaGK8hGfImP5zTdy4M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=or1fIGihUZSNNBNxZqr557AIRKQjDvpUqegzQIOfXg8X/P5HJyMmnz85BUSAAhoNVSqq53uxLJRcOw/dUVKtiriW0bukVsfLOP5t4QXqySgwacFwaxB0gytGgSUuR8bBdHHtnO0MJFaHGj0uK8GdMdjNYOFx0/lSUa8zbc+99IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YWnQ2jN1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA916C4CEC3;
+	Tue, 29 Oct 2024 02:30:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730169050;
+	bh=1kmTNFnha+cuoLiKpSVYFt8MLtaGK8hGfImP5zTdy4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YWnQ2jN10Bc6MRI2Z+gtH4OXgjXgryXTrLN1EOe2flM6tviQQjWeXCNjGkKTyH427
+	 wCrTJEjPNtFdhwJLrbgvlAByLaeayPopDiseGeIO6eUk6C1RK3F9ghtNhEV3hQJKoy
+	 Zd8P2rJCSpVWgoVClI6E4PWRuACljrSzDzXT/gVQ=
+Date: Tue, 29 Oct 2024 03:30:38 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Rex Nie <rex.nie@jaguarmicro.com>
+Cc: bryan.odonoghue@linaro.org, heikki.krogerus@linux.intel.com,
+	linux-arm-msm@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, angus.chen@jaguarmicro.com
+Subject: Re: [PATCH] usb: typec: qcom-pmic: fix uninitialized value hdr_len
+ and txbuf_len
+Message-ID: <2024102927-colossal-shore-0f46@gregkh>
+References: <20241029021823.1978-1-rex.nie@jaguarmicro.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 23/23] testing/selftests: add test tool and
- scripts for ovpn module
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Donald Hunter <donald.hunter@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- sd@queasysnail.net, Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241025-b4-ovpn-v10-0-b87530777be7@openvpn.net>
- <20241025-b4-ovpn-v10-23-b87530777be7@openvpn.net>
- <fe2b641f-a8aa-428c-9f04-f099015e0eb9@linuxfoundation.org>
- <feef6601-0e68-4913-b305-3be3face4a9e@openvpn.net>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <feef6601-0e68-4913-b305-3be3face4a9e@openvpn.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029021823.1978-1-rex.nie@jaguarmicro.com>
 
-On 10/28/24 04:13, Antonio Quartulli wrote:
-> On 27/10/2024 01:40, Shuah Khan wrote:
->> On 10/25/24 03:14, Antonio Quartulli wrote:
->>> The ovpn-cli tool can be compiled and used as selftest for the ovpn
->>> kernel module.
->>>
->>> It implements the netlink API and can thus be integrated in any
->>> script for more automated testing.
->>>
->>> Along with the tool, 4 scripts are added that perform basic
->>> functionality tests by means of network namespaces.
->>>
->>> Cc: shuah@kernel.org
->>> Cc: linux-kselftest@vger.kernel.org
->>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
->>> ---
->>>   MAINTAINERS                                        |    1 +
->>>   tools/testing/selftests/Makefile                   |    1 +
->>>   tools/testing/selftests/net/ovpn/.gitignore        |    2 +
->>>   tools/testing/selftests/net/ovpn/Makefile          |   17 +
->>>   tools/testing/selftests/net/ovpn/config            |   10 +
->>>   tools/testing/selftests/net/ovpn/data64.key        |    5 +
->>>   tools/testing/selftests/net/ovpn/ovpn-cli.c        | 2370 ++++++++++ ++++++++++
->>>   tools/testing/selftests/net/ovpn/tcp_peers.txt     |    5 +
->>>   .../testing/selftests/net/ovpn/test-chachapoly.sh  |    9 +
->>>   tools/testing/selftests/net/ovpn/test-float.sh     |    9 +
->>>   tools/testing/selftests/net/ovpn/test-tcp.sh       |    9 +
->>>   tools/testing/selftests/net/ovpn/test.sh           |  183 ++
->>>   tools/testing/selftests/net/ovpn/udp_peers.txt     |    5 +
->>>   13 files changed, 2626 insertions(+)
->>>
->>
->> What does the test output look like? Add that to the change log.
+On Tue, Oct 29, 2024 at 10:18:23AM +0800, Rex Nie wrote:
+> If the read of USB_PDPHY_RX_ACKNOWLEDGE_REG failed, then hdr_len and
+> txbuf_len are uninitialized. It makes no sense to print message header
+> and payload. It is also not safe to print uninitialized length of ram.
 > 
-> Hi Shuan,
-> 
-> is there any expected output for kselftest scripts?
-> Right now it just prints a bunch of messages about what is being tested, plus the output from `ping` and `iperf`.
-> 
-> My assumption is that the output would be useful in case of failures, to understand where and what went wrong.
-> 
-> I can document that, but I am not sure it is truly helpful (?).
-> What do you think?
-> 
-> Is there any specific output format I should obey to?
-> 
-> 
-> [...]
-> 
-> 
->>> +
->>> +static void usage(const char *cmd)
->>> +{
->>> +    fprintf(stderr,
->>> +        "Usage %s <command> <iface> [arguments..]\n",
->>> +        cmd);
->>> +    fprintf(stderr, "where <command> can be one of the following\n\n");
->>> +
->>> +    fprintf(stderr, "* new_iface <iface> [mode]: create new ovpn interface\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tmode:\n");
->>> +    fprintf(stderr, "\t\t- P2P for peer-to-peer mode (i.e. client)\n");
->>> +    fprintf(stderr, "\t\t- MP for multi-peer mode (i.e. server)\n");
->>> +
->>> +    fprintf(stderr, "* del_iface <iface>: delete ovpn interface\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* listen <iface> <lport> <peers_file> [ipv6]: listen for incoming peer TCP connections\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tlport: TCP port to listen to\n");
->>> +    fprintf(stderr,
->>> +        "\tpeers_file: file containing one peer per line: Line format:\n");
->>> +    fprintf(stderr, "\t\t<peer_id> <vpnaddr>\n");
->>> +    fprintf(stderr,
->>> +        "\tipv6: whether the socket should listen to the IPv6 wildcard address\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* connect <iface> <peer_id> <raddr> <rport> [key_file]: start connecting peer of TCP-based VPN session\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tpeer_id: peer ID of the connecting peer\n");
->>> +    fprintf(stderr, "\traddr: peer IP address to connect to\n");
->>> +    fprintf(stderr, "\trport: peer TCP port to connect to\n");
->>> +    fprintf(stderr,
->>> +        "\tkey_file: file containing the symmetric key for encryption\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* new_peer <iface> <peer_id> <lport> <raddr> <rport> [vpnaddr]: add new peer\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
->>> +    fprintf(stderr,
->>> +        "\tpeer_id: peer ID to be used in data packets to/from this peer\n");
->>> +    fprintf(stderr, "\traddr: peer IP address\n");
->>> +    fprintf(stderr, "\trport: peer UDP port\n");
->>> +    fprintf(stderr, "\tvpnaddr: peer VPN IP\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* new_multi_peer <iface> <lport> <peers_file>: add multiple peers as listed in the file\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
->>> +    fprintf(stderr,
->>> +        "\tpeers_file: text file containing one peer per line. Line format:\n");
->>> +    fprintf(stderr, "\t\t<peer_id> <raddr> <rport> <vpnaddr>\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* set_peer <iface> <peer_id> <keepalive_interval> <keepalive_timeout>: set peer attributes\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->>> +    fprintf(stderr,
->>> +        "\tkeepalive_interval: interval for sending ping messages\n");
->>> +    fprintf(stderr,
->>> +        "\tkeepalive_timeout: time after which a peer is timed out\n");
->>> +
->>> +    fprintf(stderr, "* del_peer <iface> <peer_id>: delete peer\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to delete\n");
->>> +
->>> +    fprintf(stderr, "* get_peer <iface> [peer_id]: retrieve peer(s) status\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr,
->>> +        "\tpeer_id: peer ID of the peer to query. All peers are returned if omitted\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* new_key <iface> <peer_id> <slot> <key_id> <cipher> <key_dir> <key_file>: set data channel key\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr,
->>> +        "\tpeer_id: peer ID of the peer to configure the key for\n");
->>> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
->>> +    fprintf(stderr, "\tkey_id: an ID from 0 to 7\n");
->>> +    fprintf(stderr,
->>> +        "\tcipher: cipher to use, supported: aes (AES-GCM), chachapoly (CHACHA20POLY1305)\n");
->>> +    fprintf(stderr,
->>> +        "\tkey_dir: key direction, must 0 on one host and 1 on the other\n");
->>> +    fprintf(stderr, "\tkey_file: file containing the pre-shared key\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* del_key <iface> <peer_id> [slot]: erase existing data channel key\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->>> +    fprintf(stderr, "\tslot: slot to erase. PRIMARY if omitted\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* get_key <iface> <peer_id> <slot>: retrieve non sensible key data\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to query\n");
->>> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* swap_keys <iface> <peer_id>: swap content of primary and secondary key slots\n");
->>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->>> +
->>> +    fprintf(stderr,
->>> +        "* listen_mcast: listen to ovpn netlink multicast messages\n");
->>> +}
->>
->> If this test is run from "make kselftest" as default run does this usage
->> output show up in the report?
-> 
-> No.
-> This usage is only printed when invoking ovpn-cli with wrong arguments and this can't be the case in the kselftest.
+> Signed-off-by: Rex Nie <rex.nie@jaguarmicro.com>
 
-The usage() is great and much needed. My concern is if this usage would show up
-when we run "make kselftest" - some tests do this by adding wrapper shell script
-to run the test with different options to cover all the cases.
-
-> 
-> 
-> Other than documenting the output, do you think there is any other critical part to be adjusted in this patch?
-
-No - I don't have any other comments on the test itself. I just want to make
-sure this usage inadvertently doesn't end up in the "make kselftest" run.
-
-With that
-
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+What commit id does this fix?
 
 thanks,
--- Shuah
+
+greg k-h
 
