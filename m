@@ -1,201 +1,154 @@
-Return-Path: <linux-kernel+bounces-386629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CE6E9B4615
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:54:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 602D39B4632
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:57:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A01E5B22153
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:54:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF281B226EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755672040A2;
-	Tue, 29 Oct 2024 09:54:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4451A205ABA;
+	Tue, 29 Oct 2024 09:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pGcSHIBz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yl/IoYDj";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pGcSHIBz";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="yl/IoYDj"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F142040BD
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="RqyHhxSh"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8CB204091;
+	Tue, 29 Oct 2024 09:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730195677; cv=none; b=fWqQ5fbXTmQZ//exBIRq6m0SuZx5RQo3N0WtnCxD84jks/BmydSe7EwswUT6o53hYbovTc2VYt2g5Gjrn1GgDRz3hyQT+5vn88U+aUL+fiVE4lTKth2+909H2esgpYEK2BF8NEZoDy2hVkb/nn7YUR9nxmhQARYz53HjpoNEnKM=
+	t=1730195760; cv=none; b=WQRmo58hsZUPhJgBak523cdf8sLDald1cKzONYkOwq4qvH67KUJTyUvosEViTfZ+ajNzsH44k8M4l/JSqwwfO9lZM0W9tRUiXqQnoNXVPOE5Ta7XdWK0CfTxjI1Hh5uv4zag9uKC//tCF+5SIu3CXtPH6q01zRGpMXsVmQM0heI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730195677; c=relaxed/simple;
-	bh=NK20rTXBLxtl4z9bQmS5tegoyU1cnK2QNpf5ICUOsJA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=Z/s9Kj9PXERov6YvZY19lgqoKS53OkoiwlAzM4s+hSHKYBDGnkCAayaVxMF8QXX8P8GJhWYlQ1HXXF9jrgVECo+KF7mPOMgI3lCE00zYrBgcEn55Yuey46rjOQQd2VO0H+JPjflnDA4wXDxoI8jcm8ceeg0PTLIBBXEQzSRgNRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pGcSHIBz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yl/IoYDj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pGcSHIBz; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=yl/IoYDj; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id A80341FE22;
-	Tue, 29 Oct 2024 09:54:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730195673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=ETUUF5yaXCPDuTIcv1pxOQ4q+zFdu3yZKF2Ve9SPQTc=;
-	b=pGcSHIBzZ42ElgrZJOP9s/ylg3KsyU9LMgH8ae6C5st44iUpgokTnTEvDOG0pdM+NrYVrq
-	9ozpu5eTU+u+uSP2qCssDxgcDP5drbilimYbt9OsNwIFt5VRC8NXg1pgQup71NZEojoU0J
-	mFMwQomKoMjhq6chvF+ePvnjMot5qxA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730195673;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=ETUUF5yaXCPDuTIcv1pxOQ4q+zFdu3yZKF2Ve9SPQTc=;
-	b=yl/IoYDjRSVNCY1b4mW7ux+ceH94sr2uEe4lbkNxbRreJqETVVT7mY7QOkQSkaZIlUZI8f
-	X72JXYCdK1VfZmBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1730195673; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=ETUUF5yaXCPDuTIcv1pxOQ4q+zFdu3yZKF2Ve9SPQTc=;
-	b=pGcSHIBzZ42ElgrZJOP9s/ylg3KsyU9LMgH8ae6C5st44iUpgokTnTEvDOG0pdM+NrYVrq
-	9ozpu5eTU+u+uSP2qCssDxgcDP5drbilimYbt9OsNwIFt5VRC8NXg1pgQup71NZEojoU0J
-	mFMwQomKoMjhq6chvF+ePvnjMot5qxA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1730195673;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:autocrypt:autocrypt;
-	bh=ETUUF5yaXCPDuTIcv1pxOQ4q+zFdu3yZKF2Ve9SPQTc=;
-	b=yl/IoYDjRSVNCY1b4mW7ux+ceH94sr2uEe4lbkNxbRreJqETVVT7mY7QOkQSkaZIlUZI8f
-	X72JXYCdK1VfZmBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F184136A5;
-	Tue, 29 Oct 2024 09:54:33 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id qqOaItmwIGfXJAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 29 Oct 2024 09:54:33 +0000
-Message-ID: <fcd42c5a-0350-4073-951f-4a8332b7b3de@suse.cz>
-Date: Tue, 29 Oct 2024 10:54:33 +0100
+	s=arc-20240116; t=1730195760; c=relaxed/simple;
+	bh=KuSK6yv8jISiEGH0rot5gVEQW5xwX37E3+QQhX1/l4s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=btY9SsoTYqSrGFKvJkraS2O64WcURVpG+ip9GHYQOpN0GDTkzAnyMlAV2VwVcDerJinUj+KVeuD5VYuqHVWws+/cCgn5MsgMVP6YAgQcK4g8JSazSY2Ac88vRVaKYaHn2I6atv+FreBcVFBodOYanJvyi+rHYD3BsBa4xyZHn/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=RqyHhxSh; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=YkP+h
+	HuVKz3drYv66Z6ob+bBObbmmlMznGnxdNwYQgA=; b=RqyHhxShp7vkJw9Sxgz8r
+	auzw7BM8Ffhibbz8hNslcMkmgFUB0dd9mJIUOqreCAOVZadE82V2lrU5p1fbZ+u7
+	28eiBGec+S6TNBdvmH9RKpcbSli1s5AOpdo4TTf06FNEqE68WrrfB4JE4FVAMeUO
+	sYhGdDie8sS6q27zNs0aiM=
+Received: from ProDesk.. (unknown [58.22.7.114])
+	by gzga-smtp-mtada-g1-1 (Coremail) with SMTP id _____wD3nxoCsSBn8+3dEA--.3291S2;
+	Tue, 29 Oct 2024 17:55:18 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	minhuadotchen@gmail.com,
+	detlev.casanova@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v4 00/14] VOP Support for rk3576
+Date: Tue, 29 Oct 2024 17:54:53 +0800
+Message-ID: <20241029095513.391006-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Vlastimil Babka <vbabka@suse.cz>
-Subject: [GIT PULL] slab fixes for 6.12-rc6
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Rientjes <rientjes@google.com>, Christoph Lameter <cl@linux.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "linux-mm@kvack.org" <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>,
- Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
- Guenter Roeck <linux@roeck-us.net>
-Content-Language: en-US
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.80
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_EQ_ADDR_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_CC(0.00)[google.com,linux.com,linux-foundation.org,kvack.org,vger.kernel.org,linux.dev,gmail.com,roeck-us.net];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	MID_RHS_MATCH_FROM(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3nxoCsSBn8+3dEA--.3291S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxuF13Gr4rAF48WrWUWFyUWrg_yoW5CF1fp3
+	98CryrZrWxCFyjqrs7Jw1UCrWFvwnayay7Ww4fG3W7J3W5KFnrKr9I9Fn8ZrZxX3WxZF4j
+	krs3X34UKFsIvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UmZXwUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQyHXmcgr44a3QAAsd
 
-Hi Linus,
+From: Andy Yan <andy.yan@rock-chips.com>
 
-please pull the latest slab fixes from:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vbabka/slab.git tags/slab-for-6.12-rc6
+Thanks for the basic work from Collabora, I can bringup a HDMI
+display out on rk3576.
 
-Thanks,
-Vlastimil
+No big changes in this version.
 
-======================================
+I remove the patch that set dma mask to 64 bit in V3, as it seems
+that it's not easy to come up with a suitable solution in the short
+term.
 
-* Fix for a slub_kunit test warning with MEM_ALLOC_PROFILING_DEBUG,
-  by Pei Xiao.
+Others are some typo fix and collection of Tested-by
 
-* Fix for a MTE-based KASAN BUG in krealloc(), by Qun-Wei Lin.
+PATCH 1 is a carryover from the working when add support for
+        rk3588[0], is very usefull when some people want me
+        help debug some issue online, so I really hope it can
+        be merged at this round.
+PATCH 2~4 are bugfix of rk3588 alpha blending which report and
+        test by Derek
+PATCH 5~12 are preparations for rk3576 support
+PATCH 13~14 are real support for rk376
 
-----------------------------------------------------------------
-Pei Xiao (1):
-      slub/kunit: fix a WARNING due to unwrapped __kmalloc_cache_noprof
+I test it with a 1080P/4K HDMI output with modetest and weston output.
 
-Qun-Wei Lin (1):
-      mm: krealloc: Fix MTE false alarm in __do_krealloc
+The hdmi depends Cristian's work which get merged in drm-misc recently[1]
+If there are some one want to have a try, I have a tree here[2]
 
- lib/slub_kunit.c | 2 +-
- mm/slab_common.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+[0] https://patchwork.kernel.org/project/linux-rockchip/cover/20231211115547.1784587-1-andyshrk@163.com/
+[1] https://lore.kernel.org/linux-rockchip/172917428139.3344404.160573495360164649.b4-ty@kernel.org/
+[2] https://github.com/andyshrk/linux/tree/rk3576-vop2-upstream-v4
+
+Changes in v4:
+- Fix some typo
+- Typo fix: selet->select
+- collection of Tested-by and Reviewed-by
+
+Changes in v3:
+- Split it from 10/15, as it fix a exiting compile warning.
+- Add comments for why we should treat rk3566 with special care.
+- Add hardware version check
+- Add comments for why we should treat rk3566 with special care.
+- ordered by soc name
+- Add description for newly added interrupt
+- Share the alpha setup function with rk3568
+- recoder the code block by soc
+
+Changes in v2:
+- split it from main patch add support for rk3576
+- Add platform specific callback
+- Introduce vop hardware version
+- Add dt bindings
+- Add platform specific callback
+
+Andy Yan (13):
+  drm/rockchip: vop2: Add debugfs support
+  drm/rockchip: vop2: Fix cluster windows alpha ctrl registers offset
+  drm/rockchip: vop2: Fix the mixer alpha setup for layer 0
+  drm/rockchip: vop2: Fix the windows switch between different layers
+  drm/rockchip: vop2: Support 32x8 superblock afbc
+  drm/rockchip: vop2: Add platform specific callback
+  drm/rockchip: vop2: Support for different layer select configuration
+    between VPs
+  drm/rockchip: vop2: Introduce vop hardware version
+  drm/rockchip: vop2: Register the primary plane and overlay plane
+    separately
+  drm/rockchip: vop2: Set plane possible crtcs by possible vp mask
+  drm/rockchip: vop2: Add uv swap for cluster window
+  dt-bindings: display: vop2: Add rk3576 support
+  drm/rockchip: vop2: Add support for rk3576
+
+Min-Hua Chen (1):
+  drm/rockchip: vop2: include rockchip_drm_drv.h
+
+ .../display/rockchip/rockchip-vop2.yaml       |   13 +-
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c  | 1572 ++++---------
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h  |  274 ++-
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c  | 1948 ++++++++++++++++-
+ 4 files changed, 2680 insertions(+), 1127 deletions(-)
+
+-- 
+2.34.1
+
 
