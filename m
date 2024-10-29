@@ -1,129 +1,316 @@
-Return-Path: <linux-kernel+bounces-387837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3448C9B56BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:24:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2639B56EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED75A283E9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:24:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31AF51C22059
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F405320B202;
-	Tue, 29 Oct 2024 23:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE8F720C314;
+	Tue, 29 Oct 2024 23:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EE40vylv"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P2e0ktxE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D8120B1FD
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:23:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3C220ADDC
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 23:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244228; cv=none; b=W2MtzQ1jVKvpnXA5qROHharI3g49BqyggbeD9gLLMhZ2BR2+Y73sBd4ANI0bIxYm82yoePaG3ZZFipKwY1rJg4KLil6ZJ1emeL99xPofww5GyN5k8CT4z91n4diG6q81A2qkzX3cbD+gvYtAIMlXPhVJew4Gisk0JyIW+lFaomg=
+	t=1730244517; cv=none; b=jxw4K4ewJlG7CrqywmGvQDSJQzhA8EwpWS1RiEY842kcnv7EpAYuJx4jqxHJlprOtWvJfL+nfBQb7BuzNiQpx/vvLnTPv/FQxWhklQhikT9wB0Ny3mfqZLdWB1uDjAmHT2e8cEN2PATSWbj9A55Xyw78lRTbVsSMVw6Vdy+kD8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244228; c=relaxed/simple;
-	bh=Pm4GnU7xxA+eG7GdSdjp7YUMDc/0xIrLaoLzvPTyAFg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UwsGlfh61m/POl/rSuqYJTVz8zS71jM2HE6OroDVNDd/gMbYdeRhzqse0TnMLMq2OW/sKinNzTZoaLT/grCInWU/69p0f1P5uu2PogMuodBBMD8B0856/FzbhWzo58Z3RBGSVDSwEqlDXU/ktJXpj0gKKZT6XZs2P7twu+HP4Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EE40vylv; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e5130832aso4281542b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:23:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730244225; x=1730849025; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=eq2TIvU7l6qClPWET1EJnvUTYGhEKlxfTR2646JQmYQ=;
-        b=EE40vylv6Yq39+ER3dgLD/sA237LE0D4eech4uuxDpWR+YaT862tYnvj1xRwwTCpiQ
-         pooJCjmFp4y3/YTwMxnvpO9lhpl6Y8SRSjA6EhUSUUy+edbcqrQVcajvaKfC3RuP5h6k
-         Qz5zUcxTCtR+xOrZmmWwYBjyzxCU7Rhj7SzM2buBjVttDNVl0sSc2z9P2mYR8UF5evTM
-         cfcs3uCANoZRMdw6t1ozhjdsXvo9ZyoQWCaTLtT5ZIq29REVpM4MXAAnzyF7BnXUtHbY
-         Qh9odMXBXjNlRwvxVXdsurTOzukTTD/eWHU+5H9SsrHTLvyLiZ4lfAhhRUCIj2wR0wmE
-         WQBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730244225; x=1730849025;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eq2TIvU7l6qClPWET1EJnvUTYGhEKlxfTR2646JQmYQ=;
-        b=UvkYw0Uk16tHH0y5ClakjJLc0FLqKOdu9cQx9h+xUGsrEyPvHjcMPzxIO0QvOQ/l1Y
-         Lp45S0LrwgpZG87cx7+mCfR4PBBau+L4Sg8UDDJr24Ey/KrZycKQLOjTAYnOnd87yPJ3
-         LU5ht114gMT5wNrqPIif2KghTy497BwZwCxUW/1VfYaAHVohDxxfqv4lL260AZBETUOj
-         brHNOHyaCCO8bC+w60mSm2BVohJy1Ukgox2QH4PIyjcPVuyQ6OWXcVIIYsYdaBIOf8BF
-         1zaq6Z5SkCuXYcXnV04nl9PWLU43RQ/D8VkTHS9gHdX0Lotq2L3Hh1DpfhMXPWnopOAn
-         avdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX4ZVItqJhL7UETQCoEx+C8jMN0GObk/BcDw8oSH6H/YlacUy7IegknmraOjTszuv0ZT/++UQIyaeC4Q7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxbZWxVuJOVLzA32zTGFQBjgKrCJUXm03zT8Lo9pVQzEy8joHxi
-	B6EJ7zxaIvIZhzsyCCxb0fIL/9u0sajlz3DVOVVIrl68/HMDUPqnXQA4t7XuPE91QR7VojNcFye
-	WQKU=
-X-Google-Smtp-Source: AGHT+IHW1Mblio0GktYhbv8x/PRao46V4MZh5e/NGipC5ow+04NPWNm7R51BXK9R3SQulhbCBsvRNA==
-X-Received: by 2002:a05:6a21:1693:b0:1d9:2269:c3b8 with SMTP id adf61e73a8af0-1d9a850537fmr19866497637.42.1730244225509;
-        Tue, 29 Oct 2024 16:23:45 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a3cd5esm8251088a12.84.2024.10.29.16.23.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 16:23:45 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: "Rob Herring (Arm)" <robh@kernel.org>, Andreas Kemnade
- <andreas@kemnade.info>
-Cc: aaro.koskinen@iki.fi, rogerq@kernel.org, linux-omap@vger.kernel.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
- Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- tony@atomide.com
-Subject: Re: [PATCH v2 0/4] ARM: dts: omap: omap4-epson-embt2ws: misc gpio
- definitions
-In-Reply-To: <172857036157.1533290.9663617637580743712.robh@kernel.org>
-References: <20241010122957.85164-1-andreas@kemnade.info>
- <172857036157.1533290.9663617637580743712.robh@kernel.org>
-Date: Tue, 29 Oct 2024 16:23:44 -0700
-Message-ID: <7h4j4usdbz.fsf@baylibre.com>
+	s=arc-20240116; t=1730244517; c=relaxed/simple;
+	bh=yw+1t2kusqcMiQZzTJsxE8PicO36X7q524q1DpyoK/w=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=srqisv0ihc6QCTZnVyuhFKlofKidGUuI5fq3mZU/KPuyAlmlQ8MakP1k3M7yXICAs3s02Gcjdf4U2/F+qDsbr6ExbKikXmwQWsuLQ7RJRIhjkDywHn4eu/o6HAscN4SNGRqTX5LoY9yyHMxbLAPotQb7ijtT/Ei0a1j+4pzZmy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P2e0ktxE; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730244514; x=1761780514;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=yw+1t2kusqcMiQZzTJsxE8PicO36X7q524q1DpyoK/w=;
+  b=P2e0ktxExBARSX+Aorp68UKt+dQU/Wu3BM2eFHRJUrhP33LN2rLsNmLK
+   FQtmBHfvxzUNY1qBwdG2V7CopYhjFkLuz79FI0xd4ISw0dK+E8gQjS3qA
+   nhoKbwive+k0vU6HHQWXcq3lu+AU/UN8KL9BBpxNmw+WN2bWbzXn9fTcp
+   AaYYV/9TB3lTl6bV6UBZZpIpC/qR+Qg1EvoA2ga2FOQ7+7xD2R7BoyITl
+   ZrXUTKk2SM5Eg9aC0NEQ2swta3d8QASXh5ETM4HxB01xu3hSy2XNIzqoN
+   KaBIfljL1nSdF1AoDtLMEC6yZ4XBNfFimFK4A6WLpcbB18sWKfEaRFjo8
+   g==;
+X-CSE-ConnectionGUID: oFuA8Sq2RhW0GQf3/bdk5A==
+X-CSE-MsgGUID: QynAGjgySJitbdItNRr27A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="30022127"
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="30022127"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 16:28:33 -0700
+X-CSE-ConnectionGUID: gOBX9ZN9RdO+aOlMEA32cw==
+X-CSE-MsgGUID: 2feVWP5OR6iBUvCxwm8Cig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
+   d="scan'208";a="105445069"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 29 Oct 2024 16:24:35 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t5vZg-000eGS-36;
+	Tue, 29 Oct 2024 23:24:32 +0000
+Date: Wed, 30 Oct 2024 07:24:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: sound/ac97/bus.c:192: warning: Function parameter or member 'drv'
+ not described in 'snd_ac97_codec_driver_register'
+Message-ID: <202410300721.Hw0nCc8V-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-"Rob Herring (Arm)" <robh@kernel.org> writes:
+Hi Arnd,
 
-> On Thu, 10 Oct 2024 14:29:53 +0200, Andreas Kemnade wrote:
->> Bring the system into a more defined state and do not rely
->> on things being initialized by bootloader.
->> 
->> Changes in V2:
->> - better comment strange GPIOs
->> - proper names for regulator nodes
->> 
->> Andreas Kemnade (4):
->>   ARM: dts: omap: omap4-epson-embt2ws: define GPIO regulators
->>   ARM: dts: omap: omap4-epson-embt2ws: wire up regulators
->>   ARM: dts: omap: omap4-epson-embt2ws: add unknown gpio outputs
->>   ARM: dts: omap: omap4-epson-embt2ws: add GPIO expander
->> 
->>  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 183 +++++++++++++++++-
->>  1 file changed, 179 insertions(+), 4 deletions(-)
->> 
->> --
->> 2.39.5
->> 
->> 
->> 
->
->
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
->
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
+First bad commit (maybe != root cause):
 
-This seems like not a new warning, but instead a reoccurance of an
-existing warning due to a phandle rename, so I'm planning to pull this
-as is.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   e42b1a9a2557aa94fee47f078633677198386a52
+commit: 5eab9265759e2fb042aa452931c3d06ab7ab8dae ASoC: PXA: make SND_PXA2XX_SOC_AC97 user-selectable
+date:   1 year, 10 months ago
+config: i386-buildonly-randconfig-004-20241030 (https://download.01.org/0day-ci/archive/20241030/202410300721.Hw0nCc8V-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241030/202410300721.Hw0nCc8V-lkp@intel.com/reproduce)
 
-Kevin
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410300721.Hw0nCc8V-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> sound/ac97/bus.c:192: warning: Function parameter or member 'drv' not described in 'snd_ac97_codec_driver_register'
+   sound/ac97/bus.c:192: warning: Excess function parameter 'dev' description in 'snd_ac97_codec_driver_register'
+>> sound/ac97/bus.c:205: warning: Function parameter or member 'drv' not described in 'snd_ac97_codec_driver_unregister'
+   sound/ac97/bus.c:205: warning: Excess function parameter 'dev' description in 'snd_ac97_codec_driver_unregister'
+>> sound/ac97/bus.c:351: warning: Function parameter or member 'codecs_pdata' not described in 'snd_ac97_controller_register'
+
+
+vim +192 sound/ac97/bus.c
+
+74426fbff66eea Robert Jarzmik   2017-09-02  181  
+74426fbff66eea Robert Jarzmik   2017-09-02  182  /**
+74426fbff66eea Robert Jarzmik   2017-09-02  183   * snd_ac97_codec_driver_register - register an AC97 codec driver
+74426fbff66eea Robert Jarzmik   2017-09-02  184   * @dev: AC97 driver codec to register
+74426fbff66eea Robert Jarzmik   2017-09-02  185   *
+74426fbff66eea Robert Jarzmik   2017-09-02  186   * Register an AC97 codec driver to the ac97 bus driver, aka. the AC97 digital
+74426fbff66eea Robert Jarzmik   2017-09-02  187   * controller.
+74426fbff66eea Robert Jarzmik   2017-09-02  188   *
+74426fbff66eea Robert Jarzmik   2017-09-02  189   * Returns 0 on success or error code
+74426fbff66eea Robert Jarzmik   2017-09-02  190   */
+74426fbff66eea Robert Jarzmik   2017-09-02  191  int snd_ac97_codec_driver_register(struct ac97_codec_driver *drv)
+74426fbff66eea Robert Jarzmik   2017-09-02 @192  {
+74426fbff66eea Robert Jarzmik   2017-09-02  193  	drv->driver.bus = &ac97_bus_type;
+74426fbff66eea Robert Jarzmik   2017-09-02  194  	return driver_register(&drv->driver);
+74426fbff66eea Robert Jarzmik   2017-09-02  195  }
+74426fbff66eea Robert Jarzmik   2017-09-02  196  EXPORT_SYMBOL_GPL(snd_ac97_codec_driver_register);
+74426fbff66eea Robert Jarzmik   2017-09-02  197  
+74426fbff66eea Robert Jarzmik   2017-09-02  198  /**
+74426fbff66eea Robert Jarzmik   2017-09-02  199   * snd_ac97_codec_driver_unregister - unregister an AC97 codec driver
+74426fbff66eea Robert Jarzmik   2017-09-02  200   * @dev: AC97 codec driver to unregister
+74426fbff66eea Robert Jarzmik   2017-09-02  201   *
+74426fbff66eea Robert Jarzmik   2017-09-02  202   * Unregister a previously registered ac97 codec driver.
+74426fbff66eea Robert Jarzmik   2017-09-02  203   */
+74426fbff66eea Robert Jarzmik   2017-09-02  204  void snd_ac97_codec_driver_unregister(struct ac97_codec_driver *drv)
+74426fbff66eea Robert Jarzmik   2017-09-02 @205  {
+74426fbff66eea Robert Jarzmik   2017-09-02  206  	driver_unregister(&drv->driver);
+74426fbff66eea Robert Jarzmik   2017-09-02  207  }
+74426fbff66eea Robert Jarzmik   2017-09-02  208  EXPORT_SYMBOL_GPL(snd_ac97_codec_driver_unregister);
+74426fbff66eea Robert Jarzmik   2017-09-02  209  
+74426fbff66eea Robert Jarzmik   2017-09-02  210  /**
+74426fbff66eea Robert Jarzmik   2017-09-02  211   * snd_ac97_codec_get_platdata - get platform_data
+74426fbff66eea Robert Jarzmik   2017-09-02  212   * @adev: the ac97 codec device
+74426fbff66eea Robert Jarzmik   2017-09-02  213   *
+74426fbff66eea Robert Jarzmik   2017-09-02  214   * For legacy platforms, in order to have platform_data in codec drivers
+74426fbff66eea Robert Jarzmik   2017-09-02  215   * available, while ac97 device are auto-created upon probe, this retrieves the
+74426fbff66eea Robert Jarzmik   2017-09-02  216   * platdata which was setup on ac97 controller registration.
+74426fbff66eea Robert Jarzmik   2017-09-02  217   *
+74426fbff66eea Robert Jarzmik   2017-09-02  218   * Returns the platform data pointer
+74426fbff66eea Robert Jarzmik   2017-09-02  219   */
+74426fbff66eea Robert Jarzmik   2017-09-02  220  void *snd_ac97_codec_get_platdata(const struct ac97_codec_device *adev)
+74426fbff66eea Robert Jarzmik   2017-09-02  221  {
+74426fbff66eea Robert Jarzmik   2017-09-02  222  	struct ac97_controller *ac97_ctrl = adev->ac97_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  223  
+74426fbff66eea Robert Jarzmik   2017-09-02  224  	return ac97_ctrl->codecs_pdata[adev->num];
+74426fbff66eea Robert Jarzmik   2017-09-02  225  }
+74426fbff66eea Robert Jarzmik   2017-09-02  226  EXPORT_SYMBOL_GPL(snd_ac97_codec_get_platdata);
+74426fbff66eea Robert Jarzmik   2017-09-02  227  
+74426fbff66eea Robert Jarzmik   2017-09-02  228  static void ac97_ctrl_codecs_unregister(struct ac97_controller *ac97_ctrl)
+74426fbff66eea Robert Jarzmik   2017-09-02  229  {
+74426fbff66eea Robert Jarzmik   2017-09-02  230  	int i;
+74426fbff66eea Robert Jarzmik   2017-09-02  231  
+74426fbff66eea Robert Jarzmik   2017-09-02  232  	for (i = 0; i < AC97_BUS_MAX_CODECS; i++)
+74426fbff66eea Robert Jarzmik   2017-09-02  233  		if (ac97_ctrl->codecs[i]) {
+74426fbff66eea Robert Jarzmik   2017-09-02  234  			ac97_ctrl->codecs[i]->ac97_ctrl = &ac97_unbound_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  235  			device_unregister(&ac97_ctrl->codecs[i]->dev);
+74426fbff66eea Robert Jarzmik   2017-09-02  236  		}
+74426fbff66eea Robert Jarzmik   2017-09-02  237  }
+74426fbff66eea Robert Jarzmik   2017-09-02  238  
+74426fbff66eea Robert Jarzmik   2017-09-02  239  static ssize_t cold_reset_store(struct device *dev,
+74426fbff66eea Robert Jarzmik   2017-09-02  240  				struct device_attribute *attr, const char *buf,
+74426fbff66eea Robert Jarzmik   2017-09-02  241  				size_t len)
+74426fbff66eea Robert Jarzmik   2017-09-02  242  {
+74426fbff66eea Robert Jarzmik   2017-09-02  243  	struct ac97_controller *ac97_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  244  
+74426fbff66eea Robert Jarzmik   2017-09-02  245  	mutex_lock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  246  	ac97_ctrl = to_ac97_controller(dev);
+74426fbff66eea Robert Jarzmik   2017-09-02  247  	ac97_ctrl->ops->reset(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  248  	mutex_unlock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  249  	return len;
+74426fbff66eea Robert Jarzmik   2017-09-02  250  }
+74426fbff66eea Robert Jarzmik   2017-09-02  251  static DEVICE_ATTR_WO(cold_reset);
+74426fbff66eea Robert Jarzmik   2017-09-02  252  
+74426fbff66eea Robert Jarzmik   2017-09-02  253  static ssize_t warm_reset_store(struct device *dev,
+74426fbff66eea Robert Jarzmik   2017-09-02  254  				struct device_attribute *attr, const char *buf,
+74426fbff66eea Robert Jarzmik   2017-09-02  255  				size_t len)
+74426fbff66eea Robert Jarzmik   2017-09-02  256  {
+74426fbff66eea Robert Jarzmik   2017-09-02  257  	struct ac97_controller *ac97_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  258  
+74426fbff66eea Robert Jarzmik   2017-09-02  259  	if (!dev)
+74426fbff66eea Robert Jarzmik   2017-09-02  260  		return -ENODEV;
+74426fbff66eea Robert Jarzmik   2017-09-02  261  
+74426fbff66eea Robert Jarzmik   2017-09-02  262  	mutex_lock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  263  	ac97_ctrl = to_ac97_controller(dev);
+74426fbff66eea Robert Jarzmik   2017-09-02  264  	ac97_ctrl->ops->warm_reset(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  265  	mutex_unlock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  266  	return len;
+74426fbff66eea Robert Jarzmik   2017-09-02  267  }
+74426fbff66eea Robert Jarzmik   2017-09-02  268  static DEVICE_ATTR_WO(warm_reset);
+74426fbff66eea Robert Jarzmik   2017-09-02  269  
+74426fbff66eea Robert Jarzmik   2017-09-02  270  static struct attribute *ac97_controller_device_attrs[] = {
+74426fbff66eea Robert Jarzmik   2017-09-02  271  	&dev_attr_cold_reset.attr,
+74426fbff66eea Robert Jarzmik   2017-09-02  272  	&dev_attr_warm_reset.attr,
+74426fbff66eea Robert Jarzmik   2017-09-02  273  	NULL
+74426fbff66eea Robert Jarzmik   2017-09-02  274  };
+74426fbff66eea Robert Jarzmik   2017-09-02  275  
+fa2e5a647ed2ed Rikard Falkeborn 2021-01-31  276  static const struct attribute_group ac97_adapter_attr_group = {
+74426fbff66eea Robert Jarzmik   2017-09-02  277  	.name	= "ac97_operations",
+74426fbff66eea Robert Jarzmik   2017-09-02  278  	.attrs	= ac97_controller_device_attrs,
+74426fbff66eea Robert Jarzmik   2017-09-02  279  };
+74426fbff66eea Robert Jarzmik   2017-09-02  280  
+74426fbff66eea Robert Jarzmik   2017-09-02  281  static const struct attribute_group *ac97_adapter_groups[] = {
+74426fbff66eea Robert Jarzmik   2017-09-02  282  	&ac97_adapter_attr_group,
+74426fbff66eea Robert Jarzmik   2017-09-02  283  	NULL,
+74426fbff66eea Robert Jarzmik   2017-09-02  284  };
+74426fbff66eea Robert Jarzmik   2017-09-02  285  
+74426fbff66eea Robert Jarzmik   2017-09-02  286  static void ac97_del_adapter(struct ac97_controller *ac97_ctrl)
+74426fbff66eea Robert Jarzmik   2017-09-02  287  {
+74426fbff66eea Robert Jarzmik   2017-09-02  288  	mutex_lock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  289  	ac97_ctrl_codecs_unregister(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  290  	list_del(&ac97_ctrl->controllers);
+74426fbff66eea Robert Jarzmik   2017-09-02  291  	mutex_unlock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  292  
+74426fbff66eea Robert Jarzmik   2017-09-02  293  	device_unregister(&ac97_ctrl->adap);
+74426fbff66eea Robert Jarzmik   2017-09-02  294  }
+74426fbff66eea Robert Jarzmik   2017-09-02  295  
+74426fbff66eea Robert Jarzmik   2017-09-02  296  static void ac97_adapter_release(struct device *dev)
+74426fbff66eea Robert Jarzmik   2017-09-02  297  {
+74426fbff66eea Robert Jarzmik   2017-09-02  298  	struct ac97_controller *ac97_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  299  
+74426fbff66eea Robert Jarzmik   2017-09-02  300  	ac97_ctrl = to_ac97_controller(dev);
+74426fbff66eea Robert Jarzmik   2017-09-02  301  	idr_remove(&ac97_adapter_idr, ac97_ctrl->nr);
+74426fbff66eea Robert Jarzmik   2017-09-02  302  	dev_dbg(&ac97_ctrl->adap, "adapter unregistered by %s\n",
+74426fbff66eea Robert Jarzmik   2017-09-02  303  		dev_name(ac97_ctrl->parent));
+74426fbff66eea Robert Jarzmik   2017-09-02  304  }
+74426fbff66eea Robert Jarzmik   2017-09-02  305  
+74426fbff66eea Robert Jarzmik   2017-09-02  306  static const struct device_type ac97_adapter_type = {
+74426fbff66eea Robert Jarzmik   2017-09-02  307  	.groups		= ac97_adapter_groups,
+74426fbff66eea Robert Jarzmik   2017-09-02  308  	.release	= ac97_adapter_release,
+74426fbff66eea Robert Jarzmik   2017-09-02  309  };
+74426fbff66eea Robert Jarzmik   2017-09-02  310  
+74426fbff66eea Robert Jarzmik   2017-09-02  311  static int ac97_add_adapter(struct ac97_controller *ac97_ctrl)
+74426fbff66eea Robert Jarzmik   2017-09-02  312  {
+74426fbff66eea Robert Jarzmik   2017-09-02  313  	int ret;
+74426fbff66eea Robert Jarzmik   2017-09-02  314  
+74426fbff66eea Robert Jarzmik   2017-09-02  315  	mutex_lock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  316  	ret = idr_alloc(&ac97_adapter_idr, ac97_ctrl, 0, 0, GFP_KERNEL);
+74426fbff66eea Robert Jarzmik   2017-09-02  317  	ac97_ctrl->nr = ret;
+74426fbff66eea Robert Jarzmik   2017-09-02  318  	if (ret >= 0) {
+74426fbff66eea Robert Jarzmik   2017-09-02  319  		dev_set_name(&ac97_ctrl->adap, "ac97-%d", ret);
+74426fbff66eea Robert Jarzmik   2017-09-02  320  		ac97_ctrl->adap.type = &ac97_adapter_type;
+74426fbff66eea Robert Jarzmik   2017-09-02  321  		ac97_ctrl->adap.parent = ac97_ctrl->parent;
+74426fbff66eea Robert Jarzmik   2017-09-02  322  		ret = device_register(&ac97_ctrl->adap);
+74426fbff66eea Robert Jarzmik   2017-09-02  323  		if (ret)
+74426fbff66eea Robert Jarzmik   2017-09-02  324  			put_device(&ac97_ctrl->adap);
+74426fbff66eea Robert Jarzmik   2017-09-02  325  	}
+74426fbff66eea Robert Jarzmik   2017-09-02  326  	if (!ret)
+74426fbff66eea Robert Jarzmik   2017-09-02  327  		list_add(&ac97_ctrl->controllers, &ac97_controllers);
+74426fbff66eea Robert Jarzmik   2017-09-02  328  	mutex_unlock(&ac97_controllers_mutex);
+74426fbff66eea Robert Jarzmik   2017-09-02  329  
+74426fbff66eea Robert Jarzmik   2017-09-02  330  	if (!ret)
+74426fbff66eea Robert Jarzmik   2017-09-02  331  		dev_dbg(&ac97_ctrl->adap, "adapter registered by %s\n",
+74426fbff66eea Robert Jarzmik   2017-09-02  332  			dev_name(ac97_ctrl->parent));
+74426fbff66eea Robert Jarzmik   2017-09-02  333  	return ret;
+74426fbff66eea Robert Jarzmik   2017-09-02  334  }
+74426fbff66eea Robert Jarzmik   2017-09-02  335  
+74426fbff66eea Robert Jarzmik   2017-09-02  336  /**
+74426fbff66eea Robert Jarzmik   2017-09-02  337   * snd_ac97_controller_register - register an ac97 controller
+74426fbff66eea Robert Jarzmik   2017-09-02  338   * @ops: the ac97 bus operations
+74426fbff66eea Robert Jarzmik   2017-09-02  339   * @dev: the device providing the ac97 DC function
+74426fbff66eea Robert Jarzmik   2017-09-02  340   * @slots_available: mask of the ac97 codecs that can be scanned and probed
+74426fbff66eea Robert Jarzmik   2017-09-02  341   *                   bit0 => codec 0, bit1 => codec 1 ... bit 3 => codec 3
+74426fbff66eea Robert Jarzmik   2017-09-02  342   *
+74426fbff66eea Robert Jarzmik   2017-09-02  343   * Register a digital controller which can control up to 4 ac97 codecs. This is
+74426fbff66eea Robert Jarzmik   2017-09-02  344   * the controller side of the AC97 AC-link, while the slave side are the codecs.
+74426fbff66eea Robert Jarzmik   2017-09-02  345   *
+74426fbff66eea Robert Jarzmik   2017-09-02  346   * Returns a valid controller upon success, negative pointer value upon error
+74426fbff66eea Robert Jarzmik   2017-09-02  347   */
+74426fbff66eea Robert Jarzmik   2017-09-02  348  struct ac97_controller *snd_ac97_controller_register(
+74426fbff66eea Robert Jarzmik   2017-09-02  349  	const struct ac97_controller_ops *ops, struct device *dev,
+74426fbff66eea Robert Jarzmik   2017-09-02  350  	unsigned short slots_available, void **codecs_pdata)
+74426fbff66eea Robert Jarzmik   2017-09-02 @351  {
+74426fbff66eea Robert Jarzmik   2017-09-02  352  	struct ac97_controller *ac97_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  353  	int ret, i;
+74426fbff66eea Robert Jarzmik   2017-09-02  354  
+74426fbff66eea Robert Jarzmik   2017-09-02  355  	ac97_ctrl = kzalloc(sizeof(*ac97_ctrl), GFP_KERNEL);
+74426fbff66eea Robert Jarzmik   2017-09-02  356  	if (!ac97_ctrl)
+74426fbff66eea Robert Jarzmik   2017-09-02  357  		return ERR_PTR(-ENOMEM);
+74426fbff66eea Robert Jarzmik   2017-09-02  358  
+74426fbff66eea Robert Jarzmik   2017-09-02  359  	for (i = 0; i < AC97_BUS_MAX_CODECS && codecs_pdata; i++)
+74426fbff66eea Robert Jarzmik   2017-09-02  360  		ac97_ctrl->codecs_pdata[i] = codecs_pdata[i];
+74426fbff66eea Robert Jarzmik   2017-09-02  361  
+74426fbff66eea Robert Jarzmik   2017-09-02  362  	ac97_ctrl->ops = ops;
+74426fbff66eea Robert Jarzmik   2017-09-02  363  	ac97_ctrl->slots_available = slots_available;
+74426fbff66eea Robert Jarzmik   2017-09-02  364  	ac97_ctrl->parent = dev;
+74426fbff66eea Robert Jarzmik   2017-09-02  365  	ret = ac97_add_adapter(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  366  
+74426fbff66eea Robert Jarzmik   2017-09-02  367  	if (ret)
+74426fbff66eea Robert Jarzmik   2017-09-02  368  		goto err;
+74426fbff66eea Robert Jarzmik   2017-09-02  369  	ac97_bus_reset(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  370  	ac97_bus_scan(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  371  
+74426fbff66eea Robert Jarzmik   2017-09-02  372  	return ac97_ctrl;
+74426fbff66eea Robert Jarzmik   2017-09-02  373  err:
+74426fbff66eea Robert Jarzmik   2017-09-02  374  	kfree(ac97_ctrl);
+74426fbff66eea Robert Jarzmik   2017-09-02  375  	return ERR_PTR(ret);
+74426fbff66eea Robert Jarzmik   2017-09-02  376  }
+74426fbff66eea Robert Jarzmik   2017-09-02  377  EXPORT_SYMBOL_GPL(snd_ac97_controller_register);
+74426fbff66eea Robert Jarzmik   2017-09-02  378  
+
+:::::: The code at line 192 was first introduced by commit
+:::::: 74426fbff66eea8e8d1f42c8238c268d1e63a832 ALSA: ac97: add an ac97 bus
+
+:::::: TO: Robert Jarzmik <robert.jarzmik@free.fr>
+:::::: CC: Mark Brown <broonie@kernel.org>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
