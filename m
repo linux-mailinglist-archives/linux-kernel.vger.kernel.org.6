@@ -1,150 +1,104 @@
-Return-Path: <linux-kernel+bounces-387533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9CD9B5277
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:11:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBF29B5282
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:12:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5B581F23FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:11:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 651F6284807
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AAFD2071EC;
-	Tue, 29 Oct 2024 19:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68CEC2071F6;
+	Tue, 29 Oct 2024 19:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tSQ4kbZN"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="FZ1tjSD+"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0769206979
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64551FBF50;
+	Tue, 29 Oct 2024 19:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730229098; cv=none; b=XSjHqyfbXrvsV0fIVMhtMk7sqlkrDWZsivDPa7a/W4U1RkqFeNv79ln4l+hp3o5PjAeSnE++UcRnAXwX79ZT+5FiL/LNxs1rIHAZ2NtQiDMlDTNr2UivrfvDTxg/r2ad3tlHJgOGEZffbkmdBt6HPbWDWtL1TA4fd/quxMOftOM=
+	t=1730229127; cv=none; b=boX8GrM54FUZ5P1mEGAnpirQ1ImKQliI65/tobhdCCZAWEtQsnlO9wvpmTj8P7pQ7B4bde3m/x+r1g7Lv1UWBXnYHbP2SyvZXQ5JGbhy6cmYAUadHw5+OOZUjdt/RYRMarmYU1OE8fJtwTy1PuuOwsXryUl9ol3G/wzSTYrX9qE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730229098; c=relaxed/simple;
-	bh=A3EDvAkBsrD1MH46YizbfS4xXWc+4ZiRgWy4gj950+k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a/+vPJ+v5WLmcdNOyKv9ftB7CvBYKnCdro2TwkVkWQaRLXZLDMWIFV+jb8TjCxzKO4c/p9+nf3V2F+NI5JGyMIjzjRcKt4muH3bv3rWonKFNEB7Mpl8pICnOtImlWTsk6mPNleDUEizr41/CdsWsBXLzqyET5EmExTGzgiysc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tSQ4kbZN; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so57126005e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730229095; x=1730833895; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qg+9BLrsm9SBOJJP8ytNsGKOTVgu1Tvrspr3N36bIrM=;
-        b=tSQ4kbZN64zIMrB53lopahtZmEGgQ55O7R+aHFCXjsLQOqgyECJafO5evxr7YYoVmI
-         2DdK6+gRG6YZ/jJZyqGAem4bgninLqTRRa2Ntp+RPl5a1p1+dYjmrwmyt8R+C+RMIxOi
-         dK4wUun6QbDGDDL5iCKZy8lcQrw90XiZVVZ8NAvtR0253Emo0f40SnHMnPLNV7QJ9+D7
-         NjC6+kg9PhrZbR2S/9ECUTOJpbhp8wttXEDY100j69i7lViXUu20AM6R0trYu6W3wgQp
-         TPYVHP0dlQK8Ic8qC1AVgxCMDwrtsikCYhCRIQ/0y8LbFN+NVcRva+9Yq6LoZ6D08xcl
-         z+lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730229095; x=1730833895;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qg+9BLrsm9SBOJJP8ytNsGKOTVgu1Tvrspr3N36bIrM=;
-        b=INA2ykLBlOC7RqNmOOas7bCtTfcy5guFWxdWHwlk0TXnkAVENKtGdf45UsX2DcXb5C
-         fmJdvSW/3N+BlyxzIprx8dQ8PoZvOOTGgG6QCQ9vaYWZLJOlYe0Vc4oCNwN/N62Uqybm
-         VDCrqs6yB9itgmeUgb78B2/xl+7V/NGUcQIlWgq4Q9imk6yIhqxVo1sRsUU4LHD3Kdn4
-         bEOGpuzavCum7mtDhK/g6DRQQj6ix+Z4avg8LtAv3s6NTPT1ZBSJ1lfTXaVY30Mi7lvJ
-         RXv9TgZkzl2ZA53fASFyufTyytSRkBIRuViH85EczqLAv3krxR0tJh3bCdGf9MqDC4N0
-         xRcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGj8eiT+Jc30hjXWqEwfO94seaVNV4T3YIKZAZJuudhoxvNoYEhX4A1DxlSgvf1boBBQ5i56sh/M9QxeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGL/RjGn25l5SyaYWIKjgkffcMesqte1Xr1fG50kc/YIN9yh4J
-	SeESJMU+OsKIVGaBtHITvu1WuSXVejcEjYN/6a9HW5SdhBpv4Pg2nhi2+eTDFD8=
-X-Google-Smtp-Source: AGHT+IFp4YehJs7QQecchQgE7zUujr1IPc5oNzBTFVOT84j09Z72l+JK7DtHPQFmUWtHpLEwEKBdQw==
-X-Received: by 2002:a05:600c:4f85:b0:42c:de34:34c1 with SMTP id 5b1f17b1804b1-4319ac7408dmr115069765e9.2.1730229094979;
-        Tue, 29 Oct 2024 12:11:34 -0700 (PDT)
-Received: from gpeter-l.lan ([145.224.65.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058bb4724sm13318763f8f.115.2024.10.29.12.11.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 12:11:34 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: linux-watchdog@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH] Revert "watchdog: s3c2410_wdt: use exynos_get_pmu_regmap_by_phandle() for PMU regs"
-Date: Tue, 29 Oct 2024 19:11:31 +0000
-Message-ID: <20241029191131.2329414-1-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+	s=arc-20240116; t=1730229127; c=relaxed/simple;
+	bh=KfJeyNXckP8ryDW4PLbD5ryy4KlUL7OyJI3I1nGZk6w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P/RR1O7JjhDe0DnhJmAKhOcEUJmZfIA4elAZrn5PZC3/QWarc7nHu3YvaQSzG0dv1iGWLEodVJexhuCdtMuYwngEIPem+49bpfvaywK+jUEY0Bx3yUqueiajPVSbleWGsdPSla29//uLBpEpLgUoKfqze/LCBRjFecAszUMBS8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=FZ1tjSD+; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XdKd11s2Wz6CmM6M;
+	Tue, 29 Oct 2024 19:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1730229123; x=1732821124; bh=CWBykyCGoTby+KMCV20ywtLX
+	mEyYVyRBMmjHZbe+h+o=; b=FZ1tjSD+EmpJg5hcmZDLKtvcYBI1KG6CnZuPou/C
+	gX7Gc090Cka2I/5/N0NiybpEU5hM1fUikgOZ+p2hMLpMSpFGWdN/CNSYmTJSYeEx
+	EjRVjo2uUm+mcHaVSoeceDMpu1gJFK9Fpw1kohKU6hWmHpir45shvTdzGYWT+3Lz
+	ZJKqeSGFV5mXXnYC8Baxkm8it/gljkNaKHFxcsWHwB4pKQbbxO36FwyGazbqxg9p
+	rUVDiGTKfb85izDAE3sSSiMNqNqUKIJgWuNK33kOpnGbe5Vd3aG3kZogQoX8uAG4
+	X/HlxPuRjvDmvDGeJ11AGJY+bMqgWCXR/CgL3iPCC1q74w==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id 05IhVrWL7etX; Tue, 29 Oct 2024 19:12:03 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XdKcy4CNhz6CmM5x;
+	Tue, 29 Oct 2024 19:12:01 +0000 (UTC)
+Message-ID: <c48cfcbd-0f8b-42fe-b804-1a3da473a7fe@acm.org>
+Date: Tue, 29 Oct 2024 12:12:00 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] scsi: ufs: core: Introduce a new clock_gating lock
+To: Avri Altman <Avri.Altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20241029102938.685835-1-avri.altman@wdc.com>
+ <20241029102938.685835-2-avri.altman@wdc.com>
+ <611fc99e-c947-463a-82e1-9d2a68d67aa4@acm.org>
+ <BL0PR04MB6564D3BBB11D00067485F5CBFC4B2@BL0PR04MB6564.namprd04.prod.outlook.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <BL0PR04MB6564D3BBB11D00067485F5CBFC4B2@BL0PR04MB6564.namprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This reverts commit 746f0770f916e6c48e422d6a34e67eae16707f0e.
+On 10/29/24 11:39 AM, Avri Altman wrote:
+>> On 10/29/24 3:29 AM, Avri Altman wrote:
+>> and do not exceed the 80 column limit. git clang-format HEAD^ can help
+>> with restricting code to the 80 column limit.
+> Isn't the 80 characters restriction was changed long ago to 100 characters?
+> I always use strict checkpatch and doesn't get any warning about this.
 
-Now that we can register a SoC specific regmap with syscon using
-of_syscon_register_regmap() api we can switch back to using
-syscon_regmap_lookup_by_phandle() in the client drivers.
+80 columns is the limit currently used in the UFS driver so I think we
+should stick to this limit to keep formatting of the UFS driver
+consistent. Here are two additional arguments:
+* From Documentation/process/coding-style.rst:
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/watchdog/Kconfig       | 1 +
- drivers/watchdog/s3c2410_wdt.c | 8 ++++----
- 2 files changed, 5 insertions(+), 4 deletions(-)
+   The preferred limit on the length of a single line is 80 columns.
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 684b9fe84fff..f3cd402e5795 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -549,6 +549,7 @@ config S3C2410_WATCHDOG
- 	tristate "S3C6410/S5Pv210/Exynos Watchdog"
- 	depends on ARCH_S3C64XX || ARCH_S5PV210 || ARCH_EXYNOS || COMPILE_TEST
- 	select WATCHDOG_CORE
-+	select MFD_SYSCON if ARCH_EXYNOS
- 	help
- 	  Watchdog timer block in the Samsung S3C64xx, S5Pv210 and Exynos
- 	  SoCs. This will reboot the system when the timer expires with
-diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wdt.c
-index 686cf544d0ae..349d30462c8c 100644
---- a/drivers/watchdog/s3c2410_wdt.c
-+++ b/drivers/watchdog/s3c2410_wdt.c
-@@ -24,9 +24,9 @@
- #include <linux/slab.h>
- #include <linux/err.h>
- #include <linux/of.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/regmap.h>
- #include <linux/delay.h>
--#include <linux/soc/samsung/exynos-pmu.h>
- 
- #define S3C2410_WTCON		0x00
- #define S3C2410_WTDAT		0x04
-@@ -699,11 +699,11 @@ static int s3c2410wdt_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	if (wdt->drv_data->quirks & QUIRKS_HAVE_PMUREG) {
--		wdt->pmureg = exynos_get_pmu_regmap_by_phandle(dev->of_node,
--						 "samsung,syscon-phandle");
-+		wdt->pmureg = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						"samsung,syscon-phandle");
- 		if (IS_ERR(wdt->pmureg))
- 			return dev_err_probe(dev, PTR_ERR(wdt->pmureg),
--					     "PMU regmap lookup failed.\n");
-+					     "syscon regmap lookup failed.\n");
- 	}
- 
- 	wdt_irq = platform_get_irq(pdev, 0);
--- 
-2.47.0.163.g1226f6d8fa-goog
+* From .clang-format:
 
+   ColumnLimit: 80
+
+
+Thanks,
+
+Bart.
 
