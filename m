@@ -1,139 +1,103 @@
-Return-Path: <linux-kernel+bounces-386297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C2AA9B41A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:45:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 728F89B41A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:50:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE317B21933
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:45:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 261031F234AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B477D1DB53A;
-	Tue, 29 Oct 2024 04:45:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C622FB2
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31081DE4D7;
+	Tue, 29 Oct 2024 04:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="HycEWYbr"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 724602FB2;
+	Tue, 29 Oct 2024 04:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730177141; cv=none; b=IYQHigT9p4AOgWUttrsZA4Jms/4Nb6LKWkDHCz9xEhryFzCnKgH7pDIRKvsnGKNZKcBU25O8hXHB47gUJdfZ4WDNc3cgsp/5YUoUNSDs7NNRMkCyyAdRB76OqYuM81GjCGOZ7OfuYELDKH0HwIk+4BsFJQqGsVvwNDcG3sGnjUg=
+	t=1730177429; cv=none; b=mV/BiYFUHwVLlH04SW8uelj1y8+jmajJQrmOHCtGKVIeb4jOScWGJUWoILqA1nbnl9UN4P0aZu//xPuoHsocv4po4TTWgQQELOY11QQvPclEQV4ahfMfYXUcYIySVGTPH0mNtLFbBTbSGh0VSLms2KZPld6m/9HGGFNeSyCducY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730177141; c=relaxed/simple;
-	bh=1fFWrVabQK6lR2qBCMimckzMDKPa1pDQUcCAHcFWbYs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LWHFyYaI2d9uUflQynY0Ga+BzY94+Uj/fkI5YY3hy9itn5kfo+4XPNNzJLZlAr1HFIMdYUB1FWMw1XwsPK11mhjPmMcaxmc5LQ5iEbnyA5OtsWFYVIzoHZ9pEqjKCPnImm7/vn4OdLVMHb5POyTN/4zm+uc8JjicyfRM6cNhSL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A90013D5;
-	Mon, 28 Oct 2024 21:46:07 -0700 (PDT)
-Received: from a077893.arm.com (unknown [10.163.43.192])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 23BCA3F66E;
-	Mon, 28 Oct 2024 21:45:34 -0700 (PDT)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64/mm: Re-organize arch_make_huge_pte()
-Date: Tue, 29 Oct 2024 10:15:29 +0530
-Message-Id: <20241029044529.2624785-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730177429; c=relaxed/simple;
+	bh=JyOPmA0BGHCrZsPnJA18OiK/Y00rNK2H572vJYc64Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M+C4n+frknZOjjIvCTq4/u8SEEX2Y81DAXJgdUPXIKG5B4XSIuJS/v4AIkZnNwqxvYjf55mCCdtzdtit//0JYVspyEep6cJNo4YWFNzYGybE5wYUi0qdzDZC1w2olAIZyVQKK8DxMRrFnH6TOS6n4JuwAZ0JninV5sS1CgYArKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=HycEWYbr; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1730177421;
+	bh=7zALh7Ps8DFW/WRavaEMiZdhIureRdfwU/hDHdmD4nY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HycEWYbrGesJTPRrOtFG0tDO+H6Wb9lkpMxE9+UjRIo2Kdbc5B4DJJwu1x4agh8gX
+	 C7BNYBQ/UQ8XqyNptfFcq+51pViseabU65kh8aPD5oR59Dg3hMhqN3noxICp2g8rGH
+	 Fa4tRlm1tIVcvRoauRy7+TrOs2KMF71KsIwcteqyzBh6JkNih/IBpOAbRVHzWsLjsa
+	 4Z+wOnBcHhGyvI72BLP+zX6KTMGIktZ0wbfUqPwROZIs2ikMvgQISGB9q/4XgyeSKh
+	 F9uM+jFseOtltjrxQAg2r51dlPaFZ/03RXnhJPoXF8Iz4oNY5x2SKubaXis4jtBPtP
+	 BXVfBoE0EbNHA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XcyVj3dFSz4wcy;
+	Tue, 29 Oct 2024 15:50:21 +1100 (AEDT)
+Date: Tue, 29 Oct 2024 15:50:22 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Matteo Martelli <matteomartelli3@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of the iio tree
+Message-ID: <20241029155022.5f777572@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/8ovJmLYY7eSq03w5Jf0G=Q8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Core HugeTLB defines a fallback definition for arch_make_huge_pte(), which
-calls platform provided pte_mkhuge(). But if any platform already provides
-an override for arch_make_huge_pte(), then it does not need to provide the
-helper pte_mkhuge().
+--Sig_/8ovJmLYY7eSq03w5Jf0G=Q8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-arm64 override for arch_make_huge_pte() calls pte_mkhuge() internally, thus
-creating an impression, that both of these callbacks are being used in core
-HugeTLB and hence required to be defined. This drops off pte_mkhuge() which
-was never required to begin with as there could not be any section mappings
-at the PTE level. Re-organize arch_make_huge_pte() based on requested page
-size and create the entry for the applicable page table level as needed. It
-also removes a redundancy of clearing PTE_TABLE_BIT bit followed by setting
-both PTE_TABLE_BIT and PTE_VALID bits (via PTE_TYPE_MASK) in the pte, while
-creating CONT_PTE_SIZE size entries.
+Hi all,
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This applies on v6.12-rc5
+After merging the iio tree, today's linux-next build (htmldocs) produced
+this warning:
 
- arch/arm64/include/asm/pgtable.h |  5 -----
- arch/arm64/mm/hugetlbpage.c      | 21 ++++++++++++++++-----
- 2 files changed, 16 insertions(+), 10 deletions(-)
+include/linux/iio/iio.h:555: warning: Function parameter or struct member '=
+read_avail_release_resource' not described in 'iio_info'
 
-diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
-index c329ea061dc9..fa4c32a9f572 100644
---- a/arch/arm64/include/asm/pgtable.h
-+++ b/arch/arm64/include/asm/pgtable.h
-@@ -438,11 +438,6 @@ static inline void __set_ptes(struct mm_struct *mm,
- 	}
- }
- 
--/*
-- * Huge pte definitions.
-- */
--#define pte_mkhuge(pte)		(__pte(pte_val(pte) & ~PTE_TABLE_BIT))
--
- /*
-  * Hugetlb definitions.
-  */
-diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
-index 5f1e2103888b..3215adf48a1b 100644
---- a/arch/arm64/mm/hugetlbpage.c
-+++ b/arch/arm64/mm/hugetlbpage.c
-@@ -361,14 +361,25 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
- {
- 	size_t pagesize = 1UL << shift;
- 
--	entry = pte_mkhuge(entry);
--	if (pagesize == CONT_PTE_SIZE) {
--		entry = pte_mkcont(entry);
--	} else if (pagesize == CONT_PMD_SIZE) {
-+	switch (pagesize) {
-+#ifndef __PAGETABLE_PMD_FOLDED
-+	case PUD_SIZE:
-+		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
-+		break;
-+#endif
-+	case CONT_PMD_SIZE:
- 		entry = pmd_pte(pmd_mkcont(pte_pmd(entry)));
--	} else if (pagesize != PUD_SIZE && pagesize != PMD_SIZE) {
-+		fallthrough;
-+	case PMD_SIZE:
-+		entry = pmd_pte(pmd_mkhuge(pte_pmd(entry)));
-+		break;
-+	case CONT_PTE_SIZE:
-+		entry = pte_mkcont(entry);
-+		break;
-+	default:
- 		pr_warn("%s: unrecognized huge page size 0x%lx\n",
- 			__func__, pagesize);
-+		break;
- 	}
- 	return entry;
- }
--- 
-2.30.2
+Introduced by commit
 
+  8a63e3033e72 ("iio: core: add read_avail_release_resource callback to fix=
+ race")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/8ovJmLYY7eSq03w5Jf0G=Q8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcgaY4ACgkQAVBC80lX
+0GzSpwgApICw5cQKfvgazi/jQBU5mWE0lVv6lhEcIN7jGaboW+ZVo7XGITSAdxb6
+tLfn3/agBP9qPW13s3Z1oKoc5M/YkdyTECaC2jYGYlxMgFxdUslrJMFJZCFUa5pO
+G2qGfAQOdInLHj6tyZuN5WDIjZh8GC9hA5ZhSlZeU+Qa5oJgGfanAZ6arDvFH+mk
+fmqymyOMOOy0rXVD/Ntz+t5oYbmMcD07IU3Vi4udH95BEo28LCZ5Vcw2dWckcTkd
+qa/uQkvN2yBxrhxc420JAKXldL/pkbaFb0z1WS1vhDVHyFNfeUNmH4Ikt8GFJ1rH
+Od9vq+onwb66CYPFjRR/lQecPhwouw==
+=ln/w
+-----END PGP SIGNATURE-----
+
+--Sig_/8ovJmLYY7eSq03w5Jf0G=Q8--
 
