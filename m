@@ -1,68 +1,59 @@
-Return-Path: <linux-kernel+bounces-387290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1FC9B4F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:16:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74309B4F16
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D3631C22A11
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:16:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C9B4283970
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8917E198E76;
-	Tue, 29 Oct 2024 16:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520381D86ED;
+	Tue, 29 Oct 2024 16:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIdFo/xm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3aZv97J"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA26D1993B5;
-	Tue, 29 Oct 2024 16:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A942D198E9E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:15:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730218532; cv=none; b=VClDhaLMgwuDSu+3ubggbur7M9LjDai8b86XzSCQqsQty+HePi8L0JAOvgoM7wv9bxfYxJdER3GnSGxGZKe5vRDC5Y3JQp4JJdAKsfUq30ns0PA9blTBF3y+fXSWnzikQe76usDFFE9xVrqa1LvZR8YDyi/V+uXRAuFq0gCkt2s=
+	t=1730218533; cv=none; b=nl7dHMIzdp+xqUE55XzgLfr2XJXAFJH8KnygGvYqMWxwHnGFBvgfK80MTczD5a1bHTMHlUm208tkOgm9bpXwn5HTiMewX3cO4YL6hTe3a7jmoNqErA2tbBtTw7Kw/Ha5zbbbgnDNmnOClJW1+/n1iOyBraBHE2qRIDL4zwB+wrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730218532; c=relaxed/simple;
-	bh=kMKc10j7VGxeNAMb2m4ny2C5ZWH83LXpdQnxhHidR+o=;
+	s=arc-20240116; t=1730218533; c=relaxed/simple;
+	bh=vsyWoTwbsiRwsb9EYXxM+GmOQGioC2wxUoNjmlnpZ7I=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=reEOIil5VwBkEHbtY/A3G55b9QgSBm2otGF5VzquMo9z5I1s2GoOP4SF+tXzh0nl+WVwRfWbpEby58m87Uy8Z9lgpPkFwQiSe7wxZfaNAcK8P4D8BCjCCMTRwBMUxLmWHsiHNTgK6bWNRm+qXaIp+DSiwRUAxVt9D+oRw55C6/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIdFo/xm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9752BC4CEE8;
-	Tue, 29 Oct 2024 16:15:28 +0000 (UTC)
+	 MIME-Version:Content-Type; b=P/xl9Yy3Q/qz2jvoDX8dCPojASMsi6oLj0uizZrKrvT0OD/IXUa2DVwJuKBDEy7BR9Eu58NdYcYFwREE366Byxrl3aSuiBnBCpCzok/9QLpWGJIVENWjNWK1FjItYsmSlUVAl31/B6XZBorb6pA0ced1FFWKuys4cTv/R9GiPDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3aZv97J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D75B2C4CEEB;
+	Tue, 29 Oct 2024 16:15:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730218531;
-	bh=kMKc10j7VGxeNAMb2m4ny2C5ZWH83LXpdQnxhHidR+o=;
+	s=k20201202; t=1730218533;
+	bh=vsyWoTwbsiRwsb9EYXxM+GmOQGioC2wxUoNjmlnpZ7I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=XIdFo/xmjJ/A5CqRYVA7v9r9UUp1/0vm8UzP2PZyPD1gXfJNYrja7Xv1b17rVD9Pv
-	 t98DbS0wAJN3988GoAvvJisJYvO+IaLbCJasI5dI5fR7pkumiiq0tmiEbfMoM2Ls3c
-	 otQJyl3tPZgN1ylyNfEMLyzrMN60XmMpj1Y5bSdruUlC05qh+YT/roLWGDGz8UqpS8
-	 TzZpropxMC0LTFXvukXPC7xMzswCuTG1vdqbiMCWjfulbiRo6I49WNsctUueOuhm46
-	 Mz81OZQfQUao6e7CzZbG0YXQKEP5PFTFUHgUCJuo379LAMa/q6IK+schDut7EdJBzx
-	 h7UeGnsCYovBA==
+	b=k3aZv97JusL09VW1UTsVJVdg/QpFlLRqjHiiIveXEkXQrrF4LPp7Z/2ZLuMcumsh3
+	 3Ve1OTTJYhmlHYWtxSKUUmD/+vgRwp14hnO5EpcfH4D39sWfkxGZVAx/U7oxljWtlc
+	 8hwT8NsIFNpOH0N0MzmcJrMEHjjLLJqv7LywZZHiLxlApI4h1L3WjDFaA4cxZaeWef
+	 uYBsFbusOxn83i2oE5Sk3mon2C51Mdkdet7xIGx4DkYCaKhWWKssFZsU+YE10i9zpF
+	 KY0tEfiUxi/p/92rZs06NsFxFpiioW/WaaJm0tUoiSf8i75HhNij9oHoRTXnR2bsoo
+	 NjtXqopSboMWg==
 From: Will Deacon <will@kernel.org>
-To: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	robimarko@gmail.com,
-	robin.murphy@arm.com,
-	joro@8bytes.org,
-	Qingqing Zhou <quic_qqzhou@quicinc.com>
+To: Russell King <linux@armlinux.org.uk>,
+	"Rob Herring (Arm)" <robh@kernel.org>
 Cc: catalin.marinas@arm.com,
 	kernel-team@android.com,
 	Will Deacon <will@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev
-Subject: Re: [PATCH v3 0/4] Add support for APPS SMMU on QCS615
-Date: Tue, 29 Oct 2024 16:15:14 +0000
-Message-Id: <173021813714.1137827.1103662832817907135.b4-ty@kernel.org>
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ARM: pmuv3: Add missing write_pmuacr()
+Date: Tue, 29 Oct 2024 16:15:15 +0000
+Message-Id: <173020672798.2294098.11077870064387450759.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
-References: <20241025030732.29743-1-quic_qqzhou@quicinc.com>
+In-Reply-To: <20241029120602.4061566-2-robh@kernel.org>
+References: <20241029120602.4061566-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,23 +63,16 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Fri, 25 Oct 2024 08:37:28 +0530, Qingqing Zhou wrote:
-> Enable APPS SMMU function on QCS615 platform. APPS SMMU is required
-> for address translation in devices including Ethernet/UFS/USB and
-> so on.
+On Tue, 29 Oct 2024 07:06:02 -0500, Rob Herring (Arm) wrote:
+> Fix compilation on Arm by adding missing static inline write_pmuacr()
+> declaration.
 > 
-> Add the SCM node for SMMU probing normally. SMMU driver probe will
-> check qcom_scm ready or not, without SCM node, SMMU driver probe will
-> defer.
-> The dmesg log without SCM node:
-> platform 15000000.iommu: deferred probe pending: arm-smmu: qcom_scm not ready
 > 
-> [...]
 
-Applied SMMU bindings change to will (for-joerg/arm-smmu/bindings), thanks!
+Applied to will (for-next/perf), thanks!
 
-[2/4] dt-bindings: arm-smmu: document QCS615 APPS SMMU
-      https://git.kernel.org/will/c/515c8ff024ba
+[1/1] ARM: pmuv3: Add missing write_pmuacr()
+      https://git.kernel.org/will/c/bdc9a64c8b20
 
 Cheers,
 -- 
