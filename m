@@ -1,149 +1,96 @@
-Return-Path: <linux-kernel+bounces-387474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B65D9B51B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:22:54 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BF89B51BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:23:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72E99B21DCB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:22:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71F77B238D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C0C1FBF50;
-	Tue, 29 Oct 2024 18:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C08921FBF50;
+	Tue, 29 Oct 2024 18:23:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="UzMiqvUr"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SPLO+D8k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8BE4AEE0;
-	Tue, 29 Oct 2024 18:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA724AEE0;
+	Tue, 29 Oct 2024 18:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730226163; cv=none; b=gw/Jc3ZnUab8F356MJlxOz0FywgkkFOhC9EkQFsUHDQpxwurWRmQFOmKw+p5Tr3Jpt1rraPvY3xM07c4SFJ3LQhLh70goSMx1WrWaaXJdt15VOyQRWoVPPntW5xqx5CuoHM23WCt2dv66YGhqAiANcO5xthtW6nBXM6GZjotVuA=
+	t=1730226228; cv=none; b=j90405/e3zZSvigzJPLWiv9uuKbUBT6QkZbRBeysVJERjGB2Y/SKvbVAbrJWwT8vQ8YM+rXcs/A0Oena40X0idSVTS3Ke7Ut3B52k+0nKgjnrXKU26CeoNafuoMZzloyjNlkQRWRIQmFCPF9GKdsRoW/SstTsZMVOJu6ARFxuro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730226163; c=relaxed/simple;
-	bh=cDN+Kio485uI1+mHZTMvXjvfikGTUIEBVb/zNwaom8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VMkdSNgdmFEanuR5Vni0WX9GuvDc5UdCX2+yBl3NK/F0qvJOYvtBzJCpc4nD3izKWMht+x6i2lGtOmZH9LOYAXvwR2+7jOZYfdDXgcTsQ20TnKlgTrJinpAIG5RBUavahuiduUK9cpeFRwKW1UTaHcBmhER6ETxrPXUoWle3uoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=UzMiqvUr; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=SiVr3pgC9/d36AWyRc73mxkAo1EYW9orAH0ljPOv1w8=; b=UzMiqvUrPx/kuL7j
-	J2Z+DEND4542a672OjGgtH0sf2XyfPWYtSH0LJfqLrHq/i3tb5d/PVpn7BmVl6KiaPnReZGwS2mdf
-	HgMlL8IL6lb4zImc9Ahodvc2fBe9zOw7raVq/oKcuk0gnjn8Pfp+UlFOtRqtW8kPS1WWiyVGwwkxP
-	oAQsRBY1ysBBj9iRQLK6zaX96JkxzN3ujB4aHgbsB2PqA75Zcu/Z1JoXLDgvHd0u6+PHnIiKZS3RA
-	cbcvY+513++6r5iKgB4dcDYV+xjEdblo2z4jXjp4C0K4wJV639/XukPuqJk2qvCdmf+EMJa+/6OXr
-	0ElIJBTA2fN2iCbUgg==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1t5qrN-00EImw-2u;
-	Tue, 29 Oct 2024 18:22:29 +0000
-Date: Tue, 29 Oct 2024 18:22:29 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: dan.j.williams@intel.com, herbert@gondor.apana.org.au
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] async_xor: Remove unused 'async_xor_val'
-Message-ID: <ZyEn5f8w8Ez2Szw3@gallifrey>
-References: <20240929132148.44792-1-linux@treblig.org>
+	s=arc-20240116; t=1730226228; c=relaxed/simple;
+	bh=vfctqJoadOj4Uk/e3YVcbSo7RUdgyucoANUBHx7MvB0=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BXNeHrM9ZqgStZiz2kwOQ1i37OtuRm5qTP4izg/Hf4jwy0ZktRt5ZXGzetPTc115iSserJcXf8CrzIXtx8nCxum+RE8ylp4ImCbLW/ylxUGxFGsjDPX/gCxBScWDJ5SMK24dyJhedIBSQbVpuYSUYMvKg8O340Z0KESQ022hDTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SPLO+D8k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0D60C4CECD;
+	Tue, 29 Oct 2024 18:23:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730226227;
+	bh=vfctqJoadOj4Uk/e3YVcbSo7RUdgyucoANUBHx7MvB0=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=SPLO+D8kRn6rgF4ee8+Rfi2PyoU2ANM5jdv09I/GWxRi3jpAXJdhxgYw43i0NUb3k
+	 xAGEBjWf3Ii2nYR9xuCwRlxuk0+EyMdvzbCfQXBXMfsgMjImWQtTpb5Ge1xIm4forJ
+	 Vp7eoLK2dTIZkoLKYBVBif05wWAIxggcYDaP7J+385KAw+MduCQaKPK5F21TSfyaUx
+	 MGi/ZOMMwxqQpOzm8DYy/0rRCmVfwL0chh4o9GXq/LLdv/pe/5M0JvcRUDcv2/8sgU
+	 wR8CNpgMrqSkHizivYf2NM7ahsU6LBVPmZ5lPf/EExAaG6JhToMWq0WESODkYrM3ky
+	 MTPohAijV2+IA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	James Clark <james.clark@linaro.org>,
+	Howard Chu <howardchu95@gmail.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Michael Petlan <mpetlan@redhat.com>,
+	Veronika Molnarova <vmolnaro@redhat.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	Ilya Leoshkevich <iii@linux.ibm.com>,
+	Colin Ian King <colin.i.king@gmail.com>,
+	Weilin Wang <weilin.wang@intel.com>,
+	Andi Kleen <ak@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Ian Rogers <irogers@google.com>
+Subject: Re: [PATCH v5 00/10] Run tests in parallel showing number of tests running
+Date: Tue, 29 Oct 2024 11:23:43 -0700
+Message-ID: <173022620957.677155.18320930793472494703.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+In-Reply-To: <20241025192109.132482-1-irogers@google.com>
+References: <20241025192109.132482-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20240929132148.44792-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 18:22:11 up 174 days,  5:36,  1 user,  load average: 0.00, 0.00,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> async_xor_val has been unused since commit
-> a7c224a820c3 ("md/raid5: convert to new xor compution interface")
-> 
-> Remove it.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+On Fri, 25 Oct 2024 12:20:59 -0700, Ian Rogers wrote:
 
-Ping.
-
-Thanks,
-
-Dave
-
-> ---
->  crypto/async_tx/async_xor.c | 26 --------------------------
->  include/linux/async_tx.h    |  5 -----
->  2 files changed, 31 deletions(-)
+> Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
+> to read them for display. When running on a color terminal, display
+> the number of running tests (1 if sequential). To avoid previous
+> flicker, only delete and refresh the display line when it changes. An
+> earlier version of this code is here:
+> https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
 > 
-> diff --git a/crypto/async_tx/async_xor.c b/crypto/async_tx/async_xor.c
-> index 1a3855284091..2c499654a36c 100644
-> --- a/crypto/async_tx/async_xor.c
-> +++ b/crypto/async_tx/async_xor.c
-> @@ -389,32 +389,6 @@ async_xor_val_offs(struct page *dest, unsigned int offset,
->  }
->  EXPORT_SYMBOL_GPL(async_xor_val_offs);
->  
-> -/**
-> - * async_xor_val - attempt a xor parity check with a dma engine.
-> - * @dest: destination page used if the xor is performed synchronously
-> - * @src_list: array of source pages
-> - * @offset: offset in pages to start transaction
-> - * @src_cnt: number of source pages
-> - * @len: length in bytes
-> - * @result: 0 if sum == 0 else non-zero
-> - * @submit: submission / completion modifiers
-> - *
-> - * honored flags: ASYNC_TX_ACK
-> - *
-> - * src_list note: if the dest is also a source it must be at index zero.
-> - * The contents of this array will be overwritten if a scribble region
-> - * is not specified.
-> - */
-> -struct dma_async_tx_descriptor *
-> -async_xor_val(struct page *dest, struct page **src_list, unsigned int offset,
-> -	      int src_cnt, size_t len, enum sum_check_flags *result,
-> -	      struct async_submit_ctl *submit)
-> -{
-> -	return async_xor_val_offs(dest, offset, src_list, NULL, src_cnt,
-> -			len, result, submit);
-> -}
-> -EXPORT_SYMBOL_GPL(async_xor_val);
-> -
->  MODULE_AUTHOR("Intel Corporation");
->  MODULE_DESCRIPTION("asynchronous xor/xor-zero-sum api");
->  MODULE_LICENSE("GPL");
-> diff --git a/include/linux/async_tx.h b/include/linux/async_tx.h
-> index 5cc73d7e5b52..1ca9f9e05f4f 100644
-> --- a/include/linux/async_tx.h
-> +++ b/include/linux/async_tx.h
-> @@ -167,11 +167,6 @@ async_xor_offs(struct page *dest, unsigned int offset,
->  		struct page **src_list, unsigned int *src_offset,
->  		int src_cnt, size_t len, struct async_submit_ctl *submit);
->  
-> -struct dma_async_tx_descriptor *
-> -async_xor_val(struct page *dest, struct page **src_list, unsigned int offset,
-> -	      int src_cnt, size_t len, enum sum_check_flags *result,
-> -	      struct async_submit_ctl *submit);
-> -
->  struct dma_async_tx_descriptor *
->  async_xor_val_offs(struct page *dest, unsigned int offset,
->  		struct page **src_list, unsigned int *src_offset,
-> -- 
-> 2.46.2
-> 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> [...]
+
+Applied to perf-tools-next, thanks!
+
+Best regards,
+Namhyung
 
