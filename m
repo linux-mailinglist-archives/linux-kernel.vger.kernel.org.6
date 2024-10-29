@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-387460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A29F39B5198
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:11:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A7859B5197
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C03CB231DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B5E1F23CB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:11:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEB511FB8BF;
-	Tue, 29 Oct 2024 18:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D181DDC16;
+	Tue, 29 Oct 2024 18:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CqnPLbNZ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="cslFGdPJ"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79D941CC17A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 18:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E47118130D;
+	Tue, 29 Oct 2024 18:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730225486; cv=none; b=agqzD15XKdN7B7FYOlsOPQkugdHqZGZ8fc/aS3I7X2qwe4MmT1n5tOjI0TjqkDK+lh9wMaFEJRCdEPZLknxALgyZ1jb1C7xMlw/ce9NXJHalMkS0fNo/6LNN4NovTmtCsvc0skc/CkOWnl58ycOsSUpkJOquCoGCe4OA6ip6f18=
+	t=1730225485; cv=none; b=HOfdpDEdwU0eUsvqBbZajAP5S5J06NzSHSGj1DnoL/z4mWqQMsdoUYSUvvRD/aROYqBt+dKOmbWsXNRZpAG27tBDqmO4/jVXR/D6JqrGNzOjs8QDnCkEnMFUArRr+fJsco/IoAiyCiXAB3k3ns7I4t1WyZl+uDZV0lsEwZt7KWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730225486; c=relaxed/simple;
-	bh=FLk7Y1VVgOPReJv+P14u5P2ciQaIrEWv0Ieic5HyP4M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/ZD5/Uf4Qk8igrAhPBDI+AbONqdY5yq42mcQ7JoetMM3KZnxqIh4pyzO4eiDUGL8xgk8kJ7yUPVKYcOc9VeR9Umeu/PI1k/V0wQIpXotQoBW0Rr2g1xGNF4e5PKP+MhLh2znj+JeH5WDO76Msl5QKekYboaCD1NpuE77EL/zeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CqnPLbNZ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E470140E0219;
-	Tue, 29 Oct 2024 18:11:21 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1jUAB7o3tzMk; Tue, 29 Oct 2024 18:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1730225476; bh=6Fu6LG6Vbq5lMPm5XWcRJQzu3wtX0SK7peh7dKKVOeQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CqnPLbNZvNDu/GWN1P7RVVqFeuW1y5LP8a/bS/v6+1GCoF3D7Nvr0sVaaNEEzXKca
-	 VjsHvLKArsgaYUYVl1bW9luZ8E+jDkNGBOgG4S8Waq/yuyD/RM7tI77mIhIopU9EQQ
-	 0AgJjpEH385uvOfCQwbxVaSY/qaapfAEJH2cwD+fIBrogtG9sL8VdtLhEAqBtkFpUB
-	 vYeFiwCVgWfcL5qeUHQP/r005V4tF3JlP9CNG6NhweXMWn2AF2C2ss5KbThAzagydt
-	 ln1Y1Uvek14D9dL3PSg22Cea27lx8TKjOvHI7GJbSUS1EtaYRms92ty5Di2gKv8wZI
-	 FEMOCfTkbDWHsRWKNJSa87wdVXONjh/bTRsegKVYutm/WhipVYPeW1myYcR+URvsGy
-	 DaNbdWYPqjxGdyA6L+0kKfB6oINqZ4LfXbnKVHq0lo6PLRSg8TlCIDMJwMhVZ6zQGb
-	 k31ottzjD9kxO/1GOO3yfZbHWBH1b51Gw97uTXQlnobbd6s4hQOzP/MK3Ym1tlNGhG
-	 hIJO86HuJioZTEgZMjKhG/5AtXRU1RXrqb21ZAwD4khJozY0cHpWTN1yTRze78kXcH
-	 XFCuZSlihelQmi/6HFYkuniS+uXwDzAu6qa4bvvNzSJQ5CRWLLwk0XmdJQUtLMoXoU
-	 wJC06yLzsdwCKS+BhvzSK2TQ=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	s=arc-20240116; t=1730225485; c=relaxed/simple;
+	bh=9ox1v674Cs+EqDZWALs9Vbe/MWJ2VAF1Pe0EGOx/H6U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k8AcVW2yizowDA53TjPAEWepTVRD/Js2ITUKz0cNRd9PUlmr5Llin3PRnVYDiVr4TTkt4yh5SolpL+oPrn10kYcN3M3PgB2gf/vrVDnYfRjN5HNncuxDBokWpEnYT/bzjFfw2JVjxfOy2vRcqgqXscGwqPHz+JvJ0UYn1u7eGE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=cslFGdPJ; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XdJGs34pLz6CmM6D;
+	Tue, 29 Oct 2024 18:11:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1730225475; x=1732817476; bh=Ck0LujQRxT7n4rIz6jg6e1Rc
+	zz6xuk2yIdp0i7KBTFE=; b=cslFGdPJb+wG1sTf/oxGC/WPQH/BZlJqq0Op5Pej
+	XLzXI0L+mLiQcV1/bJey5zG8wM6JT3vX0Kb58miIMV8Gf8hpgJSpbrnHGMeY+3aW
+	1CJv5TqtnR4MX9rCHUmJYXYKxnLIlnXpNdE58HfECr7BWOsEWowV0WTRrZSXFEPW
+	sjn5b6PJhAFJUWwh16E0ESMfv7prehbdqkACRFTPpLfVMzIQ5k3YW1xtNQl4sHvH
+	xpeLi47ilDAMAxAPS1VOtmuvtzPekt4fDcU5MyAnV7MVh7ZHaGTxvmM8sB+5Yimr
+	bjDCOQOYnlzmvGemTsGHXlU+4CzbHrx77dJbn8JEQ7mTBg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id OxikW3QDgw6d; Tue, 29 Oct 2024 18:11:15 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A77E40E02BD;
-	Tue, 29 Oct 2024 18:11:07 +0000 (UTC)
-Date: Tue, 29 Oct 2024 19:11:01 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Baoquan He <bhe@redhat.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
-	dyoung@redhat.com, daniel.kiper@oracle.com, noodles@fb.com,
-	lijiang@redhat.com, kexec@lists.infradead.org, x86@kernel.org
-Subject: Re: [PATCH v3 1/2] x86/mm: rename the confusing local variable in
- early_memremap_is_setup_data()
-Message-ID: <20241029181101.GXZyElNXVuF6596TKG@fat_crate.local>
-References: <20240911081615.262202-1-bhe@redhat.com>
- <20240911081615.262202-2-bhe@redhat.com>
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XdJGn6zK8z6CmM5x;
+	Tue, 29 Oct 2024 18:11:13 +0000 (UTC)
+Message-ID: <611fc99e-c947-463a-82e1-9d2a68d67aa4@acm.org>
+Date: Tue, 29 Oct 2024 11:11:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240911081615.262202-2-bhe@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] scsi: ufs: core: Introduce a new clock_gating lock
+To: Avri Altman <avri.altman@wdc.com>,
+ "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241029102938.685835-1-avri.altman@wdc.com>
+ <20241029102938.685835-2-avri.altman@wdc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241029102938.685835-2-avri.altman@wdc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Sep 11, 2024 at 04:16:14PM +0800, Baoquan He wrote:
-> In function early_memremap_is_setup_data(), parameter 'size' passed has
-> the same name as the local variable inside the while loop. That
-> confuses people who sometime mix up them when reading code.
-> 
-> Here rename the local variable 'size' inside while loop to 'sd_size'.
-> 
-> And also add one local variable 'sd_size' likewise in function
-> memremap_is_setup_data() to simplify code. In later patch, this can also
-> be used.
-> 
-> Signed-off-by: Baoquan He <bhe@redhat.com>
-> Acked-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->  arch/x86/mm/ioremap.c | 18 +++++++++++-------
->  1 file changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index aa7d279321ea..f1ee8822ddf1 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-> @@ -640,7 +640,7 @@ static bool memremap_is_setup_data(resource_size_t phys_addr,
+On 10/29/24 3:29 AM, Avri Altman wrote:
+> +	scoped_guard(spinlock_irqsave, &hba->clk_gating.lock) {
+> +		/*
+> +		 * In case you are here to cancel this work the gating state
+> +		 * would be marked as REQ_CLKS_ON. In this case save time by
+> +		 * skipping the gating work and exit after changing the clock
+> +		 * state to CLKS_ON.
+> +		 */
+> +		if (hba->clk_gating.is_suspended || (hba->clk_gating.state != REQ_CLKS_OFF)) {
+> +			hba->clk_gating.state = CLKS_ON;
+> +			trace_ufshcd_clk_gating(dev_name(hba->dev), hba->clk_gating.state);
+> +			return;
+> +		}
+> +		if (ufshcd_is_ufs_dev_busy(hba) || hba->ufshcd_state != UFSHCD_STATE_OPERATIONAL)
+> +			return;
+>   	}
 
-Huh?
+Please remove the superfluous parentheses from around the REQ_CLKS_OFF 
+test and do not exceed the 80 column limit. git clang-format HEAD^ can
+help with restricting code to the 80 column limit.
 
----
-diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-index 70b02fc61d93..e461d8e26871 100644
---- a/arch/x86/mm/ioremap.c
-+++ b/arch/x86/mm/ioremap.c
-@@ -632,8 +632,7 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
-  * Examine the physical address to determine if it is boot data by checking
-  * it against the boot params setup_data chain.
-  */
--static bool memremap_is_setup_data(resource_size_t phys_addr,
--				   unsigned long size)
-+static bool memremap_is_setup_data(resource_size_t phys_addr)
- {
- 	struct setup_indirect *indirect;
- 	struct setup_data *data;
-@@ -769,7 +768,7 @@ bool arch_memremap_can_ram_remap(resource_size_t phys_addr, unsigned long size,
- 		return false;
- 
- 	if (cc_platform_has(CC_ATTR_HOST_MEM_ENCRYPT)) {
--		if (memremap_is_setup_data(phys_addr, size) ||
-+		if (memremap_is_setup_data(phys_addr) ||
- 		    memremap_is_efi_data(phys_addr, size))
- 			return false;
- 	}
+> @@ -2072,18 +2055,18 @@ static ssize_t ufshcd_clkgate_enable_store(struct device *dev,
+>   
+>   	value = !!value;
+>   
+> -	spin_lock_irqsave(hba->host->host_lock, flags);
+> -	if (value == hba->clk_gating.is_enabled)
+> -		goto out;
+> +	scoped_guard(spinlock_irqsave, &hba->clk_gating.lock) {
+> +		if (value == hba->clk_gating.is_enabled)
+> +			goto out;
+>   
+> -	if (value)
+> -		__ufshcd_release(hba);
+> -	else
+> -		hba->clk_gating.active_reqs++;
+> +		if (value)
+> +			__ufshcd_release(hba);
+> +		else
+> +			hba->clk_gating.active_reqs++;
+>   
+> -	hba->clk_gating.is_enabled = value;
+> +		hba->clk_gating.is_enabled = value;
+> +	}
+>   out:
+> -	spin_unlock_irqrestore(hba->host->host_lock, flags);
+>   	return count;
+>   }
 
--- 
-Regards/Gruss,
-    Boris.
+Please use guard() instead of scoped_guard() and remove the "out:"
+label.
 
-https://people.kernel.org/tglx/notes-about-netiquette
+> @@ -9173,11 +9157,10 @@ static int ufshcd_setup_clocks(struct ufs_hba *hba, bool on)
+>   				clk_disable_unprepare(clki->clk);
+>   		}
+>   	} else if (!ret && on) {
+> -		spin_lock_irqsave(hba->host->host_lock, flags);
+> -		hba->clk_gating.state = CLKS_ON;
+> +		scoped_guard(spinlock_irqsave, &hba->clk_gating.lock)
+> +			hba->clk_gating.state = CLKS_ON;
+>   		trace_ufshcd_clk_gating(dev_name(hba->dev),
+>   					hba->clk_gating.state);
+> -		spin_unlock_irqrestore(hba->host->host_lock, flags);
+>   	}
+
+The above change moves the trace_ufshcd_clk_gating() call from inside
+the region protected by the host lock to outside the region protected
+by clk_gating.lock. If this is intentional, shouldn't this be mentioned
+in the patch description?
+
+Thanks,
+
+Bart.
 
