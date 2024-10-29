@@ -1,113 +1,173 @@
-Return-Path: <linux-kernel+bounces-387767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B4D79B55EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:43:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 665689B55EE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:44:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39E9284060
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:43:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2313B21F7F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:44:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD4E620969B;
-	Tue, 29 Oct 2024 22:43:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CA3E20ADED;
+	Tue, 29 Oct 2024 22:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lYnmB7B5"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VxFC4a0X"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835C1209680
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:43:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53467194AD6
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730241819; cv=none; b=G1lt9Z5BDOfYFVIZVsZkS8Yx6k94wPRLzjYZuscr/ff38s9/A8QQ+IPxCQHSEMTUmr2/Hc1Rd1E16pcyCTBvGV56msBFQE1O2OMRPcS1GZSK1xMhr9mNo00qBP3EKWwgN2HPZmgb0fK9k3J0bwAK0H7aLLnJmsq3gssn/mDV9LI=
+	t=1730241879; cv=none; b=Pv/i3q0DT5MaVvd/byDrDYlUm93GZ0JV5R70BzxSyU/YfHFEJbd0aTzJnKWz9jp5S2W6rK202kmPRTz0qOa1qtsslGpYnO6brSPuW6RkOLx6YR1QfAMe7FrBIlz7/PEisQBXUATQtyYYHcJ1lQkAForxS93InrhPrYlV6M9qmvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730241819; c=relaxed/simple;
-	bh=9E3Z00n7dYKrqXAk8LFX3TbpRib9iI7YXTzsr8EXrGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LC/dqLCmz4lwh2ISY2XFT5dqvMfU2uU5jiuDHR99eqDUkEqQp/IfCaSX7AFyteTwvPHJ8JOpX5OipgRl8e3Dt/Am5n/bv9w1HCUDedid7hHqfCns13LkB3kc+7IgCqJrpBr9v+zzdifTpZ4Dy8/308ysXwtLnirZ7vl+nvKOesA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lYnmB7B5; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730241816; x=1761777816;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=9E3Z00n7dYKrqXAk8LFX3TbpRib9iI7YXTzsr8EXrGM=;
-  b=lYnmB7B5SubWFBN7fvmrxvQ0SeXlfH+EW9hC3a5YtJ9ahjCzIHHWrf5n
-   me5Oj15Hg17JMHJuuKadrvjw2sxZJ9MDSfbj3aFRASQlTxAnal0YZA/LP
-   K+gAFhJe03r6ilwo6rfvdxXtwHzXHZ1FvAUjHbHktr/U5ZarxVZbOIvNT
-   266N6IihOpaLd5Xv3qdmErj3SUw14bg2KC9nRBXyRVjSmk5ij9UZMcvP+
-   FBh9ykx2+Mnzb0+/7RUvFRYXDELmShRPQSmHenSf9AbUi2afoKNEHk9Ue
-   U9t+sgEyr4bIm3oUIkfO738/sDrViqrAarsjvEeP+v9lsFUR/bM3QE3XK
-   Q==;
-X-CSE-ConnectionGUID: EVxUW50WRlSBbFqdWSHzlQ==
-X-CSE-MsgGUID: w4HalFGgTKuCRxyRUaDyAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="41016316"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="41016316"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 15:43:36 -0700
-X-CSE-ConnectionGUID: 9Jf8mYLNSx+TaDVCDfm+Mw==
-X-CSE-MsgGUID: HYBiyAk8QkmML/eTtjuhtQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="81661933"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 29 Oct 2024 15:43:34 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5uvz-000eEy-2y;
-	Tue, 29 Oct 2024 22:43:31 +0000
-Date: Wed, 30 Oct 2024 06:43:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: io_uring/kbuf.c:271:5-24: WARNING: atomic_dec_and_test variation
- before object free at line 273.
-Message-ID: <202410300609.JP8Dq6wz-lkp@intel.com>
+	s=arc-20240116; t=1730241879; c=relaxed/simple;
+	bh=1U+miEa3kQwSNxk3U9G6wCwVhUksags9HM9B8lRhtZ4=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=XF26QPdWOEenwqxkWAmtcT+ovBDJxKJ4cpsmPCUpx4ggzx5i43DbF5rVK41sb9NLm+A9+m0lOQPmJ4GYoEb348o7VjvbNl+ECR1nuWEI97dVE0QYBXXcYI5UA69uzfIRvvcVcB03yoynkLAtXF8PvjFcoyO8U7c8WVywcyCVizo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VxFC4a0X; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e7fb84f999so91163987b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:44:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730241876; x=1730846676; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ZScZoLloXNE7Jh+jagI6pazhAYS35p8ttkuzpJMXUcY=;
+        b=VxFC4a0XsaSH7Q3vNnbQfWI49y7N70VBTCBZsDSWHGJ1gTcayD7it1xHClxSNt9zI2
+         hrikBH+W+1eD31QD6n7g91fqQSiFev9a/QncXIgsq4CFcGmJXsNSUok0Vsbte+23hMbF
+         yFw4BZOhxHEvwpm+eGhVOOjvF6dmRD0HJ5rT3eb8ckj5nPJF3NcKGOR0BeY4EnD9tHqn
+         rmVjQYOdzUQ7l8hW4qT0ORgwlLrIORqk+KogI0G/Qr0b0KbfG0RhBIP0a21xK89NfsF8
+         gwuYIZ5D+CaD3swwdHgl3JbI93LF5PDGqwwJVFSVMVeI1loMP0m7QOyqO+SayNvFRbBG
+         JKaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730241876; x=1730846676;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZScZoLloXNE7Jh+jagI6pazhAYS35p8ttkuzpJMXUcY=;
+        b=FEECx2orH1RQ8EaaRSu3E48ItlDYQHbY6A1sqM+nVTGskd80rvaUjZM73W0UJ5RdiW
+         5pMq7KTXOMfSNLFPaN5pS0FD5Id7qNNK4G/XnP4aESTeQrfDd5BJZRYTKKG/w0J2utU9
+         Ar4j3oq2h7xHtCrCjSj+L/F1nFIRt2sRf7hKH+UtTfnwFeL083bl3WUjifm1EpN/OxTB
+         WhDhnekOOYZMlZATn0KVw9cjc3ZmPlO9dNwOhoyEegNfAOqXxvTmQN/0DIQKWXY/Vo/Z
+         7g6DukjREYKcM8NxnTEl+kfvD1+GQSV0qFeYRCU7RQEf/f219PdIZdP2Qt7aDC3rXCc2
+         XoxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOCXPsY9qWwaikZsRIsdOKyLhpORA1pLUPdVbGqmxoHEIWkRNg+rAcAyFFDowCFNiyrGBYAORV7gXV56c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9QMXIKAZlSSzV+TxqPTXSoYPdKmJU+pQ9sdLbCQEu6ucDIbyx
+	+RvpNH7jeo7kj+dN+c7r4UHMylxD8C4yPSzYklpFz9JDCaEQ9g/qT5968o9Vp/qZY+bmgkrng9F
+	WoydSuQ==
+X-Google-Smtp-Source: AGHT+IGpZHWdkqq4D1OMb/pNE0SO4VsnqyBS/b+meypXZpfCgJLC9qLP6BtMC1KqDedOIyQEKqXdRveW3UZp
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8991:d3fd:38a7:c282])
+ (user=irogers job=sendgmr) by 2002:a05:690c:6807:b0:6e3:39e5:f0e8 with SMTP
+ id 00721157ae682-6e9d8a99518mr7125207b3.6.1730241876274; Tue, 29 Oct 2024
+ 15:44:36 -0700 (PDT)
+Date: Tue, 29 Oct 2024 15:44:12 -0700
+Message-Id: <20241029224431.167623-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Subject: [PATCH v4 00/19] Python module cleanup
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Jens,
+This patch:
+ - removes workarounds for Python 2 module support due to long
+   deprecation and challenges in developing new code;
+ - constifies variables and parameters to functions;
+ - removes python.c stub code which existed due to missing functions
+   that are defined in the builtin-* files, in general the builtin-*
+   code is moved into util;
+ - remove bench and test perf C code from the python module;
+ - adds parse_events to the python perf module.
+ - improves upon some of the existing python perf module functins.
 
-FYI, the error/warning was bisected to this commit, please ignore it if it's irrelevant.
+v4. Rebase. Fix the parse events evsel to be embedded in a
+    pyrf_evsel. Add __str__/__repr__ functions to evlist and
+    evsel. Throw an exception for a bad evlist index.
+v3. Move is_directory_at to patch 6 rather than patch 7, respond to
+    review feedback on the list from Namhyung.
+v2. Add the bottom 4 bullet points - 13 more patches.
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e42b1a9a2557aa94fee47f078633677198386a52
-commit: 6b69c4ab4f685327d9e10caf0d84217ba23a8c4b io_uring/kbuf: protect io_buffer_list teardown with a reference
-date:   7 months ago
-config: arm-randconfig-r061-20241029 (https://download.01.org/0day-ci/archive/20241030/202410300609.JP8Dq6wz-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.1.0
+Ian Rogers (19):
+  perf python: Remove python 2 scripting support
+  perf python: Constify variables and parameters
+  perf python: Remove unused #include
+  perf script: Move scripting_max_stack out of builtin
+  perf kvm: Move functions used in util out of builtin
+  perf script: Move find_scripts to browser/scripts.c
+  perf stat: Move stat_config into config.c
+  perf script: Move script_spec code to trace-event-scripting.c
+  perf script: Move script_fetch_insn to trace-event-scripting.c
+  perf script: Move perf_sample__sprintf_flags to
+    trace-event-scripting.c
+  perf env: Move arch errno function to only use in env
+  perf lock: Move common lock contention code to new file
+  perf bench: Remove reference to cmd_inject
+  perf kwork: Make perf_kwork_add_work a callback
+  perf build: Remove test library from python shared object
+  perf python: Add parse_events function
+  perf python: Add __str__ and __repr__ functions to evlist
+  perf python: Add __str__ and __repr__ functions to evsel
+  perf python: Correctly throw IndexError
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410300609.JP8Dq6wz-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> io_uring/kbuf.c:271:5-24: WARNING: atomic_dec_and_test variation before object free at line 273.
-
-vim +271 io_uring/kbuf.c
-
-   268	
-   269	static void io_put_bl(struct io_ring_ctx *ctx, struct io_buffer_list *bl)
-   270	{
- > 271		if (atomic_dec_and_test(&bl->refs)) {
-   272			__io_remove_buffers(ctx, bl, -1U);
- > 273			kfree_rcu(bl, rcu);
-   274		}
-   275	}
-   276	
+ tools/perf/Makefile.perf                      |   7 +-
+ tools/perf/bench/inject-buildid.c             |  13 +-
+ tools/perf/builtin-kvm.c                      |  61 ----
+ tools/perf/builtin-kwork.c                    |   3 +-
+ tools/perf/builtin-lock.c                     | 137 +------
+ tools/perf/builtin-script.c                   | 303 +---------------
+ tools/perf/builtin-stat.c                     |  27 --
+ tools/perf/builtin-trace.c                    |   1 -
+ tools/perf/builtin.h                          |   6 -
+ .../scripts/python/Perf-Trace-Util/Context.c  |  20 +-
+ tools/perf/tests/stat.c                       |  16 +-
+ tools/perf/trace/beauty/arch_errno_names.sh   |   3 +-
+ tools/perf/ui/browsers/scripts.c              | 177 ++++++++-
+ tools/perf/util/Build                         |   2 +
+ tools/perf/util/bpf_kwork.c                   |   2 +-
+ tools/perf/util/bpf_kwork_top.c               |   2 +-
+ tools/perf/util/bpf_lock_contention.c         |   2 +-
+ tools/perf/util/cgroup.c                      |   2 +-
+ tools/perf/util/config.c                      |  27 ++
+ tools/perf/util/dlfilter.c                    |   3 +-
+ tools/perf/util/env.c                         |   2 +
+ tools/perf/util/env.h                         |   2 -
+ tools/perf/util/evsel.c                       |  19 +-
+ tools/perf/util/evsel.h                       |   2 +-
+ tools/perf/util/kvm-stat.c                    |  70 ++++
+ tools/perf/util/kvm-stat.h                    |   3 +
+ tools/perf/util/kwork.h                       |   6 +-
+ tools/perf/util/lock-contention.c             | 170 +++++++++
+ tools/perf/util/lock-contention.h             |  37 +-
+ tools/perf/util/path.c                        |  10 +
+ tools/perf/util/path.h                        |   1 +
+ tools/perf/util/python.c                      | 338 ++++++++----------
+ .../scripting-engines/trace-event-python.c    |  63 +---
+ tools/perf/util/stat.h                        |   3 +-
+ tools/perf/util/trace-event-scripting.c       | 176 +++++++++
+ tools/perf/util/trace-event.h                 |   5 +-
+ 36 files changed, 854 insertions(+), 867 deletions(-)
+ create mode 100644 tools/perf/util/kvm-stat.c
+ create mode 100644 tools/perf/util/lock-contention.c
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.0.163.g1226f6d8fa-goog
+
 
