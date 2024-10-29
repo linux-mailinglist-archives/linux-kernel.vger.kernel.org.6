@@ -1,404 +1,252 @@
-Return-Path: <linux-kernel+bounces-387577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CAD59B5326
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:13:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D8579B5328
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:14:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 542D01C2295E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:13:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E07C8281C41
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:14:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23B5D20721D;
-	Tue, 29 Oct 2024 20:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="UiZG0AuF"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53472076B8;
+	Tue, 29 Oct 2024 20:14:25 +0000 (UTC)
+Received: from fgw22-7.mail.saunalahti.fi (fgw22-7.mail.saunalahti.fi [62.142.5.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4ABE206E61
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:12:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255091DEFD0
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730232760; cv=none; b=hVTVJS19QBa505I/YDn75qyPGtrCBaLQjm6gD7flu2cDt33iSoFmvffeQmRpzns51cTXtiVCdwE8kvUDR5f9V94sbJ6o69N9KNyVn9AzXinf6M/8ahB8cuuja1VkhdIJrIx+84j4JMvm7ltRMM/ftUJkOXtzZk4Yv4z3boYWJvc=
+	t=1730232865; cv=none; b=e8H7+nIdI1UCyTbgXTphy2hAaH2ghySj1m5WkzTG+5DHopE7o46/5IapN25QzXq7qbJ6HKDBQ2hHimizhb9JEy7MYZCGXx0/JX77bMTqSba9IFwFCa/mjW/tiinPe4LirddRqbXwrRPyGy/OzB83sBZYszUdmGzXIqpwFV5PA48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730232760; c=relaxed/simple;
-	bh=a4uvxfcTk50IPf5JO0yQLnYMCdVRNOSqdTojlJrQQFc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Gp7NQD4fij2A+SUNtqupZPWFdluX36F4Ki4F3vfuZTY1+WV1Z0DvxPvyg+KfcKR9qKlEKR4Zaj9bxN20NEhSN22RIqE5LRQyhx1UfiWI4IYDPoTvz0jg/CpfG8/5WeZaEBHsVXAyRTmEkVYJ9EFM440RH2S2qQVgn2JrJvbyFEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=UiZG0AuF; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20bb39d97d1so49441205ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:12:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1730232757; x=1730837557; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DzMJEaxCO1+wmU1/AuWmTveVbLGsSMtHqkQuk6DiNZk=;
-        b=UiZG0AuFzcDbMpw6WJCK/8LaukjcmLx9QYcrTWQQ8e2JAEaXVXgQOlO3jnjCT8zBFd
-         O17rfZ5qieHUdkg9t5ghz+U8+U/EbmdpnCocFacfQGwaozsv7URzolcueJH9bC4JefFq
-         t2XtPuJiO4OtgE8GxjYjKm6uQnNOyeeB1gAM8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730232757; x=1730837557;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DzMJEaxCO1+wmU1/AuWmTveVbLGsSMtHqkQuk6DiNZk=;
-        b=ikU5IyAhstheR1ED2EYBA7eJDCCW9t6aUkG7ajIeoxKD9ZzY5FJBYOg51IuovSMJgl
-         nl9C1UjgdqPRB7HMozhYD+TZ9bu7zAIzHmd6lGYQEwfM16QVZeBD6l8rPxKv8NptcII5
-         jkh/UkqWovukfagUXrc/iEGF3jFSfVrn55JNjFto1NW5m0Nb+TnQX5UfmwKc5agCb13n
-         Z3FYewwOqx5IpmCSteggFXyfG7kyayynevG7TPbUhJx8fm9nFuvgmcL7YFhba0XTuNI8
-         1AxjLnBGQv7fWY/Kr8kPbzTL8Hv4ZsNdtqDp9YQUeWHO11ksnTt3EW/6ONzY/kBT3a3L
-         s9cw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+244g+ZJdJTJGdMX1OeoQGVZmwJFwulbexJM3icfrQr+7Q5UN7PjY0ewsFBq3omezrXsjnRupZrxru88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpkrkZnWK3/aQ51EyV+GkFXn8lWFd3XkiSJWR0p1h1LSKwXwyX
-	MK1wipWLowdq1LfKogpGpkUDwOaRrEl7DSuJHuG61KivwaWxbiHDvvkBqerDwM0=
-X-Google-Smtp-Source: AGHT+IEcDa3yfUr/14JeA6MP7LuqXP/cHig8sm/AVY4d6K3uKFZW7sucMTGgImCKA0F3kud8IkJxew==
-X-Received: by 2002:a17:902:d511:b0:20c:bea0:8d10 with SMTP id d9443c01a7336-210f751ae6emr9748955ad.20.1730232756892;
-        Tue, 29 Oct 2024 13:12:36 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc0864d7sm70113735ad.303.2024.10.29.13.12.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 13:12:36 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: vitaly.lifshits@intel.com,
-	jacob.e.keller@intel.com,
-	kurt@linutronix.de,
-	vinicius.gomes@intel.com,
-	Joe Damato <jdamato@fastly.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
-	linux-kernel@vger.kernel.org (open list),
-	bpf@vger.kernel.org (open list:XDP (eXpress Data Path))
-Subject: [PATCH iwl-next v6 2/2] igc: Link queues to NAPI instances
-Date: Tue, 29 Oct 2024 20:12:17 +0000
-Message-Id: <20241029201218.355714-3-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241029201218.355714-1-jdamato@fastly.com>
-References: <20241029201218.355714-1-jdamato@fastly.com>
+	s=arc-20240116; t=1730232865; c=relaxed/simple;
+	bh=/WXO8zC1tMtIE11ww7hVOXlZN/bNRSd8hZhLxkXpuO4=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mI6e2ASQe1TYl+ftBMn82wECzjMTo+2AYFB4rn4mJwV89pF+6v8DTxWWcLe/7FZ7w+PIlkAlvWx/kTqSTP92p0slm/OYc8OmY3HU/HZq4vWuvxS3ZeL5W4YVEyL1iaVva7D7nfbX0wh5Qfw+qWkln0TMuNP+VBp3Gxap2ctX5yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-24-75.elisa-laajakaista.fi [88.113.24.75])
+	by fgw20.mail.saunalahti.fi (Halon) with ESMTP
+	id 5852ce3b-9632-11ef-9a70-005056bd6ce9;
+	Tue, 29 Oct 2024 22:14:04 +0200 (EET)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 29 Oct 2024 22:14:04 +0200
+To: Julien Stephan <jstephan@baylibre.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] iio: adc: ad7380: add alert support
+Message-ID: <ZyFCDHsA4hoVnNy2@surfacebook.localdomain>
+References: <20241029-ad7380-add-alert-support-v1-1-d0359401b788@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029-ad7380-add-alert-support-v1-1-d0359401b788@baylibre.com>
 
-Link queues to NAPI instances via netdev-genl API so that users can
-query this information with netlink. Handle a few cases in the driver:
-  1. Link/unlink the NAPIs when XDP is enabled/disabled
-  2. Handle IGC_FLAG_QUEUE_PAIRS enabled and disabled
+Tue, Oct 29, 2024 at 04:02:46PM +0100, Julien Stephan kirjoitti:
+> The alert functionality is an out of range indicator and can be used as an
+> early indicator of an out of bounds conversion result.
+> 
+> ALERT_LOW_THRESHOLD and ALERT_HIGH_THRESHOLD registers are common to all
+> channels.
+> 
+> When using 1 SDO line (only mode supported by the driver right now), i.e
+> data outputs only on SDOA, SDOB (or SDOD for 4 channels variants) is
+> used as an alert pin. The alert pin is updated at the end of the
+> conversion (set to low if an alert occurs) and is cleared on a falling
+> edge of CS.
+> 
+> The ALERT register contains information about the exact alert status:
+> channel and direction. Unfortunately we can't read this register because
+> in buffered read we cannot claim for direct mode.
+> 
+> User can set high/low thresholds and enable event detection using the
+> regular iio events:
+> 
+>   events/in_thresh_falling_value
+>   events/in_thresh_rising_value
+>   events/thresh_either_en
+> 
+> Because we cannot read ALERT register, we can't determine the exact
+> channel that triggers the alert, neither the direction (hight/low
+> threshold violation), so we send and IIO_EV_DIR_EITHER event for all
+> channels. This is ok, because the primary use case for this chip is to
+> hardwire the alert line to shutdown the device.
+> 
+> When reading a channel raw data, we have to trigger 2 spi transactions: a
+> first transaction that will trigger a conversion and a second
+> transaction to read the conversion. By design a new conversion is
+> initiated on each falling edge of CS. This will trigger a second
+> interrupt. To avoid that we disable irq in the hard irq handler and
+> re-enable them in thread handler.
 
-Example output when IGC_FLAG_QUEUE_PAIRS is enabled:
+...
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
+>  #include <linux/iio/buffer.h>
+>  #include <linux/iio/iio.h>
+> +#include <linux/iio/events.h>
 
-[{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
- {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
- {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
+Perhaps keep it ordered?
 
-Since IGC_FLAG_QUEUE_PAIRS is enabled, you'll note that the same NAPI ID
-is present for both rx and tx queues at the same index, for example
-index 0:
+>  #include <linux/iio/trigger_consumer.h>
+>  #include <linux/iio/triggered_buffer.h>
 
-{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
+...
 
-To test IGC_FLAG_QUEUE_PAIRS disabled, a test system was booted using
-the grub command line option "maxcpus=2" to force
-igc_set_interrupt_capability to disable IGC_FLAG_QUEUE_PAIRS.
+> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +		struct ad7380_state *st = iio_priv(indio_dev);
+> +		int ret;
+> +
+> +		if (state == st->alert_en)
+> +			return 0;
+> +
+> +		/*
+> +		 * According to the datasheet, high threshold must always be
+> +		 * greater than low threshold
 
-Example output when IGC_FLAG_QUEUE_PAIRS is disabled:
+Missed period at the end.
 
-$ lscpu | grep "On-line CPU"
-On-line CPU(s) list:      0,2
+> +		 */
+> +		if (state && st->high_th < st->low_th)
+> +			return -EINVAL;
+> +
+> +		ret = regmap_update_bits(st->regmap,
+> +					 AD7380_REG_ADDR_CONFIG1,
+> +					 AD7380_CONFIG1_ALERTEN,
+> +					 FIELD_PREP(AD7380_CONFIG1_ALERTEN, state));
+> +
+> +		if (ret)
+> +			return ret;
+> +
+> +		st->alert_en = state;
+> +
+> +		return 0;
+> +	}
+> +	unreachable();
+> +}
 
-$ ethtool -l enp86s0  | tail -5
-Current hardware settings:
-RX:		n/a
-TX:		n/a
-Other:		1
-Combined:	2
+...
 
-$ cat /proc/interrupts  | grep enp
- 144: [...] enp86s0
- 145: [...] enp86s0-rx-0
- 146: [...] enp86s0-rx-1
- 147: [...] enp86s0-tx-0
- 148: [...] enp86s0-tx-1
+> +static int ad7380_write_event_value(struct iio_dev *indio_dev,
+> +				    const struct iio_chan_spec *chan,
+> +				    enum iio_event_type type,
+> +				    enum iio_event_direction dir,
+> +				    enum iio_event_info info,
+> +				    int val, int val2)
+> +{
+> +	iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> +		struct ad7380_state *st = iio_priv(indio_dev);
+> +		int ret;
+> +
+> +		/*
+> +		 * According to the datasheet,
+> +		 * AD7380_REG_ADDR_ALERT_HIGH_TH[11:0] are the MSB of the 16-bit
+> +		 * internal alert high register. LSB are set to 0x0.
+> +		 * AD7380_REG_ADDR_ALERT_LOW_TH[11:0] are the MSB of the 16 bit
+> +		 * internal alert low register. LSB are set to 0xf.
+> +		 *
+> +		 * When alert is enabled the conversion from the adc is compared
+> +		 * immediately to the alert high/low thresholds, before any
+> +		 * oversampling. This means that the thresholds are the same for
+> +		 * normal mode and oversampling mode.
+> +		 * For 12 and 14 bits, the thresholds are still on 16 bits.
+> +		 */
+> +		if (val < 0 || val > 2047)
 
-1 "other" IRQ, and 2 IRQs for each of RX and Tx, so we expect netlink to
-report 4 IRQs with unique NAPI IDs:
+What about having val >= BIT(11) here?
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump napi-get --json='{"ifindex": 2}'
-[{'id': 8196, 'ifindex': 2, 'irq': 148},
- {'id': 8195, 'ifindex': 2, 'irq': 147},
- {'id': 8194, 'ifindex': 2, 'irq': 146},
- {'id': 8193, 'ifindex': 2, 'irq': 145}]
+> +			return -EINVAL;
+> +
+> +		switch (dir) {
+> +		case IIO_EV_DIR_RISING:
+> +			ret = regmap_write(st->regmap,
+> +					   AD7380_REG_ADDR_ALERT_HIGH_TH,
+> +					   val);
+> +			if (!ret)
+> +				st->high_th = val << 4 | 0xf;
 
-Now we examine which queues these NAPIs are associated with, expecting
-that since IGC_FLAG_QUEUE_PAIRS is disabled each RX and TX queue will
-have its own NAPI instance:
+GENMASK() ? Predefined constant?
 
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
-[{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
+> +			return ret;
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
----
- v6:
-   - Rename __igc_do_resume to __igc_resume and rename the boolean
-     argument "need_rtnl" to "rpm" as seen in igb, as per Vitaly's
-     feedback to make the code look more like commit ac8c58f5b535 ("igb:
-     fix deadlock caused by taking RTNL in RPM resume path").
 
- v5:
-   - Rename igc_resume to __igc_do_resume and pass in a boolean
-     "need_rtnl" to signal whether or not rtnl should be held before
-     caling __igc_open. Call this new function from igc_runtime_resume
-     and igc_resume passing in false (for igc_runtime_resume) and true
-     (igc_resume), respectively. This is done to avoid reintroducing a
-     bug fixed in commit: 6f31d6b: "igc: Refactor runtime power
-     management flow" where rtnl is held in runtime_resume causing a
-     deadlock.
+			if (ret)
+				return ret;
+			...
+			return 0;
 
- v4:
-   - Add rtnl_lock/rtnl_unlock in two paths: igc_resume and
-     igc_io_error_detected. The code added to the latter is inspired by
-     a similar implementation in ixgbe's ixgbe_io_error_detected.
+(yes, more verbose, but better for reading and maintenance)
 
- v3:
-   - Replace igc_unset_queue_napi with igc_set_queue_napi(adapater, i,
-     NULL), as suggested by Vinicius Costa Gomes
-   - Simplify implemention of igc_set_queue_napi as suggested by Kurt
-     Kanzenbach, with a tweak to use ring->queue_index
+> +		case IIO_EV_DIR_FALLING:
+> +			ret = regmap_write(st->regmap,
+> +					   AD7380_REG_ADDR_ALERT_LOW_TH,
+> +					   val);
+> +			if (!ret)
+> +				st->low_th = val << 4;
+> +			return ret;
+> +		default:
+> +			return -EINVAL;
+> +		}
+> +	}
+> +	unreachable();
+> +}
 
- v2:
-   - Update commit message to include tests for IGC_FLAG_QUEUE_PAIRS
-     disabled
-   - Refactored code to move napi queue mapping and unmapping to helper
-     functions igc_set_queue_napi and igc_unset_queue_napi
-   - Adjust the code to handle IGC_FLAG_QUEUE_PAIRS disabled
-   - Call helpers to map/unmap queues to NAPIs in igc_up, __igc_open,
-     igc_xdp_enable_pool, and igc_xdp_disable_pool
+...
 
- drivers/net/ethernet/intel/igc/igc.h      |  2 +
- drivers/net/ethernet/intel/igc/igc_main.c | 56 +++++++++++++++++++----
- drivers/net/ethernet/intel/igc/igc_xdp.c  |  2 +
- 3 files changed, 51 insertions(+), 9 deletions(-)
+> +	st->high_th = 0x7ff;
+> +	st->low_th = 0x800;
 
-diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-index eac0f966e0e4..b8111ad9a9a8 100644
---- a/drivers/net/ethernet/intel/igc/igc.h
-+++ b/drivers/net/ethernet/intel/igc/igc.h
-@@ -337,6 +337,8 @@ struct igc_adapter {
- 	struct igc_led_classdev *leds;
- };
- 
-+void igc_set_queue_napi(struct igc_adapter *adapter, int q_idx,
-+			struct napi_struct *napi);
- void igc_up(struct igc_adapter *adapter);
- void igc_down(struct igc_adapter *adapter);
- int igc_open(struct net_device *netdev);
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 7964bbedb16c..9a5ece12e9d4 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -4948,6 +4948,22 @@ static int igc_sw_init(struct igc_adapter *adapter)
- 	return 0;
- }
- 
-+void igc_set_queue_napi(struct igc_adapter *adapter, int vector,
-+			struct napi_struct *napi)
-+{
-+	struct igc_q_vector *q_vector = adapter->q_vector[vector];
-+
-+	if (q_vector->rx.ring)
-+		netif_queue_set_napi(adapter->netdev,
-+				     q_vector->rx.ring->queue_index,
-+				     NETDEV_QUEUE_TYPE_RX, napi);
-+
-+	if (q_vector->tx.ring)
-+		netif_queue_set_napi(adapter->netdev,
-+				     q_vector->tx.ring->queue_index,
-+				     NETDEV_QUEUE_TYPE_TX, napi);
-+}
-+
- /**
-  * igc_up - Open the interface and prepare it to handle traffic
-  * @adapter: board private structure
-@@ -4955,6 +4971,7 @@ static int igc_sw_init(struct igc_adapter *adapter)
- void igc_up(struct igc_adapter *adapter)
- {
- 	struct igc_hw *hw = &adapter->hw;
-+	struct napi_struct *napi;
- 	int i = 0;
- 
- 	/* hardware has been reset, we need to reload some things */
-@@ -4962,8 +4979,11 @@ void igc_up(struct igc_adapter *adapter)
- 
- 	clear_bit(__IGC_DOWN, &adapter->state);
- 
--	for (i = 0; i < adapter->num_q_vectors; i++)
--		napi_enable(&adapter->q_vector[i]->napi);
-+	for (i = 0; i < adapter->num_q_vectors; i++) {
-+		napi = &adapter->q_vector[i]->napi;
-+		napi_enable(napi);
-+		igc_set_queue_napi(adapter, i, napi);
-+	}
- 
- 	if (adapter->msix_entries)
- 		igc_configure_msix(adapter);
-@@ -5192,6 +5212,7 @@ void igc_down(struct igc_adapter *adapter)
- 	for (i = 0; i < adapter->num_q_vectors; i++) {
- 		if (adapter->q_vector[i]) {
- 			napi_synchronize(&adapter->q_vector[i]->napi);
-+			igc_set_queue_napi(adapter, i, NULL);
- 			napi_disable(&adapter->q_vector[i]->napi);
- 		}
- 	}
-@@ -6021,6 +6042,7 @@ static int __igc_open(struct net_device *netdev, bool resuming)
- 	struct igc_adapter *adapter = netdev_priv(netdev);
- 	struct pci_dev *pdev = adapter->pdev;
- 	struct igc_hw *hw = &adapter->hw;
-+	struct napi_struct *napi;
- 	int err = 0;
- 	int i = 0;
- 
-@@ -6056,8 +6078,11 @@ static int __igc_open(struct net_device *netdev, bool resuming)
- 
- 	clear_bit(__IGC_DOWN, &adapter->state);
- 
--	for (i = 0; i < adapter->num_q_vectors; i++)
--		napi_enable(&adapter->q_vector[i]->napi);
-+	for (i = 0; i < adapter->num_q_vectors; i++) {
-+		napi = &adapter->q_vector[i]->napi;
-+		napi_enable(napi);
-+		igc_set_queue_napi(adapter, i, napi);
-+	}
- 
- 	/* Clear any pending interrupts. */
- 	rd32(IGC_ICR);
-@@ -7342,7 +7367,7 @@ static void igc_deliver_wake_packet(struct net_device *netdev)
- 	netif_rx(skb);
- }
- 
--static int igc_resume(struct device *dev)
-+static int __igc_resume(struct device *dev, bool rpm)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct net_device *netdev = pci_get_drvdata(pdev);
-@@ -7385,7 +7410,11 @@ static int igc_resume(struct device *dev)
- 	wr32(IGC_WUS, ~0);
- 
- 	if (netif_running(netdev)) {
-+		if (!rpm)
-+			rtnl_lock();
- 		err = __igc_open(netdev, true);
-+		if (!rpm)
-+			rtnl_unlock();
- 		if (!err)
- 			netif_device_attach(netdev);
- 	}
-@@ -7393,9 +7422,14 @@ static int igc_resume(struct device *dev)
- 	return err;
- }
- 
-+static int igc_resume(struct device *dev)
-+{
-+	return __igc_resume(dev, false);
-+}
-+
- static int igc_runtime_resume(struct device *dev)
- {
--	return igc_resume(dev);
-+	return __igc_resume(dev, true);
- }
- 
- static int igc_suspend(struct device *dev)
-@@ -7440,14 +7474,18 @@ static pci_ers_result_t igc_io_error_detected(struct pci_dev *pdev,
- 	struct net_device *netdev = pci_get_drvdata(pdev);
- 	struct igc_adapter *adapter = netdev_priv(netdev);
- 
-+	rtnl_lock();
- 	netif_device_detach(netdev);
- 
--	if (state == pci_channel_io_perm_failure)
-+	if (state == pci_channel_io_perm_failure) {
-+		rtnl_unlock();
- 		return PCI_ERS_RESULT_DISCONNECT;
-+	}
- 
- 	if (netif_running(netdev))
- 		igc_down(adapter);
- 	pci_disable_device(pdev);
-+	rtnl_unlock();
- 
- 	/* Request a slot reset. */
- 	return PCI_ERS_RESULT_NEED_RESET;
-@@ -7458,7 +7496,7 @@ static pci_ers_result_t igc_io_error_detected(struct pci_dev *pdev,
-  *  @pdev: Pointer to PCI device
-  *
-  *  Restart the card from scratch, as if from a cold-boot. Implementation
-- *  resembles the first-half of the igc_resume routine.
-+ *  resembles the first-half of the __igc_resume routine.
-  **/
- static pci_ers_result_t igc_io_slot_reset(struct pci_dev *pdev)
- {
-@@ -7497,7 +7535,7 @@ static pci_ers_result_t igc_io_slot_reset(struct pci_dev *pdev)
-  *
-  *  This callback is called when the error recovery driver tells us that
-  *  its OK to resume normal operation. Implementation resembles the
-- *  second-half of the igc_resume routine.
-+ *  second-half of the __igc_resume routine.
-  */
- static void igc_io_resume(struct pci_dev *pdev)
- {
-diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
-index e27af72aada8..4da633430b80 100644
---- a/drivers/net/ethernet/intel/igc/igc_xdp.c
-+++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
-@@ -84,6 +84,7 @@ static int igc_xdp_enable_pool(struct igc_adapter *adapter,
- 		napi_disable(napi);
- 	}
- 
-+	igc_set_queue_napi(adapter, queue_id, NULL);
- 	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
- 	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
- 
-@@ -133,6 +134,7 @@ static int igc_xdp_disable_pool(struct igc_adapter *adapter, u16 queue_id)
- 	xsk_pool_dma_unmap(pool, IGC_RX_DMA_ATTR);
- 	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
- 	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
-+	igc_set_queue_napi(adapter, queue_id, napi);
- 
- 	if (needs_reset) {
- 		napi_enable(napi);
+I would go with BIT(11) - 1 and BIT(11) as it seems related to the amount of
+bits in the hardware.
+
+...
+
+> +static irqreturn_t ad7380_event_handler(int irq, void *private)
+> +{
+> +	struct iio_dev *indio_dev = private;
+> +	s64 timestamp = iio_get_time_ns(indio_dev);
+> +	struct ad7380_state *st = iio_priv(indio_dev);
+> +	const struct iio_chan_spec *chan = &indio_dev->channels[0];
+> +	int i = 0, j = 0;
+
+Why signed? And for 'i' the assignment is redundant.
+
+> +
+> +	for (i = 0; i < st->chip_info->num_channels - 1; i++) {
+> +		iio_push_event(indio_dev,
+> +			       chan->differential ?
+> +			       IIO_DIFF_EVENT_CODE(IIO_VOLTAGE,
+> +						   j,
+> +						   j + 1,
+> +						   IIO_EV_TYPE_THRESH,
+> +						   IIO_EV_DIR_EITHER) :
+> +			       IIO_UNMOD_EVENT_CODE(IIO_VOLTAGE,
+> +						    i,
+> +						    IIO_EV_TYPE_THRESH,
+> +						    IIO_EV_DIR_EITHER),
+> +			       timestamp);
+> +		j += 2;
+> +	}
+> +
+> +	enable_irq(irq);
+> +
+> +	return IRQ_HANDLED;
+> +}
+
 -- 
-2.25.1
+With Best Regards,
+Andy Shevchenko
+
 
 
