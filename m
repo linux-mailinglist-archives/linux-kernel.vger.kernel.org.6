@@ -1,276 +1,107 @@
-Return-Path: <linux-kernel+bounces-387480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5652C9B51CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:29:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F9239B51CD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:30:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6B1BB22702
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:29:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A8C1F21913
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E321FF7CC;
-	Tue, 29 Oct 2024 18:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1323C200C92;
+	Tue, 29 Oct 2024 18:30:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V11dBlZG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L0GGzwO6"
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C729017DE36;
-	Tue, 29 Oct 2024 18:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF211DB375;
+	Tue, 29 Oct 2024 18:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730226583; cv=none; b=BQjXEAd5lc3/7C6R69DT+BJHQ5EQO+vGz9gp8yl1vUx8OkZs/RQsKnKfvSFZh2AiO0t1agq+ZDU6vmQaiJi6z+pY6QDkN41kaYxtswUVBg+m+8N/sB+BQed2z9IbhMi4Tj7lZIyqBi2zo4BqoaNXXzhYpNRFgyYZvEoPIXc41hg=
+	t=1730226609; cv=none; b=MuPGdYvO9wiJMYDi46hMAJLfbNbrplfCRxqeTouolL+syeRXf1VoeLfncYRbnZgbb6LBrerFNWlQoEB3b1R4Mg0RLGdQwf3M94fOj/f3XQeAnGJUDfC+M1gvLnmWc9DYI8mbEhWTv79aF9e5liNElqRapxaNJnzmeRUFth04wR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730226583; c=relaxed/simple;
-	bh=D8zGes9wsVozeVbV7+Smh+u7DzqpwqL3DIZ6uBBtNwE=;
+	s=arc-20240116; t=1730226609; c=relaxed/simple;
+	bh=AsK+V9h+B2iwFQjjk9IGQoIbaacgNFVHv5zrTuGaT/E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LnY2674B+0JsJriD3if6JmuhRcbgA0JbzFjICO1u1yUMPEmIZG0D+GtXCFZILddaE/5RVb5FcRhVpLcVdAY06BZlBvkznPGIXIyJKR2LXTuYXTIjr+opObDEeVuw6l2CUjXqEjchu6QvbLB+S1loXwCQCN9Kho+M86ZpyAFawwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V11dBlZG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92D3EC4CEE4;
-	Tue, 29 Oct 2024 18:29:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730226583;
-	bh=D8zGes9wsVozeVbV7+Smh+u7DzqpwqL3DIZ6uBBtNwE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V11dBlZGmRMv+YTXBU0NmxiabjnjyWqShBF3WG6kUCwR++tbaC8+mUUM1xlYUAfP2
-	 +m6l6k9UGN6U3dsvvyxzKBIIoJIC2HPq8poNFqni1khbibTMcBTokCod46/Sm6jJFi
-	 dRSzqNWdkhrzATiTSh8+qtYQY3qwnOUYSJdbCBXkXUPI/i6pj32pwH9ec9bi8MI9d6
-	 PJmnQoxWeDGybKOfwyPHXnEgofwk1oJnJq29gj3dTDGlFLwiVv+kjA/sgZjKiy4UUV
-	 H2Bfs5olNuD31txXCb1PVltd0RjjQLhxoN8mmfXRNcKdhJbnmEiN7HDdet7ZkoQjY8
-	 d1aVfDb7DfnQw==
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-27d0e994ae3so2533579fac.3;
-        Tue, 29 Oct 2024 11:29:43 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUjym61i00xJ5BHF3OWQCpZzHveSoLg5qHIzOvp3WUDAIMFAFzg2yJnFMHjOioLwrxHtOhW1damdA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHXpSrep0VDzsxfxw81yIpwoli3wPY9dDKROchBmFL6pz4/3Mm
-	q9aJz6NjdqZ7lGTit5aXPM33yiRed78n2FwuEd3peeIzBoXE9SS0Kzy0gBeHNQsXIrbUD7SK0Ik
-	nlwSoIEhKnTsGgaZwuLJZwfM1CoQ=
-X-Google-Smtp-Source: AGHT+IH9tadkQr/ESOI4GuXv2RDI/r2CgLzlI346wL/gRg/H6cTv9b3gSXpTrv9gAW4DFm3Mnd+hRP+bkAxszfyN/jc=
-X-Received: by 2002:a05:6870:b01f:b0:270:4219:68fe with SMTP id
- 586e51a60fabf-29051b02ea3mr11763099fac.1.1730226582847; Tue, 29 Oct 2024
- 11:29:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=rrgXqoQTyQDJ9Z1Ou55UvnkmQRjwOl9CUfd1T03wnyHqbxCLMDsIN+byOXkTGh0DJDbqlq60cn2e8kCA3WykypqADyC1y5CcSoWG+JIA5bww2Nqnk3Iidpcs1g+AbPZWcRO/bund4167iR1mjI1MwIV1wbGC2MLNj8VfjspWAok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L0GGzwO6; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea535890e0so698797a12.2;
+        Tue, 29 Oct 2024 11:30:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730226607; x=1730831407; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AsK+V9h+B2iwFQjjk9IGQoIbaacgNFVHv5zrTuGaT/E=;
+        b=L0GGzwO6tr2gmIX0T2imOHEszQ63DoZrAXyyeVHLc0cu4oqIWGSsniKDfxY4hA6lWn
+         JZLShHVVE1sDOvWoI3TctH4i0mf75tbbHoebspPZzmVTTkljsWMjDMlF1FZZeI9PqvnF
+         /i3/u79Tm7adgtheCGc6ug63AdhCmv1oGfRPF5HcHUNfuv5V9q4ViaWJiilKv7gTowq1
+         w65MVyKcQpML6LViDZO9eblcNlheTXvk5MXWHnJcCMDZ9Nv80YR6P7pHNlEW9/bUn/Px
+         PXYwn2HC+/QukYM/UheFvXXCpJbdq0IomzAmwSHpAxU9FPG58qLpinKkXVebNzkosP3J
+         Puig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730226607; x=1730831407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AsK+V9h+B2iwFQjjk9IGQoIbaacgNFVHv5zrTuGaT/E=;
+        b=LluVKwI+6B9JAmluvp4+l2kcOMw5+rm1F+1t5QLBfHATJmwB+PT+ZRyPs0wMnz9W2H
+         moQxu6n3yssH6c8EJtLo9cAyDqzEJBqhyHHnLOo4M9gvaPzn0cl5qmnEWDo7cYLWlAJo
+         e6mvdVgo1B07ioHwSS/V35wAt+b8bvLuXV5UsBVyXwNyutIk/oU6pbsxVPLpC7Nk126k
+         FFqYjgkLDowbxMj9k0uDd3Ri+fEkBbiXDZDV5G4IU8Gt7WuQwIXMyfMlBl1KHjxbKovF
+         MpYjrptNprvQy1RzVlMtsXQfWQJEEgW6/zWkSpqmJ/Cqi0bTDQBGDMPVzVdwSPq4Lktw
+         lbUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUE39DZGW3cvn8rITsz0FbvFRVrs1zVd+gE3vPBQEkdCA4e2s4zu2GEFeoJ3s0fuNX83XsKDCK1BYZU@vger.kernel.org, AJvYcCUyTHLB2P7oty1Z59P4Bs1jsF1auQSjP9C/LL4btD60lBMropKQ/X40CyRdhD2jPl/UslG1x4UCuSSsCHkk@vger.kernel.org, AJvYcCVKPre64+fb1Hu/mq+S1/eLjkixNkGqirM52Mtnso/Ho1rzZfGZRoU2t+tRRLENDC9GTKT9+Kq+KRToF/InIr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+gkUSLl4ITuqxRRvLWnMtpnYyxYZNZIztifc8IAHAITGtcl8i
+	sxznS9nf4P5eKMSfweXld17JK620MSJOgMP3xMoHAAI+ohs8Oct+5vPVLeQkv8IAXREilQQ7d0Z
+	ayT9e/oC4876wM23FseKYo3sImKU=
+X-Google-Smtp-Source: AGHT+IHJQghLABmS2gIhLis8FSQRrsVGERtaxOKMLTernOVMHA3AjEDMajT1qr0GJDUeXdWp4rWn8id5I3hLeVrdAmU=
+X-Received: by 2002:a17:902:e812:b0:20b:7bcb:5c63 with SMTP id
+ d9443c01a7336-210c6d30b04mr67872535ad.15.1730226606814; Tue, 29 Oct 2024
+ 11:30:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029094452.495439-1-lukasz.luba@arm.com> <20241029094452.495439-2-lukasz.luba@arm.com>
-In-Reply-To: <20241029094452.495439-2-lukasz.luba@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 29 Oct 2024 19:29:31 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
-Message-ID: <CAJZ5v0gzQhw3wkRVFTEx-y4pawknJqC2JPrN6_dqd77vTVuSOw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] PM: EM: Add min/max available performance state limits
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	dietmar.eggemann@arm.com, rafael@kernel.org
+References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
+ <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
+ <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
+In-Reply-To: <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 29 Oct 2024 19:29:54 +0100
+Message-ID: <CANiq72=db5jQhup8JGZT3_93orrVQt-5pwPvSQb3k5j-eW7rdQ@mail.gmail.com>
+Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
+To: Rob Herring <robh@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Saravana Kannan <saravanak@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 29, 2024 at 10:43=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
-wrote:
+On Tue, Oct 29, 2024 at 6:58=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
+:
 >
-> On some devices there are HW dependencies for shared frequency and voltag=
-e
-> between devices. It will impact Energy Aware Scheduler (EAS) decision,
-> where CPUs share the voltage & frequency domain with other CPUs or device=
-s
-> e.g.
-> - Mid CPUs + Big CPU
-> - Little CPU + L3 cache in DSU
-> - some other device + Little CPUs
->
-> Detailed explanation of one example:
-> When the L3 cache frequency is increased, the affected Little CPUs might
-> run at higher voltage and frequency. That higher voltage causes higher CP=
-U
-> power and thus more energy is used for running the tasks. This is
-> important for background running tasks, which try to run on energy
-> efficient CPUs.
->
-> Therefore, add performance state limits which are applied for the device
-> (in this case CPU). This is important on SoCs with HW dependencies
-> mentioned above so that the Energy Aware Scheduler (EAS) does not use
-> performance states outside the valid min-max range for energy calculation=
-.
->
-> Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
-> ---
->  include/linux/energy_model.h | 24 ++++++++++++++---
->  kernel/power/energy_model.c  | 52 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 72 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-> index 1ff52020cf757..e83bf230e18d1 100644
-> --- a/include/linux/energy_model.h
-> +++ b/include/linux/energy_model.h
-> @@ -55,6 +55,8 @@ struct em_perf_table {
->   * struct em_perf_domain - Performance domain
->   * @em_table:          Pointer to the runtime modifiable em_perf_table
->   * @nr_perf_states:    Number of performance states
-> + * @min_ps:            Minimum allowed Performance State index
-> + * @max_ps:            Maximum allowed Performance State index
->   * @flags:             See "em_perf_domain flags"
->   * @cpus:              Cpumask covering the CPUs of the domain. It's her=
-e
->   *                     for performance reasons to avoid potential cache
-> @@ -70,6 +72,8 @@ struct em_perf_table {
->  struct em_perf_domain {
->         struct em_perf_table __rcu *em_table;
->         int nr_perf_states;
-> +       int min_ps;
-> +       int max_ps;
->         unsigned long flags;
->         unsigned long cpus[];
->  };
-> @@ -173,6 +177,8 @@ void em_table_free(struct em_perf_table __rcu *table)=
-;
->  int em_dev_compute_costs(struct device *dev, struct em_perf_state *table=
-,
->                          int nr_states);
->  int em_dev_update_chip_binning(struct device *dev);
-> +int em_update_performance_limits(struct em_perf_domain *pd,
-> +               unsigned long freq_min_khz, unsigned long freq_max_khz);
->
->  /**
->   * em_pd_get_efficient_state() - Get an efficient performance state from=
- the EM
-> @@ -180,6 +186,8 @@ int em_dev_update_chip_binning(struct device *dev);
->   * @nr_perf_states:    Number of performance states
->   * @max_util:          Max utilization to map with the EM
->   * @pd_flags:          Performance Domain flags
-> + * @min_ps:            Minimum allowed Performance State index
-> + * @max_ps:            Maximum allowed Performance State index
->   *
->   * It is called from the scheduler code quite frequently and as a conseq=
-uence
->   * doesn't implement any check.
-> @@ -189,12 +197,13 @@ int em_dev_update_chip_binning(struct device *dev);
->   */
->  static inline int
->  em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_state=
-s,
-> -                         unsigned long max_util, unsigned long pd_flags)
-> +                         unsigned long max_util, unsigned long pd_flags,
-> +                         int min_ps, int max_ps)
->  {
->         struct em_perf_state *ps;
->         int i;
->
-> -       for (i =3D 0; i < nr_perf_states; i++) {
-> +       for (i =3D min_ps; i <=3D max_ps; i++) {
->                 ps =3D &table[i];
->                 if (ps->performance >=3D max_util) {
->                         if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES=
- &&
-> @@ -204,7 +213,7 @@ em_pd_get_efficient_state(struct em_perf_state *table=
-, int nr_perf_states,
->                 }
->         }
->
-> -       return nr_perf_states - 1;
-> +       return max_ps;
->  }
->
->  /**
-> @@ -254,7 +263,8 @@ static inline unsigned long em_cpu_energy(struct em_p=
-erf_domain *pd,
->          */
->         em_table =3D rcu_dereference(pd->em_table);
->         i =3D em_pd_get_efficient_state(em_table->state, pd->nr_perf_stat=
-es,
-> -                                     max_util, pd->flags);
-> +                                     max_util, pd->flags, pd->min_ps,
-> +                                     pd->max_ps);
->         ps =3D &em_table->state[i];
->
->         /*
-> @@ -391,6 +401,12 @@ static inline int em_dev_update_chip_binning(struct =
-device *dev)
->  {
->         return -EINVAL;
->  }
-> +static inline
-> +int em_update_performance_limits(struct em_perf_domain *pd,
-> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
-> +{
-> +       return -EINVAL;
-> +}
->  #endif
->
->  #endif
-> diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-> index 927cc55ba0b3d..436c2b8fdf9eb 100644
-> --- a/kernel/power/energy_model.c
-> +++ b/kernel/power/energy_model.c
-> @@ -628,6 +628,8 @@ int em_dev_register_perf_domain(struct device *dev, u=
-nsigned int nr_states,
->                 goto unlock;
->
->         dev->em_pd->flags |=3D flags;
-> +       dev->em_pd->min_ps =3D 0;
-> +       dev->em_pd->max_ps =3D nr_states - 1;
->
->         em_cpufreq_update_efficiencies(dev, dev->em_pd->em_table->state);
->
-> @@ -856,3 +858,53 @@ int em_dev_update_chip_binning(struct device *dev)
->         return em_recalc_and_update(dev, pd, em_table);
->  }
->  EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
-> +
-> +
-> +/**
-> + * em_update_performance_limits() - Update Energy Model with performance
-> + *                             limits information.
-> + * @pd                 : Performance Domain with EM that has to be updat=
-ed.
-> + * @freq_min_khz       : New minimum allowed frequency for this device.
-> + * @freq_max_khz       : New maximum allowed frequency for this device.
-> + *
-> + * This function allows to update the EM with information about availabl=
-e
-> + * performance levels. It takes the minimum and maximum frequency in kHz
-> + * and does internal translation to performance levels.
-> + * Returns 0 on success or -EINVAL when failed.
-> + */
-> +int em_update_performance_limits(struct em_perf_domain *pd,
-> +               unsigned long freq_min_khz, unsigned long freq_max_khz)
-> +{
-> +       struct em_perf_state *table;
-> +       int min_ps =3D -1;
-> +       int max_ps =3D -1;
-> +       int i;
-> +
-> +       if (!pd)
-> +               return -EINVAL;
-> +
-> +       rcu_read_lock();
-> +       table =3D em_perf_state_from_pd(pd);
-> +
-> +       for (i =3D 0; i < pd->nr_perf_states; i++) {
-> +               if (freq_min_khz =3D=3D table[i].frequency)
-> +                       min_ps =3D i;
-> +               if (freq_max_khz =3D=3D table[i].frequency)
-> +                       max_ps =3D i;
-> +       }
-> +       rcu_read_unlock();
-> +
-> +       /* Only update when both are found and sane */
-> +       if (min_ps < 0 || max_ps < 0 || max_ps < min_ps)
-> +               return -EINVAL;
-> +
-> +
-> +       /* Guard simultaneous updates and make them atomic */
-> +       mutex_lock(&em_pd_mutex);
-> +       pd->min_ps =3D min_ps;
-> +       pd->max_ps =3D max_ps;
-> +       mutex_unlock(&em_pd_mutex);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(em_update_performance_limits);
+> I really want a build error if the type is wrong, then the _ case
+> would be unreachable. No way to do that?
 
-It would be good to have at least one caller of this function in the tree.
+When you need to work with a set of types, you would normally define a
+trait and implement it only for those traits, e.g. see
+rust/kernel/transmute.rs. Then it is a build error if you don't
+satisfy bounds etc.
+
+Cheers,
+Miguel
 
