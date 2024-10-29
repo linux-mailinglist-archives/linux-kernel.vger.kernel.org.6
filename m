@@ -1,397 +1,247 @@
-Return-Path: <linux-kernel+bounces-387739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01B789B558A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:07:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981849B558B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:08:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 849991F24007
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:07:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F255B22584
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C570320A5EC;
-	Tue, 29 Oct 2024 22:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A320F20A5C9;
+	Tue, 29 Oct 2024 22:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TnsuNHBw"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="gHgixi5b";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="ezF7Dkq4"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003E9205E2E;
-	Tue, 29 Oct 2024 22:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730239664; cv=none; b=WZSJ57slzxS/hfMvLjA/UIrpJmUXw6PPAPf/5A+0BbywlQeekCxDRO8bB2ShtHTbYphU21FHLFCxvzjoIOY/1r81ZiqQw1rr3wsQCs+56iPjsD5huqfjQHES3ChsR+MIiZBbKfbZcqfehmc3LefxMm5A4IhhhwXQcQquTjuUqp4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730239664; c=relaxed/simple;
-	bh=sKfFR89WVt1A0vA1M4cqWisZ9SRjrOoa/iRyqOjCggw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qExdM5qMtTBe+kCL4dEKuduxVeun9OKUeYTbxKZTJnFS8YuxyetmeK70w3tibmkdvr5EtQPtbcBkGjOan8KIT+DxXz5NReTanQtm3XlIAkVP8q9mxvVYjLVN0aXe2oulJvxTeOiAawXJIyItWN/I7vUE5XZ9RDpSwHqhYZ0RtD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TnsuNHBw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TAaNDj013129;
-	Tue, 29 Oct 2024 22:07:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	2lzwmUYG0jlCTMFyMqNKgK1XdqTfRmNkBr46ecBflIc=; b=TnsuNHBwXNt/ASce
-	rOvnqz6HN0w3tDnjyS711JvMUD4dlbqdxFxvL1vWNVstD8xUFfdO1O7GxX/wgv/w
-	otzMtMdStMboUzETCa0I4VQUvrARfdhjRw9hLDiuBMdWzKM9/XCrSHTMbyEFU7vs
-	WSBXwRCFjxIjr3mNuMzhzvBBeOEpzeYpLZ5/XiabuTgyP4GOy9Mm180sIhh6B8q0
-	K9DKMpekB3Gmg7V3XEqSgO+pp3A4ubqdQ7j+to1JIjUNzM36g516yUoMdbDFkGjf
-	6DvQf2tFuYeaPBnjcvEigwpgRMNzVXef4vrHfxjR75Dl0lvN5ljlOWf7YfCcnvE7
-	AsqtYw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gqe61s5c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 22:07:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TM7XQC016222
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 22:07:33 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
- 2024 15:07:31 -0700
-Message-ID: <e09a547a-c123-489e-b993-a246ebe32513@quicinc.com>
-Date: Tue, 29 Oct 2024 15:07:30 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BC520A5DD
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730239683; cv=fail; b=txXSoes/kDjWEs+wNngMztH9BHDP/JyGRgfsEDBjCyKSm/V5tCdbV14HmCnDSHV9JwvJ+MTob0NB+9nXiesJZdsQfgOanu4bkmEHmKa8lwL81ZepmCxA04QujefFEMpypdadIeGpplrr8BIgb3m5jzYCY4k748R9de8H7oDq040=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730239683; c=relaxed/simple;
+	bh=HrYXiBAluulePDYGE+YW/SWxOqKYYaYSw7UGKZW1/jI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=TUEC1o8ZC2wXShumSeSD1LDEmBFiLxuQv6PbDmrPvWORHEYfmUinAhH+730/kbhb5GdpguOWsAKPF1y5Ot+ME3tKauGIRQUwRSZjzmwGRnHZqbChmxrDnot9+OzHtSTp3/9IsQzLcmRcFVLeU/r8hNICMm04y7yQW3w+Y1O+sck=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=gHgixi5b; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=ezF7Dkq4; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TGfdao003425;
+	Tue, 29 Oct 2024 22:07:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=BL4igOCXuqx0AUQFF1ro2H+NPKZz4u4483iLWGdMCxQ=; b=
+	gHgixi5b1E8hAd8FRHdvaxvitQz1RutQiiE2k1+LgqbIVddgu3cxm6ImoVHvTWjh
+	Zs4Il84ToTxCidsVlRoy9r2gMyqZ7vpkvt5wH04Ukk4EFoUkam7sXCHvnBWQMTZ7
+	YZqxSjtOJZhi2vbWtz25V+YSc2ndkHZUO/bAHfKMi35Inpa2KV/ZtD+heetKJzJg
+	3NiNV/GMfJmpHc5jdvGs5/RLmB0Oc5e87Ro3svzEKLlTHaQ90awrApb3TTLG456o
+	xH+p6NTKUHIoQZ3/M55TZC7c7i6IpC0/0vP+De8+rpUC1MCAXuLcFVYo5Wih1oQ0
+	xtrUZZYM+iieCaAJwNaVqQ==
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grc8xpjm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 22:07:40 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49TKOswM034894;
+	Tue, 29 Oct 2024 22:07:39 GMT
+Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10lp2047.outbound.protection.outlook.com [104.47.58.47])
+	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hnd8ajsb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 29 Oct 2024 22:07:39 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YFeMcMpD5Yg/UlV1bc/Guw7S9C/jNN1xXfot+hR/C4bQpl5m3ubZBY+qVyLUNj7e7x11e5MHPxP2HHiWcMkE9AXizZIpA4Rq4ftH5OC9FGgKaDwwk+PEXXbzemQ2UkqYnE0ba68OBiXknJfx8ltbeyq6B86uywT07Mti9QMHdbwKr/fGjGuaHcZRAAS2W8N0qxmrbUjbpyIi07LnvQeBpDqK5ddBgFdSIjIxhtqK2VhsgZd7V8VgHPXKbJTrOM7qNEEuXgDEdrN30NJ0gNGxA9+twKSJcnX3+UwQBOwJBgh0Pxdl5pbeic0hUbY4ORJNkmYQPZXOOWG4C+K6auAJQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BL4igOCXuqx0AUQFF1ro2H+NPKZz4u4483iLWGdMCxQ=;
+ b=URfw94CnV63XoWRx47kj9PK/Pvq0/kmYxhwyj1Y4xEwj4xp9r9+5ZzoybyQE8EkjAO7DPQyZHcv2OSJ5QS5Qn03zQMTyVFjbGMATKQxfU0fknlNTlXmlAQVTSzixuoyv3/4ih25NvDyFW8eUhQk2b/o3S70WLGbznOih9OAmkaZlPI6UyDchj6Hz0UZiBD/poMEwBRCobcPhnXYVPtRpE4g1yVtELYLzfGCwUXMk4yejm5RcX7yRwLXzfMGs80TXOd82yXfvwPgFVN0CZfe1owEL+s4yUUVdfCubUSMXJuEmxJy/44vIKU6kcZI0ZiMhMTXgapCYxCXLPSnw+jFQ1Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BL4igOCXuqx0AUQFF1ro2H+NPKZz4u4483iLWGdMCxQ=;
+ b=ezF7Dkq4Wf6/kUldQnL4s8TCtLKt4gdB7c8U711BlidUmMX2jIFge2FqAQD98ny6W/zNzeZ455/nC0clxE9s2lyyX4oA/+KuucTFhgmv1rThRWHO8ABb0lW5c9dAqthAyINtBP5AaVMCnyAJns6RfMvG9rMUXG/Wv7/7k4tzk6w=
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com (2603:10b6:303:19b::14)
+ by CH0PR10MB5162.namprd10.prod.outlook.com (2603:10b6:610:de::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Tue, 29 Oct
+ 2024 22:07:36 +0000
+Received: from MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb]) by MW5PR10MB5738.namprd10.prod.outlook.com
+ ([fe80::187b:b241:398b:50eb%5]) with mapi id 15.20.8114.015; Tue, 29 Oct 2024
+ 22:07:36 +0000
+Message-ID: <d2d3514a-3f7a-4367-b7a4-953a76687053@oracle.com>
+Date: Tue, 29 Oct 2024 17:07:34 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] jfs: fix array-index-out-of-bounds in jfs_readdir
+To: Ghanshyam Agrawal <ghanshyam1898@gmail.com>, eadavis@qq.com,
+        osmtendev@gmail.com, ghandatmanas@gmail.com
+Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+        syzbot+0315f8fe99120601ba88@syzkaller.appspotmail.com
+References: <20241001060548.3090738-1-ghanshyam1898@gmail.com>
+Content-Language: en-US
+From: Dave Kleikamp <dave.kleikamp@oracle.com>
+In-Reply-To: <20241001060548.3090738-1-ghanshyam1898@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: CH2PR07CA0026.namprd07.prod.outlook.com
+ (2603:10b6:610:20::39) To MW5PR10MB5738.namprd10.prod.outlook.com
+ (2603:10b6:303:19b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 8/9] drm/msm/dpu: allow using two SSPP blocks for a
- single plane
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona
- Vetter <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241025-dpu-virtual-wide-v6-0-0310fd519765@linaro.org>
- <20241025-dpu-virtual-wide-v6-8-0310fd519765@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241025-dpu-virtual-wide-v6-8-0310fd519765@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1z7gA5ECiLu-GVER1Z_KnhkfIpEuZYND
-X-Proofpoint-ORIG-GUID: 1z7gA5ECiLu-GVER1Z_KnhkfIpEuZYND
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW5PR10MB5738:EE_|CH0PR10MB5162:EE_
+X-MS-Office365-Filtering-Correlation-Id: db9d71d0-d533-44ba-bfa6-08dcf86618ab
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OWcrTVUwV2laeWtEWnE4ZzVDdCtsQW1RTmFXTGxMUnN0U0d4N1hhc1BPWnNv?=
+ =?utf-8?B?NGs2YjlQQkpsOE5Qd1hxYy9DSjU1dDZ4QnBLSVhQSXVuMEdJYXdZcTFrMVRw?=
+ =?utf-8?B?ZEJJaHNjbHc3MytldmE2OUdieFBVcjVlTkd0TzBydGR2S3ZmZUdEdEJ1N2tN?=
+ =?utf-8?B?WTVMMTNkMHFsU1hjbkJCRUc2aVIxQmRESnlnQmxBNmRLOE9rR1F2aWtkcEtD?=
+ =?utf-8?B?YStVamVuNE1YUkg3QXNoM0ZDaWVDdjJobnN3aEQ0akRPWXdjTDQvdGU0alRS?=
+ =?utf-8?B?OVFqR0JTazEvTlYzY1N6aGVYbUNpY29tK3RoTHZJRmcvZ1FyRU9NS0JuNTN6?=
+ =?utf-8?B?YlVMa1k5Y1BoeERpSkhxbldSRC93SDdZZlZvZEhrOGxtV0I0bHVvNTZoTkRo?=
+ =?utf-8?B?OW5uK0grV2R6ZGsyZFNEU0ZiMzNRbWd0NmhIenhKbHBzRGx6MHkzU3JTeTZv?=
+ =?utf-8?B?WSs5M0FHOFRPSTA0TE1QZTlQNjNQN3B6OHp0dmsrR2tsaXRqaXdVdVBCTlhv?=
+ =?utf-8?B?UmJqczd1NkFscytQMEU2N3FOOE15T3lnV1RwUzRCSjR0eGxkaENHRnlyY0M3?=
+ =?utf-8?B?U2FYdDA3STBzQmVoeWdwZitUM1RVL3JzQXFjclRXYnZTaXpwdXM5bnFwQ2li?=
+ =?utf-8?B?TFRPbGlNN0h4cFg0elFiQXpxUmRuODFsdUZaQnVnUTNyUjBSWENaNkFuaThP?=
+ =?utf-8?B?OXcvNnB1RW1IYzE3WmZWblhiY2tDYmowUjJ4RVdob3kwZllxOWpaSkNIV1p1?=
+ =?utf-8?B?K1hDa2JSSnB6VVU3U1pqV3YrZkxMWk05aWFyMmRJYXJBTWtwVThpdWh3K0ZD?=
+ =?utf-8?B?UExZWkp4RnRJOWNzck5sWUEwNXVCNkhkaE8vVkU0MG5kZXY4bUV1MVVFUEpT?=
+ =?utf-8?B?VE1RYUR1ZEx1M1c4Z0FHVmpjTUdDT2xNeURKY0JvNWJxbCs2MjRpZzBxTUxI?=
+ =?utf-8?B?KzlrM0p2aHBLWUdtbzFueDJRdmRRckxZMEtoeFV2RGVNMmkvQkI3ZUFVMTVN?=
+ =?utf-8?B?Qk1LL2NmVVBXTlpESEJuWmxrVXBMZ2pnQWRlNTR4d2txdzFtaDVlenJ5dFkv?=
+ =?utf-8?B?bWMwakhacnlpZ0ViU255SFdQbFhFdmJLOWhmZ2RTbFZ4bUJVZGlYbjZ0VlZN?=
+ =?utf-8?B?Z0Vid3l4UGwyVVkvSVY3Vmw1MnJwWUtXY0tMaFR3dWJPMktVMmtlZnpoSzNu?=
+ =?utf-8?B?U2lGcnl5WTI5VnRKd0VHNjJJd0pyVTF1TWZpZnd4TzJPaDZKTnVjU2k2V2Ix?=
+ =?utf-8?B?c28waUFhRi9lMVdxbUo1TkdFSE1uWllmeW85eDdBRG1wSU9zOXdmYWNQSEhs?=
+ =?utf-8?B?TzlOSjFVaC91d1gwY1A2WVNjOHQ4RHd5YzZUamFDaG1lQm9pTWFGVzNRamoz?=
+ =?utf-8?B?OXlSaUp0eU9nSWxmVDhBbjYrTkZ3SUFES2pzMU9TQzdnemxBZXlGNXFkVTJ2?=
+ =?utf-8?B?S2IzN0ZML2JRREhxWHVlWlZJY0F5NWh4WFc0Wk0xYlNNZmY2NGJWbS9TYVNu?=
+ =?utf-8?B?YnpwQkhENFZxWHArd01aOWplbnNCaTdIZWE2Mi9LWUlvZ2k5c3AxdnFJaEUw?=
+ =?utf-8?B?K1gyQVphMkJZTW44VklXK2Z3Qnc3WXA2K05KclB5L2FicVc4RHZPWU9QWURP?=
+ =?utf-8?B?bUh4b0ZYOHdTSUJGM2tqTjVxVXNHWWMxeFRmTG1yVEsvbVpKeEJOdkw0eWFu?=
+ =?utf-8?Q?AdZJoKS8DOBYwTZ1D3Ae?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW5PR10MB5738.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ejV4SDlteTRLcUptakhWRTRrRjVNTUc5VmdhLzMrSlU2a2hJazdWRzRCOEwy?=
+ =?utf-8?B?YytpalNDUmlDOURWZWhlZUVoYThuOE5JemV6MWlUdm9JT0RVSHZmckF6dE1T?=
+ =?utf-8?B?dTA5Z2JUNWhQWXZGcHh0L3BlNTE5VHVpUzd0NUU0ZG5odVN0aEdJdHFKN2N3?=
+ =?utf-8?B?ZmVNS0xQRmR1NS80NS9nQ1RmUzhkTkcxalE3M2o1YzhOWE8wd1BLTnlRQmhS?=
+ =?utf-8?B?RmE0OHhmNDFzYVNWMHdPWVN4Uy9obHB3Zk9sNk9LN0JTWFdsa2xoWGZJUGFv?=
+ =?utf-8?B?OXk4MTJ3QnR0amlTK1pqKzZJVVVIRXByRWJDbU1odmNoSHErcTFadjhuNldp?=
+ =?utf-8?B?UzNuSDJLU3ZBWHBmcVQ5NHhWYVhreTZoUEpEYUViUWs4RjNhaHBEWWM4SjNv?=
+ =?utf-8?B?RW4yRVRmUlpEQW1JQ0lwY0xmVVhteUtPVmx1OUpIY0JhaXAzTnJidFlJYUQ3?=
+ =?utf-8?B?Ly8xVTQwU3hNQ3dTSjYvb3F3cjRyUEFyS0RRS2ZXMm5TVGZDUEVNMFJGQ0s5?=
+ =?utf-8?B?VnY0SHFwQktqQ0tSVzA4RHhuRkZmTXp1Yml2UWZFS1ZRUDhrd3BFQlVzVU5M?=
+ =?utf-8?B?UHFTTURsVDJiaWpWeTFhMU1VL2d4TkhPWWFPQTQ3S21WVTIvZDZnbWJHQS9T?=
+ =?utf-8?B?WDBwcDN2TXNEU0V1Y1FGQU4vUkJBL0Uxb1pHRHVPaURqSmdpcVpmTU8zWno1?=
+ =?utf-8?B?N1Y5TGtqaTdCNysrQzRaaTNSanY3R0dXbkdjOHcrYW9OTjJXWVp5WFZYeUZL?=
+ =?utf-8?B?a3VBY2dQdFNsbDNsTWJsbjIzQ2Mway9RRDhYZ1FtUVk5a1pzNXBvQk5Zc1Ba?=
+ =?utf-8?B?SytlaWVvOGNpSE9mUEI3eGord2hJM2dhUUdZeW1lZkU2T3N4ZVRvK09lblNM?=
+ =?utf-8?B?T0VNbWZGbW0wTVVSTVBadWgwV0dITDRiT3hhSVlka0hkYktrakg1SnJWYWYy?=
+ =?utf-8?B?NjdVNlNGWi9hN20zT2lrVklxVWU5TExhdDNjSUVxY3ErOFhSSzh2eWcvS2Rm?=
+ =?utf-8?B?VlpKcHZ4S25qV0o2eXJ2TjZuUE0rQmFRUzkrbFBTWm9aeW1nMW5qZFZYMTFn?=
+ =?utf-8?B?UzZSclNHS2s4SDQ5dEtWK0F1b2RLclpnMWdJclpRaG5va3hiRmx0c0pUaWNs?=
+ =?utf-8?B?bSsyRmNiNTV5VjhzLzlXaGFrUXZxb3B3NFdyMzZlOEtDTjJtckxKUEFoTy85?=
+ =?utf-8?B?MFJyWlRBM2JUODQrNlpIbmpRdmVsd3BVYXAvZUlhUlhXUGI4SG5WUGtYWHFo?=
+ =?utf-8?B?bGRaVkdRdVN0VXl4MitJOURRT0tHbDhxUzY5SWJjZFkrd2NOV1REVmRLNDl4?=
+ =?utf-8?B?eFVMNUJ5VW5UWFRhTFVVdTkxRithK2VjWTk1SWJ6cVlXbktwMEkraDhHQXlV?=
+ =?utf-8?B?NWljcFRHdktYT0pQQkc5Z0x3N1p5bTAwZklEZ091SmFONFJaV0U0UEYyTVBY?=
+ =?utf-8?B?N0E1b0IrRVlJcGpHWjRQMzlYODlXMlFyeHF3SW43YTVKNlRnSTRGMkMzMFZi?=
+ =?utf-8?B?NTd4aUE0TVRkMFdPWGtrZHBOczVHZWIwdHJUTllGTU1FekFNZmdGUTZEVTE0?=
+ =?utf-8?B?Vjg5Rm9EVENpbzh2Y0xjaW1BT3hVelNCSUtBekRVb1dNdExVSXVyYUZZdlJx?=
+ =?utf-8?B?YThLOEdNYkl1bDNmZlNFaXFnRWpxMHV2aXRwalgyb1FqRGhEOGtVanBsdFhB?=
+ =?utf-8?B?clNpcmpFcW9BMU1EdENQTDk2eWEyK0RGOGxJdVlIRm4wR0xkdzBnVHFobzJz?=
+ =?utf-8?B?QklsM0VqY3RMSVliaHRuakg3OHd5TCtHVzR4QnBvbjg3Ly82ekdiUnFrYzI1?=
+ =?utf-8?B?QXlWVUdUU3JSWks5T1kwV0svYUc2RTFKSTkybENwSm9GVFVXWjNyVTQ2TFpy?=
+ =?utf-8?B?VG8rRFluRGJjRWtXVjBoeUpJd1FUU21PVmZxcjNUODdVTXppSjlEbnlETHg0?=
+ =?utf-8?B?dmYrZ0wwTm9icElvOUFVY2lkVFNBcE9WeHIxanBnRGd5bm9KbGJMeVhtSG90?=
+ =?utf-8?B?WTdpUFNMblBkNDN3U3NrMjdwREhMVXBOa3pwV2RMRUk2RTJ3ZFdVWGhaaXBv?=
+ =?utf-8?B?eHdlNEV5UGhsNVRCZkNqY2NkQWppMTZNOWtWRENvSjNFbngremdscnZuMTVu?=
+ =?utf-8?B?U2txVU96TERwZzk3NGN2ZnpZZkY2M3lTcjhKR21SelJhbFhsd2tJT1k3V0lF?=
+ =?utf-8?B?dGc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	Thp7Dp9tUn95TapmKbHC2KhGcgWDROKtIiLo5nsTFeFk/uiFtWIqPDlQdn+4CPkN0t11gR/yNxENJP+U2X+pCZC28K/CTmKNj0RGXh86MPTIgfpk5cnMRBwwq8udqtvwTRXW6PuWnoWfqK43aGAJV1hXOvJAr8RRDgPRSWTqH0VY+k6IXxO7Fa0hnYTVTI6NDhKb2cNZeCPYvE2iAFw3mxlKQ4VX3wC5MMvuKeD2UVoGcTHDgw+2b5DsuwBiLnTny+4AbajXGZB6cNnytvL9jSzU7GdUqyrLjm6v4Zs9sBkFyS+pZWosQ9nMuUm21us3YXNPyPjHYNNdce7vXC/mikLyG7qIi9A8hIivj2c08Cuqa2faXsZcnyHlHKg76KXmorGFfuxEXNUU8Rlpq++S7bVB8xTZ9H4z2lFleDDAUy9Rv5ngGHnD939pErGZKLpN/puVrtXYVqJyY1PX3wCnc0PVu6Xb+Yx0FmQKtVLAYD4LYj37qf9WIFQ4kny5m7eNyXDtDdCTvDSHvaTVcVZQyA914dA7p8PiXqiCMY6W/6738ltX7IJ02zGPFXi/a45IWW8GwBCPLKp3VF0xiJTkYOfmonrSaaTQtOYM0HDtX8g=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db9d71d0-d533-44ba-bfa6-08dcf86618ab
+X-MS-Exchange-CrossTenant-AuthSource: MW5PR10MB5738.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 22:07:36.5792
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: N/03zKhgjglWkhfJN8TjTJ8QpJLI2fqQhiVSSBybLr7hOJltFfsGjlJ5hk8PlTuya+x3BuPlZuI3Ca+AdXl0js5qd/MA3Tprbx4/xe+Mmmk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR10MB5162
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- phishscore=0 bulkscore=0 mlxlogscore=987 malwarescore=0 adultscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290167
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-29_17,2024-10-29_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
+ phishscore=0 mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410290167
+X-Proofpoint-GUID: cHTPkx4XxpFlGSV_GbeUawvOiJKmydkj
+X-Proofpoint-ORIG-GUID: cHTPkx4XxpFlGSV_GbeUawvOiJKmydkj
 
-
-
-On 10/24/2024 5:20 PM, Dmitry Baryshkov wrote:
-> Virtual wide planes give high amount of flexibility, but it is not
-> always enough:
+On 10/1/24 1:05AM, Ghanshyam Agrawal wrote:
+> The stbl might contain some invalid values. Added a check to
+> return error code in that case.
 > 
-> In parallel multirect case only the half of the usual width is supported
-> for tiled formats. Thus the whole width of two tiled multirect
-> rectangles can not be greater than max_linewidth, which is not enough
-> for some platforms/compositors.
-> 
-> Another example is as simple as wide YUV plane. YUV planes can not use
-> multirect, so currently they are limited to max_linewidth too.
-> 
-> Now that the planes are fully virtualized, add support for allocating
-> two SSPP blocks to drive a single DRM plane. This fixes both mentioned
-> cases and allows all planes to go up to 2*max_linewidth (at the cost of
-> making some of the planes unavailable to the user).
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reported-by: syzbot+0315f8fe99120601ba88@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=0315f8fe99120601ba88
+> Signed-off-by: Ghanshyam Agrawal <ghanshyam1898@gmail.com>
 > ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 163 ++++++++++++++++++++++--------
->   1 file changed, 119 insertions(+), 44 deletions(-)
+>   fs/jfs/jfs_dtree.c | 8 ++++++++
+>   1 file changed, 8 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> index 125db3803cf5..ad6cc469f475 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> @@ -20,7 +20,6 @@
->   #include "msm_drv.h"
->   #include "msm_mdss.h"
->   #include "dpu_kms.h"
-> -#include "dpu_formats.h"
->   #include "dpu_hw_sspp.h"
->   #include "dpu_hw_util.h"
->   #include "dpu_trace.h"
-> @@ -888,6 +887,28 @@ static int dpu_plane_atomic_check_nosspp(struct drm_plane *plane,
->   	return 0;
->   }
+> diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
+> index 5d3127ca68a4..c8f6e51ac047 100644
+> --- a/fs/jfs/jfs_dtree.c
+> +++ b/fs/jfs/jfs_dtree.c
+> @@ -2891,6 +2891,14 @@ int jfs_readdir(struct file *file, struct dir_context *ctx)
+>   		stbl = DT_GETSTBL(p);
 >   
-> +static int dpu_plane_is_multirect_parallel_capable(struct dpu_sw_pipe *pipe,
-> +						   struct dpu_sw_pipe_cfg *pipe_cfg,
-> +						   const struct msm_format *fmt,
-> +						   uint32_t max_linewidth)
-> +{
-> +	if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
-> +	    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect))
-> +		return false;
-> +
-> +	if (pipe_cfg->rotation & DRM_MODE_ROTATE_90)
-> +		return false;
-> +
-> +	if (MSM_FORMAT_IS_YUV(fmt))
-> +		return false;
-> +
-> +	if (MSM_FORMAT_IS_UBWC(fmt) &&
-> +	    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth / 2)
-> +		return false;
-> +
-> +	return true;
-> +}
+>   		for (i = index; i < p->header.nextindex; i++) {
+> +			if (stbl[i] < 0 || stbl[i] > 127) {
+> +				DT_PUTPAGE(mp);
+> +				free_page(dirent_buf);
+> +				jfs_err("JFS: Invalid stbl[%d] = %d for inode %ld, block = %lld",
+> +				i, stbl[i], (long)ip->i_ino, (long long)bn);
 
-Dont we also need to check for
+I'm moving the printing of the error message before the call to 
+DT_PUTPAGE() since stbl is part of the page's data. And I'm fixing the 
+indent.
 
-if (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
-		     !test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features))?
-	return false;
+> +				return -EIO;
+> +			}
+> +
+>   			d = (struct ldtentry *) & p->slot[stbl[i]];
+>   
+>   			if (((long) jfs_dirent + d->namlen + 1) >
 
-> +
->   static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
->   				       struct drm_atomic_state *state,
->   				       const struct drm_crtc_state *crtc_state)
-> @@ -901,7 +922,6 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
->   	const struct msm_format *fmt;
->   	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
->   	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
-> -	uint32_t max_linewidth;
->   	uint32_t supported_rotations;
->   	const struct dpu_sspp_cfg *pipe_hw_caps;
->   	const struct dpu_sspp_sub_blks *sblk;
-> @@ -923,8 +943,6 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
->   
->   	fmt = msm_framebuffer_format(new_plane_state->fb);
->   
-> -	max_linewidth = pdpu->catalog->caps->max_linewidth;
-> -
->   	supported_rotations = DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0;
->   
->   	if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
-> @@ -940,41 +958,6 @@ static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
->   		return ret;
->   
->   	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
-> -		/*
-> -		 * In parallel multirect case only the half of the usual width
-> -		 * is supported for tiled formats. If we are here, we know that
-> -		 * full width is more than max_linewidth, thus each rect is
-> -		 * wider than allowed.
-> -		 */
-> -		if (MSM_FORMAT_IS_UBWC(fmt) &&
-> -		    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) {
-> -			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, tiled format\n",
-> -					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> -			return -E2BIG;
-> -		}
-> -
-> -		if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
-> -		    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect) ||
-> -		    (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
-> -		     !test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features)) ||
-> -		    pipe_cfg->rotation & DRM_MODE_ROTATE_90 ||
-> -		    MSM_FORMAT_IS_YUV(fmt)) {
-> -			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, can't use split source\n",
-> -					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> -			return -E2BIG;
-> -		}
-> -
-> -		/*
-> -		 * Use multirect for wide plane. We do not support dynamic
-> -		 * assignment of SSPPs, so we know the configuration.
-> -		 */
-> -		pipe->multirect_index = DPU_SSPP_RECT_0;
-> -		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-> -
-> -		r_pipe->sspp = pipe->sspp;
-> -		r_pipe->multirect_index = DPU_SSPP_RECT_1;
-> -		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-> -
->   		ret = dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_cfg, fmt,
->   						  &crtc_state->adjusted_mode);
->   		if (ret)
-> @@ -995,16 +978,16 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   	struct dpu_kms *dpu_kms = _dpu_plane_get_kms(plane);
->   	struct dpu_sw_pipe *pipe = &pstate->pipe;
->   	struct dpu_sw_pipe *r_pipe = &pstate->r_pipe;
-> +	struct dpu_sw_pipe_cfg *pipe_cfg = &pstate->pipe_cfg;
-> +	struct dpu_sw_pipe_cfg *r_pipe_cfg = &pstate->r_pipe_cfg;
->   	const struct drm_crtc_state *crtc_state = NULL;
->   
->   	if (new_plane_state->crtc)
->   		crtc_state = drm_atomic_get_new_crtc_state(state,
->   							   new_plane_state->crtc);
->   
-> -	if (pdpu->pipe != SSPP_NONE) {
-> -		pipe->sspp = dpu_rm_get_sspp(&dpu_kms->rm, pdpu->pipe);
-> -		r_pipe->sspp = NULL;
-> -	}
-> +	pipe->sspp = dpu_rm_get_sspp(&dpu_kms->rm, pdpu->pipe);
-> +	r_pipe->sspp = NULL;
->   
->   	if (!pipe->sspp)
->   		return -EINVAL;
-> @@ -1021,6 +1004,49 @@ static int dpu_plane_atomic_check(struct drm_plane *plane,
->   	r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
->   	r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
->   
-> +	if (drm_rect_width(&r_pipe_cfg->src_rect) != 0) {
-> +		uint32_t max_linewidth = dpu_kms->catalog->caps->max_linewidth;
-> +		const struct msm_format *fmt;
-> +
-> +		fmt = msm_framebuffer_format(new_plane_state->fb);
-> +
-> +		/*
-> +		 * In parallel multirect case only the half of the usual width
-> +		 * is supported for tiled formats. If we are here, we know that
-> +		 * full width is more than max_linewidth, thus each rect is
-> +		 * wider than allowed.
-> +		 */
-> +		if (MSM_FORMAT_IS_UBWC(fmt) &&
-> +		    drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) {
-> +			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, tiled format\n",
-> +					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> +			return -E2BIG;
-> +		}
-> +
-> +		if (drm_rect_width(&pipe_cfg->src_rect) != drm_rect_width(&pipe_cfg->dst_rect) ||
-> +		    drm_rect_height(&pipe_cfg->src_rect) != drm_rect_height(&pipe_cfg->dst_rect) ||
-> +		    (!test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) &&
-> +		     !test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features)) ||
-> +		    pipe_cfg->rotation & DRM_MODE_ROTATE_90 ||
-> +		    MSM_FORMAT_IS_YUV(fmt)) {
-> +			DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT " line:%u, can't use split source\n",
-> +					DRM_RECT_ARG(&pipe_cfg->src_rect), max_linewidth);
-> +			return -E2BIG;
-> +		}
+Otherwise, looks good. I'll be applying this one.
 
-Dont the above two conditions translate to 
-!dpu_plane_is_multirect_parallel_capable()?
-
-I think once we have a unified plane atomic check and not a separate one 
-for virtual planes (we had to add one to support the modparam), some 
-duplication will go away but till then I think this is the best we can do.
+Shaggy
 
 
-> +
-> +		/*
-> +		 * Use multirect for wide plane. We do not support dynamic
-> +		 * assignment of SSPPs, so we know the configuration.
-> +		 */
-> +		r_pipe->sspp = pipe->sspp;
-> +
-> +		pipe->multirect_index = DPU_SSPP_RECT_0;
-> +		pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-> +
-> +		r_pipe->multirect_index = DPU_SSPP_RECT_1;
-> +		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-> +	}
-> +
->   	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
->   }
->   
-> @@ -1054,8 +1080,16 @@ static int dpu_plane_virtual_atomic_check(struct drm_plane *plane,
->   		return 0;
->   	}
->   
-> -	/* force resource reallocation if the format of FB has changed */
-> +	/*
-> +	 * Force resource reallocation if the format of FB or src/dst have
-> +	 * changed. We might need to allocate different SSPP or SSPPs for this
-> +	 * plane than the one used previously.
-> +	 */
->   	if (!old_plane_state || !old_plane_state->fb ||
-> +	    old_plane_state->src_w != plane_state->src_w ||
-> +	    old_plane_state->src_h != plane_state->src_h ||
-> +	    old_plane_state->src_w != plane_state->src_w ||
-> +	    old_plane_state->crtc_h != plane_state->crtc_h ||
->   	    msm_framebuffer_format(old_plane_state->fb) !=
->   	    msm_framebuffer_format(plane_state->fb))
->   		crtc_state->planes_changed = true;
-> @@ -1075,7 +1109,10 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
->   	struct dpu_plane_state *pstate;
->   	struct dpu_sw_pipe *pipe;
->   	struct dpu_sw_pipe *r_pipe;
-> +	struct dpu_sw_pipe_cfg *pipe_cfg;
-> +	struct dpu_sw_pipe_cfg *r_pipe_cfg;
->   	const struct msm_format *fmt;
-> +	uint32_t max_linewidth;
->   
->   	if (plane_state->crtc)
->   		crtc_state = drm_atomic_get_new_crtc_state(state,
-> @@ -1084,6 +1121,8 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
->   	pstate = to_dpu_plane_state(plane_state);
->   	pipe = &pstate->pipe;
->   	r_pipe = &pstate->r_pipe;
-> +	pipe_cfg = &pstate->pipe_cfg;
-> +	r_pipe_cfg = &pstate->r_pipe_cfg;
->   
->   	pipe->sspp = NULL;
->   	r_pipe->sspp = NULL;
-> @@ -1098,10 +1137,46 @@ static int dpu_plane_virtual_assign_resources(struct drm_crtc *crtc,
->   
->   	reqs.rot90 = drm_rotation_90_or_270(plane_state->rotation);
->   
-> +	max_linewidth = dpu_kms->catalog->caps->max_linewidth;
-> +
->   	pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
->   	if (!pipe->sspp)
->   		return -ENODEV;
->   
-> +	if (drm_rect_width(&r_pipe_cfg->src_rect) == 0) {
-> +		pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> +		pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +
-> +		r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> +		r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +
-> +		r_pipe->sspp = NULL;
-> +	} else {
-> +		if (dpu_plane_is_multirect_parallel_capable(pipe, pipe_cfg, fmt, max_linewidth) &&
-> +		    dpu_plane_is_multirect_parallel_capable(r_pipe, r_pipe_cfg, fmt, max_linewidth) &&
-> +		    (test_bit(DPU_SSPP_SMART_DMA_V1, &pipe->sspp->cap->features) ||
-> +		     test_bit(DPU_SSPP_SMART_DMA_V2, &pipe->sspp->cap->features))) {
-> +			r_pipe->sspp = pipe->sspp;
-> +
-> +			pipe->multirect_index = DPU_SSPP_RECT_0;
-> +			pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-> +
-> +			r_pipe->multirect_index = DPU_SSPP_RECT_1;
-> +			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_PARALLEL;
-> +		} else {
-> +			/* multirect is not possible, use two SSPP blocks */
-> +			r_pipe->sspp = dpu_rm_reserve_sspp(&dpu_kms->rm, global_state, crtc, &reqs);
-> +			if (!r_pipe->sspp)
-> +				return -ENODEV;
-> +
-> +			pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> +			pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +
-> +			r_pipe->multirect_index = DPU_SSPP_RECT_SOLO;
-> +			r_pipe->multirect_mode = DPU_SSPP_MULTIRECT_NONE;
-> +		}
-> +	}
-> +
->   	return dpu_plane_atomic_check_sspp(plane, state, crtc_state);
->   }
->   
-> 
 
