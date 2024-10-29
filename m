@@ -1,177 +1,153 @@
-Return-Path: <linux-kernel+bounces-387150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344B09B4CA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:52:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A12A9B4CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:53:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D62291C22B9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AF831F2453D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:53:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DF7192589;
-	Tue, 29 Oct 2024 14:52:35 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAEF51714DF
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:52:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE291917FE;
+	Tue, 29 Oct 2024 14:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kMJet8QL"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362F61CD2B;
+	Tue, 29 Oct 2024 14:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730213555; cv=none; b=uvXOJ2VBdyPngNUeAKqZQ3Bq/1mv5z1ryAi7igTchhR3lhTjWQ7HE8j2IZepUhBT/soCcvzw54HkplmPJa3RaoqofYaMg0e3QaAlkRpeBk2Y4KKbzpqLxMCsnBLhIfO5JxV2zE3OqSIRBVvPXgVaa034G6l3v2TeVw7EI5mHSdA=
+	t=1730213611; cv=none; b=cxXalxrW3qRA8pZep6WJrhlAzcibuUa6TLGUmnw3dsgrjM3591vt9dH9WVDTRx5KaK6P/U+/gkEmo+kC5USzLi/u/iRpZL4ESvNze106/m7j3dYcrf62tIABjctOnsrC298oVBYYcE/s/ZKYge5inw69NNX1WghW84gq+V60PmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730213555; c=relaxed/simple;
-	bh=B5qDVdMZjYfgM+Ve78sgbPZp7770ctxdJi3kml9MYOA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L2BLs+REoaA7GHt7VfhPB3vFCDON1RtXD4wNQFmFwBKqYUC052OcoDIPiavapZHIk3PWVJ/VX6Mb3FM1ssdDICqRQ41mldAcHRWPKkfGVSjc9AInMTwbCiuvT7ITLaZvdWCVU3JZNaPAVV4vIyaCQKw8uDPGnUJkvBfUAW+mPIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FBD313D5;
-	Tue, 29 Oct 2024 07:53:02 -0700 (PDT)
-Received: from J2N7QTR9R3.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0BB213F73B;
-	Tue, 29 Oct 2024 07:52:24 -0700 (PDT)
-Date: Tue, 29 Oct 2024 14:52:22 +0000
-From: Mark Rutland <mark.rutland@arm.com>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: oleg@redhat.com, linux@armlinux.org.uk, will@kernel.org,
-	catalin.marinas@arm.com, sstabellini@kernel.org, maz@kernel.org,
-	tglx@linutronix.de, peterz@infradead.org, luto@kernel.org,
-	kees@kernel.org, wad@chromium.org, akpm@linux-foundation.org,
-	samitolvanen@google.com, arnd@arndb.de, ojeda@kernel.org,
-	rppt@kernel.org, hca@linux.ibm.com, aliceryhl@google.com,
-	samuel.holland@sifive.com, paulmck@kernel.org, aquini@redhat.com,
-	petr.pavlu@suse.com, viro@zeniv.linux.org.uk,
-	rmk+kernel@armlinux.org.uk, ardb@kernel.org,
-	wangkefeng.wang@huawei.com, surenb@google.com,
-	linus.walleij@linaro.org, yangyj.ee@gmail.com, broonie@kernel.org,
-	mbenes@suse.cz, puranjay@kernel.org, pcc@google.com,
-	guohanjun@huawei.com, sudeep.holla@arm.com,
-	Jonathan.Cameron@huawei.com, prarit@redhat.com, liuwei09@cestc.cn,
-	dwmw@amazon.co.uk, oliver.upton@linux.dev,
-	kristina.martsenko@arm.com, ptosi@google.com, frederic@kernel.org,
-	vschneid@redhat.com, thiago.bauermann@linaro.org,
-	joey.gouly@arm.com, liuyuntao12@huawei.com, leobras@redhat.com,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	xen-devel@lists.xenproject.org
-Subject: Re: [PATCH -next v4 06/19] arm64: entry: Move
- arm64_preempt_schedule_irq() into exit_to_kernel_mode()
-Message-ID: <ZyD2pk285YeVmZTm@J2N7QTR9R3.cambridge.arm.com>
-References: <20241025100700.3714552-1-ruanjinjie@huawei.com>
- <20241025100700.3714552-7-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1730213611; c=relaxed/simple;
+	bh=u5Rh47LFt/E7P8TNJq1mJkqj4x6Z8qfXXpSotbiRgF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=slZn4J7F1A7uvnxQyMqpSuNaHTuugYKKLlWimn+F0kYPltPGhYwpY+ZZGSzeIonbkgHjAnE80VVCbK6CkV1URSkBPUnpzeqaoX9698ZefnE7kV/tafAaJUKSWE6m60cyWeH29ndY4aHu/f8v90TQMdkyPv+G5nn90d/62Kp0m9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kMJet8QL; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a139be16dso93581466b.3;
+        Tue, 29 Oct 2024 07:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730213607; x=1730818407; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b7H64C/J9e8GCD1HkGwsMKQrPcurnGJ6w4i8btUxmUo=;
+        b=kMJet8QLCaziUNtKxuUN8LQaTz21kmgnjqy+8msdNysXeMsmrr1KZVFhxaJofM5kNX
+         da1S7r0TiKbGg+mLguwLequnido0HbGLAMJaC9f+hk532ItEMCCvAJhIB+5k/N3MIDzt
+         tNeEulUnfLg55klP83AAI/8T8tUQ5G+40y5LKk6n/31B1x9uWSkkfHTvA3KqMDAA76WF
+         qRXx4MQkheyRdTdM8dLrXN7WYaET6NZGofbVX9uYT0p909PwOvQ1l0OkiYzPs37RrdeP
+         tOFkE9DHhXRF8c9y+NLifu/SbFU1avCy733KFIzXpJ2EcGDn4hLIoiscaS00Wk10PrxG
+         Fobg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730213607; x=1730818407;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b7H64C/J9e8GCD1HkGwsMKQrPcurnGJ6w4i8btUxmUo=;
+        b=kXFzzFKcc+8/XR2bwVCvDLvYwPj4E5zJHC3z+uoqsp0VsvYY0w0ENTRhOXonkGXui+
+         ym4HEuaf7bXJysY5B4/u9tOxhONnXifDvyzn5P78cOQR5TlaGZBWfO91mtPeIqbAsDPQ
+         m/t/JVvoWBgPoQvHmiaXmOeIivfOrTRMmmvjppkaySvERifNaLjggKwz3zvi70HkxjKf
+         WFnZoainHjUBgoPGdfgXIvmi+VpCp97F3YdV13jp/aetclnG/KhQ96atsO0VXg+TlRCA
+         lyMNlFF3j6c8n9o6hW0/G/c9cHPJGvHT99deOFN/zBA7Pd9JY1Ru7XIJiQRIOTGhppq+
+         sXlg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnRJMEk1njApwneCgaoAElGoZMvpEzxzWeSkWhiE7gHfXBugX5rXVn0i84s06HdZpImqbL861h@vger.kernel.org, AJvYcCW95GPhPOI4IW+QokHV19jbrlUGbmaXCBemHwoLWrowu597USGhVA+TVF0sfKcHg+moAOfodHvtF9rZHZc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZZjkEaHb7UrY3GtQBUMe45ZnCLvs4U3H6QYY/ZciFCPqCHGfE
+	IFRnSQMLZhuu961iEQ9Y2NojUen62oRsQpHCjwPug1OASF84C1+lRvbdxA==
+X-Google-Smtp-Source: AGHT+IGHyWendIeeMVLYSDpNkQYgJQ01EFCXgFqz8SyS42c5j0kvV8cl2qOVXH9XZ7KSxvHFYFf3eQ==
+X-Received: by 2002:a17:907:6d24:b0:a7a:a33e:47cd with SMTP id a640c23a62f3a-a9de5fa6a7bmr550235466b.8.1730213607266;
+        Tue, 29 Oct 2024 07:53:27 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? ([2a02:a449:4071:1:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3a0834a6sm479602166b.191.2024.10.29.07.53.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 07:53:26 -0700 (PDT)
+Message-ID: <f147c6c4-30e8-40cc-8a01-dc8df3913421@gmail.com>
+Date: Tue, 29 Oct 2024 15:53:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241025100700.3714552-7-ruanjinjie@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] ethernet: arc: fix the device for
+ dma_map_single/dma_unmap_single
+To: Andrew Lunn <andrew@lunn.ch>, andy.yan@rock-chips.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, david.wu@rock-chips.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
+References: <dcb70a05-2607-47dd-8abd-f6cf1b012c51@gmail.com>
+ <86192630-e09f-4392-9aca-9cc7e577107f@lunn.ch>
+Content-Language: en-US
+From: Johan Jonker <jbx6244@gmail.com>
+In-Reply-To: <86192630-e09f-4392-9aca-9cc7e577107f@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 25, 2024 at 06:06:47PM +0800, Jinjie Ruan wrote:
-> Move arm64_preempt_schedule_irq() into exit_to_kernel_mode(), so not
-> only __el1_irq() but also every time when kernel mode irq return,
-> there is a chance to reschedule.
 
-We use exit_to_kernel_mode() for every non-NMI exception return to the
-kernel, not just IRQ returns.
 
-> As Mark pointed out, this change will have the following key impact:
+On 10/28/24 14:03, Andrew Lunn wrote:
+> On Sun, Oct 27, 2024 at 10:41:48AM +0100, Johan Jonker wrote:
+>> The ndev->dev and pdev->dev aren't the same device, use ndev->dev.parent
+>> which has dma_mask, ndev->dev.parent is just pdev->dev.
+>> Or it would cause the following issue:
+>>
+>> [   39.933526] ------------[ cut here ]------------
+>> [   39.938414] WARNING: CPU: 1 PID: 501 at kernel/dma/mapping.c:149 dma_map_page_attrs+0x90/0x1f8
+>>
+>> Signed-off-by: David Wu <david.wu@rock-chips.com>
+>> Signed-off-by: Johan Jonker <jbx6244@gmail.com>
 > 
->     "We'll preempt even without taking a "real" interrupt. That
->     shouldn't result in preemption that wasn't possible before,
->     but it does change the probability of preempting at certain points,
->     and might have a performance impact, so probably warrants a
->     benchmark."
-
-For anyone following along at home, I said that at:
-
-  https://lore.kernel.org/linux-arm-kernel/ZxejvAmccYMTa4P1@J2N7QTR9R3/
-
-... and there I specifically said:
-
-> I's suggest you first write a patch to align arm64's entry code with the
-> generic code, by removing the call to arm64_preempt_schedule_irq() from
-> __el1_irq(), and adding a call to arm64_preempt_schedule_irq() in
-> __exit_to_kernel_mode(), e.g.
+> A few process issues:
 > 
-> | static __always_inline void __exit_to_kernel_mode(struct pt_regs *regs)
-> | {
-> | 	...
-> | 	if (interrupts_enabled(regs)) {
-> | 		...
-> | 		if (regs->exit_rcu) {
-> | 			...
-> | 		}
-> | 		...
-> | 		arm64_preempt_schedule_irq();
-> | 		...
-> | 	} else {
-> | 		...
-> | 	}
-> | }
+> For a patch set please add a patch 0/X which explains the big picture
+> of what the patchset does. For a single patch, you don't need one.
+> 
+> Please read:
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+> 
 
-[...]
+> It is not clear which tree you intend these patches to be applied
+> to. This one looks like it should be to net, but needs a Fixes:
+> tag. The MDIO patch might be for net-next? 
 
-> +#ifdef CONFIG_PREEMPT_DYNAMIC
-> +DEFINE_STATIC_KEY_TRUE(sk_dynamic_irqentry_exit_cond_resched);
-> +#define need_irq_preemption() \
-> +	(static_branch_unlikely(&sk_dynamic_irqentry_exit_cond_resched))
-> +#else
-> +#define need_irq_preemption()	(IS_ENABLED(CONFIG_PREEMPTION))
-> +#endif
-> +
-> +static void __sched arm64_preempt_schedule_irq(void)
-> +{
-> +	if (!need_irq_preemption())
-> +		return;
-> +
-> +	/*
-> +	 * Note: thread_info::preempt_count includes both thread_info::count
-> +	 * and thread_info::need_resched, and is not equivalent to
-> +	 * preempt_count().
-> +	 */
-> +	if (READ_ONCE(current_thread_info()->preempt_count) != 0)
-> +		return;
-> +
-> +	/*
-> +	 * DAIF.DA are cleared at the start of IRQ/FIQ handling, and when GIC
-> +	 * priority masking is used the GIC irqchip driver will clear DAIF.IF
-> +	 * using gic_arch_enable_irqs() for normal IRQs. If anything is set in
-> +	 * DAIF we must have handled an NMI, so skip preemption.
-> +	 */
-> +	if (system_uses_irq_prio_masking() && read_sysreg(daif))
-> +		return;
-> +
-> +	/*
-> +	 * Preempting a task from an IRQ means we leave copies of PSTATE
-> +	 * on the stack. cpufeature's enable calls may modify PSTATE, but
-> +	 * resuming one of these preempted tasks would undo those changes.
-> +	 *
-> +	 * Only allow a task to be preempted once cpufeatures have been
-> +	 * enabled.
-> +	 */
-> +	if (system_capabilities_finalized())
-> +		preempt_schedule_irq();
-> +}
-> +
->  /*
->   * Handle IRQ/context state management when exiting to kernel mode.
->   * After this function returns it is not safe to call regular kernel code,
-> @@ -72,6 +114,8 @@ static noinstr irqentry_state_t enter_from_kernel_mode(struct pt_regs *regs)
->  static void noinstr exit_to_kernel_mode(struct pt_regs *regs,
->  					irqentry_state_t state)
->  {
-> +	arm64_preempt_schedule_irq();
+Hi Andrew, Andy,
 
-This is broken; exit_to_kernel_mode() is called for any non-NMI return
-excpetion return to the kernel, and this doesn't check that interrupts
-were enabled in the context the exception was taken from.
+My desktop setup has a problem compiling older kernels for rk3066 MK808 to verify.
 
-This will preempt in cases where we should not, e.g. if we WARN() in a section with
-IRQs disabled.
+Are you able to bisect/compile for rk3036 before this one:
 
-Mark.
+====
+commit bc0e610a6eb0d46e4123fafdbe5e6141d9fff3be (HEAD -> test1)
+Author: Jianglei Nie <niejianglei2021@163.com>
+Date:   Wed Mar 9 20:18:24 2022 +0800
+
+    net: arc_emac: Fix use after free in arc_mdio_probe()
+
+====
+This is the oldest EMAC related checkout I can compile.
+At that patch it still gives this warnings in the kernel log.
+
+[   16.678988] ------------[ cut here ]------------
+[   16.684189] WARNING: CPU: 0 PID: 809 at kernel/dma/mapping.c:151 dma_map_page_attrs+0x2b4/0x358
+
+The driver was maintained on auto pilot recent years without a check by Rockchip users somehow.
+Currently I don't know where and when this was introduced.
+Please advise how to move forward. Should we just mark it net-next?
+
+Johan
+
+> 
+>     Andrew
+> 
+> ---
+> pw-bot: cr
+> 
+> 
 
