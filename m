@@ -1,452 +1,176 @@
-Return-Path: <linux-kernel+bounces-387204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8940B9B4DD8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:25:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F92B9B4DDA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC344B249BB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:25:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C323A1C22718
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:26:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CFA194A40;
-	Tue, 29 Oct 2024 15:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A76C319309C;
+	Tue, 29 Oct 2024 15:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="W6GVsBFV"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2070.outbound.protection.outlook.com [40.107.101.70])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="shRb8zWV"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B329192D83
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:24:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018AB22071;
+	Tue, 29 Oct 2024 15:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.47
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730215488; cv=fail; b=f4mUwkdmpd1Nmw7ZXB7cz/lNrw9Uk17vakrdY941kt8hjB/fMza0VqYO6C8PiPNPZjEL8fnAa0MHti2LtTBLQfFnSBFB+0L2ksOjYMeU1pCBXbv3UJTL4EhQLklkW2mYQcsozLVl/oVaKlHU5iVokPC8U8fdBMUTQObVqUUOnDo=
+	t=1730215557; cv=fail; b=k51MboDe9onhdFIm2gOerJfFXaJCBzOhIhx5V17R/bSdi8mzsmMeFDJtyL8J69Up8ETaKggkq0TK1IZrwXMGjQrnO4P9bz3u8jtM5goDQKgsuyEIJCh1UH1qT2xC3yhJdRR57mbYa6aNOmSEXjMKxGwrwF0pS+3p54V6BsMOWEg=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730215488; c=relaxed/simple;
-	bh=Q+l9tgwzr1ny6xi0mXIplIG2Qdffjrpr75gerEsNXvA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=UK2k6KvoplTN/kyQdoTu/Eq3AT8agU4/CopR52j2ulJpZXSWq4UjtnarIM6Cp6eQTqyiaX15mJIXIFiLDRzYi2Q4bpG9t3DoQyPBOyuiRo1awUv3THr5m2Rv4pkCXTGCYMAPHkERXQxm87XS/p5F0Tq9ZxVzStxWLPmGb2Jbo1M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=W6GVsBFV; arc=fail smtp.client-ip=40.107.101.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1730215557; c=relaxed/simple;
+	bh=V2eor132TipNsOoXwDtjyJ/bChN9c2mrokuYnoyQenk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=Kxozb8ikRPCsDR/6/gfJzQIUDXwxHQTSkx9CuWZ8LlwKwZDXrf2VM0KwNLejKm/fiLKE8fFeisL0NQnoV8Hi2kojRLK/Xr7VATTdpGE9ak9wYcnhcbDPt0ogTntUhVpjGHHLSiqAGu8+yQaJxhOONz569/ISajEzRerZDEPKiWU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=shRb8zWV; arc=fail smtp.client-ip=40.107.243.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Rvl1+I3Nk5Dj3N49xB5lUZrLmJPqFLVJOJB3XVOWIyKeTjytocm+Y9EBJuwBmtG1eIFcBivFSbYejUylGmUEsSrNPNVHvYDhR4BMSriwQ8ISTZbAVlP0tKlSapY1CZ/eh+HVirliN0owDIap2g6O2Qb3YvoC8uRf7vYnDJXC0aP4XRLQrTckGltQVobG6fDyscdv/LaQEYnR77xd3yraMZiEV8qp6C7YyoRvA34P8FgFNZYksRQz3Ls5QZB9aPAKqzPzsQ+NSX84gb9kGOhlF7xOeGGBJ60SKvV5QUkiIgl9KqLlC8RKq5S/hrKGQOi0dmPES6ewZwrgwvkszY13zw==
+ b=KB4AizCLvRYE+D6M2r5FY1qaPKVcbigXsPLzEeRSxrsr4CKgXOclCbL+35z6Nn+36KcRJg6VEoCFMk6puDh+E8qbtCXOxL2YE7SZtOFhHKfUmqY0Ib6FV0N85TRNYDMrTYs7ycpRrbSH/YW901HVHetIVwPg30YLKxpEkJopHwbnmWtbHQzRsd9IudJf2eZr4Ev3oJMsBdc8HEJAlo67wPS4XiXV9r49IYV10SN50fQfeM2ByMkKwDGrm/R8Ex1DXGSZSHZ5eRp8o2PKXJUvebUa0WxEuzxOGjkNGi7/3FjIUBv/o9avlCCYQ+kkNjvpsOTubIYhabRliU+0xLdWYg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SvIcGJ5yAUJqDO0HpQbASfAuaWzxwk4f0pSqK0y8yhg=;
- b=i/RSWx2RZdHQI0dfa70EIm7yktOSSRWIGOM/QOGx93iLXWVQdkvDHGY0tYLlfO4xEl6lUYUc2Wku4l2SZ1pv86EU6srQcBWd+PPliXGD+FTJUuDCJvWtPXgNzByO09vyGhzbr2+cNIT4YBWoc9Q5eKGSQHcokalkpigTLQHDm9eSmnfZhqLWw8h2kE5MLJq7ZnFSet8Q0VjW06OvSAo4gWJqVmRerz88PgJCqu6rEFDrQvT3VP+sYzQ08M1aSMWJtxIJLHPGBCcYD7eGVAGenTuuf4G9LFUANEX64Plwgrvw+Pyy2VhJvQRbFXSHctUMOUQ7mFe8pHJma3ExangT7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=quicinc.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ bh=FHvBzl9w3OI5R3OU1r4sk6CHWCg7j0B0EECaJJvUXSk=;
+ b=Do4P2S1EEuxOqhZMxDyVlpDGKaq2YEX/G5Zkfu1yjnYxEcPLMC3/OUHrZgPNN2d/unDXTv3ujAPDxX0GXy7gAd89y99YsUEyHjj/lG1LSGGMle6KrLqVr9xXtH0wkQ0Oh0pUKofy4D56Y91z/plbly2aFh2ypEfaOSyZKHy5OGGZYt9b+DMIVo/20CpEAN7aOKU6/O8uqauGt0tTC1kE+B6c2t/BSvsb76+KlD22PEkiKoJApoSTSXg2PuY8tS+CxdURppggSalqXJNEryz917LwVl2lSk3Dv/sDDwZ/usAOr8YhfQXV4HMF9jEam5oTJ/vxc5YaJ+k3Wyy/iiA4eg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SvIcGJ5yAUJqDO0HpQbASfAuaWzxwk4f0pSqK0y8yhg=;
- b=W6GVsBFV8fXdpPQA65N+P9aFM6YGDH+SDkmHB4cB2PQ2w6g21hQTM93v4Gu/cdBqeH2YiWSTUrJp+PQiQqzS5OfGWI0NNZgOON5ZgUmUOzVw/+IYX/CfrTF1OwFLsAjsM2Yy1k3v8oeqhTQitHhQF6AoSmRZXfWNjZZSoptzJk0=
-Received: from BN9PR03CA0618.namprd03.prod.outlook.com (2603:10b6:408:106::23)
- by SJ0PR12MB6829.namprd12.prod.outlook.com (2603:10b6:a03:47b::8) with
+ bh=FHvBzl9w3OI5R3OU1r4sk6CHWCg7j0B0EECaJJvUXSk=;
+ b=shRb8zWV9mBdJWgNjgX07zMgDOogCaAcXkT6tbPn4EG1w+Fh2D1VFbidNPipoWRXrXBuc8O1y/UxhwpzqGrrpWBeZiIbsStPw1T8rf74H3tlp6lwxeDgLJt2we86bfNupk5RTzFb4ZeGkLyS5VveUMHHOQdJVuHk7tsq1f7SGhK/bpODrcAsMIdLeQY6BmU2x1AYEbPb9lBTl9LbIIn6PttyUyof/XbpM9Z1AAdit3GFvsqAEPvV3OgkO+spitBYKOJupKBWR6iXdWwQjVSE6rPdO95u0UAy2UIOKklZa9SfcsqjtzcA/upRotPhJapfS/sx6bjJ3h1MPZ0kOh+a7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SN7PR12MB7177.namprd12.prod.outlook.com (2603:10b6:806:2a5::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Tue, 29 Oct
- 2024 15:24:39 +0000
-Received: from MN1PEPF0000ECD5.namprd02.prod.outlook.com
- (2603:10b6:408:106:cafe::df) by BN9PR03CA0618.outlook.office365.com
- (2603:10b6:408:106::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.17 via Frontend
- Transport; Tue, 29 Oct 2024 15:24:39 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- MN1PEPF0000ECD5.mail.protection.outlook.com (10.167.242.133) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 15:24:38 +0000
-Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Oct
- 2024 10:24:38 -0500
-Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
- (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Oct
- 2024 10:24:38 -0500
-Received: from [172.19.71.207] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Tue, 29 Oct 2024 10:24:37 -0500
-Message-ID: <43cb44d6-86f2-66a3-0167-6c75a97b3c9a@amd.com>
-Date: Tue, 29 Oct 2024 08:24:37 -0700
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.25; Tue, 29 Oct
+ 2024 15:25:52 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Tue, 29 Oct 2024
+ 15:25:52 +0000
+Date: Tue, 29 Oct 2024 12:25:51 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
+	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
+	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v5 05/13] iommufd: Add alloc_domain_nested op to
+ iommufd_viommu_ops
+Message-ID: <20241029152551.GD209124@nvidia.com>
+References: <cover.1729897352.git.nicolinc@nvidia.com>
+ <fa5231cad2bf4b3ee9a18434a8981acb45f0e0b5.1729897352.git.nicolinc@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa5231cad2bf4b3ee9a18434a8981acb45f0e0b5.1729897352.git.nicolinc@nvidia.com>
+X-ClientProxiedBy: BL1PR13CA0257.namprd13.prod.outlook.com
+ (2603:10b6:208:2ba::22) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: Re: [PATCH V5 00/10] AMD XDNA driver
-Content-Language: en-US
-To: Jeffrey Hugo <quic_jhugo@quicinc.com>, <ogabbay@kernel.org>,
-	<dri-devel@lists.freedesktop.org>
-CC: <linux-kernel@vger.kernel.org>, <min.ma@amd.com>, <max.zhen@amd.com>,
-	<sonal.santan@amd.com>, <king.tam@amd.com>
-References: <20241021161931.3701754-1-lizhi.hou@amd.com>
- <de895a18-e40f-4996-b799-0a957bd3ca48@quicinc.com>
- <28047f7a-ee20-0b5b-5bdc-5dea8e0bd412@amd.com>
- <49b76568-572d-b3ef-da79-36f1a3c44f27@quicinc.com>
-From: Lizhi Hou <lizhi.hou@amd.com>
-In-Reply-To: <49b76568-572d-b3ef-da79-36f1a3c44f27@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
- permitted sender hosts)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN1PEPF0000ECD5:EE_|SJ0PR12MB6829:EE_
-X-MS-Office365-Filtering-Correlation-Id: 96d96e57-4e3e-4d81-a491-08dcf82dcdd6
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB7177:EE_
+X-MS-Office365-Filtering-Correlation-Id: 859a2065-4380-4920-8d83-08dcf82df95a
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bmVSdDRVbGRXbmlvbGNoSGwxWkwwL25KUDJpM1lSTzVvOFpLVERBUUNRU05H?=
- =?utf-8?B?Z2lNelVmSkpVMW5ZY2lvRWVqa3htWStVSUZnM21MeTJFb1NVeFE1VGRnV3Bw?=
- =?utf-8?B?MGdsZXJRRHJPYkNZQnlJZHNLNzhuUGpaeWVwbVlDbXY3ZERjODI4dFdLVXly?=
- =?utf-8?B?cEd6TE1mQzh6SGxwaWkxblhYb2syQU91c0tIclVpbHhZMytPbnRaR1B3aGc4?=
- =?utf-8?B?ZUw1RFBVUkl2NmJzMDVMUFQzRjA5K28yNVV2Q0FOR2RYcHd4TDI0MDlpMDhn?=
- =?utf-8?B?empOUVZJVTBBNDFnemVzSXkzQlJ0SDFxVzZKWFErY2ZwWHJIbkpud3FyTlJo?=
- =?utf-8?B?elNyT2hqWDQrZnFIaG9CUGNzOVp4UzQ4dTYwSkJCNXRWZnZ0ZHhIM1R4MjRh?=
- =?utf-8?B?YU1IaTFtdm1nOFkyeTZkL3h2N202MGFFYlhvaTdJL3hMWU5NVTFpU1NGU2VR?=
- =?utf-8?B?K05LSlRrTmgyRFVFVlROQVpRWmJGVnM2OXA0ZG8vVHN4OUdZVGRaS0k3ZFg5?=
- =?utf-8?B?SitRY0pibzgvVHdpVUVpdW4rcC9sM0JLeC9iK3dmNHdBOHREbWlkdUoyVzVB?=
- =?utf-8?B?K1Y0K3ZJMUNMdUdoUlpOaWQyTUtURVIyc3ZmMmNxWGh4bkRETXYyLzdhdit2?=
- =?utf-8?B?SUlDTENMR0ZHUmI2OEpxV29yak5FSWVST1pTM0t0NmFZUlFTUTFtSzNuOUpu?=
- =?utf-8?B?SWMzUTcrUk5Ed2xRUDdQN0FXU2Fjd1B4dWdETnpDdWROZkd2THhjcFFYcG5l?=
- =?utf-8?B?VUcwc0ZUVExsR01zM2JsK1RRQ3Rwcm9pMXFPNmUwVlFnMmoxV0VNMkhzVEdW?=
- =?utf-8?B?VTZ4THdzUHRwUDVkSGtTQXdCRE95UWU4NGNRK1lBNnAvcENMMnJyQ21yTVhm?=
- =?utf-8?B?L3JRb2E3OFpxV2d0ajAzeW9VWUdvaUc0b2JiTnVZWFFoT296bGp6TWRvY2RF?=
- =?utf-8?B?NWxWSzBCeDYya3J0Y3hTT1J1SFcyUWJwK2pveXloSzMvdkdNOC9UaUl1ZU54?=
- =?utf-8?B?c283d2xkSWZ6WTJqQ1MrQ3BabXZvWVVCREZ3SEdsQi8wSWtaYVBvSWREMXZZ?=
- =?utf-8?B?bUFTNVJkT0NHWkkrcUZ1UEs4T2FCdXZySmZzZy80K3hNTkNTV0traGFyWmVM?=
- =?utf-8?B?aXZNSTR5UEpQMVB0eWFSMmloNGVVMERVSUMwcHhSYlVKUkhpa0QwUTFod3d3?=
- =?utf-8?B?eEVZeTdjQjhqMmp4ck9QMFRwMFlnb1B3Qm5laEEwVnltYWRBc0ZjUlJVWDhJ?=
- =?utf-8?B?VFhsc2IwVk0yTlJEMmpFTUZRUCs4b2VlclBkVjBwS0VXQWRvRDVNczIraFhR?=
- =?utf-8?B?L0xpcnNydnlFRDVDVVVMdEdwWEdxNmE4aWxPNjU5OHRkUWNOUWl0TFhrS3pH?=
- =?utf-8?B?biszS1k1Uk01Z29GS3hZVU5qeWcwWVR2THV1UE1Da1VUQmhla2xlR1NJUjVx?=
- =?utf-8?B?ZTJLU2QwM2Fnd3pVbUF6ZE5DdlNnWGkzd0lBcGdva05SRmN5VkJGZDhvUloy?=
- =?utf-8?B?WTNBbnI1WUs0WG1LY1NWaTA4TFdqMmRDVnI0cUQ4VVBwNEFvaFZYRUlXLzRi?=
- =?utf-8?B?R2l5OEVubVdXUFBEYTQ3VzVuMEMvT09FRXRZMTV2YkZvcEhWZUNQcDRXRlBZ?=
- =?utf-8?B?L2MwWW1SMVFqRjM3SUl2aWNEQ0c4cTdiQ3lRb0hmMGNSSHJBQmdHOUN6b2Vm?=
- =?utf-8?B?WURMOTk0WjVQOTA4WG5HbVhQVmNqQUxMdFpITW00NWNmR1NIZlZUWGV5Q2My?=
- =?utf-8?B?U3dGSlNlU3g5dTM5ZEI3eUtkN0hUSFdnV2dBWFNFYmpUSTVCOUxxU09BL2FT?=
- =?utf-8?Q?hWxeqtIJ9GsM8Vag5UHzp1tCf1HrDkx5G6MzY=3D?=
+	=?us-ascii?Q?coYbDyRw+QqlVaZE3iw0noXO+gQ9DUdN+zcUz1mT7onys7kKh/oZok0W2xSQ?=
+ =?us-ascii?Q?hiA8gV6ohE2oNtfsLQ8zfd7zttCm7n6NCS9NEt98ErQs/gAKIQFD3lmQbBhE?=
+ =?us-ascii?Q?66JgM0RptiP9LyIBG5tKxUaMMRBF+rlrGrULKiYNF6pfwgDWj+Nb9PHsbHtL?=
+ =?us-ascii?Q?XjMaLai0kuHcT+bfWK0j9T1812LOyeFOXMaTFsTT+P5KOft79yIWINaUqenD?=
+ =?us-ascii?Q?fcOPqrdRzk6QtQcFKY6w6sVUIQFm6snPvVsJcoBLeo++E8myj9ayuKddJ+AB?=
+ =?us-ascii?Q?dmtPGOTKn6kGKXzFG/0zkHN8uRMFr1JHQhUGZIKxh3FAtowrxJj7b4fqF5Hw?=
+ =?us-ascii?Q?msa0htno9j8Tsd88hHkFHsz53W2w2X9x4qg3rnmpwv9l5yVG7YoUAhdJPONh?=
+ =?us-ascii?Q?RntXzaZlCUmFEtc5aSm8yOmLa4Iq3hEAa+ibKm6OIfujCy/LWHiT9bKE1Npv?=
+ =?us-ascii?Q?CMNZHFLZXZU1MDFJAwmJM2pU0293P3hobFtanawMOUuO9GosEl86pNDOhmBf?=
+ =?us-ascii?Q?/NUl4vv7xfxkOy5OzmsCI4Nc41HGCASVWjOu1yl537FVemcLecKYkd35Rp/n?=
+ =?us-ascii?Q?QIYG/yHkjp1/lQ59C/dmg6guyW4gRY9Tsw/XIVI43l0y18wn4etcua3/EbaC?=
+ =?us-ascii?Q?m480OndAZ2yPD+XYohBw/y/37suwvnv6NDoVcIL8TOsNGXSIv7nmCgz0Ls7+?=
+ =?us-ascii?Q?gzup6YIGShwlHiEcGes7IsKgDJld2zYSSmWHZrNPDhkv9QYIK1G8NYyAq/6c?=
+ =?us-ascii?Q?4sv2Ys6coDd0eviB4VgrXXG2rSzz3/Rf8iXQWQZiDpwJBiYKYZYrhpMF5zTs?=
+ =?us-ascii?Q?WYRvFW34umWroy8RWE1jzeKWgnLpnHXYcC5iRYL1l2JvBowpY54XxaLVzSrm?=
+ =?us-ascii?Q?5+ZbJcSrhAKp7KllwJDdKuK5LaRuKEfK5itmgx5geTZ+uenLnW/0fdPec75L?=
+ =?us-ascii?Q?/+8nSVGK6vp/CGLpuYLwHWn5wZsVwPoUP40V6av2x4nBN0OE2eR5wN+2z/4C?=
+ =?us-ascii?Q?cu9XaXws7QIPkV9tfvEU2lj4eNSvaUebBGeXtQkW7WfuzWkDwSSwUnk0Vfeh?=
+ =?us-ascii?Q?WWlJ4ak6K3kcR5YIt3kp0pOCqvvc6JsiefIt/m+qqcMBoLeT6ITqaqETIObd?=
+ =?us-ascii?Q?po5xTozE6WBwo06SuFQLz9cinXm0KSdXsm83mp2KpeCgjzZCMthrnVUfjXUw?=
+ =?us-ascii?Q?PNGGibAnwipTBtFsd8MTkVPXu0omrIYdqpD1yx232Rtndu7bsiggONZeLx6N?=
+ =?us-ascii?Q?os8NfyqNrMnpUBkviUtk1FkxZuAEf8QoLYIHCVKFHFHQSVhIRo3FiaXR3U42?=
+ =?us-ascii?Q?d7NfQx0ZoLe4uF9DxrFHq3hj?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 15:24:38.9755
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LJE6W5gSciSQt/sY7Tokk4DZWxf4VxaWTYhgS4+YyPbZBU7Z6YKNMpEEWarF?=
+ =?us-ascii?Q?yBwF9zxDE7IJMDPvuPcmK4A0S5EW77TY8I+u+mTdIlSSB9n8H2zC2Ur7Mbsp?=
+ =?us-ascii?Q?7B6KNeBdIs9HJxdoXzUjZ6EuvKMDYtGdIOMWUdIPBNZU7YztpWwhRunBznxn?=
+ =?us-ascii?Q?VZnxwhsmleitF2PZ8lIwk6DIRjJw1yHOTPyPocum5TZowJdMzU9+ouy1OmC5?=
+ =?us-ascii?Q?pHjy7LcLSbJ89MRFO0iWIwkQuuowWxI0kAZ5HmK7DnGD3X6d6WS0RMlE27hR?=
+ =?us-ascii?Q?5OxnCdPFyofKNeqZ60oyajznnpo4eNMX0UGvQslHcNDG8Nw1TwLOWRA9gkmh?=
+ =?us-ascii?Q?BGyuJYAXLW3ZhzV+gszbBcxlmAWGl00gJ7GZSGoOCszEbex1QeFQ2nflZDH9?=
+ =?us-ascii?Q?at6doJO+IIUIVaH3J2LKG3dTYVkWeDpA1fsEk4btvN5HATTy07gHbI/1Wt3K?=
+ =?us-ascii?Q?hEFKrHLBq4sGH1nA5iegWQK7LsdkcqZI+PpyOmLqGbImYimfkwN/+nVe2J9o?=
+ =?us-ascii?Q?tm+1/5daFm7+ZJTmhyVxV7ebVSf8Dp7nh4RznE2H7CJKKmK7PzhyxIBN+Aq3?=
+ =?us-ascii?Q?XjZKXaDnEVKAuQWWxNPpBKam42qsPNTey7ldKc7EBtDVWjnDYmc52hLANd9S?=
+ =?us-ascii?Q?auOlIJ1ooSiWRHDYHpb2v68bktZZIM9euuIuI3s3pO5cTUfTMabqEf8u7+X6?=
+ =?us-ascii?Q?/ML/J9QiXmhtkW0KebNOem794lzVbyAYYUvU9j/gE5At1s6KC/AnKFz9eEX5?=
+ =?us-ascii?Q?tluJrEyk/yznkUl+2LZO8OTl370Fg250y8q06jy1aZgTur4nevkvuiyytnjR?=
+ =?us-ascii?Q?YYYBU/ulKHBrWE9KUfBpgJ/Fkov4b036Xelc2ADcLNleYofYlMI8LnFOX58B?=
+ =?us-ascii?Q?2Q3mFbHVOn988eqLOI6JXZ3dskW/J0EBjI3Rf37fshAeAPcbsGs/IM2Qs3uI?=
+ =?us-ascii?Q?q9DQPOyBsxftKup+S32slRfDWO/abXrST+GjvsMnP8GJ/+Yz74T+YRHLT4xs?=
+ =?us-ascii?Q?yziU4bzwIvuUYJJPRqmckNaw9i7zQgJXAer3BpeheM4zwXXO9w47O3wDN37d?=
+ =?us-ascii?Q?ZRw7d887x2LeADOTRHXXppKwvc3Qqh/vGbmzJ3tXkbsbVu1RaPEs+Xr0tkBq?=
+ =?us-ascii?Q?SCIGvC0PaNofc+o+8Rkye/KDjQlejsfdOXq2aPXurcYpWJMsJRZDsGWVqadR?=
+ =?us-ascii?Q?R/AUiVcjXZ3P2aTu3S1nD7HyGFWMIhPij5o4t4T16jteE7am0I8CqnEI1YfV?=
+ =?us-ascii?Q?e+mo/iuRvHuohKUVxSrtXxcJNdHDxZZbqR27zlz2o4ZQBB++hB+qJEbKNOdF?=
+ =?us-ascii?Q?asxdwFCJbTDNwDQNKCi8mS58EiHieamoOzlQCIQYeOYihMF0PDRUbT2t6lwk?=
+ =?us-ascii?Q?OhhxBtBwxR5u0gEg9acT/+Su2t0EreFFrIi6nDSK3kFZjYLssxSRJzidhbGB?=
+ =?us-ascii?Q?oDz6MWZ7LVpCXPhCMBZljLZUWv8Kj1dz9o3GiuDbSD4o+h2O1xd1mE9odvHX?=
+ =?us-ascii?Q?e6lwfSMf0Hlxg6rAMjBkQr+tICyA1fGTL7ZnTTMX+Tv9Ta5fsgg+DkZfyYHF?=
+ =?us-ascii?Q?eaj4ASjcuCkdsdKlyCZCfvEBK4Y+y3XxytEDGrXr?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 859a2065-4380-4920-8d83-08dcf82df95a
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 15:25:52.2688
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 96d96e57-4e3e-4d81-a491-08dcf82dcdd6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MN1PEPF0000ECD5.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6829
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5WjJuK3Dj91Sfm/TD8nT/+A0faVqoApwHSga+sKO3Bo70xUCAumUQYv+qQM1rJP+
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7177
 
+On Fri, Oct 25, 2024 at 04:49:45PM -0700, Nicolin Chen wrote:
+> Allow IOMMU driver to use a vIOMMU object that holds a nesting parent
+> hwpt/domain to allocate a nested domain.
+> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
+> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+> ---
+>  include/linux/iommufd.h | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 
-On 10/25/24 15:02, Jeffrey Hugo wrote:
-> On 10/25/2024 3:28 PM, Lizhi Hou wrote:
->>
->> On 10/25/24 10:55, Jeffrey Hugo wrote:
->>> On 10/21/2024 10:19 AM, Lizhi Hou wrote:
->>>> This patchset introduces a new Linux Kernel Driver, amdxdna for AMD 
->>>> NPUs.
->>>> The driver is based on Linux accel subsystem.
->>>>
->>>> NPU (Neural Processing Unit) is an AI inference accelerator integrated
->>>> into AMD client CPUs. NPU enables efficient execution of Machine 
->>>> Learning
->>>> applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
->>>> architecture [1].
->>>>
->>>> AMD NPU consists of the following components:
->>>>
->>>>    - Tiled array of AMD AI Engine processors.
->>>>    - Micro Controller which runs the NPU Firmware responsible for
->>>>      command processing, AIE array configuration, and execution 
->>>> management.
->>>>    - PCI EP for host control of the NPU device.
->>>>    - Interconnect for connecting the NPU components together.
->>>>    - SRAM for use by the NPU Firmware.
->>>>    - Address translation hardware for protected host memory access 
->>>> by the
->>>>      NPU.
->>>>
->>>> NPU supports multiple concurrent fully isolated contexts. Concurrent
->>>> contexts may be bound to AI Engine array spatially and or temporarily.
->>>>
->>>> The driver is licensed under GPL-2.0 except for UAPI header which is
->>>> licensed GPL-2.0 WITH Linux-syscall-note.
->>>>
->>>> User mode driver stack consists of XRT [2] and AMD AIE Plugin for 
->>>> IREE [3].
->>>>
->>>> The firmware for the NPU is distributed as a closed source binary, 
->>>> and has
->>>> already been pushed to the DRM firmware repository [4].
->>>>
->>>> [1]https://www.amd.com/en/technologies/xdna.html
->>>> [2]https://github.com/Xilinx/XRT
->>>> [3]https://github.com/nod-ai/iree-amd-aie
->>>> [4]https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu 
->>>>
->>>>
->>>> Changes since v4:
->>>> - Fix lockdep errors
->>>> - Use __u* structure for struct aie_error
->>>
->>> One nit, when you send the next version would you please either To: 
->>> or Cc: me on the entire series?  I only get pieces in my inbox which 
->>> is mildly annoying on my end.
->> Sure.
->>>
->>> Looks like we are getting close here.  One procedural question I 
->>> have, do you have commit permissions to drm-misc?
->> No, I do not have commit permissions yet.
->
-> You should apply for access.  Assuming this series is ready before 
-> that goes through, I'll apply it.
->
->>> I applied the series to drm-misc-next and tried to build.  Got the 
->>> following errors -
->>
->> Could you share the build command line? So I can reproduce and verify 
->> my fix.
->
-> The command is simple:
-> make -j20
->
-> The system details, incase it somehow matters:
-> Ubuntu 22.04 w/ 5.15 kernel
->
-> $ lsb_release -a
-> No LSB modules are available.
-> Distributor ID: Ubuntu
-> Description:    Ubuntu 22.04.3 LTS
-> Release:        22.04
-> Codename:       jammy
->
-> $ uname -a
-> Linux jhugo-lnx 5.15.0-89-generic #99-Ubuntu SMP Mon Oct 30 20:42:41 
-> UTC 2023 x86_64 x86_64 x86_64 GNU/Linux
->
-> The kernel config is probably the relevant piece.  When I first built 
-> after applying the series, I was asked to choose what to do with the 
-> new config item.  I selected =m.
-> .config can be found at 
-> https://gist.github.com/quic-jhugo/4cc249b1e3ba127039fbc709a513a432
->
->>
->> I used "make M=drivers/accel/amdxdna" and did not reproduce the error 
->> with drm-misc-next. It looks build robot did not complain with the 
->> patch neither.
->>
->> $ git branch
->> * drm-misc-next
->> $ make M=drivers/accel/amdxdna
->>    CC [M]  drivers/accel/amdxdna/aie2_ctx.o
->>    CC [M]  drivers/accel/amdxdna/aie2_error.o
->>    CC [M]  drivers/accel/amdxdna/aie2_message.o
->>    CC [M]  drivers/accel/amdxdna/aie2_pci.o
->>    CC [M]  drivers/accel/amdxdna/aie2_psp.o
->>    CC [M]  drivers/accel/amdxdna/aie2_smu.o
->>    CC [M]  drivers/accel/amdxdna/aie2_solver.o
->>    CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
->>    CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
->>    CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
->>    CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
->>    CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
->>    CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
->>    CC [M]  drivers/accel/amdxdna/npu1_regs.o
->>    CC [M]  drivers/accel/amdxdna/npu2_regs.o
->>    CC [M]  drivers/accel/amdxdna/npu4_regs.o
->>    CC [M]  drivers/accel/amdxdna/npu5_regs.o
->>    LD [M]  drivers/accel/amdxdna/amdxdna.o
->>    MODPOST drivers/accel/amdxdna/Module.symvers
->>    CC [M]  drivers/accel/amdxdna/amdxdna.mod.o
->>    CC [M]  drivers/accel/amdxdna/.module-common.o
->>    LD [M]  drivers/accel/amdxdna/amdxdna.ko
->> $
->>
->>>
->>>   CC [M]  drivers/accel/amdxdna/aie2_ctx.o
->>>   CC [M]  drivers/accel/amdxdna/aie2_error.o
->>>   CC [M]  drivers/accel/amdxdna/aie2_message.o
->>>   CC [M]  drivers/accel/amdxdna/aie2_pci.o
->>>   CC [M]  drivers/accel/amdxdna/aie2_psp.o
->>>   CC [M]  drivers/accel/amdxdna/aie2_smu.o
->>>   CC [M]  drivers/accel/amdxdna/aie2_solver.o
->>>   CC [M]  drivers/accel/amdxdna/amdxdna_ctx.o
->>>   CC [M]  drivers/accel/amdxdna/amdxdna_gem.o
->>>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox.o
->>>   CC [M]  drivers/accel/amdxdna/amdxdna_mailbox_helper.o
->>>   CC [M]  drivers/accel/amdxdna/amdxdna_pci_drv.o
->>>   CC [M]  drivers/accel/amdxdna/amdxdna_sysfs.o
->>>   CC [M]  drivers/accel/amdxdna/npu1_regs.o
->>>   CC [M]  drivers/accel/amdxdna/npu2_regs.o
->>>   CC [M]  drivers/accel/amdxdna/npu4_regs.o
->>>   CC [M]  drivers/accel/amdxdna/npu5_regs.o
->>>   AR      drivers/base/firmware_loader/built-in.a
->>>   AR      drivers/base/built-in.a
->>> In file included from drivers/accel/amdxdna/aie2_message.c:19:
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->>> declaration of function ‘FIELD_GET’ 
->>> [-Werror=implicit-function-declaration]
->>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>>       |                ^~~~~~~~~
->>> In file included from drivers/accel/amdxdna/amdxdna_gem.c:15:
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->>> declaration of function ‘FIELD_GET’ 
->>> [-Werror=implicit-function-declaration]
->>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>>       |                ^~~~~~~~~
->>> In file included from drivers/accel/amdxdna/aie2_psp.c:11:
->>> drivers/accel/amdxdna/aie2_psp.c: In function ‘psp_exec’:
->>> drivers/accel/amdxdna/aie2_psp.c:62:34: error: implicit declaration 
->>> of function ‘FIELD_GET’ [-Werror=implicit-function-declaration]
->>>    62 | FIELD_GET(PSP_STATUS_READY, ready),
->>>       |                                  ^~~~~~~~~
->>> ./include/linux/iopoll.h:47:21: note: in definition of macro 
->>> ‘read_poll_timeout’
->>>    47 |                 if (cond) \
->>>       |                     ^~~~
->>> drivers/accel/amdxdna/aie2_psp.c:61:15: note: in expansion of macro 
->>> ‘readx_poll_timeout’
->>>    61 |         ret = readx_poll_timeout(readl, PSP_REG(psp, 
->>> PSP_STATUS_REG), ready,
->>>       |               ^~~~~~~~~~~~~~~~~~
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function 
->>> ‘amdxdna_cmd_set_state’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>>       |                        ^~~~~~~~~~
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function 
->>> ‘amdxdna_cmd_set_state’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>>       |                        ^~~~~~~~~~
->>> In file included from drivers/accel/amdxdna/aie2_pci.c:22:
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->>> declaration of function ‘FIELD_GET’ 
->>> [-Werror=implicit-function-declaration]
->>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>>       |                ^~~~~~~~~
->>> In file included from drivers/accel/amdxdna/aie2_ctx.c:18:
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->>> declaration of function ‘FIELD_GET’ 
->>> [-Werror=implicit-function-declaration]
->>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>>       |                ^~~~~~~~~
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function 
->>> ‘amdxdna_cmd_set_state’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>>       |                        ^~~~~~~~~~
->>> In file included from drivers/accel/amdxdna/amdxdna_ctx.c:16:
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->>> declaration of function ‘FIELD_GET’ 
->>> [-Werror=implicit-function-declaration]
->>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>>       |                ^~~~~~~~~
->>> cc1: all warnings being treated as errors
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function 
->>> ‘amdxdna_cmd_set_state’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>>       |                        ^~~~~~~~~~
->>> drivers/accel/amdxdna/aie2_ctx.c: In function ‘aie2_hwctx_restart’:
->>> drivers/accel/amdxdna/aie2_ctx.c:114:9: error: too few arguments to 
->>> function ‘drm_sched_start’
->>>   114 | drm_sched_start(&hwctx->priv->sched);
->>>       |         ^~~~~~~~~~~~~~~
->>> In file included from ./include/trace/events/amdxdna.h:12,
->>>                  from drivers/accel/amdxdna/aie2_ctx.c:13:
->>> ./include/drm/gpu_scheduler.h:593:6: note: declared here
->>>   593 | void drm_sched_start(struct drm_gpu_scheduler *sched, int 
->>> errno);
->>>       |      ^~~~~~~~~~~~~~~
->>> make[5]: *** [scripts/Makefile.build:229: 
->>> drivers/accel/amdxdna/aie2_psp.o] Error 1
->>> make[5]: *** Waiting for unfinished jobs....
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function 
->>> ‘amdxdna_cmd_set_state’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>>       |                        ^~~~~~~~~~
->>> In file included from drivers/accel/amdxdna/amdxdna_pci_drv.c:18:
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function ‘amdxdna_cmd_get_op’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:112:16: error: implicit 
->>> declaration of function ‘FIELD_GET’ 
->>> [-Werror=implicit-function-declaration]
->>>   112 |         return FIELD_GET(AMDXDNA_CMD_OPCODE, cmd->header);
->>>       |                ^~~~~~~~~
->>> cc1: all warnings being treated as errors
->>> make[5]: *** [scripts/Makefile.build:229: 
->>> drivers/accel/amdxdna/aie2_ctx.o] Error 1
->>> drivers/accel/amdxdna/amdxdna_ctx.h: In function 
->>> ‘amdxdna_cmd_set_state’:
->>> drivers/accel/amdxdna/amdxdna_ctx.h:121:24: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   121 |         cmd->header |= FIELD_PREP(AMDXDNA_CMD_STATE, s);
->>>       |                        ^~~~~~~~~~
->>> drivers/accel/amdxdna/amdxdna_mailbox.c: In function 
->>> ‘xdna_mailbox_send_msg’:
->>> drivers/accel/amdxdna/amdxdna_mailbox.c:444:26: error: implicit 
->>> declaration of function ‘FIELD_PREP’ 
->>> [-Werror=implicit-function-declaration]
->>>   444 |         header->sz_ver = FIELD_PREP(MSG_BODY_SZ, 
->>> msg->send_size) |
->>>       |                          ^~~~~~~~~~
->>>
->>>
->>> You also have the following checkpatch issues -
->>
->> Could you share the command you used?  I tried to use 'dim 
->> checkpatch' and it did not find out the misspelling issue.
->
-> ./scripts/checkpatch.pl --strict --codespell *.patch
->
-> Note, --codespell requires some local setup.  I beleive the comments 
-> in the checkpatch.pl script are fairly straightforward. I use a copy 
-> of the database from the github that is rather recent.  The Ubuntu 
-> distro package is really out of date and I don't think I looked to see 
-> if there is a pythong pip version. Grabbing the one file from the 
-> github repo seemed simple emough.
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-I was able to reproduce with your suggestions. Thanks a lot.
-
-
-Lizhi
-
->
-> -Jeff
+Jason
 
