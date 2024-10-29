@@ -1,462 +1,247 @@
-Return-Path: <linux-kernel+bounces-386826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 469919B4857
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:31:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 713249B4843
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97AC8B223A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 948961C211FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6BC206058;
-	Tue, 29 Oct 2024 11:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YpVdRw8D"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74C920514F;
+	Tue, 29 Oct 2024 11:30:17 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57177205E14;
-	Tue, 29 Oct 2024 11:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230491FF7A3;
+	Tue, 29 Oct 2024 11:30:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201459; cv=none; b=cZI9fF5jwE5n5o8vQ2WkWEStAJZ6MC6qa2pArzRWobtZk3Rx5OlgpX0rcki/6JG81JVe8n4MzUjIp5PkjBdNgZseYtl9gUt273tJ7m3mMLXnqREwB8WdoPy+in/v5BdcaJxWWPX+d0x8R6j/lWyFNFJ6qx8HSGILjEHlafMI124=
+	t=1730201417; cv=none; b=h0LiKZWcvJZ0YNuM7HKZ3YFKrJjAwlerJrMeBnX6z4er+4a7FbDtbRFLIjDsCwbc1G6qJ6/Buqbw3c0es45ci5XGRWe3lgqPg3gZuN2ZH1WIVa2z/EHPvY0puAs8G1mVvMBTubU09dN+mzOe3SW2ka1vjy7vtbMonZ6KANWpUZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201459; c=relaxed/simple;
-	bh=6YG5Qc7BALHom98XDwbF4Z+IBIixgdbWaaLtifLrNVw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kcmAhX68TYccJvuK8FHTt3ATa6rTLhyWGgqyQVK1pD86ISqnmYLfAS59Ch8S41zIh4fOw5Cpa/D373jQIHXCTp/4IVu/55qQVUGEdoRaI9UpeF4y8854G2u/oF7o/3p5UQ0Mz3hQqS7PIDdjB69904WHXEoUc6CYhQuxkqRw8xQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YpVdRw8D; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T8gmWF017964;
-	Tue, 29 Oct 2024 11:30:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mh9y55DnmCN3ZEYZSzJvG0OweooWa5rf9o860xxdZk8=; b=YpVdRw8Du8OTez3g
-	79+s0I53w59Jz9xH2gcqMJObbl0duaWESH7ed/vgkjz71Rvzn4C8juTa55dCIJnn
-	lnAkeSTdk/pqhwl763Piqdk3QdYhsR2b0fohd09IElpAsHhSIV317WzfFzjeo/w7
-	SFlAkuQD0j96Fbpp8jyyJIfNRqFDT89LoxIRlq0P7QSOw7L1MwzzUA48s5BKi+SW
-	xDq8N+v0pum1rRj30cWh7YGA52ypTDoCebod9WkFVRYxkxv3ukMdMmbEQe+Nkw/v
-	ridopWlwxaHT7URpdlHvwGvcA2TN2N94ewj/zv/wZhBLOL0ft7mDbSdaN4nEF7+a
-	QrMi2Q==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn50aac-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 11:30:45 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TBUijM012197
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 11:30:44 GMT
-Received: from hu-rdwivedi-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 29 Oct 2024 04:30:39 -0700
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-To: <manivannan.sadhasivam@linaro.org>, <alim.akhtar@samsung.com>,
-        <avri.altman@wdc.com>, <bvanassche@acm.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <James.Bottomley@HansenPartnership.com>,
-        <martin.petersen@oracle.com>, <agross@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_narepall@quicinc.com>, <quic_nitirawa@quicinc.com>,
-        Can Guo
-	<quic_cang@quicinc.com>
-Subject: [PATCH V2 3/3] scsi: ufs: qcom: Add support for multiple ICE allocators
-Date: Tue, 29 Oct 2024 17:00:03 +0530
-Message-ID: <20241029113003.18820-4-quic_rdwivedi@quicinc.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241029113003.18820-1-quic_rdwivedi@quicinc.com>
-References: <20241029113003.18820-1-quic_rdwivedi@quicinc.com>
+	s=arc-20240116; t=1730201417; c=relaxed/simple;
+	bh=41y14gQZSKoB6yJqFCWXHMG6MD7kdl5Mpu9u4Ed5ncA=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NnDzBOrLGdfyNld6+3fQXT0Ftl4A7fpJpHI9wNjSG3nBSsvSW4HQxnbL3m2w8Va1zRSq1UCHXtoKmSvjRICcJZkXpG5eRkH0BvvpiOEa5Xlx+cJhivmNDPIxny8LsTuuYa2BHcwScRVy1yeT2Ucur0u0jccZiH6c01uly1b/3ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xd7Mf00Nzz4f3n6H;
+	Tue, 29 Oct 2024 19:29:49 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 77E111A0568;
+	Tue, 29 Oct 2024 19:30:08 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYoY+xyBnu2kYAQ--.53165S3;
+	Tue, 29 Oct 2024 19:30:08 +0800 (CST)
+Subject: Re: [PATCH v2 6/7] md/raid1: Handle bio_split() errors
+To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, song@kernel.org, hch@lst.de
+Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
+ Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20241028152730.3377030-1-john.g.garry@oracle.com>
+ <20241028152730.3377030-7-john.g.garry@oracle.com>
+ <c79e7bb4-6f53-344e-9651-fc146b12d240@huaweicloud.com>
+ <879c8b67-2eb4-4e9d-81bd-8f207adef7e1@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <6325d143-b8f2-7287-201b-d3a2e53a556b@huaweicloud.com>
+Date: Tue, 29 Oct 2024 19:30:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <879c8b67-2eb4-4e9d-81bd-8f207adef7e1@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: mowCTvR1e9b1K8gvKI-QQdkd4bQvPHuL
-X-Proofpoint-ORIG-GUID: mowCTvR1e9b1K8gvKI-QQdkd4bQvPHuL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290089
+X-CM-TRANSID:gCh0CgCHYoY+xyBnu2kYAQ--.53165S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3GF4DuF4rWF17Gr47JF4DXFb_yoWxJw4fpr
+	4ktFWUJrW5Jrs5tw1UJFyjqa4rAr1Uta4DJr48J3WUJr47tryqgF4UXr1qgr1UJr48Gr1U
+	Jr1UGrZxur17XrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
+	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
+	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
+	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
+	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
+	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
+	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Add support for ICE allocators for Qualcomm UFS V5.0 and above, which
-uses a pool of crypto cores for TX stream (UFS Write – Encryption)
-and RX stream (UFS Read – Decryption).
+Hi,
 
-Using these allocators, crypto cores can be dynamically allocated
-to either RX stream or TX stream based on allocator selected.
-Qualcomm UFS controller supports three ICE allocators:
-Floor based allocator, Static allocator and Instantaneous allocator
-to share crypto cores between TX and RX stream.
+在 2024/10/29 16:45, John Garry 写道:
+> On 29/10/2024 03:48, Yu Kuai wrote:
+>> Hi,
+>>
+>> 在 2024/10/28 23:27, John Garry 写道:
+>>> Add proper bio_split() error handling. For any error, call
+>>> raid_end_bio_io() and return.
+>>>
+>>> For the case of an in the write path, we need to undo the increment in
+>>> the rdev panding count and NULLify the r1_bio->bios[] pointers.
+>>>
+>>> Signed-off-by: John Garry <john.g.garry@oracle.com>
+>>> ---
+>>>   drivers/md/raid1.c | 32 ++++++++++++++++++++++++++++++--
+>>>   1 file changed, 30 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>> index 6c9d24203f39..a10018282629 100644
+>>> --- a/drivers/md/raid1.c
+>>> +++ b/drivers/md/raid1.c
+>>> @@ -1322,7 +1322,7 @@ static void raid1_read_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       const enum req_op op = bio_op(bio);
+>>>       const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
+>>>       int max_sectors;
+>>> -    int rdisk;
+>>> +    int rdisk, error;
+>>>       bool r1bio_existed = !!r1_bio;
+>>>       /*
+>>> @@ -1383,6 +1383,11 @@ static void raid1_read_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       if (max_sectors < bio_sectors(bio)) {
+>>>           struct bio *split = bio_split(bio, max_sectors,
+>>>                             gfp, &conf->bio_split);
+>>> +
+>>> +        if (IS_ERR(split)) {
+>>> +            error = PTR_ERR(split);
+>>> +            goto err_handle;
+>>> +        }
+>>>           bio_chain(split, bio);
+>>>           submit_bio_noacct(bio);
+>>>           bio = split;
+>>> @@ -1410,6 +1415,12 @@ static void raid1_read_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       read_bio->bi_private = r1_bio;
+>>>       mddev_trace_remap(mddev, read_bio, r1_bio->sector);
+>>>       submit_bio_noacct(read_bio);
+>>> +    return;
+>>> +
+>>> +err_handle:
+>>> +    bio->bi_status = errno_to_blk_status(error);
+>>> +    set_bit(R1BIO_Uptodate, &r1_bio->state);
+>>> +    raid_end_bio_io(r1_bio);
+>>>   }
+>>>   static void raid1_write_request(struct mddev *mddev, struct bio *bio,
+>>> @@ -1417,7 +1428,7 @@ static void raid1_write_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>   {
+>>>       struct r1conf *conf = mddev->private;
+>>>       struct r1bio *r1_bio;
+>>> -    int i, disks;
+>>> +    int i, disks, k, error;
+>>>       unsigned long flags;
+>>>       struct md_rdev *blocked_rdev;
+>>>       int first_clone;
+>>> @@ -1576,6 +1587,11 @@ static void raid1_write_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       if (max_sectors < bio_sectors(bio)) {
+>>>           struct bio *split = bio_split(bio, max_sectors,
+>>>                             GFP_NOIO, &conf->bio_split);
+>>> +
+>>> +        if (IS_ERR(split)) {
+>>> +            error = PTR_ERR(split);
+>>> +            goto err_handle;
+>>> +        }
+>>>           bio_chain(split, bio);
+>>>           submit_bio_noacct(bio);
+>>>           bio = split;
+>>> @@ -1660,6 +1676,18 @@ static void raid1_write_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       /* In case raid1d snuck in to freeze_array */
+>>>       wake_up_barrier(conf);
+>>> +    return;
+>>> +err_handle:
+>>> +    for (k = 0; k < i; k++) {
+>>> +        if (r1_bio->bios[k]) {
+>>> +            rdev_dec_pending(conf->mirrors[k].rdev, mddev);
+>>> +            r1_bio->bios[k] = NULL;
+>>> +        }
+>>> +    }
+>>> +
+>>> +    bio->bi_status = errno_to_blk_status(error);
+>>> +    set_bit(R1BIO_Uptodate, &r1_bio->state);
+>>> +    raid_end_bio_io(r1_bio);
+> 
+> Hi Kuai,
+> 
+>>
+>> Looks good that error code is passed to orig bio. However,
+>> I really think badblocks should be handled somehow, it just doesn't make
+>> sense to return IO error to filesystems or user if one underlying disk
+>> contain BB, while others are good.
+> 
+> Please be aware that this change is not for handling splits in atomic 
+> writes. It is for situation when split fails for whatever reason - 
+> likely a software bug.
+> 
+> For when atomic writes are supported for raid1, my plan is that an 
+> atomic write over a region which covers a BB will error, i.e. goto 
+> err_handle, like:
+> 
+> --- a/drivers/md/raid1.c
+> +++ b/drivers/md/raid1.c
+> @@ -1514,6 +1514,12 @@ static void raid1_write_request(struct mddev 
+> *mddev, struct bio *bio,
+>                   break;
+>               }
+> 
+> +            if (is_bad && bio->bi_opf & REQ_ATOMIC) {
+> +                /* We just cannot atomically write this ... */
+> +                err = -EIO;
+> +                goto err_handle;
+> +            }
+> +
+>               if (is_bad && first_bad <= r1_bio->sector) {
+> 
+> 
+> I just think that if we try to write a region atomically which contains 
+> BBs then we should error. Indeed, as I mentioned previously, I really 
+> don't expect BBs on devices which support atomic writes. But we should 
+> still handle it.
+> 
+Agreed.
 
-Floor Based allocator is selected by default after power On or Reset.
+> OTOH, if we did want to handle atomic writes to regions with BBs, we 
+> could make a bigger effort and write the disks which don't have BBs 
+> atomically (so that we don't split for those good disks). But this is 
+> too complicated and does not achieve much.
 
-Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
-Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
-Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
-Co-developed-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Can Guo <quic_cang@quicinc.com>
-Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
----
- drivers/ufs/host/ufs-qcom.c | 228 ++++++++++++++++++++++++++++++++++++
- drivers/ufs/host/ufs-qcom.h |  38 +++++-
- 2 files changed, 265 insertions(+), 1 deletion(-)
+Agreed.
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index 810e637047d0..27e71f9ce31e 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -105,6 +105,213 @@ static struct ufs_qcom_host *rcdev_to_ufs_host(struct reset_controller_dev *rcd)
- }
- 
- #ifdef CONFIG_SCSI_UFS_CRYPTO
-+/*
-+ * There're 10 sets of settings for floor-based allocations.
-+ */
-+static struct ufs_qcom_floor_based_config floor_based_config[] = {
-+	{"G0", {5, 12, 0, 0, 32, 0}},
-+	{"G1", {12, 5, 32, 0, 0, 0}},
-+	{"G2", {6, 11, 4, 1, 32, 1}},
-+	{"G3", {6, 11, 7, 1, 32, 1}},
-+	{"G4", {7, 10, 11, 1, 32, 1}},
-+	{"G5", {7, 10, 14, 1, 32, 1}},
-+	{"G6", {8, 9, 18, 1, 32, 1}},
-+	{"G7", {9, 8, 21, 1, 32, 1}},
-+	{"G8", {10, 7, 24, 1, 32, 1}},
-+	{"G9", {10, 7, 32, 1, 32, 1}},
-+};
-+
-+static inline void __get_floor_based_grp_params(unsigned int *val, int *c, int *t)
-+{
-+	*c = ((val[0] << 8) | val[1] | (1 << 31));
-+	*t = ((val[2] << 24) | (val[3] << 16) | (val[4] << 8) | val[5]);
-+}
-+
-+static inline void get_floor_based_grp_params(unsigned int group, int *core, int *task)
-+{
-+	struct ufs_qcom_floor_based_config *p = &floor_based_config[group];
-+
-+	 __get_floor_based_grp_params(p->val, core, task);
-+}
-+
-+/**
-+ * ufs_qcom_ice_config_static_alloc - Static ICE allocator
-+ *
-+ * @hba: host controller instance
-+ * Return: zero for success and non-zero in case of a failure.
-+ */
-+static int ufs_qcom_ice_config_static_alloc(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	unsigned int val, rx_aes;
-+	unsigned int num_aes_cores;
-+	int ret;
-+
-+	ret = of_property_read_u32(host->ice_conf, "rx-alloc-percent", &val);
-+	if (ret)
-+		return ret;
-+
-+	num_aes_cores = ufshcd_readl(hba, REG_UFS_MEM_ICE_NUM_AES_CORES);
-+	ufshcd_writel(hba, STATIC_ALLOC, REG_UFS_MEM_ICE_CONFIG);
-+
-+	/*
-+	 * DTS specifies the percent allocation to rx stream
-+	 * Calculation -
-+	 *  Num Tx stream = N_TOT - (N_TOT * percent of rx stream allocation)
-+	 */
-+	rx_aes = DIV_ROUND_CLOSEST(num_aes_cores * val, 100);
-+	val = rx_aes | ((num_aes_cores - rx_aes) << 8);
-+	ufshcd_writel(hba, val, REG_UFS_MEM_ICE_STATIC_ALLOC_NUM_CORE);
-+
-+	return 0;
-+}
-+
-+/**
-+ * ufs_qcom_ice_config_floor_based - Floor based ICE allocator
-+ *
-+ * @hba: host controller instance
-+ * Return: zero for success and non-zero in case of a failure.
-+ */
-+static int ufs_qcom_ice_config_floor_based(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	unsigned int reg = REG_UFS_MEM_ICE_FLOOR_BASED_NUM_CORE_0;
-+	/* 6 values for each group, refer struct ufs_qcom_floor_based_config */
-+	unsigned int override_val[ICE_FLOOR_BASED_NUM_PARAMS];
-+	char name[8] = {0};
-+	int i, ret;
-+
-+	ufshcd_writel(hba, FLOOR_BASED, REG_UFS_MEM_ICE_CONFIG);
-+	for (i = 0; i < ARRAY_SIZE(floor_based_config); i++) {
-+		int core = 0, task = 0;
-+
-+		if (host->ice_conf) {
-+			snprintf(name, sizeof(name), "g%d", i);
-+			ret = of_property_read_variable_u32_array(host->ice_conf,
-+								  name,
-+								  override_val,
-+								  ICE_FLOOR_BASED_NUM_PARAMS,
-+								  ICE_FLOOR_BASED_NUM_PARAMS);
-+			/* Some/All parameters may be overwritten */
-+			if (ret > 0)
-+				__get_floor_based_grp_params(override_val, &core,
-+						      &task);
-+			else
-+				get_floor_based_grp_params(i, &core, &task);
-+		} else {
-+			get_floor_based_grp_params(i, &core, &task);
-+		}
-+
-+		/* Num Core and Num task are contiguous & configured for a group together */
-+		ufshcd_writel(hba, core, reg);
-+		reg += 4;
-+		ufshcd_writel(hba, task, reg);
-+		reg += 4;
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * ufs_qcom_ice_config_instantaneous - Instantaneous ICE allocator
-+ *
-+ * @hba: host controller instance
-+ * Return: zero for success and non-zero in case of a failure.
-+ */
-+static int ufs_qcom_ice_config_instantaneous(struct ufs_hba *hba)
-+{
-+	unsigned int val[4];
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	unsigned int config;
-+	int ret;
-+
-+	ret = of_property_read_variable_u32_array(host->ice_conf, "num-core", val,
-+						  4, 4);
-+	if (ret < 0)
-+		return ret;
-+
-+	config = val[0] | (val[1] << 8) | (val[2] << 16) | (val[3] << 24);
-+
-+	ufshcd_writel(hba, INSTANTANEOUS, REG_UFS_MEM_ICE_CONFIG);
-+	ufshcd_writel(hba, config, REG_UFS_MEM_ICE_INSTANTANEOUS_NUM_CORE);
-+
-+	return 0;
-+}
-+
-+static int ufs_qcom_parse_ice_allocator(struct ufs_hba *hba)
-+{
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+	struct device_node *np;
-+	struct device_node *ice_np;
-+	const char *allocator_name;
-+	int ret;
-+
-+	np = hba->dev->of_node;
-+	if (!np)
-+		return -ENOENT;
-+
-+	ice_np = of_get_next_available_child(np, NULL);
-+	if (!ice_np)
-+		return -ENOENT;
-+
-+	/* Only 1 config can be enabled, pick the first */
-+	host->ice_conf = of_get_next_available_child(ice_np, NULL);
-+	if (!host->ice_conf) {
-+		/* No overrides, use floor based as default */
-+		host->chosen_ice_allocator = FLOOR_BASED;
-+		dev_info(hba->dev, "Resort to default ice floor based ice config\n");
-+		return 0;
-+	}
-+
-+	ret = of_property_read_string(host->ice_conf, "ice-allocator-name", &allocator_name);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!strcmp(allocator_name, "static-alloc"))
-+		host->chosen_ice_allocator = STATIC_ALLOC;
-+	else if (!strcmp(allocator_name, "floor-based"))
-+		host->chosen_ice_allocator = FLOOR_BASED;
-+	else if (!strcmp(allocator_name, "instantaneous"))
-+		host->chosen_ice_allocator = INSTANTANEOUS;
-+	else {
-+		dev_err(hba->dev, "Failed to find a valid ice allocator\n");
-+		ret = -ENODATA;
-+	}
-+
-+	return ret;
-+}
-+
-+static int ufs_qcom_config_ice_allocator(struct ufs_qcom_host *host)
-+{
-+	if (!is_ice_config_supported(host))
-+		return 0;
-+
-+	switch (host->chosen_ice_allocator) {
-+	case STATIC_ALLOC:
-+		return ufs_qcom_ice_config_static_alloc(host->hba);
-+	case FLOOR_BASED:
-+		return ufs_qcom_ice_config_floor_based(host->hba);
-+	case INSTANTANEOUS:
-+		return ufs_qcom_ice_config_instantaneous(host->hba);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int ufs_qcom_ice_config_init(struct ufs_qcom_host *host)
-+{
-+	struct ufs_hba *hba = host->hba;
-+	int ret;
-+
-+	if (!is_ice_config_supported(host))
-+		return 0;
-+
-+	ret = ufs_qcom_parse_ice_allocator(hba);
-+	if (!ret)
-+		dev_dbg(hba->dev, "ICE allocator initialization success!!");
-+
-+	return ret;
-+}
- 
- static inline void ufs_qcom_ice_enable(struct ufs_qcom_host *host)
- {
-@@ -117,6 +324,7 @@ static int ufs_qcom_ice_init(struct ufs_qcom_host *host)
- 	struct ufs_hba *hba = host->hba;
- 	struct device *dev = hba->dev;
- 	struct qcom_ice *ice;
-+	int ret;
- 
- 	ice = of_qcom_ice_get(dev);
- 	if (ice == ERR_PTR(-EOPNOTSUPP)) {
-@@ -130,6 +338,10 @@ static int ufs_qcom_ice_init(struct ufs_qcom_host *host)
- 	host->ice = ice;
- 	hba->caps |= UFSHCD_CAP_CRYPTO;
- 
-+	ret = ufs_qcom_ice_config_init(host);
-+	if (ret)
-+		dev_info(dev, "Continue with default ice configuration\n");
-+
- 	return 0;
- }
- 
-@@ -196,6 +408,12 @@ static inline int ufs_qcom_ice_suspend(struct ufs_qcom_host *host)
- {
- 	return 0;
- }
-+
-+static int ufs_qcom_config_ice(struct ufs_qcom_host *host)
-+{
-+	return 0;
-+}
-+
- #endif
- 
- static void ufs_qcom_disable_lane_clks(struct ufs_qcom_host *host)
-@@ -435,6 +653,11 @@ static int ufs_qcom_hce_enable_notify(struct ufs_hba *hba,
- 		err = ufs_qcom_enable_lane_clks(host);
- 		break;
- 	case POST_CHANGE:
-+		err = ufs_qcom_config_ice_allocator(host);
-+		if (err) {
-+			dev_err(hba->dev, "failed to configure ice, ret=%d\n", err);
-+			break;
-+		}
- 		/* check if UFS PHY moved from DISABLED to HIBERN8 */
- 		err = ufs_qcom_check_hibern8(hba);
- 		ufs_qcom_enable_hw_clk_gating(hba);
-@@ -914,12 +1137,17 @@ static void ufs_qcom_set_host_params(struct ufs_hba *hba)
- 
- static void ufs_qcom_set_caps(struct ufs_hba *hba)
- {
-+	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-+
- 	hba->caps |= UFSHCD_CAP_CLK_GATING | UFSHCD_CAP_HIBERN8_WITH_CLK_GATING;
- 	hba->caps |= UFSHCD_CAP_CLK_SCALING | UFSHCD_CAP_WB_WITH_CLK_SCALING;
- 	hba->caps |= UFSHCD_CAP_AUTO_BKOPS_SUSPEND;
- 	hba->caps |= UFSHCD_CAP_WB_EN;
- 	hba->caps |= UFSHCD_CAP_AGGR_POWER_COLLAPSE;
- 	hba->caps |= UFSHCD_CAP_RPM_AUTOSUSPEND;
-+
-+	if (host->hw_ver.major >= 0x5)
-+		host->caps |= UFS_QCOM_CAP_ICE_CONFIG;
- }
- 
- /**
-diff --git a/drivers/ufs/host/ufs-qcom.h b/drivers/ufs/host/ufs-qcom.h
-index b9de170983c9..7a462556b0c0 100644
---- a/drivers/ufs/host/ufs-qcom.h
-+++ b/drivers/ufs/host/ufs-qcom.h
-@@ -195,8 +195,11 @@ struct ufs_qcom_host {
- 
- #ifdef CONFIG_SCSI_UFS_CRYPTO
- 	struct qcom_ice *ice;
-+	struct device_node *ice_conf;
-+	int chosen_ice_allocator;
- #endif
--
-+	#define UFS_QCOM_CAP_ICE_CONFIG BIT(4)
-+	u32 caps;
- 	void __iomem *dev_ref_clk_ctrl_mmio;
- 	bool is_dev_ref_clk_enabled;
- 	struct ufs_hw_version hw_ver;
-@@ -226,6 +229,39 @@ ufs_qcom_get_debug_reg_offset(struct ufs_qcom_host *host, u32 reg)
- 	return UFS_CNTLR_3_x_x_VEN_REGS_OFFSET(reg);
- };
- 
-+#ifdef CONFIG_SCSI_UFS_CRYPTO
-+static inline bool is_ice_config_supported(struct ufs_qcom_host *host)
-+{
-+	return (host->caps & UFS_QCOM_CAP_ICE_CONFIG);
-+}
-+
-+/* Ice  Allocator Selection */
-+#define STATIC_ALLOC 0x0
-+#define FLOOR_BASED BIT(0)
-+#define INSTANTANEOUS BIT(1)
-+
-+enum {
-+	REG_UFS_MEM_ICE_NUM_AES_CORES = 0x2608,
-+	REG_UFS_MEM_ICE_CONFIG = 0x260C,
-+	REG_UFS_MEM_ICE_STATIC_ALLOC_NUM_CORE = 0x2610,
-+	REG_UFS_MEM_ICE_FLOOR_BASED_NUM_CORE_0 = 0x2614,
-+	REG_UFS_MEM_ICE_INSTANTANEOUS_NUM_CORE = 0x2664,
-+};
-+
-+#define ICE_FLOOR_BASED_NAME_LEN 3
-+#define ICE_FLOOR_BASED_NUM_PARAMS 6
-+
-+struct ufs_qcom_floor_based_config {
-+	/* group names */
-+	char name[ICE_FLOOR_BASED_NAME_LEN];
-+	/*
-+	 * num_core_tx_stream, num_core_rx_stream, num_wr_task_max,
-+	 * num_wr_task_min, num_rd_task_max, num_rd_task_min
-+	 */
-+	unsigned int val[ICE_FLOOR_BASED_NUM_PARAMS];
-+};
-+#endif
-+
- #define ufs_qcom_is_link_off(hba) ufshcd_is_link_off(hba)
- #define ufs_qcom_is_link_active(hba) ufshcd_is_link_active(hba)
- #define ufs_qcom_is_link_hibern8(hba) ufshcd_is_link_hibern8(hba)
--- 
-2.46.0
+> 
+>>
+>> Or is it guaranteed that IO error by atomic write won't hurt anyone,
+>> user will handle this error and retry with non atomic write?
+> 
+> Yes, I think that the user could retry non-atomically for the same 
+> write. Maybe returning a special error code could be useful for this.
+
+And can you update the above error path comment when you support raid1
+and raid10?
+
+Thanks,
+Kuai
+
+> 
+> Thanks,
+> John
+> 
+> .
+> 
 
 
