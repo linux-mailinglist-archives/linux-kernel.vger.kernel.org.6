@@ -1,239 +1,85 @@
-Return-Path: <linux-kernel+bounces-386617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563859B45E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:44:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C2EF9B45EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:44:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFEAF1F2371B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:44:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3883E1C2103F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 671AF2040B2;
-	Tue, 29 Oct 2024 09:43:57 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 303A81E04A9;
-	Tue, 29 Oct 2024 09:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 798BC204938;
+	Tue, 29 Oct 2024 09:43:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C815203708;
+	Tue, 29 Oct 2024 09:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730195037; cv=none; b=oi3nmUTde4gLZVPgdgxJjKbebnVBIvvvazK0dq9PCZI8z+jn41/0ZcZf5ghWAi0ge/yQNXYrEaDauWGYL57XqJwHK5Do4YtS8ML5imNKJV1I8c0dP83At6l41n1M5GUnhdFb/QWeEVsiNbsoVwuLJW3DlLpPsAGhN3LgzyYL2AM=
+	t=1730195038; cv=none; b=jolZ0PHsrYzf0XEbJOPIwWlChQAdelWfFli2g2nPJfvvs1RQrP1C3zitrJI/sFothEuBeNeZ4Wqtwvk9JplyHwMg50sN3PzkaJyEczBt0F2Ur5ABPiF+2/BBqGJnGTmlGqrjLmo/faK17b+LHRmWId+pRMdckfz2cf47ZEKe9UA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730195037; c=relaxed/simple;
-	bh=teihSoOif/nbeNISr36/tEFxGotTMWumKYmVCjxDxDc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ijNqKB0T/aQTQ0j0o4QA8UV7/o1YZaPCxtvFSfIgZh/Ak7BJvDoPf5/anSwwDaDfSPB1T1wZrWMJoaBGOMLgEcLsBinOS8JZAnp3Zie4GxLNRj+Km0fE11z0b7ZjNvWn1HNdWesI5anT/itwUi9W/KjTKJQstinFLpvXUfckCj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3E1091575;
-	Tue, 29 Oct 2024 02:44:23 -0700 (PDT)
-Received: from e129166.arm.com (unknown [10.57.57.182])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 774593F528;
-	Tue, 29 Oct 2024 02:43:52 -0700 (PDT)
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: lukasz.luba@arm.com,
-	dietmar.eggemann@arm.com,
-	rafael@kernel.org
-Subject: [PATCH v2 1/1] PM: EM: Add min/max available performance state limits
-Date: Tue, 29 Oct 2024 09:43:29 +0000
-Message-ID: <20241029094452.495439-2-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241029094452.495439-1-lukasz.luba@arm.com>
-References: <20241029094452.495439-1-lukasz.luba@arm.com>
+	s=arc-20240116; t=1730195038; c=relaxed/simple;
+	bh=DsAJW7VXDhepK48DnllqrO0eBSbIW23+oTWO3Yaj/Pw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tOyQMIxmnkNOqjqnTm6727iQznUQ15eWJwMey5XDBtdopiKdrYjFp+INJWWv2kkSiHlCvVWf6L/AdoWKga1d/jLpz8QPyr1axkomRTOnpRdAppL9gqyNMcV/N0+s0nVuWpV0odzu3HvHA36VgEWKzsQJgGcqmJ4KYLSZufpg70k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Xd4vp1T8kz6LDCd;
+	Tue, 29 Oct 2024 17:39:02 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A31FC1404F5;
+	Tue, 29 Oct 2024 17:43:51 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Oct
+ 2024 10:43:51 +0100
+Date: Tue, 29 Oct 2024 09:43:49 +0000
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Matteo Martelli <matteomartelli3@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>, <jic23@kernel.org>, <linux-iio@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the iio tree
+Message-ID: <20241029094349.00001186@Huawei.com>
+In-Reply-To: <20241029155022.5f777572@canb.auug.org.au>
+References: <20241029155022.5f777572@canb.auug.org.au>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On some devices there are HW dependencies for shared frequency and voltage
-between devices. It will impact Energy Aware Scheduler (EAS) decision,
-where CPUs share the voltage & frequency domain with other CPUs or devices
-e.g.
-- Mid CPUs + Big CPU
-- Little CPU + L3 cache in DSU
-- some other device + Little CPUs
+On Tue, 29 Oct 2024 15:50:22 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-Detailed explanation of one example:
-When the L3 cache frequency is increased, the affected Little CPUs might
-run at higher voltage and frequency. That higher voltage causes higher CPU
-power and thus more energy is used for running the tasks. This is
-important for background running tasks, which try to run on energy
-efficient CPUs.
+> Hi all,
+> 
+> After merging the iio tree, today's linux-next build (htmldocs) produced
+> this warning:
+> 
+> include/linux/iio/iio.h:555: warning: Function parameter or struct member 'read_avail_release_resource' not described in 'iio_info'
+> 
+> Introduced by commit
+> 
+>   8a63e3033e72 ("iio: core: add read_avail_release_resource callback to fix race")
+> 
 
-Therefore, add performance state limits which are applied for the device
-(in this case CPU). This is important on SoCs with HW dependencies
-mentioned above so that the Energy Aware Scheduler (EAS) does not use
-performance states outside the valid min-max range for energy calculation.
+Thanks.  Sorry for number of times I've missed things this cycle!
 
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
- include/linux/energy_model.h | 24 ++++++++++++++---
- kernel/power/energy_model.c  | 52 ++++++++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 4 deletions(-)
+Will fix this up when on right machine.  Matteo, feel free to send a
+patch if you have time, if not I'll make something suitable up.
 
-diff --git a/include/linux/energy_model.h b/include/linux/energy_model.h
-index 1ff52020cf757..e83bf230e18d1 100644
---- a/include/linux/energy_model.h
-+++ b/include/linux/energy_model.h
-@@ -55,6 +55,8 @@ struct em_perf_table {
-  * struct em_perf_domain - Performance domain
-  * @em_table:		Pointer to the runtime modifiable em_perf_table
-  * @nr_perf_states:	Number of performance states
-+ * @min_ps:		Minimum allowed Performance State index
-+ * @max_ps:		Maximum allowed Performance State index
-  * @flags:		See "em_perf_domain flags"
-  * @cpus:		Cpumask covering the CPUs of the domain. It's here
-  *			for performance reasons to avoid potential cache
-@@ -70,6 +72,8 @@ struct em_perf_table {
- struct em_perf_domain {
- 	struct em_perf_table __rcu *em_table;
- 	int nr_perf_states;
-+	int min_ps;
-+	int max_ps;
- 	unsigned long flags;
- 	unsigned long cpus[];
- };
-@@ -173,6 +177,8 @@ void em_table_free(struct em_perf_table __rcu *table);
- int em_dev_compute_costs(struct device *dev, struct em_perf_state *table,
- 			 int nr_states);
- int em_dev_update_chip_binning(struct device *dev);
-+int em_update_performance_limits(struct em_perf_domain *pd,
-+		unsigned long freq_min_khz, unsigned long freq_max_khz);
- 
- /**
-  * em_pd_get_efficient_state() - Get an efficient performance state from the EM
-@@ -180,6 +186,8 @@ int em_dev_update_chip_binning(struct device *dev);
-  * @nr_perf_states:	Number of performance states
-  * @max_util:		Max utilization to map with the EM
-  * @pd_flags:		Performance Domain flags
-+ * @min_ps:		Minimum allowed Performance State index
-+ * @max_ps:		Maximum allowed Performance State index
-  *
-  * It is called from the scheduler code quite frequently and as a consequence
-  * doesn't implement any check.
-@@ -189,12 +197,13 @@ int em_dev_update_chip_binning(struct device *dev);
-  */
- static inline int
- em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_states,
--			  unsigned long max_util, unsigned long pd_flags)
-+			  unsigned long max_util, unsigned long pd_flags,
-+			  int min_ps, int max_ps)
- {
- 	struct em_perf_state *ps;
- 	int i;
- 
--	for (i = 0; i < nr_perf_states; i++) {
-+	for (i = min_ps; i <= max_ps; i++) {
- 		ps = &table[i];
- 		if (ps->performance >= max_util) {
- 			if (pd_flags & EM_PERF_DOMAIN_SKIP_INEFFICIENCIES &&
-@@ -204,7 +213,7 @@ em_pd_get_efficient_state(struct em_perf_state *table, int nr_perf_states,
- 		}
- 	}
- 
--	return nr_perf_states - 1;
-+	return max_ps;
- }
- 
- /**
-@@ -254,7 +263,8 @@ static inline unsigned long em_cpu_energy(struct em_perf_domain *pd,
- 	 */
- 	em_table = rcu_dereference(pd->em_table);
- 	i = em_pd_get_efficient_state(em_table->state, pd->nr_perf_states,
--				      max_util, pd->flags);
-+				      max_util, pd->flags, pd->min_ps,
-+				      pd->max_ps);
- 	ps = &em_table->state[i];
- 
- 	/*
-@@ -391,6 +401,12 @@ static inline int em_dev_update_chip_binning(struct device *dev)
- {
- 	return -EINVAL;
- }
-+static inline
-+int em_update_performance_limits(struct em_perf_domain *pd,
-+		unsigned long freq_min_khz, unsigned long freq_max_khz)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- #endif
-diff --git a/kernel/power/energy_model.c b/kernel/power/energy_model.c
-index 927cc55ba0b3d..436c2b8fdf9eb 100644
---- a/kernel/power/energy_model.c
-+++ b/kernel/power/energy_model.c
-@@ -628,6 +628,8 @@ int em_dev_register_perf_domain(struct device *dev, unsigned int nr_states,
- 		goto unlock;
- 
- 	dev->em_pd->flags |= flags;
-+	dev->em_pd->min_ps = 0;
-+	dev->em_pd->max_ps = nr_states - 1;
- 
- 	em_cpufreq_update_efficiencies(dev, dev->em_pd->em_table->state);
- 
-@@ -856,3 +858,53 @@ int em_dev_update_chip_binning(struct device *dev)
- 	return em_recalc_and_update(dev, pd, em_table);
- }
- EXPORT_SYMBOL_GPL(em_dev_update_chip_binning);
-+
-+
-+/**
-+ * em_update_performance_limits() - Update Energy Model with performance
-+ *				limits information.
-+ * @pd			: Performance Domain with EM that has to be updated.
-+ * @freq_min_khz	: New minimum allowed frequency for this device.
-+ * @freq_max_khz	: New maximum allowed frequency for this device.
-+ *
-+ * This function allows to update the EM with information about available
-+ * performance levels. It takes the minimum and maximum frequency in kHz
-+ * and does internal translation to performance levels.
-+ * Returns 0 on success or -EINVAL when failed.
-+ */
-+int em_update_performance_limits(struct em_perf_domain *pd,
-+		unsigned long freq_min_khz, unsigned long freq_max_khz)
-+{
-+	struct em_perf_state *table;
-+	int min_ps = -1;
-+	int max_ps = -1;
-+	int i;
-+
-+	if (!pd)
-+		return -EINVAL;
-+
-+	rcu_read_lock();
-+	table = em_perf_state_from_pd(pd);
-+
-+	for (i = 0; i < pd->nr_perf_states; i++) {
-+		if (freq_min_khz == table[i].frequency)
-+			min_ps = i;
-+		if (freq_max_khz == table[i].frequency)
-+			max_ps = i;
-+	}
-+	rcu_read_unlock();
-+
-+	/* Only update when both are found and sane */
-+	if (min_ps < 0 || max_ps < 0 || max_ps < min_ps)
-+		return -EINVAL;
-+
-+
-+	/* Guard simultaneous updates and make them atomic */
-+	mutex_lock(&em_pd_mutex);
-+	pd->min_ps = min_ps;
-+	pd->max_ps = max_ps;
-+	mutex_unlock(&em_pd_mutex);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL_GPL(em_update_performance_limits);
--- 
-2.46.0
-
+Jonathan
 
