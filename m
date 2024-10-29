@@ -1,1101 +1,332 @@
-Return-Path: <linux-kernel+bounces-387727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EDF29B5566
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:58:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FB599B5569
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:59:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57B82283CD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:58:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEB71B22517
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0733720A5E1;
-	Tue, 29 Oct 2024 21:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A3920A5F2;
+	Tue, 29 Oct 2024 21:58:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HhcMxmpy"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qg0OzWJP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FFA3206E92;
-	Tue, 29 Oct 2024 21:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3199920A5EB;
+	Tue, 29 Oct 2024 21:58:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730239126; cv=none; b=jrRFcKEyoYY4rOTadpg7F4nz3ViaPQeO2J1GFqPsaqOu+fz80/g65Vl6jnqDfjqrVZVt/WZxETAD7mf46tFgRMLUTlEW742wdjuUawMSVALLKbGTDCoazGBWqgRiNysh9afGI+PpFF1GI/a077LxnmL+I80PMCSQSR3cAl2PLjY=
+	t=1730239131; cv=none; b=lrnPOIKyNlGS4ShtbTJMM5Vn+7yPR7Ch+VY4m4l2TwzY6dTNphbuoZj/XVgXNpNWLqUfQqspJviUfS0VuYt7YXHManipqq3FVXhR85nPJuA7bMfgJFRIiOsnvOHAQgFjZBh5ZYnObwJD3ZnfLTD5nrt6euxAKYk5zyb2djyZn1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730239126; c=relaxed/simple;
-	bh=SHX4q4Ga5BprPt4RG/OFAjhx9vgvS+LxJ7A9KN/isyU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PlQRmL1PN9dNMzGF7MW8yL83eivChK9iYJa3VCgQtWEiPAXnVgttajfNFiDvG0ACDyOvT7HK89Fqs9ErCfShECHGdGo/+XOxxb3uM679anGyzeeSv+7RCVhORCSP1asT79xPqohZeOnYtGL0wKSixVHudF+RnQVydxWixg8FY0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HhcMxmpy; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-72070d341e5so2602430b3a.1;
-        Tue, 29 Oct 2024 14:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730239121; x=1730843921; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XxJfqMQuAFPXu4oNOb7SxCNwoM+CMOZywcRG4aHt4aU=;
-        b=HhcMxmpyYjDpeVNqV3ZUZ2GQO1iUQbvPyh9mSarZX29v9kP94V1wEgIIZ5oOou44KE
-         nmBaXUKygabhL/IptEKNERd+TRF5zaplABJPeXCWx+uRAg8aQZRcsbqpv1FUK7STCn5e
-         z3WLk4SzpKwG5G5TTdKPPXpjGDz5knng+fA3SWGhUBePT6I5mBWb3fXHy3TLSy4vdKxp
-         54IFneFOzRYqYR/20rRVIyor7D2askF0CushhoMjeY6xLOa/j8fMZ7CupSCaJAsrUQtq
-         C9jpoVOPgJixJdgqdQLzPJ9g9XNbQjot7o+rcap1bKKjNg26Hk4ha8lPTeM4XRsPfw+N
-         kEBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730239121; x=1730843921;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XxJfqMQuAFPXu4oNOb7SxCNwoM+CMOZywcRG4aHt4aU=;
-        b=nXB1rHWf1s5H70FtYnkSaeDeFyygtX6MTzc0hY2R8Lzm3ojWTWIsPmgjDJzWq1Ta7n
-         0DxyHuFf+ULprWcAuJIebSCb/B6CSxMpnpsH5MbxC584ncexy7/AGDj9ll4Cyyn0FyaS
-         hLXikFjZt3/tbODPKfabNHl2x+Y61px+Jabl/JjSZ3DIkA7L4IIQnuKJCM30uXH2iibJ
-         jI+ceUA22xU254yxTGdw6LOKEWy7CFK1QYQHlnBizcmr2BayafPqWLQHwBffsUFO4eYp
-         aXL8Dy6fx3ienEIhuV6WsqYBm6HLow0keM/iHnsqV/6LpJSn48O1CA52qBsJVlmZQsvM
-         aQkg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAjxDcNmC0aLFQ65TxZPWD9FwTYJNsA73ykimfhzW4PrOREs88an2Df6cz2Ttd4tpAqpJyb7HTuBGwFGNo7gRz@vger.kernel.org, AJvYcCUUJd3RDAhYJqptYwmMNpnQF5kAOZlO0H6XF+YCvbsjVAWxGdiNwVFXXHBji2hnW3DniCjQSzaewVbdDVRC@vger.kernel.org, AJvYcCVwzieX65frq6Ni6x7z8miuRLzgUUhKSXpvlOWjBW710+pISiVm5kd5l7+kbKKBm4lyvCrRJzs3NcLjaRKFlD9ji89r@vger.kernel.org, AJvYcCX2tm0NU17Oxgau5RwKn5n/jmQ7oDwE9eNmhIN0n3tI84TPOuRhY67oEIryeBPF2BGu2AU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBjO/MCDrV9P3aAHKqw0x94bkQ46KjtuCr7YZfl9MaXv4yGLio
-	Nh7Z6N/0JuoKgC7bhnyru3QJ187b0ZCZgju+BxfKjylpBVvfSqPA5Pk2/DuFT9AW4FCpySw15EQ
-	Yx+uV5GOFuttsNeV2fS16O03LvGM=
-X-Google-Smtp-Source: AGHT+IFAeSNOIfy/2dbwdxOeBtdP326CYc8A99zX8dkPv/Xf8wLRrORzpLTjR1jyey9jI1kjM6zBRPIrF8/P5ZbO69w=
-X-Received: by 2002:a05:6a00:4b52:b0:71e:4296:2e with SMTP id
- d2e1a72fcca58-72062fb87b7mr18253293b3a.11.1730239121111; Tue, 29 Oct 2024
- 14:58:41 -0700 (PDT)
+	s=arc-20240116; t=1730239131; c=relaxed/simple;
+	bh=TUo6BVTwEgK0jMk21tCwY3ID9VmRPyen/+VLfnQfL9w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EE7FHYVF0CrEOJHk+4HQpaOHa3Y1ID6y2RC4onQGzkSfL18UalwVkOcqOXY9XazOl6UpxBvQAj4eIgXJxUjQXzSQ0wbqYkaDU9gI0jqm6GuyPqFK3vodfwyrcMMUxpGRJ6taB08btigUgZBQBZ7z+2xalVWGz/n49J3dD7eu9gQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qg0OzWJP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81086C4CECD;
+	Tue, 29 Oct 2024 21:58:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730239130;
+	bh=TUo6BVTwEgK0jMk21tCwY3ID9VmRPyen/+VLfnQfL9w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qg0OzWJPnukTntixOJy6XpQ0luNk6Lxh6mYTVLXE8xggrAXuTftPyLdLyXS93tAD2
+	 M19Nx9y2dygO2BIKMuOuZZhJugtSJ9ynH7ePsfCIXXltGErVIc+EYJIqQogT5H4FMq
+	 P2jq9qFLlNGUvM4+kk9eYVl4vyIlkkSkFGajNNBCVjQ9o/+ZzdsWnMvazFqfGB3EDU
+	 cVl/tYjTdFBTLvTzL3WnEDixlScfI9c0c1UpLXa0eZwbzTPpgoCSGUo5Wet2CVZ4kI
+	 g5V3KRHQ531hexPSn+U72ZlUyPfTO8ovohrTQMjLAxKxEyL586Hwr60zU99nE0Frqd
+	 8m/LxOrtpTlDg==
+Date: Tue, 29 Oct 2024 15:58:47 -0600
+From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+To: Michael Chan <michael.chan@broadcom.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Potnuri Bharat Teja <bharat@chelsio.com>,
+	Christian Benvenuti <benve@cisco.com>,
+	Satish Kharat <satishkh@cisco.com>,
+	Manish Chopra <manishc@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2 2/2][next] net: ethtool: Avoid thousands of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <0bc2809fe2a6c11dd4c8a9a10d9bd65cccdb559b.1730238285.git.gustavoars@kernel.org>
+References: <cover.1730238285.git.gustavoars@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029002208.1947947-1-dolinux.peng@gmail.com> <20241029002208.1947947-2-dolinux.peng@gmail.com>
-In-Reply-To: <20241029002208.1947947-2-dolinux.peng@gmail.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Tue, 29 Oct 2024 14:58:27 -0700
-Message-ID: <CAEf4BzbVjkhtQPcsDOLX_aR_vvB1nCQj357EQ5xwey8486=Niw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/3] libbpf: Sort btf_types in ascending order by name
-To: Donglin Peng <dolinux.peng@gmail.com>
-Cc: andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, rostedt@goodmis.org, 
-	mhiramat@kernel.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1730238285.git.gustavoars@kernel.org>
 
-On Mon, Oct 28, 2024 at 5:22=E2=80=AFPM Donglin Peng <dolinux.peng@gmail.co=
-m> wrote:
->
-> To enhance the searching performance of btf_find_by_name_kind, we
-> can sort the btf_types in ascending order based on their names.
-> This allows us to implement a binary search method.
->
-> Co-developed-by: Eduard Zingerman <eddyz87@gmail.com>
-> Signed-off-by: Eduard Zingerman <eddyz87@gmail.com>
-> Signed-off-by: Donglin Peng <dolinux.peng@gmail.com>
-> ---
-> v4:
->  - Divide the patch into two parts: kernel and libbpf
->  - Use Eduard's code to sort btf_types in the btf__dedup function
->  - Correct some btf testcases due to modifications of the order of btf_ty=
-pes.
-> ---
->  tools/lib/bpf/btf.c                           | 115 +++++--
->  tools/testing/selftests/bpf/prog_tests/btf.c  | 296 +++++++++---------
->  .../bpf/prog_tests/btf_dedup_split.c          |  64 ++--
->  3 files changed, 268 insertions(+), 207 deletions(-)
->
+-Wflex-array-member-not-at-end was introduced in GCC-14, and we are
+getting ready to enable it, globally.
 
-I don't think we should do any extra sorting by default. Maybe we need
-some extra API to explicitly re-sort underlying types. But then again,
-why just by type name? What if type names are equal, what do we use to
-disambiguate. None of this is considered in this patch.
+Change the type of the middle struct member currently causing trouble from
+`struct ethtool_link_settings` to `struct ethtool_link_settings_hdr`.
 
-pw-bot: cr
+Additionally, update the type of some variables in various functions that
+don't access the flexible-array member, changing them to the newly created
+`struct ethtool_link_settings_hdr`. These changes are needed because the
+type of the conflicting middle members changed. So, those instances that
+expect the type to be `struct ethtool_link_settings` should be adjusted to
+the newly created type `struct ethtool_link_settings_hdr`.
 
-> diff --git a/tools/lib/bpf/btf.c b/tools/lib/bpf/btf.c
-> index 3c131039c523..5290e9d59997 100644
-> --- a/tools/lib/bpf/btf.c
-> +++ b/tools/lib/bpf/btf.c
-> @@ -1,6 +1,9 @@
->  // SPDX-License-Identifier: (LGPL-2.1 OR BSD-2-Clause)
->  /* Copyright (c) 2018 Facebook */
->
-> +#ifndef _GNU_SOURCE
-> +#define _GNU_SOURCE
-> +#endif
->  #include <byteswap.h>
->  #include <endian.h>
->  #include <stdio.h>
-> @@ -4902,6 +4905,49 @@ static int btf_dedup_resolve_fwds(struct btf_dedup=
- *d)
->         return err;
->  }
->
-> +/* compare btf types by name, consider named < anonymous */
-> +static int btf_compare_type_names(const void *a, const void *b, void *pr=
-iv)
-> +{
-> +       struct btf *btf =3D (struct btf *)priv;
-> +       struct btf_type *ta =3D btf_type_by_id(btf, *(__u32 *)a);
-> +       struct btf_type *tb =3D btf_type_by_id(btf, *(__u32 *)b);
-> +       const char *na, *nb;
-> +
-> +       /* ta w/o name is greater than tb */
-> +       if (!ta->name_off && tb->name_off)
-> +               return 1;
-> +       /* tb w/o name is smaller than ta */
-> +       if (ta->name_off && !tb->name_off)
-> +               return -1;
-> +
-> +       na =3D btf__str_by_offset(btf, ta->name_off);
-> +       nb =3D btf__str_by_offset(btf, tb->name_off);
-> +       return strcmp(na, nb);
-> +}
-> +
-> +static __u32 *get_sorted_canon_types(struct btf_dedup *d, __u32 *cnt)
-> +{
-> +       int i, j, id, types_cnt =3D 0;
-> +       __u32 *sorted_ids;
-> +
-> +       for (i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_types; i++,=
- id++)
-> +               if (d->map[id] =3D=3D id)
-> +                       ++types_cnt;
-> +
-> +       sorted_ids =3D calloc(types_cnt, sizeof(*sorted_ids));
-> +       if (!sorted_ids)
-> +               return NULL;
-> +
-> +       for (j =3D 0, i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_ty=
-pes; i++, id++)
-> +               if (d->map[id] =3D=3D id)
-> +                       sorted_ids[j++] =3D id;
-> +       qsort_r(sorted_ids, types_cnt, sizeof(*sorted_ids),
-> +               btf_compare_type_names, d->btf);
-> +       *cnt =3D types_cnt;
-> +
-> +       return sorted_ids;
-> +}
-> +
->  /*
->   * Compact types.
->   *
-> @@ -4915,11 +4961,11 @@ static int btf_dedup_resolve_fwds(struct btf_dedu=
-p *d)
->   */
->  static int btf_dedup_compact_types(struct btf_dedup *d)
->  {
-> -       __u32 *new_offs;
-> -       __u32 next_type_id =3D d->btf->start_id;
-> +       __u32 canon_types_cnt =3D 0, canon_types_len =3D 0;
-> +       __u32 *new_offs =3D NULL, *canon_types =3D NULL;
->         const struct btf_type *t;
-> -       void *p;
-> -       int i, id, len;
-> +       void *p, *new_types =3D NULL;
-> +       int i, id, len, err;
->
->         /* we are going to reuse hypot_map to store compaction remapping =
-*/
->         d->hypot_map[0] =3D 0;
-> @@ -4929,36 +4975,61 @@ static int btf_dedup_compact_types(struct btf_ded=
-up *d)
->         for (i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_types; i++,=
- id++)
->                 d->hypot_map[id] =3D BTF_UNPROCESSED_ID;
->
-> -       p =3D d->btf->types_data;
-> -
-> -       for (i =3D 0, id =3D d->btf->start_id; i < d->btf->nr_types; i++,=
- id++) {
-> -               if (d->map[id] !=3D id)
-> -                       continue;
-> +       canon_types =3D get_sorted_canon_types(d, &canon_types_cnt);
-> +       if (!canon_types) {
-> +               err =3D -ENOMEM;
-> +               goto out_err;
-> +       }
->
-> +       for (i =3D 0; i < canon_types_cnt; i++) {
-> +               id =3D canon_types[i];
->                 t =3D btf__type_by_id(d->btf, id);
->                 len =3D btf_type_size(t);
-> -               if (len < 0)
-> -                       return len;
-> +               if (len < 0) {
-> +                       err =3D len;
-> +                       goto out_err;
-> +               }
-> +               canon_types_len +=3D len;
-> +       }
-> +
-> +       new_offs =3D calloc(canon_types_cnt, sizeof(*new_offs));
-> +       new_types =3D calloc(canon_types_len, 1);
-> +       if (!new_types || !new_offs) {
-> +               err =3D -ENOMEM;
-> +               goto out_err;
-> +       }
->
-> -               memmove(p, t, len);
-> -               d->hypot_map[id] =3D next_type_id;
-> -               d->btf->type_offs[next_type_id - d->btf->start_id] =3D p =
-- d->btf->types_data;
-> +       p =3D new_types;
-> +
-> +       for (i =3D 0; i < canon_types_cnt; i++) {
-> +               id =3D canon_types[i];
-> +               t =3D btf__type_by_id(d->btf, id);
-> +               len =3D btf_type_size(t);
-> +               memcpy(p, t, len);
-> +               d->hypot_map[id] =3D d->btf->start_id + i;
-> +               new_offs[i] =3D p - new_types;
->                 p +=3D len;
-> -               next_type_id++;
->         }
->
->         /* shrink struct btf's internal types index and update btf_header=
- */
-> -       d->btf->nr_types =3D next_type_id - d->btf->start_id;
-> -       d->btf->type_offs_cap =3D d->btf->nr_types;
-> -       d->btf->hdr->type_len =3D p - d->btf->types_data;
-> -       new_offs =3D libbpf_reallocarray(d->btf->type_offs, d->btf->type_=
-offs_cap,
-> -                                      sizeof(*new_offs));
-> -       if (d->btf->type_offs_cap && !new_offs)
-> -               return -ENOMEM;
-> +       free(d->btf->types_data);
-> +       free(d->btf->type_offs);
-> +       d->btf->types_data =3D new_types;
->         d->btf->type_offs =3D new_offs;
-> +       d->btf->types_data_cap =3D canon_types_len;
-> +       d->btf->type_offs_cap =3D canon_types_cnt;
-> +       d->btf->nr_types =3D canon_types_cnt;
-> +       d->btf->hdr->type_len =3D canon_types_len;
->         d->btf->hdr->str_off =3D d->btf->hdr->type_len;
->         d->btf->raw_size =3D d->btf->hdr->hdr_len + d->btf->hdr->type_len=
- + d->btf->hdr->str_len;
-> +       free(canon_types);
->         return 0;
-> +
-> +out_err:
-> +       free(canon_types);
-> +       free(new_types);
-> +       free(new_offs);
-> +       return err;
->  }
->
->  /*
-> diff --git a/tools/testing/selftests/bpf/prog_tests/btf.c b/tools/testing=
-/selftests/bpf/prog_tests/btf.c
-> index e63d74ce046f..4dc1e2bfacbb 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/btf.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/btf.c
-> @@ -7025,26 +7025,26 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> +                       BTF_TYPE_FLOAT_ENC(NAME_NTH(7), 4),              =
-               /* [1] */
->                         /* int */
-> -                       BTF_TYPE_INT_ENC(NAME_NTH(5), BTF_INT_SIGNED, 0, =
-32, 4),        /* [1] */
-> -                       /* int[16] */
-> -                       BTF_TYPE_ARRAY_ENC(1, 1, 16),                    =
-               /* [2] */
-> +                       BTF_TYPE_INT_ENC(NAME_NTH(5), BTF_INT_SIGNED, 0, =
-32, 4),        /* [2] */
->                         /* struct s { */
->                         BTF_STRUCT_ENC(NAME_NTH(8), 5, 88),              =
-               /* [3] */
-> -                               BTF_MEMBER_ENC(NAME_NTH(7), 4, 0),      /=
-* struct s *next;      */
-> -                               BTF_MEMBER_ENC(NAME_NTH(1), 5, 64),     /=
-* const int *a;        */
-> -                               BTF_MEMBER_ENC(NAME_NTH(2), 2, 128),    /=
-* int b[16];           */
-> -                               BTF_MEMBER_ENC(NAME_NTH(3), 1, 640),    /=
-* int c;               */
-> -                               BTF_MEMBER_ENC(NAME_NTH(4), 9, 672),    /=
-* float d;             */
-> +                               BTF_MEMBER_ENC(NAME_NTH(7), 7, 0),      /=
-* struct s *next;      */
-> +                               BTF_MEMBER_ENC(NAME_NTH(1), 8, 64),     /=
-* const int *a;        */
-> +                               BTF_MEMBER_ENC(NAME_NTH(2), 6, 128),    /=
-* int b[16];           */
-> +                               BTF_MEMBER_ENC(NAME_NTH(3), 2, 640),    /=
-* int c;               */
-> +                               BTF_MEMBER_ENC(NAME_NTH(4), 1, 672),    /=
-* float d;             */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(2), 3, -1),            =
-               /* [4] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(2), 3, 1),             =
-               /* [5] */
-> +                       /* int[16] */
-> +                       BTF_TYPE_ARRAY_ENC(1, 2, 16),                    =
-               /* [6] */
->                         /* ptr -> [3] struct s */
-> -                       BTF_PTR_ENC(3),                                  =
-               /* [4] */
-> +                       BTF_PTR_ENC(3),                                  =
-               /* [7] */
->                         /* ptr -> [6] const int */
-> -                       BTF_PTR_ENC(6),                                  =
-               /* [5] */
-> +                       BTF_PTR_ENC(9),                                  =
-               /* [8] */
->                         /* const -> [1] int */
-> -                       BTF_CONST_ENC(1),                                =
-               /* [6] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(2), 3, -1),            =
-               /* [7] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(2), 3, 1),             =
-               /* [8] */
-> -                       BTF_TYPE_FLOAT_ENC(NAME_NTH(7), 4),              =
-               /* [9] */
-> +                       BTF_CONST_ENC(2),                                =
-               /* [9] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0a\0b\0c\0d\0int\0float\0next\0s"),
-> @@ -7082,10 +7082,10 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       BTF_PTR_ENC(3),                                 /=
-* [1] ptr -> [3] */
-> -                       BTF_STRUCT_ENC(NAME_TBD, 1, 8),                 /=
-* [2] struct s   */
-> -                               BTF_MEMBER_ENC(NAME_TBD, 1, 0),
-> -                       BTF_STRUCT_ENC(NAME_NTH(2), 0, 0),              /=
-* [3] struct x   */
-> +                       BTF_STRUCT_ENC(NAME_TBD, 1, 8),                 /=
-* [1] struct s   */
-> +                               BTF_MEMBER_ENC(NAME_TBD, 3, 0),
-> +                       BTF_STRUCT_ENC(NAME_NTH(2), 0, 0),              /=
-* [2] struct x   */
-> +                       BTF_PTR_ENC(2),                                 /=
-* [3] ptr -> [3] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0s\0x"),
-> @@ -7123,15 +7123,13 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       /* CU 1 */
-> -                       BTF_STRUCT_ENC(0, 0, 1),                         =
-       /* [1] struct {}  */
-> -                       BTF_PTR_ENC(1),                                  =
-       /* [2] ptr -> [1] */
-> -                       BTF_STRUCT_ENC(NAME_NTH(1), 1, 8),               =
-       /* [3] struct s   */
-> -                               BTF_MEMBER_ENC(NAME_NTH(2), 2, 0),
-> -                       /* CU 2 */
-> -                       BTF_PTR_ENC(0),                                  =
-       /* [4] ptr -> void */
-> -                       BTF_STRUCT_ENC(NAME_NTH(1), 1, 8),               =
-       /* [5] struct s   */
-> +                       BTF_STRUCT_ENC(NAME_NTH(1), 1, 8),               =
-       /* [1] struct s   */
->                                 BTF_MEMBER_ENC(NAME_NTH(2), 4, 0),
-> +                       BTF_STRUCT_ENC(NAME_NTH(1), 1, 8),               =
-       /* [2] struct s   */
-> +                               BTF_MEMBER_ENC(NAME_NTH(2), 5, 0),
-> +                       BTF_STRUCT_ENC(0, 0, 1),                         =
-       /* [3] struct {}  */
-> +                       BTF_PTR_ENC(3),                                  =
-       /* [5] ptr -> [1] */
-> +                       BTF_PTR_ENC(0),                                  =
-       /* [4] ptr -> void */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0s\0x"),
-> @@ -7182,28 +7180,28 @@ static struct btf_dedup_test dedup_tests[] =3D {
->                                 BTF_ENUM_ENC(NAME_TBD, 0),
->                                 BTF_ENUM_ENC(NAME_TBD, 1),
->                         BTF_FWD_ENC(NAME_TBD, 1 /* union kind_flag */),  =
-               /* [3] fwd */
-> -                       BTF_TYPE_ARRAY_ENC(2, 1, 7),                     =
-               /* [4] array */
-> -                       BTF_STRUCT_ENC(NAME_TBD, 1, 4),                  =
-               /* [5] struct */
-> +                       BTF_STRUCT_ENC(NAME_TBD, 1, 4),                  =
-               /* [4] struct */
->                                 BTF_MEMBER_ENC(NAME_TBD, 1, 0),
-> -                       BTF_UNION_ENC(NAME_TBD, 1, 4),                   =
-               /* [6] union */
-> +                       BTF_UNION_ENC(NAME_TBD, 1, 4),                   =
-               /* [5] union */
->                                 BTF_MEMBER_ENC(NAME_TBD, 1, 0),
-> -                       BTF_TYPEDEF_ENC(NAME_TBD, 1),                    =
-               /* [7] typedef */
-> -                       BTF_PTR_ENC(0),                                  =
-               /* [8] ptr */
-> -                       BTF_CONST_ENC(8),                                =
-               /* [9] const */
-> -                       BTF_VOLATILE_ENC(8),                             =
-               /* [10] volatile */
-> -                       BTF_RESTRICT_ENC(8),                             =
-               /* [11] restrict */
-> -                       BTF_FUNC_PROTO_ENC(1, 2),                        =
-               /* [12] func_proto */
-> -                               BTF_FUNC_PROTO_ARG_ENC(NAME_TBD, 1),
-> -                               BTF_FUNC_PROTO_ARG_ENC(NAME_TBD, 18),
-> -                       BTF_FUNC_ENC(NAME_TBD, 12),                      =
-               /* [13] func */
-> -                       BTF_TYPE_FLOAT_ENC(NAME_TBD, 2),                 =
-               /* [14] float */
-> -                       BTF_DECL_TAG_ENC(NAME_TBD, 13, -1),              =
-               /* [15] decl_tag */
-> -                       BTF_DECL_TAG_ENC(NAME_TBD, 13, 1),               =
-               /* [16] decl_tag */
-> -                       BTF_DECL_TAG_ENC(NAME_TBD, 7, -1),               =
-               /* [17] decl_tag */
-> -                       BTF_TYPE_TAG_ENC(NAME_TBD, 8),                   =
-               /* [18] type_tag */
-> -                       BTF_TYPE_ENC(NAME_TBD, BTF_INFO_ENC(BTF_KIND_ENUM=
-64, 0, 2), 8), /* [19] enum64 */
-> +                       BTF_TYPEDEF_ENC(NAME_TBD, 1),                    =
-               /* [6] typedef */
-> +                       BTF_FUNC_ENC(NAME_TBD, 19),                      =
-               /* [7] func */
-> +                       BTF_TYPE_FLOAT_ENC(NAME_TBD, 2),                 =
-               /* [8] float */
-> +                       BTF_DECL_TAG_ENC(NAME_TBD, 7, -1),               =
-               /* [9] decl_tag */
-> +                       BTF_DECL_TAG_ENC(NAME_TBD, 7, 1),                =
-               /* [10] decl_tag */
-> +                       BTF_DECL_TAG_ENC(NAME_TBD, 6, -1),               =
-               /* [11] decl_tag */
-> +                       BTF_TYPE_TAG_ENC(NAME_TBD, 15),                  =
-               /* [12] type_tag */
-> +                       BTF_TYPE_ENC(NAME_TBD, BTF_INFO_ENC(BTF_KIND_ENUM=
-64, 0, 2), 8), /* [13] enum64 */
->                                 BTF_ENUM64_ENC(NAME_TBD, 0, 0),
->                                 BTF_ENUM64_ENC(NAME_TBD, 1, 1),
-> +                       BTF_TYPE_ARRAY_ENC(2, 2, 7),                     =
-               /* [14] array */
-> +                       BTF_PTR_ENC(0),                                  =
-               /* [15] ptr */
-> +                       BTF_CONST_ENC(15),                               =
-               /* [16] const */
-> +                       BTF_VOLATILE_ENC(15),                            =
-               /* [17] volatile */
-> +                       BTF_RESTRICT_ENC(15),                            =
-               /* [18] restrict */
-> +                       BTF_FUNC_PROTO_ENC(1, 2),                        =
-               /* [19] func_proto */
-> +                               BTF_FUNC_PROTO_ARG_ENC(NAME_TBD, 1),
-> +                               BTF_FUNC_PROTO_ARG_ENC(NAME_TBD, 12),
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0A\0B\0C\0D\0E\0F\0G\0H\0I\0J\0K\0L\0M\0N\0=
-O\0P\0Q\0R\0S\0T\0U"),
-> @@ -7237,9 +7235,14 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> +                       /* all allowed sizes */
-> +                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 2),
-> +                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 4),
-> +                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 8),
-> +                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 12),
-> +                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 16),
-> +
->                         BTF_TYPE_INT_ENC(NAME_NTH(1), BTF_INT_SIGNED, 0, =
-32, 8),
-> -                       /* different name */
-> -                       BTF_TYPE_INT_ENC(NAME_NTH(2), BTF_INT_SIGNED, 0, =
-32, 8),
->                         /* different encoding */
->                         BTF_TYPE_INT_ENC(NAME_NTH(1), BTF_INT_CHAR, 0, 32=
-, 8),
->                         BTF_TYPE_INT_ENC(NAME_NTH(1), BTF_INT_BOOL, 0, 32=
-, 8),
-> @@ -7249,12 +7252,8 @@ static struct btf_dedup_test dedup_tests[] =3D {
->                         BTF_TYPE_INT_ENC(NAME_NTH(1), BTF_INT_SIGNED, 0, =
-27, 8),
->                         /* different byte size */
->                         BTF_TYPE_INT_ENC(NAME_NTH(1), BTF_INT_SIGNED, 0, =
-32, 4),
-> -                       /* all allowed sizes */
-> -                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 2),
-> -                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 4),
-> -                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 8),
-> -                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 12),
-> -                       BTF_TYPE_FLOAT_ENC(NAME_NTH(3), 16),
-> +                       /* different name */
-> +                       BTF_TYPE_INT_ENC(NAME_NTH(2), BTF_INT_SIGNED, 0, =
-32, 8),
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0int\0some other int\0float"),
-> @@ -7323,18 +7322,18 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       /* int */
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       /* static int t */
-> -                       BTF_VAR_ENC(NAME_NTH(2), 1, 0),                 /=
-* [2] */
-> -                       /* .bss section */                              /=
-* [3] */
-> +                       /* .bss section */                              /=
-* [1] */
->                         BTF_TYPE_ENC(NAME_NTH(1), BTF_INFO_ENC(BTF_KIND_D=
-ATASEC, 0, 1), 4),
-> -                       BTF_VAR_SECINFO_ENC(2, 0, 4),
-> -                       /* another static int t */
-> -                       BTF_VAR_ENC(NAME_NTH(2), 1, 0),                 /=
-* [4] */
-> -                       /* another .bss section */                      /=
-* [5] */
-> +                       BTF_VAR_SECINFO_ENC(3, 0, 4),
-> +                       /* another .bss section */                      /=
-* [2] */
->                         BTF_TYPE_ENC(NAME_NTH(1), BTF_INFO_ENC(BTF_KIND_D=
-ATASEC, 0, 1), 4),
->                         BTF_VAR_SECINFO_ENC(4, 0, 4),
-> +                       /* static int t */
-> +                       BTF_VAR_ENC(NAME_NTH(2), 5, 0),                 /=
-* [3] */
-> +                       /* another static int t */
-> +                       BTF_VAR_ENC(NAME_NTH(2), 5, 0),                 /=
-* [4] */
-> +                       /* int */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [5] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0.bss\0t"),
-> @@ -7371,15 +7370,15 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_VAR_ENC(NAME_NTH(1), 1, 0),                 /=
-* [2] */
-> -                       BTF_FUNC_PROTO_ENC(0, 2),                       /=
-* [3] */
-> -                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(2), 1),
-> -                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(3), 1),
-> -                       BTF_FUNC_ENC(NAME_NTH(4), 3),                   /=
-* [4] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 2, -1),           /=
-* [5] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 4, -1),           /=
-* [6] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 4, 1),            /=
-* [7] */
-> +                       BTF_FUNC_ENC(NAME_NTH(4), 7),                   /=
-* [1] */
-> +                       BTF_VAR_ENC(NAME_NTH(1), 6, 0),                 /=
-* [2] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 2, -1),           /=
-* [3] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 1, -1),           /=
-* [4] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 1, 1),            /=
-* [5] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [6] */
-> +                       BTF_FUNC_PROTO_ENC(0, 2),                       /=
-* [7] */
-> +                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(2), 6),
-> +                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(3), 6),
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0t\0a1\0a2\0f\0tag"),
-> @@ -7419,17 +7418,17 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_FUNC_PROTO_ENC(0, 2),                       /=
-* [2] */
-> -                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(1), 1),
-> -                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(2), 1),
-> -                       BTF_FUNC_ENC(NAME_NTH(3), 2),                   /=
-* [3] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(4), 3, -1),           /=
-* [4] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 3, -1),           /=
-* [5] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(6), 3, -1),           /=
-* [6] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(4), 3, 1),            /=
-* [7] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 3, 1),            /=
-* [8] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(6), 3, 1),            /=
-* [9] */
-> +                       BTF_FUNC_ENC(NAME_NTH(3), 9),                   /=
-* [1] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(4), 1, -1),           /=
-* [2] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(4), 1, 1),            /=
-* [3] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 1, -1),           /=
-* [4] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 1, 1),            /=
-* [5] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(6), 1, -1),           /=
-* [6] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(6), 1, 1),            /=
-* [7] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [8] */
-> +                       BTF_FUNC_PROTO_ENC(0, 2),                       /=
-* [9] */
-> +                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(1), 8),
-> +                               BTF_FUNC_PROTO_ARG_ENC(NAME_NTH(2), 8),
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0a1\0a2\0f\0tag1\0tag2\0tag3"),
-> @@ -7465,16 +7464,16 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_STRUCT_ENC(NAME_NTH(1), 2, 8),              /=
-* [2] */
-> -                               BTF_MEMBER_ENC(NAME_NTH(2), 1, 0),
-> -                               BTF_MEMBER_ENC(NAME_NTH(3), 1, 32),
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(4), 2, -1),           /=
-* [3] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 2, -1),           /=
-* [4] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(6), 2, -1),           /=
-* [5] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(4), 2, 1),            /=
-* [6] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(5), 2, 1),            /=
-* [7] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(6), 2, 1),            /=
-* [8] */
-> +                       BTF_STRUCT_ENC(NAME_NTH(1), 2, 8),              /=
-* [1] */
-> +                               BTF_MEMBER_ENC(NAME_NTH(2), 8, 0),
-> +                               BTF_MEMBER_ENC(NAME_NTH(3), 8, 32),
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(4), 1, -1),           /=
-* [2] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(4), 1, 1),            /=
-* [3] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 1, -1),           /=
-* [4] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(5), 1, 1),            /=
-* [5] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(6), 1, -1),           /=
-* [6] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(6), 1, 1),            /=
-* [7] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [8] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0t\0m1\0m2\0tag1\0tag2\0tag3"),
-> @@ -7500,11 +7499,11 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_TYPEDEF_ENC(NAME_NTH(1), 1),                /=
-* [2] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(2), 2, -1),           /=
-* [3] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(3), 2, -1),           /=
-* [4] */
-> -                       BTF_DECL_TAG_ENC(NAME_NTH(4), 2, -1),           /=
-* [5] */
-> +                       BTF_TYPEDEF_ENC(NAME_NTH(1), 5),                /=
-* [1] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(2), 1, -1),           /=
-* [2] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(3), 1, -1),           /=
-* [3] */
-> +                       BTF_DECL_TAG_ENC(NAME_NTH(4), 1, -1),           /=
-* [4] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [5] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0t\0tag1\0tag2\0tag3"),
-> @@ -7533,12 +7532,12 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         .expect =3D {
->                 .raw_types =3D {
->                         /* ptr -> tag2 -> tag1 -> int */
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 1),               /=
-* [2] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 2),               /=
-* [3] */
-> -                       BTF_PTR_ENC(3),                                 /=
-* [4] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 3),               /=
-* [1] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 1),               /=
-* [2] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [3] */
-> +                       BTF_PTR_ENC(2),                                 /=
-* [4] */
->                         /* ptr -> tag1 -> int */
-> -                       BTF_PTR_ENC(2),                                 /=
-* [5] */
-> +                       BTF_PTR_ENC(1),                                 /=
-* [5] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0tag1\0tag2"),
-> @@ -7563,13 +7562,13 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         .expect =3D {
->                 .raw_types =3D {
->                         /* ptr -> tag2 -> tag1 -> int */
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 1),               /=
-* [2] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 2),               /=
-* [3] */
-> -                       BTF_PTR_ENC(3),                                 /=
-* [4] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 4),               /=
-* [1] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 1),               /=
-* [2] */
->                         /* ptr -> tag2 -> int */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 1),               /=
-* [5] */
-> -                       BTF_PTR_ENC(5),                                 /=
-* [6] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 4),               /=
-* [3] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [4] */
-> +                       BTF_PTR_ENC(2),                                 /=
-* [5] */
-> +                       BTF_PTR_ENC(3),                                 /=
-* [6] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0tag1\0tag2"),
-> @@ -7594,15 +7593,13 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       /* ptr -> tag2 -> tag1 -> int */
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 1),               /=
-* [2] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 2),               /=
-* [3] */
-> -                       BTF_PTR_ENC(3),                                 /=
-* [4] */
-> -                       /* ptr -> tag1 -> tag2 -> int */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 1),               /=
-* [5] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 5),               /=
-* [6] */
-> -                       BTF_PTR_ENC(6),                                 /=
-* [7] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 5),               /=
-* [1] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 4),               /=
-* [2] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 1),               /=
-* [3] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(2), 5),               /=
-* [4] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [5] */
-> +                       BTF_PTR_ENC(3),                                 /=
-* [6] */
-> +                       BTF_PTR_ENC(2),                                 /=
-* [7] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0tag1\0tag2"),
-> @@ -7626,14 +7623,12 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       /* ptr -> tag1 -> int */
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [1] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 1),               /=
-* [2] */
-> -                       BTF_PTR_ENC(2),                                 /=
-* [3] */
-> -                       /* ptr -> tag1 -> long */
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 64, 8),  /=
-* [4] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 4),               /=
-* [5] */
-> -                       BTF_PTR_ENC(5),                                 /=
-* [6] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 3),               /=
-* [1] */
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 5),               /=
-* [2] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),  /=
-* [3] */
-> +                       BTF_PTR_ENC(1),                                 /=
-* [4] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 64, 8),  /=
-* [5] */
-> +                       BTF_PTR_ENC(2),                                 /=
-* [6] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0tag1"),
-> @@ -7656,10 +7651,10 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),   =
-                       /* [1] */
-> -                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 1),                =
-                       /* [2] */
-> -                       BTF_TYPE_ENC(NAME_NTH(2), BTF_INFO_ENC(BTF_KIND_S=
-TRUCT, 1, 1), 4),      /* [3] */
-> +                       BTF_TYPE_ENC(NAME_NTH(2), BTF_INFO_ENC(BTF_KIND_S=
-TRUCT, 1, 1), 4),      /* [1] */
->                         BTF_MEMBER_ENC(NAME_NTH(3), 2, BTF_MEMBER_OFFSET(=
-0, 0)),
-> +                       BTF_TYPE_TAG_ENC(NAME_NTH(1), 3),                =
-                       /* [2] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4),   =
-                       /* [3] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0tag1\0t\0m"),
-> @@ -7861,10 +7856,10 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         .expect =3D {
->                 .raw_types =3D {
->                         BTF_STRUCT_ENC(NAME_NTH(1), 1, 4),             /*=
- [1] */
-> -                       BTF_MEMBER_ENC(NAME_NTH(2), 2, 0),
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [2] */
-> -                       BTF_PTR_ENC(1),                                /*=
- [3] */
-> -                       BTF_TYPEDEF_ENC(NAME_NTH(3), 3),               /*=
- [4] */
-> +                       BTF_MEMBER_ENC(NAME_NTH(2), 3, 0),
-> +                       BTF_TYPEDEF_ENC(NAME_NTH(3), 4),               /*=
- [2] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [3] */
-> +                       BTF_PTR_ENC(1),                                /*=
- [4] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0foo\0x\0foo_ptr"),
-> @@ -7901,10 +7896,10 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         .expect =3D {
->                 .raw_types =3D {
->                         BTF_UNION_ENC(NAME_NTH(1), 1, 4),              /*=
- [1] */
-> -                       BTF_MEMBER_ENC(NAME_NTH(2), 2, 0),
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [2] */
-> -                       BTF_PTR_ENC(1),                                /*=
- [3] */
-> -                       BTF_TYPEDEF_ENC(NAME_NTH(3), 3),               /*=
- [4] */
-> +                       BTF_MEMBER_ENC(NAME_NTH(2), 3, 0),
-> +                       BTF_TYPEDEF_ENC(NAME_NTH(3), 4),               /*=
- [2] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [3] */
-> +                       BTF_PTR_ENC(1),                                /*=
- [4] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0foo\0x\0foo_ptr"),
-> @@ -7940,14 +7935,12 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       /* CU 1 */
->                         BTF_STRUCT_ENC(NAME_NTH(1), 1, 4),             /*=
- [1] */
-> -                       BTF_MEMBER_ENC(NAME_NTH(2), 2, 0),
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [2] */
-> -                       /* CU 2 */
-> -                       BTF_FWD_ENC(NAME_NTH(3), 1),                   /*=
- [3] */
-> -                       BTF_PTR_ENC(3),                                /*=
- [4] */
-> -                       BTF_TYPEDEF_ENC(NAME_NTH(3), 4),               /*=
- [5] */
-> +                       BTF_MEMBER_ENC(NAME_NTH(2), 4, 0),
-> +                       BTF_FWD_ENC(NAME_NTH(3), 1),                   /*=
- [2] */
-> +                       BTF_TYPEDEF_ENC(NAME_NTH(3), 5),               /*=
- [3] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [4] */
-> +                       BTF_PTR_ENC(2),                                /*=
- [5] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0foo\0x\0foo_ptr"),
-> @@ -7990,18 +7983,15 @@ static struct btf_dedup_test dedup_tests[] =3D {
->         },
->         .expect =3D {
->                 .raw_types =3D {
-> -                       /* CU 1 */
->                         BTF_STRUCT_ENC(NAME_NTH(1), 1, 4),             /*=
- [1] */
-> -                       BTF_MEMBER_ENC(NAME_NTH(2), 2, 0),
-> -                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [2] */
-> -                       /* CU 2 */
-> -                       BTF_FWD_ENC(NAME_NTH(1), 0),                   /*=
- [3] */
-> -                       BTF_PTR_ENC(3),                                /*=
- [4] */
-> -                       BTF_TYPEDEF_ENC(NAME_NTH(4), 4),               /*=
- [5] */
-> -                       /* CU 3 */
-> -                       BTF_STRUCT_ENC(NAME_NTH(1), 2, 8),             /*=
- [6] */
-> -                       BTF_MEMBER_ENC(NAME_NTH(2), 2, 0),
-> -                       BTF_MEMBER_ENC(NAME_NTH(3), 2, 0),
-> +                       BTF_MEMBER_ENC(NAME_NTH(2), 5, 0),
-> +                       BTF_FWD_ENC(NAME_NTH(1), 0),                   /*=
- [2] */
-> +                       BTF_STRUCT_ENC(NAME_NTH(1), 2, 8),             /*=
- [3] */
-> +                       BTF_MEMBER_ENC(NAME_NTH(2), 5, 0),
-> +                       BTF_MEMBER_ENC(NAME_NTH(3), 5, 0),
-> +                       BTF_TYPEDEF_ENC(NAME_NTH(4), 6),               /*=
- [4] */
-> +                       BTF_TYPE_INT_ENC(0, BTF_INT_SIGNED, 0, 32, 4), /*=
- [5] */
-> +                       BTF_PTR_ENC(2),                                /*=
- [6] */
->                         BTF_END_RAW,
->                 },
->                 BTF_STR_SEC("\0foo\0x\0y\0foo_ptr"),
-> diff --git a/tools/testing/selftests/bpf/prog_tests/btf_dedup_split.c b/t=
-ools/testing/selftests/bpf/prog_tests/btf_dedup_split.c
-> index d9024c7a892a..e50c290b2d8c 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/btf_dedup_split.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/btf_dedup_split.c
-> @@ -311,18 +311,18 @@ static void test_split_struct_duped() {
->                 "[5] STRUCT 's1' size=3D16 vlen=3D2\n"
->                 "\t'f1' type_id=3D2 bits_offset=3D0\n"
->                 "\t'f2' type_id=3D4 bits_offset=3D64",
-> -               "[6] PTR '(anon)' type_id=3D8",
-> -               "[7] PTR '(anon)' type_id=3D9",
-> -               "[8] STRUCT 's1' size=3D16 vlen=3D2\n"
-> -               "\t'f1' type_id=3D6 bits_offset=3D0\n"
-> -               "\t'f2' type_id=3D7 bits_offset=3D64",
-> -               "[9] STRUCT 's2' size=3D40 vlen=3D4\n"
-> -               "\t'f1' type_id=3D6 bits_offset=3D0\n"
-> -               "\t'f2' type_id=3D7 bits_offset=3D64\n"
-> +               "[6] STRUCT 's1' size=3D16 vlen=3D2\n"
-> +               "\t'f1' type_id=3D9 bits_offset=3D0\n"
-> +               "\t'f2' type_id=3D10 bits_offset=3D64",
-> +               "[7] STRUCT 's2' size=3D40 vlen=3D4\n"
-> +               "\t'f1' type_id=3D9 bits_offset=3D0\n"
-> +               "\t'f2' type_id=3D10 bits_offset=3D64\n"
->                 "\t'f3' type_id=3D1 bits_offset=3D128\n"
-> -               "\t'f4' type_id=3D8 bits_offset=3D192",
-> -               "[10] STRUCT 's3' size=3D8 vlen=3D1\n"
-> -               "\t'f1' type_id=3D7 bits_offset=3D0");
-> +               "\t'f4' type_id=3D6 bits_offset=3D192",
-> +               "[8] STRUCT 's3' size=3D8 vlen=3D1\n"
-> +               "\t'f1' type_id=3D10 bits_offset=3D0",
-> +               "[9] PTR '(anon)' type_id=3D6",
-> +               "[10] PTR '(anon)' type_id=3D7");
->
->  cleanup:
->         btf__free(btf2);
-> @@ -385,13 +385,13 @@ static void test_split_dup_struct_in_cu()
->
->         VALIDATE_RAW_BTF(
->                         btf1,
-> -                       "[1] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
-> -                       "[2] STRUCT 's' size=3D8 vlen=3D2\n"
-> -                       "\t'a' type_id=3D3 bits_offset=3D0\n"
-> -                       "\t'b' type_id=3D3 bits_offset=3D0",
-> -                       "[3] STRUCT '(anon)' size=3D8 vlen=3D2\n"
-> -                       "\t'f1' type_id=3D1 bits_offset=3D0\n"
-> -                       "\t'f2' type_id=3D1 bits_offset=3D32");
-> +                       "[1] STRUCT '(anon)' size=3D8 vlen=3D2\n"
-> +                       "\t'f1' type_id=3D2 bits_offset=3D0\n"
-> +                       "\t'f2' type_id=3D2 bits_offset=3D32",
-> +                       "[2] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
-> +                       "[3] STRUCT 's' size=3D8 vlen=3D2\n"
-> +                       "\t'a' type_id=3D1 bits_offset=3D0\n"
-> +                       "\t'b' type_id=3D1 bits_offset=3D0");
->
->         /* and add the same data on top of it */
->         btf2 =3D btf__new_empty_split(btf1);
-> @@ -402,13 +402,13 @@ static void test_split_dup_struct_in_cu()
->
->         VALIDATE_RAW_BTF(
->                         btf2,
-> -                       "[1] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
-> -                       "[2] STRUCT 's' size=3D8 vlen=3D2\n"
-> -                       "\t'a' type_id=3D3 bits_offset=3D0\n"
-> -                       "\t'b' type_id=3D3 bits_offset=3D0",
-> -                       "[3] STRUCT '(anon)' size=3D8 vlen=3D2\n"
-> -                       "\t'f1' type_id=3D1 bits_offset=3D0\n"
-> -                       "\t'f2' type_id=3D1 bits_offset=3D32",
-> +                       "[1] STRUCT '(anon)' size=3D8 vlen=3D2\n"
-> +                       "\t'f1' type_id=3D2 bits_offset=3D0\n"
-> +                       "\t'f2' type_id=3D2 bits_offset=3D32",
-> +                       "[2] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
-> +                       "[3] STRUCT 's' size=3D8 vlen=3D2\n"
-> +                       "\t'a' type_id=3D1 bits_offset=3D0\n"
-> +                       "\t'b' type_id=3D1 bits_offset=3D0",
->                         "[4] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
->                         "[5] STRUCT 's' size=3D8 vlen=3D2\n"
->                         "\t'a' type_id=3D6 bits_offset=3D0\n"
-> @@ -427,13 +427,13 @@ static void test_split_dup_struct_in_cu()
->         /* after dedup it should match the original data */
->         VALIDATE_RAW_BTF(
->                         btf2,
-> -                       "[1] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
-> -                       "[2] STRUCT 's' size=3D8 vlen=3D2\n"
-> -                       "\t'a' type_id=3D3 bits_offset=3D0\n"
-> -                       "\t'b' type_id=3D3 bits_offset=3D0",
-> -                       "[3] STRUCT '(anon)' size=3D8 vlen=3D2\n"
-> -                       "\t'f1' type_id=3D1 bits_offset=3D0\n"
-> -                       "\t'f2' type_id=3D1 bits_offset=3D32");
-> +                       "[1] STRUCT '(anon)' size=3D8 vlen=3D2\n"
-> +                       "\t'f1' type_id=3D2 bits_offset=3D0\n"
-> +                       "\t'f2' type_id=3D2 bits_offset=3D32",
-> +                       "[2] INT 'int' size=3D4 bits_offset=3D0 nr_bits=
-=3D32 encoding=3DSIGNED",
-> +                       "[3] STRUCT 's' size=3D8 vlen=3D2\n"
-> +                       "\t'a' type_id=3D1 bits_offset=3D0\n"
-> +                       "\t'b' type_id=3D1 bits_offset=3D0");
->
->  cleanup:
->         btf__free(btf2);
-> --
-> 2.34.1
->
+Also, adjust variable declarations to follow the reverse xmas tree
+convention.
+
+Fix 3338 of the following -Wflex-array-member-not-at-end warnings:
+
+include/linux/ethtool.h:214:38: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
+
+Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
+---
+Changes in v2:
+ - Update changelog text in patch to better reflect the changes
+   made. (Jakub)
+ - Adjust variable declarations to follow the reverse xmas tree
+   convention. (Jakub) 
+
+v1:
+ - Link: https://lore.kernel.org/linux-hardening/f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org/
+
+ .../net/ethernet/broadcom/bnxt/bnxt_ethtool.c  |  6 +++---
+ .../net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c |  4 ++--
+ .../ethernet/chelsio/cxgb4vf/cxgb4vf_main.c    |  2 +-
+ drivers/net/ethernet/cisco/enic/enic_ethtool.c |  2 +-
+ .../net/ethernet/qlogic/qede/qede_ethtool.c    |  4 ++--
+ include/linux/ethtool.h                        |  2 +-
+ net/ethtool/ioctl.c                            |  2 +-
+ net/ethtool/linkinfo.c                         |  8 ++++----
+ net/ethtool/linkmodes.c                        | 18 +++++++++++-------
+ 9 files changed, 26 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+index f71cc8188b4e..e0ebe69110bf 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt_ethtool.c
+@@ -2781,7 +2781,7 @@ u32 bnxt_fw_to_ethtool_speed(u16 fw_link_speed)
+ static void bnxt_get_default_speeds(struct ethtool_link_ksettings *lk_ksettings,
+ 				    struct bnxt_link_info *link_info)
+ {
+-	struct ethtool_link_settings *base = &lk_ksettings->base;
++	struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
+ 
+ 	if (link_info->link_state == BNXT_LINK_STATE_UP) {
+ 		base->speed = bnxt_fw_to_ethtool_speed(link_info->link_speed);
+@@ -2800,7 +2800,7 @@ static void bnxt_get_default_speeds(struct ethtool_link_ksettings *lk_ksettings,
+ static int bnxt_get_link_ksettings(struct net_device *dev,
+ 				   struct ethtool_link_ksettings *lk_ksettings)
+ {
+-	struct ethtool_link_settings *base = &lk_ksettings->base;
++	struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
+ 	enum ethtool_link_mode_bit_indices link_mode;
+ 	struct bnxt *bp = netdev_priv(dev);
+ 	struct bnxt_link_info *link_info;
+@@ -3023,9 +3023,9 @@ u16 bnxt_get_fw_auto_link_speeds(const unsigned long *mode)
+ static int bnxt_set_link_ksettings(struct net_device *dev,
+ 			   const struct ethtool_link_ksettings *lk_ksettings)
+ {
++	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
+ 	struct bnxt *bp = netdev_priv(dev);
+ 	struct bnxt_link_info *link_info = &bp->link_info;
+-	const struct ethtool_link_settings *base = &lk_ksettings->base;
+ 	bool set_pause = false;
+ 	u32 speed, lanes = 0;
+ 	int rc = 0;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+index 7f3f5afa864f..45d28a65347e 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
++++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+@@ -662,8 +662,8 @@ static unsigned int lmm_to_fw_caps(const unsigned long *link_mode_mask)
+ static int get_link_ksettings(struct net_device *dev,
+ 			      struct ethtool_link_ksettings *link_ksettings)
+ {
++	struct ethtool_link_settings_hdr *base = &link_ksettings->base;
+ 	struct port_info *pi = netdev_priv(dev);
+-	struct ethtool_link_settings *base = &link_ksettings->base;
+ 
+ 	/* For the nonce, the Firmware doesn't send up Port State changes
+ 	 * when the Virtual Interface attached to the Port is down.  So
+@@ -717,9 +717,9 @@ static int get_link_ksettings(struct net_device *dev,
+ static int set_link_ksettings(struct net_device *dev,
+ 			    const struct ethtool_link_ksettings *link_ksettings)
+ {
++	const struct ethtool_link_settings_hdr *base = &link_ksettings->base;
+ 	struct port_info *pi = netdev_priv(dev);
+ 	struct link_config *lc = &pi->link_cfg;
+-	const struct ethtool_link_settings *base = &link_ksettings->base;
+ 	struct link_config old_lc;
+ 	unsigned int fw_caps;
+ 	int ret = 0;
+diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+index 2fbe0f059a0b..61d08547e3f9 100644
+--- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
++++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+@@ -1436,8 +1436,8 @@ static void fw_caps_to_lmm(enum fw_port_type port_type,
+ static int cxgb4vf_get_link_ksettings(struct net_device *dev,
+ 				  struct ethtool_link_ksettings *link_ksettings)
+ {
++	struct ethtool_link_settings_hdr *base = &link_ksettings->base;
+ 	struct port_info *pi = netdev_priv(dev);
+-	struct ethtool_link_settings *base = &link_ksettings->base;
+ 
+ 	/* For the nonce, the Firmware doesn't send up Port State changes
+ 	 * when the Virtual Interface attached to the Port is down.  So
+diff --git a/drivers/net/ethernet/cisco/enic/enic_ethtool.c b/drivers/net/ethernet/cisco/enic/enic_ethtool.c
+index f7986f2b6a17..4fe85780a950 100644
+--- a/drivers/net/ethernet/cisco/enic/enic_ethtool.c
++++ b/drivers/net/ethernet/cisco/enic/enic_ethtool.c
+@@ -129,8 +129,8 @@ static void enic_intr_coal_set_rx(struct enic *enic, u32 timer)
+ static int enic_get_ksettings(struct net_device *netdev,
+ 			      struct ethtool_link_ksettings *ecmd)
+ {
++	struct ethtool_link_settings_hdr *base = &ecmd->base;
+ 	struct enic *enic = netdev_priv(netdev);
+-	struct ethtool_link_settings *base = &ecmd->base;
+ 
+ 	ethtool_link_ksettings_add_link_mode(ecmd, supported,
+ 					     10000baseT_Full);
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+index 97b059be1041..24ff154285ac 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+@@ -508,7 +508,7 @@ static int qede_get_link_ksettings(struct net_device *dev,
+ 				   struct ethtool_link_ksettings *cmd)
+ {
+ 	typeof(cmd->link_modes) *link_modes = &cmd->link_modes;
+-	struct ethtool_link_settings *base = &cmd->base;
++	struct ethtool_link_settings_hdr *base = &cmd->base;
+ 	struct qede_dev *edev = netdev_priv(dev);
+ 	struct qed_link_output current_link;
+ 
+@@ -541,7 +541,7 @@ static int qede_get_link_ksettings(struct net_device *dev,
+ static int qede_set_link_ksettings(struct net_device *dev,
+ 				   const struct ethtool_link_ksettings *cmd)
+ {
+-	const struct ethtool_link_settings *base = &cmd->base;
++	const struct ethtool_link_settings_hdr *base = &cmd->base;
+ 	const struct ethtool_forced_speed_map *map;
+ 	struct qede_dev *edev = netdev_priv(dev);
+ 	struct qed_link_output current_link;
+diff --git a/include/linux/ethtool.h b/include/linux/ethtool.h
+index 12f6dc567598..1199e308c8dd 100644
+--- a/include/linux/ethtool.h
++++ b/include/linux/ethtool.h
+@@ -211,7 +211,7 @@ void ethtool_rxfh_context_lost(struct net_device *dev, u32 context_id);
+  * fields, but they are allowed to overwrite them (will be ignored).
+  */
+ struct ethtool_link_ksettings {
+-	struct ethtool_link_settings base;
++	struct ethtool_link_settings_hdr base;
+ 	struct {
+ 		__ETHTOOL_DECLARE_LINK_MODE_MASK(supported);
+ 		__ETHTOOL_DECLARE_LINK_MODE_MASK(advertising);
+diff --git a/net/ethtool/ioctl.c b/net/ethtool/ioctl.c
+index 5cc131cdb1bc..7da94e26ced6 100644
+--- a/net/ethtool/ioctl.c
++++ b/net/ethtool/ioctl.c
+@@ -425,7 +425,7 @@ convert_link_ksettings_to_legacy_settings(
+ 
+ /* layout of the struct passed from/to userland */
+ struct ethtool_link_usettings {
+-	struct ethtool_link_settings base;
++	struct ethtool_link_settings_hdr base;
+ 	struct {
+ 		__u32 supported[__ETHTOOL_LINK_MODE_MASK_NU32];
+ 		__u32 advertising[__ETHTOOL_LINK_MODE_MASK_NU32];
+diff --git a/net/ethtool/linkinfo.c b/net/ethtool/linkinfo.c
+index 30b8ce275159..2d5bc57160be 100644
+--- a/net/ethtool/linkinfo.c
++++ b/net/ethtool/linkinfo.c
+@@ -8,9 +8,9 @@ struct linkinfo_req_info {
+ };
+ 
+ struct linkinfo_reply_data {
+-	struct ethnl_reply_data		base;
+-	struct ethtool_link_ksettings	ksettings;
+-	struct ethtool_link_settings	*lsettings;
++	struct ethnl_reply_data			base;
++	struct ethtool_link_ksettings		ksettings;
++	struct ethtool_link_settings_hdr	*lsettings;
+ };
+ 
+ #define LINKINFO_REPDATA(__reply_base) \
+@@ -98,7 +98,7 @@ static int
+ ethnl_set_linkinfo(struct ethnl_req_info *req_info, struct genl_info *info)
+ {
+ 	struct ethtool_link_ksettings ksettings = {};
+-	struct ethtool_link_settings *lsettings;
++	struct ethtool_link_settings_hdr *lsettings;
+ 	struct net_device *dev = req_info->dev;
+ 	struct nlattr **tb = info->attrs;
+ 	bool mod = false;
+diff --git a/net/ethtool/linkmodes.c b/net/ethtool/linkmodes.c
+index 259cd9ef1f2a..17e49cf89f03 100644
+--- a/net/ethtool/linkmodes.c
++++ b/net/ethtool/linkmodes.c
+@@ -11,10 +11,10 @@ struct linkmodes_req_info {
+ };
+ 
+ struct linkmodes_reply_data {
+-	struct ethnl_reply_data		base;
+-	struct ethtool_link_ksettings	ksettings;
+-	struct ethtool_link_settings	*lsettings;
+-	bool				peer_empty;
++	struct ethnl_reply_data			base;
++	struct ethtool_link_ksettings		ksettings;
++	struct ethtool_link_settings_hdr	*lsettings;
++	bool					peer_empty;
+ };
+ 
+ #define LINKMODES_REPDATA(__reply_base) \
+@@ -62,10 +62,12 @@ static int linkmodes_reply_size(const struct ethnl_req_info *req_base,
+ {
+ 	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+ 	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+-	const struct ethtool_link_settings *lsettings = &ksettings->base;
+ 	bool compact = req_base->flags & ETHTOOL_FLAG_COMPACT_BITSETS;
++	const struct ethtool_link_settings_hdr *lsettings;
+ 	int len, ret;
+ 
++	lsettings = &ksettings->base;
++
+ 	len = nla_total_size(sizeof(u8)) /* LINKMODES_AUTONEG */
+ 		+ nla_total_size(sizeof(u32)) /* LINKMODES_SPEED */
+ 		+ nla_total_size(sizeof(u32)) /* LINKMODES_LANES */
+@@ -103,10 +105,12 @@ static int linkmodes_fill_reply(struct sk_buff *skb,
+ {
+ 	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+ 	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+-	const struct ethtool_link_settings *lsettings = &ksettings->base;
+ 	bool compact = req_base->flags & ETHTOOL_FLAG_COMPACT_BITSETS;
++	const struct ethtool_link_settings_hdr *lsettings;
+ 	int ret;
+ 
++	lsettings = &ksettings->base;
++
+ 	if (nla_put_u8(skb, ETHTOOL_A_LINKMODES_AUTONEG, lsettings->autoneg))
+ 		return -EMSGSIZE;
+ 
+@@ -237,7 +241,7 @@ static int ethnl_update_linkmodes(struct genl_info *info, struct nlattr **tb,
+ 				  struct ethtool_link_ksettings *ksettings,
+ 				  bool *mod, const struct net_device *dev)
+ {
+-	struct ethtool_link_settings *lsettings = &ksettings->base;
++	struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
+ 	bool req_speed, req_lanes, req_duplex;
+ 	const struct nlattr *master_slave_cfg, *lanes_cfg;
+ 	int ret;
+-- 
+2.43.0
+
 
