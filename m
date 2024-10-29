@@ -1,218 +1,144 @@
-Return-Path: <linux-kernel+bounces-386556-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3938D9B450C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:57:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12249B4507
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C6DB1C20CEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:57:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4D933B22B18
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 412A5204029;
-	Tue, 29 Oct 2024 08:56:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E75442040A2;
+	Tue, 29 Oct 2024 08:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PsV0AbyP"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="m6iiC17m"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CA420493B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2102A204091
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:56:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730192186; cv=none; b=EcITCpRPzkr6HOo0AXdSd1T3R9ez31dw/Oj9JaECKIW4G+Wpzni0LxeUiGdeO7YGvlkSwrPwJOH/7/+qtldgEgpcqxFrOnb/85qb9TPvOxbAVT0bZ2nMjd//DPo5NvVsyXmOeiea+Z+xB8Gv+c8oT0Mpl6Sm+WOWiZk95pPrvTo=
+	t=1730192174; cv=none; b=nXVnX/U9iiRq1yRZJB0q3KvWgKTbM72hKuMw+xLQlve9T0j9mlT0iXo93SCmpAU+4Hkl9XSITCGbJWqn6sCZfgVgJK8YXL6nSYNXEkyIkh+fPmhmPtD4yHXiofNDhWAz6faQavQB+g/+nltTLEv76sdYSAZKKaNcPkanXZL3rGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730192186; c=relaxed/simple;
-	bh=AXIBIm6u6Qx7op8AsQATpLo/Zp3lmq8PTNJE67XTfpI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=G9wXKGdaJ4qFEezzSurfb7udmVwPRNdDopmXVzsxjfStRLPq9Pk34Pt6G+dkBAZjJbK5TzovVwWq8na5/1J4kMaxUtaXQFvLsNp+tpKhwlvNclQP12XFS5ojkNRcuUNUeb8Kzeb5zDhn7g5JfuVhYDhX432aBWAQrJR3ainSvRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PsV0AbyP; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea6a4f287bso3293837a12.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:56:24 -0700 (PDT)
+	s=arc-20240116; t=1730192174; c=relaxed/simple;
+	bh=621QT/rt7ppLCdf7pdKUgsxJWg9USCuHr9bCXeE3uYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EXFGgkdvkbmW0bwLYM36TaqbHS7wNhF2Y98G8a6P16OBjSzy3iN7U3lh2Bruzrg294caGTmgTLDzDpMfBOh7cHbPG2kazeiJPTdCHNH5YGUSky2G8MQrlj0VzNEGeVeU5OY4SjxPnUNRn0yFUv+Iqm/JxUwBmQ75MrqLAlvjtvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=m6iiC17m; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d4c482844so3487241f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1730192184; x=1730796984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FFSFeeDBOyZstKB4qR1rdcdR6LJarrbDAw3IQnrq+2o=;
-        b=PsV0AbyPRImWvDekcrMqlDLXKnJ3jmiOjLhD1PAil9ERY7unor8f3pMgASKq1lCVcV
-         k9A/SdCwkfo4MUGO9xk6H75oW44KKIKs0T2C/H8pVU9TwcW9QV8l1qedHCTa763o//Ga
-         jyDbcFpJu+/dcXh8Gablk0ZiyiJsSldnvvCZ1nZt/DHR14UvED7wDMSsRMTYd8FP3tTd
-         9hlo1caEvw1R218tCVC7XkVnBAoaduThWBA9UZDGnA4a+zceBglw7WyzoiDYv+B7j/e8
-         X/V9y4pm0MdEZvmmm5C6LGSsmQd6oxk1qmMuTXIchN1372lS19MtEXZj1VFrZXstxVMD
-         fI+Q==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730192170; x=1730796970; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=q+tIuf+pw7VgqaoFXTVPLLVE0V3c5Y1bGL0baofA3s8=;
+        b=m6iiC17m9vkVd9SlIcGeqR5+84g1nCBaUyVmMnmfxVQ6ZjG/2GozCKaUPYHP8pDkO2
+         UgHWLK8OP5DgFGwWfV6Ff20GAvSE+fgJaYJWVT6zt5B0hWL6rXWzwT4PweOKCRlo3omw
+         jOzs85ukT2WykWZYDmAByKPmRZxqv5mNS5E1bN69Y2Y+yzOp4OeowIJGbfqdgV5cxezx
+         2T6tpxr/VxyCH+7TuhRtCiO7fp0oFDQPA8AkxgFTOdt+i85vIo7xX12OgyaabHxV4HdT
+         q5Ps6A5ouAvgNNPV0TlgULCSBklwaU5LvRJRmPBSFX6dg61lK76S63PAyAvrQIjGETCz
+         xKwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730192184; x=1730796984;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FFSFeeDBOyZstKB4qR1rdcdR6LJarrbDAw3IQnrq+2o=;
-        b=kTVMoRmLiN7Pf/DMrI10OqV3oPEVUCZ66I2dR5yD5XvdUPtcXe8Vtcwc1jLCYq3/Yr
-         V0+WgwOkEyBmcYY3tEw9xI58DgBsLzyMzF8oaJjQsBvaSAshiMXLhL8a/uk979kJyIcJ
-         eYTisKnhSs3XiHute08uJHMQfVchFaZEs5fhWCUDRGbRfEzl/XaLXOAzlIfsYMMDsXJ0
-         4P7eqHBuJdwGdlAG+z25Z2uajzKL+szz9DekAZeIjM3ilFp5fOmkPg3heo7n0PcNKl/J
-         5/I4+gPKrYrKC1XSBKh4vr94x7N8UwDOElo+HKaWBny0ZyRcFQWHp401BfL075fVO2v9
-         UFfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVs7eegb8qIloMyu6fvbTw7Rb7IuvfyxOedOICMkashTS8f+hmcZXMbLVm0BeQ8JM7nfLm7EDzdu7ab1mE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqBc8mCEHUVZZzEltIlTDJfVdib02OVKiOSvFuC5/I5wRNAMUq
-	CRmWADyuReVecaRVvMW3xZNG2Ybj68z58UZA1YByVPp79yzbFa2dS3ekjlxUMXc=
-X-Google-Smtp-Source: AGHT+IHUiKiL8NxbpHUidQXUZlRt/40IbI6UTNYVhRyPPrvl8eNbx53ouNpRbo+L6FHbv61oZFiB4g==
-X-Received: by 2002:a05:6a21:1798:b0:1d9:18b7:496 with SMTP id adf61e73a8af0-1d9a851e099mr15600766637.45.1730192183609;
-        Tue, 29 Oct 2024 01:56:23 -0700 (PDT)
-Received: from PXLDJ45XCM.bytedance.net ([61.213.176.9])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8696a86sm7156832a12.47.2024.10.29.01.56.20
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 29 Oct 2024 01:56:23 -0700 (PDT)
-From: Muchun Song <songmuchun@bytedance.com>
-To: axboe@kernel.dk,
-	tj@kernel.org,
-	yukuai1@huaweicloud.com
-Cc: chengming.zhou@linux.dev,
-	muchun.song@linux.dev,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Muchun Song <songmuchun@bytedance.com>,
-	Yu Kuai <yukuai3@huawei.com>
-Subject: [PATCH v2 2/2] block: refactor rq_qos_wait()
-Date: Tue, 29 Oct 2024 16:55:59 +0800
-Message-Id: <20241029085559.98390-2-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
-In-Reply-To: <20241029085559.98390-1-songmuchun@bytedance.com>
-References: <20241029085559.98390-1-songmuchun@bytedance.com>
+        d=1e100.net; s=20230601; t=1730192170; x=1730796970;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q+tIuf+pw7VgqaoFXTVPLLVE0V3c5Y1bGL0baofA3s8=;
+        b=l9wwkLPhyouf/ifEY2dwUdP/touiPLmIdz4qiaxz0UU80lA5BXZFkv3q+pPLM5v0uy
+         PbXUsmOvDVVdCqLXUhDUR+rZNDoU5iCDzbSBMktbLFCN+H9mGn89qqmUPuPTLR1ypMLp
+         FkQ+lMRzK5vVO+ReRUje56XhSmFXJ6Fq8isGN121ZLAkhHN3YIokoxR3XNce2qS1WmpB
+         NcNBxg2JEmgJ9f6X/IUvSejNRpbFDEAUnCKpRVvlevYRml01JR5JivLG58/HZdcB8e47
+         tyO/bpTLXUPk6lR7YJ3qbpXULZRc7UjnSc0iSuA745iGxYoWz7qUgKVb8PldS6zVdsNK
+         BPyA==
+X-Gm-Message-State: AOJu0Yz5BiwT6OW49UaK/lYDkzs2I8KB93lREHmZHfj/mfNr9fwlPvws
+	1a5vMbbcAxdhHCJ5PDdGtTnMNcV+q2cOKKY3GfOVXqHZApiYNkffOTogxooeWLU=
+X-Google-Smtp-Source: AGHT+IEA5JJWXtQoHZ0PdS/MJdUSxxPT9oA+1aQ+m1nReUn2taETur8wxSZ4YWpYW5tyNcpUGNlwNg==
+X-Received: by 2002:a05:6000:1f11:b0:37d:52d0:a59d with SMTP id ffacd0b85a97d-380610f2bd6mr7564818f8f.10.1730192170391;
+        Tue, 29 Oct 2024 01:56:10 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b132fbsm11900069f8f.4.2024.10.29.01.56.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 01:56:09 -0700 (PDT)
+Date: Tue, 29 Oct 2024 09:56:08 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Conor Dooley <conor.dooley@microchip.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Aleksandr Shubin <privatesub2@gmail.com>, 
+	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v10 1/3] dt-bindings: pwm: Add binding for Allwinner
+ D1/T113-S3/R329 PWM controller
+Message-ID: <4ioz6f6efs2uhf5mitb4xhebqeryyz5ukple4fkn54wpqep3c4@4ktefld35c3s>
+References: <20241011102751.153248-1-privatesub2@gmail.com>
+ <20241011102751.153248-2-privatesub2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ulmatopmaqdyrkp3"
+Content-Disposition: inline
+In-Reply-To: <20241011102751.153248-2-privatesub2@gmail.com>
 
-When rq_qos_wait() is first introduced, it is easy to understand. But
-with some bug fixes applied, it is not easy for newcomers to understand
-the whole logic under those fixes. In this patch, rq_qos_wait() is
-refactored and more comments are added for better understanding. There
-are 3 points for the improvement:
 
-1) Use waitqueue_active() instead of wq_has_sleeper() to eliminate
-   unnecessary memory barrier in wq_has_sleeper() which is supposed
-   to be used in waker side. In this case, we do need the barrier.
-   So use the cheaper one to locklessly test for waiters on the queue.
+--ulmatopmaqdyrkp3
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH v10 1/3] dt-bindings: pwm: Add binding for Allwinner
+ D1/T113-S3/R329 PWM controller
+MIME-Version: 1.0
 
-2) Remove acquire_inflight_cb() logic for the first waiter out of the
-   while loop to make the code clear.
+Hello,
 
-3) Add more comments to explain how to sync with different waiters and
-   the waker.
+On Fri, Oct 11, 2024 at 01:27:32PM +0300, Aleksandr Shubin wrote:
+> +  allwinner,pwm-channels:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: The number of PWM channels configured for this instance
+> +    enum: [6, 9]
 
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
----
-v2:
- - Introduce init_wait_func() in a seprate patch (Yu Kuai).
+I wonder if the number of channels is a property common enough that we
+can use "num-pwm-channels" here instead of a vendor specific property.
+Or would you suggest a different name? gpio-controller nodes have
+"ngpios", so maybe "npwms"?
 
- block/blk-rq-qos.c | 68 ++++++++++++++++++++++++++++++++--------------
- 1 file changed, 47 insertions(+), 21 deletions(-)
+A quick grep suggests we already have:
 
-diff --git a/block/blk-rq-qos.c b/block/blk-rq-qos.c
-index 858ce69c04ece..5d995d389eaf5 100644
---- a/block/blk-rq-qos.c
-+++ b/block/blk-rq-qos.c
-@@ -223,6 +223,14 @@ static int rq_qos_wake_function(struct wait_queue_entry *curr,
- 	 * Remove explicitly and use default_wake_function().
- 	 */
- 	default_wake_function(curr, mode, wake_flags, key);
-+	/*
-+	 * Note that the order of operations is important as finish_wait()
-+	 * tests whether @curr is removed without grabbing the lock. This
-+	 * should be the last thing to do to make sure we will not have a
-+	 * UAF access to @data. And the semantics of memory barrier in it
-+	 * also make sure the waiter will see the latest @data->got_token
-+	 * once list_empty_careful() in finish_wait() returns true.
-+	 */
- 	list_del_init_careful(&curr->entry);
- 	return 1;
- }
-@@ -248,37 +256,55 @@ void rq_qos_wait(struct rq_wait *rqw, void *private_data,
- 		 cleanup_cb_t *cleanup_cb)
- {
- 	struct rq_qos_wait_data data = {
--		.rqw = rqw,
--		.cb = acquire_inflight_cb,
--		.private_data = private_data,
-+		.rqw		= rqw,
-+		.cb		= acquire_inflight_cb,
-+		.private_data	= private_data,
-+		.got_token	= false,
- 	};
--	bool has_sleeper;
-+	bool first_waiter;
- 
--	has_sleeper = wq_has_sleeper(&rqw->wait);
--	if (!has_sleeper && acquire_inflight_cb(rqw, private_data))
-+	/*
-+	 * If there are no waiters in the waiting queue, try to increase the
-+	 * inflight counter if we can. Otherwise, prepare for adding ourselves
-+	 * to the waiting queue.
-+	 */
-+	if (!waitqueue_active(&rqw->wait) && acquire_inflight_cb(rqw, private_data))
- 		return;
- 
- 	init_wait_func(&data.wq, rq_qos_wake_function);
--	has_sleeper = !prepare_to_wait_exclusive(&rqw->wait, &data.wq,
-+	first_waiter = prepare_to_wait_exclusive(&rqw->wait, &data.wq,
- 						 TASK_UNINTERRUPTIBLE);
-+	/*
-+	 * Make sure there is at least one inflight process; otherwise, waiters
-+	 * will never be woken up. Since there may be no inflight process before
-+	 * adding ourselves to the waiting queue above, we need to try to
-+	 * increase the inflight counter for ourselves. And it is sufficient to
-+	 * guarantee that at least the first waiter to enter the waiting queue
-+	 * will re-check the waiting condition before going to sleep, thus
-+	 * ensuring forward progress.
-+	 */
-+	if (!data.got_token && first_waiter && acquire_inflight_cb(rqw, private_data)) {
-+		finish_wait(&rqw->wait, &data.wq);
-+		/*
-+		 * We raced with rq_qos_wake_function() getting a token,
-+		 * which means we now have two. Put our local token
-+		 * and wake anyone else potentially waiting for one.
-+		 *
-+		 * Enough memory barrier in list_empty_careful() in
-+		 * finish_wait() is paired with list_del_init_careful()
-+		 * in rq_qos_wake_function() to make sure we will see
-+		 * the latest @data->got_token.
-+		 */
-+		if (data.got_token)
-+			cleanup_cb(rqw, private_data);
-+		return;
-+	}
-+
-+	/* we are now relying on the waker to increase our inflight counter. */
- 	do {
--		/* The memory barrier in set_task_state saves us here. */
- 		if (data.got_token)
- 			break;
--		if (!has_sleeper && acquire_inflight_cb(rqw, private_data)) {
--			finish_wait(&rqw->wait, &data.wq);
--
--			/*
--			 * We raced with rq_qos_wake_function() getting a token,
--			 * which means we now have two. Put our local token
--			 * and wake anyone else potentially waiting for one.
--			 */
--			if (data.got_token)
--				cleanup_cb(rqw, private_data);
--			return;
--		}
- 		io_schedule();
--		has_sleeper = true;
- 		set_current_state(TASK_UNINTERRUPTIBLE);
- 	} while (1);
- 	finish_wait(&rqw->wait, &data.wq);
--- 
-2.20.1
+	fsl,pwm-number in mxs-pwm.yaml
+	st,pwm-num-chan in pwm-st.txt
+	snps,pwm-number in snps,dw-apb-timers-pwm2.yaml
 
+As a follow up this could then be used by pwmchip_alloc() to determine
+the number of channels if the passed npwm value is 0.
+
+Best regards
+Uwe
+
+--ulmatopmaqdyrkp3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcgoyUACgkQj4D7WH0S
+/k4BJwf8DvGu76czyjVYmp+JyjZGGyzYFVym3ObWj8LAQZ7pr5F6O61BxMrIC/a4
+RWe9joUnrwLy+UJgxerMNtgS1TgnCgb2r8VzdheUJcDwTjPBAPvaa8eOpybmRtSq
+TxJcKF0qlT8bGtWZjRsx/UYKWLZUrrhgOt7CM0LY4kubCeDEwruXHZSy/FtuPvlM
+STFxNDN8fT7KuaqVY7HYvYZw6tOROAwFaxQhMWUIWQIruQyF4+WJ2bVgBQM77bxK
+OgE8BcqpFcCB2NU0qnyDXMqalDPYeh9necn8LrbQ0qXtE11vn5+bOlJvOHQhet8x
+DYJfsCSOcurHrnvmYo50GYpNdoJUrA==
+=2jh3
+-----END PGP SIGNATURE-----
+
+--ulmatopmaqdyrkp3--
 
