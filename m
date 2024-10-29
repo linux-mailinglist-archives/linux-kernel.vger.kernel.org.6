@@ -1,213 +1,155 @@
-Return-Path: <linux-kernel+bounces-386460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F1DC9B43BC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:05:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785AD9B43BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:06:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3583BB22115
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:05:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AADCB1C21F34
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DD020110A;
-	Tue, 29 Oct 2024 08:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E6D2036F2;
+	Tue, 29 Oct 2024 08:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vfalQd62"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eWGjIyIB"
+Received: from mail-ot1-f44.google.com (mail-ot1-f44.google.com [209.85.210.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC1E54C6E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:05:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7A01854;
+	Tue, 29 Oct 2024 08:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189127; cv=none; b=GoMtLUYJoKrrXo897lMC+5qDMmqPClwDWvIj+4NHGHqJq+YW755xWD9AQjYruVBY27EDMOmwIsgJiBQXWxX+2ESe0IqlAOxxnw+TY1fr6DREjkxFWdw7+KL03+YryJS4M4jZ2TR6u3mgZheU0ygG0keLC5xWaHnNZEu8QLc84ic=
+	t=1730189196; cv=none; b=m8uuge8rBfJTesV8bicqYmjmm0EFSyAG023ZVTAng/LN7KwE9M2pc9AV1jNAG6qgSGmIPXnZeJLHGyvvubuguQFYFawtciZxAmXWa6+hQFdygDyv+G2S8z7Zm9mteqVed69aireCPX2LFsr8dBzAigzHJtvhd3Q77a2+SrD3eHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189127; c=relaxed/simple;
-	bh=Wgu4Q3YZ64aWSqvWoqqloTsZbrePlNg2P6R61VqI7S4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g9PYVXkc77Uyea1bDoXv0HT42SF6XheyfF7NgylgbMjldpLHukYrRYgu4wOTGqCzZsyVPsvSFFyOdiQMQ/B1O6K1vq4j+FmkhAsrybjllHdDlYrx8GtQGcZ7JlgGd6NhQDE1MnaS5AqIRKslBuX4ykqoMEBKywRB/mGLEPkdtCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vfalQd62; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431695fa98bso50013445e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:05:24 -0700 (PDT)
+	s=arc-20240116; t=1730189196; c=relaxed/simple;
+	bh=b6ORu50y88S7RMLQz6KA5JfYQ3oIvh0lix92w+9Q6jw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KSVE2ydSa0Gz5aKYdsNw3N7GUbY57+qB2alxGLkkCTWDbJpWW6b89r4ln6jk/DXrdtYKhSYd5W/riMVMwK+aaOHHLNGMD7p31uM71Mcxsr9XJEU1o402Q/WK5oNuYY0VyGwOkzecKVPKUs4+wI0d1Y+b5IZU5rfRgdUFkhJmeFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eWGjIyIB; arc=none smtp.client-ip=209.85.210.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f44.google.com with SMTP id 46e09a7af769-7180bd5b79dso2023667a34.2;
+        Tue, 29 Oct 2024 01:06:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730189123; x=1730793923; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3lN2eRb6bl0eRsqhdld34k6abaNSa22uP0f7TfgqVgM=;
-        b=vfalQd62VFx9TyfFbm23aog8MWNlyilO7c+TXVpv/WyeQiZc5C1AddMIV8VL5J5sEx
-         qg/0DpK2AsAMon+bogO1Ez2RgCe+VOerS0m8Z9uLqgb2NB45VV6mP4vEVZsUiovcalBQ
-         3dJPiUCP+h8meYBsDjK29m4JXEjVwhvSIMxrpub6ERXJy1bLxhMzAa/sSWufKKGQhYBL
-         wTgx7o+wvbIjJSesxRcmgflIdH6RQOgm1QDif+sODDobRFWtwroXLPgVirLcJB+W38h9
-         NGa4Se6XB1nllE/e1useaOv8R0S+6wlJjUMTjCjZ7P3cyT99MjCazMDmESEdyyiuiQ9A
-         Fh8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730189123; x=1730793923;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1730189193; x=1730793993; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3lN2eRb6bl0eRsqhdld34k6abaNSa22uP0f7TfgqVgM=;
-        b=avgzYryDKrTfT0zm/eeVE4+mpF0+VTrTt7RhKSY/yMP2FII0DpxF+lJnBeBgW+Zn4o
-         xJJ2KcpYRJOuPWPEe61V1IkTCmQk767azIj1Lk88VPCuRpljcmzCWZUIwpn6wquehqfM
-         8auQsWUNzTzwhd8NIfnaIMXaAzdL/+LCSt+EivhszCYszyc6yeSaPsW3gTKm76fdilCe
-         tf6fPwjibjOjxprx0bMDqZB2kUmxjbkEndKKkLMzyazPYPmEiDXu/8K394cHJubAR9wv
-         LMe0RAjwlP+s2Czp+6fHjdbXir946Py39fvzV3Rz3BCw3O8/ZlaLi2aCogrDoNH0HCID
-         hvtw==
-X-Forwarded-Encrypted: i=1; AJvYcCWkAEuibVgduWKrHB5BbyVoWKaG6IwNTG37fxHirnATFaGlT99qup3pvZlg4bCDsoQUiQzZNbvGCa5zTPk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH2VqfvJ2btfm6s9A1YN6AAieFQNDFAO+1MJGoADF/QrAP+uuE
-	r0ESx9ctu8+7lZwY4KKdaBvzGeMOlYNbmj7cxIAdEff+k6NC6Awwl8zuunQ6v/A=
-X-Google-Smtp-Source: AGHT+IFSjfQXCa5GW1Npbhe93OduAXI4SGUOVExv2PPgkmuE8+77dW4spir8TRXtu2Ia2kzTS2IFQA==
-X-Received: by 2002:a05:600c:46d4:b0:427:ff3b:7a20 with SMTP id 5b1f17b1804b1-4319ad049a8mr79735435e9.27.1730189123296;
-        Tue, 29 Oct 2024 01:05:23 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5433f2sm167003775e9.1.2024.10.29.01.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:05:22 -0700 (PDT)
-Date: Tue, 29 Oct 2024 09:05:21 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	David Jander <david@protonic.nl>, Martin Sperl <kernel@martin.sperl.org>, 
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH RFC v4 01/15] pwm: core: export pwm_get_state_hw()
-Message-ID: <mavlxxjza7ud7ylgoewz6fz3chtuwljvcjjf6o3kcv555iolwa@wdnrsiow5u5w>
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
- <20241023-dlech-mainline-spi-engine-offload-2-v4-1-f8125b99f5a1@baylibre.com>
+        bh=erYrvbuM+zOt800Pswb5/FeIgISJC9qqJWCYratTQZU=;
+        b=eWGjIyIByFs4qG2sjNx/YnsJ4WoyVaFajWEmkS3r386ctJ5awv+lmME2z7X9uucefW
+         dmo+5D8xlPBQPnWJSrjukF9t1gTVA4wK1fA1/Bp40VdkahjzO1S0vGCm6vMdtd780+yx
+         fdgV8XEuAJ9R8I/2OBC47LMDiBO5GSKaY6anzAEG2hDuuDrnlEiNf4ROLE4Ve4IHJUDr
+         lsuI1/PJ4VA3JDlPj5N72pcX1BTSlU5oIYIl16AwMxukI8yHder0qQz2k2r3pZkt9VCb
+         tUlBaP9sn4Vxy2I+B2D4/yqBM6qOWmz8/7U9VIN3UZ+mFB9CFJyno3lvpuUkWLbxcumn
+         7tQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730189193; x=1730793993;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=erYrvbuM+zOt800Pswb5/FeIgISJC9qqJWCYratTQZU=;
+        b=buUV9GTXFzA/EJJaqq4OeN5zf9tNurPWYdGhZZK2U/MXj/Gn7fOZCWWoil0ZuE8UZy
+         7VA4/8v+fcsgG4tM871pvzfEYJa5NKYYV97z9tlc6Z4/qcqMlPUgOtwNdNyerMt0KWcA
+         SAOeBoTYwsdU9z9ysZzMzFH0fX4AIJWchSOL8LDuPcVpQyROaiUj5St0E/PQZIcCC7Yi
+         JXRZ1y6PhtMmk0YW2oBs+wcLTPQAbkdSMWfZL8KlHsskd16dJg6uXgPmBJ3QavZZ9Ew9
+         zS0b078bdlHNeXf4r0TZaJX9KGogZfLUseXhlwfd5FFnbLrTfYcshQz/uKePZw98FJUi
+         /z9A==
+X-Forwarded-Encrypted: i=1; AJvYcCWwe3PdXuJ02eajS35l3D+9HvxkUteXaco4bwWyUJvX9MrFGTiX2ky3Ohev/YkCHRgXd7+LrtfnQ8EQisE=@vger.kernel.org, AJvYcCXh7mee5Z3fHJQmlBmkNtCdydeTXucqdsiQGq9SSLZ0UYAkaZtLFBaA3LemC4h/F5mFFxFogrzxKvD4FxQiYcKU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4WmI6lgi5XQZ8abx4rImus6RShrFLBguboMqUYNXjLyEkA3uZ
+	OKexMgbPAMtLZqSSXNcRfvOhbbWUDZwaNVVguUGFTeqCUl19pJrum7wnUGM3mSiKnVwLPin1Vs5
+	KfT4v7UhqIkZ6MzQLjRjJT07M/9Y=
+X-Google-Smtp-Source: AGHT+IFDFWL4mUjTprma/osZp1KJIoCHwGw0y8thgiAfWKZzlyBnrv8BrxgAMiSJRJIJRIEpMo2FiY9XYcdbCsPmb4I=
+X-Received: by 2002:a05:6830:4189:b0:718:678:56e3 with SMTP id
+ 46e09a7af769-71867f1012cmr11989419a34.5.1730189192952; Tue, 29 Oct 2024
+ 01:06:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="j43zmgztsm2qmibl"
-Content-Disposition: inline
-In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-1-f8125b99f5a1@baylibre.com>
-
-
---j43zmgztsm2qmibl
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20241008094141.549248-5-zhangchunyan@iscas.ac.cn> <mhng-d7045132-a4e1-409a-9646-d8ecd3d6a48f@palmer-ri-x1c9a>
+In-Reply-To: <mhng-d7045132-a4e1-409a-9646-d8ecd3d6a48f@palmer-ri-x1c9a>
+From: Chunyan Zhang <zhang.lyra@gmail.com>
+Date: Tue, 29 Oct 2024 16:05:56 +0800
+Message-ID: <CAAfSe-t7iAomibbCJQJv6d6cig8eESgHCfWCuZkRUr9Jz+aY5Q@mail.gmail.com>
+Subject: Re: [PATCH V2 4/4] selftests/mm: skip virtual_address_range tests on riscv
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: zhangchunyan@iscas.ac.cn, shuah@kernel.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, alex@ghiti.fr, 
+	Charlie Jenkins <charlie@rivosinc.com>, linux-mm@kvack.org, linux-kselftest@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Palmer Dabbelt <palmer@dabbelt.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC v4 01/15] pwm: core: export pwm_get_state_hw()
-MIME-Version: 1.0
 
-Hello David,
+Hi Andrew=EF=BC=8C
 
-On Wed, Oct 23, 2024 at 03:59:08PM -0500, David Lechner wrote:
-> Export the pwm_get_state_hw() function. This is useful in cases where
-> we want to know what the hardware is actually doing, rather than what
-> what we requested it should do.
->=20
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
->=20
-> v4 changes: new patch in v4
->=20
-> And FYI for Uwe and Jonathan, there are a couple of other series
-> introducing PWM conversion triggers that could make use of this
-> so that the sampling_frequency attribute can return the actual rate
-> rather than the requested rate.
->=20
-> Already applied:
-> https://lore.kernel.org/linux-iio/20241015-ad7606_add_iio_backend_support=
--v5-4-654faf1ae08c@baylibre.com/
->=20
-> Under review:
-> https://lore.kernel.org/linux-iio/aea7f92b-3d12-4ced-b1c8-90bcf1d992d3@ba=
-ylibre.com/T/#m1377d5acd7e996acd1f59038bdd09f0742d3ac35
-> ---
->  drivers/pwm/core.c  | 55 +++++++++++++++++++++++++++++++++++++----------=
-------
->  include/linux/pwm.h |  1 +
->  2 files changed, 40 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> index 634be56e204b..a214d0165d09 100644
-> --- a/drivers/pwm/core.c
-> +++ b/drivers/pwm/core.c
-> @@ -718,7 +718,7 @@ int pwm_apply_atomic(struct pwm_device *pwm, const st=
-ruct pwm_state *state)
->  }
->  EXPORT_SYMBOL_GPL(pwm_apply_atomic);
-> =20
-> -static int pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *st=
-ate)
-> +static int __pwm_get_state_hw(struct pwm_device *pwm, struct pwm_state *=
-state)
->  {
->  	struct pwm_chip *chip =3D pwm->chip;
->  	const struct pwm_ops *ops =3D chip->ops;
-> @@ -730,29 +730,50 @@ static int pwm_get_state_hw(struct pwm_device *pwm,=
- struct pwm_state *state)
-> =20
->  		BUG_ON(WFHWSIZE < ops->sizeof_wfhw);
-> =20
-> -		scoped_guard(pwmchip, chip) {
-> -
-> -			ret =3D __pwm_read_waveform(chip, pwm, &wfhw);
-> -			if (ret)
-> -				return ret;
-> +		ret =3D __pwm_read_waveform(chip, pwm, &wfhw);
-> +		if (ret)
-> +			return ret;
-> =20
-> -			ret =3D __pwm_round_waveform_fromhw(chip, pwm, &wfhw, &wf);
-> -			if (ret)
-> -				return ret;
-> -		}
-> +		ret =3D __pwm_round_waveform_fromhw(chip, pwm, &wfhw, &wf);
-> +		if (ret)
-> +			return ret;
-> =20
->  		pwm_wf2state(&wf, state);
-> =20
->  	} else if (ops->get_state) {
-> -		scoped_guard(pwmchip, chip)
-> -			ret =3D ops->get_state(chip, pwm, state);
-> -
-> +		ret =3D ops->get_state(chip, pwm, state);
->  		trace_pwm_get(pwm, state, ret);
->  	}
-> =20
->  	return ret;
->  }
+On Fri, 25 Oct 2024 at 02:00, Palmer Dabbelt <palmer@dabbelt.com> wrote:
+>
+> On Tue, 08 Oct 2024 02:41:41 PDT (-0700), zhangchunyan@iscas.ac.cn wrote:
+> > RISC-V doesn't currently have the behavior of restricting the virtual
+> > address space which virtual_address_range tests check, this will
+> > cause the tests fail. So lets disable the whole test suite for riscv64
+> > for now, not build it and run_vmtests.sh will skip it if it is not pres=
+ent.
+> >
+> > Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+> > Signed-off-by: Chunyan Zhang <zhangchunyan@iscas.ac.cn>
+> > ---
+> > V1: https://lore.kernel.org/linux-mm/ZuOuedBpS7i3T%2Fo0@ghost/T/
+> > ---
+> >  tools/testing/selftests/mm/Makefile       |  2 ++
+> >  tools/testing/selftests/mm/run_vmtests.sh | 10 ++++++----
+> >  2 files changed, 8 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/mm/Makefile b/tools/testing/selfte=
+sts/mm/Makefile
+> > index 02e1204971b0..76a378c5c141 100644
+> > --- a/tools/testing/selftests/mm/Makefile
+> > +++ b/tools/testing/selftests/mm/Makefile
+> > @@ -115,7 +115,9 @@ endif
+> >
+> >  ifneq (,$(filter $(ARCH),arm64 mips64 parisc64 powerpc riscv64 s390x s=
+parc64 x86_64 s390))
+> >  TEST_GEN_FILES +=3D va_high_addr_switch
+> > +ifneq ($(ARCH),riscv64)
+> >  TEST_GEN_FILES +=3D virtual_address_range
+> > +endif
+> >  TEST_GEN_FILES +=3D write_to_hugetlbfs
+> >  endif
+> >
+> > diff --git a/tools/testing/selftests/mm/run_vmtests.sh b/tools/testing/=
+selftests/mm/run_vmtests.sh
+> > index c5797ad1d37b..4493bfd1911c 100755
+> > --- a/tools/testing/selftests/mm/run_vmtests.sh
+> > +++ b/tools/testing/selftests/mm/run_vmtests.sh
+> > @@ -347,10 +347,12 @@ if [ $VADDR64 -ne 0 ]; then
+> >       # allows high virtual address allocation requests independent
+> >       # of platform's physical memory.
+> >
+> > -     prev_policy=3D$(cat /proc/sys/vm/overcommit_memory)
+> > -     echo 1 > /proc/sys/vm/overcommit_memory
+> > -     CATEGORY=3D"hugevm" run_test ./virtual_address_range
+> > -     echo $prev_policy > /proc/sys/vm/overcommit_memory
+> > +     if [ -x ./virtual_address_range ]; then
+> > +             prev_policy=3D$(cat /proc/sys/vm/overcommit_memory)
+> > +             echo 1 > /proc/sys/vm/overcommit_memory
+> > +             CATEGORY=3D"hugevm" run_test ./virtual_address_range
+> > +             echo $prev_policy > /proc/sys/vm/overcommit_memory
+> > +     fi
+> >
+> >       # va high address boundary switch test
+> >       ARCH_ARM64=3D"arm64"
+>
+> Acked-by: Palmer Dabbelt <palmer@rivosinc.com>
+>
+> (I'm taking the first two as they're RISC-V bits)
 
-I don't understand why you introduce __pwm_get_state_hw() (a variant of
-pwm_get_state_hw() that expects the caller to hold the chip lock) when the
-single caller (apart from plain pwm_get_state_hw()) could just continue
-to use pwm_get_state_hw().
+Could you please pick up the last two through your tree?
 
-In principle I'm open to such a patch and wonder if there is already a
-merge plan for this series. If you send a simpler patch soon with the
-same objective, I'll make sure it goes into v6.13-rc1 in the assumption
-that it's to late for the whole series to go in then. Or do you still
-target 6.13-rc1 for the spi bits? Then it would probably better to let
-this patch go in with the rest via the spi tree.
-
-Best regards
-Uwe
-
---j43zmgztsm2qmibl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcglz8ACgkQj4D7WH0S
-/k4VNgf/SnQ3FDnC2c7bg2CyahKuEnbI1V+Mh1n4mLdEhbjuD3kDrXmP8S8QoYN3
-UPKt/DB95LNR4rW23vH6A/VwT0Z2pxGUFkWUc+rph/XLlHGSlTHA24wqcAUFmv9U
-LrdFn6se1JD/0iqekbIgSw4Z1wmMUyDgVf5qPhCr0T8q/5xMfRnOnDRot9OLxHAE
-2wthItMXrD74GNxg7hYr+Egp9RNtEj+V8CUqOriJuHx3HDEgx+tPFT5zaBKAFOnf
-tNIEHM9s2IYxsbR97SmlSVnOdVHutuGAEsgaPGjzynuoLYqT5Wi39UbZc0Z4wCoP
-RnMNIRjxMCTHTibMjVPASVQRLwvN6g==
-=MQGh
------END PGP SIGNATURE-----
-
---j43zmgztsm2qmibl--
+Thanks,
+Chunyan
 
