@@ -1,108 +1,147 @@
-Return-Path: <linux-kernel+bounces-386597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 403469B459B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:23:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A600E9B45A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9EEE1F2190E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:23:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40C50B21A6B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:24:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F71E102D;
-	Tue, 29 Oct 2024 09:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3FFC1E3DCC;
+	Tue, 29 Oct 2024 09:24:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wmfor0SW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bkBqZCHs"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294351E0DE1
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:23:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BC7A18FDBC;
+	Tue, 29 Oct 2024 09:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730193815; cv=none; b=OuSib9mq/wosIqOUfGEqvn2n4noLvqpsma5lalOme+qHFZ1qHhQ4svCBHFeh8WMcwVxJuBMNDmyqWrUYOxAmYxiXoricPMrTWW828/W58001d3Ka3H1ZyD2y+qMBeB1oK0MJijLaAxXLrjJo0VMWv8PzPK2q0wVIJ9JMHgvg6wM=
+	t=1730193846; cv=none; b=e5sJBQnJAxIBnTBPI6QifVaFtWWZZFVkXeVh+h3B0dkh0K7iJreELWk9CZysKVbTolNkqd29B+p2bxxcPl9aUNtYpVU27j9dcjRS409IG6Od3XtniaFTqaPlDMwBuRdST9/P1tlh0T2Z84RXR7bG00QOfTBRX3txW8bA3Al/OJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730193815; c=relaxed/simple;
-	bh=0pDD/qKzHXHs+No9iGp2bHGSwuvI7K6vrHmd7+BRnZA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Srn4Iz4HuNIauWGKfnPkzGoC+g/XTFeOmkoatWcRV4QR9Ya7yDUyHBuDMhd8X9x+vkXypqo27XLOdgxLIfL4blJbAkKn0KqxjNxwi03K0Gn8s8KdkRn7YUmuVfyJ208k9g4/hF0OPsOaGxINUihZBLJa/20NqPg89JfmWYsPQjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wmfor0SW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB0CAC4CECD;
-	Tue, 29 Oct 2024 09:23:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730193814;
-	bh=0pDD/qKzHXHs+No9iGp2bHGSwuvI7K6vrHmd7+BRnZA=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Wmfor0SWM9YB25lRSj9Vr9Azb8CUkxKzn4vlIf+alTGJKl1Mx/nqVaHAV6hwow05r
-	 SpiGKPT+oFJyPmQiFlTIP+N/7Ur6vpA3D9nUz1iII5cmYnyNcjF3Uv1XHAiyrJRfdq
-	 Qb7hDrLP02B3o8/pzKwvZXY07UgyI79C488lf6huDkfmJRWu/4F+poL8oVseStNOeT
-	 6AAKP/yzCrqKR0qKyrsR4vrjDEQihCfltiVBTPM3F2JE2amMLIcn/H4L28smRb2KvQ
-	 wlCDGuJBc6o6xHquc/oN4ZAXJwLjAjZsxr03f/jSC+AtWSYyIKVjhHRWjvL1FUp0FJ
-	 2Vq5ll05iW07Q==
-From: Arnd Bergmann <arnd@kernel.org>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Suma Hegde <suma.hegde@amd.com>,
-	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] platform/x86/amd/hsmp: fix compile-testing without CONFiG_AMD_NB
-Date: Tue, 29 Oct 2024 09:23:20 +0000
-Message-Id: <20241029092329.3857004-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1730193846; c=relaxed/simple;
+	bh=t8IaEQ9rRW1L3QPfhWtAigM2TUBdX+/OVhC9Y29POQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UrSGQJsz7A1YAiN7affuKVqZZ4AeV5AXHl1nmmL6bUUGyPvCFHrH+Y+woIhuSNtwhroxNOvwKaTvgAdgj+TBrYrwKcS29rzrrMXY9Hh3YSAg/HQRM4g+T3p9g55IYxD17LsQrAF66weKuJPAzPHvEAy4vJqL25iWRKkYHVUDOUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bkBqZCHs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T99bsl001875;
+	Tue, 29 Oct 2024 09:24:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lpGsjXu2/4/vriKZ7eshVzhDsf71wfnrZMqCKy/qUEs=; b=bkBqZCHs+IOEbrA6
+	vf15a9RGAIZRgwt/y4ykeg71A9le/a3RPdVJdgKS9zXAtRGhv/7mviF5MYi/0T1y
+	Y9uRKczYkARua+YVxYbvP9yWvX5aDXKWiVoyQ3ljWPA5D8sWK/OOOf6rRB6O1qRy
+	HI+qzIsfslHKvqqYE3D284w10NKUEUbEo4DrrRg46tQZisWCoKDqbmElrayBh495
+	nnC+DrlKM1hqe187hVPrBMzt3hwVxiwHQUmvLNE2xQQLZHS+NzoXdM0yG14Zwzh0
+	rUahUC28PrA5JJU9a9wuj/8NFmw3HoyGkibP6YCTT0QobVMNO71UQVY05xVHz/7K
+	wObpVw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn4yy3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:23:59 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T9NxIe005850
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 09:23:59 GMT
+Received: from [10.216.48.13] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
+ 2024 02:23:54 -0700
+Message-ID: <fff416f9-4ea7-4117-87b0-986087f8e142@quicinc.com>
+Date: Tue, 29 Oct 2024 14:53:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: qcom: Add GPU clocks for
+ QCS8300
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "Satya
+ Priya Kakitapalli" <quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
+ <20241024-qcs8300-mm-patches-v2-1-76c905060d0a@quicinc.com>
+ <jhwf2slcwvkpxggqt42mfmnyiibhbnvwtqk3to7ueq3ppla7q7@23qrl2z56ygu>
+ <0487791a-f31b-4427-b13b-b7ab6a80378b@quicinc.com>
+ <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
+Content-Language: en-US
+From: Imran Shaik <quic_imrashai@quicinc.com>
+In-Reply-To: <ae61b485-d3af-4226-b2f8-e89ef5b4ed71@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: OCZVljbNCuwwsXfBjMgcmsL59k424CC6
+X-Proofpoint-ORIG-GUID: OCZVljbNCuwwsXfBjMgcmsL59k424CC6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=634
+ malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290072
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-node_to_amd_nb() is defined to NULL in non-AMD configs:
 
-drivers/platform/x86/amd/hsmp/plat.c: In function 'init_platform_device':
-drivers/platform/x86/amd/hsmp/plat.c:165:68: error: dereferencing 'void *' pointer [-Werror]
-  165 |                 sock->root                      = node_to_amd_nb(i)->root;
-      |                                                                    ^~
-drivers/platform/x86/amd/hsmp/plat.c:165:68: error: request for member 'root' in something not a structure or union
+On 10/28/2024 12:35 PM, Krzysztof Kozlowski wrote:
+> On 28/10/2024 06:15, Imran Shaik wrote:
+>>
+>>
+>> On 10/26/2024 5:50 PM, Krzysztof Kozlowski wrote:
+>>> On Thu, Oct 24, 2024 at 07:01:14PM +0530, Imran Shaik wrote:
+>>>> The QCS8300 GPU clock controller is mostly identical to SA8775P, but
+>>>> QCS8300 has few additional clocks and minor differences. Hence, reuse
+>>>> SA8775P gpucc bindings and add additional clocks required for QCS8300.
+>>>
+>>> IIUC, these clocks are not valid for SA8775p. How do we deal with such
+>>> cases for other Qualcomm SoCs?
+>>>
+>>
+>> These newly added clocks are not applicable to SA8755P. In the
+>> gpucc-sa8775p driver, these clocks are marked to NULL for the SA8755P,
+>> ensuring they are not registered to the CCF.
+> 
+> I meant bindings. And existing practice.
+> 
 
-Change the definition to something that builds. This does introduce a
-NULL pointer dereference but the code is never called since the driver
-won't probe successfully.
+In the bindings, the same approach is followed in other Qualcomm SoCs as 
+well, where additional clocks are added to the existing identical SoC’s 
+bindings.
 
-Fixes: 7d3135d16356 ("platform/x86/amd/hsmp: Create separate ACPI, plat and common drivers")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/x86/include/asm/amd_nb.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+https://lore.kernel.org/r/20240818204348.197788-2-danila@jiaxyga.com
 
-diff --git a/arch/x86/include/asm/amd_nb.h b/arch/x86/include/asm/amd_nb.h
-index 6f3b6aef47ba..d0caac26533f 100644
---- a/arch/x86/include/asm/amd_nb.h
-+++ b/arch/x86/include/asm/amd_nb.h
-@@ -116,7 +116,10 @@ static inline bool amd_gart_present(void)
- 
- #define amd_nb_num(x)		0
- #define amd_nb_has_feature(x)	false
--#define node_to_amd_nb(x)	NULL
-+static inline struct amd_northbridge *node_to_amd_nb(int node)
-+{
-+	return NULL;
-+}
- #define amd_gart_present(x)	false
- 
- #endif
--- 
-2.39.5
+Thanks,
+Imran
+
+> Best regards,
+> Krzysztof
+> 
 
 
