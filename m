@@ -1,144 +1,149 @@
-Return-Path: <linux-kernel+bounces-386234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5EA9B40C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:09:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDF6B9B40CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:12:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1EDC28071B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8980C1F2328A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48A1C1F12F0;
-	Tue, 29 Oct 2024 03:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2051FB88A;
+	Tue, 29 Oct 2024 03:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gwfUXJn/"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EQLUGKtc"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34621EF959
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C465149C4F;
+	Tue, 29 Oct 2024 03:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730171382; cv=none; b=WpTWKb5JZXMAvrOyGSGlk8ueoeXaehdNu2eVDrDpckPa2MUUxZB0b1bSE3IznLNOlQ6UKty9UKY/wOfwqj8Mle/I/7EcSPHAGGpiZsijm1FIqhYU2ujpbeD/AXNr727sWWyT0qjB8f4DxEAqGX/yTSif8iw+Uf8vYncjOdmRSYk=
+	t=1730171557; cv=none; b=lPvvqhbgJ3clXRoOnqdOhBgYzwe4O7aUMKuJdkmM9Fn0lNq3zmQim+qvRKmlIoNwo9zuKy47GYZ1urgwaOn/Sg9Lj44asbn4o1hdlj5O4LwGzVue6Pto4Ib9noUHHkis1BsJQqKW0ASo0AGyRnmhTxMkxEedHaSMP2Og8AbdFOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730171382; c=relaxed/simple;
-	bh=3b5nW4pKky8yOvZUxCXln0sKFoR4Dn4zscraUTMyzmc=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=JK6FJKS6fNZDdzO2AC0p/GckFwv/o6yRMiSV/u28dxA+Znlz9Fz2bHr2RGIAEve/T4KACkd5sab5Mw3brTVpcBbSifClIAGsgzZC3AgEC4MREvyV11t/flgJLCHTUL1rZ1HyXftpCE3B2fTqxNWDR06y/qdfqFtQqTUB/lKq97Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gwfUXJn/; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730171381; x=1761707381;
-  h=date:from:to:cc:subject:message-id;
-  bh=3b5nW4pKky8yOvZUxCXln0sKFoR4Dn4zscraUTMyzmc=;
-  b=gwfUXJn/ItlMNuCPUi05s0e4iIQ8XwbOy4GpA6IZpUcMMjEE2n88vRSN
-   6t5fIhh6J0TzlJ5vREtW2MoWaef8Vi85Qa69IWOx6jnKhPYTqTg/+mkOL
-   KNqTHhsuHLxdcbYAtyCALF9Em35pldsv/r0PcGyqbFDqtOlsDqxiToW0G
-   xXfeYUZ8xlkWvsE3huF6F4oc+z14YtwFUmNyhydW6ikqHdOD8fjace04P
-   y7G58hVjEfvDiMYW7WoBrs1gkhJdBkDYrcIk/HxJ0cfmcxzEATtEzPnUF
-   q5kqedsvTVN5k1oWONq8bD6nslURdDbYTmYx6dp1aqYpFqgbqGml1nsqI
-   w==;
-X-CSE-ConnectionGUID: W4bOI3ttTNutH0DqXJlLZg==
-X-CSE-MsgGUID: fNpsEUWMSiaBk2IIx4Q1vw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33487685"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33487685"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 20:09:40 -0700
-X-CSE-ConnectionGUID: 2W1DTaUIQxSZXkB4Z/6i4Q==
-X-CSE-MsgGUID: 32rDDVGVQWuxm1W7kF7Q3g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,240,1725346800"; 
-   d="scan'208";a="86422609"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 28 Oct 2024 20:09:39 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t5cbx-000dBh-0n;
-	Tue, 29 Oct 2024 03:09:37 +0000
-Date: Tue, 29 Oct 2024 11:09:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:ras/core] BUILD SUCCESS
- 754269ccf03d68da15b9e5cdd26a6464b81cec67
-Message-ID: <202410291157.sUqPzo6c-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1730171557; c=relaxed/simple;
+	bh=AnKGB5qEJmuBsYyFcAMQDGxAzQO/N5iGbBB0ygAtp/c=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=fuwO6VMUmnpDCNDTyPOfrfVSoz77rhHJF5jpM+vpW3KnzMaxiVU3E532GiUXBaf9r9oLY+wXYFCe9Hb5kCdVdNtAMxZG7H3+U6PlKirgu5yHAacZL8yJnjxTeDUWtyyVAbonU9Yp6zMxZQ3L9wXOP5PQHLdus+EbYIH8FHlwhK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EQLUGKtc; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SLNuRq005754;
+	Tue, 29 Oct 2024 03:12:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5VxwDdM9oNjw9I44/LF8Cm
+	cxos08+pTMMfiAPQ/j2nc=; b=EQLUGKtc00JIwpOLj5uCB6ePshF2AOWfVRdzfw
+	xMkyWwX9bP04xFU0lunjfR1Bo+v0y0pvOhVOzALt+ofsN6OEjfz5wuoQ8M9ce72D
+	9belLdH2DHtn5ju5GIyTbaN9WKE306RmPWbGeIDAUGHEPxtnR3Noffe+b4ysJ2zI
+	OBfWRaFw4kk0b5+5jJBs4pnexXd+R9i8ichwZx6KvKT7c8JEw9loge7WtzD9/SAD
+	0KPgD6q4+alYGc+StsepBfpfi9AsKJc0SSVeqVU2spkpNJ1cMSP+A+7fE+ctKxxm
+	RezXXX9V1H8xedTve4FyAmqU57IKpyCcYT4271M8CVwi7EoA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gskjxvwt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 03:12:25 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T3COLT016954
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 03:12:24 GMT
+Received: from yijiyang-gv.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 28 Oct 2024 20:12:19 -0700
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+Subject: [PATCH v3 0/2] Add ethernet dts schema for qcs615/qcs8300
+Date: Tue, 29 Oct 2024 11:11:54 +0800
+Message-ID: <20241029-schema-v3-0-fbde519eaf00@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHtSIGcC/zWPwXLCMAxEfyXjc8XYchpcTvwHw8F2ZKJp44CdZ
+ ugw/HudGI4r7a6eHiJTYsri0DxEooUzT7EI/dEIP9h4IeC+aIESWyXxC7IfaLSgbGd6xPazC0E
+ U8zVR4PtWdDoX7WwmcMlGP6zxmlqNA+d5Sn/bwUWtdqE0WkOlWzvaQ4towXmjoe8cSRms12SO3
+ 5Qi/eymdBFr/4JbtGKp/RtrQZCAGmUoeF5hd7z9sufod34axflZSROVaea54lbWsh95PjSR7jO
+ 8vjUl8fwH3svpdSMBAAA=
+X-Change-ID: 20241029-schema-1a68d22456ff
+To: Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David
+ S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        "Jakub
+ Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Yijie Yang
+	<quic_yijiyang@quicinc.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1730171539; l=1370;
+ i=quic_yijiyang@quicinc.com; s=20240408; h=from:subject:message-id;
+ bh=AnKGB5qEJmuBsYyFcAMQDGxAzQO/N5iGbBB0ygAtp/c=;
+ b=v9nIjoiGXBC5VmtJjLtTNk0yb2WdvlN/m5gasihBeK24chrxZ6C3PX1fQyPGkO1tJ1i7xSb+h
+ L5b374nOP2ZBd/kAnz1vXGV2mKSMbx2rSN6q9vzpaMwQLg/5zdJSBQu
+X-Developer-Key: i=quic_yijiyang@quicinc.com; a=ed25519;
+ pk=XvMv0rxjrXLYFdBXoFjTdOdAwDT5SPbQ5uAKGESDihk=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: VUBW2ZrS1V3F_hLxco_fOZlL3i_TqHAH
+X-Proofpoint-ORIG-GUID: VUBW2ZrS1V3F_hLxco_fOZlL3i_TqHAH
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
+ impostorscore=0 suspectscore=0 phishscore=0 priorityscore=1501
+ mlxlogscore=914 bulkscore=0 mlxscore=0 malwarescore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290024
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git ras/core
-branch HEAD: 754269ccf03d68da15b9e5cdd26a6464b81cec67  x86/mce/intel: Use MCG_BANKCNT_MASK instead of 0xff
+Document the ethernet and SerDes compatible for qcs8300. This platform
+shares the same EMAC and SerDes as sa8775p, so the compatible fallback to
+it.
+Document the ethernet compatible for qcs615. This platform shares the
+same EMAC as sm8150, so the compatible fallback to it.
+Document the compatible for revision 2 of the qcs8300-ride board.
 
-elapsed time: 727m
+Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+---
+Changes in v3:
+- Remove merged patch from this series: "dt-bindings: phy: describe the Qualcomm SGMII PHY".
+- Remove unnecessary dependency description.
+- Rebase this patchsets on top of 'next-20241028'.
+- Link to v2: https://lore.kernel.org/r/20241017-schema-v2-0-2320f68dc126@quicinc.com
 
-configs tested: 52
-configs skipped: 129
+Changes in v2:
+- Adjust the position of the EMAC compatible fallback for qcs8300 in the YAML file according to the order.
+- Link to v1: https://lore.kernel.org/r/132a8e29-3be7-422a-bc83-d6be00fac3e8@kernel.org
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+---
+Yijie Yang (2):
+      dt-bindings: net: qcom,ethqos: add description for qcs615
+      dt-bindings: net: qcom,ethqos: add description for qcs8300
 
-tested configs:
-alpha            allnoconfig    gcc-14.1.0
-alpha           allyesconfig    clang-20
-arc             allmodconfig    clang-20
-arc              allnoconfig    gcc-14.1.0
-arc             allyesconfig    clang-20
-arm             allmodconfig    clang-20
-arm              allnoconfig    gcc-14.1.0
-arm             allyesconfig    clang-20
-arm64           allmodconfig    clang-20
-arm64            allnoconfig    gcc-14.1.0
-csky             allnoconfig    gcc-14.1.0
-hexagon         allmodconfig    clang-20
-hexagon          allnoconfig    gcc-14.1.0
-hexagon         allyesconfig    clang-20
-i386            allmodconfig    gcc-12
-i386             allnoconfig    gcc-12
-i386            allyesconfig    gcc-12
-i386               defconfig    clang-19
-loongarch       allmodconfig    gcc-14.1.0
-loongarch        allnoconfig    gcc-14.1.0
-m68k            allmodconfig    gcc-14.1.0
-m68k             allnoconfig    gcc-14.1.0
-m68k            allyesconfig    gcc-14.1.0
-microblaze      allmodconfig    gcc-14.1.0
-microblaze       allnoconfig    gcc-14.1.0
-microblaze      allyesconfig    gcc-14.1.0
-mips             allnoconfig    gcc-14.1.0
-nios2            allnoconfig    gcc-14.1.0
-openrisc           defconfig    gcc-12
-parisc             defconfig    gcc-12
-riscv              defconfig    gcc-12
-s390            allmodconfig    gcc-14.1.0
-s390            allyesconfig    gcc-14.1.0
-s390               defconfig    gcc-12
-sh              allmodconfig    gcc-14.1.0
-sh               allnoconfig    gcc-14.1.0
-sh              allyesconfig    gcc-14.1.0
-sh                 defconfig    gcc-12
-sparc           allmodconfig    gcc-14.1.0
-sparc64            defconfig    gcc-12
-um              allmodconfig    clang-20
-um              allyesconfig    clang-20
-um                 defconfig    gcc-12
-um            i386_defconfig    gcc-12
-um          x86_64_defconfig    gcc-12
-x86_64           allnoconfig    clang-19
-x86_64          allyesconfig    clang-19
-x86_64             defconfig    gcc-11
-x86_64                 kexec    clang-19
-x86_64                 kexec    gcc-12
-x86_64              rhel-8.3    gcc-12
-xtensa           allnoconfig    gcc-14.1.0
+ .../devicetree/bindings/net/qcom,ethqos.yaml          | 19 ++++++++++++++-----
+ 1 file changed, 14 insertions(+), 5 deletions(-)
+---
+base-commit: c8f460cd88112a37cbb3321a25ddddba08bb0372
+change-id: 20241029-schema-1a68d22456ff
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Best regards,
+-- 
+Yijie Yang <quic_yijiyang@quicinc.com>
+
 
