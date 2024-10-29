@@ -1,398 +1,123 @@
-Return-Path: <linux-kernel+bounces-387384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7639B5044
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:21:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A081E9B5042
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E75CB22C7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:21:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 659D6283F04
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601A01DA305;
-	Tue, 29 Oct 2024 17:21:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE441D6194;
+	Tue, 29 Oct 2024 17:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ed0NIJQK"
-Received: from smtp.smtpout.orange.fr (smtp-16.smtpout.orange.fr [80.12.242.16])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uThwPnrp"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EBC199947;
-	Tue, 29 Oct 2024 17:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67F6A19754D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 17:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730222471; cv=none; b=bUCP+RNYQzG65E67iy4LhrvMumzf/JuqNujK4D2wDc6Pk8OnfFiWPP+Miht/zCu3LZ8c1BaIg+FDtYDnP9SfQT+JJjlqfZjN5eeeWCRu7dOclUhhsA17U9yQJL+9sfGW0varJAAtJTXPjaAaEN31iTD9WITRDCg2gKk6Wwk7g60=
+	t=1730222438; cv=none; b=oj/VAcegRj/1jY6NpH3WSYo+Ov8PNLF0a+ATUHLi6vIPyIUQW7oW4gqs8eR5zOkdPhkuEKUWnsl+MCBIKz1fP+rOLGXgLUW+AoIHhvydlaxypBTcMHSfCTDaaUS05zUrhd627Oww+JBVax1YO/yNjGZtB3P0Y+ukOP9YCfDehiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730222471; c=relaxed/simple;
-	bh=aZoSnhIYYGfzQEcndVUH53Dtr6Dv7M8RstKAy0UmYvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gsqN9qvDGxyb9CNNfBnab3V84SgEYKh9mNi4qem7XXv0OgOQIC04j6fNKqoSNihOBB5w3blEURH+WKYdL5uT6Vwyi0+KfGUhFEjAfSmC3u1opzL7LcLIGOYxnU1MvpYQy8AFOMkcFBV229B1tTX4EXBHK9qVjr2/UsaJKNPgVvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ed0NIJQK; arc=none smtp.client-ip=80.12.242.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id 5psqtypMIhwv35psqt8BUl; Tue, 29 Oct 2024 18:19:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1730222397;
-	bh=A1ipq0+eL7tHuEVwett4pkXKganRU63kOI3vJXzeeWc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=ed0NIJQKTL+P2upxbWMHO0auzbSV9RzRVB0u6H7QBWvuAMEJHaN7D27zzxhv8UtGl
-	 f9WBKYQUpxKylSMmZvk9ONwoBw4NT3oRwB0VV2x88tZAnnp1nDDdZwetxX49ziY4mi
-	 HtQp3uyljQ6pMBUD9OwN1N3WPaQA+OmsqobNDv18k3LbOtLlQMTwJuIGOX6Ugh32uO
-	 LUowdTBC/AIydclyN/CVYTJBvWEzlHeO1pOKO0RfyD8h8tFCcyKnu7w2fAWRtfv49S
-	 HS2S7ymxNHwwmsd8AJXBjpKe057o+WC626Uop20YwsSMePQ8WKOML6EmvGNQHjAJk1
-	 V790/COl27DZQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Tue, 29 Oct 2024 18:19:57 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <76147be2-9320-45a1-919c-4b41992fd7d9@wanadoo.fr>
-Date: Tue, 29 Oct 2024 18:19:55 +0100
+	s=arc-20240116; t=1730222438; c=relaxed/simple;
+	bh=a1G0i/NLLTyCcwzqXP9Sw+DHZFP0plS5ycVSGr3uIgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DXvvD+2EcxMtkyMayMH8PlB2UieTLdmUP8t3eYADNcp/J7bXHnpwTR6eIDCUcC1E/yqlYOv8MgmgkegcGzdBP4z4TiEiCxWManIbFa4YbTXcfDMOo/6pjsyHfTNrrr23LCJKhGr8qbfhKbLohWaklv8DZNSsMoIff4OV9ixvuLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uThwPnrp; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso3668156a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:20:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730222436; x=1730827236; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hcPztDRBbO+gnBgnc/GAPOLS8SXyF7AibdYbZdEAVk8=;
+        b=uThwPnrpqcdSGmiHRTk+UzDaSuReIcBsYjSHJrJpVpMwSquVErl1rmMKpKBbxcOtU+
+         nhQ8Tp5TmcLKioEdxe7aDcXClfqxo6iSw2ULyM1w4SgnL391/Swv9QU816xqWJOED06k
+         E+mT0iSpWkhS9QqzT6nahWy6/WLJQUPuQeb0OeLujGxw5pxbolWFuoZE+zYV9jSkveme
+         YcTcchknpqIwP+dtDV8C95/alrpf1YZK8Fv7FrHJMgECIHAM/YqgI/8ZoE+5hrk8Ans3
+         wDptMBOYP2iIC+BcTWBvyl9FmPP3JR6r53IPvUUGhcN6fO0qbQJr66q19dnerztIyrFK
+         hN3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730222436; x=1730827236;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hcPztDRBbO+gnBgnc/GAPOLS8SXyF7AibdYbZdEAVk8=;
+        b=ok0FZhvJ2zMTK3xqTA0JcF92RC/wMzW9YUK3pQ4q0VtXTGVMGFfK3ePS6jM9Y5NguC
+         z2zy/0GkyYUlld3I8tR3dl1dt+6KTjRFyPXX30Aufa78n3AoVzvulsowKyg6KZB6UoS5
+         z/RIAgu0FlH0RbFHniggftQ7APiIbo6r+3F5X17rVzpN9hVZYEyYVXgzML5aYdSsZc8a
+         cTmX3LIOk0sYacxHFjk/B+TwpxqaVE1egvI1555CwSHHlNDsu6c5k9T0ywP5wt1EGynM
+         5GhVhxfcBplsiCa/tbWlnV8lvKWs5ccnv7a1b5gRNQB80s1EkFOabj2WFDKTybD2vQVE
+         oJLA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9jtsVhOgsSCNdoosLYgnhzuYimQxkcTmDTukVvFhZWEuMzJpXCQ6PJvsWw03YaIRJvsmwQD7KeZkZdgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJewWZq8zIDoysbs3fzH7cv5FiTpc1OiKqefXp2rnrAVoKZ6ue
+	ZLAfAk+zFNJ2Jo25ZL2EzJKWhxz78fdiUt0dKEDm8vHfhTdO7FZUFu9XB26sOzU=
+X-Google-Smtp-Source: AGHT+IGXgbfzo6Ms367VDY/GcpMQ7HVMkDfOeOP/erT7USrt8i6Y/MNFKDgqCnyTLccduA/bLvdP+A==
+X-Received: by 2002:a05:6a20:e613:b0:1d8:f62d:3585 with SMTP id adf61e73a8af0-1d9a83abbbfmr14336348637.5.1730222435747;
+        Tue, 29 Oct 2024 10:20:35 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:303f:610b:d879:8715])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc8a3d0c2sm7728212a12.77.2024.10.29.10.20.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 10:20:35 -0700 (PDT)
+Date: Tue, 29 Oct 2024 11:20:33 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: Andrew Davis <afd@ti.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Hari Nagalla <hnagalla@ti.com>,
+	Beleswar Padhi <b-padhi@ti.com>, linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/3] remoteproc: k3-r5: Use IO memset to clear TCMs
+Message-ID: <ZyEZYRD+o2jPoTkq@p14s>
+References: <20241021204557.929823-1-afd@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] net: selpcimac: Add driver for SEL PCIe network
- adapter
-To: Robert Joslyn <robert_joslyn@selinc.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org
-Cc: lee@kernel.org
-References: <20241028223509.935-1-robert_joslyn@selinc.com>
- <20241028223509.935-3-robert_joslyn@selinc.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20241028223509.935-3-robert_joslyn@selinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021204557.929823-1-afd@ti.com>
 
-Le 28/10/2024 à 23:35, Robert Joslyn a écrit :
-> Add support for SEL FPGA based network adapters. The network device is
-> implemented as an FPGA IP core and enumerated by the selpvmf driver.
-> This is used on multiple devices, including:
->   - SEL-3350 mainboard
->   - SEL-3390E4 card
->   - SEL-3390T card
+I have applied all 3 patches in this set.
+
+Thanks,
+Mathieu
+
+On Mon, Oct 21, 2024 at 03:45:55PM -0500, Andrew Davis wrote:
+> While it should be safe to use normal memset() on these memories as they
+> are mapped as Normal Non-Cached, using the memset_io() provides stronger
+> guarantees on access alignment and fixes a sparse check warning. Switch
+> to memset_io() here.
 > 
-> Signed-off-by: Robert Joslyn <robert_joslyn@selinc.com>
+> Signed-off-by: Andrew Davis <afd@ti.com>
 > ---
-
-Hi,
-
-a few nitpicks below, should it help.
-
-
-> +/**
-> + * selpcimac_rx_alloc_page() - Allocate a network fragment page.
-> + */
-> +static struct page *selpcimac_rx_alloc_page(struct selpcimac_rx_ring *ring)
-> +{
-> +	struct page *page = dev_alloc_page();
-> +
-> +	return page;
-
-return dev_alloc_page()?
-
-> +}
-
-...
-
-> +/**
-> + * selpcimac_cleanup_rxbd() - Remove an RXBD from hardware control.
-> + *
-> + * This is only safely called if RSTAT[RX_EN] == 0
-> + *
-> + * @desc: Pointer to the buffer descriptor to cleanup
-> + */
-> +static void selpcimac_cleanup_rxbd(struct sel_rx_bd *desc)
-> +{
-> +	desc->rxbd_ctrl &= (cpu_to_le32(~(RXBD_CTRL_EMT)));
-
-Un-needed outer ().
-
-> +}
-> +
-> +/**
-> + * selpcimac_alloc_mapped_page() - Allocate a new page and map it for DMA.
-> + *
-> + * This function will ensure the passed in rx_buffer has a valid page to
-> + * give to the hardware.  A new page will be allocated only if the page
-> + * pointer in the RX buffer is NULL.  If the page pointer is not NULL, the
-> + * page is already allocated and we are reusing it.
-> + *
-> + * @ring: Pointer to the ring that owns the RX buffer.
-> + * @bi:   Pointer to the RX buffer structure to allocate for.
-> + *
-> + * Returns:  true if a page was successfully allocated, false otherwise.
-> + */
-> +static bool selpcimac_alloc_mapped_page(struct selpcimac_rx_ring *ring,
-> +					struct selpcimac_rx_buffer *bi)
-> +{
-> +	struct page *page = bi->page;
-> +	dma_addr_t dma;
-> +
-> +	/* Already allocated, nothing to do */
-> +	if (page)
-> +		return true;
-> +
-> +	page = selpcimac_rx_alloc_page(ring);
-> +	if (likely(page)) {
-> +		dma = dma_map_page(ring->dev, page, 0,
-> +				   PAGE_SIZE, DMA_FROM_DEVICE);
-> +		if (dma_mapping_error(ring->dev, dma)) {
-> +			selpcimac_rx_free_page(ring, page);
-> +			page = NULL;
-> +		} else {
-> +			bi->dma = dma;
-> +			bi->page = page;
-> +			bi->page_offset = 0;
-> +		}
-> +	}
-> +	return (page);
-
-No need for ()
-
-> +}
-
-...
-
-> +/**
-> + * selpcimac_initialize_rx_ring() - Initialize the receive ring.
-> + *
-> + * This function allocates the buffer descriptor ring for the hardware,
-> + * initializes it, and programs it to the hardware.  It also starts the
-> + * receive buffer allocation process.
-> + *
-> + * @ring: RX ring to initialize
-> + *
-> + * Returns: 0 if successful, -ENOMEM if we couldn't initialize the ring.
-> + */
-> +static int selpcimac_initialize_rx_ring(struct selpcimac_rx_ring *ring)
-> +{
-> +	/* Allocation is an array of the currently configured number
-> +	 * of RX buffer descriptors rounded up to the nearest 4k.
-> +	 */
-> +	ring->size = (sizeof(struct sel_rx_bd) * ring->count);
-> +	ring->size = ALIGN(ring->size, 4096);
-> +
-> +	ring->desc = dma_alloc_coherent(ring->dev,
-> +					ring->size,
-> +					&ring->dma,
-> +					GFP_KERNEL);
-> +	if (!ring->desc)
-> +		goto err;
-
-return directly and avoid the 'err' label?
-
-> +
-> +	WARN_ON_ONCE((ring->dma % SEL_DATA_ALIGN) != 0);
-> +
-> +	memset(ring->desc, 0, ring->size);
-
-If I recollect correctly, dma_alloc_coherent() returns some zeroed memory.
-
-> +	ring->last_bd = ring->dma +
-> +		(ring->count - 1) * sizeof(struct sel_rx_bd);
-> +	ring->next_to_use = 0;
-> +	ring->next_to_clean = 0;
-> +
-> +	if (selpcimac_init_rx_buffers(ring))
-> +		goto err_free;
-
-Why no simply propagate the error code from selpcimac_init_rx_buffers()?
-Won't change anything, but more standard.
-
-> +
-> +	return 0;
-> +
-> +err_free:
-> +	dma_free_coherent(ring->dev, ring->size, ring->desc, ring->dma);
-> +	ring->desc = NULL;
-> +	ring->dma = 0;
-> +	ring->last_bd = 0;
-> +	ring->size = 0;
-> +err:
-> +	return -ENOMEM;
-> +}
-
-...
-
-> +/**
-> + * dump_sfp_id() - Print the id values for this ports SFP
-> + *
-> + * @mac:	SEL MAC device
-> + * @buff:	Buffer to write id values to
-> + * @size:	The size of the buffer to write to
-> + *
-> + * @returns: Number of bytes written to buff
-> + */
-> +static ssize_t dump_sfp_id(struct sel_pci_mac *mac, char *buff, int size)
-> +{
-> +	struct sel_sfp_id id;
-> +	ssize_t rc = 0;
-> +
-> +	if (sfp_read_id(mac, &id) < 0)
-> +		return 0;
-> +
-> +	if (id.sel_part[0] != 0) {
-> +		rc += snprintf(buff + rc, size - rc,
-> +			       "SELPartNumber: %.4s-%.2s\n",
-> +			       id.sel_part, id.sel_part_option);
-
-I think that sysfs_emit_at() should be preferred in this function.
-
-> +		rc += snprintf(buff + rc, size - rc,
-> +			       "SELSerialNumber: %.15s\n", id.sel_sn);
-> +	}
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Manufacturer: %.16s\n", id.name);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "PartNumber: %.16s\n", id.part);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Version: %.4s\n", id.rev);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "SerialNumber: %.16s\n", id.sernum);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "DateCode: %.8s\n", id.datecode);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Wavelength: %u nm\n", id.wavelength);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "LengthSingleMode: %u m\n", id.length_smf_km);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Length50umOM2: %u m\n", id.length_om2);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Length62p5umOM1: %u m\n", id.length_om1);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "LengthCopper: %u m\n", id.length_copper);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Length50umOM3: %u m\n", id.length_om3);
-> +
-> +	return rc;
-> +}
-> +
-> +/**
-> + * dump_sfp_diag() - Print the diag values for this ports SFP
-> + *
-> + * @mac:	SEL MAC device
-> + * @buff:	Buffer to write diag values to
-> + * @size:	The size of the buffer to write to
-> + *
-> + * @returns: Number of bytes written to buff
-> + */
-> +static ssize_t dump_sfp_diag(struct sel_pci_mac *mac, char *buff, int size)
-> +{
-> +	struct sel_sfp_diag diag;
-> +	ssize_t rc = 0;
-> +
-> +	if (sfp_read_diag(mac, &diag) < 0)
-> +		return 0;
-> +
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "Temperature: %d C\n", diag.temp);
-
-I think that sysfs_emit_at() should be preferred in this function.
-
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "SupplyVoltage: %u uV\n", diag.vcc);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "TxBiasCurrent: %u uA\n", diag.tx_bias);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "TxPower: %u nW\n", diag.tx_power);
-> +	rc += snprintf(buff + rc, size - rc,
-> +		       "RxPower: %u nW\n", diag.rx_power);
-> +
-> +	return rc;
-> +}
-> +
-> +/**
-> + * __show_attr() - Return data for a specific attribute
-> + *
-> + * @dev:            device object
-> + * @attr:           device attribute to show info for
-> + * @buff:           buffer to store output
-> + * @attribute_type: the type of attribute to return information for
-> + *
-> + * Return: number of bytes stored in the buffer
-> + */
-> +static ssize_t __show_attr(struct device *dev,
-> +			   struct device_attribute *attr,
-> +			   char *buff,
-> +			   enum sel_dev_attributes attribute_type)
-> +{
-> +	struct selpcimac_platform_private *priv = dev_get_drvdata(dev->parent);
-> +	struct sel_pci_mac *mac = priv->priv;
-> +	ssize_t bytes_written = 0;
-> +	int length = 0;
-> +
-> +	switch (attribute_type) {
-> +	case SFP_CONFIGURATION:
-> +		bytes_written =	sprintf(buff, "%d\n",
-> +					(u32)mac->sfp_configuration);
-> +		break;
-> +
-> +	case INTR_MOD_RATE:
-> +		bytes_written =	sprintf(buff, "%d\n",
-> +					(u8)mac->interrupt_moderation_rate);
-> +		break;
-> +
-> +	case INTR_RX_ABS:
-> +		bytes_written =	sprintf(buff, "%d\n",
-> +					ioread32(&mac->hw_mac->intr_moderation.rxabs));
-> +		break;
-> +
-> +	case INTR_RX_PACKET:
-> +		bytes_written =	sprintf(buff, "%d\n",
-> +					ioread32(&mac->hw_mac->intr_moderation.rxpacket));
-> +		break;
-> +
-> +	case INTR_TX_ABS:
-> +		bytes_written =	sprintf(buff, "%d\n",
-> +					ioread32(&mac->hw_mac->intr_moderation.txabs));
-> +		break;
-> +
-> +	case INTR_TX_PACKET:
-> +		bytes_written =	sprintf(buff, "%d\n",
-> +					ioread32(&mac->hw_mac->intr_moderation.txpacket));
-> +		break;
-> +
-> +	case INTR_THROTTLE:
-> +		bytes_written = sprintf(buff, "%d\n",
-> +					ioread32(&mac->hw_mac->intr_moderation.throttle));
-> +		break;
-> +
-> +	case ETH_REGISTERED:
-> +		length += snprintf(buff + length,
-
-You could remove 'lenght', as in all other cases.
-
-I also think that sysfs_emit() should be preferred.
-
-> +				   PAGE_SIZE - length,
-> +				   "%s\n",
-> +				   mac->netdev->name);
-> +		bytes_written = length;
-> +		break;
-> +
-> +	case SFP_ID:
-> +		bytes_written = dump_sfp_id(mac, buff, PAGE_SIZE);
-> +		break;
-> +
-> +	case SFP_DIAG:
-> +		bytes_written = dump_sfp_diag(mac, buff, PAGE_SIZE);
-> +		break;
-> +
-> +	default:
-> +		break;
-> +	}
-> +
-> +	return bytes_written;
-> +}
-
-...
-
-CJ
-
+>  drivers/remoteproc/ti_k3_r5_remoteproc.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/ti_k3_r5_remoteproc.c b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> index 2f996a962f557..e1fe85e5eba6a 100644
+> --- a/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> +++ b/drivers/remoteproc/ti_k3_r5_remoteproc.c
+> @@ -487,10 +487,10 @@ static int k3_r5_rproc_prepare(struct rproc *rproc)
+>  	 * can be effective on all TCM addresses.
+>  	 */
+>  	dev_dbg(dev, "zeroing out ATCM memory\n");
+> -	memset(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+> +	memset_io(core->mem[0].cpu_addr, 0x00, core->mem[0].size);
+>  
+>  	dev_dbg(dev, "zeroing out BTCM memory\n");
+> -	memset(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
+> +	memset_io(core->mem[1].cpu_addr, 0x00, core->mem[1].size);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.39.2
+> 
 
