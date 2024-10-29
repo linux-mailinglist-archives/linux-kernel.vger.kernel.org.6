@@ -1,150 +1,94 @@
-Return-Path: <linux-kernel+bounces-386477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8109B43F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:15:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3F09B43ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:15:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 267381F230B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:15:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE80B213E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C6D18A95A;
-	Tue, 29 Oct 2024 08:15:38 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA86202F77;
+	Tue, 29 Oct 2024 08:15:06 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C05D5202F6B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:15:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA4203700
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:15:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189737; cv=none; b=fiviq7fKKWz4WStVYLO7ZLK+y50BiNzlXz+Qiq82A9l2rv4xCMmFFv//hu+SbJ9tyQZKcr9CffzU/kb9kKgQW473Iy6ysj7gxZZz6M3tovJ+SwERp+tX4cRDq0H7JRTlzTJMWTs4gUKWMWyU4cEfaFcqYVeoNKz/jEpzLmTzIl4=
+	t=1730189706; cv=none; b=PEyWQxmgPYYKJ8MmmPBT8xxBNILtenVExCutNmAxe6oh3zPGBEtfUGqT76+gkCWCqY2fH99fXfYcK/oeJRy0BEEdQzGd3H4guXF22zEkNQ73hDM7E8WwqMW/EkabNAtDm49MBe8xjErZdSirxpIzOoe7/keep8YRx45SGJIyDq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189737; c=relaxed/simple;
-	bh=YggC+Qxo+NVcOErzTUXjBABSyADwrdnokU2LGl0F+fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RH8LINsec7mE23XyuXoqtXMOPggZ87WA30dt4X9nFgShywZT2e4Xs/56fsQS5bhOQmNAEgdgtcHnFNUjB0cgspsPi4WnHx7H323hv6guX4MyYOG34gIKSAhomqM1YNhT6lDm+GQBK/IUNjoz53Itr/OyeE4Bd3l3nnsMBv6pNhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5hNJ-0006Vu-Og; Tue, 29 Oct 2024 09:14:49 +0100
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t5hNG-000zSr-0D;
-	Tue, 29 Oct 2024 09:14:46 +0100
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 885EA361330;
-	Tue, 29 Oct 2024 08:14:45 +0000 (UTC)
-Date: Tue, 29 Oct 2024 09:14:45 +0100
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20241029-fresh-dinosaur-of-penetration-d695ff-mkl@pengutronix.de>
-References: <20241024-adventurous-imaginary-hornet-4d5c46-mkl@pengutronix.de>
- <CAOoeyxUhnyYG3p+DQJG-tvU5vc5WYQZLLqCXW=uPcXTjq2gVfw@mail.gmail.com>
- <20241025-truthful-honest-newt-c371c8-mkl@pengutronix.de>
- <CAOoeyxUEf5vjqL67WjR-DbrhE0==2hqHLEyZ5XEBhEfMfQ5pag@mail.gmail.com>
- <20241025-spirited-nocturnal-antelope-ce93dd-mkl@pengutronix.de>
- <CAOoeyxW5QwPMGAYCWhQDtZwJJLG5xj9HXpL3-cduRSgF+4VHhg@mail.gmail.com>
- <20241028-uptight-modest-puffin-0556e7-mkl@pengutronix.de>
- <CAOoeyxU1r3ayhNWrbE_muDhA0imfZYX3-UHxSen9TqsTrSsxyA@mail.gmail.com>
- <20241028-observant-gentle-doberman-0a2baa-mkl@pengutronix.de>
- <CAOoeyxWh1-=NVQdmNp5HBzf1YPo9tQdh=OzUUVFmvC-F7sCHWg@mail.gmail.com>
+	s=arc-20240116; t=1730189706; c=relaxed/simple;
+	bh=jVZI0IwpcekhbnfOrIbgBgWJzqVFKuVUtoIm9N+jkVc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=O6TtV6pRMpRAy8GVkHVYtzX1DOu4PAvrcwMvgcItFHbTcEu39Eab3442sZH8hEEaerf4IJMHYTadDLEGrOvpC4bjPP4iE7f/s2bpvD1T0DTP+Cg/BMi80ASrkPcLNivk5CKBNuY5zjvTY1yKrR0rbPbKX9DOV39F4n6VVAlVYQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aba93c01bso496969639f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:15:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730189703; x=1730794503;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5BTRHXytTFWgdZnYL2thO68nzA3wtruqd8M7jFd6tO8=;
+        b=pc2pTNulRbL9LqA2C15KabL8ZenJkBpZpEYNPmg+BlPW/dcsLISrtWOxckMRZVJjB1
+         Vwh/w3s7FQWTM/kyPYfhoe9VnXEbr2nsDAfr2mKK4FHRUQ2m/LhSxYMUqFeNXeboUaKY
+         HLIVovQ2YizYsWXTN4wd92fXi5Zm7lbrUn09N0wczd8qs0bIx6hbHZmgT4xB01iFk2/m
+         RTYNKRlYCBR6UQ+YnxAnu6/KWwfUz9NmIhDP928wh/MObg51NBW0S2++cykbPOk9IVp7
+         2AoIex2dkNqx1oTi4OYQema0mppgj5ZGogLxySWfVGsyEilq8zRBRgFp7L5XGk4jThVc
+         aypA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/etPKVQBp92u5IBsQWAnzOUtQh4WxxuRcpQQq8n/UZfX7Ya2kJB14zd1zCjcpI6d2bgFVzMd9qFDbybI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1JgSd0pa5GcnkBKvzuwYWQBVLcnqTo3Ujkr08fI814nezzTWT
+	NOPjICBUPzrpRXYeqtUT1Y4ZQ3c/4AfWRc2gd5QTMSmJOfYZT55zzB16uvUntjIuta5VkdxWL1f
+	hJ659tSxqEuu97MqBQa66gIUMpERNRpEV8x0BNKbPuM4ctem+8RMdqFY=
+X-Google-Smtp-Source: AGHT+IG8VvCIkrmNvSQH+kmC4iRLaOd+tCtOspcugELt4BK972V9xSrn5cpBxJ3eE49Xr5ZBxahDDGO4yGtK5fLRSCzt9o8VN2t+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="l2xctpm5dxyfmd5l"
-Content-Disposition: inline
-In-Reply-To: <CAOoeyxWh1-=NVQdmNp5HBzf1YPo9tQdh=OzUUVFmvC-F7sCHWg@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:b49:b0:3a0:b631:76d4 with SMTP id
+ e9e14a558f8ab-3a4ed2663ecmr114857565ab.1.1730189703613; Tue, 29 Oct 2024
+ 01:15:03 -0700 (PDT)
+Date: Tue, 29 Oct 2024 01:15:03 -0700
+In-Reply-To: <66ed861a.050a0220.2abe4d.0015.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67209987.050a0220.4735a.0258.GAE@google.com>
+Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
+From: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, brauner@kernel.org, dhowells@redhat.com, 
+	hdanton@sina.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, netfs@lists.linux.dev, 
+	oliver.sang@intel.com, rostedt@goodmis.org, stfrench@microsoft.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot suspects this issue was fixed by commit:
 
---l2xctpm5dxyfmd5l
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-MIME-Version: 1.0
+commit df9b455633aee0bad3e5c3dc9fc1c860b13c96d2
+Author: David Howells <dhowells@redhat.com>
+Date:   Thu Sep 26 13:58:30 2024 +0000
 
-On 29.10.2024 11:45:30, Ming Yu wrote:
-> > > > You have a high coupling between the MFD driver and the individual
-> > > > drivers anyways, so why not directly use the dynamically allocated
-> > > > buffer provided by the caller and get rid of the memcpy()?
-> > >
-> > > Okay! I will provide a function to request and free buffer for child =
-devices,
-> > > and update the caller's variables to use these two functions in the n=
-ext patch.
-> >
-> > I don't see a need to provide dedicated function to allocate and free
-> > the buffers. The caller can allocate them as part of their private data,
-> > or allocate them during probe().
->=20
-> Okay, so each child device may allocate a buffer like this during probe():
-> priv->xmit_buf =3D devm_kcalloc(dev, MAX_PACKET_SZ, sizeof(unsigned char),
-> GFP_KERNEL), right?
+    netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
 
-basically yes, probably devm_kzalloc() or embed it into the priv struct
-directly with ____cacheline_aligned:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c2eca7980000
+start commit:   a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d85e1e571a820894
+dashboard link: https://syzkaller.appspot.com/bug?extid=7c48153a9d788824044b
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1511a607980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c7d69f980000
 
-| https://elixir.bootlin.com/linux/v6.11.5/source/drivers/net/can/spi/mcp25=
-1xfd/mcp251xfd.h#L498
+If the result looks correct, please mark the issue as fixed by replying with:
 
-The size of the driver's RX and TX buffers depend on what they want to
-send and expect to receive. The next step would be to create structs the
-describe the RX and TX buffers for each driver. If you have a common
-header between each driver, create that first.
+#syz fix: netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
 
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---l2xctpm5dxyfmd5l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcgmXIACgkQKDiiPnot
-vG+LsQf+O4zJwfuGycNIY6uZPaHVz1IAgaeC/v2Jtznp51yqr0WvDVOcdhOLHKtG
-8Rbd+lDgWhPK2WCiBnwj6fhpBzTIZSZHbVlIqX2668gYpCvRr4YTSydt1HYDNoHA
-/G2k1g8rCdtTWiynu5+P2CUdaolzZEdq+lOnCLoOkbWD1cDT/lMdHPYoyBLbLNZ8
-b7IbbBc1D6jVlBd9Om1Zn7Ev9cQQ9UGp9QY1fUWdv+KwJz76NCIMgGK93Hf5kDFy
-/5AIztMNibr+sFbwkZ7ypmag3icRiF750TOECdq0LEUPXM2eVXkQ+pIGkIcgXTQL
-p1zN+c2H8FwJZIvGgdCLxDQc2B+uLw==
-=2AiX
------END PGP SIGNATURE-----
-
---l2xctpm5dxyfmd5l--
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
