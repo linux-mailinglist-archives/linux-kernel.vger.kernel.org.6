@@ -1,81 +1,47 @@
-Return-Path: <linux-kernel+bounces-386403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA77C9B4302
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:22:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77459B42FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26708B21F51
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0740B1C21A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:21:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 525F7202629;
-	Tue, 29 Oct 2024 07:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19EFB2022F2;
+	Tue, 29 Oct 2024 07:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="TZuimXo4"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2081.outbound.protection.outlook.com [40.107.241.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6sItWqc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0311220127A;
-	Tue, 29 Oct 2024 07:22:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.81
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730186551; cv=fail; b=YoCePp/AhF4UYk/96GeRffC+tsPubensxHq+qr51Nv31ewshpZCY/MixIcmIOZqszCN1lUAU49/SjQO4dyrNWhlLxFUowzj7CnRdCy9Urd56TKohwE+pkDQ1Bz7SRhOZmXEdYPhlF2TTox3ougqx74QYq9sfr/04cF0f9Yjb2o4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730186551; c=relaxed/simple;
-	bh=Yk2qAUYU0AFSDgMR2vvfEM9UwjHtVW2iPBcN81elVls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Y1LRQ5Pg1YVLiEDJFiom8TElhPpEkvSA1O2e2LdcENAbs2T1K1nYQwIZvg/JM+Yo3CX5rOPahC29aPNZT2of7Q0Z+fwQPNbvgLL1RP13fyM20xWP0GM9nBgPObJkfUZz+WvHsRq/ZuYvaO9mSzfCBKRKcvKbMgXYPxwfqGCqtYg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com; spf=pass smtp.mailfrom=de.bosch.com; dkim=pass (2048-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b=TZuimXo4; arc=fail smtp.client-ip=40.107.241.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=de.bosch.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=de.bosch.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VW4QzDqrurqFKot7zhzat9NO4YCSYGSkMGoxIxp2CT6gF1PJ22rYvmsMYjlZ7MT4CYGkGHktJ+bYSlm/GQlvRF/xVDMKZ3tPkmStb8AOPKJfhTGnNm8jMsfGSr5DBOLTqdtlFnAE/7dHnOt5bs122yJ2d+DnAqKQMJPAaaHNsA/g4FnrgTThuyc8F1Fx83YWz27InGPWh3T+wtptHI8JnwpLj209RobP8otSZAsCU/PcQVy7QmGbDLwnkS4kFxOaaJku9kgL/W/VrepI163Ut5ZwoNSlpUIwPoAmZI+wcnf9sa/zte3Y1d2Es52dTVwDiDmnD8CjVzRBHDGXvMJ+NA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ItbvLAyOtuWRT2gLACoOLaMGlSuhB8RhQeMpL4ziLs4=;
- b=j3vyIsHiVhvd/PQnO92PY3VARujEb81/XtYHDQxkQpACRHR8l86exkjWgWIAtz75/qEvMCP99t6lpa/qrhPGTTU9Vomg+7js7DCMshRkV9eAQ1IIJk+Nhn63DHOnnXW1vgNxNDRaxRB4CNcop/dbdsCHndwroga1Cb5FLp1WPRrFFtDeVkhdTCyRl3xHgMcuMIGiIeQLBe8pu4QOkZQnwA7Q7l+vKjejGKrJ0Fo4XK6Y/GrqzXgWS9a/+cEzHPbxg1MrRO9p39kVzzVH/nwwWPlxvRYTeeb1ucOV9EHhxmFB1d5/ZGuMmK6pn50B4f7YjseTa5IpeFcA+cNrIkHdrQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 139.15.153.206) smtp.rcpttodomain=kernel.org smtp.mailfrom=de.bosch.com;
- dmarc=pass (p=reject sp=none pct=100) action=none header.from=de.bosch.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=de.bosch.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ItbvLAyOtuWRT2gLACoOLaMGlSuhB8RhQeMpL4ziLs4=;
- b=TZuimXo4dqRnEN3llUJl0QElM5IasEuv9+aV+bD9mEbjvMHe2tCelWzGZmsCgAsSTsOUmTytLzb6VIIBStLds7pISuAj54FBLIYNCF9GmqVPui0cGKxdsx62LS+ttHEK4k5SL34K+WvNWSEnvkU1Dq9CO6ENugUkbHnQE15mUU22R/NOb8Fylw9RMJ4drq4b8+TfrGdkAn3x/y3A33kYRyvmcIKK9H79mKyDrRv9LX/ygK24Dp0643xVBQZB6daa0NF/RE4Xt/Xtss+rMkgsZr6Ld8CE9WynVjvk3Wx5Y/YvERIPivMK6h6VrfUnXuhh/Mu4oh1dr/3lbf+S0E/YMQ==
-Received: from AS9PR04CA0031.eurprd04.prod.outlook.com (2603:10a6:20b:46a::10)
- by DU4PR10MB8322.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:566::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.19; Tue, 29 Oct
- 2024 07:22:22 +0000
-Received: from AMS1EPF0000004E.eurprd04.prod.outlook.com
- (2603:10a6:20b:46a:cafe::3f) by AS9PR04CA0031.outlook.office365.com
- (2603:10a6:20b:46a::10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.26 via Frontend
- Transport; Tue, 29 Oct 2024 07:22:22 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 139.15.153.206)
- smtp.mailfrom=de.bosch.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=de.bosch.com;
-Received-SPF: Pass (protection.outlook.com: domain of de.bosch.com designates
- 139.15.153.206 as permitted sender) receiver=protection.outlook.com;
- client-ip=139.15.153.206; helo=eop.bosch-org.com; pr=C
-Received: from eop.bosch-org.com (139.15.153.206) by
- AMS1EPF0000004E.mail.protection.outlook.com (10.167.16.139) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 07:22:22 +0000
-Received: from SI-EXCAS2001.de.bosch.com (10.139.217.202) by eop.bosch-org.com
- (139.15.153.206) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 29 Oct
- 2024 08:22:21 +0100
-Received: from [10.34.219.93] (10.139.217.196) by SI-EXCAS2001.de.bosch.com
- (10.139.217.202) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 29 Oct
- 2024 08:22:21 +0100
-Message-ID: <fd9f5a0e-b2d4-4b72-9f34-9d8fcc74c00c@de.bosch.com>
-Date: Tue, 29 Oct 2024 08:20:55 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606DB1FF7A8;
+	Tue, 29 Oct 2024 07:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730186476; cv=none; b=NOTc6woig6hKr67vN0dEMh0p7fJtZ4chUhNvh3Teiix2i3rw3OhC/Is9LHGmL9zrAUImSECF3sM6PpnvNxeKXRz6cN+1S05vSIHTR6FrWylxZau50hbxNsgMghMqa6E7rgwuAAwr+teUB7iU81V0uPxJMAlYcj6CahlWBDIkFUY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730186476; c=relaxed/simple;
+	bh=7uzAarjS0Dn2DTyPSovradqYE05Wen8ZCSz2SsXfBQQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VokGBHkEg1n6tZC0fSAYyIfEK1unph2z3M+Et98Or2LAMlV6xKe2wcq9s+HgDlsuUlY231d8tbZxTQvDk8k0CtHPgpL4+2SZIfxntswhNnieTxcF6Kglr6rjUfTRMhi73UBS2iQRreDY9D6cuATNjvgnzNqe/cTaHZP4C6AzpW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6sItWqc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B7BAC4CECD;
+	Tue, 29 Oct 2024 07:21:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730186475;
+	bh=7uzAarjS0Dn2DTyPSovradqYE05Wen8ZCSz2SsXfBQQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=j6sItWqcq7R2uMjcS2UsufpkCMJ93wg2aHHyGFhhwjZDG+xnjnxe4w0W8Y65RYtw9
+	 nvr1alvwGsKwhbEkukGtRL1QyBZX94ljUIFrxlqv3Xzm9KhDLCc8Usm53tj8lcgrMV
+	 yzs7O0AJeicdZU4QSQmY09H8DU9u/bCA23BwtCc6dub7OtIz7cvYsROrjM2BI2BoxJ
+	 Qi5kwbdF8r0WC9jssuNOUTMPDAsgXvI9nD/fAdPyNkKL1LNB4SOZ7dXX2I/BttWR8+
+	 GFPAQ78ah7ZErZk3LrLUYrouBpkTE9HHxLKvR2DiWBa2Qf4eg6k3IqyizHi5/0CXeb
+	 Lkttqj5aE2/4Q==
+Message-ID: <c0b9157c-48cd-41a7-ab38-c0334f1e5af7@kernel.org>
+Date: Tue, 29 Oct 2024 08:21:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,262 +49,129 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
- driver abstractions
-To: Danilo Krummrich <dakr@kernel.org>
-CC: <gregkh@linuxfoundation.org>, <rafael@kernel.org>, <bhelgaas@google.com>,
-	<ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
-	<tmgross@umich.edu>, <a.hindborg@samsung.com>, <aliceryhl@google.com>,
-	<airlied@gmail.com>, <fujita.tomonori@gmail.com>, <lina@asahilina.net>,
-	<pstanner@redhat.com>, <ajanulgu@redhat.com>, <lyude@redhat.com>,
-	<robh@kernel.org>, <daniel.almeida@collabora.com>, <saravanak@google.com>,
-	<rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-16-dakr@kernel.org>
- <42a5af26-8b86-45ce-8432-d7980a185bde@de.bosch.com> <Zx9lFG1XKnC_WaG0@pollux>
+Subject: Re: [EXT] Re: [PATCH v18 3/8] dt-bindings: display: bridge: Add
+ Cadence MHDP8501
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: "dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>,
+ "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
+ "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ "jonas@kwiboo.se" <jonas@kwiboo.se>,
+ "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
+ "airlied@gmail.com" <airlied@gmail.com>, "daniel@ffwll.ch"
+ <daniel@ffwll.ch>, "robh+dt@kernel.org" <robh+dt@kernel.org>,
+ "krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>,
+ "vkoul@kernel.org" <vkoul@kernel.org>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "mripard@kernel.org" <mripard@kernel.org>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ dl-linux-imx <linux-imx@nxp.com>, Oliver Brown <oliver.brown@nxp.com>,
+ "alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>,
+ "sam@ravnborg.org" <sam@ravnborg.org>
+References: <cover.1730172244.git.Sandor.yu@nxp.com>
+ <e11ba0cf836d6f27935f58b7987e792026ab0233.1730172244.git.Sandor.yu@nxp.com>
+ <c664wq5wzzvivvkpedkicz6ku55epoa75oyycm3hohoms46yi5@myn542dqlpmu>
+ <PAXPR04MB9448D20D5EDE86DEF060222CF44B2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Dirk Behme <dirk.behme@de.bosch.com>
-In-Reply-To: <Zx9lFG1XKnC_WaG0@pollux>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <PAXPR04MB9448D20D5EDE86DEF060222CF44B2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AMS1EPF0000004E:EE_|DU4PR10MB8322:EE_
-X-MS-Office365-Filtering-Correlation-Id: 77e142ec-12b6-42a9-476a-08dcf7ea6e29
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|82310400026|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aXFUMVRzNkxCRENTNnlwZTA3eFVXajRFV0FabDlDL1NmUXFGdHk1YzRra3pY?=
- =?utf-8?B?aFRWSXdWeWtDaEpBTGNjZSs2T2tBaTlyUjVkUnN4dXB1SVZkTC9nVVJCRU1D?=
- =?utf-8?B?M29OcTBWUkE1Vml6NS9sQ2hXbUY4TTdFMy8yWGFtNHFnN0U5eG5TZ2dwa1ZV?=
- =?utf-8?B?TlBkUDd2emJLMW84ZVF2OHhpRktWcUxsek5ySjI0VEE0WFk5VWI0QzFMTkpO?=
- =?utf-8?B?SWUzVHc2Z0ludDlSOVY3dDdkOVpFd0J4TDJadUJ6QlMyV2xScmM0Z2ltQ2N4?=
- =?utf-8?B?dERqREgrNWxYNHJpa1pIRnBSemNTU1lVUmNubU5kWDM1ejJRVE16NkNaNTZs?=
- =?utf-8?B?SXBZcGRpWVc0Q2U2Z2ozRjg3OGRrUGQ1OXdoNW82enFRYU5vQ2hwaFJNL0lZ?=
- =?utf-8?B?bUhocmRROXNGbWErUGJ6c2JFODh4ekROVyt4S291cnNzU0daV0NaelZqcnM4?=
- =?utf-8?B?V3FBNlF0UzY5cWVYV3BKb3pCODNIY1RaUGtNV3RTRjBSOEluRmVLZkdhTzA5?=
- =?utf-8?B?R3NsY0lCdjVzcE9EREdEY2VPSVJiTHd6SkxVUkhnQ2VJOWtRR3BxYWlia3pY?=
- =?utf-8?B?T2RCcnlDc0RtS2VybENFRlJYSXJYSXVYeHlFT0tTQ1FrdHFWSmY4dFNOc3VJ?=
- =?utf-8?B?VVkrZWRHeStKbDlPRktTZ3ZZaHYySFVWaEVSL1JGLzJBNkREb0IrVTk4Kyt4?=
- =?utf-8?B?aE51RElaNXdQRGUyQWlxN2t6NDI0bm5mN2h5K0JOeHNGVVFDNjdwU3gxSi9v?=
- =?utf-8?B?SElCMmhIYjVGcG1Nek5iazBjZStHNkZPdmY5RmV3d2Q5MU9ONkNBazJSa0FP?=
- =?utf-8?B?YlordGNOZERZT3ZISE1kRFNtQlJSOHZTbUhmOGl5VG56MXBMdjJPMkkyaEtt?=
- =?utf-8?B?SDRzN2h4SkFBWDhIajNBUWNrbnA5YVdMbkNHMEQyU2FIbVZVYmY3ZmVOUWRq?=
- =?utf-8?B?MDZuNS91ZmV5NXF4OEpjZkJ6SlRSUlgwRzVDa0N0ZktsQ1RTaGJIRENEWTgy?=
- =?utf-8?B?QXVXU0U3VldhbkhzLzZxdFNkbERSMnR4UmVMbEtyZUQ4QUlqbzJUblhJUy9D?=
- =?utf-8?B?NHRjTWZrWDk5bnVIMEtCWWdtOVhuMlYwMndFbThOc0xHSm43NkpXbmsvVEE0?=
- =?utf-8?B?c2MyUFZISUxaUEhjTGp5WDRrRGE2Vmc5ZGFsaWQzRTEwVlhjajlvVVNjeXlJ?=
- =?utf-8?B?RzlqTUpuRW1TTkFuTENoN3lLdVNQVWZwNnhxdDZLeFRUSWNNV1lhRVFVRUFx?=
- =?utf-8?B?NnhmZEt1OGpnTjF6c1l6amE3bXFXdjdIY2xoMVJsMmNJT1BsZ3NKVCt3UDg5?=
- =?utf-8?B?czd2TndEbEpXTDlKOXZWTjRiY2RldXNwbTBMSkdRSllsRFp4RVd0UksrNjRH?=
- =?utf-8?B?VzJqOFExalBobUFCU0JUYnhSWGFCaitYYnltdklEYm1jRWRIUlZKSW1WQ0V0?=
- =?utf-8?B?MUhLWXJ1cXlIRUtwK0RSRlNpYVJidFhIWGx5Skt4YkhYYkl0VHNBY3Q0cDgv?=
- =?utf-8?B?YytxWE9obFpjd0dDd1grQmMwVFQ0bVg1NU9FR3JzWGVIak1YOUxndWR3aGhS?=
- =?utf-8?B?MVhCNWtsVkxCejFJdG1ITEtvVUhEMVE3Yjc5bXZ3b2c3dTBncHpyRnMwZ04z?=
- =?utf-8?B?bWZQRDJxYmtUSkpWZmFGalM1NHVVVWFmS29YL3EyNUZZSmJCZDFQU2pBQWRV?=
- =?utf-8?B?WlV6RStCQUNJZTRTQzJyMjdDaTc1Vzl6eTFIcVZNVldJamxHcHdVZlgrWWJR?=
- =?utf-8?B?MkMvM0lyNUg0OFJMaGhJM0N0Vy8rTjNvejJxemdtOUpkTkpRQkVLNGtuT21M?=
- =?utf-8?B?Yk9uNllGWFJxL2FEa2p4amlrY2VZMFZCVWN6RXFQRUJhQW9NbnBJdmJZbHdZ?=
- =?utf-8?B?QmFJZGN5UGIzMENrMXFZUU1adnlmRlJGdE5YQlhaemxaRlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:139.15.153.206;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:eop.bosch-org.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(82310400026)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: de.bosch.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 07:22:22.1593
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 77e142ec-12b6-42a9-476a-08dcf7ea6e29
-X-MS-Exchange-CrossTenant-Id: 0ae51e19-07c8-4e4b-bb6d-648ee58410f4
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0ae51e19-07c8-4e4b-bb6d-648ee58410f4;Ip=[139.15.153.206];Helo=[eop.bosch-org.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AMS1EPF0000004E.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR10MB8322
 
-On 28.10.2024 11:19, Danilo Krummrich wrote:
-> On Thu, Oct 24, 2024 at 11:11:50AM +0200, Dirk Behme wrote:
->>> +/// IdTable type for platform drivers.
->>> +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<of::DeviceId, T>;
->>> +
->>> +/// The platform driver trait.
->>> +///
->>> +/// # Example
->>> +///
->>> +///```
->>> +/// # use kernel::{bindings, c_str, of, platform};
->>> +///
->>> +/// struct MyDriver;
->>> +///
->>> +/// kernel::of_device_table!(
->>> +///     OF_TABLE,
->>> +///     MODULE_OF_TABLE,
+On 29/10/2024 08:17, Sandor Yu wrote:
 >>
->> It looks to me that OF_TABLE and MODULE_OF_TABLE are quite generic names
->> used here. Shouldn't they be somehow driver specific, e.g. OF_TABLE_MYDRIVER
->> and MODULE_OF_TABLE_MYDRIVER or whatever? Same for the other
->> examples/samples in this patch series. Found that while using the *same*
->> somewhere else ;)
+>> On Tue, Oct 29, 2024 at 02:02:11PM +0800, Sandor Yu wrote:
+>>> +  interrupts:
+>>> +    items:
+>>> +      - description: Hotplug cable plugin.
+>>> +      - description: Hotplug cable plugout.
+>>> +
+>>> +  interrupt-names:
+>>> +    items:
+>>> +      - const: plug_in
+>>> +      - const: plug_out
+>>> +
+>>> +  data-lanes:
+>>> +    $ref: /schemas/media/video-interfaces.yaml#/properties/data-lanes
+>>> +    minItems: 4
+>>> +    maxItems: 4
+>>> +    description: Lane reordering for HDMI or DisplayPort interface.
+>>
+>> Please look how existing bindings do it. data-lanes is a property of port.
+>> Otherwise why would you like this to be applied to the input?
 > 
-> I think the names by themselves are fine. They're local to the module. However,
-> we stringify `OF_TABLE` in `module_device_table` to build the export name, i.e.
-> "__mod_of__OF_TABLE_device_table". Hence the potential duplicate symbols.
+> 'lane reordering' is a feature of the MHDP IP, and different boards have different mappings. 
+
+Yeah, and?
+
 > 
-> I think we somehow need to build the module name into the symbol name as well.
+> Benjamin comments in v16, the imx8mq-zii-ultra board's lane mapping differs from the default in my driver, 
+> so we need to treat it as an input.
 
-Something like this?
+But HDMI is not your input port. At least that's what few lines below!
+This is confusing.
 
+> 
+> As data-lanes is a property of port, so there is no exist property could be reused,
 
-Subject: [PATCH] rust: device: Add the module name to the symbol name
+data-lanes, really, what is the problem here?
 
-Make the symbol name unique by adding the module name to avoid
-duplicate symbol errors like
+> How about revert 'data-lanes' back to my previous implementation of 'lane-mapping'?
 
-ld.lld: error: duplicate symbol: __mod_of__OF_TABLE_device_table
- >>> defined at doctests_kernel_generated.ff18649a828ae8c4-cgu.0
- >>> 
-rust/doctests_kernel_generated.o:(__mod_of__OF_TABLE_device_table) in 
-archive vmlinux.a
- >>> defined at rust_driver_platform.2308c4225c4e08b3-cgu.0
- >>>            samples/rust/rust_driver_platform.o:(.rodata+0x5A8) in 
-archive vmlinux.a
-make[2]: *** [scripts/Makefile.vmlinux_o:65: vmlinux.o] Error 1
-make[1]: *** [Makefile:1154: vmlinux_o] Error 2
+No.
 
-__mod_of__OF_TABLE_device_table is too generic. Add the module name.
-
-Proposed-by: Danilo Krummrich <dakr@kernel.org>
-Link: https://lore.kernel.org/rust-for-linux/Zx9lFG1XKnC_WaG0@pollux/
-Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
----
-  rust/kernel/device_id.rs             | 4 ++--
-  rust/kernel/of.rs                    | 4 ++--
-  rust/kernel/pci.rs                   | 5 +++--
-  rust/kernel/platform.rs              | 1 +
-  samples/rust/rust_driver_pci.rs      | 1 +
-  samples/rust/rust_driver_platform.rs | 1 +
-  6 files changed, 10 insertions(+), 6 deletions(-)
-
-diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
-index 5b1329fba528..231f34362da9 100644
---- a/rust/kernel/device_id.rs
-+++ b/rust/kernel/device_id.rs
-@@ -151,10 +151,10 @@ fn info(&self, index: usize) -> &U {
-  /// Create device table alias for modpost.
-  #[macro_export]
-  macro_rules! module_device_table {
--    ($table_type: literal, $module_table_name:ident, $table_name:ident) 
-=> {
-+    ($table_type: literal, $device_name: literal, 
-$module_table_name:ident, $table_name:ident) => {
-          #[rustfmt::skip]
-          #[export_name =
--            concat!("__mod_", $table_type, "__", 
-stringify!($table_name), "_device_table")
-+            concat!("__mod_", $table_type, "__", 
-stringify!($table_name), "_", $device_name, "_device_table")
-          ]
-          static $module_table_name: [core::mem::MaybeUninit<u8>; 
-$table_name.raw_ids().size()] =
-              unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
-diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-index a37629997974..77679c30638c 100644
---- a/rust/kernel/of.rs
-+++ b/rust/kernel/of.rs
-@@ -51,13 +51,13 @@ pub fn compatible<'a>(&self) -> &'a CStr {
-  /// Create an OF `IdTable` with an "alias" for modpost.
-  #[macro_export]
-  macro_rules! of_device_table {
--    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, 
-$table_data: expr) => {
-+    ($device_name: literal, $table_name:ident, 
-$module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
-          const $table_name: $crate::device_id::IdArray<
-              $crate::of::DeviceId,
-              $id_info_type,
-              { $table_data.len() },
-          > = $crate::device_id::IdArray::new($table_data);
-
--        $crate::module_device_table!("of", $module_table_name, 
-$table_name);
-+        $crate::module_device_table!("of", $device_name, 
-$module_table_name, $table_name);
-      };
-  }
-diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-index 58f7d9c0045b..806d192b9600 100644
---- a/rust/kernel/pci.rs
-+++ b/rust/kernel/pci.rs
-@@ -176,14 +176,14 @@ fn index(&self) -> usize {
-  /// Create a PCI `IdTable` with its alias for modpost.
-  #[macro_export]
-  macro_rules! pci_device_table {
--    ($table_name:ident, $module_table_name:ident, $id_info_type: ty, 
-$table_data: expr) => {
-+    ($device_name: literal, $table_name:ident, 
-$module_table_name:ident, $id_info_type: ty, $table_data: expr) => {
-          const $table_name: $crate::device_id::IdArray<
-              $crate::pci::DeviceId,
-              $id_info_type,
-              { $table_data.len() },
-          > = $crate::device_id::IdArray::new($table_data);
-
--        $crate::module_device_table!("pci", $module_table_name, 
-$table_name);
-+        $crate::module_device_table!("pci", $device_name, 
-$module_table_name, $table_name);
-      };
-  }
-
-@@ -197,6 +197,7 @@ macro_rules! pci_device_table {
-  /// struct MyDriver;
-  ///
-  /// kernel::pci_device_table!(
-+///     "MyDriver",
-  ///     PCI_TABLE,
-  ///     MODULE_PCI_TABLE,
-  ///     <MyDriver as pci::Driver>::IdInfo,
-diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-index a926233a789f..fcdd3c5da0e5 100644
---- a/rust/kernel/platform.rs
-+++ b/rust/kernel/platform.rs
-@@ -118,6 +118,7 @@ macro_rules! module_platform_driver {
-  /// struct MyDriver;
-  ///
-  /// kernel::of_device_table!(
-+///     "MyDriver",
-  ///     OF_TABLE,
-  ///     MODULE_OF_TABLE,
-  ///     <MyDriver as platform::Driver>::IdInfo,
-diff --git a/samples/rust/rust_driver_pci.rs 
-b/samples/rust/rust_driver_pci.rs
-index d24dc1fde9e8..6ee570b59233 100644
---- a/samples/rust/rust_driver_pci.rs
-+++ b/samples/rust/rust_driver_pci.rs
-@@ -31,6 +31,7 @@ struct SampleDriver {
-  }
-
-  kernel::pci_device_table!(
-+    "SampleDriver",
-      PCI_TABLE,
-      MODULE_PCI_TABLE,
-      <SampleDriver as pci::Driver>::IdInfo,
-diff --git a/samples/rust/rust_driver_platform.rs 
-b/samples/rust/rust_driver_platform.rs
-index fd7a5ad669fe..9dfbe3b9932b 100644
---- a/samples/rust/rust_driver_platform.rs
-+++ b/samples/rust/rust_driver_platform.rs
-@@ -11,6 +11,7 @@ struct SampleDriver {
-  struct Info(u32);
-
-  kernel::of_device_table!(
-+    "SampleDriver",
-      OF_TABLE,
-      MODULE_OF_TABLE,
-      <SampleDriver as platform::Driver>::IdInfo,
--- 
-2.46.2
+Best regards,
+Krzysztof
 
 
