@@ -1,72 +1,85 @@
-Return-Path: <linux-kernel+bounces-387049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17FE9B4B2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:47:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4A09B4B30
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:48:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9698F283DC1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:47:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D61B2351C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242DA20607D;
-	Tue, 29 Oct 2024 13:47:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3A8206961;
+	Tue, 29 Oct 2024 13:47:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bJkp2CJY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wb4LEH2G"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FAB91E480;
-	Tue, 29 Oct 2024 13:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFD120695E
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:47:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209632; cv=none; b=djmfAiGINlgi6b7+q4eTNFIdgCczymRUajI/k+bB1ZA2rJpClSmM8POm6LpOQ3+6q3pjkvQRWT9MsGgRubwjGQnfFJ3PN7P2h+VOUbTNB+GU4qA6vaJG/Y/DQqIdrmLiZpao0/SygmE9qgt88dwMIkUThDOWQsfyhUMRJX4hJDg=
+	t=1730209661; cv=none; b=KccBw1Wk1Dlk79x+VZvkbhTgjIkfh7DEzonb877EnN9tsvxUF8+Ie0KQPHYv3a0AZxqg/KHuFFElAA2QjymqQjfzqS6MYa3xxIbVEb6zp0ZM0YSoUPKRKVe73CoXZyKEQuvsEJGCzpTs97BTx25NiTTDPzj9vgvBscpQ2e0AAZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209632; c=relaxed/simple;
-	bh=KEQem3GuAcK/dyUVeI9paTDkYNzz2c637THBwlYhUd8=;
+	s=arc-20240116; t=1730209661; c=relaxed/simple;
+	bh=MuX46C0b0u91A82k45hWka6IQnP6qDFX7xp0m0U0xog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QyGSuk/Pyfd6bg4O7AObDbTbcXHhzU6fAz0GyU/GXn3rbHLkOaKQPLyOq9xrxeYYczmCtfKJUsm1rlpM1SHwAFHj2meztnXMUvTtTW4yiIBJz0Vk0CxyEXl+PJKsMEIsHK16BqWme86jzSo30Aa3WUYQBGJFvw5QfhrAz3CL9B0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bJkp2CJY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E1EC4CECD;
-	Tue, 29 Oct 2024 13:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730209632;
-	bh=KEQem3GuAcK/dyUVeI9paTDkYNzz2c637THBwlYhUd8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bJkp2CJYS4BqKoZSVbPb8U9xdsDI5BZ0ocj+JkurZSYlkp9bbpzg0xL02GrK/3QuP
-	 1jatkq9w62FKp/NAECrxdp1olj8GcYLaQqincZ86b/wDa3/kbqqFTsCJo90e4Mmab3
-	 SYsQf7apzYVGzIW8TtkXjYI8gIsHbGZcf7pKW/OkHSLwyLjlyibQ0yPoB8ZcM9ubdc
-	 GU5KkUKxKqXR7VOpkuHCD/7xrDKLwwwqusMrTKqXVgC9SLiDQXpMSVtcKRphycLAr7
-	 T6HijRH5UfsLYVq0UKuWKFSntaxmxZ+uxnn251AW222Dutzrh+QQSGX4BMCkZtL3Bz
-	 pkdGEmjRamRIg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t5mZH-0000000034N-2ieg;
-	Tue, 29 Oct 2024 14:47:31 +0100
-Date: Tue, 29 Oct 2024 14:47:31 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Felipe Balbi <balbi@ti.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Lee Jones <lee@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	stable@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-Subject: Re: [PATCH v2 4/6] phy: core: Fix an OF node refcount leakage in
- _of_phy_get()
-Message-ID: <ZyDnc7HpMTnwEs-2@hovoldconsulting.com>
-References: <20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com>
- <20241024-phy_core_fix-v2-4-fc0c63dbfcf3@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJ/RbiUjdaNNDJpCvB1K1vsWa8Dw8i3qqKLkLP41nkhzSqLISmk5jI6tb1jjB2gr1y/PaYLEgwc2fsXFlYhjXjUuHeCFmcznSOUlOwRda42BtlsjNW+xKfF2B7+RAo83dSBkwE66TGt1HDBBTszAlSLlJ93RedFu9M9711yojkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wb4LEH2G; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso50235595e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:47:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730209658; x=1730814458; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MnilKf+1LggrXw/pxXpB+USKjynDFjlh1WwCMDATiQE=;
+        b=wb4LEH2GXw8U+WcPtMdDOIUs7P62k6Y4kv+fJKeyZkY/mE0arHNR0b63r33KD3XeYT
+         ID9SjMD1uCn4EuoJhqWtE64sIPBwIlKfrJpoWRx8QraAhTnnpfz7AhGlW8GR5+QA+LC6
+         ednE6xLIuM10TmOKfd5TS+ILBM8L3x0wg+pDKTNJq5hiBf9P00bLsPbu2KjIpraeT+RJ
+         Sy4146qdGZocP2yk1Yi3OKD1ME59/+IE8Fb7RMcIQbHHFBKHIZ3uRbRVF4VSLxLve5es
+         8PKE37WkaQbzcPdYjz/yOIX1Ctl1aAILHtxa6UfkfMUnQkbLQX46YLgU1Hb5zShUcx7B
+         +hPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730209658; x=1730814458;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MnilKf+1LggrXw/pxXpB+USKjynDFjlh1WwCMDATiQE=;
+        b=WQHQr1eOGXww+x6jcfhLnyDtfYBx7AFWIloRpgckckxbwVgMUIT6dvKCKjWYES1LTD
+         4FKzmuWoYyAqdXf17COp1gEnm4AGIoiKub9SuyAGPquw9f6lU7L0uZoESubw+iB4zbTQ
+         WO8AYk0RBhc/1Yo6H0TVWSVH7/PuxL3Wj5Zy3QDDVW6cL8H7UJrzXbndhhLoRLpdufTV
+         Vc2x3MTxCnn0jFX+hoaOQU1gNX/gaEOe35qu1XAqSgpn5j4C0M6gN7X4WZfhxkMCevqc
+         tTASuhywKvGq6royt8gHW0jZZ2B7Kqw2w9VTRC31Ze+VJIIZelfxYa/ojIuc/zTzwC1E
+         DE6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXj1VFQ0lLym58EvzfeHnfPzFJSmpprSZlVARUBnwb0QWqjNb8byoEMqcaHaV8+jqUveiucWIbVeOYNVoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/Puii9YU6YCxQJXx+Ev5ej4oBJJHtcczLvnNnhKdppypnNAbj
+	ifia6jifS46Qt4Q+oQBo8vnpiYfoYUAi5x46LTKFavqDozwgjY2PIu/JiX+80g==
+X-Google-Smtp-Source: AGHT+IFRicCdvu+GXyC4D+ImhbhvYd6aX8bPfpuSw0QRQAOpKsrjXWD7uCi3UbUTKpUo37D4ocP8/Q==
+X-Received: by 2002:a05:600c:3b94:b0:431:4e3f:9dee with SMTP id 5b1f17b1804b1-4319ac7409amr89860875e9.4.1730209657614;
+        Tue, 29 Oct 2024 06:47:37 -0700 (PDT)
+Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm12652018f8f.70.2024.10.29.06.47.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 06:47:37 -0700 (PDT)
+Date: Tue, 29 Oct 2024 13:47:34 +0000
+From: Aleksei Vetrov <vvvvvv@google.com>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in
+ dapm_widget_list_create
+Message-ID: <ZyDndtgj5vKo-wvB@google.com>
+References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
+ <28ade5d1-d13a-4388-bd0b-f03211937abd@embeddedor.com>
+ <ZyDlAd-Z26wnhZK5@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,48 +88,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024-phy_core_fix-v2-4-fc0c63dbfcf3@quicinc.com>
+In-Reply-To: <ZyDlAd-Z26wnhZK5@google.com>
 
-On Thu, Oct 24, 2024 at 10:39:29PM +0800, Zijun Hu wrote:
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
+On Tue, Oct 29, 2024 at 01:37:09PM +0000, Aleksei Vetrov wrote:
+> On Mon, Oct 28, 2024 at 04:58:58PM -0600, Gustavo A. R. Silva wrote:
+> > 
+> > As in the previous patch, this should include the following tag
+> > (and probably CC stable):
+> > 
+> > Fixes: 80e698e2df5b ("ASoC: soc-dapm: Annotate struct snd_soc_dapm_widget_list with __counted_by")
 > 
-> It will leak refcount of OF node @args.np for _of_phy_get() not to
-> decrease refcount increased by previous of_parse_phandle_with_args()
-> when returns due to of_device_is_compatible() error.
+> Thank you very much for this suggestion! I didn't understand how Fixes
+> tag works until your comment, but I've just read about Linux stable
+> process and it makes sense now.
 > 
-> Fix by adding of_node_put() before the error return.
-> 
-> Fixes: b7563e2796f8 ("phy: work around 'phys' references to usb-nop-xceiv devices")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/phy/phy-core.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> index 52ca590a58b9..967878b78797 100644
-> --- a/drivers/phy/phy-core.c
-> +++ b/drivers/phy/phy-core.c
-> @@ -629,8 +629,11 @@ static struct phy *_of_phy_get(struct device_node *np, int index)
->  		return ERR_PTR(-ENODEV);
->  
->  	/* This phy type handled by the usb-phy subsystem for now */
-> -	if (of_device_is_compatible(args.np, "usb-nop-xceiv"))
-> +	if (of_device_is_compatible(args.np, "usb-nop-xceiv")) {
-> +		/* Put refcount above of_parse_phandle_with_args() got */
+> Sent v2.
 
-No need for a comment as this is already handled in the later paths.
+Actually, my reply above meant to be for the nl80211 fix
+(https://lore.kernel.org/r/20241028-nl80211_parse_sched_scan-bounds-checker-fix-v1-1-bb640be0ebb7@google.com).
 
-> +		of_node_put(args.np);
+For this fix I couldn't send v2, because it has been already applied by
+Mark Brown. Guess I would need to send a separate message to the stable
+team asking them to pick this patch from git.
 
-For that reason you should probably initialise ret and add a new label
-out_put_node that you jump to here instead.
-
->  		return ERR_PTR(-ENODEV);
-> +	}
->  
->  	mutex_lock(&phy_provider_mutex);
->  	phy_provider = of_phy_provider_lookup(args.np);
-
-Johan
+--
+Aleksei Vetrov
 
