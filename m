@@ -1,152 +1,112 @@
-Return-Path: <linux-kernel+bounces-387459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7859B5197
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:11:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3543B9B5199
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:12:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B5E1F23CB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:11:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 673831C22799
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:12:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D181DDC16;
-	Tue, 29 Oct 2024 18:11:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2167B1DFE2F;
+	Tue, 29 Oct 2024 18:11:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="cslFGdPJ"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cqRBTFXM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E47118130D;
-	Tue, 29 Oct 2024 18:11:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3DD1DD529;
+	Tue, 29 Oct 2024 18:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730225485; cv=none; b=HOfdpDEdwU0eUsvqBbZajAP5S5J06NzSHSGj1DnoL/z4mWqQMsdoUYSUvvRD/aROYqBt+dKOmbWsXNRZpAG27tBDqmO4/jVXR/D6JqrGNzOjs8QDnCkEnMFUArRr+fJsco/IoAiyCiXAB3k3ns7I4t1WyZl+uDZV0lsEwZt7KWc=
+	t=1730225511; cv=none; b=e6Qd86E8bWwBgvfcakL7apFxJJVHzEatnZwgaRZJ2qvjvNHYOu2kLdg8vAHAYoTR56hjiwv0jpyVyfELOxIzXL5Y3Tfh+MmPEj5+YosEFCD6jc/RLPXid1GEEglETrfKLRpzU1oXUmcL0RxAfoJqWxoCR+xT03fnHmNPsXuoMBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730225485; c=relaxed/simple;
-	bh=9ox1v674Cs+EqDZWALs9Vbe/MWJ2VAF1Pe0EGOx/H6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k8AcVW2yizowDA53TjPAEWepTVRD/Js2ITUKz0cNRd9PUlmr5Llin3PRnVYDiVr4TTkt4yh5SolpL+oPrn10kYcN3M3PgB2gf/vrVDnYfRjN5HNncuxDBokWpEnYT/bzjFfw2JVjxfOy2vRcqgqXscGwqPHz+JvJ0UYn1u7eGE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=cslFGdPJ; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XdJGs34pLz6CmM6D;
-	Tue, 29 Oct 2024 18:11:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1730225475; x=1732817476; bh=Ck0LujQRxT7n4rIz6jg6e1Rc
-	zz6xuk2yIdp0i7KBTFE=; b=cslFGdPJb+wG1sTf/oxGC/WPQH/BZlJqq0Op5Pej
-	XLzXI0L+mLiQcV1/bJey5zG8wM6JT3vX0Kb58miIMV8Gf8hpgJSpbrnHGMeY+3aW
-	1CJv5TqtnR4MX9rCHUmJYXYKxnLIlnXpNdE58HfECr7BWOsEWowV0WTRrZSXFEPW
-	sjn5b6PJhAFJUWwh16E0ESMfv7prehbdqkACRFTPpLfVMzIQ5k3YW1xtNQl4sHvH
-	xpeLi47ilDAMAxAPS1VOtmuvtzPekt4fDcU5MyAnV7MVh7ZHaGTxvmM8sB+5Yimr
-	bjDCOQOYnlzmvGemTsGHXlU+4CzbHrx77dJbn8JEQ7mTBg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id OxikW3QDgw6d; Tue, 29 Oct 2024 18:11:15 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XdJGn6zK8z6CmM5x;
-	Tue, 29 Oct 2024 18:11:13 +0000 (UTC)
-Message-ID: <611fc99e-c947-463a-82e1-9d2a68d67aa4@acm.org>
-Date: Tue, 29 Oct 2024 11:11:12 -0700
+	s=arc-20240116; t=1730225511; c=relaxed/simple;
+	bh=8xw7z8CEUINWdxtHO9dShc2ndAJXdfyUhIINxW6T/9g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GGXOEQOM80Dgxg9ujgpCF6vRxBPJkd6bBrSU2b6l5rFDnPhXeTfBk+bjYZ+42cdpnodlgHBl0I6yUygX5AFEubYesWpJMuefLllP0347wjXRvzl/mjzGiKALfQEo6PvK2j+sA7p3YXo6BwhQToz2ara7sid9+zyRprFS7FeRBmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cqRBTFXM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ktq3lkoSzGcMhJDlOopdwpiDj9Zb69SDMXTk4TVirW4=; b=cqRBTFXMWk7cjZyCinieivueln
+	F4sK52aUG7au7xfGQZ0shuxU7b7yh4tx5Nfa3b3XLMG5hUNboLiB8UKQ9lSh+331Pho6S6RbGQrRb
+	lFonZCvPLBHUsFYzd5lz4cBTrIk4RXp+qPm3QXKE6s1+5UVsXXQs+3TSkaYtGhe5Ftw1LcvbpRY8Q
+	PG8rzN3v2+vi2GNLho8DFEYkzdabC3JxlD91bjjppuZHvP0GHtfCE4zt2M3FtazhqT5sM15VTQb/A
+	WcUlsnZ02mWIbmoEwEG5cs9nMVXshzRgOiBmxC/HRm63+QWYH2uaiwiEuzegupVkhtzhZJWsopUc+
+	PB1gcQag==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5qgr-0000000ABjQ-1HTW;
+	Tue, 29 Oct 2024 18:11:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8DB8630073F; Tue, 29 Oct 2024 19:11:37 +0100 (CET)
+Date: Tue, 29 Oct 2024 19:11:37 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029181137.GH14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
+ <20241029134918.GA14555@noisy.programming.kicks-ass.net>
+ <20241029170526.5gdnqdlnoqsd7pxh@treble.attlocal.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] scsi: ufs: core: Introduce a new clock_gating lock
-To: Avri Altman <avri.altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241029102938.685835-1-avri.altman@wdc.com>
- <20241029102938.685835-2-avri.altman@wdc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241029102938.685835-2-avri.altman@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029170526.5gdnqdlnoqsd7pxh@treble.attlocal.net>
 
-On 10/29/24 3:29 AM, Avri Altman wrote:
-> +	scoped_guard(spinlock_irqsave, &hba->clk_gating.lock) {
-> +		/*
-> +		 * In case you are here to cancel this work the gating state
-> +		 * would be marked as REQ_CLKS_ON. In this case save time by
-> +		 * skipping the gating work and exit after changing the clock
-> +		 * state to CLKS_ON.
-> +		 */
-> +		if (hba->clk_gating.is_suspended || (hba->clk_gating.state != REQ_CLKS_OFF)) {
-> +			hba->clk_gating.state = CLKS_ON;
-> +			trace_ufshcd_clk_gating(dev_name(hba->dev), hba->clk_gating.state);
-> +			return;
-> +		}
-> +		if (ufshcd_is_ufs_dev_busy(hba) || hba->ufshcd_state != UFSHCD_STATE_OPERATIONAL)
-> +			return;
->   	}
+On Tue, Oct 29, 2024 at 10:05:26AM -0700, Josh Poimboeuf wrote:
+> On Tue, Oct 29, 2024 at 02:49:18PM +0100, Peter Zijlstra wrote:
+> > On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
+> > 
+> > > +static void unwind_user_task_work(struct callback_head *head)
+> > > +{
+> > ...
+> > > +	guard(rwsem_read)(&callbacks_rwsem);
+> > > +
+> > > +	for_each_set_bit(i, &pending, UNWIND_MAX_CALLBACKS) {
+> > > +		if (callbacks[i])
+> > > +			callbacks[i]->func(&trace, cookie, privs[i]);
+> > > +	}
+> > 
+> > I'm fairly sure people will come with pitchforks for that read-lock
+> > there. They scale like shit on big systems. Please use SRCU or somesuch.
+> 
+> I'd expect that unwind_user_{register,unregister}() would only be called
+> once per tracing component during boot so there wouldn't be any
+> contention.
 
-Please remove the superfluous parentheses from around the REQ_CLKS_OFF 
-test and do not exceed the 80 column limit. git clang-format HEAD^ can
-help with restricting code to the 80 column limit.
+The read-lock does an atomic op on the lock word, try and do that with
+200+ CPUs and things get really sad.
 
-> @@ -2072,18 +2055,18 @@ static ssize_t ufshcd_clkgate_enable_store(struct device *dev,
->   
->   	value = !!value;
->   
-> -	spin_lock_irqsave(hba->host->host_lock, flags);
-> -	if (value == hba->clk_gating.is_enabled)
-> -		goto out;
-> +	scoped_guard(spinlock_irqsave, &hba->clk_gating.lock) {
-> +		if (value == hba->clk_gating.is_enabled)
-> +			goto out;
->   
-> -	if (value)
-> -		__ufshcd_release(hba);
-> -	else
-> -		hba->clk_gating.active_reqs++;
-> +		if (value)
-> +			__ufshcd_release(hba);
-> +		else
-> +			hba->clk_gating.active_reqs++;
->   
-> -	hba->clk_gating.is_enabled = value;
-> +		hba->clk_gating.is_enabled = value;
-> +	}
->   out:
-> -	spin_unlock_irqrestore(hba->host->host_lock, flags);
->   	return count;
->   }
+> But I think I can make SRCU work here.
 
-Please use guard() instead of scoped_guard() and remove the "out:"
-label.
-
-> @@ -9173,11 +9157,10 @@ static int ufshcd_setup_clocks(struct ufs_hba *hba, bool on)
->   				clk_disable_unprepare(clki->clk);
->   		}
->   	} else if (!ret && on) {
-> -		spin_lock_irqsave(hba->host->host_lock, flags);
-> -		hba->clk_gating.state = CLKS_ON;
-> +		scoped_guard(spinlock_irqsave, &hba->clk_gating.lock)
-> +			hba->clk_gating.state = CLKS_ON;
->   		trace_ufshcd_clk_gating(dev_name(hba->dev),
->   					hba->clk_gating.state);
-> -		spin_unlock_irqrestore(hba->host->host_lock, flags);
->   	}
-
-The above change moves the trace_ufshcd_clk_gating() call from inside
-the region protected by the host lock to outside the region protected
-by clk_gating.lock. If this is intentional, shouldn't this be mentioned
-in the patch description?
-
-Thanks,
-
-Bart.
+Thanks!
 
