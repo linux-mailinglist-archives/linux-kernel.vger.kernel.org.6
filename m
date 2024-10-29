@@ -1,302 +1,199 @@
-Return-Path: <linux-kernel+bounces-387691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24C339B54BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:12:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4052D9B54C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:12:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59E4028413B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:12:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3DC62841F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:12:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483502076DA;
-	Tue, 29 Oct 2024 21:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 693ED2076A2;
+	Tue, 29 Oct 2024 21:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="S6jF3v8Y"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lpaWBnBg"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54CFF204011
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC2B1991CD;
+	Tue, 29 Oct 2024 21:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730236342; cv=none; b=o810jmMF5P1NRR7vV0M7CSy6Q9m41KQzdaI5b4yEJh7KpKC+1IA+91tiq9P6SSALzx/tmeSxNfa4AaGuPdfx1pF+NthNDZE/GAEGzhi9WZJ+rOUZmOQxXZwSXdKdjAhi5GotkuetC+eUcxWwazejK0ORyugOVlmHHAgUpkS7skI=
+	t=1730236354; cv=none; b=MOmIofLqi7S5LC8FBtPV5pvhuW994EKsb2rNCHpnEBMWiOKTw4WkrJ5VQ+pz+snDe7HgCPjatgJNSs8ReoVm6yHUY1XUG+M0Ww6Ohid9pF6Qxm6IFoUGKurmeCKQ0hqAh2kSo62vHaEhKgWgG3gt2waUBMQghV4ZXC3H1CA/1bA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730236342; c=relaxed/simple;
-	bh=jsJdW77K/F27zI3fAtOfpDr+t87mADEpuKcLTwvGZKs=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FOkMES3VRgV4gPgP7Cpk8CVyqZy3xbGmwZWMxrgaCf8LTVQA1PWX9N4Agx8AxpzvosGLmIW3zwHL9USMDVjwGTFh58Lt8iEvc6Kb0+F3QVsVVjH84eceCVupk6NBWjrM6+wScq3YgTQHKTYiiD//Xw5dHdrYUjewt9LusaFJLg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=S6jF3v8Y; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e315a5b199so108371047b3.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:12:20 -0700 (PDT)
+	s=arc-20240116; t=1730236354; c=relaxed/simple;
+	bh=204BV9XbDi7xTyMgZCCLdtJzxzTmC9djfzMFwknc3I8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KTUymukAFrRKzGYJkq9VaJNLha91Ayc7D1jhhWXI8hsWDbJ21BGhPI6F5qKP7YaiZruEp/+k/E0jZ2txLo1YMOxIgQfGX0ck2UwBBsrTz1cqfWqNGLkKwC54t+wa1E+n8ZJtgPa+aSd7FOUkY4IkKJZbN+76kpM2OXMnFdxLcvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lpaWBnBg; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460dce6fff9so43257171cf.1;
+        Tue, 29 Oct 2024 14:12:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730236339; x=1730841139; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FPhiy+s+yCTJqEn5/E+L2J/2UCA8LWK4fta0QlMSnic=;
-        b=S6jF3v8YEcMZ5gXCcxeRW8unqI66219XGIvYrhVMnddT8TrTIZNRhYkU09G9v/fX7n
-         NxrSnAa3fImv4MY6OiVogfmigUYTZlq31iliH/D7+9PBIHaUgdUwJiKreMuB6ODvTEZX
-         AB36KpMdmRH2RAzr7cSGmin0Vwj7VknHw7Q+RckzwiyO59+Bw5WNS9g2rF0cd0MP1YUl
-         O5IZ1dzQT5RI/IeRfX4jKoG6GdTlScq6W80xjzDY/9+oxa4aEBlPf97VsJukdU6PfCuv
-         C/jbAATQBbckT1oHh+aGefO7/cajRRUjVkPUrAnG9NznFUxPu00V8NnCnPITHRq+UtMh
-         2BZA==
+        d=gmail.com; s=20230601; t=1730236351; x=1730841151; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ob3s5eW5DFFmF/sJYltP1wSc/GVzO5gvkP17mjeImM8=;
+        b=lpaWBnBgI1+yImECKr9xXorNiU94jbviCc+ppI3sCJo5L+0VtzQ6Z1QvystBKxUd7o
+         nZ8ogqqM5sCDk0OwDZ7H0IEJVZ7rAORPuuxnmtuFNxwjsl1BixdipigLM1Bw9Fp/Vy9W
+         5HEQWDhOBXZV/YqmpOB+oANvQKOW7Z8LQtjvxuTlTjerXmNCWrEiY3EkdVUVaoyjg9Ns
+         Z1ztM0jIg6X3ZZW7VNMH1m6lnrL0T7eTnvyXTCA8Aj/VUsdLXuqDYOUd9wwuHB0w1V/X
+         0G3EtihzPR8GbseJmQkZjZcWFu1do0qiX/kic1W0gbv1etrdAnpj/O0TGhj9yRvBWSMi
+         azTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730236339; x=1730841139;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FPhiy+s+yCTJqEn5/E+L2J/2UCA8LWK4fta0QlMSnic=;
-        b=mrsJk+zMjQ+tNIFxv5X81OmuNhjc9DohjeKsMMZwRopCXw3bjs9nKDpHJHtkKZHL0Y
-         kneIp79ZgTkTy/uUH6P1KfSQOXnVaf65iyBAbDplSL6WcnM9RTQHkcZuOrV25VfVVJoe
-         ckNXQNSi2VcLIB1QWUwOMRQfOEqnZXFmVZxo0ZyPX3hFKjn65w74Ipbho99V+CBECU5U
-         Luh06RcZR3NjszhNI7PVbKAtnaS752UtxrSbutyNj/Pm8OZkpM9fD+572+tEhJhguYj8
-         i7zSOreM4Nv3Xg5rjMbOaubwRhgCOfmRYzyTJVu+oVsoU2fwTv8kE6jTiBwiqnzGK46A
-         EO+A==
-X-Forwarded-Encrypted: i=1; AJvYcCUJGfIfyYn+xPcrzyVe9ba1fQKSoOODDnwKwrM9WJCzcFOH9MwDYZ133miITCnCes0DgKyfXtM2PgsswEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5vn3uWU0oXu1FWYKdLxfldu0asOqG6rvgGt/8yAiP5neV4mDA
-	uvRzCh1+yTtGUmJ3Y//IXZnBxDKOCyXez30S4ir+aqmQppdTpsu0ttnd8OgHSsC3qNOTbhr3VHi
-	xY6OEAw==
-X-Google-Smtp-Source: AGHT+IF/0bGeYrUGkOHkdN/vXLCX587JqgdQHIHT6TdmwV/CsfY5GUUMX2vNyykt2EABfkhMtirshhyO8pXT
-X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
- (user=mmaurer job=sendgmr) by 2002:a81:a8c4:0:b0:6e3:2693:ca6b with SMTP id
- 00721157ae682-6e9d897c43cmr3222487b3.2.1730236339381; Tue, 29 Oct 2024
- 14:12:19 -0700 (PDT)
-Date: Tue, 29 Oct 2024 21:12:17 +0000
+        d=1e100.net; s=20230601; t=1730236351; x=1730841151;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ob3s5eW5DFFmF/sJYltP1wSc/GVzO5gvkP17mjeImM8=;
+        b=hlxikVGv/EIoY0GW/VN/19fjDLGO/4zYFo4svFamPfHP+isFmJdxH1aTASFq6rexXg
+         ENqNseOX3294EKDXqoTuiTfPJmrvjqLYq+5rW2htaxtIf3SdSB0QBV7g/xEL+8oOpL7y
+         EBuY56V8Jv3WmUlurE7bMULMwcGfajGI5lVmVIg9dEMm02KEaqDCtI+ahm3BT54pRr/X
+         70WQMlXH8tMLVRKeSOCoGZDvsj0n6ABLNCI67lGNvDnFlGOd65XOLGM5T2EFtvGybhvb
+         vQNY2tB9GgB31sxKs6Z99teEjlPhJpBHHztpEsk9pOxlBq6Q4xN6g6Z24K16PU7DmOeS
+         SUag==
+X-Forwarded-Encrypted: i=1; AJvYcCVaMQyrEzcHrEKvhhB7J8H8BlKBqo6cELF2RvJJIePUVW4uw5JIq4Qt2uJm4VK4v1SZdbTrUy+YS5HlER4bMTc=@vger.kernel.org, AJvYcCW0fPy7nBzw9yvocR9x/e1HJhE2KQM8j23eBuFF9Zheu4JqLPqsAR+mEWpntlpeN9ODlDlvO0g3tyNv0oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYF6zAhL+XWfmLj+S3wppkrgAQJNZyhdx2li5KR7mZmF7P47Jp
+	rvAG5RrBbFxetc2q6RBgPtH4u7QdbCQlHn12NT04OQ7mcoNq/uJ9
+X-Google-Smtp-Source: AGHT+IHSmmyxcd/2Yj9vg57U61l66xXmn8h145jdJFp5JjfJN3yfgTdQuWx93nU2BQH6MzbWClE6+A==
+X-Received: by 2002:a05:622a:110b:b0:45f:873:ff5e with SMTP id d75a77b69052e-4613c1b54b7mr196318231cf.57.1730236351560;
+        Tue, 29 Oct 2024 14:12:31 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46132376491sm48090281cf.66.2024.10.29.14.12.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 14:12:31 -0700 (PDT)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 74589120006C;
+	Tue, 29 Oct 2024 17:12:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-01.internal (MEProxy); Tue, 29 Oct 2024 17:12:30 -0400
+X-ME-Sender: <xms:vk8hZ-bojyLvPpXRrD0ZlUkjH6vJ2JAcFXaeGtAv2xT0FmyGb6z_SQ>
+    <xme:vk8hZxbqgnI2jVmBm3A88k2JAnns0lnwfGmk5eZdTVoe0WNjZWlquBg1huDJeI2Uw
+    emsOhU7oZSdpj6CUA>
+X-ME-Received: <xmr:vk8hZ4_HtTeWIujdpoTLjbdQ73JTMKWWLapB2IEV9OkT_xPG8MX-N9iGBfs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekuddgudegudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrih
+    hlrdgtohhmqeenucggtffrrghtthgvrhhnpeefhfehveetieettdevgeeggedujeffjedv
+    ueeludeugedvfeehgeetlefffeeiteenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpd
+    dufedqrhgtuddrnhhonecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghi
+    lhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqie
+    elvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdr
+    tghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedugedpmhhouggvpehsmh
+    htphhouhhtpdhrtghpthhtohepmhhighhuvghlrdhojhgvuggrrdhsrghnughonhhishes
+    ghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtg
+    homhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    vghtvghriiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhnghhosehrvg
+    guhhgrthdrtghomhdprhgtphhtthhopeifihhllheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheplhhonhhgmhgrnhesrhgvughhrghtrdgtohhmpdhrtghpthhtohepghgrrhihse
+    hgrghrhihguhhordhnvghtpdhrtghpthhtohepsghjohhrnhefpghghhesphhrohhtohhn
+    mhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:vk8hZwreZ0jZGiONx-u9UM9QEhELvLw0mBM1sfF1LVwWoUjuaCrAAw>
+    <xmx:vk8hZ5pKMr85r_ImOIkM9rVJg8gaN5RAg_yhHlMzsNMGrV5S5ewjcg>
+    <xmx:vk8hZ-S7Tmpt7Ch9yJG0NA1E0gTRPSILQNQ-YgDVhRxew2H2PdVbDw>
+    <xmx:vk8hZ5ppImHpD7AbWl5SoM68KuaWvMmJF3wqSy0n3IqnFqrPZpVG0w>
+    <xmx:vk8hZ24fMDVji3zkhuCL27kPNT7vRm27Qipz6xV-XTn6SLa8Jua2d6mY>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 29 Oct 2024 17:12:29 -0400 (EDT)
+Date: Tue, 29 Oct 2024 14:12:28 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andreas Hindborg <a.hindborg@kernel.org>
+Subject: Re: [PATCH v6] rust: add global lock support
+Message-ID: <ZyFPvO4jNLieAXUe@Boquns-Mac-mini.local>
+References: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com>
+ <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local>
+ <CANiq72mb9X0LiDtDe9ptbqm3Ls527Xp+szX7px+Zw6OP8-aefQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIALBPIWcC/x3MOwqAMBCE4avI1gY0vtCriIXGURfUhI0EQby7w
- Wr4ivkf8hCGpy55SBDYsz0j8jQhs43nCsVzNOlMl3mmWyU4bIDC7axcUf+4XTVFXZnajMUEUHw 7wcL3X+6H9/0AfvrzB2kAAAA=
-X-Change-Id: 20241029-remove-export-report-pl-7365c6ca3bee
-X-Mailer: b4 0.15-dev
-Message-ID: <20241029-remove-export-report-pl-v1-1-9cd6ccf93493@google.com>
-Subject: [PATCH] scripts: Remove export_report.pl
-From: Matthew Maurer <mmaurer@google.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-modules@vger.kernel.org, 
-	Sami Tolvanen <samitolvanen@google.com>, Matthew Maurer <mmaurer@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANiq72mb9X0LiDtDe9ptbqm3Ls527Xp+szX7px+Zw6OP8-aefQ@mail.gmail.com>
 
-This script has been broken for 5 years with no user complaints.
+On Tue, Oct 29, 2024 at 07:48:21PM +0100, Miguel Ojeda wrote:
+> On Mon, Oct 28, 2024 at 6:49 PM Boqun Feng <boqun.feng@gmail.com> wrote:
+> >
+> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> >
+> > In addition, I've also queued it in my lockdep-for-tip branch:
+> >
+> >         https://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git/log/?h=lockdep-for-tip
+> >
+> > as I want to help route Rust lock-related patches into tip, so this is
+> > a practice round for me ;-)
+> >
+> > Miguel, feel free to take it via rust-next with my Reviewed-by, I will
+> > drop it from my branch once if I see it shows up in v6.13-rc1.
+> 
+> No, no, it is great if you can take them :)
+> 
 
-It first had its .mod.c parser broken in commit a3d0cb04f7df ("modpost:
-use __section in the output to *.mod.c"). Later, it had its object file
-enumeration broken in commit f65a486821cf ("kbuild: change module.order
-to list *.o instead of *.ko"). Both of these changes sat for years with
-no reports.
+Thanks!
 
-Rather than reviving this script as we make further changes to `.mod.c`,
-this patch gets rid of it because it is clearly unused.
+> By "if I see it shows up in v6.13-rc1", do you mean your branch is not
+> meant for v6.13?
+> 
 
-Signed-off-by: Matthew Maurer <mmaurer@google.com>
----
- scripts/export_report.pl | 186 -----------------------------------------------
- 1 file changed, 186 deletions(-)
+Right, so I'm acting as a sub-subsystem maintainer, and I submit pull
+requests to the tip tree, and then tip will send pull requests to
+Linus. So usually (yeah, I'm calling sometimes I've done only twice as
+"usually"), I submit my PR at rc2 to rc4, and tip will carry that into
+the next merge window. For example, since we are at v6.12-rc5, my next
+PR will be at v6.13-rc{2, 3 or 4}. So if this patch is going via me, it
+has to be in v6.14.
 
-diff --git a/scripts/export_report.pl b/scripts/export_report.pl
-deleted file mode 100755
-index feb3d5542a62d90b7af4f041d98a3c4b5ac386c0..0000000000000000000000000000000000000000
---- a/scripts/export_report.pl
-+++ /dev/null
-@@ -1,186 +0,0 @@
--#!/usr/bin/env perl
--# SPDX-License-Identifier: GPL-2.0-only
--#
--# (C) Copyright IBM Corporation 2006.
--#	Author : Ram Pai (linuxram@us.ibm.com)
--#
--# Usage: export_report.pl -k Module.symvers [-o report_file ] -f *.mod.c
--#
--
--use warnings;
--use Getopt::Std;
--use strict;
--
--sub numerically {
--	my $no1 = (split /\s+/, $a)[1];
--	my $no2 = (split /\s+/, $b)[1];
--	return $no1 <=> $no2;
--}
--
--sub alphabetically {
--	my ($module1, $value1) = @{$a};
--	my ($module2, $value2) = @{$b};
--	return $value1 <=> $value2 || $module2 cmp $module1;
--}
--
--sub print_depends_on {
--	my ($href) = @_;
--	print "\n";
--	for my $mod (sort keys %$href) {
--		my $list = $href->{$mod};
--		print "\t$mod:\n";
--		foreach my $sym (sort numerically @{$list}) {
--			my ($symbol, $no) = split /\s+/, $sym;
--			printf("\t\t%-25s\n", $symbol);
--		}
--		print "\n";
--	}
--	print "\n";
--	print "~"x80 , "\n";
--}
--
--sub usage {
--        print "Usage: @_ -h -k Module.symvers  [ -o outputfile ] \n",
--	      "\t-f: treat all the non-option argument as .mod.c files. ",
--	      "Recommend using this as the last option\n",
--	      "\t-h: print detailed help\n",
--	      "\t-k: the path to Module.symvers file. By default uses ",
--	      "the file from the current directory\n",
--	      "\t-o outputfile: output the report to outputfile\n";
--	exit 0;
--}
--
--sub collectcfiles {
--    my @file;
--    open my $fh, '< modules.order' or die "cannot open modules.order: $!\n";
--    while (<$fh>) {
--	s/\.ko$/.mod.c/;
--	push (@file, $_)
--    }
--    close($fh);
--    chomp @file;
--    return @file;
--}
--
--my (%SYMBOL, %MODULE, %opt, @allcfiles);
--
--if (not getopts('hk:o:f',\%opt) or defined $opt{'h'}) {
--        usage($0);
--}
--
--if (defined $opt{'f'}) {
--	@allcfiles = @ARGV;
--} else {
--	@allcfiles = collectcfiles();
--}
--
--if (not defined $opt{'k'}) {
--	$opt{'k'} = "Module.symvers";
--}
--
--open (my $module_symvers, '<', $opt{'k'})
--    or die "Sorry, cannot open $opt{'k'}: $!\n";
--
--if (defined $opt{'o'}) {
--    open (my $out, '>', $opt{'o'})
--	or die "Sorry, cannot open $opt{'o'} $!\n";
--
--    select $out;
--}
--
--#
--# collect all the symbols and their attributes from the
--# Module.symvers file
--#
--while ( <$module_symvers> ) {
--	chomp;
--	my (undef, $symbol, $module, $gpl, $namespace) = split('\t');
--	$SYMBOL { $symbol } =  [ $module , "0" , $symbol, $gpl];
--}
--close($module_symvers);
--
--#
--# collect the usage count of each symbol.
--#
--my $modversion_warnings = 0;
--
--foreach my $thismod (@allcfiles) {
--	my $module;
--
--	unless (open ($module, '<', $thismod)) {
--		warn "Sorry, cannot open $thismod: $!\n";
--		next;
--	}
--
--	my $state=0;
--	while ( <$module> ) {
--		chomp;
--		if ($state == 0) {
--			$state = 1 if ($_ =~ /static const struct modversion_info/);
--			next;
--		}
--		if ($state == 1) {
--			$state = 2 if ($_ =~ /__attribute__\(\(section\("__versions"\)\)\)/);
--			next;
--		}
--		if ($state == 2) {
--			if ( $_ !~ /0x[0-9a-f]+,/ ) {
--				next;
--			}
--			my $sym = (split /([,"])/,)[4];
--			my ($module, $value, $symbol, $gpl) = @{$SYMBOL{$sym}};
--			$SYMBOL{ $sym } =  [ $module, $value+1, $symbol, $gpl];
--			push(@{$MODULE{$thismod}} , $sym);
--		}
--	}
--	if ($state != 2) {
--		warn "WARNING:$thismod is not built with CONFIG_MODVERSIONS enabled\n";
--		$modversion_warnings++;
--	}
--	close($module);
--}
--
--print "\tThis file reports the exported symbols usage patterns by in-tree\n",
--	"\t\t\t\tmodules\n";
--printf("%s\n\n\n","x"x80);
--printf("\t\t\t\tINDEX\n\n\n");
--printf("SECTION 1: Usage counts of all exported symbols\n");
--printf("SECTION 2: List of modules and the exported symbols they use\n");
--printf("%s\n\n\n","x"x80);
--printf("SECTION 1:\tThe exported symbols and their usage count\n\n");
--printf("%-25s\t%-25s\t%-5s\t%-25s\n", "Symbol", "Module", "Usage count",
--	"export type");
--
--#
--# print the list of unused exported symbols
--#
--foreach my $list (sort alphabetically values(%SYMBOL)) {
--	my ($module, $value, $symbol, $gpl) = @{$list};
--	printf("%-25s\t%-25s\t%-10s\t", $symbol, $module, $value);
--	if (defined $gpl) {
--		printf("%-25s\n",$gpl);
--	} else {
--		printf("\n");
--	}
--}
--printf("%s\n\n\n","x"x80);
--
--printf("SECTION 2:\n\tThis section reports export-symbol-usage of in-kernel
--modules. Each module lists the modules, and the symbols from that module that
--it uses.  Each listed symbol reports the number of modules using it\n");
--
--print "\nNOTE: Got $modversion_warnings CONFIG_MODVERSIONS warnings\n\n"
--    if $modversion_warnings;
--
--print "~"x80 , "\n";
--for my $thismod (sort keys %MODULE) {
--	my $list = $MODULE{$thismod};
--	my %depends;
--	$thismod =~ s/\.mod\.c/.ko/;
--	print "\t\t\t$thismod\n";
--	foreach my $symbol (@{$list}) {
--		my ($module, $value, undef, $gpl) = @{$SYMBOL{$symbol}};
--		push (@{$depends{"$module"}}, "$symbol $value");
--	}
--	print_depends_on(\%depends);
--}
+I think this patch has no problem to go into v6.13, so again, feel free
+to do it ;-)
 
----
-base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
-change-id: 20241029-remove-export-report-pl-7365c6ca3bee
+> Couple of things I noticed that I would normally double-check/fix in
+> place: the "// SAFETY: called exactly once" comment could be
 
-Best regards,
--- 
-Matthew Maurer <mmaurer@google.com>
+Got it. This particular one needs to be "// SAFETY: Called exactly
+once", right?
 
+Note that since lockdep-for-tip is not watched by linux-next, I have
+some flexibilities between queuing a patch and preparing it for the PR
+(I will need to rebase anyway). This could give contributers an early
+notice and we both would have less things to watch (contributers can
+just wait for the patches to show up eventually in Linus' tree instead
+of checking the list for a reply, and I only need to focus on my branch
+for improvement) for normal cases.
+
+> formatted, and I think the "Link:" tag should be before your SoB
+> (well, at least b4 does that, which makes sense since you added it,
+> but I have seen commits done differently too).
+> 
+
+For this I'm following the precedents in tip tree: always put the patch
+links at the last line. See the "Commit notifications" in
+Documentation/process/maintainer-tip.rst. (And yeah, I have to manually
+modify this after b4 applies the patches if you have to ask ;-))
+
+Regards,
+Boqun
+
+> Thanks!
+> 
+> Cheers,
+> Miguel
 
