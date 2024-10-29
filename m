@@ -1,293 +1,729 @@
-Return-Path: <linux-kernel+bounces-387741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7CAB9B558E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:09:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002399B5590
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:10:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86425283D30
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:09:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 774B81F2406F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA54E20A5F4;
-	Tue, 29 Oct 2024 22:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BE4720A5F4;
+	Tue, 29 Oct 2024 22:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZTc6gOGk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StM8NXpJ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9624F205E2E;
-	Tue, 29 Oct 2024 22:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730239771; cv=fail; b=h4qLPmyq7UKF7taQi2EbzkLAbQ9ONnhcACmbVxaEYnv3rzmklNLqjRfNUfw7mYAuL3TN3qiEaj2fDxx6VF7rGS+2QuPtnwjsCyPNluGi7wCggwQpoxkinjsI3g3T5hAyLddfeRFaebRNKh4IIdPKrLQErGWOl7jemVxWn/xu+9M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730239771; c=relaxed/simple;
-	bh=JoAp9cuqRVrNuTusnTPZKgFOD6MLJzhCOavkMm3xe5E=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=m9Ry5xsvRQ4t/Ci5eoDY/KVryO1+cuDAWAvHSWvAwyLkaWZsDC/yBlDYZXHN+LH4rvwR9wP6qoh9ojB4+CzQUdMwimCam5Qba1fE/GysAxmxO2g06RXZs1USLvYIAl1joxnLKkw3vpnG5JZFt14YhIEtga9GFQ6SUU8sGMa4zAE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZTc6gOGk; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730239769; x=1761775769;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=JoAp9cuqRVrNuTusnTPZKgFOD6MLJzhCOavkMm3xe5E=;
-  b=ZTc6gOGkfGuO5WZYl4YlAqkyaK2ScDEpOx7jGPanobLYIb7Lymv4pm4O
-   xpH+n6PbOU4+0+8iylthkdotC4PaKDwI1SHZ7Iv39QAjEF9oxEaHnnUPz
-   qyss9mMmdLxZhAvuIeoNK8bobvzTuFg7bhD+V04cSm7X8TUnFcf6SjIzy
-   zDcnZoDjdJcU0qhB4e6lqoaz8/ojIVz+PevQUu5MlRpHfuKDLEHqrEO5g
-   O8+toB8ToKczWkaWG6y8/O/zmx1roxnh9p8+rgxwLFY3BiFcEcB9+RV4w
-   ZWKPwRPwrClEza9f5n6zo4KSQ6FcG/3KvQ8+gtjSpfjyUcbZFqv+rtKq+
-   A==;
-X-CSE-ConnectionGUID: lS973fyDQx6NpcsFUhaeLg==
-X-CSE-MsgGUID: aMP7WzwbQBu/0DIi4eoVNg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="32760876"
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="32760876"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 15:09:26 -0700
-X-CSE-ConnectionGUID: J8Ji638ARaqCe4Bf5q0Deg==
-X-CSE-MsgGUID: Z6L6J0AaTo6LpwQVvqZ/qA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="82525087"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 15:09:26 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 29 Oct 2024 15:09:24 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 15:09:24 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.176)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 29 Oct 2024 15:09:24 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cgZoIDz4+Euixvu02rE9oDegRIBhtvPc8bEY4KCu7b7KQ15LqhJ7Feg66LnWUnYDKnN7LggstVx7OEDWqxsrA10ceU6Lojdke+XwN4p+YfBQZUtZO7+kNmXlgXEe4gnM87UVNm8HU3LQ1aZ3/ZV08HL/AzFVPdfqffAANSxQ0jm+XGWTSZbdE4lAtQCibL1JUHa7W/f3qAYSNnZYjeaChtqr8VaFUmp5plqN+AjtqFGdk4k9UnuxTFz0v3Pn9jLSmD32qsSdTIAbcZuvWK/UesLk+dAIE59x7ys+EeLqaoNNRH7tjSyLv5f7lEndpDTzkdS/IK7xHvA+/8wPLu24fg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wFiMlpjYgOd8KTrsu+E47mYd6eQkldkQoELEsWEJseg=;
- b=ZkvyZVs63E8jdLuS5oMMdAcfqrmaVoyDQWO2TGG8wcezlJIBixyi/fSRfD5wfMdE1kw3nCsVcO49V1P4Jax4iyur4CFtK4v/41/0klWXTTyz4+ESCcIN4MiXw2FKT2jilQAYjcYcoVIW4djrsgvwnvLKoojpp72kLCf6cavy55geMDp0GJJwEl/FJS5rgZhTwLGolqW4sfhn1wKUpAi5Ivpxvho5rNtN1ZMG15aPLIXOLwoHH3DEkRB3msrPlGgZsSnwTbJRwLKcwcWXwhs4DYiafv/36/duBG1BstwQG2ExDwDKF2wH+M4PX5n3DC7p6+IACVQasIeeA8mmgNMbwQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by SN7PR11MB6653.namprd11.prod.outlook.com (2603:10b6:806:26f::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Tue, 29 Oct
- 2024 22:09:21 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8093.027; Tue, 29 Oct 2024
- 22:09:21 +0000
-Message-ID: <8e1a742c-380c-4faf-a6c2-3fa67689c57e@intel.com>
-Date: Tue, 29 Oct 2024 15:09:18 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 6/9] ice: use <linux/packing.h> for Tx and Rx
- queue context data
-To: Daniel Machon <daniel.machon@microchip.com>
-CC: Vladimir Oltean <olteanv@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>
-References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
- <20241025-packing-pack-fields-and-ice-implementation-v2-6-734776c88e40@intel.com>
- <20241029145011.4obrgprcaksworlq@DEN-DL-M70577>
-Content-Language: en-US
-From: Jacob Keller <jacob.e.keller@intel.com>
-In-Reply-To: <20241029145011.4obrgprcaksworlq@DEN-DL-M70577>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0009.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::14) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C8D4DA03;
+	Tue, 29 Oct 2024 22:10:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730239814; cv=none; b=lG3RnVuTRUMobkxWX/0WOu+YT4Cm+BtSERDNgr32QSYv/bg2YHqkK5qCDY4MANY+yJM2NOU30jdIhWIFfYkQOQCw8w8ZYktK9QM7hiwYf0zA1lwXIE19FJEyofvqR+Xenzhjo2ySYRU4qa30oyEEQWqsBqUIG/8xk7+LSmwlMFg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730239814; c=relaxed/simple;
+	bh=P3bHOZpGpcCGIJOr8BQumQjmtcsxcXdI/PE2dif1aq4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T/egZbYG56qi5QYBF2z7eKuMm0zES5FMsWGbJsLwkEesrCiNhUrWAIVF74sk/Spv/+NZ4nmxF+KKwf9RRrDOh1ZF5bUcz32I/6v4Ga0akfNdfLuS6htpmUgSbj45i+Lv4Yquhc+YVI66neZY5Dm4NVVi/E7Al1rtH5SXYZ0q7JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StM8NXpJ; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-431695fa98bso56697785e9.3;
+        Tue, 29 Oct 2024 15:10:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730239809; x=1730844609; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=berfMvSELJbjAbSJn9HS5gIQl5dVY8u1tWBeLZJRY0E=;
+        b=StM8NXpJr6JOOPYBRhzqt7QmvbwcnWGR63BgCzfvIlpOjBLikG+Ubj//uI3t2t2F0X
+         LsS76z5LvwXgiysjR5QbovwQRlaXBHc64xwpTTuHofo3oFlMlf+eIbMe4+T4u8Bb+7RP
+         AoHs+/QjEl2roT1HSnfDkzVJrumIMjwUdCEchSu/xmaWJp48JosE5UKv4+ntWiOKZwyd
+         2QNBfAyIG9uzyQFvXgW2Af0R8UPoMbDxb8DzdbgV5xnkeuqnbHanwC+CxTJRYm7RRGd8
+         bSblk8tKg6sgCOM1nXHclBfs9zMdS1SwwtPRaKkoXO8MlB6Ka/7Q7lW1CXSgfSKPD76R
+         YMrA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730239809; x=1730844609;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=berfMvSELJbjAbSJn9HS5gIQl5dVY8u1tWBeLZJRY0E=;
+        b=cdocKfojhydA9Z6r2iZNBJary0de9wUwXsHhds7ytccOKV/XnS7qfC6d72LRfr0xqC
+         Gk/pkUSPzdH53cEwAfl0/xW96F7y0lxrtJlpQVd+ivAUXHfH+GcaVIhJJIDZLfDDd4bP
+         3N/4g+jNiEZZKKr/f67IF0zi12smRc60i+iuflzfxvJQHqNghP9m5Z2KzDqMoKslKe+q
+         VqDguZ7Y9lxcrU0miw5lNgt24mxnl52Nw5e9jvdiLAI+t6GVmfXlGuYIBL3I0WnCUQze
+         ujg9RBWX5X0CoSYLYwrK2Qm/yIYhWdIFmx3qq8QKTg+YGhoQM18T9i/Gu56+SD5kU+SX
+         rLxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVdBxd5+RHesRYxC04putTI3ih+7RABm5LMY2rTrQoquVAuEGObqYYj5XTFNEbgvVHWP1bAbwLXKBpLrU=@vger.kernel.org, AJvYcCWgQEHEzB9W6o11dxQlwuISz9QF+bztloV5H3VWz80vvPeTYP8c6E1lLfE8Ld3+R0NlTSfbG1QPL/N+dOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJXAZCfN4YdgyfqpD5Soty+/nPKWx/sO/nVCyANf6yIOcvqb5U
+	YuzW05/0ZFDGeUELazwR5d/kpfsgjB1OqXfnYj9xGKphlIQCfMv0
+X-Google-Smtp-Source: AGHT+IGS2P7NCWGsGTUGf+HfKuX1ysQYcVIQL5a+IllYsxGNMJW7xQbx912vvTqQYCHPAGfom8VZog==
+X-Received: by 2002:a05:600c:2d81:b0:431:93dd:8e77 with SMTP id 5b1f17b1804b1-431b172b3bemr50576905e9.31.1730239808990;
+        Tue, 29 Oct 2024 15:10:08 -0700 (PDT)
+Received: from tom-desktop (net-188-217-53-167.cust.vodafonedsl.it. [188.217.53.167])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd8e8524sm1973465e9.5.2024.10.29.15.10.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 15:10:08 -0700 (PDT)
+Date: Tue, 29 Oct 2024 23:10:05 +0100
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: sakari.ailus@linux.intel.com, Martin Hecht <martin.hecht@avnet.eu>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Sebastian Reichel <sre@kernel.org>, Zhi Mao <zhi.mao@mediatek.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Julien Massot <julien.massot@collabora.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Jacopo Mondi <jacopo.mondi@ideasonboard.com>,
+	Nicholas Roth <nicholas@rothemail.net>,
+	Paul Elder <paul.elder@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] media: v4l2-subdev: Drop HAS_EVENTS and event
+ handlers
+Message-ID: <ZyFdPats5BechjOa@tom-desktop>
+References: <20241029162106.3005800-1-tomm.merciai@gmail.com>
+ <20241029205849.GH6081@pendragon.ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|SN7PR11MB6653:EE_
-X-MS-Office365-Filtering-Correlation-Id: e0668b90-6b4a-478a-0ef6-08dcf866573c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?bEx1SlBFMy9UaGgzU01vTnhSVEpuV1c3U3BOdjdISWNBVFpzdE0zeCtzNjNE?=
- =?utf-8?B?WXhjTjRBRnc0NXlyOHY2RFFqakdwM1hDWS9tTWRDZktRbDFMNVJhZGxFeE1S?=
- =?utf-8?B?VUNrZFFRWE9JZUlIWmZnQkZMMUwvTXBiR3BWcm5ibTVaUUZwQjAvTlI1bTJn?=
- =?utf-8?B?cEUyR2lVM0JwK2RuNyttT0tEK1VqU2FNTkMvbjl5NlBpcTcvUXl5enpnL05i?=
- =?utf-8?B?cnFrS3lncyt1K2ZTT3c0dHVqd1RsalRyUGVqanA0NWZiUVp5TkpZVnpuOTZw?=
- =?utf-8?B?MVh3b0NKQmw4cndUM1VOWGFLRjl6OGpuNFltYVQyeUw4WGVEN3k2ckNLUUpL?=
- =?utf-8?B?YS9COEFML2t3Wi90RlhiaWlha2MxSzBnZjZzWENUdk1MR09kWXFWSitWZ2RE?=
- =?utf-8?B?bDVLQmdoellnZU5JQUlLZ3lEd2RLYm4zczlYY253TkorVG5TUUg1RzZqdUtl?=
- =?utf-8?B?K2dmVHNITThYWFErZmFaUjdLSU9FUWx3VCt5cHd5U0JqVk03bXpCZGFCWDdq?=
- =?utf-8?B?bWtqNDFlbllMQnVRM1pmMGpOTnQwamxBUHpXemtONzc3SmhqQ1o4THBXZmVR?=
- =?utf-8?B?MG8wUGplQ1BzL3ZVZzJrRjNaOUNqeitTMmszM2dPMDFFdmhaUUFyUFpMOUtI?=
- =?utf-8?B?SXpQSEFESzVtR0J3d0U3cnlSYUc2NVFKMHZGVlZOLzdBRUxPbmJnZnd3MHhG?=
- =?utf-8?B?NnM5L0R6K3diQUtZVCtBZW9Fem11MXhVREVZSEdocjdRb1ZqaE5mQW95eC9N?=
- =?utf-8?B?U2oxR3ZSemFZMW13bjhLNTFrVmU1RUtRZmdoZlNpRXlFWEZKREFnU3k4MGVl?=
- =?utf-8?B?NjVsR0RuVW1UZzBTNnRjMjlETy9OV0gzTHRBUGtzYnlUVkhoeFpnWEZhVCtt?=
- =?utf-8?B?RkQwTVk1akx1eURHajdLdUFXYVNIQjJxVnU5MlFib1VzT0JVRDB2d21OTnoy?=
- =?utf-8?B?eXRrY2dwVk9qWjM1U1ExVnNUV1FDYjcrYlR5VlF6NnpMSytKNnp6YkdGYld1?=
- =?utf-8?B?alNQZmhFeVl5dUtlVzNSWWhuK0o5VWozeElvTk1HWmlmMmliZGhncldjdGR1?=
- =?utf-8?B?SFIyQ01TRXVWOW1FdSsxd0pvcVZnWnYvSGNXTGVLWGN1SDBQSEloT3d1eFor?=
- =?utf-8?B?dFM4R0xUY0pEV0JOV3crb3BsYjB5N1pVcVpJZ2pvOGY1MHlYSDlkejI0S3Ba?=
- =?utf-8?B?TFZMOWJOWG5Wd0E3bWtQSWhIVVg2Z2dxc3R5YVRBUnZ0Q0NrUDVKdlJPeGk1?=
- =?utf-8?B?cHFkd0I0S2N1dWtyc0R5YnIzM0VlUzZjODd0K1k2amJJemJsVDU1VytGcTVq?=
- =?utf-8?B?NGdGZThzeXhxN1RTNFhpZEQ5c0RFZTA1dVU4YVJaYU0rRlB4UElFT3JPaDQv?=
- =?utf-8?B?d1p0YWFNMHBLVDk4SmRNdDQ1TFlXMit1Tk5sNFRUMEg0L1FLUGlEaUVUNFhi?=
- =?utf-8?B?ZnlPY2xXcUgrNGIvbW1qb0pFU2pDcWxSOWxldGMwY2lvWVJwNkV0WW5RbUpS?=
- =?utf-8?B?U3RWbGt2UFhkTmNpMXZrcEtrcElZNHc0blJPc01YTVZWcjB3SCtvVURnWXZx?=
- =?utf-8?B?QU9CMmFtN1UyRXo0ckNxbTZKenBlUmVNM1MwenpmeXUzaXhwdlNIcXhvUlBs?=
- =?utf-8?B?YkdoREVCTXVLcEpiTXgzaFJsamhCK3hjVDJ1QnZ2eHRWUDQrbUpUa2RHTFMv?=
- =?utf-8?B?U0FWa0orbHF5dWYzQ0lGN2xaUjZFMkV1SU9EcG8xMVIzQmRET3ZuNHhlMTNN?=
- =?utf-8?Q?Q1EFrxg+B09qZeA1Fk6Jz/ZIFTSuvkVQM19q6H4?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MHg2N3JISFlRNDdEaTNYaklVTE45Q2ZLUk5BanJsMisxQkxmY0Z3QjZyakNk?=
- =?utf-8?B?ajFYSDgvbUhmemxEU3d2cmU2NmFWTkVKZVpuV0tsVGxiK3ZGTVlxWjhuQ1VM?=
- =?utf-8?B?aE9kSFQzTkF0b3FsYWk2TGdLekQ5L3dLRFg1TFhFaE80TjBvMTMvOTBpcU1J?=
- =?utf-8?B?N0pOUWdSYVlZSHZtZGtTUEw5a1NSY0doZ2FScXZwRTl3NDBEUEppcHdoaGxv?=
- =?utf-8?B?Ylc3ZGF4UHUzSzZPcEF3VGUybWg2akR2SXpVVFZFU0VxalJmMWxSbDk4cFRl?=
- =?utf-8?B?S3RoUzZJU05SZm1NR3dKaHlTV09xNjRoMkxJTnN6RHMrSUpUODR0akZicnFW?=
- =?utf-8?B?VDgzV2xVY1c5MDRuekZHZUJDOFZUOStBK3FrazBZZVB4cGRpcHJLQlEzbzFv?=
- =?utf-8?B?TzdhODNMRjFZTHBvUE14b0NjUnJ4UEdnb3cwRUtSMi83K2VLRjBvVzR5cTBi?=
- =?utf-8?B?WHVNbE9WaTBwZFVnMi9BMGxNaDJTWlFMUysvWVZ2cGVRbFZrVEpDTDlzZTJK?=
- =?utf-8?B?dlVjLzhJRCttT3Bwb1N2WEtpY1k2VWtxYy9mQ2Rjc1ZSakp1OEh6VTJZNVA4?=
- =?utf-8?B?RU1rT0VYWWRqMWl6anVaZm85RThjalNmTkJrRjlnczZQOEViNk5QL1FzR3hE?=
- =?utf-8?B?c05KOVNxSTA1ZnJJYUNBbEhLNDFYTm1nYUpmaGJRWEEwbERDZC9OSHBENmEy?=
- =?utf-8?B?aWowK2JWWVdZK0ljTzVpYjBWaitCMmVtWXkxelJsL0hnNDlyYUt3c29ndkNG?=
- =?utf-8?B?K0VlcmJRcmxEZDZGc3V2OTMxVWtJaDZURm01UFE0ZjFwMmtpbTU1ZE4vTkhs?=
- =?utf-8?B?MEdYL0JUdU9NZGY3MEpJUUdDbTNDVElsOVJWeC9tL0RHamVDbmtJREhlWWdi?=
- =?utf-8?B?YVR6QWpzaXAvNWQrVlltOXdpbnpIdnBiRWNuRTlMQlFWMnBMMTVyeEJLNVhG?=
- =?utf-8?B?Szg4NUtTOGZGNGhSQkhSR3lTR2lRZUhpVHYzc3ArdWN3U1hGNEhPVDBUMmtr?=
- =?utf-8?B?VFFqSGEreGxRWUk2a3BjT25NY254eGdob2JrNnU2TWthSnU1OXA2Zk9qWUgv?=
- =?utf-8?B?OFcxMVBwa0ZvZW5JU1cvY3dqNjRuUDg1a3JyMExuRXlhL0xhWVlXSzBEMkd4?=
- =?utf-8?B?aUYzUjRXVTIrWHgvZVNxVnBLenNIT21IZ2ZLOVFNWkxzRFhZWlZKTFk2Uzhy?=
- =?utf-8?B?cWFlR290V1I5RnVRd0E0YmtQVEo1dXRJUDVZQm52eHA5VTVtOFVJMDNKbmNj?=
- =?utf-8?B?ajVqWm9IUzk4MUcrOWNMUk1XdTl0aDMvbUpoNjdLbGVyNGdOdzN2d3BweWVV?=
- =?utf-8?B?bS9wdklYVG1TL2cvbzJhKzlPVkZsMkU0bWpVVTJiSXFZMjMvZTJLVzRvWXpt?=
- =?utf-8?B?UkNscTZUaitKQUlDNGJEaEIrdG1jRk14UENMY29Pa3NXNHBRR0puSDhKTlRl?=
- =?utf-8?B?aGJic2VDTEJHVVhRemFpRGdEQmYrM05jVHFxQkNvd2cxdEg4TnlBK0RiUVRW?=
- =?utf-8?B?dEF0bWZHblRVUXlPTHhmL3M4eU1mMXFDcGN5Njk3amFYUHBDaVVSTDhhT1FT?=
- =?utf-8?B?VXdsUGZKcm9wQ1BtUW96czBFWFBJOEltV2NMSXppOVF6YWZTVHVWMTFhRHpN?=
- =?utf-8?B?Tjl3b3V2NXdodzgwNnpNZzYzUGxkNTVncnFlOEJIL0k2bXVyVmVRUlJlVmhS?=
- =?utf-8?B?enBPK3VCeExyNS9FOEg4T2NYd2t3c3BtWVpMYm9ZUFJQRERRajFpVVJxQ2Zp?=
- =?utf-8?B?dk5YczY4dHRPWExFNlBoR3pjcTlib2Q0bkFyc0xKb203U2JUMmZDYUxmWmw3?=
- =?utf-8?B?WGlOeVh1aFZqZU5ZZFVvNkVVNGZOTnJDZUE4T0twTk43Z3V1a1MrVFF6eDkw?=
- =?utf-8?B?U0RWWVNra0g4bVRtUHpQMGdUMDhUV3BGalpWYTVkeHp6OVd0eTJJdWd0RVpY?=
- =?utf-8?B?UTF3SkxCT3VqNGxrUnl0alUxYjl4QkJCVWhnQnV5ZFpyWlNLRXE1TzA0d0hz?=
- =?utf-8?B?clNJRi9XclZFNmIvT0FFeE9VKyswTGZxTkJiZzN4WWZQQnNyN1hNSXNld2Mr?=
- =?utf-8?B?d1J6eVo5NVNpeGVySE00aDNDblNwUnRDL1ZMNjd0cmxVL3Zrd0hPOTJaV05J?=
- =?utf-8?B?QUhHZEVaNVRFVWR1SGhybTM2U1ZxdzBQNm8yS29CUTA0M0haTE1IWmhTSk4r?=
- =?utf-8?B?clE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0668b90-6b4a-478a-0ef6-08dcf866573c
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 22:09:21.5519
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 2ZNcPcS6io4CL0rWoshIyfhyQbkfKC/4lOY3a6/jY9JkZHhvGBbJ1ASSDIM7/5ZHhrk6fe0lgpkUd8ke6b/W9JkNgqI+jrtWOQpbjzhgNeM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB6653
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029205849.GH6081@pendragon.ideasonboard.com>
 
+Hi Laurent,
+Thanks for your review.
 
-
-On 10/29/2024 7:50 AM, Daniel Machon wrote:
-> Hi Jacob,
-
->> +/**
->> + * ice_pack_rxq_ctx - Pack Rx queue context into a HW buffer
->> + * @ctx: the Rx queue context to pack
->> + * @buf: the HW buffer to pack into
->> + *
->> + * Pack the Rx queue context from the CPU-friendly unpacked buffer into its
->> + * bit-packed HW layout.
->> + */
->> +static void ice_pack_rxq_ctx(const struct ice_rlan_ctx *ctx,
->> +                            ice_rxq_ctx_buf_t *buf)
->> +{
->> +       CHECK_PACKED_FIELDS_20(ice_rlan_ctx_fields, ICE_RXQ_CTX_SZ);
->> +       BUILD_BUG_ON(sizeof(*buf) != ICE_RXQ_CTX_SZ);
->> +
->> +       pack_fields(buf, sizeof(*buf), ctx, ice_rlan_ctx_fields,
->> +                   QUIRK_LITTLE_ENDIAN | QUIRK_LSW32_IS_FIRST);
->> +}
->> +
+On Tue, Oct 29, 2024 at 10:58:49PM +0200, Laurent Pinchart wrote:
+> Hi Tommaso,
 > 
-> FWIW, I noticed that smatch bails out checking all the CHECK_PACKED_FIELDS_*
-> variants >= 20, with the warning:
+> Thank you for the patch.
 > 
-> ice_common.c:1486 ice_pack_txq_ctx() parse error: OOM: 3000148Kb sm_state_count = 413556
-> ice_common.c:1486 ice_pack_txq_ctx() warn: Function too hairy.  No more merges.
-> ice_common.c:1486 ice_pack_txq_ctx() parse error: Function too hairy.  Giving up. 43 second
-> 
+> The subject should start with "media: i2c:", not "media: v4l2-subdev:".
 
-We might need to wrap these checks to become no-ops when running under
-such a checker. It looks like the parser doesn't like the size of the
-macros?
-
-> Maybe this can just be ignored .. not sure :-)
-> 
-
-I would prefer if we found a way to at least silence it, rather than
-straight up ignore it.
-
-I am not that familiar with smatch. Let me see if there's an obvious way
-we can handle this.
-
->> +/**
->> + * ice_pack_txq_ctx - Pack Tx queue context into a HW buffer
->> + * @ctx: the Tx queue context to pack
->> + * @buf: the HW buffer to pack into
->> + *
->> + * Pack the Tx queue context from the CPU-friendly unpacked buffer into its
->> + * bit-packed HW layout.
->> + */
->> +void ice_pack_txq_ctx(const struct ice_tlan_ctx *ctx, ice_txq_ctx_buf_t *buf)
->> +{
->> +       CHECK_PACKED_FIELDS_27(ice_tlan_ctx_fields, ICE_TXQ_CTX_SZ);
->> +       BUILD_BUG_ON(sizeof(*buf) != ICE_TXQ_CTX_SZ);
->> +
->> +       pack_fields(buf, sizeof(*buf), ctx, ice_tlan_ctx_fields,
->> +                   QUIRK_LITTLE_ENDIAN | QUIRK_LSW32_IS_FIRST);
->> +}
->> +
-> 
-> Same here with the 27 variant.
->
-
-Yea, same problem of course. The generated checks are too large to be
-parsed by smatch.
-
-
-<snip removed code>
-> 
-> Some nice cleanup!
-> 
-
-Yea. I got motivated with this because I was looking at introducing the
-inverse 'unpacking' variants for supporting VF live migration, and
-realized how ugly the existing code was and how much worse adding yet
-more code to unpack would be.
+Completely right. I will fix that in v2.
 
 > 
-> /Daniel
+> On Tue, Oct 29, 2024 at 05:21:05PM +0100, Tommaso Merciai wrote:
+> > v4l2_subdev_init_finalize() already sets the HAS_EVENTS flag if a
+> > control handler is set, and subdev_do_ioctl() uses
+> > v4l2_ctrl_subdev_subscribe_event() and v4l2_event_subdev_unsubscribe()
+> > as defaults if the subdev doesn't have .(un)subscribe.
+> 
+> That will be true once patch "[PATCH v2] media: v4l2-subdev: Refactor
+> events" gets merged. It's good practice to list dependencies, possibly
+> below the --- line (or in a cover letter) if you don't want it to appear
+> in the commit message. I also recommend setting the format.useAutoBase
+> option to automate recording of the base commit in the patch.
 
-Thanks for the careful review!
+Ouch :'(
+My bad, cover letter is in my pc.
+
+> 
+> > Let's drop the HAS_EVENTS flag and event handlers.
+> > 
+> > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > ---
+> >  drivers/media/i2c/alvium-csi2.c |  5 +----
+> >  drivers/media/i2c/ds90ub953.c   |  5 +----
+> >  drivers/media/i2c/ds90ub960.c   |  5 +----
+> >  drivers/media/i2c/gc0308.c      |  4 ----
+> >  drivers/media/i2c/gc05a2.c      | 10 +---------
+> >  drivers/media/i2c/gc08a3.c      | 10 +---------
+> >  drivers/media/i2c/gc2145.c      | 10 +---------
+> >  drivers/media/i2c/imx219.c      | 10 +---------
+> >  drivers/media/i2c/imx283.c      | 10 +---------
+> >  drivers/media/i2c/imx290.c      | 10 +---------
+> 
+> You could also address the imx415 driver, it sets the HAS_EVENTS flags
+> but not the operations. It's probably best done in a separate patch,
+> with an appropriate commit message.
+
+Good catch! :)
+Thanks for pointing this.
+
+Will send v2.
+
+Thanks & Regards,
+Tommaso
+
+> 
+> >  drivers/media/i2c/max96714.c    |  6 +-----
+> >  drivers/media/i2c/max96717.c    |  6 +-----
+> >  drivers/media/i2c/ov01a10.c     |  6 +-----
+> >  drivers/media/i2c/ov64a40.c     | 10 +---------
+> >  drivers/media/i2c/ov8858.c      |  9 +--------
+> >  drivers/media/i2c/thp7312.c     |  5 +----
+> >  16 files changed, 15 insertions(+), 106 deletions(-)
+> 
+> Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> 
+> > diff --git a/drivers/media/i2c/alvium-csi2.c b/drivers/media/i2c/alvium-csi2.c
+> > index 5c294e4ad20c..5b66bfac195a 100644
+> > --- a/drivers/media/i2c/alvium-csi2.c
+> > +++ b/drivers/media/i2c/alvium-csi2.c
+> > @@ -16,7 +16,6 @@
+> >  #include <media/v4l2-async.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -2265,8 +2264,6 @@ static int alvium_ctrl_init(struct alvium_dev *alvium)
+> >  
+> >  static const struct v4l2_subdev_core_ops alvium_core_ops = {
+> >  	.log_status = alvium_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_video_ops alvium_video_ops = {
+> > @@ -2314,7 +2311,7 @@ static int alvium_subdev_init(struct alvium_dev *alvium)
+> >  	v4l2_i2c_subdev_init(sd, client, &alvium_subdev_ops);
+> >  
+> >  	sd->internal_ops = &alvium_internal_ops;
+> > -	sd->flags |= V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > +	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	alvium->pad.flags = MEDIA_PAD_FL_SOURCE;
+> >  	sd->entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  
+> > diff --git a/drivers/media/i2c/ds90ub953.c b/drivers/media/i2c/ds90ub953.c
+> > index 16f88db14981..8b028a84f5bc 100644
+> > --- a/drivers/media/i2c/ds90ub953.c
+> > +++ b/drivers/media/i2c/ds90ub953.c
+> > @@ -24,7 +24,6 @@
+> >  
+> >  #include <media/i2c/ds90ub9xx.h>
+> >  #include <media/v4l2-ctrls.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-mediabus.h>
+> >  #include <media/v4l2-subdev.h>
+> > @@ -717,8 +716,6 @@ static const struct v4l2_subdev_pad_ops ub953_pad_ops = {
+> >  
+> >  static const struct v4l2_subdev_core_ops ub953_subdev_core_ops = {
+> >  	.log_status = ub953_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_ops ub953_subdev_ops = {
+> > @@ -1246,7 +1243,7 @@ static int ub953_subdev_init(struct ub953_data *priv)
+> >  	priv->sd.internal_ops = &ub953_internal_ops;
+> >  
+> >  	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
+> > +			  V4L2_SUBDEV_FL_STREAMS;
+> >  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> >  	priv->sd.entity.ops = &ub953_entity_ops;
+> >  
+> > diff --git a/drivers/media/i2c/ds90ub960.c b/drivers/media/i2c/ds90ub960.c
+> > index 58424d8f72af..33f362a00875 100644
+> > --- a/drivers/media/i2c/ds90ub960.c
+> > +++ b/drivers/media/i2c/ds90ub960.c
+> > @@ -48,7 +48,6 @@
+> >  #include <media/i2c/ds90ub9xx.h>
+> >  #include <media/mipi-csi2.h>
+> >  #include <media/v4l2-ctrls.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -3085,8 +3084,6 @@ static int ub960_log_status(struct v4l2_subdev *sd)
+> >  
+> >  static const struct v4l2_subdev_core_ops ub960_subdev_core_ops = {
+> >  	.log_status = ub960_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_internal_ops ub960_internal_ops = {
+> > @@ -3667,7 +3664,7 @@ static int ub960_create_subdev(struct ub960_data *priv)
+> >  	}
+> >  
+> >  	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
+> > +			  V4L2_SUBDEV_FL_STREAMS;
+> >  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> >  	priv->sd.entity.ops = &ub960_entity_ops;
+> >  
+> > diff --git a/drivers/media/i2c/gc0308.c b/drivers/media/i2c/gc0308.c
+> > index fa754a8a39a6..069f42785b3c 100644
+> > --- a/drivers/media/i2c/gc0308.c
+> > +++ b/drivers/media/i2c/gc0308.c
+> > @@ -18,7 +18,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -987,8 +986,6 @@ static const struct v4l2_ctrl_ops gc0308_ctrl_ops = {
+> >  
+> >  static const struct v4l2_subdev_core_ops gc0308_core_ops = {
+> >  	.log_status = v4l2_ctrl_subdev_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  #ifdef CONFIG_VIDEO_ADV_DEBUG
+> >  	.g_register	= gc0308_g_register,
+> >  	.s_register	= gc0308_s_register,
+> > @@ -1338,7 +1335,6 @@ static int gc0308_probe(struct i2c_client *client)
+> >  	v4l2_i2c_subdev_init(&gc0308->sd, client, &gc0308_subdev_ops);
+> >  	gc0308->sd.internal_ops = &gc0308_internal_ops;
+> >  	gc0308->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> > -	gc0308->sd.flags |= V4L2_SUBDEV_FL_HAS_EVENTS;
+> >  
+> >  	ret = gc0308_init_controls(gc0308);
+> >  	if (ret)
+> > diff --git a/drivers/media/i2c/gc05a2.c b/drivers/media/i2c/gc05a2.c
+> > index 0413c557e594..3f7f3d5abeeb 100644
+> > --- a/drivers/media/i2c/gc05a2.c
+> > +++ b/drivers/media/i2c/gc05a2.c
+> > @@ -24,7 +24,6 @@
+> >  
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -1059,13 +1058,7 @@ static const struct v4l2_subdev_pad_ops gc05a2_subdev_pad_ops = {
+> >  	.get_selection = gc05a2_get_selection,
+> >  };
+> >  
+> > -static const struct v4l2_subdev_core_ops gc05a2_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_ops gc05a2_subdev_ops = {
+> > -	.core = &gc05a2_core_ops,
+> >  	.video = &gc05a2_video_ops,
+> >  	.pad = &gc05a2_subdev_pad_ops,
+> >  };
+> > @@ -1271,8 +1264,7 @@ static int gc05a2_probe(struct i2c_client *client)
+> >  		return dev_err_probe(dev, ret,
+> >  				     "failed to init controls\n");
+> >  
+> > -	gc05a2->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	gc05a2->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	gc05a2->pad.flags = MEDIA_PAD_FL_SOURCE;
+> >  	gc05a2->sd.dev = &client->dev;
+> >  	gc05a2->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> > diff --git a/drivers/media/i2c/gc08a3.c b/drivers/media/i2c/gc08a3.c
+> > index 84de5cff958d..938709a677b6 100644
+> > --- a/drivers/media/i2c/gc08a3.c
+> > +++ b/drivers/media/i2c/gc08a3.c
+> > @@ -24,7 +24,6 @@
+> >  
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -1001,13 +1000,7 @@ static const struct v4l2_subdev_pad_ops gc08a3_subdev_pad_ops = {
+> >  	.get_selection = gc08a3_get_selection,
+> >  };
+> >  
+> > -static const struct v4l2_subdev_core_ops gc08a3_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_ops gc08a3_subdev_ops = {
+> > -	.core = &gc08a3_core_ops,
+> >  	.video = &gc08a3_video_ops,
+> >  	.pad = &gc08a3_subdev_pad_ops,
+> >  };
+> > @@ -1247,8 +1240,7 @@ static int gc08a3_probe(struct i2c_client *client)
+> >  		goto err_power_off;
+> >  	}
+> >  
+> > -	gc08a3->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	gc08a3->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	gc08a3->pad.flags = MEDIA_PAD_FL_SOURCE;
+> >  	gc08a3->sd.dev = &client->dev;
+> >  	gc08a3->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> > diff --git a/drivers/media/i2c/gc2145.c b/drivers/media/i2c/gc2145.c
+> > index 667bb756d056..03d78fbe8634 100644
+> > --- a/drivers/media/i2c/gc2145.c
+> > +++ b/drivers/media/i2c/gc2145.c
+> > @@ -21,7 +21,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-mediabus.h>
+> >  
+> > @@ -1123,11 +1122,6 @@ static const u8 test_pattern_val[] = {
+> >  	GC2145_TEST_UNIFORM | GC2145_TEST_BLACK,
+> >  };
+> >  
+> > -static const struct v4l2_subdev_core_ops gc2145_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_video_ops gc2145_video_ops = {
+> >  	.s_stream = gc2145_set_stream,
+> >  };
+> > @@ -1141,7 +1135,6 @@ static const struct v4l2_subdev_pad_ops gc2145_pad_ops = {
+> >  };
+> >  
+> >  static const struct v4l2_subdev_ops gc2145_subdev_ops = {
+> > -	.core = &gc2145_core_ops,
+> >  	.video = &gc2145_video_ops,
+> >  	.pad = &gc2145_pad_ops,
+> >  };
+> > @@ -1407,8 +1400,7 @@ static int gc2145_probe(struct i2c_client *client)
+> >  		goto error_power_off;
+> >  
+> >  	/* Initialize subdev */
+> > -	gc2145->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	gc2145->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	gc2145->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  
+> >  	/* Initialize source pad */
+> > diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> > index e78a80b2bb2e..2d54cea113e1 100644
+> > --- a/drivers/media/i2c/imx219.c
+> > +++ b/drivers/media/i2c/imx219.c
+> > @@ -26,7 +26,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-mediabus.h>
+> >  
+> > @@ -922,11 +921,6 @@ static int imx219_init_state(struct v4l2_subdev *sd,
+> >  	return 0;
+> >  }
+> >  
+> > -static const struct v4l2_subdev_core_ops imx219_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_video_ops imx219_video_ops = {
+> >  	.s_stream = imx219_set_stream,
+> >  };
+> > @@ -940,7 +934,6 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
+> >  };
+> >  
+> >  static const struct v4l2_subdev_ops imx219_subdev_ops = {
+> > -	.core = &imx219_core_ops,
+> >  	.video = &imx219_video_ops,
+> >  	.pad = &imx219_pad_ops,
+> >  };
+> > @@ -1166,8 +1159,7 @@ static int imx219_probe(struct i2c_client *client)
+> >  		goto error_power_off;
+> >  
+> >  	/* Initialize subdev */
+> > -	imx219->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	imx219->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	imx219->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  
+> >  	/* Initialize source pad */
+> > diff --git a/drivers/media/i2c/imx283.c b/drivers/media/i2c/imx283.c
+> > index 94276f4f2d83..f676faf4b301 100644
+> > --- a/drivers/media/i2c/imx283.c
+> > +++ b/drivers/media/i2c/imx283.c
+> > @@ -32,7 +32,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-mediabus.h>
+> >  
+> > @@ -1284,11 +1283,6 @@ static int imx283_get_selection(struct v4l2_subdev *sd,
+> >  	}
+> >  }
+> >  
+> > -static const struct v4l2_subdev_core_ops imx283_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_video_ops imx283_video_ops = {
+> >  	.s_stream = v4l2_subdev_s_stream_helper,
+> >  };
+> > @@ -1308,7 +1302,6 @@ static const struct v4l2_subdev_internal_ops imx283_internal_ops = {
+> >  };
+> >  
+> >  static const struct v4l2_subdev_ops imx283_subdev_ops = {
+> > -	.core = &imx283_core_ops,
+> >  	.video = &imx283_video_ops,
+> >  	.pad = &imx283_pad_ops,
+> >  };
+> > @@ -1548,8 +1541,7 @@ static int imx283_probe(struct i2c_client *client)
+> >  		goto error_pm;
+> >  
+> >  	/* Initialize subdev */
+> > -	imx283->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	imx283->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	imx283->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  	imx283->sd.internal_ops = &imx283_internal_ops;
+> >  
+> > diff --git a/drivers/media/i2c/imx290.c b/drivers/media/i2c/imx290.c
+> > index 49a5bf9c17da..ee698c99001d 100644
+> > --- a/drivers/media/i2c/imx290.c
+> > +++ b/drivers/media/i2c/imx290.c
+> > @@ -24,7 +24,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -1210,11 +1209,6 @@ static int imx290_entity_init_state(struct v4l2_subdev *subdev,
+> >  	return 0;
+> >  }
+> >  
+> > -static const struct v4l2_subdev_core_ops imx290_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_video_ops imx290_video_ops = {
+> >  	.s_stream = imx290_set_stream,
+> >  };
+> > @@ -1228,7 +1222,6 @@ static const struct v4l2_subdev_pad_ops imx290_pad_ops = {
+> >  };
+> >  
+> >  static const struct v4l2_subdev_ops imx290_subdev_ops = {
+> > -	.core = &imx290_core_ops,
+> >  	.video = &imx290_video_ops,
+> >  	.pad = &imx290_pad_ops,
+> >  };
+> > @@ -1262,8 +1255,7 @@ static int imx290_subdev_init(struct imx290 *imx290)
+> >  	pm_runtime_put_autosuspend(imx290->dev);
+> >  
+> >  	imx290->sd.internal_ops = &imx290_internal_ops;
+> > -	imx290->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			    V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	imx290->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	imx290->sd.entity.ops = &imx290_subdev_entity_ops;
+> >  	imx290->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  
+> > diff --git a/drivers/media/i2c/max96714.c b/drivers/media/i2c/max96714.c
+> > index 2257b6b807ea..159753b13777 100644
+> > --- a/drivers/media/i2c/max96714.c
+> > +++ b/drivers/media/i2c/max96714.c
+> > @@ -17,7 +17,6 @@
+> >  
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -489,8 +488,6 @@ static int max96714_log_status(struct v4l2_subdev *sd)
+> >  
+> >  static const struct v4l2_subdev_core_ops max96714_subdev_core_ops = {
+> >  	.log_status = max96714_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_video_ops max96714_video_ops = {
+> > @@ -605,8 +602,7 @@ static int max96714_create_subdev(struct max96714_priv *priv)
+> >  		goto err_free_ctrl;
+> >  	}
+> >  
+> > -	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
+> > +	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+> >  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> >  	priv->sd.entity.ops = &max96714_entity_ops;
+> >  
+> > diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> > index 047bad30e263..9259d58ba734 100644
+> > --- a/drivers/media/i2c/max96717.c
+> > +++ b/drivers/media/i2c/max96717.c
+> > @@ -17,7 +17,6 @@
+> >  
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -577,8 +576,6 @@ static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
+> >  
+> >  static const struct v4l2_subdev_core_ops max96717_subdev_core_ops = {
+> >  	.log_status = max96717_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_internal_ops max96717_internal_ops = {
+> > @@ -692,8 +689,7 @@ static int max96717_subdev_init(struct max96717_priv *priv)
+> >  		goto err_free_ctrl;
+> >  	}
+> >  
+> > -	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -			  V4L2_SUBDEV_FL_HAS_EVENTS | V4L2_SUBDEV_FL_STREAMS;
+> > +	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+> >  	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> >  	priv->sd.entity.ops = &max96717_entity_ops;
+> >  
+> > diff --git a/drivers/media/i2c/ov01a10.c b/drivers/media/i2c/ov01a10.c
+> > index 5606437f37d0..a608cb51ac6e 100644
+> > --- a/drivers/media/i2c/ov01a10.c
+> > +++ b/drivers/media/i2c/ov01a10.c
+> > @@ -13,7 +13,6 @@
+> >  
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  
+> >  #define OV01A10_LINK_FREQ_400MHZ	400000000ULL
+> > @@ -804,8 +803,6 @@ static int ov01a10_get_selection(struct v4l2_subdev *sd,
+> >  
+> >  static const struct v4l2_subdev_core_ops ov01a10_core_ops = {
+> >  	.log_status = v4l2_ctrl_subdev_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_video_ops ov01a10_video_ops = {
+> > @@ -892,8 +889,7 @@ static int ov01a10_probe(struct i2c_client *client)
+> >  	}
+> >  
+> >  	ov01a10->sd.state_lock = ov01a10->ctrl_handler.lock;
+> > -	ov01a10->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE |
+> > -		V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	ov01a10->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	ov01a10->sd.entity.ops = &ov01a10_subdev_entity_ops;
+> >  	ov01a10->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  	ov01a10->pad.flags = MEDIA_PAD_FL_SOURCE;
+> > diff --git a/drivers/media/i2c/ov64a40.c b/drivers/media/i2c/ov64a40.c
+> > index 541bf74581d2..a5da4fe47e0b 100644
+> > --- a/drivers/media/i2c/ov64a40.c
+> > +++ b/drivers/media/i2c/ov64a40.c
+> > @@ -18,7 +18,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-mediabus.h>
+> >  #include <media/v4l2-subdev.h>
+> > @@ -3200,13 +3199,7 @@ static const struct v4l2_subdev_pad_ops ov64a40_pad_ops = {
+> >  	.get_selection = ov64a40_get_selection,
+> >  };
+> >  
+> > -static const struct v4l2_subdev_core_ops ov64a40_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_ops ov64a40_subdev_ops = {
+> > -	.core = &ov64a40_core_ops,
+> >  	.video = &ov64a40_video_ops,
+> >  	.pad = &ov64a40_pad_ops,
+> >  };
+> > @@ -3605,8 +3598,7 @@ static int ov64a40_probe(struct i2c_client *client)
+> >  
+> >  	/* Initialize subdev */
+> >  	ov64a40->sd.internal_ops = &ov64a40_internal_ops;
+> > -	ov64a40->sd.flags = V4L2_SUBDEV_FL_HAS_DEVNODE
+> > -			  | V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	ov64a40->sd.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	ov64a40->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  
+> >  	ov64a40->pad.flags = MEDIA_PAD_FL_SOURCE;
+> > diff --git a/drivers/media/i2c/ov8858.c b/drivers/media/i2c/ov8858.c
+> > index 174c65f76886..7dcb235d2056 100644
+> > --- a/drivers/media/i2c/ov8858.c
+> > +++ b/drivers/media/i2c/ov8858.c
+> > @@ -24,7 +24,6 @@
+> >  #include <media/v4l2-common.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-mediabus.h>
+> >  #include <media/v4l2-subdev.h>
+> > @@ -1500,13 +1499,7 @@ static const struct v4l2_subdev_pad_ops ov8858_pad_ops = {
+> >  	.set_fmt = ov8858_set_fmt,
+> >  };
+> >  
+> > -static const struct v4l2_subdev_core_ops ov8858_core_ops = {
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> > -};
+> > -
+> >  static const struct v4l2_subdev_ops ov8858_subdev_ops = {
+> > -	.core	= &ov8858_core_ops,
+> >  	.video	= &ov8858_video_ops,
+> >  	.pad	= &ov8858_pad_ops,
+> >  };
+> > @@ -1917,7 +1910,7 @@ static int ov8858_probe(struct i2c_client *client)
+> >  		return ret;
+> >  
+> >  	sd = &ov8858->subdev;
+> > -	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	sd->flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	ov8858->pad.flags = MEDIA_PAD_FL_SOURCE;
+> >  	sd->entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  	ret = media_entity_pads_init(&sd->entity, 1, &ov8858->pad);
+> > diff --git a/drivers/media/i2c/thp7312.c b/drivers/media/i2c/thp7312.c
+> > index 75225ff5eff6..e2679601a301 100644
+> > --- a/drivers/media/i2c/thp7312.c
+> > +++ b/drivers/media/i2c/thp7312.c
+> > @@ -27,7 +27,6 @@
+> >  #include <media/v4l2-cci.h>
+> >  #include <media/v4l2-ctrls.h>
+> >  #include <media/v4l2-device.h>
+> > -#include <media/v4l2-event.h>
+> >  #include <media/v4l2-fwnode.h>
+> >  #include <media/v4l2-subdev.h>
+> >  
+> > @@ -879,8 +878,6 @@ static int thp7312_init_state(struct v4l2_subdev *sd,
+> >  
+> >  static const struct v4l2_subdev_core_ops thp7312_core_ops = {
+> >  	.log_status = v4l2_ctrl_subdev_log_status,
+> > -	.subscribe_event = v4l2_ctrl_subdev_subscribe_event,
+> > -	.unsubscribe_event = v4l2_event_subdev_unsubscribe,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_video_ops thp7312_video_ops = {
+> > @@ -2127,7 +2124,7 @@ static int thp7312_probe(struct i2c_client *client)
+> >  
+> >  	v4l2_i2c_subdev_init(&thp7312->sd, client, &thp7312_subdev_ops);
+> >  	thp7312->sd.internal_ops = &thp7312_internal_ops;
+> > -	thp7312->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_HAS_EVENTS;
+> > +	thp7312->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
+> >  	thp7312->pad.flags = MEDIA_PAD_FL_SOURCE;
+> >  	thp7312->sd.entity.function = MEDIA_ENT_F_CAM_SENSOR;
+> >  
+> > -- 
+> > 2.34.1
+> > 
+> 
+> -- 
+> Regards,
+> 
+> Laurent Pinchart
 
