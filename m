@@ -1,96 +1,79 @@
-Return-Path: <linux-kernel+bounces-386182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605ED9B4020
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:07:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 258579B4022
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 03:08:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 154391F232F5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:07:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 578B91C211F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 02:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6424126C01;
-	Tue, 29 Oct 2024 02:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0ECD155316;
+	Tue, 29 Oct 2024 02:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fKaeab0X"
-Received: from out30-113.freemail.mail.aliyun.com (out30-113.freemail.mail.aliyun.com [115.124.30.113])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11C88172A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.113
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Hdsga5QD"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9311582876;
+	Tue, 29 Oct 2024 02:07:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730167663; cv=none; b=AgpH2uUQe3juOHHFk/WZnB3viYephwJlBPdt9Y3LdVMjAOVTWAxZPJVKld1WQrs+U170u9thBAn50AD/asNvV5uS0YNJncwfwl1TRLf1tUtux/dOar9fMpBFttTh9+lXmceefVKId0Opkl1ebzx5npGWabf7Pkl3lxnBq/TXXBQ=
+	t=1730167681; cv=none; b=hSysXwKXR7JNxDFc0NSlXS8Wfbv26hQ3RQIxl8Y0+rMwg4zDBI98LWd/llO5qd65grEC9Hdj/2Gxor7GSTqronJmkpZ/RNg7//SDCjTWY85wmPuFZp2hqa8+us2nozcaysQgz39OeLzWE48i63hb/oaaxWAkcT1VGl3b1dP0LF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730167663; c=relaxed/simple;
-	bh=GnVdX3ggVppPQ/hS6fDtTKnVptOBOcq7buqXGEbzBNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j1HoBJ9ZCx9XBq4w39xSzhGx2MYYnuNiw1p5GJywqedu1ffbAQcINaA/7BETeSvSGYxm/Vmh5La3q/9KAYT/oklBqbZt1TD3Tc75/LeQXbcGAG6Quz4xAj+62F2yD83cltF8ke+VP/BE5i9ythY4cktClLxA25KCTzrPYv6YUH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fKaeab0X; arc=none smtp.client-ip=115.124.30.113
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1730167658; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=fUmX3bcpVhhyrvx6Y/iR5Yx/MiSlGOQFocQBSo30Ze0=;
-	b=fKaeab0X/pDtan+CdAJTf3nWD1481/16pGKyq6RghGXkXK9jsLy6OEDcyBQMDIMc389eOQF4EgBkvhbqGV2vLiBQDg8vgkB+MDZ4wcCy5BEsvMbcn2vcI/cNLyrB39PJDpeM2h4UhWwACCv8gnNvBJ0JWZijgfV/F9AaQ5nOkLo=
-Received: from 30.166.34.203(mailfrom:dtcccc@linux.alibaba.com fp:SMTPD_---0WI8Qelo_1730167656 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Tue, 29 Oct 2024 10:07:37 +0800
-Message-ID: <ddfca6ac-f7a6-4b51-80e8-2e422de7d597@linux.alibaba.com>
-Date: Tue, 29 Oct 2024 10:07:36 +0800
+	s=arc-20240116; t=1730167681; c=relaxed/simple;
+	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=eVgxbEtUhvryL4u7UePYh7JCh35ax7JN0MUurA7dvzTHvdS7cJx2j6zWm75ErfOm4RmnJIlYds9T4QMdAkHvUJ3yoef1q48rymk+DXfdC6Fv3x0IBmkk6KjiiQNYzU3OGt7wvsGoxihulZYiM7S5PFFlTNMHt4LUU1VS9CjaYoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Hdsga5QD; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 213CA211F60E; Mon, 28 Oct 2024 19:07:58 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 213CA211F60E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1730167678;
+	bh=H5yKHa85K/kN38MCbIEu0HaXLqb/id9+omWJt6O4sx0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Hdsga5QD/uRuO3D5CRdPstgEaMsK0bwpGuB24HynRkNsta5znSpYxXTueWz8ZAqbu
+	 tV4RgwYraTEAWLNCjdYHQsOUT2Rsm36AkbLyIFzTVWyhFMJ0AheGOU+c196/Qg6/3w
+	 mpq1kOJI29K0AmIKjXHXTTlTckMThlCMCR8C02Bw=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	allen.lkml@gmail.com,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 5.15] 5.15.170-rc1 review
+Date: Mon, 28 Oct 2024 19:07:58 -0700
+Message-Id: <1730167678-10669-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20241028062252.611837461@linuxfoundation.org>
+References: <20241028062252.611837461@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/2] sched/eevdf: Introduce a cgroup interface for
- slice
-Content-Language: en-US
-To: Tejun Heo <tj@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
-References: <20241028063313.8039-1-dtcccc@linux.alibaba.com>
- <20241028063313.8039-3-dtcccc@linux.alibaba.com>
- <Zx_LwYshJV5LERm9@slm.duckdns.org>
-From: Tianchen Ding <dtcccc@linux.alibaba.com>
-In-Reply-To: <Zx_LwYshJV5LERm9@slm.duckdns.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 2024/10/29 01:37, Tejun Heo wrote:
-> Hello,
-> 
-> On Mon, Oct 28, 2024 at 02:33:13PM +0800, Tianchen Ding wrote:
->> Introduce "cpu.fair_slice" for cgroup v2 and "cpu.fair_slice_us" for v1
->> according to their name styles. The unit is always microseconds.
->>
->> A cgroup with shorter slice can preempt others more easily. This could be
->> useful in container scenarios.
->>
->> By default, cpu.fair_slice is 0, which means the slice of se is
->> calculated by min_slice from its cfs_rq. If cpu.fair_slice is set, it
->> will overwrite se->slice with the customized value.
-> 
-> Provided that this tunable is necessary, wouldn't it be more useful to
-> figure out what per-task interface would look like first? Maybe there are
-> cases where per-cgroup slice config makes sense but that sounds
-> significantly less useful than being able to configure it per-task.
-> 
-> Thanks.
-> 
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
 
-For eevdf, per-task interface has been introduced in commit 857b158dc5e8 
-("sched/eevdf: Use sched_attr::sched_runtime to set request/slice suggestion")
 
-So This patch is trying to introduce a cgroup level interface.
 
-Thanks.
+
+Thanks,
+Hardik
 
