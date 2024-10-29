@@ -1,161 +1,460 @@
-Return-Path: <linux-kernel+bounces-387566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CCB9B5301
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:54:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40B0A9B5303
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:00:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 993EC1C228CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:54:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8392EB22496
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFAC207206;
-	Tue, 29 Oct 2024 19:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CAE3206E61;
+	Tue, 29 Oct 2024 20:00:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3/M5U0sB"
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com [209.85.222.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EQWO6b3b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24813205ACD
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BD11940B3;
+	Tue, 29 Oct 2024 20:00:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730231639; cv=none; b=DhJpNUT3QlXRx1FohYKm+lrMgpeIeuYCQuf7KQ0/79mgqUeja0e+UGtX2H50Izuo6mQutkoVV8kf7olVdsjNx3MD7le0uEomb7Nbv+laep2YMz6AMiA4xh1V/PfVRH1LJCiv8EQsjKxYqFm1wajc8dCfdIHg9EwoaQr7MfgTm1U=
+	t=1730232035; cv=none; b=cPFk+nkv/JdIi0ty9mzFyTOQ4pkzvyOUfJxnLkPRV1vxvktWrO/pd216VeVDDz+uvn/6wqn8HF9+E3bvU0gnfL3ZfDs6hxl0HnY6TUvq8QM83yrjkBZotVjB58bEDoKlAV6yOLdNORro7Ece6JyWVbK9FzOjs48Bg0w8heSGQRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730231639; c=relaxed/simple;
-	bh=bC/aoiCY+0/pd6/iVVaQE1r33l0jbGNXMhU7hb06FSY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MF8KXG/yKL1FjfGDahpm23tZDv5Cf7CWPJk+xtPPTvdw2JSj5Z9jnezeev+zZsLfT6zoO0FUmW7PUGBAB5VGuw8V+O1wIhg7FxT90CUXG3nOy/TCUGzUzUg2qc44idkldTvftKQoCfrME9Zt04YItnTiqWxTYTgK7qqrmrpfqHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3/M5U0sB; arc=none smtp.client-ip=209.85.222.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-84fd764f6ddso97537241.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730231636; x=1730836436; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wF8AVBE566042dEisFc0/QOULIDtd917EPRX8LpaS4Q=;
-        b=3/M5U0sBReCT31OQrVKHduL8yj73UMh2MTtKVCZvNY7iqdc6BvtrEPSoMMlAGdt4GJ
-         UjxSX+h9smV1ZELV8vXuTOU8WdqTY09JfkDjgcFkUXwQ4yJ/UgnXnKlaQczLePgM2iYl
-         XsK+sDze55vYw0XSD8BB7+Pu9CCsBe2a0ZyP7WCKozPKMBFnlDr6XCteZWIDKjb/O0fo
-         SDizd3+yjSX+5WvcAqnshgYYuaMLQO9dDCI0lSjXT8wpTmZoBNBVH+PyRRtwWfOoPmdq
-         Na4GiIyznk02qzlnKGG6xnvueKr63qfPJjE1RLrGOFmraoJJW7qBFCD1xfUHILrP4h6N
-         PeMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730231636; x=1730836436;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wF8AVBE566042dEisFc0/QOULIDtd917EPRX8LpaS4Q=;
-        b=VluRqvFOJgwzblSFdDMOeAnAP6clsWb2Y6nFhYWtm564AKPO+B2dgmPtElQxOBvMl/
-         gAQUhpUwEYf9N4pflGorIJMw20AZ1DOnj+b1BxCK6oIm/R4ZQZDbXjlhXTfePdkCmK3B
-         SiCqxV+Fffn84EUQxblXMvz8l6tscV3lgUdVRi+pn71AVKlJbYjrv66ce9wGR3OPMd2H
-         k3keWLuP8/ToSqGt03EX3/vTj0vFnh6qA9KYtQQX58joukRkpVQtgpTHN80Rcg751dTp
-         pmiTF5kPMVwD2ZsTV33u2QPzt3iuimhK92EGCMLbX7ltbnFOaHACKOBcwc9yf9zVP4sy
-         9qog==
-X-Forwarded-Encrypted: i=1; AJvYcCVmbFQQMVNdjGNybjXQDNq8uo6S34KlgI2YLlUSa+UPfvAE8lbiyGXTtGSYc1Gh8HJzJjYfXbXntoAzv4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUV1iZPrdpelk/8OlMipv/Rg5T70ufc5KF2IFMQsG4KAEqABCa
-	MBjCIREKTsCvcKB3QoRGI2HOrkaDmieIfbd3I2EnINzI9OQGJmiwJdL7CGUg75IBv9zk9Lt0ZnY
-	XvcxPt2Fq14rlYEEXMeKdMDnKEJn3Qx3WfY2W
-X-Google-Smtp-Source: AGHT+IGiqS8zkowA0hhH1G9zpWHqiGgjCkwEqm4HQq3vuHcJXKhYb0OieWP/5MMHrb/rtD2no9MHT8oFzOwREShVmNE=
-X-Received: by 2002:a05:6102:a52:b0:4a4:77c7:9471 with SMTP id
- ada2fe7eead31-4a8f67c4340mr2620516137.5.1730231635771; Tue, 29 Oct 2024
- 12:53:55 -0700 (PDT)
+	s=arc-20240116; t=1730232035; c=relaxed/simple;
+	bh=Z5k6IE5EbAGovDlm8kn1eD8hO0NwIVUO7nt1+rBPFyM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RqTyUGsVHtP10ky3Hp5yAIIdQwlkVfrmIzTEdGJMlDXiD03rIsJWxcRBCg4ABMQ76cYoItLRn8vnXWCOwAtXAh6Y/cghtYqn1J1sqRHZFIdrNnUyqEEz5z6Rwr6W7bFTW2EHg+MI3quMavRuWVzO3k15U0BH2+vT5f2oIUAnd88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EQWO6b3b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 633B5C4CECD;
+	Tue, 29 Oct 2024 20:00:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730232035;
+	bh=Z5k6IE5EbAGovDlm8kn1eD8hO0NwIVUO7nt1+rBPFyM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=EQWO6b3b23uFJ8yJz7kF6iDRTNE6NSAV4ffmgJXO1J7gNmVjt/Eu1gcH8hporzB1O
+	 y5fElDNqOQjt3SeWdEbuOOcgE8T8SrzX5cy1KwaFkIjeACs9fy3sX2zsYD8DOuHPW4
+	 saYK/r/+97QgVS8riMCfOxYWhJUxHLdTVmPV9GvPvnxgHwUXPave7/XY5VamkniE2W
+	 bFDEKAvYW1vZNqwiUvZlNspiRTJxNK6q+Aat95gh+vrnZX3ZERS1bxZ3vY7FqKvefP
+	 hkITA2DKJ5+lrVDHbRtmph9eck4tJL9TwSeM2XiDmuuWQTTP5qsc00kWyW4o/rgZd8
+	 qw5Sf3EVFkTzA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 29 Oct 2024 16:00:23 -0400
+Subject: [PATCH v2] nfsd: allow for up to 32 callback session slots
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021042218.746659-1-yuzhao@google.com> <20241021042218.746659-4-yuzhao@google.com>
- <86a5ew41tp.wl-maz@kernel.org> <CAOUHufanq2_nbNiU_=mCgWufoSGDOS3EpAz+4xB5kB=PV2ECVA@mail.gmail.com>
- <86h6902m7y.wl-maz@kernel.org> <CAOUHufbEadyAn0WVdJqYKkUjvMfGXXiLjaApjhaHKg93P8Rymg@mail.gmail.com>
- <864j4u3f7l.wl-maz@kernel.org>
-In-Reply-To: <864j4u3f7l.wl-maz@kernel.org>
-From: Yu Zhao <yuzhao@google.com>
-Date: Tue, 29 Oct 2024 13:53:17 -0600
-Message-ID: <CAOUHufZFQ+RrSRiSw00Gv8bjn04hAg92eAbdp-tRoKM36R7uVQ@mail.gmail.com>
-Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-To: Marc Zyngier <maz@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Muchun Song <muchun.song@linux.dev>, Thomas Gleixner <tglx@linutronix.de>, 
-	Will Deacon <will@kernel.org>, Douglas Anderson <dianders@chromium.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Nanyong Sun <sunnanyong@huawei.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241029-bcwide-v2-1-e9010b6ef55d@kernel.org>
+X-B4-Tracking: v=1; b=H4sIANc+IWcC/2WMyw6CMBAAf4X0bM12KQ89+R+GA21X2GiAtAY1p
+ P9uIR40HmcymUUE8kxBHLNFeJo58DgkwF0mbN8OHUl2iQUCagVYSGMf7EiWxlWkTZk7gyLFk6c
+ LP7fRuUncc7iP/rV9Z7Xav8WsJEiHAHlFhYbWnq7kB7rtR9+ty09f//RAVdHWqA7OwnffxBjfI
+ /NJOc0AAAA=
+X-Change-ID: 20241025-bcwide-6bd7e4b63db2
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>
+Cc: Olga Kornievskaia <okorniev@redhat.com>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12941; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=Z5k6IE5EbAGovDlm8kn1eD8hO0NwIVUO7nt1+rBPFyM=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnIT7ciLNg2L6sd38JSfB3XmiIPIOrt8QRansL7
+ vy5HUQXL9CJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZyE+3AAKCRAADmhBGVaC
+ FTMcD/9ZW5J0t0fBipWWFUe/W2Hu3O6J1/IaA5BfFieSIHBJAySi1Ts75I0/dow80CJR2njcBzt
+ 8ZBaT/uNzvjt7uVz4yE8WXYHO9EbSavQzuUuOZ70TjnUPIv1ilt9WzcxRnh+Ud5SFIwOLxxQfaG
+ Q161SYDqpznoiAOBh9ImdvhlSUvnJjs/tw7fUmbKFHlCSyQq8iDIJJ9aPLczig6IhOdCEsA6eBJ
+ fD3LLDNmj1BZ+/f6sjjPDk/5pwfu5mhwUl69CSiySxxfTLXx66vdbx+N2ItijyPvP+FP2F2QzHX
+ gWDz3RKGiHpR0wdHfZK4Ekv4zMUPK5ta7WdPLYn1AgXCAPAxFdWnTqEHyHE4ceqtSCqvXIJEp8L
+ J29Fxmn+oSd1D4Pl0OiHPjXsBCp+W9pK8d9NKJgp9Lz0dYiHrtOTOTfNc+6oHIk0uy51XO+EcsS
+ FN1iRcaelD8ahusYbNLPBfJTUgKIilgczQ0huxtzqIz+xPD7Mg15e/7S5EkdqPYaTqYqtduQsoJ
+ OUaTTrE0pk5yDdWl1vWO9OczBealBRTwLcYg08o3SLUrWAdylIP08OY0s890o4Yfz++181jhEZV
+ yH72w9FatAGZ2ksz2XUbCGXK4KKX4DEY7Ez4nxNGKCCvoQG2StcjAadJs18gs5HsGzLIfoUrP4I
+ 2f0PL8SWXcMWCVQ==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On Tue, Oct 29, 2024 at 1:02=E2=80=AFPM Marc Zyngier <maz@kernel.org> wrote=
-:
->
-> On Fri, 25 Oct 2024 18:31:01 +0100,
-> Yu Zhao <yuzhao@google.com> wrote:
-> >
-> > On Fri, Oct 25, 2024 at 10:15=E2=80=AFAM Marc Zyngier <maz@kernel.org> =
-wrote:
-> > >
-> > > On Fri, 25 Oct 2024 06:07:45 +0100,
-> > > Yu Zhao <yuzhao@google.com> wrote:
-> > > >
-> > > > Hi Marc,
-> > > >
-> > > > On Tue, Oct 22, 2024 at 9:03=E2=80=AFAM Marc Zyngier <maz@kernel.or=
-g> wrote:
-> > > > >
-> > > > > On Mon, 21 Oct 2024 05:22:15 +0100,
-> > > > > Yu Zhao <yuzhao@google.com> wrote:
-> > > > > >
-> > > > > > @@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq=
-_data *d, const struct cpumask *mask)
-> > > > > >        */
-> > > > > >       dsb(ishst);
-> > > > > >
-> > > > > > +     cpumask_copy(&broadcast, cpu_present_mask);
-> > > > >
-> > > > > Why cpu_present_mask? I'd expect that cpu_online_mask should be t=
-he
-> > > > > correct mask to use -- we don't IPI offline CPUs, in general.
-> > > >
-> > > > This is exactly because "we don't IPI offline CPUs, in general",
-> > > > assuming "we" means the kernel, not GIC.
-> > > >
-> > > > My interpretation of what the GIC spec says ("0b1: Interrupts route=
-d
-> > > > to all PEs in the system, excluding self") is that it broadcasts IP=
-Is to
-> > > > "cpu_present_mask" (minus the local one). So if the kernel uses
-> > > > "cpu_online_mask" here, GIC would send IPIs to offline CPUs
-> > > > (cpu_present_mask ^ cpu_online_mask), which I don't know whether it=
-'s
-> > > > a defined behavior.
-> >
-> > Thanks for clarifying.
-> >
-> > > Offline CPUs are not known to the kernel.
-> >
-> > I assume it wouldn't matter to firmware either, correct? IOW, we
->
-> Firmware is on the secure side of the stack.
->
-> > wouldn't cause firmware any trouble by letting GIC send IPIs to
-> > (cpu_present_mask ^ cpu_online_mask), assuming those two masks can be
-> > different on arm64 when hotplug is enabled?
->
-> You can't send SGIs from non-secure to secure using ICC_SGI1R_EL1.
+nfsd currently only uses a single slot in the callback channel, which is
+proving to be a bottleneck in some cases. Widen the callback channel to
+a max of 32 slots (subject to the client's target_maxreqs value).
 
-Right, this makes sense now.
+Change the cb_holds_slot boolean to an integer that tracks the current
+slot number (with -1 meaning "unassigned").  Move the callback slot
+tracking info into the session. Add a new u32 that acts as a bitmap to
+track which slots are in use, and a u32 to track the latest callback
+target_slotid that the client reports. To protect the new fields, add
+a new per-session spinlock (the se_lock).
 
-> You
-> would need to use ICC_ASGI1R_EL1, and have secure to allow such
-> brokenness via a configuration of GICR_NSACR. Linux doesn't use the
-> former, and no sane software touches the latter.
->
->         M.
->
-> --
-> Without deviation from the norm, progress is not possible.
+Fix nfsd41_cb_get_slot to always search for the lowest slotid (using
+ffs()), and change it to retry until there is a slot available or the
+rpc_task is signalled.
+
+Finally, convert the session->se_cb_seq_nr field into an array of
+counters and add the necessary handling to ensure that the seqids get
+reset at the appropriate times.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Minor update to the set I sent yesterday, mostly to address Chuck's
+comments. This one also adds a new per-session spinlock to protect
+these fields instead of using the cl_lock.
+
+Olga, you had a workload that was seeing timeouts (probably?) due to
+long callback queues. I'd be interested to know whether this patch
+helps that workload at all.
+---
+Changes in v2:
+- take cl_lock when fetching fields from session to be encoded
+- use fls() instead of bespoke highest_unset_index()
+- rename variables in several functions with more descriptive names
+- clamp limit of for loop in update_cb_slot_table()
+- re-add missing rpc_wake_up_queued_task() call
+- fix slotid check in decode_cb_sequence4resok()
+- add new per-session spinlock
+---
+ fs/nfsd/nfs4callback.c | 113 +++++++++++++++++++++++++++++++++++--------------
+ fs/nfsd/nfs4state.c    |   8 +++-
+ fs/nfsd/state.h        |  17 +++++---
+ fs/nfsd/trace.h        |   2 +-
+ 4 files changed, 98 insertions(+), 42 deletions(-)
+
+diff --git a/fs/nfsd/nfs4callback.c b/fs/nfsd/nfs4callback.c
+index e38fa834b3d91333acf1425eb14c644e5d5f2601..4516ec5f68edcf702944dd2cc3071a24fd350f21 100644
+--- a/fs/nfsd/nfs4callback.c
++++ b/fs/nfsd/nfs4callback.c
+@@ -406,6 +406,19 @@ encode_cb_getattr4args(struct xdr_stream *xdr, struct nfs4_cb_compound_hdr *hdr,
+ 	hdr->nops++;
+ }
+ 
++static u32 highest_slotid(struct nfsd4_session *ses)
++{
++	u32 idx;
++
++	spin_lock(&ses->se_lock);
++	idx = fls(~ses->se_cb_slot_avail);
++	if (idx > 0)
++		--idx;
++	idx = max(idx, ses->se_cb_highest_slot);
++	spin_unlock(&ses->se_lock);
++	return idx;
++}
++
+ /*
+  * CB_SEQUENCE4args
+  *
+@@ -432,15 +445,35 @@ static void encode_cb_sequence4args(struct xdr_stream *xdr,
+ 	encode_sessionid4(xdr, session);
+ 
+ 	p = xdr_reserve_space(xdr, 4 + 4 + 4 + 4 + 4);
+-	*p++ = cpu_to_be32(session->se_cb_seq_nr);	/* csa_sequenceid */
+-	*p++ = xdr_zero;			/* csa_slotid */
+-	*p++ = xdr_zero;			/* csa_highest_slotid */
++	*p++ = cpu_to_be32(session->se_cb_seq_nr[cb->cb_held_slot]);	/* csa_sequenceid */
++	*p++ = cpu_to_be32(cb->cb_held_slot);		/* csa_slotid */
++	*p++ = cpu_to_be32(highest_slotid(session)); /* csa_highest_slotid */
+ 	*p++ = xdr_zero;			/* csa_cachethis */
+ 	xdr_encode_empty_array(p);		/* csa_referring_call_lists */
+ 
+ 	hdr->nops++;
+ }
+ 
++static void update_cb_slot_table(struct nfsd4_session *ses, u32 target)
++{
++	/* No need to do anything if nothing changed */
++	if (likely(target == READ_ONCE(ses->se_cb_highest_slot)))
++		return;
++
++	spin_lock(&ses->se_lock);
++	if (target > ses->se_cb_highest_slot) {
++		int i;
++
++		target = min(target, NFSD_BC_SLOT_TABLE_MAX);
++
++		/* Growing the slot table. Reset any new sequences to 1 */
++		for (i = ses->se_cb_highest_slot + 1; i <= target; ++i)
++			ses->se_cb_seq_nr[i] = 1;
++	}
++	ses->se_cb_highest_slot = target;
++	spin_unlock(&ses->se_lock);
++}
++
+ /*
+  * CB_SEQUENCE4resok
+  *
+@@ -468,7 +501,7 @@ static int decode_cb_sequence4resok(struct xdr_stream *xdr,
+ 	struct nfsd4_session *session = cb->cb_clp->cl_cb_session;
+ 	int status = -ESERVERFAULT;
+ 	__be32 *p;
+-	u32 dummy;
++	u32 seqid, slotid, target;
+ 
+ 	/*
+ 	 * If the server returns different values for sessionID, slotID or
+@@ -484,21 +517,27 @@ static int decode_cb_sequence4resok(struct xdr_stream *xdr,
+ 	}
+ 	p += XDR_QUADLEN(NFS4_MAX_SESSIONID_LEN);
+ 
+-	dummy = be32_to_cpup(p++);
+-	if (dummy != session->se_cb_seq_nr) {
++	seqid = be32_to_cpup(p++);
++	if (seqid != session->se_cb_seq_nr[cb->cb_held_slot]) {
+ 		dprintk("NFS: %s Invalid sequence number\n", __func__);
+ 		goto out;
+ 	}
+ 
+-	dummy = be32_to_cpup(p++);
+-	if (dummy != 0) {
++	slotid = be32_to_cpup(p++);
++	if (slotid != cb->cb_held_slot) {
+ 		dprintk("NFS: %s Invalid slotid\n", __func__);
+ 		goto out;
+ 	}
+ 
+-	/*
+-	 * FIXME: process highest slotid and target highest slotid
+-	 */
++	p++; // ignore current highest slot value
++
++	target = be32_to_cpup(p++);
++	if (target == 0) {
++		dprintk("NFS: %s Invalid target highest slotid\n", __func__);
++		goto out;
++	}
++
++	update_cb_slot_table(session, target);
+ 	status = 0;
+ out:
+ 	cb->cb_seq_status = status;
+@@ -1211,28 +1250,39 @@ void nfsd4_change_callback(struct nfs4_client *clp, struct nfs4_cb_conn *conn)
+ static bool nfsd41_cb_get_slot(struct nfsd4_callback *cb, struct rpc_task *task)
+ {
+ 	struct nfs4_client *clp = cb->cb_clp;
++	struct nfsd4_session *ses = clp->cl_cb_session;
++	int idx;
+ 
+-	if (!cb->cb_holds_slot &&
+-	    test_and_set_bit(0, &clp->cl_cb_slot_busy) != 0) {
+-		rpc_sleep_on(&clp->cl_cb_waitq, task, NULL);
+-		/* Race breaker */
+-		if (test_and_set_bit(0, &clp->cl_cb_slot_busy) != 0) {
+-			dprintk("%s slot is busy\n", __func__);
++	if (cb->cb_held_slot >= 0)
++		return true;
++retry:
++	spin_lock(&ses->se_lock);
++	idx = ffs(ses->se_cb_slot_avail) - 1;
++	if (idx < 0 || idx > ses->se_cb_highest_slot) {
++		spin_unlock(&ses->se_lock);
++		if (RPC_SIGNALLED(task))
+ 			return false;
+-		}
++		rpc_sleep_on(&clp->cl_cb_waitq, task, NULL);
+ 		rpc_wake_up_queued_task(&clp->cl_cb_waitq, task);
++		goto retry;
+ 	}
+-	cb->cb_holds_slot = true;
++	/* clear the bit for the slot */
++	ses->se_cb_slot_avail &= ~BIT(idx);
++	spin_unlock(&ses->se_lock);
++	cb->cb_held_slot = idx;
+ 	return true;
+ }
+ 
+ static void nfsd41_cb_release_slot(struct nfsd4_callback *cb)
+ {
+ 	struct nfs4_client *clp = cb->cb_clp;
++	struct nfsd4_session *ses = clp->cl_cb_session;
+ 
+-	if (cb->cb_holds_slot) {
+-		cb->cb_holds_slot = false;
+-		clear_bit(0, &clp->cl_cb_slot_busy);
++	if (cb->cb_held_slot >= 0) {
++		spin_lock(&ses->se_lock);
++		ses->se_cb_slot_avail |= BIT(cb->cb_held_slot);
++		spin_unlock(&ses->se_lock);
++		cb->cb_held_slot = -1;
+ 		rpc_wake_up_next(&clp->cl_cb_waitq);
+ 	}
+ }
+@@ -1249,8 +1299,8 @@ static void nfsd41_destroy_cb(struct nfsd4_callback *cb)
+ }
+ 
+ /*
+- * TODO: cb_sequence should support referring call lists, cachethis, multiple
+- * slots, and mark callback channel down on communication errors.
++ * TODO: cb_sequence should support referring call lists, cachethis,
++ * and mark callback channel down on communication errors.
+  */
+ static void nfsd4_cb_prepare(struct rpc_task *task, void *calldata)
+ {
+@@ -1292,7 +1342,7 @@ static bool nfsd4_cb_sequence_done(struct rpc_task *task, struct nfsd4_callback
+ 		return true;
+ 	}
+ 
+-	if (!cb->cb_holds_slot)
++	if (cb->cb_held_slot < 0)
+ 		goto need_restart;
+ 
+ 	/* This is the operation status code for CB_SEQUENCE */
+@@ -1306,10 +1356,10 @@ static bool nfsd4_cb_sequence_done(struct rpc_task *task, struct nfsd4_callback
+ 		 * If CB_SEQUENCE returns an error, then the state of the slot
+ 		 * (sequence ID, cached reply) MUST NOT change.
+ 		 */
+-		++session->se_cb_seq_nr;
++		++session->se_cb_seq_nr[cb->cb_held_slot];
+ 		break;
+ 	case -ESERVERFAULT:
+-		++session->se_cb_seq_nr;
++		++session->se_cb_seq_nr[cb->cb_held_slot];
+ 		nfsd4_mark_cb_fault(cb->cb_clp);
+ 		ret = false;
+ 		break;
+@@ -1335,17 +1385,16 @@ static bool nfsd4_cb_sequence_done(struct rpc_task *task, struct nfsd4_callback
+ 	case -NFS4ERR_BADSLOT:
+ 		goto retry_nowait;
+ 	case -NFS4ERR_SEQ_MISORDERED:
+-		if (session->se_cb_seq_nr != 1) {
+-			session->se_cb_seq_nr = 1;
++		if (session->se_cb_seq_nr[cb->cb_held_slot] != 1) {
++			session->se_cb_seq_nr[cb->cb_held_slot] = 1;
+ 			goto retry_nowait;
+ 		}
+ 		break;
+ 	default:
+ 		nfsd4_mark_cb_fault(cb->cb_clp);
+ 	}
+-	nfsd41_cb_release_slot(cb);
+-
+ 	trace_nfsd_cb_free_slot(task, cb);
++	nfsd41_cb_release_slot(cb);
+ 
+ 	if (RPC_SIGNALLED(task))
+ 		goto need_restart;
+@@ -1565,7 +1614,7 @@ void nfsd4_init_cb(struct nfsd4_callback *cb, struct nfs4_client *clp,
+ 	INIT_WORK(&cb->cb_work, nfsd4_run_cb_work);
+ 	cb->cb_status = 0;
+ 	cb->cb_need_restart = false;
+-	cb->cb_holds_slot = false;
++	cb->cb_held_slot = -1;
+ }
+ 
+ /**
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 5b718b349396f1aecd0ad4c63b2f43342841bbd4..2e8d2a3425f8ae28608e9e6a81ecda49cf4b2089 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -2002,6 +2002,9 @@ static struct nfsd4_session *alloc_session(struct nfsd4_channel_attrs *fattrs,
+ 	}
+ 
+ 	memcpy(&new->se_fchannel, fattrs, sizeof(struct nfsd4_channel_attrs));
++	new->se_cb_slot_avail = ~0U;
++	new->se_cb_highest_slot = battrs->maxreqs - 1;
++	spin_lock_init(&new->se_lock);
+ 	return new;
+ out_free:
+ 	while (i--)
+@@ -2132,7 +2135,9 @@ static void init_session(struct svc_rqst *rqstp, struct nfsd4_session *new, stru
+ 
+ 	INIT_LIST_HEAD(&new->se_conns);
+ 
+-	new->se_cb_seq_nr = 1;
++	for (idx = 0; idx < NFSD_BC_SLOT_TABLE_MAX; ++idx)
++		new->se_cb_seq_nr[idx] = 1;
++
+ 	new->se_flags = cses->flags;
+ 	new->se_cb_prog = cses->callback_prog;
+ 	new->se_cb_sec = cses->cb_sec;
+@@ -3159,7 +3164,6 @@ static struct nfs4_client *create_client(struct xdr_netobj name,
+ 	kref_init(&clp->cl_nfsdfs.cl_ref);
+ 	nfsd4_init_cb(&clp->cl_cb_null, clp, NULL, NFSPROC4_CLNT_CB_NULL);
+ 	clp->cl_time = ktime_get_boottime_seconds();
+-	clear_bit(0, &clp->cl_cb_slot_busy);
+ 	copy_verf(clp, verf);
+ 	memcpy(&clp->cl_addr, sa, sizeof(struct sockaddr_storage));
+ 	clp->cl_cb_session = NULL;
+diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+index 41cda86fea1f6166a0fd0215d3d458c93ced3e6a..665a672fe71e453809f432b8dd0b120e92f5a36a 100644
+--- a/fs/nfsd/state.h
++++ b/fs/nfsd/state.h
+@@ -71,8 +71,8 @@ struct nfsd4_callback {
+ 	struct work_struct cb_work;
+ 	int cb_seq_status;
+ 	int cb_status;
++	int cb_held_slot;
+ 	bool cb_need_restart;
+-	bool cb_holds_slot;
+ };
+ 
+ struct nfsd4_callback_ops {
+@@ -307,6 +307,9 @@ struct nfsd4_conn {
+ 	unsigned char cn_flags;
+ };
+ 
++/* Max number of slots that nfsd implements for NFSv4.1+ backchannel */
++#define NFSD_BC_SLOT_TABLE_MAX	(sizeof(u32) * 8)
++
+ /*
+  * Representation of a v4.1+ session. These are refcounted in a similar fashion
+  * to the nfs4_client. References are only taken when the server is actively
+@@ -314,18 +317,21 @@ struct nfsd4_conn {
+  */
+ struct nfsd4_session {
+ 	atomic_t		se_ref;
+-	struct list_head	se_hash;	/* hash by sessionid */
+-	struct list_head	se_perclnt;
+ /* See SESSION4_PERSIST, etc. for standard flags; this is internal-only: */
+ #define NFS4_SESSION_DEAD	0x010
+ 	u32			se_flags;
++	spinlock_t		se_lock;
++	struct list_head	se_hash;	/* hash by sessionid */
++	struct list_head	se_perclnt;
+ 	struct nfs4_client	*se_client;
+ 	struct nfs4_sessionid	se_sessionid;
+ 	struct nfsd4_channel_attrs se_fchannel;
+ 	struct nfsd4_cb_sec	se_cb_sec;
+ 	struct list_head	se_conns;
+ 	u32			se_cb_prog;
+-	u32			se_cb_seq_nr;
++	u32			se_cb_slot_avail; /* bitmap of available slots */
++	u32			se_cb_highest_slot;	/* highest slot client wants */
++	u32			se_cb_seq_nr[NFSD_BC_SLOT_TABLE_MAX];
+ 	struct nfsd4_slot	*se_slots[];	/* forward channel slots */
+ };
+ 
+@@ -459,9 +465,6 @@ struct nfs4_client {
+ 	 */
+ 	struct dentry		*cl_nfsd_info_dentry;
+ 
+-	/* for nfs41 callbacks */
+-	/* We currently support a single back channel with a single slot */
+-	unsigned long		cl_cb_slot_busy;
+ 	struct rpc_wait_queue	cl_cb_waitq;	/* backchannel callers may */
+ 						/* wait here for slots */
+ 	struct net		*net;
+diff --git a/fs/nfsd/trace.h b/fs/nfsd/trace.h
+index f318898cfc31614b5a84a4867e18c2b3a07122c9..a9c17186b6892f1df8d7f7b90e250c2913ab23fe 100644
+--- a/fs/nfsd/trace.h
++++ b/fs/nfsd/trace.h
+@@ -1697,7 +1697,7 @@ TRACE_EVENT(nfsd_cb_free_slot,
+ 		__entry->cl_id = sid->clientid.cl_id;
+ 		__entry->seqno = sid->sequence;
+ 		__entry->reserved = sid->reserved;
+-		__entry->slot_seqno = session->se_cb_seq_nr;
++		__entry->slot_seqno = session->se_cb_seq_nr[cb->cb_held_slot];
+ 	),
+ 	TP_printk(SUNRPC_TRACE_TASK_SPECIFIER
+ 		" sessionid=%08x:%08x:%08x:%08x new slot seqno=%u",
+
+---
+base-commit: 9c9cb4242c49bbadd010e8f0a9e7daf4b392ff6b
+change-id: 20241025-bcwide-6bd7e4b63db2
+
+Best regards,
+-- 
+Jeff Layton <jlayton@kernel.org>
+
 
