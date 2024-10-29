@@ -1,112 +1,151 @@
-Return-Path: <linux-kernel+bounces-386450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8235E9B439D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:01:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF7659B439E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB7FFB2195B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A118F1F23422
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:01:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2610200BA5;
-	Tue, 29 Oct 2024 08:00:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF588200BA5;
+	Tue, 29 Oct 2024 08:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HmC8HqRO"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVy4r70s"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F026C198E90
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:00:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22E4198E90
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188857; cv=none; b=mkVLnNYQw25erexY/5jNYLKFcoZNxY8TknUEl/4jcg2zuJebgwJCFaYB9Qq++L2O1q/1uRuu/86mnyuWSvX1PRFABU3RuJHkhvlfZ9wyqhNkRJ8AiaOGSENKPQsjtceZOGGR1P22PTJe0nwx13+6fq19lzuX+ZXi1feMQHll0Es=
+	t=1730188870; cv=none; b=LGyo6eLDkEb//eEcOleNaE3nOzGQAe4E8/desorVresMmpGB6DBsPC/ny7NejlMSlTuD8K1a8OUu+BRPy12loP9lwH2mFThii78CiOCQGNqT0hEZHrMwbBwO8eds7DLXW8Q0WihaLBcENGmuvstvDLgf8JAuHdObTQBNmhE2HZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188857; c=relaxed/simple;
-	bh=Bs5RKnlg0wosheoy7cIkhyyQ9FSLjDyya8fyL/0PWG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=i7dt3jEAhHE1Tl9ANc5B+Rlr6y4yU24pvxJXj1me2iUoJjpwqvRQaBPINzmQXVNSocAF7hwBdWaIS2WMEGeywkL/t9viKYbGlD/8cJaocSkFNRA+9qbccGtaQ9r3wuDQU9TDOZ6HSNmu3ixuOMvc5cKoqvF1HSvwJK2V9xEwOjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HmC8HqRO; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539fe76e802so6102824e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:00:54 -0700 (PDT)
+	s=arc-20240116; t=1730188870; c=relaxed/simple;
+	bh=bzhZz2GbYuomV5MFzqF3P/eLv0fnWUj7r5Lpx812OSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCeCMvfgMHFux1F+Ky03tcKQglo1G2eJZcNeTQkwEQPZuQdEiSNTe/mAKIs/vA4Hmt1I7lNl0IblZU1ejlkPsjCuQ+m0pc5/1tZVbN95euV6Kgergy8s3evM6FIWoDFwL1+6RRJa0gmHOs13kR5RQBRyD+0wBXbTAvyQYITiBR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVy4r70s; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316cce103dso67925695e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:01:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730188853; x=1730793653; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4n4x9GYxa/84hlNl/zX8+weX12yrLQSNbbEjP2vC+SU=;
-        b=HmC8HqROddiAQduxPNsUATlWDIcGfGjr9FI4CeJrGlA6uQyC82ooZPZDlYnnYgl0ba
-         VFV2ndO6RPbX5T78Rvpjy01wedn3Cy9V91ojbX/gWDLUFvg53u7e9TD9tVFmw0MMgD1F
-         yuKysVmo80kwWFg7zZz7Gbgp14AxSTIZrzlGUjaS3LNBoo9C/jgdKhIfDJNt5coVjvnc
-         +d2rYLZKXHs8KoF85fdOXLCeUjlFLjWIrm6GRzjP+3fYb/QdGiUFp7cSgH4DpuaziiUs
-         BsbbE+yQhtF4Bw2dYblroUPQJXUq3CLExJccCYiE6gGQeCVZzY+t1A2HtUtrprNuowKX
-         +Okg==
+        d=gmail.com; s=20230601; t=1730188866; x=1730793666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bzhZz2GbYuomV5MFzqF3P/eLv0fnWUj7r5Lpx812OSI=;
+        b=BVy4r70s2ut3hLDrMBl0Z2UEc2oBuCPNWQPIiQ7KpnnSkNesLYo8l7ELZCty4Y8wNY
+         YSob9W4kOYqyCvGBhuiWIV88KQ92f2IwohisW3opUTOg/v/amzo1UR7P0DxGIDMALeZj
+         Rn4665R10xbZDxG0R+/XnQ+IokjVw6IRFZGkplMPx+57tWmzcLr/RALCkWfNwKfLtH2u
+         EFhfV44/wv6aSiDu3DQmBc+ujGCzY/+Cd8+H0U6Et0C+y7wwV0HHt1zME2Ft++GbI/0l
+         +4YaNNJBCwmRzmrEyIMcooaNYAfVE5MoupYgPut5KrHPmHt0FJJMv9YA+t6gYCVmmvCN
+         zAdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730188853; x=1730793653;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4n4x9GYxa/84hlNl/zX8+weX12yrLQSNbbEjP2vC+SU=;
-        b=AK8tr5sL9Ofd3DcL1LKcYJ/SEvsyiRVMgxSxVC29zvWduf6oLUWFyTOkCH/53u5Qj2
-         RwLEtWhF+h4AT0083OwjAqYKv+YmDRN2oVYrO9WZrDouDeyneNpEQ/+4Gr2aD+Jr1Ylu
-         BtjaohalwAp1Jvy7B1K9IS0bfY1ps+XbdfnY2lEzgTHPUhW1/PechzdOP7l0FRF4zpz6
-         /qLygKVfLU+4uHFYRhN+Y0Ywzr4ej0RItGUPDj5mwqdVYt4Sj/8ADBbZiP7U8sAOCeW9
-         LOK8n3bGLHVJn+MPNCo/f2pKjDPHs9BRduPsIIX+dHEBXajMFzb4jakkDVWGvHFHQaYL
-         4QNA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbAtjdsXaFYeUFtVkLCzXgDljKmesWrzwZON1lC3t+f0L8vs0pLUpG5oVcihmWPVunUzEQ5rtTJiBlOCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Eof6RF32hXneNWtu433ZYUrl1zGBQFswklSZ9L9xu5x5YM5T
-	Yrp4aIWWbPdHhksGP9AkUJYOOu7lgDdl3leGOVPCd4JbqE1T+TZvbmQvzsYELqI=
-X-Google-Smtp-Source: AGHT+IFI0GQq8D7c2huksHpR4S4ZugunHxuqIU3GR4zlJi6+IR1gaYwVJZr1f3llj1rmrlrWDh05mg==
-X-Received: by 2002:a05:6512:2243:b0:539:de0d:1e35 with SMTP id 2adb3069b0e04-53b348c1ddemr4380499e87.1.1730188852659;
-        Tue, 29 Oct 2024 01:00:52 -0700 (PDT)
-Received: from tudordana.roam.corp.google.com ([79.115.63.43])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935a4b40sm135826265e9.24.2024.10.29.01.00.51
+        d=1e100.net; s=20230601; t=1730188866; x=1730793666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bzhZz2GbYuomV5MFzqF3P/eLv0fnWUj7r5Lpx812OSI=;
+        b=rhU0tvIj+rhKG6bH5ZnohpHSfNiz1K75jUbOTDbwKAZZI5Y/1EwjPw2twZlPLADZ8C
+         uSGY1bZc6EVg7MxYP7mK9P03mCVBIPMlcaFxQPAO+awEhe7XHei2cnljTDo5tKS/Jfsb
+         Q8CEd3xv2MU8MwdmQ6aUY3uTbEbJ9whypavwDs/mHVqgTDg+IX9Dig5dRzbMpPP1MJs9
+         EIDrSxtgbpESbD+lJJ8kED8bCYVKd8MEOCb/LMawPKRVaZBWSAkfkn6E0cr7M3huAKDC
+         ZR0AIiv0SH+9yMmTZ2ll3kLXFaNy81JWj4Abb80wBTpaXUGLyxx5GTRENakyVfrmAejW
+         Bnjw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSUjMqBsP71r0+TJiDIum3mO+X0ZC9lHgGVKDNoCftU0gXQc8ipyEqDMQAEt2m5vTVlmXGg0m2ccuikDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8QUvHv39vbJCY0yf3d/8vNs03GpTmgsvClFRoEDUSgc7nRZIZ
+	/UoNSFCGgjSdhZadgGzo60eBU5Hcw5XE2MHE2r8ikx7fJoFYR79ldnax3wsg
+X-Google-Smtp-Source: AGHT+IFr0REKzIVW7Tl7PWuzYb/YDn87kfUPNpGrBe1ZEl3WOV7PcWg4Lczgc6Zu7KIosbpcVpyrhA==
+X-Received: by 2002:a05:6512:108c:b0:539:8f68:e036 with SMTP id 2adb3069b0e04-53b348e755fmr7646927e87.34.1730188854996;
+        Tue, 29 Oct 2024 01:00:54 -0700 (PDT)
+Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c96ebsm1305019e87.223.2024.10.29.01.00.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:00:52 -0700 (PDT)
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: pratyush@kernel.org
-Cc: mwalle@kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Tudor Ambarus <tudor.ambarus@linaro.org>
-Subject: [PATCH] mtd: spi-nor: winbond: add "w/ and w/o SFDP" comment
-Date: Tue, 29 Oct 2024 08:00:49 +0000
-Message-ID: <20241029080049.96679-1-tudor.ambarus@linaro.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+        Tue, 29 Oct 2024 01:00:54 -0700 (PDT)
+Date: Tue, 29 Oct 2024 09:00:52 +0100
+From: Marcus Folkesson <marcus.folkesson@gmail.com>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mtd: spi-nor: atmel: add at25sf321b entry
+Message-ID: <ZyCWNK_xMIsW4Ibq@gmail.com>
+References: <20241018-spi-nor-v1-1-d725bfb701ec@gmail.com>
+ <239d2425-52f6-4deb-964e-e22d1a1f6637@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KknHUEYmorMeUoPi"
+Content-Disposition: inline
+In-Reply-To: <239d2425-52f6-4deb-964e-e22d1a1f6637@linaro.org>
 
-Commit d35df77707bf ("mtd: spi-nor: winbond: fix w25q128 regression")
-upstream fixed a regression for flavors of 0xef4018 flash that don't
-define SFDP tables. Add a comment on the flash definition highlighting
-that there are flavors of flashes with and without SFDP support.
-It spares developers searching the entire git log for when we'll better
-handle these cases.
 
-Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
----
- drivers/mtd/spi-nor/winbond.c | 1 +
- 1 file changed, 1 insertion(+)
+--KknHUEYmorMeUoPi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index 9f7ce5763e71..8d0a00d69e12 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -129,6 +129,7 @@ static const struct flash_info winbond_nor_parts[] = {
- 		.no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
- 	}, {
- 		.id = SNOR_ID(0xef, 0x40, 0x18),
-+		/* Flavors w/ and w/o SFDP. */
- 		.name = "w25q128",
- 		.size = SZ_16M,
- 		.flags = SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB,
--- 
-2.47.0.163.g1226f6d8fa-goog
+Hi Tudor,
 
+On Tue, Oct 29, 2024 at 07:16:08AM +0000, Tudor Ambarus wrote:
+>=20
+>=20
+> On 10/18/24 10:51 AM, Marcus Folkesson wrote:
+> > Add entry for the at25sf321b 32Mbit SPI flash which is able to provide
+> > SFDP information.
+>=20
+> then we could initialize the flash based on SFDP. If you don't need
+> locking then probably you won't need a flash entry at all. See
+> https://docs.kernel.org/driver-api/mtd/spi-nor.html
+
+Hrmf. It seems like I have been looking into the wrong datasheet.
+
+The actual device is at25sf321, not at25s321b, where the former can not
+be identified using the SFDP table.
+At25sf321 and at25s321b uses the same JEDEC ID though, probably what got
+me wrong in the first place.
+
+Please see page 10 in
+https://www.renesas.cn/zh/document/apn/an201-adesto-32mbit-products-overview
+for further reading.
+
+I will send a v2 with updated details.
+
+Best regards,
+Marcus Folkesson
+
+--KknHUEYmorMeUoPi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmcgli8ACgkQiIBOb1ld
+UjLqWBAAyi0k9ULJfnyCaEkxEVEnWiyzPbYA3Tb5WlQoY/FuzK9QF2YO5eAZcnX3
+1MI2jYg6AXHK5Peep8m0if7Zeul+lhXxoIbQ5rSvpg8V9emyP5H4OBMyC/Ut2Xn8
+dAmHWzZq/4x7tvioOuceQMyvom3f31ruLYj1UIQDxqkgPxph/Vs10uz6VDYD7+5m
+a2fws0yI32dprIjt17WJiNVqti7t8OB7UTtb+cMrYssTtcMJgg+ZwDbSbqKgKKgt
+jb53eSQM8o45g7W7FwZG5niwV+BDnv3+U2iBqez4Z+Az2fJxH0hUqYajlRGDtAMw
+9+OQW2YfXVuAhYBPeq1tbVRgYZYUi2gCo5QHtbXJ5dgetdzhHl1j1ZrSDTTWbSvO
+BkMoDBlW8tdik9S9WPu++i8yqq/2uvbhOFz+vlimTjJJELiu9GdGGNiuf7JG0S2g
+KuJdxtn0Md+s2+hHDK5ZguT6OljNsx0DADS1XW/K2TGsBrvHeUSsB05RvDaaUiwO
+BK47ytYmWued1tcflYvtj/9RL36rrHTJx1EQzedpzCHYqdGTPvXlfLPMqZVM7hvx
+qJOctA11w5wkDje2DUuxYzeG8uytdXglmAsnYM5DTZnTHpOtSAZf1VjCKCm9YkLh
+GeTIBZcjHffbAB4053mzvDA+Nxt88VTVteiUByfu6gKKVkcv3Jo=
+=l+pl
+-----END PGP SIGNATURE-----
+
+--KknHUEYmorMeUoPi--
 
