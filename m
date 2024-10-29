@@ -1,369 +1,102 @@
-Return-Path: <linux-kernel+bounces-386615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58EF49B45E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:42:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8209B45E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:44:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BDFF1C22173
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:42:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CADE1C221E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:44:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4B8204039;
-	Tue, 29 Oct 2024 09:42:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="SRVMMa3h"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EC226AFC
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 785B8204039;
+	Tue, 29 Oct 2024 09:43:55 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8567926AFC;
+	Tue, 29 Oct 2024 09:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730194920; cv=none; b=rIbFgdFi5tlroJYvXu6dhNfUyqFQ2Beepi3YrEjHtB9K7EiT6kKz6IUSRbwYgRDw3THEubziSGiOse8iZNBcMe5LKVW8PQESdNx1Sm1ZFVViwQZwGA5vW+1wySp61u9U+rgAH5l1SeCKdWqD05xQrYiiQTlaW3bb8uqtofocx/o=
+	t=1730195035; cv=none; b=tifovfc4nofaAgNbt38K0CoNpjs9gUc4g1uDdaLpjnf4qtH1G+4KjE4203HNPheF+XbDolVfk/f6rqLo57DXLZQIzND+yrCLEPHPcyTiaTnacaoqK8wZ0Masbfef2LP4DVNWeVgmqrayBxvUgxuP6OgsTkzUEFyJaVqZlYqUUlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730194920; c=relaxed/simple;
-	bh=Rk1U0Q8IPzGXyW42DR/flbGw6vgMx+pYnP4sPaLW3FY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cMssG3UOKPWnWy5qwMIStYsJNQdzljwmhsZA2Gowrgjk0nneSo7KDaT2Rhn3IeFD6wHCfZsscYHDzT4dJmpUiGrouuMJPFS9MiCFracLn3I14zSxHXHH1E+7xWHJo2pGuQtfwRiAULalqSdvXydafyBMuzXs6fQ3PA+EZZaE9vE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=SRVMMa3h; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d3ecad390so4534854f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 02:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1730194915; x=1730799715; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=gLtr73VHqwgdcXGBbLOcbwXiHKwoIVyQG3J6RSZ3YZs=;
-        b=SRVMMa3hn04cPq8TfRTkmFUq8h1qw6olJ5xv16506j/oS1nxovegaQk8g+hZkJdQx1
-         ON1zMTufq2aocOi5WokkMR6haIIgrvRX7jpuLQz6fjvkp70P+a0SDAQhGXLjUd9YCE+x
-         2vGROjiVfPEQoTqzdQ4l5iP7WaiXzag6okfKqGeLQVYugeHN6fAGKdDpl8uD5amaRz2v
-         CN7uuFmUGJcOcJ65xUe43PP0KFn3FiD9Ze5KHKCgqEBV7OuFRfoY3jFvwraspJI0v0Lk
-         Dt22KI16KA4L8HUJVWTegId8j/BX8GM+PXYNMngwuD8Mey+neZ7it0E29U1C432ira/8
-         QquA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730194915; x=1730799715;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gLtr73VHqwgdcXGBbLOcbwXiHKwoIVyQG3J6RSZ3YZs=;
-        b=MoV7T/Lim9jsgAFa6vXXN8Mnw4gdeaYi0mni3Tnw+E70lkqADVeGlTDxzs7sE2VHvl
-         W4xRlpoHMzfAKMvWiFd/sENJac7BVVIM3ZkWMcRf/SylL74aN+zqrsTiZLW2xWrY//B2
-         XO06PWnrnmmHBis1ruttIkCVwBShf3NXRA44RMReqtbTamWJuAH/niS/KgYSqnFKWK2B
-         lT+a0eadVVOdDjRAG3RMdnIhrOns9twJK+D69V5beJWDETa0hUc8K41tMJoABuCydRAa
-         yuPTrYNCwQire1+aeLN85gGNqEUqcoDdSU10p5jWJFLjflf10VxbkYRlc5iKsu1UC25m
-         1GoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXxJY/+f757eKxiY6vM6fekjeMlwS6uUsgRnXGT43ytpvlT1J01p38M1DsFvmCyiT62y6xzidmvZa67+oY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlSz3mtEHSPIAmfO90aK++RYZwBk/UqiBNS/HcEJfKCnFIpypj
-	+aAu3E/icaiol2HW6nEn1iFD/+sP92Tb6Qrj8c59bkCB68vhKGqab0uytdPqK2k=
-X-Google-Smtp-Source: AGHT+IGqXDwnFNH7alnVVvpJskyB5278JBHkmt0HsSMEI09m7FRSIIR7myTRb9sj6Ecl9UHEE9DuWQ==
-X-Received: by 2002:a5d:45c5:0:b0:374:bf6b:1021 with SMTP id ffacd0b85a97d-38162916869mr1208668f8f.27.1730194915081;
-        Tue, 29 Oct 2024 02:41:55 -0700 (PDT)
-Received: from ?IPV6:2001:67c:2fbc:1:3dcf:a6cb:47af:d9f? ([2001:67c:2fbc:1:3dcf:a6cb:47af:d9f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431935f6e47sm139676855e9.38.2024.10.29.02.41.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 02:41:54 -0700 (PDT)
-Message-ID: <2f178d43-8a40-4f1a-b8cf-85d26ad0a063@openvpn.net>
-Date: Tue, 29 Oct 2024 10:42:09 +0100
+	s=arc-20240116; t=1730195035; c=relaxed/simple;
+	bh=ZtRs8jiXiWiRLZAbLrYbLsFyRRuNx7W1DkYJelr76LU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GGk0vUAcjXSnNv2TXueac2J/4knVRH7oqA8p/fy8Trw3UKOggTO9ElMWeWTBEWxvZaZhTQUZ+2g8apmUWRn0V9COn9tDEEh5cwXlHDS4yqTTlmYksDS47fV5iZ+uVvrcv6npnGNmqSQI+ns7R+gOFc5ZfFlKYvF9yHKrmNpp5ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DFE1313D5;
+	Tue, 29 Oct 2024 02:44:21 -0700 (PDT)
+Received: from e129166.arm.com (unknown [10.57.57.182])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 25FA73F528;
+	Tue, 29 Oct 2024 02:43:51 -0700 (PDT)
+From: Lukasz Luba <lukasz.luba@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Cc: lukasz.luba@arm.com,
+	dietmar.eggemann@arm.com,
+	rafael@kernel.org
+Subject: [PATCH v2 0/1] Update Energy Model with performance limits
+Date: Tue, 29 Oct 2024 09:43:28 +0000
+Message-ID: <20241029094452.495439-1-lukasz.luba@arm.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v10 23/23] testing/selftests: add test tool and
- scripts for ovpn module
-To: Shuah Khan <skhan@linuxfoundation.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Donald Hunter <donald.hunter@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
- Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
- sd@queasysnail.net, Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
- Eric Dumazet <edumazet@google.com>, linux-kselftest@vger.kernel.org
-References: <20241025-b4-ovpn-v10-0-b87530777be7@openvpn.net>
- <20241025-b4-ovpn-v10-23-b87530777be7@openvpn.net>
- <fe2b641f-a8aa-428c-9f04-f099015e0eb9@linuxfoundation.org>
- <feef6601-0e68-4913-b305-3be3face4a9e@openvpn.net>
- <24edee6f-9f77-43f2-8565-566668e5f697@linuxfoundation.org>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <24edee6f-9f77-43f2-8565-566668e5f697@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+Hi all,
 
+This patch set allows to specify in the EM the range of performance levels that
+the device is allowed to operate. It will impact EAS decision, especially for
+SoCs where CPUs share the voltage & frequency domain with other CPUs or devices
+e.g.
+- Mid CPUs + Big CPU
+- Little CPU + L3 cache in DSU
+- some other device + Little CPUs
 
-On 29/10/2024 03:29, Shuah Khan wrote:
-> On 10/28/24 04:13, Antonio Quartulli wrote:
->> On 27/10/2024 01:40, Shuah Khan wrote:
->>> On 10/25/24 03:14, Antonio Quartulli wrote:
->>>> The ovpn-cli tool can be compiled and used as selftest for the ovpn
->>>> kernel module.
->>>>
->>>> It implements the netlink API and can thus be integrated in any
->>>> script for more automated testing.
->>>>
->>>> Along with the tool, 4 scripts are added that perform basic
->>>> functionality tests by means of network namespaces.
->>>>
->>>> Cc: shuah@kernel.org
->>>> Cc: linux-kselftest@vger.kernel.org
->>>> Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
->>>> ---
->>>>   MAINTAINERS                                        |    1 +
->>>>   tools/testing/selftests/Makefile                   |    1 +
->>>>   tools/testing/selftests/net/ovpn/.gitignore        |    2 +
->>>>   tools/testing/selftests/net/ovpn/Makefile          |   17 +
->>>>   tools/testing/selftests/net/ovpn/config            |   10 +
->>>>   tools/testing/selftests/net/ovpn/data64.key        |    5 +
->>>>   tools/testing/selftests/net/ovpn/ovpn-cli.c        | 2370 ++++++++ 
->>>> ++ ++++++++++
->>>>   tools/testing/selftests/net/ovpn/tcp_peers.txt     |    5 +
->>>>   .../testing/selftests/net/ovpn/test-chachapoly.sh  |    9 +
->>>>   tools/testing/selftests/net/ovpn/test-float.sh     |    9 +
->>>>   tools/testing/selftests/net/ovpn/test-tcp.sh       |    9 +
->>>>   tools/testing/selftests/net/ovpn/test.sh           |  183 ++
->>>>   tools/testing/selftests/net/ovpn/udp_peers.txt     |    5 +
->>>>   13 files changed, 2626 insertions(+)
->>>>
->>>
->>> What does the test output look like? Add that to the change log.
->>
->> Hi Shuan,
->>
->> is there any expected output for kselftest scripts?
->> Right now it just prints a bunch of messages about what is being 
->> tested, plus the output from `ping` and `iperf`.
->>
->> My assumption is that the output would be useful in case of failures, 
->> to understand where and what went wrong.
->>
->> I can document that, but I am not sure it is truly helpful (?).
->> What do you think?
->>
->> Is there any specific output format I should obey to?
->>
->>
->> [...]
->>
->>
->>>> +
->>>> +static void usage(const char *cmd)
->>>> +{
->>>> +    fprintf(stderr,
->>>> +        "Usage %s <command> <iface> [arguments..]\n",
->>>> +        cmd);
->>>> +    fprintf(stderr, "where <command> can be one of the 
->>>> following\n\n");
->>>> +
->>>> +    fprintf(stderr, "* new_iface <iface> [mode]: create new ovpn 
->>>> interface\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tmode:\n");
->>>> +    fprintf(stderr, "\t\t- P2P for peer-to-peer mode (i.e. 
->>>> client)\n");
->>>> +    fprintf(stderr, "\t\t- MP for multi-peer mode (i.e. server)\n");
->>>> +
->>>> +    fprintf(stderr, "* del_iface <iface>: delete ovpn interface\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* listen <iface> <lport> <peers_file> [ipv6]: listen for 
->>>> incoming peer TCP connections\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tlport: TCP port to listen to\n");
->>>> +    fprintf(stderr,
->>>> +        "\tpeers_file: file containing one peer per line: Line 
->>>> format:\n");
->>>> +    fprintf(stderr, "\t\t<peer_id> <vpnaddr>\n");
->>>> +    fprintf(stderr,
->>>> +        "\tipv6: whether the socket should listen to the IPv6 
->>>> wildcard address\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* connect <iface> <peer_id> <raddr> <rport> [key_file]: 
->>>> start connecting peer of TCP-based VPN session\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tpeer_id: peer ID of the connecting peer\n");
->>>> +    fprintf(stderr, "\traddr: peer IP address to connect to\n");
->>>> +    fprintf(stderr, "\trport: peer TCP port to connect to\n");
->>>> +    fprintf(stderr,
->>>> +        "\tkey_file: file containing the symmetric key for 
->>>> encryption\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* new_peer <iface> <peer_id> <lport> <raddr> <rport> 
->>>> [vpnaddr]: add new peer\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
->>>> +    fprintf(stderr,
->>>> +        "\tpeer_id: peer ID to be used in data packets to/from this 
->>>> peer\n");
->>>> +    fprintf(stderr, "\traddr: peer IP address\n");
->>>> +    fprintf(stderr, "\trport: peer UDP port\n");
->>>> +    fprintf(stderr, "\tvpnaddr: peer VPN IP\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* new_multi_peer <iface> <lport> <peers_file>: add 
->>>> multiple peers as listed in the file\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tlport: local UDP port to bind to\n");
->>>> +    fprintf(stderr,
->>>> +        "\tpeers_file: text file containing one peer per line. Line 
->>>> format:\n");
->>>> +    fprintf(stderr, "\t\t<peer_id> <raddr> <rport> <vpnaddr>\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* set_peer <iface> <peer_id> <keepalive_interval> 
->>>> <keepalive_timeout>: set peer attributes\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->>>> +    fprintf(stderr,
->>>> +        "\tkeepalive_interval: interval for sending ping messages\n");
->>>> +    fprintf(stderr,
->>>> +        "\tkeepalive_timeout: time after which a peer is timed 
->>>> out\n");
->>>> +
->>>> +    fprintf(stderr, "* del_peer <iface> <peer_id>: delete peer\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to delete\n");
->>>> +
->>>> +    fprintf(stderr, "* get_peer <iface> [peer_id]: retrieve peer(s) 
->>>> status\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr,
->>>> +        "\tpeer_id: peer ID of the peer to query. All peers are 
->>>> returned if omitted\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* new_key <iface> <peer_id> <slot> <key_id> <cipher> 
->>>> <key_dir> <key_file>: set data channel key\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr,
->>>> +        "\tpeer_id: peer ID of the peer to configure the key for\n");
->>>> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
->>>> +    fprintf(stderr, "\tkey_id: an ID from 0 to 7\n");
->>>> +    fprintf(stderr,
->>>> +        "\tcipher: cipher to use, supported: aes (AES-GCM), 
->>>> chachapoly (CHACHA20POLY1305)\n");
->>>> +    fprintf(stderr,
->>>> +        "\tkey_dir: key direction, must 0 on one host and 1 on the 
->>>> other\n");
->>>> +    fprintf(stderr, "\tkey_file: file containing the pre-shared 
->>>> key\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* del_key <iface> <peer_id> [slot]: erase existing data 
->>>> channel key\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->>>> +    fprintf(stderr, "\tslot: slot to erase. PRIMARY if omitted\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* get_key <iface> <peer_id> <slot>: retrieve non sensible 
->>>> key data\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to query\n");
->>>> +    fprintf(stderr, "\tslot: either 1 (primary) or 2 (secondary)\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* swap_keys <iface> <peer_id>: swap content of primary and 
->>>> secondary key slots\n");
->>>> +    fprintf(stderr, "\tiface: ovpn interface name\n");
->>>> +    fprintf(stderr, "\tpeer_id: peer ID of the peer to modify\n");
->>>> +
->>>> +    fprintf(stderr,
->>>> +        "* listen_mcast: listen to ovpn netlink multicast 
->>>> messages\n");
->>>> +}
->>>
->>> If this test is run from "make kselftest" as default run does this usage
->>> output show up in the report?
->>
->> No.
->> This usage is only printed when invoking ovpn-cli with wrong arguments 
->> and this can't be the case in the kselftest.
-> 
-> The usage() is great and much needed. My concern is if this usage would 
-> show up
-> when we run "make kselftest" - some tests do this by adding wrapper 
-> shell script
-> to run the test with different options to cover all the cases.
-> 
->>
->>
->> Other than documenting the output, do you think there is any other 
->> critical part to be adjusted in this patch?
-> 
-> No - I don't have any other comments on the test itself. I just want to 
-> make
-> sure this usage inadvertently doesn't end up in the "make kselftest" run.
-> 
-> With that
-> 
-> Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
+The minimum allowed frequency will be taken into account while doing EAS task
+placement simulation. When the min frequency is higher for the whole domain
+and not driven by the CPUs in that PD utilization, than the energy for
+computation in that PD will be higher. This patch helps to reflect that higher
+cost.
 
-Thanks a lot for your feedback.
-I promise no usage() output will pollute the reports :-)
+More explanation can be found in my presentation at OSPM2023 [1].
+I have shown experiments with Big CPU running high frequency and increasing
+the L3 cache frequency (to reduce the latency), but that impacted Little
+CPU which are in the same DVFS domain with L3 cache. It had bad impact for
+total energy consumed by small tasks placed on Little CPU. The EAS was not
+aware about the min frequency&voltage of the Little CPUs and energy estimation
+was wrong.
 
-Ok then, I will extend the commit message with a description of the 
-output and retain your Reviewed-by in v11.
+Changelog:
+v2:
+- added mutex to guard simultaneous updates and make them atomic (Hongyan)
+- added Doxygen two new arguments description (Dietmar)
+- changed patch header description (Dietmar) and added an example
+- dropped the SCMI patch for now, since the notifications are not merged there yet
+v1 [2]:
+- basic implementation
 
-I'll try to send it out today.
-
-Thanks.
 Regards,
+Lukasz Luba
 
-> 
-> thanks,
-> -- Shuah
+[1] https://www.youtube.com/watch?v=2C-5uikSbtM&list=PL0fKordpLTjKsBOUcZqnzlHShri4YBL1H
+[2] https://lore.kernel.org/lkml/20240403162315.1458337-1-lukasz.luba@arm.com/
+
+
+Lukasz Luba (1):
+  PM: EM: Add min/max available performance state limits
+
+ include/linux/energy_model.h | 24 ++++++++++++++---
+ kernel/power/energy_model.c  | 52 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 72 insertions(+), 4 deletions(-)
 
 -- 
-Antonio Quartulli
-OpenVPN Inc.
+2.46.0
 
 
