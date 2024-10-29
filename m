@@ -1,216 +1,106 @@
-Return-Path: <linux-kernel+bounces-386661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 289C89B468D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:17:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1DD99B4696
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:19:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498101C226E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:17:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873F6282A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:19:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12A62040AF;
-	Tue, 29 Oct 2024 10:17:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2660204032
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC96E204F78;
+	Tue, 29 Oct 2024 10:19:18 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B16204098
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197073; cv=none; b=rLJP0M9yGBtGTCTqo3ninQsp4gMmowDCnVZ8TxTcdZ4tl3D5RviRI6lC/wyp0JZJWIx0wfYidTjaGdkJ7GIh08+CAfTbzJMYcwZOaaxiDxIQcGb6NJKblpknetArT2m0bhROD3N1YNfflFDI5VMAudud4iTV3DqeOanCc1594Wo=
+	t=1730197158; cv=none; b=JlBC8tlnZ+kAIYigAJqmL1G/YnBwizJsNJ1AYl8o5IRNw5HEXvAvOXkJM94IWUQB2SUs2E+8iZB9F44UTPv/gjdXA8rErCh4dUrQyXtgjoKqbK4/1/ATbAUspSY51T+ndvyAA3gW0q79yKYUq0BKnfIl06r080u17F/4O1mdABc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197073; c=relaxed/simple;
-	bh=xx3ROp2cdPygsDksJKc8u2Zj6zaZ1kgfvXMqOT2Z61M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNjClYvt8ieFax+Ds1QXBr5CotPkh68erCqYSi1pLQqM6xtUZfUdkrGCLb56JGhARRgrv/e7f18H83zntt2lf/lhr4PmRee8AuoJJXM+qcLDTvS7wN2OszVKT4U+K6brztV2lhgFHKLKPTfClNgFlLN+UjSMDa61oWZZrRELZgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C41BF13D5
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:18:18 -0700 (PDT)
-Received: from e110455-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id C88083F528
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:17:48 -0700 (PDT)
-Date: Tue, 29 Oct 2024 10:17:46 +0000
-From: Liviu Dudau <liviu.dudau@arm.com>
-To: Yulia Garbovich <yulia.garbovich@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch,
-	rosen.zhelev@arm.com
-Subject: Re: [PATCH v2] drm: drm_fourcc: adding 10/12/14 bit formats
-Message-ID: <ZyC2Sp52aqTEgKoa@e110455-lin.cambridge.arm.com>
-References: <20240902142910.2716380-1-yulia.garbovich@arm.com>
+	s=arc-20240116; t=1730197158; c=relaxed/simple;
+	bh=LVKDUrcQcElxjQbX8op354Jgek9F9zCXPV5kpWMUO7E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MJMiPAvJNo00t0d71VLH3CDZjyYzUMiFqBgf3x+Pgm5pi5GkP6trIVSScG28zJkEP7Gb6ZK59g+fHdt4IYF7CvKCa+KZm8Py/EQqTJIdbhO+rN7499VP25qkZ32lF3tKG9aCuHr0eo3jFAyepcy63ge6UnvVlzj/YFVYrizpOJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 3a9341c695df11efa216b1d71e6e1362-20241029
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
+	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
+	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
+	IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR, DN_TRUSTED
+	SRC_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR, SN_UNTRUSTED, SN_UNFAMILIAR
+	SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF
+	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
+	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-UNFAMILIAR: 1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:6b8f3b12-faf5-4a8d-a269-1b9dc56d5702,IP:20,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:18,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:38
+X-CID-INFO: VERSION:1.1.38,REQID:6b8f3b12-faf5-4a8d-a269-1b9dc56d5702,IP:20,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:18,FILE:0,BULK:0,RULE:Release_HamU,ACTION
+	:release,TS:38
+X-CID-META: VersionHash:82c5f88,CLOUDID:197810b0e41b391e0c9a1f3cd400b1fd,BulkI
+	D:2410291819064NGZ8PPP,BulkQuantity:0,Recheck:0,SF:19|43|74|66|841|38|23|1
+	6|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,
+	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_SNR,TF_CID_SPAM_USA
+X-UUID: 3a9341c695df11efa216b1d71e6e1362-20241029
+X-User: zhangguopeng@kylinos.cn
+Received: from localhost.localdomain [(223.70.159.239)] by mailgw.kylinos.cn
+	(envelope-from <zhangguopeng@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 875702192; Tue, 29 Oct 2024 18:19:06 +0800
+From: zhangguopeng <zhangguopeng@kylinos.cn>
+To: linmiaohe@huawei.com,
+	linux-mm@kvack.org
+Cc: nao.horiguchi@gmail.com,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	zhangguopeng <zhangguopeng@kylinos.cn>
+Subject: [PATCH] mm/memory-failure: Replace sprintf() with sysfs_emit()
+Date: Tue, 29 Oct 2024 18:18:53 +0800
+Message-Id: <20241029101853.37890-1-zhangguopeng@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240902142910.2716380-1-yulia.garbovich@arm.com>
 
-On Mon, Sep 02, 2024 at 05:29:10PM +0300, Yulia Garbovich wrote:
-> Adding the following formats
->      - DRM_FORMAT_RX106
->      - DRM_FORMAT_GXRX106106
->      - DRM_FORMAT_RX124
->      - DRM_FORMAT_GXRX124124
->      - DRM_FORMAT_AXBXGXRX124124124124
->      - DRM_FORMAT_RX142
->      - DRM_FORMAT_GXRX142142
->      - DRM_FORMAT_AXBXGXRX142142142142
-> 
-> They are useful for communicating Bayer data between ISPs and GPU by emulating GL_R16UI and GL_RG16UI formats
-> 
-> Signed-off-by: Yulia Garbovich <yulia.garbovich@arm.com>
+As Documentation/filesystems/sysfs.rst suggested, show() should only
+use sysfs_emit() or sysfs_emit_at() when formatting the value to be
+returned to user space.
 
-Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+Signed-off-by: zhangguopeng <zhangguopeng@kylinos.cn>
+---
+ mm/memory-failure.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Best regards,
-Liviu
-
-> ---
->  drivers/gpu/drm/drm_fourcc.c  |  8 +++++
->  include/uapi/drm/drm_fourcc.h | 61 +++++++++++++++++++++++++++++++++--
->  2 files changed, 67 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_fourcc.c b/drivers/gpu/drm/drm_fourcc.c
-> index 193cf8ed7912..cd5f467edfeb 100644
-> --- a/drivers/gpu/drm/drm_fourcc.c
-> +++ b/drivers/gpu/drm/drm_fourcc.c
-> @@ -170,6 +170,9 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_R8,		.depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_R10,		.depth = 10, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_R12,		.depth = 12, .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
-> +		{ .format = DRM_FORMAT_RX106,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
-> +		{ .format = DRM_FORMAT_RX124,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
-> +		{ .format = DRM_FORMAT_RX142,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_RGB332,		.depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_BGR233,		.depth = 8,  .num_planes = 1, .cpp = { 1, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_XRGB4444,	.depth = 0,  .num_planes = 1, .cpp = { 2, 0, 0 }, .hsub = 1, .vsub = 1 },
-> @@ -200,6 +203,9 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_XBGR8888,	.depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_RGBX8888,	.depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_BGRX8888,	.depth = 24, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
-> +		{ .format = DRM_FORMAT_GXRX106106,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
-> +		{ .format = DRM_FORMAT_GXRX124124,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
-> +		{ .format = DRM_FORMAT_GXRX142142,	.depth = 0,  .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_RGB565_A8,	.depth = 24, .num_planes = 2, .cpp = { 2, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
->  		{ .format = DRM_FORMAT_BGR565_A8,	.depth = 24, .num_planes = 2, .cpp = { 2, 1, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
->  		{ .format = DRM_FORMAT_XRGB2101010,	.depth = 30, .num_planes = 1, .cpp = { 4, 0, 0 }, .hsub = 1, .vsub = 1 },
-> @@ -219,6 +225,8 @@ const struct drm_format_info *__drm_format_info(u32 format)
->  		{ .format = DRM_FORMAT_ARGB16161616F,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
->  		{ .format = DRM_FORMAT_ABGR16161616F,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
->  		{ .format = DRM_FORMAT_AXBXGXRX106106106106, .depth = 0, .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
-> +		{ .format = DRM_FORMAT_AXBXGXRX124124124124, .depth = 0, .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
-> +		{ .format = DRM_FORMAT_AXBXGXRX142142142142, .depth = 0, .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
->  		{ .format = DRM_FORMAT_XRGB16161616,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_XBGR16161616,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1 },
->  		{ .format = DRM_FORMAT_ARGB16161616,	.depth = 0,  .num_planes = 1, .cpp = { 8, 0, 0 }, .hsub = 1, .vsub = 1, .has_alpha = true },
-> diff --git a/include/uapi/drm/drm_fourcc.h b/include/uapi/drm/drm_fourcc.h
-> index 84d502e42961..7248b96ecf7e 100644
-> --- a/include/uapi/drm/drm_fourcc.h
-> +++ b/include/uapi/drm/drm_fourcc.h
-> @@ -146,6 +146,24 @@ extern "C" {
->  /* 12 bpp Red (direct relationship between channel value and brightness) */
->  #define DRM_FORMAT_R12		fourcc_code('R', '1', '2', ' ') /* [15:0] x:R 4:12 little endian */
->  
-> +/*
-> + * 1-component 16 bpp format that has a 10-bit R component in the top 10 bits of the word
-> + * in bytes 0..1 with the bottom 6 bits of the word unused
-> + */
-> +#define DRM_FORMAT_RX106	fourcc_code('R', '0', '1', '0') /* [15:0] R:x 10:6 little endian */
-> +
-> +/*
-> + * 1-component 16 bpp format that has a 12-bit R component in the top 12 bits of the word
-> + * in bytes 0..1 with the bottom 4 bits of the word unused
-> + */
-> +#define DRM_FORMAT_RX124	fourcc_code('R', '0', '1', '2') /* [15:0] R:x 12:4 little endian */
-> +
-> +/*
-> + * 1-component 16 bpp format that has a 14-bit R component in the top 14 bits of the word
-> + * in bytes 0..1 with the bottom 2 bits of the word unused
-> + */
-> +#define DRM_FORMAT_RX142	fourcc_code('R', '0', '1', '4') /* [15:0] R:x 14:2 little endian */
-> +
->  /* 16 bpp Red (direct relationship between channel value and brightness) */
->  #define DRM_FORMAT_R16		fourcc_code('R', '1', '6', ' ') /* [15:0] R little endian */
->  
-> @@ -157,6 +175,27 @@ extern "C" {
->  #define DRM_FORMAT_RG1616	fourcc_code('R', 'G', '3', '2') /* [31:0] R:G 16:16 little endian */
->  #define DRM_FORMAT_GR1616	fourcc_code('G', 'R', '3', '2') /* [31:0] G:R 16:16 little endian */
->  
-> + /*
-> + * 2-component  32bpp  format that has a 10-bit R component in the top 10 bits of the word
-> + * in bytes 0..1, and a 10-bit G component in the top 10 bits of the word in bytes 2..3,
-> + * with the bottom 6 bits of each word unused.
-> + */
-> +#define DRM_FORMAT_GXRX106106	fourcc_code('G', 'R', '1', '0') /* [31:0] G:x:R:x 10:6:10:6 little endian */
-> +
-> +/*
-> + * 2-component  32bpp  format that has a 12-bit R component in the top 12 bits of the word
-> + * in bytes 0..1, and a 12-bit G component in the top 12 bits of the word in bytes 2..3,
-> + * with the bottom 4 bits of each word unused.
-> + */
-> +#define DRM_FORMAT_GXRX124124	fourcc_code('G', 'R', '1', '2') /* [31:0] G:x:R:x 12:4:12:4 little endian */
-> +
-> +/*
-> + * 2-component  32bpp  format that has a 14-bit R component in the top 14 bits of the word
-> + * in bytes 0..1, and a 14-bit G component in the top 14 bits of the word in bytes 2..3,
-> + * with the bottom 2 bits of each word unused.
-> + */
-> +#define DRM_FORMAT_GXRX142142	fourcc_code('G', 'R', '1', '4') /* [31:0] G:x:R:x 14:2:14:2 little endian */
-> +
->  /* 8 bpp RGB */
->  #define DRM_FORMAT_RGB332	fourcc_code('R', 'G', 'B', '8') /* [7:0] R:G:B 3:3:2 */
->  #define DRM_FORMAT_BGR233	fourcc_code('B', 'G', 'R', '8') /* [7:0] B:G:R 2:3:3 */
-> @@ -229,11 +268,29 @@ extern "C" {
->  #define DRM_FORMAT_ABGR16161616F fourcc_code('A', 'B', '4', 'H') /* [63:0] A:B:G:R 16:16:16:16 little endian */
->  
->  /*
-> - * RGBA format with 10-bit components packed in 64-bit per pixel, with 6 bits
-> - * of unused padding per component:
-> + * 4-component, 64bpp format that has a 10-bit R component in the top 10 bits of the word in bytes 0..1,
-> + * a 10-bit G component in the top 10 bits of the word in bytes 2..3, a 10-bit B component in the top 10 bits of the word
-> + * in bytes 4..5, and a 10-bit A component in the top 10 bits of the word in bytes 6..7,
-> + * with the bottom 6 bits of each word unused.
->   */
->  #define DRM_FORMAT_AXBXGXRX106106106106 fourcc_code('A', 'B', '1', '0') /* [63:0] A:x:B:x:G:x:R:x 10:6:10:6:10:6:10:6 little endian */
->  
-> +/*
-> + * 4-component, 64bpp format that has a 12-bit R component in the top 12bits of the word in bytes 0..1,
-> + * a 12-bit G component in the top 12 bits of the word in bytes 2..3, a 12-bit B component in the top 12 bits of the word
-> + * in bytes 4..5, and a 12-bit A component in the top 12 bits of the word in bytes 6..7,
-> + * with the bottom 4 bits of each word unused.
-> + */
-> +#define DRM_FORMAT_AXBXGXRX124124124124	fourcc_code('A', 'B', '1', '2') /* [63:0] A:x:B:x:G:x:R:x 12:4:12:4:12:4:12:4 little endian */
-> +
-> +/*
-> + * 4-component, 64bpp format that has a 14-bit R component in the top 14 bits of the word in bytes 0..1,
-> + * a 14-bit G component in the top 14 bits of the word in bytes 2..3, a 14-bit B component in the top 14 bits of the word
-> + * in bytes 4..5, and a 14-bit A component in the top 14 bits of the word in bytes 6..7,
-> + * with the bottom 2 bits of each word unused.
-> + */
-> +#define DRM_FORMAT_AXBXGXRX142142142142	fourcc_code('A', 'B', '1', '4') /* [63:0] A:x:B:x:G:x:R:x 14:2:14:2:14:2:14:2 little endian */
-> +
->  /* packed YCbCr */
->  #define DRM_FORMAT_YUYV		fourcc_code('Y', 'U', 'Y', 'V') /* [31:0] Cr0:Y1:Cb0:Y0 8:8:8:8 little endian */
->  #define DRM_FORMAT_YVYU		fourcc_code('Y', 'V', 'Y', 'U') /* [31:0] Cb0:Y1:Cr0:Y0 8:8:8:8 little endian */
-> -- 
-> 2.34.1
-> 
-
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index 7194d6639720..fff849daceba 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -100,7 +100,7 @@ static ssize_t _name##_show(struct device *dev,			\
+ {								\
+ 	struct memory_failure_stats *mf_stats =			\
+ 		&NODE_DATA(dev->id)->mf_stats;			\
+-	return sprintf(buf, "%lu\n", mf_stats->_name);		\
++	return sysfs_emit(buf, "%lu\n", mf_stats->_name);	\
+ }								\
+ static DEVICE_ATTR_RO(_name)
+ 
 -- 
-====================
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    ¯\_(ツ)_/¯
+2.25.1
+
 
