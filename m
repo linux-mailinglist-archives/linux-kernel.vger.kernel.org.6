@@ -1,107 +1,162 @@
-Return-Path: <linux-kernel+bounces-387713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 233B09B5526
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:35:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFB4A9B552C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:38:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1E22B221FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 572CE286B4B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708A0209F32;
-	Tue, 29 Oct 2024 21:35:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C35209693;
+	Tue, 29 Oct 2024 21:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="My1ryafL"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543520720D;
-	Tue, 29 Oct 2024 21:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="f2Sgxykr"
+Received: from s1-ba86.socketlabs.email-od.com (s1-ba86.socketlabs.email-od.com [142.0.186.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49877207A0A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:38:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.0.186.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730237727; cv=none; b=O5qS4OBZj2vBN50sB9qLwUdS5zleHljlHQqhBitcXoI7phiFwSYUAtc9/Ujpys6UPDd6RVSYPzHR3/F/qHjDSXH0KJDR0ky/7y4ECOu51Z9woMKoe0YOyuvG0+A/9KjRjehWjmwBmgCN+rP069Km+xa1eTaYLJSNGUVNJNIlqTs=
+	t=1730237899; cv=none; b=JR2wBeBgMTCLIImqE47NqVS0ss9bkbjjHFv9kwAZCV/GGGTk+voqQuRA16wzIdSfKg1fBCM+BrUgZX32eHv9g/miw5ia1wZF4zosm13cAgK4IPN/0pGSCXJKx2StabAzZ6I8iy7f1k3Dij1TthH2XA5bxggQbXZ2upClJGBBAv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730237727; c=relaxed/simple;
-	bh=hHzo/wbOlevPanZnfhP7yXufFIuHywm932n25rx8H1I=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PMZYOl/OeK3SOoiz/FRQf5Q4ZawGmbn57L+72TWz3tTyZq125pikNUmzCsBcO/lfb+p6FEl6FgJflopRIDEOaUGbVlwO9agGrgUcp09o51a4qu06u60rQXrOoeFiNyyAVrKZ+xArdhrM1Rjo9iZICUplZgmOQdxaO5NVKKzQg4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=My1ryafL; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.65.218.219] (unknown [20.236.10.120])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 193E22054B46;
-	Tue, 29 Oct 2024 14:35:25 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 193E22054B46
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1730237725;
-	bh=GTG3OYIuFDMSahIf0vIvPWDvl1TaKOfpY+MP90a0Sds=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=My1ryafLYk14vWEQB4C6aqSG6uLExvOK4UOzJSE93H+C8Mnag6JjdIr6rntr8BmZw
-	 lK71EbHbDIz8jJL3LCfAEHaSgvI5020Eo/5iSv5fz2AHuUua3Fa0M+Ij5tkAV8SGAZ
-	 sPfVS7YkdykxaswXatAhH2nAoi0uJInNCLCcGILU=
-Message-ID: <5e4f8c05-45e1-4a92-bfc3-ec66657baa9a@linux.microsoft.com>
-Date: Tue, 29 Oct 2024 14:35:25 -0700
+	s=arc-20240116; t=1730237899; c=relaxed/simple;
+	bh=+wJ5KWpgT+2Otb1SXgnm+ECduxv9o6ciNoEgRwIi6/Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Uthv1k3Tje7f1+VaZYgPPHNJ3cq6DTj1gSZssyClyCFSJ4Lal3mRjrGay6rr2CVi3Hl2IBzDaxvIQOh2viG4/Ixwvw5qGvXSKey6iHJmPCr8+8nqowWH7UbUcxmYs/UIu4ziHCKyufBAs1nEWphWt4Ij6fgpy3u4j2xlUfWjtt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=f2Sgxykr; arc=none smtp.client-ip=142.0.186.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email-od.com
+DKIM-Signature: v=1; a=rsa-sha256; d=email-od.com;i=@email-od.com;s=dkim;
+	c=relaxed/relaxed; q=dns/txt; t=1730237897; x=1732829897;
+	h=content-transfer-encoding:mime-version:references:in-reply-to:message-id:date:subject:cc:to:from:x-thread-info:subject:to:from:cc:reply-to;
+	bh=jizTLtrLMmCt7wE/5ipTFTDD8VO6t5SHcJxMFWKWNrM=;
+	b=f2SgxykrbxFqbq5iQHCsyS2CAJXZdA3le9O25zVGTgKuC/RezP54Ioj9Q57lByefLkCCBAL0aA1FihTPQc4OS+4xGAU2H3yey6Tecdec90rOhUh++CXA1dBacQzEZUk7RvZhrEjrRVthW+vwYNabzvGscUQgEGLaBT+YgKcr/I4=
+X-Thread-Info: NDUwNC4xMi4zZmU2ZjAwMDBmMzg1OTAubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
+x-xsSpam: eyJTY29yZSI6MCwiRGV0YWlscyI6bnVsbH0=
+Received: from localhost.localdomain (d4-50-191-215.clv.wideopenwest.com [50.4.215.191])
+	by nalramli.com (Postfix) with ESMTPS id CE3152CE04B1;
+	Tue, 29 Oct 2024 17:37:54 -0400 (EDT)
+From: "Nabil S. Alramli" <dev@nalramli.com>
+To: stable@vger.kernel.org
+Cc: nalramli@fastly.com,
+	jdamato@fastly.com,
+	khubert@fastly.com,
+	mario.limonciello@amd.com,
+	Perry.Yuan@amd.com,
+	li.meng@amd.com,
+	ray.huang@amd.com,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Nabil S. Alramli" <dev@nalramli.com>
+Subject: [PATCH 6.1.y v2] cpufreq: amd-pstate: Enable CPU boost in passive and guided modes
+Date: Tue, 29 Oct 2024 17:36:43 -0400
+Message-Id: <20241029213643.2966723-1-dev@nalramli.com>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <Zw8Wn5SPqBfRKUhp@LQ3V64L9R2>
+References: <Zw8Wn5SPqBfRKUhp@LQ3V64L9R2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: eahariha@linux.microsoft.com, "K. Y. Srinivasan" <kys@microsoft.com>,
- Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>,
- Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>,
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
- linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
-To: Thomas Gleixner <tglx@linutronix.de>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
- <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
- <87wmhq28o6.ffs@tglx>
- <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
- <87ed3y255a.ffs@tglx>
-Content-Language: en-US
-From: Easwar Hariharan <eahariha@linux.microsoft.com>
-In-Reply-To: <87ed3y255a.ffs@tglx>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 
-On 10/29/2024 10:25 AM, Thomas Gleixner wrote:
-> On Tue, Oct 29 2024 at 17:22, Geert Uytterhoeven wrote:
->> On Tue, Oct 29, 2024 at 5:08 PM Thomas Gleixner <tglx@linutronix.de> wrote:
->>> On Mon, Oct 28 2024 at 19:11, Easwar Hariharan wrote:
->>>> diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
->>>> index 1220f0fbe5bf..e5256bb5f851 100644
->>>> --- a/include/linux/jiffies.h
->>>> +++ b/include/linux/jiffies.h
->>>> @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiffies(const unsigned int m)
->>>>       }
->>>>  }
->>>>
->>>> +#define secs_to_jiffies(_secs) ((_secs) * HZ)
->>>
->>> Can you please make that a static inline, as there is no need for macro
->>> magic like in the other conversions, and add a kernel doc comment which
->>> documents this?
->>
->> Note that a static inline means it cannot be used in e.g. struct initializers,
->> which are substantial users of  "<value> * HZ".
-> 
-> Bah. That wants to be mentioned in the change log then.
-> 
-> Still the macro should be documented.
-> 
-> Thanks,
-> 
->         tglx
+CPU frequency cannot be boosted when using the amd_pstate driver in
+passive or guided mode.
 
-Thanks for the review, I'll add a kernel doc in v3 and mention the
-limitations of an inline function.
+On a host that has an AMD EPYC 7662 processor, while running with
+amd-pstate configured for passive mode on full CPU load, the processor
+only reaches 2.0 GHz. On later kernels the CPU can reach 3.3GHz.
 
-- Easwar
+The CPU frequency is dependent on a setting called highest_perf which is
+the multiplier used to compute it. The highest_perf value comes from
+cppc_init_perf when the driver is built-in and from pstate_init_perf when
+it is a loaded module. Both of these calls have the following condition:
+
+	highest_perf =3D amd_get_highest_perf();
+	if (highest_perf > __cppc_highest_perf_)
+		highest_perf =3D __cppc_highest_perf;
+
+Where again __cppc_highest_perf is either the return from
+cppc_get_perf_caps in the built-in case or AMD_CPPC_HIGHEST_PERF in the
+module case. Both of these functions actually return the nominal value,
+whereas the call to amd_get_highest_perf returns the correct boost value,
+so the condition tests true and highest_perf always ends up being the
+nominal value, therefore never having the ability to boost CPU frequency.
+
+Since amd_get_highest_perf already returns the boost value, we have
+eliminated this check.
+
+The issue was introduced in v6.1 via commit bedadcfb011f ("cpufreq:
+amd-pstate: Fix initial highest_perf value"), and exists in stable v6.1
+kernels. This has been fixed in v6.6.y and newer but due to refactoring t=
+hat
+change isn't feasible to bring back to v6.1.y. Thus, v6.1 kernels are
+affected by this significant performance issue, and cannot be easily
+remediated.
+
+Signed-off-by: Nabil S. Alramli <dev@nalramli.com>
+Reviewed-by: Joe Damato <jdamato@fastly.com>
+Reviewed-by: Kyle Hubert <khubert@fastly.com>
+Fixes: bedadcfb011f ("cpufreq: amd-pstate: Fix initial highest_perf value=
+")
+See-also: 1ec40a175a48 ("cpufreq: amd-pstate: Enable amd-pstate preferred=
+ core support")
+Cc: mario.limonciello@amd.com
+Cc: Perry.Yuan@amd.com
+Cc: li.meng@amd.com
+Cc: stable@vger.kernel.org # v6.1
+---
+ v2:
+   - Omit cover letter
+   - Converted from RFC to PATCH
+   - Expand commit message based on feedback from Mario Limonciello
+   - Added Reviewed-by tags
+   - No functional/code changes
+
+ rfc:
+ https://lore.kernel.org/lkml/20241025010527.491605-1-dev@nalramli.com/
+---
+ drivers/cpufreq/amd-pstate.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 90dcf26f0973..c66086ae624a 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -102,9 +102,7 @@ static int pstate_init_perf(struct amd_cpudata *cpuda=
+ta)
+ 	 *
+ 	 * CPPC entry doesn't indicate the highest performance in some ASICs.
+ 	 */
+-	highest_perf =3D amd_get_highest_perf();
+-	if (highest_perf > AMD_CPPC_HIGHEST_PERF(cap1))
+-		highest_perf =3D AMD_CPPC_HIGHEST_PERF(cap1);
++	highest_perf =3D max(amd_get_highest_perf(), AMD_CPPC_HIGHEST_PERF(cap1=
+));
+=20
+ 	WRITE_ONCE(cpudata->highest_perf, highest_perf);
+=20
+@@ -124,9 +122,7 @@ static int cppc_init_perf(struct amd_cpudata *cpudata=
+)
+ 	if (ret)
+ 		return ret;
+=20
+-	highest_perf =3D amd_get_highest_perf();
+-	if (highest_perf > cppc_perf.highest_perf)
+-		highest_perf =3D cppc_perf.highest_perf;
++	highest_perf =3D max(amd_get_highest_perf(), cppc_perf.highest_perf);
+=20
+ 	WRITE_ONCE(cpudata->highest_perf, highest_perf);
+=20
+--=20
+2.35.1
+
 
