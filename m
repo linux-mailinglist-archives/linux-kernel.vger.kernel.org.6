@@ -1,148 +1,122 @@
-Return-Path: <linux-kernel+bounces-387543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CEB69B52A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD819B52AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:22:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2A01F250EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 468CD1F252B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B213207209;
-	Tue, 29 Oct 2024 19:21:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7EF520720D;
+	Tue, 29 Oct 2024 19:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mrl19yhC"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LOmX2+dS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF525206E9C
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48B51206979;
+	Tue, 29 Oct 2024 19:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730229675; cv=none; b=dqSkpoJfOuVF8nACkUltmpSaSVNHh2+I3MXx/Dsy+XP6UfdNZ0WWhO44wRIjYK5hmREwk97aszdtrMOZWxiudC32mnM08moFwITNKTpFhTkLB/A2x0ugBFMa9mXanr8nUf8EaHG3xzegLRBJmfrsxKC9DhSc0L8XechZTcDWJqI=
+	t=1730229719; cv=none; b=vAO68GRRhgtO8XrNn6aJrgzsKDF9MYfPmbUP8r6M5b0uzM2CGAcVIzUbBZ/nc3o3d+8XZYF7IU+GlYhHXopPn6Uiogdn/bR0NRe5IaWNXOMyKuo8uTfEjYG0hsd+LvTPMhIKAhIOOH+A6uMxORMpU4psbd32rBSleql751mr8vQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730229675; c=relaxed/simple;
-	bh=P489AMDgM30T1RbDh1KNW2GuxIt8cv6FbKb6+8yV/Nc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M0HFrzmuxJNuWRNXkCi2T+kNZOPCqILsQJsetXaxpasOpe9uOfV5EnpeMeo2gFSijc2y3Ym1vaySzi6hG6W7t9xkZftJCWRrWvRcFqvlHtK4Jx/dLk28tnqumnVSNXMTHEAx65VxMUU7+5rgOT0E3FTerjoTz+HaBgSeHk+iRvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mrl19yhC; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43152b79d25so53167125e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:21:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730229672; x=1730834472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x0XI8AhmhnWxIwBb5nhzbNedpBYemfsEhJh3VU8fjT4=;
-        b=Mrl19yhCuxDkFlFmHbQv8Mvk2T3jFck6aRJLYiFC/fXc81v8vmvFUuMyWhKhUhiJEU
-         W1lPGvhDrSvyu5Nt9CAODhdPvDSKKxZFvY/h7qksrqzu1G9oLtQKDBmlpFFcCJ39WlfL
-         RDxnwe39pvxBZB2rSQHf6ReNjYUvCD1Y6TzF9FS76lkl5orxDHRYVH/lyAlLc2a8Yi3i
-         Pw5cwcDgai8Ziht84fXYHEOukN+1yPg/NHPCVOmI0BTFUsXYJFnGFcjV3NXn8CR4YQNc
-         YnTveJAsnOn58TLVIYbCYmhxVvHAY+uiGqd2isKLNv+FZCRF6qR3KSv5dv1hYbqJj4UW
-         fZ3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730229672; x=1730834472;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x0XI8AhmhnWxIwBb5nhzbNedpBYemfsEhJh3VU8fjT4=;
-        b=fOdTcIsf1HPAQ2uN5N1HGw5uQTJFpysrRV1jzKckiESP7tjsPZhZOZGRZv4L9GFpTZ
-         /+MVZOlkRx0axOb49IKoP3GPUiDMhpun5VJCGra65wzLO1NTsVIMxVWFxEPUf9Y3Oz1r
-         jcW+ynp6fHxCtFMeb0XMXiAW6YiWRP7mJopzSxzczWtZsOWfCDp6LQPWrASHIu5tjB9a
-         NOBhF6etOVKxCR5ixYAEhjAGzg3XKgOSWrl2WADIQ7ugNK5FbNWd4jUOTm/8Y6ezoGmW
-         zUJN4uZ51v5GhP5iOqhFmqyFROug0R16dVHBiroDolxrXteeHDS/M5l0kQLvTfVE8L5W
-         NcfA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlB2TQea92EuEHE1vm/dftI6CO0ZDqL+eBiZtUVwP3oJ9K02AEQ5ukRpqZiviWRbbMCsazQgt5v9WEykY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzZsuhhZbI4XigHnBtPmaJYHUkY/h8FDsCykpgUQY+8uMPNWfZ
-	FVvo4olejwOWPZYfWgV4ODP1zM5fEOpfyjMwjsH9J4uc8R9jAZNLaer3mnBbAeM=
-X-Google-Smtp-Source: AGHT+IGHMHqNaQuwakaAsQmPTNJ5IJ7w2nk9odL/D7VFnJmp9SBayW4GuwAbU+nObFDT/w1xv3DyDA==
-X-Received: by 2002:adf:fcd1:0:b0:37d:4cd5:fff2 with SMTP id ffacd0b85a97d-380610f4961mr9250210f8f.6.1730229671917;
-        Tue, 29 Oct 2024 12:21:11 -0700 (PDT)
-Received: from gpeter-l.lan ([145.224.65.239])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058981ae4sm13436572f8f.0.2024.10.29.12.21.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 12:21:10 -0700 (PDT)
-From: Peter Griffin <peter.griffin@linaro.org>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	krzysztof.kozlowski@linaro.org,
-	alim.akhtar@samsung.com
-Cc: tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org,
-	kernel-team@android.com,
-	willmcvicker@google.com,
-	linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH] phy: samsung-ufs: switch back to syscon_regmap_lookup_by_phandle()
-Date: Tue, 29 Oct 2024 19:21:07 +0000
-Message-ID: <20241029192107.2344279-1-peter.griffin@linaro.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+	s=arc-20240116; t=1730229719; c=relaxed/simple;
+	bh=gQwj26AXbStfJzPa5fSOAVsCpDjxEpQ9CKNHrOAQ6sE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OMz2S6RzpEf3AfTBFxy/cy84OhLf+Fu/TBj7sFk2FlsVoi0j2CmGMp+EtdpVOGGNxwdon30NHwCmpkUYZnX9jFUoC2imbvzbcAgL3t+NgCofYfjv5aqJV06GAZ1Dz3X2QvQRtn7V3kAW//sE1FV/0GWIcRfoYIzZiADbZWO+zi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LOmX2+dS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0581C4CECD;
+	Tue, 29 Oct 2024 19:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730229718;
+	bh=gQwj26AXbStfJzPa5fSOAVsCpDjxEpQ9CKNHrOAQ6sE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=LOmX2+dSdZ3QX/j9g7pPQ/ZRO5t7Slg2xj3ERaBbrFwbwS7zZ2VXDLkZIyiezhXFE
+	 dr81JBuTrMAKhj8CxRHWHcoLczebVeh7VAl4NjJTGj6v0RVhKdB3ijGddFbN+zDWXU
+	 r4Xo6Z6ik18XTvbD0WhzKyXdj64AjwvGxQK13/hdsb49fSPZZLNNJT3cPiMzSSqCHA
+	 fy1v7Jr9FcvRMM5Em1UXvYgZ+gn5v8VdiwI1R/lzU9EZHskDfDCk4OlIBjweTNI7Vl
+	 4dGM/YlTGg/uhcjWuGY+ggNBWK+t+Fb/NaMwyaQrc1MYtMRXzxu3BC9qHtXjX9dKGW
+	 Kq3FI0dth1GvA==
+From: Jeff Layton <jlayton@kernel.org>
+Date: Tue, 29 Oct 2024 15:21:43 -0400
+Subject: [PATCH] sunrpc: remove newlines from tracepoints
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241029-tpfix-v1-1-19f69fcf915a@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAMY1IWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDAyNL3ZKCtMwKXSNTo1TDNAtTo8RUEyWg2oKiVKAw2Jzo2NpaALqvNg9
+ XAAAA
+X-Change-ID: 20241029-tpfix-252e1f852ae4
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=gQwj26AXbStfJzPa5fSOAVsCpDjxEpQ9CKNHrOAQ6sE=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnITXPT/LqGoAQrhKGhjRnaJs5U8gY4kh+gfrUy
+ h21JL6kRqeJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZyE1zwAKCRAADmhBGVaC
+ FfghD/9u9kZzjdI8OJBMO79l1i9cgclz6/Z1/OmHbb7i2DfxOu2Jxw2cxeIE5fS+l+NAqvhFxaZ
+ tXGPXmSCPknzwGHLGJFdWMyRKkN4hdfQy1vfTTmOaR1j3D4amf98bu9ssmS9jgiqz6fudqZ9J+e
+ ep6KetyJwe1v0EVaap8pkdUcNSQau2j49CcxomQsLSGQp8Y9/dOOKVoOZlqIsTTDGsSaT3YeAxT
+ cTywba2biOrJOuxX1RA1GV8BwqmLvkQAFAsBOf2uFHRiU3CRZ/zkN/cWE5OiaThpDXzkNj5z02D
+ V5acD7eLJ6e+jw9rTti0oTDZRei4jvWLOodyXXo4fetNBg6YEwdsStXP0B9dbuVTl0UP6sQ9JwN
+ PA5tXhOPY3wUKiQDsL64z0/dtVXGjhZ1v8WwZK56AsxwxTIuG/D1Dgsfu4zZ/GbkqMlTfhAlW7Q
+ RbBFT5Uv5e3PVXK3zS3rlszcbNQ6Fsoxc5QxSmzYoQGj2c1KhgM1/xlVVCi4HLojsTAjAPCetc4
+ O92mB3Uo7NDJt0nen/DZ4NEKjf0DEz/kOdt341GnK1R4Nf6lcUuoCr/3DHHZ3veltFKbgo3+eqa
+ y2KqTWP124bYsKNhcA/Tf0G1nX/QF2Ic2y8mKzmKtHoSplzvjRXvxT6lbgRwIN0tgVDF8uzsYKR
+ yaPd/HZ5HMcFyHg==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-Now exynos-pmu can register its custom regmap for gs101 via
-of_syscon_register_regmap() we can switch back to the standard
-syscon_regmap_lookup_by_phandle() api for obtaining the regmap.
+Tracepoint strings don't require newlines (and in fact, they are
+undesirable).
 
-Additionally add a Kconfig dependency for MFD_SYSCON.
-
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- drivers/phy/samsung/Kconfig           | 1 +
- drivers/phy/samsung/phy-samsung-ufs.c | 6 +++---
- 2 files changed, 4 insertions(+), 3 deletions(-)
+ include/trace/events/sunrpc.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-index f10afa3d7ff5..e2330b0894d6 100644
---- a/drivers/phy/samsung/Kconfig
-+++ b/drivers/phy/samsung/Kconfig
-@@ -33,6 +33,7 @@ config PHY_SAMSUNG_UFS
- 	tristate "Exynos SoC series UFS PHY driver"
- 	depends on OF && (ARCH_EXYNOS || COMPILE_TEST)
- 	select GENERIC_PHY
-+	select MFD_SYSCON
- 	help
- 	  Enable this to support the Samsung Exynos SoC UFS PHY driver for
- 	  Samsung Exynos SoCs. This driver provides the interface for UFS host
-diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/phy-samsung-ufs.c
-index 6c5d41552649..8e9ccd39f97e 100644
---- a/drivers/phy/samsung/phy-samsung-ufs.c
-+++ b/drivers/phy/samsung/phy-samsung-ufs.c
-@@ -13,11 +13,11 @@
- #include <linux/of.h>
- #include <linux/io.h>
- #include <linux/iopoll.h>
-+#include <linux/mfd/syscon.h>
- #include <linux/module.h>
- #include <linux/phy/phy.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
--#include <linux/soc/samsung/exynos-pmu.h>
+diff --git a/include/trace/events/sunrpc.h b/include/trace/events/sunrpc.h
+index 5e8495216689549f1c0bb377911eac4a7bb7b1a8..b13dc275ef4a79940a940dd463b7a3eef5ca428b 100644
+--- a/include/trace/events/sunrpc.h
++++ b/include/trace/events/sunrpc.h
+@@ -719,7 +719,7 @@ TRACE_EVENT(rpc_xdr_overflow,
+ 	),
  
- #include "phy-samsung-ufs.h"
+ 	TP_printk(SUNRPC_TRACE_TASK_SPECIFIER
+-		  " %sv%d %s requested=%zu p=%p end=%p xdr=[%p,%zu]/%u/[%p,%zu]/%u\n",
++		  " %sv%d %s requested=%zu p=%p end=%p xdr=[%p,%zu]/%u/[%p,%zu]/%u",
+ 		__entry->task_id, __entry->client_id,
+ 		__get_str(progname), __entry->version, __get_str(procedure),
+ 		__entry->requested, __entry->p, __entry->end,
+@@ -777,7 +777,7 @@ TRACE_EVENT(rpc_xdr_alignment,
+ 	),
  
-@@ -268,8 +268,8 @@ static int samsung_ufs_phy_probe(struct platform_device *pdev)
- 		goto out;
- 	}
- 
--	phy->reg_pmu = exynos_get_pmu_regmap_by_phandle(dev->of_node,
--							"samsung,pmu-syscon");
-+	phy->reg_pmu = syscon_regmap_lookup_by_phandle(dev->of_node,
-+						       "samsung,pmu-syscon");
- 	if (IS_ERR(phy->reg_pmu)) {
- 		err = PTR_ERR(phy->reg_pmu);
- 		dev_err(dev, "failed syscon remap for pmu\n");
+ 	TP_printk(SUNRPC_TRACE_TASK_SPECIFIER
+-		  " %sv%d %s offset=%zu copied=%u xdr=[%p,%zu]/%u/[%p,%zu]/%u\n",
++		  " %sv%d %s offset=%zu copied=%u xdr=[%p,%zu]/%u/[%p,%zu]/%u",
+ 		__entry->task_id, __entry->client_id,
+ 		__get_str(progname), __entry->version, __get_str(procedure),
+ 		__entry->offset, __entry->copied,
+
+---
+base-commit: 9c9cb4242c49bbadd010e8f0a9e7daf4b392ff6b
+change-id: 20241029-tpfix-252e1f852ae4
+
+Best regards,
 -- 
-2.47.0.163.g1226f6d8fa-goog
+Jeff Layton <jlayton@kernel.org>
 
 
