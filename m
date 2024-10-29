@@ -1,85 +1,75 @@
-Return-Path: <linux-kernel+bounces-387052-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4A09B4B30
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:48:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5F919B4B37
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:48:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D61B2351C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 115331C2278F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:48:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F3A8206961;
-	Tue, 29 Oct 2024 13:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286F920650E;
+	Tue, 29 Oct 2024 13:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wb4LEH2G"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QM/tp925"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FFD120695E
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F491205E12;
+	Tue, 29 Oct 2024 13:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730209661; cv=none; b=KccBw1Wk1Dlk79x+VZvkbhTgjIkfh7DEzonb877EnN9tsvxUF8+Ie0KQPHYv3a0AZxqg/KHuFFElAA2QjymqQjfzqS6MYa3xxIbVEb6zp0ZM0YSoUPKRKVe73CoXZyKEQuvsEJGCzpTs97BTx25NiTTDPzj9vgvBscpQ2e0AAZQ=
+	t=1730209703; cv=none; b=Tt4Q/rpqJrIzsGbtopzI3OxfAYCjnPcjpMF+GZLDnE9BzDiubr1ht5Pw+jrptIEvJzeA/50VoeXQfbLCGBZXoWIBOtCAH0qieReJLYgzJo+pJBc+QPPyOxQ26oOiPni5LdWtS/v2tXY0YztX8MCFPBYZtVIEK6qGSaoSrAqGixQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730209661; c=relaxed/simple;
-	bh=MuX46C0b0u91A82k45hWka6IQnP6qDFX7xp0m0U0xog=;
+	s=arc-20240116; t=1730209703; c=relaxed/simple;
+	bh=I+EHbGr2mQRXlWga/E1SaEry12fnOHrzMXisiQcG8T0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TJ/RbiUjdaNNDJpCvB1K1vsWa8Dw8i3qqKLkLP41nkhzSqLISmk5jI6tb1jjB2gr1y/PaYLEgwc2fsXFlYhjXjUuHeCFmcznSOUlOwRda42BtlsjNW+xKfF2B7+RAo83dSBkwE66TGt1HDBBTszAlSLlJ93RedFu9M9711yojkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wb4LEH2G; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316a44d1bbso50235595e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:47:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730209658; x=1730814458; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MnilKf+1LggrXw/pxXpB+USKjynDFjlh1WwCMDATiQE=;
-        b=wb4LEH2GXw8U+WcPtMdDOIUs7P62k6Y4kv+fJKeyZkY/mE0arHNR0b63r33KD3XeYT
-         ID9SjMD1uCn4EuoJhqWtE64sIPBwIlKfrJpoWRx8QraAhTnnpfz7AhGlW8GR5+QA+LC6
-         ednE6xLIuM10TmOKfd5TS+ILBM8L3x0wg+pDKTNJq5hiBf9P00bLsPbu2KjIpraeT+RJ
-         Sy4146qdGZocP2yk1Yi3OKD1ME59/+IE8Fb7RMcIQbHHFBKHIZ3uRbRVF4VSLxLve5es
-         8PKE37WkaQbzcPdYjz/yOIX1Ctl1aAILHtxa6UfkfMUnQkbLQX46YLgU1Hb5zShUcx7B
-         +hPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730209658; x=1730814458;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MnilKf+1LggrXw/pxXpB+USKjynDFjlh1WwCMDATiQE=;
-        b=WQHQr1eOGXww+x6jcfhLnyDtfYBx7AFWIloRpgckckxbwVgMUIT6dvKCKjWYES1LTD
-         4FKzmuWoYyAqdXf17COp1gEnm4AGIoiKub9SuyAGPquw9f6lU7L0uZoESubw+iB4zbTQ
-         WO8AYk0RBhc/1Yo6H0TVWSVH7/PuxL3Wj5Zy3QDDVW6cL8H7UJrzXbndhhLoRLpdufTV
-         Vc2x3MTxCnn0jFX+hoaOQU1gNX/gaEOe35qu1XAqSgpn5j4C0M6gN7X4WZfhxkMCevqc
-         tTASuhywKvGq6royt8gHW0jZZ2B7Kqw2w9VTRC31Ze+VJIIZelfxYa/ojIuc/zTzwC1E
-         DE6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXj1VFQ0lLym58EvzfeHnfPzFJSmpprSZlVARUBnwb0QWqjNb8byoEMqcaHaV8+jqUveiucWIbVeOYNVoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/Puii9YU6YCxQJXx+Ev5ej4oBJJHtcczLvnNnhKdppypnNAbj
-	ifia6jifS46Qt4Q+oQBo8vnpiYfoYUAi5x46LTKFavqDozwgjY2PIu/JiX+80g==
-X-Google-Smtp-Source: AGHT+IFRicCdvu+GXyC4D+ImhbhvYd6aX8bPfpuSw0QRQAOpKsrjXWD7uCi3UbUTKpUo37D4ocP8/Q==
-X-Received: by 2002:a05:600c:3b94:b0:431:4e3f:9dee with SMTP id 5b1f17b1804b1-4319ac7409amr89860875e9.4.1730209657614;
-        Tue, 29 Oct 2024 06:47:37 -0700 (PDT)
-Received: from localhost (65.0.187.35.bc.googleusercontent.com. [35.187.0.65])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70bc1sm12652018f8f.70.2024.10.29.06.47.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 06:47:37 -0700 (PDT)
-Date: Tue, 29 Oct 2024 13:47:34 +0000
-From: Aleksei Vetrov <vvvvvv@google.com>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in
- dapm_widget_list_create
-Message-ID: <ZyDndtgj5vKo-wvB@google.com>
-References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
- <28ade5d1-d13a-4388-bd0b-f03211937abd@embeddedor.com>
- <ZyDlAd-Z26wnhZK5@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TVSJsYddP4xVH61UN6HRjtO7zvoN8hbSWBYx0MhPYN22r5bNJGbSdqxspfwXCKS8D607xJ3SehujU+prHuCxKypNiHpQ+J19xVEdkGlYieExsXgopR7X0K7kDBOyBvVq6fAkwo2vOJZJR+pA8nA61efzquOAVGqyDqIL/TWj5u4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QM/tp925; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=oJ5DV/UcQ+ikEONgBc7qCDCzreaqUoflYR+9p1+c5Q8=; b=QM/tp925rD1E3VzhtXQIvDCuDe
+	lfSjZV1aZeoLIepXZEmNnbKzfp3HJyo7W/g33Pw+pMWxOoBOTCJxIHoVCSVo/03cmm1y/ylxw8dqb
+	Z0F+QZsdPZcxnYY+l4lOem+xgX4NPq6cki/GbMNalLL6tRN/co8R0jmDo5qZwzj+mlURSlSNP7X77
+	aiCaCN9yRTcQlwurMpSF1Ief7Lu5Oi7PIzE3Djdc5DhUFWiCD+furCDXgZ+cqKZVJpY4xRxVJsFQM
+	7gfB3wtVfg1U5HJ+6lbUSBo2YXw6t2mKVXuvtjQgHK4Ng5YUfnSXuOCvBk1EdTbVtEwgGrb0Gz0Qc
+	LAqL3dbw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5mZr-00000009kya-1pvw;
+	Tue, 29 Oct 2024 13:48:08 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4CAFC30073F; Tue, 29 Oct 2024 14:48:07 +0100 (CET)
+Date: Tue, 29 Oct 2024 14:48:07 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH v3 11/19] unwind: Add deferred user space unwinding API
+Message-ID: <20241029134807.GZ14555@noisy.programming.kicks-ass.net>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,29 +78,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyDlAd-Z26wnhZK5@google.com>
+In-Reply-To: <a94eb70a80c4a13dedb2655b7848304a992cb1b0.1730150953.git.jpoimboe@kernel.org>
 
-On Tue, Oct 29, 2024 at 01:37:09PM +0000, Aleksei Vetrov wrote:
-> On Mon, Oct 28, 2024 at 04:58:58PM -0600, Gustavo A. R. Silva wrote:
-> > 
-> > As in the previous patch, this should include the following tag
-> > (and probably CC stable):
-> > 
-> > Fixes: 80e698e2df5b ("ASoC: soc-dapm: Annotate struct snd_soc_dapm_widget_list with __counted_by")
-> 
-> Thank you very much for this suggestion! I didn't understand how Fixes
-> tag works until your comment, but I've just read about Linux stable
-> process and it makes sense now.
-> 
-> Sent v2.
+On Mon, Oct 28, 2024 at 02:47:38PM -0700, Josh Poimboeuf wrote:
 
-Actually, my reply above meant to be for the nl80211 fix
-(https://lore.kernel.org/r/20241028-nl80211_parse_sched_scan-bounds-checker-fix-v1-1-bb640be0ebb7@google.com).
+> +/*
+> + * The "context cookie" is a unique identifier which allows post-processing to
+> + * correlate kernel trace(s) with user unwinds.  It has the CPU id the highest
+> + * 16 bits and a per-CPU entry counter in the lower 48 bits.
+> + */
+> +static u64 ctx_to_cookie(u64 cpu, u64 ctx)
+> +{
+> +	BUILD_BUG_ON(NR_CPUS > 65535);
+> +	return (ctx & ((1UL << 48) - 1)) | cpu;
+> +}
 
-For this fix I couldn't send v2, because it has been already applied by
-Mark Brown. Guess I would need to send a separate message to the stable
-team asking them to pick this patch from git.
-
---
-Aleksei Vetrov
+Did you mean to: (cpu << 48) ?
 
