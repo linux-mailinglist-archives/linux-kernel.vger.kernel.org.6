@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-386959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0DB9B4A38
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:53:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3ADFB9B4A3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:54:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C60A1C210A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:53:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68DE1F23711
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCCA7205AAA;
-	Tue, 29 Oct 2024 12:53:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EAB3205AC7;
+	Tue, 29 Oct 2024 12:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="h0/PLnnf"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B8E76eaK"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78BA3188010;
-	Tue, 29 Oct 2024 12:53:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7E7B188010;
+	Tue, 29 Oct 2024 12:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206418; cv=none; b=Rb9Bx4YbC2hbevLpm7M+DOkWwYMGmuLKx6NrpLZBAKvqDYIWeJFoAwy2FSESsXk1R1VDUhZW7B/tlWK9MplDXBrCr65ga553BfDjaoXNEP1Y6uPP+vKujyjbI5Bkm7j5Jse4/UoxVGdKMdieZ+vKlr/nWfB7a63n1xdcWmoke1I=
+	t=1730206440; cv=none; b=WqLWUcEQ5WtyoOlFdQeY9tk12zmbOwC6YtlJaa7J0wKwqb7aGc/+ACBT9F4XL71++g8jAr5LZwpv/efUcVHfJ4LsUAc3IQkY+1bMcCTszz6vDEeEUmm+EKjDGsmA1rPQOH6GDZO7XD0APO1IRUL3/UoL6OhQ8IClcPclhMxOFSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206418; c=relaxed/simple;
-	bh=Lb5u5GLF0cw8Rn6e+JknNi3ga1iEQ6ao6vKwWe2UUFw=;
+	s=arc-20240116; t=1730206440; c=relaxed/simple;
+	bh=Fq5Nw3kWvPQcRl50h6+LTplnlvw20EDxvIDFwfHu5cw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M1Dsn//E1LwOzWvIa1AYa+BWr3BqOoAUzJnaL0rB8Xyy83jV+jcups3pG43UJSMPPcxcBpROmZQxAvYdC1QAKjMKJU2lPk9B1BJ+0fI1aK6HFcnb3qGzU7/OpcUx4+f82XEaCLz1E06nno4oDrd26N0pD6NdI2pBTjzhqOqvq4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=h0/PLnnf; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=vs9AShkC7UCHtkM1AY7IODbX66QH+H0VrkAiInPtTHM=; b=h0/PLnnfXATnTJIyUzlHK+w/8B
-	yRa3IsajUnP53qdTzdHyeMx4YkIKXtw0pRsVDkW5gqTLpIV+jyz3x00Xd/0HpCTdmStOwZ7tcTQ02
-	rVfmoLy1BEzQ4vqR3MGkrv3vl2zXC0m+59x9osjqzc8dwcUQMqU5gaJ9W6kxd7X+WFxo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t5liz-00BZmR-Hq; Tue, 29 Oct 2024 13:53:29 +0100
-Date: Tue, 29 Oct 2024 13:53:29 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Moon Yeounsu <yyyynoom@gmail.com>
-Cc: davem@davemloft.net, Eric Dumazet <edumazet@google.com>,
-	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: dlink: add get_ethtool_stats in ethtool
-Message-ID: <c0cafab5-7a8a-49a4-8d46-a79b47eee867@lunn.ch>
-References: <20241026192651.22169-3-yyyynoom@gmail.com>
- <2502f12c-54ad-4c47-b9ef-6e5985903c1e@lunn.ch>
- <CAAjsZQwDG8m33yvXRf+ERpziGDxULwyiTTBU4Ph7Rq0MbfqoEQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtTYOXW+8wQ3U5OPg9o33lC+kAO+foEdzmFJQL7NpEedxJQU90O9iGEtlQj2lTSpHqR+uILKuudzGdAt2g5ehx2pZ5udV7o5Ba4qjX9Vajb9pj3sV+8hJ9O4m2WfHbJn9d2KVzsSd7geAqoGzKY8ptLF0w8BXOjGof3I31m4YPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B8E76eaK; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bsJEbD14F+5zhtH9551psCJLxDd9gre6B71OeSZfA5E=; b=B8E76eaK+KFBJPC9e6MXrw7M4E
+	SN6Ga+eETplbhnRHH38PAnBjlQetBzBtzK/Bc5qD2mJuUccIBp6+nusEe1Rbob16fA5x9lKu8snEi
+	jgU4qXnjxGXfRrv3jPVvN6mZG64M8NHX7aR3Plzu24ErsV9sqvFflW1KnDMUras0sKQ76WOlpx2vG
+	5ZcGG2VYdpsQz6d73e22EzibYT2Z32eA2qoS5UyuCj0FP1oxunGR5jaZbjWMiVylPYPGsdcWGExD9
+	21ODpaRBuDtwln1dLEtokP2H36eZkklOUJ52zxgSpml0creEzSatqCs65VhFNTRI6FfwronMJctEv
+	6pMYYnAA==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5ljN-00000009tot-2Hzf;
+	Tue, 29 Oct 2024 12:53:53 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 9126130073F; Tue, 29 Oct 2024 13:53:52 +0100 (CET)
+Date: Tue, 29 Oct 2024 13:53:52 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: Signed-off-by missing for commit in the tip tree
+Message-ID: <20241029125352.GV14555@noisy.programming.kicks-ass.net>
+References: <20241029075021.107877f4@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,23 +64,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAAjsZQwDG8m33yvXRf+ERpziGDxULwyiTTBU4Ph7Rq0MbfqoEQ@mail.gmail.com>
+In-Reply-To: <20241029075021.107877f4@canb.auug.org.au>
 
-> Regarding the RMON statistics, I understand that you are advising me to use the
-> structured ethtool_rmon_stats for RMON statistics and to reserve unstructured
-> ethtool -S (without groups) for non-standard statistics. The documentation[1]
-> specifies grouping RMON statistics, but there are other statistics in my patch
-> that are not part of the RMON. Would it be appropriate to group these
-> additional statistics as well?
+On Tue, Oct 29, 2024 at 07:50:21AM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> Commit
+> 
+>   b4f5f4934b58 ("sched: Pass correct scheduling policy to __setscheduler_class")
+> 
+> is missing a Signed-off-by from its committer.
 
-Groups are used where we expect drivers to offer the same
-statistics. Having the group means we have a well defined interface,
-where as in the past they were just dumped in ethtool -S, often with
-inconsistent names. So once you have extracted the RMON stats, see
-what you have left and see if they fit any of the existing groups. If
-not, they are probably just what the hardware vendor thought was
-useful, rather than being defined by some standard, so can be part of
-the unstructured output of ethtool -S.
+*sigh*, however did I manage that.
 
-	Andrew
+I'll go rebase and fix.
+
+Thanks!
 
