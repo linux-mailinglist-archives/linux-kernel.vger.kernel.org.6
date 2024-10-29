@@ -1,69 +1,58 @@
-Return-Path: <linux-kernel+bounces-387568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0E169B5305
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:01:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC0C9B5308
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:02:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E60EB22D6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:00:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 976C71F23B51
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1F12076DF;
-	Tue, 29 Oct 2024 20:00:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D26F92076AB;
+	Tue, 29 Oct 2024 20:02:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dp5AxGKa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="tDYgHkvG"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44D62076CA;
-	Tue, 29 Oct 2024 20:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57BDE1940B3;
+	Tue, 29 Oct 2024 20:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730232039; cv=none; b=ksh48eXD1hVfmui9Y30BQrcDHJmsZiYTC6jJsi2VkVbmn9ZlAbpkrmytYgH9YEVuNqcEWzsuPctDBhMYY0hiGhyj6p5oa9UJzoalfOcTor8WlemiMajZfCEjM08MhIi3ugXq1LY2SWo6mSFMZNMChqk7RubkSuL6LVOSC+iZj8I=
+	t=1730232162; cv=none; b=CBBWNMIe7PRUgWTIXeUdJAyFr9A+heOqQDoJd3MEeJZU+hOCOI5c56zNRra90RnuP/2/a/cAEFk4VBBNLHpK5JGzY6pf3bSOtApbAKoBDOrK2w/8+OaZoGzrScwRCfmcu9ESapGZ1aISGC+7y+FDbZERmXn2LK8RVaRzPftwbbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730232039; c=relaxed/simple;
-	bh=pKypalYakTpPySQDkMJhREf+MBtrrJGMKov0teHbvtk=;
+	s=arc-20240116; t=1730232162; c=relaxed/simple;
+	bh=f3UuPOeTZD4/EqjwCyUXIfeYlRaYApjvPjNvGd90k78=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q2QhVqSQ3Ch/GfNId1lSvaNisWokRPC6DRNEiiU4MlnXLMnCMljIIVQQxPaRe0TIbESaT5HsGr+QhEuQhVNjjrOyCowOtRe09b7InjzcM5PiyJEq3ES2/bOZgJp57IVbXbvxzHSAtYc/IWRdG8dkByvyJLEedVSx0AYVrjc2+7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dp5AxGKa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B4D0C4CECD;
-	Tue, 29 Oct 2024 20:00:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730232038;
-	bh=pKypalYakTpPySQDkMJhREf+MBtrrJGMKov0teHbvtk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dp5AxGKaXzmIiJStJRelad+pUYQm4KxqYN4SrWpWXLi6ZuKnGyPo/mQQHUzyqglgb
-	 MhPQZKdDI7Vefl+hJRMia9y41Cn2cBCn9hJljRLpZN7xxPNuMRyCCQ/ibQqKc9JQqw
-	 heYtqN02nBBCPRSiQ/fLrKbx8FGhj50C1psB1jvB0XP2tP0VF74r6nmsNYLclqxBnh
-	 +UMDt7yg2ztjfrFdzV6z9iRpaQtnlMVFIhaPEJdwDMo9Om5FO7iPQR0K2DHXdMn7qZ
-	 4GoN/Rxv6TZYDLgxRufzGvubwKekxoWRk8+pv7yt+7MqkRaTHUGLt2vrFwdCGZhjuy
-	 bhPnHO+3sfgdQ==
-Date: Tue, 29 Oct 2024 13:00:37 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
- <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20241029130037.2c7e96c7@kernel.org>
-In-Reply-To: <5aa93a65-e325-4c77-aaa8-5ef04f3b9697@embeddedor.com>
-References: <cover.1729536776.git.gustavoars@kernel.org>
-	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
-	<20241029065824.670f14fc@kernel.org>
-	<f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
-	<20241029110845.0f9bb1cc@kernel.org>
-	<7d227ced-0202-4f6e-9bc5-c2411d8224be@embeddedor.com>
-	<20241029113955.145d2a2f@kernel.org>
-	<26d37815-c652-418c-99b0-9d3e6ab78893@embeddedor.com>
-	<20241029115426.3b0fcaff@kernel.org>
-	<5aa93a65-e325-4c77-aaa8-5ef04f3b9697@embeddedor.com>
+	 MIME-Version:Content-Type; b=ItWE5WKAVQ6zkibFS4lPoyeup1vtCoNR36J0IxroNy3vJXkF1b3glORxqLMAnyvD84oLRF7hEvDA0Lv/NoGgE8Pp4Jzt/6ZPMkE03FNgGfpZgdvo6aEmw0kHgOGt2SvQn1EEFA2viHp+38V0D4juIVIXBTwKlvJ+UTPF5O/us10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=tDYgHkvG; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=4OcGl0KWTU3dE20CCOU72pTkjwMEmHgpOFmz9ZwbjCY=; b=tDYgHkvGew+c1P8rkg5Y4/g87J
+	GKZJMUOHNPhJdKvoD5vcYEBCk1tGPcwqxE7F7w2NTv7cVN/eFG6on0e57m74Mng1wvl47OkS3lNkx
+	N5r92+cpnoNTN1BJ76ssekUmXkyOzoDWb5BxdkTodlBoOKjgBK2dubX2eskLC426EpPGTH1C35Y5u
+	HrNSaqAF1Zni7609ZB0Ko4fj3JMOcg9rNtg0PiDbGNAwSNubOIJ+Qr1KaZ7RKJt40FQ4gWKpBHdIg
+	9bF1CqPB90k3F2qzqKKZRWYj3Ntlrv/kcZc7p7xoSma7e8lT+Osciwet4VeFQ/oZDbHXY/VT3/Nrb
+	UtGDVw9A==;
+Date: Tue, 29 Oct 2024 21:02:28 +0100
+From: Andreas Kemnade <andreas@kemnade.info>
+To: Mighty <bavishimithil@gmail.com>
+Cc: =?UTF-8?B?QmVub8OudA==?= Cousson <bcousson@baylibre.com>, Tony Lindgren
+ <tony@atomide.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+Message-ID: <20241029210228.3c517751@akair>
+In-Reply-To: <20240626095056.12607-1-bavishimithil@gmail.com>
+References: <20240626095056.12607-1-bavishimithil@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,51 +62,35 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 29 Oct 2024 13:18:56 -0600 Gustavo A. R. Silva wrote:
-> By priority I mean if preserving the reverse xmas tree is a most
-> after any changes that mess in some way with it. As in the case below,
-> where things were already messed up:
+Am Wed, 26 Jun 2024 15:20:56 +0530
+schrieb Mighty <bavishimithil@gmail.com>:
+
+> From: Mithil Bavishi <bavishimithil@gmail.com>
 > 
-> +       const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
->          struct bnxt *bp = netdev_priv(dev);
->          struct bnxt_link_info *link_info = &bp->link_info;
-> -       const struct ethtool_link_settings *base = &lk_ksettings->base;
->          bool set_pause = false;
->          u32 speed, lanes = 0;
->          int rc = 0;
+> Add a dedicated DTS file for the TWL6032 PMIC (Phoenix Lite). Already
+> has driver support with TWL6030 (Phoenix) since both of them are so
+> similar, some nodes can be reused from TWL6030 as well.
 > 
-> Should I leave the rest as-is, or should I now have to rearrange the whole
-> thing to accommodate for the convention?
-
-Don't rearrange the rest. The point is that if you touch a line you end
-up with a delete and an add. So you can as well move it to get it closer
-to the convention. But that's just nice to have, I brought the entire
-thing up because of the net/ethtool/ code which previously followed the
-convention and after changes it wouldn't.
-
-> How I see this, we can take a couple of directions:
+> This can be included in the board files like twl6030.
+> Example:
+> ...
+> &i2c1 {
+>     twl: twl@48 {
+>         reg = <0x48>;
+>         interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+>         interrupt-controller;
+>         interrupt-parent = <&gic>;
+>     };
+> };
 > 
-> a) when things are already messed up, just implement your changes and leave
-> the rest as-is.
-
-This is acceptable, moving things closer to convention is nice to have.
-
-> b) when your changes mess things up, clean it up and accommodate for the
-> convention.
-
-Yes, if by "your changes mess things up" you mean that the code follows
-the convention exactly for a given function - then yes, the changes must
-remain complaint. Not sure why you say "clean it up", if the code is
-complaint you shouldn't break it. No touching of pre-existing code
-(other than modified lines) should be necessary.
-
-> extra option:
+> /include/ "twl6032.dtsi"
+> ...
 > 
-> c) this is probably going to be a case by case thing and we may ask you
->     to do more changes as we see fit.
+> Used in devices like samsung-espresso, amazon-jem, epson-embt2ws etc.
 > 
-> To be clear, I have no issue with c) (because it's basically how things
-> usually work), as long as maintainers don't expect v1 of any patch to
-> be in pristine form. In any other case, I would really like to be crystal
-> clear about what's expected and what's not.
+Well, no, the file is not used at the moment, I do not think it makes
+sense to have it in without an actual in-tree user.
+
+Regards,
+Andreas
 
