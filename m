@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-387845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557219B56D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:26:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880399B56DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:27:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D89031F23ED1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:26:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA6DEB222BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA10205141;
-	Tue, 29 Oct 2024 23:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA0F20CCD5;
+	Tue, 29 Oct 2024 23:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="QCDEKnDG"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2064.outbound.protection.outlook.com [40.107.220.64])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="UhxUvaRF"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2067.outbound.protection.outlook.com [40.107.94.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F8D820C03E;
-	Tue, 29 Oct 2024 23:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 095A320C017;
+	Tue, 29 Oct 2024 23:25:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.67
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244301; cv=fail; b=Wjj4ueTxNfnvo/PZQ2KhrJV6vb0eO7y4WPBsvLPce5M4sCpdgqg/BKAesfl4d3PN7mOYeylCMx+nA1d9d9QLBmPj88KXksZ/6ojKeDMrKUZqmD5zS27ELNTD4GC5uG0Aj8dxhD5vAN6PzRY8E3BdMiwt1hM76LlcYgOvqoktLiU=
+	t=1730244318; cv=fail; b=Inj1PMesEgO7M/Z0MHufLLB36cnPxSXJRwtSniDfakdBoimEjmwTvy9JHN7puUvKnkpIFjwKaNBlnJKjevasgEsWrf3aLtQA810PK2h/IViy0ynnMmR65oYGwDRGilfvk7Ngwtn/T3gHFkFNMI+t/Yh6yKp32nwG7wsxJUNG8HA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244301; c=relaxed/simple;
-	bh=3c+K7mTpbWuwj5DHbpGJwyFbugrQmeHvzdAMo/y0/E0=;
+	s=arc-20240116; t=1730244318; c=relaxed/simple;
+	bh=/C/2kHRU0+d9XWAhefuEt2DD5Uxx7TfoKUvJC3phkC4=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=c8Dywh3VoJ4xZceB5zOZLRJ7KdMdyTxcsSAO62uHMPwhRcvM2bGahFIMOpy4NgLOYs1X9XBMfojy1Ipa2Mfef1FUlM2DQ59l7V93YVWYAOCgekx5ZvX2UQ0vgU5LysliVbc/e8a7HKhJ9lelEAwfNCvWhYGHcd/pI7RD32Gs8X0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=QCDEKnDG; arc=fail smtp.client-ip=40.107.220.64
+	 MIME-Version:Content-Type; b=XjPaNLIg1KFxl/fb00MOn64haCh7I9FUVPhS/A6k0lRUTpNUjwS6zfMa5ljXi4JwG6lickllQsBB8FZOewYknS1i24qBAx3p0fY3X8/c3Bum/flQ0je7iQVMCBn0ppPKgHjriY16N8Vcp/BU6gN4hRpEWnikutW5vInh0+shXR0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=UhxUvaRF; arc=fail smtp.client-ip=40.107.94.67
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BPOq+g1VVnqwSUgFW5EwvtwuSzLK/MPtRfKx4IniA/04wBdvy/vonlYL2sj4sxAVo4diuAqySizD5xJkpAokTCEVmR4kNLKjc5RFGYPCLkOIAc1btdKV4QMrWt4NBI13Xx5v+HRZSfy3thZNvKZwrVjF47YZIQowqZtKuaH/PgH8Q8hOlW7UVCn7MTlv2qBh6PDvAhopMkJQXavf4T2NLawga5axtKviizPWBWCJ63kJBejYNUsi32fWPRxVYgCH9DtKoc0gGa8e/OTGT8BKfdmkTqkEsNnEKBqSvhODTN0kWj4sn+KShLDo228nMknHNgCzEAkRwioFb4nXoSCT2A==
+ b=DIqfv4PqwRxk5GYzk5hmleLw6r7Hk5rnOItVrI5rgjg15dm8RXno4exoghy6OrvVVajMohA83lY6JXzL04txctBNZ2M7MEOA4yy0tDnpEQzd2HHtR1N4lrkhf6ImwPsH1H5bao3s7Z4qa5/hFWz8PdJxel06SWW86hUobb5MCTkVytFBkWyQbmqFWHGG9Ad9yAmbUSplhHVqAlRLX4vE5qoatQ5uiYR3LV57nycalVzJEbvw5fOwelo/ufDAhdLlcFUdIoo4J3IGbSJuYwqJ1Q3uc0hEWu7Yug28sjMKNhbDlbl5qqoKuJFdTl8F3XO3VYdRZZUGzIoySGtBlsSdtw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3lgJc4GFG8DitFNODUOSWfso0cmaBtUOP8bVocO6kQE=;
- b=HECUFX5yHR9YQb+MnbUZJoIfDc66aSU3YG2ZcHmZSJW3UEmIYDS94hteRxudjeDvbbNO0AUXhpyBWf6B1V//IhNjjagNcS61F/prFEgEpdmYHT48wUGAPqigx1wKFw3ETa8WidVSzqUyE5Ya1zm4JMriIDwWuH/SBp0HclwnDy5GmOIHcKiPXFV2WrkkrQTwzaJ5KUEaiDej7KeWeZNQZZflMoeZs08kSQZ7R8Hhu+xwiRBJ2aqG6hi5a63H+12uBXNZo2bdjnAhxmkw0+xMRSIJFTqE4jsj52reRlLqs0L1Si3PuOUChy41+dyaPv10Q6+g2VdJcBJFjB52rIEApw==
+ bh=CX9m6nhwVylvJd06phujkaiFhpD1fHqZRmkMhsZBUyY=;
+ b=eSpaEtu5kAlZCAZj8wMqQkXfF78CwfivNHJbXKjClCjtCWO2WOClUBsv5X/N/ZLTLShrJ0xJB53zVNPkKKX0blS6/MMhZXZ4XyispGkBBGJfzWgNKV0Tc7q9227grsDuV4xSnqjN8qkyl0L7OIjNWR55sxts3ooxyjrS8igH6Nlk4ZHtSyglMtpBdoEwjHYDqEpBCgg1XJ2fOZmEUCOX1gNzt0lDQtntg/oSuh+rzTrb2PZnd0IU4IsFMf2htKlNsKrOPllsMFGXyRW4sXG3P0XVMQzaKmzn67z8qdRxuY06c66p0NjbmNN5qBo4uHLrkxT3HNuQj+x1tHXF3H/QfA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=lwn.net smtp.mailfrom=amd.com; dmarc=pass
  (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
  dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3lgJc4GFG8DitFNODUOSWfso0cmaBtUOP8bVocO6kQE=;
- b=QCDEKnDGZD1mtWqFIa/5MougYFBpeL2cjOjW77mCicyLWjgqRFiV4xYYq14PK5Rmh5EzwH3Pg7AQxJxvG3WCkRM+GphyycMjZWVFbJ7zSXUJrxFpNhj4u4CVIYwsSn4mAi0ZnzUY/FbbWzFJ8d8jZNiJ99DQe50rp34pKDg0hGY=
-Received: from SN6PR08CA0004.namprd08.prod.outlook.com (2603:10b6:805:66::17)
- by PH8PR12MB7205.namprd12.prod.outlook.com (2603:10b6:510:227::18) with
+ bh=CX9m6nhwVylvJd06phujkaiFhpD1fHqZRmkMhsZBUyY=;
+ b=UhxUvaRF626fPyrJrWcnsZ2Z/alTyREE2JnT0mO6XW3rYWUrhXdQxz9pcwfY9Krgys0JBc6yAa+dHPuXjPjR6KmRRZoueCSO8kAF3RX8+brilCTsE7eoT6wq/57mwv6wI5oYMvo2lHA60YoZUAUjzuyCwKY5c02p56krLQCrAN4=
+Received: from MW4PR03CA0347.namprd03.prod.outlook.com (2603:10b6:303:dc::22)
+ by IA0PR12MB8277.namprd12.prod.outlook.com (2603:10b6:208:3de::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Tue, 29 Oct
- 2024 23:24:55 +0000
-Received: from SA2PEPF00001507.namprd04.prod.outlook.com
- (2603:10b6:805:66:cafe::c8) by SN6PR08CA0004.outlook.office365.com
- (2603:10b6:805:66::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8114.19 via Frontend
- Transport; Tue, 29 Oct 2024 23:24:55 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Tue, 29 Oct
+ 2024 23:25:12 +0000
+Received: from CO1PEPF000044F4.namprd05.prod.outlook.com
+ (2603:10b6:303:dc:cafe::cd) by MW4PR03CA0347.outlook.office365.com
+ (2603:10b6:303:dc::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.26 via Frontend
+ Transport; Tue, 29 Oct 2024 23:25:12 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,13 +62,13 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SA2PEPF00001507.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ CO1PEPF000044F4.mail.protection.outlook.com (10.167.241.74) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 23:24:55 +0000
+ 15.20.8114.16 via Frontend Transport; Tue, 29 Oct 2024 23:25:12 +0000
 Received: from bmoger-ubuntu.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 29 Oct
- 2024 18:24:47 -0500
+ 2024 18:24:56 -0500
 From: Babu Moger <babu.moger@amd.com>
 To: <corbet@lwn.net>, <reinette.chatre@intel.com>, <tglx@linutronix.de>,
 	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>
@@ -86,9 +86,9 @@ CC: <fenghua.yu@intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
 	<linux-kernel@vger.kernel.org>, <peternewman@google.com>,
 	<maciej.wieczor-retman@intel.com>, <eranian@google.com>,
 	<jpoimboe@kernel.org>, <thomas.lendacky@amd.com>
-Subject: [PATCH v9 19/26] x86/resctrl: Add the interface to unassign a MBM counter
-Date: Tue, 29 Oct 2024 18:21:51 -0500
-Message-ID: <d27c3a15ccb11c6ba76794eba6cf7c013b0bb074.1730244116.git.babu.moger@amd.com>
+Subject: [PATCH v9 20/26] x86/resctrl: Auto assign/unassign counters when mbm_cntr_assign is enabled
+Date: Tue, 29 Oct 2024 18:21:52 -0500
+Message-ID: <4ec00fe60cd42c1f22c98c9f5c2f5d3ceb9f8d58.1730244116.git.babu.moger@amd.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1730244116.git.babu.moger@amd.com>
 References: <cover.1730244116.git.babu.moger@amd.com>
@@ -104,162 +104,244 @@ X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001507:EE_|PH8PR12MB7205:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8f510502-e80c-4ebf-c41d-08dcf870e604
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044F4:EE_|IA0PR12MB8277:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84858472-a70f-49f6-aeaf-08dcf870efd4
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|7416014|36860700013;
+	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6/riaFmsFAgPSGuEmLF9XGICXTt37LbyR5eU2EonIgjePJVY6u0t0A11af/R?=
- =?us-ascii?Q?jS0SBf+CgKB+qScaaZkYJx/iz1urKJbZZHElbUizXySgEzyY3CxHfhLjHp22?=
- =?us-ascii?Q?1hGyYllomUFqcBwMCQGU3DAF2+IxICgsPJYoDfy28UPreVpZMysiusQdv/XJ?=
- =?us-ascii?Q?Jm4NGn0maYHBKXgUanE/2/aIucw4r5zcHXyDWZEVji7w5AgC5eBGodNgN97T?=
- =?us-ascii?Q?81miRUzzpxG7496Y6y8zT0p40IzXZRegXQxOuYDzN/brKsjgku2ICiLcko3g?=
- =?us-ascii?Q?W1q+WBxgg8GRdBvxl9shwTRlWWPBsPc+Pqg6e1KmjuSEx8aD/k9f2wXUoKcc?=
- =?us-ascii?Q?1yw55ZWNKmzbbOy73CvKpIVl8lzVs+I1C1Sv4Nzh+b0gIwgHMyhVuSsqaTZ5?=
- =?us-ascii?Q?XQBNk/Wx3vhuLDJHlUWrAmNKDsB74oIUgec498DTSRTVmlBNetH5L4fbyWwl?=
- =?us-ascii?Q?g1CG9xJj4K8/GnJP3wxNYljB2T2fNn/SJm4Tl/wmJpQuPlqLzlI5yFQLHwQZ?=
- =?us-ascii?Q?pIK3VxytZoTti72r1C7adC7gCdWF6TpceoHtLgAVXY4VxURlKpZ22y0f3jRK?=
- =?us-ascii?Q?QeIXlLdQYwTg94VTqmCFUf2CKY7GGP0aJ6mt8z1/Hpd0nri4f/Av9GvjaEBa?=
- =?us-ascii?Q?txa3peZ1EtBw8PL1C3ZX7jsA4vIEy6B273dnk/wkFvIgZNbAW45awoSpBKOR?=
- =?us-ascii?Q?vN7NoPCsexOe/5b2joGFu7mCdlw6k81vdisRfb7ZvcG1BV/TSl2dx9/FWjNN?=
- =?us-ascii?Q?3FEAc01DmFmoxPU4g3nV6+DWblRA2aK7uw4/d52jy1pKNJwyGC1Mzh29wvr2?=
- =?us-ascii?Q?LhkwHd+SbNqRiIICePUj8Pji9eaJAKMKvtKyF7cUfz+jUTEXywYM26RxT0bA?=
- =?us-ascii?Q?/EczN6BSAxKPiPN1RKUSAtCnoqAIx3nj7Qm9ACYqCQxAwrYKkaa/B/M8ANEw?=
- =?us-ascii?Q?SL5pdcK8elLQYu7kCMWdWjoN35cd8ZFciTa/XmY+pPgWwAKls77Ur5ZX7j1C?=
- =?us-ascii?Q?fvx3Kx9r3vJ0hoaTV0UEJ79rFl64sRaoRucTBbJuwL6X1oCD6dj8OYzYxQrd?=
- =?us-ascii?Q?Bgv5odackZg5OQ9l5483s+mu3VudIyYqi5nWX364ORLvLeDyw3/QD1+md6B0?=
- =?us-ascii?Q?TQar7WMDCCOA7Xv0rHwvYuYK/7EMW/87wDKM9xTZ3gXm/pSI9VT1Rg5wpTAF?=
- =?us-ascii?Q?VfCu+V9UyDKRMUl+NyHtjNmqwcfekN+Xgs1Nq7TmRBhOHy4xwQTCQTH1lIA8?=
- =?us-ascii?Q?dozxQgbuLsV7z4LfBQE2YVmIcZrEijXNQyCxi1XYDOps7EQDcQr/Q8zZm3vA?=
- =?us-ascii?Q?fs6ghoqC5FJF8CqaRJirGk8RMXWJu5T5ba43Dj4Qa9XW7oxJfghFEItKPLTu?=
- =?us-ascii?Q?9JODzxs2HnbhGR3glDtdla0O8pWwkXqX+WkBQliJfqHaL/ZOgg=3D=3D?=
+	=?us-ascii?Q?CvZ/og522YSS0ULuESG0aPmGf8szhUhIGGlAAQZh6gGagdjjA+hL9DLWiFhi?=
+ =?us-ascii?Q?rcQB+/hyQWG1SEOMfT5uqi6hddobfYNoNCeo3L5uzgDa2noG6+/9Nj7HT+hi?=
+ =?us-ascii?Q?9pTAMCyX3Fq7xi6KrGrayO5d+Cm+XnNGfAB+f2W4deLI2xeB653PR9hJSg6v?=
+ =?us-ascii?Q?lhhrMAR6Y1wCDvbep5GUZhE1XUahekGXM2PdcTOC6A8ttysjDLMWj+G1InKy?=
+ =?us-ascii?Q?jYMR5rorzTA8L0pcFtRCKddKU1KedEpGs/EzWwJOUvN2wmC5kqzNhNoMa4K0?=
+ =?us-ascii?Q?Z9/c7a+/Djw88jVUZ0sLg5x+9/1Ib4KHGeRYSjyInDe0suEorFDEmPOoC9wT?=
+ =?us-ascii?Q?ZFakWOI8tSHz86yZ1ALXPVDxfOC1yeoeKCB05ZGDXku5CH1pDiFGlbC+IMXw?=
+ =?us-ascii?Q?NOo7QILPgz6Sr5KksUwg3dUaEzGTAe2nZyOcEyxuAj2YUBaHS0gRQNVIu9JY?=
+ =?us-ascii?Q?S0ECDApN9ow+E8LvgTN4s/Ce5oxmlB84Ieqxfcuw2wpSNEpIzDSXgYT05nj6?=
+ =?us-ascii?Q?+8oGpB1mxQqYw0+j0mxgQykafQ03NGB2Flq7HGJIlAai5Jz0iTCi6O2MfoQY?=
+ =?us-ascii?Q?4WdT/TRryoTaD/+du5U9/gW2de7o4gptN/JrbIIzMoXHWl44B46HLvulJJQu?=
+ =?us-ascii?Q?9ANLKF1mk/fR9wA02PddmsK0ukci5XjT2TMOG3ES/9KHBc+9rf7dxN8l2Ap1?=
+ =?us-ascii?Q?gT0yRKlSN7DKGaDB6I8osTF6t3nKlvKIq/wqCD4/3v+K3/Me0cLspwOqXBV8?=
+ =?us-ascii?Q?Y0cjgv1tI3DPIWyqE2w5dohwHPYhsJUYu0MFmVnkt2EUzTRRoCx4MBiHB3J3?=
+ =?us-ascii?Q?03R3PdXeVexUbGTeFjDwk0C6iDPLQ5UjxXgKk9/6hMBEZh17VFmi+gAd+uFf?=
+ =?us-ascii?Q?JLah0mhqBCaQe2WYzDsqpUqGbau7fP2e9ZoXOlQu0JkahzgwCN0FEZtV4Scm?=
+ =?us-ascii?Q?aGr/XaKLq6dise9LNhmNVG1Qfg5/4e8M0rTbBU5Sfo+fxmH55wU/wKt+WjcV?=
+ =?us-ascii?Q?QxIAggmtnR76HuhMjtHZS0ycWwmUtrSUz5jicJ6e/vYe7utaPzmRwjO9QNdu?=
+ =?us-ascii?Q?RdD6fqcgas1S6ryWSKZLggZEbVuUVWwnksl811+whKShR1+Yp3ziqWRTli5G?=
+ =?us-ascii?Q?vcxApRnNYjXoJbqnuj8dJo9K62G8CQXoWTQ6xsgbN03GGRZqv5FwtgGGPkFi?=
+ =?us-ascii?Q?fUc1QGShdp5+fGM97JoOX2AIE+8ZAzB9sPvOwleuqdzXBkKjo1UNuDZyrTTC?=
+ =?us-ascii?Q?+HlNPJIr3QFSRMq7V5bG+gPja1ylZTxyKwhIbvq/PI4Wybft1hErLMJ6eQnN?=
+ =?us-ascii?Q?6Il/zGRaSbKMYPSNx0P7ld1+3hXsE3ekldusZjmpci9OyOrhN+h3Lu24b0Rc?=
+ =?us-ascii?Q?TpDEU+MhcYKbTFSZ/QMxmrz3K/0twb5MPKXCdMc+frUrhQjVQQ=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(7416014)(36860700013);DIR:OUT;SFP:1101;
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 23:24:55.8084
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 23:25:12.1767
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8f510502-e80c-4ebf-c41d-08dcf870e604
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84858472-a70f-49f6-aeaf-08dcf870efd4
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001507.namprd04.prod.outlook.com
+	CO1PEPF000044F4.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7205
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8277
 
-The mbm_cntr_assign mode provides a limited number of hardware counters
-that can be assigned to an RMID, event pair to monitor bandwidth while
-assigned. If all counters are in use, the kernel will show an error
-message: "Out of MBM assignable counters" when a new assignment is
-requested. To make space for a new assignment, users must unassign an
-already assigned counter.
+Assign/unassign counters on resctrl group creation/deletion. Two counters
+are required per group, one for MBM total event and one for MBM local
+event.
 
-Introduce an interface that allows for the unassignment of counter IDs
-from both the group and the domain. Additionally, ensure that the global
-counter is released if it is no longer assigned to any domains.
+There are a limited number of counters available for assignment. If these
+counters are exhausted, the kernel will display the error message: "Out of
+MBM assignable counters". However, it is not necessary to fail the
+creation of a group due to assignment failures. Users have the flexibility
+to modify the assignments at a later time.
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 ---
-v9: Changes related to addition of new function resctrl_config_cntr().
-    The removed rdtgroup_mbm_cntr_is_assigned() as it was introduced
-    already.
-    Text changes to take care comments.
+v9: Changed rdtgroup_assign_cntrs() and rdtgroup_unassign_cntrs() to return void.
+    Updated couple of rdtgroup_unassign_cntrs() calls properly.
+    Updated function comments.
 
-v8: Renamed rdtgroup_mbm_cntr_is_assigned to mbm_cntr_assigned_to_domain
-    Added return error handling in resctrl_arch_config_cntr().
+v8: Renamed rdtgroup_assign_grp to rdtgroup_assign_cntrs.
+    Renamed rdtgroup_unassign_grp to rdtgroup_unassign_cntrs.
+    Fixed the problem with unassigning the child MON groups of CTRL_MON group.
 
-v7: Merged rdtgroup_unassign_cntr and rdtgroup_free_cntr functions.
-    Renamed rdtgroup_mbm_cntr_test() to rdtgroup_mbm_cntr_is_assigned().
-    Reworded the commit log little bit.
+v7: Reworded the commit message.
+    Removed the reference of ABMC with mbm_cntr_assign.
+    Renamed the function rdtgroup_assign_cntrs to rdtgroup_assign_grp.
 
-v6: Removed mbm_cntr_free from this patch.
-    Added counter test in all the domains and free if it is not assigned to
-    any domains.
+v6: Removed the redundant comments on all the calls of
+    rdtgroup_assign_cntrs. Updated the commit message.
+    Dropped printing error message on every call of rdtgroup_assign_cntrs.
 
-v5: Few name changes to match cntr_id.
-    Changed the function names to rdtgroup_unassign_cntr
-    More comments on commit log.
+v5: Removed the code to enable/disable ABMC during the mount.
+    That will be another patch.
+    Added arch callers to get the arch specific data.
+    Renamed fuctions to match the other abmc function.
+    Added code comments for assignment failures.
 
-v4: Added domain specific unassign feature.
-    Few name changes.
+v4: Few name changes based on the upstream discussion.
+    Commit message update.
 
-v3: Removed the static from the prototype of rdtgroup_unassign_abmc.
-    The function is not called directly from user anymore. These
-    changes are related to global assignment interface.
-
-v2: No changes.
+v3: This is a new patch. Patch addresses the upstream comment to enable
+    ABMC feature by default if the feature is available.
 ---
- arch/x86/kernel/cpu/resctrl/internal.h |  2 ++
- arch/x86/kernel/cpu/resctrl/rdtgroup.c | 41 ++++++++++++++++++++++++++
- 2 files changed, 43 insertions(+)
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c | 61 +++++++++++++++++++++++++-
+ 1 file changed, 60 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index cb496bd97007..66de0ce12aba 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -719,6 +719,8 @@ int resctrl_arch_config_cntr(struct rdt_resource *r, struct rdt_mon_domain *d,
- 			     u32 cntr_id, bool assign);
- int rdtgroup_assign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
- 			       struct rdt_mon_domain *d, enum resctrl_event_id evtid);
-+int rdtgroup_unassign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
-+				 struct rdt_mon_domain *d, enum resctrl_event_id evtid);
- void rdt_staged_configs_clear(void);
- bool closid_allocated(unsigned int closid);
- int resctrl_find_cleanest_closid(void);
 diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index bc3752967c44..b0cce3dfd062 100644
+index b0cce3dfd062..a8d21b0b2054 100644
 --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
 +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -2011,6 +2011,47 @@ int rdtgroup_assign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
- 	return ret;
+@@ -2932,6 +2932,46 @@ static void schemata_list_destroy(void)
+ 	}
  }
  
 +/*
-+ * Unassign a hardware counter associated with @evtid from the domain and
-+ * the group. Unassign the counters from all the domains if rdt_mon_domain
-+ * is NULL else unassign from the specific domain.
-+ * Free the global counter once unassigned from all the domains.
++ * Called when a new group is created. If "mbm_cntr_assign" mode is enabled,
++ * counters are automatically assigned. Each group can accommodate two counters:
++ * one for the total event and one for the local event. Assignments may fail
++ * due to the limited number of counters. However, it is not necessary to fail
++ * the group creation and thus no failure is returned. Users have the option
++ * to modify the counter assignments after the group has been created.
 + */
-+int rdtgroup_unassign_cntr_event(struct rdt_resource *r, struct rdtgroup *rdtgrp,
-+				 struct rdt_mon_domain *d, enum resctrl_event_id evtid)
++static void rdtgroup_assign_cntrs(struct rdtgroup *rdtgrp)
 +{
-+	int index = MBM_EVENT_ARRAY_INDEX(evtid);
-+	int cntr_id = rdtgrp->mon.cntr_id[index];
-+	int ret;
++	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
 +
-+	/* Return early if the counter is unassigned already */
-+	if (cntr_id == MON_CNTR_UNSET)
-+		return 0;
++	if (!resctrl_arch_mbm_cntr_assign_enabled(r))
++		return;
 +
-+	if (!d) {
-+		list_for_each_entry(d, &r->mon_domains, hdr.list) {
-+			ret = resctrl_config_cntr(r, d, evtid, rdtgrp->mon.rmid,
-+						  rdtgrp->closid, cntr_id, false);
-+			if (ret)
-+				goto out_done_unassign;
-+		}
-+	} else {
-+		ret = resctrl_config_cntr(r, d, evtid, rdtgrp->mon.rmid,
-+					  rdtgrp->closid, cntr_id, false);
-+		if (ret)
-+			goto out_done_unassign;
-+	}
++	if (is_mbm_total_enabled())
++		rdtgroup_assign_cntr_event(r, rdtgrp, NULL, QOS_L3_MBM_TOTAL_EVENT_ID);
 +
-+	/* Free the counter id once it is unassigned from all the domains */
-+	if (!mbm_cntr_assigned_to_domain(r, cntr_id)) {
-+		mbm_cntr_free(r, cntr_id);
-+		rdtgroup_cntr_id_init(rdtgrp, evtid);
-+	}
-+
-+out_done_unassign:
-+	return ret;
++	if (is_mbm_local_enabled())
++		rdtgroup_assign_cntr_event(r, rdtgrp, NULL, QOS_L3_MBM_LOCAL_EVENT_ID);
 +}
 +
- /* rdtgroup information files for one cache resource. */
- static struct rftype res_common_files[] = {
- 	{
++/*
++ * Called when a group is deleted. Counters are unassigned if it was in
++ * assigned state.
++ */
++static void rdtgroup_unassign_cntrs(struct rdtgroup *rdtgrp)
++{
++	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_L3].r_resctrl;
++
++	if (!resctrl_arch_mbm_cntr_assign_enabled(r))
++		return;
++
++	if (is_mbm_total_enabled())
++		rdtgroup_unassign_cntr_event(r, rdtgrp, NULL, QOS_L3_MBM_TOTAL_EVENT_ID);
++
++	if (is_mbm_local_enabled())
++		rdtgroup_unassign_cntr_event(r, rdtgrp, NULL, QOS_L3_MBM_LOCAL_EVENT_ID);
++}
++
+ static int rdt_get_tree(struct fs_context *fc)
+ {
+ 	struct rdt_fs_context *ctx = rdt_fc2context(fc);
+@@ -2991,6 +3031,8 @@ static int rdt_get_tree(struct fs_context *fc)
+ 		if (ret < 0)
+ 			goto out_mongrp;
+ 		rdtgroup_default.mon.mon_data_kn = kn_mondata;
++
++		rdtgroup_assign_cntrs(&rdtgroup_default);
+ 	}
+ 
+ 	ret = rdt_pseudo_lock_init();
+@@ -3021,8 +3063,10 @@ static int rdt_get_tree(struct fs_context *fc)
+ out_psl:
+ 	rdt_pseudo_lock_release();
+ out_mondata:
+-	if (resctrl_arch_mon_capable())
++	if (resctrl_arch_mon_capable()) {
++		rdtgroup_unassign_cntrs(&rdtgroup_default);
+ 		kernfs_remove(kn_mondata);
++	}
+ out_mongrp:
+ 	if (resctrl_arch_mon_capable())
+ 		kernfs_remove(kn_mongrp);
+@@ -3201,6 +3245,7 @@ static void free_all_child_rdtgrp(struct rdtgroup *rdtgrp)
+ 
+ 	head = &rdtgrp->mon.crdtgrp_list;
+ 	list_for_each_entry_safe(sentry, stmp, head, mon.crdtgrp_list) {
++		rdtgroup_unassign_cntrs(sentry);
+ 		free_rmid(sentry->closid, sentry->mon.rmid);
+ 		list_del(&sentry->mon.crdtgrp_list);
+ 
+@@ -3241,6 +3286,8 @@ static void rmdir_all_sub(void)
+ 		cpumask_or(&rdtgroup_default.cpu_mask,
+ 			   &rdtgroup_default.cpu_mask, &rdtgrp->cpu_mask);
+ 
++		rdtgroup_unassign_cntrs(rdtgrp);
++
+ 		free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+ 
+ 		kernfs_remove(rdtgrp->kn);
+@@ -3272,6 +3319,7 @@ static void rdt_kill_sb(struct super_block *sb)
+ 	for_each_alloc_capable_rdt_resource(r)
+ 		reset_all_ctrls(r);
+ 	rmdir_all_sub();
++	rdtgroup_unassign_cntrs(&rdtgroup_default);
+ 	rdt_pseudo_lock_release();
+ 	rdtgroup_default.mode = RDT_MODE_SHAREABLE;
+ 	schemata_list_destroy();
+@@ -3280,6 +3328,7 @@ static void rdt_kill_sb(struct super_block *sb)
+ 		resctrl_arch_disable_alloc();
+ 	if (resctrl_arch_mon_capable())
+ 		resctrl_arch_disable_mon();
++
+ 	resctrl_mounted = false;
+ 	kernfs_kill_sb(sb);
+ 	mutex_unlock(&rdtgroup_mutex);
+@@ -3871,6 +3920,8 @@ static int rdtgroup_mkdir_mon(struct kernfs_node *parent_kn,
+ 		goto out_unlock;
+ 	}
+ 
++	rdtgroup_assign_cntrs(rdtgrp);
++
+ 	kernfs_activate(rdtgrp->kn);
+ 
+ 	/*
+@@ -3915,6 +3966,8 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ 	if (ret)
+ 		goto out_closid_free;
+ 
++	rdtgroup_assign_cntrs(rdtgrp);
++
+ 	kernfs_activate(rdtgrp->kn);
+ 
+ 	ret = rdtgroup_init_alloc(rdtgrp);
+@@ -3940,6 +3993,7 @@ static int rdtgroup_mkdir_ctrl_mon(struct kernfs_node *parent_kn,
+ out_del_list:
+ 	list_del(&rdtgrp->rdtgroup_list);
+ out_rmid_free:
++	rdtgroup_unassign_cntrs(rdtgrp);
+ 	mkdir_rdt_prepare_rmid_free(rdtgrp);
+ out_closid_free:
+ 	closid_free(closid);
+@@ -4010,6 +4064,9 @@ static int rdtgroup_rmdir_mon(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+ 	update_closid_rmid(tmpmask, NULL);
+ 
+ 	rdtgrp->flags = RDT_DELETED;
++
++	rdtgroup_unassign_cntrs(rdtgrp);
++
+ 	free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+ 
+ 	/*
+@@ -4056,6 +4113,8 @@ static int rdtgroup_rmdir_ctrl(struct rdtgroup *rdtgrp, cpumask_var_t tmpmask)
+ 	cpumask_or(tmpmask, tmpmask, &rdtgrp->cpu_mask);
+ 	update_closid_rmid(tmpmask, NULL);
+ 
++	rdtgroup_unassign_cntrs(rdtgrp);
++
+ 	free_rmid(rdtgrp->closid, rdtgrp->mon.rmid);
+ 	closid_free(rdtgrp->closid);
+ 
 -- 
 2.34.1
 
