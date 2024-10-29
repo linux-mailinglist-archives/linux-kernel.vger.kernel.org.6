@@ -1,225 +1,154 @@
-Return-Path: <linux-kernel+bounces-386702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3919B4722
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:43:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1F79B4725
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:44:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD9102849ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:43:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9016B1F24067
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BC84204953;
-	Tue, 29 Oct 2024 10:43:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E705D204934;
+	Tue, 29 Oct 2024 10:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edmfA/gn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qLKYBybE"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F8561DF985;
-	Tue, 29 Oct 2024 10:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CB621DF985
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198612; cv=none; b=mrSKsv4B6kigbJ7NM7eS7D84CttdZRlavTshJlvMK1FEsWrOcO5eCsyogv1kvsu+8JEUP33VILyHR0aecBxgPZWlAyXlWcIZOUqTuB1RRE2XQBIJzxxAVL6iYgH4lA6zKkbb4qOfh4TnHa+ye+VmwhnMbFK7Xe0fIElXn/OKWxk=
+	t=1730198652; cv=none; b=MJCN+p1RjeHgHly3MRQTL8uuCLPPwhxPJEWO84x+3c0mj1/p7pphz2Q+XznEc+FcQz2kV9lDUCuf9+tO8sjiy1/8ZK3Fz62MUcXqnQ0SWOYlEsWV9DG0dgJsufEwB1rf6SEt3VfCCEiClhk/D8Z4jSTpJT0BpoasGZtWEiqs6fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198612; c=relaxed/simple;
-	bh=fCHg+USXVzv55vvKlBlous6qKMSJtzt3sWEWLEln7lo=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Gj/ADwxKFRtjYzZA8KbaAjaMMfNx4YE1RFhI5CWFX2SYHZejWE5SG+KuIWxf+vPQ9L16zVsBfuvpHwlPH05yjfKNz+bS4VFHgh+wLH6/FbcMEC6ebf1TKb76uwEfm5VKGF+WYPkFQjFhcoTw9sJY7CvtqJkMx/NVWAwM134FDh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edmfA/gn; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730198610; x=1761734610;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=fCHg+USXVzv55vvKlBlous6qKMSJtzt3sWEWLEln7lo=;
-  b=edmfA/gntf2g6KWQEMVxwrR9rOD2oSwTzHrezLiYHcxGYvgFtcKJPij5
-   GohiAS5/0DkIBBzkPt5VVFBfIyO0Pgav8Q3bcXNjFkgIB80QtomMcMSF3
-   8jeN4EqSUmy7hvtGw6MjHG68G6SsY6+P3VQ4+l7nxkzT1AYT/R7mp2SeL
-   SY9N88nlG21qQSzx2iTqyXBCNMDe7BQ7+/M/zyN0PwBAGeqAx/sM9KnQx
-   /MyZ4cKNV+dqIYC7DhnjPUATCOex5BFdtLQy6OPSbrWETTKaDsgw4UUR1
-   0WlEAnGdvIujab+bscN3HYiXKoOxk6Blk+P3tYZ0ehiYi2S9THuzl6OFL
-   A==;
-X-CSE-ConnectionGUID: kQ/OR1LBR3mVwhSErYY0KQ==
-X-CSE-MsgGUID: jeFiTvfKSHqvGYgBqH74Tg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="29938249"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="29938249"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:43:29 -0700
-X-CSE-ConnectionGUID: hwa4kfISQk2Yt3IyfJj9SQ==
-X-CSE-MsgGUID: uuHoB4mXT4eVdpxNbr9g8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="105263664"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:43:22 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Tue, 29 Oct 2024 12:43:18 +0200 (EET)
-To: Mario Limonciello <mario.limonciello@amd.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
-    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
-    Corentin Chary <corentin.chary@gmail.com>, 
-    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
-    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
-    Alexis Belmonte <alexbelm48@gmail.com>, 
-    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
-    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
-    open list <linux-kernel@vger.kernel.org>, 
-    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
-    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
-    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
-    Mark Pearson <mpearson-lenovo@squebb.ca>, 
-    Matthew Schwartz <matthew.schwartz@linux.dev>
-Subject: Re: [PATCH v2 12/15] ACPI: platform_profile: Make sure all profile
- handlers agree on profile
-In-Reply-To: <20241028020131.8031-13-mario.limonciello@amd.com>
-Message-ID: <4eaa085a-3cc8-b359-9f70-c4a6b7742389@linux.intel.com>
-References: <20241028020131.8031-1-mario.limonciello@amd.com> <20241028020131.8031-13-mario.limonciello@amd.com>
+	s=arc-20240116; t=1730198652; c=relaxed/simple;
+	bh=08v98m3masgehHn+A38/furMQeUNpa14MNDKpKMLv4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxDeNiGJodvqCfd9uEX3CX+yAEFf6wpaEksduhY4VMT7QWkkR0m+4jr6v32VnwSNLILq5QcW/0hb/qjTBsSSEWxLaidiTdU9Zgrxq8CYDC+00rLvwo1Nv0QTFBLqzadwfn3SFV3TF/R1bBXGmRCBwuJB/8AwLt7cP75ZGn4ZMDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qLKYBybE; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4316cce103dso69599505e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:44:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730198648; x=1730803448; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uV0lBLqUhbRGXbbqopf6xRDXiTg4koFgUnIUJCqwVao=;
+        b=qLKYBybEjz+kCqpC+vqQJ1hqfebLKQaMkVtY17DbVf2YPL8UaRce6ki54/rdWOwWMz
+         Eld7RwIVK+hOizbH+3W8WPdRfFQ49NSs5Qt570YVDQs+xh6a+vaOwGHLeBrd8N6uBnZT
+         Irood5tpNEwo3PVm8h+E+h4ytJPgIihZeldZM8dkUhsoSu/pTGIBT+Ha5SveVoJupBrj
+         WZoYLD9wAdI22RTnWyro4RqxXEqLanfq1pIctznZoFx7uOxTbdz+EpcyVq0bYNUe3/Mr
+         vUPAvYrIld5Q4aMfAiVFxrbWQEYsCUPo8UJSVgz948vj8rGEQF5iVG+eYIA+5SmgHNNT
+         rgCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730198648; x=1730803448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uV0lBLqUhbRGXbbqopf6xRDXiTg4koFgUnIUJCqwVao=;
+        b=LRp5oG0pbZu5Z49FwFR6bCGERfUOT0BV0p6Fq/AUesznAELsK5CMwBvhIhV5rjZvHq
+         ypA/FcO0DQbT7E8z1U7scCnjIN3SZdbyFsaXGVJqdCmoadqZP9J5jcFvwBt1xGgqV12e
+         T8EW2eSvSYwIl/Hlf0EkbaHh4W56s7DIMm2SyduLniVlGHi8XUKLydGZGf8WJYXmpdxq
+         /+cPzUPfUQ2efpWI0GSP0l9s8IO2bNCZ5xqpwlsLhVHeA0rEMpX+hrzgcarcoAAL3A77
+         m0b/uvSCwgFLrFkPGnnbQ9nNDxIe6pXNkFPqn71Mo0VLdtkaMr+j5bqnG8Az1rQjSdd6
+         MVZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWjBkl8iT1D7RP0bS2/TqbTZevSSZosBPsdI05mUwi/uzH9aygLQP+reEMvANrw6qTMDQIhzG79n4eAYfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlSPqnsuE8+0ipvVugDljKV1Lg5sBoLNRIuWLrK4nO4JPmOifR
+	+v1t3mZBg4qOT1mlDFOtSeSYi55ksmI5ixtACdut+126vz881K5/cTIKIJplcXo=
+X-Google-Smtp-Source: AGHT+IFDd9toNEVebdV6GM2H3JKBp+TnL/N5UFyps7M6//NaEXMseAjAq8HwH15HVV5Fc5y5sz8WpQ==
+X-Received: by 2002:a05:600c:3512:b0:42c:b508:750e with SMTP id 5b1f17b1804b1-4319ac9a785mr107122565e9.11.1730198648310;
+        Tue, 29 Oct 2024 03:44:08 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b92f11sm12079610f8f.101.2024.10.29.03.44.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 03:44:07 -0700 (PDT)
+Date: Tue, 29 Oct 2024 11:44:06 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, linux-kernel@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, justin.chen@broadcom.com
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: brcm,bcm7038: Document the
+ 'open-drain' property
+Message-ID: <7aok7zs7whxfg3bhv7koxfxq6qhgv34b7kg3mh526z2cf7e23l@ffbsxqdqjis3>
+References: <20241012025603.1644451-1-florian.fainelli@broadcom.com>
+ <20241012025603.1644451-2-florian.fainelli@broadcom.com>
+ <20241015163200.GA1220909-robh@kernel.org>
+ <252b6f39-3b06-43b7-b227-1c29c1c12bd5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4cvjuzgzwtcm6jma"
+Content-Disposition: inline
+In-Reply-To: <252b6f39-3b06-43b7-b227-1c29c1c12bd5@gmail.com>
 
-On Sun, 27 Oct 2024, Mario Limonciello wrote:
 
-> If for any reason multiple profile handlers don't agree on the profile
-> set for the system then the value shown in sysfs can be wrong.
-> 
-> Explicitly check that they match.
-> 
-> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/acpi/platform_profile.c | 61 ++++++++++++++++++++++++---------
->  1 file changed, 45 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> index db2ebd0393cf7..d22c4eb5f0c36 100644
-> --- a/drivers/acpi/platform_profile.c
-> +++ b/drivers/acpi/platform_profile.c
-> @@ -51,6 +51,45 @@ static unsigned long platform_profile_get_choices(void)
->  	return seen;
->  }
->  
-> +/* expected to be called under mutex */
+--4cvjuzgzwtcm6jma
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/2] dt-bindings: pwm: brcm,bcm7038: Document the
+ 'open-drain' property
+MIME-Version: 1.0
 
-Don't add comments like this but enforce it with a lockdep annotation.
+Hello,
 
-"mutex" would have been too vague anyway :-).
+On Tue, Oct 15, 2024 at 10:07:10AM -0700, Florian Fainelli wrote:
+> On 10/15/24 09:32, Rob Herring wrote:
+> > Another thing to consider is for any PWM controller with more than
+> > 1 output, you might want this to be per output and therefore should be
+> > a flag in the cells.
+>=20
+> Yes, that is a good point, this controller has two channels, so it seems
+> like increasing the #pwm-cells might be the way to go.
 
-> +static int platform_profile_get_active(enum platform_profile_option *profile)
-> +{
-> +	struct platform_profile_handler *handler;
-> +	enum platform_profile_option active = PLATFORM_PROFILE_LAST;
-> +	enum platform_profile_option active2 = PLATFORM_PROFILE_LAST;
-> +	int err;
-> +
-> +	list_for_each_entry(handler, &platform_profile_handler_list, list) {
-> +		if (active == PLATFORM_PROFILE_LAST)
-> +			err = handler->profile_get(handler, &active);
-> +		else
-> +			err = handler->profile_get(handler, &active2);
-> +		if (err) {
-> +			pr_err("Failed to get profile for handler %s\n", handler->name);
-> +			return err;
-> +		}
-> +
-> +		if (WARN_ON(active == PLATFORM_PROFILE_LAST))
-> +			return -EINVAL;
-> +		if (active2 == PLATFORM_PROFILE_LAST)
-> +			continue;
-> +
-> +		if (active != active2) {
-> +			pr_warn("Profile handlers don't agree on current profile\n");
-> +			return -EINVAL;
-> +		}
-> +		active = active2;
+So the idea is something like:
 
-This looked very confusing (IMO). How about this:
+diff --git a/include/dt-bindings/pwm/pwm.h b/include/dt-bindings/pwm/pwm.h
+index ab9a077e3c7d..d18b006a7399 100644
+--- a/include/dt-bindings/pwm/pwm.h
++++ b/include/dt-bindings/pwm/pwm.h
+@@ -11,5 +11,6 @@
+ #define _DT_BINDINGS_PWM_PWM_H
+=20
+ #define PWM_POLARITY_INVERTED			(1 << 0)
++#define PWM_OUTPUT_OPEN_DRAIN			(1 << 1)
+=20
+ #endif
 
-	enum platform_profile_option active = PLATFORM_PROFILE_LAST;
-	enum platform_profile_option val;
-	...
+and then add support for that to the core and drivers? There is some
+intersection with pinctrl (depending on hardware). I wonder if
+abstracting this somehow using the typical pinctrl properties would be a
+saner option??
 
-		err = handler->profile_get(handler, &val);
-		if (err) {
-			pr_err(...);
-			return err;
-		}
+Best regards
+Uwe
 
-		if (WARN_ON(val == PLATFORM_PROFILE_LAST))
-			return -EINVAL;
+--4cvjuzgzwtcm6jma
+Content-Type: application/pgp-signature; name="signature.asc"
 
-		if (active != val && active != PLATFORM_PROFILE_LAST) {
-			pr_warn("Profile handlers don't agree on current profile\n");
-			return -EINVAL;
-		}
-		active = val;
+-----BEGIN PGP SIGNATURE-----
 
-> +	}
-> +
-> +	/* Check that profile is valid index */
-> +	if (WARN_ON((active < 0) || (active >= ARRAY_SIZE(profile_names))))
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcgvHQACgkQj4D7WH0S
+/k4+iwgAjc7XEedu+25b7SNYH5vkBjaMm+K01V70SIUTshAMpLovuNsjbzQq6gNo
+SJIwRMnsjcofeOlME5jeQYNZFA+M1nq9cihDvbUntoS2ylkwgNhFggKKQPXQ8goB
+uPGWeRngZsmodqIRBw6nSQgGXlELsQkBchj3pM9XjlOKApNq1SKu9VqgQVY/C/ku
+ObxIaFk4POIAW/W4VUm/sTpP7do75qWVemdrckfEs3orE/1x8w+9JKEYqQmus8vQ
+yeVPDEVIFAnI1rx7qXUOH3ojZRhAsom35euFMSY0oumokNN0VUQdkB0ZVPr7O4fn
+0On/5fTjF4nnOTVxM1IrMrqLNz9fvg==
+=tPDq
+-----END PGP SIGNATURE-----
 
-What does that < 0 check do? Should it be checked right after reading 
-profile_get()? Or perhaps check both of these right there?
-
-> +		return -EIO;
-> +
-> +	*profile = active;
-> +
-> +	return 0;
-> +}
-> +
->  static ssize_t platform_profile_choices_show(struct device *dev,
->  					struct device_attribute *attr,
->  					char *buf)
-> @@ -80,24 +119,14 @@ static ssize_t platform_profile_show(struct device *dev,
->  	enum platform_profile_option profile = PLATFORM_PROFILE_BALANCED;
->  	int err;
->  
-> -	err = mutex_lock_interruptible(&profile_lock);
-> -	if (err)
-> -		return err;
-> -
-> -	if (!cur_profile) {
-> -		mutex_unlock(&profile_lock);
-> -		return -ENODEV;
-> +	scoped_cond_guard(mutex_intr, return -ERESTARTSYS, &profile_lock) {
-
-scoped_cond_guard() conversion should be made in the guard patch?
-
-> +		if (!platform_profile_is_registered())
-> +			return -ENODEV;
-> +		err = platform_profile_get_active(&profile);
-> +		if (err)
-> +			return err;
->  	}
->  
-> -	err = cur_profile->profile_get(cur_profile, &profile);
-> -	mutex_unlock(&profile_lock);
-> -	if (err)
-> -		return err;
-> -
-> -	/* Check that profile is valid index */
-> -	if (WARN_ON((profile < 0) || (profile >= ARRAY_SIZE(profile_names))))
-> -		return -EIO;
-> -
->  	return sysfs_emit(buf, "%s\n", profile_names[profile]);
->  }
->  
-> 
-
--- 
- i.
-
+--4cvjuzgzwtcm6jma--
 
