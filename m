@@ -1,159 +1,109 @@
-Return-Path: <linux-kernel+bounces-386780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 058889B47D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:07:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 615109B47D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:07:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3712B1C24883
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:07:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 923091C24993
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:07:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038DD204F7F;
-	Tue, 29 Oct 2024 11:07:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C5C20512F;
+	Tue, 29 Oct 2024 11:07:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FbtjQ9MF"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="bXkBGJ1X"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BECB1DF753;
-	Tue, 29 Oct 2024 11:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507D11EE031
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730200029; cv=none; b=ZPumVlpLdEtxksspyqfn6hsTerakRTdlliQ+574nXZZBhnkv4UsM4VjVRNP3vafeR+gtQYFBqPgevvVvqd7plLo/bEZl+Th0+PD4oCcrWUzn+u8D13qsV/r6k1V4M6N3hsgoADxYVr0q6GlqWEjqlaU/kMR5CCWBiq1yDpenhAU=
+	t=1730200030; cv=none; b=WULuR77Kr4gqRfaR/+yoA5RNBPzTPv0TxOX6lPkzyMguAnbJ2dNDGCEbqFsw73k7PKGwGCu2ptzQme6W2tNp1Gsjg1clYEr6kooEbRuIRV70N9emCFZ50uk/kL/4t5QN31M/0p9RRAETrBW7RxRhnKkyYOmAuUKxZHSRofv7ag0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730200029; c=relaxed/simple;
-	bh=JVHgsgLpf4vjbEvcbEAaNHu5W6OoFfO3Y2fLYfnFZ7k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h2RW49FS3XBZ2rwtycOKnkDb3jld/qnXFGDYd5TDLJANRf9Tx6Z2TVpuzA37lpUVEA4e13JMsHv0+VktAXSJ4fvgpzRgB2CuQ+fPYO3N9UrTEAs8HC+UXpvDTrg4nteBLtvcnbopM4Ns3tJWZPuBoM2hFG2PoEwQQLB3BkLlhTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FbtjQ9MF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T9Lcjk004586;
-	Tue, 29 Oct 2024 11:06:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1LuXf9jYuiVYJdyPLwQTVsJnJJdP0P/j5ARC3WFPmX8=; b=FbtjQ9MFSG0V7P9N
-	H7cI1x6Ox99l5qPjvjni6QNr+x3MSSbJjtRzTkuF7Z315wzS1AwNMvCJzWrH+93i
-	NGrg3sJEnPAU8YanUK12XCsi9M0YCV/cz9vDvuseDY58h0hnFKnZ+NnSWJin+tzH
-	ZFBD/uxzlKvT8/PuM7AOHrIgbG/5vQEB+MJfWU9mVHSW+MdBBDtbpJLdWWpkd/O0
-	aZccgUR77DPQzKLvUX+Mqg5tUxtZkQVuVx36w38UEa4CTgbqtsp6y20Q8Pqh+erW
-	65/8Ta84pmWK9BAGNeR8kxYCt76vMxYbujw9wrrsARa57M/0lu/e0ve8QzKbQjw3
-	n0E1bQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gr0x859s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 11:06:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TB6gs3029772
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 11:06:42 GMT
-Received: from [10.216.3.156] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
- 2024 04:06:35 -0700
-Message-ID: <75589588-ed41-42f6-b7fa-c6f0359ba4cd@quicinc.com>
-Date: Tue, 29 Oct 2024 16:36:31 +0530
+	s=arc-20240116; t=1730200030; c=relaxed/simple;
+	bh=nruZqsA2XW5jXE6oIEGXvWuKwoAGvf5ZIlpBMwK76jo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gox87Agx7xTfb4WEXCPQYKexseXIWmBqRrf7A8uFvwY17k/AnEuYx/jdEpl5j6ggilHus9Q3FDplkXZreDYHtnY+0Hlv2YizHhMA8ifML3A4LbhU+qEDIbZZuhb0UTGDf8fXsEC6aYt2ucoVmIywsMQuuJnGot6AME+8Bq59x4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=bXkBGJ1X; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8EB6F40E0198;
+	Tue, 29 Oct 2024 11:07:00 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dFfMh_i6PbAn; Tue, 29 Oct 2024 11:06:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730200016; bh=eAWbP0fRWMPLppgvWu2z9VQau+eDPrgN+MGorysQCOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bXkBGJ1XihE+oQLvLC9rEcqmsibmUS2jRSclA1LWnd1awt4kcRBADQJ7OtK4Sr3YI
+	 cu8EmIrxCIu6vI3eE9jPByrC7FsweJ5vDnY0cwH6TPD0D7dFEXaL0Jebeli4wowNpu
+	 R4cCSWSitFwny7KJmTtqZ6y3YAnNlXqLNVoXGCUi8805VSWE1l3oYq/w4/vyHbvpfV
+	 lu9yCxl1tCMewTxUC9zb79SPbo3ZDaQRgPMR1ZqvZmQQ3p1DNQXtAr7Kg3Qttgl+nX
+	 vKMeWAeXyp7fMaiXZORQ6IHJknpAGFlafg6SMFBXni1RdPlhXxuhWvuAVEPxpIQwgf
+	 v+jHQXISlqVORCrgcdALJonBMXdl37d/8ofh7lzBcrywpfHF5fY+qW5tfVxpN8SyLQ
+	 k3XxJksckrSaMKEJiIxJyo6bawARIFYDoViVqcSP5C+2LxWIVrx2T0ABbBspPkEe8/
+	 FqQvZX8I4obyHSNL27g6ma83vUALPnu0aUuO11WZoaKeMsGwYQOgmo38cnlYmvUUMg
+	 Phwubt7V7UyFoZbQPMjyPmKO70i59IOGmjZHL7hN9O8jeqyQQHqS99prAyD7yVdFyH
+	 S74CAxkHUljzg4mN/wcpT2EEK0ST3BEzX77msAcP+c2QHGK3Hx419BgG/cL6psvxUN
+	 o84+yfA0aOAd1NOBRYzY43pU=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 95AF840E0191;
+	Tue, 29 Oct 2024 11:06:42 +0000 (UTC)
+Date: Tue, 29 Oct 2024 12:06:41 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Yazen Ghannam <yazen.ghannam@amd.com>,
+	Suma Hegde <suma.hegde@amd.com>,
+	Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] platform/x86/amd/hsmp: fix compile-testing without
+ CONFiG_AMD_NB
+Message-ID: <20241029110641.GFZyDBwa2o1a13Bt-T@fat_crate.local>
+References: <20241029092329.3857004-1-arnd@kernel.org>
+ <20241029103316.GBZyC57KGSxyPie3Qu@fat_crate.local>
+ <3a5360a4-e5c7-4c97-ab15-778d73f5b5a6@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Add ICE algorithm
- entries
-To: Krzysztof Kozlowski <krzk@kernel.org>, <manivannan.sadhasivam@linaro.org>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konrad.dybcio@linaro.org>,
-        <James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
-        <agross@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_narepall@quicinc.com>, <quic_nitirawa@quicinc.com>
-References: <20241005064307.18972-1-quic_rdwivedi@quicinc.com>
- <20241005064307.18972-3-quic_rdwivedi@quicinc.com>
- <070bd760-9095-496b-8f46-1825c592754c@kernel.org>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <070bd760-9095-496b-8f46-1825c592754c@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: KaS_AwvqOTb_1vuyQ--Sn0N5liSx3Ehv
-X-Proofpoint-GUID: KaS_AwvqOTb_1vuyQ--Sn0N5liSx3Ehv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- clxscore=1011 bulkscore=0 adultscore=0 impostorscore=0 mlxscore=0
- malwarescore=0 mlxlogscore=999 priorityscore=1501 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290086
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3a5360a4-e5c7-4c97-ab15-778d73f5b5a6@app.fastmail.com>
 
+On Tue, Oct 29, 2024 at 10:56:12AM +0000, Arnd Bergmann wrote:
+> That would work, or Ilpo can pick it into the tree that
+> has the driver changes, possibly folding the fix into the
+> other changes.
 
+Right, while it shouldn't be a problem, I'd like to keep all amd_nb changes in
+one tree because we have stuff in-flight touching and changing exactly that
+area so...
 
-On 06-Oct-24 2:02 PM, Krzysztof Kozlowski wrote:
-> On 05/10/2024 08:43, Ram Kumar Dwivedi wrote:
->> There are three algorithms supported for inline crypto engine:
->> Floor based, Static and Instantaneous algorithm.
->>
->> Add ice algorithm entries and enable instantaneous algorithm
->> by default.
->>
->> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
->> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
->> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
->> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 19 +++++++++++++++++++
->>  1 file changed, 19 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> index 9d9bbb9aca64..56a7ca6a3af4 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> @@ -2590,6 +2590,25 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->>  			#reset-cells = <1>;
->>  
->>  			status = "disabled";
->> +
->> +			ice_cfg: ice-config {
->> +				alg1 {
->> +					alg-name = "alg1";
->> +					rx-alloc-percent = <60>;
->> +					status = "disabled";
->> +				};
->> +
->> +				alg2 {
->> +					alg-name = "alg2";
->> +					status = "disabled";
->> +				};
->> +
->> +				alg3 {
->> +					alg-name = "alg3";
->> +					num-core = <28 28 15 13>;
->> +					status = "ok";
-> 
-> NAK. This has so many issues... First, describes OS policy. Second,
-> there is no "ok".
-> 
-Hi Krzysztof,
-	I have updated the status to "okay" in latest patchset and updated the alg-name with actual allocator name.
-	I have already mentioned default allocator as instantaneous. Sorry, I did not understand OS policy comment, could you please explain?
-Thanks,
-Ram.
+Thx.
 
-> Best regards,
-> Krzysztof
-> 
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
