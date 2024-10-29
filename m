@@ -1,102 +1,189 @@
-Return-Path: <linux-kernel+bounces-387166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45FAC9B4CE5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:05:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1BBD9B4CD6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:03:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 773A81C2260F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:05:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E64284D1D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:03:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB99A194A5A;
-	Tue, 29 Oct 2024 15:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276A7192D9C;
+	Tue, 29 Oct 2024 15:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZT66GuNF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="MEL6gOA5"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E15B192D93;
-	Tue, 29 Oct 2024 15:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8BC1922C4
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730214280; cv=none; b=C/K3bCQ6NSYa8GRiG4vKrkfxIfcrd/9j4qRKag9nokugNWcbCOp+5ZEpo+VO90OpumHI/AAU7F7HggYjg+HdDY8TV880dQrPje9D91ugNB09Li1dFU3bkNInBaHWFCeKFtjynzKcFVl+jzBOT9ao2nrFPv2k6taUFbUdsnvyPpU=
+	t=1730214206; cv=none; b=NWZ6AuV+DsGp3+vJApaAiwK1gt1p79lkpwMpRlWyTVe5gfRqxbGd78IGHMb/N1t0dpFduMNGuKPwGc88DAZom11WDJOHj5GuL26w2EnpBcCsjw0KW9x0LJp1TWxNWZ1dvIlz9RkMzyOzfv53fo8TA3F+TFOzNDWBV1JzAKD3mcs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730214280; c=relaxed/simple;
-	bh=IhZqwxywfidNMOS5LUExdH984KVWiLGmJHduuN5McNk=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=A6Ducq2FU6uQEUmvxoJkvbKNQSVCi44cxoLedhqlK5yySkqTQmoU4b2Wc4AlD2Mo9uscqU2HziiVlxWJyBNFfuJ4ZZJujygxpRY6v2JruHcFFHmgEO8A7mCJh5N2d1dh7LEpaeKG8MsjsP73w1Z7fCj2a1mA1ikzfRYVpTDE1I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZT66GuNF; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730214278; x=1761750278;
-  h=from:to:cc:in-reply-to:references:subject:message-id:
-   date:mime-version:content-transfer-encoding;
-  bh=IhZqwxywfidNMOS5LUExdH984KVWiLGmJHduuN5McNk=;
-  b=ZT66GuNFp3CdfLmCVK5wczJsminhYNSzoaaSlmddv62BjWVGLTrsNgbC
-   CcwgoByzTCs/0qfFYF4VPI7oi4mzB4fCOwdnP6+VHE/z1rFuX4M3ifKbD
-   aQCm6mOxdI/vlLIVyNi93jPo+MaX9AeDzdtK9YEcdBB5xbPck1QzZo7JD
-   RugKLEppEAnxYVB5mtDCUZENls3akWLyo6FPSXKnd05ai0EwlbKSo4a03
-   AM87SunQ7PpVU2ETzQUec5H9UC4uq0vw9SP9B60rtHTWhgPzGmuxwXVLr
-   Djb9z4XA3hDKaZbKkzPq0y5wflCzjVo+qlImCTg0hiTtYFvAzstzlcKRC
-   Q==;
-X-CSE-ConnectionGUID: FFS8Q0PKT5O5JlXvz/Zhlw==
-X-CSE-MsgGUID: Au2W+l44Scm1K7g6sCwNCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="29968476"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="29968476"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:03:03 -0700
-X-CSE-ConnectionGUID: xDFZ37l0QNerlGmwLeO6UA==
-X-CSE-MsgGUID: DhKNEs3MSVesI+ZktPCu5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82315556"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:03:00 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: hdegoede@redhat.com, cezary.jackiewicz@gmail.com, 
- chen zhang <chenzhang@kylinos.cn>
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
- chenzhang_0901@163.com
-In-Reply-To: <20241028024949.24746-1-chenzhang@kylinos.cn>
-References: <20241028024949.24746-1-chenzhang@kylinos.cn>
-Subject: Re: [PATCH v2] platform/x86: compal-laptop: use sysfs_emit()
- instead of sprintf()
-Message-Id: <173021417618.2801.6058426025520461204.b4-ty@linux.intel.com>
-Date: Tue, 29 Oct 2024 17:02:56 +0200
+	s=arc-20240116; t=1730214206; c=relaxed/simple;
+	bh=NBSC41srgKPt9bg/2Qz/7PgkEc3c+cfTUpjZyDXQUXI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CCMJU7Omv76kyYXWthRhHFmBvcTIyQdJoxPsIsx8SQH54RTpJZADf3NiMtyO2i4NI5oVsTeOsYSLEFfH8Ad/ySFeua9PpNPtGYCLSkHmq0zwDAi5zV4EkyCGXj9WzJsqPnUH8EDcToaqp+4rKNygPgI9z8CvY+9Mwj7wOVB/C3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=MEL6gOA5; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-20c9978a221so60338595ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:03:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1730214204; x=1730819004; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=agAKt0IT7G723lrXGrtqJgZBhbv7SHC0IN5lHsfmwYg=;
+        b=MEL6gOA51kVLII2DrX5XlCZ45ift+ozAjPNP1QUrIAfg+Cscpr79lUtPOwcfK8UHZY
+         bcFKwJf9zAK++TP9/IgY1eu1aBWMDsdxjChIfoIpGAJQXRcejE3eshWYuNORz/CfiWVo
+         xdwLQiyGHL2X6Sa2uatbuFBEc7LE3UhOWf7+o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730214204; x=1730819004;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=agAKt0IT7G723lrXGrtqJgZBhbv7SHC0IN5lHsfmwYg=;
+        b=hoDV/J3EsUFg2YP9jUAU6p4f3xAacs2nDyeSn2Swg0KF2j/cBcMBtv20ETaNhdIouM
+         Ylx4MGHwe3vJxJ93ac4bCJGz2ueeqpcVMhl+jGsxVyO9nru29jRpO+C93YBUgMJsb7QT
+         5BNPslHWfoTI+9cL+eDMqjDzXi+kht2UTZyWDNpi/oM9Az3pw9YypIDOChB15Mq9FdZo
+         hz4MD1I5+aAK5V8XtHe+dp0myWpA+y2U7jk7Jx4zBb9TnIaE07MsHnY/5E7EEa5WgEPt
+         Pda1FhDlTSosxG7/XacDTFtEQYQjrpl6Jap0TKxDayDs7KYmAY2Rq3W5nfpjGxomZmy4
+         7ZHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWsuzSVt0qFecNcwMM2eHGU9yMBuFR2ZVmnCyJeezmvgOjwBvdkqt5YnlW8CW7POKuIK0HphJTJQ/aqGl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHHPaP2pJCVUsugXhI1T/IXBcskxc+hwvzBSkmJLMoh4HCzjt0
+	bi09OjVq6VSnCgiV/pC8wUBZjRwpJQQMLdpeZji2WYihMJFDcofzUtQlg6vHo8w=
+X-Google-Smtp-Source: AGHT+IFCKnHDgGtsA90IcNnhxnGU7fXTHsLH84y6r6k1evSEfeb5nttjlUCgjLc1TGCn9mq7Trci/w==
+X-Received: by 2002:a17:902:7790:b0:20c:fb47:5c05 with SMTP id d9443c01a7336-210c6c6d996mr123687415ad.46.1730214202479;
+        Tue, 29 Oct 2024 08:03:22 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02e941sm66967365ad.204.2024.10.29.08.03.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 08:03:22 -0700 (PDT)
+Date: Tue, 29 Oct 2024 08:03:18 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, namangulati@google.com, edumazet@google.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"open list:BPF [MISC] :Keyword:(?:b|_)bpf(?:b|_)" <bpf@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Donald Hunter <donald.hunter@gmail.com>, Jan Kara <jack@suse.cz>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Mina Almasry <almasrymina@google.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Subject: Re: [PATCH net-next v2 0/6] Suspend IRQs during application busy
+ periods
+Message-ID: <ZyD5Ntx_DwnQj47e@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+	namangulati@google.com, edumazet@google.com,
+	amritha.nambiar@intel.com, sridhar.samudrala@intel.com,
+	sdf@fomichev.me, peter@typeblog.net, m2shafiei@uwaterloo.ca,
+	bjorn@rivosinc.com, hch@infradead.org, willy@infradead.org,
+	willemdebruijn.kernel@gmail.com, skhawaja@google.com,
+	kuba@kernel.org, Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	"open list:BPF [MISC] :Keyword:(?:b|_)bpf(?:b|_)" <bpf@vger.kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Donald Hunter <donald.hunter@gmail.com>, Jan Kara <jack@suse.cz>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Johannes Berg <johannes.berg@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	"open list:FILESYSTEMS (VFS and infrastructure)" <linux-fsdevel@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	Martin Karsten <mkarsten@uwaterloo.ca>,
+	Mina Almasry <almasrymina@google.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+References: <20241021015311.95468-1-jdamato@fastly.com>
+ <57a0e1e7-1079-4055-8072-d9105b70103f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <57a0e1e7-1079-4055-8072-d9105b70103f@redhat.com>
 
-On Mon, 28 Oct 2024 10:49:49 +0800, chen zhang wrote:
+On Tue, Oct 29, 2024 at 11:25:18AM +0100, Paolo Abeni wrote:
+> On 10/21/24 03:52, Joe Damato wrote:
+> > Greetings:
+> > 
+> > Welcome to v2, see changelog below.
 
-> Follow the advice in Documentation/filesystems/sysfs.rst:
-> show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-> the value to be returned to user space.
+[...]
+
 > 
-> 
+> The changes makes sense to me, and I could not find any obvious issue in
+> the patches.
 
+Thanks for taking a look.
+ 
+> I think this deserve some - even basic - self-tests coverage. Note that
+> you can enable GRO on veth devices to make NAPI instances avail there.
+>
+> Possibly you could opt for a drivers/net defaulting to veth usage and
+> allowing the user to select real H/W via env variables.
 
-Thank you for your contribution, it has been applied to my local
-review-ilpo branch. Note it will show up in the public
-platform-drivers-x86/review-ilpo branch only once I've pushed my
-local branch there, which might take a while.
+Could we send a selftest in a follow up?
 
-The list of commits applied:
-[1/1] platform/x86: compal-laptop: use sysfs_emit() instead of sprintf()
-      commit: f60933390852beb1fbbcad12df5e261cf8312a9b
+I am asking because we've jumped through a number of hoops to get to
+this point:
+  1. Added support for per-NAPI config settings [1] to address Eric's
+     concern in the v1, which took several revisions and was stalled
+     due to a merge window.
+  2. Added support for netdev-genl to numerous drivers so that this
+     would be usable in many different environments (gve, ena, tg3,
+     e1000, e1000e, igc...) [2] [3] [4] [5] [6]
+  3. We didn't get any feedback about adding a selftest in the RFC
+     or v1 [7].
 
---
- i.
+I think all busy poll methods currently in the kernel need selftests
+(including the existing busy poll method) and its not clear to me
+currently how much work it'll be to get veth or netdevsim working to
+a point where we could re-submit this with a selftest that would be
+considered reasonable enough.
 
+FWIW, neither my previous series on the epoll ioctl nor the per NAPI
+settings were rejected due to lack of selftests, but I did add a
+simple selftest for the epoll ioctl later [8].
+
+What do you think?
+
+Could we get this merged without having to get selftests working and
+come back with a selftest as separate change (like I did for the
+epoll ioctl) ?
+
+[1]: https://lore.kernel.org/lkml/20241011184527.16393-1-jdamato@fastly.com/
+[2]: https://lore.kernel.org/lkml/20240930210731.1629-1-jdamato@fastly.com/
+[3]: https://lore.kernel.org/lkml/20241002001331.65444-1-jdamato@fastly.com/
+[4]: https://lore.kernel.org/netdev/20241009175509.31753-1-jdamato@fastly.com/
+[5]: https://lore.kernel.org/netdev/20240930171232.1668-1-jdamato@fastly.com/
+[6]: https://lore.kernel.org/lkml/20241028195243.52488-1-jdamato@fastly.com/
+[7]: https://lore.kernel.org/all/20240823173103.94978-1-jdamato@fastly.com/
+[8]: https://lore.kernel.org/netdev/171528362770.20134.14528995105510778643.git-patchwork-notify@kernel.org/T/
 
