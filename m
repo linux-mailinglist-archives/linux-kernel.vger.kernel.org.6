@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-387403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 838589B50B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:31:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC47D9B50D3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:33:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EFA1C22C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:31:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA4EB1C22A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAA220CCE1;
-	Tue, 29 Oct 2024 17:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FC2207212;
+	Tue, 29 Oct 2024 17:28:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RF6C3rFx";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="chc3FF56"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TAUFosc6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4371C1DCB31;
-	Tue, 29 Oct 2024 17:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 637F7203719;
+	Tue, 29 Oct 2024 17:28:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730222709; cv=none; b=tWj24bej1yVeYk4qR/fxyKQjbtOg3lU5enPMv5DfxD4ATLeJAfpqc5t11fYtfRgc42xsUmnRbG6XjMi58nfOgEIrfmDjmrmtK8DIa47NWYcDBqxw5MB7Vi943YfUQfstAXUm1k285gXzOWXWynkOsdYfW89IYMQq9kpPUXutIZ8=
+	t=1730222922; cv=none; b=lWET/7GSH/rUq65ki1BCgVnY/5Q44IWY59Akkn4W8pG7pB1zmhcJ8MNsORgoZnRmAAU4KNafUF67JR9e+XFw9K6EOJnmIPHZqht5cgIDwHK5/eRO4CSEgtUS4CURWnDgxWGWryq0LyIJ/pxDgRtomDDw68fatzzOXy5UvDme/wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730222709; c=relaxed/simple;
-	bh=tKqu5xf+7+b36Fy1aUkYpZUXg29HUSsJwQdbeju6nts=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Bl+0enmJaSo8YckYMbOfoFvPI7M3UHCtfq7a/jtphxCBvLnTukoku6F6tMzam4qQr6Id27pI3mR4PAR6DDzM0pzhvsIL8ku0dDrkp8Er5VX214q+TR6XQx0ODEcBWCBkPPGPNYFjdV2MXSMkAWhEEiOXyk0PgcydUOcY2NMFtEo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RF6C3rFx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=chc3FF56; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730222705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VB2YGHKy8tQmBThMLnbaC2CRgV6b37/PrdYthMx96g4=;
-	b=RF6C3rFxjgUBuYvXtWnJyhHLszik83TDhUJwNpNxIQGnmrHBaSXhJkE6uURWSUP6h57KlQ
-	Raz3OalVvwaGdgUamPHcR+8xPieoNXITgOk5zVWdc/kKlnyjKCUfUXRzHsvUqKadE/9PmZ
-	o9f19mhUx0/05cNoCv3LKeA65akjn6mSEfF/xdJ4EDP37Z0/F8k1OJipAKdJWgW2OVaP40
-	YX2M5wdEePydt7Q9HZPBC7WiO+IKrtDGp08tWm8mWV2GO0Jd8tNMxkPpklY/rAR5gFAKka
-	Ez9pzRlQZwBIvY2OWzQVz0z5Rt0clM2g1XdL18sHX9k7Zmq4O8xNym8nQY+VPQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730222705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VB2YGHKy8tQmBThMLnbaC2CRgV6b37/PrdYthMx96g4=;
-	b=chc3FF56A9KHBZCa+WMl54iaEOCynw2FvJe6lrJ14/EKBkByGiU+bdg0oV9XXZiJ6scDTD
-	JfucYndyZggwI8DA==
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, "K. Y. Srinivasan"
- <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
- <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
- linux-hyperv@vger.kernel.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Marcel Holtmann <marcel@holtmann.org>, Johan
- Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
- <luiz.dentz@gmail.com>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org, Michael Kelley <mhklinux@outlook.com>
-Subject: Re: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
-In-Reply-To: <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
-References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
- <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
- <87wmhq28o6.ffs@tglx>
- <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
-Date: Tue, 29 Oct 2024 18:25:05 +0100
-Message-ID: <87ed3y255a.ffs@tglx>
+	s=arc-20240116; t=1730222922; c=relaxed/simple;
+	bh=Iuf6Xk0m12VH4JrneWbnqoZPwuhneMbLQmLINWp5Ogo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rGyw0mUZEMuKhC889LaneraEOlUq/ddDNgJ0hy4svwLBE5tE8fmSVrMQbHff4xaRzbNW0ul1ULo4UFmH74FKWx37ewlb+u8uDKttPhmNkZNktJMEq5+SBd11KfXI00FYitVp997c8Ig8Kwe8twDLP7VtOv8q5aGeWphlmHH2zys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TAUFosc6; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730222920; x=1761758920;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Iuf6Xk0m12VH4JrneWbnqoZPwuhneMbLQmLINWp5Ogo=;
+  b=TAUFosc6wjWG1OsjRth9tO2V6negNiyxsOSEq7y9DkeOgnFZL26daMUz
+   jmJeZDYqyUTXn8ED0sofOgPc95E+Bs3y1LsFwVyxpgI5KYPCS0Kpp9WnC
+   UurXO0FKrOV91Vgd3jInSJA/CG3q9joX8Qt+qUNs1dGNDVABw/6B8AdbT
+   ECtS5c1Qz+4Fb+iqnIOBb9jgnRGyJE3sVU3LS91KCFg/i0XK8xF+04ros
+   LXPb3ENhOEK4bKZwNOLDiP/3DVJ7XuWRKOn0bjj1jMWzPOD5swI8ar6yh
+   yUsnOhU7wIt7pNJ09LtojKsW9F5Q12nt3jme4OVKpK6mYDFwl1gtq86+x
+   Q==;
+X-CSE-ConnectionGUID: PMN0dnC5QB+OWsW2Yskc8g==
+X-CSE-MsgGUID: iM484KtZTiyna/ZP0JEHjA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="17515633"
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="17515633"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 10:28:39 -0700
+X-CSE-ConnectionGUID: NNDEMe48S12WU0V7De+VXA==
+X-CSE-MsgGUID: /ZNosftBQlWVME4l10itHQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="81585594"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 10:28:39 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	x86@kernel.org
+Cc: James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v8 0/7] x86/resctrl: mba_MBps enhancement
+Date: Tue, 29 Oct 2024 10:28:25 -0700
+Message-ID: <20241029172832.93963-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 29 2024 at 17:22, Geert Uytterhoeven wrote:
-> On Tue, Oct 29, 2024 at 5:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
-de> wrote:
->> On Mon, Oct 28 2024 at 19:11, Easwar Hariharan wrote:
->> > diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
->> > index 1220f0fbe5bf..e5256bb5f851 100644
->> > --- a/include/linux/jiffies.h
->> > +++ b/include/linux/jiffies.h
->> > @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiff=
-ies(const unsigned int m)
->> >       }
->> >  }
->> >
->> > +#define secs_to_jiffies(_secs) ((_secs) * HZ)
->>
->> Can you please make that a static inline, as there is no need for macro
->> magic like in the other conversions, and add a kernel doc comment which
->> documents this?
->
-> Note that a static inline means it cannot be used in e.g. struct initiali=
-zers,
-> which are substantial users of  "<value> * HZ".
+Add support to choose the memory monitor bandwidth event independently
+for each ctrl_mon group when resctrl is mounted with the mba_MBps
+option. Users may want this for applications that are not localized to
+NUMA boundaries.  Default behavior still uses local memory bandwidth
+when that event is supported by the platform.
 
-Bah. That wants to be mentioned in the change log then.
+Side benefit[0]: Systems that do not support the local bandwidth monitor
+event but do support the total bandwidth event can now use the mba_MBps
+mount option.
 
-Still the macro should be documented.
+Changes since v7[1]:
+--------------------
 
-Thanks,
+Almost a complete rewrite based on the new user ABI of a file
+in each ctrl_mon group to select the event instead of a mount
+option that applies to all groups.
 
-        tglx
+Some of the code from the v7 patch0001 was salvaged and is now
+split between patches 0002/0003 in this series. Patch 0002
+addresses comments from Reinette[2] with additional sanity
+checks, use of WARN_ON_ONCE() and early return from functions
+where these checks fail.
+
+I moved the refactor of mbm_update() to a separate patch to
+make it easier to review the changes to compute bandwidth for
+all memory bandwidth events.
+
+Signed-off-by: Tony Luck <tony.luck@intel.com>
+
+[0] My original objective!
+[1] https://lore.kernel.org/all/20241003191228.67541-1-tony.luck@intel.com
+[2] https://lore.kernel.org/all/bb30835f-5be9-44b4-8544-2f528e7fc573@intel.com/
+
+Tony Luck (7):
+  x86/resctrl: Prepare for per-ctrl_mon group mba_MBps control
+  x86/resctrl: Compute memory bandwidth for all supported events
+  x86/resctrl: Refactor mbm_update()
+  x86/resctrl: Relax checks for mba_MBps mount option
+  x86/resctrl: Add "mba_MBps_event" file to ctrl_mon directories
+  x86/resctrl: Add write option to "mba_MBps_event" file
+  x86/resctrl: Document the new "mba_MBps_event" file
+
+ Documentation/arch/x86/resctrl.rst        | 10 +++
+ include/linux/resctrl.h                   |  2 +
+ arch/x86/kernel/cpu/resctrl/internal.h    |  6 ++
+ arch/x86/kernel/cpu/resctrl/core.c        |  5 ++
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 71 ++++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 91 ++++++++++++-----------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 28 ++++++-
+ 7 files changed, 167 insertions(+), 46 deletions(-)
+
+
+base-commit: 81983758430957d9a5cb3333fe324fd70cf63e7e
+-- 
+2.47.0
+
 
