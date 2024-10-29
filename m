@@ -1,181 +1,174 @@
-Return-Path: <linux-kernel+bounces-386899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D96BB9B4956
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:12:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA0A9B495A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:13:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16AD31C22932
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:12:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35172831D1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B01205E11;
-	Tue, 29 Oct 2024 12:12:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4892A205E16;
+	Tue, 29 Oct 2024 12:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uMbZe4jM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43EA520494C;
-	Tue, 29 Oct 2024 12:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F47120494C;
+	Tue, 29 Oct 2024 12:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730203960; cv=none; b=sT75b7ZlYHpJWwkjS3rpo0zByoLRNBt9D69umLd23iSL7YQQOEOyauMNYhrjbC9fFaJRbvUPkSiqI10ZzYhud0hUFlXRUGbg+1GYp7H2m5tg9o18VRHPiWNQZaYBodrd2o8ezHmVTCJeOtYjw+HV+Jik0zCvAwRpRCKCmCfJCi4=
+	t=1730204019; cv=none; b=pp6VLVh1KPI+IDgjNu2V588gLVk78PAmnYIBHfbSg6OMjmGZ6BwKHioTmTwtIF0KNpMNJG/Je8cyelL7zkVNdu2JK0I2hU+GJJOcylPOptlT2L2gcfxYfGNruDgiOtdpNkM69sNva+krX5mi2JNxXZyK0sjRhvPLej3i23CEhW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730203960; c=relaxed/simple;
-	bh=OG1fmlyRblrftQ3dSBwGkncNsxqTtjdK+M2PQG7pfSQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CMLNMRDN2zjud8Z9l6JvEFDQkyCKdoxksRY/AsQ6mvHCUlU4FlEPupQT++GX+npj8opeipm95grAQdjxV/XOl20EyiB15S3Axl6wXYzFhMOXRpleFNSEOE81vgzDRymHWRzlVNVaM+/WgtXoQryG1N1BeAI8C0Ut/ZsyMZvVJDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xd8JZ1Hk6z4f3nTc;
-	Tue, 29 Oct 2024 20:12:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A38E01A0194;
-	Tue, 29 Oct 2024 20:12:32 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCHY4cv0SBn6R0bAQ--.54625S3;
-	Tue, 29 Oct 2024 20:12:32 +0800 (CST)
-Subject: Re: [PATCH v2 6/7] md/raid1: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, axboe@kernel.dk, song@kernel.org,
- hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
- Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241028152730.3377030-1-john.g.garry@oracle.com>
- <20241028152730.3377030-7-john.g.garry@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <c670a854-bee6-790b-7d1e-5ceaca8791a5@huaweicloud.com>
-Date: Tue, 29 Oct 2024 20:12:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730204019; c=relaxed/simple;
+	bh=dsiuFxJLzxNN03bre+aMjd50pBF0Tv47v7XGt7Opgk8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L6qRA47WQ4JeV5EoljVTktCFyBB3dmP4OFiCBwK4UAE13rE3kUkoVLdJWvPFxf9r+f1vte6VfHogqcw4hcVPc2B/V9AnXQKcLhIvfXe5LRX0eY+n+K4scnmu0Z74ltYgW3P2r2zpCcYJt1rGjGJ4c4lmsVCn5zPsfhlkm81hdTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uMbZe4jM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB5B4C4CECD;
+	Tue, 29 Oct 2024 12:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730204019;
+	bh=dsiuFxJLzxNN03bre+aMjd50pBF0Tv47v7XGt7Opgk8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uMbZe4jMwzDas8Sww2AWlrJGYUGh3QdJB8QJfWHdjXupOvWXsYv/a6/+j3qjTKIrO
+	 b9wQN2t1R8P+iu60n8w/sK9tX1P2rS6kj9qaho9dZVzXgQkaaZ3Nv9jHhkRc7HQ/p4
+	 eeuxdkvVAMPYZNqcFlSE6YmTUc9+yUCJmwIukNxGKphxRB3RrEKyJkQjTKjFocpG0m
+	 NIgp5iDlAvKxNNQ52gUl6usdTfEIiLlPxqYzqNduikq5DWhJq8rc/cd72NyirXFApl
+	 DqlziLUfSGHyPRI/uQVfEfqurlH6qKzUWALxGRQup9b5sBdQ/mn5IWM2Sd4M9RJVUZ
+	 JOcwyRgsOjFug==
+Message-ID: <70a1599e-67a2-4f39-acac-f4fe83b96b86@kernel.org>
+Date: Tue, 29 Oct 2024 13:13:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241028152730.3377030-7-john.g.garry@oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCHY4cv0SBn6R0bAQ--.54625S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxCF4UtrWxtF4xtw13Zw18Zrb_yoW5Aw45pw
-	4jga1S9rW3JFWa9wsxtFZF9a4FvF4vqFW2krWxJwn7JFnIqFyDKF1UWFWYgry5uFy5ury7
-	Aw1kCa1Dur42gFDanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_GFv_Wryl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxU4NB_UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/3] dt-bindings: ufs: qcom: Document ice configuration
+ table
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
+ manivannan.sadhasivam@linaro.org, alim.akhtar@samsung.com,
+ avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ konrad.dybcio@linaro.org, James.Bottomley@HansenPartnership.com,
+ martin.petersen@oracle.com, agross@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_narepall@quicinc.com, quic_nitirawa@quicinc.com
+References: <20241029113003.18820-1-quic_rdwivedi@quicinc.com>
+ <20241029113003.18820-2-quic_rdwivedi@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241029113003.18820-2-quic_rdwivedi@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-ÔÚ 2024/10/28 23:27, John Garry Ð´µÀ:
-> Add proper bio_split() error handling. For any error, call
-> raid_end_bio_io() and return.
+On 29/10/2024 12:30, Ram Kumar Dwivedi wrote:
+> There are three allocators supported for inline crypto engine:
+> Floor based, Static and Instantaneous allocator.
 > 
-> For the case of an in the write path, we need to undo the increment in
-> the rdev panding count and NULLify the r1_bio->bios[] pointers.
+> Document the compatible used for the allocator configurations
+> for inline crypto engine found.
 > 
-> Signed-off-by: John Garry <john.g.garry@oracle.com>
+> Co-developed-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+> Signed-off-by: Naveen Kumar Goud Arepalli <quic_narepall@quicinc.com>
+> Co-developed-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Nitin Rawat <quic_nitirawa@quicinc.com>
+> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
 > ---
->   drivers/md/raid1.c | 32 ++++++++++++++++++++++++++++++--
->   1 file changed, 30 insertions(+), 2 deletions(-)
+>  .../devicetree/bindings/ufs/qcom,ufs.yaml     | 24 +++++++++++++++++++
+>  1 file changed, 24 insertions(+)
 > 
-> diff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
-> index 6c9d24203f39..a10018282629 100644
-> --- a/drivers/md/raid1.c
-> +++ b/drivers/md/raid1.c
-> @@ -1322,7 +1322,7 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	const enum req_op op = bio_op(bio);
->   	const blk_opf_t do_sync = bio->bi_opf & REQ_SYNC;
->   	int max_sectors;
-> -	int rdisk;
-> +	int rdisk, error;
->   	bool r1bio_existed = !!r1_bio;
->   
->   	/*
-> @@ -1383,6 +1383,11 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      gfp, &conf->bio_split);
-> +
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1410,6 +1415,12 @@ static void raid1_read_request(struct mddev *mddev, struct bio *bio,
->   	read_bio->bi_private = r1_bio;
->   	mddev_trace_remap(mddev, read_bio, r1_bio->sector);
->   	submit_bio_noacct(read_bio);
-> +	return;
-> +
-> +err_handle:
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +	raid_end_bio_io(r1_bio);
+> diff --git a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> index 25a5edeea164..069bd87d3404 100644
+> --- a/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> +++ b/Documentation/devicetree/bindings/ufs/qcom,ufs.yaml
+> @@ -108,6 +108,11 @@ properties:
+>      description:
+>        GPIO connected to the RESET pin of the UFS memory device.
+>  
+> +  ice-config:
+> +    type: object
+> +    description:
+> +      ICE configuration table for Qualcom SOC
 
-rdev_dec_pending() is missed here. :)
+Not much improved, still not constrained, this can be literally
+anything, right? No explanation what this is.
 
-Thanks,
-Kuai
+This does not look even like hardware property, although with such
+explanation tricky to judge.
 
->   }
->   
->   static void raid1_write_request(struct mddev *mddev, struct bio *bio,
-> @@ -1417,7 +1428,7 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   {
->   	struct r1conf *conf = mddev->private;
->   	struct r1bio *r1_bio;
-> -	int i, disks;
-> +	int i, disks, k, error;
->   	unsigned long flags;
->   	struct md_rdev *blocked_rdev;
->   	int first_clone;
-> @@ -1576,6 +1587,11 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   	if (max_sectors < bio_sectors(bio)) {
->   		struct bio *split = bio_split(bio, max_sectors,
->   					      GFP_NOIO, &conf->bio_split);
+NAK, please reach internally to qcom folks so they will guide you how
+bindings should look like. You are *not supposed* to send downstream
+stuff to us.
+
 > +
-> +		if (IS_ERR(split)) {
-> +			error = PTR_ERR(split);
-> +			goto err_handle;
-> +		}
->   		bio_chain(split, bio);
->   		submit_bio_noacct(bio);
->   		bio = split;
-> @@ -1660,6 +1676,18 @@ static void raid1_write_request(struct mddev *mddev, struct bio *bio,
->   
->   	/* In case raid1d snuck in to freeze_array */
->   	wake_up_barrier(conf);
-> +	return;
-> +err_handle:
-> +	for (k = 0; k < i; k++) {
-> +		if (r1_bio->bios[k]) {
-> +			rdev_dec_pending(conf->mirrors[k].rdev, mddev);
-> +			r1_bio->bios[k] = NULL;
-> +		}
-> +	}
+>  required:
+>    - compatible
+>    - reg
+> @@ -350,5 +355,24 @@ examples:
+>                              <0 0>,
+>                              <0 0>;
+>              qcom,ice = <&ice>;
 > +
-> +	bio->bi_status = errno_to_blk_status(error);
-> +	set_bit(R1BIO_Uptodate, &r1_bio->state);
-> +	raid_end_bio_io(r1_bio);
->   }
->   
->   static bool raid1_make_request(struct mddev *mddev, struct bio *bio)
-> 
+> +            ice_cfg: ice-config {
+> +                static-alloc {
+> +                     ice-allocator-name = "static-alloc";
+> +                     rx-alloc-percent = <60>;
+> +                     status = "okay";
+
+Drop. Same everywhere else.
+
+
+Best regards,
+Krzysztof
 
 
