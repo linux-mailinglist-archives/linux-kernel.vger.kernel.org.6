@@ -1,242 +1,223 @@
-Return-Path: <linux-kernel+bounces-387359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946399B4FDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:55:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD709B4FE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:55:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1B201C228F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:55:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F7F1282E88
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F411D8A14;
-	Tue, 29 Oct 2024 16:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54461DACA9;
+	Tue, 29 Oct 2024 16:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ORjacSq3"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="gPUqdL4C"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC8E419995A;
-	Tue, 29 Oct 2024 16:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 059811D88DD
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730220927; cv=none; b=SYp4AwGpnkFBFDlwBaskPqa0JvliVJIzdfHTIJBt5xpb7VSMNvFsGhy8cCDcV6DLgwDddAQKoyHdc7Wqc0KpmudDR6qd8MDWFe6DPxXDuQDn36ZL3c6RNsjCDUUFSaxdu/S9PjNKo9UPryxatl9/DgAtm9QkLt01GdIh9+CVsaM=
+	t=1730220931; cv=none; b=Sz9UaIX0hpPrYqZFyINtQxoNHND9R/5TGD+EmtMQhr8Hs4q3kWId6jrBHoam0sjoLpR+xUAxvECvdny61aQdOhDuNzdGhkFfZp7z/CQ7lHnjWgVxy+y5bVJHSagQaMgVlCpiXSW1oBbEP5mPYKaqA+nphu9q+V0XitzrN6GDI7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730220927; c=relaxed/simple;
-	bh=pkXIRdIs/jZR3TXb+O6bD4IKMKSCJczdWSHEHc96lSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=mXBX5LKUNDC459q/VMha6pFJGguIIU6KgppzYx5c0gLl3vzqkpL5kv2WnmFy/WYn8L5jcAHpG+xeEmuMu5IxzJdWDUHqUdzMjGw8neQnAhdCtKVKE2ZMhS7RcnOfmmtycrYfMaEjoCJUz+qxA502L4hQnhS47GKX/E3YuR89kQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ORjacSq3; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T909MB010250;
-	Tue, 29 Oct 2024 16:55:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	PDl2iRxwvVar6fxWCNmum7s4lN+Zxn4SBV0GVrlZ2VU=; b=ORjacSq3Vcelm5XJ
-	P7cZha6rFAgWIhzhVNV8UzOMlXGDmkqud2mYF4/8MKEoG61z67ZV0OiWiFzQl7Jn
-	NTJi7UViqa43vnDmRXO9ACszQOiuv/znGY9oW/Se+a62wbK5uUQ7pBcvCDnYyy4h
-	m3Myhf8BFwGYtOg5FGHzdgw/ypOVdgtN/NYhldUUuxiy+DCNRGFay+sM2MIzdoCK
-	qlZ61hi/jbqZMgZLMIp+9kqm3IaEZEcd3xKX/WY/sdi0ccp8S3tFWNgfhis8SK+Y
-	CdD8DVtzfD9K/xChAKhj39tATyn7QJ++AQz7cLO56dGmbH7SWICaCykzg/1bOiBk
-	tHUw5w==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn515u6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 16:55:01 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49TGt0qA006858
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 29 Oct 2024 16:55:00 GMT
-Received: from [10.216.61.9] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 29 Oct
- 2024 09:54:53 -0700
-Message-ID: <d63f16ac-c5ed-35cd-ec75-0bf6d7dab9ca@quicinc.com>
-Date: Tue, 29 Oct 2024 22:24:48 +0530
+	s=arc-20240116; t=1730220931; c=relaxed/simple;
+	bh=X0jaiMvCjJEEhd7RT+IguPkikO8YjtAW97ZeFQNx5/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kgGl6x9WgGfKD/ker+vj/NNHoBj1EF1/RVKBp0KpdMPpbNAN8ouXm1lUNMR4Pw5+9ufTAmpCKER22VqO4OIZTWeGG1IgAR7lMF2Do3CdDC9jBboFsYOmiNSMDAHiPzYpZ6GvaoF9BmQuWKwhGN6Jy6pj3qab4XnlIazuW88Xx/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=gPUqdL4C; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6007a.ext.cloudfilter.net ([10.0.30.247])
+	by cmsmtp with ESMTPS
+	id 5p7vt4pKnnNFG5pV8tR0Ck; Tue, 29 Oct 2024 16:55:26 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 5pV7tdSzOmQ0j5pV8tGFQ6; Tue, 29 Oct 2024 16:55:26 +0000
+X-Authority-Analysis: v=2.4 cv=cP3msEeN c=1 sm=1 tr=0 ts=6721137e
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
+ a=hLRBkJ6lmyVDo42-feIA:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=RI3obuqQ9kDWIuhA0WGes/O5kbrhm7V31zs2payIIG8=; b=gPUqdL4Cl1PAV31UvlNTxaY8qS
+	IT3XfBCwC0vS+hk18SE9jcXSkovV1MGXCdguYO1mhQtPhODfOHqFR7lVOXOnG7Uyv+ArdUMidI3mU
+	xxcgNSDusbyTogJ1AnzjbidAsqHCK+BBN0cB1r6Kev+9aw/rTmy9xT6CKHnT2dxtgGfkArftf+xkY
+	LdeFxq8WfB6m4Ep0vk8TwQ6ptRASZ1bxbgbD1Xv+tpcDfJVHBbSMu8r+ec+Yrx1H7OQchEiFK9EZ9
+	iH0YswiYu2vTIugfu1A+fhNxESR27o3ezqokwcqHshoM/YHEnlVCXnF4+2Slzk7w/N1sPKPW2GPWh
+	LiJbZ6Eg==;
+Received: from [201.172.173.7] (port=36540 helo=[192.168.15.6])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1t5pV5-003FnW-1l;
+	Tue, 29 Oct 2024 11:55:23 -0500
+Message-ID: <f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
+Date: Tue, 29 Oct 2024 10:55:14 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 1/1] RFC: dt bindings: Add property "brcm,gen3-eq-presets"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
+ -Wflex-array-member-not-at-end warnings
+To: Jakub Kicinski <kuba@kernel.org>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>
+Cc: Michael Chan <michael.chan@broadcom.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
+ Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <cover.1729536776.git.gustavoars@kernel.org>
+ <f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
+ <20241029065824.670f14fc@kernel.org>
 Content-Language: en-US
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: Jim Quinlan <james.quinlan@broadcom.com>, Rob Herring <robh@kernel.org>,
-        <linux-pci@vger.kernel.org>,
-        Nicolas Saenz Julienne <nsaenz@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi
-	<lorenzo.pieralisi@arm.com>,
-        <bcm-kernel-feedback-list@broadcom.com>, <jim2101024@gmail.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?= <kw@linux.com>,
-        Manivannan Sadhasivam
-	<manivannan.sadhasivam@linaro.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "moderated list:BROADCOM BCM7XXX ARM
- ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-        "moderated
- list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE"
-	<linux-rpi-kernel@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND
- FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-        open list
-	<linux-kernel@vger.kernel.org>,
-        Veerabhadrarao Badiganti
-	<quic_vbadigan@quicinc.com>,
-        Mayank Rana <quic_mrana@quicinc.com>
-References: <20241029155538.GA1157681@bhelgaas>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241029155538.GA1157681@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fTatBQxwIDrKlTzbenOJYgld54KnJrsF
-X-Proofpoint-ORIG-GUID: fTatBQxwIDrKlTzbenOJYgld54KnJrsF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=999
- malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410290129
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <20241029065824.670f14fc@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.7
+X-Source-L: No
+X-Exim-ID: 1t5pV5-003FnW-1l
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:36540
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfBzQa3QJth+Usm2Q1p+NUirV5hbb80pomKFEyA1WUhctf9WdD7inlz7tuiU73OMW3qhtKhqCKxH0EZoNv4p10sPjdC96r/6gfiv0lp89rU2hOZVuYjB9
+ 16bEQqtKWsIsoKJZvQ3rq9EOM2FGRoNFL09cO3AtR4ReC81c1kpez0k7FDgiNNX4HmkfL38JUreMp+jwrW32GV8ZO8PzDcuy0Chd0t4xu+4B3soalQ5g5F2+
 
 
 
-On 10/29/2024 9:25 PM, Bjorn Helgaas wrote:
-> On Tue, Oct 29, 2024 at 10:40:32AM -0500, Bjorn Helgaas wrote:
->> On Tue, Oct 29, 2024 at 08:52:15PM +0530, Krishna Chaitanya Chundru wrote:
->>> On 10/29/2024 8:18 PM, Bjorn Helgaas wrote:
->>>> On Tue, Oct 29, 2024 at 10:22:36AM -0400, Jim Quinlan wrote:
->>>>> On Tue, Oct 29, 2024 at 1:17 AM Krishna Chaitanya Chundru
->>>>> <quic_krichai@quicinc.com> wrote:
->>>>>> On 10/29/2024 12:21 AM, James Quinlan wrote:
->>>>>>> On 10/24/24 21:08, Krishna Chaitanya Chundru wrote:
->>>>>>>> On 10/22/2024 12:33 AM, Rob Herring wrote:
->>>>>>>>> On Fri, Oct 18, 2024 at 02:22:45PM -0400, Jim Quinlan wrote:
->>>>>>>>>> Support configuration of the GEN3 preset equalization settings, aka the
->>>>>>>>>> Lane Equalization Control Register(s) of the Secondary PCI Express
->>>>>>>>>> Extended Capability.  These registers are of type HwInit/RsvdP and
->>>>>>>>>> typically set by FW.  In our case they are set by our RC host bridge
->>>>>>>>>> driver using internal registers.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
->>>>>>>>>> ---
->>>>>>>>>>     .../devicetree/bindings/pci/brcm,stb-pcie.yaml       | 12
->>>>>>>>>> ++++++++++++
->>>>>>>>>>     1 file changed, 12 insertions(+)
->>>>>>>>>>
->>>>>>>>>> diff --git
->>>>>>>>>> a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>>>>>>>> b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>>>>>>>> index 0925c520195a..f965ad57f32f 100644
->>>>>>>>>> --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
->>>>>>>>>> @@ -104,6 +104,18 @@ properties:
->>>>>>>>>>         minItems: 1
->>>>>>>>>>         maxItems: 3
->>>>>>>>>>     +  brcm,gen3-eq-presets:
->>>>>>>>>> +    description: |
->>>>>>>>>> +      A u16 array giving the GEN3 equilization presets, one for
->>>>>>>>>> each lane.
->>>>>>>>>> +      These values are destined for the 16bit registers known as the
->>>>>>>>>> +      Lane Equalization Control Register(s) of the Secondary PCI
->>>>>>>>>> Express
->>>>>>>>>> +      Extended Capability.  In the array, lane 0 is first term,
->>>>>>>>>> lane 1 next,
->>>>>>>>>> +      etc. The contents of the entries reflect what is necessary for
->>>>>>>>>> +      the current board and SoC, and the details of each preset are
->>>>>>>>>> +      described in Section 7.27.4 of the PCI base spec, Revision 3.0.
->>>>>>>>>
->>>>>>>>> If these are defined by the PCIe spec, then why is it Broadcom specific
->>>>>>>>> property?
->>>>>>> Yes, I will remove the "brcm," prefix.
->>>>>>>>>
->>>>>>>> Hi Rob,
->>>>>>>>
->>>>>>>> qcom pcie driver also needs to program these presets as you suggested
->>>>>>>> this can go to common pci bridge binding.
->>>>>>>>
->>>>>>>> from PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4.2 for data rates
->>>>>>>> of  8.0 GT/s, 16.0 GT/s, and 32.0 GT/s uses one class of preset (P0
->>>>>>>> through P10) and where as data rates of 64.0 GT/s use different class of
->>>>>>>> presets (Q0 through Q10) (Table 4-23). And data rates of 8.0 GT/s also
->>>>>>>> have optional preset hints (Table 4-24).
->>>>>>>>
->>>>>>>> And there is possibility that for each data rate we may require
->>>>>>>> different preset configuration.
->>>>>>>>
->>>>>>>> Can we have a dt binding for each data rate of 16 byte array.
->>>>>>>> like gen3-eq-preset array, gen4-eq-preset array etc.
->>>>>>>
->>>>>>> Yes, that was the idea when using "genX-eq-preset", for X in {3,4...}.
->>>>>>>
->>>>>>> Keep in mind that this is an RFC; I have a backlog of commit submissions
->>>>>>> before I can submit the code that uses this DT property.  If you
->>>>>>> (Krishna) want to submit something now I'd be quite happy to go with
->>>>>>> that.  I don't believe it is acceptable to submit a bindings commit w/o
->>>>>>> code that uses it (if I'm incorrect I'll be glad to do a V2).
->>>>>>>
->>>>>> I submitted a pull request for this. if you have any other suggestions
->>>>>> or if we need to have any other details we can update this pull request.
->>>>>> https://github.com/devicetree-org/dt-schema/pull/146
->>>>>
->>>>> Thanks for doing this.   However, why a u8 array?  The registers are
->>>>> defined as u16 so it would be more natural to use a u16 array, each
->>>>> entry giving
->>>>> all of the data for a single lane.  In our implementation we read a
->>>>> u16 and we write it to the register -- what advantage is there by
->>>>> using a u8 array?
->>>>>
->>>>> Also if there are 16 lanes, you will need 32 maxItems, correct?
->>>>
->>>> I added these questions to the github PR.
->>>>
->>>> Also, why does it define gen3-eq-presets, gen4-eq-presets,
->>>> gen5-eq-presets, and gen6-eq-presets?  I think there's only a single
->>>> place to write these values (the Lane Equalization Control registers,
->>>> PCIe r6.0, sec 7.7.3.4), isn't here?  How would software choose the
->>>> correct values to use?
->> ...
+On 29/10/24 07:58, Jakub Kicinski wrote:
+> On Mon, 21 Oct 2024 13:02:27 -0600 Gustavo A. R. Silva wrote:
+>> @@ -3025,7 +3025,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
+>>   {
+>>   	struct bnxt *bp = netdev_priv(dev);
+>>   	struct bnxt_link_info *link_info = &bp->link_info;
+>> -	const struct ethtool_link_settings *base = &lk_ksettings->base;
+>> +	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
 > 
-> Oh, one more thing: I guess "gen3", "gen4", etc. are well-entrenched
-> terms in the industry, and they're probably fine in marketing
-> materials.
-> 
-> But I really don't like them in device trees or drivers because the
-> spec doesn't use those terms.  In fact, the spec specifically advises
-> *avoiding* them (PCIe r6.0, sec 1.2 footnote):
-> 
->    Terms like “PCIe Gen3” are ambiguous and should be avoided. For
->    example, “gen3” could mean (1) compliant with Base 3.0, (2)
->    compliant with Base 3.1 (last revision of 3.x), (3) compliant with
->    Base 3.0 and supporting 8.0 GT/s, (4) compliant with Base 3.0 or
->    later and supporting 8.0 GT/s, ....
-> 
-> As a practical matter, those terms make it hard to use the spec: where
-> do I go to learn how to use "gen4-eq-presets"?  There's no instance of
-> "gen4" in the PCIe spec.  AFAICT, all I can do is look up the PCIe
-> r4.0 spec and try to figure out what was added in that revision, which
-> is a real hassle.
-> 
-is it fine if I change names from gen3-eq-presets, gen4-eq-presets etc
-to 8gts-eq-presets, 16gts-eq-presets  etc.
+> Please improve the variable ordering while at it. Longest list first,
+> so move the @base definition first.
 
-If above names are fine I will update the patch.
+OK. This would end up looking like:
 
-- Krishna Chaitanya.
-> Bjorn
+	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
+	struct bnxt *bp = netdev_priv(dev);
+	struct bnxt_link_info *link_info = &bp->link_info;
+
+
+
+> 
+>>   	bool set_pause = false;
+>>   	u32 speed, lanes = 0;
+>>   	int rc = 0;
+>> diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+>> index 7f3f5afa864f..cc43294bdc96 100644
+>> --- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+>> +++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_ethtool.c
+>> @@ -663,7 +663,7 @@ static int get_link_ksettings(struct net_device *dev,
+>>   			      struct ethtool_link_ksettings *link_ksettings)
+>>   {
+>>   	struct port_info *pi = netdev_priv(dev);
+>> -	struct ethtool_link_settings *base = &link_ksettings->base;
+>> +	struct ethtool_link_settings_hdr *base = &link_ksettings->base;
+> 
+> ditto
+> 
+>>   	/* For the nonce, the Firmware doesn't send up Port State changes
+>>   	 * when the Virtual Interface attached to the Port is down.  So
+>> @@ -719,7 +719,7 @@ static int set_link_ksettings(struct net_device *dev,
+>>   {
+>>   	struct port_info *pi = netdev_priv(dev);
+>>   	struct link_config *lc = &pi->link_cfg;
+>> -	const struct ethtool_link_settings *base = &link_ksettings->base;
+>> +	const struct ethtool_link_settings_hdr *base = &link_ksettings->base;
+> 
+> and here
+> 
+>>   	struct link_config old_lc;
+>>   	unsigned int fw_caps;
+>>   	int ret = 0;
+>> diff --git a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+>> index 2fbe0f059a0b..0d85ac342ac7 100644
+>> --- a/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+>> +++ b/drivers/net/ethernet/chelsio/cxgb4vf/cxgb4vf_main.c
+>> @@ -1437,7 +1437,7 @@ static int cxgb4vf_get_link_ksettings(struct net_device *dev,
+>>   				  struct ethtool_link_ksettings *link_ksettings)
+>>   {
+>>   	struct port_info *pi = netdev_priv(dev);
+>> -	struct ethtool_link_settings *base = &link_ksettings->base;
+>> +	struct ethtool_link_settings_hdr *base = &link_ksettings->base;
+> 
+> and here
+> 
+>>   	/* For the nonce, the Firmware doesn't send up Port State changes
+>>   	 * when the Virtual Interface attached to the Port is down.  So
+>> diff --git a/drivers/net/ethernet/cisco/enic/enic_ethtool.c b/drivers/net/ethernet/cisco/enic/enic_ethtool.c
+>> index f7986f2b6a17..8670eb394fad 100644
+>> --- a/drivers/net/ethernet/cisco/enic/enic_ethtool.c
+>> +++ b/drivers/net/ethernet/cisco/enic/enic_ethtool.c
+>> @@ -130,7 +130,7 @@ static int enic_get_ksettings(struct net_device *netdev,
+>>   			      struct ethtool_link_ksettings *ecmd)
+>>   {
+>>   	struct enic *enic = netdev_priv(netdev);
+>> -	struct ethtool_link_settings *base = &ecmd->base;
+>> +	struct ethtool_link_settings_hdr *base = &ecmd->base;
+> 
+> and here
+> 
+>>   	ethtool_link_ksettings_add_link_mode(ecmd, supported,
+>>   					     10000baseT_Full);
+> 
+>> @@ -62,7 +62,7 @@ static int linkmodes_reply_size(const struct ethnl_req_info *req_base,
+>>   {
+>>   	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+>>   	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+>> -	const struct ethtool_link_settings *lsettings = &ksettings->base;
+>> +	const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
+> 
+> here it was correct and now its not
+
+I don't think you want to change this. `lsettings` is based on `ksettings`. So,
+`ksettings` should go first. The same scenario for the one below.
+
+> 
+>>   	bool compact = req_base->flags & ETHTOOL_FLAG_COMPACT_BITSETS;
+>>   	int len, ret;
+>>   
+>> @@ -103,7 +103,7 @@ static int linkmodes_fill_reply(struct sk_buff *skb,
+>>   {
+>>   	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+>>   	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+>> -	const struct ethtool_link_settings *lsettings = &ksettings->base;
+>> +	const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;
+> 
+> same
+> 
+>>   	bool compact = req_base->flags & ETHTOOL_FLAG_COMPACT_BITSETS;
+>>   	int ret;
+> 
+
 
