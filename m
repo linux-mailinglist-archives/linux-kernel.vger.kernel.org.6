@@ -1,113 +1,139 @@
-Return-Path: <linux-kernel+bounces-386296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 700209B419F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:43:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2AA9B41A0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C4E61C22218
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:43:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE317B21933
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 04:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C89200CBA;
-	Tue, 29 Oct 2024 04:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f05MY81P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C66C1F4FA8
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B477D1DB53A;
+	Tue, 29 Oct 2024 04:45:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C622FB2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730176975; cv=none; b=F6Fx/VP/aWScOwK3m2lThW4dwYXBX+Fe1PF0qcv1Y3EffVp16FUN8qSQU770VhDx5tkORaJftDzWctqXMwPz/3SQOtAOWF5dal+h88ruX9t6kB2Rop89K59xuiYVHRRGTf8yp/7YrqvXVQKZ7Qva51Xmvl8ZwynpEYNZz4pI/jw=
+	t=1730177141; cv=none; b=IYQHigT9p4AOgWUttrsZA4Jms/4Nb6LKWkDHCz9xEhryFzCnKgH7pDIRKvsnGKNZKcBU25O8hXHB47gUJdfZ4WDNc3cgsp/5YUoUNSDs7NNRMkCyyAdRB76OqYuM81GjCGOZ7OfuYELDKH0HwIk+4BsFJQqGsVvwNDcG3sGnjUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730176975; c=relaxed/simple;
-	bh=FMv1SMzCCaIcu5A3KfXQYWBrzrewT4qJneSbHJ30744=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RXSTeRPFeNVzB44GJcm7p9COwDBlu8tsE8xpF9wiDw/ca7A6w3qwyOu7iaNuwQPshwDKWUBmkhWHOp95TzmQ62uBmgSVYGgQBvfgW45AR7pO3rIjUBVkkP2R4/yAvLWrmsEs9SI8w0DEURmx3cE2A6Lk4Sgg25x1zWp4OaDxzXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f05MY81P; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730176974; x=1761712974;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=FMv1SMzCCaIcu5A3KfXQYWBrzrewT4qJneSbHJ30744=;
-  b=f05MY81PcnNye8O7xKsg7kUPDhlGPvBroolyZ34z6aTjkURmNavO16bN
-   TGF4Vp34evJhQ5VXEB3LVb9d1skquBZzrUxfrb2/4K/gKFuJ5zLi0DXP/
-   YKUXFuKi2WXGIrq7WHtgNhPgKl5N+hbFSs9pz6c3hMhAh9ucmFsoKM0x1
-   Rq1sUelxL5fQHz7yfT+9YupQ5JSRfSRDYXjtTQzeJsV44DAtZ3zW2eBjl
-   MjN/s2OZIiUzvBTQ9SrDOPswtWe0c0rwx0cNuRAyhL6HnwsWLkvC93GLv
-   evPvNQJJ5v9pZZjai1qIbsigHwpv+hGwgJJurwiHAVsVkLOidpjPe+wSq
-   A==;
-X-CSE-ConnectionGUID: y+KAXlRLSNabp+wlDGBIXA==
-X-CSE-MsgGUID: aqH85RU1TVOzJ4U947fI3w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11239"; a="41193940"
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="41193940"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 21:42:54 -0700
-X-CSE-ConnectionGUID: UbKZlTQPR661bfRfSnQn1A==
-X-CSE-MsgGUID: ckFTUfP3SuisHj6b1rhVyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82161920"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.238.0.51]) ([10.238.0.51])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Oct 2024 21:42:51 -0700
-Message-ID: <2551f5b6-a1f3-4d4b-a17e-3451bdabfa90@linux.intel.com>
-Date: Tue, 29 Oct 2024 12:42:48 +0800
+	s=arc-20240116; t=1730177141; c=relaxed/simple;
+	bh=1fFWrVabQK6lR2qBCMimckzMDKPa1pDQUcCAHcFWbYs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LWHFyYaI2d9uUflQynY0Ga+BzY94+Uj/fkI5YY3hy9itn5kfo+4XPNNzJLZlAr1HFIMdYUB1FWMw1XwsPK11mhjPmMcaxmc5LQ5iEbnyA5OtsWFYVIzoHZ9pEqjKCPnImm7/vn4OdLVMHb5POyTN/4zm+uc8JjicyfRM6cNhSL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8A90013D5;
+	Mon, 28 Oct 2024 21:46:07 -0700 (PDT)
+Received: from a077893.arm.com (unknown [10.163.43.192])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 23BCA3F66E;
+	Mon, 28 Oct 2024 21:45:34 -0700 (PDT)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64/mm: Re-organize arch_make_huge_pte()
+Date: Tue, 29 Oct 2024 10:15:29 +0530
+Message-Id: <20241029044529.2624785-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, dwmw2@infradead.org, joro@8bytes.org,
- will@kernel.org, robin.murphy@arm.com, chao.p.peng@intel.com
-Subject: Re: [PATCH v3 0/2] vtd: Minor cleanup
-To: Zhenzhong Duan <zhenzhong.duan@intel.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20241024092146.715063-1-zhenzhong.duan@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20241024092146.715063-1-zhenzhong.duan@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 2024/10/24 17:21, Zhenzhong Duan wrote:
-> Hi,
-> 
-> This cleanup the vtd dump code to dump lower entry after check current
-> level entry's present bit. Also fix the print to avoid confusing.
-> 
-> See patch log for details.
-> 
-> Thanks
-> Zhenzhong
-> 
-> Changelog:
-> v3:
-> - Fix a missed check
-> - Refine commit log further
-> 
-> v2:
-> - Add Fixes tag in patch1 (Baolu)
-> - Refine commit log in patch2 (Baolu)
-> 
-> 
-> Zhenzhong Duan (2):
->    iommu/vt-d: Fix checks and print in dmar_fault_dump_ptes()
->    iommu/vt-d: Fix checks and print in pgtable_walk()
-> 
->   drivers/iommu/intel/iommu.c | 40 ++++++++++++++++++++++++-------------
->   1 file changed, 26 insertions(+), 14 deletions(-)
+Core HugeTLB defines a fallback definition for arch_make_huge_pte(), which
+calls platform provided pte_mkhuge(). But if any platform already provides
+an override for arch_make_huge_pte(), then it does not need to provide the
+helper pte_mkhuge().
 
-Queued for v6.13. Thank you!
+arm64 override for arch_make_huge_pte() calls pte_mkhuge() internally, thus
+creating an impression, that both of these callbacks are being used in core
+HugeTLB and hence required to be defined. This drops off pte_mkhuge() which
+was never required to begin with as there could not be any section mappings
+at the PTE level. Re-organize arch_make_huge_pte() based on requested page
+size and create the entry for the applicable page table level as needed. It
+also removes a redundancy of clearing PTE_TABLE_BIT bit followed by setting
+both PTE_TABLE_BIT and PTE_VALID bits (via PTE_TYPE_MASK) in the pte, while
+creating CONT_PTE_SIZE size entries.
 
---
-baolu
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+---
+This applies on v6.12-rc5
+
+ arch/arm64/include/asm/pgtable.h |  5 -----
+ arch/arm64/mm/hugetlbpage.c      | 21 ++++++++++++++++-----
+ 2 files changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+index c329ea061dc9..fa4c32a9f572 100644
+--- a/arch/arm64/include/asm/pgtable.h
++++ b/arch/arm64/include/asm/pgtable.h
+@@ -438,11 +438,6 @@ static inline void __set_ptes(struct mm_struct *mm,
+ 	}
+ }
+ 
+-/*
+- * Huge pte definitions.
+- */
+-#define pte_mkhuge(pte)		(__pte(pte_val(pte) & ~PTE_TABLE_BIT))
+-
+ /*
+  * Hugetlb definitions.
+  */
+diff --git a/arch/arm64/mm/hugetlbpage.c b/arch/arm64/mm/hugetlbpage.c
+index 5f1e2103888b..3215adf48a1b 100644
+--- a/arch/arm64/mm/hugetlbpage.c
++++ b/arch/arm64/mm/hugetlbpage.c
+@@ -361,14 +361,25 @@ pte_t arch_make_huge_pte(pte_t entry, unsigned int shift, vm_flags_t flags)
+ {
+ 	size_t pagesize = 1UL << shift;
+ 
+-	entry = pte_mkhuge(entry);
+-	if (pagesize == CONT_PTE_SIZE) {
+-		entry = pte_mkcont(entry);
+-	} else if (pagesize == CONT_PMD_SIZE) {
++	switch (pagesize) {
++#ifndef __PAGETABLE_PMD_FOLDED
++	case PUD_SIZE:
++		entry = pud_pte(pud_mkhuge(pte_pud(entry)));
++		break;
++#endif
++	case CONT_PMD_SIZE:
+ 		entry = pmd_pte(pmd_mkcont(pte_pmd(entry)));
+-	} else if (pagesize != PUD_SIZE && pagesize != PMD_SIZE) {
++		fallthrough;
++	case PMD_SIZE:
++		entry = pmd_pte(pmd_mkhuge(pte_pmd(entry)));
++		break;
++	case CONT_PTE_SIZE:
++		entry = pte_mkcont(entry);
++		break;
++	default:
+ 		pr_warn("%s: unrecognized huge page size 0x%lx\n",
+ 			__func__, pagesize);
++		break;
+ 	}
+ 	return entry;
+ }
+-- 
+2.30.2
+
 
