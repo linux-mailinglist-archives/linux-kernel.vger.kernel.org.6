@@ -1,143 +1,74 @@
-Return-Path: <linux-kernel+bounces-386087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16919B3F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:20:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C1259B3F03
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:20:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E1BB1F2321D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:20:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 215F228394C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B33E846F;
-	Tue, 29 Oct 2024 00:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F9B6FB0;
+	Tue, 29 Oct 2024 00:20:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="gLesxE+1"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="aI6GJFX7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DF952904;
-	Tue, 29 Oct 2024 00:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934044A2D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 00:20:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730161206; cv=none; b=c+M47BL19pKEcxCQg1a3QL2Y3XZXD0PU3BHXU3kvaVPdvBGbGcs9PgEIYnn+S7a5MmmUGF4muY0ug/U6gemkFm4+N5BYWQnqHbO15VGV7J5StGt5CIniUiTTEuNLT1vvSAkA3ePBJn2mtsyTzkQYBitq2LyIqq8Je07PxcIeyqQ=
+	t=1730161244; cv=none; b=hWKhst9s45assL4NYyIDgj+FkdjYQSjz0wKnYmWU/eTcrYGy4VrSTm7NDdaUyHc11eL65uMxVse21G3t9gGaoOgSAxvUvlwBGq2UW62x+eyHy2Keid6mOTmMcJkCCW8oMB1xi6BYKey16xHXaSI7SIgtnNVn0tyoUeOoWGnPhbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730161206; c=relaxed/simple;
-	bh=FOUiNvi8O3GqXFPiU21I448Bt9bmNIXrroPvtjYN/Xs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AQUfetMYSqOrolVt1urwFwsLj0Iewb2RyFvSQgeNka7YAa8i60xVVFnGex/JyhxR0woEr6g6wTVXnpc2ClcwExP5L5Z2BjjIIM7tPDmRWyB4u6CvuKkF/KpCxbACD+EO7tUBiNHeJtTGnmQyegjEInal4jJJYf81ZlBAQl/JIZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=gLesxE+1; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.3.244] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49T0I9Jq034002
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 28 Oct 2024 17:18:10 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49T0I9Jq034002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1730161095;
-	bh=lw19VMVgvpimByaEBMvY/Dq85RZi0Sbm7gXvjx0Vg/M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gLesxE+1tY7r5RxYlvoDemz/lwnCb6m7LWPZaAybe/08vd4npJw8ZzVaGbGq4Ola+
-	 UY78bVymAky07wU0B/tZweoyTY6bGNWuAFWaecf3Cc4GH7F+tg95/zQ86ZIoL8Tu2b
-	 kcsQ8F3YRJahe7p7s6zPL3QpKNDb8nOoO8tqg7vCFswE7KjaugvgUW+c1WPDT5LA6/
-	 AWQvtblVz5L14MTBe2U5RGZQKZRXO1TBplPFTlcr7OiN8d7i2Q6Lt3ime/klzEkmNI
-	 ulEBTXWImaZ++7WNbYcQwW69wthI9mt0RzihG9g3k42UO0VoHPe9szIT4vWrH5a13K
-	 muN3WPAz/4NIg==
-Message-ID: <0605fa9c-0e48-48ec-b04d-c2ef1c48fdd9@zytor.com>
-Date: Mon, 28 Oct 2024 17:18:09 -0700
+	s=arc-20240116; t=1730161244; c=relaxed/simple;
+	bh=0RcBKxUNAnH20HyktGHycqKfexsnOgzeNXbbOuBOHYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s8hKyf/BdlQuPkymlQESwoCWCp9USQdGhVQOP60xhyEfeyVXJ0VL314dXmZ/bgFAHCuqBnSnhMdNvetIzOd/488zY5dn849aGt9tIhD9ImOxp2mo9B8AWKY3J0sb7r6blSvopJgMXSN51zY44PGP0CeUmSWPj5a8M01sKmQ+6Iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=aI6GJFX7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB118C4CEC3;
+	Tue, 29 Oct 2024 00:20:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730161244;
+	bh=0RcBKxUNAnH20HyktGHycqKfexsnOgzeNXbbOuBOHYI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aI6GJFX7Ypmec3dZtauyLC9vsF5CzuipnXPS4MTeNEE1Ub3TJAy9Cbg+R64+DX2Mc
+	 UbY5VHHD68P61jNr9lUVqEPmf8TriFdmTGT9wdWvh/5Nvpy0wK/+r1phfWnHTektyG
+	 fRprXaeNipESzNmlYf3PB5mU4S7BBCZ8lvvO1EMU=
+Date: Tue, 29 Oct 2024 01:20:31 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Edward Cree <ec429@cantab.net>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] CREDITS: do the decent thing
+Message-ID: <2024102903-unused-pelican-2852@gregkh>
+References: <ff3fcde5-f8b3-4b20-36c5-68d73d0e4757@cantab.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/7] objtool: Fix unreachable instruction warnings for
- weak functions
-To: Kees Cook <kees@kernel.org>, Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-        Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Ingo Molnar <mingo@redhat.com>,
-        Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-        Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Masahiro Yamada <masahiroy@kernel.org>,
-        "Mike Rapoport (IBM)"
- <rppt@kernel.org>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Nicolas Schier <nicolas@fjasle.eu>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Thomas Gleixner
- <tglx@linutronix.de>,
-        Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Maksim Panchenko <max4bolt@gmail.com>,
-        "David S. Miller"
- <davem@davemloft.net>,
-        Andreas Larsson <andreas@gaisler.com>,
-        Yonghong Song <yonghong.song@linux.dev>, Yabin Cui <yabinc@google.com>,
-        Krzysztof Pszeniczny <kpszeniczny@google.com>,
-        Sriraman Tallam <tmsriram@google.com>,
-        Stephane Eranian
- <eranian@google.com>, x86@kernel.org,
-        linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20241026051410.2819338-1-xur@google.com>
- <20241026051410.2819338-3-xur@google.com> <202410281716.0C8F383@keescook>
-Content-Language: en-US
-From: "H. Peter Anvin" <hpa@zytor.com>
-In-Reply-To: <202410281716.0C8F383@keescook>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ff3fcde5-f8b3-4b20-36c5-68d73d0e4757@cantab.net>
 
-On 10/28/24 17:16, Kees Cook wrote:
-> On Fri, Oct 25, 2024 at 10:14:04PM -0700, Rong Xu wrote:
->> In the presence of both weak and strong function definitions, the
->> linker drops the weak symbol in favor of a strong symbol, but
->> leaves the code in place. Code in ignore_unreachable_insn() has
->> some heuristics to suppress the warning, but it does not work when
->> -ffunction-sections is enabled.
->>
->> Suppose function foo has both strong and weak definitions.
->> Case 1: The strong definition has an annotated section name,
->> like .init.text. Only the weak definition will be placed into
->> .text.foo. But since the section has no symbols, there will be no
->> "hole" in the section.
->>
->> Case 2: Both sections are without an annotated section name.
->> Both will be placed into .text.foo section, but there will be only one
->> symbol (the strong one). If the weak code is before the strong code,
->> there is no "hole" as it fails to find the right-most symbol before
->> the offset.
->>
->> The fix is to use the first node to compute the hole if hole.sym
->> is empty. If there is no symbol in the section, the first node
->> will be NULL, in which case, -1 is returned to skip the whole
->> section.
->>
->> Co-developed-by: Han Shen <shenhan@google.com>
->> Signed-off-by: Han Shen <shenhan@google.com>
-> 
-> This seems logically correct to me, but I'd love to see review from Josh
-> and/or Peter Z on this change too.
-> 
-> Reviewed-by: Kees Cook <kees@kernel.org>
-> 
+On Thu, Oct 24, 2024 at 11:24:49PM +0100, Edward Cree wrote:
+> Acknowledge the past contributions of those whom the Linux project no
+>  longer permits to be maintainers owing to sanctions against their
+>  employers.
 
-Does this happen even with -Wl,--gc-sections?
+Odd whitespace formatting, can you fix that up if you wish to resend
+this?
 
-	-hpa
+Overall, I have no objection to this, but normally CREDIT changes come
+from the people who are being listed, so they can choose how they wish
+to be listed.  Can you work with those developers to do that here as
+well?
 
+thanks,
+
+greg k-h
 
