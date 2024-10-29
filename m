@@ -1,178 +1,192 @@
-Return-Path: <linux-kernel+bounces-387306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46D7E9B4F43
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:25:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F65E9B4F45
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:26:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A783284200
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:25:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0BD71C20D18
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:26:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF26F1993AE;
-	Tue, 29 Oct 2024 16:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D161990CD;
+	Tue, 29 Oct 2024 16:26:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M4GoxcDi"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dMIM15a4"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ADB198A35
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10B02107
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:26:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730219113; cv=none; b=Q/IzC2L0hcfIySmcK5g68/P81K8zieXLMmVFFjnwIRZNC0JBcvrE6zOU3QS2gYFtTB9m0l8SQiRfHuIecSej1ANORnuRBEUnkpxIr5MyRJ55myWPRMSoQGXcx7+UJWv/L3caKLv9jBwYUpxQ721OMvT3J3uGVjMMg+uxPK53Hks=
+	t=1730219199; cv=none; b=FrydU9wQ3wQSd/TEXaSXOBBUh3YDb9dYpOJscUybQTXaEE36yVoFiy7d999JWmnTV2PsP20MgKiyi4u/WGxv7xMt6Nl9giosbqLWxu0lHs7b6S+XEnv+wDjZebcacoI09Hn2EU9SSxP2BpvYgkiu23073rOhhEKfW/oYXhAlzMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730219113; c=relaxed/simple;
-	bh=wst9NCOhP9yui/XiYSq/wkqGCzcqSKCzU9QNQl/jnTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m2Y2YP1rgrVvE1HCFLhmPN9lEpR+mP5gBbStjMNibPwsiLlS8JV9sTypyhJbo0U/5WRZFrvo1L1LR2T7/n+D2cQ/QX2RBLi4v8/4p8W6PNo5oCTuDSGAkG15tCN3NGlegg2vtJsO0hhnIh/mnDrf2u+73L6a1BAW+slMdxvkKXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M4GoxcDi; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315ee633dcso259255e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:25:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730219109; x=1730823909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QEv9d8+SgpybU6wrl4Us2xApnW3bmNdYFOKHVQ/35tc=;
-        b=M4GoxcDinujoX4nd36dyYF3czj1ZQ8OkflT+nhh5Hy4N/+4M5Szkp6OAFmc8BpLAkM
-         AU6sgUL+PxT2j50asV/yK6svz6E/2xCjIW6XlNIETQA9zJaYaaarJuonTDOiIw6dTP4T
-         iAq6BZBh72nzhHxX+o9aveTdwr2cc99SVpXmti/xd6G1qEa4DDkwnr5RSsfRck1ZKb4E
-         oXfd0aZdECaV+Xz//WhBTAtVZN+c2BrmOvv4LF1PNNGS8BC558cUgXV/AYVBHLKQLxD4
-         W7szRbIKsUM+FO/HVR92GdqoTgY1a+ZRKCDAkgvDvo1VnS6tDNE6/1kIa6ej8srNqadK
-         lGew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730219109; x=1730823909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QEv9d8+SgpybU6wrl4Us2xApnW3bmNdYFOKHVQ/35tc=;
-        b=Wjw/RPNE91dBNh51cdJs08rM4thlwVPUtTAVoVearUIvGSj53XSUM0tswV/eTCoX6s
-         XoNvn+F0zCMkbeICu+qponZNN4QhYOsoq1Yq8MF9QBgqHdDXRxNFfdwi6mYO8b9gqywS
-         UrbuWcmDu3DtPUucAoaFbdkxzu7+MPrYp8Wygg2nqaq5iyvt7rDtYaUp+q6l9RygUo/U
-         Rg4fijkjvKqys/M9lmGhUIYpm9EfsJX5wqQGMJ4en3Isq/U13wC2Kv6+CUzyQJaWSSiR
-         U9gv2PKy+7QUohzjZfpB3hdAMupqMQpnaSKBzUUTZejcekwBpv0UrMEHdQtKSQU0/+XC
-         mVOA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0AaOVTddpTZzhhOFzNXnVsclQVP2yIubbNasYyGERpXGgM/9cHcqdu2v9jFuzNpcWsprIXvQHoiPC1Hg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxlo7mvKUAetRubTOgjdk2huRKPR3iVYRDlY2FJ/unB6DuW7YNu
-	bHBzHcUpSl2WSioHXXE9ufO/OPAEEbCpe3w1ZdJpZOZ9TQyzi/FTJ2flybRIncWqAetOqB6ssES
-	tzgaHps+VWdoF02yZa2Ej660AYPZ9sqguJywW
-X-Gm-Gg: ASbGnctJH92HWxS57XAMWcR4J+KmzAQJdO3qgLe9Hffr1luSAiaRjre/d2qjifGcC0y
-	uUdIu2C91vQbckQ1MOgwR1JJLSrGh
-X-Google-Smtp-Source: AGHT+IEjg7tLGOf0RNWlIWCZEtoXA0fa4xP6dF+qxAfjCQh/ZG2TzSsk23bIMPrkhk0s/xBZY9zuys5zrZqmK4JnQ68=
-X-Received: by 2002:a05:600c:b85:b0:42c:b0b0:513a with SMTP id
- 5b1f17b1804b1-431b3c9a40dmr5630055e9.2.1730219108707; Tue, 29 Oct 2024
- 09:25:08 -0700 (PDT)
+	s=arc-20240116; t=1730219199; c=relaxed/simple;
+	bh=SjbABfLBo4hzIup6rCmtJhqjVs3h1hKpoTPhMIQWOuA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P3yTiQdzLWom6D2dNbv6/4JUwuT6vEQihaIDHopzZ1ESaVTsa7SMhZ3zsSgtgdg+OqrqYQqCGd2nBv+EKbO5nv5H3gNZGVI/Ln+fjHLdTHyo8vNkLcsgf0XKaz2rLKaCz7RfVtEKx1qPTQcgbyb4sQTSxtthdPcIZT5GIlOHKtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dMIM15a4; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <4cce154a-1115-4371-a9f2-8bdb4879ea16@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1730219194;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=z3SIO11gAxzBORUAwmF5PxUYgrfzJbpOJQSZlkW2Wfg=;
+	b=dMIM15a4oH0M/peynmJ4cMC0vmvM4fsyNmowbgFZpCH+xQokc19h2vEPK/GB6Im5ZZvAH/
+	JC/YMO4FH9AU7xo3EUyZmWaRJMqPuMLFrgEPlhRTtTb6pNamM8UbdyG3Q3NMz1a30XY/OP
+	Pn3NpHRfWeToJdml1Dl8J6og/gmGgNI=
+Date: Wed, 30 Oct 2024 00:26:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021193310.2014131-1-mcgrof@kernel.org>
-In-Reply-To: <20241021193310.2014131-1-mcgrof@kernel.org>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Tue, 29 Oct 2024 09:24:30 -0700
-Message-ID: <CABCJKudob+8GH2U_QLEngjqjOVmDfm8ZkEfn-Ya9ZG5OEOrRtQ@mail.gmail.com>
-Subject: Re: [PATCH v3] selftests: add new kallsyms selftests
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	petr.pavlu@suse.com, da.gomez@samsung.com, masahiroy@kernel.org, 
-	deller@gmx.de, linux-arch@vger.kernel.org, live-patching@vger.kernel.org, 
-	kris.van.hees@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [RESEND PATCH v3] sysctl: simplify the min/max boundary check
+To: Joel Granados <joel.granados@kernel.org>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>,
+ Luis Chamberlain <mcgrof@kernel.org>, Kees Cook <keescook@chromium.org>,
+ Joel Granados <j.granados@samsung.com>,
+ Christian Brauner <brauner@kernel.org>, Dave Young <dyoung@redhat.com>,
+ linux-kernel@vger.kernel.org
+References: <20240905134818.4104-1-wen.yang@linux.dev>
+ <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Wen Yang <wen.yang@linux.dev>
+In-Reply-To: <5yfnu64fqsuahcmifvqdaynvdesqvaehhikhjff46ndoaacxyd@jvjrd3ivdpyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Luis,
 
-On Mon, Oct 21, 2024 at 12:33=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.or=
-g> wrote:
->
-> diff --git a/lib/tests/module/gen_test_kallsyms.sh b/lib/tests/module/gen=
-_test_kallsyms.sh
-> new file mode 100755
-> index 000000000000..e85f10dc11bd
-> --- /dev/null
-> +++ b/lib/tests/module/gen_test_kallsyms.sh
-> @@ -0,0 +1,128 @@
-[..]
-> +gen_template_module_data_b()
-> +{
-> +       printf "\nextern int auto_test_a_%010d;\n\n" 28
-> +       echo "static int auto_runtime_test(void)"
-> +       echo "{"
-> +       printf "\nreturn auto_test_a_%010d;\n" 28
-> +       echo "}"
-> +}
 
-FYI, I get a warning when loading test_kallsyms_b because the init
-function return value is >0:
+On 2024/10/23 03:12, Joel Granados wrote:
+> On Thu, Sep 05, 2024 at 09:48:18PM +0800, Wen Yang wrote:
+>> The do_proc_dointvec_minmax_conv_param structure provides the minimum and
+>> maximum values for doing range checking for the proc_dointvec_minmax()
+>> handler, while the do_proc_douintvec_minmax_conv_param structure also
+>> provides these min/max values for doing range checking for the
+>> proc_douintvec_minmax()/proc_dou8vec_minmax() handlers.
+> Finally got around to reviewing this. Sorry for the wait. Thx for the
+> patch but I don't like how this looks in terms of Integer promotion in
+> 32b architectures.
+> 
+Yes, thank you for pointing it out.
+We will explain it later.
 
-# modprobe test_kallsyms_b
-[   11.154496] do_init_module: 'test_kallsyms_b'->init suspiciously
-returned 255, it should follow 0/-E convention
-[   11.154496] do_init_module: loading module anyway...
-[   11.156156] CPU: 3 UID: 0 PID: 116 Comm: modprobe Not tainted
-6.12.0-rc5-00020-g897cb2ff413d #1
-[   11.156832] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
-BIOS rel-1.16.2-0-gea1b7a073390-prebuilt.qemu.org 04/01/2014
-[   11.157762] Call Trace:
-[   11.158914]  <TASK>
-[   11.159253]  dump_stack_lvl+0x3f/0xb0
-[   11.160279]  do_init_module+0x1f4/0x200
-[   11.160586]  __se_sys_finit_module+0x30c/0x400
-[   11.160948]  do_syscall_64+0xd0/0x1a0
-[   11.161255]  ? arch_exit_to_user_mode_prepare+0x11/0x60
-[   11.161659]  ? irqentry_exit_to_user_mode+0x8e/0xb0
-[   11.162052]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[   11.162598] RIP: 0033:0x7f5843968cf6
-[   11.163076] Code: 48 89 57 30 48 8b 04 24 48 89 47 38 e9 1e 9a 02
-00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24
-08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3a fd ff ff c3 48 c7 c6 01 00 00 00
-e9 a1
-[   11.164465] RSP: 002b:00007ffefcc92d68 EFLAGS: 00000246 ORIG_RAX:
-0000000000000139
-[   11.165046] RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f58439=
-68cf6
-[   11.165656] RDX: 0000000000000000 RSI: 00000000320429e0 RDI: 00000000000=
-00003
-[   11.166220] RBP: 00000000320429e0 R08: 0000000000000074 R09: 00000000000=
-00000
-[   11.166804] R10: 0000000000000000 R11: 0000000000000246 R12: 00000000320=
-42b50
-[   11.167378] R13: 0000000000000001 R14: 0000000032042c10 R15: 00000000000=
-00000
-[   11.168007]  </TASK>
+>>
+>> To avoid duplicate code, a new proc_minmax_conv_param structure has been
+> I'm not seeing duplicate code here as one is handling the int case and
+> the other is handling the uint case. And it is making sure that all
+> assignments and comparisons are without any Integer Promotion issues.
+> I'm not saying that it cannot be done, but it has to address Integer
+> Promotion issues in 32b architectures.
+> 
+>> introduced to replace both do_proc_dointvec_minmax_conv_param and
+>> do_proc_douintvec_minmax_conv_param mentioned above.
+>>
+>> This also prepares for the removal of sysctl_vals and sysctl_long_vals.
+> If I'm not mistaken this is another patchset that you sent separetly. Is
+> it "sysctl: encode the min/max values directly in the table entry"?
+> 
 
-> diff --git a/tools/testing/selftests/module/find_symbol.sh b/tools/testin=
-g/selftests/module/find_symbol.sh
-> new file mode 100755
-> index 000000000000..140364d3c49f
-> --- /dev/null
-> +++ b/tools/testing/selftests/module/find_symbol.sh
-> @@ -0,0 +1,81 @@
-[..]
-> +test_reqs()
-> +{
-> +       if ! which modprobe 2> /dev/null > /dev/null; then
-> +               echo "$0: You need modprobe installed" >&2
-> +               exit $ksft_skip
-> +       fi
-> +
-> +       if ! which kmod 2> /dev/null > /dev/null; then
-> +               echo "$0: You need kmod installed" >&2
-> +               exit $ksft_skip
-> +       fi
+Yes.
 
-Is there a reason to test for kmod? I don't see it called directly in
-this script.
+> ...
+> 
+>> @@ -904,8 +890,7 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+>>   		return ret;
+>>   
+>>   	if (write) {
+>> -		if ((param->min && *param->min > tmp) ||
+>> -		    (param->max && *param->max < tmp))
+>> +		if ((param->min > tmp) || (param->max < tmp))
+>>   			return -ERANGE;
+>>   
+>>   		WRITE_ONCE(*valp, tmp);
+>> @@ -936,10 +921,10 @@ static int do_proc_douintvec_minmax_conv(unsigned long *lvalp,
+>>   int proc_douintvec_minmax(const struct ctl_table *table, int write,
+>>   			  void *buffer, size_t *lenp, loff_t *ppos)
+>>   {
+>> -	struct do_proc_douintvec_minmax_conv_param param = {
+>> -		.min = (unsigned int *) table->extra1,
+>> -		.max = (unsigned int *) table->extra2,
+>> -	};
+>> +	struct proc_minmax_conv_param param;
+>> +
+>> +	param.min = (table->extra1) ? *(unsigned int *) table->extra1 : 0;
+>> +	param.max = (table->extra2) ? *(unsigned int *) table->extra2 : UINT_MAX;
+> This is one of the cases where there is potential issues. Here, if the
+>  value of table->extra{1,2}'s value is greater than when
+> the maximum value of a signed long, then the value assigned would be
+> incorrect. Note that the problem does not go away if you remove the
+> "unsigned" qualifier; it remains if table->extra{1,2} are originally
+> unsigned.
+> 
 
-Also, shouldn't you add the module directory to TARGETS in
-tools/testing/selftests/Makefile? Otherwise the script won't be
-installed with the rest of kselftests.
+I set up a CentOS 7.9 32-bit VM on Virtuanbox:
+# uname  -a
+Linux osboxes.org 3.10.0-1160.2.2.el7.centos.plus.i686 #1 SMP Mon Oct 26 
+11:56:29 UTC 2020 i686 i686 i386 GNU/Linux
 
-Sami
+And the following test code:
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main()
+{
+	unsigned int i = 4294967294;
+	long j = i;
+
+	printf("original hex(i) = 0x%x\n", i);
+	printf("unsigned int(i) = %lu\n", i);
+	printf("---------------------\n");
+	printf("hex(j) = 0x%x\n", j);
+	printf("long(j) = %ld\n", j);
+	printf("unsigned long(j) = %lu\n", j);
+	printf("int(j) = %d\n", j);
+	printf("unsigned int(j) = %lu\n", j);
+	return 0;
+}
+
+
+./a.out
+
+original hex(i) = 0xfffffffe
+unsigned int(i) = 4294967294
+---------------------
+hex(j) = 0xfffffffe
+long(j) = -2
+unsigned long(j) = 4294967294
+int(j) = -2
+unsigned int(j) = 4294967294
+
+
+The original hexadecimal values are the same, using unsigned int, int, 
+unsigned long, or long is just interpreted in different ways.
+
+We also ensure consistency in numerical writing and type conversion in 
+the patch. For example, in proc_rointvec_jiffies, convert to int; And in 
+proc_rouintvec_minmax, it is converted to unsigned int.
+
+
+--
+Best wishes,
+Wen
+
+
+> I'm not sure if there are more, but just having one of these things
+> around make me uncomfortable. Please re-work the patch in order to
+> remove this issue in order to continue review.
+> 
+> best
+> 
 
