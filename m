@@ -1,259 +1,166 @@
-Return-Path: <linux-kernel+bounces-387755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C130A9B55C3
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:26:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE979B55C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:26:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80E2028586F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:26:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EFE81F2373A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:26:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453F120ADE4;
-	Tue, 29 Oct 2024 22:26:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22C2720ADE3;
+	Tue, 29 Oct 2024 22:26:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dCpf4pqk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xClEgT+q"
+Received: from mail-oi1-f174.google.com (mail-oi1-f174.google.com [209.85.167.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64EDB208237;
-	Tue, 29 Oct 2024 22:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730240791; cv=fail; b=LsLKzPp0oRR4ORfTxhlesQEtzZ9gizsmhVH7jNgsnLv0ckEL0E5bWWgwZ1ajySCSo94n7UTbgN4hPOVUOQG0ro3suMhZreQgqsbYLGxVuMRF5om0g+zh81hVVeDUZm9bAs5vCedcdATXwdFHKF59jm5LUJB394CdGF+4iYD7uJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730240791; c=relaxed/simple;
-	bh=cis3NVENys9kqb+P5AuNFAJ6zXnbUD9tqDMVwHTr2BY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=jHXH4Dw448TagZFlIo1JcjgXPDATlbdq5y6cPLav2Z5A0a/jy4ztzC5/gfQi24M63rvXNU/N+7LLEQgxQaibBgX0p+GYs8Pde6rPoySWz7j7GWB3RK1UMXCsDlkDqJBPM9n+q9JJ1dd237ObYRcJ54IUNYcc0caM9LmvxumMKFQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dCpf4pqk; arc=fail smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730240789; x=1761776789;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=cis3NVENys9kqb+P5AuNFAJ6zXnbUD9tqDMVwHTr2BY=;
-  b=dCpf4pqkNivsNsrsz0+OZTB1Tkls8eFwaynur4EkSHk78giEbz5iBMYL
-   OwxexXNU81uB+Y4PWUF8p1zO0QoqOOhcRrmqrdqTux40o4Q+kePbIMPJ2
-   T22QfeYLMScV+ZQFUzd3BimmWszNnwjhJXzssVPY3mfaN0Hw9SxFb/ne2
-   KyJKi0KmrKbe3WWwfjoc/gSZYi3aZ5jiCj3YtLcjXcDnf0/tb5G07d+oV
-   yUwpHjNVzM+hDEzt2fXkNin9lsRsIHKNLsTlYPmQt/dRVn0bKRPv8UKyN
-   S2nCt7FuMBUEvEjzNGbBZ+mmQPD2RLk/Pb9tr3oyWTBY2UQMper8ebR5d
-   g==;
-X-CSE-ConnectionGUID: +rMlpl0OT1S2Aden22ZSKw==
-X-CSE-MsgGUID: Y+6htfNZQdS/DaVNohb5lg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11240"; a="29363002"
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="29363002"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 15:26:27 -0700
-X-CSE-ConnectionGUID: zpY/HC+LSgmw7Ce8t/E/ww==
-X-CSE-MsgGUID: bgjVKbSuTCaACwD9uy0xvA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,243,1725346800"; 
-   d="scan'208";a="86719123"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 15:26:27 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 29 Oct 2024 15:26:26 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 15:26:26 -0700
-Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.48) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 29 Oct 2024 15:26:10 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RNzmu7UNB59sgcZkv2Qo010dQb8qKbo+eZb99g03VCJtn3N3xEPZdna9OwI/fnAC0kUCYhIpSR0g8LY1dvS5BZyf67Kxvq1H4muKgZyU4EckdThtGsu6g8evSvKMUgKFVMyQygJPwKjrWgyDW7M7r1NzYiqWfuGaT4MVpbtSfU7s9DU5XmTOW/HKzsItEQYNs05rsGDkwG108VoV0zxi7Z53SlcAtp9sfyR9A32xsmSHYGoU5pu9xpTpJMG6WcZp6Kx8rrbFfjAaJC92EsNHlYjGHYc3tJV0DYYm+BRyBdAKOPO2TXYbjIItLD5/51kx07kZvAhY/xHV+Qe7f/kepA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cis3NVENys9kqb+P5AuNFAJ6zXnbUD9tqDMVwHTr2BY=;
- b=NuafWqNFOwnGOKPP/4tyUui+P6HuqbxCbOcMphnA/3g2pxPigdo8+4/afb3T3riScSnXHM8Wv2EQv4gqpkNCsW6No3FM32bUxRseF1daBSEuDyDhWdnwguiNHGULwuVjGksjz1ZyUwlGtoh7t4s2EB8LIyqhrdsLdKpQ2d4t+87R0jsiV03rF6ly0acj0ruB3vt5MWQm3b+uOcCkh4fQBc3jtYqLV/z6w/aUA9Ww2L91+OGAJa01OO/ahkz6s5TWtQN4SWkGBe/0yJtNSAJV5PU+qbqE0oDZumLxE/vrYHO480Uur/3BWYJTVG4++jbBwSJch5dLAi4g3AobiH1g7g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
- by PH0PR11MB5903.namprd11.prod.outlook.com (2603:10b6:510:144::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Tue, 29 Oct
- 2024 22:26:02 +0000
-Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
- ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.8093.025; Tue, 29 Oct 2024
- 22:26:02 +0000
-From: "Luck, Tony" <tony.luck@intel.com>
-To: "Mehta, Sohil" <sohil.mehta@intel.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, "Peter
- Zijlstra" <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, "Paul E.
- McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>, "Li, Xin3" <xin3.li@intel.com>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh
-	<brijesh.singh@amd.com>, Michael Roth <michael.roth@amd.com>, "Kirill A.
- Shutemov" <kirill.shutemov@linux.intel.com>, Alexey Kardashevskiy
-	<aik@amd.com>
-CC: Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>, "Pawan
- Gupta" <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon
-	<daniel.sneddon@linux.intel.com>, "Huang, Kai" <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>, Breno Leitao <leitao@debian.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>, Alexei Starovoitov
-	<ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross
-	<jgross@suse.com>, Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook
-	<kees@kernel.org>, Eric Biggers <ebiggers@google.com>, Jason Gunthorpe
-	<jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, "Andrew
- Morton" <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>,
-	Changbin Du <changbin.du@huawei.com>, Huang Shijie
-	<shijie@os.amperecomputing.com>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, Namhyung Kim <namhyung@kernel.org>, "Arnaldo
- Carvalho de Melo" <acme@redhat.com>, "linux-doc@vger.kernel.org"
-	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-efi@vger.kernel.org"
-	<linux-efi@vger.kernel.org>
-Subject: RE: [PATCH v5 05/16] x86/cpu: Defer CR pinning setup until after EFI
- initialization
-Thread-Topic: [PATCH v5 05/16] x86/cpu: Defer CR pinning setup until after EFI
- initialization
-Thread-Index: AQHbKVP0cuDlVV7xLE2PM0asFJfZPLKeTCEAgAACT+A=
-Date: Tue, 29 Oct 2024 22:26:02 +0000
-Message-ID: <SJ1PR11MB6083B9854320176B6301C530FC4B2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
- <20241028160917.1380714-6-alexander.shishkin@linux.intel.com>
- <a95a624b-214a-4b1f-ac16-dad5a9270bf8@intel.com>
-In-Reply-To: <a95a624b-214a-4b1f-ac16-dad5a9270bf8@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|PH0PR11MB5903:EE_
-x-ms-office365-filtering-correlation-id: 6b0bfbfb-3264-4a08-b2fa-08dcf868abfd
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?c0FUa29Eby9qS2YrcWRxaUU2Rzc3REQzbW9LVUFuT1NrUVNuck1wWEpIMGM5?=
- =?utf-8?B?c3VWekhZYXUwQWp2WVdRZUl2TngwQ2kyb0RNVmVsSHlFRXN6UTVmdXFJNjRa?=
- =?utf-8?B?UmpnRnN3VHZKZy9lK25mamVBUlQvakgyVW9sUVdkYmJIcXFaK2J5cFZ0ZHJz?=
- =?utf-8?B?UHJzZEdBQ0RBNmJ2MUFMbWUvZW1CSUNVZkI1OFIxTlVhb3BpZVhmU3ZEblp6?=
- =?utf-8?B?VTMwUjM4M202bUZzQ0hTbjJnNFN1TFZQck5wdEg0VEhVaDU3eGhtcFFkNjhI?=
- =?utf-8?B?RVlXRTRzeWI2T2lSNkJUWVFrWWpra0oybC9ZL3VlNE5KcXRobDJYSTNGSklz?=
- =?utf-8?B?b0dRTU0xUW9tWTRQLzJUWU5MQ0tXMGhibGtINjJrU3NOeSswRk0xUkRhRFox?=
- =?utf-8?B?LzNxNW4wZUlCTXQvemNVZTRFMFJKUWJnNU5rY0Y4UkYrTmcreGJsdUYrZkNk?=
- =?utf-8?B?V0c0WHpacjhiMFhIOCs1cFE0R2oyZndMejJCVitoUDQzcXJWelJKRFAvWlRa?=
- =?utf-8?B?UEZFSDlXR0tzejJxV2FtRVdpbEpuTnd1T2hxVldXdmhJdHgrQndEVHFRaE9X?=
- =?utf-8?B?NUpoQmZhd0ZnU2diVzN2eWdqUWhwNS9RS3ZoM01DK0dJOU5iTnp5NTg4NnVD?=
- =?utf-8?B?RVVkWHJBV2ZLVWhTM0FCRFcrK1Y4UVpkaUx2Y2lUeW1pelp2VUJFdnUwWkRY?=
- =?utf-8?B?bGoyc2dIdkVkOHl2cUkzdW1GNHRzWFBDVjZFMTdFN2lkSkJwUENPV1RBTlcv?=
- =?utf-8?B?TFNnem55N3hsMnpoQ1pOazh4OUZpdTRjdjhQa2JVSVZkRWpMcWdCQlFYWnZp?=
- =?utf-8?B?R2pGUm9Eb3hjRlgrbFJWK0I2NDZ4TC94UVZVNmxxcVd6Z1cxOU1qNnQ0dGtZ?=
- =?utf-8?B?dDZlaElNZWdmUmVyVUc5ZVZPelRqd3NnWW9BR1liaUV5VUdmL3d0eDlYQ3dY?=
- =?utf-8?B?Yjg4MU5ERlBmYU5ES3A5STYxT291UHpwcEozNFJDNC9yblRaZ0p6RGxhb2JN?=
- =?utf-8?B?VCtxbCtrVWhQc2VSRDVVYWNadlBYeTkxNDkxMUo0Wk1pdkJpLzBSMk9hdlRi?=
- =?utf-8?B?QkVHckVBZUhwV2lGeTVsU0NnMnlTQ0xqWjRNY3NJSXhXcWVmWkdUQkFSVEU1?=
- =?utf-8?B?QnNVNzJXUTAzOGdpcjZCOTRXRWR0N1Vtd1Z0eVA5SVRYNWFXb1E0cGVYYmxO?=
- =?utf-8?B?K3ZXYTFjQ01pRXljNjY3ZFk5UUNFR2xCR25vWVhRdHhPeWgwZUJWM05JK2ds?=
- =?utf-8?B?d28xTW54cTlUNGFqdHBtb0pNZEdValhRUHQzUDNCNTU4YUhlVW9vOXBqMnh1?=
- =?utf-8?B?YTFsZ0tFOHBZWml0OEJubnJHaFFaenVIbUZzeEErTGpBTWZBdCtRc0w0dVND?=
- =?utf-8?B?OVJieVhRWFptK0ZUUWh3bFVYTFNYUmZWa01kdjlGU29JejhjUTFmcW1rb2VP?=
- =?utf-8?B?eTBwVVp4KzRnZXdQdFhQRHhqcDR0SFRndHJZZmlpNHdFdzFkU0pNL09zdnhT?=
- =?utf-8?B?RVhzVGpxeGx6TzVzTDhaamo1MDJuaXZvanFhS3A3dmFXUmFkSk0vUmt2Y1VW?=
- =?utf-8?B?Y1FOeFRtZ0VxdVJ2SkRxMlppZExmeUZBd0NiVFdwOFNkMFZJVE1ybUdOUUpP?=
- =?utf-8?B?V2ZmNGpGN0llaTRmNXpqRkxCREQ4U3FaMzJib2k3cVZzaFpqOEVKWjdvOUtn?=
- =?utf-8?B?SkF0RHBHT1BaT0xkU3ZWT3dFU2tNdE1qaldmeVdpNkNlcjFGb1VSSWlEYzds?=
- =?utf-8?B?RjZFWXV2eXRGVnN3dGF1LzRtQzQvWStJZHZyTkRabDBraER0OE05cTBnWm9w?=
- =?utf-8?B?Tlk1dDNTNERvbkJRcjZ5cWN3U3ZORUYwWjc0d2ptRjQwVmw0UFYyNldCRDRx?=
- =?utf-8?Q?ib7eKWlrOUTVR?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?a1A3V2p6anVwdVFyTm1tZld5V0dVaEl3RjhJQ2NCbnNyZTlyM0IxRC9RbGVM?=
- =?utf-8?B?OFAvdnEvUUEwYk9HNlNBVGUwT2dEMXRWUGR5ME14L2c0UTQwVTlmVUdtakNT?=
- =?utf-8?B?S3gzSzExSUZBN1kzR29qQXdnem9FUmZHV2FhbWJlL091RzFRMHQ0QzZuZ1Jl?=
- =?utf-8?B?YVpLN3ZuWHFhVjlNaW9ZZmViZzhiZVBvaEZzRmI2YzVDTUw4bUIzRkl4TXVN?=
- =?utf-8?B?ZVNUaUhEOElBQzBZOWNEOFNRVzArMWE0MGc0bFl3MklzN1BMSHFDaGMrMUNp?=
- =?utf-8?B?TjFvYTBQb05ZYXJ3c0g2KzVuSGt0OVFFeHNHUFVuYWUzMlAyeVc3Nkg1WWFQ?=
- =?utf-8?B?dmZhRkhaeGtNaEk5clZDd0ZCTnZYbDFIZVFxMEFDSjZCTHB2TEIxYXMzQTNS?=
- =?utf-8?B?QXZTZ01uRllpbEczUUlzeFJJOEswU2tQOEptcXEvQWZlQmdpK3hRT1dHd3FI?=
- =?utf-8?B?SXgrQVJsc015MG5ZTkNwZnVnN2pneDdsSXcyOXpNQUMyTjRGUUd2OU1NbXVH?=
- =?utf-8?B?RmtvRVIzemZGMjFNUGVYUG51d2l0ZVNVdHY4eFRndjRkY0R4TitMNFp6aFUy?=
- =?utf-8?B?MTNNMC80UXc3N1Fyd2c4N1crbUJabW1TQXkyMjRrOVJTa05IR3lLR3NZMDhz?=
- =?utf-8?B?c1ZSZnFERTZFQjdSOERmV3JEeXV4VUZyN3B2L3FLb01yMzhCWTBxaUtEcHdO?=
- =?utf-8?B?cUVyLzdMZ2p5aHNnUHBMU09LdjIrblVYWlZObUxYOGdjTFZGeCs2Q1Vna1hW?=
- =?utf-8?B?ekhDMFhXYmhiL05uM05vMnRTOFptazdCUUZFQkxVRFhjeW1kSVI0bWpNM0E4?=
- =?utf-8?B?MmsxVGFZM1MwdjRZQUlQNGpjeGxBREJqU3crVnF5R2tVM1JCZEU3UFk5QlJK?=
- =?utf-8?B?ajJxTjBNUlljdHArTTFJaVpRMkdRMTViWHI1SHZCNkVJS1J3U1FpR2tnMHJO?=
- =?utf-8?B?eDQwaHRrWEYwZGV3SjVzTHZrTjhQZ3ZGTW9VaTcvb0pqYStTbEVnM3dIZGRu?=
- =?utf-8?B?Z2xkdHIvamJKaXNhWkxCYy84eEtvMDlKdHRrTFdyREU4KzN3S1JJWFB6Sk9v?=
- =?utf-8?B?clRraWhYUE5uTWlKRmNSbzJ4Y05GY0dZZG9EejQ2cFlab2xJOG03WnJPdkla?=
- =?utf-8?B?TTVETG1VNmdsUWNWS0ROSUZoT3dDem8vZlN4WjRIOWlaenhQR1krWDhYaHZM?=
- =?utf-8?B?WW5RcVQrNUtCSWhFczJLY2tmY20yV2owRnVkZGU0UDF3bm1qVDd3ZVZISTZJ?=
- =?utf-8?B?a20xaVYzUGIvNkY3cXEyNWl3dTBRbXJ2end3aWhtdkhOOGp4SWhCNGU1M3Qr?=
- =?utf-8?B?S2tQUnVWbUliUTFwR0E3RUdNYm1EMTZHN1Z6dlhYNUVFb0lCUFpOUEIrMW1N?=
- =?utf-8?B?eHhNaVVtWWZXRHkyWjFCeEpHM0xLQ3FXdjc1cHBZOStsWWNxbFNpZkJEK2p1?=
- =?utf-8?B?VE1nbWZ2WSttNjF2SHhiUThueTdNTFpCWER4Si9XNStxbXZQTzMvMHRlNlhF?=
- =?utf-8?B?NlZUNThUL1VuZGoxU3k4YlBibGh0bGNMUkI3YXp2RnlGUWxPbjhCNW9TSVBC?=
- =?utf-8?B?TndwaHo3RzhwQWdmNUZaNTNwVHFmSUlobzRrSEs1MkVRWXVkKzFOcVJmc3J2?=
- =?utf-8?B?N3RLNVhUdm94amRURDdiQWdxN2h4amxkalJMd2MyRTJZQ29FRjFBeURwTHlx?=
- =?utf-8?B?Q3cwclFYRC9URnQ0UHZzcEpPT2piT3M5QnFJb3lSOEtRTld4U1F6YzVWcGZ5?=
- =?utf-8?B?WHVHNmFzRlZCYXIwdEhlRHYxOGdDMG5zTDNPY1N0VlRCNURkUFBSMEZYajha?=
- =?utf-8?B?QmNjdXdBaEhmNmVVWEk3UlNRQlJGdkZGT3drOUFSeUlhNjhLR1MxNWY4U2ZV?=
- =?utf-8?B?ZDJvTUxGblpheEg3SjZjQ0Q3emxmZjJsbnFxWlBhR3ErcFEyVEtDdUFnMktX?=
- =?utf-8?B?ckZFSC9oTUhQYjNUUTAzYm8xM1dtZ01XMzc1d1pIbVBZMTBDU2J3MCsyU05q?=
- =?utf-8?B?L1NaVmNQMkJHUzY3RkJ6Sy85QkhtZFdkYWl6ZzR2SGgyOG8rb2t3VVNYNnFP?=
- =?utf-8?B?clpmVWJ1OVh2Z1BTTnJyU0FvOUtuQVJ0cDYyZEFJTjIyWTBXWnN5YTNtaFhI?=
- =?utf-8?Q?XydBSj0SXZS4fTxURFbpFT+Se?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27FA20ADD3
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 22:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730240772; cv=none; b=ffS4gDQP0T0OAGhYdOzAABtShRtapya/CfrcHw0Fxe9uQLRunXCJmxpdGb6cos2Dm/+s7B2CHd3xn0N9uF6XuD6MNOgTQJUehKir96Dp5NxfzkyT45KhXyCTucIwlS8KqkbimL1uPmM5Vn4ElxCgwEhxCZu/321cZB510gcsOdk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730240772; c=relaxed/simple;
+	bh=t5+4Q8OWpVdp/0RgGYt6wGLBd/T5QhCCqDsGYRkkzmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iF8oS0Rw91CnuicuWkguKQ393CkWBV/YfPP4fupvVbMhHNwltT3vYGzveLVUelSqX8q4s/FxdIAL1UgYkHRMTcqZfNn/dzRHJ4gyzz88Wght5/DfaVLpFCKRz1XWi5w3YUdDYqtJdnP3BxLXObkb59Mlhkr72y8N8vtZO5hgD5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xClEgT+q; arc=none smtp.client-ip=209.85.167.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oi1-f174.google.com with SMTP id 5614622812f47-3e601b6a33aso3509594b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730240769; x=1730845569; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JlW02YBV+5dPho8DkByoe+gPa11gJkbgA1l/C1eYeW4=;
+        b=xClEgT+qYhpknxBOr3R27bCuYGRvNZTX8SlqE/R3uqZauJBKBhzcl+SStQG3JJWN5B
+         +W5oa+DrNkXM3kNtnE4JC7Lc4gaG1s9u+7VzAHct2byk0/fmbo3jcNdYHxEem8yAcvDl
+         MbG7DUIHxjtL6WSuK3xYZMWhk94YHJ2xXiA1bnedsOA7tO/QCEscxiXk5EhiFIRE0lCA
+         5CtUEL9kfPCJuZZEqyPn9XypA70rfVcNbzRVXSRhnUcu0Y2PAiHRrZTRv8s0mfowvsyZ
+         K3AimnEYPmb8CgivA1wXkS6tUIJ+Axjhu6X4gkUm/wC1Y3XehH8cpFCbc/I8GSqnJBpf
+         JAEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730240769; x=1730845569;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JlW02YBV+5dPho8DkByoe+gPa11gJkbgA1l/C1eYeW4=;
+        b=wiLbH7g15B04LMVocTItCccDdwlVX8w1aohTbJRufo9EkY/AgpwYfLrUbL/FEO9cr3
+         PIO26JpMv3zeYv/qWPluSwgXsjeCk9GeoY1KyUR8/wPye7F9L7tPng1J9hSSILSTnXrk
+         lglC0ke82nCC7tgt+R7BKDKtG1Wc/TpnEmsvc8QaD0iWDo3EITBx7sxMziSVeWwoyabf
+         4zanwoY7YK5dfSkXoP2YgYm/n2uCzO4kFdshQXEvor+Ey6pYHDj4tkJIPD5TMolmA1+W
+         myc9gI5wvWsHfreW63UrFVNVZyZMt+cw7KFnWxYKXz3rD7f3I8/y2o4JcMvrICgeuYPY
+         k5iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9atrHLDKJJqLRBbASULonlzeHI+1Q/dAmua2O/mCmFhkc31Ya4/MpmZm1L7FRm6HUC9cHc5CF6EPirlM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+L6T11dtr5PAY3hn6QEQOv0g+AWaHZmPoV7qpvs43y2NwiyxT
+	M531JdG8TLTYLvJy/5mX7/t1CIsemhkCY9SOx8MSB0A3ldu7sBhADRR74GSSEog=
+X-Google-Smtp-Source: AGHT+IH+xL4WkT7PHq4e4eGpDTEdBuUhuyNcG6ApkM+ymrg3d/hbpgqXXO+NZSR4pqqXg7V3HUjnJg==
+X-Received: by 2002:a05:6808:22a6:b0:3e5:fc09:7f51 with SMTP id 5614622812f47-3e63823916cmr11524333b6e.9.1730240768711;
+        Tue, 29 Oct 2024 15:26:08 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3e6340bbb20sm2221777b6e.7.2024.10.29.15.26.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 15:26:08 -0700 (PDT)
+Message-ID: <b9da1c5e-3177-4bd1-abb2-5e92b0c2fb4c@baylibre.com>
+Date: Tue, 29 Oct 2024 17:26:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b0bfbfb-3264-4a08-b2fa-08dcf868abfd
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2024 22:26:02.5549
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: zLN1sAajzc99gOFTuJh+3pnpy4p4KJl8zgcqbfGkGwvIqj9QX8ooO+kgP7D5twBG9zNGsou/WHPtqLNSFOuKRQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5903
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] iio: Add channel type for attention
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ Ricardo Ribalda <ribalda@chromium.org>
+Cc: Jonathan Cameron <jic23@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Harvey Yang <chenghaoyang@google.com>,
+ linux-input@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241028-hpd-v2-0-18f6e79154d7@chromium.org>
+ <20241028-hpd-v2-3-18f6e79154d7@chromium.org>
+ <20241028203437.3eb5268d@jic23-huawei>
+ <CANiDSCu7G8gDKaY5jJR+JGyqGDobkDPRG+9NOfpXvVviqkQizA@mail.gmail.com>
+ <20241029143847.00004392@Huawei.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241029143847.00004392@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-PiAgCS8qDQo+ICAJICogVGhpcyBuZWVkcyB0byBmb2xsb3cgdGhlIEZQVSBpbml0aWFsaXp0aW9u
-LCBzaW5jZSBFRkkgZGVwZW5kcyBvbiBpdC4NCj4gKwkgKiBJdCBhbHNvIG5lZWRzIHRvIHByZWNl
-ZGUgdGhlIENSIHBpbm5pbmcgc2V0dXAsIGJlY2F1c2Ugd2UgbmVlZCB0byBiZQ0KPiArCSAqIGFi
-bGUgdG8gdGVtcG9yYXJpbHkgY2xlYXIgdGhlIENSNC5MQVNTIGJpdCBpbiBvcmRlciB0byBleGVj
-dXRlIHRoZQ0KPiArCSAqIHNldF92aXJ0dWFsX2FkZHJlc3NfbWFwIGNhbGwsIHdoaWNoIHJlc2lk
-ZXMgaW4gbG93ZXIgYWRkcmVzc2VzIGFuZA0KPiArCSAqIHdvdWxkIHRyaXAgTEFTUyBpZiBlbmFi
-bGVkLg0KPiAgCSAqLw0KDQpXaHkgYXJlIHRoZSB0ZW1wb3JhcnkgbWFwcGluZ3MgdXNlZCB0byBw
-YXRjaCBrZXJuZWwgY29kZSBpbiB0aGUgbG93ZXIgaGFsZg0Kb2YgdGhlIHZpcnR1YWwgYWRkcmVz
-cyBzcGFjZT8gVGhlIGNvbW1lbnRzIGluIGZyb250IG9mIHVzZV90ZW1wb3JhcnlfbW0oKQ0Kc2F5
-Og0KDQoqIFVzaW5nIGEgdGVtcG9yYXJ5IG1tIGFsbG93cyB0byBzZXQgdGVtcG9yYXJ5IG1hcHBp
-bmdzIHRoYXQgYXJlIG5vdCBhY2Nlc3NpYmxlDQogKiBieSBvdGhlciBDUFVzLiBTdWNoIG1hcHBp
-bmdzIGFyZSBuZWVkZWQgdG8gcGVyZm9ybSBzZW5zaXRpdmUgbWVtb3J5IHdyaXRlcw0KICogdGhh
-dCBvdmVycmlkZSB0aGUga2VybmVsIG1lbW9yeSBwcm90ZWN0aW9ucyAoZS5nLiwgV15YKSwgd2l0
-aG91dCBleHBvc2luZyB0aGUNCiAqIHRlbXBvcmFyeSBwYWdlLXRhYmxlIG1hcHBpbmdzIHRoYXQg
-YXJlIHJlcXVpcmVkIGZvciB0aGVzZSB3cml0ZSBvcGVyYXRpb25zIHRvDQogKiBvdGhlciBDUFVz
-LiBVc2luZyBhIHRlbXBvcmFyeSBtbSBhbHNvIGFsbG93cyB0byBhdm9pZCBUTEIgc2hvb3Rkb3du
-cyB3aGVuIHRoZQ0KICogbWFwcGluZyBpcyB0b3JuIGRvd24uDQoNCkJ1dCBjb3VsZG4ndCB3ZSBt
-YXAgaW50byB1cHBlciBoYWxmIGFuZCBkbyBzb21lL2FsbCBvZjoNCg0KMSkgVHJ1c3QgdGhhdCB0
-aGVyZSBhcmVuJ3Qgc3R1cGlkIGJ1Z3MgdGhhdCBkZXJlZmVyZW5jZSByYW5kb20gcG9pbnRlcnMg
-aW50byB0aGUNCnRlbXBvcmFyeSBtYXBwaW5nPw0KMikgTWFrZSBhICJ0aGlzIENQVSBvbmx5IiBt
-YXBwaW5nDQozKSBBdm9pZCBwcmVlbXB0aW9uIHdoaWxlIHBhdGNoaW5nIHNvIHRoZXJlIGlzIG5v
-IG5lZWQgZm9yIFRMQiBzaG9vdGRvd24NCmJ5IG90aGVyIENQVXMgd2hlbiB0aGUgdGVtcG9yYXJ5
-IG1hcHBpbmcgaXMgdG9ybiBkb3duLCBqdXN0IGZsdXNoIGxvY2FsIFRMQi4NCg0KLVRvbnkNCg==
+On 10/29/24 9:38 AM, Jonathan Cameron wrote:
+> On Tue, 29 Oct 2024 13:20:06 +0100
+> Ricardo Ribalda <ribalda@chromium.org> wrote:
+> 
+>> Hi Jonathan
+>>
+>> On Mon, 28 Oct 2024 at 21:34, Jonathan Cameron <jic23@kernel.org> wrote:
+>>>
+>>> On Mon, 28 Oct 2024 10:12:23 +0000
+>>> Ricardo Ribalda <ribalda@chromium.org> wrote:
+>>>  
+>>>> Add a new channel type representing if the user's attention state to the
+>>>> the system. This usually means if the user is looking at the screen or
+>>>> not.
+>>>>
+>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>>>> ---
+>>>>  Documentation/ABI/testing/sysfs-bus-iio | 7 +++++++
+>>>>  drivers/iio/industrialio-core.c         | 1 +
+>>>>  include/uapi/linux/iio/types.h          | 1 +
+>>>>  tools/iio/iio_event_monitor.c           | 2 ++
+>>>>  4 files changed, 11 insertions(+)
+>>>>
+>>>> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+>>>> index 89943c2d54e8..d5a2f93bd051 100644
+>>>> --- a/Documentation/ABI/testing/sysfs-bus-iio
+>>>> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+>>>> @@ -2339,3 +2339,10 @@ KernelVersion: 6.10
+>>>>  Contact:     linux-iio@vger.kernel.org
+>>>>  Description:
+>>>>               The value of current sense resistor in Ohms.
+>>>> +
+>>>> +What:                /sys/.../iio:deviceX/in_attention_raw
+>>>> +KernelVersion:       6.13
+>>>> +Contact:     linux-iio@vger.kernel.org
+>>>> +Description:
+>>>> +             Boolean value representing the user's attention to the system.
+>>>> +             This usually means if the user is looking at the screen or not.  
+>>>
+>>> Hmm. I should have thought of this when I replied to suggest a new channel type.
+>>> The question is 'units' for a decision.
+>>>
+>>> Last time we hit something like this where processing is used to make a decision
+>>> we decided to at least allow for the concept of 'certainty'.
+>>>
+>>> The idea being that smarter sensors would tell us something about how sure they
+>>> are that the attention is on the device.
+>>> The analogy being with activity detection. See in_activity_walking_input
+>>> in Documentation/ABI/testing/sysfs-bus-iio
+>>>
+>>> Do you think that would be appropriate here as well?  For this device
+>>> it would take the values 0 and 100 rather than 0 and 1.  
+>>
+>> For the particular device that I want to support, they are giving me a
+>> value of 1 and 0, and the example from usb.org seems to work the same
+>> way (Logical Maximum of 1)
+>> https://www.usb.org/sites/default/files/hutrr107-humanpresenceattention_1.pdf
+>>
+>> I have no problem multiplying my value by 100 if you think there will
+>> be a use case for that. It will not have a major performance impact on
+>> the driver.
+> Same was true (0 or 1) for the activity classification but I'm not
+> keen on certainty :)  So lets' copy that precedence and *100
+> 
+> 
+And I assume we would want this to be in_attention_input (processed),
+not in_attention_raw.
+
 
