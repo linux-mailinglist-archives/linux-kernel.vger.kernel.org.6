@@ -1,167 +1,206 @@
-Return-Path: <linux-kernel+bounces-386831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E7E9B486A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:37:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA9039B4867
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:36:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C55131C22E14
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:36:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384A21F2380E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259CB205148;
-	Tue, 29 Oct 2024 11:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E3B204F9E;
+	Tue, 29 Oct 2024 11:36:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dr2Wko62"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bhj4zKZV"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1002F20492E;
-	Tue, 29 Oct 2024 11:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B07E7464
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201813; cv=none; b=Xd6axhvahhrC7wTXILeh+IDwqTc7cbd2KYrpDAQaRhIP+OI0bkyl8Bx7wpkgAxmZAQbvDYUxJeILt56QCTzInvhcoS0J3H3FWDptlI7oQAlt7W284mGu06L5m5YaohHpB0I8ghVKUepSMMGlsIBps1a4IsOQ4ShnixBfeAUT/fo=
+	t=1730201783; cv=none; b=mfle+LG5fnJaUjW9LSpUZE4hcUulpwGTXdqj0exUM5LWM/nFI8LpOj694gv5SkCgUbv6JT4xSAXbscH1fz/PFNNIe38tI3l6NQathIPyZLSK75VJqrLzhwife69ehy5XA0DdmHkPclYPYF24wHXVMSa9fnDjepzh5IzfgiGADPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201813; c=relaxed/simple;
-	bh=e5S/YKnH9NHvSS0aTqimfEThPXu31EgHVlB//jnSb+Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WAEechlrZZ1Wde5vL2l4O7QH/HTps2sbD8XEtdJmFxi/XnTAo8sRstOv2eCq0NVUr/T6Iw25KLe7nhNtGaA2eQqMjJMBBVLaSD0iZb9zAEA2hSQ7eGbHpZR1XawO7uek4zDRRHDwr0K5rQUx6rrAEUd97an1Gx2wRzUwhT73Jvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=dr2Wko62; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mRSboDDzGxAiy3/RWSIRW202wiGtlrHhBve+K+RhU38=; b=dr2Wko62gJxMTrK00ekmXTouum
-	fRryKzE23eZi7WLE5eGQk6PCAaQrrcRHJX9k1jouVRU0cHMV1MvhLFb98RCc9g9TNqUmYNKecxYBQ
-	uFIXCzATCX7D6+8YtDPtNJn8dHac5jrImCWIHVY3ECwJbPSx3CgB6kX3QNRc3nmHn+0l9xdb7Np8/
-	So0Nd2tjsSxVGVngTeSH1eZDkTiJVB5mgaQyoPUgWotA/0/MicKUle+uM5uxXXbyhguTWVxoB8jnq
-	aJNWDyAKr70EhEqdHM8BKT+/w+EoP0XF8/mH1cbPn5HFNO3OZclS8Y3guTbtx53/BanZR4/gGhGgO
-	FfRhsjhg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5kWC-00000009t4y-0VcF;
-	Tue, 29 Oct 2024 11:36:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id BD8B630073F; Tue, 29 Oct 2024 12:36:11 +0100 (CET)
-Date: Tue, 29 Oct 2024 12:36:11 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Alexey Kardashevskiy <aik@amd.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org
-Subject: Re: [PATCH v5 03/16] x86/alternatives: Disable LASS when patching
- kernel alternatives
-Message-ID: <20241029113611.GS14555@noisy.programming.kicks-ass.net>
-References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
- <20241028160917.1380714-4-alexander.shishkin@linux.intel.com>
- <7897bc3e-2d68-4aef-8668-f6eb9f8efd7f@intel.com>
+	s=arc-20240116; t=1730201783; c=relaxed/simple;
+	bh=xAlHerI/SjbyHMp7C5ErU7dc79CeI9j2Htf4sbM2FKQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A0sXcsEqLICHDqXnMbQJ2AemlJxBWe5b3/5pD3oF3UuhQ6onhy2cVAYdVduO8XOCJoCL3fcmPYDMy+UwEAA33b5a94HAaBxEKb9w+Yv3k4bx+nEHUBRHtXQA1HwT9J8RTiUIvbrGVjdyNg+0RaAhFYP6rP6W6glNvTmiaHKMJj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bhj4zKZV; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43161c0068bso51039805e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:36:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1730201779; x=1730806579; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+M/KQdGIkDYfM7K25gdQMNQDVUPshojJzAQojc78QCM=;
+        b=bhj4zKZVLQBhgJelh+LhcF5pQWD7shtmmkPFvvpQj/TCSU8lwpLq9rNYwEm2e80alZ
+         aoBPXE3hlUN9f46P461DUzW9RYHIZXyMFDKF4Dx7TiolahSceD2kcN6bI4EWQ0PtHVHs
+         FwyCj9u++wEfEZbbRGUTJgdgVtLy27jOqAWta2VoDzvRInDZJrcFhFb2hgzRfJCReL6Y
+         dfGfkzr14l/0CM4ayKfC46ttBYoQA08n3afW3Rr49oQhd/Q4sO7tgChPbbYAezU9j34u
+         PfA0nlKZKCE2ClO+NDeQKmvR+y0EA/zSrnMtioSfOY2IpoKc5Xjl577fD/aV71gA7Vpk
+         w27A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730201779; x=1730806579;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+M/KQdGIkDYfM7K25gdQMNQDVUPshojJzAQojc78QCM=;
+        b=K1m51c5R3Sr8PhxPp7NGTESkpcgYqLzjKkqCHnTs5M6ZQgWyIuqm6zWufoOynRvOs4
+         +LboIGF2/Zn0KM0ZswpHBd9xClidJeOgGiB8C+4de4UM/2aPWA1t833Pmkocds516KhM
+         pKUafE4jJme45/7RvWwY7sNuVgBEjyTPAswzaYzMGuKpkdLsqIP1Qlo6cplfGmIhsQIf
+         MKDG6AL183d6qSuhhZt/PjP74z1If21/flbdIYzATlZiCPHFQtNaZ60ubQtBgz7hzPp3
+         egshXPna+i/FEfj6F1O2yDIt5NvrCk/+2FW61HBvB5AzaFdkiIn8kfah8Y1HcRrMZU3N
+         ENhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVC1qlUKTGHCUfvAiDCPIW3wckcsNW0Qm5rfrXQXtNAOk0G4Wyb5naKfew4bvscLuzqsLQ/OU8a5UBqdBc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNRd75WwrIBoH/N5DYEQkIbCxzyVkFvZlgjB+Rqd1QCXIF9LVA
+	LDJ61AeawGRfBvGSQrCWmwdhu2pTIdOZn2f1kwLgle1nr9cJ5zl5r/ZHpjWfRqN/QnPaxq/cJ/R
+	A
+X-Google-Smtp-Source: AGHT+IEOBrGtnrhp04p9oamxv3IoUL1pQg8omLS9eVTdrvSsB1a4sDi6dykLX3HF4VOaaj5ki/bCvw==
+X-Received: by 2002:a05:600c:4e8e:b0:431:3b53:105e with SMTP id 5b1f17b1804b1-4319aca5995mr92471355e9.9.1730201779516;
+        Tue, 29 Oct 2024 04:36:19 -0700 (PDT)
+Received: from [192.168.0.157] ([79.115.63.43])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4319360d32bsm141307985e9.46.2024.10.29.04.36.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 04:36:19 -0700 (PDT)
+Message-ID: <0bbd2514-ff51-4b0c-b3ad-547e4937d9f4@linaro.org>
+Date: Tue, 29 Oct 2024 11:36:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7897bc3e-2d68-4aef-8668-f6eb9f8efd7f@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mtd: spi-nor: atmel: add at25sf321 entry
+To: Marcus Folkesson <marcus.folkesson@gmail.com>,
+ Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241029-spi-nor-v2-1-e166c3900e19@gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20241029-spi-nor-v2-1-e166c3900e19@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 28, 2024 at 10:49:07AM -0700, Dave Hansen wrote:
-> On 10/28/24 09:07, Alexander Shishkin wrote:
-> >  static void text_poke_memcpy(void *dst, const void *src, size_t len)
-> >  {
-> > -	memcpy(dst, src, len);
-> > +	lass_stac();
-> > +	__inline_memcpy(dst, src, len);
-> > +	lass_clac();
-> >  }
-> >  
-> >  static void text_poke_memset(void *dst, const void *src, size_t len)
-> >  {
-> >  	int c = *(const int *)src;
-> >  
-> > -	memset(dst, c, len);
-> > +	lass_stac();
-> > +	__inline_memset(dst, c, len);
-> > +	lass_clac();
-> >  }
+
+
+On 10/29/24 11:23 AM, Marcus Folkesson wrote:
+> Add entry for the at25sf321 32Mbit SPI flash.
 > 
-> These are the _only_ users of lass_stac/clac() or the new inlines.
-
-For now; I have vague memories of running into trouble with compilers
-doing random things with memcpy before, and having these inline versions
-gives us more control.
-
-One of the cases I remember running into was KASAN, where a compiler is
-SUPPOSED to issue __asan_memcpy calls instead of the regular memcpy
-calls, except they weren't all doing that, with the end result that our
-regular memcpy implementation grew instrumentation to deal with that.
-
-That got sorted -- by deprecating / breaking all those non-conformant
-compilers. But still, I think it would be good to have the option to
-force a simple inline memcpy when needed.
-
-> First of all, I totally agree that the _existing_ strict objtool
-> behavior around STAC/CLAC is a good idea.
+> This flash is populated on a custom board and was tested at
+> 10MHz frequency using the "ti,da830-spi" SPI controller.
 > 
-> But text poking really is special and the context is highly unlikely to
-> result in bugs or exploits.  My first instinct here would have been to
-> tell objtool that the text poking code is OK and to relax objtool's
-> STAC/CLAC paranoia here.
-> 
-> Looking at objtool, I can see how important it is to keep the STAC/CLAC
-> code as dirt simple and foolproof as possible.  I don't see an obvious
-> way to except the text poking code without adding at least some complexity.
-> 
-> Basically what I'm asking for is if the goal is to keep objtool simple,
-> please *SAY* that.  Because on the surface this doesn't look like a good
-> idea.
 
-There is, you can add it to uaccess_safe_builtin[], but I'm not sure we
-want to blanked accept memcpy() -- or perhaps that is what you're
-saying.
+no sfdp for this one?
 
-Anyway, looking at this, I see we grew rep_{movs,stos}_alternative, as
-used in copy_user_generic() and __clear_user(). Which are all somewhat
-similar.
+> Link:
+> https://www.renesas.com/en/document/dst/at25sf321-datasheet?r=1608801
+> 
+> Signed-off-by: Marcus Folkesson <marcus.folkesson@gmail.com>
+> ---
+> root# cat /sys/class/spi_master/spi1/spi1.1/spi-nor/partname
+> at25sf321
+> 
+> root# cat /sys/class/spi_master/spi1/spi1.1/spi-nor/jedec_id
+> 1f8701
+> 
+> root# cat /sys/class/spi_master/spi1/spi1.1/spi-nor/manufacturer
+> atmel
+> 
+
+xxd -p /sys/bus/spi/devices/spi0.0/spi-nor/sfdp?
+or hexdump -Cv if you prefer
+
+> root# cat /sys/kernel/debug/spi-nor/spi1.1/capabilities
+> Supported read modes by the flash
+>  1S-1S-1S
+>   opcode        0x03
+>   mode cycles   0
+>   dummy cycles  0
+>  1S-1S-1S (fast read)
+>   opcode        0x0b
+>   mode cycles   0
+>   dummy cycles  8
+> 
+> Supported page program modes by the flash
+>  1S-1S-1S
+>   opcode        0x0
+> 
+> root# cat /sys/kernel/debug/spi-nor/spi1.1/params
+> name            at25sf321
+> id              1f 87 01
+> size            4.00 MiB
+> write size      1
+> page size       256
+> address nbytes  3
+> flags           HAS_16BIT_SR
+> 
+> opcodes
+>  read           0x0b
+>   dummy cycles  8
+>  erase          0x20
+>  program        0x02
+>  8D extension   none
+> 
+> protocols
+>  read           1S-1S-1S
+>  write          1S-1S-1S
+>  register       1S-1S-1S
+> 
+> erase commands
+>  20 (4.00 KiB) [0]
+>  d8 (64.0 KiB) [1]
+>  c7 (4.00 MiB)
+> 
+> sector map
+>  region (in hex)   | erase mask | flags
+>  ------------------+------------+----------
+>  00000000-003fffff |     [01  ] |
+> ---
+> Changes in v2:
+> - Change from at25sf321b to at25sf321
+> - Link to v1: https://lore.kernel.org/r/20241018-spi-nor-v1-1-d725bfb701ec@gmail.com
+> ---
+>  drivers/mtd/spi-nor/atmel.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/mtd/spi-nor/atmel.c b/drivers/mtd/spi-nor/atmel.c
+> index 45d1153a04a07b7c61f46b117311b24ab695038f..8285a16b253d54ae8c4a5302850244d2248aa755 100644
+> --- a/drivers/mtd/spi-nor/atmel.c
+> +++ b/drivers/mtd/spi-nor/atmel.c
+> @@ -238,6 +238,11 @@ static const struct flash_info atmel_nor_parts[] = {
+>  		.flags = SPI_NOR_HAS_LOCK,
+>  		.no_sfdp_flags = SECT_4K,
+>  		.fixups = &at25fs_nor_fixups
+> +	}, {
+> +		.id = SNOR_ID(0x1f, 0x87, 0x01),
+> +		.name = "at25sf321",
+> +		.size = SZ_4M,
+> +		.no_sfdp_flags = SECT_4K,
+
+it seems this flash supports dual and quad reads. Do you care to
+add/test these modes?
+
+you'll need mtd-utils
+
+>  	},
+>  };
+>  
+> 
+> ---
+> base-commit: 200289db261f0c8131a5756133e9d30966289c3b
+> change-id: 20241018-spi-nor-dc29698dea0f
+> 
+> Best regards,
 
