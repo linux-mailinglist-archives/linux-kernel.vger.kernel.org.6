@@ -1,106 +1,337 @@
-Return-Path: <linux-kernel+bounces-387554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FC3A9B52CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:35:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23AF89B52D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:36:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0D19B22FA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 470801C229C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 304FB20721C;
-	Tue, 29 Oct 2024 19:35:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD96207218;
+	Tue, 29 Oct 2024 19:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WF44hvjf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IGsT8o8e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80EB1190486;
-	Tue, 29 Oct 2024 19:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6625B201278
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730230546; cv=none; b=FZ9QW7UjzpbM6ZnaVg49zUMZVVoTJmhoN8p2RHuNOaTvxs+4yGuvLKA3vtISuJlfxfgD1dNcAym6ZTPrtbUhjhgpNNyDZOssdM9ZlIxY6VIIHtTg9aKNo3rfJTbOJewzoJj4GhjaYGXfstNkhd5U4+wGkgABgzPBlho7tdhGUa8=
+	t=1730230578; cv=none; b=sM4wqeeJfJcBWrSg6aj+kITI7BugC305zhhbh+TR0tuSbQ4IiTobYDF3QHEaupqPKyql46TvJqe7ma4T1yU/9yrzK/i6+DE3HvY/K4ffewQR9Az2kTkMBjJoNRMPsDBSsBAIgZhxTOzaACjq23O/q0qP84Yf0ueN7YZv/ssu2oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730230546; c=relaxed/simple;
-	bh=5KQbaA+O7BsA/JA0J1T6fbaSAGxHI5cW1PQ5/cTrGuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eb099/7UlCLanjHlJXf9QsvM+KTa9hlu7RpdMT283kf6jTM0MQ1CSSBHbO+fysJ0Gnrk5JC7gEcyJaDIbyuP6OIaod+HB2fMzzwPbjKQnq6f1ob48Jxy86kjbnjTxki8nfYxU6Oh2qwqcFgQ7vDKNbjx5Egkc+h/Bcc8bxT1Hc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WF44hvjf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B52BC4CECD;
-	Tue, 29 Oct 2024 19:35:45 +0000 (UTC)
+	s=arc-20240116; t=1730230578; c=relaxed/simple;
+	bh=3uwQfVKC86zJomr8pFUiO9oxtyj0KvgRZsMsu10Gehw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Fv5MaY8AKx2x3solRyCuDVG5yjoleNcibeqZhRfXdMuVontayksvGDef7I70LG6OjhMrhr3xenq2yhPk5Xi4lXwGtVonQ5hFtFrhfNzLHBfLlRGAmUC+Fva5kzv7on0FJrKgn6XLuLxTULAMTDGFZ9dd+ZNkrO/+xWMteS3W4AA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IGsT8o8e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE91BC4CECD;
+	Tue, 29 Oct 2024 19:36:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730230546;
-	bh=5KQbaA+O7BsA/JA0J1T6fbaSAGxHI5cW1PQ5/cTrGuY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WF44hvjfVsOy9QH0lokqppbf52+iVfI4qe+h0ERxoOQpWnFl5wtUniBjt9TS0am7z
-	 TjM1JlOPueujGXP5g6til6XH9RIHmPeRwnSXyYNSe2H/wElFIpSsGPtG0DGEa5xKmv
-	 sGw3nb4sv2l9cKB+DiJEFKwIlbVopxiag95TtOzSvLgGCpYbduP2pREgoSZITayFO0
-	 MnQww53c+BYB4iLRmSjY4aL9h9p3lc488tOKVBNlb2BkdX4AiW/hTEICV2nc7ylaJu
-	 rV6D34Xd162dixrhEjKO3s/aDeg4bbxnsVXkKDa3YP73kOZA3QadFHplTZlujJGvD5
-	 jO6HdLJp1v1jA==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so5174562e87.3;
-        Tue, 29 Oct 2024 12:35:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgieVhC+tB0c9qjMaf+XVnY7E2vwmLyEqqx+9oLhwve9xfyCZZxaeiaqKyVP4qdy7aPTOOzhDzr259uJDW5yA=@vger.kernel.org, AJvYcCVS2sZ/qZh1KjiGdz4PA/UmWN/ijXCbwWHL1nS6l6UyuGZBMLfRDOF2IrQQTf7L154o4f5tedSY3Yd+i5ge@vger.kernel.org, AJvYcCXXkEYPv9FGB4LEqa3VI4LHooe4Oen3REGJfTCctW/ltc6coCHvrmplhbS0sJNlNfW3aGebuur4oRWC@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQLzohTqvA+RK5yewyecUqWPR6HbKsF07h/1b2ljaaXg9lq7MN
-	aZhkXG6rDd5GaopJxR8a2ziRrfvisCWTTguavOWugkm+lgmazD193uRUwWXce9e1djNqV8oD5uS
-	YCFkTtfdhHn8ySXCLY+B/RamnxA==
-X-Google-Smtp-Source: AGHT+IFe9PFqt+n8Vs6QpequE7rsrw365RDFEY3bYDcLHyZ8EyQZTv5AB4GWHhbd1GDB4ZBkz78jJbxqGvlOMrcJxas=
-X-Received: by 2002:a05:6512:3f1c:b0:539:e761:c21a with SMTP id
- 2adb3069b0e04-53b34a365c7mr7068570e87.48.1730230543434; Tue, 29 Oct 2024
- 12:35:43 -0700 (PDT)
+	s=k20201202; t=1730230578;
+	bh=3uwQfVKC86zJomr8pFUiO9oxtyj0KvgRZsMsu10Gehw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=IGsT8o8eqRIdZE1aUDWQPOT9yVTu5HoYduq0zrnkDYFUyzuMoAp+yjOqC1KnOrl7T
+	 2BEoI74bOJfH1isOh6IwBOarF7c+g5K1AeuQKSAvzzk9rjMKayZfzV+z4TrqbMqbBl
+	 yspmOHcLDEdY7OYIHnvYtWDi1jd3/JZJVFXWTq24EooNJAHKhFvaNqtsTAB6XeSxAr
+	 isHTsUT0QpEU9GmVzQGfVkHwUlxTP7YcD/cI2goJTYGgHfa+G/60jqeDgBqLoSi2eW
+	 px4GD+dJcq5d/S2PXiWz07SzpeJk/ovGHfUUgaZMsqUAOzWVI8loe7lbB+/ggjL/tY
+	 hW1E/YIoMbf3g==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t5s0l-0082UH-FW;
+	Tue, 29 Oct 2024 19:36:15 +0000
+Date: Tue, 29 Oct 2024 19:36:15 +0000
+Message-ID: <8634ke3dn4.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Yu Zhao <yuzhao@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Muchun Song <muchun.song@linux.dev>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Will Deacon <will@kernel.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Nanyong Sun <sunnanyong@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH v1 4/6] arm64: broadcast IPIs to pause remote CPUs
+In-Reply-To: <CAOUHufabSWTZ+cBjXEDTRh61GeALL5b6uh0M76=2ninZP3KAzQ@mail.gmail.com>
+References: <20241021042218.746659-1-yuzhao@google.com>
+	<20241021042218.746659-5-yuzhao@google.com>
+	<868qug3yig.wl-maz@kernel.org>
+	<CAOUHufabSWTZ+cBjXEDTRh61GeALL5b6uh0M76=2ninZP3KAzQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
- <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org> <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
- <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
- <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com> <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
-In-Reply-To: <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Tue, 29 Oct 2024 14:35:29 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+T6T_3p2C62U3v4aSjm_oc-Ycjxi_ckF0ufh=JJDz=rg@mail.gmail.com>
-Message-ID: <CAL_Jsq+T6T_3p2C62U3v4aSjm_oc-Ycjxi_ckF0ufh=JJDz=rg@mail.gmail.com>
-Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Saravana Kannan <saravanak@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Dirk Behme <dirk.behme@gmail.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Tue, Oct 29, 2024 at 1:57=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Tue, Oct 29, 2024 at 7:48=E2=80=AFPM Alice Ryhl <aliceryhl@google.com>=
- wrote:
+On Mon, 28 Oct 2024 22:11:52 +0000,
+Yu Zhao <yuzhao@google.com> wrote:
+>=20
+> On Tue, Oct 22, 2024 at 10:15=E2=80=AFAM Marc Zyngier <maz@kernel.org> wr=
+ote:
 > >
-> > One option is to define a trait for integers:
+> > On Mon, 21 Oct 2024 05:22:16 +0100,
+> > Yu Zhao <yuzhao@google.com> wrote:
+> > >
+> > > Broadcast pseudo-NMI IPIs to pause remote CPUs for a short period of
+> > > time, and then reliably resume them when the local CPU exits critical
+> > > sections that preclude the execution of remote CPUs.
+> > >
+> > > A typical example of such critical sections is BBM on kernel PTEs.
+> > > HugeTLB Vmemmap Optimization (HVO) on arm64 was disabled by
+> > > commit 060a2c92d1b6 ("arm64: mm: hugetlb: Disable
+> > > HUGETLB_PAGE_OPTIMIZE_VMEMMAP") due to the folllowing reason:
+> > >
+> > >   This is deemed UNPREDICTABLE by the Arm architecture without a
+> > >   break-before-make sequence (make the PTE invalid, TLBI, write the
+> > >   new valid PTE). However, such sequence is not possible since the
+> > >   vmemmap may be concurrently accessed by the kernel.
+> > >
+> > > Supporting BBM on kernel PTEs is one of the approaches that can make
+> > > HVO theoretically safe on arm64.
+> >
+> > Is the safety only theoretical? I would have expected that we'd use an
+> > approach that is absolutely rock-solid.
+>=20
+> We've been trying to construct a repro against the original HVO
+> (missing BBM), but so far no success. Hopefully a repro does exist,
+> and then we'd be able to demonstrate the effectiveness of this series,
+> which is only theoretical at the moment.
 
-Yeah, but that doesn't feel like something I should do here. I imagine
-other things might need the same thing. Perhaps the bindings for
-readb/readw/readl for example. And essentially the crate:num already
-has the trait I need. Shouldn't the kernel mirror that? I recall
-seeing some topic of including crates in the kernel?
+That wasn't my question.
 
-> +1, one more thing to consider is whether it makes sense to define a
-> DT-only trait that holds all the types that can be a device property
-> (like `bool` too, not just the `Integer`s).
+Just because your HW doesn't show you a failure mode doesn't mean the
+issue doesn't exist. Or that someone will eventually make use of the
+relaxed aspects of the architecture and turn the behaviour you are
+relying on into the perfect memory corruption  You absolutely cannot
+rely on an implementation-defined behaviour for this stuff.
+
+Hence my question: is your current approach actually safe? In a
+non-theoretical manner?
+
+>=20
+> > > Note that it is still possible for the paused CPUs to perform
+> > > speculative translations. Such translations would cause spurious
+> > > kernel PFs, which should be properly handled by
+> > > is_spurious_el1_translation_fault().
+> >
+> > Speculative translation faults are never reported, that'd be a CPU
+> > bug.
+>=20
+> Right, I meant to say "speculative accesses that cause translations".
+>=20
+> > *Spurious* translation faults can be reported if the CPU doesn't
+> > implement FEAT_ETS2, for example, and that has to do with the ordering
+> > of memory access wrt page-table walking for the purpose of translations.
+>=20
+> Just want to make sure I fully understand: after the local CPU sends
+> TLBI (followed by DSB & ISB), FEAT_ETS2 would act like DSB & ISB on
+> remote CPUs when they perform the invalidation, and therefore
+> speculative accesses are ordered as well on remote CPUs.
+
+ETS2 has nothing to do with TLBI. It has to do with non-cacheable
+(translation, access and address size) faults, and whether an older
+update to a translation is visible to a younger memory access without
+extra synchronisation. It definitely has nothing to do with remote
+CPUs (and the idea of a remote ISB, while cute, doesn't exist).
+
+> Also I'm assuming IPIs on remote CPUs don't act like a full barrier,
+> and whatever they interrupt still can be speculatively executed even
+> though the IPI hander itself doesn't access the vmemmap area
+> undergoing BBM. Is this correct?
+
+Full barrier *for what*? An interrupt is a CSE, which has the effects
+described in the ARM ARM, but that's about it.
+
+>=20
+> > > Signed-off-by: Yu Zhao <yuzhao@google.com>
+> > > ---
+> > >  arch/arm64/include/asm/smp.h |  3 ++
+> > >  arch/arm64/kernel/smp.c      | 92 +++++++++++++++++++++++++++++++++-=
+--
+> > >  2 files changed, 88 insertions(+), 7 deletions(-)
+> > >
+> > > diff --git a/arch/arm64/include/asm/smp.h b/arch/arm64/include/asm/sm=
+p.h
+> > > index 2510eec026f7..cffb0cfed961 100644
+> > > --- a/arch/arm64/include/asm/smp.h
+> > > +++ b/arch/arm64/include/asm/smp.h
+> > > @@ -133,6 +133,9 @@ bool cpus_are_stuck_in_kernel(void);
+> > >  extern void crash_smp_send_stop(void);
+> > >  extern bool smp_crash_stop_failed(void);
+> > >
+> > > +void pause_remote_cpus(void);
+> > > +void resume_remote_cpus(void);
+> > > +
+> > >  #endif /* ifndef __ASSEMBLY__ */
+> > >
+> > >  #endif /* ifndef __ASM_SMP_H */
+> > > diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+> > > index 3b3f6b56e733..68829c6de1b1 100644
+> > > --- a/arch/arm64/kernel/smp.c
+> > > +++ b/arch/arm64/kernel/smp.c
+> > > @@ -85,7 +85,12 @@ static int ipi_irq_base __ro_after_init;
+> > >  static int nr_ipi __ro_after_init =3D NR_IPI;
+> > >  static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+> > >
+> > > -static bool crash_stop;
+> > > +enum {
+> > > +     SEND_STOP =3D BIT(0),
+> > > +     CRASH_STOP =3D BIT(1),
+> > > +};
+> > > +
+> > > +static unsigned long stop_in_progress;
+> > >
+> > >  static void ipi_setup(int cpu);
+> > >
+> > > @@ -917,6 +922,79 @@ static void __noreturn ipi_cpu_crash_stop(unsign=
+ed int cpu, struct pt_regs *regs
+> > >  #endif
+> > >  }
+> > >
+> > > +static DEFINE_SPINLOCK(cpu_pause_lock);
+> >
+> > PREEMPT_RT will turn this into a sleeping lock. Is it safe to sleep as
+> > you are dealing with kernel mappings?
+>=20
+> Right, it should be a raw spinlock -- the caller disabled preemption,
+> which as you said is required when dealing with the kernel mappings.
+>=20
+> > > +static cpumask_t paused_cpus;
+> > > +static cpumask_t resumed_cpus;
+> > > +
+> > > +static void pause_local_cpu(void)
+> > > +{
+> > > +     int cpu =3D smp_processor_id();
+> > > +
+> > > +     cpumask_clear_cpu(cpu, &resumed_cpus);
+> > > +     /*
+> > > +      * Paired with pause_remote_cpus() to confirm that this CPU not=
+ only
+> > > +      * will be paused but also can be reliably resumed.
+> > > +      */
+> > > +     smp_wmb();
+> > > +     cpumask_set_cpu(cpu, &paused_cpus);
+> > > +     /* paused_cpus must be set before waiting on resumed_cpus. */
+> > > +     barrier();
+> >
+> > I'm not sure what this is trying to enforce. Yes, the compiler won't
+> > reorder the set and the test.
+>=20
+> Sorry I don't follow: does cpumask_set_cpu(), i.e., set_bit(), already
+> contain a compiler barrier?
+>=20
+> My understanding is that the compiler is free to reorder the set and
+> test on those two independent variables, and make it like this:
+>=20
+>   while (!cpumask_test_cpu(cpu, &resumed_cpus))
+>       cpu_relax();
+>   cpumask_set_cpu(cpu, &paused_cpus);
+>=20
+> So the CPU sent the IPI would keep waiting on paused_cpus being set,
+> and this CPU would keep waiting on resumed_cpus being set, which would
+> end up with a deadlock.
+>=20
+> > But your comment seems to indicate that
+> > also need to make sure the CPU preserves that ordering
+> > and short of a
+> > DMB, the test below could be reordered.
+>=20
+> If this CPU reorders the set and test like above, it wouldn't be a
+> problem because the set would eventually appear on the other CPU that
+> sent the IPI.
+
+I don't get it. You are requiring that the compiler doesn't reorder
+things, but you're happy that the CPU reorders the same things. Surely
+this leads to the same outcome...
+
+>=20
+> > > +     while (!cpumask_test_cpu(cpu, &resumed_cpus))
+> > > +             cpu_relax();
+> > > +     /* A typical example for sleep and wake-up functions. */
+> >
+> > I'm not sure this is "typical",...
+>=20
+> Sorry, this full barrier isn't needed. Apparently I didn't properly
+> fix this from the previous attempt to use wfe()/sev() to make this
+> function the sleeper for resume_remote_cpus() to wake up.
 >
-> Then we can avoid e.g. `property_read_bool` and simply do it in `property=
-_read`.
+> > > +     smp_mb();
+> > > +     cpumask_clear_cpu(cpu, &paused_cpus);
+> > > +}
+> > > +
+> > > +void pause_remote_cpus(void)
+> > > +{
+> > > +     cpumask_t cpus_to_pause;
+> > > +
+> > > +     lockdep_assert_cpus_held();
+> > > +     lockdep_assert_preemption_disabled();
+> > > +
+> > > +     cpumask_copy(&cpus_to_pause, cpu_online_mask);
+> > > +     cpumask_clear_cpu(smp_processor_id(), &cpus_to_pause);
+> >
+> > This bitmap is manipulated outside of your cpu_pause_lock. What
+> > guarantees you can't have two CPUs stepping on each other here?
+>=20
+> Do you mean cpus_to_pause? If so, that's a local bitmap.
 
-Is there no way to say must have traitA or traitB?
+Ah yes, sorry.
 
-Rob
+>=20
+> > > +
+> > > +     spin_lock(&cpu_pause_lock);
+> > > +
+> > > +     WARN_ON_ONCE(!cpumask_empty(&paused_cpus));
+> > > +
+> > > +     smp_cross_call(&cpus_to_pause, IPI_CPU_STOP_NMI);
+> > > +
+> > > +     while (!cpumask_equal(&cpus_to_pause, &paused_cpus))
+> > > +             cpu_relax();
+> >
+> > This can be a lot of things to compare, specially that you are
+> > explicitly mentioning large systems. Why can't this be implemented as
+> > a counter instead?
+>=20
+> Agreed - that'd be sufficient and simpler.
+>=20
+> > Overall, this looks like stop_machine() in disguise. Why can't this
+> > use the existing infrastructure?
+>=20
+> This came up during the previous discussion [1]. There are
+> similarities. The main concern with reusing stop_machine() (or part of
+> its current implementation) is that it may not meet the performance
+> requirements. Refactoring might be possible, however, it seems to me
+> (after checking the code again) that such a refactoring unlikely ends
+> up cleaner or simpler codebase, especially after I got rid of CPU
+> masks, as you suggested.
+
+I would have expected to see an implementation handling faults during
+the break window. IPIs are slow, virtualised extremely badly, and
+pNMIs are rarely enabled, due to the long history of issues with it.
+At this stage, I'm not sure what you have here is any better than
+stop_machine(). On the other hand, faults should be the rarest thing,
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
