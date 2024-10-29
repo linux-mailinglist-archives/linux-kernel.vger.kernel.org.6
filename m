@@ -1,428 +1,283 @@
-Return-Path: <linux-kernel+bounces-387259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9E49B4EB6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:58:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D88DF9B4EB9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:59:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3126D1F23995
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:58:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 056641C226AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC10196455;
-	Tue, 29 Oct 2024 15:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479FD198832;
+	Tue, 29 Oct 2024 15:59:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="M3QB93yx"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2071.outbound.protection.outlook.com [40.107.243.71])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="I7P3k6yU"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02041917F9;
-	Tue, 29 Oct 2024 15:58:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730217512; cv=fail; b=PqyNEBs7yOC+UOAhlbyriJmh1P9BxwX9LoqHwlu7ZKtHoYxfCWPjT7B7HzFz7WI7i2E+wx0VloBzmo9YoBG14LFEvWuxnGxx3MC/PT9cgo9JHvHmfiHXCx53bOYx1bZHYgntGbQzy14Ko9Ho5tU1FNX9R0D8U5wagDvwHeaeyuM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730217512; c=relaxed/simple;
-	bh=iMjfTzqNQ01AQnUJSvGAAjGQsiV+gccwEMQM7AvUVKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=kJo+/QqUpDRwnau6BZH+Yg341cxQ9QvfTHAoF9Lo/09rzx0l1kMgtKK/Bh0mUQ4Gt4fPsKtG8psSy28Um2jyKBw1jP8MjysZfN7f4X3769WefO8+ydjcNW84rPxeJopzxj9eqKoEcaxIpy2YQ8BUn65+ltdQk+Ey5hsiIIsOtc8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=M3QB93yx; arc=fail smtp.client-ip=40.107.243.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=d5e7Lgna+QqYUVFnqNyHsgtjB+36yk55G+Sx+kpyWl3F083H5QtPBccpgX8o2rFBNLBXftFFTUeBrPoJ410w2L9c8J/dfPaCBDzJPF5/Fj3b7QZs1rCklFIxqBQDRWQQDzHBJeqIQGxBv97Ay0OECQqPSRjKBmdpo+gW1wULWlb4NVNo8NZCuphZOiJkmClb5CrZMDfMIH/thl55HDvzP397L2kV0avS5Uc7aNjbyseVVhLuSrbBeeRXL9rt56/XZRLM7kF5Ai63GaOHLUo9qzruXVSIzAebZzNZGxIcO+2QqxhPN8QZkVnFThT9zsTMkuGYFsnFuoHHLJjPUCJhVg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6Pb50ul+Z1Xs2yi7Sc0Kdvwsp7+oKmKpstOm0rxmIj0=;
- b=scDYczWQLiTMnKW4WXIQm0EfOzDXs6hQk7YWb6+5Ew+OUhutPqP9NFJls6R66cOdD6q1YLRDzFr6phyf9WTvpcPjdisY4osM9Io/4+Dbv2KtUS4FePiKny5m/0bWzSr/Z5PLo730CJaMwgPwH//gIEavSOfp444VLPF4PuPgDTNsigPv/j/1x+hmQnpnngFKHmTqwfgrEOmPVd0pliwJh9Lamy/MogD1vm2489SspMhIxI3aNF8EVh+tMSBLCMzjGowoqx67hqLHGBK0Z6y15Nt5HxgWd/QOf43Qo23NVJOl9KSfXQi0BFNLuHu0BSJVE0vI5gXpWpmRMMIl3dOlSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6Pb50ul+Z1Xs2yi7Sc0Kdvwsp7+oKmKpstOm0rxmIj0=;
- b=M3QB93yxkZ4UYGYDQfUEjQRSQDn7t4qREoyJJkXwY/lsXDvR8Mc4hL8D4BRZ+yvRTr466L1/k3vgqUM9xgN2QkIKgiez7c08BcB0rHtWjpMnH+DyvDHEqjPb9/evr2kmBJBeHshLd/2m9nN8819nwc9lLi2dOa++eVRhnlJGxW/PXI4WEWgrDVCnL4BpVsldmFsUYeBNOkxaaisssbcSPrrjANHItFBFQTQeG7m/8nXtbWCs2Dj+atbguLhRk55I7361tXpfd3fBLvxaI1wy9L79YylT+wG5rBUhqQ0iYfDXLgtkRDnib2SQeIC5xA34/ihXJ89Hh6+fToT7HkI0ow==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by SJ0PR12MB8090.namprd12.prod.outlook.com (2603:10b6:a03:4ea::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Tue, 29 Oct
- 2024 15:58:25 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8093.018; Tue, 29 Oct 2024
- 15:58:25 +0000
-Date: Tue, 29 Oct 2024 12:58:24 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com,
-	dwmw2@infradead.org, baolu.lu@linux.intel.com, shuah@kernel.org,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com,
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com,
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com,
-	yi.l.liu@intel.com, aik@amd.com, zhangfei.gao@linaro.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v5 01/13] iommufd/viommu: Add IOMMUFD_OBJ_VDEVICE and
- IOMMU_VDEVICE_ALLOC ioctl
-Message-ID: <20241029155824.GJ209124@nvidia.com>
-References: <cover.1729897278.git.nicolinc@nvidia.com>
- <53025c827c44d68edb6469bfd940a8e8bc6147a5.1729897278.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53025c827c44d68edb6469bfd940a8e8bc6147a5.1729897278.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: BN9PR03CA0061.namprd03.prod.outlook.com
- (2603:10b6:408:fc::6) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79EB195FE3
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:58:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730217539; cv=none; b=BDr8lZvTeJrlSLbFvMggqB7D8elEYIWV7U/5h5bTbg0u5oPBnjCPFKpW5VGRv7PgE6t1y8r8n2RzVNarCEzOJkrFCu9hGO24jLcnAvvtIHE2Iz5ZkEB3KqdpFmQVwMJdp5GUhqgxhqhlqEonwSLoOKfU7Gjj03R5Edp7TSbJ/ZE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730217539; c=relaxed/simple;
+	bh=9rxRnvMHKieuIPgSZR2KhvHzI6LksLWfD6moc6GGmjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rCLfN+QxcJE+o9s0pz7x4kfxrvwTRavmqOYcltQ9xs6RuoQuKNOjPe3GFD5cp4oH7bPgPC8cfQiYoSdVBdDLgg2GEYCl3jsbo4B/T4xDuwZvQe8Qti6PRj+gIOZij/+X2DaPZIXhMqU4dGAGIM/mdRUWvtLXqYqLcmqVx1JhhCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=I7P3k6yU; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730217535;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G07csj/HNKUG9US1sa0uMRjt/spEWmkQbZuUCy73fiM=;
+	b=I7P3k6yURh2znNcOjLF5mki2D9/xjTTpRCiISb2cTArz6ZyhlSV9lkukG1piGqf1Z3En6A
+	HXuz28x/JlcOGgJtYNKckjBNLmefgwYVS3g8oLUb7zUaW0wbgNWABAylAE1Xo7i7rhp9Dn
+	CyBB0PorFqMKmHKOMEA2InoZbnlhfv8=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-107-qCLRboBOMDyvyh6TIhE8JA-1; Tue,
+ 29 Oct 2024 11:58:54 -0400
+X-MC-Unique: qCLRboBOMDyvyh6TIhE8JA-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E7F201955D50;
+	Tue, 29 Oct 2024 15:58:51 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.26])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0B9CD19560AA;
+	Tue, 29 Oct 2024 15:58:43 +0000 (UTC)
+Date: Tue, 29 Oct 2024 23:58:37 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Christoph Hellwig <hch@lst.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH V2 3/3] block: model freeze & enter queue as lock for
+ supporting lockdep
+Message-ID: <ZyEGLdg744U_xBjp@fedora>
+References: <20241025003722.3630252-1-ming.lei@redhat.com>
+ <20241025003722.3630252-4-ming.lei@redhat.com>
+ <CGME20241029111338eucas1p2bd56c697b825eef235604e892569207e@eucas1p2.samsung.com>
+ <ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SJ0PR12MB8090:EE_
-X-MS-Office365-Filtering-Correlation-Id: c46c3fdb-5495-4112-0adf-08dcf8328586
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S00Y4De2y2KfrKfbKUmQlDdrR3Lydsl8Po+rKo7GeggYLUOZrZwgYZYKvVm+?=
- =?us-ascii?Q?7w3JOWkFeQQAPMqF79+VHXPtzZbzLr4apXfxJTUf8031IPHeLnHnWlz0v/B+?=
- =?us-ascii?Q?v+JHqPTcsBViBK/YTLeSVZeVhDFNOPIPcB/B69VBIUp/ozUFQTyb4AGTDF9A?=
- =?us-ascii?Q?mPz4HEqtA0FpI+pA+0dCaDj1DkO6LOSpJIsHmv204RbmmOVzdEf0idQjX5qw?=
- =?us-ascii?Q?/mZOUOzw1/P+qbyfU/va3YqW7Fh4DdgKAoxyOBxuD0g5Yu+pN0pBH8FWjmEv?=
- =?us-ascii?Q?Zrx4JHCcAfsGFmacwLJKoBCRx593DFXRJFQ1s88Fx6XHqX0VW4oT4sOX3939?=
- =?us-ascii?Q?E6Vlq0pIuBzDdHounk0sAq1bkZnKQ0eCVFSbcLiGWAbjHanAiFveKzXtmAOh?=
- =?us-ascii?Q?dTK197CbdKywlBarQOG01f0bctsvX2mkT2ywLfXhieVx5sfFxXRFwbxIAqZt?=
- =?us-ascii?Q?Z8t2oFE972IQVeq9Yn63qwwULBTGht/hEkPUKFK5nmuK7Fi25pjHRrIyA+Cw?=
- =?us-ascii?Q?/9B1rt2RyDSXF3UkLydOCA99RfkbtUyizR1ck4Lfsh6LqN9auPhtGNZ8B1Om?=
- =?us-ascii?Q?sI/Mvt5ThWhAYzxFjT5rNvC0NcmZAKZ0UnQDMETuYvblFfy77D5n1gKXXROr?=
- =?us-ascii?Q?YELvTl8/cfI0YM6eOKKrdienuNhHwMBQPspWHYlYQrWKtJM+l45mBa7SRlRQ?=
- =?us-ascii?Q?d202eZJl5hF2aPDB92aKdS7ZzM/E94s5TNcCnG0Ya4xRVIsiLKWFVZ30VVVZ?=
- =?us-ascii?Q?ficC8SR1uWUBUcdoNE8O1pJsTzEhVDtAgTSNECUuiVr0U7m0JZ9FmHcBF353?=
- =?us-ascii?Q?P4ljIvM9PCoYhSuu00+36DzvoR9yMMz3r+2qAj1BKQNXzcU6pCHdDbR6aAzz?=
- =?us-ascii?Q?p+4DPj3cJ3DO5PzKSje3dWGWIwkoQJOmSpnUJgPs8EFz7+lJ6MJzbRf+ZWtl?=
- =?us-ascii?Q?1tqelwvsXYDYFuWw+8QFHEwW0AkNWyA+ZfoYs425v77DewOFpplXj20nK9r8?=
- =?us-ascii?Q?8yaSzZ9QMC1ByYoTc7TU3UhxLvsDZqMB5oKWfKKH6+hOH/q1GePw2vGUBo/m?=
- =?us-ascii?Q?FW2uwXAovlcvjHbHcyL7ZVfhT4F+3iF/bSIhlJyEMCm/G2PlWA3GinEWKF4h?=
- =?us-ascii?Q?phJVEKkZ+PVWIUEzzFaFmLrHXo4mbook3ESB/+jxN1HSyy3UD1DEeMAylM75?=
- =?us-ascii?Q?yOtYCHkpFPq0PhFYrS+qdSiH/bpHllJKR2vOG27cn+UzyEGdk7qa2qJU9JcZ?=
- =?us-ascii?Q?AnLtT4HB3an9BxxPnD+gDN9yfHCwAslsl2/oeviQI/7qzMpni8IkJU6lmy2r?=
- =?us-ascii?Q?bbnOXI9T+PqwJkSRFTn23mNh?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?kt0x7IxOzjhhrH1zmXS22HxPVlD+457ToaKPYweFjxClw1lm+yhSqkf6Omnl?=
- =?us-ascii?Q?pIJyKmtRL5p4VYfN9xQ+qlGodW560sATymmZhDq0J/DIyxKVGbhx44BV/yyr?=
- =?us-ascii?Q?J5/Vil/NNdt7FHDWpy7/wq++bCqP3PT08qIYa1aw82+ZS0ZDJRuHYsxKtlaC?=
- =?us-ascii?Q?5Ysmkd5TEL0uMuh1Fl9kGuj2H2iHtpvQoYdfI0YyuR1diMC+DrPAHlCQCwr7?=
- =?us-ascii?Q?Spz6AHPFpDYgWYX0BpxRIuM2j/9qqToqhJj7mb8zlMsk4dSG6PSx9csnAXWK?=
- =?us-ascii?Q?nZ2NuiGWFtdowH716BNHddVMKjvQPupf2g40zdeRxgYk/ngPco0bYztGK5GI?=
- =?us-ascii?Q?qKCsQRCtyeekCOYch6YYaDtidyYydAdWdglU6jTMVXBev0cPz20o0XovRAlJ?=
- =?us-ascii?Q?EM1DRN7REMOIgudEByvuc+kDSS5XSIaBAORC8DWu67RgUTdBn+GUT4WgoJsP?=
- =?us-ascii?Q?kjHlUPLaKs8lJHrzgt5T+FRAlrx3zmIvltxhl5jXytQ87pbONr0dOtn3dJ+K?=
- =?us-ascii?Q?1JwKPvoqQrvSBTG3NOE6PpnqgMV6FRoYF7AbSPxUcwFw8akrWm1mUqfCNe7q?=
- =?us-ascii?Q?UmULGHwifsAEyQoAcuvrd/OwVpOegJrynw5Fz4cfWdXcGLd2LnATlBX53o7m?=
- =?us-ascii?Q?XVsmB0/FT5RWA9VJya5OJPZ15Jn2ZKDIZjuPV1Tnu4tp5f4YITSzweh7Fo/5?=
- =?us-ascii?Q?x4v+DaPe+TQ+ZO4jbonqWtKeZUl/J44j7v2lRs9Hb5RbxQJ5YyIC1c8b+h2M?=
- =?us-ascii?Q?EZ+Qxal2PaA7ufc1WT7YFLQz89mU8WFjKm9Jn8GKtVsNVUf9GqsOZbyow359?=
- =?us-ascii?Q?hwl8F1AgXTok/OJqp8rQQcl/T0pOAQg2txWhzn6YXqGVulLjaBkN2Tv2SONT?=
- =?us-ascii?Q?jgV82FX3toHN3YVoo+REfB+myCZF2a53LuBLlqv4mh+ONx/Td8HwKRgKF/f4?=
- =?us-ascii?Q?W6kaXIQmwrOMFhsTW7BQDUO35gHABsYZnssKzKdLtM8aYfjPLDwYv6h+unLD?=
- =?us-ascii?Q?UWr2+GIX4i/TAwHvs4jl7lR79cjQzm0gAd4MrJb5sh87+a2vS9nuhjirHSwm?=
- =?us-ascii?Q?3A3yatGqLijCkdlN/l83HiC6Jkmx0MeFTbUd+PPgYpvy+vtkKKlaArbbR1FA?=
- =?us-ascii?Q?O+B+2iZ3YUYUXrOqVSIpBIikOJa79vNHjRajvdf69Rzbj/PgqoBR1ZHCUQT6?=
- =?us-ascii?Q?tFnn3Qg6RHyeX2mwhrqo4EJqiDRGiW1H4Ot5ITJlzoHPnDjZ7XdVloc5ilVd?=
- =?us-ascii?Q?zgjlnbSAeFkRTjn9X7pLIEN1xsIJVW4zU1u8EFwYMaLCB1+Thtcu7Jat0FVJ?=
- =?us-ascii?Q?DInRRhkyiCv+PO8pV1jih3WMwxHgKjdNvyBGCcPbDEXWr9dfuYWaVO5Mm66C?=
- =?us-ascii?Q?RcI9STGPUxHVbC27KZ6UH8jwDyV97b1JB3QK0WhsjXauHOlUPbV7yZk4cW3N?=
- =?us-ascii?Q?pZNtoKiWvcUn+I3sCSSNZb+4DRSSGOKEr8duCgqbSBsCUxnspvUmktaXmOZT?=
- =?us-ascii?Q?dauY4078FTQUa5R+JopwjqHVcWHE5S03ryU3iu3xlSCkjOj8CizpOIJFpLy0?=
- =?us-ascii?Q?lH94iKW3eV+NfkJ2tHw=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c46c3fdb-5495-4112-0adf-08dcf8328586
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 15:58:25.5001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: sV2syAl1ijlRKCd00Dn1j8cawcJvjHmxu7S7rXLs7HLYxqdVZEeWYqFBVgD9N0Ac
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB8090
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <ca16370e-d646-4eee-b9cc-87277c89c43c@samsung.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Oct 25, 2024 at 04:50:30PM -0700, Nicolin Chen wrote:
-> +/**
-> + * struct iommu_vdevice_alloc - ioctl(IOMMU_VDEVICE_ALLOC)
-> + * @size: sizeof(struct iommu_vdevice_alloc)
-> + * @viommu_id: vIOMMU ID to associate with the virtual device
-> + * @dev_id: The pyhsical device to allocate a virtual instance on the vIOMMU
-> + * @__reserved: Must be 0
-> + * @virt_id: Virtual device ID per vIOMMU, e.g. vSID of ARM SMMUv3, vDeviceID
-> + *           of AMD IOMMU, and vID of a nested Intel VT-d to a Context Table.
-> + * @out_vdevice_id: Output virtual instance ID for the allocated object
+On Tue, Oct 29, 2024 at 12:13:35PM +0100, Marek Szyprowski wrote:
+> On 25.10.2024 02:37, Ming Lei wrote:
+> > Recently we got several deadlock report[1][2][3] caused by
+> > blk_mq_freeze_queue and blk_enter_queue().
+> >
+> > Turns out the two are just like acquiring read/write lock, so model them
+> > as read/write lock for supporting lockdep:
+> >
+> > 1) model q->q_usage_counter as two locks(io and queue lock)
+> >
+> > - queue lock covers sync with blk_enter_queue()
+> >
+> > - io lock covers sync with bio_enter_queue()
+> >
+> > 2) make the lockdep class/key as per-queue:
+> >
+> > - different subsystem has very different lock use pattern, shared lock
+> >   class causes false positive easily
+> >
+> > - freeze_queue degrades to no lock in case that disk state becomes DEAD
+> >    because bio_enter_queue() won't be blocked any more
+> >
+> > - freeze_queue degrades to no lock in case that request queue becomes dying
+> >    because blk_enter_queue() won't be blocked any more
+> >
+> > 3) model blk_mq_freeze_queue() as acquire_exclusive & try_lock
+> > - it is exclusive lock, so dependency with blk_enter_queue() is covered
+> >
+> > - it is trylock because blk_mq_freeze_queue() are allowed to run
+> >    concurrently
+> >
+> > 4) model blk_enter_queue() & bio_enter_queue() as acquire_read()
+> > - nested blk_enter_queue() are allowed
+> >
+> > - dependency with blk_mq_freeze_queue() is covered
+> >
+> > - blk_queue_exit() is often called from other contexts(such as irq), and
+> > it can't be annotated as lock_release(), so simply do it in
+> > blk_enter_queue(), this way still covered cases as many as possible
+> >
+> > With lockdep support, such kind of reports may be reported asap and
+> > needn't wait until the real deadlock is triggered.
+> >
+> > For example, lockdep report can be triggered in the report[3] with this
+> > patch applied.
+> >
+> > [1] occasional block layer hang when setting 'echo noop > /sys/block/sda/queue/scheduler'
+> > https://bugzilla.kernel.org/show_bug.cgi?id=219166
+> >
+> > [2] del_gendisk() vs blk_queue_enter() race condition
+> > https://lore.kernel.org/linux-block/20241003085610.GK11458@google.com/
+> >
+> > [3] queue_freeze & queue_enter deadlock in scsi
+> > https://lore.kernel.org/linux-block/ZxG38G9BuFdBpBHZ@fedora/T/#u
+> >
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> 
+> This patch landed yesterday in linux-next as commit f1be1788a32e 
+> ("block: model freeze & enter queue as lock for supporting lockdep").  
+> In my tests I found that it introduces the following 2 lockdep warnings:
+> 
+> 1. On Samsung Exynos 4412-based Odroid U3 board (ARM 32bit), observed 
+> when booting it:
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-rc4-00037-gf1be1788a32e #9290 Not tainted
+> ------------------------------------------------------
+> find/1284 is trying to acquire lock:
+> cf3b8534 (&mm->mmap_lock){++++}-{3:3}, at: __might_fault+0x30/0x70
+> 
+> but task is already holding lock:
+> c203a0c8 (&sb->s_type->i_mutex_key#2){++++}-{3:3}, at: 
+> iterate_dir+0x30/0x140
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+> 
+> -> #4 (&sb->s_type->i_mutex_key#2){++++}-{3:3}:
+>         down_write+0x44/0xc4
+>         start_creating+0x8c/0x170
+>         debugfs_create_dir+0x1c/0x178
+>         blk_register_queue+0xa0/0x1c0
+>         add_disk_fwnode+0x210/0x434
+>         brd_alloc+0x1cc/0x210
+>         brd_init+0xac/0x104
+>         do_one_initcall+0x64/0x30c
+>         kernel_init_freeable+0x1c4/0x228
+>         kernel_init+0x1c/0x12c
+>         ret_from_fork+0x14/0x28
+> 
+> -> #3 (&q->debugfs_mutex){+.+.}-{3:3}:
+>         __mutex_lock+0x94/0x94c
+>         mutex_lock_nested+0x1c/0x24
+>         blk_mq_init_sched+0x140/0x204
+>         elevator_init_mq+0xb8/0x130
+>         add_disk_fwnode+0x3c/0x434
 
-How about:
+The above chain can be cut by the following patch because disk state
+can be thought as DEAD in add_disk(), can you test it?
 
-@out_vdevice_id: Object handle for the vDevice. Pass to IOMMU_DESTORY
-
-
-> + * Allocate a virtual device instance (for a physical device) against a vIOMMU.
-> + * This instance holds the device's information (related to its vIOMMU) in a VM.
-> + */
-> +struct iommu_vdevice_alloc {
-> +	__u32 size;
-> +	__u32 viommu_id;
-> +	__u32 dev_id;
-> +	__u32 __reserved;
-> +	__aligned_u64 virt_id;
-> +	__u32 out_vdevice_id;
-> +	__u32 __reserved2;
-
-Lets not have two u32 reserved, put the out_vdevice_id above virt_id
-
-> diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-> index 5fd3dd420290..e50113305a9c 100644
-> --- a/drivers/iommu/iommufd/device.c
-> +++ b/drivers/iommu/iommufd/device.c
-> @@ -277,6 +277,17 @@ EXPORT_SYMBOL_NS_GPL(iommufd_ctx_has_group, IOMMUFD);
->   */
->  void iommufd_device_unbind(struct iommufd_device *idev)
->  {
-> +	u32 vdev_id = 0;
-> +
-> +	/* idev->vdev object should be destroyed prior, yet just in case.. */
-> +	mutex_lock(&idev->igroup->lock);
-> +	if (idev->vdev)
-
-Then should it have a WARN_ON here?
-
-> +		vdev_id = idev->vdev->obj.id;
-> +	mutex_unlock(&idev->igroup->lock);
-> +	/* Relying on xa_lock against a race with iommufd_destroy() */
-> +	if (vdev_id)
-> +		iommufd_object_remove(idev->ictx, NULL, vdev_id, 0);
-
-That doesn't seem right, iommufd_object_remove() should never be used
-to destroy an object that userspace created with an IOCTL, in fact
-that just isn't allowed.
-
-Ugh, there is worse here, we can't hold a long term reference on a
-kernel owned object:
-
-	idev->vdev = vdev;
-	refcount_inc(&idev->obj.users);
-
-As it prevents the kernel from disconnecting it.
-
-I came up with this that seems like it will work. Maybe we will need
-to improve it later. Instead of using the idev, just keep the raw
-struct device. We can hold a refcount on the struct device without
-races. There is no need for the idev igroup lock since the xa_lock
-does everything we need.
-
-diff --git a/drivers/iommu/iommufd/device.c b/drivers/iommu/iommufd/device.c
-index e50113305a9c47..5fd3dd42029015 100644
---- a/drivers/iommu/iommufd/device.c
-+++ b/drivers/iommu/iommufd/device.c
-@@ -277,17 +277,6 @@ EXPORT_SYMBOL_NS_GPL(iommufd_ctx_has_group, IOMMUFD);
-  */
- void iommufd_device_unbind(struct iommufd_device *idev)
- {
--	u32 vdev_id = 0;
--
--	/* idev->vdev object should be destroyed prior, yet just in case.. */
--	mutex_lock(&idev->igroup->lock);
--	if (idev->vdev)
--		vdev_id = idev->vdev->obj.id;
--	mutex_unlock(&idev->igroup->lock);
--	/* Relying on xa_lock against a race with iommufd_destroy() */
--	if (vdev_id)
--		iommufd_object_remove(idev->ictx, NULL, vdev_id, 0);
--
- 	iommufd_object_destroy_user(idev->ictx, &idev->obj);
- }
- EXPORT_SYMBOL_NS_GPL(iommufd_device_unbind, IOMMUFD);
-diff --git a/drivers/iommu/iommufd/driver.c b/drivers/iommu/iommufd/driver.c
-index 9849474f429f98..6e870bce2a0cd0 100644
---- a/drivers/iommu/iommufd/driver.c
-+++ b/drivers/iommu/iommufd/driver.c
-@@ -46,6 +46,6 @@ struct device *iommufd_viommu_find_dev(struct iommufd_viommu *viommu,
- 	lockdep_assert_held(&viommu->vdevs.xa_lock);
+diff --git a/block/elevator.c b/block/elevator.c
+index 4122026b11f1..efa6ff941a25 100644
+--- a/block/elevator.c
++++ b/block/elevator.c
+@@ -600,12 +600,14 @@ void elevator_init_mq(struct request_queue *q)
+ 	 * requests, then no need to quiesce queue which may add long boot
+ 	 * latency, especially when lots of disks are involved.
+ 	 */
+-	blk_mq_freeze_queue(q);
++	if (__blk_freeze_queue_start(q))
++		blk_freeze_acquire_lock(q, true, false);
+ 	blk_mq_cancel_work_sync(q);
  
- 	vdev = xa_load(&viommu->vdevs, vdev_id);
--	return vdev ? vdev->idev->dev : NULL;
-+	return vdev ? vdev->dev : NULL;
- }
- EXPORT_SYMBOL_NS_GPL(iommufd_viommu_find_dev, IOMMUFD);
-diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iommufd/iommufd_private.h
-index 365cf5a56cdf20..275f954235940c 100644
---- a/drivers/iommu/iommufd/iommufd_private.h
-+++ b/drivers/iommu/iommufd/iommufd_private.h
-@@ -152,9 +152,6 @@ static inline void iommufd_put_object(struct iommufd_ctx *ictx,
- 		wake_up_interruptible_all(&ictx->destroy_wait);
- }
+ 	err = blk_mq_init_sched(q, e);
  
--int iommufd_verify_unfinalized_object(struct iommufd_ctx *ictx,
--				      struct iommufd_object *to_verify);
--
- void iommufd_object_abort(struct iommufd_ctx *ictx, struct iommufd_object *obj);
- void iommufd_object_abort_and_destroy(struct iommufd_ctx *ictx,
- 				      struct iommufd_object *obj);
-@@ -391,7 +388,6 @@ struct iommufd_device {
- 	struct iommufd_object obj;
- 	struct iommufd_ctx *ictx;
- 	struct iommufd_group *igroup;
--	struct iommufd_vdevice *vdev;
- 	struct list_head group_item;
- 	/* always the physical device */
- 	struct device *dev;
-@@ -523,7 +519,7 @@ void iommufd_vdevice_abort(struct iommufd_object *obj);
- struct iommufd_vdevice {
- 	struct iommufd_object obj;
- 	struct iommufd_ctx *ictx;
--	struct iommufd_device *idev;
-+	struct device *dev;
- 	struct iommufd_viommu *viommu;
- 	u64 id; /* per-vIOMMU virtual ID */
- };
-diff --git a/drivers/iommu/iommufd/main.c b/drivers/iommu/iommufd/main.c
-index 696ac9e0e74b89..c90fe15af98be4 100644
---- a/drivers/iommu/iommufd/main.c
-+++ b/drivers/iommu/iommufd/main.c
-@@ -43,9 +43,10 @@ void iommufd_object_finalize(struct iommufd_ctx *ictx,
- {
- 	void *old;
+-	blk_mq_unfreeze_queue(q);
++	if (__blk_mq_unfreeze_queue(q, false))
++		blk_unfreeze_release_lock(q, true, false);
  
--	old = xa_store(&ictx->objects, obj->id, obj, GFP_KERNEL);
-+	old = xa_cmpxchg(&ictx->objects, obj->id, XA_ZERO_ENTRY, obj,
-+			 GFP_KERNEL);
- 	/* obj->id was returned from xa_alloc() so the xa_store() cannot fail */
--	WARN_ON(old);
-+	WARN_ON(old != XA_ZERO_ENTRY);
- }
- 
- /* Undo _iommufd_object_alloc() if iommufd_object_finalize() was not called */
-@@ -89,26 +90,6 @@ struct iommufd_object *iommufd_get_object(struct iommufd_ctx *ictx, u32 id,
- 	return obj;
- }
- 
--int iommufd_verify_unfinalized_object(struct iommufd_ctx *ictx,
--				      struct iommufd_object *to_verify)
--{
--	XA_STATE(xas, &ictx->objects, 0);
--	struct iommufd_object *obj;
--	int rc = 0;
--
--	if (!to_verify || !to_verify->id)
--		return -EINVAL;
--	xas.xa_index = to_verify->id;
--
--	xa_lock(&ictx->objects);
--	obj = xas_load(&xas);
--	/* Being an unfinalized object, the loaded obj is a reserved space */
--	if (obj != XA_ZERO_ENTRY)
--		rc = -ENOENT;
--	xa_unlock(&ictx->objects);
--	return rc;
--}
--
- static int iommufd_object_dec_wait_shortterm(struct iommufd_ctx *ictx,
- 					     struct iommufd_object *to_destroy)
- {
-diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viommu.c
-index 2b9a9a80298d8e..e7385676f17659 100644
---- a/drivers/iommu/iommufd/viommu.c
-+++ b/drivers/iommu/iommufd/viommu.c
-@@ -55,12 +55,6 @@ int iommufd_viommu_alloc_ioctl(struct iommufd_ucmd *ucmd)
- 		goto out_put_hwpt;
- 	}
- 
--	rc = iommufd_verify_unfinalized_object(ucmd->ictx, &viommu->obj);
--	if (rc) {
--		kfree(viommu);
--		goto out_put_hwpt;
--	}
--
- 	viommu->type = cmd->type;
- 	viommu->ictx = ucmd->ictx;
- 	viommu->hwpt = hwpt_paging;
-@@ -95,27 +89,18 @@ void iommufd_vdevice_abort(struct iommufd_object *obj)
- 	struct iommufd_vdevice *old,
- 		*vdev = container_of(obj, struct iommufd_vdevice, obj);
- 	struct iommufd_viommu *viommu = vdev->viommu;
--	struct iommufd_device *idev = vdev->idev;
--
--	lockdep_assert_held(&idev->igroup->lock);
- 
- 	old = xa_cmpxchg(&viommu->vdevs, vdev->id, vdev, NULL, GFP_KERNEL);
- 	if (old)
- 		WARN_ON(old != vdev);
- 
- 	refcount_dec(&viommu->obj.users);
--	refcount_dec(&idev->obj.users);
--	idev->vdev = NULL;
-+	put_device(vdev->dev);
- }
- 
- void iommufd_vdevice_destroy(struct iommufd_object *obj)
- {
--	struct iommufd_vdevice *vdev =
--		container_of(obj, struct iommufd_vdevice, obj);
--
--	mutex_lock(&vdev->idev->igroup->lock);
- 	iommufd_vdevice_abort(obj);
--	mutex_unlock(&vdev->idev->igroup->lock);
- }
- 
- int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
-@@ -140,30 +125,16 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
- 		goto out_put_viommu;
- 	}
- 
--	mutex_lock(&idev->igroup->lock);
--	if (idev->vdev) {
--		rc = -EEXIST;
--		goto out_unlock_igroup;
--	}
--
- 	vdev = iommufd_object_alloc(ucmd->ictx, vdev, IOMMUFD_OBJ_VDEVICE);
- 	if (IS_ERR(vdev)) {
- 		rc = PTR_ERR(vdev);
- 		goto out_unlock_igroup;
- 	}
- 
--	rc = iommufd_verify_unfinalized_object(ucmd->ictx, &vdev->obj);
--	if (rc) {
--		kfree(vdev);
--		goto out_unlock_igroup;
--	}
--
--	vdev->idev = idev;
- 	vdev->id = virt_id;
-+	vdev->dev = idev->dev;
-+	get_device(idev->dev);
- 	vdev->viommu = viommu;
--
--	idev->vdev = vdev;
--	refcount_inc(&idev->obj.users);
- 	refcount_inc(&viommu->obj.users);
- 
- 	curr = xa_cmpxchg(&viommu->vdevs, virt_id, NULL, vdev, GFP_KERNEL);
-@@ -182,7 +153,6 @@ int iommufd_vdevice_alloc_ioctl(struct iommufd_ucmd *ucmd)
- out_abort:
- 	iommufd_object_abort_and_destroy(ucmd->ictx, &vdev->obj);
- out_unlock_igroup:
--	mutex_unlock(&idev->igroup->lock);
- 	iommufd_put_object(ucmd->ictx, &idev->obj);
- out_put_viommu:
- 	iommufd_put_object(ucmd->ictx, &viommu->obj);
+ 	if (err) {
+ 		pr_warn("\"%s\" elevator initialization failed, "
+
+...
+
+> 2 locks held by find/1284:
+>   #0: c3df1e88 (&f->f_pos_lock){+.+.}-{3:3}, at: fdget_pos+0x88/0xd0
+>   #1: c203a0c8 (&sb->s_type->i_mutex_key#2){++++}-{3:3}, at: 
+> iterate_dir+0x30/0x140
+> 
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 1284 Comm: find Not tainted 
+> 6.12.0-rc4-00037-gf1be1788a32e #9290
+> Hardware name: Samsung Exynos (Flattened Device Tree)
+> Call trace:
+>   unwind_backtrace from show_stack+0x10/0x14
+>   show_stack from dump_stack_lvl+0x68/0x88
+>   dump_stack_lvl from print_circular_bug+0x31c/0x394
+>   print_circular_bug from check_noncircular+0x16c/0x184
+>   check_noncircular from __lock_acquire+0x158c/0x2970
+>   __lock_acquire from lock_acquire+0x130/0x384
+>   lock_acquire from __might_fault+0x50/0x70
+>   __might_fault from filldir64+0x94/0x28c
+>   filldir64 from dcache_readdir+0x174/0x260
+>   dcache_readdir from iterate_dir+0x64/0x140
+>   iterate_dir from sys_getdents64+0x60/0x130
+>   sys_getdents64 from ret_fast_syscall+0x0/0x1c
+> Exception stack(0xf22b5fa8 to 0xf22b5ff0)
+> 5fa0:                   004b4fa0 004b4f80 00000004 004b4fa0 00008000 
+> 00000000
+> 5fc0: 004b4fa0 004b4f80 00000001 000000d9 00000000 004b4af0 00000000 
+> 000010ea
+> 5fe0: 004b1eb4 bea05af0 b6da4b08 b6da4a28
+> 
+> --->8---
+> 
+> 
+> 2. On QEMU's ARM64 virt machine, observed during system suspend/resume 
+> cycle:
+> 
+> # time rtcwake -s10 -mmem
+> rtcwake: wakeup from "mem" using /dev/rtc0 at Tue Oct 29 11:54:30 2024
+> PM: suspend entry (s2idle)
+> Filesystems sync: 0.004 seconds
+> Freezing user space processes
+> Freezing user space processes completed (elapsed 0.007 seconds)
+> OOM killer disabled.
+> Freezing remaining freezable tasks
+> Freezing remaining freezable tasks completed (elapsed 0.004 seconds)
+> 
+> ======================================================
+> WARNING: possible circular locking dependency detected
+> 6.12.0-rc4+ #9291 Not tainted
+> ------------------------------------------------------
+> rtcwake/1299 is trying to acquire lock:
+> ffff80008358a7f8 (rtnl_mutex){+.+.}-{3:3}, at: rtnl_lock+0x1c/0x28
+> 
+> but task is already holding lock:
+> ffff000006136d68 (&q->q_usage_counter(io)#5){++++}-{0:0}, at: 
+> virtblk_freeze+0x24/0x60
+> 
+> which lock already depends on the new lock.
+> 
+> 
+> the existing dependency chain (in reverse order) is:
+
+This one looks a real thing, at least the added lockdep code works as
+expected, also the blk_mq_freeze_queue() use in virtio-blk's ->suspend()
+is questionable. I will take a further look.
+
+
+Thanks,
+Ming
+
 
