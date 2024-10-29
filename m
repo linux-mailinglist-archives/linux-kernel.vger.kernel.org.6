@@ -1,397 +1,196 @@
-Return-Path: <linux-kernel+bounces-386684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDCE89B46E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:32:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CB899B46D8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D776283915
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:32:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0A7D1F23B0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72FA41DEFFE;
-	Tue, 29 Oct 2024 10:32:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831B5204952;
+	Tue, 29 Oct 2024 10:29:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="KFzzeHSC"
-Received: from esa5.hgst.iphmx.com (esa5.hgst.iphmx.com [216.71.153.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="SDRXj+3D";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zo9sl49Z";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BHOU5eOh";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="A0q0vgG3"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4FD204F89;
-	Tue, 29 Oct 2024 10:31:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.71.153.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB121839E4;
+	Tue, 29 Oct 2024 10:29:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730197922; cv=none; b=EG9IQLXpTDuu/8xFKQaSDJY0iOKPH6n4pfh2yq+zP5fYmZf0ifkZqeo9L7zNiBfUnkR3T5Wp2QhuRHYZ6y+1jtg/TepWp2/TzwRCT5KM/c6SCH0a1dhM/uUWdLiomxQFsZ4bAtiQF4KMpUjO+j9+IE0jdvdMRsqFj9ywYpdsvqc=
+	t=1730197781; cv=none; b=UOJx2iVWQDSt55vpQccSNeOCY7yd8+ciKuE3CiG4bgnjif5BRnp2RhPa3Ud7I1woKJZ4NwzgHQ9roexrAOYdbG5MNSJ/01tS3QCySYRraks6A7oBp/OCDhHTbhnf/EL+PTC6wLhiWgXcBcz8m/NPqDQKOqJmVBqcxuFJv5vgvFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730197922; c=relaxed/simple;
-	bh=wa7SSAoDHh4qwkDn6recGCiBpo3N9nVWye+iPsMj69Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TSOetLZi7Hf8q59TDalK+0FpDE/7T+PSk09stEm+lVvUQj0UnlNGoIcUFKSPfb041rsay0Rl/Y04Pr5u7JNpoUS6GttYhtX7ATgavV5D5cL3QZshww2p73b4LYurArJneG9lwe53D5+xwNPN/LQsn5EWr2uzLPRMaZEouxZVkC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com; spf=pass smtp.mailfrom=wdc.com; dkim=pass (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b=KFzzeHSC; arc=none smtp.client-ip=216.71.153.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wdc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1730197919; x=1761733919;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=wa7SSAoDHh4qwkDn6recGCiBpo3N9nVWye+iPsMj69Y=;
-  b=KFzzeHSCvj7x5wHZgsvvRyNC8D9ekGa4iX635ZO3SAr+UfHTQAPSydAJ
-   5rH6AE7RsoLjXW+InYvD0OoG6R3Bq0eUtn7tUOwo8dcqv3N5XjWVa+JRJ
-   Oip6/Ud51nsKdBxFh9mnvKhc7Wym8rf6U31bUtM3tb7iOagyZuBC1KvmN
-   jKBrQbqA9r3tcjGskoGk7fJ8wBFynCIBL6haGI9N76CkTk/eyPPawdZaz
-   DAH0VgifN63vA+XkNv3L2K6ju1vko/x6hBqan3zhEV2fQR1YxJCOsSurP
-   4iZjgMgc/LJXmy3K1XML4lqV1EGAop47ttBmUaGSSE63Z1xjsRqQP19D6
-   A==;
-X-CSE-ConnectionGUID: SKAJNaUHTUCDofvu+eXNEQ==
-X-CSE-MsgGUID: aMJ9Ku9IT3qXBPOO80xX4Q==
-X-IronPort-AV: E=Sophos;i="6.11,241,1725292800"; 
-   d="scan'208";a="31231856"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 29 Oct 2024 18:31:59 +0800
-IronPort-SDR: 6720ac72_zGv44sNU5ZtZHppZtX4sEu4FSJvcJp6va/VYdyQLpbAa0Lw
- Wtww6/0/3v3E2lotOrQx0hJSBw7NT6E9H7Xt3lg==
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Oct 2024 02:35:46 -0700
-WDCIronportException: Internal
-Received: from avri-office.ad.shared (HELO avri-office.sdcorp.global.sandisk.com) ([10.45.31.142])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Oct 2024 03:31:58 -0700
-From: Avri Altman <avri.altman@wdc.com>
-To: "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org,
+	s=arc-20240116; t=1730197781; c=relaxed/simple;
+	bh=RWDTkc2mC5P9oWE8l7uS05yQr/bSQVafDmQClHceYUE=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HHO++xeouhEvPn0mfNmwepUzmVO/vvXWh45TtYmIEGEgyFzkTUWLhC6E1MEjCXiUadRIQGy23HnM0QQlg4m5Y8JTHxxUu/ke44OfaQE0wWBh2YupHdM1R+PVcuMTHd1rk/p/QJsfvAoIz11vI8NfDSwkXy1o9wnYV13EhYdhDT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=SDRXj+3D; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zo9sl49Z; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BHOU5eOh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=A0q0vgG3; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id D97821F393;
+	Tue, 29 Oct 2024 10:29:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730197778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R0/vMU3FNM+TQ2c3PTiDPuUXc7T52Hqxj70/05xfkGk=;
+	b=SDRXj+3DCKpfnTglx0e6CGtJiuowuPG9k4IGYXzU3gE2jeS6ULv58wmC3yE9UGdqs6IWqe
+	2OubK89j6vWDRP1fzgeqRUf5A+rZQDf4oppjBahPdK2TuBHtvGPTmfdHOHCaHwxZzA2DjH
+	fDZ3gIMwl99epZ85jkQAw4IkfRjFCEg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730197778;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R0/vMU3FNM+TQ2c3PTiDPuUXc7T52Hqxj70/05xfkGk=;
+	b=zo9sl49ZlLvaQjowd/bE0EI1jfjJvgrffMpiIGI3gYNBQPc8A2vx34qcvmzL1zv9tUn1XW
+	e6ussS9lM8GjD/AA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=BHOU5eOh;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=A0q0vgG3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1730197777; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R0/vMU3FNM+TQ2c3PTiDPuUXc7T52Hqxj70/05xfkGk=;
+	b=BHOU5eOhjSAIMQBwT9Bfn+JFdGk/Tf4LNJTTeQsoWV4RBVOyZQWjsJhypoZmWYqfMxVnB+
+	rcxhuB4b433clqcJCkeLB+XPTStQP8YiuvRtiKuXrO1fpG/Y7i/OmRa6Ib72HJzNM/dxej
+	dpWkrQJUe+Ovab0rWRSNLAT0gx38ICE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1730197777;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R0/vMU3FNM+TQ2c3PTiDPuUXc7T52Hqxj70/05xfkGk=;
+	b=A0q0vgG32RIRG5TpXuO/0hPnD1bAqZJY/DnQ+okL8dT+x7YUeeVCJD11iXG3+FmLSAGJ+P
+	7C7kPEBo/8T339Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B5569139A2;
+	Tue, 29 Oct 2024 10:29:37 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id MaOaKxG5IGeQMwAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Tue, 29 Oct 2024 10:29:37 +0000
+Date: Tue, 29 Oct 2024 11:30:25 +0100
+Message-ID: <87plnj19ry.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Amadeusz =?ISO-8859-2?Q?S=B3awi=F1ski?=
+ <amadeuszx.slawinski@linux.intel.com>
+Cc: Aleksei Vetrov <vvvvvv@google.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v2 2/2] scsi: ufs: core: Introduce a new clock_scaling lock
-Date: Tue, 29 Oct 2024 12:29:38 +0200
-Message-Id: <20241029102938.685835-3-avri.altman@wdc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241029102938.685835-1-avri.altman@wdc.com>
-References: <20241029102938.685835-1-avri.altman@wdc.com>
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] ASoC: dapm: fix bounds checker error in dapm_widget_list_create
+In-Reply-To: <987b8806-2ec7-41f7-bdeb-8f843c34a993@linux.intel.com>
+References: <20241028-soc-dapm-bounds-checker-fix-v1-1-262b0394e89e@google.com>
+	<987b8806-2ec7-41f7-bdeb-8f843c34a993@linux.intel.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-2
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D97821F393
+X-Spam-Score: -3.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[google.com,gmail.com,kernel.org,perex.cz,suse.com,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Introduce a new clock scaling lock to serialize access to some of the
-clock scaling members instead of the host_lock. here also, simplify the
-code with the guard() macro and co.
+On Tue, 29 Oct 2024 10:50:21 +0100,
+Amadeusz S³awiñski wrote:
+> 
+> On 10/28/2024 11:50 PM, Aleksei Vetrov wrote:
+> > The widgets array in the snd_soc_dapm_widget_list has a __counted_by
+> > attribute attached to it, which points to the num_widgets variable. This
+> > attribute is used in bounds checking, and if it is not set before the
+> > array is filled, then the bounds sanitizer will issue a warning or a
+> > kernel panic if CONFIG_UBSAN_TRAP is set.
+> > 
+> > This patch sets the size of the widgets list calculated with
+> > list_for_each as the initial value for num_widgets as it is used for
+> > allocating memory for the array. It is updated with the actual number of
+> > added elements after the array is filled.
+> > 
+> > Signed-off-by: Aleksei Vetrov <vvvvvv@google.com>
+> > ---
+> >   sound/soc/soc-dapm.c | 2 ++
+> >   1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/sound/soc/soc-dapm.c b/sound/soc/soc-dapm.c
+> > index c34934c31ffec3970b34b24dcaa0826dfb7d8e86..99521c784a9b16a232a558029a2f3e88bd8ebfb1 100644
+> > --- a/sound/soc/soc-dapm.c
+> > +++ b/sound/soc/soc-dapm.c
+> > @@ -1147,6 +1147,8 @@ static int dapm_widget_list_create(struct snd_soc_dapm_widget_list **list,
+> >   	if (*list == NULL)
+> >   		return -ENOMEM;
+> >   +	(*list)->num_widgets = size;
+> > +
+> >   	list_for_each_entry(w, widgets, work_list)
+> >   		(*list)->widgets[i++] = w;
+> >   
+> 
+> and after that there is (*list)->num_widgets = i;
+> 
+> Can this be somehow simplified to remove 'i', if it set before assignment?
 
-Signed-off-by: Avri Altman <avri.altman@wdc.com>
----
- drivers/ufs/core/ufshcd.c | 126 +++++++++++++++++---------------------
- include/ufs/ufshcd.h      |  16 +++--
- 2 files changed, 65 insertions(+), 77 deletions(-)
+That line can be removed after this change, I suppose.
+The size is calculated from the list at the beginning, and it must be
+the exact size.
 
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 3373debe7b94..e574910adba5 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -1447,16 +1447,14 @@ static void ufshcd_clk_scaling_suspend_work(struct work_struct *work)
- {
- 	struct ufs_hba *hba = container_of(work, struct ufs_hba,
- 					   clk_scaling.suspend_work);
--	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (hba->clk_scaling.active_reqs || hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock) {
-+		if (hba->clk_scaling.active_reqs || hba->clk_scaling.is_suspended)
-+			return;
-+
-+		hba->clk_scaling.is_suspended = true;
-+		hba->clk_scaling.window_start_t = 0;
- 	}
--	hba->clk_scaling.is_suspended = true;
--	hba->clk_scaling.window_start_t = 0;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	devfreq_suspend_device(hba->devfreq);
- }
-@@ -1465,15 +1463,12 @@ static void ufshcd_clk_scaling_resume_work(struct work_struct *work)
- {
- 	struct ufs_hba *hba = container_of(work, struct ufs_hba,
- 					   clk_scaling.resume_work);
--	unsigned long irq_flags;
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (!hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock) {
-+		if (!hba->clk_scaling.is_suspended)
-+			return;
-+		hba->clk_scaling.is_suspended = false;
- 	}
--	hba->clk_scaling.is_suspended = false;
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	devfreq_resume_device(hba->devfreq);
- }
-@@ -1487,7 +1482,6 @@ static int ufshcd_devfreq_target(struct device *dev,
- 	bool scale_up = false, sched_clk_scaling_suspend_work = false;
- 	struct list_head *clk_list = &hba->clk_list_head;
- 	struct ufs_clk_info *clki;
--	unsigned long irq_flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return -EINVAL;
-@@ -1508,43 +1502,37 @@ static int ufshcd_devfreq_target(struct device *dev,
- 		*freq =	(unsigned long) clk_round_rate(clki->clk, *freq);
- 	}
- 
--	spin_lock_irqsave(hba->host->host_lock, irq_flags);
--	if (ufshcd_eh_in_progress(hba)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		return 0;
--	}
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock) {
-+		if (ufshcd_eh_in_progress(hba))
-+			return 0;
- 
--	/* Skip scaling clock when clock scaling is suspended */
--	if (hba->clk_scaling.is_suspended) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		dev_warn(hba->dev, "clock scaling is suspended, skip");
--		return 0;
--	}
-+		/* Skip scaling clock when clock scaling is suspended */
-+		if (hba->clk_scaling.is_suspended) {
-+			dev_warn(hba->dev, "clock scaling is suspended, skip");
-+			return 0;
-+		}
- 
--	if (!hba->clk_scaling.active_reqs)
--		sched_clk_scaling_suspend_work = true;
-+		if (!hba->clk_scaling.active_reqs)
-+			sched_clk_scaling_suspend_work = true;
- 
--	if (list_empty(clk_list)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		goto out;
--	}
-+		if (list_empty(clk_list))
-+			goto out;
- 
--	/* Decide based on the target or rounded-off frequency and update */
--	if (hba->use_pm_opp)
--		scale_up = *freq > hba->clk_scaling.target_freq;
--	else
--		scale_up = *freq == clki->max_freq;
-+		/* Decide based on the target or rounded-off frequency and update */
-+		if (hba->use_pm_opp)
-+			scale_up = *freq > hba->clk_scaling.target_freq;
-+		else
-+			scale_up = *freq == clki->max_freq;
- 
--	if (!hba->use_pm_opp && !scale_up)
--		*freq = clki->min_freq;
-+		if (!hba->use_pm_opp && !scale_up)
-+			*freq = clki->min_freq;
- 
--	/* Update the frequency */
--	if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
--		spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
--		ret = 0;
--		goto out; /* no state change required */
-+		/* Update the frequency */
-+		if (!ufshcd_is_devfreq_scaling_required(hba, *freq, scale_up)) {
-+			ret = 0;
-+			goto out; /* no state change required */
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, irq_flags);
- 
- 	start = ktime_get();
- 	ret = ufshcd_devfreq_scale(hba, *freq, scale_up);
-@@ -1569,7 +1557,6 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- {
- 	struct ufs_hba *hba = dev_get_drvdata(dev);
- 	struct ufs_clk_scaling *scaling = &hba->clk_scaling;
--	unsigned long flags;
- 	ktime_t curr_t;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
-@@ -1577,7 +1564,8 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 
- 	memset(stat, 0, sizeof(*stat));
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	curr_t = ktime_get();
- 	if (!scaling->window_start_t)
- 		goto start_window;
-@@ -1613,7 +1601,7 @@ static int ufshcd_devfreq_get_dev_status(struct device *dev,
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
-+
- 	return 0;
- }
- 
-@@ -1677,19 +1665,18 @@ static void ufshcd_devfreq_remove(struct ufs_hba *hba)
- 
- static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- {
--	unsigned long flags;
- 	bool suspend = false;
- 
- 	cancel_work_sync(&hba->clk_scaling.suspend_work);
- 	cancel_work_sync(&hba->clk_scaling.resume_work);
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (!hba->clk_scaling.is_suspended) {
--		suspend = true;
--		hba->clk_scaling.is_suspended = true;
--		hba->clk_scaling.window_start_t = 0;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock) {
-+		if (!hba->clk_scaling.is_suspended) {
-+			suspend = true;
-+			hba->clk_scaling.is_suspended = true;
-+			hba->clk_scaling.window_start_t = 0;
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	if (suspend)
- 		devfreq_suspend_device(hba->devfreq);
-@@ -1697,15 +1684,14 @@ static void ufshcd_suspend_clkscaling(struct ufs_hba *hba)
- 
- static void ufshcd_resume_clkscaling(struct ufs_hba *hba)
- {
--	unsigned long flags;
- 	bool resume = false;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
--	if (hba->clk_scaling.is_suspended) {
--		resume = true;
--		hba->clk_scaling.is_suspended = false;
-+	scoped_guard(spinlock_irqsave, &hba->clk_scaling.lock) {
-+		if (hba->clk_scaling.is_suspended) {
-+			resume = true;
-+			hba->clk_scaling.is_suspended = false;
-+		}
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- 
- 	if (resume)
- 		devfreq_resume_device(hba->devfreq);
-@@ -1791,6 +1777,8 @@ static void ufshcd_init_clk_scaling(struct ufs_hba *hba)
- 	INIT_WORK(&hba->clk_scaling.resume_work,
- 		  ufshcd_clk_scaling_resume_work);
- 
-+	spin_lock_init(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.workq = alloc_ordered_workqueue(
- 		"ufs_clkscaling_%d", WQ_MEM_RECLAIM, hba->host->host_no);
- 
-@@ -2139,19 +2127,17 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- {
- 	bool queue_resume_work = false;
- 	ktime_t curr_t = ktime_get();
--	unsigned long flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	if (!hba->clk_scaling.active_reqs++)
- 		queue_resume_work = true;
- 
--	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress) {
--		spin_unlock_irqrestore(hba->host->host_lock, flags);
-+	if (!hba->clk_scaling.is_enabled || hba->pm_op_in_progress)
- 		return;
--	}
- 
- 	if (queue_resume_work)
- 		queue_work(hba->clk_scaling.workq,
-@@ -2167,18 +2153,17 @@ static void ufshcd_clk_scaling_start_busy(struct ufs_hba *hba)
- 		hba->clk_scaling.busy_start_t = curr_t;
- 		hba->clk_scaling.is_busy_started = true;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- }
- 
- static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- {
- 	struct ufs_clk_scaling *scaling = &hba->clk_scaling;
--	unsigned long flags;
- 
- 	if (!ufshcd_is_clkscaling_supported(hba))
- 		return;
- 
--	spin_lock_irqsave(hba->host->host_lock, flags);
-+	guard(spinlock_irqsave)(&hba->clk_scaling.lock);
-+
- 	hba->clk_scaling.active_reqs--;
- 	if (!scaling->active_reqs && scaling->is_busy_started) {
- 		scaling->tot_busy_t += ktime_to_us(ktime_sub(ktime_get(),
-@@ -2186,7 +2171,6 @@ static void ufshcd_clk_scaling_update_busy(struct ufs_hba *hba)
- 		scaling->busy_start_t = 0;
- 		scaling->is_busy_started = false;
- 	}
--	spin_unlock_irqrestore(hba->host->host_lock, flags);
- }
- 
- static inline int ufshcd_monitor_opcode2dir(u8 opcode)
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 3d42532efbd1..1125b260aef9 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -434,6 +434,10 @@ struct ufs_clk_gating {
- 
- /**
-  * struct ufs_clk_scaling - UFS clock scaling related data
-+ * @workq: workqueue to schedule devfreq suspend/resume work
-+ * @suspend_work: worker to suspend devfreq
-+ * @resume_work: worker to resume devfreq
-+ * @lock: serialize access to some struct ufs_clk_scaling members
-  * @active_reqs: number of requests that are pending. If this is zero when
-  * devfreq ->target() function is called then schedule "suspend_work" to
-  * suspend devfreq.
-@@ -443,9 +447,6 @@ struct ufs_clk_gating {
-  * @enable_attr: sysfs attribute to enable/disable clock scaling
-  * @saved_pwr_info: UFS power mode may also be changed during scaling and this
-  * one keeps track of previous power mode.
-- * @workq: workqueue to schedule devfreq suspend/resume work
-- * @suspend_work: worker to suspend devfreq
-- * @resume_work: worker to resume devfreq
-  * @target_freq: frequency requested by devfreq framework
-  * @min_gear: lowest HS gear to scale down to
-  * @is_enabled: tracks if scaling is currently enabled or not, controlled by
-@@ -457,15 +458,18 @@ struct ufs_clk_gating {
-  * @is_suspended: tracks if devfreq is suspended or not
-  */
- struct ufs_clk_scaling {
-+	struct workqueue_struct *workq;
-+	struct work_struct suspend_work;
-+	struct work_struct resume_work;
-+
-+	spinlock_t lock;
-+
- 	int active_reqs;
- 	unsigned long tot_busy_t;
- 	ktime_t window_start_t;
- 	ktime_t busy_start_t;
- 	struct device_attribute enable_attr;
- 	struct ufs_pa_layer_attr saved_pwr_info;
--	struct workqueue_struct *workq;
--	struct work_struct suspend_work;
--	struct work_struct resume_work;
- 	unsigned long target_freq;
- 	u32 min_gear;
- 	bool is_enabled;
--- 
-2.25.1
 
+thanks,
+
+Takashi
 
