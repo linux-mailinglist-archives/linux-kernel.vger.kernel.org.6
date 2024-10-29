@@ -1,151 +1,206 @@
-Return-Path: <linux-kernel+bounces-386451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF7659B439E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:01:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 001ED9B43A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A118F1F23422
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:01:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76DAA1F235EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF588200BA5;
-	Tue, 29 Oct 2024 08:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BVy4r70s"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1E22038B2;
+	Tue, 29 Oct 2024 08:01:37 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22E4198E90
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:01:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 709671DF99F;
+	Tue, 29 Oct 2024 08:01:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188870; cv=none; b=LGyo6eLDkEb//eEcOleNaE3nOzGQAe4E8/desorVresMmpGB6DBsPC/ny7NejlMSlTuD8K1a8OUu+BRPy12loP9lwH2mFThii78CiOCQGNqT0hEZHrMwbBwO8eds7DLXW8Q0WihaLBcENGmuvstvDLgf8JAuHdObTQBNmhE2HZE=
+	t=1730188896; cv=none; b=WZpZstAgSPEggbhDkTCZyqbl5kXiOI3nvrCDs7G0z9M3DunVV9oH9Je9098J9MP5tsPnCdVuzv71Cm/WkazE26Brcd2vu98BEdq4aOPms7oTMK0Zh6mKB37eKlW7rkXpkIY4n2t7oiizhy5zoC531oToXyF/I6nF9/ZTkg7c7uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188870; c=relaxed/simple;
-	bh=bzhZz2GbYuomV5MFzqF3P/eLv0fnWUj7r5Lpx812OSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TCeCMvfgMHFux1F+Ky03tcKQglo1G2eJZcNeTQkwEQPZuQdEiSNTe/mAKIs/vA4Hmt1I7lNl0IblZU1ejlkPsjCuQ+m0pc5/1tZVbN95euV6Kgergy8s3evM6FIWoDFwL1+6RRJa0gmHOs13kR5RQBRyD+0wBXbTAvyQYITiBR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BVy4r70s; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4316cce103dso67925695e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:01:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730188866; x=1730793666; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bzhZz2GbYuomV5MFzqF3P/eLv0fnWUj7r5Lpx812OSI=;
-        b=BVy4r70s2ut3hLDrMBl0Z2UEc2oBuCPNWQPIiQ7KpnnSkNesLYo8l7ELZCty4Y8wNY
-         YSob9W4kOYqyCvGBhuiWIV88KQ92f2IwohisW3opUTOg/v/amzo1UR7P0DxGIDMALeZj
-         Rn4665R10xbZDxG0R+/XnQ+IokjVw6IRFZGkplMPx+57tWmzcLr/RALCkWfNwKfLtH2u
-         EFhfV44/wv6aSiDu3DQmBc+ujGCzY/+Cd8+H0U6Et0C+y7wwV0HHt1zME2Ft++GbI/0l
-         +4YaNNJBCwmRzmrEyIMcooaNYAfVE5MoupYgPut5KrHPmHt0FJJMv9YA+t6gYCVmmvCN
-         zAdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730188866; x=1730793666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bzhZz2GbYuomV5MFzqF3P/eLv0fnWUj7r5Lpx812OSI=;
-        b=rhU0tvIj+rhKG6bH5ZnohpHSfNiz1K75jUbOTDbwKAZZI5Y/1EwjPw2twZlPLADZ8C
-         uSGY1bZc6EVg7MxYP7mK9P03mCVBIPMlcaFxQPAO+awEhe7XHei2cnljTDo5tKS/Jfsb
-         Q8CEd3xv2MU8MwdmQ6aUY3uTbEbJ9whypavwDs/mHVqgTDg+IX9Dig5dRzbMpPP1MJs9
-         EIDrSxtgbpESbD+lJJ8kED8bCYVKd8MEOCb/LMawPKRVaZBWSAkfkn6E0cr7M3huAKDC
-         ZR0AIiv0SH+9yMmTZ2ll3kLXFaNy81JWj4Abb80wBTpaXUGLyxx5GTRENakyVfrmAejW
-         Bnjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVSUjMqBsP71r0+TJiDIum3mO+X0ZC9lHgGVKDNoCftU0gXQc8ipyEqDMQAEt2m5vTVlmXGg0m2ccuikDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8QUvHv39vbJCY0yf3d/8vNs03GpTmgsvClFRoEDUSgc7nRZIZ
-	/UoNSFCGgjSdhZadgGzo60eBU5Hcw5XE2MHE2r8ikx7fJoFYR79ldnax3wsg
-X-Google-Smtp-Source: AGHT+IFr0REKzIVW7Tl7PWuzYb/YDn87kfUPNpGrBe1ZEl3WOV7PcWg4Lczgc6Zu7KIosbpcVpyrhA==
-X-Received: by 2002:a05:6512:108c:b0:539:8f68:e036 with SMTP id 2adb3069b0e04-53b348e755fmr7646927e87.34.1730188854996;
-        Tue, 29 Oct 2024 01:00:54 -0700 (PDT)
-Received: from gmail.com (83-233-6-197.cust.bredband2.com. [83.233.6.197])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b2e1c96ebsm1305019e87.223.2024.10.29.01.00.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 01:00:54 -0700 (PDT)
-Date: Tue, 29 Oct 2024 09:00:52 +0100
-From: Marcus Folkesson <marcus.folkesson@gmail.com>
-To: Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: spi-nor: atmel: add at25sf321b entry
-Message-ID: <ZyCWNK_xMIsW4Ibq@gmail.com>
-References: <20241018-spi-nor-v1-1-d725bfb701ec@gmail.com>
- <239d2425-52f6-4deb-964e-e22d1a1f6637@linaro.org>
+	s=arc-20240116; t=1730188896; c=relaxed/simple;
+	bh=DWyuuNyI5EivBbhvHm3xZId6MbdsDyCE0SGv5o5janU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=W6e2QL9axG0o3lg7u97YQWCI/867HviVodWfyWrYonl2rwHlF6tgPw8xToVnd9uLhcygUN/gLmblFgmumyRoiFaW7CK0ejwL24ri2Pc7C2S2dxRTlhZhLo01L02ljrYwTzPVfxZzXnTF03rGuMClDHWPotgQ9qvVH56h7whw57A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: f7eb435495cb11efa216b1d71e6e1362-20241029
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
+	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
+	CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI
+	GTI_FG_IT, GTI_RG_INFO, GTI_FG_SER, GTI_C_BU, AMN_T1
+	AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:1712e57f-e99b-43d8-8d36-38876f304438,IP:25,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTI
+	ON:release,TS:10
+X-CID-INFO: VERSION:1.1.38,REQID:1712e57f-e99b-43d8-8d36-38876f304438,IP:25,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:10
+X-CID-META: VersionHash:82c5f88,CLOUDID:8d7803ee997f5958779c7ebadad8ebc0,BulkI
+	D:241024105327XGBM1VDO,BulkQuantity:8,Recheck:0,SF:44|64|66|841|24|17|19|1
+	02,TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:40,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_ULS
+X-UUID: f7eb435495cb11efa216b1d71e6e1362-20241029
+X-User: duanchenghao@kylinos.cn
+Received: from [172.30.80.21] [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 645352901; Tue, 29 Oct 2024 16:01:14 +0800
+Message-ID: <31be22e3ee6633e0753a717c7c0994802662a39d.camel@kylinos.cn>
+Subject: Re: [PATCH v4] USB: Fix the issue of task recovery failure caused
+ by USB status when S4 wakes up
+From: duanchenghao <duanchenghao@kylinos.cn>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: stern@rowland.harvard.edu, saranya.gopal@intel.com, 
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-usb@vger.kernel.org, niko.mauno@vaisala.com, pavel@ucw.cz,
+ rafael@kernel.org,  stanley_chang@realtek.com, tj@kernel.org,
+ xiehongyu1@kylinos.cn,  xy521521@gmail.com, kernel test robot
+ <lkp@intel.com>
+Date: Tue, 29 Oct 2024 16:01:04 +0800
+In-Reply-To: <2024102911-mooned-precise-f526@gregkh>
+References: <e795d88afb2b485fab97e2be7759664e823fbfad.camel@kylinos.cn>
+	 <20241024024038.26157-1-duanchenghao@kylinos.cn>
+	 <2024102432-conjoined-skylight-33f1@gregkh>
+	 <8aff9a5acbd21d7bd08b80e02ef2b34f2028cedf.camel@kylinos.cn>
+	 <2024102911-mooned-precise-f526@gregkh>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KknHUEYmorMeUoPi"
-Content-Disposition: inline
-In-Reply-To: <239d2425-52f6-4deb-964e-e22d1a1f6637@linaro.org>
 
+hi greg k-h,
 
---KknHUEYmorMeUoPi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hi Tudor,
-
-On Tue, Oct 29, 2024 at 07:16:08AM +0000, Tudor Ambarus wrote:
+=E5=9C=A8 2024-10-29=E6=98=9F=E6=9C=9F=E4=BA=8C=E7=9A=84 04:27 +0100=EF=BC=
+=8CGreg KH=E5=86=99=E9=81=93=EF=BC=9A
+> On Thu, Oct 24, 2024 at 04:46:48PM +0800, duanchenghao wrote:
+> > hi greg k-h,
+> >=20
+> > =E5=9C=A8 2024-10-24=E6=98=9F=E6=9C=9F=E5=9B=9B=E7=9A=84 09:05 +0200=EF=
+=BC=8CGreg KH=E5=86=99=E9=81=93=EF=BC=9A
+> > > On Thu, Oct 24, 2024 at 10:40:38AM +0800, Duan Chenghao wrote:
+> > > > When a device is inserted into the USB port and an S4 wakeup is
+> > > > initiated,
+> > > > after the USB-hub initialization is completed, it will
+> > > > automatically enter
+> > > > suspend mode. Upon detecting a device on the USB port, it will
+> > > > proceed with
+> > > > resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state.
+> > > > During
+> > > > the S4
+> > > > wakeup process, peripherals are put into suspend mode, followed
+> > > > by
+> > > > task
+> > > > recovery. However, upon detecting that the hcd is in the
+> > > > HCD_FLAG_WAKEUP_PENDING state, it will return an EBUSY status,
+> > > > causing the
+> > > > S4 suspend to fail and subsequent task recovery to not proceed.
+> > > > -
+> > > > [=C2=A0=C2=A0 27.594598][ 1]=C2=A0 PM: pci_pm_freeze():
+> > > > hcd_pci_suspend+0x0/0x28
+> > > > returns -16
+> > > > [=C2=A0=C2=A0 27.594601][ 1]=C2=A0 PM: dpm_run_callback():
+> > > > pci_pm_freeze+0x0/0x100
+> > > > returns -16
+> > > > [=C2=A0=C2=A0 27.603420][ 1]=C2=A0 ehci-pci 0000:00:04.1:
+> > > > pci_pm_freeze+0x0/0x100
+> > > > returned 0 after 3 usecs
+> > > > [=C2=A0=C2=A0 27.612233][ 1]=C2=A0 ehci-pci 0000:00:05.1:
+> > > > pci_pm_freeze+0x0/0x100
+> > > > returned -16 after 17223 usecs
+> > > > [=C2=A0=C2=A0 27.810067][ 1]=C2=A0 PM: Device 0000:00:05.1 failed t=
+o quiesce
+> > > > async: error -16
+> > > > [=C2=A0=C2=A0 27.816988][ 1]=C2=A0 PM: quiesce of devices aborted a=
+fter
+> > > > 1833.282
+> > > > msecs
+> > > > [=C2=A0=C2=A0 27.823302][ 1]=C2=A0 PM: start quiesce of devices abo=
+rted after
+> > > > 1839.975 msecs
+> > > > ......
+> > > > [=C2=A0=C2=A0 31.303172][ 1]=C2=A0 PM: recover of devices complete =
+after
+> > > > 3473.039
+> > > > msecs
+> > > > [=C2=A0=C2=A0 31.309818][ 1]=C2=A0 PM: Failed to load hibernation i=
+mage,
+> > > > recovering.
+> > > > [=C2=A0=C2=A0 31.348188][ 1]=C2=A0 PM: Basic memory bitmaps freed
+> > > > [=C2=A0=C2=A0 31.352686][ 1]=C2=A0 OOM killer enabled.
+> > > > [=C2=A0=C2=A0 31.356232][ 1]=C2=A0 Restarting tasks ... done.
+> > > > [=C2=A0=C2=A0 31.360609][ 1]=C2=A0 PM: resume from hibernation fail=
+ed (0)
+> > > > [=C2=A0=C2=A0 31.365800][ 1]=C2=A0 PM: Hibernation image not presen=
+t or could
+> > > > not
+> > > > be loaded.
+> > > >=20
+> > > > The "do_wakeup" is determined based on whether the controller's
+> > > > power/wakeup attribute is set. The current issue necessitates
+> > > > considering
+> > > > the type of suspend that is occurring. If the suspend type is
+> > > > either
+> > > > PM_EVENT_FREEZE or PM_EVENT_QUIESCE, then "do_wakeup" should be
+> > > > set
+> > > > to
+> > > > false.
+> > > >=20
+> > > > Reported-by: kernel test robot <lkp@intel.com>
+> > > > Closes:
+> > > > https://lore.kernel.org/oe-kbuild-all/202410151722.rfjtknRz-lkp@int=
+el.com/
+> > > > Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+> > > > Signed-off-by: Duan Chenghao <duanchenghao@kylinos.cn>
+> > >=20
+> > > What commit id does this fix?
+> >=20
+> > The current patch is not intended to fix an issue with a specific
+> > commit, but rather to address a long-standing problem in the USB
+> > core.
 >=20
+> So should it be backported to older stable kernels?=C2=A0 If so, how far
+> back?
+
+yes, It needs to be backported. The stable branches such as 6.6.y,
+6.10.y, and 6.11.y can be considered for the backport.
+
+Should we backport to these versions?
+
+Thanks=20
+
+Duan Chenghao
 >=20
-> On 10/18/24 10:51 AM, Marcus Folkesson wrote:
-> > Add entry for the at25sf321b 32Mbit SPI flash which is able to provide
-> > SFDP information.
+> > > And I missed where Alan provided a signed-off-by, where was that?
+> >=20
+> > In the following email, Alan proposed using "Signed-off-by" for
+> > signing.
+> > https://lore.kernel.org/all/489805e7-c19c-4b57-9cd7-713e075261cd@rowlan=
+d.harvard.edu/
 >=20
-> then we could initialize the flash based on SFDP. If you don't need
-> locking then probably you won't need a flash entry at all. See
-> https://docs.kernel.org/driver-api/mtd/spi-nor.html
+> Ah, missed that, sorry.
+>=20
+> thanks,
+>=20
+> greg k-h
 
-Hrmf. It seems like I have been looking into the wrong datasheet.
-
-The actual device is at25sf321, not at25s321b, where the former can not
-be identified using the SFDP table.
-At25sf321 and at25s321b uses the same JEDEC ID though, probably what got
-me wrong in the first place.
-
-Please see page 10 in
-https://www.renesas.cn/zh/document/apn/an201-adesto-32mbit-products-overview
-for further reading.
-
-I will send a v2 with updated details.
-
-Best regards,
-Marcus Folkesson
-
---KknHUEYmorMeUoPi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEBVGi6LZstU1kwSxliIBOb1ldUjIFAmcgli8ACgkQiIBOb1ld
-UjLqWBAAyi0k9ULJfnyCaEkxEVEnWiyzPbYA3Tb5WlQoY/FuzK9QF2YO5eAZcnX3
-1MI2jYg6AXHK5Peep8m0if7Zeul+lhXxoIbQ5rSvpg8V9emyP5H4OBMyC/Ut2Xn8
-dAmHWzZq/4x7tvioOuceQMyvom3f31ruLYj1UIQDxqkgPxph/Vs10uz6VDYD7+5m
-a2fws0yI32dprIjt17WJiNVqti7t8OB7UTtb+cMrYssTtcMJgg+ZwDbSbqKgKKgt
-jb53eSQM8o45g7W7FwZG5niwV+BDnv3+U2iBqez4Z+Az2fJxH0hUqYajlRGDtAMw
-9+OQW2YfXVuAhYBPeq1tbVRgYZYUi2gCo5QHtbXJ5dgetdzhHl1j1ZrSDTTWbSvO
-BkMoDBlW8tdik9S9WPu++i8yqq/2uvbhOFz+vlimTjJJELiu9GdGGNiuf7JG0S2g
-KuJdxtn0Md+s2+hHDK5ZguT6OljNsx0DADS1XW/K2TGsBrvHeUSsB05RvDaaUiwO
-BK47ytYmWued1tcflYvtj/9RL36rrHTJx1EQzedpzCHYqdGTPvXlfLPMqZVM7hvx
-qJOctA11w5wkDje2DUuxYzeG8uytdXglmAsnYM5DTZnTHpOtSAZf1VjCKCm9YkLh
-GeTIBZcjHffbAB4053mzvDA+Nxt88VTVteiUByfu6gKKVkcv3Jo=
-=l+pl
------END PGP SIGNATURE-----
-
---KknHUEYmorMeUoPi--
 
