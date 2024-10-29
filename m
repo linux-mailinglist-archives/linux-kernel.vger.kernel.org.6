@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-386869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DAA49B48D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:01:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68CE29B48DF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:03:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43024281BC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:01:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C8161C22649
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA76A205AA4;
-	Tue, 29 Oct 2024 12:01:07 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC85A205E16;
+	Tue, 29 Oct 2024 12:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vs8YLYaT"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D65F2010E0
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1DC2010E0;
+	Tue, 29 Oct 2024 12:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730203267; cv=none; b=BTgwMjvB9Aj5FA50WidmLXcxoevG0P5Vkh5pjn9RM3hQk+JbOKHaFSauppEMy7L9GaEOG0qQc0ua/9/qawhUEkUIxOCtUflDC/ngCgkfWx6ynyNVbxb3AmAhxBdutCcoVMTI7slJ0O3Gn5Mpaye/2UkA0d60HJLLXNj3xGWl5PM=
+	t=1730203371; cv=none; b=sG69uhXeU6yrmMtmBZjKCnkFXpjJiRoQCJB4nr28ecABlLWuDZIRUXJT5xtmxuwaWj4h2PeqQsy3Cl9PL7P02G8j2KsCcO9dx0H4ttZ40USjonkDso38dAC5L0V0gq+1ZOWQqOGD80eI3q9VxqqrRvyRv1Jb/udMgMn0FC3vuPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730203267; c=relaxed/simple;
-	bh=Awp8WP8YK8//JD8KIqDDEcMc/QLUqHZ79NHNdLQv3cc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=OkM7j1AogI4GIF2cAGolovtyEx+zWTKlgW0YbPeVqdrZPZO810ocTjfCo5VWB8zE051VXvCF8DgBErFFyXg2bJ0ZKn1IAgBpmBLZBR40p5L5vtR6lTPTlHYl6HlMubausP7crw34G4XZJjcCXbaHMIuu1e98W7E4KZ5TBzfck8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aa904b231so506318939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:01:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730203263; x=1730808063;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uXeGWYQhIn2DlGpfWwfazH0xzMvBnWNWzL+SQslnEZc=;
-        b=g555C9y7dO9+Rh+3nUCb0gTVfv/YkEIiwI8fw2OAvnT3MHav/smeTBp9+07wBEHC6B
-         qJ2ChSYA0deTidDfv8hIHkDXzoOHy+YW7WwHV0hUas5xcQF+At7kOojWPEZBC7h0g7Co
-         npT4OmGOdooyW+9mdkt7DUXclmBH9nVvX+7f+lKfZDMaXX6dR0oS+qcjwJrwB+A2Jtqq
-         cuMM2qfRG8q7eJ4Qz7qyytxqW/m+33tdzMhcbO0C2oLR/sHv9g7DD4WArNOHiOltppnn
-         XZa1doGm5iuJBD0NbRfJRC5WLqB2ZFHGofoxz0qgo8csTQO1v4+5lw0w5bFVqeCRNLdE
-         6gHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKKgtr72aHAKewVfSlLZhoAA3X3FwNOWZSeBAopHhuiojVcfYp2KmGm061wJoRxNwu2WYUNjg33YIFweo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxFXbp3ndGuNWXfw0BLjIUcvpR8Apsus1Y7Q84fBOFYc5bgAgQm
-	4E9LwrndaxuL7KbGY4eh7L0PFKyKG872dv9+i0L8wce7TY80rVTgC6y5GvVx+QQhLWLRvKjPXLP
-	kSovbzc2UHfAEwjzA48h7tSc7tpdGAJbIcL6dqtV2CMZmMYP2dCZF1rM=
-X-Google-Smtp-Source: AGHT+IGPQY8kxUqMvSJ3/4geValkMBfATzBcJltBfmgLz8uEKx9YG3cfjGTozwP6HOueuimewK28tH3YfqIi3HZtqLl1TbDLELqK
+	s=arc-20240116; t=1730203371; c=relaxed/simple;
+	bh=mkUNkwZOKzf/L7j4+ozdug6HRLKHrIEWQmmLtR0CwjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AWBzMKzqmlNsm7PGHb3Bkbaikme8SuurzYx5/JpoRG+coTX57FGp3fmuS1ZUw+ZMCpapPrk2VKbCHFVNEAY5FVmARV8tOfu3/lW+TWRwz+Mv+M7uNvhJWoZeQQ8wuJwP6bpXHjfAk080jPhn/0dF2Xo5oMT8rkrTeiwvv7ahfEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vs8YLYaT; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=MSSENdvMyuzo91ZSJkXGlvut0qguBDSstRfo6W1iEF0=; b=vs8YLYaTD7EC7DDmaI+9D04Lry
+	WDkFRZQrLIEyJjIyx5G9C8b09fOunqRWJxscl30npec/cQWx10fqwvAssc7Lreg/wOCs5p2xRFPUn
+	jfES/jYg44wJP1yZMqcQMs3UZiY6JKNr4NPLzw3bBBJeSOilfPa+pCyc99OTft5ALLG8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t5kvL-00BZ9M-Rt; Tue, 29 Oct 2024 13:02:11 +0100
+Date: Tue, 29 Oct 2024 13:02:11 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: jan.petrous@oss.nxp.com
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Minda Chen <minda.chen@starfivetech.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
+	Keyur Chudgar <keyur@os.amperecomputing.com>,
+	Quan Nguyen <quan@os.amperecomputing.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH v4 04/16] net: phy: Add helper for mapping RGMII link
+ speed to clock rate
+Message-ID: <cf51e433-4622-498a-8754-60b220cb6aab@lunn.ch>
+References: <20241028-upstream_s32cc_gmac-v4-0-03618f10e3e2@oss.nxp.com>
+ <20241028-upstream_s32cc_gmac-v4-4-03618f10e3e2@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13ac:b0:3a1:a293:4349 with SMTP id
- e9e14a558f8ab-3a4ed2fbabemr102499015ab.18.1730203262942; Tue, 29 Oct 2024
- 05:01:02 -0700 (PDT)
-Date: Tue, 29 Oct 2024 05:01:02 -0700
-In-Reply-To: <20241029112046.2492-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6720ce7e.050a0220.4735a.025b.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] kernel BUG in binder_alloc_deferred_release (2)
-From: syzbot <syzbot+dee8aa54cb2f5a150f9e@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028-upstream_s32cc_gmac-v4-4-03618f10e3e2@oss.nxp.com>
 
-Hello,
+On Mon, Oct 28, 2024 at 09:24:46PM +0100, Jan Petrous via B4 Relay wrote:
+> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
+> 
+> The RGMII interface supports three data rates: 10/100 Mbps
+> and 1 Gbps. These speeds correspond to clock frequencies
+> of 2.5/25 MHz and 125 MHz, respectively.
+> 
+> Many Ethernet drivers, including glues in stmmac, follow
+> a similar pattern of converting RGMII speed to clock frequency.
+> 
+> To simplify code, define the helper rgmii_clock(speed)
+> to convert connection speed to clock frequency.
+> 
+> Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-Reported-by: syzbot+dee8aa54cb2f5a150f9e@syzkaller.appspotmail.com
-Tested-by: syzbot+dee8aa54cb2f5a150f9e@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         e42b1a9a Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12784540580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4340261e4e9f37fc
-dashboard link: https://syzkaller.appspot.com/bug?extid=dee8aa54cb2f5a150f9e
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=14904540580000
-
-Note: testing is done by a robot and is best-effort only.
+    Andrew
 
