@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-386077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322079B3EDD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:08:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D919B3EDF
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:10:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC09C1F225E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:08:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7A92B22143
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C954400;
-	Tue, 29 Oct 2024 00:08:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B15A128FF;
+	Tue, 29 Oct 2024 00:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mde/PyOW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nk6fe8ve"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FE682F56;
-	Tue, 29 Oct 2024 00:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A6F23BB
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 00:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730160527; cv=none; b=TtQ5RSpcF0fnpP0JIel/yUmXiP2uSWVijqldpUJnddfJzSP3QRK3W/PoBWOO6QCOYOpEDYdJyjme7Lx9nVKQOuzu36yMwWpHqbxwwtd+uKA3p/+SoKAtmnU0DiZjiVqYvWknvRxBaoVmD7Tw+Rhbbc2RrJ28sVYhYU1ga4qcH70=
+	t=1730160601; cv=none; b=b8yfXW2DPj5L4pohQ1XvgR2vpTCf4jo2wTvM865w2R9fR2Z+VVWKDElROcgrErL3KCRrNb03QMoWIZzEQVF91Lp/d5iqa1/U1PHoq5D6tOFG29DEzkDR9gvwaQ0kpAU9TUXO7lV792X4Kemr8YSfmVva1O0lXxUgtrw1dx7qvCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730160527; c=relaxed/simple;
-	bh=Z9kYOx9QnUfURSK1MXGxCRMihyc/NCGFbBjvOnQS5Ak=;
+	s=arc-20240116; t=1730160601; c=relaxed/simple;
+	bh=Wvd7y7NCZsR5g5DUTAa1+XtV4RUFP0+yut9cgqwZX/c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UZ2hEIvLWa7raFHkWSgLQcyqoVqUr6JKiyKRjeKfx/roog0eT8bZ5EZz/Ft4dcDVmMPcFH7yhsMwBzVOjpQrLIXdb4LsuFFtLfKOeY2UPccgiyC5yJQtk7l/qawK4e0a0O0DW0nCvDUF9K5iVypZtPiax9U2xZlP1LdG8Dz8EyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mde/PyOW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F74DC4CEC3;
-	Tue, 29 Oct 2024 00:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730160527;
-	bh=Z9kYOx9QnUfURSK1MXGxCRMihyc/NCGFbBjvOnQS5Ak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mde/PyOWw84L/lIa5qt7MfY0O//i8GHeEiFKdrAWz9TwI+crY9yjuOc+3nAYEOX0Y
-	 5kgPSzFPey3nnMmE2fj6l0VfR4kuwXv3kxArQ25tg2hJr5gaaeN57tUuuWD6gcuWeM
-	 Hc6zSw8QI4qIdsFv2FeTRTDXHPNI+Jx5/JP5gTwXSFzx2RBoDVffwiWDAO3hX7v+6K
-	 oLoaTi/uHQDDJ5NXNyAyrY00ayAzKBUeC9N6z01oOhBnRBgf08jeemx/wfnGqLPpGy
-	 sbivf++RkfHeURmNx/EvWYm2pGHhXkBUgtMeJQ8xdBQhaTkPJYrgOtLhw6GVjnTwN6
-	 uy/HtlQljqEtQ==
-Date: Mon, 28 Oct 2024 17:08:44 -0700
-From: Kees Cook <kees@kernel.org>
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=oKJHSx3YLgYAcbsbZjkt0rABsLF90ykq69TeSvWSdhEF/KZH9uacjudvAoXKASlu4jZvEkF6xkk5nkG7opA+Hv8oYEmiFhFCgkonaiS/zS2XMlP8xgFROBWrmaTX2oR71qxgunJzoltCZss/CF6mHoRchqTtLLTWbt5lZ3UI4n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=nk6fe8ve; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-207115e3056so42426365ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 17:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1730160598; x=1730765398; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DyNj9yhVqBo8rP3kKnrY+7ZOwQuV7aQIAYn1Xhl/8tY=;
+        b=nk6fe8vevP7nadzWGcYSZZmAA9ig/3jr3Vn3al/t2F2h4u+NTNdj3QGZDRrZKj4wed
+         gEISGTFEjVcT4MniuWERpphZn+GKpIrCkhF4Vign3WWPG0ghb1OLWS/JxVT8QxzQEXGf
+         Y/HCUDYRjAAFDVGBAfIQuSd7amwsxrAvuUfZc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730160598; x=1730765398;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DyNj9yhVqBo8rP3kKnrY+7ZOwQuV7aQIAYn1Xhl/8tY=;
+        b=DHb9x9y1yMAAe607ZskW0Bx7jdISoSFTZO0BangxyBAJjlXhIom6t8+qpugefwYGJ3
+         evOXYw+VvHQJ8iK2h7c6bm9VTYoi0m/ekyGQPPdLpqWaUSa9Noo+0UXksC2EvOShpZja
+         6pG1vvB+z7khHN5trEts4e05hbMOlLlEur30CwYTHkYXMkPnV7JjHTWewZf/LrOfZvpf
+         x+439M+rrJ3r1p8eX29DbNQQpZOWX2ScML4YJLg0/X6sJgNXOqCszgptkN+6YJI/chis
+         45D/SeOGjhF8FidZxK/iFDFr/9X7ox4w1s5LOvQTIGzzIIudnb2QpOX7X0EiFe/EKqsX
+         g7gA==
+X-Forwarded-Encrypted: i=1; AJvYcCXpey4UFS3BoMehTOl0tXtIJbHCQVeBfT/jrRkZ8izPyhmb9OU/hNc24oysj8a8THD5srSaO9KzyyMzVv0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwceSkLl9+bo655DDR6Z9ztAWJWGb7Pjl5CVT2mhxcTQeDQqiZg
+	C9iio/XIUG6aLzGvvdk9zGvcGhF2NrlCwRCExlJ7AF/6QlPJY9/ejeujvicUdxGZ4ef1wr/ryk4
+	=
+X-Google-Smtp-Source: AGHT+IE2HFwFcx+qYPVftgpCRRknWjlLHbqaYVcm679LojSp+LUrsSXd4rZJs5l99oFP8OTxrKIKSw==
+X-Received: by 2002:a17:902:fc4e:b0:20c:9821:69a4 with SMTP id d9443c01a7336-210c6872726mr127498535ad.6.1730160598535;
+        Mon, 28 Oct 2024 17:09:58 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:f1f8:97e1:9c5b:d66f])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bc02df82sm56278975ad.189.2024.10.28.17.09.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Oct 2024 17:09:58 -0700 (PDT)
+Date: Tue, 29 Oct 2024 09:09:54 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Brian Geffon <bgeffon@google.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>,
-	Brian Gerst <brgerst@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	David Li <davidxl@google.com>, Han Shen <shenhan@google.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-	Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Juergen Gross <jgross@suse.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Nicolas Schier <nicolas@fjasle.eu>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Sami Tolvanen <samitolvanen@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org,
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Maksim Panchenko <max4bolt@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	Yabin Cui <yabinc@google.com>,
-	Krzysztof Pszeniczny <kpszeniczny@google.com>,
-	Sriraman Tallam <tmsriram@google.com>,
-	Stephane Eranian <eranian@google.com>, x86@kernel.org,
-	linux-arch@vger.kernel.org, sparclinux@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v6 1/7] Add AutoFDO support for Clang build
-Message-ID: <202410281708.83F316FF@keescook>
-References: <20241026051410.2819338-1-xur@google.com>
- <20241026051410.2819338-2-xur@google.com>
+	Minchan Kim <minchan@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 2/2] zram: clear IDLE flag in mark_idle()
+Message-ID: <20241029000954.GU1279924@google.com>
+References: <20241028153629.1479791-1-senozhatsky@chromium.org>
+ <20241028153629.1479791-3-senozhatsky@chromium.org>
+ <Zx_QblcMMLznXd4P@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,81 +82,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241026051410.2819338-2-xur@google.com>
+In-Reply-To: <Zx_QblcMMLznXd4P@google.com>
 
-On Fri, Oct 25, 2024 at 10:14:03PM -0700, Rong Xu wrote:
-> Add the build support for using Clang's AutoFDO. Building the kernel
-> with AutoFDO does not reduce the optimization level from the
-> compiler. AutoFDO uses hardware sampling to gather information about
-> the frequency of execution of different code paths within a binary.
-> This information is then used to guide the compiler's optimization
-> decisions, resulting in a more efficient binary. Experiments
-> showed that the kernel can improve up to 10% in latency.
-> 
-> The support requires a Clang compiler after LLVM 17. This submission
-> is limited to x86 platforms that support PMU features like LBR on
-> Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
->  and BRBE on ARM 1 is part of planned future work.
-> 
-> Here is an example workflow for AutoFDO kernel:
-> 
-> 1) Build the kernel on the host machine with LLVM enabled, for example,
->        $ make menuconfig LLVM=1
->     Turn on AutoFDO build config:
->       CONFIG_AUTOFDO_CLANG=y
->     With a configuration that has LLVM enabled, use the following
->     command:
->        scripts/config -e AUTOFDO_CLANG
->     After getting the config, build with
->       $ make LLVM=1
-> 
-> 2) Install the kernel on the test machine.
-> 
-> 3) Run the load tests. The '-c' option in perf specifies the sample
->    event period. We suggest     using a suitable prime number,
->    like 500009, for this purpose.
->    For Intel platforms:
->       $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> \
->         -o <perf_file> -- <loadtest>
->    For AMD platforms:
->       The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
->      For Zen3:
->       $ cat proc/cpuinfo | grep " brs"
->       For Zen4:
->       $ cat proc/cpuinfo | grep amd_lbr_v2
->       $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a \
->         -N -b -c <count> -o <perf_file> -- <loadtest>
-> 
-> 4) (Optional) Download the raw perf file to the host machine.
-> 
-> 5) To generate an AutoFDO profile, two offline tools are available:
->    create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
->    of the AutoFDO project and can be found on GitHub
->    (https://github.com/google/autofdo), version v0.30.1 or later. The
->    llvm_profgen tool is included in the LLVM compiler itself. It's
->    important to note that the version of llvm_profgen doesn't need to
->    match the version of Clang. It needs to be the LLVM 19 release or
->    later, or from the LLVM trunk.
->       $ llvm-profgen --kernel --binary=<vmlinux> --perfdata=<perf_file> \
->         -o <profile_file>
->    or
->       $ create_llvm_prof --binary=<vmlinux> --profile=<perf_file> \
->         --format=extbinary --out=<profile_file>
-> 
->    Note that multiple AutoFDO profile files can be merged into one via:
->       $ llvm-profdata merge -o <profile_file>  <profile_1> ... <profile_n>
-> 
-> 6) Rebuild the kernel using the AutoFDO profile file with the same config
->    as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
->       $ make LLVM=1 CLANG_AUTOFDO_PROFILE=<profile_file>
-> 
-> Co-developed-by: Han Shen <shenhan@google.com>
-> Signed-off-by: Han Shen <shenhan@google.com>
+On (24/10/28 13:57), Brian Geffon wrote:
+> On Tue, Oct 29, 2024 at 12:36:15AM +0900, Sergey Senozhatsky wrote:
+> > If entry does not fulfill current mark_idle() parameters, e.g.
+> > cutoff time, then we should clear its ZRAM_IDLE from previous
+> > mark_idle() invocations.
+> >
+> > Consider the following case:
+> > - mark_idle() cutoff time 8h
+> > - mark_idle() cutoff time 4h
+> > - writeback() idle - will writeback entries with cutoff time 8h,
+> >   while it should only pick entries with cutoff time 4h
+> >
+> > The bug was reported by Shin Kawamura.
+> Reported-by: Shin Kawamura <kawasin@google.com>
 
-This looks good. Fairly well isolated.
+This is how it was in v1, but that triggered a warn
 
-Reviewed-by: Kees Cook <kees@kernel.org>
+    WARNING: Reported-by: should be immediately followed by Closes: with a URL to the report
+    #16:
+    Reported-by: Shin Kawamura <kawasin@google.com>
+    Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
--- 
-Kees Cook
+so I switched to less "formal" reported-by tag in v2.
 
