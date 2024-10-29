@@ -1,156 +1,249 @@
-Return-Path: <linux-kernel+bounces-387571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A002C9B530E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:06:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 364429B5311
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:07:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BC84B21A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:06:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 991F8B21A24
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:07:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A595720721D;
-	Tue, 29 Oct 2024 20:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D32E20721D;
+	Tue, 29 Oct 2024 20:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="redasTKJ"
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="UCighNrp"
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC60A1940B3
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F3A2038D3;
+	Tue, 29 Oct 2024 20:07:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730232397; cv=none; b=LBNXvaS97DDs0Kh/vef/AwKayAjkiPRUJvOoJnsMUTpFYNgwXeJC5K+vTVryHM6tzUhL8TEx9CIScv9JS9D+0Sa7FRu9FwspbvvCuaHd6Ih05UYrk+JrTD4xhUkA6UckgUogEfYDIWYVMJEZfO7cUfowrYbbADdHa5CG/1ivvdg=
+	t=1730232441; cv=none; b=TIA2XRFgOhXsR87r67Xp520NCYpaJyHYWZ17mGwkeowRU5IHAoqIJFtSLEA/ObnDPRVuHRTeQoE9cDBh8AQZy1+s83/tq+L70o+4vFXiXFy8rzclMFFdHr6Cv+bsSbzz9QMXj+7ZzWopSZhiPi2N7wzG/BDc8afrDxwNSc9eHDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730232397; c=relaxed/simple;
-	bh=LxpRy52hsHxICThIzpgu8DP8/m7n7T9gRZNpb9bvNfs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fi/uPXKBJnEkM4GPpF0EuWu8WOQ7CqaD7spQbASHHm50/0luNXdTlg0ChT9Q2HuV4hlzKMEy2CgK+hVo6aYoJ6S4xNhjzeQlY5JNRwoJfgPGwjdU4ZhCdUwSAyO5nsKiWKo3S08IrgeToz3RA1WZJtmMr5QXkaXrEINDDy9H6bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=redasTKJ; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e290e857d56so5498309276.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730232394; x=1730837194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H3NttoA5WxBHMHxzBK9jMzti32CvvOP6K0PZcY+FhbE=;
-        b=redasTKJvYX0T8ILNYUJ/to6msxFmt4U+5juZZ8eTn3rP7wAbgWZLt257Atjr+qInC
-         cc+HvCi03EIqhD44Nr21oVJiMJtjs3Jk4Ng4fC5w5XWW1r6EFvV1vLDbRV2XxSNsgq9c
-         2Ue6KQhCZ18/BxyhgG9y4fGD8HNhxvJvT2ra6oftdSdC6l9u4pK4ROYVYZkITsijCAXq
-         A6AY9ue+KcEK3FkeU+QDUDA2Pz9rZWgRlc7ddrg6au2XpJCISFpZPe78Hd/mRYSln0dB
-         qRjhRCH6EDXHTeAbQYFj0qQJxndU01H6hP8vSmI/pz84GW++r+VPBHbzAgzlL3lvxMD/
-         nkmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730232394; x=1730837194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H3NttoA5WxBHMHxzBK9jMzti32CvvOP6K0PZcY+FhbE=;
-        b=o2yG6lHFp3aVn+MkrKe8bKbLtClEo3EzLEAnKG4ctns27fVR2d+r2f2uwMO8DPQNwG
-         wIu+cG5uGCL1NxOVHS4e4nU49W30Sr9Fkp2N22sREBkgc6Kkn28HDo+2Uqk12BeS7idF
-         9TaamhvMik5mYPcIqqb4508maOv/ign4CP+gV4rrRI47Su2Iw2JK2Y3kkTzvVsDaQZ6Q
-         bz1oA/yoRqIr7ybqlTkjZpvVnxhbops3nJTda1O17L4fLmjNstXqa6ofM39x9TLynv85
-         Haq7VchR2IjdZZafwT0MU4ICpEt3+bCxh6nuhaNGKVyes6GaPaHc5n2lIdy7bnrJs0D6
-         ZXbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwBjYRgLKohE4u/AHhcyv+28JJ7vKdjeVxzva/OmMWkT+EZJ+lVLZ4MAQyYce6yOzh4zY8tZFI1QDjP/8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9N80IaHUR6go/aG8AdkRpO2bATOdZrMnZrnogysNnUKinQ52j
-	aOHrlx5WJPB2FpmY+weWQyNH0Ix+KuKsv7eBLe+47QERFgyTVPvSBPk8zpsoSBzCbUxFZPFaBRB
-	HsHhkanCXFuANbfHhkGrW3UaIFpIepFTAtZVX/Q==
-X-Google-Smtp-Source: AGHT+IHJIZjJm0+Hsxf3gPKdK8yBtqrSRKRjmh10LGyKq5VrJEw8ofGWS0qIV7jYqKH4wMYRbrhheBmDRAEt5XkqPpk=
-X-Received: by 2002:a05:6902:1109:b0:e30:6dea:3ab4 with SMTP id
- 3f1490d57ef6-e3087a6060fmr12587842276.23.1730232393985; Tue, 29 Oct 2024
- 13:06:33 -0700 (PDT)
+	s=arc-20240116; t=1730232441; c=relaxed/simple;
+	bh=RnxuaGzteAOrXRoTIbxzr8OKGrlTWJ6640j3aTLYeh4=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lXhMqWT/Y35E1Ojvj69OiFf+PGo/vjbmPIhXuyf3aPHpFKWxMNPadhgeOsyH2ZNLjtSmLyaxaGU9Oke9Nu5uycSoldaXIUQtsgl3VC5wo4Okf9RT7FGGv8DWe81N+GMkrYgk/0aAvGUrX6j0zpl39SFMXX65UeYK8pwG1kVIwdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=UCighNrp; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 156D7120012;
+	Tue, 29 Oct 2024 23:07:00 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 156D7120012
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1730232420;
+	bh=RNaGEaeYTgO0RlXTmxEJ0K4YXTz7mIWuayOKYdwgxKY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=UCighNrpktIezcGZ4gdO0cEfRNT7ryE4EWGqFJAdQoEEbSglxtCw771bz/GE7Gzc0
+	 M9vEZ2nHjs2+dfmg2sfex5R7Qo49bxQrGmyGc2pxo4Ot1EuuKfJ73HSmhP6WpGbCjR
+	 WcHQJKKf6vfrs3VckjnrRKZTGKqr5Imd5Vvg0GmwkjHs42QyslfbA7CNguc5nvpIu3
+	 nvj+prLcVLW0Brn18NymGNPp6cw5HuaQt6naNMoZwOjZPtu2PYtvvrwnmDazaToKGb
+	 6P0xc/A8Uiz0Y+iLFB8YFhZngK23k37AcTCNosXH0/pcsXFhQB4c9IwOuCfMymwP+t
+	 xDhY0hA+xjiEw==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m01.sberdevices.ru [172.16.192.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 29 Oct 2024 23:06:59 +0300 (MSK)
+Date: Tue, 29 Oct 2024 23:06:59 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Lee Jones <lee@kernel.org>
+CC: <pavel@ucw.cz>, <linux-kernel@vger.kernel.org>,
+	<linux-leds@vger.kernel.org>, <kernel@salutedevices.com>,
+	<rockosov@gmail.com>, Alexey Romanov <avromanov@salutedevices.com>
+Subject: Re: [PATCH v2] leds: introduce ordered workqueue for leds events
+ instead of system_wq
+Message-ID: <20241029200632.chysrb7teyc7dsrq@CAB-WSD-L081021>
+References: <20240903223936.21292-1-ddrokosov@salutedevices.com>
+ <20240916111733.c5rp4l666rtdz7bt@CAB-WSD-L081021>
+ <20240917080412.GB9955@google.com>
+ <20241022142248.lzm45fzisrcgtitd@CAB-WSD-L081021>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029192107.2344279-1-peter.griffin@linaro.org>
-In-Reply-To: <20241029192107.2344279-1-peter.griffin@linaro.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Tue, 29 Oct 2024 15:06:23 -0500
-Message-ID: <CAPLW+4k7wd4Wix8xEB8+Aeb10_D9XU9jbxhCZ_OMn1fW5OOAtg@mail.gmail.com>
-Subject: Re: [PATCH] phy: samsung-ufs: switch back to syscon_regmap_lookup_by_phandle()
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: vkoul@kernel.org, kishon@kernel.org, krzysztof.kozlowski@linaro.org, 
-	alim.akhtar@samsung.com, tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
-	kernel-team@android.com, willmcvicker@google.com, 
-	linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241022142248.lzm45fzisrcgtitd@CAB-WSD-L081021>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-a-m2.sberdevices.ru (172.24.196.120) To
+ p-i-exch-a-m1.sberdevices.ru (172.24.196.116)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188799 [Oct 29 2024]
+X-KSMG-AntiSpam-Version: 6.1.1.7
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 40 0.3.40 cefee68357d12c80cb9cf2bdcf92256b1d238d22, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/29 19:11:00
+X-KSMG-LinksScanning: Clean, bases: 2024/10/29 19:12:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/10/29 15:51:00 #26800612
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Tue, Oct 29, 2024 at 2:21=E2=80=AFPM Peter Griffin <peter.griffin@linaro=
-.org> wrote:
->
-> Now exynos-pmu can register its custom regmap for gs101 via
-> of_syscon_register_regmap() we can switch back to the standard
-> syscon_regmap_lookup_by_phandle() api for obtaining the regmap.
->
-> Additionally add a Kconfig dependency for MFD_SYSCON.
->
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> ---
+Hello Lee,
 
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Kindly reminder.
 
->  drivers/phy/samsung/Kconfig           | 1 +
->  drivers/phy/samsung/phy-samsung-ufs.c | 6 +++---
->  2 files changed, 4 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/phy/samsung/Kconfig b/drivers/phy/samsung/Kconfig
-> index f10afa3d7ff5..e2330b0894d6 100644
-> --- a/drivers/phy/samsung/Kconfig
-> +++ b/drivers/phy/samsung/Kconfig
-> @@ -33,6 +33,7 @@ config PHY_SAMSUNG_UFS
->         tristate "Exynos SoC series UFS PHY driver"
->         depends on OF && (ARCH_EXYNOS || COMPILE_TEST)
->         select GENERIC_PHY
-> +       select MFD_SYSCON
->         help
->           Enable this to support the Samsung Exynos SoC UFS PHY driver fo=
-r
->           Samsung Exynos SoCs. This driver provides the interface for UFS=
- host
-> diff --git a/drivers/phy/samsung/phy-samsung-ufs.c b/drivers/phy/samsung/=
-phy-samsung-ufs.c
-> index 6c5d41552649..8e9ccd39f97e 100644
-> --- a/drivers/phy/samsung/phy-samsung-ufs.c
-> +++ b/drivers/phy/samsung/phy-samsung-ufs.c
-> @@ -13,11 +13,11 @@
->  #include <linux/of.h>
->  #include <linux/io.h>
->  #include <linux/iopoll.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
-> -#include <linux/soc/samsung/exynos-pmu.h>
->
->  #include "phy-samsung-ufs.h"
->
-> @@ -268,8 +268,8 @@ static int samsung_ufs_phy_probe(struct platform_devi=
-ce *pdev)
->                 goto out;
->         }
->
-> -       phy->reg_pmu =3D exynos_get_pmu_regmap_by_phandle(dev->of_node,
-> -                                                       "samsung,pmu-sysc=
-on");
-> +       phy->reg_pmu =3D syscon_regmap_lookup_by_phandle(dev->of_node,
-> +                                                      "samsung,pmu-sysco=
-n");
->         if (IS_ERR(phy->reg_pmu)) {
->                 err =3D PTR_ERR(phy->reg_pmu);
->                 dev_err(dev, "failed syscon remap for pmu\n");
-> --
-> 2.47.0.163.g1226f6d8fa-goog
->
->
+On Tue, Oct 22, 2024 at 05:22:48PM +0300, Dmitry Rokosov wrote:
+> Hello Lee,
+> 
+> I hope this message finds you well.
+> I wanted to ask for your thoughts on whether there was enough time for
+> testing and if we can proceed with merging this patchset.
+> 
+> I appreciate any feedback about it.
+> 
+> On Tue, Sep 17, 2024 at 09:04:12AM +0100, Lee Jones wrote:
+> > On Mon, 16 Sep 2024, Dmitry Rokosov wrote:
+> > 
+> > > Hello Lee!
+> > > 
+> > > What are the next steps? Should I make any changes, or are we waiting
+> > > for test results from the mailing list members?
+> > 
+> > This is an intrusive core change that was submitted during -rc6.
+> > 
+> > It's going to need some time on the list for people to respond.
+> > 
+> > > Sorry for the ping.
+> > > 
+> > > On Wed, Sep 04, 2024 at 01:39:30AM +0300, Dmitry Rokosov wrote:
+> > > > This allows to setup ordered workqueue for leds events. This may be
+> > > > useful, because default 'system_wq' does not guarantee execution order
+> > > > of each work_struct, thus for several brightness update requests (for
+> > > > multiple leds), real brightness switch could be in random order.
+> > > > 
+> > > > Yes, for sysfs-based leds we have flush_work() call inside
+> > > > brightness_store() operation, but it's blocking call, so userspace
+> > > > caller can be blocked at a long time, which means leds animation stream
+> > > > can be broken.
+> > > > 
+> > > > Ordered workqueue has the same behaviour as system_wq + flush_work(),
+> > > > but all scheduled works are async and userspace caller is not blocked,
+> > > > which it better for userspace animation scheduling.
+> > > > 
+> > > > Signed-off-by: Alexey Romanov <avromanov@salutedevices.com>
+> > > > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > > > ---
+> > > > Changes v2 since v1 at [1]:
+> > > >     - replace "leds" with "LEDs" in the log message
+> > > > 
+> > > > Links:
+> > > >     [1] https://lore.kernel.org/all/20240820155407.32729-1-ddrokosov@salutedevices.com/
+> > > > ---
+> > > >  drivers/leds/led-class.c | 12 +++++++++++-
+> > > >  drivers/leds/led-core.c  |  6 +++---
+> > > >  include/linux/leds.h     |  1 +
+> > > >  3 files changed, 15 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
+> > > > index c66d1bead0a4..b5e28ad54f7f 100644
+> > > > --- a/drivers/leds/led-class.c
+> > > > +++ b/drivers/leds/led-class.c
+> > > > @@ -25,6 +25,8 @@
+> > > >  static DEFINE_MUTEX(leds_lookup_lock);
+> > > >  static LIST_HEAD(leds_lookup_list);
+> > > >  
+> > > > +static struct workqueue_struct *leds_wq;
+> > > > +
+> > > >  static ssize_t brightness_show(struct device *dev,
+> > > >  		struct device_attribute *attr, char *buf)
+> > > >  {
+> > > > @@ -57,7 +59,6 @@ static ssize_t brightness_store(struct device *dev,
+> > > >  	if (state == LED_OFF)
+> > > >  		led_trigger_remove(led_cdev);
+> > > >  	led_set_brightness(led_cdev, state);
+> > > > -	flush_work(&led_cdev->set_brightness_work);
+> > > >  
+> > > >  	ret = size;
+> > > >  unlock:
+> > > > @@ -548,6 +549,8 @@ int led_classdev_register_ext(struct device *parent,
+> > > >  
+> > > >  	led_update_brightness(led_cdev);
+> > > >  
+> > > > +	led_cdev->wq = leds_wq;
+> > > > +
+> > > >  	led_init_core(led_cdev);
+> > > >  
+> > > >  #ifdef CONFIG_LEDS_TRIGGERS
+> > > > @@ -666,12 +669,19 @@ EXPORT_SYMBOL_GPL(devm_led_classdev_unregister);
+> > > >  
+> > > >  static int __init leds_init(void)
+> > > >  {
+> > > > +	leds_wq = alloc_ordered_workqueue("leds", 0);
+> > > > +	if (!leds_wq) {
+> > > > +		pr_err("failed to create LEDs ordered workqueue\n");
+> > > > +		return -ENOMEM;
+> > > > +	}
+> > > > +
+> > > >  	return class_register(&leds_class);
+> > > >  }
+> > > >  
+> > > >  static void __exit leds_exit(void)
+> > > >  {
+> > > >  	class_unregister(&leds_class);
+> > > > +	destroy_workqueue(leds_wq);
+> > > >  }
+> > > >  
+> > > >  subsys_initcall(leds_init);
+> > > > diff --git a/drivers/leds/led-core.c b/drivers/leds/led-core.c
+> > > > index 89c9806cc97f..9769ac49be20 100644
+> > > > --- a/drivers/leds/led-core.c
+> > > > +++ b/drivers/leds/led-core.c
+> > > > @@ -266,7 +266,7 @@ void led_blink_set_nosleep(struct led_classdev *led_cdev, unsigned long delay_on
+> > > >  		led_cdev->delayed_delay_on = delay_on;
+> > > >  		led_cdev->delayed_delay_off = delay_off;
+> > > >  		set_bit(LED_SET_BLINK, &led_cdev->work_flags);
+> > > > -		schedule_work(&led_cdev->set_brightness_work);
+> > > > +		queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+> > > >  		return;
+> > > >  	}
+> > > >  
+> > > > @@ -297,7 +297,7 @@ void led_set_brightness(struct led_classdev *led_cdev, unsigned int brightness)
+> > > >  		 */
+> > > >  		if (!brightness) {
+> > > >  			set_bit(LED_BLINK_DISABLE, &led_cdev->work_flags);
+> > > > -			schedule_work(&led_cdev->set_brightness_work);
+> > > > +			queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+> > > >  		} else {
+> > > >  			set_bit(LED_BLINK_BRIGHTNESS_CHANGE,
+> > > >  				&led_cdev->work_flags);
+> > > > @@ -333,7 +333,7 @@ void led_set_brightness_nopm(struct led_classdev *led_cdev, unsigned int value)
+> > > >  		set_bit(LED_SET_BRIGHTNESS_OFF, &led_cdev->work_flags);
+> > > >  	}
+> > > >  
+> > > > -	schedule_work(&led_cdev->set_brightness_work);
+> > > > +	queue_work(led_cdev->wq, &led_cdev->set_brightness_work);
+> > > >  }
+> > > >  EXPORT_SYMBOL_GPL(led_set_brightness_nopm);
+> > > >  
+> > > > diff --git a/include/linux/leds.h b/include/linux/leds.h
+> > > > index 6300313c46b7..7c9f1cb12ab9 100644
+> > > > --- a/include/linux/leds.h
+> > > > +++ b/include/linux/leds.h
+> > > > @@ -169,6 +169,7 @@ struct led_classdev {
+> > > >  	int			 new_blink_brightness;
+> > > >  	void			(*flash_resume)(struct led_classdev *led_cdev);
+> > > >  
+> > > > +	struct workqueue_struct *wq; /* LED workqueue */
+> > > >  	struct work_struct	set_brightness_work;
+> > > >  	int			delayed_set_value;
+> > > >  	unsigned long		delayed_delay_on;
+> > > > -- 
+> > > > 2.43.0
+
+-- 
+Thank you,
+Dmitry
 
