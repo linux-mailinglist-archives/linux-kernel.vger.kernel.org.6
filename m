@@ -1,109 +1,106 @@
-Return-Path: <linux-kernel+bounces-387457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A954E9B5192
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:09:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51ADC9B5191
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:08:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549251F22832
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 837911C21722
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F881DDC16;
-	Tue, 29 Oct 2024 18:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03AA61DEFD0;
+	Tue, 29 Oct 2024 18:08:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UfdF3Ces"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOSSaaia"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F1B91DC739;
-	Tue, 29 Oct 2024 18:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 573541DB929;
+	Tue, 29 Oct 2024 18:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730225336; cv=none; b=Z4ToRxrozIQpMAqX5SEsqhk9/J+imfuxVEix0yV9ISkJAlT6TQgQxdykgVw4rtb6KWhS94BjKWMDZhfg8Jz18flcnMgox15EafIuMLFeHMjxWp4B+mfAUrkn9W2iMW3lvPPorfW2ZXuWrgW4q4367qVFqXaj9Enk20eqNMKAfUM=
+	t=1730225327; cv=none; b=Q4r/Xwe0Fp/xNQnx6UC47S2mcEsnWv1KGDmy1h6KxVNdUDUxlvangX8cWPQHit7Ltx31qOYNDHDbob2Az8aZKrjiFFNXnnrnQrh5GjLqjYciYq4+oSqEHUUMEz2uaRJuhLasHafeM6ougm7HexHxm3m3iY2EKFDjyDotUKvFg6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730225336; c=relaxed/simple;
-	bh=AN4iv66DentSAFq4QXzCCx3UrpDmKZxveFdmoxab1CY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dt+iSigbMA4CsG89eq1v7MlMD/99IwIQqzkGXfLUMvDBjhwDXY4v4YIByMA3Jhnxwbj2MQiJyYaClbqy54WAtupoLbVpDd8YGyi62Z5EGn37oDI7n6Sic1jD2xBHy1rSsr9+OXDUW1fXW/bxAv4cWG6JxMXLpKl1q9vX8lBn/t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UfdF3Ces; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=fgjuHQ78XGkZb7KcQM6xJQ3E19G0vHh//2ashTQs+PI=; b=UfdF3CessnVcHFTyrvbRreKgpW
-	zkCjNxgvYtsONLHLEGf+1c7DAPcDhpOtPPZ4Z29zA5WQbxiEZKNvvd+h788o2FsRbnfxqCxwd/Akg
-	ME79PR0vAHcIxj87B2lALKxmNrSCDL89JvNYrMH65Z5TwUV7IquwPR5MXk9nCLDTuvYuTG1030Cu9
-	OmzDgsEMKOxjtVgJi17zKCw+pUBMf1/bCSO4EfqXbQfPo66gnABiVJeA6gPm0dLE1Wvys/rEQh/Kj
-	T2pmdlhxz5d8W54OEOEmlo7S+G+XRBxj60ediRf6kGI+kqnaMRVy5WRH/2EikGfaZrB0D6G/OwjP2
-	lsWE7YBQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t5qdy-0000000ABCN-48JX;
-	Tue, 29 Oct 2024 18:08:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id CAD0630073F; Tue, 29 Oct 2024 19:08:38 +0100 (CET)
-Date: Tue, 29 Oct 2024 19:08:38 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>
-Subject: Re: [PATCH v3 08/19] unwind/x86: Enable CONFIG_HAVE_UNWIND_USER_FP
-Message-ID: <20241029180838.GF14555@noisy.programming.kicks-ass.net>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <2354d43022bd336c390e1e77f7cee68126d5f8c8.1730150953.git.jpoimboe@kernel.org>
- <20241029131303.GW14555@noisy.programming.kicks-ass.net>
- <20241029163110.xf5o2bvfbfcenlla@treble.attlocal.net>
+	s=arc-20240116; t=1730225327; c=relaxed/simple;
+	bh=iJLj11O4g41SPsxiCL9Pj63IUN3VrnEb2c1RDciZciU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LhBnQVD8m2RPQObH4uMXmasbkU/pd8fQZaI0rUznu2RNDI01Pwo2Km8b24k06KgoEVYUW+CIUsYeyzm2iK3Dn2BZM8q7VmV8pw5VX5Xi9/YL+//C2p+Za+GVcfX+zSX505jSk4pWPnTiubWFSIuCwGu0B5zmaArCoT58XUHABdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOSSaaia; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E05C4CECD;
+	Tue, 29 Oct 2024 18:08:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730225326;
+	bh=iJLj11O4g41SPsxiCL9Pj63IUN3VrnEb2c1RDciZciU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tOSSaaiaWNoPAl+nKlkGkrJBdelh/1LB7gZ1HgrEAnpXCM4BLsnAIX1xrhOymWEp9
+	 lddeFvmBx0/JHKOx+ze17PmAYvSBntBmR/0wrwoQ1MOyQZxJTJdMfhBYJjZs3/n8pE
+	 nYnI7kHTFSUrtrUM/QYCuNFngoaHDvF+xwdK2xJF5qznxWC756r7fNUW0h9HLJwkT3
+	 WHleKVF23wqifyHtVmmVDQDM31QVvG5MwfXSDv7gOGX6Oq9Roku1J6TrPRuLpr4Fi9
+	 Bk8DzyvroAlbMLRqsqh5UyU3QRP8pzT3I0GZDivtwZ6YnfG56EnmYe3gOexetahgBx
+	 H+DGsGFQB653w==
+Date: Tue, 29 Oct 2024 11:08:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
+ <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
+ Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
+ -Wflex-array-member-not-at-end warnings
+Message-ID: <20241029110845.0f9bb1cc@kernel.org>
+In-Reply-To: <f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
+References: <cover.1729536776.git.gustavoars@kernel.org>
+	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
+	<20241029065824.670f14fc@kernel.org>
+	<f6c90a57-0cd6-4e26-9250-8a63d043e252@embeddedor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029163110.xf5o2bvfbfcenlla@treble.attlocal.net>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 09:31:10AM -0700, Josh Poimboeuf wrote:
-> On Tue, Oct 29, 2024 at 02:13:03PM +0100, Peter Zijlstra wrote:
-
-> > > +#define ARCH_INIT_USER_FP_FRAME							\
-> > > +	.ra_off		= (s32)sizeof(long) * -1,				\
-> > > +	.cfa_off	= (s32)sizeof(long) * 2,				\
-> > > +	.fp_off		= (s32)sizeof(long) * -2,				\
-> > > +	.use_fp		= true,
-> > > +
-> > > +#endif /* _ASM_X86_UNWIND_USER_H */
+On Tue, 29 Oct 2024 10:55:14 -0600 Gustavo A. R. Silva wrote:
+> On 29/10/24 07:58, Jakub Kicinski wrote:
+> > On Mon, 21 Oct 2024 13:02:27 -0600 Gustavo A. R. Silva wrote:  
+> >> @@ -3025,7 +3025,7 @@ static int bnxt_set_link_ksettings(struct net_device *dev,
+> >>   {
+> >>   	struct bnxt *bp = netdev_priv(dev);
+> >>   	struct bnxt_link_info *link_info = &bp->link_info;
+> >> -	const struct ethtool_link_settings *base = &lk_ksettings->base;
+> >> +	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;  
 > > 
-> > What about compat / 32bit userspace?
+> > Please improve the variable ordering while at it. Longest list first,
+> > so move the @base definition first.  
 > 
-> Sframe doesn't support 32-bit binaries at the moment.  Does anybody
-> actually care?
+> OK. This would end up looking like:
+> 
+> 	const struct ethtool_link_settings_hdr *base = &lk_ksettings->base;
+> 	struct bnxt *bp = netdev_priv(dev);
+> 	struct bnxt_link_info *link_info = &bp->link_info;
 
-Dunno, I think the only 32bit code I've recently ran is in selftests and
-wine32 -- because Monkey Island rules :-)
+Correct, one step at a time.
 
-> You're right this regresses existing perf behavior for the frame pointer
-> case.  I'll try to fix that.
+> >> @@ -62,7 +62,7 @@ static int linkmodes_reply_size(const struct ethnl_req_info *req_base,
+> >>   {
+> >>   	const struct linkmodes_reply_data *data = LINKMODES_REPDATA(reply_base);
+> >>   	const struct ethtool_link_ksettings *ksettings = &data->ksettings;
+> >> -	const struct ethtool_link_settings *lsettings = &ksettings->base;
+> >> +	const struct ethtool_link_settings_hdr *lsettings = &ksettings->base;  
+> > 
+> > here it was correct and now its not  
+> 
+> I don't think you want to change this. `lsettings` is based on `ksettings`. So,
+> `ksettings` should go first. The same scenario for the one below.
 
-Thanks, this patch is the frame pointer unwinder, that really should do
-32bit.
+In which case you need to move the init out of line.
+
+Thanks.
 
