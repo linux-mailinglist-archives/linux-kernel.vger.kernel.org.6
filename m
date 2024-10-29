@@ -1,257 +1,426 @@
-Return-Path: <linux-kernel+bounces-386688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75ACF9B46F6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:34:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BD829B46FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9906B1C20D42
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:34:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82788B227B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3098204F7A;
-	Tue, 29 Oct 2024 10:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA5AA204924;
+	Tue, 29 Oct 2024 10:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QqroQIm4";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="dXrcFYsv"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+Y42L2R"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765CC1E102D;
-	Tue, 29 Oct 2024 10:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730198050; cv=fail; b=BVv+hN6QkG7rDqRr4emVZEuzxSSma/4mVQp+jwU0mdaSFpYZ9m/4r3VIlhk9H5qBOU2GBIw2SgnXrzZlpvoPShUh8TLUN1Vo41ai5LxPPjIlJ/tfm5+g0Uzsxqp7O8+iIFfMxRyRP3gSYmOLBICWhFwCfOxPZIbp/PFJ4UYFGME=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730198050; c=relaxed/simple;
-	bh=9+320+F414cnX0KTvMq7iVLo4r1F1hnWANqKnDMwiug=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PFCiD72TFXjeV0QcTBe+waVJK8Qe8/W2GrOOogtxwd6rZqBx4gDuti6vf1BEdbf+1VeJWWeMPapfu/9+8cFc3EfBFqkq87foifMZLlDxzuEiAHESH60qFyr0jcUvVpnrsErmJtmUulTH4b1VB2k7mRtCyBMBHnOlp6EVEsaf+hU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=QqroQIm4; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=dXrcFYsv; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49T7tfFw021219;
-	Tue, 29 Oct 2024 10:33:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2023-11-20; bh=A2GFmrH71zTUYbldYypbn6BhDURvYYfQlzYaimnt91w=; b=
-	QqroQIm4NkFWfAwYL+X7Q6AAqZQgcdxHqcjsF6GSfv9k/3u4mysJBwhjeRlcxhqi
-	6BSI/wF2gBfN4DhAvFm6FF1ufhy3fU7ok8/frhKrrsVlgbEVN7dF2w5lVVDhgSzG
-	N0ctXoSi9tthreCoQKaPAtCOJNmDB0by/y3KeWLa9qVEmDEcLgIIO4lS5WsLosyQ
-	b/h98/ANguaIaes7Jz6+L90otsVwXwuYZnwLUePq3ypaMDl51BFJ94GyL+qe03wE
-	laaRom12pD0Kx+7EWfvYeqiN1D9LhLPfHykm5D+2csNVDLMoPUQaeP92fUk6GEV1
-	OdsMA5FiHigFOX/kV4pcNg==
-Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42grys51rq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 10:33:46 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49T92nLq034839;
-	Tue, 29 Oct 2024 10:33:45 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2168.outbound.protection.outlook.com [104.47.58.168])
-	by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42hnd7f7e7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 29 Oct 2024 10:33:44 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=RwmnyxrgEsUBRSgLyg85IRMm8sjfoj1bVkVu5ix+159rlK8DvKWvgEmyTIyYCFxwUsWEJdOYhqkIFBUBPc4qRXrt1cTLe3j4YFjhjscqo7cE8Q43O/92t0jDteD7qjlukgxmnkukCYUZqEql/9Ji3y855R6djeVfPCcNKR+UUtsDXB+f82Wp3B7C6xIW7rUDTRJLb+g5fz+Nz7b3vEizeS/zb9eY6eHB5HBBoqvEJEBdrX1MV4qnGM4Hy8qtSUFkgHLBI1tfDquF/9RFSzr9XTjyVRGgs0hwfrxc6fatQ8uTJHiUFhRVEisI4exNYCdtRUXnDTv5HKpCYEuZSMQ/kQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A2GFmrH71zTUYbldYypbn6BhDURvYYfQlzYaimnt91w=;
- b=q0mjPZ2nC+y6dv+GjigqwR9UweqN/q/iC23prnaFbj/wyD7xx9M3iCa3Qojqx8lYnrslS6vfU3j2hx1fY6ici+6lS9VK0s6mY0KzMNoFTvPe77pXQDwE9WJ27QyvlfvvdwBgQYfw4qf+zgoE/r0GxnKlMtHZtyLdyH8F/tuGJp6RS1yt5bjmcVYMSNcQOuR9pPmaZcYyzBsrUpK/yHCbCXtaX3HaU37udiRlo+2xBqLzn/qaWQIHVc/9TUk2NveEZgiJgy8yfCnajzMkRgDTm8GyjLciSZbIBnTzlG6rCtro5N9TxmPcpCVwBYMOZlvOWGNT9sff2geDLJ3f+fHzKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A2GFmrH71zTUYbldYypbn6BhDURvYYfQlzYaimnt91w=;
- b=dXrcFYsvyivoCPQbUEEyddQFJ+1A+mNgBznZgJ4O8QQ2NF9ATrVkDCp8jLdN4MhyVD1OtHWHFLGEdux1o22KfU21ww7vwYY3tGh3SFN0MwucCMyI1GuRbDw3Lfyx/HMjerz/puFRV0+X+FOoYTJfOvb7D7C5x8zXRbr3lqYlou0=
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
- by DM6PR10MB4316.namprd10.prod.outlook.com (2603:10b6:5:21d::23) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.24; Tue, 29 Oct
- 2024 10:33:42 +0000
-Received: from DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
- ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8093.024; Tue, 29 Oct 2024
- 10:33:42 +0000
-Message-ID: <45d406c3-e837-4de9-8311-7f7f4a84b95c@oracle.com>
-Date: Tue, 29 Oct 2024 10:33:38 +0000
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] btrfs: handle bio_split() error
-To: Johannes Thumshirn <jth@kernel.org>
-Cc: linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, hch@lst.de,
-        martin.petersen@oracle.com, hare@suse.de,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-References: <20241028152730.3377030-1-john.g.garry@oracle.com>
- <20241029091121.16281-1-jth@kernel.org>
-Content-Language: en-US
-From: John Garry <john.g.garry@oracle.com>
-Organization: Oracle Corporation
-In-Reply-To: <20241029091121.16281-1-jth@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM0PR10CA0035.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:20b:150::15) To DM6PR10MB4313.namprd10.prod.outlook.com
- (2603:10b6:5:212::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABDB117A58F
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:36:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730198177; cv=none; b=HEpbMEefwhjhA7bWn3BpaEO8kkrY0bgi/VvhT0BV9sGgemMo3Fa5rtoRDqKqsqny7hZJVJiDYQYO5HqABruWWz5vWv5A38hUnWWpjAKm3HVqed5I1BtHK2lt9J/PIAIf1ouxYTT5PqsFaPIVmq/ayIM2eliViPD3VcePbSY358E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730198177; c=relaxed/simple;
+	bh=VOOiITcAay3xjPgGq0lXI3S/tyqKH+PnoeC/YgAiolg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PL5hYt5/us1DOHW5kKeLT5pTUiF6MPfOK/Mg5u9hmG3aNI5qDyKajAr4HjzIhFxfS3KgzDNGWrrRYepMYEitlTM3QqinBSGE0KAASyfy59fOSPmE0/x2x5LH67B5pEurur9wR5/AVchog1Blk8XZTLpgmsZHiqk3Y++/VT2fR+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+Y42L2R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A793C4AF0B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:36:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730198177;
+	bh=VOOiITcAay3xjPgGq0lXI3S/tyqKH+PnoeC/YgAiolg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=V+Y42L2R2Z7KMm1TLUVVycRPstT6csX5+nzQU0WWfzz1XSu5kmH7i4vVvHY8QixxQ
+	 kiN19h4iDkWXOTxymhb7WmjoZSC44PrvDCEqnve1zy19+BhdXEwfN047OHUFEWdUyt
+	 mqjkLmyHvFCNZ0Zok/JOO6rEABiZRz5tdAJIaDsFM7keegtQhBUS5Jyy5iTfa2/p2B
+	 TPJ/Ay0Xmd4QrykPw1l8o87aueAqPpnKVBGDRP85FV7CT8/HMSooHXLrXvopX1SfXV
+	 kgeCfAe+ex5uehAXYLNSTZ4XX7iKpJCAlJXNphkpOC0/21opltf6CeOaN/sz/+m1Ba
+	 Ja/iGmufOlAjg==
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso812746366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:36:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWStgLu3eLX8h59rXz/8WVZXKcY06BFqf1K652uItgA1PH9O4LamCKCT9f2XGHcj+NMdfSEtgWXCUUmup0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcab8BSkQrL6c2CaIMSp6vlkMQE6576p+pOOamNGhXcYnEZElV
+	HfaPwcpP1r2q0eQQooQK0v2YhNfnT5XMdC2dXKS7kUSFMW6uREaFclrUoJAmsQc2csEPWCJ4AVH
+	U8Q/qFJlOEnZCWEmDyIE29xr9kck=
+X-Google-Smtp-Source: AGHT+IHNl8DkiKadgu0GU30lr0RHrN4LFN4yROoo+h5jwOMa2Lb8C+/ApeZDw5+cm0asUUceO3DLw1mpnRfPpykKcDA=
+X-Received: by 2002:a17:907:728e:b0:a99:389a:63c2 with SMTP id
+ a640c23a62f3a-a9de61997d9mr1111132766b.62.1730198175946; Tue, 29 Oct 2024
+ 03:36:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DM6PR10MB4316:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d556880-31bf-4bc8-0aac-08dcf80528de
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?enVLOExYazFPQlFoT3UySkt4V0pPdmE4c2R2eGxySERRaU11d3haNzIvSURU?=
- =?utf-8?B?NFY0eDExQkRKZVQrNTFLQkJTRVJDSk1CWSsrRGgrOGZFWlk1K3IxelhZS3NV?=
- =?utf-8?B?N1hpWFpIZzgxKzFYSk50Y3NZYTc1SEpUTEpvdHU0Y0RnUUtHL1J1TC8zVGFo?=
- =?utf-8?B?cSs0S3R5TXJ5MXRhUVl5WHFFcjYwa2p3RExSQ3p0U25RWGpmL1NZUXE5S1U0?=
- =?utf-8?B?V0pFVGl6QVZ6Wnl0d2xwejVScXZxZitZcWhGbFpsNHdhZXQ1dVJIeTdJU3Yx?=
- =?utf-8?B?cm8vS3g1dXM3d3hSZkR4YktZb3RxcWNEd3RlblVmTnZRQnY1c3hqcEtkUjVC?=
- =?utf-8?B?VUQrcXFqOVRhVEo0SkwvZjAvZXRFdWlmYWJhT0J5ZVU0d2lLdk41L01IL2Z6?=
- =?utf-8?B?WjdYSERjWTIwa28yQ04raEJtU0lvVjhKTkNmY01wbmUwUU04aEo0ZkVxRk5O?=
- =?utf-8?B?ODdVNlRUb2l1U3dqdXZWS2U2cy84VmE2S1ZBalhJSVcxZ1NtSlNrNHNFV3JX?=
- =?utf-8?B?YjcvY1JVSEtKblIxQmRsamJyUXZpVGFrZTdXS1ZGRXhoYW5KT0FMdWc5K1VM?=
- =?utf-8?B?MzRWTkpRNWFlK2RlK3psanFmY2ZoWk1zMEpvLzlqbzZCSXRZZlFWU2pHaTFi?=
- =?utf-8?B?NnNTMDJGR2FsWUViSEtCTGJacnJSdmNSNnVOK2dUK1B6Y2lNdW4xcXZlUy9w?=
- =?utf-8?B?OHhNdXM0NGtrMThieEFnK3pXcVY5MkxwMk5FVXB3RDdzalh2MjVmS0IwZjg1?=
- =?utf-8?B?L2h4Lzk1NGMwaGh6dG1QUVMxU3lrdTZ4bkFGZXZDc2NtdlRlMTBxRjNmUzFF?=
- =?utf-8?B?cTNzT1dFZjIzU3hKWEE5TnFPYU1xZHozNUZYOGM5bXVNeXhMbXRIYkg2TzNT?=
- =?utf-8?B?T3BvVE1MRlQ5RldZb2lYalpTTTdEMzZsWXYwVVFMRTZGY1BpcEFTbWRTNFo4?=
- =?utf-8?B?MENnazhacEZ1eVdsWmgxbkxzdE5uNEw3WVNIenBPTmZxSXVHN0xQL3ZBVGg2?=
- =?utf-8?B?SUpyb0FBMHdpeTNYVisvM0Z3TXNjWE01aVNEK0YxV2g4bHZJcmRhbkQ0TlBo?=
- =?utf-8?B?RHUvSVlDY2FkWStNYU9YemhnQ0VLbzVLNnRGa0J0NXkvS0V5T2RoVmR1WE9B?=
- =?utf-8?B?bDZ4VzYrMTltbmQ4TStab3dzdE1JaHFLU2V1R2h5dmtlKzJaZWNwQnRFUS90?=
- =?utf-8?B?TXNIQjcvcFdaRloxUStmcGV5aG9PZ3N3Rys3aS9NRzRxdUNUa2R5QndMVkFW?=
- =?utf-8?B?WXI4cGxUNHVBdXZnZmVZSmhNZVdSY0NCdzNiUDhOaDMxZ1RLUmlvSFl0QUxw?=
- =?utf-8?B?c3M5WXhYT21PTzNJUDliVkhBdUNOeHVTc0pWVjBzTUk5TTdvZXdveUJPeDJH?=
- =?utf-8?B?R25EQkZ6OGttYWlKZ1BDRkZ6aGNodFVTVkdTYy82enZObDVNUXdTcFdOVFFl?=
- =?utf-8?B?Z1lKZDZPSmNaVkFkdm5DZEV4dDdiekxDR0xyYWtvZmJhSGRoV1RKMTU2L3Vo?=
- =?utf-8?B?YWRpRXQyQ2o5dnZ2YTg2bnlBcGcyTFJkMzRTcXh3a2tPRHdtTDV5aURuZXBD?=
- =?utf-8?B?U2F6WHRFaFJZVE5uWVlZNDF4ejYyVFBKVjI4RVhHOG9CV0FHcm1zRHVHRjBj?=
- =?utf-8?B?TDBmUWY4bE0xYjNINW1USGhld20ySE5QbjV3Uk5jbmNZTHhSMk1zRU1ITElL?=
- =?utf-8?B?NXlTV1I2OGlvenJ0VG15QkFOckRGUUZpTHVkdVZqeFo1STU5djBhWXQwOWda?=
- =?utf-8?Q?iF10JxdD1QW2vHKylA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SnJpaWwwZnVxaGMxdzhSMnQxOXhBQzRoTkpzWUpiTFR4RStRMUVlR0tYSy9w?=
- =?utf-8?B?RUI3NjZ6bERzbTVNYXMwamw3ZE54UXVHQlluRTkxNHZrS09uUTZMTDRSTjFz?=
- =?utf-8?B?M2h2OHkrclg4ZTFjRVJtbTV2Q2tFaFJiektUcTd6QldSSjBIOUI0NlFGNzhY?=
- =?utf-8?B?NU5yNkhDZGxteUQxcVRRNXBha05kMU1UaFpEZzMzMU9LeVhkMTYrWDhzbW5Z?=
- =?utf-8?B?MUc2Y0tGU2lHWnd2ZHVyNHgyWnJZclQ0bjZoakJIajVRdDBxaURyVVZCakxQ?=
- =?utf-8?B?RXp6VDU1MDlsTFV6OW1OQWk0MlA4WklDTW1ISUpMMjFVUWZITmdvdW5aM3Ba?=
- =?utf-8?B?ZUYybWFUcmVUVDdWRFRoL3RzR0VJU2ZFT3hYajkwS040cVM3UzhCRGFLNGdH?=
- =?utf-8?B?OUlQUW83bWxodTBndUVvZzBJNys0bUpnUEdtNzZwcHNic0VLSjRwK2pKZkZ0?=
- =?utf-8?B?NHYxQzd6SVRMTXFmdGg5NWNDckxVRFJxZCszdDYrYnB4Y1FxWFhCTXhDU0xH?=
- =?utf-8?B?cENWYkt4UXgxcDdVUDMxQWp5MitUeGlnRGJCUXdYVHRKSUxtUnJ2RytyejNj?=
- =?utf-8?B?YWgvQXZLTk40OXdRTjlZWTU3UHg4MnNqTWRHd1NrcGt1V3lUelR0YkUzQmlP?=
- =?utf-8?B?THhyVmhKaHo2Q1FkOE5RdTVHS3BiVXdHZGFzYnJOU2JJZ21wMjFEYTJ5QSt0?=
- =?utf-8?B?UFV0ZWNPUFZVZzdUVUwyOUhFaXkvTEFvcHZWelpQOUJlNEtrNUlpMXltczRi?=
- =?utf-8?B?am5uS0tESnNwckFRU01CblVaQTVjTlpmZWtkaEtnT1pxenhoYnRURFlKQjdm?=
- =?utf-8?B?UlArdXp0cEdIem9VUFhZVm1HODNKemwwQzN3bG1vd3J6aXYvenZhWk93eldJ?=
- =?utf-8?B?bXJ0ODVlbWMrMndSK1dRdkdjZFFhcm9KTXcyaG9PRWozMzBkWit6dm55RTlt?=
- =?utf-8?B?dFRCS214Um1SbW9mNGFkOVNxc0xrS1YwVk1oV2xPcnNFVWpFbFZFREFkbDc1?=
- =?utf-8?B?REdIYTh3aExWRmtQSURqbDhrRVcra3dNeEpCckdRVUV0Uzh2dTFwaUZpRGFr?=
- =?utf-8?B?cmFqamFhTXo1b0N1cTVUcHorMXM0L294empWa1FqSXI4T3BjU1Qya1J4Z0Vm?=
- =?utf-8?B?OFJGeHJUSFpaM1QzemE2WnFjOFh2TmxEalluK1VmbjVFWk1wVk50Mk9ZenpV?=
- =?utf-8?B?Y2NMeTJrcTFUOVViY2l0dktvbm5hMzNIeFEzSVV3V3pRY0tyZi95L0t6MDUz?=
- =?utf-8?B?cWlGZVl2ejA2bWdtZ2ZXSmEwMDcxZG9RWDhuTU1JYjFhVkNydnJsOFVlOUVi?=
- =?utf-8?B?cC9QNlprYitWcGVJcXhjYnJWUlBGNStkMSswRU9xc1F0TVlrOTdnSE5ZM09q?=
- =?utf-8?B?MzFHZkUrN0JRZUpvbU5aa3BSV0RrT2tvT3BycHVHcVJIWCt4NzZBU3p3L3BT?=
- =?utf-8?B?SVhSbElnSHZXYlZsNWF0UDA3bFBLWXpZaVBDalFkWmtSMlU1b2x3UzI2TDBG?=
- =?utf-8?B?Y3p6VEtCUnd0cHVzWExqU3p5RzJGdEkyL20rcHAxeld0eno0UmxIdnQ4dGVB?=
- =?utf-8?B?QURsR05peXhVdVBhQlg1QkZMT09ONytkSk5sMmhWLzlTZWhjeE54Q2MxNVFQ?=
- =?utf-8?B?SkxWN2NBYndxSUVhVHg3dHpDbGUxQnA0ODVWaXJxbzBtRTNheEVaN2xwYXUy?=
- =?utf-8?B?aFpQdktqQ3JSbjhuWnYzV0NGVTcySmx6ZzdsU0N0OEJJTlp5RU92anM1RUZm?=
- =?utf-8?B?UEZDN3dnekhIZWR5bHkrRUZ1alR3VDJ6WE00WlhWZk1UM0loUjdOQnk2Yld6?=
- =?utf-8?B?ZVZJMHprUGlNQm81NjlrdHgrSXEvcmVya1lBN2hHZmYrS0RPOHVWT3VOWHdw?=
- =?utf-8?B?VnFDQzhPS0FjUi8yTiszTUh2YzdxYmNDRWV1NGFMb1M3VTM5Mlk3dUVTVlRV?=
- =?utf-8?B?b3MyT1YyUWxCR21jamhKb0crQWhLc2tweXZTRFhiUEk0dGpKUHdpZUxxTzJD?=
- =?utf-8?B?QlhpZWdPNUZGMXFUNzNER2hUak1PaGVyMUdTUFpvZnZZb0pxckFqQ2hTejNL?=
- =?utf-8?B?UytZWk9USGFVS2M0VjltSTVvcWxBaURHUlg2eUJ0SzU5OEtYVVNiN0tpYU1u?=
- =?utf-8?B?MTVtTExsWWhtN2dvUFMzR2ZsLzBqLytCQlg4RUZkRXFONVdLbnU2ekVtb0N5?=
- =?utf-8?B?L1E9PQ==?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	v2MJI7M0L0PoJDg64a9uc6jCXcdoGwGuJFLSqGZTTIkauJgDvDDL8djr9BvUgKVK0jRDnXRRrWoH6HCNtOVlhD2Gy6n7FRAYQ7bg1Yu/lSsPgffXQ1egPddoA6Jo6YYSDveqC2Nv+U3Zhh+mJ0H6+a0ew64GQSP5+Nhw0xtln+X7jCkpO6ixAuCcV0Vq+xpaXstfXI5JLzTw2Was9udjuiKalLBd0lN//BM+aTVjiaplxgc+L8KJgkeCIACKX245eEjuA90n/B5vNdHu6k2ztf4E3PnkJCBBEJW44byegN4IL8tfDlHxtbFDCUmVHgGETrXk+o5y8KhvRpMVG2rYnAFmEluET6SJpNcaI6IpPg7uGZAqwDPsskcknCTTjVbRq+ThVBMtS+bsnilL6PwK5xrvL8SAu7tolaTPgzSTZOOQr/tr00lfaqOTSZUU6rhLK8bCVF3qe/0w6rsExiCsSWlgUy4ypE3W9PVyoxnPGZnzLJWCWVeq313HBCHTDjaJRjhwGIGXwKmbHiBrO7N/3MKXSvEa0/rEKWcFDDhoRWUV8MFrF7sYXbPYX1acjoKiTf7Wj94wLm9LibwzQCQB1UQ6HU5E0VU7OGjNxZ8VYKo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d556880-31bf-4bc8-0aac-08dcf80528de
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 10:33:42.6887
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: hrNmodjmIyA1LP/kmxq68H+D4nD+UuCdds+I0IMAiRLHqlf7xEaDStPDbAzJ4skH/y2NL8y3eLYADyikCmyQfg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4316
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-29_06,2024-10-28_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 malwarescore=0 spamscore=0
- phishscore=0 mlxscore=0 bulkscore=0 suspectscore=0 mlxlogscore=999
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
- definitions=main-2410290082
-X-Proofpoint-ORIG-GUID: tkXf1lUW-9lHSvfu8vcqcHrX1M_cLTiu
-X-Proofpoint-GUID: tkXf1lUW-9lHSvfu8vcqcHrX1M_cLTiu
+References: <20241021080418.644342-1-maobibo@loongson.cn> <CAAhV-H4anpgfiAnPgm9h-m9pKCW0KUio+E72r1Q3F_0vm+zMRg@mail.gmail.com>
+ <8c55c680-48c8-0ba3-c2a1-56dc72929a8d@loongson.cn> <CAAhV-H4wD5fGVgxwmRVpRgvQ-jyUY0t=ewJANbe50vj9_TZDUQ@mail.gmail.com>
+ <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
+In-Reply-To: <f7ab6ec1-7a49-2764-7c19-9949ad508e2e@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 29 Oct 2024 18:36:03 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
+Message-ID: <CAAhV-H6+rE_7P_C0MaWzXToVcPqZQX0YMPnhyZV7Pp6aQ01mCQ@mail.gmail.com>
+Subject: Re: [PATCH v2] LoongArch: Fix cpu hotplug issue
+To: maobibo <maobibo@loongson.cn>
+Cc: Jianmin Lv <lvjianmin@loongson.cn>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, lixianglai@loongson.cn, 
+	WANG Xuerui <kernel@xen0n.name>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 29/10/2024 09:11, Johannes Thumshirn wrote:
-> From: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> 
-> Now that bio_split() can return errors, add error handling for it in
-> btrfs_split_bio() and ultimately btrfs_submit_chunk().
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
-> 
-> John,
-> in case you have to send a v3, can you please include this one in your series?
+On Mon, Oct 28, 2024 at 8:38=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote=
+:
+>
+> Hi Huacai,
+>
+> On 2024/10/22 =E4=B8=8A=E5=8D=889:31, Huacai Chen wrote:
+> > On Tue, Oct 22, 2024 at 9:17=E2=80=AFAM maobibo <maobibo@loongson.cn> w=
+rote:
+> >>
+> >>
+> >>
+> >> On 2024/10/21 =E4=B8=8B=E5=8D=8810:32, Huacai Chen wrote:
+> >>> Hi, Bibo,
+> >>>
+> >>> This version still doesn't touch the round-robin method, but it
+> >>> doesn't matter, I think I misunderstood something since V1...
+> >> I do not understand why round-robin method need be modified, SRAT may =
+be
+> >> disabled with general function disable_srat(). Then round-robin method
+> >> is required.
+> > I don't mean round-robin should be modified, I mean I misunderstand rou=
+nd-robin.
+> >
+> >>
+> >>>
+> >>> Please correct me if I'm wrong: For cpus without ACPI_MADT_ENABLED, i=
+n
+> >>> smp_prepare_boot_cpu() the round-robin node ids only apply to
+> >>> cpu_to_node(), but __cpuid_to_node[] still record the right node ids.
+> >>> early_cpu_to_node() returns NUMA_NO_NODE not because
+> >>> __cpuid_to_node[] records NUMA_NO_NODE, but because cpu_logical_map()
+> >>> < 0.
+> >>>
+> >>> If the above is correct, we don't need so complicated, because the
+> >>> correct and simplest way is:
+> >>> https://lore.kernel.org/loongarch/6b2b3e89-5a46-2d20-3dfb-7aae33839f4=
+9@loongson.cn/T/#m950eead5250e5992cc703bbe69622348cecfa465
+> >>>
+> >> It works also. Only that LoongArch kernel parsing about SRAT/MADT is
+> >> badly. If you do not mind, I do not mind neither. It is not my duty fo=
+r
+> >> kernel side.
+> > Yes, I don't mind, please use that simplest way.
+> There is another problem with the simple way. eiointc reports error when
+> cpu is online. The error message is:
+>    Loongson-64bit Processor probed (LA464 Core)
+>    CPU2 revision is: 0014c010 (Loongson-64bit)
+>    FPU2 revision is: 00000001
+>    eiointc: Error: invalid nodemap!
+>    CPU 2 UP state irqchip/loongarch/eiointc:starting (100) failed (-1)
+>
+> The problem is that node_map of eiointc is problematic,
+>
+>
+> static int cpu_to_eio_node(int cpu)
+> {
+>          return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
+> }
+>
+> static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+>                                 u64 node_map)
+> {
+>          int i;
+>
+>          node_map =3D node_map ? node_map : -1ULL;
+>          for_each_possible_cpu(i) {
+>                  if (node_map & (1ULL << (cpu_to_eio_node(i)))) {
+>                          node_set(cpu_to_eio_node(i), priv->node_map);
+>           ...
+> The cause is that for possible not present cpu, *cpu_logical_map(cpu)*
+> is -1, cpu_to_eio_node(i) will be equal to -1, so node_map of eiointc is
+> problematic.
+The error message seems from eiointc_router_init(), but it is a little
+strange. Physical hot-add should be before logical hot-add. So
+acpi_map_cpu() is before cpu_up(). acpi_map_cpu() calls
+set_processor_mask() to setup logical-physical mapping, so in
+eiointc_router_init() which is called by cpu_up(), cpu_logical_map()
+should work well.
 
-sure, and I think that I will be sending a v3
+Maybe in your case a whole node is hot-added? I don't think the
+eiointc design can work with this case...
 
-Cheers
+>
+> So cpu_logical_map(cpu) should be set during MADT parsing even if it is
+> not enabled at beginning, it should not be set at hotplug runtime.
+This will cause the logical cpu number be not continuous after boot.
+Physical numbers have no requirement, but logical numbers should be
+continuous.
 
-> 
->   fs/btrfs/bio.c | 7 +++++++
->   1 file changed, 7 insertions(+)
-> 
-> diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-> index 1f216d07eff6..96cacd5c03a5 100644
-> --- a/fs/btrfs/bio.c
-> +++ b/fs/btrfs/bio.c
-> @@ -81,6 +81,9 @@ static struct btrfs_bio *btrfs_split_bio(struct btrfs_fs_info *fs_info,
->   
->   	bio = bio_split(&orig_bbio->bio, map_length >> SECTOR_SHIFT, GFP_NOFS,
->   			&btrfs_clone_bioset);
-> +	if (IS_ERR(bio))
-> +		return ERR_CAST(bio);
-> +
->   	bbio = btrfs_bio(bio);
->   	btrfs_bio_init(bbio, fs_info, NULL, orig_bbio);
->   	bbio->inode = orig_bbio->inode;
-> @@ -687,6 +690,10 @@ static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
->   
->   	if (map_length < length) {
->   		bbio = btrfs_split_bio(fs_info, bbio, map_length);
-> +		if (IS_ERR(bbio)) {
-> +			ret = PTR_ERR(bbio);
-> +			goto fail;
-> +		}
->   		bio = &bbio->bio;
->   	}
->   
+Huacai
 
+>
+> Regards
+> Bibo Mao
+>
+>
+> >
+> > Huacai
+> >
+> >>
+> >> Bibo Mao
+> >>>
+> >>> Huacai
+> >>>
+> >>> On Mon, Oct 21, 2024 at 4:04=E2=80=AFPM Bibo Mao <maobibo@loongson.cn=
+> wrote:
+> >>>>
+> >>>> On LoongArch system, there are two places to set cpu numa node. One
+> >>>> is in arch specified function smp_prepare_boot_cpu(), the other is
+> >>>> in generic function early_numa_node_init(). The latter will overwrit=
+e
+> >>>> the numa node information.
+> >>>>
+> >>>> With hot-added cpu without numa information, cpu_logical_map() fails
+> >>>> to its physical cpuid at beginning since it is not enabled in ACPI
+> >>>> MADT table. So function early_cpu_to_node() also fails to get its
+> >>>> numa node for hot-added cpu, and generic function
+> >>>> early_numa_node_init() will overwrite with incorrect numa node.
+> >>>>
+> >>>> APIs topo_get_cpu() and topo_add_cpu() is added here, like other
+> >>>> architectures logic cpu is allocated when parsing MADT table. When
+> >>>> parsing SRAT table or hot-add cpu, logic cpu is acquired by searchin=
+g
+> >>>> all allocated logical cpu with matched physical id. It solves such
+> >>>> problems such as:
+> >>>>     1. Boot cpu is not the first entry in MADT table, the first entr=
+y
+> >>>> will be overwritten with later boot cpu.
+> >>>>     2. Physical cpu id not presented in MADT table is invalid, in la=
+ter
+> >>>> SRAT/hot-add cpu parsing, invalid physical cpu detected is added
+> >>>>     3. For hot-add cpu, its logic cpu is allocated in MADT table par=
+sing,
+> >>>> so early_cpu_to_node() can be used for hot-add cpu and cpu_to_node()
+> >>>> is correct for hot-add cpu.
+> >>>>
+> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>>> ---
+> >>>> v1 ... v2:
+> >>>>     1. Like other architectures, allocate logic cpu when parsing MAD=
+T table.
+> >>>>     2. Add invalid or duplicated physical cpuid parsing with SRAT ta=
+ble or
+> >>>> hot-add cpu DSDT information.
+> >>>> ---
+> >>>>    arch/loongarch/include/asm/smp.h |  3 ++
+> >>>>    arch/loongarch/kernel/acpi.c     | 24 ++++++++++------
+> >>>>    arch/loongarch/kernel/setup.c    | 47 +++++++++++++++++++++++++++=
++++++
+> >>>>    arch/loongarch/kernel/smp.c      |  9 +++---
+> >>>>    4 files changed, 70 insertions(+), 13 deletions(-)
+> >>>>
+> >>>> diff --git a/arch/loongarch/include/asm/smp.h b/arch/loongarch/inclu=
+de/asm/smp.h
+> >>>> index 3383c9d24e94..c61b75937a77 100644
+> >>>> --- a/arch/loongarch/include/asm/smp.h
+> >>>> +++ b/arch/loongarch/include/asm/smp.h
+> >>>> @@ -119,4 +119,7 @@ static inline void __cpu_die(unsigned int cpu)
+> >>>>    #define cpu_logical_map(cpu)   0
+> >>>>    #endif /* CONFIG_SMP */
+> >>>>
+> >>>> +int topo_add_cpu(int physid);
+> >>>> +int topo_get_cpu(int physid);
+> >>>> +
+> >>>>    #endif /* __ASM_SMP_H */
+> >>>> diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/ac=
+pi.c
+> >>>> index f1a74b80f22c..84d9812d5f38 100644
+> >>>> --- a/arch/loongarch/kernel/acpi.c
+> >>>> +++ b/arch/loongarch/kernel/acpi.c
+> >>>> @@ -78,10 +78,10 @@ static int set_processor_mask(u32 id, u32 flags)
+> >>>>                   return -ENODEV;
+> >>>>
+> >>>>           }
+> >>>> -       if (cpuid =3D=3D loongson_sysconf.boot_cpu_id)
+> >>>> -               cpu =3D 0;
+> >>>> -       else
+> >>>> -               cpu =3D find_first_zero_bit(cpumask_bits(cpu_present=
+_mask), NR_CPUS);
+> >>>> +
+> >>>> +       cpu =3D topo_add_cpu(cpuid);
+> >>>> +       if (cpu < 0)
+> >>>> +               return -EEXIST;
+> >>>>
+> >>>>           if (!cpu_enumerated)
+> >>>>                   set_cpu_possible(cpu, true);
+> >>>> @@ -203,8 +203,6 @@ void __init acpi_boot_table_init(void)
+> >>>>                   goto fdt_earlycon;
+> >>>>           }
+> >>>>
+> >>>> -       loongson_sysconf.boot_cpu_id =3D read_csr_cpuid();
+> >>>> -
+> >>>>           /*
+> >>>>            * Process the Multiple APIC Description Table (MADT), if =
+present
+> >>>>            */
+> >>>> @@ -257,7 +255,7 @@ void __init numa_set_distance(int from, int to, =
+int distance)
+> >>>>    void __init
+> >>>>    acpi_numa_processor_affinity_init(struct acpi_srat_cpu_affinity *=
+pa)
+> >>>>    {
+> >>>> -       int pxm, node;
+> >>>> +       int pxm, node, cpu;
+> >>>>
+> >>>>           if (srat_disabled())
+> >>>>                   return;
+> >>>> @@ -286,6 +284,11 @@ acpi_numa_processor_affinity_init(struct acpi_s=
+rat_cpu_affinity *pa)
+> >>>>                   return;
+> >>>>           }
+> >>>>
+> >>>> +       cpu =3D topo_get_cpu(pa->apic_id);
+> >>>> +       /* Check whether apic_id exists in MADT table */
+> >>>> +       if (cpu < 0)
+> >>>> +               return;
+> >>>> +
+> >>>>           early_numa_add_cpu(pa->apic_id, node);
+> >>>>
+> >>>>           set_cpuid_to_node(pa->apic_id, node);
+> >>>> @@ -324,12 +327,17 @@ int acpi_map_cpu(acpi_handle handle, phys_cpui=
+d_t physid, u32 acpi_id, int *pcpu
+> >>>>    {
+> >>>>           int cpu;
+> >>>>
+> >>>> -       cpu =3D set_processor_mask(physid, ACPI_MADT_ENABLED);
+> >>>> +       cpu =3D topo_get_cpu(physid);
+> >>>> +       /* Check whether apic_id exists in MADT table */
+> >>>>           if (cpu < 0) {
+> >>>>                   pr_info(PREFIX "Unable to map lapic to logical cpu=
+ number\n");
+> >>>>                   return cpu;
+> >>>>           }
+> >>>>
+> >>>> +       num_processors++;
+> >>>> +       set_cpu_present(cpu, true);
+> >>>> +       __cpu_number_map[physid] =3D cpu;
+> >>>> +       __cpu_logical_map[cpu] =3D physid;
+> >>>>           acpi_map_cpu2node(handle, cpu, physid);
+> >>>>
+> >>>>           *pcpu =3D cpu;
+> >>>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/s=
+etup.c
+> >>>> index 00e307203ddb..649e98640076 100644
+> >>>> --- a/arch/loongarch/kernel/setup.c
+> >>>> +++ b/arch/loongarch/kernel/setup.c
+> >>>> @@ -65,6 +65,8 @@ EXPORT_SYMBOL(cpu_data);
+> >>>>
+> >>>>    struct loongson_board_info b_info;
+> >>>>    static const char dmi_empty_string[] =3D "        ";
+> >>>> +static int possible_cpus;
+> >>>> +static bool bsp_added;
+> >>>>
+> >>>>    /*
+> >>>>     * Setup information
+> >>>> @@ -346,10 +348,55 @@ static void __init bootcmdline_init(char **cmd=
+line_p)
+> >>>>           *cmdline_p =3D boot_command_line;
+> >>>>    }
+> >>>>
+> >>>> +int topo_get_cpu(int physid)
+> >>>> +{
+> >>>> +       int i;
+> >>>> +
+> >>>> +       for (i =3D 0; i < possible_cpus; i++)
+> >>>> +               if (cpu_logical_map(i) =3D=3D physid)
+> >>>> +                       break;
+> >>>> +
+> >>>> +       if (i =3D=3D possible_cpus)
+> >>>> +               return -ENOENT;
+> >>>> +
+> >>>> +       return i;
+> >>>> +}
+> >>>> +
+> >>>> +int topo_add_cpu(int physid)
+> >>>> +{
+> >>>> +       int cpu;
+> >>>> +
+> >>>> +       if (!bsp_added && (physid =3D=3D loongson_sysconf.boot_cpu_i=
+d)) {
+> >>>> +               bsp_added =3D true;
+> >>>> +               return 0;
+> >>>> +       }
+> >>>> +
+> >>>> +       cpu =3D topo_get_cpu(physid);
+> >>>> +       if (cpu >=3D 0) {
+> >>>> +               pr_warn("Adding duplicated physical cpuid 0x%x\n", p=
+hysid);
+> >>>> +               return -EEXIST;
+> >>>> +       }
+> >>>> +
+> >>>> +       if (possible_cpus >=3D nr_cpu_ids)
+> >>>> +               return -ERANGE;
+> >>>> +
+> >>>> +       __cpu_logical_map[possible_cpus] =3D physid;
+> >>>> +       cpu =3D possible_cpus++;
+> >>>> +       return cpu;
+> >>>> +}
+> >>>> +
+> >>>> +static void __init topo_init(void)
+> >>>> +{
+> >>>> +       loongson_sysconf.boot_cpu_id =3D read_csr_cpuid();
+> >>>> +       __cpu_logical_map[0] =3D loongson_sysconf.boot_cpu_id;
+> >>>> +       possible_cpus++;
+> >>>> +}
+> >>>> +
+> >>>>    void __init platform_init(void)
+> >>>>    {
+> >>>>           arch_reserve_vmcore();
+> >>>>           arch_reserve_crashkernel();
+> >>>> +       topo_init();
+> >>>>
+> >>>>    #ifdef CONFIG_ACPI
+> >>>>           acpi_table_upgrade();
+> >>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp=
+.c
+> >>>> index 9afc2d8b3414..a3f466b89179 100644
+> >>>> --- a/arch/loongarch/kernel/smp.c
+> >>>> +++ b/arch/loongarch/kernel/smp.c
+> >>>> @@ -291,10 +291,9 @@ static void __init fdt_smp_setup(void)
+> >>>>                   if (cpuid >=3D nr_cpu_ids)
+> >>>>                           continue;
+> >>>>
+> >>>> -               if (cpuid =3D=3D loongson_sysconf.boot_cpu_id)
+> >>>> -                       cpu =3D 0;
+> >>>> -               else
+> >>>> -                       cpu =3D find_first_zero_bit(cpumask_bits(cpu=
+_present_mask), NR_CPUS);
+> >>>> +               cpu =3D topo_add_cpu(cpuid);
+> >>>> +               if (cpu < 0)
+> >>>> +                       continue;
+> >>>>
+> >>>>                   num_processors++;
+> >>>>                   set_cpu_possible(cpu, true);
+> >>>> @@ -302,7 +301,7 @@ static void __init fdt_smp_setup(void)
+> >>>>                   __cpu_number_map[cpuid] =3D cpu;
+> >>>>                   __cpu_logical_map[cpu] =3D cpuid;
+> >>>>
+> >>>> -               early_numa_add_cpu(cpu, 0);
+> >>>> +               early_numa_add_cpu(cpuid, 0);
+> >>>>                   set_cpuid_to_node(cpuid, 0);
+> >>>>           }
+> >>>>
+> >>>>
+> >>>> base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+> >>>> --
+> >>>> 2.39.3
+> >>>>
+> >>
+> >>
+>
 
