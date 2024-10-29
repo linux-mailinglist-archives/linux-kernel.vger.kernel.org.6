@@ -1,320 +1,127 @@
-Return-Path: <linux-kernel+bounces-386330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71A29B41FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:57:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3829B4201
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:58:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAC0A1C21438
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:57:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4885A1C215FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 05:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495A1201013;
-	Tue, 29 Oct 2024 05:57:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9078201027;
+	Tue, 29 Oct 2024 05:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b="pG7Dhics"
-Received: from s1-ba86.socketlabs.email-od.com (s1-ba86.socketlabs.email-od.com [142.0.186.134])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NbrwfI7a"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEDC2200C82
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 05:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=142.0.186.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618877464;
+	Tue, 29 Oct 2024 05:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730181427; cv=none; b=GrrcozRE1ov0AFHRJmYuQAEWlgUNFzNyQ1p5xVy6VhIbrvXO24eoUY3ddl00+I6H6OVOsRLSd2vs7EN8LJz0HRsots2wthNXEkYaZsRV2jSKrm7sGkDnV9sXwaoqe9/DpA4q4RflG4EtYoH6Djtccmjo1W4ge/pbRBF3dz1n0XI=
+	t=1730181478; cv=none; b=Y/Adj+OoIpx4irMSS7D0/NEMdlG+P0AtyUHbLn7Hg5zsYYYDZkSBnkD697NEK3tgOkj7cFBiduF9wu/deGu6sCFobUxAO4f4HF+Ts4pY2SqdyUVg9Ah4YLg52n+AhIRJUbUTNB5aWZ1gbXj4yh3yDSB7TY5gxrIzfivX3XxOI7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730181427; c=relaxed/simple;
-	bh=hkyZDIRc4Fjj8C8xF2cu1h3KmH1YUWxA5lhYy5mQumY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IZtTO9vccGLkce9hfyAM1pv1iPvpiyQRhYpZhBsHAgOvuit7VtzBwsNQ7rdQNCcP4sjn4lOSZ7b/1rXbk9KOB5+VacYqW2AyI1QhLcy3lLvnVmp07qLGHEsdo0earsC8LpNj40jIKx+cHAX2YrxFi4qrOLnpm9pHEg5HKyT0prg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com; spf=pass smtp.mailfrom=email-od.com; dkim=pass (1024-bit key) header.d=email-od.com header.i=@email-od.com header.b=pG7Dhics; arc=none smtp.client-ip=142.0.186.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nalramli.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=email-od.com
-DKIM-Signature: v=1; a=rsa-sha256; d=email-od.com;i=@email-od.com;s=dkim;
-	c=relaxed/relaxed; q=dns/txt; t=1730181425; x=1732773425;
-	h=content-transfer-encoding:content-type:in-reply-to:from:content-language:references:cc:to:subject:mime-version:date:message-id:x-thread-info:subject:to:from:cc:reply-to;
-	bh=hkyZDIRc4Fjj8C8xF2cu1h3KmH1YUWxA5lhYy5mQumY=;
-	b=pG7Dhics/XsjJNqY1NW0Kd/eC2ntmJ9KddjxToFPmgeaEyYsiIAGiLuLU0+O4HBKE98EVss7P7NmKd9YAUF71U4KFfWlb2bdcj+vl0cw0t0zzLDSlJC+gtLCSwwQa+8hRWnqFpBKlvrJywJCJyYEgEMjRSAP2Yrw5BA/tISRLbc=
-X-Thread-Info: NDUwNC4xMi41ZjNhMDAwMDA3ZWYyZjgubGludXgta2VybmVsPXZnZXIua2VybmVsLm9yZw==
-x-xsSpam: eyJTY29yZSI6MCwiRGV0YWlscyI6bnVsbH0=
-Received: from [192.168.0.167] (d4-50-191-215.clv.wideopenwest.com [50.4.215.191])
-	by nalramli.com (Postfix) with ESMTPS id 3C8302CE0038;
-	Tue, 29 Oct 2024 01:56:54 -0400 (EDT)
-Message-ID: <b150332e-c80a-492d-bef8-aeb2f28ec8a0@nalramli.com>
-Date: Tue, 29 Oct 2024 01:56:53 -0400
+	s=arc-20240116; t=1730181478; c=relaxed/simple;
+	bh=ZdmxadM0qitMz8h++TS+i+JMGgqwYOA9lEVe+RyuLTA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nVyQ+TqIxs5kAm66vk9aJA7y79L3YLC1PPToH7OYFdegaVE7b4li/jw26dErl3MJMZFkY9CmRs8uefA6XwCE00acKzweVzSsyu+xaRlXucY85XnUJK216NXwz02U0yW8d2ot3IH3gjjOVQoL+h+YFUcaelbCZ4s/SmH51ShGkYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NbrwfI7a; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=y5hIEno3hSw6Bs0nElkBzz+S0GGKfeU4NL68Zcym0TA=; b=NbrwfI7aCxqhCar/MFfBqte2mf
+	VGpnwyAfOfOh9lRUXfqFcG42dV5YmDVFqRY8J6BHuxzjYZktxw94kcQstkaCDifpGDCKhfJ28j9ME
+	1hEM7NxgPSOWMhvNMbTOv0+my+QF6FOLbzvtDnVxyMDLLxm0lsrObclwmLDpcT0g8koFLu+EzSFqc
+	oizBkhahfbGiY7y16s/95CbXy/nKXo2yYrEG0sAxBGhJ8YJXNKecY13vxY1KcN65YDl3/4Bo4cDz4
+	D9RnOzStcM0gxOrICT6d92LrRXZejeZB7efsDRjKfZonPNUp1mub0wTCuTODyBTntFmIHNc7SCA0n
+	vledpmHA==;
+Received: from [185.156.123.69] (helo=phil.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t5fEb-0005Ts-O7; Tue, 29 Oct 2024 06:57:41 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Dmitry Yashin <dmt.yashin@gmail.com>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Dmitry Yashin <dmt.yashin@gmail.com>
+Subject:
+ Re: [PATCH 2/3] dt-bindings: arm: rockchip: add Banana Pi BPI-P2 Pro board
+Date: Tue, 29 Oct 2024 06:57:39 +0100
+Message-ID: <5957455.DvuYhMxLoT@phil>
+In-Reply-To: <20241028213314.476776-3-dmt.yashin@gmail.com>
+References:
+ <20241028213314.476776-1-dmt.yashin@gmail.com>
+ <20241028213314.476776-3-dmt.yashin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 6.1.y 0/1] cpufreq: amd-pstate: Enable CPU boost in
- passive and guided modes
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: "nalramli@fastly.com" <nalramli@fastly.com>,
- "jdamato@fastly.com" <jdamato@fastly.com>,
- "khubert@fastly.com" <khubert@fastly.com>, "Yuan, Perry"
- <Perry.Yuan@amd.com>, "Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
- "Meng, Li (Jassmine)" <Li.Meng@amd.com>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>,
- "Huang, Ray" <Ray.Huang@amd.com>, "rafael@kernel.org" <rafael@kernel.org>,
- "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <Zw8Wn5SPqBfRKUhp@LQ3V64L9R2>
- <20241025010527.491605-1-dev@nalramli.com>
- <CYYPR12MB8655545294DAB1B0D174B2AC9C4F2@CYYPR12MB8655.namprd12.prod.outlook.com>
- <3a4596ba-1a83-4cd2-ba17-5132861eac00@amd.com>
- <894de4c2-ce04-4cc1-97d8-fc7c860e943d@nalramli.com>
- <b950b73e-fe40-4172-a95e-a7902179c5b7@amd.com>
-Content-Language: en-US
-From: "Nabil S. Alramli" <dev@nalramli.com>
-In-Reply-To: <b950b73e-fe40-4172-a95e-a7902179c5b7@amd.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Mario,
+Am Montag, 28. Oktober 2024, 22:33:13 CET schrieb Dmitry Yashin:
+> Banana Pi BPI-P2 Pro is the SBC made by Shenzhen SINOVOIP based on
+> Rockchip RK3308.
+> 
+> Banana Pi BPI-P2 Pro features:
+> - Rockchip RK3308B-S
+> - DDR3 512 MB
+> - eMMC 8 GB
+> - 100M lan + onboard PoE
+> - 40 pin and 12 pin headers
+> - AP6256 BT + WIFI
+> - TF card slot
+> - 2x USB 2.0 (Type-C OTG and Type-A)
+> - Headphone jack
+> 
+> Add devicetree binding for Banana Pi BPI-P2 Pro.
+> 
+> Signed-off-by: Dmitry Yashin <dmt.yashin@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> index 1e3eceb266b7..0c85c15d5c04 100644
+> --- a/Documentation/devicetree/bindings/arm/rockchip.yaml
+> +++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
+> @@ -1104,6 +1104,11 @@ properties:
+>            - const: rockchip,rk3568-evb1-v10
+>            - const: rockchip,rk3568
+>  
+> +      - description: Sinovoip RK3308 Banana Pi BPI-P2 Pro
 
-Thank you so much for your valuable feedback. This all makes sense, and
-I will incorporate it into another revision soon.
+isn't BPI the short form of Banana Pi?
+So the naming is sort of double and I'd expect it to be
+    Sinovoip RK3308 BanaPi P2 Pro
+similar to how the R2 below does is?
 
-On 10/29/2024 12:09 AM, Mario Limonciello wrote:
-> On 10/28/2024 16:33, Nabil S. Alramli wrote:
->> Hi Mario,
->>
->> Thank you for taking a look at my patch.
->>
->> What do you think about the following for the commit message in the ne=
-xt
->> revision of the PATCH, and omitting the cover letter since most of it =
-is
->> incorporated here?
->>
->> **********************************************************************=
-*
->>
->> cpufreq: amd-pstate: Enable CPU boost in passive and guided modes
->>
->> The CPU frequency cannot be boosted when using the amd_pstate driver i=
-n
->> passive or guided mode. This is fixed here.
->=20
-> No need to say things like "I did this" or "this patch does that".
-> Just drop last sentence.
->=20
 
-My apologies. I was just trying to be clear as to what this patch does.
-I will drop it.
+Heiko
 
->>
->> For example, on a host that has AMD EPYC 7662 64-Core processor withou=
-t
->> this patch running at full CPU load:
-> "On a host that has an AMD EPYC 7662 processor while running with
-> amd-pstate configured for passive mode on full CPU load the processor
-> only reaches 2.0 GHz."
->=20
->>
->> $ for i in $(cat
->> /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq); \
->> =C2=A0=C2=A0 do ni=3D$(echo "scale=3D1; $i/1000000" | bc -l); echo "$n=
-i GHz"; done | \
->> =C2=A0=C2=A0 sort | uniq -c
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0 128 2.0 GHz
->>
->> And with this patch:
->=20
-> On later kernels the CPU can reach 3.3GHz.
->=20
->>
->> $ for i in $(cat
->> /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq); \
->> =C2=A0=C2=A0 do ni=3D$(echo "scale=3D1; $i/1000000" | bc -l); echo "$n=
-i GHz"; done | \
->> =C2=A0=C2=A0 sort | uniq -c
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0 128 3.3 GHz
->>
->> The CPU frequency is dependent on a setting called highest_perf which =
-is
->> the multiplier used to compute it. The highest_perf value comes from
->> cppc_init_perf when the driver is built-in and from pstate_init_perf w=
-hen
->> it is a loaded module. Both of these calls have the following conditio=
-n:
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 highest_perf =3D amd_=
-get_highest_perf();
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (highest_perf > __=
-cppc_highest_perf_)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 highest_perf =3D __cppc_highest_perf;
->>
->> Where again __cppc_highest_perf is either the return from
->> cppc_get_perf_caps in the built-in case or AMD_CPPC_HIGHEST_PERF in th=
-e
->> module case. Both of these functions actually return the nominal value=
-,
->> Whereas the call to amd_get_highest_perf returns the correct boost
->> value, so the condition tests true and highest_perf always ends up bei=
-ng
->> the nominal value, therefore never having the ability to boost CPU
->> frequency.
->>
->> Since amd_get_highest_perf already returns the boost value we should
->> just eliminate this check.
->>
->> The issue was introduced in v6.1 via commit bedadcfb011f ("cpufreq:
->> amd-pstate: Fix initial highest_perf value"), and exists in stable
->> kernels
->=20
-> "In stable 6.1" kernels.
->=20
->>
->> In v6.6.51, a large change, commit 1ec40a175a48 ("cpufreq: amd-pstate:
->> Enable amd-pstate preferred core support"), was introduced which
->> significantly refactored the code. This commit cannot be ported back o=
-n
->> its own, and would require reviewing and cherry picking at least a few
->> dozen of commits in cpufreq, amd-pstate, ACPI, CPPC.
->>
-> I'd just say "this has been fixed in 6.6.y and newer but due to
-> refactoring that change isn't feasible to bring back to 6.1.y"
->=20
->> This means kernels v6.1 up until v6.6.51 are affected by this
->> significant performance issue, and cannot be easily remediated. This
->> patch simplifies the fix to a single commit.
->=20
-> Again no need to say "this patch".
+> +        items:
+> +          - const: sinovoip,rk3308-bpi-p2pro
+> +          - const: rockchip,rk3308
+> +
+>        - description: Sinovoip RK3568 Banana Pi R2 Pro
+>          items:
+>            - const: sinovoip,rk3568-bpi-r2pro
+> 
 
-Understood. As I stated this was just for clarity as to why the patch
-may be needed or useful.
 
->=20
->>
->> **********************************************************************=
-*
->>
->> On 10/28/2024 4:07 PM, Mario Limonciello wrote:
->>> On 10/24/2024 22:23, Yuan, Perry wrote:
->>>> [AMD Official Use Only - AMD Internal Distribution Only]
->>>>
->>>>> -----Original Message-----
->>>>> From: Nabil S. Alramli <dev@nalramli.com>
->>>>> Sent: Friday, October 25, 2024 9:05 AM
->>>>> To: stable@vger.kernel.org
->>>>> Cc: nalramli@fastly.com; jdamato@fastly.com; khubert@fastly.com;
->>>>> Yuan, Perry
->>>>> <Perry.Yuan@amd.com>; Meng, Li (Jassmine) <Li.Meng@amd.com>; Huang,
->>>>> Ray
->>>>> <Ray.Huang@amd.com>; rafael@kernel.org; viresh.kumar@linaro.org;
->>>>> linux-
->>>>> pm@vger.kernel.org; linux-kernel@vger.kernel.org; Nabil S. Alramli
->>>>> <dev@nalramli.com>
->>>>> Subject: [RFC PATCH 6.1.y 0/1] cpufreq: amd-pstate: Enable CPU boos=
-t
->>>>> in passive
->>>>> and guided modes
->>>>>
->>>>> Greetings,
->>>>>
->>>>> This is a RFC for a maintenance patch to an issue in the amd_pstate
->>>>> driver where
->>>>> CPU frequency cannot be boosted in passive or guided modes. Without
->>>>> this patch,
->>>>> AMD machines using stable kernels are unable to get their CPU
->>>>> frequency boosted,
->>>>> which is a significant performance issue.
->>>>>
->>>>> For example, on a host that has AMD EPYC 7662 64-Core processor
->>>>> without this
->>>>> patch running at full CPU load:
->>>>>
->>>>> $ for i in $(cat
->>>>> /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq); \
->>>>> =C2=A0=C2=A0=C2=A0 do ni=3D$(echo "scale=3D1; $i/1000000" | bc -l);=
- echo "$ni GHz";
->>>>> done | \
->>>>> =C2=A0=C2=A0=C2=A0 sort | uniq -c
->>>>>
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 128 2.0 GHz
->>>>>
->>>>> And with this patch:
->>>>>
->>>>> $ for i in $(cat
->>>>> /sys/devices/system/cpu/cpu*/cpufreq/scaling_cur_freq); \
->>>>> =C2=A0=C2=A0=C2=A0 do ni=3D$(echo "scale=3D1; $i/1000000" | bc -l);=
- echo "$ni GHz";
->>>>> done | \
->>>>> =C2=A0=C2=A0=C2=A0 sort | uniq -c
->>>>>
->>>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 128 3.3 GHz
->>>>>
->>>>> I am not sure what the correct process is for submitting patches
->>>>> which affect only
->>>>> stable trees but not the current code base, and do not apply to the
->>>>> current tree. As
->>>>> such, I am submitting this directly to stable@, but please let me
->>>>> know if I should be
->>>>> submitting this elsewhere.
->>>>>
->>>>> The issue was introduced in v6.1 via commit bedadcfb011f ("cpufreq:
->>>>> amd-pstate: Fix initial highest_perf value"), and exists in stable
->>>>> kernels up until
->>>>> v6.6.51.
->>>>>
->>>>> In v6.6.51, a large change, commit 1ec40a175a48 ("cpufreq: amd-psta=
-te:
->>>>> Enable amd-pstate preferred core support"), was introduced which
->>>>> significantly
->>>>> refactored the code. This commit cannot be ported back on its own,
->>>>> and would
->>>>> require reviewing and cherry picking at least a few dozen of commit=
-s
->>>>> in cpufreq,
->>>>> amd-pstate, ACPI, CPPC.
->>>>>
->>>>> This means kernels v6.1 up until v6.6.51 are affected by this
->>>>> significant
->>>>> performance issue, and cannot be easily remediated.
->>>>>
->>>>> Thank you for your attention and I look forward to your response in
->>>>> regards to what
->>>>> the best way to proceed is for getting this important performance f=
-ix
->>>>> merged.
->>>>>
->>>>> Best Regards,
->>>>>
->>>>> Nabil S. Alramli (1):
->>>>> =C2=A0=C2=A0=C2=A0 cpufreq: amd-pstate: Enable CPU boost in passive=
- and guided modes
->>>>>
->>>>> =C2=A0=C2=A0 drivers/cpufreq/amd-pstate.c | 8 ++------
->>>>> =C2=A0=C2=A0 1 file changed, 2 insertions(+), 6 deletions(-)
->>>>>
->>>>> --=C2=A0
->>>>> 2.35.1
->>>>
->>>> Add Mario and Gautham for any help.
->>>>
->>>> Perry.
->>>>
->>>
->>> If doing a patch that is only for 6.1.y then I think that some more o=
-f
->>> this information from the cover letter needs to push into the patch
->>> itself.
->>>
->>> But looking over the patch and considering how much we've changed thi=
-s
->>> in the newer kernels I think it is a sensible localized change for
->>> 6.1.y.
->>>
->>> As this is fixed in 6.6.51 via a more complete backport patch please
->>> only tag 6.1 in your "Cc: stable@vger.kernel.org" from the patch.
->>>
->=20
+
+
 
