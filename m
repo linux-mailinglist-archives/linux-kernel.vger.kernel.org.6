@@ -1,137 +1,162 @@
-Return-Path: <linux-kernel+bounces-386950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2A919B4A0E
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:47:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C98A89B4A07
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:46:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 658152837C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:47:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88B072842BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 408CF206060;
-	Tue, 29 Oct 2024 12:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63DBA206047;
+	Tue, 29 Oct 2024 12:46:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="UeRzOsV2"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ucSnCxdD"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81263206065;
-	Tue, 29 Oct 2024 12:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206007; cv=pass; b=Aeo3w7Yj4T49UqS5hZUPHOTt/+dljYs0dCuozhCcyB00GtjDuy7td2au+t6SiX8goEsSudkQwClhfECVV82euKH39pz0Oa6RMeDR+TvJhjWnqOq82YvTw7egLmos7/HMbTjHKK2BNGdzWMbab0cDz9/qV7qUb4qJgrU6FXF8+wI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206007; c=relaxed/simple;
-	bh=02O9OLW/g9ApFOsRDAht4QzW3rppeXYmBfHe9bZLecc=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mdFkM0fq9VjSMf+hkw4Aa5Y/XY1OQdlVJ+kL3Pv314QWM+N8fMEev9WmxsQRqTT2LDfSL5G14Jri68umy3Cwpl6dAFnWP/ETb2KWyf0H8wh1nLaTwGnvZu/RbxsOgHdQmIe6b+7hRma6skivPQf9xY8EL3HdUy+60ew8IcJ7Xy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=UeRzOsV2; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1730205970; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cDlOP1p7NceXi8MBxpKNC28xiNDRPlp4fv20r0PUMrEAAgK5umH1hAiv3jI/fXfg96zZf1Ywco2Lyq2eTulzWqSi4+oYLD4H7b9iPMzf48ri7qdt8VXceYyj7R/2NXooWUvbQh8AYZaKkhP7HdIEAYno758MfE6lt1CKOC2vt6U=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1730205970; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=NhuvYhWtyx8/keKVS3fcnmffHIOcZ9CkEtjr4NvLsbM=; 
-	b=FfWV30bmLYDpmM90KgvGAPP3xnL5O2cKimX3qmpmM+NfUnGqzn7zk6vf5yeVH5YjXyq5DJsqwA/9a0EOaYF6oiTEjyNfuzx7hOBdlHZ8sc0SCla7RCindvD58BYsJ0E9gUQA0dlmRc8ELiXrfWkn5vau1vglCav17hYzz8u/bYs=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1730205970;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=NhuvYhWtyx8/keKVS3fcnmffHIOcZ9CkEtjr4NvLsbM=;
-	b=UeRzOsV2oEVqgpCquWQp5Dmr0kNSkJw/9cBSv0QQJ9O19nR4u5mlxuwk5y1Nzck4
-	i+PC/wnUpOwEtf0bXWr34h5GmYHZWvTviZ3xaQY2cUc2HOiQzcsL9FGf9lE0R/jpw0v
-	/8qj3pHpwEk1agkA+K07afkzS08gAQ8gtPF44h6g=
-Received: by mx.zohomail.com with SMTPS id 1730205969715872.2644885507135;
-	Tue, 29 Oct 2024 05:46:09 -0700 (PDT)
-Message-ID: <f5ae659f-a6ef-4305-9f6b-280a8892a565@collabora.com>
-Date: Tue, 29 Oct 2024 17:45:58 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4343F1E2301;
+	Tue, 29 Oct 2024 12:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730205980; cv=none; b=pv7RVXHFu5rIjNoDSVpS5mYtisQz0CfsrWacb3u1fWF+iSNicPnAKLiQXUIFDPTKrXxbI3SKnw8r3zEubX3hENOyPblRvkOP5o7MM3d7VsKwHfa/Cl+ZM7oeFuq887iSFw3MHRhvJ6yibQJF44jcXAiiwkHFXWjBSPqM/cEv9y8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730205980; c=relaxed/simple;
+	bh=OLil04WAdDwUQiUnyBgo68CgowQVLkwEN+Pc80r2GOo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MEwJsIm0SyahJPzRKrAvghnilgkKshOGSLHS+fK87iFwlObXwfHWeRhI8Pyz1be4AP04GpfV4NDEoUIOVneKXq2//hcqW93c4otx3jCrJUZwh2BwfqlKjIsxpatUVoRiuQTQvDdpDAIEGsWvvbI9WMp7m3pnC+woT+38kiQB7FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ucSnCxdD; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 56CAE4D4;
+	Tue, 29 Oct 2024 13:46:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730205973;
+	bh=OLil04WAdDwUQiUnyBgo68CgowQVLkwEN+Pc80r2GOo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ucSnCxdDdpntMwXNJ28N3XAxZ/O5S44Eheqyt0429yfbjXnt22/Vw/J70MUfahUFs
+	 hfqB0pC/Rnpl5UwEtPYILpB21BN0+8n0FI1AgZLnqlMzRNfSvvcwPpuu01TNyOcxh+
+	 O9TjDRkyZ2f3k1FodWSvjsaLDMFi6Mi+81MatNK4=
+Date: Tue, 29 Oct 2024 14:46:09 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+	laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com,
+	hdegoede@redhat.com, dave.stevenson@raspberrypi.com,
+	mike.rudenko@gmail.com, alain.volmat@foss.st.com,
+	julien.vuillaumier@nxp.com, alice.yuan@nxp.com,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
+ sensor driver
+Message-ID: <20241029124609.GP22600@pendragon.ideasonboard.com>
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-2-mirela.rabulea@nxp.com>
+ <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
+ <20241029121039.GM22600@pendragon.ideasonboard.com>
+ <eeaa92c0-fed6-408b-8471-47acf0ca394d@kernel.org>
+ <20241029122150.GN22600@pendragon.ideasonboard.com>
+ <3ff55dc3-c6a9-40a8-8e21-2e3e43cfd614@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/208] 6.6.59-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241028062306.649733554@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241028062306.649733554@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3ff55dc3-c6a9-40a8-8e21-2e3e43cfd614@kernel.org>
 
-On 10/28/24 11:23 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.59 release.
-> There are 208 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+(CC'ing the devicetree mailing list)
+
+On Tue, Oct 29, 2024 at 01:28:51PM +0100, Krzysztof Kozlowski wrote:
+> On 29/10/2024 13:21, Laurent Pinchart wrote:
+> > On Tue, Oct 29, 2024 at 01:15:46PM +0100, Krzysztof Kozlowski wrote:
+> >> On 29/10/2024 13:10, Laurent Pinchart wrote:
+> >>> On Tue, Oct 29, 2024 at 07:14:28AM +0100, Krzysztof Kozlowski wrote:
+> >>>> On 28/10/2024 20:06, Mirela Rabulea wrote:
+> >>>>> Add bindings for OX05B1S sensor driver
+> >>>>>
+> >>>>> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+> >>>>
+> >>>> <form letter>
+> >>>> Please use scripts/get_maintainers.pl to get a list of necessary people
+> >>>> and lists to CC. It might happen, that command when run on an older
+> >>>> kernel, gives you outdated entries. Therefore please be sure you base
+> >>>> your patches on recent Linux kernel.
+> >>>>
+> >>>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> >>>> people, so fix your workflow. Tools might also fail if you work on some
+> >>>> ancient tree (don't, instead use mainline) or work on fork of kernel
+> >>>> (don't, instead use mainline). Just use b4 and everything should be
+> >>>> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> >>>> patches to the patchset.
+> >>>>
+> >>>> You missed at least devicetree list (maybe more), so this won't be
+> >>>> tested by automated tooling. Performing review on untested code might be
+> >>>> a waste of time.
+> >>>>
+> >>>> Please kindly resend and include all necessary To/Cc entries.
+> >>>> </form letter>
+> >>>>
+> >>>> Binding also looks very different than all other devices, so re-write it
+> >>>> starting from EXISTING GOOD bindings. Not some downstream stuff.
+> >>>
+> >>> Krzysztof, please point to a good example when making this kind of
+> >>> comment.
+> >>
+> >> Anything recently added. Git log tells which files were recently added.
+> > 
+> > If the review comment is a copy&paste (given that you review lots of
+> > bindings and constantly have to repeat the same things, that would make
+> > sense), expanding it with that information for future reviews could help
+> > patch authors. Thanks for considering it, it would be much appreciated.
 > 
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
+> Sorry, but that's not the point. You do not take 10 yo, unmaintained
+> driver and use it as template for your new one. Instead you rather take
+> something recent or something which you know is correct. Same with bindings.
+
+I wouldn't know for sure which driver or binding was used as a starting
+point. My point was unrelated to this particular patch series. I think
+that including clear information in ready-made answers will help
+everybody. It will tell the submitters what they need to know, it will
+avoid this kind of conversation being repeated, and it could even in the
+end increase the quality of submissions. Even better, it won't cost
+anything to add it to answer templates.
+
+> NXP is not a small company which does not know how to use Linux or how
+> to upstream stuff. This is not individual's contribution, where one does
+> not have colleagues or 3 billions USD of revenue behind, to be able to
+> get some internal help prior sending something downstream.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.59-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-Hi,
+> They can spend something out of these 3 billions of revenue or 700
+> millions of net income to hire you guys or any other open-source
+> company, if basics of upstreaming are unknown.
+>
+> That's the comment I was giving about NXP since a year. Some things
+> around SoC improved, some things from this unit of NXP here did not
+> change at all.
 
-Please find the KernelCI report below :-
+If I were on the receiving end of this, as an individual developer, I
+would consider it very patronizing and insulting. Treating the authors
+of contributions you don't consider as good enough in such a harsh way
+will not improve the situation, and will drive people away. You may be
+frustrated by some companies, but this kind of comment will not help.
+Please soften your tone towards individual developers, they're not
+punching balls on which to dump frustration and anger. Firm and polite
+will work better than lashing out.
 
+> So again, it's not about me giving them more things. They will keep
+> ignoring it over and over, because that's how big companies sometimes
+> behave. You know, community people work for free, right?
 
-OVERVIEW
+-- 
+Regards,
 
-    Builds: 24 passed, 0 failed
-
-    Boot tests: 48 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 6.6.59-rc1
-        hash: ef2696e271126e75fbbeba63c906736842815c4e
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=ef2696e271126e75fbbeba63c906736842815c4e&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
-
+Laurent Pinchart
 
