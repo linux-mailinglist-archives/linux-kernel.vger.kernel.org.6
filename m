@@ -1,153 +1,112 @@
-Return-Path: <linux-kernel+bounces-387316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEECB9B4F5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:32:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2B79B4F65
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6535282EAB
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE40284380
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC1A1D2796;
-	Tue, 29 Oct 2024 16:32:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9DC199E84;
+	Tue, 29 Oct 2024 16:34:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="DG5i+xB8"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Li0Nwsw7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF217198A1A
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:32:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD481953BD
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730219548; cv=none; b=jp5zwVOGFn2tk/fTe1ybOMaSfJ8RRaopAfNZNSd34BChsAzyz4ChShW+saRwPTDOElnZj7IB1ZTOoVXcWAWkZaWSX6mH0OEhuHlZK7EPfTF+PsrMg1K1XYIHRiGW0cFwDceO1G4x1iVc2OZvL5vPWJ6bPvtAIfzuocgZNjck/Oc=
+	t=1730219645; cv=none; b=VRz8n3/WG3VzAq5api6UJ+3/DdBoX3LC0SE2ZKk1dMoW92eDtbZrHgSap1TJbOH43CHylhLg7nblMl4lkaf7YgJTmRKQVtAhnXsoOSEjdhGgCtZUyHinin84h4S6xBBi+/zWyfNEJ3KaskoJEh/wmByT16QnvvADkbpwKbeiF9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730219548; c=relaxed/simple;
-	bh=hYolIBUKtKrKGdr/IPiPmwPl8fX/vuUGaiMdAk19sho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E7ZrbGIdEV7bNWbN5ExdMECoj5fJzVvDVNa6Ea7YtGkgXrumfCF7DVvTlJmMQdr23p67mIxbdWH8tyhOFo770lXJ6ia/R7UjiJPjgu2OZJQ0O+GFwbslHEZx4tiqokSMRmDScHYA3wDPxWbZThqNkuAaGvF0fN5Mq58nuuBZzyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=DG5i+xB8; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso78358371fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:32:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1730219543; x=1730824343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=bUOJQ4C9/O1JlNHOtWYDDSld89tRwaEqczlK/L6VWlA=;
-        b=DG5i+xB8SGrVP6U8PilwMIHhAi5GLnqFt+CvKNzMqJNLw0p5tPaCsgx6XRWncuD1kB
-         CfGhNnQBKRiqgENw+hdC7CPdlYXB6Vxl7QNG8g3Y3053jMyNAu2Pp6eVbisGDA+mR2o3
-         HV/iBXMSJCkShwetgK7YVtDYssxwmaozMebcV/F+tumD/Eh7gyKMJAKm6jpj8jrM4vpz
-         dHOUdJdNWG8obNGNafawz4qyNslWJl3x6MR3Nj8bvNfl2Mc8qWGrni1uz6MwyCjIDax2
-         vrxubw3uCO3/zbFbmA9h5z+FeIns8/7bNu3GHgCumQVzS16wKQvN/k8A9r+j5X4o8op4
-         r5IQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730219543; x=1730824343;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bUOJQ4C9/O1JlNHOtWYDDSld89tRwaEqczlK/L6VWlA=;
-        b=Mz9Z1ZMlCEQLkLJNo+pHCQlrFyiRLiW6+Te9SZQ5qkptKgNvWvWoAAw2u2/jNkvrYL
-         sLXIRWqQ7/C2bR5I1rua4tqYk8KkTp28YmVEybnnUW0bA7V7Vpy7pnI59J8lzntJpmcc
-         TMeRVV3p/re6tn4RlJevOH+LAXKR+rxMpxHr8t3OL6QmTGp0er6wTAQ6dc1/pHLsg5tA
-         8njeOfs94k62t7DqaRwc5OFd97AkllONz6Z6s3Kua0u3d9s6uFjan06v+ByfbDsqMNSd
-         Itym9F/x4RDehAIsACiwV+NR9wzsPjLYS2MIKMeHXMYBeCcN4pnRtRHMDXNH3fDG4sQI
-         y38g==
-X-Forwarded-Encrypted: i=1; AJvYcCX6RVzFtmkISwe1MIBa/gJe9veCnlPjPXF8Nrvm5yccRq7d+Jo94FGIJlfbLwfu0W+/gLJqPNcRMLZPJuk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxk2SDdjM8GUgJyQkSyQi583BLHiaMya8nhW+DNIBFgpWq7515N
-	WcTMoMeR6tFoAwspMOO6HgYY3c+pxyokfhZVytDDorbGwLhcSX5lSKNqzpcSmCg=
-X-Google-Smtp-Source: AGHT+IFRjAbr9XWeX7K55eMSmZKhkY0RY3XF4MvBwCJPmM2jYr8kSDV9jS96JgjiVUw4zczZOC4WcA==
-X-Received: by 2002:a2e:be9f:0:b0:2fa:d4ef:f234 with SMTP id 38308e7fff4ca-2fcbdf6183emr96680611fa.1.1730219542770;
-        Tue, 29 Oct 2024 09:32:22 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7465:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b3099ddf1sm498006466b.149.2024.10.29.09.32.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 09:32:22 -0700 (PDT)
-Message-ID: <35c07733-d9e4-43a3-9dde-2cc10cd1ab9f@suse.com>
-Date: Tue, 29 Oct 2024 18:32:20 +0200
+	s=arc-20240116; t=1730219645; c=relaxed/simple;
+	bh=OQrRX425YErf6WBAlS31+n1TMuwI9ESjLwYvILN6+ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QjmRzGqQECswhRNiS8ZJNT+EWBhkon4jyQBmUW7KnwUZS/O3HTQp3oroBom71Cu+DxFxsArRMTPFw86VFef9ovz53MaseCeEYN2gC7WWYEEjXxVHmgMIGkfejF9zqxweSCW7F20rOQIHBkYLJu401pfTrZGkMUfFf8YjyUSbm5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Li0Nwsw7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18ACC4CECD;
+	Tue, 29 Oct 2024 16:34:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730219645;
+	bh=OQrRX425YErf6WBAlS31+n1TMuwI9ESjLwYvILN6+ys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Li0Nwsw7czzmjgKw+cyoJIe4YK+pXszWEXybTj9Sz96rkVV1wjXBq7lnqbbO03aQ3
+	 C0nh8kg6vWo7mG8N8TCYyENTI2yn1fuy9fqkTrml/cZzMoKYVmRQ1WGt68yd6oF4wR
+	 rnLMws8bzlSCvmQF1a9YaWmwU0Zs6fcTJyTVKBbreiG05mKAHHJmbPpBLBpKptgbpu
+	 W899QYjAmKJ/YDEluDGxrHyvcEaDDKdmwX6elobz5kAg0EEWG7ePmi7voJkl8YQWEj
+	 828c6B3VPfEVFuktFRfDP+/XBKbSUquJtFxb/YlpX4AsNe/JxLDQdzbePSFkdBTXsM
+	 8YdKmewloc74w==
+Date: Tue, 29 Oct 2024 17:34:02 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 16/26] signal: Replace resched_timer logic
+Message-ID: <ZyEOeqkSYWR2XTp_@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083836.220867629@linutronix.de>
+ <ZyEFyV28jcz85V1q@localhost.localdomain>
+ <87ttcu281y.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/bugs: Check VERW mitigations for consistency
-To: Daniel Sneddon <daniel.sneddon@linux.intel.com>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
- Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
- Josh Poimboeuf <jpoimboe@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: hpa@zytor.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- pawan.kumar.gupta@linux.intel.com
-References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
- <3ed45a10e2f7fbecce31d9964b1da1372e8cb838.1730158506.git.daniel.sneddon@linux.intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <3ed45a10e2f7fbecce31d9964b1da1372e8cb838.1730158506.git.daniel.sneddon@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <87ttcu281y.ffs@tglx>
 
-
-
-On 29.10.24 г. 1:50 ч., Daniel Sneddon wrote:
-> There are currently 4 mitigations that use VERW: MDS, TAA,
-> MMIO Stale Data, and Register File Data Sampling. Because
-> all 4 use the same mitigation path, if any one of them is
-> enabled, they're all enabled. Normally, this is what is
-> wanted. However, if a user wants to disable the mitigation,
-> this can cause problems. If the user misses disabling even
-> one of these mitigations, then none of them will be
-> disabled. This can cause confusion as the user expects to
-> regain the performance lost to the mitigation but isn't
-> seeing any improvement. Since there are already 4 knobs for
-> controlling it, adding a 5th knob that controls all 4
-> mitigations together would just overcomplicate things.
-> Instead, let the user know their mitigations are out of sync
-> when at least one of these mitigations is disabled but not
-> all 4.
+Le Tue, Oct 29, 2024 at 05:22:17PM +0100, Thomas Gleixner a �crit :
+> On Tue, Oct 29 2024 at 16:56, Frederic Weisbecker wrote:
+> >> @@ -568,10 +568,10 @@ static void collect_signal(int sig, stru
+> >>  		list_del_init(&first->list);
+> >>  		copy_siginfo(info, &first->info);
+> >>  
+> >> -		*resched_timer = (first->flags & SIGQUEUE_PREALLOC) &&
+> >> -				 (info->si_code == SI_TIMER);
+> >> -
+> >> -		__sigqueue_free(first);
+> >> +		if (unlikely((first->flags & SIGQUEUE_PREALLOC) && (info->si_code == SI_TIMER)))
+> >> +			*timer_sigq = first;
+> >> +		else
+> >> +			__sigqueue_free(first);
+> >
+> > So this isn't calling __sigqueue_free() unconditionally anymore. What if
+> > the timer has been freed already, what is going to free the sigqueue?
 > 
-> Signed-off-by: Daniel Sneddon <daniel.sneddon@linux.intel.com>
-> ---
->   arch/x86/kernel/cpu/bugs.c | 18 ++++++++++++++++++
->   1 file changed, 18 insertions(+)
+> __sigqueue_free() does not free timers marked with SIGQUEUE_PREALLOC.
 > 
-> diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-> index d1915427b4ff..b26b3b554330 100644
-> --- a/arch/x86/kernel/cpu/bugs.c
-> +++ b/arch/x86/kernel/cpu/bugs.c
-> @@ -582,8 +582,26 @@ static void __init md_clear_update_mitigation(void)
->   		pr_info("Register File Data Sampling: %s\n", rfds_strings[rfds_mitigation]);
->   }
->   
-> +static void __init verw_mitigations_check(void)
-> +{
-> +	if (mds_mitigation == MDS_MITIGATION_OFF ||
-> +	    taa_mitigation == TAA_MITIGATION_OFF ||
-> +	    mmio_mitigation == MMIO_MITIGATION_OFF ||
-> +	    rfds_mitigation == RFDS_MITIGATION_OFF) {
-> +		if (mds_mitigation == MDS_MITIGATION_OFF &&
-> +		    taa_mitigation == TAA_MITIGATION_OFF &&
-> +		    mmio_mitigation == MMIO_MITIGATION_OFF &&
-> +		    rfds_mitigation == RFDS_MITIGATION_OFF)
-> +			return;
+> sigqueue_free() takes care of that, which is invoked from
+> posixtimer_free_timer(). It clears SIGQUEUE_PREALLOC and if it is queued
+> it lets it pending and delivery will free it.
 
-Ugh, why don't you simply XOR the 4 values and if it's 1 it means the 
-inputs differe => there is inconsistency.
+But the delivery freeing used to be done with the __sigqueue_free()
+above, which doesn't happen anymore, right?
 
-> +
-> +		pr_info("MDS, TAA, MMIO Stale Data, and Register File Data Sampling all depend on VERW\n");
-> +		pr_info("In order to disable any one of them please ensure all 4 are disabled.\n");
-> +	}
-> +}
-> +
->   static void __init md_clear_select_mitigation(void)
->   {
-> +	verw_mitigations_check();
->   	mds_select_mitigation();
->   	taa_select_mitigation();
->   	mmio_select_mitigation();
+> 
+> That's not any different from before this change.
+> 
+> Though thinking more about it. As we drop the signal in that case
+> anyway, we could remove it from pending in sigqueue_free() directly. Let
+> me look into that.
+
+Ok.
+
+Thanks.
+
+> 
+> Thanks,
+> 
+>         tglx
 
