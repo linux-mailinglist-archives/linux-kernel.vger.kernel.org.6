@@ -1,134 +1,133 @@
-Return-Path: <linux-kernel+bounces-386835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C20109B4873
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:37:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3E149B4871
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:37:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873E828313B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:37:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58320B22FCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:37:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB90D205ACA;
-	Tue, 29 Oct 2024 11:37:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4168320515D;
+	Tue, 29 Oct 2024 11:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b="a3uzFKdp"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.126.130])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="TPEdzcIw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5251D20514E;
-	Tue, 29 Oct 2024 11:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.126.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A3A205151;
+	Tue, 29 Oct 2024 11:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201851; cv=none; b=L3+52HnCCpAbxMxhGiCEnIyu7gZF3HqFgwmKXfZ8EtZ4BSaZfTk6GTFDJazxkSuNiSRfqZah4eUcovo6VStQ7uMuQxThPHiKIVc6vwL9rcCDXbQ8HSs14BeoSGy7V+r5LbU5oX76+T3v1FlSdgU8oqa+YZE1S/M4ED/QQtqVeLg=
+	t=1730201849; cv=none; b=iZrf6BbCHjJPQCSN2WzOoEIT2TPC0TR4n98yaZsUmyENTg1+pY6ydTkvbxkVeIQdhKxawbVKyzfYoxX++ROTk0YsJGJHioIsZk2sr18bFk2IP3A87GAbnCyrXw7WpsZ1RdIqU4Hw6JBO/DhRI1P1rF44zztibZPdZyy109VM2Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201851; c=relaxed/simple;
-	bh=o2E1FQYdtO20CbBV3qYSi9WtW0hUwUhugtlkNPHSqD4=;
+	s=arc-20240116; t=1730201849; c=relaxed/simple;
+	bh=57Sx9PTEFK++KLP+ahxoeTLSm5WWbmfZd6tVyMNFZ/s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dGFa5WfA7M1lvDMpjUmfiQllWhseMFhhfAsIdjcuF/wFQtGwPbisbAnpJh1b0j5qKq06pI3+RwzVQHi1Wr8gYbm7vvuRsxoiG8OmPfr88OrQg7ewPb58XvcnFyt2WR4SZ1njB6FXVsydMJbEvaWy2e7ht/XbUSM9wx3UKwYsGnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu; spf=pass smtp.mailfrom=heusel.eu; dkim=pass (2048-bit key) header.d=heusel.eu header.i=christian@heusel.eu header.b=a3uzFKdp; arc=none smtp.client-ip=212.227.126.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=heusel.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=heusel.eu
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=heusel.eu;
-	s=s1-ionos; t=1730201801; x=1730806601; i=christian@heusel.eu;
-	bh=uPx/693D1KOpsC75//Rzve20O6pDdXOCslY44UXj3UY=;
-	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
-	 MIME-Version:Content-Type:In-Reply-To:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=a3uzFKdpOOt14foID4PhT1BsUt5A0v8QljsNVCUuy1AG/+rBtwZM3Vqfsf8P8D8B
-	 /oHKm0lPhAyB7QH6smn8ACK0XEZ7+kVknYY1FMkXHo2AiUFKOZoSnlT2YlAkav5BW
-	 xfbQKaRGSsOs9basaTQkICnL5pXZ2lqsRro4W/LDKnp2XZKKpM774nP3AZqYbzTEV
-	 r8FETuy/+O2oLrC8FUFCSMOTiWyxH6SDwjgOiU+H4XDgNnBkCP07iNr14Z7JtgcZN
-	 n+MG21EvdV8HoXDs8Ik83RlydH7Zs2DXRxbh4OvCX3/ybhWTPiQKSTdZ5jGSs87c4
-	 0rzlsLa1rJJKI2J4VQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from localhost ([141.70.80.5]) by mrelayeu.kundenserver.de (mreue009
- [212.227.15.167]) with ESMTPSA (Nemesis) id 1MfYHQ-1tlPw91vJY-00jaHv; Tue, 29
- Oct 2024 12:36:41 +0100
-Date: Tue, 29 Oct 2024 12:36:39 +0100
-From: Christian Heusel <christian@heusel.eu>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, akpm@linux-foundation.org, 
-	linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org, 
-	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com, f.fainelli@gmail.com, 
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, 
-	allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-Message-ID: <dc2297a1-aa4e-410c-b4a8-ded53a4a96a1@heusel.eu>
-References: <20241028062312.001273460@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=kCHJenx84w3Y7SVLcwzqTqekVQmbxaD/VBl5uQ+PBqT3iXlBuuuV0yE1ebEr6UL14NTv37Q8v7Ebrm1pSdU3S/1W56DrQMa13RLr2gU8+XGkH94rjjwiotzmuEPxVDYO21hrx/fLP8+nOBSbutML67nYveLywNcz2Co73ij6wy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=TPEdzcIw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 27BBD40E0219;
+	Tue, 29 Oct 2024 11:37:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id IZhXHwRFY4rV; Tue, 29 Oct 2024 11:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730201840; bh=eCpAktyIiVGESsEQ9DG1nf4m9PsJ6IeL20ZQjcotDag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TPEdzcIwfFmui8gc2r+UzPwHtc6nudE5/aRg29rRgK1yCrCcOshIINfBXh4qllYyy
+	 LmRO2JzKVQHFOrSWYh7iGRceAzJMbnrMKI35jjl61CxmopGVT9miZ4pDB+T+PpCf+q
+	 dx7EYxnl+aEt3q5ngNf9caM1HDbpciCS1FNVApeKakOyNlm2j8ie3qDUMjevtpgiDr
+	 9sCVealnm2UTDZtzd7NmhHml8C5e9O8CThA7dtIInFTEhtcRPnTpTMICF3ZbVXVZ6A
+	 KUk2JXJnbAPdqSAXZB7wcDmrMb6XC9hKvvhpqs77wfBBcd0nyZ3idONU4Rb2WLeLqs
+	 28Az8MIleGVXNOW89iSV2WhgWSUKsh3ZKJ5Np24SMdkeATrF6GK2tchJzwg76MZ/Cr
+	 4I/AmE31gu1TNeyKuaMKd/mVD/+8juOl/Dc3rONgwBPvWOQdARYbW/QEQxe5sfKEJD
+	 T6yRfYcbWwXXiYsM9Y58YhxeraM8DLVIPeosYhaG1t779kPGb7bdHsU7utUMZhh4wU
+	 WKrCkxAIa1mNlPD9MP1ygxWyy/ITOy3p91UnOxP4pVBiGozb0GI1nXYW/BqWWvOBP8
+	 ViXOA1/CIM3cL1V1m5GoMnUgJf90yVvlXTMewKa9TD5fHHR95G3zhtIFyVuhwS/Ma9
+	 yFwWiCYdEukAAMISkCsc1VLA=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C2BBB40E0198;
+	Tue, 29 Oct 2024 11:37:07 +0000 (UTC)
+Date: Tue, 29 Oct 2024 12:37:02 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Daniel Sneddon <daniel.sneddon@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	hpa@zytor.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, pawan.kumar.gupta@linux.intel.com
+Subject: Re: [PATCH 2/2] x86/bugs: Clean-up verw mitigations
+Message-ID: <20241029113702.GUZyDI3u_6IxiCWOBJ@fat_crate.local>
+References: <cover.1730158506.git.daniel.sneddon@linux.intel.com>
+ <20992658d2c79f27de91a474a7b122782be5f04b.1730158506.git.daniel.sneddon@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="25aaetkewxcot6dh"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241028062312.001273460@linuxfoundation.org>
-X-Provags-ID: V03:K1:WIuvLVObM+VfqWn6SLKPhk5tdVFYSxFfqVmKE3oroCCtr5V3KKh
- RBBt5nPhCgyoXyaWF56Zh3v+KHwP4IV7bNMCGJTky/XCVzUb4BAYNij6bOlrxOuoS5nt2cB
- u5HNxu1kQpHkFPFDx2ZXff+xIt/DtvnRVfQoquYzUqmjJW+/mlV5YTogimmNVtBq0kOiV7m
- A6at6VnFVliIsRYIxHGeg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:63jAJymAGVo=;2PI09+GH+HHCSVCrYKZBEPwt33F
- oAHeoHmQK7dN4VZj2n/Lx9oPVyiXwk/oKv3PQVSKqdRabohlXS9tUx+MIrIE9RfgTiceVqI8I
- zoqh/DrTK35IgnSpCR/LCs0Zl1ui09Qy8h7HGT7ucJvvxhxXGPvvGAEOOMi7wqdpRNLkwSwwn
- w5n6QyJrhpOtq9SwkSRBwlqHWlYVXjuzixsujAYkUFZ0q+XaEn6/biS+6sQS2WShgA5LD9e1D
- fDTLzHRM1D725Qn4Uf238rIstYWj5FyuCz2++O3hlauckD8Ie69d5Wf/cz/2aeWO+ffklC0Me
- 2P0nnI5wwK+q/3Rv3z10riEhD9zmhGVOYi9rHetHScusVje833lduudZLSEhmCIDOPnOnywbI
- RQUkXiOEbsZu1FQ07YZffbjNQFihWpbYE4u+7TndaaHcBQF99Hb16RWaXZSYyHPRE1sUPTvjg
- OJOH8IK9MrgaUCRQ05DV9ty/bBr0DfW6ETjR6mojuSLsNIF8j7oLOWqDe9RLYQDGkuM1RRwD+
- cZm+EEYxyh4Tlcon5ItsQga+67nWqksWNTg5IZ+LhIWD0NSQHe/X/IiMfrolokq4wXA8Nsfp+
- nd1rmM/BdBpHXdU9R+VR7uh1w1ON2Lo0bZGjBKp4epp4FQDKBa7TovZflKDX4eDm2C0yKHsLD
- Nfas25zj0enoJ2x0hs5ulduXOHfHFw+Ei3J5EaRb0IaiZ/TiuMqeupF8lTihi8+rKuwXyyysv
- 6OAH6Fg8H9mKwvbDf5V75cJnAKtcxY5zg==
+In-Reply-To: <20992658d2c79f27de91a474a7b122782be5f04b.1730158506.git.daniel.sneddon@linux.intel.com>
 
+On Mon, Oct 28, 2024 at 04:50:35PM -0700, Daniel Sneddon wrote:
+> @@ -599,20 +503,70 @@ static void __init verw_mitigations_check(void)
+>  	}
+>  }
+>  
+> -static void __init md_clear_select_mitigation(void)
+> +static bool __init verw_mitigations_disabled(void)
+>  {
+>  	verw_mitigations_check();
+> +	/*
+> +	 * TODO: Create a single mitigation variable that will allow for setting
 
---25aaetkewxcot6dh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 6.11 000/261] 6.11.6-rc1 review
-MIME-Version: 1.0
+A patch which introduces a TODO is basically telling me, it is not ready to go
+anywhere yet...
 
-On 24/10/28 07:22AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.6 release.
-> There are 261 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Wed, 30 Oct 2024 06:22:39 +0000.
-> Anything received after that time might be too late.
->
+> +	 * the location of the mitigation, i.e.:
+> +	 *
+> +	 * kernel->user
+> +	 * kvm->guest
+> +	 * kvm->guest if device passthrough
+> +	 * kernel->idle
+> +	 */
+> +	return (mds_mitigation == MDS_MITIGATION_OFF &&
+> +		taa_mitigation == TAA_MITIGATION_OFF &&
+> +		mmio_mitigation == MMIO_MITIGATION_OFF &&
+> +		rfds_mitigation == RFDS_MITIGATION_OFF);
 
-Tested-by: Christian Heusel <christian@heusel.eu>
+This should be used inside verw_mitigations_check() instead of repeated here,
+no?
 
-Tested on a ThinkPad E14 Gen 3 with a AMD Ryzen 5 5500U CPU and on the
-Steam Deck (LCD variant).=20
+Also, pls call verw_mitigations_check() "check_verw_mitigations" - the name
+should start with a verb.
 
---25aaetkewxcot6dh
-Content-Type: application/pgp-signature; name="signature.asc"
+Actually, you can merge verw_mitigations_check() and
+verw_mitigations_disabled(). Please do a *minimal* patch when cleaning this up
+- bugs.c is horrible. It should not get worse.
 
------BEGIN PGP SIGNATURE-----
+What could also help is splitting this patch - it is hard to review as it
+is...
 
-iQIzBAABCAAdFiEEb3ea3iR6a4oPcswTwEfU8yi1JYUFAmcgyMcACgkQwEfU8yi1
-JYUrxw//aTJQRwtT6aLo2u3LUsuB4oC24QnzP0j6S8npCogqDQPFrTFLvBTdf1Sj
-Kg+BDVwShNg5Nc3pNG4VABEsVmrOWGhyZ9OaCZfPI+XXwuTJu/HWMCE1ja/3flo1
-maIEY9QBVRyjmvJH5jgD3h+q4VIYLUJ0h8oJDgrAudxOMPsQFOxpZqmgaGtUnOQM
-b+ngYsV0fifzyiL3BwpHAt+EDtE+qLx8KQaKI0os8S1bbSBESGFvK624rlmZLVzS
-TQsSGu+eOBqhGPgv8DwZ7AlIegw8MkTkToKTDW/MUVJ3m9dx+KOWUScN3qvZgFB7
-ycTl+hS174+9XrJRaS0pXBAe5kry8c2xrnzjQ1p6xoWnICTC+x0IGy9lhXi7nO16
-GYSfvhE5103WcMkXiLlvIPo1pUcKLv2JuKd/RLe+/LjzSeqDeK0BSSQwWDK6vJ4s
-QlmLtqpNNID+GaZNcs819yzxqpW2hOdqTQirLvX8LUJAUJeZqSGaJ/y0Om1RAvyh
-C7mUGzqzT1lTfezFk/Ug1Wct2tx9IAYwPaKbit644ACElqDVMA0dyOl+7Y4BFCEY
-7kBFv2yyRM3rCdzpNJskWmbuXDD+YK1hXSpbfPBBMNbm9vYNzweqO4+90KrGmUFm
-m/WpbaL2Fxy03m9JWwZ1gqZpIV6ZI/Vu0OqFo5U+MMYk71WdcEs=
-=41HY
------END PGP SIGNATURE-----
+Thx.
 
---25aaetkewxcot6dh--
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
