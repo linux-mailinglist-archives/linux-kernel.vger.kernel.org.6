@@ -1,176 +1,133 @@
-Return-Path: <linux-kernel+bounces-387221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7C19B4E21
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:36:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4600A9B4E23
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:36:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D67DB1F23916
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:35:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFE51B23585
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:36:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34B72194ACF;
-	Tue, 29 Oct 2024 15:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C09194ACA;
+	Tue, 29 Oct 2024 15:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V/9rUhkS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="mwlKU0wN"
+Received: from pv50p00im-ztbu10021601.me.com (pv50p00im-ztbu10021601.me.com [17.58.6.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80AF1A23;
-	Tue, 29 Oct 2024 15:35:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE4919413C
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730216148; cv=none; b=mmFRK6c0GXRMzhtf5feTe5h1KEJP/pyV5v2WgGF/XhDeXrLrD0RAWgYADh8o6/hGe5e1TReNvOq0FT1NCaNq72SJ/WUqKFHiiF44W5aWQRI9kGcm0VSctJje6vdElCWrcX4qVolgc3hm4q2/CHddrO6Q2eRMbvW2q9vquQw8TJA=
+	t=1730216166; cv=none; b=LX4G3bwiXG3dbhhoqLs510c1PHjBRXeC3aIYkCbcTvQRIv6TyUFPYxhvz/+fLrw89ul8xC4fTRhSGYaFYgVe8+tms3RmsIMzSlOW66h13EgX0eQcrxL+5rB6/SL02QKZGr7haR7aQ28WGC04mQTqk8hyGjft3PkVywiNyINdxYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730216148; c=relaxed/simple;
-	bh=m3sq7wXYLvTDYHbfRMB5UeUtoYck6rsjkP+zWtVTWso=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=QjXiQdMcUf0Oe1rH+qyT49ZDz095tPddQtP2ckmWUpC1u9hBlqHiOEQOKUn1MyL853w82ACEdJvekcODPwRdKp6m13zrWvnskdHT8d6sPtP5+1Tfd/HjInK8kUfWpJnQG9VmsHRCSsO8/Hsa/DgtQTKgUqyki1FaGRVBKll0qDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V/9rUhkS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4044C4CECD;
-	Tue, 29 Oct 2024 15:35:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730216148;
-	bh=m3sq7wXYLvTDYHbfRMB5UeUtoYck6rsjkP+zWtVTWso=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=V/9rUhkSwmeb4TU+DpjHy53bTOaz+7d0lKjpQyy8Wbcfz+0/EINsQhS2CJAKRCly8
-	 Ict46b77/vCzqINZMtP9m7wtcmoJpXRUCSLXyj4XuVdmjKyeR3dMGqjL0OCKhVj+gR
-	 R4rjjEGiija7sI3FcQUZHHu4mOojN1Q1EQhR1ve7PAFwoA2zauvPod3uevfNKlnpuu
-	 qCSxGvmYkEDlXxqnCrlfRoj0cqbGo1l+xF2lwZmzWSmBYYQc0DReT89ijZKmEr7mts
-	 cfh6efqLNDlcwx6yyqfOzGghf1Av4VkspjhSu7cu4uZBO3Y4QI2ZzFO/wYyDnbtNsW
-	 JmPaoWzyXbc1Q==
-Date: Tue, 29 Oct 2024 10:35:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Kevin Xie <kevin.xie@starfivetech.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Markus.Elfring@web.de, quic_mrana@quicinc.com, rafael@kernel.org,
-	m.szyprowski@samsung.com, linux-pm@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/2] PCI: Enable runtime pm of the host bridge
-Message-ID: <20241029153546.GA1156846@bhelgaas>
+	s=arc-20240116; t=1730216166; c=relaxed/simple;
+	bh=/fpG2GGUWbUH06HgZi2peKYBsU1bofywwwD42xbLIQE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KjNTTZt8nXlsevswEHiM2vCR8HdxDmqjA5bGL7yEe6U/gsRYMTG4cybsV74RjvTrVv8igSyAcGdxMTR4G6mS9be5mVdxV9oTM5hIOhlH8cADJ1VnlZ7s08XSO0qJSPCv3LKj8Rhr+vUKwgPcnj4DzITK86JS9qrx0YSuYxYUky4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=mwlKU0wN; arc=none smtp.client-ip=17.58.6.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1730216162;
+	bh=puxcM7+qXLjSwz68WBl3v2znnK9nvbamWejoVMBg5Ts=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	b=mwlKU0wNVYj/f0QuLQyW332g+Rm694/Ue89y0qaiSnkuy9Ya3arYo56nduii5yvN2
+	 3UUnBADolY9vEMa9u33v3DHb5k2O2AQgmpgIjKmmUvAnkOxVx2T5T7iC1SKf2sPiTD
+	 8mqbUbZRTut2qd4odYJQCnr8BCOfAkJdl788hzyG+lW3yqSOKNgO5Tyy0Xid7hvd+j
+	 fIZIk0Fn6gNuJvNI2i+Rh2C3oaAv8JEhcaCAkAtMfYADzpBg5EuOUAKr5mujpR20XQ
+	 ww1pk+oV05mvBd2t0Q10wQkkQHburN8zp1ribRexuH1+ulrPIkJEKeGYNGlXO49pNV
+	 v7gnhFuu8rVCA==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztbu10021601.me.com (Postfix) with ESMTPSA id 148CD8013C;
+	Tue, 29 Oct 2024 15:35:52 +0000 (UTC)
+Message-ID: <a6d7efe2-ec92-4ffa-a1f1-bc73ebd49d16@icloud.com>
+Date: Tue, 29 Oct 2024 23:35:48 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017-runtime_pm-v6-2-55eab5c2c940@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/6] phy: core: Fix that API
+ devm_of_phy_provider_unregister() fails to unregister the phy provider
+To: Johan Hovold <johan@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Lee Jones <lee@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+ Bjorn Helgaas <bhelgaas@google.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>, stable@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Zijun Hu <quic_zijuhu@quicinc.com>
+References: <20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com>
+ <20241024-phy_core_fix-v2-2-fc0c63dbfcf3@quicinc.com>
+ <ZyDmdsHtxo-gFIFH@hovoldconsulting.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <ZyDmdsHtxo-gFIFH@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: XeQvugf_b68p5An_VnUiKVZ6QSUfRYln
+X-Proofpoint-ORIG-GUID: XeQvugf_b68p5An_VnUiKVZ6QSUfRYln
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-29_10,2024-10-29_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 spamscore=0 suspectscore=0
+ mlxlogscore=961 malwarescore=0 clxscore=1015 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2410290119
 
-On Thu, Oct 17, 2024 at 09:05:51PM +0530, Krishna chaitanya chundru wrote:
-> The Controller driver is the parent device of the PCIe host bridge,
-> PCI-PCI bridge and PCIe endpoint as shown below.
+On 2024/10/29 21:43, Johan Hovold wrote:
+> On Thu, Oct 24, 2024 at 10:39:27PM +0800, Zijun Hu wrote:
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> For devm_of_phy_provider_unregister(), its comment says it needs to invoke
+>> of_phy_provider_unregister() to unregister the phy provider, but it does
+>> not invoke the function actually since devres_destroy() will not call
+>> devm_phy_provider_release() at all which will call the function, and the
+>> missing of_phy_provider_unregister() call will case:
 > 
->         PCIe controller(Top level parent & parent of host bridge)
->                         |
->                         v
->         PCIe Host bridge(Parent of PCI-PCI bridge)
->                         |
->                         v
->         PCI-PCI bridge(Parent of endpoint driver)
->                         |
->                         v
->                 PCIe endpoint driver
+> Please split this up in two sentences as well.
 > 
-> Now, when the controller device goes to runtime suspend, PM framework
-> will check the runtime PM state of the child device (host bridge) and
-> will find it to be disabled. So it will allow the parent (controller
-> device) to go to runtime suspend. Only if the child device's state was
-> 'active' it will prevent the parent to get suspended.
-> 
-> It is a property of the runtime PM framework that it can only
-> follow continuous dependency chains.  That is, if there is a device
-> with runtime PM disabled in a dependency chain, runtime PM cannot be
-> enabled for devices below it and above it in that chain both at the
-> same time.
-> 
-> Since runtime PM is disabled for host bridge, the state of the child
-> devices under the host bridge is not taken into account by PM framework
-> for the top level parent, PCIe controller. So PM framework, allows
-> the controller driver to enter runtime PM irrespective of the state
-> of the devices under the host bridge. And this causes the topology
-> breakage and also possible PM issues like controller driver goes to
-> runtime suspend while endpoint driver is doing some transfers.
-> 
-> Because of the above, in order to enable runtime PM for a PCIe
-> controller device, one needs to ensure that runtime PM is enabled for
-> all devices in every dependency chain between it and any PCIe endpoint
-> (as runtime PM is enabled for PCIe endpoints).
-> 
-> This means that runtime PM needs to be enabled for the host bridge
-> device, which is present in all of these dependency chains.
 
-Earlier I asked about how we can verify that no other drivers need a
-change like the starfive one:
-https://lore.kernel.org/r/20241012140852.GA603197@bhelgaas
+good suggestions. will do it.
 
-I guess this sentence is basically how we verify all drivers are safe
-with this change?  
-
-Since this patch adds devm_pm_runtime_enable() in pci_host_probe(),
-can we expand this along the lines of this so it's more specific about
-what we need to verify?
-
-  Every host bridge driver must call pm_runtime_enable() before
-  runtime PM is enabled by pci_host_probe().
-
-Please correct me if that's not the right requirement.
-
-> After this change, the host bridge device will be runtime-suspended
-> by the runtime PM framework automatically after suspending its last
-> child and it will be runtime-resumed automatically before resuming its
-> first child which will allow the runtime PM framework to track
-> dependencies between the host bridge device and all of its
-> descendants.
+>> - The phy provider fails to be unregistered.
+>> - Leak both memory and the OF node refcount.
 > 
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
-> Changes in v6:
-> - no change
-> Changes in v5:
-> - call pm_runtime_no_callbacks() as suggested by Rafael.
-> - include the commit texts as suggested by Rafael.
-> - Link to v4: https://lore.kernel.org/linux-pci/20240708-runtime_pm-v4-1-c02a3663243b@quicinc.com/
-> Changes in v4:
-> - Changed pm_runtime_enable() to devm_pm_runtime_enable() (suggested by mayank)
-> - Link to v3: https://lore.kernel.org/lkml/20240609-runtime_pm-v3-1-3d0460b49d60@quicinc.com/
-> Changes in v3:
-> - Moved the runtime API call's from the dwc driver to PCI framework
->   as it is applicable for all (suggested by mani)
-> - Updated the commit message.
-> - Link to v2: https://lore.kernel.org/all/20240305-runtime_pm_enable-v2-1-a849b74091d1@quicinc.com
-> Changes in v2:
-> - Updated commit message as suggested by mani.
-> - Link to v1: https://lore.kernel.org/r/20240219-runtime_pm_enable-v1-1-d39660310504@quicinc.com
-> ---
->  drivers/pci/probe.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> Perhaps a comment about there not being any in-tree users of this API is
+> in place here?
 > 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index 4f68414c3086..8409e1dde0d1 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -3106,6 +3106,11 @@ int pci_host_probe(struct pci_host_bridge *bridge)
->  		pcie_bus_configure_settings(child);
->  
->  	pci_bus_add_devices(bus);
-> +
-> +	pm_runtime_set_active(&bridge->dev);
-> +	pm_runtime_no_callbacks(&bridge->dev);
-> +	devm_pm_runtime_enable(&bridge->dev);
-> +
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pci_host_probe);
+
+okay, will do it as you suggest.
+
+> And you could consider dropping the function altogether as well.
+>
+
+Remove the API devm_of_phy_provider_unregister()?
+
+i prefer fixing it instead of removing it based on below considerations.
+
+1) it is simper. just about one line change.
+2) the API may be used in future. the similar API of [PATCH 1/6] have 2
+usages.
+
+>> Fixed by using devres_release() instead of devres_destroy() within the API.
+>>
+>> Fixes: ff764963479a ("drivers: phy: add generic PHY framework")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> -- 
-> 2.34.1
+> Looks good otherwise.
 > 
+> Johan
+
 
