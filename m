@@ -1,150 +1,146 @@
-Return-Path: <linux-kernel+bounces-386349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B71D89B4248
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:17:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA0E09B424E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:18:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435981F22AE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:17:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC3701C21735
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2874201030;
-	Tue, 29 Oct 2024 06:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5392E2010F2;
+	Tue, 29 Oct 2024 06:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AGIsJoG3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jG1gIeL/"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D5B1FAC27;
-	Tue, 29 Oct 2024 06:17:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA526200C8D
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730182669; cv=none; b=V6hCLOZBbs9sEnEWLBWLNS5eY8hjG0kXunpB0IrRU8TQMufK7aIXcEMaLdp4/ay/wpPHfLUbv6GQzWBJbp796QZ8F8jGKwNC/DS5SARdIS/FECs5hrmKqEt26SdGsgUUrEpr2b90y+bIyCLZbz04LFKPYFlZ9GQFRLtNgTi9oIU=
+	t=1730182693; cv=none; b=W6SWI7HW3yMoS9itIW8jMeveQX4zy/wfgcJpfVPpY9r7uLaGERkmPNj5j9e6/uyce5ghxr7/NcE4rEqV0ecREoRx7ov9dbn7UroypaiC9yTCXSjj9Z9SPjbPiIYzNQ+ALLHw9fkMjYzSzkdGEQzTYAUZGfdR9Y4gYwQUGt2ZRqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730182669; c=relaxed/simple;
-	bh=EX88BFowTyTzQK48jgUHRYAkppmwqtPniiQeRyf8GL8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TybQtftb65UG0pJePeRwwUBdPqx+VqfOk82YSxpUSH67eph4OrunVzz8IVGf7OxdLectNmH3QOKP/8ZN7KcnxEGtxk0TS6igEBBmigkcIPZiPjK4obN75ullAIbkMgUnP6JDpX6DWx0cR2S8EcDAWov2le8OO2r6zS76AMXCgA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AGIsJoG3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 508ABC4CECD;
-	Tue, 29 Oct 2024 06:17:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730182668;
-	bh=EX88BFowTyTzQK48jgUHRYAkppmwqtPniiQeRyf8GL8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=AGIsJoG3tLxOPrQgmyWNPa7v5KAjfv6AlmY4jxCuMmvoy0+2Bc4+AsQynrBgcE2o0
-	 PAWBCbzRxXJiDCTCg+EAxlzuXf9JUENR4DRmGK4zNIyvp1lpGZUVJpABAy7yV6vmAH
-	 fvL2M6fig9u1GIyLT3WgDhnLwOYYnzKien3k0HnGnTbLsbPDAADAufmFzXIp0lJvaP
-	 xZb+SZ9OVGVHuyXgJXmEM/f7RdSNE88nCmSfdm5FrswnAcWHQhv+fe8BsNuV4wi4Rf
-	 KqVlx8VeZ0ekflV9YmFTcVAWkMeVmsGlBGY1ks4ZLsu9o6Zg+t6wMcE79+ZbYXgV9D
-	 oyd1SciKqfB7A==
-Message-ID: <f4155f41-7267-423f-ad23-e7f0b24c650f@kernel.org>
-Date: Tue, 29 Oct 2024 07:17:40 +0100
+	s=arc-20240116; t=1730182693; c=relaxed/simple;
+	bh=UdI8tpwPnCym4G8x3MoPmeXJLHOe8ka7Ss+PUunnOUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=q3pej1/VBaCmuTifIds+4sDAPWIGXRixzc81vfbJ8TvhnFSFsfd2zoJr5q1dB+VwvfEYGdjqlrKdIQG3JxU19LX2f5JyEF+blvh43buOlCxUBAVGrIim/tpYjeLgN90mC923D5MPIKCwvSIcqgUXecgNheUC9sVU+GGE1ou7hvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jG1gIeL/; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2ad9825a7so3603810a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Oct 2024 23:18:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730182691; x=1730787491; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JbH+MxlZZP0jfdF1t+NhFG6akIfHUreHIb4HeUjiq8Y=;
+        b=jG1gIeL/3yg87kUkYfR8hm3yv+NJ0UOLEGOP8FZgpqGHC92ce8ltpqQ+Uk6r2VFtTY
+         Lk5RY62QeDVpXhx2OnlN8Xh/92IG0R3PhfDRtPKSkkkCzWE05btyixsyiSzJ2wALSIl1
+         YPYLNCap8YUpPqQab4SbKWPUXb7yNelpcBDKIo1Vta7V2bPHhFnU5FNab/IJyHVaf6VB
+         a+dvJgDJ1xQIi+5UdR1tXT94u8a1Iv+v2j4N8x06hxmNnNgvwx8sj8bfF4+tQs3gC0ZZ
+         QA1AdNR2F7H/Cvqrz4reBsjHtzvdyCWdc24UN9SqYlfpyyApv0RRElaYXQPY8ya8kZHq
+         gPlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730182691; x=1730787491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JbH+MxlZZP0jfdF1t+NhFG6akIfHUreHIb4HeUjiq8Y=;
+        b=U/0iG+/G6R4hn/GfGUoQgu/i2fy/+NmE0EHhElVPNQZdc3MgSz3TcTIo00z/syrSdY
+         3RVywaMLMhsCQQl7pY24wHgKE0FmVZpZhACfqAFIkIaTK/NEAl8hayKqlgw67SuYzm54
+         eGYaIEu+gV9nUfqwijzauJiQpQUj2qyGmIVulrGYHr1GHLLQUEFgkPPqwQvpSj1ICUr9
+         0aCuIHh9lwlNsT7LFw35ERFjwuDdEgCZp8XuOjIqRwCUsE8/E72fR6n9sHDkJL/zb8pu
+         UtPp5Ya5RMFdpjXocoiljok9ZWkhqNCGrMcqBNxX5ZldDxqQsymc+Fw2p/KoLyZt67ZE
+         JvVg==
+X-Forwarded-Encrypted: i=1; AJvYcCV7rhDfeQ3QhFlIswdiy29JmBfGcqyPQYvyfKksHLhABGJXeUd6bQdK248VPrljTm4u0DtADl5pQnzakJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUh36PUFdN1cu0LsrXrQkn4APGdlGGIbw9gh3hBAtuBAOR2oHU
+	oWKoTdHBCSDamoD3VPKdo4sxCy9OcLoV8G1H7duDyevrruP+uUqij1E7I1sT0pqtEPuW/FErnH+
+	Sn/J+w6eAZcSxXW1N8PTsnnaQVp8=
+X-Google-Smtp-Source: AGHT+IEakR8+6KFEHZc1bHgt3VBR9Z5XpuWlN6ZYFkC6UU38ogv3Y7zZUo33OohAhhDzC6sTqSsezfL4MOPl/EAohnc=
+X-Received: by 2002:a17:90b:315:b0:2e2:ba35:356c with SMTP id
+ 98e67ed59e1d1-2e8f11dceb8mr11682733a91.39.1730182691042; Mon, 28 Oct 2024
+ 23:18:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/5] dt-bindings: media: i2c: Update bindings for OX05B1S
- with OS08A20
-To: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
- sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
- laurent.pinchart+renesas@ideasonboard.com, laurentiu.palcu@nxp.com,
- robert.chiras@nxp.com
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com, hdegoede@redhat.com,
- dave.stevenson@raspberrypi.com, mike.rudenko@gmail.com,
- alain.volmat@foss.st.com, julien.vuillaumier@nxp.com, alice.yuan@nxp.com
-References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
- <20241028190628.257249-5-mirela.rabulea@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241028190628.257249-5-mirela.rabulea@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241027045752.10530-1-gye976@gmail.com> <53slkiaabzxkr4npxjgc32igwnspzyohvswwhooc4nfzdjw547@q3nnf3wblgfd>
+In-Reply-To: <53slkiaabzxkr4npxjgc32igwnspzyohvswwhooc4nfzdjw547@q3nnf3wblgfd>
+From: gyeyoung <gye976@gmail.com>
+Date: Tue, 29 Oct 2024 15:17:59 +0900
+Message-ID: <CAKbEznsv9yH9vYSqhCi0gJt-oww3R5t0YWP_YtpTF-=CvgzWkw@mail.gmail.com>
+Subject: Re: [PATCH] drm/xe: Fix build error for XE_IOCTL_DBG macro
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: Oded Gabbay <ogabbay@kernel.org>, 
+	=?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 28/10/2024 20:06, Mirela Rabulea wrote:
-> Add another compatible for OS08A20 sensor.
-> 
-> Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
-> ---
->  Documentation/devicetree/bindings/media/i2c/ovti,ox05b1s.yaml | 1 +
+Thank you for your review, I missed how && work.
+I will revise a patch that print only when cond is true.
 
-This is part of the original binding. Submit complete binding in one patch.
+sincerely,
+Gyeyoung baek
 
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
-
-Best regards,
-Krzysztof
-
+On Tue, Oct 29, 2024 at 4:47=E2=80=AFAM Lucas De Marchi
+<lucas.demarchi@intel.com> wrote:
+>
+> On Sun, Oct 27, 2024 at 01:57:52PM +0900, Gyeyoung Baek wrote:
+> >In the previous code, there is build error.
+> >if CONFIG_DRM_USE_DYNAMIC_DEBUG is set,
+> >'drm_dbg' function is replaced with '__dynamic_func_call_cls',
+> >which is replaced with a do while statement.
+> >
+> >The problem is that,
+> >XE_IOCTL_DBG uses this function for conditional expression.
+> >
+> >so I fix the expression to be compatible with the do while statement,
+> >by referring to "https://gcc.gnu.org/onlinedocs/gcc/Statement-Exprs.html=
+".
+> >
+> >Signed-off-by: Gyeyoung Baek <gye976@gmail.com>
+> >---
+> > drivers/gpu/drm/xe/xe_macros.h | 6 +++---
+> > 1 file changed, 3 insertions(+), 3 deletions(-)
+> >
+> >diff --git a/drivers/gpu/drm/xe/xe_macros.h b/drivers/gpu/drm/xe/xe_macr=
+os.h
+> >index daf56c846d03..58a9d1e33502 100644
+> >--- a/drivers/gpu/drm/xe/xe_macros.h
+> >+++ b/drivers/gpu/drm/xe/xe_macros.h
+> >@@ -11,8 +11,8 @@
+> > #define XE_WARN_ON WARN_ON
+> >
+> > #define XE_IOCTL_DBG(xe, cond) \
+> >-      ((cond) && (drm_dbg(&(xe)->drm, \
+> >-                          "Ioctl argument check failed at %s:%d: %s", \
+> >-                          __FILE__, __LINE__, #cond), 1))
+> >+      ({drm_dbg(&(xe)->drm, \
+> >+              "Ioctl argument check failed at %s:%d: %s", \
+> >+              __FILE__, __LINE__, #cond); (cond); })
+>
+> but this would print the debug message regardless of the cond being
+> true. Previously this would enter the condition if cond && 1 (due to the
+> comma operator use), but printing the message was shortcut when cond was
+> false.
+>
+> It looks like keeping cond outside and the statement expr to cover only
+> the call to drm_dbg would work.
+>
+> Lucas De Marchi
+>
+> > #endif
+> >--
+> >2.34.1
+> >
 
