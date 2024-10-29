@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-386344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203069B4230
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:13:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD019B4224
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:09:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E23283789
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:13:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AF02823BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 06:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD232010E1;
-	Tue, 29 Oct 2024 06:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 986F72010E8;
+	Tue, 29 Oct 2024 06:09:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b="lJ3Go5Gn"
-Received: from mail.rothwell.id.au (gimli.rothwell.id.au [103.230.158.156])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ftBBUqrm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B6D7464;
-	Tue, 29 Oct 2024 06:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.230.158.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62E07464;
+	Tue, 29 Oct 2024 06:09:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730182386; cv=none; b=p5l7o8meIVPJqRxsNwquTHCJoqKwcnZagcpidjBEApXgFQ7WbLiaU9IXBdfS35mHz4f2fQiJw+3i6DWBrrBXfGosGVbyoexjtERhb76NpEfoQT4C4OEYjOOWWemaz+qY6rlrpKljtIu8sazF0RrMGMFABUtLPcLFm/5dj9rN9sk=
+	t=1730182144; cv=none; b=jd4z7Siupk/YJNV+Y9BE1ZWv1gfz9JcaUqvx99hC1HgLKgjPSWjA15OAizhWIh01N/brniu4P4RsTH8Ww9Ir7Gkbcw4n7sK7QJ/TOEj+j/maOOPx4dghmtfeq93XVJ6MZAqLcAGzweonBda92aa0DKfwEJ2J66dKtfKZAtgbq8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730182386; c=relaxed/simple;
-	bh=ch844stOOcYt++jDmvHi7Q1K19GvVMurzsLZBKno57U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V2UhjI2xo7Lw3U5jGy3IDw5vV5YSj3LQWuIv/UGpFI3Z8OCyC8vqBTDshYlEjllWt2r9DSWGVtLPrWCvFl/9qUU1OuNe3Cv6WeGzeLbFTperE8PUf5Y2D2Af5g0Q0A02Lw4ifTCaxjb7YDHFG8a2ZZS+ToRjZn6CAEJsTl9Jt7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au; spf=pass smtp.mailfrom=rothwell.id.au; dkim=pass (2048-bit key) header.d=rothwell.id.au header.i=@rothwell.id.au header.b=lJ3Go5Gn; arc=none smtp.client-ip=103.230.158.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rothwell.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rothwell.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rothwell.id.au;
-	s=201702; t=1730181937;
-	bh=ese/ICA2Vd7ZwEi5Vtpit6xyLjkPxy2lWxF4PC/6sJY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=lJ3Go5GnR47ldvd+Uyr1lHlAnX0Sw05bo6hOODee822i/u0Fnppwn2wyxQYzCypV5
-	 ggTwN4Y2agIuBXTAPNIaGoLaT4SLwcMSaDQRnhr8REdI0H0YjV9lK4RENgRdzsgq98
-	 gIuOvJmqy8OjqqMhR6GwNUaL0dNo+quV2U1Efz/jUEr+K8x5NDIlJqE0EEF8tFSqwj
-	 s0PGwr/pR20/2tXXyP81fayzos7vFfvudoOqTqYIVT/eYFNmdHjg0WcCpCIr1ZUt2m
-	 3yjbhc3KGrcNsk5fBk2//6R5q4tOWE820bakUYIKuDn5DzOs6jiZPPUjrSaZcZeiEy
-	 xlOrBsMOWplaw==
-Received: from authenticated.rothwell.id.au (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.rothwell.id.au (Postfix) with ESMTPSA id 4Xd09W0XXQz6M;
-	Tue, 29 Oct 2024 17:05:35 +1100 (AEDT)
-Date: Tue, 29 Oct 2024 17:05:33 +1100
-From: Stephen Rothwell <sfr@rothwell.id.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner
- <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin"
- <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the tip tree
-Message-ID: <20241029170533.5592ab42@oak>
-In-Reply-To: <20241028213040.e5d72b2f56971ceb5c80395b@linux-foundation.org>
-References: <20241029133407.3580be1a@canb.auug.org.au>
-	<20241028213040.e5d72b2f56971ceb5c80395b@linux-foundation.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1730182144; c=relaxed/simple;
+	bh=wwR+ydtsPTf5mZdslw+yFqLNdvviEtqZG2hcmZESksE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=d74XU5h4lz5m1UH0JwvjUhiybyXRcv3F7P6yuRk5LaHui2U5HNxKz7h+Ny8FQ4KKYU1OjgJABQsvPUOmDmuJI3R1FaaXkVduYBRN4vAoHBLBLN2dbBSz1jkJJzsV5ARfAV//c5auQEZ/wlyeD7mPAFspsDR5qKddPeiltrJqmHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ftBBUqrm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49SJhrJS019225;
+	Tue, 29 Oct 2024 06:08:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8rfiywrYAqS+ll+TtY46Ca2fgi4aNwqBa+VTuRHmt2w=; b=ftBBUqrm5dhSVsa1
+	dkJtCeZClGvYUe1ReZ4Q+Zim9XkqdEQKPszJm0sMYn5kcXmQY3+YPBU4fFGna2Ef
+	TycVHfeMBx3NJIQ/ged9hgLC+PQZNPvaNh7RjGi6LsKJ2veJxhQm4C2pe7kICtA1
+	tPly6f8GIbpvYy4txUJdnjq4zHdl9Xe5YaDQvDTYajZKM0NcPa+KJM0JAKawibI2
+	74TVhkykdM/iHnfTxDzvyRanyrjflcl3hnf4gyuX8idK0nlCsuF+mrtz4vNnhwKc
+	Oky5K2qx5ufSv3FqdCQ6Zt2/kDr4dyErB/l0KkkCLfgz5rvSycK2OhrBU6RxUIMk
+	v9AKqw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grn4ye4q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 06:08:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49T68ttK031166
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 29 Oct 2024 06:08:55 GMT
+Received: from [10.204.67.70] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 28 Oct
+ 2024 23:08:51 -0700
+Message-ID: <fad3508a-bb02-4162-8803-fba5de25e752@quicinc.com>
+Date: Tue, 29 Oct 2024 11:38:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/7psVxqKYd=1bKJnYCTBwJxq";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: sa8775p-ride: Enable Display
+ Port
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_riteshk@quicinc.com>,
+        <quic_vproddut@quicinc.com>, <quic_abhinavk@quicinc.com>
+References: <20241008112516.17702-1-quic_mukhopad@quicinc.com>
+ <20241008112516.17702-3-quic_mukhopad@quicinc.com>
+ <zluuezrywecffsh3f7yzrtvd2sa3nyzl52sk6bluvjch5icvuu@noecozosseko>
+ <e7543055-316e-447e-ab0e-15d2fdd19dca@quicinc.com>
+ <CAA8EJpqcnxbZAUJm0fdbQNjZ3Dw189oDMkC+0pMLz1XGO7HhnQ@mail.gmail.com>
+From: Soutrik Mukhopadhyay <quic_mukhopad@quicinc.com>
+In-Reply-To: <CAA8EJpqcnxbZAUJm0fdbQNjZ3Dw189oDMkC+0pMLz1XGO7HhnQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Pex_-xe5lo-J_Il77HN-WSKvTRynJV8x
+X-Proofpoint-ORIG-GUID: Pex_-xe5lo-J_Il77HN-WSKvTRynJV8x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 mlxlogscore=704
+ malwarescore=0 clxscore=1015 bulkscore=0 suspectscore=0 adultscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410290047
 
---Sig_/7psVxqKYd=1bKJnYCTBwJxq
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
-
-On Mon, 28 Oct 2024 21:30:40 -0700 Andrew Morton <akpm@linux-foundation.org=
-> wrote:
+On 10/28/2024 3:15 PM, Dmitry Baryshkov wrote:
+> On Mon, 28 Oct 2024 at 10:49, Soutrik Mukhopadhyay
+> <quic_mukhopad@quicinc.com> wrote:
+>>
+>> On 10/8/2024 5:46 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Oct 08, 2024 at 04:55:16PM GMT, Soutrik Mukhopadhyay wrote:
+>>>> Enable DPTX0 and DPTX1 along with their corresponding PHYs for
+>>>> sa8775p-ride platform.
+>>> What is connected to those DP lanes? If they are routed directly to the
+>>> DisplayPort connectors, please add corresponding devices (see
+>>> dp-connector).
+>>
+>> We are defining the functionality of gpio101 and gpio102 as "edp0_hot"
+>> and "edp1_hot"
+>>
+>> respectively. This ensures that the hot plug will be directly routed via
+>> the display interrupt
+>>
+>> line "mdss0" to the display port driver and no external dependencies on
+>> dp-connector is
+>>
+>> necessary.
+> Please describe the hardware, not the driver necessities.
+> If the board has a DP connector, please add the node. E.g. it allows
+> one to specify the label and the type used by the connector.
 >
-> On Tue, 29 Oct 2024 13:34:07 +1100 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
->=20
-> > The following commit is also in the mm-hotfixes tree as a different com=
-mit
-> > (but the same patch):
-> >=20
-> >   9c70b2a33cd2 ("sched/numa: Fix the potential null pointer dereference=
- in task_numa_work()")
-> >=20
-> > This is commit
-> >=20
-> >   82c4d6b6dace ("sched/numa: fix the potential null pointer dereference=
- in task_numa_work()")
-> >=20
-> > in the mm-hotfixes-unstable branch of the mm-hotfixes tree. =20
->=20
-> Thanks, but...  What tip branch is it in?  Matters because: is that
-> branch destined for 6.12.x?
+> Also could you please fix your email client so that you don't have
+> strange/unnecessary line wraps and empty lines?
 
-Its in the sched/urgent branch, so probably destined for Linus fairly
-soon.  But the tip guys would know better than I.
+Addition of DP connector node with the hpd-gpio property does not allow 
+hpd to be detected since the gpio
 
---=20
-Cheers,
-Stephen Rothwell
+101/102 have the "edp0_hot" as function. If the hpd-gpio property is 
+removed from the DP connector node,
 
---Sig_/7psVxqKYd=1bKJnYCTBwJxq
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+the probe of DP connector will fail.
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcgey0ACgkQAVBC80lX
-0GytDwf/aS8kX6z2isQPahD9pxomMZcAjCSiSnBwuM0/78hvomVK9QEL8IzLA2YB
-vgD2iKwlG6HYbRGzqhiBIx/RJyurZPICffSfc2T4/VZF98OlTKH1j9GdrPvA+CiT
-e+ZctoeSZ2s7YOo4HHtVbIMapTuswKROxm8lWZ+aCrr6/+oB10M8oesHKLo9qpD1
-MInrwUK3fDuKOHTtxgCnS+sLBR5lKQMflgURZOFhZsl2Ynct6ljTkLkwCAHUroD5
-jQGZq+tlwFV7MqDm/hploc5LEV2FrbWICVbMsTlMXW7fsKyn4Je8NhXRBBs07Omz
-7BDewUOtf3XpccNhu+n2SKGEAu0vVQ==
-=nSse
------END PGP SIGNATURE-----
-
---Sig_/7psVxqKYd=1bKJnYCTBwJxq--
+>
 
