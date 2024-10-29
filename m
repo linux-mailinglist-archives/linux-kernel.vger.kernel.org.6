@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-386969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2778F9B4A45
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:56:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 008C09B4A47
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58F911C22736
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:56:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B96C5283611
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F418A206E7C;
-	Tue, 29 Oct 2024 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC920207216;
+	Tue, 29 Oct 2024 12:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJGiwWQz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IvZ/IJEI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8A62071FB;
-	Tue, 29 Oct 2024 12:55:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DB120720B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:55:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730206511; cv=none; b=Gs2bSdGsyajVfhEsKYsH8PM9M/k+p/vDF6a0Z4BDlv654R7Lhacy8xDDMhH99rLpKoFG/HQj41G0xYL1kncsHodjfCBt0bUxIyZNlqHjIGk9BVJXqjK8OqVy5mSd2XdNweCCJlsYNdgry3SatYjmQ3IN7elSA12a8QaqacmMwLE=
+	t=1730206513; cv=none; b=emCa33185Wqiztufbt4vEbzJnGOW/67wnzwK57srXTRGvccbi/0vG0OfsFA7RqYpfsWtG6y1trcOdR67weh02R1FsU1ZDgVFOLcbU+ca4dCXbsOdiqgQbdcFFzcVK0/SXozkX8sLeP8ar+Xii83rLUduqHCWjl/gYqnwsyK90DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730206511; c=relaxed/simple;
-	bh=SMDyXbB2S/Xna6nklNIq1bBj07R+0sg6UmAJM+SQqgE=;
+	s=arc-20240116; t=1730206513; c=relaxed/simple;
+	bh=osLJ67WkCleliN3lQ7XuVH0lOjALLrP6N6qy/Qc6chM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aOUwIQf5ITslhC0L6pRx0T84GjcCI1upznt2e/JMFZ7S1zjHv04ocR98Nh+bZ5cTM7qqDXiOE+Gd4flohJDjYR5M51oALDuTSOXYv3Ro39+lg2OZpbvUrSGTkEi3fdNihDCV2kzkjbCvnpzUSNoRRk8R7wsNwWhrqMa2guYOEes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJGiwWQz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F200C4CEE3;
-	Tue, 29 Oct 2024 12:55:09 +0000 (UTC)
+	 MIME-Version; b=obtufs15EBcOuL8T0iWOq0ZhzGsW1mLh4DFzGHOyNr+pOZwA6g7M+7yF7ayEXeznW/f01Z3NBPyDnCTgF1qFV0s3bnKEumz/PAWwMEwRltyxiIHG2/Id4EMQnX/hZW0KOLTWE/26NN4GBb3KYvKznZ2OyJfXoGqY+nXOFJUa8HI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IvZ/IJEI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AF7C4CECD;
+	Tue, 29 Oct 2024 12:55:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730206511;
-	bh=SMDyXbB2S/Xna6nklNIq1bBj07R+0sg6UmAJM+SQqgE=;
+	s=k20201202; t=1730206512;
+	bh=osLJ67WkCleliN3lQ7XuVH0lOjALLrP6N6qy/Qc6chM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=GJGiwWQziuAXIPGEsbIeJ67Cd8ikiouNRZJSB4eheC82PZohay8AluOa2Ue3HyJtE
-	 pvZpAEvcev+b6Ypw1kLSzCZXx+oCXKts5Hbwf/AMw624tkpy7Pbfuk2n92KojPJ0dX
-	 lPWwUiAPwMaQdBK4DroBjRkVqwGg2t3UUinbtC2zdeARkSRyRCAyvhldUlwc0wRhbN
-	 51zxRjzqAGWxCJQhIm91Qal6QN6EPuE2zefKyf1sS0QMvXhuU4XPAhCOOChUxY6/2U
-	 lPYo/+VFVOwrsbcNQBU6X43BjdcMg5tgg3l3is10WSoKOyl79a+ffyILQB89rGYWIY
-	 k9tAmBr4myx8A==
+	b=IvZ/IJEINIzcFhKQ38Gx+RsW/Wfa3RAR6+WVCrDZPUT3rSFS2VVub7/8bNFVCbu5Y
+	 zqGDOb3BmZNy8ElxCAuX+Qqbm2NUW1JZGAD5jsdTGvWnXAgr4gIWUYr14CYMks7UzQ
+	 LT8pGe+JG7VPJPK4PtDSXE35fbKomwe707e+XPDfPdPHDGTquTAkaEleOEwiQxIg0v
+	 ocg3vYKw9SAqPN0USxaFRcOiP0P08cB4UXPiEhSb8tpA25R+u4SSmQ6Zn7IxeKsq15
+	 6ooBFNZlSC+U+nRaqsLzotC/mPnulw1PAv6SGfBWTGgK2OafEkHea3xeCVu9G9v1Pm
+	 6dc9TReXuMhAg==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Daniel Lezcano <daniel.lezcano@linaro.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Subject: [PATCH 07/10] clocksource/drivers/exynos_mct: Remove clockevents shutdown call on offlining
-Date: Tue, 29 Oct 2024 13:54:48 +0100
-Message-ID: <20241029125451.54574-8-frederic@kernel.org>
+	Anna-Maria Behnsen <anna-maria@linutronix.de>
+Subject: [PATCH 08/10] clocksource/drivers/armada-370-xp: Remove clockevents shutdown call on offlining
+Date: Tue, 29 Oct 2024 13:54:49 +0100
+Message-ID: <20241029125451.54574-9-frederic@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241029125451.54574-1-frederic@kernel.org>
 References: <20241029125451.54574-1-frederic@kernel.org>
@@ -68,21 +64,21 @@ The clockevents core already detached and unregistered it at this stage.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- drivers/clocksource/exynos_mct.c | 1 -
+ drivers/clocksource/timer-armada-370-xp.c | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clocksource/exynos_mct.c b/drivers/clocksource/exynos_mct.c
-index ef8cb1b71be4..e6a02e351d77 100644
---- a/drivers/clocksource/exynos_mct.c
-+++ b/drivers/clocksource/exynos_mct.c
-@@ -496,7 +496,6 @@ static int exynos4_mct_dying_cpu(unsigned int cpu)
- 		per_cpu_ptr(&percpu_mct_tick, cpu);
- 	struct clock_event_device *evt = &mevt->evt;
+diff --git a/drivers/clocksource/timer-armada-370-xp.c b/drivers/clocksource/timer-armada-370-xp.c
+index 6ec565d6939a..54284c1c0651 100644
+--- a/drivers/clocksource/timer-armada-370-xp.c
++++ b/drivers/clocksource/timer-armada-370-xp.c
+@@ -201,7 +201,6 @@ static int armada_370_xp_timer_dying_cpu(unsigned int cpu)
+ {
+ 	struct clock_event_device *evt = per_cpu_ptr(armada_370_xp_evt, cpu);
  
 -	evt->set_state_shutdown(evt);
- 	if (mct_int_type == MCT_INT_SPI) {
- 		if (evt->irq != -1)
- 			disable_irq_nosync(evt->irq);
+ 	disable_percpu_irq(evt->irq);
+ 	return 0;
+ }
 -- 
 2.46.0
 
