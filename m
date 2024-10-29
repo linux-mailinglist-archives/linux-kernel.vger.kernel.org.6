@@ -1,147 +1,102 @@
-Return-Path: <linux-kernel+bounces-387526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1703B9B525D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:02:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5366A9B5263
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:07:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89D23B216A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:02:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE059B228D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CF02076B3;
-	Tue, 29 Oct 2024 19:02:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E3020604D;
+	Tue, 29 Oct 2024 19:07:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzubmDqO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oIwJNo64"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487792076A9
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:02:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1D11FF7C2
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 19:07:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730228545; cv=none; b=fPSBT0xgv6Bw2GgZZW1cmHNV99J9QAorI6UA4oiPs17uXnfgJISj0u0U0S1nbRjCAg6eSqL5T90VYqhHVzeMvhAvonjTxne9NhD91fiVwyiUvEOdv5HC/C9xCLcBmOMqm0NQ2C+eLI2yU+2fkG2MyL5HyWfW8c/mpVu7tIFiJLA=
+	t=1730228862; cv=none; b=uHlQ4amxOTd3uXAq8GQRoTwQedpo02t6gR3m1vhs6o3kENlMG+xKjAF39uKIwaqbvyOv/+UqYXyX8QqO37+5YumDYKJQ58X6DXHrtQwXPsbdHZ5qNTh2FG+ff6ikEmWERZ06Mc47+0zez5IJKczY0et0KSErJlNrDj2U2ExPLgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730228545; c=relaxed/simple;
-	bh=c3B6zM0g76ktl69lbL9/91FTBSkAtle6ro7RJaPmxWY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b79pWkKigIyAzvCr9ykPRSZ9BLUi3/iTz4TkUhlNPXVErOdih1/ZpTlQGsgU1fz5p9nJYBjaYVk+I4ZK1Gms/dDtaxGHwdzh8KTyCVZmT2NC1H0+igEj9bvfyxyr9YHX2UndQNRNJNCDjHi1lM92jzpDGXsbVt12ws831RJGkB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzubmDqO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C982CC4CECD;
-	Tue, 29 Oct 2024 19:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730228544;
-	bh=c3B6zM0g76ktl69lbL9/91FTBSkAtle6ro7RJaPmxWY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=WzubmDqOVvPIBDYTPKHnrbCuEngf55eh4KgIMF7AzODVZnGA9G3qv7CutXGTGPFDh
-	 Y3Xgo9b8ryQSaeDVbedWE0IY5mb54FNHd8Y/23J+WxqbhW9N4GpQFyaW8Y6UbCNSI1
-	 GpyGgSH1fhyiGFd/K5dhdImQbZCRePwY5fZyT5yA5YurAl4lkPfc2iTeqy3q6RBSUf
-	 9ZtVkKTF6/4MPKHOqsRAVMnwUDHZzIW70vVHhWERB8oDKx6WHHvrdvqtyEIjFlwgsE
-	 Qu2w98WUF+iz6cVlwLSsutRUrtRlyTw3f5PNtLgXwn8ACG1326UI/ikDEzOJYo2WZu
-	 5JYXxP0zh4cfw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t5rTy-0081t7-Pc;
-	Tue, 29 Oct 2024 19:02:22 +0000
-Date: Tue, 29 Oct 2024 19:02:22 +0000
-Message-ID: <864j4u3f7l.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yu Zhao <yuzhao@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Muchun Song <muchun.song@linux.dev>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Will Deacon <will@kernel.org>,
-	Douglas Anderson <dianders@chromium.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Nanyong Sun <sunnanyong@huawei.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [PATCH v1 3/6] irqchip/gic-v3: support SGI broadcast
-In-Reply-To: <CAOUHufbEadyAn0WVdJqYKkUjvMfGXXiLjaApjhaHKg93P8Rymg@mail.gmail.com>
-References: <20241021042218.746659-1-yuzhao@google.com>
-	<20241021042218.746659-4-yuzhao@google.com>
-	<86a5ew41tp.wl-maz@kernel.org>
-	<CAOUHufanq2_nbNiU_=mCgWufoSGDOS3EpAz+4xB5kB=PV2ECVA@mail.gmail.com>
-	<86h6902m7y.wl-maz@kernel.org>
-	<CAOUHufbEadyAn0WVdJqYKkUjvMfGXXiLjaApjhaHKg93P8Rymg@mail.gmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1730228862; c=relaxed/simple;
+	bh=TSO+mrrI6OeC+vCFS9oXY7vQmV6mGsUoNVRXySJ+s78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HKwJQc7/NFloycFokZujTbwxjwmYFxwSue+3eQPSi2arwjMuDH7QfJ6N/5EOZqL8s/bnqhVI35qVhPOkd6P+NcbJProSHER1wGDXegKq7ug7t5Qwm7z9z8CUQES0nps0zE5JczyvMJ1AJH0N6DLrXlq34Z4XNNIEvCRQkEQxbi8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oIwJNo64; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5ebc0c05e25so3344495eaf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:07:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730228859; x=1730833659; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wsBRlZOCSoWr8F90LQG/vXheC35lbvig9xJxIETc2Hw=;
+        b=oIwJNo64EPd05DDrg5QS8F2vrN/XHkFSzj5aOV46T27RLo0/cJg7vh/URHhyjC2aso
+         iJkgHryt+R+zLZ9KuJQYmBRKTfHvJM/nqiruhJQNQ1v+cahGWfvrIKGYxZl1AxI/8J4g
+         SNd58mr3eIovATajr2YpBbmdMTnUtdaqeECPwKbmCNARgPmbJeI60m/a75O1n4fZ2ym8
+         xc8q/JCDKYpqOeI0G5OXMH+880xCsjOXJUKX42BSVW06wT9RuXfEeop/JFMP6+/D/Bwd
+         F1bI7shRVpnKqqHAOtt5FiMzNHSXCSyi6Ubrk1SC9XIIKLjZ22dd90Qv3HmZj+jA7Plj
+         4wGg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730228859; x=1730833659;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wsBRlZOCSoWr8F90LQG/vXheC35lbvig9xJxIETc2Hw=;
+        b=QDVw/58TRoj1AULBjgC/AsZ1L/3kDioFI3x+16Foowq76Qkm1OBFAH3nkdNkIaobn8
+         peGPWCgI7v+1giCgxlDDRPzbgerykkxb563cpK31uTJaHFRviKbx2TykH0MEJAC6956O
+         sPPKgDuHH3pzxpzHdgsL1MTSgA6P1HWnVIvChR8Sx6RRZh2vQVZN+bKId7NA0EKN5htB
+         I7tQ2hMpXZPbjREVSiqOZ3G1Nr9xqMSv3BNgat7yszmE3DoX9F8hFzJyFKlJ/sAUSeEt
+         DEUcpGQB+bulFQKtNKIkNYevJuoXd9YJX9g+V9Zf6GCn5tceSqxqP6yQfWQ0Quo3/1/r
+         Sb3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6k7wrtUknn+8c6z/dj/oB2fN03q7BqqZtojTmBke9FMiFQUYUSmzoSNF6vYxlzi5QjU4nwBlHf74BEg0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwswPpqAzLOTbR4AXttzph7+uB2t/iN6BK5DgOJUG3EycPogaNt
+	1LPy/gQSwxVwQi8N2EgT/i4CzbtQtcpsTHF2werJSivS+j7MWeLMEg2tGbqgKt8=
+X-Google-Smtp-Source: AGHT+IFHyPnT/lwmK+anQPQw7Dkx03k6xG82n3fxQcGnEgJpVoXbLy/sLSGjIfr8xSHvXkIuOgH+kA==
+X-Received: by 2002:a05:6820:541:b0:5eb:db1c:a860 with SMTP id 006d021491bc7-5ec23aa5cd5mr8778986eaf.8.1730228859052;
+        Tue, 29 Oct 2024 12:07:39 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec18738f4fsm2458396eaf.44.2024.10.29.12.07.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2024 12:07:37 -0700 (PDT)
+Message-ID: <94a03835-bdd1-4243-88c7-0ad85784fe36@baylibre.com>
+Date: Tue, 29 Oct 2024 14:07:36 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] Improvements and Enhancements for AD5791 DAC Driver
+To: ahaslam@baylibre.com, lars@metafoo.de, Michael.Hennerich@analog.com,
+ jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241029073857.753782-1-ahaslam@baylibre.com>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241029073857.753782-1-ahaslam@baylibre.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzhao@google.com, akpm@linux-foundation.org, catalin.marinas@arm.com, muchun.song@linux.dev, tglx@linutronix.de, will@kernel.org, dianders@chromium.org, mark.rutland@arm.com, sunnanyong@huawei.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-On Fri, 25 Oct 2024 18:31:01 +0100,
-Yu Zhao <yuzhao@google.com> wrote:
->=20
-> On Fri, Oct 25, 2024 at 10:15=E2=80=AFAM Marc Zyngier <maz@kernel.org> wr=
-ote:
-> >
-> > On Fri, 25 Oct 2024 06:07:45 +0100,
-> > Yu Zhao <yuzhao@google.com> wrote:
-> > >
-> > > Hi Marc,
-> > >
-> > > On Tue, Oct 22, 2024 at 9:03=E2=80=AFAM Marc Zyngier <maz@kernel.org>=
- wrote:
-> > > >
-> > > > On Mon, 21 Oct 2024 05:22:15 +0100,
-> > > > Yu Zhao <yuzhao@google.com> wrote:
-> > > > >
-> > > > > @@ -1407,6 +1418,13 @@ static void gic_ipi_send_mask(struct irq_d=
-ata *d, const struct cpumask *mask)
-> > > > >        */
-> > > > >       dsb(ishst);
-> > > > >
-> > > > > +     cpumask_copy(&broadcast, cpu_present_mask);
-> > > >
-> > > > Why cpu_present_mask? I'd expect that cpu_online_mask should be the
-> > > > correct mask to use -- we don't IPI offline CPUs, in general.
-> > >
-> > > This is exactly because "we don't IPI offline CPUs, in general",
-> > > assuming "we" means the kernel, not GIC.
-> > >
-> > > My interpretation of what the GIC spec says ("0b1: Interrupts routed
-> > > to all PEs in the system, excluding self") is that it broadcasts IPIs=
- to
-> > > "cpu_present_mask" (minus the local one). So if the kernel uses
-> > > "cpu_online_mask" here, GIC would send IPIs to offline CPUs
-> > > (cpu_present_mask ^ cpu_online_mask), which I don't know whether it's
-> > > a defined behavior.
->=20
-> Thanks for clarifying.
->=20
-> > Offline CPUs are not known to the kernel.
->=20
-> I assume it wouldn't matter to firmware either, correct? IOW, we
+On 10/29/24 2:38 AM, ahaslam@baylibre.com wrote:
+> From: Axel Haslam <ahaslam@baylibre.com>
+> 
+> These patches aim to improve on the ad5791 driver:
+>  - make use of chip_info / match tables, and drop device enum id.
+>  - Add reset, clr and ldac gpios that have to be set to the correct level in case they
+>    are not hardwired on the setup/PCB.
+>  - simplify probe by using the devm_* functions to automatically free resources.
+> ---
+Reviewed-by: David Lechner <dlechner@baylibre.com>
 
-Firmware is on the secure side of the stack.
-
-> wouldn't cause firmware any trouble by letting GIC send IPIs to
-> (cpu_present_mask ^ cpu_online_mask), assuming those two masks can be
-> different on arm64 when hotplug is enabled?
-
-You can't send SGIs from non-secure to secure using ICC_SGI1R_EL1. You
-would need to use ICC_ASGI1R_EL1, and have secure to allow such
-brokenness via a configuration of GICR_NSACR. Linux doesn't use the
-former, and no sane software touches the latter.
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
 
