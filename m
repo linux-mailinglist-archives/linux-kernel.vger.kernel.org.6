@@ -1,105 +1,94 @@
-Return-Path: <linux-kernel+bounces-387588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C8D9B5348
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C47549B5352
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 572801F23E8C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:21:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 47D161F23F43
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69D9D207A39;
-	Tue, 29 Oct 2024 20:20:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26525207A0D;
+	Tue, 29 Oct 2024 20:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="aVYBws5k"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bizggs0p"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00E3207A12
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 20:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5434192B74;
+	Tue, 29 Oct 2024 20:23:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730233250; cv=none; b=mWSqhOMmIM8S2p4YM4lYpCVOREmkWvOcESuD+iOW5oZjegWO9jyDM+9PEZCoJFGPbYobBqoldXQCHJ+NN7AlExTiXiuHQnNaH/zFMcKsV4J54OyHgNcp4/oRAzppaZC3CThopMVXGY5qf2W9iMjfbv02WuR/mPtlQ13Hegh+yf4=
+	t=1730233436; cv=none; b=HH/UeXmoIRfUEirS3vlq5JkMWuAU6WU3bE0PS7XVwcB805POsB5ybG798tbpxaWAxXp0GnsGwFUfhf5IXoRsnt3kwsmHG4+OImR+gvC9a4K4s0yUJU0iwXPiQXn9hWPjRYaxoOxzz7xPWy3dvm2StBuJxG+fPKd+FI6IiIQ9gUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730233250; c=relaxed/simple;
-	bh=RZBBsApnlgF1Ci2nfqhR3Jj7bCjvEKsJcrRAsuJZmfY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RLHrbMIS8z+YXFumf+bEhM38FrxvRHD5a9FbdqBxuZ9FGcnX3W7t7/rtS1YD655KPq9qgN7g4A9X9VWw1iycf7ywhuO9u8EaiJIfrnBbWiUI+ezz6jMyCQt+EJLWSafF0J9dmQ0sQ7kwcds5ZHhjPHhLNohdu62+dOQxn1s2Jls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=aVYBws5k; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cbd005d0f9so36029986d6.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:20:48 -0700 (PDT)
+	s=arc-20240116; t=1730233436; c=relaxed/simple;
+	bh=/7wyiogOSmw3I9TDee9Zv17VHrKk7/JF3y8QrE9pGsk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hxgTeCBEasELaYNrMUoZzzhMIMMesVCdcFVltK/uONhYOra3TU6kr481eeagli7t9M+GLNxvon08C+F7zoUK+miNq1+shhMHRIRit1NOtKFlyrqR6WgCAB56X9r4na5KKS3mxSloBGGqAu1BzgZDEkwYU6xNxcoGWmSMRe9B67E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bizggs0p; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3807e72c468so244871f8f.3;
+        Tue, 29 Oct 2024 13:23:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1730233248; x=1730838048; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Oy7XVkWRraFdetQ8jpQD3fWOiMh3kGBraLt2py6f48c=;
-        b=aVYBws5kDWUytiHAI2dH2ovhlS/HgdZ8EQjGQ58KqRu3dc/hOe9LocgdZQVFjjvds/
-         KkboSCYSqTx5U9kxtp6+Mqiuf4fAec7JWOOrprn0ia33gI1u9rspy5EcIaxARy55dgBY
-         b1lcM4xPyRvrh5yYqbwj8TAEtZ98lrB2I2PTS0xKHLatNJNwYLaVY9sDDF8cROTq8KMS
-         PJLS0PtHYXUFG+rOVWr9td56V6dEgypEIkgOTCbA4HOcDL4b81jznFQA6emOsXyiWhsN
-         dfzVlWIWKqQ4EyZHtOUAfuI9IJUSmuNVg6wxdQYD+Yrs+yKOJypc5NGZAld2QSm6XXZx
-         /ljQ==
+        d=gmail.com; s=20230601; t=1730233432; x=1730838232; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fmaJ2cGgy9S2swZZo1UerLLaJvJoBIutdhI6IzAFbxA=;
+        b=Bizggs0pwb01tCljfY8nWAnemulr65PDpPUp8fc7e4u6+R8SZpuWU7k8DAJXWJAiCU
+         EcAKZ+hOGwyVfD1/TqGLcDfKFN1qQPy9v0V2KWeAxvBwmb6gTwOruGYNFz2PyhqORpyZ
+         kkTBsWdXkTSWkN7xmRmo/fMPQ58qurNjUx/fcsQRaWuQK7reVpve0jqwF10cMXK2ot84
+         TtMVT1eG/RPQKuqvX7DLVyQQxHA2WBvfIQPxjJitOp5kye5wZQ9KHRpIBvgcC8cVNQS7
+         hQVpW2L69kaUXaPbmltjHFk2Cljf6uMkQJlKXyb0cD7/zJcMWoiAfIdA1p5N50ayepQm
+         6XXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730233248; x=1730838048;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Oy7XVkWRraFdetQ8jpQD3fWOiMh3kGBraLt2py6f48c=;
-        b=IByZzh9Q5YAqNytp9qpLzR6QOi78dS7wEexPo9ddzCKn3JFYa3P62schn2vHUeTjJ8
-         JjUzymgGt9SwcJUBUI0MC1ZXPz95FW9YV9VAep+PWEGzn+qcg7juLOdXS010cmeGcGSL
-         47pgkFHppBSOCXmM1ZB7xD8WrI/W1dcgjw4tLtfUuIFvhGyamheTVlE0mBx4jt0voHby
-         +B1vmYUgcCRhOEw8Mw0nDTlmvUTiM+2l9X1ThfPj+YrywFe7SfasPgZIFB/QUte33KF4
-         wXpnxxQmeH3SzphkNcUzwEblQRyP/N4/7e1Gnu6xF2UXLkntrvzuKpjqWFdXnN0yZ0hO
-         906g==
-X-Forwarded-Encrypted: i=1; AJvYcCXyOrL7IQnxcz6GAWazSsvKFx4k6lFc6Re0O8+hv13reqkGzkyryYY5NWJbREcb9uNtKhDUu/DpTvqGV2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzG38E9282lHvm8U4u+A00UONbiNZsdaoNOaNaZ6Wasn+otFMDN
-	lek/Ce1tnWxHuxaQtIorW3PcqkS/zv/z2rX+jH7Celsygt8TdTB8NxMM2oD1pzM=
-X-Google-Smtp-Source: AGHT+IG8wR2VNJGr8w4nEF8K7TLnCCm88h4+MvvrazJR7tXK1WVS/iZtDKaRFV9lJM5ZTXQsS64Xjw==
-X-Received: by 2002:a0c:f40c:0:b0:6d1:7434:55a4 with SMTP id 6a1803df08f44-6d1856c7483mr158035446d6.19.1730233247766;
-        Tue, 29 Oct 2024 13:20:47 -0700 (PDT)
-Received: from PC2K9PVX.TheFacebook.com (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d1798bd8bdsm45071796d6.54.2024.10.29.13.20.46
+        d=1e100.net; s=20230601; t=1730233432; x=1730838232;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fmaJ2cGgy9S2swZZo1UerLLaJvJoBIutdhI6IzAFbxA=;
+        b=gGbS4xSoeMGyY6UcNLMobQ25Ak4Yfj5EOmGd2yb399dYQZdE0XJnIHWeZ7++2c6lpT
+         tpFZn37oxq0EH17Ko6p0aCl+QkUOrugkRIjkC78+Xni6NGx5iuAT2fC+Lcy9EZc90GVi
+         i3IBR5F7wpqA34fIri/qHSMjw4avwI0Wl3IrFthMB++C397JaPJBUp0MhpXNBZTPNHr9
+         a6+hx4jB4UoHmtEWDpnJlN3MCZ4gwxl7WCSmt9oWuQ9wc0tyQhiRjwlNoldiKOyoV3j7
+         HRjCdOnlyGFuMRMS/k3nKwfAnzF8950ppYVcZi+FRczsQwOtqxmtMFO8dSo8vKNLTf55
+         TAmw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6jch1GfxfRrwdvzKNaH1zUKA3MAPXqvgFNPF/e6klUdE/6w94M4mTZg2MGFHrngCWDlMNuizd35z3@vger.kernel.org, AJvYcCVJujYTwP9F28jmhHP3gb176vRe0VVJhC64u43pxx3x/Y1PQm5F/GN+eHvo03FExibnYczpj3DIxHqohdpg@vger.kernel.org, AJvYcCVbSptSwdCVsUt+KaLVo6NiMFAKhN9tFxZE+H+uSSJqIF5H7ZmvRB5JhcoNZTB/I+Ijj6jUhF3k@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbh6OjDFjM6bxaMq4opMm05QDZ7cguLNh0Mij7QAgd38lS4YgA
+	Z1ihokUE/c3WK/LCUaRgcdwTrrtmzCtG/FgpEZzPnuLjMxIi9kWS
+X-Google-Smtp-Source: AGHT+IE4eVnaZPidUHeSY1WAuGOgaGW6tLvUl8un5Y9u46tplJhMw2SpOUD20rey7JdzrkLSVHdpYg==
+X-Received: by 2002:a05:6000:156a:b0:37d:5313:ee45 with SMTP id ffacd0b85a97d-3806100755dmr4716128f8f.0.1730233431682;
+        Tue, 29 Oct 2024 13:23:51 -0700 (PDT)
+Received: from 6c1d2e1f4cf4.v.cablecom.net (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b3bf85sm13619976f8f.42.2024.10.29.13.23.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2024 13:20:47 -0700 (PDT)
-From: Gregory Price <gourry@gourry.net>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org
-Cc: linux-cxl@vger.kernel.org,
-	Jonathan.Cameron@huawei.com,
-	dan.j.williams@intel.com,
-	rrichter@amd.com,
-	Terry.Bowman@amd.com,
-	dave.jiang@intel.com,
-	ira.weiny@intel.com,
-	alison.schofield@intel.com,
-	gourry@gourry.net,
-	dave.hansen@linux.intel.com,
-	luto@kernel.org,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	mingo@redhat.com,
-	bp@alien8.de,
-	hpa@zytor.com,
-	rafael@kernel.org,
-	lenb@kernel.org,
-	david@redhat.com,
-	osalvador@suse.de,
-	gregkh@linuxfoundation.org,
-	akpm@linux-foundation.org,
-	rppt@kernel.org
-Subject: [PATCH v4 3/3] acpi,srat: give memory block size advice based on CFMWS alignment
-Date: Tue, 29 Oct 2024 16:20:41 -0400
-Message-ID: <20241029202041.25334-4-gourry@gourry.net>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241029202041.25334-1-gourry@gourry.net>
-References: <20241029202041.25334-1-gourry@gourry.net>
+        Tue, 29 Oct 2024 13:23:51 -0700 (PDT)
+From: Lothar Rubusch <l.rubusch@gmail.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	a.fatoum@pengutronix.de
+Cc: conor+dt@kernel.org,
+	dinguyen@kernel.org,
+	marex@denx.de,
+	s.trumtrar@pengutronix.de,
+	alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com,
+	netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	l.rubusch@gmail.com,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 00/23] Add Enclustra Arria10 and Cyclone5 SoMs
+Date: Tue, 29 Oct 2024 20:23:26 +0000
+Message-Id: <20241029202349.69442-1-l.rubusch@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,59 +97,162 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Capacity is stranded when CFMWS regions are not aligned to block size.
-On x86, block size increases with capacity (2G blocks @ 64G capacity).
+Add device-tree support for the following SoMs:
 
-Use CFMWS base/size to report memory block size alignment advice.
+- Mercury SA1 (cyclone5)
+- Mercury+ SA2 (cyclone5)
+- Mercury+ AA1 (arria10)
 
-Suggested-by: Dan Williams <dan.j.williams@intel.com>
-Signed-off-by: Gregory Price <gourry@gourry.net>
+Further add device-tree support for the corresponding carrier boards:
+
+- Mercury+ PE1
+- Mercury+ PE3
+- Mercury+ ST1
+
+Finally, provide generic support for combinations of the above with
+one of the boot-modes
+- SD
+- eMMC
+- QSPI
+
+Almost all of the above can be freely combined. Combinations are
+covered by the provided .dts files. This makes an already existing
+.dts file obsolete. Further minor fixes of the dtbs_checks are
+added separtely.
+
+The current approach shall be partly useful also for corresponding
+bootloader integration using dts/upstream. That's also one of the
+reasons for the .dtsi split.
+
+Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
 ---
- drivers/acpi/numa/srat.c | 19 +++++++++++++++++--
- 1 file changed, 17 insertions(+), 2 deletions(-)
+v3 -> v4:
+- add separate patch to match "snps,dwmac" compatible in corresponding
+  driver, required by binding check
+- replace non-standard node names in .dtsi files by node names recommended
+  by the device tree standard v0.4
 
-diff --git a/drivers/acpi/numa/srat.c b/drivers/acpi/numa/srat.c
-index 44f91f2c6c5d..a24aff38c465 100644
---- a/drivers/acpi/numa/srat.c
-+++ b/drivers/acpi/numa/srat.c
-@@ -14,6 +14,7 @@
- #include <linux/errno.h>
- #include <linux/acpi.h>
- #include <linux/memblock.h>
-+#include <linux/memory.h>
- #include <linux/numa.h>
- #include <linux/nodemask.h>
- #include <linux/topology.h>
-@@ -338,12 +339,26 @@ static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
- {
- 	struct acpi_cedt_cfmws *cfmws;
- 	int *fake_pxm = arg;
--	u64 start, end;
-+	u64 start, end, align, size;
- 	int node;
- 
- 	cfmws = (struct acpi_cedt_cfmws *)header;
- 	start = cfmws->base_hpa;
--	end = cfmws->base_hpa + cfmws->window_size;
-+	size = cfmws->window_size;
-+	end = cfmws->base_hpa + size;
-+
-+	/* Align memblock size to CFMW regions if possible */
-+	for (align = SZ_64T; align >= SZ_256M; align >>= 1) {
-+		if (IS_ALIGNED(start, align) && IS_ALIGNED(size, align))
-+			break;
-+	}
-+
-+	if (align >= SZ_256M) {
-+		if (memory_block_advise_max_size(align) < 0)
-+			pr_warn("CFMWS: memblock size advise failed\n");
-+	} else {
-+		pr_err("CFMWS: [BIOS BUG] base/size alignment violates spec\n");
-+	}
- 
- 	/*
- 	 * The SRAT may have already described NUMA details for all,
+v2 -> v3:
+- dropped the patch to add the socfpga clock bindings:
+  Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+  reason: refactoring the "altr,socfpga-" TXT files to .yaml files is a
+  different story involving several other files, thus can be part of a
+  future patch series, not related to the current upstreaming the
+  Enclustra DTS support, so dropped
+- adjust comments on boot mode selection
+- adjust titles to several bindings patches
+
+v1 -> v2:
+- split bindings and DT adjustments/additions
+- add several fixes to the socfpga.dtsi and socfpga_arria10.dtsi where
+  bindings did not match
+- extend existing bindings by properties and nods from arria10 setup
+- implement the clock binding altr,socfpga-a10.yaml based on existing
+  text file, rudimentary datasheet study and requirements of the
+  particular DT setup
+---
+Lothar Rubusch (23):
+  ARM: dts: socfpga: fix typo
+  ARM: dts: socfpga: align bus name with bindings
+  ARM: dts: socfpga: align dma name with binding
+  ARM: dts: socfpga: align fpga-region name
+  ARM: dts: socfpga: add label to clock manager
+  ARM: dts: socfpga: add missing cells properties
+  ARM: dts: socfpga: fix missing ranges
+  ARM: dts: socfpga: add clock-frequency property
+  ARM: dts: socfpga: add ranges property to sram
+  ARM: dts: socfpga: remove arria10 reset-names
+  net: stmmac: add support for dwmac 3.72a
+  dt-bindings: net: snps,dwmac: add support for Arria10
+  ARM: dts: socfpga: add Enclustra boot-mode dtsi
+  ARM: dts: socfpga: add Enclustra base-board dtsi
+  ARM: dts: socfpga: add Enclustra Mercury SA1
+  dt-bindings: altera: add Enclustra Mercury SA1
+  ARM: dts: socfpga: add Enclustra Mercury+ SA2
+  dt-bindings: altera: add binding for Mercury+ SA2
+  ARM: dts: socfpga: add Mercury AA1 combinations
+  dt-bindings: altera: add Mercury AA1 combinations
+  ARM: dts: socfpga: removal of generic PE1 dts
+  dt-bindings: altera: removal of generic PE1 dts
+  ARM: dts: socfpga: add Enclustra SoM dts files
+
+ .../devicetree/bindings/arm/altera.yaml       |  24 ++-
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   2 +
+ arch/arm/boot/dts/intel/socfpga/Makefile      |  25 ++-
+ arch/arm/boot/dts/intel/socfpga/socfpga.dtsi  |   6 +-
+ .../dts/intel/socfpga/socfpga_arria10.dtsi    |  26 ++--
+ .../socfpga/socfpga_arria10_mercury_aa1.dtsi  | 141 ++++++++++++++---
+ .../socfpga_arria10_mercury_aa1_pe1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_emmc.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_qspi.dts  |  16 ++
+ .../socfpga_arria10_mercury_aa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_arria10_mercury_pe1.dts   |  55 -------
+ .../socfpga/socfpga_cyclone5_mercury_sa1.dtsi | 143 +++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa1_pe1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_emmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa1_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts |  16 ++
+ .../socfpga/socfpga_cyclone5_mercury_sa2.dtsi | 146 ++++++++++++++++++
+ .../socfpga_cyclone5_mercury_sa2_pe1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_pe3_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts |  16 ++
+ .../socfpga_cyclone5_mercury_sa2_st1_qspi.dts |  16 ++
+ ...socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts |  16 ++
+ ...cfpga_enclustra_mercury_bootmode_emmc.dtsi |  12 ++
+ ...cfpga_enclustra_mercury_bootmode_qspi.dtsi |   8 +
+ ...fpga_enclustra_mercury_bootmode_sdmmc.dtsi |   8 +
+ .../socfpga_enclustra_mercury_pe1.dtsi        |  33 ++++
+ .../socfpga_enclustra_mercury_pe3.dtsi        |  55 +++++++
+ .../socfpga_enclustra_mercury_st1.dtsi        |  15 ++
+ .../ethernet/stmicro/stmmac/dwmac-generic.c   |   1 +
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |   1 +
+ 41 files changed, 992 insertions(+), 93 deletions(-)
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_aa1_st1_sdmmc.dts
+ delete mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_arria10_mercury_pe1.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_emmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa1_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_pe3_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_qspi.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_cyclone5_mercury_sa2_st1_sdmmc.dts
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_emmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_qspi.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_bootmode_sdmmc.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe1.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_pe3.dtsi
+ create mode 100644 arch/arm/boot/dts/intel/socfpga/socfpga_enclustra_mercury_st1.dtsi
+
 -- 
-2.43.0
+2.25.1
 
 
