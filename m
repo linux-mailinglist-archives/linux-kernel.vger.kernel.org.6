@@ -1,112 +1,143 @@
-Return-Path: <linux-kernel+bounces-386652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F8429B4663
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:05:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DBB59B4668
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:06:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BE25B220B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:05:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 237271F221BC
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 10:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2B42040A9;
-	Tue, 29 Oct 2024 10:05:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D1A2040AE;
+	Tue, 29 Oct 2024 10:06:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K2SEk6mL"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D/mt/1ty"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FAFA203710
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 10:05:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 115D8187FE0;
+	Tue, 29 Oct 2024 10:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730196324; cv=none; b=exaOmcFPUbzf6E3GbK7HWh+pWtWsl19AQv3VSKRxA8GemfoHTgMiCQcWhYNbLYMandNamG6FEDb+IymjY/vLV0GqMNNTZXV1bsSJiZosLyTO4Ga5kDNPjmjimlzfnVrFXRpo7jaZ6jLF5cSMvekZ0WOWs6QqkRqxeXJ6T9seqdI=
+	t=1730196404; cv=none; b=d0ozz1oiImF57m5NEciGsBjvdIOPgirWw1hBqOxku4MsNAjhLA9tzHkmRy4JblWYdaXNoegw8197WwjZfbxwpsu8eZgsSFC1T8atlpInBztSE/NfPyUKzzxATovJXM/MCXaXh/hm2UaiVulsZPaozxF3QJf2hRbRxsz/YtMTqco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730196324; c=relaxed/simple;
-	bh=AfykAnYLZupGg1fLCVn8uYBy1t/aBOVuyKkPyLQTwRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZINy91ualHaqZg/WSEX17tMi9JvoPnhvpHjBi0x7wHKAuuDxilFy1sLiIm9I/JNjAAKK04lhQDflxsskMu6pXfiAj/ik1P+E8eneggZYHKo1x3T8IEziRGT9JWk5NY3Ery9LMNkTS0xLhbeUQc8rwvZxkmh01SwfwaMIioZEATs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K2SEk6mL; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539fbbadf83so6740059e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 03:05:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730196320; x=1730801120; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U4RV5zlTOUYZMKhmx1UYpbwnBm/HWX3vXyjwC0A2b/s=;
-        b=K2SEk6mLQhmuMGkCEAP/7maZCivDCatMZZU0ZxYlsyNSCCxV0fLDCKM+gL8MAINSJ2
-         966UBH/rygUX2pZm0WbB3mljpKcDeRCdmZw4LlSZEntx22jwxiGaUu2+npdSWrjr5O0M
-         w7aB/2sw6qdLeI3tUcSjT9pVsah0SfZgpiW4vYMjER0M+6uM6ehds7TRlKSiE6A7uu6T
-         +wgKZrlpDVgxRESgyv97l2sbU0mGz5/5nxaAowfDcUV3NMcKpbRf0N5iwNknbvACHYl6
-         UHzmgKN9P6l1t1QRjnMJ68S+hAlJbjmdMdmMYtmZUhWF9Ci8VJWcR9ZXK+INm6ZKxyrK
-         Aa9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730196320; x=1730801120;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=U4RV5zlTOUYZMKhmx1UYpbwnBm/HWX3vXyjwC0A2b/s=;
-        b=E+Nrj6iwuTtEa8uU9lkknPYr42ZQ2HCXF099ilb+C5DigSvYWy1ZJTlQV1axNrUERP
-         Fmfdf0NkzobJxMk/wx1fqsYJ5HEMNUrH5uB9Kc7br8GtaupGFEf0l74+GYOjALB/Z18J
-         +k8GPG5Cr5wRW8xCTkmme2F0S5kWsD4eYNpMVpTh4dyylvXALGlO+jguQkBgwQQsAy6G
-         yvAqGiLK0foCqXrHHcwtomV0YnCsFasLvw9r3YqG/+9wy6K1Xlu0R677344ryPA4FR1t
-         RHEcyFF08k6F0vImFqvU4kzU6iCIyqROeylIkc5oXh3TDZ8aavBdWnQSP3MzTHujQ446
-         jyxg==
-X-Forwarded-Encrypted: i=1; AJvYcCWoLpw1YIppzIJjXDiYC3I/OxRPhG9iaJ2wyGjBmhORlJhFW5lUKfKBD1SoXGDvivNJ4I3jn0J0mjdlybI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLsB58FIuzSneQAi2aOlfJJpvutpAUxjCPhqRXNZ07cw8pl9Jl
-	chEhQzGPft/NmVzu8uLfZ50QF7TWB7oAUmiOdN24L9uM94RlZc68vdMTXt6s4I+uh5mEMwgS7Wg
-	IlZlGS8wQ7zUZZ8Wr2ltA4IBc1k6efnUQfBssUQ==
-X-Google-Smtp-Source: AGHT+IHRjlZ5hUDjfU+PhK/6e3oqa7R+fo3XhjKnYIjv7VyxU8Q5LEQEqbHbzMAmS4KxgFa0+3jWkOmL3SAGQgEfxvY=
-X-Received: by 2002:a05:6512:3c98:b0:536:54e9:3a63 with SMTP id
- 2adb3069b0e04-53b34a19727mr5084956e87.49.1730196320370; Tue, 29 Oct 2024
- 03:05:20 -0700 (PDT)
+	s=arc-20240116; t=1730196404; c=relaxed/simple;
+	bh=ALT9A3sQ5Y4md6I1DY1tRYdezpyKZu0ORjTnspRxHZI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=Iw2U8ukc7qjGnpqcUgM/L4LNSAnLcmlZDfPjsBZK4kQT462Pcj13nQVuRmA1SV149PzBi+Ssy2xUK7/j78WuPEJUplsddDej+xCCD+R67O++2E1uGjdFZCRNGY0uPEArqI8tzza9UJhniO7JxBcYmYZfZDEZ4RSBZGLg0hxIo1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D/mt/1ty; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730196404; x=1761732404;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=ALT9A3sQ5Y4md6I1DY1tRYdezpyKZu0ORjTnspRxHZI=;
+  b=D/mt/1tyJbYsc8Fvp/cJfbOD4pB9n52/GUkor6VTDIAtJarOfeVxn2MS
+   QegFrTPw7RoGXgVjWmkyfq6N2qXMMTMPu7OrZAq1wkK43O6QsAYvHY7ak
+   AtLMW3GFZlLyo2s6TT6oEQ9MdikxtA82+gCa1wMAvWtSXgzKycIhQ6uYc
+   Axt3vY6TmxxwYaKIWOQCUEDPya+fpJMqFN7eDd/m6f5FfHhftWIVZNZ3C
+   jfJzpmoE+NaBnm0NSYjz+lp0P7w1ZqPf+IzWoQq+AtNtipRHQChAVfvCO
+   Q3kVlu9anWEpCM6YvbIXvTmijuRVADtWWnYTQUe618+4bvWb41TKlyKF/
+   g==;
+X-CSE-ConnectionGUID: ZbihmPPsQGWdWxO8jXCwww==
+X-CSE-MsgGUID: GubRRJv6RvOK6FvTBagjAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29966971"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29966971"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:06:43 -0700
+X-CSE-ConnectionGUID: /ByS0/uCSJyNAfrJ3/2dmg==
+X-CSE-MsgGUID: fIHuh1rVR6O5/pjdIVrJRQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="82237442"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.244.83])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 03:06:36 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 29 Oct 2024 12:06:33 +0200 (EET)
+To: Mario Limonciello <mario.limonciello@amd.com>
+cc: Hans de Goede <hdegoede@redhat.com>, 
+    "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+    Maximilian Luz <luzmaximilian@gmail.com>, Lee Chun-Yi <jlee@suse.com>, 
+    Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, 
+    Corentin Chary <corentin.chary@gmail.com>, 
+    "Luke D . Jones" <luke@ljones.dev>, Ike Panhc <ike.pan@canonical.com>, 
+    Henrique de Moraes Holschuh <hmh@hmh.eng.br>, 
+    Alexis Belmonte <alexbelm48@gmail.com>, 
+    =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, 
+    Ai Chao <aichao@kylinos.cn>, Gergo Koteles <soyer@irl.hu>, 
+    open list <linux-kernel@vger.kernel.org>, 
+    "open list:ACPI" <linux-acpi@vger.kernel.org>, 
+    "open list:MICROSOFT SURFACE PLATFORM PROFILE DRIVER" <platform-driver-x86@vger.kernel.org>, 
+    "open list:THINKPAD ACPI EXTRAS DRIVER" <ibm-acpi-devel@lists.sourceforge.net>, 
+    Mark Pearson <mpearson-lenovo@squebb.ca>, 
+    Matthew Schwartz <matthew.schwartz@linux.dev>
+Subject: Re: [PATCH 6/8] ACPI: platform_profile: Only remove group when no
+ more handler registered
+In-Reply-To: <20241025193055.2235-7-mario.limonciello@amd.com>
+Message-ID: <2816f1b2-b6ea-05eb-f2ce-a0c07093f146@linux.intel.com>
+References: <20241025193055.2235-1-mario.limonciello@amd.com> <20241025193055.2235-7-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029074901.18977-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20241029074901.18977-1-krzysztof.kozlowski@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 29 Oct 2024 11:05:07 +0100
-Message-ID: <CACRpkdZCeQFzqbSN_=jX-_406OyxOoLb3b0R5NX3SjacE5JZSQ@mail.gmail.com>
-Subject: Re: [GIT PULL] pinctrl: samsung: drivers for v6.13
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Oct 29, 2024 at 8:49=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
+On Fri, 25 Oct 2024, Mario Limonciello wrote:
 
-> The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758e=
-dc:
->
->   Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
->
-> are available in the Git repository at:
->
->   https://git.kernel.org/pub/scm/linux/kernel/git/pinctrl/samsung.git tag=
-s/samsung-pinctrl-6.13
->
-> for you to fetch changes up to 6d2dbd4cec8939ad2b813b8052eb12406db528d7:
->
->   pinctrl: samsung: Add Exynos9810 SoC specific data (2024-10-27 21:02:08=
- +0100)
+> As multiple handlers may register for ACPI platform profile handler,
+> only remove the sysfs group when the last one unregisters.
+> 
+> Tested-by: Matthew Schwartz <matthew.schwartz@linux.dev>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/acpi/platform_profile.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
+> index 81928adccfade..091ca6941a925 100644
+> --- a/drivers/acpi/platform_profile.c
+> +++ b/drivers/acpi/platform_profile.c
+> @@ -23,6 +23,15 @@ static const char * const profile_names[] = {
+>  };
+>  static_assert(ARRAY_SIZE(profile_names) == PLATFORM_PROFILE_LAST);
+>  
+> +static bool platform_profile_is_registered(void)
+> +{
+> +	struct list_head *pos;
+> +	int count = 0;
+> +	list_for_each(pos, &platform_profile_handler_list)
+> +		count++;
+> +	return count > 0;
 
-Pulled into the pinctrl tree for v6.13.
+return !list_empty(&platform_profile_handler_list) ?
 
-Thanks for sorting out the Exynos drivers, excellent work as always Krzyszt=
-of!
+> +}
+> +
+>  static ssize_t platform_profile_choices_show(struct device *dev,
+>  					struct device_attribute *attr,
+>  					char *buf)
+> @@ -206,8 +215,10 @@ int platform_profile_remove(struct platform_profile_handler *pprof)
+>  
+>  	list_del(&pprof->list);
+>  
+> -	sysfs_remove_group(acpi_kobj, &platform_profile_group);
+>  	cur_profile = NULL;
+> +	if (!platform_profile_is_registered())
+> +		sysfs_remove_group(acpi_kobj, &platform_profile_group);
+> +
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(platform_profile_remove);
+> 
 
-Yours,
-Linus Walleij
+-- 
+ i.
+
 
