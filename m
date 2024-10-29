@@ -1,98 +1,56 @@
-Return-Path: <linux-kernel+bounces-386447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28D29B4397
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:56:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74A1B9B4398
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:56:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 666FF28398C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:56:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39D272839F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75AE0202F97;
-	Tue, 29 Oct 2024 07:55:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MpuUnnZQ";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hQw02PqO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D082038A0;
+	Tue, 29 Oct 2024 07:55:58 +0000 (UTC)
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 169791DE3C5;
-	Tue, 29 Oct 2024 07:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E13B2036FA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188554; cv=none; b=KYy78oBEiVFrNtblqBw4tCUasyE0CUwyA7y4FVj3K2FWUWI++jXG71UEBcWO8EgW22MwrHi3dSrxlkpNlwDeVPx1n/cPjZZFfcVOpysdGau7Sis4S9+X2x8kAd6xb2WbzKWzr/hjci/lQ1Mk827EG2cX1vq/Xf2+Yno3tLuzsFY=
+	t=1730188557; cv=none; b=BBERfOby2WcSbmqf0xnwvnn5MYb8p4/oMQfltAvO3WWC/b0zoL9aW1j/JHd6pcWoeC+CCoJoSeoeh8kbkloxyMFVBfh2X2ynQBQ2gEESNpSy4CKl0QV6DDBEjegLgEMaKLyEkkQketova4GXo59X1S/44n2Fp3PUtHfQfxkDL3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188554; c=relaxed/simple;
-	bh=cW9s2dHTlaDkI8QhhBu//NGLNVZBurjcsG25s9INS3U=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tnrjDBI38eWbZwxrlI5zrvMMuuCqlQRucVzDKj6gta2aCjmhI3dKZHNzIWe7NhkeNtTx4sl0TMx2DQis6vDrIrsDRpNDf34S2RQDmPamozT3XoAvUrFyU7tRl82TeVnleczT1o2+Bz733qEVd9eKfmerc1vtwKXN2mrD70tpW74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MpuUnnZQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hQw02PqO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730188551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KyvdhUfZSHeeKnvfzCZQJk5wLqHskMwbV1UXrfOwkQE=;
-	b=MpuUnnZQRXxH+ZSgeoFBJg0UjCSANjGPCjS+GYPojwmrQic+6zOTwCN1EYWiJPNalIB16m
-	sQFe+NEjyvRuzGNHwf+WlHsje3Y3dbTpCPLiNYiPylbfz242rEAe0dxkssD/SLdxkVlIxS
-	5NChoNkpP9z/LtNQWfzpQclXnOhDiVBojlRlafvEjyde+Xw4HYt/QsfTMFOqemkaZPsYFJ
-	lfKr5Ohj0GBbZineAhf8gGZE1qOLKI8cAJcj6qeaEdYXvfmmCyR7VyOjRS6Gtyr8x9788I
-	5I664Z0T9ILrf/7bL3WxFZw0kjE4fSI6QWth7zm5gD2WWq2yCBwdaVibdM+DRQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730188551;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KyvdhUfZSHeeKnvfzCZQJk5wLqHskMwbV1UXrfOwkQE=;
-	b=hQw02PqOxo1iGJETpQaXoxQFx2pg24ffujGHL3kOxGrPfqs2GFr3EYGlo4iVWKDmH0kKOf
-	uIPzC1ikjhHlMlCw==
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>, boqun.feng@gmail.com
-Cc: fujita.tomonori@gmail.com, anna-maria@linutronix.de,
- frederic@kernel.org, jstultz@google.com, sboyd@kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com,
- tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@samsung.com, aliceryhl@google.com, arnd@arndb.de
-Subject: Re: [PATCH v4 4/7] rust: time: Add wrapper for fsleep function
-In-Reply-To: <20241029.083029.72679397436968362.fujita.tomonori@gmail.com>
-References: <ZxwVuceNORRAI7FV@Boquns-Mac-mini.local>
- <20241028.095030.2023085589483262207.fujita.tomonori@gmail.com>
- <Zx8VUety0BTpDGAL@Boquns-Mac-mini.local>
- <20241029.083029.72679397436968362.fujita.tomonori@gmail.com>
-Date: Tue, 29 Oct 2024 08:55:50 +0100
-Message-ID: <87cyjj2vi1.ffs@tglx>
+	s=arc-20240116; t=1730188557; c=relaxed/simple;
+	bh=9X5HzpGMNhITwz5P/zDUNMTKoZK6sG55VCCs7gQYj44=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lwXCkxOPfiIt8m22thD2ZHOSvj/hT87K7KxvAsoRyo5bdbMutmSBjThn5XQP4UyECY5I7Md5gZ5gMiM/TUo88GGu4YI77SWt25ToqHqrD703NQAMobvWrXIOghGhgphtFbcS8+eiFaa0NoNZ7TT9HXw1OBO/4MDX10MCJ+0M9RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
+Received: by verein.lst.de (Postfix, from userid 2407)
+	id 5FDB9227A88; Tue, 29 Oct 2024 08:55:52 +0100 (CET)
+Date: Tue, 29 Oct 2024 08:55:52 +0100
+From: Christoph Hellwig <hch@lst.de>
+To: Levi Yun <yeoreum.yun@arm.com>
+Cc: hch@lst.de, m.szyprowski@samsung.com, robin.murphy@arm.com, nd@arm.com,
+	iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Denis Nikitin <denik@chromium.org>
+Subject: Re: [PATCH] dma/debug.c: fix possible deadlock scenario
+Message-ID: <20241029075552.GA23876@lst.de>
+References: <20241025100600.3076319-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241025100600.3076319-1-yeoreum.yun@arm.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 29 2024 at 08:30, FUJITA Tomonori wrote:
-> On Sun, 27 Oct 2024 21:38:41 -0700
-> Boqun Feng <boqun.feng@gmail.com> wrote:
->> That also works for me, but an immediate question is: do we put
->> #[must_use] on `fsleep()` to enforce the use of the return value? If
->> yes, then the normal users would need to explicitly ignore the return
->> value:
->> 
->> 	let _ = fsleep(1sec);
->> 
->> The "let _ =" would be a bit annoying for every user that just uses a
->> constant duration.
->
-> Yeah, but I don't think that we have enough of an excuse here to break
-> the rule "Do not crash the kernel".
->
-> Another possible option is to convert an invalid argument to a safe
-> value (e.g., the maximum), possibly with WARN_ON_ONCE().
+Thanks, I've applied this to the dma-mapping tree with small tweaks
+to the Subject and the comment in the code.
 
-That makes sense.
 
