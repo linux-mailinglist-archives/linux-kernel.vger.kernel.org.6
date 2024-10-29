@@ -1,233 +1,114 @@
-Return-Path: <linux-kernel+bounces-386894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A931C9B4929
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:10:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D81C9B492A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:11:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30EB81F23C03
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:10:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6EC5285B66
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38DDE205E13;
-	Tue, 29 Oct 2024 12:10:36 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C89205ADA;
+	Tue, 29 Oct 2024 12:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="fWsys7nt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7BE5188CDC;
-	Tue, 29 Oct 2024 12:10:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C96188CDC;
+	Tue, 29 Oct 2024 12:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730203835; cv=none; b=akkHLuk1OEv13iH511NKRttwcK/Z9TXw+xLU2j5Zy09CN8Qxnq6QP0WrnH0B+Do+KnRrEdNJ++/F59u4s2UurR1lJNoJfad5tRJP5qe4FqglhHhiXRA5S2+24rlFkFoY/xk/Ibheh4lGyQpgyx5rwqd54hpLPoQC+98rPCESSmM=
+	t=1730203849; cv=none; b=UPnuPzP1n730oxXM6qDNFluKLmB6HvRzLX9IZFEdCxpq79i6jRRJBRqsXWMA2JAARoAQO3yFXuNyK0DiDK2ukpMjhTG05v/ica9r7Zw0sRaaOnHNOXHqVeZLhxE3QItVW4Fuu2xXWBRqeSaEoudI1owPOp+II7vaFzVWPB4x99U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730203835; c=relaxed/simple;
-	bh=JWN2yKRVAsTYbOiMY1fo1Pn+gqGzZJiTgrvBje3uEF8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DeHK+M8wOSx0d+wdBQHE03vtDV5v5PxGHKq93rGEMANqeePwbaZSulG3wLpY92ZD3esS4pMJZVFaSaHYtGy56lEHzrMj/fm8Phn6FQQURELvcld4VDIeCopwGceT2dPO8oWT0Lgfs23PNv0OfW6XVvz4dT1NfXee+/4pVZC/FZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Xd8G963TTz4f3nTf;
-	Tue, 29 Oct 2024 20:10:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 543C11A0359;
-	Tue, 29 Oct 2024 20:10:28 +0800 (CST)
-Received: from [10.174.176.73] (unknown [10.174.176.73])
-	by APP4 (Coremail) with SMTP id gCh0CgCngYWy0CBn3_0aAQ--.51388S3;
-	Tue, 29 Oct 2024 20:10:28 +0800 (CST)
-Subject: Re: [PATCH v2 7/7] md/raid10: Handle bio_split() errors
-To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
- axboe@kernel.dk, song@kernel.org, hch@lst.de
-Cc: martin.petersen@oracle.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org, hare@suse.de,
- Johannes.Thumshirn@wdc.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20241028152730.3377030-1-john.g.garry@oracle.com>
- <20241028152730.3377030-8-john.g.garry@oracle.com>
- <eeb9ca32-6862-6a07-bc51-7bd05430f018@huaweicloud.com>
- <f0ecb0b1-7963-42ed-a26d-9b155884abb6@oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <93532589-13d9-2b48-4a6d-7f2a29e1ecf5@huaweicloud.com>
-Date: Tue, 29 Oct 2024 20:10:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1730203849; c=relaxed/simple;
+	bh=3QkexQixL7eVxLYiqNDcKJZUluEyHaHeQ04J4WlbObE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIkd0+81Ucvv7zc/jEMdxnGrYwP9dIZFZTqfn9OFvtBeSi/W1qRfSLYSt8UgoXFrVEnqADpMv/zo1OUPPS3VwAkSbSw8FdVKMjSZ/xSBk5z/1W7gxbUbuNTZHpF/Aihzu2NXsSAmQuFgtUFArgTQU8iyDyAvCXUgWd6adWGc8IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=fWsys7nt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 058984D4;
+	Tue, 29 Oct 2024 13:10:42 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1730203843;
+	bh=3QkexQixL7eVxLYiqNDcKJZUluEyHaHeQ04J4WlbObE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fWsys7ntz+RayOfJfMRmdH2qf+qFqRFVL4eD3/WLevCOIDlSOd04XYxDWWMfMYzhE
+	 NahnA43zWm4VU8X7IYSel0+UO+4YpGeQtbNB3HsZrnOcziQdMVjbzN7CccV7Fg8PvS
+	 4zA9ig76+o25UpqK8u7AS6RZ2lW+CZGwomKMVPgE=
+Date: Tue, 29 Oct 2024 14:10:39 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Mirela Rabulea <mirela.rabulea@nxp.com>, mchehab@kernel.org,
+	sakari.ailus@linux.intel.com, hverkuil-cisco@xs4all.nl,
+	laurentiu.palcu@nxp.com, robert.chiras@nxp.com,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	LnxRevLi@nxp.com, kieran.bingham@ideasonboard.com,
+	hdegoede@redhat.com, dave.stevenson@raspberrypi.com,
+	mike.rudenko@gmail.com, alain.volmat@foss.st.com,
+	julien.vuillaumier@nxp.com, alice.yuan@nxp.com
+Subject: Re: [PATCH 1/5] dt-bindings: media: i2c: Add bindings for OX05B1S
+ sensor driver
+Message-ID: <20241029121039.GM22600@pendragon.ideasonboard.com>
+References: <20241028190628.257249-1-mirela.rabulea@nxp.com>
+ <20241028190628.257249-2-mirela.rabulea@nxp.com>
+ <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f0ecb0b1-7963-42ed-a26d-9b155884abb6@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCngYWy0CBn3_0aAQ--.51388S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3GF4kZFyDWr1UKr45Kw4DArb_yoW7Cw48pr
-	4ktFWUArW5Jrn5Jr12qF4UJFyFyr18Ja1DJr18J3WUJr47tryqgF4UXr1qgr1UCr48Gr1U
-	Xr15WrsxurnrJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <216a2728-ab62-4b76-aca5-8d911687dfbe@kernel.org>
 
-Hi,
+On Tue, Oct 29, 2024 at 07:14:28AM +0100, Krzysztof Kozlowski wrote:
+> On 28/10/2024 20:06, Mirela Rabulea wrote:
+> > Add bindings for OX05B1S sensor driver
+> > 
+> > Signed-off-by: Mirela Rabulea <mirela.rabulea@nxp.com>
+> 
+> <form letter>
+> Please use scripts/get_maintainers.pl to get a list of necessary people
+> and lists to CC. It might happen, that command when run on an older
+> kernel, gives you outdated entries. Therefore please be sure you base
+> your patches on recent Linux kernel.
+> 
+> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+> people, so fix your workflow. Tools might also fail if you work on some
+> ancient tree (don't, instead use mainline) or work on fork of kernel
+> (don't, instead use mainline). Just use b4 and everything should be
+> fine, although remember about `b4 prep --auto-to-cc` if you added new
+> patches to the patchset.
+> 
+> You missed at least devicetree list (maybe more), so this won't be
+> tested by automated tooling. Performing review on untested code might be
+> a waste of time.
+> 
+> Please kindly resend and include all necessary To/Cc entries.
+> </form letter>
+> 
+> Binding also looks very different than all other devices, so re-write it
+> starting from EXISTING GOOD bindings. Not some downstream stuff.
 
-在 2024/10/29 20:05, John Garry 写道:
-> On 29/10/2024 11:55, Yu Kuai wrote:
->> Hi,
->>
->> 在 2024/10/28 23:27, John Garry 写道:
->>> Add proper bio_split() error handling. For any error, call
->>> raid_end_bio_io() and return. Except for discard, where we end the bio
->>> directly.
->>>
->>> Signed-off-by: John Garry <john.g.garry@oracle.com>
->>> ---
->>>   drivers/md/raid10.c | 47 ++++++++++++++++++++++++++++++++++++++++++++-
->>>   1 file changed, 46 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
->>> index f3bf1116794a..9c56b27b754a 100644
->>> --- a/drivers/md/raid10.c
->>> +++ b/drivers/md/raid10.c
->>> @@ -1159,6 +1159,7 @@ static void raid10_read_request(struct mddev 
->>> *mddev, struct bio *bio,
->>>       int slot = r10_bio->read_slot;
->>>       struct md_rdev *err_rdev = NULL;
->>>       gfp_t gfp = GFP_NOIO;
->>> +    int error;
->>>       if (slot >= 0 && r10_bio->devs[slot].rdev) {
->>>           /*
->>> @@ -1206,6 +1207,10 @@ static void raid10_read_request(struct mddev 
->>> *mddev, struct bio *bio,
->>>       if (max_sectors < bio_sectors(bio)) {
->>>           struct bio *split = bio_split(bio, max_sectors,
->>>                             gfp, &conf->bio_split);
->>> +        if (IS_ERR(split)) {
->>> +            error = PTR_ERR(split);
->>> +            goto err_handle;
->>> +        }
->>>           bio_chain(split, bio);
->>>           allow_barrier(conf);
->>>           submit_bio_noacct(bio);
->>> @@ -1236,6 +1241,12 @@ static void raid10_read_request(struct mddev 
->>> *mddev, struct bio *bio,
->>>       mddev_trace_remap(mddev, read_bio, r10_bio->sector);
->>>       submit_bio_noacct(read_bio);
->>>       return;
->>> +err_handle:
->>> +    atomic_dec(&rdev->nr_pending);
->>
->> I just realized that for the raid1 patch, this is missed. read_balance()
->> from raid1 will increase nr_pending as well. :(
-> 
-> hmmm... I have the rdev_dec_pending() call for raid1 at the error label, 
-> which does the appropriate nr_pending dec, right? Or not?
+Krzysztof, please point to a good example when making this kind of
+comment.
 
-Looks not, I'll reply here. :)
+> A nit, subject: drop second/last, redundant "bindings". The
+> "dt-bindings" prefix is already stating that these are bindings.
+> See also:
+> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 > 
->>
->>> +
->>> +    bio->bi_status = errno_to_blk_status(error);
->>> +    set_bit(R10BIO_Uptodate, &r10_bio->state);
->>> +    raid_end_bio_io(r10_bio);
->>>   }
->>>   static void raid10_write_one_disk(struct mddev *mddev, struct 
->>> r10bio *r10_bio,
->>> @@ -1347,9 +1358,10 @@ static void raid10_write_request(struct mddev 
->>> *mddev, struct bio *bio,
->>>                    struct r10bio *r10_bio)
->>>   {
->>>       struct r10conf *conf = mddev->private;
->>> -    int i;
->>> +    int i, k;
->>>       sector_t sectors;
->>>       int max_sectors;
->>> +    int error;
->>>       if ((mddev_is_clustered(mddev) &&
->>>            md_cluster_ops->area_resyncing(mddev, WRITE,
->>> @@ -1482,6 +1494,10 @@ static void raid10_write_request(struct mddev 
->>> *mddev, struct bio *bio,
->>>       if (r10_bio->sectors < bio_sectors(bio)) {
->>>           struct bio *split = bio_split(bio, r10_bio->sectors,
->>>                             GFP_NOIO, &conf->bio_split);
->>> +        if (IS_ERR(split)) {
->>> +            error = PTR_ERR(split);
->>> +            goto err_handle;
->>> +        }
->>>           bio_chain(split, bio);
->>>           allow_barrier(conf);
->>>           submit_bio_noacct(bio);
->>> @@ -1503,6 +1519,25 @@ static void raid10_write_request(struct mddev 
->>> *mddev, struct bio *bio,
->>>               raid10_write_one_disk(mddev, r10_bio, bio, true, i);
->>>       }
->>>       one_write_done(r10_bio);
->>> +    return;
->>> +err_handle:
->>> +    for (k = 0;  k < i; k++) {
->>> +        struct md_rdev *rdev, *rrdev;
->>> +
->>> +        rdev = conf->mirrors[k].rdev;
->>> +        rrdev = conf->mirrors[k].replacement;
->>
->> This looks wrong, r10_bio->devs[k].devnum should be used to deference
->> rdev from mirrors.
-> 
-> ok
-> 
->>> +
->>> +        if (rdev)
->>> +            rdev_dec_pending(conf->mirrors[k].rdev, mddev);
->>> +        if (rrdev)
->>> +            rdev_dec_pending(conf->mirrors[k].rdev, mddev);
->>
->> This is not correct for now, for the case that rdev is all BB in the
->> write range, continue will be reached in the loop and rrdev is skipped(
->> This doesn't look correct to skip rrdev). However, I'll suggest to use:
->>
->> int d = r10_bio->devs[k].devnum;
->> if (r10_bio->devs[k].bio == NULL)
-> 
-> eh, should this be:
-> if (r10_bio->devs[k].bio != NULL)
+> A nit, subject: drop second/last "driver". Bindings are for hardware,
+> not drivers.
 
-Of course, sorry about the typo.
+-- 
+Regards,
 
-Thanks,
-Kuai
-
-> 
->>      rdev_dec_pending(conf->mirrors[d].rdev);
->> if (r10_bio->devs[k].repl_bio == NULL)
->>      rdev_dec_pending(conf->mirrors[d].replacement);
->>
-> 
-> 
-> 
->>
->>> +        r10_bio->devs[k].bio = NULL;
->>> +        r10_bio->devs[k].repl_bio = NULL;
->>> +    }
->>> +
->>> +    bio->bi_status = errno_to_blk_status(error);
->>> +    set_bit(R10BIO_Uptodate, &r10_bio->state);
->>> +    raid_end_bio_io(r10_bio);
-> 
-> Thanks,
-> John
-> 
-> .
-> 
-
+Laurent Pinchart
 
