@@ -1,273 +1,475 @@
-Return-Path: <linux-kernel+bounces-387864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2560C9B56FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:33:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8589B56FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 00:33:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA2921F22C9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26011C20C51
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 23:33:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961CF20B216;
-	Tue, 29 Oct 2024 23:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E51209675;
+	Tue, 29 Oct 2024 23:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EdBlSLEG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMqYZUtQ"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85AC11DF753;
-	Tue, 29 Oct 2024 23:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730244766; cv=fail; b=nZuqsgVL90r8+9A68q6F8WEncRLevie0SUfTWdxOWtxgwf+Wr9vxfDejXKCPfr2Ish54rNK/whBk4rahItoK7CGnBEBNPv45LVqxcEdRu+JcA/1JwlMuoB+feSQVM9w3H5affV3/3qv0iJDNjzyuzuLb16jKqFfDxE2h7cMCxpM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730244766; c=relaxed/simple;
-	bh=dXFZtceRF4ci57mp2hajgkY6H3H1FKS9cHX7XVh76qc=;
-	h=Message-ID:Date:Subject:From:To:CC:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=mXyErPMOMrK47H31OYdMDAg6Jk8e+86/u/aqf7kJeMpUwdoz4mAXAUM00JzBBq/vXPgO6X2zDl41PkRISq29IKAiJT9uZqtTCoPk8gKlc0LZ9OPPHxtIEdYvuM7H5nPTyyDyGx1dYbOSH5HMp+ZjUxSfCVrFEjgfHEOoqzhvJSY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EdBlSLEG; arc=fail smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730244764; x=1761780764;
-  h=message-id:date:subject:from:to:cc:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=dXFZtceRF4ci57mp2hajgkY6H3H1FKS9cHX7XVh76qc=;
-  b=EdBlSLEGeUKY9fh6R77BIXFqZxF4sFUjwzwRpp636o0sW+JqrJt6SeYQ
-   0pAPWz8qmsNBG21AmyUOo9iFvTIRgRPCM8n7m0GfFEPIdeZ4xE84lpaLD
-   rescPNvplM5BaKDEY2mxVvtGvjiiMmQz9XNyPmPEoi0JoJyvG3qpMHJyd
-   t8xqDMHAQqao9ba+Ak6fb/1ImdDONE+IGRoIxcSw5rEccLkmDwAZ1fHRh
-   ofFZBW11BUOpyxBBthZ2SRjAIAhxTaB4CBTjYMc4GOOSJtT/dMOZTteio
-   cntBJn3CSN8K0K3X9ytUG8BGClvmFI0PImGC1t7ouDKn1Qu1g1DxE2OkM
-   g==;
-X-CSE-ConnectionGUID: jgyw5xMbRoSzS98TAfRChg==
-X-CSE-MsgGUID: ZVQgbLunTiycc+ap3IJVpg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47382781"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47382781"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 16:32:43 -0700
-X-CSE-ConnectionGUID: UDfIMvr6T9eN3tqEEMrs7A==
-X-CSE-MsgGUID: jmL9+1PuS7WqMJiAQbjf2g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="86877570"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 16:32:43 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 29 Oct 2024 16:32:43 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 16:32:43 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 29 Oct 2024 16:32:42 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OJono6Lmu0obkUgE3MgQGbSQdL3zpbluFKQxQ3cdEFYPeMZqOoGWUoF8WB53vH+i+6zw8I+folPn+DhsXBaE/5nwzgQqOjPZGM3/USULdKKPIz7VYZj1se/R5HgoxExz8ED4xKnU+6Y6Yt6NHZkpEC/GUzq7km3VzhW3Ug7WRoIoiyI+g3Qu72PReiGQYiGfGxKv6IKke1yOTiJgCjXpMZlSyGHuCfN7D9gV8KHUxxjyMOpWOjNH90EAX7NM8Acn9R9ONFWFlqj2xW3A53v2Y9XziLyw2qMgdoD7RXtlSFvp2gDJkf1fRArPhM8DhMJFCvxDX3ycwVGNrUCTD8dCqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jpsMJDCjXKiBrKXqEvaobd+aUlNI3ZGv468/PyhocNQ=;
- b=ctTxnP0yAwqyB4FfJR1AbVfu0Rg6kb/1uXTmfuSqUmbGC1WInln6Z9586KXnS/E2AjTvXZeclVYhJhF0oJngcGPcEHzyv1fi2m1XfFMF0IJFNPLd2bqoB6YwucevGe6ja7HGhqAxjchi+aLv5bi9sfKwAx7wMHoPv1/9w6uJOr7kQPvpx1VeXlmOUMfvL084OIFOLZQj9/Ebk/Gwpo00sq1/tEUFbflplKZlO9pbh+TbzAM4wNPdPWKJtEKxXE/6bT/OknSLrt6PVov9D7GmnvwppdAzxKfHfCsoPN2xR8sGEWTa1fvnDIPRQNRINp+Riev4tbIAHiXNZsqAWWOHGw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
- by BL1PR11MB6052.namprd11.prod.outlook.com (2603:10b6:208:394::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.23; Tue, 29 Oct
- 2024 23:32:39 +0000
-Received: from CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8]) by CO1PR11MB5089.namprd11.prod.outlook.com
- ([fe80::7de8:e1b1:a3b:b8a8%4]) with mapi id 15.20.8093.027; Tue, 29 Oct 2024
- 23:32:39 +0000
-Message-ID: <62387bab-f42a-4981-9664-76c439e2aadb@intel.com>
-Date: Tue, 29 Oct 2024 16:32:34 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 6/9] ice: use <linux/packing.h> for Tx and Rx
- queue context data
-From: Jacob Keller <jacob.e.keller@intel.com>
-To: Daniel Machon <daniel.machon@microchip.com>, Dan Carpenter
-	<dan.carpenter@linaro.org>
-CC: Vladimir Oltean <olteanv@gmail.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Tony Nguyen
-	<anthony.l.nguyen@intel.com>, Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<netdev@vger.kernel.org>
-References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
- <20241025-packing-pack-fields-and-ice-implementation-v2-6-734776c88e40@intel.com>
- <20241029145011.4obrgprcaksworlq@DEN-DL-M70577>
- <8e1a742c-380c-4faf-a6c2-3fa67689c57e@intel.com>
-Content-Language: en-US
-In-Reply-To: <8e1a742c-380c-4faf-a6c2-3fa67689c57e@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR13CA0154.namprd13.prod.outlook.com
- (2603:10b6:a03:2c7::9) To CO1PR11MB5089.namprd11.prod.outlook.com
- (2603:10b6:303:9b::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFEEF20C00A;
+	Tue, 29 Oct 2024 23:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730244777; cv=none; b=ElkneU5u+bYTq9ub7bJz/d78HMZ33P53TGPT+u50VA1bkH+FybDq4PVSy0s4pxOE6V55AJD9OhWxifoubDqQlfqcZdFLm8171LCpOSKtCIKLKqSf3aB9MG46rPvQsm9BU2nu1SIADkRXso7tUkOJKC1Z4iCXhXV6nmxApEMnXSM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730244777; c=relaxed/simple;
+	bh=PH58iDodTTubnkEujlIaUFS7AbT7jcag+SlgzrD26AY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fbTKv3+ht7Msx2HwVlc8Wdyf/jxcYUkl8E/QX0XsoxT2nPzrZB9kEQVmiBg8KKFAV3dCnDp7xWoI7lKUEDs+HbztVVBYYQOtC3ma4f+69gEJZzY1XEwF3jkb7EHTNlklf3y/RqS/fnls4AZYy0uvQhJq2SOcmjYpo/LhtYGZJ64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMqYZUtQ; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7eda47b7343so3879941a12.0;
+        Tue, 29 Oct 2024 16:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730244774; x=1730849574; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7emS6FqxxtwGK42f+Iy69RznkACs0efmp5R7LUKm2Os=;
+        b=lMqYZUtQZRFvmUcjQ/mrTKGGQoeVLhCl7voQwLjb6xXPZnCeLqHfZGYhT0cY9Odf83
+         K/X2yBjFgyzTWxShd09Q6CuYNFDvpqV+wdbcZZahBAyjPU8yOxkCKvgmK/L4e8eYHox5
+         2W+SPgmj42IhyFUAvlHN1P8KVrwlvA5rLanEhHOAjB7830HAEBI16uk7kaHwD1zU1phw
+         VPuklasvl83kY+P8dDqMFWsvwVT4NOPGD3zrk6MZCYuD0SiQ2aVaXVv/MEdPTyq7mDZY
+         CaQfkusSbAsgx5NHOkR3IcR/2KgLdpRHflRKFXEcgLwdH9hCCmCftdLj/ElCOzuflIgz
+         CdtQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730244774; x=1730849574;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7emS6FqxxtwGK42f+Iy69RznkACs0efmp5R7LUKm2Os=;
+        b=NqZtQrEhdqMX+j5Y2GvQN6W99Z6YOBaiUy71YmkOKBkP7LYBIwTmNL70WRqZLA/7o7
+         mHv4l9QdLt7UCYRYsVHnX7NBIhs7tm7oFlVAtlYZ3hf6j7rEFplOk3dHBH0wToX7ghtT
+         lnxM+lmeD6WxOFd90rRYVRojKIv7qEilGJfSKCOWsl5nvpdwkH64s5GfXA6XMg1UI14r
+         6SY61nM/GRZOpacfvJ8oLXrq2VvP/ra5WAyibvhInQ16YuBqrDpZr8WPWIFJ9Ps2lt3u
+         bB2wQMthploxs9hjkN/DA/+BzHog6Q7TTOw7qrVWzfqvVgwBJlHD/JvMoKhsd0ypQ03u
+         E3uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYw4xDdpyD+LB5V5hanrWp4LCMnE15kSykZAT84v+EG7sEZ1thQYp6nO92CbntzbG3Ug5imVv71X0+TqM9tj2eAw==@vger.kernel.org, AJvYcCXdz+oxkL7IHSJZaXMiHtDpDfankM5ahafexWWvlW0PGRen2dKl4wifVjepodBF0yxvpHFjH5oMXlFBiDI=@vger.kernel.org, AJvYcCXfyeHgZy720faiISgrveOqGDon7v7QOIAbsFl5VJoIqdv1n8j3TeP3jE42D2uXFCKIUKCu1SaPiEfgyehU2usn0w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjJ26z/HKD34JnaZ54uvq1qooalykeNZOMbEPxmQRW0XsACeEd
+	c9ZoA/M1rlla56y7eK/085P2GuNwwuA5tIPg+F6qrzfShNHXULdOot+isJUCO0GdV1UdcamdibW
+	SZ1s+mxEqcl/8pOSoH9zRNH2KJbU=
+X-Google-Smtp-Source: AGHT+IHDz43omOfLmggEhx0HF4xQLnfIv3KEkuhXMCCHCXyHLt8e+1uVqZMoaT+Ct1JFceU1FTjP7T09eViPCMhHEO8=
+X-Received: by 2002:a17:90b:4b04:b0:2d3:c976:dd80 with SMTP id
+ 98e67ed59e1d1-2e8f11dd117mr13904064a91.39.1730244773740; Tue, 29 Oct 2024
+ 16:32:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|BL1PR11MB6052:EE_
-X-MS-Office365-Filtering-Correlation-Id: b68c77c6-abad-497c-1359-08dcf871f98a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?NlJMOXBaemllalNXRm5FOHVzeFcxYVJLMlBuTkc0YkhmQjBBaENndkZLaTR1?=
- =?utf-8?B?OWZpWmxHVUV5V0FrSWhsT01TczhqMk5sbXBva2dmYU5qaXZGUWIxRUVSak1F?=
- =?utf-8?B?UTdlVUkyRkFGalJobDRUd1pLVW5zalZ2NjV2dTdiSVdTUWdzWTJaZE5aanE0?=
- =?utf-8?B?VkZDSEY5TklZU1FHTXRHTHgvVW5JQXpnR3FHYUNjSVE0R2xhaXhZQ0h6dlFt?=
- =?utf-8?B?UVl3Vm5OdXM4Yk1rT1R0Uy9MUUw4L09xRno3NE1VSTVBU2NYVHFQSGI2dWFU?=
- =?utf-8?B?N2E1eURhd0srbGpqZDNwSjJzOE5BK0ZkSXNnT3NNU2xNRWpBZEdiRXBxYjlZ?=
- =?utf-8?B?MDNQVHNsa2w2bDhWenRMR2ZUaElpdmUwZ25TK0RzV3RYOVVTclBIR3hHMXVh?=
- =?utf-8?B?NWtXT1ZpNU9TVnZWM2RIcE54dE1wbllPZU9wVlBoZVovVUdscklqWGdSOGw1?=
- =?utf-8?B?UEZwbHMxNlM4TE1sS3NmbTQrV1R6SGluSVFOT1dhc2xFVXNZVzJrdEJGUFZi?=
- =?utf-8?B?VWNqTGYraWJUNFpOLy9PWFhEZkhuU0VxbmlTUXpIeGhGcW9VMmdkdVJ3ZWhT?=
- =?utf-8?B?eGFqcDZsZHp0Zmt3SmVpRzNZcXkyOTNQTjJjaW4wVnRQTGhDK3haN0xUbGgz?=
- =?utf-8?B?TVpYNTV5WmZkTkhJUGJtMEMzcTJ1blZaTjUwYnEvUHlibDQ2aU55aG9yRSsz?=
- =?utf-8?B?djZiQnVpcnJlT0NrUGxLNzg3aDdBUzBVaEhncDBIelFjbi8vRFhjalNRUTVo?=
- =?utf-8?B?d21IT3VZcVFHWE5vTnB5TFR3RUJCZkh3MnlxenZIYXZxbHIvVDFtc0RwTUc3?=
- =?utf-8?B?elowY04xZjI4R095djVwQlBVR0dmbEpaRlBJbWVaSkRhNWNHZ2ZNWHdHY2dK?=
- =?utf-8?B?clJtM3ZZdXpCbmh2TGJ5ZmZDbVVSREY0K1pOVmNqMk9ILzdKYStXa0plMkRM?=
- =?utf-8?B?WVRSSmFOU2Vzbzd6aHRhNE1QZDI2ZHY3eForUk90aXRIQll2WnNkWitNN3B5?=
- =?utf-8?B?YzFxQy9xMVNPckZFZ1hvZWhKLzlvYzZkaUlMMnYveUVKRExkZ2JYckdpYU9M?=
- =?utf-8?B?N1UvdVZlQXZlUW4yOFMxalNRN0ZUZFo3WUhiUm1kV3ZEVzl6OEZCcmllY2lj?=
- =?utf-8?B?WlVDQllXcWlqSnJZdndMcFN5Q2RpcEQxVkdlNWpObXVrR0g4c1pwRDhEZ0VK?=
- =?utf-8?B?SERZa0F6STc1U0l5K2NBMUJLUFVYS1J0S0laN2tTanROZVZ3dEMzRkFpRVQ1?=
- =?utf-8?B?N05RQ1lmQVlxOVp4bXV6VlRMRnVlWm14K210VUQ4OWU0U2hQQVdRYW9RSjhT?=
- =?utf-8?B?YjZhL1JuMkY3RDMvRTRuV0ZEZGxvQ1BLTWZCVm5kTXBsRjJWM0k1ZGNlU29S?=
- =?utf-8?B?U01tNWJuVk9sTHNCV1Q0akpIUlFpS1c5YmgvdDNPMlBtMDA0L1BEenN5aGlM?=
- =?utf-8?B?UkxSekliV3dqbjBqeUY1Ujhjcy9ESjFzZ1ErTnA4TG1NL3FidU54T2ZCcjF0?=
- =?utf-8?B?ODEza05ZR3NGUlRwRXVVTUhHcUZ0Wm9GNFpETCtndlBZdHVwY2xORmx3bXg0?=
- =?utf-8?B?ekVOZWUxV0hmcVc4VkFacVorNVJPajhYc0puTGRNcUV1VzluSUM2RDYvYkVs?=
- =?utf-8?B?b3pTRFJvSUxWSW5MWGFwWkhXOFQ3bHd2YlpuckgvK2M5SUhVNiszYmdPei8x?=
- =?utf-8?B?UDh3c20vU2VrRWcyWm9LYTkzT3B3dDh0dGxiWXNxWkdtamFTTTliVVdENy9E?=
- =?utf-8?Q?dfC+GBRAjt/QWFe8qjhUss3oiWk4RGsdW7Q18QS?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?OU5zdFpJZGNtQm5kWHpTRjhNRll5Si9Gdm44UmJmdThnbVpibERUejFuU1Ax?=
- =?utf-8?B?TlJqNys1MTJ4QlkxWHVHRjBCQVNQMGtQL2ZMUkR2Sm1UeVBqZHpVTnFsYUp1?=
- =?utf-8?B?dlE0OWliMHFQdXZHYk1ZWE5idXMvRzA1bkorNS9Pd0NpaFcvVUhydi8wSDdM?=
- =?utf-8?B?VjBSNDluRVlKakJSL3hPL1hsaWJwZkJCVTViRnEzSkFJbm5LVlhKeVRRR0lQ?=
- =?utf-8?B?QlROTVMzOFZjU0t1VXRidnFhSmNLSUVZUW0zMjJXazdpZHZFc2wyVGgzTFJ1?=
- =?utf-8?B?eFhOWTAwejBSdVlGV1FSeUQ0YlVkWHNpRnBUZ0xhTy9jblBEdGkyRXlITWti?=
- =?utf-8?B?ejZnQ1BJMi82VzR5NkpreVoxenFiQi9NOEhhT0NtbXBjV3RISUQ0UW8xQ0JU?=
- =?utf-8?B?aDBaQmdKakc5dnpXbS9NZWFEaUlUTm9MZU9BR1U4eTYySjc4VXZNNlBrT3Z0?=
- =?utf-8?B?V0g1eVlVK29GbGdLZ2FrVm1BcXlCMWpqVk1seU5VNHJINjZKcVAwb2pkNzMy?=
- =?utf-8?B?dmp1NmJYcWk0b0hYbnpUTWxjWlh1Uk8wWER3ZTY5NGI4S1NrMlZELzRtTTU3?=
- =?utf-8?B?TzhxWEJPZkFLSktMVTAveHhHdHRwaEExbHhpVHhVTzYzdkhab0pNT0xTTjMx?=
- =?utf-8?B?eGV5dHJadkR3c01ubkN5SFFkMFJJV3dHZnJqcGlldzB4c2Z2dysxT1FzNVpj?=
- =?utf-8?B?ZGZpQVIwTmtsbGRJWlJ6UHN3eXJlUkhLSnB5NmFxWHVSWmVrZk5JWmtQMzJQ?=
- =?utf-8?B?Sy9STjlKNlNNOWxZZDR1cmZMbDBJR1J1UVdxRkFXMURVeWpvdEp5WmF0SkYy?=
- =?utf-8?B?Q1RQdHBxcCtvditWMmNKUzNrZllGMnZSTFA2UytCZUVCc1dXQ2sxRWpBN0wy?=
- =?utf-8?B?a1FPNUxJdFhIa05uMEtHcVh3N3dNUnVFTDNaWkhoRlQ0dmQ3WEs5UVR0Ynpu?=
- =?utf-8?B?QVRLMHJYR255MVUxSFlPZ2J2QVdDYTZIZEdwN2hwandpTFV0VTB4bk1NNjdP?=
- =?utf-8?B?V0ZBVVMraHVqYzI3Z2UrT3NNRUtEejhHait2TzhZTDJZblFmNzgyeEpCYVV3?=
- =?utf-8?B?aHMxYmFQYk1FVzZ4dHRhL0s0SDF0aU4xbFhSemlHUHE3RVd6U3QzeDNpUisz?=
- =?utf-8?B?TnRXdmh5ZHdMVVpFajFncEtRdkt6Qk9jS2piZUZ6R2lkbVNUR2JrLzR4dmJM?=
- =?utf-8?B?U3hadWNPNjdVdWw5Y0VaTHFJZ05ZM1UrbnF1eVVpMWw1OFZHcm1UTlQ0V3p3?=
- =?utf-8?B?YzlxNjNPRGh4NktiWVIvdnlJamN5aGN4eVorT1VyZWlpSE1TNG5xZk9Bdy9o?=
- =?utf-8?B?V3FROTljRUlCbkZUV2xqZjA4VUtvZmMzVS9hdHlQUGR3SG0xMnhCVmhTaGhW?=
- =?utf-8?B?RnhycWM1dVJ2ZWRRMFcyUVdUNjNwTVVHMXhYQlJOTHA1Vi8zeUw4Z05FMm5M?=
- =?utf-8?B?Z2cyaDMvaEtFUUxXaXlXcnBQekJ2R0tCdzNJNGNWK0EwV2RGVmpnZG9Kb0lx?=
- =?utf-8?B?TTF4a1lFWmtMTWFpUnhjanI2OXRGQ0JxK2IyZHZGQXFGTFk3UnE4RzczYmp2?=
- =?utf-8?B?aytXc1dTQm5QdTh2TFNDWUhvZ1FDcFhpd0JxVzBHQmc1OHU0N0JMaFg4NHRP?=
- =?utf-8?B?cHVTZ1NpZk4rdDc3ZERTQWlJdTNIQ3A3UHpUNnd6TTR5RHpJN2FOUlpVZE0r?=
- =?utf-8?B?ejRiZCtzVHpIM0xVQlpmUnFidGdDbkgvT25mMjVjTjFKYXk5Ymd4NngvUTll?=
- =?utf-8?B?ZVZXTFlUMXRUWTU3MkR5bkJHODBSY1NEeDFFUmh0ZjcyamZXSm5CK1ZmcWpJ?=
- =?utf-8?B?VWZwZ3VhQTNmaFVrVThzR01xVUlvYVV3SS85NUFDSUtYSXUzM3N0SjlEMlVS?=
- =?utf-8?B?VWE1bFF5ZXplR1h0K0RheFRuWFM2bzZSL25HOXd4MmdYbXQxSXMrOHY2WlVM?=
- =?utf-8?B?Z1FBNXVTWHYwVmlYdEQyaFh3SGp1ZWhJYjlLVXk5ekF6SW9RaWRUUVFiajFs?=
- =?utf-8?B?RnZzdW13VkVMTHc5Z05TTmVuYzlyNGM2ZVI0d0h3VWlqaDdMckt1aWZaT0lB?=
- =?utf-8?B?MW0xTlNOdWUraWQ4b0NodVdhbVBQUkRXeHZMaERPdUpDQzFHU3lhUVdZQk9o?=
- =?utf-8?B?NktRQUJwK1B3MnN1UWdjUzhWREdYZG5vZVBUUjNveUczVmVaVzdHZTNxVWhR?=
- =?utf-8?B?ZUE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: b68c77c6-abad-497c-1359-08dcf871f98a
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Oct 2024 23:32:39.0423
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Bt/1OKf/3Nm0JmCExj9pn+SC3+dhPctFttVkImla1HhNICAfqPIbBzJQ3XRTGmQDE0rF725AfEI/+hVWt2W9eKmakp25U8MXUKQ/engDcXA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL1PR11MB6052
-X-OriginatorOrg: intel.com
+References: <cover.1730150953.git.jpoimboe@kernel.org> <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+In-Reply-To: <42c0a99236af65c09c8182e260af7bcf5aa1e158.1730150953.git.jpoimboe@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Tue, 29 Oct 2024 16:32:40 -0700
+Message-ID: <CAEf4BzY_rGszo9O9i3xhB2VFC-BOcqoZ3KGpKT+Hf4o-0W2BAQ@mail.gmail.com>
+Subject: Re: [PATCH v3 09/19] unwind: Introduce sframe user space unwinding
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, linux-kernel@vger.kernel.org, 
+	Indu Bhagat <indu.bhagat@oracle.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, linux-perf-users@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>, linux-toolchains@vger.kernel.org, 
+	Jordan Rome <jordalgo@meta.com>, Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org, 
+	Jens Remus <jremus@linux.ibm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Oct 28, 2024 at 2:48=E2=80=AFPM Josh Poimboeuf <jpoimboe@kernel.org=
+> wrote:
+>
+> Some distros have started compiling frame pointers into all their
+> packages to enable the kernel to do system-wide profiling of user space.
+> Unfortunately that creates a runtime performance penalty across the
+> entire system.  Using DWARF instead isn't feasible due to the complexity
+> it would add to the kernel.
+>
+> For in-kernel unwinding we solved this problem with the creation of the
+> ORC unwinder for x86_64.  Similarly, for user space the GNU assembler
+> has created the sframe format starting with binutils 2.41 for sframe v2.
+> Sframe is a simpler version of .eh_frame.  It gets placed in the .sframe
+> section.
+>
+> Add support for unwinding user space using sframe.
+>
+> More information about sframe can be found here:
+>
+>   - https://lwn.net/Articles/932209/
+>   - https://lwn.net/Articles/940686/
+>   - https://sourceware.org/binutils/docs/sframe-spec.html
+>
+> Glibc support is needed to implement the prctl() calls to tell the
+> kernel where the .sframe segments are.
+>
+> Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> ---
+>  arch/Kconfig                |   4 +
+>  arch/x86/include/asm/mmu.h  |   2 +-
+>  fs/binfmt_elf.c             |  35 +++-
+>  include/linux/mm_types.h    |   3 +
+>  include/linux/sframe.h      |  41 ++++
+>  include/linux/unwind_user.h |   2 +
+>  include/uapi/linux/elf.h    |   1 +
+>  include/uapi/linux/prctl.h  |   3 +
+>  kernel/fork.c               |  10 +
+>  kernel/sys.c                |  11 ++
+>  kernel/unwind/Makefile      |   3 +-
+>  kernel/unwind/sframe.c      | 380 ++++++++++++++++++++++++++++++++++++
+>  kernel/unwind/sframe.h      | 215 ++++++++++++++++++++
+>  kernel/unwind/user.c        |  24 ++-
+>  mm/init-mm.c                |   6 +
+>  15 files changed, 732 insertions(+), 8 deletions(-)
+>  create mode 100644 include/linux/sframe.h
+>  create mode 100644 kernel/unwind/sframe.c
+>  create mode 100644 kernel/unwind/sframe.h
+>
+
+It feels like this patch is trying to do too much. There is both new
+UAPI introduction, and SFrame format definition, and unwinder
+integration, etc, etc. Do you think it can be split further into more
+focused smaller patches?
 
 
+> @@ -688,7 +692,7 @@ static unsigned long load_elf_interp(struct elfhdr *i=
+nterp_elf_ex,
+>                         /*
+>                          * Check to see if the section's size will overfl=
+ow the
+>                          * allowed task size. Note that p_filesz must alw=
+ays be
+> -                        * <=3D p_memsize so it's only necessary to check=
+ p_memsz.
+> +                        * <=3D p_memsz so it's only necessary to check p=
+_memsz.
+>                          */
+>                         k =3D load_addr + eppnt->p_vaddr;
+>                         if (BAD_ADDR(k) ||
+> @@ -698,9 +702,24 @@ static unsigned long load_elf_interp(struct elfhdr *=
+interp_elf_ex,
+>                                 error =3D -ENOMEM;
+>                                 goto out;
+>                         }
+> +
+> +                       if ((eppnt->p_flags & PF_X) && k < start_code)
+> +                               start_code =3D k;
+> +
+> +                       if ((eppnt->p_flags & PF_X) && k + eppnt->p_files=
+z > end_code)
+> +                               end_code =3D k + eppnt->p_filesz;
+> +                       break;
+> +               }
+> +               case PT_GNU_SFRAME:
+> +                       sframe_phdr =3D eppnt;
 
-On 10/29/2024 3:09 PM, Jacob Keller wrote:
-> 
-> 
-> On 10/29/2024 7:50 AM, Daniel Machon wrote:
->> Hi Jacob,
-> 
->>> +/**
->>> + * ice_pack_rxq_ctx - Pack Rx queue context into a HW buffer
->>> + * @ctx: the Rx queue context to pack
->>> + * @buf: the HW buffer to pack into
->>> + *
->>> + * Pack the Rx queue context from the CPU-friendly unpacked buffer into its
->>> + * bit-packed HW layout.
->>> + */
->>> +static void ice_pack_rxq_ctx(const struct ice_rlan_ctx *ctx,
->>> +                            ice_rxq_ctx_buf_t *buf)
->>> +{
->>> +       CHECK_PACKED_FIELDS_20(ice_rlan_ctx_fields, ICE_RXQ_CTX_SZ);
->>> +       BUILD_BUG_ON(sizeof(*buf) != ICE_RXQ_CTX_SZ);
->>> +
->>> +       pack_fields(buf, sizeof(*buf), ctx, ice_rlan_ctx_fields,
->>> +                   QUIRK_LITTLE_ENDIAN | QUIRK_LSW32_IS_FIRST);
->>> +}
->>> +
->>
->> FWIW, I noticed that smatch bails out checking all the CHECK_PACKED_FIELDS_*
->> variants >= 20, with the warning:
->>
->> ice_common.c:1486 ice_pack_txq_ctx() parse error: OOM: 3000148Kb sm_state_count = 413556
->> ice_common.c:1486 ice_pack_txq_ctx() warn: Function too hairy.  No more merges.
->> ice_common.c:1486 ice_pack_txq_ctx() parse error: Function too hairy.  Giving up. 43 second
->>
-> 
-> We might need to wrap these checks to become no-ops when running under
-> such a checker. It looks like the parser doesn't like the size of the
-> macros?
-> 
->> Maybe this can just be ignored .. not sure :-)
->>
-> 
-> I would prefer if we found a way to at least silence it, rather than
-> straight up ignore it.
-> 
-> I am not that familiar with smatch. Let me see if there's an obvious way
-> we can handle this.
-> 
-From the look of this, smatch is running out of memory trying to keep
-track of a number of possible states. Likely the depth of the macro is
-too high once we get beyond 20.
+if I understand correctly, there has to be only one sframe, is that
+right? Should we validate that?
 
-I think the simplest solution would be to disable these macros under
-__CHECKER__, and possibly even write our own checker in smatch which can
-cover this case..
+> +                       break;
+>                 }
+>         }
+>
+> +       if (sframe_phdr)
+> +               sframe_add_section(load_addr + sframe_phdr->p_vaddr,
+> +                                  start_code, end_code);
+> +
 
-@Dan Carpenter:
+no error checking?
 
-Any chance you could provide guidance here?
+>         error =3D load_addr;
+>  out:
+>         return error;
+> @@ -823,7 +842,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+>         int first_pt_load =3D 1;
+>         unsigned long error;
+>         struct elf_phdr *elf_ppnt, *elf_phdata, *interp_elf_phdata =3D NU=
+LL;
+> -       struct elf_phdr *elf_property_phdata =3D NULL;
+> +       struct elf_phdr *elf_property_phdata =3D NULL, *sframe_phdr =3D N=
+ULL;
+>         unsigned long elf_brk;
+>         int retval, i;
+>         unsigned long elf_entry;
+> @@ -931,6 +950,10 @@ static int load_elf_binary(struct linux_binprm *bprm=
+)
+>                                 executable_stack =3D EXSTACK_DISABLE_X;
+>                         break;
+>
+> +               case PT_GNU_SFRAME:
+> +                       sframe_phdr =3D elf_ppnt;
+> +                       break;
+> +
+>                 case PT_LOPROC ... PT_HIPROC:
+>                         retval =3D arch_elf_pt_proc(elf_ex, elf_ppnt,
+>                                                   bprm->file, false,
+> @@ -1321,6 +1344,10 @@ static int load_elf_binary(struct linux_binprm *bp=
+rm)
+>                                             task_pid_nr(current), retval)=
+;
+>         }
+>
+> +       if (sframe_phdr)
+> +               sframe_add_section(load_bias + sframe_phdr->p_vaddr,
+> +                                  start_code, end_code);
+> +
 
-Thanks,
-Jake
+error checking missing?
+
+>         regs =3D current_pt_regs();
+>  #ifdef ELF_PLAT_INIT
+>         /*
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 381d22eba088..6e7561c1a5fc 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -1052,6 +1052,9 @@ struct mm_struct {
+>  #endif
+>                 } lru_gen;
+>  #endif /* CONFIG_LRU_GEN_WALKS_MMU */
+> +#ifdef CONFIG_HAVE_UNWIND_USER_SFRAME
+> +               struct maple_tree sframe_mt;
+> +#endif
+>         } __randomize_layout;
+>
+>         /*
+> diff --git a/include/linux/sframe.h b/include/linux/sframe.h
+> new file mode 100644
+> index 000000000000..d167e01817c4
+> --- /dev/null
+> +++ b/include/linux/sframe.h
+> @@ -0,0 +1,41 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef _LINUX_SFRAME_H
+> +#define _LINUX_SFRAME_H
+> +
+> +#include <linux/mm_types.h>
+> +
+> +struct unwind_user_frame;
+> +
+> +#ifdef CONFIG_HAVE_UNWIND_USER_SFRAME
+> +
+> +#define INIT_MM_SFRAME .sframe_mt =3D MTREE_INIT(sframe_mt, 0),
+> +
+> +extern void sframe_free_mm(struct mm_struct *mm);
+> +
+> +/* text_start, text_end, file_name are optional */
+
+what file_name? was that an extra argument that got removed?
+
+> +extern int sframe_add_section(unsigned long sframe_addr, unsigned long t=
+ext_start,
+> +                             unsigned long text_end);
+> +
+> +extern int sframe_remove_section(unsigned long sframe_addr);
+> +extern int sframe_find(unsigned long ip, struct unwind_user_frame *frame=
+);
+> +
+> +static inline bool current_has_sframe(void)
+> +{
+> +       struct mm_struct *mm =3D current->mm;
+> +
+> +       return mm && !mtree_empty(&mm->sframe_mt);
+> +}
+> +
+
+[...]
+
+> diff --git a/kernel/sys.c b/kernel/sys.c
+> index 4da31f28fda8..7d05a67727db 100644
+> --- a/kernel/sys.c
+> +++ b/kernel/sys.c
+> @@ -64,6 +64,7 @@
+>  #include <linux/rcupdate.h>
+>  #include <linux/uidgid.h>
+>  #include <linux/cred.h>
+> +#include <linux/sframe.h>
+>
+>  #include <linux/nospec.h>
+>
+> @@ -2784,6 +2785,16 @@ SYSCALL_DEFINE5(prctl, int, option, unsigned long,=
+ arg2, unsigned long, arg3,
+>         case PR_RISCV_SET_ICACHE_FLUSH_CTX:
+>                 error =3D RISCV_SET_ICACHE_FLUSH_CTX(arg2, arg3);
+>                 break;
+> +       case PR_ADD_SFRAME:
+> +               if (arg5)
+> +                       return -EINVAL;
+> +               error =3D sframe_add_section(arg2, arg3, arg4);
+
+wouldn't it be better to make this interface extendable from the get
+go? Instead of passing 3 arguments with fixed meaning, why not pass a
+pointer to an extendable binary struct like seems to be the trend
+nowadays with nicely extensible APIs. See [0] for one such example
+(specifically, struct procmap_query). Seems more prudent, as we'll
+most probably will be adding flags, options, extra information, etc)
+
+  [0] https://lore.kernel.org/linux-mm/20240627170900.1672542-3-andrii@kern=
+el.org/
+
+> +               break;
+> +       case PR_REMOVE_SFRAME:
+> +               if (arg3 || arg4 || arg5)
+> +                       return -EINVAL;
+> +               error =3D sframe_remove_section(arg2);
+> +               break;
+>         default:
+>                 error =3D -EINVAL;
+>                 break;
+
+[...]
+
+> +static unsigned char fre_type_to_size(unsigned char fre_type)
+> +{
+> +       if (fre_type > 2)
+> +               return 0;
+> +       return 1 << fre_type;
+> +}
+> +
+> +static unsigned char offset_size_enum_to_size(unsigned char off_size)
+> +{
+> +       if (off_size > 2)
+> +               return 0;
+> +       return 1 << off_size;
+> +}
+> +
+> +static int find_fde(struct sframe_section *sec, unsigned long ip,
+> +                   struct sframe_fde *fde)
+> +{
+> +       struct sframe_fde __user *first, *last, *found =3D NULL;
+> +       u32 ip_off, func_off_low =3D 0, func_off_high =3D -1;
+> +
+> +       ip_off =3D ip - sec->sframe_addr;
+
+what if ip_off is larger than 4GB? ELF section can be bigger than 4GB, righ=
+t?
+
+and also, does it mean that SFrame doesn't support executables with
+text bigger than 4GB?
+
+> +
+> +       first =3D (void __user *)sec->fdes_addr;
+> +       last =3D first + sec->fdes_nr;
+> +       while (first <=3D last) {
+> +               struct sframe_fde __user *mid;
+> +               u32 func_off;
+> +
+> +               mid =3D first + ((last - first) / 2);
+> +
+> +               if (get_user(func_off, (s32 __user *)mid))
+> +                       return -EFAULT;
+> +
+> +               if (ip_off >=3D func_off) {
+> +                       /* validate sort order */
+> +                       if (func_off < func_off_low)
+> +                               return -EINVAL;
+> +
+> +                       func_off_low =3D func_off;
+> +
+> +                       found =3D mid;
+> +                       first =3D mid + 1;
+> +               } else {
+> +                       /* validate sort order */
+> +                       if (func_off > func_off_high)
+> +                               return -EINVAL;
+> +
+> +                       func_off_high =3D func_off;
+> +
+> +                       last =3D mid - 1;
+> +               }
+> +       }
+> +
+> +       if (!found)
+> +               return -EINVAL;
+> +
+> +       if (copy_from_user(fde, found, sizeof(*fde)))
+> +               return -EFAULT;
+> +
+> +       /* check for gaps */
+> +       if (ip_off < fde->start_addr || ip_off >=3D fde->start_addr + fde=
+->size)
+> +               return -EINVAL;
+> +
+> +       return 0;
+> +}
+> +
+
+[...]
+
+> +int sframe_add_section(unsigned long sframe_addr, unsigned long text_sta=
+rt,
+> +                      unsigned long text_end)
+> +{
+> +       struct mm_struct *mm =3D current->mm;
+> +       struct vm_area_struct *sframe_vma;
+> +
+> +       mmap_read_lock(mm);
+> +
+> +       sframe_vma =3D vma_lookup(mm, sframe_addr);
+> +       if (!sframe_vma)
+> +               goto err_unlock;
+> +
+> +       if (text_start && text_end) {
+> +               struct vm_area_struct *text_vma;
+> +
+> +               text_vma =3D vma_lookup(mm, text_start);
+> +               if (!(text_vma->vm_flags & VM_EXEC))
+> +                       goto err_unlock;
+> +
+> +               if (PAGE_ALIGN(text_end) !=3D text_vma->vm_end)
+> +                       goto err_unlock;
+> +       } else {
+> +               struct vm_area_struct *vma, *text_vma =3D NULL;
+> +               VMA_ITERATOR(vmi, mm, 0);
+> +
+> +               for_each_vma(vmi, vma) {
+> +                       if (vma->vm_file !=3D sframe_vma->vm_file ||
+> +                           !(vma->vm_flags & VM_EXEC))
+> +                               continue;
+> +
+> +                       if (text_vma) {
+> +                               pr_warn_once("%s[%d]: multiple EXEC segme=
+nts unsupported\n",
+> +                                            current->comm, current->pid)=
+;
+
+is this just something that fundamentally can't be supported by SFrame
+format? Or just an implementation simplification?
+
+It's not illegal to have an executable with multiple VM_EXEC segments,
+no? Should this be a pr_warn_once() then?
+
+> +                               goto err_unlock;
+> +                       }
+> +
+> +                       text_vma =3D vma;
+> +               }
+> +
+> +               if (!text_vma)
+> +                       goto err_unlock;
+> +
+> +               text_start =3D text_vma->vm_start;
+> +               text_end   =3D text_vma->vm_end;
+> +       }
+> +
+> +       mmap_read_unlock(mm);
+> +
+> +       return __sframe_add_section(sframe_addr, text_start, text_end);
+> +
+
+[...]
 
