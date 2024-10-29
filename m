@@ -1,175 +1,214 @@
-Return-Path: <linux-kernel+bounces-386818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CE09B483B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:26:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C529B483E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:29:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA67DB2224A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:26:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAD21B210F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:29:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E86205AA8;
-	Tue, 29 Oct 2024 11:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TPc6VxiE"
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D316205120;
+	Tue, 29 Oct 2024 11:29:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE5820515B
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:26:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DA91DED5A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730201182; cv=none; b=JITMHpXTtCSFhZM4Uxz02EO0utrIS30rT/iBXaWib2Lwbwanb2BzJLPmmeT5oaAdHExfBCwPfEAvibBJ4fezqsZ8Wtd8mKh5+K0Wg3euxYRG0JS2JmTReKyOrRSADjBRBOS1BCtwQY9txGowTOb9JRy3fkyoFcOvbpiJf6rEBh8=
+	t=1730201345; cv=none; b=UAkPvLEQAA89fTu7dylyDzyQ/elUU53AnYk5MmUtEF0eHX0o75QNwZyfViZHR8BHJXzC088MEbkuou783rA+3lCB31zWH4FpRS9x1gw2lEXLg5FKybkfmeXzD2Y4n/6bRqR6HIBDMPd84Pjl0gaJeU4R4t6gxwICOuoo7gTMasI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730201182; c=relaxed/simple;
-	bh=TuhtbHWut8WUmRnO9F2af11VQo6JDMWk6jUX5L/0C8Q=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jhrlQFKEg/G8+TbpTGroecSfu7snYdduXC8GDwO8xLh1Y6YigZbyXUdMZAPf4nNvsPE9x7ajIriM2o8LuA+ET6PXv67n58NgzJgEVo94K2vJXdLa5Hh0hUjgEXNMT7evdt0aWcWzq1SB3uR+hR+eIugqQZLPXmQJOP7wmpdinuA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TPc6VxiE; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id ED64C4121F
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 11:26:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1730201177;
-	bh=v61ehPphC3SpuWBobmkEMN1kDRB/yHy45WnKnBTik4Y=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=TPc6VxiETpv+l2wpr/mrGQ/CcLZuJEUSvddDiaVOe4cxUDrVZwfxp+Rwy45vuCS+T
-	 2Df4AgshOPi16oSPxXxOjwxXSZ1QfNZrkaIoVrmoRoyKuQ8yzRt50cE7M7c5NQ/soT
-	 xzfBknLybnaloXQ/0PiF18USII0UCmsLDrJu/RAVq3MsRyCEHuBPaClA7A/QwLvtHU
-	 82ddWTZf3m0lAeDwYUxBupoVlXkK0ZMyJNQGsX6XLmuqA7M6e1oU/EpdJ2lKgDI8zc
-	 1BD7Pvxvsdbcas7Pojp8RuLkrNOSheX5ftW8FJRyAdmg31lEHfE2wlEJSsCKV8L7FR
-	 Rx/h70PRnu0Dw==
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-28879673bb1so4915357fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:26:17 -0700 (PDT)
+	s=arc-20240116; t=1730201345; c=relaxed/simple;
+	bh=fOBDd2J0hX3LqvaCtaIVPmnNqTjZUrM2zjM1L2xU0cw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=pihaf1SZewKIEYQVb9DBliJ01YGDOy3bNoyW24DBHgU/J2YFMf23CgCX4Gajg4yFJ6R+eEfuvoR0tkQWN5m0VUxUeXqoajSMMzAPEKL4gEe1mwSh4SItHKhI13Lk4pbQm/TCm43UbpAXAs/K8tX6Vk9o/JrXfpvOCwBanZGfb3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a4ee7817b3so26133315ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 04:29:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730201176; x=1730805976;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v61ehPphC3SpuWBobmkEMN1kDRB/yHy45WnKnBTik4Y=;
-        b=L1jy6OI0npYzlql/bQdrbvj5lvzQ4nsN9rB5gqEyOPTMtVuWLL0Ddj/KBzL8g1jnCP
-         EpGGNCCVCaGrXtx61RKWbJp72RQbQNvg3EvSyynMXbCgIB6CCjkaGzLb08AW1uFB39cK
-         MiHvBs4C5//wIuT8i2Xd31xDl3tV9sZpwrH2GKcMj0gF1R7rs/7DhDZNkrmNMVpT52V8
-         0Iie9LeOl0iZuTQI6FNUbcmaogSRN4QzXNAOh7BVU/A0nTJhHmvc4okAKXgcnkyv6Dup
-         Gw6fF7AgENoq7frLNuLdOvq3RVG7VpmLoqpR7orheQS1oYIvh5SpNrMVxMD+gBNIlmBZ
-         sqSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUT5fr5rFsiSsGuZXhtVSWlkbkcTpvSahRab6+N9XAF+MLliXd1pLEaki0cohjVJWMvhkxEcP58dJtlUA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzun2j4O5E8qyQzIrj427pHvfYYMOXf0CgHZwJTdlF1qLaLQN2W
-	RiphO2Xo2tYsGdERqEM+kKQxRhkFpzdOsUWGnUEK5FyhwI1PKEeiX5l4GfhbGEv1i4+H0mehOoQ
-	spVNHB3BWXPeZ9JG2zuLjiyC/6hUnlJo0bU70MVOhRrr5LvSxGX/uYmdGpQEJTMmN9EB6gNEyu4
-	GTHvFPZDKfzMFhEaZunERkqEc9PJLW12qx6ZqXRep/5DCcCsQBjV0tbos+2rxN1ycJww==
-X-Received: by 2002:a05:6870:46a7:b0:251:2755:5a33 with SMTP id 586e51a60fabf-29051dd2a1fmr9702103fac.39.1730201176521;
-        Tue, 29 Oct 2024 04:26:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH6KUynuQ+DlJ0SAdxk9knLJkp8MoDFJfgMWvvrdfES/yU5CoPOQxKysfhlo/J2oaPVpFrqPL817POZllpwwZI=
-X-Received: by 2002:a05:6870:46a7:b0:251:2755:5a33 with SMTP id
- 586e51a60fabf-29051dd2a1fmr9702093fac.39.1730201176239; Tue, 29 Oct 2024
- 04:26:16 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 29 Oct 2024 04:26:15 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240902111127.15155-2-minda.chen@starfivetech.com>
-References: <20240902111127.15155-1-minda.chen@starfivetech.com> <20240902111127.15155-2-minda.chen@starfivetech.com>
+        d=1e100.net; s=20230601; t=1730201342; x=1730806142;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iMiHNZA7MovsSmz60eF2vEP0EIwEQI9MtX6E0CccO34=;
+        b=xUgevDARUkjAI79q/4pftWE6MXDOkHMqV1tEkjkYw8FP/cL74sfX9BVvgwAXqp+NQW
+         3pvz7rOPTa7y4xiZqfOEmtdw46H+P9t3DpDaeF/+mXs9oA/xtCLcniEjHbAMEIYAWVqi
+         vCNUvJlK6j1RmPwcZ9/HBjieWzz6gCt/5BZv4lCJAIrpIvJ1fKLq8mevKMH8uWIJA8Lx
+         UwPJaYUI4j2zMSACoq60qsyiFH8pYvdERPCEiFYGQeNkPX2/gSSJcWcDdKTWynq4zO37
+         CNf/G/a9MtbL+g9rs+8DpQa6WqnlvVI2IEkiCvr8CxQtSYgISVIunfJVLcZCtD/nDF30
+         TT1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUHWqCzB+ez1mU937s6w2q08qolY9hdAJz8JtiNoWrz7GHgqNTI9ZNiV0WNasaW1GYJfKKGJ+x5jaIAVkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy650sC3eRqlnRGhAH8+Z0rqhlOr+IzlBWpoaMBcBLy3052M4U2
+	oDJcCv5god92nljJpn/73F/UiM/hT4KM9WfyKV5Lb2K4wPSfptA0q/GG9mBTioBGU3K7a6DBJVZ
+	kw1gJTHCthjwwcrLogrJzjVRXx72T7z5ykMp0T7bLpiYJemAj3yym+Mw=
+X-Google-Smtp-Source: AGHT+IE0OkzJwXuWhM+2R54HxwbsG3zteuwpl3Cd2O4srQmZ6srAJl8X5/bNeKfDcwBeSEdy9Dkk1r7x/ffkxLkYipCo9JMV48DX
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 29 Oct 2024 04:26:15 -0700
-Message-ID: <CAJM55Z9sm6TVbjK4GpHN1yc5uub1uLh3++SPPP+h-T=CYhU25w@mail.gmail.com>
-Subject: Re: [PATCH v3 1/1] phy: starfive: jh7110-usb: Fix link configuration
- to controller
-To: Minda Chen <minda.chen@starfivetech.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Jan Kiszka <jan.kiszka@siemens.com>, 
-	linux-phy@lists.infradead.org
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>, Rob Herring <robh+dt@kernel.org>, 
-	Conor Dooley <conor@kernel.org>, linux-kernel@vger.kernel.org
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1445:b0:3a3:b45b:a8cc with SMTP id
+ e9e14a558f8ab-3a4ed2b5cb9mr106866605ab.15.1730201341966; Tue, 29 Oct 2024
+ 04:29:01 -0700 (PDT)
+Date: Tue, 29 Oct 2024 04:29:01 -0700
+In-Reply-To: <20241029110726.2433-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6720c6fd.050a0220.11b624.04c0.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
+From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Minda Chen wrote:
-> From: Jan Kiszka <jan.kiszka@siemens.com>
->
-> In order to connect the USB 2.0 PHY to its controller, we also need to
-> set "u0_pdrstn_split_sw_usbpipe_plugen" [1]. Some downstream U-Boot
-> versions did that, but upstream firmware does not, and the kernel must
-> not rely on such behavior anyway. Failing to set this left the USB
-> gadget port invisible to connected hosts behind.
->
-> Link: https://doc-en.rvspace.org/JH7110/TRM/JH7110_TRM/sys_syscon.html#sys_syscon__section_b3l_fqs_wsb [1]
-> Fixes: 16d3a71c20cf ("phy: starfive: Add JH7110 USB 2.0 PHY driver")
-> Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
-> Signed-off-by: Minda Chen <minda.chen@starfivetech.com>
+Hello,
 
-Apologies if this was already applied somewhere, but I don't see message that
-it was. In any case this looks good to me, thanks.
+syzbot tried to test the proposed patch but the build/boot failed:
 
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+failed to copy binary to VM: failed to run ["scp" "-P" "22" "-F" "/dev/null=
+" "-o" "UserKnownHostsFile=3D/dev/null" "-o" "IdentitiesOnly=3Dyes" "-o" "B=
+atchMode=3Dyes" "-o" "StrictHostKeyChecking=3Dno" "-o" "ConnectTimeout=3D10=
+" "-v" "/tmp/syz-executor448792031" "root@10.128.1.66:./syz-executor4487920=
+31"]: exit status 255
+Executing: program /usr/bin/ssh host 10.128.1.66, user root, command sftp
+OpenSSH_9.2p1 Debian-2+deb12u3, OpenSSL 3.0.14 4 Jun 2024
+debug1: Reading configuration data /dev/null
+debug1: Connecting to 10.128.1.66 [10.128.1.66] port 22.
+debug1: fd 3 clearing O_NONBLOCK
+debug1: Connection established.
+debug1: identity file /root/.ssh/id_rsa type -1
+debug1: identity file /root/.ssh/id_rsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa type -1
+debug1: identity file /root/.ssh/id_ecdsa-cert type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk type -1
+debug1: identity file /root/.ssh/id_ecdsa_sk-cert type -1
+debug1: identity file /root/.ssh/id_ed25519 type -1
+debug1: identity file /root/.ssh/id_ed25519-cert type -1
+debug1: identity file /root/.ssh/id_ed25519_sk type -1
+debug1: identity file /root/.ssh/id_ed25519_sk-cert type -1
+debug1: identity file /root/.ssh/id_xmss type -1
+debug1: identity file /root/.ssh/id_xmss-cert type -1
+debug1: identity file /root/.ssh/id_dsa type -1
+debug1: identity file /root/.ssh/id_dsa-cert type -1
+debug1: Local version string SSH-2.0-OpenSSH_9.2p1 Debian-2+deb12u3
+Connection timed out during banner exchange
+Connection to 10.128.1.66 port 22 timed out
+scp: Connection closed
 
-> ---
->  drivers/phy/starfive/phy-jh7110-usb.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/drivers/phy/starfive/phy-jh7110-usb.c b/drivers/phy/starfive/phy-jh7110-usb.c
-> index 633912f8a05d..dabe59953070 100644
-> --- a/drivers/phy/starfive/phy-jh7110-usb.c
-> +++ b/drivers/phy/starfive/phy-jh7110-usb.c
-> @@ -10,18 +10,24 @@
->  #include <linux/clk.h>
->  #include <linux/err.h>
->  #include <linux/io.h>
-> +#include <linux/mfd/syscon.h>
->  #include <linux/module.h>
->  #include <linux/phy/phy.h>
->  #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->  #include <linux/usb/of.h>
->
->  #define USB_125M_CLK_RATE		125000000
->  #define USB_LS_KEEPALIVE_OFF		0x4
->  #define USB_LS_KEEPALIVE_ENABLE		BIT(4)
->
-> +#define USB_PDRSTN_SPLIT		BIT(17)
-> +#define SYSCON_USB_SPLIT_OFFSET		0x18
-> +
->  struct jh7110_usb2_phy {
->  	struct phy *phy;
->  	void __iomem *regs;
-> +	struct regmap *sys_syscon;
->  	struct clk *usb_125m_clk;
->  	struct clk *app_125m;
->  	enum phy_mode mode;
-> @@ -61,6 +67,10 @@ static int usb2_phy_set_mode(struct phy *_phy,
->  		usb2_set_ls_keepalive(phy, (mode != PHY_MODE_USB_DEVICE));
->  	}
->
-> +	/* Connect usb 2.0 phy mode */
-> +	regmap_update_bits(phy->sys_syscon, SYSCON_USB_SPLIT_OFFSET,
-> +			   USB_PDRSTN_SPLIT, USB_PDRSTN_SPLIT);
-> +
->  	return 0;
->  }
->
-> @@ -129,6 +139,12 @@ static int jh7110_usb_phy_probe(struct platform_device *pdev)
->  	phy_set_drvdata(phy->phy, phy);
->  	phy_provider = devm_of_phy_provider_register(dev, of_phy_simple_xlate);
->
-> +	phy->sys_syscon =
-> +		syscon_regmap_lookup_by_compatible("starfive,jh7110-sys-syscon");
-> +	if (IS_ERR(phy->sys_syscon))
-> +		return dev_err_probe(dev, PTR_ERR(phy->sys_syscon),
-> +			"Failed to get sys-syscon\n");
-> +
->  	return PTR_ERR_OR_ZERO(phy_provider);
->  }
->
-> --
-> 2.17.1
->
+
+
+
+syzkaller build log:
+go env (err=3D<nil>)
+GO111MODULE=3D'auto'
+GOARCH=3D'amd64'
+GOBIN=3D''
+GOCACHE=3D'/syzkaller/.cache/go-build'
+GOENV=3D'/syzkaller/.config/go/env'
+GOEXE=3D''
+GOEXPERIMENT=3D''
+GOFLAGS=3D''
+GOHOSTARCH=3D'amd64'
+GOHOSTOS=3D'linux'
+GOINSECURE=3D''
+GOMODCACHE=3D'/syzkaller/jobs/linux/gopath/pkg/mod'
+GONOPROXY=3D''
+GONOSUMDB=3D''
+GOOS=3D'linux'
+GOPATH=3D'/syzkaller/jobs/linux/gopath'
+GOPRIVATE=3D''
+GOPROXY=3D'https://proxy.golang.org,direct'
+GOROOT=3D'/usr/local/go'
+GOSUMDB=3D'sum.golang.org'
+GOTMPDIR=3D''
+GOTOOLCHAIN=3D'auto'
+GOTOOLDIR=3D'/usr/local/go/pkg/tool/linux_amd64'
+GOVCS=3D''
+GOVERSION=3D'go1.22.7'
+GCCGO=3D'gccgo'
+GOAMD64=3D'v1'
+AR=3D'ar'
+CC=3D'gcc'
+CXX=3D'g++'
+CGO_ENABLED=3D'1'
+GOMOD=3D'/syzkaller/jobs/linux/gopath/src/github.com/google/syzkaller/go.mo=
+d'
+GOWORK=3D''
+CGO_CFLAGS=3D'-O2 -g'
+CGO_CPPFLAGS=3D''
+CGO_CXXFLAGS=3D'-O2 -g'
+CGO_FFLAGS=3D'-O2 -g'
+CGO_LDFLAGS=3D'-O2 -g'
+PKG_CONFIG=3D'pkg-config'
+GOGCCFLAGS=3D'-fPIC -m64 -pthread -Wl,--no-gc-sections -fmessage-length=3D0=
+ -ffile-prefix-map=3D/tmp/go-build236127509=3D/tmp/go-build -gno-record-gcc=
+-switches'
+
+git status (err=3D<nil>)
+HEAD detached at 5fe1d0f516
+nothing to commit, working tree clean
+
+
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+go list -f '{{.Stale}}' ./sys/syz-sysgen | grep -q false || go install ./sy=
+s/syz-sysgen
+make .descriptions
+tput: No value for $TERM and no -T specified
+tput: No value for $TERM and no -T specified
+Makefile:31: run command via tools/syz-env for best compatibility, see:
+Makefile:32: https://github.com/google/syzkaller/blob/master/docs/contribut=
+ing.md#using-syz-env
+bin/syz-sysgen
+go fmt ./sys/... >/dev/null
+touch .descriptions
+GOOS=3Dlinux GOARCH=3Damd64 go build "-ldflags=3D-s -w -X github.com/google=
+/syzkaller/prog.GitRevision=3D5fe1d0f516ac169c2b6e3a268aea92df864ea3a6 -X '=
+github.com/google/syzkaller/prog.gitRevisionDate=3D20241028-155739'" "-tags=
+=3Dsyz_target syz_os_linux syz_arch_amd64 " -o ./bin/linux_amd64/syz-execpr=
+og github.com/google/syzkaller/tools/syz-execprog
+mkdir -p ./bin/linux_amd64
+g++ -o ./bin/linux_amd64/syz-executor executor/executor.cc \
+	-m64 -O2 -pthread -Wall -Werror -Wparentheses -Wunused-const-variable -Wfr=
+ame-larger-than=3D16384 -Wno-stringop-overflow -Wno-array-bounds -Wno-forma=
+t-overflow -Wno-unused-but-set-variable -Wno-unused-command-line-argument -=
+static-pie -std=3Dc++17 -I. -Iexecutor/_include -fpermissive -w -DGOOS_linu=
+x=3D1 -DGOARCH_amd64=3D1 \
+	-DHOSTGOOS_linux=3D1 -DGIT_REVISION=3D\"5fe1d0f516ac169c2b6e3a268aea92df86=
+4ea3a6\"
+/usr/bin/ld: /tmp/ccsbdreI.o: in function `test_cover_filter()':
+executor.cc:(.text+0x1426b): warning: the use of `tempnam' is dangerous, be=
+tter use `mkstemp'
+/usr/bin/ld: /tmp/ccsbdreI.o: in function `Connection::Connect(char const*,=
+ char const*)':
+executor.cc:(.text._ZN10Connection7ConnectEPKcS1_[_ZN10Connection7ConnectEP=
+KcS1_]+0x104): warning: Using 'gethostbyname' in statically linked applicat=
+ions requires at runtime the shared libraries from the glibc version used f=
+or linking
+
+
+
+Tested on:
+
+commit:         e42b1a9a Merge tag 'spi-fix-v6.12-rc5' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3D1940f73a609bb87=
+4
+dashboard link: https://syzkaller.appspot.com/bug?extid=3Da8cdfe2d8ad35db3a=
+7fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D1729eca79800=
+00
+
 
