@@ -1,125 +1,105 @@
-Return-Path: <linux-kernel+bounces-387535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ECA39B5283
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:13:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5220B9B5291
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 20:16:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0BD81C218DF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7FD221C20E93
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 19:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE1E2071ED;
-	Tue, 29 Oct 2024 19:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D765620720B;
+	Tue, 29 Oct 2024 19:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LteSbu9X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tffWXmsp"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="R91qr6az"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E08821FBF50;
-	Tue, 29 Oct 2024 19:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84EE01FBF50;
+	Tue, 29 Oct 2024 19:16:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730229183; cv=none; b=Vz4UgvMYbWvFr72RnRsas8UkXGwqXpLWcU75PGjWALCJSDpPJpLAEY9ZjAYuTQ3+3liYYOmeG9ZvB9Vt46yZkIvEwaSnoy1Y2Q2I+lglCed2EpfzThhrlKLHoJHkIxVzgPrMxoJv529nUQhm2td48T7WroUYRFcASr1kb/5eNjc=
+	t=1730229409; cv=none; b=f9xCpyVXDBi3ow08g1suHAqIrBsN/D7SKEOcNr2IQf40NkiXoKpIqmfhKQcCQdlPatBcboRZBo8yBWlcwznuaV521xZHDEWZSUFQEMMN/Pd7BoMdGofly0FEf9oY8Mny5mr644IOLfDjjx6RgpL1CgjCsf/BEolZcIaYQBAvNJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730229183; c=relaxed/simple;
-	bh=kVYtwcfclxpvBW30S2RwWocigUFMTa1azVLZdYZRh5E=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cSwnp72HPtGnoBnHWXR4Vyzg4TCvdZ4vpHe/3Wijof36WUdjLu6z7g9B9hgUBpycPcOGmoGsmwtIdNOtwybXX192jdEgJAZTGWaJ9smRIZL9/763UCSqONwIyylFtczcBGI1+bs8Dlzul71DdUGKwvR5mPS54euqLpC3PVNksrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LteSbu9X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tffWXmsp; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730229180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNDoZlvVc72wsuMOc+bkf/3VOAqrrScR8m3Zau9Vv2A=;
-	b=LteSbu9Xs2VfzjzEJkuyON+4kl2xG6qdPp8l31+3semXp8JX+wELAol3bGKIObe2tC8qgZ
-	r/STTisUNB90uUbxwASGC3zhmFIgz4HdCDWJ8xEIQl/+K5mHMFxoNuqo0ZLaEDvZPckodY
-	Z8XS99mlhVFgp7za0qYgZUjaUCtVxgjcsQdOvp0LwCqhMCh6x+fh/yRfHObDJCQoBgQbIP
-	uXtSvLiB/RJ383jc4ZUkzMBjcu8U3JPeBu5y0eUDtDarHfjnSuoL5XAuphDp4DcuYciNqf
-	QyG5YZkWHdLLQBGYL1zxZrv1NWff66znqDKl1X+4MKqkdUQxnQCNZZI9aCo8uA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730229180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nNDoZlvVc72wsuMOc+bkf/3VOAqrrScR8m3Zau9Vv2A=;
-	b=tffWXmspbsG8CjVmPkNj8bsXifiOXLbwPOM8E71lx8cYAnHl21ExdcKl3ZFuIiOMh3MolO
-	XUK1hXHPM3igiTBg==
-To: Junaid Shahid <junaids@google.com>, Brendan Jackman
- <jackmanb@google.com>, Borislav Petkov <bp@alien8.de>
-Cc: Ingo Molnar <mingo@redhat.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, Andy
- Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Sean
- Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Alexandre Chartre <alexandre.chartre@oracle.com>, Liran Alon
- <liran.alon@oracle.com>, Jan Setje-Eilers <jan.setjeeilers@oracle.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Andrew Morton
- <akpm@linux-foundation.org>, Mel Gorman <mgorman@suse.de>, Lorenzo Stoakes
- <lstoakes@gmail.com>, David Hildenbrand <david@redhat.com>, Vlastimil
- Babka <vbabka@suse.cz>, Michal Hocko <mhocko@kernel.org>, Khalid Aziz
- <khalid.aziz@oracle.com>, Juri Lelli <juri.lelli@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann
- <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, Valentin
- Schneider <vschneid@redhat.com>, Paul Turner <pjt@google.com>, Reiji
- Watanabe <reijiw@google.com>, Ofir Weisse <oweisse@google.com>, Yosry
- Ahmed <yosryahmed@google.com>, Patrick Bellasi <derkling@google.com>, KP
- Singh <kpsingh@google.com>, Alexandra Sandulescu <aesa@google.com>, Matteo
- Rizzo <matteorizzo@google.com>, Jann Horn <jannh@google.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- kvm@vger.kernel.org
-Subject: Re: [PATCH 01/26] mm: asi: Make some utility functions noinstr
- compatible
-In-Reply-To: <ab8ef5ef-f51c-4940-9094-28fbaa926d37@google.com>
-References: <20240712-asi-rfc-24-v1-0-144b319a40d8@google.com>
- <20240712-asi-rfc-24-v1-1-144b319a40d8@google.com>
- <20241025113455.GMZxuCX2Tzu8ulwN3o@fat_crate.local>
- <CA+i-1C3SZ4FEPJyvbrDfE-0nQtB_8L_H_i67dQb5yQ2t8KJF9Q@mail.gmail.com>
- <ab8ef5ef-f51c-4940-9094-28fbaa926d37@google.com>
-Date: Tue, 29 Oct 2024 20:12:59 +0100
-Message-ID: <878qu6205g.ffs@tglx>
+	s=arc-20240116; t=1730229409; c=relaxed/simple;
+	bh=QsUrMu2XlZNY7oEUj/a/YTqiiYHE1xROUDsqVTOIbSg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ryl+pvmZEgsPn7WdNYuqdZYzYf6qUiMzNjTyO756kAgTLoy1ZD9bR6CqHrUe96ggSIHbUmnEICqhq7HdGCgBp35+xmLV1ufHdP85VnYFbK2l1g2XJ/p0IF0Y8TVbqmfW1cNo6o7C9vfoIdp5vOMwz1ULBdvh2Qwpt3XwFRFXRfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=R91qr6az; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 2F2F640E019C;
+	Tue, 29 Oct 2024 19:16:44 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id FA7FlAZbomgW; Tue, 29 Oct 2024 19:16:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730229399; bh=2OCmyKBsSKP5AzXVFymIxdlDz4cGAywN80+RPbEYwHQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R91qr6azMOZlHRhNIimQ9MteMSSOooJh6ihZyyFYS7CpNy4d1ePk+/rpGQmRNi/H7
+	 kblNBPo2YU34KrGLiUT+0XxMbjfCU5Xp1Cqb6zVKYI4jNuedYPoJBkHdMFG8k4S+AV
+	 bhsjaGRfGB1GT2cba8oiv6Lfj6inT7qeI9+Ryxqm17ThLDMYN/zae28/At5y386cKd
+	 iik8o3/G5knBBm3bCmg9WfySEzsaRGwsiT1wnFOgZnmnzDcnibfmGhkEta5xG8whZE
+	 CJaploP0NU775aVDcuXfgAA7e2elx21+3VNWpOG6pfrG5hsZDf7dERDnbTSJHtHxl/
+	 6WqxC4mPerUQe3pzmBdF8NlfNYPDsUhtJr/SlsiIIq7n6Euu9dQYx675unrntW4WgJ
+	 V6PLRBaUDvjdERtJWHwEiDJBVkwKbnvlyHAZBT+QljVt2gBzXEh68JVXiDfTfxfute
+	 8g1lj0Ws+Uz6DI3y4jD3Ybt21miBPJv8+BQHfPZyYmTlkIIDjDE+uzLlxAZarXXFka
+	 xHO/Q6lbR1Ze4FpbvTZrB3JcyDerCmLSFZe7ByJ5yKlNQ9GoJ9OGd0lGNBiORflI0Z
+	 cM+pR1w2dvAxM3HgBhPaZWAkxQWssR2zaIVyEXKmOjnQlERhH210uKwkCjFAgYQYQS
+	 IW9sx+M4GhS0WBMv7BsxwxgQ=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B734340E0191;
+	Tue, 29 Oct 2024 19:16:28 +0000 (UTC)
+Date: Tue, 29 Oct 2024 20:16:23 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v5 05/13] platform/x86: hfi: Introduce AMD Hardware
+ Feedback Interface Driver
+Message-ID: <20241029191623.GYZyE0h3364vdHHoxP@fat_crate.local>
+References: <20241028020251.8085-1-mario.limonciello@amd.com>
+ <20241028020251.8085-6-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241028020251.8085-6-mario.limonciello@amd.com>
 
-On Tue, Oct 29 2024 at 10:38, Junaid Shahid wrote:
-> On 10/25/24 6:21 AM, Brendan Jackman wrote:
->>> I'd expect you either always inline the small functions - as you do for some
->>> aleady - or mark the others noinstr. But not something in between.
->>>
->>> Why this?
->> 
->> Overall it's pretty likely I'm wrong about the subtlety of noinstr's
->> meaning. And the benefits I listed above are pretty minor. I should
->> have looked into this as it would have been an opportunity to reduce
->> the patch count of this RFC!
->> 
->> Maybe I'm also forgetting something more important, perhaps Junaid
->> will weigh in...
->
-> Yes, IIRC the idea was that there is no need to prohibit inlining for this class 
-> of functions.
+On Sun, Oct 27, 2024 at 09:02:43PM -0500, Mario Limonciello wrote:
+> +static int __init amd_hfi_init(void)
+> +{
+> +	int ret;
+> +
+> +	if (acpi_disabled ||
+> +	    !boot_cpu_has(X86_FEATURE_AMD_HETEROGENEOUS_CORES) ||
+> +	    !boot_cpu_has(X86_FEATURE_AMD_WORKLOAD_CLASS))
 
-I doubt that it works as you want it to work.
+s/boot_cpu_has/cpu_feature_enabled/g
 
-+	inline notrace __attribute((__section__(".noinstr.text")))	\
+Audit your whole set pls.
 
-So this explicitely puts the inline into the .noinstr.text section,
-which means when it is used in .text the compiler will generate an out-of
-line function in the .noinstr.text section and insert a call into the
-usage site. That's independent of the size of the inline.
+-- 
+Regards/Gruss,
+    Boris.
 
-Thanks,
-
-        tglx
+https://people.kernel.org/tglx/notes-about-netiquette
 
