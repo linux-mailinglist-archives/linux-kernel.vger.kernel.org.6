@@ -1,249 +1,199 @@
-Return-Path: <linux-kernel+bounces-387423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDDA29B5109
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:38:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE0D29B510E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:38:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18F1CB24C42
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:38:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D5CEB24C7A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C842E206040;
-	Tue, 29 Oct 2024 17:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808682071F6;
+	Tue, 29 Oct 2024 17:34:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fskBfInQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ak+9NkxN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68F71D5CD6;
-	Tue, 29 Oct 2024 17:34:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEBB51D5CD6;
+	Tue, 29 Oct 2024 17:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730223265; cv=none; b=bHA31+W1Xfjr5HmgVqr9IHx4Xn3IEGf2yxP5887zS/Xd8H0LBa1TI/9LQRQjSaORozc/0KUulsbURpzhoUqZ45A6QvKdv5pZUO+jEbiQDKV0doV9dQdYF+YzHa80rzvNud9MIElOFmuKuJ+Q4bUJWaBAbnOfRjZ4vBGv27g4rY8=
+	t=1730223285; cv=none; b=cwylYo8dOmw0qmdbF86YfajTLW5bRMDQ66x1qGhdR4wBAOxp1++hpoXoEiTiamF3vK4Z7cJujN1kTFyQDn0sTNXM1IhxpVv08cslxN0FTyIAxdxRDiFLnWWOH1bVQrGwAaC82OhxqB7TCMN0bl5sht/ccqBkiIGneYZaLiEun9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730223265; c=relaxed/simple;
-	bh=3g0p2tDhh+R0D+c6XvvKGkeoeP0gW3rm59HIK5YxF5I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h8SWCoC98D1XsQlWglVLfFRpigK16PZWOnYLQJPLnbqyy+PcsY8OWGnLSb/OWs6R+jjHTiKIRe/UDPJP5M27XwfmhgM8hZZHAV3u3oiYkeobQu/CABoPzdb2+jMcqoKaxFolRlyuFGcNM5KRzOtaBgrmVZrLaANcuy1OxV2C7ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fskBfInQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BFCDC4CEE4;
-	Tue, 29 Oct 2024 17:34:20 +0000 (UTC)
+	s=arc-20240116; t=1730223285; c=relaxed/simple;
+	bh=ZHnpIHQ+J8HOssHQ5IPGz+tNjWCdkyKzKzgKZXxB1Ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=oTvcQNJkJ1T5Yp/nSRRIBavZsIu4UWd35XMcCJUi9RPSBe1r8DyrVW7FygZySjwkBcCRZdKlXpx4jHZ/+bv9ukQgDog1ZYo7ShZiEEXNcTciVGjzSOj6CAxLEG3FiZArLF1fITyoMovGCZg9cZv6/Da/2nbOK+3k9Q3P8UI+3aY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ak+9NkxN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B3F3C4CECD;
+	Tue, 29 Oct 2024 17:34:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730223264;
-	bh=3g0p2tDhh+R0D+c6XvvKGkeoeP0gW3rm59HIK5YxF5I=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fskBfInQPb9slhqLvkZEC0UaitcPPXnryTO0C5+mk7a6L0yUbkzhi2qUHoY31L9xl
-	 DONXv/2KnJAxTYYW8r597tybHkC93ESd8EXZeOUTSUDKtBWVwApKkLFqhRAJ3Ogrfz
-	 /1LRFz36cfv7w3Ya8y5rvWcKhH5HH0lZ0Hzk2dZOCvWkGXhfrH7ujvnwmnmzrH4/Hf
-	 C69smfNkXJAa6FNUEiWtezB2hmKI2rK2BO803+pVToMLNOvEsaMo8QeI9nSHbDT8cp
-	 5IChbCb3vbOhgkEwo4EgxfUupkWIAlmpZOv8BG/V4Q16vwNa0wLMLXl/VvCoWIH3gR
-	 w0V/m90No7aKA==
-Message-ID: <9aff2bed-bca4-482b-83ea-4cd945812817@kernel.org>
-Date: Tue, 29 Oct 2024 18:34:18 +0100
+	s=k20201202; t=1730223285;
+	bh=ZHnpIHQ+J8HOssHQ5IPGz+tNjWCdkyKzKzgKZXxB1Ks=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=ak+9NkxNn2HgunkI0eVl+316kJFKadFn5Jn2pViRpAtdn+kZH1RbHy0ZvxHyna9sH
+	 +04kx1Ydf7WoE36kCDKXSqL0AvDKtlczjxb/lQQqtWHdDbxr/Xe4XNKlaVB4mJzcqs
+	 gZZHLngzUTs0c8yi53AxbXLw+cKYYjjBVRWhK2U+KxhFT0jdB6THgKtdg9cQSzlPhe
+	 9XFG1AoEfgFzurc1V1f0sSR1LdMVqrlWRJLy2SEhAWCUXu5pjwYRkWaeiYrpAreqLH
+	 FqXqSHYQdOnlEiNWd/5Lq+VMKEKWV+YTG9DS31SHOij49GaYKduffBUUueobhIo9S6
+	 gnjbZ8+AUeoLQ==
+Date: Tue, 29 Oct 2024 12:34:42 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Jim Quinlan <james.quinlan@broadcom.com>, Rob Herring <robh@kernel.org>,
+	linux-pci@vger.kernel.org,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Veerabhadrarao Badiganti <quic_vbadigan@quicinc.com>,
+	Mayank Rana <quic_mrana@quicinc.com>
+Subject: Re: [PATCH 1/1] RFC: dt bindings: Add property "brcm,gen3-eq-presets"
+Message-ID: <20241029173442.GA1164705@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 04/17] wifi: cc33xx: Add sdio.c, io.c, io.h
-To: Michael Nemanov <michael.nemanov@ti.com>, Kalle Valo <kvalo@kernel.org>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-wireless@vger.kernel.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Sabeeh Khan <sabeeh-khan@ti.com>
-References: <20241029172354.4027886-1-michael.nemanov@ti.com>
- <20241029172354.4027886-5-michael.nemanov@ti.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20241029172354.4027886-5-michael.nemanov@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d63f16ac-c5ed-35cd-ec75-0bf6d7dab9ca@quicinc.com>
 
-On 29/10/2024 18:23, Michael Nemanov wrote:
-> sdio.c implements SDIO transport functions. These are bound into
-> struct cc33xx_if_operations and accessed via io.h in order to abstract
-> multiple transport interfaces such as SPI in the future.
-> The CC33xx driver supports the SDIO in-band IRQ option so the IRQ from
-> the device received here as well.
-> Unlike wl1xxx products, there is no longer mapping between
-> HW and SDIO / SPI address space of any kind.
-> There are only 3 valid addresses for control, data and status
-> transactions each with a predefined structure.
-> 
-> Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
-> ---
->  drivers/net/wireless/ti/cc33xx/io.c   | 129 +++++++
->  drivers/net/wireless/ti/cc33xx/io.h   |  26 ++
->  drivers/net/wireless/ti/cc33xx/sdio.c | 530 ++++++++++++++++++++++++++
->  3 files changed, 685 insertions(+)
->  create mode 100644 drivers/net/wireless/ti/cc33xx/io.c
->  create mode 100644 drivers/net/wireless/ti/cc33xx/io.h
->  create mode 100644 drivers/net/wireless/ti/cc33xx/sdio.c
-> 
-> diff --git a/drivers/net/wireless/ti/cc33xx/io.c b/drivers/net/wireless/ti/cc33xx/io.c
-> new file mode 100644
-> index 000000000000..59696004efe9
-> --- /dev/null
-> +++ b/drivers/net/wireless/ti/cc33xx/io.c
-> @@ -0,0 +1,129 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2022-2024 Texas Instruments Incorporated - https://www.ti.com/
-> + */
-> +
-> +#include "cc33xx.h"
-> +#include "debug.h"
-> +#include "io.h"
-> +#include "tx.h"
-> +
-> +bool cc33xx_set_block_size(struct cc33xx *cc)
-> +{
-> +	if (cc->if_ops->set_block_size) {
-> +		cc->if_ops->set_block_size(cc->dev, CC33XX_BUS_BLOCK_SIZE);
-> +		cc33xx_debug(DEBUG_CC33xx,
-> +			     "Set BLKsize to %d", CC33XX_BUS_BLOCK_SIZE);
-> +		return true;
-> +	}
-> +
-> +	cc33xx_debug(DEBUG_CC33xx, "Could not set BLKsize");
-> +	return false;
-> +}
-> +
-> +void cc33xx_disable_interrupts_nosync(struct cc33xx *cc)
-> +{
-> +	cc->if_ops->disable_irq(cc->dev);
-> +}
-> +
-> +void cc33xx_irq(void *cookie);
+On Tue, Oct 29, 2024 at 10:24:48PM +0530, Krishna Chaitanya Chundru wrote:
+> On 10/29/2024 9:25 PM, Bjorn Helgaas wrote:
+> > On Tue, Oct 29, 2024 at 10:40:32AM -0500, Bjorn Helgaas wrote:
+> > > On Tue, Oct 29, 2024 at 08:52:15PM +0530, Krishna Chaitanya Chundru wrote:
+> > > > On 10/29/2024 8:18 PM, Bjorn Helgaas wrote:
+> > > > > On Tue, Oct 29, 2024 at 10:22:36AM -0400, Jim Quinlan wrote:
+> > > > > > On Tue, Oct 29, 2024 at 1:17 AM Krishna Chaitanya Chundru
+> > > > > > <quic_krichai@quicinc.com> wrote:
+> > > > > > > On 10/29/2024 12:21 AM, James Quinlan wrote:
+> > > > > > > > On 10/24/24 21:08, Krishna Chaitanya Chundru wrote:
+> > > > > > > > > On 10/22/2024 12:33 AM, Rob Herring wrote:
+> > > > > > > > > > On Fri, Oct 18, 2024 at 02:22:45PM -0400, Jim Quinlan wrote:
+> > > > > > > > > > > Support configuration of the GEN3 preset equalization settings, aka the
+> > > > > > > > > > > Lane Equalization Control Register(s) of the Secondary PCI Express
+> > > > > > > > > > > Extended Capability.  These registers are of type HwInit/RsvdP and
+> > > > > > > > > > > typically set by FW.  In our case they are set by our RC host bridge
+> > > > > > > > > > > driver using internal registers.
+> > > > > > > > > > > 
+> > > > > > > > > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > > > > > > > > > ---
+> > > > > > > > > > >     .../devicetree/bindings/pci/brcm,stb-pcie.yaml       | 12
+> > > > > > > > > > > ++++++++++++
+> > > > > > > > > > >     1 file changed, 12 insertions(+)
+> > > > > > > > > > > 
+> > > > > > > > > > > diff --git
+> > > > > > > > > > > a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > > > b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > > > index 0925c520195a..f965ad57f32f 100644
+> > > > > > > > > > > --- a/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > > > +++ b/Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
+> > > > > > > > > > > @@ -104,6 +104,18 @@ properties:
+> > > > > > > > > > >         minItems: 1
+> > > > > > > > > > >         maxItems: 3
+> > > > > > > > > > >     +  brcm,gen3-eq-presets:
+> > > > > > > > > > > +    description: |
+> > > > > > > > > > > +      A u16 array giving the GEN3 equilization presets, one for
+> > > > > > > > > > > each lane.
+> > > > > > > > > > > +      These values are destined for the 16bit registers known as the
+> > > > > > > > > > > +      Lane Equalization Control Register(s) of the Secondary PCI
+> > > > > > > > > > > Express
+> > > > > > > > > > > +      Extended Capability.  In the array, lane 0 is first term,
+> > > > > > > > > > > lane 1 next,
+> > > > > > > > > > > +      etc. The contents of the entries reflect what is necessary for
+> > > > > > > > > > > +      the current board and SoC, and the details of each preset are
+> > > > > > > > > > > +      described in Section 7.27.4 of the PCI base spec, Revision 3.0.
+> > > > > > > > > > 
+> > > > > > > > > > If these are defined by the PCIe spec, then why is it Broadcom specific
+> > > > > > > > > > property?
+> > > > > > > > Yes, I will remove the "brcm," prefix.
+> > > > > > > > > > 
+> > > > > > > > > Hi Rob,
+> > > > > > > > > 
+> > > > > > > > > qcom pcie driver also needs to program these presets as you suggested
+> > > > > > > > > this can go to common pci bridge binding.
+> > > > > > > > > 
+> > > > > > > > > from PCIe spec 6.0.1 revision section 8.3.3.3 & 4.2.4.2 for data rates
+> > > > > > > > > of  8.0 GT/s, 16.0 GT/s, and 32.0 GT/s uses one class of preset (P0
+> > > > > > > > > through P10) and where as data rates of 64.0 GT/s use different class of
+> > > > > > > > > presets (Q0 through Q10) (Table 4-23). And data rates of 8.0 GT/s also
+> > > > > > > > > have optional preset hints (Table 4-24).
+> > > > > > > > > 
+> > > > > > > > > And there is possibility that for each data rate we may require
+> > > > > > > > > different preset configuration.
+> > > > > > > > > 
+> > > > > > > > > Can we have a dt binding for each data rate of 16 byte array.
+> > > > > > > > > like gen3-eq-preset array, gen4-eq-preset array etc.
+> > > > > > > > 
+> > > > > > > > Yes, that was the idea when using "genX-eq-preset", for X in {3,4...}.
+> > > > > > > > 
+> > > > > > > > Keep in mind that this is an RFC; I have a backlog of commit submissions
+> > > > > > > > before I can submit the code that uses this DT property.  If you
+> > > > > > > > (Krishna) want to submit something now I'd be quite happy to go with
+> > > > > > > > that.  I don't believe it is acceptable to submit a bindings commit w/o
+> > > > > > > > code that uses it (if I'm incorrect I'll be glad to do a V2).
+> > > > > > > > 
+> > > > > > > I submitted a pull request for this. if you have any other suggestions
+> > > > > > > or if we need to have any other details we can update this pull request.
+> > > > > > > https://github.com/devicetree-org/dt-schema/pull/146
+> > > > > > 
+> > > > > > Thanks for doing this.   However, why a u8 array?  The registers are
+> > > > > > defined as u16 so it would be more natural to use a u16 array, each
+> > > > > > entry giving
+> > > > > > all of the data for a single lane.  In our implementation we read a
+> > > > > > u16 and we write it to the register -- what advantage is there by
+> > > > > > using a u8 array?
+> > > > > > 
+> > > > > > Also if there are 16 lanes, you will need 32 maxItems, correct?
+> > > > > 
+> > > > > I added these questions to the github PR.
+> > > > > 
+> > > > > Also, why does it define gen3-eq-presets, gen4-eq-presets,
+> > > > > gen5-eq-presets, and gen6-eq-presets?  I think there's only a single
+> > > > > place to write these values (the Lane Equalization Control registers,
+> > > > > PCIe r6.0, sec 7.7.3.4), isn't here?  How would software choose the
+> > > > > correct values to use?
+> > > ...
+> > 
+> > Oh, one more thing: I guess "gen3", "gen4", etc. are well-entrenched
+> > terms in the industry, and they're probably fine in marketing
+> > materials.
+> > 
+> > But I really don't like them in device trees or drivers because the
+> > spec doesn't use those terms.  In fact, the spec specifically advises
+> > *avoiding* them (PCIe r6.0, sec 1.2 footnote):
+> > 
+> >    Terms like “PCIe Gen3” are ambiguous and should be avoided. For
+> >    example, “gen3” could mean (1) compliant with Base 3.0, (2)
+> >    compliant with Base 3.1 (last revision of 3.x), (3) compliant with
+> >    Base 3.0 and supporting 8.0 GT/s, (4) compliant with Base 3.0 or
+> >    later and supporting 8.0 GT/s, ....
+> > 
+> > As a practical matter, those terms make it hard to use the spec: where
+> > do I go to learn how to use "gen4-eq-presets"?  There's no instance of
+> > "gen4" in the PCIe spec.  AFAICT, all I can do is look up the PCIe
+> > r4.0 spec and try to figure out what was added in that revision, which
+> > is a real hassle.
+> > 
+> is it fine if I change names from gen3-eq-presets, gen4-eq-presets etc
+> to 8gts-eq-presets, 16gts-eq-presets  etc.
 
-Why do you need forward declaration of non-static function? If you need
-it, it means you had W=1 warning which you fixed incorrect way.
-
-Regardless, be sure this code has 0 warnings on clang with W=1.
-
-
-> +void cc33xx_enable_interrupts(struct cc33xx *cc)
-> +{
-> +	cc->if_ops->enable_irq(cc->dev);
-> +
-> +	cc33xx_irq(cc);
-> +}
-
-...
-
-
-> +static const struct cc33xx_if_operations sdio_ops_inband_irq = {
-> +	.interface_claim	= cc33xx_sdio_claim,
-> +	.interface_release	= cc33xx_sdio_release,
-> +	.read			= cc33xx_sdio_raw_read,
-> +	.write			= cc33xx_sdio_raw_write,
-> +	.power			= cc33xx_sdio_set_power,
-> +	.set_block_size	= cc33xx_sdio_set_block_size,
-> +	.set_irq_handler	= cc33xx_set_irq_handler,
-> +	.disable_irq		= cc33xx_sdio_disable_irq,
-> +	.enable_irq		= cc33xx_sdio_enable_irq,
-> +};
-> +
-> +#ifdef CONFIG_OF
-> +static const struct cc33xx_family_data cc33xx_data = {
-> +	.name = "cc33xx",
-> +	.cfg_name = "ti-connectivity/cc33xx-conf.bin",
-> +	.nvs_name = "ti-connectivity/cc33xx-nvs.bin",
-> +};
-> +
-> +static const struct of_device_id cc33xx_sdio_of_match_table[] = {
-> +	{ .compatible = "ti,cc33xx", .data = &cc33xx_data },
-
-This is supposed to be your base variant.
-
-> +	{ }
-> +};
-
-Missing MODULE_DEVICE_TABLE... or you do not autoload this based on OF
-matching? That's a bit surprising, I don't remember how SDIO bus handles
-it. But for other buses this is unexpected and usually not correct.
-
-> +
-
-...
-
-> +
-> +static struct sdio_driver cc33xx_sdio_driver = {
-> +	.name		= "cc33xx_sdio",
-> +	.id_table	= cc33xx_devices,
-> +	.probe		= sdio_cc33xx_probe,
-> +	.remove		= sdio_cc33xx_remove,
-> +#ifdef CONFIG_PM
-> +	.drv = {
-> +		.pm = &cc33xx_sdio_pm_ops,
-> +	},
-> +#endif /* CONFIG_PM */
-> +};
-> +
-> +MODULE_DEVICE_TABLE(sdio, cc33xx_devices);
-
-This is always next to the table.
-
-> +
-> +module_sdio_driver(cc33xx_sdio_driver);
-> +
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_DESCRIPTION("SDIO transport for Texas Instruments CC33xx WLAN driver");
-> +MODULE_AUTHOR("Michael Nemanov <michael.nemanov@ti.com>");
-> +MODULE_AUTHOR("Sabeeh Khan <sabeeh-khan@ti.com>");
-
-Best regards,
-Krzysztof
-
+Those would be fine with me.  If names starting with digits don't
+work, things like "eq-presets-8gts" would also be fine.
 
