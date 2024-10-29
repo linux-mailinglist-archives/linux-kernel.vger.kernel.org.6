@@ -1,169 +1,227 @@
-Return-Path: <linux-kernel+bounces-386998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F28659B4A98
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:06:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D44B69B4A9B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:06:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33BD28335F
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:06:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 945922828E2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DB8205E17;
-	Tue, 29 Oct 2024 13:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA26205ACF;
+	Tue, 29 Oct 2024 13:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="or+EwbV7"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CDLToG+x";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ie/Rz3q6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77170C2ED
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0967520604E;
+	Tue, 29 Oct 2024 13:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730207183; cv=none; b=eQsXBSnD5kZ18T7jF0HBDNpwH0L4Jq+3p41UXIaZZ1PUcLZ40sZklUnxk/v/v5qx/pLgk1R36+5jSxPIzafVbi6etcYr7et5wjUkFyXUXJuDSwzy9a6CSJC3P+tn5FXeXveX0Pbwp1xa2EH55Cc93TryymVzPeWTZvHKFm+b9gI=
+	t=1730207187; cv=none; b=r9nEzo+RM9SjG72Kcp2x5j++DFW7S8k78Lwr3amEKpc4UETOv/ngb1o1/6+twGq8DwOdIu8xsrqfeF3C5ZznEUHOVbot08NqbPLSx1o9cmanZKKCEIySHwmbEI+AhGRpHx9+0UB+xDjOI0y+SWNTJ27tV+G3uktxx3QBiOknaZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730207183; c=relaxed/simple;
-	bh=48vTuMVxOY3Vh3K7QBbivurdZXR3WfKhrPNH8x35x0c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AocRMjSz8zccyOvq3yBEXbyi6SIMT63rNKb0mwEJNNrCpf86ykPNqfe3nC4SsCuDnZEjBW9jfy4lx5gU6FKl9o0q0x/UWiibWqO4yENEGM67gu3RP76itzrnEgZpQG28kvfu1EzJ+ZDUl7MQstdT36Y7Lff3nDjRXIauAzUvNkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=or+EwbV7; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso3943940b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:06:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1730207181; x=1730811981; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NHj8IGmGIs1egtb7syFkJuryY4pVczFLIPpjJP1F+TM=;
-        b=or+EwbV70niuvyt0qIDv1tj0Dv/NOliiwJV4PdZ5CN+hPD9r74pTCpeDQTA3iebRw2
-         XB5xgfUrgiwyhIeXJSJcKScg4/7/ulav9ZPHrDqr0b24uw/c6MDA5M3OinsAbXTFxvPC
-         1uNAvKZXxGiTLLGPsL1ivDPb1B5iNeTDhxdXr2qyr8l+wgohieaRgFTuiDsOAsjFo79b
-         VcP/90X42bC1M+HGl7LiN5EqzaPv3eia/a8br4HpraizKQRE2kWOfSPiiB1izUjceQTS
-         JsX7LzPu2xRVy2iPCi9wIoePnI8BWW/LKg93kU0typRh64oMlrBMfrh+hVF+7heW5uy7
-         uhQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730207181; x=1730811981;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NHj8IGmGIs1egtb7syFkJuryY4pVczFLIPpjJP1F+TM=;
-        b=bKmjA5nN4khHnuZ8awF6YbwhmUW/BjHg1qYBv1Xg5FBcrtK3jKxl+4a71wLqAY4QHN
-         +ukUNkRIfGNzJAzVbT1z7xLcdwsOoPYG9o/N6Av8ZbRG0P/J/tL/Lht7BaAvi1xyr2rt
-         zDjX8/v9cfQjzV/x+UU8pu6HFHtugHGILI79AwjFxGAa1EY5McMLiQliLNCaue+/ATz/
-         1+MgRdoFMXn76f+gq0SZRo2DWQmJvXIttnWCy+g8QeUDj4D90/DOlCL+PMDkG9zPtWFq
-         cmls2AbBNB+S+95lUzvlxgovuAqbV/8xYKlVw4AtkX+8Cjk2tTpL9T9/TXxxmBR3gYMM
-         92+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXhgyOX5ebDLrMkkXE127vm8qg86I9+hU1TU6ohEkJBItl0bd23a8V4XEcLdpH5yMvWV3Dc3deUQ6EpZwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs8TuFEsaFfbBHRIdmPTPeb/gspUc2SplBXKSIH3KdHFA1jFKL
-	uI38sEl47Oi5/7pPeBkNm2luK5dMZfVJAkCdk0X51URr9aeLd1N8wPu/dTDSM7CU6VGHWzU21zD
-	URjCSjmTj0j3JgVS0GRbBIxWVdQ6X8jW23NDQ
-X-Google-Smtp-Source: AGHT+IFqgq9XP2OlsftQqekOzP9p6HoWIcNFPPYFQP/nwtgiEeSO9cYr1iWcK3DznxduaspwjF0ybkZey+m6cNaweGs=
-X-Received: by 2002:a05:6a00:3cc8:b0:71e:e3:608 with SMTP id
- d2e1a72fcca58-7206306ebb4mr15810841b3a.26.1730207180368; Tue, 29 Oct 2024
- 06:06:20 -0700 (PDT)
+	s=arc-20240116; t=1730207187; c=relaxed/simple;
+	bh=qJlIu1rwSJaaeP6GDnUlzTvKn0eqh98EQrtqA3SthE4=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=DqIyISbhuxetZvf9pMSm6uwlHh96Fh6Dk8I8NXesloMRh2xDWFQN5Ci+drcu5E68dSG0cr8uJ3nZ92S6mkIo9HLxD5nWgGIUs+U/1XQ9rPJugaf39BlEv1XtVw2F1UDrr4B9RcBYtbNRYwx0O9vQJGdrU9nAx3mp1wcMz+5z0ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CDLToG+x; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ie/Rz3q6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 29 Oct 2024 13:06:21 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730207183;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=rfCHrr8IyiHld6GvV2AfvBgiAma/q2lRww75s5sLxy0=;
+	b=CDLToG+xFjrIfxKi52vWWfthKncSeBBGjcYtLr9vSp6yH27IlY4d49FlUf+YHCxE4y+cWp
+	BFUwpMlr+Az5xkZ4XuvWVJ7lpEPwC6t2t/s2BVxDzmaIs2oj5UN7QpNbSdbOrMy1eUeI6H
+	J/cGpNnlDKgKyvQMrCFz4vW9QRqpzUYsynj54qt/H1mDB60pMhApJI34+0PUWNmBjL/0dZ
+	d7z8qYa8GwZEF9ueXNNvyQmDZ9HkMzBMZ33DOeRwOcbjjYWHzmEDYKt7St5mxXRC1qBUw4
+	nSQR0VXxbLqnMl6dBgqHoZ3PMD10ywv0FawNU8TeAV6G19bGhB4zWP9rpAe7sw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730207183;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=rfCHrr8IyiHld6GvV2AfvBgiAma/q2lRww75s5sLxy0=;
+	b=Ie/Rz3q6cZt9l+rNOK45hL2h2sl9UsjmrOdwV92gcJoPlumNuK8V4pGjMOLMjm2KcCdOGv
+	eEXpRbqkNiggwkAQ==
+From: "tip-bot2 for Aboorva Devarajan" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched: Pass correct scheduling policy to
+ __setscheduler_class
+Cc: Aboorva Devarajan <aboorvad@linux.ibm.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029083658.1096492-1-elver@google.com> <20241029114937.GT14555@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241029114937.GT14555@noisy.programming.kicks-ass.net>
-From: Marco Elver <elver@google.com>
-Date: Tue, 29 Oct 2024 14:05:38 +0100
-Message-ID: <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
-Subject: Re: [PATCH] kcsan, seqlock: Support seqcount_latch_t
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <173020718190.1442.18044798383106446595.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, 29 Oct 2024 at 12:49, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Oct 29, 2024 at 09:36:29AM +0100, Marco Elver wrote:
-> > Reviewing current raw_write_seqcount_latch() callers, the most common
-> > patterns involve only few memory accesses, either a single plain C
-> > assignment, or memcpy;
->
-> Then I assume you've encountered latch_tree_{insert,erase}() in your
-> travels, right?
+The following commit has been merged into the sched/urgent branch of tip:
 
-Oops. That once certainly exceeds the "8 memory accesses".
+Commit-ID:     5db91545ef8150c45a526675ef99e8998b648a41
+Gitweb:        https://git.kernel.org/tip/5db91545ef8150c45a526675ef99e8998b648a41
+Author:        Aboorva Devarajan <aboorvad@linux.ibm.com>
+AuthorDate:    Sat, 26 Oct 2024 00:20:20 +05:30
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Tue, 29 Oct 2024 13:57:51 +01:00
 
-> Also, I note that update_clock_read_data() seems to do things
-> 'backwards' and will completely elide your proposed annotation.
+sched: Pass correct scheduling policy to __setscheduler_class
 
-Hmm, for the first access, yes. This particular oddity could be
-"fixed" by surrounding the accesses by
-kcsan_nestable_atomic_begin/end(). I don't know if it warrants adding
-a raw_write_seqcount_latch_begin().
+Commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs
+switched_from_fair()") overlooked that __setscheduler_prio(), now
+__setscheduler_class() relies on p->policy for task_should_scx(), and
+moved the call before __setscheduler_params() updates it, causing it
+to be using the old p->policy value.
 
-Preferences?
+Resolve this by changing task_should_scx() to take the policy itself
+instead of a task pointer, such that __sched_setscheduler() can pass
+in the updated policy.
 
-> > therefore, the value of 8 memory accesses after
-> > raw_write_seqcount_latch() is chosen to (a) avoid most false positives,
-> > and (b) avoid excessive number of false negatives (due to inadvertently
-> > declaring most accesses in the proximity of update_fast_timekeeper() as
-> > "atomic").
->
-> The above latch'ed RB-trees can certainly exceed this magical number 8.
->
-> > Reported-by: Alexander Potapenko <glider@google.com>
-> > Tested-by: Alexander Potapenko <glider@google.com>
-> > Fixes: 88ecd153be95 ("seqlock, kcsan: Add annotations for KCSAN")
-> > Signed-off-by: Marco Elver <elver@google.com>
-> > ---
-> >  include/linux/seqlock.h | 9 +++++++++
-> >  1 file changed, 9 insertions(+)
-> >
-> > diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
-> > index fffeb754880f..e24cf144276e 100644
-> > --- a/include/linux/seqlock.h
-> > +++ b/include/linux/seqlock.h
-> > @@ -614,6 +614,7 @@ typedef struct {
-> >   */
-> >  static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *s)
-> >  {
-> > +     kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
-> >       /*
-> >        * Pairs with the first smp_wmb() in raw_write_seqcount_latch().
-> >        * Due to the dependent load, a full smp_rmb() is not needed.
-> > @@ -631,6 +632,7 @@ static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *
-> >  static __always_inline int
-> >  raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
-> >  {
-> > +     kcsan_atomic_next(0);
-> >       smp_rmb();
-> >       return unlikely(READ_ONCE(s->seqcount.sequence) != start);
-> >  }
-> > @@ -721,6 +723,13 @@ static inline void raw_write_seqcount_latch(seqcount_latch_t *s)
-> >       smp_wmb();      /* prior stores before incrementing "sequence" */
-> >       s->seqcount.sequence++;
-> >       smp_wmb();      /* increment "sequence" before following stores */
-> > +
-> > +     /*
-> > +      * Latch writers do not have a well-defined critical section, but to
-> > +      * avoid most false positives, at the cost of false negatives, assume
-> > +      * the next few memory accesses belong to the latch writer.
-> > +      */
-> > +     kcsan_atomic_next(8);
-> >  }
->
-> Given there are so very few latch users, would it make sense to
-> introduce a raw_write_seqcount_latch_end() callback that does
-> kcsan_atomic_next(0) ? -- or something along those lines? Then you won't
-> have to assume such a small number.
+Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
+Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Tejun Heo <tj@kernel.org>
+---
+ kernel/sched/core.c     | 8 ++++----
+ kernel/sched/ext.c      | 8 ++++----
+ kernel/sched/ext.h      | 2 +-
+ kernel/sched/sched.h    | 2 +-
+ kernel/sched/syscalls.c | 2 +-
+ 5 files changed, 11 insertions(+), 11 deletions(-)
 
-That's something I considered, but thought I'd try the unintrusive
-version first. But since you proposed it here, I'd much prefer that,
-too. ;-)
-Let me try that.
-
-Thanks,
--- Marco
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index dbfb571..719e0ed 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4711,7 +4711,7 @@ int sched_fork(unsigned long clone_flags, struct task_struct *p)
+ 	if (rt_prio(p->prio)) {
+ 		p->sched_class = &rt_sched_class;
+ #ifdef CONFIG_SCHED_CLASS_EXT
+-	} else if (task_should_scx(p)) {
++	} else if (task_should_scx(p->policy)) {
+ 		p->sched_class = &ext_sched_class;
+ #endif
+ 	} else {
+@@ -7025,7 +7025,7 @@ int default_wake_function(wait_queue_entry_t *curr, unsigned mode, int wake_flag
+ }
+ EXPORT_SYMBOL(default_wake_function);
+ 
+-const struct sched_class *__setscheduler_class(struct task_struct *p, int prio)
++const struct sched_class *__setscheduler_class(int policy, int prio)
+ {
+ 	if (dl_prio(prio))
+ 		return &dl_sched_class;
+@@ -7034,7 +7034,7 @@ const struct sched_class *__setscheduler_class(struct task_struct *p, int prio)
+ 		return &rt_sched_class;
+ 
+ #ifdef CONFIG_SCHED_CLASS_EXT
+-	if (task_should_scx(p))
++	if (task_should_scx(policy))
+ 		return &ext_sched_class;
+ #endif
+ 
+@@ -7142,7 +7142,7 @@ void rt_mutex_setprio(struct task_struct *p, struct task_struct *pi_task)
+ 		queue_flag &= ~DEQUEUE_MOVE;
+ 
+ 	prev_class = p->sched_class;
+-	next_class = __setscheduler_class(p, prio);
++	next_class = __setscheduler_class(p->policy, prio);
+ 
+ 	if (prev_class != next_class && p->se.sched_delayed)
+ 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 5900b06..40bdfe8 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4256,14 +4256,14 @@ static const struct kset_uevent_ops scx_uevent_ops = {
+  * Used by sched_fork() and __setscheduler_prio() to pick the matching
+  * sched_class. dl/rt are already handled.
+  */
+-bool task_should_scx(struct task_struct *p)
++bool task_should_scx(int policy)
+ {
+ 	if (!scx_enabled() ||
+ 	    unlikely(scx_ops_enable_state() == SCX_OPS_DISABLING))
+ 		return false;
+ 	if (READ_ONCE(scx_switching_all))
+ 		return true;
+-	return p->policy == SCHED_EXT;
++	return policy == SCHED_EXT;
+ }
+ 
+ /**
+@@ -4493,7 +4493,7 @@ static void scx_ops_disable_workfn(struct kthread_work *work)
+ 
+ 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+ 
+-		p->sched_class = __setscheduler_class(p, p->prio);
++		p->sched_class = __setscheduler_class(p->policy, p->prio);
+ 		check_class_changing(task_rq(p), p, old_class);
+ 
+ 		sched_enq_and_set_task(&ctx);
+@@ -5204,7 +5204,7 @@ static int scx_ops_enable(struct sched_ext_ops *ops, struct bpf_link *link)
+ 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+ 
+ 		p->scx.slice = SCX_SLICE_DFL;
+-		p->sched_class = __setscheduler_class(p, p->prio);
++		p->sched_class = __setscheduler_class(p->policy, p->prio);
+ 		check_class_changing(task_rq(p), p, old_class);
+ 
+ 		sched_enq_and_set_task(&ctx);
+diff --git a/kernel/sched/ext.h b/kernel/sched/ext.h
+index 2460195..b1675bb 100644
+--- a/kernel/sched/ext.h
++++ b/kernel/sched/ext.h
+@@ -18,7 +18,7 @@ bool scx_can_stop_tick(struct rq *rq);
+ void scx_rq_activate(struct rq *rq);
+ void scx_rq_deactivate(struct rq *rq);
+ int scx_check_setscheduler(struct task_struct *p, int policy);
+-bool task_should_scx(struct task_struct *p);
++bool task_should_scx(int policy);
+ void init_sched_ext_class(void);
+ 
+ static inline u32 scx_cpuperf_target(s32 cpu)
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 9f9d1cc..6c54a57 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3830,7 +3830,7 @@ static inline int rt_effective_prio(struct task_struct *p, int prio)
+ 
+ extern int __sched_setscheduler(struct task_struct *p, const struct sched_attr *attr, bool user, bool pi);
+ extern int __sched_setaffinity(struct task_struct *p, struct affinity_context *ctx);
+-extern const struct sched_class *__setscheduler_class(struct task_struct *p, int prio);
++extern const struct sched_class *__setscheduler_class(int policy, int prio);
+ extern void set_load_weight(struct task_struct *p, bool update_load);
+ extern void enqueue_task(struct rq *rq, struct task_struct *p, int flags);
+ extern bool dequeue_task(struct rq *rq, struct task_struct *p, int flags);
+diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+index 0470bcc..24f9f90 100644
+--- a/kernel/sched/syscalls.c
++++ b/kernel/sched/syscalls.c
+@@ -707,7 +707,7 @@ change:
+ 	}
+ 
+ 	prev_class = p->sched_class;
+-	next_class = __setscheduler_class(p, newprio);
++	next_class = __setscheduler_class(policy, newprio);
+ 
+ 	if (prev_class != next_class && p->se.sched_delayed)
+ 		dequeue_task(rq, p, DEQUEUE_SLEEP | DEQUEUE_DELAYED | DEQUEUE_NOCLOCK);
 
