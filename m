@@ -1,168 +1,112 @@
-Return-Path: <linux-kernel+bounces-387399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294E09B50B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:30:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 838589B50B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 18:31:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC2A1C22C1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:30:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4EFA1C22C7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:31:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E4F520B218;
-	Tue, 29 Oct 2024 17:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAAA220CCE1;
+	Tue, 29 Oct 2024 17:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="SLou/OZD"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RF6C3rFx";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="chc3FF56"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2305020A5EC;
-	Tue, 29 Oct 2024 17:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4371C1DCB31;
+	Tue, 29 Oct 2024 17:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730222695; cv=none; b=FnMIaBpzNCtEIMVVGeYKFQHqGQyuZOC52/Ak5noXrlafvgfCUPfhmgmISKnIdUPrBiL5Kl2hrzBoQ//dU6h6Z+uMxdRlAzeEpcUvlmceTJNXR6ZThjKPC9PXV1zRLwArR4WnDw+Wo2vazXqmO0zFBAacg2KeZywhugIFKrFF7pg=
+	t=1730222709; cv=none; b=tWj24bej1yVeYk4qR/fxyKQjbtOg3lU5enPMv5DfxD4ATLeJAfpqc5t11fYtfRgc42xsUmnRbG6XjMi58nfOgEIrfmDjmrmtK8DIa47NWYcDBqxw5MB7Vi943YfUQfstAXUm1k285gXzOWXWynkOsdYfW89IYMQq9kpPUXutIZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730222695; c=relaxed/simple;
-	bh=ms8A76nkeaNRHdXkIVVVrgITpbhw592CLIfijFs1/HQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QD1YwgTWQFmSfkmoxmvK0BzknXERzMQ128IhF5ErH80/Z3mERhoi51cWUzBDNM7xqa00Jp9dQl3ihCvLR3E7VUM8sP+haXb2Araoh+PnoxlIBsW5bx61vIoJbct4si0E5Hb9jcdjjyTokmAYH18ME353mUIoB09gE8xFCsrwjYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=SLou/OZD; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49THOkE7051096;
-	Tue, 29 Oct 2024 12:24:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1730222686;
-	bh=q15TcAJYFaPQe8njBAMAvJ8ClRw15csz0DfHF3xGVLE=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=SLou/OZDWrBSo0WHUrstUq3tjHzzVUmVDOfTuIWLXEoUPAbKK+cy0Wunu0q1Y3Xpq
-	 I/Tj5URm2wzW+92fwHnLeKy9yFRpim8u+WhFVo4FBZ+MkqknEWtE0gbW4qw6qE3SpZ
-	 +HJr2CZ1HTHObxRbYrL+S7wZIIuxPYvfEf0+aUYU=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49THOkhw092366
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 29 Oct 2024 12:24:46 -0500
-Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 29
- Oct 2024 12:24:46 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE110.ent.ti.com
- (10.64.6.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 29 Oct 2024 12:24:46 -0500
-Received: from localhost (udb0389739.dhcp.ti.com [137.167.1.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49THOj6K065912;
-	Tue, 29 Oct 2024 12:24:45 -0500
-From: Michael Nemanov <michael.nemanov@ti.com>
-To: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo
- Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-wireless@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: Sabeeh Khan <sabeeh-khan@ti.com>, Michael Nemanov <michael.nemanov@ti.com>
-Subject: [PATCH v4 17/17] wifi: cc33xx: Add Kconfig, Makefile
-Date: Tue, 29 Oct 2024 19:23:54 +0200
-Message-ID: <20241029172354.4027886-18-michael.nemanov@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241029172354.4027886-1-michael.nemanov@ti.com>
-References: <20241029172354.4027886-1-michael.nemanov@ti.com>
+	s=arc-20240116; t=1730222709; c=relaxed/simple;
+	bh=tKqu5xf+7+b36Fy1aUkYpZUXg29HUSsJwQdbeju6nts=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Bl+0enmJaSo8YckYMbOfoFvPI7M3UHCtfq7a/jtphxCBvLnTukoku6F6tMzam4qQr6Id27pI3mR4PAR6DDzM0pzhvsIL8ku0dDrkp8Er5VX214q+TR6XQx0ODEcBWCBkPPGPNYFjdV2MXSMkAWhEEiOXyk0PgcydUOcY2NMFtEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RF6C3rFx; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=chc3FF56; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1730222705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VB2YGHKy8tQmBThMLnbaC2CRgV6b37/PrdYthMx96g4=;
+	b=RF6C3rFxjgUBuYvXtWnJyhHLszik83TDhUJwNpNxIQGnmrHBaSXhJkE6uURWSUP6h57KlQ
+	Raz3OalVvwaGdgUamPHcR+8xPieoNXITgOk5zVWdc/kKlnyjKCUfUXRzHsvUqKadE/9PmZ
+	o9f19mhUx0/05cNoCv3LKeA65akjn6mSEfF/xdJ4EDP37Z0/F8k1OJipAKdJWgW2OVaP40
+	YX2M5wdEePydt7Q9HZPBC7WiO+IKrtDGp08tWm8mWV2GO0Jd8tNMxkPpklY/rAR5gFAKka
+	Ez9pzRlQZwBIvY2OWzQVz0z5Rt0clM2g1XdL18sHX9k7Zmq4O8xNym8nQY+VPQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1730222705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VB2YGHKy8tQmBThMLnbaC2CRgV6b37/PrdYthMx96g4=;
+	b=chc3FF56A9KHBZCa+WMl54iaEOCynw2FvJe6lrJ14/EKBkByGiU+bdg0oV9XXZiJ6scDTD
+	JfucYndyZggwI8DA==
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, "K. Y. Srinivasan"
+ <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ linux-hyperv@vger.kernel.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Marcel Holtmann <marcel@holtmann.org>, Johan
+ Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz
+ <luiz.dentz@gmail.com>, linux-bluetooth@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Michael Kelley <mhklinux@outlook.com>
+Subject: Re: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
+In-Reply-To: <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
+References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
+ <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com>
+ <87wmhq28o6.ffs@tglx>
+ <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
+Date: Tue, 29 Oct 2024 18:25:05 +0100
+Message-ID: <87ed3y255a.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Integrate cc33xx into wireless/ti folder
+On Tue, Oct 29 2024 at 17:22, Geert Uytterhoeven wrote:
+> On Tue, Oct 29, 2024 at 5:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.=
+de> wrote:
+>> On Mon, Oct 28 2024 at 19:11, Easwar Hariharan wrote:
+>> > diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
+>> > index 1220f0fbe5bf..e5256bb5f851 100644
+>> > --- a/include/linux/jiffies.h
+>> > +++ b/include/linux/jiffies.h
+>> > @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiff=
+ies(const unsigned int m)
+>> >       }
+>> >  }
+>> >
+>> > +#define secs_to_jiffies(_secs) ((_secs) * HZ)
+>>
+>> Can you please make that a static inline, as there is no need for macro
+>> magic like in the other conversions, and add a kernel doc comment which
+>> documents this?
+>
+> Note that a static inline means it cannot be used in e.g. struct initiali=
+zers,
+> which are substantial users of  "<value> * HZ".
 
-Signed-off-by: Michael Nemanov <michael.nemanov@ti.com>
----
- drivers/net/wireless/ti/Kconfig         |  1 +
- drivers/net/wireless/ti/Makefile        |  1 +
- drivers/net/wireless/ti/cc33xx/Kconfig  | 24 ++++++++++++++++++++++++
- drivers/net/wireless/ti/cc33xx/Makefile | 10 ++++++++++
- 4 files changed, 36 insertions(+)
- create mode 100644 drivers/net/wireless/ti/cc33xx/Kconfig
- create mode 100644 drivers/net/wireless/ti/cc33xx/Makefile
+Bah. That wants to be mentioned in the change log then.
 
-diff --git a/drivers/net/wireless/ti/Kconfig b/drivers/net/wireless/ti/Kconfig
-index 3fcd9e395f72..fa7214d6018c 100644
---- a/drivers/net/wireless/ti/Kconfig
-+++ b/drivers/net/wireless/ti/Kconfig
-@@ -14,6 +14,7 @@ if WLAN_VENDOR_TI
- source "drivers/net/wireless/ti/wl1251/Kconfig"
- source "drivers/net/wireless/ti/wl12xx/Kconfig"
- source "drivers/net/wireless/ti/wl18xx/Kconfig"
-+source "drivers/net/wireless/ti/cc33xx/Kconfig"
- 
- # keep last for automatic dependencies
- source "drivers/net/wireless/ti/wlcore/Kconfig"
-diff --git a/drivers/net/wireless/ti/Makefile b/drivers/net/wireless/ti/Makefile
-index 05ee016594f8..9e028a91ec30 100644
---- a/drivers/net/wireless/ti/Makefile
-+++ b/drivers/net/wireless/ti/Makefile
-@@ -3,3 +3,4 @@ obj-$(CONFIG_WLCORE)			+= wlcore/
- obj-$(CONFIG_WL12XX)			+= wl12xx/
- obj-$(CONFIG_WL1251)			+= wl1251/
- obj-$(CONFIG_WL18XX)			+= wl18xx/
-+obj-$(CONFIG_CC33XX)			+= cc33xx/
-\ No newline at end of file
-diff --git a/drivers/net/wireless/ti/cc33xx/Kconfig b/drivers/net/wireless/ti/cc33xx/Kconfig
-new file mode 100644
-index 000000000000..0c3ff97dacc7
---- /dev/null
-+++ b/drivers/net/wireless/ti/cc33xx/Kconfig
-@@ -0,0 +1,24 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+config CC33XX
-+	tristate "TI CC33XX support"
-+	depends on MAC80211
-+	select FW_LOADER
-+	help
-+	  This module contains the main code for TI CC33XX WLAN chips. It abstracts
-+	  hardware-specific differences among different chipset families.
-+	  Each chipset family needs to implement its own lower-level module
-+	  that will depend on this module for the common code.
-+
-+	  If you choose to build a module, it will be called cc33xx. Say N if
-+	  unsure.
-+
-+config CC33XX_SDIO
-+	tristate "TI CC33XX SDIO support"
-+	depends on CC33XX && MMC
-+	help
-+	  This module adds support for the SDIO interface of adapters using
-+	  TI CC33XX WLAN chipsets.  Select this if your platform is using
-+	  the SDIO bus.
-+
-+	  If you choose to build a module, it'll be called cc33xx_sdio.
-+	  Say N if unsure.
-diff --git a/drivers/net/wireless/ti/cc33xx/Makefile b/drivers/net/wireless/ti/cc33xx/Makefile
-new file mode 100644
-index 000000000000..6156f778edee
---- /dev/null
-+++ b/drivers/net/wireless/ti/cc33xx/Makefile
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+cc33xx-objs		= main.o cmd.o io.o event.o tx.o rx.o ps.o acx.o \
-+					boot.o init.o scan.o
-+
-+cc33xx_sdio-objs	= sdio.o
-+
-+cc33xx-$(CONFIG_NL80211_TESTMODE)	+= testmode.o
-+obj-$(CONFIG_CC33XX)				+= cc33xx.o
-+obj-$(CONFIG_CC33XX_SDIO)			+= cc33xx_sdio.o
--- 
-2.34.1
+Still the macro should be documented.
 
+Thanks,
+
+        tglx
 
