@@ -1,186 +1,152 @@
-Return-Path: <linux-kernel+bounces-386523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E73A9B448B
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:44:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E6C89B44B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C27CD1C22332
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:44:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78F691C21CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258B1204011;
-	Tue, 29 Oct 2024 08:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2900C204099;
+	Tue, 29 Oct 2024 08:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="C8PH7V93"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CxNak1L5"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AC62038D7;
-	Tue, 29 Oct 2024 08:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC97204036
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:46:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730191447; cv=none; b=ARhyIItv5+COxupa9GQ2HviwcIHCpQcbre/WgjwkK4x8vNmOqYZOhnZdvOKvVN+k3gpp3oL2blPKevfeCQJH8Zwivj5jVJ6bF88HJ/fVsaQ7rI18p0uQzp25/obtx0CUjxVvAOn8eYnPSd7LHk/C3j7FHryepR0qyzBx/3rYzhc=
+	t=1730191568; cv=none; b=uoqqpYU02lluP8r3Sl0/tTlHBFXVsT4G0g80pk2yF25r9x8UiTspoe0oMkO2njBbHZ7sWJGPvHxnIJFdPI7OcTHts8sy5H4UUQHV/zGRK8P0MjZPfwMG3Qnxx0gIDn4UV5tivzeIdSENeGoGr5fkxF3CsnDj/orQzrArabyPjww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730191447; c=relaxed/simple;
-	bh=29GtuOb78Tq1qYNR/nE/cnVHgRQpd26VnE8XbAtvsAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p1V5IJ7apsJTC4CG/VxMRWdnRu5y5O3AhYkBRPMN4jdkH/x9Ca6dDCjsOksYr5Rg+vREwrmfe5eedCsthvIsIkuUwreQvrORb6l4nG4gnrcwCzxH2Jzyzn7HYJZ2QitnCnj2EhHLAT7lyZ5KWMsxMgDsVEmYjbt/d7LKzNZbk24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=C8PH7V93; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=q9tbeX7y+zJgZuAb/cGAaZ6MuCs4CQFq8FQvgssvj5E=; b=C8PH7V936k7jSRlqWNh/9IP9kq
-	2lMBc9oVA6BILyiZI4TvY/qs23GQNfOWpQipGokmPTcvgTR+8AsdYx/mQol5PQ4B9Q3BXKcA5vwL0
-	qaWWQBolR7aLKV1lPlDpe5qo7inNYIGy9fBvYgJYW28sCoV0QHkz/H9sBYaDd6geVj06rE866fs0k
-	9UGEXv8I8JgXoDP8Bf/Zrom5MoisZ/iRJSIfZoFwauhEu2WhjwMcdPpDRhJu/D0pWBQAcH+Kqw8RX
-	8FaYwoKRFjv4uv4cIaJd4NoZ2rZD6+W6BKaJdpB5qf6LUGoYxilHQ2YT+yj+/Ga7ZYy4IJ77fJWEx
-	lRU3k4KQ==;
-Date: Tue, 29 Oct 2024 09:44:02 +0100
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- linux-kernel@vger.kernel.org, Fabio Estevam <festevam@gmail.com>,
- devicetree@vger.kernel.org, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Sascha Hauer
- <s.hauer@pengutronix.de>, Alexander Stein
- <alexander.stein@ew.tq-group.com>, imx@lists.linux.dev, sre@kernel.org
-Subject: Re: [PATCH v2 2/3] ARM: dts: imx: Add devicetree for Kobo Clara 2E
-Message-ID: <20241029094402.382594c5@akair>
-In-Reply-To: <f2bb661d-8ef5-43d4-aece-c7fec01ff9fe@gmail.com>
-References: <20241024142206.411336-1-andreas@kemnade.info>
- <20241024142206.411336-3-andreas@kemnade.info>
- <f2bb661d-8ef5-43d4-aece-c7fec01ff9fe@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730191568; c=relaxed/simple;
+	bh=oMsPeNDPYjX24/xrsdIKUnroAYKkElkCjISZqScZwOw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pHQGERw5YPqPdYM+ZqAUDwQx/xw/VZF0MzIFizeUVcdJK7+rdh9tylRFUNBdw51yeghJo1UIWg7vbCG/w9WMV93JCfQGr4g34FBCemw6cQCpmYVhmBLpi+CgrSgE7ykLtnho57TG1oZLl562UCoerF+axlEVdL4E94TSZm1qVkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=CxNak1L5; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99ebb390a5so1138554466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:46:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1730191564; x=1730796364; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FgWCepazzfo33UdtIIMN3k0wsxQsDr435va3n4Xr8tQ=;
+        b=CxNak1L5JQf0Yt56A7ip3UAPeRZSXzEMbKxHWHOR0H7db/CrB8pYS/Y3PYLtDo0mmK
+         a5eBiGMuoMqqLPh1iLfAhycSWZXgC29Po0z62ifisHe89n3SbtNEO1oW/IPz5IcaC2Qi
+         jVWOLkMDuraD04+Adjqh3GXhzxOTjY1W/Cxlc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730191564; x=1730796364;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FgWCepazzfo33UdtIIMN3k0wsxQsDr435va3n4Xr8tQ=;
+        b=MOHfSyjeLjsnZlxwYyLRtLhbwSLR9gBawyrovr7VOPZ56aR0Lbba3Ocs2PQz58fb3l
+         c+/a+G+glxGelbRCnaYkDu4fwz6gVAjLqwUbc52l5ZY9xQQAyc25ngmQ7Re/uEK4+XbM
+         TAIHiUpGDK+6hcgK8g80fWbjWuQVhzY7IBAHgfRWaH1Rr4C4EGCJVy/hXlEnsG2aUGcu
+         Bt6/cYmr5vwFG9EKGESOnGOOeMLuxVrUyo90hdXNRe7u2KoOA3G4U7FMhCzR6SKFycJm
+         vY0huzXV3kLAT3QI0uYGJnBt3EKM2DzzIxHMqD3UswjajxrxU5qtvWog3QUPmNn0SU1P
+         6ckA==
+X-Gm-Message-State: AOJu0YzBuDijWfTUzWu8TpzBR86PFyQAiXfcI3yq2uJi0AoeTeikToXb
+	h+vK/ozcHQ7h3d3iK7+eqND+K6DyWcu9pc9hAsD+c3FJXMORNSzsYOYZFqIs5KFUPNBBQZ0fTnl
+	T
+X-Google-Smtp-Source: AGHT+IEPwkX0IhV+bKZax/ZDnKCtE6vuHXhCdpPupl5TYU7s9VlSPImd24020c4tF67SdJTKa0gPiw==
+X-Received: by 2002:a17:907:1b98:b0:a9a:8263:d2c7 with SMTP id a640c23a62f3a-a9e2b347278mr87267966b.7.1730191564353;
+        Tue, 29 Oct 2024 01:46:04 -0700 (PDT)
+Received: from dario-ThinkPad-T14s-Gen-2i.homenet.telecomitalia.it (host-79-40-68-117.business.telecomitalia.it. [79.40.68.117])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1dec7dacsm450134166b.9.2024.10.29.01.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 01:46:04 -0700 (PDT)
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com,
+	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	Alexandra Winter <wintera@linux.ibm.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Haibo Chen <haibo.chen@nxp.com>,
+	Han Xu <han.xu@nxp.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Simon Horman <horms@kernel.org>,
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	linux-can@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: [RFC PATCH v2 0/6] can: dev: add generic function can_update_bus_error_stats()
+Date: Tue, 29 Oct 2024 09:44:44 +0100
+Message-ID: <20241029084525.2858224-1-dario.binacchi@amarulasolutions.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Am Tue, 29 Oct 2024 09:53:33 +0200
-schrieb Matti Vaittinen <mazziesaccount@gmail.com>:
+This series originates from some tests I ran on a CAN communication for
+one of my clients that reports sporadic errors. After enabling BERR
+reporting, I was surprised that the command:
 
-> On 24/10/2024 17:22, Andreas Kemnade wrote:
-> > Adds a devicetree for the Kobo Clara 2E Ebook reader. It is based
-> > on boards marked with "37NB-E60K2M+4A2" or "37NB-E60K2M+4B0". It is
-> > equipped with an i.MX6SLL SoC.
-> > 
-> > Expected to work:
-> >    - Buttons
-> >    - Wifi
-> >    - Bluetooth
-> >      (if Wifi is initialized first, driver does not handle
-> > regulators yet)
-> >    - LED
-> >    - uSD
-> >    - USB
-> >    - RTC
-> >    - Touchscreen
-> > 
-> > Add human-readable comments for devices without mainlined driver and
-> > binding. Such comments can e.g. be help to find testers if someone
-> > starts to work on the missing drivers.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>  
-> 
-> ...
-> 
-> > +
-> > +	pmic@4b {
-> > +		compatible = "rohm,bd71879", "rohm,bd71828";
-> > +		reg = <0x4b>;
-> > +		pinctrl-names = "default";
-> > +		pinctrl-0 = <&pinctrl_bd71828>;
-> > +
-> > +		interrupt-parent = <&gpio4>;
-> > +		interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
-> > +		system-power-controller;
-> > +
-> > +		clocks = <&clks 0>;
-> > +		#clock-cells = <0>;
-> > +		clock-output-names = "bd71828-32k-out";
-> > +
-> > +		gpio-controller;
-> > +		#gpio-cells = <2>;
-> > +		gpio-reserved-ranges = <0 1>, <2 1>;
-> > +
-> > +		rohm,charger-sense-resistor-ohms = <30000000>;  
-> 
-> I am afraid that this one is _my_ very much terrible brainfart. Yeah, 
-> pile up the stones and start casting ;)
->
-... at everyone who had looked at this and did not question it ;-)
- 
-> I am fairly sure the sense resistor is 30 mOhm (0,030 Ohm), not 30
-> MOhm (30 000 000 Ohm). (And I am the one who misinterpreted the M in
-> some email/data-sheet in the past - and never questioned the sanity).
-> 
-Well, I did question it, but then thought, ok there might be some
-current mirror to scale things down so that the massive rsense might
-make sense. Well, no schematics here.
+ip -details -statistics link show can0
 
-> In short, AFAICS the sense resistor is added "in series" to the
-> system load. Eg:
-> 
->            --------
->        ---| Rsense |-----
->       |    --------      |
->   ---------           -------
-> | VSupply |         | Rload |
->   ---------           -------
->       |                  |
->        ------------------
-> 
-> Hence, by measuring the voltage drop on the Rsense gives us the
-> current flowing through the system ( good old U = RI ).
-> 
-Yes, that is the way I did know how these things are usually done.
-So I am still on track.
+did not display the occurrence of different types of errors, but only the
+generic ones for reception and transmission. In trying to export this
+information, I felt that the code related to managing statistics and handling
+CAN errors (CRC, STUF, BIT, ACK, and FORM) was quite duplicated in the
+implementation of various drivers, and there wasn't a generic function like
+in the case of state changes (i. e. can_change_state). This led to the idea
+of adding can_update_bus_error_stats() and the helpers for setting up the
+CAN error frame.
 
-> I believe having 30 Mohm (30 000 000 Ohm) resistor there would not
-> make much of sense... With a Fermi estimate that the system works
-> with voltage magnitude of 1V and current magnitude of 1A and then
-> applying good old P = UI and U = RI would give us wonderful results
-> :) Quite a battery on poor Kobo, right? You'd better to not touch the
-> battery termninals ;) Oh, and looking the driver code I've written
-> for handling this property... Sometimes I really don't like mirrors :)
-> 
+Regarding patch 5/6 ("can: netlink: extend stats to the error types (ack,
+CRC, form, ..."), I ran
 
-> Well, now that I got this out - I suppose this could be
-> rohm,charger-sense-resistor-milli-ohms = <30>;
-> or
-> rohm,charger-sense-resistor-micro-ohms = <30000>;
-> 
-> I further guess there is no upstreamn binding doc for this property.
+./scripts/check-uapi.sh
 
-The binding doc is upstream. So an impressive amount of maintainers
-had a look at it...
+which found
 
-Well, everyone seem to entrust Rohm Semiconductors to do magic...
-wonderful reputation.
+"error - 1/934 UAPI headers compatible with x86 appear _not_ to be backwards
+compatible."
 
-So how to proceed? As this property is not required, I can simply
-remove it and add a comment.
+I included it in the series because I am currently interested in understanding
+whether the idea behind each of the submitted patches makes sense, and I can
+adjust them later if the response is positive, following your suggestions.
 
-> I think there is also no upstream charger driver for the
-> BD71828/BD71879 - only an early RFC and some downstream mess - but
-> stil it'd be nice to have the property in place as the size of the
-> sense resistor is needed when converting coulomb counter register
-> values to current.
-> 
-What are you upstreaming plans here? For all:
-I rebased the charger stuff to v6.11 on
-https://github.com/akemnade/linux branch kobo/power-6.11
+Changes in v2:
+- Replace macros with static inline functions
+- Update the commit message
+- Replace the macros with static inline funcions calls.
+- Update the commit message
 
-Regards,
-Andreas
+Dario Binacchi (6):
+  can: dev: add generic function can_update_bus_error_stats()
+  can: flexcan: use can_update_bus_error_stats()
+  can: dev: add helpers to setup an error frame
+  can: flexcan: use helpers to setup the error frame
+  can: netlink: extend stats to the error types (ack, CRC, form, ...)
+  can: dev: update the error types stats (ack, CRC, form, ...)
+
+ drivers/net/can/dev/dev.c              | 45 ++++++++++++++++++++++++
+ drivers/net/can/flexcan/flexcan-core.c | 29 +++++-----------
+ include/linux/can/dev.h                | 47 ++++++++++++++++++++++++++
+ include/uapi/linux/can/netlink.h       |  6 ++++
+ 4 files changed, 106 insertions(+), 21 deletions(-)
+
+-- 
+2.43.0
+
 
