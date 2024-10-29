@@ -1,339 +1,819 @@
-Return-Path: <linux-kernel+bounces-386435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B41029B437A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:48:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D83CB9B4384
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:49:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D73AC1C21928
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:48:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 076661C21E3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 07:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F934202F85;
-	Tue, 29 Oct 2024 07:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C75202F6E;
+	Tue, 29 Oct 2024 07:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="IYjaw3D7"
-Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011046.outbound.protection.outlook.com [52.101.125.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="toy8OjQ+"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73541CCB33;
-	Tue, 29 Oct 2024 07:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730188098; cv=fail; b=T3wQyzAy8RLHccq1eNpG+/jizsAxjNz6Jm+N4TQq8zMHYxs9yP8OhBOF666RfJnKHPiNfmmVVgs4LEtwAqTipIT0vRqDhepVjhlFRboTP+oh9s0DXoQ1ibQQ2Fkbw9hqCY77rS1YUTirfXtnXdUe9Ciff28/v80vX+wpoXpayp4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730188098; c=relaxed/simple;
-	bh=2H60Gi/DuVcQ6lohi+x/KzgjTByagPf4eIym7zJAhW8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=cT94Tsom7ebLwI9dTrAMsD8NB81477jnFj7KXlzJFiBCdMzoH9h9pc+nqCrYFljC5VqGf6eaHc0XlizIisnbDRVvGj0Wn1hAuen+xKAcCrmYxN+26W3Xg9NlP5tw16fubF09rWqP+nwKJQ6LD8f/z3xjTBxWUb1c8aGMVlwJcWY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=IYjaw3D7; arc=fail smtp.client-ip=52.101.125.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=QJ0fpGRPLCu5rDEPbcwXpYRPtVnZU36zQMF7IwVrf5otHKl0G3ENA+jBG3vg2KFGB2csSXiTtvhjHHjkyUPUMZt8gzkG5Hf37INuRTkNp5za8rk/IR+pHU5XVRJ8LQ519h+rtFxMcVmP2H9LXsZFDjhl6kDxfHtAWs/MWlri7ajtT2pkFLYU+0+eGNAih3hO+Ztf6MQIs7X1xO8lIU9de/hr5R5zCR0AB2/+sSfCCFLJd6f9pDiEE9UGlyrr5XlXgGGng+GK7HedDwams+fxPkFEmrXRaDO70zkKxi/nPVF8cnVr4NUHmala8LGBcdUK9ENfo/Uc150XNzkGIi7OPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2H60Gi/DuVcQ6lohi+x/KzgjTByagPf4eIym7zJAhW8=;
- b=sCRToV2W2FhLwR9Q1flT9LAQEt3wSA1JSlKKrQPeQSpasu/KTvtwRyw7F55SUNgn4Y1tqtWWWsx6VDeF2B0tEsBISXVWS3XRTltmBw/ajGXaZSKJoK4KOgljFxDLX5+2sv3348br5Obb5WWQu1ktFcRR/01/QgDv3kUCLU5fEBGxV4gqZoz/+sSHdGsPgr59nrNcg6MNETDqaf6STYFZECSac30Ov4YpfXiM+UyLAaTyOe1M1SzAvA6mw0OilkVhXEl59kU65fPnMYfeMkALs3P2W1mFgou5EQ/EBWqeaUvavxoxZWaiN2wHrnmxxHsyFVNSToSjDtVpT5mbqqKP0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2H60Gi/DuVcQ6lohi+x/KzgjTByagPf4eIym7zJAhW8=;
- b=IYjaw3D7B2DWye72BkRBoKmGIIRaBjvn37t7zy0em3J8xzP+aFjkZUhrp2aDpdfxxJ/MBrGUQjTepqvaC8b7TkjliEcL+3FTwUaQ47RybWGJhYzSZDYLZKVBAeB671ziNQjxq0kKgSuhVVzbfmlVB81/XbgKwuPrP6uuoZKSjtQ=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYCPR01MB11094.jpnprd01.prod.outlook.com (2603:1096:400:3df::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Tue, 29 Oct
- 2024 07:48:08 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%3]) with mapi id 15.20.8093.025; Tue, 29 Oct 2024
- 07:48:08 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Liu Ying <victor.liu@nxp.com>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-media@vger.kernel.org"
-	<linux-media@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-CC: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org"
-	<rfoss@kernel.org>, laurent.pinchart <laurent.pinchart@ideasonboard.com>,
-	"jonas@kwiboo.se" <jonas@kwiboo.se>, "jernej.skrabec@gmail.com"
-	<jernej.skrabec@gmail.com>, "maarten.lankhorst@linux.intel.com"
-	<maarten.lankhorst@linux.intel.com>, "mripard@kernel.org"
-	<mripard@kernel.org>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
-	"airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"quic_jesszhan@quicinc.com" <quic_jesszhan@quicinc.com>, "mchehab@kernel.org"
-	<mchehab@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
-	<will@kernel.org>, "sakari.ailus@linux.intel.com"
-	<sakari.ailus@linux.intel.com>, "hverkuil@xs4all.nl" <hverkuil@xs4all.nl>,
-	"tomi.valkeinen@ideasonboard.com" <tomi.valkeinen@ideasonboard.com>,
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"dmitry.baryshkov@linaro.org" <dmitry.baryshkov@linaro.org>, "arnd@arndb.de"
-	<arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>,
-	"thierry.reding@gmail.com" <thierry.reding@gmail.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>, "sam@ravnborg.org"
-	<sam@ravnborg.org>, "marex@denx.de" <marex@denx.de>
-Subject: RE: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
- display common properties
-Thread-Topic: [PATCH v4 08/13] dt-bindings: display: Document dual-link LVDS
- display common properties
-Thread-Index:
- AQHbKOKZPN4b66+xp0G7h8Y65TjgzbKdQo2AgAAK22CAAATsgIAAAEOwgAAFyICAAAFroA==
-Date: Tue, 29 Oct 2024 07:48:08 +0000
-Message-ID:
- <TY3PR01MB113465D2F4C35A0728993D35E864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20241028023740.19732-1-victor.liu@nxp.com>
- <20241028023740.19732-9-victor.liu@nxp.com>
- <01c1c4f3-1652-4b08-bd35-08b4e1c04c79@nxp.com>
- <TY3PR01MB11346805C5D524D264669D178864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <750920ae-36b9-47f5-84e9-779332739f86@nxp.com>
- <TY3PR01MB1134610B42A1D3424D97B04CA864B2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <a166da61-8cd4-44c9-987b-94d8a62faf82@nxp.com>
-In-Reply-To: <a166da61-8cd4-44c9-987b-94d8a62faf82@nxp.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB11094:EE_
-x-ms-office365-filtering-correlation-id: ac5a5c50-0b84-4ec5-ac1d-08dcf7ee07de
-x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?NGgrc252SUdZOW5CY1E1U2hnbGZvYmlYN3l3WGtQeXBOYWVocndMNEhwbk0y?=
- =?utf-8?B?cms4SDIzRm9sb2RlV0ptcGJ3MDdtUUlzWXRvRVZUdlJSUUttSXU3cGFuSGR2?=
- =?utf-8?B?cVNkUWdJSUVlaVEraFpQTENaNUlGd1pFTENVa3Z1akpHTkQyMFV2SzJ2UmM0?=
- =?utf-8?B?d3prM2VZZUZQWkR4OVdQbkdBVUtPN3BjWFl0QTBtQ2g1VTlMRjBkb1c0SjF0?=
- =?utf-8?B?dG5LSlFxNWhUTHZQakJpWW9NUmkyM3JDTUNDaGdyUmp1cWxZWThlOTYzdU5R?=
- =?utf-8?B?NHhkRUVidWNKWGFsaGhJditTQUxueEpTeXh0VDllY3cvSFpkalZIM25KdVVk?=
- =?utf-8?B?YWlnQ1ZyUFBlNWx6WGxuR2lDekR0dmRJL2J1Z2tkN1lUa0VvU1RPWHlLV285?=
- =?utf-8?B?aFFlMitGSktLL0d0WC9CSkRRSGdIV2xnditMR3R1VXNNSXc2dGdHcUlDdkl2?=
- =?utf-8?B?TXhSRG1kWFhYSklQRXZ3ZEx5YmpqYmd0VkcwNnRmRVA0NHdiVExSTlY1VDdK?=
- =?utf-8?B?a2d5aUd2ZTZ3TW10RURCeVJVMHQyTzQ2dzJ0S3Q0WmdYcHNZVUI4Zy9aUEV5?=
- =?utf-8?B?RUptSlhCcmJEb1RPTUFma2VmcjRZbVd2ak5ucEUzbk53MGNGaU1hNjk0QS92?=
- =?utf-8?B?dDk5OTlEaVRqTHU1RTRwOWkvczhnNTRNeU8vbVB6NnpBWXZTZmxEeDRUa2Uw?=
- =?utf-8?B?YUcxQzZCcHcyRmNJZHB3Vm9CQjAyM2h0VWpiUk5FVEpsZFVpR2JBR1E3K0Zo?=
- =?utf-8?B?cWxGVU9LL0ltVEVXL09lZFdzN09Xa3I3dllPYnJBNWV5YVZrcm1wUmREYTlh?=
- =?utf-8?B?dzU2dEtxa1B3aHpzM2xhWGFDVnRYSnhXY2ZvR0hhSTIyNnBkUzlRWi9kT2lG?=
- =?utf-8?B?bFJNQUlIMG5mK20zN2x4RHBGcWg5cUp0aVlsY3JCTzZ0YXFZeHhsVVBZbTN2?=
- =?utf-8?B?V05MaCtyS1lDa1JFVFJkSTNOalRQRm5XMzVNeXoySEN6SlZISGR3bEFUN2V5?=
- =?utf-8?B?bGdZQjlNeWFLSU5BNEVtZGJnYUE1UFZtYUd5eGxEZDlBNUZlZ0M1MjVoZVJP?=
- =?utf-8?B?QUtBUWg0RmtURCt4WVBjNHp1bEpwQkhCeDlBanZvTnJVaW8vSUpOUnFLdlhT?=
- =?utf-8?B?UWtaMyt4UWNWd1dpU1ZLSHV1RFc3Q0FXemtVczNjQUQ1N1hqdnpzVXEzSVZC?=
- =?utf-8?B?cWpHRWhhc2cyQ2xYa3k0SlBWMjJTVGRtTEpqZGhFMjZKVkNDSEhJQUNEWGJt?=
- =?utf-8?B?ZGIxOEtCZTFVZFVyREZLYWR0ZTFwQVZ5N0J5YTFGeWdrRy95eEZ5QVA3Q0lw?=
- =?utf-8?B?NlNHMjBrS3VKWEhHbDNuTW0vQ0NUVWtiTVZaQWpNNUVzcXpqMjJQdVp6M2w1?=
- =?utf-8?B?cnlnZ3p1WTZlUVhnVkFWWVFqRmYzVkNRTW5kbUhvQWYwSVYyRWIweVFBTHZE?=
- =?utf-8?B?dGllQ2VOVUhaNUU5UXUxNzF5ZUExYVVXVkVzZUFvZnM4Mzh1dXpXU2o4elhp?=
- =?utf-8?B?ckRGUjhxWEtRU3M5K2FqVFJYSGQ1STlIZnNNVUkzdDk4RVdQM2R2MEd2Um5I?=
- =?utf-8?B?ZzRqamhlR0x1aEM0a3hRYlVnaE82aDFZa0JKc0VnVDN5aUJLb1ZjdnNvbTZn?=
- =?utf-8?B?NFAyckJtSG9wSVU5TFFUVXdaRitkSVg2VGVPRXJkS2wvYjN1ZkNKZDdLSlRr?=
- =?utf-8?B?OWxJVlBiUTZyZmpDTGhnY3A4M05oMmdBczJ1SVJVWloxeS82bFY3S1pkejBW?=
- =?utf-8?Q?+8ajdUiSYg9j/eUaws+64P4S2089HjrGTl40Vrr?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VzdmWDc2ZFp2blU1RlJ4V1VCT1A1TnlOVHluYmxIdzRFdWFnZU5pVUhKb0M2?=
- =?utf-8?B?VEdtaFNqUHdydUowTCtpNE1KMkpzbzFRRlZYM3V6QW1uZ3VlLzIyOFZ4RFFO?=
- =?utf-8?B?Z21NZ25YdytqcFk1RWFKZnBhOVIwMFRvT092U1h1SDFRaGRrRU1QZU9HbEpN?=
- =?utf-8?B?dWU1dVRGWXFIcmZZNW1weHU4K2hxODhxZGw3WTcvQTdnNnVteUIzTkJibFNU?=
- =?utf-8?B?czFxdXFIV0QwTUZGZE9pV1d5QUIxVHlqQkVnZjhkZzNENEFlWllTcjRVaGhI?=
- =?utf-8?B?bnF5aHBJeUMvWW1Od0xOcTNJSi9adVdmUVpiQ1RqYVdOSlFqa3ZyTldGQm0y?=
- =?utf-8?B?SkFxRlFiR0ovaFJsQXRRZHRyUkR1Mk5OY1I5UUtXU2M2T0dsZ2dFRWxVK3lS?=
- =?utf-8?B?dlZIQlN5MnpkaWNwdkVTK3JYalE1amF5K1EzWGRZVHA3d0dBNW1lZytnS0Iv?=
- =?utf-8?B?dVhYcDg5YmNIYUhaZmZOM0RjUkxDWkcvYXloVFpsRkdtRG9sVWNmOTk5bzY3?=
- =?utf-8?B?dCsra3pHQ3FJaGRWZ2NxeXFJbUFjOTYyOUJyOFBFK0pnd2dRcGRQbW50TXph?=
- =?utf-8?B?MTZrV1dhd1d6WEwxTytqWFE5ZWZGUnRRQ1Via1RPeEpVMTFzdmQ3dkdwNHRv?=
- =?utf-8?B?QVE3NXAvMU5oZ0NIY2taRmJBQTdjYUw3Mys2VDN4MVF2MUtxNWlQK2ljWDdU?=
- =?utf-8?B?NVhSOTR5VGY1d0hwNDJLT0JxdTRrcHY0N3ovM2ZPUitCemJ4T1Q1U2lZMTM5?=
- =?utf-8?B?Z0J0VUd5MnVVazdGY3VhRFBGZmtPQUpJZ1Z3dG84Mzlpdm9xU1E1T0QxU3gw?=
- =?utf-8?B?ODVCd0k0RENxY1c1SnU2NDdZbmVsZmZ6aDF2cVJiem5IdEVmUUNsR0ZJekE4?=
- =?utf-8?B?UlZweVVlZkppbHpVTVRLTnU5R2IwSFlNZWRjYjlmV1NOV0pVTDJVTU1uSVh0?=
- =?utf-8?B?UzFjNkJLcXVjRENrNitoVkE5ejQ3bDhDS1h0WEJzNjBnUS92ZTVpSjZ1ODBq?=
- =?utf-8?B?SEU1d3ZndktkTmo0R2RVYjNWeFJadUJsbUtFd2IwWXZqZzVFeXByYTRjUjVR?=
- =?utf-8?B?VHFwcVAzWUlPdVdFRVpmaHdHQjhWNjBHcjVLN25DeEpNdXg4SDhyOGxsUE81?=
- =?utf-8?B?RlJmaGpRcngwVDhkRHZYRVVTLzRtVkZMQmRFS0xPOXVwNzBTOWtwTWlINzhY?=
- =?utf-8?B?Sk16WHBuUGdITGgzZHBDc1BPR3o0Sk91SVV1VkEzbnAzSGY2cFFRbjhFZ2Rj?=
- =?utf-8?B?akg1T1dHblFQcXpwdWVqY1hZWTFyRmw4Y0NXaXpydGFIZ2xFdTR3UFBSS3dR?=
- =?utf-8?B?VzR2ZzdQS2k2N3c1L0VteU5QTE9DN04yZzFkM0w4dUVoSUNlK21oeS9Iam5Z?=
- =?utf-8?B?M1FvOFk5M2tVdm9ZUVlxNHRXWnQ0OE0wOVptL0RUOGVMRjdERC9ORU5XV0Qx?=
- =?utf-8?B?YmR2TDBzdDJqTjVEZkxETlJac1V6QTJVTmhQd2pTVWhDbFU3L2pYNTVkdmhY?=
- =?utf-8?B?bncxbUpjdXR1dTBoaHRQSnlXb2xZVEovN3VvQlc0MFZpalEzWElCSHhWWm1q?=
- =?utf-8?B?d3pPbThsT2VLVjU2azN6NW9URURIT2YyUCtPMnFJQW9qUDFDQjJITFd4TzlI?=
- =?utf-8?B?ZXZtdm9Tc1R2N3ltTllRY240eUErWmM2TFJ2bVBGTk5RTUdjaU5TVG1BemdH?=
- =?utf-8?B?RnZvM3lCRVVLdXBlVHZGaGZTUUhsdWF4ektqdUM0TDhxTGp1NUlkUFdRM29B?=
- =?utf-8?B?aDhQQ3lOVzl2Y212TDNQMFoyQnl5aks5aGtHSUR6L016WU4zaWsyZkQ5MzV4?=
- =?utf-8?B?WEJ3d0E5NFh0aDJRZ3I2Yk00UkVzd3hoOElHcWY1ZkQ3c3N6TGJjcDJ1SnBY?=
- =?utf-8?B?NWNraktQVVlOejBmSWVFMWR2c21xd2czZW1DN2JybWVVbDljbGx3VktKWTdZ?=
- =?utf-8?B?U01MK2xyUVI3SVVBQzltajRkdnNLbXB2VjdxbGtZTEFnSUMxM2VXd05KemdC?=
- =?utf-8?B?V2JCeUFZME9BY3I1S3ZTeFM0dk9MdGZoUVNBRmpmM1FEL3BKeGJZamtZNngw?=
- =?utf-8?B?VlZyNnlpZ29DTnF1b0phWWVKQ2pGaWY0VUJkelM3TEVEK2swRHJER1FEdGNH?=
- =?utf-8?Q?FW21c25/V9daDD6AeaIT7aMxh?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CEF2036EA
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 07:49:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730188156; cv=none; b=l5C++DofUzNO3O9fe6w71UbDkZttg7M1qC/N3LvqTWNqbEzxLpaZdZc5MgqEVo5ULQS2GqKTklaM8HTwXavmSJiZ9kkrqkRECzLAqHfAAu9xS6FgdhCnS6wbUDPXzJnJmMSbzjn0bYdZ1doLo6qttClfGNARL6o0iZlUzI/dGCc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730188156; c=relaxed/simple;
+	bh=fnnipu1v9HmdJU4ysZHd39XDD27bDCU235ZUeCAg6nQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=lVjgHrWfp5xEAuFo93heSl0pjSEAeZ1+avVAhsuz3OnOk1uuKR7Kx28JVEHFCQgc7R6bvTSv3KZXUePNSG/F+M4dh8jE+DxrhMFtfB1AMVdbS4Co5KoIPzoDJe8PFFqAk3K0X7NRDHJ1EfK+aT88b1x3SvvZYLW+nj8EaJPb2qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=toy8OjQ+; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb57f97d75so42943411fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 00:49:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730188149; x=1730792949; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QCw635TGuENx07EaRSTZGCzhpZFETm5Vel7NYeU7n3E=;
+        b=toy8OjQ+COiaBQ0H5w/rIQhKurHXlaL9CRfHvxxyCz/RhIcm1mo99rEqdOoIAGXTHb
+         tPxFwlGMWTk2Ytt8PwS9t1iJ34bRf/5bc8nGIE6yGWKdKR1o66S6b4b+jISITutF6L/z
+         6kAl8jiqM3NoPcxOy6hoXP63laWtGspXhCt/rqzQB7AF6O90a6HBbK01xsjUfOOu7Ay2
+         S0XWdNG0JbVj4+8b0/1ZSRi0QQXHUNxJIZMvY/bc1zFeGA7wtcgljUGAvfKtuSWVW+Co
+         XsBznXSgYirfIQuunSqNivAEqPWLHr37XN042Mud9cQzf/zceESaTS1mfHvPvG7TxUUV
+         wZ+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730188149; x=1730792949;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QCw635TGuENx07EaRSTZGCzhpZFETm5Vel7NYeU7n3E=;
+        b=aT2WlmpQC/mSJ3REC2vH2kS77XWw21VlSHKrbDgBSI0keRtip953MfS/PwTF1dhE8N
+         0I9OZztYqidk1ga1XYXPDaZC9FyJ9QZHdb8DYS1KoP6vgQRqkqyFlfGqkzWt6FaEeMlO
+         10D5Dru5us0E621sJB+zr8gqmR2t812l7rxn9coaiij+ts3S1jpqgWrLZ4p6JgGuSbDz
+         BbQmKCvPbXxEyFoDiq9QnqOxR7v4bpPOnct9WqlAip8WC6vB1VJ+W7dJ83BP4tYI61hL
+         xKvHNuforpXkAe1pgbp8flWYy5sesU0ZtHD3IhjZFuegGGs3u3o8xNYajU88WfaCTEnN
+         P1nA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6s13bvBSZ2fbbChM4b4QjyyenLtoAAyfVffNYcrejKq01RBB3FuRQ930lGqkdXdCi+/CHHpgfKjzG0ok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKxqEw8lrEuC5Cpq11/nGf1GDlk9qW9xnJFAWf8r2b1RIRvj63
+	pesCZmOryE7uyqw7losbFFMbw+dQnI/kD9EpNRoklkG9zZMJlI9nuluX9XWlLks=
+X-Google-Smtp-Source: AGHT+IEiy2uM0QbU0rGfI+6lQhTGNKNRDAhi18c5OfAAL1QDrCnK1OjCXdp0JS6eDw82pAWqu+69qg==
+X-Received: by 2002:a05:6512:3ca1:b0:539:edf4:68b4 with SMTP id 2adb3069b0e04-53b34a320e7mr3505181e87.57.1730188149240;
+        Tue, 29 Oct 2024 00:49:09 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b1cc0asm11850202f8f.10.2024.10.29.00.49.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 00:49:08 -0700 (PDT)
+From: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Olof Johansson <olof@lixom.net>
+Cc: Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Qiang Zhao <qiang.zhao@nxp.com>,
+	Hitomi Hasegawa <hasegawa-hitomi@fujitsu.com>,
+	Huisong Li <lihuisong@huawei.com>,
+	Linus Walleij <linusw@kernel.org>,
+	Imre Kaloz <kaloz@openwrt.org>,
+	Karol Gugala <kgugala@antmicro.com>,
+	Mateusz Holenko <mholenko@antmicro.com>,
+	Gabriel Somlo <gsomlo@gmail.com>,
+	Yinbo Zhu <zhuyinbo@loongson.cn>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Nishanth Menon <nm@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	=?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>,
+	Mark Brown <broonie@kernel.org>,
+	David Wu <david.wu@rock-chips.com>,
+	Jianqun Xu <jay.xu@rock-chips.com>,
+	Jay Buddhabhatti <jay.buddhabhatti@amd.com>,
+	Radhey Shyam Pandey <radhey.shyam.pandey@amd.com>,
+	Izhar Ameer Shaikh <izhar.ameer.shaikh@amd.com>,
+	Naman Trivedi Manojbhai <naman.trivedimanojbhai@amd.com>,
+	linux-arm-kernel@lists.infradead.org,
+	soc@lists.linux.dev,
+	linux-aspeed@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	loongarch@lists.linux.dev,
+	linux-mediatek@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-tegra@vger.kernel.org,
+	linux-pm@vger.kernel.org
+Subject: [PATCH] soc: Switch back to struct platform_driver::remove()
+Date: Tue, 29 Oct 2024 08:48:58 +0100
+Message-ID: <20241029074859.509587-2-u.kleine-koenig@baylibre.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac5a5c50-0b84-4ec5-ac1d-08dcf7ee07de
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2024 07:48:08.5902
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: JH8wrHJWJ2GvEwCX7cOii3mAyhhsRlMOrI3a85qSgmtAKckOGiojV14MHpqc/qhCDloDuAvIHJgaVBUs1rrpwgZwsa65W9/kztxmIu7GoAE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB11094
+Content-Type: text/plain; charset=UTF-8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=26321; i=u.kleine-koenig@baylibre.com; h=from:subject; bh=fnnipu1v9HmdJU4ysZHd39XDD27bDCU235ZUeCAg6nQ=; b=owEBbQGS/pANAwAKAY+A+1h9Ev5OAcsmYgBnIJNr/CHo9H03UCk92GQ+eXG9SjbKcOiSiGJM3 fvPNk4tk5+JATMEAAEKAB0WIQQ/gaxpOnoeWYmt/tOPgPtYfRL+TgUCZyCTawAKCRCPgPtYfRL+ Tr7WB/4oG7s/vSEelL6mw2Yv4b8acJHHEU0TymDWXfks0AghGYPP09hc+oS3icrfHXQ+BGjoJ4m iHzustxNtNbSMlEMziFj5toAnzAckkrZOp+HBPNyMa6BZ4d+Rev8bbiv3EEqHAW9yMSptFqS29R up+wNm2mTkdJHQA/zBMf2mzB1CBTyNq1QzyQi/v310HaL+LmsmSZnWwtmGV1a4ZmcgG9yYjrClI ThNQA3UAlM0/Dh4et/gbxxYd5I+GEuCgjI7dMaXzy9TqsfGaytroA4rHca5F+CuNw1WH8L0Nmz+ bnCkMH4JmUhw0NplwXtSNUoyb5xFcEUpWyvq7xgBzBLWuZcY
+X-Developer-Key: i=u.kleine-koenig@baylibre.com; a=openpgp; fpr=0D2511F322BFAB1C1580266BE2DCDD9132669BD6
+Content-Transfer-Encoding: 8bit
 
-DQpIaSBMaXUgWWluZywNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBk
-cmktZGV2ZWwgPGRyaS1kZXZlbC1ib3VuY2VzQGxpc3RzLmZyZWVkZXNrdG9wLm9yZz4gT24gQmVo
-YWxmIE9mIExpdSBZaW5nDQo+IFNlbnQ6IDI5IE9jdG9iZXIgMjAyNCAwNzozNQ0KPiBTdWJqZWN0
-OiBSZTogW1BBVENIIHY0IDA4LzEzXSBkdC1iaW5kaW5nczogZGlzcGxheTogRG9jdW1lbnQgZHVh
-bC1saW5rIExWRFMgZGlzcGxheSBjb21tb24gcHJvcGVydGllcw0KPiANCj4gT24gMTAvMjkvMjAy
-NCwgQmlqdSBEYXMgd3JvdGU6DQo+ID4gSGkgTGl1IFlpbmcsDQo+IA0KPiBIaSBCaWp1LA0KPiAN
-Cj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+PiBGcm9tOiBMaXUgWWlu
-ZyA8dmljdG9yLmxpdUBueHAuY29tPg0KPiA+PiBTZW50OiAyOSBPY3RvYmVyIDIwMjQgMDc6MTMN
-Cj4gPj4gU3ViamVjdDogUmU6IFtQQVRDSCB2NCAwOC8xM10gZHQtYmluZGluZ3M6IGRpc3BsYXk6
-IERvY3VtZW50DQo+ID4+IGR1YWwtbGluayBMVkRTIGRpc3BsYXkgY29tbW9uIHByb3BlcnRpZXMN
-Cj4gPj4NCj4gPj4gT24gMTAvMjkvMjAyNCwgQmlqdSBEYXMgd3JvdGU6DQo+ID4+PiBIaSBMaXUg
-WWluZywNCj4gPj4NCj4gPj4gSGkgQmlqdSwNCj4gPj4NCj4gPj4+DQo+ID4+Pj4gLS0tLS1Pcmln
-aW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4+PiBGcm9tOiBMaXUgWWluZyA8dmljdG9yLmxpdUBueHAu
-Y29tPg0KPiA+Pj4+IFNlbnQ6IDI5IE9jdG9iZXIgMjAyNCAwNjoxNw0KPiA+Pj4+IFN1YmplY3Q6
-IFJlOiBbUEFUQ0ggdjQgMDgvMTNdIGR0LWJpbmRpbmdzOiBkaXNwbGF5OiBEb2N1bWVudA0KPiA+
-Pj4+IGR1YWwtbGluayBMVkRTIGRpc3BsYXkgY29tbW9uIHByb3BlcnRpZXMNCj4gPj4+Pg0KPiA+
-Pj4+IE9uIDEwLzI4LzIwMjQsIExpdSBZaW5nIHdyb3RlOg0KPiA+Pj4+PiBEdWFsLWxpbmsgTFZE
-UyBkaXNwbGF5cyByZWNlaXZlIG9kZCBwaXhlbHMgYW5kIGV2ZW4gcGl4ZWxzDQo+ID4+Pj4+IHNl
-cGFyYXRlbHkgZnJvbSBkdWFsIExWRFMgbGlua3MuICBPbmUgbGluayByZWNlaXZlcyBvZGQgcGl4
-ZWxzIGFuZA0KPiA+Pj4+PiB0aGUgb3RoZXIgcmVjZWl2ZXMgZXZlbiBwaXhlbHMuICBTb21lIG9m
-IHRob3NlIGRpc3BsYXlzIG1heSBhbHNvDQo+ID4+Pj4+IHVzZSBvbmx5IG9uZSBMVkRTIGxpbmsg
-dG8gcmVjZWl2ZSBhbGwgcGl4ZWxzLCBiZWluZyBvZGQgYW5kIGV2ZW4gYWdub3N0aWMuDQo+ID4+
-Pj4+IERvY3VtZW50IGNvbW1vbiBwcm9wZXJ0aWVzIGZvciB0aG9zZSBkaXNwbGF5cyBieSBleHRl
-bmRpbmcgTFZEUw0KPiA+Pj4+PiBkaXNwbGF5IGNvbW1vbiBwcm9wZXJ0aWVzIGRlZmluZWQgaW4g
-bHZkcy55YW1sLg0KPiA+Pj4+Pg0KPiA+Pj4+PiBTdWdnZXN0ZWQtYnk6IERtaXRyeSBCYXJ5c2hr
-b3YgPGRtaXRyeS5iYXJ5c2hrb3ZAbGluYXJvLm9yZz4NCj4gPj4+Pj4gU2lnbmVkLW9mZi1ieTog
-TGl1IFlpbmcgPHZpY3Rvci5saXVAbnhwLmNvbT4NCj4gPj4+Pj4gLS0tDQo+ID4+Pj4+IHY0Og0K
-PiA+Pj4+PiAqIFNxdWFzaCBjaGFuZ2UgZm9yIGFkdmFudGVjaCxpZGstMjEyMXdyLnlhbWwgYW5k
-DQo+ID4+Pj4+ICAgcGFuZWwtc2ltcGxlLWx2ZHMtZHVhbC1wb3J0cy55YW1sIHdpdGggbHZkcy1k
-dWFsLXBvcnRzLnlhbWwuDQo+ID4+Pj4+IChSb2IpDQo+ID4+Pj4+ICogSW1wcm92ZSBkZXNjcmlw
-dGlvbiBpbiBsdmRzLWR1YWwtcG9ydHMueWFtbC4gIChLcnp5c3p0b2YpDQo+ID4+Pj4+DQo+ID4+
-Pj4+IHYzOg0KPiA+Pj4+PiAqIE5ldyBwYXRjaC4gIChEbWl0cnkpDQo+ID4+Pj4+DQo+ID4+Pj4+
-ICAuLi4vYmluZGluZ3MvZGlzcGxheS9sdmRzLWR1YWwtcG9ydHMueWFtbCAgICAgfCA3NiArKysr
-KysrKysrKysrKysrKysrDQo+ID4+Pj4+ICAuLi4vZGlzcGxheS9wYW5lbC9hZHZhbnRlY2gsaWRr
-LTIxMjF3ci55YW1sICAgfCAxNCArLS0tDQo+ID4+Pj4+ICAuLi4vcGFuZWwvcGFuZWwtc2ltcGxl
-LWx2ZHMtZHVhbC1wb3J0cy55YW1sICAgfCAyMCArLS0tLQ0KPiA+Pj4+PiAgMyBmaWxlcyBjaGFu
-Z2VkLCA3OCBpbnNlcnRpb25zKCspLCAzMiBkZWxldGlvbnMoLSkgIGNyZWF0ZSBtb2RlDQo+ID4+
-Pj4+IDEwMDY0NA0KPiA+Pj4+PiBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlz
-cGxheS9sdmRzLWR1YWwtcG9ydHMueWFtbA0KPiA+Pj4+Pg0KPiA+Pj4+PiBkaWZmIC0tZ2l0DQo+
-ID4+Pj4+IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3BsYXkvbHZkcy1k
-dWFsLXBvcnRzLnlhbWwNCj4gPj4+Pj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
-Z3MvZGlzcGxheS9sdmRzLWR1YWwtcG9ydHMueWFtbA0KPiA+Pj4+PiBuZXcgZmlsZSBtb2RlIDEw
-MDY0NA0KPiA+Pj4+PiBpbmRleCAwMDAwMDAwMDAwMDAuLjVmN2EzMDY0MDQwNA0KPiA+Pj4+PiAt
-LS0gL2Rldi9udWxsDQo+ID4+Pj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5k
-aW5ncy9kaXNwbGF5L2x2ZHMtZHVhbC1wb3J0cy55YQ0KPiA+Pj4+PiArKysgbWwNCj4gPj4+Pj4g
-QEAgLTAsMCArMSw3NiBAQA0KPiA+Pj4+PiArIyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogKEdQ
-TC0yLjAtb25seSBPUiBCU0QtMi1DbGF1c2UpICVZQU1MDQo+ID4+Pj4+ICsxLjINCj4gPj4+Pj4g
-Ky0tLQ0KPiA+Pj4+PiArJGlkOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9kaXNwbGF5
-L2x2ZHMtZHVhbC1wb3J0cy55YW1sIw0KPiA+Pj4+PiArJHNjaGVtYTogaHR0cDovL2RldmljZXRy
-ZWUub3JnL21ldGEtc2NoZW1hcy9jb3JlLnlhbWwjDQo+ID4+Pj4+ICsNCj4gPj4+Pj4gK3RpdGxl
-OiBEdWFsLWxpbmsgTFZEUyBEaXNwbGF5IENvbW1vbiBQcm9wZXJ0aWVzDQo+ID4+Pj4+ICsNCj4g
-Pj4+Pj4gK21haW50YWluZXJzOg0KPiA+Pj4+PiArICAtIExpdSBZaW5nIDx2aWN0b3IubGl1QG54
-cC5jb20+DQo+ID4+Pj4+ICsNCj4gPj4+Pj4gK2Rlc2NyaXB0aW9uOiB8DQo+ID4+Pj4+ICsgIENv
-bW1vbiBwcm9wZXJ0aWVzIGZvciBMVkRTIGRpc3BsYXlzIHdpdGggZHVhbCBMVkRTIGxpbmtzLg0K
-PiA+Pj4+PiArRXh0ZW5kIExWRFMgZGlzcGxheQ0KPiA+Pj4+PiArICBjb21tb24gcHJvcGVydGll
-cyBkZWZpbmVkIGluIGx2ZHMueWFtbC4NCj4gPj4+Pj4gKw0KPiA+Pj4+PiArICBEdWFsLWxpbmsg
-TFZEUyBkaXNwbGF5cyByZWNlaXZlIG9kZCBwaXhlbHMgYW5kIGV2ZW4gcGl4ZWxzDQo+ID4+Pj4+
-ICsgc2VwYXJhdGVseSBmcm9tICB0aGUgZHVhbCBMVkRTIGxpbmtzLiBPbmUgbGluayByZWNlaXZl
-cyBvZGQNCj4gPj4+Pj4gKyBwaXhlbHMgYW5kIHRoZSBvdGhlciByZWNlaXZlcyAgZXZlbiBwaXhl
-bHMuIFNvbWUgb2YgdGhvc2UNCj4gPj4+Pj4gKyBkaXNwbGF5cyBtYXkgYWxzbyB1c2Ugb25seSBv
-bmUgTFZEUyBsaW5rIHRvICByZWNlaXZlIGFsbCBwaXhlbHMsIGJlaW5nIG9kZCBhbmQgZXZlbiBh
-Z25vc3RpYy4NCj4gPj4+Pj4gKw0KPiA+Pj4+PiArYWxsT2Y6DQo+ID4+Pj4+ICsgIC0gJHJlZjog
-bHZkcy55YW1sIw0KPiA+Pj4+PiArDQo+ID4+Pj4+ICtwcm9wZXJ0aWVzOg0KPiA+Pj4+PiArICBw
-b3J0czoNCj4gPj4+Pj4gKyAgICAkcmVmOiAvc2NoZW1hcy9ncmFwaC55YW1sIy9wcm9wZXJ0aWVz
-L3BvcnRzDQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKyAgICBwcm9wZXJ0aWVzOg0KPiA+Pj4+PiArICAg
-ICAgcG9ydEAwOg0KPiA+Pj4+PiArICAgICAgICAkcmVmOiAvc2NoZW1hcy9ncmFwaC55YW1sIy8k
-ZGVmcy9wb3J0LWJhc2UNCj4gPj4+Pj4gKyAgICAgICAgdW5ldmFsdWF0ZWRQcm9wZXJ0aWVzOiBm
-YWxzZQ0KPiA+Pj4+PiArICAgICAgICBkZXNjcmlwdGlvbjogdGhlIGZpcnN0IExWRFMgaW5wdXQg
-bGluaw0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsgICAgICAgIHByb3BlcnRpZXM6DQo+ID4+Pj4+ICsg
-ICAgICAgICAgZHVhbC1sdmRzLW9kZC1waXhlbHM6DQo+ID4+Pj4+ICsgICAgICAgICAgICB0eXBl
-OiBib29sZWFuDQo+ID4+Pj4+ICsgICAgICAgICAgICBkZXNjcmlwdGlvbjogdGhlIGZpcnN0IExW
-RFMgaW5wdXQgbGluayBmb3Igb2RkIHBpeGVscw0KPiA+Pj4+PiArDQo+ID4+Pj4+ICsgICAgICAg
-ICAgZHVhbC1sdmRzLWV2ZW4tcGl4ZWxzOg0KPiA+Pj4+PiArICAgICAgICAgICAgdHlwZTogYm9v
-bGVhbg0KPiA+Pj4+PiArICAgICAgICAgICAgZGVzY3JpcHRpb246IHRoZSBmaXJzdCBMVkRTIGlu
-cHV0IGxpbmsgZm9yIGV2ZW4NCj4gPj4+Pj4gKyBwaXhlbHMNCj4gPj4+Pj4gKw0KPiA+Pj4+PiAr
-ICAgICAgICBvbmVPZjoNCj4gPj4+Pj4gKyAgICAgICAgICAtIHJlcXVpcmVkOiBbZHVhbC1sdmRz
-LW9kZC1waXhlbHNdDQo+ID4+Pj4+ICsgICAgICAgICAgLSByZXF1aXJlZDogW2R1YWwtbHZkcy1l
-dmVuLXBpeGVsc10NCj4gPj4+Pj4gKyAgICAgICAgICAtIHByb3BlcnRpZXM6DQo+ID4+Pj4+ICsg
-ICAgICAgICAgICAgIGR1YWwtbHZkcy1vZGQtcGl4ZWxzOiBmYWxzZQ0KPiA+Pj4+PiArICAgICAg
-ICAgICAgICBkdWFsLWx2ZHMtZXZlbi1waXhlbHM6IGZhbHNlDQo+ID4+Pj4+ICsNCj4gPj4+Pj4g
-KyAgICAgIHBvcnRAMToNCj4gPj4+Pj4gKyAgICAgICAgJHJlZjogL3NjaGVtYXMvZ3JhcGgueWFt
-bCMvJGRlZnMvcG9ydC1iYXNlDQo+ID4+Pj4+ICsgICAgICAgIHVuZXZhbHVhdGVkUHJvcGVydGll
-czogZmFsc2UNCj4gPj4+Pj4gKyAgICAgICAgZGVzY3JpcHRpb246IHRoZSBzZWNvbmQgTFZEUyBp
-bnB1dCBsaW5rDQo+ID4+Pj4+ICsNCj4gPj4+Pj4gKyAgICAgICAgcHJvcGVydGllczoNCj4gPj4+
-Pj4gKyAgICAgICAgICBkdWFsLWx2ZHMtb2RkLXBpeGVsczoNCj4gPj4+Pj4gKyAgICAgICAgICAg
-IHR5cGU6IGJvb2xlYW4NCj4gPj4+Pj4gKyAgICAgICAgICAgIGRlc2NyaXB0aW9uOiB0aGUgc2Vj
-b25kIExWRFMgaW5wdXQgbGluayBmb3Igb2RkDQo+ID4+Pj4+ICsgcGl4ZWxzDQo+ID4+Pj4+ICsN
-Cj4gPj4+Pj4gKyAgICAgICAgICBkdWFsLWx2ZHMtZXZlbi1waXhlbHM6DQo+ID4+Pj4+ICsgICAg
-ICAgICAgICB0eXBlOiBib29sZWFuDQo+ID4+Pj4+ICsgICAgICAgICAgICBkZXNjcmlwdGlvbjog
-dGhlIHNlY29uZCBMVkRTIGlucHV0IGxpbmsgZm9yIGV2ZW4NCj4gPj4+Pj4gKyBwaXhlbHMNCj4g
-Pj4+Pj4gKw0KPiA+Pj4+PiArICAgICAgICBvbmVPZjoNCj4gPj4+Pj4gKyAgICAgICAgICAtIHJl
-cXVpcmVkOiBbZHVhbC1sdmRzLW9kZC1waXhlbHNdDQo+ID4+Pj4+ICsgICAgICAgICAgLSByZXF1
-aXJlZDogW2R1YWwtbHZkcy1ldmVuLXBpeGVsc10NCj4gPj4+Pj4gKyAgICAgICAgICAtIHByb3Bl
-cnRpZXM6DQo+ID4+Pj4+ICsgICAgICAgICAgICAgIGR1YWwtbHZkcy1vZGQtcGl4ZWxzOiBmYWxz
-ZQ0KPiA+Pj4+PiArICAgICAgICAgICAgICBkdWFsLWx2ZHMtZXZlbi1waXhlbHM6IGZhbHNlDQo+
-ID4+Pj4NCj4gPj4+PiBIbW0sIEkgc2hvdWxkIHJlcXVpcmUgcG9ydEAwIG9yIHBvcnRAMS4NCj4g
-Pj4+DQo+ID4+PiBGb3IgZHVhbCBMVkRTLCB5b3UgbmVlZCAzIHBvcnRzIGFzIGNvbW1vbiB1c2Ug
-Y2FzZQ0KPiA+Pg0KPiA+PiBGb3IgTFZEUyBwYW5lbHMsIG9ubHkgdHdvIHBvcnRzIGZvciBMVkRT
-IHNpbmsgYXJlIG5lZWRlZC4NCj4gPj4gRm9yIGRpc3BsYXkgYnJpZGdlcyB3aXRoIExWRFMgc2lu
-aywgb25lIGFkZGl0aW9uYWwgb3V0cHV0IHBvcnQgaXMNCj4gPj4gbmVlZGVkLiAgSG93ZXZlciwg
-SSdtIG5vdCBzdXJlIGlmIHRoaXMgb3V0cHV0IHBvcnQgc2hvdWxkIGJlDQo+ID4+IGRvY3VtZW50
-ZWQgaW4gdGhpcyBiaW5kaW5nIG9yIG5vdCwgYmVjYXVzZSBpdCBkb2Vzbid0IGxvb2sgY29tbW9u
-IGVub3VnaCBjb25zaWRlcmluZyB0aGUgTFZEUw0KPiBwYW5lbHMuDQo+ID4+DQo+ID4+Pg0KPiA+
-Pj4gMiBpbnB1dCBwb3J0cyBhbmQgMSBvdXRwb3J0IGFuZCBhbGwgYXJlIHJlcXVpcmVkIHByb3Bl
-cnRpZXMuDQo+ID4+DQo+ID4+IFRoZSBvdXRwdXQgcG9ydCBjYW5ub3QgYmUgcmVxdWlyZWQgZm9y
-IExWRFMgcGFuZWxzIGF0IGxlYXN0Lg0KPiA+DQo+ID4gQWNrLg0KPiA+DQo+ID4+DQo+ID4+IFdl
-IG5lZWQgdG8gcmVxdWlyZSBvbmUgb3IgdHdvIGlucHV0IHBvcnRzLCBiZWNhdXNlIElUNjI2MyBt
-YXkgdXNlIG9uZSBMVkRTIGxpbmsgb3IgdHdvLg0KPiA+DQo+ID4gVGhpcyBwYXRjaCBpcyBmb3Ig
-Z2VuZXJpYyBkdWFsIGxpbmsgY29tbW9uIGNhc2VzIGFuZCBpcyBub3QgYXBwbGljYWJsZSBmb3Ig
-SVQ2MjYzIHNpbmdsZSBsaW5rIGNhc2UuDQo+IA0KPiBCYXNlZCBvbiBwcmV2aW91cyBkaXNjdXNz
-aW9uKGVzcGVjaWFsbHkgRG1pdHJ5J3Mgc3VnZ2VzdGlvbiksIHRoaXMgYmluZGluZyBzaG91bGQg
-Y292ZXIgZGlzcGxheQ0KPiBicmlkZ2VzIHRoYXQgY2FuIHVzZSBvbmUgTFZEUyBzaW5rIHBvcnQg
-b3IgdHdvIExWRFMgc2luayBwb3J0cywgbGlrZSBJVDYyNjMuICBUbyBiZSBjbGVhciwgdGhvc2UN
-Cj4gYnJpZGdlcyBtYXkgaGF2ZSB0d28gbW9kZXMoc3VwcG9ydGVkIGJ5IG9uZQ0KPiBjaGlwKSAt
-IHNpbmdsZSBMVkRTIHNpbmsgbGluayBtb2RlIGFuZCBkdWFsIExWRFMgc2luayBsaW5rIG1vZGUu
-ICBUaG9zZSBicmlkZ2VzIGFyZSBjb25zaWRlcmVkIGFzDQo+IGNvbW1vbiBkdWFsLWxpbmsgTFZE
-UyBkaXNwbGF5cy4gIFRoYXQncyB3aHkgSSB3YXMgYXNrZWQgdG8gZXh0cmFjdCB0aGUgY29tbW9u
-DQo+IHByb3BlcnRpZXMgdG8gdGhpcyBzY2hlbWEgd2hlbiBhZGRpbmcgSVQ2MjYzIERUIGJpbmRp
-bmcuDQoNCkFzIHBlciBbMV0gYW5kIFsyXSBib3RoIHBhbmVscyBkb27igJl0IHN1cHBvcnQgc2lu
-Z2xlIExWRFMgbGluay4NCklUNjI2MyBpcyBicmlkZ2UgZGV2aWNlIHRoYXQgaGFzIHNpbmdsZSBh
-bmQgZHVhbCBsaW5rIHN1cHBvcnQuDQpOb3Qgc3VyZSB0aGUgc2luZ2xlIGxpbmsgY2FzZSBoYXMg
-dG8gYmUgdGFrZW4gY2FyZSBpbiBJVEU2MjYzIGJpbmRpbmcgaXRzZWxmLA0KTGVhdmluZyBEdWFs
-IGxpbmsgYXMgaXQgaXM/Pw0KDQpbMV0NCmh0dHBzOi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4
-L3Y2LjEyLXJjNS9zb3VyY2UvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rpc3Bs
-YXkvcGFuZWwvYWR2YW50ZWNoLGlkay0yMTIxd3IueWFtbA0KWzJdDQoNCmh0dHBzOi8vZWxpeGly
-LmJvb3RsaW4uY29tL2xpbnV4L3Y2LjEyLXJjNS9zb3VyY2UvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvcGFuZWwvcGFuZWwtc2ltcGxlLWx2ZHMtZHVhbC1wb3J0cy55
-YW1sDQoNCg0KQ2hlZXJzLA0KQmlqdQ0K
+After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
+return void") .remove() is (again) the right callback to implement for
+platform drivers.
+
+Convert all platform drivers below drivers/soc to use .remove(), with
+the eventual goal to drop struct platform_driver::remove_new(). As
+.remove() and .remove_new() have the same prototypes, conversion is done
+by just changing the structure member name in the driver initializer.
+
+On the way do a few whitespace changes to make indention consistent.
+
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@baylibre.com>
+---
+Hello,
+
+I did a single patch for all of drivers/soc. While I usually prefer to
+do one logical change per patch, this seems to be overengineering here
+as the individual changes are really trivial and shouldn't be much in
+the way for stable backports.
+
+There is no dedicated maintainer for all of drivers/soc, but I'd expect
+it to be ok to be picked up by the arm soc team.
+
+This is based on today's next, if conflicts arise when you apply it at
+some later time and don't want to resolve them, feel free to just drop
+the changes to the conflicting files. I'll notice and followup at a
+later time then. Or ask me for a fixed resend.
+
+Best regards
+Uwe
+
+ drivers/soc/aspeed/aspeed-lpc-ctrl.c        | 2 +-
+ drivers/soc/aspeed/aspeed-lpc-snoop.c       | 2 +-
+ drivers/soc/aspeed/aspeed-p2a-ctrl.c        | 2 +-
+ drivers/soc/aspeed/aspeed-uart-routing.c    | 2 +-
+ drivers/soc/fsl/dpaa2-console.c             | 2 +-
+ drivers/soc/fsl/qe/qmc.c                    | 2 +-
+ drivers/soc/fsl/qe/tsa.c                    | 2 +-
+ drivers/soc/fujitsu/a64fx-diag.c            | 2 +-
+ drivers/soc/hisilicon/kunpeng_hccs.c        | 2 +-
+ drivers/soc/ixp4xx/ixp4xx-npe.c             | 2 +-
+ drivers/soc/ixp4xx/ixp4xx-qmgr.c            | 2 +-
+ drivers/soc/litex/litex_soc_ctrl.c          | 2 +-
+ drivers/soc/loongson/loongson2_guts.c       | 2 +-
+ drivers/soc/mediatek/mtk-devapc.c           | 2 +-
+ drivers/soc/mediatek/mtk-mmsys.c            | 2 +-
+ drivers/soc/mediatek/mtk-socinfo.c          | 2 +-
+ drivers/soc/microchip/mpfs-sys-controller.c | 2 +-
+ drivers/soc/pxa/ssp.c                       | 2 +-
+ drivers/soc/qcom/icc-bwmon.c                | 2 +-
+ drivers/soc/qcom/llcc-qcom.c                | 2 +-
+ drivers/soc/qcom/ocmem.c                    | 2 +-
+ drivers/soc/qcom/pmic_glink.c               | 2 +-
+ drivers/soc/qcom/qcom_aoss.c                | 2 +-
+ drivers/soc/qcom/qcom_gsbi.c                | 2 +-
+ drivers/soc/qcom/qcom_stats.c               | 2 +-
+ drivers/soc/qcom/ramp_controller.c          | 4 ++--
+ drivers/soc/qcom/rmtfs_mem.c                | 2 +-
+ drivers/soc/qcom/rpm-proc.c                 | 2 +-
+ drivers/soc/qcom/rpm_master_stats.c         | 2 +-
+ drivers/soc/qcom/smem.c                     | 2 +-
+ drivers/soc/qcom/smp2p.c                    | 2 +-
+ drivers/soc/qcom/smsm.c                     | 6 +++---
+ drivers/soc/qcom/socinfo.c                  | 2 +-
+ drivers/soc/rockchip/io-domain.c            | 8 ++++----
+ drivers/soc/samsung/exynos-chipid.c         | 4 ++--
+ drivers/soc/tegra/cbb/tegra194-cbb.c        | 2 +-
+ drivers/soc/ti/k3-ringacc.c                 | 2 +-
+ drivers/soc/ti/knav_dma.c                   | 4 ++--
+ drivers/soc/ti/knav_qmss_queue.c            | 2 +-
+ drivers/soc/ti/pm33xx.c                     | 2 +-
+ drivers/soc/ti/pruss.c                      | 4 ++--
+ drivers/soc/ti/smartreflex.c                | 2 +-
+ drivers/soc/ti/wkup_m3_ipc.c                | 2 +-
+ drivers/soc/xilinx/xlnx_event_manager.c     | 2 +-
+ drivers/soc/xilinx/zynqmp_power.c           | 2 +-
+ 45 files changed, 54 insertions(+), 54 deletions(-)
+
+diff --git a/drivers/soc/aspeed/aspeed-lpc-ctrl.c b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+index e87038009d1b..ee58151bd69e 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-lpc-ctrl.c
+@@ -353,7 +353,7 @@ static struct platform_driver aspeed_lpc_ctrl_driver = {
+ 		.of_match_table = aspeed_lpc_ctrl_match,
+ 	},
+ 	.probe = aspeed_lpc_ctrl_probe,
+-	.remove_new = aspeed_lpc_ctrl_remove,
++	.remove = aspeed_lpc_ctrl_remove,
+ };
+ 
+ module_platform_driver(aspeed_lpc_ctrl_driver);
+diff --git a/drivers/soc/aspeed/aspeed-lpc-snoop.c b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+index 888b5840c015..9ab5ba9cf1d6 100644
+--- a/drivers/soc/aspeed/aspeed-lpc-snoop.c
++++ b/drivers/soc/aspeed/aspeed-lpc-snoop.c
+@@ -366,7 +366,7 @@ static struct platform_driver aspeed_lpc_snoop_driver = {
+ 		.of_match_table = aspeed_lpc_snoop_match,
+ 	},
+ 	.probe = aspeed_lpc_snoop_probe,
+-	.remove_new = aspeed_lpc_snoop_remove,
++	.remove = aspeed_lpc_snoop_remove,
+ };
+ 
+ module_platform_driver(aspeed_lpc_snoop_driver);
+diff --git a/drivers/soc/aspeed/aspeed-p2a-ctrl.c b/drivers/soc/aspeed/aspeed-p2a-ctrl.c
+index 8610ddacc7bc..6cc943744e12 100644
+--- a/drivers/soc/aspeed/aspeed-p2a-ctrl.c
++++ b/drivers/soc/aspeed/aspeed-p2a-ctrl.c
+@@ -431,7 +431,7 @@ static struct platform_driver aspeed_p2a_ctrl_driver = {
+ 		.of_match_table = aspeed_p2a_ctrl_match,
+ 	},
+ 	.probe = aspeed_p2a_ctrl_probe,
+-	.remove_new = aspeed_p2a_ctrl_remove,
++	.remove = aspeed_p2a_ctrl_remove,
+ };
+ 
+ module_platform_driver(aspeed_p2a_ctrl_driver);
+diff --git a/drivers/soc/aspeed/aspeed-uart-routing.c b/drivers/soc/aspeed/aspeed-uart-routing.c
+index a2195f062e01..0191e36e66e1 100644
+--- a/drivers/soc/aspeed/aspeed-uart-routing.c
++++ b/drivers/soc/aspeed/aspeed-uart-routing.c
+@@ -589,7 +589,7 @@ static struct platform_driver aspeed_uart_routing_driver = {
+ 		.of_match_table = aspeed_uart_routing_table,
+ 	},
+ 	.probe = aspeed_uart_routing_probe,
+-	.remove_new = aspeed_uart_routing_remove,
++	.remove = aspeed_uart_routing_remove,
+ };
+ 
+ module_platform_driver(aspeed_uart_routing_driver);
+diff --git a/drivers/soc/fsl/dpaa2-console.c b/drivers/soc/fsl/dpaa2-console.c
+index 6dbc77db7718..6310f54e68a2 100644
+--- a/drivers/soc/fsl/dpaa2-console.c
++++ b/drivers/soc/fsl/dpaa2-console.c
+@@ -320,7 +320,7 @@ static struct platform_driver dpaa2_console_driver = {
+ 		   .of_match_table = dpaa2_console_match_table,
+ 		   },
+ 	.probe = dpaa2_console_probe,
+-	.remove_new = dpaa2_console_remove,
++	.remove = dpaa2_console_remove,
+ };
+ module_platform_driver(dpaa2_console_driver);
+ 
+diff --git a/drivers/soc/fsl/qe/qmc.c b/drivers/soc/fsl/qe/qmc.c
+index 19cc581b06d0..29d7fd7d5b21 100644
+--- a/drivers/soc/fsl/qe/qmc.c
++++ b/drivers/soc/fsl/qe/qmc.c
+@@ -2092,7 +2092,7 @@ static struct platform_driver qmc_driver = {
+ 		.of_match_table = of_match_ptr(qmc_id_table),
+ 	},
+ 	.probe = qmc_probe,
+-	.remove_new = qmc_remove,
++	.remove = qmc_remove,
+ };
+ module_platform_driver(qmc_driver);
+ 
+diff --git a/drivers/soc/fsl/qe/tsa.c b/drivers/soc/fsl/qe/tsa.c
+index f0889b3fcaf2..515da9b45c2c 100644
+--- a/drivers/soc/fsl/qe/tsa.c
++++ b/drivers/soc/fsl/qe/tsa.c
+@@ -1086,7 +1086,7 @@ static struct platform_driver tsa_driver = {
+ 		.of_match_table = of_match_ptr(tsa_id_table),
+ 	},
+ 	.probe = tsa_probe,
+-	.remove_new = tsa_remove,
++	.remove = tsa_remove,
+ };
+ module_platform_driver(tsa_driver);
+ 
+diff --git a/drivers/soc/fujitsu/a64fx-diag.c b/drivers/soc/fujitsu/a64fx-diag.c
+index 330901893577..76cb0b6a221c 100644
+--- a/drivers/soc/fujitsu/a64fx-diag.c
++++ b/drivers/soc/fujitsu/a64fx-diag.c
+@@ -142,7 +142,7 @@ static struct platform_driver a64fx_diag_driver = {
+ 		.acpi_match_table = ACPI_PTR(a64fx_diag_acpi_match),
+ 	},
+ 	.probe = a64fx_diag_probe,
+-	.remove_new = a64fx_diag_remove,
++	.remove = a64fx_diag_remove,
+ };
+ 
+ module_platform_driver(a64fx_diag_driver);
+diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+index e882a61636ec..8f51e59c9bb1 100644
+--- a/drivers/soc/hisilicon/kunpeng_hccs.c
++++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+@@ -1348,7 +1348,7 @@ MODULE_DEVICE_TABLE(acpi, hccs_acpi_match);
+ 
+ static struct platform_driver hccs_driver = {
+ 	.probe = hccs_probe,
+-	.remove_new = hccs_remove,
++	.remove = hccs_remove,
+ 	.driver = {
+ 		.name = "kunpeng_hccs",
+ 		.acpi_match_table = hccs_acpi_match,
+diff --git a/drivers/soc/ixp4xx/ixp4xx-npe.c b/drivers/soc/ixp4xx/ixp4xx-npe.c
+index 34a6f187c220..33e2e0366f19 100644
+--- a/drivers/soc/ixp4xx/ixp4xx-npe.c
++++ b/drivers/soc/ixp4xx/ixp4xx-npe.c
+@@ -759,7 +759,7 @@ static struct platform_driver ixp4xx_npe_driver = {
+ 		.of_match_table = ixp4xx_npe_of_match,
+ 	},
+ 	.probe = ixp4xx_npe_probe,
+-	.remove_new = ixp4xx_npe_remove,
++	.remove = ixp4xx_npe_remove,
+ };
+ module_platform_driver(ixp4xx_npe_driver);
+ 
+diff --git a/drivers/soc/ixp4xx/ixp4xx-qmgr.c b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
+index cb112f3643e9..475e229039e3 100644
+--- a/drivers/soc/ixp4xx/ixp4xx-qmgr.c
++++ b/drivers/soc/ixp4xx/ixp4xx-qmgr.c
+@@ -461,7 +461,7 @@ static struct platform_driver ixp4xx_qmgr_driver = {
+ 		.of_match_table = ixp4xx_qmgr_of_match,
+ 	},
+ 	.probe = ixp4xx_qmgr_probe,
+-	.remove_new = ixp4xx_qmgr_remove,
++	.remove = ixp4xx_qmgr_remove,
+ };
+ module_platform_driver(ixp4xx_qmgr_driver);
+ 
+diff --git a/drivers/soc/litex/litex_soc_ctrl.c b/drivers/soc/litex/litex_soc_ctrl.c
+index 72c44119dd54..d08bfc8ef7be 100644
+--- a/drivers/soc/litex/litex_soc_ctrl.c
++++ b/drivers/soc/litex/litex_soc_ctrl.c
+@@ -131,7 +131,7 @@ static struct platform_driver litex_soc_ctrl_driver = {
+ 		.of_match_table = litex_soc_ctrl_of_match,
+ 	},
+ 	.probe = litex_soc_ctrl_probe,
+-	.remove_new = litex_soc_ctrl_remove,
++	.remove = litex_soc_ctrl_remove,
+ };
+ 
+ module_platform_driver(litex_soc_ctrl_driver);
+diff --git a/drivers/soc/loongson/loongson2_guts.c b/drivers/soc/loongson/loongson2_guts.c
+index ef352a0f5022..ae42e3a9127f 100644
+--- a/drivers/soc/loongson/loongson2_guts.c
++++ b/drivers/soc/loongson/loongson2_guts.c
+@@ -169,7 +169,7 @@ static struct platform_driver loongson2_guts_driver = {
+ 		.of_match_table = loongson2_guts_of_match,
+ 	},
+ 	.probe = loongson2_guts_probe,
+-	.remove_new = loongson2_guts_remove,
++	.remove = loongson2_guts_remove,
+ };
+ 
+ static int __init loongson2_guts_init(void)
+diff --git a/drivers/soc/mediatek/mtk-devapc.c b/drivers/soc/mediatek/mtk-devapc.c
+index 56cc345552a4..2a1adcb87d4e 100644
+--- a/drivers/soc/mediatek/mtk-devapc.c
++++ b/drivers/soc/mediatek/mtk-devapc.c
+@@ -301,7 +301,7 @@ static void mtk_devapc_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver mtk_devapc_driver = {
+ 	.probe = mtk_devapc_probe,
+-	.remove_new = mtk_devapc_remove,
++	.remove = mtk_devapc_remove,
+ 	.driver = {
+ 		.name = "mtk-devapc",
+ 		.of_match_table = mtk_devapc_dt_match,
+diff --git a/drivers/soc/mediatek/mtk-mmsys.c b/drivers/soc/mediatek/mtk-mmsys.c
+index 938240714e54..bb4639ca0b8c 100644
+--- a/drivers/soc/mediatek/mtk-mmsys.c
++++ b/drivers/soc/mediatek/mtk-mmsys.c
+@@ -487,7 +487,7 @@ static struct platform_driver mtk_mmsys_drv = {
+ 		.of_match_table = of_match_mtk_mmsys,
+ 	},
+ 	.probe = mtk_mmsys_probe,
+-	.remove_new = mtk_mmsys_remove,
++	.remove = mtk_mmsys_remove,
+ };
+ module_platform_driver(mtk_mmsys_drv);
+ 
+diff --git a/drivers/soc/mediatek/mtk-socinfo.c b/drivers/soc/mediatek/mtk-socinfo.c
+index 74672a9d6d13..123b12cd2543 100644
+--- a/drivers/soc/mediatek/mtk-socinfo.c
++++ b/drivers/soc/mediatek/mtk-socinfo.c
+@@ -187,7 +187,7 @@ static void mtk_socinfo_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver mtk_socinfo = {
+ 	.probe = mtk_socinfo_probe,
+-	.remove_new = mtk_socinfo_remove,
++	.remove = mtk_socinfo_remove,
+ 	.driver = {
+ 		.name = "mtk-socinfo",
+ 	},
+diff --git a/drivers/soc/microchip/mpfs-sys-controller.c b/drivers/soc/microchip/mpfs-sys-controller.c
+index 7a4936019329..30bc45d17d34 100644
+--- a/drivers/soc/microchip/mpfs-sys-controller.c
++++ b/drivers/soc/microchip/mpfs-sys-controller.c
+@@ -232,7 +232,7 @@ static struct platform_driver mpfs_sys_controller_driver = {
+ 		.of_match_table = mpfs_sys_controller_of_match,
+ 	},
+ 	.probe = mpfs_sys_controller_probe,
+-	.remove_new = mpfs_sys_controller_remove,
++	.remove = mpfs_sys_controller_remove,
+ };
+ module_platform_driver(mpfs_sys_controller_driver);
+ 
+diff --git a/drivers/soc/pxa/ssp.c b/drivers/soc/pxa/ssp.c
+index 854d32e04558..bb0062c165fe 100644
+--- a/drivers/soc/pxa/ssp.c
++++ b/drivers/soc/pxa/ssp.c
+@@ -197,7 +197,7 @@ static const struct platform_device_id ssp_id_table[] = {
+ 
+ static struct platform_driver pxa_ssp_driver = {
+ 	.probe		= pxa_ssp_probe,
+-	.remove_new	= pxa_ssp_remove,
++	.remove		= pxa_ssp_remove,
+ 	.driver		= {
+ 		.name		= "pxa2xx-ssp",
+ 		.of_match_table	= of_match_ptr(pxa_ssp_of_ids),
+diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+index f9235bc3aa3b..3dfa448bf8cf 100644
+--- a/drivers/soc/qcom/icc-bwmon.c
++++ b/drivers/soc/qcom/icc-bwmon.c
+@@ -872,7 +872,7 @@ MODULE_DEVICE_TABLE(of, bwmon_of_match);
+ 
+ static struct platform_driver bwmon_driver = {
+ 	.probe = bwmon_probe,
+-	.remove_new = bwmon_remove,
++	.remove = bwmon_remove,
+ 	.driver = {
+ 		.name = "qcom-bwmon",
+ 		.of_match_table = bwmon_of_match,
+diff --git a/drivers/soc/qcom/llcc-qcom.c b/drivers/soc/qcom/llcc-qcom.c
+index a470285f54a8..99fc6f7f35f0 100644
+--- a/drivers/soc/qcom/llcc-qcom.c
++++ b/drivers/soc/qcom/llcc-qcom.c
+@@ -3510,7 +3510,7 @@ static struct platform_driver qcom_llcc_driver = {
+ 		.of_match_table = qcom_llcc_of_match,
+ 	},
+ 	.probe = qcom_llcc_probe,
+-	.remove_new = qcom_llcc_remove,
++	.remove = qcom_llcc_remove,
+ };
+ module_platform_driver(qcom_llcc_driver);
+ 
+diff --git a/drivers/soc/qcom/ocmem.c b/drivers/soc/qcom/ocmem.c
+index ff8df7d75d6b..9c3bd37b6579 100644
+--- a/drivers/soc/qcom/ocmem.c
++++ b/drivers/soc/qcom/ocmem.c
+@@ -439,7 +439,7 @@ MODULE_DEVICE_TABLE(of, ocmem_of_match);
+ 
+ static struct platform_driver ocmem_driver = {
+ 	.probe = ocmem_dev_probe,
+-	.remove_new = ocmem_dev_remove,
++	.remove = ocmem_dev_remove,
+ 	.driver = {
+ 		.name = "ocmem",
+ 		.of_match_table = ocmem_of_match,
+diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+index baa4ac6704a9..caf3f63d940e 100644
+--- a/drivers/soc/qcom/pmic_glink.c
++++ b/drivers/soc/qcom/pmic_glink.c
+@@ -399,7 +399,7 @@ MODULE_DEVICE_TABLE(of, pmic_glink_of_match);
+ 
+ static struct platform_driver pmic_glink_driver = {
+ 	.probe = pmic_glink_probe,
+-	.remove_new = pmic_glink_remove,
++	.remove = pmic_glink_remove,
+ 	.driver = {
+ 		.name = "qcom_pmic_glink",
+ 		.of_match_table = pmic_glink_of_match,
+diff --git a/drivers/soc/qcom/qcom_aoss.c b/drivers/soc/qcom/qcom_aoss.c
+index 60af26667bce..0320ad3b9148 100644
+--- a/drivers/soc/qcom/qcom_aoss.c
++++ b/drivers/soc/qcom/qcom_aoss.c
+@@ -664,7 +664,7 @@ static struct platform_driver qmp_driver = {
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = qmp_probe,
+-	.remove_new = qmp_remove,
++	.remove = qmp_remove,
+ };
+ module_platform_driver(qmp_driver);
+ 
+diff --git a/drivers/soc/qcom/qcom_gsbi.c b/drivers/soc/qcom/qcom_gsbi.c
+index f04b9a324ea9..8f1158e0c631 100644
+--- a/drivers/soc/qcom/qcom_gsbi.c
++++ b/drivers/soc/qcom/qcom_gsbi.c
+@@ -232,7 +232,7 @@ static struct platform_driver gsbi_driver = {
+ 		.of_match_table	= gsbi_dt_match,
+ 	},
+ 	.probe = gsbi_probe,
+-	.remove_new = gsbi_remove,
++	.remove = gsbi_remove,
+ };
+ 
+ module_platform_driver(gsbi_driver);
+diff --git a/drivers/soc/qcom/qcom_stats.c b/drivers/soc/qcom/qcom_stats.c
+index c429d5154aae..5de99cf59b9f 100644
+--- a/drivers/soc/qcom/qcom_stats.c
++++ b/drivers/soc/qcom/qcom_stats.c
+@@ -274,7 +274,7 @@ MODULE_DEVICE_TABLE(of, qcom_stats_table);
+ 
+ static struct platform_driver qcom_stats = {
+ 	.probe = qcom_stats_probe,
+-	.remove_new = qcom_stats_remove,
++	.remove = qcom_stats_remove,
+ 	.driver = {
+ 		.name = "qcom_stats",
+ 		.of_match_table = qcom_stats_table,
+diff --git a/drivers/soc/qcom/ramp_controller.c b/drivers/soc/qcom/ramp_controller.c
+index e9a0cca07189..349bdfbc61ef 100644
+--- a/drivers/soc/qcom/ramp_controller.c
++++ b/drivers/soc/qcom/ramp_controller.c
+@@ -331,8 +331,8 @@ static struct platform_driver qcom_ramp_controller_driver = {
+ 		.of_match_table = qcom_ramp_controller_match_table,
+ 		.suppress_bind_attrs = true,
+ 	},
+-	.probe  = qcom_ramp_controller_probe,
+-	.remove_new = qcom_ramp_controller_remove,
++	.probe = qcom_ramp_controller_probe,
++	.remove = qcom_ramp_controller_remove,
+ };
+ 
+ static int __init qcom_ramp_controller_init(void)
+diff --git a/drivers/soc/qcom/rmtfs_mem.c b/drivers/soc/qcom/rmtfs_mem.c
+index df850d073102..33603b8fd8f3 100644
+--- a/drivers/soc/qcom/rmtfs_mem.c
++++ b/drivers/soc/qcom/rmtfs_mem.c
+@@ -315,7 +315,7 @@ MODULE_DEVICE_TABLE(of, qcom_rmtfs_mem_of_match);
+ 
+ static struct platform_driver qcom_rmtfs_mem_driver = {
+ 	.probe = qcom_rmtfs_mem_probe,
+-	.remove_new = qcom_rmtfs_mem_remove,
++	.remove = qcom_rmtfs_mem_remove,
+ 	.driver  = {
+ 		.name  = "qcom_rmtfs_mem",
+ 		.of_match_table = qcom_rmtfs_mem_of_match,
+diff --git a/drivers/soc/qcom/rpm-proc.c b/drivers/soc/qcom/rpm-proc.c
+index 2995d9b90190..2466d0400c2e 100644
+--- a/drivers/soc/qcom/rpm-proc.c
++++ b/drivers/soc/qcom/rpm-proc.c
+@@ -53,7 +53,7 @@ MODULE_DEVICE_TABLE(of, rpm_proc_of_match);
+ 
+ static struct platform_driver rpm_proc_driver = {
+ 	.probe = rpm_proc_probe,
+-	.remove_new = rpm_proc_remove,
++	.remove = rpm_proc_remove,
+ 	.driver = {
+ 		.name = "qcom-rpm-proc",
+ 		.of_match_table = rpm_proc_of_match,
+diff --git a/drivers/soc/qcom/rpm_master_stats.c b/drivers/soc/qcom/rpm_master_stats.c
+index 086fe4ba6707..49e4f9457279 100644
+--- a/drivers/soc/qcom/rpm_master_stats.c
++++ b/drivers/soc/qcom/rpm_master_stats.c
+@@ -155,7 +155,7 @@ static const struct of_device_id rpm_master_table[] = {
+ 
+ static struct platform_driver master_stats_driver = {
+ 	.probe = master_stats_probe,
+-	.remove_new = master_stats_remove,
++	.remove = master_stats_remove,
+ 	.driver = {
+ 		.name = "qcom_rpm_master_stats",
+ 		.of_match_table = rpm_master_table,
+diff --git a/drivers/soc/qcom/smem.c b/drivers/soc/qcom/smem.c
+index 0d1ccf3ef108..b8e9f5068ca1 100644
+--- a/drivers/soc/qcom/smem.c
++++ b/drivers/soc/qcom/smem.c
+@@ -1257,7 +1257,7 @@ MODULE_DEVICE_TABLE(of, qcom_smem_of_match);
+ 
+ static struct platform_driver qcom_smem_driver = {
+ 	.probe = qcom_smem_probe,
+-	.remove_new = qcom_smem_remove,
++	.remove = qcom_smem_remove,
+ 	.driver  = {
+ 		.name = "qcom-smem",
+ 		.of_match_table = qcom_smem_of_match,
+diff --git a/drivers/soc/qcom/smp2p.c b/drivers/soc/qcom/smp2p.c
+index cefcbd61c628..9295a13ae996 100644
+--- a/drivers/soc/qcom/smp2p.c
++++ b/drivers/soc/qcom/smp2p.c
+@@ -698,7 +698,7 @@ MODULE_DEVICE_TABLE(of, qcom_smp2p_of_match);
+ 
+ static struct platform_driver qcom_smp2p_driver = {
+ 	.probe = qcom_smp2p_probe,
+-	.remove_new = qcom_smp2p_remove,
++	.remove = qcom_smp2p_remove,
+ 	.driver  = {
+ 		.name  = "qcom_smp2p",
+ 		.of_match_table = qcom_smp2p_of_match,
+diff --git a/drivers/soc/qcom/smsm.c b/drivers/soc/qcom/smsm.c
+index ffe78ae34386..e803ea342c97 100644
+--- a/drivers/soc/qcom/smsm.c
++++ b/drivers/soc/qcom/smsm.c
+@@ -682,9 +682,9 @@ MODULE_DEVICE_TABLE(of, qcom_smsm_of_match);
+ 
+ static struct platform_driver qcom_smsm_driver = {
+ 	.probe = qcom_smsm_probe,
+-	.remove_new = qcom_smsm_remove,
+-	.driver  = {
+-		.name  = "qcom-smsm",
++	.remove = qcom_smsm_remove,
++	.driver = {
++		.name = "qcom-smsm",
+ 		.of_match_table = qcom_smsm_of_match,
+ 	},
+ };
+diff --git a/drivers/soc/qcom/socinfo.c b/drivers/soc/qcom/socinfo.c
+index 21ab8c699251..01a0bb71638b 100644
+--- a/drivers/soc/qcom/socinfo.c
++++ b/drivers/soc/qcom/socinfo.c
+@@ -825,7 +825,7 @@ static void qcom_socinfo_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver qcom_socinfo_driver = {
+ 	.probe = qcom_socinfo_probe,
+-	.remove_new = qcom_socinfo_remove,
++	.remove = qcom_socinfo_remove,
+ 	.driver  = {
+ 		.name = "qcom-socinfo",
+ 	},
+diff --git a/drivers/soc/rockchip/io-domain.c b/drivers/soc/rockchip/io-domain.c
+index fd9fd31f71c2..f94985a905c2 100644
+--- a/drivers/soc/rockchip/io-domain.c
++++ b/drivers/soc/rockchip/io-domain.c
+@@ -742,10 +742,10 @@ static void rockchip_iodomain_remove(struct platform_device *pdev)
+ }
+ 
+ static struct platform_driver rockchip_iodomain_driver = {
+-	.probe   = rockchip_iodomain_probe,
+-	.remove_new = rockchip_iodomain_remove,
+-	.driver  = {
+-		.name  = "rockchip-iodomain",
++	.probe = rockchip_iodomain_probe,
++	.remove = rockchip_iodomain_remove,
++	.driver = {
++		.name = "rockchip-iodomain",
+ 		.of_match_table = rockchip_iodomain_match,
+ 	},
+ };
+diff --git a/drivers/soc/samsung/exynos-chipid.c b/drivers/soc/samsung/exynos-chipid.c
+index 23cc20896b85..e37dde1fb588 100644
+--- a/drivers/soc/samsung/exynos-chipid.c
++++ b/drivers/soc/samsung/exynos-chipid.c
+@@ -198,8 +198,8 @@ static struct platform_driver exynos_chipid_driver = {
+ 		.name = "exynos-chipid",
+ 		.of_match_table = exynos_chipid_of_device_ids,
+ 	},
+-	.probe	= exynos_chipid_probe,
+-	.remove_new = exynos_chipid_remove,
++	.probe = exynos_chipid_probe,
++	.remove = exynos_chipid_remove,
+ };
+ module_platform_driver(exynos_chipid_driver);
+ 
+diff --git a/drivers/soc/tegra/cbb/tegra194-cbb.c b/drivers/soc/tegra/cbb/tegra194-cbb.c
+index 9cbc562ae7d3..846b17ffc2f9 100644
+--- a/drivers/soc/tegra/cbb/tegra194-cbb.c
++++ b/drivers/soc/tegra/cbb/tegra194-cbb.c
+@@ -2330,7 +2330,7 @@ static const struct dev_pm_ops tegra194_cbb_pm = {
+ 
+ static struct platform_driver tegra194_cbb_driver = {
+ 	.probe = tegra194_cbb_probe,
+-	.remove_new = tegra194_cbb_remove,
++	.remove = tegra194_cbb_remove,
+ 	.driver = {
+ 		.name = "tegra194-cbb",
+ 		.of_match_table = of_match_ptr(tegra194_cbb_match),
+diff --git a/drivers/soc/ti/k3-ringacc.c b/drivers/soc/ti/k3-ringacc.c
+index 8c0102968351..82a15cad1c6c 100644
+--- a/drivers/soc/ti/k3-ringacc.c
++++ b/drivers/soc/ti/k3-ringacc.c
+@@ -1562,7 +1562,7 @@ static void k3_ringacc_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver k3_ringacc_driver = {
+ 	.probe		= k3_ringacc_probe,
+-	.remove_new	= k3_ringacc_remove,
++	.remove		= k3_ringacc_remove,
+ 	.driver		= {
+ 		.name	= "k3-ringacc",
+ 		.of_match_table = k3_ringacc_of_match,
+diff --git a/drivers/soc/ti/knav_dma.c b/drivers/soc/ti/knav_dma.c
+index fb0746d8caad..a25ebe6cd503 100644
+--- a/drivers/soc/ti/knav_dma.c
++++ b/drivers/soc/ti/knav_dma.c
+@@ -783,8 +783,8 @@ MODULE_DEVICE_TABLE(of, of_match);
+ 
+ static struct platform_driver knav_dma_driver = {
+ 	.probe	= knav_dma_probe,
+-	.remove_new = knav_dma_remove,
+-	.driver = {
++	.remove	= knav_dma_remove,
++	.driver	= {
+ 		.name		= "keystone-navigator-dma",
+ 		.of_match_table	= of_match,
+ 	},
+diff --git a/drivers/soc/ti/knav_qmss_queue.c b/drivers/soc/ti/knav_qmss_queue.c
+index b4051cb932c4..ea52425864a9 100644
+--- a/drivers/soc/ti/knav_qmss_queue.c
++++ b/drivers/soc/ti/knav_qmss_queue.c
+@@ -1892,7 +1892,7 @@ static void knav_queue_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver keystone_qmss_driver = {
+ 	.probe		= knav_queue_probe,
+-	.remove_new	= knav_queue_remove,
++	.remove		= knav_queue_remove,
+ 	.driver		= {
+ 		.name	= "keystone-navigator-qmss",
+ 		.of_match_table = keystone_qmss_of_match,
+diff --git a/drivers/soc/ti/pm33xx.c b/drivers/soc/ti/pm33xx.c
+index 8169885ab1e0..dfdff186c805 100644
+--- a/drivers/soc/ti/pm33xx.c
++++ b/drivers/soc/ti/pm33xx.c
+@@ -591,7 +591,7 @@ static struct platform_driver am33xx_pm_driver = {
+ 		.name   = "pm33xx",
+ 	},
+ 	.probe = am33xx_pm_probe,
+-	.remove_new = am33xx_pm_remove,
++	.remove = am33xx_pm_remove,
+ };
+ module_platform_driver(am33xx_pm_driver);
+ 
+diff --git a/drivers/soc/ti/pruss.c b/drivers/soc/ti/pruss.c
+index 3ec758f50e24..d7634bf5413a 100644
+--- a/drivers/soc/ti/pruss.c
++++ b/drivers/soc/ti/pruss.c
+@@ -593,8 +593,8 @@ static struct platform_driver pruss_driver = {
+ 		.name = "pruss",
+ 		.of_match_table = pruss_of_match,
+ 	},
+-	.probe  = pruss_probe,
+-	.remove_new = pruss_remove,
++	.probe = pruss_probe,
++	.remove = pruss_remove,
+ };
+ module_platform_driver(pruss_driver);
+ 
+diff --git a/drivers/soc/ti/smartreflex.c b/drivers/soc/ti/smartreflex.c
+index 38add2ab5613..ced3a73929e3 100644
+--- a/drivers/soc/ti/smartreflex.c
++++ b/drivers/soc/ti/smartreflex.c
+@@ -969,7 +969,7 @@ MODULE_DEVICE_TABLE(of, omap_sr_match);
+ 
+ static struct platform_driver smartreflex_driver = {
+ 	.probe		= omap_sr_probe,
+-	.remove_new     = omap_sr_remove,
++	.remove         = omap_sr_remove,
+ 	.shutdown	= omap_sr_shutdown,
+ 	.driver		= {
+ 		.name	= DRIVER_NAME,
+diff --git a/drivers/soc/ti/wkup_m3_ipc.c b/drivers/soc/ti/wkup_m3_ipc.c
+index 88f774db9208..79dde9a7ec63 100644
+--- a/drivers/soc/ti/wkup_m3_ipc.c
++++ b/drivers/soc/ti/wkup_m3_ipc.c
+@@ -755,7 +755,7 @@ MODULE_DEVICE_TABLE(of, wkup_m3_ipc_of_match);
+ 
+ static struct platform_driver wkup_m3_ipc_driver = {
+ 	.probe = wkup_m3_ipc_probe,
+-	.remove_new = wkup_m3_ipc_remove,
++	.remove = wkup_m3_ipc_remove,
+ 	.driver = {
+ 		.name = "wkup_m3_ipc",
+ 		.of_match_table = wkup_m3_ipc_of_match,
+diff --git a/drivers/soc/xilinx/xlnx_event_manager.c b/drivers/soc/xilinx/xlnx_event_manager.c
+index 85df6b9c04ee..a572d15f6161 100644
+--- a/drivers/soc/xilinx/xlnx_event_manager.c
++++ b/drivers/soc/xilinx/xlnx_event_manager.c
+@@ -711,7 +711,7 @@ static void xlnx_event_manager_remove(struct platform_device *pdev)
+ 
+ static struct platform_driver xlnx_event_manager_driver = {
+ 	.probe = xlnx_event_manager_probe,
+-	.remove_new = xlnx_event_manager_remove,
++	.remove = xlnx_event_manager_remove,
+ 	.driver = {
+ 		.name = "xlnx_event_manager",
+ 	},
+diff --git a/drivers/soc/xilinx/zynqmp_power.c b/drivers/soc/xilinx/zynqmp_power.c
+index 411d33f2fb05..ae59bf16659a 100644
+--- a/drivers/soc/xilinx/zynqmp_power.c
++++ b/drivers/soc/xilinx/zynqmp_power.c
+@@ -408,7 +408,7 @@ MODULE_DEVICE_TABLE(of, pm_of_match);
+ 
+ static struct platform_driver zynqmp_pm_platform_driver = {
+ 	.probe = zynqmp_pm_probe,
+-	.remove_new = zynqmp_pm_remove,
++	.remove = zynqmp_pm_remove,
+ 	.driver = {
+ 		.name = "zynqmp_power",
+ 		.of_match_table = pm_of_match,
+
+base-commit: 6fb2fa9805c501d9ade047fc511961f3273cdcb5
+-- 
+2.45.2
 
