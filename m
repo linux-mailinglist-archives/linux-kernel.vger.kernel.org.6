@@ -1,94 +1,136 @@
-Return-Path: <linux-kernel+bounces-386475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3F09B43ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:15:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912389B43F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:15:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CE80B213E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:15:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 564E8283889
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA86202F77;
-	Tue, 29 Oct 2024 08:15:06 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0222022E6;
+	Tue, 29 Oct 2024 08:15:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W79BwF2z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CA4203700
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:15:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EBB18A95A
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 08:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730189706; cv=none; b=PEyWQxmgPYYKJ8MmmPBT8xxBNILtenVExCutNmAxe6oh3zPGBEtfUGqT76+gkCWCqY2fH99fXfYcK/oeJRy0BEEdQzGd3H4guXF22zEkNQ73hDM7E8WwqMW/EkabNAtDm49MBe8xjErZdSirxpIzOoe7/keep8YRx45SGJIyDq0=
+	t=1730189734; cv=none; b=iAHyieRsFqhcYd8aHVimald26yMx+L/xg/LcoSX5iIU1mDNnWQw333/GzDPPu2UYvTqa/h5/D72IbPMRlKuRep6O7E7iE2yzkxSMt7eQSsZq7iBEbSb39lTKn+LAQwaU1ku0JLvficL49vG2V+0RqLLkv8oEbcERsnIlqPAxTds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730189706; c=relaxed/simple;
-	bh=jVZI0IwpcekhbnfOrIbgBgWJzqVFKuVUtoIm9N+jkVc=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O6TtV6pRMpRAy8GVkHVYtzX1DOu4PAvrcwMvgcItFHbTcEu39Eab3442sZH8hEEaerf4IJMHYTadDLEGrOvpC4bjPP4iE7f/s2bpvD1T0DTP+Cg/BMi80ASrkPcLNivk5CKBNuY5zjvTY1yKrR0rbPbKX9DOV39F4n6VVAlVYQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-83aba93c01bso496969639f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 01:15:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730189703; x=1730794503;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5BTRHXytTFWgdZnYL2thO68nzA3wtruqd8M7jFd6tO8=;
-        b=pc2pTNulRbL9LqA2C15KabL8ZenJkBpZpEYNPmg+BlPW/dcsLISrtWOxckMRZVJjB1
-         Vwh/w3s7FQWTM/kyPYfhoe9VnXEbr2nsDAfr2mKK4FHRUQ2m/LhSxYMUqFeNXeboUaKY
-         HLIVovQ2YizYsWXTN4wd92fXi5Zm7lbrUn09N0wczd8qs0bIx6hbHZmgT4xB01iFk2/m
-         RTYNKRlYCBR6UQ+YnxAnu6/KWwfUz9NmIhDP928wh/MObg51NBW0S2++cykbPOk9IVp7
-         2AoIex2dkNqx1oTi4OYQema0mppgj5ZGogLxySWfVGsyEilq8zRBRgFp7L5XGk4jThVc
-         aypA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/etPKVQBp92u5IBsQWAnzOUtQh4WxxuRcpQQq8n/UZfX7Ya2kJB14zd1zCjcpI6d2bgFVzMd9qFDbybI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1JgSd0pa5GcnkBKvzuwYWQBVLcnqTo3Ujkr08fI814nezzTWT
-	NOPjICBUPzrpRXYeqtUT1Y4ZQ3c/4AfWRc2gd5QTMSmJOfYZT55zzB16uvUntjIuta5VkdxWL1f
-	hJ659tSxqEuu97MqBQa66gIUMpERNRpEV8x0BNKbPuM4ctem+8RMdqFY=
-X-Google-Smtp-Source: AGHT+IG8VvCIkrmNvSQH+kmC4iRLaOd+tCtOspcugELt4BK972V9xSrn5cpBxJ3eE49Xr5ZBxahDDGO4yGtK5fLRSCzt9o8VN2t+
+	s=arc-20240116; t=1730189734; c=relaxed/simple;
+	bh=Re+MDXtcVE8bjwH91xYXXaAonR+wVRYRG/DIzrjk0b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U4Il6o5U6UtvO96wV1UWaDgRStkAJzEEHkll5wTOySQed6hMN2dVxHdnf5yhaAkxNz3BuC/dWm6efptI3k1WMXsZ0O6ZD6kD9IRPx2AWdDPwOKUitg+fYb8PD4i5KXMGl1BwUPgnhelbeKTxNABoTRCJxdP8vG2MPPeVCdEerFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W79BwF2z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DB81C4CECD;
+	Tue, 29 Oct 2024 08:15:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730189734;
+	bh=Re+MDXtcVE8bjwH91xYXXaAonR+wVRYRG/DIzrjk0b0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W79BwF2zUWa8O5pH1qu/q+K7UkCg1cL4w25XMvvGaJWFBCDXzc23uJ53wi7d4+Vhi
+	 bOdQsAIoa/ML4A//LzLch7KsVXpnC70XO26Pm1NbFaLUmNBHm9bkPQiFv6AmOEQIfX
+	 fmMMGnN+eyDUvDEeJzJg1EUsoexxqSCuK7zv1tQn+vgYbh4jiRix310uvLyE5LsCd7
+	 eMNgF5l/27ZlohWnTJphlEU7vwdvLePECnw+b3CbVE1MXn9PosSji1rDyhBryUjukK
+	 2AYuOghKKyLnGvUkdSpUsUtAN+4QWjLYWyOHt8uskj0ORYO6BkKysE8rKzMH5MaWFE
+	 412fPjiPImGSw==
+Date: Tue, 29 Oct 2024 09:15:31 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, christian.koenig@amd.com, ray.huang@amd.com, 
+	dmitry.baryshkov@linaro.org, dave.stevenson@raspberrypi.com, quic_jjohnson@quicinc.com, 
+	mcanal@igalia.com, davidgow@google.com, skhan@linuxfoundation.org, 
+	karolina.stolarek@intel.com, Arunpravin.PaneerSelvam@amd.com, 
+	thomas.hellstrom@linux.intel.com, asomalap@amd.com, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/4] drm/tests: Fix some memory leaks
+Message-ID: <20241029-heavy-scallop-of-jest-1fcfd4@houat>
+References: <20241017063125.3080347-1-ruanjinjie@huawei.com>
+ <20241018-gigantic-meticulous-pug-06ec1b@houat>
+ <f7519595-8080-44c5-0477-e1281266b80b@huawei.com>
+ <80114de7-19c0-d860-c888-35e535915f78@huawei.com>
+ <20241025-bold-light-vicugna-c30ecf@houat>
+ <fb6c6e6d-18ad-344d-c8ad-a9b90c6c2f28@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b49:b0:3a0:b631:76d4 with SMTP id
- e9e14a558f8ab-3a4ed2663ecmr114857565ab.1.1730189703613; Tue, 29 Oct 2024
- 01:15:03 -0700 (PDT)
-Date: Tue, 29 Oct 2024 01:15:03 -0700
-In-Reply-To: <66ed861a.050a0220.2abe4d.0015.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67209987.050a0220.4735a.0258.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] KASAN: slab-use-after-free Read in iov_iter_advance
-From: syzbot <syzbot+7c48153a9d788824044b@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, brauner@kernel.org, dhowells@redhat.com, 
-	hdanton@sina.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, netfs@lists.linux.dev, 
-	oliver.sang@intel.com, rostedt@goodmis.org, stfrench@microsoft.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="ddtzjmtot4x35duc"
+Content-Disposition: inline
+In-Reply-To: <fb6c6e6d-18ad-344d-c8ad-a9b90c6c2f28@huawei.com>
 
-syzbot suspects this issue was fixed by commit:
 
-commit df9b455633aee0bad3e5c3dc9fc1c860b13c96d2
-Author: David Howells <dhowells@redhat.com>
-Date:   Thu Sep 26 13:58:30 2024 +0000
+--ddtzjmtot4x35duc
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 0/4] drm/tests: Fix some memory leaks
+MIME-Version: 1.0
 
-    netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
+On Sat, Oct 26, 2024 at 10:02:51AM +0800, Jinjie Ruan wrote:
+>=20
+>=20
+> On 2024/10/25 22:33, Maxime Ripard wrote:
+> > On Wed, Oct 23, 2024 at 09:35:59AM +0800, Jinjie Ruan wrote:
+> >>
+> >>
+> >> On 2024/10/18 16:12, Jinjie Ruan wrote:
+> >>>
+> >>>
+> >>> On 2024/10/18 15:55, Maxime Ripard wrote:
+> >>>> Hi,
+> >>>>
+> >>>> On Thu, Oct 17, 2024 at 02:31:21PM GMT, Jinjie Ruan wrote:
+> >>>>> Fix some memory leaks in drm tests.
+> >>>>>
+> >>>>> Changes in v3:
+> >>>>> - Adjust drm/drm_edid.h header to drm_kunit_helpers.c.
+> >>>>> - Drop the "helper" in the helper name.
+> >>>>> - s/fllowing/following/
+> >>>>> - Add Acked-by.
+> >>>>
+> >>>> This creates build failures since drm_display_mode were const before,
+> >>>> and can't anymore.
+> >>>
+> >>> It seems it came from bellowing v1, and this v3 has not reported the
+> >>> issue yet.
+> >>>
+> >>> https://lore.kernel.org/all/202410180830.oitxTsOv-lkp@intel.com/
+> >>
+> >> Hi, Maxime,
+> >>
+> >> Should this series send again? The issue seems not related to this ver=
+sion.
+> >=20
+> > As far as I know, the issues reported still apply there, so yes
+>
+> I make this version code with "C=3D2", there is no these build failures.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12c2eca7980000
-start commit:   a430d95c5efa Merge tag 'lsm-pr-20240911' of git://git.kern..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d85e1e571a820894
-dashboard link: https://syzkaller.appspot.com/bug?extid=7c48153a9d788824044b
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1511a607980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10c7d69f980000
+Sorry, you're right. I still have a comment on the first patch
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Maxime
 
-#syz fix: netfs: Fix write oops in generic/346 (9p) and generic/074 (cifs)
+--ddtzjmtot4x35duc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZyCZngAKCRAnX84Zoj2+
+dq32AYCl7QmrfN3pfj027QXZ8TGQ+8c8LyDuRgYyH8YTib+XzneLzB4O7/yMzsQC
+6vZy91oBgIRpmNU1EOPfVKJjjgqZnAu0Gze+3rUqf0oN+HYU3T3WBoH/l52/9KsM
+9psGrWsF7A==
+=5jYc
+-----END PGP SIGNATURE-----
+
+--ddtzjmtot4x35duc--
 
