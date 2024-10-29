@@ -1,117 +1,169 @@
-Return-Path: <linux-kernel+bounces-386915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4A39B49A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:27:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28659B4A98
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E492B224DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:27:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33BD28335F
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 13:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282B1205E3F;
-	Tue, 29 Oct 2024 12:27:19 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DB8205E17;
+	Tue, 29 Oct 2024 13:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="or+EwbV7"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B239205ADB
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 12:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77170C2ED
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 13:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730204838; cv=none; b=OatZNpDcf0x8MAQMNf+5Jleu8x+kL0Q9aCflCImlSyyuczUcHzM96dP5pEXsePBu8PntU7I/gYE8k9M3rYh42r2iJ3QcUbea1rQAVBgcciYkinuGOVUL6yVO3tsY4g98/MefRNMNdr0k+EOHcE/YejLkyNi3QokNRnrX44JPUjg=
+	t=1730207183; cv=none; b=eQsXBSnD5kZ18T7jF0HBDNpwH0L4Jq+3p41UXIaZZ1PUcLZ40sZklUnxk/v/v5qx/pLgk1R36+5jSxPIzafVbi6etcYr7et5wjUkFyXUXJuDSwzy9a6CSJC3P+tn5FXeXveX0Pbwp1xa2EH55Cc93TryymVzPeWTZvHKFm+b9gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730204838; c=relaxed/simple;
-	bh=7mhiZmY2GL+llId5mUHpE9T/ZEU+bn/887f9XiB2SFE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=eomS1zC8SW/SSaJ6HVlP9ct7SK1qLjO13SaPTGJMETnnjj19RdXHGRx5DHrLzNrLVMFglnuRcC4QQZNJBEejFeLfmUJGVArN+3X+dTx4LJii3BcbazMST4Mg/f2ST+5S5X/gWgLE0Loy+qU6iMwZBh1yNDQrwzX6J4tj6drpAmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Xd8bw6bhnz1SCwB;
-	Tue, 29 Oct 2024 20:25:32 +0800 (CST)
-Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6BEC714013B;
-	Tue, 29 Oct 2024 20:27:04 +0800 (CST)
-Received: from lihuafei.huawei.com (10.90.53.74) by
- kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 29 Oct 2024 20:27:03 +0800
-From: Li Huafei <lihuafei1@huawei.com>
-To: <alexander.deucher@amd.com>, <lijo.lazar@amd.com>,
-	<christophe.jaillet@wanadoo.fr>
-CC: <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <Hawking.Zhang@amd.com>, <yifan1.zhang@amd.com>,
-	<Likun.Gao@amd.com>, <Tim.Huang@amd.com>, <pratap.nirujogi@amd.com>,
-	<victorchengchi.lu@amd.com>, <Jun.Ma2@amd.com>, <le.ma@amd.com>,
-	<amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lihuafei1@huawei.com>
-Subject: [PATCH v3] drm/amdgpu: Fix the memory allocation issue in amdgpu_discovery_get_nps_info()
-Date: Wed, 30 Oct 2024 04:27:58 +0800
-Message-ID: <20241029202758.2764535-1-lihuafei1@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1730207183; c=relaxed/simple;
+	bh=48vTuMVxOY3Vh3K7QBbivurdZXR3WfKhrPNH8x35x0c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AocRMjSz8zccyOvq3yBEXbyi6SIMT63rNKb0mwEJNNrCpf86ykPNqfe3nC4SsCuDnZEjBW9jfy4lx5gU6FKl9o0q0x/UWiibWqO4yENEGM67gu3RP76itzrnEgZpQG28kvfu1EzJ+ZDUl7MQstdT36Y7Lff3nDjRXIauAzUvNkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=or+EwbV7; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e953f4e7cso3943940b3a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 06:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730207181; x=1730811981; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NHj8IGmGIs1egtb7syFkJuryY4pVczFLIPpjJP1F+TM=;
+        b=or+EwbV70niuvyt0qIDv1tj0Dv/NOliiwJV4PdZ5CN+hPD9r74pTCpeDQTA3iebRw2
+         XB5xgfUrgiwyhIeXJSJcKScg4/7/ulav9ZPHrDqr0b24uw/c6MDA5M3OinsAbXTFxvPC
+         1uNAvKZXxGiTLLGPsL1ivDPb1B5iNeTDhxdXr2qyr8l+wgohieaRgFTuiDsOAsjFo79b
+         VcP/90X42bC1M+HGl7LiN5EqzaPv3eia/a8br4HpraizKQRE2kWOfSPiiB1izUjceQTS
+         JsX7LzPu2xRVy2iPCi9wIoePnI8BWW/LKg93kU0typRh64oMlrBMfrh+hVF+7heW5uy7
+         uhQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730207181; x=1730811981;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NHj8IGmGIs1egtb7syFkJuryY4pVczFLIPpjJP1F+TM=;
+        b=bKmjA5nN4khHnuZ8awF6YbwhmUW/BjHg1qYBv1Xg5FBcrtK3jKxl+4a71wLqAY4QHN
+         +ukUNkRIfGNzJAzVbT1z7xLcdwsOoPYG9o/N6Av8ZbRG0P/J/tL/Lht7BaAvi1xyr2rt
+         zDjX8/v9cfQjzV/x+UU8pu6HFHtugHGILI79AwjFxGAa1EY5McMLiQliLNCaue+/ATz/
+         1+MgRdoFMXn76f+gq0SZRo2DWQmJvXIttnWCy+g8QeUDj4D90/DOlCL+PMDkG9zPtWFq
+         cmls2AbBNB+S+95lUzvlxgovuAqbV/8xYKlVw4AtkX+8Cjk2tTpL9T9/TXxxmBR3gYMM
+         92+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXhgyOX5ebDLrMkkXE127vm8qg86I9+hU1TU6ohEkJBItl0bd23a8V4XEcLdpH5yMvWV3Dc3deUQ6EpZwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs8TuFEsaFfbBHRIdmPTPeb/gspUc2SplBXKSIH3KdHFA1jFKL
+	uI38sEl47Oi5/7pPeBkNm2luK5dMZfVJAkCdk0X51URr9aeLd1N8wPu/dTDSM7CU6VGHWzU21zD
+	URjCSjmTj0j3JgVS0GRbBIxWVdQ6X8jW23NDQ
+X-Google-Smtp-Source: AGHT+IFqgq9XP2OlsftQqekOzP9p6HoWIcNFPPYFQP/nwtgiEeSO9cYr1iWcK3DznxduaspwjF0ybkZey+m6cNaweGs=
+X-Received: by 2002:a05:6a00:3cc8:b0:71e:e3:608 with SMTP id
+ d2e1a72fcca58-7206306ebb4mr15810841b3a.26.1730207180368; Tue, 29 Oct 2024
+ 06:06:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemf500004.china.huawei.com (7.202.181.242)
+References: <20241029083658.1096492-1-elver@google.com> <20241029114937.GT14555@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241029114937.GT14555@noisy.programming.kicks-ass.net>
+From: Marco Elver <elver@google.com>
+Date: Tue, 29 Oct 2024 14:05:38 +0100
+Message-ID: <CANpmjNPyXGRTWHhycVuEXdDfe7MoN19MeztdQaSOJkzqhCD69Q@mail.gmail.com>
+Subject: Re: [PATCH] kcsan, seqlock: Support seqcount_latch_t
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Mark Rutland <mark.rutland@arm.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, Alexander Potapenko <glider@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Fix two issues with memory allocation in amdgpu_discovery_get_nps_info()
-for mem_ranges:
+On Tue, 29 Oct 2024 at 12:49, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Oct 29, 2024 at 09:36:29AM +0100, Marco Elver wrote:
+> > Reviewing current raw_write_seqcount_latch() callers, the most common
+> > patterns involve only few memory accesses, either a single plain C
+> > assignment, or memcpy;
+>
+> Then I assume you've encountered latch_tree_{insert,erase}() in your
+> travels, right?
 
- - Add a check for allocation failure to avoid dereferencing a null
-   pointer.
+Oops. That once certainly exceeds the "8 memory accesses".
 
- - As suggested by Christophe, use kvcalloc() for memory allocation,
-   which checks for multiplication overflow.
+> Also, I note that update_clock_read_data() seems to do things
+> 'backwards' and will completely elide your proposed annotation.
 
-Additionally, assign the output parameters nps_type and range_cnt after
-the kvcalloc() call to prevent modifying the output parameters in case
-of an error return.
+Hmm, for the first access, yes. This particular oddity could be
+"fixed" by surrounding the accesses by
+kcsan_nestable_atomic_begin/end(). I don't know if it warrants adding
+a raw_write_seqcount_latch_begin().
 
-Fixes: b194d21b9bcc ("drm/amdgpu: Use NPS ranges from discovery table")
-Suggested-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
-Signed-off-by: Li Huafei <lihuafei1@huawei.com>
----
-Changes in v3: 
- - As suggested by Christophe, replace kvzalloc() with kvcalloc()
- - Link to v2: https://lore.kernel.org/lkml/20241029101839.2605713-1-lihuafei1@huawei.com/
+Preferences?
 
-Changes in v2:
- - kvzalloc() call uses 'nps_info->v1.count' instead of '*range_cnt'
- - Link to v1: https://lore.kernel.org/lkml/20241028215933.2599271-1-lihuafei1@huawei.com/
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+> > therefore, the value of 8 memory accesses after
+> > raw_write_seqcount_latch() is chosen to (a) avoid most false positives,
+> > and (b) avoid excessive number of false negatives (due to inadvertently
+> > declaring most accesses in the proximity of update_fast_timekeeper() as
+> > "atomic").
+>
+> The above latch'ed RB-trees can certainly exceed this magical number 8.
+>
+> > Reported-by: Alexander Potapenko <glider@google.com>
+> > Tested-by: Alexander Potapenko <glider@google.com>
+> > Fixes: 88ecd153be95 ("seqlock, kcsan: Add annotations for KCSAN")
+> > Signed-off-by: Marco Elver <elver@google.com>
+> > ---
+> >  include/linux/seqlock.h | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> >
+> > diff --git a/include/linux/seqlock.h b/include/linux/seqlock.h
+> > index fffeb754880f..e24cf144276e 100644
+> > --- a/include/linux/seqlock.h
+> > +++ b/include/linux/seqlock.h
+> > @@ -614,6 +614,7 @@ typedef struct {
+> >   */
+> >  static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *s)
+> >  {
+> > +     kcsan_atomic_next(KCSAN_SEQLOCK_REGION_MAX);
+> >       /*
+> >        * Pairs with the first smp_wmb() in raw_write_seqcount_latch().
+> >        * Due to the dependent load, a full smp_rmb() is not needed.
+> > @@ -631,6 +632,7 @@ static __always_inline unsigned raw_read_seqcount_latch(const seqcount_latch_t *
+> >  static __always_inline int
+> >  raw_read_seqcount_latch_retry(const seqcount_latch_t *s, unsigned start)
+> >  {
+> > +     kcsan_atomic_next(0);
+> >       smp_rmb();
+> >       return unlikely(READ_ONCE(s->seqcount.sequence) != start);
+> >  }
+> > @@ -721,6 +723,13 @@ static inline void raw_write_seqcount_latch(seqcount_latch_t *s)
+> >       smp_wmb();      /* prior stores before incrementing "sequence" */
+> >       s->seqcount.sequence++;
+> >       smp_wmb();      /* increment "sequence" before following stores */
+> > +
+> > +     /*
+> > +      * Latch writers do not have a well-defined critical section, but to
+> > +      * avoid most false positives, at the cost of false negatives, assume
+> > +      * the next few memory accesses belong to the latch writer.
+> > +      */
+> > +     kcsan_atomic_next(8);
+> >  }
+>
+> Given there are so very few latch users, would it make sense to
+> introduce a raw_write_seqcount_latch_end() callback that does
+> kcsan_atomic_next(0) ? -- or something along those lines? Then you won't
+> have to assume such a small number.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
-index 4bd61c169ca8..620090f092ab 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_discovery.c
-@@ -1757,11 +1757,13 @@ int amdgpu_discovery_get_nps_info(struct amdgpu_device *adev,
- 
- 	switch (le16_to_cpu(nps_info->v1.header.version_major)) {
- 	case 1:
-+		mem_ranges = kvcalloc(nps_info->v1.count,
-+				      sizeof(struct amdgpu_gmc_memrange),
-+				      GFP_KERNEL);
-+		if (!mem_ranges)
-+			return -ENOMEM;
- 		*nps_type = nps_info->v1.nps_type;
- 		*range_cnt = nps_info->v1.count;
--		mem_ranges = kvzalloc(
--			*range_cnt * sizeof(struct amdgpu_gmc_memrange),
--			GFP_KERNEL);
- 		for (i = 0; i < *range_cnt; i++) {
- 			mem_ranges[i].base_address =
- 				nps_info->v1.instance_info[i].base_address;
--- 
-2.25.1
+That's something I considered, but thought I'd try the unintrusive
+version first. But since you proposed it here, I'd much prefer that,
+too. ;-)
+Let me try that.
 
+Thanks,
+-- Marco
 
