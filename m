@@ -1,159 +1,146 @@
-Return-Path: <linux-kernel+bounces-386778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87D5E9B47CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:06:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7909D9B47D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 12:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 441291F240E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:06:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E549AB2453E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 11:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13FB4205E36;
-	Tue, 29 Oct 2024 11:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D7020607A;
+	Tue, 29 Oct 2024 11:03:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="O0mbOpre";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lEdMhMtK"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="SMyY1FX5"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51769204920;
-	Tue, 29 Oct 2024 11:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCE120606B;
+	Tue, 29 Oct 2024 11:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730199657; cv=none; b=i43XnkaYLlWESR0FEAb1nWbnP3m2zPqWvK2k8NJBpt/HnZGwwl1krnr4Dkw5bhaVSLBR9wzKDWHcMLP9eo/BPhAPzm1ksfyo6w4rxUCd60HbIM6pT8lZxRtqZMQwazvtT/X3SCytCgVJHFPar9i4yjP04k9taGXbf7Nl9SRKPi8=
+	t=1730199826; cv=none; b=CLnrCjYQxzg5G9/ey3YrScHYAbI2cfsXObjyTzbXW1+YA8sLg1W6MaC8EnPhovXzUx5ULfRmYU59ekugWn5A89LAfCQTeJMjRjE35K1u/vq5YS5v6zKLX3lHD8IGrFDPYZqRC3FcaUUswtqXG/uR1CUWb0GpHvR6OV5v4N1VdnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730199657; c=relaxed/simple;
-	bh=d0Z4ObN46Fk8U2e4ZoISVPyhtpk5snmnYYWX1Qwtyyg=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UmNZ3z/3sh9alVheQYTl1iA203FNDGQApPqtzxwcdcd+3g8j2vAOrChqd4m4QXHCkln3PkFL3YRcyFtiyHniO76Ukp/gfvJanZJHKZnjHYbahgxvooivhzlaC7FQ0JuucbF7P8kZkxZkMxmaHwkjJJch23TX3E9epXtWckYheXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=O0mbOpre; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lEdMhMtK; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 29 Oct 2024 11:00:52 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1730199653;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mId0OUh17dofr+uBJPBqWZKxuWE5fkaKVwATqueCyz4=;
-	b=O0mbOpretIv8aOn0DE/a5ym040aABkcOySUoji+Q5Zs8RspMPL9PG0FyeADa4i/IvbxVB2
-	5jv/Tn/+XfdPYBAYNv+K+j0N1uhInANAJEcPQlWwj2FTnJD1cJTkctjEOBzJ7RSkZaLKBp
-	g2ufvHTMebJiYBNvekft3Uo58m3O7PbVme5IXGpwYw3jE0AC6fezIPw9e+zWwedO6hH2h6
-	pFm9KRuC6bxoVbAt0x19GiDxBtgEVDit46TLPWjawGt78MYW5OSUhAdr4ACc5pfOrllM2c
-	QnnzmyW3e3d5OGmohH0JSl1XqzTrBLp+nD6we9EIIwi7fMIzEFUi1d2wBlqRXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1730199653;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mId0OUh17dofr+uBJPBqWZKxuWE5fkaKVwATqueCyz4=;
-	b=lEdMhMtKoZLBFiQ4HIm/iTfsLs188pUP6TdLl81EDAmEv4pHiQF70xuZc41CA8jjcJzwUB
-	eeCdbq3jDARii1Bw==
-From: "tip-bot2 for Ashish Kalra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/sev] x86/boot: Skip video memory access in the decompressor
- for SEV-ES/SNP
-Cc: "Borislav Petkov (AMD)" <bp@alien8.de>,
- Thomas Lendacky <thomas.lendacky@amd.com>,
- Ashish Kalra <ashish.kalra@amd.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: =?utf-8?q?=3C8a55ea86524c686e575d273311acbe57ce8cee23=2E17225?=
- =?utf-8?q?20012=2Egit=2Eashish=2Ekalra=40amd=2Ecom=3E?=
-References: =?utf-8?q?=3C8a55ea86524c686e575d273311acbe57ce8cee23=2E172252?=
- =?utf-8?q?0012=2Egit=2Eashish=2Ekalra=40amd=2Ecom=3E?=
+	s=arc-20240116; t=1730199826; c=relaxed/simple;
+	bh=WoBnGVVt6CyKgZYpepDo803Mqerb5sbRInXKA/I3q6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qm/+eDTi+jP+P34vBiQ17DD14GYWGmeuHqMlClMX0iOYl5mZ1ZS6OO+wZANvW4RoYubc/1IdJJQ2lgAtRtY2nuq8ywauG93Tk7m2WpjLMxiF7ODGN8HidmSSAqJH/oggk/FIPGYzNCwWkqDWyHF7ZKirjdb+nh36w/JtDurHKQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=SMyY1FX5; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=psSewTcXqOY4Qf7bkmixNMW1kHT74PJEKuMsClxav4Q=; b=SMyY1FX57TshQVK9zxUZmMtaGt
+	g1FpOidJFXvAYTMjmm4+lCGKOo77IfqNsvGO4Gmqvj8S5D6welpeo73FV/h+TOyqa9vIz09GbVJwx
+	Aoqipwl2uY0+O99K3DK27ayoaCZX+EGhxrau8TZx2XBzs5NvcoOnSKqSaSlC61ZOQLDThwexnCYuO
+	JzVfUJhOF7lGcYPqINDw3X5QjKop4duGnST7NU5Gj+7Lw9TbRH8YEbvE4CJgBOEoTs14askFNt5Eq
+	7ZpFerswy5ijdOFCOdb9Y4T2FKbPtPK2Ya+6EmWkkXp8OU5xE5QN8GY1A8ejrzrbrRK3Q3/0MJsUY
+	Vn1DrHsA==;
+Received: from [187.36.213.55] (helo=[192.168.1.103])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t5k0R-00GaoS-Ov; Tue, 29 Oct 2024 12:03:24 +0100
+Message-ID: <1f4f02ce-f61c-4346-a6b8-e9cb65cd9733@igalia.com>
+Date: Tue, 29 Oct 2024 08:03:17 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173019965256.1442.17892938606871476783.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] mm: fix docs for the kernel parameter
+ ``thp_anon=``
+To: Barry Song <baohua@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ David Hildenbrand <david@redhat.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Lance Yang
+ <ioworker0@gmail.com>, linux-mm@kvack.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com
+References: <20241029002324.1062723-1-mcanal@igalia.com>
+ <20241029002324.1062723-2-mcanal@igalia.com>
+ <CAGsJ_4xEpk1dQFBWfkqGqiSV+Z5Qzyp1Rju1zEhErDRgBWeXtg@mail.gmail.com>
+Content-Language: en-US
+From: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>
+In-Reply-To: <CAGsJ_4xEpk1dQFBWfkqGqiSV+Z5Qzyp1Rju1zEhErDRgBWeXtg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/sev branch of tip:
+Hi Barry,
 
-Commit-ID:     f30470c190c2f4776e0baeba1f53fd8dd3820394
-Gitweb:        https://git.kernel.org/tip/f30470c190c2f4776e0baeba1f53fd8dd3820394
-Author:        Ashish Kalra <ashish.kalra@amd.com>
-AuthorDate:    Thu, 01 Aug 2024 19:14:17 
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Mon, 28 Oct 2024 16:54:16 +01:00
+On 28/10/24 22:03, Barry Song wrote:
+> On Tue, Oct 29, 2024 at 8:24 AM Maíra Canal <mcanal@igalia.com> wrote:
+>>
+>> If we add ``thp_anon=32,64K:always`` to the kernel command line, we
+>> will see the following error:
+>>
+>> [    0.000000] huge_memory: thp_anon=32,64K:always: error parsing string, ignoring setting
+>>
+>> This happens because the correct format isn't ``thp_anon=<size>,<size>[KMG]:<state>```,
+>> as [KMG] must follow each number to especify its unit. So, the correct
+>> format is ``thp_anon=<size>[KMG],<size>[KMG]:<state>```.
+>>
+>> Therefore, adjust the documentation to reflect the correct format of the
+>> parameter ``thp_anon=``.
+>>
+>> Fixes: dd4d30d1cdbe ("mm: override mTHP "enabled" defaults at kernel cmdline")
+>> Signed-off-by: Maíra Canal <mcanal@igalia.com>
+>> Acked-by: Barry Song <baohua@kernel.org>
+>> Acked-by: David Hildenbrand <david@redhat.com>
+> 
+> Can we separate this and apply it to v6.12-rc? If Andrew doesn't require a new
+> version for the separation, can we extract it from this series and
+> apply it to mm?
 
-x86/boot: Skip video memory access in the decompressor for SEV-ES/SNP
+That's fine on my side.
 
-Accessing guest video memory/RAM in the decompressor causes guest
-termination as the boot stage2 #VC handler for SEV-ES/SNP systems does
-not support MMIO handling.
+Best Regards,
+- Maíra
 
-This issue is observed during a SEV-ES/SNP guest kexec as kexec -c adds
-screen_info to the boot parameters passed to the second kernel, which
-causes console output to be dumped to both video and serial.
+> 
+>> ---
+>>   Documentation/admin-guide/kernel-parameters.txt | 2 +-
+>>   Documentation/admin-guide/mm/transhuge.rst      | 2 +-
+>>   2 files changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>> index 1518343bbe22..1666576acc0e 100644
+>> --- a/Documentation/admin-guide/kernel-parameters.txt
+>> +++ b/Documentation/admin-guide/kernel-parameters.txt
+>> @@ -6688,7 +6688,7 @@
+>>                          0: no polling (default)
+>>
+>>          thp_anon=       [KNL]
+>> -                       Format: <size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>
+>> +                       Format: <size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>
+>>                          state is one of "always", "madvise", "never" or "inherit".
+>>                          Control the default behavior of the system with respect
+>>                          to anonymous transparent hugepages.
+>> diff --git a/Documentation/admin-guide/mm/transhuge.rst b/Documentation/admin-guide/mm/transhuge.rst
+>> index 203ba7aaf5fc..745055c3dc09 100644
+>> --- a/Documentation/admin-guide/mm/transhuge.rst
+>> +++ b/Documentation/admin-guide/mm/transhuge.rst
+>> @@ -303,7 +303,7 @@ control by passing the parameter ``transparent_hugepage=always`` or
+>>   kernel command line.
+>>
+>>   Alternatively, each supported anonymous THP size can be controlled by
+>> -passing ``thp_anon=<size>,<size>[KMG]:<state>;<size>-<size>[KMG]:<state>``,
+>> +passing ``thp_anon=<size>[KMG],<size>[KMG]:<state>;<size>[KMG]-<size>[KMG]:<state>``,
+>>   where ``<size>`` is the THP size (must be a power of 2 of PAGE_SIZE and
+>>   supported anonymous THP)  and ``<state>`` is one of ``always``, ``madvise``,
+>>   ``never`` or ``inherit``.
+>> --
+>> 2.46.2
+>>
+> 
+> Thanks
+> Barry
 
-As the decompressor output gets cleared really fast, it is preferable to
-get the console output only on serial, hence, skip accessing the video
-RAM during decompressor stage to prevent guest termination.
-
-Serial console output during decompressor stage works as boot stage2 #VC
-handler already supports handling port I/O.
-
-  [ bp: Massage. ]
-
-Suggested-by: Borislav Petkov (AMD) <bp@alien8.de>
-Suggested-by: Thomas Lendacky <thomas.lendacky@amd.com>
-Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
-Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-Link: https://lore.kernel.org/r/8a55ea86524c686e575d273311acbe57ce8cee23.1722520012.git.ashish.kalra@amd.com
----
- arch/x86/boot/compressed/misc.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
-index 04a35b2..0d37420 100644
---- a/arch/x86/boot/compressed/misc.c
-+++ b/arch/x86/boot/compressed/misc.c
-@@ -385,6 +385,19 @@ static void parse_mem_encrypt(struct setup_header *hdr)
- 		hdr->xloadflags |= XLF_MEM_ENCRYPTION;
- }
- 
-+static void early_sev_detect(void)
-+{
-+	/*
-+	 * Accessing video memory causes guest termination because
-+	 * the boot stage2 #VC handler of SEV-ES/SNP guests does not
-+	 * support MMIO handling and kexec -c adds screen_info to the
-+	 * boot parameters passed to the kexec kernel, which causes
-+	 * console output to be dumped to both video and serial.
-+	 */
-+	if (sev_status & MSR_AMD64_SEV_ES_ENABLED)
-+		lines = cols = 0;
-+}
-+
- /*
-  * The compressed kernel image (ZO), has been moved so that its position
-  * is against the end of the buffer used to hold the uncompressed kernel
-@@ -440,6 +453,8 @@ asmlinkage __visible void *extract_kernel(void *rmode, unsigned char *output)
- 	 */
- 	early_tdx_detect();
- 
-+	early_sev_detect();
-+
- 	console_init();
- 
- 	/*
 
