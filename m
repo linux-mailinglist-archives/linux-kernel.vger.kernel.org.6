@@ -1,189 +1,503 @@
-Return-Path: <linux-kernel+bounces-387100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D9009B4BF0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:17:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E6C39B4BF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:17:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50A701C229F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:17:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96DE41F2389E
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 14:17:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A75BB206E8D;
-	Tue, 29 Oct 2024 14:16:55 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF8F2071EB;
+	Tue, 29 Oct 2024 14:17:03 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293BB206E65;
-	Tue, 29 Oct 2024 14:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F06C206E65
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 14:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730211415; cv=none; b=SIbglT1DhVYmbrOI7pE4eobO0eJlb4pme4ue7r8s07plenKEsZYZQWfNfih7s+q17WU4XnnzXmJen7CMzTJMzeXTLdThtpaaAz+iesLQ3f3xcZHOti9O7Q805M5oWkqF0X0h0T+4UZ5AulO8gMDzyeUWPJ2w2tynPjaR9WEr8mo=
+	t=1730211422; cv=none; b=tsso8Oov2VV0R3/1ET9D4ZLyFwBQt0t4eth3HeGDvfyKuC+2aL/52aKTpHCF3ssz3zkTkXFMHo17jIOHhKJw6ed5OXrvCAWLtc5N1Jbg3hNTatbC/V4cCpNjm5Bf4m29zu8wvYBwDeLRP0kCRy82MeEAMKAHSRtLdorQ6BD+nCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730211415; c=relaxed/simple;
-	bh=frx8sGu1rwCpvPaSoX5EhggfnwG/IG6G9kp99x8qhoo=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=HRzhJ1n9wjalbqv3pgXRNOcTk2aN8zUPNfg3P74WSuWM9GuaVXTNcJfnGU5R2pmWuB2dQ+/+4TVidlFRC9LIizFim9JALP/zbs2tYi15Cq3NmoRujV8EC3+s/VqBqpE5on6o2FX40yami1qIExxUJEEwgEZ3yIgP0wgY6JlrSPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+	s=arc-20240116; t=1730211422; c=relaxed/simple;
+	bh=09D8e3obKoTtHibJCdREHizIcFhUzqtns/yAFXUeuHE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=p2mLpDpChWtdWeWeTsnjnweG8d8M7Fa0ezgUQQFKxIB1c4L8BZBjxgVn73UNtR53ZNJvyjjNU7pVuZBrWHq9cGPhkb2o4BbG8DzYUVhFYA/eKY7sRn/PA23FgdHHHXgUaiRpjiSNa4jrFp5JZlZ4bdbw/YpPf6gKeYcb7mwB3jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XdC343RtGzQsBc;
-	Tue, 29 Oct 2024 22:15:44 +0800 (CST)
-Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1CCAF140157;
-	Tue, 29 Oct 2024 22:16:43 +0800 (CST)
-Received: from [10.174.162.134] (10.174.162.134) by
- kwepemd200010.china.huawei.com (7.221.188.124) with Microsoft SMTP Server
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XdC1y5QHYz10PBx;
+	Tue, 29 Oct 2024 22:14:46 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id B6C2F1400FD;
+	Tue, 29 Oct 2024 22:16:56 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 29 Oct 2024 22:16:42 +0800
-Subject: Re: [PATCH v4] ACPI: GTDT: Tighten the check for the array of
- platform timer structures
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-CC: <guohanjun@huawei.com>, <sudeep.holla@arm.com>, <mark.rutland@arm.com>,
-	<maz@kernel.org>, <rafael@kernel.org>, <lenb@kernel.org>,
-	<daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241016095458.34126-1-zhengzengkai@huawei.com>
- <Zw+O4nZisbkdvNtz@lpieralisi>
-From: Zheng Zengkai <zhengzengkai@huawei.com>
-Message-ID: <3bf1fe29-e135-c1ba-2774-d1e98c8b92b3@huawei.com>
-Date: Tue, 29 Oct 2024 22:16:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+ 15.2.1258.34; Tue, 29 Oct 2024 22:16:55 +0800
+Message-ID: <fb8cd99a-d037-450e-b4f9-ba0378989ff2@huawei.com>
+Date: Tue, 29 Oct 2024 22:16:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zw+O4nZisbkdvNtz@lpieralisi>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemd200010.china.huawei.com (7.221.188.124)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 drm-dp 1/4] drm/hisilicon/hibmc: add dp aux in hibmc
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20241022124148.1952761-1-shiyongbang@huawei.com>
+ <20241022124148.1952761-2-shiyongbang@huawei.com>
+ <wu2kwdqce7jovidzxhublmpgdhzq4uby65quo7ks44tfjhtgd2@qtfogva3exyg>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <wu2kwdqce7jovidzxhublmpgdhzq4uby65quo7ks44tfjhtgd2@qtfogva3exyg>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-
-Gentle ping.
-
-This patch still can be applied to upstream now.
-
-Thanks!
-
-
-ÔÚ 2024/10/16 18:01, Lorenzo Pieralisi Ð´µÀ:
-> On Wed, Oct 16, 2024 at 05:54:58PM +0800, Zheng Zengkai wrote:
->> As suggested by Marc and Lorenzo, first we need to check whether the
->> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
->> de-referencing what it points at to detect the length of the platform
->> timer struct and then check that the length of current platform_timer
->> struct is also valid, i.e. the length is not zero and within gtdt_end.
->> Now next_platform_timer() only checks against gtdt_end for the entry of
->> subsequent platform timer without checking the length of it and will
->> not report error if the check failed and the existing check in function
->> acpi_gtdt_init() is also not enough.
+> On Tue, Oct 22, 2024 at 08:41:45PM +0800, Yongbang Shi wrote:
+>> From: baihan li <libaihan@huawei.com>
 >>
->> Modify the for_each_platform_timer() iterator and use it combined with
->> a dedicated check function platform_timer_valid() to do the check
->> against table length (gtdt_end) for each element of platform timer
->> array in function acpi_gtdt_init(), making sure that both their entry
->> and length actually fit in the table.
+>> Add dp aux read/write functions. They are basic functions
+>> and will be used later.
 >>
->> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
->> Co-developed-by: Marc Zyngier <maz@kernel.org>
->> Signed-off-by: Marc Zyngier <maz@kernel.org>
->> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+>> Signed-off-by: baihan li <libaihan@huawei.com>
 >> ---
->> Changes in v4:
->> - remove the tmp pointer to make the code more concise.
->>
->> Changes in v3:
->> - based on Marc's patch and reuse the for_each_platform_timer() loop
->> Link to v3: https://lore.kernel.org/linux-arm-kernel/20241015152602.184108-1-zhengzengkai@huawei.com/
->>
->> Changes in v2:
->> - Check against gtdt_end for both entry and len of each array element
->> Link to v2: https://lore.kernel.org/linux-arm-kernel/20241012085343.6594-1-zhengzengkai@huawei.com/
->>
->> Link to v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
->>
->> Link to previous related patches:
->> https://lore.kernel.org/all/20241008082429.33646-1-zhengzengkai@huawei.com/
->> https://lore.kernel.org/all/20240930030716.179992-1-zhengzengkai@huawei.com/
+>> ChangeLog:
+>> v1 -> v2:
+>>    - using drm_dp_aux frame implement dp aux read and write functions, suggested by Jani Nikula.
+>>    - using drm dp header files' dp macros instead, suggested by Andy Yan.
+>>    v1:https://lore.kernel.org/all/20240930100610.782363-1-shiyongbang@huawei.com/
 >> ---
->>   drivers/acpi/arm64/gtdt.c | 29 ++++++++++++++++++++---------
->>   1 file changed, 20 insertions(+), 9 deletions(-)
-> Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
->
->> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
->> index c0e77c1c8e09..d7c4e1b9915b 100644
->> --- a/drivers/acpi/arm64/gtdt.c
->> +++ b/drivers/acpi/arm64/gtdt.c
->> @@ -36,19 +36,25 @@ struct acpi_gtdt_descriptor {
+>>   drivers/gpu/drm/hisilicon/hibmc/Makefile     |   3 +-
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c  | 162 +++++++++++++++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h  |  31 ++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h |  74 +++++++++
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h  |  76 +++++++++
+>>   5 files changed, 345 insertions(+), 1 deletion(-)
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+>>   create mode 100644 drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/Makefile b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> index d25c75e60d3d..8770ec6dfffd 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/Makefile
+>> @@ -1,4 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0-only
+>> -hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o
+>> +hibmc-drm-y := hibmc_drm_drv.o hibmc_drm_de.o hibmc_drm_vdac.o hibmc_drm_i2c.o \
+>> +	       dp/dp_aux.o
 >>   
->>   static struct acpi_gtdt_descriptor acpi_gtdt_desc __initdata;
->>   
->> -static inline __init void *next_platform_timer(void *platform_timer)
->> +static __init bool platform_timer_valid(void *platform_timer)
->>   {
->>   	struct acpi_gtdt_header *gh = platform_timer;
->>   
->> -	platform_timer += gh->length;
->> -	if (platform_timer < acpi_gtdt_desc.gtdt_end)
->> -		return platform_timer;
->> +	return (platform_timer >= (void *)(acpi_gtdt_desc.gtdt + 1) &&
->> +		platform_timer < acpi_gtdt_desc.gtdt_end &&
->> +		gh->length != 0 &&
->> +		platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end);
+>>   obj-$(CONFIG_DRM_HISI_HIBMC) += hibmc-drm.o
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+>> new file mode 100644
+>> index 000000000000..0078cafdf86d
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.c
+>> @@ -0,0 +1,162 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>> +// Copyright (c) 2024 Hisilicon Limited.
+>> +
+>> +#include <linux/io.h>
+>> +#include <linux/iopoll.h>
+>> +#include <linux/minmax.h>
+>> +#include <drm/drm_device.h>
+>> +#include <drm/drm_print.h>
+>> +#include "dp_comm.h"
+>> +#include "dp_reg.h"
+>> +#include "dp_aux.h"
+>> +
+>> +#define DP_MIN_PULSE_NUM 0x9
+>> +
+>> +static void dp_aux_reset(const struct dp_dev *dp)
+>> +{
+>> +	dp_write_bits(dp->base + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x0);
+>> +	usleep_range(10, 15);
+>> +	dp_write_bits(dp->base + DP_DPTX_RST_CTRL, DP_CFG_AUX_RST_N, 0x1);
 >> +}
 >> +
->> +static __init void *next_platform_timer(void *platform_timer)
+>> +static void dp_aux_read_data(struct dp_dev *dp, u8 *buf, u8 size)
 >> +{
->> +	struct acpi_gtdt_header *gh = platform_timer;
->>   
->> -	return NULL;
->> +	return platform_timer + gh->length;
->>   }
->>   
->>   #define for_each_platform_timer(_g)				\
->> -	for (_g = acpi_gtdt_desc.platform_timer; _g;	\
->> +	for (_g = acpi_gtdt_desc.platform_timer; platform_timer_valid(_g);\
->>   	     _g = next_platform_timer(_g))
->>   
->>   static inline bool is_timer_block(void *platform_timer)
->> @@ -157,6 +163,7 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->>   {
->>   	void *platform_timer;
->>   	struct acpi_table_gtdt *gtdt;
->> +	int cnt = 0;
->>   
->>   	gtdt = container_of(table, struct acpi_table_gtdt, header);
->>   	acpi_gtdt_desc.gtdt = gtdt;
->> @@ -176,12 +183,16 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
->>   		return 0;
->>   	}
->>   
->> -	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
->> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
->> +	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
->> +	for_each_platform_timer(platform_timer)
->> +		cnt++;
+>> +	u32 reg_num;
+>> +	u32 value;
+>> +	u32 num;
+>> +	u8 i, j;
 >> +
->> +	if (cnt != gtdt->platform_timer_count) {
->> +		acpi_gtdt_desc.platform_timer = NULL;
->>   		pr_err(FW_BUG "invalid timer data.\n");
->>   		return -EINVAL;
->>   	}
->> -	acpi_gtdt_desc.platform_timer = platform_timer;
+>> +	reg_num = round_up(size, AUX_4_BYTE) / AUX_4_BYTE;
+>> +	for (i = 0; i < reg_num; i++) {
+>> +		/* number of bytes read from a single register */
+>> +		num = min(size - i * AUX_4_BYTE, AUX_4_BYTE);
+>> +		value = readl(dp->base + DP_AUX_RD_DATA0 + i * AUX_4_BYTE);
+>> +		/* convert the 32-bit value of the register to the buffer. */
+>> +		for (j = 0; j < num; j++)
+>> +			buf[i * AUX_4_BYTE + j] = value >> (j * AUX_8_BIT);
+>> +	}
+>> +}
 >> +
->>   	if (platform_timer_count)
->>   		*platform_timer_count = gtdt->platform_timer_count;
->>   
->> -- 
->> 2.20.1
->>
-> .
+>> +static void dp_aux_write_data(struct dp_dev *dp, u8 *buf, u8 size)
+>> +{
+>> +	u32 reg_num;
+>> +	u32 value;
+>> +	u8 i, j;
+>> +	u32 num;
+>> +
+>> +	reg_num = round_up(size, AUX_4_BYTE) / AUX_4_BYTE;
+>> +	for (i = 0; i < reg_num; i++) {
+>> +		/* number of bytes written to a single register */
+>> +		num = min_t(u8, size - i * AUX_4_BYTE, AUX_4_BYTE);
+>> +		value = 0;
+>> +		/* obtain the 32-bit value written to a single register. */
+>> +		for (j = 0; j < num; j++)
+>> +			value |= buf[i * AUX_4_BYTE + j] << (j * AUX_8_BIT);
+>> +		/* writing data to a single register */
+>> +		writel(value, dp->base + DP_AUX_WR_DATA0 + i * AUX_4_BYTE);
+>> +	}
+>> +}
+>> +
+>> +static u32 dp_aux_build_cmd(const struct drm_dp_aux_msg *msg)
+>> +{
+>> +	u32 aux_cmd = msg->request;
+>> +
+>> +	if (msg->size)
+>> +		aux_cmd |= (msg->size - 1) << AUX_CMD_REQ_LEN_S;
+>> +	else
+>> +		aux_cmd |= 1 << AUX_CMD_I2C_ADDR_ONLY_S;
+>> +
+>> +	aux_cmd |= msg->address << AUX_CMD_ADDR_S;
+>> +
+>> +	return aux_cmd;
+>> +}
+>> +
+>> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
+>> +static int dp_aux_parse_xfer(struct dp_dev *dp, struct drm_dp_aux_msg *msg)
+>> +{
+>> +	u32 buf_data_cnt;
+>> +	u32 aux_status;
+>> +	int ret = 0;
+>> +
+>> +	aux_status = readl(dp->base + DP_AUX_STATUS);
+>> +	msg->reply = FIELD_GET(DP_CFG_AUX_STATUS, aux_status);
+>> +
+>> +	if (aux_status & DP_CFG_AUX_TIMEOUT)
+>> +		return -ETIMEDOUT;
+>> +
+>> +	/* only address */
+>> +	if (!msg->size)
+>> +		return 0;
+>> +
+>> +	if (msg->reply != DP_AUX_NATIVE_REPLY_ACK)
+>> +		return 0;
+>> +
+>> +	buf_data_cnt = FIELD_GET(DP_CFG_AUX_READY_DATA_BYTE, aux_status);
+>> +
+>> +	switch (msg->request) {
+>> +	case DP_AUX_NATIVE_WRITE:
+>> +		ret = msg->size;
+>> +		break;
+>> +	case DP_AUX_I2C_WRITE | DP_AUX_I2C_MOT:
+>> +		if (buf_data_cnt == AUX_I2C_WRITE_SUCCESS)
+>> +			ret = msg->size;
+>> +		else if (buf_data_cnt == AUX_I2C_WRITE_PARTIAL_SUCCESS)
+>> +			ret = FIELD_GET(DP_CFG_AUX, aux_status);
+>> +		break;
+>> +	case DP_AUX_NATIVE_READ:
+>> +	case DP_AUX_I2C_READ | DP_AUX_I2C_MOT:
+>> +		buf_data_cnt--;
+>> +		/* only the successful part of data is read */
+>> +		if (buf_data_cnt != msg->size) {
+>> +			ret = -EBUSY;
+>> +		} else { /* all data is successfully read */
+>> +			dp_aux_read_data(dp, msg->buffer, msg->size);
+>> +			ret = msg->size;
+>> +		}
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +/* ret >= 0 ,ret is size; ret < 0, ret is err code */
+>> +static ssize_t dp_aux_xfer(struct drm_dp_aux *aux, struct drm_dp_aux_msg *msg)
+>> +{
+>> +	struct dp_dev *dp = container_of(aux, struct dp_dev, aux);
+>> +	u32 aux_cmd;
+>> +	int ret;
+>> +	u32 val; /* val will be assigned at the beginning of readl_poll_timeout function */
+>> +
+>> +	writel(0, dp->base + DP_AUX_WR_DATA0);
+>> +	writel(0, dp->base + DP_AUX_WR_DATA1);
+>> +	writel(0, dp->base + DP_AUX_WR_DATA2);
+>> +	writel(0, dp->base + DP_AUX_WR_DATA3);
+>> +
+>> +	dp_aux_write_data(dp, msg->buffer, msg->size);
+>> +
+>> +	aux_cmd = dp_aux_build_cmd(msg);
+>> +	writel(aux_cmd, dp->base + DP_AUX_CMD_ADDR);
+>> +
+>> +	/* enable aux transfer */
+>> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_REQ, 0x1);
+>> +	ret = readl_poll_timeout(dp->base + DP_AUX_REQ, val, !(val & DP_CFG_AUX_REQ), 50, 5000);
+>> +	if (ret) {
+>> +		dp_aux_reset(dp);
+>> +		return ret;
+>> +	}
+>> +
+>> +	return dp_aux_parse_xfer(dp, msg);
+>> +}
+>> +
+>> +void dp_aux_init(struct dp_dev *dp)
+>> +{
+>> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
+>> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
+>> +	dp_write_bits(dp->base + DP_AUX_REQ, DP_CFG_AUX_MIN_PULSE_NUM, DP_MIN_PULSE_NUM);
+>> +
+>> +	dp->aux.transfer = dp_aux_xfer;
+>> +	dp->aux.is_remote = 0;
+>> +	drm_dp_aux_init(&dp->aux);
+>> +}
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+>> new file mode 100644
+>> index 000000000000..6f95a3750d60
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_aux.h
+>> @@ -0,0 +1,31 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +
+>> +#ifndef DP_AUX_H
+>> +#define DP_AUX_H
+>> +
+>> +#include <linux/bitops.h>
+>> +#include "dp_comm.h"
+>> +
+>> +#define AUX_I2C_WRITE_SUCCESS		0x1
+>> +#define AUX_I2C_WRITE_PARTIAL_SUCCESS	0x2
+>> +
+>> +#define EQ_MAX_RETRY			5
+> unused
 >
+>> +
+>> +#define DP_CFG_AUX_S			17
+>> +#define DP_CFG_AUX_STATUS_S		4
+> Both are unused
+>
+>> +
+>> +#define AUX_4_BYTE			4
+>> +#define AUX_4_BIT			4
+>> +#define AUX_8_BIT			8
+> AUX_4_BIT is unused. For other defines I think it's better to provide
+> sensible names. BITS_IN_U32, BYTES_IN_U32
+>
+>> +
+>> +#define AUX_READY_DATA_BYTE_S		12
+> unused
+>
+>> +
+>> +/* aux_cmd_addr register shift */
+>> +#define AUX_CMD_REQ_LEN_S		4
+>> +#define AUX_CMD_ADDR_S			8
+>> +#define AUX_CMD_I2C_ADDR_ONLY_S		28
+> Please use FIELD_PREP instead of definig shifts (and shift is usally
+> _SHIFT, not _S)
+>
+>> +
+>> +void dp_aux_init(struct dp_dev *dp);
+>> +
+>> +#endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+>> new file mode 100644
+>> index 000000000000..26d97929dc06
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
+>> @@ -0,0 +1,74 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +
+>> +#ifndef DP_COMM_H
+>> +#define DP_COMM_H
+>> +
+>> +#include <linux/types.h>
+>> +#include <linux/bitops.h>
+>> +#include <linux/errno.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/bitfield.h>
+>> +#include <linux/io.h>
+>> +
+>> +#include <drm/display/drm_dp_helper.h>
+>> +
+>> +#define REG_LENGTH 32
+>> +
+>> +static inline u32 dp_read_bits(void __iomem *addr, u32 bit_mask)
+>> +{
+>> +	u32 reg_val;
+>> +
+>> +	reg_val = readl(addr);
+>> +
+>> +	return (reg_val & bit_mask) >> __ffs(bit_mask);
+> FIELD_GET
+>
+>> +}
+>> +
+>> +static inline void dp_write_bits(void __iomem *addr, u32 bit_mask, u32 val)
+>> +{
+>> +	u32 reg_val;
+>> +
+>> +	reg_val = readl(addr);
+>> +	reg_val &= ~bit_mask;
+>> +	reg_val |= (val << __ffs(bit_mask)) & bit_mask;
+> FIELD_PREP
+>
+>> +	writel(reg_val, addr);
+> How is this protected from concurrent RMW cycles?
+
+Hi Dmitry,
+This is just an encapsulation for readl or writel functions to simplify every shift operation when calling them.
+I'll consider concurrency and have locks every time where I call these read and write functions and their contexts.
+Thanks,
+Baihan
+
+
+>> +}
+>> +
+>> +enum dpcd_revision {
+>> +	DPCD_REVISION_10 = 0x10,
+>> +	DPCD_REVISION_11,
+>> +	DPCD_REVISION_12,
+>> +	DPCD_REVISION_13,
+>> +	DPCD_REVISION_14,
+> Any reason for ignoring defines in drm_dp.h?
+>
+>> +};
+>> +
+>> +struct link_status {
+>> +	bool clock_recovered;
+>> +	bool channel_equalized;
+>> +	u8 cr_done_lanes;
+>> +};
+>> +
+>> +struct link_cap {
+>> +	enum dpcd_revision rx_dpcd_revision;
+>> +	u8 link_rate;
+>> +	u8 lanes;
+>> +	bool is_tps3;
+>> +	bool is_tps4;
+>> +};
+>> +
+>> +struct hibmc_dp_link {
+>> +	struct link_status status;
+>> +	u8 *train_set;
+>> +	struct link_cap cap;
+>> +};
+>> +
+>> +struct dp_dev {
+>> +	struct hibmc_dp_link link;
+>> +	struct drm_dp_aux aux;
+>> +	struct drm_device *dev;
+>> +	void __iomem *base;
+>> +	u8 dpcd[DP_RECEIVER_CAP_SIZE];
+>> +};
+>> +
+>> +#endif
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> new file mode 100644
+>> index 000000000000..3dcb847057a4
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
+>> @@ -0,0 +1,76 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+>> +/* Copyright (c) 2024 Hisilicon Limited. */
+>> +
+>> +#ifndef DP_REG_H
+>> +#define DP_REG_H
+>> +
+>> +#define DP_AUX_CMD_ADDR			0x50
+>> +#define DP_AUX_WR_DATA0			0x54
+>> +#define DP_AUX_WR_DATA1			0x58
+>> +#define DP_AUX_WR_DATA2			0x5c
+>> +#define DP_AUX_WR_DATA3			0x60
+>> +#define DP_AUX_RD_DATA0			0x64
+>> +#define DP_AUX_REQ			0x74
+>> +#define DP_AUX_STATUS			0x78
+>> +#define DP_PHYIF_CTRL0			0xa0
+>> +#define DP_VIDEO_CTRL			0x100
+>> +#define DP_VIDEO_CONFIG0		0x104
+>> +#define DP_VIDEO_CONFIG1		0x108
+>> +#define DP_VIDEO_CONFIG2		0x10c
+>> +#define DP_VIDEO_CONFIG3		0x110
+>> +#define DP_VIDEO_PACKET			0x114
+>> +#define DP_VIDEO_MSA0			0x118
+>> +#define DP_VIDEO_MSA1			0x11c
+>> +#define DP_VIDEO_MSA2			0x120
+>> +#define DP_VIDEO_HORIZONTAL_SIZE	0X124
+>> +#define DP_TIMING_GEN_CONFIG0		0x26c
+>> +#define DP_TIMING_GEN_CONFIG2		0x274
+>> +#define DP_TIMING_GEN_CONFIG3		0x278
+>> +#define DP_HDCP_CFG			0x600
+>> +#define DP_INTR_ENABLE			0x720
+>> +#define DP_INTR_ORIGINAL_STATUS		0x728
+>> +#define DP_DPTX_RST_CTRL		0x700
+>> +#define DP_DPTX_CLK_CTRL		0x704
+>> +#define DP_DPTX_GCTL0			0x708
+>> +#define DP_TIMING_MODEL_CTRL		0x884
+>> +#define DP_TIMING_SYNC_CTRL		0xFF0
+>> +
+>> +#define DP_CFG_AUX_SYNC_LEN_SEL			BIT(1)
+>> +#define DP_CFG_AUX_TIMER_TIMEOUT		BIT(2)
+>> +#define DP_CFG_STREAM_FRAME_MODE		BIT(6)
+>> +#define DP_CFG_AUX_MIN_PULSE_NUM		GENMASK(13, 9)
+>> +#define DP_CFG_LANE_DATA_EN			GENMASK(11, 8)
+>> +#define DP_CFG_PHY_LANE_NUM			GENMASK(2, 1)
+>> +#define DP_CFG_AUX_REQ				BIT(0)
+>> +#define DP_CFG_AUX_RST_N			BIT(4)
+>> +#define DP_CFG_AUX_TIMEOUT			BIT(0)
+>> +#define DP_CFG_AUX_READY_DATA_BYTE		GENMASK(16, 12)
+>> +#define DP_CFG_AUX				GENMASK(24, 17)
+>> +#define DP_CFG_AUX_STATUS			GENMASK(11, 4)
+>> +#define DP_CFG_SCRAMBLE_EN			BIT(0)
+>> +#define DP_CFG_PAT_SEL				GENMASK(7, 4)
+>> +#define DP_CFG_TIMING_GEN0_HACTIVE		GENMASK(31, 16)
+>> +#define DP_CFG_TIMING_GEN0_HBLANK		GENMASK(15, 0)
+>> +#define DP_CFG_TIMING_GEN0_VACTIVE		GENMASK(31, 16)
+>> +#define DP_CFG_TIMING_GEN0_VBLANK		GENMASK(15, 0)
+>> +#define DP_CFG_TIMING_GEN0_VFRONT_PORCH		GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HACTIVE			GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HBLANK			GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_HSYNC_WIDTH		GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VACTIVE			GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_VBLANK			GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VFRONT_PORCH		GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_VSYNC_WIDTH		GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VSTART			GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HSTART			GENMASK(15, 0)
+>> +#define DP_CFG_STREAM_VSYNC_POLARITY		BIT(8)
+>> +#define DP_CFG_STREAM_HSYNC_POLARITY		BIT(7)
+>> +#define DP_CFG_STREAM_RGB_ENABLE		BIT(1)
+>> +#define DP_CFG_STREAM_VIDEO_MAPPING		GENMASK(5, 2)
+>> +#define DP_CFG_PIXEL_NUM_TIMING_MODE_SEL1	GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_TU_SYMBOL_SIZE		GENMASK(5, 0)
+>> +#define DP_CFG_STREAM_TU_SYMBOL_FRAC_SIZE	GENMASK(9, 6)
+>> +#define DP_CFG_STREAM_HTOTAL_SIZE		GENMASK(31, 16)
+>> +#define DP_CFG_STREAM_HBLANK_SIZE		GENMASK(15, 0)
+>> +
+>> +#endif
+>> -- 
+>> 2.33.0
+>>
 
