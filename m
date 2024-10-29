@@ -1,123 +1,174 @@
-Return-Path: <linux-kernel+bounces-387304-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330179B4F39
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:23:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F4189B4F3D
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:24:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC0F2867C2
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:23:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B6981F265BE
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2FE199E88;
-	Tue, 29 Oct 2024 16:23:06 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 716501990CD;
+	Tue, 29 Oct 2024 16:24:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XO3DgkGm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4552A199E80;
-	Tue, 29 Oct 2024 16:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 968E8198A35
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:24:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730218985; cv=none; b=VNgyul50vI3eaEwOx9PSvHbwikMkSHV7qnAzChj3j8mGKaxcPJMfP9jHR3p08eJAAPYMNSLLoKhP6H7dRSqc8p6bQPAgNC0Hq20eXIECiZo7TAHHlOg5aUMEeziyf0uahinDbcVXaT1sedwIHeAuufKHzoG2rTvfMW7aD+08lCc=
+	t=1730219066; cv=none; b=KucUFKImYEM8Wa8B4LEX2H3hq7+Og0qySVhXVW9sjj/22mDxrBkriC1em5KvOSE0645zLpt1gTxwlvk+PxQwCWvTv2YzHjrUTYgiPfiOR2+duJojFxfQx6/CfxfdQcWubZc1Pgt+Eu8ThwwrAjopx29PNwjXh1Han5x7XpwQo1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730218985; c=relaxed/simple;
-	bh=hnw3a4Xz8giAfeEUrg7HVp4lhnxcTB5sn16ndm/j+k4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lGNZ5jIRbELIuW5txmZ1TS9FSqwfuXdo2zbGjt8nzq+28f9ZKRXorQq76CqB3meqMftT/jFRdVThuzB+A9C+SGpkA+YFYPiBH+PhNgRlpycPCWjRV1Mz6v6S9kJ31h7qyLGhYnRjroeM05eRUndrHhoMtRgUzXMQJNrUZHnmKt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ea051d04caso20386167b3.0;
-        Tue, 29 Oct 2024 09:23:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730218980; x=1730823780;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ROSe2v3U/1vSKBR72rtEBk3p8buCmeo4JYHedEhiUX8=;
-        b=VeWUUKRTPd/D66AKb+4KT3nswjq5Dhd6PI065BceAQmMApAtCluXkIzyNjYAx3hkUH
-         2EtvdCqG3wm/25D0nwwQ098FJ9MuCyKbp9ow9/0PRVZWpYWqL0Ug84KDzf34T6lXxxpk
-         xa8Z+P7ZSPo6bDlUJjqVF5vLLw3Imwq2NDuUkODqQGifjqIes+c8wJ0BsSBxi73IlGru
-         rTzy6LLopmLTerF3fCz5BscCI3zFI1xPntQiw1SCBY/M8VmqTmbaVUah8FyvzBAZ8TwJ
-         c79hr2Tlio6xnX9HPJAwLxE+D9ujCuzdImfgNL+x0j3AYMjbp/Ko3KwsKSdYtjyXsiOE
-         nazw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTHplA4DGtCeblf3JpTODtajLRqcFmlNJsZ1MCeHeQyGMsZ8OBfv8MAIwpDDAmmN2jTki3e4EYdMtr/Tgs@vger.kernel.org, AJvYcCWQALwzlZWzdEm77yBFJJ7Xii2490dy/eQe3qvKu6vbcNv1bAza6HB2T/gaOgTyhkj9liKhOs7SNsUNMQUIfhs=@vger.kernel.org, AJvYcCWmLKFNg2UHgarc1Kj6UDXjCFokT9z/IRpws0tP7+z0CXhbrMjrbBtzsWfq1DcuiuSlKIW2MGLE/rQQFSxc@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyy71aOv5gKXCV8deOHu9WBy5lcxj4ed2ZYopTaSy5RWgFY5BLN
-	YirntAKmTUgHGCjNPS8WTZtmFd/IstDKF7MNAJGslOiX3yc1dMvEksfcBnXH
-X-Google-Smtp-Source: AGHT+IEiJzMtBL2USODF9wB49pZtOjVi7QAC4ridp46IJDGW+slkjk9Xsih4ve2PBsxn8bpOMq5UdQ==
-X-Received: by 2002:a05:690c:6085:b0:6d5:7b2f:60a0 with SMTP id 00721157ae682-6e9d8afb26dmr131442847b3.34.1730218980363;
-        Tue, 29 Oct 2024 09:23:00 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e9c6c193b6sm20001877b3.66.2024.10.29.09.22.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 09:22:59 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6ea051d04caso20385607b3.0;
-        Tue, 29 Oct 2024 09:22:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUkIyt1iOsZ8/lmwDQE4HSNwnIxEKdjV9AU5+tJYLFdOd94g2oEqxC1L/CLvZXrOeMB5SUdDWSMbspX2k3O@vger.kernel.org, AJvYcCVtgarZtNV5XeVSPDi8+JDYNYZmLQfy/0Q5LZ2Er66wkK+kHCJJw7b5kjdGrHfLqdlEkpjlJScB+HwgX1cG@vger.kernel.org, AJvYcCWGC1JusvWfaC8ok+B25eeldXRhu7NqTCXAXJeG285DjNnvusAkK7Q2a/so5UkyZDnPg22qeeiaOWtUpwkOLOo=@vger.kernel.org
-X-Received: by 2002:a05:690c:60c1:b0:6e3:36cc:eb74 with SMTP id
- 00721157ae682-6e9d8afa635mr145747877b3.32.1730218979252; Tue, 29 Oct 2024
- 09:22:59 -0700 (PDT)
+	s=arc-20240116; t=1730219066; c=relaxed/simple;
+	bh=C65qfDDDxCTRTP97/W4uzaYzCBQIJJ/LO3jBSxMCD/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PCJ3i4Cj0lfUHzc6MS27vheMXOQQ4OkGMlp9TDRypG7xcVKX24n/0b536qxp+WlJfchMYXa5wxLUruBA3RPihUya9pH9gnklad4JBbRMABoYbgbf9HD4WZV7lGFIXdERh3ob0tzxGu+R01363Nq3Cor7GYwMq8uCxSQRMlHSYuE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XO3DgkGm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730219063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sBEBhcwFRWdEyrYlXSEyJ0AeIl4d7kyeomTAvUDYmHc=;
+	b=XO3DgkGmdQRS1i0jwsdJEwaOcpLqhs0uW2aVov4NFvE3+x3BrOw7pn2vinz/T6tQtiWopn
+	LHq0SBDFWAPtR7P16NCmtd96UxfIOxInoNcdKahvnD00E1YBX+3vFIyIS7VFK29p7xzXeo
+	My46RDXCDkGMJHfKxsxu1sDMfoSnsn4=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-635-rx-gZuZfNt6DqaA-qm1PGg-1; Tue,
+ 29 Oct 2024 12:24:19 -0400
+X-MC-Unique: rx-gZuZfNt6DqaA-qm1PGg-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 440761955D4C;
+	Tue, 29 Oct 2024 16:24:17 +0000 (UTC)
+Received: from wcosta-thinkpadt14gen4.rmtbr.csb (unknown [10.22.88.170])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0CAFE19560AA;
+	Tue, 29 Oct 2024 16:24:10 +0000 (UTC)
+Date: Tue, 29 Oct 2024 13:24:09 -0300
+From: Wander Lairson Costa <wander@redhat.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: John Ogness <john.ogness@linutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Petr Mladek <pmladek@suse.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Esben Haabendal <esben@geanix.com>, linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Rengarajan S <rengarajan.s@microchip.com>, Jeff Johnson <quic_jjohnson@quicinc.com>, 
+	Serge Semin <fancer.lancer@gmail.com>, Lino Sanfilippo <l.sanfilippo@kunbus.com>
+Subject: Re: [PATCH tty-next v3 1/6] serial: 8250: Adjust the timeout for
+ FIFO mode
+Message-ID: <gdgngas4qc4mv4efghwzi5z7zbg7imvupjcyiskbyedivclwoi@vus4vxbsnqgu>
+References: <20241025105728.602310-1-john.ogness@linutronix.de>
+ <20241025105728.602310-2-john.ogness@linutronix.de>
+ <Zxug3qF9KUOn4VaM@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241028-open-coded-timeouts-v2-0-c7294bb845a1@linux.microsoft.com>
- <20241028-open-coded-timeouts-v2-1-c7294bb845a1@linux.microsoft.com> <87wmhq28o6.ffs@tglx>
-In-Reply-To: <87wmhq28o6.ffs@tglx>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 29 Oct 2024 17:22:47 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
-Message-ID: <CAMuHMdWFAgfgM0uCrG4uMz77-Y8CFSnpL-YM_VEFuvKTPNKZ5w@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] jiffies: Define secs_to_jiffies()
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Easwar Hariharan <eahariha@linux.microsoft.com>, "K. Y. Srinivasan" <kys@microsoft.com>, 
-	Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
-	Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org, 
-	Anna-Maria Behnsen <anna-maria@linutronix.de>, Marcel Holtmann <marcel@holtmann.org>, 
-	Johan Hedberg <johan.hedberg@gmail.com>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Michael Kelley <mhklinux@outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxug3qF9KUOn4VaM@smile.fi.intel.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Hi Thomas,
+On Fri, Oct 25, 2024 at 04:45:02PM +0300, Andy Shevchenko wrote:
+> On Fri, Oct 25, 2024 at 01:03:23PM +0206, John Ogness wrote:
+> > After a console has fed a line into TX, it uses wait_for_xmitr()
+> > to wait until the data has been sent out before returning to the
+> > printk code. However, wait_for_xmitr() will timeout after 10ms,
+> 
+> printk here is a function reference or module?
+> For the latter I would use the filename to be sure it's clear,
+> like printk.c. For the former (and it seems you know that)
+> we may use printk().
+> 
+> > regardless if the data has been transmitted or not.
+> > 
+> > For single bytes, this timeout is sufficient even at very slow
+> > baud rates, such as 1200bps. However, when FIFO mode is used,
+> > there may be 64 bytes pushed into the FIFO at once. At a baud
+> > rate of 115200bps, the 10ms timeout is still sufficient.
+> > However, when using lower baud rates (such as 57600bps), the
+> > timeout is _not_ sufficient. This causes longer lines to be cut
+> > off, resulting in lost and horribly misformatted output on the
+> > console.
+> > 
+> > When using FIFO mode, take the number of bytes into account to
+> > determine an appropriate max timeout. Increasing the timeout
+> 
+> maximum
+> (in order not to mix with max() function)
+> 
+> > does not affect performance since ideally the timeout never
+> > occurs.
+> 
+> ...
+> 
+> >  /*
+> >   *	Wait for transmitter & holding register to empty
+> > + *	with timeout
+> 
+> Can you fix the style while at it?
+> 
+> >   */
+> 
+>  /* Wait for transmitter & holding register to empty with timeout */
+> 
+> ...
+> 
+> >  static void serial8250_console_fifo_write(struct uart_8250_port *up,
+> >  					  const char *s, unsigned int count)
+> >  {
+> > -	int i;
+> >  	const char *end = s + count;
+> >  	unsigned int fifosize = up->tx_loadsz;
+> > +	unsigned int tx_count = 0;
+> >  	bool cr_sent = false;
+> > +	unsigned int i;
+> >  
+> >  	while (s != end) {
+> > -		wait_for_lsr(up, UART_LSR_THRE);
+> > +		/* Allow timeout for each byte of a possibly full FIFO. */
+> 
+> Does the one-line comment style in this file use periods? If not, drop,
+> otherwise apply it to the above proposal.
+> 
+> > +		for (i = 0; i < fifosize; i++) {
+> > +			if (wait_for_lsr(up, UART_LSR_THRE))
+> > +				break;
+> > +		}
+> 
+> > +	}
+> > +
+> > +	/* Allow timeout for each byte written. */
+> > +	for (i = 0; i < tx_count; i++) {
+> > +		if (wait_for_lsr(up, UART_LSR_THRE))
+> > +			break;
+> 
+> This effectively repeats the above. Even for the fix case I would still add
+> a new helper to deduplicate.
 
-On Tue, Oct 29, 2024 at 5:08=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de=
-> wrote:
-> On Mon, Oct 28 2024 at 19:11, Easwar Hariharan wrote:
-> > diff --git a/include/linux/jiffies.h b/include/linux/jiffies.h
-> > index 1220f0fbe5bf..e5256bb5f851 100644
-> > --- a/include/linux/jiffies.h
-> > +++ b/include/linux/jiffies.h
-> > @@ -526,6 +526,8 @@ static __always_inline unsigned long msecs_to_jiffi=
-es(const unsigned int m)
-> >       }
++1
+
+With this fixed, Reviewed-by: Wander Lairson Costa <wander@redhat.com>
+> 
+> >  	}
 > >  }
-> >
-> > +#define secs_to_jiffies(_secs) ((_secs) * HZ)
->
-> Can you please make that a static inline, as there is no need for macro
-> magic like in the other conversions, and add a kernel doc comment which
-> documents this?
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
-Note that a static inline means it cannot be used in e.g. struct initialize=
-rs,
-which are substantial users of  "<value> * HZ".
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
