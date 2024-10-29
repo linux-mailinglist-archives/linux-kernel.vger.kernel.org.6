@@ -1,98 +1,116 @@
-Return-Path: <linux-kernel+bounces-387157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3322B9B4CC0
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:00:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 760D09B4CC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:00:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 288A01C22A43
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:00:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BA60B23063
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:00:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADBF91925AE;
-	Tue, 29 Oct 2024 15:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476841885BD;
+	Tue, 29 Oct 2024 15:00:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="P+zzB3nv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AjZFxSVp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A79AFC0A;
-	Tue, 29 Oct 2024 14:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7267E10F7;
+	Tue, 29 Oct 2024 15:00:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730214002; cv=none; b=HQzeLmwd7LP9t/L3NSj/iDSZOIW4t6IMBToUA3v1GvfUB9ym8AQ8t3ouubpnBIQ0EsczeAP+fF5ttYj8lAoTMLMCa0a3M9WdkTlHS9MMJR8/2vl0ozfHrOve1AYe0u4yQJMFQsfJloydbPSmlOn0Q0imFb1nmSZBYbddbSQiSgQ=
+	t=1730214047; cv=none; b=QIbIYBOY4L3FRij6SnY2jtp8B6aPd8eDrseZqmwoTrzLSh5z7xmRyZh4FQzMG8Tk8NScivh7ffG3PX5XTYoFOu6PqRbf6PluhriMyNh+e1cpCr26yG6kSopOUAqO9YUwsGzM2mH609jUku0H/Yiqv0h520B+eqoZjVOmi95law4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730214002; c=relaxed/simple;
-	bh=SiEFjk6TmcgSl4Jn7HhISzuv6QAVmzOotSoDU8dmeEw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gwAyZgDW472pHiS8QinL06N8YajZR4O3xNUUVOotLZp6bCWPzSaqwRs7ZvGYdTJ1HtJJhWrAmxUIxgu0FZOueB9hFlidZ7xnZ+YrbHnQBwPDQYu0BIj6FguL1x14gTggC+81F2VpkYlBs0Iak8tO2AII/CPrrrPgQNIId6J0rkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=P+zzB3nv; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1730214047; c=relaxed/simple;
+	bh=D9Rp+5yWfZatHCUq+TZPqqV9m9KZmsZKTmZvcVZ20TE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DstKFy6Q4Z2KBLe+IuHxcuhw3NDS6F9ECdjVB/pjwRNHDlJ8+pve4eQ3mh0BnyA1ADzbBbZh3boDwGIohhNLZhw8kxIY0GKJBPV8ap1H2Rap0N4kt456WmEUlFvtbgir7Ky/kdP2iOy+Ogf+EPB65aNFk0wRwWETsced4vxK61g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AjZFxSVp; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730214000; x=1761750000;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=SiEFjk6TmcgSl4Jn7HhISzuv6QAVmzOotSoDU8dmeEw=;
-  b=P+zzB3nvHiQ746656/pWwVcWESLQqvhJdvbsi8P7eH/6TAkQ8xzNW/r4
-   g0vOyvPbLl+KxcC8o4a/UJ8f3JIKpcdrCFhc5ECe71v7BhilznnMCL7K2
-   MBoxHIafBJ2qewePjObF0Rc+5wUw1dHbOBjuKTPcACsWZvKcSCS+2HODM
-   iPpsUOXre6AEI94mkSeZPj3vURGFvqC8956mmYLFF+GqYs38QbisqczgI
-   2y9rBG+xl7x1PsRv/poN3Por+//MtFrpTHisv2tdOspU3pZVfKoi2QQVO
-   YsVhr4o9kMGLv+bcaQWwE6fbenmXK1YYnCQC/bbr2vjGm/r/EE3Ljgklx
-   A==;
-X-CSE-ConnectionGUID: ysYmMqfhTPmJyd9rmCBPkg==
-X-CSE-MsgGUID: cqeukXbLTy2nQ3XWyRjLvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="47322642"
+  t=1730214046; x=1761750046;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=D9Rp+5yWfZatHCUq+TZPqqV9m9KZmsZKTmZvcVZ20TE=;
+  b=AjZFxSVpKZOw1wMz8iwQRcG8zuq2WFHqDBmHwjOQrTvjcOF21CrJ1pbp
+   dg83m4mM7TqqXlA/GxH9EcRFGwh5dqj/pi3q+cjk3n8VkRuNmf5AJ1gYX
+   kLApCyp/2ISFqN0tp5EVcnsIvAutAid2bDrCfz44L+DmD1qJduzY4ffuH
+   GZBC/nZMjMLPhnoVZ3bzxSZR4TXP8TvviZrKIH/GJ+9Z7A473Z20YYVQj
+   hdYMMLetVrxFFcx8ouGZvTuyXs354z+oqt2C3RdDoCGA520jvkIvdwWOY
+   3L2mIlxUq7RdHnd/lmjhqbeQ4wM41uPyFk+/g4kKQLWorCehwV3ve52U8
+   g==;
+X-CSE-ConnectionGUID: 4dlUXqHMRXiHSsGJNJLhoQ==
+X-CSE-MsgGUID: YLOJv365Qv6W0ZB+XcmK2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29997215"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="47322642"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 07:59:59 -0700
-X-CSE-ConnectionGUID: t62fhBRmSRONYCfyGV2ujA==
-X-CSE-MsgGUID: 8NCGtjc+Q+enW08+sMFsJw==
+   d="scan'208";a="29997215"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 08:00:45 -0700
+X-CSE-ConnectionGUID: Nxyay8XyRLOVqnvvVwffuA==
+X-CSE-MsgGUID: ZL6gQGYLQJee/O82nos84A==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
-   d="scan'208";a="82127490"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.0.178])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 07:59:56 -0700
-Message-ID: <b46e153f-f329-44b9-a72e-bcc65763f789@intel.com>
-Date: Tue, 29 Oct 2024 16:59:50 +0200
+   d="scan'208";a="81919191"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 29 Oct 2024 08:00:34 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id 9D49B26B; Tue, 29 Oct 2024 17:00:32 +0200 (EET)
+Date: Tue, 29 Oct 2024 17:00:32 +0200
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Xiongwei Song <xiongwei.song@windriver.com>, Xin Li <xin3.li@intel.com>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Brijesh Singh <brijesh.singh@amd.com>, 
+	Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>, 
+	Alexey Kardashevskiy <aik@amd.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Sohil Mehta <sohil.mehta@intel.com>, Ingo Molnar <mingo@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, Daniel Sneddon <daniel.sneddon@linux.intel.com>, 
+	Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>, 
+	Breno Leitao <leitao@debian.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>, Juergen Gross <jgross@suse.com>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, Kees Cook <kees@kernel.org>, Eric Biggers <ebiggers@google.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Yuntao Wang <ytcoode@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>, 
+	Huang Shijie <shijie@os.amperecomputing.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Namhyung Kim <namhyung@kernel.org>, Arnaldo Carvalho de Melo <acme@redhat.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org
+Subject: Re: [PATCH v5 06/16] efi: Disable LASS around
+ set_virtual_address_map call
+Message-ID: <vp6kerur3lw7kkw4on5n4vflkdetwrj55dhndkmqn7eljrziyj@v6nhq4bz5ort>
+References: <20241028160917.1380714-1-alexander.shishkin@linux.intel.com>
+ <20241028160917.1380714-7-alexander.shishkin@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] mmc: core: A couple of fixes for UHS-II card
-To: Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org
-Cc: Victor Shih <victor.shih@genesyslogic.com.tw>,
- Victor Shih <victorshihgli@gmail.com>, linux-kernel@vger.kernel.org
-References: <20241029131752.226764-1-ulf.hansson@linaro.org>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241029131752.226764-1-ulf.hansson@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028160917.1380714-7-alexander.shishkin@linux.intel.com>
 
-On 29/10/24 15:17, Ulf Hansson wrote:
-> The recently introduced UHS-II support to the mmc core has a few problems,
-> during the card initialization and re-initialization. This series intends to
-> addresses some these problems.
-> 
-> Ulf Hansson (3):
->   mmc: core: Simplify sd_uhs2_power_up()
->   mmc: core: Add error handling of sd_uhs2_power_up()
->   mmc: core: Fix error paths for UHS-II card init and re-init
-> 
->  drivers/mmc/core/sd_uhs2.c | 65 +++++++++++++++++---------------------
->  1 file changed, 29 insertions(+), 36 deletions(-)
+On Mon, Oct 28, 2024 at 06:07:54PM +0200, Alexander Shishkin wrote:
+> Of all the EFI runtime services, set_virtual_address_map is the only one
 
-Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+set_virtual_address_map()
 
+> that is called at its lower mapping, which LASS prohibits regardless of
+> EFLAGS.AC setting. The only way to allow this to happen is to disable
+> LASS in the CR4 register.
 
+How does it interact with cr_pinning? IIUC, this can happen well after
+boot? Like on efivar fs mount.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
