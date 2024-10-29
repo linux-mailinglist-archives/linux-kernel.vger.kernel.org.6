@@ -1,282 +1,239 @@
-Return-Path: <linux-kernel+bounces-386547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8734E9B44E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:51:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991CC9B44E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 09:51:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DE3A1C21B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:51:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 028E6B21483
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 08:51:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C822040AE;
-	Tue, 29 Oct 2024 08:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725692022DE;
+	Tue, 29 Oct 2024 08:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sVA6647f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LWH9nt3g"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C95204091;
-	Tue, 29 Oct 2024 08:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730191852; cv=none; b=rgE66PVXi2PrjSeYDlhETlP0x4CyL1UcuLFQsDDJ+hXi9q6SfrzxB0juwaYpdQH12wbF0Q90CAGH8XCgVi2DZpNiEquQOl+gwGWJiLWYt6WwZ3IsOaa5GJgogBc7okAeppvkCt0hohCKDo5TptyK0vbrB6nOJv3rOiGcL223Usc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730191852; c=relaxed/simple;
-	bh=W5rqZ6tX1MxtmhXIMLhi2lKSnRqfo6Db9jRER9ZOPyo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Do4/mR4tVwe8NuoXXMIvVJuePsEW8lRKHXA9HpJ0YSQDO5zOi1LiaVZLHfLx5WAPYGx9jtnenL8F4ONLxiQWQlYrNk3ayUWIa+PTGD0VgQZpbHEMjd0UQlI2jzM29/xkm4a+3XosgXunAG3wnT7tlCx8Im/xwa6nYk77LigtlFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sVA6647f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7490EC4CEE4;
-	Tue, 29 Oct 2024 08:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730191851;
-	bh=W5rqZ6tX1MxtmhXIMLhi2lKSnRqfo6Db9jRER9ZOPyo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sVA6647f8jsVVS/EBPiL4UabKzSoJHcWMVtg3lHdmISN4XotY7i60/5uD6Y/lIYXR
-	 wBIySdLP2nfpmsHxdi5Kuln0s1Bugqol3C2CUZ+m3QfaO40Wufvh17CVtzCNyhWjYD
-	 7MsvaXjKf4JCwtYDUZgv2xPwGRckv+DJ5TCmw3FJ8EfHPRtDg9zwnRjoaGUeey4QR7
-	 4MP/9PfR2ysd9bvj+CTQTZWK/sRakYvsEyhBKyxFcqeFfhVDL+iCMGUYINITHlLeDP
-	 Dxn14HPC71IrHPs/7ZaosbP/qXyJukGidJO7JdN/UVde15tyg427pV3aWhhdwiVtmh
-	 VkWUb7Y78KWrQ==
-Date: Tue, 29 Oct 2024 09:50:43 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Dirk Behme <dirk.behme@de.bosch.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
- driver abstractions
-Message-ID: <ZyCh4_hcr6qJJ8jw@pollux>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-16-dakr@kernel.org>
- <42a5af26-8b86-45ce-8432-d7980a185bde@de.bosch.com>
- <Zx9lFG1XKnC_WaG0@pollux>
- <fd9f5a0e-b2d4-4b72-9f34-9d8fcc74c00c@de.bosch.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C1A6202F8E;
+	Tue, 29 Oct 2024 08:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.20
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730191889; cv=fail; b=GDF81NIPj46/DcuFSPRdmmtWx++bbtoq5957Oxuz3jfCbeJoKxzArqrtw6thxYkdxsUqsTFPoQWWQn69oxUVyin8fifsl9hC6hvKg2rtj5zqoFpz4REJ4fpHnw1Ay+JLJEgVrjDn93U+wv6CLKlNJJ4s5Dc8W3mJezgu0f3baaI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730191889; c=relaxed/simple;
+	bh=rcgeKlvAyIUwNOP9aERtAUAqupdUqd04pTsC24HWcwI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eIY/HqEcLcXm3Ax/qlDINp6Er7SFvwxS4gltKFy3AYRnEDkhDlH610gfIDdwjs04eJ43S7p3a+S86a40SFss5wnz9GhIhBovWE9TvOmCikfBxxjgYLUo8IMPi7p1kX26eZpoPuKekgs1PKfMg2TYiKhqoIj51/wqvy8bGOd5CC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LWH9nt3g; arc=fail smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730191888; x=1761727888;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=rcgeKlvAyIUwNOP9aERtAUAqupdUqd04pTsC24HWcwI=;
+  b=LWH9nt3g7sIfjCAngM5wBulM89gy+ESxZ4A4BeKBaT2PPp3Gr+M6q2bz
+   LMN/ZmGS0Em4QSvjoZx+PBC+7aO+taswIAdf/sJgK2I8O8AEIJOWNU5Yx
+   S+dRMYhHUHvo7W6QCsjiyxfaUY+8bWV7pN1jEuQziad6dYhI57j2xhUNU
+   Vusf0jbTdlQtK6je4svtj6GPd7RHOWkYNnDoFhA+5/b87uwRzg9SH9kcF
+   a/6NqLFz0ndx/DeBkta0UlC8QRQPuLP1BA+XbKKGW9clZD0PYJwfmG43a
+   np6//l7qWiZ2JN4AmN+2ni/gU8KNM4n/G13nafFSFRJSuwqQEdOVzYZMw
+   g==;
+X-CSE-ConnectionGUID: dAGpPOZ1SlC3OBRCKYRLuA==
+X-CSE-MsgGUID: oVUpsbxfT0iN5ZXyZ93+LA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29593842"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29593842"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Oct 2024 01:51:26 -0700
+X-CSE-ConnectionGUID: J1kg9Gk1TrmTrH6I7ufqfA==
+X-CSE-MsgGUID: 3vCUSeSlTb6n6wweP6WIuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,241,1725346800"; 
+   d="scan'208";a="85848851"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 29 Oct 2024 01:51:25 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 29 Oct 2024 01:51:25 -0700
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 29 Oct 2024 01:51:25 -0700
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.45) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 29 Oct 2024 01:51:24 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mVfFV24adnnAoJWyAX1GOGzke4SN9/QemPxXMYSWtivgLnH4CII01WN+eTisa+bsN23gawnhmCFeAcjsdycBvdIyl50s0nw56nN/VXNPYLBwcnKtrjyNHnVWColr/EcGl1UNUAiFi+aT5l5lHNJ92hCuamf8NIHxbzpcbRKFQCuAjcbfdpUIjPlgdBCLTeYr+WYUpPxbrgTQYi1T7rAKoqB+o0Ys8id+3bLrFNsbIZb4k3lUO0tVGIEiK2f0BdmJUP4xTwXmJRLWyJaOz3XMSWf4bXQPEO6ZHolnFX16AgaikJnGm77NOU4Gf3Px4JvxiQH8e0whWV+R6SJCdtlaKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rcgeKlvAyIUwNOP9aERtAUAqupdUqd04pTsC24HWcwI=;
+ b=xliO2tRIUKTkNDFrsPqBJw9cML9z4htwlKXMHmssjn8r+U93oRNSHjOgM1xdQzV4YFbxq1woFhegB8pEFy1hotEMcsseIlHN5E0fSyuvJlyTjP/8F8wcWGhXLU0qh6qz35w+4U2NWzZPbpt9w1CpEH6ZypJmbMmCc2oFC7u6omK2ZiAcKFkfMaAlwFpj+C8hMbA+fO3px1+hYrgQyEJ94QkvkKK5ZpU0NJm8V0soz/IycgmyOvR5/6gBnGldFF8/0mfPxZF3ZcRAPdASCP04N6y/+oZFOgErkATGLiyvLWfDkDv2RIUnqxxVtF6c5yNHjGGORHRWmpzlfqK0b6QPBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com (2603:10b6:208:31a::21)
+ by CO1PR11MB5185.namprd11.prod.outlook.com (2603:10b6:303:6e::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.27; Tue, 29 Oct
+ 2024 08:51:22 +0000
+Received: from BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a]) by BL1PR11MB5271.namprd11.prod.outlook.com
+ ([fe80::5616:a124:479a:5f2a%4]) with mapi id 15.20.8093.025; Tue, 29 Oct 2024
+ 08:51:21 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Jason Gunthorpe <jgg@nvidia.com>
+CC: Nicolin Chen <nicolinc@nvidia.com>, "will@kernel.org" <will@kernel.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "suravee.suthikulpanit@amd.com"
+	<suravee.suthikulpanit@amd.com>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "dwmw2@infradead.org" <dwmw2@infradead.org>,
+	"baolu.lu@linux.intel.com" <baolu.lu@linux.intel.com>, "shuah@kernel.org"
+	<shuah@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "iommu@lists.linux.dev"
+	<iommu@lists.linux.dev>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kselftest@vger.kernel.org"
+	<linux-kselftest@vger.kernel.org>, "eric.auger@redhat.com"
+	<eric.auger@redhat.com>, "jean-philippe@linaro.org"
+	<jean-philippe@linaro.org>, "mdf@kernel.org" <mdf@kernel.org>,
+	"mshavit@google.com" <mshavit@google.com>,
+	"shameerali.kolothum.thodi@huawei.com"
+	<shameerali.kolothum.thodi@huawei.com>, "smostafa@google.com"
+	<smostafa@google.com>, "Liu, Yi L" <yi.l.liu@intel.com>, "aik@amd.com"
+	<aik@amd.com>, "zhangfei.gao@linaro.org" <zhangfei.gao@linaro.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: RE: [PATCH v5 00/13] iommufd: Add vIOMMU infrastructure (Part-2:
+ vDEVICE)
+Thread-Topic: [PATCH v5 00/13] iommufd: Add vIOMMU infrastructure (Part-2:
+ vDEVICE)
+Thread-Index: AQHbJzjDl1+fCVXsnEi2WCoYqtSYK7KbfMYggAC9AgCAATXJ0A==
+Date: Tue, 29 Oct 2024 08:51:21 +0000
+Message-ID: <BL1PR11MB527135D53410D86949F39FEB8C4B2@BL1PR11MB5271.namprd11.prod.outlook.com>
+References: <cover.1729897278.git.nicolinc@nvidia.com>
+ <BN9PR11MB5276FFE90D75B2146674E0BC8C4A2@BN9PR11MB5276.namprd11.prod.outlook.com>
+ <20241028141726.GQ6956@nvidia.com>
+In-Reply-To: <20241028141726.GQ6956@nvidia.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5271:EE_|CO1PR11MB5185:EE_
+x-ms-office365-filtering-correlation-id: e5cff7a3-7831-4d2d-88fd-08dcf7f6dca0
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?6cSKCfmwWQC1NpmtrC/HT82/4FI/6yHnQRE3pD76pNunV1T0h348j9z5S/6J?=
+ =?us-ascii?Q?o+08S1C4pYc+bmkHg8CjFrgwh47WGDZIM/iGzp0RlcsgHzHF+xCtbSnpyeZi?=
+ =?us-ascii?Q?SzjfIyJ/iClb0WASAQACFQyMACH/QV9ropReitrs9c4H9Iwm0S2XEj89c/1M?=
+ =?us-ascii?Q?oIUTbEZ5/z/Na6LBBUz6FbF269ooAqW3AepWnz+CELYqtXx7pv8+8S9SFYXG?=
+ =?us-ascii?Q?DxjF3LOa1F6NiMHMorcZiEqsA8L1RzUaVL4m6ZDKvJ0Ul/X2dFXcwAckwFs9?=
+ =?us-ascii?Q?tTBMCCvOvnXTZ1WHdtIa1/pezMOxnyNTp5UtnGnTfd0irx2mamLijFKsX2BR?=
+ =?us-ascii?Q?o1D4g3xuE3eLIunB/RsFIiwU/+uaPODrnqzPg3h5Nf6wANSIdYWWBLJ9XBKP?=
+ =?us-ascii?Q?LMddN0dj1Hz6FKqXVzbIXKu9b/P5cHBsH9wVl5eqlgBTMnLyl9dtVAkA7WvK?=
+ =?us-ascii?Q?ZJp5FHgFht9iOVGUvPEgp092AVh67nhq+K+/turCEYm3P332DlOCWcj5jC7z?=
+ =?us-ascii?Q?JI8g4kfdS2I43Rhov4RtqQ3DetV3W3Wr/qSb2WRynxMSN+U3U9HHpPe8rnsA?=
+ =?us-ascii?Q?41A7QwQcExuOMavhIim0h3Zz8GJAyqalUs/1dOvHcgpejmEaVAAgkyymkpgU?=
+ =?us-ascii?Q?bi1XKLxN2OiDLyChG0Mn7tSOaSGH7nspfuGzigo8g/FeWy+2Z8c1cnAtNUPN?=
+ =?us-ascii?Q?KK+/4OhC1C2aO8byqR85qlQUNol3WWXvZ2FcqifTkyXd3hN6A7pqZKN3ZQiu?=
+ =?us-ascii?Q?dBzqvnBB2j3SgH694/qXsUsw/1OcciC378AiPPwYK7LmCYwE6kF2SUIaNRZj?=
+ =?us-ascii?Q?BIgZ8EE9gw0wqd5Oa2DHpT6ZlngwFM6Slqvx+YRmb09bP1XzJNNhVJNRE4aA?=
+ =?us-ascii?Q?NtdkAFnae+WILMFfvJLK5gZawEctzhnvylgz9NRzqSibW16kSoTmKOj3DXsb?=
+ =?us-ascii?Q?kfOOkCG728D0/1Y7jkf4USXg0nZz/wsLezZ0yeHl2XR1n82MGo3i9NPgA+zd?=
+ =?us-ascii?Q?3xOp4RZBNilpDE1TvAOgu1IHh19lCCZ4Cr/r/UDNwVWVOZbfhHJXP4F0U+di?=
+ =?us-ascii?Q?8CI9pTcuaI+fb5ezcLsVMVucnlmgUJS4awU7JDA/m9TDYL+0Yu88NBPEnY/i?=
+ =?us-ascii?Q?msmeEXsnLCy9yIVUOCJbZGFGziQOJdiIOvVklm2FxaIscr0eZOpxKDsiOQR6?=
+ =?us-ascii?Q?7HlDGpJU1Zh9lzafPIVwdNn/0snIedjQMNokiHujsVcy40eQbfuwvxwQTPXN?=
+ =?us-ascii?Q?FUXfxyhscizOUrcRF0tTebEmwwnqY8rdCdj0y7YZeCUg+ExI/McdwPRjVnTe?=
+ =?us-ascii?Q?x69ilte7t4yuo8CwcMQ9mQnEQIg+zlYhc4wqcWwPfb7BEJlazy5bbHonG15E?=
+ =?us-ascii?Q?Nw1h7Fw=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5271.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?XMJVu+9lPyEJSnx/gZ07PiKey+hZtpmLiap5BnYHQcJ8P4nY7Pi6QTVbAh7r?=
+ =?us-ascii?Q?XPikmDjCNxYo/xmZij2vagObQ3oT50BTK7p/xEGSsAmMW64/7ZGVsO2EUCzp?=
+ =?us-ascii?Q?UpW8vBUUStLC6MslNA/bvwiN1MT6K052bc1qU7EGqgDyBH0c7KkpAUIszj4Z?=
+ =?us-ascii?Q?ChpAMbqDKjQ9O1T0RiAt0aoUAu/a+M5D7x3Kp/cBmL9QMmWCtkpSEYNAOVBP?=
+ =?us-ascii?Q?Vo2AT2msLH8t+wS8W+Fq6OlAk9/6admwllAMiAroub5mIGNBpLYfcAIrvL94?=
+ =?us-ascii?Q?T3xL9sS9SU/3yxOdvb4Qvu6SZq2GkaozFyn6kXgU7X9ihwIJXYAjzAr3Oec1?=
+ =?us-ascii?Q?H4XXzxUsajF0aEOmir746PxDEuDAjv2vqOhQWjXuiJc+4+vWQsVJMjc5o0su?=
+ =?us-ascii?Q?LRFK/o6F0EZbaiWnyRKUeztjtWu/eBPXmnB/IS1I2AbmkoooCeSosD/WEctN?=
+ =?us-ascii?Q?or53YyergXQizCezbKqN6MSdwE/YBlXF0RHNqGRHnUmNq0EEnAZtNLXVD3hp?=
+ =?us-ascii?Q?XA++9SVwUHBhefC8iQKoskDxmaXpfZa6Ue1o8X0rhGbYuJ/e0Fu0j4NQPvX3?=
+ =?us-ascii?Q?ovCTXQgJrGNQK1yWRlwzCGFmDsecNREV4LgpdH10JlBqf1NXAFjAKYyXT7Vq?=
+ =?us-ascii?Q?zVFBTOxSsD31CpM6Ik957uRLFC1xdwxeCyCRl6QHtrYugynxp7y/ylAf9zuJ?=
+ =?us-ascii?Q?y4i+wByPZFrBqZCTk+X7sNz0e2Iy7X3LXF1fd65NcpZ6T+rx9eliPZtKyQXO?=
+ =?us-ascii?Q?/09vq0iQiYnVt4tRrFnZlv6B+Rc6Y5UBosUfvzHeabUarPkLtmfdKBwMJxm2?=
+ =?us-ascii?Q?uLkMM/fP6h4oQ/gmy/yAi92kgHvAd7oKBsLMpUx4SGM8MFbwNJ9frhpAalxM?=
+ =?us-ascii?Q?SKWwRda5V89/za42l5Ll29TmtiubE0/wNab1ughe0ZsFahrHJFckjBbeqlfq?=
+ =?us-ascii?Q?M+LW+NQc9gXJE68HqfFSXFBiAyuPbo5PTeGiZDMDK3BNXNiAlLwQfmwJvy2E?=
+ =?us-ascii?Q?QzWtzbwDf6q/mdnpezTtGlM4b3QDEfAT/aD6MV5fBLCVtKry2x4w3dx7Ml7n?=
+ =?us-ascii?Q?AYYEcohd272bCpNEQXkyEJ2PY21DN4ZvNChnqkynmh9/qdG0UOVS/325AdBm?=
+ =?us-ascii?Q?iNuZhIBEFHqp2yylCXTdNRPv2Jqem27+uq0hxkAyeY/aNJqK4mca2Q/RQrTH?=
+ =?us-ascii?Q?7Y/Gvkvzk6ppHr9NFWz1FLoZqi8pXfjpqkAeuOsykaVY7sVrR6OhPBadla6l?=
+ =?us-ascii?Q?o8Qj458hcVTUc6mUgFGe9xJyX8GauYElbv0l0nPBNpUm57mWF9z2gAbV1FeA?=
+ =?us-ascii?Q?e/2VMOMNcHkNi5KrFnJFVjxncxAo5TEpyXjKC8eQpgFGuyd0dom7hlWOq3R7?=
+ =?us-ascii?Q?1AD1KMAUHoFjr7y0UOY10kWVBSU55tGCnSnv/dDtmOjQoY4nkovGQe0kQN2G?=
+ =?us-ascii?Q?L4Ua40v0Zo0nRcJoIJYw1D9c7m4ZpVsvNULpAcviBrqnCUm6Y6cIQ2/sgDdn?=
+ =?us-ascii?Q?ppxhqqbX/FLAF9q3JJpP6crCVQL9KH3AHV10Kw5tMnsLq03NWO00rULrO+K3?=
+ =?us-ascii?Q?jDlMVWvRo1PF1acK3yph3tyMAm7sFhCfGpWgYmck?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd9f5a0e-b2d4-4b72-9f34-9d8fcc74c00c@de.bosch.com>
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5271.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5cff7a3-7831-4d2d-88fd-08dcf7f6dca0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Oct 2024 08:51:21.5209
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ZfsnSE1no5zcwbYv7tBKBDHhLH1qMHwrqMdoywzZiLWqwGJKiEk+Yay7tA/C5CKcSrN/P6vWIl23Z/bh8LL9gw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5185
+X-OriginatorOrg: intel.com
 
-On Tue, Oct 29, 2024 at 08:20:55AM +0100, Dirk Behme wrote:
-> On 28.10.2024 11:19, Danilo Krummrich wrote:
-> > On Thu, Oct 24, 2024 at 11:11:50AM +0200, Dirk Behme wrote:
-> > > > +/// IdTable type for platform drivers.
-> > > > +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<of::DeviceId, T>;
-> > > > +
-> > > > +/// The platform driver trait.
-> > > > +///
-> > > > +/// # Example
-> > > > +///
-> > > > +///```
-> > > > +/// # use kernel::{bindings, c_str, of, platform};
-> > > > +///
-> > > > +/// struct MyDriver;
-> > > > +///
-> > > > +/// kernel::of_device_table!(
-> > > > +///     OF_TABLE,
-> > > > +///     MODULE_OF_TABLE,
-> > > 
-> > > It looks to me that OF_TABLE and MODULE_OF_TABLE are quite generic names
-> > > used here. Shouldn't they be somehow driver specific, e.g. OF_TABLE_MYDRIVER
-> > > and MODULE_OF_TABLE_MYDRIVER or whatever? Same for the other
-> > > examples/samples in this patch series. Found that while using the *same*
-> > > somewhere else ;)
-> > 
-> > I think the names by themselves are fine. They're local to the module. However,
-> > we stringify `OF_TABLE` in `module_device_table` to build the export name, i.e.
-> > "__mod_of__OF_TABLE_device_table". Hence the potential duplicate symbols.
-> > 
-> > I think we somehow need to build the module name into the symbol name as well.
-> 
-> Something like this?
+> From: Jason Gunthorpe <jgg@nvidia.com>
+> Sent: Monday, October 28, 2024 10:17 PM
+>=20
+> > > to
+> > > a Context Table. This virt_id helps IOMMU drivers to link the vID to =
+a pID
+> > > of the device against the physical IOMMU instance. This is essential =
+for a
+> > > vIOMMU-based invalidation, where the request contains a device's vID
+> for a
+> > > device cache flush, e.g. ATC invalidation.
+> >
+> > probably connect this to vCMDQ passthrough? otherwise for sw-based
+> > invalidation the userspace can always replace vID with pID before
+> > submitting the request.
+>=20
+> You can't just do that, the ID in the invalidation command has to be
+> validated by the kernel.
 
-No, I think we should just encode the Rust module name / path, which should make
-this a unique symbol name.
+sure the ID must be validated to match the iommufd_device but not
+exactly going through a vID indirectly.
 
-diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
-index 5b1329fba528..63e81ec2d6fd 100644
---- a/rust/kernel/device_id.rs
-+++ b/rust/kernel/device_id.rs
-@@ -154,7 +154,7 @@ macro_rules! module_device_table {
-     ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
-         #[rustfmt::skip]
-         #[export_name =
--            concat!("__mod_", $table_type, "__", stringify!($table_name), "_device_table")
-+            concat!("__mod_", $table_type, "__", module_path!(), "_", stringify!($table_name), "_device_table")
-         ]
-         static $module_table_name: [core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
-             unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
+>=20
+> At that point you may as well just use the vID instead of inventing a
+> new means to validate raw pIDs.
 
-For the doctests for instance this
+w/o VCMDQ stuff validating raw pID sounds the natural way while
+vID is more like a new means and not mandatory.
 
-  "__mod_of__OF_TABLE_device_table"
+I'm fine with this design but just didn't feel the above description
+is accurate.=20
 
-becomes
-
-  "__mod_of__doctests_kernel_generated_OF_TABLE_device_table".
-
-> 
-> 
-> Subject: [PATCH] rust: device: Add the module name to the symbol name
-> 
-> Make the symbol name unique by adding the module name to avoid
-> duplicate symbol errors like
-> 
-> ld.lld: error: duplicate symbol: __mod_of__OF_TABLE_device_table
-> >>> defined at doctests_kernel_generated.ff18649a828ae8c4-cgu.0
-> >>> rust/doctests_kernel_generated.o:(__mod_of__OF_TABLE_device_table) in
-> archive vmlinux.a
-> >>> defined at rust_driver_platform.2308c4225c4e08b3-cgu.0
-> >>>            samples/rust/rust_driver_platform.o:(.rodata+0x5A8) in
-> archive vmlinux.a
-> make[2]: *** [scripts/Makefile.vmlinux_o:65: vmlinux.o] Error 1
-> make[1]: *** [Makefile:1154: vmlinux_o] Error 2
-> 
-> __mod_of__OF_TABLE_device_table is too generic. Add the module name.
-> 
-> Proposed-by: Danilo Krummrich <dakr@kernel.org>
-> Link: https://lore.kernel.org/rust-for-linux/Zx9lFG1XKnC_WaG0@pollux/
-> Signed-off-by: Dirk Behme <dirk.behme@de.bosch.com>
-> ---
->  rust/kernel/device_id.rs             | 4 ++--
->  rust/kernel/of.rs                    | 4 ++--
->  rust/kernel/pci.rs                   | 5 +++--
->  rust/kernel/platform.rs              | 1 +
->  samples/rust/rust_driver_pci.rs      | 1 +
->  samples/rust/rust_driver_platform.rs | 1 +
->  6 files changed, 10 insertions(+), 6 deletions(-)
-> 
-> diff --git a/rust/kernel/device_id.rs b/rust/kernel/device_id.rs
-> index 5b1329fba528..231f34362da9 100644
-> --- a/rust/kernel/device_id.rs
-> +++ b/rust/kernel/device_id.rs
-> @@ -151,10 +151,10 @@ fn info(&self, index: usize) -> &U {
->  /// Create device table alias for modpost.
->  #[macro_export]
->  macro_rules! module_device_table {
-> -    ($table_type: literal, $module_table_name:ident, $table_name:ident) =>
-> {
-> +    ($table_type: literal, $device_name: literal, $module_table_name:ident,
-> $table_name:ident) => {
->          #[rustfmt::skip]
->          #[export_name =
-> -            concat!("__mod_", $table_type, "__", stringify!($table_name),
-> "_device_table")
-> +            concat!("__mod_", $table_type, "__", stringify!($table_name),
-> "_", $device_name, "_device_table")
->          ]
->          static $module_table_name: [core::mem::MaybeUninit<u8>;
-> $table_name.raw_ids().size()] =
->              unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
-> diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-> index a37629997974..77679c30638c 100644
-> --- a/rust/kernel/of.rs
-> +++ b/rust/kernel/of.rs
-> @@ -51,13 +51,13 @@ pub fn compatible<'a>(&self) -> &'a CStr {
->  /// Create an OF `IdTable` with an "alias" for modpost.
->  #[macro_export]
->  macro_rules! of_device_table {
-> -    ($table_name:ident, $module_table_name:ident, $id_info_type: ty,
-> $table_data: expr) => {
-> +    ($device_name: literal, $table_name:ident, $module_table_name:ident,
-> $id_info_type: ty, $table_data: expr) => {
->          const $table_name: $crate::device_id::IdArray<
->              $crate::of::DeviceId,
->              $id_info_type,
->              { $table_data.len() },
->          > = $crate::device_id::IdArray::new($table_data);
-> 
-> -        $crate::module_device_table!("of", $module_table_name,
-> $table_name);
-> +        $crate::module_device_table!("of", $device_name,
-> $module_table_name, $table_name);
->      };
->  }
-> diff --git a/rust/kernel/pci.rs b/rust/kernel/pci.rs
-> index 58f7d9c0045b..806d192b9600 100644
-> --- a/rust/kernel/pci.rs
-> +++ b/rust/kernel/pci.rs
-> @@ -176,14 +176,14 @@ fn index(&self) -> usize {
->  /// Create a PCI `IdTable` with its alias for modpost.
->  #[macro_export]
->  macro_rules! pci_device_table {
-> -    ($table_name:ident, $module_table_name:ident, $id_info_type: ty,
-> $table_data: expr) => {
-> +    ($device_name: literal, $table_name:ident, $module_table_name:ident,
-> $id_info_type: ty, $table_data: expr) => {
->          const $table_name: $crate::device_id::IdArray<
->              $crate::pci::DeviceId,
->              $id_info_type,
->              { $table_data.len() },
->          > = $crate::device_id::IdArray::new($table_data);
-> 
-> -        $crate::module_device_table!("pci", $module_table_name,
-> $table_name);
-> +        $crate::module_device_table!("pci", $device_name,
-> $module_table_name, $table_name);
->      };
->  }
-> 
-> @@ -197,6 +197,7 @@ macro_rules! pci_device_table {
->  /// struct MyDriver;
->  ///
->  /// kernel::pci_device_table!(
-> +///     "MyDriver",
->  ///     PCI_TABLE,
->  ///     MODULE_PCI_TABLE,
->  ///     <MyDriver as pci::Driver>::IdInfo,
-> diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-> index a926233a789f..fcdd3c5da0e5 100644
-> --- a/rust/kernel/platform.rs
-> +++ b/rust/kernel/platform.rs
-> @@ -118,6 +118,7 @@ macro_rules! module_platform_driver {
->  /// struct MyDriver;
->  ///
->  /// kernel::of_device_table!(
-> +///     "MyDriver",
->  ///     OF_TABLE,
->  ///     MODULE_OF_TABLE,
->  ///     <MyDriver as platform::Driver>::IdInfo,
-> diff --git a/samples/rust/rust_driver_pci.rs
-> b/samples/rust/rust_driver_pci.rs
-> index d24dc1fde9e8..6ee570b59233 100644
-> --- a/samples/rust/rust_driver_pci.rs
-> +++ b/samples/rust/rust_driver_pci.rs
-> @@ -31,6 +31,7 @@ struct SampleDriver {
->  }
-> 
->  kernel::pci_device_table!(
-> +    "SampleDriver",
->      PCI_TABLE,
->      MODULE_PCI_TABLE,
->      <SampleDriver as pci::Driver>::IdInfo,
-> diff --git a/samples/rust/rust_driver_platform.rs
-> b/samples/rust/rust_driver_platform.rs
-> index fd7a5ad669fe..9dfbe3b9932b 100644
-> --- a/samples/rust/rust_driver_platform.rs
-> +++ b/samples/rust/rust_driver_platform.rs
-> @@ -11,6 +11,7 @@ struct SampleDriver {
->  struct Info(u32);
-> 
->  kernel::of_device_table!(
-> +    "SampleDriver",
->      OF_TABLE,
->      MODULE_OF_TABLE,
->      <SampleDriver as platform::Driver>::IdInfo,
-> -- 
-> 2.46.2
-> 
 
