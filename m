@@ -1,80 +1,109 @@
-Return-Path: <linux-kernel+bounces-387173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F26B9B4D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:08:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB099B4D10
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:09:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 503AA1C21B50
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:08:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31775285311
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 15:09:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94237192B83;
-	Tue, 29 Oct 2024 15:08:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375F8192D8F;
+	Tue, 29 Oct 2024 15:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fmWsqU9+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iPqZJMWP"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E99191F98
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 15:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E211885BD;
+	Tue, 29 Oct 2024 15:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730214516; cv=none; b=LMtMRDaN+W6BOP9atzIttRaeumZO65GGtuxKAjLxhXO3oHQYgLpyls3weTKHCFqBJOsUCe1TDicA3vn/RLZlgQtEjY4LHRLSqe7vrlKXIU/0gQjeyfkkhoAob6+LFqe9wHENHYzUdgJhrB08oByWODt74+FxYV064QVH7uPLNag=
+	t=1730214559; cv=none; b=tgdeHTEV6hjKikIASlLon3/nhh4fHbh20oy7dTCGqzTV/l256J4vjbm8tW+MXMw4KMDjNiXtUl/sQRFE6Ba7vhzTFtT3pybWAzdBDEm5t8Mg8n4PRwwipOLXnigyyAsY9HBgLSLau+tIdAh9mtKbOdMfAK/9iEyj3AOTdVvojzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730214516; c=relaxed/simple;
-	bh=QtJl8SpImb0PzLseIecf9y9DBnR3aHQ8oF8HpmGvpTE=;
+	s=arc-20240116; t=1730214559; c=relaxed/simple;
+	bh=Uu7MSsIfwM/nK86sCizAjmT3qbPGspNamKH58t1cCtc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GY7H2eO7HkdB3yXokzMnFL80lgbRqxtf9eERYG9pqeM1QamR6z13ThETptfCwL1o37wWSr/DaB1jPEAxk90ilLLhPeYLNCp0yEek8LjA9fLJKYpTG+4Y+MWdi88kYdn+6wgn8bOi6NcR9PsB4CTGswxjMqQWdlxnxvBLF8JCeDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fmWsqU9+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 329BAC4CECD;
-	Tue, 29 Oct 2024 15:08:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730214514;
-	bh=QtJl8SpImb0PzLseIecf9y9DBnR3aHQ8oF8HpmGvpTE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=tyqaEQRa2zlHYVj4KAm4nuL2RCQvbJxi0atzuONwIXq9HQ61JfyQ2Yz0FLeZeRB8ZybYE5v3dqjytqkbaqvFZjeGnBoqW1XKISTQ+eH3/CSACvSQuBOUJ1MbIeHhJFx8O9XJBNgUdBD+8G8v3SmPw6GcjcylhhWP5mzFhDMrVjY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iPqZJMWP; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7B99D40E0191;
+	Tue, 29 Oct 2024 15:09:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id UpTCgdSWcxWY; Tue, 29 Oct 2024 15:09:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1730214550; bh=CGpcOAn8UHlSL3WE5rbvoEk8vV1upCzgOQR+a5Jg3zw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fmWsqU9+Rkop2pA/G+DgvFFVkgkg4rSEHB/GYlzn98WA6fPMOvgNH8lhY4bEq3s+U
-	 mU0qszy6P4Dy7z7w/1Tu9SDBi6wmPkAaR24Jt16kNEj+nOfQAt2AwwKsGdLQuf/qRZ
-	 6uk+GPN2GP0+O0Sgvvj9/AFvSLhExpD7cTgh+4FSkBsyqtedBMm+FiUXWKlgotIKmV
-	 VZxAfJFcSjR7WOpcpDJBwMDiA3xjtcMsQw2gTfuJELF1Md2EhayY8LPFL8lHwXXetp
-	 2z5GGuE3t9IZg1bzHY5RhRXFHgsA+s6WocJlGgNkiMBBy0T9K9TaccOOxGkh6uwh29
-	 +kUDvXVz0Bz+Q==
-Date: Tue, 29 Oct 2024 16:08:31 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 16/26] signal: Replace resched_timer logic
-Message-ID: <ZyD6bypT8bQunXoZ@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083836.220867629@linutronix.de>
+	b=iPqZJMWP/S97Nw3qt0o9eoCnSWA0S5IDfZgXGAEtZQ7JZWnosysRxl+HGVtwoGUDq
+	 +jCfzuzv6y8wrw84eZ18870uqv8Fjyxpl3DixUrwno6AP9ikM0/qQTn6R+uIN+yEve
+	 aSyl5n6iZmq3s+w8MIUIDTedEpgvJeGNNpL8gxyySd0YolqY8l97DSFa3wpb7cbGBx
+	 IhcwlV0Qml8Tymeq8EFT+PcsDfCG7cpM7cM0lUhyDa3u+wP5I3p+PqKdzbK0WY8CfQ
+	 Ud8ZIfFZj7hILM02w8A4I9ypSPnZH8eBr0rdQeRXOw0JrZp8fwM8RPbM8w7AOe7CNr
+	 TwLHRBgdKJh3p2egKaVB2EaVEjjVaB0soGOBUZVHK8wi6EDX2zyzDLVSw4pvqO3j/t
+	 PmT6bBBIWguwUsk2La+8SbgbEsaMrIkwEEcxJAut/d9BSKX7rBZ5KituH3bUdBe6IH
+	 AIui1ceCdOEGc8IjUzBLWtxRPZ8tdLRs3uBgN2QkauRlEfM3qkGzptraA2n3xfjgud
+	 ui73I8Fi54+uW8qOnoq0hqGjMEEGZPnXixtvpktbVta1g959eDcsQOGQXwNDnYrTN6
+	 96M2oubTs2pilfIE/35/3JQm6AQXZav8+IafheJvSgDsbTKbxxRuEQApGD81J55wU/
+	 I0NTZEfjkQl0Ovif27+b2MRg=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DCA8F40E0192;
+	Tue, 29 Oct 2024 15:08:48 +0000 (UTC)
+Date: Tue, 29 Oct 2024 16:08:47 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 03/16] x86/amd_nb: Clean up early_is_amd_nb()
+Message-ID: <20241029150847.GLZyD6f-Hk6pRTEt2c@fat_crate.local>
+References: <20241023172150.659002-1-yazen.ghannam@amd.com>
+ <20241023172150.659002-4-yazen.ghannam@amd.com>
+ <20241025155830.GQZxvAJkJnfLfNpSRx@fat_crate.local>
+ <20241029143928.GA1011322@yaz-khff2.amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001083836.220867629@linutronix.de>
+In-Reply-To: <20241029143928.GA1011322@yaz-khff2.amd.com>
 
-Le Tue, Oct 01, 2024 at 10:42:21AM +0200, Thomas Gleixner a écrit :
-> In preparation for handling ignored posix timer signals correctly and
-> embedding the sigqueue struct into struct k_itimer, hand down a pointer to
-> the sigqueue struct into posix_timer_deliver_signal() instead of just
-> having a boolean flag.
-> 
-> No functional change.
-> 
-> Suggested-by: Eric W. Biederman <ebiederm@xmission.com>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+On Tue, Oct 29, 2024 at 10:39:28AM -0400, Yazen Ghannam wrote:
+> How can I enable this check myself?
 
-Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+It is part of my silly patch checking script:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=vp
+
+in here:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/tree/.tip/bin/vp.py?h=vp
+
+but it probably isn't ready for public consumption yet.
+
+I probably should try to package it properly when there's time...
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
