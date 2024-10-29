@@ -1,157 +1,143 @@
-Return-Path: <linux-kernel+bounces-387274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2AE69B4EDF
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:06:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8EAE9B4EE0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 17:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58C8B285744
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:06:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAB9F1C22674
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 16:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E271990A8;
-	Tue, 29 Oct 2024 16:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8549F196D9D;
+	Tue, 29 Oct 2024 16:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDIImkMI"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQBBPzPt"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEE7196DB1;
-	Tue, 29 Oct 2024 16:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE3819750B
+	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 16:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730217956; cv=none; b=Vkh6mc+BQsqsuCvxRM4qy6mXyK02XtUVzhJbNIN2eIRJqPcR0X+ahycDzSqFGPdGiDEnJvP5DCjc+Cz1tdbqoBeSgA84psUazOOud8+n7segn07FjMcvwEIgycyKD4s8mQaUvoVm3Jgtj44cFNZpnhK3wdmODWQAxqafFEGtZmY=
+	t=1730217976; cv=none; b=jp7sOvkPeodXvU3ap8iSPCzA2yRNCe0wamyG0Pc7F0sksBOpJSmTE8hg2qZGA/wu/Am4tDuemCq0qp9PWWdi4QTt0h4dhBG0q4sHO535IIgU5Tib2kC5jUyfbbykXl7xE0om/PrkJcH6sIiaj/lHh3oe79VbU5iQGq3GvYWguyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730217956; c=relaxed/simple;
-	bh=Oqs1DFkDeB+oVDAFNnju+8u4mlvnvqc4EuY913y0JQw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IOXJlOUM8Y3jCC+dClUpyrkoZHlbxz7NviJ3HrzoR8YnWNFGgTLKQyvSsVNbfX+Vrc0MQ37zPs612PaJ+/RBuuFB3djoiHb8CcAoc6Da5e7NBPLPqTVlUwVTORbaf2n20G0SMg5o8lUNM/hFcaeQF5R7iFI0XqEBH762U47ehKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DDIImkMI; arc=none smtp.client-ip=209.85.222.177
+	s=arc-20240116; t=1730217976; c=relaxed/simple;
+	bh=JHYXYO4Ar0m5AmXnfS+OxQcWUjgEryu7uzk0O80IwGI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gZr41PqVPcPuo7l2ClG0TxC2YGrUIrbkqXt0T9GI99rfdI6VMokMUEkte3GuoyeZ1B9JU3uYQjaoC9wzI0l0AudbftGHpEG1Rrt8C0TKP3p6xpyi+amHKXBiEXCZKm1hRuPqy2cqaQHRqGW4otY22ZfVMukge5lIq7kp1IBxxGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQBBPzPt; arc=none smtp.client-ip=209.85.160.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7b152a23e9aso431495585a.0;
-        Tue, 29 Oct 2024 09:05:54 -0700 (PDT)
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-46090640f0cso46751811cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 09:06:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730217953; x=1730822753; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5brSZaOw+9ougvDAl9jlg7R1/aMH3wJP+fv0gISH6So=;
-        b=DDIImkMIs25MbZIBqtr93qSdYw68/HA+tZOrl9dNkHxPNfchYSmNgHRK3LWwb3UlWH
-         ndTU3tbskaEdwoq31N9s3wKksI3zPsG1W4klZaz9HKdPCGLjnMGjeBAM3dDQsEKHAWE6
-         na0/jVjWq3WA3Pbip3gLslgg2XC/vh/W2pcN8LbbPqy2uCah4c5q4o6hZhBk1PO75bHx
-         QQP5Eyr4tB0lFHHK3aCyuLdBrh6c5nstwIPY4nc2991dDcAs9lBYmu2rgiQ46QuvA22Z
-         UmTXGhp/7gbtxTIOXVwQR9MgQtTojBMZcWlWG6tQKHZVivChFxDu3VVUIcOsAos1btNv
-         iYeQ==
+        d=gmail.com; s=20230601; t=1730217973; x=1730822773; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JxqDfsTZfxgb3cilRe8hoCrBEVjF1sBAyNYF4pj84bA=;
+        b=HQBBPzPtvKiSEcLnGlm+u5w8ESEIXxojp6vOdQYn0URQSmXBvVSDzUZ6diQMRDdUBY
+         fE59lVVvfiuMyHOqXM4GQgPMSmR0OUAvfr5bYF3Ze6FqpdH+3OTU3ZJ/8y78fGKn1Q6S
+         imy5TnvTgoa+mCb43DQ3lpnYCx5/C66eUoMUTPHHN6EAvr4HNlYi0fxB48eX7q1DlA8W
+         ZFkqW7BlGx4NHNgk/vbg7QvuQcc0cO4sNJdIRrS0/fJCPD76IlQPcdFA696SygxX4gwp
+         Bd4ov+W/9+D976ypXrTYFGmWPBG6RHPANFJRNOtlUt/Sm3gSX8MJof9z0VJp6MrAEmyh
+         v7ZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730217953; x=1730822753;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5brSZaOw+9ougvDAl9jlg7R1/aMH3wJP+fv0gISH6So=;
-        b=WEVVZgVgk1qsnkjKlcx9u1Q0YTqrH4Su5v0VE1hbedsSJArbuFPuSfuLooJivW+xj0
-         Iy39k1qbrfytYn4XEmOKicLh6SD1oiHmzKT1uwSbfbFWT7BZd/3Lrk/4jRP00v6VqhfQ
-         MtgoId9lpJfMsmUyWAlFo65Itkwzr44fVB6NT7v5Ahd3SurfKQB6rB0x+uRPK54gbjjl
-         4X6r0RMkE+G2P9zIGddtGrl68nlqUzhdvTAUgVi3qnhpsZfHe3y4GgZRiOs4J4Ob+Ray
-         UkdxiA7MSsgJoI59zNB+xNpsK6WXzUbVQehiubIclE5grWdnPvD7r+L2jzQyRYeJ33Vv
-         Ddrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbWtzkSNJJXJh+v4WVW0YXfiMW5wNkC6q3Z3eiQtvoelQYkifSKbzasqku7ayIEkkTFd0HJKjMnWFD1Tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZnuZrXfYznHO4awVbUUtc+SQa6mxBpArSoKx82MpNkGXV/XJ4
-	CyLxBekk+OSLpfhJmSfG4/fcXo90bT9lUwgn89qkiPZ8acZKpL0M
-X-Google-Smtp-Source: AGHT+IH5w/AG4xmtdASign0118O4/Vy2V70Zi0LgjdjsQ9t620Dw7nQQEsQ5WG8UM8tvvABF+DRPdQ==
-X-Received: by 2002:a05:620a:4686:b0:7b1:1b47:213c with SMTP id af79cd13be357-7b193ee1bbemr1912180485a.10.1730217953377;
-        Tue, 29 Oct 2024 09:05:53 -0700 (PDT)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d3593e4sm427058085a.129.2024.10.29.09.05.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2024 09:05:52 -0700 (PDT)
-Message-ID: <d7bc3c5f-2788-4878-b6cc-69657607a34c@gmail.com>
-Date: Tue, 29 Oct 2024 09:05:51 -0700
+        d=1e100.net; s=20230601; t=1730217973; x=1730822773;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JxqDfsTZfxgb3cilRe8hoCrBEVjF1sBAyNYF4pj84bA=;
+        b=naRAeFUoIOert4MyvSCiik0LQ++mx2S5eJY20TDGbDDnzwRaHBi+ju3x1I6HASEPsA
+         Rk+U7nBf7UoNavU0fSoH+29/zsvb4euCqn/Ji2fyJikhVRsdtt26YsaQXq6DVhaCl6mB
+         /FjQPBOpoHfEOMURYndbBOiymYqKAci9QfPsPCRHClZRXJDT8+qx7KnITsdl853s3qXh
+         WSP1QYNYFkXlgiWiWdf+SpnzVv6Y6eyAeOa0gobc+Oz8KbEr4gnhNHfemCNvXQbLNtjM
+         jykIZVZYbOAnobEYY/0ZAeXv+NQ7eGCw4s16PJJngbyHDg79hR9dbJz+YqwW8LszwV3J
+         gx/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUi5fVW/PrGD/wQ0eddikVImFc7YQp7y4aW+OP6+xvMCZJeh1J32GAdsruAmvpr5lbs4moumsCmgEGnFic=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzChIQwAkLb9xuPhVv97xdwn2duCkqGgWk5sOWTIOWMZjOoUbye
+	fsRk1PI/cS5krvK+pbjeds2lmVXrqwTdgsBKkxnyz1oNaFAdkNtA5U/Ewg==
+X-Google-Smtp-Source: AGHT+IE/qbLC9OX8BeHdYRbXF0ot9ym22z0B2Ed7vUvRq09Q1GEpYyHNEHqdaG9BO5Ed5KamyQVKow==
+X-Received: by 2002:a05:6214:5404:b0:6cd:faea:9f78 with SMTP id 6a1803df08f44-6d1856bf3e7mr214160526d6.12.1730217971752;
+        Tue, 29 Oct 2024 09:06:11 -0700 (PDT)
+Received: from hemlock.fiveisland.rocks (dhcp-213-15-2-159.pbband.net. [159.2.15.213])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179a2b208sm43280476d6.111.2024.10.29.09.06.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 09:06:11 -0700 (PDT)
+From: Marc Dionne <marc.c.dionne@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Marc Dionne <marc.dionne@auristor.com>
+Subject: [PATCH] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
+Date: Tue, 29 Oct 2024 13:06:09 -0300
+Message-ID: <20241029160609.13725-1-marc.c.dionne@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] MAINTAINERS: Remove self from DSA entry
-To: Vladimir Oltean <olteanv@gmail.com>
-Cc: netdev@vger.kernel.org, andrew@lunn.ch,
- open list <linux-kernel@vger.kernel.org>
-References: <20241029003659.3853796-1-f.fainelli@gmail.com>
- <20241029104946.epsq2sw54ahkvv26@skbuf>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20241029104946.epsq2sw54ahkvv26@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/29/24 03:49, Vladimir Oltean wrote:
-> On Mon, Oct 28, 2024 at 05:36:58PM -0700, Florian Fainelli wrote:
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>   MAINTAINERS | 1 -
->>   1 file changed, 1 deletion(-)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index f39ab140710f..cde4a51fd3a1 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -16031,7 +16031,6 @@ F:	drivers/net/wireless/
->>   
->>   NETWORKING [DSA]
->>   M:	Andrew Lunn <andrew@lunn.ch>
->> -M:	Florian Fainelli <f.fainelli@gmail.com>
->>   M:	Vladimir Oltean <olteanv@gmail.com>
->>   S:	Maintained
->>   F:	Documentation/devicetree/bindings/net/dsa/
->> -- 
->> 2.43.0
->>
-> 
-> This is unexpected. What has happened?
+From: Marc Dionne <marc.dionne@auristor.com>
 
-Nothing, and that's the main motivation, most, if not all of my reviews 
-of DSA patches have been extremely superficial and mostly an additional 
-stamp on top of someone's else review. At this point I don't feel like I 
-am contributing anything to the subsystem that warrants me being listed 
-as a maintainer of that subsystem. There are other factors like having a 
-somewhat different role from when I was working on DSA at the time.
+The number of slabs can easily exceed the hard coded MAX_SLABS in the
+slabinfo tool, causing it to overwrite memory and crash.
+
+Increase the value of MAX_SLABS, and check if that has been exceeded for
+each new slab, instead of at the end when it's already too late.  Also
+move the check for MAX_ALIASES into the loop body.
+
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
+---
+ tools/mm/slabinfo.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
+index cfaeaea71042..2c9c86d677ed 100644
+--- a/tools/mm/slabinfo.c
++++ b/tools/mm/slabinfo.c
+@@ -21,7 +21,7 @@
+ #include <regex.h>
+ #include <errno.h>
+ 
+-#define MAX_SLABS 500
++#define MAX_SLABS 1000
+ #define MAX_ALIASES 500
+ #define MAX_NODES 1024
+ 
+@@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
+ 				p--;
+ 			alias->ref = strdup(p);
+ 			alias++;
++			if (aliases > MAX_ALIASES)
++				fatal("Too many aliases\n");
+ 			break;
+ 		   case DT_DIR:
+ 			if (chdir(de->d_name))
+@@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
+ 			if (slab->name[0] == ':')
+ 				alias_targets++;
+ 			slab++;
++			if (slab - slabinfo > MAX_SLABS)
++				fatal("Too many slabs\n");
+ 			break;
+ 		   default :
+ 			fatal("Unknown file type %lx\n", de->d_type);
+@@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
+ 	slabs = slab - slabinfo;
+ 	actual_slabs = slabs;
+ 	aliases = alias - aliasinfo;
+-	if (slabs > MAX_SLABS)
+-		fatal("Too many slabs\n");
+-	if (aliases > MAX_ALIASES)
+-		fatal("Too many aliases\n");
+ }
+ 
+ static void output_slabs(void)
 -- 
-Florian
+2.47.0
+
 
