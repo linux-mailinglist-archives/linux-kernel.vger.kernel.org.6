@@ -1,85 +1,159 @@
-Return-Path: <linux-kernel+bounces-386110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-386111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94F59B3F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:32:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A559B3F3A
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 01:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEDF81C21D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:32:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C5FB21B08
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 00:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D1EEAF1;
-	Tue, 29 Oct 2024 00:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C29DF59;
+	Tue, 29 Oct 2024 00:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sQojNdMw"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1fWOv+Xz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AAB88F5E;
-	Tue, 29 Oct 2024 00:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FBD24A28;
+	Tue, 29 Oct 2024 00:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730161970; cv=none; b=AYf0i3ejruswU7Pr7t/qB5+KCz7spDLYa8ByZ+dEJFROAvtvqd99iM2gX+0oWZagerdnVKpBxXBNvrFEM4fjMLZwj1U7U+TeHgQsM024TP4/J2ZPukDHeA1qf090fxVVPTRoyIFLa1MPw60AmbB/Cezslz+gGUCwOaPFhdXvS0c=
+	t=1730161980; cv=none; b=alxGSK1M36U0UWEXlpbIcGj0syzWyb1pdQc0IzE8hMsKB+h4Tfc9KTUm/hB64Xqo+397sr6NUl1tOaGASbQ0l9BXgC1JKGPZyPhqCbkeBG1jjr3jKkaKjVCuHjRUZ3FtX+LVWvhTzb8rPvk27fHEsYdsOEkEqi4b9zWRq3Me+nc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730161970; c=relaxed/simple;
-	bh=VrGmwAKvt8OuEEU8UFOYAYL/Op/81kQxgvV8yNAWlac=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ruX4D8trO33ouRXLCqKAQp/fG6/jsEiCvxoByNu6a0zwSq37kuHh21C4inYsBVQZlog7m7xaTyGYoVSbjkuTkSPG6fYIoQDZeE/FOhMk0ogls80LYWT+4No4n0IJ2spAC83Dc9PrrQAW5vlI8pzmavDjadlsWcuh6+ifvv39Txg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sQojNdMw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EEF8C4CEC3;
-	Tue, 29 Oct 2024 00:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730161970;
-	bh=VrGmwAKvt8OuEEU8UFOYAYL/Op/81kQxgvV8yNAWlac=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sQojNdMwb7KKZ5rXzgsyQq+Miz7vK7/LJMBuPSxJ826Q4I3iDQjJ3gJsLA/DiAJFq
-	 8nsbcrA/lMEj1o5qnskS3CECbrzx4gfyaS4q6UDfvhUmOcODQczoNPyuZ/3H6AXYWC
-	 S+c0VS8ud9LWSp4zlywiDPmUW5ErfE/WnnfpuC+Chc2JEzfhnqDK8mSMiaO3Vq4jqy
-	 twSmu4DXAaqFf/5ZyZXNvpmzl+gMGoUuaRgo9Nyf3NijHj06suHzwanDbjRd/BW3VB
-	 B5cSkUTI1BDUwZLoNub/ModARMxvQyHldKKF0KMwYXlMEn+1lQmTf0fnprsXpiso0F
-	 DzBlV3ooV/WOQ==
-Date: Mon, 28 Oct 2024 17:32:48 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, Michael Chan
- <michael.chan@broadcom.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
- Abeni <pabeni@redhat.com>, Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2][next] net: ethtool: Avoid thousands of
- -Wflex-array-member-not-at-end warnings
-Message-ID: <20241028173248.582080ae@kernel.org>
-In-Reply-To: <158eb222-d875-4f96-b027-83854e5f4275@embeddedor.com>
-References: <cover.1729536776.git.gustavoars@kernel.org>
-	<f4f8ca5cd7f039bcab816194342c7b6101e891fe.1729536776.git.gustavoars@kernel.org>
-	<20241028162131.39e280bd@kernel.org>
-	<158eb222-d875-4f96-b027-83854e5f4275@embeddedor.com>
+	s=arc-20240116; t=1730161980; c=relaxed/simple;
+	bh=h6uTVq+hv9WhN1djveiVDbjzfvV7PyEB+OO+feAAn98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KeNLh9I3t89pukiwjNJcvVAL2lUpSzCQXk/rSaf+A4r+hF7idxPvKH6nqOjKYAdb78jhQlWRxlZoGvFXyo0FU+FK5L4G8QLNfJ6MDdRVQP3kO7dHhjIG1Y5ZohOoLDNL/TiZl9Z19yLaIRGpa0O49fjKiGMFNVRilDLy2XGTyQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1fWOv+Xz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15FD9C4CEC3;
+	Tue, 29 Oct 2024 00:33:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1730161980;
+	bh=h6uTVq+hv9WhN1djveiVDbjzfvV7PyEB+OO+feAAn98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=1fWOv+Xz4YoVnyfxnShxDcmk+XGg2cxeGv/lJbGGmZOc9bq79BG9xUrfeHzwcoLFZ
+	 Rv5MyOoqKTRjEE47xrnZDVU5/Iqkuyel1uikjJooEeWSjZ7dLpwoDnpOJtTA1MD5yS
+	 vy8b8S696klE0nThRykPJYyXlZUiSbepqDCCk4tk=
+Date: Tue, 29 Oct 2024 01:32:48 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Pierre Gondois <pierre.gondois@arm.com>
+Cc: linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Sudeep Holla <sudeep.holla@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Clark Williams <clrkwllms@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	Yunhui Cui <cuiyunhui@bytedance.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Steffen Persvold <spersvold@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Tony Luck <tony.luck@intel.com>, Yury Norov <yury.norov@gmail.com>,
+	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org, linux-acpi@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH] ACPI: CPPC: Make rmw_lock a raw_spin_lock
+Message-ID: <2024102934-bankroll-strongbox-8074@gregkh>
+References: <20241028105200.1205509-1-pierre.gondois@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241028105200.1205509-1-pierre.gondois@arm.com>
 
-On Mon, 28 Oct 2024 17:32:53 -0600 Gustavo A. R. Silva wrote:
-> >> Additionally, update the type of some variables in various functions
-> >> that don't access the flexible-array member, changing them to the
-> >> newly created `struct ethtool_link_settings_hdr`.  
-> > 
-> > Why? Please avoid unnecessary code changes.  
+On Mon, Oct 28, 2024 at 11:51:49AM +0100, Pierre Gondois wrote:
+> The following BUG was triggered. sugov_update_shared() locks a
+> raw_spinlock while cpc_write() locks a spinlock. To have a correct
+> wait-type order, update rmw_lock to a raw_spinlock.
 > 
-> This is actually necessary. As the type of the conflicting middle members
-> changed, those instances that expect the type to be `struct ethtool_link_settings`
-> should be adjusted to the new type. Another option is to leave the type
-> unchanged and instead use container_of. See below.
+> Also save irq state.
+> 
+> =============================
+> [ BUG: Invalid wait context ]
+> 6.12.0-rc2-XXX #406 Not tainted
+> -----------------------------
+> kworker/1:1/62 is trying to lock:
+> ffffff8801593030 (&cpc_ptr->rmw_lock){+.+.}-{3:3}, at: cpc_write+0xcc/0x370
+> other info that might help us debug this:
+> context-{5:5}
+> 2 locks held by kworker/1:1/62:
+>   #0: ffffff897ef5ec98 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2c/0x50
+>   #1: ffffff880154e238 (&sg_policy->update_lock){....}-{2:2}, at: sugov_update_shared+0x3c/0x280
+> stack backtrace:
+> CPU: 1 UID: 0 PID: 62 Comm: kworker/1:1 Not tainted 6.12.0-rc2-g9654bd3e8806 #406
+> Workqueue:  0x0 (events)
+> Call trace:
+>   dump_backtrace+0xa4/0x130
+>   show_stack+0x20/0x38
+>   dump_stack_lvl+0x90/0xd0
+>   dump_stack+0x18/0x28
+>   __lock_acquire+0x480/0x1ad8
+>   lock_acquire+0x114/0x310
+>   _raw_spin_lock+0x50/0x70
+>   cpc_write+0xcc/0x370
+>   cppc_set_perf+0xa0/0x3a8
+>   cppc_cpufreq_fast_switch+0x40/0xc0
+>   cpufreq_driver_fast_switch+0x4c/0x218
+>   sugov_update_shared+0x234/0x280
+>   update_load_avg+0x6ec/0x7b8
+>   dequeue_entities+0x108/0x830
+>   dequeue_task_fair+0x58/0x408
+>   __schedule+0x4f0/0x1070
+>   schedule+0x54/0x130
+>   worker_thread+0xc0/0x2e8
+>   kthread+0x130/0x148
+>   ret_from_fork+0x10/0x20
+> 
+> Fixes: 60949b7b8054 ("ACPI: CPPC: Fix MASK_VAL() usage")
+> Signed-off-by: Pierre Gondois <pierre.gondois@arm.com>
+> ---
+>  drivers/acpi/cppc_acpi.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Ah, that makes sense. So they need to be included int the newly split
-patch. Please rephrase the commit message a bit, the current paragraph
-reads as if this was a code cleanup.
+Hi,
+
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
+
+You are receiving this message because of the following common error(s)
+as indicated below:
+
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
+
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
+
+thanks,
+
+greg k-h's patch email bot
 
