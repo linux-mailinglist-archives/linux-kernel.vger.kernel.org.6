@@ -1,377 +1,144 @@
-Return-Path: <linux-kernel+bounces-387688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-387689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD919B54AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:04:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 989129B54B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 22:04:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C845FB216E8
-	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:03:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29E891F23974
+	for <lists+linux-kernel@lfdr.de>; Tue, 29 Oct 2024 21:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA5C204011;
-	Tue, 29 Oct 2024 21:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961E02076DA;
+	Tue, 29 Oct 2024 21:04:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CyWTU2se"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mEbZh5xe"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 916443207
-	for <linux-kernel@vger.kernel.org>; Tue, 29 Oct 2024 21:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E74343207;
+	Tue, 29 Oct 2024 21:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730235831; cv=none; b=sH71ywo7tQt2YMQzAcZYl2v2u64JKsNeZy1B9jWUTRHBN8uCpUssmPl5dh481xPLvJer6VBXHJKyc6v5WQK9bXA5Oun32IuKCxk2FRHazeqHQEY5H54KyQ/pF9WecKFs6qYfa/b+GoywbW8X708WRveyUVypgcVaGkwNemMl4Tc=
+	t=1730235882; cv=none; b=auRUzze63mLlLur7j4cVlOsy6w8g+F9q4TLI/gUwj4QhPuUG7zKFhbE7SkKW25zTPo4T+QpIDwTm+FivbunfCywMlob7Q84vanaQn3ElYOYcN03liDcboksKA792ABtv9wnmnoDv4KXhCT1Jl7ZGV3VEeBJLqYWB/Nch1gP1MmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730235831; c=relaxed/simple;
-	bh=qsBXdfTsNrkhamOAmEwRSPxNYazNiwCrN8PjaAI3aXo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jkZYMVtVWLT9KBXxBbKTQn9lSZOwdqvrr/tu/AIPZhxbQioCPkCZVVUg9Zesf+Za6kn1XahkmmUtoyO3lIx//z1UK3KGonuCYJrJUEYLqJfZfBOGgGDTaz/WPPG4lkQsT+MnuR9NSCr1+6Mziovx4nUT85sOcN3PoqAPH8P3YM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CyWTU2se; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730235827;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=Pwj4NlTv+aGn9kqoGEJUhJSZhDkCLWi15FS2ya73Nww=;
-	b=CyWTU2seC1O49kqvHSMBCTbhv0j1x0Z5ic9lr0FwZU9oktKgQxsD2aDEulAJOlrd2Ef4vc
-	X81ODx3/yReBjyJOKIEbvYC0fz9xN7QiwZtEf4rWr9PGQiupjIn5BO9/tBvv3kppS0J2lL
-	/sIdleNZ5TsXIGeuOEU1WSYvvRHXEcc=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-45-mLd6iII3OAeZerlGltp2QQ-1; Tue,
- 29 Oct 2024 17:03:42 -0400
-X-MC-Unique: mLd6iII3OAeZerlGltp2QQ-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C3D41955E9D;
-	Tue, 29 Oct 2024 21:03:39 +0000 (UTC)
-Received: from t14s.redhat.com (unknown [10.22.64.79])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2715919560A2;
-	Tue, 29 Oct 2024 21:03:32 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org,
-	x86@kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	xingwei lee <xrivendell7@gmail.com>,
-	yuxin wang <wang1315768607@163.com>,
-	Marius Fleischer <fleischermarius@gmail.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Peter Xu <peterx@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Ma Wupeng <mawupeng1@huawei.com>
-Subject: [PATCH v1] x86/mm/pat: fix VM_PAT handling when fork() fails in copy_page_range()
-Date: Tue, 29 Oct 2024 22:03:31 +0100
-Message-ID: <20241029210331.1339581-1-david@redhat.com>
+	s=arc-20240116; t=1730235882; c=relaxed/simple;
+	bh=LFzZjhfZfngdF1t+EG9Hy271pddMX0WmfCPy6v/0RRA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mKANfJ4ug/eozr7B7s4CK4df3JNQDBYzxlfNb3aAbITaSSlC7VkM4vGYHsSrQC+wnhXURlF9RL3L35rN7gdEQcms7XPj04MapYJ4kaVmJs4dVxL39ieTdFUVQxD1vaQ/qrchmNMUKsbs/WaSAv6gWnin26yXuGlU+dbzQ076WOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mEbZh5xe; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cbce16d151so33738216d6.2;
+        Tue, 29 Oct 2024 14:04:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730235879; x=1730840679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DWF4JMlMslw/GFDtipOIiN9c4I6myuF71ODQ5wMy07o=;
+        b=mEbZh5xePhJ3lbb6weA6PfUXSDX2GOdwEWsODdl1aMShRy58qWiGBXV9YlhHFjJrRa
+         XEzsjoJqQu1zlhPiWPmkQF6BPJo4GlGsPKIyEpOUU780CGp6ZUMPuy0tXKvmkdPeDyJ/
+         BLvbJKOeb65hRgVhrDHTbz4qriOW8NMXNxtKNhAo6JY5ER+TMmaTPcj55kMj/NCpA3Fk
+         2eRo/SNZkQJSrBKt5jihZw4XjpdNPN4ZT8VhJaOwUEeSfaghRJpaoElypifDV9L3YqGC
+         9m5frpcrohRdEz6VJziHAflEufUwnShsDUJeBl+/irm0jJg4O1fa1gk9xK5L5vy4YZSK
+         2FKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730235879; x=1730840679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DWF4JMlMslw/GFDtipOIiN9c4I6myuF71ODQ5wMy07o=;
+        b=qjvbsphf+o8WXPFQYso1iifm4pCk1e3kCd5T8c3R+FFwDoZIoyqY1KeQYTs8bJy5Ii
+         ArS9aFbYkm4aonPCKy6IWTzF9Mur4tJ7kD1RJtnZhm3gHWrSb9dPbmvH64LoSkRBAAaM
+         //ViDDJwQNbQ9jwh3CayZ9bhhKfRevStC1T2OGot46dYJW9M4VXU7NAxaDQ0u2R0BeNz
+         BJ8DIvKxmn2Jfm0c7EjbNQf/dgDgSl8IyjaGIRGffAUuaOuX0qqYvpPWIdbt1PJcyPDi
+         s96wpUAUrq+5jLSCBOWzW7ZVdFvoildpV8/qKsxJev7PpYSaMy7J+lQh0VZmGnm8dO3T
+         nvAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+aqu//zHo02hQpY1W8rC0DSQZVuwRoPRLtJOkJYFnBUnXrFS8tKV1oG9nIg/CjWmkuhzr7ReVBd5Q@vger.kernel.org, AJvYcCVK9UGc28spfnTKW+py5jQeFzmOvULNjIjO6nupjyqwJPXKv95+LG/g/+8W70JUBVKJLZuT80/e@vger.kernel.org, AJvYcCWBr7LY4CtdK9EiMNDuni7/buyeYRwIotZsJxmyShcej7kJpjZoBB2YkWX9fsXQN/dGaXi3XEZ6fGJNQIpF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0xkX3UtNOOSvQFOnGPFG7hWrc20ORH3tTd1prWjtQ+ndt2ZIe
+	t0wxZJAcS+ufAy4v2TmsiRsOI2YU7cMKGoeyDOu4IzVIC+3xP1wlT4zUbu1w4//34sLmnVDNBvL
+	kOPMqXe+Fy7tm35GbC9mzLbieFrY=
+X-Google-Smtp-Source: AGHT+IGYEoKUfjapXifSa0HhvXycaqStroq848S5VfperkjE7/QZ6rz9oqVgiXSzkVHcWlH65oViCPKZR8cx3Soq7gk=
+X-Received: by 2002:a05:6214:3d11:b0:6cb:f6de:3d11 with SMTP id
+ 6a1803df08f44-6d18584fcfbmr213619256d6.41.1730235878766; Tue, 29 Oct 2024
+ 14:04:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+In-Reply-To: <20241028210505.1950884-1-joshua.hahnjy@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Tue, 29 Oct 2024 14:04:27 -0700
+Message-ID: <CAKEwX=NO3CPSVtYRsYhxMawqV-6L1nr-6v+Wkc3cBGiCBajRaA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] memcg/hugetlb: Adding hugeTLB counters to memcg
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: hannes@cmpxchg.org, shakeel.butt@linux.dev, mhocko@kernel.org, 
+	roman.gushchin@linux.dev, muchun.song@linux.dev, tj@kernel.org, 
+	lizefan.x@bytedance.com, mkoutny@suse.com, corbet@lwn.net, lnyng@meta.com, 
+	akpm@linux-foundation.org, cgroups@vger.kernel.org, linux-mm@kvack.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-team@meta.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If track_pfn_copy() fails, we already added the dst VMA to the maple
-tree. As fork() fails, we'll cleanup the maple tree, and stumble over
-the dst VMA for which we neither performed any reservation nor copied
-any page tables.
+On Mon, Oct 28, 2024 at 2:05=E2=80=AFPM Joshua Hahn <joshua.hahnjy@gmail.co=
+m> wrote:
+>
+> This patch introduces a new counter to memory.stat that tracks hugeTLB
+> usage, only if hugeTLB accounting is done to memory.current. This
+> feature is enabled the same way hugeTLB accounting is enabled, via
+> the memory_hugetlb_accounting mount flag for cgroupsv2.
+>
+> 1. Why is this patch necessary?
+> Currently, memcg hugeTLB accounting is an opt-in feature [1] that adds
+> hugeTLB usage to memory.current. However, the metric is not reported in
+> memory.stat. Given that users often interpret memory.stat as a breakdown
+> of the value reported in memory.current, the disparity between the two
+> reports can be confusing. This patch solves this problem by including
+> the metric in memory.stat as well, but only if it is also reported in
+> memory.current (it would also be confusing if the value was reported in
+> memory.stat, but not in memory.current)
+>
+> Aside from the consistency between the two files, we also see benefits
+> in observability. Userspace might be interested in the hugeTLB footprint
+> of cgroups for many reasons. For instance, system admins might want to
+> verify that hugeTLB usage is distributed as expected across tasks: i.e.
+> memory-intensive tasks are using more hugeTLB pages than tasks that
+> don't consume a lot of memory, or are seen to fault frequently. Note that
+> this is separate from wanting to inspect the distribution for limiting
+> purposes (in which case, hugeTLB controller makes more sense).
+>
+> 2. We already have a hugeTLB controller. Why not use that?
+> It is true that hugeTLB tracks the exact value that we want. In fact, by
+> enabling the hugeTLB controller, we get all of the observability
+> benefits that I mentioned above, and users can check the total hugeTLB
+> usage, verify if it is distributed as expected, etc.
+>
+> With this said, there are 2 problems:
+> (a) They are still not reported in memory.stat, which means the
+>     disparity between the memcg reports are still there.
+> (b) We cannot reasonably expect users to enable the hugeTLB controller
+>     just for the sake of hugeTLB usage reporting, especially since
+>     they don't have any use for hugeTLB usage enforcing [2].
+>
+> [1] https://lore.kernel.org/all/20231006184629.155543-1-nphamcs@gmail.com=
+/
+> [2] Of course, we can't make a new patch for every feature that can be
+>     duplicated. However, since the existing solution of enabling the
+>     hugeTLB controller is an imperfect solution that still leaves a
+>     discrepancy between memory.stat and memory.curent, I think that it
+>     is reasonable to isolate the feature in this case.
+>
+> Suggested-by: Nhat Pham <nphamcs@gmail.com>
 
-Consequently untrack_pfn() will see VM_PAT and try obtaining the
-PAT information from the page table -- which fails because the page
-table was not copied.
+I'll take it ;)
 
-The easiest fix would be to simply clear the VM_PAT flag of the dst VMA
-if track_pfn_copy() fails. However, the whole thing is about "simply"
-clearing the VM_PAT flag is shaky as well: if we passed track_pfn_copy()
-and performed a reservation, but copying the page tables fails, we'll
-simply clear the VM_PAT flag, not properly undoing the reservation ...
-which is also wrong.
+> Suggested-by: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
 
-So let's fix it properly: set the VM_PAT flag only if the reservation
-succeeded (leaving it clear initially), and undo the reservation if
-anything goes wrong while copying the page tables: clearing the VM_PAT
-flag after undoing the reservation.
-
-Note that any copied page table entries will get zapped when the VMA will
-get removed later, after copy_page_range() succeeded; as VM_PAT is not set
-then, we won't try cleaning VM_PAT up once more and untrack_pfn() will be
-happy. Note that leaving these page tables in place without a reservation
-is not a problem, as we are aborting fork(); this process will never run.
-
-A reproducer [1] can trigger this usually at the first try:
-
-[   45.239440] WARNING: CPU: 26 PID: 11650 at arch/x86/mm/pat/memtype.c:983 get_pat_info+0xf6/0x110
-[   45.241082] Modules linked in: ...
-[   45.249119] CPU: 26 UID: 0 PID: 11650 Comm: repro3 Not tainted 6.12.0-rc5+ #92
-[   45.250598] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-2.fc40 04/01/2014
-[   45.252181] RIP: 0010:get_pat_info+0xf6/0x110
-...
-[   45.268513] Call Trace:
-[   45.269003]  <TASK>
-[   45.269425]  ? __warn.cold+0xb7/0x14d
-[   45.270131]  ? get_pat_info+0xf6/0x110
-[   45.270846]  ? report_bug+0xff/0x140
-[   45.271519]  ? handle_bug+0x58/0x90
-[   45.272192]  ? exc_invalid_op+0x17/0x70
-[   45.272935]  ? asm_exc_invalid_op+0x1a/0x20
-[   45.273717]  ? get_pat_info+0xf6/0x110
-[   45.274438]  ? get_pat_info+0x71/0x110
-[   45.275165]  untrack_pfn+0x52/0x110
-[   45.275835]  unmap_single_vma+0xa6/0xe0
-[   45.276549]  unmap_vmas+0x105/0x1f0
-[   45.277256]  exit_mmap+0xf6/0x460
-[   45.277913]  __mmput+0x4b/0x120
-[   45.278512]  copy_process+0x1bf6/0x2aa0
-[   45.279264]  kernel_clone+0xab/0x440
-[   45.279959]  __do_sys_clone+0x66/0x90
-[   45.280650]  do_syscall_64+0x95/0x180
-
-Likely this case was missed in commit d155df53f310
-("x86/mm/pat: clear VM_PAT if copy_p4d_range failed"), and instead of
-undoing the reservation we simply cleared the VM_PAT flag.
-
-Keep the documentation of these functions in include/linux/pgtable.h,
-one place is more than sufficient -- we should clean that up for the other
-functions like track_pfn_remap/untrack_pfn separately.
-
-[1] https://gitlab.com/davidhildenbrand/scratchspace/-/raw/main/reproducers/pat_fork.c
-
-Reported-by: xingwei lee <xrivendell7@gmail.com>
-Reported-by: yuxin wang <wang1315768607@163.com>
-Closes: https://lore.kernel.org/lkml/CABOYnLx_dnqzpCW99G81DmOr+2UzdmZMk=T3uxwNxwz+R1RAwg@mail.gmail.com/
-Reported-by: Marius Fleischer <fleischermarius@gmail.com>
-Closes: https://lore.kernel.org/lkml/CAJg=8jwijTP5fre8woS4JVJQ8iUA6v+iNcsOgtj9Zfpc3obDOQ@mail.gmail.com/
-Fixes: d155df53f310 ("x86/mm/pat: clear VM_PAT if copy_p4d_range failed")
-Fixes: 2ab640379a0a ("x86: PAT: hooks in generic vm code to help archs to track pfnmap regions - v3")
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Peter Xu <peterx@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Ma Wupeng <mawupeng1@huawei.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
- arch/x86/mm/pat/memtype.c | 66 +++++++++++++++++++++++++--------------
- include/linux/pgtable.h   | 27 ++++++++++++----
- kernel/fork.c             |  4 +++
- mm/memory.c               |  9 ++----
- 4 files changed, 70 insertions(+), 36 deletions(-)
-
-diff --git a/arch/x86/mm/pat/memtype.c b/arch/x86/mm/pat/memtype.c
-index feb8cc6a12bf..3a9e6dd58e2f 100644
---- a/arch/x86/mm/pat/memtype.c
-+++ b/arch/x86/mm/pat/memtype.c
-@@ -984,27 +984,54 @@ static int get_pat_info(struct vm_area_struct *vma, resource_size_t *paddr,
- 	return -EINVAL;
- }
- 
--/*
-- * track_pfn_copy is called when vma that is covering the pfnmap gets
-- * copied through copy_page_range().
-- *
-- * If the vma has a linear pfn mapping for the entire range, we get the prot
-- * from pte and reserve the entire vma range with single reserve_pfn_range call.
-- */
--int track_pfn_copy(struct vm_area_struct *vma)
-+int track_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma)
- {
-+	const unsigned long vma_size = src_vma->vm_end - src_vma->vm_start;
- 	resource_size_t paddr;
--	unsigned long vma_size = vma->vm_end - vma->vm_start;
- 	pgprot_t pgprot;
-+	int rc;
- 
--	if (vma->vm_flags & VM_PAT) {
--		if (get_pat_info(vma, &paddr, &pgprot))
--			return -EINVAL;
--		/* reserve the whole chunk covered by vma. */
--		return reserve_pfn_range(paddr, vma_size, &pgprot, 1);
-+	if (!(src_vma->vm_flags & VM_PAT))
-+		return 0;
-+
-+	/*
-+	 * Duplicate the PAT information for the dst VMA based on the src
-+	 * VMA.
-+	 */
-+	if (get_pat_info(src_vma, &paddr, &pgprot))
-+		return -EINVAL;
-+	rc = reserve_pfn_range(paddr, vma_size, &pgprot, 1);
-+	if (!rc)
-+		/* Reservation for the destination VMA succeeded. */
-+		vm_flags_set(dst_vma, VM_PAT);
-+	return rc;
-+}
-+
-+void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma)
-+{
-+	resource_size_t paddr;
-+	unsigned long size;
-+
-+	if (!(dst_vma->vm_flags & VM_PAT))
-+		return;
-+
-+	/*
-+	 * As the page tables might not have been copied yet, the PAT
-+	 * information is obtained from the src VMA, just like during
-+	 * track_pfn_copy().
-+	 */
-+	if (get_pat_info(src_vma, &paddr, NULL)) {
-+		size = src_vma->vm_end - src_vma->vm_start;
-+		free_pfn_range(paddr, size);
- 	}
- 
--	return 0;
-+	/*
-+	 * Reservation was freed, any copied page tables will get cleaned
-+	 * up later, but without getting PAT involved again.
-+	 */
-+	vm_flags_clear(dst_vma, VM_PAT);
- }
- 
- /*
-@@ -1095,15 +1122,6 @@ void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
- 	}
- }
- 
--/*
-- * untrack_pfn_clear is called if the following situation fits:
-- *
-- * 1) while mremapping a pfnmap for a new region,  with the old vma after
-- * its pfnmap page table has been removed.  The new vma has a new pfnmap
-- * to the same pfn & cache type with VM_PAT set.
-- * 2) while duplicating vm area, the new vma fails to copy the pgtable from
-- * old vma.
-- */
- void untrack_pfn_clear(struct vm_area_struct *vma)
- {
- 	vm_flags_clear(vma, VM_PAT);
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index e8b2ac6bd2ae..616707b4ecb8 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -1518,14 +1518,24 @@ static inline void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
- }
- 
- /*
-- * track_pfn_copy is called when vma that is covering the pfnmap gets
-- * copied through copy_page_range().
-+ * track_pfn_copy is called when a VM_PFNMAP VMA is about to get the page
-+ * tables copied during copy_page_range().
-  */
--static inline int track_pfn_copy(struct vm_area_struct *vma)
-+static inline int track_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma)
- {
- 	return 0;
- }
- 
-+/*
-+ * untrack_pfn_copy is called when a VM_PFNMAP VMA failed to copy during
-+ * copy_page_range(), but after track_pfn_copy() was already called.
-+ */
-+static inline void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma)
-+{
-+}
-+
- /*
-  * untrack_pfn is called while unmapping a pfnmap for a region.
-  * untrack can be called for a specific region indicated by pfn and size or
-@@ -1538,8 +1548,10 @@ static inline void untrack_pfn(struct vm_area_struct *vma,
- }
- 
- /*
-- * untrack_pfn_clear is called while mremapping a pfnmap for a new region
-- * or fails to copy pgtable during duplicate vm area.
-+ * untrack_pfn_clear is called in the following cases on a VM_PFNMAP VMA:
-+ *
-+ * 1) During mremap() on the src VMA after the page tables were moved.
-+ * 2) During fork() on the dst VMA, immediately after duplicating the src VMA.
-  */
- static inline void untrack_pfn_clear(struct vm_area_struct *vma)
- {
-@@ -1550,7 +1562,10 @@ extern int track_pfn_remap(struct vm_area_struct *vma, pgprot_t *prot,
- 			   unsigned long size);
- extern void track_pfn_insert(struct vm_area_struct *vma, pgprot_t *prot,
- 			     pfn_t pfn);
--extern int track_pfn_copy(struct vm_area_struct *vma);
-+extern int track_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma);
-+extern void untrack_pfn_copy(struct vm_area_struct *dst_vma,
-+		struct vm_area_struct *src_vma);
- extern void untrack_pfn(struct vm_area_struct *vma, unsigned long pfn,
- 			unsigned long size, bool mm_wr_locked);
- extern void untrack_pfn_clear(struct vm_area_struct *vma);
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 89ceb4a68af2..02a7a8b44107 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -504,6 +504,10 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
- 	vma_numab_state_init(new);
- 	dup_anon_vma_name(orig, new);
- 
-+	/* track_pfn_copy() will later take care of copying internal state. */
-+	if (unlikely(new->vm_flags & VM_PFNMAP))
-+		untrack_pfn_clear(new);
-+
- 	return new;
- }
- 
-diff --git a/mm/memory.c b/mm/memory.c
-index 3ccee51adfbb..f7fbf099e8f9 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -1372,11 +1372,7 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- 		return copy_hugetlb_page_range(dst_mm, src_mm, dst_vma, src_vma);
- 
- 	if (unlikely(src_vma->vm_flags & VM_PFNMAP)) {
--		/*
--		 * We do not free on error cases below as remove_vma
--		 * gets called on error from higher level routine
--		 */
--		ret = track_pfn_copy(src_vma);
-+		ret = track_pfn_copy(dst_vma, src_vma);
- 		if (ret)
- 			return ret;
- 	}
-@@ -1413,7 +1409,6 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- 			continue;
- 		if (unlikely(copy_p4d_range(dst_vma, src_vma, dst_pgd, src_pgd,
- 					    addr, next))) {
--			untrack_pfn_clear(dst_vma);
- 			ret = -ENOMEM;
- 			break;
- 		}
-@@ -1423,6 +1418,8 @@ copy_page_range(struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
- 		raw_write_seqcount_end(&src_mm->write_protect_seq);
- 		mmu_notifier_invalidate_range_end(&range);
- 	}
-+	if (ret && unlikely(src_vma->vm_flags & VM_PFNMAP))
-+		untrack_pfn_copy(dst_vma, src_vma);
- 	return ret;
- }
- 
-
-base-commit: 0f4cb420b38489c9bab9d091c3815714be8cb69d
--- 
-2.47.0
-
+Reviewed-by: Nhat Pham <nphamcs@gmail.com>
 
