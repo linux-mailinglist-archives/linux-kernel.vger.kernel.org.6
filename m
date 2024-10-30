@@ -1,147 +1,125 @@
-Return-Path: <linux-kernel+bounces-388931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95AF29B665B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:48:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A8069B6666
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:49:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B643282042
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:48:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B09C1F21B9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DC51F4736;
-	Wed, 30 Oct 2024 14:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC521F4714;
+	Wed, 30 Oct 2024 14:48:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kl6ppK73"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aV2PaoP7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9860026AD4;
-	Wed, 30 Oct 2024 14:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C391F131B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730299678; cv=none; b=F4kR9t/7N+9xCWz7AiHXH3H4i8wpHqr9unf8oqJsrCiL4bZ41Ta1PTykGxmtg+qNNK/ShNH+GaC5QUC2NTDTgAhTkUt1RhOuMO7sxCquJo+ZoGhR+3TeuoM7zWWd5gtb32OsjTvYble8Pvd3s/jWmyLUu9HRTLBzPKv+7fQIPNE=
+	t=1730299722; cv=none; b=cVPLYLuX3cWLFE35LDr4LPJ4ShACsvoRO4SddLQCA/pPLXbOVjEF2Y/U9ohSKMo9jRnpVpwo7vy2TD2WSB6BofTcNQ3DQrCmnto3E99URxk9Pvu/da3l2B38WjXF09GKXPAxCxMPTgYYVgQ7EXj6TkFyB5F2EMyofvODWOuLjLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730299678; c=relaxed/simple;
-	bh=0qNSMhz3HfQ8pdlxFtN+Wf71hTW7vNFz35H/uAF59sE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iegqSckwzbowW2JOXRb1BUZxFVMBa3d3NLb4w1Rsea3LJNsWc3H02znT+/9QpPk+y7aGWUp5opYP5dcRFMwE938lENK5FRvLKttuzXq15wSHAeig2vVtbX6z29C5MMvVAGJXQhOcoOFFkIZ1spm7A5Bgzz/keIThLTPMxV0rNKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kl6ppK73; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1730299676; x=1761835676;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0qNSMhz3HfQ8pdlxFtN+Wf71hTW7vNFz35H/uAF59sE=;
-  b=kl6ppK73J7olNGNpxAg5vim5/wE3hMOYNqIMfIDUrYim1XI/0q24dhq2
-   /hCKbq5Wy03bea/L0xsI0uF9YT46reU73d+MQ+I1x+IiY+BpyGZlf87Tr
-   om+/UCCSjhUO4Cf9MWvGUCbKZQptZDrrO4+zWfrmd5nzcUUs0VnNSHolq
-   IUSgWGSW7U1HCkVNjRfQL4mL2SGMlccXvlY5sV2zHSQt4IR2RKnPdoXL3
-   KDazDHlu52RCXd8jyp9tDtAUMhgfNuCMVcDk+UXrh8zCsQ/tbj6PtOyDN
-   Vkk4kumIuqAosSBFrN+CXy7tve/27lXDd0jAl4cd5X4/ffuy+iH4wX/Xa
-   w==;
-X-CSE-ConnectionGUID: YUBURptFSb2/bmuvyfI9fQ==
-X-CSE-MsgGUID: jefUExjlSpGu5F+LSedmCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="30108723"
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="30108723"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 07:47:55 -0700
-X-CSE-ConnectionGUID: EdP2Z8J1Q7Ol8IOnqn7q3Q==
-X-CSE-MsgGUID: CDc8J2m5RWyO1yL2qRqb/g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
-   d="scan'208";a="86889613"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa005.fm.intel.com with ESMTP; 30 Oct 2024 07:47:51 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 838EC1FD; Wed, 30 Oct 2024 16:47:50 +0200 (EET)
-Date: Wed, 30 Oct 2024 16:47:50 +0200
-From: Andy Shevchenko <andriy.shevchenko@intel.com>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Alisa-Dariana Roman <alisa.roman@analog.com>,
-	Christian Eggers <ceggers@arri.de>, Peter Rosin <peda@axentia.se>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Sebastian Reichel <sre@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] iio: consumers: copy/release available info from
- producer to fix race
-Message-ID: <ZyJHFp6vbQ7deLFs@black.fi.intel.com>
-References: <20241021-iio-read-avail-release-v5-0-b168713fab33@gmail.com>
- <20241021-iio-read-avail-release-v5-2-b168713fab33@gmail.com>
+	s=arc-20240116; t=1730299722; c=relaxed/simple;
+	bh=LpMMu2tW+v0eK2jTek+FUNY5ghd010WyUddw61A5pxY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=N3IxezfkfcrSDn/bbyFQkUzujWrEmiUd8o2cQtiM1oLJSzOzApWQLLcCqh2MYwU1k4rOP04cTdVD32fza/Jv/dHAwuttFTOWI23Kzgnj9jejDMHRCKAuURuSBj2/fOBxE6O9/05EOuug0APDlX5nfb8+we33DPfx0nEQlu4i4Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aV2PaoP7; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730299718;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vIiqNGj0/lEgFzl4Mf1L3cqOhzMe2y2T4h2UU2CLbw4=;
+	b=aV2PaoP7nX5Sl0zKpbD8GrxcnF0Dv+mHkXdmaKMhoYZRxNux9bo0tnDEvwlXOx9c8j2QNx
+	w9dGl/ZoZT7x9MTRUBphsOwue6VqDKShxsgBUilIqrOVGkHnEoBeszqCDl+dC7igAkPq4P
+	pAkYv3NLEEr9jly0jLdGPVr51XPZDWk=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-661-rntquG6BPhiSzVr_xjBCew-1; Wed, 30 Oct 2024 10:48:21 -0400
+X-MC-Unique: rntquG6BPhiSzVr_xjBCew-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d533a484aso553642f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:48:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730299700; x=1730904500;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vIiqNGj0/lEgFzl4Mf1L3cqOhzMe2y2T4h2UU2CLbw4=;
+        b=RmJI1xPrCO75m35EzEzhSwypADcDMtj+GneYKLmsV8QlvQxmt12DO/35Q3I+xoz6oE
+         rxOSbEyfx33Hpx3+j3Onxj6kH+slE2P7fIkgf6WAx8677Ip8Z82gx0HB0DO3xdVUdu80
+         gioK2cl/2AZWoF214hMmMBq4iPvMw+w5IFBbf39WK2qEK0amVXnwb2QD1lmh5uJTPvWn
+         eacdKNLgW1+w4wupAjX9T0sEGRhO7kbwd1AvidSrZ6nVdX8UW7Q/2N5jjVGTOl/PTWr3
+         qSlj2ifGYdL4mjg2tcT5dStLbGHmPAiQRovOwCE9aUtiD9xBjYHeQQHa5VNrYHUNxdqt
+         kKdw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7XNw+AKt4bOq4SOOASshehwrJZEnGRB39D50R8SgHEowvHuSlNfj5k8WEWxS98VdxnhLMb+i9v2/6fZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDcccgGZqhojp9nnjIP9b3aPw5emQnEILkOs3dC750+Qe+EsHa
+	ML4EdDdY9cbDe4UMz4qPuJDT2tNWonu/LAiBZNxcXekhbT3cKedfckICtRiFWAI4UangpCFuv3o
+	Aw9Bh6BSPtp+DLO1kikSQ5d5xyA0YF9jc/c+fb4fbL5NtQhRiZ6mVP8kHnfiXCnUyJXh8C10XG1
+	FTeITmGxYygVn+DTzub0GZj3Xw7fHd0eawMOrj
+X-Received: by 2002:adf:ec92:0:b0:374:c21a:9dd4 with SMTP id ffacd0b85a97d-3817d636ca4mr5614291f8f.20.1730299700594;
+        Wed, 30 Oct 2024 07:48:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEMIDA8EBgIVSRmKzeTJu8F00z1MEyGrcfLHRjfhN6WRVRP4EeuJk9Z2vLE/2TS04vqzHZtnvBUPW0FcKjQimY=
+X-Received: by 2002:adf:ec92:0:b0:374:c21a:9dd4 with SMTP id
+ ffacd0b85a97d-3817d636ca4mr5614274f8f.20.1730299700297; Wed, 30 Oct 2024
+ 07:48:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-iio-read-avail-release-v5-2-b168713fab33@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <cover.1730118186.git.kai.huang@intel.com> <0b1f3c07-a1e9-4008-8de5-52b1fea7ad7b@redhat.com>
+ <08c6bb42-c068-4dc1-8b97-0c53fb896a58@intel.com> <6c8bff1a-876f-47b7-a80c-3f3a825ddbc0@intel.com>
+In-Reply-To: <6c8bff1a-876f-47b7-a80c-3f3a825ddbc0@intel.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Wed, 30 Oct 2024 15:48:08 +0100
+Message-ID: <CABgObfZWjGc0FT2My_oEd6V8ZxYHD-RejndbU_FipuADgJkFbw@mail.gmail.com>
+Subject: Re: [PATCH v6 00/10] TDX host: metadata reading tweaks, bug fix and
+ info dump
+To: "Huang, Kai" <kai.huang@intel.com>
+Cc: dave.hansen@intel.com, kirill.shutemov@linux.intel.com, tglx@linutronix.de, 
+	bp@alien8.de, peterz@infradead.org, mingo@redhat.com, hpa@zytor.com, 
+	dan.j.williams@intel.com, seanjc@google.com, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, rick.p.edgecombe@intel.com, 
+	isaku.yamahata@intel.com, adrian.hunter@intel.com, nik.borisov@suse.com, 
+	Klaus Kiwi <kkiwi@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 02:54:15PM +0200, Matteo Martelli wrote:
-> Consumers need to call the producer's read_avail_release_resource()
-> callback after reading producer's available info. To avoid a race
-> condition with the producer unregistration, change inkern
-> iio_channel_read_avail() so that it copies the available info from the
-> producer and immediately calls its release callback with info_exists
-> locked.
-> 
-> Also, modify the users of iio_read_avail_channel_raw() and
-> iio_read_avail_channel_attribute() to free the copied available buffers
-> after calling these functions. To let users free the copied buffer with
-> a cleanup pattern, also add a iio_read_avail_channel_attr_retvals()
-> consumer helper that is equivalent to iio_read_avail_channel_attribute()
-> but stores the available values in the returned variable.
+On Tue, Oct 29, 2024 at 1:24=E2=80=AFAM Huang, Kai <kai.huang@intel.com> wr=
+ote:
+> >> Are you able to send quickly a v7 that includes these fields, and that
+> >> also checks in the script that generates the files?
+> >
+> > Yeah I can do.  But for KVM to use those fields, we will also need
+> > export those metadata.  Do you want me to just include all the 3 patche=
+s
+> > that are mentioned in the above item 3) to v7?
+>
+> for kvm-coco-queue purpose as mentioned in the previous reply I have
+> rebased those patches and pushed to github.  So perhaps we can leave
+> them to the future patchset for the sake of keeping this series simple?
 
-...
+Yes, I have now pushed a new kvm-coco-queue.
 
-> +static void dpot_dac_read_avail_release_res(struct iio_dev *indio_dev,
-> +					    struct iio_chan_spec const *chan,
-> +					    const int *vals, long mask)
-> +{
-> +	kfree(vals);
-> +}
-> +
->  static int dpot_dac_write_raw(struct iio_dev *indio_dev,
->  			      struct iio_chan_spec const *chan,
->  			      int val, int val2, long mask)
-> @@ -125,6 +132,7 @@ static int dpot_dac_write_raw(struct iio_dev *indio_dev,
->  static const struct iio_info dpot_dac_info = {
->  	.read_raw = dpot_dac_read_raw,
->  	.read_avail = dpot_dac_read_avail,
-> +	.read_avail_release_resource = dpot_dac_read_avail_release_res,
->  	.write_raw = dpot_dac_write_raw,
->  };
+> Adding the patch which adds the script to this series is another topic.
+> I can certainly do if Dave is fine.
 
-I have a problem with this approach. The issue is that we allocate
-memory in one place and must clear it in another. This is not well
-designed thingy in my opinion. I was thinking a bit of the solution and
-at least these two comes to my mind:
+It's better since future patches will almost certainly regenerate the file.
 
-1) having a special callback for .read_avail_with_copy (choose better
-name) that will dump the data to the intermediate buffer and clean it
-after all;
+Can you post a followup patch to this thread,, like "9/8", that adds
+the script? Then maintainers can decide whether to pick it.
 
-2) introduce a new type (or bit there), like IIO_AVAIL_LIST_ALLOC.
+Thanks,
 
-In any case it looks fragile and not scalable. I propose to drop this
-and think again.
-
-Yes, yes, I'm fully aware about the problem you are trying to solve and
-agree on the report, I think this solution is not good enough.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Paolo
 
 
