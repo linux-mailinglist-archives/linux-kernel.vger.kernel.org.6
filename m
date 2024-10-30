@@ -1,97 +1,114 @@
-Return-Path: <linux-kernel+bounces-389577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F39A89B6EA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:18:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A49359B6EA5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:19:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B231C2143B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:18:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61F11C21930
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950521E9064;
-	Wed, 30 Oct 2024 21:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49A1E21500A;
+	Wed, 30 Oct 2024 21:19:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSBxgvzt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tb/9x4bb"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91011BD9D3;
-	Wed, 30 Oct 2024 21:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23AC1DD9A8;
+	Wed, 30 Oct 2024 21:19:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730323104; cv=none; b=lJcssM1ump6Yf91Cmnx8ibBXQHaXYIYhnlWE+wAvablYQwcKhopaIyDQCFMtzVl/pH2iNNq3nz4d0yFxDFjJFJxzdTrX1g7zXgrhLHjveXKuOXzLlF4n+MezYNFDDfAY/EWdF6xswZ+ghSuH6+mVax6M2TG6pE+oHMR22b4P1Cw=
+	t=1730323145; cv=none; b=M2qZi3KfMlol0DXbh60JJF9CIp6nuQX1MQcnY4AS/J8yqQgCnhgXt480zZa6laXuarM3SUq/CXwn6fkJ9F9KNICCsaQsWUJblEW3hNE6M9q9iw1ctwfAilE4WP8hCsQjXFPP8uJhDCCLiQ9BfjeEZySrJ99vEGNn3N5nd23nvew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730323104; c=relaxed/simple;
-	bh=3BBANKyeKVKDGcIjEeL8qVZENm0DzfnsMr9bdNswKeo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mowtLP7j1KaXbSIXlg4wryRXoClF9b75zjKB8R5K5HH4eKeJLmWOl7PVG/BKdYfDfnIHn7vJXwziPeN3XtTSBzTlFUPgLTsvpdd66xa5Z2bIB1LPXVJ5AwkyVitLoqhqpCrQGnEeKQXbfEKvezSO0oZjOk210XvNia+NtsBkF3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LSBxgvzt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44BBBC4CECE;
-	Wed, 30 Oct 2024 21:18:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730323103;
-	bh=3BBANKyeKVKDGcIjEeL8qVZENm0DzfnsMr9bdNswKeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LSBxgvzt+6RXr87w8QiDOnWep2kzSZeJQQIrnJ1xuD2GoDmLlgh9SMFat8LUyq03W
-	 HDYU4lgCK+ldgMN2GO+7Wo0wrVknbDGuD5574Nx5H7H4BseZIHkx+blLtBix0dc8Om
-	 1OaX8G68eS6pd6KsDu1WCvt+elPcrBJvvkWeAresX7wXCti2cdd94ORlDlkhb/9i+W
-	 MoinRU4i+fqEoG4JqMe4S9tBtxtTULKLtE7TtebiOyYjtPEgcN7xtxnpYLjMUt8hTH
-	 /KaHmIK9r80Gn1Si8VHumZOTlDjp5NH7WPgdUHZY1GbUHbsoJ//26GvUvKhcd12HFd
-	 rIUtI10h17kyg==
-Date: Wed, 30 Oct 2024 16:18:21 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>,
-	Nuno Sa <nuno.sa@analog.com>, Vinod Koul <vkoul@kernel.org>,
-	dmaengine@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: dma: adi,axi-dmac: convert to yaml
- schema
-Message-ID: <173032310079.2048575.8476862949520338048.robh@kernel.org>
-References: <20241029-axi-dma-dt-yaml-v2-0-52a6ec7df251@baylibre.com>
- <20241029-axi-dma-dt-yaml-v2-1-52a6ec7df251@baylibre.com>
+	s=arc-20240116; t=1730323145; c=relaxed/simple;
+	bh=XdOmvDolgsg316/LoEhz2Xof9L0XlyeF4ghIAS8RWAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZ8eThRwFlZQqczm3FGGUysG4xuB3YOYYjUU5Z6aZdN/HWQFu4Faj05V3KqQgL90Znpd+uStwO0+57G0TfIMnCYv+WAF9x7gWxDD1OXlYrNdQE4EpPj+PEYEi++yKlS8jnoKKydpK4zHRn2DzGknr4VnjGmyq1aC1JNtlDQVkfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tb/9x4bb; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so250053a12.3;
+        Wed, 30 Oct 2024 14:19:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730323143; x=1730927943; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EItZw59EPW9dB++eM4lBpPIiCqgZ04QUsEmbNBJSClQ=;
+        b=Tb/9x4bbj9Dbuy8OAYFlWHVc0gcpiSswCIfIp9UqXGu24NdjQRzKwgQz/MolnoRwl1
+         m0XucA/zzdzkyLlgg6QikuCHtZU652MpsKBioxLggQNsR1cSukagjgkPciW3YABU2Y7+
+         sK5u62jhCTtftHFT2hZmiosQQemv9SkMTvf+3hE5FxWNMmtmgaJdlckEha7IEghVrEEQ
+         MKO+pYtWM3qvS7b0txEuqfJgzqzkoE5KfCFg3tSSW9c1xWKkbglWAKuzLEprlbIKR1SY
+         kF0bGY7eJ2SVa8TpJpitrzCXPC9vof2YvS1gM9GNT5bLkOQ3Nvl6z+FEF0fvQSKSGjS4
+         I6kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730323143; x=1730927943;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EItZw59EPW9dB++eM4lBpPIiCqgZ04QUsEmbNBJSClQ=;
+        b=so8j5Gl3qhMD1lVgwOzWVCu8/MGdZtB0PMxDw72DbW6KPm4xq5/Jq19s6lhyTRCCNT
+         kebPHNelvp4an7sFs8cAeyaTH1iaw7nZeL6dgeWb53RQmgzNp1yutHw3p6A9nI6rcohe
+         9QJMl/kP0OGAmitr3fRhqGFWut1yyT9LGlUc1q9bcPIlFKQCeXatVfFvHMhDrKgejzGv
+         uZ7f/zpESZWbyWwQLtNxSsrwsNEBH51cJPFKU8U0Xmda62hGxfvA23rA6SjJi5HAFzxw
+         RciNbrCqxaUFON4nPy8NXVh5ub/hA+yeUOV2BX8rw/XiI+HVLsUGrbopDw55mGCSTUZd
+         yf8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUUbzC7MUpx4DXpimaOZ3nAn2UEdRfOtfp9BN+Zop95om5sj5tFAdR572viTTIkCtkpnTmdj2g1sLOHQs+o@vger.kernel.org, AJvYcCVE0jIzcKFkIUaSsCMefEWqwYHlYFXhFkE0ocuyf10qnfYiSdguKvx03xcKV0QQFrux7rDNpN+DuAziruc+Lp6x@vger.kernel.org, AJvYcCVuWAcZkewcwU+EU/5OZeWfGd34Y173tQZkGN8FLz6Qt1NjhVeBlmo1pYVcpbvb2YAcRTLhK0LGO+HJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKV83xy5BAQtAGrDhNMRfKrot/Fj7D/DW0PeK+6JVtX0V8tzWu
+	gwO5fgZAjRd6NKWwYk2419QxSiR7H1mFVNpjQCeOOHEJHC7Y5893
+X-Google-Smtp-Source: AGHT+IHyfQiZotGwZQwLQh2MV4kreDKeBHyemuGX3McUX/Ct2pZzPbmy+ZUAdmOfAa2fU5wIy5IQLw==
+X-Received: by 2002:a05:6a21:1193:b0:1d8:d6b6:94c6 with SMTP id adf61e73a8af0-1d9a83ab108mr22416443637.2.1730323143154;
+        Wed, 30 Oct 2024 14:19:03 -0700 (PDT)
+Received: from mighty.kangaroo-insen.ts.net ([120.88.183.142])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-720bc1b9daesm78938b3a.10.2024.10.30.14.18.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 14:19:01 -0700 (PDT)
+From: Mithil Bavishi <bavishimithil@gmail.com>
+To: Aaro Koskinen <aaro.koskinen@iki.fi>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Roger Quadros <rogerq@kernel.org>,
+	Tony Lindgren <tony@atomide.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: [PATCH v2 3/6] dt-bindings: omap: Add Samaung Galaxy Tab 2 7.0
+Date: Wed, 30 Oct 2024 21:18:43 +0000
+Message-ID: <20241030211847.413-1-bavishimithil@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029-axi-dma-dt-yaml-v2-1-52a6ec7df251@baylibre.com>
+Content-Transfer-Encoding: 8bit
 
+Add samsung-espresso7 codename for the 7 inch variant
 
-On Tue, 29 Oct 2024 14:29:14 -0500, David Lechner wrote:
-> Convert the AXI DMAC bindings from .txt to .yaml.
-> 
-> Acked-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> ---
-> 
-> For the maintainer, Lars is the original author, but isn't really
-> active with ADI anymore, so I have added Nuno instead since he is the
-> most active ADI representative currently and is knowledgeable about this
-> hardware.
-> 
-> As in v1, the rob-bot is likely to complain with the following:
-> 
-> 	Documentation/devicetree/bindings/dma/adi,axi-dmac.yaml: properties:adi,channels:type: 'boolean' was expected
-> 		hint: A vendor boolean property can use "type: boolean"
-> 		from schema $id: http://devicetree.org/meta-schemas/vendor-props.yaml#
-> 	DTC [C] Documentation/devicetree/bindings/dma/adi,axi-dmac.example.dtb
-> 
-> This is due to the fact that we have a vendor prefix on an object node.
-> We can't change that since it is an existing binding. Rob said he will
-> fix this in dtschema.
-> ---
->  .../devicetree/bindings/dma/adi,axi-dmac.txt       |  61 ---------
->  .../devicetree/bindings/dma/adi,axi-dmac.yaml      | 139 +++++++++++++++++++++
->  2 files changed, 139 insertions(+), 61 deletions(-)
-> 
+Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+---
+ Documentation/devicetree/bindings/arm/ti/omap.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/Documentation/devicetree/bindings/arm/ti/omap.yaml b/Documentation/devicetree/bindings/arm/ti/omap.yaml
+index 93e04a109..3d09ec1ad 100644
+--- a/Documentation/devicetree/bindings/arm/ti/omap.yaml
++++ b/Documentation/devicetree/bindings/arm/ti/omap.yaml
+@@ -136,6 +136,7 @@ properties:
+               - motorola,droid-bionic   # Motorola Droid Bionic XT875
+               - motorola,xyboard-mz609
+               - motorola,xyboard-mz617
++              - samsung,espresso7
+               - ti,omap4-panda
+               - ti,omap4-sdp
+           - const: ti,omap4430
+-- 
+2.43.0
 
 
