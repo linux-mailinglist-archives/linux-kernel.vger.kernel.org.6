@@ -1,161 +1,148 @@
-Return-Path: <linux-kernel+bounces-389110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 100939B68AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:59:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D66729B68B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 335E11C21C94
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:59:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95BD2284561
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68309216DFB;
-	Wed, 30 Oct 2024 15:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28CE72144A2;
+	Wed, 30 Oct 2024 15:59:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jgFyGQfQ"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zVA+0vdy"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D37BF2144A9;
-	Wed, 30 Oct 2024 15:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEFD21441B
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:59:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730303905; cv=none; b=grvpFR5Utd67y2zZQ7hGLDXVsBpotRHpz/X8sMuq/KXbE7elSeoobZdQn1C3/VbhY6NcGBDZwo1K0NLtjO/lFeDlWTz+2t/J9fVpXACwKO3NmAu79Gb2s421UERzaBqzKfLJmkUP+EvVHmlAz2QBRpKm6yPnO2Ch38iw4wXEqXw=
+	t=1730303950; cv=none; b=KDfu44xjmNMgdHude/7M+68Ngj/6YNodQSZXCv2LN5i1B1n+L0QVSaHLcPjnygRVyt82vnP17k8Cv1rCwkxDYeVBDJJt6unJw3v8jylgEdTmTHdFcfdk0O+RJ4QwC90e5cHb+JOLV7Z2AgVSd69e5pl69XjyvK3yTVsnTMTOL5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730303905; c=relaxed/simple;
-	bh=LzN5+Qpd7fuL14+fAVQDSNU6E/uPPJd4jhyHUUHdrXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uHWh66QC85zZh5Qbt331lRrsKhhHgw6CtTdH8uEDf9fuUbpm7rDYGX/c9wR21ECSLIMvP3F7b2UZdpjxgcg+2/UADVhKtYFTJfP/4F9HbCptkFgvriat2qg/LtnabNI1syf9lwg6ozdqQN5XSUP3piv8uH0cOJ3bYgnpsDq7j/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jgFyGQfQ; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7ea6a4f287bso31057a12.3;
-        Wed, 30 Oct 2024 08:58:23 -0700 (PDT)
+	s=arc-20240116; t=1730303950; c=relaxed/simple;
+	bh=HIxxikhzDMWtdyaOhUJ5dv/cxvC7QWX8RE3H4C7G+k8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YKz5xr4ibQYYvIXZnYye1WTGchj8qs2d1ZW6PaEvnKghishytve4ou9c7YvnEuGRvDohFTtXQ8ClMVEU6NK5bgYGiyjDfT9XEKC1hFRRG3mOO+V9Pq/+BMy430tJujvxhAZTwB64npt5Fqwm8FyfP7GzBxOJioMy7LbhKVhXRcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zVA+0vdy; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7180d9d0dcbso3062025a34.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 08:59:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730303903; x=1730908703; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pGqbYAHXK4Jd6LmiaTB3lDHwM2K50OqruyDt1hmpDOc=;
-        b=jgFyGQfQuNT3bYW3Rj1ew3UOSOKYaaVW9yBIyAH+FR1gDRZdyvMvj3i7pkRLqgmlbK
-         +odCCjVEdzhdTLNP3Ycl0jyZRyJe2NrOgI8L1b1m/u0Dq1R0YYxzlMwktkVpTQtCfutc
-         eaVHnu8EKvVGFrR4l2SyOLl0rnJDzTErMkJsJGpSi68mUb4iFfuGvunylR/HO9OiGSbk
-         hThFewh3iT3W7fHpKd30kQVsw53Vwj6GhKetTAv4hrwPm3BcFQwatVdWh15LfPppQ8O5
-         Wqf1IW93w3EijoGhl13ZT4NMtOY19GbtGopPGlNMoLtekoUsMCUzSw8fY4phbnGlqpml
-         2VHw==
+        d=linaro.org; s=google; t=1730303947; x=1730908747; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eh9Rgk7ggpbAIfmbuIxK8vjEN7ZF46nd11xU/V0drIE=;
+        b=zVA+0vdytRlKrska7A+SDkT2kbnrGW7gdQpMYMJADtDg60Ekuw0P/HgXJ/3oPuIr24
+         MbcHmRAmW1Daxuy2jlrdrLn/rptAWW3oWsTOkjhPwGY8Vxc/xX5VoK1iAFNYiXkJ4NDW
+         KzIZC9HRfACMKbTKxXxj8SYrU9Bqlsn07+7739Eq26XWqBkiU+rxxQXsOIiT4JJ9YSdB
+         8iwuU94xJxB9vhEO36aSNjLOD0fswwb00KcIDknS0Wg30cZHljwK4Rd4UU/CNK6dIBYp
+         78aXaYGdb1agOORp7KmgccgSuZJE9lz4ltj4UThgFWET2j2VFrscVxJeRNJBvPNOr7LV
+         XBew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730303903; x=1730908703;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pGqbYAHXK4Jd6LmiaTB3lDHwM2K50OqruyDt1hmpDOc=;
-        b=su7FjUi6MSnXcd+N2Hz9eLjiFKi376WH4RxRaAgNkpjim6GrrPcDPYvNrULl69mbWY
-         u1L+DsOc04bUcNVYwUhuBY8AkvPFgJMBxnsA9WZdjwvT7tdHJLXpXpg3lojqoYr69Nx0
-         68TPaVPXTtjtx4QAeuhlLc545Ma02UZWUYOhAKal1JHDkzdwx5bQacDMoDBwTJBAOmFb
-         LK/aEgllqkBGJQvuF3+mfOftPQ/4V4NYU4/yn7DZAkGEjxHLedy1NzRDZ57nfiBt/2py
-         FP3w+8esqT7DWuqnSvQzb1K2NLj/E8djv6uHHOZdSKa1j2K3zw2k4mkRDCXBoxZbk6NH
-         VawA==
-X-Forwarded-Encrypted: i=1; AJvYcCViTmr0ApLpfZvuwrXxYcBBBZPjdU3bA2vmtOmsVEwa8fwwmIwMm19tXufUdZ1oVN0528h1ryuy172basSj@vger.kernel.org, AJvYcCWIVN9hp6eXz9YYvHMO119/R7g83LiVZCKv5rLxs/v7RTCiZrCIFIHg1Y5LHlYENaWj4qPuq2Br791R@vger.kernel.org, AJvYcCXIxx5h4MQgToiK+xn2FgzcOtE5t/rnP8x/buhpjoZe5S5DpqKtao217Erq4ILNQjyuWRd4B9HUqrZejMaX@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywpa4NVrMWm8DWGpvqIDqlnzRq/RxmWKNkQLDmN++6NNvTDh0nu
-	ifJt6mp2hh1IApmfC/lVU//EW/37M+fYnDKz5MqaYV314yYGq3WD/CCQDA==
-X-Google-Smtp-Source: AGHT+IERpMAKdiB7Q+yEULyTmcaK7Y2OEMDYKNAg4w67ROuwPqoJMrUWG93TXtbM1zJgoABdgJmOjQ==
-X-Received: by 2002:a05:6a20:d528:b0:1d9:f95:9f97 with SMTP id adf61e73a8af0-1d9a83c22b1mr19163886637.16.1730303902714;
-        Wed, 30 Oct 2024 08:58:22 -0700 (PDT)
-Received: from dw-tp.ibmuc.com ([203.81.241.194])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7edc89f2d5bsm9407519a12.57.2024.10.30.08.58.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 08:58:22 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-ext4@vger.kernel.org
-Cc: Theodore Ts'o <tytso@mit.edu>,
-	Jan Kara <jack@suse.cz>,
-	"Darrick J . Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	John Garry <john.g.garry@oracle.com>,
-	Ojaswin Mujoo <ojaswin@linux.ibm.com>,
-	Dave Chinner <david@fromorbit.com>,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [PATCH v3 4/4] ext4: Do not fallback to buffered-io for DIO atomic write
-Date: Wed, 30 Oct 2024 21:27:41 +0530
-Message-ID: <3c6f41ebed5ca2a669fb05ccc38e8530d0e3e220.1730286164.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <cover.1730286164.git.ritesh.list@gmail.com>
-References: <cover.1730286164.git.ritesh.list@gmail.com>
+        d=1e100.net; s=20230601; t=1730303947; x=1730908747;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eh9Rgk7ggpbAIfmbuIxK8vjEN7ZF46nd11xU/V0drIE=;
+        b=wTDwjoJkHwJ5IeGE7Nz0TsnqZvLC99pFrC+xz0CospBZkf568qtxYDfrZhsxocYIz5
+         ilpWTZrxEYq8t3KpJup6KadIMqCQNNuv+IIN5sQ5KpIVLkJY0iRY2wkKorkreWW+8rzH
+         Da2jqLS1ATl1SYvAObmw+tRrPZgnnOiPzLxTgsHSevITkXJvn0A0WSgEsSD6MUd/Zzng
+         JkbHg/fwI+tsuHvQPE+O2QTZ1WADVWXnEokNDzZvkvuB11htJoI3EVSjEA4cE0VT2R7G
+         pdPbzNOSPZgxx9Px/XHUPjAi1viSv43da8fEUVURIAoDSaKXNFWify2ooY01Y7lNfBtc
+         BJgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNo6PrOmrvnIyYU+xNJ18uYa0Mt1gxMetlmFEKFouq340XJm37bK1CgVg+pChYdgjPdhoHAa//W+nrQDk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwW//VejbcEE4NdPwrmymDS8hheVh7FSZtx+rt+F9G9JKbWAe5Q
+	Rg4D3rBTQOo/MkXZ/FKR9b+qUA048yC7hMOtUAvSEybP/O97MrgsLe2uM2d7qAGI8iknK1WoUEC
+	X035WWtpVunabKeFNYUsko7fL/w3KQ+xb9eMGaQ==
+X-Google-Smtp-Source: AGHT+IGcvdh6hUVAY/ghEqHaTdX2aYhEr0HkUHbGO2MLJDsO31xGVP61B+nN11Z8X8ZW3LGsIq5cI9Ila4LMFwxgeNo=
+X-Received: by 2002:a05:6830:912:b0:718:1109:9626 with SMTP id
+ 46e09a7af769-7189b4cb6dcmr122701a34.6.1730303947477; Wed, 30 Oct 2024
+ 08:59:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240906-lpm-v6-10-constraints-pmdomain-v4-0-4055557fafbc@baylibre.com>
+ <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
+In-Reply-To: <173029317079.2440963.17313738472826934777.b4-ty@ti.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Wed, 30 Oct 2024 16:58:31 +0100
+Message-ID: <CAPDyKFptHq6xkKSAmeHsEuhBoEhzvudcMf2+nG08MFPwnMi+ew@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] pmdomain: ti_sci: collect and send low-power mode constraints
+To: Nishanth Menon <nm@ti.com>
+Cc: linux-pm@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>, 
+	Vibhore Vardhan <vibhore@ti.com>, Dhruva Gole <d-gole@ti.com>, Akashdeep Kaur <a-kaur@ti.com>, 
+	Sebin Francis <sebin.francis@ti.com>, Markus Schneider-Pargmann <msp@baylibre.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-atomic writes is currently only supported for single fsblock and only
-for direct-io. We should not return -ENOTBLK for atomic writes since we
-want the atomic write request to either complete fully or fail
-otherwise. We should not fallback to buffered-io in case of DIO atomic
-write requests.
-Let's also catch if this ever happens by adding some WARN_ON_ONCE before
-buffered-io handling for direct-io atomic writes.
+On Wed, 30 Oct 2024 at 14:01, Nishanth Menon <nm@ti.com> wrote:
+>
+> Hi Kevin Hilman,
+>
+> On Fri, 06 Sep 2024 09:14:48 -0700, Kevin Hilman wrote:
+> > The latest (10.x) version of the firmware for the PM co-processor (aka
+> > device manager, or DM) adds support for a "managed" mode, where the DM
+> > firmware will select the specific low power state which is entered
+> > when Linux requests a system-wide suspend.
+> >
+> > In this mode, the DM will always attempt the deepest low-power state
+> > available for the SoC.
+> >
+> > [...]
+>
+> I have applied the following to branch ti-drivers-soc-next on [1].
+> Thank you!
+>
+> Ulf, based on your ack[2], I have assumed that you want me to pick
+> this series up. Let me know if that is not the case and I can drop the
+> series.
 
-More details of the discussion [1].
+Well, that was a while ago. The reason was because there was a
+dependency to another series [2], when this was posted.
 
-[1]: https://lore.kernel.org/linux-xfs/cover.1729825985.git.ritesh.list@gmail.com/T/#m9dbecc11bed713ed0d7a486432c56b105b555f04
+If that's not the case anymore, I think it's better to funnel this via
+my pmdomain tree. Please let me know how to proceed.
 
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
- fs/ext4/file.c  |  7 +++++++
- fs/ext4/inode.c | 14 +++++++++-----
- 2 files changed, 16 insertions(+), 5 deletions(-)
+Kind regards
+Uffe
 
-diff --git a/fs/ext4/file.c b/fs/ext4/file.c
-index 8116bd78910b..61787a37e9d4 100644
---- a/fs/ext4/file.c
-+++ b/fs/ext4/file.c
-@@ -599,6 +599,13 @@ static ssize_t ext4_dio_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		ssize_t err;
- 		loff_t endbyte;
- 
-+		/*
-+		 * There is no support for atomic writes on buffered-io yet,
-+		 * we should never fallback to buffered-io for DIO atomic
-+		 * writes.
-+		 */
-+		WARN_ON_ONCE(iocb->ki_flags & IOCB_ATOMIC);
-+
- 		offset = iocb->ki_pos;
- 		err = ext4_buffered_write_iter(iocb, from);
- 		if (err < 0)
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index fcdee27b9aa2..26b3c84d7f64 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3449,12 +3449,16 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
- {
- 	/*
- 	 * Check to see whether an error occurred while writing out the data to
--	 * the allocated blocks. If so, return the magic error code so that we
--	 * fallback to buffered I/O and attempt to complete the remainder of
--	 * the I/O. Any blocks that may have been allocated in preparation for
--	 * the direct I/O will be reused during buffered I/O.
-+	 * the allocated blocks. If so, return the magic error code for
-+	 * non-atomic write so that we fallback to buffered I/O and attempt to
-+	 * complete the remainder of the I/O.
-+	 * For atomic writes we will simply fail the I/O request if we coudn't
-+	 * write anything. For non-atomic writes, any blocks that may have been
-+	 * allocated in preparation for the direct I/O will be reused during
-+	 * buffered I/O.
- 	 */
--	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-+	if (!(flags & IOMAP_ATOMIC) && (flags & (IOMAP_WRITE | IOMAP_DIRECT))
-+			&& written == 0)
- 		return -ENOTBLK;
- 
- 	return 0;
--- 
-2.46.0
-
+>
+> [1/3] pmdomain: ti_sci: add per-device latency constraint management
+>       commit: 7c2c8d2651b5ffaffb2d5f723bd5b0493bd66f36
+> [2/3] pmdomain: ti_sci: add wakeup constraint management
+>       commit: 5a2d997b1bf8b05379309270063d7b9bd3767dd2
+> [3/3] pmdomain: ti_sci: handle wake IRQs for IO daisy chain wakeups
+>       commit: e8f35dc8de8c3216d28dab51b962bb31f20934c8
+>
+> All being well this means that it will be integrated into the linux-next
+> tree (usually sometime in the next 24 hours) and sent up the chain during
+> the next merge window (or sooner if it is a relevant bug fix), however if
+> problems are discovered then the patch may be dropped or reverted.
+>
+> You may get further e-mails resulting from automated or manual testing
+> and review of the tree, please engage with people reporting problems and
+> send followup patches addressing any issues that are reported if needed.
+>
+> If any updates are required or you are submitting further changes they
+> should be sent as incremental updates against current git, existing
+> patches will not be replaced.
+>
+> Please add any relevant lists and maintainers to the CCs when replying
+> to this mail.
+>
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+> [2] https://lore.kernel.org/all/CAPDyKFr9isnz66B+n5y3=QO-ndB05JKZN3kgXO+kXBn7ofcwMw@mail.gmail.com/
+> --
+> Regards,
+> Nishanth Menon
+> Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+>
 
