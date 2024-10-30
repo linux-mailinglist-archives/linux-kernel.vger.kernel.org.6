@@ -1,197 +1,161 @@
-Return-Path: <linux-kernel+bounces-388871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DBD69B6577
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:17:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 517389B657B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DA522831FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:17:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085591F2181E
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3576E1EF93C;
-	Wed, 30 Oct 2024 14:17:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2151EF0A2;
+	Wed, 30 Oct 2024 14:18:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h23ivYsr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BCkBbO1V"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06C91EC018
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC177286A8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 14:18:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730297822; cv=none; b=nrker0C43z6uJVvVNsPD/UaYzM/xqjyvNob8z6hgjwY9zJiU5yL/UUedC82ka+acId48h4ADMQkcxZWzaHgrFgr7RAuM65/VDCWIBQUqDC3lqHfCW7+xaQZ+mov99mc5/RPjHS9gzbraKWQZ92yLrewlFDzn3nu19fLUpsBaTAI=
+	t=1730297912; cv=none; b=tyXM9QMm6mFGILKt+Whd4VsR/DRwGGvMBtuA/nZ+GuY5FWv+sovHw3GyUP4t5nOU3H7JsXZJFdUELyHgDDikKWz2gAwu7sPqRLf7VQDq9VLrvca19UKiU3TOscF9Du3EJ0PEVdblMp51ntTAvkvfYMu2DqdJzAovkMF7oiVTzXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730297822; c=relaxed/simple;
-	bh=emBaMnXHFsEFJaNPDftsqZ+5Gk4w9RSC62uoAF8ptfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jv5RD7wwU6xsa7gmViwq0+bWOa6oCjP7Qivj5hZsnbGGR5sgr1+VaLzZ/qbXuL1r2FMbpxTqVgyH++D4dE9TWbfUSxc1nUZwjRlJ4CtTDaw9ppKagiw5Kp87iNVAg7/vUN/ybn9a4RrMJHhyNiC6WoQfxjhydBBJW6BUvqLF4+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h23ivYsr; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1730297818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2kVt6Jf0mlrFlKgj91AyuwPJLKq+gBRTfZHaemWVr3Y=;
-	b=h23ivYsrQLOCcELXaxR4BsTjThw4qUwtZXR0RyBTwgdB3fB4K8WRSOtYw8aYMjl/rEavOu
-	vBJ1bhPxXPqoMi+coR72JzP6WkITwUowJnxFzIZSjQnmHHXF6e9bFFV0h3FIu9FBos0SGO
-	vlQCzhntanVUft8CwGmrjf/WvV4tnDE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-275-UFk4oVCMOnGvK4P6HpXpRQ-1; Wed, 30 Oct 2024 10:16:56 -0400
-X-MC-Unique: UFk4oVCMOnGvK4P6HpXpRQ-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a99efc7d881so439803766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:16:56 -0700 (PDT)
+	s=arc-20240116; t=1730297912; c=relaxed/simple;
+	bh=ZCOoHIRMbKIZGLHZWE5qwSr0CwEqLtaGujX1YBNvVxw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lffh6a370c1JH0YVIdj4D3ByMqrBhqsl8fQH7ddDJOB1KEPtKEgEAQpY1TfR3X/NRq8jSdFs2BdekKe0CLpCK8ikXxFNdMEzN7Sep3qXpTVzYfX+tbUteyyhTWtxeeATL6WI5q+LRN/Am5AYxJsSjLBLteV+IxuF5weCPGeh8jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BCkBbO1V; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb5be4381dso64566571fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 07:18:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730297908; x=1730902708; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZI1Q7iFFALyNWdb6YnYTA6RNW062i2zYDoz0ifkHGFk=;
+        b=BCkBbO1VvrIOmm0ba1Z8TM+ZxiOzS+sCS9d0tCDgjfBjUkVZG7wcHyu5uNNQXIlyB3
+         2hHwyCEtRDanwa8N0OQ8rZ52pCBPHfjqDBcz8atNC4J6HxoGEhNyznRD59tURWFRFruk
+         qJ2v2u9AevTjlkK8dYD6HaP8cq0z/PfEjffHSWkST6weBEbl6vNKmD6zG+G6f12hEdEx
+         qlkWuKaW9TRdRcTh0E3dYa69aIUhlMrLqK2vyLIzg6SsEgouJBoyxw7fZ3N15tO6QtmJ
+         bXl9Ovuf9bjEcwcCmfL1tiT/KhEg0KzsEKvQKOeHq1I4bONLwCRR4kPzNkV6eexIHlE8
+         rFpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730297815; x=1730902615;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2kVt6Jf0mlrFlKgj91AyuwPJLKq+gBRTfZHaemWVr3Y=;
-        b=d7Xp5eI8zvSyOJ5AfMW6TmdUa9wNgOHEs9aGTDR32pyMXQjsjR8zJmQWImoN+o1/L7
-         eaXLjj+PJn8A384A0G6GB+AKQCsl1kbj537JhcgGhVBZn8ruY/DA+pJHb9MhM67uJ/EG
-         J8ce570GUnNDCUUPGDhXPmoDRCBsFtVD0nHOusnjwqh/7QPhlP0HkHv+wR1wR6NToSWr
-         gRMHLtbzRt7uGis+7fXNy+zro9S4UF8+Ps85M6ogeH5iYsypddLhQtlwWQW4uiKwKZre
-         6m5d+ce4LMnV5LqnB++acTJCE4tKk1DvZUvJ8OIpQWCLG+y+QTggzuCANXxgu7NXcevX
-         IrCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZcu8mAKlfXw0XhnSuoqIloSymbVDmYykylLVjbodUmpdWHQ9DyqTWuK824AbCeSeOpZLVFf5C6loKeq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3u+0ErhUA4WYVgchS+hVq0Vs2BicFfxuajoVtzVLe+y9lX1M5
-	mjiquD4efzulOPrkaUIXRd8gRij/ryChmUeIwLVGKsFi5+w8sErX6jpUaxLCDsx9j5lywAzFDs0
-	d1DkwzVrcFWmG+Rb6dyqGOaFmGX2AK7E7QgADjAll/tcmo1YETxv1rgTOV2hfGw==
-X-Received: by 2002:a17:907:9611:b0:a9a:eca:f7c4 with SMTP id a640c23a62f3a-a9de6199b4bmr1567152166b.54.1730297815180;
-        Wed, 30 Oct 2024 07:16:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IERlYVhvULgkJGMdtzuVMS0R74v+lxpi11wCzSuhqdKM6DR//Na3xUdI0tEKUGJ/zSd+AHpHQ==
-X-Received: by 2002:a17:907:9611:b0:a9a:eca:f7c4 with SMTP id a640c23a62f3a-a9de6199b4bmr1567148666b.54.1730297814701;
-        Wed, 30 Oct 2024 07:16:54 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b1f2994ddsm567904766b.110.2024.10.30.07.16.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 07:16:54 -0700 (PDT)
-Message-ID: <5bee1158-537f-4fb2-bde3-e86b5dce3fee@redhat.com>
-Date: Wed, 30 Oct 2024 15:16:53 +0100
+        d=1e100.net; s=20230601; t=1730297908; x=1730902708;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZI1Q7iFFALyNWdb6YnYTA6RNW062i2zYDoz0ifkHGFk=;
+        b=ZEdRmuz5mfLKZDpNCThJsqE3bRt8Saaiv4+tKOo6hY6ZKmqkopky7TYM0HiwifDRPM
+         rsPokkBsv1dCTipxAdr632gca5Yy8lZGJqFWdC5TNw9wyXpE4i7WrgzNFgsyUOqm6sIE
+         PE3BXsUsWkUcx8meZLURV2ILH8KRFuSvwrcphn+Outl656l/PsVHOjoL4VAEYoBTRCoP
+         YvIVRKhejJcaA9ZfPWenfQHKw9jpeTKsb0rzMBd5a/+WAPCU7d9q88G+gAFpPo1AbOO4
+         xvE+LHjrdoImDyTTwhi2RYdWPei0F3/Oyo43aBaXccSjFx7A71/iqbg0h5m97tc0PtAL
+         x47Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUuCX+ZNNwDU36zBOoeHABpTNWhkPx+LlpzQO6hzQwEuPv4Pui+EGIb9a8qopxLv8YrgA1Ktmyy+z9lwac=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbBt6wAX+wphMpG+YDKeIAkMJOUrgxx0IH4YYB8oJl2PzCbxvp
+	LKK/VTdY0ks0XsNR4GxDSIzMySSpGNiaVKFHNo1P/DY6AsOfw2HBjvhZuQvKdQPnKDXfkHsx8NU
+	UVHn2cIeQlAle5FGLzvDyZESTszCHoVyGEriy
+X-Google-Smtp-Source: AGHT+IFBilfUkzHEmS6+o84sCK1y4uKaB4NO7YNRFJquAc77QKxj0moVYTFp7ObaLzboY+vQGnMMw+U412cqHiD5QrU=
+X-Received: by 2002:a2e:b88e:0:b0:2fa:e658:27b4 with SMTP id
+ 38308e7fff4ca-2fcbdf5fe55mr73102971fa.4.1730297907852; Wed, 30 Oct 2024
+ 07:18:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/x86/amd/hsmp: mark hsmp_msg_desc_table[] as
- maybe_unused
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Arnd Bergmann <arnd@kernel.org>, Suma Hegde <suma.hegde@amd.com>
-Cc: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, "H. Peter Anvin"
- <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>,
- Bjorn Helgaas <bhelgaas@google.com>, platform-driver-x86@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-References: <20241028163553.2452486-1-arnd@kernel.org>
- <8aa437c2-43be-4ecf-88c4-f733b1e7f243@linux.intel.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <8aa437c2-43be-4ecf-88c4-f733b1e7f243@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241030140224.972565-1-leitao@debian.org>
+In-Reply-To: <20241030140224.972565-1-leitao@debian.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Wed, 30 Oct 2024 15:18:14 +0100
+Message-ID: <CANn89iLbTAwG-GM-UBFv4fNJ+1RuUZLMFNDCbUumbXx3SxxfBA@mail.gmail.com>
+Subject: Re: [PATCH net] mptcp: Ensure RCU read lock is held when calling mptcp_sched_find()
+To: Breno Leitao <leitao@debian.org>
+Cc: kuba@kernel.org, horms@kernel.org, davem@davemloft.net, pabeni@redhat.com, 
+	Matthieu Baerts <matttbe@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+	Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	vlad.wing@gmail.com, max@kutsevol.com, kernel-team@meta.com, aehkn@xenhub.one, 
+	stable@vger.kernel.org, 
+	"open list:NETWORKING [MPTCP]" <mptcp@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 30, 2024 at 3:02=E2=80=AFPM Breno Leitao <leitao@debian.org> wr=
+ote:
+>
+> The mptcp_sched_find() function must be called with the RCU read lock
+> held, as it accesses RCU-protected data structures. This requirement was
+> not properly enforced in the mptcp_init_sock() function, leading to a
+> RCU list traversal in a non-reader section error when
+> CONFIG_PROVE_RCU_LIST is enabled.
+>
+>         net/mptcp/sched.c:44 RCU-list traversed in non-reader section!!
+>
+> Fix it by acquiring the RCU read lock before calling the
+> mptcp_sched_find() function. This ensures that the function is invoked
+> with the necessary RCU protection in place, as it accesses RCU-protected
+> data structures.
+>
+> Additionally, the patch breaks down the mptcp_init_sched() call into
+> smaller parts, with the RCU read lock only covering the specific call to
+> mptcp_sched_find(). This helps minimize the critical section, reducing
+> the time during which RCU grace periods are blocked.
+>
+> The mptcp_sched_list_lock is not held in this case, and it is not clear
+> if it is necessary.
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: 1730b2b2c5a5 ("mptcp: add sched in mptcp_sock")
+> Cc: stable@vger.kernel.org
+> ---
+>  net/mptcp/protocol.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/mptcp/protocol.c b/net/mptcp/protocol.c
+> index 6d0e201c3eb2..8ece630f80d4 100644
+> --- a/net/mptcp/protocol.c
+> +++ b/net/mptcp/protocol.c
+> @@ -2854,6 +2854,7 @@ static void mptcp_ca_reset(struct sock *sk)
+>  static int mptcp_init_sock(struct sock *sk)
+>  {
+>         struct net *net =3D sock_net(sk);
+> +       struct mptcp_sched_ops *sched;
+>         int ret;
+>
+>         __mptcp_init_sock(sk);
+> @@ -2864,8 +2865,10 @@ static int mptcp_init_sock(struct sock *sk)
+>         if (unlikely(!net->mib.mptcp_statistics) && !mptcp_mib_alloc(net)=
+)
+>                 return -ENOMEM;
+>
+> -       ret =3D mptcp_init_sched(mptcp_sk(sk),
+> -                              mptcp_sched_find(mptcp_get_scheduler(net))=
+);
+> +       rcu_read_lock();
+> +       sched =3D mptcp_sched_find(mptcp_get_scheduler(net));
+> +       rcu_read_unlock();
 
-On 29-Oct-24 1:55 PM, Ilpo Järvinen wrote:
-> On Mon, 28 Oct 2024, Arnd Bergmann wrote:
-> 
-> + Hans
-> 
->> From: Arnd Bergmann <arnd@arndb.de>
->>
->> After the file got split, there are now W=1 warnings for users that
->> include it without referencing hsmp_msg_desc_table:
->>
->> In file included from arch/x86/include/asm/amd_hsmp.h:6,
->>                  from drivers/platform/x86/amd/hsmp/plat.c:12:
->> arch/x86/include/uapi/asm/amd_hsmp.h:91:35: error: 'hsmp_msg_desc_table' defined but not used [-Werror=unused-const-variable=]
->>    91 | static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
->>       |                                   ^~~~~~~~~~~~~~~~~~~
->>
->> Mark it as __attribute__((maybe_unused)) to shut up the warning but
->> keep it in the file in case it is used from userland. The __maybe_unused
->> shorthand unfurtunately isn't available in userspace, so this has to
-> 
-> unfortunately
-> 
->> be the long form.
->>
->> Fixes: e47c018a0ee6 ("platform/x86/amd/hsmp: Move platform device specific code to plat.c")
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->> ---
->> Ideally this array wouldn't be part of the UAPI at all, since it is
->> not really a interface, but it's hard to know what part  of the header
->> is actually used outside of the kernel.
-> 
-> Sadly this slipped through during review even if it was brought up by 
-> somebody back then. The (rather weak) reasoning for having it as a part of 
-> UAPI was seemingly accepted uncontested :-(.
-> 
->> ---
->>  arch/x86/include/uapi/asm/amd_hsmp.h | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/x86/include/uapi/asm/amd_hsmp.h b/arch/x86/include/uapi/asm/amd_hsmp.h
->> index e5d182c7373c..4a7cace06204 100644
->> --- a/arch/x86/include/uapi/asm/amd_hsmp.h
->> +++ b/arch/x86/include/uapi/asm/amd_hsmp.h
->> @@ -88,7 +88,8 @@ struct hsmp_msg_desc {
->>   *
->>   * Not supported messages would return -ENOMSG.
->>   */
->> -static const struct hsmp_msg_desc hsmp_msg_desc_table[] = {
->> +static const struct hsmp_msg_desc hsmp_msg_desc_table[]
->> +				__attribute__((unused)) = {
-> 
-> It seems that the main goal why it was put into UAPI was "to give the user 
-> some reference about proper num_args and response_size for each message":
-> 
-> https://lore.kernel.org/all/CAPhsuW5V0BJT+YSwv1U=hRG0k9zBWXeRd=E1n4U5hvcnwEV3mQ@mail.gmail.com/
-> 
-> Are we actually expecting userspace to benefit from this in C form?
-> Suma? Hans?
+You are silencing the warning, but a potential UAF remains.
 
-I can see how having this available in the uapi header as documentation
-of sorts is somewhat useful.
+sched could have been freed already, it is illegal to deref it.
 
-OTOH I do agree that this array should probably not be used by userspace.
+> +       ret =3D mptcp_init_sched(mptcp_sk(sk), sched);
 
-And there is only 1 way to find out if it is actually used (which I do not
-expect) and that is to just drop it and find out (and to be willing to
-revert the change if it breaks things).
+The rcu_read_unlock() should be moved after this point.
 
-So we can either move the array in its entirety to the c-code consuming it,
-which I think would be best; or we can go with Arnd's patch + add
+This means that mptcp_sched_ops ->init() functions are not allowed to sleep=
+.
 
-#ifdef __KERNEL__ 
-
-around the array so that it is there for people reading the header, but
-it is no longer exposed as uapi.
-
-Regards,
-
-Hans
-
-
-
-
-
-
-> 
->>  	/* RESERVED */
->>  	{0, 0, HSMP_RSVD},
-> 
-> 
-
+>         if (ret)
+>                 return ret;
+>
+> --
+> 2.43.5
+>
 
