@@ -1,172 +1,132 @@
-Return-Path: <linux-kernel+bounces-388990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADCC9B6715
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:13:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3424D9B671F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:14:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07B5A282510
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:13:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 683E8B232BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1611F2139D1;
-	Wed, 30 Oct 2024 15:13:17 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F1832141BB;
+	Wed, 30 Oct 2024 15:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MVlILVSM"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E44A1FCF40;
-	Wed, 30 Oct 2024 15:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE5E213EDC;
+	Wed, 30 Oct 2024 15:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301196; cv=none; b=XiHtlHZ98mgFH26KJ6SolEP55OBHixP9lTdlhDTwjlbpxYsc9SQyFjCol1M4GxTKPkTApNReTDmQsJLFWc3jjeueX+GKgINr6OtMse84w04woa72IBiHiZohHUvg5oJ4wFgkjYtWO+lel0fuFDDudO9IZhH1yzPf6/zpiP3cSjM=
+	t=1730301203; cv=none; b=sVNPEur+3ELMmfdOR/iZvkl+lfkUqbV0nBU/5I5Jnjs5PWK6b+1+DDKB7BeRlKbjwPVBa3n+PF3YoLya+/UTNovUVRknm4MLjp02ZqzLFIcn84hVtvQayF8VVtexc0pael7iroHzurnVejX40v7YKP/6dpo3nyJiZGREmVeYmRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301196; c=relaxed/simple;
-	bh=eGP89k2OWd5d7Pxbyxcn/I7TL7S78zbAyyD/JGiIBFg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t2Mska9PEI/A6NN+ATN1nvjrYBS7bbE61SA0iaLnR6WRmbf74Q5o9+066P6kxCidSuEK5i61z6QoMdz5MuEFLRT1+Hc1SjCkyHACBkhfMgBaRp+M06GzpK/CWjpmM6Ax2gsOmdhr5ZxYSN+zndL11LTkB8rhd8InSP7PSVnE7SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdrFN1Z65z6HJgC;
-	Wed, 30 Oct 2024 23:11:52 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9D84F140158;
-	Wed, 30 Oct 2024 23:13:10 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 16:13:09 +0100
-Date: Wed, 30 Oct 2024 15:13:08 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Terry Bowman <terry.bowman@amd.com>
-CC: <ming4.li@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <dan.j.williams@intel.com>,
-	<bhelgaas@google.com>, <mahesh@linux.ibm.com>, <ira.weiny@intel.com>,
-	<oohall@gmail.com>, <Benjamin.Cheatham@amd.com>, <rrichter@amd.com>,
-	<nathan.fontenot@amd.com>, <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v2 05/14] PCI/AER: Add CXL PCIe port correctable error
- support in AER service driver
-Message-ID: <20241030151308.000005d5@Huawei.com>
-In-Reply-To: <20241025210305.27499-6-terry.bowman@amd.com>
-References: <20241025210305.27499-1-terry.bowman@amd.com>
-	<20241025210305.27499-6-terry.bowman@amd.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730301203; c=relaxed/simple;
+	bh=LuEdHPduW79U4O3XLY1gGdLAM5ujOyiDtRI4qWqVFuw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EhVlMKLhwtOnOb8GUceiCwkylh1D9zpb+vUlhbTZgHgjxyc+HE9B8XAXrpv6CeRxrilWE9USzM3WjGDt2RMplYxi1WqaD+64KQXuXKimffkczPR38tHBo8NXuCm4eLIN4F3QDRVsh7vKiUZ9MFCMIhAFRkurmfjVQGkOCIPC8c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MVlILVSM; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730301202; x=1761837202;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=LuEdHPduW79U4O3XLY1gGdLAM5ujOyiDtRI4qWqVFuw=;
+  b=MVlILVSMqBqJr+ur2kOCgWTBEMgJ5f2P0hmTB626dy27BOwQZjrByH7E
+   nqoqHccGoj7q+NVJLyqQfjLVHSAnitSk7tGuB42RaAfNhUu2WBkNUqn17
+   JzT8PGPCf6jsFHrQWEATenbYpnNFnY4eWPV5q8I8VJl8Q22Lp0AFTCtgY
+   acj5bFxq5jPOukkiMVVRbC/nkP/+7XeSceKi/C/+UhuwS1jaxDQ6jgDh5
+   y8tTKRJ0SxiZ4pDOVJb47ZDp81aJVnc5MXMCyr/86eg5Q/xG+c6i/UXOS
+   4lQuPCX8mNZ3LC+eIsnemCvnsAw4g4m5KICFBJJxh4bl7TDTlRzsb7Fuw
+   g==;
+X-CSE-ConnectionGUID: hjHz78dIQ/SCIGpn8cLgdw==
+X-CSE-MsgGUID: 8LY0ubjsQkqH/LQDkLp5QQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40542002"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40542002"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 08:13:20 -0700
+X-CSE-ConnectionGUID: re2uEumQTOy26heq2IEy0A==
+X-CSE-MsgGUID: xWhHf4zATleSPYPwptJ85Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="86953417"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 08:13:18 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6ANn-000000094nf-3BxU;
+	Wed, 30 Oct 2024 17:13:15 +0200
+Date: Wed, 30 Oct 2024 17:13:15 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Len Brown <lenb@kernel.org>,
+	Jarred White <jarredwhite@linux.microsoft.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] [v3] acpi: allow building without CONFIG_HAS_IOPORT
+Message-ID: <ZyJNC44r11a83FlI@smile.fi.intel.com>
+References: <20241030123701.1538919-1-arnd@kernel.org>
+ <20241030123701.1538919-2-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030123701.1538919-2-arnd@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 25 Oct 2024 16:02:56 -0500
-Terry Bowman <terry.bowman@amd.com> wrote:
-
-> The AER service driver doesn't currently handle CXL protocol errors
-> reported by CXL root ports, CXL upstream switch ports, and CXL downstream
-> switch ports. Consequently, RAS protocol errors from CXL PCIe port devices
-> are not properly logged or handled.
+On Wed, Oct 30, 2024 at 12:36:41PM +0000, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> These errors are reported to the OS via the root port's AER correctable
-> and uncorrectable internal error fields. While the AER driver supports
-> handling downstream port protocol errors in restricted CXL host (RCH) mode
-> also known as CXL1.1, it lacks the same functionality for CXL PCIe ports
-> operating in virtual hierarchy (VH) mode.
+> CONFIG_HAS_IOPORT will soon become optional and cause a build time
+> failure when it is disabled but a driver calls inb()/outb(). At the
+> moment, all architectures that can support ACPI have port I/O, but this
+> is not necessarily the case in the future on non-x86 architectures.
+> The result is a set of errors like:
 > 
-> To address this gap, update the AER driver to handle CXL PCIe port device
-> protocol correctable errors (CE).
+> drivers/acpi/osl.c: In function 'acpi_os_read_port':
+> include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
 > 
-> Make this update alongside the existing downstream port RCH error handling
-> logic, extending support to CXL PCIe ports in VH mode.
+> Nothing should actually call these functions in this configuration,
+> and if it does, the result would be undefined behavior today, possibly
+> a NULL pointer dereference.
 > 
-> is_internal_error() is currently limited by CONFIG_PCIEAER_CXL kernel
-> config. Update is_internal_error()'s function declaration such that it is
-> always available regardless if CONFIG_PCIEAER_CXL kernel config is enabled
-> or disabled.
-> 
-> The uncorrectable error (UCE) handling will be added in a future patch.
-> 
-> [1] CXL 3.1 Spec, 12.2.2 CXL Root Ports, Downstream Switch Ports, and
-> Upstream Switch Ports
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-This is a fiddly patch to read, but that's at least partly diff going crazy
-in a few places.
+> Change the low-level functions to return a proper error code when
+> HAS_IOPORT is disabled.
 
-Anyhow, I think it is fine but I would call out that this changes
-things so that the PCI error handlers are no longer called for CXL ports
-if it's an internal error.
+Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-With a sentence on that:
+...
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
+> +		/*
+> +		 * set all-1 result as if reading from non-existing
+> +		 * I/O port
+> +		 */
 
-I'm not 100% convinced the path of separate handlers is the way to go
-but we can always change things again if that doesn't work out.
+Don't know if Rafael can / want to tweak this, but would be nice to follow
+standard style for multi-line comments.
 
-Jonathan
+		/*
+		 * Set all-1 result as if reading from non-existing
+		 * I/O port.
+		 */
 
-> ---
->  drivers/pci/pcie/aer.c | 59 ++++++++++++++++++++++++++++--------------
->  1 file changed, 39 insertions(+), 20 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 53e9a11f6c0f..1d3e5b929661 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -941,8 +941,15 @@ static bool find_source_device(struct pci_dev *parent,
->  	return true;
->  }
->  
-> -#ifdef CONFIG_PCIEAER_CXL
-> +static bool is_internal_error(struct aer_err_info *info)
-> +{
-> +	if (info->severity == AER_CORRECTABLE)
-> +		return info->status & PCI_ERR_COR_INTERNAL;
->  
-> +	return info->status & PCI_ERR_UNC_INTN;
-> +}
-> +
-> +#ifdef CONFIG_PCIEAER_CXL
+> +		*value = GENMASK(width, 0);
+> +		return AE_NOT_IMPLEMENTED;
+> +	}
 
-Diff was having fun.  Maybe put a blank line here? I think that's
-what has tripped it up.
+-- 
+With Best Regards,
+Andy Shevchenko
 
->  /**
->   * pci_aer_unmask_internal_errors - unmask internal errors
->   * @dev: pointer to the pcie_dev data structure
-> @@ -994,14 +1001,6 @@ static bool cxl_error_is_native(struct pci_dev *dev)
->  	return (pcie_ports_native || host->native_aer);
->  }
-
-> -
-
->  /**
-> @@ -1115,8 +1131,11 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  
->  static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
->  {
-> -	cxl_handle_error(dev, info);
-> -	pci_aer_handle_error(dev, info);
-> +	if (is_internal_error(info) && handles_cxl_errors(dev))
-> +		cxl_handle_error(dev, info);
-> +	else
-> +		pci_aer_handle_error(dev, info);
-Whilst not calling this for the CXL cases probably makes sense and
-given new code needs to be the case to avoid a double clear I think,
-I would call that change out more explicitly in the patch description.
-> +
-
->  	pci_dev_put(dev);
->  }
->  
 
 
