@@ -1,90 +1,120 @@
-Return-Path: <linux-kernel+bounces-388664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3979B62BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:14:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1D19B62C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:15:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51882284727
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:14:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD5961C2278F
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:15:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF7D1E885B;
-	Wed, 30 Oct 2024 12:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qboeUIeN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 075E11E909E;
+	Wed, 30 Oct 2024 12:15:07 +0000 (UTC)
+Received: from mx.gpxsee.org (mx.gpxsee.org [37.205.14.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4011E8849;
-	Wed, 30 Oct 2024 12:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BAD1E7C0A;
+	Wed, 30 Oct 2024 12:15:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.14.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730290457; cv=none; b=j98f5X2vABP904m4oqExe8zdHjQT8CYKH2ObuGAcmJct2VlYY0QQn1DBsU6i2EAfD6gslCGflyio4QTK6SzuODBAUqYEnZwrY20r8BGf4DdK9IwuXoaF6G8lYZzjlxhW9HxQIhez79yzBl3nMQtXDaIHESYui6HmnDb8aku8J0I=
+	t=1730290506; cv=none; b=AIITliwaNzSUr66+QSQUtM76BwTtSFcxhMMfNfxsqm7uuvlXnBw+YnKlTQ2cFPew1OvH/IUKsIBCkSYa/ragO4Sk3GRrWmuDpcpnWsskgBJgprsOG7HXp6cngvhDHc3mCXVI0pjdJbrVdxjEslT6ThwuX+149xMbp3dBkQut59k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730290457; c=relaxed/simple;
-	bh=E1waqaljvmeuCK69VUwSbhAMyNmFJXiH8O/T3EHdJbQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QZz6wNSmTUs0qKgTcDR2ZX5pUql7VNe9VTdjhcQfTWRVHv5YrMjcD+Q2wTwxm2SwYFeB1O5Q7HJUSCv3YZcV9XOtviwyx15pY7TvNdxFUEz5LUDxd2jIMaOkSXxuI3yavLFR39iXQj4IR0xxrYJXLG1X5QC/lMucs2O73mOid1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qboeUIeN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF591C4CEE3;
-	Wed, 30 Oct 2024 12:14:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730290457;
-	bh=E1waqaljvmeuCK69VUwSbhAMyNmFJXiH8O/T3EHdJbQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=qboeUIeNuRAWcPxZ0vO7peVotwLR5Gd2vg6iQXbk5gxisWpBQktWASgnU8CTnGBaR
-	 i/O3OagtFIPr16ERSeuFSamjWksQqfbBlJx1+xIBRvzQDQ6NqGvxAQuLhC3jiCEEt0
-	 imk6TYVBjMetYWLHw9vHYSLmd8IwE7rG456AQeY41AmOU2WQaTHr5t0y4onP9ZslIW
-	 +2sH2d0zaJOcuSAI4KqhakJ0gJe5rNB9W+ITSHjaDvaHI29ltliXeYLJ0C0njignhU
-	 gpckKOgPKy/N3GNgl/GlHa2kq9mcywuO0w2F5sk9ic3BMJLC1Qsr8l3zPsSWxfWCJk
-	 3Ahm5/+kCEG5g==
-From: Leon Romanovsky <leon@kernel.org>
-To: jgg@ziepe.ca, Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com, 
- linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-In-Reply-To: <20241024124000.2931869-1-huangjunxian6@hisilicon.com>
-References: <20241024124000.2931869-1-huangjunxian6@hisilicon.com>
-Subject: Re: [PATCH v2 for-rc 0/5] RDMA/hns: Bugfixes
-Message-Id: <173029045313.59867.17041043920057577100.b4-ty@kernel.org>
-Date: Wed, 30 Oct 2024 14:14:13 +0200
+	s=arc-20240116; t=1730290506; c=relaxed/simple;
+	bh=UhSiF+V6M9qHwAONR8rQ3KB37XoyLkc3yCdh97dZiGQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N6CHLUnObQWDh+GsQxQvlu8PjYBKgHUeNG2FBosIWyr5F3+Gsa9+I5pZJtLrUCHEk19iNAHWk6yHv69ufgeUTLdBgmLy10r4RpbjxeHkwBsQp/E5LAdbiup/T5LJkFdgIpEC9xgHQzkI/QILEGwGiLCF9+85bw3y+fQCxGsaxMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org; spf=pass smtp.mailfrom=gpxsee.org; arc=none smtp.client-ip=37.205.14.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gpxsee.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gpxsee.org
+Received: from mgb4.. (unknown [62.77.71.229])
+	by mx.gpxsee.org (Postfix) with ESMTPSA id 3A3386F807;
+	Wed, 30 Oct 2024 13:14:54 +0100 (CET)
+From: tumic@gpxsee.org
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Hans Verkuil <hverkuil@xs4all.nl>
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Martin=20T=C5=AFma?= <martin.tuma@digiteqautomotive.com>
+Subject: [PATCH] media: mgb4: Fix inconsistent input/output alignment in loopback mode
+Date: Wed, 30 Oct 2024 13:14:46 +0100
+Message-ID: <20241030121446.1743-1-tumic@gpxsee.org>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-37811
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Martin Tůma <martin.tuma@digiteqautomotive.com>
 
-On Thu, 24 Oct 2024 20:39:55 +0800, Junxian Huang wrote:
-> Some hns bugfixes.
-> Patch #5 has been sent once before:
-> https://lore.kernel.org/lkml/4c202653-1ad7-d885-55b7-07c77a549b09@hisilicon.com/T/#m05883778af8e39438d864e9c0fb9062aa09f362c
-> 
-> v1 -> v2:
-> * Add spin_lock_init() for the newly-added flush_lock in patch #2.
-> 
-> [...]
+Fixes broken output due to different input/output alignment in loopback
+mode when the (last) input device is closed. Instead of on device close,
+do the alignment synchronisation when enabling the loopback.
 
-Applied, thanks!
+Signed-off-by: Martin Tůma <martin.tuma@digiteqautomotive.com>
+---
+ drivers/media/pci/mgb4/mgb4_sysfs_out.c |  5 ++++-
+ drivers/media/pci/mgb4/mgb4_vin.c       | 19 +------------------
+ 2 files changed, 5 insertions(+), 19 deletions(-)
 
-[1/5] RDMA/hns: Fix an AEQE overflow error caused by untimely update of eq_db_ci
-      https://git.kernel.org/rdma/rdma/c/571e4ab8a45e53
-[2/5] RDMA/hns: Fix flush cqe error when racing with destroy qp
-      https://git.kernel.org/rdma/rdma/c/377a2097705b91
-[3/5] RDMA/hns: Modify debugfs name
-      https://git.kernel.org/rdma/rdma/c/370a9351bf84af
-[4/5] RDMA/hns: Use dev_* printings in hem code instead of ibdev_*
-      https://git.kernel.org/rdma/rdma/c/d81fb6511abf18
-[5/5] RDMA/hns: Fix cpu stuck caused by printings during reset
-      https://git.kernel.org/rdma/rdma/c/323275ac2ff15b
+diff --git a/drivers/media/pci/mgb4/mgb4_sysfs_out.c b/drivers/media/pci/mgb4/mgb4_sysfs_out.c
+index 573aa61c69d4..88429d400ce3 100644
+--- a/drivers/media/pci/mgb4/mgb4_sysfs_out.c
++++ b/drivers/media/pci/mgb4/mgb4_sysfs_out.c
+@@ -122,9 +122,12 @@ static ssize_t video_source_store(struct device *dev,
+ 	if (loopin_old && loopin_cnt(loopin_old) == 1)
+ 		mgb4_mask_reg(&mgbdev->video, loopin_old->config->regs.config,
+ 			      0x2, 0x0);
+-	if (loopin_new)
++	if (loopin_new) {
+ 		mgb4_mask_reg(&mgbdev->video, loopin_new->config->regs.config,
+ 			      0x2, 0x2);
++		mgb4_write_reg(&mgbdev->video, voutdev->config->regs.padding,
++			       loopin_new->padding);
++	}
+ 
+ 	if (val == voutdev->config->id + MGB4_VIN_DEVICES)
+ 		mgb4_write_reg(&mgbdev->video, voutdev->config->regs.config,
+diff --git a/drivers/media/pci/mgb4/mgb4_vin.c b/drivers/media/pci/mgb4/mgb4_vin.c
+index 185fb28226b6..1fb28dd443fa 100644
+--- a/drivers/media/pci/mgb4/mgb4_vin.c
++++ b/drivers/media/pci/mgb4/mgb4_vin.c
+@@ -331,27 +331,10 @@ static int fh_open(struct file *file)
+ 	return rv;
+ }
+ 
+-static int fh_release(struct file *file)
+-{
+-	struct mgb4_vin_dev *vindev = video_drvdata(file);
+-	int rv;
+-
+-	mutex_lock(&vindev->lock);
+-
+-	if (v4l2_fh_is_singular_file(file))
+-		set_loopback_padding(vindev, 0);
+-
+-	rv = _vb2_fop_release(file, NULL);
+-
+-	mutex_unlock(&vindev->lock);
+-
+-	return rv;
+-}
+-
+ static const struct v4l2_file_operations video_fops = {
+ 	.owner = THIS_MODULE,
+ 	.open = fh_open,
+-	.release = fh_release,
++	.release = vb2_fop_release,
+ 	.unlocked_ioctl = video_ioctl2,
+ 	.read = vb2_fop_read,
+ 	.mmap = vb2_fop_mmap,
 
-Best regards,
+base-commit: 698b6e3163bafd61e1b7d13572e2c42974ac85ec
 -- 
-Leon Romanovsky <leon@kernel.org>
+2.46.2
 
 
