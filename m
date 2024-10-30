@@ -1,263 +1,227 @@
-Return-Path: <linux-kernel+bounces-389703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89AE49B703B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:04:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FC2F9B703F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:05:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47735281BA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:04:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85C261C215BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9BF1E32B0;
-	Wed, 30 Oct 2024 23:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 668E9217461;
+	Wed, 30 Oct 2024 23:05:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l7/0uMgG"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aDg7weAd"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DEE1BD9DF;
-	Wed, 30 Oct 2024 23:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D64A1BD9DF
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 23:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730329471; cv=none; b=mMDhZ8EtNPEJnUFet1KICvTWwmgJrIQgRYStwP2FF7BIgZRNFj3rVkylIviw6wHDTBQwONDsCA7g9Ig1TdqVGTVo8U6fBOLbyiBUEL9GEyNZsp8FgRa77crcSPnNZOi+q9FDxUkV5SjjLNioXqsseiB2Gtgs7Kzy0vex6YuEgxw=
+	t=1730329510; cv=none; b=Ody4Zuf0D8L9GhFTMEDsOdD7zNLMOKsuzvqc2Y28GSn5d+Km4RnM/JYXmafQrzx8ie8+/u5OjAXCSin9y2JJIL6rQqcR0HoihtOI65eAk8hBD1Rht5AJ9FCGlC4syOtzHEMEXPjm8arlCr/jISmAFYcfgUCSNG154AWmOwM41KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730329471; c=relaxed/simple;
-	bh=Ec4D5SyBdaBhg+W6wXsrh9nu22khEYqGIQhe+ODvsks=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mw2h7fMOELVQogpHgPkr0frZpEsENMCa/Ktgu7/3AEpnob7jqRhogDeYtRSTJ7SzKpFcwpuSFrHG3Lhk2/Td3/hQg/ZcsQJIeSskxV7KNdotCDNVpLLqPm0MMWxo4hcJQAiOw94Hkqr5WkLbIFkeWHVZq/CI3HQIEiVuOuGG7FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l7/0uMgG; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4611abb6bd5so2618911cf.1;
-        Wed, 30 Oct 2024 16:04:28 -0700 (PDT)
+	s=arc-20240116; t=1730329510; c=relaxed/simple;
+	bh=caVe8KUg4p0c7ymHU2yLmoxpVlKecGLB8YQ6QefrTCo=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=NTwEBRAU+LAaPXjLXlXhRRV1ztT2zPM/wQt8HFcKyV7RajAzXrPPwtvTiHXmuJZ2vTAqDsVskfiy9Zwf8oH+e5HEXEhX342jhbJomlGBh9NFBmJ0GrNkrnSxRIk2K0lk+S9CCoaG1MrAV4fISG0p/QuNfqYcFnHl5AiTdxmJFOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aDg7weAd; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--mmaurer.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e1159159528so2313188276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730329468; x=1730934268; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PLJJBAKyQj+SNUNmxz2AeNTsEKRK6TwiIX+0O6pGNdQ=;
-        b=l7/0uMgGhfsM/sdsI16tTA72CUkvAhvKgPrZE2zp/8y44vr0MEJ1TPM9X0lASO3mib
-         KQPdeeZ5+XjVLXkqlZ/Gl+yEzIhFCmH3L0a16IHefazeI7BJ7pK6EBwTS3FljgmD7NKY
-         PzkacNugcA3xpJSSJxJAXxZx1mX5p3mLnc/4WBva/T0naDfu1P7Y1ax4EBlWSQ9NgktO
-         9si2CdGnO5US8jYkCSuQcRCJA5MXU3kkGtSow/ogjn1NHhWD1bhx1cG/Xpf6G3dduu4z
-         AfjxacszyJdxLcSfIreB1vA41j/bJnoSkA2gHT130sUCkHYXStbEfqv0gevV8RQ6jceI
-         Xo3A==
+        d=google.com; s=20230601; t=1730329506; x=1730934306; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=mwCfAovhpPAvFtkBAaRUtvlrChVtTdt/SXipMI6/liY=;
+        b=aDg7weAdvelrTfNpX+eJjZap/wLk5M04DDdxiJAKoBWzl0Y3/0+ufbcv+nSkUwaoH6
+         McQZK4antoPiegc2gP1vM5CjYspOYntqmuRsWSsX4o4Z0QX4L73Pwnl8KNzUTLd/cQ30
+         FsQJx8k12yScffjv0pQ/WVocINDwjGdrDwF22r6oj1x40jCH+bUOm6TBW1L8Xzag3xV5
+         yZT3CUKE4J4j6+cX465GxsUjzh17tYHu/L7HzvJyMiJJG0TDmnHXleztPJ/YKoFQDCqU
+         zn/Qq7JW85wzpQdqrdv030d4+VEM2Ov3sdUnilJtNQAG5H4Z8RZ1zk2nv3wf/bZPRyEt
+         l/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730329468; x=1730934268;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PLJJBAKyQj+SNUNmxz2AeNTsEKRK6TwiIX+0O6pGNdQ=;
-        b=F9EL/fTeq2wf7975Jb7FAbaWbVh8SIF1jLZaSIkLIMsGbABN1b4XjH3Q11Hg+zMdPH
-         YXwVXqBo/yPmJDVgZfQHP5W8rsnGMI3AGjdFus9E8RyqtzqFtzCwiOmb9FCnHkr+5P0X
-         C5BErKyx6lyiFwzoUFZpdmi8nWM0bBpsBULjqYrlS6gmJiH2l7RinYSPD4/jCU6T+5IF
-         67t0S5IKRtgOJEePJ3o2NrBZJZDDPUSHKg5sJegtlFVGV/0YYuyhu+RZxCf16m6/K1se
-         ba5cZMD+hIqFgqKxdefUKnSBCzniX/AzAyws7Q7C7NDUEMSqJMNLJcNtis9xbcqhz43G
-         omgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSd/ZdXR9gfWfJM0x+OF6YTxgLOKInYi92Kv+d0uf0c18q2JXABy197Kk5EAaqzKiq+RwaMUruPhrr3x8=@vger.kernel.org, AJvYcCXU3Mu9/ApjjQUbi0MWNeSY5ZSkiQmHI8rcAndfFTwYzCIH77kpNgle0YtDWkwkAGYp241ZDjTeT8V56w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyOoegXuelpaPGu6BaRUUPgdBYAd8CGK6uZfJhCS78/6sxtgil
-	NaGXPe0ng+E0nRnasBdwXQbp02vGq3bDxf9xjOCzLCXmeu87WjTF
-X-Google-Smtp-Source: AGHT+IFMAcf+dFBcoD7SGdRauKrebHUvmAG2ECPiTluSnfadQE+H/b/qksVg722bKVaJXipBpbHcLw==
-X-Received: by 2002:a05:622a:58e:b0:461:148b:1884 with SMTP id d75a77b69052e-4613bfd0547mr250096891cf.11.1730329467740;
-        Wed, 30 Oct 2024 16:04:27 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-462ad19b328sm1220441cf.85.2024.10.30.16.04.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 16:04:27 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 72ED31200066;
-	Wed, 30 Oct 2024 19:04:26 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 30 Oct 2024 19:04:26 -0400
-X-ME-Sender: <xms:ersiZx38nY2ghCYzRWWqgHa3CxJ8ukzFhWb1D2-I3W9RVVnspMWbTA>
-    <xme:ersiZ4GCeBW-Vulbkr8qDM4UuWiVjCkdHBJgw-YzMszDOxocMSwKSjbIGM4CeEbqe
-    H4eTna0cpq3SrGjwQ>
-X-ME-Received: <xmr:ersiZx7P240Dmw5DHoWeDSgttVlOUid3ijnFMigJvHgOZEtIaJqieE4bzM0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekgedgtdehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeevgfejgfevfeevteegffdvhedtgfekvefgledv
-    teffgeffveeiuedvieethfdugeenucffohhmrghinhepqhgvmhhurdhorhhgnecuvehluh
-    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgv
-    shhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeehhe
-    ehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgv
-    pdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepvg
-    hlvhgvrhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepvhgsrggskhgrsehsuhhsvgdr
-    tgiipdhrtghpthhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epkhgrshgrnhdquggvvhesghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtohep
-    lhhinhhugidqmhhmsehkvhgrtghkrdhorhhgpdhrtghpthhtohepshhfrhestggrnhgsrd
-    gruhhughdrohhrghdrrghupdhrtghpthhtohepsghighgvrghshieslhhinhhuthhrohhn
-    ihigrdguvg
-X-ME-Proxy: <xmx:ersiZ-2PNxt_8g4rxZhOfvGOkxDK_WrYHRcmNR_UcN51kjb6QqwqfQ>
-    <xmx:ersiZ0H6tvJbvOp1Yq0VQ58WZoMXNeRa8YXDYiiDy1xBICrXxzWIkg>
-    <xmx:ersiZ_-PkU9APVb4QIEFu-fjasOuj7NDUjW8bHId8-blUvHHtXUIAw>
-    <xmx:ersiZxn7CvyI9URkKz8eoySlJ3n1HKFwvXMaND_xGj2HdiVA7_HLpg>
-    <xmx:ersiZ4EsAmAZcD4QUT5YWF0wJIVnUb3L4DRyUgVUBYXId3xVFlLfY0hZ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 19:04:25 -0400 (EDT)
-Date: Wed, 30 Oct 2024 16:04:24 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Marco Elver <elver@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, paulmck@kernel.org,
-	linux-next@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com, linux-mm@kvack.org,
-	sfr@canb.auug.org.au, bigeasy@linutronix.de, longman@redhat.com,
-	cl@linux.com, penberg@kernel.org, rientjes@google.com,
-	iamjoonsoo.kim@lge.com, akpm@linux-foundation.org
-Subject: Re: [BUG] -next lockdep invalid wait context
-Message-ID: <ZyK7eGSWfEYzio_u@Boquns-Mac-mini.local>
-References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
- <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
- <ZyK0YPgtWExT4deh@elver.google.com>
+        d=1e100.net; s=20230601; t=1730329506; x=1730934306;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mwCfAovhpPAvFtkBAaRUtvlrChVtTdt/SXipMI6/liY=;
+        b=fLrsHoTjMJvayTFqDMxRq43dI/fyUbnZlfdieYHDrn7NY0kBT6h6AqDCRgbUf9iqbf
+         HjNQtDRazrXiHMJsuNGxuyh44L9YFyvoegHWx024gH+BgleUpyV8l+wkCvXr7uG8IrIe
+         1NKXbXV9GsgQHrz+AcT70D9GtLFUDXFFW4v723w/1Po9VYxf0KrfQrCNV1J9UvryGO8Z
+         sQmmrlowYTHVoIqnb//TsF5wl67HE8uEyDuDx4cWAD6e5MlA1NXPs7F2sFXY0X0LNBKa
+         JVmVRHHTbozOLgJv6GLHcYesqFCc1AgANwCS54Tkd+M+Jv1mBELdXdz9GZGPW7v8/XKK
+         cYMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsbKvQRIXLl9nhoXM7kG5ZGfWtx40OsJmSZt/jO4yk5TuxbhfQT6qf9XOSCbwtyAoORzJow0LsS1L68xk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoF3S4WASiif2MPPumu5gewVgrFEDGouAhGfM5VKk6S6d9zJFW
+	PzRD8bbFIj52sZzsdn9miRhjl6ApII2oJIjc1jcolc/w4WA7czvdG49+6zZY9+TfGKub6L89xKM
+	CmvcHRw==
+X-Google-Smtp-Source: AGHT+IEVxCPJ8KY+daO6sXzeep+OX1tLKz9cP/KzhVx9mKCU3r73WaJnmvG2rqaP9yNNj71dEIj2Eigx8el+
+X-Received: from anyblade.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:1791])
+ (user=mmaurer job=sendgmr) by 2002:a25:ad54:0:b0:e2b:db24:905e with SMTP id
+ 3f1490d57ef6-e30e8da06f9mr779276.5.1730329506200; Wed, 30 Oct 2024 16:05:06
+ -0700 (PDT)
+Date: Wed, 30 Oct 2024 23:05:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZyK0YPgtWExT4deh@elver.google.com>
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAJ67ImcC/22QzW6DMBCEXwX53EX+wZigqup7VDkYWBNLMU5tY
+ qWKePcamgOquO1IO59m5kkiBouRtMWTBEw2Wj9l0bwVpL/oaUSwQ9aEU14xyjngY8ZpwAGcHxK
+ G9T+CVl1VDaYzxjCSrbeAxj427Nc5axO8g/kSUO9gTHLBTlyWopEVFxQYOKfvAcPn6P14xbL37
+ kUL+H3P2eY/JHEYo96ytcX7jlZLttIYE80h7WPFHZgFZYoyWpdM5qsWwBlE7ezsr0lPOP1HdDo iZJE/2iJlG4fQS7JWvdg4+/CzDZrUlva1nTjeLimgIMRJNXlEIZTYtz8vy/ILqBzHl6QBAAA=
+X-Change-Id: 20241022-extended-modversions-a7b44dfbfff1
+X-Mailer: b4 0.15-dev
+Message-ID: <20241030-extended-modversions-v8-0-93acdef62ce8@google.com>
+Subject: [PATCH v8 0/3] Extended MODVERSIONS Support
+From: Matthew Maurer <mmaurer@google.com>
+To: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kbuild@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, Matthew Maurer <mmaurer@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Oct 30, 2024 at 11:34:08PM +0100, Marco Elver wrote:
-> On Wed, Oct 30, 2024 at 10:48PM +0100, Vlastimil Babka wrote:
-> > On 10/30/24 22:05, Paul E. McKenney wrote:
-> > > Hello!
-> > 
-> > Hi!
-> > 
-> > > The next-20241030 release gets the splat shown below when running
-> > > scftorture in a preemptible kernel.  This bisects to this commit:
-> > > 
-> > > 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING")
-> > > 
-> > > Except that all this is doing is enabling lockdep to find the problem.
-> > > 
-> > > The obvious way to fix this is to make the kmem_cache structure's
-> > > cpu_slab field's ->lock be a raw spinlock, but this might not be what
-> > > we want for real-time response.
-> > 
-> > But it's a local_lock, not spinlock and it's doing local_lock_irqsave(). I'm
-> > confused what's happening here, the code has been like this for years now.
-> > 
-> > > This can be reproduced deterministically as follows:
-> > > 
-> > > tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
-> > > 
-> > > I doubt that the number of CPUs or amount of memory makes any difference,
-> > > but that is what I used.
-> > > 
-> > > Thoughts?
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > ------------------------------------------------------------------------
-> > > 
-> > > [   35.659746] =============================
-> > > [   35.659746] [ BUG: Invalid wait context ]
-> > > [   35.659746] 6.12.0-rc5-next-20241029 #57233 Not tainted
-> > > [   35.659746] -----------------------------
-> > > [   35.659746] swapper/37/0 is trying to lock:
-> > > [   35.659746] ffff8881ff4bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x49/0x1b0
-> > > [   35.659746] other info that might help us debug this:
-> > > [   35.659746] context-{2:2}
-> > > [   35.659746] no locks held by swapper/37/0.
-> > > [   35.659746] stack backtrace:
-> > > [   35.659746] CPU: 37 UID: 0 PID: 0 Comm: swapper/37 Not tainted 6.12.0-rc5-next-20241029 #57233
-> > > [   35.659746] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-> > > [   35.659746] Call Trace:
-> > > [   35.659746]  <IRQ>
-> > > [   35.659746]  dump_stack_lvl+0x68/0xa0
-> > > [   35.659746]  __lock_acquire+0x8fd/0x3b90
-> > > [   35.659746]  ? start_secondary+0x113/0x210
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
-> > > [   35.659746]  lock_acquire+0x19b/0x520
-> > > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
-> > > [   35.659746]  ? __pfx_lock_acquire+0x10/0x10
-> > > [   35.659746]  ? __pfx_lock_release+0x10/0x10
-> > > [   35.659746]  ? lock_release+0x20f/0x6f0
-> > > [   35.659746]  ? __pfx_lock_release+0x10/0x10
-> > > [   35.659746]  ? lock_release+0x20f/0x6f0
-> > > [   35.659746]  ? kasan_save_track+0x14/0x30
-> > > [   35.659746]  put_cpu_partial+0x52/0x1b0
-> > > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
-> > > [   35.659746]  ? __pfx_scf_handler_1+0x10/0x10
-> > > [   35.659746]  __flush_smp_call_function_queue+0x2d2/0x600
-> > 
-> > How did we even get to put_cpu_partial directly from flushing smp calls?
-> > SLUB doesn't use them, it uses queue_work_on)_ for flushing and that
-> > flushing doesn't involve put_cpu_partial() AFAIK.
-> > 
-> > I think only slab allocation or free can lead to put_cpu_partial() that
-> > would mean the backtrace is missing something. And that somebody does a slab
-> > alloc/free from a smp callback, which I'd then assume isn't allowed?
-> 
+This patch series is intended for use alongside the Implement DWARF
+modversions series [1] to enable RUST and MODVERSIONS at the same
+time.
 
-I think in this particular case, it is queuing a callback for
-smp_call_function_single() which doesn't have an interrupt handle
-thread AKAICT, that means the callback will be executed in non-threaded
-hardirq context, and that makes locks must be taken with real interrupt
-disabled.
+Elsewhere, we've seen a desire for long symbol name support for LTO
+symbol names [2], and the previous series came up [3] as a possible
+solution rather than hashing, which some have objected [4] to.
 
-Using irq_work might be fine, because it has a handler thread (but the
-torture is for s(mp) c(all) f(unction), so replacing with irq_work is
-not really fixing it ;-)).
+This series adds a MODVERSIONS format which uses a section per column.
+This avoids userspace tools breaking if we need to make a similar change
+to the format in the future - we would do so by adding a new section,
+rather than editing the struct definition. In the new format, the name
+section is formatted as a concatenated sequence of NUL-terminated
+strings, which allows for arbitrary length names.
 
-Regards,
-Boqun
+Emitting the extended format is guarded by CONFIG_EXTENDED_MODVERSIONS,
+but the kernel always knows how to validate both the original and
+extended formats.
 
-> Tail-call optimization is hiding the caller. Compiling with
-> -fno-optimize-sibling-calls exposes the caller. This gives the full
-> picture:
-> 
-> [   40.321505] =============================
-> [   40.322711] [ BUG: Invalid wait context ]
-> [   40.323927] 6.12.0-rc5-next-20241030-dirty #4 Not tainted
-> [   40.325502] -----------------------------
-> [   40.326653] cpuhp/47/253 is trying to lock:
-> [   40.327869] ffff8881ff9bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x48/0x1a0
-> [   40.330081] other info that might help us debug this:
-> [   40.331540] context-{2:2}
-> [   40.332305] 3 locks held by cpuhp/47/253:
-> [   40.333468]  #0: ffffffffae6e6910 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
-> [   40.336048]  #1: ffffffffae6e9060 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
-> [   40.338607]  #2: ffff8881002a6948 (&root->kernfs_rwsem){++++}-{4:4}, at: kernfs_remove_by_name_ns+0x78/0x100
-> [   40.341454] stack backtrace:
-> [   40.342291] CPU: 47 UID: 0 PID: 253 Comm: cpuhp/47 Not tainted 6.12.0-rc5-next-20241030-dirty #4
-> [   40.344807] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [   40.347482] Call Trace:
-> [   40.348199]  <IRQ>
-> [   40.348827]  dump_stack_lvl+0x6b/0xa0
-> [   40.349899]  dump_stack+0x10/0x20
-> [   40.350850]  __lock_acquire+0x900/0x4010
-> [   40.360290]  lock_acquire+0x191/0x4f0
-> [   40.364850]  put_cpu_partial+0x51/0x1a0
-> [   40.368341]  scf_handler+0x1bd/0x290
-> [   40.370590]  scf_handler_1+0x4e/0xb0
-> [   40.371630]  __flush_smp_call_function_queue+0x2dd/0x600
-> [   40.373142]  generic_smp_call_function_single_interrupt+0xe/0x20
-> [   40.374801]  __sysvec_call_function_single+0x50/0x280
-> [   40.376214]  sysvec_call_function_single+0x6c/0x80
-> [   40.377543]  </IRQ>
-> [   40.378142]  <TASK>
-> 
-> And scf_handler does indeed tail-call kfree:
-> 
-> 	static void scf_handler(void *scfc_in)
-> 	{
-> 	[...]
-> 		} else {
-> 			kfree(scfcp);
-> 		}
-> 	}
+Selecting RUST and MODVERSIONS is now possible if GENDWARFKSYMS is
+selected, and will implicitly select EXTENDED_MODVERSIONS.
+
+This series depends upon the module verification refactor patches [5]
+that were split off of v5, and DWARF-based versions [1].
+
+[1] https://lore.kernel.org/lkml/20241030170106.1501763-21-samitolvanen@google.com/
+[2] https://lore.kernel.org/lkml/20240605032120.3179157-1-song@kernel.org/
+[3] https://lore.kernel.org/lkml/ZoxbEEsK40ASi1cY@bombadil.infradead.org/
+[4] https://lore.kernel.org/lkml/0b2697fd-7ab4-469f-83a6-ec9ebc701ba0@suse.com/
+[5] https://lore.kernel.org/linux-modules/20241015231651.3851138-1-mmaurer@google.com/T/#t
+
+Changes in v8:
+- Rebased onto latest version of Sami's series, on top of v6.12-rc5
+- Pass --stable when KBUILD_GENDWARFKSYMS_STABLE is set.
+- Flipped MODVERSIONS/GENDWARFKSYMS order in deps for CONFIG_RUST
+- Picked up trailers
+
+v7: https://lore.kernel.org/r/20241023-extended-modversions-v7-0-339787b43373@google.com
+- Fix modpost to detect EXTENDED_MODVERSIONS based on a flag
+- Drop patches to fix export_report.pl
+- Switch from conditional compilation in .mod.c to conditional emission
+  in modpost
+- Factored extended modversion emission into its own function
+- Allow RUST + MODVERSIONS if GENDWARFKSYMS is enabled by selecting
+  EXTENDED_MODVERSIONS
+
+v6: https://lore.kernel.org/lkml/20241015231925.3854230-1-mmaurer@google.com/
+- Splits verification refactor Luis requested out to a separate change
+- Clarifies commits around export_report.pl repairs
+- Add CONFIG_EXTENDED_MODVERSIONS to control whether extended
+  information is included in the module, per Luis's request.
+
+v5: https://lore.kernel.org/all/20240925233854.90072-1-mmaurer@google.com/
+- Addresses Sami's comments from v3 that I missed in v4 (missing early
+  return, extra parens)
+
+v4: https://lore.kernel.org/asahi/20240924212024.540574-1-mmaurer@google.com/
+- Fix incorrect dot munging in PPC
+
+v3: https://lore.kernel.org/lkml/87le0w2hop.fsf@mail.lhotse/T/
+- Split up the module verification refactor into smaller patches, per
+  Greg K-H's suggestion.
+
+v2: https://lore.kernel.org/all/20231118025748.2778044-1-mmaurer@google.com/
+- Add loading/verification refactor before modifying, per Luis's request
+
+v1: https://lore.kernel.org/rust-for-linux/20231115185858.2110875-1-mmaurer@google.com/
+
+--
+2.47.0.rc1.288.g06298d1525-goog
+
+---
+Matthew Maurer (2):
+      modules: Support extended MODVERSIONS info
+      modpost: Produce extended MODVERSIONS information
+
+Sami Tolvanen (1):
+      rust: Use gendwarfksyms + extended modversions for CONFIG_MODVERSIONS
+
+ arch/powerpc/kernel/module_64.c | 24 ++++++++++-
+ init/Kconfig                    |  3 +-
+ kernel/module/Kconfig           | 10 +++++
+ kernel/module/internal.h        | 11 +++++
+ kernel/module/main.c            | 92 +++++++++++++++++++++++++++++++++++++----
+ kernel/module/version.c         | 45 ++++++++++++++++++++
+ rust/Makefile                   | 33 ++++++++++++++-
+ scripts/Makefile.modpost        |  1 +
+ scripts/mod/modpost.c           | 65 +++++++++++++++++++++++++++--
+ 9 files changed, 267 insertions(+), 17 deletions(-)
+---
+base-commit: ac746e6156c4d6d7b46ba2102acf644ea2aa4aac
+change-id: 20241022-extended-modversions-a7b44dfbfff1
+prerequisite-message-id: <20241015231651.3851138-1-mmaurer@google.com>
+prerequisite-patch-id: 7b7bf0c0c0f484703e29a452dc99dc99711c051b
+prerequisite-patch-id: 8cc51bc35ddd4c268b5ccba4c3a74af3dbee8bee
+prerequisite-patch-id: 0c4fded10660440fc59e256d6456ac865b70f04b
+prerequisite-patch-id: 121f9313b4bde4e374ba37132fbf36e435f7ada5
+prerequisite-patch-id: bbd158ee717130fd5d5fc4b7c0613d89c2adcc45
+prerequisite-patch-id: af83141b7e527e3d1936326e3c9996bddfa45642
+prerequisite-patch-id: 61a51b5c2ab3dc55031fcb2a2b56b4b44b9fabd3
+prerequisite-patch-id: 63b4bdc24ff078bd48b8dcec28a334042450796e
+prerequisite-patch-id: 429739b875bf7400ece44ec2529f43051b43dd45
+prerequisite-patch-id: 55a19e6365f3d60ac5dbea13e320ece71538de25
+prerequisite-patch-id: d5ab8e10e837e8193c265dc8548b97655a56db27
+prerequisite-patch-id: e2f5364a0c5f3c9341aaa183f97fb7544b1c9dba
+prerequisite-message-id: <20241030170106.1501763-21-samitolvanen@google.com>
+prerequisite-patch-id: 08b46e0d1e37c262c08da6db4a87728d7b3047cc
+prerequisite-patch-id: 0a1e1ac99f325f4df27bd35f00bd4914f5386cb9
+prerequisite-patch-id: 32a05b89083cfed15e5b877664b0c8138c40d09b
+prerequisite-patch-id: e192e2a692c40d96cba919e3baae68c441ab25e4
+prerequisite-patch-id: 50e884d28c720e90f201aae7801590d19736541b
+prerequisite-patch-id: 4d6a826429c519b581d01215e1d9c7373fdfd8c6
+prerequisite-patch-id: 0dcd84187b222adf52696dbcab303d683d087dd2
+prerequisite-patch-id: 0abe8634eb844a85e8dc51c1cd3970cf96cc494a
+prerequisite-patch-id: 5fabb630792f9304f200b5996314f3c2ae4c83ae
+prerequisite-patch-id: 4859bef5bb0f6b2142bd7a0e89973f7a79009624
+prerequisite-patch-id: a5cf20d27871bf63be64ac79cc81e5eb9d117b89
+prerequisite-patch-id: f9cacaf82d1f2a93ade313c44269fb871e7b9ce2
+prerequisite-patch-id: 9fcea62d87a577d69ec262fe76b81c889c1bdf92
+prerequisite-patch-id: 310f411df60af62002a3898eafe60c1687c0e9b8
+prerequisite-patch-id: c21f85ffe5c7684c1ffc87af716e2e50498d5c92
+prerequisite-patch-id: a372f88626c3dda51eab6c6af132a76141ff20cc
+prerequisite-patch-id: 57d2fe708769154a6494fb1fece56911dea00687
+prerequisite-patch-id: e5fb35555f6a95bc9953bddebba0612f422146c4
+prerequisite-patch-id: 624e6794e5003cff734873894c2343595b45244b
+
+Best regards,
+-- 
+Matthew Maurer <mmaurer@google.com>
+
 
