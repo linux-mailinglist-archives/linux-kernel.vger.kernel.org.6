@@ -1,167 +1,211 @@
-Return-Path: <linux-kernel+bounces-388902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FF1A9B65E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:32:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 855B09B65E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:32:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C401F2848BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44919284515
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B49E1F9EBB;
-	Wed, 30 Oct 2024 14:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D960F1F4726;
+	Wed, 30 Oct 2024 14:28:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C49FTgs2"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2069.outbound.protection.outlook.com [40.107.20.69])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmxueWrz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50B011F4288;
-	Wed, 30 Oct 2024 14:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.69
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298472; cv=fail; b=TBZCiFeK45+b6tRdUbq2AuRUUd3sd9QzC9IoHnrs14E+FuMGeulz/CrYmEzbeXXteEkz63yxRdYW8XOWx6tgJRK3h0LYDtLUTk8gtf2WxGW1xOJ+h3R3+kwTWuoFuwPI99902XbNsofTxa88HqVRQF9nQ/0BrNBBkd2hnvAH6KY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298472; c=relaxed/simple;
-	bh=pfKgEMX1vmb51ux39nniqld7dR8e9BBLpTa6gc2HtA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=m+0kq9HxsEq3WKkE9P3eU/qa3S1iNqtHD+rGKG3HvH1UUDj+Nsvcbs1rjw6jg3xpCZjLfCrl1uJrbeaf8fxb5jcKcsGAuPOOTgBaBF+mKnYMtjxxLxyIzNpKupCkmKMXYFLK2WHUJjjaFMLGgO/TSKkGRuyIDSnjs+9lIysi1qo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C49FTgs2; arc=fail smtp.client-ip=40.107.20.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=r2CoJmCHO8d6tPvosPqTEYCrDi966o3c914ysX/6foWZNXpaBHnznussNTjJxnKywjgHz8DsP3nWRkTYJ085oZWyxEW3Y8vKinD1RW0suLIGOUZ+vOcssRJN6ahx4N5e+/wsxDJxT2D+6iS6PB+hkcUbNJ8k3pks20oe/5FhtlndW8DkfNjPlXzvL/lYrvMim9D1OpDKdXUCf/uEB+V6DY21wkHu8y+lt1s2vR9xf8+nvdsILt9zgnC6z54VZ00MOmwwZX/d9hRFcSWBr7hV49ToPkOxau+fTBp1XRDnX6jOC3th7/7KxDlIym13Wo4Ypl5bGnydWzOZAubOygpFVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pfKgEMX1vmb51ux39nniqld7dR8e9BBLpTa6gc2HtA8=;
- b=GYljo1bH/4+kLk+Vr2bShh8uuprDuqDR5jcGkyH/w8E0MkIDLWoemkqfP29KAyl+geFveXsQwS+OXvQbOMXR2FGOMszlv28ELOaPXBYhS5MlQv65nY615ek3aZcdZt507rld4bPzC1ROcfzajn4Am0wcTHK2HvgSJ7etZYppZ8B62UuYNlALfL6BQd4eaYAVgODwzNHBsG3i3o/7HtMOysKaJHEEJQzxhhICmLjtlpDly2/pqVTCaaKqjpLgv7oqhJaPslqSrmwymk4W4bv8C9vB6Lh9cQiNT4HFP5WmgDzVkuPcl/Ds0a9PJz8MEDl5T5U0bxTqLyMJzfG450UJOA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pfKgEMX1vmb51ux39nniqld7dR8e9BBLpTa6gc2HtA8=;
- b=C49FTgs2k5pNOiZYi7sL+Xtl0QhdWtZKumEw7joDXOR+gGVP2kVp/kgkr5PhOWMFQZPpXjytfb/EFs4NugywDLuphqT7rjbTi6AwXA86/zRihGLTrUkiGfYqX4BJUIVpnxaNMF+xon0bydWAHbaGM+QYaEfX0B0etvNX+4ArW19D2/QG3XBKmNxN1HMZU+HUKmWhBab/W2r7dTBDkemY1BI52cf7DWyay5unaREhtE73GeJyL+W/XAqRpGZY28CjSzGiOh8e27D15mSyBpgrf3mKIJZMPz8vU+GHvPkqEPlATwSDsvsh+NTZd5zg6tHIeMm24Ys0tpOxUIbNhaOs9w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by DB9PR04MB8236.eurprd04.prod.outlook.com (2603:10a6:10:245::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.32; Wed, 30 Oct
- 2024 14:27:47 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8093.027; Wed, 30 Oct 2024
- 14:27:47 +0000
-Date: Wed, 30 Oct 2024 16:27:44 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: netdev@vger.kernel.org
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Breno Leitao <leitao@debian.org>,
-	Madalin Bucur <madalin.bucur@nxp.com>,
-	Ioana Ciornei <ioana.ciornei@nxp.com>,
-	Radu Bulie <radu-andrei.bulie@nxp.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Sean Anderson <sean.anderson@linux.dev>,
-	linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH net-next 2/3] net: dpaa_eth: add assertions about SGT
- entry offsets in sg_fd_to_skb()
-Message-ID: <20241030142744.lt4vhiayg5gvnbuw@skbuf>
-References: <20241029164317.50182-1-vladimir.oltean@nxp.com>
- <20241029164317.50182-3-vladimir.oltean@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029164317.50182-3-vladimir.oltean@nxp.com>
-X-ClientProxiedBy: VI1PR06CA0227.eurprd06.prod.outlook.com
- (2603:10a6:802:2c::48) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FE671EABA5;
+	Wed, 30 Oct 2024 14:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1730298505; cv=none; b=ieeYTd/7EHvXGhPiEY5kmaEHq4Oc6Rq8pQOewcq1y6insy93w4qa80WOnMUrerFKs7mB6ZII9pMx5bDUjiOhcdOnDvwveazlC/mVKvRGr8ZzhgtFdy2Kc4GH9qgpNabGpBm/oc4v7otgg0ILwyyMHpYTvosHGX7YvsGuFED5KUo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1730298505; c=relaxed/simple;
+	bh=cik8CPZIYPW9LoZhpfSKFRXBikFEngZ05BGqUP+wAlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kYMwPVT1kOeFVn5rxJH4rl8r+TvUcUeJ7iCTMK0ZG8y+nthJhV/r39HyHgtqeIeN2grPEci901FIEU41lgG2hYBzdWRRx81XxXxE9HBhudQaqodjVPoPNggSpbjFKZZPYcCYZyicGiNQJU397UjOk3VJ9nLAhSPu8yIJge4JA0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmxueWrz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BD2AC4CECE;
+	Wed, 30 Oct 2024 14:28:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730298504;
+	bh=cik8CPZIYPW9LoZhpfSKFRXBikFEngZ05BGqUP+wAlM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WmxueWrzfCVuFMHErUMRXyrCD1zxmw7JfJnuWjNIvSSVOh+yUpiaA92k8jjvTTxAW
+	 ivxwn/8dJA9rPojJhVr2MffiPVolJN1Qd/mbJHDlJyeOnbJo13snzVhd8gAjrD3pOI
+	 OYcKP8ecZfWnPHQ1bT5hS2vrAtfRARpHxF2z0a2AakOCOGzQ/fs+X1b3x4zbE7f6UD
+	 TVglVBXWecL0nqQvioxg1wfAmq04rw37CJy+uxNucyDd1Bu3X10/HLCrHL2mulqSfE
+	 1XhFuJ0K5OGP4170Am2DNoWtRI3K5tXLs3wu4E2Ih7Q1F/YvjgVcRo+Lx/bsdGb7/Y
+	 wOCe/k2h0S0DA==
+Date: Wed, 30 Oct 2024 15:28:19 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+Cc: Yi Liu <yi.l.liu@intel.com>, David Woodhouse <dwmw2@infradead.org>, 
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, Klaus Jensen <k.jensen@samsung.com>
+Subject: Re: Re: [PATCH v4 2/5] iommu/vt-d: Remove the pasid present check in
+ prq_event_thread
+Message-ID: <pdslu36mhfxbzs254tlte2wavfkmecm53xhdtdelm4nfnemt3f@m5ed4hn6zmbl>
+References: <20241015-jag-iopfv8-v4-0-b696ca89ba29@kernel.org>
+ <20241015-jag-iopfv8-v4-2-b696ca89ba29@kernel.org>
+ <90c772ce-6d2d-4a1d-bfec-5a7813be43e4@intel.com>
+ <ujexsgcpvcjux2ugfes6mzjxl53j3icarfbu25imhzliqskyv6@l7f42nv4fhmy>
+ <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|DB9PR04MB8236:EE_
-X-MS-Office365-Filtering-Correlation-Id: 985bef55-0827-4524-9c13-08dcf8ef06ad
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s14WVn5W3hwXepPzC4tEu9qKTSQbe5mPb7aSD8uDpnxx131HvpV2YDw0SRXD?=
- =?us-ascii?Q?kSUJgA2kVRZoqy06gkrQiYTgisa4JB4nRnsDbQyiT7b/jpaYmoQMqes28yU5?=
- =?us-ascii?Q?Afz0HRtTSGiG27XVZ2mukyXUHrlX8H+RVInBR+FYoHkThz8ocU/pYcrloT8K?=
- =?us-ascii?Q?oQwHcdYGVJs8XT9yvOojcm0Dpg37tU/2qH0oKEStxA8KCAvvVI+BYV+FG8ci?=
- =?us-ascii?Q?B5Ynzm6Rw5qAirWVK3fAlejtreXYN6wZVFMTAomMU1xbyLnmJeUQdYo15sj2?=
- =?us-ascii?Q?T3UUiQ0r/kSNR1u72e7G43V6Fo5/R5EL5eBQMtaVjkEu8/DZJ/VeUKMKFXs3?=
- =?us-ascii?Q?F4RjaL+jk/hqzFHrjKAPnoFwmKgnMMsGVcwg63XfFjSwcdHd5dpQVlYOtrHG?=
- =?us-ascii?Q?P/suNMKIsrX9lppcVKWrXh7LBeDfvivTFc79Ol5Le918ZTIqV0alNJK8KGMq?=
- =?us-ascii?Q?M2Ut2UysaY9mNRhmR01TsERckiTTMqJqhgL0AXvBFm84VEnO1TiYTjONaB5n?=
- =?us-ascii?Q?W0vsdLYh7ho0osj2JiXrRWj3ReO/gr9kqH6aBe7Bwd9NXlW4WxnGfJX61jgC?=
- =?us-ascii?Q?TXk5F1FRg69Ceh3I+OVs8XvH4WwdsBVMw5Hc9vwkbRH2TUMPXfq3Zbw0BFpZ?=
- =?us-ascii?Q?d683O/HT9xtfnoY4hI1MLjNLDSRUpKWiyZ6FhfHJMoC10m7E1KxqWnT373Ou?=
- =?us-ascii?Q?zPuIwAKdp7XnYlRZN6N6gfnkqxM/X38EoAvBDOylazB0RPAf99p22iOCc6bL?=
- =?us-ascii?Q?RtyLDN1bhZMWH2qPhItBE/Nu0hl7EfGAFBrLXUowu/tnQx5APpCtq7nP32vk?=
- =?us-ascii?Q?G/WM/4204kV483Cp9T3bLbqjnTPCdAcjxAFQypnk+iSS4OmyUmMsDJQhYdgR?=
- =?us-ascii?Q?0zhVDvQYbIRu34DvM9VIhSYds7DW63gHKdVkILbrqugA6LOhiqv++CNIKV3u?=
- =?us-ascii?Q?RnA0t0GqjCmcUX2KMkG3oA0pFXlsKVOGKKfsz3ic1jMWOwdHYVJrNI3pb2JK?=
- =?us-ascii?Q?vHHqOd0EiSDnwiIGAgDJcJhtK/IJ89Kb/sBXyr6Ln2oZ2JhTFJVJsUji9AKB?=
- =?us-ascii?Q?NvAfM+sYeaF+2uzAfE2pxCtBNjpB0i3HWtetR3Q+3yETtBdjJV3AJggZztUq?=
- =?us-ascii?Q?xB35MzKpFpUmewHWGL5wRmJOMGmTaRMENX5zwkKwEXS2pMzIU7wtxtIL8dw/?=
- =?us-ascii?Q?rrqcj24KliZNIgDi16FCW1Noy7Qnt7iqUQPm+PUZWkDHEVSVyI/VU5Wj4Lvy?=
- =?us-ascii?Q?r0G9oKPx5seDeK97OHY+5hpxBeqztV4c65op+fO91bPI/XFyXiL4daQMxzkm?=
- =?us-ascii?Q?1ls=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?4nbuDI1urim7IDDbFOeMUrrCyL3ELIHt1YGOQ4UpndDFAMi5/lridHn8ynkc?=
- =?us-ascii?Q?FyRt0mSNt4PVdSONuYPKnzCUyTAPYEcaFJV00Y4E+K2O6vKvxE1gtt2LZDZx?=
- =?us-ascii?Q?5Yr+FcQd0mAu99C4mtyybKw6CKay9MC29tK9D0vjqUvPGRqhudxfiwM8hvI7?=
- =?us-ascii?Q?R9zn9JsQkQ10HVgLAmKLv/OiI/QI6V+p1kxrmmeTZvlF/lC5lFEgk2itlUqt?=
- =?us-ascii?Q?R4e6aR8V9yRST1smPHzMQjIcnhwb22Q/vFdJqNVu5oAV3ics1/mmI98xL6Rx?=
- =?us-ascii?Q?y81/8Mzr8Nzqay9jLmTuLkwdyG3/HA10VXh4J/QJFELbla6YOEWkbIDp6hYQ?=
- =?us-ascii?Q?F7NZt/Q386Jbjb4W3ZhYEdKcevFnt+aM+CP4NtaLzlZ0SkXFmroc1kVihuta?=
- =?us-ascii?Q?/TLmmWCfEKSLUxSJCPpZ6MEe0zWRqZIYVG390fWDGwqiPXZvHHZcE5RnqBgH?=
- =?us-ascii?Q?oSEu2xKT1ikt/q+c7oXJjRmTqEAX0eArF+8oWy8iJiH/0X0cr5jSQasmgbC1?=
- =?us-ascii?Q?7dslBg86zHOwfzTBIaFrLpslyk2s538uNHpDLe8QgyFO/Miz7PEwY2Sr6Y1l?=
- =?us-ascii?Q?3fFeYvBFpA6h29q1VQZ8krGYhWkZ67nS3nPzlHrnD71q62ILjRYBFftG+gFn?=
- =?us-ascii?Q?dRc6PcONypcPEamqV/WrK+iuKs76eJc2XMECaIzUZgAOi4eLQ0Rwb1udW+SV?=
- =?us-ascii?Q?c2hFPu/7V+XhuegZ9K54KPh+lYufrDfxT7iA9T66mfyo8mXwdcjh+XeW5ELu?=
- =?us-ascii?Q?YN+NnVtI5k9Wvh6qZP/5HyhXuRqeRnMxPJqzYzurQ3M4VDq2EzFSPSpaNek7?=
- =?us-ascii?Q?ASEBGqw/D66CHSUHVhd1d2Cmg4DNl10GFin7K6xR8SVht2rqgP8uWjWYuCju?=
- =?us-ascii?Q?9HnZKkvixO+0Eby9sVH68VFWp8QDN1pyTqmWxTM9pxZclT1URG0sDPziKBTj?=
- =?us-ascii?Q?XY+IneUxVSsXorMXHBojP1lgl2JkCdB8PnH+hWDzqa12qJ+os6UIKd3mlAEJ?=
- =?us-ascii?Q?lkyjqJ7koD37kesq3Ab1V+KLseKGSYWRiR051PA+ee2lreMCjUAIBqzpzL69?=
- =?us-ascii?Q?6pGlNbViAbFS3fSuw0GuBVmA3yrpc8jqUTDwIPW2P+HTfXznQ6860yD2nbNY?=
- =?us-ascii?Q?87Jj3bHYOQrQReiCd2wBbNHc04yiXLHzs2gnPi527gzaOS9Q2vSOVBFOrczt?=
- =?us-ascii?Q?qg7xOA0npHspQxEpOOoHMxDWlr11+rnFUO2nUPt+4DYmjADX2cAfavmHMTvA?=
- =?us-ascii?Q?j4u1vWWaEN+oBXZkc785DTTuX2/UE6Wcfn4R7252CPPrhvtCjm+vq2L4nK4/?=
- =?us-ascii?Q?ZvJ1h662yo5HARfa5vnEVsQ/WlbNuAbEbH8JjwCzEC4fVSkpys1Xd7uImudm?=
- =?us-ascii?Q?Dh5DKctE0hlC/wSU25S6KGffZF27hP0UpR0gQUfQyTmYygwx++KqMYjGM42a?=
- =?us-ascii?Q?rhRht4i3Wu2jj0jCH2WOZYYLsAohWtYhANON6SmgbU5syvFkvYJaeDXgJNun?=
- =?us-ascii?Q?QdbgSgDrhmfXnJsZXN6+Yi6PQrKfM2SvpSbEX/t5GiKr4L1caXXJvg1MCtS+?=
- =?us-ascii?Q?Mv8Y3T5EFOfQ25Wv9TyhEagEKee2NM/1OXEYdQ3koYzjZ7rcr5gqdRSkGg6q?=
- =?us-ascii?Q?mA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 985bef55-0827-4524-9c13-08dcf8ef06ad
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Oct 2024 14:27:47.4444
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: seT524JYjOvUPeBWwrVJUX870NoV++0aG2TVL+9DQATn0Xdz6hRm/L8Tahlb4fD8jFLtYdsDD4Bt/IMRN4vuvA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8236
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bbd95589-f4c9-4dcf-939b-c3c407eeed21@linux.intel.com>
 
-On Tue, Oct 29, 2024 at 06:43:16PM +0200, Vladimir Oltean wrote:
-> Tested on LS1046A.
+On Tue, Oct 29, 2024 at 11:12:49AM +0800, Baolu Lu wrote:
+> On 2024/10/28 18:24, Joel Granados wrote:
+> > On Mon, Oct 28, 2024 at 03:50:46PM +0800, Yi Liu wrote:
+> >> On 2024/10/16 05:08, Joel Granados wrote:
+> >>> From: Klaus Jensen<k.jensen@samsung.com>
+> >>>
+> >>> PASID is not strictly needed when handling a PRQ event; remove the check
+> >>> for the pasid present bit in the request. This change was not included
+> >>> in the creation of prq.c to emphasize the change in capability checks
+> >>> when handing PRQ events.
+> >>>
+> >>> Signed-off-by: Klaus Jensen<k.jensen@samsung.com>
+> >>> Reviewed-by: Kevin Tian<kevin.tian@intel.com>
+> >>> Signed-off-by: Joel Granados<joel.granados@kernel.org>
+> >> looks like the PRQ draining is missed for the PRI usage. When a pasid
+> >> entry is destroyed, it might need to add helper similar to the
+> >> intel_drain_pasid_prq() to drain PRQ for the non-pasid usage.
+> > These types of user space PRIs (non-pasid, non-svm) are created by
+> > making use of iommufd_hwpt_replace_device. Which adds an entry to the
+> > pasid_array indexed on IOMMU_NO_PASID (0U) via the following path:
+> > 
+> > iommufd_hwpt_replace_device
+> >    -> iommufd_fault_domain_repalce_dev
+> >      -> __fault_domain_replace_dev
+> >        -> iommu_replace_group_handle
+>             -> __iommu_group_set_domain
+>               -> intel_iommu_attach_device
+>                  -> device_block_translation
+>                    -> intel_pasid_tear_down_entry(IOMMU_NO_PASID)
+> 
+> Here a domain is removed from the pasid entry, hence we need to flush
+> all page requests that are pending in the IOMMU page request queue or
+> the PCI fabric.
+This make a lot of sense: To use iommufd_hwpt_replace_device to replace
+the existing hwpt with a iopf enabled one, the soon to be irrelevant
+page requests from the existing hwpt need to be flushed. And we were not
+doing that here.
 
-..and now also tested on T2080 (PowerPC), no apparent regressions.
+> 
+> >          -> xa_reserve(&group->pasid_array, IOMMU_NO_PASID, GFP_KERNEL);
+> > 
+> > It is my understanding that this will provide the needed relation
+> > between the device and the prq in such a way that when  remove_dev_pasid
+> > is called, intel_iommu_drain_pasid_prq will be called with the
+> > appropriate pasid value set to IOMMU_NO_PASID. Please correct me if I'm
+> > mistaken.
+> 
+> Removing a domain from a RID and a PASID are different paths.
+> Previously, this IOMMU driver only supported page requests on PASID
+> (non-IOMMU_NO_PASID). It is acceptable that it does not flush the PRQ in
+> the domain-removing RID path.
+> 
+> With the changes made in this series, the driver now supports page
+> requests for RID. It should also flush the PRQ when removing a domain
+> from a PASID entry for IOMMU_NO_PASID.
+
+Thank you for your explanation. Clarifies where I lacked understanding.
+
+> 
+> > 
+> > Does this answer your question? Do you have a specific path that you are
+> > looking at where a specific non-pasid drain is needed?
+> 
+> Perhaps we can simply add below change.
+> 
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index e860bc9439a2..a24a42649621 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -4283,7 +4283,6 @@ static void intel_iommu_remove_dev_pasid(struct 
+> device *dev, ioasid_t pasid,
+>          intel_iommu_debugfs_remove_dev_pasid(dev_pasid);
+>          kfree(dev_pasid);
+>          intel_pasid_tear_down_entry(iommu, dev, pasid, false);
+> -       intel_drain_pasid_prq(dev, pasid);
+>   }
+> 
+>   static int intel_iommu_set_dev_pasid(struct iommu_domain *domain,
+> diff --git a/drivers/iommu/intel/pasid.c b/drivers/iommu/intel/pasid.c
+> index 2e5fa0a23299..8639f3eb4264 100644
+> --- a/drivers/iommu/intel/pasid.c
+> +++ b/drivers/iommu/intel/pasid.c
+> @@ -265,6 +265,7 @@ void intel_pasid_tear_down_entry(struct intel_iommu 
+> *iommu, struct device *dev,
+>                  iommu->flush.flush_iotlb(iommu, did, 0, 0, 
+> DMA_TLB_DSI_FLUSH);
+> 
+>          devtlb_invalidation_with_pasid(iommu, dev, pasid);
+> +       intel_drain_pasid_prq(dev, pasid);
+>   }
+This make sense logically as the intel_drain_pasid_prq keeps being
+called at the end of intel_iommu_remove_dev_pasid, but it is now also
+included in the intel_pasid_tear_down_entry call which adds it to the
+case discussed.
+
+> 
+>   /*
+> diff --git a/drivers/iommu/intel/svm.c b/drivers/iommu/intel/svm.c
+> index 078d1e32a24e..ff88f31053d1 100644
+> --- a/drivers/iommu/intel/svm.c
+> +++ b/drivers/iommu/intel/svm.c
+> @@ -304,9 +304,6 @@ void intel_drain_pasid_prq(struct device *dev, u32 
+> pasid)
+>          int qdep;
+> 
+>          info = dev_iommu_priv_get(dev);
+> -       if (WARN_ON(!info || !dev_is_pci(dev)))
+> -               return;
+Did you mean to take out both checks?:
+  1. The info pointer check
+  2. the dev_is_pci check
+
+I can understand the dev_is_pci check, but we should definitely take
+action if info is NULL. Right?
+
+> -
+>          if (!info->pri_enabled)
+>                  return;
+> 
+> Generally, intel_drain_pasid_prq() should be called if
+> 
+> - a translation is removed from a pasid entry; and
+This is the path that is already mentiond
+
+> - PRI on this device is enabled.
+And this path is:
+  -> intel_iommu_enable_iopf
+    -> context_flip_pri
+      -> intel_context_flush_present
+        -> qi_flush_pasid_cache
+
+Right?
+
+I'll put this in my next version if I see that there is a consensus in
+the current discussion.
+
+thx again for the feedback.
+
+Best
+-- 
+
+Joel Granados
 
