@@ -1,128 +1,94 @@
-Return-Path: <linux-kernel+bounces-388034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E9A19B598E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:48:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD33E9B5991
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 02:48:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 558CF1F24295
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:48:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ABED1C2287A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 01:48:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86AB19342E;
-	Wed, 30 Oct 2024 01:47:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031A41865F0;
+	Wed, 30 Oct 2024 01:48:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSKPNlsA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="SN7vNQiQ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091A383CA0;
-	Wed, 30 Oct 2024 01:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C3A5028C;
+	Wed, 30 Oct 2024 01:48:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730252855; cv=none; b=SvqeyRXPCI7swecyF103b0Pzvz2EPnpx+SNfY1MKe6SJf0zk6bHqYbHwCSlR4afb2YWgJZiH0Q4yk7IvpOINV4F/clxy482++L28xUz3Ag+4MVPrjHBTNS10A1tsEnVUPljwh9phc1ssdvDvBJ6m7/y3Ym4Om1yO07sz3C2zJmg=
+	t=1730252905; cv=none; b=fXLiNErDlopzd52l0p5NmrTs7KQPX/XeOqvUXapSUzHijncD8g92JS4iWAQjL+Eul9F/nQaewNGuEOTzOnfPLxiczQD5wplrYbrTruRS/jRerFiWjtNKR1YQcPr5bfLnPEQVNWZt0xydcPpI0He3aZoEQ5FXOqpDmZRr4Gbe9hU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730252855; c=relaxed/simple;
-	bh=yY/c+Ers7lzRZ2/3Cil0sCo9++1VJGqVZ3Deuce2yLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OlA2F7Xx8O9CEY98Ba8Rr+l+zy+J0uW6ACO7PLkfdrlkiD2A7jAVfC0Y+QV3pJoZGhIIcE6tlh9zknhGdf1C8PZfGh8H8vVC6iPQ3H4ZqKCI0N+oz8tbaYqrPBoWKzcp3hlQ/ED9HpJA42Wgv6D5KxMLUvXdsSjHAEJq0T8gqYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VSKPNlsA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C4A2C4CECD;
-	Wed, 30 Oct 2024 01:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730252854;
-	bh=yY/c+Ers7lzRZ2/3Cil0sCo9++1VJGqVZ3Deuce2yLw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=VSKPNlsAp8xtYZqJ+lL3YeYwf9h/KFmuUS0SrU0Kd242zkRGAHj2tZolSWx5TqYYy
-	 4nMY2czlPWVQ7utq52nGSF20rvImvjjAqmR+9w2LTQC0Jd/gfxj3NZ9GkeXjHBfZFb
-	 493wcFo0ZPkd83UmmFKOxxYlg8TrGNdnH1pelNWwl/0f/1aPmchj9yj4oJh5/10lRP
-	 oV7fTfv0EkNj5fjXslkR1HT9ZdVhkfAtoO+CBBc9i2tnpqDenWV0yzF5Ev0csWkAzl
-	 2DhqaGvlKXAJGKFu1dSBT59LPjrL7SLpRWY+1G37QnNyRq8Ix79lrwXLYqfkDisGmN
-	 WjR19ra5keh9A==
-Date: Tue, 29 Oct 2024 18:47:32 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Giuseppe Cavallaro
- <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>, Maxime
- Coquelin <mcoquelin.stm32@gmail.com>, Emil Renner Berthing
- <emil.renner.berthing@canonical.com>, Jisheng Zhang <jszhang@kernel.org>,
- Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
- <aou@eecs.berkeley.edu>, Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini
- <drew@pdp7.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-riscv@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH net-next v5 2/2] net: stmmac: Add glue layer for T-HEAD
- TH1520 SoC
-Message-ID: <20241029184732.2e3ef7b7@kernel.org>
-In-Reply-To: <20241025-th1520-gmac-v5-2-38d0a48406ff@tenstorrent.com>
-References: <20241025-th1520-gmac-v5-0-38d0a48406ff@tenstorrent.com>
-	<20241025-th1520-gmac-v5-2-38d0a48406ff@tenstorrent.com>
+	s=arc-20240116; t=1730252905; c=relaxed/simple;
+	bh=TZPH/zNqFtR4xXRIshHvWGqYHhD8L1r1/j0m4unen38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnhoyAvDeoW9beWuF223ODzcsfEXTHApOkgV3BTbP6/h50fY2etTOC/ZFjozfBVIwth/nOWXwcpO/RgRtujgzCJZehkzrHjkMJGQe+glqM91Mfonn/2kkhEtiLRuchxouV6dN3XEYCfL0SG08e8rg+lOq4EXFQY4hRnfX9fuJCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=SN7vNQiQ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=o4nR9AN/uRb+rAFJHdVHs06gtrg0kMkPiQgM1up+0jg=; b=SN7vNQiQ1RpepN8Ls9r/trUPuH
+	N2A4WonkT5YCwHdDdgzYis2aql1AHMRLMc3srQoN+OY3cqYyZytIT1f/nj/NfSbcP6kiw1+NCyWQi
+	io44XRcFYv2SZL6Shl9bT6R9K1htj0MJIljjU+ufqnUnu9BzBqwXno5QUHqWiMjbEd0c0Kp/bnNX8
+	Via8SB35fbz2oWfPIplGTb03cTSTmmPHhvmhUsxNGXJflybpbGBk22B+60FECYqafsdREw4XlLSd5
+	/POUxj8X4DBLpFnd7iKBu/9FF0nQT06VRPZYSIs3/qjMILBTPhjWUr4q4G8c0cYQb2JThJcoWk/x9
+	3xXsa4cA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t5xoo-00000009Jfb-3aW8;
+	Wed, 30 Oct 2024 01:48:18 +0000
+Date: Wed, 30 Oct 2024 01:48:18 +0000
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org,
+	daniel@iogearbox.net, martin.lau@linux.dev, brauner@kernel.org,
+	jack@suse.cz, kpsingh@kernel.org, mattbobrowski@google.com,
+	amir73il@gmail.com, repnop@google.com, jlayton@kernel.org,
+	josef@toxicpanda.com
+Subject: Re: [RFC bpf-next fanotify 2/5] samples/fanotify: Add a sample
+ fanotify fastpath handler
+Message-ID: <20241030014818.GG1350452@ZenIV>
+References: <20241029231244.2834368-1-song@kernel.org>
+ <20241029231244.2834368-3-song@kernel.org>
+ <20241030001155.GF1350452@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241030001155.GF1350452@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, 25 Oct 2024 10:39:09 -0700 Drew Fustini wrote:
-> +static int thead_dwmac_set_phy_if(struct plat_stmmacenet_data *plat)
-> +{
-> +	struct thead_dwmac *dwmac = plat->bsp_priv;
-> +	u32 phyif;
-> +
-> +	switch (plat->mac_interface) {
-> +	case PHY_INTERFACE_MODE_MII:
-> +		phyif = PHY_INTF_MII_GMII;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +	case PHY_INTERFACE_MODE_RGMII_ID:
-> +	case PHY_INTERFACE_MODE_RGMII_TXID:
-> +	case PHY_INTERFACE_MODE_RGMII_RXID:
-> +		phyif = PHY_INTF_RGMII;
-> +		break;
-> +	default:
-> +		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-> +			plat->mac_interface);
-> +		return -EINVAL;
-> +	};
+On Wed, Oct 30, 2024 at 12:11:55AM +0000, Al Viro wrote:
+> On Tue, Oct 29, 2024 at 04:12:41PM -0700, Song Liu wrote:
+> > +		if (strstr(file_name->name, item->prefix) == (char *)file_name->name)
+> 
+> 	Huh?  "Find the first substring (if any) equal to item->prefix and
+> then check if that happens to be in the very beginning"???
+> 
+> 	And you are placing that into the place where it's most likely to cause
+> the maximal braindamage and spread all over the tree.  Wonderful ;-/
+> 
+> 	Where does that "idiom" come from, anyway?  Java?  Not the first time
+> I see that kind of garbage; typecast is an unusual twist, though...
 
-unnecessary semicolon
+	After some coproarchaeology: it's probably even worse than java - in
+javashit indexOf() predates startsWith() by quite a few years; java itself
+had both methods from the very beginning.  So that's probably where it had
+been cargo-culted from...
 
-> +
-> +	writel(phyif, dwmac->apb_base + GMAC_INTF_CTRL);
-> +	return 0;
-> +}
-> +
-> +static int thead_dwmac_set_txclk_dir(struct plat_stmmacenet_data *plat)
-> +{
-> +	struct thead_dwmac *dwmac = plat->bsp_priv;
-> +	u32 txclk_dir;
-> +
-> +	switch (plat->mac_interface) {
-> +	case PHY_INTERFACE_MODE_MII:
-> +		txclk_dir = TXCLK_DIR_INPUT;
-> +		break;
-> +	case PHY_INTERFACE_MODE_RGMII:
-> +	case PHY_INTERFACE_MODE_RGMII_ID:
-> +	case PHY_INTERFACE_MODE_RGMII_TXID:
-> +	case PHY_INTERFACE_MODE_RGMII_RXID:
-> +		txclk_dir = TXCLK_DIR_OUTPUT;
-> +		break;
-> +	default:
-> +		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-> +			plat->mac_interface);
-> +		return -EINVAL;
-> +	};
-
-unnecessary semicolon
--- 
-pw-bot: cr
+	The thing is, performance requirements of some garbage script from
+a javascript-infested webshite are somewhat different from what you want
+to see anywhere near the kernel-side filesystem event handling...
 
