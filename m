@@ -1,447 +1,219 @@
-Return-Path: <linux-kernel+bounces-389224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8809B6A39
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:07:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 433329B6A31
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:07:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F0D71C21E34
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:07:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C399B20D41
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:07:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B14F219CB0;
-	Wed, 30 Oct 2024 16:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8443C217456;
+	Wed, 30 Oct 2024 16:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Yl4o9Ji3"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="jDyx06VO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D456721948A
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38AA216423
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730307483; cv=none; b=j/DpF+de9tnTwQdcPXjUTwDtRDkwhgaDHxY6BR0CNwoMhgv/99jMFyXEjH7cRs5+JjN7U507D4jxkkid582sm9qF2JPQdJmQZSkn+Fs7C2PUT4V0O//XDR3RNWCaa725ribC+zB6ETb5rL/lqtU43iDlWXbvGs+Ym0aqql4Y0ms=
+	t=1730307473; cv=none; b=JLefYHSxYeXY1i4pXegfPWC5a0Up5ighlrKk+MynIrsqoGqMP0VlkZQSALOExNXPnx8nE6ZocXC66AERqOkMFT6bFKn0bMqLehVQv0qIyvioVlhpGQdUjVh22RAkYcBrBF1Z4qJZijFDVIx7AV75ana4GUrx3WR7asowTccNCKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730307483; c=relaxed/simple;
-	bh=neXwPuNY2JHIeFvsve5uZTtDulaRq/OAudJCQheeq6Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nuyC7a6Ls7S0hgqHihS2J7CcxhQJH2/QXH2mt+GD5u7cZxd1PsGfvLyYDd05dFz2kR44BUmfRVXEHjFjLKZdNBl3mZBKY/fRQu17tVmESmsq1Q8YCpXJ+FiuEY/ncUaLw3YAN3LqGuvyZdlciBvk77aK7JsvgZapXjCQeHm1hgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Yl4o9Ji3; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71e3fce4a60so27350b3a.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:58:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1730307480; x=1730912280; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SQIDvZHJLlv2NnA/L5KGhQzE00s+QY4xZ6sZqZZ0iZs=;
-        b=Yl4o9Ji3rpalIq03Ki+eDNCQpi3pIGjFYLgA9rRywR6k/xO43XkCEqBdu5gWVWPe20
-         bPdeawlrdsg50THNGrqGLcKWmEQ0o6qnryjyCPoTHZ/PQe45NGYpJgTfn4vVtn8/BUW+
-         0Rzp2O+gkrVB0gwULyoZELGFPKi2zryPq8Dq0bjgzrCIRNYXVTtPPFmVINTwdF/NnkBH
-         sVxQzmOTB0O2SRS1rmA1iXWYej1w37Le3HkmHtFrfKJ9qcAaOFru/eImcW935t9PIbhD
-         8Rx+L3a2H/7PvHmyrHV4IqfHBK9cK7mR7AZZo1ON7fMS3I7YeMIohJdgLrGbS0Yqqxb4
-         QAaw==
+	s=arc-20240116; t=1730307473; c=relaxed/simple;
+	bh=MUg/AqlACYeJZuyLU/D4ZsuzJ3Jb0wplsvX+Dzj6hS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yh4QAjuQcDQQ+toAZSR3V7yy/NJ+ZYI9+fagaqQFtPVutZHrTxC7d59CWojQtasGGtq4TsyXbF0F52OJ+dW0XOFqMYc6uwr3/Ux4J3Xw6VOgYabq5ktVZGQq4aOyc69W7zna8Hp3+W+3slnKPt/NlbdGOqcRq/EogOZXOu5O+7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=jDyx06VO; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1730307470;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uQWTrgmGWBGrBXpPJKHJztraJEV3X5HkMcorOSdjP9I=;
+	b=jDyx06VOJZGbwKg/wqQVZsnp/0dRv29yQQBdJv6akDEuwn7VfQl3A6XXwb8si6SJ44JbTq
+	W2a8kYEOaFlyKN/kvcl4LF4fGCZT1LBln9UrRN41++DFm6jPagfQknLSSJYL3vqVE++Btv
+	WQIHEgAW8T7LP0UNd2aUU/PXeTS9F6o=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-30-j65XwmOtMz21E0nN-V6UAA-1; Wed, 30 Oct 2024 12:57:49 -0400
+X-MC-Unique: j65XwmOtMz21E0nN-V6UAA-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6cdeeb785c8so915156d6.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:57:49 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730307480; x=1730912280;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SQIDvZHJLlv2NnA/L5KGhQzE00s+QY4xZ6sZqZZ0iZs=;
-        b=tqK7q3qBtUifeo5rbEevtFSNC/BdbClgZpXPQ0vUe9NzQdaOFW4504yqsmOTe8v/bv
-         UH4qV4O0YJaQSsXI6oLQBWP8XKb0jcTAZIvdhvKsrGquH5KbbJjLdL4GERzOmHc+4dpk
-         hzy7eIc6cBGI3CNPNB08WdeSpI9rMWyHqgr17rtqYaieItY2YIRxKbLRbz5yzqZUBJjW
-         sgSL0r3Y2nppnVqgYxQZNuik1VqVvma/Hp6qYmjkjNUnmpY4YhjgsknRUNvhQMMLr4tV
-         CIrq7Qn1uw8C7uG4xYxfwL0kjqsOUFgKA5MxqAQ7t+eZffwmHGU6ltBSutfssmaau/cT
-         GZoA==
-X-Forwarded-Encrypted: i=1; AJvYcCX7pttBIlRE00DrAwfNPD7ccT4I8aM6jF0b3Ak7FA23ujlqof/vF3nnzrNYWBO4DgYE3o3iVQsiTUiBEqY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsW4Ii8oNK+Cn7LvmdXLYmm/R2GafMxxkHP092OGKkF1iMsx3S
-	xxpGGL8pCjFxm+rFBmcS+UdrrvCns1W4bZFZDE1CMdV+W0EfE+67XCSekzrYRt4=
-X-Google-Smtp-Source: AGHT+IFendjYryfYbhHPdbJiPH50n2zYBYX/Re9V2bpl5NUL9VcmlaAud6ZDSSBB5Y1WnNz8vlj0fg==
-X-Received: by 2002:a05:6a00:1892:b0:71e:4c20:75fc with SMTP id d2e1a72fcca58-72062f67d62mr23111941b3a.10.1730307479822;
-        Wed, 30 Oct 2024 09:57:59 -0700 (PDT)
-Received: from [127.0.1.1] (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a1f1ddsm9810776b3a.149.2024.10.30.09.57.59
+        d=1e100.net; s=20230601; t=1730307468; x=1730912268;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uQWTrgmGWBGrBXpPJKHJztraJEV3X5HkMcorOSdjP9I=;
+        b=Gs5VuGF3OhBOnM3qpVwT6zXhEMCfbDoBkK4lbu0mNbcAMLcU/5SOLWS/Iun44vBOaG
+         EykT3j3xCEhUf81MIM5qgAn6lXchQt3yZTEH8cVF+R/El0n538B1pjs+dW7D9M9UchIf
+         jSrz+GsCCNTltSMXhn9rnCXgWKRvIEAGJnunv96dtJn5ajXHl9LQOzUkGBWt6ZCpuH8g
+         hcPahz8sx3fJvekNWRm+HV7yHCCY3ZTYUFZgBE9Q0OvAb2Z6BJH6KvIAFnvjUlHZYpb3
+         e9eDXpz2D34zJ29OMzd3/lXo3oYca4bw5lO1JsbMXkZdmCYgzJ5vz04zWODSda1mGRMn
+         toRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVmgEfks9yxaGyKej9XUPfiN2Q70WeiNU69LztBVdeS/1HljhvmidLGnpkTdogXpSm2vjXk7qVNGU0mQFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKHbQ7zQ2C8UHTbUDmz2jqc3DV4YgDhet8o/oshKbmurYumNpu
+	FdbRSRItrwtMvTFZ2rA2iGDy8LQucPYoysr5F7fgA9HWe5EbzdZxKlFj81VVzqgiDk1a4SkbBHk
+	FisOEkJym+x80SmzVetBmtcjDT0MsPjaxagUSdbbIqJfGoSV3jqEb+OL8Q8fHsg==
+X-Received: by 2002:a05:6214:448e:b0:6cb:99db:bdd5 with SMTP id 6a1803df08f44-6d185853395mr270032446d6.39.1730307468637;
+        Wed, 30 Oct 2024 09:57:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGwaNfJfa8CT5a1qeELpBazDzLhRcaRV4TD0jNvOLfsNepdXBrhzyrPoDSK035eKLLGaI2bAQ==
+X-Received: by 2002:a05:6214:448e:b0:6cb:99db:bdd5 with SMTP id 6a1803df08f44-6d185853395mr270032236d6.39.1730307468370;
+        Wed, 30 Oct 2024 09:57:48 -0700 (PDT)
+Received: from rhfedora ([71.217.60.247])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d179a0a5ebsm53212266d6.90.2024.10.30.09.57.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 09:57:59 -0700 (PDT)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Wed, 30 Oct 2024 09:57:45 -0700
-Subject: [PATCH net-next v6 2/2] net: stmmac: Add glue layer for T-HEAD
- TH1520 SoC
+        Wed, 30 Oct 2024 09:57:47 -0700 (PDT)
+Date: Wed, 30 Oct 2024 12:57:45 -0400
+From: "John B. Wyatt IV" <jwyatt@redhat.com>
+To: Vishnu Sanal T <t.v.s10123@gmail.com>
+Cc: linux-pm@vger.kernel.org, trenn@suse.com, shuah@kernel.org,
+	jkacur@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] implement set_enabled functions on powercap.c
+Message-ID: <ZyJliZ3Uka8R5ilh@rhfedora>
+References: <20241019124233.194140-2-t.v.s10123@gmail.com>
+ <20241030152706.179779-2-t.v.s10123@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241030-th1520-gmac-v6-2-e48176d45116@tenstorrent.com>
-References: <20241030-th1520-gmac-v6-0-e48176d45116@tenstorrent.com>
-In-Reply-To: <20241030-th1520-gmac-v6-0-e48176d45116@tenstorrent.com>
-To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
- Jose Abreu <joabreu@synopsys.com>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
- Andrew Lunn <andrew+netdev@lunn.ch>, Drew Fustini <drew@pdp7.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-riscv@lists.infradead.org, Drew Fustini <dfustini@tenstorrent.com>, 
- linux-stm32@st-md-mailman.stormreply.com
-X-Mailer: b4 0.14.1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241030152706.179779-2-t.v.s10123@gmail.com>
 
-From: Jisheng Zhang <jszhang@kernel.org>
+On Wed, Oct 30, 2024 at 08:57:07PM +0530, Vishnu Sanal T wrote:
+> Implement the functions sysfs_set_enabled, powercap_set_enabled,
+> and powercap_zone_set_enabled on powercap.c.
+> 
+> Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
+> ---
+> Changes in v2:
+> 
+> - simplify the implementation of sysfs_set_enabled using system()
+>   function.
 
-Add dwmac glue driver to support the DesignWare-based GMAC controllers
-on the T-HEAD TH1520 SoC.
+Hello Vishnu,
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-[esmil: rename plat->interface -> plat->mac_interface,
-        use devm_stmmac_probe_config_dt()]
-Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-[drew: convert from stmmac_dvr_probe() to devm_stmmac_pltfr_probe(),
-       convert register access from regmap to regular mmio]
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
----
- MAINTAINERS                                       |   1 +
- drivers/net/ethernet/stmicro/stmmac/Kconfig       |  10 +
- drivers/net/ethernet/stmicro/stmmac/Makefile      |   1 +
- drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 268 ++++++++++++++++++++++
- 4 files changed, 280 insertions(+)
+Ty for sending a patch to implement this.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 72dee6d07ced..b53f9f6b3e04 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19830,6 +19830,7 @@ F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
- F:	Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
- F:	arch/riscv/boot/dts/thead/
- F:	drivers/clk/thead/clk-th1520-ap.c
-+F:	drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
- F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
- 
- RNBD BLOCK DRIVERS
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 05cc07b8f48c..6658536a4e17 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -228,6 +228,16 @@ config DWMAC_SUN8I
- 	  stmmac device driver. This driver is used for H3/A83T/A64
- 	  EMAC ethernet controller.
- 
-+config DWMAC_THEAD
-+	tristate "T-HEAD dwmac support"
-+	depends on OF && (ARCH_THEAD || COMPILE_TEST)
-+	help
-+	  Support for ethernet controllers on T-HEAD RISC-V SoCs
-+
-+	  This selects the T-HEAD platform specific glue layer support for
-+	  the stmmac device driver. This driver is used for T-HEAD TH1520
-+	  ethernet controller.
-+
- config DWMAC_IMX8
- 	tristate "NXP IMX8 DWMAC support"
- 	default ARCH_MXC
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index c2f0e91f6bf8..d065634c6223 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
- obj-$(CONFIG_DWMAC_STM32)	+= dwmac-stm32.o
- obj-$(CONFIG_DWMAC_SUNXI)	+= dwmac-sunxi.o
- obj-$(CONFIG_DWMAC_SUN8I)	+= dwmac-sun8i.o
-+obj-$(CONFIG_DWMAC_THEAD)	+= dwmac-thead.o
- obj-$(CONFIG_DWMAC_DWC_QOS_ETH)	+= dwmac-dwc-qos-eth.o
- obj-$(CONFIG_DWMAC_INTEL_PLAT)	+= dwmac-intel-plat.o
- obj-$(CONFIG_DWMAC_LOONGSON1)	+= dwmac-loongson1.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-new file mode 100644
-index 000000000000..8c7ec156ebb0
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-@@ -0,0 +1,268 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * T-HEAD DWMAC platform driver
-+ *
-+ * Copyright (C) 2021 Alibaba Group Holding Limited.
-+ * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
-+ *
-+ */
-+
-+#include <linux/bitfield.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_net.h>
-+#include <linux/platform_device.h>
-+
-+#include "stmmac_platform.h"
-+
-+#define GMAC_CLK_EN			0x00
-+#define  GMAC_TX_CLK_EN			BIT(1)
-+#define  GMAC_TX_CLK_N_EN		BIT(2)
-+#define  GMAC_TX_CLK_OUT_EN		BIT(3)
-+#define  GMAC_RX_CLK_EN			BIT(4)
-+#define  GMAC_RX_CLK_N_EN		BIT(5)
-+#define  GMAC_EPHY_REF_CLK_EN		BIT(6)
-+#define GMAC_RXCLK_DELAY_CTRL		0x04
-+#define  GMAC_RXCLK_BYPASS		BIT(15)
-+#define  GMAC_RXCLK_INVERT		BIT(14)
-+#define  GMAC_RXCLK_DELAY_MASK		GENMASK(4, 0)
-+#define  GMAC_RXCLK_DELAY_VAL(x)	FIELD_PREP(GMAC_RXCLK_DELAY_MASK, (x))
-+#define GMAC_TXCLK_DELAY_CTRL		0x08
-+#define  GMAC_TXCLK_BYPASS		BIT(15)
-+#define  GMAC_TXCLK_INVERT		BIT(14)
-+#define  GMAC_TXCLK_DELAY_MASK		GENMASK(4, 0)
-+#define  GMAC_TXCLK_DELAY_VAL(x)	FIELD_PREP(GMAC_RXCLK_DELAY_MASK, (x))
-+#define GMAC_PLLCLK_DIV			0x0c
-+#define  GMAC_PLLCLK_DIV_EN		BIT(31)
-+#define  GMAC_PLLCLK_DIV_MASK		GENMASK(7, 0)
-+#define  GMAC_PLLCLK_DIV_NUM(x)		FIELD_PREP(GMAC_PLLCLK_DIV_MASK, (x))
-+#define GMAC_GTXCLK_SEL			0x18
-+#define  GMAC_GTXCLK_SEL_PLL		BIT(0)
-+#define GMAC_INTF_CTRL			0x1c
-+#define  PHY_INTF_MASK			BIT(0)
-+#define  PHY_INTF_RGMII			FIELD_PREP(PHY_INTF_MASK, 1)
-+#define  PHY_INTF_MII_GMII		FIELD_PREP(PHY_INTF_MASK, 0)
-+#define GMAC_TXCLK_OEN			0x20
-+#define  TXCLK_DIR_MASK			BIT(0)
-+#define  TXCLK_DIR_OUTPUT		FIELD_PREP(TXCLK_DIR_MASK, 0)
-+#define  TXCLK_DIR_INPUT		FIELD_PREP(TXCLK_DIR_MASK, 1)
-+
-+#define GMAC_GMII_RGMII_RATE	125000000
-+#define GMAC_MII_RATE		25000000
-+
-+struct thead_dwmac {
-+	struct plat_stmmacenet_data *plat;
-+	void __iomem *apb_base;
-+	struct device *dev;
-+};
-+
-+static int thead_dwmac_set_phy_if(struct plat_stmmacenet_data *plat)
-+{
-+	struct thead_dwmac *dwmac = plat->bsp_priv;
-+	u32 phyif;
-+
-+	switch (plat->mac_interface) {
-+	case PHY_INTERFACE_MODE_MII:
-+		phyif = PHY_INTF_MII_GMII;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+		phyif = PHY_INTF_RGMII;
-+		break;
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return -EINVAL;
-+	}
-+
-+	writel(phyif, dwmac->apb_base + GMAC_INTF_CTRL);
-+	return 0;
-+}
-+
-+static int thead_dwmac_set_txclk_dir(struct plat_stmmacenet_data *plat)
-+{
-+	struct thead_dwmac *dwmac = plat->bsp_priv;
-+	u32 txclk_dir;
-+
-+	switch (plat->mac_interface) {
-+	case PHY_INTERFACE_MODE_MII:
-+		txclk_dir = TXCLK_DIR_INPUT;
-+		break;
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+		txclk_dir = TXCLK_DIR_OUTPUT;
-+		break;
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return -EINVAL;
-+	}
-+
-+	writel(txclk_dir, dwmac->apb_base + GMAC_TXCLK_OEN);
-+	return 0;
-+}
-+
-+static void thead_dwmac_fix_speed(void *priv, unsigned int speed, unsigned int mode)
-+{
-+	struct plat_stmmacenet_data *plat;
-+	struct thead_dwmac *dwmac = priv;
-+	unsigned long rate;
-+	u32 div, reg;
-+
-+	plat = dwmac->plat;
-+
-+	switch (plat->mac_interface) {
-+	/* For MII, rxc/txc is provided by phy */
-+	case PHY_INTERFACE_MODE_MII:
-+		return;
-+
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		rate = clk_get_rate(plat->stmmac_clk);
-+		if (!rate || rate % GMAC_GMII_RGMII_RATE != 0 ||
-+		    rate % GMAC_MII_RATE != 0) {
-+			dev_err(dwmac->dev, "invalid gmac rate %ld\n", rate);
-+			return;
-+		}
-+
-+		writel(FIELD_PREP(GMAC_PLLCLK_DIV_EN, 0), dwmac->apb_base + GMAC_PLLCLK_DIV);
-+
-+		switch (speed) {
-+		case SPEED_1000:
-+			div = rate / GMAC_GMII_RGMII_RATE;
-+			break;
-+		case SPEED_100:
-+			div = rate / GMAC_MII_RATE;
-+			break;
-+		case SPEED_10:
-+			div = rate * 10 / GMAC_MII_RATE;
-+			break;
-+		default:
-+			dev_err(dwmac->dev, "invalid speed %u\n", speed);
-+			return;
-+		}
-+
-+		reg = FIELD_PREP(GMAC_PLLCLK_DIV_EN, 1) |
-+		      FIELD_PREP(GMAC_PLLCLK_DIV_MASK, GMAC_PLLCLK_DIV_NUM(div));
-+		writel(reg, dwmac->apb_base + GMAC_PLLCLK_DIV);
-+		break;
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return;
-+	}
-+}
-+
-+static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
-+{
-+	struct thead_dwmac *dwmac = plat->bsp_priv;
-+	u32 reg;
-+
-+	switch (plat->mac_interface) {
-+	case PHY_INTERFACE_MODE_MII:
-+		reg = GMAC_RX_CLK_EN | GMAC_TX_CLK_EN;
-+		break;
-+
-+	case PHY_INTERFACE_MODE_RGMII:
-+	case PHY_INTERFACE_MODE_RGMII_ID:
-+	case PHY_INTERFACE_MODE_RGMII_RXID:
-+	case PHY_INTERFACE_MODE_RGMII_TXID:
-+		/* use pll */
-+		writel(GMAC_GTXCLK_SEL_PLL, dwmac->apb_base + GMAC_GTXCLK_SEL);
-+		reg = GMAC_TX_CLK_EN | GMAC_TX_CLK_N_EN | GMAC_TX_CLK_OUT_EN |
-+		      GMAC_RX_CLK_EN | GMAC_RX_CLK_N_EN;
-+		break;
-+
-+	default:
-+		dev_err(dwmac->dev, "unsupported phy interface %d\n",
-+			plat->mac_interface);
-+		return -EINVAL;
-+	}
-+
-+	writel(reg, dwmac->apb_base + GMAC_CLK_EN);
-+	return 0;
-+}
-+
-+static int thead_dwmac_init(struct platform_device *pdev, void *priv)
-+{
-+	struct thead_dwmac *dwmac = priv;
-+	int ret;
-+
-+	ret = thead_dwmac_set_phy_if(dwmac->plat);
-+	if (ret)
-+		return ret;
-+
-+	ret = thead_dwmac_set_txclk_dir(dwmac->plat);
-+	if (ret)
-+		return ret;
-+
-+	writel(GMAC_RXCLK_DELAY_VAL(0), dwmac->apb_base + GMAC_RXCLK_DELAY_CTRL);
-+	writel(GMAC_TXCLK_DELAY_VAL(0), dwmac->apb_base + GMAC_TXCLK_DELAY_CTRL);
-+
-+	return thead_dwmac_enable_clk(dwmac->plat);
-+}
-+
-+static int thead_dwmac_probe(struct platform_device *pdev)
-+{
-+	struct stmmac_resources stmmac_res;
-+	struct plat_stmmacenet_data *plat;
-+	struct thead_dwmac *dwmac;
-+	void __iomem *apb;
-+	int ret;
-+
-+	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "failed to get resources\n");
-+
-+	plat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-+	if (IS_ERR(plat))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(plat),
-+				     "dt configuration failed\n");
-+
-+	dwmac = devm_kzalloc(&pdev->dev, sizeof(*dwmac), GFP_KERNEL);
-+	if (!dwmac)
-+		return -ENOMEM;
-+
-+	apb = devm_platform_ioremap_resource(pdev, 1);
-+	if (IS_ERR(apb))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(apb),
-+				     "Failed to remap gmac apb registers\n");
-+
-+	dwmac->dev = &pdev->dev;
-+	dwmac->plat = plat;
-+	dwmac->apb_base = apb;
-+	plat->bsp_priv = dwmac;
-+	plat->fix_mac_speed = thead_dwmac_fix_speed;
-+	plat->init = thead_dwmac_init;
-+
-+	return devm_stmmac_pltfr_probe(pdev, plat, &stmmac_res);
-+}
-+
-+static const struct of_device_id thead_dwmac_match[] = {
-+	{ .compatible = "thead,th1520-gmac" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, thead_dwmac_match);
-+
-+static struct platform_driver thead_dwmac_driver = {
-+	.probe = thead_dwmac_probe,
-+	.driver = {
-+		.name = "thead-dwmac",
-+		.pm = &stmmac_pltfr_pm_ops,
-+		.of_match_table = thead_dwmac_match,
-+	},
-+};
-+module_platform_driver(thead_dwmac_driver);
-+
-+MODULE_AUTHOR("Jisheng Zhang <jszhang@kernel.org>");
-+MODULE_AUTHOR("Drew Fustini <drew@pdp7.com>");
-+MODULE_DESCRIPTION("T-HEAD DWMAC platform driver");
-+MODULE_LICENSE("GPL");
+I got several warnings trying to compile your patch. Please resolve
+them. I have not tested your code yet. How are you testing your code?
+
+> ---
+>  tools/power/cpupower/lib/powercap.c | 31 +++++++++++++++++++++++------
+>  1 file changed, 25 insertions(+), 6 deletions(-)
+> 
+> diff --git a/tools/power/cpupower/lib/powercap.c b/tools/power/cpupower/lib/powercap.c
+> index 94a0c69e55ef..a2c0c33b7729 100644
+> --- a/tools/power/cpupower/lib/powercap.c
+> +++ b/tools/power/cpupower/lib/powercap.c
+> @@ -70,6 +70,17 @@ static int sysfs_get_enabled(char *path, int *mode)
+>  	return ret;
+>  }
+>  
+> +static int sysfs_set_enabled(char *path, int mode)
+> +{
+> +	char command[SYSFS_PATH_MAX + 10];
+> +
+> +	char yes_no = (char)(mode + '0');
+
+What does yes or no mean for setting a value?
+
+`is_set` or using something with the word 'mode' would be a better
+variable name?
+
+> +
+> +	sprintf(command, "echo -n %c > %s", yes_no, path);
+> +
+> +	return system(command);
+> +}
+> +
+
+In function ‘sysfs_set_enabled’,
+    inlined from ‘powercap_set_enabled’ at lib/powercap.c:95:9:
+lib/powercap.c:79:9: note: ‘sprintf’ output between 13 and 267 bytes into a destination of size 265
+   79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+lib/powercap.c: In function ‘powercap_zone_set_enabled’:
+lib/powercap.c:79:40: warning: ‘%s’ directive writing up to 254 bytes into a region of size 253 [-Wformat-overflow=]
+   79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+      |                                        ^~
+......
+  203 |         return sysfs_set_enabled(path, mode);
+      |                                  ~~~~   
+In function ‘sysfs_set_enabled’,
+    inlined from ‘powercap_zone_set_enabled’ at lib/powercap.c:203:9:
+lib/powercap.c:79:9: note: ‘sprintf’ output between 13 and 267 bytes into a destination of size 265
+   79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+>  int powercap_get_enabled(int *mode)
+>  {
+>  	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
+> @@ -77,12 +88,11 @@ int powercap_get_enabled(int *mode)
+>  	return sysfs_get_enabled(path, mode);
+>  }
+>  
+> -/*
+> - * TODO: implement function. Returns dummy 0 for now.
+> - */
+>  int powercap_set_enabled(int mode)
+>  {
+> -	return 0;
+> +	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP "/intel-rapl/enabled";
+> +
+> +	return sysfs_set_enabled(path, mode);
+>  }
+
+lib/powercap.c: In function ‘powercap_set_enabled’:
+lib/powercap.c:79:40: warning: ‘%s’ directive writing up to 254 bytes into a region of size 253 [-Wformat-overflow=]
+   79 |         sprintf(command, "echo -n %c > %s", yes_no, path);
+      |                                        ^~
+......
+   95 |         return sysfs_set_enabled(path, mode);
+
+>  
+>  /*
+> @@ -180,8 +190,17 @@ int powercap_zone_get_enabled(struct powercap_zone *zone, int *mode)
+>  
+>  int powercap_zone_set_enabled(struct powercap_zone *zone, int mode)
+>  {
+> -	/* To be done if needed */
+> -	return 0;
+> +	char path[SYSFS_PATH_MAX] = PATH_TO_POWERCAP;
+> +
+> +	if ((strlen(PATH_TO_POWERCAP) + strlen(zone->sys_name)) +
+> +	    strlen("/enabled") + 1 >= SYSFS_PATH_MAX)
+> +		return -1;
+> +
+> +	strcat(path, "/");
+> +	strcat(path, zone->sys_name);
+> +	strcat(path, "/enabled");
+> +
+> +	return sysfs_set_enabled(path, mode);
+>  }
+>  
+
+>  
+> -- 
+> 2.47.0
+> 
 
 -- 
-2.34.1
+Sincerely,
+John Wyatt
+Software Engineer, Core Kernel
+Red Hat
 
 
