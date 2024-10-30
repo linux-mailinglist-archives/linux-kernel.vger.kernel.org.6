@@ -1,97 +1,127 @@
-Return-Path: <linux-kernel+bounces-388290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452D19B5D3E
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:56:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 886F79B5D45
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 08:57:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098A3283F2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:56:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E766B2840F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A3401E0B66;
-	Wed, 30 Oct 2024 07:56:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7492A1E0DAC;
+	Wed, 30 Oct 2024 07:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BUH71srC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NBKYc8AK"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836AA33E1;
-	Wed, 30 Oct 2024 07:55:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F02E21D9595;
+	Wed, 30 Oct 2024 07:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730274960; cv=none; b=jit7hMEE9QsDd0PUQMKt+pkVK0QgfEmbncryQt7tYAIzITywamkB7OFgZZ3jO/ykex9fC9EhXJiH3s8s45vXmhnkRdUestNnAkFsgqPv9CUv3xut51WTA8l754cL5Kko6QoklDVrG0ZPKh3tLlH2k++SUIdxr1pzJ1Cq159x8P0=
+	t=1730275022; cv=none; b=EeTnxfRNu67MJ6ShrbZgbabMS1+3so2lHT2puvQIkBcav52wLOxAG29Fcxx07hphYYXc+bfQrE47iwVgEqpA6MW8VJQlOA3k0c5qh0RoTlXN8XJpgvYm5nYkKL2Hi6MguqRCCWTEtOf2Ola1gLJzOnQGFJNljI5bKQ9cLkTGxJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730274960; c=relaxed/simple;
-	bh=gpPN7Q2sLWKjzaffkRwxaK7OnuNJs9eevr8SCuMuL/8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SDHHPxoeuNqn3mTU/Rb7yUVTyBNWDes6FHBoasKaF1/WNBv/MhO6KiUbxrrEInhPeG5uYI1IhOvbXMNd6T+iSi9tBoVPkmuOduWzpAQy0ReB7Ztoy9kKvH76wRWlKPW5uFMssoz0TSvfx86Ke/6/miv11J5QqnwV1Qc5+WE5S4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BUH71srC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA6BC4CEE4;
-	Wed, 30 Oct 2024 07:55:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730274959;
-	bh=gpPN7Q2sLWKjzaffkRwxaK7OnuNJs9eevr8SCuMuL/8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=BUH71srCUmo6Yo5Zj5v596dWnv7WddJErBNA1I9FhssSS3QmxttSW4zKqVxPJmmzM
-	 FwaX85B7dxMEdrbjste6ixaE+mBcmzK97oIdEFOrElhG6c7/EN9j8Lh+1JQQ8kmQgJ
-	 rBc3jNaZyMfZFMxx/G7mTbs0kN+OX+cDz83YUE5FzMWOfzSDlIfGVx3nGq9PDDbgSi
-	 zV1/f5lKWlWY9W0oL1Gx9oRnU13wp86sP84dOlyL2AImYWFxN9bfk3ZyITpo7gVvHG
-	 V+uoeeNT289LOwVjjzCmOxhocS2ox3c0CjGFJ8/xXTQTa8/FAl5kcMOkqnpbkZLDAF
-	 T2qz6FxH2EucA==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 09/43] arm64: RME: ioctls to create and configure realms
-In-Reply-To: <20241004152804.72508-10-steven.price@arm.com>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-10-steven.price@arm.com>
-Date: Wed, 30 Oct 2024 13:25:49 +0530
-Message-ID: <yq5acyjic9dm.fsf@kernel.org>
+	s=arc-20240116; t=1730275022; c=relaxed/simple;
+	bh=jzy6NjUhpqgplvP6dO3x/nvFG3N0AVPu8SNofLcz4Hc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RkoYf+UCgVyzFELalgMI0S0ufJgvhyF4SbiJ41osFH++1cZFJKNQdapxg6f30KP25ieoGjFf9Y9CDWYLMUQE7yBL8Sw7vWlW/mHdGsprJ+kTKxlgYEnMIsKmKj34ZeTKBozB7+aH9jlcHlo9djVlIVOP9JIG3hn/2EZYd3o2ncE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NBKYc8AK; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49TLJk7B009006;
+	Wed, 30 Oct 2024 07:56:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	jzy6NjUhpqgplvP6dO3x/nvFG3N0AVPu8SNofLcz4Hc=; b=NBKYc8AKdAoc6cQb
+	m26okJRdHgGm2oHFADZdq1KTIfSvotELmMf4DftVqdtVGndYkbVMsz/6X3TMG/vL
+	Vy78aC8Or01vYeBUtK0B1TDbnrJxMGjpeBmFD68++PtYAc0wYUi5QeK2bLIHKhxo
+	McXw4coCS5p8Gt6GYWzhRd+iSc/k6TlQAlt1Bvg0K35klquE5ot/OLR5HvvttZ6r
+	CA0YdDuNfdrV2s247C1lkk7ZxsWVAmD+1htVqfauvyJP8s+LdE5YJ/IuH99gk6ha
+	D+lUTfjwA9XrODer/4WFCJgyn2DzzlAJrEqpuw8rtfS4tI5S7ADK2wnBm62nEAg1
+	o/G68A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42gsq8k41w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 07:56:52 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49U7upce020939
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 07:56:51 GMT
+Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 30 Oct
+ 2024 00:56:45 -0700
+Message-ID: <58e5dbbf-7c35-49ae-b2ff-954fc0e3fe48@quicinc.com>
+Date: Wed, 30 Oct 2024 15:56:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 6/7] PCI: qcom: Disable ASPM L0s and remove BDF2SID
+ mapping config for X1E80100 SoC
+To: Johan Hovold <johan@kernel.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>
+CC: <vkoul@kernel.org>, <kishon@kernel.org>, <robh@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <abel.vesa@linaro.org>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <dmitry.baryshkov@linaro.org>,
+        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <johan+linaro@kernel.org>, <stable@vger.kernel.org>
+References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
+ <20241017030412.265000-7-quic_qianyu@quicinc.com>
+ <ZxJrUQDGMDw3wI3Q@hovoldconsulting.com>
+ <91395c5e-22a0-4117-a4b5-4985284289ab@quicinc.com>
+ <250bce05-a095-4eb3-a445-70bbf4366526@quicinc.com>
+ <ZyHc-TkRtKxLU5-p@hovoldconsulting.com>
+ <20241030071851.sdm3fu6ecaddoiit@thinkpad>
+ <ZyHjSCWGYLDu27ys@hovoldconsulting.com>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <ZyHjSCWGYLDu27ys@hovoldconsulting.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: D5Cb7mxE4A_JpgHN_bxxcjll1VkaFGrq
+X-Proofpoint-ORIG-GUID: D5Cb7mxE4A_JpgHN_bxxcjll1VkaFGrq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
+ adultscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=865 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 clxscore=1015 spamscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410300061
 
-Steven Price <steven.price@arm.com> writes:
 
-> +
-> +out_undelegate_tables:
-> +	while (--i >= 0) {
-> +		phys_addr_t pgd_phys = kvm->arch.mmu.pgd_phys + i * PAGE_SIZE;
-> +
-> +		WARN_ON(rmi_granule_undelegate(pgd_phys));
-> +	}
-> +	WARN_ON(rmi_granule_undelegate(rd_phys));
-> +free_rd:
-> +	free_page((unsigned long)rd);
-> +	return r;
-> +}
-> +
+On 10/30/2024 3:42 PM, Johan Hovold wrote:
+> On Wed, Oct 30, 2024 at 12:48:51PM +0530, Manivannan Sadhasivam wrote:
+>> On Wed, Oct 30, 2024 at 08:15:05AM +0100, Johan Hovold wrote:
+>>> Also, are there any Qualcomm platforms that actually support L0s?
+>>> Perhaps we should just disable it everywhere?
+>> Most of the mobile chipsets from Qcom support L0s. It is not supported only on
+>> the compute ones. So we cannot disable it everywhere.
+>>
+>> Again, it is not the hw issue but the PHY init sequence not tuned support L0s.
+> Right, this should be mentioned in the commit message.
+OK, I got it. Will write this into commit message.
 
-we should avoid that free_page on an undelegate failure? rd_phys we can
-handle here. Not sure how to handle the pgd_phys.
-
--aneesh
+Thanks,
+Qiang Yu
+>
+> Johan
 
