@@ -1,63 +1,79 @@
-Return-Path: <linux-kernel+bounces-389292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661CF9B6B0B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:33:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BE419B6B16
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 18:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E305EB21670
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3189B281E3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:34:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E0C1993B7;
-	Wed, 30 Oct 2024 17:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E842139A4;
+	Wed, 30 Oct 2024 17:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NsvQqO0h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e2w79DbO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AE851BD9C1;
-	Wed, 30 Oct 2024 17:32:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB5321314B;
+	Wed, 30 Oct 2024 17:34:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730309577; cv=none; b=dusJ1JObmzvb2kvcNvlYsJ7eznZmA8xUZW5nfOFU+++7Jn313A63YofGSCHw0plVBXgTFlRrKdIpaHIYcA6KaUbnJgyQ33HBnGlJ3zoGDlJhgNtEkuEe8ET9NnIp/gR487AHffvkkUXlKo3JOaivXEiEZsRlqX+LEILuvwwegvE=
+	t=1730309679; cv=none; b=pCU/8nAZ+LFlZSjRY2qYmHuH3sPSzTjqSEFvvR8ebaP3YF9qioRu8M0WDJh2pKsgyIkoSyrr1LF0k+weFnJakK/GemonQIWRvOoQaOXU+iKgHINu7HFbY5/EfPLj49bmVdxbru1rx7+luBLEnk1oGeNWIPwXqTz4toHZabdDssE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730309577; c=relaxed/simple;
-	bh=xD3fbQXh0ADlv6ZOptn1aGGPtRMLbGY+tnrT42LdKQE=;
+	s=arc-20240116; t=1730309679; c=relaxed/simple;
+	bh=cBd5TgkzQqEHOwZwVLZxCtIcfAbdWndm7ybVSTY1TiQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZTjfqYWfZS6ehlKDmYNJHaIgo0b4i4I9KaXRyNL/8AeaCNvNw8oN5rbifGCvWLfrF022LK3MOFS8+I8LZggDhFR4lgUGnGotgUNwXRhf0gLjSrIvrHuswBZTLGbO4/HerK3xAEvyQwfDXlg0FTpZpIoTZFh6Y9VHWbWvRY+jlpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NsvQqO0h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5DEFC4CECE;
-	Wed, 30 Oct 2024 17:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730309576;
-	bh=xD3fbQXh0ADlv6ZOptn1aGGPtRMLbGY+tnrT42LdKQE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=NsvQqO0hMPepYn6kSvR2+zBfpxBRcHrK9CeDHrTi4hiB5OyWoQL9iDUjQnMd6ekBG
-	 8Bzzc2fdNa/E57e7UWIsRzSwETI10c3FQP1eCdGLEagEOSA3oik4A4xss1Ldpjyvem
-	 0egifEgr+Dabr05b2l7y37qdbXaEpVcTBawnIFNKCO2VAyLO5L344L3SBYeTT9cqaN
-	 kO7Dsz0As6Z1dcND8X5yvPg1nK1PTZi+bcmr2O8nhfp8O/c0UFmXpAZpKr54Qf/hoH
-	 4I9PfcMgtts931boEk2q/nJTZFbkNdOZyNgQuwE+pgz71xEllmW8o+sPJ3yZl6tx4a
-	 /LM7S++SmYRhA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 815CBCE0BB3; Wed, 30 Oct 2024 10:32:56 -0700 (PDT)
-Date: Wed, 30 Oct 2024 10:32:56 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
-	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <cb2af1b4-5ce0-4e91-9456-1c88f4eef4fc@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org>
- <ZyAUO0b3z_f_kVnj@sashalap>
- <c936a7f6-e532-4f6a-b55a-bbf0fe6c6f32@paulmck-laptop>
- <ZyJpu5QdGho6cOUs@sashalap>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QAPiY7MMAF61eNIhbnejZ7ceH702ZJPiBU33BbgT/jOybMnNS1Rf/NRVmKyMZ0B5epIhk98fVoyOIMgMoWS9AZQcdlDypXjWDGCahQBDg2BOI1o9v7KGlDRFBKOxH1lcSfYU3pR2Mnj5ThAZaGZ4OvVApjntgt/UvkhBul1ohWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e2w79DbO; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1730309677; x=1761845677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cBd5TgkzQqEHOwZwVLZxCtIcfAbdWndm7ybVSTY1TiQ=;
+  b=e2w79DbORdX3XeC+TH8cjFpCaym/UroEe8x3fdXPBTtFbi1dYLH3vCkF
+   1zzPeFv12fsSJJ+MosCGspcxlJgb8skktfFuV9IDl7U05WUDljpillMV7
+   Z6yBz/0iUkVpVT3SD0XsEPKt1ssA05F4J1zIPloKxHFG+qjgm//U5L8Wd
+   r8uO0TheP0Dr7G+nPxQHwfhftvzeeXuSVsE4d06KMD7YtHk3g2LPrFfS9
+   omsl6o6j5F125pyb7vS+QFAEGVVSmsDNHmSbI1bLJ7MoaNGCUNnbgRq5a
+   e6IS2Owl25mUPhntnilSXufGLVfn2Py0mc0uYFbv1gL5PJlaGzV4hjzFQ
+   w==;
+X-CSE-ConnectionGUID: K+0I9KtnS3OPUfvS7nWNdQ==
+X-CSE-MsgGUID: S2ov9qh+T3eXWVS30xJ2hA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11241"; a="55429978"
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="55429978"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:34:30 -0700
+X-CSE-ConnectionGUID: mb7h3fMvSp6irmx4ab5+6Q==
+X-CSE-MsgGUID: VmDdag91QyyArSfhvxWOMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,245,1725346800"; 
+   d="scan'208";a="86322811"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Oct 2024 10:33:20 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t6CZJ-000000097N2-41Zn;
+	Wed, 30 Oct 2024 19:33:17 +0200
+Date: Wed, 30 Oct 2024 19:33:17 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Mary Strodl <mstrodl@csh.rit.edu>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: Re: [PATCH v1 1/2] gpio: mpsse: Check for error code from
+ devm_mutex_init() call
+Message-ID: <ZyJt3U-YTpQYwLrq@smile.fi.intel.com>
+References: <20241030153201.2078266-1-andriy.shevchenko@linux.intel.com>
+ <20241030153201.2078266-2-andriy.shevchenko@linux.intel.com>
+ <ZyJo4dvULIflwhXL@freedom.csh.rit.edu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,49 +82,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZyJpu5QdGho6cOUs@sashalap>
+In-Reply-To: <ZyJo4dvULIflwhXL@freedom.csh.rit.edu>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Oct 30, 2024 at 01:15:39PM -0400, Sasha Levin wrote:
-> On Wed, Oct 30, 2024 at 10:08:57AM -0700, Paul E. McKenney wrote:
-> > On Mon, Oct 28, 2024 at 06:46:19PM -0400, Sasha Levin wrote:
-> > > On Mon, Oct 21, 2024 at 11:48:34PM -0700, Christoph Hellwig wrote:
-> > > > On Mon, Oct 21, 2024 at 09:54:53PM -0700, Kees Cook wrote:
-> > > > > For example, for a given PR, the bot can report:
-> > > > >
-> > > > > - Were the patches CCed to a mailing list?
-> > > > > - A histogram of how long the patches were in next (to show bake times)
-> > > > > - Are any patches associated with test failures? (0day and many other
-> > > > > CIs are already running tests against -next; parse those reports)
-> > > > >
-> > > > > We could have a real pre-submit checker! :)
-> > > >
-> > > > That would be very useful.  Items 1 and 2 should be trivial, 3 would
-> > > > require a bit of work but would still be very useful.
-> > > 
-> > > If you've been following so far, there is a bot that is capable of doing
-> > > most of the above
-> > > (https://git.kernel.org/pub/scm/linux/kernel/git/sashal/next-analysis.git/).
-> > 
-> > Nice!!!
-> > 
-> > What does this make of these commits of mine?
-> > 
-> > 744e87210b1ae rcu: Finer-grained grace-period-end checks in rcu_dump_cpu_stacks()
-> > cbe644aa6fe17 rcu: Stop stall warning from dumping stacks if grace period ends
-> > 26ff1fb02991e rcu: Delete unused rcu_gp_might_be_stalled() function
+On Wed, Oct 30, 2024 at 01:12:01PM -0400, Mary Strodl wrote:
+> On Wed, Oct 30, 2024 at 05:30:26PM +0200, Andy Shevchenko wrote:
+
+...
+
+> > +	err = devm_mutex_init(dev, &priv->io_mutex);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	ret = devm_mutex_init(dev, &priv->irq_mutex);
 > 
-> Days in linux-next:
-> ----------------------------------------
->  1 |
->  2 |
->  3 |
->  4 |
->  5 |
->  6 | +++ (3)
+> I think this should be `err = `
 
-Very good!
+Oh, I haven't compiled that for sure :-)
 
-Any indications of errors for any of them?
+> Other than that, it looks good to me (I doubt you need this, but just in case):
+> 
+> Reviewed-by: Mary Strodl <mstrodl@csh.rit.edu>
 
-							Thanx, Paul
+Thanks, I will fix that, I dunno how I missed that because I carefully read
+the code before adding the checks.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
