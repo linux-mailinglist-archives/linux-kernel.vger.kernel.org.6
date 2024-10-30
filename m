@@ -1,150 +1,115 @@
-Return-Path: <linux-kernel+bounces-389555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA7559B6E62
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:07:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 109A59B6E64
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:07:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36A781F2276A
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:07:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BCB2820C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:07:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C335B21501F;
-	Wed, 30 Oct 2024 21:07:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223FD2144CE;
+	Wed, 30 Oct 2024 21:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b="Jxq7SdXe";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YarRtNLf"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heCIvecj"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B85014F90;
-	Wed, 30 Oct 2024 21:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31CC14F90;
+	Wed, 30 Oct 2024 21:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730322426; cv=none; b=NE14MRt+x4Yx0kecH7QWgD0EQQrGP0ZXdnmmMz6FfJJE5JTcu0j7WPmgVWSa47yNxsjRRe4+ARAeAlS1mfMOjylUIO4onFrEpRZ5uUvOBy2Af6FDT6PYyXiFAHIbRzf6HASVlayjKzn52a8mXcebGxT/Q35VjrVavFqpehMi0IM=
+	t=1730322435; cv=none; b=RcFWlZxE8VolJ8y6oni1LsubRyh0Os1CclmbW2pMX4xd7Io29Y2i59QCXw3WxVC51wxjBZSetTGKBJMwddUlGZYq8wf2nfAVwtZn9wAlK8oA4bLYObbNPeak8197QjDYtziB01jWbmLOIn8WQ0+pQJZOwz55pg25Y9ccINeiJp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730322426; c=relaxed/simple;
-	bh=1fFvRA8Ti6aNmkII/E3CoPBzL8mG2bnG0r4usRcmrOI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGUvUtlvPjBLCHHQoAQnCl90OClL56mu3QgmltEWZ1LFQHozCNTqf7rXx7+qjbtym99YTJDcMeNt+ZVbZOzuH/sJhSAmgvT5/rGJhB8ZnlQ3bVHFtoMaMktk2cA8V2B9Ek6/wiWCyDqwhw9QL7MIEn1brTRyYdEOcTa3Y3Co5qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com; spf=pass smtp.mailfrom=tyhicks.com; dkim=pass (2048-bit key) header.d=tyhicks.com header.i=@tyhicks.com header.b=Jxq7SdXe; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YarRtNLf; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tyhicks.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tyhicks.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3050013801CC;
-	Wed, 30 Oct 2024 17:07:03 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Wed, 30 Oct 2024 17:07:03 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tyhicks.com; h=
-	cc:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1730322423; x=1730408823; bh=UcDpvOVrCi
-	ePv+GG2jgcrKxzk05VQ6RMJOQDsRm2Wsg=; b=Jxq7SdXexDBEz4imZuZgzjDNjh
-	zdVqiF8jXz7QDZWqB9aWURKKREAgdFOQl++cxBOA2F85/CKeBX7R9JH/g0WDoLJU
-	D6r8z+EDWw/F3p7Naw2ixkYO4FLI3HZTGuXD8aJF5DIUKZuM/eIVE20JzoNlSIBb
-	WY14DJZiwEkLT/sAzbYEIBbmIDHTixEMGBtMtJtVroMAfeJ9w+M/KtBFE1MbsP9a
-	avff/fHpUzCmhAIHIci424C0q76rKJYfGK/Hsf0s5J4g8Too18mXco4dDcaqPvVy
-	ob2dXahle2m7NZ7MZk+KpSP51jTxF814Vwgqb5pNjWQnZi2OKUDsLE9HjR8Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
-	1730322423; x=1730408823; bh=UcDpvOVrCiePv+GG2jgcrKxzk05VQ6RMJOQ
-	DsRm2Wsg=; b=YarRtNLf5Bgv3nudJgNkE9rqq4RFaptlzFLiK9mjf9wXmmR5elo
-	ZwWSYtsx/BAsFxFh8KgJf+3273HeHfuec9e46QHabHPYxM80lQM4rIBTAfxIdH02
-	8AeJonT5m3tvL2t8y3K46+96gv1Fxcj3jwxx2dE18BGYQzqk5nSMh+XVqmP+fkLx
-	tl40EyUpCBfWQ6ZmpShDd59mdbC/k0B9SBKFouPb6edmPRsBmPRW0VmI+WzQGTtN
-	T/jVubRn2XaogBi1LY0H3gQPYFuM7cq86Ac1K6AusVKMsLj/56/k/802GSrXPLnn
-	hhgOKliCZFY1f77Z2Zhvv3LbmICO1TKfvSg==
-X-ME-Sender: <xms:9p8iZyntvIZKyd2sxdrBWgG8F6PYs3vPZXhNGEFt5dRvAZdnx-EgVQ>
-    <xme:9p8iZ53sRZMW8CJY_5N0xo-XtWLB1MnNVZiKVC5jCAwalOvNKoapD6JLrtgRz7_79
-    dA88iL5n8OY_Nn_OHE>
-X-ME-Received: <xmr:9p8iZwold8VdCpUID6T91bGnaItMwWoB7y4h4MW_5rbz7xKrczcAGAqR-xCTnwRQZBnNoOJCSW-zWbRHfip2Pr8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdekfedgudeggecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpefvhihlvghrucfjihgtkhhsuceotghouggvsehthihhihgtkhhsrdgtoh
-    hmqeenucggtffrrghtthgvrhhnpedvhedvtddthfefhfdtgfelheefgefgudejueevkedu
-    veekvdegjedttdefgfelieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegtohguvgesthihhhhitghkshdrtghomhdpnhgspghrtghpthhtohep
-    jedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepthihthhsohesmhhithdrvgguuh
-    dprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthhtohepfihilhhlhies
-    ihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopegrrhhnugeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepuggrmhhivghnrdhlvghmohgrlhesohhpvghnshhouhhrtggvrdif
-    uggtrdgtohhmpdhrtghpthhtohepvggtrhihphhtfhhssehvghgvrhdrkhgvrhhnvghlrd
-    horhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghl
-    rdhorhhg
-X-ME-Proxy: <xmx:9p8iZ2ktHTU-Itco9mEDQSjyI5hilV35HN51DXmyhhv4hOIApWR2Hw>
-    <xmx:9p8iZw1wSPsvyJVz24ov4rOuVzWQwbf_j6J6PxO-MjcVP7xRKP5iHg>
-    <xmx:9p8iZ9v_ZSVzPOmuz8ZvnfpsupxA8esOy-hSyrd_Q_PguyTS4O04SQ>
-    <xmx:9p8iZ8VDzspnJlNTLRCT1N44WrxFp8ljd1Xo7zKSVygnvK_0rdnvug>
-    <xmx:958iZxnYJ_rEqNxZMEa-a1MRdvNthH-lR_T8A4yPRwkWcmUEqjJ4foof>
-Feedback-ID: i78e14604:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 30 Oct 2024 17:07:01 -0400 (EDT)
-Date: Wed, 30 Oct 2024 16:06:49 -0500
-From: Tyler Hicks <code@tyhicks.com>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Arnd Bergmann <arnd@arndb.de>, Matthew Wilcox <willy@infradead.org>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-	ecryptfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: ecryptfs is unmaintained and untested
-Message-ID: <ZyKf6ZSZrETI+4/S@redbud>
-References: <20241028141955.639633-1-arnd@kernel.org>
- <Zx-ndBo7wpYSHWPK@casper.infradead.org>
- <ef98d985-6153-416d-9d5e-9a8a8595461a@app.fastmail.com>
- <20241029043328.GB3213@mit.edu>
+	s=arc-20240116; t=1730322435; c=relaxed/simple;
+	bh=h2L7SUYMGT2A2xgyq9e7pwTUTiOSuRTfqDYwxLdZbAI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YkM7w4Iqfsf23tART0wr6HQg2dzxrSzatDyS9GbdW34PWKttLeycDLqusDjDPcN7+9sgmJgCojGdkBf0DqwB+rjL/ufn5EeV1/ZtrdJcoSTyQCHnlBLt7FFZyOA8PH95sRPr4odkxW5XO/QEEcHAJ29NlsoQBhXtWuVk5Ds6bK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heCIvecj; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2d83f15f3so37826a91.0;
+        Wed, 30 Oct 2024 14:07:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730322433; x=1730927233; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h2L7SUYMGT2A2xgyq9e7pwTUTiOSuRTfqDYwxLdZbAI=;
+        b=heCIvecjPXy3yeAWRp6cmlElEdY5f1QQ2xTk6rUTE+k1+zvyrlsNggTSlgpucYUYRA
+         FJHLnXdsnkOoezssDvu1gTtSzy0rimQO6uuano25mRHZQycOcqvCoFR/CfOMoZhf8V17
+         rdU1M3qj2IimGVZKYKemiyn5cDYFkMVUYQMq54aMBc+wOJNC/giRebnh2hrhCJBh4ScV
+         CVKkBsrcdB/bJnk7bb1sQpiKDPeXrAslE8UtWk1iNye7hyT4GTqcHZPBizDtsuzsLDfL
+         1uYEmoyQKonlVTbEEGf94XHNTzEV4ZD+WCLMpyoustNjQ7qKRBFG9klueSirtny/m3Qg
+         Nfww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730322433; x=1730927233;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=h2L7SUYMGT2A2xgyq9e7pwTUTiOSuRTfqDYwxLdZbAI=;
+        b=TXYGiin0rPf/xVrJoH7aS3oqewG/ewbz2dnTIumum6FR0jCYmZ7mCJ5QCOIO4nW0QU
+         1+i7Km81Zviia/U8BeKpi99yX/ObM8DACIEMoDxYxaerHrWEr3IDTv68Y0QyOo2SYYDL
+         Q9P3W1afDENkv9VgFJM9xBCb9xo/hcolGvM5cnJNe6ZpDndp+Q1jtL6zFu9bSE5dFZdH
+         ghOsLlLol1x6JTUGkYZq5fzXqAHM9ggvltAOFYS3BNG9Vu7rOjjYm7+dfxHeGyv3BK8M
+         GtfmJYcHWEU8Ghetmoqko6To7hf1ypQqYKMi1LPXVl0QQlQhfzAhyF/ySYyNd2GIVRkC
+         8K/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUA6rGlTb4qBbJeNT03jImElX6cQL6pWZgL5hnXFoiDk2LK7lODVjM5MwZcczZd2NxQEkSqjZ3dC1gA4vodEj4=@vger.kernel.org, AJvYcCV1mMJtGb/pkV0c++ViIYvWoEheZXuNgyd4+j90LMpv853AlXyiqkPL6iFaTcFMS4sQbj6QRaqCkFtW79c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLysblf6XX/j7Ml+s2lCHYA6XkeN+DUCpIR8uNHK1T1heuXe3k
+	AH+1nffZpMsV2p1hVncmiN7UXP0HZQtlDaFubZPdi/nQAP13mW1yriK3A7Y7ss/bQNbBW+EzI/b
+	tTum6lZRjU/qa29BnhdWxcUBAFkw=
+X-Google-Smtp-Source: AGHT+IEo1G6mW80Vx4XiYAKfACrYdglAOmtjPfOP/BUss867AwoFXLEluBwIOWsmOdMPtzcuDICLsOIytFygXEfdZnQ=
+X-Received: by 2002:a17:90a:4bc5:b0:2e2:c04b:da94 with SMTP id
+ 98e67ed59e1d1-2e8f11a71b2mr8298497a91.5.1730322433048; Wed, 30 Oct 2024
+ 14:07:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241029043328.GB3213@mit.edu>
+References: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com>
+ <Zx_OoCRrA_WTay_O@Boquns-Mac-mini.local> <CANiq72mb9X0LiDtDe9ptbqm3Ls527Xp+szX7px+Zw6OP8-aefQ@mail.gmail.com>
+ <ZyFPvO4jNLieAXUe@Boquns-Mac-mini.local>
+In-Reply-To: <ZyFPvO4jNLieAXUe@Boquns-Mac-mini.local>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 30 Oct 2024 22:07:00 +0100
+Message-ID: <CANiq72nb0b7yO5EBubpD63+u6quvaOTmny880DmzVwKqbeYHRA@mail.gmail.com>
+Subject: Re: [PATCH v6] rust: add global lock support
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, 
+	Waiman Long <longman@redhat.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-10-28 21:33:28, Theodore Ts'o wrote:
-> On Mon, Oct 28, 2024 at 09:50:37PM +0000, Arnd Bergmann wrote:
-> > On Mon, Oct 28, 2024, at 15:02, Matthew Wilcox wrote:
-> > >
-> > > This comment has been there since June 2021, so I think we can just
-> > > delete ecryptfs now?
-> > 
-> > I have no opinion on removing ecryptfs, but I don't how possibly
-> > removing it is related to the patch I sent, as far as I can tell
-> > it just means it relies on both CONFIG_BLOCK and CONFIG_BUFFER_HEAD
-> > then.
-> > 
-> > Is there any indication that the last users that had files on
-> > ecryptfs are unable to update their kernels?
-> 
-> Debian is still shipping ecryptfs-utils and is building and including
-> the ecryptfs kernel module in their distro kernel.`
-> 
-> So it seems likely that there are probably a non-zero (although
-> probably relatively small) number of ecryptfs users out there.
+On Tue, Oct 29, 2024 at 10:12=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com> =
+wrote:
+>
+> "usually"), I submit my PR at rc2 to rc4, and tip will carry that into
 
-It would be good to discuss how we can get the message out to users to
-migrate off of eCryptfs so that functionality can be reduced and
-eventually it can be removed.
+Ah, so you only submit up to -rc4, got it. I didn't know what the cutoff wa=
+s.
 
-What do folks think about the following?
+> Got it. This particular one needs to be "// SAFETY: Called exactly
+> once", right?
 
-1. Print loud warnings at mount time that eCryptfs is deprecated and
-   give a specific date when write support will be removed.
-2. Remove write support at that date, while retaining read-only support
-   to allow any lagging users to move their data to fscrypt or other
-   alternatives.
-3. Print loud warnings at mount that eCryptfs will be removed and give a
-   specific date.
-4. Remove it.
+Yeah, with an ending period (pedantic nit, but it is the style we try
+to follow).
 
-Suggestions on lead times for #2 and #4 would be appreciated.
+> For this I'm following the precedents in tip tree: always put the patch
+> links at the last line. See the "Commit notifications" in
+> Documentation/process/maintainer-tip.rst. (And yeah, I have to manually
+> modify this after b4 applies the patches if you have to ask ;-))
 
-Tyler
+That explains it -- thanks! Sounds good (though perhaps the bot should
+be amended to agree with `b4`... :)
+
+Cheers,
+Miguel
 
