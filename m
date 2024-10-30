@@ -1,245 +1,212 @@
-Return-Path: <linux-kernel+bounces-389685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C65DB9B6FDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:28:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D01F9B6FE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:34:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24DCCB22657
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B08D81C21023
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 22:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B865E21746D;
-	Wed, 30 Oct 2024 22:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C62E1E32A8;
+	Wed, 30 Oct 2024 22:34:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hcl9FquJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ACFvFZQ9"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0620E2144D3;
-	Wed, 30 Oct 2024 22:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283EB1BD9EA
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 22:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730327303; cv=none; b=oMiYZl06GiOJgoZd5T+wW23axAYDWGMuttbeuNBpZEoanrnOGXCgNHKhrlpuZDNgK//4TwBBC/tFZf4o7XRLS1+Xq6GI3COv4vina3hyb/hq0Pn4sVkbYavntvBmNcXb8/7fZAd4wBCVq2/0/83Pg81OV8VDSKafp9Uz97RWcUw=
+	t=1730327660; cv=none; b=AIKnWQj04srgPziIaZ4k3HYAFNHccZ/LCbWAPihIMmCJOQFoYDpQy213f03bbJf1cXZ2kavvExoCpK4OKvegplKVOI8YPOqZvm65FnB9jT1/1AtCGQ6R9d9/dMnt9JOhbtC4ysIyEXE8gyiAHWapthC+uT/KwJwaEkUL9R12J/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730327303; c=relaxed/simple;
-	bh=A/2av0Pr/WuyCSRAw3QjLR+gEsZ3d3mzZRpBnlCCgnI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gfEcf6ReXfifv095X2dwPZHaqEEoAlpJYCi1oVaxPEvTfRD2yiZafv+j9R/DCZuQAUEdJ4v5I2HLGh4cKrbXAezkHMYBsx8ujDWgtfaqPP1lYdteCwza41r96iRoYcfu8nYcCiCsm6/gvrKwVPWxgbBnhkQmqTDBxIdgVDB/9Bc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hcl9FquJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC595C4CED3;
-	Wed, 30 Oct 2024 22:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730327302;
-	bh=A/2av0Pr/WuyCSRAw3QjLR+gEsZ3d3mzZRpBnlCCgnI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hcl9FquJW+B+A0O6lhbUfkrFUnBcfaGcZsOa+a3qThQP6avACEPtVFwAKyuoEX2lL
-	 fgRzX9u8TK8WufNXi2dIHksZS+vRKEqsH0YV21T+MKqCU9eFtAqWg1o/qCGkJspBzP
-	 8MGl0UMdvAHjtbiKUPH7Amm9QGHWJ30bcYyROBiI218afaJyT/FmTkF7rbjUrNqTeZ
-	 tjnxK9qa/Q4/JKihMiB+kSAZLHCbRA99Xw5ZJOQ7FWttFquXkuvojcf9RBxCYLf6E0
-	 Epy+H3Vvhri6PdstdTSIMkkVqPTnI4gcasjzDmTwflammKEu3ApQBZO3KU3yYNC1qj
-	 kgKG6kf4H58yA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH bpf-next v3 2/2] selftests/bpf: Add a test for open coded kmem_cache iter
-Date: Wed, 30 Oct 2024 15:28:19 -0700
-Message-ID: <20241030222819.1800667-2-namhyung@kernel.org>
-X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-In-Reply-To: <20241030222819.1800667-1-namhyung@kernel.org>
-References: <20241030222819.1800667-1-namhyung@kernel.org>
+	s=arc-20240116; t=1730327660; c=relaxed/simple;
+	bh=XJkfmlNmNyiKNdso7eQQzn14nbdGf46/0jApNo7RLGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CeEIW0dGLb4rnRX1WNVwZnrsGhcWhSQOf4nv2Xh9fMvkNmXgGayi5RNBx4yveuzXgY7zUeNQCgIqPQodQgl3PnrNN88NDHPix4ftoB3yw259l8w+9Yafoqk2hgxh5c9HMyRjRoWZ1e1oYBTnuF4GnemGUQ3QR8NELXyer7hVlmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ACFvFZQ9; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37ec4e349f4so214007f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:34:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1730327656; x=1730932456; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ni3lKjy3PY8T0mBefZFxGJ1yDDh/2Xy0r8Ncbm02QOA=;
+        b=ACFvFZQ99apX5bJNa/5Qcdvxh3fZxbbGkjmoTZE7M6Zi5bCUKg1QCmWwiaSeFpA18E
+         Ls959AVTzDA268w/VVERznrunw3+CBez7tTmIS9N5XFiAAXcNfNbT7x4j9vyepXCN75c
+         2jmpfpwkvz9FI89b7B9VpgNMI5gLomUqT9vdL4zbNCCgaX+bksiqysl2yRqTK3vBZMRR
+         H2mBgxdb21N9g3DdSyQsLa1LxBwFGHB0GfbbcZwqL9ITSV/L7HPR1YYGr2KX6fCjZc2Q
+         1uUKkFaKrUSWrovxwnL6sEdY/5Hg6anZ3+GU4+cT2stYv0jQxofCwKYlZQw5KE+vg3gv
+         PhDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730327656; x=1730932456;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ni3lKjy3PY8T0mBefZFxGJ1yDDh/2Xy0r8Ncbm02QOA=;
+        b=PfMBgl6RkSogCfZTd2NAXEezWq2at45qadZTDVtGB/uMHFFYjBuhJIPzSQ/rHWwAF9
+         WoIIg0WC17+mMBJJQJXe2qHOWFA5G5ATaXS3PjWevNBePjzSCou3Sapoccut6+Ss+Gqu
+         4PfGrWsoeMqgW7tbSt5TfEC8YSQy+2bFm684OqmUCZPJ1JFj/wAmXPbftG7jB7fGqbek
+         MZrJytr60/loMC66jwN3fObkK8Ucq5C+Ll4TnL0r9S4yzA79reQUUXFbia2gP8KdS6aW
+         4wWVVrIOw3Y186q8ONLzpPTLG0gpYoY+9aT6dRUJc3Fmcn6jOytBlrfYSwqXVLASJq24
+         cokg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZ7JkbREZASqWPujPsp4pece/rua2K1E33xhxZC4dd66y9TKMk1qhBJS2JY2Z/dv6FlQgktS11f4uG9Qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziokCeXu0Wvrf46D4p023eZq85bOoeiB5s+oPW7cpQO0EuHhJS
+	eEjEgUdPNHASHlOVCqgeVQY9ZdDmGNehK6vzCwImCcWRZhAuRJF7lzhaMmcMrA==
+X-Google-Smtp-Source: AGHT+IFmGsbAbkZzs0MbotIQ1EenBGrw3itupW8ZgVwCnUy7Fpt7cnZeTzVFA5Njzc0+8H3RJxO/QA==
+X-Received: by 2002:a5d:494f:0:b0:37d:4846:3d29 with SMTP id ffacd0b85a97d-38061162e68mr11660878f8f.28.1730327656290;
+        Wed, 30 Oct 2024 15:34:16 -0700 (PDT)
+Received: from elver.google.com ([2a00:79e0:9c:201:ca43:df8b:ca42:54da])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-381c10b7b75sm250245f8f.15.2024.10.30.15.34.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 15:34:14 -0700 (PDT)
+Date: Wed, 30 Oct 2024 23:34:08 +0100
+From: Marco Elver <elver@google.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: paulmck@kernel.org, linux-next@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
+	linux-mm@kvack.org, sfr@canb.auug.org.au, bigeasy@linutronix.de,
+	longman@redhat.com, boqun.feng@gmail.com, cl@linux.com,
+	penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
+	akpm@linux-foundation.org
+Subject: Re: [BUG] -next lockdep invalid wait context
+Message-ID: <ZyK0YPgtWExT4deh@elver.google.com>
+References: <41619255-cdc2-4573-a360-7794fc3614f7@paulmck-laptop>
+ <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e06d69c9-f067-45c6-b604-fd340c3bd612@suse.cz>
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-The new subtest runs with bpf_prog_test_run_opts() as a syscall prog.
-It iterates the kmem_cache using bpf_for_each loop and count the number
-of entries.  Finally it checks it with the number of entries from the
-regular iterator.
+On Wed, Oct 30, 2024 at 10:48PM +0100, Vlastimil Babka wrote:
+> On 10/30/24 22:05, Paul E. McKenney wrote:
+> > Hello!
+> 
+> Hi!
+> 
+> > The next-20241030 release gets the splat shown below when running
+> > scftorture in a preemptible kernel.  This bisects to this commit:
+> > 
+> > 560af5dc839e ("lockdep: Enable PROVE_RAW_LOCK_NESTING with PROVE_LOCKING")
+> > 
+> > Except that all this is doing is enabling lockdep to find the problem.
+> > 
+> > The obvious way to fix this is to make the kmem_cache structure's
+> > cpu_slab field's ->lock be a raw spinlock, but this might not be what
+> > we want for real-time response.
+> 
+> But it's a local_lock, not spinlock and it's doing local_lock_irqsave(). I'm
+> confused what's happening here, the code has been like this for years now.
+> 
+> > This can be reproduced deterministically as follows:
+> > 
+> > tools/testing/selftests/rcutorture/bin/kvm.sh --torture scf --allcpus --duration 2 --configs PREEMPT --kconfig CONFIG_NR_CPUS=64 --memory 7G --trust-make --kasan --bootargs "scftorture.nthreads=64 torture.disable_onoff_at_boot csdlock_debug=1"
+> > 
+> > I doubt that the number of CPUs or amount of memory makes any difference,
+> > but that is what I used.
+> > 
+> > Thoughts?
+> > 
+> > 							Thanx, Paul
+> > 
+> > ------------------------------------------------------------------------
+> > 
+> > [   35.659746] =============================
+> > [   35.659746] [ BUG: Invalid wait context ]
+> > [   35.659746] 6.12.0-rc5-next-20241029 #57233 Not tainted
+> > [   35.659746] -----------------------------
+> > [   35.659746] swapper/37/0 is trying to lock:
+> > [   35.659746] ffff8881ff4bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x49/0x1b0
+> > [   35.659746] other info that might help us debug this:
+> > [   35.659746] context-{2:2}
+> > [   35.659746] no locks held by swapper/37/0.
+> > [   35.659746] stack backtrace:
+> > [   35.659746] CPU: 37 UID: 0 PID: 0 Comm: swapper/37 Not tainted 6.12.0-rc5-next-20241029 #57233
+> > [   35.659746] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
+> > [   35.659746] Call Trace:
+> > [   35.659746]  <IRQ>
+> > [   35.659746]  dump_stack_lvl+0x68/0xa0
+> > [   35.659746]  __lock_acquire+0x8fd/0x3b90
+> > [   35.659746]  ? start_secondary+0x113/0x210
+> > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > [   35.659746]  ? __pfx___lock_acquire+0x10/0x10
+> > [   35.659746]  lock_acquire+0x19b/0x520
+> > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
+> > [   35.659746]  ? __pfx_lock_acquire+0x10/0x10
+> > [   35.659746]  ? __pfx_lock_release+0x10/0x10
+> > [   35.659746]  ? lock_release+0x20f/0x6f0
+> > [   35.659746]  ? __pfx_lock_release+0x10/0x10
+> > [   35.659746]  ? lock_release+0x20f/0x6f0
+> > [   35.659746]  ? kasan_save_track+0x14/0x30
+> > [   35.659746]  put_cpu_partial+0x52/0x1b0
+> > [   35.659746]  ? put_cpu_partial+0x49/0x1b0
+> > [   35.659746]  ? __pfx_scf_handler_1+0x10/0x10
+> > [   35.659746]  __flush_smp_call_function_queue+0x2d2/0x600
+> 
+> How did we even get to put_cpu_partial directly from flushing smp calls?
+> SLUB doesn't use them, it uses queue_work_on)_ for flushing and that
+> flushing doesn't involve put_cpu_partial() AFAIK.
+> 
+> I think only slab allocation or free can lead to put_cpu_partial() that
+> would mean the backtrace is missing something. And that somebody does a slab
+> alloc/free from a smp callback, which I'd then assume isn't allowed?
 
-  $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
-  ...
-  #130/1   kmem_cache_iter/check_task_struct:OK
-  #130/2   kmem_cache_iter/check_slabinfo:OK
-  #130/3   kmem_cache_iter/open_coded_iter:OK
-  #130     kmem_cache_iter:OK
-  Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+Tail-call optimization is hiding the caller. Compiling with
+-fno-optimize-sibling-calls exposes the caller. This gives the full
+picture:
 
-Also simplify the code by using attach routine of the skeleton.
+[   40.321505] =============================
+[   40.322711] [ BUG: Invalid wait context ]
+[   40.323927] 6.12.0-rc5-next-20241030-dirty #4 Not tainted
+[   40.325502] -----------------------------
+[   40.326653] cpuhp/47/253 is trying to lock:
+[   40.327869] ffff8881ff9bf2f0 (&c->lock){....}-{3:3}, at: put_cpu_partial+0x48/0x1a0
+[   40.330081] other info that might help us debug this:
+[   40.331540] context-{2:2}
+[   40.332305] 3 locks held by cpuhp/47/253:
+[   40.333468]  #0: ffffffffae6e6910 (cpu_hotplug_lock){++++}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
+[   40.336048]  #1: ffffffffae6e9060 (cpuhp_state-down){+.+.}-{0:0}, at: cpuhp_thread_fun+0xe0/0x590
+[   40.338607]  #2: ffff8881002a6948 (&root->kernfs_rwsem){++++}-{4:4}, at: kernfs_remove_by_name_ns+0x78/0x100
+[   40.341454] stack backtrace:
+[   40.342291] CPU: 47 UID: 0 PID: 253 Comm: cpuhp/47 Not tainted 6.12.0-rc5-next-20241030-dirty #4
+[   40.344807] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+[   40.347482] Call Trace:
+[   40.348199]  <IRQ>
+[   40.348827]  dump_stack_lvl+0x6b/0xa0
+[   40.349899]  dump_stack+0x10/0x20
+[   40.350850]  __lock_acquire+0x900/0x4010
+[   40.360290]  lock_acquire+0x191/0x4f0
+[   40.364850]  put_cpu_partial+0x51/0x1a0
+[   40.368341]  scf_handler+0x1bd/0x290
+[   40.370590]  scf_handler_1+0x4e/0xb0
+[   40.371630]  __flush_smp_call_function_queue+0x2dd/0x600
+[   40.373142]  generic_smp_call_function_single_interrupt+0xe/0x20
+[   40.374801]  __sysvec_call_function_single+0x50/0x280
+[   40.376214]  sysvec_call_function_single+0x6c/0x80
+[   40.377543]  </IRQ>
+[   40.378142]  <TASK>
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
-v3)
- * use syscall prog type and bpf_prog_test_run_opts()  (Alexei)
- * increase open_coded_seen count after checking size  (Alexei)
+And scf_handler does indeed tail-call kfree:
 
-v2)
- * remove unnecessary detach  (Martin)
- * check pid in syncfs to prevent surprise  (Martin)
- * remove unnecessary local variable  (Andrii)
-
- .../testing/selftests/bpf/bpf_experimental.h  |  6 ++++
- .../bpf/prog_tests/kmem_cache_iter.c          | 35 ++++++++++++-------
- .../selftests/bpf/progs/kmem_cache_iter.c     | 22 ++++++++++++
- 3 files changed, 51 insertions(+), 12 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-index b0668f29f7b394eb..cd8ecd39c3f3c68d 100644
---- a/tools/testing/selftests/bpf/bpf_experimental.h
-+++ b/tools/testing/selftests/bpf/bpf_experimental.h
-@@ -582,4 +582,10 @@ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
- 		unsigned int flags__k, void *aux__ign) __ksym;
- #define bpf_wq_set_callback(timer, cb, flags) \
- 	bpf_wq_set_callback_impl(timer, cb, flags, NULL)
-+
-+struct bpf_iter_kmem_cache;
-+extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym;
-+extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
-+extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
-+
- #endif
-diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-index 848d8fc9171fae45..8e13a3416a21d2e9 100644
---- a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-+++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-@@ -68,12 +68,27 @@ static void subtest_kmem_cache_iter_check_slabinfo(struct kmem_cache_iter *skel)
- 	fclose(fp);
- }
- 
-+static void subtest_kmem_cache_iter_open_coded(struct kmem_cache_iter *skel)
-+{
-+	LIBBPF_OPTS(bpf_test_run_opts, topts);
-+	int err, fd;
-+
-+	/* No need to attach it, just run it directly */
-+	fd = bpf_program__fd(skel->progs.open_coded_iter);
-+
-+	err = bpf_prog_test_run_opts(fd, &topts);
-+	if (!ASSERT_OK(err, "test_run_opts err"))
-+		return;
-+	if (!ASSERT_OK(topts.retval, "test_run_opts retval"))
-+		return;
-+
-+	/* It should be same as we've seen from the explicit iterator */
-+	ASSERT_EQ(skel->bss->open_coded_seen, skel->bss->kmem_cache_seen, "open_code_seen_eq");
-+}
-+
- void test_kmem_cache_iter(void)
- {
--	DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
- 	struct kmem_cache_iter *skel = NULL;
--	union bpf_iter_link_info linfo = {};
--	struct bpf_link *link;
- 	char buf[256];
- 	int iter_fd;
- 
-@@ -81,16 +96,12 @@ void test_kmem_cache_iter(void)
- 	if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
- 		return;
- 
--	opts.link_info = &linfo;
--	opts.link_info_len = sizeof(linfo);
--
--	link = bpf_program__attach_iter(skel->progs.slab_info_collector, &opts);
--	if (!ASSERT_OK_PTR(link, "attach_iter"))
-+	if (!ASSERT_OK(kmem_cache_iter__attach(skel), "skel_attach"))
- 		goto destroy;
- 
--	iter_fd = bpf_iter_create(bpf_link__fd(link));
-+	iter_fd = bpf_iter_create(bpf_link__fd(skel->links.slab_info_collector));
- 	if (!ASSERT_GE(iter_fd, 0, "iter_create"))
--		goto free_link;
-+		goto destroy;
- 
- 	memset(buf, 0, sizeof(buf));
- 	while (read(iter_fd, buf, sizeof(buf) > 0)) {
-@@ -105,11 +116,11 @@ void test_kmem_cache_iter(void)
- 		subtest_kmem_cache_iter_check_task_struct(skel);
- 	if (test__start_subtest("check_slabinfo"))
- 		subtest_kmem_cache_iter_check_slabinfo(skel);
-+	if (test__start_subtest("open_coded_iter"))
-+		subtest_kmem_cache_iter_open_coded(skel);
- 
- 	close(iter_fd);
- 
--free_link:
--	bpf_link__destroy(link);
- destroy:
- 	kmem_cache_iter__destroy(skel);
- }
-diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-index e775d5cd99fca579..b9c8f94574922099 100644
---- a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-+++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-@@ -3,6 +3,7 @@
- #include <vmlinux.h>
- #include <bpf/bpf_helpers.h>
- #include <bpf/bpf_tracing.h>
-+#include "bpf_experimental.h"
- 
- char _license[] SEC("license") = "GPL";
- 
-@@ -32,6 +33,7 @@ extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym;
- /* Result, will be checked by userspace */
- int task_struct_found;
- int kmem_cache_seen;
-+int open_coded_seen;
- 
- SEC("iter/kmem_cache")
- int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
-@@ -84,3 +86,23 @@ int BPF_PROG(check_task_struct)
- 		task_struct_found = -2;
- 	return 0;
- }
-+
-+SEC("syscall")
-+int open_coded_iter(const void *ctx)
-+{
-+	struct kmem_cache *s;
-+
-+	bpf_for_each(kmem_cache, s) {
-+		struct kmem_cache_result *r;
-+
-+		r = bpf_map_lookup_elem(&slab_result, &open_coded_seen);
-+		if (!r)
-+			break;
-+
-+		if (r->obj_size != s->size)
-+			break;
-+
-+		open_coded_seen++;
-+	}
-+	return 0;
-+}
--- 
-2.47.0.163.g1226f6d8fa-goog
-
+	static void scf_handler(void *scfc_in)
+	{
+	[...]
+		} else {
+			kfree(scfcp);
+		}
+	}
 
