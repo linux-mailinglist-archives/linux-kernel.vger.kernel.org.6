@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-388203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E202B9B5BF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:46:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50A289B5BFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:48:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CC6C1F22341
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:46:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAA71F242E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:48:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC901D2781;
-	Wed, 30 Oct 2024 06:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA2BD1D515C;
+	Wed, 30 Oct 2024 06:48:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="dz8GQSXP"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BNYqlyk6"
+Received: from mail-pl1-f193.google.com (mail-pl1-f193.google.com [209.85.214.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56DC18FC8F;
-	Wed, 30 Oct 2024 06:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5963B1D0E27;
+	Wed, 30 Oct 2024 06:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730270810; cv=none; b=Yg20dr7lKv2NfrDl17Gz1ET3+ssZ1dizsL4+/8KtfO1TF74sNRZHCDQyxWPZUcdYv9Ku90hkrxO/2+0UTHl5LKxdYrnZs9V7M7HmAiIuNwy56KbA8UWY7lVhzhh2/vSYTitKK3YLY7yXNNTeCJ6QG/iuKAb2RzUk7XmOHRFr34s=
+	t=1730270916; cv=none; b=H8KiDluz7fLFAIsatdpGbOq4H5MF/X1S01WI+Fs57jrSPkuh2lXFrK/zLrDAyPMojcPWtediBDKqv1PvbX7MKTdN3rZJY1T5MOpZppLtfJdBiUU3UmXpOX+VSFTrYRihpcQhstK0ls2qTJslr/DW9D+ry+Zet5Jf14+6nc6eY+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730270810; c=relaxed/simple;
-	bh=U8FWZ6SDqLWyS4j+r11B50+GOeGBfrXGbo421lmH874=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I35hI9GptB36CBqDHdXLmaaJUXwadgrhhYGT5d1vxwUX76FARr+A0xLhuL7GNRMjzCJs5dwxA+CiomFsmUKL9XUWWB+MRzru/bDfLR6FaNMZ/GqTqRVdWT5iFUj2m9UtxtPp37ZVVAkvMYrscTHfUTEaz9AbxVkmrHdDSodThSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=dz8GQSXP; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:From:
-	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=U8FWZ6SDqLWyS4j+r11B50+GOeGBfrXGbo421lmH874=; t=1730270808;
-	x=1730702808; b=dz8GQSXPOlAzMcPy1jac4g3/wbObnaXJuu0+umknJ+l/wjlTDXYBVBqEpWMIn
-	aqg5TLzB9LIuMy1DDr6Wf9QUMBgw9+Owtje5/WnvzZtl9GBHddPnZpZuday8q5CJatWFattpayJLh
-	NlF0zsgZ0372aplTkovYE4K+0AyF7PRCYe51yzGqGdSKqijk3auRSyu52oPGOdZzqCrn291cnVjOm
-	smu/cdJYUNENA3x/GDKzVaZagZlIdX8G1oS/Ep8hl9fOJDhqZ+MfHBs9rBE1CBmJyGLuNwBhDCXd4
-	X7ukaIFgTSPl1ALFyf7qDA6jqX/c4IvwP1+/yoaicgT4ogYPPw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t62TY-0008D9-On; Wed, 30 Oct 2024 07:46:40 +0100
-Message-ID: <58c58550-532a-4cfa-947d-ed56c6c5ba4e@leemhuis.info>
-Date: Wed, 30 Oct 2024 07:46:40 +0100
+	s=arc-20240116; t=1730270916; c=relaxed/simple;
+	bh=92RQnOORjAJsaNb2qDBDg22hmUK/J5GkQTPRwalOP1E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kNjy5bYkxfn7aR5R98TyZQLW3vRqmRrxQ4HBKHZ1tRkXRVFqWj5mdpd2HohaaNr6OQ0Ab4KWme+EmxZ4Fl+CF7uuhWXq6vhlqSUvtGafeKDWt6eL55XbwgL1nUSfiSchkZed1kAHjgBU/VSAJc8MhrSZw4Ey3LDcJJynUNx8KyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BNYqlyk6; arc=none smtp.client-ip=209.85.214.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f193.google.com with SMTP id d9443c01a7336-20cd76c513cso58139485ad.3;
+        Tue, 29 Oct 2024 23:48:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730270914; x=1730875714; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NLH+mb52MPyjIXhx1azIc5EcwOmHKk4FSK5JYKVOnRs=;
+        b=BNYqlyk6wc11Ulx0Ks/DLx8q8tXwfw+W/ZCYu6h3AsIXQNkj8j/VHqb9AwHYc+KsFP
+         pzAWvRyX/FdR3fAVQrKAiwOet1gD0GXFcMsh/HEiCPch3eXiUXfQBbus3Y6Bh/iEzxLp
+         vr/SXemFdDI4EYtDzvxCqFg28LAdpoDQRLLF1W6yUlb8X1ABZ+ZIZ+P68NQCuWHuHJVS
+         lgaQLBVhSBGGpwhiwiUvJ9wz/BxkQDNGtRzpXeMpzpNa7JafKMyCY1nV3u01HBDswT3e
+         /WFIFQDxwt+bpl9rkZMBXoEfMYl3mDz+oa31KAtFA4AjhwfMTNdTTCJsKy5gCB1BtRzu
+         voxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730270914; x=1730875714;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NLH+mb52MPyjIXhx1azIc5EcwOmHKk4FSK5JYKVOnRs=;
+        b=Q+Ub3htES2dK+lDpSZEyT5vIUTWoJQ0s6kN9uL84MWA97GyrMk+4yEMve+aFOIgSbo
+         LjYMQww6L3+eiXlv3NUglt/B4Q1XW/rduPNNlTqhE24OU6t7T5P6+TY1Tn4oSYzDsa47
+         xuOFJ5qzGtSwtXdoWRVGR3fDkYMRSYiLvF3AbL3FCbmMEOFkXa/HoDR/UG8MSl8AuMgY
+         aIyMAptDqO8t3lKQx8/zLw7IICpHJMbkf5+oYJRjhi2eLWbbABXa88l/C1yB+O8DW9D/
+         MHr0t3UDG5dHESSjjUe1UIJBvMJiZPCl/rY13IuNcz99tQUuoG9T7aFEbsbOoCuQnFg0
+         /pVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWTcsSLxMXHvQmTBdGknNKDz3hxI5/RFJHDjKEmrxAqWq+g1U//DsUsxhv72QifPaL7sIY2DyDC@vger.kernel.org, AJvYcCWZ+pAVU0nRx/pCsvtSiChBGDMyviPp219Uwlkfei69stcPvH6qgNad7ADoIqoM0Givsdqm5je93n9CdXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLCPj1BwTQX/6P+5ZjIHo5iCtliD5R5s4PLX4JKu5L9qu6D2vy
+	mwarnhATUyxGuWBjndf9Cd/VT16vnmAf+0bJL0n1FyK2Sbn6j3VV
+X-Google-Smtp-Source: AGHT+IGbovcA7DAuva0hpZ5aQsAvIcP9p5SceqDodQnH5kIGmYD19P1JUT1Hv70RIaRgZNs/qLZ9dw==
+X-Received: by 2002:a17:902:e5cf:b0:20c:5bdc:c228 with SMTP id d9443c01a7336-210f7508efbmr27270015ad.13.1730270913549;
+        Tue, 29 Oct 2024 23:48:33 -0700 (PDT)
+Received: from tom-QiTianM540-A739.. ([106.39.42.118])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-210bbf43460sm75989155ad.23.2024.10.29.23.48.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 23:48:33 -0700 (PDT)
+From: Qiu-ji Chen <chenqiuji666@gmail.com>
+To: mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl,
+	allen.lkml@gmail.com
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	baijiaju1990@gmail.com,
+	Qiu-ji Chen <chenqiuji666@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH RESEND] drivers:media:radio: Fix atomicity violation in fmc_send_cmd()
+Date: Wed, 30 Oct 2024 14:48:24 +0800
+Message-Id: <20241030064824.6122-1-chenqiuji666@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-To: Sasha Levin <sashal@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
- torvalds@linux-foundation.org, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org> <ZyAUO0b3z_f_kVnj@sashalap>
- <d75c9c2f-353f-464c-89d3-8c18dbfb4770@leemhuis.info>
- <ZyDHZHjxwmK1Ow9e@sashalap>
- <292de8f0-49e7-49c8-a327-b279924a5794@leemhuis.info>
- <ZyD6QioGPyJUXI5r@sashalap>
-From: Thorsten Leemhuis <linux@leemhuis.info>
-Content-Language: en-US, de-DE
-Autocrypt: addr=linux@leemhuis.info; keydata=
- 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 n7RI
-In-Reply-To: <ZyD6QioGPyJUXI5r@sashalap>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1730270808;c96c0a51;
-X-HE-SMSGID: 1t62TY-0008D9-On
+Content-Transfer-Encoding: 8bit
 
-On 29.10.24 16:07, Sasha Levin wrote:
-> On Tue, Oct 29, 2024 at 01:46:23PM +0100, Thorsten Leemhuis wrote:
->> Hmmm. After all those mails in this thread improving (and maybe even
->> separating & somewhat automating[1]) pending-fixes to me still sounds
->> like time better spend, as then more things could tested before they
->> even read a PR; but yes, I understand, the timing/order of merges can
->> mess things up, so testing on PR time has benefits, too.
-> Automating how? Having it be generated more often?
+Atomicity violation occurs when the fmc_send_cmd() function is executed 
+simultaneously with the modification of the fmdev->resp_skb value. 
+Consider a scenario where, after passing the validity check within the 
+function, a non-null fmdev->resp_skb variable is assigned a null value. 
+This results in an invalid fmdev->resp_skb variable passing the validity 
+check. As seen in the later part of the function, skb = fmdev->resp_skb; 
+when the invalid fmdev->resp_skb passes the check, a null pointer 
+dereference error may occur at line 478, evt_hdr = (void *)skb->data;
 
-Have the list of -fixes trees which a "no rebases" policy somewhere and
-a script that regularly merges them into a tree. But as indicated, it's
-not that easy in practice and can't be fully automated, as there will be
-merge conflicts occasionally. But Linus wants to see them, so they will
-happen at pull requests time, too -- doing it constantly has the benefit
-that you can notice and resolve them ahead of time.
+To address this issue, it is recommended to include the validity check of 
+fmdev->resp_skb within the locked section of the function. This 
+modification ensures that the value of fmdev->resp_skb does not change 
+during the validation process, thereby maintaining its validity.
 
-How much work this is: no idea, maybe Stephen could help answering that
-from experiences for pending-fixes. But I expect conflicts should not
-happen as often as they do when it comes to merging -for-next branches.
+This possible bug is found by an experimental static analysis tool
+developed by our team. This tool analyzes the locking APIs
+to extract function pairs that can be concurrently executed, and then
+analyzes the instructions in the paired functions to identify possible
+concurrency bugs including data races and atomicity violations.
 
-But that obviously only helps outside of merge windows.
+Fixes: e8454ff7b9a4 ("[media] drivers:media:radio: wl128x: FM Driver Common sources")
+Cc: stable@vger.kernel.org
+Signed-off-by: Qiu-ji Chen <chenqiuji666@gmail.com>
+---
+ drivers/media/radio/wl128x/fmdrv_common.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Ciao, Thorsten
+diff --git a/drivers/media/radio/wl128x/fmdrv_common.c b/drivers/media/radio/wl128x/fmdrv_common.c
+index 3d36f323a8f8..4d032436691c 100644
+--- a/drivers/media/radio/wl128x/fmdrv_common.c
++++ b/drivers/media/radio/wl128x/fmdrv_common.c
+@@ -466,11 +466,12 @@ int fmc_send_cmd(struct fmdev *fmdev, u8 fm_op, u16 type, void *payload,
+ 			   jiffies_to_msecs(FM_DRV_TX_TIMEOUT) / 1000);
+ 		return -ETIMEDOUT;
+ 	}
++	spin_lock_irqsave(&fmdev->resp_skb_lock, flags);
+ 	if (!fmdev->resp_skb) {
++		spin_unlock_irqrestore(&fmdev->resp_skb_lock, flags);
+ 		fmerr("Response SKB is missing\n");
+ 		return -EFAULT;
+ 	}
+-	spin_lock_irqsave(&fmdev->resp_skb_lock, flags);
+ 	skb = fmdev->resp_skb;
+ 	fmdev->resp_skb = NULL;
+ 	spin_unlock_irqrestore(&fmdev->resp_skb_lock, flags);
+-- 
+2.34.1
+
 
