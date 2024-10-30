@@ -1,54 +1,75 @@
-Return-Path: <linux-kernel+bounces-388980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B79B79B66EE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:03:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1759B66E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:03:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75CDE28274D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:03:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F0AEB24014
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FB0920F5D5;
-	Wed, 30 Oct 2024 15:03:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A921F80A0;
+	Wed, 30 Oct 2024 15:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="qomTIikI"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLpx3BRu"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2009F200CA2;
-	Wed, 30 Oct 2024 15:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C22EE1F4FA8;
+	Wed, 30 Oct 2024 15:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730300611; cv=none; b=fSLnKluJDFy8cQ5uINPhoHsKjosiiOTeF6XdRmLU/BB5HZ7On6Tto8iPB2AXUMJizjICbB/tfMHL/a8XKleFweHtFz4876vlwDvxfH7QLFP6wg1tOvRaQi+WtJwBF3pR6F4d9bRXMcsoAoiv2tdtLxDBBByIiQBGZXf2516TNkg=
+	t=1730300580; cv=none; b=VzMNp1h45GHNvRnpjdALTR5zucUjDW3/HXgEDPQy5C3qgh4QV8d3JObjot64moyfRAPSA/evmg0euOCo/1C7/ytA/kHsujgbpACqx/kWDQxlABIzEzvHrbyLsMhKcL70IConihMmGniRF6eBxC9/g32kjUSkCho4THrOa8aknpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730300611; c=relaxed/simple;
-	bh=NAJDFpr9nmdU19C3JKcxMzbLsCujnceVqhZ/RKnEwwg=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Af+TFKHbaNb+31NyYomIGXM73EbTT6cTqSu98SsoWPf9nOox0LZkrVYTYwFp+I+wNaLYmJk8frvjgX/RPZmzBKdUFVwnUGYm49zXP0bFaKHdfny3PyILmseqRbzytFLMMDTu/p8ax9QRp+1oc96YfhX0b314DFEoItACsgBOMu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=qomTIikI; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730300534; x=1730905334; i=metux@gmx.de;
-	bh=NAJDFpr9nmdU19C3JKcxMzbLsCujnceVqhZ/RKnEwwg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=qomTIikI/OgfmxAbFKh1e8iCRJShu7EnlgU5G434TkB+7QieI60zcRnRQmNHY7mL
-	 26XECiyiNu12zXTWRy2asSgHeF6VwbBHM3aDnQ3uox6d+N5j3vyz2V29nf9ZEHI/7
-	 qUlSXTqxVipxXZ1JSehQTzpHDHQPSPiL/eaweFb8E7BUCEPOvfqCWNoLR7qjkN1j/
-	 p49vWpG4avdBGfWZrfUUn1QQPJYBKupzAA27zZiM0BrIysUJtE3I4oi18t2KU2Jgp
-	 NR5BKuTzLj4AssNq/jcoRi8JEym9/1eHXVRmJDUQ/Hacah+zbe10IoOhncuicwk4Q
-	 B7fK/ijaayh5nLVM0A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.178] ([77.2.112.201]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M5wPh-1tCUne2tcR-003w9y; Wed, 30
- Oct 2024 16:02:13 +0100
-Message-ID: <0369c687-db33-4665-b3dc-143000ef2e47@gmx.de>
-Date: Wed, 30 Oct 2024 16:02:48 +0100
+	s=arc-20240116; t=1730300580; c=relaxed/simple;
+	bh=vwtgccB7FGWGz25PUGScEkFA45oRKl5HCNKi0pd5liA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e+s5BG0ZsH2ehcONR+dJ6kG2alMkRxIufDzPUjRYoB8sOhG6wtqdWhWgoriaiqXezF2hLzzeIU0ouo08Y2ApRgs9StlKJu2ve+y5WEt1ZPQOjimfJuR4xGjpyjxP31yMLucZsMBrCj0+CM05gljc8XRXtRugCVU2n42P79+Rg0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLpx3BRu; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e592d7f6eso4708455b3a.3;
+        Wed, 30 Oct 2024 08:02:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730300578; x=1730905378; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=PmKgwR+LdwuK0RxQ8YvMV5Ly4zqIVxv2OMzb7E5lgEo=;
+        b=DLpx3BRuow4Js6gRWGgBNyCBP7tOIiyXKwL96Sgj3RfaYJVNn+V8ZtiLNDXK9FBnlp
+         k2pFx6E9pSaHPyg1jkoy19sScTD9YWBvETOpl+U5bJut+eWlPLyz249nTQbd+qSrQJET
+         bEkorJzQIlQJipRCKvZleLNb9RQzZb0+NJ2L/LSKKcd1wKu5FD0aqspCbSCpKS27jz6n
+         x7v8nSUqqefpbQZE6hkk9ZQrgoZs0EOBOtK4JHoOOzLzLcGHxmYcBI/pORwgFGSnDutd
+         64BXZzljljwmvvPxzYkg2i951APCqN8ith8EnaoSV6yg86fYCP60c1QDS0wpm5tuVcH4
+         b7lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730300578; x=1730905378;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PmKgwR+LdwuK0RxQ8YvMV5Ly4zqIVxv2OMzb7E5lgEo=;
+        b=g4jDAMiePKi2qhXZhB1ppiNDVLEOTJfN3YCWj7kE3HvrtuTnZo9eZeH4MIRejjSDAl
+         XqKbFgKgyhoTj3KX6Jsi6b4D6Erf66EmtCq/NKd+RwDxKKJY9OzZKEycbWyzsj29EN6K
+         w7qwWvkRN5jGxffPmt2LYL1rgu203xfCFXopQn5Qu38Df0p56gp6SNM3Kzz1SSKPByAY
+         HEc6HRQhmKzuasgDTgaNoD404AjnLJTpP1koluZOqsjsnJ8F8Q4LI2BVUBzdX6vwaaQY
+         0no+/X8ZtJWa9ne0B6Q7kjskmPfqzfVo4gcThuU69chdslz4hrRkUkrmobf3xXkISRW0
+         dHZw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBKludhLFT4goZLkWjIzBif1nJfUsV3o0/wMSmN1gyxhkCj0MKZu945dL+/SSpZntQcOrSletrfc0a@vger.kernel.org, AJvYcCUa2729H9e62rMr3kKlvoBRxTxy58OgGP9iZlnRpbypFPcuj6N4eQFa8VXx62ecgml39X/Sw6iZv5QAgoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgTk08geJLlZU5kiYuUzYJRW7Y2+0ROqHbx9vHCGHOhUtBpc4W
+	OrI7Cat81ahzcnzC8qG3sMCwenRul8cO9Zy3oPhXeE3HPZ0iUFDO
+X-Google-Smtp-Source: AGHT+IGZc0jedsqhBEQS2ZKpKd15C0NSSXsroPkxzIz9wIvlOZOoNV13GUf37ZbaOLkzYZWkwpflCA==
+X-Received: by 2002:a05:6a00:3cd1:b0:71e:1b6d:5a94 with SMTP id d2e1a72fcca58-72062f4c06bmr18971825b3a.5.1730300577924;
+        Wed, 30 Oct 2024 08:02:57 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a0bc94sm9322711b3a.119.2024.10.30.08.02.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Oct 2024 08:02:56 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <8a68babc-b4f5-42f2-bc93-ce8f1b7a14e1@roeck-us.net>
+Date: Wed, 30 Oct 2024 08:02:55 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,99 +77,92 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Maintainers now blocked from kernel.org mail access [WAS Re:
- linux: Goodbye from a Linux community volunteer]
-From: metux <metux@gmx.de>
-To: Hantong Chen <cxwdyx620@gmail.com>, tytso@mit.edu
-Cc: ajhalaney@gmail.com, allenbh@gmail.com, andrew@lunn.ch,
- andriy.shevchenko@linux.intel.com, andy@kernel.org, arnd@arndb.de,
- bhelgaas@google.com, bp@alien8.de, broonie@kernel.org,
- cai.huoqing@linux.dev, dave.jiang@intel.com, davem@davemloft.net,
- dlemoal@kernel.org, dmaengine@vger.kernel.org, dushistov@mail.ru,
- fancer.lancer@gmail.com, geert@linux-m68k.org, gregkh@linuxfoundation.org,
- ink@jurassic.park.msu.ru, james.bottomley@hansenpartnership.com,
- jdmason@kudzu.us, jiaxun.yang@flygoat.com, keguang.zhang@gmail.com,
- kory.maincent@bootlin.com, krzk@kernel.org, kuba@kernel.org,
- linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org, linux@armlinux.org.uk, linux@roeck-us.net,
- manivannan.sadhasivam@linaro.org, netdev@vger.kernel.org,
- nikita.shubin@maquefel.me, nikita@trvn.ru, ntb@lists.linux.dev,
- olteanv@gmail.com, pabeni@redhat.com, paulburton@kernel.org,
- robh@kernel.org, s.shtylyov@omp.ru, sergio.paracuellos@gmail.com,
- shc_work@mail.ru, siyanteng@loongson.cn, tsbogend@alpha.franken.de,
- xeb@mail.ru, yoshihiro.shimoda.uh@renesas.com
-References: <20241024173504.GN3204734@mit.edu>
- <20241024181917.1119-1-cxwdyx620@gmail.com>
- <e3559794-ab4a-48f2-8c28-52ef46258051@metux.net>
-Content-Language: tl
-In-Reply-To: <e3559794-ab4a-48f2-8c28-52ef46258051@metux.net>
+Subject: Re: [PATCH v2 1/2] hwmon: (pwm-fan) add option to leave fan on
+ shutdown
+To: Akinobu Mita <akinobu.mita@gmail.com>,
+ Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-hwmon@vger.kernel.org" <linux-hwmon@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ Jean Delvare <jdelvare@suse.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20241026080535.444903-1-akinobu.mita@gmail.com>
+ <20241026080535.444903-2-akinobu.mita@gmail.com>
+ <OSQPR06MB72524578F1E5BA93772A12728B4B2@OSQPR06MB7252.apcprd06.prod.outlook.com>
+ <CAC5umyjtCaYPjtgDnJ69c87w825MFSHgm92JA1kWORwP4Hdjww@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <CAC5umyjtCaYPjtgDnJ69c87w825MFSHgm92JA1kWORwP4Hdjww@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jSWmplSFQgV90c2A0bkkvj2t8ExnIUMHHQD7NlbYYqtnVH71j/A
- Pj4uZIi6YPufmEMjudXa4dJHIygmTV1wIFJJkHGM+GIBFRAfnlev+sgkCZr+MF54lQRidxS
- bkG2HCXJq0essmv69s27h4WdycA0Rnb+4K1fnTHuD/qBR+mEDSBS53MElG91weJLYtaeg5k
- OTPFgaQ3fak8gIXNj4JDQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WLKWUYisdM4=;2yNj/laS7SIY5FYvJFi4MhOmvxZ
- pHFbD0J1kye994bqbqLhdCTnBHW8Ug5JybvfzVUSlvhHAACTecoQE51xKKnV5hpKkUhCo8yLr
- /EvJ6VglOAgdSAY02WiKyUBPuOArNFiBamR/Fukdo2XJTgsXt550Q9Uu3s0mVOwxlXCMnWMns
- Fn7g+nMUVDwZg2peIk913PvjXMFh4d9Lkvh3kvC90QEiN4qogLfcOyB8IyykJPV3DQeeXp5hf
- +MrDjTpn28aqOi4W0rgu+IoyVD3neDdXwidld0Di4C2B0Xjeof79KSNCRhE6HCopzETXFL3/P
- Eq20+VJdDS4NGHO7dtKR96RqKlqckwmu3AywKAhNuZLL3xf4qG/GG7lFzucn1PmOwB9qzuDQ0
- T83E1gkoEctHd2TIp9iZslkwtRvZoLEaBVqlMchJ2WhOacIxu0B7j2GBH/lqButUW3kxkamyr
- QKLpEtwiYtP4mMfbOjHeKNuT587VBOcJ0soGtjcr5abLWdDOKEep1at+A6hNDrbBSP1f6/IBo
- BK+2+hzwJ3piZW/Yn1eaXBx6/3MBI0Lr+ftdHokUiS61Mp+GLxSd3NlP9E5Ud6tWQlNEOE+TO
- 3A3+h1iPb9qNj+J4fjqMCG2p0nA6l58zMiSBfI4P0CjndwksOOuTcigJ6T1hzsfD+NMuWWKR6
- sAOmiaHvt7qnuiw6srIxEdbhvlRklDpq1Rv8Lrce6Ts8Z8qBYDnh7sqT0QOx+5KI9Lsu5iX3q
- 5le4iVFFC4QhG4eqQ5l+1SnoJ0wgVAVlJ5k6YKhwZo8jzqS56dXAir9zu5tn+DGzJFsWUTgbd
- rbwM2pncFYXiGznL6foV5OhA==
+Content-Transfer-Encoding: 8bit
 
-Resending with another address, since the other one is
-hard-blocked / censored by kernel.org mail server.
+On 10/30/24 07:55, Akinobu Mita wrote:
+> 2024年10月29日(火) 11:35 Billy Tsai <billy_tsai@aspeedtech.com>:
+>>
+>>> This adds an optional property "retain-state-shutdown" as requested by
+>>> Billy Tsai.
+>>
+>>> Billy said:
+>>>   "Our platform is BMC that will use a PWM-FAN driver to control the fan
+>>>   on the managed host. In our case, we do not want to stop the fan when
+>>>   the BMC is reboot, which may cause the temperature of the managed host
+>>>   not to be lowered."
+>>
+>> I confirmed that it works properly.
+>>
+>> Reviewed-by: Billy Tsai <billy_tsai@aspeedtech.com>
+>> Tested-by: Billy Tsai <billy_tsai@aspeedtech.com>
+> 
+> Thank you very much for testing.
+> However, I plan to change this option to device attribute
+> (/sys/class/hwmon/hwmonX/retain-state-shutdown) instead of the device tree.
 
-On 30.10.24 15:33, Enrico Weigelt, metux IT consult wrote:
-> On 24.10.24 20:19, Hantong Chen wrote:
->
->> What LF and Linus done will inevitably create a climate of fear where
->> contributors and maintainers from the *Countries of Particular Concern*
->> feels endangered.
->
-> And it's getting worse:
->
-> They're now blocking mail traffic on kernel.org, even from maintainers.
-> (my whole company is hard-marked as "spam"). Anything @kernel.org -
-> lists as well as invidual inboxes.
->
-> Still in the process of compiling evidence report. Anybody out there
-> who's affected too, let me know - will be added to the report.
->
-> I wonder when this one will be blocked, too. (I've still got many more
-> left).
->
->> This is clearly NOT what contributors truly want. People from around
->> the world
->> once firmly believed that Linux was a free and open-source project.
->> However,
->> Greg's commit and Linus' response deeply disappoint them.
->
-> Indeed. The trust that had been bulit up in decades is now finally
-> destroyed - just by a few mails.
->
-> Linux has been turned into POSS, politware.
->
->> Open-source projects might be international, but the people or
->> organizations
->> controlling them are not. This is the source of concern and
->> disappointment.
->
-> That's why those projects should never depend on just a few individuals
-> or organisations in one specific country.
->
->
->
-> --mtx
->
+
+No, I won't acccept that.
+
+Guenter
+
 
