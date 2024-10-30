@@ -1,144 +1,187 @@
-Return-Path: <linux-kernel+bounces-388187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3429B5BBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:30:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51D49B5BBD
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 07:33:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC6A284417
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:30:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 36281B2268B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 06:33:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3CCD19DF95;
-	Wed, 30 Oct 2024 06:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B35E1D1F6F;
+	Wed, 30 Oct 2024 06:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b="iBt/CG11"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aibMDmx8"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1279E17996
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF6D63CB;
+	Wed, 30 Oct 2024 06:33:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730269831; cv=none; b=abSjmo0IT94tr5dB8+GT7PUvjhnXhxHm/erm+4IEgFWdMs0Ewu6CQF7xDmDQ2HiCxmYPMfArQNz8f7+lcJkxUCnWnzID442yF39dogxOH0x/KjJRculXCLDztjG9bX8pikVqPg5Yoq1nO3WtNiS9cMG22HwOFsYnH8c9Kd83szU=
+	t=1730270003; cv=none; b=sqoHm4p84qJbhPfRRpqYtuYvN7zqBhQ2/LBaXtCkdMeiSpnuw4Q2BVzfAUELHD3nqd0xH9YY+qkGU+yRGl9GsYM6ULSp6t9c1IKrW5m3pfhqxVbLw+8/d55wAycTkRru73L0QnRRzA5zLXhiBTO5dLFRhxScAY/DqoHj+g4Feso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730269831; c=relaxed/simple;
-	bh=uNVBmJWUvavQT91MvneBZBCJhNW4tIU0pWqZ+3uqi9I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TOR9ImFiBDE5HeTzEKW66w/RO2fJGafMK5VT6aHeUSQKL3XkocirD5I/bkCbBeTJyGa4HesCq0G/1yOtaw1AAMQ0OFkZzMfHuN6yuXiQUsOCfx1V969UIGzHtlyFoWgNgBDJoVXXAynYTvfXUB2nOIbbhCJVXXMH11ZLV9+mqO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=efault@gmx.de header.b=iBt/CG11; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730269825; x=1730874625; i=efault@gmx.de;
-	bh=glsVwdX8HiadQS6WYSIKYvD8/B0U9fUdOhxwFm/yWWQ=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=iBt/CG11qvkmNqddAvR9tU3ptlhpxp00fH/f42TunE7Dcfrh1GHmEzIwUsmv65z/
-	 rmKxf/Lgh1100IQCm6hVeL5w7BOzvb+q3PY+tgUh/RAWDiPBAm0fvW9zLMW92Of5r
-	 7u/2Zmwl8rCA36kDGwvGK1RHztOhCzKY9aWZ1xL/PTsdkmVSjEdC7pPUk24Xc09v3
-	 sB72o4HE88yEXQE54XAN/hMluyk7jngCsRzGJij757VM1k4s9npD2mZ9Sbx497rGu
-	 tp0SwXrgC7fnMNfoOuvMth0TqeI4ogufxKYnh0DshYrFRVfFvgChHmN84hpD67VyY
-	 RIThBEejs/YQBOaCaQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from homer.fritz.box ([91.212.106.7]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Md6Qr-1tfMuI1OHD-00fSKv; Wed, 30
- Oct 2024 07:30:25 +0100
-Message-ID: <fda44f45fe5aea109ccc3e20c7e583b4b649a728.camel@gmx.de>
-Subject: Re: regression: mm: vmscan:  -  size XL irqoff time increase v6.10+
-From: Mike Galbraith <efault@gmx.de>
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Date: Wed, 30 Oct 2024 07:30:24 +0100
-In-Reply-To: <88ae633aa910c7e320b89e5f4779d472f7cffffb.camel@gmx.de>
-References: <88ae633aa910c7e320b89e5f4779d472f7cffffb.camel@gmx.de>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1730270003; c=relaxed/simple;
+	bh=JkKmcioEchHN6SSzjPu+rsMYp/BSELwDzX0MuJ3+zZo=;
+	h=Date:From:Subject:To:Cc:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BOeyrSa6wafiof1m8QHCnM02YCrinWAaEZ4elZQQz2NmkRX2TEOxDevnC/L22Q8Ct+bFJhsx5X9ICJ5E1HBhLnk8Xble0eVCqR8qdTgS7YHmS9b8WUB1lDcpTTVfBb9smroh7gVkTbL87PV0GRXizHl1M/2KUjc7NPWos0324sQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aibMDmx8; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a0c40849cso1025553666b.3;
+        Tue, 29 Oct 2024 23:33:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730270000; x=1730874800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:cc:to:subject:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tQB2skrqNyBBtXr9NvGq3k5U2F5Farr1AhF3+r/DnZY=;
+        b=aibMDmx8YdW19MXdaR+LgkV+trkjCxP4Nno88xv1Jfbo5t6INgQXkK3kwux7z6waCX
+         ioVi8YbuaZET0u37uIIG0FooGqu71SyBmKIqW9FN9uPWV/eADFu6sboLx56OPFj45Cxb
+         tD6Bt0HF+4o4GjljgSDoig6RDU7f1CvW/gasR4INrp2g0oFRMVLNMQPuW1oZY5VFiVlx
+         dnpTq+ScGDncDvd4zQGeB72kubddxgtnjuC1n7v3KSNqB3aJHEF1D+l1pmfvTZEZBig1
+         IwKTbmuUaFvzw/0OwxZt4YprgHTq6puYxNgHZcb7OgUmO7uB4lrsxpWMfEfkuZzpDo3w
+         EpQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730270000; x=1730874800;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:cc:to:subject:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tQB2skrqNyBBtXr9NvGq3k5U2F5Farr1AhF3+r/DnZY=;
+        b=ws/y2dZJHjYXXcByaEdS93P/lTtXWbZAH5rJ+gO7V3Feq2H4iHXVe/tD5eDL7ACx1K
+         tGceIr0lJq5OhhcRJ1VM9vhhr9Os6+JB2DrlLKsde0Ol7HgylDd9qOMP6K07lL2FA5zC
+         +0H6I5SvGYMZqZ086dlam1ucDK1REvZ761zaesVImw8KrUmI7Bg21kKTY0EiTWdUn681
+         PQkxOGsDe6N75VgrSk3n1N/2h6hRE36Odu8AhQp7uE5Qs4qeReRCygotSEzhfqQ0iucp
+         1iXzeilLVSDe+9pn6SkDHMgfpTTqrIGsQ5xzxnOz3FcEEkYo05TAnEc/ASWo95G638Sx
+         1KFA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqezj/AoPg21rnYyGAR/M3VDsu5zMdI/w3dpPLvSPsyKrw7Ln5HDT+VrXbImulJOd9Hto6uN16teSrc6r2@vger.kernel.org, AJvYcCXBlA9CBUlKA4QcrFD1s9+UKzz0sq2geQI6Gmn/9q5aunpOiDox4enMHZ5Xo6uWM5Ppb17zK1cchn3bUA==@vger.kernel.org, AJvYcCXpKxaJz/Ra4XUZAVuIxqccjZ77Ay7IZp5VIaW3dfnmXgKtFJ2/ILMiKgef7S1rrKvAyGHTQgE6HEap@vger.kernel.org
+X-Gm-Message-State: AOJu0YwO1ao4RfUC8z6AzAVjwGoC0aKEB8auwfQqxkSh4M2tCWsPkziQ
+	8yDVifxg0rQEXki3/Jk0BWjcW2IelcegpaTQGej/eHsvgW3H0Tqo
+X-Google-Smtp-Source: AGHT+IGoO/JgCl6tIFd8tMOpxidHIIxUPkp1DnQ/++FPlMXZXQ2ix6vSKLM04UkK2EC6h5bxjO2Xow==
+X-Received: by 2002:a17:906:6a0e:b0:a9a:2afc:e4da with SMTP id a640c23a62f3a-a9e3a7f433bmr177110766b.63.1730269999630;
+        Tue, 29 Oct 2024 23:33:19 -0700 (PDT)
+Received: from [10.34.27.4] ([95.183.227.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9b30c7adadsm544485066b.175.2024.10.29.23.33.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2024 23:33:17 -0700 (PDT)
+Date: Wed, 30 Oct 2024 09:33:07 +0300
+From: Yassine Oudjana <yassine.oudjana@gmail.com>
+Subject: Re: [PATCH v6 1/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
+ Pull pinctrl node changes from MT6795 document
+To: Rob Herring <robh@kernel.org>
+Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, Yassine Oudjana
+	<y.oudjana@protonmail.com>, Andy Teng <andy.teng@mediatek.com>,
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Message-Id: <7VO5MS.DLTH7ISEUBUE1@gmail.com>
+In-Reply-To: <CAL_JsqJ864ZM8qgqfuyKsS5H=gsVm=nOrikQ4cuObEVBJX75JQ@mail.gmail.com>
+References: <20241011120520.140318-1-y.oudjana@protonmail.com>
+	<20241011120520.140318-2-y.oudjana@protonmail.com>
+	<20241011165640.GA2475122-robh@kernel.org>
+	<2608306c-da19-4160-b0c7-dbb8935abc42@collabora.com>
+	<CAL_JsqJ864ZM8qgqfuyKsS5H=gsVm=nOrikQ4cuObEVBJX75JQ@mail.gmail.com>
+X-Mailer: geary/46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:RlNjx33EzOchBH3gnRG39zrzvE7EfsQiRS5ZltKZVWG8azHM5kc
- vTRqJcBiP+WQGCXrDePB94XIKF1uFai5OheFCYKHQpwZ5fhDfo3bm8Icb0ilzZdeUm3UCu6
- k9TNGcrERC7CLfWL+i0ReqFB4j+/v5TKjMvCby2cEjXm5X3+rFHXdUR6HavAdMnTCv5T7JW
- saOl1nj6HeALw5IkCGayw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:Its+Z6y3OmE=;T95pdACs8D5H5BX5PmTavqU8BMx
- bMfD1+QDVJ4IUebisaRBgpCH/jbCDm27zmeIZt6Jpr1yLQ+cnjylbp8uBULrPlK8S0p5zuoNQ
- VYXiB4lDhEyjf7+mKfDiDgC2HBpENjUyG2H5JDHR367zMsCAYVFrJm4ANONsnE12lduVqqQ02
- 6hFsyDmlGCoZJqlEuEKNx+fiAYI8P0NN1jXofnBc2DiVy8iq1DyZhHXKwPzAjb7gOVSxz6dg0
- 3CjxaYOQ3TRFGtwrM4/XNnPypufs2wlUWyQwoTufmMh/2F8BMJr6maTnxngQ2XuefKVlPYvYz
- DU5PzIPx9ruOux2T5OLKq9T1HRfMi9rJkib8q8zw8s3QlcJD39SvVXy23neOjosRT3s7AS5YM
- Q9OQYtO6usH8E/OfP2FqU+bE6ZrfRSbg+AGpVK3x9Z27c1EbfUw9yHnNvyQlzA3GjFhkEwqoh
- 7oxHwvLRfm2UOG5NjeGgj7Oz7/uQHddWdMihl67vIUi41tFkBFcuHwEQu6VhO6Up0c0SQ4fBw
- p3HBLvkD0EoAPEWbJ3vZjVcDKYRxc7ctpNOm27cbj5qoXU2OooMxFcJUXOnRwl0+CjKKkTYUv
- DuC4Tavy1v7xS9+AEe1Gnav9hnUHgs6Qwl7BUNr4vp0HHgVSxR7+vC0tGj48i5nb20D5NWaQc
- ADymaCWsPiEJpVSU/c4nN/w0/rw42tX2hIiM4iJWk1exzxs0uR4lUWcqgy97ORjbYkhCpoy9o
- 4uFhhaTImwSiEBbzErNzZ4ysXWpp+W3/AJLji1VP8PVnr/lKN3IHo+vfkJEaqNNWy56sqwExo
- HBs/hV+xw0iQTH7EXFTwW2YA==
 
-On Tue, 2024-10-29 at 13:03 +0100, Mike Galbraith wrote:
-> Greetings,
->
-> I've noticed size XL cyclictest -Smp99 wakeup latency spikes for some
-> time now, but due to bandwidth etc (ie laziness), never got around to
-> taking a peek until today.
 
-isolate_lru_folios() dropped off the irqsoff radar with the below.
+On Mon, Oct 14 2024 at 14:02:37 -05:00:00, Rob Herring=20
+<robh@kernel.org> wrote:
+> On Mon, Oct 14, 2024 at 3:27=E2=80=AFAM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>=20
+>>  Il 11/10/24 18:56, Rob Herring ha scritto:
+>>  > On Fri, Oct 11, 2024 at 03:03:46PM +0300, Yassine Oudjana wrote:
+>>  >> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>>  >>
+>>  >> mediatek,pinctrl-mt6795.yaml has different node name patterns=20
+>> which match
+>>  >> bindings of other MediaTek pin controllers, ref for=20
+>> pinmux-node.yaml which
+>>  >> has a description of the pinmux property, as well as some=20
+>> additional
+>>  >> descriptions for some pin configuration properties. Pull those=20
+>> changes
+>>  >> into mediatek,mt6779-pinctrl.yaml and adjust the example DTS to=20
+>> match in
+>>  >> preparation to combine the MT6795 document into it.
+>>  >>
+>>  >> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+>>  >> ---
+>>  >>   .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 38=20
+>> ++++++++++++++-----
+>>  >>   1 file changed, 28 insertions(+), 10 deletions(-)
+>>  >>
+>>  >> diff --git=20
+>> a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml=
+=20
+>> b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+>>  >> index 3bbc00df5548d..352a88d7b135e 100644
+>>  >> ---=20
+>> a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+>>  >> +++=20
+>> b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctrl.yaml
+>>  >> @@ -111,12 +111,12 @@ allOf:
+>>  >>           - "#interrupt-cells"
+>>  >>
+>>  >>   patternProperties:
+>>  >> -  '-[0-9]*$':
+>>  >> +  '-pins$':
+>>  >
+>>  > Worst case, this could be an ABI break. Best case, it's churn for
+>>  > mt6779. Is it worth unifying?
+>>  >
+>>  All those MediaTek pinctrl bindings are mostly the same, where only=20
+>> the pin
+>>  definitions in the binding header does actually change.
+>>=20
+>>  I think that it's worth unifying them, not only to get rid of the=20
+>> duplication
+>>  but mostly for consistency between all of those subnode names which=20
+>> are wildly
+>>  differing for no real reason... and consistency is a long time=20
+>> issue with
+>>  MediaTek bindings/dts in general (which is way way way better now,=20
+>> but still)...
+>>=20
+>>  Besides - just for context and nothing else: the driver doesn't=20
+>> care about
+>>  the names of the subnodes, anyway... so while this is technically=20
+>> an ABI break
+>>  it's not really creating any functionality issue, and then,=20
+>> actually, Yassine
+>>  is also modifying the devicetrees to comply with his consistency=20
+>> changes, so,
+>>  in my own perspective, it's still acceptable.
+>=20
+> Wait, I thought there were no users?
 
-mm: vmscan: Limit isolate_lru_folios() IRQ holdoff latency impact.
+Right, When I said there were no users I was thinking of MT6779=20
+strictly, but MT6797 is included in the bindings so it counts too.=20
+mt6797.dtsi is currently the only place where these bindings are used.
 
-While examining an RT latency regression beginning at v6.10, it was
-discovered that isolate_lru_folios() runtimes could cause IRQ holdoff
-to easily span several ticks.
+>=20
+> We generally only consider node names ABI when/if something or someone
+> cares. Most of the time it doesn't matter. For the pinctrl nodes, it's
+> really just a question of churn renaming a lot of nodes.
+>=20
+> Ultimately, it's up to you. I only care that the implications of the
+> changes are clear in the commit msg.
 
-Given it's called with IRQs disabled, cap its runtme to around a ms.
+I'll mention MT6797 in the commit message.
 
-Signed-off-by: Mike Galbraith <efault@gmx.de>
-=2D--
- mm/vmscan.c |   12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-=2D-- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -63,6 +63,7 @@
- #include <linux/swapops.h>
- #include <linux/balloon_compaction.h>
- #include <linux/sched/sysctl.h>
-+#include <linux/sched/clock.h>
-
- #include "internal.h"
- #include "swap.h"
-@@ -1656,6 +1657,8 @@ static unsigned long isolate_lru_folios(
- 	unsigned long nr_skipped[MAX_NR_ZONES] =3D { 0, };
- 	unsigned long skipped =3D 0;
- 	unsigned long scan, total_scan, nr_pages;
-+	int cpu =3D raw_smp_processor_id(), iter =3D 0;
-+	u64 then =3D cpu_clock(cpu);
- 	LIST_HEAD(folios_skipped);
-
- 	total_scan =3D 0;
-@@ -1709,6 +1712,15 @@ static unsigned long isolate_lru_folios(
- 		move_to =3D dst;
- move:
- 		list_move(&folio->lru, move_to);
-+
-+		/*
-+		 * IRQs are disabled, cap holdoff at a millisecond or so.
-+		 */
-+		if (iter++ < 1000)
-+			continue;
-+		if (cpu_clock(cpu) - then > NSEC_PER_MSEC)
-+			break;
-+		iter =3D 0;
- 	}
-
- 	/*
 
 
