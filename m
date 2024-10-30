@@ -1,108 +1,88 @@
-Return-Path: <linux-kernel+bounces-388568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7049B6153
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:21:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A6F49B6157
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:21:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 607A0B2392B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:21:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 310091F222AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E5A1E4929;
-	Wed, 30 Oct 2024 11:20:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zBlaY0r1"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D251E47D9;
+	Wed, 30 Oct 2024 11:21:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33AE41E47CA
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180AD1E4908
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:21:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730287209; cv=none; b=iZYZAPWCMFRFehca1dz7qHSazwGatcQokPHKp0YPZLWafBacpcAp131rtTFyrtuuIXPycEUHy4QpjtAYoXHlDokRiSmpQP3g5W+woSxc5d1WvdxVdxkKPp4mJFS34RruZ7v7MOZAvVUmtmyAuiJOmXpiB1UjUCiYlRoMqmmdQ8Q=
+	t=1730287265; cv=none; b=e1hM3L816+KPYLr0ilWzHPflJTwkuWbegv4a/epZKSmf8LfIFDLsE0JVKf6iinU1CihYQIBD1fKltzCetQfn7jldZviVJ/ls7UT9+tz3WXm3/agMH28eggt5ojReTeXDdmVYm2PYpUqJ/jqKvosko0qwnOevv/qCfirjnsS1QUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730287209; c=relaxed/simple;
-	bh=E34cDbhoWFaOTge5djHJ7kU7XTfeh7DjhFUmukypNZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DL0DdaInnfK7E00/ArVzoz3aQ1PMqyNHoRljR4MMOKxLmtEV/enof3MUeDVNV32Fud+nCvRYcq5K/sqlzMrpzysOlPd6HQ0S0VWG685QP77tnWje7f5pSMppoxfPnWLYRIbjDpKJJCqFoG/6xc2y0zWkM/pjSkGw600wuHTSaIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zBlaY0r1; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso60828155e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:20:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1730287205; x=1730892005; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=afFNrnqW4FhVnOEQ1S9K7+CEGrEiaeSx1dvRA3QybgY=;
-        b=zBlaY0r1sZ7udlWmlVuvlfJrBuK9AP7F3cRR4DKhSTxEvvreROQ+QtBUWvVwyLSJ+G
-         7aO4Mg6esOLjIRr4qQ3jxpFgxBbEzvIUg00HqSQqJnwKfe2ijiTGJozO9fni6Dkzh3aM
-         PvmReC6Px317CSXmzGDmLyRgUDY3IhQ7fjnExvTQHM0TQ/G9sOun4h1NHzATomt+AU30
-         BZB0UIXS8eAHPa6fDDSnYr7fUFIYa1G2xS4RnrjF4ws4C3kBJkgzD7rmhJLtU9sukJkf
-         VsAD9EIrA8fM0fhkcquH5B04V7FtVJSJLmoIOYXkneS063BdBy9A7Sm4L7gmXeYupHdy
-         xvKw==
+	s=arc-20240116; t=1730287265; c=relaxed/simple;
+	bh=mqYd9M05WGYBVAVqpCleCMCXiGxhQhMBft/i2oNW82I=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iie49NXbythGYVBsSn5ubH6pKguhnRH2p2+BHJCPEeBtjgkX8zA6LcIAX5rew1Lw3vI3t1B5n5kIEqdP8YVZh6WSJMvxNo8NI5mhOplfx9WSIf9u+fU6XsDb0iVkV+1F3ZFGmt5912C9ms6PT+f5dp/oegdWRVboVISdkw531Lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c27c72d5so59435035ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 04:21:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730287205; x=1730892005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=afFNrnqW4FhVnOEQ1S9K7+CEGrEiaeSx1dvRA3QybgY=;
-        b=ulaxSOPDwNQSCUPZW4ciD+OBwzqQyWjZYCP0pxTLvRc9IynuVLOen0ICz5zN7oywSr
-         RMeS15l3MBR3859yJ9zkgEpb6M1P/hIskqFFD4HI0bE+Xlha3KEwtNdX0k3DWCdP0ubI
-         BTFFOfuX+PFnMvrx0Xymqc/FMs3Cjct5BCdb+2dA0Ies1sGXr30KBKGC5m6Kna5RDvN6
-         L9Rjkay0PQSY7fEJsrk0jwqPlwVIPi+hIuRZwUD2aUpwt5STyTh8qeXYO5hpxNFhnCkR
-         B1B5MxLK+kPALaPdRIHSAzHBy1oOOl4lnm/EdROlWpJj4GaiAPgVGZswKkdvUL6DEU4k
-         86Vw==
-X-Forwarded-Encrypted: i=1; AJvYcCVN71TWlnsmV2sw20guN7ZjFaGyvtgLdFPkpnBoue4uMsZcYODD2CnGwTwDYKeIZFhuGQXUI0LUrGCXshU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8haQ3qkfsF8LJnWM5Ojbkf0yUlF8v/1ELim4r7d5t5cpBqT8z
-	IFq01rR11F/dF4hIB8k/hTYMLZWySCvEQiGQzmmubVYW6vuADDnsFJauMi+Bty4=
-X-Google-Smtp-Source: AGHT+IHtm38/xWwZKdfE6rCwMknqgCM2HN1qz0TLHVXw/nvbyjWyNnTHVgN0RTV0nwIm7xZI7mlV8Q==
-X-Received: by 2002:a05:600c:4f56:b0:431:52c4:1069 with SMTP id 5b1f17b1804b1-4319ac997c7mr140592835e9.8.1730287205578;
-        Wed, 30 Oct 2024 04:20:05 -0700 (PDT)
-Received: from localhost ([41.210.143.198])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9a9984sm18477285e9.32.2024.10.30.04.20.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 04:20:05 -0700 (PDT)
-Date: Wed, 30 Oct 2024 14:19:58 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jacob Keller <jacob.e.keller@intel.com>
-Cc: Daniel Machon <daniel.machon@microchip.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v2 6/9] ice: use <linux/packing.h> for Tx and Rx
- queue context data
-Message-ID: <bda38b6e-73df-4ca5-8606-b4701a4db482@stanley.mountain>
-References: <20241025-packing-pack-fields-and-ice-implementation-v2-0-734776c88e40@intel.com>
- <20241025-packing-pack-fields-and-ice-implementation-v2-6-734776c88e40@intel.com>
- <20241029145011.4obrgprcaksworlq@DEN-DL-M70577>
- <8e1a742c-380c-4faf-a6c2-3fa67689c57e@intel.com>
- <62387bab-f42a-4981-9664-76c439e2aadb@intel.com>
+        d=1e100.net; s=20230601; t=1730287262; x=1730892062;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0BYoxibK342+E9B+CcWmXJzU3QAOmgISMB1A3wZhUE0=;
+        b=M91yO5et30Hil4De1HwlxoPlgCJ5zPTboHwteWPub+T9BcwKzf01xYeVPwWHbYoMDO
+         p22V7PWwGIz/nddw/9lAUGvHEJ7ntcNzVOmvEvTjS21gKd5tFmI4U8u6q2XGvegXTYjA
+         I6GCeK0BGS1L+1OcOkh1L7pw9oxFNfECgyQJVrA12dxu9PXsJ2DvYNTc17KBEoW1jv3J
+         dsbRzASPPN6f1cLBP0KWrQuPKiqzomWPEfBRGf3D6XXKGjJk3YGQtkxc7IcyIx2+NDZK
+         vbiBvkBK8Zy2to7nvk9dAYFUNR30Tzcf6DwNUyfQc05HAmSg8RGqUfdcb03zZj9zYcUN
+         Y4Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXavM9oaukcC4QLu2yl0sRwHbArbCjWkl8M2JYA+Gav0U+jPcT0WgVsT/fiFTLg6LPDit5o28sPDdBoN28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwecsjDUHJeuesZsBE6Mtw+YKfkpVVTBvYV+FaYlynrC7qfDn8F
+	ZFwBnu+Brg7+25GYJimC/JUSAvQ/BxDllZd+NX7RRmp5y0zHtDbCwYciG7NUNpuZv3HQElgstiv
+	++OoKQsOwBJk9XIs4Wpaibj2C+VhWHhUvUhsFI+C5IDLNUwX7dSz2rtc=
+X-Google-Smtp-Source: AGHT+IGs+4RhQotXd2hmMxOjyD4HqdqCg9iGhbt1cREp3UjhhrLKKvmaDtYGfHIYP9PIhJlqtkIIXq5fBj6kRVSUOe7TjIMkUy/h
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <62387bab-f42a-4981-9664-76c439e2aadb@intel.com>
+X-Received: by 2002:a05:6e02:190a:b0:3a5:e7e2:1f92 with SMTP id
+ e9e14a558f8ab-3a5e7e22108mr2841685ab.25.1730287262175; Wed, 30 Oct 2024
+ 04:21:02 -0700 (PDT)
+Date: Wed, 30 Oct 2024 04:21:02 -0700
+In-Reply-To: <20241030105839.2547-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6722169e.050a0220.35b515.001a.GAE@google.com>
+Subject: Re: [syzbot] [kernfs?] INFO: task hung in do_coredump (3)
+From: syzbot <syzbot+a8cdfe2d8ad35db3a7fd@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Always just ignore the tool when it if it's not useful.
+Hello,
 
-CHECK_PACKED_FIELDS_ macros are just build time asserts, right?  I can easily
-just hard code Smatch to ignore CHECK_PACKED_FIELDS_* macros.  I'm just going to
-go ahead an do that in the ugliest way possible.  If we have a lot of these then
-I'll do it properly.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+INFO: rcu detected stall in corrupted
 
-regards,
-dan carpenter
+rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { P1029 } 3639 jiffies s: 9185 root: 0x0/T
+rcu: blocking rcu_node structures (internal RCU debug):
+
+
+Tested on:
+
+commit:         c1e939a2 Merge tag 'cgroup-for-6.12-rc5-fixes' of git:..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1408e540580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1940f73a609bb874
+dashboard link: https://syzkaller.appspot.com/bug?extid=a8cdfe2d8ad35db3a7fd
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1620e540580000
 
 
