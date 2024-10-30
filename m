@@ -1,236 +1,127 @@
-Return-Path: <linux-kernel+bounces-389002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C0DC9B675B
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:18:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F7D9B67C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:28:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF8531F21188
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A0281F22B88
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:28:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F4FF217447;
-	Wed, 30 Oct 2024 15:13:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D362170B3;
+	Wed, 30 Oct 2024 15:25:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gnbQRLju"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="btR0bnor"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BBA2170DD;
-	Wed, 30 Oct 2024 15:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA7342561D
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 15:25:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730301234; cv=none; b=myOxJXxujkMLPdA6k4cST/fKuIp1hq7j+4AGRXrzX4YjD91MhlMy/S/Uou3gCYUzl6SPIvkvWBB5ryae1+aH9KJT0DvReZ5Oxxe/OPg9r4h2P20PkjBvuQSapAZunpWSWMZ0JpvIU0i1QHO3Pg+L7ZEoW7nx8Ho912mQOkRBNRU=
+	t=1730301954; cv=none; b=HclgfAAhlmjY63Se8jcWSWGzBpS194GkdgSN2nA81C87q5xWaxRs8l++cZLt1zqQm/v1ICNePNarfX7bIL0M087dXhW8RT2hb4z2R33K+sZ/gbTwttFZi9RYg6I2YoiYX1QmdLveJGfCcgy+t9SlbA3u/BCfxl1zSWQ4Y8/HPOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730301234; c=relaxed/simple;
-	bh=LyGbooKE736rWckmyvuR6Y2aUxxUKiIhQ25bI43LeHo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=g4f+TW3B092O7UZ6Yt0ehfjp1tsOXh0wy2kLb43yca3Nr5uXGoHhrU9qQxruJ4HwVHaorXgchlIV2gFFI5kjZ6sTEMoMfiGP7rxR7rSkU7CGm4DRxyUZFmyaoVxFa2W9M35jFm5EFDs0tmStu4HswV9DcI8GyQYIptiw2/MUqto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gnbQRLju; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91DDCC4CED1;
-	Wed, 30 Oct 2024 15:13:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1730301234;
-	bh=LyGbooKE736rWckmyvuR6Y2aUxxUKiIhQ25bI43LeHo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gnbQRLju1EGkWrMUq1IEnfCImY/sV9QqN3EtvIXwn6fwjiEiWAe2neBZdDCdV7yHr
-	 qcm05YMTX2HjYttwSkMdkPZu827K45fVD5z/d2S7M0nrrrP5/m9EqJ1slY09EmQN3a
-	 d2Cd6nFHM6OmwTNw2wEVvXTaKeNW4VfyiRLzEuKOs85WvxEzWcM/xRt73c66yBHci3
-	 SKqb7lSPzJW49SZUIb5sj7omTVYloV7g4/qyWLtu5pchWIDw+VTxFln9bhApnufmPL
-	 csDsywMT+HisWLNFXI/t1D4sSzvZQOjKXw12aKaZsJqNIqTytD5aguAnmC+31kW8MT
-	 ywSaehtZC6bRw==
-From: Leon Romanovsky <leon@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Keith Busch <kbusch@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Logan Gunthorpe <logang@deltatee.com>,
-	Yishai Hadas <yishaih@nvidia.com>,
-	Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	=?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-block@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-nvme@lists.infradead.org,
-	linux-pci@vger.kernel.org,
-	kvm@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH v1 10/17] mm/hmm: let users to tag specific PFN with DMA mapped bit
-Date: Wed, 30 Oct 2024 17:12:56 +0200
-Message-ID: <6ae52934e3f7652d8ae1630f9c16f2c8a15215ff.1730298502.git.leon@kernel.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <cover.1730298502.git.leon@kernel.org>
-References: <cover.1730298502.git.leon@kernel.org>
+	s=arc-20240116; t=1730301954; c=relaxed/simple;
+	bh=6Ks3e9Uk/ZKTYxD4/YEDl9B2m8TpBp0jREYyDCrsFkM=;
+	h=Message-Id:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type; b=k9s6aCBu+nLWVlUT/TGDKiuBHBJt0QMMAiN9npVHgGAgjHTuQm9kIcdmH3ivR5WoAFUtfvZhprJNm6AJvrdq+0HEbnO1rXWYkdlzjSN3RxbCHvjLFwe8gWKqKfDfTgp2O5UChmIOgzbo/KLlGmN3zun4NPhbPjq3pN0/o3A19rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=btR0bnor; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:References:
+	Subject:Cc:To:From:Date:Message-Id:Sender:Reply-To:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To;
+	bh=iqBunzPUDSWv3TKKN/Q/5ZZ4v9ZwJa4KftzK5/fKuWc=; b=btR0bnorRWdwLKz1MGOsuEd/ou
+	oj2sqnQakVQSdB1C9HeduNVlxBJ/uRs1yDCshMNBVhVZv5al0xqbMbQSv1FQwvqVPoVYI/ZY61ZEd
+	pxbbLjHFg19ManLBbu3oFSOXHOX1z4Z3NE6SUjA7IyAqp7MLKmpGkhHzpKEtz1rEpX9AAW/XLxdAS
+	f1MLCWpTQWKwcemPBzOX86/l9cXxN7bQQ6a9bZqXfSmBpcBKx5/xGXAVUnn3HEY9RZrFe8iZ5mXtJ
+	HcIdwUbHmlaMnX9gRldFuPkXLqSMcXynI1JVaIdraULxeAhrR5394k1U3UHuUOMtLp1IZdnw4HojT
+	Rxl9vVYg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t6AZs-0000000DYqU-2VEh;
+	Wed, 30 Oct 2024 15:25:45 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id DB0B6300B40; Wed, 30 Oct 2024 16:25:43 +0100 (CET)
+Message-Id: <20241030152142.372771313@infradead.org>
+User-Agent: quilt/0.65
+Date: Wed, 30 Oct 2024 16:12:56 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org
+Cc: peterz@infradead.org,
+ juri.lelli@redhat.com,
+ vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com,
+ rostedt@goodmis.org,
+ bsegall@google.com,
+ mgorman@suse.de,
+ vschneid@redhat.com,
+ tj@kernel.org,
+ void@manifault.com,
+ linux-kernel@vger.kernel.org
+Subject: [PATCH 1/6] sched/ext: Fix scx vs sched_delayed
+References: <20241030151255.300069509@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
 
-From: Leon Romanovsky <leonro@nvidia.com>
+Commit 98442f0ccd82 ("sched: Fix delayed_dequeue vs
+switched_from_fair()") forgot about scx :/
 
-Introduce new sticky flag (HMM_PFN_DMA_MAPPED), which isn't overwritten
-by HMM range fault. Such flag allows users to tag specific PFNs with information
-if this specific PFN was already DMA mapped.
-
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
+Fixes: 98442f0ccd82 ("sched: Fix delayed_dequeue vs switched_from_fair()")
+Reported-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20241030104934.GK14555@noisy.programming.kicks-ass.net
 ---
- include/linux/hmm.h | 14 ++++++++++++++
- mm/hmm.c            | 34 +++++++++++++++++++++-------------
- 2 files changed, 35 insertions(+), 13 deletions(-)
+ kernel/sched/ext.c |   14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/hmm.h b/include/linux/hmm.h
-index 126a36571667..5dd655f6766b 100644
---- a/include/linux/hmm.h
-+++ b/include/linux/hmm.h
-@@ -23,6 +23,8 @@ struct mmu_interval_notifier;
-  * HMM_PFN_WRITE - if the page memory can be written to (requires HMM_PFN_VALID)
-  * HMM_PFN_ERROR - accessing the pfn is impossible and the device should
-  *                 fail. ie poisoned memory, special pages, no vma, etc
-+ * HMM_PFN_DMA_MAPPED - Flag preserved on input-to-output transformation
-+ *                      to mark that page is already DMA mapped
-  *
-  * On input:
-  * 0                 - Return the current state of the page, do not fault it.
-@@ -36,6 +38,10 @@ enum hmm_pfn_flags {
- 	HMM_PFN_VALID = 1UL << (BITS_PER_LONG - 1),
- 	HMM_PFN_WRITE = 1UL << (BITS_PER_LONG - 2),
- 	HMM_PFN_ERROR = 1UL << (BITS_PER_LONG - 3),
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -4489,11 +4489,16 @@ static void scx_ops_disable_workfn(struc
+ 	scx_task_iter_start(&sti);
+ 	while ((p = scx_task_iter_next_locked(&sti))) {
+ 		const struct sched_class *old_class = p->sched_class;
++		const struct sched_class *new_class =
++			__setscheduler_class(p->policy, p->prio);
+ 		struct sched_enq_and_set_ctx ctx;
+ 
++		if (old_class != new_class && p->se.sched_delayed)
++			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
 +
-+	/* Sticky flag, carried from Input to Output */
-+	HMM_PFN_DMA_MAPPED = 1UL << (BITS_PER_LONG - 7),
+ 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
+ 
+-		p->sched_class = __setscheduler_class(p->policy, p->prio);
++		p->sched_class = new_class;
+ 		check_class_changing(task_rq(p), p, old_class);
+ 
+ 		sched_enq_and_set_task(&ctx);
+@@ -5199,12 +5204,17 @@ static int scx_ops_enable(struct sched_e
+ 	scx_task_iter_start(&sti);
+ 	while ((p = scx_task_iter_next_locked(&sti))) {
+ 		const struct sched_class *old_class = p->sched_class;
++		const struct sched_class *new_class =
++			__setscheduler_class(p->policy, p->prio);
+ 		struct sched_enq_and_set_ctx ctx;
+ 
++		if (old_class != new_class && p->se.sched_delayed)
++			dequeue_task(task_rq(p), p, DEQUEUE_SLEEP | DEQUEE_DELAYED);
 +
- 	HMM_PFN_ORDER_SHIFT = (BITS_PER_LONG - 8),
+ 		sched_deq_and_put_task(p, DEQUEUE_SAVE | DEQUEUE_MOVE, &ctx);
  
- 	/* Input flags */
-@@ -57,6 +63,14 @@ static inline struct page *hmm_pfn_to_page(unsigned long hmm_pfn)
- 	return pfn_to_page(hmm_pfn & ~HMM_PFN_FLAGS);
- }
+ 		p->scx.slice = SCX_SLICE_DFL;
+-		p->sched_class = __setscheduler_class(p->policy, p->prio);
++		p->sched_class = new_class;
+ 		check_class_changing(task_rq(p), p, old_class);
  
-+/*
-+ * hmm_pfn_to_phys() - return physical address pointed to by a device entry
-+ */
-+static inline phys_addr_t hmm_pfn_to_phys(unsigned long hmm_pfn)
-+{
-+	return __pfn_to_phys(hmm_pfn & ~HMM_PFN_FLAGS);
-+}
-+
- /*
-  * hmm_pfn_to_map_order() - return the CPU mapping size order
-  *
-diff --git a/mm/hmm.c b/mm/hmm.c
-index 7e0229ae4a5a..2a0c34d7cb2b 100644
---- a/mm/hmm.c
-+++ b/mm/hmm.c
-@@ -44,8 +44,10 @@ static int hmm_pfns_fill(unsigned long addr, unsigned long end,
- {
- 	unsigned long i = (addr - range->start) >> PAGE_SHIFT;
- 
--	for (; addr < end; addr += PAGE_SIZE, i++)
--		range->hmm_pfns[i] = cpu_flags;
-+	for (; addr < end; addr += PAGE_SIZE, i++) {
-+		range->hmm_pfns[i] &= HMM_PFN_DMA_MAPPED;
-+		range->hmm_pfns[i] |= cpu_flags;
-+	}
- 	return 0;
- }
- 
-@@ -202,8 +204,10 @@ static int hmm_vma_handle_pmd(struct mm_walk *walk, unsigned long addr,
- 		return hmm_vma_fault(addr, end, required_fault, walk);
- 
- 	pfn = pmd_pfn(pmd) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
--	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++)
--		hmm_pfns[i] = pfn | cpu_flags;
-+	for (i = 0; addr < end; addr += PAGE_SIZE, i++, pfn++) {
-+		hmm_pfns[i] &= HMM_PFN_DMA_MAPPED;
-+		hmm_pfns[i] |= pfn | cpu_flags;
-+	}
- 	return 0;
- }
- #else /* CONFIG_TRANSPARENT_HUGEPAGE */
-@@ -236,7 +240,7 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 			hmm_pte_need_fault(hmm_vma_walk, pfn_req_flags, 0);
- 		if (required_fault)
- 			goto fault;
--		*hmm_pfn = 0;
-+		*hmm_pfn = *hmm_pfn & HMM_PFN_DMA_MAPPED;
- 		return 0;
- 	}
- 
-@@ -253,14 +257,14 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 			cpu_flags = HMM_PFN_VALID;
- 			if (is_writable_device_private_entry(entry))
- 				cpu_flags |= HMM_PFN_WRITE;
--			*hmm_pfn = swp_offset_pfn(entry) | cpu_flags;
-+			*hmm_pfn = (*hmm_pfn & HMM_PFN_DMA_MAPPED) | swp_offset_pfn(entry) | cpu_flags;
- 			return 0;
- 		}
- 
- 		required_fault =
- 			hmm_pte_need_fault(hmm_vma_walk, pfn_req_flags, 0);
- 		if (!required_fault) {
--			*hmm_pfn = 0;
-+			*hmm_pfn = *hmm_pfn & HMM_PFN_DMA_MAPPED;
- 			return 0;
- 		}
- 
-@@ -304,11 +308,11 @@ static int hmm_vma_handle_pte(struct mm_walk *walk, unsigned long addr,
- 			pte_unmap(ptep);
- 			return -EFAULT;
- 		}
--		*hmm_pfn = HMM_PFN_ERROR;
-+		*hmm_pfn = (*hmm_pfn & HMM_PFN_DMA_MAPPED) | HMM_PFN_ERROR;
- 		return 0;
- 	}
- 
--	*hmm_pfn = pte_pfn(pte) | cpu_flags;
-+	*hmm_pfn = (*hmm_pfn & HMM_PFN_DMA_MAPPED) | pte_pfn(pte) | cpu_flags;
- 	return 0;
- 
- fault:
-@@ -448,8 +452,10 @@ static int hmm_vma_walk_pud(pud_t *pudp, unsigned long start, unsigned long end,
- 		}
- 
- 		pfn = pud_pfn(pud) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
--		for (i = 0; i < npages; ++i, ++pfn)
--			hmm_pfns[i] = pfn | cpu_flags;
-+		for (i = 0; i < npages; ++i, ++pfn) {
-+			hmm_pfns[i] &= HMM_PFN_DMA_MAPPED;
-+			hmm_pfns[i] |= pfn | cpu_flags;
-+		}
- 		goto out_unlock;
- 	}
- 
-@@ -507,8 +513,10 @@ static int hmm_vma_walk_hugetlb_entry(pte_t *pte, unsigned long hmask,
- 	}
- 
- 	pfn = pte_pfn(entry) + ((start & ~hmask) >> PAGE_SHIFT);
--	for (; addr < end; addr += PAGE_SIZE, i++, pfn++)
--		range->hmm_pfns[i] = pfn | cpu_flags;
-+	for (; addr < end; addr += PAGE_SIZE, i++, pfn++) {
-+		range->hmm_pfns[i] &= HMM_PFN_DMA_MAPPED;
-+		range->hmm_pfns[i] |= pfn | cpu_flags;
-+	}
- 
- 	spin_unlock(ptl);
- 	return 0;
--- 
-2.46.2
+ 		sched_enq_and_set_task(&ctx);
+
 
 
