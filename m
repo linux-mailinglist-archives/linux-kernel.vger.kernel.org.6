@@ -1,186 +1,130 @@
-Return-Path: <linux-kernel+bounces-388913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CC469B660C
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:35:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78C989B661A
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 15:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B7040B24827
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:35:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E691B227DE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18B3E1F9408;
-	Wed, 30 Oct 2024 14:32:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076821F5822;
+	Wed, 30 Oct 2024 14:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WyIejBet"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413B81F4731;
-	Wed, 30 Oct 2024 14:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75E0B1EABA5;
+	Wed, 30 Oct 2024 14:33:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730298760; cv=none; b=nfDCYKHB2DhnNW7+XR8zHasz/0gPqzuES8HizMTMkg/uA8NDIAfG2+Xe5Ak182ka8cShaNMU5q5E1H+JhWXGdhq25gdnPsnb3glkxemwAUgEMzj0/ItHP16mykuUVj4Yg2htwyQeWng+EfCh5Ju3poOxMAO+BUYAPfOYzRNe1zk=
+	t=1730298825; cv=none; b=kYwLIJR5vrJPgNTvmcioif1DD6MC7fbmcDtKHDJqj6Njxzb32tgKzF3hVPmGiqipGDk/obIikegaDvmp7mmhRg6pWHQPoi2JC46rt0ej3N1J28BoLsl/WSSn2zrEPJrcpXCf0rOQDStOsOXeFHZDpuAE1jBm7a1YlbwqnJs5APo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730298760; c=relaxed/simple;
-	bh=v3iv01fkiGERUMvGlov6KCBtyaQUwrAGSlj+FhqRSrQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l+58vWepbuszHu1xD25pNS/UkvfTxb9f2YEqqMd1Sa5oH0+9dv6E76ciuvSFEUbOG9GyVhr3zuoiwNFC4FU4b/fF5RNNdmJRmwowkLDO6DlV/gyDve5gqYNBXcFAAUg+wd7gMFYSV0xPauNT1IVZBXdX2div6JWSyctGBU+MxUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XdqLX3xMcz6HJcw;
-	Wed, 30 Oct 2024 22:31:16 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id CC49B1401F3;
-	Wed, 30 Oct 2024 22:32:34 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 30 Oct
- 2024 15:32:34 +0100
-Date: Wed, 30 Oct 2024 14:32:32 +0000
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 20/27] cxl/extent: Process DCD events and realize
- region extents
-Message-ID: <20241030143232.000013b8@Huawei.com>
-In-Reply-To: <20241029-dcd-type2-upstream-v5-20-8739cb67c374@intel.com>
-References: <20241029-dcd-type2-upstream-v5-0-8739cb67c374@intel.com>
-	<20241029-dcd-type2-upstream-v5-20-8739cb67c374@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1730298825; c=relaxed/simple;
+	bh=nAXA1e6ereqmb3MHInQbwUXw9moQjsLdg9jJAZQQfmw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2C6ZTFYoLtRCoCjBGiz+KY5k9rTHxAEqfkcIqVPBdp7mxyavK5VREY4Ntf3Ou2F848CNYVPVAhnCHuiVh9I2yvX15cS655zr149oOCrOqTPIkIf2BKufbw3wiTujQrsiJc7hgA6WnIJCd/4aRQgpLKVwD6njEu6+y9H55Wc5Ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WyIejBet; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49UDw8v0012224;
+	Wed, 30 Oct 2024 14:33:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=YkQE0QbnYso+0/vqDX8+nkLt1O3VUV
+	PdnTC+wEH8KGE=; b=WyIejBetHbX0WyYb0GKLUyHBI8ejg4faUfq03iPDKQCjyC
+	i3eQ6LR/lXfw55UdBInl/1YGQxhPOjZrLTuu5WK3zQ6D+mLH6yFPsgv1UkRLhYww
+	ALuAuwUR3t/FUstC6wrPpSQRLXwPOrpdIKUQijW0H4bk6hZDZWSueEj1Rv7yh4wh
+	ZaWTgnrOwQSWDjhsVU4mbfzK/q1EXQoHseOFl4LzLYKMt7vefzsXgG5hGaekQ2lt
+	7bul14+5kPhuYmh6La4Y5kDWu4exphv0jy8OJF7lcC2YpF4qy9WVS4tQuPpT+3KK
+	1tjM8eVvRjfVGRiJ1hEK0gKbhXHg7/olgUTQ5bIw==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jyhbpbju-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 14:33:34 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49UEXX6l003381;
+	Wed, 30 Oct 2024 14:33:33 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42jyhbpbjq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 14:33:33 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49UBsOA9018383;
+	Wed, 30 Oct 2024 14:33:32 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42hc8k8ba4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 30 Oct 2024 14:33:32 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49UEXSsL57475502
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 30 Oct 2024 14:33:28 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C983E20043;
+	Wed, 30 Oct 2024 14:33:28 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AA4C62004B;
+	Wed, 30 Oct 2024 14:33:27 +0000 (GMT)
+Received: from li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com (unknown [9.155.204.135])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 30 Oct 2024 14:33:27 +0000 (GMT)
+Date: Wed, 30 Oct 2024 15:33:25 +0100
+From: Alexander Gordeev <agordeev@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+Subject: Re: [PATCH v2 4/7] s390/physmem_info: query diag500(STORAGE LIMIT)
+ to support QEMU/KVM memory devices
+Message-ID: <ZyJDtdElqCCwjcW+@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-5-david@redhat.com>
+ <ZyJC+s5L6JI3xO44@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZyJC+s5L6JI3xO44@li-008a6a4c-3549-11b2-a85c-c5cc2836eea2.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: pyTitmUaMPipLM8LFiCgngkB-xj0DyYQ
+X-Proofpoint-ORIG-GUID: LU3TDk4DyvFKwduroN5_L-gXPQpICUT5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ malwarescore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 impostorscore=0 mlxlogscore=623 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410300111
 
-A few minor things inline from a fresh read.
+> >  arch/s390/boot/physmem_info.c        | 46 ++++++++++++++++++++++++++--
+> >  arch/s390/include/asm/physmem_info.h |  3 ++
+> >  2 files changed, 46 insertions(+), 3 deletions(-)
+> 
+> Reviewed-by: Alexander Gordeev <agordeev@linux.ibm.com>
 
-Other than maybe a missing header, the others are all trivial
-and you can make your own minds up.
+Sorry, it supposed to be for v3, so please dismiss this one.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huwei.com>
-
->  #endif /* __CXL_CORE_H__ */
-> diff --git a/drivers/cxl/core/extent.c b/drivers/cxl/core/extent.c
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..315aa46252c15dcefe175da87522505f8ecf537c
-> --- /dev/null
-> +++ b/drivers/cxl/core/extent.c
-> @@ -0,0 +1,372 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*  Copyright(c) 2024 Intel Corporation. All rights reserved. */
-> +
-> +#include <linux/device.h>
-> +#include <cxl.h>
-
-
-> +static bool extents_contain(struct cxl_dax_region *cxlr_dax,
-> +			    struct cxl_endpoint_decoder *cxled,
-> +			    struct range *new_range)
-> +{
-> +	struct match_data md = {
-> +		.cxled = cxled,
-> +		.new_range = new_range,
-> +	};
-> +
-> +	struct device *extent_device __free(put_device)
-> +			= device_find_child(&cxlr_dax->dev, &md, match_contains);
-> +	if (!extent_device)
-> +		return false;
-> +
-> +	return true;
-trivial but could do.
-
-	return extent_device != NULL;
-
-> +}
-
-> +static bool extents_overlap(struct cxl_dax_region *cxlr_dax,
-> +			    struct cxl_endpoint_decoder *cxled,
-> +			    struct range *new_range)
-> +{
-> +	struct match_data md = {
-> +		.cxled = cxled,
-> +		.new_range = new_range,
-> +	};
-> +
-> +	struct device *extent_device __free(put_device)
-> +			= device_find_child(&cxlr_dax->dev, &md, match_overlaps);
-> +	if (!extent_device)
-> +		return false;
-> +
-> +	return true;
-As above.
-
-> +}
-
-> +static int cxlr_rm_extent(struct device *dev, void *data)
-> +{
-> +	struct region_extent *region_extent = to_region_extent(dev);
-> +	struct range *region_hpa_range = data;
-> +
-> +	if (!region_extent)
-> +		return 0;
-> +
-> +	/*
-> +	 * Any extent which 'touches' the released range is removed.
-
-Maybe single line comment syntax is fine here.
-
-> +	 */
-> +	if (range_overlaps(region_hpa_range, &region_extent->hpa_range)) {
-> +		dev_dbg(dev, "Remove region extent HPA [range 0x%016llx-0x%016llx]\n",
-> +			region_extent->hpa_range.start, region_extent->hpa_range.end);
-> +		region_rm_extent(region_extent);
-> +	}
-> +	return 0;
-> +}
-
-
-> +/* Callers are expected to ensure cxled has been attached to a region */
-> +int cxl_add_extent(struct cxl_memdev_state *mds, struct cxl_extent *extent)
-> +{
-> +	u64 start_dpa = le64_to_cpu(extent->start_dpa);
-> +	struct cxl_memdev *cxlmd = mds->cxlds.cxlmd;
-> +	struct cxl_endpoint_decoder *cxled;
-> +	struct range ed_range, ext_range;
-> +	struct cxl_dax_region *cxlr_dax;
-> +	struct cxled_extent *ed_extent;
-> +	struct cxl_region *cxlr;
-> +	struct device *dev;
-> +
-> +	ext_range = (struct range) {
-> +		.start = start_dpa,
-> +		.end = start_dpa + le64_to_cpu(extent->length) - 1,
-> +	};
-> +
->
-
-
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index 16e06b59d7f04762ca73a81740b0d6b2487301af..85b30a74a6fa5de1dd99c08c8318edd204e3e19d 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-
-Is the xarray header included in here already?
-If not it should be.
-
-> @@ -506,6 +506,7 @@ static inline struct cxl_dev_state *mbox_to_cxlds(struct cxl_mailbox *cxl_mbox)
->   * @pmem_perf: performance data entry matched to PMEM partition
->   * @nr_dc_region: number of DC regions implemented in the memory device
->   * @dc_region: array containing info about the DC regions
+> Thanks!
 
