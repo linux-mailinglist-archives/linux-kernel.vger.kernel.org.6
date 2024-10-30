@@ -1,206 +1,263 @@
-Return-Path: <linux-kernel+bounces-389116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0FB9B68C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:04:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBE59B68CE
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 17:05:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F26E1C2153D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:04:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3155D1F2210B
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 16:05:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FB42141B7;
-	Wed, 30 Oct 2024 16:03:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D4A2141C3;
+	Wed, 30 Oct 2024 16:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KDDeMcYy"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pJHw22fj"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52D3C36126;
-	Wed, 30 Oct 2024 16:03:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7572C21313C
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 16:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730304235; cv=none; b=af5t3Qh8wZWrrA+wFRP8AJQ/mCFzMsjD+PCUrg7R8y4q3VDr0h4Ime6St3VOt0miIupyV8O3s7+WjbL7xe8yX86ARIo4WAl6cn/69rDAwCjSI8EczgdNrA2922nsurcbCTzvu4DfSv72WKzKQTNmpsBuXW+cb09zZ1gMaaFAZec=
+	t=1730304298; cv=none; b=WryEWeFO4H1+WlHOm8x9lsfnRwOji4itvEpTWAdGAFzD5nGtljmkveAqZGj/5Q32jNY4QXT9s6xoDlsv2VAEM1HgAFepEcHu0BwDADkm+FWqSOvVmS5EE935i0ca+X48WA85oZ6iDuCw+OfUJY+7PtffwJSAszlAt3OmjdecRKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730304235; c=relaxed/simple;
-	bh=8MLDBn7mU2G6eGwIVqX/nGEK1NGlKs8yV/EOwYpdu7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NcWvzSgjCFSG0Vu9B3oly2XxU4FiPpjsO6OpZb6SWd852K0PP2NzVq1sP2CEreM/cGByfyloaf63b5wskD/vUHLGigSRp3jGMar+BcwVGZjM17Tz8SUWtKOREqOPANokhavt/2al487m4TMepqO9LnCSqm1vwcOr7ML4v3OI+GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KDDeMcYy; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so32114f8f.2;
-        Wed, 30 Oct 2024 09:03:53 -0700 (PDT)
+	s=arc-20240116; t=1730304298; c=relaxed/simple;
+	bh=mQU2pzDmzpt11iULsoB16Cf/xP/IF3oTNJcu+P0cuA8=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rxvjkGFD6a83kvXaMPZdUCMMHahY/IH0+H8GBR8k/dYezVagT6872fZGTtC79iDC7g6MoA7rNFvG9bS8kDsWKpsUkqNyx2X5RCHSCQ64GgTU/Z2BAn3SeRK6g5pJdzPUmcpPIlLfl1nV3FjaHlrnoZLiN82DfgcipcFmrzyk54o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pJHw22fj; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3497c8eb0so107927b3.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 09:04:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1730304232; x=1730909032; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=loh0zeo2kdsDuCCuROMVcSaSS8mgdLqRUDrIHMoopBQ=;
-        b=KDDeMcYywvGN79xZP3ghu5cm2Xpo6NhOQiZSxDuyBz6OyNbAa2IEwhNidt8i0wM5Ln
-         j/VzrurUVOXeL0s+YNM1Gk9r0xNCDPH0KHx/hqbgt+nLwbv1ogKVLdofHUB3WdePfZmp
-         jPtpdDZI2mGn1tjiYTfVwNKKaECmkCKFg9i/YK4vQ3AZp+H/H7BH2dIPo8cUOIsI3cel
-         rknRjafUj6edXfQ1S4/xYZkB+wwlu2SXOT4PtmR7wxBPG2M9K5QiVTdOMzbmE47sCH22
-         l0cCPQg6DFY+mRIwYr9wdVwVCAd6R8byNvHtepGliYXVCagC2YKwX9U9ThY9JzIzClPn
-         f6CA==
+        d=google.com; s=20230601; t=1730304294; x=1730909094; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q0WT77wRON2fu3my9E0wFOB4dWqJ57fFMAi7Ei7+AGM=;
+        b=pJHw22fjRBupArcCdaLIzlMOnXLxdiZPxCJnsCeIOLZlLChI2QTn4dj2ziod+/6aTe
+         OaKS14Dq6VYjrWsRkpwDxOP6n4n7YLuH073oxr3u9IKrFw6DUdNK/OaY8JOX7n1C2EgC
+         gq4T5/rEXHFzoKy1x78Awnz39uthf/KAz/p+yktF8Un9qnNDRyDy43/KXpsG7YHLMoUQ
+         2hykkIuIPMAGGAX5MdPWqW3L5+8WfvPUA1yzsZes0lEye01v14B327czcXDjuWD4vvnK
+         o4EUIZXWfwCYR0AWHvSMfx1oRbBRkVVNakygUCMPHECuRmQLCE6lgo6UvZU2D1HhQLgi
+         2Okw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730304232; x=1730909032;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=loh0zeo2kdsDuCCuROMVcSaSS8mgdLqRUDrIHMoopBQ=;
-        b=h4iiMsc6byTAHWdVm4+e/6aWMIEJuBXApxI2/RhnIQYfpJiaxeXxqd6wpbjddq8zFp
-         AZHHKVEZyvCtdh2sq2NCy28OmcDJgceSbzapqFpCyr6QK8x+R1NLLwK0Q1v8DnDEKipr
-         dwCAVn3tKlfa6bYR9Cxk/082h8cuh+UxkZc2nas50xUuQ9oiRpgpgWFpMqEUG0eVs/Lg
-         PlbJufz9D81qq/jbSuwaEWB3YRcbGGTioMF/G99QmZpWNXegXUZM2VH0U3U9fcZPtH78
-         03Wnygy40qHYaZfhC+sYb0TGwPP4JOzN7DigFO0TdK6UwoX4rxqDK23gFrJc3PUX8hxv
-         X8pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpLIWqx058goMdbnwE3+Yb01/i5iBT/85ZY6ezv4TQc0ggJQYkHtUaftiPy5n9A+sez5Qs7xmHeco/YDXQ@vger.kernel.org, AJvYcCVx0cu7/9bFrXlXf7kxDgbcQgS0xXmEdMqXkMnbq65X0R80tQYg6OGcoZSI4nMpj9oXhOlQgVnyhAFi@vger.kernel.org, AJvYcCXPlva0Kf4U0vbMyz3t5YUw1DRGmkWdQWX0sm9Eig2upOhopdwGDtnn4NxLufKu8WLLD1L5MYBzJiLrVhuGrm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0/uMtUFgyV2ifKrIg0BFqLaPIBT0cOrMDbY5HOMgxShdC6ByJ
-	kvF6Ws5qVG7sLawKxCDJuQrlzHG8R8seQH51cv2zqAkWOG6fdPY7
-X-Google-Smtp-Source: AGHT+IHiqK+pe4ogZgBOrg0REvXdAqXeZPpccBdO2od0LtmYHMbEebXDNuf+mtX00E8V6lrZPBGUvg==
-X-Received: by 2002:a05:6000:1ccc:b0:37d:4f69:c9b with SMTP id ffacd0b85a97d-380611e0c40mr14299216f8f.35.1730304231297;
-        Wed, 30 Oct 2024 09:03:51 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf0d:b400:dc52:63bc:ee84:76b9? (p200300dfbf0db400dc5263bcee8476b9.dip0.t-ipconnect.de. [2003:df:bf0d:b400:dc52:63bc:ee84:76b9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38058b70d5csm15788527f8f.89.2024.10.30.09.03.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Oct 2024 09:03:50 -0700 (PDT)
-Message-ID: <79c47555-c9e9-4ff6-8c43-c7c26a91afd4@gmail.com>
-Date: Wed, 30 Oct 2024 17:03:49 +0100
+        d=1e100.net; s=20230601; t=1730304294; x=1730909094;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=q0WT77wRON2fu3my9E0wFOB4dWqJ57fFMAi7Ei7+AGM=;
+        b=DwUXgk+FQ6VyrRj/MvcUynkVUF6vfJL5HDseKPBQ29b82fYwvZ148ISVpO9SMqx3G0
+         6clkRy1A2bVxrPxAoVjZbMmQ6ld4tSjsFLrqkItcatH1slrJ6FfWhCCWIVzqcEDKbEb7
+         i4PGn8TfVKClRoDnAjc8XJlXuOdL1cVp06GiWXrb9Nkin85dS0qzWNy0HnmxMmLRPqe7
+         N74Hzt3PuUl6CUeLwX73delkBHUAVSH7UieSrXyi9HLBgcfD3jj5oXYPhze1gRfHz3vq
+         G0QCURiLBVeGxd19obE8eyHmFBlQEBkm1u2vlebt1S1zg0ocMF6hLCNNJ+wgJc2h9L2U
+         2wog==
+X-Forwarded-Encrypted: i=1; AJvYcCU76ZVFaXlCcfcWTVXXmYcU471e9SYUjjGShEm2wBM4FdW3ikOLAuSYzHymp4uRMGSLb0ohP57kSOvpEHw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznggnzzyLhghl/DPvs9OTFHNO5P5ly0uq5ByghI4zZrnmwqzjP
+	Arw+cmgreNP272y4gDsUzDcXyyDFtnhMSI0hMFUW3CCaLTlk8wPGpOwXh+IwrQYgZur4fqzLRvm
+	cF639o9VHv8Sj/A==
+X-Google-Smtp-Source: AGHT+IFsumdNHSKRbfFmvPwbNT1EakQjB4ZRJlJrhcnTXJpDdTCOafftnDFAGrkPp8ZDYDw9k7Z0vNFl+0Pt1As=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:690c:6309:b0:6e3:ad3:1f19 with SMTP
+ id 00721157ae682-6ea2c1f16f8mr3956897b3.3.1730304294426; Wed, 30 Oct 2024
+ 09:04:54 -0700 (PDT)
+Date: Wed, 30 Oct 2024 16:04:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 2/3] rust: Add bindings for device properties
-To: Rob Herring <robh@kernel.org>, Alice Ryhl <aliceryhl@google.com>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- Saravana Kannan <saravanak@google.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
- Danilo Krummrich <dakr@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-References: <20241025-rust-platform-dev-v1-0-0df8dcf7c20b@kernel.org>
- <20241025-rust-platform-dev-v1-2-0df8dcf7c20b@kernel.org>
- <CAH5fLgjhiLUYPgTt_Ks+L-zhWaQG5-Yjm-Y3tfh2b2+PzT=bLg@mail.gmail.com>
- <CAL_JsqJWPR-Q=vsxSvD7V9_v=+om5mRuW9yYNqfavVRUwH9JFw@mail.gmail.com>
- <CAH5fLgiXPZqKpWSSNdx-Ww-E9h2tOLcF3_8Y4C_JQ0eU8EMwFw@mail.gmail.com>
- <CANiq72kaidDJ=81+kibMNr9jNxg467HjOm9C_4G7WRvaiddGvg@mail.gmail.com>
- <CAL_Jsq+T6T_3p2C62U3v4aSjm_oc-Ycjxi_ckF0ufh=JJDz=rg@mail.gmail.com>
- <CAH5fLggCDiKUu_dvJZeJr8UD5RvUpqRJbdYKf1F3_MvCdOVK6g@mail.gmail.com>
- <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <CAL_JsqL+b-f5K24qTxyA09c_QPeb07s4Hb=s1VqrdksBB4BQ=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAAdZImcC/23SS07DMBAG4KtUXhM047dZcQ/Ewo9xGwmaKokiU
+ NW743QBNu5yRvrG49++soXmkRb2criymbZxGadzKZA/HVg8+fORhjGVBuPAJWjQwzr7SJdpPK+
+ DQEIVHJA0yAq4zJTHr/u0t/dSn8Zlnebv+/AN9+7DMRsOMGilUHMTssLwepym4wc9x+mT7XM2X
+ lmExvJis6fgk8UglOqsqCzHxopiHUlJRJ4H21tZW9tYWaxQIikuvIvYW/VnLfDGqvvOHrWUTqb
+ Y31fXtj1XF+u5yBYgI1rXWVNZbHM2xSYNLjjUwWJvbWV5u7Pdd4aorHOkcxKddb8WAdqcXbHok wgmGesf3Behwtji8t4wmBwSyaSD4n3SiLVWrd7/VowUtLIc4F9et9vtByG/r5QCAwAA
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6484; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=mQU2pzDmzpt11iULsoB16Cf/xP/IF3oTNJcu+P0cuA8=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnIlkJ3et4UkiRFDqzQ/5bZPe9WUXMNUrlp4w/5
+ qJQ9m5+HkSJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZyJZCQAKCRAEWL7uWMY5
+ RgFdEACfjIPWcuU/kPXPZFS0JoWS6SC1zSff77oxH0YybvKyLTuj+/O241P6lqq7GaEzrZlvEVf
+ 9kcUsPsgAX7cGt1UGQ7w3ofZ93fLp3GiFt9CUPxg5DlkZTsqZwnDnKGNuFXFbreAyyexTSGSpeq
+ JkqAuq+cKq8cWFIHyy7sasegzDdTbn/Gu3kMNwLuRpy+y3Zc1qn/8Jfyq/YVh9P7GGcCqWGgWV5
+ /irCJSfvPk/ixyNtuF3g44afTxvagik4iBf4NGlsXkMbJAQZjfBb4Ujj0P5QHyvcsGiW5wQV9Q+
+ feZFcuQfFyGVVnr/as7iPUvc3KUKYywVeRhjQDNWYcPvgI6nQ3St3Iu9ihFL4G9clmiLN20PxJx
+ PV9PUKlwIbsxwvqaGinlSWyigzL7o06E908CcZ9FH7LOI7VMWVDshAnMSbs4XvCimdJguBBbP8U
+ j5+nPMXDiIw4n0uGGWgMSuBWQj3y9jVPKSpaQx+1fQFTW+8ETaTGfISTqWQwIJkVyReXtKSkFb0
+ Bsw4IShQN4yyxAHI/OFPLaSfBGhAam54t/0xa33wjhlnmzcgphiqQZL663mD/04HW7iMXAO4DaK
+ s3JHU/jcM27BOaF/MOig2XWfh+YXIp/tce5FzDELU8cgOHtf983kjhq4xFtSq2SUX/7cO4jjzyO kA/wBWZovsOH0+A==
+X-Mailer: b4 0.13.0
+Message-ID: <20241030-tracepoint-v12-0-eec7f0f8ad22@google.com>
+Subject: [PATCH v12 0/5] Tracepoints and static branch in Rust
+From: Alice Ryhl <aliceryhl@google.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev, 
+	Alice Ryhl <aliceryhl@google.com>, Carlos Llamas <cmllamas@google.com>, 
+	Palmer Dabbelt <palmer@rivosinc.com>
+Content-Type: text/plain; charset="utf-8"
 
-On 30.10.24 15:05, Rob Herring wrote:
-> On Wed, Oct 30, 2024 at 3:15 AM Alice Ryhl <aliceryhl@google.com> wrote:
->>
->> On Tue, Oct 29, 2024 at 8:35 PM Rob Herring <robh@kernel.org> wrote:
->>>
->>> On Tue, Oct 29, 2024 at 1:57 PM Miguel Ojeda
->>> <miguel.ojeda.sandonis@gmail.com> wrote:
->>>>
->>>> On Tue, Oct 29, 2024 at 7:48 PM Alice Ryhl <aliceryhl@google.com> wrote:
->>>>>
->>>>> One option is to define a trait for integers:
->>>
->>> Yeah, but that doesn't feel like something I should do here. I imagine
->>> other things might need the same thing. Perhaps the bindings for
->>> readb/readw/readl for example. And essentially the crate:num already
->>> has the trait I need. Shouldn't the kernel mirror that? I recall
->>> seeing some topic of including crates in the kernel?
->>
->> You can design the trait to look similar to traits in external crates.
->> We did that for FromBytes/AsBytes.
->>
->> I assume you're referring to the PrimInt trait [1]? That trait doesn't
->> really let you get rid of the catch-all case, and it's not even
->> unreachable due to the u128 type.
-> 
-> It was num::Integer which seems to be similar.
-> 
->>
->> [1]: https://docs.rs/num-traits/0.2.19/num_traits/int/trait.PrimInt.html
->>
->>>> +1, one more thing to consider is whether it makes sense to define a
->>>> DT-only trait that holds all the types that can be a device property
->>>> (like `bool` too, not just the `Integer`s).
->>>>
->>>> Then we can avoid e.g. `property_read_bool` and simply do it in `property_read`.
->>>
->>> Is there no way to say must have traitA or traitB?
->>
->> No. What should it do if you pass it something that implements both traits?
->>
->> If you want a single function name, you'll need one trait.
-> 
-> I'm not sure I want that actually.
-> 
-> DT boolean is a bit special. A property not present is false.
-> Everything else is true. For example, 'prop = <0>' or 'prop =
-> "string"' are both true. I'm moving things in the kernel to be
-> stricter so that those cases are errors. I recently introduced
-> (of|device)_property_present() for that reason. There's no type
-> information stored in DT.  At the DT level, it's all just byte arrays.
-> However, we now have all the type information for properties within
-> the schema. So eventually, I want to use that to warn on accessing
-> properties with the wrong type.
-> 
-> For example, I think I don't want this to work:
-> 
-> if dev.property_read(c_str!("test,i16-array"))? {
->     // do something
-> }
-> 
-> But instead have:
-> 
-> if dev.property_present(c_str!("test,i16-array")) {
->     // do something
-> }
+An important part of a production ready Linux kernel driver is
+tracepoints. So to write production ready Linux kernel drivers in Rust,
+we must be able to call tracepoints from Rust code. This patch series
+adds support for calling tracepoints declared in C from Rust.
 
-I think we have "optional" properties which can be there (== true) or
-not (== false). Let's assume for this example "test,i16-array" is such
-kind of "optional" property. With what you gave above we need two
-device tree accesses, then? One to check if it is there and one to
-read the data:
+This series includes a patch that adds a user of tracepoints to the
+rust_print sample. Please see that sample for details on what is needed
+to use this feature in Rust code.
 
-let mut array = <empty_marker>;
-if dev.property_present(c_str!("test,i16-array")) {
-    array = dev.property_read(c_str!("test,i16-array"))?;
-}
+This is intended for use in the Rust Binder driver, which was originally
+sent as an RFC [1]. The RFC did not include tracepoint support, but you
+can see how it will be used in Rust Binder at [2]. The author has
+verified that the tracepoint support works on Android devices.
 
-?
+This implementation implements support for static keys in Rust so that
+the actual static branch happens in the Rust object file. However, the
+__DO_TRACE body remains in C code. See v1 for an implementation where
+__DO_TRACE is also implemented in Rust.
 
-Instead of these two accesses, I was thinking to use the error
-property_read() will return if the optional property is not there to
-just do one access:
+Based on top of commit eb887c4567d1 ("tracing: Use atomic64_inc_return()
+in trace_clock_counter()") from trace/for-next, which is in turn based
+on top of v6.12-rc2.
 
-let mut array = <empty_marker>;
-if let Ok(val) = dev.property_read(c_str!("test,i16-array")) {
-       array = val;
-}
+The sample added in this series is affected by [3], so be aware that
+some bindgen/libclang combinations may fail to build the sample. This
+isn't something that this patch series needs to fix, though.
 
-(and ignore the error case as its irrelvant in the optional case)
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-0-08ba9197f637@google.com/ [1]
+Link: https://r.android.com/3119993 [2]
+Link: https://lore.kernel.org/all/20241030-bindgen-libclang-warn-v1-1-3a7ba9fedcfe@google.com/ [3]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+Changes in v12:
+- Replace `ifneq ($(CONFIG_JUMP_LABEL),)` with `ifdef CONFIG_JUMP_LABEL`.
+- Expand x86 asm to 32-bit for future-compat.
+- Add note to coverletter about libclang issue.
+- Link to v11: https://lore.kernel.org/r/20241015-tracepoint-v11-0-cceb65820089@google.com
 
-Have I missed anything?
+Changes in v11:
+- Fix build failure with CONFIG_JUMP_LABEL disabled.
+- Remove CONFIG_HAVE_JUMP_LABEL_HACK duplication.
+- Remove explicit export of rust_helper_static_key_count.
+- Add Gary's Reviewed-by to first patch.
+- Link to v10: https://lore.kernel.org/r/20241011-tracepoint-v10-0-7fbde4d6b525@google.com
 
-Best regards
+Changes in v10:
+- Rebase on trace/for-next.
+- Use static_branch_unlikely as of [PATCH] tracepoints: Use new static branch API.
+- Update second patch as of [PATCH] tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL.
+- Link to v9: https://lore.kernel.org/r/20241001-tracepoint-v9-0-1ad3b7d78acb@google.com
 
-Dirk
+Changes in v9:
+- Rebase on v6.12-rc1.
+- Add some Reviewed-by tags from Boqun.
+- Link to v8: https://lore.kernel.org/r/20240822-tracepoint-v8-0-f0c5899e6fd3@google.com
 
+Changes in v8:
+- Use OBJTREE instead of SRCTREE for temporary asm file.
+- Adjust comments on `asm!` wrapper to be less confusing.
+- Include resolution of conflict with helpers splitting.
+- Link to v7: https://lore.kernel.org/r/20240816-tracepoint-v7-0-d609b916b819@google.com
 
+Changes in v7:
+- Fix spurious file included in first patch.
+- Fix issue with riscv asm.
+- Fix tags on fourth patch to match fifth patch.
+- Add Reviewed-by/Acked-by tags where appropriate.
+- Link to v6: https://lore.kernel.org/r/20240808-tracepoint-v6-0-a23f800f1189@google.com
 
+Changes in v6:
+- Add support for !CONFIG_JUMP_LABEL.
+- Add tracepoint to rust_print sample.
+- Deduplicate inline asm.
+- Require unsafe inside `declare_trace!`.
+- Fix bug on x86 due to use of intel syntax.
+- Link to v5: https://lore.kernel.org/r/20240802-tracepoint-v5-0-faa164494dcb@google.com
 
+Changes in v5:
+- Update first patch regarding inline asm duplication.
+- Add __rust_do_trace helper to support conditions.
+- Rename DEFINE_RUST_DO_TRACE_REAL to __DEFINE_RUST_DO_TRACE.
+- Get rid of glob-import in tracepoint macro.
+- Address safety requirements on tracepoints in docs.
+- Link to v4: https://lore.kernel.org/rust-for-linux/20240628-tracepoint-v4-0-353d523a9c15@google.com
 
+Changes in v4:
+- Move arch-specific code into rust/kernel/arch.
+- Restore DEFINE_RUST_DO_TRACE at end of define_trace.h
+- Link to v3: https://lore.kernel.org/r/20240621-tracepoint-v3-0-9e44eeea2b85@google.com
+
+Changes in v3:
+- Support for Rust static_key on loongarch64 and riscv64.
+- Avoid failing compilation on architectures that are missing Rust
+  static_key support when the archtectures does not actually use it.
+- Link to v2: https://lore.kernel.org/r/20240610-tracepoint-v2-0-faebad81b355@google.com
+
+Changes in v2:
+- Call into C code for __DO_TRACE.
+- Drop static_call patch, as it is no longer needed.
+- Link to v1: https://lore.kernel.org/r/20240606-tracepoint-v1-0-6551627bf51b@google.com
+
+---
+Alice Ryhl (5):
+      rust: add static_branch_unlikely for static_key_false
+      rust: add tracepoint support
+      rust: samples: add tracepoint to Rust sample
+      jump_label: adjust inline asm to be consistent
+      rust: add arch_static_branch
+
+ MAINTAINERS                             |  1 +
+ arch/arm/include/asm/jump_label.h       | 14 ++++---
+ arch/arm64/include/asm/jump_label.h     | 20 +++++----
+ arch/loongarch/include/asm/jump_label.h | 16 ++++---
+ arch/riscv/include/asm/jump_label.h     | 50 ++++++++++++----------
+ arch/x86/include/asm/jump_label.h       | 35 ++++++----------
+ include/linux/tracepoint.h              | 28 ++++++++++++-
+ include/trace/define_trace.h            | 12 ++++++
+ include/trace/events/rust_sample.h      | 31 ++++++++++++++
+ rust/Makefile                           |  6 +++
+ rust/bindings/bindings_helper.h         |  3 ++
+ rust/helpers/helpers.c                  |  1 +
+ rust/helpers/jump_label.c               | 14 +++++++
+ rust/kernel/.gitignore                  |  3 ++
+ rust/kernel/arch_static_branch_asm.rs.S |  7 ++++
+ rust/kernel/jump_label.rs               | 74 +++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs                      | 37 +++++++++++++++++
+ rust/kernel/tracepoint.rs               | 49 ++++++++++++++++++++++
+ samples/rust/Makefile                   |  3 +-
+ samples/rust/rust_print.rs              | 18 ++++++++
+ samples/rust/rust_print_events.c        |  8 ++++
+ scripts/Makefile.build                  |  9 +++-
+ 22 files changed, 374 insertions(+), 65 deletions(-)
+---
+base-commit: eb887c4567d1b0e7684c026fe7df44afa96589e6
+change-id: 20240606-tracepoint-31e15b90e471
+
+Best regards,
+-- 
+Alice Ryhl <aliceryhl@google.com>
 
 
