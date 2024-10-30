@@ -1,121 +1,77 @@
-Return-Path: <linux-kernel+bounces-388557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 999289B6130
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:16:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B0C9B6134
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 12:16:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58D012841BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4BA81F22BD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 11:16:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71EB91E47C3;
-	Wed, 30 Oct 2024 11:16:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6AA81E47B2;
+	Wed, 30 Oct 2024 11:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b="oV989kEi"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9OrkQxR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB2491CF7DE;
-	Wed, 30 Oct 2024 11:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D3CA1CF7DE
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 11:16:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730286960; cv=none; b=f+Rh1Ngfg+n7p9V7ZKmEgw3po2GBwF0dQvz5B3NfA6JptwO9z+/P5jJB3BPmEqtFq+HtLxEQH7vzM6xJR+WRx/3L+3/Hix5CeSzrxukCi4Ce6H9Bf5zukQNBKIU6Cu8/aa8rk4EftwHpuWR3jOMBQHcy/nZXaMLHTYKxAPKCW3A=
+	t=1730287009; cv=none; b=KoMN3n7gbXqPVf6ixsSFZkkIc99TvXbpbZvqXyEtOJ2dpfC9VCbI/szQ7/I01f/MLTEzRzDrNjxjPzN71B/D1VDymvctX4VNfpJup95NSYAJ56NPfPStaM6JN2/ANaL/FJDO+bLzE1li8beduUNMDf7wtIxYmV5bdBXTLIjSD9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730286960; c=relaxed/simple;
-	bh=mlDftfx0K4BOCP97UClfQEOO1aAHQKqEtrb3HZcbogc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LmkCoXey4bigXR36MG3VQwGt8pswRY7MRIQJgu5ApOsgloP0sL3+/zgZveCYQR6k6oMBsEdtObOnaif5a0u2ZATM78G8pWzuGIhm+aSdf45S7uK1rwPW4c6MPOP4kyA74oQ2iIuGDJUa8NI6MoV4LOEIQoDPdoEDghHhUfA5U+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=metux@gmx.de header.b=oV989kEi; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1730286945; x=1730891745; i=metux@gmx.de;
-	bh=mlDftfx0K4BOCP97UClfQEOO1aAHQKqEtrb3HZcbogc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=oV989kEiNWeJh8gP21cTVDoFmxCiTpBKcteuNrFpD3JzsOYLqTWquNReAO7JXDVQ
-	 bkZ3MPce8pPgAhfADVFEJL9FKgxbrDc5yJ43s86N64sXLcwlq+YnaaOCjqnaTViY3
-	 kBITyvP0TEl0z4Q9D08feJUaFpsv8Yf12Fw9IXMWYeXH4u3LSwHcInzvocIuJR79v
-	 +enfEhcMlD5BKwtCntlEMyFYoFC0engUUEV8B/K78sCTexSVDh9QOEkYwOO0BA9fi
-	 EUZCCBznDJflQsg44b6oKhjb67KRqb+9kmgKo3oVp1RhZVVdtiZBz/0WsmL2dxv71
-	 vTjQhfnY+nrr5HZmHg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.178] ([95.114.207.188]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N8ob6-1ttH783dA6-010bqc; Wed, 30
- Oct 2024 12:15:45 +0100
-Message-ID: <35deac48-4220-4889-833d-1b57b417e968@gmx.de>
-Date: Wed, 30 Oct 2024 12:16:22 +0100
+	s=arc-20240116; t=1730287009; c=relaxed/simple;
+	bh=CrTKs/PgnusP+ItjAesPGATDP1uOydqzrTWerpGCjhg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjhaTDUPp6S00X94dG3itopjp9jYl+eZJucS79l+G8nyDpegXQzn9UwzCYURYcHf0KeCJmcNFiRqNNjMZeSiNMogJn3kMwFrCvfk2+W4zKOtFmAG4OUmGpxM1c6kGo1pLUQH+4JuzauvB9D54S4gEIs2FYYklPQq8BIrHZIPemo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9OrkQxR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A00C9C4CEE3;
+	Wed, 30 Oct 2024 11:16:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1730287009;
+	bh=CrTKs/PgnusP+ItjAesPGATDP1uOydqzrTWerpGCjhg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9OrkQxR8VYw++8Ifwb1fkehxaV4DDZRJCCm8wj4If6vVSFQFhIYo9hGtBMSUsU2A
+	 LbzZszcDCSslQhDp5jStwJCd3N0tEkQiUkh5UhGjQRj++A/Qh9C8q6626QzLUOdhpT
+	 o1l6xTIP7G+lS1o4Ew1Ak0HR1FhwVqITVtJvjGnGHXBkWI63WeQAAXE0Kn7eVySeie
+	 R/L85twmjsvtVVB6edZfdJ4ndAVxahALjXf7TczDqIqLdBS2zA8I9A3M36zSWsILL0
+	 zqGrBn/0ae3H5vPl/ksBLfiQKFOBlAPHPLJYJvrKRju45NokhbnsUR7FLol1b+gJqg
+	 Cg2V0NKgJmjAQ==
+Date: Wed, 30 Oct 2024 12:16:46 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	John Stultz <jstultz@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Eric Biederman <ebiederm@xmission.com>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 18/26] signal: Cleanup unused posix-timer leftovers
+Message-ID: <ZyIVnpqpNiLths5_@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083836.337735372@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Requirements to merge new heaps in the kernel
-To: Maxime Ripard <mripard@redhat.com>, Sumit Semwal <sumit.semwal@linaro.org>
-Cc: Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Brian Starkey <Brian.Starkey@arm.com>, John Stultz <jstultz@google.com>,
- "T.J. Mercier" <tjmercier@google.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-References: <20241022-macaw-of-spectacular-joy-8dcefa@houat>
-Content-Language: tl
-From: metux <metux@gmx.de>
-In-Reply-To: <20241022-macaw-of-spectacular-joy-8dcefa@houat>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:OXs7H1W+UFRu0PC7wfyzXJLH0EbhAYeRDPBvuzLGrQSDhISLPnc
- 6WC52Fn3eaU5BOifJojQ5t94gaHu+qcA18UYcIpyEL8UepofSNlbxFDRp11lMQbDFgiV39Q
- Io0EklDI6cb1kgk464W+PyGSnP2NLEyYWE1Do/VIteND7LFfreTb+5i7upH9CA4v7jqqsoF
- bnawMxSDiyUs5pnwlo0RQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:H52CPmlmabM=;0t4AdGqQVW+nDR/Ok80kPjqEzjN
- QuuzM3Vi+5o+idAGY13wmHfnHzZSup/mnzbiCmHCVbO8P8Wde1B1Pz/Ua4nE2mVFt5egDIkNS
- LONeHuphdvVv3VbLQmU6Cr7NBAsRO6E7s3l41kJyE8h46n0vPAqzgIYOX5gYkfS/d0ksXfg9m
- lLNU5x3/VuYSgEc4jJNHM0nmUlLR9hukOKJvLs5exWCyYKwUZyvsl5VNAvxdFdzNp8JNhkK7H
- hw0IX+TXumArBdWNV7q3FkR9SkLTZJYVQw40MQDECd+jvVEgsUvxdU9sCYm4oOSWs7e+uBAb2
- 9kENftMqlViJiW9iWD2tr3xgb62e7CiWM3LM/VaAQXaxTvy8obzv0rycQ1mtEQDderVW8Hf92
- Svhcrdwm10FEwpHV3OmuAkcFsxIgg2gXiY7IbZH8ap/Y+7CL/Fyi92Eav3MuziyBLshiqo8gY
- lKXOJaXT5cVRzg1K6sb/OquoLR4G8tTUNB1cYOr9sreWhdH2BrRkAGuIjGW/ElF9uV5aki7T7
- RVDSf4Ab0XQ/0YmEGz9eA+W7hscr3tVrIIGiQnsITW0ayMvlYbV2sqoiMCEb7v8qj5Jgd+n5H
- DcnKjcDbRD3D8E2klbPeRzRd1j/6qYzRKDS3EVLiXB5T1JxRYQzK4y00PLfrt+LyLcVAvkQZh
- QI3ig7AFdZ+9eFqDP7YIrT9b0wTViSoxFzcU0yaC9NkPuHaqYazGZiXyK82v8+j+b/qfeR3Yi
- zSmnj0ZtTrgumeNsiCqt3SVcZq70czr5rLPpPmft3gOTrXu1mdpahcWwDT8nF2k8uNTnwA3mS
- eYjxZzA5Aq9U+UR9jGjNSd86lyeQpt0GkF53wIPhNBotw=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241001083836.337735372@linutronix.de>
 
-On 22.10.24 10:38, Maxime Ripard wrote:
+Le Tue, Oct 01, 2024 at 10:42:24AM +0200, Thomas Gleixner a écrit :
+> From: Thomas Gleixner <tglx@linutronix.de>
+> 
+> Remove the leftovers of sigqueue preallocation as it's not longer used.
+> 
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
-Hi,
-
-> I'm still interested in merging a carve-out driver[1], since it seems to=
- be
-> in every vendor BSP and got asked again last week.
->
-> I remember from our discussion that for new heap types to be merged, we
-> needed a kernel use-case. Looking back, I'm not entirely sure how one
-> can provide that given that heaps are essentially facilities for
-> user-space.
-
-For those who didn't follow your work, could you please give a short
-intro what's that all about ?
-
-If I understand you correctly, you'd like the infrastructure of
-kmalloc() et al for things / memory regions that aren't the usual heap,
-right ?
-
-What's the practical use case ? GPU memory ? Shared memory between
-nodes in a multi-CPU / cluster machine ?
-
-Is it related to NUMA ?
-
-
-thx
-=2D-mtx
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
