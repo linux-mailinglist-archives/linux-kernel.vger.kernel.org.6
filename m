@@ -1,163 +1,239 @@
-Return-Path: <linux-kernel+bounces-389450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17E29B6D3D
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:04:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B1C89B6D40
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 21:06:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924B62820AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38F6B28246C
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 20:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96731BD9D8;
-	Wed, 30 Oct 2024 20:04:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9263C1D1727;
+	Wed, 30 Oct 2024 20:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VTAFKu62"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CDbTh8xn"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7DB1990C9
-	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B3F1BD9D8
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 20:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730318674; cv=none; b=c+KmF5Rz4dusanzEvwJwm58Hm3QFs0C7x4c6DrzooodMJ+pToGH4gBpz/xmQeX0JgOz6ejV9sNzek0OtcOVqSacVII5QIcwDohrHgP5dczoVYa3atR9jplgdO5XDCqgCs4Eos6uRz3M75u7b9/SNZ7sHt+osi9bO8HrP1iXNJRk=
+	t=1730318750; cv=none; b=TTgcDe+nri76dftbOCDifJFqbNbwEChYyJ43A1ciJ8whHMXhI/NrsC/7gJVlDdS5ZiEG9IqmlQ9PE9EFQIG3Uy4hoLiOzRu8o/UH4dfOdkiS2KvuMPK/S0v9y2z0iD/+gHbzmcpCj7/uAsTWiSbj81C4oCs9nfyDEEVSpd2LKkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730318674; c=relaxed/simple;
-	bh=uVgPnvdvVixUrLvSSmzOwFP1ifO3Y5wM1O4TUyu6hVQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BAPjba+cD4UHxugUKVLsjTXMbiMZCAhJtYPD9WOoy+mBJpJMdfMEm9fZbGzjIqG+S9DbGTKTEjQtBlBT8PClJaz4tJ+bbtomsa8YuQ909oxMKSVgx/3LDt+pXAYFVrsCaIVC3rN3NyOXNDQFeRbVmLBvA7yjdTOLC2VczPOpI1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VTAFKu62; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-720aa3dbda5so145836b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:04:31 -0700 (PDT)
+	s=arc-20240116; t=1730318750; c=relaxed/simple;
+	bh=lkwtoRA5tvMUiCpjLAGYONGPDcS+xn0HGuOJP0Bh3dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=U2wjPQqWEoc5kup86/fiIJ2wD7onxq1TsX8w8Y9m8RzrEvZ1199KB5rXCECw139fqmuiFT/xoAA4yW3lQsiO1mw41132QrkFJNq7v3ecgvwWL5rhzmsvJ6u1hatRT75tVW731Sioned2QUV3yO3Wn1y+1vJqnhY/RYUGKBsVj8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CDbTh8xn; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314b316495so1773395e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:05:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1730318670; x=1730923470; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=lQzFRfxxx9a4+2mBsj0Xqoq7m6oJoVrd/IVmDiqDLcY=;
-        b=VTAFKu62o3GP5mEXNj/d9LEvmaDwRxfnG54IVbgBN0hOGKiIXOGFpeMrzF6Rj0ziKk
-         3ydTL5QRsiu6Tndjlzv9A+v8SivRh+9JmRSOtLGjTF4tCFhUMYJGpR1twI4vN48Hat7K
-         r15lGmm3plKmIK4yc0bTaTWGS+hQRFcJdG5C67OnXWWqXGMC8V1j+8UVD0wdkrmoMxDU
-         T0L9zw0aSn8vEOU3e0Xo5V31qh5N+Q4avNLVoU6fzYoGiaJ7NFeUUTxN7SNZcH5UrSpT
-         8juOqBUVntR/MwQByZGiPIhiHHPE+yWN6IfVU9cUc7Y8bWNz0XNOclyp6xm6LYciqBXn
-         qJrg==
+        d=linaro.org; s=google; t=1730318746; x=1730923546; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BMYzWn3a9BZHBJmSLCvIY/w+pubGzIYYisFrSZ78I48=;
+        b=CDbTh8xni7gt/fZC/QpUJta+7XxgsP6nM1iYI+yc36Uh5MZRuUVOudH4bKH3fj49sn
+         1M5InDtuCThD8wXNGDFAy2+78AL6N/MbHG8Woa7mjuBuIT+8mk5/+I5g60/KEH4CFxPM
+         rPVGsbn23SfMOFGa1YvGCfLgjOZSWgAKa8xh+KXNufUllaI6+1zGhj/dVLlIcqh6p0XH
+         59D20lzthze2a7oC1+NYhX5fePMpeBaQU/SmKVZ6AAlyZwkvAgpXlk1qh5xbBHdIcnan
+         hsDgS+VBMjf1Atzm6js6WIQipqyZpdoIp4UcdBT3+zpoo+aJ5lZ47xwI/Yt39SKOFGx0
+         zrVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1730318670; x=1730923470;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lQzFRfxxx9a4+2mBsj0Xqoq7m6oJoVrd/IVmDiqDLcY=;
-        b=k2YxliiQ0cV9tVCmXlR+51OlRr1mlUQ/tu8oOPidr/emrC1UhBi97+fW3iupmd6x7F
-         PeAnTuFpmUxY+Jp8dDCU7Di4fOCOqPbpemiTIksXGaZQC9S4QfQj2S3lUxx4K2JuGjg6
-         yxkD0e81b+5mVWg20VBn4c84Qwje9PnMg0uwLqyR96DrHbXgOVoiKmANk6+4+IRo3HZt
-         lcnLxJLeDwSGObGKqd30ZFQvLO8hf/tUc0ufUgvW5W7LcEKNLhDtaCJLST67Ae9CIAHQ
-         5p3oQmA+qwrPFgqscIeb9reg++zi9Rkait5D59c5o5qosFYP9K8qvNoXG3QZsg2J49X7
-         nkGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWx8w/0x/1NUy6axHN4fXn7GK2Lnp2LhqAugv+Nd2UEcaDh16p1t6hL5isHx/zb3O9l99RSP2iFDU89z4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw54zap6amYdfzDU5KEwJY6vkXcY3qu2BeEVQqbQxtQ3Iak3Z2F
-	/bzx0dnSa2GwKH87iFu7kaI9+rPni/stjvIYcRreE957VNmprAP+IvPZUTuBt54=
-X-Google-Smtp-Source: AGHT+IGVMEfUTc5x54Nwx1RTWRE+uqmsaKPPq5D46+jAG7fPOuoQ1j0ELW9wLdgJ/Zu3YwUM52plmg==
-X-Received: by 2002:a05:6a00:3ccb:b0:71e:4ee1:6d78 with SMTP id d2e1a72fcca58-720ab39e56emr5383301b3a.1.1730318670285;
-        Wed, 30 Oct 2024 13:04:30 -0700 (PDT)
-Received: from localhost ([97.126.177.194])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-72057a3c046sm9623477b3a.194.2024.10.30.13.04.29
+        d=1e100.net; s=20230601; t=1730318746; x=1730923546;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BMYzWn3a9BZHBJmSLCvIY/w+pubGzIYYisFrSZ78I48=;
+        b=ox9bwBZ5mzbeaqRcsW1mXWpfVCE8fPiUX6MEJOV9v1VlY8qd6l+L+zrTP9IK9C/iVj
+         ECJ+1O70aJ3JKMJVNOZUzXfvIEVOCO8uEF3rTRzVtI/CuEebJjRa3SFi1aY3rkeQYZ1J
+         reYkYLnzA30sX0PQRmYRGeEVWm0Ym2nTmWf6PbIXN2k708KJqELpvkxMWeB8U8U7pHqX
+         RHNrzkeDiDQxdKvlLBlA11g8C0hZg/6LM6DHnr9wtKjRSVdu5uHegZc6WQXylt4fyb/v
+         namvNKTFKGYCrGiZoEyduo1GwGkSDB+fJVlt4M48Gms6gO6UB35ePRIPQuwlryus/Zpt
+         Ux8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUXOq9s0e4Qqwbns/rS2OgSiEChIFYMYvzQHXEqXCvaqvKblMLuTxiBpNFGyCTa029p2blh5VbxILVLaz0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3uSvHhlE0cDvq0MazgRdwzttAHwk8Rhc1mecfyqUqTIM9dcyV
+	N9Bc2TBXDx/aEXupzhBsj+UE0Abimudw6paJs2BcDlNfdqEAXDg2btMUA4tEjVQ=
+X-Google-Smtp-Source: AGHT+IEDH4m+a8rcy96TqWsPWN9s2UOIanCX22F1aRjED1fm8KzovyJb8Oo8tcsdMdF1fJbXALgUwQ==
+X-Received: by 2002:a05:600c:1d28:b0:431:6060:8b16 with SMTP id 5b1f17b1804b1-4327b80055dmr7553265e9.30.1730318746063;
+        Wed, 30 Oct 2024 13:05:46 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431bd9a9a53sm30796495e9.30.2024.10.30.13.05.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2024 13:04:29 -0700 (PDT)
-From: Kevin Hilman <khilman@baylibre.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Nishanth Menon
- <nm@ti.com>, Tero Kristo <kristo@kernel.org>, Santosh Shilimkar
- <ssantosh@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, vishalm@ti.com, sebin.francis@ti.com,
- d-gole@ti.com, Devarsh Thakkar <devarsht@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Subject: Re: [PATCH RFC] pmdomain: ti-sci: Set PD on/off state according to
- the HW state
-In-Reply-To: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
-References: <20241022-tisci-pd-boot-state-v1-1-849a6384131b@ideasonboard.com>
-Date: Wed, 30 Oct 2024 13:04:28 -0700
-Message-ID: <7hmsilqrw3.fsf@baylibre.com>
+        Wed, 30 Oct 2024 13:05:45 -0700 (PDT)
+Date: Wed, 30 Oct 2024 23:05:41 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Johannes Thumshirn <jth@kernel.org>,
+	John Garry <john.g.garry@oracle.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-block@vger.kernel.org, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+	axboe@kernel.dk, song@kernel.org, yukuai3@huawei.com, hch@lst.de,
+	martin.petersen@oracle.com, hare@suse.de,
+	Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Subject: Re: [PATCH] btrfs: handle bio_split() error
+Message-ID: <1cab6d9b-8493-4baf-8a44-602dc035ded6@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241029091121.16281-1-jth@kernel.org>
 
-Tomi Valkeinen <tomi.valkeinen@ideasonboard.com> writes:
+Hi Johannes,
 
-> At the moment the driver sets the power state of all the PDs it creates
-> to off, regardless of the actual HW state. This has two drawbacks:
->
-> 1) The kernel cannot disable unused PDs automatically for power saving,
->    as it thinks they are off already
->
-> 2) A more specific case (but perhaps applicable to other scenarios
->    also): bootloader enabled splash-screen cannot be kept on the screen.
->
-> The issue in 2) is that the driver framework automatically enables the
-> device's PD before calling probe() and disables it after the probe().
-> This means that when the display subsystem (DSS) driver probes, but e.g.
-> fails due to deferred probing, the DSS PD gets turned off and the driver
-> cannot do anything to affect that.
->
-> Solving the 2) requires more changes to actually keep the PD on during
-> the boot, but a prerequisite for it is to have the correct power state
-> for the PD.
->
-> The downside with this patch is that it takes time to call the 'is_on'
-> op, and we need to call it for each PD. In my tests with AM62 SK, using
-> defconfig, I see an increase from ~3.5ms to ~7ms. However, the added
-> feature is valuable, so in my opinion it's worth it.
->
-> The performance could probably be improved with a new firmware API which
-> returns the power states of all the PDs.
+kernel test robot noticed the following build warnings:
 
-Agreed.  I think we have to pay this performance price for correctness,
-and we can optimizie it later with improvements to the SCI firmware and
-a new API.
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> There's also a related HW issue at play here: if the DSS IP is enabled
-> and active, and its PD is turned off without first disabling the DSS
-> display outputs, the DSS IP will hang and causes the kernel to halt if
-> and when the DSS driver accesses the DSS registers the next time.
+url:    https://github.com/intel-lab-lkp/linux/commits/Johannes-Thumshirn/btrfs-handle-bio_split-error/20241029-171227
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241029091121.16281-1-jth%40kernel.org
+patch subject: [PATCH] btrfs: handle bio_split() error
+config: openrisc-randconfig-r072-20241030 (https://download.01.org/0day-ci/archive/20241031/202410310231.WMcRwBhG-lkp@intel.com/config)
+compiler: or1k-linux-gcc (GCC) 14.1.0
 
-Ouch.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202410310231.WMcRwBhG-lkp@intel.com/
 
-> With the current upstream kernel, with this patch applied, this means
-> that if the bootloader enables the display, and the DSS driver is
-> compiled as a module, the kernel will at some point disable unused PDs,
-> including the DSS PD. When the DSS module is later loaded, it will hang
-> the kernel.
->
-> The same issue is already there, even without this patch, as the DSS
-> driver may hit deferred probing, which causes the PD to be turned off,
-> and leading to kernel halt when the DSS driver is probed again. This
-> issue has been made quite rare with some arrangements in the DSS
-> driver's probe, but it's still there.
->
-> So, because of the DSS hang issues, I think this patch is still an RFC.
+smatch warnings:
+fs/btrfs/bio.c:763 btrfs_submit_chunk() error: 'bbio' dereferencing possible ERR_PTR()
 
-Like you said, I think that DSS hang is an issue independently of this
-patch, so it shouldn't hold this up IMO.
+vim +/bbio +763 fs/btrfs/bio.c
 
-> Hopefully we can sort out all the issues, but this patch (or similar)
-> will be part of the solution so I'd like to get some acks/nacks/comments
-> for this. Also, this change might have side effects to other devices
-> too, if the drivers expect the PD to be on, so testing is needed.
->
-> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+ae42a154ca8972 Christoph Hellwig  2023-03-07  660  static bool btrfs_submit_chunk(struct btrfs_bio *bbio, int mirror_num)
+103c19723c80bf Christoph Hellwig  2022-11-15  661  {
+d5e4377d505189 Christoph Hellwig  2023-01-21  662  	struct btrfs_inode *inode = bbio->inode;
+4317ff0056bedf Qu Wenruo          2023-03-23  663  	struct btrfs_fs_info *fs_info = bbio->fs_info;
+ae42a154ca8972 Christoph Hellwig  2023-03-07  664  	struct bio *bio = &bbio->bio;
+adbe7e388e4239 Anand Jain         2023-04-15  665  	u64 logical = bio->bi_iter.bi_sector << SECTOR_SHIFT;
+103c19723c80bf Christoph Hellwig  2022-11-15  666  	u64 length = bio->bi_iter.bi_size;
+103c19723c80bf Christoph Hellwig  2022-11-15  667  	u64 map_length = length;
+921603c76246a7 Christoph Hellwig  2022-12-12  668  	bool use_append = btrfs_use_zone_append(bbio);
+103c19723c80bf Christoph Hellwig  2022-11-15  669  	struct btrfs_io_context *bioc = NULL;
+103c19723c80bf Christoph Hellwig  2022-11-15  670  	struct btrfs_io_stripe smap;
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  671  	blk_status_t ret;
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  672  	int error;
+103c19723c80bf Christoph Hellwig  2022-11-15  673  
+f4d39cf1cebfb8 Johannes Thumshirn 2024-07-31  674  	if (!bbio->inode || btrfs_is_data_reloc_root(inode->root))
+f4d39cf1cebfb8 Johannes Thumshirn 2024-07-31  675  		smap.rst_search_commit_root = true;
+f4d39cf1cebfb8 Johannes Thumshirn 2024-07-31  676  	else
+f4d39cf1cebfb8 Johannes Thumshirn 2024-07-31  677  		smap.rst_search_commit_root = false;
+9acaa64187f9b4 Johannes Thumshirn 2023-09-14  678  
+103c19723c80bf Christoph Hellwig  2022-11-15  679  	btrfs_bio_counter_inc_blocked(fs_info);
+cd4efd210edfb3 Christoph Hellwig  2023-05-31  680  	error = btrfs_map_block(fs_info, btrfs_op(bio), logical, &map_length,
+9fb2acc2fe07f1 Qu Wenruo          2023-09-17  681  				&bioc, &smap, &mirror_num);
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  682  	if (error) {
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  683  		ret = errno_to_blk_status(error);
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  684  		goto fail;
+103c19723c80bf Christoph Hellwig  2022-11-15  685  	}
+103c19723c80bf Christoph Hellwig  2022-11-15  686  
+852eee62d31abd Christoph Hellwig  2023-01-21  687  	map_length = min(map_length, length);
+d5e4377d505189 Christoph Hellwig  2023-01-21  688  	if (use_append)
+b35243a447b9fe Christoph Hellwig  2024-08-26  689  		map_length = btrfs_append_map_length(bbio, map_length);
+d5e4377d505189 Christoph Hellwig  2023-01-21  690  
+103c19723c80bf Christoph Hellwig  2022-11-15  691  	if (map_length < length) {
+b35243a447b9fe Christoph Hellwig  2024-08-26  692  		bbio = btrfs_split_bio(fs_info, bbio, map_length);
+28c02a018d50ae Johannes Thumshirn 2024-10-29  693  		if (IS_ERR(bbio)) {
+28c02a018d50ae Johannes Thumshirn 2024-10-29  694  			ret = PTR_ERR(bbio);
+28c02a018d50ae Johannes Thumshirn 2024-10-29  695  			goto fail;
 
-We already discussed this a bit off-list, but for the record, I agree
-with the approach.
+We hit this goto.  We know from the if statement that map_length < length.
 
-I also tested it on k3-am62a7-sk where I've been doing the other TI SCI
-pmdomain work and everything still working fine.
+28c02a018d50ae Johannes Thumshirn 2024-10-29  696  		}
+2cef0c79bb81d8 Christoph Hellwig  2023-03-07  697  		bio = &bbio->bio;
+103c19723c80bf Christoph Hellwig  2022-11-15  698  	}
+103c19723c80bf Christoph Hellwig  2022-11-15  699  
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  700  	/*
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  701  	 * Save the iter for the end_io handler and preload the checksums for
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  702  	 * data reads.
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  703  	 */
+fbe960877b6f43 Christoph Hellwig  2023-05-31  704  	if (bio_op(bio) == REQ_OP_READ && is_data_bbio(bbio)) {
+0d3acb25e70d5f Christoph Hellwig  2023-01-21  705  		bbio->saved_iter = bio->bi_iter;
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  706  		ret = btrfs_lookup_bio_sums(bbio);
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  707  		if (ret)
+10d9d8c3512f16 Qu Wenruo          2024-08-17  708  			goto fail;
+1c2b3ee3b0ec4b Christoph Hellwig  2023-01-21  709  	}
+7276aa7d38255b Christoph Hellwig  2023-01-21  710  
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  711  	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
+d5e4377d505189 Christoph Hellwig  2023-01-21  712  		if (use_append) {
+d5e4377d505189 Christoph Hellwig  2023-01-21  713  			bio->bi_opf &= ~REQ_OP_WRITE;
+d5e4377d505189 Christoph Hellwig  2023-01-21  714  			bio->bi_opf |= REQ_OP_ZONE_APPEND;
+69ccf3f4244abc Christoph Hellwig  2023-01-21  715  		}
+69ccf3f4244abc Christoph Hellwig  2023-01-21  716  
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  717  		if (is_data_bbio(bbio) && bioc &&
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  718  		    btrfs_need_stripe_tree_update(bioc->fs_info, bioc->map_type)) {
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  719  			/*
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  720  			 * No locking for the list update, as we only add to
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  721  			 * the list in the I/O submission path, and list
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  722  			 * iteration only happens in the completion path, which
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  723  			 * can't happen until after the last submission.
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  724  			 */
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  725  			btrfs_get_bioc(bioc);
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  726  			list_add_tail(&bioc->rst_ordered_entry, &bbio->ordered->bioc_list);
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  727  		}
+02c372e1f016e5 Johannes Thumshirn 2023-09-14  728  
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  729  		/*
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  730  		 * Csum items for reloc roots have already been cloned at this
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  731  		 * point, so they are handled as part of the no-checksum case.
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  732  		 */
+4317ff0056bedf Qu Wenruo          2023-03-23  733  		if (inode && !(inode->flags & BTRFS_INODE_NODATASUM) &&
+169aaaf2e0be61 Qu Wenruo          2024-06-14  734  		    !test_bit(BTRFS_FS_STATE_NO_DATA_CSUMS, &fs_info->fs_state) &&
+d5e4377d505189 Christoph Hellwig  2023-01-21  735  		    !btrfs_is_data_reloc_root(inode->root)) {
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  736  			if (should_async_write(bbio) &&
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  737  			    btrfs_wq_submit_bio(bbio, bioc, &smap, mirror_num))
+852eee62d31abd Christoph Hellwig  2023-01-21  738  				goto done;
+103c19723c80bf Christoph Hellwig  2022-11-15  739  
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  740  			ret = btrfs_bio_csum(bbio);
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  741  			if (ret)
+10d9d8c3512f16 Qu Wenruo          2024-08-17  742  				goto fail;
+cebae292e0c32a Johannes Thumshirn 2024-06-07  743  		} else if (use_append ||
+cebae292e0c32a Johannes Thumshirn 2024-06-07  744  			   (btrfs_is_zoned(fs_info) && inode &&
+cebae292e0c32a Johannes Thumshirn 2024-06-07  745  			    inode->flags & BTRFS_INODE_NODATASUM)) {
+cbfce4c7fbde23 Christoph Hellwig  2023-05-24  746  			ret = btrfs_alloc_dummy_sum(bbio);
+cbfce4c7fbde23 Christoph Hellwig  2023-05-24  747  			if (ret)
+10d9d8c3512f16 Qu Wenruo          2024-08-17  748  				goto fail;
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  749  		}
+103c19723c80bf Christoph Hellwig  2022-11-15  750  	}
+f8a53bb58ec7e2 Christoph Hellwig  2023-01-21  751  
+22b4ef50dc1d11 David Sterba       2024-08-27  752  	btrfs_submit_bio(bio, bioc, &smap, mirror_num);
+852eee62d31abd Christoph Hellwig  2023-01-21  753  done:
+852eee62d31abd Christoph Hellwig  2023-01-21  754  	return map_length == length;
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  755  
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  756  fail:
+9ba0004bd95e05 Christoph Hellwig  2023-01-21  757  	btrfs_bio_counter_dec(fs_info);
+10d9d8c3512f16 Qu Wenruo          2024-08-17  758  	/*
+10d9d8c3512f16 Qu Wenruo          2024-08-17  759  	 * We have split the original bbio, now we have to end both the current
+10d9d8c3512f16 Qu Wenruo          2024-08-17  760  	 * @bbio and remaining one, as the remaining one will never be submitted.
+10d9d8c3512f16 Qu Wenruo          2024-08-17  761  	 */
+10d9d8c3512f16 Qu Wenruo          2024-08-17  762  	if (map_length < length) {
+10d9d8c3512f16 Qu Wenruo          2024-08-17 @763  		struct btrfs_bio *remaining = bbio->private;
+                                                                                              ^^^^^^^^^^^^^
+Error pointer dereference
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+10d9d8c3512f16 Qu Wenruo          2024-08-17  764  
+10d9d8c3512f16 Qu Wenruo          2024-08-17  765  		ASSERT(bbio->bio.bi_pool == &btrfs_clone_bioset);
+10d9d8c3512f16 Qu Wenruo          2024-08-17  766  		ASSERT(remaining);
+10d9d8c3512f16 Qu Wenruo          2024-08-17  767  
+9ca0e58cb752b0 Qu Wenruo          2024-08-24  768  		btrfs_bio_end_io(remaining, ret);
+10d9d8c3512f16 Qu Wenruo          2024-08-17  769  	}
+9ca0e58cb752b0 Qu Wenruo          2024-08-24  770  	btrfs_bio_end_io(bbio, ret);
+852eee62d31abd Christoph Hellwig  2023-01-21  771  	/* Do not submit another chunk */
+852eee62d31abd Christoph Hellwig  2023-01-21  772  	return true;
+852eee62d31abd Christoph Hellwig  2023-01-21  773  }
 
-Kevin
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
