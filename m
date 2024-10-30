@@ -1,115 +1,165 @@
-Return-Path: <linux-kernel+bounces-389737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-389739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 112099B7098
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:40:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281789B709D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Oct 2024 00:41:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCD00282842
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F5C1F22567
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 23:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48A7217446;
-	Wed, 30 Oct 2024 23:40:10 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA89215029;
+	Wed, 30 Oct 2024 23:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Qgg/Bc8R"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429941E8856;
-	Wed, 30 Oct 2024 23:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB81C2141CA;
+	Wed, 30 Oct 2024 23:41:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730331610; cv=none; b=OaLfdLb5HmSqGZVf9zey/EyIR8zv4X1M/iuW3DeOFHwMFxdUcdoR7Xz8fazaorcwcmJq4WWpRzxwsoYCaGye3KjksKSzsUdrQC0NZWvo+5MjRB+B0RW/DZUobwORNBh3G+6IoSf3/WSIEIdWRZc+R8utALwyk/KPEDqOjgbaWkU=
+	t=1730331702; cv=none; b=HnjFE1Zg2ROEZn8otOslmundojKVULSXkdo8YVLZ//1uCfTMoOObjnM+BxiLThCkyOUzh6KlOhE6mgsU+OTCPOZsRd5JrQiwNzef1y1AmMSl8WZmdIXqVUyQsnwO7GI/MnhAgMk+YttYhJ6pnMJpiHrF2iacP7NnlERBlygbJag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730331610; c=relaxed/simple;
-	bh=P54VmbAjUDEuc9ALM89/kQ517bvFtFpeh51kBjdxCT0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b+VO3xp/1Toyl7qCLLVJjTCAV/wJAn9ShzxRU6RsUFUUBWfq9AmDO3mh9FekoVu7phuNjqQEjuJlnHHzEZCrOxzKPaxN4YS/li9+RzZbPFO2EBHUxdicz3M1LURB3+LC6++lyLz0S9nUFWEArJRSSKw9AlBpo7lXzbGaYgMVBVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53114C4E692;
-	Wed, 30 Oct 2024 23:40:09 +0000 (UTC)
-Date: Wed, 30 Oct 2024 19:40:06 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: <mhiramat@kernel.org>, <mathieu.desnoyers@efficios.com>,
- <linux-kernel@vger.kernel.org>, <linux-trace-kernel@vger.kernel.org>
-Subject: Re: [PATCH] tracing: Replace strncpy() with strscpy() when copying
- comm
-Message-ID: <20241030194006.4d29417c@rorschach.local.home>
-In-Reply-To: <20240731075058.617588-1-ruanjinjie@huawei.com>
-References: <20240731075058.617588-1-ruanjinjie@huawei.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1730331702; c=relaxed/simple;
+	bh=M0DDN+40heMq1MUyTEiggbwfVdfQi32sS1lu41JVgR0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aReKudVo+0aUjP0y7U16poXCYjzJ+OGouSwnY87kL/sWhL29JWBkwP+UYErYRf/ifQf6gXwH6aeAULhcjgGY3CyTG4w85NgwVzsgacgmUr47MHF8JSlmA5MYH2NM5vm2WNUIffMLAnKFS1pT0J9k/UJTGueICt/tIPoQp9uU+p4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Qgg/Bc8R; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfNc8107073;
+	Wed, 30 Oct 2024 18:41:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1730331683;
+	bh=56mwxKqWIevGkZXhU/haryWJFMgZit1fhV8XrDFsqio=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Qgg/Bc8R5KjC8BWc1AZrdWzdx1M4rGmY8IZzuAS/fh0zC3R/Cr1reOwdMzklwTYYN
+	 kK4mv4EQHBOse+u0+m4CnKhM6Rm7tLQx3Ba/oshhO4WwI0a7Ly4gkkeMrcPyz+bDL0
+	 EPVmFlXbK/BNHPUGaiMsEdzCnnMd53Iws7CM6wTw=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfNKW107369;
+	Wed, 30 Oct 2024 18:41:23 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 30
+ Oct 2024 18:41:23 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 30 Oct 2024 18:41:23 -0500
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49UNfMbj096597;
+	Wed, 30 Oct 2024 18:41:22 -0500
+Message-ID: <b0f15446-2e31-4776-84ec-99d96f65ef48@ti.com>
+Date: Wed, 30 Oct 2024 18:41:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] gpio: omap: Add omap_gpio_disable/enable_irq calls
+To: Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@kernel.org>
+CC: Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski
+	<brgl@bgdev.pl>, <linux-omap@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Bin Liu <b-liu@ti.com>
+References: <20241030225900.59844-1-jm@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20241030225900.59844-1-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, 31 Jul 2024 15:50:58 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+Hi all,
 
-> diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events=
-_hist.c
-> index 6ece1308d36a..4ee0e64719fa 100644
-> --- a/kernel/trace/trace_events_hist.c
-> +++ b/kernel/trace/trace_events_hist.c
-> @@ -1599,7 +1599,7 @@ static inline void save_comm(char *comm, struct tas=
-k_struct *task)
->  		return;
->  	}
-> =20
-> -	strncpy(comm, task->comm, TASK_COMM_LEN);
-> +	strscpy(comm, task->comm);
->  }
-> =20
+Please ignore this patch, will resend this patch
+with fixed recipients in the "to" list.
 
-Was this even compiled?
+Apologies for the noise.
 
-In file included from /work/git/test-linux.git/include/linux/container_of.h=
-:5,
-                 from /work/git/test-linux.git/include/linux/list.h:5,
-                 from /work/git/test-linux.git/include/linux/module.h:12,
-                 from /work/git/test-linux.git/kernel/trace/trace_events_hi=
-st.c:8:
-/work/git/test-linux.git/kernel/trace/trace_events_hist.c: In function =E2=
-=80=98save_comm=E2=80=99:
-/work/git/test-linux.git/include/linux/build_bug.h:16:51: error: negative w=
-idth in bit-field =E2=80=98<anonymous>=E2=80=99
-   16 | #define BUILD_BUG_ON_ZERO(e) ((int)(sizeof(struct { int:(-!!(e)); }=
-)))
-      |                                                   ^
-/work/git/test-linux.git/include/linux/compiler.h:243:33: note: in expansio=
-n of macro =E2=80=98BUILD_BUG_ON_ZERO=E2=80=99
-  243 | #define __must_be_array(a)      BUILD_BUG_ON_ZERO(__same_type((a), =
-&(a)[0]))
-      |                                 ^~~~~~~~~~~~~~~~~
-/work/git/test-linux.git/include/linux/string.h:79:47: note: in expansion o=
-f macro =E2=80=98__must_be_array=E2=80=99
-   79 |         sized_strscpy(dst, src, sizeof(dst) + __must_be_array(dst) =
-+    \
-      |                                               ^~~~~~~~~~~~~~~
-/work/git/test-linux.git/include/linux/args.h:25:24: note: in expansion of =
-macro =E2=80=98__strscpy0=E2=80=99
-   25 | #define __CONCAT(a, b) a ## b
-      |                        ^
-/work/git/test-linux.git/include/linux/args.h:26:27: note: in expansion of =
-macro =E2=80=98__CONCAT=E2=80=99
-   26 | #define CONCATENATE(a, b) __CONCAT(a, b)
-      |                           ^~~~~~~~
-/work/git/test-linux.git/include/linux/string.h:113:9: note: in expansion o=
-f macro =E2=80=98CONCATENATE=E2=80=99
-  113 |         CONCATENATE(__strscpy, COUNT_ARGS(__VA_ARGS__))(dst, src, _=
-_VA_ARGS__)
-      |         ^~~~~~~~~~~
-/work/git/test-linux.git/kernel/trace/trace_events_hist.c:1602:9: note: in =
-expansion of macro =E2=80=98strscpy=E2=80=99
- 1602 |         strscpy(comm, task->comm);
-      |         ^~~~~~~
+~ Judith
 
-Bah!
 
--- Steve
+On 10/30/24 5:59 PM, Judith Mendez wrote:
+> Add omap_gpio_disable_irq and omap_gpio_enable_irq
+> calls in gpio-omap.
+> 
+> Currently, kernel cannot disable gpio interrupts in
+> case of a irq storm, so add omap_gpio_disable/enable_irq
+> so that interrupts can be disabled/enabled.
+> 
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> [Judith: Add commit message]
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+> Changes since v1 RESEND:
+> - split patch from series [0]
+> - Add disable/enable calls without wrapper functions
+> [0] https://lore.kernel.org/linux-omap/20241011173356.870883-1-jm@ti.com/
+> 
+> Tested on am335x BeagleBone Black
+> ---
+>   drivers/gpio/gpio-omap.c | 26 ++++++++++++++++++++++++++
+>   1 file changed, 26 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 76d5d87e9681e..137aabada26f9 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -711,6 +711,28 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+>   	raw_spin_unlock_irqrestore(&bank->lock, flags);
+>   }
+>   
+> +static void omap_gpio_disable_irq(struct irq_data *d)
+> +{
+> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+> +	unsigned int offset = d->hwirq;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&bank->lock, flags);
+> +	omap_set_gpio_irqenable(bank, offset, 0);
+> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +}
+> +
+> +static void omap_gpio_enable_irq(struct irq_data *d)
+> +{
+> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+> +	unsigned int offset = d->hwirq;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&bank->lock, flags);
+> +	omap_set_gpio_irqenable(bank, offset, 1);
+> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +}
+> +
+>   static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+>   {
+>   	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+> @@ -723,6 +745,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
+>   	.irq_shutdown = omap_gpio_irq_shutdown,
+>   	.irq_mask = omap_gpio_mask_irq,
+>   	.irq_unmask = omap_gpio_unmask_irq,
+> +	.irq_disable = omap_gpio_disable_irq,
+> +	.irq_enable = omap_gpio_enable_irq,
+>   	.irq_set_type = omap_gpio_irq_type,
+>   	.irq_set_wake = omap_gpio_wake_enable,
+>   	.irq_bus_lock = omap_gpio_irq_bus_lock,
+> @@ -737,6 +761,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
+>   	.irq_shutdown = omap_gpio_irq_shutdown,
+>   	.irq_mask = omap_gpio_mask_irq,
+>   	.irq_unmask = omap_gpio_unmask_irq,
+> +	.irq_disable = omap_gpio_disable_irq,
+> +	.irq_enable = omap_gpio_enable_irq,
+>   	.irq_set_type = omap_gpio_irq_type,
+>   	.irq_bus_lock = omap_gpio_irq_bus_lock,
+>   	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
+
 
