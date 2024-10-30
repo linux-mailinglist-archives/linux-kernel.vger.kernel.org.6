@@ -1,74 +1,79 @@
-Return-Path: <linux-kernel+bounces-388768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-388767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E74439B6426
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 987B79B6423
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 14:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A60C32817AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678822816C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 30 Oct 2024 13:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876E31E7C0B;
-	Wed, 30 Oct 2024 13:32:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41BB71EABBE;
+	Wed, 30 Oct 2024 13:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mKsRhVIH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDNKfbfI"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A931E570E;
-	Wed, 30 Oct 2024 13:32:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961F03FB31
+	for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 13:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1730295136; cv=none; b=ddxPIozIBFuIrSKE+0aBuubpxzpmFBWQATeMOK9w37Of/ul5bYJck+z0qY55QoFKvymnVyWlEmovhmIthJ2V2IBl79pNrzyZs/1Dbba56jnmWkiKTp4nMj8xLGuhJzIA9pZQQIGsM+9pmOjNMsKpaBJ7VLS4MfGuuaKovmversA=
+	t=1730295134; cv=none; b=tCVlfLqoj4dmrSaaESlWczybkpnaZsSKJXCOi+3Ar8SIxpwnvbs+U0VJ4Oepe75sZ7Yd16y7fGj7uoLWsGLnbijo7YBFVIOeGtAvj4JjbmZfqqyIYAGuBQcmkn0UEfc1Nq1nxkNskw6mgenq0irEnFei6DWGy84C5MfPf3EcqTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1730295136; c=relaxed/simple;
-	bh=A3P0x+0FP1lUv1l+YQtrfhbDMMUcog/NdLSQXT0BOoA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Numq2iItOY4titfF7UhNXANbzCcTrpysQ/abvPyVPuZOLZorOmgCWPpttn/rGAAbIZUctvntSjxapvcSublgJAxyjgFIey2+pMEPvst6QdXo5vfrlPh462Miys0vxAlgDvXuoav7x2LOi7T5BWTB+Wn5oLTkn9vcNYxga+prUoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mKsRhVIH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49U9x5OJ012773;
-	Wed, 30 Oct 2024 13:32:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	mHQ+Gg6V2ei7AXCu6cKzXPNkuQvbXoSycYg1KOBw+f0=; b=mKsRhVIHXPT4/6OL
-	I7p0NBMHPbrMXFFGwBKseePx36kpeqLmlj1qDyEnpQAF15WBDGuJ9bZ5kXDhD9zB
-	e5AdsHKZbTHS4ZFfkMmVlbb9UcNHWWNMCy8inKHOvAn2yVax/aUAr/WRSUn+3pU9
-	CO2oD7+7s5iXWXMJAWdcmapuAeuHSNfWx/ziCHEY93K/KmcqGqE0GLOKsRzKfPFG
-	SSo718CEl0DWcW/rQaRITAIHTzNmBYp2OoTNbQ9aRIvKhLcYvYzof49m2CzTlNN6
-	oa2b8TSO/eZdKvz7uMmap6CQzNOAD+YgGMIR9fAfRdyqxMoAK03cFiJUWY9JgsJj
-	797/vw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42grgum6jq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 13:32:04 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49UDW3A7024757
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 30 Oct 2024 13:32:03 GMT
-Received: from hu-sibis-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 30 Oct 2024 06:31:58 -0700
-From: Sibi Sankar <quic_sibis@quicinc.com>
-To: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <morten.rasmussen@arm.com>,
-        <dietmar.eggemann@arm.com>, <lukasz.luba@arm.com>,
-        <pierre.gondois@arm.com>, <vincent.guittot@linaro.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_mdtipton@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, Sibi Sankar <quic_sibis@quicinc.com>
-Subject: [PATCH V6 1/1] cpufreq: scmi: Register for limit change notifications
-Date: Wed, 30 Oct 2024 19:01:33 +0530
-Message-ID: <20241030133133.2932722-2-quic_sibis@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241030133133.2932722-1-quic_sibis@quicinc.com>
-References: <20241030133133.2932722-1-quic_sibis@quicinc.com>
+	s=arc-20240116; t=1730295134; c=relaxed/simple;
+	bh=Re8Arxx6x5qOB4LQGkXCJaMRkFudlsmyB2e/oy/1A1A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CvKy94HM5AOTyuIcZCl6Zm8P7JEDlCSwIvj+wbwsRRtEbTPhq90O4LWfCAVmVo2C3PvIolJ048KFESxOP/kUphqsO9ttitfvOqRJCZwQ7FelslzrN2dZN40Lvyti45QTiSl5N8gYsIZTpKe0FYUJII9PbvLwBh+5+ulr1mXlHx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDNKfbfI; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7b15467f383so482049085a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Oct 2024 06:32:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1730295131; x=1730899931; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ns5nWhr0PT4Sc6/u0VDcTbhfTPo6/0aZkcTxVWdIZRo=;
+        b=GDNKfbfI0kLJw+J6xxVjRBvbsH8FvmKbMyo+F0CjIrY2iuu8eViipA32nK4cMjNR2u
+         v7a6v/rG1K7e8cczVzVNJW5NChf+PAk5hOy1ZSQI9Wv3sAqZ3zuuK2ltqWW4kfmWpBbl
+         XKpkpLOHT/JvOGnsTTr4ieNs1USk/de8Njjyo3u745AgvsH+ox1rfP6KlHv683/MuRb5
+         1sl5hCPWWgEgAcx7qokhL5WOi4Ls8fs+ZXBye0YWYYixX99DdG3ymsQdt71hdqqiLLep
+         elBRTEyryTDWuJCLdOhX2tpy/c0mtjP+xRpSuUAr0nVchaCHjyjQ+/dwgPiDiddjipT9
+         +ELw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1730295131; x=1730899931;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ns5nWhr0PT4Sc6/u0VDcTbhfTPo6/0aZkcTxVWdIZRo=;
+        b=OZSMFpahKBJArQ+2IVgCrSrRPjiWmAS52/DnFnf8uOnVswzbcxi98q8PwsLXEXqLuT
+         quuGIK4o/JWoBuE5/QJAy8Vm5tVKnoEofaG5DbQA1drwJcyQ0VbfsYzo+l+5zif/YsbX
+         ftV3En/n/lzuito/qTE0/O/D+aPcw7MT8ThyBnWOjn0gkzG/MgDs0zQhlCfO9an5xPlA
+         pVVMW7hToCP31Cb9VwAXL9uqNFfEdmqQSNs+cWOnntSsAiZnLQFnYizqrTbPqt0Eb491
+         OAI3Mf68Xcm2K+dcViuIBjGi3wC2L3Bnm6xr0fJujCiNrBHj1lHDQ0L4qExwZmO9xmng
+         DezA==
+X-Forwarded-Encrypted: i=1; AJvYcCXhxfOwY242QMHvbE49UiZmdd7uyRaYT7WdqTQy+sBP0RMqJh4TDfaDirF+sJNRULOrvw//fqoHNrafUyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4jLNDg3KPiFXpPolMWVkXIhd2wJfdb0FPRrVrKj1l23QLa0Wp
+	UmnEjNMpF+FFfraLskclPZNVQoWKXJ0l12mJpTKrZqGpUfEHD4B+
+X-Google-Smtp-Source: AGHT+IHDeLO3HDuzQWG5QFgMmTLs8z3uetA7y8Qy6YtIjbeSmpntV0NS1nysmvuJx6ZNotSlChVO1w==
+X-Received: by 2002:a05:620a:3182:b0:7b1:3754:7d82 with SMTP id af79cd13be357-7b193f74527mr2102137485a.66.1730295131265;
+        Wed, 30 Oct 2024 06:32:11 -0700 (PDT)
+Received: from hemlock.fiveisland.rocks (dhcp-213-15-2-159.pbband.net. [159.2.15.213])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b18d2aab9csm513495785a.61.2024.10.30.06.32.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2024 06:32:10 -0700 (PDT)
+From: Marc Dionne <marc.c.dionne@gmail.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: Vlastimil Babka <vbabka@suse.cz>,
+	Marc Dionne <marc.dionne@auristor.com>
+Subject: [PATCH v3] tools/mm: Fix slabinfo crash when MAX_SLABS is exceeded
+Date: Wed, 30 Oct 2024 10:32:08 -0300
+Message-ID: <20241030133208.41061-1-marc.c.dionne@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,133 +81,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: SHu6vOOkDMECajIkn3n51HKE80Eadjy6
-X-Proofpoint-GUID: SHu6vOOkDMECajIkn3n51HKE80Eadjy6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- lowpriorityscore=0 adultscore=0 mlxscore=0 bulkscore=0 suspectscore=0
- phishscore=0 spamscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410300106
 
-Register for limit change notifications if supported and use the throttled
-frequency from the notification to apply HW pressure.
+From: Marc Dionne <marc.dionne@auristor.com>
 
-Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
-Tested-by: Mike Tipton <quic_mdtipton@quicinc.com>
-Reviewed-by: Cristian Marussi <cristian.marussi@arm.com>
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+The number of slabs can easily exceed the hard coded MAX_SLABS in the
+slabinfo tool, causing it to overwrite memory and crash.
+
+Increase the value of MAX_SLABS, and check if that has been exceeded for
+each new slab, instead of at the end when it's already too late.  Also
+move the check for MAX_ALIASES into the loop body.
+
+Signed-off-by: Marc Dionne <marc.dionne@auristor.com>
 ---
+ tools/mm/slabinfo.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-v6:
-* Unregister the notifier in the exit path to make sure
-  the cpus work across suspend/resume cycles.
-
- drivers/cpufreq/scmi-cpufreq.c | 38 ++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 5892c73e129d..fb3534eae722 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -16,6 +16,7 @@
- #include <linux/export.h>
- #include <linux/module.h>
- #include <linux/pm_opp.h>
-+#include <linux/pm_qos.h>
- #include <linux/slab.h>
- #include <linux/scmi_protocol.h>
- #include <linux/types.h>
-@@ -25,7 +26,9 @@ struct scmi_data {
- 	int domain_id;
- 	int nr_opp;
- 	struct device *cpu_dev;
-+	struct cpufreq_policy *policy;
- 	cpumask_var_t opp_shared_cpus;
-+	struct notifier_block limit_notify_nb;
- };
+diff --git a/tools/mm/slabinfo.c b/tools/mm/slabinfo.c
+index cfaeaea71042..bf770101929a 100644
+--- a/tools/mm/slabinfo.c
++++ b/tools/mm/slabinfo.c
+@@ -21,7 +21,7 @@
+ #include <regex.h>
+ #include <errno.h>
  
- static struct scmi_protocol_handle *ph;
-@@ -174,6 +177,25 @@ static struct freq_attr *scmi_cpufreq_hw_attr[] = {
- 	NULL,
- };
+-#define MAX_SLABS 500
++#define MAX_SLABS 2000
+ #define MAX_ALIASES 500
+ #define MAX_NODES 1024
  
-+static int scmi_limit_notify_cb(struct notifier_block *nb, unsigned long event, void *data)
-+{
-+	struct scmi_data *priv = container_of(nb, struct scmi_data, limit_notify_nb);
-+	struct scmi_perf_limits_report *limit_notify = data;
-+	struct cpufreq_policy *policy = priv->policy;
-+	unsigned int limit_freq_khz;
-+	int ret;
-+
-+	limit_freq_khz = limit_notify->range_max_freq / HZ_PER_KHZ;
-+
-+	policy->max = clamp(limit_freq_khz, policy->cpuinfo.min_freq, policy->cpuinfo.max_freq);
-+
-+	ret = freq_qos_update_request(policy->max_freq_req, policy->max);
-+	if (ret < 0)
-+		pr_warn("failed to update freq constraint: %d\n", ret);
-+
-+	return NOTIFY_OK;
-+}
-+
- static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- {
- 	int ret, nr_opp, domain;
-@@ -181,6 +203,7 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- 	struct device *cpu_dev;
- 	struct scmi_data *priv;
- 	struct cpufreq_frequency_table *freq_table;
-+	struct scmi_device *sdev = cpufreq_get_driver_data();
+@@ -1240,6 +1240,8 @@ static void read_slab_dir(void)
+ 				p--;
+ 			alias->ref = strdup(p);
+ 			alias++;
++			if (alias - aliasinfo == MAX_ALIASES)
++				fatal("Too many aliases\n");
+ 			break;
+ 		   case DT_DIR:
+ 			if (chdir(de->d_name))
+@@ -1301,6 +1303,8 @@ static void read_slab_dir(void)
+ 			if (slab->name[0] == ':')
+ 				alias_targets++;
+ 			slab++;
++			if (slab - slabinfo == MAX_SLABS)
++				fatal("Too many slabs\n");
+ 			break;
+ 		   default :
+ 			fatal("Unknown file type %lx\n", de->d_type);
+@@ -1310,10 +1314,6 @@ static void read_slab_dir(void)
+ 	slabs = slab - slabinfo;
+ 	actual_slabs = slabs;
+ 	aliases = alias - aliasinfo;
+-	if (slabs > MAX_SLABS)
+-		fatal("Too many slabs\n");
+-	if (aliases > MAX_ALIASES)
+-		fatal("Too many aliases\n");
+ }
  
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
-@@ -294,6 +317,17 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- 		}
- 	}
- 
-+	priv->limit_notify_nb.notifier_call = scmi_limit_notify_cb;
-+	ret = sdev->handle->notify_ops->devm_event_notifier_register(sdev, SCMI_PROTOCOL_PERF,
-+							SCMI_EVENT_PERFORMANCE_LIMITS_CHANGED,
-+							&domain,
-+							&priv->limit_notify_nb);
-+	if (ret)
-+		dev_warn(&sdev->dev,
-+			 "failed to register for limits change notifier for domain %d\n", domain);
-+
-+	priv->policy = policy;
-+
- 	return 0;
- 
- out_free_opp:
-@@ -310,8 +344,10 @@ static int scmi_cpufreq_init(struct cpufreq_policy *policy)
- 
- static void scmi_cpufreq_exit(struct cpufreq_policy *policy)
- {
-+	struct scmi_device *sdev = cpufreq_get_driver_data();
- 	struct scmi_data *priv = policy->driver_data;
- 
-+	sdev->handle->notify_ops->devm_event_notifier_unregister(sdev, &priv->limit_notify_nb);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
- 	free_cpumask_var(priv->opp_shared_cpus);
-@@ -370,6 +406,8 @@ static int scmi_cpufreq_probe(struct scmi_device *sdev)
- 	if (!handle)
- 		return -ENODEV;
- 
-+	scmi_cpufreq_driver.driver_data = sdev;
-+
- 	perf_ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_PERF, &ph);
- 	if (IS_ERR(perf_ops))
- 		return PTR_ERR(perf_ops);
+ static void output_slabs(void)
 -- 
-2.34.1
+2.47.0
 
 
